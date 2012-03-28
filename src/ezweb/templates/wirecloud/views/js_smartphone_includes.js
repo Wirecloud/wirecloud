@@ -24,7 +24,6 @@
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/showcase/showcase.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/contextManager/ContextManager.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/contextManager/ContextPlatform.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/contextManager/Adaptors.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/dragboard/iGadget.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/dragboard/dragboard.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/wiring_exceptions.js"></script>
