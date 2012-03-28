@@ -44,8 +44,8 @@ urlpatterns = patterns('workspace.views',
     # Tab
     (r'^/((?P<workspace_id>\d+)/tab(s)?[/]?)?$',
         views.TabCollection(permitted_methods=('GET', 'POST', 'PUT',))),
-    (r'^/((?P<workspace_id>\d+)/tab(s)?/(?P<tab_id>\w+)[/]?)?$',
-        views.TabEntry(permitted_methods=('GET', 'PUT', 'POST', 'DELETE',))),
+    (r'^/(?P<workspace_id>\d+)/tab/(?P<tab_id>\w+)/?$',
+        views.TabEntry(permitted_methods=('GET', 'PUT', 'DELETE',))),
 
     # Variables of the whole workspace
     (r'^/((?P<workspace_id>\d+)/variable(s)?[/]?)?$',
