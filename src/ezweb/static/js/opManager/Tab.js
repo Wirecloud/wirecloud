@@ -54,23 +54,46 @@ function Tab(id, notebook, options) {
     }.bind(this));
 
     //CALLBACK METHODS
-    var renameError = function(transport, e) {
-        var logManager = LogManagerFactory.getInstance();
-        var msg = logManager.formatError(gettext("Error renaming a tab, changes will not be saved: %(errorMsg)s."), transport, e);
-        logManager.log(msg);
-    }
+    var renameSuccess = function(transport) {
+        var layoutManager = LayoutManagerFactory.getInstance();
 
-    var deleteSuccess = function(transport) {
-        LayoutManagerFactory.getInstance().hideCover();
-    }
+        this.tab.tabInfo.name = this.newName;
+        this.tab.rename(this.newName);
+
+        layoutManager.logSubTask(gettext('Tab renamed successfully'));
+        layoutManager.logStep('');
+    };
+
+    var renameError = function(transport, e) {
+        var layoutManager, logManager, msg;
+
+        layoutManager = LayoutManagerFactory.getInstance();
+        logManager = LogManagerFactory.getInstance();
+
+        msg = logManager.formatError(gettext("Error renaming tab: %(errorMsg)s."), transport, e);
+        logManager.log(msg);
+        layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+    };
+
+    var deleteSuccess = function (transport) {
+        var layoutManager = LayoutManagerFactory.getInstance();
+
+        this.workSpace.unloadTab(this.getId());
+
+        layoutManager.logSubTask(gettext('Tab deleted successfully'));
+        layoutManager.logStep('');
+    };
 
     var deleteError = function(transport, e) {
-        var logManager = LogManagerFactory.getInstance();
-        var msg = logManager.formatError(gettext("Error removing a tab: %(errorMsg)s."), transport, e);
-        logManager.log(msg);
+        var layoutManager, logManager, msg;
 
-        LayoutManagerFactory.getInstance().hideCover();
-    }
+        layoutManager = LayoutManagerFactory.getInstance();
+        logManager = LogManagerFactory.getInstance();
+
+        msg = logManager.formatError(gettext("Error removing tab: %(errorMsg)s."), transport, e);
+        logManager.log(msg);
+        layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+    };
 
     // ****************
     // PUBLIC METHODS
@@ -85,33 +108,73 @@ function Tab(id, notebook, options) {
         this.preferences = null;
 
         this.menu.destroy();
+        this.menu = null;
         this.dragboard.destroy();
+        this.dragboard = null;
 
         StyledElements.Alternative.prototype.destroy.call(this);
     };
 
 
+    /**
+     * NOTE: rename conflicts with StyledElements.Tab.rename
+     */
     Tab.prototype.updateInfo = function (tabName) {
-        //If the server isn't working the changes will not be saved
-        if (tabName=="" || tabName.match(/^\s$/)) {//empty name
-            var msg = interpolate(gettext("Error updating a tab: invalid name"), true);
-            LogManagerFactory.getInstance().log(msg);
-        } else if (!this.workSpace.tabExists(tabName)) {
-            var tabUrl = URIs.TAB.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
-            var params = {'tab': Object.toJSON({'name': tabName})};
-            PersistenceEngineFactory.getInstance().send_update(tabUrl, params, this, function() { this.tabInfo.name = tabName; this.rename(tabName)}, renameError);
-        } else {
-            var msg = interpolate(gettext("Error updating a tab: the name %(tabName)s is already in use in workspace %(wsName)s."), {tabName: tabName, wsName: this.workSpace.workSpaceState.name}, true);
-            LogManagerFactory.getInstance().log(msg);
-        }
-    }
+        var layoutManager, tabUrl, params, msg = null;
 
-    Tab.prototype.deleteTab = function() {
-        if (this.workSpace.removeTab(this)) { //check if it can be deleted (if not it displays an error window)
-            var tabUrl = URIs.TAB.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
-            PersistenceEngineFactory.getInstance().send_delete(tabUrl, this, deleteSuccess, deleteError);
+        tabName = tabName.strip();
+
+        if (tabName === "") {
+            msg = interpolate(gettext("Error updating a tab: invalid name"), true);
+        } else if (this.workSpace.tabExists(tabName)) {
+            msg = interpolate(gettext("Error updating a tab: the name %(tabName)s is already in use in workspace %(wsName)s."), {tabName: tabName, wsName: this.workSpace.workSpaceState.name}, true);
         }
-    }
+
+        if (msg !== null) {
+            LogManagerFactory.getInstance().log(msg);
+            return;
+        }
+
+        layoutManager = LayoutManagerFactory.getInstance();
+        layoutManager._startComplexTask(gettext("Renaming tab"), 1);
+        msg = gettext('Renaming "%(tabname)s" to "%(newname)s"');
+        msg = interpolate(msg, {tabname: this.tabInfo.name, newname: tabName}, true);
+        layoutManager.logSubTask(msg);
+
+        tabUrl = URIs.TAB.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
+        params = {'tab': Object.toJSON({'name': tabName})};
+        Wirecloud.io.makeRequest(tabUrl, {
+            method: 'PUT',
+            parameters: params,
+            onSuccess: renameSuccess.bind({tab: this, newName: tabName}),
+            onFailure: renameError,
+            onException: renameError,
+            onComplete: function () {
+                LayoutManagerFactory.getInstance()._notifyPlatformReady();
+            }
+        });
+    };
+
+    Tab.prototype.delete = function () {
+        var layoutManager, tabUrl, msg;
+
+        layoutManager = LayoutManagerFactory.getInstance();
+        layoutManager._startComplexTask(gettext("Removing tab"), 1);
+        msg = gettext('Removing "%(tabname)s" from server');
+        msg = interpolate(msg, {tabname: this.tabInfo.name}, true);
+        layoutManager.logSubTask(msg);
+
+        tabUrl = URIs.TAB.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
+        Wirecloud.io.makeRequest(tabUrl, {
+            method: 'DELETE',
+            onSuccess: deleteSuccess.bind(this),
+            onFailure: deleteError,
+            onException: deleteError,
+            onComplete: function () {
+                LayoutManagerFactory.getInstance()._notifyPlatformReady();
+            }
+        });
+    };
 
     Tab.prototype.is_painted = function () {
         return this.painted;
@@ -209,6 +272,15 @@ function Tab(id, notebook, options) {
     this.menu.append(new TabMenuItems(this));
 }
 Tab.prototype = new StyledElements.Tab();
+
+Tab.prototype.isAllowed = function (action) {
+    switch (action) {
+    case "remove":
+        return this.workSpace.tabInstances.keys().length > 1 && !this.hasReadOnlyIGadgets();
+    default:
+        return false;
+    }
+};
 
 Tab.prototype.repaint = function(temporal) {
     StyledElements.Tab.prototype.repaint.call(this, temporal);

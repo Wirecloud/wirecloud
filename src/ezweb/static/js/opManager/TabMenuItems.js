@@ -49,6 +49,13 @@ TabMenuItems.prototype.build = function () {
         ));
     }
 
+    if (this.tab.isAllowed('remove')) {
+        items.push(new StyledElements.MenuItem(
+            gettext("Remove"),
+            this.tab.workSpace.removeTab.bind(this.tab.workSpace, this.tab)
+        ));
+    }
+
     /*
     this.menu.addOption('icon-show-floating',
         gettext("Show Floating Gadget"),

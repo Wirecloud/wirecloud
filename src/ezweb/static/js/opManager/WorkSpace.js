@@ -532,7 +532,7 @@ function WorkSpace (workSpaceState) {
             return false;
         }
 
-        this.unloadTab(tab.getId());
+        tab.delete();
 
         return true;
     }
@@ -544,6 +544,7 @@ function WorkSpace (workSpaceState) {
         var tab = this.tabInstances.get(tabId);
 
         this.tabInstances.unset(tabId);
+        tab.close();
         tab.destroy();
 
         this.visibleTab = null;

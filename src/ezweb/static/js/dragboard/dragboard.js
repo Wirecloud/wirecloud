@@ -128,7 +128,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
         data = {'igadgets': Object.toJSON(data)};
         uri = URIs.GET_IGADGETS.evaluate({workspaceId: this.workSpaceId, tabId: this.tabId});
-        Wirecloud.id.makeRequest(uri, {
+        Wirecloud.io.makeRequest(uri, {
             method: 'POST',
             parameters: data,
             onSuccess: onSuccess,
@@ -205,8 +205,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
         this.iGadgets = null;
         this.iGadgetsByCode = null;
-
-        Element.remove(this.dragboardElement);
+        this.dragboardElement = null;
     };
 
     /**
