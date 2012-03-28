@@ -403,13 +403,6 @@ function WorkSpace (workSpaceState) {
         return this.contextManager;
     }
 
-    WorkSpace.prototype.isEmpty = function () {
-        if (this.tabInstances.keys().length >= 1) {
-            return this.visibleTab.dragboard.getIGadgets().length === 0;
-        }
-        return false;
-    }
-
     WorkSpace.prototype.downloadWorkSpaceInfo = function (initial_tab) {
         // TODO
         this.renameTabWindow = new RenameTabWindowMenu();
@@ -595,15 +588,6 @@ function WorkSpace (workSpaceState) {
         LogManagerFactory.getInstance().log(gettext('workspace unloaded'), Constants.Logging.INFO_MSG);
         LogManagerFactory.getInstance().newCycle();
     }
-
-    WorkSpace.prototype.goTab = function(tab) {
-        if (!this.loaded)
-            return;
-
-        this.visibleTab = tab;
-        this.notebook.goToTab(tab);
-    }
-
 
     WorkSpace.prototype.addIGadget = function(tab, igadget, igadgetJSON, options) {
         this.varManager.addInstance(igadget, igadgetJSON, tab);
