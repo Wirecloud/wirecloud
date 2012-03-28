@@ -25,19 +25,14 @@ var WorkspaceView = function (id, options) {
     StyledElements.Alternative.call(this, id, options);
 
     this.createWorkspaceWindow = new CreateWindowMenu('workSpace');
-    this.renameWorkspaceWindow = new RenameWindowMenu(null);
 
     this.wsMenu = new StyledElements.PopupMenu();
-    this.wsMenu.append(new WorkspaceItems(function (workspace) {
+    this.wsMenu.append(new WorkspaceListItems(function (workspace) {
         OpManagerFactory.getInstance().changeActiveWorkSpace(workspace);
     }));
     this.wsMenu.appendSeparator();
-    this.wsMenu.append(new StyledElements.MenuItem(gettext('Rename'), function () {
-        this.renameWorkspaceWindow.show();
-    }.bind(this)));
-    this.wsMenu.append(new StyledElements.MenuItem(gettext('Settings'), function () {
-        LayoutManagerFactory.getInstance().showPreferencesWindow('workspace', OpManagerFactory.getInstance().activeWorkSpace.preferences);
-    }.bind(this)));
+    this.wsMenu.append(new WorkspaceItems());
+
     this.wsMenu.append(new StyledElements.MenuItem(gettext('New workspace'), function () {
         this.createWorkspaceWindow.show();
     }.bind(this)));

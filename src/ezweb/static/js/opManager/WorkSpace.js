@@ -184,10 +184,6 @@ function WorkSpace (workSpaceState) {
         }
 
         this.loaded = true;
-
-        this._createWorkspaceMenu();
-
-        this._update_creator_options();
         this._lockFunc(false);
 
         layoutManager.logStep('');
@@ -199,8 +195,6 @@ function WorkSpace (workSpaceState) {
         _failsafeInit.call(this, transport, e);
     }
 
-    var renameSuccess = function(transport) {
-    }
     var renameError = function(transport, e) {
         var logManager = LogManagerFactory.getInstance();
         var msg = logManager.formatError(gettext("Error renaming workspace, changes will not be saved: %(errorMsg)s."), transport, e);
@@ -350,42 +344,27 @@ function WorkSpace (workSpaceState) {
         return this.headerHTML;
     }
 
-    WorkSpace.prototype.fillWithLabel = function() {
-        var nameToShow = (this.workSpaceState.name.length>15)?this.workSpaceState.name.substring(0, 15)+"..." : this.workSpaceState.name;
+    WorkSpace.prototype.rename = function(name) {
+        name = name.strip()
 
-        this.workSpaceNameHTMLElement = this.workSpaceHTMLElement.firstDescendant();
-        if (this.workSpaceNameHTMLElement != null) {
-            this.workSpaceNameHTMLElement.update(nameToShow);
-        }else {
-            var spanHTML = "<span>" + nameToShow + "</span>";
-            new Insertion.Top(this.workSpaceHTMLElement, spanHTML);
-            this.workSpaceNameHTMLElement = this.workSpaceHTMLElement.firstDescendant();
+        if (name === "") {
+            throw new Error(gettext("Invalid workspace name"));
         }
-    }
 
-    WorkSpace.prototype.rename = function(name){
-        this.updateInfo(name);
-        this.fillWithLabel();
-    }
-
-    WorkSpace.prototype.updateInfo = function (workSpaceName) {
-        //If the server isn't working the changes will not be saved
-        if (workSpaceName == "" || workSpaceName.match(/^\s$/)){//empty name
-            var msg = interpolate(gettext("Error updating a workspace: invalid name"), true);
-            LogManagerFactory.getInstance().log(msg);
-        } else if (!OpManagerFactory.getInstance().workSpaceExists(workSpaceName)) {
-            this.workSpaceState.name = workSpaceName;
-
+        if (!OpManagerFactory.getInstance().workSpaceExists(name)) {
             var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});
-            var params = {'workspace': Object.toJSON({name: workSpaceName})};
+            var params = {'workspace': Object.toJSON({name: name})};
             Wirecloud.io.makeRequest(workSpaceUrl, {
                 method: 'PUT',
                 parameters: params,
-                onSuccess: renameSuccess.bind(this),
+                onSuccess: function () {
+                    this.workSpaceState.name = name;
+                    LayoutManagerFactory.getInstance().header.refresh();
+                }.bind(this),
                 onFailure: renameError.bind(this)
             });
         } else {
-            var msg = interpolate(gettext("Error updating a workspace: the name %(workSpaceName)s is already in use."), {workSpaceName: workSpaceName}, true);
+            var msg = interpolate(gettext("Error updating a workspace: the name %(name)s is already in use."), {name: name}, true);
             LogManagerFactory.getInstance().log(msg);
         }
     }
@@ -612,8 +591,6 @@ function WorkSpace (workSpaceState) {
             this.contextManager = null;
         }
 
-        this._removeWorkspaceMenu();
-
         layoutManager.logStep('');
         LogManagerFactory.getInstance().log(gettext('workspace unloaded'), Constants.Logging.INFO_MSG);
         LogManagerFactory.getInstance().newCycle();
@@ -778,235 +755,7 @@ function WorkSpace (workSpaceState) {
         default:
             return this._isAllowed(action);
         }
-    }
-
-    /*
-     * Menu with the options to configure the workspace
-     */
-    WorkSpace.prototype._createConfigurationMenu = function(){
-        var idMenu = 'config_menu_'+this.workSpaceState.id;
-
-        this.confMenu = this._initMenu(idMenu);
-
-        /*** Add to the menu the proper options ***/
-        var optionPosition = 0;
-        var nworkspaces = OpManagerFactory.getInstance().workSpaceInstances.keys().length;
-
-        // Mark as active option
-        if (this.valid && !this.workSpaceGlobalInfo.workspace.active) {
-            this.activeEntryId = this.confMenu.addOption(gettext("Initial"),
-                function() {
-                    LayoutManagerFactory.getInstance().hideCover();
-                    this.markAsActive();
-                }.bind(this),
-                optionPosition++);
-        }
-        //Rename option
-        if (this.isAllowed('rename_workspaces')) {
-            this.confMenu.addOption(gettext("Rename"),
-                function() {
-                    LayoutManagerFactory.getInstance().showWindowMenu("renameWorkSpace");
-                },
-                optionPosition++);
-        }
-        // Workspace preferences option
-        if (this.isAllowed('change_workspace_preferences')) {
-            this.confMenu.addOption(gettext("Preferences"),
-                function() {
-                    LayoutManagerFactory.getInstance().showPreferencesWindow('workspace', this.preferences);
-                }.bind(this),
-                optionPosition++);
-        }
-
-        // Delete option
-        if ((nworkspaces > 1) && this.removable && this.isAllowed('add_remove_workspaces')) {
-            this.confMenu.addOption(gettext("Remove"),
-                function() {
-                    var msg = gettext('Do you really want to remove the "%(workspaceName)s" workspace?');
-                    msg = interpolate(msg, {workspaceName: this.workSpaceState.name}, true);
-                    LayoutManagerFactory.getInstance().showYesNoDialog(msg, function(){OpManagerFactory.getInstance().activeWorkSpace.deleteWorkSpace();})
-                }.bind(this),
-                optionPosition++);
-        }
-
-        //Merge workspace option
-        if ((nworkspaces > 1) && this.isAllowed('merge_workspaces')) {
-
-            // mergeWith workspace Menu
-            var idMergeMenu = 'mergeMenu_'+this.workSpaceState.id;
-            this.mergeMenu = LayoutManagerFactory.getInstance().initDropDownMenu(idMergeMenu);
-
-            this.confMenu.addOption(gettext("Merge"),
-                function(e) {
-                    LayoutManagerFactory.getInstance().showDropDownMenu('wsList', this.mergeMenu, Event.pointerX(e), Event.pointerY(e));
-                }.bind(this),
-                optionPosition++);
-        }
-
-        if (optionPosition === 0) {
-            this.confLauncher.addClassName('disabled_button');
-        } else {
-            this.confLauncher.removeClassName('disabled_button');
-        }
-
-        // add the event listener
-        Event.observe(this.confLauncher, 'click',
-                        function(e){
-                            var target = BrowserUtilsFactory.getInstance().getTarget(e);
-                            target.blur();
-                            if (this.confLauncher.className.indexOf('disabled_button') >= 0) {
-                                var msg = gettext("This WorkSpace is blocked, please create a new one if you want to configure it.");
-                                this.messageWindowMenu = new MessageWindowMenu();
-                                this.messageWindowMenu.iconElement.className += ' icon-error';
-                                this.messageWindowMenu.setMsg(msg);
-                                this.messageWindowMenu.show();
-                            } else {
-                                LayoutManagerFactory.getInstance().showToolbarMenu(this.confMenu, this.confLauncher, this.toolbarSection);
-                            }
-                        }.bind(this));
-    }
-
-
-    /*
-     * Menu with the share and publish options
-     */
-    WorkSpace.prototype._createSharingMenu = function(){
-        var idMenu = 'sharing_menu_'+this.workSpaceState.id;
-
-        this.sharingMenu = this._initMenu(idMenu);
-
-        /*** Add to the menu the proper options ***/
-        var optionPosition = 0;
-
-        if (this.isAllowed('share_workspaces')) {
-            this.sharingMenu.addOption(gettext("Share"),
-                function() {
-                    LayoutManagerFactory.getInstance().showWindowMenu('shareWorkSpace');
-                }.bind(this),
-                optionPosition++, null, "share_workspace");
-        }
-
-        if (this.isAllowed('publish_workspaces')) {
-            this.sharingMenu.addOption(gettext("Publish in gallery"),
-                function() {
-                    LayoutManagerFactory.getInstance().showWindowMenu('publishWorkSpace');
-                }.bind(this),
-                optionPosition++, null, "publish_workspace");
-        }
-
-        if (optionPosition === 0) {
-            this.sharingLauncher.addClassName('disabled_button');
-        } else {
-            this.sharingLauncher.removeClassName('disabled_button');
-        }
-
-        // add the event listener
-        Event.observe(this.sharingLauncher, 'click',
-                        function(e){
-                            var target = BrowserUtilsFactory.getInstance().getTarget(e);
-                            target.blur();
-                            if (this.sharingLauncher.className.indexOf('disabled_button') >= 0) {
-                                var msg = gettext("This WorkSpace is blocked, please create a new one if you want to share it.");
-                                this.messageWindowMenu = new MessageWindowMenu();
-                                this.messageWindowMenu.iconElement.className += ' icon-error';
-                                this.messageWindowMenu.setMsg(msg);
-                                this.messageWindowMenu.show();
-                            } else {
-                                LayoutManagerFactory.getInstance().showToolbarMenu(this.sharingMenu, this.sharingLauncher, this.toolbarSection);
-                            }
-                        }.bind(this));
-    }
-
-    /*
-     * Menu with the share and publish options
-     */
-    WorkSpace.prototype._createEditMenu = function () {
-        var idMenu = 'edit_menu_' + this.workSpaceState.id;
-
-        this.editMenu = this._initMenu(idMenu);
-
-        /*** Add to the menu the proper options ***/
-        var optionPosition = 0;
-
-        // catalogue access option
-        if (this.isAllowed('catalogue_view_gadgets') || this.isAllowed('catalogue_view_mashups')) {
-            // the action of going to the catalogue is set by the catalogue module
-            var catId = this.editMenu.addOption(gettext("Go to Gallery") + " »",
-                                function() {},
-                                optionPosition++);
-            this.catalogue_link = $(catId)
-        }
-
-        // wiring access option
-        if (this.isAllowed('show_wiring')) {
-            // the action of going to the wiring is set by the wiring module
-            var wiringId = this.editMenu.addOption(gettext("Go to Wiring tool") + " »",
-                                function() {},
-                                optionPosition++);
-            this.wiring_link = $(wiringId)
-        }
-
-        if (optionPosition === 0) {
-            this.editLauncher.addClassName('disabled_button');
-        } else {
-            this.editLauncher.removeClassName('disabled_button');
-        }
-
-        // add the event listener
-        Event.observe(this.editLauncher, 'click',
-                        function(e){
-                            var target = BrowserUtilsFactory.getInstance().getTarget(e);
-                            target.blur();
-                            if (this.isAllowed('change_lock_status')) {
-                                this._lockFunc(!this._isLocked());
-                            }
-                            if (this.editLauncher.className.indexOf('disabled_button') >= 0) {
-                                var msg = gettext("This WorkSpace is blocked, please create a new one if you want to modify it.");
-                                this.messageWindowMenu = new MessageWindowMenu();
-                                this.messageWindowMenu.iconElement.className += ' icon-error';
-                                this.messageWindowMenu.setMsg(msg);
-                                this.messageWindowMenu.show();
-                            } else {
-                                LayoutManagerFactory.getInstance().showToolbarMenu(this.editMenu, this.editLauncher, this.toolbarSection);
-                            }
-                        }.bind(this));
-    }
-
-
-    /*
-     * Create the necessary menus for the Toolbar
-     */
-    WorkSpace.prototype._createWorkspaceMenu = function() {
-    }
-
-    /*
-     * Remove the toolbar menus
-     */
-    WorkSpace.prototype._removeWorkspaceMenu = function(){
-        if (this.goToMenu)
-            this.goToMenu.remove();
-        if (this.confMenu)
-            this.confMenu.remove();
-        if (this.sharingMenu)
-            this.sharingMenu.remove();
-        if (this.editMenu)
-            this.editMenu.remove();
-
-        if (this.wsListMenu)
-            this.wsListMenu.remove();
-        if (this.mergeMenu)
-            this.mergeMenu.remove();
-
-    }
-
-    WorkSpace.prototype.getGoToMenu = function(){
-        return this.goToMenu;
-    }
-
-    WorkSpace.prototype.getWsListMenu = function(){
-        return this.wsListMenu;
-    }
-
+    };
 
     // *****************
     //  CONSTRUCTOR
@@ -1025,21 +774,6 @@ function WorkSpace (workSpaceState) {
     this.wiringLayer = null;
     this.visibleTab = null;
     this.valid=false;
-
-    // menu DOM elements and objects
-    this.goToMenu = null;
-    this.confMenu = null;
-    this.sharingMenu = null;
-    this.mergeMenu = null;
-    this.FloatingGadgetsMenu = null;
-    this.wsListMenu = null;
-
-    //this.goToLauncher = null;
-    this.confLauncher = null;
-    this.sharingLauncher = null;
-    this.editLauncher = null;
-
-    this.unlockEntryPos;
 
     /*
      * OPERATIONS
@@ -1088,16 +822,7 @@ function WorkSpace (workSpaceState) {
         var msg = logManager.formatError(gettext("Error marking as first active workspace, changes will not be saved: %(errorMsg)s."), transport, e);
         logManager.log(msg);
     }.bind(this);
-
-    this._update_creator_options = function() {
-        Element.extend(document.body);
-        if (this.restricted) {
-            document.body.addClassName('shared');
-        } else {
-            document.body.removeClassName('shared');
-        }
-    }
-}
+};
 
 WorkSpace.prototype.drawAttention = function(iGadgetId) {
     var iGadget = this.getIgadget(iGadgetId);

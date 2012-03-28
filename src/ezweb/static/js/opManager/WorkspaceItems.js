@@ -22,25 +22,40 @@
 /*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50 */
 /*global gettext, LayoutManagerFactory, OpManagerFactory, StyledElements*/
 
-var WorkspaceItems = function (handler) {
+var WorkspaceItems = function () {
     StyledElements.DynamicMenuItems.call(this);
 
-    this.handler = handler;
+    this.renameWorkspaceWindow = new RenameWindowMenu(null);
 };
 WorkspaceItems.prototype = new StyledElements.DynamicMenuItems();
 
 WorkspaceItems.prototype.build = function () {
-    var workspace_keys, i, items, workspace;
+    var current_workspace, items, nworkspaces;
 
     items = [];
+    current_workspace = OpManagerFactory.getInstance().activeWorkSpace;
+    nworkspaces = OpManagerFactory.getInstance().workSpaceInstances.keys().length;
 
-    workspace_keys = OpManagerFactory.getInstance().workSpaceInstances.keys();
-    for (i = 0; i < workspace_keys.length; i += 1) {
-        workspace = OpManagerFactory.getInstance().workSpaceInstances.get(workspace_keys[i]);
-        items.push(new StyledElements.MenuItem(
-            workspace.getName(),
-            this.handler.bind(this, workspace)
-        ));
+    if (current_workspace.isAllowed('rename_workspace')) {
+        items.push(new StyledElements.MenuItem(gettext('Rename'), function () {
+            this.renameWorkspaceWindow.show();
+        }.bind(this)));
+    }
+
+    if (current_workspace.isAllowed('change_workspace_preferences')) {
+        items.push(new StyledElements.MenuItem(gettext('Settings'), function () {
+            LayoutManagerFactory.getInstance().showPreferencesWindow('workspace', current_workspace.preferences);
+        }));
+    }
+
+    if ((nworkspaces > 1) && current_workspace.removable && current_workspace.isAllowed('add_remove_workspaces')) {
+        items.push(new StyledElements.MenuItem(gettext("Remove"), function() {
+            var msg = gettext('Do you really want to remove the "%(workspaceName)s" workspace?');
+            msg = interpolate(msg, {workspaceName: current_workspace.workSpaceState.name}, true);
+            LayoutManagerFactory.getInstance().showYesNoDialog(msg, function() {
+                current_workspace.deleteWorkSpace();
+            });
+        }.bind(this)));
     }
 
     return items;
