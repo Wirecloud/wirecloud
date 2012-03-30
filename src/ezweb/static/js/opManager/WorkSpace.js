@@ -195,26 +195,30 @@ function WorkSpace (workSpaceState) {
     }
 
     var renameError = function(transport, e) {
-        var logManager = LogManagerFactory.getInstance();
-        var msg = logManager.formatError(gettext("Error renaming workspace, changes will not be saved: %(errorMsg)s."), transport, e);
-        logManager.log(msg);
-    }
-    var deleteSuccess = function(transport) {
-        var i, tab_keys = this.tabInstances.keys();
+        var layoutManager, logManager, msg;
 
-        for (i = 0; i < tab_keys.length; i += 1) {
-            this.tabInstances[tab_keys[i]].destroy();
-            //TODO:treatment of wiring, varManager, etc.
-        }
-        LayoutManagerFactory.getInstance().hideCover();
-    }
+        layoutManager = LayoutManagerFactory.getInstance();
+        logManager = LogManagerFactory.getInstance();
+
+        msg = logManager.formatError(gettext("Error renaming workspace: %(errorMsg)s."), transport, e);
+        logManager.log(msg);
+        layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+    };
+
+    var deleteSuccess = function (transport) {
+        OpManagerFactory.getInstance().removeWorkSpace(this.workSpaceState.id);
+        LayoutManagerFactory.getInstance().logSubTask(gettext('Workspace renamed successfully'));
+        LayoutManagerFactory.getInstance().logStep('');
+    };
 
     var deleteError = function(transport, e) {
         var logManager = LogManagerFactory.getInstance();
         var msg = logManager.formatError(gettext("Error removing workspace, changes will not be saved: %(errorMsg)s."), transport, e);
         logManager.log(msg);
-        LayoutManagerFactory.getInstance().hideCover();
-    }
+        LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+
+        LayoutManagerFactory.getInstance()._notifyPlatformReady();
+    };
 
     var publishSuccess = function (transport) {
         var layoutManager = LayoutManagerFactory.getInstance();
@@ -341,37 +345,64 @@ function WorkSpace (workSpaceState) {
         return this.headerHTML;
     }
 
-    WorkSpace.prototype.rename = function(name) {
+    WorkSpace.prototype.rename = function (name) {
+        var layoutManager, workspaceUrl, params, msg = null;
+
         name = name.strip()
 
         if (name === "") {
-            throw new Error(gettext("Invalid workspace name"));
+            msg = gettext("Invalid workspace name");
+        } else if (OpManagerFactory.getInstance().workSpaceExists(name)) {
+            msg = interpolate(gettext("Error updating workspace: the name %(name)s is already in use."), {name: name}, true);
         }
 
-        if (!OpManagerFactory.getInstance().workSpaceExists(name)) {
-            var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});
-            var params = {'workspace': Object.toJSON({name: name})};
-            Wirecloud.io.makeRequest(workSpaceUrl, {
-                method: 'PUT',
-                parameters: params,
-                onSuccess: function () {
-                    this.workSpaceState.name = name;
-                    LayoutManagerFactory.getInstance().header.refresh();
-                }.bind(this),
-                onFailure: renameError.bind(this)
-            });
-        } else {
-            var msg = interpolate(gettext("Error updating a workspace: the name %(name)s is already in use."), {name: name}, true);
+        if (msg !== null) {
             LogManagerFactory.getInstance().log(msg);
+            return;
         }
-    }
 
-    WorkSpace.prototype.deleteWorkSpace = function() {
-        var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id});
+        layoutManager = LayoutManagerFactory.getInstance();
+        layoutManager._startComplexTask(gettext("Renaming workspace"), 1);
+        msg = gettext('Renaming "%(workspacename)s" to "%(newname)s"');
+        msg = interpolate(msg, {workspacename: this.workSpaceState.name, newname: name}, true);
+        layoutManager.logSubTask(msg);
+
+        workspaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});
+        params = {'workspace': Object.toJSON({name: name})};
+        Wirecloud.io.makeRequest(workspaceUrl, {
+            method: 'PUT',
+            parameters: params,
+            onSuccess: function () {
+                var layoutManager = LayoutManagerFactory.getInstance();
+
+                this.workSpaceState.name = name;
+                layoutManager.header.refresh();
+                layoutManager.logSubTask(gettext('Workspace renamed successfully'));
+                layoutManager.logStep('');
+            }.bind(this),
+            onFailure: renameError,
+            onException: renameError,
+            onComplete: function () {
+                LayoutManagerFactory.getInstance()._notifyPlatformReady();
+            }
+        });
+    };
+
+    WorkSpace.prototype.delete = function () {
+        var layoutManager, workspaceUrl;
+
+        layoutManager = LayoutManagerFactory.getInstance();
+        layoutManager._startComplexTask(gettext("Removing workspace"), 2);
+        msg = gettext('Removing "%(workspacename)s"');
+        msg = interpolate(msg, {workspacename: this.workSpaceState.name}, true);
+        layoutManager.logSubTask(msg);
+
+        workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id});
         Wirecloud.io.makeRequest(workSpaceUrl, {
             method: 'DELETE',
             onSuccess: deleteSuccess.bind(this),
-            onFailure: deleteError.bind(this)
+            onFailure: deleteError,
+            onException: deleteError
         });
     };
 
@@ -717,12 +748,16 @@ function WorkSpace (workSpaceState) {
      * Checks if an action can be performed in this workspace by current user.
      */
     WorkSpace.prototype.isAllowed = function (action) {
+        var nworkspaces;
 
-        if (action != "add_remove_workspaces" && (!this.valid || this.restricted)) {
+        if (action !== "remove" && (!this.valid || this.restricted)) {
             return false;
         }
 
         switch (action) {
+        case "remove":
+            nworkspaces = OpManagerFactory.getInstance().workSpaceInstances.keys().length;
+            return /* opManager.isAllow('add_remove_workspaces') && */ (nworkspaces > 1) && this.removable;
         case "merge_workspaces":
             return this._isAllowed('add_remove_igadgets') || this._isAllowed('merge_workspaces');
         case "catalogue_view_gadgets":

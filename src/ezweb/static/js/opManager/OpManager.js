@@ -488,25 +488,12 @@ var OpManagerFactory = function () {
         }
 
         OpManager.prototype.removeWorkSpace = function(workSpaceId) {
-            if (this.workSpaceInstances.keys().length <= 1) {
-                var msg = gettext("there must be one workspace at least");
-                msg = interpolate(gettext("Error removing workspace: %(errorMsg)s."), {errorMsg: msg}, true);
-
-                LogManagerFactory.getInstance().log(msg);
-                var layoutManager = LayoutManagerFactory.getInstance();
-                layoutManager.hideCover();
-                layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-                return false;
-            }
-
             // Removing reference
             this.workSpaceInstances.unset(workSpaceId);
 
-            //set the first workspace as current (and unload the former)
+            // Set the first workspace as current
             this.changeActiveWorkSpace(this.workSpaceInstances.values()[0]);
-
-            return true;
-        }
+        };
 
 
         OpManager.prototype.getWorkspaceCount = function(){
