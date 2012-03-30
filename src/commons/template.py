@@ -101,6 +101,7 @@ class USDLTemplateParser(object):
         self.base = base
         self._info = {}
         self._translation_indexes = {}
+        self._translations={}
         self._url_fields = []
 
         self._graph = rdflib.Graph()
@@ -114,6 +115,45 @@ class USDLTemplateParser(object):
             self._info['type']='mashup'
 
         self._parse_basic_info()
+
+    def _add_translation_index(self,value,**kwargs):
+
+        if value not in self._translation_indexes:
+            self._translation_indexes[value]=[]
+            self._translation_indexes[value].append(kwargs)
+
+    def _get_translation_field(self,namespace,element,subject,translation_name,required=True,**kwargs):
+
+        element_num=0
+        translations={}
+
+        for field_element in self._graph.objects(subject,namespace[element]):
+            element_num=element_num+1
+            if field_element.language:
+                translations[str(field_element.language)]=field_element.title()
+                #This field is necesary in order to prevent a problem in case only existed 1 field but it had a language tag
+                translations['no_translation']=field_element.title()
+            else:
+                translations['no_translation']=str(field_element)
+
+        if element_num == 1:
+            return translations['no_translation']
+
+        elif element_num > 1:
+            self._add_translation_index(translation_name,**kwargs)
+            for k,v in translations.iteritems():
+                if k not in self._translations:
+                    self._translations[k]={}
+                self._translations[k][translation_name]=v
+            return '__MSG_'+translation_name+'__'
+
+        elif element_num==0 and required:
+            msg = _('missing required field: %(field)s')
+            raise TemplateParseException(msg % {'field': element})
+
+        else:
+            return ''
+
 
     def _get_field(self,namespace,element,subject,required=True,id_=False):
 
@@ -168,7 +208,8 @@ class USDLTemplateParser(object):
         if not re.match(NAME_RE, self._info['name']):
             raise TemplateParseException(_('ERROR: the format of the name is invalid.'))
 
-        self._info['description']=self._get_field(DCTERMS,'description',self._gadgetURI)
+
+        self._info['description']=self._get_translation_field(DCTERMS,'description',self._gadgetURI,'description',type='resource',field='description')
 
         vendor = self._get_field(USDL,'hasProvider',self._gadgetURI,id_=True)
 
@@ -193,7 +234,7 @@ class USDLTemplateParser(object):
         else:
             self._info['doc_uri']=''
 
-        self._info['display_name']=self._get_field(WIRE,'displayName',self._gadgetURI,required=False)
+        self._info['display_name']=self._get_translation_field(WIRE,'displayName',self._gadgetURI,'display_name',required=False,type='resource',field='display_name')
 
         self._info['mail']=self._get_field(VCARD,'email',self._gadgetURI)
 
@@ -211,9 +252,9 @@ class USDLTemplateParser(object):
             self._info['slots'].append({
                 'name': self._get_field(DCTERMS,'title',slot,required=False),
                 'type': self._get_field(WIRE,'type',slot,required=False),
-                'label': self._get_field(RDFS,'label',slot,required=False),
-                'description': self._get_field(DCTERMS,'description',slot,required=False),
-                'action_label': self._get_field(WIRE,'slotActionLabel',slot,required=False),
+                'label': self._get_translation_field(RDFS,'label',slot,'slotLabel',required=False,type='vdef',variable=self._get_field(DCTERMS,'title',slot,required=False)),
+                'description': self._get_translation_field(DCTERMS,'description',slot,'slotDescription',required=False,type='vdef',variable=self._get_field(DCTERMS,'title',slot,required=False)),
+                'action_label': self._get_translation_field(WIRE,'slotActionLabel',slot,'slotActionLabel',required=False,type='vdef',variable=self._get_field(DCTERMS,'title',slot,required=False)),
                 'friendcode': self._get_field(WIRE,'slotFriendcode',slot,required=False),
             })
 
@@ -221,8 +262,8 @@ class USDLTemplateParser(object):
             self._info['events'].append({
                 'name': self._get_field(DCTERMS,'title',event,required=False),
                 'type': self._get_field(WIRE,'type',event,required=False),
-                'label': self._get_field(RDFS,'label',event,required=False),
-                'description': self._get_field(DCTERMS,'description',event,required=False),
+                'label': self._get_translation_field(RDFS,'label',event,'eventLabel',required=False,type='vdef',variable=self._get_field(DCTERMS,'title',event,required=False)),
+                'description': self._get_translation_field(DCTERMS,'description',event,'eventDescription',required=False,type='vdef',variable=self._get_field(DCTERMS,'title',event,required=False)),
                 'friendcode': self._get_field(WIRE,'eventFriendcode',event,required=False),
             })
 
@@ -275,8 +316,8 @@ class USDLTemplateParser(object):
             preference_info={
                 'name': self._get_field(DCTERMS,'title',preference,required=False),
                 'type': self._get_field(WIRE,'type',preference,required=False),
-                'label': self._get_field(RDFS,'label',preference,required=False),
-                'description': self._get_field(DCTERMS,'description',preference,required=False),
+                'label': self._get_translation_field(RDFS,'label',preference,'prefLabel',required=False,type='vdef',variable=self._get_field(DCTERMS,'title',preference,required=False)),
+                'description': self._get_translation_field(DCTERMS,'description',preference,'prefDescription',required=False,type='vdef',variable=self._get_field(DCTERMS,'title',preference,required=False)),
                 'default_value': self._get_field(WIRE,'default',preference,required=False),
                 'secure': self._get_field(WIRE,'secure',preference,required=False).lower() == 'true',
             }
@@ -285,7 +326,7 @@ class USDLTemplateParser(object):
 
                 for option in self._graph.objects(preference,WIRE['hasOption']):
                     preference_info['options'].append({
-                        'label': self._get_field(DCTERMS,'title',option,required=False),
+                        'label': self._get_translation_field(DCTERMS,'title',option,'optionName',required=False,type='upo',variable=preference_info['name'],option='__MSG_optionName__'),
                         'value': self._get_field(WIRE,'value',option,required=False),
                     })
 
@@ -298,8 +339,8 @@ class USDLTemplateParser(object):
             self._info['properties'].append({
                 'name': self._get_field(DCTERMS,'title',prop,required=False),
                 'type': self._get_field(WIRE,'type',prop,required=False),
-                'label': self._get_field(RDFS,'label',prop,required=False),
-                'description': self._get_field(DCTERMS,'description',prop,required=False),
+                'label': self._get_translation_field(RDFS,'label',prop,'propLabel',required=False,type='vdef',variable=self._get_field(DCTERMS,'title',prop,required=False)),
+                'description': self._get_translation_field(DCTERMS,'description',prop,'propDescription',required=False,type='vdef',variable=self._get_field(DCTERMS,'title',prop,required=False)),
                 'default_value': self._get_field(WIRE,'default',prop,required=False),
                 'secure': self._get_field(WIRE,'secure',prop,required=False).lower() == 'true',
             })
@@ -352,7 +393,9 @@ class USDLTemplateParser(object):
         self._info['gadget_menucolor']=self._get_field(WIRE,'hasPlatformMenucolor',self._gadgetURI,required=False)
 
     def _parse_translation_catalogue(self):
-        pass
+        self._info['default_lang']='en'
+        self._info['translations']=self._translations
+        self._info['translation_index_usage']=self._translation_indexes
 
     def _parse_workspace_info(self):
 
@@ -836,7 +879,6 @@ class WirecloudTemplateParser(object):
             tabs.append(tab_info)
 
         self._info['tabs'] = tabs
-
         self._parse_wiring_info(parse_channels=True)
 
     def _parse_translation_catalogue(self):

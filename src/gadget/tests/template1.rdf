@@ -10,7 +10,8 @@
 
 	<wire:Gadget rdf:about="http://wirecloud.com/test">
 		<dcterms:title>test</dcterms:title>
-		<dcterms:description>Test Gadget description</dcterms:description>
+		<dcterms:description xml:lang="en">Test Gadget description</dcterms:description>
+		<dcterms:description xml:lang="es">Descripción del Gadget de pruebas</dcterms:description>
 		<dcterms:creator rdf:resource="http://creatoruri/"/>
 		<wire:version>0.1</wire:version>
 		<wire:hasImageUri rdf:resource="images/catalogue.png"/>
@@ -26,12 +27,15 @@
 			<wire:PlatformPreference rdf:ID="preference_1">
 				<dcterms:title>pref</dcterms:title>
 				<wire:type>list</wire:type>
-				<dcterms:description>Preference description</dcterms:description>
-				<rdfs:label>Preference label</rdfs:label>
+				<dcterms:description xml:lang="en">Preference description</dcterms:description>
+				<dcterms:description xml:lang="es">Descripción de la preferencia</dcterms:description>
+				<rdfs:label xml:lang="en">Preference label</rdfs:label>
+				<rdfs:label xml:lang="es">Etiqueta de la preferencia</rdfs:label>
 				<wire:default>value</wire:default>
 					<wire:hasOption>
 					<wire:Option rdf:ID="option_1">
-						<dcterms:title>Option name</dcterms:title>
+						<dcterms:title xml:lang="en">Option name</dcterms:title>
+						<dcterms:title xml:lang="es">Nombre de la opción</dcterms:title>
 						<wire:value>1</wire:value>
 					</wire:Option>
 				</wire:hasOption>
@@ -42,7 +46,8 @@
 			<wire:PlatformStateProperty rdf:ID="property_1">
 				<dcterms:title>prop</dcterms:title>
 				<wire:type>text</wire:type>
-				<rdfs:label>Property label</rdfs:label>
+				<rdfs:label xml:lang="en">Property label</rdfs:label>
+				<rdfs:label xml:lang="es">Etiqueta de la propiedad</rdfs:label>
 			</wire:PlatformStateProperty>
 		</wire:hasPlatformStateProperty>
 
@@ -52,7 +57,8 @@
 					<wire:Slot rdf:ID="slot_1">
 						<dcterms:title>slot</dcterms:title>
 						<wire:type>text</wire:type>
-						<rdfs:label>slot</rdfs:label>
+						<rdfs:label xml:lang="en">Slot label</rdfs:label>
+						<rdfs:label xml:lang="es">Etiqueta de la ranura</rdfs:label>
 						<wire:slotFriendcode>test_friend_code</wire:slotFriendcode>
 					</wire:Slot>
 				</wire:hasSlot>
@@ -60,7 +66,8 @@
 					<wire:Event rdf:ID="event_1">
 						<dcterms:title>event</dcterms:title>
 						<wire:type>text</wire:type>
-						<rdfs:label>event</rdfs:label>
+						<rdfs:label xml:lang="en">Event label</rdfs:label>
+						<rdfs:label xml:lang="es">Etiqueta del evento</rdfs:label>
 						<wire:eventFriendcode>test_friend_code</wire:eventFriendcode>
 					</wire:Event>
 				</wire:hasEvent>
