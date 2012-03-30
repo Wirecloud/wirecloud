@@ -85,24 +85,13 @@ var ResourceDetailsPainter = function (catalogue, details_structure_element, dom
         ///////////////////////////////
 
         // Go back to list of resources
-        this.create_simple_command(this.dom_element, '.back_to_resource_list', 'click', this.catalogue.createUserCommand('home'));
+        this.create_simple_command(this.dom_element, '.back_to_resource_list', 'click', this.catalogue.home.bind(this.catalogue));
 
         // "Instantiate"
         this.create_simple_command(this.dom_element, '.instanciate_button', 'click', this.catalogue.createUserCommand('instanciate', resource));
 
+        this.populate_advanced_operations(resource);
         /*
-        // Delete resource
-        this.create_simple_command('.delete_resource', 'click', this.catalogue.deleteResource.bind(resource));
-
-        // Update resource html
-        this.create_simple_command('.update_resource', 'click', this.catalogue.updateResource.bind(resource));
-
-        // Voting a resource
-        this.create_simple_command('.voting_resource', 'click', this.catalogue.'VOTE_RESOURCE', resource, 'click', user_command_manager);
-
-        // Changing version
-        this.create_simple_command('.change_version_resource', 'CHANGE_RESOURCE_VERSION', resource, 'click', user_command_manager);
-
         // Tagging resource
         this.create_simple_command('.tagging_resource', 'TAG_RESOURCE', resource, 'click', user_command_manager);
 
@@ -169,3 +158,13 @@ var ResourceDetailsPainter = function (catalogue, details_structure_element, dom
     };
 };
 ResourceDetailsPainter.prototype = new HTML_Painter();
+
+ResourceDetailsPainter.prototype.populate_advanced_operations = function (resource) {
+    var button, element = this.dom_element.getElementsByClassName('advanced_operations')[0];
+
+    button = new StyledElements.StyledButton({
+        'text': gettext('Delete'),
+    });
+    button.addEventListener('click', this.catalogue.createUserCommand('delete', resource));
+    button.insertInto(element);
+};

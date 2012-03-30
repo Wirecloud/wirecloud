@@ -23,6 +23,7 @@ var WirecloudHeader = function () {
     this.wrapperElement = $('wirecloud_header');
     this.breadcrum = $('wirecloud_breadcrum');
 
+    this.currentView = null;
     this.currentMenu = null;
 
     this.submenu = document.createElement('div');
@@ -162,9 +163,14 @@ WirecloudHeader.prototype._notifyViewChange = function (newView) {
         this.submenu.className = 'submenu';
     }
 
+    this.currentView = newView;
     this.currentMenu = this.menues[newView.view_name];
     this.currentMenu.html_element.addClassName('selected');
 
-    this._paintBreadcrum(newView);
-    this._paintSubMenu(newView);
+    this.refresh();
+};
+
+WirecloudHeader.prototype.refresh = function () {
+    this._paintBreadcrum(this.currentView);
+    this._paintSubMenu(this.currentView);
 };

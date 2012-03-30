@@ -51,7 +51,21 @@ MarketplaceView.prototype.getSubMenuItems = function () {
     return [
         {
             'label': gettext('publish'),
-            'callback': alert.bind(null, 'hola')
+            'callback': this.createUserCommand('publish')
         }
     ];
+};
+
+MarketplaceView.prototype.createUserCommand = function(command) {
+    return this.ui_commands[command].apply(this, Array.prototype.slice.call(arguments, 1));
+};
+
+
+MarketplaceView.prototype.ui_commands = {};
+
+MarketplaceView.prototype.ui_commands.publish = function() {
+    return function () {
+        var current_catalogue = this.alternatives.getCurrentAlternative();
+        current_catalogue.ui_commands.publish.call(current_catalogue)();
+    }.bind(this);
 };

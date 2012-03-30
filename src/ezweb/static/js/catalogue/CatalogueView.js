@@ -31,14 +31,12 @@ var CatalogueView = function (id, options) {
 
     this.viewsByName = {
         'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: {catalogue: this}}),
-        'developer': this.alternatives.createAlternative(),
+        'developer': this.alternatives.createAlternative({alternative_constructor: CataloguePublishView, containerOptions: {catalogue: this}}),
         'details': this.alternatives.createAlternative({alternative_constructor: ResourceDetailsView, containerOptions: {catalogue: this}})
     };
 
     this.view_all_template = new Template(URIs.GET_POST_RESOURCES + '/#{starting_page}/#{resources_per_page}');
     this.simple_search_template = new Template(URIs.GET_RESOURCES_SIMPLE_SEARCH + '/simple_or/#{starting_page}/#{resources_per_page}');
-
-    this.resource_painter = new ResourcePainter(this, $('catalogue_resource_template').getTextContent(), this.wrapperElement.getElementsByClassName('resource_list')[0]);
 };
 CatalogueView.prototype = new StyledElements.Alternative();
 
@@ -79,11 +77,11 @@ CatalogueView.prototype._onSearchSuccess = function (transport) {
             'current_page': 1
         };
 
-        this.resource_painter.paint(data);
+        this.callback(data);
     }
 };
 
-CatalogueView.prototype.search = function (options) {
+CatalogueView.prototype.search = function (callback, options) {
     var params, url, context;
 
     params = {
@@ -94,8 +92,7 @@ CatalogueView.prototype.search = function (options) {
     };
 
     context = {
-        'resource_painter': this.resource_painter,
-        'user_command_manager': this.user_command_manager
+        'callback': callback
     };
 
     if (options.search_criteria.strip() === '') {
@@ -147,8 +144,16 @@ CatalogueView.prototype.getSubMenuItems = function () {
     ];
 };
 
+CatalogueView.prototype.changeCurrentView = function (view_name) {
+    if (!(view_name in this.viewsByName)) {
+        throw new TypeError();
+    }
+
+    this.alternatives.showAlternative(this.viewsByName[view_name]);
+};
+
 CatalogueView.prototype.home = function () {
-    this.alternatives.showAlternative(this.viewsByName.search);
+    this.changeCurrentView('search');
 };
 
 CatalogueView.prototype.createUserCommand = function(command) {
@@ -156,13 +161,6 @@ CatalogueView.prototype.createUserCommand = function(command) {
 };
 
 CatalogueView.prototype.ui_commands = {};
-
-CatalogueView.prototype.ui_commands.home = function () {
-    return function (e) {
-        Event.stop(e);
-        this.alternatives.showAlternative(this.viewsByName.search);
-    }.bind(this)
-};
 
 CatalogueView.prototype.ui_commands.instanciate = function (resource) {
     return function (e) {
@@ -178,4 +176,84 @@ CatalogueView.prototype.ui_commands.showDetails = function (resource) {
         this.viewsByName.details.paint(resource);
         this.alternatives.showAlternative(this.viewsByName.details);
     }.bind(this)
+};
+
+CatalogueView.prototype.ui_commands.publish = function (resource) {
+    return function (e) {
+        this.alternatives.showAlternative(this.viewsByName.developer);
+    }.bind(this)
+};
+
+CatalogueView.prototype.ui_commands.delete = function (resource) {
+    var url, success_callback, error_callback, doRequest, msg, context;
+
+    url = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + resource.getName() + "/" + resource.getVersion().text;
+
+    success_callback = function (response) {
+        // processing command
+        var layoutManager, result, opManager, i, gadgetId;
+
+        layoutManager = LayoutManagerFactory.getInstance();
+        result = JSON.parse(response.responseText);
+
+        layoutManager.logSubTask(gettext('Removing affected iGadgets'));
+        opManager = OpManagerFactory.getInstance();
+        for (i = 0; i < result.removedIGadgets.length; i += 1) {
+            opManager.removeInstance(result.removedIGadgets[i], true);
+        }
+
+        layoutManager.logSubTask(gettext('Purging gadget info'));
+        gadgetId = resource.getVendor() + '_' + resource.getName() + '_' + resource.getVersion().text;
+        ShowcaseFactory.getInstance().deleteGadget(gadgetId);
+
+        layoutManager._notifyPlatformReady();
+        this.home();
+        this.refresh_search_results();
+    };
+
+    error_callback = function (transport, e) {
+        var logManager, layoutManager, msg;
+
+        logManager = LogManagerFactory.getInstance();
+        layoutManager = LayoutManagerFactory.getInstance();
+
+        msg = logManager.formatError(gettext("Error deleting the Gadget: %(errorMsg)s."), transport, e);
+
+        logManager.log(msg);
+        layoutManager._notifyPlatformReady();
+        layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+    };
+
+    doRequest = function () {
+        var layoutManager;
+
+        layoutManager = LayoutManagerFactory.getInstance();
+        layoutManager._startComplexTask(gettext("Deleting gadget resource from catalogue"), 3);
+        layoutManager.logSubTask(gettext('Requesting server'));
+
+        // Send request to delete de gadget
+        Wirecloud.io.makeRequest(url, {
+            method: 'DELETE',
+            onSuccess: success_callback.bind(this),
+            onFailure: error_callback,
+            onException: error_callback
+        });
+    };
+
+    // First ask the user
+    msg = gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") gadget?');
+    context = {
+        name: resource.getName(),
+        vendor: resource.getVendor(),
+        version: resource.getVersion().text
+    };
+
+    msg = interpolate(msg, context, true);
+    return function () {
+        LayoutManagerFactory.getInstance().showYesNoDialog(msg, doRequest.bind(this));
+    }.bind(this);
+};
+
+CatalogueView.prototype.refresh_search_results = function () {
+    this.viewsByName.search._search();
 };

@@ -122,10 +122,10 @@
 }
 
 #catalogue .developer_image {
-  width: 200px;
-  height: 120px;
-  padding-left: 20px;
-  padding-top:8px;
+    width: 200px;
+    height: 120px;
+    margin: 1ex 2ex 2ex 0;
+    float: left;
 }
 
 #catalogue .developer_title {

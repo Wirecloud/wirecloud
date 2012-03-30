@@ -32,6 +32,10 @@ var CatalogueSearchView = function (id, options) {
 
     this.simple_search_input = this.wrapperElement.getElementsByClassName('simple_search_text')[0];
     this.view_all_button = this.wrapperElement.getElementsByClassName('view_all')[0];
+    this.resource_painter = new ResourcePainter(this.catalogue,
+        $('catalogue_resource_template').getTextContent(),
+        this.wrapperElement.getElementsByClassName('resource_list')[0]
+    );
 
     EzWebExt.addEventListener(this.simple_search_input, 'keypress', this._onSearchInputKeyPress.bind(this));
 
@@ -54,7 +58,7 @@ CatalogueSearchView.prototype._search = function (event) {
         'resources_per_page': $('results_per_page').value
     };
 
-    this.catalogue.search(options);
+    this.catalogue.search(this.resource_painter.paint.bind(this.resource_painter), options);
 };
 
 CatalogueSearchView.prototype._onSearchInputKeyPress = function (event) {

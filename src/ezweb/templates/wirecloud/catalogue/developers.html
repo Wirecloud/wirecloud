@@ -1,52 +1,34 @@
 {% load i18n %}
 
-<div class="advanced_develop" id="advanced_develop">
+<div class="back_to_resource_list link">« {% trans 'Close publish form' %}</div>
 
-    <div class="developer_block">
-        <div class="developer_title">{% trans "Creating new gadgets from web sites" %}</div>
-        <div class="float_left">
-            <img class="developer_image" src="{{STATIC_URL}}images/catalogue/developer_url.jpg" />
-        </div>
-        <div class="float_left">
-            <div class="developer_description">{% trans "The easiest way to create a new gadget is <b>to provide the URL of a web site.</b>" %}</div>
-            <div class="developer_description">{% trans "By using a wizard, you will be able to automatically create those gadgets you really like from your favourite web pages. Try it! It will take you no more than 1 minute!" %}</div>
-            <button id="new_website_button">{% trans "Create" %}</button>
-        </div>
+<div class="developer_block">
+    <h2>{% trans "Adding gadgets from packages" %}</h2>
+    <img class="developer_image" src="{{STATIC_URL}}images/catalogue/developer_package.jpg" />
+    <div class="developer_description">
+        <p>{% trans "Do you have a gadget stored in a wgt file? Then you can upload it to the catalogue by means of this form." %}</p>
     </div>
 
-    <div class="developer_block">
-        <div class="developer_title">{% trans "Adding gadgets from packages" %}</div>
-        <div>
-            <div class="float_left">
-                <img class="developer_image" src="{{STATIC_URL}}images/catalogue/developer_package.jpg" />
-            </div>
-            <div class="float_left">
-                <div class="developer_description">{% trans "Do you have a gadget stored in a wgt file? Then you can upload it to the catalogue by means of this form." %}</div> 
-            </div>
-
-            <form target="upload" style="margin: 0px;" class="uploadGadget" enctype="multipart/form-data" method="post" action="/catalogue/resource" id="upload_form">
-            <div>
-               <input type="hidden" value="true" name="iframe"></input>
-               <input type="file" name="file" id="gadget_uri"></input>
-               <button id="gadget_link">{% trans "Add" %}</button>
-            </div>
-            </form>
-            <iframe frameborder="0" style="display: none;" id="upload" name="upload"></iframe>
-        </div>
+    <form target="upload" style="margin: 0px;" class="uploadGadget" enctype="multipart/form-data" method="post" action="/catalogue/resource" id="upload_form">
+    <div>
+       <input type="hidden" value="true" name="iframe"></input>
+       <input type="file" name="file" id="wgt_file"></input>
+       <button id="upload_wgt_button">{% trans "Add" %}</button>
     </div>
-
-    <div class="developer_block">
-        <div class="developer_title">{% trans "Adding gadgets and composite applications from their templates" %}</div>
-        <div>
-            <div class="float_left">
-                <img class="developer_image" src="{{STATIC_URL}}images/catalogue/developer_template.png"></img>
-            </div>
-            <div class="float_left">
-                <div class="developer_description">{% trans "If you have the XML template of a gadget or a composite application, you can add it to the catalogue by writing the URL of the template in the text field below." %}</div>
-                <input type="text" name="template_uri" id="template_uri">
-                <button class="submit_link" id="submit_link">{% trans "Add" %}</button>
-            </div>
-        </div>
-    </div>
+    </form>
+    <iframe frameborder="0" style="display: none;" id="upload" name="upload"></iframe>
 </div>
 
+<div class="developer_block">
+    <h2>{% trans "Adding gadgets and mashups using a template description" %}</h2>
+    <img class="developer_image" src="{{STATIC_URL}}images/catalogue/developer_template.png"></img>
+    <div class="developer_description">
+        <p>{% trans "If you have the XML template of a gadget or a mashup, you can add it to the catalogue by writing the URL of the template in the text field below." %}</p>
+    <div>
+    <form>
+        <div>
+            <input type="text" name="template_uri" id="template_uri">
+            <button class="submit_link" id="submit_link">{% trans "Add" %}</button>
+        </div>
+    </form>
+</div>
