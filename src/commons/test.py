@@ -56,9 +56,9 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         # initialize
         self.wgt_dir = os.path.join(settings.BASEDIR, '..', 'tests', 'ezweb-data')
 
-    def wait_wirecloud_ready(self, start_timeout=0, timeout=60):
+    def wait_wirecloud_ready(self, start_timeout=5, timeout=60):
 
-        WebDriverWait(self.driver, timeout).until(lambda driver: driver.find_element_by_xpath(r'//*[@id="loading-window" and (@class="" or @class="fadding")]'))
+        WebDriverWait(self.driver, start_timeout).until(lambda driver: driver.find_element_by_xpath(r'//*[@id="loading-window" and (@class="" or @class="fadding")]'))
         WebDriverWait(self.driver, timeout).until(lambda driver: driver.find_element_by_css_selector('#loading-window.fadding'))
 
         try:
@@ -69,9 +69,9 @@ class WirecloudSeleniumTestCase(HttpTestCase):
     def login(self, username='admin', password='admin'):
         self.driver.get(self.get_live_server_url() + "accounts/login/?next=/")
         self.driver.find_element_by_xpath('//*[@id="id_username"]').clear()
-        self.driver.find_element_by_xpath('//*[@id="id_username"]').send_keys('admin')
+        self.driver.find_element_by_xpath('//*[@id="id_username"]').send_keys(username)
         self.driver.find_element_by_xpath('//*[@id="id_password"]').clear()
-        self.driver.find_element_by_xpath('//*[@id="id_password"]').send_keys('admin')
+        self.driver.find_element_by_xpath('//*[@id="id_password"]').send_keys(password)
         self.driver.find_element_by_xpath('//*[@id="submit"]').click()
         self.wait_wirecloud_ready()
 
@@ -143,18 +143,35 @@ class WirecloudSeleniumTestCase(HttpTestCase):
     def count_iwidgets(self):
         return len(self.driver.find_elements_by_css_selector('object'))
 
+    def get_popup_menu_item(self, item_name):
+
+        items = self.driver.find_elements_by_css_selector('.popup_menu > .menu_item')
+        for item in items:
+            span = item.find_element_by_css_selector('span')
+            if span and span.text == item_name:
+                return item
+
+        return None
+
     def popup_menu_click(self, item_name):
 
-        items = self.driver.find_elements_by_css_selector('.popup_menu > .menu_item > span')
-        for item in items:
-            if item.text == item_name:
-                item.click()
-                return
+        item = self.get_popup_menu_item(item_name)
+        item.click()
 
     def get_current_workspace_name(self):
 
         self.change_main_view('workspace')
         return self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text
+
+    def get_workspace_tab_by_name(self, tab_name):
+
+        tabs = self.driver.find_elements_by_css_selector('.notebook.workspace .tab')
+        for tab in tabs:
+            span = tab.find_element_by_css_selector('span')
+            if span.text == tab_name:
+                return tab
+
+        return None
 
     def create_workspace(self, workspace_name):
         self.change_main_view('workspace')
@@ -183,6 +200,18 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         self.wait_wirecloud_ready()
         time.sleep(0.5) # work around race condition
         self.assertEqual(self.get_current_workspace_name(), workspace_name)
+
+    def remove_workspace(self):
+        self.change_main_view('workspace')
+        workspace_to_remove = self.get_current_workspace_name()
+
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').click()
+        self.popup_menu_click('Remove')
+
+        self.driver.find_element_by_xpath("//div[contains(@class, 'window_menu')]//button[text()='Yes']").click()
+
+        self.wait_wirecloud_ready()
+        self.assertNotEqual(workspace_to_remove, self.get_current_workspace_name())
 
     def is_element_present(self, how, what):
         try:
