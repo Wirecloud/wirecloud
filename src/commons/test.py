@@ -66,6 +66,8 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         except ElementNotVisibleException:
             pass
 
+        time.sleep(0.1)  # work around some problems
+
     def login(self, username='admin', password='admin'):
         self.driver.get(self.get_live_server_url() + "accounts/login/?next=/")
         self.driver.find_element_by_xpath('//*[@id="id_username"]').clear()
@@ -73,6 +75,7 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         self.driver.find_element_by_xpath('//*[@id="id_password"]').clear()
         self.driver.find_element_by_xpath('//*[@id="id_password"]').send_keys(password)
         self.driver.find_element_by_xpath('//*[@id="submit"]').click()
+        time.sleep(0.1)  # work around some problems with chromium
         self.wait_wirecloud_ready()
 
     def get_current_view(self):

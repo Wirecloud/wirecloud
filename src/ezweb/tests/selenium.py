@@ -1,8 +1,12 @@
+import time
+
 from commons.test import WirecloudSeleniumTestCase
 
 class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def check_popup_menu(self, must_be, must_be_absent):
+
+        time.sleep(0.1)
 
         for item in must_be:
             menu_item = self.get_popup_menu_item(item)
