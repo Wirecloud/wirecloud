@@ -2,8 +2,14 @@
 
 
 import time
+from shutil import rmtree
+from tempfile import mkdtemp
 
+from django.conf import settings
+
+import catalogue.utils
 from commons.test import WirecloudSeleniumTestCase
+from commons.wgt import WgtDeployer
 
 __test__ = False
 
@@ -11,6 +17,22 @@ __test__ = False
 class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
     __test__ = True
+
+    def setUp(self):
+
+        self.old_CATALOGUE_MEDIA_ROOT = settings.CATALOGUE_MEDIA_ROOT
+        settings.CATALOGUE_MEDIA_ROOT = mkdtemp()
+        self.old_deployer = catalogue.utils.wgt_deployer
+        catalogue.utils.wgt_deployer = WgtDeployer(settings.CATALOGUE_MEDIA_ROOT)
+
+        super(CatalogueSeleniumTests, self).setUp()
+
+    def tearDown(self):
+        rmtree(settings.CATALOGUE_MEDIA_ROOT, ignore_errors=True)
+        settings.CATALOGUE_MEDIA_ROOT = self.old_CATALOGUE_MEDIA_ROOT
+        catalogue.utils.wgt_deployer = self.old_deployer
+
+        super(CatalogueSeleniumTests, self).tearDown()
 
     def test_add_gadget_to_catalog_wgt(self):
         driver = self.driver
