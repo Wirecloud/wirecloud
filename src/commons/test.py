@@ -14,7 +14,6 @@ from django.utils.importlib import import_module
 from django.test import TestCase
 from django.utils import translation
 from selenium.common.exceptions import NoSuchElementException, ElementNotVisibleException
-from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -187,7 +186,7 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         self.driver.find_element_by_xpath("//div[contains(@class, 'window_menu')]//button[text()='Create']").click()
 
         self.wait_wirecloud_ready()
-        time.sleep(0.5) # work around race condition
+        time.sleep(0.5)  # work around race condition
         self.assertEqual(self.get_current_workspace_name(), workspace_name)
 
     def rename_workspace(self, workspace_name):
@@ -201,7 +200,7 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         self.driver.find_element_by_xpath("//div[contains(@class, 'window_menu')]//button[text()='Accept']").click()
 
         self.wait_wirecloud_ready()
-        time.sleep(0.5) # work around race condition
+        time.sleep(0.5)  # work around race condition
         self.assertEqual(self.get_current_workspace_name(), workspace_name)
 
     def remove_workspace(self):
@@ -236,6 +235,7 @@ browsers = getattr(settings, 'WIRECLOUD_SELENIUM_BROWSER_COMMANDS', {
         'CLASS': 'selenium.webdriver.Chrome',
     },
 })
+
 
 def build_selenium_test_cases(classes, namespace):
     for class_name in classes:

@@ -2,6 +2,7 @@ import time
 
 from commons.test import WirecloudSeleniumTestCase
 
+
 class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def check_popup_menu(self, must_be, must_be_absent):
@@ -47,7 +48,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').click()
         self.check_popup_menu(('Rename', 'Settings', 'New workspace'), ('Remove',))
         self.driver.find_element_by_class_name('disable-layer').click()
-
 
     def test_add_widget_from_catalogue(self):
 
