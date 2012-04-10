@@ -60,9 +60,10 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         WebDriverWait(self.driver, start_timeout).until(lambda driver: driver.find_element_by_xpath(r'//*[@id="loading-window" and (@class="" or @class="fadding")]'))
         WebDriverWait(self.driver, timeout).until(lambda driver: driver.find_element_by_css_selector('#loading-window.fadding'))
 
+        loading_message = self.driver.find_element_by_id('loading-message')
         try:
-            self.driver.find_element_by_id('loading-message').click()
-        except ElementNotVisibleException:
+            loading_message.click()
+        except:
             pass
 
         time.sleep(0.1)  # work around some problems
