@@ -3181,20 +3181,27 @@ StyledElements.SendMenuItems.prototype.build = function() {
 /**
  * @abstract
  */
-StyledElements.PopupMenuBase = function(options) {
-    if (options && options.extending)
-        return;
+StyledElements.PopupMenuBase = function (options) {
+    var defaultOptions = {
+        'position': 'bottom-left',
+    };
+    options = EzWebExt.merge(defaultOptions, options);
 
-    StyledElements.ObjectWithEvents.call(this, ['itemOver']);
+    if (options.extending) {
+        return;
+    }
+
+    StyledElements.ObjectWithEvents.call(this, ['itemOver', 'visibilityChange']);
 
     this.wrapperElement = window.parent.document.createElement('div');
     this.wrapperElement.className = 'popup_menu hidden';
+    this._position = options.position;
     this._items = [];
     this._dynamicItems = [];
     this._submenus = [];
     this._menuItemCallback = EzWebExt.bind(this._menuItemCallback, this);
     this._menuItemEnterCallback = EzWebExt.bind(this._menuItemEnterCallback, this);
-}
+};
 StyledElements.PopupMenuBase.prototype = new StyledElements.ObjectWithEvents();
 
 StyledElements.PopupMenuBase.prototype._append = function(child, where) {
@@ -3219,10 +3226,14 @@ StyledElements.PopupMenuBase.prototype.appendSeparator = function() {
     this._items.push(separator);
 }
 
+StyledElements.PopupMenuBase.prototype.isVisible = function() {
+    return EzWebExt.XML.isElement(this.wrapperElement.parentNode);
+};
+
 StyledElements.PopupMenuBase.prototype.show = function(refPosition) {
     var i, j, item, generatedItems, generatedItem;
 
-    if (EzWebExt.XML.isElement(this.wrapperElement.parentNode)) {
+    if (this.isVisible()) {
         return; // This Popup Menu is already visible => nothing to do
     }
 
@@ -3253,19 +3264,41 @@ StyledElements.PopupMenuBase.prototype.show = function(refPosition) {
 
     EzWebExt.removeClassName(this.wrapperElement, 'hidden');
     window.parent.document.body.appendChild(this.wrapperElement);
+    this.events['visibilityChange'].dispatch(this);
 
     // TODO Hay que ajustar refPosition.y y refPosition.x para que el menú no
     // pueda salirse del área visible
-
-    this.wrapperElement.style.top = refPosition.y + "px";
-    this.wrapperElement.style.left = refPosition.x + "px";
+    if ('x' in refPosition && 'y' in refPosition) {
+        this.wrapperElement.style.top = refPosition.y + "px";
+        this.wrapperElement.style.left = refPosition.x + "px";
+    } else {
+        switch (this._position) {
+        case 'top-left':
+            this.wrapperElement.style.top = (refPosition.top - this.wrapperElement.offsetHeight + 1) + "px";
+            this.wrapperElement.style.left = (refPosition.right - this.wrapperElement.offsetWidth) + "px";
+            break;
+        case 'top-right':
+            this.wrapperElement.style.top = (refPosition.top - this.wrapperElement.offsetHeight + 1) + "px";
+            this.wrapperElement.style.left = refPosition.left + "px";
+            break;
+        case 'bottom-right':
+            this.wrapperElement.style.top = (refPosition.bottom - 1) + "px";
+            this.wrapperElement.style.left = refPosition.left + "px";
+            break;
+        default:
+        case 'bottom-left':
+            this.wrapperElement.style.top = (refPosition.bottom - 1) + "px";
+            this.wrapperElement.style.left = (refPosition.right - this.wrapperElement.offsetWidth) + "px";
+            break;
+        }
+    }
     this.wrapperElement.style.display = 'block';
-}
+};
 
 StyledElements.PopupMenuBase.prototype.hide = function() {
     var i, aux;
 
-    if (!EzWebExt.XML.isElement(this.wrapperElement.parentNode)) {
+    if (!this.isVisible()) {
         return; // This Popup Menu is already hidden => nothing to do
     }
 
@@ -3285,10 +3318,10 @@ StyledElements.PopupMenuBase.prototype.hide = function() {
     this._dynamicItems = [];
     this._submenus = [];
     this.wrapperElement.innerHTML = '';
-    if (EzWebExt.XML.isElement(this.wrapperElement.parentNode)) {
-        EzWebExt.removeFromParent(this.wrapperElement);
-    }
-}
+    EzWebExt.removeFromParent(this.wrapperElement);
+
+    this.events['visibilityChange'].dispatch(this);
+};
 
 StyledElements.PopupMenuBase.prototype._menuItemEnterCallback = function(menuItem) {
     this.events['itemOver'].dispatch(this, menuItem);
@@ -3313,8 +3346,8 @@ StyledElements.PopupMenuBase.prototype.destroy = function() {
 /**
  *
  */
-StyledElements.PopupMenu = function() {
-    StyledElements.PopupMenuBase.call(this);
+StyledElements.PopupMenu = function (options) {
+    StyledElements.PopupMenuBase.call(this, options);
 
     this._disableCallback = EzWebExt.bind(function(event) {
         event.stopPropagation();
@@ -3326,7 +3359,7 @@ StyledElements.PopupMenu = function() {
     this._disableLayer.className = 'disable-layer';
     EzWebExt.addEventListener(this._disableLayer, "click", this._disableCallback, false);
     EzWebExt.addEventListener(this._disableLayer, "contextmenu", this._disableCallback, false);
-}
+};
 StyledElements.PopupMenu.prototype = new StyledElements.PopupMenuBase({extending: true});
 
 StyledElements.PopupMenu.prototype.show = function(refPosition) {
