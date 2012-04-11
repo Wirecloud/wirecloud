@@ -4,6 +4,7 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/opManager/io.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/EzWebExt/EzWebExt.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/StyledElements.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/PopupButton.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/BrowserUtils.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/BackgroundFadder.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/WindowMenu.js"></script>
