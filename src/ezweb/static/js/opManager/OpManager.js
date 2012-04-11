@@ -314,44 +314,9 @@ var OpManagerFactory = function () {
                           this.unloadEnvironment.bind(this),
                           true);
 
-            // Wirecloud fly
-            if (BrowserUtilsFactory.getInstance().isIE()) {
-                this.flyStyleSheet = document.createStyleSheet();
-            } else {
-                s = document.createElement('style');
-                s.type = "text/css";
-                var h = document.getElementsByTagName("head")[0];
-                h.appendChild(s);
-                this.flyStyleSheet = document.styleSheets[document.styleSheets.length - 1];
-            }
-
             // Load initial theme
             OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
         }
-
-        /**
-         * Refresh Wirecloud fly using current theme.
-         */
-        OpManager.prototype.refreshEzWebFly = function() {
-            /*var rules = 'background-image: url('+_currentTheme.getIconURL('init-dat')+');' +
-                        'background-repeat: no-repeat;' +
-                        'background-attachment:scroll;' +
-                        'background-position: center bottom;';
-
-            if (BrowserUtilsFactory.getInstance().isIE()) {
-                while (this.flyStyleSheet.rules.length > 0)
-                    this.flyStyleSheet.removeRule(0);
-
-                this.flyStyleSheet.addRule('#wrapper', rules);
-            } else {
-                while (this.flyStyleSheet.cssRules.length > 0)
-                    this.flyStyleSheet.deleteRule(0);
-
-                this.flyStyleSheet.insertRule('#wrapper {' + rules + '}',
-                                              this.flyStyleSheet.cssRules.length);
-            }*/
-        }
-
 
         /**
          * Unloads the Wirecloud Platform. This method is called, by default, when
@@ -398,7 +363,6 @@ var OpManagerFactory = function () {
 
             switch (module) {
             case Modules.prototype.THEME_MANAGER:
-                this.refreshEzWebFly();
                 this.platformPreferences = PreferencesManagerFactory.getInstance();
                 break;
 
