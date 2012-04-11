@@ -178,7 +178,7 @@ class WirecloudSeleniumTestCase(HttpTestCase):
 
     def create_workspace(self, workspace_name):
         self.change_main_view('workspace')
-        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').click()
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click('New workspace')
 
         workspace_name_input = self.driver.find_element_by_css_selector('.window_menu .window_content input')
@@ -192,7 +192,7 @@ class WirecloudSeleniumTestCase(HttpTestCase):
 
     def rename_workspace(self, workspace_name):
         self.change_main_view('workspace')
-        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').click()
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click('Rename')
 
         workspace_name_input = self.driver.find_element_by_css_selector('.window_menu .window_content input')
@@ -208,7 +208,7 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         self.change_main_view('workspace')
         workspace_to_remove = self.get_current_workspace_name()
 
-        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').click()
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click('Remove')
 
         self.driver.find_element_by_xpath("//div[contains(@class, 'window_menu')]//button[text()='Yes']").click()

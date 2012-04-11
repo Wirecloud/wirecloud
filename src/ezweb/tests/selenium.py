@@ -22,14 +22,14 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.login()
 
         # We need atleast one Workspace, so we cannot delete current workspace
-        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').click()
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.check_popup_menu(('Rename', 'Settings', 'New workspace'), ('Remove',))
         self.driver.find_element_by_class_name('disable-layer').click()
 
         self.create_workspace('Test')
 
         # Now we have two workspaces so we can remove any of them
-        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').click()
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.check_popup_menu(('Rename', 'Settings', 'New workspace', 'Remove'), ())
         self.driver.find_element_by_class_name('disable-layer').click()
 
@@ -45,7 +45,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.remove_workspace()
 
         # Now we have only one workspace, so we cannot remove it
-        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').click()
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.check_popup_menu(('Rename', 'Settings', 'New workspace'), ('Remove',))
         self.driver.find_element_by_class_name('disable-layer').click()
 
