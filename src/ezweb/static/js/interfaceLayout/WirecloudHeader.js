@@ -65,23 +65,25 @@ WirecloudHeader.prototype._initMenuBar = function () {
 };
 
 WirecloudHeader.prototype._initUserMenu = function () {
-    var user_menu;
+    var user_menu, wrapper;
 
-    this.user_menu = new StyledElements.PopupMenu();
-    this.user_menu.append(new StyledElements.MenuItem(gettext('Sign out'), OpManagerFactory.getInstance().logout));
-    this.user_menu.append(new StyledElements.MenuItem(gettext('Settings'), OpManagerFactory.getInstance().showPlatformPreferences));
+    wrapper = document.createElement('div');
+    wrapper.className = 'user_menu_wrapper';
+    this.menu.appendChild(wrapper);
 
-    user_menu = document.createElement('div');
-    user_menu.className = 'user_menu';
-    user_menu.setTextContent(ezweb_user_name);
-    this.menu.appendChild(user_menu);
-    EzWebExt.addEventListener(user_menu, 'click', function (e) {
-        this.user_menu.show({x: e.clientX, y: e.clientY});
-    }.bind(this));
+    this.user_button = new StyledElements.PopupButton({
+        'plain': true,
+        'text': ezweb_user_name
+    });
+    this.user_button.insertInto(wrapper);
+
+    user_menu = this.user_button.getPopupMenu();
+    user_menu.append(new StyledElements.MenuItem(gettext('Settings'), OpManagerFactory.getInstance().showPlatformPreferences));
+    user_menu.append(new StyledElements.MenuItem(gettext('Sign out'), OpManagerFactory.getInstance().logout));
 };
 
 WirecloudHeader.prototype._paintBreadcrum = function (newView) {
-    var i, breadcrum_part, breadcrum, breadcrum_entry, breadcrum_levels;
+    var i, breadcrum_part, breadcrum, breadcrum_entry, breadcrum_levels, button;
 
     breadcrum_levels = ['first_level', 'second_level', 'third_level'];
 
@@ -109,20 +111,21 @@ WirecloudHeader.prototype._paintBreadcrum = function (newView) {
         this.breadcrum.appendChild(document.createTextNode('/'));
 
         breadcrum_entry = breadcrum[i];
+
         breadcrum_part = document.createElement('span');
         breadcrum_part.setTextContent(breadcrum_entry.label);
         breadcrum_part.className = breadcrum_levels[i];
         if ('class' in breadcrum_entry) {
             breadcrum_part.addClassName(breadcrum_entry['class']);
         }
+
         if ('menu' in breadcrum_entry) {
-            breadcrum_part.addEventListener('click', function (e) {
-                var position = {
-                    x: this.element.offsetLeft,
-                    y: this.element.offsetTop + this.element.offsetHeight
-                };
-                this.menu.show(position);
-            }.bind({element: breadcrum_part, menu: breadcrum_entry.menu}), true);
+            button = new StyledElements.PopupButton({
+                'plain': true,
+                'class': 'icon-menu',
+                'menu': breadcrum_entry.menu
+            });
+            button.insertInto(breadcrum_part);
         }
         this.breadcrum.appendChild(breadcrum_part);
     }

@@ -45,24 +45,27 @@ WorkspaceView.prototype.getSubMenuItems = function () {
 };
 
 WorkspaceView.prototype.getBreadcrum = function () {
-    var workspace, workspace_name;
+    var workspace, workspace_name, entries;
+
+    entries = [
+        {
+            'label': ezweb_user_name,
+        }
+    ];
 
     workspace = OpManagerFactory.getInstance().activeWorkSpace;
     if (workspace != null) {
-        workspace_name = workspace.getName();
+        entries.push({
+            'label': workspace.getName(),
+            'menu': this.wsMenu
+        });
     } else {
-        workspace_name = gettext('loading...');
+        entries.push({
+            'label': gettext('loading...')
+        });
     }
 
-    return [
-        {
-            'label': ezweb_user_name,
-        },
-        {
-            'label': workspace_name,
-            'menu': this.wsMenu
-        }
-    ];
+    return entries;
 };
 
 WorkspaceView.prototype.destroy = function() {

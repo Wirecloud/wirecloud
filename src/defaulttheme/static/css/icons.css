@@ -32,6 +32,22 @@ span.icon {
     display: none;
 }
 
+.styled_button.icon-menu {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    border-width: 1px 1px 0px 1px;
+    border-style: solid;
+    border-color: transparent;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    background-color: white;
+}
+
+.styled_button.icon-menu.open {
+    border-color: #BEBEBE;
+}
+
 .styled_button.icon-tab-menu {
     width: 16px;
     height: 16px;
@@ -40,6 +56,16 @@ span.icon {
     position: absolute;
     right: 5px;
     margin: 0px;
+    border-width: 0px 1px 1px 1px;
+    border-style: solid;
+    border-color: transparent;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    background-color: white;
+}
+
+.styled_button.icon-tab-menu.open {
+    border-color: #BEBEBE;
 }
 
 .tab.selected .icon-tab-menu {
@@ -67,6 +93,7 @@ span.icon {
 }
 
 .icon-tab-menu { background-image: url(../images/icons-sprite.png); background-position: -48px 0; }
+.icon-menu { background-image: url(../images/icons-sprite.png); background-position: -48px -24px; }
 .icon-igadget-settings, .icon-channel-settings { background-image: url(../images/icons-sprite.png); background-position: -48px -404px; }
 span.icon-igadget-settings, .icon-channel-settings{ background-position: -48px -408px; }
 .icon-info{ background-image: url(../images/icons-sprite.png); background-position: -48px -504px; }

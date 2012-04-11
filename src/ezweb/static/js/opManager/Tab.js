@@ -44,14 +44,15 @@ function Tab(id, notebook, options) {
         }
     });
 
-    button = new StyledElements.StyledButton({
+    this.menu_button = new StyledElements.PopupButton({
         'class': 'icon-tab-menu',
-        'plain': true
+        'plain': true,
+        'menuOptions': {
+            'position': 'top-left'
+        }
     });
-    button.insertInto(this.tabElement);
-    button.addEventListener('click', function () {
-        this.menu.show();
-    }.bind(this));
+    this.menu_button.getPopupMenu().append(new TabMenuItems(this));
+    this.menu_button.insertInto(this.tabElement);
 
     //CALLBACK METHODS
     var renameSuccess = function(transport) {
@@ -107,8 +108,8 @@ function Tab(id, notebook, options) {
         this.preferences.destroy();
         this.preferences = null;
 
-        this.menu.destroy();
-        this.menu = null;
+        this.menu_button.destroy();
+        this.menu_button = null;
         this.dragboard.destroy();
         this.dragboard = null;
 
@@ -263,9 +264,6 @@ function Tab(id, notebook, options) {
         var msg = logManager.formatError(gettext("Error marking as first visible tab, changes will not be saved: %(errorMsg)s."), transport, e);
         logManager.log(msg);
     }.bind(this);
-
-    this.menu = new StyledElements.PopupMenu();
-    this.menu.append(new TabMenuItems(this));
 }
 Tab.prototype = new StyledElements.Tab();
 
