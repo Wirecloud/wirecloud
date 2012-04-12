@@ -17,6 +17,19 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             menu_item = self.get_popup_menu_item(item)
             self.assertIsNone(menu_item)
 
+    def add_tab(self):
+
+        old_tab_count = len(self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab'))
+
+        self.change_main_view('workspace')
+        self.driver.find_element_by_css_selector('#workspace .tab_wrapper .add_tab').click()
+        self.wait_wirecloud_ready()
+
+        new_tab_count = len(self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab'))
+        self.assertEqual(new_tab_count, old_tab_count + 1)
+
+        return self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab')[-1]
+
     def test_basic_workspace_operations(self):
 
         self.login()
@@ -41,6 +54,24 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         tab_menu_button.click()
         self.check_popup_menu(('Rename',), ('Remove',))
         self.driver.find_element_by_class_name('disable-layer').click()
+
+        new_tab = self.add_tab()
+
+        # Now we have two tabs so we can remove any of them
+        tab_menu_button = tab.find_element_by_css_selector('.icon-tab-menu')
+        tab_menu_button.click()
+        self.check_popup_menu(('Rename', 'Remove'), ())
+        self.driver.find_element_by_class_name('disable-layer').click()
+
+        new_tab.click()
+        tab_menu_button = new_tab.find_element_by_css_selector('.icon-tab-menu')
+        tab_menu_button.click()
+        self.check_popup_menu(('Rename', 'Remove'), ())
+
+        # Remove the recently created one
+        self.popup_menu_click('Remove')
+        self.wait_wirecloud_ready()
+        self.assertEqual(len(self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab')), 1)
 
         self.remove_workspace()
 
