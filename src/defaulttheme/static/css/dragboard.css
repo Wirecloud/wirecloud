@@ -211,6 +211,15 @@ div.gadget_window.highlighted {
     right: 4px;
 }
 
+.notebook.workspace .tab_wrapper .add_tab {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    right: 24px;
+    top: 0px;
+    margin: 0px;
+}
+
 .notebook.workspace .wrapper {
     top: 0;
     bottom: 24px;

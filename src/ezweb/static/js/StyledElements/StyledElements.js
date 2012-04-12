@@ -1679,6 +1679,7 @@ StyledElements.StyledNotebook = function(options) {
     this.wrapperElement.appendChild(div);
 
     tabWrapper = document.createElement("div");
+    this.tabWrapper = tabWrapper;
     tabWrapper.className = "tab_wrapper";
     div.appendChild(tabWrapper);
 
@@ -1803,8 +1804,7 @@ StyledElements.StyledNotebook = function(options) {
     EzWebExt.addEventListener(this.moveRightButton, "click",
                                          EzWebExt.bind(this.shiftRightTabs, this),
                                          true);
-
-}
+};
 StyledElements.StyledNotebook.prototype = new StyledElements.StyledElement();
 
 /**
@@ -2196,6 +2196,14 @@ StyledElements.StyledNotebook.prototype.clear = function () {
 
     // Enable/Disable tab scrolling buttons
     this._enableDisableButtons();
+};
+
+StyledElements.StyledNotebook.prototype.addButton = function addButton (button) {
+    if (!(button instanceof StyledElements.StyledButton)) {
+        throw new TypeError();
+    }
+
+    button.insertInto(this.tabWrapper);
 };
 
 StyledElements.StyledNotebook.prototype.destroy = function () {

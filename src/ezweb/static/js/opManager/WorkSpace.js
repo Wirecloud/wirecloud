@@ -26,19 +26,9 @@
 
 function WorkSpace (workSpaceState) {
 
-    WorkSpace.prototype._manageAddTabElement = function(locked) {
-        if (this.addTabElement) {
-            if (this.isAllowed('add_tab')) {
-                if (locked) {
-                    this.addTabElement.hide();
-                }
-                else {
-                    this.addTabElement.show();
-                }
-            }
-            else {
-                this.addTabElement.hide();
-            }
+    WorkSpace.prototype._updateAddTabButton = function () {
+        if (this.addTabButton) {
+            this.addTabButton.setDisabled(!this.isAllowed('add_tab'));
         }
     }
 
@@ -267,6 +257,8 @@ function WorkSpace (workSpaceState) {
 
     //**** TAB CALLBACK*****
     var createTabSuccess = function(transport) {
+        var layoutManager = LayoutManagerFactory.getInstance();
+
         var response = transport.responseText;
         var tabInfo = JSON.parse(response);
 
@@ -277,6 +269,8 @@ function WorkSpace (workSpaceState) {
         this.tabInstances.set(tabInfo.id, newTab);
 
         newTab.setLock(false);
+        layoutManager.logSubTask(gettext('Tab added successfully'));
+        layoutManager.logStep('');
     };
 
     var createTabError = function(transport, e) {
@@ -433,8 +427,17 @@ function WorkSpace (workSpaceState) {
 
     WorkSpace.prototype.downloadWorkSpaceInfo = function (initial_tab) {
         // TODO
+        this.addTabButton = new StyledElements.StyledButton({
+            'class': 'add_tab',
+            'plain': true,
+            'text': '+',
+            'title': gettext('Add a new tab')
+        });
+
         this.renameTabWindow = new RenameTabWindowMenu();
         this.notebook = new StyledElements.StyledNotebook({'class': 'workspace'});
+        this.notebook.addButton(this.addTabButton);
+        this.addTabButton.addEventListener('click', this.addTab.bind(this));
         LayoutManagerFactory.getInstance().viewsByName['workspace'].clear();
         LayoutManagerFactory.getInstance().viewsByName['workspace'].appendChild(this.notebook);
 
@@ -508,11 +511,17 @@ function WorkSpace (workSpaceState) {
     }
 
     WorkSpace.prototype.addTab = function() {
-        var counter, prefixName, tabName, url, params;
+        var layoutManager, msg, counter, prefixName, tabName, url, params;
 
         if (!this.isValid()) {
             return;
         }
+
+        layoutManager = LayoutManagerFactory.getInstance();
+        layoutManager._startComplexTask(gettext("Adding a tab to the workspace"), 1);
+        msg = gettext('Adding tab to "%(workspacename)s"');
+        msg = interpolate(msg, {workspacename: this.workSpaceState.name}, true);
+        layoutManager.logSubTask(msg);
 
         counter = this.tabInstances.keys().length + 1;
         prefixName = gettext("Tab");
@@ -530,7 +539,10 @@ function WorkSpace (workSpaceState) {
             parameters: params,
             onSuccess: createTabSuccess.bind(this),
             onFailure: createTabError,
-            onException: createTabError
+            onException: createTabError,
+            onComplete: function () {
+                LayoutManagerFactory.getInstance()._notifyPlatformReady();
+            }
         });
     }
 
@@ -794,7 +806,7 @@ function WorkSpace (workSpaceState) {
         for (i = 0; i < tab_keys.length; i += 1) {
             this.tabInstances.get(tab_keys[i]).setLock(locked);
         }
-        this._manageAddTabElement(locked)
+        this._updateAddTabButton();
 
     }.bind(this);
 
