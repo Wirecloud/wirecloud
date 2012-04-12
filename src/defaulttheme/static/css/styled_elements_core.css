@@ -403,7 +403,6 @@ div.styled_numeric_field div.numeric_bottom_button {
   margin: 0 3ex;
   overflow: hidden;
   white-space: nowrap;
-  z-index: 2;
   height: 22px;
 }
 
@@ -427,7 +426,6 @@ div.styled_numeric_field div.numeric_bottom_button {
   position: absolute;
   overflow: hidden;
   padding: 0;
-  z-index: 1;
 }
 
 .notebook > div > .wrapper > div {
@@ -439,13 +437,12 @@ div.styled_numeric_field div.numeric_bottom_button {
   overflow: auto;
   position: absolute;
   visibility: visible;
-  z-index: 2;
 }
 
 .hidden .notebook > div > .wrapper > div,
 .notebook > div > .wrapper > div.hidden {
-  z-index: 1;
   visibility: hidden;
+  height: 0px;
 }
 
 .notebook .disable-layer {
@@ -481,7 +478,6 @@ div.styled_numeric_field div.numeric_bottom_button {
   bottom: 0;
   overflow: hidden;
   padding: 0;
-  z-index: 1;
 }
 
 .alternatives.full {
@@ -499,13 +495,12 @@ div.styled_numeric_field div.numeric_bottom_button {
   overflow: auto;
   position: absolute;
   visibility: inherit;
-  z-index: 2;
 }
 
 .hidden > .alternatives > .wrapper > div,
 .alternatives > .wrapper > div.hidden {
   visibility: hidden;
-  z-index: 1;
+  height: 0;
 }
 
 /* Styled alert */
