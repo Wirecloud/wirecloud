@@ -103,11 +103,6 @@ USE_I18N = True
 # Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = path.join(BASEDIR, 'media')
 
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash if there is a path component (optional in other cases).
-# Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = '/ezweb/'
-
 STATIC_URL = '/static/'
 STATIC_ROOT = path.join(BASEDIR, 'static')
 COMPRESS_ROOT = STATIC_ROOT

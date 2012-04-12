@@ -346,7 +346,7 @@ function WorkSpace(workSpaceState) {
     };
 
     WorkSpace.prototype.updateVisibleTab = function (index) {
-        var i, img, tabsLength = this.getNumberOfTabs();
+        var i, mark, tabsLength = this.getNumberOfTabs();
 
         if (this.visibleTabIndex !== index) {
             this.visibleTabIndex = index;
@@ -356,13 +356,11 @@ function WorkSpace(workSpaceState) {
 
         this.layout.getSouthContainer().clear();
         for (i = 0; i < tabsLength; i += 1) {
-            img = document.createElement('img');
-            if (i !== index) {
-                img.src = "/ezweb/images/iphone/greyball.png";
-            } else {
-                img.src = "/ezweb/images/iphone/whiteball.png";
+            mark = document.createElement('div');
+            if (i === index) {
+                mark.className = "current";
             }
-            this.layout.getSouthContainer().appendChild(img);
+            this.layout.getSouthContainer().appendChild(mark);
         }
 
         this._scroll(index);

@@ -273,11 +273,6 @@ Add a virtualhost to the apache configuration:
                     SetHandler None
             </Location>
 
-            Alias /ezweb /path/to/wirecloud/src/media
-            <Location "/ezweb">
-                    SetHandler None
-            </Location>
-
             ...
 
     </VirtualHost>

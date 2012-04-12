@@ -50,7 +50,6 @@ js_info_dict = {
 
 urlpatterns = patterns('',
     # Static content
-     (r'^ezweb/(.*)$', 'django.views.static.serve', {'document_root': path.join(settings.BASEDIR, 'media')}),
      (r'^api/html/(.*)$', 'django.views.static.serve', {'document_root': path.join(settings.BASEDIR, 'media/html')}),
 
     # EzWeb
