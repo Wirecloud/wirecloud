@@ -374,14 +374,14 @@ def fix_gadget_code(xhtml_code, base_url, request):
             script.text = ''
 
         if script.get('src', '') == '/ezweb/js/EzWebAPI/EzWebAPI.js':
-            script.set('src', rootURL + script.get('src'))
+            script.set('src', rootURL + settings.STATIC_URL + 'js/EzWebAPI/EzWebAPI.js')
 
             files = get_gadget_api_extensions('index')
             files.reverse()
             for file in files:
                 script.addnext(etree.Element('script', src=rootURL + settings.STATIC_URL + file))
         elif script.get('src', '').startswith('/ezweb/'):
-            script.set('src', rootURL + script.get('src'))
+            script.set('src', rootURL + settings.STATIC_URL + script.get('src'))
 
     # return modified code
     return etree.tostring(xmltree, pretty_print=False, method='html')
