@@ -284,11 +284,11 @@ div.styled_numeric_field div.numeric_bottom_button {
   z-index: 111113;
 }
 
-.styled_button > div {
+.styled_button > div, .styled_button.plain {
   cursor: pointer;
 }
 
-.styled_button.disabled > div {
+.styled_button.disabled > div, .styled_button.plain.disabled {
   cursor: default;
 }
 

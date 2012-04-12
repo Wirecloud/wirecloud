@@ -2733,6 +2733,7 @@ StyledElements.StyledButton = function(options) {
 
     if (options.plain) {
         button = this.wrapperElement;
+        EzWebExt.addClassName(this.wrapperElement, 'plain');
     } else {
         button = document.createElement("div");
         this.wrapperElement.appendChild(button);
