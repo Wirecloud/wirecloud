@@ -30,7 +30,6 @@ body {
     position: relative;
     left: 0px;
     right: 0px;
-    z-index: 1;
     min-width: 600px;
 }
 
@@ -176,7 +175,7 @@ body {
     position: absolute;
     top: 0;
     width: 100%;
-    z-index: 3;
+    z-index: 101111;
     background-color: #4C5054;
     moz-opacity: .8;
     opacity: .8;
@@ -193,7 +192,7 @@ body {
     box-shadow: 0.3ex 0.3ex 0.5ex 0.25ex rgba(0,0,0,0.5);*/
     position: absolute;
     text-align: left;
-    z-index: 4;
+    z-index: 101112;
     overflow: hidden;
     padding: 1em 2em;
     color: #4C5054;
