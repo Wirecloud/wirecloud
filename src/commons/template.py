@@ -89,7 +89,7 @@ USDL=rdflib.Namespace("http://www.linked-usdl.org/ns/usdl-core#")
 DCTERMS=rdflib.Namespace("http://purl.org/dc/terms/")
 RDF=rdflib.Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
 RDFS=rdflib.Namespace("http://www.w3.org/2000/01/rdf-schema#")
-VCARD=rdflib.Namespace("http://www.w3.org/2001/vcard-rdf/3.0#")
+VCARD=rdflib.Namespace("http://www.w3.org/2006/vcard/ns#")
 
 class USDLTemplateParser(object):
 
@@ -97,15 +97,14 @@ class USDLTemplateParser(object):
     _parsed = False
     _gadgetURI = None
 
-    def __init__(self, template, base=None):
+    def __init__(self, graph, base=None):
         self.base = base
         self._info = {}
         self._translation_indexes = {}
         self._translations={}
         self._url_fields = []
 
-        self._graph = rdflib.Graph()
-        self._graph.parse(data=template)
+        self._graph = graph
 
         # check if is a mashup or a gadget
         for type_ in self._graph.subjects(RDF['type'],WIRE['Gadget']):
@@ -200,7 +199,7 @@ class USDLTemplateParser(object):
         elif self._info['type'] == 'mashup':
             self._gadgetURI=self._graph.subjects(RDF['type'],WIRE_M['Mashup']).next()
 
-        self._info['version']=self._get_field(WIRE,'version',self._gadgetURI)
+        self._info['version']=self._get_field(USDL,'versionInfo',self._gadgetURI)
         if not re.match(VERSION_RE, self._info['version']):
             raise TemplateParseException(_('ERROR: the format of the version number is invalid. Format: X.X.X where X is an integer. Ex. "0.1", "1.11" NOTE: "1.01" should be changed to "1.0.1" or "1.1"'))
 
@@ -224,19 +223,12 @@ class USDLTemplateParser(object):
         self._info['image_uri']=self._get_url_field('image_uri',WIRE,'hasImageUri',self._gadgetURI)
 
         # it contains code and docURI if exists
-        resources = self._graph.objects(self._gadgetURI,USDL['exposes'])
-
-        for resource_element in resources:
-            if str(self._get_field(DCTERMS,'title',resource_element,required=False)).lower() == 'wikiuri':
-                self._info['doc_uri']=str(resource_element)
-                self._url_fields.append('doc_uri')
-                break
-        else:
-            self._info['doc_uri']=''
+        self._info['doc_uri']=self._get_field(FOAF,'page',self._gadgetURI,required=False)
 
         self._info['display_name']=self._get_translation_field(WIRE,'displayName',self._gadgetURI,'display_name',required=False,type='resource',field='display_name')
 
-        self._info['mail']=self._get_field(VCARD,'email',self._gadgetURI)
+        addr_element = self._get_field(VCARD,'addr',self._gadgetURI,id_=True)
+        self._info['mail']=self._get_field(VCARD,'email',addr_element)
 
 
     def _parse_wiring_info(self,wiring_property='hasPlatformWiring',parse_channels=False):
@@ -366,19 +358,11 @@ class USDLTemplateParser(object):
                 'aspect': 'ECTX',
             })
 
-        # It contains the elements gadget code and WikiURI
-        resources = self._graph.objects(self._gadgetURI,USDL['exposes'])
-
-        for res in resources:
-            if self._get_field(DCTERMS,'title',res,required=False) == 'code':
-                xhtml_element=res
-                break
-        else:
-            msg = _('missing gadget code')
-            raise TemplateParseException(msg)
+        # It contains the gadget code
+        xhtml_element = self._get_field(USDL,'exposes',self._gadgetURI,id_=True)
 
         self._info['code_url']=str(xhtml_element)
-        self._info['code_content_type']=self._get_field(WIRE,'codeContentType',xhtml_element,required=False)
+        self._info['code_content_type']=self._get_field(DCTERMS,'format',xhtml_element,required=False)
         if self._info['code_content_type']=='':
             self._info['code_content_type']='text/html'
 
@@ -1005,29 +989,43 @@ class TemplateParser(object):
 
     def __init__(self, template, base=None):
 
-        if isinstance(template, str):
-            self._doc = etree.fromstring(template)
-        elif isinstance(template, unicode):
-            # Work around: ValueError: Unicode strings with encoding
-            # declaration are not supported.
-            self._doc = etree.fromstring(template.encode('utf-8'))
-        else:
-            self._doc = template
+        xml_document=False
+        graph=rdflib.Graph()
+        # It is necesary to check if template is a n3/turtle document before
+        # any other format because it is not a xml based document so etree
+        # function would raise an exeption
+        try:
+            graph.parse(data=template,format='n3')
+        except:
+            xml_document=True
 
-        prefix = self._doc.prefix
-        xmlns = None
-        if prefix in self._doc.nsmap:
-            xmlns = self._doc.nsmap[prefix]
-
-        if xmlns is not None and xmlns != WIRECLOUD_TEMPLATE_NS:
-             # TODO check if the document is a valid usdl document and add an else with rise Exception
-            if str(template).find('rdf:RDF') > 0:
-                self._parser = USDLTemplateParser(template,base)
+        if xml_document:
+            if isinstance(template, str):
+                self._doc = etree.fromstring(template)
+            elif isinstance(template, unicode):
+                # Work around: ValueError: Unicode strings with encoding
+                # declaration are not supported.
+                self._doc = etree.fromstring(template.encode('utf-8'))
             else:
-                raise TemplateParseException(_('The document is not valid'))
+                self._doc = template
+
+            prefix = self._doc.prefix
+            xmlns = None
+            if prefix in self._doc.nsmap:
+                xmlns = self._doc.nsmap[prefix]
+
+            if xmlns is not None and xmlns != WIRECLOUD_TEMPLATE_NS:
+                try:
+                    graph.parse(data=template,format='application/rdf+xml')
+                except:
+                    raise TemplateParseException(_('The document is not valid'))
+                self._parser = USDLTemplateParser(graph,base)
+
+            else:
+                # The document is a Wirecloud Template so WirecloudTemplateParser is Used
+                self._parser = WirecloudTemplateParser(self._doc,base)
         else:
-             # The document is a Wirecloud Template so WirecloudTemplateParser is Used
-            self._parser = WirecloudTemplateParser(self._doc,base)
+            self._parser = USDLTemplateParser(graph,base)
 
 
 
