@@ -97,7 +97,7 @@ def iframe_error(func):
         try:
             response = func(self, request, *args, **kwargs)
         except Exception, e:
-            error_msg = str(e)
+            error_msg = unicode(e)
 
         if response is not None and (response.status_code >= 300 or response.status_code < 200):
             error_msg = response.content
