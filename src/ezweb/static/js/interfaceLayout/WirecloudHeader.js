@@ -25,6 +25,7 @@ var WirecloudHeader = function () {
 
     this.currentView = null;
     this.currentMenu = null;
+    this._popup_buttons = [];
 
     this.submenu = document.createElement('div');
     this.submenu.className = 'submenu';
@@ -82,12 +83,23 @@ WirecloudHeader.prototype._initUserMenu = function () {
     user_menu.append(new StyledElements.MenuItem(gettext('Sign out'), OpManagerFactory.getInstance().logout));
 };
 
+WirecloudHeader.prototype._clearOldBreadcrum = function () {
+
+    this.breadcrum.innerHTML = '';
+    for (i = 0; i < this._popup_buttons.length; i += 1) {
+        this._popup_buttons[i].destroy();
+    }
+
+    this._popup_buttons = [];
+};
+
 WirecloudHeader.prototype._paintBreadcrum = function (newView) {
     var i, breadcrum_part, breadcrum, breadcrum_entry, breadcrum_levels, button;
 
     breadcrum_levels = ['first_level', 'second_level', 'third_level'];
 
-    this.breadcrum.innerHTML = '';
+    this._clearOldBreadcrum();
+
     if ('getBreadcrum' in newView) {
         breadcrum = newView.getBreadcrum();
     } else {
@@ -126,6 +138,7 @@ WirecloudHeader.prototype._paintBreadcrum = function (newView) {
                 'menu': breadcrum_entry.menu
             });
             button.insertInto(breadcrum_part);
+            this._popup_buttons.push(button);
         }
         this.breadcrum.appendChild(breadcrum_part);
     }

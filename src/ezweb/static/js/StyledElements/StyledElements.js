@@ -3127,6 +3127,7 @@ StyledElements.MenuItem = function(text, handler) {
     this._clickHandler = EzWebExt.bind(function(event) {
         event.stopPropagation();
         if (this.enabled) {
+            this.events['mouseout'].dispatch(this);
             this.events['click'].dispatch(this);
         }
     }, this);
