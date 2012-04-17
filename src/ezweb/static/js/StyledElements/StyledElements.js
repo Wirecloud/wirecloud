@@ -253,6 +253,10 @@ StyledElements.StyledInputElement.prototype.disable = function() {
     this.inputElement.disabled = true;
 }
 
+StyledElements.StyledInputElement.prototype.focus = function() {
+    this.inputElement.focus();
+}
+
 /**
  * Este componente permite crear un contenedor en el que añadir otros
  * componentes.

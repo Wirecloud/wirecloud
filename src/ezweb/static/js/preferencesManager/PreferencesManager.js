@@ -121,16 +121,11 @@ var PreferencesManagerFactory = function () {
           "language": {
             "label": gettext('Language'),
             "type": "select",
-            "options": [
+            "initialEntries": [
                 {value: 'default', label: gettext('Default setting')},
                 {value: 'browser', label: gettext('Browser detect')}
             ]
           },
-		  "skin": {
-		    "label":         gettext("Skin"),
-		    "type":          "select",
-		    "options":       []
-		  },
 		  "tip-0": {
 		    "defaultValue": true,
 		    "label":        gettext("Show catalogue help dialog"),
@@ -159,19 +154,11 @@ var PreferencesManagerFactory = function () {
 
 		// Workspace preferences
 		var workspacePreferences = {
-		  "skin": {
-		    "inheritable":   true,
-		    "inheritByDefault": true,
-		    "label":         gettext("Skin"),
-		    "type":          "select",
-		    "options":       [],
-		    "description":   gettext("Skin to use as default. (default: inherit)")
-		  },
 		  "layout": {
 		    "defaultValue":  "Fixed",
 		    "label":         gettext("Default grid layout"),
 		    "type":          "select",
-		    "options":       [{value:"Fixed",label:gettext("Fixed to the grid")},{value:"Free",label:gettext("Out of the grid")}],
+		    "initialEntries":       [{value:"Fixed",label:gettext("Fixed to the grid")},{value:"Free",label:gettext("Out of the grid")}],
 		    "description":   gettext("Default layout for the new gadgets.")
 		  },
 		  "smart": {
@@ -214,7 +201,7 @@ var PreferencesManagerFactory = function () {
 		    "defaultValue":  "Fixed",
 		    "label":         gettext("Default grid layout"),
 		    "type":          "select",
-		    "options":       [{value:"Fixed",label:gettext("Fixed to the grid")},{value:"Free",label:gettext("Out of the grid")}],
+		    "initialEntries":       [{value:"Fixed",label:gettext("Fixed to the grid")},{value:"Free",label:gettext("Out of the grid")}],
 		    "description":   gettext("Default layout for the new gadgets.")
 		  },
 		  "smart": {
@@ -262,20 +249,8 @@ var PreferencesManagerFactory = function () {
         // Initialize some dynamic preferences (theme...)
         for (i = 0; i < LANGUAGES.length; i += 1) {
             lang = LANGUAGES[i];
-            platformPreferences['language']['options'].push({value: lang[0], label: lang[1]});
+            platformPreferences['language']['initialEntries'].push({value: lang[0], label: lang[1]});
         }
-
-		platformPreferences['skin']['defaultValue'] = _DEFAULT_SKIN;
-		var desc = gettext("Skin to use by default. (default: %(defaultValue)s)");
-		platformPreferences['skin']['description'] = interpolate(desc, {defaultValue: _DEFAULT_SKIN}, true);
-		workspacePreferences['skin']['defaultValue'] = _DEFAULT_SKIN;
-		var themes = _SKINS;
-
-		for (var i = 0; i < themes.length; i++) {
-			var themeName = themes[i];
-			workspacePreferences['skin']['options'].push({value: themeName, label: themeName});
-			platformPreferences['skin']['options'].push({value: themeName, label: themeName});
-		}
 
 		// Save they into our structures
 		definitions = this._processDefinitions(platformPreferences);

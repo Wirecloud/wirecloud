@@ -59,22 +59,17 @@ function GadgetTemplate(variables_, size_) {
         return variableList;
     }
 
-    this._newUserPref = function(rawVar){
+    this._newUserPref = function(rawVar) {
+        var mapping = {
+            "S": "text",
+            "N": "integer",
+            "D": "date",
+            "L": "select",
+            "B": "boolean",
+            "P": "password"
+        };
 
-        switch (rawVar.type) {
-            case UserPref.prototype.TEXT:
-                return new TextUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value);
-            case UserPref.prototype.INTEGER:
-                return new IntUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value);
-            case UserPref.prototype.BOOLEAN:
-                return new BoolUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value);
-            case UserPref.prototype.DATE:
-                return new DateUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value);
-            case UserPref.prototype.PASSWORD:
-                return new PasswordUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value);
-            case UserPref.prototype.LIST:
-                return new ListUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value, rawVar.value_options);
-        }
+        return new UserPref(rawVar.name, mapping[rawVar.type], rawVar);
     }
 
     this._generateUserPrefs = function () {

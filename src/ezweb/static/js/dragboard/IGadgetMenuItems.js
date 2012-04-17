@@ -39,8 +39,8 @@ IGadgetMenuItems.prototype.build = function () {
         items.push(new StyledElements.MenuItem(
             gettext("Preferences"),
             function () {
-                this.toggleConfigurationVisible();
-                LayoutManagerFactory.getInstance().hideCover();
+                var prueba = new Wirecloud.Widget.PreferencesWindowMenu();
+                prueba.show(this);
             }.bind(this.iGadget)
         ));
     }
@@ -54,7 +54,6 @@ IGadgetMenuItems.prototype.build = function () {
             } else {
                 this.content.src = this.codeURL;
             }
-            LayoutManagerFactory.getInstance().hideCover();
         }.bind(this.iGadget)
     ));
 
@@ -66,7 +65,6 @@ IGadgetMenuItems.prototype.build = function () {
     items.push(new StyledElements.MenuItem(
         fulldragboard_label,
         function () {
-            LayoutManagerFactory.getInstance().hideCover();
             this.setFullDragboardMode(!this.isInFullDragboardMode());
         }.bind(this.iGadget)
     ));

@@ -74,7 +74,6 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
     this.draggable = null;
     this.visible = false;
     this.minimized = minimized;
-    this.configurationVisible = false;
     this.highlightTimeout = null;
     if (this.id) {
         this.codeURL = this.gadget.getXHtml().getURICode() + "#id=" + this.id;
@@ -108,7 +107,6 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
     this.gadgetMenu = null;
     this.contentWrapper = null;
     this.content = null;
-    this.configurationElement = null;
     this.closeButtonElement = null;
     this.settingsButtonElement = null;
     this.minimizeButtonElement = null;
@@ -481,12 +479,6 @@ IGadget.prototype.build = function () {
     Element.extend(this.contentWrapper);
     this.contentWrapper.addClassName("gadget_wrapper");
     this.element.appendChild(this.contentWrapper);
-
-    // Gadget configuration (Initially empty and hidden)
-    this.configurationElement = document.createElement("div");
-    Element.extend(this.configurationElement);
-    this.configurationElement.addClassName("config_interface");
-    this.contentWrapper.appendChild(this.configurationElement);
 
     // Gadget Content
     if (BrowserUtilsFactory.getInstance().isIE()) {
@@ -1068,146 +1060,6 @@ IGadget.prototype.remove = function (orderFromServer) {
 };
 
 /**
- * Change the values shown in the configuration form of this igadget to the default ones.
- */
-IGadget.prototype._setDefaultPrefsInInterface = function () {
-    var varManager = this.layout.dragboard.getWorkspace().getVarManager();
-    var prefs = this.gadget.getTemplate().getUserPrefs();
-    var curPref;
-
-    for (var i = 0; i < prefs.length; i++) {
-        curPref = prefs[i];
-        curPref.setDefaultValueInInterface(varManager, this.id);
-    }
-};
-
-/**
- * Set all preferences of this gadget instance to their default value
- */
-IGadget.prototype.setDefaultPrefs = function () {
-    var prefs = this.gadget.getTemplate().getUserPrefs();
-    var varManager = this.layout.dragboard.getWorkspace().getVarManager();
-
-    for (var i = 0; i < prefs.length; i++) {
-        prefs[i].setToDefault(varManager, this.id);
-    }
-
-    if (this.configurationVisible) {
-        this._setDefaultPrefsInInterface();
-    }
-};
-
-/**
- * @private
- *
- *  Auxiliar function to create a table interface with a set of preferences
- *
- */
-IGadget.prototype._createPrefsInterface = function (prefs) {
-    var varManager, table, tbody, row, cell, label, i, curPrefInterface, count = 0;
-
-    varManager = this.layout.dragboard.getWorkspace().getVarManager();
-    table = document.createElement("table");
-
-    tbody = document.createElement("tbody");
-    table.appendChild(tbody);
-    for (i = 0; i < prefs.length; i++) {
-        if (prefs[i].isHidden(varManager, this.id)) {
-            continue;
-        }
-        row = document.createElement("tr");
-
-        // Settings label
-        cell = document.createElement("td");
-        cell.setAttribute("width", "40%"); // TODO
-        label = prefs[i].getLabel();
-        cell.appendChild(label);
-        row.appendChild(cell);
-
-        // Settings control
-        cell = document.createElement("td");
-        cell.setAttribute("width", "60%"); // TODO
-        curPrefInterface = prefs[i].makeInterface(varManager, this.id);
-        this.prefElements[prefs[i].getVarName()] = curPrefInterface;
-        Element.extend(this.prefElements[curPrefInterface.name]);
-        cell.appendChild(curPrefInterface);
-        row.appendChild(cell);
-
-        tbody.appendChild(row);
-        count += 1;
-    }
-
-    return [table, count];
-};
-
-/**
- * This function builds the igadget configuration form.
- */
-IGadget.prototype._makeConfigureInterface = function () {
-    var gadgetPrefs, interfaceDiv, result, buttons, button, floatClearer;
-
-    gadgetPrefs = this.gadget.getTemplate().getUserPrefs();
-
-    interfaceDiv = document.createElement("div");
-
-    this.prefElements = [];
-
-    /* result = [<table>, <visible_prefs_count>] */
-    result = this._createPrefsInterface(gadgetPrefs);
-    interfaceDiv.appendChild(result[0]);
-
-    if (result[1] === 0) {
-        interfaceDiv.innerHTML = gettext("This IGadget does not have any user prefs");
-        return interfaceDiv;
-    }
-
-    buttons = document.createElement("div");
-    Element.extend(buttons);
-    buttons.addClassName("buttons");
-
-    // "Set Defaults" button
-    button = document.createElement("input");
-    Element.extend(button);
-    button.setAttribute("type", "button");
-    button.setAttribute("value", gettext("Set Defaults"));
-    Event.observe(button, "click", this._setDefaultPrefsInInterface.bind(this), true);
-    buttons.appendChild(button);
-
-    // "Save" button
-    button = document.createElement("input");
-    Element.extend(button);
-    button.setAttribute("type", "button");
-    button.setAttribute("value", gettext("Save"));
-    button.observe("click",
-        function () {
-            this.layout.dragboard.saveConfig(this.id);
-        }.bind(this),
-        true);
-    buttons.appendChild(button);
-
-    // "Cancel" button
-    button = document.createElement("input");
-    Element.extend(button);
-    button.setAttribute("type", "button");
-    button.setAttribute("value", gettext("Cancel"));
-    button.observe("click",
-        function () {
-            this.setConfigurationVisible(false);
-        }.bind(this),
-        true);
-    buttons.appendChild(button);
-    interfaceDiv.appendChild(buttons);
-
-    // clean floats
-    floatClearer = document.createElement("div");
-    Element.extend(floatClearer);
-    floatClearer.addClassName("floatclearer");
-    interfaceDiv.appendChild(floatClearer);
-
-    return interfaceDiv;
-};
-
-/**
  * Sets the content size.
  *
  * @param {Number} newWidth
@@ -1386,8 +1238,11 @@ IGadget.prototype._recomputeWrapper = function (contentHeight) {
     var wrapperHeight;
 
     if (!this.minimized) {
-        contentHeight = contentHeight ? contentHeight : parseInt(this.content.offsetHeight, 10);
-        wrapperHeight = contentHeight + this.configurationElement.offsetHeight;
+        if (contentHeight) {
+            wrapperHeight = contentHeight;
+        } else {
+            wrapperHeight = parseInt(this.content.offsetHeight, 10);
+        }
     } else {
         wrapperHeight = 0;
     }
@@ -1448,8 +1303,7 @@ IGadget.prototype._recomputeHeight = function (basedOnContent) {
             contentHeight = this.layout.fromVCellsToPixels(this.contentHeight);
             var fullSize = contentHeight;
             fullSize += this.gadgetMenu.offsetHeight +
-                        this.statusBar.offsetHeight +
-                        this.configurationElement.offsetHeight;
+                        this.statusBar.offsetHeight;
             fullSize += this._computeExtraHeightPixels();
 
             var processedSize = this.layout.adaptHeight(contentHeight, fullSize);
@@ -1459,7 +1313,7 @@ IGadget.prototype._recomputeHeight = function (basedOnContent) {
         } else {
             // Based on full gadget height
             contentHeight = this.layout.getHeightInPixels(this.height);
-            contentHeight -= this.configurationElement.offsetHeight + this.gadgetMenu.offsetHeight + this.statusBar.offsetHeight;
+            contentHeight -= this.gadgetMenu.offsetHeight + this.statusBar.offsetHeight;
             contentHeight -= this._computeExtraHeightPixels();
 
             if (contentHeight < 0) {
@@ -1572,8 +1426,6 @@ IGadget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
     this.minimized = newStatus;
 
     if (this.minimized) {
-        this.configurationElement.setStyle({"display": "none"});
-
         if (this.onFreeLayout()) {
             // Floating gadget
             this.element.setStyle({"visibility": "hidden"});
@@ -1588,9 +1440,6 @@ IGadget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
             this.minimizeButtonElement.addClassName("maximizebutton");
         }
     } else {
-        if (this.configurationVisible === true) {
-            this.configurationElement.setStyle({"display": "block"});
-        }
         this.minimizeButtonElement.setAttribute("title", gettext("Minimize"));
         this.minimizeButtonElement.setAttribute("alt", gettext("Minimize"));
         this.minimizeButtonElement.removeClassName("maximizebutton");
@@ -1705,138 +1554,6 @@ IGadget.prototype.toggleLayout = function () {
 };
 
 /**
- * Returns true if the configuration form of this igadget is visible
- *
- * @returns true if the configuration form of this igadget is visible; false
- *          otherwise
- */
-IGadget.prototype.isConfigurationVisible = function () {
-    return this.configurationVisible;
-};
-
-/**
- * Changes the visibility status of the configuration form of this igadget
- *
- * @param newValue new visibility status of the configuration form of this
- *                 igadget
- */
-IGadget.prototype.setConfigurationVisible = function (newValue) {
-    if (this.configurationVisible === newValue) {
-        return; // Nothing to do
-    }
-
-    // New Status
-    this.configurationVisible = newValue;
-
-    if (newValue === true) {
-        this.configurationElement.appendChild(this._makeConfigureInterface());
-        if (this.isMinimized()) {
-            this.configurationElement.setStyle({"display": "none"});
-        } else {
-            this.configurationElement.setStyle({"display": "block"});
-        }
-        this.settingsButtonElement.removeClassName("settingsbutton");
-        this.settingsButtonElement.addClassName("settings2button");
-    } else {
-        this.configurationElement.innerHTML = "";
-        this.configurationElement.hide();
-        this.settingsButtonElement.removeClassName("settings2button");
-        this.settingsButtonElement.addClassName("settingsbutton");
-    }
-
-    var oldHeight = this.getHeight();
-    this._recomputeHeight(true);
-
-    // Notify resize event
-    this.layout._notifyResizeEvent(this, this.contentWidth, oldHeight, this.contentWidth, this.getHeight(), true);
-};
-
-/**
- * Toggles the visibility status of the configuration form of this igadget.
- */
-IGadget.prototype.toggleConfigurationVisible = function () {
-    this.setConfigurationVisible(!this.configurationVisible);
-};
-
-/**
- * Saves the values of the preferences from the config form of this igadget.
- */
-IGadget.prototype.saveConfig = function () {
-    if (this.configurationVisible === false) {
-        throw new Error(""); // TODO
-    }
-
-    var varManager = this.layout.dragboard.getWorkspace().getVarManager();
-    var i, curPref, prefElement, validData = true;
-    var prefs = this.gadget.getTemplate().getUserPrefs();
-    var prefName = null;
-
-    for (i = 0; i < prefs.length; i++) {
-        curPref = prefs[i];
-        if (curPref.isHidden(varManager, this.id)) {
-            continue;
-        }
-
-        prefName = curPref.getVarName();
-        prefElement = $(this.prefElements[prefName]);
-        if (!curPref.validate(curPref.getValueFromInterface())) {
-            validData = false;
-            prefElement.addClassName("invalid");
-        } else {
-            prefElement.removeClassName("invalid");
-        }
-    }
-
-    if (!validData) {
-        throw new Error("Invalid data found"); // Don't save if the data is invalid
-    }
-
-    // Start propagation of the new values of the user pref variables
-    varManager.incNestingLevel();
-
-    /*
-     * The new value is commited with 2 phases (first setting the value and then
-     * propagating changes). This avoids the case where igadgets read old values.
-     */
-
-    // Phase 1
-    // Annotate new value of the variable without invoking callback function!
-    var oldValue, newValue;
-    for (i = 0; i < prefs.length; i++) {
-        curPref = prefs[i];
-        if (curPref.isHidden(varManager, this.id)) {
-            continue;
-        }
-
-        oldValue = curPref.getCurrentValue(varManager, this.id);
-        newValue = curPref.getValueFromInterface();
-
-        if (newValue !== oldValue) {
-            curPref.annotate(varManager, this.id, newValue);
-        }
-    }
-
-    // Phase 2
-    // Commit new value of the variable
-    for (i = 0; i < prefs.length; i++) {
-        curPref = prefs[i];
-        if (curPref.isHidden(varManager, this.id)) {
-            continue;
-        }
-
-        newValue = curPref.getValueFromInterface();
-
-        curPref.setValue(varManager, this.id, newValue);
-    }
-
-    // Commit
-    varManager.decNestingLevel();
-    varManager.sendBufferedVars();
-
-    this.setConfigurationVisible(false);
-};
-
-/**
  * Check if the igadget belongs to a shared workspace
  */
 IGadget.prototype.is_shared_workspace = function () {
@@ -1924,8 +1641,7 @@ IGadget.prototype.moveToLayout = function (newLayout) {
     var contentHeight = this.content.offsetHeight;
     var fullHeight = contentHeight;
     fullHeight += this.gadgetMenu.offsetHeight +
-                  this.statusBar.offsetHeight +
-                  this.configurationElement.offsetHeight;
+                  this.statusBar.offsetHeight;
     fullHeight += this._computeExtraHeightPixels();
     // ##### END TODO
 

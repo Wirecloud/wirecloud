@@ -780,8 +780,6 @@ function PublishWindowMenu(workspace) {
     //ezweb_organizations as options to be used in select inputs
     var orgs = JSON.parse(ezweb_organizations);
     this.organizations = new Array();
-    //first option (empty value)
-    this.organizations.push({label: '------', value: ''});
     for (var i = 0; i < orgs.length; i++) {
         //org__groupname: name = groupname, value = org__groupname
         name = orgs[i].split('__')[1];
@@ -1115,11 +1113,11 @@ RenameWindowMenu.prototype.executeOperation = function(form) {
 
 RenameWindowMenu.prototype.show = function(parentWindow) {
     FormWindowMenu.prototype.show.call(this, parentWindow);
-    this.fields['name'].inputInterface.inputElement.value = OpManagerFactory.getInstance().activeWorkSpace.workSpaceState.name;
+    this.fields['name'].inputInterface.setValue(OpManagerFactory.getInstance().activeWorkSpace.workSpaceState.name);
 }
 
 RenameWindowMenu.prototype.extraValidation = function(fields) {
-    if (fields["name"].inputInterface.inputElement.value.length > 30) {
+    if (fields["name"].inputInterface.getValue().length > 30) {
         return gettext("The new name is too long. It must have less than 30 characters.");
     }
     return null;
@@ -1148,11 +1146,11 @@ RenameTabWindowMenu.prototype.executeOperation = function(form) {
 
 RenameTabWindowMenu.prototype.show = function(parentWindow) {
     FormWindowMenu.prototype.show.call(this, parentWindow);
-    this.fields['name'].inputInterface.inputElement.value = this.tab.tabInfo.name;
+    this.fields['name'].inputInterface.setValue(this.tab.tabInfo.name);
 }
 
 RenameTabWindowMenu.prototype.extraValidation = function(fields) {
-    var value = fields["name"].inputInterface.inputElement.value;
+    var value = fields["name"].inputInterface.getValue();
     if (value.length > 30) {
         return gettext("The new name is too long. It must have less than 30 characters.");
     } else if (this.tab.workSpace.tabExists(value)) {

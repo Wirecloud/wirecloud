@@ -224,8 +224,8 @@ function PreferencesDef(definitions) {
 			var inheritInput = preference.getInheritInterface();
 			inheritInput._insertInto(inheritCell);
 			inheritCell.appendChild(document.createTextNode(gettext('Inherit')));
-			Event.observe(inheritInput.inputElement,
-			    'click',
+			inheritInput.inputElement.addEventListener(
+			    'change',
 			    function() {
 			        this.getInterface().setDisabled(this.inheritInterface.getValue());
 			    }.bind(preference));
