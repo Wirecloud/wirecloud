@@ -29,17 +29,49 @@ var CataloguePublishView = function (id, options) {
 
     this.wrapperElement.innerHTML = $('wirecloud_catalogue_publish_interface').getTextContent();
 
+    this.wrapperElement.getElementsByClassName('template_submit_form')[0].onsubmit = this._submit_template.bind(this);
+    this.wrapperElement.getElementsByClassName('back_to_resource_list')[0].addEventListener('click', this.catalogue.home.bind(this.catalogue));
+
+    // TODO
     setTimeout(function () {
-        EzWebExt.addEventListener($('upload_wgt_button'), 'click', this._upload_wgt_file.bind(this));
+        $('upload_wgt_button').addEventListener('click', this._upload_wgt_file.bind(this), true);
         $('upload').onload = this._check_upload_wgt_result.bind(this);
-        EzWebExt.addEventListener(this.wrapperElement.getElementsByClassName('back_to_resource_list')[0], 'click', this.catalogue.home.bind(this.catalogue));
     }.bind(this), 0);
 };
 CataloguePublishView.prototype = new StyledElements.Alternative();
 
 CataloguePublishView.prototype._upload_wgt_file = function () {
     LayoutManagerFactory.getInstance()._startComplexTask(gettext("Uploading packaged gadget"), 1);
-    $("upload_form").submit();
+    this.wrapperElement.getElementsByClassName("wgt_upload_form")[0].submit();
+};
+
+CataloguePublishView.prototype._submit_template = function (e) {
+    var template_uri = this.wrapperElement.getElementsByClassName('template_uri')[0].value;
+
+    LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding resource to the catalogue"), 1);
+    LayoutManagerFactory.getInstance().logSubTask(gettext('Sending resource template to catalogue'));
+
+    Wirecloud.io.makeRequest(URIs.GET_POST_RESOURCES, {
+        method: 'POST',
+        parameters: {'template_uri': template_uri},
+        onSuccess: function (transport) {
+            LayoutManagerFactory.getInstance().logSubTask(gettext('Resource uploaded successfully'));
+            LayoutManagerFactory.getInstance().logStep('');
+
+            this.catalogue.home();
+            this.catalogue.refresh_search_results();
+        }.bind(this),
+        onFailure: function (transport) {
+            var msg = LogManagerFactory.getInstance().formatError(gettext("Error uploading resource: %(errorMsg)s."), transport);
+            LogManagerFactory.getInstance().log(msg);
+            LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+            LayoutManagerFactory.getInstance().log(msg);
+        },
+        onComplete: function () {
+            LayoutManagerFactory.getInstance()._notifyPlatformReady();
+        }
+    });
+    return false;
 };
 
 CataloguePublishView.prototype._check_upload_wgt_result = function () {
@@ -66,7 +98,6 @@ CataloguePublishView.prototype._check_upload_wgt_result = function () {
         layoutManager._notifyPlatformReady();
         layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
         logManager.log(msg);
-        return;
     } else {
         layoutManager.logSubTask(gettext('Gadget uploaded successfully'));
         layoutManager.logStep('');
