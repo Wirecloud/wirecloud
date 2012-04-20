@@ -112,6 +112,23 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         self.assertIsNotNone(gadget)
         return gadget
 
+    def add_template_to_catalogue(self, template_url, resource_name):
+
+        self.change_main_view('marketplace')
+        self.click_submenu_item('publish')
+        time.sleep(1)
+
+        submit_button = self.driver.find_element_by_css_selector('form.template_submit_form .template_uri')
+        submit_button.send_keys(template_url + Keys.ENTER)
+
+        self.wait_wirecloud_ready()
+        time.sleep(2)
+
+        self.search_resource(resource_name)
+        resource = self.search_in_catalogue_results(resource_name)
+        self.assertIsNotNone(resource)
+        return resource
+
     def search_gadget(self, keyword):
         search_input = self.driver.find_element_by_css_selector('#simple_search input')
         search_input.clear()

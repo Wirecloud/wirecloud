@@ -63,3 +63,12 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         driver.find_element_by_link_text("Delete").click()
         driver.find_element_by_xpath("//input[@value=\"Yes, I'm sure\"]").click()
         driver.find_element_by_link_text("Log out").click()
+
+    def test_add_gadget_to_catalogue_xml(self):
+
+        self.login()
+
+        self.change_main_view("marketplace")
+        time.sleep(3)
+
+        self.add_template_to_catalogue('http://localhost:8001/test/test.xml', 'Test_Selenium')
