@@ -94,8 +94,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
         // TODO only send real changes
         var iGadget, iGadgetInfo, uri, position;
-        var data = {};
-        data['iGadgets'] = [];
+        var data = [];
 
         for (var i = 0; i < keys.length; i++) {
             iGadget = this.iGadgetsByCode.get(keys[i]);
@@ -123,13 +122,14 @@ function Dragboard(tab, workSpace, dragboardElement) {
             iGadgetInfo['icon_top'] = icon_position.y;
             iGadgetInfo['icon_left'] = icon_position.x;
 
-            data['iGadgets'].push(iGadgetInfo);
+            data.push(iGadgetInfo);
         }
 
-        data = {'igadgets': Object.toJSON(data)};
         uri = URIs.GET_IGADGETS.evaluate({workspaceId: this.workSpaceId, tabId: this.tabId});
         Wirecloud.io.makeRequest(uri, {
-            method: 'POST',
+            method: 'PUT',
+            contentType: 'application/json',
+            postBody: Object.toJSON(data),
             parameters: data,
             onSuccess: onSuccess,
             onFailure: onError
