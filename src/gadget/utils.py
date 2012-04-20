@@ -381,7 +381,7 @@ def fix_gadget_code(xhtml_code, base_url, request):
             for file in files:
                 script.addnext(etree.Element('script', src=rootURL + settings.STATIC_URL + file))
         elif script.get('src', '').startswith('/ezweb/'):
-            script.set('src', rootURL + settings.STATIC_URL + script.get('src'))
+            script.set('src', rootURL + settings.STATIC_URL + script.get('src')[7:])
 
     # return modified code
     return etree.tostring(xmltree, pretty_print=False, method='html')
