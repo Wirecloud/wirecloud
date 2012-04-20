@@ -882,7 +882,7 @@ WorkSpace.prototype.highlightTab = function(tab) {
  * Returns the sub menu items for the wirecloud header
  */
 WorkSpace.prototype.getSubMenuItems = function () {
-    var share_window = new ShareWindowMenu(null);
+    var share_window = null; //new ShareWindowMenu(null);
 
     return [
         {
