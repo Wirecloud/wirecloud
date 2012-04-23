@@ -41,8 +41,6 @@ from django.views.i18n import javascript_catalog
 
 admin.autodiscover()
 
-from catalogue.views import ResourceEnabler
-
 #JavaScript translation
 js_info_dict = {
     'packages': ('ezweb', )
@@ -78,12 +76,8 @@ urlpatterns = patterns('',
     # Platform Preferences
     (r'^user/(?P<user_name>[\.\-\w\@]+)/preference(s)?', include('preferences.urls')),
 
-    # Catalogue Resource
-    (r'^user/(?P<user_name>[\.\-\w\@]+)/catalogue/', include('catalogue.urls')),
-
-    # Catalogue: Changing certification status
-    (r'^catalogue/resource/(?P<resource_id>\d+)/activation$', ResourceEnabler(permitted_methods=('GET',))),
-    (r'^catalogue/', include('catalogue.urls')),
+    # Catalogue
+    (r'^catalogue', include('catalogue.urls')),
 
     #GadgetGenerator
     (r'^gadgetGenerator', include('gadgetGenerator.urls')),
