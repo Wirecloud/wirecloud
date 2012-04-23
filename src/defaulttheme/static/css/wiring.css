@@ -65,12 +65,10 @@
 }
 
 #wiring .tab {
-  background: #97A0A8 url(../images/degradado.png) no-repeat scroll left top;
-  -moz-border-radius-topleft:10px;
-  -moz-border-radius-topright:4px;
-  -moz-border-radius-bottomleft:3px;
-  -moz-border-radius-bottomright:3px;
-  border-color: #000000;
+    background: #E4E6E2;
+    border-radius: 10px;
+    border-color: #BEBEBE;
+    border-style: dashed;
 }
 
 #wiring .tab > .content {
@@ -91,15 +89,6 @@
 
 #wiring .slot_column .tab > .header_section .header_icon {
     float: right;
-}
-
-#wiring .tab > .header_section {
-  color:       white;
-  font-weight: bold;
-}
-
-#wiring .tab.empty > .header_section {
-  background: none;
 }
 
 #wiring .igadget > .header_section .header_icon {
@@ -129,9 +118,11 @@
 }
 
 #wiring .channelPipe {
-  border-color: #2D6F9C;
-  background: #97A0A8 url(../images/pipe.png);
-  padding: 0 8px;
+    background: #EBE6B1;
+    padding: 0 8px;
+    border-color: #E8A150;
+    border-radius: 10px;
+    border-style: dashed;
 }
 
 .channelPipe * {
@@ -139,8 +130,8 @@
 }
 
 #wiring .channels_list .channel.selected .channelPipe {
-  background-color: #2D6F9C;
-  padding: 0 8px;
+    background-color: #FFD978;
+    padding: 0 8px;
 }
 
 .channel_window .filter_menu_button {
