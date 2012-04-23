@@ -107,7 +107,7 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         self.wait_wirecloud_ready()
         time.sleep(2)
 
-        self.search_gadget(gadget_name)
+        self.search_resource(gadget_name)
         gadget = self.search_in_catalogue_results(gadget_name)
         self.assertIsNotNone(gadget)
         return gadget
@@ -129,7 +129,7 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         self.assertIsNotNone(resource)
         return resource
 
-    def search_gadget(self, keyword):
+    def search_resource(self, keyword):
         search_input = self.driver.find_element_by_css_selector('#simple_search input')
         search_input.clear()
         search_input.send_keys(keyword + Keys.ENTER)
@@ -156,7 +156,7 @@ class WirecloudSeleniumTestCase(HttpTestCase):
     def add_widget_to_mashup(self, gadget_name):
 
         self.change_main_view('marketplace')
-        self.search_gadget(gadget_name)
+        self.search_resource(gadget_name)
         resource = self.search_in_catalogue_results(gadget_name)
         self.instanciate(resource)
 
