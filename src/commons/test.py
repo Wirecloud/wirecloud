@@ -55,7 +55,7 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         # initialize
         self.wgt_dir = os.path.join(settings.BASEDIR, '..', 'tests', 'ezweb-data')
 
-    def wait_wirecloud_ready(self, start_timeout=60, timeout=90):
+    def wait_wirecloud_ready(self, start_timeout=90, timeout=120):
 
         WebDriverWait(self.driver, start_timeout).until(lambda driver: driver.find_element_by_xpath(r'//*[@id="loading-window" and (@class="" or @class="fadding")]'))
         WebDriverWait(self.driver, timeout).until(lambda driver: driver.find_element_by_css_selector('#loading-window.fadding'))
