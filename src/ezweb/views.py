@@ -428,4 +428,4 @@ def render_ezweb(request, user_name=None, view_type=None, public_workspace='', l
         'post_load_script': script,
     }
 
-    return render_to_response('wirecloud/views/%s.html' % view_type, context, context_instance=RequestContext(request))
+    return render_to_response('wirecloud/views/%s.html' % view_type, context, context_instance=RequestContext(request), mimetype="application/xhtml+xml")

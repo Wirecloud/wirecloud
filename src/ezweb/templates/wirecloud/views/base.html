@@ -1,8 +1,6 @@
 {% load compress i18n %}
 {% load wirecloud %}
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xml:lang="{{ LANGUAGE_CODE }}"
       lang="{{ LANGUAGE_CODE }}">
@@ -67,14 +65,14 @@
 </div>
 
 {% include "wirecloud/views/header.html" %}
-<script id="wirecloud_catalogue_search_interface" type="wirecloud/template">{% include "wirecloud/catalogue/search_interface.html" %}</script>
-<script id="wirecloud_wiring_template" type="wirecloud/template">{% include "wirecloud/wiring.html" %}</script>
-<script id="catalogue_resource_template" type="html/template">{% include "wirecloud/catalogue/resource.html" %}</script>
-<script id="catalogue_resource_details_template" type="html/template">{% include "wirecloud/catalogue/resource_details.html" %}</script>
-<script id="wirecloud_catalogue_publish_interface" type="wirecloud/template">{% include "wirecloud/catalogue/developers.html" %}</script>
-<script id="pagination_structure" type="html/template">{% include "wirecloud/catalogue/pagination_template.html" %}</script>
-<script id="wirecloud_catalogue_template" type="wirecloud/template">{% include "wirecloud/catalogue/template.html" %}</script>
-<script id="wirecloud_logs_template" type="wirecloud/template">{% include "wirecloud/logs.html" %}</script>
+<script id="wirecloud_catalogue_search_interface" type="wirecloud/template"><![CDATA[{% include "wirecloud/catalogue/search_interface.html" %}]]></script>
+<script id="wirecloud_wiring_template" type="wirecloud/template"><![CDATA[{% include "wirecloud/wiring.html" %}]]></script>
+<script id="catalogue_resource_template" type="html/template"><![CDATA[{% include "wirecloud/catalogue/resource.html" %}]]></script>
+<script id="catalogue_resource_details_template" type="html/template"><![CDATA[{% include "wirecloud/catalogue/resource_details.html" %}]]></script>
+<script id="wirecloud_catalogue_publish_interface" type="wirecloud/template"><![CDATA[{% include "wirecloud/catalogue/developers.html" %}]]></script>
+<script id="pagination_structure" type="html/template"><![CDATA[{% include "wirecloud/catalogue/pagination_template.html" %}]]></script>
+<script id="wirecloud_catalogue_template" type="wirecloud/template"><![CDATA[{% include "wirecloud/catalogue/template.html" %}]]></script>
+<script id="wirecloud_logs_template" type="wirecloud/template"><![CDATA[{% include "wirecloud/logs.html" %}]]></script>
 
 
 <!-- JavaScript code -->
@@ -88,6 +86,7 @@
 <!-- jscolor can't be compressed because then it won't find the images -->
 <script type="text/javascript" src="{{ STATIC_URL }}js/common/jscolor/jscolor.js"></script>
 <script type="text/javascript">
+<![CDATA[
 var URIs = {
   USER: '/user/{{ user.username }}',
   GET_IGADGET: new Template('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/#{iGadgetId}'),
@@ -154,7 +153,7 @@ var policy_lists = {{ policies|safe|default:"null" }};
 
 {% block policies %}
 {% endblock %}
-
+]]>
 </script>
 
 
