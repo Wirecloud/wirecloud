@@ -2,7 +2,7 @@ import time
 
 from commons.test import WirecloudSeleniumTestCase
 from selenium.webdriver import Firefox
-from unittest import SkipTest
+from django.utils.unittest import SkipTest
 
 
 class widget_operation:
