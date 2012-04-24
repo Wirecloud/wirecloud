@@ -70,11 +70,11 @@ class WirecloudSeleniumTestCase(HttpTestCase):
 
     def login(self, username='admin', password='admin'):
         self.driver.get(self.get_live_server_url() + "accounts/login/?next=/")
-        self.driver.find_element_by_xpath('//*[@id="id_username"]').clear()
-        self.driver.find_element_by_xpath('//*[@id="id_username"]').send_keys(username)
-        self.driver.find_element_by_xpath('//*[@id="id_password"]').clear()
-        self.driver.find_element_by_xpath('//*[@id="id_password"]').send_keys(password)
-        self.driver.find_element_by_xpath('//*[@id="submit"]').click()
+        self.driver.find_element_by_id('id_username').clear()
+        self.driver.find_element_by_id('id_username').send_keys(username)
+        self.driver.find_element_by_id('id_password').clear()
+        self.driver.find_element_by_id('id_password').send_keys(password)
+        self.driver.find_element_by_id('submit').click()
         time.sleep(0.1)  # work around some problems with chromium
         self.wait_wirecloud_ready()
 
@@ -201,7 +201,7 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         workspace_name_input = self.driver.find_element_by_css_selector('.window_menu .window_content input')
         workspace_name_input.clear()
         workspace_name_input.send_keys(workspace_name)
-        self.driver.find_element_by_xpath("//div[contains(@class, 'window_menu')]//button[text()='Create']").click()
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Create']").click()
 
         self.wait_wirecloud_ready()
         time.sleep(0.5)  # work around race condition
@@ -215,7 +215,7 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         workspace_name_input = self.driver.find_element_by_css_selector('.window_menu .window_content input')
         workspace_name_input.clear()
         workspace_name_input.send_keys(workspace_name)
-        self.driver.find_element_by_xpath("//div[contains(@class, 'window_menu')]//button[text()='Accept']").click()
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 
         self.wait_wirecloud_ready()
         time.sleep(0.5)  # work around race condition
@@ -228,7 +228,7 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click('Remove')
 
-        self.driver.find_element_by_xpath("//div[contains(@class, 'window_menu')]//button[text()='Yes']").click()
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
 
         self.wait_wirecloud_ready()
         self.assertNotEqual(workspace_to_remove, self.get_current_workspace_name())

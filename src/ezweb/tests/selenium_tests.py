@@ -1,6 +1,22 @@
 import time
 
 from commons.test import WirecloudSeleniumTestCase
+from selenium.webdriver import Firefox
+from unittest import SkipTest
+
+
+class widget_operation:
+
+    def __init__(self, driver, widget):
+        self.driver = driver
+        self.widget = widget
+
+    def __enter__(self):
+        self.driver.switch_to_frame(self.widget)
+        return None
+
+    def __exit__(self, type, value, traceback):
+        self.driver.switch_to_frame(None)
 
 
 class BasicSeleniumTests(WirecloudSeleniumTestCase):
@@ -86,3 +102,30 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(self.count_iwidgets(), 0)
         self.add_widget_to_mashup('Test')
         self.assertEqual(self.count_iwidgets(), 1)
+
+    def test_basic_gadget_functionalities(self):
+
+        if not isinstance(self.driver, Firefox):
+            raise SkipTest('Unsupported webdriver instance')
+
+        self.login()
+        self.add_widget_to_mashup('Test')
+
+        with widget_operation(self.driver, 1):
+            self.assertEqual(self.driver.find_element_by_id('listPref').text, 'default')
+            self.assertEqual(self.driver.find_element_by_id('textPref').text, 'initial text')
+
+        # Change widget settings
+        self.driver.find_element_by_css_selector('.gadget_window .settingsbutton').click()
+        self.popup_menu_click('Settings')
+
+        self.driver.find_element_by_css_selector('.window_menu [name="list"]').send_keys('value1')
+        pref_input = self.driver.find_element_by_css_selector('.window_menu [name="text"]')
+        pref_input.clear()
+        pref_input.send_keys('test')
+
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+
+        with widget_operation(self.driver, 1):
+            self.assertEqual(self.driver.find_element_by_id('listPref').text, '1')
+            self.assertEqual(self.driver.find_element_by_id('textPref').text, 'test')
