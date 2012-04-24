@@ -248,7 +248,7 @@ your wirecloud installation):
     import os
     import sys
 
-    path = '/path/to/wirecloud/src'
+    path = '<path_to_wirecloud/src>'
     if path not in sys.path:
         sys.path.insert(0, path)
 
@@ -266,14 +266,15 @@ Add a virtualhost to the apache configuration:
             ...
 
             ### Wirecloud / EzWeb ###
-            WSGIScriptAlias / /path/to/django.wsgi
+            WSGIScriptAlias / <path_to_django_wsgi>
+            WSGIPassAuthorization On
 
-            Alias /static /path/to/wirecloud/src/static
+            Alias /static <path_to_wirecloud/src/static>
             <Location "/static">
                     SetHandler None
             </Location>
 
-            Alias /ezweb /path/to/wirecloud/src/media
+            Alias /ezweb <path_to_wirecloud/src/media>
             <Location "/ezweb">
                     SetHandler None
             </Location>
