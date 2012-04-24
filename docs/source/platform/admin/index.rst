@@ -88,7 +88,7 @@ following parameters:
 
     .. code-block:: python
 
-        DATABASE = {
+        DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.postgresql_psycopg2',
                 'NAME': '<dbname>',
