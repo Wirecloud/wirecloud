@@ -19,17 +19,20 @@ def no_cache(func):
 
 def patch_cache_headers(response, timestamp=None, cache_timeout=None):
 
-    if timestamp is None:
-        timestamp = time.time() * 1000
+    current_timestamp = time.time() * 1000
 
-    timestamp = int(timestamp)
+    if timestamp is None:
+        timestamp = current_timestamp
+    else:
+        timestamp = int(timestamp)
+
     response['Last-Modified'] = http_date(timestamp / 1000)
     response['ETag'] = '"' + str(timestamp) + '"'
 
-    if cache_timeout != None and cache_timeout > 0:
-        timeout_str = str(cache_timeout)
+    if cache_timeout != None and timestamp + cache_timeout > current_timestamp:
+        timeout_str = str(timestamp + cache_timeout - current_timestamp)
         response['Cache-Control'] = 'private, max-age=' + timeout_str
-        response['Expires'] = http_date(time.time() + cache_timeout)
+        response['Expires'] = http_date((timestamp / 1000) + cache_timeout)
     else:
         response['Cache-Control'] = 'private, max-age=0, post-check=0, pre-check=0, must-revalidate'
 

@@ -33,6 +33,7 @@ import time
 import os
 
 from django.conf import settings
+from django.core.cache import cache
 from django.db import transaction, IntegrityError
 from django.http import HttpResponse, HttpResponseServerError, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
@@ -52,7 +53,7 @@ from commons.transaction import commit_on_http_success
 
 from gadget.models import Gadget, XHTML
 import gadget.utils as showcase_utils
-from gadget.utils import get_or_create_gadget, create_gadget_from_template, fix_gadget_code
+from gadget.utils import get_or_create_gadget, create_gadget_from_template, fix_gadget_code, get_site_domain
 from igadget.models import IGadget
 from igadget.utils import deleteIGadget
 from workspace.utils import create_published_workspace_from_template
@@ -196,8 +197,20 @@ class GadgetEntry(Resource):
 class GadgetCodeEntry(Resource):
 
     def read(self, request, vendor, name, version, user_name=None):
+
         user = user_authentication(request, user_name)
         gadget = get_object_or_404(Gadget, vendor=vendor, name=name, version=version, users__id=user.id)
+
+        # check if the xhtml code has been cached
+        if gadget.xhtml.cacheable:
+            cache_key = '_gadget_xhtml/' + get_site_domain(request) + '/' + str(gadget.xhtml.id)
+            cache_entry = cache.get(cache_key)
+            if cache_entry is not None:
+                response = HttpResponse(cache_entry['code'], mimetype='%s; charset=UTF-8' % cache_entry['content_type'])
+                patch_cache_headers(response, cache_entry['timestamp'], cache_entry['timeout'])
+                return response
+
+        # process xhtml
         xhtml = gadget.xhtml
 
         content_type = xhtml.content_type
@@ -227,11 +240,20 @@ class GadgetCodeEntry(Resource):
             xhtml.code_timestamp = None
             xhtml.save()
 
-        response = HttpResponse(code, mimetype='%s; charset=UTF-8' % content_type)
-        cache_timeout = 0
+        code = fix_gadget_code(code, xhtml.url, request)
         if xhtml.cacheable:
             cache_timeout = 31536000  # 1 year
+            cache_entry = {
+                'code': code,
+                'content_type': content_type,
+                'timestamp': xhtml.code_timestamp,
+                'timeout': cache_timeout,
+            }
+            cache.set(cache_key, cache_entry, cache_timeout)
+        else:
+            cache_timeout = 0
 
+        response = HttpResponse(code, mimetype='%s; charset=UTF-8' % content_type)
         patch_cache_headers(response, xhtml.code_timestamp, cache_timeout)
         return response
 

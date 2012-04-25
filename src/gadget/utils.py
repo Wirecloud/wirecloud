@@ -33,7 +33,7 @@ import os
 from lxml import etree
 from cStringIO import StringIO
 
-from django.contrib.sites.models import Site
+from django.contrib.sites.models import get_current_site
 from django.conf import settings
 from django.core.urlresolvers import reverse
 
@@ -388,9 +388,4 @@ def fix_gadget_code(xhtml_code, base_url, request):
 
 
 def get_site_domain(request):
-    try:
-        host = Site.objects.get(id=settings.SITE_ID).domain
-    except Site.DoesNotExist:
-        host = request.META['HTTP_HOST']
-
-    return "//" + host
+    return "//" + get_current_site(request).domain
