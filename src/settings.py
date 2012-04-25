@@ -93,8 +93,6 @@ LANGUAGES = (
     ('pt', _('Portuguese')),
 )
 
-SITE_ID = 1
-
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
 USE_I18N = True
@@ -153,7 +151,6 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -219,7 +216,6 @@ LOGIN_REDIRECT_URL = '/'
 
 FIXTURE_DIRS = (
     path.join(BASEDIR, 'fixtures', 'django.contrib.auth'),
-    path.join(BASEDIR, 'fixtures', 'django.contrib.sites'),
 )
 
 # Set the log path

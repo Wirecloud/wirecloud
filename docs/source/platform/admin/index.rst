@@ -185,17 +185,6 @@ be accomplished by running:
 Last remarks to the installation
 --------------------------------
 
-First of all, you must go to the administration panel on:
-
-.. code-block:: bash
-
-    http://wirecloud.server.com/admin/sites/site/
-
-Here you have two options:
-
-* You can remove all entries and wirecloud will use the server name and port from the request for building absolute URLs.
-* Set just one entry with the server name/port to use for building absolute URLs in the domain field (i.e. example.com or example:8080).
-
 Make sure both ``GADGETS_DEPLOYMENT_DIR`` and ``GADGETS_DEPLOYMENT_TMPDIR``
 (by default, these configuration variables point to
 <wirecloud>/src/deployment/gadgets and <wirecloud>/src/deployment/tmps
@@ -229,6 +218,19 @@ performance using the following command:
 
 .. _`runserver command`: https://docs.djangoproject.com/en/dev/ref/django-admin/#runserver-port-or-address-port
 .. _`topic`: https://docs.djangoproject.com/en/dev/howto/deployment/
+
+
+Wirecloud integration with django "sites" framework
+---------------------------------------------------
+
+Wirecloud, by default, uses the hostname provided by the http request when
+building internal URLs. This behaviour is good enough for normal use.
+
+When the `sites framework`_ is installed, Wirecloud make use of it to obtain
+the domain to use when building internal urls. This is very useful when the
+hostname of the request doesn't match the public name of the Wirecloud server.
+
+.. _`sites framework`: https://docs.djangoproject.com/en/dev/ref/contrib/sites/
 
 
 Example of deployment using Apache
