@@ -11,6 +11,16 @@ prototype. For a full list of these options see the *Ajax option* section on
 
 .. _prototype documentation: http://api.prototypejs.org/ajax/
 
+log levels
+----------
+
+The available log levels are:
+
+* ``EzWebAPI.NO_LOG_MSG``
+* ``EzWebAPI.ERROR_MSG``
+* ``EzWebAPI.WARN_MSG``
+* ``EzWebAPI.INFO_MSG``
+
 main functions
 --------------
 
@@ -23,8 +33,8 @@ control request headers if the browser has support for they.
 
 .. method:: EzWebAPI.buildProxyURL(url, options)
 
-``url`` is the target URL.
-``options`` is a optional hash.
+* ``url`` is the target URL.
+* ``options`` is a optional hash.
 
 createRGadgetVariable
 .....................
@@ -49,20 +59,27 @@ Creates a new read-write variable.
 drawAttention
 .............
 
+Makes wirecloud notify that the widget needs user's attention.
+
 .. method:: EzWebAPI.drawAttention()
 
 getId
 .....
+
+Returns current gadget id.
 
 .. method:: EzWebAPI.getId()
 
 log
 ...
 
+Writes a message into the wirecloud's log console.
+
 .. method:: EzWebAPI.log(msg, level)
 
-* ``msg``
-* ``level``
+* ``msg`` is the message to log.
+* ``level`` is an optional parameter with the level to use for logging the
+  message (see `log levels`_ section for more details). (default: INFO_MSG).
 
 send
 ....
@@ -71,10 +88,10 @@ Sends a HTTP request.
 
 .. method:: EzWebAPI.send(url, context, options)
 
-* ``url``
-* ``context``
-* ``options``
-
+* ``url`` is the target URL.
+* ``context`` is the value (must be an object or null) that will be bind to the
+  *this* variable when one of the callbacks are called.
+* ``options`` is an object with request options.
 
 deprecated functions
 --------------------
