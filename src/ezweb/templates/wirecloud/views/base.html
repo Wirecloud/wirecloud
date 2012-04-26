@@ -24,6 +24,7 @@
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dragboard.css" />
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/wiring.css" />
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/catalogue.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/fi-ware_catalogue.css" />
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/catalogue_list.css" />
 
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/default_catalogue.css" />
@@ -63,7 +64,16 @@
 <script id="wirecloud_wiring_template" type="wirecloud/template"><![CDATA[{% include "wirecloud/wiring.html" %}]]></script>
 <script id="catalogue_resource_template" type="html/template"><![CDATA[{% include "wirecloud/catalogue/resource.html" %}]]></script>
 <script id="catalogue_resource_details_template" type="html/template"><![CDATA[{% include "wirecloud/catalogue/resource_details.html" %}]]></script>
+<script id="fiware_catalogue_resource_details_template" type="html/template"><![CDATA[{% include "wirecloud/catalogue/fiware_resource_details.html" %}]]></script>
+<script id="legal_template" type="html/template"><![CDATA[{% include "wirecloud/catalogue/legal_templates/legal_template.html" %}]]></script>
+<script id="legal_clause_template" type="html/template"><![CDATA[{% include "wirecloud/catalogue/legal_templates/legal_clause_template.html" %}]]></script>
+<script id="service_level_template" type="html/template"><![CDATA[{% include "wirecloud/catalogue/sla_templates/service_level_template.html" %}]]></script>
+<script id="sla_expresion_template" type="html/template"><![CDATA[{% include "wirecloud/catalogue/sla_templates/sla_expresion_template.html" %}]]></script>
+<script id="sla_variable_template" type="html/template"><![CDATA[{% include "wirecloud/catalogue/sla_templates/sla_variable_template.html" %}]]></script>
+<script id="pricing_template" type="html/template"><![CDATA[{% include "wirecloud/catalogue/pricing_templates/pricing_template.html" %}]]></script>
+<script id="price_component_template" type="html/template"><![CDATA[{% include "wirecloud/catalogue/pricing_templates/price_component_template.html" %}]]></script>
 <script id="wirecloud_catalogue_publish_interface" type="wirecloud/template"><![CDATA[{% include "wirecloud/catalogue/developers.html" %}]]></script>
+<script id="fiware_catalogue_publish_interface" type="wirecloud/template"><![CDATA[{% include "wirecloud/catalogue/fiware_publish_template.html" %}]]></script>
 <script id="pagination_structure" type="html/template"><![CDATA[{% include "wirecloud/catalogue/pagination_template.html" %}]]></script>
 <script id="wirecloud_catalogue_template" type="wirecloud/template"><![CDATA[{% include "wirecloud/catalogue/template.html" %}]]></script>
 <script id="wirecloud_logs_template" type="wirecloud/template"><![CDATA[{% include "wirecloud/logs.html" %}]]></script>

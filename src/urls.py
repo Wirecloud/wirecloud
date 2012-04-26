@@ -105,6 +105,8 @@ urlpatterns = patterns('',
     (r'^API', include('API.urls')),
 
     (r'^uploader', include('uploader.urls')),
+
+    (r'^marketAdaptor/', include('marketAdaptor.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()

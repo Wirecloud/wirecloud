@@ -13,12 +13,28 @@
 	margin: 0;
 }
 
+#fi-ware_catalogue #tag_categories ul {
+	list-style-type:none;
+	padding-left: 10px;
+	margin: 0;
+}
+
 #catalogue #tag_categories li {
 	padding: 5px 0;
 	cursor: pointer;
 }
 
+#fi-ware_catalogue #tag_categories li {
+	padding: 5px 0;
+	cursor: pointer;
+}
+
+
 #catalogue .resource_list .popularity.no_float, .no_float {
+  float: none;
+}
+
+#fi-ware_catalogue .resource_list .popularity.no_float, .no_float {
   float: none;
 }
 
@@ -26,7 +42,15 @@
   float: left;
 }
 
+#fi-ware_catalogue .tagging_area {
+  float: left;
+}
+
 #catalogue .inline {
+  display: inline;
+}
+
+#fi-ware_catalogue .inline {
   display: inline;
 }
 
@@ -34,7 +58,16 @@
   margin-left: 15px;
 }
 
+#fi-ware_catalogue .submit_tag_link {
+  margin-left: 15px;
+}
+
 #catalogue .tag_links a, #catalogue .my_tags_area a {
+  margin-right: 5px;
+  float: left;
+}
+
+#fi-ware_catalogue .tag_links a, #catalogue .my_tags_area a {
   margin-right: 5px;
   float: left;
 }
@@ -54,12 +87,37 @@
 	margin-left: 5px;
 }
 
+#fi-ware_catalogue .tag_input {
+	-moz-background-clip:border;
+	-moz-background-inline-policy:continuous;
+	-moz-background-origin:padding;
+	-moz-border-radius-bottomleft:5px;
+	-moz-border-radius-bottomright:5px;
+	-moz-border-radius-topleft:5px;
+	-moz-border-radius-topright:5px;
+	background:#EEEEEE none repeat scroll 0 0;
+	border:1px solid #DDDDDD;
+	height:14px;
+	width:120px;
+	margin-left: 5px;
+}
+
 #catalogue .resource_details .tagging_area .operation_area {
   float: none;
   overflow: hidden;
 }
 
+#fi-ware_catalogue .resource_details .tagging_area .operation_area {
+  float: none;
+  overflow: hidden;
+}
+
 #catalogue .resource_details .available_version {
+  float: left;
+  margin-right: 15px;
+}
+
+#fi-ware_catalogue .resource_details .available_version {
   float: left;
   margin-right: 15px;
 }
@@ -75,11 +133,32 @@
   margin-bottom: 5px;
 }
 
+#fi-ware_catalogue .resource_details .operation_area {
+  border: 1px solid #DDDDDD;
+  width:400px;
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  float: left;
+  margin-left: 20px;
+  padding-bottom: 3px;
+  margin-bottom: 5px;
+}
+
 #catalogue .resource_details .operation_area>div {
   margin-left: 10px;
 }
 
+#fi-ware_catalogue .resource_details .operation_area>div {
+  margin-left: 10px;
+}
+
 #catalogue .resource_details .operation_area .operation_content {
+  margin-left: 15px;
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
+#fi-ware_catalogue .resource_details .operation_area .operation_content {
   margin-left: 15px;
   margin-top: 3px;
   margin-bottom: 3px;
@@ -93,7 +172,20 @@
   color: red;
 }
 
+#fi-ware_catalogue .resource_details .message {
+  float: left;
+  padding-left: 15px;
+  font-weight: bold;
+  text-decoration: none;
+  color: red;
+}
+
 #catalogue select {
+  height: 20px;
+  font-size: 8pt;
+}
+
+#fi-ware_catalogue select {
   height: 20px;
   font-size: 8pt;
 }
@@ -108,7 +200,17 @@
   color: black;
 }
 
+#fi-ware_catalogue .paginate a.text,  #catalogue .paginate a.text:visited {
+  cursor: default;
+  text-decoration: none;
+  color: black;
+}
+
 #catalogue .margin_top {
+  margin-top: 10px;
+}
+
+#fi-ware_catalogue .margin_top {
   margin-top: 10px;
 }
 
@@ -116,6 +218,9 @@
   text-decoration: underline;
 }
 
+#fi-ware_catalogue .link:hover  {
+  text-decoration: underline;
+}
 #catalogue .link {
   cursor: pointer;
   color: darkBlue;
@@ -256,6 +361,146 @@
     display: none;
 }
 
+#fi-ware_catalogue .link {
+  cursor: pointer;
+  color: darkBlue;
+}
+
+#fi-ware_catalogue .developer_image {
+    width: 200px;
+    height: 120px;
+    margin: 1ex 2ex 2ex 0;
+    float: left;
+}
+
+#fi-ware_catalogue .developer_title {
+  font-size:18px;
+}
+
+#fi-ware_catalogue .developer_block {
+  clear:both;
+  float:left;
+  margin-bottom:25px;
+  padding-left:15px;
+  width: 100%;
+}
+
+#fi-ware_catalogue .developer_description {
+  padding-left: 15px;
+  padding-top: 8px;
+  max-width: 700px;
+}
+
+#fi-ware_catalogue .developer_block button, #catalogue #template_uri, #catalogue #gadget_uri {
+  margin-left:15px;
+  margin-top:10px;
+}
+
+#fi-ware_catalogue .float_left {
+  float: left;
+}
+
+#fi-ware_catalogue #left_bar {
+	float:left;
+	display:inline;
+	position:relative;
+	width: 13%;
+	padding: 7px 10px 0 10px;
+	margin: 0;
+	height: 1000px;
+}
+
+#fi-ware_catalogue #left_bar a:hover {
+   text-decoration:none;
+}
+
+#fi-ware_catalogue #left_bar .bar_widget {
+	margin: 0 0 20px 0;
+}
+
+#fi-ware_catalogue #left_bar .widget_title {
+	font-size: 105%;
+	margin: 10px 0;
+}
+
+#fi-ware_catalogue #left_bar .widget_content {
+	overflow-x: auto;
+	margin-top: 10px;
+}
+
+#fi-ware_catalogue .simple_search {
+	float: left;
+	position: relative;
+	left: 10px;
+}
+
+#fi-ware_catalogue .simple_search #simple_search_text {
+    margin: 0px;
+    padding: 0px;
+    -moz-background-clip:border;
+    -moz-background-inline-policy:continuous;
+	-moz-background-origin:padding;
+	-moz-border-radius-bottomleft:4px;
+	-moz-border-radius-bottomright:4px;
+	-moz-border-radius-topleft:4px;
+	-moz-border-radius-topright:4px;
+	background:#E6F3FF none repeat scroll 0 0;
+}
+
+#fi-ware_catalogue #catalogue_content {
+	float:left;
+    padding-left:10px;
+    position:relative;
+    width:84%;
+    padding-top: 7px;
+}
+
+#fi-ware_catalogue #catalogue_resources_header{
+	float: left;
+	clear: both;
+	width: 100%;
+}
+
+#fi-ware_catalogue .paginate_show {
+    display: inline;
+    float:right;
+    margin-right: 10px;
+}
+
+#fi-ware_catalogue .orderby {
+	display:inline;
+	float:right;
+	margin-right: 10px;
+}
+
+#fi-ware_catalogue .paginate {
+	padding-top:2px;
+	padding-bottom:7px;
+	float:right;
+	margin-right: 10px;
+}
+
+#fi-ware_catalogue .resource_list .resource {
+    clear: both;
+    margin-right: 10px;
+    position: relative;
+}
+
+#fi-ware_catalogue .resource_list .header_resource {
+	border-top: 1px solid;
+}
+
+#fi-ware_catalogue .section_ie_compatibility .warning {
+    background-color: #FFFFA8;
+    border: black solid 1px;
+    padding: 3px;
+    margin-top: 2px;
+}
+
+#fi-ware_catalogue .section_ie_compatibility .hidden {
+    display: none;
+}
+
 /*
 ///////////
 Resource
@@ -286,12 +531,40 @@ Resource
     display: block;
 }
 
+#fi-ware_catalogue .resource_list > .resource .resource_name {
+    padding-bottom: 8px;
+    max-width: 350px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+#fi-ware_catalogue .resource h2 {
+    display: inline-block;
+}
+
+#fi-ware_catalogue .resource h3 {
+    margin: 0.5ex 0 1ex 0;
+}
+
+#fi-ware_catalogue .resource .image {
+    width: 170px;
+    height: 80px;
+    border: 1px solid;
+    border-color: #BBBBBB;
+    background: white;
+    display: block;
+}
 .resource .popularity {
     display: inline-block;
     margin-left: 15px;
 }
 
 #catalogue .resource_list .resource_details .voting_label {
+  float: left;
+  margin: 5px;
+}
+
+#fi-ware_catalogue .resource_list .resource_details .voting_label {
   float: left;
   margin: 5px;
 }
@@ -390,6 +663,65 @@ Resource
   top: 0px;
 }
 
+
+
+#fi-ware_catalogue .padding_left {
+  padding-left: 5px;
+}
+
+#fi-ware_catalogue .padding_right {
+  padding-right: 5px;
+}
+
+#fi-ware_catalogue .section_title {
+  clear:both;
+  font-size:13pt;
+  padding-bottom:5px;
+  padding-top:10px;
+}
+
+#fi-ware_catalogue .resource_list .resource .desc, #catalogue .resource_list .resource_details .desc {
+  clear: both;
+  max-width: 650px;
+}
+
+#fi-ware_catalogue .resource_list .resource .tags, #catalogue .resource_list .resource_details .tags {
+  float: left;
+  padding-top: 10px;
+}
+
+#fi-ware_catalogue .resource_list .resource .tags .tags_label, #catalogue .resource_list .resource_details .tags {
+  float: left;
+  margin-right:10px;
+}
+
+#fi-ware_catalogue .resource_list .resource .footer_resource {
+  height: 10px;
+  clear: both;
+  bottom: 0px;
+  float: left;
+}
+
+#fi-ware_catalogue .resource .left_column_resource {
+  float: left;
+  width: 25%;
+  text-align: center;
+}
+
+#fi-ware_catalogue .resource > .left_column_resource > img {
+    display: inline;
+}
+
+#fi-ware_catalogue .resource .right_column_resource {
+  float: left;
+  width: 75%;
+}
+
+#fi-ware_catalogue .resource_list .header_resource, #catalogue .resource_list .header_resource {
+  height: 10px;
+  clear: both;
+  top: 0px;
+}
 /* /////////////// */
 
 .purchase_window_table td.app_name {
@@ -416,6 +748,14 @@ Resource
 }
 
 #catalogue .toolbar_option {
+  float: left;
+}
+
+#fi-ware_catalogue #toolbar {
+  width: 100%;
+}
+
+#fi-ware_catalogue .toolbar_option {
   float: left;
 }
 

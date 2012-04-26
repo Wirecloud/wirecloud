@@ -1,0 +1,49 @@
+{% load i18n %}
+<div class="back_to_resource_list link">« {% trans 'Close resource details' %}</div>
+
+<div class="resource detailed">
+
+    <div class="left_column_resource">
+        <img src="#{image_url}" class="image">
+        <div class="buttons">
+            <button class="instanciate_button">#{button_text}</button>
+        </div>
+    </div>
+
+    <div class="right_column_resource">
+        <div>
+            <h2 class="resource_name">#{name}</h2>
+        </div>
+
+		<div class="fiware_descriptions">
+        <h3>{% trans 'Description' %}</h3>
+        <div class="desc padding_left">#{shortDescription}</div>
+		<h3>{% trans 'Detailed Description' %}</h3>
+        <div class="desc padding_left">#{longDescription}</div>
+		</div>
+
+        <h3>{% trans 'Tags' %}</h3>
+        <div class="tag_links padding_left"></div>
+
+        <h3>{% trans 'Detailed data' %}</h3>
+		<div class="bold padding_left floating_left padding_right">{% trans 'Store:' %}</div>
+        <div>#{store}</div>
+        <div class="bold padding_left floating_left padding_right">{% trans 'Vendor:' %}</div>
+        <div>#{vendor}</div>
+        <div class="bold padding_left floating_left padding_right">{% trans 'Name:' %}</div>
+        <div>#{name}</div>
+        <div class="bold padding_left floating_left padding_right">{% trans 'Version:' %}</div>
+        <div>#{version}</div>
+        <div class="bold padding_left floating_left padding_right">{% trans 'Created:' %}</div>
+        <div>#{created}</div>
+		<div class="bold padding_left floating_left padding_right">{% trans 'Modified:' %}</div>
+        <div>#{created}</div>
+        <div class="bold padding_left floating_left padding_right">{% trans 'Available versions:' %}</div>
+        <div>#{versions}</div>
+		<div class="bold padding_left floating_left padding_right">{% trans 'More info at:' %}</div>
+        <div class="link"><a target="_blank" href="#{page}">#{page}</a></div>
+        <h3>{% trans 'Advanced operations' %}</h3>
+        <div class="advanced_operations"></div>
+    </div>
+    <div class="footer_resource"></div>
+</div>

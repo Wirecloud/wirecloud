@@ -1,0 +1,14 @@
+{% load i18n %}
+<div class="right_column_resource">
+		<h4>{% trans 'Price element:' %}</h4>
+		<div class="bold padding_left floating_left padding_right">{% trans 'Title:' %}</div>
+        <div>#{title}</div>
+		<div class="bold padding_left floating_left padding_right">{% trans 'Description:' %}</div>
+        <div>#{description}</div>
+		<div class="bold padding_left floating_left padding_right">{% trans 'Value:' %}</div>
+        <div>#{value} #{currency} #{unit}</div>
+
+    <div class="footer_resource"></div>
+</div>
+
+

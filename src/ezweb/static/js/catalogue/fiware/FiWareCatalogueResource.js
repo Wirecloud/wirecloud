@@ -27,14 +27,15 @@
 /*global $, GadgetVersion */
 "use strict";
 
-function CatalogueResource(resourceJSON_) {
+function FiWareCatalogueResource(resourceJSON_) {
 
     ///////////////////////
     // PRIVATE VARIABLES
     ///////////////////////
     var vendor = resourceJSON_.vendor,
         name = resourceJSON_.name,
-        type = resourceJSON_.type,
+		store = resourceJSON_.store,
+		market_name = resourceJSON_.marketName,
         currentVersion = null,
         allVersions = [],
         data_by_version = {},
@@ -49,20 +50,16 @@ function CatalogueResource(resourceJSON_) {
     //////////////////////////
     // GETTERS
     /////////////////////////
-    this.getCreator = function () {
-        return currentVersion.author;
-    };
 
+	this.isMashup = function(){
+		return false;
+	};
     this.getVendor = function () {
         return vendor;
     };
 
     this.getName = function () {
         return name;
-    };
-
-    this.getDisplayName = function () {
-        return currentVersion.displayName;
     };
 
     this.getVersion = function () {
@@ -81,8 +78,12 @@ function CatalogueResource(resourceJSON_) {
         return allVersions;
     };
 
-    this.getDescription = function () {
-        return currentVersion.description;
+    this.getShortDescription = function () {
+        return currentVersion.shortDescription;
+    };
+
+	this.getLongDescription = function () {
+        return currentVersion.longDescription;
     };
 
     this.getUriImage = function () {
@@ -93,57 +94,43 @@ function CatalogueResource(resourceJSON_) {
         return currentVersion.uriTemplate;
     };
 
-    this.getUriWiki = function () {
-        return currentVersion.uriWiki;
+	this.getPage = function () {
+        return currentVersion.page;
     };
 
-    this.isMashup = function () {
-        return type === 'mashup';
+	this.getCreated = function () {
+        return currentVersion.created;
     };
 
-    this.isGadget = function () {
-        return type === 'gadget';
+	this.getModified = function () {
+        return currentVersion.modified;
     };
 
-    this.getAddedBy = function () {
-        return currentVersion.addedBy;
-    };
+	this.getPricing = function() {
+		return currentVersion.pricing;
+	};
 
-    this.getTags = function () {
-        return currentVersion.tags;
-    };
+	this.getSla = function() {
+		return currentVersion.sla;
+	};
+	
+	this.getLegal = function() {
+		return currentVersion.legal;
+	};
 
-    this.getSlots = function () {
-        return currentVersion.slots;
-    };
+	this.getStore = function() {
+		return store;
+	};
 
-    this.getEvents = function () {
-        return currentVersion.events;
-    };
-
-    this.getVotes = function () {
-        return currentVersion.votes.votes_number;
-    };
-
-    this.getUserVote = function () {
-        return currentVersion.votes.user_vote;
-    };
-
-    this.getPopularity = function () {
-        return currentVersion.votes.popularity;
-    };
-
-    this.getCapabilities = function () {
-        return currentVersion.capabilities;
-    };
+	this.getMarketName = function() {
+		return market_name;
+	};
 
     this.getExtraData = function () {
         return extra_data;
     };
 
-    this.getIeCompatible = function () {
-        return currentVersion.ieCompatible;
-    };
+	
 
     //////////////
     // SETTERS
@@ -151,14 +138,6 @@ function CatalogueResource(resourceJSON_) {
 
     this.setExtraData = function (extra_data_) {
         extra_data = extra_data_;
-    };
-
-    this.setTags = function (tagsJSON_) {
-        currentVersion.tags = tagsJSON_;
-    };
-
-    this.setVotes = function (voteDataJSON_) {
-        currentVersion.votes = voteDataJSON_;
     };
 
     /////////////////////////////
@@ -181,16 +160,17 @@ function CatalogueResource(resourceJSON_) {
     ////////////////////////
     versions = resourceJSON_.versions;
 
-    function flat_friendcode(x) {
+    /*function flat_friendcode(x) {
         return x.friendcode;
-    }
+    }*/
 
     for (i = 0; i < versions.length; i += 1) {
         version_data = versions[i];
 
         version_data.version = new GadgetVersion(version_data.version, 'catalogue');
-        version_data.events = version_data.events.map(flat_friendcode);
-        version_data.slots = version_data.slots.map(flat_friendcode);
+        /*version_data.events = version_data.events.map(flat_friendcode);
+        version_data.slots = version_data.slots.map(flat_friendcode);*/
+
         allVersions.push(version_data.version);
         data_by_version[version_data.version.text] = version_data;
     }

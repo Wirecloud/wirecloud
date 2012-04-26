@@ -1,0 +1,26 @@
+{% load i18n %}
+
+<div class="back_to_resource_list link">« {% trans 'Close publish form' %}</div>
+
+<div class="developer_block">
+    <h2>{% trans "Adding gadgets and mashups using a USDL description" %}</h2>
+    <img class="developer_image" src="{{STATIC_URL}}images/catalogue/developer_template.png"></img>
+    <div class="developer_description">
+        <p>{% trans "If you have the USDL description of a gadget or a mashup, you can add it to the marketplace by writing the URL of the USDL in the text field below." %}</p>
+    <div>
+    <form class="usdl_submit_form">
+		<div>
+			<p>{% trans "Add marketplace store name" %}</p>
+            <input type="text" name="store_name" id="store_name">
+        </div>
+		<div>
+			<p>{% trans "Add new gadget or mashup name" %}</p>
+            <input type="text" name="service_name" id="service_name">
+        </div>
+        <div>
+			<p>{% trans "Add marketplace store name" %}</p>
+            <input type="text" name="usdl_url" id="usdl_url">
+            <button class="submit_link" id="submit_link">{% trans "Add" %}</button>
+        </div>
+    </form>
+</div>

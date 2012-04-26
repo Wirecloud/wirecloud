@@ -32,7 +32,8 @@ var MarketplaceView = function (id, options) {
     this.appendChild(this.alternatives);
 
     this.viewsByName = {
-        'cat-local': this.alternatives.createAlternative({alternative_constructor: CatalogueView, containerOptions: {catalogue: this}})
+        'cat-local': this.alternatives.createAlternative({alternative_constructor: CatalogueView, containerOptions: {catalogue: this}}),
+		'cat-remote': this.alternatives.createAlternative({alternative_constructor: FiWareCatalogueView, containerOptions: {catalogue: this}})
     };
 
     this.marketMenu = new StyledElements.PopupMenu();

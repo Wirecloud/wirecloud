@@ -30,18 +30,19 @@ var CatalogueView = function (id, options) {
     this.appendChild(this.alternatives);
 
     this.viewsByName = {
-        'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: {catalogue: this}}),
+        'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: {catalogue: this, resource_painter: ResourcePainter}}),
         'developer': this.alternatives.createAlternative({alternative_constructor: CataloguePublishView, containerOptions: {catalogue: this}}),
         'details': this.alternatives.createAlternative({alternative_constructor: ResourceDetailsView, containerOptions: {catalogue: this}})
     };
 
     this.view_all_template = new Template(URIs.GET_POST_RESOURCES + '/#{starting_page}/#{resources_per_page}');
     this.simple_search_template = new Template(URIs.GET_RESOURCES_SIMPLE_SEARCH + '/simple_or/#{starting_page}/#{resources_per_page}');
+
 };
 CatalogueView.prototype = new StyledElements.Alternative();
 
 CatalogueView.prototype.getLabel = function () {
-    return gettext('local');
+    return gettext('wirecloud marketplace');
 };
 
 CatalogueView.prototype._onShow = function () {
@@ -51,7 +52,6 @@ CatalogueView.prototype._onSearchSuccess = function (transport) {
     var preferred_versions, i, data, key, raw_data, resources, resource;
 
     raw_data = JSON.parse(transport.responseText);
-
     if (raw_data.resources) {
         preferred_versions = CookieManager.readCookie('preferred_versions', true);
         if (preferred_versions === null) {
