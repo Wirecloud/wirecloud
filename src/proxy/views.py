@@ -207,10 +207,10 @@ class Proxy(Resource):
             try:
                 res = self._do_request(opener, request_data['method'], request_data['url'], request_data['data'], request_data['headers'])
             except urllib2.URLError, e:
-                if e.reason[0] == errno.ECONNREFUSED:
+                if e.reason[0] in (errno.ECONNREFUSED, errno.ETIMEDOUT):
                     return HttpResponse(status=504)
                 else:
-                    return HttpResponseNotFound(e.reason)
+                    return HttpResponseNotFound(str(e.reason))
 
             # Add content-type header to the response
             res_info = res.info()
