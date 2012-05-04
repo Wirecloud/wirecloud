@@ -37,7 +37,7 @@ from commons.utils import json_encode
 
 
 
-def get_resource_list_from_store(request, marketplace='localhost:8080',store='testStore'):
+def get_resource_list_from_store(request, store, marketplace='localhost:8080'):
 
     adaptor = MarketAdaptor(marketplace)
 
@@ -45,10 +45,10 @@ def get_resource_list_from_store(request, marketplace='localhost:8080',store='te
 
     return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
-def get_resource_list_from_keyword(request, keyword="widget", marketplace='localhost:8080'):
+def get_resource_list_from_keyword(request, store="", keyword="widget", marketplace='localhost:8080'):
 
     adaptor = MarketAdaptor(marketplace)
-    result = adaptor.full_text_search(keyword)
+    result = adaptor.full_text_search(store,keyword)
 
     return HttpResponse(json_encode(result),mimetype='application/json; chaset=UTF-8')
 
@@ -70,8 +70,34 @@ def delete_service_from_marketplace(request, store, service_name, marketplace='l
 
     return HttpResponse()
 
+def get_store_list(request,marketplace='localhost:8080'):
+
+    adaptor = MarketAdaptor(marketplace)
+    result = adaptor.get_all_stores()
+
+    return HttpResponse(json_encode(result),mimetype='application/json; chaset=UTF-8')
+
+def manage_store_in_marketplace(request, store, marketplace='localhost:8080'):
+    
+    adaptor = MarketAdaptor(marketplace)
+    #import ipdb; ipdb.set_trace()
+
+    if request.POST:
+        store_info = {}
+        store_info['store_name'] = store
+        store_info['store_uri'] = request.POST['uri']
+        result = adaptor.add_store(store_info)
+        return HttpResponse()
+    else:
+        
+        result = adaptor.delete_store(store)
+        return HttpResponse() 
+
+    
+    
 
 
+    
 
 
 

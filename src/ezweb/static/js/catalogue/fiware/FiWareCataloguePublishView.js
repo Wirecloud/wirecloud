@@ -46,18 +46,17 @@ FiWareCataloguePublishView.prototype._submit_usdl = function(e){
 	LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding resource to the marketplace"), 1);
     LayoutManagerFactory.getInstance().logSubTask(gettext('Sending usdl description to marketplace'));
 
-	store_name = $('store_name').value;
-	url = 'http://localhost:8000/marketAdaptor/' + store_name;
+	url = 'http://localhost:8000/marketAdaptor/' + this.catalogue.getCurrentStore();
 
 	Wirecloud.io.makeRequest(url, {
         method: 'POST',
-		// TODO think about service name and store selection
         parameters: {'url': $('usdl_url').value,
 					 'name': $('service_name').value},
         onSuccess: function (transport) {
             LayoutManagerFactory.getInstance().logSubTask(gettext('Resource uploaded successfully'));
             LayoutManagerFactory.getInstance().logStep('');
-        },
+			this.catalogue.refresh_search_results();
+        }.bind(this),
         onFailure: function (transport) {
             var msg = LogManagerFactory.getInstance().formatError(gettext("Error uploading resource: %(errorMsg)s."), transport);
             LogManagerFactory.getInstance().log(msg);
@@ -67,7 +66,7 @@ FiWareCataloguePublishView.prototype._submit_usdl = function(e){
         onComplete: function () {
             LayoutManagerFactory.getInstance()._notifyPlatformReady();
 			this.catalogue.home();
-        }
+        }.bind(this)
     });
 };
 

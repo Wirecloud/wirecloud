@@ -64,6 +64,7 @@ var FiWareResourceDetailsPainter = function (catalogue, details_structure_elemen
 			pricing_painter,legal_button_info,sla_button_info,pricing_button_info;
 		
         this.main_description.clear();
+		// The fields in this dictionary are only used in delete requests
 		this.delete_options = {'store': resource.getStore(),
 							   'name': resource.getMarketName()};
         /*if (resource.getIeCompatible()) {

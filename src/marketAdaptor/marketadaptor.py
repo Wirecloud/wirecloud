@@ -64,12 +64,14 @@ class MarketAdaptor(object):
 
         parsed_body = etree.fromstring(body)
 
-        result = {}
+        result = []
 
         for res in parsed_body.xpath(RESOURCE_XPATH):
-            name = res.get('name')
+            store={}
+            store['name'] = res.get('name')
             url = res.xpath(URL_XPATH)[0].text
-            result[name]=url
+            store['url']=url
+            result.append(store)
 
         return result
 
@@ -95,13 +97,32 @@ class MarketAdaptor(object):
         
 
     def add_store(self,store_info):
-        pass
+        params='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><resource name="' + store_info['store_name'] +'" ><url>' + store_info['store_uri'] + '</url></resource>'
+        headers = {'content-type': 'application/xml'}
+
+        connection = httplib.HTTPConnection(self._marketplace_uri)
+        connection.request("PUT", "http://localhost:8080/FiwareMarketplace/v1/registration/store/", params, headers)
+        response = connection.getresponse()
+        
+        if response.status != 201:
+            msg =_("Connection error:Server response status %(res)s" % {"res":response.status})
+            # TODO create a especific exeption
+            raise Exception(msg)
 
     def update_store(self,store_info):
         pass
 
     def delete_store(self,store):
-        pass
+        connection = httplib.HTTPConnection(self._marketplace_uri)
+        connection.request("DELETE", "/FiwareMarketplace/v1/registration/store/" + store)
+        response = connection.getresponse()
+
+        if response.status != 200:
+            msg =_("Connection error:Server response status %(res)s" % {"res":response.status})
+            # TODO create a especific exeption
+            raise Exception(msg)
+
+        
 
     def get_all_services_from_store(self,store):
         connection = httplib.HTTPConnection(self._marketplace_uri)
@@ -121,11 +142,20 @@ class MarketAdaptor(object):
         for res in parsed_body.xpath(RESOURCE_XPATH):
             url =  res.xpath(URL_XPATH)[0].text
             try:
-                usdl_document = download_http_content(url)
+                url_elements = urlparse(url)
+                connection = httplib.HTTPConnection(url_elements[1])
+                headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"} 
+                connection.request("GET", url_elements[2], "",  headers)
+                response = connection.getresponse()
+                usdl_document=response.read()
                 parser = USDLParser(usdl_document)
             except:
 	        continue
-            result['resources'].append(parser.parse)
+            
+            parsed_usdl=parser.parse()
+            parsed_usdl['store']=store
+            parsed_usdl['marketName']=res.get('name')
+            result['resources'].append(parsed_usdl)
 
         return result
 
@@ -160,7 +190,7 @@ class MarketAdaptor(object):
             # TODO create a especific exeption
             raise Exception(msg)
 
-    def full_text_search(self,search_string):
+    def full_text_search(self,store,search_string):
         
         connection = httplib.HTTPConnection(self._marketplace_uri)
         connection.request("GET", "/FiwareMarketplace/v1/search/fulltext/" + search_string)
@@ -168,7 +198,7 @@ class MarketAdaptor(object):
 
         if response.status != 200:
             msg =_("Connection error:Server response status %(res)s" % {"res":response.status})
-            # TODO create a especific exeption
+            # TODO create a especific exception
             raise Exception(msg)
 
         body = response.read()
@@ -176,10 +206,22 @@ class MarketAdaptor(object):
 
         result = {'resources': []}
         for res in parsed_body.xpath(SEARCH_RESULT_XPATH):
-            for service in res.xpath(SEARCH_SERVICE_XPATH):
-                url = service.xpath(URL_XPATH)[0].text
-                try:
-                    #TODO url parser
+            service = res.xpath(SEARCH_SERVICE_XPATH)[0]
+            url = service.xpath(URL_XPATH)[0].text
+            service_store = res.xpath(SEARCH_STORE_XPATH)[0].get('name')
+            try:
+                if store != '':
+                    if store == service_store:
+                        url_elements = urlparse(url)
+                        connection = httplib.HTTPConnection(url_elements[1])
+                        headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"} 
+                        connection.request("GET", url_elements[2], "",  headers)
+                        response = connection.getresponse()
+                        usdl_document=response.read()
+                        parser = USDLParser(usdl_document)
+                    else:
+                        continue
+                else:
                     url_elements = urlparse(url)
                     connection = httplib.HTTPConnection(url_elements[1])
                     headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"} 
@@ -187,11 +229,12 @@ class MarketAdaptor(object):
                     response = connection.getresponse()
                     usdl_document=response.read()
                     parser = USDLParser(usdl_document)
-                except:
-                    continue
+            except:
+                continue
 
-                parsed_usdl=parser.parse()
-                parsed_usdl['store']=res.xpath(SEARCH_STORE_XPATH)[0].get('name')
-                parsed_usdl['marketName']=service.get('name')
-                result['resources'].append(parsed_usdl)
+            parsed_usdl=parser.parse()
+            parsed_usdl['store']=service_store
+            parsed_usdl['marketName']=service.get('name')
+            result['resources'].append(parsed_usdl)
+
         return result

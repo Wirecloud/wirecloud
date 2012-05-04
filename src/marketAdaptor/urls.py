@@ -35,7 +35,11 @@ urlpatterns = patterns('marketAdaptor.views',
 
     #Next url search all gadgets in every store using the keyword gadget
     url(r'^resources$', 'get_resource_list_from_keyword'),
+    url(r'^resources/(?P<store>\w+)$','get_resource_list_from_store'),
     url(r'^search/(?P<keyword>\w+)$','get_resource_list_from_keyword'),
+    url(r'^search/(?P<store>\w+)/(?P<keyword>\w+)$','get_resource_list_from_keyword'),
+    url(r'^stores$','get_store_list'),
+    url(r'^stores/(?P<store>\w+)$','manage_store_in_marketplace'),
     url(r'^(?P<store>\w+)$','add_service_to_marketplace'),
     url(r'^(?P<store>\w+)/(?P<service_name>\w+)$','delete_service_from_marketplace')
 )

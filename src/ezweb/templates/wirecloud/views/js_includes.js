@@ -66,6 +66,7 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/fiware/FiWareResourcePainter.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/fiware/FiWareResourceDetailsExtraInfo.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/fiware/FiWareResourceDetailsPainter.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/fiware/FiWareStoreListItems.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/CatalogueResource.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/ResourceDetailsPainter.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/CataloguePublishView.js"></script>
