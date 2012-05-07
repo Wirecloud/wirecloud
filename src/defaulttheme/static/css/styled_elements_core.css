@@ -151,8 +151,9 @@ div.styled_text_field div input:focus {
 /* Styled Text Area */
 
 div.styled_text_area {
-  overflow: hidden;
-  height: 5em;
+    overflow: hidden;
+    height: 5em;
+    position: relative;
 }
 
 div.styled_text_area > div {
