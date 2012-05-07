@@ -877,20 +877,3 @@ WorkSpace.prototype.highlightTab = function(tab) {
         delete this.highlightTimeouts[tab.tabInfo.id];
     }.bind(this), 10000);
 };
-
-/**
- * Returns the sub menu items for the wirecloud header
- */
-WorkSpace.prototype.getSubMenuItems = function () {
-    var share_window = null; //new ShareWindowMenu(null);
-
-    return [
-        {
-            'label': gettext('Share'),
-            'callback': function () {
-                share_window.show();
-            },
-        }
-//        {'label': gettext('Export'), 'callback': 5}
-    ]
-};

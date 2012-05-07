@@ -20,6 +20,8 @@
  */
 
 var WirecloudHeader = function () {
+    var menu_wrapper;
+
     this.wrapperElement = $('wirecloud_header');
     this.breadcrum = $('wirecloud_breadcrum');
 
@@ -31,16 +33,19 @@ var WirecloudHeader = function () {
     this.submenu.className = 'submenu';
     this.wrapperElement.insertBefore(this.submenu, this.wrapperElement.firstChild);
 
+    menu_wrapper = document.createElement('div');
+    menu_wrapper.className = 'menu_wrapper';
     this.menu = document.createElement('div');
     this.menu.className = 'menu';
-    this.wrapperElement.insertBefore(this.menu, this.wrapperElement.firstChild);
+    menu_wrapper.appendChild(this.menu);
+    this.wrapperElement.insertBefore(menu_wrapper, this.wrapperElement.firstChild);
 
     this._initMenuBar();
     this._initUserMenu();
 }
 
 WirecloudHeader.prototype._initMenuBar = function () {
-    var menues, menu, menu_element, i, view_name;
+    var menues, menu, mark, menu_element, i, view_name;
 
     this.menues = {
         'workspace': {label: gettext('Editor')},
@@ -60,6 +65,9 @@ WirecloudHeader.prototype._initMenuBar = function () {
             LayoutManagerFactory.getInstance().changeCurrentView(this.view);
         }.bind({'view': view_name}), true);
 
+        var mark = document.createElement('div');
+        mark.className = 'mark';
+        menu_element.appendChild(mark);
         this.menu.appendChild(menu_element);
         menu['html_element'] = menu_element;
     }
@@ -144,33 +152,6 @@ WirecloudHeader.prototype._paintBreadcrum = function (newView) {
     }
 };
 
-WirecloudHeader.prototype._paintSubMenu = function (newView) {
-
-    this.submenu.innerHTML = '';
-    if ('getSubMenuItems' in newView) {
-        menuitems = newView.getSubMenuItems();
-    } else {
-        return;
-    }
-
-    this.submenu.addClassName(newView.view_name);
-    triangle = document.createElement('div');
-    triangle.className = 'mark';
-    this.submenu.appendChild(triangle);
-
-    for (i = 0; i < menuitems.length; i += 1) {
-        submenu = menuitems[i];
-
-        submenu_element = document.createElement('span');
-        submenu_element.setTextContent(submenu.label);
-        submenu_element.addEventListener('click', submenu.callback.bind(newView), true);
-        this.submenu.appendChild(submenu_element);
-    }
-    this.submenu.style.right = '';
-    startx = this.menu.offsetWidth - this.currentMenu.html_element.offsetLeft;
-    this.submenu.style.right = startx - this.submenu.offsetWidth + 'px';
-};
-
 WirecloudHeader.prototype._notifyViewChange = function (newView) {
     var menuitems, triangle, startx;
 
@@ -188,5 +169,4 @@ WirecloudHeader.prototype._notifyViewChange = function (newView) {
 
 WirecloudHeader.prototype.refresh = function () {
     this._paintBreadcrum(this.currentView);
-    this._paintSubMenu(this.currentView);
 };

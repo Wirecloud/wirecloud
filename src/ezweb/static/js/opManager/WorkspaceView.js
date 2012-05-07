@@ -40,9 +40,6 @@ var WorkspaceView = function (id, options) {
 WorkspaceView.prototype = new StyledElements.Alternative();
 
 WorkspaceView.prototype.view_name = 'workspace';
-WorkspaceView.prototype.getSubMenuItems = function () {
-    return WorkSpace.prototype.getSubMenuItems();
-};
 
 WorkspaceView.prototype.getBreadcrum = function () {
     var workspace, workspace_name, entries;

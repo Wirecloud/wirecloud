@@ -773,15 +773,6 @@ WiringInterface.prototype.getBreadcrum = function () {
     return workspace_breadcrum;
 };
 
-/**
- * Returns the sub menu items for the wirecloud header
- */
-WiringInterface.prototype.getSubMenuItems = function () {
-    return [
-        {'label': gettext('New channel'), 'callback': this._createChannel}
-    ]
-};
-
 // ***********************************
 //  COLOR SCHEME FOR HIGHLIGHTS
 //  More colors in color_scheme.js file but now it is not used!
