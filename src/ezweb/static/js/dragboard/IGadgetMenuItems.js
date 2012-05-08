@@ -37,7 +37,7 @@ IGadgetMenuItems.prototype.build = function () {
 
     if (this.has_prefs) {
         items.push(new StyledElements.MenuItem(
-            gettext("Preferences"),
+            gettext("Settings"),
             function () {
                 var prueba = new Wirecloud.Widget.PreferencesWindowMenu();
                 prueba.show(this);
