@@ -36,6 +36,11 @@ var WorkspaceView = function (id, options) {
     this.wsMenu.append(new StyledElements.MenuItem(gettext('New workspace'), function () {
         this.createWorkspaceWindow.show();
     }.bind(this)));
+
+    this.wsMenu.append(new StyledElements.MenuItem(gettext('Publish'), function () {
+        var window = new PublishWindowMenu(OpManagerFactory.getInstance().activeWorkSpace);
+        window.show();
+    }.bind(this)));
 };
 WorkspaceView.prototype = new StyledElements.Alternative();
 

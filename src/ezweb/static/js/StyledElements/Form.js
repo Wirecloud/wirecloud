@@ -10,11 +10,13 @@ function Form(fields, options) {
 
     defaultOptions = {
         'readOnly': false,
+        'buttonArea': null,
         'acceptButton': true,
         'cancelButton': true,
         'useHtmlForm': true,
         'legend': 'auto',
-        'edition': false
+        'edition': false,
+        'factory': Wirecloud.form.WirecloudInterfaceFactory
     };
     if (options && options.readOnly) {
         defaultOptions.acceptButton = false;
@@ -28,11 +30,15 @@ function Form(fields, options) {
     this.fields = {};
     this.fieldInterfaces = {};
     this.edition = options.edition;
+    this.factory = options.factory;
 
     // Build GUI
     div = document.createElement('div');
     if (options.useHtmlForm) {
         this.wrapperElement = document.createElement('form');
+        this.wrapperElement.addEventListener('submit', function (e) {
+            e.preventDefault();
+        }, true);
         this.wrapperElement.appendChild(div);
     } else {
         this.wrapperElement = div;
@@ -58,9 +64,13 @@ function Form(fields, options) {
     div.appendChild(this.msgElement);
     this.pSetMsgs([]);
 
-    buttonArea = document.createElement('div');
-    buttonArea.className = 'buttons';
-    div.appendChild(buttonArea);
+    if (options.buttonArea != null) {
+        buttonArea = options.buttonArea;
+    } else {
+        buttonArea = document.createElement('div');
+        buttonArea.className = 'buttons';
+        div.appendChild(buttonArea);
+    }
 
     // Accept button
     this.pAcceptHandler = EzWebExt.bind(this.pAcceptHandler, this);
@@ -68,7 +78,10 @@ function Form(fields, options) {
     if (options.acceptButton instanceof StyledElements.StyledButton) {
         this.acceptButton = options.acceptButton;
     } else if (options.acceptButton === true) {
-        this.acceptButton = new StyledElements.StyledButton({text: 'Accept'});
+        this.acceptButton = new StyledElements.StyledButton({
+            usedInForm: true,
+            text: 'Accept'
+        });
     }
     if (this.acceptButton !== null) {
         this.acceptButton.addEventListener("click", this.pAcceptHandler);
@@ -81,7 +94,10 @@ function Form(fields, options) {
     if (options.cancelButton instanceof StyledElements.StyledButton) {
         this.cancelButton = options.cancelButton;
     } else if (options.cancelButton === true) {
-        this.cancelButton = new StyledElements.StyledButton({text: 'Cancel'});
+        this.cancelButton = new StyledElements.StyledButton({
+            usedInForm: true,
+            text: 'Cancel'
+        });
     }
     if (this.cancelButton !== null) {
         this.cancelButton.addEventListener("click", this.pCancelHandler);
@@ -107,8 +123,40 @@ Form.prototype.pSetMsgs = function (msgs) {
     }
 };
 
+Form.prototype.pBuildFieldGroups = function (fields) {
+    var notebook, i, field, tab, tmp_field, tmp_input;
+
+    notebook = new StyledElements.StyledNotebook();
+
+    for (i = 0; i < fields.length; i += 1) {
+        field = fields[i];
+        tab = notebook.createTab({name:field.shortTitle, closable: false});
+        if (field.nested === true) {
+            tmp_field = {
+                'name': field.name,
+                'type': 'fieldset',
+                'fields': field.fields
+            };
+            tmp_input = this.factory.createInterface(field.name, tmp_field);
+
+            this.fieldInterfaces[field.name] = tmp_input;
+            this.fields[field.name] = tmp_field;
+            tab.appendChild(tmp_input);
+        } else {
+            tab.appendChild(this.pBuildFieldTable(field.fields));
+        }
+    }
+
+    return notebook.wrapperElement;
+};
+
 Form.prototype.pBuildFieldTable = function (fields) {
     var table, tbody, fieldId, field, row, cell;
+
+    // TODO
+    if (fields[0] && fields[0].type === 'group') {
+        return this.pBuildFieldGroups(fields);
+    }
 
     table = document.createElement('table');
     table.setAttribute('cellspacing', '0');
@@ -119,6 +167,9 @@ Form.prototype.pBuildFieldTable = function (fields) {
     for (fieldId in fields) {
         if (fields.hasOwnProperty(fieldId)) {
             field = fields[fieldId];
+            if ('name' in field) {
+                fieldId = field.name;
+            }
 
             row = tbody.insertRow(-1);
 
@@ -170,8 +221,8 @@ Form.prototype.pInsertLineLayout = function (desc, wrapper) {
         if (desc.fields.hasOwnProperty(fieldId)) {
             field = desc.fields[fieldId];
 
-            inputInterface = InterfaceFactory.createInterface(fieldId, field);
-            inputInterface._insertInto(wrapper);
+            inputInterface = this.factory.createInterface(fieldId, field);
+            inputInterface.insertInto(wrapper);
             // TODO
             wrapperElement = null;
             if (inputInterface.wrapperElement && inputInterface.wrapperElement.wrapperElement) {
@@ -199,7 +250,7 @@ Form.prototype.pInsertField = function (fieldId, field, row) {
 
     if (field.type === 'separator') {
         separator = row.insertCell(-1);
-        separator.setAttribute('colSpan', '2');
+        separator.setAttribute('colspan', '2');
         hr = document.createElement('hr');
         separator.appendChild(hr);
         return;
@@ -238,18 +289,17 @@ Form.prototype.pInsertField = function (fieldId, field, row) {
         requiredMark.className = 'required_mark';
         labelCell.appendChild(requiredMark);
     }
-    
 
     // Input Cell
     inputCell = document.createElement('td');
     row.appendChild(inputCell);
 
-    inputInterface = InterfaceFactory.createInterface(fieldId, field);
-    inputInterface._insertInto(inputCell);
+    inputInterface = this.factory.createInterface(fieldId, field);
+    inputInterface.insertInto(inputCell);
     if (this.readOnly || inputInterface._readOnly) {
         inputInterface.setDisabled(true);
     }
-    
+
     this.fieldInterfaces[fieldId] = inputInterface;
 
     this.fields[fieldId] = field;
@@ -286,12 +336,17 @@ Form.prototype.getData = function () {
 Form.prototype.setData = function (data) {
     var field, fieldId;
 
+    if (typeof data !== 'object' && typeof data !== 'undefined') {
+        throw new TypeError();
+    }
+
+    if (data == null) {
+        data = {};
+    }
+
     for (fieldId in this.fieldInterfaces) {
         if (this.fieldInterfaces.hasOwnProperty(fieldId)) {
             field = this.fieldInterfaces[fieldId];
-            if (data[fieldId] === undefined) {
-                data[fieldId] = '';
-            }
             field._setValue(data[fieldId]);
         }
     }

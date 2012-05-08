@@ -195,7 +195,9 @@ WindowMenu.prototype.hide = function () {
     }
 
     this.htmlElement.parentNode.removeChild(this.htmlElement);
-    this.msgElement.update();
+    if (this.msgElement != null) {
+        this.msgElement.update();
+    }
     if (this.childWindow != null) {
         this.childWindow.hide();
     }
@@ -498,356 +500,90 @@ function TipWindowMenu() {
 }
 TipWindowMenu.prototype = new InfoWindowMenu();
 
+
 /**
  * Form dialog.
  */
-function FormWindowMenu (fields, title, extra_class) {
-
-    this.fields = {};
+var FormWindowMenu = function FormWindowMenu (fields, title, extra_class) {
 
     // Allow hierarchy
-    if (arguments.length == 0)
+    if (arguments.length === 0) {
         return;
+    }
 
     WindowMenu.call(this, title, extra_class);
+    // TODO
+    this.windowContent.parentNode.removeChild(this.windowContent);
+    this.windowContent = null;
+    this.iconElement = null;
+    this.msgElement = null;
+    this.windowBottom.parentNode.removeChild(this.windowBottom);
+    this.windowBottom = null;
 
-    var table_ = this._buildFieldTable(fields, this.fields);
-    this.windowContent.insertBefore(table_, this.msgElement);
-
-    // Legend
-    var legend = document.createElement('div');
-    legend.className = "legend";
-    var requiredMark = document.createElement('span');
-    requiredMark.appendChild(document.createTextNode('*'));
-    requiredMark.className = 'required_mark';
-    legend.appendChild(requiredMark);
-    legend.appendChild(document.createTextNode(gettext('required field')));
-    this.windowContent.insertBefore(legend, this.msgElement);
-
-    // Mark our message div as an error msg
-    this.msgElement.addClassName("error");
-
-    // Accept button
-    this.button = document.createElement('button');
-    Element.extend(this.button);
-    this.button.appendChild(document.createTextNode(gettext('Accept')));
-    this.windowBottom.appendChild(this.button);
-    this._acceptHandler = this._acceptHandler.bind(this);
-    this.button.observe("click", this._acceptHandler);
-
-    // Cancel button
-    var cancelButton = document.createElement('button');
-    Element.extend(cancelButton);
-    cancelButton.appendChild(document.createTextNode(gettext('Cancel')));
-    cancelButton.observe("click", this._closeListener);
-    this.windowBottom.appendChild(cancelButton);
-}
+    this.form = new Form(fields, {
+        factory: Wirecloud.form.WirecloudInterfaceFactory
+    });
+    this.form.insertInto(this.htmlElement);
+    this.form.addEventListener('submit', function (form, data) {
+        try {
+            this.executeOperation(data);
+        } catch (e) {};
+        this.hide();
+    }.bind(this));
+    this.form.addEventListener('cancel', this._closeListener);
+};
 FormWindowMenu.prototype = new WindowMenu();
 
-FormWindowMenu.prototype._buildFieldTable = function(fields, fieldHash) {
-    var table_ = document.createElement('table');
-    table_.setAttribute('cellspacing', '0');
-    table_.setAttribute('cellpadding', '0');
-    var table = document.createElement('tbody'); // IE7 needs a tbody to display dynamic tables
-    table_.appendChild(table);
-
-    for (var fieldId in fields) {
-        var field = fields[fieldId];
-        var row = table.insertRow(-1);
-
-        if (field.type === 'fieldset') {
-            var fieldset = row.insertCell(-1);
-            Element.extend(fieldset);
-            fieldset.addClassName('fieldset');
-            fieldset.setAttribute('colSpan', '2');
-
-            var label = document.createElement('span')
-            Element.extend(label);
-            label.addClassName('section_name');
-            var icon = document.createElement('div');
-            if (BrowserUtilsFactory.getInstance().isIE()) {
-                icon.className += ' section_icon';
-            } else { 
-                icon.addClassName('section_icon');
-            }
-
-            label.appendChild(document.createTextNode(field.label));
-            fieldset.appendChild(icon);
-            fieldset.appendChild(label);
-
-            var sectionHash = fieldHash;
-            if (field.nested === true) {
-                sectionHash = {};
-                fieldHash[fieldId] = sectionHash;
-            }
-
-            var section = this._buildFieldTable(field.elements, sectionHash);
-            Element.extend(section);
-            section.addClassName('section');
-            section.setStyle({'display': 'none'});
-            fieldset.appendChild(section);
-
-            var context = {"section":section, "object":this}
-            Event.observe(label, 'click', function () {
-                            this.section.toggle();
-                            this.object.calculatePosition();
-                        }.bind(context));
-
-            continue;
-        }
-
-        this._insertField(fieldId, field, row, fieldHash);
-    }
-
-    return table_;
-}
-
-FormWindowMenu.prototype._insertField = function(fieldId, field, row, fieldHash) {
-    if (field.type === 'separator') {
-        var separator = row.insertCell(-1);
-        separator.setAttribute('colSpan', '2');
-        var hr = document.createElement('hr');
-        separator.appendChild(hr);
-        return;
-    }
-    if (field.type === 'label') {
-        var labelRow = row.insertCell(-1);
-        Element.extend(labelRow);
-        labelRow.addClassName('label');
-        if (field.url){
-            var label = document.createElement('a');
-            label.setAttribute("href",field.url);
-            label.setAttribute("target","_blank");
-        }else{
-            var label = document.createElement('label');
-        }
-        label.appendChild(document.createTextNode(field.label));
-        labelRow.appendChild(label);
-        return;
-    }
-    // Label Cell
-    var labelCell = row.insertCell(-1);
-    Element.extend(labelCell);
-    labelCell.addClassName('label');
-
-    var label = document.createElement('label');
-    label.appendChild(document.createTextNode(field.label));
-    labelCell.appendChild(label);
-
-    if (field.required) {
-        var requiredMark = document.createElement('span');
-        requiredMark.appendChild(document.createTextNode('*'));
-        requiredMark.className = 'required_mark';
-        labelCell.appendChild(requiredMark);
-    }
-
-    // Input Cell
-    var inputCell = document.createElement('td');
-    // TODO
-    //if the field is radio type the label must go after te input
-    if (field.type == 'radio') {
-        row.insertBefore(inputCell, labelCell);
-    } else {
-        row.appendChild(inputCell);
-    }
-
-    if (field.type == 'color') {
-        var icon = document.createElement('div');
-        icon.className = "icon icon-size icon-color";
-        inputCell.appendChild(icon);
-    }
-
-    var inputInterface = InterfaceFactory.createInterface(fieldId, field);
-    inputInterface._insertInto(inputCell);
-
-    field.inputInterface = inputInterface;
-
-    fieldHash[fieldId] = field;
-}
-
-/**
- * Does extra checks for testing field validity. This method must be overwriten
- * by child classes for providing this extra checks.
- *
- * @param {Hash} fields Hash with the current fields
- */
-FormWindowMenu.prototype.extraValidation = function(fields) {
-    //Parent implementation, allways true if no redefined by child class!
-    return "";
-}
-
-FormWindowMenu.prototype._validateFields = function (fields, validationManager) {
-    var field, fieldId;
-    for (fieldId in fields) {
-        field = fields[fieldId];
-        if (field.inputInterface != null && field.inputInterface instanceof InputInterface) {
-            validationManager.validate(fields[fieldId].inputInterface);
-        } else {
-            this._validateFields(field, validationManager);
-        }
-    }
+FormWindowMenu.prototype.setValue = function setValue (newValue) {
+    this.form.setData(newValue);
 };
-
-FormWindowMenu.prototype._parseForm = function (fields) {
-    var value, field, fieldId, form = {};
-    for (fieldId in fields) {
-        field = fields[fieldId];
-        if (field.inputInterface != null && field.inputInterface instanceof InputInterface) {
-            value = field.inputInterface.getValue();
-
-            if (field.required || value !== "")
-                form[fieldId] = value;
-        } else {
-            form[fieldId] = this._parseForm(field);
-        }
-    }
-    return form;
-};
-
-FormWindowMenu.prototype._setForm = function (fields, data) {
-    var field, fieldId;
-    for (fieldId in fields) {
-        field = fields[fieldId];
-        if (field.inputInterface != null && field.inputInterface instanceof InputInterface) {
-            if (data != null) {
-                field.inputInterface.setValue(data[fieldId]);
-            } else {
-                field.inputInterface.setValue(null);
-            }
-        } else {
-            if (data != null) {
-                this._setForm(field, data[fieldId]);
-            } else {
-                this._setForm(field, null);
-            }
-        }
-    }
-};
-
-FormWindowMenu.prototype.setValue = function(data) {
-    this._setForm(this.fields, data);
-};
-
-FormWindowMenu.prototype._acceptHandler = function(e) {
-
-    // Validate input fields
-    var validationManager = new ValidationErrorManager();
-    this._validateFields(this.fields, validationManager);
-
-    // Extra validations
-    var extraErrorMsg = this.extraValidation(this.fields);
-
-    // Build Error Message
-    var errorMsg = validationManager.toHTML();
-
-    if (extraErrorMsg !== null && extraErrorMsg != "")
-        errorMsg += "<p>" + extraErrorMsg + "</p>";
-
-    // Show error message if needed
-    if (errorMsg != "") {
-        this.setMsg(errorMsg);
-        return;
-    } else {
-        // Otherwise process the data
-        this.executeOperation(this._parseForm(this.fields));
-        this.hide();
-    }
-}
-
-FormWindowMenu.prototype._reset = function (fields) {
-    var fieldId, field;
-
-    for (fieldId in fields) {
-        field = fields[fieldId];
-        if (field.inputInterface != null && field.inputInterface instanceof InputInterface) {
-            field.inputInterface.reset();
-        } else {
-            this._reset(field);
-        }
-    }
-}
 
 FormWindowMenu.prototype.show = function (parentWindow) {
-    this._reset(this.fields);
+    this.form.reset();
     WindowMenu.prototype.show.call(this, parentWindow);
-}
+};
 
 /**
  * Specific class for publish windows
  */
 function PublishWindowMenu(workspace) {
 
-    //ezweb_organizations as options to be used in select inputs
-    var orgs = JSON.parse(ezweb_organizations);
-    this.organizations = new Array();
-    for (var i = 0; i < orgs.length; i++) {
-        //org__groupname: name = groupname, value = org__groupname
-        name = orgs[i].split('__')[1];
-        this.organizations.push({label: name, value: orgs[i]});
-    }
-
-    var fields = {
-        'name': {label: gettext('Mashup Name'), type:'id', required: true},
-        'vendor': {label: gettext('Vendor'), type:'id',  required: true},
-        'version': {label: gettext('Version'), type:'version',  required: true},
-        'email': {label: gettext('Email'), type:'email',  required: true},
-        'detailedInfo': {
-            label: gettext('Detailed description'),
-            type: 'fieldset',
-            elements: {
-                'description': {label: gettext('Description'), type:'longtext'},
-                'wikiURI': {label: gettext('Wiki URL'), type:'url'},
-                'author': {label: gettext('Author'), type:'text',  defaultValue: ezweb_user_name}
-            }
+    var fields = [
+        {
+            'type': 'group',
+            'shortTitle': gettext('General info'),
+            'fields': [
+                {name: 'name', label: gettext('Mashup Name'), type: 'text', required: true, initialValue: workspace.getName(), defaultValue: workspace.getName()},
+                {name: 'vendor', label: gettext('Vendor'), type:'text',  required: true},
+                {name: 'version', label: gettext('Version'), type:'text',  required: true},
+                {name: 'email', label: gettext('Email'), type:'text',  required: true},
+                {name: 'description', label: gettext('Description'), type:'longtext'},
+                {name: 'wikiURI', label: gettext('Homepage'), type:'text'},
+                {name: 'author', label: gettext('Author'), type:'text',  initialValue: ezweb_user_name, defaultValue: ezweb_user_name}
+            ]
         },
-        'personalization': {
-            label: gettext('Personalization'),
-            type: 'fieldset',
-            elements: {
-                'imageURI': {
-                    label: gettext('Image for the catalogue (170x80 px)'),
-                    type: 'fileUrl',
-                    linkHandler: function(){
-                        this.openUploadWindow('imageURI');
-                    }.bind(this)
-                },
-                'noBranding': {
-                    label: gettext('Do not use any branding'),
-                    type: 'boolean'
-                },
-                'logo': {
-                    label: gettext('Banner logo (250x50 px)'),
-                    type: 'fileUrl',
-                    linkHandler: function(){
-                        this.openUploadWindow('logo');
-                    }.bind(this)
-                },
-                'viewerLogo': {
-                    label: gettext('Banner logo for viewer mode (150x30 px)'),
-                    type: 'fileUrl',
-                    linkHandler: function(){
-                        this.openUploadWindow('viewerLogo');
-                    }.bind(this)
-                },
-                'link': {
-                    label: gettext('Clicking on these logos will open this page'),
-                    type: 'url'
+        {
+            'type': 'group',
+            'shortTitle': gettext('Media'),
+            'fields': [
+                {
+                    name: 'imageURI',
+                    label: gettext('Image shown in catalogue (170x80 px)'),
+                    type: 'text'
                 }
-            }
+            ]
         },
-        'advanced': {
-            label: gettext('Advanced options'),
-            type: 'fieldset',
-            elements: {
-                'organization': {label: gettext('Organization'), type: 'select', options: this.organizations},
-                'readOnlyGadgets': {label: gettext('Block gadgets'), type: 'boolean'},
-                'readOnlyConnectables': {label: gettext('Block connections'), type: 'boolean'}
-            }
+        {
+            'type': 'group',
+            'shortTitle': gettext('Advanced'),
+            'fields': [
+                {name: 'readOnlyGadgets', label: gettext('Block gadgets'), type: 'boolean'},
+                {name: 'readOnlyConnectables', label: gettext('Block connections'), type: 'boolean'}
+            ]
         }
-    }
+    ];
 
     this._addVariableParametrization(workspace, fields);
-
     FormWindowMenu.call(this, fields, gettext('Publish Workspace'), 'publish_workspace');
 
     //fill a warning message
@@ -855,49 +591,33 @@ function PublishWindowMenu(workspace) {
     Element.extend(warning);
     warning.addClassName('msg warning');
     warning.update(gettext("WARNING: configured and stored data in your workspace (properties and preferences except passwords) will be shared!"));
-    this.windowContent.appendChild(warning);
-
-    //check whether to enable the branding fields or not
-    var _checkIfBranding = function(){
-        if(this.fields['noBranding'].inputInterface.getValue()){
-            this.fields['logo'].inputInterface.setDisabled(true);
-            this.fields['viewerLogo'].inputInterface.setDisabled(true);
-            this.fields['link'].inputInterface.setDisabled(true);
-        }
-        else{
-            this.fields['logo'].inputInterface.setDisabled(false);
-            this.fields['viewerLogo'].inputInterface.setDisabled(false);
-            this.fields['link'].inputInterface.setDisabled(false);
-        }
-    }.bind(this);
-
-    this.fields['noBranding'].inputInterface.setOnclickHandler(_checkIfBranding);
-
-    //Window for uploading local files
-    this.uploadWindow = new UploadWindowMenu(gettext('Upload File'));
-
-        // Add a clear button
-    this._clearListener = this._clearListener.bind(this);
-    var clearButton = document.createElement('button');
-    Element.extend(clearButton);
-    clearButton.appendChild(document.createTextNode(gettext('Clear')));
-    clearButton.observe("click", this._clearListener);
-    this.windowBottom.appendChild(clearButton);
+    this.htmlElement.insertBefore(warning, this.form.wrapperElement);
 }
 PublishWindowMenu.prototype = new FormWindowMenu();
 
-FormWindowMenu.prototype._clearListener = function() {
-    this._reset(this.fields);
-};
-
-FormWindowMenu.prototype._addVariableParametrization = function (workspace, fields) {
-    var i, name, igadget, igadgets, igadget_params, pref_params,
-        prop_params, variable, variables, varManager, var_elements;
+PublishWindowMenu.prototype._addVariableParametrization = function (workspace, fields) {
+    var i, tab_keys, tab_field;
 
     this.workspace = workspace;
-    varManager = workspace.getVarManager();
-    igadgets = workspace.getIGadgets();
-    igadget_params = {};
+    tab_keys = workspace.tabInstances.keys();
+
+    for (i = 0; i < tab_keys.length; i += 1) {
+        tab_field = this._parseTab(workspace.tabInstances.get(tab_keys[i]));
+        if (tab_field !== null) {
+            fields.push(tab_field);
+        }
+    }
+};
+
+PublishWindowMenu.prototype._parseTab = function (tab) {
+
+    var i, name, igadget, igadgets, igadget_params, pref_params,
+        prop_params, variable, variables, varManager, var_elements,
+        fields;
+
+    varManager = tab.workSpace.getVarManager();
+    igadgets = tab.getDragboard().getIGadgets();
+    fields = [];
 
     for (i = 0; i < igadgets.length; i++) {
         igadget = igadgets[i];
@@ -930,43 +650,38 @@ FormWindowMenu.prototype._addVariableParametrization = function (workspace, fiel
             var_elements['pref'] = {
                 label: gettext('Preferences'),
                 type: 'fieldset',
-                elements: this._prepareElements(pref_params.sort(this._sortVariables))
+                fields: pref_params.sort(this._sortVariables)
             }
         }
         if (prop_params.length !== 0) {
             var_elements['props'] = {
                 label: gettext('Properties'),
                 type: 'fieldset',
-                elements: this._prepareElements(prop_params.sort(this._sortVariables))
+                fields: prop_params.sort(this._sortVariables)
             }
         }
 
         if (pref_params.length + prop_params.length !== 0) {
-            igadget_params[igadget.id] = {
+            fields.push({
+                name: igadget.id,
                 label: igadget.name,
                 type: 'fieldset',
                 nested: true,
-                elements: var_elements
-            };
+                fields: var_elements
+            });
         }
     }
 
-    fields['advanced'].elements['parametrization'] = {
-        label: gettext('Parametrization'),
-        type: 'fieldset',
-        nested: true,
-        elements: igadget_params
-    };
-};
-
-PublishWindowMenu.prototype._prepareElements = function (elements) {
-    var i, data = {};
-
-    for (i = 0; i < elements.length; i += 1) {
-        data[elements[i].variable.vardef.name] = elements[i];
+    if (fields.length > 0) {
+        return {
+            'shortTitle': tab.tabInfo.name,
+            'fields': fields,
+            'nested': true,
+            'name': 'tab-' + tab.tabInfo.name
+        }
+    } else {
+        return null;
     }
-
-    return data;
 };
 
 PublishWindowMenu.prototype._sortVariables = function (var1, var2) {
@@ -974,22 +689,26 @@ PublishWindowMenu.prototype._sortVariables = function (var1, var2) {
 };
 
 PublishWindowMenu.prototype.show = function(parentWindow) {
-    FormWindowMenu.prototype.show.call(this, parentWindow);
+    WindowMenu.prototype.show.call(this, parentWindow);
     this.setValue(this.workspace.workSpaceGlobalInfo.workspace.params);
 };
 
 PublishWindowMenu.prototype.setFocus = function() {
-    this.fields['name'].inputInterface.focus();
-}
+    this.form.fieldInterfaces['name'].focus();
+};
 
-PublishWindowMenu.prototype.executeOperation = function(form) {
-    OpManagerFactory.getInstance().activeWorkSpace.publish(form);
-}
+PublishWindowMenu.prototype.executeOperation = function executeOperation (data) {
+    var key;
 
-PublishWindowMenu.prototype.openUploadWindow = function(targetElementName){
-    var targetElement = this.fields[targetElementName].inputInterface.inputElement;
-    this.uploadWindow.show(this, targetElement);
-}
+    data.parametrization = {};
+    for (key in data) {
+        if (key.startsWith('tab-')) {
+            EzWebExt.merge(data.parametrization, data[key]);
+            delete data[key];
+        }
+    }
+    OpManagerFactory.getInstance().activeWorkSpace.publish(data);
+};
 
 /**
  * Specific class for sharing windows
@@ -1092,29 +811,28 @@ ShareWindowMenu.prototype.show = function(parentWindow) {
 /**
  *  Specific class to rename the workspace
  */
-function RenameWindowMenu () {
+function RenameWindowMenu (workspace) {
 
     var fields = {
-        'name': {label: gettext('New Name'),type: 'text', required: true}
+        'name': {
+            label: gettext('New Name'),
+            type: 'text',
+            required: true,
+            initialValue: workspace.getName()
+        }
     }
+    this.workspace = workspace;
     FormWindowMenu.call(this, fields, gettext('Rename Workspace'));
 }
-
 RenameWindowMenu.prototype = new FormWindowMenu();
 
 RenameWindowMenu.prototype.setFocus = function() {
     this.fields['name'].inputInterface.focus();
 }
 
-RenameWindowMenu.prototype.executeOperation = function(form) {
-    var name = form["name"];
-    OpManagerFactory.getInstance().activeWorkSpace.rename(name);
-}
-
-RenameWindowMenu.prototype.show = function(parentWindow) {
-    FormWindowMenu.prototype.show.call(this, parentWindow);
-    this.fields['name'].inputInterface.setValue(OpManagerFactory.getInstance().activeWorkSpace.workSpaceState.name);
-}
+RenameWindowMenu.prototype.executeOperation = function(data) {
+    this.workspace.rename(data.name);
+};
 
 RenameWindowMenu.prototype.extraValidation = function(fields) {
     if (fields["name"].inputInterface.getValue().length > 30) {
@@ -1123,31 +841,28 @@ RenameWindowMenu.prototype.extraValidation = function(fields) {
     return null;
 }
 
-function RenameTabWindowMenu () {
+function RenameTabWindowMenu (tab) {
     var fields = {
-        'name': {label: gettext('New Name'),type: 'text', required: true}
+        'name': {
+            label: gettext('New Name'),
+            type: 'text',
+            required: true,
+            initialValue: tab.tabInfo.name
+        }
     }
+
+    this.tab = tab;
     FormWindowMenu.call(this, fields, gettext('Rename Tab'));
 }
 RenameTabWindowMenu.prototype = new FormWindowMenu();
 
-RenameTabWindowMenu.prototype.setTab = function(tab) {
-    this.tab = tab;
-}
-
 RenameTabWindowMenu.prototype.setFocus = function() {
     this.fields['name'].inputInterface.focus();
-}
+};
 
-RenameTabWindowMenu.prototype.executeOperation = function(form) {
-    var name = form["name"];
-    this.tab.updateInfo(name);
-}
-
-RenameTabWindowMenu.prototype.show = function(parentWindow) {
-    FormWindowMenu.prototype.show.call(this, parentWindow);
-    this.fields['name'].inputInterface.setValue(this.tab.tabInfo.name);
-}
+RenameTabWindowMenu.prototype.executeOperation = function(data) {
+    this.tab.updateInfo(data.name);
+};
 
 RenameTabWindowMenu.prototype.extraValidation = function(fields) {
     var value = fields["name"].inputInterface.getValue();
@@ -1156,10 +871,10 @@ RenameTabWindowMenu.prototype.extraValidation = function(fields) {
     } else if (this.tab.workSpace.tabExists(value)) {
         return interpolate(gettext("Error updating a tab: the name %(tabName)s is already in use in workspace %(wsName)s."), {tabName: value, wsName: this.tab.workSpace.workSpaceState.name}, true);
     } else if (value == "" || value.match(/^\s$/)) {
-        return gettext("Error updating a tab: invalid name");
+        return gettext("Error updating tab: invalid name");
     }
     return null;
-}
+};
 
 /**
  * Specific class for Sharing workspace results window!
@@ -1386,14 +1101,14 @@ function ParametrizeWindowMenu(inputInterface) {
     }
 
     sourceOptions = [
-        {label: gettext('Use current value'), value: 'current'},
-        {label: gettext('Use gadget default value'), value: 'default'},
-        {label: gettext('Use parametrized value'), value: 'custom'}
+        {label: gettext('Current value'), value: 'current'},
+        {label: gettext('Default value'), value: 'default'},
+        {label: gettext('Parametrized value'), value: 'custom'}
     ];
 
     fields = {
-        'status': {label: gettext('Status'), type: 'select', options: statusOptions},
-        'source': {label: '', type: 'select', options: sourceOptions},
+        'status': {label: gettext('Status'), type: 'select', initialEntries: statusOptions, required: true},
+        'source': {label: gettext('Value source'), type: 'select', initialEntries: sourceOptions, required: true},
         'separator': {type: 'separator'},
         'value': {label: gettext('Value'), type: 'parametrizedText', variable: inputInterface.variable}
     }
@@ -1402,21 +1117,16 @@ function ParametrizeWindowMenu(inputInterface) {
     this.inputInterface = inputInterface;
 
     // TODO
-    var valueInput = this.fields['value'].inputInterface;
-    var sourceInput = this.fields['source'].inputInterface.inputElement;
+    var valueInput = this.form.fieldInterfaces['value'];
+    var sourceInput = this.form.fieldInterfaces['source'].inputElement;
     var updateFunc = function() {
-        this.valueInput.setDisabled(this.sourceInput.value !== 'custom');
+        this.valueInput.setDisabled(this.sourceInput.getValue() !== 'custom');
     }.bind({valueInput: valueInput, sourceInput: sourceInput});
-
-    this.fields['value'].inputInterface.update = updateFunc;
-    Event.observe(sourceInput, 'change', updateFunc);
+    valueInput.update = updateFunc;
+    Event.observe(sourceInput.inputElement, 'change', updateFunc);
 }
 ParametrizeWindowMenu.prototype = new FormWindowMenu();
 
 ParametrizeWindowMenu.prototype.executeOperation = function(newValue) {
     this.inputInterface.setValue(newValue);
-};
-
-ParametrizeWindowMenu.prototype._closeListener = function() {
-    this.hide();
 };

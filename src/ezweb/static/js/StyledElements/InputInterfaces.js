@@ -94,6 +94,8 @@ function InputInterface(fieldId, options) {
         return;
     }
 
+    StyledElements.StyledElement.call(this, []);
+
     options.name = fieldId;
     this._fieldId = fieldId;
     this._initialValue = options.initialValue;
@@ -109,6 +111,7 @@ function InputInterface(fieldId, options) {
         this._description = options.label;
     }
 }
+InputInterface.prototype = new StyledElements.StyledElement();
 
 InputInterface.prototype.getValue = function () {
     return this.inputElement.getValue();
@@ -281,7 +284,7 @@ InputInterface.prototype.setDisabled = function (disable) {
  *
  * @param {Element} element
  */
-InputInterface.prototype._insertInto = function (element) {
+InputInterface.prototype.insertInto = function (element) {
     this.inputElement.insertInto(element);
 };
 
@@ -538,7 +541,7 @@ function ButtonGroupInputInterface(fieldId, fieldDesc) {
     }
 }
 ButtonGroupInputInterface.prototype = new InputInterface();
-ButtonGroupInputInterface.prototype._insertInto = function (element) {
+ButtonGroupInputInterface.prototype.insertInto = function (element) {
     element.appendChild(this.wrapperElement);
 };
 
@@ -565,7 +568,7 @@ function FileInputInterface(fieldId, fieldDesc) {
 }
 FileInputInterface.prototype = new InputInterface();
 
-FileInputInterface.prototype._insertInto = function (element) {
+FileInputInterface.prototype.insertInto = function (element) {
     element.appendChild(this.wrapperElement);
 };
 
@@ -657,10 +660,6 @@ MultivaluedInputInterface.prototype._removeAllEntries = function () {
     this.entries = [];
 };
 
-MultivaluedInputInterface.prototype._insertInto = function (element) {
-    this.wrapperElement.insertInto(element);
-};
-
 MultivaluedInputInterface.prototype.getValue = function () {
     var i, data = [];
 
@@ -697,6 +696,375 @@ MultivaluedInputInterface.prototype._setError = function (error) {
 /**
  *
  */
+var FieldSetInterface = function (fieldId, fieldDesc) {
+    this.form = new Form(fieldDesc.fields, {
+        useHtmlForm: false,
+        acceptButton: false,
+        cancelButton: false,
+        legend: false
+    });
+};
+FieldSetInterface.prototype = new InputInterface();
+
+FieldSetInterface.prototype.insertInto = function insertInto (element) {
+    this.form.insertInto(element);
+};
+
+FieldSetInterface.prototype.getValue = function getValue () {
+    return this.form.getData();
+};
+
+FieldSetInterface.prototype._setValue = function _setValue (newValue) {
+    return this.form.setData(newValue);
+};
+
+FieldSetInterface.prototype._setError = function (error) {
+    // TODO
+};
+
+/**
+ *
+ */
+function ParametrizableValueInputInterface(fieldId, options) {
+    InputInterface.call(this, fieldId, options);
+
+    this.parentWindow = options.parentWindow;
+    this.variable = options.variable;
+    this.canBeHidden = options.canBeHidden;
+
+    this.wrapperElement = document.createElement('div');
+    this.wrapperElement.className = "parametrizable_input";
+
+    this.readOnlyIcon = document.createElement('div');
+    Element.extend(this.readOnlyIcon);
+    this.readOnlyIcon.addClassName('readOnlyIcon');
+    this.wrapperElement.appendChild(this.readOnlyIcon);
+
+    this.visibilityIcon = document.createElement('div');
+    Element.extend(this.visibilityIcon);
+    this.visibilityIcon.addClassName('visibilityIcon');
+    this.wrapperElement.appendChild(this.visibilityIcon);
+    if (!this.canBeHidden) {
+        this.visibilityIcon.style.visibility = 'hidden';
+    }
+
+    this.inputElement = new StyledElements.StyledTextField();
+    this.inputElement.disable();
+    this.inputElement.insertInto(this.wrapperElement);
+
+    this.buttonElement = new StyledElements.StyledButton({text: ''});
+    this.buttonElement.addEventListener('click', function() {
+        var dialog = new ParametrizeWindowMenu(this);
+        dialog.show(this.parentWindow);
+        dialog.setValue(this.getValue());
+    }.bind(this));
+    this.buttonElement.insertInto(this.wrapperElement);
+}
+ParametrizableValueInputInterface.prototype = new InputInterface();
+
+ParametrizableValueInputInterface.prototype._checkValue = function(newValue) {
+    return InputValidationError.NO_ERROR;
+};
+
+ParametrizableValueInputInterface.prototype.getValue = function() {
+    var value = {
+        'source': this.source,
+        'status': this['status']
+    };
+
+    if (this.source !== 'default') {
+        value.value = this.inputElement.getValue();
+    }
+
+    return value;
+};
+
+ParametrizableValueInputInterface.prototype.VALID_SOURCE_VALUES = ['current', 'default', 'custom'];
+ParametrizableValueInputInterface.prototype.VALID_STATUS_VALUES = ['normal', 'hidden', 'readonly'];
+
+ParametrizableValueInputInterface.prototype._setValue = function(newValue) {
+    if (newValue == null || this.VALID_SOURCE_VALUES.indexOf(newValue.source) === -1) {
+        this.source = 'current';
+    } else {
+        this.source = newValue.source;
+    }
+
+    if (newValue == null || typeof newValue.value !== 'string') {
+        this.value = '';
+    } else {
+        this.value = newValue.value;
+    }
+
+    if (newValue == null || this.VALID_STATUS_VALUES.indexOf(newValue['status']) === -1) {
+        this['status'] = 'normal';
+    } else if (!this.canBeHidden && newValue['status'] === 'hidden') {
+        this['status'] = 'readOnly';
+    } else {
+        this['status'] = newValue['status'];
+    }
+
+    this._updateInputElement();
+    this._updateButton();
+};
+
+ParametrizableValueInputInterface.prototype.insertInto = function(element) {
+    element.appendChild(this.wrapperElement);
+};
+
+ParametrizableValueInputInterface.prototype._updateInputElement = function() {
+    switch (this.source) {
+    case 'default':
+        this.inputElement.setValue('');
+        break;
+    case 'current':
+        this.inputElement.setValue(ParametrizedTextInputInterface.prototype.escapeValue(this.variable.value));
+        break;
+    case 'custom':
+        this.inputElement.setValue(this.value);
+    }
+};
+
+ParametrizableValueInputInterface.prototype._updateButton = function() {
+    if (this.source === 'default') {
+        this.buttonElement.setLabel(gettext('Parametrize'));
+    } else {
+        this.buttonElement.setLabel(gettext('Modify'));
+    }
+
+    if (this['status'] !== 'normal') {
+        this.readOnlyIcon.addClassName('readOnly');
+        this.readOnlyIcon.title = gettext("This value won't be editable by the user");
+    } else {
+        this.readOnlyIcon.removeClassName('readOnly');
+        this.readOnlyIcon.title = gettext("This value will be editable by the user");
+    }
+
+    if (this['status'] !== 'hidden') {
+        this.visibilityIcon.addClassName('visible');
+        this.visibilityIcon.title = gettext("This value will be visible to the user");
+    } else {
+        this.visibilityIcon.removeClassName('visible');
+        this.visibilityIcon.title = gettext("This value won't be visible to the user");
+    }
+};
+
+/**
+ *
+ */
+function ParametrizedTextInputInterface(fieldId, options) {
+    var i, param, contextFields, option;
+
+    InputInterface.call(this, fieldId, options);
+
+    this.variable = options.variable;
+    this.parameters = this.getAvailableParameters();
+
+    this.wrapperElement = new StyledElements.Container({
+        'class': 'parametrized_text_input'
+    });
+
+    this.resetButton = new StyledElements.StyledButton({
+        'text': gettext('Use current value')
+    });
+    this.resetButton.addEventListener('click', function() {
+        this.inputElement.setValue(this.escapeValue(this.variable.value));
+    }.bind(this));
+    this.wrapperElement.appendChild(this.resetButton);
+
+    this.selectorWrapperElement = new StyledElements.Container({
+        'class': 'context_selector'
+    });
+    this.wrapperElement.appendChild(this.selectorWrapperElement);
+
+    this.mainSelect = document.createElement('select');
+    for (i = 0; i < this.parameters.length; i += 1) {
+        param = this.parameters[i];
+        option = new Option(param.label, param.value);
+        try {
+            this.mainSelect.add(option, null);
+        } catch (e) {
+            this.mainSelect.add(option);
+        }
+    }
+    Element.observe(this.mainSelect, 'change', this._updateSecondSelect.bind(this));
+    this.selectorWrapperElement.appendChild(this.mainSelect);
+
+    this.secondSelect = document.createElement('select');
+    this.selectorWrapperElement.appendChild(this.secondSelect);
+    Element.observe(this.secondSelect, 'change', this._updateDescription.bind(this));
+
+    this.addButton = new StyledElements.StyledButton({
+        'text': gettext('Add')
+    });
+    this.addButton.addEventListener('click', function() {
+        var prefix, suffix, parameter, start, input;
+
+        input = this.inputElement.inputElement;
+        start = input.selectionStart;
+        prefix = input.value.substr(0, start);
+        suffix = input.value.substr(input.selectionEnd);
+        parameter = this.mainSelect.value + '.' + this.secondSelect.value;
+
+        this.inputElement.setValue(prefix + '%(' + parameter + ')' + suffix);
+        input.selectionStart = start;
+        input.selectionEnd = start + parameter.length + 3;
+    }.bind(this));
+    this.selectorWrapperElement.appendChild(this.addButton);
+
+    this.descriptionDiv = document.createElement('div');
+    this.descriptionDiv.className = 'description';
+    this.wrapperElement.appendChild(this.descriptionDiv);
+
+    this.inputElement = new StyledElements.StyledTextArea();
+    this.wrapperElement.appendChild(this.inputElement);
+
+    // Initialize
+    this._updateSecondSelect();
+}
+ParametrizedTextInputInterface.prototype = new InputInterface();
+
+ParametrizedTextInputInterface.prototype._ESCAPE_RE = new RegExp("(%+)(\\([a-zA-Z]\\w*(?:\\.[a-zA-Z]\\w*)*\\))");
+ParametrizedTextInputInterface.prototype._ESCAPE_FUNC = function() {
+    var str, i;
+
+    i = arguments[1].length * 2;
+    str = '';
+    while ((i -= 1) >= 0) {
+        str += '%';
+    }
+
+    return str + arguments[2];
+};
+
+ParametrizedTextInputInterface.prototype._CONTEXT_PARAMS = null;
+ParametrizedTextInputInterface.prototype.getAvailableParameters = function() {
+    var concepts, contextFields, conceptName, dashIndex, provider, concept, parameters, label;
+
+    if (ParametrizedTextInputInterface.prototype._CONTEXT_PARAMS === null) {
+        concepts = OpManagerFactory.getInstance().activeWorkSpace.contextManager._concepts;
+        contextFields = {
+            '': []
+        };
+        for (conceptName in concepts) {
+            concept = concepts[conceptName];
+            if (concept._type !== 'GCTX') {
+                dashIndex = conceptName.indexOf('-');
+                provider = conceptName.substring(0, dashIndex);
+                if (!(provider in contextFields)) {
+                    contextFields[provider] = [];
+                }
+                label = interpolate('%(label)s (%(concept)s)', {
+                    label: concept._label,
+                    concept: conceptName
+                }, true);
+                contextFields[provider].push({
+                    label: label,
+                    description: concept._description,
+                    value: conceptName
+                });
+            }
+        }
+
+        parameters = [
+            {
+                label: gettext('User'),
+                value: 'user',
+                fields: [
+                    {
+                        label: gettext('User Name'),
+                        description: '',
+                        value: 'username'
+                    },
+                    {
+                        label: gettext('First Name'),
+                        description: '',
+                        value: 'first_name'
+                    },
+                    {
+                        label: gettext('Last Name'),
+                        description: '',
+                        value: 'last_name'
+                    },
+                ]
+            },
+            {
+                label: gettext('Context'),
+                value: 'context',
+                fields: contextFields['']
+            }
+        ];
+        delete contextFields[''];
+        for (conceptName in contextFields) {
+            parameters.push({
+                label: conceptName,
+                value: 'context',
+                fields: contextFields[conceptName]
+            });
+        }
+        ParametrizedTextInputInterface.prototype._CONTEXT_PARAMS = parameters;
+    }
+
+    return ParametrizedTextInputInterface.prototype._CONTEXT_PARAMS;
+};
+
+ParametrizedTextInputInterface.prototype.escapeValue = function(value) {
+    return value.replace(ParametrizedTextInputInterface.prototype._ESCAPE_RE,
+        ParametrizedTextInputInterface.prototype._ESCAPE_FUNC);
+};
+
+ParametrizedTextInputInterface.prototype._updateSecondSelect = function() {
+    var fields, field, i;
+
+    this.secondSelect.innerHTML = '';
+
+    fields = this.parameters[this.mainSelect.selectedIndex].fields;
+
+    for (i = 0; i < fields.length; i += 1) {
+        field = fields[i];
+        try {
+            this.secondSelect.add(new Option(field.label, field.value), null);
+        } catch (e) {
+            this.secondSelect.add(new Option(field.label, field.value));
+        }
+    }
+
+    this._updateDescription();
+};
+
+ParametrizedTextInputInterface.prototype._updateDescription = function() {
+    var fields, field;
+
+    fields = this.parameters[this.mainSelect.selectedIndex].fields;
+    field = fields[this.secondSelect.selectedIndex];
+    this.descriptionDiv.setTextContent(field.description);
+};
+
+ParametrizedTextInputInterface.prototype._setError = function () {
+};
+
+ParametrizedTextInputInterface.prototype._setValue = function(newValue) {
+    this.inputElement.value = newValue;
+    if (this.update) {
+        this.update();
+    }
+};
+
+ParametrizedTextInputInterface.prototype.setDisabled = function(disabled) {
+
+    this.mainSelect.disabled = !!disabled;
+    this.secondSelect.disabled = !!disabled;
+    this.addButton.setDisabled(disabled);
+    this.resetButton.setDisabled(disabled);
+    this.inputElement.setDisabled(disabled);
+}
+
+ParametrizedTextInputInterface.prototype.insertInto = function(element) {
+    this.wrapperElement.insertInto(element);
+};
+
+/**
+ *
+ */
 var InterfaceFactory = function () {
     var mapping = {
         'boolean': BooleanInputInterface,
@@ -710,6 +1078,7 @@ var InterfaceFactory = function () {
         'select': SelectInputInterface,
         'buttons': ButtonGroupInputInterface,
         'file': FileInputInterface,
+        'fieldset': FieldSetInterface,
         'multivalued': MultivaluedInputInterface
     };
 
@@ -732,4 +1101,11 @@ var InterfaceFactory = function () {
         mapping[type] = class_;
     };
 };
+
+
+Wirecloud.form = {};
+
+Wirecloud.form.WirecloudInterfaceFactory = new InterfaceFactory();
+Wirecloud.form.WirecloudInterfaceFactory.addFieldType('parametrizableValue', ParametrizableValueInputInterface);
+Wirecloud.form.WirecloudInterfaceFactory.addFieldType('parametrizedText', ParametrizedTextInputInterface);
 InterfaceFactory = new InterfaceFactory();

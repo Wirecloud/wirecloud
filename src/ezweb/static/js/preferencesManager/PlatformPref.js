@@ -197,7 +197,7 @@ function PreferencesDef(definitions) {
 			columnLabel.className = "label";
 			var columnValue = row.insertCell(-1);
 			columnLabel.appendChild(preference.getLabelInterface());
-			preference.getInterface()._insertInto(columnValue);
+			preference.getInterface().insertInto(columnValue);
 		} else {
 			var complexRow = tbody.insertRow(-1);
 			var complexCell = complexRow.insertCell(-1);
@@ -222,7 +222,7 @@ function PreferencesDef(definitions) {
 			inheritCell.addClassName('inheritCell');
 
 			var inheritInput = preference.getInheritInterface();
-			inheritInput._insertInto(inheritCell);
+			inheritInput.insertInto(inheritCell);
 			inheritCell.appendChild(document.createTextNode(gettext('Inherit')));
 			inheritInput.inputElement.addEventListener(
 			    'change',
@@ -232,7 +232,7 @@ function PreferencesDef(definitions) {
 
 			var columnValue = prefRow.insertCell(-1);
 			columnLabel.appendChild(preference.getLabelInterface());
-			preference.getInterface()._insertInto(columnValue);
+			preference.getInterface().insertInto(columnValue);
 		}
 	}
 }

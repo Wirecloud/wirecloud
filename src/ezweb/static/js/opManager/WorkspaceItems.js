@@ -24,8 +24,6 @@
 
 var WorkspaceItems = function () {
     StyledElements.DynamicMenuItems.call(this);
-
-    this.renameWorkspaceWindow = new RenameWindowMenu(null);
 };
 WorkspaceItems.prototype = new StyledElements.DynamicMenuItems();
 
@@ -37,7 +35,7 @@ WorkspaceItems.prototype.build = function () {
 
     if (current_workspace.isAllowed('rename_workspace')) {
         items.push(new StyledElements.MenuItem(gettext('Rename'), function () {
-            this.renameWorkspaceWindow.show();
+            (new RenameWindowMenu(opManager.activeWorkSpace)).show();
         }.bind(this)));
     }
 

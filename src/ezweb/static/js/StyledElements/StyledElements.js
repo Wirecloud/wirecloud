@@ -11,23 +11,26 @@ var StyledElements = new Object();
  */
 StyledElements.Event = function() {
     this.handlers = [];
-}
+};
 
 StyledElements.Event.prototype.addEventListener = function(handler) {
     this.handlers.push(handler);
-}
+};
 
 StyledElements.Event.prototype.removeEventListener = function(handler) {
     var index = this.handlers.indexOf(handler);
-    if (index != -1)
+    if (index != -1) {
         this.handlers.splice(index, 1);
-}
+    }
+};
 
 StyledElements.Event.prototype.dispatch = function() {
     for (var i = 0; i < this.handlers.length; i++) {
-        this.handlers[i].apply(null, arguments);
+        try {
+            this.handlers[i].apply(null, arguments);
+        } catch (e) {}
     }
-}
+};
 
 
 /**
@@ -2729,7 +2732,8 @@ StyledElements.StyledButton = function(options) {
         'plain': false,
         'iconHeight': 24,
         'iconWidth': 24,
-        'icon': null
+        'icon': null,
+        'usedInForm': false
     };
     options = EzWebExt.merge(defaultOptions, options);
 
@@ -2743,7 +2747,11 @@ StyledElements.StyledButton = function(options) {
     this.wrapperElement = document.createElement("div");
     this.wrapperElement.className = EzWebExt.appendWord(options['class'], "styled_button");
 
-    if (options.plain) {
+    if (options.usedInForm) {
+        button = document.createElement("button");
+        button.setAttribute('type', 'button');
+        this.wrapperElement.appendChild(button);
+    } else if (options.plain) {
         button = this.wrapperElement;
         EzWebExt.addClassName(this.wrapperElement, 'plain');
     } else {
@@ -2777,10 +2785,16 @@ StyledElements.StyledButton = function(options) {
 StyledElements.StyledButton.prototype = new StyledElements.StyledElement();
 
 StyledElements.StyledButton.prototype._clickCallback = function(e) {
+    e.preventDefault();
     e.stopPropagation();
-    if (this.enabled)
+    if (this.enabled) {
         this.events['click'].dispatch(this);
-}
+    }
+};
+
+StyledElements.StyledButton.prototype.setLabel = function(label) {
+    this.label.textContent = label;
+};
 
 /**
  * Eventos que soporta este componente:

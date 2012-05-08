@@ -37,8 +37,7 @@ TabMenuItems.prototype.build = function () {
     items.push(new StyledElements.MenuItem(
         gettext("Rename"),
         function () {
-            this.workSpace.renameTabWindow.setTab(this);
-            this.workSpace.renameTabWindow.show();
+            (new RenameTabWindowMenu(this)).show();
         }.bind(this.tab)
     ));
 

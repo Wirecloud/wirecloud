@@ -184,7 +184,7 @@ body {
     float: right;
 }
 
-.window_menu > .window_content {
+.window_menu > .window_content, .window_menu > .styled_form > div > table {
     margin-top: 2ex;
     clear: both;
     overflow: auto;
@@ -193,6 +193,13 @@ body {
 .window_menu > .window_bottom {
     margin: 2em 0 0.5em;
     text-align: center;
+}
+
+.window_menu > .msg {
+    margin: 2ex;
+    border: 1px solid #888;
+    padding: 1ex;
+    border-radius: 1ex;
 }
 
 /* Loading window */
@@ -255,4 +262,42 @@ body {
     width: 16px;
     height: 16px;
     display: block;
+}
+
+.window_menu .styled_form .notebook {
+    height: 400px;
+}
+
+.parametrizable_input > * {
+    display: inline-block;
+}
+
+.parametrizable_input > .readOnlyIcon, .parametrizable_input > .visibilityIcon {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    margin: 3px;
+    vertical-align: bottom;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+}
+
+.parametrizable_input > .readOnlyIcon {
+    background-image: url(../images/icons-sprite.png);
+    background-position: -48px -552px;
+}
+
+.parametrizable_input > .readOnlyIcon.readOnly {
+    background-image: url(../images/icons-sprite.png);
+    background-position: -24px -552px;
+}
+
+.parametrizable_input > .visibilityIcon {
+    background-image: none;
+}
+
+.parametrizable_input > .visibilityIcon.visible {
+    background-image: url(../images/icons-sprite.png);
+    background-position: -48px -384px;
 }

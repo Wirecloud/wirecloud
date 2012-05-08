@@ -434,7 +434,6 @@ function WorkSpace (workSpaceState) {
             'title': gettext('Add a new tab')
         });
 
-        this.renameTabWindow = new RenameTabWindowMenu();
         this.notebook = new StyledElements.StyledNotebook({'class': 'workspace'});
         this.notebook.addButton(this.addTabButton);
         this.addTabButton.addEventListener('click', this.addTab.bind(this));
