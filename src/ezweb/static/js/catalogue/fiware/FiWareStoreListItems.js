@@ -30,6 +30,7 @@ var FiWareStoreListItems = function (view) {
 	this.handler = function(store) {
 		this.currentStore = store;
 		this.viewsByName['cat-remote'].setCurrentStore(this.currentStore);
+		this.viewsByName['cat-remote'].refresh_search_results();
 		LayoutManagerFactory.getInstance().header.refresh();
 	};
 };
@@ -51,13 +52,20 @@ FiWareStoreListItems.prototype.build = function (store_info) {
 
 	// This is used to delete the current store and update store list
 	if (this.view.currentStore !== 'All stores') {
-		items.push(new StyledElements.MenuItem(gettext('Delete'), function () {
+		items.push(new StyledElements.MenuItem(gettext('Delete store'), function () {
 			this.fiWareCatalogue.delete_store(this.currentStore);
 			this.currentStore = 'All stores';
 			this.viewsByName['cat-remote'].setCurrentStore(this.currentStore);
+			this.viewsByName['cat-remote'].refresh_search_results();
 			this.refresh_store_info(); 
 			LayoutManagerFactory.getInstance().header.refresh();
 		}.bind(this.view)));
+	}
+
+	if (this.view.currentStore !== 'All stores') {
+		items.push(new StyledElements.MenuItem(gettext('Publish service'),
+			this.view.viewsByName['cat-remote'].createUserCommand('publish')));
+		items.push(new StyledElements.Separator());
 	}
 
 	// To add a new store is necesary to have a form in order to take the information

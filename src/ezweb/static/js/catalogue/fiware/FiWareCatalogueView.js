@@ -136,6 +136,7 @@ FiWareCatalogueView.prototype.generateStoreMenu = function() {
     this.storeMenu.append(new StyledElements.MenuItem(gettext('All stores'), function () {
         this.currentStore = 'All stores';
         this.viewsByName['cat-remote'].setCurrentStore(this.currentStore);
+        this.viewsByName['cat-remote'].refresh_search_results();
         LayoutManagerFactory.getInstance().header.refresh();
     }.bind(this)));
 

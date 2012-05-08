@@ -34,9 +34,13 @@ var FiWareResourceDetailsPainter = function (catalogue, details_structure_elemen
     this.details_template_element = details_structure_element;
     this.details_template = new Template(this.details_template_element);
 	this.delete_options = {};
+	this.container = container
+	this.back_part = document.createElement('div');
+	this.content_part = document.createElement('div');
+	this.back_appended = false;
 	/***********************************/
 	this.notebook = new StyledElements.StyledNotebook({'class': 'pruebas'});
-	container.appendChild(this.notebook);
+	//this.container.appendChild(this.notebook);
 	this.main_description = this.notebook.createTab({'name': gettext('Generic Info'), 'closable': false});
 	this.legal_description = this.notebook.createTab({'name': gettext('Legal'), 'closable': false});
 	this.pricing_description = this.notebook.createTab({'name': gettext('Pricing'), 'closable': false});
@@ -61,7 +65,8 @@ var FiWareResourceDetailsPainter = function (catalogue, details_structure_elemen
             tag, tag_element, mytags_area_list, my_tags_area, legal_button_dom_element,
 			more_info_dom_element,sla_painter,sla_button_dom_element,
 			sla_more_info,pricing_more_info,pricing_button_dom_element,
-			pricing_painter,legal_button_info,sla_button_info,pricing_button_info;
+			pricing_painter,legal_button_info,sla_button_info,pricing_button_info, details_element,
+			back_button_element;
 		
         this.main_description.clear();
 		// The fields in this dictionary are only used in delete requests
@@ -89,9 +94,15 @@ var FiWareResourceDetailsPainter = function (catalogue, details_structure_elemen
 			'store': resource.getStore(),
 			'page':resource.getPage()
         });
+		details_element = document.createElement('div');
+		Element.extend(details_element);
+		details_element.update(resource_html);
 
-        // Inserting resource html to the root_element
-        this.main_description.wrapperElement.innerHTML = resource_html;
+		this.back_part = details_element.getElementsByClassName('back_part')[0];
+		this.content_part = details_element.getElementsByClassName('content_part')[0];
+
+		this.main_description.wrapperElement.innerHTML = this.content_part.innerHTML;
+
 
 		//take the dom elements that will contain the legal clauses
 		legal_painter =new LegalPainter(catalogue,$('legal_template').getTextContent(), this.legal_description.wrapperElement);
@@ -110,12 +121,19 @@ var FiWareResourceDetailsPainter = function (catalogue, details_structure_elemen
         ///////////////////////////////
 
         // Go back to list of resources
-        this.create_simple_command(this.dom_element, '.back_to_resource_list', 'click', this.catalogue.home.bind(this.catalogue));
+        this.create_simple_command(this.back_part, '.back_to_resource_list', 'click', this.catalogue.home.bind(this.catalogue));
 
         // "Instantiate"
         this.create_simple_command(this.dom_element, '.instanciate_button', 'click', this.catalogue.createUserCommand('instanciate', resource));
 
         this.populate_advanced_operations(resource);
+
+		if(!this.back_appended){
+			this.container.appendChild(this.back_part);
+			this.container.appendChild(this.notebook);
+			this.back_appended = true;
+		}
+		
         /*
         // Tagging resource
         this.create_simple_command('.tagging_resource', 'TAG_RESOURCE', resource, 'click', user_command_manager);
