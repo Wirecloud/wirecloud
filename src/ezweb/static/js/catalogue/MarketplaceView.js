@@ -26,37 +26,37 @@ var MarketplaceView = function (id, options) {
     StyledElements.Alternative.call(this, id, options);
 
     this.alternatives = new StyledElements.StyledAlternatives();
+    this.alternatives.addEventListener('postTransition', function() {
+        LayoutManagerFactory.getInstance().header.refresh();
+    });
     this.appendChild(this.alternatives);
 
     this.viewsByName = {
         'cat-local': this.alternatives.createAlternative({alternative_constructor: CatalogueView, containerOptions: {catalogue: this}})
     };
+
+    this.marketMenu = new StyledElements.PopupMenu();
+    this.marketMenu.append(new Wirecloud.ui.MarketplaceViewMenuItems(this));
 };
+
 MarketplaceView.prototype = new StyledElements.Alternative();
 
 MarketplaceView.prototype.view_name = 'marketplace';
 
 MarketplaceView.prototype.getBreadcrum = function () {
-    return [
+    var breadcrum = [
         {
             'label': 'marketplace'
         },
         {
-            'label': this.alternatives.getCurrentAlternative().getLabel()
+            'label': this.alternatives.getCurrentAlternative().getLabel(),
+            'menu': this.marketMenu
         }
     ];
-};
 
-MarketplaceView.prototype.createUserCommand = function(command) {
-    return this.ui_commands[command].apply(this, Array.prototype.slice.call(arguments, 1));
-};
+    if (typeof this.alternatives.getCurrentAlternative().getExtraBreadcrum === 'function') {
+        breadcrum = breadcrum.concat(this.alternatives.getCurrentAlternative().getExtraBreadcrum());
+    }
 
-
-MarketplaceView.prototype.ui_commands = {};
-
-MarketplaceView.prototype.ui_commands.publish = function() {
-    return function () {
-        var current_catalogue = this.alternatives.getCurrentAlternative();
-        current_catalogue.ui_commands.publish.call(current_catalogue)();
-    }.bind(this);
+    return breadcrum;
 };

@@ -156,6 +156,10 @@ CatalogueView.prototype.home = function () {
     this.changeCurrentView('search');
 };
 
+CatalogueView.prototype.show_upload_view = function show_upload_view () {
+    this.changeCurrentView('developer');
+};
+
 CatalogueView.prototype.createUserCommand = function(command) {
     return this.ui_commands[command].apply(this, Array.prototype.slice.call(arguments, 1));
 };
@@ -175,12 +179,6 @@ CatalogueView.prototype.ui_commands.showDetails = function (resource) {
         Event.stop(e);
         this.viewsByName.details.paint(resource);
         this.alternatives.showAlternative(this.viewsByName.details);
-    }.bind(this)
-};
-
-CatalogueView.prototype.ui_commands.publish = function (resource) {
-    return function (e) {
-        this.alternatives.showAlternative(this.viewsByName.developer);
     }.bind(this)
 };
 
