@@ -24,7 +24,7 @@ var WorkspaceView = function (id, options) {
     options.id = 'workspace';
     StyledElements.Alternative.call(this, id, options);
 
-    this.createWorkspaceWindow = new CreateWindowMenu('workSpace');
+    this.createWorkspaceWindow = new Wirecloud.ui.NewWorkspaceWindowMenu();
 
     this.wsMenu = new StyledElements.PopupMenu();
     this.wsMenu.append(new WorkspaceListItems(function (workspace) {
