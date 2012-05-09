@@ -107,7 +107,7 @@ WindowMenu.prototype._closeListener = function(e) {
  * Updates the message displayed by this <code>WindowMenu</code>
  */
 WindowMenu.prototype.setMsg = function (msg) {
-    this.msgElement.update(msg);
+    this.msgElement.setTextContent(msg);
 
     if (isElement(this.htmlElement.parentNode)) {
         this.calculatePosition();
