@@ -203,20 +203,21 @@ if (useInternalComputedStyle) {
     var i;
 
     this._element = element;
-    if (Object.defineProperty) {
-      for (i = 0; i < cssProperties.length; i += 1) {
-        this._defProp(cssProperties[i]);
-      }
-    }
   }
 
-  ComputedCSSStyleDeclaration.prototype._defProp = function(property) {
-    Object.defineProperty(this, property, {
-      get: function () { return this.getPropertyValue(property); },
-      enumerable: true,
-      configurable: false
-    });
-  }
+    if (Object.defineProperty) {
+        var _defProp = function(object, property) {
+            Object.defineProperty(object, property, {
+                get: function () { return this.getPropertyValue(property); },
+                enumerable: true,
+                configurable: false
+            });
+        }
+
+        for (i = 0; i < cssProperties.length; i += 1) {
+            _defProp(ComputedCSSStyleDeclaration.prototype, cssProperties[i]);
+        }
+    }
 
   ComputedCSSStyleDeclaration.prototype._getIEProperty = function(property) {
     switch (property) {
