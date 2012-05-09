@@ -316,60 +316,6 @@ var LayoutManagerFactory = function () {
             this.currentMenu = window_menu;
         };
 
-        /**
-         * @deprecated
-         * Shows the asked window menu
-         */
-        LayoutManager.prototype.showWindowMenu = function(window, handlerYesButton, handlerNoButton, extra_data) {
-            var newMenu;
-
-            //the disabling layer is displayed as long as a menu is shown. If there is not a menu, there is not a layer.
-            switch (window) {
-            case 'useBrokenTheme':
-                if (!this.menus['alertMenu']) {
-                    this.menus['alertMenu'] = new AlertWindowMenu();
-                }
-                newMenu = this.menus['alertMenu'];
-                newMenu.setMsg(gettext('Do you really want to remove this tab?'));
-                newMenu.setHandler(function(){OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().deleteTab();}, handlerNoButton);
-                break;
-            case 'cancelService':
-                if (!this.menus['alertMenu']) {
-                    this.menus['alertMenu'] = new AlertWindowMenu(null);
-                }
-                newMenu = this.menus['alertMenu'];
-                newMenu.setMsg(gettext('Do you want to cancel the subscription to the service?'));
-                newMenu.setHandler(handlerYesButton, handlerNoButton);
-                break;
-            case 'publishWorkSpace':
-                newMenu = new PublishWindowMenu(OpManagerFactory.getInstance().activeWorkSpace);
-                break;
-            case 'addFeed':
-                if (!this.menus['addFeedMenu']) {
-                    this.menus['addFeedMenu'] = new AddFeedMenu();
-                }
-                newMenu = this.menus['addFeedMenu'];
-                break;
-            case 'addSite':
-                if (!this.menus['addSiteMenu']) {
-                    this.menus['addSiteMenu'] = new AddSiteMenu();
-                }
-                newMenu = this.menus['addSiteMenu'];
-                break;
-            case 'addMashup':
-                if (!this.menus['addMashupMenu']) {
-                    this.menus['addMashupMenu'] = new AddMashupWindowMenu(null);
-                }
-                newMenu = this.menus['addMashupMenu'];
-                newMenu.setMsg(gettext('You are going to add a Mashup that could be composed by more than one gadget. Do you want to add it to a new Workspace or to the current one?'));
-                newMenu.setHandler(handlerYesButton, handlerNoButton);
-                break;
-            default:
-                return;
-            }
-            newMenu.show();
-        }
-
         //Shows the background and on click the message on front disappear
         LayoutManager.prototype.showTransparentBackground = function() {
             this.coverLayerElement.addClassName('disabled_background');
