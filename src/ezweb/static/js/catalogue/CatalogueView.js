@@ -108,23 +108,16 @@ CatalogueView.prototype.search = function (callback, options) {
 };
 
 CatalogueView.prototype.instanciate = function (resource) {
-    //is mashup?
     if (resource.isMashup()) {
-        LayoutManagerFactory.getInstance().showWindowMenu(
-            "addMashup",
-            function () {
-                OpManagerFactory.getInstance().addMashupResource(this);
-            }.bind(resource),
-            function () {
-                OpManagerFactory.getInstance().mergeMashupResource(this);
-            }.bind(resource));
-
-        return;
+        // Ask if the user want to create a new workspace or merge it with the current one
+        (new Wirecloud.ui.InstanciateMashupWindowMenu(resource)).show();
+    } else {
+        ShowcaseFactory.getInstance().addGadget(resource.getVendor(),
+            resource.getName(),
+            resource.getVersion().text,
+            resource.getUriTemplate()
+        );
     }
-
-    // Normal instantiation!
-    ShowcaseFactory.getInstance().addGadget(resource.getVendor(), resource.getName(),
-        resource.getVersion().text, resource.getUriTemplate());
 };
 
 CatalogueView.prototype.getBreadcrum = function () {

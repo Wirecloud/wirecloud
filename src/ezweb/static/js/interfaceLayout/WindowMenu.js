@@ -276,52 +276,6 @@ AlertWindowMenu.prototype.setFocus = function() {
     this.acceptButton.focus();
 }
 
-/**
- * Specific class representing add mashup dialogs
- */
-function AddMashupWindowMenu (actions) {
-    WindowMenu.call(this, gettext('Add Mashup'));
-
-    // Warning icon
-    this.iconElement.className += ' icon-warning';
-
-    // New Workspace button
-    this.acceptButton = document.createElement('button');
-    Element.extend(this.acceptButton);
-    this.acceptButton.appendChild(document.createTextNode(gettext('New Workspace')));
-    this.acceptButton.observe("click", this._newWorkspaceListener.bind(this));
-    this.windowBottom.appendChild(this.acceptButton);
-
-    // Cancel button
-    this.cancelButton = document.createElement('button');
-    Element.extend(this.cancelButton);
-    this.cancelButton.appendChild(document.createTextNode(gettext('Current Workspace')));
-    this.cancelButton.observe("click", this._currentWorkspaceListener.bind(this));
-    this.windowBottom.appendChild(this.cancelButton);
-
-    this.acceptHandler = null;
-    this.cancelHandler = null;
-}
-AddMashupWindowMenu.prototype = new WindowMenu();
-
-AddMashupWindowMenu.prototype._newWorkspaceListener = function(e) {
-    this.acceptHandler();
-    this.hide();
-}
-
-AddMashupWindowMenu.prototype._currentWorkspaceListener = function(e) {
-    this.cancelHandler();
-    this.hide();
-}
-
-AddMashupWindowMenu.prototype.setHandler = function(acceptHandler, cancelHandler) {
-    this.acceptHandler = acceptHandler;
-    this.cancelHandler = cancelHandler;
-}
-
-AddMashupWindowMenu.prototype.setFocus = function() {
-    this.acceptButton.focus();
-}
 
 /**
  * Specific class representing alert dialogs.
