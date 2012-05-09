@@ -3223,6 +3223,7 @@ StyledElements.PopupMenuBase = function (options) {
 
     this.wrapperElement = window.parent.document.createElement('div');
     this.wrapperElement.className = 'popup_menu hidden';
+    this._context = null;
     this._position = options.position;
     this._items = [];
     this._dynamicItems = [];
@@ -3252,6 +3253,15 @@ StyledElements.PopupMenuBase.prototype.appendSeparator = function() {
     this.append(new StyledElements.Separator());
 }
 
+StyledElements.PopupMenuBase.prototype.setContext = function setContext (context) {
+    this._context = context;
+};
+
+StyledElements.PopupMenuBase.prototype._menuItemCallback = function _menuItemCallback (menuItem) {
+    this.hide();
+    menuItem.run(this._context);
+};
+
 StyledElements.PopupMenuBase.prototype.isVisible = function() {
     return EzWebExt.XML.isElement(this.wrapperElement.parentNode);
 };
@@ -3266,7 +3276,7 @@ StyledElements.PopupMenuBase.prototype.show = function(refPosition) {
     for (i = 0; i < this._items.length; i += 1) {
         item = this._items[i];
         if (item instanceof StyledElements.DynamicMenuItems) {
-            generatedItems = item.build();
+            generatedItems = item.build(this._context);
             for (j = 0; j < generatedItems.length; j += 1) {
                 generatedItem = generatedItems[j];
 
@@ -3365,9 +3375,10 @@ StyledElements.PopupMenuBase.prototype.destroy = function() {
     }
     this._items = null;
     this._menuItemCallback = null;
+    this._context = null;
 
     StyledElements.StyledElement.prototype.destroy.call(this);
-}
+};
 
 /**
  *
@@ -3400,15 +3411,6 @@ StyledElements.PopupMenu.prototype.hide = function() {
     if (EzWebExt.XML.isElement(this._disableLayer.parentNode)) {
         EzWebExt.removeFromParent(this._disableLayer);
     }
-}
-
-StyledElements.PopupMenu.prototype.setContext = function(context) {
-    this._context = context;
-}
-
-StyledElements.PopupMenu.prototype._menuItemCallback = function(menuItem) {
-    this.hide();
-    menuItem.run(this._context);
 }
 
 StyledElements.PopupMenu.prototype.destroy = function() {
