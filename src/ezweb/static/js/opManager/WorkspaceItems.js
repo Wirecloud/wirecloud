@@ -35,7 +35,7 @@ WorkspaceItems.prototype.build = function () {
 
     if (current_workspace.isAllowed('rename_workspace')) {
         items.push(new StyledElements.MenuItem(gettext('Rename'), function () {
-            (new RenameWindowMenu(opManager.activeWorkSpace)).show();
+            (new Wirecloud.ui.RenameWindowMenu(opManager.activeWorkSpace, 'rename')).show();
         }.bind(this)));
     }
 

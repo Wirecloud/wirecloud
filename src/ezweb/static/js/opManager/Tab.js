@@ -104,6 +104,10 @@ function Tab(id, notebook, options) {
         return this.tabInfo.id;
     }
 
+    Tab.prototype.getName = function getName () {
+        return this.tabInfo.name;
+    };
+
     Tab.prototype.destroy = function() {
         this.preferences.destroy();
         this.preferences = null;

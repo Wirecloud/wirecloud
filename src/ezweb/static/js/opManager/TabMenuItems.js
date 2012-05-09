@@ -37,7 +37,7 @@ TabMenuItems.prototype.build = function () {
     items.push(new StyledElements.MenuItem(
         gettext("Rename"),
         function () {
-            (new RenameTabWindowMenu(this)).show();
+            (new Wirecloud.ui.RenameWindowMenu(this, 'updateInfo')).show();
         }.bind(this.tab)
     ));
 
