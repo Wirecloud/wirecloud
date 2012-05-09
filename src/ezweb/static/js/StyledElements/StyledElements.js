@@ -3249,9 +3249,7 @@ StyledElements.PopupMenuBase.prototype.append = function(child) {
 }
 
 StyledElements.PopupMenuBase.prototype.appendSeparator = function() {
-    var separator = document.createElement('hr');
-    this.wrapperElement.appendChild(separator);
-    this._items.push(separator);
+    this.append(new StyledElements.Separator());
 }
 
 StyledElements.PopupMenuBase.prototype.isVisible = function() {
@@ -3274,13 +3272,13 @@ StyledElements.PopupMenuBase.prototype.show = function(refPosition) {
 
                 this._append(generatedItem, this._dynamicItems);
 
-                if (generatedItem instanceof StyledElements.MenuItem) {
+                if (generatedItem instanceof StyledElements.MenuItem || generatedItem instanceof StyledElements.Separator) {
                     generatedItem.insertInto(this.wrapperElement);
                 } else if (generatedItem instanceof StyledElements.SubMenuItem) {
                     generatedItem._getMenuItem().insertInto(this.wrapperElement);
                 }
             }
-        } else if (item instanceof StyledElements.MenuItem) {
+        } else if (item instanceof StyledElements.MenuItem || item instanceof StyledElements.Separator) {
             item.insertInto(this.wrapperElement);
         } else if (item instanceof StyledElements.SubMenuItem) {
             item._getMenuItem().insertInto(this.wrapperElement);
@@ -3488,3 +3486,21 @@ StyledElements.SubMenuItem.prototype.destroy = function() {
     StyledElements.PopupMenuBase.prototype.destroy.call(this);
 }
 
+/**
+ * @experimental
+ *
+ */
+StyledElements.Separator = function Separator () {
+    StyledElements.StyledElement.call(this, []);
+
+    this.wrapperElement = document.createElement("hr");
+};
+StyledElements.Separator.prototype = new StyledElements.StyledElement();
+
+StyledElements.Separator.prototype.destroy = function destroy () {
+    if (EzWebExt.XML.isElement(this.wrapperElement.parentNode)) {
+        EzWebExt.removeFromParent(this.wrapperElement);
+    }
+
+    StyledElements.StyledElement.prototype.destroy.call(this);
+};
