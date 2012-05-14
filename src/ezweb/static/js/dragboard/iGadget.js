@@ -138,9 +138,11 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
     this.build();
     layout.addIGadget(this, true);
 
+    StyledElements.ObjectWithEvents.call(this, ['load', 'unload']);
     this.menu_color = menu_color ? menu_color : "FFFFFF";
     //this.menu_color = IGadgetColorManager.autogenColor(menu_color, this.code);
 }
+IGadget.prototype = new StyledElements.ObjectWithEvents();
 
 /**
  * Returns the associated Gadget.
@@ -1192,6 +1194,8 @@ IGadget.prototype._notifyLoaded = function () {
         //Change the layout to extract the igadget from the grid
         this.toggleLayout();
     }
+
+    this.events['load'].dispatch(this);
 };
 
 /**
@@ -1210,6 +1214,7 @@ IGadget.prototype._notifyUnloaded = function () {
 
     this.errorButtonElement.addClassName("disabled");
     this.loaded = false;
+    this.events['unload'].dispatch(this);
 };
 
 /**
