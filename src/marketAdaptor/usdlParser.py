@@ -55,12 +55,14 @@ class USDLParser(object):
     _usdl_document= None
     _info = None
     _graph = None
-    _service_uri = None
+    _service_list = None
+    _service_number = None
 
     def __init__(self,usdl_document):
-        #import ipdb;ipdb.set_trace()
         self._usdl_document=usdl_document
         self._info = {}
+        self._service_list = []
+        self._service_number = 0
         self._graph = rdflib.Graph()
 
         #Check rdf format
@@ -69,12 +71,12 @@ class USDLParser(object):
         except:
             self._graph.parse(data=usdl_document,format='n3')
 
-        # Only a usdl service is permited in the document
-        # TODO check if exist a composite service or more services
+        # take all the services in the document
         for ser in self._graph.subjects(RDF['type'],USDL['Service']):
-             self._service_uri = ser
-             break
-        else:
+            self._service_list.append(ser)
+            self._service_number = self._service_number + 1
+        
+        if self._service_number == 0:
             msg =_('Error the document is not a valid usdl document')
             raise Exception(msg)
 
@@ -94,25 +96,41 @@ class USDLParser(object):
 
         return result
 
-    def _parse_basic_info(self):
-        vendor = self._get_field(USDL,self._service_uri,'hasProvider',id_ = True)[0]
+    def _parse_basic_info(self,service_uri):
+        vendor = self._get_field(USDL,service_uri,'hasProvider',id_ = True)[0]
         self._info['vendor']=self._get_field(FOAF,vendor,'name')[0]
-        self._info['name']=self._get_field(DCTERMS,self._service_uri,'title')[0]
+        self._info['name']=self._get_field(DCTERMS,service_uri,'title')[0]
+        
+        # If the service has parts it means that is a mash-up
+        service_parts = self._get_field(USDL,service_uri,'hasPartMandatory',id_=True)
+
+        if len(service_parts) == 1 and service_parts[0] == '':
+            self._info['type']='gadget'
+        else:
+            self._info['type']='mashup'
+            self._info['parts']=[]
+
+            for part in service_parts:
+                part_info = {}
+                part_info['name'] = self._get_field(DCTERMS,part,'title')[0]
+                part_info['uri'] = unicode(part)
+                self._info['parts'].append(part_info)
+            
         self._info['versions']=[]
         self._info['versions'].append({})
-        self._info['versions'][0]['shortDescription']=self._get_field(DCTERMS,self._service_uri,'abstract')[0]
-        self._info['versions'][0]['longDescription']=self._get_field(DCTERMS,self._service_uri,'description')[0]
-        self._info['versions'][0]['created']=self._get_field(DCTERMS,self._service_uri,'created')[0]
-        self._info['versions'][0]['modified']=self._get_field(DCTERMS,self._service_uri,'modified')[0]
-        self._info['versions'][0]['uriImage']=self._get_field(FOAF,self._service_uri,'depiction')[0]
-        self._info['versions'][0]['version']=self._get_field(USDL,self._service_uri,'versionInfo')[0]
-        artefact=self._get_field(USDL,self._service_uri,'utilizedResource',id_=True)[0]
+        self._info['versions'][0]['shortDescription']=self._get_field(DCTERMS,service_uri,'abstract')[0]
+        self._info['versions'][0]['longDescription']=self._get_field(DCTERMS,service_uri,'description')[0]
+        self._info['versions'][0]['created']=self._get_field(DCTERMS,service_uri,'created')[0]
+        self._info['versions'][0]['modified']=self._get_field(DCTERMS,service_uri,'modified')[0]
+        self._info['versions'][0]['uriImage']=self._get_field(FOAF,service_uri,'depiction')[0]
+        self._info['versions'][0]['version']=self._get_field(USDL,service_uri,'versionInfo')[0]
+        artefact=self._get_field(USDL,service_uri,'utilizedResource',id_=True)[0]
         self._info['versions'][0]['uriTemplate']=self._get_field(BLUEPRINT,artefact,'location')[0]
-        self._info['versions'][0]['page']=self._get_field(FOAF,self._service_uri,'page')[0]
+        self._info['versions'][0]['page']=self._get_field(FOAF,service_uri,'page')[0]
 
-    def _parse_legal_info(self):
+    def _parse_legal_info(self,service_uri):
         self._info['versions'][0]['legal']=[]
-        legal_conditions = self._get_field(USDL,self._service_uri,'hasLegalCondition',id_=True)
+        legal_conditions = self._get_field(USDL,service_uri,'hasLegalCondition',id_=True)
 
         for legal in legal_conditions:
             legal_condition = {}
@@ -131,10 +149,10 @@ class USDLParser(object):
             self._info['versions'][0]['legal'].append(legal_condition)
         
 
-    def _parse_sla_info(self):
+    def _parse_sla_info(self,service_uri):
         #import ipdb;ipdb.set_trace()
         self._info['versions'][0]['sla']=[]
-        service_level_profile = self._get_field(USDL,self._service_uri,'hasServiceLevelProfile',id_=True)[0]
+        service_level_profile = self._get_field(USDL,service_uri,'hasServiceLevelProfile',id_=True)[0]
         service_levels = self._get_field(SLA,service_level_profile,'hasServiceLevel',id_=True)
 
         for sla in service_levels:
@@ -170,7 +188,7 @@ class USDLParser(object):
             self._info['versions'][0]['sla'].append(service_level)
 
 
-    def _parse_pricing_info(self):
+    def _parse_pricing_info(self,service_uri):
         self._info['versions'][0]['pricing']=[]
         current_pricing = None
 
@@ -178,7 +196,7 @@ class USDLParser(object):
             found = False
 
             for included_service in self._get_field(USDL,ofering,'includes',id_=True):
-                if included_service == self._service_uri:
+                if included_service == service_uri:
                     current_pricing = ofering
                     found = True
                     break
@@ -234,9 +252,20 @@ class USDLParser(object):
                 
 
     def parse(self):
-        self._parse_basic_info()
-        self._parse_legal_info()
-        self._parse_sla_info()
-        self._parse_pricing_info()
-        return self._info
+        
+        result = []
+        for service_uri in self._service_list:
+            self._parse_basic_info(service_uri)
+            self._parse_legal_info(service_uri)
+            self._parse_sla_info(service_uri)
+            self._parse_pricing_info(service_uri)
+
+            if self._service_number > 1:
+                result.append(self._info)
+                self._info = {}
+        
+        if self._service_number == 1:
+            return self._info
+        else:
+            return result
         

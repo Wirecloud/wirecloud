@@ -27,6 +27,34 @@
 /*global alert, Constants, Element, document, gettext, interpolate, LayoutManagerFactory, Template */
 "use strict";
 
+var PartsPainter = function(catalogue, part_structure_element, dom_element){
+	this.catalogue=catalogue;
+	this.part_template_element = part_structure_element;
+    this.part_template = new Template(this.part_template_element);
+    this.dom_element = dom_element;
+
+	this.paint = function(resource){
+		var resource_html,parts,i,parts_element,resource_element;
+		
+		this.dom_element.innerHTML = '';
+		parts=resource.getParts();
+		
+		for(i = 0 ; i<parts.length ; i += 1 ){
+			parts_element=parts[i];
+
+			resource_html = {
+            	"name":parts_element.name,
+				"uri":parts_element.uri
+        	};
+			resource_element = document.createElement('div');
+			Element.extend(resource_element);
+			resource_element.className="part_resource";
+			resource_element.update(this.part_template.evaluate(resource_html));
+			this.dom_element.appendChild(resource_element)
+		}
+	};
+};
+
 var LegalPainter = function(catalogue, legal_structure_element, dom_element){
 	this.catalogue=catalogue;
 	this.legal_template_element = legal_structure_element;

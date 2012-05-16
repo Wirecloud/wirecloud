@@ -43,9 +43,9 @@ if (!Wirecloud.ui) {
         current_catalogue = this.market.alternatives.getCurrentAlternative();
 
         for (key in this.market.viewsByName) {
-            items.push(new StyledElements.MenuItem(this.market.viewsByName[key].getLabel(), function () {
-                this.alternatives.showAlternative(this.viewsByName['cat-local']);
-            }.bind(this.market)));
+            items.push(new StyledElements.MenuItem(this.market.viewsByName[key].getLabel(), function (view_name) {
+                this.alternatives.showAlternative(this.viewsByName[view_name]);
+            }.bind(this.market, key)));
         }
 
         items.push(new StyledElements.Separator());
@@ -56,11 +56,67 @@ if (!Wirecloud.ui) {
             }.bind(current_catalogue)));
         }
 
-        items.push(new StyledElements.MenuItem(gettext('Add new catalogue'), function () {
+        items.push(new StyledElements.MenuItem(gettext('Add new marketplace'), function () {
+            var menu,fields,type_entries; 
+
+            fields= {
+			'label': {
+				'type': 'text',
+				'label': gettext('Name'),
+				'required': true
+			},
+			'display_name': {
+				'type': 'text',
+				'label': gettext('Label'),
+				'required': true,
+			},
+            'url': {
+				'type': 'text',
+				'label': gettext('URL'),
+				'required': true,
+				'initialValue': 'http://'
+			},
+            'type': {
+				'type': 'select',
+                'initialEntries': [{'label':'Wirecloud',
+                                    'value':'wirecloud'},
+                                   {'label':'Fi-ware',
+                                    'value':'fiware'}],
+                'label': gettext('Type'),
+				'required': true,
+			}
+		    };
+		    menu = new FormWindowMenu(fields, gettext('Add Marketplace'));
+            
+		    // Form data is sent to server
+            menu.executeOperation = function(data) {
+                var market_info = {};
+                market_info["name"]=data['label'];
+                market_info["options"]={
+                    "label":data['display_name'],
+                    "url":data['url'],
+                    "type":data['type']
+                };
+			    this.market.market_manager.addMarket(market_info, this.market.refreshViewInfo.bind(this.market));	
+		    }.bind(this);
+
+	   	    menu.show(); 
         }.bind(this)));
+
+        if(this.market.number_of_alternatives > 1){
+            items.push(new StyledElements.MenuItem(gettext('Delete marketplace'), function(){
+                //First ask if the user really wants to remove the marketplace
+                LayoutManagerFactory.getInstance().showYesNoDialog(gettext('Do you really want to remove the marketplace ') + this.market.alternatives.getCurrentAlternative().getLabel() + '?', 
+                function (){
+                    this.market.market_manager.deleteMarket(this.market.alternatives.getCurrentAlternative().getLabel(),this.market.refreshViewInfo.bind(this.market));
+                    //this.market.alternatives.showAlternative()
+                }.bind(this));
+            }.bind(this)));
+        }
 
         return items;
     };
+
 
     Wirecloud.ui.MarketplaceViewMenuItems = MarketplaceViewMenuItems;
 })();

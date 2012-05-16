@@ -29,8 +29,7 @@ var FiWareStoreListItems = function (view) {
 	// This function changes the current store when a store is selected in storeMenu 
 	this.handler = function(store) {
 		this.currentStore = store;
-		this.viewsByName['cat-remote'].setCurrentStore(this.currentStore);
-		this.viewsByName['cat-remote'].refresh_search_results();
+		this.refresh_search_results();
 		LayoutManagerFactory.getInstance().header.refresh();
 	};
 };
@@ -53,49 +52,47 @@ FiWareStoreListItems.prototype.build = function (store_info) {
 	// This is used to delete the current store and update store list
 	if (this.view.currentStore !== 'All stores') {
 		items.push(new StyledElements.MenuItem(gettext('Delete store'), function () {
-			this.fiWareCatalogue.delete_store(this.currentStore);
-			this.currentStore = 'All stores';
-			this.viewsByName['cat-remote'].setCurrentStore(this.currentStore);
-			this.viewsByName['cat-remote'].refresh_search_results();
-			this.refresh_store_info(); 
-			LayoutManagerFactory.getInstance().header.refresh();
+			//First ask if the user really wants to remove the store
+			LayoutManagerFactory.getInstance().showYesNoDialog(gettext('Do you really want to remove the store ') + this.currentStore + '?', 
+			function() {
+				this.fiWareCatalogue.delete_store(this.currentStore);
+				this.currentStore = 'All stores';
+				this.refresh_search_results();
+				this.refresh_store_info(); 
+				LayoutManagerFactory.getInstance().header.refresh();
+			}.bind(this));
 		}.bind(this.view)));
 	}
 
 	if (this.view.currentStore !== 'All stores') {
 		items.push(new StyledElements.MenuItem(gettext('Publish service'),
-			this.view.viewsByName['cat-remote'].createUserCommand('publish')));
+			this.view.createUserCommand('publish')));
 		items.push(new StyledElements.Separator());
 	}
 
 	// To add a new store is necesary to have a form in order to take the information
 	items.push(new StyledElements.MenuItem(gettext('Add store'), function () {
-		
-		menu = new CreateWindowMenu();
-		menu.setTitle(gettext('Add Store'));
 
-		url_label = document.createElement('label');
-		url_label.appendChild(document.createTextNode(gettext('URI: ')));
-		store_url = document.createElement('input');
-		Element.extend(store_url);
-		store_url.setAttribute('type','text');
-		store_url.value='http://'
-		url_label.appendChild(store_url);
-
-		menu.windowContent.appendChild(url_label);
+		var menu, fields = {
+			'label': {
+				'type': 'text',
+				'label': gettext('Name'),
+				'required': true
+			},
+			'uri': {
+				'type': 'text',
+				'label': gettext('URI'),
+				'required': true,
+				'initialValue': 'http://'
+			}
+		};
+		menu = new FormWindowMenu(fields, gettext('Add Store'));
 
 		// Form data is sent to server
-		menu.operationHandler = function(e){
-			var store_uri, store_name;
-			store_uri = store_url.value;
-			store_name = menu.nameInput.value;
-			Event.stop(e);
-			menu.hide();
-			this.fiWareCatalogue.add_store(store_name,store_uri, this.refresh_store_info.bind(this));
-			
+		menu.executeOperation = function(data) {
+			this.fiWareCatalogue.add_store(data['label'], data['uri'], this.refresh_store_info.bind(this));	
 		}.bind(this);
 
-		menu.button.observe("click", menu.operationHandler);
 		menu.show();
 
     }.bind(this.view)));

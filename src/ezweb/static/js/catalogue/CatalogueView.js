@@ -26,6 +26,7 @@ var CatalogueView = function (id, options) {
     options.id = 'catalogue';
     StyledElements.Alternative.call(this, id, options);
 
+	this.marketplace=options.marketplace;
     this.alternatives = new StyledElements.StyledAlternatives();
     this.appendChild(this.alternatives);
 
@@ -42,7 +43,7 @@ var CatalogueView = function (id, options) {
 CatalogueView.prototype = new StyledElements.Alternative();
 
 CatalogueView.prototype.getLabel = function () {
-    return gettext('wirecloud marketplace');
+    return this.marketplace;
 };
 
 CatalogueView.prototype._onShow = function () {

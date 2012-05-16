@@ -46,7 +46,7 @@ FiWareCataloguePublishView.prototype._submit_usdl = function(e){
 	LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding resource to the marketplace"), 1);
     LayoutManagerFactory.getInstance().logSubTask(gettext('Sending usdl description to marketplace'));
 
-	url = 'http://localhost:8000/marketAdaptor/' + this.catalogue.getCurrentStore();
+	url = '/marketAdaptor' + '/marketplace/' + this.catalogue.getLabel() + '/' + this.catalogue.getCurrentStore() +"/resources";
 
 	Wirecloud.io.makeRequest(url, {
         method: 'POST',

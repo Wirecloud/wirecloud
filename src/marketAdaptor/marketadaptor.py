@@ -29,12 +29,15 @@
 
 
 #
-from urlparse import urlparse
+import urllib2
+from urllib2 import HTTPError
+from urlparse import urlparse, urljoin
+
 from django.utils.translation import ugettext as _
 from marketAdaptor.usdlParser import USDLParser
-from commons.http_utils import download_http_content
 from lxml import etree
-import httplib
+
+from proxy.views import MethodRequest
 
 RESOURCE_XPATH = '/collection/resource'
 URL_XPATH = 'url' 
@@ -42,6 +45,7 @@ DATE_XPATH = 'registrationDate'
 SEARCH_RESULT_XPATH = '/searchresults/searchresult'
 SEARCH_SERVICE_XPATH = 'service'
 SEARCH_STORE_XPATH = 'store'
+
 
 class MarketAdaptor(object):
 
@@ -51,14 +55,12 @@ class MarketAdaptor(object):
         self._marketplace_uri = marketplace_uri
 
     def get_all_stores(self):
-        connection = httplib.HTTPConnection(self._marketplace_uri)
-        connection.request("GET", "/FiwareMarketplace/v1/registration/stores/")
-        response = connection.getresponse()
+        opener = urllib2.build_opener()
+        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/stores/"))
+        response = opener.open(request)
 
-        if response.status != 200:
-            msg =_("Connection error:Server response status %(res)s" % {"res":response.status})
-            # TODO create a especific exeption
-            raise Exception(msg)
+        if response.code != 200:
+            raise HTTPError(response.url,response.code,response.msg, None, None)
 
         body = response.read()
 
@@ -76,14 +78,12 @@ class MarketAdaptor(object):
         return result
 
     def get_store_info(self,store):
-        connection = httplib.HTTPConnection(self._marketplace_uri)
-        connection.request("GET", "/FiwareMarketplace/v1/registration/store/" + store)
-        response = connection.getresponse()
+        opener = urllib2.build_opener()
+        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + store))
+        response = opener.open(request)
 
-        if response.status != 200:
-            msg =_("Connection error:Server response status %(res)s" % {"res":response.status})
-            # TODO create a especific exeption
-            raise Exception(msg)
+        if response.code != 200:
+            raise HTTPError(response.url,response.code,response.msg, None, None)
 
         body = response.read()
         parsed_body = etree.fromstring(body)
@@ -97,42 +97,37 @@ class MarketAdaptor(object):
         
 
     def add_store(self,store_info):
+        #import ipdb; ipdb.set_trace()
         params='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><resource name="' + store_info['store_name'] +'" ><url>' + store_info['store_uri'] + '</url></resource>'
         headers = {'content-type': 'application/xml'}
 
-        connection = httplib.HTTPConnection(self._marketplace_uri)
-        connection.request("PUT", "http://localhost:8080/FiwareMarketplace/v1/registration/store/", params, headers)
-        response = connection.getresponse()
+        opener = urllib2.build_opener()
+        request = MethodRequest("PUT", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/"),params,headers)
+        response = opener.open(request)
         
-        if response.status != 201:
-            msg =_("Connection error:Server response status %(res)s" % {"res":response.status})
-            # TODO create a especific exeption
-            raise Exception(msg)
+        if response.code != 201:
+            raise HTTPError(response.url,response.code,response.msg, None, None)
 
     def update_store(self,store_info):
         pass
 
     def delete_store(self,store):
-        connection = httplib.HTTPConnection(self._marketplace_uri)
-        connection.request("DELETE", "/FiwareMarketplace/v1/registration/store/" + store)
-        response = connection.getresponse()
+        opener = urllib2.build_opener()
+        request = MethodRequest("DELETE", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + store))
+        response = opener.open(request)
 
-        if response.status != 200:
-            msg =_("Connection error:Server response status %(res)s" % {"res":response.status})
-            # TODO create a especific exeption
-            raise Exception(msg)
+        if response.code != 200:
+            raise HTTPError(response.url,response.code,response.msg, None, None)
 
-        
 
     def get_all_services_from_store(self,store):
-        connection = httplib.HTTPConnection(self._marketplace_uri)
-        connection.request("GET", "/FiwareMarketplace/v1/registration/store/" + store + "/services")
-        response = connection.getresponse()
+        #import ipdb; ipdb.set_trace()
+        opener = urllib2.build_opener()
+        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + store + "/services"))
+        response = opener.open(request)
 
-        if response.status != 200:
-            msg =_("Connection error:Server response status %(res)s" % {"res":response.status})
-            # TODO create a especific exeption
-            raise Exception(msg)
+        if response.code != 200:
+            raise HTTPError(response.url,response.code,response.msg, None, None)
 
         body = response.read()
         parsed_body = etree.fromstring(body)
@@ -142,20 +137,26 @@ class MarketAdaptor(object):
         for res in parsed_body.xpath(RESOURCE_XPATH):
             url =  res.xpath(URL_XPATH)[0].text
             try:
-                url_elements = urlparse(url)
-                connection = httplib.HTTPConnection(url_elements[1])
-                headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"} 
-                connection.request("GET", url_elements[2], "",  headers)
-                response = connection.getresponse()
+                headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"}
+                request = MethodRequest("GET", url,'',headers)
+                response = opener.open(request)
                 usdl_document=response.read()
                 parser = USDLParser(usdl_document)
             except:
-	        continue
+                continue
+
             
             parsed_usdl=parser.parse()
-            parsed_usdl['store']=store
-            parsed_usdl['marketName']=res.get('name')
-            result['resources'].append(parsed_usdl)
+
+            if isinstance(parsed_usdl,dict): 
+                parsed_usdl['store']=store
+                parsed_usdl['marketName']=res.get('name')
+                result['resources'].append(parsed_usdl)
+            else:
+                for ser in parsed_usdl:
+                    ser['store']=store
+                    ser['marketName']=res.get('name')
+                    result['resources'].append(ser)
 
         return result
 
@@ -163,43 +164,37 @@ class MarketAdaptor(object):
         pass
 
     def add_service(self,store,service_info):
-       
+        
         params='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><resource name="' + service_info['name'] +'" ><url>' + service_info['url'] + '</url></resource>'
         headers = {'content-type': 'application/xml'}
 
-        connection = httplib.HTTPConnection(self._marketplace_uri)
-        connection.request("PUT", "http://localhost:8080/FiwareMarketplace/v1/registration/store/"+ store +"/service", params, headers)
-        response = connection.getresponse()
+        opener = urllib2.build_opener()
+        request = MethodRequest("PUT", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + store + "/service"),params,headers)
+        response = opener.open(request)
         
-        if response.status != 201:
-            msg =_("Connection error:Server response status %(res)s" % {"res":response.status})
-            # TODO create a especific exeption
-            raise Exception(msg)
+        if response.code != 201:
+            raise HTTPError(response.url,response.code,response.msg, None, None)
 
     def update_service(self,store,service_info):
         pass
 
     def delete_service(self,store,service):
         
-        connection = httplib.HTTPConnection(self._marketplace_uri)
-        connection.request("DELETE", "/FiwareMarketplace/v1/registration/store/" + store + "/service/" + service)
-        response = connection.getresponse()
+        opener = urllib2.build_opener()
+        request = MethodRequest("DELETE", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + store + "/service/"+ service))
+        response = opener.open(request)
 
-        if response.status != 200:
-            msg =_("Connection error:Server response status %(res)s" % {"res":response.status})
-            # TODO create a especific exeption
-            raise Exception(msg)
+        if response.code != 200:
+            raise HTTPError(response.url,response.code,response.msg, None, None)
 
     def full_text_search(self,store,search_string):
-        
-        connection = httplib.HTTPConnection(self._marketplace_uri)
-        connection.request("GET", "/FiwareMarketplace/v1/search/fulltext/" + search_string)
-        response = connection.getresponse()
 
-        if response.status != 200:
-            msg =_("Connection error:Server response status %(res)s" % {"res":response.status})
-            # TODO create a especific exception
-            raise Exception(msg)
+        opener = urllib2.build_opener()
+        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/search/fulltext/" + search_string))
+        response = opener.open(request)
+
+        if response.code != 200:
+            raise HTTPError(response.url,response.code,response.msg, None, None)
 
         body = response.read()
         parsed_body = etree.fromstring(body)
@@ -212,29 +207,32 @@ class MarketAdaptor(object):
             try:
                 if store != '':
                     if store == service_store:
-                        url_elements = urlparse(url)
-                        connection = httplib.HTTPConnection(url_elements[1])
                         headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"} 
-                        connection.request("GET", url_elements[2], "",  headers)
-                        response = connection.getresponse()
+                        request = MethodRequest("GET",url,'',headers)
+                        response = opener.open(request)
                         usdl_document=response.read()
                         parser = USDLParser(usdl_document)
                     else:
                         continue
                 else:
-                    url_elements = urlparse(url)
-                    connection = httplib.HTTPConnection(url_elements[1])
                     headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"} 
-                    connection.request("GET", url_elements[2], "",  headers)
-                    response = connection.getresponse()
+                    request = MethodRequest("GET",url,'',headers)
+                    response = opener.open(request)
                     usdl_document=response.read()
                     parser = USDLParser(usdl_document)
             except:
                 continue
 
             parsed_usdl=parser.parse()
-            parsed_usdl['store']=service_store
-            parsed_usdl['marketName']=service.get('name')
-            result['resources'].append(parsed_usdl)
+
+            if isinstance(parsed_usdl,dict): 
+                parsed_usdl['store']=service_store
+                parsed_usdl['marketName']=service.get('name')
+                result['resources'].append(parsed_usdl)
+            else:
+                for ser in parsed_usdl:
+                    ser['store']=service_store
+                    ser['marketName']=service.get('name')
+                    result['resources'].append(ser)
 
         return result

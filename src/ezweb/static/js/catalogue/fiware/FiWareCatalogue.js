@@ -110,13 +110,13 @@ FiWareCatalogue.prototype.search = function (callback, options) {
 	var url;
 
 	if (options.search_criteria == '' && this.catalogue.getCurrentStore() == 'All stores'){
-		url = 'http://localhost:8000/marketAdaptor/resources';
+		url = '/marketAdaptor/marketplace/' + this.catalogue.getLabel() + '/' + 'resources';
 	}else if (options.search_criteria != '' && this.catalogue.getCurrentStore() == 'All stores'){
-		url = 'http://localhost:8000/marketAdaptor/search/' + options.search_criteria;
+		url = '/marketAdaptor/marketplace/' + this.catalogue.getLabel() + '/search/' + options.search_criteria;
 	}else if (options.search_criteria == '' && this.catalogue.getCurrentStore() != 'All stores'){
-		url = 'http://localhost:8000/marketAdaptor/resources/' + this.catalogue.getCurrentStore();
+		url = '/marketAdaptor/marketplace/'+ this.catalogue.getLabel() + '/' + this.catalogue.getCurrentStore() + '/resources/';
 	}else{
-		url = 'http://localhost:8000/marketAdaptor/search/' + this.catalogue.getCurrentStore() + '/' + options.search_criteria;
+		url = '/marketAdaptor/marketplace/'+ this.catalogue.getLabel() + '/search/' + this.catalogue.getCurrentStore() + '/' + options.search_criteria;
 	}	
 
 	context ={
@@ -133,7 +133,7 @@ FiWareCatalogue.prototype.search = function (callback, options) {
 FiWareCatalogue.prototype.delete = function (options) {
 	var url;
 
-	url = 'http://localhost:8000/marketAdaptor/' + options.store + '/' + options.name;
+	url = '/marketAdaptor/marketplace/'+ this.catalogue.getLabel()+ '/' + options.store + '/' + options.name;
 
 	LayoutManagerFactory.getInstance()._startComplexTask(gettext("Deleting resource from  marketplace"), 1);
     LayoutManagerFactory.getInstance().logSubTask(gettext('Deleting resource from marketplace'));
@@ -160,7 +160,7 @@ FiWareCatalogue.prototype.delete = function (options) {
 
 FiWareCatalogue.prototype.getStores = function(callback){
 	var url;
-	url='http://localhost:8000/marketAdaptor/stores'
+	url='/marketAdaptor/marketplace/' + this.catalogue.getLabel() +'/stores'
 
 	context ={
 		'callback':callback
@@ -174,7 +174,7 @@ FiWareCatalogue.prototype.getStores = function(callback){
 };
 
 FiWareCatalogue.prototype.delete_store = function (store) {
-	var url = 'http://localhost:8000/marketAdaptor/stores/' + store;
+	var url = '/marketAdaptor/marketplace/'+ this.catalogue.getLabel() + '/stores/' + store;
 
 	LayoutManagerFactory.getInstance()._startComplexTask(gettext("Deleting store from  marketplace"), 1);
     LayoutManagerFactory.getInstance().logSubTask(gettext('Deleting store from marketplace'));
@@ -199,14 +199,15 @@ FiWareCatalogue.prototype.delete_store = function (store) {
 
 FiWareCatalogue.prototype.add_store = function (store, store_uri,callback) {
 	var url;
-	url = 'http://localhost:8000/marketAdaptor/stores/' + store;
+	url = '/marketAdaptor/marketplace/' + this.catalogue.getLabel() +'/stores/';
 
 	LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding store to  marketplace"), 1);
     LayoutManagerFactory.getInstance().logSubTask(gettext('Adding store to marketplace'));
 
 	Wirecloud.io.makeRequest(url, {
 		method: 'POST',
-		parameters: {'uri': store_uri},
+		parameters: {'uri': store_uri,
+					 'store':store},
 
 		onSuccess: function (transport) {
             LayoutManagerFactory.getInstance().logSubTask(gettext('Store added successfully'));

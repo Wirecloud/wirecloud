@@ -28,15 +28,16 @@ var FiWareCatalogueView = function (id, options) {
 	this.alternatives = new StyledElements.StyledAlternatives();
     this.appendChild(this.alternatives);
     this.currentStore = 'All stores';
+    this.marketplace = options.marketplace;
     this.store_info =[];
 
 	this.viewsByName = {
         'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: {catalogue: this, resource_painter: FiWareResourcePainter}}),
         'details': this.alternatives.createAlternative({alternative_constructor: FiWareResourceDetailsView, containerOptions: {catalogue: this}}),
-		'publish': this.alternatives.createAlternative({alternative_constructor: FiWareCataloguePublishView, containerOptions: {catalogue: this}}),
+	'publish': this.alternatives.createAlternative({alternative_constructor: FiWareCataloguePublishView, containerOptions: {catalogue: this}}),
     };
 
-	this.fiWareCatalogue = new FiWareCatalogue(this);
+    this.fiWareCatalogue = new FiWareCatalogue(this);
 
     this.generateStoreMenu();
 };
@@ -44,12 +45,12 @@ var FiWareCatalogueView = function (id, options) {
 FiWareCatalogueView.prototype = new StyledElements.Alternative();
 
 FiWareCatalogueView.prototype.getLabel = function () {
-    return gettext('fi-ware marketplace');
+    return this.marketplace;
 };
 
 // this functions are used to update and know the current store in diferent views
 FiWareCatalogueView.prototype.setCurrentStore = function (store) {
-	this.currentStore = store;
+    this.currentStore = store;
 };
 
 FiWareCatalogueView.prototype.getCurrentStore = function () {
@@ -96,28 +97,18 @@ FiWareCatalogueView.prototype._onSearch = function (callback, raw_data) {
 FiWareCatalogueView.prototype.instanciate = function (resource) {
     //is mashup?
     if (resource.isMashup()) {
-        LayoutManagerFactory.getInstance().showWindowMenu(
-            "addMashup",
-            function () {
-                OpManagerFactory.getInstance().addMashupResource(this);
-            }.bind(resource),
-            function () {
-                OpManagerFactory.getInstance().mergeMashupResource(this);
-            }.bind(resource));
-
-        return;
+        (new Wirecloud.io.InstanciateMashupWindow(resource)).show();
+    } else {
+        ShowcaseFactory.getInstance().addGadget(resource.getVendor(), resource.getName(),
+                resource.getVersion().text, resource.getUriTemplate());
     }
-
-    // Normal instantiation!
-    ShowcaseFactory.getInstance().addGadget(resource.getVendor(), resource.getName(),
-        resource.getVersion().text, resource.getUriTemplate());
 };
 
 FiWareCatalogueView.prototype.getExtraBreadcrum = function () {
 
     return [{
         'label': this.currentStore,
-	'menu': this.storeMenu
+		'menu': this.storeMenu
     }];
 };
 
@@ -135,8 +126,7 @@ FiWareCatalogueView.prototype.generateStoreMenu = function() {
 
     this.storeMenu.append(new StyledElements.MenuItem(gettext('All stores'), function () {
         this.currentStore = 'All stores';
-        this.viewsByName['cat-remote'].setCurrentStore(this.currentStore);
-        this.viewsByName['cat-remote'].refresh_search_results();
+		this.refresh_search_results();
         LayoutManagerFactory.getInstance().header.refresh();
     }.bind(this)));
 
@@ -184,7 +174,7 @@ FiWareCatalogueView.prototype.ui_commands.showDetails = function (resource) {
 FiWareCatalogueView.prototype.ui_commands.publish = function (resource) {
     return function (e) {
 		if(this.currentStore !== 'All stores'){
-        	this.alternatives.showAlternative(this.viewsByName.publish);
+			this.alternatives.showAlternative(this.viewsByName.publish);
 		}else{
 			var msg_menu;
 			msg_menu = new MessageWindowMenu();
@@ -199,19 +189,19 @@ FiWareCatalogueView.prototype.ui_commands.delete = function (resource,options) {
 	// First ask the user
     msg = gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") gadget?');
     context = {
-       	name: resource.getName(),
-       	vendor: resource.getVendor(),
-       	version: resource.getVersion().text
+		name: resource.getName(),
+		vendor: resource.getVendor(),
+		version: resource.getVersion().text
     };
 
 	doRequest = function(){
 		this.fiWareCatalogue.delete(options)
 	};
 
-   	msg = interpolate(msg, context, true);
-   	return function () {
-       	LayoutManagerFactory.getInstance().showYesNoDialog(msg, doRequest.bind(this));
-   	}.bind(this);
+	msg = interpolate(msg, context, true);
+	return function () {
+		LayoutManagerFactory.getInstance().showYesNoDialog(msg, doRequest.bind(this));
+	}.bind(this);
 };
 
 FiWareCatalogueView.prototype.refresh_search_results = function () {

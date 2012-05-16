@@ -29,71 +29,141 @@
 
 
 #
+import json
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse, HttpResponseServerError, HttpResponseBadRequest
+from django.shortcuts import get_object_or_404
 from commons.http_utils import download_http_content
 from marketAdaptor.marketadaptor import MarketAdaptor
+from commons.resource import Resource
 from commons.utils import json_encode
+from wirecloud.models.markets import Market 
 
 
+class ServiceCollection(Resource):
 
-def get_resource_list_from_store(request, store, marketplace='localhost:8080'):
+    def read(self, request, marketplace, store):
+        #import ipdb;ipdb.set_trace()
+        m = get_object_or_404(Market, name=marketplace)
+        options = json.loads(m.options)
+        url=options['url']
 
-    adaptor = MarketAdaptor(marketplace)
+        adaptor = MarketAdaptor(url)
+        try:
+            result = adaptor.get_all_services_from_store(store)
+        except:
+            return HttpResponse(status=502)
 
-    result = adaptor.get_all_services_from_store(store)
-
-    return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
-
-def get_resource_list_from_keyword(request, store="", keyword="widget", marketplace='localhost:8080'):
-
-    adaptor = MarketAdaptor(marketplace)
-    result = adaptor.full_text_search(store,keyword)
-
-    return HttpResponse(json_encode(result),mimetype='application/json; chaset=UTF-8')
-
-def add_service_to_marketplace(request, store, marketplace='localhost:8080'):
-    #import ipdb; ipdb.set_trace()
-    service_info={}
-    service_info['name']=request.POST['name']
-    service_info['url']=request.POST['url']
-
-    adaptor = MarketAdaptor(marketplace)
-    adaptor.add_service(store,service_info)
-
-    return HttpResponse()
-
-def delete_service_from_marketplace(request, store, service_name, marketplace='localhost:8080'):
-
-    adaptor = MarketAdaptor(marketplace)
-    adaptor.delete_service(store,service_name)
-
-    return HttpResponse()
-
-def get_store_list(request,marketplace='localhost:8080'):
-
-    adaptor = MarketAdaptor(marketplace)
-    result = adaptor.get_all_stores()
-
-    return HttpResponse(json_encode(result),mimetype='application/json; chaset=UTF-8')
-
-def manage_store_in_marketplace(request, store, marketplace='localhost:8080'):
-    
-    adaptor = MarketAdaptor(marketplace)
-    #import ipdb; ipdb.set_trace()
-
-    if request.POST:
-        store_info = {}
-        store_info['store_name'] = store
-        store_info['store_uri'] = request.POST['uri']
-        result = adaptor.add_store(store_info)
-        return HttpResponse()
-    else:
+        return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
         
-        result = adaptor.delete_store(store)
-        return HttpResponse() 
 
-    
+    def create(self, request, marketplace, store):
+        
+        service_info={}
+        service_info['name']=request.POST['name']
+        service_info['url']=request.POST['url']
+        
+        m = get_object_or_404(Market, name=marketplace)
+        options = json.loads(m.options)
+        url=options['url']
+
+        adaptor = MarketAdaptor(url)
+        
+        try:
+            adaptor.add_service(store,service_info)
+        except:
+            return HttpResponse(status=502)
+
+        return HttpResponse(status=201)
+
+
+class ServiceEntry(Resource):
+
+    def delete(self, request, marketplace, store, service_name):
+        m = get_object_or_404(Market, name=marketplace)
+        options = json.loads(m.options)
+        url=options['url']
+
+        adaptor = MarketAdaptor(url)
+        
+        try:
+            adaptor.delete_service(store,service_name)
+        except:
+            return HttpResponse(status=502)
+
+        return HttpResponse(status=204)
+
+
+class ServiceSearchCollection(Resource):
+
+    def read(self,request, marketplace, store='', keyword='widget'):
+        m = get_object_or_404(Market, name=marketplace)
+        options = json.loads(m.options)
+        url=options['url']
+
+        adaptor = MarketAdaptor(url)
+        
+        try:
+            result = adaptor.full_text_search(store,keyword)
+        except:
+            return HttpResponse(status=502)
+
+        return HttpResponse(json_encode(result),mimetype='application/json; chaset=UTF-8')
+        
+
+class StoreCollection(Resource):
+
+    def read(self, request, marketplace):
+        
+        m = get_object_or_404(Market, name=marketplace)
+        options = json.loads(m.options)
+        url=options['url']
+
+        adaptor = MarketAdaptor(url)
+
+	try:
+            result = adaptor.get_all_stores()
+        except:
+            return HttpResponse(status=502)
+
+        return HttpResponse(json_encode(result),mimetype='application/json; chaset=UTF-8')
+
+
+    def create(self, request, marketplace):
+        m = get_object_or_404(Market, name=marketplace)
+        options = json.loads(m.options)
+        url=options['url']
+
+        adaptor = MarketAdaptor(url)
+
+        store_info = {}
+        store_info['store_name'] = request.POST['store']
+        store_info['store_uri'] = request.POST['uri']
+	
+        try:
+            result = adaptor.add_store(store_info)
+        except:
+            return HttpResponse(status=502)
+
+        return HttpResponse(status=201)
+
+class StoreEntry(Resource):
+
+    def delete(self, request, marketplace, store):
+        m = get_object_or_404(Market, name=marketplace)
+        options = json.loads(m.options)
+        url=options['url']
+
+        adaptor = MarketAdaptor(url)
+        
+        try:
+            result = adaptor.delete_store(store)
+        except:
+            return HttpResponse(status=502)
+
+        return HttpResponse(status=204)
+
+
     
 
 

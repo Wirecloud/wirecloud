@@ -36,6 +36,8 @@ function FiWareCatalogueResource(resourceJSON_) {
         name = resourceJSON_.name,
 		store = resourceJSON_.store,
 		market_name = resourceJSON_.marketName,
+		parts = resourceJSON_.parts,
+		type = resourceJSON_.type,
         currentVersion = null,
         allVersions = [],
         data_by_version = {},
@@ -52,7 +54,12 @@ function FiWareCatalogueResource(resourceJSON_) {
     /////////////////////////
 
 	this.isMashup = function(){
-		return false;
+		var result = false;
+
+		if (type === 'mashup'){
+			result = true;
+		}
+		return result;
 	};
     this.getVendor = function () {
         return vendor;
@@ -61,6 +68,14 @@ function FiWareCatalogueResource(resourceJSON_) {
     this.getName = function () {
         return name;
     };
+
+	this.getType = function() {
+		return type;
+	};
+
+	this.getParts = function() {
+		return parts;
+	};
 
     this.getVersion = function () {
         return currentVersion.version;

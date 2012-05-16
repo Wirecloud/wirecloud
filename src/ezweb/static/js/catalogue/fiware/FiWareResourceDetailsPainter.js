@@ -38,6 +38,7 @@ var FiWareResourceDetailsPainter = function (catalogue, details_structure_elemen
 	this.back_part = document.createElement('div');
 	this.content_part = document.createElement('div');
 	this.back_appended = false;
+	this.mashup_tab_created = false;
 	/***********************************/
 	this.notebook = new StyledElements.StyledNotebook({'class': 'pruebas'});
 	//this.container.appendChild(this.notebook);
@@ -66,7 +67,7 @@ var FiWareResourceDetailsPainter = function (catalogue, details_structure_elemen
 			more_info_dom_element,sla_painter,sla_button_dom_element,
 			sla_more_info,pricing_more_info,pricing_button_dom_element,
 			pricing_painter,legal_button_info,sla_button_info,pricing_button_info, details_element,
-			back_button_element;
+			evaluate_dict,part_painter;
 		
         this.main_description.clear();
 		// The fields in this dictionary are only used in delete requests
@@ -79,9 +80,11 @@ var FiWareResourceDetailsPainter = function (catalogue, details_structure_elemen
 
         type = '';
 		button_text = gettext('add');
-        resource_html = this.details_template.evaluate({
+
+		evaluate_dict = {
             'image_url': resource.getUriImage(),
             'name': resource.getName(),
+			'type': resource.getType(),
             'shortDescription': resource.getShortDescription(),
 			'longDescription': resource.getLongDescription(),
             'button_text': button_text,
@@ -93,17 +96,32 @@ var FiWareResourceDetailsPainter = function (catalogue, details_structure_elemen
             'template_url': resource.getUriTemplate(),
 			'store': resource.getStore(),
 			'page':resource.getPage()
-        });
+        }
+
+        resource_html = this.details_template.evaluate(evaluate_dict);
 		details_element = document.createElement('div');
 		Element.extend(details_element);
 		details_element.update(resource_html);
+		
+		// If the resource is a mashup another tab is appended with information
+		// about the services that compose it
+		if(resource.isMashup() && !this.mashup_tab_created){
+			this.resource_parts = this.notebook.createTab({'name': gettext('Mash-up parts'), 'closable': false});
+			part_painter = new PartsPainter(catalogue,$('fiware_resource_parts').getTextContent(), this.resource_parts.wrapperElement);
+			part_painter.paint(resource);
+			this.mashup_tab_created = true;
+		}else if(!resource.isMashup() && this.mashup_tab_created){
+			this.resource_parts.close();
+			this.mashup_tab_created = false;
+		}
 
 		this.back_part = details_element.getElementsByClassName('back_part')[0];
 		this.content_part = details_element.getElementsByClassName('content_part')[0];
+		
 
 		this.main_description.wrapperElement.innerHTML = this.content_part.innerHTML;
 
-
+	
 		//take the dom elements that will contain the legal clauses
 		legal_painter =new LegalPainter(catalogue,$('legal_template').getTextContent(), this.legal_description.wrapperElement);
 		legal_painter.paint(resource);

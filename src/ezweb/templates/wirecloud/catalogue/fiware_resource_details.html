@@ -7,7 +7,7 @@
 <div class="resource detailed">
 
     <div class="left_column_resource">
-        <img src="#{image_url}" class="image">
+        <img src="#{image_url}" class="image"/>
         <div class="buttons">
             <button class="instanciate_button">#{button_text}</button>
         </div>
@@ -31,6 +31,8 @@
         <h3>{% trans 'Detailed data' %}</h3>
 		<div class="bold padding_left floating_left padding_right">{% trans 'Store:' %}</div>
         <div>#{store}</div>
+		<div class="bold padding_left floating_left padding_right">{% trans 'Type:' %}</div>
+        <div>#{type}</div>
         <div class="bold padding_left floating_left padding_right">{% trans 'Vendor:' %}</div>
         <div>#{vendor}</div>
         <div class="bold padding_left floating_left padding_right">{% trans 'Name:' %}</div>
