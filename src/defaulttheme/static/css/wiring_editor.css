@@ -1,0 +1,222 @@
+.wiring_editor {
+	-moz-user-select: none;
+	-webkit-user-select: none;
+}
+
+.wiring_editor .igadget {
+    position: absolute;
+    border: 1px solid;
+    padding-bottom: 8px;
+    border-radius: 5px;
+    background-color: rgba(255, 217, 120, 0.8);
+    font-family: "Courier New", courier;
+}
+
+.wiring_editor .igadget .anchor {
+    width: 16px;
+    height: 16px;
+    margin: 2px;
+    position: absolute;
+}
+
+.wiring_editor .igadget > .header {
+    text-align: center;
+    font-size: 13pt;
+    font-weight: bold;
+    cursor: move;
+    overflow: hidden;
+    border-radius: 5px;
+    padding-top: 8px;
+    padding-right: 16px;
+    padding-bottom: 8px;
+    padding-left: 16px;
+}
+
+.wiring_editor .igadget > .header  span{
+    pointer-events: none;
+    font-style: oblique;
+    color: #221BE2;
+}
+
+.wiring_editor .igadget {
+    line-height: 25px;
+    font-size: 12px;
+}
+
+.wiring_editor .igadget > .targets {
+    float: left;
+    text-align: left;
+    padding-left: 16px;
+    padding-right: 2px;
+}
+
+.wiring_editor .igadget > .sources {
+    float: right;
+    text-align: right;
+    padding-right: 16px;
+    padding-left: 2px;
+}
+
+.wiring_editor .igadget > .sources .anchor {
+    background: #A1A6FF;
+    position: absolute;
+    cursor: pointer;
+    display: inline;
+    right: -11px;
+}
+
+.wiring_editor .igadget > .targets .anchor {
+    background: #FF7A00;
+    position: absolute;
+    cursor: pointer;
+	display: inline;
+	left: -10px;
+}
+.wiring_editor .igadget> .targets .anchor.disabled {
+    background-color: rgba(255, 120, 0, 0.3);
+}
+
+.wiring_editor > .igadget> .sources .anchor.disabled {
+    background-color: rgba(161, 166, 255, 0.3);
+}
+
+.wiring_editor .canvas {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	/*pointer-events: none;*/
+	width: 100%;
+	height: 100%;
+}
+
+.wiring_editor .canvas .arrow {
+	marker-end: url(markers.svg#ArrowStandar);
+    stroke: rgba(138, 131, 226, 0.9);
+    fill:   none;
+    stroke-width: 5;
+}
+
+.wiring_editor .canvas .arrowborder {
+    stroke: black;
+    fill:   none;
+    stroke-width: 8;
+}
+
+.wiring_editor .canvas .pullerBall {
+    stroke: black;
+    fill:   rgba(138, 131, 226, 0.9);
+    stroke-width: 1;
+    display: none;
+}
+
+.wiring_editor .canvas .closer {
+    stroke: black;
+    fill:   url(cross.svg#closeCircle);
+    fill-opacity="1";
+    stroke-width: 1;
+    display: none;
+}
+
+.wiring_editor .canvas .selected .arrow {
+	marker-end: url(markers.svg#ArrowStandar);
+    stroke: rgba(138, 131, 226, 0.9);
+    fill:   none;
+    stroke-width: 5;
+}
+
+.wiring_editor .canvas .selected .arrowborder {
+    stroke: orange;
+    fill:   none;
+    stroke-width: 10;
+}
+
+.wiring_editor .canvas .selected .closer {
+    display: inline;
+}
+
+.wiring_editor .canvas .selected .pullerBall {
+    display: inline;
+}
+
+.wiring_editor .ioperator {
+    position: absolute;
+    border: 1px solid;
+    padding-bottom: 8px;
+    border-radius: 30px;
+    background-color: rgba(255, 255, 0, 0.8);
+    font-family: "Courier New", courier;
+}
+
+.wiring_editor .ioperator .anchor {
+    width: 16px;
+    height: 16px;
+    margin: 2px;
+    position: absolute;
+}
+
+.wiring_editor .ioperator > .shaperDiv {
+
+}
+
+.wiring_editor .ioperator > .shaperDiv > .header {
+    text-align: center;
+    font-size: 13pt;
+    font-weight: bold;
+    cursor: move;
+    overflow: hidden;
+    border-radius: 30px;
+    padding-top: 8px;
+    padding-right: 16px;
+    padding-bottom: 8px;
+    padding-left: 16px;
+}
+
+.wiring_editor .ioperator > .shaperDiv >.header  span{
+    pointer-events: none;
+    font-style: oblique;
+    color: #221BE2;
+}
+
+.wiring_editor .ioperator {
+    line-height: 25px;
+    font-size: 12px;
+}
+
+.wiring_editor .ioperator > .shaperDiv >.targets {
+    float: left;
+    text-align: left;
+    padding-left: 16px;
+    padding-right: 6px;
+}
+
+.wiring_editor .ioperator > .shaperDiv >.sources {
+    float: right;
+    text-align: right;
+    padding-right: 16px;
+    padding-left: 6px;
+}
+
+.wiring_editor .ioperator > .shaperDiv >.sources .anchor {
+    background: #A1A6FF;
+    position: absolute;
+    cursor: pointer;
+    display: inline;
+    right: -11px;
+}
+
+.wiring_editor .ioperator > .shaperDiv > .targets .anchor {
+    background: #FF7A00;
+    position: absolute;
+    cursor: pointer;
+	display: inline;
+	left: -10px;
+}
+.wiring_editor .ioperator > .shaperDiv > .event .anchor.disabled {
+    background-color: rgba(255, 120, 0, 0.3);
+}
+
+.wiring_editor .ioperator > .shaperDiv > .slot .anchor.disabled {
+    background-color: rgba(161, 166, 255, 0.3);
+}
