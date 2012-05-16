@@ -151,8 +151,6 @@ function WorkSpace (workSpaceState) {
             // FIXME
             LayoutManagerFactory.getInstance().mainLayout.repaint();
             LayoutManagerFactory.getInstance().header._paintBreadcrum(LayoutManagerFactory.getInstance().viewsByName['workspace']);
-            this.wiringInterface = LayoutManagerFactory.getInstance().viewsByName['wiring'];
-            this.wiringInterface.assignWorkspace(this);
 
             this.restricted = !this.isOwned() && this.isShared();
             this.removable = !this.restricted && this.workSpaceGlobalInfo.workspace.removable;

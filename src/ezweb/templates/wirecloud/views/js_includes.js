@@ -49,8 +49,14 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/filter.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/connectable.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/wiring.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wiring/wiringGUI.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wiring/connectableInterface.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/Anchor.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/Arrow.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/ArrowCreator.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/Canvas.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/GadgetInterface.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/SourceAnchor.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/TargetAnchor.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/jsonFilter.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/MarketplaceViewMenuItems.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/InstanciateMashupWindowMenu.js"></script>
