@@ -113,7 +113,7 @@
 
 .wiring_editor .canvas .closer {
     stroke: black;
-    fill:   url(cross.svg#closeCircle);
+    fill: black;
     fill-opacity="1";
     stroke-width: 1;
     display: none;

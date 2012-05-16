@@ -45,10 +45,10 @@
             if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
                 return;
             }
-            if (canvas.getSelectedArrow) {
-                canvas.unSelectArrow();
-                this.highlight();
-                canvas.setSelectedArrow(this);
+            if (canvas.getSelectedArrow() === this) {
+                canvas.unselectArrow();
+            } else {
+                canvas.selectArrow(this);
             }
         }.bind(this));
 
@@ -59,7 +59,7 @@
             if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
                 return;
             }
-            canvas.unSelectArrow();
+            canvas.unselectArrow();
             this.disconnect();
             this.destroy();
             e.stopPropagation();
@@ -195,37 +195,37 @@
     /**
      *  highlights the arrow
      */
-    Arrow.prototype.highLight = function highlight() {
-        this.addClassName('class', 'selected');
+    Arrow.prototype.highlight = function highlight() {
+        this.addClassName('selected');
     };
 
     /**
      *  unhighlights the arrow
      */
     Arrow.prototype.unhighlight = function unhighlight() {
-        this.removeClassName('class', 'selected');
+        this.removeClassName('selected');
     };
 
     /**
      *  add new class in to the arrow
      */
     Arrow.prototype.addClassName = function addClassName(className) {
-        var atr = this.arrowElement.getAttribute('class');
+        var atr = this.wrapperElement.getAttribute('class');
         if (atr == null) {
             atr = '';
         }
-        this.arrowElement.setAttribute('class', EzWebExt.appendWord(atr, className));
+        this.wrapperElement.setAttribute('class', EzWebExt.appendWord(atr, className));
     };
 
     /**
      * removeClassName
      */
     Arrow.prototype.removeClassName = function removeClassName(className) {
-        var atr = this.arrowElement.getAttribute('class');
+        var atr = this.wrapperElement.getAttribute('class');
         if (atr == null) {
             atr = '';
         }
-        this.arrowElement.setAttribute('class', EzWebExt.removeWord(atr, className));
+        this.wrapperElement.setAttribute('class', EzWebExt.removeWord(atr, className));
     };
 
     /**

@@ -115,7 +115,9 @@
     /**
      * Sets the current selected arrow in canvas.
      */
-    Canvas.prototype.setSelectedArrow = function setSelectedArrow(arrow) {
+    Canvas.prototype.selectArrow = function selectArrow(arrow) {
+        this.unselectArrow();
+        arrow.highlight();
         this.selectedArrow = arrow;
     };
 
