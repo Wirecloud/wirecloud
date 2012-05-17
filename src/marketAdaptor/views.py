@@ -109,6 +109,29 @@ class ServiceSearchCollection(Resource):
             return HttpResponse(status=502)
 
         return HttpResponse(json_encode(result),mimetype='application/json; chaset=UTF-8')
+
+class AllStoresServiceCollection(Resource):
+
+    def read(self, request, marketplace):
+      
+        m = get_object_or_404(Market, name=marketplace)
+        options = json.loads(m.options)
+        url = options['url']
+
+        adaptor = MarketAdaptor(url)
+        result = {'resources':[]}
+        try:
+            stores=adaptor.get_all_stores()
+            for store in stores:
+                #This if is necesary in order to avoid an Http error
+                #caused by and store without name that cant be deleted
+                if store['name'] != '':
+                    store_services=adaptor.get_all_services_from_store(store['name'])
+                    result['resources'].extend(store_services['resources'])
+        except:
+            return HttpResponse(status=502)
+
+        return HttpResponse(json_encode(result),mimetype='application/json; charset=UTF-8')
         
 
 class StoreCollection(Resource):

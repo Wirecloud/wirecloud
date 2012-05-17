@@ -173,7 +173,7 @@ FiWareCatalogue.prototype.getStores = function(callback){
 
 };
 
-FiWareCatalogue.prototype.delete_store = function (store) {
+FiWareCatalogue.prototype.delete_store = function (store, callback) {
 	var url = '/marketAdaptor/marketplace/'+ this.catalogue.getLabel() + '/stores/' + store;
 
 	LayoutManagerFactory.getInstance()._startComplexTask(gettext("Deleting store from  marketplace"), 1);
@@ -184,6 +184,7 @@ FiWareCatalogue.prototype.delete_store = function (store) {
 		onSuccess: function (transport) {
             LayoutManagerFactory.getInstance().logSubTask(gettext('Store deleted successfully'));
             LayoutManagerFactory.getInstance().logStep('');
+            callback();
         },
 		onFailure: function (transport) {
             var msg = LogManagerFactory.getInstance().formatError(gettext("Error deleting store: %(errorMsg)s."), transport);

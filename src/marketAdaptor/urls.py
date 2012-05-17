@@ -34,7 +34,7 @@ from marketAdaptor import views
 
 urlpatterns = patterns('marketAdaptor.views',                
     #Next url search all gadgets in every store using the keyword gadget
-    url(r'^marketplace/(?P<marketplace>[\w -]+)/resources/?$', views.ServiceSearchCollection(permitted_methods=('GET',))),
+    url(r'^marketplace/(?P<marketplace>[\w -]+)/resources/?$', views.AllStoresServiceCollection(permitted_methods=('GET',))),
     url(r'^marketplace/(?P<marketplace>[\w -]+)/(?P<store>\w+)/resources/?$',views.ServiceCollection(permitted_methods=('GET','POST'))),
     url(r'^marketplace/(?P<marketplace>[\w -]+)/search/(?P<keyword>\w+)/?$',views.ServiceSearchCollection(permitted_methods=('GET',))),
     url(r'^marketplace/(?P<marketplace>[\w -]+)/search/(?P<store>\w+)/(?P<keyword>\w+)/?$',views.ServiceSearchCollection(permitted_methods=('GET',))),

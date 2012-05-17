@@ -55,10 +55,8 @@ FiWareStoreListItems.prototype.build = function (store_info) {
 			//First ask if the user really wants to remove the store
 			LayoutManagerFactory.getInstance().showYesNoDialog(gettext('Do you really want to remove the store ') + this.currentStore + '?', 
 			function() {
-				this.fiWareCatalogue.delete_store(this.currentStore);
+				this.fiWareCatalogue.delete_store(this.currentStore, this.refresh_store_info.bind(this));
 				this.currentStore = 'All stores';
-				this.refresh_search_results();
-				this.refresh_store_info(); 
 				LayoutManagerFactory.getInstance().header.refresh();
 			}.bind(this));
 		}.bind(this.view)));

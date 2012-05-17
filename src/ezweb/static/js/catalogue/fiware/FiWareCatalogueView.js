@@ -117,6 +117,7 @@ FiWareCatalogueView.prototype.refresh_store_info = function () {
 };
 
 FiWareCatalogueView.prototype.addStoreInfo = function (store_info) {
+    this.refresh_search_results();
     this.store_info = store_info;
     this.storeMenu.setContext(store_info);
 };

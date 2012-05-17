@@ -132,6 +132,10 @@ class USDLParser(object):
         self._info['versions'][0]['legal']=[]
         legal_conditions = self._get_field(USDL,service_uri,'hasLegalCondition',id_=True)
 
+        # If legal doest not exist the mothod does nothing 
+        if len(legal_conditions) == 1 and legal_conditions[0] == '':
+            return
+
         for legal in legal_conditions:
             legal_condition = {}
             legal_condition['type']=self._get_field(RDF,legal,'type')[0]
@@ -147,45 +151,48 @@ class USDLParser(object):
                 legal_condition['clauses'].append(clause)
 
             self._info['versions'][0]['legal'].append(legal_condition)
-        
+       
 
     def _parse_sla_info(self,service_uri):
         #import ipdb;ipdb.set_trace()
         self._info['versions'][0]['sla']=[]
         service_level_profile = self._get_field(USDL,service_uri,'hasServiceLevelProfile',id_=True)[0]
-        service_levels = self._get_field(SLA,service_level_profile,'hasServiceLevel',id_=True)
 
-        for sla in service_levels:
-            service_level = {}
-            service_level['type']=self._get_field(RDF,sla,'type')[0]
-            service_level['name']=self._get_field(DCTERMS,sla,'title')[0]
-            service_level['description']=self._get_field(DCTERMS,sla,'description')[0]
-            service_level['obligatedParty']=self._get_field(SLA,sla,'obligatedParty')[0]
-            service_level['slaExpresions']=[]
+        #If sla does not exist the mothod does nothing 
+        if service_level_profile != '':
+            service_levels = self._get_field(SLA,service_level_profile,'hasServiceLevel',id_=True)
 
-            sla_expresions = self._get_field(SLA,sla,'serviceLevelExpression',id_=True)
+            for sla in service_levels:
+                service_level = {}
+                service_level['type']=self._get_field(RDF,sla,'type')[0]
+                service_level['name']=self._get_field(DCTERMS,sla,'title')[0]
+                service_level['description']=self._get_field(DCTERMS,sla,'description')[0]
+                service_level['obligatedParty']=self._get_field(SLA,sla,'obligatedParty')[0]
+                service_level['slaExpresions']=[]
+
+                sla_expresions = self._get_field(SLA,sla,'serviceLevelExpression',id_=True)
             
-            for exp in sla_expresions:
-                expresion = {}
-                expresion['name']=self._get_field(DCTERMS,exp,'title')[0]
-                expresion['description']=self._get_field(DCTERMS,exp,'description')[0]
-                expresion['variables']=[]
+                for exp in sla_expresions:
+                    expresion = {}
+                    expresion['name']=self._get_field(DCTERMS,exp,'title')[0]
+                    expresion['description']=self._get_field(DCTERMS,exp,'description')[0]
+                    expresion['variables']=[]
 
-                variables = self._get_field(SLA,exp,'hasVariable',id_=True)
+                    variables = self._get_field(SLA,exp,'hasVariable',id_=True)
 
-                for var in variables:
-                    variable = {}
-                    variable['label']=self._get_field(RDFS,var,'label')[0]
-                    default_value = self._get_field(SLA,var,'hasDefault',id_=True)[0]
-                    variable['type']=self._get_field(RDF,default_value,'type')[0]
-                    variable['value']=self._get_field(GR,default_value,'hasValue')[0]
-                    variable['unit']=self._get_field(GR,default_value,'hasUnitOfMeasurement')[0]
+                    for var in variables:
+                        variable = {}
+                        variable['label']=self._get_field(RDFS,var,'label')[0]
+                        default_value = self._get_field(SLA,var,'hasDefault',id_=True)[0]
+                        variable['type']=self._get_field(RDF,default_value,'type')[0]
+                        variable['value']=self._get_field(GR,default_value,'hasValue')[0]
+                        variable['unit']=self._get_field(GR,default_value,'hasUnitOfMeasurement')[0]
 
-                    expresion['variables'].append(variable)
+                        expresion['variables'].append(variable)
 
-                service_level['slaExpresions'].append(expresion)
+                    service_level['slaExpresions'].append(expresion)
 
-            self._info['versions'][0]['sla'].append(service_level)
+                self._info['versions'][0]['sla'].append(service_level)
 
 
     def _parse_pricing_info(self,service_uri):

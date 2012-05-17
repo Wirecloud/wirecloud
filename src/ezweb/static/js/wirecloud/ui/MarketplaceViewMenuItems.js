@@ -58,6 +58,7 @@ if (!Wirecloud.ui) {
 
         items.push(new StyledElements.MenuItem(gettext('Add new marketplace'), function () {
             var menu,fields,type_entries; 
+            //type_entries = this.market.market_types;
 
             fields= {
 			'label': {
@@ -109,7 +110,7 @@ if (!Wirecloud.ui) {
                 LayoutManagerFactory.getInstance().showYesNoDialog(gettext('Do you really want to remove the marketplace ') + this.market.alternatives.getCurrentAlternative().getLabel() + '?', 
                 function (){
                     this.market.market_manager.deleteMarket(this.market.alternatives.getCurrentAlternative().getLabel(),this.market.refreshViewInfo.bind(this.market));
-                    //this.market.alternatives.showAlternative()
+                    
                 }.bind(this));
             }.bind(this)));
         }
