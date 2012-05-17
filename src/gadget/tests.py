@@ -123,7 +123,6 @@ class ShowcaseTestCase(LocalizedTestCase):
         deleteGadget(self.user, 'test', 'Morfeo', '0.1')
         self.assertRaises(Gadget.DoesNotExist, Gadget.objects.get, vendor='Morfeo', name='test', version='0.1')
 
-        
     def test_gadget_creation_from_catalogue(self):
         template_uri = "http://example.com/path/gadget.xml"
         template = self.read_template('template1.xml')
