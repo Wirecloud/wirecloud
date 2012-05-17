@@ -90,6 +90,7 @@ DCTERMS=rdflib.Namespace("http://purl.org/dc/terms/")
 RDF=rdflib.Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
 RDFS=rdflib.Namespace("http://www.w3.org/2000/01/rdf-schema#")
 VCARD=rdflib.Namespace("http://www.w3.org/2006/vcard/ns#")
+BLUEPRINT=rdflib.Namespace("http://bizweb.sap.com/TR/blueprint#")
 
 class USDLTemplateParser(object):
 
@@ -359,7 +360,7 @@ class USDLTemplateParser(object):
             })
 
         # It contains the gadget code
-        xhtml_element = self._get_field(USDL,'exposes',self._gadgetURI,id_=True)
+        xhtml_element = self._get_field(USDL,'utilizedResource',self._gadgetURI,id_=True)
 
         self._info['code_url']=str(xhtml_element)
         self._info['code_content_type']=self._get_field(DCTERMS,'format',xhtml_element,required=False)
