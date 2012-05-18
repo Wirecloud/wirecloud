@@ -95,6 +95,14 @@ Variable.prototype.getWorkspace = function () {
     return this.varManager.getWorkspace();
 }
 
+Variable.prototype.serialize = function serialize() {
+    return {
+        'type': 'igadget',
+        'igadget': this.iGadget.getId(),
+        'varname': this.vardef.name
+    };
+};
+
 //////////////////////////////////////////////
 // PUBLIC CONSTANTS
 //////////////////////////////////////////////

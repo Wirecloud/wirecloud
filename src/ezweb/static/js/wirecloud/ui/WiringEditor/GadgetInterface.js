@@ -32,9 +32,12 @@
     /*
      * GadgetInterface Class
      */
-    var GadgetInterface = function GadgetInterface(igadget, arrowCreator) {
-        var i, name, variables, variable, anchor, anchorDiv, anchorLabel, desc, nameDiv, nameElement;
+    var GadgetInterface = function GadgetInterface(wiringEditor, igadget, manager) {
+        var i, name, variables, variable, anchor, anchorDiv, anchorLabel, desc, nameDiv, nameElement,
+            arrowCreator = null;
 
+        this.targetAnchorsByName = {};
+        this.sourceAnchorsByName = {};
         this.targetAnchors = [];
         this.sourceAnchors = [];
         StyledElements.Container.call(this, {'class': 'igadget'}, []);
@@ -43,19 +46,67 @@
         this.wrapperElement.appendChild(this.gadgetHeader);
 
         //make draggable
-        this.draggable = new Draggable(this.wrapperElement, this.gadgetHeader, this,
-            function () {},
-            function (e, draggable, widget) {
-                widget.repaint();
-            },
-			function () {},
-            function () {return true}
-        );
+        if (manager instanceof Wirecloud.ui.WiringEditor.ArrowCreator) {
+            this.isMiniGadget = false;
+            arrowCreator = manager;
+            this.draggable = new Draggable(this.wrapperElement, this.gadgetHeader, this,
+                function () {},
+                function (e, draggable, widget) {
+                    widget.repaint();
+                },
+                function onFinish(draggable, data) {
+                    var position = data.getPosition();
+                    if (position.posX < 0) {
+                        position.posX = 0;
+                    }
+                    if (position.posY < 0) {
+                        position.posY = 0;
+                    }
+                    data.setPosition(position);
+                    data.repaint();
+                },
+                function () {return true}
+            );
+        } else if (manager instanceof Wirecloud.ui.WiringEditor) {
+            this.isMiniGadget = true;
+            this.draggable = new Draggable(this.wrapperElement, this.gadgetHeader, this,
+                function () {},
+                function (e, draggable, widget) {
+                    widget.repaint();
+                },
+		        function onFinish(draggable, igadget_interface) {
+		            var position, new_igadget_interface = manager.addIGadget(wiringEditor, igadget);
+
+                    // MAGIC code
+		            position = igadget_interface.getPosition();
+		            igadget_interface.setPosition({posX: 0, posY: 0});
+		            position.posY -= 68 - igadget_interface.wrapperElement.offsetTop;
+		            new_igadget_interface.setPosition(position);
+
+		            igadget_interface.disable();
+		        },
+                function (draggable, data) {return data.enabled}
+            );
+        }
 
         //gadget name
+        this.igadget = igadget;
         nameElement = document.createElement("span");
         nameElement.setTextContent(igadget.name);
         this.gadgetHeader.appendChild(nameElement);
+
+        if (!this.isMiniGadget) {
+            // close button
+            var del_button = new StyledElements.StyledButton({
+                'title': gettext("Remove"),
+                'class': 'closebutton',
+                'plain': true
+            });
+            del_button.insertInto(this.gadgetHeader);
+            del_button.addEventListener('click', function () {
+                wiringEditor.removeGadget(this);
+            }.bind(this));
+        }
 
         //sources and targets for the gadget
         variables = opManager.activeWorkSpace.varManager.getIGadgetVariables(igadget.getId());
@@ -67,7 +118,6 @@
             variable = variables[name];
             //each Event
             if (variable.vardef.aspect === Variable.prototype.EVENT) {
-                anchor = new Wirecloud.ui.WiringEditor.SourceAnchor(variable, arrowCreator);
                 anchorDiv = new StyledElements.Container();
                 desc = variable.vardef.description;
                 //if the variable have not description, take the label
@@ -79,12 +129,20 @@
                 anchorLabel = document.createElement("span");
                 anchorLabel.setTextContent(variable.vardef.label);
                 anchorDiv.appendChild(anchorLabel);
+                if (arrowCreator != null) {
+                    anchor = new Wirecloud.ui.WiringEditor.SourceAnchor(variable, arrowCreator);
+                    this.sourceAnchorsByName[variable.vardef.name] = anchor;
+                    this.sourceAnchors.push(anchor);
+                } else {
+                    // Psuedo-anchor
+                    anchor = document.createElement('div');
+                    anchor.className = 'anchor';
+                }
                 anchorDiv.appendChild(anchor);
                 this.sourceDiv.appendChild(anchorDiv);
-                this.sourceAnchors.push(anchor);
+
             //each Slot
             } else if (variable.vardef.aspect === Variable.prototype.SLOT) {
-                anchor = new Wirecloud.ui.WiringEditor.TargetAnchor(variable, arrowCreator);
                 anchorDiv = new StyledElements.Container();
                 desc = variable.vardef.description;
                 if (desc == '') {
@@ -93,13 +151,24 @@
                 anchorDiv.wrapperElement.setAttribute('title', desc);
                 anchorLabel = document.createElement("span");
                 anchorLabel.setTextContent(variable.vardef.label);
+                if (arrowCreator != null) {
+                    anchor = new Wirecloud.ui.WiringEditor.TargetAnchor(variable, arrowCreator);
+                    this.targetAnchorsByName[variable.vardef.name] = anchor;
+                    this.targetAnchors.push(anchor);
+                } else {
+                    // Psuedo-anchor
+                    anchor = document.createElement('div');
+                    anchor.className = 'anchor';
+                }
                 anchorDiv.appendChild(anchor);
                 anchorDiv.appendChild(anchorLabel);
                 this.targetDiv.appendChild(anchorDiv);
-                this.targetAnchors.push(anchor);
             }
         }
-
+        Object.defineProperty(this, 'sourceAnchorsByName', {value: this.sourceAnchorsByName});
+        Object.defineProperty(this, 'targetAnchorsByName', {value: this.targetAnchorsByName});
+        Object.preventExtensions(this.sourceAnchorsByName);
+        Object.preventExtensions(this.targetAnchorsByName);
         Object.defineProperty(this, 'sourceAnchors', {value: this.sourceAnchors});
         Object.defineProperty(this, 'targetAnchors', {value: this.targetAnchors});
         Object.preventExtensions(this.sourceAnchors);
@@ -112,12 +181,47 @@
      /*************************************************************************
      * Public methods
      *************************************************************************/
-    /*
+    /**
      * Container
      */
     GadgetInterface.prototype = new StyledElements.Container({'extending': true});
 
-    /*
+    /**
+     * get the gadget name.
+     */
+    GadgetInterface.prototype.getIGadget = function getIGadget() {
+        return this.igadget;
+    };
+    
+    /**
+     * get the gadget position.
+     */
+    GadgetInterface.prototype.getPosition = function getPosition () {
+        var coordinates = {posX: this.wrapperElement.offsetLeft,
+                           posY: this.wrapperElement.offsetTop};
+        return coordinates;
+    };
+    
+    /**
+     * set the gadget position.
+     */
+    GadgetInterface.prototype.setPosition = function setPosition (coordinates) {
+        this.wrapperElement.style.left = coordinates.posX + 'px';
+        this.wrapperElement.style.top = coordinates.posY + 'px';
+    };
+
+    /**
+     *  gets an anchor given a name
+     */
+    GadgetInterface.prototype.getAnchor = function getAnchor(name) {
+        if (name in this.sourceAnchorsByName) {
+            return this.sourceAnchorsByName[name];
+        } else if (name in this.targetAnchorsByName) {
+            return this.targetAnchorsByName[name];
+        }
+    };
+
+    /**
      * Destroy
      */
     GadgetInterface.prototype.destroy = function destroy () {

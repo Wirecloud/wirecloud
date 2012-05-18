@@ -31,7 +31,9 @@
      * Constructor Anchor
      *************************************************************************/
     /**
-     * An anchor is represented by a checkbox and used as target or source of arrows.
+     * This is the base class for the classes representing the anchors used to
+     * connect the connectables on the wiring interface. They are usually
+     * represented by a checkbox and used as target or source of arrows.
      *
      * @abstract
      */
@@ -96,13 +98,10 @@
     };
 
     /**
-     * Retrieves the coordinates of the anchor center.
-     * @return {Coordinates}
+     * @addArrow
      */
-    Anchor.prototype.getAnchorCenter = function getAnchorCenter() {
-        var coordinates = {posX: this.htmlElement.offsetLeft,
-                           posY: this.htmlElement.offsetTop};
-        return new Coordinates(coordinates, this.htmlElement.offsetWidth, this.htmlElement.offsetHeight);
+    Anchor.prototype.addArrow = function addArrow(theArrow) {
+        this.arrows.push(theArrow);
     };
 
     /**
@@ -119,15 +118,16 @@
         this.arrows.push(theArrow);
     };
 
-    /**
-     * @addArrow
-     */
     Anchor.prototype.removeArrow = function removeArrow(theArrow) {
         var index = this.arrows.indexOf(theArrow);
 
         if (index !== -1) {
             this.arrows.splice(index, 1);
         }
+    };
+
+    Anchor.prototype.serialize = function serialize() {
+        return this.context.serialize();
     };
 
     /*************************************************************************

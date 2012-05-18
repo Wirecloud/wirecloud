@@ -147,6 +147,26 @@
     /*
      *  Set the Arrow pullerStart point.
      */
+    Arrow.prototype.setPullerStart = function setPullerStart (pStart) {
+        this.pullerStart = pStart;
+        this.pullerStartElement.setAttribute("cx", pStart.posX);
+        this.pullerStartElement.setAttribute("cy", pStart.posY);
+        this.pullerStartElement.setAttribute("r", 5);
+    };
+
+    /*
+     *  Set the Arrow pullerEnd point.
+     */
+    Arrow.prototype.setPullerEnd = function setPullerEnd (pEnd) {
+        this.pullerEnd = pEnd;
+        this.pullerEndElement.setAttribute("cx", pEnd.posX);
+        this.pullerEndElement.setAttribute("cy", pEnd.posY);
+        this.pullerEndElement.setAttribute("r", "5");
+    };
+
+    /*
+     *  Set the Arrow pullerStart point.
+     */
     Arrow.prototype.setPullerStart = function setPullerStart(pStart) {
         this.pullerStart = pStart;
         this.pullerStartElement.setAttribute("cx", pStart.posX);
@@ -226,17 +246,6 @@
             atr = '';
         }
         this.wrapperElement.setAttribute('class', EzWebExt.removeWord(atr, className));
-    };
-
-    /**
-     * Inverts the arrow.
-     */
-    Arrow.prototype.invert = function invert() {
-        var k;
-
-        k = this.end;
-        this.end = this.start;
-        this.start = k;
     };
 
     /**

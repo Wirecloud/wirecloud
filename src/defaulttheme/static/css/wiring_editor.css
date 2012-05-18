@@ -3,11 +3,84 @@
 	-webkit-user-select: none;
 }
 
+.wiring_editor .menubar {
+    white-space: nowrap;
+    height: 68px;
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
+    line-height: 68px;
+}
+
+.wiring_editor .menubar .igadget {
+    font-size: 6px;
+    line-height: 9px;
+    padding-bottom: 2px;
+    display: inline-block;
+    position:relative;
+    margin: 1ex 2ex;
+    vertical-align: middle;
+}
+
+.wiring_editor .menubar .ioperator {
+    font-size: 6px;
+    line-height: 9px;
+    padding-bottom: 2px;
+    display: inline-block;
+    position: relative;
+    margin: 1ex 2ex;
+    vertical-align: middle;
+}
+
+.wiring_editor .menubar .igadget .header {
+    font-size: 10px;
+    padding-top: 2px;
+    padding-right: 4px;
+    padding-bottom: 2px;
+    padding-left: 4px;
+}
+
+.wiring_editor .menubar .igadget .anchor {
+    width: 6px;
+    height: 6px;
+    margin: 1px;
+    position: absolute;
+}
+
+.wiring_editor .menubar .igadget > .targets {
+    padding-left: 4px;
+    padding-right: 1px;
+}
+
+.wiring_editor .menubar .igadget > .sources {
+    padding-right: 4px;
+    padding-left: 1px;
+}
+
+.wiring_editor .menubar .igadget > .sources .anchor {
+    right: -4px;
+}
+
+.wiring_editor .menubar .igadget > .targets .anchor {
+    left: -4px;
+}
+
+
+.wiring_editor .center_container .igadget {
+    top: 250px;
+    left:400px;
+}
+
+
+.wiring_editor .center_container .ioperator {
+    top: 250px;
+    left:200px;
+}
+
 .wiring_editor .igadget {
     position: absolute;
     border: 1px solid;
     padding-bottom: 8px;
-    border-radius: 5px;
+    border-radius: 1.25ex 1.25ex 1.25ex 1.25ex;
+    box-shadow: 0.1ex 0.1ex 1px black;
     background-color: rgba(255, 217, 120, 0.8);
     font-family: "Courier New", courier;
 }
@@ -69,8 +142,8 @@
     background: #FF7A00;
     position: absolute;
     cursor: pointer;
-	display: inline;
-	left: -10px;
+    display: inline;
+    left: -11px;
 }
 .wiring_editor .igadget> .targets .anchor.disabled {
     background-color: rgba(255, 120, 0, 0.3);
@@ -113,7 +186,7 @@
 
 .wiring_editor .canvas .closer {
     stroke: black;
-    fill: black;
+    fill:   url(cross.svg#closeCircle);
     fill-opacity="1";
     stroke-width: 1;
     display: none;
@@ -144,7 +217,8 @@
     position: absolute;
     border: 1px solid;
     padding-bottom: 8px;
-    border-radius: 30px;
+    border-radius: 1.25ex 1.25ex 1.25ex 1.25ex;
+    box-shadow: 0.1ex 0.1ex 1px black;
     background-color: rgba(255, 255, 0, 0.8);
     font-family: "Courier New", courier;
 }
@@ -210,8 +284,8 @@
     background: #FF7A00;
     position: absolute;
     cursor: pointer;
-	display: inline;
-	left: -10px;
+    display: inline;
+    left: -10px;
 }
 .wiring_editor .ioperator > .shaperDiv > .event .anchor.disabled {
     background-color: rgba(255, 120, 0, 0.3);
@@ -219,4 +293,37 @@
 
 .wiring_editor .ioperator > .shaperDiv > .slot .anchor.disabled {
     background-color: rgba(161, 166, 255, 0.3);
+}
+
+.wiring_editor .menubar .ioperator > .shaperDiv > .header {
+    font-size: 10px;
+    padding-top: 2px;
+    padding-right: 4px;
+    padding-bottom: 2px;
+    padding-left: 4px;
+}
+
+.wiring_editor .menubar .ioperator .anchor {
+    width: 6px;
+    height: 6px;
+    margin: 1px;
+    position: absolute;
+}
+
+.wiring_editor .menubar .ioperator > .shaperDiv >.targets {
+    padding-left: 4px;
+    padding-right: 1px;
+}
+
+.wiring_editor .menubar .ioperator > .shaperDiv >.sources {
+    padding-right: 4px;
+    padding-left: 1px;
+}
+
+.wiring_editor .menubar .ioperator > .shaperDiv > .sources .anchor {
+    right: -4px;
+}
+
+.wiring_editor .menubar .ioperator > .shaperDiv > .targets .anchor {
+    left: -4px;
 }

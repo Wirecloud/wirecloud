@@ -44,7 +44,7 @@
     SourceAnchor.prototype.repaint = function repaint(temporal) {
         var i, coordinates;
 
-        coordinates = this.getCoordinates(document.getElementsByClassName('wiring_editor')[0]);
+        coordinates = this.getCoordinates(document.getElementsByClassName('grid')[0]);
         for (i = 0; i < this.arrows.length; i += 1) {
             this.arrows[i].setStart(coordinates);
             this.arrows[i].redraw();

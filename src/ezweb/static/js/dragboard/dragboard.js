@@ -764,6 +764,11 @@ EzWebEffectBase.findDragboardElement = function (element) {
     return null; // Not found
 };
 
+/**
+ * @param draggableElement {HTMLElement} Element to drag
+ * @param handler {HTMLElement} Element where the drag & drop operation must to be started
+ * @param data {Object} context 
+ */
 function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, canBeDragged) {
     var xDelta = 0, yDelta = 0;
     var xStart = 0, yStart = 0;
@@ -843,8 +848,14 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
 
         xStart = parseInt(e.screenX, 10);
         yStart = parseInt(e.screenY, 10);
-        y = draggableElement.offsetTop;
-        x = draggableElement.offsetLeft;
+
+/*        var cssStyle = document.defaultView.getComputedStyle(draggableElement, null);
+        y = cssStyle.getPropertyCSSValue("top").getFloatValue(CSSPrimitiveValue.CSS_PX);
+        x = cssStyle.getPropertyCSSValue("left").getFloatValue(CSSPrimitiveValue.CSS_PX);*/
+        // TODO
+        y = draggableElement.style.top === "" ? 0 : parseInt(draggableElement.style.top);
+        x = draggableElement.style.left === "" ? 0 : parseInt(draggableElement.style.left);
+
         draggableElement.style.top = y + 'px';
         draggableElement.style.left = x + 'px';
         Event.observe(document, "mouseup", enddrag);

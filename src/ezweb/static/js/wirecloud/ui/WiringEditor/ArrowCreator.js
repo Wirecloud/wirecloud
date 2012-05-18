@@ -31,7 +31,7 @@
     /*
      * ArrowCreator.
      */
-    var ArrowCreator = function ArrowCreator(canvas, data, onStart, onDrag, onFinish, canBeDragged) {
+    var ArrowCreator = function ArrowCreator(canvas, data, onStart, onDrag, onFinish, canBeDragged, onArrowCreation) {
         var x, y;
         var theArrow;
         var dragboardCover;
@@ -123,6 +123,7 @@
                     // add the arrow to the arrow list of both anchors
                     this.initAnchor.addArrow(theArrow);
                     fAnchor.addArrow(theArrow);
+                    onArrowCreation(data, theArrow);
                 } else {
                     theArrow.destroy();
                 }
