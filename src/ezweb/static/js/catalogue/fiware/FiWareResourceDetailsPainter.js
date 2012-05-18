@@ -95,7 +95,9 @@ var FiWareResourceDetailsPainter = function (catalogue, details_structure_elemen
             'versions': get_all_versions_html(resource.getAllVersions()),
             'template_url': resource.getUriTemplate(),
 			'store': resource.getStore(),
-			'page':resource.getPage()
+			'page':resource.getPage(),
+            'average_popularity':this.get_popularity_html(resource.getPopularity())
+
         }
 
         resource_html = this.details_template.evaluate(evaluate_dict);

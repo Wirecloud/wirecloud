@@ -51,7 +51,8 @@ FiWareResourcePainter.prototype.paint = function (command_data) {
         context = {
             'name': resource.getName(),
             'image_url': resource.getUriImage(),
-            'description': resource.getShortDescription()
+            'description': resource.getShortDescription(),
+            'average_popularity': this.get_popularity_html(resource.getPopularity())
         };
         context.button_text = gettext('Add');
         context.type = '';

@@ -145,7 +145,9 @@ function FiWareCatalogueResource(resourceJSON_) {
         return extra_data;
     };
 
-	
+   this.getPopularity = function () {
+       return 0;
+   }
 
     //////////////
     // SETTERS
