@@ -226,6 +226,7 @@ class USDLTemplateParser(object):
 
         addr_element = self._get_field(VCARD, 'addr', self._gadgetURI, id_=True)
         self._info['mail'] = self._get_field(VCARD, 'email', addr_element)
+        self._info['requirements'] = []
 
     def _parse_wiring_info(self, wiring_property='hasPlatformWiring', parse_channels=False):
 
