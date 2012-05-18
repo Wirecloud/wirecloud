@@ -165,7 +165,6 @@
 }
 
 .wiring_editor .canvas .arrow {
-	marker-end: url(markers.svg#ArrowStandar);
     stroke: rgba(138, 131, 226, 0.9);
     fill:   none;
     stroke-width: 5;
@@ -193,7 +192,6 @@
 }
 
 .wiring_editor .canvas .selected .arrow {
-	marker-end: url(markers.svg#ArrowStandar);
     stroke: rgba(138, 131, 226, 0.9);
     fill:   none;
     stroke-width: 5;
