@@ -40,7 +40,7 @@ from lxml import etree
 from proxy.views import MethodRequest
 
 RESOURCE_XPATH = '/collection/resource'
-URL_XPATH = 'url' 
+URL_XPATH = 'url'
 DATE_XPATH = 'registrationDate'
 SEARCH_RESULT_XPATH = '/searchresults/searchresult'
 SEARCH_SERVICE_XPATH = 'service'
@@ -51,7 +51,7 @@ class MarketAdaptor(object):
 
     _marketplace_uri = None
 
-    def __init__(self,marketplace_uri):
+    def __init__(self, marketplace_uri):
         self._marketplace_uri = marketplace_uri
 
     def get_all_stores(self):
@@ -60,7 +60,7 @@ class MarketAdaptor(object):
         response = opener.open(request)
 
         if response.code != 200:
-            raise HTTPError(response.url,response.code,response.msg, None, None)
+            raise HTTPError(response.url, response.code, response.msg, None, None)
 
         body = response.read()
 
@@ -69,132 +69,129 @@ class MarketAdaptor(object):
         result = []
 
         for res in parsed_body.xpath(RESOURCE_XPATH):
-            store={}
+            store = {}
             store['name'] = res.get('name')
             url = res.xpath(URL_XPATH)[0].text
-            store['url']=url
+            store['url'] = url
             result.append(store)
 
         return result
 
-    def get_store_info(self,store):
+    def get_store_info(self, store):
         opener = urllib2.build_opener()
         request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + store))
         response = opener.open(request)
 
         if response.code != 200:
-            raise HTTPError(response.url,response.code,response.msg, None, None)
+            raise HTTPError(response.url, response.code, response.msg, None, None)
 
         body = response.read()
         parsed_body = etree.fromstring(body)
 
         result = {}
-        result['name']=store
+        result['name'] = store
         result['url'] = parsed_body.xpath(URL_XPATH)[0].text
         result['registrationDate'] = parsed_body.xpath(DATE_XPATH)[0].text
 
         return result
-        
 
-    def add_store(self,store_info):
+    def add_store(self, store_info):
         #import ipdb; ipdb.set_trace()
-        params='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><resource name="' + store_info['store_name'] +'" ><url>' + store_info['store_uri'] + '</url></resource>'
+        params = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><resource name="' + store_info['store_name'] + '" ><url>' + store_info['store_uri'] + '</url></resource>'
         headers = {'content-type': 'application/xml'}
 
         opener = urllib2.build_opener()
-        request = MethodRequest("PUT", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/"),params,headers)
+        request = MethodRequest("PUT", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/"), params, headers)
         response = opener.open(request)
-        
-        if response.code != 201:
-            raise HTTPError(response.url,response.code,response.msg, None, None)
 
-    def update_store(self,store_info):
+        if response.code != 201:
+            raise HTTPError(response.url, response.code, response.msg, None, None)
+
+    def update_store(self, store_info):
         pass
 
-    def delete_store(self,store):
+    def delete_store(self, store):
         opener = urllib2.build_opener()
         request = MethodRequest("DELETE", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + store))
         response = opener.open(request)
 
         if response.code != 200:
-            raise HTTPError(response.url,response.code,response.msg, None, None)
+            raise HTTPError(response.url, response.code, response.msg, None, None)
 
-
-    def get_all_services_from_store(self,store):
+    def get_all_services_from_store(self, store):
         #import ipdb; ipdb.set_trace()
         opener = urllib2.build_opener()
         request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + store + "/services"))
         response = opener.open(request)
 
         if response.code != 200:
-            raise HTTPError(response.url,response.code,response.msg, None, None)
+            raise HTTPError(response.url, response.code, response.msg, None, None)
 
         body = response.read()
         parsed_body = etree.fromstring(body)
 
-        result = {'resources' : []}
+        result = {'resources': []}
 
         for res in parsed_body.xpath(RESOURCE_XPATH):
-            url =  res.xpath(URL_XPATH)[0].text
+            url = res.xpath(URL_XPATH)[0].text
             try:
                 headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"}
-                request = MethodRequest("GET", url,'',headers)
+                request = MethodRequest("GET", url, '', headers)
                 response = opener.open(request)
-                usdl_document=response.read()
+                usdl_document = response.read()
                 parser = USDLParser(usdl_document)
             except:
                 continue
 
-            
-            parsed_usdl=parser.parse()
+            parsed_usdl = parser.parse()
 
-            if isinstance(parsed_usdl,dict): 
-                parsed_usdl['store']=store
-                parsed_usdl['marketName']=res.get('name')
+            if isinstance(parsed_usdl, dict):
+                parsed_usdl['store'] = store
+                parsed_usdl['marketName'] = res.get('name')
                 result['resources'].append(parsed_usdl)
             else:
                 for ser in parsed_usdl:
-                    ser['store']=store
-                    ser['marketName']=res.get('name')
+                    ser['store'] = store
+                    ser['marketName'] = res.get('name')
                     result['resources'].append(ser)
 
         return result
 
-    def get_service_info(self,store,service):
+    def get_service_info(self, store, service):
         pass
 
-    def add_service(self,store,service_info):
-        
-        params='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><resource name="' + service_info['name'] +'" ><url>' + service_info['url'] + '</url></resource>'
+    def add_service(self, store, service_info):
+
+        params = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><resource name="' + service_info['name'] + '" ><url>' + service_info['url'] + '</url></resource>'
         headers = {'content-type': 'application/xml'}
 
         opener = urllib2.build_opener()
-        request = MethodRequest("PUT", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + store + "/service"),params,headers)
+        request = MethodRequest("PUT", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + store + "/service"), params, headers)
         response = opener.open(request)
-        
-        if response.code != 201:
-            raise HTTPError(response.url,response.code,response.msg, None, None)
 
-    def update_service(self,store,service_info):
+        if response.code != 201:
+            raise HTTPError(response.url, response.code, response.msg, None, None)
+
+    def update_service(self, store, service_info):
         pass
 
-    def delete_service(self,store,service):
-        
+    def delete_service(self, store, service):
+
         opener = urllib2.build_opener()
-        request = MethodRequest("DELETE", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + store + "/service/"+ service))
+        request = MethodRequest("DELETE", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + store + "/service/" + service))
         response = opener.open(request)
 
         if response.code != 200:
-            raise HTTPError(response.url,response.code,response.msg, None, None)
+            raise HTTPError(response.url, response.code, response.msg, None, None)
 
-    def full_text_search(self,store,search_string):
+    def full_text_search(self, store, search_string):
 
         opener = urllib2.build_opener()
         request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/search/fulltext/" + search_string))
         response = opener.open(request)
 
         if response.code != 200:
-            raise HTTPError(response.url,response.code,response.msg, None, None)
+            raise HTTPError(response.url, response.code, response.msg, None, None)
 
         body = response.read()
         parsed_body = etree.fromstring(body)
@@ -207,32 +204,32 @@ class MarketAdaptor(object):
             try:
                 if store != '':
                     if store == service_store:
-                        headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"} 
-                        request = MethodRequest("GET",url,'',headers)
+                        headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"}
+                        request = MethodRequest("GET", url, '', headers)
                         response = opener.open(request)
-                        usdl_document=response.read()
+                        usdl_document = response.read()
                         parser = USDLParser(usdl_document)
                     else:
                         continue
                 else:
-                    headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"} 
-                    request = MethodRequest("GET",url,'',headers)
+                    headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"}
+                    request = MethodRequest("GET", url, '', headers)
                     response = opener.open(request)
-                    usdl_document=response.read()
+                    usdl_document = response.read()
                     parser = USDLParser(usdl_document)
             except:
                 continue
 
-            parsed_usdl=parser.parse()
+            parsed_usdl = parser.parse()
 
-            if isinstance(parsed_usdl,dict): 
-                parsed_usdl['store']=service_store
-                parsed_usdl['marketName']=service.get('name')
+            if isinstance(parsed_usdl, dict):
+                parsed_usdl['store'] = service_store
+                parsed_usdl['marketName'] = service.get('name')
                 result['resources'].append(parsed_usdl)
             else:
                 for ser in parsed_usdl:
-                    ser['store']=service_store
-                    ser['marketName']=service.get('name')
+                    ser['store'] = service_store
+                    ser['marketName'] = service.get('name')
                     result['resources'].append(ser)
 
         return result

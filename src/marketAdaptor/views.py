@@ -37,7 +37,7 @@ from commons.http_utils import download_http_content
 from marketAdaptor.marketadaptor import MarketAdaptor
 from commons.resource import Resource
 from commons.utils import json_encode
-from wirecloud.models.markets import Market 
+from wirecloud.models.markets import Market
 
 
 class ServiceCollection(Resource):
@@ -46,7 +46,7 @@ class ServiceCollection(Resource):
         #import ipdb;ipdb.set_trace()
         m = get_object_or_404(Market, name=marketplace)
         options = json.loads(m.options)
-        url=options['url']
+        url = options['url']
 
         adaptor = MarketAdaptor(url)
         try:
@@ -55,22 +55,21 @@ class ServiceCollection(Resource):
             return HttpResponse(status=502)
 
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
-        
 
     def create(self, request, marketplace, store):
-        
-        service_info={}
-        service_info['name']=request.POST['name']
-        service_info['url']=request.POST['url']
-        
+
+        service_info = {}
+        service_info['name'] = request.POST['name']
+        service_info['url'] = request.POST['url']
+
         m = get_object_or_404(Market, name=marketplace)
         options = json.loads(m.options)
-        url=options['url']
+        url = options['url']
 
         adaptor = MarketAdaptor(url)
-        
+
         try:
-            adaptor.add_service(store,service_info)
+            adaptor.add_service(store, service_info)
         except:
             return HttpResponse(status=502)
 
@@ -82,12 +81,12 @@ class ServiceEntry(Resource):
     def delete(self, request, marketplace, store, service_name):
         m = get_object_or_404(Market, name=marketplace)
         options = json.loads(m.options)
-        url=options['url']
+        url = options['url']
 
         adaptor = MarketAdaptor(url)
-        
+
         try:
-            adaptor.delete_service(store,service_name)
+            adaptor.delete_service(store, service_name)
         except:
             return HttpResponse(status=502)
 
@@ -96,73 +95,74 @@ class ServiceEntry(Resource):
 
 class ServiceSearchCollection(Resource):
 
-    def read(self,request, marketplace, store='', keyword='widget'):
-        m = get_object_or_404(Market, name=marketplace)
-        options = json.loads(m.options)
-        url=options['url']
-
-        adaptor = MarketAdaptor(url)
-        
-        try:
-            result = adaptor.full_text_search(store,keyword)
-        except:
-            return HttpResponse(status=502)
-
-        return HttpResponse(json_encode(result),mimetype='application/json; chaset=UTF-8')
-
-class AllStoresServiceCollection(Resource):
-
-    def read(self, request, marketplace):
-      
+    def read(self, request, marketplace, store='', keyword='widget'):
         m = get_object_or_404(Market, name=marketplace)
         options = json.loads(m.options)
         url = options['url']
 
         adaptor = MarketAdaptor(url)
-        result = {'resources':[]}
+
         try:
-            stores=adaptor.get_all_stores()
+            result = adaptor.full_text_search(store, keyword)
+        except:
+            return HttpResponse(status=502)
+
+        return HttpResponse(json_encode(result), mimetype='application/json; chaset=UTF-8')
+
+
+class AllStoresServiceCollection(Resource):
+
+    def read(self, request, marketplace):
+
+        m = get_object_or_404(Market, name=marketplace)
+        options = json.loads(m.options)
+        url = options['url']
+
+        adaptor = MarketAdaptor(url)
+        result = {'resources': []}
+        try:
+            stores = adaptor.get_all_stores()
             for store in stores:
                 #This if is necesary in order to avoid an Http error
                 #caused by and store without name that cant be deleted
                 if store['name'] != '':
-                    store_services=adaptor.get_all_services_from_store(store['name'])
+                    store_services = adaptor.get_all_services_from_store(store['name'])
                     result['resources'].extend(store_services['resources'])
         except:
             return HttpResponse(status=502)
 
-        return HttpResponse(json_encode(result),mimetype='application/json; charset=UTF-8')
-        
+        return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
+
 
 class StoreCollection(Resource):
 
     def read(self, request, marketplace):
-        
+
         m = get_object_or_404(Market, name=marketplace)
         options = json.loads(m.options)
-        url=options['url']
+        url = options['url']
 
         adaptor = MarketAdaptor(url)
 
-	try:
+        try:
             result = adaptor.get_all_stores()
         except:
             return HttpResponse(status=502)
 
-        return HttpResponse(json_encode(result),mimetype='application/json; chaset=UTF-8')
-
+        return HttpResponse(json_encode(result), mimetype='application/json; chaset=UTF-8')
 
     def create(self, request, marketplace):
+
         m = get_object_or_404(Market, name=marketplace)
         options = json.loads(m.options)
-        url=options['url']
+        url = options['url']
 
         adaptor = MarketAdaptor(url)
 
         store_info = {}
         store_info['store_name'] = request.POST['store']
         store_info['store_uri'] = request.POST['uri']
-	
+
         try:
             result = adaptor.add_store(store_info)
         except:
@@ -170,32 +170,19 @@ class StoreCollection(Resource):
 
         return HttpResponse(status=201)
 
+
 class StoreEntry(Resource):
 
     def delete(self, request, marketplace, store):
         m = get_object_or_404(Market, name=marketplace)
         options = json.loads(m.options)
-        url=options['url']
+        url = options['url']
 
         adaptor = MarketAdaptor(url)
-        
+
         try:
             result = adaptor.delete_store(store)
         except:
             return HttpResponse(status=502)
 
         return HttpResponse(status=204)
-
-
-    
-
-
-    
-
-
-
-
-
-
-
-
