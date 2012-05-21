@@ -107,10 +107,10 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
     this.gadgetMenu = null;
     this.contentWrapper = null;
     this.content = null;
-    this.closeButtonElement = null;
-    this.settingsButtonElement = null;
-    this.minimizeButtonElement = null;
-    this.errorButtonElement = null;
+    this.closeButton = null;
+    this.settingsButton = null;
+    this.minimizeButton = null;
+    this.errorButton = null;
     this.igadgetNameHTMLElement = null;
     this.igadgetInputHTMLElement = null;
     this.statusBar = null;
@@ -390,73 +390,51 @@ IGadget.prototype.build = function () {
     //#######################################
     // buttons. Inserted from right to left
     //#######################################
-    var button;
 
     // close button
-    button = document.createElement("input");
-    Element.extend(button);
-    button.setAttribute("type", "button");
-    button.addClassName("closebutton");
-    button.observe("click",
+    this.closeButton = new StyledElements.StyledButton({
+        'plain': true,
+        'class': 'closebutton',
+        'title': gettext('Close')
+    });
+    this.closeButton.addEventListener("click",
         function () {
             OpManagerFactory.getInstance().removeInstance(this.id);
-        }.bind(this),
-        false);
-    button.setAttribute("title", gettext("Close"));
-    button.setAttribute("alt", gettext("Close"));
-    this.closeButtonElement = button;
-
+        }.bind(this));
+    this.closeButton.insertInto(this.gadgetMenu);
 
     // Menu button
-    button = document.createElement("input");
-    Element.extend(button);
-    button.setAttribute("type", "button");
-    button.addClassName("settingsbutton");
-    button.setAttribute("id", "settingsbutton");
-
-    button.observe("click",
-        function (e) {
-            this.menu.show({x: Event.pointerX(e), y: Event.pointerY(e)});
-        }.bind(this),
-        false);
-
-    button.setAttribute("title", gettext("Menu"));
-    button.setAttribute("alt", gettext("Menu"));
-    this.settingsButtonElement = button;
+    this.settingsButton = new StyledElements.StyledButton({
+        'plain': true,
+        'class': 'settingsbutton',
+        'title': gettext('Menu')
+    });
+    this.settingsButton.addEventListener("click",
+        function (button) {
+            this.menu.show(button.getBoundingClientRect());
+        }.bind(this));
+    this.settingsButton.insertInto(this.gadgetMenu);
 
     // minimize button
-    button = document.createElement("input");
-    Element.extend(button);
-    button.setAttribute("type", "button");
-    button.observe("click",
-        function () {
+    this.minimizeButton = new StyledElements.StyledButton({
+        'plain': true
+    });
+    this.minimizeButton.addEventListener("click",
+        function (button) {
             this.toggleMinimizeStatus(true);
-        }.bind(this),
-        false);
-    if (this.minimized) {
-        button.setAttribute("title", gettext("Maximize"));
-        button.setAttribute("alt", gettext("Maximize"));
-        button.addClassName("maximizebutton");
-    } else {
-        button.setAttribute("title", gettext("Minimize"));
-        button.setAttribute("alt", gettext("Minimize"));
-        button.addClassName("minimizebutton");
-    }
-    this.minimizeButtonElement = button;
+        }.bind(this));
+    this.minimizeButton.insertInto(this.gadgetMenu);
 
     // error button
-    button = document.createElement("input");
-    Element.extend(button);
-    button.setAttribute("type", "button");
-    button.addClassName("button errorbutton disabled");
-    Event.observe(button,
-        "click",
-        function () {
+    this.errorButton = new StyledElements.StyledButton({
+        'plain': true,
+        'class': 'errorbutton'
+    });
+    this.errorButton.addEventListener("click",
+        function (button) {
             OpManagerFactory.getInstance().showLogs(this.logManager); // TODO
-        }.bind(this),
-        false);
-    this.gadgetMenu.appendChild(button);
-    this.errorButtonElement = button;
+        }.bind(this));
+    this.errorButton.insertInto(this.gadgetMenu);
 
     // New Version button
     this.upgradeButton = document.createElement("input");
@@ -606,18 +584,9 @@ IGadget.prototype.isAllowed = function (action) {
 };
 
 IGadget.prototype._updateButtons = function () {
-    if (isElement(this.closeButtonElement.parentNode)) {
-        this.closeButtonElement.remove();
-    }
-    if (isElement(this.settingsButtonElement.parentNode)) {
-        this.settingsButtonElement.remove();
-    }
-    if (isElement(this.minimizeButtonElement.parentNode)) {
-        this.minimizeButtonElement.remove();
-    }
-    if (isElement(this.closeButtonElement.parentNode)) {
-        this.closeButtonElement.remove();
-    }
+    this.closeButton.setDisabled(!this.isAllowed('close'));
+    this.minimizeButton.setDisabled(!this.isAllowed('minimize'));
+
     if (isElement(this.leftResizeHandleElement.parentNode)) {
         this.leftResizeHandleElement.remove();
     }
@@ -625,16 +594,6 @@ IGadget.prototype._updateButtons = function () {
         this.rightResizeHandleElement.remove();
     }
 
-
-    if (this.isAllowed('close')) {
-        this.gadgetMenu.appendChild(this.closeButtonElement);
-    }
-
-    this.gadgetMenu.appendChild(this.settingsButtonElement);
-
-    if (this.isAllowed('minimize')) {
-        this.gadgetMenu.appendChild(this.minimizeButtonElement);
-    }
 
     if (this.isAllowed('resize')) {
         this.statusBar.appendChild(this.leftResizeHandleElement);
@@ -683,6 +642,7 @@ IGadget.prototype.paint = function (onInit) {
     this.minimized = false;
     this._recomputeSize(false);
 
+    this.minimized = null;
     this.setMinimizeStatus(minimizedStatusBackup, false, false);
 
     // Initialize transparency status
@@ -1212,7 +1172,8 @@ IGadget.prototype._notifyUnloaded = function () {
         return;
     }
 
-    this.errorButtonElement.addClassName("disabled");
+    this.errorButton.addClassName("disabled");
+    this.errorButton.setTitle('');
     this.loaded = false;
     this.events['unload'].dispatch(this);
 };
@@ -1439,16 +1400,14 @@ IGadget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
             // Linked to the grid
             this.contentWrapper.setStyle({"visibility": "hidden", "border": "0px"});
             this.statusBar.setStyle({"display": "none"});
-            this.minimizeButtonElement.setAttribute("title", gettext("Maximize"));
-            this.minimizeButtonElement.setAttribute("alt", gettext("Maximize"));
-            this.minimizeButtonElement.removeClassName("minimizebutton");
-            this.minimizeButtonElement.addClassName("maximizebutton");
+            this.minimizeButton.setTitle(gettext("Maximize"));
+            this.minimizeButton.removeClassName("minimizebutton");
+            this.minimizeButton.addClassName("maximizebutton");
         }
     } else {
-        this.minimizeButtonElement.setAttribute("title", gettext("Minimize"));
-        this.minimizeButtonElement.setAttribute("alt", gettext("Minimize"));
-        this.minimizeButtonElement.removeClassName("maximizebutton");
-        this.minimizeButtonElement.addClassName("minimizebutton");
+        this.minimizeButton.setTitle(gettext("Minimize"));
+        this.minimizeButton.removeClassName("maximizebutton");
+        this.minimizeButton.addClassName("minimizebutton");
         this.contentWrapper.setStyle({"visibility": "", "border": ""});
 
         if (this.onFreeLayout()) {
@@ -1508,15 +1467,11 @@ IGadget.prototype.toggleMinimizeStatus = function (persistence) {
  */
 IGadget.prototype._updateErrorInfo = function () {
     var label, errorCount = this.logManager.getErrorCount();
-    if (errorCount > 0) {
-        this.errorButtonElement.removeClassName("disabled");
-    } else {
-        this.errorButtonElement.addClassName("disabled");
-    }
+    this.errorButton.setDisabled(errorCount == 0);
 
     label = ngettext("%(errorCount)s error", "%(errorCount)s errors", errorCount);
     label = interpolate(label, {errorCount: errorCount}, true);
-    this.errorButtonElement.setAttribute("title", label);
+    this.errorButton.setTitle(label);
 };
 
 /**
