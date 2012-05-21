@@ -48,6 +48,7 @@
         this.wrapperElement = document.createElement("div");
         this.wrapperElement.className = 'anchor';
         this.wrapperElement.addEventListener('mousedown', function (e) {
+            e.stopPropagation();
             if (this.enabled && BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
                 arrowCreator.startdrag(e, this);
                 this.events.startdrag.dispatch(this);
@@ -55,8 +56,8 @@
         }.bind(this));
 
         this.wrapperElement.addEventListener('mouseup', function (e) {
+            e.stopPropagation();
             if (this.enabled && BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
-                e.stopPropagation();
                 arrowCreator.enddrag(e, this);
                 this.events.enddrag.dispatch(this);
             }
