@@ -727,6 +727,7 @@ IGadget.prototype.fillWithLabel = function () {
         this.igadgetNameHTMLElement.innerHTML = nameToShow;
         this.gadgetMenu.appendChild(this.igadgetNameHTMLElement);
 
+        this.igadgetNameHTMLElement.observe('mousedown', Event.stop);
         this.igadgetNameHTMLElement.observe('click',
                                             function (e) {
                                                 Event.stop(e);
