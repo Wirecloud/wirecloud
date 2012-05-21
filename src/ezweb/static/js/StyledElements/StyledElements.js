@@ -2780,6 +2780,8 @@ StyledElements.StyledButton = function(options) {
     }
 
     /* Event handlers */
+    EzWebExt.addEventListener(button, 'mousedown', function (e) {e.stopPropagation();}, true);
+    EzWebExt.addEventListener(button, 'mouseup', function (e) {e.stopPropagation();}, true);
     EzWebExt.addEventListener(button, 'click', EzWebExt.bind(this._clickCallback, this), true);
     this.buttonElement = button;
 };
