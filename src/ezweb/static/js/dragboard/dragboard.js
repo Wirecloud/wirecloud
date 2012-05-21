@@ -836,11 +836,6 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
             return false;
         }
 
-        var target = BrowserUtilsFactory.getInstance().getTarget(e);
-        if (target !== handler) {
-            return false;
-        }
-
         document.oncontextmenu = Draggable._cancel; // disable context menu
         document.onmousedown = Draggable._cancel; // disable text selection in Firefox
         document.onselectstart = Draggable._cancel; // disable text selection in IE
@@ -904,11 +899,7 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
     };
 
     // add mousedown event listener
-    Event.observe(handler, "mousedown", startdrag);
-    var children = handler.childElements();
-    for (var i = 0; i < children.length; i++) {
-        Event.observe(children[i], "mousedown", Draggable._cancelbubbling);
-    }
+    handler.addEventListener("mousedown", startdrag, false);
 
     /**********
      * Public methods
@@ -923,7 +914,7 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
     };
 
     this.destroy = function () {
-        Event.stopObserving(handler, "mousedown", startdrag);
+        handler.removeEventListener("mousedown", startdrag, false);
         startdrag = null;
         enddrag = null;
         drag = null;
