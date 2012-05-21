@@ -52,7 +52,7 @@
         if (manager instanceof Wirecloud.ui.WiringEditor.ArrowCreator) {
             arrowCreator = manager;
             this.isMiniGadget = false;
-            this.draggable = new Draggable(this.wrapperElement, this.operatorHeader, this,
+            this.draggable = new Draggable(this.wrapperElement, this.wrapperElement, this,
                 function () {},
                 function (e, draggable, operator) {
                     operator.repaint();
@@ -72,7 +72,7 @@
             );
         } else {
             this.isMiniGadget = true;
-            this.draggable = new Draggable(this.wrapperElement, this.operatorHeader, this,
+            this.draggable = new Draggable(this.wrapperElement, this.wrapperElement, this,
                 function () {},
                 function (e, draggable, operator) {
                     operator.repaint();
