@@ -2781,6 +2781,7 @@ StyledElements.StyledButton = function(options) {
 
     /* Event handlers */
     EzWebExt.addEventListener(button, 'click', EzWebExt.bind(this._clickCallback, this), true);
+    this.buttonElement = button;
 };
 StyledElements.StyledButton.prototype = new StyledElements.StyledElement();
 
@@ -2794,6 +2795,10 @@ StyledElements.StyledButton.prototype._clickCallback = function(e) {
 
 StyledElements.StyledButton.prototype.setLabel = function(label) {
     this.label.textContent = label;
+};
+
+StyledElements.StyledButton.prototype.setTitle = function(title) {
+    this.buttonElement.setAttribute('title', title);
 };
 
 /**
