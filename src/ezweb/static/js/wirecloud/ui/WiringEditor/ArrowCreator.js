@@ -61,7 +61,7 @@
             document.onmousedown = Draggable._cancel; // disable text selection in Firefox
             document.onselectstart = Draggable._cancel; // disable text selection in IE
             // enddrag when mouseup in no-anchor
-            document.addEventListener('mouseup', this.enddrag);
+            document.addEventListener('mouseup', this.enddrag, false);
 
             xStart = parseInt(e.clientX, 10);
             yStart = parseInt(e.clientY, 10);
@@ -80,7 +80,7 @@
             theArrow.addClassName("arrow");
             currentSource = initAnchor;
             currentTarget = null;
-            document.addEventListener("mousemove", this.drag);
+            document.addEventListener("mousemove", this.drag, false);
             onStart(draggable, data);
             return false;
         };
@@ -89,6 +89,7 @@
          * drag, second step to draw a dragable arrow.
          */
         this.drag = function drag(e) {
+
             e = e || window.event; // needed for IE
             var hasChanged;
             var x = parseInt(e.clientX, 10);
@@ -131,9 +132,8 @@
             } else {
                 theArrow.destroy();
             }
-
-            document.removeEventListener("mouseup", this.enddrag);
-            document.removeEventListener("mousemove", this.drag);
+            document.removeEventListener("mouseup", this.enddrag, false);
+            document.removeEventListener("mousemove", this.drag, false);
             onFinish(draggable, data);
             document.onmousedown = null; // reenable context menu
             document.onselectstart = null; // reenable text selection in IE
@@ -142,7 +142,6 @@
             currentSource = null;
             this.initAnchor = null;
             this.invert = null;
-
             return theArrow;
         }.bind(this);
     };

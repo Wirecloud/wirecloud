@@ -5,9 +5,15 @@
 
 .wiring_editor .menubar {
     white-space: nowrap;
-    height: 68px;
+    height: 75px;
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
     line-height: 68px;
+    border-bottom: #DF7A62;
+    border-bottom-style: solid;
+    border-bottom-width: 10px;
+    background: -webkit-linear-gradient(white, #DF7A62);
+    background: -moz-linear-gradient(white, #DF7A62);
+    background: -o-linear-gradient(white, #DF7A62);
 }
 
 .wiring_editor .menubar .igadget {
@@ -18,6 +24,7 @@
     position:relative;
     margin: 1ex 2ex;
     vertical-align: middle;
+    z-index:10;
 }
 
 .wiring_editor .menubar .ioperator {
@@ -28,6 +35,7 @@
     position: relative;
     margin: 1ex 2ex;
     vertical-align: middle;
+    z-index:10;
 }
 
 .wiring_editor .menubar .igadget .header {
@@ -131,7 +139,7 @@
 }
 
 .wiring_editor .igadget > .sources .anchor {
-    background: #A1A6FF;
+    background: rgb(122, 152, 192);
     position: absolute;
     cursor: pointer;
     display: inline;
@@ -146,11 +154,11 @@
     left: -11px;
 }
 .wiring_editor .igadget> .targets .anchor.disabled {
-    background-color: rgba(255, 120, 0, 0.3);
+    background-color: rgba(255, 120, 0, 0.9);
 }
 
 .wiring_editor > .igadget> .sources .anchor.disabled {
-    background-color: rgba(161, 166, 255, 0.3);
+    background-color: rgba(122, 152, 192, 0.3);
 }
 
 .wiring_editor .canvas {
@@ -162,6 +170,7 @@
 	/*pointer-events: none;*/
 	width: 100%;
 	height: 100%;
+    background: url(../images/transp-grid-orange.png);
 }
 
 .wiring_editor .canvas .arrow {
@@ -185,7 +194,7 @@
 
 .wiring_editor .canvas .closer {
     stroke: black;
-    fill:   url(cross.svg#closeCircle);
+    fill:   red;
     fill-opacity="1";
     stroke-width: 1;
     display: none;
@@ -275,7 +284,7 @@
     position: absolute;
     cursor: pointer;
     display: inline;
-    right: -11px;
+    right: -10px;
 }
 
 .wiring_editor .ioperator > .shaperDiv > .targets .anchor {

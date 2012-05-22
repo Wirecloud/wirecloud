@@ -193,25 +193,46 @@
         to = this.end;
         pullerStart = this.pullerStart;
         pullerEnd = this.pullerEnd;
-
         this.arrowElementBorder.setAttribute("d",
                 "M " + from.posX + "," + from.posY + " " +
                 "C " + pullerStart.posX + "," + pullerStart.posY + " " + pullerEnd.posX + "," + pullerEnd.posY + " " +
                 to.posX + "," + to.posY
         );
-
         this.arrowElement.setAttribute("d",
                 "M " + from.posX + "," + from.posY + " " +
                 "C " + pullerStart.posX + "," + pullerStart.posY + " " + pullerEnd.posX + "," + pullerEnd.posY + " " +
                 to.posX + "," + to.posY
         );
-        //closer
-        posCloser = this.arrowElement.getPointAtLength(this.arrowElement.getTotalLength() / 2);
-        this.closerElement.setAttribute("cx", posCloser.x);
-        this.closerElement.setAttribute("cy", posCloser.y);
+        
+        try{
+        posCloser = this.calculateMid();
+        
+        this.closerElement.setAttribute("cx", posCloser.posX);
+        this.closerElement.setAttribute("cy", posCloser.posY);
         this.closerElement.setAttribute("r", 8);
+        }
+        catch(err) {
+            //TODO: error msg?
+        }
     };
+    /**
+     *  calculate the arrow path middle position.
+     */
+    Arrow.prototype.calculateMid = function calculateMid() {
+        var B1, B2, B3, B4, getBercier;
+        
+        B1 = function B1(t) { return t*t*t };
+        B2 = function B2(t) { return 3*t*t*(1-t) };
+        B3 = function B3(t) { return 3*t*(1-t)*(1-t) };
+        B4 = function B4(t) { return (1-t)*(1-t)*(1-t) };
 
+        getBercier = function getBezier(percent,C1,C2,C3,C4) {
+            var X = C1.posX*B1(percent) + C2.posX*B2(percent) + C3.posX*B3(percent) + C4.posX*B4(percent);
+            var Y = C1.posY*B1(percent) + C2.posY*B2(percent) + C3.posY*B3(percent) + C4.posY*B4(percent);
+            return {posX : X, posY : Y};
+        }
+        return getBercier(0.5, this.start, this.pullerStart, this.pullerEnd, this.end);
+    };
     /**
      *  highlights the arrow
      */
@@ -254,6 +275,9 @@
     Arrow.prototype.destroy = function destroy() {
         this.wrapperElement.parentNode.removeChild(this.wrapperElement);
         this.wrapperElement = null;
+        this.pullerStartElement = null;
+        this.pullerEndElement = null;
+        this.closerElement = null;
         this.start = null;
         this.end = null;
     };

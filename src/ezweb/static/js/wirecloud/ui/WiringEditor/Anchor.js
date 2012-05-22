@@ -56,8 +56,8 @@
         }.bind(this));
 
         this.wrapperElement.addEventListener('mouseup', function (e) {
-            e.stopPropagation();
             if (this.enabled && BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
+                e.stopPropagation();
                 arrowCreator.enddrag(e, this);
                 this.events.enddrag.dispatch(this);
             }
