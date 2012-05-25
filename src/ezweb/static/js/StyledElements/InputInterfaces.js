@@ -1,5 +1,4 @@
-/*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true, nomen: false  */
-/*global $, window, document, EzWebExt, SelectInputInterface, StyledElements, jQuery, Form */
+/*global $, document, gettext, interpolate, Element, EzWebExt, Form, OpManagerFactory, ParametrizeWindowMenu, SelectInputInterface, StyledElements, Wirecloud */
 "use strict";
 
 var ValidationErrorManager, InputValidationError = {};
@@ -14,11 +13,11 @@ InputValidationError.VERSION_ERROR      = 7;
 InputValidationError.OUT_OF_RANGE_ERROR = 8;
 
 
-function ValidationErrorManager() {
+var ValidationErrorManager = function ValidationErrorManager() {
     this.fieldsWithErrorById = {};
-}
+};
 
-ValidationErrorManager.prototype._addValidationError = function (errorCode, fieldName) {
+ValidationErrorManager.prototype._addValidationError = function _addValidationError(errorCode, fieldName) {
     if (this.fieldsWithErrorById[errorCode] === undefined) {
         this.fieldsWithErrorById[errorCode] = [];
     }
@@ -26,7 +25,7 @@ ValidationErrorManager.prototype._addValidationError = function (errorCode, fiel
     this.fieldsWithErrorById[errorCode].push(fieldName);
 };
 
-ValidationErrorManager.prototype.validate = function (field) {
+ValidationErrorManager.prototype.validate = function validate(field) {
     var errorCode = field.checkValue();
     if (errorCode !== InputValidationError.NO_ERROR) {
         field._setError(true);
@@ -36,7 +35,7 @@ ValidationErrorManager.prototype.validate = function (field) {
     }
 };
 
-ValidationErrorManager.prototype._buildErrorMsg = function (errorCode) {
+ValidationErrorManager.prototype._buildErrorMsg = function _buildErrorMsg(errorCode) {
     var msg, fields, i;
 
     errorCode = parseInt(errorCode, 10);
@@ -73,7 +72,7 @@ ValidationErrorManager.prototype._buildErrorMsg = function (errorCode) {
     return EzWebExt.interpolate(msg, {'fields': fields});
 };
 
-ValidationErrorManager.prototype.toHTML = function () {
+ValidationErrorManager.prototype.toHTML = function toHTML() {
     var errorCode, errorMsgs = [];
 
     for (errorCode in this.fieldsWithErrorById) {
@@ -89,7 +88,7 @@ ValidationErrorManager.prototype.toHTML = function () {
 /**
  * @abstract
  */
-function InputInterface(fieldId, options) {
+var InputInterface = function InputInterface(fieldId, options) {
     if (arguments.length === 0) {
         return;
     }
@@ -110,14 +109,14 @@ function InputInterface(fieldId, options) {
     } else {
         this._description = options.label;
     }
-}
+};
 InputInterface.prototype = new StyledElements.StyledElement();
 
-InputInterface.prototype.getValue = function () {
+InputInterface.prototype.getValue = function getValue() {
     return this.inputElement.getValue();
 };
 
-InputInterface.prototype.setValue = function (newValue) {
+InputInterface.prototype.setValue = function setValue(newValue) {
     if (this.isValidValue(newValue)) {
         this._setValue(newValue);
     }
@@ -128,7 +127,7 @@ InputInterface.prototype.setValue = function (newValue) {
  *
  * @returns {String}
  */
-InputInterface.prototype.getLabel = function () {
+InputInterface.prototype.getLabel = function getLabel() {
     return this._label;
 };
 
@@ -137,7 +136,7 @@ InputInterface.prototype.getLabel = function () {
  *
  * @returns {String}
  */
-InputInterface.prototype.getDescription = function () {
+InputInterface.prototype.getDescription = function getDescription() {
     return this._description;
 };
 
@@ -146,7 +145,7 @@ InputInterface.prototype.getDescription = function () {
  *
  * @returns {Object}
  */
-InputInterface.prototype.getDefaultValue = function () {
+InputInterface.prototype.getDefaultValue = function getDefaultValue() {
     return this._defaultValue;
 };
 
@@ -155,7 +154,7 @@ InputInterface.prototype.getDefaultValue = function () {
  *
  * @returns {Boolean}
  */
-InputInterface.prototype.isEmpty = function () {
+InputInterface.prototype.isEmpty = function isEmpty() {
     return this._isEmptyValue(this.getValue());
 };
 
@@ -165,11 +164,11 @@ InputInterface.prototype.isEmpty = function () {
  *
  * @returns {Boolean}
  */
-InputInterface.prototype._isEmptyValue = function (value) {
+InputInterface.prototype._isEmptyValue = function _isEmptyValue(value) {
     return value === "" || value == null;
 };
 
-InputInterface.prototype._normalize = function (value) {
+InputInterface.prototype._normalize = function _normalize(value) {
     if (value == null) {
         return value;
     } else {
@@ -184,7 +183,7 @@ InputInterface.prototype._normalize = function (value) {
  * is valid for this <code>InputInterface</code>. Things as checking if the
  * value is empty but required is out of scope of this method.
  */
-InputInterface.prototype._checkValue = function (newValue) {
+InputInterface.prototype._checkValue = function _checkValue(newValue) {
     return InputValidationError.NO_ERROR;
 };
 
@@ -192,7 +191,7 @@ InputInterface.prototype._checkValue = function (newValue) {
  * Checks if the given value is valid for this InputInterface.
  *
  */
-InputInterface.prototype.checkValue = function (newValue) {
+InputInterface.prototype.checkValue = function checkValue(newValue) {
     if (newValue === undefined) {
         newValue = this.getValue();
     } else {
@@ -217,7 +216,7 @@ InputInterface.prototype.checkValue = function (newValue) {
  *
  * @retuns {Boolean}
  */
-InputInterface.prototype.isValidValue = function (newValue) {
+InputInterface.prototype.isValidValue = function isValidValue(newValue) {
     return this.checkValue(newValue) === InputValidationError.NO_ERROR;
 };
 
@@ -228,7 +227,7 @@ InputInterface.prototype.isValidValue = function (newValue) {
  *
  * @see <code>InputInterface.setValue</code>
  */
-InputInterface.prototype._setValue = function (newValue) {
+InputInterface.prototype._setValue = function _setValue(newValue) {
     if (newValue === null || newValue === undefined) {
         newValue = "";
     }
@@ -241,7 +240,7 @@ InputInterface.prototype._setValue = function (newValue) {
  *
  * @param {Boolean} error
  */
-InputInterface.prototype._setError = function (error) {
+InputInterface.prototype._setError = function _setError(error) {
     if (error) {
         EzWebExt.addClassName(this.inputElement.wrapperElement, 'error');
     } else {
@@ -252,7 +251,7 @@ InputInterface.prototype._setError = function (error) {
 /**
  * Resets the current interface using its default value.
  */
-InputInterface.prototype.resetToDefault = function () {
+InputInterface.prototype.resetToDefault = function resetToDefault() {
     this._setError(false);
     this._setValue(this._defaultValue);
 };
@@ -260,7 +259,7 @@ InputInterface.prototype.resetToDefault = function () {
 /**
  * Resets the current interface using the initial value.
  */
-InputInterface.prototype.reset = function () {
+InputInterface.prototype.reset = function reset() {
     this._setError(false);
     this._setValue(this._initialValue);
 };
@@ -268,14 +267,15 @@ InputInterface.prototype.reset = function () {
 /**
  * Sets the focus on this input interface.
  */
-InputInterface.prototype.focus = function () {
+InputInterface.prototype.focus = function focus() {
+
     this.inputElement.focus();
 };
 
 /**
  * Disables/enables this input interface.
  */
-InputInterface.prototype.setDisabled = function (disable) {
+InputInterface.prototype.setDisabled = function setDisabled(disable) {
     this.inputElement.setDisabled(this._readOnly || disable);
 };
 
@@ -284,7 +284,7 @@ InputInterface.prototype.setDisabled = function (disable) {
  *
  * @param {Element} element
  */
-InputInterface.prototype.insertInto = function (element) {
+InputInterface.prototype.insertInto = function insertInto(element) {
     this.inputElement.insertInto(element);
 };
 
@@ -294,7 +294,7 @@ InputInterface.prototype.insertInto = function (element) {
  *
  * @return {Object}
  */
-InputInterface.prototype.parseFromPersistence = function (value) {
+InputInterface.prototype.parseFromPersistence = function parseFromPersistence(value) {
     return value;
 };
 
@@ -326,7 +326,7 @@ function ListInputInterface(fieldId, options) {
 }
 ListInputInterface.prototype = new InputInterface();
 
-ListInputInterface.prototype._setValue = function (newValue) {
+ListInputInterface.prototype._setValue = function _setValue(newValue) {
     if (newValue === null || newValue === undefined) {
         newValue = [];
     }
@@ -335,11 +335,11 @@ ListInputInterface.prototype._setValue = function (newValue) {
     this.inputElement.addSelection(newValue);
 };
 
-ListInputInterface.prototype.getValue = function () {
+ListInputInterface.prototype.getValue = function getValue() {
     return this.inputElement.getSelection();
 };
 
-ListInputInterface.prototype.isEmpty = function () {
+ListInputInterface.prototype.isEmpty = function isEmpty() {
     return this.getValue().length === 0;
 };
 
@@ -357,11 +357,11 @@ function IntegerInputInterface(fieldId, options) {
 }
 IntegerInputInterface.prototype = new InputInterface();
 
-IntegerInputInterface.prototype.parseFromPersistence = function (value) {
+IntegerInputInterface.prototype.parseFromPersistence = function parseFromPersistence(value) {
     return parseInt(value, 10);
 };
 
-IntegerInputInterface.prototype._checkValue = function (newValue) {
+IntegerInputInterface.prototype._checkValue = function _checkValue(newValue) {
     if (this.inputElement.min !== undefined) {
         if (newValue < parseInt(this.inputElement.min, 10)) {
             return InputValidationError.OUT_OF_RANGE_ERROR;
@@ -400,7 +400,7 @@ URLInputInterface.prototype = new TextInputInterface();
 
 URLInputInterface.prototype._URLChecker = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
 
-URLInputInterface.prototype._checkValue = function (newValue) {
+URLInputInterface.prototype._checkValue = function _checkValue(newValue) {
     return this._URLChecker.test(newValue) ? InputValidationError.NO_ERROR : InputValidationError.URL_ERROR;
 };
 
@@ -415,7 +415,7 @@ EMailInputInterface.prototype = new TextInputInterface();
 
 EMailInputInterface.prototype._EMailChecker = /[\w\d][\w\-]*@[\w\d\-]+\.[\w\d]+/;
 
-EMailInputInterface.prototype._checkValue = function (newValue) {
+EMailInputInterface.prototype._checkValue = function _checkValue(newValue) {
     return this._EMailChecker.test(newValue) ? InputValidationError.NO_ERROR : InputValidationError.EMAIL_ERROR;
 };
 
@@ -429,15 +429,15 @@ function BooleanInputInterface(fieldId, options) {
 }
 BooleanInputInterface.prototype = new InputInterface();
 
-BooleanInputInterface.prototype.isEmpty = function () {
+BooleanInputInterface.prototype.isEmpty = function isEmpty() {
     return false;
 };
 
-BooleanInputInterface.prototype._checkValue = function (newValue) {
+BooleanInputInterface.prototype._checkValue = function _checkValue(newValue) {
     return (typeof newValue === 'boolean') ? InputValidationError.NO_ERROR : InputValidationError.BOOLEAN_ERROR;
 };
 
-BooleanInputInterface.prototype.parseFromPersistence = function (value) {
+BooleanInputInterface.prototype.parseFromPersistence = function parseFromPersistence(value) {
     return typeof value === 'boolean' ? value : value.toLowerCase() === 'true';
 };
 
@@ -459,7 +459,7 @@ function SelectInputInterface(fieldId, fieldDesc) {
 }
 SelectInputInterface.prototype = new InputInterface();
 
-SelectInputInterface.prototype._setValue = function (newValue) {
+SelectInputInterface.prototype._setValue = function _setValue(newValue) {
     var entries;
 
     if (this._update) {
@@ -473,7 +473,7 @@ SelectInputInterface.prototype._setValue = function (newValue) {
     this.inputElement.setValue(newValue);
 };
 
-SelectInputInterface.prototype._checkValue = function (newValue) {
+SelectInputInterface.prototype._checkValue = function _checkValue(newValue) {
     var value, newValueId;
 
     if (typeof newValue !== 'string') {
@@ -541,15 +541,15 @@ function ButtonGroupInputInterface(fieldId, fieldDesc) {
     }
 }
 ButtonGroupInputInterface.prototype = new InputInterface();
-ButtonGroupInputInterface.prototype.insertInto = function (element) {
+ButtonGroupInputInterface.prototype.insertInto = function insertInto(element) {
     element.appendChild(this.wrapperElement);
 };
 
-ButtonGroupInputInterface.prototype._setValue = function (newValue) {
+ButtonGroupInputInterface.prototype._setValue = function _setValue(newValue) {
     this.inputElement.setValue(newValue);
 };
 
-ButtonGroupInputInterface.prototype._setError = function (error) {
+ButtonGroupInputInterface.prototype._setError = function _setError(error) {
     // TODO
 };
 
@@ -568,19 +568,19 @@ function FileInputInterface(fieldId, fieldDesc) {
 }
 FileInputInterface.prototype = new InputInterface();
 
-FileInputInterface.prototype.insertInto = function (element) {
+FileInputInterface.prototype.insertInto = function insertInto(element) {
     element.appendChild(this.wrapperElement);
 };
 
-FileInputInterface.prototype.getValue = function () {
+FileInputInterface.prototype.getValue = function getValue() {
     return this.inputElement.value;
 };
 
-FileInputInterface.prototype._setValue = function (newValue) {
+FileInputInterface.prototype._setValue = function _setValue(newValue) {
     // TODO
 };
 
-FileInputInterface.prototype._setError = function (error) {
+FileInputInterface.prototype._setError = function _setError(error) {
     // TODO
 };
 
@@ -595,7 +595,7 @@ function MultivaluedInputInterface(fieldId, fieldDesc) {
 }
 MultivaluedInputInterface.prototype = new InputInterface();
 
-MultivaluedInputInterface.prototype._addEntry = function () {
+MultivaluedInputInterface.prototype._addEntry = function _addEntry() {
     var entry, fields;
 
     entry = {};
@@ -637,7 +637,7 @@ MultivaluedInputInterface.prototype._addEntry = function () {
     return entry;
 };
 
-MultivaluedInputInterface.prototype._removeEntry = function (entry) {
+MultivaluedInputInterface.prototype._removeEntry = function _removeEntry(entry) {
     var index;
 
     this.wrapperElement.removeChild(entry.wrapper);
@@ -650,7 +650,7 @@ MultivaluedInputInterface.prototype._removeEntry = function (entry) {
     }
 };
 
-MultivaluedInputInterface.prototype._removeAllEntries = function () {
+MultivaluedInputInterface.prototype._removeAllEntries = function _removeAllEntries() {
     var i, entry;
     for (i = 0; i < this.entries.length; i += 1) {
         entry = this.entries[i];
@@ -660,7 +660,7 @@ MultivaluedInputInterface.prototype._removeAllEntries = function () {
     this.entries = [];
 };
 
-MultivaluedInputInterface.prototype.getValue = function () {
+MultivaluedInputInterface.prototype.getValue = function getValue() {
     var i, data = [];
 
     for (i = 0; i < this.entries.length; i += 1) {
@@ -670,7 +670,7 @@ MultivaluedInputInterface.prototype.getValue = function () {
     return data;
 };
 
-MultivaluedInputInterface.prototype._setValue = function (newValue) {
+MultivaluedInputInterface.prototype._setValue = function _setValue(newValue) {
     var i, form, entry;
 
     this._removeAllEntries();
@@ -689,14 +689,14 @@ MultivaluedInputInterface.prototype._setValue = function (newValue) {
     }
 };
 
-MultivaluedInputInterface.prototype._setError = function (error) {
+MultivaluedInputInterface.prototype._setError = function _setError(error) {
     // TODO
 };
 
 /**
  *
  */
-var FieldSetInterface = function (fieldId, fieldDesc) {
+var FieldSetInterface = function FieldSetInterface(fieldId, fieldDesc) {
     this.form = new Form(fieldDesc.fields, {
         useHtmlForm: false,
         acceptButton: false,
@@ -706,19 +706,19 @@ var FieldSetInterface = function (fieldId, fieldDesc) {
 };
 FieldSetInterface.prototype = new InputInterface();
 
-FieldSetInterface.prototype.insertInto = function insertInto (element) {
+FieldSetInterface.prototype.insertInto = function insertInto(element) {
     this.form.insertInto(element);
 };
 
-FieldSetInterface.prototype.getValue = function getValue () {
+FieldSetInterface.prototype.getValue = function getValue() {
     return this.form.getData();
 };
 
-FieldSetInterface.prototype._setValue = function _setValue (newValue) {
+FieldSetInterface.prototype._setValue = function _setValue(newValue) {
     return this.form.setData(newValue);
 };
 
-FieldSetInterface.prototype._setError = function (error) {
+FieldSetInterface.prototype._setError = function _setError(error) {
     // TODO
 };
 
@@ -753,7 +753,7 @@ function ParametrizableValueInputInterface(fieldId, options) {
     this.inputElement.insertInto(this.wrapperElement);
 
     this.buttonElement = new StyledElements.StyledButton({text: ''});
-    this.buttonElement.addEventListener('click', function() {
+    this.buttonElement.addEventListener('click', function () {
         var dialog = new ParametrizeWindowMenu(this);
         dialog.show(this.parentWindow);
         dialog.setValue(this.getValue());
@@ -762,14 +762,14 @@ function ParametrizableValueInputInterface(fieldId, options) {
 }
 ParametrizableValueInputInterface.prototype = new InputInterface();
 
-ParametrizableValueInputInterface.prototype._checkValue = function(newValue) {
+ParametrizableValueInputInterface.prototype._checkValue = function _checkValue(newValue) {
     return InputValidationError.NO_ERROR;
 };
 
-ParametrizableValueInputInterface.prototype.getValue = function() {
+ParametrizableValueInputInterface.prototype.getValue = function getValue() {
     var value = {
         'source': this.source,
-        'status': this['status']
+        'status': this.status
     };
 
     if (this.source !== 'default') {
@@ -782,7 +782,7 @@ ParametrizableValueInputInterface.prototype.getValue = function() {
 ParametrizableValueInputInterface.prototype.VALID_SOURCE_VALUES = ['current', 'default', 'custom'];
 ParametrizableValueInputInterface.prototype.VALID_STATUS_VALUES = ['normal', 'hidden', 'readonly'];
 
-ParametrizableValueInputInterface.prototype._setValue = function(newValue) {
+ParametrizableValueInputInterface.prototype._setValue = function _setValue(newValue) {
     if (newValue == null || this.VALID_SOURCE_VALUES.indexOf(newValue.source) === -1) {
         this.source = 'current';
     } else {
@@ -795,23 +795,23 @@ ParametrizableValueInputInterface.prototype._setValue = function(newValue) {
         this.value = newValue.value;
     }
 
-    if (newValue == null || this.VALID_STATUS_VALUES.indexOf(newValue['status']) === -1) {
-        this['status'] = 'normal';
-    } else if (!this.canBeHidden && newValue['status'] === 'hidden') {
-        this['status'] = 'readOnly';
+    if (newValue == null || this.VALID_STATUS_VALUES.indexOf(newValue.status) === -1) {
+        this.status = 'normal';
+    } else if (!this.canBeHidden && newValue.status === 'hidden') {
+        this.status = 'readOnly';
     } else {
-        this['status'] = newValue['status'];
+        this.status = newValue.status;
     }
 
     this._updateInputElement();
     this._updateButton();
 };
 
-ParametrizableValueInputInterface.prototype.insertInto = function(element) {
+ParametrizableValueInputInterface.prototype.insertInto = function insertInto(element) {
     element.appendChild(this.wrapperElement);
 };
 
-ParametrizableValueInputInterface.prototype._updateInputElement = function() {
+ParametrizableValueInputInterface.prototype._updateInputElement = function _updateInputElement() {
     switch (this.source) {
     case 'default':
         this.inputElement.setValue('');
@@ -824,14 +824,14 @@ ParametrizableValueInputInterface.prototype._updateInputElement = function() {
     }
 };
 
-ParametrizableValueInputInterface.prototype._updateButton = function() {
+ParametrizableValueInputInterface.prototype._updateButton = function _updateButton() {
     if (this.source === 'default') {
         this.buttonElement.setLabel(gettext('Parametrize'));
     } else {
         this.buttonElement.setLabel(gettext('Modify'));
     }
 
-    if (this['status'] !== 'normal') {
+    if (this.status !== 'normal') {
         this.readOnlyIcon.addClassName('readOnly');
         this.readOnlyIcon.title = gettext("This value won't be editable by the user");
     } else {
@@ -839,7 +839,7 @@ ParametrizableValueInputInterface.prototype._updateButton = function() {
         this.readOnlyIcon.title = gettext("This value will be editable by the user");
     }
 
-    if (this['status'] !== 'hidden') {
+    if (this.status !== 'hidden') {
         this.visibilityIcon.addClassName('visible');
         this.visibilityIcon.title = gettext("This value will be visible to the user");
     } else {
@@ -866,7 +866,7 @@ function ParametrizedTextInputInterface(fieldId, options) {
     this.resetButton = new StyledElements.StyledButton({
         'text': gettext('Use current value')
     });
-    this.resetButton.addEventListener('click', function() {
+    this.resetButton.addEventListener('click', function () {
         this.inputElement.setValue(this.escapeValue(this.variable.value));
     }.bind(this));
     this.wrapperElement.appendChild(this.resetButton);
@@ -896,7 +896,7 @@ function ParametrizedTextInputInterface(fieldId, options) {
     this.addButton = new StyledElements.StyledButton({
         'text': gettext('Add')
     });
-    this.addButton.addEventListener('click', function() {
+    this.addButton.addEventListener('click', function () {
         var prefix, suffix, parameter, start, input;
 
         input = this.inputElement.inputElement;
@@ -924,7 +924,7 @@ function ParametrizedTextInputInterface(fieldId, options) {
 ParametrizedTextInputInterface.prototype = new InputInterface();
 
 ParametrizedTextInputInterface.prototype._ESCAPE_RE = new RegExp("(%+)(\\([a-zA-Z]\\w*(?:\\.[a-zA-Z]\\w*)*\\))");
-ParametrizedTextInputInterface.prototype._ESCAPE_FUNC = function() {
+ParametrizedTextInputInterface.prototype._ESCAPE_FUNC = function () {
     var str, i;
 
     i = arguments[1].length * 2;
@@ -937,7 +937,7 @@ ParametrizedTextInputInterface.prototype._ESCAPE_FUNC = function() {
 };
 
 ParametrizedTextInputInterface.prototype._CONTEXT_PARAMS = null;
-ParametrizedTextInputInterface.prototype.getAvailableParameters = function() {
+ParametrizedTextInputInterface.prototype.getAvailableParameters = function getAvailableParameters() {
     var concepts, contextFields, conceptName, dashIndex, provider, concept, parameters, label;
 
     if (ParametrizedTextInputInterface.prototype._CONTEXT_PARAMS === null) {
@@ -984,7 +984,7 @@ ParametrizedTextInputInterface.prototype.getAvailableParameters = function() {
                         label: gettext('Last Name'),
                         description: '',
                         value: 'last_name'
-                    },
+                    }
                 ]
             },
             {
@@ -1007,12 +1007,12 @@ ParametrizedTextInputInterface.prototype.getAvailableParameters = function() {
     return ParametrizedTextInputInterface.prototype._CONTEXT_PARAMS;
 };
 
-ParametrizedTextInputInterface.prototype.escapeValue = function(value) {
+ParametrizedTextInputInterface.prototype.escapeValue = function escapeValue(value) {
     return value.replace(ParametrizedTextInputInterface.prototype._ESCAPE_RE,
         ParametrizedTextInputInterface.prototype._ESCAPE_FUNC);
 };
 
-ParametrizedTextInputInterface.prototype._updateSecondSelect = function() {
+ParametrizedTextInputInterface.prototype._updateSecondSelect = function _updateSecondSelect() {
     var fields, field, i;
 
     this.secondSelect.innerHTML = '';
@@ -1031,7 +1031,7 @@ ParametrizedTextInputInterface.prototype._updateSecondSelect = function() {
     this._updateDescription();
 };
 
-ParametrizedTextInputInterface.prototype._updateDescription = function() {
+ParametrizedTextInputInterface.prototype._updateDescription = function _updateDescription() {
     var fields, field;
 
     fields = this.parameters[this.mainSelect.selectedIndex].fields;
@@ -1039,33 +1039,33 @@ ParametrizedTextInputInterface.prototype._updateDescription = function() {
     this.descriptionDiv.setTextContent(field.description);
 };
 
-ParametrizedTextInputInterface.prototype._setError = function () {
+ParametrizedTextInputInterface.prototype._setError = function _setError() {
 };
 
-ParametrizedTextInputInterface.prototype._setValue = function(newValue) {
+ParametrizedTextInputInterface.prototype._setValue = function _setValue(newValue) {
     this.inputElement.value = newValue;
     if (this.update) {
         this.update();
     }
 };
 
-ParametrizedTextInputInterface.prototype.setDisabled = function(disabled) {
+ParametrizedTextInputInterface.prototype.setDisabled = function setDisabled(disabled) {
 
     this.mainSelect.disabled = !!disabled;
     this.secondSelect.disabled = !!disabled;
     this.addButton.setDisabled(disabled);
     this.resetButton.setDisabled(disabled);
     this.inputElement.setDisabled(disabled);
-}
+};
 
-ParametrizedTextInputInterface.prototype.insertInto = function(element) {
+ParametrizedTextInputInterface.prototype.insertInto = function insertInto(element) {
     this.wrapperElement.insertInto(element);
 };
 
 /**
  *
  */
-var InterfaceFactory = function () {
+var InterfaceFactory = function InterfaceFactory() {
     var mapping = {
         'boolean': BooleanInputInterface,
         'text': TextInputInterface,
@@ -1082,7 +1082,7 @@ var InterfaceFactory = function () {
         'multivalued': MultivaluedInputInterface
     };
 
-    this.createInterface = function (fieldId, fieldDesc) {
+    this.createInterface = function createInterface(fieldId, fieldDesc) {
         var Class_ = mapping[fieldDesc.type];
         if (Class_ == null) {
             throw new Error(fieldDesc.type);
@@ -1090,7 +1090,7 @@ var InterfaceFactory = function () {
         return new Class_(fieldId, fieldDesc);
     };
 
-    this.addFieldType = function (type, class_) {
+    this.addFieldType = function addFieldType(type, class_) {
         if (!class_ instanceof InputInterface) {
             throw new TypeError();
         }
