@@ -1,108 +1,65 @@
+.wiring_editor .canvas {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    /*pointer-events: none;*/
+    width: 100%;
+    height: 100%;
+    background: url(../images/transp-grid-orange.png);
+    z-index: 3;
+}
+
 .wiring_editor {
-	-moz-user-select: none;
-	-webkit-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    font-size:12px;
+    font-family: "Courier New", courier;
 }
 
 .wiring_editor .menubar {
     white-space: nowrap;
-    height: 75px;
+    font-size: 0.6em;
+    height: 100px;
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
-    line-height: 68px;
+    line-height: 20%;
     border-bottom: #DF7A62;
     border-bottom-style: solid;
     border-bottom-width: 10px;
     background: -webkit-linear-gradient(white, #DF7A62);
     background: -moz-linear-gradient(white, #DF7A62);
     background: -o-linear-gradient(white, #DF7A62);
-}
-
-.wiring_editor .menubar .igadget {
-    font-size: 6px;
-    line-height: 9px;
-    padding-bottom: 2px;
     display: inline-block;
-    position:relative;
-    margin: 1ex 2ex;
     vertical-align: middle;
-    z-index:10;
 }
 
-.wiring_editor .menubar .ioperator {
-    font-size: 6px;
-    line-height: 9px;
-    padding-bottom: 2px;
-    display: inline-block;
-    position: relative;
-    margin: 1ex 2ex;
-    vertical-align: middle;
-    z-index:10;
+.wiring_editor .grid {
+    font-size: 1em;
 }
 
-.wiring_editor .menubar .igadget .header {
-    font-size: 10px;
-    padding-top: 2px;
-    padding-right: 4px;
-    padding-bottom: 2px;
-    padding-left: 4px;
-}
-
-.wiring_editor .menubar .igadget .anchor {
-    width: 6px;
-    height: 6px;
-    margin: 1px;
-    position: absolute;
-}
-
-.wiring_editor .menubar .igadget > .targets {
-    padding-left: 4px;
-    padding-right: 1px;
-}
-
-.wiring_editor .menubar .igadget > .sources {
-    padding-right: 4px;
-    padding-left: 1px;
-}
-
-.wiring_editor .menubar .igadget > .sources .anchor {
-    right: -4px;
-}
-
-.wiring_editor .menubar .igadget > .targets .anchor {
-    left: -4px;
-}
-
-
-.wiring_editor .center_container .igadget {
-    top: 250px;
-    left:400px;
-}
-
-
-.wiring_editor .center_container .ioperator {
-    top: 250px;
-    left:200px;
+.wiring_editor .ioperator {
+    background-color: rgba(255, 255, 0, 0.8);
 }
 
 .wiring_editor .igadget {
-    position: absolute;
+    background-color: rgba(255, 217, 120, 0.8);
+}
+
+.wiring_editor .ioperator, .wiring_editor .igadget {
+    line-height: 25px;
+    padding-bottom: 2px;
+    margin: 1ex 2ex;
     border: 1px solid;
     padding-bottom: 8px;
     border-radius: 1.25ex 1.25ex 1.25ex 1.25ex;
     box-shadow: 0.1ex 0.1ex 1px black;
-    background-color: rgba(255, 217, 120, 0.8);
     font-family: "Courier New", courier;
 }
 
-.wiring_editor .igadget .anchor {
-    width: 16px;
-    height: 16px;
-    margin: 2px;
-    position: absolute;
-}
-
-.wiring_editor .igadget > .header {
+.wiring_editor .ioperator .header, .wiring_editor .igadget .header {
     text-align: center;
-    font-size: 13pt;
+    font-size: 1.3em;
     font-weight: bold;
     cursor: move;
     overflow: hidden;
@@ -111,68 +68,99 @@
     padding-right: 16px;
     padding-bottom: 8px;
     padding-left: 16px;
-}
-
-.wiring_editor .igadget > .header  span{
     pointer-events: none;
     font-style: oblique;
     color: #221BE2;
 }
 
-.wiring_editor .igadget {
-    line-height: 25px;
-    font-size: 12px;
+.wiring_editor .grid .ioperator .header span, .wiring_editor .grid .igadget .header span {
+    padding-left:1em;
 }
 
-.wiring_editor .igadget > .targets {
+.wiring_editor .grid .header .closebutton {
+    right: -1.6em;
+    top: -0.9em;
+    float: right;
+}
+
+.wiring_editor .grid .ioperator, .wiring_editor .grid .igadget {
+    z-index: 5;
+    position: absolute;
+}
+
+.wiring_editor .menubar .ioperator, .wiring_editor .menubar .igadget {
+    position: relative;
+    padding-bottom: 0.6em;
+    display: inline-block;
+    margin: 0.6em 0.6em;
+    vertical-align: middle;
+    z-index: 10;
+    line-height: 1.5em;
+}
+
+
+.wiring_editor .grid .ioperator, .wiring_editor .grid .igadget {
+    z-index: 5;
+}
+
+.wiring_editor .targets {
     float: left;
     text-align: left;
-    padding-left: 16px;
-    padding-right: 2px;
+    padding-left: 1em;
+    padding-right: 1em;
 }
 
-.wiring_editor .igadget > .sources {
+.wiring_editor .sources {
     float: right;
     text-align: right;
-    padding-right: 16px;
-    padding-left: 2px;
+    padding-left: 1em;
+    padding-right: 1em;
 }
 
-.wiring_editor .igadget > .sources .anchor {
+
+/*ANCHORS*/
+.wiring_editor .anchor {
     background: rgb(122, 152, 192);
     position: absolute;
     cursor: pointer;
     display: inline;
-    right: -11px;
+    width: 16px;
+    height: 16px;
+    margin: 2px;
+
+}
+.wiring_editor .sources .anchor {
+    background: #A1A6FF;
+    right: -1em;
 }
 
-.wiring_editor .igadget > .targets .anchor {
+.wiring_editor .targets .anchor {
     background: #FF7A00;
-    position: absolute;
-    cursor: pointer;
-    display: inline;
-    left: -11px;
-}
-.wiring_editor .igadget> .targets .anchor.disabled {
-    background-color: rgba(255, 120, 0, 0.9);
+    left: -1em;
 }
 
-.wiring_editor > .igadget> .sources .anchor.disabled {
-    background-color: rgba(122, 152, 192, 0.3);
+.wiring_editor .menubar .sources .anchor {
+    width: 0.6em;
+    height: 0.6em;
+    margin: 0.6em;
 }
 
-.wiring_editor .canvas {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	right: 0px;
-	bottom: 0px;
-	/*pointer-events: none;*/
-	width: 100%;
-	height: 100%;
-    background: url(../images/transp-grid-orange.png);
+.wiring_editor .menubar .targets .anchor {
+    width: 0.6em;
+    height: 0.6em;
+    margin: 0.6em;
 }
 
+.wiring_editor .sources .anchor.disabled {
+    background-color: rgba(255, 120, 0, 0.3);
+}
+
+.wiring_editor .targets .anchor.disabled {
+    background-color: rgba(161, 166, 255, 0.3);
+}
+
+
+/*ARROWS*/
 .wiring_editor .canvas .arrow {
     stroke: rgba(138, 131, 226, 0.9);
     fill:   none;
@@ -218,119 +206,4 @@
 
 .wiring_editor .canvas .selected .pullerBall {
     display: inline;
-}
-
-.wiring_editor .ioperator {
-    position: absolute;
-    border: 1px solid;
-    padding-bottom: 8px;
-    border-radius: 1.25ex 1.25ex 1.25ex 1.25ex;
-    box-shadow: 0.1ex 0.1ex 1px black;
-    background-color: rgba(255, 255, 0, 0.8);
-    font-family: "Courier New", courier;
-}
-
-.wiring_editor .ioperator .anchor {
-    width: 16px;
-    height: 16px;
-    margin: 2px;
-    position: absolute;
-}
-
-.wiring_editor .ioperator > .shaperDiv {
-
-}
-
-.wiring_editor .ioperator > .shaperDiv > .header {
-    text-align: center;
-    font-size: 13pt;
-    font-weight: bold;
-    cursor: move;
-    overflow: hidden;
-    border-radius: 30px;
-    padding-top: 8px;
-    padding-right: 16px;
-    padding-bottom: 8px;
-    padding-left: 16px;
-}
-
-.wiring_editor .ioperator > .shaperDiv >.header  span{
-    pointer-events: none;
-    font-style: oblique;
-    color: #221BE2;
-}
-
-.wiring_editor .ioperator {
-    line-height: 25px;
-    font-size: 12px;
-}
-
-.wiring_editor .ioperator > .shaperDiv >.targets {
-    float: left;
-    text-align: left;
-    padding-left: 16px;
-    padding-right: 6px;
-}
-
-.wiring_editor .ioperator > .shaperDiv >.sources {
-    float: right;
-    text-align: right;
-    padding-right: 16px;
-    padding-left: 6px;
-}
-
-.wiring_editor .ioperator > .shaperDiv >.sources .anchor {
-    background: #A1A6FF;
-    position: absolute;
-    cursor: pointer;
-    display: inline;
-    right: -10px;
-}
-
-.wiring_editor .ioperator > .shaperDiv > .targets .anchor {
-    background: #FF7A00;
-    position: absolute;
-    cursor: pointer;
-    display: inline;
-    left: -10px;
-}
-.wiring_editor .ioperator > .shaperDiv > .event .anchor.disabled {
-    background-color: rgba(255, 120, 0, 0.3);
-}
-
-.wiring_editor .ioperator > .shaperDiv > .slot .anchor.disabled {
-    background-color: rgba(161, 166, 255, 0.3);
-}
-
-.wiring_editor .menubar .ioperator > .shaperDiv > .header {
-    font-size: 10px;
-    padding-top: 2px;
-    padding-right: 4px;
-    padding-bottom: 2px;
-    padding-left: 4px;
-}
-
-.wiring_editor .menubar .ioperator .anchor {
-    width: 6px;
-    height: 6px;
-    margin: 1px;
-    position: absolute;
-}
-
-.wiring_editor .menubar .ioperator > .shaperDiv >.targets {
-    padding-left: 4px;
-    padding-right: 1px;
-}
-
-.wiring_editor .menubar .ioperator > .shaperDiv >.sources {
-    padding-right: 4px;
-    padding-left: 1px;
-}
-
-.wiring_editor .menubar .ioperator > .shaperDiv > .sources .anchor {
-    right: -4px;
-}
-
-.wiring_editor .menubar .ioperator > .shaperDiv > .targets .anchor {
-    left: -4px;
 }

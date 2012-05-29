@@ -56,6 +56,7 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/Arrow.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/ArrowCreator.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/Canvas.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/GenericInterface.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/GadgetInterface.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/OperatorInterface.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/SourceAnchor.js"></script>
