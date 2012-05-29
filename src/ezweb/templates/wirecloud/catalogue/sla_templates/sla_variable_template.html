@@ -1,11 +1,8 @@
 {% load i18n %}
 <div class="right_column_resource">
-		<h4>{% trans 'Service level variable:' %}</h4>
-    	<div class="bold padding_left floating_left padding_right">{% trans 'Title:' %}</div>
-        <div>#{title}</div>
-		<div class="bold padding_left floating_left padding_right">{% trans 'Type:' %}</div>
-        <div>#{type}</div>
-		<div class="bold padding_left floating_left padding_right">{% trans 'value:' %}</div>
-        <div>#{value} #{unit}</div>
+    <div class="bold second_level floating_left padding_right">#{title}</div>
+    <br />
+    <div class="bold second_level floating_left padding_right">{% trans 'value:' %}</div>
+    <div>#{value} #{unit}</div>
     <div class="footer_resource"></div>
 </div>

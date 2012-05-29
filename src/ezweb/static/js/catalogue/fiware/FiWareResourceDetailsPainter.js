@@ -33,21 +33,21 @@ var FiWareResourceDetailsPainter = function (catalogue, details_structure_elemen
     this.catalogue = catalogue;
     this.details_template_element = details_structure_element;
     this.details_template = new Template(this.details_template_element);
-	this.delete_options = {};
-	this.container = container
-	this.back_part = document.createElement('div');
-	this.content_part = document.createElement('div');
-	this.back_appended = false;
-	this.mashup_tab_created = false;
-	/***********************************/
-	this.notebook = new StyledElements.StyledNotebook({'class': 'pruebas'});
-	//this.container.appendChild(this.notebook);
-	this.main_description = this.notebook.createTab({'name': gettext('Generic Info'), 'closable': false});
-	this.legal_description = this.notebook.createTab({'name': gettext('Legal'), 'closable': false});
-	this.pricing_description = this.notebook.createTab({'name': gettext('Pricing'), 'closable': false});
-	this.sla_description = this.notebook.createTab({'name': gettext('Service level agreement'), 'closable': false});
+    this.delete_options = {};
+    this.container = container
+    this.back_part = document.createElement('div');
+    this.content_part = document.createElement('div');
+    this.back_appended = false;
+    this.mashup_tab_created = false;
+    /***********************************/
+    this.notebook = new StyledElements.StyledNotebook({'class': 'pruebas'});
+    //this.container.appendChild(this.notebook);
+    this.main_description = this.notebook.createTab({'name': gettext('Generic Info'), 'closable': false});
+    this.legal_description = this.notebook.createTab({'name': gettext('Legal'), 'closable': false});
+    this.pricing_description = this.notebook.createTab({'name': gettext('Pricing'), 'closable': false});
+    this.sla_description = this.notebook.createTab({'name': gettext('Service level agreement'), 'closable': false});
     this.dom_element = this.main_description.wrapperElement; // Esto para borrar
-	/***********************************/
+    /***********************************/
 
     get_all_versions_html = function (versions) {
         var i, html = '';
@@ -64,77 +64,75 @@ var FiWareResourceDetailsPainter = function (catalogue, details_structure_elemen
         var ieCompatibleClass, type, button_text,legal_more_info,legal_painter,
             resource_html, tag_links_list, tag_links, search_options, tags, j,
             tag, tag_element, mytags_area_list, my_tags_area, legal_button_dom_element,
-			more_info_dom_element,sla_painter,sla_button_dom_element,
-			sla_more_info,pricing_more_info,pricing_button_dom_element,
-			pricing_painter,legal_button_info,sla_button_info,pricing_button_info, details_element,
-			evaluate_dict,part_painter;
+            more_info_dom_element,sla_painter,sla_button_dom_element,
+            sla_more_info,pricing_more_info,pricing_button_dom_element,
+            pricing_painter,legal_button_info,sla_button_info,pricing_button_info, details_element,
+            evaluate_dict,part_painter;
 		
         this.main_description.clear();
-		// The fields in this dictionary are only used in delete requests
-		this.delete_options = {'store': resource.getStore(),
-							   'name': resource.getMarketName()};
+        // The fields in this dictionary are only used in delete requests
+        this.delete_options = {'store': resource.getStore(),
+                               'name': resource.getMarketName()};
         /*if (resource.getIeCompatible()) {
             // Si es IE compatible ocultamos la advertencia
             ieCompatibleClass = 'hidden';
         }*/
 
         type = '';
-		button_text = gettext('add');
+        button_text = gettext('add');
 
-		evaluate_dict = {
+        evaluate_dict = {
             'image_url': resource.getUriImage(),
             'name': resource.getName(),
-			'type': resource.getType(),
-            'shortDescription': resource.getShortDescription(),
-			'longDescription': resource.getLongDescription(),
+            'type': resource.getType(),
+            'longDescription': resource.getLongDescription(),
             'button_text': button_text,
             'vendor': resource.getVendor(),
             'version': resource.getVersion().text,
             'created': resource.getCreated(),
-			'modified': resource.getModified(),
+            'modified': resource.getModified(),
             'versions': get_all_versions_html(resource.getAllVersions()),
             'template_url': resource.getUriTemplate(),
-			'store': resource.getStore(),
-			'page':resource.getPage(),
+            'store': resource.getStore(),
+            'page':resource.getPage(),
             'average_popularity':this.get_popularity_html(resource.getPopularity())
 
         }
 
         resource_html = this.details_template.evaluate(evaluate_dict);
-		details_element = document.createElement('div');
-		Element.extend(details_element);
-		details_element.update(resource_html);
-		
-		// If the resource is a mashup another tab is appended with information
-		// about the services that compose it
-		if(resource.isMashup() && !this.mashup_tab_created){
-			this.resource_parts = this.notebook.createTab({'name': gettext('Mash-up parts'), 'closable': false});
-			part_painter = new PartsPainter(catalogue,$('fiware_resource_parts').getTextContent(), this.resource_parts.wrapperElement);
-			part_painter.paint(resource);
-			this.mashup_tab_created = true;
-		}else if(!resource.isMashup() && this.mashup_tab_created){
-			this.resource_parts.close();
-			this.mashup_tab_created = false;
-		}
+        details_element = document.createElement('div');
+        Element.extend(details_element);
+        details_element.update(resource_html);
 
-		this.back_part = details_element.getElementsByClassName('back_part')[0];
-		this.content_part = details_element.getElementsByClassName('content_part')[0];
-		
+        // If the resource is a mashup another tab is appended with information
+        // about the services that compose it
+        if(resource.isMashup() && !this.mashup_tab_created){
+            this.resource_parts = this.notebook.createTab({'name': gettext('Mash-up parts'), 'closable': false});
+            part_painter = new PartsPainter(catalogue,$('fiware_resource_parts').getTextContent(), this.resource_parts.wrapperElement);
+            part_painter.paint(resource);
+            this.mashup_tab_created = true;
+        }else if(!resource.isMashup() && this.mashup_tab_created){
+            this.resource_parts.close();
+            this.mashup_tab_created = false;
+        }
 
-		this.main_description.wrapperElement.innerHTML = this.content_part.innerHTML;
+        this.back_part = details_element.getElementsByClassName('back_part')[0];
+        this.content_part = details_element.getElementsByClassName('content_part')[0];
 
-	
-		//take the dom elements that will contain the legal clauses
-		legal_painter =new LegalPainter(catalogue,$('legal_template').getTextContent(), this.legal_description.wrapperElement);
-		legal_painter.paint(resource);
+        this.main_description.wrapperElement.innerHTML = this.content_part.innerHTML;
 
-		//take the dom elements that will contain the sla statements
-		sla_painter =new SlaPainter(catalogue,$('service_level_template').getTextContent(),this.sla_description.wrapperElement);
-		sla_painter.paint(resource)
 
-		//take the dom elements tha will contain the pricing information
-		pricing_painter =new PricingPainter(catalogue,$('pricing_template').getTextContent(),this.pricing_description.wrapperElement);
-		pricing_painter.paint(resource)
+        //take the dom elements that will contain the legal clauses
+        legal_painter =new LegalPainter(catalogue,$('legal_template').getTextContent(), this.legal_description.wrapperElement);
+        legal_painter.paint(resource);
+
+        //take the dom elements that will contain the sla statements
+        sla_painter =new SlaPainter(catalogue,$('service_level_template').getTextContent(),this.sla_description.wrapperElement);
+        sla_painter.paint(resource)
+
+        //take the dom elements tha will contain the pricing information
+        pricing_painter =new PricingPainter(catalogue,$('pricing_template').getTextContent(),this.pricing_description.wrapperElement);
+        pricing_painter.paint(resource)
 
         ///////////////////////////////
         // Binding events to GUI
@@ -148,11 +146,11 @@ var FiWareResourceDetailsPainter = function (catalogue, details_structure_elemen
 
         this.populate_advanced_operations(resource);
 
-		if(!this.back_appended){
-			this.container.appendChild(this.back_part);
-			this.container.appendChild(this.notebook);
-			this.back_appended = true;
-		}
+        if(!this.back_appended){
+            this.container.appendChild(this.back_part);
+            this.container.appendChild(this.notebook);
+            this.back_appended = true;
+        }
 		
         /*
         // Tagging resource

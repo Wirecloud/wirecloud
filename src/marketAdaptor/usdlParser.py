@@ -132,7 +132,7 @@ class USDLParser(object):
         self._info['versions'][0]['legal']=[]
         legal_conditions = self._get_field(USDL,service_uri,'hasLegalCondition',id_=True)
 
-        # If legal doest not exist the mothod does nothing 
+        # If legal doest not exist the method does nothing 
         if len(legal_conditions) == 1 and legal_conditions[0] == '':
             return
 

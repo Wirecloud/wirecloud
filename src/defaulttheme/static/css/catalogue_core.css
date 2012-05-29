@@ -540,10 +540,66 @@ Resource
 
 #fi-ware_catalogue .resource h2 {
     display: inline-block;
+    color: #900;
 }
 
 #fi-ware_catalogue .resource h3 {
     margin: 0.5ex 0 1ex 0;
+    color: #063;
+}
+#fi-ware_catalogue div.second_level {
+    padding-left: 25px;
+}
+#fi-ware_catalogue .legal_resource h3 {
+    margin: 0.5ex 0 1ex 0;
+    color: #063;
+    padding-left: 50px;
+    padding-top: 25px;
+}
+
+#fi-ware_catalogue .legal_resource h4{
+    color: #E8A150;
+    padding-left: 75px;
+}
+
+#fi-ware_catalogue .legal_resource div.tab_info {
+    padding-left: 75px;
+}
+
+#fi-ware_catalogue .sla_resource h3 {
+    margin: 0.5ex 0 1ex 0;
+    color: #063;
+    padding-left: 50px;
+	padding-top: 25px;
+}
+
+#fi-ware_catalogue .sla_resource h4{
+    color: #E8A150;
+    padding-left: 75px;
+}
+
+#fi-ware_catalogue .sla_resource h4.second_level{
+    padding-left: 25px;
+}
+
+#fi-ware_catalogue .sla_resource div.tab_info {
+    padding-left: 75px;
+}
+
+#fi-ware_catalogue .pricing_resource h3 {
+    margin: 0.5ex 0 1ex 0;
+    color: #063;
+    padding-left: 50px;
+	padding-top: 25px;
+}
+
+#fi-ware_catalogue .pricing_resource h4{
+    color: #E8A150;
+    padding-left: 75px;
+}
+
+#fi-ware_catalogue .pricing_resource div.tab_info {
+    padding-left: 75px;
 }
 
 #fi-ware_catalogue .resource .image {

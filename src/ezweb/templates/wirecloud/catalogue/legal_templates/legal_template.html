@@ -1,14 +1,12 @@
 {% load i18n %}
-<div class="right_column_resource">
-		<h3>{% trans 'Legal Condition' %}</h3>
-    	<div class="bold padding_left floating_left padding_right">{% trans 'Type:' %}</div>
-        <div>#{type}</div>
-		<div class="bold padding_left floating_left padding_right">{% trans 'Title:' %}</div>
-        <div>#{title}</div>
-		<div class="bold padding_left floating_left padding_right">{% trans 'Description:' %}</div>
-        <div>#{description}</div>
-		<div class="bold padding_left floating_left padding_right">{% trans 'Clauses:' %}</div>
-        <div class="clause_list"></div>
+<div class="">
+    <h3>{% trans 'Legal Conditions' %}</h3>
+    <h4>#{title}</h4>
+    <div class="bold tab_info floating_left padding_right">{% trans 'Description:' %}</div>
+    <div>#{description}</div>
+    <br />
+    <h4>{% trans 'Clauses:' %}</h4>
+    <div class="clause_list"></div>
     <div class="footer_resource"></div>
 </div>
 

@@ -24,6 +24,14 @@ div.gadget_menu {
     border-radius: 0px;
 }
 
+.notebook.pruebas .tab_area .tab.selected {
+	background: white;
+    z-index: 2;
+}
+
+.notebook.pruebas .tab_area .tab {
+	background: #DF7A62;
+}
 /********************************************/
 
 div.dragboard.fixed {

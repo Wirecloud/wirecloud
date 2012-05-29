@@ -26,10 +26,3 @@ class Market(models.Model):
 
     class Meta:
         app_label = 'wirecloud'
-
-class MarketType(models.Model):
-    label = models.CharField(_('Label'),max_length=50)
-    display_name = models.CharField(_('Display_Name'),max_length=50)
-    
-    class Meta:
-        app_label = 'wirecloud'

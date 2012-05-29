@@ -23,7 +23,7 @@ from django.http import HttpResponse, HttpResponseServerError, HttpResponseBadRe
 from django.shortcuts import get_object_or_404
 from commons.resource import Resource
 from commons.utils import json_encode
-from wirecloud.models.markets import Market, MarketType
+from wirecloud.models.markets import Market
 
 
 class MarketCollection(Resource):
@@ -72,11 +72,5 @@ class MarketTypeCollection(Resource):
     def read(self, request):
         result = []
         
-        for market_type in MarketType.objects.all():
-            type_info = {}
-            type_info['label']=market_type.label
-            type_info['display_name']=market_type.display_name
-            result.append(type_info)
-
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
         
