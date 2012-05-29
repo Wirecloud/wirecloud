@@ -19,12 +19,158 @@
  *
  */
 
-/*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50, prototypejs: true */
-/*global BrowserUtilsFactory, EzWebExt, Wirecloud */
+/*global BrowserUtilsFactory, EzWebExt, Wirecloud, Event, EzWebEffectBase, Element */
 
 (function () {
 
     "use strict";
+
+    function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, canBeDragged) {
+        var xDelta = 0, yDelta = 0;
+        var xStart = 0, yStart = 0;
+        var yScroll = 0;
+        var xOffset = 0, yOffset = 0;
+        var x, y;
+        var dragboardCover;
+        var draggable = this;
+        var enddrag, drag, startdrag, scroll, pullclick;
+        canBeDragged = canBeDragged ? canBeDragged : Draggable._canBeDragged;
+
+        // remove the events
+        enddrag = function (e) {
+            e = e || window.event; // needed for IE
+
+            // Only attend to left button (or right button for left-handed persons) events
+            if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
+                return;
+            }
+            Event.stopObserving(document, "mouseup", enddrag);
+            Event.stopObserving(document, "mousemove", drag);
+
+            onFinish(draggable, data);
+
+            Event.observe(handler, "mousedown", startdrag);
+
+            e.stopPropagation();
+            e.preventDefault();
+            document.onmousedown = null; // reenable context menu
+            document.onselectstart = null; // reenable text selection in IE
+            document.oncontextmenu = null; // reenable text selection
+        };
+
+        // fire each time it's dragged
+        drag = function (e) {
+            e = e || window.event; // needed for IE
+
+            var screenX = parseInt(e.screenX, 10);
+            var screenY = parseInt(e.screenY, 10);
+            xDelta = screenX - xStart;
+            yDelta = screenY - yStart;
+
+            onDrag(e, draggable, data, xDelta, yDelta);
+        };
+
+        // initiate the drag
+        startdrag = function (e) {
+            e = e || window.event; // needed for IE
+
+            // Only attend to left button (or right button for left-handed persons) events
+            if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
+                return false;
+            }
+
+            if (!canBeDragged(draggable, data)) {
+                return false;
+            }
+
+            document.oncontextmenu = Draggable._cancel; // disable context menu
+            document.onmousedown = Draggable._cancel; // disable text selection in Firefox
+            document.onselectstart = Draggable._cancel; // disable text selection in IE
+            Event.stopObserving(handler, "mousedown", startdrag);
+
+            xStart = parseInt(e.screenX, 10);
+            yStart = parseInt(e.screenY, 10);
+
+            Event.observe(document, "mouseup", enddrag);
+            Event.observe(document, "mousemove", drag);
+
+            onStart(draggable, data);
+
+            var dragboard = EzWebEffectBase.findDragboardElement(draggableElement);
+            dragboardCover = document.createElement("div");
+            Element.extend(dragboardCover);
+            dragboardCover.addClassName("cover");
+            dragboardCover.observe("mouseup", enddrag, false);
+            dragboardCover.observe("mousemove", drag, false);
+
+            dragboardCover.style.zIndex = "1000000";
+            dragboardCover.style.position = "absolute";
+            dragboardCover.style.top = "0";
+            dragboardCover.style.left = "0";
+            dragboardCover.style.width = "100%";
+            dragboardCover.style.height = dragboard.scrollHeight + "px";
+
+            yScroll = parseInt(dragboard.scrollTop, 15);
+
+            dragboard.addEventListener("scroll", scroll, true);
+
+            dragboard.insertBefore(dragboardCover, dragboard.firstChild);
+
+            return false;
+        };
+
+        // fire each time the dragboard is scrolled while dragging
+        scroll = function (e) {
+            e = e || window.event; // needed for IE
+
+            var dragboard = dragboardCover.parentNode;
+            dragboardCover.style.height = dragboard.scrollHeight + "px";
+            var scrollTop = parseInt(dragboard.scrollTop, 10);
+            var scrollDelta = yScroll - scrollTop;
+            y -= scrollDelta;
+            yScroll = scrollTop;
+
+            draggableElement.style.top = y + 'px';
+            draggableElement.style.left = x + 'px';
+
+            onDrag(e, draggable, data, x + xOffset, y + yOffset);
+        };
+        
+        pullclick = function (e) {
+            e.stopPropagation();
+        };
+
+        // add mousedown event listener
+        handler.addEventListener("mousedown", startdrag, true);
+        handler.addEventListener("click", pullclick, false);
+
+        /**********
+         * Public methods
+         **********/
+
+        this.setXOffset = function (offset) {
+            xOffset = offset;
+        };
+
+        this.setYOffset = function (offset) {
+            yOffset = offset;
+        };
+
+        this.destroy = function () {
+            handler.removeEventListener("mousedown", startdrag, false);
+            startdrag = null;
+            enddrag = null;
+            drag = null;
+            scroll = null;
+            draggable = null;
+            data = null;
+            handler = null;
+        };
+    }
+
+
+
+
 
     /*************************************************************************
      * Constructor
@@ -32,25 +178,29 @@
     var Arrow = function Arrow(canvas) {
         this.wrapperElement = canvas.canvasElement.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:g");
 
+        this.arrowBodyElement = canvas.canvasElement.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:g");
+        this.wrapperElement.appendChild(this.arrowBodyElement);
+
         // Create a path for the arrow's border
         this.arrowElementBorder = canvas.canvasElement.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
         this.arrowElementBorder.setAttribute('class', 'arrowborder');
-        this.wrapperElement.appendChild(this.arrowElementBorder);
+        this.arrowBodyElement.appendChild(this.arrowElementBorder);
 
         // And another for the arrow's body
         this.arrowElement = canvas.canvasElement.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
-        this.wrapperElement.appendChild(this.arrowElement);
+        this.arrowBodyElement.appendChild(this.arrowElement);
 
-        this.wrapperElement.addEventListener('click', function (e) {
+        this.arrowBodyElement.addEventListener('click', function (e) {
             if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
                 return;
             }
+            e.stopPropagation();
             if (canvas.getSelectedArrow() === this) {
                 canvas.unselectArrow();
             } else {
                 canvas.selectArrow(this);
             }
-        }.bind(this));
+        }.bind(this), true);
 
         // closer
         this.closerElement = canvas.canvasElement.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
@@ -67,10 +217,39 @@
 
         // pullers definition
         this.pullerStartElement = canvas.canvasElement.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
+        this.pullerStartElement.setAttribute("r", 5);
         this.pullerEndElement = canvas.canvasElement.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
+        this.pullerEndElement.setAttribute("r", 5);
+
         this.pullerStartElement.setAttribute('class', 'pullerBall');
         this.pullerEndElement.setAttribute('class', 'pullerBall');
-
+        // make draggable pullers
+        this.pullerStartDraggable = new Draggable(this.pullerStartElement, this.pullerStartElement, {arrow: this},
+            function onStart(draggable, data) {
+                data.refPos = data.arrow.getPullerStart();
+            },
+            function onDrag(e, draggable, data, x, y) {
+                data.arrow.setPullerStart({posX: data.refPos.posX + x, posY: data.refPos.posY + y});
+                data.arrow.redraw();
+            },
+            function onFinish(draggable, data) {
+                data.arrow.redraw();
+            },
+            function () {return true; }
+        );
+        this.pullerEndDraggable = new Draggable(this.pullerEndElement, this.pullerEndElement, {arrow: this},
+            function onStart(draggable, data) {
+                data.refPos = data.arrow.getPullerEnd();
+            },
+            function onDrag(e, draggable, data, x, y) {
+                data.arrow.setPullerEnd({posX: data.refPos.posX + x, posY: data.refPos.posY + y});
+                data.arrow.redraw();
+            },
+            function onFinish(draggable, data) {
+                data.arrow.redraw();
+            },
+            function () {return true; }
+        );
         // closer
         this.wrapperElement.appendChild(this.closerElement);
 
@@ -106,16 +285,13 @@
      *  Set the Arrow start point.
      */
     Arrow.prototype.setStart = function setStart(start, anchor) {
+        var difStartX, difStartY;
         this.start = start;
         this.setStartAnchor(anchor);
-        //initial position for star puller
-        if (this.PullerStart == null) {
-            this.setPullerStart({posX: start.posX + 90, posY: start.posY + 40});
-        }
     };
 
     /**
-     *  Set the Arrow start point.
+     *  Set the Arrow start Anchor.
      */
     Arrow.prototype.setStartAnchor = function setStartAnchor(anchor) {
         if (anchor != null) {
@@ -127,16 +303,13 @@
      *  Set the Arrow end point.
      */
     Arrow.prototype.setEnd = function setEnd(end, anchor) {
+        var difEndX, difEndY;
         this.end = end;
         this.setEndAnchor(anchor);
-        //initial position for end puller
-        if (this.PullerEnd == null) {
-            this.setPullerEnd({posX: end.posX - 90, posY: end.posY - 40});
-        }
     };
 
     /**
-     *  Set the Arrow start point.
+     *  Set the Arrow end Anchor
      */
     Arrow.prototype.setEndAnchor = function setEndAnchor(anchor) {
         if (anchor != null) {
@@ -145,23 +318,68 @@
     };
 
     /*
-     *  Set the Arrow pullerStart point.
+     *  Get the Arrow pullerStart point.
      */
-    Arrow.prototype.setPullerStart = function setPullerStart (pStart) {
-        this.pullerStart = pStart;
-        this.pullerStartElement.setAttribute("cx", pStart.posX);
-        this.pullerStartElement.setAttribute("cy", pStart.posY);
-        this.pullerStartElement.setAttribute("r", 5);
+    Arrow.prototype.getPullerStart = function getPullerStart(absolute) {
+        var from, to, difX, difY, result;
+
+        from = this.start;
+        to = this.end;
+        if (this.pullerStart === null) {
+            difX = from.posX - to.posX;
+            if (from.posX < to.posX) {
+                difX = 50;
+            } else {
+                difX = -50;
+            }
+            if (from.posY < to.posXY) {
+                difY = 40;
+            } else {
+                difY = -40;
+            }
+            result = {posX: difX, posY: difY};
+        } else {
+            result = this.pullerStart;
+        }
+
+        if (absolute) {
+            return {posX: from.posX + result.posX, posY: from.posY + result.posY};
+        } else {
+            return result;
+        }
     };
 
     /*
-     *  Set the Arrow pullerEnd point.
+     *  Get the Arrow pullerEnd point.
      */
-    Arrow.prototype.setPullerEnd = function setPullerEnd (pEnd) {
-        this.pullerEnd = pEnd;
-        this.pullerEndElement.setAttribute("cx", pEnd.posX);
-        this.pullerEndElement.setAttribute("cy", pEnd.posY);
-        this.pullerEndElement.setAttribute("r", "5");
+    Arrow.prototype.getPullerEnd = function getPullerEnd(absolute) {
+        var from, to, difX, difY, result;
+
+        from = this.start;
+        to = this.end;
+
+        if (this.pullerEnd === null) {
+
+            if (from.posX < to.posX) {
+                difX = 10;
+            } else {
+                difX = -10;
+            }
+            if (from.posY < to.posXY) {
+                difY = 10;
+            } else {
+                difY = -10;
+            }
+            result = {posX: -difX, posY: -difY};
+        } else {
+            result = this.pullerEnd;
+        }
+
+        if (absolute) {
+            return {posX: to.posX + result.posX, posY: to.posY + result.posY};
+        } else {
+            return result;
+        }
     };
 
     /*
@@ -169,9 +387,6 @@
      */
     Arrow.prototype.setPullerStart = function setPullerStart(pStart) {
         this.pullerStart = pStart;
-        this.pullerStartElement.setAttribute("cx", pStart.posX);
-        this.pullerStartElement.setAttribute("cy", pStart.posY);
-        this.pullerStartElement.setAttribute("r", 5);
     };
 
     /**
@@ -179,59 +394,69 @@
      */
     Arrow.prototype.setPullerEnd = function setPullerEnd(pEnd) {
         this.pullerEnd = pEnd;
-        this.pullerEndElement.setAttribute("cx", pEnd.posX);
-        this.pullerEndElement.setAttribute("cy", pEnd.posY);
-        this.pullerEndElement.setAttribute("r", "5");
     };
 
     /**
      *  redraw the line.
      */
     Arrow.prototype.redraw = function redraw() {
-        var from, to, middleX, pullerStart, pullerEnd, posCloser;
+        var middleX, posCloser, startPuller, endPuller, from, to;
+
         from = this.start;
         to = this.end;
-        pullerStart = this.pullerStart;
-        pullerEnd = this.pullerEnd;
+
+        // Start puller
+        startPuller = this.getPullerStart(true);
+        this.pullerStartElement.setAttribute("cx", startPuller.posX);
+        this.pullerStartElement.setAttribute("cy", startPuller.posY);
+
+        // End puller
+        endPuller = this.getPullerEnd(true);
+        this.pullerEndElement.setAttribute("cx", endPuller.posX);
+        this.pullerEndElement.setAttribute("cy", endPuller.posY);
+
         this.arrowElementBorder.setAttribute("d",
                 "M " + from.posX + "," + from.posY + " " +
-                "C " + pullerStart.posX + "," + pullerStart.posY + " " + pullerEnd.posX + "," + pullerEnd.posY + " " +
+                "C " + startPuller.posX + "," + startPuller.posY + " " + endPuller.posX + "," + endPuller.posY + " " +
                 to.posX + "," + to.posY
         );
         this.arrowElement.setAttribute("d",
                 "M " + from.posX + "," + from.posY + " " +
-                "C " + pullerStart.posX + "," + pullerStart.posY + " " + pullerEnd.posX + "," + pullerEnd.posY + " " +
+                "C " + startPuller.posX + "," + startPuller.posY + " " + endPuller.posX + "," + endPuller.posY + " " +
                 to.posX + "," + to.posY
         );
         
-        try{
-        posCloser = this.calculateMid();
-        
-        this.closerElement.setAttribute("cx", posCloser.posX);
-        this.closerElement.setAttribute("cy", posCloser.posY);
-        this.closerElement.setAttribute("r", 8);
+        try {
+            posCloser = this.calculateMid();
+            
+            this.closerElement.setAttribute("cx", posCloser.posX);
+            this.closerElement.setAttribute("cy", posCloser.posY);
+            this.closerElement.setAttribute("r", 8);
         }
-        catch(err) {
-            //TODO: error msg?
+        catch (err) {
+            //TODO: error msg
         }
     };
+    
     /**
-     *  calculate the arrow path middle position.
+     *  calculate the arrow path middle position
+     *  with a bercier curves aproximation.
      */
     Arrow.prototype.calculateMid = function calculateMid() {
         var B1, B2, B3, B4, getBercier;
         
-        B1 = function B1(t) { return t*t*t };
-        B2 = function B2(t) { return 3*t*t*(1-t) };
-        B3 = function B3(t) { return 3*t*(1-t)*(1-t) };
-        B4 = function B4(t) { return (1-t)*(1-t)*(1-t) };
+        B1 = function B1(t) { return t * t * t; };
+        B2 = function B2(t) { return 3 * t * t * (1 - t); };
+        B3 = function B3(t) { return 3 * t * (1 - t) * (1 - t); };
+        B4 = function B4(t) { return (1 - t) * (1 - t) * (1 - t); };
 
-        getBercier = function getBezier(percent,C1,C2,C3,C4) {
-            var X = C1.posX*B1(percent) + C2.posX*B2(percent) + C3.posX*B3(percent) + C4.posX*B4(percent);
-            var Y = C1.posY*B1(percent) + C2.posY*B2(percent) + C3.posY*B3(percent) + C4.posY*B4(percent);
+        getBercier = function getBezier(percent, C1, C2, C3, C4) {
+            var X = C1.posX * B1(percent) + C2.posX * B2(percent) + C3.posX * B3(percent) + C4.posX * B4(percent);
+            var Y = C1.posY * B1(percent) + C2.posY * B2(percent) + C3.posY * B3(percent) + C4.posY * B4(percent);
             return {posX : X, posY : Y};
-        }
-        return getBercier(0.5, this.start, this.pullerStart, this.pullerEnd, this.end);
+        };
+
+        return getBercier(0.5, this.start, this.getPullerStart(true), this.getPullerEnd(true), this.end);
     };
     /**
      *  highlights the arrow
@@ -251,7 +476,13 @@
      *  add new class in to the arrow
      */
     Arrow.prototype.addClassName = function addClassName(className) {
-        var atr = this.wrapperElement.getAttribute('class');
+        var atr;
+
+        if (className == null) {
+            return;
+        }
+
+        atr = this.wrapperElement.getAttribute('class');
         if (atr == null) {
             atr = '';
         }
@@ -262,7 +493,13 @@
      * removeClassName
      */
     Arrow.prototype.removeClassName = function removeClassName(className) {
-        var atr = this.wrapperElement.getAttribute('class');
+        var atr;
+
+        if (className == null) {
+            return;
+        }
+
+        atr = this.wrapperElement.getAttribute('class');
         if (atr == null) {
             atr = '';
         }
