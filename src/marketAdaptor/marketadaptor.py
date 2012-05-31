@@ -31,9 +31,8 @@
 #
 import urllib2
 from urllib2 import HTTPError
-from urlparse import urlparse, urljoin
+from urlparse import urljoin
 
-from django.utils.translation import ugettext as _
 from marketAdaptor.usdlParser import USDLParser
 from lxml import etree
 
@@ -55,9 +54,14 @@ class MarketAdaptor(object):
         self._marketplace_uri = marketplace_uri
 
     def get_all_stores(self):
+
         opener = urllib2.build_opener()
         request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/stores/"))
-        response = opener.open(request)
+        try:
+            response = opener.open(request)
+        except HTTPError, e:
+            if (e.code == 404):
+                return []
 
         if response.code != 200:
             raise HTTPError(response.url, response.code, response.msg, None, None)
