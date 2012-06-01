@@ -7,8 +7,6 @@
     /*pointer-events: none;*/
     width: 100%;
     height: 100%;
-    background: url(../images/transp-grid-orange.png);
-    z-index: 3;
 }
 
 .wiring_editor {
@@ -21,33 +19,37 @@
 .wiring_editor .menubar {
     white-space: nowrap;
     font-size: 0.6em;
-    height: 100px;
+    height: 80px;
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
-    line-height: 20%;
-    border-bottom: #DF7A62;
+    border-bottom: #DFA462;
     border-bottom-style: solid;
     border-bottom-width: 10px;
-    background: -webkit-linear-gradient(white, #DF7A62);
-    background: -moz-linear-gradient(white, #DF7A62);
-    background: -o-linear-gradient(white, #DF7A62);
+    background: -webkit-linear-gradient(white, #DFA462);
+    background: -moz-linear-gradient(white, #DFA462);
+    background: -o-linear-gradient(white, #DFA462);
     display: inline-block;
     vertical-align: middle;
 }
 
 .wiring_editor .grid {
     font-size: 1em;
+    background: url('../images/wiring/transp-grid-gray.png');
 }
 
 .wiring_editor .ioperator {
-    background-color: rgba(255, 255, 0, 0.8);
+    background: -webkit-linear-gradient(white, rgba(255, 255, 0, 0.8));
+    background: -moz-linear-gradient(white, rgba(255, 255, 0, 0.8));
+    background: -o-linear-gradient(white, rgba(255, 255, 0, 0.8));
 }
 
 .wiring_editor .igadget {
-    background-color: rgba(255, 217, 120, 0.8);
+    background: -webkit-linear-gradient(white, rgba(255, 217, 120, 0.8));
+    background: -moz-linear-gradient(white, rgba(255, 217, 120, 0.8));
+    background: -o-linear-gradient(white, rgba(255, 217, 120, 0.8));
 }
 
 .wiring_editor .ioperator, .wiring_editor .igadget {
-    line-height: 25px;
+    line-height: 2.2em;
     padding-bottom: 2px;
     margin: 1ex 2ex;
     border: 1px solid;
@@ -65,10 +67,9 @@
     overflow: hidden;
     border-radius: 5px;
     padding-top: 8px;
-    padding-right: 16px;
+    /*padding-right: 16px;*/
     padding-bottom: 8px;
-    padding-left: 16px;
-    pointer-events: none;
+    /*padding-left: 16px;*/
     font-style: oblique;
     color: #221BE2;
 }
@@ -78,7 +79,6 @@
 }
 
 .wiring_editor .grid .header .closebutton {
-    right: -1.6em;
     top: -0.9em;
     float: right;
 }
@@ -115,15 +115,10 @@
     position: relative;
     padding-bottom: 0.6em;
     display: inline-block;
-    margin: 0.6em 0.6em;
+    margin: 1em 1em;
     vertical-align: middle;
     z-index: 10;
     line-height: 1.5em;
-}
-
-
-.wiring_editor .grid .ioperator, .wiring_editor .grid .igadget {
-    z-index: 5;
 }
 
 .wiring_editor .targets {
@@ -140,46 +135,71 @@
     padding-right: 1em;
 }
 
+/* SELECTED OBJECTS 
+.wiring_editor .grid .ioperator.selected {
+    background-color: #DF7A62;
+    z-index: 15;
+    background: -webkit-linear-gradient(top, white, #47A06B);
+    background: -moz-linear-gradient(top, white, #47A06B);
+    background: -o-linear-gradient(top, white, #47A06B);  
+    border-width: 0.4em;
+    border-color: orange;  
+}
+
+ .wiring_editor .grid .igadget.selected {
+    background-color: #DF7A62;
+    z-index: 15;
+    background: -webkit-linear-gradient(top, white, #DF7A62);
+    background: -moz-linear-gradient(top, white, #DF7A62);
+    background: -o-linear-gradient(top, white, #DF7A62);
+    border-width: 0.4em;
+    border-color: orange;
+}
+*/
+
 
 /*ANCHORS*/
 .wiring_editor .anchor {
     background: rgb(122, 152, 192);
     position: absolute;
-    cursor: pointer;
     display: inline;
     width: 16px;
     height: 16px;
     margin: 2px;
 
 }
+
+.wiring_editor .grid .anchor {
+    cursor: pointer;
+}
 .wiring_editor .sources .anchor {
-    background: #A1A6FF;
+    background: url('../images/wiring/blue_ball.png');
     right: -1em;
 }
 
 .wiring_editor .targets .anchor {
-    background: #FF7A00;
+    background: url('../images/wiring/orange_ball.png');
     left: -1em;
 }
 
 .wiring_editor .menubar .sources .anchor {
-    width: 0.6em;
-    height: 0.6em;
-    margin: 0.6em;
+    width: 1em;
+    height: 1em;
+
 }
 
 .wiring_editor .menubar .targets .anchor {
-    width: 0.6em;
-    height: 0.6em;
-    margin: 0.6em;
+    width: 1em;
+    height: 1em;
+
 }
 
 .wiring_editor .sources .anchor.disabled {
-    background-color: rgba(255, 120, 0, 0.3);
+    opacity: 0.7;
 }
 
 .wiring_editor .targets .anchor.disabled {
-    background-color: rgba(161, 166, 255, 0.3);
+    opacity: 0.7;
 }
 
 
@@ -206,7 +226,7 @@
 .wiring_editor .canvas .closer {
     stroke: black;
     fill:   red;
-    fill-opacity="1";
+    fill-opacity:1;
     stroke-width: 1;
     display: none;
 }
