@@ -54,6 +54,7 @@
     SourceAnchor.prototype.isHighlighted = function isHighlighted() {
             return this.context.iObject.highlighted;
     };
+
     /*************************************************************************
      * Make SourceAnchor public
      *************************************************************************/

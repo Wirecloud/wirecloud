@@ -119,6 +119,7 @@
                 }
                 currentTarget = fAnchor;
                 if (isVal(currentSource, currentTarget)) {
+                    theArrow.calculateHighlight();
                     theArrow.redraw();
                     // add the arrow to the arrow list of both anchors
                     this.initAnchor.addArrow(theArrow);

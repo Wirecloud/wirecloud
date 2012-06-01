@@ -176,6 +176,8 @@
      * Constructor
      *************************************************************************/
     var Arrow = function Arrow(canvas) {
+        this.highlight_counter = 2;
+        
         this.wrapperElement = canvas.canvasElement.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:g");
 
         this.arrowBodyElement = canvas.canvasElement.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:g");
@@ -462,13 +464,47 @@
      *  highlights the arrow
      */
     Arrow.prototype.highlight = function highlight() {
-        this.addClassName('selected');
+        //this.addClassName('highlighted');
+        this.highlight_counter += 1;
+        this.removeClassName('disabled');
     };
 
     /**
      *  unhighlights the arrow
      */
     Arrow.prototype.unhighlight = function unhighlight() {
+        //this.removeClassName('highlighted');
+        this.highlight_counter -= 1;
+        if (this.highlight_counter < 1) {
+            this.addClassName('disabled');
+        }
+    };
+
+    /**
+     *  recalculate if the arrow may be Highlighted or not
+     */
+    Arrow.prototype.calculateHighlight = function calculateHighlight() {
+        this.highlight_counter = 2;
+        if (!this.endAnchor.isHighlighted()) {
+            this.unhighlight();
+        }
+        if (!this.startAnchor.isHighlighted()) {
+            this.unhighlight();
+        }
+        this.redraw();
+    };
+
+    /**
+     *  select the arrow
+     */
+    Arrow.prototype.select = function select() {
+        this.addClassName('selected');
+    };
+
+    /**
+     *  unselect the arrow
+     */
+    Arrow.prototype.unselect = function unselect() {
         this.removeClassName('selected');
     };
 

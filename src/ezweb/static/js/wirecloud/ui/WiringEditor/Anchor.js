@@ -134,8 +134,24 @@
         }
     };
 
+    Anchor.prototype.highlightArrows = function highlightArrows() {
+        var i;
+
+        for (i = 0; i < this.arrows.length; i += 1) {
+            this.arrows[i].highlight();
+        }
+    };
+
+    Anchor.prototype.unhighlightArrows = function unhighlightArrows() {
+        var i;
+
+        for (i = 0; i < this.arrows.length; i += 1) {
+            this.arrows[i].unhighlight();
+        }
+    };
+
     Anchor.prototype.serialize = function serialize() {
-        return this.context.serialize();
+        return this.context.data.serialize();
     };
 
     /*************************************************************************

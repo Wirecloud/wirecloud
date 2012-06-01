@@ -32,7 +32,7 @@
      * GadgetInterface Class
      */
     var GadgetInterface = function GadgetInterface(wiringEditor, igadget, manager) {
-        var variables, variable, desc, label, name;
+        var variables, variable, desc, label, name, anchorContext;
         this.igadget = igadget;
         this.wiringEditor = wiringEditor;
 
@@ -45,9 +45,11 @@
             label = variable.vardef.label;
             //each Event
             if (variable.vardef.aspect === Variable.prototype.EVENT) {
-                this.addSource(label, desc, variable.vardef.name, variables[name]);
+                anchorContext = {'data': variables[name], 'iObject': this};
+                this.addSource(label, desc, variable.vardef.name, anchorContext);
             } else if (variable.vardef.aspect === Variable.prototype.SLOT) {
-                this.addTarget(label, desc, variable.vardef.name, variables[name]);
+                anchorContext = {'data': variables[name], 'iObject': this};
+                this.addTarget(label, desc, variable.vardef.name, anchorContext);
             }
         }
     };
