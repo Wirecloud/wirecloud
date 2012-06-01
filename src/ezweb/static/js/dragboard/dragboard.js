@@ -792,13 +792,13 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
         Event.stopObserving(document, "mouseup", enddrag);
         Event.stopObserving(document, "mousemove", drag);
 
-        dragboardCover.parentNode.stopObserving("scroll", scroll);
+        dragboardCover.parentNode.removeEventListener("scroll", scroll, true);
         dragboardCover.parentNode.removeChild(dragboardCover);
         dragboardCover = null;
 
         onFinish(draggable, data);
 
-        Event.observe(handler, "mousedown", startdrag);
+        handler.addEventListener("mousedown", startdrag, false);
 
         document.onmousedown = null; // reenable context menu
         document.onselectstart = null; // reenable text selection in IE
@@ -839,7 +839,7 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
         document.oncontextmenu = Draggable._cancel; // disable context menu
         document.onmousedown = Draggable._cancel; // disable text selection in Firefox
         document.onselectstart = Draggable._cancel; // disable text selection in IE
-        Event.stopObserving(handler, "mousedown", startdrag);
+        handler.removeEventListener("mousedown", startdrag, false);
 
         xStart = parseInt(e.screenX, 10);
         yStart = parseInt(e.screenY, 10);
@@ -856,7 +856,7 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
         Event.observe(document, "mouseup", enddrag);
         Event.observe(document, "mousemove", drag);
 
-        onStart(draggable, data);
+        onStart(draggable, data, e);
 
         var dragboard = EzWebEffectBase.findDragboardElement(draggableElement);
         dragboardCover = document.createElement("div");
@@ -874,7 +874,7 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
 
         yScroll = parseInt(dragboard.scrollTop, 15);
 
-        dragboard.observe("scroll", scroll);
+        dragboard.addEventListener("scroll", scroll, true);
 
         dragboard.insertBefore(dragboardCover, dragboard.firstChild);
 
