@@ -46,10 +46,21 @@
         var i, coordinates;
 
         coordinates = this.getCoordinates(document.getElementsByClassName('grid')[0]);
-        for (i = 0; i < this.arrows.length; i += 1) {
-            this.arrows[i].setEnd(coordinates);
-            this.arrows[i].redraw();
+        /* Multi-Connector */
+        if (this.arrows.length > 1) {
+            for (i = 0; i < this.arrows.length; i += 1) {
+                this.arrows[i].setEnd(coordinates);
+                this.arrows[i].redraw();
+            }
+        /* Normal connector */
+        } else if (this.arrows.length === 1) {
+            this.arrows[0].setEnd(coordinates);
+            this.arrows[0].redraw();
         }
+    };
+
+    TargetAnchor.prototype.isHighlighted = function isHighlighted() {
+        return this.context.iObject.highlighted;
     };
 
     /*************************************************************************

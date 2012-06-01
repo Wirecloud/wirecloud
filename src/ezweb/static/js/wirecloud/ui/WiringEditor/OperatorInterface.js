@@ -32,7 +32,7 @@
      * OperatorInterface Class
      */
     var OperatorInterface = function OperatorInterface(wiringEditor, ioperator, manager) {
-        var outputs, inputs, desc, label, i;
+        var outputs, inputs, desc, label, i, anchorContext;
         this.ioperator = ioperator;
         this.wiringEditor = wiringEditor;
 
@@ -43,12 +43,14 @@
         for (i = 0; i < outputs.length; i++) {
             desc = outputs[i].meta.getDescription();
             label = outputs[i].meta.getLabel();
-            this.addSource(label, desc, outputs[i].meta.getName(), outputs[i]);
+            anchorContext = {'data': outputs[i], 'iObject': this};
+            this.addSource(label, desc, outputs[i].meta.getName(), anchorContext);
         }
         for (i = 0; i < inputs.length; i++) {
             desc = inputs[i].meta.getDescription();
             label = inputs[i].meta.getLabel();
-            this.addTarget(label, desc, inputs[i].meta.getName(), inputs[i]);
+            anchorContext = {'data': inputs[i], 'iObject': this};
+            this.addTarget(label, desc, inputs[i].meta.getName(), anchorContext);
         }
     };
 
@@ -58,9 +60,23 @@
      * onFinish for draggable
      */
     OperatorInterface.prototype.onFinish = function onFinish(draggable, data) {
-        var operator_interface = this.wiringEditor.addIOperator(this.ioperator.meta);
-        operator_interface.setPosition(data.getPosition());
-        data.setPosition({posX: 0, posY: 0});
+        var operator_interface, position, initialPosition, movement;
+
+        operator_interface = this.wiringEditor.addIOperator(this.ioperator.meta);
+
+        position = {posX: 0, posY: 0};
+        initialPosition = data.initialPos;
+        movement = data.entity.getStylePosition();
+        position.posX = initialPosition.posX + movement.posX;
+        position.posY = initialPosition.posY + movement.posY - 90;
+        if (position.posX < 0) {
+            position.posX = 0;
+        }
+        if (position.posY < 0) {
+            position.posY = 0;
+        }
+        data.entity.setPosition({posX: 0, posY: 0});
+        operator_interface.setPosition(position);
     };
 
     /**

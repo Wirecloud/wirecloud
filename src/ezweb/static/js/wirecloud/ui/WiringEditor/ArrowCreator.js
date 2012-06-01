@@ -68,7 +68,7 @@
 
             tmpPos = initAnchor.getCoordinates(layer);
             // arrow pointer
-            theArrow = canvas.drawArrow(tmpPos, tmpPos);
+            theArrow = canvas.drawArrow(tmpPos, tmpPos, "arrow");
             // we can draw invert arrows from the end to the start
             if (initAnchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
                 this.invert = true;
@@ -77,7 +77,6 @@
                 this.invert = false;
                 theArrow.setStart(tmpPos, initAnchor);
             }
-            theArrow.addClassName("arrow");
             currentSource = initAnchor;
             currentTarget = null;
             document.addEventListener("mousemove", this.drag, false);

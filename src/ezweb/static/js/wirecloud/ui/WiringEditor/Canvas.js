@@ -19,7 +19,6 @@
  *
  */
 
-/*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50, prototypejs: true */
 /*global EzWebExt, Wirecloud */
 
 (function () {
@@ -33,14 +32,12 @@
         this.canvasElement = document.createElementNS(this.SVG_NAMESPACE, 'svg:svg');
         this.canvasElement.setAttribute('class', 'canvas');
         this.selectedArrow = null;
-        /*
-        //remove the current selected arrow
+        this.selectedObject = null;
         this.canvasElement.addEventListener('click', function (e) {
             if (this.getSelectedArrow) {
-                this.unSelectArrow();
+                this.unselectArrow();
             }
-        }.bind(this));
-        */
+        }.bind(this), false);
     };
 
     Canvas.prototype.SVG_NAMESPACE = "http://www.w3.org/2000/svg";
@@ -100,7 +97,7 @@
      */
     Canvas.prototype.selectArrow = function selectArrow(arrow) {
         this.unselectArrow();
-        arrow.highlight();
+        arrow.select();
         this.selectedArrow = arrow;
     };
 
@@ -116,11 +113,10 @@
      */
     Canvas.prototype.unselectArrow = function unselectArrow() {
         if (this.selectedArrow !== null) {
-            this.selectedArrow.unhighlight();
+            this.selectedArrow.unselect();
             this.selectedArrow = null;
         }
     };
-
     /*************************************************************************
      * Make Canvas public
      *************************************************************************/

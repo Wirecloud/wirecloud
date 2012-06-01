@@ -19,8 +19,7 @@
  *
  */
 
-/*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50, prototypejs: true */
-/*global LayoutManagerFactory, opManager, StyledElements, Wirecloud */
+/*global LayoutManagerFactory, opManager, StyledElements, Wirecloud, gettext */
 if (!Wirecloud.ui) {
     // TODO this line should live in another file
     Wirecloud.ui = {};
@@ -52,6 +51,7 @@ var WiringStatus = {
     var WiringEditor = function WiringEditor(id, options) {
         options['class'] = 'wiring_editor';
         StyledElements.Alternative.call(this, id, options);
+
         this.addEventListener('show', renewInterface.bind(this));
         this.addEventListener('hide', clearInterface.bind(this));
 
@@ -61,6 +61,26 @@ var WiringStatus = {
         this.layout.getNorthContainer().addClassName('menubar');
         this.layout.getCenterContainer().addClassName('grid');
 
+        // general highlight button
+        this.highlight_button = new StyledElements.StyledButton({
+            'title': gettext("general highlight"),
+            'class': 'generalHighlight_button',
+            'plain': true
+        });
+        this.highlight_button.insertInto(this.layout.getCenterContainer());
+        this.highlight_button.addClassName('activated');
+        this.highlight_button.addEventListener('click', function () {
+            if (this.generalHighlighted) {
+                this.highlight_button.removeClassName('activated');
+                this.generalUnhighlight();
+                this.generalHighlighted = false;
+            } else {
+                this.generalHighlight();
+                this.highlight_button.addClassName('activated');
+                this.generalHighlighted = true;
+            }
+        }.bind(this), true);
+        
         //canvas for arrows
         this.canvas = new Wirecloud.ui.WiringEditor.Canvas();
         this.canvasElement = this.canvas.getHTMLElement();
@@ -110,7 +130,8 @@ var WiringStatus = {
      */
     var renewInterface = function renewInterface() {
         var igadgets, igadget, key, i, gadget_interface, minigadget_interface, ioperators, operator,
-            operator_interface, operator_instance, operatorKeys, meta, connection, startAnchor, endAnchor, arrow, workspace;
+            operator_interface, operator_instance, operatorKeys, meta, connection, startAnchor, endAnchor,
+            arrow, workspace;
 
         workspace = opManager.activeWorkSpace; // FIXME this is the current way to obtain the current workspace
 
@@ -120,6 +141,8 @@ var WiringStatus = {
         this.arrows = [];
         this.igadgets = {};
         this.ioperators = [];
+        this.selectedObjects = [];
+        this.generalHighlighted = true;
 
         igadgets = workspace.getIGadgets();
 
@@ -219,7 +242,7 @@ var WiringStatus = {
                     igadgets: {
                     },
                     operators: {
-                    },
+                    }
                 }
             ],
             operators: {
@@ -249,6 +272,59 @@ var WiringStatus = {
             });
         }
     };
+
+    /**
+     * general Highlight switch on.
+     */
+    WiringEditor.prototype.generalHighlight = function generalHighlight() {
+        var i, key;
+
+        this.selectedObjects = [];
+        for (i = 0; i < this.ioperators.length; i++) {
+            this.ioperators[i].highlight();
+            this.selectedObjects.push(this.ioperators[i]);
+        }
+
+        for (key in this.igadgets) {
+            this.igadgets[key].highlight();
+            this.selectedObjects.push(this.igadgets[key]);
+        }
+    };
+
+    /**
+     * general Highlight switch off.
+     */
+    WiringEditor.prototype.generalUnhighlight = function generalUnhighlight() {
+        var i, key;
+
+        for (i = 0; i < this.ioperators.length; i++) {
+            this.ioperators[i].unhighlight();
+        }
+
+        for (key in this.igadgets) {
+            this.igadgets[key].unhighlight();
+        }
+
+        this.selectedObjects = [];
+    };
+
+    /**
+     * Highlight object.
+     */
+    WiringEditor.prototype.highlightEntity = function highlightEntity(object) {
+        this.selectedObjects.push(object);
+    };
+
+    /**
+     * Unhighlight object.
+     */
+    WiringEditor.prototype.unhighlightEntity = function unhighlightEntity(object) {
+        var pos = this.selectedObjects.indexOf(object);
+        delete this.selectedObjects[pos];
+    };
+    
+
+
 
     WiringEditor.prototype.addIGadget = function addIGadget(wiringEditor, igadget) {
         var gadget_interface = new Wirecloud.ui.WiringEditor.GadgetInterface(wiringEditor, igadget, this.arrowCreator);

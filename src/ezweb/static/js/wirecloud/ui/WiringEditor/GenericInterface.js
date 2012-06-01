@@ -19,7 +19,7 @@
  *
  */
 
-/*global Draggable, gettext, StyledElements, Wirecloud */
+/*global Draggable, gettext, StyledElements, Wirecloud, EzWebExt */
 
 (function () {
 
@@ -35,9 +35,11 @@
         if (extending === true) {
             return;
         }
-        var i, name, variables, variable, anchor, anchorDiv, anchorLabel, desc, nameDiv, nameElement, del_button;
+        var i, name, variables, variable, anchor, anchorDiv, anchorLabel, desc, nameDiv, nameElement, del_button, highlight_button;
 
         StyledElements.Container.call(this, {'class': className}, []);
+
+        this.highlighted = true;
 
         this.targetAnchorsByName = {};
         this.sourceAnchorsByName = {};
@@ -68,7 +70,32 @@
             });
             del_button.insertInto(this.header);
             del_button.addEventListener('click', function () {
-                wiringEditor.removeInterface(this);
+                if (className == 'igadget') {
+                    wiringEditor.removeGadget(this);
+                } else {
+                    wiringEditor.removeOperator(this);
+                }
+            }.bind(this));
+
+            // highlight button, not for miniInterface
+            /*highlight_button = new StyledElements.StyledCheckBox({
+                'title': gettext("highlight"),
+                'initiallyChecked': 'true'
+            });*/
+            this.highlight_button = new StyledElements.StyledButton({
+                'title': gettext("highlight"),
+                'class': 'highlight_button activated',
+                'plain': true
+            });
+            this.highlight_button.insertInto(this.header);
+            this.highlight_button.addEventListener('click', function () {
+                if (this.highlighted) {
+                    wiringEditor.unhighlightEntity(this);
+                    this.unhighlight();
+                } else {
+                    wiringEditor.highlightEntity(this);
+                    this.highlight();
+                }
             }.bind(this));
         }
 
@@ -88,7 +115,7 @@
                     iObject.repaint();
                 },
                 function onFinish(draggable, data) {
-                    var position = data.getPosition();
+                    var position = data.getStylePosition();
                     if (position.posX < 0) {
                         position.posX = 0;
                     }
@@ -101,24 +128,22 @@
                 function () {return true; }
             );
         } else {
-            this.draggable = new Draggable(this.wrapperElement, this.wrapperElement, this,
-                function () {},
-                function (e, draggable, iObject) {
-                    iObject.repaint();
+            this.draggable = new Draggable(this.wrapperElement, this.wrapperElement, {initialPos: null, entity: this},
+                function onStart(draggable, data, event) {
+                    var objectPos;
+                    objectPos = data.entity.getPosition();
+                    recalculateEventOffset(event);
+                    objectPos.posX = objectPos.posX - event.offsetX;
+                    objectPos.posY = objectPos.posY - event.offsetY;
+                    data.initialPos = objectPos;
+                },
+                function (e, draggable, data, X, Y) {
+                    data.entity.repaint();
                 },
                 this.onFinish.bind(this),
-                function (draggable, data) {return data.enabled; }
+                function (draggable, data) {return data.entity.enabled; }
             );
         }
-
-        /*Object.defineProperty(this, 'sourceAnchorsByName', {value: this.sourceAnchorsByName});
-        Object.defineProperty(this, 'targetAnchorsByName', {value: this.targetAnchorsByName});
-        Object.preventExtensions(this.sourceAnchorsByName);
-        Object.preventExtensions(this.targetAnchorsByName);
-        Object.defineProperty(this, 'sourceAnchors', {value: this.sourceAnchors});
-        Object.defineProperty(this, 'targetAnchors', {value: this.targetAnchors});
-        Object.preventExtensions(this.sourceAnchors);
-        Object.preventExtensions(this.targetAnchors);*/
     };
     GenericInterface.prototype = new StyledElements.Container({'extending': true});
 
@@ -126,17 +151,62 @@
     /*************************************************************************
      * Private methods
      *************************************************************************/
+    /**
+    * change the value of event.offsetX and offsetY, for the offsetLeft and 
+    * offsetTop acumulated from initial element to the iObject container.
+    */
+    var recalculateEventOffset = function (ev) {
+        var offsetLeft, offsetTop, menubarOffsetLeft, menubarOffsetTop, pointerMov;
+        offsetLeft = 0;
+        offsetTop = 0;
+        menubarOffsetLeft = 0;
+        menubarOffsetTop = 0;
+        var target = ev.target;
+        while (!target.hasClassName('menubar')) {
+            menubarOffsetLeft += target.offsetLeft;
+            target = target.parentNode;
+        }
+        target = ev.target;
+        while (!target.hasClassName('menubar')) {
+            menubarOffsetTop += target.offsetTop;
+            target = target.parentNode;
+        }
+        target = ev.target;
+        while (!target.hasClassName('container')) {
+            offsetLeft += target.offsetLeft;
+            target = target.parentNode;
+        }
+        target = ev.target;
+        while (!target.hasClassName('container')) {
+            offsetTop += target.offsetTop;
+            target = target.parentNode;
+        }
+        pointerMov = {posX: ev.clientX - menubarOffsetLeft, posY: ev.clientY - menubarOffsetTop - 90};
 
+        ev.offsetX =  offsetLeft + pointerMov.posX;
+        ev.offsetY =  offsetTop + pointerMov.posY;
+        return ev;
+    };
      /*************************************************************************
      * Public methods
      *************************************************************************/
-    
+
     /**
      * get the GenericInterface position.
      */
     GenericInterface.prototype.getPosition = function getPosition() {
         var coordinates = {posX: this.wrapperElement.offsetLeft,
                            posY: this.wrapperElement.offsetTop};
+        return coordinates;
+    };
+
+    /**
+     * get the GenericInterface style position.
+     */
+    GenericInterface.prototype.getStylePosition = function getStylePosition() {
+        var coordinates;
+        coordinates = {posX: parseInt(this.wrapperElement.style.left, 10),
+                       posY: parseInt(this.wrapperElement.style.top, 10)};
         return coordinates;
     };
 
@@ -159,6 +229,19 @@
         this.wrapperElement.style.top = coordinates.posY + 'px';
     };
 
+    /**
+     * set the initial position in the menubar, miniobjects.
+     */
+    GenericInterface.prototype.setMenubarPosition = function setMenubarPosition(menubarPosition) {
+        this.menubarPosition = menubarPosition;
+    };
+
+    /**
+     * set the initial position in the menubar, miniobjects.
+     */
+    GenericInterface.prototype.getMenubarPosition = function getMenubarPosition() {
+        return this.menubarPosition;
+    };
     /**
      * generic repaint
      */
@@ -234,6 +317,68 @@
             anchorDiv.appendChild(anchor);
         }
         this.targetDiv.appendChild(anchorDiv);
+    };
+
+    /**
+     *  add new class in to the genericInterface
+     */
+    GenericInterface.prototype.addClassName = function addClassName(className) {
+        var atr;
+
+        if (className == null) {
+            return;
+        }
+
+        atr = this.wrapperElement.getAttribute('class');
+        if (atr == null) {
+            atr = '';
+        }
+        this.wrapperElement.setAttribute('class', EzWebExt.appendWord(atr, className));
+    };
+
+    /**
+     * remove a genericInterface Class name
+     */
+    GenericInterface.prototype.removeClassName = function removeClassName(className) {
+        var atr;
+
+        if (className == null) {
+            return;
+        }
+
+        atr = this.wrapperElement.getAttribute('class');
+        if (atr == null) {
+            atr = '';
+        }
+        this.wrapperElement.setAttribute('class', EzWebExt.removeWord(atr, className));
+    };
+
+    GenericInterface.prototype.highlight = function highlight() {
+        var i;
+        this.highlighted = true;
+        this.removeClassName('disabled');
+        this.highlight_button.addClassName('activated');
+        for (i = 0; i < this.targetAnchors.length; i++) {
+            this.targetAnchors[i].highlightArrows();
+
+        }
+        for (i = 0; i < this.sourceAnchors.length; i++) {
+            this.sourceAnchors[i].highlightArrows();
+        }
+    };
+
+    GenericInterface.prototype.unhighlight = function unhighlight() {
+        var i;
+        this.highlighted = false;
+        this.addClassName('disabled');
+        this.highlight_button.removeClassName('activated');
+        for (i = 0; i < this.targetAnchors.length; i++) {
+            this.targetAnchors[i].unhighlightArrows();
+
+        }
+        for (i = 0; i < this.sourceAnchors.length; i++) {
+            this.sourceAnchors[i].unhighlightArrows();
+        }
     };
 
     /**

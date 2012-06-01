@@ -106,6 +106,13 @@
     };
 
     /**
+     * get the arrow list
+     */
+    Anchor.prototype.getArrows = function getArrows() {
+        return this.arrows;
+    };
+
+    /**
      * @return {Boolean}
      */
     Anchor.prototype.isConnected = function isConnected() {
