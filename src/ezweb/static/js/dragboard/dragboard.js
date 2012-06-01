@@ -23,7 +23,6 @@
 *     http://morfeo-project.org
  */
 
-/*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
 /*global document, window, Error, gettext, interpolate, $, Hash, Element, Event, isElement*/
 /*global BrowserUtilsFactory, Constants, ColumnLayout, DragboardPosition, FreeLayout, FullDragboardLayout, Gadget, IGadget, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud, ShowcaseFactory, SmartColumnLayout, URIs*/
 
@@ -82,45 +81,46 @@ function Dragboard(tab, workSpace, dragboardElement) {
      * Update igadget status in persistence
      */
     this._commitChanges = function (keys) {
+        var onSuccess, onError;
         keys = keys || this.iGadgetsByCode.keys();
 
-        var onSuccess = function (transport) { };
+        onSuccess = function (transport) { };
 
-        var onError = function (transport, e) {
+        onError = function (transport, e) {
             var logManager = LogManagerFactory.getInstance();
             var msg = logManager.formatError(gettext("Error committing dragboard changes to persistence: %(errorMsg)s."), transport, e);
             logManager.log(msg);
         };
 
         // TODO only send real changes
-        var iGadget, iGadgetInfo, uri, position;
-        var data = [];
+        var iGadget, iGadgetInfo, uri, position, data, icon_position;
+        data = [];
 
         for (var i = 0; i < keys.length; i++) {
             iGadget = this.iGadgetsByCode.get(keys[i]);
             iGadgetInfo = {};
             position = iGadget.getPosition();
-            iGadgetInfo['id'] = iGadget.id;
-            iGadgetInfo['tab'] = this.tabId;
+            iGadgetInfo.id = iGadget.id;
+            iGadgetInfo.tab = this.tabId;
             if (this.workSpace.isOwned()) {
-                iGadgetInfo['minimized'] = iGadget.isMinimized();
+                iGadgetInfo.minimized = iGadget.isMinimized();
             }
             if (!iGadget.isInFullDragboardMode()) {
-                iGadgetInfo['top'] = iGadget.position.y;
-                iGadgetInfo['left'] = iGadget.position.x;
-                iGadgetInfo['zIndex'] = iGadget.zPos;
-                iGadgetInfo['width'] = iGadget.contentWidth;
-                iGadgetInfo['height'] = iGadget.height;
-                iGadgetInfo['fulldragboard'] = false;
+                iGadgetInfo.top = iGadget.position.y;
+                iGadgetInfo.left = iGadget.position.x;
+                iGadgetInfo.zIndex = iGadget.zPos;
+                iGadgetInfo.width = iGadget.contentWidth;
+                iGadgetInfo.height = iGadget.height;
+                iGadgetInfo.fulldragboard = false;
             } else {
-                iGadgetInfo['fulldragboard'] = true;
+                iGadgetInfo.fulldragboard = true;
             }
 
-            iGadgetInfo['layout'] = iGadget.onFreeLayout() ? 1 : 0;
+            iGadgetInfo.layout = iGadget.onFreeLayout() ? 1 : 0;
 
-            var icon_position = iGadget.getIconPosition();
-            iGadgetInfo['icon_top'] = icon_position.y;
-            iGadgetInfo['icon_left'] = icon_position.x;
+            icon_position = iGadget.getIconPosition();
+            iGadgetInfo.icon_top = icon_position.y;
+            iGadgetInfo.icon_left = icon_position.x;
 
             data.push(iGadgetInfo);
         }
@@ -621,16 +621,16 @@ Dragboard.prototype._recomputeSize = function () {
     this.leftMargin = cssStyle.getPropertyCSSValue("padding-left").getFloatValue(CSSPrimitiveValue.CSS_PX);
     this.rightMargin = cssStyle.getPropertyCSSValue("padding-right").getFloatValue(CSSPrimitiveValue.CSS_PX);
 
-    this.dragboardWidth = parseInt(dragboardElement.offsetWidth);
+    this.dragboardWidth = parseInt(dragboardElement.offsetWidth, 10);
     this.dragboardWidth -= this.leftMargin + this.rightMargin;
 
     var tmp = this.dragboardWidth;
-    tmp-= parseInt(dragboardElement.clientWidth);
+    tmp -= parseInt(dragboardElement.clientWidth, 10);
 
     if (tmp > this.scrollbarSpace)
-        this.dragboardWidth-= tmp;
+        this.dragboardWidth -= tmp;
     else
-        this.dragboardWidth-= this.scrollbarSpace;
+        this.dragboardWidth -= this.scrollbarSpace;
 
     // TODO
     this.dragboardHeight = parseInt(dragboardElement.clientHeight, 10);
@@ -848,8 +848,8 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
         y = cssStyle.getPropertyCSSValue("top").getFloatValue(CSSPrimitiveValue.CSS_PX);
         x = cssStyle.getPropertyCSSValue("left").getFloatValue(CSSPrimitiveValue.CSS_PX);*/
         // TODO
-        y = draggableElement.style.top === "" ? 0 : parseInt(draggableElement.style.top);
-        x = draggableElement.style.left === "" ? 0 : parseInt(draggableElement.style.left);
+        y = draggableElement.style.top === "" ? 0 : parseInt(draggableElement.style.top, 10);
+        x = draggableElement.style.left === "" ? 0 : parseInt(draggableElement.style.left, 10);
 
         draggableElement.style.top = y + 'px';
         draggableElement.style.left = x + 'px';
@@ -926,8 +926,8 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
 }
 
 Draggable._cancelbubbling = function (e) {
-   e = e || window.event; // needed for IE
-   Event.stop(e);
+    e = e || window.event; // needed for IE
+    Event.stop(e);
 };
 
 Draggable._canBeDragged = function () {
