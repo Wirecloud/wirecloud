@@ -212,7 +212,6 @@
                 return;
             }
             canvas.unselectArrow();
-            this.disconnect();
             this.destroy();
             e.stopPropagation();
         }.bind(this));
@@ -546,6 +545,7 @@
      * destroy the arrow.
      */
     Arrow.prototype.destroy = function destroy() {
+        this.disconnect();
         this.wrapperElement.parentNode.removeChild(this.wrapperElement);
         this.wrapperElement = null;
         this.pullerStartElement = null;

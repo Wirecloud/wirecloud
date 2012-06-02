@@ -412,6 +412,13 @@ var WiringStatus = {
         operator_interface.destroy();
     };
 
+    WiringEditor.prototype.removeArrow = function removeArrow(arrow) {
+        var pos;
+        pos = this.arrows.indexOf(arrow);
+        this.arrows.splice(pos, 1);
+        arrow.destroy();
+    };
+
     /**
      * getBreadcrum
      */

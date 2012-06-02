@@ -19,7 +19,7 @@
  *
  */
 
-/*global Draggable, gettext, StyledElements, Wirecloud, EzWebExt */
+/*global Draggable, gettext, StyledElements, Wirecloud, EzWebExt, LayoutManagerFactory */
 
 (function () {
 
@@ -385,6 +385,23 @@
      * Destroy
      */
     GenericInterface.prototype.destroy = function destroy() {
+        var i, j, arrows;
+
+        StyledElements.Container.prototype.destroy.call(this);
+
+        for (i = 0; i < this.sourceAnchors.length; i += 1) {
+            arrows = this.sourceAnchors[i].arrows.clone();
+            for (j = 0; j < arrows.length; j += 1) {
+                LayoutManagerFactory.getInstance().viewsByName.wiring.removeArrow(arrows[j]);
+            }
+        }
+
+        for (i = 0; i < this.targetAnchors.length; i += 1) {
+            arrows = this.targetAnchors[i].arrows.clone();
+            for (j = 0; j < arrows.length; j += 1) {
+                LayoutManagerFactory.getInstance().viewsByName.wiring.removeArrow(arrows[j]);
+            }
+        }
         this.draggable.destroy();
         this.draggable = null;
     };
