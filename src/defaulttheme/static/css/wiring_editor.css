@@ -51,7 +51,6 @@
 .wiring_editor .ioperator, .wiring_editor .igadget {
     line-height: 2.2em;
     padding-bottom: 2px;
-    margin: 1ex 2ex;
     border: 1px solid;
     padding-bottom: 8px;
     border-radius: 1.25ex 1.25ex 1.25ex 1.25ex;

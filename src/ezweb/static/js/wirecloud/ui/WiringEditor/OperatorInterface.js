@@ -70,7 +70,7 @@
         position.posX = initialPosition.posX + movement.posX;
         position.posY = initialPosition.posY + movement.posY - 90;
         if (position.posX < 0) {
-            position.posX = 0;
+            position.posX = 8;
         }
         if (position.posY < 0) {
             position.posY = 0;

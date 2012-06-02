@@ -117,7 +117,7 @@
                 function onFinish(draggable, data) {
                     var position = data.getStylePosition();
                     if (position.posX < 0) {
-                        position.posX = 0;
+                        position.posX = 8;
                     }
                     if (position.posY < 0) {
                         position.posY = 0;

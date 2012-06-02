@@ -256,7 +256,7 @@ var WiringStatus = {
 
         for (key in this.igadgets) {
             gadget = this.igadgets[key];
-            pos = gadget.getPosition();
+            pos = gadget.getStylePosition();
             WiringStatus.views[0].igadgets[gadget.getIGadget().getId()] = pos;
         }
 
