@@ -48,22 +48,6 @@
     /*************************************************************************
      * Private methods
      *************************************************************************/
-    /**
-     * @Private
-     * apply style to the specific element.
-     */
-    var applyStyle = function applyStyle(style, element) {
-        var key, styleAttr = element.getAttribute('style');
-
-        if (styleAttr == null) {
-            styleAttr = "";
-        }
-
-        for (key in style) {
-            styleAttr += key + ":" + style[key] + ";";
-        }
-        element.setAttribute('style', styleAttr);
-    };
 
     /*************************************************************************
      * Public methods
@@ -85,13 +69,12 @@
     /**
      * Draws an arrow into this canvas.
      */
-    Canvas.prototype.drawArrow = function drawArrow(from, to, style, extraClass) {
+    Canvas.prototype.drawArrow = function drawArrow(from, to, extraClass) {
         var arrow = new Wirecloud.ui.WiringEditor.Arrow(this);
         arrow.addClassName(extraClass);
         arrow.setStart(from);
         arrow.setEnd(to);
         arrow.redraw();
-        applyStyle(style ? style : this.context, arrow.arrowElement);
         arrow.insertInto(this.canvasElement);
         return arrow;
     };
