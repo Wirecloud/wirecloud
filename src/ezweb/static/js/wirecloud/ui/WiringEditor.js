@@ -32,7 +32,8 @@ var WiringStatus = {
             igadgets: {
             },
             operators: {
-            }
+            },
+            nextOperatorId: 0
         }
     ],
     operators: {
@@ -135,12 +136,13 @@ var WiringStatus = {
 
         workspace = opManager.activeWorkSpace; // FIXME this is the current way to obtain the current workspace
 
+        this.nextOperatorId = WiringStatus.views[0].nextOperatorId;
         this.targetsOn = this.sourcesOn = true;
         this.targetAnchorList = [];
         this.sourceAnchorList = [];
         this.arrows = [];
         this.igadgets = {};
-        this.ioperators = [];
+        this.ioperators = {};
         this.selectedObjects = [];
         this.generalHighlighted = true;
 
@@ -213,15 +215,15 @@ var WiringStatus = {
             this.layout.getCenterContainer().removeChild(this.igadgets[key]);
             this.igadgets[key].destroy();
         }
-        for (i = 0; i < this.ioperators.length; i++) {
-            this.layout.getCenterContainer().removeChild(this.ioperators[i]);
-            this.ioperators[i].destroy();
+        for (key in this.ioperators) {
+            this.layout.getCenterContainer().removeChild(this.ioperators[key]);
+            this.ioperators[key].destroy();
         }
 
         this.layout.getNorthContainer().clear();
         this.arrows = [];
         this.igadgets = {};
-        this.ioperators = [];
+        this.ioperators = {};
     };
 
     /*************************************************************************
@@ -242,7 +244,8 @@ var WiringStatus = {
                     igadgets: {
                     },
                     operators: {
-                    }
+                    },
+                    nextOperatorId: this.nextOperatorId
                 }
             ],
             operators: {
@@ -257,10 +260,10 @@ var WiringStatus = {
             WiringStatus.views[0].igadgets[gadget.getIGadget().getId()] = pos;
         }
 
-        for (i = 0; i < this.ioperators.length; i++) {
+        for (i in this.ioperators) {
             operator_interface = this.ioperators[i];
-            pos = operator_interface.getPosition();
-            WiringStatus.operators[operator_interface.getId()] = {"name" : operator_interface.getName()};
+            pos = operator_interface.getStylePosition();
+            WiringStatus.operators[operator_interface.getId()] = {"name" : operator_interface.getName(), 'id' : operator_interface.getId()};
             WiringStatus.views[0].operators[operator_interface.getId()] = pos;
         }
 
@@ -280,7 +283,7 @@ var WiringStatus = {
         var i, key;
 
         this.selectedObjects = [];
-        for (i = 0; i < this.ioperators.length; i++) {
+        for (i in this.ioperators) {
             this.ioperators[i].highlight();
             this.selectedObjects.push(this.ioperators[i]);
         }
@@ -295,10 +298,10 @@ var WiringStatus = {
      * general Highlight switch off.
      */
     WiringEditor.prototype.generalUnhighlight = function generalUnhighlight() {
-        var i, key;
+        var key;
 
-        for (i = 0; i < this.ioperators.length; i++) {
-            this.ioperators[i].unhighlight();
+        for (key in this.ioperators) {
+            this.ioperators[key].unhighlight();
         }
 
         for (key in this.igadgets) {
@@ -347,7 +350,8 @@ var WiringStatus = {
         if (initial_status != null) {
             instanciated_operator = ioperator.instanciate(initial_status.id);
         } else {
-            instanciated_operator = ioperator.instanciate(this.ioperators.length);
+            instanciated_operator = ioperator.instanciate(this.nextOperatorId);
+            this.nextOperatorId++;
         }
 
         operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, instanciated_operator, this.arrowCreator);
@@ -359,8 +363,7 @@ var WiringStatus = {
         this.targetAnchorList = this.targetAnchorList.concat(operator_interface.targetAnchors);
         this.sourceAnchorList = this.sourceAnchorList.concat(operator_interface.sourceAnchors);
 
-        this.ioperators.push(operator_interface);
-
+        this.ioperators[operator_interface.getId()] = operator_interface;
         return operator_interface;
     };
 
