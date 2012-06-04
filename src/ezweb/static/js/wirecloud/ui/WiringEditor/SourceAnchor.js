@@ -52,7 +52,7 @@
     };
 
     SourceAnchor.prototype.isHighlighted = function isHighlighted() {
-            return this.context.iObject.highlighted;
+        return this.context.iObject.highlighted;
     };
 
     /*************************************************************************

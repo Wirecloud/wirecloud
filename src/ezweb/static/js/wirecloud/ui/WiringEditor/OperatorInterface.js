@@ -24,7 +24,7 @@
 (function () {
 
     "use strict";
-    
+
     /*************************************************************************
      * Constructor
      *************************************************************************/
@@ -80,21 +80,21 @@
     };
 
     /**
-     * get the ioperator 
+     * get the ioperator
      */
     OperatorInterface.prototype.getIOperator = function getIOperator() {
         return this.ioperator;
     };
 
     /**
-     * get id 
+     * get id
      */
     OperatorInterface.prototype.getId = function getId() {
         return this.ioperator.getId();
     };
 
     /**
-     * get id 
+     * get id
      */
     OperatorInterface.prototype.getName = function getName() {
         return this.ioperator.getName();

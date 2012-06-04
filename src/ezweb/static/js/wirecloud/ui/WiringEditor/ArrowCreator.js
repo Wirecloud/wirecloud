@@ -155,7 +155,7 @@
      * a valid connection or not.
      */
     var isVal = function isVal(currentSource, currentTarget) {
-        return (currentSource !== currentTarget) && 
+        return (currentSource !== currentTarget) &&
             (((currentSource instanceof Wirecloud.ui.WiringEditor.TargetAnchor) && (currentTarget instanceof Wirecloud.ui.WiringEditor.SourceAnchor)) ||
                 ((currentTarget instanceof Wirecloud.ui.WiringEditor.TargetAnchor) && (currentSource instanceof Wirecloud.ui.WiringEditor.SourceAnchor)));
     };

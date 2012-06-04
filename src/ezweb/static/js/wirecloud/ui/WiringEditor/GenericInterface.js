@@ -152,7 +152,7 @@
      * Private methods
      *************************************************************************/
     /**
-    * change the value of event.offsetX and offsetY, for the offsetLeft and 
+    * change the value of event.offsetX and offsetY, for the offsetLeft and
     * offsetTop acumulated from initial element to the iObject container.
     */
     var recalculateEventOffset = function (ev) {
@@ -279,7 +279,7 @@
             anchor = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, this.arrowCreator);
             anchorDiv.appendChild(anchor.wrapperElement);
             this.sourceAnchorsByName[name] = anchor;
-            this.sourceAnchors.push(anchor);  
+            this.sourceAnchors.push(anchor);
         } else {
             //PseudoAnchors for mini interfaces
             anchor = document.createElement('div');
@@ -309,7 +309,7 @@
             anchor = new Wirecloud.ui.WiringEditor.TargetAnchor(anchorContext, this.arrowCreator);
             anchorDiv.appendChild(anchor.wrapperElement);
             this.targetAnchorsByName[name] = anchor;
-            this.targetAnchors.push(anchor);  
+            this.targetAnchors.push(anchor);
         } else {
             //PseudoAnchors for mini interfaces
             anchor = document.createElement('div');

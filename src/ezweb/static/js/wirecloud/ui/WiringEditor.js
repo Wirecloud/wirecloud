@@ -81,7 +81,7 @@ var WiringStatus = {
                 this.generalHighlighted = true;
             }
         }.bind(this), true);
-        
+
         //canvas for arrows
         this.canvas = new Wirecloud.ui.WiringEditor.Canvas();
         this.canvasElement = this.canvas.getHTMLElement();
@@ -329,9 +329,6 @@ var WiringStatus = {
         var pos = this.selectedObjects.indexOf(object);
         delete this.selectedObjects[pos];
     };
-    
-
-
 
     WiringEditor.prototype.addIGadget = function addIGadget(wiringEditor, igadget) {
         var gadget_interface = new Wirecloud.ui.WiringEditor.GadgetInterface(wiringEditor, igadget, this.arrowCreator);
@@ -443,5 +440,5 @@ var WiringStatus = {
      * Make WiringEditor public
      *************************************************************************/
     Wirecloud.ui.WiringEditor = WiringEditor;
-    
+
 })();
