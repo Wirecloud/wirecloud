@@ -1230,6 +1230,9 @@ StyledElements.StyledCheckBox = function(nameGroup_, value, options) {
     }
 
     /* Internal events */
+    EzWebExt.addEventListener(this.inputElement, 'mousedown', function (e) {
+        e.stopPropagation();
+    }, true);
     EzWebExt.addEventListener(this.inputElement, 'change',
                                 EzWebExt.bind(function () {
                                     if (this.enabled)
