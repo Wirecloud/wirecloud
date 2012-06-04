@@ -190,6 +190,8 @@ var WiringStatus = {
             arrow.endAnchor = endAnchor;
             endAnchor.addArrow(arrow);
             arrow.addClassName('arrow');
+            arrow.setPullerStart(connection.pullerStart);
+            arrow.setPullerEnd(connection.pullerEnd);
 
             this.arrows.push(arrow);
         }
@@ -271,7 +273,9 @@ var WiringStatus = {
             arrow = this.arrows[i];
             WiringStatus.connections.push({
                 'source': arrow.startAnchor.serialize(),
-                'target': arrow.endAnchor.serialize()
+                'target': arrow.endAnchor.serialize(),
+                'pullerStart': arrow.getPullerStart(),
+                'pullerEnd': arrow.getPullerEnd()
             });
         }
     };
