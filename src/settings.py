@@ -124,8 +124,6 @@ TEMPLATE_LOADERS = (
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.gzip.GZipMiddleware',
-    'johnny.middleware.LocalStoreClearMiddleware',  # this has to be first
-    'johnny.middleware.QueryCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
 #    'middleware.session_middleware.SessionMiddleware',
 #    'facebook.djangofb.FacebookMiddleware',
@@ -168,7 +166,6 @@ INSTALLED_APPS = (
     'uploader',
     'south',
     'compressor',
-    'johnny',
     ### openid authentication ###
 #    'openid_auth',
 #    'openid_auth.django_openidconsumer',

@@ -31,59 +31,109 @@ Wirecloud.wiring = {};
 
     var operatorList, operators, i, operator, OperatorFactory;
 
-    // TODO this is for testing
-    var inputs = [{"name":"sum1", "label":"sumando 1","desc":"Este es el primer sumando", "type":"N", "index":0, "required": true, "defaultValue": 0},
-    {"name":"sum2", "label":"sumando 2", "desc":"Este es el segundo sumando", "type":"N", "index":1, "required": true, "defaultValue": 0},
-    {"name":"sum3", "label":"sumando 3", "desc":"Este es el tercer sumando", "type":"N", "index":2, "required": true, "defaultValue": 0}];
-
-    var outputs = [{"name":"res", "label":"resultado" ,"desc":"Este es el resultado de sumar todos los inputs del operador", "type":"N", "index":0, "required": true, "defaultValue": 0}];
-
-    var code = function (params, callback) {
-        callback(param[0] + param[1] + param[2])
-    }
-
-    var myname = 'Multi-Sumador';
-    var description = 'Suma todos los enteros introducidos y devuelve el resultado'
-    
-    var OpSumadorTriple = new OperatorMeta (myname, description, inputs, outputs, code);
-
-    inputs = [
-        {"name":"sum1", "label":"sumando 1","desc":"Este es el primer sumando", "type":"S", "index":0, "required": true, "defaultValue": 0},
-    ];
-
-    outputs = [
-        {"name":"res", "label":"resultado" ,"desc":"Este es el resultado de sumar todos los inputs del operador", "type":"N", "index":0, "required": true, "defaultValue": 0}
-    ];
-
-    code = function (params, callback) {
-        callback(params);
-    }
-
-    var description = 'Suma todos los enteros introducidos y devuelve el resultado'
-    
-    var Channel = new OperatorMeta ('Channel', description, inputs, outputs, code);
-    //TODO END
-    
-    var smsReceiver = new OperatorMeta('Receive SMS',
+    var smsReceiver = new OperatorMeta('Get SMS',
         '',
-        [{"name": "contact", "label": "contact", "desc": "", "type": "S", "index": 0}, {"name": "auth", "label": "contact", "desc": "", "type": "S", "index": 1}],
-        [{"name": "message", "label": "SMS Message", "desc": "Received SMS", "type": "S", "index": 0}],
+        [{"name": "contact", "label": "Sender (vcard)", "desc": "Person who sent the SMS", "type": "S", "index": 0}], //, {"name": "auth", "label": "contact", "desc": "", "type": "S", "index": 1}],
+        [{"name": "message", "label": "Message", "desc": "The received SMS message", "type": "S", "index": 0}],
         function () {}
         );
-    var jabberReceiver = new OperatorMeta('ReceiveJabber',
+    var jabberReceiver = new OperatorMeta('Get Jabber',
         '',
-        [{"name": "contact", "label": "contact", "desc": "", "type": "S", "index": 0}, {"name": "auth", "label": "contact", "desc": "", "type": "S", "index": 1}],
-        [{"name": "message", "label": "SMS Message", "desc": "Received SMS", "type": "S", "index": 0}],
+        [{"name": "contact", "label": "Sender (vcard)", "desc": "Person who sent the Jabber message", "type": "S", "index": 0}], // {"name": "auth", "label": "contact", "desc": "", "type": "S", "index": 1}],
+        [{"name": "message", "label": "Message", "desc": "The received Jabber message", "type": "S", "index": 0}],
         function () {}
         );
-    var twitterReceiver = new OperatorMeta('ReceiveTwitter',
+    var twitterReceiver = new OperatorMeta('Get Tweet',
         '',
-        [{"name": "contact", "label": "contact", "desc": "", "type": "S", "index": 0}, {"name": "auth", "label": "contact", "desc": "", "type": "S", "index": 1}],
-        [{"name": "message", "label": "SMS Message", "desc": "Received SMS", "type": "S", "index": 0}],
+        [{"name": "contact", "label": "Sender (vcard)", "desc": "Person who mentioned me in Tweeter", "type": "S", "index": 0}], // {"name": "auth", "label": "contact", "desc": "", "type": "S", "index": 1}],
+        [{"name": "message", "label": "Message", "desc": "The received tweet", "type": "S", "index": 0}],
+        function () {}
+        );
+    var getContactsFromGMail = new OperatorMeta('Get GMail Contacts',
+        '',
+        [],
+        [{"name": "vcard", "label": "Vcard", "desc": "The list of GMail contacts in vcard format", "type": "S", "index": 0}],
+        function () {}
+        );
+    var sendTweet = new OperatorMeta('Send Tweet',
+        '',
+        [{"name": "message", "label": "Message", "desc": "The mention to tweet", "type": "S", "index": 0}, {"name": "auth", "label": "contact", "desc": "Vcard of the contact to mention", "type": "S", "index": 1}],
+        [],
         function () {}
         );
 
-    operatorList = [OpSumadorTriple, Channel, smsReceiver, jabberReceiver, twitterReceiver];
+    var sendSms = new OperatorMeta('Send SMS',
+        '',
+        [
+            {
+                "name": "message",
+                "label": "Message",
+                "desc": "The message to send",
+                "action_label": 'Send SMS',
+                "type": "S",
+                "index": 0,
+                "callback": function (data) {
+
+                    var element, doc = EzWebExt.XML.createDocument('http://telecomitalia.it/ictservice/smsService/rest', 'rest:SmsOut');
+
+                    element = doc.createElement('rest:Recipient');
+                    element.textContent = this.contact_phone;
+                    doc.documentElement.appendChild(element);
+
+                    element = doc.createElement('rest:Sender');
+                    element.textContent = ezweb_user_name;
+                    doc.documentElement.appendChild(element);
+
+                    element = doc.createElement('rest:MessageBody');
+                    element.textContent = data.text;
+                    doc.documentElement.appendChild(element);
+
+                    element = doc.createElement('rest:ContentType');
+                    element.textContent = 'Text';
+                    doc.documentElement.appendChild(element);
+
+                    Wirecloud.io.makeRequest("https://cassiopea.tilab.com:9443/camel-dynamic-container/camelServices/smsService/sms", {
+                        method: 'POST',
+                        postBody: EzWebExt.XML.serializeXML(doc),
+                        contentType: 'application/xml',
+                        requestHeaders: {
+                            'Accept': 'application/xml, text/plain',
+                            'Authorization': 'Basic Zml3YXJlOmZpd2FyZSQ='
+                        },
+                        onSuccess: function () {
+                            this.sendEvent('ack', {id: data.id, result: 'success'});
+                        }.bind(this),
+                        onFailure: function () {
+                            this.sendEvent('ack', {id: data.id, result: 'error'});
+                        }.bind(this)
+                    });
+                }
+            },
+            {
+                "name": "contact",
+                "label": "contact",
+                "desc": "Vcard of the contact to send the sms",
+                "type": "S",
+                "index": 1,
+                "callback": function (data) {
+                    this.contact_phone = data;
+//                    this.contact_phone = VCard.parse(data)['tel'][0];
+                }
+            }
+        ],
+        [
+            {'name': 'ack', 'label': "Acknowledge", 'desc': '', 'type': 'S', 'index': 0}
+        ],
+        function () {}
+        );
+
+    var sendJabber = new OperatorMeta('Send Msg to Jabber',
+        '',
+        [{"name": "message", "label": "Message", "desc": "The message to send", "type": "S", "index": 0}, {"name": "auth", "label": "contact", "desc": "Vcard of the contact to send the Jabber message", "type": "S", "index": 1}],
+        [],
+        function () {}
+        );
+    operatorList = [smsReceiver, jabberReceiver, twitterReceiver, getContactsFromGMail, sendTweet, sendSms, sendJabber];
 
     operators = {};
     for (i = 0; i < operatorList.length; i += 1) {

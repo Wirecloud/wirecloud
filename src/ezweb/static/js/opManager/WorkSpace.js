@@ -91,7 +91,7 @@ function WorkSpace (workSpaceState) {
 
     // Not like the remaining methods. This is a callback function to process AJAX requests, so must be public.
     var loadWorkSpace = function (transport) {
-        var layoutManager, params, param, preferenceValues;
+        var layoutManager, params, param, preferenceValues, iwidgets;
 
         layoutManager = LayoutManagerFactory.getInstance();
         layoutManager.logStep('');
@@ -132,6 +132,7 @@ function WorkSpace (workSpaceState) {
 
             if (tabs.length > 0) {
                 visibleTabId = tabs[0].id;
+
                 for (var i = 0; i < tabs.length; i++) {
                     var tab = tabs[i];
                     var tabInstance = this.notebook.createTab({'tab_constructor': Tab, 'tab_info': tab, 'workspace': this});
@@ -146,7 +147,11 @@ function WorkSpace (workSpaceState) {
             this.varManager = new VarManager(this);
 
             this.contextManager = new ContextManager(this, this.workSpaceGlobalInfo);
-            this.wiring = new Wiring(this, this.workSpaceGlobalInfo);
+            this.wiring = new Wirecloud.Wiring(this);
+            iwidgets = this.getIGadgets();
+            for (i = 0; i < iwidgets.length; i += 1) {
+                this.events.iwidgetadded.dispatch(this, iwidgets[i]);
+            }
 
             // FIXME
             LayoutManagerFactory.getInstance().mainLayout.repaint();
@@ -286,9 +291,6 @@ function WorkSpace (workSpaceState) {
         var igadget = this.getIgadget(igadgetId);
         igadget._notifyLoaded();
 
-        // Notify to the wiring module the igadget has been loaded
-        this.wiring.iGadgetLoaded(igadget);
-
         // Notify to the context manager the igadget has been loaded
         this.contextManager.iGadgetLoaded(igadget);
 
@@ -319,9 +321,6 @@ function WorkSpace (workSpaceState) {
         var igadget = this.getIgadget(igadgetId);
         if (igadget == null)
             return;
-
-        // Notify to the wiring module the igadget has been unloaded
-        this.wiring.iGadgetUnloaded(igadget);
 
         // Notify to the context manager the igadget has been unloaded
         this.contextManager.iGadgetUnloaded(igadget);
@@ -586,6 +585,8 @@ function WorkSpace (workSpaceState) {
         var layoutManager = LayoutManagerFactory.getInstance();
         layoutManager.logSubTask(gettext("Unloading current workspace"));
 
+        this.loaded = false;
+
         // Unload Wiring Interface
         // TODO Wiring Interface should be shared between Workspaces
         if (this.wiringInterface !== null) {
@@ -609,8 +610,10 @@ function WorkSpace (workSpaceState) {
         }
 
         if (this.wiring !== null) {
-            this.wiring.unload();
+            this.wiring.destroy();
+            this.wiring = null;
         }
+
         if (this.contextManager !== null) {
             this.contextManager.unload();
             this.contextManager = null;
@@ -624,7 +627,7 @@ function WorkSpace (workSpaceState) {
     WorkSpace.prototype.addIGadget = function(tab, igadget, igadgetJSON, options) {
         this.varManager.addInstance(igadget, igadgetJSON, tab);
         this.contextManager.addInstance(igadget, igadget.getGadget().getTemplate());
-        this.wiring.addInstance(igadget, igadgetJSON.variables);
+        this.events.iwidgetadded.dispatch(this, igadget);
 
         options.setDefaultValues.call(this, igadget.id);
 
@@ -633,7 +636,6 @@ function WorkSpace (workSpaceState) {
 
     WorkSpace.prototype.removeIGadgetData = function(iGadgetId) {
             this.varManager.removeInstance(iGadgetId);
-            this.wiring.removeInstance(iGadgetId);
             this.contextManager.removeInstance(iGadgetId);
     }
 
@@ -643,13 +645,11 @@ function WorkSpace (workSpaceState) {
             var dragboard = igadget.layout.dragboard;
             dragboard.removeInstance(iGadgetId, orderFromServer); // TODO split into hideInstance and removeInstance
             this.removeIGadgetData(iGadgetId);
+            this.events.iwidgetremoved.dispatch(this, igadget);
         }
     }
 
     WorkSpace.prototype.getIGadgets = function() {
-        if (!this.loaded)
-            return;
-
         var iGadgets = [];
         var keys = this.tabInstances.keys();
         for (var i = 0; i < keys.length; i++) {
@@ -795,6 +795,8 @@ function WorkSpace (workSpaceState) {
     this.wiringLayer = null;
     this.valid=false;
 
+    StyledElements.ObjectWithEvents.call(this, ['iwidgetadded', 'iwidgetremoved']);
+
     /*
      * OPERATIONS
      */
@@ -843,6 +845,7 @@ function WorkSpace (workSpaceState) {
         logManager.log(msg);
     }.bind(this);
 };
+WorkSpace.prototype = new StyledElements.ObjectWithEvents();
 
 WorkSpace.prototype.drawAttention = function(iGadgetId) {
     var iGadget = this.getIgadget(iGadgetId);

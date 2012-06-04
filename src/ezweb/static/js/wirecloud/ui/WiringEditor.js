@@ -175,8 +175,11 @@ var WiringStatus = {
      * clean the WiringEditor interface.
      */
     var clearInterface = function clearInterface() {
-        var i, key;
+        var i, key, workspace;
+
         this.serialize();
+        workspace = opManager.activeWorkSpace; // FIXME this is the current way to obtain the current workspace
+        workspace.wiring.load(WiringStatus);
 
         for (i = 0; i < this.arrows.length; i++) {
             this.arrows[i].destroy();
