@@ -25,11 +25,47 @@
 
     "use strict";
 
-    var Wiring, addIWidget, removeIWidget;
+    var Wiring, findConnectable, unload, addIWidget, removeIWidget;
 
     /*****************
      * Private methods
      *****************/
+    findConnectable = function findConnectable(desc) {
+        var entry;
+
+        switch (desc.type) {
+        case 'igadget':
+            entry = this.connectablesByWidget[desc.igadget];
+            if (desc.varname in entry.events) {
+                return entry.events[desc.varname];
+            } else {
+                return entry.slots[desc.varname];
+            }
+        case 'ioperator':
+            entry = this.ioperators[desc.ioperator];
+            if (desc.endpoint in entry.inputs) {
+                return entry.inputs[desc.endpoint];
+            } else {
+                return entry.outputs[desc.endpoint];
+            }
+        }
+    };
+
+    unload = function unload() {
+        var widgets, key, i, j, connectables;
+
+        widgets = this.workspace.getIGadgets();
+        for (i = 0; i < widgets.length; i++) {
+            connectables = this.connectablesByWidget[widgets[i].getId()].connectables;
+            for (j = 0; j < connectables.length; j++) {
+                connectables[j].fullDisconnect();
+            }
+        }
+
+        for (key in this.ioperators) {
+            this.ioperators[key].fullDisconnect();
+        }
+    };
 
     addIWidget = function addIWidget(iwidget) {
         var varManager, iWidgetId, widgetEntry, i, variableDef,
@@ -46,8 +82,8 @@
         connectables  = iwidget.getGadget().getTemplate().getConnectables();
 
         widgetEntry = {
-            events: [],
-            slots: [],
+            events: {},
+            slots: {},
             connectables: []
         };
 
@@ -56,14 +92,15 @@
             variableDef = connectables.events[i];
             variable = varManager.getVariableByName(iWidgetId, variableDef.name);
             connectable = new wEvent(variable, variableDef.type, variableDef.friend_code, variableDef.connectable_id);
-            widgetEntry.events.push(connectable);
+            widgetEntry.events[connectable._name] = connectable;
             widgetEntry.connectables.push(connectable);
         }
+
         for (i = 0; i < connectables.slots.length; i += 1) {
             variableDef = connectables.slots[i];
             variable = varManager.getVariableByName(iWidgetId, variableDef.name);
             connectable = new wSlot(variable, variableDef.type, variableDef.friend_code, variableDef.connectable_id);
-            widgetEntry.slots.push(connectable);
+            widgetEntry.slots[connectable._name] = connectable;
             widgetEntry.connectables.push(connectable);
         }
 
@@ -96,6 +133,7 @@
     Wiring = function Wiring(workspace) {
         this.workspace = workspace;
         this.connectablesByWidget = {};
+        this.ioperators = {};
 
         this._iwidget_unload_listener = this._iwidget_unload_listener.bind(this);
         this._iwidget_added_listener = this._iwidget_added_listener.bind(this);
@@ -106,13 +144,34 @@
     };
 
     Wiring.prototype.load = function load(status) {
-        var widgets;
+        var connection, sourceConnectable, targetConnectable, operators, id,
+            operator_info, i, old_operators;
 
         if (typeof status === 'string') {
             status = JSON.parse(status);
         }
 
-        widgets = this.workspace.getIGadgets();
+        unload.call(this);
+
+        operators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
+        old_operators = this.ioperators;
+        this.ioperators = {};
+        for (id in status.operators) {
+            operator_info = status.operators[id];
+            if (id in old_operators) {
+                this.ioperators[id] = old_operators[id];
+            } else {
+                this.ioperators[id] = operators[operator_info.name].instanciate(id);
+            }
+        }
+
+        for (i = 0; i < status.connections.length; i += 1) {
+            connection = status.connections[i];
+            sourceConnectable = findConnectable.call(this, connection.source);
+            targetConnectable = findConnectable.call(this, connection.target);
+            sourceConnectable.connect(targetConnectable);
+        }
+        this.status = status;
     };
 
     Wiring.prototype.destroy = function destroy() {
@@ -124,8 +183,13 @@
                 entry.connectables[i].destroy();
             }
         }
-
         this.connectablesByWidget = null;
+
+        for (key in this.ioperators) {
+            this.ioperators[key].fullDisconnect();
+        }
+        this.ioperators = null;
+
 
         this.workspace.removeEventListener('iwidgetadded', this._iwidget_added_listener);
         this.workspace.removeEventListener('iwidgetremoved', this._iwidget_removed_listener);
@@ -146,10 +210,10 @@
     };
 
     Wiring.prototype._iwidget_unload_listener = function _iwidget_unload_listener(iWidget) {
-        var i, entry = this.connectablesByWidget[iWidget.getId()];
+        var key, entry = this.connectablesByWidget[iWidget.getId()];
 
-        for (i = 0; i < entry.slots.length; i++) {
-            entry.slots[i].variable.setHandler(null);
+        for (key in entry.slots) {
+            entry.slots[key].variable.setHandler(null);
         }
     };
 

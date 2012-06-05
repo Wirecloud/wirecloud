@@ -19,28 +19,11 @@
  *
  */
 
-/*global LayoutManagerFactory, opManager, StyledElements, Wirecloud, gettext */
+/*global LayoutManagerFactory, OperatorMeta, opManager, StyledElements, Wirecloud, gettext */
 if (!Wirecloud.ui) {
     // TODO this line should live in another file
     Wirecloud.ui = {};
 }
-
-var WiringStatus = {
-    views: [
-        {
-            label: 'default',
-            igadgets: {
-            },
-            operators: {
-            },
-            nextOperatorId: 0
-        }
-    ],
-    operators: {
-    },
-    connections: [
-    ]
-};
 
 (function () {
 
@@ -131,10 +114,30 @@ var WiringStatus = {
      */
     var renewInterface = function renewInterface() {
         var igadgets, igadget, key, i, gadget_interface, minigadget_interface, ioperators, operator,
-            operator_interface, operator_instance, operatorKeys, meta, connection, startAnchor, endAnchor,
-            arrow, workspace;
+            operator_interface, operator_instance, operatorKeys, connection, startAnchor, endAnchor,
+            arrow, workspace, WiringStatus;
 
         workspace = opManager.activeWorkSpace; // FIXME this is the current way to obtain the current workspace
+        WiringStatus = workspace.wiring.status;
+
+        if (WiringStatus == null) {
+            WiringStatus = {
+                views: [
+                    {
+                        label: 'default',
+                        igadgets: {
+                        },
+                        operators: {
+                        },
+                        nextOperatorId: 1
+                    }
+                ],
+                operators: {
+                },
+                connections: [
+                ]
+            };
+        }
 
         this.nextOperatorId = WiringStatus.views[0].nextOperatorId;
         this.targetsOn = this.sourcesOn = true;
@@ -160,22 +163,24 @@ var WiringStatus = {
                 gadget_interface.setPosition(WiringStatus.views[0].igadgets[igadget.getId()]);
             }
         }
+
         // mini operators
         ioperators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
         for (key in ioperators) {
             operator = ioperators[key];
-            operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, operator.instanciate(-1), this);
+            operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, operator, this);
             this.layout.getNorthContainer().appendChild(operator_interface);
         }
 
         // operators
-        for (key in WiringStatus.views[0].operators) {
-            operator_instance = WiringStatus.operators[key];
-            operator_instance.id = key;
+        ioperators = workspace.wiring.ioperators;
+        for (key in ioperators) {
+            operator_instance = ioperators[key];
 
-            meta = ioperators[operator_instance.name];
-            operator_interface = this.addIOperator(meta, operator_instance);
-            operator_interface.setPosition(WiringStatus.views[0].operators[key]);
+            operator_interface = this.addIOperator(operator_instance);
+            if (key in WiringStatus.views[0].operators) {
+                operator_interface.setPosition(WiringStatus.views[0].operators[key]);
+            }
         }
 
         // connenctions
@@ -202,16 +207,10 @@ var WiringStatus = {
      * clean the WiringEditor interface.
      */
     var clearInterface = function clearInterface() {
-        var i, key, workspace;
+        var key, workspace;
 
-        this.serialize();
         workspace = opManager.activeWorkSpace; // FIXME this is the current way to obtain the current workspace
-        workspace.wiring.load(WiringStatus);
-
-        for (i = 0; i < this.arrows.length; i++) {
-            this.arrows[i].destroy();
-        }
-        this.canvas.clear();
+        workspace.wiring.load(this.serialize());
 
         for (key in this.igadgets) {
             this.layout.getCenterContainer().removeChild(this.igadgets[key]);
@@ -221,6 +220,7 @@ var WiringStatus = {
             this.layout.getCenterContainer().removeChild(this.ioperators[key]);
             this.ioperators[key].destroy();
         }
+        this.canvas.clear();
 
         this.layout.getNorthContainer().clear();
         this.arrows = [];
@@ -236,7 +236,7 @@ var WiringStatus = {
      * Saves the wiring state.
      */
     WiringEditor.prototype.serialize = function serialize() {
-        var pos, i, key, gadget, arrow, operator_interface;
+        var pos, i, key, gadget, arrow, operator_interface, WiringStatus;
 
         // positions
         WiringStatus = {
@@ -278,6 +278,8 @@ var WiringStatus = {
                 'pullerEnd': arrow.getPullerEnd()
             });
         }
+
+        return WiringStatus;
     };
 
     /**
@@ -345,14 +347,14 @@ var WiringStatus = {
         return gadget_interface;
     };
 
-    WiringEditor.prototype.addIOperator = function addIOperator(ioperator, initial_status) {
+    WiringEditor.prototype.addIOperator = function addIOperator(ioperator) {
         var instanciated_operator, operator_interface;
 
-        if (initial_status != null) {
-            instanciated_operator = ioperator.instanciate(initial_status.id);
-        } else {
+        if (ioperator instanceof OperatorMeta) {
             instanciated_operator = ioperator.instanciate(this.nextOperatorId);
             this.nextOperatorId++;
+        } else {
+            instanciated_operator = ioperator;
         }
 
         operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, instanciated_operator, this.arrowCreator);
