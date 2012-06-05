@@ -559,8 +559,15 @@
      * disconnet the arrow
      */
     Arrow.prototype.disconnect = function disconnect() {
-        this.startAnchor.removeArrow(this);
-        this.endAnchor.removeArrow(this);
+        if (this.startAnchor !== null) {
+            this.startAnchor.removeArrow(this);
+            this.startAnchor = null;
+        }
+
+        if (this.endAnchor !== null) {
+            this.endAnchor.removeArrow(this);
+            this.endAnchor = null;
+        }
     };
 
     /*************************************************************************
