@@ -32,25 +32,25 @@
      * OperatorInterface Class
      */
     var OperatorInterface = function OperatorInterface(wiringEditor, ioperator, manager) {
-        var outputs, inputs, desc, label, i, anchorContext;
+        var outputs, inputs, desc, label, key, anchorContext;
         this.ioperator = ioperator;
         this.wiringEditor = wiringEditor;
 
-        Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.ioperator.getName(), manager, 'ioperator');
-        inputs = ioperator.getInputs();
-        outputs = ioperator.getOutputs();
+        Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.ioperator.name, manager, 'ioperator');
+        inputs = ioperator.inputs;
+        outputs = ioperator.outputs;
         //sources & targets anchors (sourceAnchor and targetAnchor)
-        for (i = 0; i < outputs.length; i++) {
-            desc = outputs[i].meta.getDescription();
-            label = outputs[i].meta.getLabel();
-            anchorContext = {'data': outputs[i], 'iObject': this};
-            this.addSource(label, desc, outputs[i].meta.getName(), anchorContext);
+        for (key in outputs) {
+            desc = outputs[key].description;
+            label = outputs[key].label;
+            anchorContext = {'data': outputs[key], 'iObject': this};
+            this.addSource(label, desc, outputs[key].name, anchorContext);
         }
-        for (i = 0; i < inputs.length; i++) {
-            desc = inputs[i].meta.getDescription();
-            label = inputs[i].meta.getLabel();
-            anchorContext = {'data': inputs[i], 'iObject': this};
-            this.addTarget(label, desc, inputs[i].meta.getName(), anchorContext);
+        for (key in inputs) {
+            desc = inputs[key].description;
+            label = inputs[key].label;
+            anchorContext = {'data': inputs[key], 'iObject': this};
+            this.addTarget(label, desc, inputs[key].name, anchorContext);
         }
     };
 
@@ -62,7 +62,7 @@
     OperatorInterface.prototype.onFinish = function onFinish(draggable, data) {
         var operator_interface, position, initialPosition, movement;
 
-        operator_interface = this.wiringEditor.addIOperator(this.ioperator.meta);
+        operator_interface = this.wiringEditor.addIOperator(this.ioperator);
 
         position = {posX: 0, posY: 0};
         initialPosition = data.initialPos;
@@ -90,14 +90,14 @@
      * get id
      */
     OperatorInterface.prototype.getId = function getId() {
-        return this.ioperator.getId();
+        return this.ioperator.id;
     };
 
     /**
-     * get id
+     * gets name
      */
     OperatorInterface.prototype.getName = function getName() {
-        return this.ioperator.getName();
+        return this.ioperator.name;
     };
 
     /*************************************************************************

@@ -19,8 +19,7 @@
  *
  */
 
-/*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50, prototypejs: true */
-/*global gettext */
+/*global EzWebExt, ezweb_user_name, OperatorMeta, Wirecloud */
 
 // TODO
 Wirecloud.wiring = {};
@@ -31,41 +30,11 @@ Wirecloud.wiring = {};
 
     var operatorList, operators, i, operator, OperatorFactory;
 
-    var smsReceiver = new OperatorMeta('Get SMS',
-        '',
-        [{"name": "contact", "label": "Sender (vcard)", "desc": "Person who sent the SMS", "type": "S", "index": 0}], //, {"name": "auth", "label": "contact", "desc": "", "type": "S", "index": 1}],
-        [{"name": "message", "label": "Message", "desc": "The received SMS message", "type": "S", "index": 0}],
-        function () {}
-        );
-    var jabberReceiver = new OperatorMeta('Get Jabber',
-        '',
-        [{"name": "contact", "label": "Sender (vcard)", "desc": "Person who sent the Jabber message", "type": "S", "index": 0}], // {"name": "auth", "label": "contact", "desc": "", "type": "S", "index": 1}],
-        [{"name": "message", "label": "Message", "desc": "The received Jabber message", "type": "S", "index": 0}],
-        function () {}
-        );
-    var twitterReceiver = new OperatorMeta('Get Tweet',
-        '',
-        [{"name": "contact", "label": "Sender (vcard)", "desc": "Person who mentioned me in Tweeter", "type": "S", "index": 0}], // {"name": "auth", "label": "contact", "desc": "", "type": "S", "index": 1}],
-        [{"name": "message", "label": "Message", "desc": "The received tweet", "type": "S", "index": 0}],
-        function () {}
-        );
-    var getContactsFromGMail = new OperatorMeta('Get GMail Contacts',
-        '',
-        [],
-        [{"name": "vcard", "label": "Vcard", "desc": "The list of GMail contacts in vcard format", "type": "S", "index": 0}],
-        function () {}
-        );
-    var sendTweet = new OperatorMeta('Send Tweet',
-        '',
-        [{"name": "message", "label": "Message", "desc": "The mention to tweet", "type": "S", "index": 0}, {"name": "auth", "label": "contact", "desc": "Vcard of the contact to mention", "type": "S", "index": 1}],
-        [],
-        function () {}
-        );
-
-    var sendSms = new OperatorMeta('Send SMS',
-        '',
-        [
-            {
+    var sendSms = new OperatorMeta({
+        name: 'Send SMS',
+        description: '',
+        inputs: {
+            'message': {
                 "name": "message",
                 "label": "Message",
                 "desc": "The message to send",
@@ -77,7 +46,7 @@ Wirecloud.wiring = {};
                     var element, doc = EzWebExt.XML.createDocument('http://telecomitalia.it/ictservice/smsService/rest', 'rest:SmsOut');
 
                     element = doc.createElement('rest:Recipient');
-                    element.textContent = this.contact_phone;
+                    element.textContent = data.recipient;
                     doc.documentElement.appendChild(element);
 
                     element = doc.createElement('rest:Sender');
@@ -108,47 +77,37 @@ Wirecloud.wiring = {};
                         }.bind(this)
                     });
                 }
-            },
-            {
-                "name": "contact",
-                "label": "contact",
-                "desc": "Vcard of the contact to send the sms",
-                "type": "S",
-                "index": 1,
-                "callback": function (data) {
-                    this.contact_phone = data;
-//                    this.contact_phone = VCard.parse(data)['tel'][0];
-                }
             }
-        ],
-        [
-            {'name': 'ack', 'label': "Acknowledge", 'desc': '', 'type': 'S', 'index': 0}
-        ],
-        function () {}
-        );
+        },
+        outputs: {
+            'ack': {
+                'name': 'ack',
+                'label': "Acknowledge",
+                'desc': '',
+                'type': 'S',
+                'index': 0
+            }
+        }
+    });
 
-    var sendJabber = new OperatorMeta('Send Msg to Jabber',
-        '',
-        [{"name": "message", "label": "Message", "desc": "The message to send", "type": "S", "index": 0}, {"name": "auth", "label": "contact", "desc": "Vcard of the contact to send the Jabber message", "type": "S", "index": 1}],
-        [],
-        function () {}
-        );
-    operatorList = [smsReceiver, jabberReceiver, twitterReceiver, getContactsFromGMail, sendTweet, sendSms, sendJabber];
+    operatorList = [sendSms];
 
     operators = {};
     for (i = 0; i < operatorList.length; i += 1) {
         operator = operatorList[i];
-        operators[operator.getName()] = operator;
+        operators[operator.name] = operator;
     }
 
     OperatorFactory = {};
+
     /*************************************************************************
      * Private methods
      *************************************************************************/
      
     /*************************************************************************
      * Public methods
-     *************************************************************************/ 
+     *************************************************************************/
+
     OperatorFactory.getAvailableOperators = function getAvailableOperators() {
         return operators;
     };

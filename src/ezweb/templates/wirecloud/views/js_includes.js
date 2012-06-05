@@ -74,4 +74,3 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/CatalogueSearchView.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/ResourceDetailsView.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/CatalogueView.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/Operator.js"></script>
