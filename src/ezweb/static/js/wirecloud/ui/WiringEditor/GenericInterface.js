@@ -71,7 +71,7 @@
             del_button.insertInto(this.header);
             del_button.addEventListener('click', function () {
                 if (className == 'igadget') {
-                    wiringEditor.removeGadget(this);
+                    wiringEditor.removeIGadget(this);
                 } else {
                     wiringEditor.removeIOperator(this);
                 }

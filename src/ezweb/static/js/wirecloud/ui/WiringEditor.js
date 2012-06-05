@@ -406,7 +406,7 @@ if (!Wirecloud.ui) {
         }
     };
 
-    WiringEditor.prototype.removeGadget = function removeGadget(gadget_interface) {
+    WiringEditor.prototype.removeIGadget = function removeIGadget(gadget_interface) {
         delete this.igadgets[gadget_interface.getIGadget().getId()];
         this.layout.getCenterContainer().removeChild(gadget_interface);
         gadget_interface.destroy();
