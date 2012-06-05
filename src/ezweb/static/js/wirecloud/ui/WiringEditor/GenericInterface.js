@@ -73,7 +73,7 @@
                 if (className == 'igadget') {
                     wiringEditor.removeGadget(this);
                 } else {
-                    wiringEditor.removeOperator(this);
+                    wiringEditor.removeIOperator(this);
                 }
             }.bind(this));
 

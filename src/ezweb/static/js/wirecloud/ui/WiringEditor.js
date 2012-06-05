@@ -410,7 +410,7 @@ var WiringStatus = {
         gadget_interface.destroy();
     };
 
-    WiringEditor.prototype.removeOperator = function removeOperator(operator_interface) {
+    WiringEditor.prototype.removeIOperator = function removeIOperator(operator_interface) {
         delete this.ioperators[operator_interface.getIOperator().id];
         this.layout.getCenterContainer().removeChild(operator_interface);
         operator_interface.destroy();
