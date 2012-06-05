@@ -145,6 +145,7 @@ if (!Wirecloud.ui) {
         this.sourceAnchorList = [];
         this.arrows = [];
         this.igadgets = {};
+        this.mini_widgets = {};
         this.ioperators = {};
         this.selectedObjects = [];
         this.generalHighlighted = true;
@@ -155,6 +156,7 @@ if (!Wirecloud.ui) {
             igadget = igadgets[i];
             // mini widgets
             minigadget_interface = new Wirecloud.ui.WiringEditor.GadgetInterface(this, igadget, this);
+            this.mini_widgets[igadget.getId()] = minigadget_interface;
             this.layout.getNorthContainer().appendChild(minigadget_interface);
             // widget
             if (igadget.getId() in WiringStatus.views[0].igadgets) {
@@ -224,6 +226,7 @@ if (!Wirecloud.ui) {
 
         this.layout.getNorthContainer().clear();
         this.arrows = [];
+        this.mini_widgets = {};
         this.igadgets = {};
         this.ioperators = {};
     };
@@ -410,6 +413,8 @@ if (!Wirecloud.ui) {
         delete this.igadgets[gadget_interface.getIGadget().getId()];
         this.layout.getCenterContainer().removeChild(gadget_interface);
         gadget_interface.destroy();
+
+        this.mini_widgets[gadget_interface.getIGadget().getId()].enable();
     };
 
     WiringEditor.prototype.removeIOperator = function removeIOperator(operator_interface) {
