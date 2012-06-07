@@ -146,8 +146,8 @@ class WirecloudSeleniumTestCase(HttpTestCase):
 
         return None
 
-    def instanciate(self, resource):
-        resource.find_element_by_css_selector('.instanciate_button').click()
+    def instanciate(self):#, resource):
+        self.driver.find_element_by_css_selector('.instanciate_button').click()
 
         # TODO
         time.sleep(2)
@@ -241,7 +241,37 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         self.driver.quit()
         super(WirecloudSeleniumTestCase, self).tearDown()
 
+    def add_marketplace(self,name,label,url,type_):
+        
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
+        self.popup_menu_click("Add new marketplace")
+        
+        market_name_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="label"]')
+        self.fill_form_input(market_name_input, name)
+        market_label_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="display_name"]')
+        self.fill_form_input(market_label_input, label)
+        market_url_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="url"]')
+        self.fill_form_input(market_url_input, url)
+        market_type_input = self.driver.find_element_by_css_selector('.window_menu .styled_form select')
+        self.fill_form_input(market_type_input, type_)
 
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+
+    def delete_marketplace(self, market):
+
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
+        self.popup_menu_click(market)
+        
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
+        self.popup_menu_click("Delete marketplace")
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
+
+    def delete_gadget(self, gadget_name):
+        import ipdb;ipdb.set_trace()
+        self.driver.find_element_by_css_selector('.click_for_details').click()
+        self.driver.find_element_by_css_selector('.advanced_operations .styled_button').click()
+        self.driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").click()
+        
 browsers = getattr(settings, 'WIRECLOUD_SELENIUM_BROWSER_COMMANDS', {
     'Firefox': {
         'CLASS': 'selenium.webdriver.Firefox',

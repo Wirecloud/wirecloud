@@ -34,7 +34,7 @@
 from os import path
 from django.utils.translation import ugettext_lazy as _
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 COMPRESS = not DEBUG
 COMPRESS_OFFLINE = not DEBUG
@@ -152,6 +152,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'wirecloud',
     'ezweb',
     'gadget',
     'workspace',
@@ -169,6 +170,7 @@ INSTALLED_APPS = (
     'south',
     'compressor',
     'johnny',
+    'marketAdaptor',
     ### openid authentication ###
 #    'openid_auth',
 #    'openid_auth.django_openidconsumer',

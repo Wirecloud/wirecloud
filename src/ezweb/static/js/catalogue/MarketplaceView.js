@@ -20,20 +20,18 @@
  */
 
 /*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50, prototypejs: true */
-
+/*global StyledElements, LayoutManagerFactory, MarketplaceManagement, Wirecloud, gettext, CatalogueView, FiWareCatalogueView*/
 var MarketplaceView = function (id, options) {
     options.id = 'marketplace';
     StyledElements.Alternative.call(this, id, options);
 
     this.alternatives = new StyledElements.StyledAlternatives();
-    this.alternatives.addEventListener('postTransition', function() {
+    this.alternatives.addEventListener('postTransition', function () {
         LayoutManagerFactory.getInstance().header.refresh();
     });
+    this.market_manager = new MarketplaceManagement();
     this.appendChild(this.alternatives);
-
-    this.viewsByName = {
-        'cat-local': this.alternatives.createAlternative({alternative_constructor: CatalogueView, containerOptions: {catalogue: this}})
-    };
+    this.generateViews();
 
     this.marketMenu = new StyledElements.PopupMenu();
     this.marketMenu.append(new Wirecloud.ui.MarketplaceViewMenuItems(this));
@@ -44,19 +42,68 @@ MarketplaceView.prototype = new StyledElements.Alternative();
 MarketplaceView.prototype.view_name = 'marketplace';
 
 MarketplaceView.prototype.getBreadcrum = function () {
-    var breadcrum = [
+    var label, breadcrum;
+
+    label = gettext('No marketplace registered');
+    if (this.number_of_alternatives > 0) {
+        label = this.alternatives.getCurrentAlternative().getLabel();
+    }
+
+    breadcrum = [
         {
             'label': 'marketplace'
         },
         {
-            'label': this.alternatives.getCurrentAlternative().getLabel(),
+            'label': label,
             'menu': this.marketMenu
         }
     ];
-
-    if (typeof this.alternatives.getCurrentAlternative().getExtraBreadcrum === 'function') {
-        breadcrum = breadcrum.concat(this.alternatives.getCurrentAlternative().getExtraBreadcrum());
+    // If no alternatives exist, it is no posible to have an extra breadcrum
+    if (this.number_of_alternatives > 0) {
+        if (typeof this.alternatives.getCurrentAlternative().getExtraBreadcrum === 'function') {
+            breadcrum = breadcrum.concat(this.alternatives.getCurrentAlternative().getExtraBreadcrum());
+        }
     }
-
     return breadcrum;
+};
+
+MarketplaceView.prototype.refreshViewInfo = function () {
+    this.market_manager.getMarkets(this.addViewInfo.bind(this));
+};
+
+MarketplaceView.prototype.addViewInfo = function (view_info) {
+    var info, view_element, first_element, first_iteration = true;
+
+    this.number_of_alternatives = 0;
+    this.viewsByName = {};
+    for (info in view_info) {
+
+        view_element = JSON.parse(view_info[info]);
+
+        if (view_element.type === 'wirecloud') {
+            this.viewsByName[info] = this.alternatives.createAlternative({alternative_constructor: CatalogueView, containerOptions: {catalogue: this, marketplace: info}});
+            this.number_of_alternatives += 1;
+            if (first_iteration) {
+                first_element = this.viewsByName[info];
+                first_iteration = false;
+            }
+        } else if (view_element.type === 'fiware') {
+            this.viewsByName[info] = this.alternatives.createAlternative({alternative_constructor: FiWareCatalogueView, containerOptions: {catalogue: this, marketplace: info}});
+            this.number_of_alternatives += 1;
+            if (first_iteration) {
+                first_element = this.viewsByName[info];
+                first_iteration = false;
+            }
+        }
+
+    }
+    if (this.number_of_alternatives > 0) {
+        // this is used to avoid an inconsistent state in case a marketplace had been deleted
+        this.alternatives.showAlternative(first_element);
+    }
+    LayoutManagerFactory.getInstance().header.refresh();
+};
+
+MarketplaceView.prototype.generateViews = function () {
+    this.market_manager.getMarkets(this.addViewInfo.bind(this));
 };
