@@ -19,7 +19,7 @@
  *
  */
 
-/*global EzWebExt, Wirecloud */
+/*global EzWebExt, StyledElements, Wirecloud */
 
 (function () {
 
@@ -29,16 +29,15 @@
      * Constructor
      *************************************************************************/
     var Canvas = function Canvas() {
+        StyledElements.ObjectWithEvents.call(this, ['arrowadded', 'arrowremoved']);
+
         this.canvasElement = document.createElementNS(this.SVG_NAMESPACE, 'svg:svg');
         this.canvasElement.setAttribute('class', 'canvas');
         this.selectedArrow = null;
         this.selectedObject = null;
-        this.canvasElement.addEventListener('click', function (e) {
-            if (this.getSelectedArrow) {
-                this.unselectArrow();
-            }
-        }.bind(this), false);
+        this.canvasElement.addEventListener('click', this.unselectArrow.bind(this), false);
     };
+    Canvas.prototype = new StyledElements.ObjectWithEvents();
 
     Canvas.prototype.SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 
@@ -73,7 +72,21 @@
         arrow.setEnd(to);
         arrow.redraw();
         arrow.insertInto(this.canvasElement);
+
+        this.events.arrowadded.dispatch(this, arrow);
+
         return arrow;
+    };
+
+    /**
+     * Removes an arrow from this canvas.
+     */
+    Canvas.prototype.removeArrow = function removeArrow(arrow) {
+        if (this.selectedArrow === arrow) {
+            this.unselectArrow();
+        }
+        arrow.wrapperElement.parentNode.removeChild(arrow.wrapperElement);
+        this.events.arrowremoved.dispatch(this, arrow);
     };
 
     /*
@@ -117,6 +130,7 @@
             this.selectedArrow = null;
         }
     };
+
     /*************************************************************************
      * Make Canvas public
      *************************************************************************/

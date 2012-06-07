@@ -392,14 +392,14 @@
         for (i = 0; i < this.sourceAnchors.length; i += 1) {
             arrows = this.sourceAnchors[i].arrows.clone();
             for (j = 0; j < arrows.length; j += 1) {
-                LayoutManagerFactory.getInstance().viewsByName.wiring.removeArrow(arrows[j]);
+                arrows[j].destroy();
             }
         }
 
         for (i = 0; i < this.targetAnchors.length; i += 1) {
             arrows = this.targetAnchors[i].arrows.clone();
             for (j = 0; j < arrows.length; j += 1) {
-                LayoutManagerFactory.getInstance().viewsByName.wiring.removeArrow(arrows[j]);
+                arrows[j].destroy();
             }
         }
         this.draggable.destroy();

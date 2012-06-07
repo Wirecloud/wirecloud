@@ -69,6 +69,13 @@ if (!Wirecloud.ui) {
         this.canvas = new Wirecloud.ui.WiringEditor.Canvas();
         this.canvasElement = this.canvas.getHTMLElement();
         this.layout.getCenterContainer().appendChild(this.canvasElement);
+        this.canvas.addEventListener('arrowadded', function (canvas, arrow) {
+            this.arrows.push(arrow);
+        }.bind(this));
+        this.canvas.addEventListener('arrowremoved', function (canvas, arrow) {
+            var pos = this.arrows.indexOf(arrow);
+            this.arrows.splice(pos, 1);
+        }.bind(this));
 
         this.enableAnchors = this.enableAnchors.bind(this);
         this.disableAnchors = this.disableAnchors.bind(this);
@@ -77,11 +84,7 @@ if (!Wirecloud.ui) {
             function () {},
             function () {},
             this.enableAnchors,
-            function () {},
-            //adding arrow to WiringEditor.arrows list
-            function (data, theArrow) {
-                data.arrows.push(theArrow);
-            }
+            function () {}
         );
         this._startdrag_map_func = function (anchor) {
             anchor.addEventListener('startdrag', this.disableAnchors);
@@ -421,13 +424,6 @@ if (!Wirecloud.ui) {
         delete this.ioperators[operator_interface.getIOperator().id];
         this.layout.getCenterContainer().removeChild(operator_interface);
         operator_interface.destroy();
-    };
-
-    WiringEditor.prototype.removeArrow = function removeArrow(arrow) {
-        var pos;
-        pos = this.arrows.indexOf(arrow);
-        this.arrows.splice(pos, 1);
-        arrow.destroy();
     };
 
     /**

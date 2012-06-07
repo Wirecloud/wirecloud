@@ -177,7 +177,8 @@
      *************************************************************************/
     var Arrow = function Arrow(canvas) {
         this.highlight_counter = 2;
-        
+
+        this.canvas = canvas;
         this.wrapperElement = canvas.canvasElement.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:g");
 
         this.arrowBodyElement = canvas.canvasElement.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:g");
@@ -211,7 +212,6 @@
             if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
                 return;
             }
-            canvas.unselectArrow();
             this.destroy();
             e.stopPropagation();
         }.bind(this));
@@ -546,7 +546,13 @@
      */
     Arrow.prototype.destroy = function destroy() {
         this.disconnect();
-        this.wrapperElement.parentNode.removeChild(this.wrapperElement);
+        if (this.canvas !== null) {
+            this.canvas.removeArrow(this);
+            this.canvas = null;
+        }
+        if (this.wrapperElement.parentNode) {
+            this.wrapperElement.parentNode.removeChild(this.wrapperElement);
+        }
         this.wrapperElement = null;
         this.pullerStartElement = null;
         this.pullerEndElement = null;
