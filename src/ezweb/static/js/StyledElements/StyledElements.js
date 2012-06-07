@@ -884,6 +884,9 @@ StyledElements.StyledTextField = function(options) {
     /* Internal events */
     EzWebExt.addEventListener(this.inputElement, 'mousedown', EzWebExt.stopPropagationListener, true);
     EzWebExt.addEventListener(this.inputElement, 'mouseup', EzWebExt.stopPropagationListener, true);
+    this.inputElement.addEventListener('input', function () {
+        this.events.change.dispatch(this);
+    }.bind(this), true);
 }
 StyledElements.StyledTextField.prototype = new StyledElements.StyledInputElement();
 
