@@ -48,7 +48,7 @@ if (!Wirecloud.ui) {
                     this.alternatives.showAlternative(this.viewsByName[view_name]);
                 }.bind(this.market, key)));
             }
-            
+
             items.push(new StyledElements.Separator());
 
             if (typeof current_catalogue.show_upload_view === 'function') {
@@ -57,7 +57,7 @@ if (!Wirecloud.ui) {
                 }.bind(current_catalogue)));
             }
         } else {
-            items.push(new StyledElements.MenuItem(gettext('No marketplace registered'), function () { })); 
+            items.push(new StyledElements.MenuItem(gettext('No marketplace registered'), function () { }));
             items.push(new StyledElements.Separator());
         }
 
@@ -95,7 +95,7 @@ if (!Wirecloud.ui) {
                 }
             };
             menu = new FormWindowMenu(fields, gettext('Add Marketplace'));
-            
+
             // Form data is sent to server
             menu.executeOperation = function (data) {
                 var market_info = {};
@@ -105,7 +105,7 @@ if (!Wirecloud.ui) {
                     "url": data['url'],
                     "type": data['type']
                 };
-                this.market.market_manager.addMarket(market_info, this.market.refreshViewInfo.bind(this.market));	
+                Wirecloud.MarketManager.addMarket(market_info, this.market.refreshViewInfo.bind(this.market));
             }.bind(this);
 
             menu.show(); 
@@ -116,8 +116,8 @@ if (!Wirecloud.ui) {
                 //First ask if the user really wants to remove the marketplace
                 LayoutManagerFactory.getInstance().showYesNoDialog(gettext('Do you really want to remove the marketplace ') + this.market.alternatives.getCurrentAlternative().getLabel() + '?', 
                 function () {
-                    this.market.market_manager.deleteMarket(this.market.alternatives.getCurrentAlternative().getLabel(), this.market.refreshViewInfo.bind(this.market));
-                    
+                    Wirecloud.MarketManager.deleteMarket(this.market.alternatives.getCurrentAlternative().getLabel(), this.market.refreshViewInfo.bind(this.market));
+
                 }.bind(this));
             }.bind(this)));
         }

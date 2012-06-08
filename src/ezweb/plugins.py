@@ -150,4 +150,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
     def get_ajax_endpoints(self, views):
         return (
+            {'id': 'MARKET_COLLECTION', 'url': '/markets'},
+            {'id': 'MARKET_ENTRY', 'url': '/market/#{market}'},
         )

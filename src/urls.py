@@ -38,7 +38,8 @@ from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.decorators.cache import cache_page
 from django.views.i18n import javascript_catalog
-#import wirecloud.urls
+
+import wirecloud.urls
 
 admin.autodiscover()
 
@@ -108,10 +109,9 @@ urlpatterns = patterns('',
     (r'^uploader', include('uploader.urls')),
 
     (r'^marketAdaptor/', include('marketAdaptor.urls')),
-    (r'^wirecloud', include('wirecloud.urls')),
 )
 
-#urlpatterns += wirecloud.urls.urlpatterns
+urlpatterns += wirecloud.urls.urlpatterns
 urlpatterns += staticfiles_urlpatterns()
 
 ### OpenId URLs

@@ -29,8 +29,6 @@ var MarketplaceView = function (id, options) {
     this.alternatives.addEventListener('postTransition', function () {
         LayoutManagerFactory.getInstance().header.refresh();
     });
-    this.market_manager = new MarketplaceManagement();
-    this.appendChild(this.alternatives);
     this.generateViews();
 
     this.marketMenu = new StyledElements.PopupMenu();
@@ -68,7 +66,7 @@ MarketplaceView.prototype.getBreadcrum = function () {
 };
 
 MarketplaceView.prototype.refreshViewInfo = function () {
-    this.market_manager.getMarkets(this.addViewInfo.bind(this));
+    Wirecloud.MarketManager.getMarkets(this.addViewInfo.bind(this));
 };
 
 MarketplaceView.prototype.addViewInfo = function (view_info) {
@@ -105,5 +103,5 @@ MarketplaceView.prototype.addViewInfo = function (view_info) {
 };
 
 MarketplaceView.prototype.generateViews = function () {
-    this.market_manager.getMarkets(this.addViewInfo.bind(this));
+    Wirecloud.MarketManager.getMarkets(this.addViewInfo.bind(this));
 };

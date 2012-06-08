@@ -57,7 +57,7 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/NewWorkspaceWindowMenu.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/RenameWindowMenu.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/MarketplaceView.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/MarketplaceManagement.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/MarketManager.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/ResourcePainter.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/fiware/FiWareCatalogueView.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/fiware/FiWareCatalogue.js"></script>
