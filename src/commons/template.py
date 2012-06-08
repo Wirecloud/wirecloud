@@ -81,8 +81,8 @@ TRANSLATION_XPATH = 't:Translation'
 MSG_XPATH = 't:msg'
 
 # Namespaces used by rdflib
-WIRE = rdflib.Namespace("http://wirecloud/gadget#")
-WIRE_M = rdflib.Namespace("http://wirecloud/mashup#")
+WIRE = rdflib.Namespace("http://wirecloud.conwet.fi.upm.es/ns/widget#")
+WIRE_M = rdflib.Namespace("http://wirecloud.conwet.fi.upm.es/ns/mashup#")
 FOAF = rdflib.Namespace("http://xmlns.com/foaf/0.1/")
 USDL = rdflib.Namespace("http://www.linked-usdl.org/ns/usdl-core#")
 DCTERMS = rdflib.Namespace("http://purl.org/dc/terms/")
