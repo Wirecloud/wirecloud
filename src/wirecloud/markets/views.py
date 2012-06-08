@@ -18,9 +18,11 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
-from django.utils.translation import ugettext as _
-from django.http import HttpResponse, HttpResponseServerError, HttpResponseBadRequest
+
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
+from django.utils.translation import ugettext as _
+
 from commons.resource import Resource
 from commons.utils import json_encode
 from wirecloud.models.markets import Market
@@ -29,13 +31,12 @@ from wirecloud.models.markets import Market
 class MarketCollection(Resource):
 
     def read(self, request):
-	result = {}
+        result = {}
 
-	for market in Market.objects.all():
-		result[market.name] = market.options
+        for market in Market.objects.all():
+            result[market.name] = market.options
 
-        return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
-	#{'market1': {"label": "FiWare Marketplace", "type": ""}
+            return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
     def create(self, request):
 
@@ -55,6 +56,7 @@ class MarketCollection(Resource):
         m.save()
 
         return HttpResponse(status=201)
+
 
 class MarketEntry(Resource):
 
