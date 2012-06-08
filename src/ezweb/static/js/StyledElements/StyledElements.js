@@ -3144,7 +3144,7 @@ PaginationInterface.prototype.goToLast = function() {
 /**
  *
  */
-StyledElements.MenuItem = function(text, handler) {
+StyledElements.MenuItem = function(text, handler, context) {
     StyledElements.StyledElement.call(this, ['click', 'mouseover', 'mouseout']);
 
     this.wrapperElement = document.createElement("div");
@@ -3155,6 +3155,7 @@ StyledElements.MenuItem = function(text, handler) {
     this.wrapperElement.appendChild(span);
 
     this.run = handler;
+    this.context = context;
 
     // Internal events
     this._mouseoverEventHandler = EzWebExt.bind(function(event) {
@@ -3189,8 +3190,11 @@ StyledElements.MenuItem.prototype.destroy = function() {
     }
     EzWebExt.removeEventListener(this.wrapperElement, "mouseover", this._mouseoverEventHandler, false);
     EzWebExt.removeEventListener(this.wrapperElement, "mouseout", this._mouseoutEventHandler, false);
+    EzWebExt.removeEventListener(this.wrapperElement, "click", this._clickHandler, false);
+
     this._mouseoverEventHandler = null;
     this._mouseoutEventHandler = null;
+    this._clickHandler = null;
 
     StyledElements.StyledElement.prototype.destroy.call(this);
 }
@@ -3289,7 +3293,7 @@ StyledElements.PopupMenuBase.prototype.setContext = function setContext (context
 
 StyledElements.PopupMenuBase.prototype._menuItemCallback = function _menuItemCallback (menuItem) {
     this.hide();
-    menuItem.run(this._context);
+    menuItem.run(this._context, menuItem.context);
 };
 
 StyledElements.PopupMenuBase.prototype.isVisible = function() {
