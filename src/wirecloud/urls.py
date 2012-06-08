@@ -30,11 +30,12 @@
 
 #
 
-from django import template
+from django.conf.urls.defaults import patterns, url
+from wirecloud.markets import views
 
-register = template.Library()
+urlpatterns = patterns('wirecloud.views',
 
+    url(r'^markets/?$', views.MarketCollection(permitted_methods=('GET', 'POST'))),
+    url(r'^market/(?P<market>[\w -]+)/?$', views.MarketEntry(permitted_methods=('PUT', 'DELETE'))),
 
-@register.filter
-def in_list(value, arg):
-    return value in arg
+)

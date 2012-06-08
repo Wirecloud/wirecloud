@@ -301,6 +301,13 @@ EzWebExt.interpolate = function(pattern, attributes) {
 }
 
 /**
+ * Event listener that stops any event propagation.
+ */
+EzWebExt.stopPropagationListener = function (e) {
+    e.stopPropagation();
+};
+
+/**
  * Elimina el exceso de caracteres de espaciado (espacios, tabuladores, saltos
  * de linea, etc...)
  *

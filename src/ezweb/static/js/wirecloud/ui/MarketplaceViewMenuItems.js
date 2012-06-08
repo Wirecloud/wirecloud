@@ -19,8 +19,7 @@
  *
  */
 
-/*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50 */
-/*global gettext, StyledElements*/
+/*global gettext, StyledElements, Wirecloud, FormWindowMenu, LayoutManagerFactory*/
 
 if (!Wirecloud.ui) {
     Wirecloud.ui = {};
@@ -30,37 +29,110 @@ if (!Wirecloud.ui) {
 
     "use strict";
 
-    var MarketplaceViewMenuItems = function MarketplaceViewMenuItems (marketplace_view) {
+    var MarketplaceViewMenuItems, clickCallback;
+
+    MarketplaceViewMenuItems = function MarketplaceViewMenuItems(marketplace_view) {
         this.market = marketplace_view;
 
         StyledElements.DynamicMenuItems.call(this);
+
+        this._click_callback = function _click_callback(menu_context, menu_item_context) {
+            marketplace_view.alternatives.showAlternative(menu_item_context);
+        };
     };
     MarketplaceViewMenuItems.prototype = new StyledElements.DynamicMenuItems();
 
-    MarketplaceViewMenuItems.prototype.build = function build (context) {
+    MarketplaceViewMenuItems.prototype.build = function build(context) {
         var current_catalogue, key, items = [];
 
-        current_catalogue = this.market.alternatives.getCurrentAlternative();
+        // If no view exits no view is pushed
+        if (this.market.number_of_alternatives > 0) {
+            current_catalogue = this.market.alternatives.getCurrentAlternative();
 
-        for (key in this.market.viewsByName) {
-            items.push(new StyledElements.MenuItem(this.market.viewsByName[key].getLabel(), function () {
-                this.alternatives.showAlternative(this.viewsByName['cat-local']);
-            }.bind(this.market)));
+            for (key in this.market.viewsByName) {
+                items.push(new StyledElements.MenuItem(this.market.viewsByName[key].getLabel(),
+                    this._click_callback,
+                    this.market.viewsByName[key]
+                ));
+            }
+
+            items.push(new StyledElements.Separator());
+
+            if (typeof current_catalogue.show_upload_view === 'function') {
+                items.push(new StyledElements.MenuItem(gettext('Upload'), function () {
+                    this.show_upload_view();
+                }.bind(current_catalogue)));
+            }
+        } else {
+            items.push(new StyledElements.MenuItem(gettext('No marketplace registered'), function () { }));
+            items.push(new StyledElements.Separator());
         }
 
-        items.push(new StyledElements.Separator());
+        items.push(new StyledElements.MenuItem(gettext('Add new marketplace'), function () {
+            var menu, fields, type_entries;
+            //type_entries = this.market.market_types;
 
-        if (typeof current_catalogue.show_upload_view === 'function') {
-            items.push(new StyledElements.MenuItem(gettext('Upload'), function () {
-                this.show_upload_view();
-            }.bind(current_catalogue)));
-        }
+            fields = {
+                'label': {
+                    'type': 'text',
+                    'label': gettext('Name'),
+                    'required': true
+                },
+                'display_name': {
+                    'type': 'text',
+                    'label': gettext('Label'),
+                    'required': true
+                },
+                'url': {
+                    'type': 'text',
+                    'label': gettext('URL'),
+                    'required': true,
+                    'initialValue': 'http://'
+                },
+                'type': {
+                    'type': 'select',
+                    'initialEntries': [{
+                        'label': 'Wirecloud',
+                        'value': 'wirecloud'
+                    },
+                        {'label': 'Fi-ware',
+                        'value': 'fiware'}],
+                    'label': gettext('Type'),
+                    'required': true
+                }
+            };
+            menu = new FormWindowMenu(fields, gettext('Add Marketplace'));
 
-        items.push(new StyledElements.MenuItem(gettext('Add new catalogue'), function () {
+            // Form data is sent to server
+            menu.executeOperation = function (data) {
+                var market_info = {
+                    "name": data.label,
+                    "options": {
+                        "label": data.display_name,
+                        "url": data.url,
+                        "type": data.type
+                    }
+                };
+                Wirecloud.MarketManager.addMarket(market_info, this.market.refreshViewInfo.bind(this.market));
+            }.bind(this);
+
+            menu.show();
         }.bind(this)));
+
+        if (this.market.number_of_alternatives > 1) {
+            items.push(new StyledElements.MenuItem(gettext('Delete marketplace'), function () {
+                //First ask if the user really wants to remove the marketplace
+                LayoutManagerFactory.getInstance().showYesNoDialog(gettext('Do you really want to remove the marketplace ') + this.market.alternatives.getCurrentAlternative().getLabel() + '?',
+                function () {
+                    Wirecloud.MarketManager.deleteMarket(this.market.alternatives.getCurrentAlternative().getLabel(), this.market.refreshViewInfo.bind(this.market));
+
+                }.bind(this));
+            }.bind(this)));
+        }
 
         return items;
     };
+
 
     Wirecloud.ui.MarketplaceViewMenuItems = MarketplaceViewMenuItems;
 })();

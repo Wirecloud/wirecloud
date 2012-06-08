@@ -191,7 +191,6 @@ function CatalogueResource(resourceJSON_) {
         version_data.version = new GadgetVersion(version_data.version, 'catalogue');
         version_data.events = version_data.events.map(flat_friendcode);
         version_data.slots = version_data.slots.map(flat_friendcode);
-
         allVersions.push(version_data.version);
         data_by_version[version_data.version.text] = version_data;
     }

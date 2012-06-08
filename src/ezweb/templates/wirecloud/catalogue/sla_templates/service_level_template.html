@@ -1,0 +1,13 @@
+{% load i18n %}
+<div class="right_column_resource">
+    <h3>{% trans 'Service level:' %}</h3>
+    <h4>#{title}</h4>
+    <div class="bold tab_info floating_left padding_right">{% trans 'Obligated party:' %}</div>
+    <div>#{obligated}</div>
+    <div class="bold tab_info floating_left padding_right">{% trans 'Description:' %}</div>
+    <div>#{description}</div>
+    <br />
+    <h4>Service Level expresions</h4>
+    <div class="tab_info expresions_list"></div>
+    <div class="footer_resource"></div>
+</div>
