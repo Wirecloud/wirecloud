@@ -36,7 +36,6 @@ from wirecloud.markets import views
 urlpatterns = patterns('wirecloud.views',
 
     url(r'^/markets/?$', views.MarketCollection(permitted_methods=('GET', 'POST'))),
-    url(r'^/markets/types/?$',views.MarketTypeCollection(permitted_methods=('GET',))),
     url(r'^/markets/(?P<market>[\w -]+)/?$', views.MarketEntry(permitted_methods=('PUT', 'DELETE'))),
 
 )

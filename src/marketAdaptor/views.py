@@ -1,39 +1,26 @@
 # -*- coding: utf-8 -*-
 
-#...............................licence...........................................
-#
-#     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
-#     S.A.Unipersonal (Telefonica I+D)
-#
-#     This file is part of Morfeo EzWeb Platform.
-#
-#     Morfeo EzWeb Platform is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU Affero General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     (at your option) any later version.
-#
-#     Morfeo EzWeb Platform is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU Affero General Public License for more details.
-#
-#     You should have received a copy of the GNU Affero General Public License
-#     along with Morfeo EzWeb Platform.  If not, see <http://www.gnu.org/licenses/>.
-#
-#     Info about members and contributors of the MORFEO project
-#     is available at
-#
-#     http://morfeo-project.org
-#
-#...............................licence...........................................#
+# Copyright 2012 Universidad Politécnica de Madrid
+
+# This file is part of Wirecluod.
+
+# Wirecloud is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Wirecloud is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#
 import json
-from django.utils.translation import ugettext as _
-from django.http import HttpResponse, HttpResponseServerError, HttpResponseBadRequest
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from commons.http_utils import download_http_content
 from marketAdaptor.marketadaptor import MarketAdaptor
 from commons.resource import Resource
 from commons.utils import json_encode
@@ -164,7 +151,7 @@ class StoreCollection(Resource):
         store_info['store_uri'] = request.POST['uri']
 
         try:
-            result = adaptor.add_store(store_info)
+            adaptor.add_store(store_info)
         except:
             return HttpResponse(status=502)
 
@@ -181,7 +168,7 @@ class StoreEntry(Resource):
         adaptor = MarketAdaptor(url)
 
         try:
-            result = adaptor.delete_store(store)
+            adaptor.delete_store(store)
         except:
             return HttpResponse(status=502)
 

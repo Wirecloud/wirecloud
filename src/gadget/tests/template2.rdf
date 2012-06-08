@@ -5,13 +5,13 @@
 	 xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 	 xmlns:dcterms="http://purl.org/dc/terms/"
 	 xmlns:skos="http://www.w3.org/2004/02/skos/core#"
-	 xmlns:wire="http://wirecloud/gadget#"
+	 xmlns:wire="http://wirecloud.conwet.fi.upm.es/ns/widget#"
 	 xmlns:vCard = "http://www.w3.org/2006/vcard/ns#"
 	 xmlns:gr="http://purl.org/goodrelations/v1#">
 
-	<wire:Gadget rdf:about="http://wirecloud.com/test">
+	<wire:Widget rdf:about="http://wirecloud.com/test">
 		<dcterms:title>test</dcterms:title>
-		<dcterms:description>Test Gadget description</dcterms:description>
+		<dcterms:description>Test Widget description</dcterms:description>
 		<dcterms:creator rdf:resource="http://creatoruri/"/>
 		<usdl-core:versionInfo>0.1</usdl-core:versionInfo>
 		<wire:hasImageUri rdf:resource="images/catalogue.png"/>
@@ -77,7 +77,7 @@
 			</wire:PlatformRendering>
 		</wire:hasPlatformRendering>
 
-	</wire:Gadget>
+	</wire:Widget>
 
 
 	<foaf:Person rdf:about="http://creatoruri/">

@@ -95,6 +95,16 @@ def clear_cache():
     _wirecloud_features = None
 
 
+def get_wirecloud_ajax_endpoints(view):
+    plugins = get_plugins()
+    endpoints = []
+
+    for plugin in plugins:
+        endpoints += plugin.get_ajax_endpoints(view)
+
+    return endpoints
+
+
 def get_extra_javascripts(view):
     plugins = get_plugins()
     files = []
@@ -125,6 +135,9 @@ class WirecloudPlugin(object):
     def get_scripts(self, views):
         return ()
 
+    def get_ajax_endpoints(self, views):
+        return ()
+
     def get_gadget_api_extensions(self, views):
         return ()
 
@@ -134,3 +147,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
     features = {
         'Wirecloud': '.'.join(map(str, VERSION)),
     }
+
+    def get_ajax_endpoints(self, views):
+        return (
+        )

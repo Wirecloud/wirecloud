@@ -20,6 +20,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 
+
 class Market(models.Model):
     name = models.CharField(_('Name'), max_length=50)
     options = models.TextField(_('Options'))

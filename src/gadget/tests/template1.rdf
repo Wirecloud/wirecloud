@@ -5,20 +5,20 @@
 	 xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 	 xmlns:dcterms="http://purl.org/dc/terms/"
 	 xmlns:skos="http://www.w3.org/2004/02/skos/core#"
-	 xmlns:wire="http://wirecloud/gadget#"
+	 xmlns:wire="http://wirecloud.conwet.fi.upm.es/ns/widget#"
 	 xmlns:vCard = "http://www.w3.org/2006/vcard/ns#"
 	 xmlns:gr="http://purl.org/goodrelations/v1#">
 
-	<wire:Gadget rdf:about="http://wirecloud.com/test">
+	<wire:Widget rdf:about="http://wirecloud.com/test">
 		<dcterms:title>test</dcterms:title>
-		<dcterms:description xml:lang="en">Test Gadget description</dcterms:description>
-		<dcterms:description xml:lang="es">Descripción del Gadget de pruebas</dcterms:description>
+		<dcterms:description xml:lang="en">Test Widget description</dcterms:description>
+		<dcterms:description xml:lang="es">Descripción del Widget de pruebas</dcterms:description>
 		<dcterms:creator rdf:resource="http://creatoruri/"/>
 		<usdl-core:versionInfo>0.1</usdl-core:versionInfo>
 		<wire:hasImageUri rdf:resource="images/catalogue.png"/>
 		<wire:hasiPhoneImageUri rdf:resource="images/catalogue_iphone.png"/>
 
-		<usdl-core:exposes rdf:resource="test.html"/>
+		<usdl-core:utilizedResource rdf:resource="test.html"/>
 		<foaf:page rdf:resource="doc/index.html"/>
 		<usdl-core:hasProvider rdf:resource="http://vendoruri/"/>
 
@@ -102,24 +102,24 @@
 						<wire:platformContextConcept>username</wire:platformContextConcept>
 					</wire:PlatformContext>
 				</wire:hasPlatformContext>
-				<wire:hasGadgetContext>
-					<wire:GadgetContext rdf:ID="GadgetContext_1">
+				<wire:hasWidgetContext>
+					<wire:WidgetContext rdf:ID="WidgetContext_1">
 						<dcterms:title>lockStatus</dcterms:title>
 						<wire:type>text</wire:type>
-						<wire:gadgetContextConcept>lockStatus</wire:gadgetContextConcept>
-					</wire:GadgetContext>
-				</wire:hasGadgetContext>
-				<wire:hasGadgetContext>
-					<wire:GadgetContext rdf:ID="GadgetContext_2">
+						<wire:widgetContextConcept>lockStatus</wire:widgetContextConcept>
+					</wire:WidgetContext>
+				</wire:hasWidgetContext>
+				<wire:hasWidgetContext>
+					<wire:WidgetContext rdf:ID="WidgetContext_2">
 						<dcterms:title>width</dcterms:title>
 						<wire:type>text</wire:type>
-						<wire:gadgetContextConcept>widthInPixels</wire:gadgetContextConcept>
-					</wire:GadgetContext>
-				</wire:hasGadgetContext>
+						<wire:widgetContextConcept>widthInPixels</wire:widgetContextConcept>
+					</wire:WidgetContext>
+				</wire:hasWidgetContext>
 			</wire:Context>
 		</wire:hasContext>
 
-	</wire:Gadget>
+	</wire:Widget>
 	<foaf:Person rdf:about="http://creatoruri/">
 		<foaf:name>admin</foaf:name>
 	</foaf:Person>
