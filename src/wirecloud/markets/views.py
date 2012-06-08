@@ -66,11 +66,3 @@ class MarketEntry(Resource):
 
     def update(self, request, market):
         pass
-
-class MarketTypeCollection(Resource):
-
-    def read(self, request):
-        result = []
-        
-        return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
-        
