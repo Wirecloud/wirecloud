@@ -29,6 +29,7 @@ var MarketplaceView = function (id, options) {
     this.alternatives.addEventListener('postTransition', function () {
         LayoutManagerFactory.getInstance().header.refresh();
     });
+    this.appendChild(this.alternatives);
     this.generateViews();
 
     this.marketMenu = new StyledElements.PopupMenu();
