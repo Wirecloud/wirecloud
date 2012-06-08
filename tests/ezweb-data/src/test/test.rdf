@@ -9,10 +9,10 @@
  xmlns:gr="http://purl.org/goodrelations/v1#"
  xmlns:blueprint="http://bizweb.sap.com/TR/blueprint#" >
 
-<wire:Gadget rdf:about="http://wirecloud.com/test">
+<wire:Widget rdf:about="http://wirecloud.com/test">
     <dcterms:title>Test_Selenium</dcterms:title>
-    <dcterms:description xml:lang="en">Test Gadget description</dcterms:description>
-    <dcterms:description xml:lang="es">Descripción del Gadget de pruebas</dcterms:description>
+    <dcterms:description xml:lang="en">Test Widget description</dcterms:description>
+    <dcterms:description xml:lang="es">Descripción del Widget de pruebas</dcterms:description>
     <dcterms:creator rdf:resource="http://creatoruri/"/>
     <usdl-core:versionInfo>0.9</usdl-core:versionInfo>
     <wire:hasImageUri rdf:resource="images/catalogue.png"/>
@@ -100,24 +100,24 @@
                     <wire:platformContextConcept>username</wire:platformContextConcept>
                 </wire:PlatformContext>
             </wire:hasPlatformContext>
-            <wire:hasGadgetContext>
-                <wire:GadgetContext rdf:ID="GadgetContext_1">
+            <wire:hasWidgetContext>
+                <wire:WidgetContext rdf:ID="WidgetContext_1">
                     <dcterms:title>lockStatus</dcterms:title>
                     <wire:type>text</wire:type>
-                    <wire:gadgetContextConcept>lockStatus</wire:gadgetContextConcept>
-                </wire:GadgetContext>
-            </wire:hasGadgetContext>
-            <wire:hasGadgetContext>
-                <wire:GadgetContext rdf:ID="GadgetContext_2">
+                    <wire:widgetContextConcept>lockStatus</wire:widgetContextConcept>
+                </wire:WidgetContext>
+            </wire:hasWidgetContext>
+            <wire:hasWidgetContext>
+                <wire:WidgetContext rdf:ID="WidgetContext_2">
                     <dcterms:title>width</dcterms:title>
                     <wire:type>text</wire:type>
-                    <wire:gadgetContextConcept>widthInPixels</wire:gadgetContextConcept>
-                </wire:GadgetContext>
-            </wire:hasGadgetContext>
+                    <wire:widgetContextConcept>widthInPixels</wire:widgetContextConcept>
+                </wire:WidgetContext>
+            </wire:hasWidgetContext>
         </wire:Context>
     </wire:hasContext>
 
-</wire:Gadget>
+</wire:Widget>
 
 <foaf:Person rdf:about="http://creatoruri/">
     <foaf:name>admin</foaf:name>
