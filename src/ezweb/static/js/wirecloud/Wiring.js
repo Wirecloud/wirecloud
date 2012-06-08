@@ -147,6 +147,12 @@
         var connection, sourceConnectable, targetConnectable, operators, id,
             operator_info, i, old_operators;
 
+        if (status == null || status === '') {
+            this.status = null;
+            unload.call(this);
+            return;
+        }
+
         if (typeof status === 'string') {
             status = JSON.parse(status);
         }
@@ -171,7 +177,16 @@
             targetConnectable = findConnectable.call(this, connection.target);
             sourceConnectable.connect(targetConnectable);
         }
+
         this.status = status;
+    };
+
+    Wiring.prototype.save = function save() {
+        Wirecloud.io.makeRequest(Wirecloud.URLs.WIRING_ENTRY.evaluate({id: this.workspace.getId()}), {
+            method: 'PUT',
+            contentType: 'application/json',
+            postBody: Object.toJSON(this.status)
+        });
     };
 
     Wiring.prototype.destroy = function destroy() {

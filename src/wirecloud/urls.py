@@ -32,8 +32,11 @@
 
 from django.conf.urls.defaults import patterns, url
 from wirecloud.markets import views
+from wirecloud.wiring import views as wiring_views
 
 urlpatterns = patterns('wirecloud.views',
+
+    url(r'^workspace/(?P<workspace_id>\d+)/wiring$', wiring_views.WiringEntry(permitted_methods=('PUT',))),
 
     url(r'^markets/?$', views.MarketCollection(permitted_methods=('GET', 'POST'))),
     url(r'^market/(?P<market>[\w -]+)/?$', views.MarketEntry(permitted_methods=('PUT', 'DELETE'))),

@@ -216,6 +216,7 @@ if (!Wirecloud.ui) {
 
         workspace = opManager.activeWorkSpace; // FIXME this is the current way to obtain the current workspace
         workspace.wiring.load(this.serialize());
+        workspace.wiring.save();
 
         for (key in this.igadgets) {
             this.layout.getCenterContainer().removeChild(this.igadgets[key]);

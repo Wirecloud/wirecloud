@@ -165,6 +165,7 @@ function WorkSpace (workSpaceState) {
                 visibleTabId = this.initial_tab_id;
             }
 
+            this.wiring.load(this.workSpaceGlobalInfo.workspace.wiring);
             this.notebook.goToTab(this.tabInstances.get(visibleTabId));
             loading_tab.close();
 
