@@ -36,7 +36,7 @@ class MarketCollection(Resource):
         for market in Market.objects.all():
             result[market.name] = market.options
 
-            return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
     def create(self, request):
 
