@@ -167,6 +167,7 @@ var policy_lists = {{ policies|safe|default:"null" }};
 <script type="text/javascript" src="{{ STATIC_URL }}js/EzSteroidsAPI/EzSteroidsAPI.js"></script>
 {% include "wirecloud/views/js_includes.js" %}
 {% extra_javascripts "index" %}
+{% wirecloud_ajax_endpoints "index" %}
 {% endcompress %}
 
 {% block extra_scripts %}{% endblock %}
