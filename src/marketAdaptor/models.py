@@ -20,6 +20,7 @@
 
 from django.db import models
 
+
 class Marketplace(models.Model):
     name = models.CharField(max_length=50)
     uri = models.CharField(max_length=200)

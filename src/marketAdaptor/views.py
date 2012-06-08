@@ -19,10 +19,8 @@
 
 
 import json
-from django.utils.translation import ugettext as _
-from django.http import HttpResponse, HttpResponseServerError, HttpResponseBadRequest
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from commons.http_utils import download_http_content
 from marketAdaptor.marketadaptor import MarketAdaptor
 from commons.resource import Resource
 from commons.utils import json_encode
@@ -153,7 +151,7 @@ class StoreCollection(Resource):
         store_info['store_uri'] = request.POST['uri']
 
         try:
-            result = adaptor.add_store(store_info)
+            adaptor.add_store(store_info)
         except:
             return HttpResponse(status=502)
 
@@ -170,7 +168,7 @@ class StoreEntry(Resource):
         adaptor = MarketAdaptor(url)
 
         try:
-            result = adaptor.delete_store(store)
+            adaptor.delete_store(store)
         except:
             return HttpResponse(status=502)
 
