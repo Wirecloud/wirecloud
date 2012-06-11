@@ -155,6 +155,7 @@ OperatorTargetEndpoint.prototype.propagate = function propagate(newValue, option
 
 var OperatorSourceEndpoint = function OperatorSourceEndpoint(operator, meta) {
     Object.defineProperty(this, 'meta', {value: meta});
+    Object.defineProperty(this, 'name', {value: meta.name});
     Object.defineProperty(this, 'operator', {value: operator});
     Object.defineProperty(this, 'label', {value: meta.label});
     Object.defineProperty(this, 'description', {value: meta.description});
