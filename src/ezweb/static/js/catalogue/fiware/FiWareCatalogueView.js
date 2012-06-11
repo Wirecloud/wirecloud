@@ -186,7 +186,7 @@ FiWareCatalogueView.prototype.ui_commands.delete = function (resource, options) 
     };
 
     doRequest = function () {
-        this.fiWareCatalogue.delete(options);
+        this.fiWareCatalogue.deleteResource(options);
     };
 
     msg = interpolate(msg, context, true);

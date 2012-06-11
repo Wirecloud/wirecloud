@@ -19,211 +19,133 @@
  *
  */
 
-/*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50, prototypejs: true */
+/*global Constants, gettext, LayoutManagerFactory, LogManagerFactory, Wirecloud */
 
-var example_data = {"resources": 
-[{"vendor": "Morfeo", 
-"name": "Amazon", 
-"versions": [{ 
-"shortDescription": "Busqueda de productos en Amazon", 
-"longDescription": "", 
-"created":"2012-03-01",
-"modified":"2012-04-04",
-"uriImage": "http://demo.ezweb.morfeo-project.org/repository/amazon/amazon.jpg", 
-"version": "1.0", 
-"uriTemplate": "http://demo.ezweb.morfeo-project.com/repository/amazon/amazonGadget.xml",
-"legal":[{	"type":"TermsAndConditions",
-			"label": "Basic Legal Profile",
-			"description":"Terms and conditions for the use",
-			"clauses":[{"name":"Warranty",
-						"text":"We make no warranty of any kind, either express or implied"},
-						{"name":"Privacy and Data Protection",
-						 "text":"Your personal information and utilization data and \nmay share such data with third party service providers"}]}],
-"pricing":[{"label":"Price plan",
-			"description":"this is an example price plan",
-			"priceComponents":[{"title":"price component",
-								"description":"example price component",
-								"currency":"euros",
-								"value":"10",
-								"unit":"per month"},
-								{"title":"price component 2",
-								"description":"example price component 2",
-								"currency":"euros",
-								"value":"5",
-								"unit":"per month"}],
-	
-		
-			"taxes":[			{"title":"tax",
-								"description":"example tax over ths final price",
-								"currency":"euros",
-								"value":"5",
-								"unit":"per 10 downloads"}		 
-					]}],
-"sla":[{	"type":"GuaranteedState",
-			"name":"Number of service calls",
-			"description":"",
-			"slaExpresions":[{"name":"Number of calls limit",
-							  "description":"For demonstration purposes the number of calls to the services is restricted in order to avoid overloading the small demonstration installation",
-							  "variables":[{"label":"Number of calls",
-											"type":"QuantitativeValue",
-											"value":"1000",
-											"unit":"per day"},
-										{	"label":"Number of calls",
-											"type":"QuantitativeValue",
-											"value":"500",
-											"unit":"per day"}]}],
+(function () {
 
-			"obligatedParty":"provider"}]}]
-}, 
+    "use strict";
 
-{"vendor": "Morfeo", 
-"name": "Map Viewer", 
-"versions": [{
-"shortDescription": "Este gadget presenta la ubicacion en el plano de una determinada direccion o coordenadas UTM. Si se le pasa la precision, dibuja un circulo con el area seleccionada", 
-"longDescription":"",
-"created":"2012-03-01",
-"modified":"2012-04-04",
-"uriImage": "http://demo.ezweb.morfeo-project.org/repository/localizador/google_maps.jpg", 
-"version": "1.2", 
-"uriTemplate": "http://demo.ezweb.morfeo-project.com/repository/localizador/localizadorPequeno1.2.xml",
-"legal":[],
-"sla":[],
-"pricing":[]}]}]};
+    var FiWareCatalogue, _onSearchSuccess;
 
-var example2 = {"resources": [
-{"vendor":"Morfeo","type":"gadget","name":"Amazon","versions":[{"votes":{"user_vote":0,"popularity":"0","votes_number":0},"displayName":"Amazon","description":"Busqueda de productos en Amazon","tags":[],"author":"jmartin","uriImage":"http://demo.ezweb.morfeo-project.org/repository/amazon/amazon.jpg","capabilities":[],"uriWiki":"http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Amazon","ieCompatible":false,"added_by_user":false,"version":"1.0","id":1,"mail":"jjmr@tid.es","slots":[{"friendcode":"keyword"}],"events":[],"uriTemplate":"http://demo.ezweb.morfeo-project.com/repository/amazon/amazonGadget.xml"}]}
-]};
-
-var FiWareCatalogue = function (catalogue) {
-	this.catalogue = catalogue;
-};
-
-FiWareCatalogue.prototype = new StyledElements.Alternative();
-
-FiWareCatalogue.prototype._onSearchSuccess = function(transport){
-	var raw_data;
-	raw_data = JSON.parse(transport.responseText);
-	this.callback(raw_data);
-}
-
-FiWareCatalogue.prototype.search = function (callback, options) {
-	var url;
-
-	if (options.search_criteria == '' && this.catalogue.getCurrentStore() == 'All stores'){
-		url = '/marketAdaptor/marketplace/' + this.catalogue.getLabel() + '/' + 'resources';
-	}else if (options.search_criteria != '' && this.catalogue.getCurrentStore() == 'All stores'){
-		url = '/marketAdaptor/marketplace/' + this.catalogue.getLabel() + '/search/' + options.search_criteria;
-	}else if (options.search_criteria == '' && this.catalogue.getCurrentStore() != 'All stores'){
-		url = '/marketAdaptor/marketplace/'+ this.catalogue.getLabel() + '/' + this.catalogue.getCurrentStore() + '/resources/';
-	}else{
-		url = '/marketAdaptor/marketplace/'+ this.catalogue.getLabel() + '/search/' + this.catalogue.getCurrentStore() + '/' + options.search_criteria;
-	}	
-
-	context ={
-		'callback':callback
-	};
+    _onSearchSuccess = function _onSearchSuccess(transport) {
+        var raw_data = JSON.parse(transport.responseText);
+        this.callback(raw_data);
+    };
 
 
-	Wirecloud.io.makeRequest(url, {
-        method: 'GET',
-        onSuccess: this._onSearchSuccess.bind(context)
-    });
-};
+    FiWareCatalogue = function FiWareCatalogue(catalogue) {
+        this.catalogue = catalogue;
+    };
 
-FiWareCatalogue.prototype.delete = function (options) {
-	var url;
+    FiWareCatalogue.prototype.search = function search(callback, options) {
+        var url;
 
-	url = '/marketAdaptor/marketplace/'+ this.catalogue.getLabel()+ '/' + options.store + '/' + options.name;
-
-	LayoutManagerFactory.getInstance()._startComplexTask(gettext("Deleting resource from  marketplace"), 1);
-    LayoutManagerFactory.getInstance().logSubTask(gettext('Deleting resource from marketplace'));
-
-	Wirecloud.io.makeRequest(url, {
-        method: 'DELETE',
-        onSuccess: function (transport) {
-            LayoutManagerFactory.getInstance().logSubTask(gettext('Resource deleted successfully'));
-            LayoutManagerFactory.getInstance().logStep('');
-			this.catalogue.refresh_search_results();
-        }.bind(this),
-		onFailure: function (transport) {
-            var msg = LogManagerFactory.getInstance().formatError(gettext("Error deleting resource: %(errorMsg)s."), transport);
-            LogManagerFactory.getInstance().log(msg);
-            LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-            LayoutManagerFactory.getInstance().log(msg);
-        },
-		onComplete: function () {
-            LayoutManagerFactory.getInstance()._notifyPlatformReady();
-			this.catalogue.home();
-        }.bind(this)
-    });
-}
-
-FiWareCatalogue.prototype.getStores = function(callback){
-	var url;
-	url='/marketAdaptor/marketplace/' + this.catalogue.getLabel() +'/stores'
-
-	context ={
-		'callback':callback
-	};
-
-	Wirecloud.io.makeRequest(url, {
-        method: 'GET',
-		onSuccess: this._onSearchSuccess.bind(context)
-	});
-
-};
-
-FiWareCatalogue.prototype.delete_store = function (store, callback) {
-	var url = '/marketAdaptor/marketplace/'+ this.catalogue.getLabel() + '/stores/' + store;
-
-	LayoutManagerFactory.getInstance()._startComplexTask(gettext("Deleting store from  marketplace"), 1);
-    LayoutManagerFactory.getInstance().logSubTask(gettext('Deleting store from marketplace'));
-
-	Wirecloud.io.makeRequest(url, {
-		method: 'DELETE',
-		onSuccess: function (transport) {
-            LayoutManagerFactory.getInstance().logSubTask(gettext('Store deleted successfully'));
-            LayoutManagerFactory.getInstance().logStep('');
-            callback();
-        },
-		onFailure: function (transport) {
-            var msg = LogManagerFactory.getInstance().formatError(gettext("Error deleting store: %(errorMsg)s."), transport);
-            LogManagerFactory.getInstance().log(msg);
-            LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-            LayoutManagerFactory.getInstance().log(msg);
-        },
-		onComplete: function () {
-            LayoutManagerFactory.getInstance()._notifyPlatformReady();
+        if (options.search_criteria === '' && this.catalogue.getCurrentStore() === 'All stores') {
+            url = '/marketAdaptor/marketplace/' + this.catalogue.getLabel() + '/' + 'resources';
+        } else if (options.search_criteria !== '' && this.catalogue.getCurrentStore() === 'All stores') {
+            url = '/marketAdaptor/marketplace/' + this.catalogue.getLabel() + '/search/' + options.search_criteria;
+        } else if (options.search_criteria === '' && this.catalogue.getCurrentStore() !== 'All stores') {
+            url = '/marketAdaptor/marketplace/' + this.catalogue.getLabel() + '/' + this.catalogue.getCurrentStore() + '/resources/';
+        } else {
+            url = '/marketAdaptor/marketplace/' + this.catalogue.getLabel() + '/search/' + this.catalogue.getCurrentStore() + '/' + options.search_criteria;
         }
-	});
-};
 
-FiWareCatalogue.prototype.add_store = function (store, store_uri,callback) {
-	var url;
-	url = '/marketAdaptor/marketplace/' + this.catalogue.getLabel() +'/stores/';
+        Wirecloud.io.makeRequest(url, {
+            method: 'GET',
+            onSuccess: _onSearchSuccess.bind({'callback': callback})
+        });
+    };
 
-	LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding store to  marketplace"), 1);
-    LayoutManagerFactory.getInstance().logSubTask(gettext('Adding store to marketplace'));
+    FiWareCatalogue.prototype.deleteResource = function deleteResource(options) {
+        var url;
 
-	Wirecloud.io.makeRequest(url, {
-		method: 'POST',
-		parameters: {'uri': store_uri,
-					 'store':store},
+        url = '/marketAdaptor/marketplace/' + this.catalogue.getLabel() + '/' + options.store + '/' + options.name;
 
-		onSuccess: function (transport) {
-            LayoutManagerFactory.getInstance().logSubTask(gettext('Store added successfully'));
-            LayoutManagerFactory.getInstance().logStep('');
-			callback();
-        },
-		onFailure: function (transport) {
-            var msg = LogManagerFactory.getInstance().formatError(gettext("Error adding store: %(errorMsg)s."), transport);
-            LogManagerFactory.getInstance().log(msg);
-            LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-            LayoutManagerFactory.getInstance().log(msg);
-        },
-		onComplete: function () {
-            LayoutManagerFactory.getInstance()._notifyPlatformReady();
-        }
-	});
+        LayoutManagerFactory.getInstance()._startComplexTask(gettext("Deleting resource from marketplace"), 1);
+        LayoutManagerFactory.getInstance().logSubTask(gettext('Deleting resource from marketplace'));
 
-};
+        Wirecloud.io.makeRequest(url, {
+            method: 'DELETE',
+            onSuccess: function (transport) {
+                LayoutManagerFactory.getInstance().logSubTask(gettext('Resource deleted successfully'));
+                LayoutManagerFactory.getInstance().logStep('');
+                this.catalogue.refresh_search_results();
+            }.bind(this),
+            onFailure: function (transport) {
+                var msg = LogManagerFactory.getInstance().formatError(gettext("Error deleting resource: %(errorMsg)s."), transport);
+                LogManagerFactory.getInstance().log(msg);
+                LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                LayoutManagerFactory.getInstance().log(msg);
+            },
+            onComplete: function () {
+                LayoutManagerFactory.getInstance()._notifyPlatformReady();
+                this.catalogue.home();
+            }.bind(this)
+        });
+    };
+
+    FiWareCatalogue.prototype.getStores = function getStores(callback) {
+        var url = '/marketAdaptor/marketplace/' + this.catalogue.getLabel() + '/stores';
+
+        Wirecloud.io.makeRequest(url, {
+            method: 'GET',
+            onSuccess: _onSearchSuccess.bind({'callback': callback})
+        });
+
+    };
+
+    FiWareCatalogue.prototype.delete_store = function delete_store(store, callback) {
+        var url = '/marketAdaptor/marketplace/' + this.catalogue.getLabel() + '/stores/' + store;
+
+        LayoutManagerFactory.getInstance()._startComplexTask(gettext("Deleting store from marketplace"), 1);
+        LayoutManagerFactory.getInstance().logSubTask(gettext('Deleting store from marketplace'));
+
+        Wirecloud.io.makeRequest(url, {
+            method: 'DELETE',
+            onSuccess: function (transport) {
+                LayoutManagerFactory.getInstance().logSubTask(gettext('Store deleted successfully'));
+                LayoutManagerFactory.getInstance().logStep('');
+                callback();
+            },
+            onFailure: function (transport) {
+                var msg = LogManagerFactory.getInstance().formatError(gettext("Error deleting store: %(errorMsg)s."), transport);
+                LogManagerFactory.getInstance().log(msg);
+                LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                LayoutManagerFactory.getInstance().log(msg);
+            },
+            onComplete: function () {
+                LayoutManagerFactory.getInstance()._notifyPlatformReady();
+            }
+        });
+    };
+
+    FiWareCatalogue.prototype.add_store = function (store, store_uri, callback) {
+        var url;
+        url = '/marketAdaptor/marketplace/' + this.catalogue.getLabel() + '/stores/';
+
+        LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding store to  marketplace"), 1);
+        LayoutManagerFactory.getInstance().logSubTask(gettext('Adding store to marketplace'));
+
+        Wirecloud.io.makeRequest(url, {
+            method: 'POST',
+            parameters: {'uri': store_uri, 'store': store},
+            onSuccess: function (transport) {
+                LayoutManagerFactory.getInstance().logSubTask(gettext('Store added successfully'));
+                LayoutManagerFactory.getInstance().logStep('');
+                callback();
+            },
+            onFailure: function (transport) {
+                var msg = LogManagerFactory.getInstance().formatError(gettext("Error adding store: %(errorMsg)s."), transport);
+                LogManagerFactory.getInstance().log(msg);
+                LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                LayoutManagerFactory.getInstance().log(msg);
+            },
+            onComplete: function () {
+                LayoutManagerFactory.getInstance()._notifyPlatformReady();
+            }
+        });
+
+    };
+
+    window.FiWareCatalogue = FiWareCatalogue;
+})();
