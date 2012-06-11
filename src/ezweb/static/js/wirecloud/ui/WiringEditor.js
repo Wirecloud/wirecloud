@@ -202,8 +202,6 @@ if (!Wirecloud.ui) {
             arrow.addClassName('arrow');
             arrow.setPullerStart(connection.pullerStart);
             arrow.setPullerEnd(connection.pullerEnd);
-
-            this.arrows.push(arrow);
         }
     };
 

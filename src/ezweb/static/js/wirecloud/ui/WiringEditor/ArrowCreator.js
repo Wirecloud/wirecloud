@@ -72,13 +72,15 @@
             // we can draw invert arrows from the end to the start
             if (initAnchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
                 this.invert = true;
+                currentSource = null;
+                currentTarget = initAnchor;
                 theArrow.setEnd(tmpPos, initAnchor);
             } else {
                 this.invert = false;
+                currentSource = initAnchor;
+                currentTarget = null;
                 theArrow.setStart(tmpPos, initAnchor);
             }
-            currentSource = initAnchor;
-            currentTarget = null;
             document.addEventListener("mousemove", this.drag, false);
             onStart(draggable, data);
             return false;
@@ -113,11 +115,12 @@
             }
             if (fAnchor != null) {
                 if (!this.invert) {
+                    currentTarget = fAnchor;
                     theArrow.setEnd(fAnchor.getCoordinates(layer), fAnchor);
                 } else {
+                    currentSource = fAnchor;
                     theArrow.setStart(fAnchor.getCoordinates(layer), fAnchor);
                 }
-                currentTarget = fAnchor;
                 if (isVal(currentSource, currentTarget)) {
                     theArrow.calculateHighlight();
                     theArrow.redraw();
@@ -154,9 +157,24 @@
      * a valid connection or not.
      */
     var isVal = function isVal(currentSource, currentTarget) {
-        return (currentSource !== currentTarget) &&
-            (((currentSource instanceof Wirecloud.ui.WiringEditor.TargetAnchor) && (currentTarget instanceof Wirecloud.ui.WiringEditor.SourceAnchor)) ||
-                ((currentTarget instanceof Wirecloud.ui.WiringEditor.TargetAnchor) && (currentSource instanceof Wirecloud.ui.WiringEditor.SourceAnchor)));
+        var arrows, i;
+
+        if (currentSource === currentTarget) {
+            return false;
+        }
+
+        if (!(currentSource instanceof Wirecloud.ui.WiringEditor.SourceAnchor) || !(currentTarget instanceof Wirecloud.ui.WiringEditor.TargetAnchor)) {
+            return false;
+        }
+
+        arrows = currentSource.getArrows();
+        for (i = 0; i < arrows.length; i++) {
+            if (arrows[i].endAnchor === currentTarget) {
+                return false;
+            }
+        }
+
+        return true;
     };
 
     /**
