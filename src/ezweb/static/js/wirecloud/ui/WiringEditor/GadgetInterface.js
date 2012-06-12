@@ -31,25 +31,28 @@
     /*
      * GadgetInterface Class
      */
-    var GadgetInterface = function GadgetInterface(wiringEditor, igadget, manager) {
+    var GadgetInterface = function GadgetInterface(wiringEditor, igadget, manager, isMenubarRef) {
         var variables, variable, desc, label, name, anchorContext;
         this.igadget = igadget;
         this.wiringEditor = wiringEditor;
 
         Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.igadget.name, manager, 'igadget');
-        variables = opManager.activeWorkSpace.varManager.getIGadgetVariables(igadget.getId());
-         //sources & targets anchors (sourceAnchor and targetAnchor)
-        for (name in variables) {
-            variable = variables[name];
-            desc = variable.vardef.description;
-            label = variable.vardef.label;
-            //each Event
-            if (variable.vardef.aspect === Variable.prototype.EVENT) {
-                anchorContext = {'data': variables[name], 'iObject': this};
-                this.addSource(label, desc, variable.vardef.name, anchorContext);
-            } else if (variable.vardef.aspect === Variable.prototype.SLOT) {
-                anchorContext = {'data': variables[name], 'iObject': this};
-                this.addTarget(label, desc, variable.vardef.name, anchorContext);
+
+        if (!isMenubarRef) {
+            variables = opManager.activeWorkSpace.varManager.getIGadgetVariables(igadget.getId());
+            //sources & targets anchors (sourceAnchor and targetAnchor)
+            for (name in variables) {
+                variable = variables[name];
+                desc = variable.vardef.description;
+                label = variable.vardef.label;
+                //each Event
+                if (variable.vardef.aspect === Variable.prototype.EVENT) {
+                    anchorContext = {'data': variables[name], 'iObject': this};
+                    this.addSource(label, desc, variable.vardef.name, anchorContext);
+                } else if (variable.vardef.aspect === Variable.prototype.SLOT) {
+                    anchorContext = {'data': variables[name], 'iObject': this};
+                    this.addTarget(label, desc, variable.vardef.name, anchorContext);
+                }
             }
         }
     };

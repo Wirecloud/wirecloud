@@ -31,26 +31,28 @@
     /**
      * OperatorInterface Class
      */
-    var OperatorInterface = function OperatorInterface(wiringEditor, ioperator, manager) {
+    var OperatorInterface = function OperatorInterface(wiringEditor, ioperator, manager, isMenubarRef) {
         var outputs, inputs, desc, label, key, anchorContext;
         this.ioperator = ioperator;
         this.wiringEditor = wiringEditor;
 
         Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.ioperator.name, manager, 'ioperator');
-        inputs = ioperator.inputs;
-        outputs = ioperator.outputs;
-        //sources & targets anchors (sourceAnchor and targetAnchor)
-        for (key in outputs) {
-            desc = outputs[key].description;
-            label = outputs[key].label;
-            anchorContext = {'data': outputs[key], 'iObject': this};
-            this.addSource(label, desc, outputs[key].name, anchorContext);
-        }
-        for (key in inputs) {
-            desc = inputs[key].description;
-            label = inputs[key].label;
-            anchorContext = {'data': inputs[key], 'iObject': this};
-            this.addTarget(label, desc, inputs[key].name, anchorContext);
+        if (!isMenubarRef) {
+            inputs = ioperator.inputs;
+            outputs = ioperator.outputs;
+            //sources & targets anchors (sourceAnchor and targetAnchor)
+            for (key in outputs) {
+                desc = outputs[key].description;
+                label = outputs[key].label;
+                anchorContext = {'data': outputs[key], 'iObject': this};
+                this.addSource(label, desc, outputs[key].name, anchorContext);
+            }
+            for (key in inputs) {
+                desc = inputs[key].description;
+                label = inputs[key].label;
+                anchorContext = {'data': inputs[key], 'iObject': this};
+                this.addTarget(label, desc, inputs[key].name, anchorContext);
+            }
         }
     };
 

@@ -33,6 +33,7 @@ if (!Wirecloud.ui) {
      * Constructor
      *************************************************************************/
     var WiringEditor = function WiringEditor(id, options) {
+        var widgetIcon, operatorIcon;
         options['class'] = 'wiring_editor';
         StyledElements.Alternative.call(this, id, options);
 
@@ -42,7 +43,17 @@ if (!Wirecloud.ui) {
         this.layout = new StyledElements.BorderLayout();
         this.appendChild(this.layout);
 
-        this.layout.getNorthContainer().addClassName('menubar');
+        this.layout.getWestContainer().addClassName('menubar');
+        this.accordion = new StyledElements.Accordion();
+        this.mini_widget_section = this.accordion.createContainer({title: 'Widgets'});
+        widgetIcon = document.createElement("span");
+        widgetIcon.addClassName("widgetsIcon");
+        this.mini_widget_section.titleContainer.wrapperElement.appendChild(widgetIcon);
+        this.mini_operator_section = this.accordion.createContainer({title: 'Operators'});
+        operatorIcon = document.createElement("span");
+        operatorIcon.addClassName("operatorsIcon");
+        this.mini_operator_section.titleContainer.wrapperElement.appendChild(operatorIcon);
+        this.layout.getWestContainer().appendChild(this.accordion);
         this.layout.getCenterContainer().addClassName('grid');
 
         // general highlight button
@@ -118,7 +129,7 @@ if (!Wirecloud.ui) {
     var renewInterface = function renewInterface() {
         var igadgets, igadget, key, i, gadget_interface, minigadget_interface, ioperators, operator,
             operator_interface, operator_instance, operatorKeys, connection, startAnchor, endAnchor,
-            arrow, workspace, WiringStatus;
+            arrow, workspace, WiringStatus, isMenubarRef;
 
         workspace = opManager.activeWorkSpace; // FIXME this is the current way to obtain the current workspace
         WiringStatus = workspace.wiring.status;
@@ -158,9 +169,10 @@ if (!Wirecloud.ui) {
         for (i = 0; i < igadgets.length; i++) {
             igadget = igadgets[i];
             // mini widgets
-            minigadget_interface = new Wirecloud.ui.WiringEditor.GadgetInterface(this, igadget, this);
+            isMenubarRef = true;
+            minigadget_interface = new Wirecloud.ui.WiringEditor.GadgetInterface(this, igadget, this, isMenubarRef);
             this.mini_widgets[igadget.getId()] = minigadget_interface;
-            this.layout.getNorthContainer().appendChild(minigadget_interface);
+            this.mini_widget_section.appendChild(minigadget_interface);
             // widget
             if (igadget.getId() in WiringStatus.views[0].igadgets) {
                 minigadget_interface.disable();
@@ -172,9 +184,10 @@ if (!Wirecloud.ui) {
         // mini operators
         ioperators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
         for (key in ioperators) {
+            isMenubarRef = true;
             operator = ioperators[key];
-            operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, operator, this);
-            this.layout.getNorthContainer().appendChild(operator_interface);
+            operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, operator, this, isMenubarRef);
+            this.mini_operator_section.appendChild(operator_interface);
         }
 
         // operators
@@ -226,7 +239,8 @@ if (!Wirecloud.ui) {
         }
         this.canvas.clear();
 
-        this.layout.getNorthContainer().clear();
+        this.mini_widget_section.clear();
+        this.mini_operator_section.clear();
         this.arrows = [];
         this.mini_widgets = {};
         this.igadgets = {};
@@ -264,14 +278,14 @@ if (!Wirecloud.ui) {
         for (key in this.igadgets) {
             gadget = this.igadgets[key];
             pos = gadget.getStylePosition();
-            WiringStatus.views[0].igadgets[gadget.getIGadget().getId()] = pos;
+            WiringStatus.views[0].igadgets[key] = pos;
         }
 
-        for (i in this.ioperators) {
-            operator_interface = this.ioperators[i];
+        for (key in this.ioperators) {
+            operator_interface = this.ioperators[key];
             pos = operator_interface.getStylePosition();
-            WiringStatus.operators[operator_interface.getId()] = {"name" : operator_interface.getName(), 'id' : operator_interface.getId()};
-            WiringStatus.views[0].operators[operator_interface.getId()] = pos;
+            WiringStatus.operators[key] = {"name" : operator_interface.getName(), 'id' : key};
+            WiringStatus.views[0].operators[key] = pos;
         }
 
         for (i = 0; i < this.arrows.length; i++) {

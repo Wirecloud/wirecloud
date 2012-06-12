@@ -1009,3 +1009,29 @@ div.styled_numeric_field div.numeric_bottom_button {
 .error_desc .cause_desc {
   margin-left: 1em;
 }
+
+.styled_expander {
+    border: 1px solid #8AAD3E;
+    margin: 3px;
+}
+
+.styled_expander .title {
+    background: #F3F4EC;
+    padding: 1.5ex;
+    font-size: 16px;
+    font-style: italic;
+    text-shadow: 2px 2px 3px #999999;
+}
+
+.styled_expander .contents {
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    padding: 0;
+}
+
+.styled_expander.expanded .contents {
+    width: auto;
+    height: auto;
+    padding: 1ex;
+}
