@@ -726,9 +726,8 @@ EzWebEffectBase.findDragboardElement = function (element) {
  * @param data {Object} context 
  */
 function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, canBeDragged) {
-    var xDelta = 0, yDelta = 0;
-    var xStart = 0, yStart = 0;
-    var yScroll = 0;
+    var xStart = 0, yStart = 0, xScrollStart = 0, yScrollStart = 0;
+    var xScrollDelta, yScrollDelta;
     var xOffset = 0, yOffset = 0;
     var x, y;
     var dragboardCover;
@@ -767,16 +766,12 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
 
         var screenX = parseInt(e.screenX, 10);
         var screenY = parseInt(e.screenY, 10);
-        xDelta = xStart - screenX;
-        yDelta = yStart - screenY;
-        xStart = screenX;
-        yStart = screenY;
-        y = y - yDelta;
-        x = x - xDelta;
-        draggableElement.style.top = y + 'px';
-        draggableElement.style.left = x + 'px';
+        var xDelta = screenX - xStart - xScrollDelta;
+        var yDelta = screenY - yStart - yScrollDelta;
+        draggableElement.style.top = (y + yDelta) + 'px';
+        draggableElement.style.left = (x + xDelta) + 'px';
 
-        onDrag(e, draggable, data, x + xOffset, y + yOffset);
+        onDrag(e, draggable, data, x + xDelta + xOffset, y + yDelta + yOffset);
     };
 
     // initiate the drag
@@ -828,7 +823,10 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
         dragboardCover.style.width = "100%";
         dragboardCover.style.height = dragboard.scrollHeight + "px";
 
-        yScroll = parseInt(dragboard.scrollTop, 15);
+        yScrollStart = parseInt(dragboard.scrollTop, 10);
+        yScrollDelta = 0;
+        xScrollStart = parseInt(dragboard.scrollLeft, 10);
+        xScrollDelta = 0;
 
         dragboard.addEventListener("scroll", scroll, true);
 
@@ -844,14 +842,25 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
         var dragboard = dragboardCover.parentNode;
         dragboardCover.style.height = dragboard.scrollHeight + "px";
         var scrollTop = parseInt(dragboard.scrollTop, 10);
-        var scrollDelta = yScroll - scrollTop;
-        y -= scrollDelta;
-        yScroll = scrollTop;
 
-        draggableElement.style.top = y + 'px';
-        draggableElement.style.left = x + 'px';
+        // yScrollDeltaDiff = diff between old scroll y delta and the new scroll y delta
+        var oldYDelta = yScrollDelta;
+        yScrollDelta = yScrollStart - scrollTop;
+        var yScrollDeltaDiff = yScrollDelta - oldYDelta;
 
-        onDrag(e, draggable, data, x + xOffset, y + yOffset);
+        var scrollLeft = parseInt(dragboard.scrollLeft, 10);
+        // xScrollDeltaDiff = diff between old scroll x delta and the new scroll x delta
+        var oldXDelta = xScrollDelta;
+        xScrollDelta = xScrollStart - scrollLeft;
+        var xScrollDeltaDiff = xScrollDelta - oldXDelta;
+
+        // TODO
+        var y = draggableElement.style.top === "" ? 0 : parseInt(draggableElement.style.top, 10);
+        var x = draggableElement.style.left === "" ? 0 : parseInt(draggableElement.style.left, 10);
+        draggableElement.style.top = (y - yScrollDeltaDiff) + 'px';
+        draggableElement.style.left = (x - xScrollDeltaDiff) + 'px';
+
+        onDrag(e, draggable, data, x - xScrollDeltaDiff + xOffset, y - yScrollDeltaDiff + yOffset);
     };
 
     // add mousedown event listener
