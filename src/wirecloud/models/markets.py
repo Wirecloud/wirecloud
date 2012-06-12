@@ -17,13 +17,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.contrib.auth.models import User, Group
 from django.db import models
 from django.utils.translation import ugettext as _
 
 
 class Market(models.Model):
+    user = models.ForeignKey(User, verbose_name=_('User'), blank=True, null=True)
     name = models.CharField(_('Name'), max_length=50)
     options = models.TextField(_('Options'))
 
     class Meta:
+	unique_together = ('user', 'name')
         app_label = 'wirecloud'
