@@ -63,9 +63,6 @@ if (!Wirecloud.ui) {
                     this.show_upload_view();
                 }.bind(current_catalogue)));
             }
-        } else {
-            items.push(new StyledElements.MenuItem(gettext('No marketplace registered'), function () { }));
-            items.push(new StyledElements.Separator());
         }
 
         items.push(new StyledElements.MenuItem(gettext('Add new marketplace'), function () {

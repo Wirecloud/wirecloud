@@ -26,7 +26,7 @@ var FiWareStoreListItems = function (view) {
     StyledElements.DynamicMenuItems.call(this);
 
     this.view = view;
-    // This function changes the current store when a store is selected in storeMenu 
+    // This function changes the current store when a store is selected in storeMenu
     this.handler = function (store) {
         this.currentStore = store;
         this.refresh_search_results();
@@ -38,46 +38,43 @@ FiWareStoreListItems.prototype = new StyledElements.DynamicMenuItems();
 FiWareStoreListItems.prototype.build = function (store_info) {
     var workspace_keys, i, items, workspace;
     items = [];
-   
+
     if (this.view.number_of_stores > 0) {
         items.push(new StyledElements.MenuItem(gettext('All stores'), function () {
             this.currentStore = 'All stores';
             this.refresh_search_results();
             LayoutManagerFactory.getInstance().header.refresh();
         }.bind(this.view)));
-    } else {
-        items.push(new StyledElements.MenuItem(gettext('No stores registered'), function () { }));
-    }
-    
-    items.push(new StyledElements.Separator());
- 
-    for (i = 0; i < store_info.length; i += 1) {
-        items.push(new StyledElements.MenuItem(
-        store_info[i].name,
-            this.handler.bind(this.view, store_info[i].name)
-        ));
-    }
-    
-    if (this.view.number_of_stores > 0) {
-        items.push(new StyledElements.Separator());
-    }
 
-    // This is used to delete the current store and update store list
-    if (this.view.currentStore !== 'All stores' && this.view.number_of_stores > 0) {
-
-        items.push(new StyledElements.MenuItem(gettext('Delete store'), function () {
-            //First ask if the user really wants to remove the store
-            LayoutManagerFactory.getInstance().showYesNoDialog(gettext('Do you really want to remove the store ') + this.currentStore + '?', 
-            function () {
-                this.fiWareCatalogue.delete_store(this.currentStore, this.refresh_store_info.bind(this));
-                this.currentStore = 'All stores';
-                this.number_of_stores -= 1;
-            }.bind(this));
-        }.bind(this.view)));
-    
-        items.push(new StyledElements.MenuItem(gettext('Publish service'),
-        this.view.createUserCommand('publish')));
         items.push(new StyledElements.Separator());
+
+        for (i = 0; i < store_info.length; i += 1) {
+            items.push(new StyledElements.MenuItem(
+                store_info[i].name,
+                this.handler.bind(this.view, store_info[i].name)
+            ));
+        }
+
+        items.push(new StyledElements.Separator());
+
+
+        // This is used to delete the current store and update store list
+        if (this.view.currentStore !== 'All stores') {
+
+            items.push(new StyledElements.MenuItem(gettext('Delete store'), function () {
+                //First ask if the user really wants to remove the store
+                LayoutManagerFactory.getInstance().showYesNoDialog(gettext('Do you really want to remove the store ') + this.currentStore + '?',
+                function () {
+                    this.fiWareCatalogue.delete_store(this.currentStore, this.refresh_store_info.bind(this));
+                    this.currentStore = 'All stores';
+                    this.number_of_stores -= 1;
+                }.bind(this));
+            }.bind(this.view)));
+
+            items.push(new StyledElements.MenuItem(gettext('Publish service'),
+            this.view.createUserCommand('publish')));
+            items.push(new StyledElements.Separator());
+        }
     }
 
     // To add a new store is necesary to have a form in order to take the information
@@ -100,12 +97,12 @@ FiWareStoreListItems.prototype.build = function (store_info) {
 
         // Form data is sent to server
         menu.executeOperation = function (data) {
-            
+
             if (this.number_of_stores === 0) {
                 this.currentStore = 'All stores';
             }
 
-            this.fiWareCatalogue.add_store(data['label'], data['uri'], this.refresh_store_info.bind(this));
+            this.fiWareCatalogue.add_store(data.label, data.uri, this.refresh_store_info.bind(this));
         }.bind(this);
 
         menu.show();
