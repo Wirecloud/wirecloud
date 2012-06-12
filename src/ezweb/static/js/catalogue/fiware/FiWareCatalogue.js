@@ -18,7 +18,6 @@
  *     <http://www.gnu.org/licenses/>.
  *
  */
-
 /*global Constants, gettext, LayoutManagerFactory, LogManagerFactory, Wirecloud */
 
 (function () {
@@ -33,21 +32,21 @@
     };
 
 
-    FiWareCatalogue = function FiWareCatalogue(catalogue) {
-        this.catalogue = catalogue;
+    FiWareCatalogue = function FiWareCatalogue(market_name) {
+        this.market_name = market_name;
     };
 
     FiWareCatalogue.prototype.search = function search(callback, options) {
         var url;
 
-        if (options.search_criteria === '' && this.catalogue.getCurrentStore() === 'All stores') {
-            url = '/marketAdaptor/marketplace/' + this.catalogue.getLabel() + '/' + 'resources';
-        } else if (options.search_criteria !== '' && this.catalogue.getCurrentStore() === 'All stores') {
-            url = '/marketAdaptor/marketplace/' + this.catalogue.getLabel() + '/search/' + options.search_criteria;
-        } else if (options.search_criteria === '' && this.catalogue.getCurrentStore() !== 'All stores') {
-            url = '/marketAdaptor/marketplace/' + this.catalogue.getLabel() + '/' + this.catalogue.getCurrentStore() + '/resources/';
+        if (options.search_criteria === '' && options.store === 'All stores') {
+            url = Wirecloud.URLs.FIWARE_RESOURCES_COLLECTION.evaluate({market: this.market_name});
+        } else if (options.search_criteria !== '' && options.store === 'All stores') {
+            url = Wirecloud.URLs.FIWARE_FULL_SEARCH.evaluate({market: this.market_name, search_string: options.search_criteria});
+        } else if (options.search_criteria === '' && options.store !== 'All stores') {
+            url = Wirecloud.URLs.FIWARE_STORE_RESOURCES_COLLECTION.evaluate({market: this.market_name, store: options.store});
         } else {
-            url = '/marketAdaptor/marketplace/' + this.catalogue.getLabel() + '/search/' + this.catalogue.getCurrentStore() + '/' + options.search_criteria;
+            url = Wirecloud.URLs.FIWARE_STORE_SEARCH.evaluate({market: this.market_name, store: options.store, search_string: options.search_criteria});
         }
 
         Wirecloud.io.makeRequest(url, {
@@ -59,7 +58,7 @@
     FiWareCatalogue.prototype.deleteResource = function deleteResource(options) {
         var url;
 
-        url = '/marketAdaptor/marketplace/' + this.catalogue.getLabel() + '/' + options.store + '/' + options.name;
+        url = Wirecloud.URLs.FIWARE_RESOURCE_ENTRY.evaluate({market: this.market_name, store: options.store, entry: options.name});
 
         LayoutManagerFactory.getInstance()._startComplexTask(gettext("Deleting resource from marketplace"), 1);
         LayoutManagerFactory.getInstance().logSubTask(gettext('Deleting resource from marketplace'));
@@ -69,7 +68,9 @@
             onSuccess: function (transport) {
                 LayoutManagerFactory.getInstance().logSubTask(gettext('Resource deleted successfully'));
                 LayoutManagerFactory.getInstance().logStep('');
-                this.catalogue.refresh_search_results();
+                if (typeof options.onSuccess === 'function') {
+                    options.onSuccess();
+                }
             }.bind(this),
             onFailure: function (transport) {
                 var msg = LogManagerFactory.getInstance().formatError(gettext("Error deleting resource: %(errorMsg)s."), transport);
@@ -79,13 +80,15 @@
             },
             onComplete: function () {
                 LayoutManagerFactory.getInstance()._notifyPlatformReady();
-                this.catalogue.home();
+                if (typeof options.onComplete === 'function') {
+                    options.onComplete();
+                }
             }.bind(this)
         });
     };
 
     FiWareCatalogue.prototype.getStores = function getStores(callback) {
-        var url = '/marketAdaptor/marketplace/' + this.catalogue.getLabel() + '/stores';
+        var url = Wirecloud.URLs.FIWARE_STORE_COLLECTION.evaluate({market: this.market_name});
 
         Wirecloud.io.makeRequest(url, {
             method: 'GET',
@@ -95,7 +98,7 @@
     };
 
     FiWareCatalogue.prototype.delete_store = function delete_store(store, callback) {
-        var url = '/marketAdaptor/marketplace/' + this.catalogue.getLabel() + '/stores/' + store;
+        var url = Wirecloud.URLs.FIWARE_STORE_ENTRY.evaluate({market: this.market_name, store: store});
 
         LayoutManagerFactory.getInstance()._startComplexTask(gettext("Deleting store from marketplace"), 1);
         LayoutManagerFactory.getInstance().logSubTask(gettext('Deleting store from marketplace'));
@@ -121,7 +124,7 @@
 
     FiWareCatalogue.prototype.add_store = function (store, store_uri, callback) {
         var url;
-        url = '/marketAdaptor/marketplace/' + this.catalogue.getLabel() + '/stores/';
+        url = Wirecloud.URLs.FIWARE_STORE_COLLECTION.evaluate({market: this.market_name});
 
         LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding store to  marketplace"), 1);
         LayoutManagerFactory.getInstance().logSubTask(gettext('Adding store to marketplace'));

@@ -57,6 +57,9 @@ CatalogueSearchView.prototype._search = function (event) {
         'starting_page': 1,
         'resources_per_page': $('results_per_page').value
     };
+    if (typeof this.catalogue.getCurrentSearchContext === 'function') {
+        options = EzWebExt.merge(options, this.catalogue.getCurrentSearchContext());
+    }
 
     this.catalogue.search(this.resource_painter.paint.bind(this.resource_painter), options);
 };

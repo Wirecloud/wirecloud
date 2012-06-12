@@ -20,7 +20,7 @@
  */
 
 /*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50, prototypejs: true */
-/*global EzWebExt, gettext, StyledElements*/
+/*global EzWebExt, gettext, StyledElements, LayoutManagerFactory, Wirecloud, LogManagerFactory, Constants*/
 
 var FiWareCataloguePublishView = function (id, options) {
     options.class = 'fiware_publish_view';
@@ -37,8 +37,8 @@ var FiWareCataloguePublishView = function (id, options) {
 };
 FiWareCataloguePublishView.prototype = new StyledElements.Alternative();
 
-FiWareCataloguePublishView.prototype._submit_usdl = function(e){
-	var store_name,url;
+FiWareCataloguePublishView.prototype._submit_usdl = function (e) {
+	var store_name, url;
 
 	e.stopPropagation();
 	e.preventDefault();
@@ -46,16 +46,16 @@ FiWareCataloguePublishView.prototype._submit_usdl = function(e){
 	LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding resource to the marketplace"), 1);
     LayoutManagerFactory.getInstance().logSubTask(gettext('Sending usdl description to marketplace'));
 
-	url = '/marketAdaptor' + '/marketplace/' + this.catalogue.getLabel() + '/' + this.catalogue.getCurrentStore() +"/resources";
+	url = Wirecloud.URLs.FIWARE_STORE_RESOURCES_COLLECTION.evaluate({market: this.catalogue.getLabel(), store: this.catalogue.getCurrentStore()});
 
 	Wirecloud.io.makeRequest(url, {
         method: 'POST',
         parameters: {'url': $('usdl_url').value,
-					 'name': $('service_name').value},
+                    'name': $('service_name').value},
         onSuccess: function (transport) {
             LayoutManagerFactory.getInstance().logSubTask(gettext('Resource uploaded successfully'));
             LayoutManagerFactory.getInstance().logStep('');
-			this.catalogue.refresh_search_results();
+            this.catalogue.refresh_search_results();
         }.bind(this),
         onFailure: function (transport) {
             var msg = LogManagerFactory.getInstance().formatError(gettext("Error uploading resource: %(errorMsg)s."), transport);

@@ -38,7 +38,7 @@ var FiWareCatalogueView = function (id, options) {
         'publish': this.alternatives.createAlternative({alternative_constructor: FiWareCataloguePublishView, containerOptions: {catalogue: this}})
     };
 
-    this.fiWareCatalogue = new FiWareCatalogue(this);
+    this.fiWareCatalogue = new FiWareCatalogue(this.marketplace);
     this.number_of_stores = 0;
     this.generateStoreMenu();
 };
@@ -56,6 +56,12 @@ FiWareCatalogueView.prototype.setCurrentStore = function (store) {
 
 FiWareCatalogueView.prototype.getCurrentStore = function () {
     return this.currentStore;
+};
+
+FiWareCatalogueView.prototype.getCurrentSearchContext = function getCurrentSearchContext() {
+    return {
+        'store': this.currentStore
+    }
 };
 
 FiWareCatalogueView.prototype.search = function (callback, options) {
@@ -184,6 +190,9 @@ FiWareCatalogueView.prototype.ui_commands.delete = function (resource, options) 
         vendor: resource.getVendor(),
         version: resource.getVersion().text
     };
+
+    options.onSuccess = this.refresh_search_results.bind(this);
+    options.onComplete = this.home.bind(this);
 
     doRequest = function () {
         this.fiWareCatalogue.deleteResource(options);
