@@ -130,12 +130,11 @@
         } else {
             this.draggable = new Draggable(this.wrapperElement, this.wrapperElement, {initialPos: null, entity: this},
                 function onStart(draggable, data, event) {
-                    var objectPos;
-                    objectPos = data.entity.getPosition();
-                    recalculateEventOffset(event);
-                    objectPos.posX = objectPos.posX - event.offsetX;
-                    objectPos.posY = objectPos.posY - event.offsetY;
-                    data.initialPos = objectPos;
+                    var mouseDesp;
+                    mouseDesp = data.entity.getPosition();
+                    mouseDesp.posX = event.clientX - mouseDesp.posX;
+                    mouseDesp.posY = event.clientY - 74 - mouseDesp.posY;
+                    data.initialPos = mouseDesp;
                 },
                 function (e, draggable, data, X, Y) {
                     data.entity.repaint();
@@ -151,43 +150,8 @@
     /*************************************************************************
      * Private methods
      *************************************************************************/
-    /**
-    * change the value of event.offsetX and offsetY, for the offsetLeft and
-    * offsetTop acumulated from initial element to the iObject container.
-    */
-    var recalculateEventOffset = function (ev) {
-        var offsetLeft, offsetTop, menubarOffsetLeft, menubarOffsetTop, pointerMov;
-        offsetLeft = 0;
-        offsetTop = 0;
-        menubarOffsetLeft = 0;
-        menubarOffsetTop = 0;
-        var target = ev.target;
-        while (!target.hasClassName('menubar')) {
-            menubarOffsetLeft += target.offsetLeft;
-            target = target.parentNode;
-        }
-        target = ev.target;
-        while (!target.hasClassName('menubar')) {
-            menubarOffsetTop += target.offsetTop;
-            target = target.parentNode;
-        }
-        target = ev.target;
-        while (!target.hasClassName('container')) {
-            offsetLeft += target.offsetLeft;
-            target = target.parentNode;
-        }
-        target = ev.target;
-        while (!target.hasClassName('container')) {
-            offsetTop += target.offsetTop;
-            target = target.parentNode;
-        }
-        pointerMov = {posX: ev.clientX - menubarOffsetLeft, posY: ev.clientY - menubarOffsetTop - 90};
 
-        ev.offsetX =  offsetLeft + pointerMov.posX;
-        ev.offsetY =  offsetTop + pointerMov.posY;
-        return ev;
-    };
-     /*************************************************************************
+    /*************************************************************************
      * Public methods
      *************************************************************************/
 

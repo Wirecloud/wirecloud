@@ -67,9 +67,8 @@
         
         position = {posX: 0, posY: 0};
         initialPosition = igadget_interface.initialPos;
-        movement = igadget_interface.entity.getStylePosition();
-        position.posX = initialPosition.posX + movement.posX;
-        position.posY = initialPosition.posY + movement.posY - 90;
+        position = igadget_interface.entity.getPosition();
+        position.posX -= 180;
         igadget_interface.entity.setPosition({posX: 0, posY: 0});
         if (position.posX < 0) {
             position.posX = 8;

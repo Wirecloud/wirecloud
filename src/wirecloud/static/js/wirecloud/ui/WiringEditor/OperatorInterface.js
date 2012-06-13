@@ -68,9 +68,8 @@
 
         position = {posX: 0, posY: 0};
         initialPosition = data.initialPos;
-        movement = data.entity.getStylePosition();
-        position.posX = initialPosition.posX + movement.posX;
-        position.posY = initialPosition.posY + movement.posY - 90;
+        position = data.entity.getPosition();
+        position.posX -= 180;
         if (position.posX < 0) {
             position.posX = 8;
         }
