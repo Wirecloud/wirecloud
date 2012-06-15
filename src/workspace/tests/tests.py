@@ -2,6 +2,7 @@
 
 import codecs
 import os
+import rdflib
 
 from django.contrib.auth.models import User, Group
 from django.core.cache import cache
@@ -14,7 +15,7 @@ from gadget.models import Gadget
 from igadget.models import IGadget, Variable
 from igadget.utils import SaveIGadget, deleteIGadget
 from workspace.packageCloner import PackageCloner
-from workspace.mashupTemplateGenerator import build_template_from_workspace
+from workspace.mashupTemplateGenerator import build_template_from_workspace, build_rdf_template_from_workspace, build_usdl_from_workspace
 from workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from workspace.models import WorkSpace, UserWorkSpace, Tab, VariableValue
 from workspace.utils import sync_base_workspaces
@@ -223,6 +224,14 @@ class WorkspaceTestCase(CacheTestCase):
 
 
 class ParamatrizedWorkspaceGenerationTestCase(TestCase):
+
+    WIRE_M = rdflib.Namespace('http://wirecloud.conwet.fi.upm.es/ns/mashup#')
+    FOAF = rdflib.Namespace('http://xmlns.com/foaf/0.1/')
+    RDF = rdflib.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#')
+    DCTERMS = rdflib.Namespace('http://purl.org/dc/terms/')
+    USDL = rdflib.Namespace('http://www.linked-usdl.org/ns/usdl-core#')
+    VCARD = rdflib.Namespace('http://www.w3.org/2006/vcard/ns#')
+
     fixtures = ['test_workspace']
 
     def setUp(self):
@@ -234,6 +243,11 @@ class ParamatrizedWorkspaceGenerationTestCase(TestCase):
         elements = root_element.xpath(xpath)
         self.assertEquals(len(elements), 1)
         self.assertEquals(elements[0].text, content)
+
+    def assertRDFElement(self, graph, element, ns, predicate, content):
+        elements = graph.objects(element, ns[predicate])
+        for e in elements:
+            self.assertEquals(str(e), content)
 
     def testBuildTemplateFromWorkspace(self):
 
@@ -251,6 +265,56 @@ class ParamatrizedWorkspaceGenerationTestCase(TestCase):
         self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Version', '1')
         self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Author', 'test')
         self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Mail', 'a@b.com')
+
+    def testBuildRdfTemplateFromWorkspace(self):
+
+        options = {
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Workspace',
+            'version': '1',
+            'author': 'test',
+            'email': 'a@b.com',
+            'readOnlyGadgets': True,
+        }
+        graph = build_rdf_template_from_workspace(options, self.workspace, self.user)
+        mashup_uri = graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']).next()
+
+        self.assertRDFElement(graph, mashup_uri, self.DCTERMS, 'title', 'Test Workspace')
+        self.assertRDFElement(graph, mashup_uri, self.USDL, 'versionInfo', '1')
+
+        vendor = graph.objects(mashup_uri, self.USDL['hasProvider']).next()
+        self.assertRDFElement(graph, vendor, self.FOAF, 'name', 'Wirecloud Test Suite')
+
+        addr = graph.objects(mashup_uri, self.VCARD['addr']).next()
+        self.assertRDFElement(graph, addr, self.VCARD, 'email', 'a@b.com')
+
+        author = graph.objects(mashup_uri, self.DCTERMS['creator']).next()
+        self.assertRDFElement(graph, author, self.FOAF, 'name', 'test')
+
+    def testBuildUSDLFromWorkspace(self):
+
+        options = {
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Workspace',
+            'version': '1',
+            'author': 'test',
+            'email': 'a@b.com',
+            'readOnlyGadgets': True,
+        }
+        graph = build_usdl_from_workspace(options, self.workspace, self.user, 'http://wirecloud.conwet.fi.upm.es/ns/mashup#/Wirecloud%20Test%20Suite/Test%20Workspace/1')
+        services = graph.subjects(self.RDF['type'], self.USDL['Service'])
+
+        for service in services:
+            if str(service) == str(self.WIRE_M[options['vendor'] + '/' + options['name'] + '/' + options['version']]):
+                service_uri = service
+                break
+        else:
+            raise Exception
+
+        self.assertRDFElement(graph, service_uri, self.DCTERMS, 'title', 'Test Workspace')
+        self.assertRDFElement(graph, service_uri, self.USDL, 'versionInfo', '1')
+        vendor = graph.objects(service_uri, self.USDL['hasProvider']).next()
+        self.assertRDFElement(graph, vendor, self.FOAF, 'name', 'Wirecloud Test Suite')
 
 
 class ParametrizedWorkspaceParseTestCase(TestCase):

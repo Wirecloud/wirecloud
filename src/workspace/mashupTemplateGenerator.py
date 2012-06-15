@@ -1,42 +1,57 @@
 # -*- coding: utf-8 -*-
 
-#...............................licence...........................................
-#
-#     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
-#     S.A.Unipersonal (Telefonica I+D)
-#
-#     This file is part of Morfeo EzWeb Platform.
-#
-#     Morfeo EzWeb Platform is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU Affero General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     (at your option) any later version.
-#
-#     Morfeo EzWeb Platform is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU Affero General Public License for more details.
-#
-#     You should have received a copy of the GNU Affero General Public License
-#     along with Morfeo EzWeb Platform.  If not, see <http://www.gnu.org/licenses/>.
-#
-#     Info about members and contributors of the MORFEO project
-#     is available at
-#
-#     http://morfeo-project.org
-#
-#...............................licence...........................................#
 
+# Copyright 2012 Universidad Politécnica de Madrid
 
-#
+# This file is part of Wirecloud.
 
-from django.conf import settings
+# Wirecloud is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Wirecloud is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+
+import json
+import rdflib
 from lxml import etree
 
+from django.conf import settings
+
 from igadget.models import IGadget
+from datetime import datetime
 from workspace.models import Tab
 from preferences.models import WorkSpacePreference, TabPreference
-from connectable.models import InOut, In, Out, RelatedInOut
+
+
+#definition of namespaces that will be used in rdf documents
+WIRE = rdflib.Namespace("http://wirecloud.conwet.fi.upm.es/ns/widget#")
+WIRE_M = rdflib.Namespace("http://wirecloud.conwet.fi.upm.es/ns/mashup#")
+FOAF = rdflib.Namespace('http://xmlns.com/foaf/0.1/')
+RDF = rdflib.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#')
+RDFS = rdflib.Namespace('http://www.w3.org/2000/01/rdf-schema#')
+MSM = rdflib.Namespace('http://cms-wg.sti2.org/ns/minimal-service-model#')
+OWL = rdflib.Namespace('http://www.w3.org/2002/07/owl#')
+DCTERMS = rdflib.Namespace('http://purl.org/dc/terms/')
+USDL = rdflib.Namespace('http://www.linked-usdl.org/ns/usdl-core#')
+LEGAL = rdflib.Namespace('http://www.linked-usdl.org/ns/usdl-legal#')
+PRICE = rdflib.Namespace('http://www.linked-usdl.org/ns/usdl-pricing#')
+SLA = rdflib.Namespace('http://www.linked-usdl.org/ns/usdl-sla#')
+BLUEPRINT = rdflib.Namespace('http://bizweb.sap.com/TR/blueprint#')
+VCARD = rdflib.Namespace('http://www.w3.org/2006/vcard/ns#')
+XSD = rdflib.Namespace('http://www.w3.org/2001/XMLSchema#')
+CTAG = rdflib.Namespace('http://commontag.org/ns#')
+ORG = rdflib.Namespace('http://www.w3.org/ns/org#')
+SKOS = rdflib.Namespace('http://www.w3.org/2004/02/skos/core#')
+TIME = rdflib.Namespace('http://www.w3.org/2006/time#')
+GR = rdflib.Namespace('http://purl.org/goodrelations/v1#')
+DOAP = rdflib.Namespace('http://usefulinc.com/ns/doap#')
 
 
 def typeCode2typeText(typeCode):
@@ -230,3 +245,302 @@ def build_template_from_workspace(options, workspace, user):
         etree.SubElement(element, 'Taget', type=connection['target']['type'], id=connection['target']['id'], endpoint=connection['target']['endpoint'])
 
     return template
+
+
+def build_rdf_template_from_workspace(options, workspace, user):
+
+    graph = rdflib.Graph()
+    # build the root node
+    mashup_uri = WIRE_M[options.get('vendor') + '/' + options.get('name') + '/' + options.get('version')]
+    graph.add((mashup_uri, rdflib.RDF.type, WIRE_M['Mashup']))
+
+    # add basic info
+    provider = rdflib.BNode()
+    graph.add((provider, rdflib.RDF.type, GR['BussisnessEntity']))
+    graph.add((mashup_uri, USDL['hasProvider'], provider))
+    graph.add((provider, FOAF['name'], rdflib.Literal(options.get('vendor'))))
+    graph.add((mashup_uri, USDL['versionInfo'], rdflib.Literal(options.get('version'))))
+    graph.add((mashup_uri, DCTERMS['title'], rdflib.Literal(options.get('name'))))
+
+    author = rdflib.BNode()
+    graph.add((author, rdflib.RDF.type, FOAF['Person']))
+    graph.add((mashup_uri, DCTERMS['creator'], author))
+
+    if options.get('author'):
+        graph.add((author, FOAF['name'], rdflib.Literal(options.get('author'))))
+    else:
+        graph.add((author, FOAF['name'], rdflib.Literal(user)))
+
+    if options.get('description'):
+        description = options.get('description') + '\n' + get_workspace_description(workspace)
+    else:
+        description = get_workspace_description(workspace)
+
+    graph.add((mashup_uri, DCTERMS['description'], rdflib.Literal(description)))
+    graph.add((mashup_uri, WIRE['hasImageUri'], rdflib.URIRef(options.get('imageURI'))))
+
+    if options.get('wikiURI'):
+        graph.add((mashup_uri, FOAF['page'], rdflib.URIRef(options.get('wikiURI'))))
+
+    addr = rdflib.BNode()
+    graph.add((addr, rdflib.RDF.type, VCARD['Work']))
+    graph.add((mashup_uri, VCARD['addr'], addr))
+    graph.add((addr, VCARD['email'], rdflib.Literal(options.get('email'))))
+
+    read_only = options.get('readOnlyGadgets', False)
+    graph.add((mashup_uri, WIRE_M['readonly'], rdflib.Literal(str(read_only))))
+
+    # add preferences and tabs
+    preferences = WorkSpacePreference.objects.filter(workspace=workspace)
+    workspace_tabs = Tab.objects.filter(workspace=workspace).order_by('position')
+
+    # Workspace preferences
+    for preference in preferences:
+        if not preference.inherit:
+            pref = rdflib.BNode()
+            graph.add((pref, rdflib.RDF.type, WIRE_M['MashupPreference']))
+            graph.add((mashup_uri, WIRE_M['hasMashupPreference'], pref))
+            graph.add((pref, DCTERMS['title'], rdflib.Literal(preference.name)))
+            graph.add((pref, WIRE['value'], rdflib.Literal(preference.value)))
+
+    # Tabs and their preferences
+    tabs = {}
+    for tab in workspace_tabs:
+        tab_element = rdflib.BNode()
+        graph.add((tab_element, rdflib.RDF.type, WIRE_M['Tab']))
+        graph.add((mashup_uri, WIRE_M['hasTab'], tab_element))
+        graph.add((tab_element, DCTERMS['title'], rdflib.Literal(tab.name)))
+        tabs[tab.id] = tab_element
+        preferences = TabPreference.objects.filter(tab=tab.pk)
+        for preference in preferences:
+            if not preference.inherit:
+                pref = rdflib.BNode()
+                graph.add((pref, rdflib.RDF.type, WIRE_M['TabPreference']))
+                graph.add((tab_element, WIRE_M['hasTabPreference'], pref))
+                graph.add((pref, DCTERMS['title'], rdflib.Literal(preference.name)))
+                graph.add((pref, WIRE['value'], rdflib.Literal(preference.value)))
+
+    #Create wiring node
+    wiring = rdflib.BNode()
+    graph.add((wiring, rdflib.RDF.type, WIRE['PlatformWiring']))
+    graph.add((mashup_uri, WIRE_M['hasMashupWiring'], wiring))
+
+    readOnlyGadgets = options.get('readOnlyGadgets', False)
+    parametrization = options.get('parametrization')
+    if not parametrization:
+        parametrization = {}
+
+    included_iwidgets = IGadget.objects.filter(tab__workspace=workspace)
+    # iWidgets
+    iwidgets = {}
+    for iwidget in included_iwidgets:
+        widget = iwidget.gadget
+        iwidget_id = str(iwidget.id)
+        iwidget_params = {}
+        if iwidget_id in parametrization:
+            iwidget_params = parametrization[iwidget_id]
+
+        resource = rdflib.BNode()
+        iwidgets[iwidget_id] = resource
+        graph.add((resource, rdflib.RDF.type, WIRE_M['iWidget']))
+        graph.add((tabs[iwidget.tab.id], WIRE_M['hasiWidget'], resource))
+        provider = rdflib.BNode()
+        graph.add((provider, rdflib.RDF.type, GR['BussisnessEntity']))
+        graph.add((provider, FOAF['name'], rdflib.Literal(widget.vendor)))
+        graph.add((resource, USDL['hasProvider'], provider))
+        graph.add((resource, DCTERMS['title'], rdflib.Literal(iwidget.name)))
+        graph.add((resource, USDL['versionInfo'], rdflib.Literal(widget.version)))
+        graph.add((resource, RDFS['label'], rdflib.Literal(widget.name)))
+
+        if readOnlyGadgets:
+            graph.add((resource, WIRE['readonly'], rdflib.Literal('true')))
+
+        # iWidget position
+        position = iwidget.position
+        pos = rdflib.BNode()
+        graph.add((pos, rdflib.RDF.type, WIRE_M['Position']))
+        graph.add((resource, WIRE_M['hasPosition'], pos))
+        graph.add((pos, WIRE_M['x'], rdflib.Literal(str(position.posX))))
+        graph.add((pos, WIRE_M['y'], rdflib.Literal(str(position.posY))))
+        graph.add((pos, WIRE_M['z'], rdflib.Literal(str(position.posZ))))
+
+        # iWidget rendering
+        rend = rdflib.BNode()
+        graph.add((rend, rdflib.RDF.type, WIRE_M['iWidgetRendering']))
+        graph.add((resource, WIRE_M['hasiWidgetRendering'], rend))
+        graph.add((rend, WIRE['renderingHeight'], rdflib.Literal(str(position.height))))
+        graph.add((rend, WIRE['renderingWidth'], rdflib.Literal(str(position.width))))
+        graph.add((rend, WIRE_M['minimized'], rdflib.Literal(str(position.minimized))))
+        graph.add((rend, WIRE_M['fullDragboard'], rdflib.Literal(str(position.fulldragboard))))
+        graph.add((rend, WIRE_M['layout'], rdflib.Literal(str(position.layout))))
+
+        # iWidget preferences
+        widget_preferences = widget.get_related_preferences()
+        for pref in widget_preferences:
+            status = 'normal'
+            if pref.name in iwidget_params:
+                iwidget_param_desc = iwidget_params[pref.name]
+                if iwidget_param_desc['source'] == 'default':
+                    # Do not issue a Preference element for this preference
+                    continue
+                value = iwidget_param_desc['value']
+                status = iwidget_param_desc['status']
+            else:
+                value = iwidget.get_var_value(pref, workspace.creator)
+
+            element = rdflib.BNode()
+            graph.add((element, rdflib.RDF.type, WIRE_M['iWidgetPreference']))
+            graph.add((resource, WIRE_M['hasiWidgetPreference'], element))
+            graph.add((element, DCTERMS['title'], rdflib.Literal(pref.name)))
+            graph.add((element, WIRE['value'], rdflib.Literal(value)))
+
+            if status != 'normal':
+                graph.add((element, WIRE_M['readonly'], rdflib.Literal('true')))
+                if status != 'readonly':
+                    graph.add((element, WIRE_M['hiden'], rdflib.Literal('true')))
+
+        # iWidget properties
+        widget_properties = widget.get_related_properties()
+        for prop in widget_properties:
+            status = 'normal'
+            if prop.name in iwidget_params:
+                iwidget_param_desc = iwidget_params[prop.name]
+                if iwidget_param_desc['source'] == 'default':
+                    # Do not issue a Property element for this property
+                    continue
+                value = iwidget_param_desc['value']
+                status = iwidget_param_desc['status']
+            else:
+                value = iwidget.get_var_value(prop, workspace.creator)
+
+            element = rdflib.BNode()
+            graph.add((element, rdflib.RDF.type, WIRE_M['iWidgetProperty']))
+            graph.add((resource, WIRE_M['hasiWidgetProperty'], element))
+            graph.add((element, DCTERMS['title'], rdflib.Literal(prop.name)))
+            graph.add((element, WIRE['value'], rdflib.Literal(value)))
+
+            if status != 'normal':
+                graph.add((element, WIRE_M['readonly'], rdflib.Literal('true')))
+
+        # slots and events
+        events = widget.get_related_events()
+
+        for event in events:
+            ev = rdflib.BNode()
+            graph.add((ev, rdflib.RDF.type, WIRE['Event']))
+            graph.add((wiring, WIRE['hasEvent'], ev))
+            graph.add((ev, DCTERMS['title'], rdflib.Literal(event.name)))
+            graph.add((ev, WIRE['type'], rdflib.Literal(typeCode2typeText(event.type))))
+            graph.add((ev, RDFS['label'], rdflib.Literal(event.label)))
+            graph.add((ev, WIRE['friendcode'], rdflib.Literal(event.friend_code)))
+
+        slots = widget.get_related_slots()
+
+        for slot in slots:
+            sl = rdflib.BNode()
+            graph.add((sl, rdflib.RDF.type, WIRE['Slot']))
+            graph.add((wiring, WIRE['hasSlot'], sl))
+            graph.add((sl, DCTERMS['title'], rdflib.Literal(slot.name)))
+            graph.add((sl, WIRE['type'], rdflib.Literal(typeCode2typeText(slot.type))))
+            graph.add((sl, RDFS['label'], rdflib.Literal(slot.label)))
+            graph.add((sl, WIRE['frindcode'], rdflib.Literal(slot.friend_code)))
+
+    # wiring conections and operators
+    readOnlyConnectables = options.get('readOnlyConnectables', False)
+    try:
+        wiring_status = json.loads(workspace.wiringStatus)
+    except:
+        wiring_status = {
+            "operators": {},
+            "connections": [],
+        }
+
+    operators = {}
+    for id_, operator in wiring_status['operators'].iteritems():
+        op = rdflib.BNode()
+        operators[id_] = op
+        graph.add((op, rdflib.RDF.type, WIRE_M['iOperator']))
+        graph.add((wiring, WIRE_M['hasiOperator'], op))
+        graph.add((op, DCTERMS['title'], rdflib.Literal(operator['name'])))
+
+    for connection in wiring_status['connections']:
+        element = rdflib.BNode()
+        graph.add((element, rdflib.RDF.type, WIRE_M['Connection']))
+        graph.add((wiring, WIRE_M['hasConnection'], element))
+
+        if readOnlyConnectables:
+            graph.add((element, WIRE_M['readonly'], rdflib.Literal('true')))
+
+        source = rdflib.BNode()
+        graph.add((source, rdflib.RDF.type, WIRE_M['Source']))
+        graph.add((wiring, WIRE_M['hasSource'], source))
+        graph.add((source, WIRE['type'], rdflib.Literal(connection['source']['type'])))
+
+        id_ = str(iwidgets[connection['source']['id']])[1:]
+
+        if connection['source']['type'] == 'operator':
+            id_ = str(operators[connection['source']['id']])[1:]
+
+        graph.add((source, WIRE_M['sourceId'], rdflib.Literal(id_)))
+        graph.add((source, WIRE_M['endpoint'], rdflib.Literal(connection['source']['endpoint'])))
+
+        target = rdflib.BNode()
+        graph.add((target, rdflib.RDF.type, WIRE_M['Target']))
+        graph.add((wiring, WIRE_M['hasTarget'], target))
+        graph.add((target, WIRE['type'], rdflib.Literal(connection['target']['type'])))
+
+        id_ = str(iwidgets[connection['target']['id']])[1:]
+
+        if connection['target']['type'] == 'operator':
+            id_ = str(operators[connection['target']['id']])[1:]
+
+        graph.add((target, WIRE_M['targetId'], rdflib.Literal(id_)))
+        graph.add((target, WIRE_M['endpoint'], rdflib.Literal(connection['target']['endpoint'])))
+
+    return graph
+
+
+def build_usdl_from_workspace(options, workspace, user, template_url):
+
+    usdl_uri = WIRE_M[options.get('vendor') + '/' + options.get('name') + '/' + options.get('version')]
+    graph = rdflib.Graph()
+
+    graph.add((usdl_uri, rdflib.RDF.type, USDL['Service']))
+    graph.add((usdl_uri, DCTERMS['title'], rdflib.Literal(options.get('name'))))
+    graph.add((usdl_uri, USDL['versionInfo'], rdflib.Literal(options.get('version'))))
+
+    vendor = rdflib.BNode()
+    graph.add((vendor, rdflib.RDF.type, GR['BussisnessEntity']))
+    graph.add((usdl_uri, USDL['hasProvider'], vendor))
+    graph.add((vendor, FOAF['name'], rdflib.Literal(options.get('vendor'))))
+
+    description = get_workspace_description(workspace)
+
+    if options.get('description'):
+        graph.add((usdl_uri, DCTERMS['abstract'], rdflib.Literal(options.get('description'))))
+        description = options.get('description') + '\n' + description
+
+    graph.add((usdl_uri, DCTERMS['description'], rdflib.Literal(description)))
+
+    graph.add((usdl_uri, FOAF['page'], rdflib.URIRef(options.get('wikiURI'))))
+    graph.add((usdl_uri, FOAF['depiction'], rdflib.URIRef(options.get('imageURI'))))
+
+    date = datetime.today()
+    graph.add((usdl_uri, DCTERMS['created'], rdflib.Literal(str(date))))
+    graph.add((usdl_uri, DCTERMS['modified'], rdflib.Literal(str(date))))
+
+    abstract = rdflib.URIRef(template_url)
+    graph.add((abstract, rdflib.RDF.type, BLUEPRINT['Artefact']))
+    graph.add((usdl_uri, USDL['utilizedResource'], abstract))
+    graph.add((abstract, BLUEPRINT['location'], abstract))
+
+    #Mashup parts
+    included_iwidgets = IGadget.objects.filter(tab__workspace=workspace)
+    for iwidget in included_iwidgets:
+        widget = iwidget.gadget
+        part = WIRE_M[widget.vendor + '/' + widget.name + '/' + widget.version]
+        graph.add((part, rdflib.RDF.type, USDL['Service']))
+        graph.add((usdl_uri, USDL['hasPartMandatory'], part))
+        graph.add((part, DCTERMS['title'], rdflib.Literal(widget.name)))
+
+    return graph
