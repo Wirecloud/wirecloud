@@ -71,9 +71,10 @@ POSITION_XPATH = 't:Position'
 RENDERING_XPATH = 't:Rendering'
 PARAM_XPATH = 't:Param'
 PROPERTIES_XPATH = 't:Property'
-CHANNEL_XPATH = 't:Channel'
-IN_XPATH = 't:In'
-OUT_XPATH = 't:Out'
+CONNECTION_XPATH = 't:Connection'
+IOPERATOR_XPATH = 't:Operator'
+SOURCE_XPATH = 't:Source'
+TARGET_XPATH = 't:Target'
 
 TRANSLATIONS_XPATH = '/t:Template/t:Translations'
 TRANSLATION_XPATH = 't:Translation'
@@ -227,17 +228,19 @@ class USDLTemplateParser(object):
         self._info['mail'] = self._get_field(VCARD, 'email', addr_element)
         self._info['requirements'] = []
 
-    def _parse_wiring_info(self, wiring_property='hasPlatformWiring', parse_channels=False):
+    def _parse_wiring_info(self, wiring_property='hasPlatformWiring', parse_connections=False):
 
-        self._info['slots'] = []
-        self._info['events'] = []
+        self._info['wiring'] = {
+            'slots': [],
+            'events': [],
+        }
 
         # method self._graph.objects always returns an iterable object not subscriptable,
         # althought only exits one instance
         wiring_element = self._get_field(WIRE, wiring_property, self._rootURI, id_=True, required=False)
 
         for slot in self._graph.objects(wiring_element, WIRE['hasSlot']):
-            self._info['slots'].append({
+            self._info['wiring']['slots'].append({
                 'name': self._get_field(DCTERMS, 'title', slot, required=False),
                 'type': self._get_field(WIRE, 'type', slot, required=False),
                 'label': self._get_translation_field(RDFS, 'label', slot, 'slotLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', slot, required=False)),
@@ -247,7 +250,7 @@ class USDLTemplateParser(object):
             })
 
         for event in self._graph.objects(wiring_element, WIRE['hasEvent']):
-            self._info['events'].append({
+            self._info['wiring']['events'].append({
                 'name': self._get_field(DCTERMS, 'title', event, required=False),
                 'type': self._get_field(WIRE, 'type', event, required=False),
                 'label': self._get_translation_field(RDFS, 'label', event, 'eventLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', event, required=False)),
@@ -255,42 +258,48 @@ class USDLTemplateParser(object):
                 'friendcode': self._get_field(WIRE, 'eventFriendcode', event, required=False),
             })
 
-        if parse_channels:
-            self._parse_wiring_channel_info(wiring_element)
+        if parse_connections:
+            self._parse_wiring_connection_info(wiring_element)
+            self._parse_wiring_operator_info(wiring_element)
 
-    def _parse_wiring_channel_info(self, wiring_element):
+    def _parse_wiring_connection_info(self, wiring_element):
 
-        channels = {}
+        connections = []
 
-        for channel in self._graph.objects(wiring_element, WIRE_M['hasChannel']):
-            channel_info = {
-                'id': str(channel)[1:],
-                'name': self._get_field(DCTERMS, 'title', channel, required=False),
-                'readonly': self._get_field(WIRE_M, 'readonly', channel, required=False).lower() == 'true',
-                'filter': self._get_field(WIRE_M, 'channelFilter', channel, required=False),
-                'filterparams': self._get_field(WIRE_M, 'channelFilterParams', channel, required=False),
-                'ins': [],
-                'outs': [],
-                'out_channels': [],
+        for connection in self._graph.objects(wiring_element, WIRE_M['hasConnection']):
+            connection_info = {
+                'readonly': self._get_field(WIRE_M, 'readonly', connection, required=False).lower() == 'true',
+                'source': {},
+                'target': {},
             }
-            for in_ in self._graph.objects(channel, WIRE_M['hasIn']):
-                channel_info['ins'].append({
-                    'igadget': self._get_field(WIRE_M, 'iniWidget', in_, required=False),
-                    'name': self._get_field(DCTERMS, 'title', in_, required=False),
-                })
+            for source in self._graph.objects(connection, WIRE_M['hasSource']):
+                connection_info['source'] = {
+                    'id': self._get_field(WIRE_M, 'sourceId', source, required=False),
+                    'endpoint': self._get_field(WIRE_M, 'endpoint', source, required=False),
+                    'type': self._get_field(WIRE, 'type', source, required=False),
+                }
 
-            for out in self._graph.objects(channel, WIRE_M['hasOut']):
-                channel_info['outs'].append({
-                    'igadget': self._get_field(WIRE_M, 'outiWidget', out, required=False),
-                    'name': self._get_field(DCTERMS, 'title', out, required=False),
-                })
+            for target in self._graph.objects(connection, WIRE_M['hasTarget']):
+                connection_info['target'] = {
+                    'id': self._get_field(WIRE_M, 'targetId', target, required=False),
+                    'endpoint': self._get_field(WIRE_M, 'endpoint', target, required=False),
+                    'type': self._get_field(WIRE, 'type', target, required=False),
+                }
 
-            for out_channel in self._graph.objects(channel, WIRE_M['hasOutChannel']):
-                channel_info['out_channels'].append(str(out_channel)[1:])
+            connections.append(connection_info)
 
-            channels[channel_info['id']] = channel_info
+        self._info['wiring']['connections'] = connections
 
-        self._info['channels'] = channels
+    def _parse_wiring_operator_info(self, wiring_element):
+
+        self._info['wiring']['operators'] = {}
+
+        for operator in self._graph.objects(wiring_element, WIRE_M['hasiOperator']):
+            operator_info = {
+               'id': unicode(operator)[1:],
+               'name': self._get_field(DCTERMS, 'title', operator, required=False),
+            }
+            self._info['wiring']['operators'][operator_info['id']] = operator_info
 
     def _parse_widget_info(self):
 
@@ -423,8 +432,10 @@ class USDLTemplateParser(object):
                     },
                     'rendering': {
                         'width': self._get_field(WIRE, 'renderingWidth', rendering),
-                        'height': self._get_field(WIRE, 'renderingHight', rendering),
+                        'height': self._get_field(WIRE, 'renderingHeight', rendering),
                         'layout': self._get_field(WIRE_M, 'layout', rendering),
+                        'fulldragboard': self.get_field(WIRE_M, 'fullDragboard', rendering).lower() == 'true',
+                        'minimized': self.get_field(WIRE_M, 'minimized', rendering).lower() == 'true',
                     },
                 }
 
@@ -447,7 +458,7 @@ class USDLTemplateParser(object):
 
         self._info['tabs'] = tabs
 
-        self._parse_wiring_info(wiring_property='hasMashupWiring', parse_channels=True)
+        self._parse_wiring_info(wiring_property='hasMashupWiring', parse_connections=True)
         #wiring_element = self._xpath(WIRING_XPATH, self._doc)[0]
 
     def typeText2typeCode(self, typeText):
@@ -631,10 +642,12 @@ class WirecloudTemplateParser(object):
                 'version': requirement.get('version'),
             })
 
-    def _parse_wiring_info(self, parse_channels=False):
+    def _parse_wiring_info(self, parse_connections=False):
 
-        self._info['slots'] = []
-        self._info['events'] = []
+        self._info['wiring'] = {
+            'slots': [],
+            'events': [],
+        }
 
         wiring_element = self._xpath(WIRING_XPATH, self._doc)[0]
 
@@ -642,7 +655,7 @@ class WirecloudTemplateParser(object):
             self._add_translation_index(slot.get('label'), type='vdef', variable=slot.get('name'))
             self._add_translation_index(slot.get('action_label', ''), type='vdef', variable=slot.get('name'))
             self._add_translation_index(slot.get('description', ''), type='vdef', variable=slot.get('name'))
-            self._info['slots'].append({
+            self._info['wiring']['slots'].append({
                 'name': slot.get('name'),
                 'type': slot.get('type'),
                 'label': slot.get('label'),
@@ -654,7 +667,7 @@ class WirecloudTemplateParser(object):
         for event in self._xpath(EVENT_XPATH, wiring_element):
             self._add_translation_index(event.get('label'), type='vdef', variable=event.get('name'))
             self._add_translation_index(event.get('description', ''), type='vdef', variable=event.get('name'))
-            self._info['events'].append({
+            self._info['wiring']['events'].append({
                 'name': event.get('name'),
                 'type': event.get('type'),
                 'label': event.get('label'),
@@ -662,42 +675,43 @@ class WirecloudTemplateParser(object):
                 'friendcode': event.get('friendcode'),
             })
 
-        if parse_channels:
-            self._parse_wiring_channel_info(wiring_element)
+        if parse_connections:
+            self._parse_wiring_connection_info(wiring_element)
+            self._parse_wiring_operator_info(wiring_element)
 
-    def _parse_wiring_channel_info(self, wiring_element):
+    def _parse_wiring_connection_info(self, wiring_element):
 
-        channels = {}
-        for channel in self._xpath(CHANNEL_XPATH, wiring_element):
-            channel_info = {
-                'id': int(channel.get('id')),
-                'name': channel.get('name'),
-                'readonly': channel.get('readonly', 'false').lower() == 'true',
-                'filter': channel.get('filter'),
-                'filter_params': channel.get('filter_params'),
-                'ins': [],
-                'outs': [],
-                'out_channels': [],
+        connections = []
+
+        for connection in self._xpath(CONNECTION_XPATH, wiring_element):
+            connection_info = {
+                'readonly': connection.get('readonly', 'false').lower() == 'true',
+                'source': {
+                    'type': self._xpath(SOURCE_XPATH, connection)[0].get('type'),
+                    'endpoint': self._xpath(SOURCE_XPATH, connection)[0].get('endpoint'),
+                    'id': self._xpath(SOURCE_XPATH, connection)[0].get('id'),
+                },
+                'target': {
+                    'type': self._xpath(TARGET_XPATH, connection)[0].get('type'),
+                    'endpoint': self._xpath(TARGET_XPATH, connection)[0].get('endpoint'),
+                    'id': self._xpath(TARGET_XPATH, connection)[0].get('id'),
+                }
             }
 
-            for in_ in self._xpath(IN_XPATH, channel):
-                channel_info['ins'].append({
-                    'igadget': in_.get('igadget'),
-                    'name': in_.get('name'),
-                })
+            connections.append(connection_info)
 
-            for out in self._xpath(OUT_XPATH, channel):
-                channel_info['outs'].append({
-                    'igadget': out.get('igadget'),
-                    'name': out.get('name'),
-                })
+        self._info['wiring']['connections'] = connections
 
-            for out_channel in self._xpath(CHANNEL_XPATH, channel):
-                channel_info['out_channels'].append(out_channel.get('id'))
+    def _parse_wiring_operator_info(self, wiring_element):
 
-            channels[channel.get('id')] = channel_info
+        self._info['wiring']['operators'] = {}
 
-        self._info['channels'] = channels
+        for operator in self._xpath(IOPERATOR_XPATH, wiring_element):
+            operator_info = {
+                'id': operator.get('id'),
+                'name': operator.get('name'),
+            }
+            self._info['wiring']['operators'][operator_info['id']] = operator_info
 
     def _parse_gadget_info(self):
 
@@ -854,7 +868,7 @@ class WirecloudTemplateParser(object):
             tabs.append(tab_info)
 
         self._info['tabs'] = tabs
-        self._parse_wiring_info(parse_channels=True)
+        self._parse_wiring_info(parse_connections=True)
 
     def _parse_translation_catalogue(self):
 

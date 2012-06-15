@@ -36,9 +36,10 @@
     <Slot label="slot" type="text" friendcode="slot" name="slot"/>
     <Event label="event" type="text" friendcode="event" name="event"/>
     <Slot label="slot" type="text" friendcode="slot" name="slot"/>
-    <Channel name="Channel_1" id="1">
-        <In name="event" igadget="1"/>
-        <Out name="slot" igadget="2"/>
-    </Channel>
+    <Operator id="1" name="Send SMS" />
+    <Connection>
+        <Source type="iwidget" endpoint="event" id="1"/>
+        <Target type="iwidget" endpoint="slot" id="2"/>
+    </Connection>
   </Platform.Wiring>
 </Template>

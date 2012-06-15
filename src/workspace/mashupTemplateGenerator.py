@@ -209,28 +209,24 @@ def build_template_from_workspace(options, workspace, user):
         for slot in slots:
             wiring.append(etree.Element('Slot', name=slot.name, type=typeCode2typeText(slot.type), label=slot.label, friendcode=slot.friend_code))
 
-    # wiring channel and connections
-    channel_vars = InOut.objects.filter(workspace=workspace)
-    for connectable in channel_vars:
-        element = etree.SubElement(wiring, 'Channel', id=str(connectable.id), name=connectable.name)
-        if connectable.filter:
-            element.set('filter', connectable.filter.name)
-            element.set('filter_params', connectable.filter_param_values)
+    # wiring
+    try:
+        wiring_status = json.loads(workspace.wiringStatus)
+    except:
+        wiring_status = {
+            "operators": {},
+            "connections": [],
+        }
 
+    for id_, operator in wiring_status['operators'].iteritems():
+        etree.SubElement(wiring, 'Operator', id=id_, name=operator['name'])
+
+    for connection in wiring_status['connections']:
+        element = etree.SubElement(wiring, 'Connection')
         if readOnlyConnectables:
             element.set('readonly', 'true')
 
-        ins = In.objects.filter(inouts=connectable)
-        for inp in ins:
-            etree.SubElement(element, 'In', igadget=str(inp.variable.igadget.id), name=inp.name)
-
-        in_inouts = RelatedInOut.objects.filter(in_inout=connectable)
-        for in_inout in in_inouts:
-            etree.SubElement(element, 'Channel', id=str(in_inout.out_inout_id))
-
-        outs = Out.objects.filter(inouts=connectable)
-        for out in outs:
-            variable = out.variable
-            etree.SubElement(element, 'Out', igadget=str(variable.igadget.id), name=out.name)
+        etree.SubElement(element, 'Source', type=connection['source']['type'], id=connection['source']['id'], endpoint=connection['source']['endpoint'])
+        etree.SubElement(element, 'Taget', type=connection['target']['type'], id=connection['target']['id'], endpoint=connection['target']['endpoint'])
 
     return template
