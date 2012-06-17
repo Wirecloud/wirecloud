@@ -128,7 +128,6 @@ MIDDLEWARE_CLASSES = (
     'johnny.middleware.QueryCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
 #    'middleware.session_middleware.SessionMiddleware',
-#    'facebook.djangofb.FacebookMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'middleware.http.ConditionalGetMiddleware',
@@ -138,8 +137,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.doc.XViewMiddleware',
     'middleware.console_middleware.ConsoleExceptionMiddleware',
  #   'middleware.cookie_redirect_middleware.CookieRedirectMiddleware',
- #   'facebookconnect.middleware.FacebookConnectMiddleware',
-
 )
 
 ROOT_URLCONF = 'urls'
@@ -171,14 +168,6 @@ INSTALLED_APPS = (
     'compressor',
     'johnny',
     'marketAdaptor',
-    ### openid authentication ###
-#    'openid_auth',
-#    'openid_auth.django_openidconsumer',
-    # sign in with twitter app
-#    'twitterauth',
-    ### facebook applications ###
-#    'facebook',
-#    'facebookconnect',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -227,13 +216,10 @@ AUTHENTICATION_BACKENDS = (
     #'authentication.tcloud_access.TCloudBackend',
     'authentication.public_access.PublicBackend',
     #'authentication.anonymousaccess.AnonymousBackend',
-    #'openid_auth.models.OpenIDBackend',
     #'authentication.ldapaccess.LDAPBackend',
     #'authentication.ezsteroidsaccess.EzSteroidsBackend',
     'django.contrib.auth.backends.ModelBackend',
-    #'facebookconnect.models.FacebookBackend',
-    #'authentication.twitteroauth.TwitterBackend',
-    )
+)
 
 #LDAP Backend
 #AD_LDAP_URL = 'ldap://host:port'
@@ -295,35 +281,6 @@ PROXY_PROCESSORS = (
 #    'proxy.processors.FixServletBugsProcessor',
     'proxy.processors.SecureDataProcessor',
 )
-
-#Open Id providers. Uncomment this if you only allow certain providers to authenticate users.
-#OPENID_PROVIDERS = ["myopenid.com", "google.com"]
-
-
-#################################
-##### Facebook Connect data #####
-#################################
-
-# To enable Facebook Connect authentication in Wirecloud (having your application set up in Facebook) you must:
-#    1. Enable the facebook and facebookconnect applications
-#    2. Enable the Middlewares (facebook.djangofb.FacebookMiddleware, facebookconnect.middleware.FacebookConnectMiddleware)
-#    3. Enable the backend facebookconnect.models.FacebookBackend
-#    4. Uncomment the following constants and configure the keys: FACEBOOK_API_KEY and FACEBOOK_SECRET_KEY
-#    5. Uncomment the sections of the login templates (change # with %}. These sections are:
-#        * {# load facebook_tags #}
-#        * {# facebook_js #}
-#        * {# initialize_facebook_connect #}
-#        * {# show_connect_button #}
-#FACEBOOK_API_KEY = "YOUR API KEY FROM FACEBOOK"
-#FACEBOOK_SECRET_KEY = "YOUR SECRET KEY FROM FACEBOOK"
-#FACEBOOK_INTERNAL = True
-#FACEBOOK_CACHE_TIMEOUT = 1800
-
-#################################
-
-#Authentication against Twitter (Sign in with twitter)
-#TWITTER_CONSUMER_KEY = "YOUR CONSUMER KEY FROM TWITTER"
-#TWITTER_CONSUMER_SECRET = "YOUR CONSUMER SECRET FROM TWITTER"
 
 # External settings configuration
 try:

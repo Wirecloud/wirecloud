@@ -32,7 +32,6 @@
 import random
 import re
 
-from django.conf import settings
 from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
@@ -759,17 +758,7 @@ def get_concept_values(user):
 
     concept_values = constant_context
 
-    data = {}
-    data['user'] = user
-    try:
-        if 'twitterauth' in settings.INSTALLED_APPS:
-            from twitterauth.models import TwitterUserProfile
-            data['twitterauth'] = TwitterUserProfile.objects.get(user__id=user.id)
-        else:
-            data['twitterauth'] = None
-    except Exception:
-        data['twitterauth'] = None
-
+    data = {'user': user}
     for concept in concepts:
         if concept.source == 'PLAT':
             concept_values[concept.concept] = get_concept_value(concept, data)
@@ -832,11 +821,5 @@ def get_concept_value(concept, data):
 
     elif concept.concept == 'language':
         res = get_language()
-
-    elif concept.concept == 'twitterauth' and data['twitterauth']:
-        res = "&".join(['user_screen_name=%s' % data['twitterauth'].screen_name,
-            'oauth_consumer_key=%s' % getattr(settings, 'TWITTER_CONSUMER_KEY', 'YOUR_KEY'),
-            'oauth_consumer_secret=%s' % getattr(settings, 'TWITTER_CONSUMER_SECRET', 'YOUR_SECRET'),
-            data['twitterauth'].access_token])
 
     return res
