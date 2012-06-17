@@ -159,8 +159,6 @@ INSTALLED_APPS = (
     'context',
     'preferences',
     'translator',
-    'gadgetGenerator',
-    'remoteChannel',
     'user',
     'API',
     'uploader',
