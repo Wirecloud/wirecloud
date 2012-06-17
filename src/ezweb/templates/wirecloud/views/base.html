@@ -152,8 +152,6 @@ var _SKINS = ["default"];
 //default skin for workspaces. Users may change the skin of a workspace afterwards
 var _DEFAULT_SKIN = 'default';
 
-var installed_apps = {{ installed_apps|safe }};
-
 var policy_lists = {{ policies|safe|default:"null" }};
 
 {% block policies %}
