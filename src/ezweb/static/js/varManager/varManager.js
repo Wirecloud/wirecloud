@@ -170,15 +170,15 @@ function VarManager (_workSpace) {
     }
 
     VarManager.prototype.setVariable = function (iGadgetId, variableName, value, options) {
-        if (typeof(value) !== 'string') {
+        var variable = this.findVariable(iGadgetId, variableName);
+
+        if (variable.vardef.aspect !== Variable.prototype.EVENT && typeof(value) !== 'string') {
             var transObj = {iGadgetId: iGadgetId, varName: variableName};
             var msg = interpolate(gettext("IGadget %(iGadgetId)s attempted to establish a non-string value for the variable \"%(varName)s\"."), transObj, true);
             OpManagerFactory.getInstance().logIGadgetError(iGadgetId, msg, Constants.Logging.ERROR_MSG);
 
             throw new Error();
         }
-
-        var variable = this.findVariable(iGadgetId, variableName);
 
         variable.set(value, options);
     }

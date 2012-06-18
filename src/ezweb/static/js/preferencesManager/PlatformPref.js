@@ -458,7 +458,7 @@ Preferences.prototype._save = function(modifiedValues) {
         parameters: {"preferences": JSON.stringify(modifiedValues)},
         onSuccess: this._onSuccessSavePreferences.bind(context),
         onFailure: this._onErrorSavePreferences.bind(context),
-        onException: this.onErrorSavePreferences.bind(context)
+        onException: this._onErrorSavePreferences.bind(context)
     });
 };
 

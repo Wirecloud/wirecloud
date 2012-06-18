@@ -362,8 +362,10 @@ StyledElements.Container.prototype.setDisabled = function(disabled) {
         this.disabledLayer = document.createElement('div');
         EzWebExt.addClassName(this.disabledLayer, 'disable-layer');
         this.wrapperElement.appendChild(this.disabledLayer);
+        this.wrapperElement.addClassName('disabled');
         this.disabledLayer.style.height = this.wrapperElement.scrollHeight + 'px';
     } else {
+        this.wrapperElement.removeClassName('disabled');
         EzWebExt.removeFromParent(this.disabledLayer);
         this.disabledLayer = null;
     }

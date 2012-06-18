@@ -32,7 +32,6 @@
 
 from django.conf.urls.defaults import patterns, url
 
-from connectable.views import ConnectableEntry
 from workspace import views
 
 
@@ -50,10 +49,6 @@ urlpatterns = patterns('workspace.views',
     # Variables of the whole workspace
     (r'^/((?P<workspace_id>\d+)/variable(s)?[/]?)?$',
         views.WorkSpaceVariableCollection(permitted_methods=('PUT', ))),
-
-    # Wiring info for the whole workspace
-    (r'^/((?P<workspace_id>\d+)/wiring[/]?)?$',
-        ConnectableEntry(permitted_methods=('PUT', 'POST', ))),
 
     # Sharing workspace
     (r'^/(?P<workspace_id>\d+)/share/groups[/]?$',

@@ -152,4 +152,5 @@ class WirecloudCorePlugin(WirecloudPlugin):
         return (
             {'id': 'MARKET_COLLECTION', 'url': '/markets'},
             {'id': 'MARKET_ENTRY', 'url': '/market/#{market}'},
+            {'id': 'WIRING_ENTRY', 'url': '/workspace/#{id}/wiring'},
         )

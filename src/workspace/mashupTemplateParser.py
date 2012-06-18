@@ -34,13 +34,10 @@ from commons.get_data import get_concept_values, TemplateValueProcessor
 from commons.template import TemplateParser
 from django.utils import simplejson
 from gadget.utils import get_or_add_gadget_from_catalogue
-from igadget.models import Variable
 from igadget.utils import SaveIGadget
 from preferences.views import update_tab_preferences, update_workspace_preferences
 from workspace.models import WorkSpace, UserWorkSpace
 from workspace.utils import createTab
-from connectable.models import In, Out, RelatedInOut, Filter
-from connectable.views import createChannel
 
 
 def buildWorkspaceFromTemplate(template, user):
@@ -180,55 +177,32 @@ def fillWorkspaceUsingTemplate(workspace, template):
     workspace.save()
 
     # wiring
-    channel_connectables = {}
-    for channel_id in workspace_info['channels']:
-        channel = workspace_info['channels'][channel_id]
-        connectable = createChannel(workspace, channel.get('name'))
+    wiring_status = {
+        'operators': workspace_info['wiring']['operators'],
+        'connections': [],
+    }
+    for connection in workspace_info['wiring']['connections']:
+        source_id = connection['source']['id']
+        target_id = connection['target']['id']
 
-        save = False
-        if read_only_workspace or channel.get('readonly'):
-            connectable.readOnly = True
-            save = True
+        if connection['source']['type'] == 'iwidget':
+            source_id = igadget_id_mapping[source_id].id
 
-        filter_name = channel.get('filter')
-        if filter_name:
-            save = True
-            connectable.filter = Filter.objects.get(name=filter_name)
-            connectable.filter_param_values = channel.get('filter_params')
+        if connection['target']['type'] == 'iwidget':
+            target_id = igadget_id_mapping[target_id].id
 
-        if save:
-            connectable.save()
-
-        channel_connectables[channel_id] = {
-            'connectable': connectable,
-            'element': channel,
-        }
-
-    for key in channel_connectables:
-        channel = channel_connectables[key]
-        for in_ in channel['element']['ins']:
-            igadget_id = in_.get('igadget')
-            igadget = igadget_id_mapping[igadget_id]
-            name = in_.get('name')
-
-            connectable = In.objects.get(variable__vardef__name=name, variable__igadget=igadget)
-            connectable.inouts.add(channel['connectable'])
-            connectable.save()
-
-        for out in channel['element']['outs']:
-            igadget_id = out.get('igadget')
-            igadget = igadget_id_mapping[igadget_id]
-            name = out.get('name')
-
-            variable = Variable.objects.get(igadget=igadget, vardef__name=name)
-            connectable = Out.objects.get(variable=variable)
-            connectable.inouts.add(channel['connectable'])
-            connectable.save()
-
-        for out_channel_id in channel['element']['out_channels']:
-            out_channel = channel_connectables[out_channel_id]['connectable']
-            relation = RelatedInOut(in_inout=channel['connectable'], out_inout=out_channel)
-            relation.save()
+        wiring_status['connections'].append({
+            'readonly': connection['readonly'],
+            'source': {'id': source_id,
+                       'type': connection['source']['type'],
+                       'endpoint': connection['source']['endpoint'],
+            },
+            'target': {'id': target_id,
+                       'type': connection['target']['type'],
+                       'endpoint': connection['target']['type'],
+            },
+        })
+    workspace.wiringStatus = simplejson.dumps(wiring_status)
 
     from commons.get_data import _invalidate_cached_variable_values
     _invalidate_cached_variable_values(workspace)

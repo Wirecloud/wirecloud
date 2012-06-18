@@ -5,8 +5,8 @@
 	 xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 	 xmlns:dcterms="http://purl.org/dc/terms/"
 	 xmlns:skos="http://www.w3.org/2004/02/skos/core#"
-	 xmlns:wire="http://wirecloud/gadget#"
-	 xmlns:wire-m="http://wirecloud/mashup#"
+	 xmlns:wire="http://wirecloud.conwet.fi.upm.es/ns/widget#"
+	 xmlns:wire-m="http://wirecloud.conwet.fi.upm.es/ns/mashup#"
 	 xmlns:vCard = "http://www.w3.org/2006/vcard/ns#"
 	 xmlns:gr="http://purl.org/goodrelations/v1#">
 
@@ -35,10 +35,10 @@
 						<wire:value>False</wire:value>
 					</wire-m:TabPreference>
 				</wire-m:hasTabPreference>
-				<wire-m:hasiGadget>
-					<wire-m:iGadget rdf:ID="iG-1">
+				<wire-m:hasiWidget>
+					<wire-m:iWidget rdf:ID="iG-1">
 						<dcterms:title>Test (1)</dcterms:title>
-						<wire:version>0.9</wire:version>
+						<usdl-core:versionInfo>0.9</usdl-core:versionInfo>
 						<usdl-core:hasProvider>
 							<foaf:Organization>
 								<foaf:name>Yaco Sistemas S.L.</foaf:name>
@@ -52,43 +52,43 @@
 								<wire-m:z>0</wire-m:z>
 							</wire-m:Position>
 						</wire-m:hasPosition>
-						<wire-m:hasiGadgetRendering>
-							<wire-m:iGadgetRendering>
+						<wire-m:hasiWidgetRendering>
+							<wire-m:iWidgetRendering>
 								<wire:renderingWidth>6</wire:renderingWidth>
 								<wire:renderingHight>24</wire:renderingHight>
 								<wire-m:layout>0</wire-m:layout>
 								<wire-m:minimized>False</wire-m:minimized>
 								<wire-m:fullDragboard>False</wire-m:fullDragboard>
-							</wire-m:iGadgetRendering>
-						</wire-m:hasiGadgetRendering>
-						<wire-m:hasiGadgetPreference>
-							<wire-m:iGadgetPreference>
+							</wire-m:iWidgetRendering>
+						</wire-m:hasiWidgetRendering>
+						<wire-m:hasiWidgetPreference>
+							<wire-m:iWidgetPreference>
 								<dcterms:title>list</dcterms:title>
 								<wire:value>default</wire:value>
 								<wire-m:readonly>true</wire-m:readonly>
 								<wire-m:hidden>true</wire-m:hidden>
-							</wire-m:iGadgetPreference>
-						</wire-m:hasiGadgetPreference>
-						<wire-m:hasiGadgetPreference>
-							<wire-m:iGadgetPreference>
+							</wire-m:iWidgetPreference>
+						</wire-m:hasiWidgetPreference>
+						<wire-m:hasiWidgetPreference>
+							<wire-m:iWidgetPreference>
 								<dcterms:title>text</dcterms:title>
 								<wire:value>initial text</wire:value>
 								<wire-m:readonly>true</wire-m:readonly>
 								<wire-m:hidden>false</wire-m:hidden>
-							</wire-m:iGadgetPreference>
-						</wire-m:hasiGadgetPreference>
-					</wire-m:iGadget>
-				</wire-m:hasiGadget>
+							</wire-m:iWidgetPreference>
+						</wire-m:hasiWidgetPreference>
+					</wire-m:iWidget>
+				</wire-m:hasiWidget>
 			</wire-m:Tab>
 		</wire-m:hasTab>
 
 		<wire-m:hasTab>
 			<wire-m:Tab rdf:ID="tab-2">
 				<dcterms:title>Tab 2</dcterms:title>
-				<wire-m:hasiGadget>
-					<wire-m:iGadget rdf:ID="iG-2">
+				<wire-m:hasiWidget>
+					<wire-m:iWidget rdf:ID="iG-2">
 						<dcterms:title>Test (2)</dcterms:title>
-						<wire:version>0.9</wire:version>
+						<usdl-core:versionInfo>0.9</usdl-core:versionInfo>
 						<usdl-core:hasProvider>
 							<foaf:Organization>
 								<foaf:name>Yaco Sistemas S.L.</foaf:name>
@@ -102,31 +102,31 @@
 								<wire-m:z>0</wire-m:z>
 							</wire-m:Position>
 						</wire-m:hasPosition>
-						<wire-m:hasiGadgetRendering>
-							<wire-m:iGadgetRendering>
+						<wire-m:hasiWidgetRendering>
+							<wire-m:iWidgetRendering>
 								<wire:renderingWidth>6</wire:renderingWidth>
 								<wire:renderingHight>24</wire:renderingHight>
 								<wire-m:layout>0</wire-m:layout>
 								<wire-m:minimized>False</wire-m:minimized>
 								<wire-m:fullDragboard>False</wire-m:fullDragboard>
-							</wire-m:iGadgetRendering>
-						</wire-m:hasiGadgetRendering>
-						<wire-m:hasiGadgetPreference>
-							<wire-m:iGadgetPreference>
+							</wire-m:iWidgetRendering>
+						</wire-m:hasiWidgetRendering>
+						<wire-m:hasiWidgetPreference>
+							<wire-m:iWidgetPreference>
 								<dcterms:title>list</dcterms:title>
 								<wire:value>default</wire:value>
-							</wire-m:iGadgetPreference>
-						</wire-m:hasiGadgetPreference>
-						<wire-m:hasiGadgetPreference>
-							<wire-m:iGadgetPreference>
+							</wire-m:iWidgetPreference>
+						</wire-m:hasiWidgetPreference>
+						<wire-m:hasiWidgetPreference>
+							<wire-m:iWidgetPreference>
 								<dcterms:title>text</dcterms:title>
 								<wire:value>initial text</wire:value>
 								<wire-m:readonly>true</wire-m:readonly>
 								<wire-m:hidden>true</wire-m:hidden>
-							</wire-m:iGadgetPreference>
-						</wire-m:hasiGadgetPreference>
-					</wire-m:iGadget>
-				</wire-m:hasiGadget>
+							</wire-m:iWidgetPreference>
+						</wire-m:hasiWidgetPreference>
+					</wire-m:iWidget>
+				</wire-m:hasiWidget>
 			</wire-m:Tab>
 		</wire-m:hasTab>
 
@@ -176,23 +176,29 @@
 						<wire:slotFriendcode>slot</wire:slotFriendcode>
 					</wire:Slot>
 				</wire:hasSlot>
-				<wire-m:hasChannel>
-					<wire-m:Channel rdf:ID="CH-1">
-						<dcterms:title>channel_1</dcterms:title>
-						<wire-m:hasIn>
-							<wire-m:In>
-								<dcterms:title>event</dcterms:title>
-								<wire-m:iniGadget rdf:resource="iG-1"/>
-							</wire-m:In>
-						</wire-m:hasIn>
-						<wire-m:hasOut>
-							<wire-m:Out>
-								<dcterms:title>slot</dcterms:title>
-								<wire-m:outiGadget rdf:resource="iG-2"/>
-							</wire-m:Out>
-						</wire-m:hasOut>
-					</wire-m:Channel>
-				</wire-m:hasChannel>
+				<wire-m:hasConnection>
+					<wire-m:Connection>
+						<wire-m:hasSource>
+							<wire-m:Source>
+								<wire-m:endpoint>event</wire-m:endpoint>
+								<wire-m:sourceId rdf:resource="iG-1"/>
+                                                                <wire:type>iwidget</wire:type>
+							</wire-m:Source>
+						</wire-m:hasSource>
+						<wire-m:hasTarget>
+							<wire-m:Target>
+								<wire-m:endpoint>Send SMS</wire-m:endpoint>
+								<wire-m:targetId rdf:resource="OP-1"/>
+                                                                <wire:type>ioperator</wire:type>
+							</wire-m:Target>
+						</wire-m:hasTarget>
+					</wire-m:Connection>
+				</wire-m:hasConnection>
+                                <wire-m:hasiOperator>
+                                    <wire-m:iOperator rdf:ID="OP-1">
+                                        <dcterms:title>Send SMS</dcterms:title>
+                                    </wire-m:iOperator>
+                                </wire-m:hasiOperator>
 			</wire:PlatformWiring>
 		</wire:hasMashupWiring>
 

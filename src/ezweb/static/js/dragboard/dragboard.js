@@ -23,7 +23,6 @@
 *     http://morfeo-project.org
  */
 
-/*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
 /*global document, window, Error, gettext, interpolate, $, Hash, Element, Event, isElement*/
 /*global BrowserUtilsFactory, Constants, ColumnLayout, DragboardPosition, FreeLayout, FullDragboardLayout, Gadget, IGadget, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud, ShowcaseFactory, SmartColumnLayout, URIs*/
 
@@ -82,45 +81,46 @@ function Dragboard(tab, workSpace, dragboardElement) {
      * Update igadget status in persistence
      */
     this._commitChanges = function (keys) {
+        var onSuccess, onError;
         keys = keys || this.iGadgetsByCode.keys();
 
-        var onSuccess = function (transport) { };
+        onSuccess = function (transport) { };
 
-        var onError = function (transport, e) {
+        onError = function (transport, e) {
             var logManager = LogManagerFactory.getInstance();
             var msg = logManager.formatError(gettext("Error committing dragboard changes to persistence: %(errorMsg)s."), transport, e);
             logManager.log(msg);
         };
 
         // TODO only send real changes
-        var iGadget, iGadgetInfo, uri, position;
-        var data = [];
+        var iGadget, iGadgetInfo, uri, position, data, icon_position;
+        data = [];
 
         for (var i = 0; i < keys.length; i++) {
             iGadget = this.iGadgetsByCode.get(keys[i]);
             iGadgetInfo = {};
             position = iGadget.getPosition();
-            iGadgetInfo['id'] = iGadget.id;
-            iGadgetInfo['tab'] = this.tabId;
+            iGadgetInfo.id = iGadget.id;
+            iGadgetInfo.tab = this.tabId;
             if (this.workSpace.isOwned()) {
-                iGadgetInfo['minimized'] = iGadget.isMinimized();
+                iGadgetInfo.minimized = iGadget.isMinimized();
             }
             if (!iGadget.isInFullDragboardMode()) {
-                iGadgetInfo['top'] = iGadget.position.y;
-                iGadgetInfo['left'] = iGadget.position.x;
-                iGadgetInfo['zIndex'] = iGadget.zPos;
-                iGadgetInfo['width'] = iGadget.contentWidth;
-                iGadgetInfo['height'] = iGadget.height;
-                iGadgetInfo['fulldragboard'] = false;
+                iGadgetInfo.top = iGadget.position.y;
+                iGadgetInfo.left = iGadget.position.x;
+                iGadgetInfo.zIndex = iGadget.zPos;
+                iGadgetInfo.width = iGadget.contentWidth;
+                iGadgetInfo.height = iGadget.height;
+                iGadgetInfo.fulldragboard = false;
             } else {
-                iGadgetInfo['fulldragboard'] = true;
+                iGadgetInfo.fulldragboard = true;
             }
 
-            iGadgetInfo['layout'] = iGadget.onFreeLayout() ? 1 : 0;
+            iGadgetInfo.layout = iGadget.onFreeLayout() ? 1 : 0;
 
-            var icon_position = iGadget.getIconPosition();
-            iGadgetInfo['icon_top'] = icon_position.y;
-            iGadgetInfo['icon_left'] = icon_position.x;
+            icon_position = iGadget.getIconPosition();
+            iGadgetInfo.icon_top = icon_position.y;
+            iGadgetInfo.icon_left = icon_position.x;
 
             data.push(iGadgetInfo);
         }
@@ -621,16 +621,16 @@ Dragboard.prototype._recomputeSize = function () {
     this.leftMargin = cssStyle.getPropertyCSSValue("padding-left").getFloatValue(CSSPrimitiveValue.CSS_PX);
     this.rightMargin = cssStyle.getPropertyCSSValue("padding-right").getFloatValue(CSSPrimitiveValue.CSS_PX);
 
-    this.dragboardWidth = parseInt(dragboardElement.offsetWidth);
+    this.dragboardWidth = parseInt(dragboardElement.offsetWidth, 10);
     this.dragboardWidth -= this.leftMargin + this.rightMargin;
 
     var tmp = this.dragboardWidth;
-    tmp-= parseInt(dragboardElement.clientWidth);
+    tmp -= parseInt(dragboardElement.clientWidth, 10);
 
     if (tmp > this.scrollbarSpace)
-        this.dragboardWidth-= tmp;
+        this.dragboardWidth -= tmp;
     else
-        this.dragboardWidth-= this.scrollbarSpace;
+        this.dragboardWidth -= this.scrollbarSpace;
 
     // TODO
     this.dragboardHeight = parseInt(dragboardElement.clientHeight, 10);
@@ -764,6 +764,11 @@ EzWebEffectBase.findDragboardElement = function (element) {
     return null; // Not found
 };
 
+/**
+ * @param draggableElement {HTMLElement} Element to drag
+ * @param handler {HTMLElement} Element where the drag & drop operation must to be started
+ * @param data {Object} context 
+ */
 function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, canBeDragged) {
     var xDelta = 0, yDelta = 0;
     var xStart = 0, yStart = 0;
@@ -787,13 +792,13 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
         Event.stopObserving(document, "mouseup", enddrag);
         Event.stopObserving(document, "mousemove", drag);
 
-        dragboardCover.parentNode.stopObserving("scroll", scroll);
+        dragboardCover.parentNode.removeEventListener("scroll", scroll, true);
         dragboardCover.parentNode.removeChild(dragboardCover);
         dragboardCover = null;
 
         onFinish(draggable, data);
 
-        Event.observe(handler, "mousedown", startdrag);
+        handler.addEventListener("mousedown", startdrag, false);
 
         document.onmousedown = null; // reenable context menu
         document.onselectstart = null; // reenable text selection in IE
@@ -831,26 +836,27 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
             return false;
         }
 
-        var target = BrowserUtilsFactory.getInstance().getTarget(e);
-        if (target !== handler) {
-            return false;
-        }
-
         document.oncontextmenu = Draggable._cancel; // disable context menu
         document.onmousedown = Draggable._cancel; // disable text selection in Firefox
         document.onselectstart = Draggable._cancel; // disable text selection in IE
-        Event.stopObserving(handler, "mousedown", startdrag);
+        handler.removeEventListener("mousedown", startdrag, false);
 
         xStart = parseInt(e.screenX, 10);
         yStart = parseInt(e.screenY, 10);
-        y = draggableElement.offsetTop;
-        x = draggableElement.offsetLeft;
+
+/*        var cssStyle = document.defaultView.getComputedStyle(draggableElement, null);
+        y = cssStyle.getPropertyCSSValue("top").getFloatValue(CSSPrimitiveValue.CSS_PX);
+        x = cssStyle.getPropertyCSSValue("left").getFloatValue(CSSPrimitiveValue.CSS_PX);*/
+        // TODO
+        y = draggableElement.style.top === "" ? 0 : parseInt(draggableElement.style.top, 10);
+        x = draggableElement.style.left === "" ? 0 : parseInt(draggableElement.style.left, 10);
+
         draggableElement.style.top = y + 'px';
         draggableElement.style.left = x + 'px';
         Event.observe(document, "mouseup", enddrag);
         Event.observe(document, "mousemove", drag);
 
-        onStart(draggable, data);
+        onStart(draggable, data, e);
 
         var dragboard = EzWebEffectBase.findDragboardElement(draggableElement);
         dragboardCover = document.createElement("div");
@@ -868,7 +874,7 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
 
         yScroll = parseInt(dragboard.scrollTop, 15);
 
-        dragboard.observe("scroll", scroll);
+        dragboard.addEventListener("scroll", scroll, true);
 
         dragboard.insertBefore(dragboardCover, dragboard.firstChild);
 
@@ -893,11 +899,7 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
     };
 
     // add mousedown event listener
-    Event.observe(handler, "mousedown", startdrag);
-    var children = handler.childElements();
-    for (var i = 0; i < children.length; i++) {
-        Event.observe(children[i], "mousedown", Draggable._cancelbubbling);
-    }
+    handler.addEventListener("mousedown", startdrag, false);
 
     /**********
      * Public methods
@@ -912,7 +914,7 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
     };
 
     this.destroy = function () {
-        Event.stopObserving(handler, "mousedown", startdrag);
+        handler.removeEventListener("mousedown", startdrag, false);
         startdrag = null;
         enddrag = null;
         drag = null;
@@ -924,8 +926,8 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
 }
 
 Draggable._cancelbubbling = function (e) {
-   e = e || window.event; // needed for IE
-   Event.stop(e);
+    e = e || window.event; // needed for IE
+    Event.stop(e);
 };
 
 Draggable._canBeDragged = function () {

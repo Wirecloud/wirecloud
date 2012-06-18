@@ -39,7 +39,7 @@ from django.utils.translation import get_language
 from django.utils.translation import ugettext as _
 
 from commons.cache import CacheableData
-from connectable.models import In, Out, RelatedInOut, InOut, Filter
+from connectable.models import In, Out, Filter
 from context.models import Concept, ConceptName, Constant
 from context.utils import get_user_context_providers
 from gadget.models import XHTML, UserPrefOption, Capability, VariableDef
@@ -454,59 +454,6 @@ def get_workspace_data(workspace, user):
     }
 
 
-def get_workspace_variables_data(workSpaceDAO, user):
-    inout_variables = InOut.objects.filter(workspace=workSpaceDAO)
-    return [get_connectable_data(inout) for inout in inout_variables]
-
-
-def get_connectable_data(connectable):
-    res_data = {}
-
-    if isinstance(connectable, InOut):
-        connectable_type = "inout"
-        res_data['id'] = connectable.id
-        res_data['name'] = connectable.name
-
-        # Locating IN connectables linked to this connectable
-        res_data['ins'] = []
-
-        ins = In.objects.filter(inouts__id=connectable.id)
-        for input in ins:
-            res_data['ins'].append(get_connectable_data(input))
-
-        # Locating OUT connectables linked to this connectable
-        res_data['outs'] = []
-
-        outs = Out.objects.filter(inouts__id=connectable.id)
-        for output in outs:
-            res_data['outs'].append(get_connectable_data(output))
-
-        # Locating INOUT connectables linked to this connectable as output
-        res_data['out_inouts'] = []
-        related_inouts = RelatedInOut.objects.filter(in_inout=connectable)
-        for related_inout in related_inouts:
-            res_data['out_inouts'].append(related_inout.out_inout_id)
-
-        # Locating the filter linked to this conectable!
-        res_data['filter'] = connectable.filter_id
-        res_data['filter_params'] = connectable.filter_param_values
-
-        # ReadOnly data
-        res_data['readOnly'] = connectable.readOnly
-
-    elif isinstance(connectable, Out):
-        connectable_type = "out"
-        res_data['var_id'] = connectable.variable.id
-
-    elif isinstance(connectable, In):
-        connectable_type = "in"
-        res_data['var_id'] = connectable.variable.id
-
-    res_data['connectable_type'] = connectable_type
-
-    return res_data
-
-
 class TemplateValueProcessor:
 
     _RE = re.compile(r'(%+)\(([a-zA-Z][\w-]*(?:\.[a-zA-Z\][\w-]*)*)\)')
@@ -630,8 +577,7 @@ def _get_global_workspace_data(workSpaceDAO, user):
 
         tab['igadgetList'] = igadget_data
 
-    workspace_variables_data = get_workspace_variables_data(workSpaceDAO, user)
-    data_ret['workspace']['channels'] = workspace_variables_data
+    data_ret['workspace']['wiring'] = workSpaceDAO.wiringStatus
 
     # Filter information
     filters = Filter.objects.all()
