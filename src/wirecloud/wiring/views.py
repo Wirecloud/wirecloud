@@ -19,7 +19,7 @@
 
 import json
 
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
@@ -29,14 +29,6 @@ from workspace.models import WorkSpace
 
 
 class WiringEntry(Resource):
-
-    def read(self, request):
-        result = {}
-
-        for market in Market.objects.all():
-            result[market.name] = market.options
-
-        return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
     def update(self, request, workspace_id):
 
@@ -62,4 +54,4 @@ class WiringEntry(Resource):
 
         _invalidate_cached_variable_values(workspace)
 
-        return HttpResponse(status=201)
+        return HttpResponse(status=204)
