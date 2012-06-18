@@ -168,7 +168,7 @@ OperatorSourceEndpoint.prototype = new wIn();
 OperatorSourceEndpoint.prototype.serialize = function serialize() {
     return {
         'type': 'ioperator',
-        'ioperator': this.operator.getId(),
+        'ioperator': this.operator.id,
         'endpoint': this.meta.name
     };
 };
