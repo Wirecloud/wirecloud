@@ -97,9 +97,9 @@ Variable.prototype.getWorkspace = function () {
 
 Variable.prototype.serialize = function serialize() {
     return {
-        'type': 'igadget',
-        'igadget': this.iGadget.getId(),
-        'varname': this.vardef.name
+        'type': 'iwidget',
+        'id': this.iGadget.getId(),
+        'endpoint': this.vardef.name
     };
 };
 

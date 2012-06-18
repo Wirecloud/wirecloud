@@ -104,10 +104,10 @@ if (!Wirecloud.ui) {
      */
     var findAnchor = function findAnchor(desc) {
         switch (desc.type) {
-        case 'igadget':
-            return this.igadgets[desc.igadget].getAnchor(desc.varname);
+        case 'iwidget':
+            return this.igadgets[desc.id].getAnchor(desc.endpoint);
         case 'ioperator':
-            return this.ioperators[desc.ioperator].getAnchor(desc.endpoint);
+            return this.ioperators[desc.id].getAnchor(desc.endpoint);
         }
     };
 

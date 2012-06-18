@@ -34,15 +34,15 @@
         var entry;
 
         switch (desc.type) {
-        case 'igadget':
-            entry = this.connectablesByWidget[desc.igadget];
-            if (desc.varname in entry.events) {
-                return entry.events[desc.varname];
+        case 'iwidget':
+            entry = this.connectablesByWidget[desc.id];
+            if (desc.endpoint in entry.events) {
+                return entry.events[desc.endpoint];
             } else {
-                return entry.slots[desc.varname];
+                return entry.slots[desc.endpoint];
             }
         case 'ioperator':
-            entry = this.ioperators[desc.ioperator];
+            entry = this.ioperators[desc.id];
             if (desc.endpoint in entry.inputs) {
                 return entry.inputs[desc.endpoint];
             } else {

@@ -109,7 +109,7 @@ OperatorTargetEndpoint.prototype = new wOut();
 OperatorTargetEndpoint.prototype.serialize = function serialize() {
     return {
         'type': 'ioperator',
-        'ioperator': this.operator.id,
+        'id': this.operator.id,
         'endpoint': this.meta.name
     };
 };
