@@ -108,32 +108,5 @@ urlpatterns = patterns('',
 urlpatterns += wirecloud.urls.urlpatterns
 urlpatterns += staticfiles_urlpatterns()
 
-### OpenId URLs
-if 'openid_auth' in settings.INSTALLED_APPS:
-    #urls needed for OpenID authentication
-    urlpatterns += patterns('',
-                            (r'^accounts/login/$', 'openid_auth.views.login'),
-                            (r'^openid/complete/$', 'openid_auth.views.complete_openid_login'),
-                    )
-else:
-    #Usual login
-    urlpatterns += patterns('',
-                             (r'^accounts/login/$', 'django.contrib.auth.views.login'),
-                    )
-
-### Facebook connect URLs
-if 'facebookconnect' in settings.INSTALLED_APPS:
-    #add the facebook url
-    urlpatterns += patterns('',
-                             (r'^facebook/', include('facebookconnect.urls')),
-                    )
-
-##Sign in with Twitter
-if 'twitterauth' in settings.INSTALLED_APPS:
-    #add twitter urls
-    urlpatterns += patterns('',
-                            (r'^twitter/', include('twitterauth.urls')),
-                    )
-
 handler404 = "django.views.defaults.page_not_found"
 handler500 = "django.views.defaults.server_error"
