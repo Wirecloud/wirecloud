@@ -24,6 +24,8 @@ from wirecloud.wiring import views as wiring_views
 
 urlpatterns = patterns('wirecloud.views',
 
+    url(r'^$', 'render_root_page', name='wirecloud.root'),
+
     url(r'^workspace/(?P<workspace_id>\d+)/wiring$',
         wiring_views.WiringEntry(permitted_methods=('PUT',)),
         name='wirecloud.workspace_wiring'),
@@ -31,4 +33,5 @@ urlpatterns = patterns('wirecloud.views',
     url(r'^markets/?$', views.MarketCollection(permitted_methods=('GET', 'POST'))),
     url(r'^market/(?P<market>[\w -]+)/?$', views.MarketEntry(permitted_methods=('PUT', 'DELETE'))),
 
+    url(r'^(?P<creator_user>[^/]+)/(?P<workspace>[^/]+)/?$', 'render_workspace_view', name='wirecloud.workspace_view'),
 )
