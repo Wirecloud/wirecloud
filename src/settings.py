@@ -246,7 +246,7 @@ CERTIFICATION_ENABLED = False
 # Cache settings
 CACHES = {
     'default': {
-        'BACKEND': 'ezweb.cache.backends.locmem.LocMemCache',
+        'BACKEND': 'wirecloud.cache.backends.locmem.LocMemCache',
         'OPTIONS': {
             'MAX_ENTRIES': 3000,
         },
