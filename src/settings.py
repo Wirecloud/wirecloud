@@ -32,6 +32,7 @@
 
 # Django settings for mymem project.
 from os import path
+from django.core.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 
 DEBUG = False
@@ -196,9 +197,10 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 AUTH_PROFILE_MODULE = 'user.UserProfile'
 
-# URLs aftetr login and logout
-LOGOUT_URL = '/'
-LOGIN_REDIRECT_URL = '/'
+# Login/logout URLs
+LOGIN_URL = reverse_lazy('login')
+LOGOUT_URL = reverse_lazy('wirecloud.root')
+LOGIN_REDIRECT_URL = reverse_lazy('wirecloud.root')
 
 FIXTURE_DIRS = (
     path.join(BASEDIR, 'fixtures', 'django.contrib.auth'),

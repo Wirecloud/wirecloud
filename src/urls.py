@@ -30,7 +30,7 @@
 
 #
 
-from django.conf.urls.defaults import patterns, include
+from django.conf.urls.defaults import patterns, include, url
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.decorators.cache import cache_page
@@ -75,15 +75,12 @@ urlpatterns = patterns('',
     # Proxy
     (r'^proxy', include('proxy.urls')),
 
-    # Django contrib
-    #(r'^registration/login_form/$', 'registration.views.login_form'),
+    # Login/logout
+    url(r'^login/?$', 'django.contrib.auth.views.login', name="login"),
+    url(r'^logout/?$', 'authentication.logout', name="logout"),
+    url(r'^admin/logout/?$', 'authentication.logout'),
 
-    #(r'^logout$', 'django.contrib.auth.views.logout'),
-    # custom logouts (to enable anonymous access)
-    (r'^logout$', 'authentication.logout'),
-    (r'^admin/logout/$', 'authentication.logout'),
-
-    #Admin interface
+    # Admin interface
     (r'^admin/', include(admin.site.urls)),
 
     # Django "set language" (internacionalitation)
