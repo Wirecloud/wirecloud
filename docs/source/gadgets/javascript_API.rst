@@ -34,6 +34,7 @@ request options
 ...............
 
 General options:
+
 * **asynchronous** (Boolean; default *true*): Determines whether XMLHttpRequest
   is used asynchronously or not. Synchronous usage is strongly discouraged — it
   halts all script execution for the duration of the request and blocks the
@@ -62,6 +63,7 @@ General options:
   parameter to the callbacks.
 
 Callback options:
+
 * **onSuccess**: Invoked when a request completes and its status code belongs
   in the 2xy family. This is skipped if a code-specific callback is defined
   (e.g., on200), and happens before **onComplete**.
@@ -135,7 +137,8 @@ Sets the value of a preference.
 
 .. method:: MashupPlatform.prefs.set(key, value)
 
-* ``
+* ``key`` is the identifier of the preference.
+* ``value`` is the new value to use for the preference.
 
 MashupPlatform.widget
 ---------------------
@@ -156,12 +159,12 @@ Makes wirecloud notify that the widget needs user's attention.
 
 .. method:: MashupPlatform.Widget.drawAttention()
 
-getId
+id
 .....
 
 Returns the widget id.
 
-.. method:: MashupPlatform.Widget.getId()
+.. attribute:: MashupPlatform.Widget.id
 
 log
 ...
