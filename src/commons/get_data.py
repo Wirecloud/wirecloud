@@ -39,7 +39,6 @@ from django.utils.translation import get_language
 from django.utils.translation import ugettext as _
 
 from commons.cache import CacheableData
-from connectable.models import In, Out, Filter
 from context.models import Concept, ConceptName, Constant
 from context.utils import get_user_context_providers
 from gadget.models import XHTML, UserPrefOption, Capability, VariableDef
@@ -381,66 +380,6 @@ def get_gadget_capabilities(gadget_id):
     return data_ret
 
 
-def get_input_data(inout):
-    all_inputs = []
-    inputs = In.objects.filter(inout=inout)
-    for ins in inputs:
-        input_data = {}
-        input_data['id'] = ins.pk
-        input_data['name'] = ins.name
-        var = ins.variable
-        input_data['varId'] = var.pk
-        input_data['type'] = var.vardef.aspect
-        all_inputs.append(input_data)
-    return all_inputs
-
-
-def get_output_data(inout):
-    all_outputs = []
-    outputs = Out.objects.filter(inout=inout)
-    for outs in outputs:
-        output_data = {}
-        output_data['id'] = outs.pk
-        output_data['name'] = outs.name
-        var = outs.variable
-        output_data['varId'] = var.pk
-        output_data['type'] = var.vardef.aspect
-        all_outputs.append(output_data)
-    return all_outputs
-
-
-def get_inout_data(inout):
-    """
-        deprecated!!!!
-    """
-    data_ins = get_input_data(inout=inout)
-    data_outs = get_output_data(inout=inout)
-
-    return {
-        'id': inout.pk,
-        'aspect': 'INOUT',
-        'friend_code': inout.friend_code,
-        'name': inout.name,
-        'inputs': [d for d in data_ins],
-        'outputs': [d for d in data_outs],
-    }
-
-
-def get_filter_data(filter__):
-    filter_ = filter__.get_translated_model()
-
-    return {
-        'id': filter_.pk,
-        'name': filter_.name,
-        'nature': filter_.nature,
-        'label': filter_.label,
-        'category': filter_.category,
-        'help_text': filter_.help_text,
-        'code': filter_.code,
-        'params': filter_.params,
-    }
-
-
 def get_workspace_data(workspace, user):
     user_workspace = UserWorkSpace.objects.get(user=user, workspace=workspace)
 
@@ -579,10 +518,6 @@ def _get_global_workspace_data(workSpaceDAO, user):
         tab['igadgetList'] = igadget_data
 
     data_ret['workspace']['wiring'] = workSpaceDAO.wiringStatus
-
-    # Filter information
-    filters = Filter.objects.all()
-    data_ret['workspace']['filters'] = [get_filter_data(f) for f in filters]
 
     # Params
     last_published_workspace = PublishedWorkSpace.objects.filter(workspace=workSpaceDAO).order_by('-pk')
