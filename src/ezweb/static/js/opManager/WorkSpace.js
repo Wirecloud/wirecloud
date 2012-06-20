@@ -63,13 +63,13 @@ function WorkSpace (workSpaceState) {
         this.preferences = PreferencesManagerFactory.getInstance().buildPreferences('workspace', {}, this)
 
         var initialTab = {
-                          'id': 0,
-                          'locked': "true",
-                          'igadgetList': [],
-                          'name': gettext("Unusable Tab"),
-                          'visible': 1,
-                          'preferences': {}
-                         };
+            'id': 0,
+            'readOnly': "true",
+            'igadgetList': [],
+            'name': gettext("Unusable Tab"),
+            'visible': 1,
+            'preferences': {}
+        };
 
         this.workSpaceGlobalInfo = {
                                     'workspace': {
@@ -177,7 +177,6 @@ function WorkSpace (workSpaceState) {
         }
 
         this.loaded = true;
-        this._lockFunc(false);
 
         layoutManager.logStep('');
         OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.ACTIVE_WORKSPACE);
@@ -272,7 +271,6 @@ function WorkSpace (workSpaceState) {
         var newTab = this.notebook.createTab({'tab_constructor': Tab, 'tab_info': tabInfo, 'workspace': this});
         this.tabInstances.set(tabInfo.id, newTab);
 
-        newTab.setLock(false);
         layoutManager.logSubTask(gettext('Tab added successfully'));
         layoutManager.logStep('');
     };
@@ -801,25 +799,6 @@ function WorkSpace (workSpaceState) {
     /*
      * OPERATIONS
      */
-    this._lockFunc = function (locked) {
-        var i, tab_keys = this.tabInstances.keys();
-        for (i = 0; i < tab_keys.length; i += 1) {
-            this.tabInstances.get(tab_keys[i]).setLock(locked);
-        }
-        this._updateAddTabButton();
-
-    }.bind(this);
-
-    this._isLocked = function () {
-        var i, tab_keys = this.tabInstances.keys(), all = true;
-        for (i = 0; i < tab_keys.length; i += 1) {
-            if (!this.tabInstances.get(tab_keys[i]).dragboard.isLocked()) {
-                all = false;
-            }
-        }
-        return all;
-    };
-
     this.markAsActive = function () {
         var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});
         var params = {'workspace': Object.toJSON({active: "true"})};

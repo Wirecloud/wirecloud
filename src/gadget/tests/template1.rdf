@@ -103,13 +103,6 @@
 					</wire:PlatformContext>
 				</wire:hasPlatformContext>
 				<wire:hasWidgetContext>
-					<wire:WidgetContext rdf:ID="WidgetContext_1">
-						<dcterms:title>lockStatus</dcterms:title>
-						<wire:type>text</wire:type>
-						<wire:widgetContextConcept>lockStatus</wire:widgetContextConcept>
-					</wire:WidgetContext>
-				</wire:hasWidgetContext>
-				<wire:hasWidgetContext>
 					<wire:WidgetContext rdf:ID="WidgetContext_2">
 						<dcterms:title>width</dcterms:title>
 						<wire:type>text</wire:type>

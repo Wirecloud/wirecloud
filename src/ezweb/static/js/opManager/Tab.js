@@ -237,8 +237,7 @@ function Tab(id, notebook, options) {
     //Now, a TAB is painted on-demand. Only the active tab is rendered automatically!
     this.painted = false;
 
-    //By default, the TAB is locked
-    this.locked = true;
+    this.readOnly = false;
 
     this.dragboard = new Dragboard(this, this.workSpace, this.wrapperElement);
 
@@ -274,7 +273,7 @@ Tab.prototype = new StyledElements.Tab();
 Tab.prototype.isAllowed = function (action) {
     switch (action) {
     case "remove":
-        return this.workSpace.tabInstances.keys().length > 1 && !this.hasReadOnlyIGadgets();
+        return !this.readOnly && this.workSpace.tabInstances.keys().length > 1 && !this.hasReadOnlyIGadgets();
     default:
         return false;
     }
@@ -314,20 +313,4 @@ Tab.prototype.preferencesChanged = function(modifiedValues) {
     if (newLayout) {
         this.dragboard._updateBaseLayout();
     }
-}
-
-
-/**
- * Locks/unlocks this tab.
- */
-Tab.prototype.setLock = function(locked) {
-    this.locked = locked;
-    this.dragboard.setLock(locked);
-}
-
-/**
- * Checks if the tab is locked
- */
-Tab.prototype.isLocked = function() {
-    return this.locked;
 }

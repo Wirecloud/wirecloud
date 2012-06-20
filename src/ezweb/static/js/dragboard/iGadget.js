@@ -575,7 +575,7 @@ IGadget.prototype.isAllowed = function (action) {
     case "move":
     case "resize":
         var dragboard = this.layout.dragboard;
-        return !dragboard.isLocked() && dragboard.getWorkspace().isAllowed('edit_layout');
+        return !dragboard.tab.readOnly && dragboard.getWorkspace().isAllowed('edit_layout');
     case "minimize":
         return this.layout.dragboard.getWorkspace().isAllowed('edit_layout');
     default:
@@ -631,12 +631,6 @@ IGadget.prototype.paint = function (onInit) {
     this.element.style.top = this.layout.getRowOffset(this.position.y) + "px";
     this.setZPosition(this.zPos);
 
-    // Initialize lock status
-    var locked = this.layout.dragboard.isLocked();
-    if (locked) {
-        this.element.addClassName("gadget_window_locked");
-    }
-
     // Select the correct representation for this iGadget (iconified, minimized or normal)
     var minimizedStatusBackup = this.minimized;
     this.minimized = false;
@@ -673,9 +667,6 @@ IGadget.prototype.paint = function (onInit) {
     contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.HEIGHT, this.contentHeight);
     contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.WIDTH, this.contentWidth);
 
-    // Notify Context Manager about the new sizes
-    contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.LOCKSTATUS, this.layout.dragboard.isLocked());
-
     this._updateButtons();
     this._updateVersionButton();
 
@@ -688,10 +679,8 @@ IGadget.prototype.paint = function (onInit) {
     Event.observe(this.iconImg,
         "click",
         function () {
-            if (this.layout.dragboard.isLocked()) {
-                this.setMinimizeStatus(false);
-                this.layout.dragboard.raiseToTop(this);
-            }
+            this.setMinimizeStatus(false);
+            this.layout.dragboard.raiseToTop(this);
         }.bind(this),
         true);
 };
@@ -738,53 +727,51 @@ IGadget.prototype.fillWithLabel = function () {
 };
 
 IGadget.prototype.fillWithInput = function () {
-    if (!this.layout.dragboard.isLocked()) {
-        this.igadgetNameHTMLElement.hide();
-        if (this.igadgetInputHTMLElement) {
-            this.igadgetInputHTMLElement.show();
-            this.igadgetInputHTMLElement.setAttribute("value", this.name);
-            this.igadgetInputHTMLElement.setAttribute("size", this.name.length + 5);
-        } else {
-            this.igadgetInputHTMLElement = document.createElement("input");
-            Element.extend(this.igadgetInputHTMLElement);
-            this.igadgetInputHTMLElement.addClassName("igadget_name");
-            this.igadgetInputHTMLElement.setAttribute("type", "text");
-            this.igadgetInputHTMLElement.setAttribute("value", this.name);
-            this.igadgetInputHTMLElement.setAttribute("size", this.name.length + 5);
-            this.igadgetInputHTMLElement.setAttribute("maxlength", 30);
+    this.igadgetNameHTMLElement.hide();
+    if (this.igadgetInputHTMLElement) {
+        this.igadgetInputHTMLElement.show();
+        this.igadgetInputHTMLElement.setAttribute("value", this.name);
+        this.igadgetInputHTMLElement.setAttribute("size", this.name.length + 5);
+    } else {
+        this.igadgetInputHTMLElement = document.createElement("input");
+        Element.extend(this.igadgetInputHTMLElement);
+        this.igadgetInputHTMLElement.addClassName("igadget_name");
+        this.igadgetInputHTMLElement.setAttribute("type", "text");
+        this.igadgetInputHTMLElement.setAttribute("value", this.name);
+        this.igadgetInputHTMLElement.setAttribute("size", this.name.length + 5);
+        this.igadgetInputHTMLElement.setAttribute("maxlength", 30);
 
-            this.gadgetMenu.appendChild(this.igadgetInputHTMLElement);
+        this.gadgetMenu.appendChild(this.igadgetInputHTMLElement);
 
-            this.igadgetInputHTMLElement.observe('blur',
-                                                function (e) {
-                                                    Event.stop(e);
-                                                    this.fillWithLabel();
-                                                }.bind(this));
+        this.igadgetInputHTMLElement.observe('blur',
+                                            function (e) {
+                                                Event.stop(e);
+                                                this.fillWithLabel();
+                                            }.bind(this));
 
-            this.igadgetInputHTMLElement.observe('keypress',
-                                                function (e) {
-                                                    if (e.keyCode === Event.KEY_RETURN) {
-                                                        Event.stop(e);
-                                                        var target = BrowserUtilsFactory.getInstance().getTarget(e);
-                                                        target.blur();
-                                                    }
-                                                }.bind(this));
-
-            this.igadgetInputHTMLElement.observe('change',
-                                                function (e) {
-                                                    var target = BrowserUtilsFactory.getInstance().getTarget(e);
-                                                    this.setName(target.value);
-                                                }.bind(this));
-
-            this.igadgetInputHTMLElement.observe('keyup',
-                                                function (e) {
+        this.igadgetInputHTMLElement.observe('keypress',
+                                            function (e) {
+                                                if (e.keyCode === Event.KEY_RETURN) {
                                                     Event.stop(e);
                                                     var target = BrowserUtilsFactory.getInstance().getTarget(e);
-                                                    target.size = (target.value.length === 0) ? 1 : target.value.length + 5;
-                                                }.bind(this));
-        }
-        this.igadgetInputHTMLElement.focus();
+                                                    target.blur();
+                                                }
+                                            }.bind(this));
+
+        this.igadgetInputHTMLElement.observe('change',
+                                            function (e) {
+                                                var target = BrowserUtilsFactory.getInstance().getTarget(e);
+                                                this.setName(target.value);
+                                            }.bind(this));
+
+        this.igadgetInputHTMLElement.observe('keyup',
+                                            function (e) {
+                                                Event.stop(e);
+                                                var target = BrowserUtilsFactory.getInstance().getTarget(e);
+                                                target.size = (target.value.length === 0) ? 1 : target.value.length + 5;
+                                            }.bind(this));
     }
+    this.igadgetInputHTMLElement.focus();
 };
 
 /**
@@ -989,7 +976,7 @@ IGadget.prototype.destroy = function () {
 IGadget.prototype.remove = function (orderFromServer) {
     orderFromServer = orderFromServer !== null ? orderFromServer : false;
 
-    if (this.layout === null || (!orderFromServer && this.layout.dragboard.isLocked())) {
+    if (this.layout === null) {
         return;
     }
 
@@ -1081,34 +1068,6 @@ IGadget.prototype._notifyWindowResizeEvent = function () {
         this.layout._notifyResizeEvent(this, oldWidth, oldHeight, newWidth, newHeight, false, false);
     }
     /* TODO end of temporally workaround */
-};
-
-/**
- * This function is called when the dragboard is locked or unlocked.
- *
- * @private
- * @param {Boolean} newLockStatus
- */
-IGadget.prototype._notifyLockEvent = function (newLockStatus, reserveSpace) {
-    if (!this.isPainted()) {
-        return;
-    }
-
-    var oldWidth = this.getWidth();
-    var oldHeight = this.getHeight();
-
-    if (newLockStatus) {
-        this.element.addClassName("gadget_window_locked");
-    } else {
-        this.element.removeClassName("gadget_window_locked");
-    }
-
-    this._updateButtons();
-    this.setSize(oldWidth, oldHeight, false, false);
-
-    // Notify Context Manager
-    var contextManager = this.layout.dragboard.getWorkspace().getContextManager();
-    contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.LOCKSTATUS, newLockStatus);
 };
 
 /**

@@ -1217,8 +1217,6 @@ EzWebExt.BERT2 = 37;
  * por los elementos languagePrefVarName y platformLanguageVarName.
  *
  * La configuración por defecto es la siguiente:
- *       useLockStatus: true,
- *       lockStatusVarName: "lockStatus",
  *       useHeightVar: true,
  *       heightVarName: "height",
  *       useWidthVar: false,
@@ -1244,8 +1242,6 @@ var EzWebGadget = function(customSettings) {
 
     /* Parse settings */
     this.settings = {
-        useLockStatus: true,
-        lockStatusVarName: "lockStatus",
         useHeightVar: true,
         heightVarName: "height",
         useWidthVar: false,
@@ -1260,8 +1256,6 @@ var EzWebGadget = function(customSettings) {
         this.settings[key] = customSettings[key];
 
     /* Common funcionality */
-    this.lockVar   = EzWebAPI.createRGadgetVariable(this.settings["lockStatusVarName"],
-                                                    function(value) {gadget.lockCallback(value)});
     this.heightVar = EzWebAPI.createRGadgetVariable(this.settings["heightVarName"],
                                                     function(value) {gadget.heightCallback(value)});
 
@@ -1484,29 +1478,6 @@ EzWebGadget.prototype.heightCallback = function(newHeight) {
  */
 EzWebGadget.prototype.widthCallback = function(newWidth) {
     this.repaint();
-}
-
-
-/**
- * Este método es llamado cuando la plataforma bloquea o desbloquea este
- * gadget. La implementación por defecto de este gadget se encarga de modificar
- * el atributo class del elemento body acordemente al nuevo estado. En caso de
- * querer modificar este comportamiento, se podrá sobreescribir este método. En
- * caso de querer usar la implementación por defecto de este método cuando se
- * está sobreescribiendo el método, basta con usar la siguiente linea de
- * código:
- *
- * <code>
- * EzWebGadget.prototype.lockCallback.call(this, newLockStatus);
- * </code>
- *
- */
-EzWebGadget.prototype.lockCallback = function(newLockStatus) {
-    if (newLockStatus == true) {
-        EzWebExt.appendClassName(document.body, "locked");
-    } else {
-        EzWebExt.removeClassName(document.body, "locked");
-    }
 }
 
 

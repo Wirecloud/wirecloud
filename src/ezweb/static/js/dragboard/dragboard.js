@@ -49,7 +49,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
     this.tabId = tab.tabInfo.id;
     this.workSpace = workSpace;
     this.workSpaceId = workSpace.workSpaceState.id;
-    this.fixed = false;
+    this.readOnly = false;
 
     // ***********************
     // PRIVATE FUNCTIONS
@@ -208,50 +208,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
         this.dragboardElement = null;
     };
 
-    /**
-     * Returns true if the dragboard is locked.
-     */
-    Dragboard.prototype.isLocked = function () {
-        return this.fixed;
-    };
-
-    /**
-     * Locks and unlocks the dragboard according to the newLockStatus
-     * parameter.
-     *
-     * @param newLockStatus true to make dragboard  be locked or false for
-     *                      having an editable dragboard (where you can
-     *                      move, resize, etc the gadget instances).
-     */
-    Dragboard.prototype.setLock = function (newLockStatus) {
-        if (this.fixed === newLockStatus) {
-            return; // No change in status => nothing to do
-        }
-
-        this.fixed = newLockStatus;
-        if (this.fixed) {
-            this.dragboardElement.addClassName("fixed");
-        } else {
-            this.dragboardElement.removeClassName("fixed");
-        }
-
-        var iGadget;
-
-        // propagate the fixed status change event
-        var igadgetKeys = this.iGadgets.keys();
-        for (var i = 0; i < igadgetKeys.length; i++) {
-            iGadget = this.iGadgets.get(igadgetKeys[i]);
-            iGadget._notifyLockEvent(this.fixed);
-        }
-    };
-
-    /**
-     * Toggles the current lock status of the dragboard.
-     */
-    Dragboard.prototype.toggleLock = function () {
-        this.setFixed(!this.fixed);
-    };
-
     Dragboard.prototype.parseTab = function (tabInfo) {
         var curIGadget, position, icon_position, zPos, width, height, igadget,
             gadget, gadgetid, minimized, layout, menu_color, refusedVersion,
@@ -263,8 +219,8 @@ function Dragboard(tab, workSpace, dragboardElement) {
         this.iGadgets = new Hash();
         this.iGadgetsByCode = new Hash();
 
-        if (this.tab.isLocked() || !this.workSpace.isOwned()) {
-            this.fixed = true;
+        if (this.tab.readOnly || !this.workSpace.isOwned()) {
+            this.readOnly = true;
             this.dragboardElement.addClassName("fixed");
         }
 
@@ -333,8 +289,8 @@ function Dragboard(tab, workSpace, dragboardElement) {
             throw new TypeError();
         }
 
-        if (this.isLocked()) {
-            var msg = gettext("The destination tab (%(tabName)s) is locked. Try to unlock it or select an unlocked tab.");
+        if (this.readOnly) {
+            var msg = gettext("The destination tab (%(tabName)s) is read only.");
             msg = interpolate(msg, {tabName: this.tab.tabInfo.name}, true);
             LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.WARN_MSG);
             return;
@@ -1090,7 +1046,7 @@ function IGadgetIconDraggable(iGadget) {
 }
 
 IGadgetIconDraggable.prototype.canBeDraggedFunc = function (draggable, context) {
-    return !context.iGadget.layout.dragboard.isLocked();
+    return true;
 };
 
 
