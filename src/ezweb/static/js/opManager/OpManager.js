@@ -245,7 +245,8 @@ var OpManagerFactory = function () {
             var state, steps = this.activeWorkSpace != null ? 2 : 1;
 
             state = {
-                workspace: workspace.getId(),
+                workspace_creator: workspace.workSpaceState.creator,
+                workspace_name: workspace.getName(),
                 view: "workspace"
             };
             if (initial_tab) {

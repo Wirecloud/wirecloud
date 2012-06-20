@@ -1,12 +1,8 @@
 var HistoryManager = new Object();
 
-HistoryManager.init = function(initial_workspace) {
+HistoryManager.init = function() {
     this.initialState = this._parseStateFromHash(window.location.hash);
-    if (initial_workspace != null) {
-        this.initialState.workspace = "" + initial_workspace;
-    } else {
-        this.initialState.workspace = this._parseWorkspaceFromPathName(window.location.pathname);
-    }
+    this._parseWorkspaceFromPathName(window.location.pathname, this.initialState);
 
     if ('history' in window && 'pushState' in window.history) {
         Event.observe(window,
@@ -58,9 +54,13 @@ HistoryManager._parseStateFromHash = function(hash) {
 };
 
 HistoryManager._parseWorkspaceFromPathName = function(pathname) {
-    var index = pathname.lastIndexOf('/');
+    var index, index2;
 
-    return pathname.substr(index + 1);
+    index = pathname.lastIndexOf('/');
+    index2 = pathname.lastIndexOf('/', index - 1);
+
+    status.workspace_creator = pathname.substring(index2 + 1, index);
+    status.workspace_name = pathname.substring(index + 1);
 };
 
 HistoryManager._prepareData = function(data) {
@@ -80,7 +80,7 @@ HistoryManager._buildURL = function(data) {
         lite = '';
 
     for (key in data) {
-        if (key === 'workspace') {
+        if (key === 'workspace_name' || key === 'workspace_creator') {
             continue;
         }
         hash += '&' + encodeURI(key) + '=' + encodeURI(data[key]);
@@ -88,7 +88,7 @@ HistoryManager._buildURL = function(data) {
 
     return window.location.protocol + "//" +
         window.location.host + lite +
-        "/workspaces/" + data.workspace +
+        "/" + data.workspace_creator + '/' + data.workspace_name +
         window.location.search +
         '#' + hash.substr(1);
 };
