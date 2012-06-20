@@ -1,0 +1,32 @@
+<Template xmlns="http://morfeo-project.org/2007/Template">
+
+    <Catalog.ResourceDescription>
+        <Vendor>Yaco Sistemas S.L.</Vendor>
+        <Name>api-test</Name>
+        <DisplayName>Wirecloud API test</DisplayName>
+        <Version>0.9</Version>
+        <Author>aarranz</Author>
+        <Mail>aarranz@yaco.es</Mail>
+        <Description>This gadget is used to test some of the features of the EzWeb platform</Description>
+        <ImageURI>images/catalogue.png</ImageURI>
+        <iPhoneImageURI>images/catalogue_iphone.png</iPhoneImageURI>
+        <WikiURI>doc/index.html</WikiURI>
+    </Catalog.ResourceDescription>
+
+    <Platform.Preferences>
+    </Platform.Preferences>
+
+    <!-- EzWeb Gadget Persistent State -->
+    <Platform.StateProperties>
+    </Platform.StateProperties>
+
+    <!-- EzWeb Gadget Data Wiring -->
+    <Platform.Wiring>
+    </Platform.Wiring>
+    <Platform.Link>
+        <XHTML href="test.html"/>
+    </Platform.Link>
+    <Platform.Rendering width="6" height="24"/>
+    <Platform.Context>
+    </Platform.Context>
+</Template>
