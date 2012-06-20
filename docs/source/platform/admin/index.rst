@@ -10,7 +10,6 @@ Dependencies
 * South 0.7.3+
 * lxml
 * django-compressor (BeautifulSoup)
-* johnny-cache
 
 Installing basic dependencies in Debian Wheeze and Ubuntu oneiric
 -----------------------------------------------------------------
@@ -24,7 +23,7 @@ using pip:
 
 .. code-block:: bash
 
-    $ sudo pip install johnny-cache django-compressor
+    $ sudo pip install django-compressor
 
 
 Database Installation and Configuration
