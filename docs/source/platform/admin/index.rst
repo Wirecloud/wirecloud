@@ -270,6 +270,19 @@ Add a virtualhost to the apache configuration:
             Alias /static /path/to/wirecloud/src/static
             <Location "/static">
                     SetHandler None
+                    <IfModule mod_expires.c>
+                            ExpiresActive On
+                            ExpiresDefault "access plus 1 week"
+                    </IfModule>
+                    <IfModule mod_headers.c>
+                            Header append Cache-Control "public"
+                    </IfModule>
+            </Location>
+
+            <Location "/static/cache">
+                    <IfModule mod_expires.c>
+                            ExpiresDefault "access plus 3 years"
+                    </IfModule>
             </Location>
 
             ...
