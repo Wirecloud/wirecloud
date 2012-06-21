@@ -31,5 +31,4 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/connectable.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/wiring.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/jsonFilter.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}iphone/add-ons/wiring.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/add-ons/connectable.js"></script>

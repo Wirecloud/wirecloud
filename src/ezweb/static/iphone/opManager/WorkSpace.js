@@ -255,27 +255,6 @@ function WorkSpace(workSpaceState) {
         return iGadgets;
     };
 
-    WorkSpace.prototype.getRelatedIGadgets = function (iGadgetId) {
-        var iGadgets = [],
-            dragboard = null,
-            igadget = null,
-            id = null,
-            iGadgetIds = this.wiring.getRelatedIgadgets(iGadgetId),
-            j, i;
-
-        for (j = 0; j < iGadgetIds.length; j += 1) {
-            id = iGadgetIds[j];
-            for (i = 0; i < this.tabInstances.length; i += 1) {
-                dragboard = this.tabInstances[i].getDragboard();
-                igadget = dragboard.getIGadget(id);
-                if (igadget) {
-                    iGadgets.push(igadget);
-                }
-            }
-        }
-        return iGadgets;
-    };
-
     /**** Display the IGadgets menu ***/
     WorkSpace.prototype.init = function () {
         //Create a menu for each tab of the workspace and paint it as main screen.

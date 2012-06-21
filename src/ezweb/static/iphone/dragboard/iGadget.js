@@ -68,24 +68,6 @@ IGadget.prototype.getId = function () {
     return this.id;
 };
 
-
-IGadget.prototype.getRelatedGadgetsHTML = function () {
-    var relatedhtml = "",
-        related = this.dragboard.workSpace.getRelatedIGadgets(this.id);
-
-    if (related.length > 0) {
-        relatedhtml += '<div id="related_gadgets" class="related_gadgets">';
-        for (i = 0; i < related.length; i += 1) {
-            relatedhtml += '<div class="related_gadget_div" onclick="OpManagerFactory.getInstance().showRelatedIgadget(' + related[i].id + ',' + related[i].dragboard.tab.tabInfo.id + ')" >';
-            relatedhtml += '<img id="related_' + related[i].getId() + '" class="related_gadget" src="' + related[i].getGadget().getIPhoneImageURI() + '" />';
-            relatedhtml += '</div>';
-        }
-        relatedhtml += '</div>';
-    }
-
-    return relatedhtml;
-};
-
 /**
 * Paints the gadget instance
 * @param where HTML Element where the igadget will be painted
