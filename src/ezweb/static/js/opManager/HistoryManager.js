@@ -1,150 +1,158 @@
-var HistoryManager = new Object();
+/*global Event, LayoutManagerFactory*/
 
-HistoryManager.init = function() {
-    this.initialState = this._parseStateFromHash(window.location.hash);
-    this._parseWorkspaceFromPathName(window.location.pathname, this.initialState);
+(function () {
 
-    if ('history' in window && 'pushState' in window.history) {
-        Event.observe(window,
-            "popstate",
-            this._onpopstate.bind(this),
-            true);
-        history.replaceState(this.initialState, "", window.location.href);
-        this.currentState = this.initialState;
+    "use strict";
 
-        this._pushState = function(data, title, url) {
-            history.pushState(data, "", url);
-            this.currentState = data;
-        };
+    var HistoryManager = {};
 
-    } else if ('onhashchange' in document || 'onhashchange' in window) {
-        Event.observe(window,
-            "hashchange",
-            this._onhashchange.bind(this),
-            true);
-        this.currentState = this.initialState;
+    HistoryManager.init = function init() {
+        this.initialState = this._parseStateFromHash(window.location.hash);
+        this._parseWorkspaceFromPathName(window.location.pathname, this.initialState);
 
-        this._pushState = function(data, title, url) {
-            var url = this._buildURL(data);
-            window.location = url;
-        };
-    }
-    this.stateChangeEnabled = true;
-};
+        if ('history' in window && 'pushState' in window.history) {
+            Event.observe(window,
+                "popstate",
+                this._onpopstate.bind(this),
+                true);
+            history.replaceState(this.initialState, "", window.location.href);
+            this.currentState = this.initialState;
 
-HistoryManager._parseStateFromHash = function(hash) {
-    var definitions, i, pair, key, value, data = {};
+            this._pushState = function (data, title, url) {
+                history.pushState(data, "", url);
+                this.currentState = data;
+            };
 
-    if (hash.charAt(0) === '#') {
-        hash = hash.substr(1);
-    }
-    if (hash.length === 0) {
+        } else if ('onhashchange' in document || 'onhashchange' in window) {
+            Event.observe(window,
+                "hashchange",
+                this._onhashchange.bind(this),
+                true);
+            this.currentState = this.initialState;
+
+            this._pushState = function (data, title, url) {
+                window.location = url;
+            };
+        }
+        this.stateChangeEnabled = true;
+    };
+
+    HistoryManager._parseStateFromHash = function _parseStateFromHash(hash) {
+        var definitions, i, pair, key, value, data = {};
+
+        if (hash.charAt(0) === '#') {
+            hash = hash.substr(1);
+        }
+        if (hash.length === 0) {
+            return data;
+        }
+
+        definitions = hash.split('&');
+        for (i = 0; i < definitions.length; i += 1) {
+            pair = definitions[i].split('=');
+            key = decodeURIComponent(pair[0]);
+            value = decodeURIComponent(pair[1]);
+            data[key] = value;
+        }
+
         return data;
-    }
+    };
 
-    definitions = hash.split('&');
-    for (i = 0; i < definitions.length; i += 1) {
-        pair = definitions[i].split('=');
-        key = decodeURIComponent(pair[0]);
-        value = decodeURIComponent(pair[1]);
-        data[key] = value;
-    }
+    HistoryManager._parseWorkspaceFromPathName = function _parseWorkspaceFromPathName(pathname, status) {
+        var index, index2;
 
-    return data;
-};
+        index = pathname.lastIndexOf('/');
+        index2 = pathname.lastIndexOf('/', index - 1);
 
-HistoryManager._parseWorkspaceFromPathName = function(pathname, status) {
-    var index, index2;
+        status.workspace_creator = pathname.substring(index2 + 1, index);
+        status.workspace_name = pathname.substring(index + 1);
+    };
 
-    index = pathname.lastIndexOf('/');
-    index2 = pathname.lastIndexOf('/', index - 1);
-
-    status.workspace_creator = pathname.substring(index2 + 1, index);
-    status.workspace_name = pathname.substring(index + 1);
-};
-
-HistoryManager._prepareData = function(data) {
-    var default_data = {
-        view: "dragboard"
-    }
-    data = Object.extend(default_data, data);
-    for (key in data) {
-        data[key] = "" + data[key];
-    }
-    return data;
-};
-
-HistoryManager._buildURL = function(data) {
-    var key,
-        hash = '',
-        lite = '';
-
-    for (key in data) {
-        if (key === 'workspace_name' || key === 'workspace_creator') {
-            continue;
+    HistoryManager._prepareData = function _prepareData(data) {
+        var key, default_data = {
+            view: "dragboard"
+        };
+        data = Object.extend(default_data, data);
+        for (key in data) {
+            data[key] = "" + data[key];
         }
-        hash += '&' + encodeURI(key) + '=' + encodeURI(data[key]);
-    }
+        return data;
+    };
 
-    return window.location.protocol + "//" +
-        window.location.host + lite +
-        "/" + data.workspace_creator + '/' + data.workspace_name +
-        window.location.search +
-        '#' + hash.substr(1);
-};
+    HistoryManager._buildURL = function _buildURL(data) {
+        var key,
+            hash = '',
+            lite = '';
 
-HistoryManager.pushState = function(data) {
-    var url, key, equal;
-
-    if (!this.stateChangeEnabled) {
-        return;
-    }
-
-    data = this._prepareData(data);
-    equal = true;
-    for (key in data) {
-        if (data[key] !== this.currentState[key]) {
-            equal = false;
-            break;
+        for (key in data) {
+            if (key === 'workspace_name' || key === 'workspace_creator') {
+                continue;
+            }
+            hash += '&' + encodeURI(key) + '=' + encodeURI(data[key]);
         }
-    }
-    if (equal) {
-        return;
-    }
-    url = this._buildURL(data);
 
-    this._pushState(data, "", url);
-};
+        return window.location.protocol + "//" +
+            window.location.host + lite +
+            "/" + data.workspace_creator + '/' + data.workspace_name +
+            window.location.search +
+            '#' + hash.substr(1);
+    };
 
-HistoryManager._onhashchange = function() {
-    this.stateChangeEnabled = false;
+    HistoryManager.pushState = function pushState(data) {
+        var url, key, equal;
 
-    var hash = window.location.hash;
-    var state = Object.clone(this.initialState);
-    Object.extend(state, this._parseStateFromHash(hash));
-    this.currentState = state;
+        if (!this.stateChangeEnabled) {
+            return;
+        }
 
-    LayoutManagerFactory.getInstance().onHashChange(state);
+        data = this._prepareData(data);
+        equal = true;
+        for (key in data) {
+            if (data[key] !== this.currentState[key]) {
+                equal = false;
+                break;
+            }
+        }
+        if (equal) {
+            return;
+        }
+        url = this._buildURL(data);
 
-    this.stateChangeEnabled = true;
-};
+        this._pushState(data, "", url);
+    };
 
-HistoryManager._onpopstate = function(event) {
-    if (event.state === null) {
-        return;
-    }
-    this.stateChangeEnabled = false;
+    HistoryManager._onhashchange = function _onhashchange() {
+        this.stateChangeEnabled = false;
 
-    this.currentState = event.state;
-    LayoutManagerFactory.getInstance().onHashChange(event.state);
+        var hash = window.location.hash;
+        var state = Object.clone(this.initialState);
+        Object.extend(state, this._parseStateFromHash(hash));
+        this.currentState = state;
 
-    this.stateChangeEnabled = true;
-};
+        LayoutManagerFactory.getInstance().onHashChange(state);
 
-HistoryManager.getCurrentState = function() {
-    return Object.clone(this.currentState);
-};
+        this.stateChangeEnabled = true;
+    };
 
-HistoryManager.cloneCurrentState = function() {
-    return Object.clone(this.currentState);
-};
+    HistoryManager._onpopstate = function _onpopstate(event) {
+        if (event.state === null) {
+            return;
+        }
+        this.stateChangeEnabled = false;
+
+        this.currentState = event.state;
+        LayoutManagerFactory.getInstance().onHashChange(event.state);
+
+        this.stateChangeEnabled = true;
+    };
+
+    HistoryManager.getCurrentState = function getCurrentState() {
+        return Object.clone(this.currentState);
+    };
+
+    HistoryManager.cloneCurrentState = function cloneCurrentState() {
+        return Object.clone(this.currentState);
+    };
+
+    window.HistoryManager = HistoryManager;
+})();
