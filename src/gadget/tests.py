@@ -144,6 +144,27 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(data['variables']['lockStatus']['aspect'], 'GCTX')
         self.assertEqual(data['variables']['lockStatus']['concept'], 'lockStatus')
 
+    def test_basic_operator_creation_from_rdf(self):
+        template = self.read_template('operatorTemplate1.rdf')
+        parser = TemplateParser(template)
+        data = parser.get_resource_info()
+
+        self.assertEqual(data['name'], 'test operator')
+        self.assertEqual(data['type'], 'operator')
+        self.assertEqual(data['version'], '0.1')
+        self.assertEqual(data['mail'], 'test@example.com')
+        self.assertEqual(data['vendor'], 'Morfeo')
+        self.assertEqual(data['wiring']['slots'][0]['label'], 'slot')
+        self.assertEqual(data['wiring']['slots'][0]['type'], 'text')
+        self.assertEqual(data['wiring']['slots'][0]['friendcode'], 'test_friend_code')
+        self.assertEqual(data['wiring']['events'][0]['label'], 'event')
+        self.assertEqual(data['wiring']['events'][0]['type'], 'text')
+        self.assertEqual(data['wiring']['events'][0]['friendcode'], 'test_friend_code')
+        self.assertEqual(len(data['js_files']), 5)
+
+        for file_ in data['js_files']:
+            self.assertEqual(file_[:-4], '/examplecode')
+
     def test_gadget_deletion(self):
         template_uri = "http://example.com/path/gadget.xml"
         template = self.read_template('template1.xml')
@@ -209,7 +230,6 @@ class ShowcaseTestCase(LocalizedTestCase):
 
         gadget2 = get_or_add_gadget_from_catalogue('Morfeo', 'test', '0.1', self.user)
         self.assertEqual(gadget, gadget2)
-
 
     def test_gadget_template_with_missing_translation_indexes(self):
         template_uri = "http://example.com/path/gadget.xml"
@@ -290,7 +310,6 @@ class ShowcaseTestCase(LocalizedTestCase):
     def test_gadgets_with_invalid_format_usdl(self):
         template_uri = "http://example.com/path/gadget.rdf"
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
-
 
         template = self.read_template('template5.rdf')
         http_utils.download_http_content.set_response(template_uri, template)

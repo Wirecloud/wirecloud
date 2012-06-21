@@ -106,13 +106,16 @@ class USDLTemplateParser(object):
         self._url_fields = []
 
         self._graph = graph
-
-        # check if is a mashup or a widget
+        # check if is a mashup, a widget or an operator
         for type_ in self._graph.subjects(RDF['type'], WIRE['Widget']):
             self._info['type'] = 'gadget'
             break
         else:
-            self._info['type'] = 'mashup'
+            for t in self._graph.subjects(RDF['type'], WIRE['Operator']):
+                self._info['type'] = 'operator'
+                break
+            else:
+                self._info['type'] = 'mashup'
 
         self._parse_basic_info()
 
@@ -130,11 +133,11 @@ class USDLTemplateParser(object):
         for field_element in self._graph.objects(subject, namespace[element]):
             element_num = element_num + 1
             if field_element.language:
-                translations[str(field_element.language)] = field_element.title()
+                translations[unicode(field_element.language)] = field_element.title()
                 #This field is necesary in order to prevent a problem in case only existed 1 field but it had a language tag
                 translations['no_translation'] = field_element.title()
             else:
-                translations['no_translation'] = str(field_element)
+                translations['no_translation'] = unicode(field_element)
 
         if element_num == 1:
             return translations['no_translation']
@@ -159,7 +162,7 @@ class USDLTemplateParser(object):
         fields = self._graph.objects(subject, namespace[element])
         for field_element in fields:
             if not id_:
-                result = str(field_element)
+                result = unicode(field_element)
                 break
             else:
                 result = field_element
@@ -179,7 +182,7 @@ class USDLTemplateParser(object):
 
     def _parse_extra_info(self):
 
-        if self._info['type'] == 'gadget':
+        if self._info['type'] == 'gadget' or self._info['type'] == 'operator':
             self._parse_widget_info()
         elif self._info['type'] == 'mashup':
             self._parse_workspace_info()
@@ -198,6 +201,8 @@ class USDLTemplateParser(object):
             self._rootURI = self._graph.subjects(RDF['type'], WIRE['Widget']).next()
         elif self._info['type'] == 'mashup':
             self._rootURI = self._graph.subjects(RDF['type'], WIRE_M['Mashup']).next()
+        elif self._info['type'] == 'operator':
+            self._rootURI = self._graph.subjects(RDF['type'], WIRE['Operator']).next()
 
         self._info['version'] = self._get_field(USDL, 'versionInfo', self._rootURI)
         if not re.match(VERSION_RE, self._info['version']):
@@ -361,15 +366,25 @@ class USDLTemplateParser(object):
                 'aspect': 'ECTX',
             })
 
-        # It contains the widget code
-        xhtml_element = self._get_field(USDL, 'utilizedResource', self._rootURI, id_=True)
+        if self._info['type'] == 'gadget':
+            # It contains the widget code
+            xhtml_element = self._get_field(USDL, 'utilizedResource', self._rootURI, id_=True)
 
-        self._info['code_url'] = str(xhtml_element)
-        self._info['code_content_type'] = self._get_field(DCTERMS, 'format', xhtml_element, required=False)
-        if self._info['code_content_type'] == '':
-            self._info['code_content_type'] = 'text/html'
+            self._info['code_url'] = unicode(xhtml_element)
+            self._info['code_content_type'] = self._get_field(DCTERMS, 'format', xhtml_element, required=False)
+            if self._info['code_content_type'] == '':
+                self._info['code_content_type'] = 'text/html'
 
-        self._info['code_cacheable'] = self._get_field(WIRE, 'codeCacheable', xhtml_element, required=False).lower() == 'true'
+            self._info['code_cacheable'] = self._get_field(WIRE, 'codeCacheable', xhtml_element, required=False).lower() == 'true'
+
+        elif self._info['type'] == 'operator':
+            # The tamplate has 1-n javascript elements
+
+            self._info['js_files'] = []
+            for js_element in self._graph.objects(self._rootURI, USDL['utilizedResource']):
+                self._info['js_files'].append(unicode(js_element))
+
+            self._info['code_content_type'] = 'text/javascript'
 
         rendering_element = self._get_field(WIRE, 'hasPlatformRendering', self._rootURI, id_=True, required=False)
 

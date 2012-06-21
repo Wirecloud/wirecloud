@@ -267,7 +267,6 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
 
     def delete_gadget(self, gadget_name):
-        import ipdb;ipdb.set_trace()
         self.driver.find_element_by_css_selector('.click_for_details').click()
         self.driver.find_element_by_css_selector('.advanced_operations .styled_button').click()
         self.driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").click()

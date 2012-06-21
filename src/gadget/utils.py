@@ -155,7 +155,7 @@ def create_gadget_from_template(template, user, request=None, base=None):
         order += 1
 
     order = 0
-    for slot in gadget_info['slots']:
+    for slot in gadget_info['wiring']['slots']:
         vDef = VariableDef.objects.create(
             name=slot['name'],
             order=order,
@@ -171,7 +171,7 @@ def create_gadget_from_template(template, user, request=None, base=None):
         order += 1
 
     order = 0
-    for event in gadget_info['events']:
+    for event in gadget_info['wiring']['events']:
         vDef = VariableDef.objects.create(
             name=event['name'],
             order=order,

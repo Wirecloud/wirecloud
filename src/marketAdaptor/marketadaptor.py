@@ -89,7 +89,6 @@ class MarketAdaptor(object):
         return result
 
     def add_store(self, store_info):
-        #import ipdb; ipdb.set_trace()
         params = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><resource name="' + store_info['store_name'] + '" ><url>' + store_info['store_uri'] + '</url></resource>'
         headers = {'content-type': 'application/xml'}
 

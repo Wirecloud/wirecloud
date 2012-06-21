@@ -30,7 +30,6 @@ from wirecloud.models.markets import Market
 class ServiceCollection(Resource):
 
     def read(self, request, marketplace, store):
-        #import ipdb;ipdb.set_trace()
         m = get_object_or_404(Market, name=marketplace)
         options = json.loads(m.options)
         url = options['url']
