@@ -8,13 +8,14 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/Form.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/Expander.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/Accordion.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/InputInterfaces.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/GUIBuilder.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/BrowserUtils.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/BackgroundFadder.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/WindowMenu.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/WirecloudHeader.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/LayoutManager.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/common/modules.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/InputInterfaces.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/preferencesManager/PreferencesManager.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/preferencesManager/PlatformPref.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/gadgetModel/XHtml.js"></script>
