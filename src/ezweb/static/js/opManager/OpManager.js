@@ -44,31 +44,21 @@ var OpManagerFactory = function () {
 
             var reloadShowcase = workSpacesStructure.reloadShowcase;
             var workSpaces = workSpacesStructure.workspaces;
-            var activeWorkSpace = null;
 
             for (var i = 0; i < workSpaces.length; i++) {
                 var workSpace = workSpaces[i];
 
-                this.workSpaceInstances.set(workSpace.id, new WorkSpace(workSpace));
-
-                if (public_workspace && public_workspace != '') {
-                    if (workSpace.id == public_workspace) {
-                        activeWorkSpace = this.workSpaceInstances.get(workSpace.id);
-                        continue;
-                    }
-                } else {
-                    if (workSpace.active) {
-                        activeWorkSpace = this.workSpaceInstances.get(workSpace.id);
-                    }
+                var workspace_instance = new WorkSpace(workSpace);
+                this.workSpaceInstances.set(workSpace.id, workspace_instance);
+                if (!(workSpace.creator in this.workspacesByUserAndName)) {
+                    this.workspacesByUserAndName[workSpace.creator] = {};
                 }
+                this.workspacesByUserAndName[workSpace.creator][workSpace.name] = workspace_instance;
             }
 
-            // When a profile is set to a user, profile options prevail over user options!
-            var active_ws_from_script = ScriptManagerFactory.getInstance().get_ws_id();
-            if (active_ws_from_script && this.workSpaceInstances.get(active_ws_from_script)) {
-                activeWorkSpace = this.workSpaceInstances.get(active_ws_from_script);
-            }
-            HistoryManager.init(activeWorkSpace.getId());
+            HistoryManager.init();
+            var state = HistoryManager.getCurrentState();
+            this.activeWorkSpace = this.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
 
             // Total information of the active workspace must be downloaded!
             if (reloadShowcase) {
@@ -76,11 +66,6 @@ var OpManagerFactory = function () {
                 //it itself changes to the active workspace
                 ShowcaseFactory.getInstance().reload(workSpace.id);
             } else {
-                this.activeWorkSpace = activeWorkSpace;
-
-                if (this.activeWorkSpace == null && workSpaces.length > 0)
-                    this.activeWorkSpace = this.workSpaceInstances.get(workSpaces[0].id);
-
                 this.activeWorkSpace.downloadWorkSpaceInfo(HistoryManager.getCurrentState().tab);
             }
         }
@@ -134,6 +119,7 @@ var OpManagerFactory = function () {
 
         // Variables for controlling the collection of wiring and dragboard instances of a user
         this.workSpaceInstances = new Hash();
+        this.workspacesByUserAndName = {};
 
         this.activeWorkSpace = null;
 

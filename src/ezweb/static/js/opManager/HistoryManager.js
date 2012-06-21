@@ -53,7 +53,7 @@ HistoryManager._parseStateFromHash = function(hash) {
     return data;
 };
 
-HistoryManager._parseWorkspaceFromPathName = function(pathname) {
+HistoryManager._parseWorkspaceFromPathName = function(pathname, status) {
     var index, index2;
 
     index = pathname.lastIndexOf('/');

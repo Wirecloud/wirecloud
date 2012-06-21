@@ -46,20 +46,25 @@ var OpManagerFactory = (function () {
         // ****************
 
         loadEnvironment = function (transport) {
-            // JSON-coded user tabspaces
             var response = transport.responseText,
                 workSpacesStructure = JSON.parse(response),
                 workSpaces = workSpacesStructure.workspaces,
-                workSpace, i;
+                workSpace, workspace_instance, state, i;
 
             for (i = 0; i < workSpaces.length; i += 1) {
                 workSpace = workSpaces[i];
 
-                this.workSpaceInstances.set(workSpace.id, new WorkSpace(workSpace));
+                workspace_instance = new WorkSpace(workSpace);
+                this.workSpaceInstances.set(workSpace.id, workspace_instance);
+                if (!(workSpace.creator in this.workspacesByUserAndName)) {
+                    this.workspacesByUserAndName[workSpace.creator] = {};
+                }
+                this.workspacesByUserAndName[workSpace.creator][workSpace.name] = workspace_instance;
             }
 
             HistoryManager.init();
-            this.activeWorkSpace = this.workSpaceInstances.get(parseInt(HistoryManager.getCurrentState().workspace, 10));
+            state = HistoryManager.getCurrentState();
+            this.activeWorkSpace = this.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
 
             // Total information of the active workspace must be downloaded!
             this.activeWorkSpace.downloadWorkSpaceInfo();
@@ -247,6 +252,7 @@ var OpManagerFactory = (function () {
 
         // Variables for controlling the collection of wiring and dragboard instances of a user
         this.workSpaceInstances = new Hash();
+        this.workspacesByUserAndName = {};
         this.activeWorkSpace = null;
 
         // workspace menu element
