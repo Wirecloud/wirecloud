@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2011-2012 Universidad Politécnica de Madrid
+# Copyright 2012 Universidad Politécnica de Madrid
 
 # This file is part of Wirecluod.
 
@@ -18,4 +18,4 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
-VERSION = (0, 3, 0)
+VERSION = (1,)

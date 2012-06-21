@@ -20,7 +20,6 @@
 
 from django.utils.importlib import import_module
 from django.core.exceptions import ImproperlyConfigured
-from ezweb import VERSION
 
 _wirecloud_plugins = None
 _wirecloud_features = None
@@ -53,6 +52,7 @@ def get_plugins():
 
             plugins.append(plugin)
 
+        from wirecloud.core.plugins import WirecloudCorePlugin
         add_plugin('wirecloud.WirecloudCorePlugin', WirecloudCorePlugin())
 
         for path in modules:
@@ -129,6 +129,9 @@ class WirecloudPlugin(object):
 
     features = {}
 
+    def get_market_classes(self):
+        return {}
+
     def get_features(self):
         return self.features
 
@@ -140,17 +143,3 @@ class WirecloudPlugin(object):
 
     def get_gadget_api_extensions(self, views):
         return ()
-
-
-class WirecloudCorePlugin(WirecloudPlugin):
-
-    features = {
-        'Wirecloud': '.'.join(map(str, VERSION)),
-    }
-
-    def get_ajax_endpoints(self, views):
-        return (
-            {'id': 'MARKET_COLLECTION', 'url': '/markets'},
-            {'id': 'MARKET_ENTRY', 'url': '/market/#{market}'},
-            {'id': 'WIRING_ENTRY', 'url': '/workspace/#{id}/wiring'},
-        )

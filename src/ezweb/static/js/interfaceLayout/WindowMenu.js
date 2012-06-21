@@ -413,7 +413,11 @@ FormWindowMenu.prototype.show = function (parentWindow) {
  */
 function PublishWindowMenu(workspace) {
 
-    var fields = [
+    var fields;
+    this.marketFields = [];
+    //this._getAvailableMarkets();
+
+    fields = [
         {
             'type': 'group',
             'shortTitle': gettext('General info'),
@@ -445,6 +449,11 @@ function PublishWindowMenu(workspace) {
                 {name: 'readOnlyGadgets', label: gettext('Block gadgets'), type: 'boolean'},
                 {name: 'readOnlyConnectables', label: gettext('Block connections'), type: 'boolean'}
             ]
+        },
+        {
+            'type': 'group',
+            'shortTitle': gettext('Publish place'),
+            'fields': this.marketFields
         }
     ];
 
@@ -553,6 +562,23 @@ PublishWindowMenu.prototype._sortVariables = function (var1, var2) {
     return var1.variable.vardef.order - var2.variable.vardef.order;
 };
 
+PublishWindowMenu.prototype._addMarketInfo = function _addMarketInfo (marketInfo) {
+    var marketElement;
+
+    for (info in marketInfo) {
+        marketElement = JSON.parse(marketInfo[info]);
+        this.marketFields.append({
+            name: info,
+            label: info,
+            type: 'boolean'
+        })
+    }
+};
+
+PublishWindowMenu.prototype._getAvailableMarkets = function _getAvailableMarkets () {
+    Wirecloud.MarketManager.getMarkets(this._addMarketInfo.bind(this));
+};
+
 PublishWindowMenu.prototype.show = function(parentWindow) {
     WindowMenu.prototype.show.call(this, parentWindow);
     this.setValue(this.workspace.workSpaceGlobalInfo.workspace.params);
@@ -566,6 +592,13 @@ PublishWindowMenu.prototype.executeOperation = function executeOperation (data) 
     var key;
 
     data.parametrization = {};
+    data.marketplaces = [{
+        'market': 'fiware',
+        'store': 'CoNWeT'
+    },
+    {
+        'market': 'local'
+    }]
     for (key in data) {
         if (key.startsWith('tab-')) {
             EzWebExt.merge(data.parametrization, data[key]);

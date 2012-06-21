@@ -199,9 +199,10 @@ def fillWorkspaceUsingTemplate(workspace, template):
             },
             'target': {'id': target_id,
                        'type': connection['target']['type'],
-                       'endpoint': connection['target']['type'],
+                       'endpoint': connection['target']['endpoint'],
             },
         })
+
     workspace.wiringStatus = simplejson.dumps(wiring_status)
 
     from commons.get_data import _invalidate_cached_variable_values

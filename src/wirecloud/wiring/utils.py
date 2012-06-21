@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2011-2012 Universidad Politécnica de Madrid
+# Copyright 2012 Universidad Politécnica de Madrid
 
-# This file is part of Wirecluod.
+# This file is part of Wirecloud.
 
 # Wirecloud is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,5 +17,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.template import loader, Context
 
-VERSION = (0, 3, 0)
+
+def generate_xhtml_operator_code(js_files):
+    t = loader.get_template('wirecloud/operator_xhtml.html')
+    c = Context({'js_files': js_files})
+
+    xhtml = t.render(c)
+
+    return xhtml

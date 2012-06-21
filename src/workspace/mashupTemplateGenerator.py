@@ -241,8 +241,8 @@ def build_template_from_workspace(options, workspace, user):
         if readOnlyConnectables:
             element.set('readonly', 'true')
 
-        etree.SubElement(element, 'Source', type=connection['source']['type'], id=connection['source']['id'], endpoint=connection['source']['endpoint'])
-        etree.SubElement(element, 'Taget', type=connection['target']['type'], id=connection['target']['id'], endpoint=connection['target']['endpoint'])
+        etree.SubElement(element, 'Source', type=connection['source']['type'], id=str(connection['source']['id']), endpoint=connection['source']['endpoint'])
+        etree.SubElement(element, 'Target', type=connection['target']['type'], id=str(connection['target']['id']), endpoint=connection['target']['endpoint'])
 
     return template
 
@@ -342,6 +342,7 @@ def build_rdf_template_from_workspace(options, workspace, user):
 
         resource = rdflib.BNode()
         iwidgets[iwidget_id] = resource
+        graph.add((resource, WIRE_M['iWidgetId'], rdflib.Literal(str(resource))))
         graph.add((resource, rdflib.RDF.type, WIRE_M['iWidget']))
         graph.add((tabs[iwidget.tab.id], WIRE_M['hasiWidget'], resource))
         provider = rdflib.BNode()
@@ -372,7 +373,7 @@ def build_rdf_template_from_workspace(options, workspace, user):
         graph.add((rend, WIRE['renderingWidth'], rdflib.Literal(str(position.width))))
         graph.add((rend, WIRE_M['minimized'], rdflib.Literal(str(position.minimized))))
         graph.add((rend, WIRE_M['fullDragboard'], rdflib.Literal(str(position.fulldragboard))))
-        graph.add((rend, WIRE_M['layout'], rdflib.Literal(str(position.layout))))
+        graph.add((rend, WIRE_M['layout'], rdflib.Literal(str(iwidget.layout))))
 
         # iWidget preferences
         widget_preferences = widget.get_related_preferences()
@@ -473,26 +474,26 @@ def build_rdf_template_from_workspace(options, workspace, user):
 
         source = rdflib.BNode()
         graph.add((source, rdflib.RDF.type, WIRE_M['Source']))
-        graph.add((wiring, WIRE_M['hasSource'], source))
+        graph.add((element, WIRE_M['hasSource'], source))
         graph.add((source, WIRE['type'], rdflib.Literal(connection['source']['type'])))
 
-        id_ = str(iwidgets[connection['source']['id']])[1:]
+        id_ = str(iwidgets[str(connection['source']['id'])])
 
         if connection['source']['type'] == 'operator':
-            id_ = str(operators[connection['source']['id']])[1:]
+            id_ = str(operators[str(connection['source']['id'])])
 
         graph.add((source, WIRE_M['sourceId'], rdflib.Literal(id_)))
         graph.add((source, WIRE_M['endpoint'], rdflib.Literal(connection['source']['endpoint'])))
 
         target = rdflib.BNode()
         graph.add((target, rdflib.RDF.type, WIRE_M['Target']))
-        graph.add((wiring, WIRE_M['hasTarget'], target))
+        graph.add((element, WIRE_M['hasTarget'], target))
         graph.add((target, WIRE['type'], rdflib.Literal(connection['target']['type'])))
 
-        id_ = str(iwidgets[connection['target']['id']])[1:]
+        id_ = str(iwidgets[str(connection['target']['id'])])
 
         if connection['target']['type'] == 'operator':
-            id_ = str(operators[connection['target']['id']])[1:]
+            id_ = str(operators[str(connection['target']['id'])])
 
         graph.add((target, WIRE_M['targetId'], rdflib.Literal(id_)))
         graph.add((target, WIRE_M['endpoint'], rdflib.Literal(connection['target']['endpoint'])))

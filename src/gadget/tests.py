@@ -15,6 +15,7 @@ from commons.exceptions import TemplateParseException
 from commons.get_data import get_gadget_data
 from commons.test import LocalizedTestCase
 from commons.wgt import WgtFile, WgtDeployer
+from commons.template import TemplateParser
 from gadget.models import Gadget
 import gadget.utils
 from gadget.utils import create_gadget_from_template, create_gadget_from_wgt, get_or_add_gadget_from_catalogue

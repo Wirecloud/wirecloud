@@ -242,7 +242,12 @@ class USDLTemplateParser(object):
 
         # method self._graph.objects always returns an iterable object not subscriptable,
         # althought only exits one instance
-        wiring_element = self._get_field(WIRE, wiring_property, self._rootURI, id_=True, required=False)
+        wiring_type = WIRE
+
+        if self._info['type'] == 'mashup':
+            wiring_type = WIRE_M
+
+        wiring_element = self._get_field(wiring_type, wiring_property, self._rootURI, id_=True, required=False)
 
         for slot in self._graph.objects(wiring_element, WIRE['hasSlot']):
             self._info['wiring']['slots'].append({
@@ -433,7 +438,7 @@ class USDLTemplateParser(object):
                 vendor = self._get_field(USDL, 'hasProvider', resource, id_=True, required=False)
 
                 resource_info = {
-                    'id': str(resource)[1:],
+                    'id': self._get_field(WIRE_M, 'iWidgetId', resource),
                     'name': self._get_field(RDFS, 'label', resource),
                     'vendor': self._get_field(FOAF, 'name', vendor),
                     'version': self._get_field(USDL, 'versionInfo', resource),
@@ -449,15 +454,15 @@ class USDLTemplateParser(object):
                         'width': self._get_field(WIRE, 'renderingWidth', rendering),
                         'height': self._get_field(WIRE, 'renderingHeight', rendering),
                         'layout': self._get_field(WIRE_M, 'layout', rendering),
-                        'fulldragboard': self.get_field(WIRE_M, 'fullDragboard', rendering).lower() == 'true',
-                        'minimized': self.get_field(WIRE_M, 'minimized', rendering).lower() == 'true',
+                        'fulldragboard': self._get_field(WIRE_M, 'fullDragboard', rendering).lower() == 'true',
+                        'minimized': self._get_field(WIRE_M, 'minimized', rendering).lower() == 'true',
                     },
                 }
 
                 for prop in self._graph.objects(resource, WIRE_M['hasiWidgetProperty']):
                     resource_info['properties'][self._get_field(DCTERMS, 'title', prop)] = {
-                        'readonly': self._get_field(WIRE_M, 'readonly', prop).lower() == 'true',
-                        'value': self._get_field(WIRE, 'value', prop),
+                        'readonly': self._get_field(WIRE_M, 'readonly', prop, required=False).lower() == 'true',
+                        'value': self._get_field(WIRE, 'value', prop, required=False),
                     }
 
                 for pref in self._graph.objects(resource, WIRE_M['hasiWidgetPreference']):
@@ -494,7 +499,7 @@ class USDLTemplateParser(object):
         self.base = base
 
     def get_contents(self):
-        return self._graph.serialize()
+        return unicode(self._graph.serialize(), 'UTF-8')
 
     def get_resource_type(self):
         return self._info['type']
@@ -699,17 +704,19 @@ class WirecloudTemplateParser(object):
         connections = []
 
         for connection in self._xpath(CONNECTION_XPATH, wiring_element):
+            source_element = self._xpath(SOURCE_XPATH, connection)[0]
+            target_element = self._xpath(TARGET_XPATH, connection)[0]
             connection_info = {
                 'readonly': connection.get('readonly', 'false').lower() == 'true',
                 'source': {
-                    'type': self._xpath(SOURCE_XPATH, connection)[0].get('type'),
-                    'endpoint': self._xpath(SOURCE_XPATH, connection)[0].get('endpoint'),
-                    'id': self._xpath(SOURCE_XPATH, connection)[0].get('id'),
+                    'type': source_element.get('type'),
+                    'endpoint': source_element.get('endpoint'),
+                    'id': source_element.get('id'),
                 },
                 'target': {
-                    'type': self._xpath(TARGET_XPATH, connection)[0].get('type'),
-                    'endpoint': self._xpath(TARGET_XPATH, connection)[0].get('endpoint'),
-                    'id': self._xpath(TARGET_XPATH, connection)[0].get('id'),
+                    'type': target_element.get('type'),
+                    'endpoint': target_element.get('endpoint'),
+                    'id': target_element.get('id'),
                 }
             }
 
@@ -1019,6 +1026,7 @@ class TemplateParser(object):
         try:
             graph.parse(data=template, format='n3')
         except:
+            graph = rdflib.Graph()
             xml_document = True
 
         if xml_document:
@@ -1038,7 +1046,7 @@ class TemplateParser(object):
 
             if xmlns is not None and xmlns != WIRECLOUD_TEMPLATE_NS:
                 try:
-                    graph.parse(data=template, format='application/rdf+xml')
+                    graph.parse(data=template)
                 except:
                     raise TemplateParseException(_('The document is not valid'))
                 self._parser = USDLTemplateParser(graph, base)
