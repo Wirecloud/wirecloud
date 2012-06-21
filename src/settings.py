@@ -103,7 +103,7 @@ USE_I18N = True
 STATIC_URL = '/static/'
 STATIC_ROOT = path.join(BASEDIR, 'static')
 COMPRESS_ROOT = STATIC_ROOT
-COMPRESS_OUTPUT_DIR = ''
+COMPRESS_OUTPUT_DIR = 'cache'
 COMPRESS_JS_FILTERS = (
     'compressor.filters.jsmin.JSMinFilter',
     'ezweb.compressor_filters.JSUseStrictFilter',
