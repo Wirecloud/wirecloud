@@ -174,7 +174,6 @@ def fillWorkspaceUsingTemplate(workspace, template):
 
     forced_values['igadget'].update(old_forced_values['igadget'])
     workspace.forcedValues = simplejson.dumps(forced_values, ensure_ascii=False)
-    workspace.save()
 
     # wiring
     wiring_status = {
@@ -204,6 +203,8 @@ def fillWorkspaceUsingTemplate(workspace, template):
         })
 
     workspace.wiringStatus = simplejson.dumps(wiring_status)
+
+    workspace.save()
 
     from commons.get_data import _invalidate_cached_variable_values
     _invalidate_cached_variable_values(workspace)

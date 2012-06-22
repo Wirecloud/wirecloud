@@ -99,7 +99,8 @@
             <wire:PlatformWiring rdf:ID="wiring">
                 <wire-m:hasConnection>
                     <wire-m:Connection rdf:ID="CH-1">
-                        <dcterms:title>connection</dcterms:title>
+                        <dcterms:title>bloqued connection</dcterms:title>
+                        <wire-m:readonly>true</wire-m:readonly>
                         <wire-m:hasSource>
                             <wire-m:Source>
                                 <wire-m:sourceId>i-1</wire-m:sourceId>

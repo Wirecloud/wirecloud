@@ -3,6 +3,7 @@
 import codecs
 import os
 import rdflib
+import json
 
 from django.contrib.auth.models import User, Group
 from django.core.cache import cache
@@ -10,7 +11,6 @@ from django.test import Client, TestCase
 from django.utils import simplejson
 
 from commons.get_data import get_global_workspace_data
-from connectable.models import InOut
 from gadget.models import Gadget
 from igadget.models import IGadget, Variable
 from igadget.utils import SaveIGadget, deleteIGadget
@@ -327,6 +327,9 @@ class ParametrizedWorkspaceParseTestCase(TestCase):
         self.workspace = createEmptyWorkSpace('Testing', self.user)
         self.template1 = self.read_template('wt1.xml')
         self.template2 = self.read_template('wt2.xml')
+        self.rdfTemplate1 = self.read_template('wt1.rdf')
+        self.rdfTemplate2 = self.read_template('wt2.rdf')
+        self.rdfTemplate3 = self.read_template('wt3.rdf')
 
     def read_template(self, filename):
         f = codecs.open(os.path.join(os.path.dirname(__file__), filename), 'rb')
@@ -339,34 +342,49 @@ class ParametrizedWorkspaceParseTestCase(TestCase):
         fillWorkspaceUsingTemplate(self.workspace, self.template1)
         data = get_global_workspace_data(self.workspace, self.user).get_data()
         self.assertEqual(self.workspace.name, 'Testing')
-        self.assertEqual(len(data['workspace']['tabList']), 1)
+        self.assertEqual(len(data['workspace']['tabList']), 2)
 
         # Workspace template 2 adds a new Tab
         fillWorkspaceUsingTemplate(self.workspace, self.template2)
         data = get_global_workspace_data(self.workspace, self.user).get_data()
-        self.assertEqual(len(data['workspace']['tabList']), 2)
+        self.assertEqual(len(data['workspace']['tabList']), 3)
 
         # Check that we handle the case where there are 2 tabs with the same name
         fillWorkspaceUsingTemplate(self.workspace, self.template2)
         data = get_global_workspace_data(self.workspace, self.user).get_data()
-        self.assertEqual(len(data['workspace']['tabList']), 3)
-        self.assertNotEqual(data['workspace']['tabList'][1]['name'],
-            data['workspace']['tabList'][2]['name'])
+        self.assertEqual(len(data['workspace']['tabList']), 4)
+        self.assertNotEqual(data['workspace']['tabList'][2]['name'],
+            data['workspace']['tabList'][3]['name'])
 
     def testBuildWorkspaceFromTemplate(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.template1, self.user)
         get_global_workspace_data(self.workspace, self.user)
 
-        channels = InOut.objects.filter(workspace=workspace)
-        self.assertEqual(channels.count(), 1)
-        self.assertEqual(channels[0].readOnly, False)
+        wiring_status = json.loads(workspace.wiringStatus)
+        self.assertEqual(len(wiring_status['connections']), 1)
+        self.assertEqual(wiring_status['connections'][0]['readonly'], False)
 
-    def testBlockedChannels(self):
+    def testBuildWorkspaceFromRdfTemplate(self):
+        workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate1, self.user)
+        get_global_workspace_data(self.workspace, self.user)
+
+        wiring_status = json.loads(workspace.wiringStatus)
+        self.assertEqual(len(wiring_status['connections']), 1)
+        self.assertEqual(wiring_status['connections'][0]['readonly'], False)
+
+    def testBlockedConnections(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.template2, self.user)
 
-        connectables = InOut.objects.filter(workspace=workspace)
-        self.assertEqual(connectables.count(), 1)
-        self.assertEqual(connectables[0].readOnly, True)
+        wiring_status = json.loads(workspace.wiringStatus)
+        self.assertEqual(len(wiring_status['connections']), 1)
+        self.assertEqual(wiring_status['connections'][0]['readonly'], True)
+
+    def testBloquedConnectionsRdf(self):
+        workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate2, self.user)
+
+        wiring_status = json.loads(workspace.wiringStatus)
+        self.assertEqual(len(wiring_status['connections']), 1)
+        self.assertEqual(wiring_status['connections'][0]['readonly'], True)
 
     def test_complex_workspaces(self):
         template3 = self.read_template('wt3.xml')
@@ -383,3 +401,28 @@ class ParametrizedWorkspaceParseTestCase(TestCase):
         self.assertEqual(len(data['workspace']['tabList'][2]['igadgetList']), 0)
         self.assertEqual(data['workspace']['tabList'][3]['name'], 'Tab 4')
         self.assertEqual(len(data['workspace']['tabList'][3]['igadgetList']), 0)
+
+    def testComplexWorkspacesRdf(self):
+        workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate3, self.user)
+        data = get_global_workspace_data(workspace, self.user).get_data()
+        tabs = [u'Tab', u'Tab 2', u'Tab 3', u'Tab 4']
+
+        self.assertEqual(len(data['workspace']['tabList']), 4)
+
+        for tab in data['workspace']['tabList']:
+            if tab['name'] in tabs:
+                tabs.remove(tab['name'])
+
+                if tab['name'] == u'Tab' or tab['name'] == u'Tab 2':
+                    self.assertEqual(len(tab['igadgetList']), 1)
+                elif tab['name'] == u'Tab 3' or tab['name'] == u'Tab 4':
+                    self.assertEqual(len(tab['igadgetList']), 0)
+
+        self.assertEqual(len(tabs), 0)
+
+        wiring = json.loads(data['workspace']['wiring'])
+        self.assertEqual(len(wiring['connections']), 1)
+        self.assertEqual(wiring['connections'][0]['source']['type'], 'iwidget')
+        self.assertEqual(wiring['connections'][0]['source']['endpoint'], 'event')
+        self.assertEqual(wiring['connections'][0]['target']['type'], 'iwidget')
+        self.assertEqual(wiring['connections'][0]['target']['endpoint'], 'slot')
