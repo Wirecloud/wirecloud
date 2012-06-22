@@ -312,8 +312,8 @@ class USDLTemplateParser(object):
 
         for operator in self._graph.objects(wiring_element, WIRE_M['hasiOperator']):
             operator_info = {
-               'id': unicode(operator)[1:],
-               'name': self._get_field(DCTERMS, 'title', operator, required=False),
+               'id': self._get_field(WIRE_M, 'iOperatorId', operator),
+               'name': self._get_field(DCTERMS, 'title', operator),
             }
             self._info['wiring']['operators'][operator_info['id']] = operator_info
 

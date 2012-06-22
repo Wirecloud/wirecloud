@@ -463,6 +463,7 @@ def build_rdf_template_from_workspace(options, workspace, user):
         graph.add((op, rdflib.RDF.type, WIRE_M['iOperator']))
         graph.add((wiring, WIRE_M['hasiOperator'], op))
         graph.add((op, DCTERMS['title'], rdflib.Literal(operator['name'])))
+        graph.add((op, WIRE_M['iOperatorId'], rdflib.Literal(str(op))))
 
     for connection in wiring_status['connections']:
         element = rdflib.BNode()
