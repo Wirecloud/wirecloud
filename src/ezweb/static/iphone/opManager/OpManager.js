@@ -100,8 +100,9 @@ var OpManagerFactory = (function () {
             this.loadCompleted = false;
             this.activeWorkSpace = workspace;
             state = {
-                workspace: workspace.getId(),
-                view: "dragboard"
+                workspace_creator: workspace.workSpaceState.creator,
+                workspace_name: workspace.getName(),
+                view: "workspace"
             };
             HistoryManager.pushState(state);
             this.activeWorkSpace.downloadWorkSpaceInfo();
@@ -120,14 +121,6 @@ var OpManagerFactory = (function () {
             this.showcaseModule = ShowcaseFactory.getInstance();
             this.showcaseModule.init();
             this.logs = LogManagerFactory.getInstance();
-        };
-
-        OpManager.prototype.igadgetLoaded = function (igadgetId) {
-            this.activeWorkSpace.igadgetLoaded(igadgetId);
-        };
-
-        OpManager.prototype.igadgetUnloaded = function (igadgetId) {
-            this.activeWorkSpace.igadgetUnloaded(igadgetId);
         };
 
         OpManager.prototype.showActiveWorkSpace = function () {

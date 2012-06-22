@@ -116,37 +116,6 @@ function WorkSpace(workSpaceState) {
     // ****************
     // PUBLIC METHODS
     // ****************
-    WorkSpace.prototype.igadgetLoaded = function (igadgetId) {
-        var igadget = this.getIgadget(igadgetId);
-
-        if (!igadget.loaded) {
-            igadget._notifyLoaded();
-
-            // Notify to the wiring module the igadget has been loaded
-            this.wiring.iGadgetLoaded(igadget);
-
-            // Notify to the context manager the igadget has been loaded
-            this.contextManager.iGadgetLoaded(igadget);
-
-            // Notify to the variable manager the igadget has been loaded
-            this.varManager.dispatchPendingVariables(igadgetId);
-        }
-    };
-
-    WorkSpace.prototype.igadgetUnloaded = function (igadgetId) {
-        var igadget = this.getIgadget(igadgetId);
-        if (igadget === null || igadget === undefined) {
-            return;
-        }
-
-        // Notify to the wiring module the igadget has been unloaded
-        this.wiring.iGadgetUnloaded(igadget);
-
-        // Notify to the context manager the igadget has been unloaded
-        this.contextManager.iGadgetUnloaded(igadget);
-
-        igadget._notifyUnloaded();
-    };
 
     WorkSpace.prototype.unload = function () {
         // After that, tab info is managed
@@ -158,7 +127,7 @@ function WorkSpace(workSpaceState) {
             this.alternatives = null;
         }
         this.tabInstances = [];
-        this.wiring.unload();
+        this.wiring.destroy();
         this.contextManager.unload();
         OpManagerFactory.getInstance().globalDragboard.clear();
         this.tabsContainerElement = null;
@@ -260,7 +229,7 @@ function WorkSpace(workSpaceState) {
         //Create a menu for each tab of the workspace and paint it as main screen.
         var scrolling = 0,
             step = window.innerWidth,
-            i, tabs, tab;
+            i, tabs, tab, iwidgets;
 
         tabs = this.workSpaceGlobalInfo.workspace.tabList;
 
@@ -280,7 +249,12 @@ function WorkSpace(workSpaceState) {
         this.varManager = new VarManager(this);
 
         this.contextManager = new ContextManager(this, this.workSpaceGlobalInfo);
-        this.wiring = new Wiring(this, this.workSpaceGlobalInfo);
+        this.wiring = new Wirecloud.Wiring(this);
+        iwidgets = this.getIGadgets();
+        for (i = 0; i < iwidgets.length; i += 1) {
+            this.events.iwidgetadded.dispatch(this, iwidgets[i]);
+        }
+        this.wiring.load(this.workSpaceGlobalInfo.workspace.wiring);
         this._buildInterface();
 
         for (i = 0; i < this.tabInstances.length; i += 1) {
@@ -400,4 +374,7 @@ function WorkSpace(workSpaceState) {
     this.alternatives = null;
     this.tabsContainerElement = null;
     this.layout = null;
+
+    StyledElements.ObjectWithEvents.call(this, ['iwidgetadded', 'iwidgetremoved']);
 }
+WorkSpace.prototype = new StyledElements.ObjectWithEvents();

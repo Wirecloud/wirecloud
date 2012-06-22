@@ -131,8 +131,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
         //disconect and delete the connectables and variables of all tab iGadgets
         for (i = 0; i < keys.length; i += 1) {
-            this.workSpace.removeIGadgetData(keys[i]);
-
             igadget = this.iGadgets.get(keys[i]);
             this.iGadgets.unset(keys[i]);
             igadget.destroy();

@@ -48,7 +48,13 @@ function IGadget(gadget, iGadgetId, iGadgetCode, iGadgetName, dragboard, alterna
     }.bind(this));
 
     this.loaded = false;
+
+    StyledElements.ObjectWithEvents.call(this, ['load', 'unload']);
+
+    this._notifyLoaded = this._notifyLoaded.bind(this);
+    this._notifyUnloaded = this._notifyUnloaded.bind(this);
 }
+IGadget.prototype = new StyledElements.ObjectWithEvents();
 
 /**
 * Returns the associated Gadget class.
@@ -83,7 +89,7 @@ IGadget.prototype.paint = function () {
     this.element = document.createElement('div');
     this.element.setAttribute('class', 'gadget_content');
     this.content = document.createElement('object');
-    this.content.addEventListener('load', opManager.igadgetLoaded.bind(opManager, this.id), true);
+    this.content.addEventListener('load', this._notifyLoaded, true);
     this.content.setAttribute('class', 'gadget_object');
     this.content.setAttribute('type', 'text/html');
     this.content.setAttribute('data', this.gadget.getXHtml().getURICode() + '#id=' + this.id);
@@ -104,12 +110,14 @@ IGadget.prototype._notifyLoaded = function () {
     var opManager = OpManagerFactory.getInstance(),
         unloadElement = this.content.contentDocument.defaultView;
 
-    unloadElement.addEventListener('unload', opManager.igadgetUnloaded.bind(opManager, this.id));
+    unloadElement.addEventListener('unload', this._notifyLoaded, true);
     // FIXME
     new MobileScrollManager(this.content.contentDocument, {
         'capture': true,
         'propagate': true
     });
+
+    this.events['load'].dispatch(this);
 };
 
 IGadget.prototype._notifyUnloaded = function () {
@@ -118,6 +126,7 @@ IGadget.prototype._notifyUnloaded = function () {
     }
 
     this.loaded = false;
+    this.events['unload'].dispatch(this);
 };
 
 /**
@@ -205,5 +214,7 @@ IGadget.prototype.destroy = function () {
         this.element.remove();
         this.element = null;
         this.content = null;
+        this._notifyLoaded = null;
+        this._notifyUnloaded = null;
     }
 };
