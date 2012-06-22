@@ -1,5 +1,5 @@
 from wirecloud import VERSION
-from ezweb.plugins import WirecloudPlugin
+from wirecloud.plugins import WirecloudPlugin
 
 from wirecloud.core.catalogue_manager import WirecloudCatalogueManager
 

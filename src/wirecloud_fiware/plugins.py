@@ -22,9 +22,9 @@ import urllib2
 from urllib2 import HTTPError
 from urlparse import urljoin
 
-from ezweb.plugins import WirecloudPlugin
 from proxy.views import MethodRequest
 from wirecloud.markets.utils import MarketManager
+from wirecloud.plugins import WirecloudPlugin
 from workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_usdl_from_workspace
 
 from wirecloud_fiware import VERSION

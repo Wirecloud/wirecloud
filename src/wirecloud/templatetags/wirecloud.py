@@ -20,7 +20,7 @@
 
 from django import template
 
-from ezweb.plugins import get_extra_javascripts, get_wirecloud_ajax_endpoints
+from wirecloud.plugins import get_extra_javascripts, get_wirecloud_ajax_endpoints
 
 
 register = template.Library()

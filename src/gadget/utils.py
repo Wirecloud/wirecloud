@@ -44,8 +44,8 @@ from commons.http_utils import download_http_content
 from commons.template import TemplateParser
 from commons.wgt import WgtDeployer, WgtFile
 from gadget.models import ContextOption, VariableDef, UserPrefOption, Gadget, XHTML
-from ezweb.plugins import get_active_features, get_gadget_api_extensions
 from translator.models import Translation
+from wirecloud.plugins import get_active_features, get_gadget_api_extensions
 from workspace.models import WorkSpace, UserWorkSpace
 
 

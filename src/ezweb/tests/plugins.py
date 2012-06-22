@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils import unittest
 
-from ezweb.plugins import clear_cache, get_active_features, get_plugins, \
+from wirecloud.plugins import clear_cache, get_active_features, get_plugins, \
     get_extra_javascripts, get_gadget_api_extensions, WirecloudPlugin
 
 try:

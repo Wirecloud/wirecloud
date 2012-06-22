@@ -19,8 +19,8 @@
 
 import json
 
-from ezweb.plugins import get_plugins
 from wirecloud.models import Market
+from wirecloud.plugins import get_plugins
 
 
 class MarketManager:
