@@ -94,4 +94,4 @@ class FiWarePlugin(WirecloudPlugin):
             {'id': 'FIWARE_RESOURCE_ENTRY', 'url': '/marketAdaptor/marketplace/#{market}/#{store}/#{entry}'},
             {'id': 'FIWARE_STORE_COLLECTION', 'url': '/marketAdaptor/marketplace/#{market}/stores'},
             {'id': 'FIWARE_STORE_ENTRY', 'url': '/marketAdaptor/marketplace/#{market}/stores/#{store}'},
-	)
+        )

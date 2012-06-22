@@ -32,8 +32,8 @@ class MarketManager:
         pass
 
 
-
 _market_classes = None
+
 
 def get_market_classes():
     global _market_classes
@@ -47,7 +47,9 @@ def get_market_classes():
 
     return _market_classes
 
+
 _managers = None
+
 
 def get_market_managers():
     global _managers

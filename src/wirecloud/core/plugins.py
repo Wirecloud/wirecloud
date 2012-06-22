@@ -3,6 +3,7 @@ from wirecloud.plugins import WirecloudPlugin
 
 from wirecloud.core.catalogue_manager import WirecloudCatalogueManager
 
+
 class WirecloudCorePlugin(WirecloudPlugin):
 
     features = {
