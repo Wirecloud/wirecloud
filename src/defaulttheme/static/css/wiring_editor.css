@@ -198,15 +198,24 @@
 
 .wiring_editor .sources .anchor.disabled {
     opacity: 0.7;
+    cursor: no-drop;
 }
 
 .wiring_editor .targets .anchor.disabled {
     opacity: 0.7;
+    cursor: no-drop;
 }
 
 
 /*ARROWS*/
 .wiring_editor .canvas .arrow {
+    stroke: rgba(138, 131, 226, 0.9);
+    fill:   none;
+    stroke-width: 5;
+}
+
+.wiring_editor .canvas .arrow .arrowbody {
+    /*stroke: url(../css/gradient1.svg);*/
     stroke: rgba(138, 131, 226, 0.9);
     fill:   none;
     stroke-width: 5;
@@ -338,4 +347,78 @@
 
 .wiring_editor .menubar .styled_expander.expanded .igadget, .wiring_editor .menubar .styled_expander.expanded .ioperator{
     visibility: inherit;
+}
+
+/* multiconnector */
+
+.wiring_editor .grid .multiconnector {
+    position: absolute;
+    border-radius: 15px;
+    border: 1px solid;
+    border-color: gray;
+}
+
+.wiring_editor .grid .multiconnector.source {
+    background: rgb(122, 152, 192);
+}
+
+.wiring_editor .grid .multiconnector.target {
+    background: rgb(223, 164, 98);
+}
+
+.wiring_editor .grid .multiconnector .dragZone {
+    background: rgb(71, 160, 107);
+    position: absolute;
+    border-radius: 10px;
+    width: 18px;
+    height: 18px;
+    left: 6px;
+}
+
+.wiring_editor .grid .multiconnector.target .anchor.main {
+    background: transparent;
+    right: -0.98em;
+}
+
+.wiring_editor .grid .multiconnector.source .anchor.main {
+    background: transparent;
+    left: -0.98em;
+}
+
+.wiring_editor .grid .multiconnector_icon {
+    background: rgb(122, 152, 192);
+    position: absolute;
+    display: inline;
+    width: 9px;
+    height: 9px;
+    margin: 2px;
+}
+
+.wiring_editor .grid .multiconnector_icon{
+    cursor: pointer;
+}
+.wiring_editor .grid .sources .multiconnector_icon {
+    background: url('../images/wiring/multiconnector_button.png');
+    float: right;
+    right: -10px;
+    position: relative;
+}
+
+.wiring_editor .grid .targets .multiconnector_icon {
+    background: url('../images/wiring/multiconnector_button.png');
+    float: left;
+    left: -11px;
+    position: relative;
+}
+
+.wiring_editor .grid .multiconnector.source .closebutton {
+    top: 14px;
+    right: 12px;
+    z-index: 30;
+}
+
+.wiring_editor .grid .multiconnector.target .closebutton {
+    top:14px;
+    left: 20px;
+    z-index: 30;
 }

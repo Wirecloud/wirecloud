@@ -49,8 +49,6 @@
          */
         this.startdrag = function startdrag(e, initAnchor) {
             var tmpPos, xStart, yStart;
-
-            // TODO:¿?¿?, Only attend to left button (or right button for left-handed persons) events
             if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
                 return;
             }
@@ -75,11 +73,25 @@
                 currentSource = null;
                 currentTarget = initAnchor;
                 theArrow.setEnd(tmpPos, initAnchor);
-            } else {
+            } else if (initAnchor instanceof Wirecloud.ui.WiringEditor.SourceAnchor) {
                 this.invert = false;
                 currentSource = initAnchor;
                 currentTarget = null;
                 theArrow.setStart(tmpPos, initAnchor);
+            } else if (initAnchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
+                if (initAnchor.initAnchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
+                    this.invert = true;
+                    currentSource = null;
+                    currentTarget = initAnchor;
+                    theArrow.setEnd(tmpPos, initAnchor.initAnchor);
+                    theArrow.endMulti = initAnchor.id;
+                } else if (initAnchor.initAnchor instanceof Wirecloud.ui.WiringEditor.SourceAnchor) {
+                    this.invert = false;
+                    currentSource = initAnchor;
+                    currentTarget = null;
+                    theArrow.startMulti = initAnchor.id;
+                    theArrow.setStart(tmpPos, initAnchor.initAnchor);
+                }
             }
             document.addEventListener("mousemove", this.drag, false);
             onStart(draggable, data);
@@ -109,28 +121,48 @@
          * enddrag, last step to draw a dragable arrow.
          */
         this.enddrag = function enddrag(e, fAnchor) {
-            // TODO: Only attend to left button (or right button for left-handed persons) events
             if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
                 return;
             }
-            if (fAnchor != null) {
-                if (!this.invert) {
-                    currentTarget = fAnchor;
-                    theArrow.setEnd(fAnchor.getCoordinates(layer), fAnchor);
-                } else {
-                    currentSource = fAnchor;
-                    theArrow.setStart(fAnchor.getCoordinates(layer), fAnchor);
-                }
-                if (isVal(currentSource, currentTarget)) {
-                    theArrow.calculateHighlight();
-                    theArrow.redraw();
-                    // add the arrow to the arrow list of both anchors
-                    this.initAnchor.addArrow(theArrow);
-                    fAnchor.addArrow(theArrow);
+            if (fAnchor !== this.initAnchor) {
+                if (fAnchor != null) {
+                    if (fAnchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
+                        if (!this.invert) {
+                            currentTarget = fAnchor.initAnchor;
+                            theArrow.setEnd(fAnchor.getCoordinates(layer), fAnchor.initAnchor);
+                            theArrow.endMulti = fAnchor.id;
+                        } else {
+                            currentSource = fAnchor.initAnchor;
+                            theArrow.setStart(fAnchor.getCoordinates(layer), fAnchor.initAnchor);
+                            theArrow.startMulti = fAnchor.id;
+                        }
+                    } else {
+                        if (!this.invert) {
+                            currentTarget = fAnchor;
+                            theArrow.setEnd(fAnchor.getCoordinates(layer), fAnchor);
+                        } else {
+                            currentSource = fAnchor;
+                            theArrow.setStart(fAnchor.getCoordinates(layer), fAnchor);
+                        }
+                    }
+                    if (isVal(currentSource, currentTarget)) {
+                        theArrow.calculateHighlight();
+                        theArrow.redraw();
+                        // add the arrow to the arrow list of both anchors
+                        this.initAnchor.addArrow(theArrow);
+                        if (this.initAnchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
+                            this.initAnchor.initAnchor.addArrow(theArrow);
+                        } else if (fAnchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
+                            fAnchor.initAnchor.addArrow(theArrow);
+                        }
+                        fAnchor.addArrow(theArrow);
+                    } else {
+                        theArrow.destroy();
+                    }
+                // mouseup out of an anchor
                 } else {
                     theArrow.destroy();
                 }
-            // mouseup out of an anchor
             } else {
                 theArrow.destroy();
             }
@@ -157,19 +189,28 @@
      * a valid connection or not.
      */
     var isVal = function isVal(currentSource, currentTarget) {
-        var arrows, i;
+        var arrows, i, source, target;
 
-        if (currentSource === currentTarget) {
+        source = currentSource;
+        target = currentTarget;
+
+        if (source instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
+            source = currentSource.initAnchor;
+        }
+        if (target instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
+            target = currentTarget.initAnchor;
+        }
+        if (source === target) {
             return false;
         }
 
-        if (!(currentSource instanceof Wirecloud.ui.WiringEditor.SourceAnchor) || !(currentTarget instanceof Wirecloud.ui.WiringEditor.TargetAnchor)) {
+        if (!(source instanceof Wirecloud.ui.WiringEditor.SourceAnchor) || !(target instanceof Wirecloud.ui.WiringEditor.TargetAnchor)) {
             return false;
         }
 
-        arrows = currentSource.getArrows();
+        arrows = source.getArrows();
         for (i = 0; i < arrows.length; i++) {
-            if (arrows[i].endAnchor === currentTarget) {
+            if (arrows[i].endAnchor === target) {
                 return false;
             }
         }

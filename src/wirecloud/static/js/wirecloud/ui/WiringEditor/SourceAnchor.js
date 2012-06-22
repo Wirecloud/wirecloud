@@ -19,7 +19,7 @@
  *
  */
 
-/*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50, prototypejs: true */
+
 /*global StyledElements, Wirecloud */
 
 (function () {
@@ -46,13 +46,11 @@
 
         coordinates = this.getCoordinates(document.getElementsByClassName('grid')[0]);
         for (i = 0; i < this.arrows.length; i += 1) {
-            this.arrows[i].setStart(coordinates);
-            this.arrows[i].redraw();
+            if (this.arrows[i].startMulti == null) {
+                this.arrows[i].setStart(coordinates);
+                this.arrows[i].redraw();
+            }
         }
-    };
-
-    SourceAnchor.prototype.isHighlighted = function isHighlighted() {
-        return this.context.iObject.highlighted;
     };
 
     /*************************************************************************

@@ -81,10 +81,6 @@
             }.bind(this));
 
             // highlight button, not for miniInterface
-            /*highlight_button = new StyledElements.StyledCheckBox({
-                'title': gettext("highlight"),
-                'initiallyChecked': 'true'
-            });*/
             this.highlight_button = new StyledElements.StyledButton({
                 'title': gettext("highlight"),
                 'class': 'highlight_button activated',
@@ -135,11 +131,6 @@
                 function () {return true; }
             );
         } else { //miniInterface
-            /*if (!clone) {
-                this.wrapperElement.addEventListener('mousedown', this.wiringEditor.starDrag.bind(this));
-            } else if (clone) {
-                this.addClassName('clone');
-            }*/
             this.draggable = new Draggable(this.wrapperElement, {iObject: this},
                 function onStart(draggable, context) {
                     var miniwidget_clon, pos_miniwidget;
@@ -246,6 +237,7 @@
     GenericInterface.prototype.getMenubarPosition = function getMenubarPosition() {
         return this.menubarPosition;
     };
+
     /**
      * generic repaint
      */
@@ -266,8 +258,8 @@
     /**
      * add Source.
      */
-    GenericInterface.prototype.addSource = function addSourceAnchor(label, desc, name, anchorContext) {
-        var anchor, anchorDiv, anchorLabel;
+    GenericInterface.prototype.addSource = function addSource(label, desc, name, anchorContext) {
+        var anchor, anchorDiv, anchorLabel, multiconnector, id, objectId;
         //anchorDiv
         anchorDiv = document.createElement("div");
         //if the output have not description, take the label
@@ -282,6 +274,28 @@
         if (!this.isMiniInterface) {
             anchor = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, this.arrowCreator);
             anchorDiv.appendChild(anchor.wrapperElement);
+
+            //multiconnector button
+            this.multiButton = new StyledElements.StyledButton({
+                'title': gettext("highlight"),
+                'class': 'multiconnector_icon',
+                'plain': true
+            });
+            this.multiButton.addEventListener('click', function (e) {
+                if (this instanceof Wirecloud.ui.WiringEditor.GadgetInterface) {
+                    objectId = (this.igadget.getId());
+                } else {
+                    objectId = (this.getId());
+                }
+                multiconnector = new Wirecloud.ui.WiringEditor.Multiconnector(this.wiringEditor.nextMulticonnectorId, objectId, name,
+                                            this.wiringEditor.layout.getCenterContainer().wrapperElement,
+                                            this.wiringEditor, anchor, null, null);
+                this.wiringEditor.nextMulticonnectorId = parseInt(this.wiringEditor.nextMulticonnectorId, 10) + 1;
+                this.wiringEditor.addMulticonnector(multiconnector);
+                multiconnector.addMainArrow();
+            }.bind(this));
+
+            anchorDiv.appendChild(this.multiButton.wrapperElement);
             this.sourceAnchorsByName[name] = anchor;
             this.sourceAnchors.push(anchor);
         } else {
@@ -297,7 +311,7 @@
      * add Target.
      */
     GenericInterface.prototype.addTarget = function addTarget(label, desc, name, anchorContext) {
-        var anchor, anchorDiv, anchorLabel;
+        var anchor, anchorDiv, anchorLabel, multiconnector, id, objectId;
         //anchorDiv
         anchorDiv = document.createElement("div");
         //if the input have not description, take the label
@@ -311,6 +325,26 @@
         anchorDiv.appendChild(anchorLabel);
         if (!this.isMiniInterface) {
             anchor = new Wirecloud.ui.WiringEditor.TargetAnchor(anchorContext, this.arrowCreator);
+            //multiconnector button
+            this.multiButton = new StyledElements.StyledButton({
+                'title': gettext("highlight"),
+                'class': 'multiconnector_icon',
+                'plain': true
+            });
+            this.multiButton.addEventListener('click', function (e) {
+                if (this instanceof Wirecloud.ui.WiringEditor.GadgetInterface) {
+                    objectId = this.igadget.getId();
+                } else {
+                    objectId = this.getId();
+                }
+                multiconnector = new Wirecloud.ui.WiringEditor.Multiconnector(this.wiringEditor.nextMulticonnectorId, objectId, name,
+                                            this.wiringEditor.layout.getCenterContainer().wrapperElement,
+                                            this.wiringEditor, anchor, null, null);
+                this.wiringEditor.nextMulticonnectorId = parseInt(this.wiringEditor.nextMulticonnectorId, 10) + 1;
+                this.wiringEditor.addMulticonnector(multiconnector);
+                multiconnector.addMainArrow();
+            }.bind(this));
+            anchorDiv.appendChild(this.multiButton.wrapperElement);
             anchorDiv.appendChild(anchor.wrapperElement);
             this.targetAnchorsByName[name] = anchor;
             this.targetAnchors.push(anchor);
@@ -389,21 +423,37 @@
      * Destroy
      */
     GenericInterface.prototype.destroy = function destroy() {
-        var i, j, arrows;
+        var i, j, arrows, className;
 
         StyledElements.Container.prototype.destroy.call(this);
 
         for (i = 0; i < this.sourceAnchors.length; i += 1) {
             arrows = this.sourceAnchors[i].arrows.clone();
             for (j = 0; j < arrows.length; j += 1) {
-                arrows[j].destroy();
+                className = arrows[j].wrapperElement.getAttribute('class');
+                if (!className.include('multiconnector_arrow')) {
+                    arrows[j].destroy();
+                } else {
+                    this.wiringEditor.removeMulticonnector(this.wiringEditor.multiconnectors[arrows[j].multiId]);
+                    // TODO restarting current loop due to removeMulticonnector removing arrows
+                    arrows = this.sourceAnchors[i].arrows.clone();
+                    j = 0;
+                }
             }
         }
 
         for (i = 0; i < this.targetAnchors.length; i += 1) {
             arrows = this.targetAnchors[i].arrows.clone();
             for (j = 0; j < arrows.length; j += 1) {
-                arrows[j].destroy();
+                className = arrows[j].wrapperElement.getAttribute('class');
+                if (!className.include('multiconnector_arrow')) {
+                    arrows[j].destroy();
+                } else {
+                    this.wiringEditor.removeMulticonnector(this.wiringEditor.multiconnectors[arrows[j].multiId]);
+                    // TODO restarting current loop due to removeMulticonnector removing arrows
+                    arrows = this.targetAnchors[i].arrows.clone();
+                    j = 0;
+                }
             }
         }
         this.draggable.destroy();

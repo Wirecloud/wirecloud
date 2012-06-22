@@ -62,6 +62,7 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/OperatorInterface.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/SourceAnchor.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/TargetAnchor.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/Multiconnector.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/MarketplaceViewMenuItems.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/InstanciateMashupWindowMenu.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/NewWorkspaceWindowMenu.js"></script>

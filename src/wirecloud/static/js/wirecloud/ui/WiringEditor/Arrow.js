@@ -135,7 +135,7 @@
 
             onDrag(e, draggable, data, x + xOffset, y + yOffset);
         };
-        
+
         pullclick = function (e) {
             e.stopPropagation();
         };
@@ -191,6 +191,7 @@
 
         // And another for the arrow's body
         this.arrowElement = canvas.canvasElement.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
+        this.arrowElement.setAttribute('class', 'arrowbody');
         this.arrowBodyElement.appendChild(this.arrowElement);
 
         this.arrowBodyElement.addEventListener('click', function (e) {
@@ -264,12 +265,14 @@
         this.end = null;
         this.startAnchor = null;
         this.endAnchor = null;
+        this.endMulti = null;
+        this.startMulti = null;
+        this.multiId = null;
     };
 
     /*************************************************************************
      * Private methods
      *************************************************************************/
-
 
     /*************************************************************************
      * Public methods
@@ -324,6 +327,10 @@
 
         from = this.start;
         to = this.end;
+        if (from == null || to == null) {
+            //error: getPullerStart in a inconsistent arrow;
+            return;
+        }
         if (this.pullerStart == null) {
             difX = Math.abs(from.posX - to.posX);
             difY = Math.abs(from.posY - to.posY);
@@ -353,7 +360,10 @@
 
         from = this.start;
         to = this.end;
-
+        if (from == null || to == null) {
+            //error: getPullerEnd in a inconsistent arrow;
+            return;
+        }
         if (this.pullerEnd == null) {
             difX = Math.abs(from.posX - to.posX);
             difY = Math.abs(from.posY - to.posY);
@@ -418,10 +428,10 @@
                 "C " + startPuller.posX + "," + startPuller.posY + " " + endPuller.posX + "," + endPuller.posY + " " +
                 to.posX + "," + to.posY
         );
-        
+
         try {
             posCloser = this.calculateMid();
-            
+
             this.closerElement.setAttribute("cx", posCloser.posX);
             this.closerElement.setAttribute("cy", posCloser.posY);
             this.closerElement.setAttribute("r", 8);
@@ -430,14 +440,14 @@
             //TODO: error msg
         }
     };
-    
+
     /**
      *  calculate the arrow path middle position
      *  with a bercier curves aproximation.
      */
     Arrow.prototype.calculateMid = function calculateMid() {
         var B1, B2, B3, B4, getBercier;
-        
+
         B1 = function B1(t) { return t * t * t; };
         B2 = function B2(t) { return 3 * t * t * (1 - t); };
         B3 = function B3(t) { return 3 * t * (1 - t) * (1 - t); };
@@ -522,7 +532,7 @@
     Arrow.prototype.removeClassName = function removeClassName(className) {
         var atr;
 
-        if (className == null) {
+        if (className == null || this.wrapperElement == null) {
             return;
         }
 
@@ -541,6 +551,10 @@
         if (this.canvas !== null) {
             this.canvas.removeArrow(this);
             this.canvas = null;
+        }
+        if (this.wrapperElement == null) {
+            //error: trying to destroy a previously destroyed arrow;
+            return;
         }
         if (this.wrapperElement.parentNode) {
             this.wrapperElement.parentNode.removeChild(this.wrapperElement);

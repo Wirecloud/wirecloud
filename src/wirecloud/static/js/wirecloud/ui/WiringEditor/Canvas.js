@@ -73,8 +73,9 @@
         arrow.redraw();
         arrow.insertInto(this.canvasElement);
 
-        this.events.arrowadded.dispatch(this, arrow);
-
+        if (extraClass != 'multiconnector_arrow') {
+            this.events.arrowadded.dispatch(this, arrow);
+        }
         return arrow;
     };
 

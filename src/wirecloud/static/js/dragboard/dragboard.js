@@ -826,7 +826,7 @@ function Draggable(handler, data, onStart, onDrag, onFinish, canBeDragged, onScr
 
             dragboard.insertBefore(dragboardCover, dragboard.firstChild);
         }
-
+        e.stopPropagation();
         return false;
     };
 

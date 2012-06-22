@@ -154,6 +154,10 @@
         return this.context.data.serialize();
     };
 
+
+    Anchor.prototype.isHighlighted = function isHighlighted() {
+        return this.context.iObject.highlighted;
+    };
     /*************************************************************************
      * Make Anchor public
      *************************************************************************/
