@@ -284,17 +284,23 @@ class USDLTemplateParser(object):
             }
             for source in self._graph.objects(connection, WIRE_M['hasSource']):
                 connection_info['source'] = {
-                    'id': self._get_field(WIRE_M, 'sourceId', source, required=False),
-                    'endpoint': self._get_field(WIRE_M, 'endpoint', source, required=False),
-                    'type': self._get_field(WIRE, 'type', source, required=False),
+                    'id': self._get_field(WIRE_M, 'sourceId', source),
+                    'endpoint': self._get_field(WIRE_M, 'endpoint', source),
+                    'type': self._get_field(WIRE, 'type', source),
                 }
+                break
+            else:
+                raise TemplateParseException(_('missing required field: source'))
 
             for target in self._graph.objects(connection, WIRE_M['hasTarget']):
                 connection_info['target'] = {
-                    'id': self._get_field(WIRE_M, 'targetId', target, required=False),
-                    'endpoint': self._get_field(WIRE_M, 'endpoint', target, required=False),
-                    'type': self._get_field(WIRE, 'type', target, required=False),
+                    'id': self._get_field(WIRE_M, 'targetId', target),
+                    'endpoint': self._get_field(WIRE_M, 'endpoint', target),
+                    'type': self._get_field(WIRE, 'type', target),
                 }
+                break
+            else:
+                raise TemplateParseException(_('missing required field: target'))
 
             connections.append(connection_info)
 
@@ -704,8 +710,17 @@ class WirecloudTemplateParser(object):
         connections = []
 
         for connection in self._xpath(CONNECTION_XPATH, wiring_element):
-            source_element = self._xpath(SOURCE_XPATH, connection)[0]
-            target_element = self._xpath(TARGET_XPATH, connection)[0]
+
+            if len(self._xpath(SOURCE_XPATH, connection)) > 0:
+                source_element = self._xpath(SOURCE_XPATH, connection)[0]
+            else:
+                raise TemplateParseException(_('Missing required field: source'))
+
+            if len(self._xpath(SOURCE_XPATH, connection)) > 0:
+                target_element = self._xpath(TARGET_XPATH, connection)[0]
+            else:
+                raise TemplateParseException(_('Missing required field: target'))
+
             connection_info = {
                 'readonly': connection.get('readonly', 'false').lower() == 'true',
                 'source': {
