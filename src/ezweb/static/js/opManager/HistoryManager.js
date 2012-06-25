@@ -81,8 +81,7 @@
 
     HistoryManager._buildURL = function _buildURL(data) {
         var key,
-            hash = '',
-            lite = '';
+            hash = '';
 
         for (key in data) {
             if (key === 'workspace_name' || key === 'workspace_creator') {
@@ -92,7 +91,7 @@
         }
 
         return window.location.protocol + "//" +
-            window.location.host + lite +
+            window.location.host +
             "/" + encodeURIComponent(data.workspace_creator) + '/' + encodeURIComponent(data.workspace_name) +
             window.location.search +
             '#' + hash.substr(1);
