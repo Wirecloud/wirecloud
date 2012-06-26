@@ -1,0 +1,29 @@
+.title {
+    white-space: nowrap;
+    margin-top: 7px;
+    margin-bottom: 2px;
+    display: block;
+    font-weight: bold;
+}
+
+.content {
+    display:block;
+    min-height: 20px;
+    padding: 2px;
+    border:2px solid #4c5054;
+    background-color:#ccffcc;
+}
+
+body {
+    overflow: auto;
+}
+
+body > div {
+    padding: 0px 5px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: auto;
+}
