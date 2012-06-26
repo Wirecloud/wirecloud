@@ -31,12 +31,16 @@
     /**
      * OperatorInterface Class
      */
-    var OperatorInterface = function OperatorInterface(wiringEditor, ioperator, manager, isMenubarRef) {
+    var OperatorInterface = function OperatorInterface(wiringEditor, ioperator, manager, isMenubarRef, clone) {
         var outputs, inputs, desc, label, key, anchorContext;
         this.ioperator = ioperator;
         this.wiringEditor = wiringEditor;
 
-        Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.ioperator.name, manager, 'ioperator');
+        if (clone !== true) {
+            clone = false;
+        }
+
+        Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.ioperator.name, manager, 'ioperator', clone);
         if (!isMenubarRef) {
             inputs = ioperator.inputs;
             outputs = ioperator.outputs;
@@ -61,14 +65,20 @@
     /**
      * onFinish for draggable
      */
-    OperatorInterface.prototype.onFinish = function onFinish(draggable, data) {
+    OperatorInterface.prototype.onFinish = function onFinish(draggable, data, e) {
         var operator_interface, position, initialPosition, movement;
+        
+        position = {posX: 0, posY: 0};
+        position = data.entity.getPosition();
+        data.entity.setPosition({posX: 0, posY: 0});
+
+        if (!this.wiringEditor.withinGrid(e)) {
+            this.wiringEditor.layout.wrapperElement.removeChild(data.entity.wrapperElement);
+            return;
+        }
 
         operator_interface = this.wiringEditor.addIOperator(this.ioperator);
 
-        position = {posX: 0, posY: 0};
-        initialPosition = data.initialPos;
-        position = data.entity.getPosition();
         position.posX -= 180;
         if (position.posX < 0) {
             position.posX = 8;
@@ -76,8 +86,8 @@
         if (position.posY < 0) {
             position.posY = 0;
         }
-        data.entity.setPosition({posX: 0, posY: 0});
         operator_interface.setPosition(position);
+        this.wiringEditor.layout.wrapperElement.removeChild(data.entity.wrapperElement);
     };
 
     /**

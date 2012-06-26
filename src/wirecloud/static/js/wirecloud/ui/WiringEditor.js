@@ -19,7 +19,7 @@
  *
  */
 
-/*global LayoutManagerFactory, OperatorMeta, opManager, StyledElements, Wirecloud, gettext */
+/*global LayoutManagerFactory, OperatorMeta, opManager, StyledElements, Wirecloud, gettext, Draggable, BrowserUtilsFactory */
 if (!Wirecloud.ui) {
     // TODO this line should live in another file
     Wirecloud.ui = {};
@@ -129,7 +129,7 @@ if (!Wirecloud.ui) {
     var renewInterface = function renewInterface() {
         var igadgets, igadget, key, i, gadget_interface, minigadget_interface, ioperators, operator,
             operator_interface, operator_instance, operatorKeys, connection, startAnchor, endAnchor,
-            arrow, workspace, WiringStatus, isMenubarRef;
+            arrow, workspace, WiringStatus, isMenubarRef, minigadget_clon, pos;
 
         workspace = opManager.activeWorkSpace; // FIXME this is the current way to obtain the current workspace
         WiringStatus = workspace.wiring.status;
@@ -173,6 +173,7 @@ if (!Wirecloud.ui) {
             minigadget_interface = new Wirecloud.ui.WiringEditor.GadgetInterface(this, igadget, this, isMenubarRef);
             this.mini_widgets[igadget.getId()] = minigadget_interface;
             this.mini_widget_section.appendChild(minigadget_interface);
+
             // widget
             if (igadget.getId() in WiringStatus.views[0].igadgets) {
                 minigadget_interface.disable();
@@ -250,6 +251,43 @@ if (!Wirecloud.ui) {
     /*************************************************************************
      * Public methods
      *************************************************************************/
+
+    /**
+     * start drag and drop for menubar gadgets
+     */
+    WiringEditor.prototype.starDrag = function starDrag(e) {
+        var miniwidget_clon, pos_miniwidget;
+        if (this.wrapperElement.hasClassName('disabled') || !BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
+            return;
+        }
+        if (this instanceof Wirecloud.ui.WiringEditor.GadgetInterface) {
+            miniwidget_clon = new Wirecloud.ui.WiringEditor.GadgetInterface(this.wiringEditor,
+                                                    this.igadget, this.wiringEditor, true, true);
+        } else {
+            miniwidget_clon = new Wirecloud.ui.WiringEditor.OperatorInterface(this.wiringEditor,
+                                                    this.ioperator, this.wiringEditor, true, true);
+        }
+        pos_miniwidget = this.getBoundingClientRect();
+        miniwidget_clon.setBoundingClientRect(pos_miniwidget,
+                     {top: -73, left: 0, width: -2, height: -10});
+
+        miniwidget_clon.draggable = new Draggable(miniwidget_clon.wrapperElement,
+            miniwidget_clon.wrapperElement, {initialPos: null, entity: miniwidget_clon},
+            function onStart(draggable, data, event) {
+                var mouseDesp;
+                mouseDesp = data.entity.getPosition();
+                mouseDesp.posX = event.clientX - mouseDesp.posX;
+                mouseDesp.posY = event.clientY - 73 - mouseDesp.posY;
+                data.initialPos = mouseDesp;
+            },
+            function (e, draggable, data, X, Y) {
+                data.entity.repaint();
+            },
+            miniwidget_clon.onFinish.bind(this),
+            function (draggable, data) {return data.entity.enabled; });
+        this.wiringEditor.layout.wrapperElement.appendChild(miniwidget_clon.wrapperElement);
+
+    };
 
     /**
      * Saves the wiring state.
@@ -349,6 +387,16 @@ if (!Wirecloud.ui) {
     WiringEditor.prototype.unhighlightEntity = function unhighlightEntity(object) {
         var pos = this.selectedObjects.indexOf(object);
         delete this.selectedObjects[pos];
+    };
+
+    /**
+     * check if the position of the event occurred within the grid
+     */
+    WiringEditor.prototype.withinGrid = function withinGrid(event) {
+        var box = this.layout.getCenterContainer().getBoundingClientRect();
+
+        return (event.clientX > box.left) && (event.clientX < box.right) &&
+               (event.clientY > box.top) && (event.clientY < box.bottom);
     };
 
     WiringEditor.prototype.addIGadget = function addIGadget(wiringEditor, igadget) {

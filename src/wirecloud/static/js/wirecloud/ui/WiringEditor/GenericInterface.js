@@ -31,11 +31,11 @@
     /*
      * GenericInterface Class
      */
-    var GenericInterface = function GenericInterface(extending, wiringEditor, tittle, manager, className) {
+    var GenericInterface = function GenericInterface(extending, wiringEditor, tittle, manager, className, clone) {
         if (extending === true) {
             return;
         }
-        var i, name, variables, variable, anchor, anchorDiv, anchorLabel, desc, nameDiv, nameElement, del_button, highlight_button;
+        var i, name, variables, variable, anchor, anchorDiv, anchorLabel, desc, nameDiv, nameElement, del_button, highlight_button, copy;
 
         StyledElements.Container.call(this, {'class': className}, []);
 
@@ -45,6 +45,9 @@
         this.sourceAnchorsByName = {};
         this.targetAnchors = [];
         this.sourceAnchors = [];
+        this.wiringEditor = wiringEditor;
+        this.tittle = tittle;
+        this.className = className;
         if (manager instanceof Wirecloud.ui.WiringEditor.ArrowCreator) {
             this.isMiniInterface = false;
             this.arrowCreator = manager;
@@ -71,9 +74,9 @@
             del_button.insertInto(this.header);
             del_button.addEventListener('click', function () {
                 if (className == 'igadget') {
-                    wiringEditor.removeIGadget(this);
+                    this.wiringEditor.removeIGadget(this);
                 } else {
-                    wiringEditor.removeIOperator(this);
+                    this.wiringEditor.removeIOperator(this);
                 }
             }.bind(this));
 
@@ -90,10 +93,10 @@
             this.highlight_button.insertInto(this.header);
             this.highlight_button.addEventListener('click', function () {
                 if (this.highlighted) {
-                    wiringEditor.unhighlightEntity(this);
+                    this.wiringEditor.unhighlightEntity(this);
                     this.unhighlight();
                 } else {
-                    wiringEditor.highlightEntity(this);
+                    this.wiringEditor.highlightEntity(this);
                     this.highlight();
                 }
             }.bind(this));
@@ -128,24 +131,14 @@
                 function () {return true; }
             );
         } else {
-            this.draggable = new Draggable(this.wrapperElement, this.wrapperElement, {initialPos: null, entity: this},
-                function onStart(draggable, data, event) {
-                    var mouseDesp;
-                    mouseDesp = data.entity.getPosition();
-                    mouseDesp.posX = event.clientX - mouseDesp.posX;
-                    mouseDesp.posY = event.clientY - 74 - mouseDesp.posY;
-                    data.initialPos = mouseDesp;
-                },
-                function (e, draggable, data, X, Y) {
-                    data.entity.repaint();
-                },
-                this.onFinish.bind(this),
-                function (draggable, data) {return data.entity.enabled; }
-            );
+            if (!clone) {
+                this.wrapperElement.addEventListener('mousedown', this.wiringEditor.starDrag.bind(this));
+            } else if (clone) {
+                this.addClassName('clone');
+            }
         }
     };
     GenericInterface.prototype = new StyledElements.Container({'extending': true});
-
 
     /*************************************************************************
      * Private methods
@@ -191,6 +184,16 @@
     GenericInterface.prototype.setPosition = function setPosition(coordinates) {
         this.wrapperElement.style.left = coordinates.posX + 'px';
         this.wrapperElement.style.top = coordinates.posY + 'px';
+    };
+
+    /**
+     * set the BoundingClientRect parameters
+     */
+    GenericInterface.prototype.setBoundingClientRect = function setBoundingClientRect(BoundingClientRect, move) {
+        this.wrapperElement.style.height = (BoundingClientRect.height + move.height) + 'px';
+        this.wrapperElement.style.left = (BoundingClientRect.left + move.left) + 'px';
+        this.wrapperElement.style.top = (BoundingClientRect.top + move.top) + 'px';
+        this.wrapperElement.style.width = (BoundingClientRect.width + move.width) + 'px';
     };
 
     /**

@@ -31,12 +31,16 @@
     /*
      * GadgetInterface Class
      */
-    var GadgetInterface = function GadgetInterface(wiringEditor, igadget, manager, isMenubarRef) {
+    var GadgetInterface = function GadgetInterface(wiringEditor, igadget, manager, isMenubarRef, clone) {
         var variables, variable, desc, label, name, anchorContext;
         this.igadget = igadget;
         this.wiringEditor = wiringEditor;
 
-        Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.igadget.name, manager, 'igadget');
+        if (clone !== true) {
+            clone = false;
+        }
+
+        Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.igadget.name, manager, 'igadget', clone);
 
         if (!isMenubarRef) {
             variables = opManager.activeWorkSpace.varManager.getIGadgetVariables(igadget.getId());
@@ -60,16 +64,21 @@
     GadgetInterface.prototype = new Wirecloud.ui.WiringEditor.GenericInterface(true);
 
     //function for the draggable gadgets
-    GadgetInterface.prototype.onFinish = function onFinish(draggable, igadget_interface) {
+    GadgetInterface.prototype.onFinish = function onFinish(draggable, igadget_interface, e) {
         var position, initialPosition, movement, big_igadget_interface;
 
-        big_igadget_interface = this.wiringEditor.addIGadget(this.wiringEditor, this.igadget);
-        
         position = {posX: 0, posY: 0};
-        initialPosition = igadget_interface.initialPos;
         position = igadget_interface.entity.getPosition();
+
+        if (!this.wiringEditor.withinGrid(e)) {
+            this.wiringEditor.layout.wrapperElement.removeChild(igadget_interface.entity.wrapperElement);
+            return;
+        }
+
+        big_igadget_interface = this.wiringEditor.addIGadget(this.wiringEditor, this.igadget);
+
         position.posX -= 180;
-        igadget_interface.entity.setPosition({posX: 0, posY: 0});
+
         if (position.posX < 0) {
             position.posX = 8;
         }
@@ -77,7 +86,8 @@
             position.posY = 0;
         }
         big_igadget_interface.setPosition(position);
-        igadget_interface.entity.disable();
+        this.wiringEditor.layout.wrapperElement.removeChild(igadget_interface.entity.wrapperElement);
+        this.disable();
     };
 
     /*************************************************************************

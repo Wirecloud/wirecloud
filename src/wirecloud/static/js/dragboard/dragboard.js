@@ -1,4 +1,4 @@
-/* 
+/*
 *     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
 *     S.A.Unipersonal (Telefonica I+D)
 *
@@ -723,7 +723,7 @@ EzWebEffectBase.findDragboardElement = function (element) {
 /**
  * @param draggableElement {HTMLElement} Element to drag
  * @param handler {HTMLElement} Element where the drag & drop operation must to be started
- * @param data {Object} context 
+ * @param data {Object} context
  */
 function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, canBeDragged) {
     var xStart = 0, yStart = 0, xScrollStart = 0, yScrollStart = 0;
@@ -751,7 +751,7 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
         dragboardCover.parentNode.removeChild(dragboardCover);
         dragboardCover = null;
 
-        onFinish(draggable, data);
+        onFinish(draggable, data, e);
 
         handler.addEventListener("mousedown", startdrag, false);
 
