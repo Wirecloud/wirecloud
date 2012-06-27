@@ -145,7 +145,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'wirecloud',
-    'ezweb',
     'gadget',
     'workspace',
     'igadget',
