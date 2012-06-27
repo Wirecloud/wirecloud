@@ -42,7 +42,7 @@ admin.autodiscover()
 
 #JavaScript translation
 js_info_dict = {
-    'packages': ('ezweb', )
+    'packages': ('wirecloud', )
 }
 
 urlpatterns = patterns('',
