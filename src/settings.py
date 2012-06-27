@@ -106,7 +106,7 @@ COMPRESS_ROOT = STATIC_ROOT
 COMPRESS_OUTPUT_DIR = 'cache'
 COMPRESS_JS_FILTERS = (
     'compressor.filters.jsmin.JSMinFilter',
-    'ezweb.compressor_filters.JSUseStrictFilter',
+    'wirecloud.compressor_filters.JSUseStrictFilter',
 )
 
 # Make this unique, and don't share it with anybody.
