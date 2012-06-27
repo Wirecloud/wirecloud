@@ -112,31 +112,68 @@
 
         //draggable
         if (!this.isMiniInterface) {
-            this.draggable = new Draggable(this.wrapperElement, this.wrapperElement, this,
-                function () {},
-                function (e, draggable, iObject) {
-                    iObject.repaint();
+            this.draggable = new Draggable(this.wrapperElement, {iObject: this},
+                function onStart(draggable, context) {
+                    context.y = context.iObject.wrapperElement.style.top === "" ? 0 : parseInt(context.iObject.wrapperElement.style.top, 10);
+                    context.x = context.iObject.wrapperElement.style.left === "" ? 0 : parseInt(context.iObject.wrapperElement.style.left, 10);
                 },
-                function onFinish(draggable, data) {
-                    var position = data.getStylePosition();
+                function onDrag(e, draggable, context, xDelta, yDelta) {
+                    context.iObject.setPosition({posX: context.x + xDelta, posY: context.y + yDelta});
+                    context.iObject.repaint();
+                },
+                function onFinish(draggable, context) {
+                    var position = context.iObject.getStylePosition();
                     if (position.posX < 0) {
                         position.posX = 8;
                     }
                     if (position.posY < 0) {
-                        position.posY = 0;
+                        position.posY = 8;
                     }
-                    data.setPosition(position);
-                    data.repaint();
+                    context.iObject.setPosition(position);
+                    context.iObject.repaint();
                 },
                 function () {return true; }
             );
-        } else {
-            if (!clone) {
+        } else { //miniInterface
+            /*if (!clone) {
                 this.wrapperElement.addEventListener('mousedown', this.wiringEditor.starDrag.bind(this));
             } else if (clone) {
                 this.addClassName('clone');
-            }
-        }
+            }*/
+            this.draggable = new Draggable(this.wrapperElement, {iObject: this},
+                function onStart(draggable, context) {
+                    var miniwidget_clon, pos_miniwidget;
+
+                    //initial position
+                    pos_miniwidget = context.iObject.getBoundingClientRect();
+                    context.y = pos_miniwidget.top - 73;
+                    context.x = pos_miniwidget.left;
+                    //create a minigadget clon
+                    if (context.iObject instanceof Wirecloud.ui.WiringEditor.GadgetInterface) {
+                        miniwidget_clon = new Wirecloud.ui.WiringEditor.GadgetInterface(context.iObject.wiringEditor,
+                                            context.iObject.igadget, context.iObject.wiringEditor, true);
+                    } else {
+                        miniwidget_clon = new Wirecloud.ui.WiringEditor.OperatorInterface(context.iObject.wiringEditor,
+                                            context.iObject.ioperator, context.iObject.wiringEditor, true);
+                    }
+                    miniwidget_clon.addClassName('clon');
+                    //set the clon position over the originar miniGadget
+                    miniwidget_clon.setBoundingClientRect(pos_miniwidget,
+                     {top: -73, left: 0, width: -2, height: -10});
+                    // put the minigadget clon in the layout
+                    context.iObject.wiringEditor.layout.wrapperElement.appendChild(miniwidget_clon.wrapperElement);
+                    //put the clon in the context.iObject
+                    context.iObjectClon = miniwidget_clon;
+                },
+                function onDrag(e, draggable, context, xDelta, yDelta) {
+                    context.iObjectClon.setPosition({posX: context.x + xDelta, posY: context.y + yDelta});
+                    context.iObjectClon.repaint();
+                },
+                this.onFinish.bind(this),
+                function () {return true; }
+            );
+
+        }//else miniInterface
     };
     GenericInterface.prototype = new StyledElements.Container({'extending': true});
 

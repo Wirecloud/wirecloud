@@ -725,11 +725,9 @@ EzWebEffectBase.findDragboardElement = function (element) {
  * @param handler {HTMLElement} Element where the drag & drop operation must to be started
  * @param data {Object} context
  */
-function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, canBeDragged) {
+function Draggable(handler, data, onStart, onDrag, onFinish, canBeDragged, onScroll) {
     var xStart = 0, yStart = 0, xScrollStart = 0, yScrollStart = 0;
     var xScrollDelta, yScrollDelta;
-    var xOffset = 0, yOffset = 0;
-    var x, y;
     var dragboardCover;
     var draggable = this;
     var enddrag, drag, startdrag, scroll;
@@ -747,9 +745,11 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
         Event.stopObserving(document, "mouseup", enddrag);
         Event.stopObserving(document, "mousemove", drag);
 
-        dragboardCover.parentNode.removeEventListener("scroll", scroll, true);
-        dragboardCover.parentNode.removeChild(dragboardCover);
-        dragboardCover = null;
+        if (dragboardCover != null) {
+            dragboardCover.parentNode.removeEventListener("scroll", scroll, true);
+            dragboardCover.parentNode.removeChild(dragboardCover);
+            dragboardCover = null;
+        }
 
         onFinish(draggable, data, e);
 
@@ -768,10 +768,8 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
         var screenY = parseInt(e.screenY, 10);
         var xDelta = screenX - xStart - xScrollDelta;
         var yDelta = screenY - yStart - yScrollDelta;
-        draggableElement.style.top = (y + yDelta) + 'px';
-        draggableElement.style.left = (x + xDelta) + 'px';
 
-        onDrag(e, draggable, data, x + xDelta + xOffset, y + yDelta + yOffset);
+        onDrag(e, draggable, data, xDelta, yDelta);
     };
 
     // initiate the drag
@@ -795,42 +793,36 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
         xStart = parseInt(e.screenX, 10);
         yStart = parseInt(e.screenY, 10);
 
-/*        var cssStyle = document.defaultView.getComputedStyle(draggableElement, null);
-        y = cssStyle.getPropertyCSSValue("top").getFloatValue(CSSPrimitiveValue.CSS_PX);
-        x = cssStyle.getPropertyCSSValue("left").getFloatValue(CSSPrimitiveValue.CSS_PX);*/
-        // TODO
-        y = draggableElement.style.top === "" ? 0 : parseInt(draggableElement.style.top, 10);
-        x = draggableElement.style.left === "" ? 0 : parseInt(draggableElement.style.left, 10);
-
-        draggableElement.style.top = y + 'px';
-        draggableElement.style.left = x + 'px';
         Event.observe(document, "mouseup", enddrag);
         Event.observe(document, "mousemove", drag);
 
-        onStart(draggable, data, e);
-
-        var dragboard = EzWebEffectBase.findDragboardElement(draggableElement);
-        dragboardCover = document.createElement("div");
-        Element.extend(dragboardCover);
-        dragboardCover.addClassName("cover");
-        dragboardCover.observe("mouseup", enddrag, true);
-        dragboardCover.observe("mousemove", drag, true);
-
-        dragboardCover.style.zIndex = "1000000";
-        dragboardCover.style.position = "absolute";
-        dragboardCover.style.top = "0";
-        dragboardCover.style.left = "0";
-        dragboardCover.style.width = "100%";
-        dragboardCover.style.height = dragboard.scrollHeight + "px";
-
-        yScrollStart = parseInt(dragboard.scrollTop, 10);
         yScrollDelta = 0;
-        xScrollStart = parseInt(dragboard.scrollLeft, 10);
         xScrollDelta = 0;
 
-        dragboard.addEventListener("scroll", scroll, true);
+        options = onStart(draggable, data, e);
+        // TODO
+        if (options != null && options.dragboard) {
+            var dragboard = options.dragboard;
+            dragboardCover = document.createElement("div");
+            Element.extend(dragboardCover);
+            dragboardCover.addClassName("cover");
+            dragboardCover.observe("mouseup", enddrag, true);
+            dragboardCover.observe("mousemove", drag, true);
 
-        dragboard.insertBefore(dragboardCover, dragboard.firstChild);
+            dragboardCover.style.zIndex = "1000000";
+            dragboardCover.style.position = "absolute";
+            dragboardCover.style.top = "0";
+            dragboardCover.style.left = "0";
+            dragboardCover.style.width = "100%";
+            dragboardCover.style.height = dragboard.scrollHeight + "px";
+
+            yScrollStart = parseInt(dragboard.scrollTop, 10);
+            xScrollStart = parseInt(dragboard.scrollLeft, 10);
+
+            dragboardCover.addEventListener("scroll", scroll, true);
+
+            dragboard.insertBefore(dragboardCover, dragboard.firstChild);
+        }
 
         return false;
     };
@@ -854,13 +846,7 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
         xScrollDelta = xScrollStart - scrollLeft;
         var xScrollDeltaDiff = xScrollDelta - oldXDelta;
 
-        // TODO
-        var y = draggableElement.style.top === "" ? 0 : parseInt(draggableElement.style.top, 10);
-        var x = draggableElement.style.left === "" ? 0 : parseInt(draggableElement.style.left, 10);
-        draggableElement.style.top = (y - yScrollDeltaDiff) + 'px';
-        draggableElement.style.left = (x - xScrollDeltaDiff) + 'px';
-
-        onDrag(e, draggable, data, x - xScrollDeltaDiff + xOffset, y - yScrollDeltaDiff + yOffset);
+        onScroll(e, draggable, data, xScrollDeltaDiff, yScrollDeltaDiff);
     };
 
     // add mousedown event listener
@@ -869,14 +855,6 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
     /**********
      * Public methods
      **********/
-
-    this.setXOffset = function (offset) {
-        xOffset = offset;
-    };
-
-    this.setYOffset = function (offset) {
-        yOffset = offset;
-    };
 
     this.destroy = function () {
         handler.removeEventListener("mousedown", startdrag, false);
@@ -912,11 +890,19 @@ function IGadgetDraggable(iGadget) {
     var context = {
         iGadget: iGadget
     };
-    Draggable.call(this, iGadget.element, iGadget.gadgetMenu, context,
+    Draggable.call(this, iGadget.gadgetMenu, context,
                          IGadgetDraggable.prototype.startFunc,
                          IGadgetDraggable.prototype.updateFunc,
                          IGadgetDraggable.prototype.finishFunc,
                          IGadgetDraggable.prototype.canBeDraggedFunc);
+
+    this.setXOffset = function (xOffset) {
+        context.xOffset = xOffset;
+    };
+
+    this.setYOffset = function (yOffset) {
+        context.yOffset = yOffset;
+    };
 }
 
 IGadgetDraggable.prototype.canBeDraggedFunc = function (draggable, context) {
@@ -932,6 +918,13 @@ IGadgetDraggable.prototype.startFunc = function (draggable, context) {
     context.currentTab = context.dragboard.tabId;
     context.dragboard.raiseToTop(context.iGadget);
     context.layout.initializeMove(context.iGadget, draggable);
+
+    context.y = context.iGadget.element.style.top === "" ? 0 : parseInt(context.iGadget.element.style.top, 10);
+    context.x = context.iGadget.element.style.left === "" ? 0 : parseInt(context.iGadget.element.style.left, 10);
+
+    return {
+        dragboard: EzWebEffectBase.findDragboardElement(context.iGadget.element)
+    };
 };
 
 IGadgetDraggable.prototype._findTabElement = function (curNode, maxRecursion) {
@@ -952,8 +945,14 @@ IGadgetDraggable.prototype._findTabElement = function (curNode, maxRecursion) {
     }
 };
 
-IGadgetDraggable.prototype.updateFunc = function (event, draggable, context, x, y) {
-    var element = null;
+IGadgetDraggable.prototype.updateFunc = function (event, draggable, context, xDelta, yDelta) {
+    var x, y, element = null;
+
+    context.iGadget.element.style.left = (context.x + xDelta) + 'px';
+    context.iGadget.element.style.top = (context.y + yDelta) + 'px';
+
+    x = context.x + xDelta + context.xOffset;
+    y = context.y + yDelta + context.yOffset;
 
     // Check if the mouse is over a tab
     element = document.elementFromPoint(event.clientX, event.clientY);
@@ -1047,7 +1046,7 @@ function IGadgetIconDraggable(iGadget) {
         x: null,
         y: null
     };
-    Draggable.call(this, iGadget.iconElement, iGadget.iconImg, context,
+    Draggable.call(this, iGadget.iconImg, context,
                          IGadgetIconDraggable.prototype.startFunc,
                          IGadgetIconDraggable.prototype.updateFunc,
                          IGadgetIconDraggable.prototype.finishFunc,
@@ -1065,6 +1064,10 @@ IGadgetIconDraggable.prototype.startFunc = function (draggable, context) {
     context.oldZIndex = context.iGadget.getZPosition();
     context.iGadget.setZPosition("999999");
     context.dragboard = context.iGadget.layout.dragboard;
+
+    return {
+        dragboard: EzWebEffectBase.findDragboardElement(context.iGadget.element)
+    };
 };
 
 

@@ -31,16 +31,12 @@
     /*
      * GadgetInterface Class
      */
-    var GadgetInterface = function GadgetInterface(wiringEditor, igadget, manager, isMenubarRef, clone) {
+    var GadgetInterface = function GadgetInterface(wiringEditor, igadget, manager, isMenubarRef) {
         var variables, variable, desc, label, name, anchorContext;
         this.igadget = igadget;
         this.wiringEditor = wiringEditor;
 
-        if (clone !== true) {
-            clone = false;
-        }
-
-        Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.igadget.name, manager, 'igadget', clone);
+        Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.igadget.name, manager, 'igadget');
 
         if (!isMenubarRef) {
             variables = opManager.activeWorkSpace.varManager.getIGadgetVariables(igadget.getId());
@@ -63,19 +59,21 @@
 
     GadgetInterface.prototype = new Wirecloud.ui.WiringEditor.GenericInterface(true);
 
-    //function for the draggable gadgets
-    GadgetInterface.prototype.onFinish = function onFinish(draggable, igadget_interface, e) {
-        var position, initialPosition, movement, big_igadget_interface;
+    /**
+     * onFinish for draggable
+     */
+    GadgetInterface.prototype.onFinish = function onFinish(draggable, data, e) {
+        var position, initialPosition, movement, igadget_interface;
 
         position = {posX: 0, posY: 0};
-        position = igadget_interface.entity.getPosition();
+        position = data.iObjectClon.getPosition();
 
         if (!this.wiringEditor.withinGrid(e)) {
-            this.wiringEditor.layout.wrapperElement.removeChild(igadget_interface.entity.wrapperElement);
+            this.wiringEditor.layout.wrapperElement.removeChild(data.iObjectClon.wrapperElement);
             return;
         }
 
-        big_igadget_interface = this.wiringEditor.addIGadget(this.wiringEditor, this.igadget);
+        igadget_interface = this.wiringEditor.addIGadget(this.wiringEditor, this.igadget);
 
         position.posX -= 180;
 
@@ -83,10 +81,10 @@
             position.posX = 8;
         }
         if (position.posY < 0) {
-            position.posY = 0;
+            position.posY = 8;
         }
-        big_igadget_interface.setPosition(position);
-        this.wiringEditor.layout.wrapperElement.removeChild(igadget_interface.entity.wrapperElement);
+        igadget_interface.setPosition(position);
+        this.wiringEditor.layout.wrapperElement.removeChild(data.iObjectClon.wrapperElement);
         this.disable();
     };
 

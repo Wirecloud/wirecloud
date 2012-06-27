@@ -31,16 +31,13 @@
     /**
      * OperatorInterface Class
      */
-    var OperatorInterface = function OperatorInterface(wiringEditor, ioperator, manager, isMenubarRef, clone) {
+    var OperatorInterface = function OperatorInterface(wiringEditor, ioperator, manager, isMenubarRef) {
         var outputs, inputs, desc, label, key, anchorContext;
+        //TODO: petará cuando se use this.ioperator y este salga del xml
         this.ioperator = ioperator;
         this.wiringEditor = wiringEditor;
 
-        if (clone !== true) {
-            clone = false;
-        }
-
-        Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.ioperator.name, manager, 'ioperator', clone);
+        Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.ioperator.name, manager, 'ioperator');
         if (!isMenubarRef) {
             inputs = ioperator.inputs;
             outputs = ioperator.outputs;
@@ -69,11 +66,10 @@
         var operator_interface, position, initialPosition, movement;
         
         position = {posX: 0, posY: 0};
-        position = data.entity.getPosition();
-        data.entity.setPosition({posX: 0, posY: 0});
+        position = data.iObjectClon.getPosition();
 
         if (!this.wiringEditor.withinGrid(e)) {
-            this.wiringEditor.layout.wrapperElement.removeChild(data.entity.wrapperElement);
+            this.wiringEditor.layout.wrapperElement.removeChild(data.iObjectClon.wrapperElement);
             return;
         }
 
@@ -84,10 +80,10 @@
             position.posX = 8;
         }
         if (position.posY < 0) {
-            position.posY = 0;
+            position.posY = 8;
         }
         operator_interface.setPosition(position);
-        this.wiringEditor.layout.wrapperElement.removeChild(data.entity.wrapperElement);
+        this.wiringEditor.layout.wrapperElement.removeChild(data.iObjectClon.wrapperElement);
     };
 
     /**

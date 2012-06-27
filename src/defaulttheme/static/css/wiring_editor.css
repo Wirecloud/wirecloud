@@ -25,6 +25,10 @@
     overflow-y: auto;
 }
 
+.wiring_editor .menubar .disabled {
+    pointer-events: none;
+}
+
 .wiring_editor .grid {
     font-size: 1em;
     background: url('../images/wiring/transp-grid-gray.png');
@@ -127,7 +131,7 @@
 }
 
 /* clone mini widget for drag and drop */
-.wiring_editor .border_layout .ioperator.clone, .wiring_editor .border_layout .igadget.clone {
+.wiring_editor .border_layout .ioperator.clon, .wiring_editor .border_layout .igadget.clon {
     position: absolute;
     font-size: 0.6em;
     z-index: 20;
