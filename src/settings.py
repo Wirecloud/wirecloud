@@ -114,7 +114,7 @@ SECRET_KEY = '15=7f)g=)&spodi3bg8%&4fqt%f3rpg%b$-aer5*#a*(rqm79e'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    'ezweb.themes.load_template_source',
+    'wirecloud.themes.load_template_source',
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
 )
@@ -169,7 +169,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.request',
     'django.core.context_processors.static',
-    'ezweb.themes.active_theme_context_processor',
+    'wirecloud.themes.active_theme_context_processor',
     'processors.context_processors.server_url',
     'processors.context_processors.is_anonymous',
     'processors.context_processors.tag_categories',
@@ -178,7 +178,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 STATICFILES_FINDERS = (
-    'ezweb.themes.ActiveThemeFinder',
+    'wirecloud.themes.ActiveThemeFinder',
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
