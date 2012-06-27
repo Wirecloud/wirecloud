@@ -46,9 +46,6 @@ js_info_dict = {
 }
 
 urlpatterns = patterns('',
-    # EzWeb
-    (r'^', include('ezweb.urls')),
-    (r'^user/(?P<user_name>[\.\-\w\@]+)/$', include('ezweb.urls')),
 
     # Gadgets
     (r'^user/(?P<user_name>[\.\-\w\@]+)/gadget(s)?', include('gadget.urls')),
