@@ -505,7 +505,7 @@ class USDLTemplateParser(object):
         self.base = base
 
     def get_contents(self):
-        return unicode(self._graph.serialize(), 'UTF-8')
+        return self._graph.serialize()
 
     def get_resource_type(self):
         return self._info['type']
@@ -1033,44 +1033,60 @@ class TemplateParser(object):
 
     def __init__(self, template, base=None):
 
-        xml_document = False
-        graph = rdflib.Graph()
-        # It is necesary to check if template is a n3/turtle document before
-        # any other format because it is not a xml based document so etree
-        # function would raise an exeption
-        try:
-            graph.parse(data=template, format='n3')
-        except:
-            graph = rdflib.Graph()
-            xml_document = True
+        if isinstance(template, rdflib.Graph):
+            self._parser = USDLTemplateParser(template, base)
 
-        if xml_document:
-            if isinstance(template, str):
-                self._doc = etree.fromstring(template)
-            elif isinstance(template, unicode):
-                # Work around: ValueError: Unicode strings with encoding
-                # declaration are not supported.
-                self._doc = etree.fromstring(template.encode('utf-8'))
-            else:
-                self._doc = template
-
+        elif isinstance(template, etree._Element):
+            self._doc = template
             prefix = self._doc.prefix
             xmlns = None
+
             if prefix in self._doc.nsmap:
                 xmlns = self._doc.nsmap[prefix]
 
             if xmlns is not None and xmlns != WIRECLOUD_TEMPLATE_NS:
-                try:
-                    graph.parse(data=template)
-                except:
-                    raise TemplateParseException(_('The document is not valid'))
-                self._parser = USDLTemplateParser(graph, base)
+                raise TemplateParseException(_('The document is not valid'))
 
+            self._parser = WirecloudTemplateParser(self._doc, base)
+
+        elif isinstance(template, str) or isinstance(template, unicode):
+            xml_document = False
+            graph = rdflib.Graph()
+            # It is necesary to check if template is a n3/turtle document before
+            # any other format because it is not a xml based document so etree
+            # function would raise an exeption
+            try:
+                graph.parse(data=template, format='n3')
+            except:
+                graph = rdflib.Graph()
+                xml_document = True
+
+            if xml_document:
+                if isinstance(template, str):
+                    self._doc = etree.fromstring(template)
+                else:
+                    # Work around: ValueError: Unicode strings with encoding
+                    # declaration are not supported.
+                    self._doc = etree.fromstring(template.encode('utf-8'))
+
+                prefix = self._doc.prefix
+                xmlns = None
+
+                if prefix in self._doc.nsmap:
+                    xmlns = self._doc.nsmap[prefix]
+
+                if xmlns is not None and xmlns != WIRECLOUD_TEMPLATE_NS:
+                    try:
+                        graph.parse(data=template)
+                    except:
+                        raise TemplateParseException(_('The document is not valid'))
+                    self._parser = USDLTemplateParser(graph, base)
+
+                else:
+                    # The document is a Wirecloud Template so WirecloudTemplateParser is Used
+                    self._parser = WirecloudTemplateParser(self._doc, base)
             else:
-                # The document is a Wirecloud Template so WirecloudTemplateParser is Used
-                self._parser = WirecloudTemplateParser(self._doc, base)
-        else:
-            self._parser = USDLTemplateParser(graph, base)
+                self._parser = USDLTemplateParser(graph, base)
 
     def typeText2typeCode(self, typeText):
         return self._parser.typeText2typeCode(typeText)

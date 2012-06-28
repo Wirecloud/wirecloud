@@ -104,7 +104,7 @@ FiWareCatalogueView.prototype._onSearch = function (callback, raw_data) {
 FiWareCatalogueView.prototype.instanciate = function (resource) {
     //is mashup?
     if (resource.isMashup()) {
-        (new Wirecloud.io.InstanciateMashupWindow(resource)).show();
+        (new Wirecloud.ui.InstanciateMashupWindowMenu(resource)).show();
     } else {
         ShowcaseFactory.getInstance().addGadget(resource.getVendor(), resource.getName(),
         resource.getVersion().text, resource.getUriTemplate());

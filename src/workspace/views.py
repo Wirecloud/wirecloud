@@ -731,7 +731,7 @@ class WorkSpacePublisherEntry(Resource):
 
         user = get_user_authentication(request)
         workspace = get_object_or_404(WorkSpace, id=workspace_id)
-        template = TemplateParser(build_rdf_template_from_workspace(mashup, workspace, user).serialize())
+        template = TemplateParser(build_rdf_template_from_workspace(mashup, workspace, user))
         published_workspace = create_published_workspace_from_template(template, user)
         published_workspace.workspace = workspace
         published_workspace.params = received_json

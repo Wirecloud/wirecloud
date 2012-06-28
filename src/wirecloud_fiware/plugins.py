@@ -48,13 +48,21 @@ class FiWareMarketManager(MarketManager):
 
         # Create rdf template and publish it into the repository
         params = build_rdf_template_from_workspace(published_options, published_workspace.workspace, user)
-        headers = {'content-type': 'application/rdf+xml'}
-
+        headers = {'content-type': 'application/rdf+xml; charset=utf-8'}
         opener = urllib2.build_opener()
         name = published_options.get('name')
-        template_location = urljoin(store_info['url'], '/FiwareRepository/v1/colectionA/collectionB/' + name + 'Mdl')
+        template_location = urljoin(store_info['url'], '/FiwareRepository/v1/collectionA/collectionB/' + name + 'Mdl')
 
-        request = MethodRequest('PUT', template_location, params.serialize(), headers)
+        content = params.serialize()
+
+        # TODO remove this lines when repository implementation works!!
+        i = 0
+        while i < 75:
+            content += '\n'
+            i += 1
+        #--------------------------------------------------------------
+
+        request = MethodRequest('PUT', template_location.encode('utf-8'), content, headers)
         response = opener.open(request)
 
         if response.code != 200:
@@ -62,8 +70,14 @@ class FiWareMarketManager(MarketManager):
 
         # Create usdl document and publish it into the repository
         usdl_document = build_usdl_from_workspace(published_options, published_workspace.workspace, user, template_location)
-        usdl_location = urljoin(store_info['url'], '/FiwareRepository/v1/colectionA/collectionB/' + name)
-        request = MethodRequest('PUT', usdl_location, usdl_document.serialize(), headers)
+        usdl_location = urljoin(store_info['url'], '/FiwareRepository/v1/collectionA/collectionB/' + name)
+        usdl_content = usdl_document.serialize()
+
+        # TODO remove this line when repository implementation works!!
+        usdl_content += '\n\n\n\n\n\n\n'
+        # -----------------------------------------------------------
+
+        request = MethodRequest('PUT', usdl_location.encode('utf-8'), usdl_content, headers)
 
         response = opener.open(request)
 
