@@ -19,6 +19,9 @@
 
 import json
 
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from django.utils.decorators import method_decorator
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
@@ -30,14 +33,16 @@ from wirecloud.models.markets import Market
 
 class MarketCollection(Resource):
 
+    @method_decorator(login_required)
     def read(self, request):
         result = {}
 
-        for market in Market.objects.all():
+        for market in Market.objects.filter(Q(user=None) | Q(user=request.user)):
             result[market.name] = market.options
 
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
+    @method_decorator(login_required)
     def create(self, request):
 
         content_type = request.META.get('CONTENT_TYPE', '')
@@ -52,7 +57,11 @@ class MarketCollection(Resource):
         except:
             return HttpResponseBadRequest(_("Request body is not valid JSON data"), mimetype='text/plain; charset=UTF-8')
 
-        m = Market.objects.create(name=received_data['name'], options=json.dumps(received_data['options']))
+        user_entry = request.user
+        if received_data['options'].get('share', '') == True and request.user.is_staff:
+            user_entry = None
+
+        m = Market.objects.create(user=user_entry, name=received_data['name'], options=json.dumps(received_data['options']))
         m.save()
 
         return HttpResponse(status=201)
@@ -60,9 +69,10 @@ class MarketCollection(Resource):
 
 class MarketEntry(Resource):
 
+    @method_decorator(login_required)
     def delete(self, request, market):
-
-        m = get_object_or_404(Market, name=market)
+        user_entry = request.user
+        m = get_object_or_404(Market, user=user_entry, name=market)
         m.delete()
         return HttpResponse(status=204)
 
