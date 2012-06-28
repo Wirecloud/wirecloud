@@ -12,12 +12,12 @@
 
     <wire-m:Mashup rdf:about="http://wirecloud.com/test">
         <dcterms:title>test</dcterms:title>
-        <dcterms:description>EzWeb Mashup composed of: Test, Test</dcterms:description>
+        <dcterms:description>Wirecloud Mashup composed of: Test, Test</dcterms:description>
         <dcterms:creator rdf:resource="http://creatoruri/"/>
         <usdl-core:versionInfo>1</usdl-core:versionInfo>
-        <wire:hasImageUri rdf:resource="/ezweb/images/headshot_mashup.jpg"/>
+        <wire:hasImageUri rdf:resource="images/mashup.png"/>
 
-        <foaf:page rdf:resource="http://trac.morfeo-project.org/trac/ezwebplatform/wiki/options"/>
+        <foaf:page rdf:resource="docs/index.html"/>
         <usdl-core:hasProvider rdf:resource="http://vendoruri/"/>
 
         <vCard:addr>
@@ -207,14 +207,14 @@
     </foaf:Person>
 
     <gr:BusinessEntity rdf:about="http://vendoruri/">
-        <foaf:name>yo</foaf:name>
+        <foaf:name>Wirecloud Test Suite</foaf:name>
     </gr:BusinessEntity>
 
-    <usdl-core:Resource rdf:about="http://trac.morfeo-project.org/trac/ezwebplatform/wiki/options">
+    <usdl-core:Resource rdf:about="docs/index.html">
         <dcterms:title>WikiURI</dcterms:title>
     </usdl-core:Resource>
 
-    <foaf:Image rdf:about="/ezweb/images/headshot_mashup.jpg">
+    <foaf:Image rdf:about="images/mashup.png">
         <dcterms:title>ImageURI</dcterms:title>
     </foaf:Image>
 

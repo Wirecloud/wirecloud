@@ -1,14 +1,14 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <Template xmlns="http://morfeo-project.org/2007/Template">
   <Catalog.ResourceDescription>
-    <Vendor>EzWeb Test Suite</Vendor>
-    <Name>Test Workspace</Name>
+    <Vendor>Wirecloud Test Suite</Vendor>
+    <Name>Test Mashup</Name>
     <Version>1</Version>
     <Author>test</Author>
     <Mail>a@b.com</Mail>
-    <Description>This template defines an empty workspace</Description>
-    <ImageURI>/ezweb/images/headshot_mashup.jpg</ImageURI>
-    <WikiURI>http://trac.morfeo-project.org/trac/ezwebplatform/wiki/options</WikiURI>
+    <Description>Mashup for testing</Description>
+    <ImageURI>images/mashup.png</ImageURI>
+    <WikiURI>docs/index.html</WikiURI>
     <Organization></Organization>
     <IncludedResources>
         <Tab id="1" name="Tab">
@@ -29,7 +29,7 @@
     </IncludedResources>
   </Catalog.ResourceDescription>
   <Platform.Wiring>
-    <Connection id="1" name="channel">
+    <Connection id="1">
         <Source id="1" type="iwidget" endpoint="test" />
         <Target id="2" type="iwidget" endpoint="test" />
     </Connection>

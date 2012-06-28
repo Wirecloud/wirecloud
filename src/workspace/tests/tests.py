@@ -252,16 +252,16 @@ class ParamatrizedWorkspaceGenerationTestCase(TestCase):
     def testBuildTemplateFromWorkspace(self):
 
         options = {
-            'vendor': 'EzWeb Test Suite',
-            'name': 'Test Workspace',
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Mashup',
             'version': '1',
             'author': 'test',
             'email': 'a@b.com',
             'readOnlyGadgets': True,
         }
         template = build_template_from_workspace(options, self.workspace, self.user)
-        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Vendor', 'EzWeb Test Suite')
-        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Name', 'Test Workspace')
+        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Vendor', 'Wirecloud Test Suite')
+        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Name', 'Test Mashup')
         self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Version', '1')
         self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Author', 'test')
         self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Mail', 'a@b.com')
@@ -270,7 +270,7 @@ class ParamatrizedWorkspaceGenerationTestCase(TestCase):
 
         options = {
             'vendor': u'Wirecloud Test Suite',
-            'name': u'Test Workspace',
+            'name': u'Test Mashup',
             'version': u'1',
             'author': u'test',
             'email': u'a@b.com',
@@ -279,7 +279,7 @@ class ParamatrizedWorkspaceGenerationTestCase(TestCase):
         graph = build_rdf_template_from_workspace(options, self.workspace, self.user)
         mashup_uri = graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']).next()
 
-        self.assertRDFElement(graph, mashup_uri, self.DCTERMS, 'title', u'Test Workspace')
+        self.assertRDFElement(graph, mashup_uri, self.DCTERMS, 'title', u'Test Mashup')
         self.assertRDFElement(graph, mashup_uri, self.USDL, 'versionInfo', u'1')
 
         vendor = graph.objects(mashup_uri, self.USDL['hasProvider']).next()
@@ -294,7 +294,7 @@ class ParamatrizedWorkspaceGenerationTestCase(TestCase):
     def testBuildRdfTemplateFromWorkspaceUtf8Char(self):
         options = {
             'vendor': u'Wirecloud Test Suite',
-            'name': u'Test Workspace with ñ',
+            'name': u'Test Mashup with ñ',
             'version': u'1',
             'author': u'author with é',
             'email': u'a@b.com',
@@ -304,7 +304,7 @@ class ParamatrizedWorkspaceGenerationTestCase(TestCase):
         graph = build_rdf_template_from_workspace(options, self.workspace, self.user)
         mashup_uri = graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']).next()
 
-        self.assertRDFElement(graph, mashup_uri, self.DCTERMS, 'title', u'Test Workspace with ñ')
+        self.assertRDFElement(graph, mashup_uri, self.DCTERMS, 'title', u'Test Mashup with ñ')
         self.assertRDFElement(graph, mashup_uri, self.USDL, 'versionInfo', u'1')
 
         vendor = graph.objects(mashup_uri, self.USDL['hasProvider']).next()

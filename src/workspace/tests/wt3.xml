@@ -1,13 +1,13 @@
 <Template xmlns="http://morfeo-project.org/2007/Template">
   <Catalog.ResourceDescription>
-    <Vendor>yo</Vendor>
+    <Vendor>Wirecloud Test Suite</Vendor>
     <Name>test</Name>
     <Version>1</Version>
     <Author>admin</Author>
     <Mail>a@c.com</Mail>
-    <Description>EzWeb Mashup composed of: Test, Test</Description>
-    <ImageURI>/ezweb/images/headshot_mashup.jpg</ImageURI>
-    <WikiURI>http://trac.morfeo-project.org/trac/ezwebplatform/wiki/options</WikiURI>
+    <Description>Wirecloud Mashup composed of: Test, Test</Description>
+    <ImageURI>images/mashup.png</ImageURI>
+    <WikiURI>doc/index.html</WikiURI>
     <Organization></Organization>
     <IncludedResources>
       <Tab id="1" name="Tab">
