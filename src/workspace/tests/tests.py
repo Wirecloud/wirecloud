@@ -247,7 +247,7 @@ class ParamatrizedWorkspaceGenerationTestCase(TestCase):
     def assertRDFElement(self, graph, element, ns, predicate, content):
         elements = graph.objects(element, ns[predicate])
         for e in elements:
-            self.assertEquals(str(e), content)
+            self.assertEquals(unicode(e), content)
 
     def testBuildTemplateFromWorkspace(self):
 
@@ -269,36 +269,61 @@ class ParamatrizedWorkspaceGenerationTestCase(TestCase):
     def testBuildRdfTemplateFromWorkspace(self):
 
         options = {
-            'vendor': 'Wirecloud Test Suite',
-            'name': 'Test Workspace',
-            'version': '1',
-            'author': 'test',
-            'email': 'a@b.com',
+            'vendor': u'Wirecloud Test Suite',
+            'name': u'Test Workspace',
+            'version': u'1',
+            'author': u'test',
+            'email': u'a@b.com',
             'readOnlyGadgets': True,
         }
         graph = build_rdf_template_from_workspace(options, self.workspace, self.user)
         mashup_uri = graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']).next()
 
-        self.assertRDFElement(graph, mashup_uri, self.DCTERMS, 'title', 'Test Workspace')
-        self.assertRDFElement(graph, mashup_uri, self.USDL, 'versionInfo', '1')
+        self.assertRDFElement(graph, mashup_uri, self.DCTERMS, 'title', u'Test Workspace')
+        self.assertRDFElement(graph, mashup_uri, self.USDL, 'versionInfo', u'1')
 
         vendor = graph.objects(mashup_uri, self.USDL['hasProvider']).next()
-        self.assertRDFElement(graph, vendor, self.FOAF, 'name', 'Wirecloud Test Suite')
+        self.assertRDFElement(graph, vendor, self.FOAF, 'name', u'Wirecloud Test Suite')
 
         addr = graph.objects(mashup_uri, self.VCARD['addr']).next()
-        self.assertRDFElement(graph, addr, self.VCARD, 'email', 'a@b.com')
+        self.assertRDFElement(graph, addr, self.VCARD, 'email', u'a@b.com')
 
         author = graph.objects(mashup_uri, self.DCTERMS['creator']).next()
-        self.assertRDFElement(graph, author, self.FOAF, 'name', 'test')
+        self.assertRDFElement(graph, author, self.FOAF, 'name', u'test')
+
+    def testBuildRdfTemplateFromWorkspaceUtf8Char(self):
+        options = {
+            'vendor': u'Wirecloud Test Suite',
+            'name': u'Test Workspace with ñ',
+            'version': u'1',
+            'author': u'author with é',
+            'email': u'a@b.com',
+            'readOnlyGadgets': True,
+        }
+
+        graph = build_rdf_template_from_workspace(options, self.workspace, self.user)
+        mashup_uri = graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']).next()
+
+        self.assertRDFElement(graph, mashup_uri, self.DCTERMS, 'title', u'Test Workspace with ñ')
+        self.assertRDFElement(graph, mashup_uri, self.USDL, 'versionInfo', u'1')
+
+        vendor = graph.objects(mashup_uri, self.USDL['hasProvider']).next()
+        self.assertRDFElement(graph, vendor, self.FOAF, 'name', u'Wirecloud Test Suite')
+
+        addr = graph.objects(mashup_uri, self.VCARD['addr']).next()
+        self.assertRDFElement(graph, addr, self.VCARD, 'email', u'a@b.com')
+
+        author = graph.objects(mashup_uri, self.DCTERMS['creator']).next()
+        self.assertRDFElement(graph, author, self.FOAF, 'name', u'author with é')
 
     def testBuildUSDLFromWorkspace(self):
 
         options = {
-            'vendor': 'Wirecloud Test Suite',
-            'name': 'Test Workspace',
-            'version': '1',
-            'author': 'test',
-            'email': 'a@b.com',
+            'vendor': u'Wirecloud Test Suite',
+            'name': u'Test Workspace',
+            'version': u'1',
+            'author': u'test',
+            'email': u'a@b.com',
             'readOnlyGadgets': True,
         }
         graph = build_usdl_from_workspace(options, self.workspace, self.user, 'http://wirecloud.conwet.fi.upm.es/ns/mashup#/Wirecloud%20Test%20Suite/Test%20Workspace/1')
@@ -311,10 +336,10 @@ class ParamatrizedWorkspaceGenerationTestCase(TestCase):
         else:
             raise Exception
 
-        self.assertRDFElement(graph, service_uri, self.DCTERMS, 'title', 'Test Workspace')
-        self.assertRDFElement(graph, service_uri, self.USDL, 'versionInfo', '1')
+        self.assertRDFElement(graph, service_uri, self.DCTERMS, 'title', u'Test Workspace')
+        self.assertRDFElement(graph, service_uri, self.USDL, 'versionInfo', u'1')
         vendor = graph.objects(service_uri, self.USDL['hasProvider']).next()
-        self.assertRDFElement(graph, vendor, self.FOAF, 'name', 'Wirecloud Test Suite')
+        self.assertRDFElement(graph, vendor, self.FOAF, 'name', u'Wirecloud Test Suite')
 
 
 class ParametrizedWorkspaceParseTestCase(TestCase):
@@ -330,6 +355,7 @@ class ParametrizedWorkspaceParseTestCase(TestCase):
         self.rdfTemplate1 = self.read_template('wt1.rdf')
         self.rdfTemplate2 = self.read_template('wt2.rdf')
         self.rdfTemplate3 = self.read_template('wt3.rdf')
+        self.rdfTemplate4 = self.read_template('wt4.rdf')
 
     def read_template(self, filename):
         f = codecs.open(os.path.join(os.path.dirname(__file__), filename), 'rb')
@@ -372,6 +398,13 @@ class ParametrizedWorkspaceParseTestCase(TestCase):
         self.assertEqual(len(wiring_status['connections']), 1)
         self.assertEqual(wiring_status['connections'][0]['readonly'], False)
 
+    def testBuildWorkspaceFromRdfTemplateUtf8Char(self):
+        workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate4, self.user)
+        data = get_global_workspace_data(workspace, self.user).get_data()
+
+        for t in data['workspace']['tabList']:
+            self.assertEqual(t['name'][0:7], u'Pestaña')
+
     def testBlockedConnections(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.template2, self.user)
 
@@ -404,6 +437,7 @@ class ParametrizedWorkspaceParseTestCase(TestCase):
 
     def testComplexWorkspacesRdf(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate3, self.user)
+
         data = get_global_workspace_data(workspace, self.user).get_data()
         tabs = [u'Tab', u'Tab 2', u'Tab 3', u'Tab 4']
 

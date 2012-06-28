@@ -127,7 +127,7 @@
     </foaf:Person>
 
     <gr:BusinessEntity rdf:about="http://vendoruri/">
-        <foaf:name>EzWeb Test Suite</foaf:name>
+        <foaf:name>Wirecloud Test Suite</foaf:name>
     </gr:BusinessEntity>
 
     <usdl-core:Resource rdf:about="http://trac.morfeo-project.org/trac/ezwebplatform/wiki/options">
