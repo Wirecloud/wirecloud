@@ -177,18 +177,53 @@ def fillWorkspaceUsingTemplate(workspace, template):
 
     # wiring
     wiring_status = {
-        'operators': workspace_info['wiring']['operators'],
+        'operators': {},
         'connections': [],
     }
+
+    if workspace.wiringStatus != '':
+        workspace_wiring_status = simplejson.loads(workspace.wiringStatus)
+    else:
+        workspace_wiring_status = {
+            'operators': {},
+            'connections': []
+        }
+
+    max_id = 0
+    operators = {}
+
+    for id_ in workspace_wiring_status['operators'].keys():
+        if id_ > max_id:
+            max_id = id_
+
+    # Change string ids by integer ids
+    for id_, op in workspace_info['wiring']['operators'].iteritems():
+        max_id += 1
+        #mapping between string ids and integer id
+        operators[id_] = max_id
+        wiring_status['operators'][max_id] = {
+            'id': max_id,
+            'name': op['name']
+        }
+
+    wiring_status['operators'].update(workspace_wiring_status['operators'])
+
+    if workspace_wiring_status['connections']:
+        wiring_status['connections'] = workspace_wiring_status['connections']
+
     for connection in workspace_info['wiring']['connections']:
         source_id = connection['source']['id']
         target_id = connection['target']['id']
 
         if connection['source']['type'] == 'iwidget':
             source_id = igadget_id_mapping[source_id].id
+        elif connection['source']['type'] == 'ioperator':
+            source_id = operators[source_id]
 
         if connection['target']['type'] == 'iwidget':
             target_id = igadget_id_mapping[target_id].id
+        elif connection['target']['type'] == 'ioperator':
+            target_id = operators[target_id]
 
         wiring_status['connections'].append({
             'readonly': connection['readonly'],
