@@ -480,7 +480,7 @@ def build_rdf_template_from_workspace(options, workspace, user):
 
         id_ = str(iwidgets[str(connection['source']['id'])])
 
-        if connection['source']['type'] == 'operator':
+        if connection['source']['type'] == 'ioperator':
             id_ = str(operators[str(connection['source']['id'])])
 
         graph.add((source, WIRE_M['sourceId'], rdflib.Literal(id_)))
@@ -493,7 +493,7 @@ def build_rdf_template_from_workspace(options, workspace, user):
 
         id_ = str(iwidgets[str(connection['target']['id'])])
 
-        if connection['target']['type'] == 'operator':
+        if connection['target']['type'] == 'ioperator':
             id_ = str(operators[str(connection['target']['id'])])
 
         graph.add((target, WIRE_M['targetId'], rdflib.Literal(id_)))
