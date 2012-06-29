@@ -149,7 +149,6 @@ INSTALLED_APPS = (
     'gadget',
     'workspace',
     'igadget',
-    'connectable',
     'catalogue',
     'context',
     'preferences',
