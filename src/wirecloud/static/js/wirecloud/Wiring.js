@@ -41,6 +41,7 @@
             } else {
                 return entry.slots[desc.endpoint];
             }
+            break;
         case 'ioperator':
             entry = this.ioperators[desc.id];
             if (desc.endpoint in entry.inputs) {
@@ -48,6 +49,7 @@
             } else {
                 return entry.outputs[desc.endpoint];
             }
+            break;
         }
     };
 
@@ -109,7 +111,7 @@
     };
 
     removeIWidget = function removeIWidget(iwidget) {
-        var widgetEntry, i;
+        var widgetEntry, i, connection;
 
         if (!(iwidget.getId() in this.connectablesByWidget)) {
             var msg = gettext("Error: trying to remove an inexistant iWidget from the wiring module.");
@@ -120,6 +122,16 @@
         widgetEntry = this.connectablesByWidget[iwidget.getId()];
         for (i = 0; i < widgetEntry.connectables.length; i += 1) {
             widgetEntry.connectables[i].destroy();
+        }
+
+        for (i = this.status.connections.length - 1; i >= 0 ; i -= 1) {
+            connection = this.status.connections[i];
+
+            if (connection.source.type === 'iwidget' && connection.source.id === iwidget.getId()) {
+                this.status.connections.splice(i, 1);
+            } else if (connection.target.type === 'iwidget' && connection.target.id === iwidget.getId()) {
+                this.status.connections.splice(i, 1);
+            }
         }
 
         iwidget.removeEventListener('unload', this._iwidget_unload_listener);

@@ -113,12 +113,28 @@ if (!Wirecloud.ui) {
      * @Private
      * finds anchors from the serialized string
      */
-    var findAnchor = function findAnchor(desc) {
+    var findAnchor = function findAnchor(desc, workspace) {
+        var iObject_interface, iobject;
         switch (desc.type) {
         case 'iwidget':
-            return this.igadgets[desc.id].getAnchor(desc.endpoint);
+            if (this.igadgets[desc.id] != null) {
+                return this.igadgets[desc.id].getAnchor(desc.endpoint);
+            } else {
+                iobject = workspace.getIgadget(desc.id);
+                if (iobject != null) {
+                    iObject_interface = this.addIGadget(this, iobject);
+                    //gadget_interface.setPosition({posX: 0, posY: 0});
+                    this.mini_widgets[iobject.getId()].disable();
+                } else {
+                    //ERROR
+                    //console.debug("inconsistent wiring, gadget referenced not found");
+                }
+            }
+            break;
         case 'ioperator':
-            return this.ioperators[desc.id].getAnchor(desc.endpoint);
+            if (this.ioperators[desc.id] != null) {
+                return this.ioperators[desc.id].getAnchor(desc.endpoint);
+            }
         }
     };
 
@@ -129,7 +145,7 @@ if (!Wirecloud.ui) {
     var renewInterface = function renewInterface() {
         var igadgets, igadget, key, i, gadget_interface, minigadget_interface, ioperators, operator,
             operator_interface, operator_instance, operatorKeys, connection, startAnchor, endAnchor,
-            arrow, workspace, WiringStatus, isMenubarRef, minigadget_clon, pos;
+            arrow, workspace, WiringStatus, isMenubarRef, minigadget_clon, pos, op_id;
 
         workspace = opManager.activeWorkSpace; // FIXME this is the current way to obtain the current workspace
         WiringStatus = workspace.wiring.status;
@@ -142,8 +158,7 @@ if (!Wirecloud.ui) {
                         igadgets: {
                         },
                         operators: {
-                        },
-                        nextOperatorId: 1
+                        }
                     }
                 ],
                 operators: {
@@ -153,7 +168,16 @@ if (!Wirecloud.ui) {
             };
         }
 
-        this.nextOperatorId = WiringStatus.views[0].nextOperatorId;
+        if (WiringStatus.views == null) {
+            WiringStatus.views = [
+                {
+                    label: 'default',
+                    igadgets: {},
+                    operators: {}
+                }
+            ];
+        }
+
         this.targetsOn = this.sourcesOn = true;
         this.targetAnchorList = [];
         this.sourceAnchorList = [];
@@ -163,6 +187,7 @@ if (!Wirecloud.ui) {
         this.ioperators = {};
         this.selectedObjects = [];
         this.generalHighlighted = true;
+        this.nextOperatorId = 0;
 
         igadgets = workspace.getIGadgets();
 
@@ -195,20 +220,28 @@ if (!Wirecloud.ui) {
         ioperators = workspace.wiring.ioperators;
         for (key in ioperators) {
             operator_instance = ioperators[key];
+            op_id = operator_instance.id;
+            if (this.NextOperatorId < op_id) {
+                this.NextOperatorId = op_id;
+            }
 
             operator_interface = this.addIOperator(operator_instance);
             if (key in WiringStatus.views[0].operators) {
                 operator_interface.setPosition(WiringStatus.views[0].operators[key]);
+            }
+            if (key >= this.nextOperatorId) {
+                this.nextOperatorId = parseInt(key, 10) + 1;
             }
         }
 
         // connenctions
         for (i = 0; i < WiringStatus.connections.length; i += 1) {
             connection = WiringStatus.connections[i];
-            startAnchor = findAnchor.call(this, connection.source);
-            endAnchor = findAnchor.call(this, connection.target);
+            startAnchor = findAnchor.call(this, connection.source, workspace);
+            endAnchor = findAnchor.call(this, connection.target, workspace);
+
             arrow = this.canvas.drawArrow(startAnchor.getCoordinates(this.layout.getCenterContainer().wrapperElement),
-                 endAnchor.getCoordinates(this.layout.getCenterContainer().wrapperElement));
+            endAnchor.getCoordinates(this.layout.getCenterContainer().wrapperElement));
             arrow.startAnchor = startAnchor;
             startAnchor.addArrow(arrow);
             arrow.endAnchor = endAnchor;
@@ -266,8 +299,7 @@ if (!Wirecloud.ui) {
                     igadgets: {
                     },
                     operators: {
-                    },
-                    nextOperatorId: this.nextOperatorId
+                    }
                 }
             ],
             operators: {
