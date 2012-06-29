@@ -111,15 +111,21 @@ class IGadgetCollection(Resource):
     def update(self, request, workspace_id, tab_id):
         user = get_user_authentication(request)
 
-        received_json = PUT_parameter(request, 'igadgets')
+        content_type = request.META.get('CONTENT_TYPE', '')
+        if content_type == None:
+            content_type = ''
 
-        if not received_json:
-            return HttpResponseBadRequest(get_xml_error(_("iGadget JSON expected")), mimetype='application/xml; charset=UTF-8')
+        if not content_type.startswith('application/json'):
+            return HttpResponseBadRequest(get_xml_error(_("Invalid content type")), mimetype='application/xml; charset=UTF-8')
+
+        try:
+            received_data = simplejson.loads(request.raw_post_data)
+        except:
+            return HttpResponseBadRequest(get_xml_error(_("Request body is not valid JSON data")), mimetype='application/xml; charset=UTF-8')
 
         try:
             tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
-            received_data = simplejson.loads(received_json)
-            igadgets = received_data.get('iGadgets')
+            igadgets = received_data
             for igadget in igadgets:
                 UpdateIGadget(igadget, user, tab)
 

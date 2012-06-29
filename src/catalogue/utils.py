@@ -148,14 +148,14 @@ def add_resource_from_template(template_uri, template, user, fromWGT=False, over
 
     resource.save()
 
-    for slot in resource_info['slots']:
+    for slot in resource_info['wiring']['slots']:
         GadgetWiring.objects.create(
             idResource=resource,
             wiring='in',
             friendcode=slot['friendcode']
         )
 
-    for event in resource_info['events']:
+    for event in resource_info['wiring']['events']:
         GadgetWiring.objects.create(
             idResource=resource,
             wiring='out',

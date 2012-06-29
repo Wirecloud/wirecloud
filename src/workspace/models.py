@@ -39,8 +39,6 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext as  _
 
-from connectable.models import InOut
-
 
 class WorkSpace(models.Model):
 
@@ -50,28 +48,13 @@ class WorkSpace(models.Model):
     users = models.ManyToManyField(User, verbose_name=_('Users'), through='UserWorkSpace')
     targetOrganizations = models.ManyToManyField(Group, verbose_name=_('Target Organizations'), blank=True, null=True)
     forcedValues = models.TextField(blank=True)
+    wiringStatus = models.TextField(blank=True)
 
     def __unicode__(self):
         return unicode(self.pk) + " " + unicode(self.name)
 
     def is_shared(self):
         return len(self.users.all()) > 1
-
-    def setReadOnlyFields(self, readOnly):
-        # Get the igadget identifiers
-        tabs = self.tab_set.all()
-        try:
-            for ig in reduce(lambda x, y: x + y, [list(t.igadget_set.all()) for t in tabs]):
-                ig.readOnly = readOnly
-                ig.save()
-        except Exception:
-            pass
-
-        # Get the channel identifiers
-        inouts = InOut.objects.filter(workspace=self)
-        for inout in inouts:
-            inout.readOnly = readOnly
-            inout.save()
 
 
 class UserWorkSpace(models.Model):

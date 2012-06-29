@@ -1,0 +1,341 @@
+.wiring_editor .canvas {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    width: 100%;
+    height: 100%;
+    box-shadow: inset 0 0 10px #000000;
+}
+
+.wiring_editor {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    font-size:12px;
+    font-family: "Courier New", courier;
+}
+
+.wiring_editor .menubar {
+    white-space: nowrap;
+    font-size: 0.6em;
+    width: 180px;
+    vertical-align: middle;
+    overflow-x: visible;
+    overflow-y: auto;
+}
+
+.wiring_editor .menubar .disabled {
+    pointer-events: none;
+}
+
+.wiring_editor .grid {
+    font-size: 1em;
+    background: url('../images/wiring/transp-grid-gray.png');
+}
+
+.wiring_editor .ioperator {
+    background: -webkit-linear-gradient(white, rgba(255, 255, 0, 0.8));
+    background: -moz-linear-gradient(white, rgba(255, 255, 0, 0.8));
+    background: -o-linear-gradient(white, rgba(255, 255, 0, 0.8));
+}
+
+.wiring_editor .igadget {
+    background: -webkit-linear-gradient(white, rgba(255, 217, 120, 0.8));
+    background: -moz-linear-gradient(white, rgba(255, 217, 120, 0.8));
+    background: -o-linear-gradient(white, rgba(255, 217, 120, 0.8));
+}
+
+.wiring_editor .ioperator, .wiring_editor .igadget {
+    line-height: 2.2em;
+    padding-bottom: 2px;
+    border: 1px solid;
+    padding-bottom: 8px;
+    border-radius: 1.25ex 1.25ex 1.25ex 1.25ex;
+    box-shadow: 0.1ex 0.1ex 1px black;
+    font-family: "Courier New", courier;
+}
+
+.wiring_editor .ioperator .header, .wiring_editor .igadget .header {
+    text-align: center;
+    font-size: 1.3em;
+    font-weight: bold;
+    cursor: move;
+    overflow: hidden;
+    border-radius: 5px;
+    padding-top: 8px;
+    /*padding-right: 16px;*/
+    padding-bottom: 8px;
+    /*padding-left: 16px;*/
+    font-style: oblique;
+    color: #221BE2;
+}
+
+.wiring_editor .grid .ioperator .header span, .wiring_editor .grid .igadget .header span {
+    padding-left:1em;
+}
+
+.wiring_editor .grid .header .closebutton {
+    top: -0.9em;
+    float: right;
+}
+
+.wiring_editor .grid .generalHighlight_button {
+    float: right;
+    background: url('../images/wiring/big_eye1.png');
+    width: 20px;
+    height: 20px;
+    z-index: 100;
+}
+
+.wiring_editor .grid .generalHighlight_button.activated {
+    background: url('../images/wiring/big_eye2.png');
+}
+
+.wiring_editor .grid .header .highlight_button {
+    float: left;
+    background: url('../images/wiring/eye1.png');
+    top: -0.9em;
+    width: 16px;
+    height: 16px;
+}
+
+.wiring_editor .grid .header .highlight_button.activated {
+    background: url('../images/wiring/eye2.png');
+}
+
+.wiring_editor .grid .ioperator, .wiring_editor .grid .igadget {
+    position: absolute;
+}
+
+.wiring_editor .menubar .ioperator, .wiring_editor .menubar .igadget {
+    position: relative;
+    padding-bottom: 0.6em;
+    margin: 1em 1em;
+    vertical-align: middle;
+    z-index: 10;
+}
+
+.wiring_editor .targets {
+    float: left;
+    text-align: left;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.wiring_editor .sources {
+    float: right;
+    text-align: right;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+/* clone mini widget for drag and drop */
+.wiring_editor .border_layout .ioperator.clon, .wiring_editor .border_layout .igadget.clon {
+    position: absolute;
+    font-size: 0.6em;
+    z-index: 20;
+}
+
+/* SELECTED OBJECTS 
+.wiring_editor .grid .ioperator.selected {
+    background-color: #DF7A62;
+    z-index: 15;
+    background: -webkit-linear-gradient(top, white, #47A06B);
+    background: -moz-linear-gradient(top, white, #47A06B);
+    background: -o-linear-gradient(top, white, #47A06B);  
+    border-width: 0.4em;
+    border-color: orange;  
+}
+
+ .wiring_editor .grid .igadget.selected {
+    background-color: #DF7A62;
+    z-index: 15;
+    background: -webkit-linear-gradient(top, white, #DF7A62);
+    background: -moz-linear-gradient(top, white, #DF7A62);
+    background: -o-linear-gradient(top, white, #DF7A62);
+    border-width: 0.4em;
+    border-color: orange;
+}
+*/
+
+
+/*ANCHORS*/
+.wiring_editor .anchor {
+    background: rgb(122, 152, 192);
+    position: absolute;
+    display: inline;
+    width: 16px;
+    height: 16px;
+    margin: 2px;
+
+}
+
+.wiring_editor .grid .anchor {
+    cursor: pointer;
+}
+.wiring_editor .sources .anchor {
+    background: url('../images/wiring/blue_ball.png');
+    right: -1em;
+}
+
+.wiring_editor .targets .anchor {
+    background: url('../images/wiring/orange_ball.png');
+    left: -1em;
+}
+
+.wiring_editor .menubar .sources .anchor {
+    width: 1em;
+    height: 1em;
+
+}
+
+.wiring_editor .menubar .targets .anchor {
+    width: 1em;
+    height: 1em;
+
+}
+
+.wiring_editor .sources .anchor.disabled {
+    opacity: 0.7;
+}
+
+.wiring_editor .targets .anchor.disabled {
+    opacity: 0.7;
+}
+
+
+/*ARROWS*/
+.wiring_editor .canvas .arrow {
+    stroke: rgba(138, 131, 226, 0.9);
+    fill:   none;
+    stroke-width: 5;
+}
+
+.wiring_editor .canvas .arrowborder {
+    stroke: black;
+    fill:   none;
+    stroke-width: 8;
+}
+
+.wiring_editor .canvas .pullerBall {
+    stroke: black;
+    fill:   rgba(138, 131, 226, 0.9);
+    stroke-width: 1;
+    display: none;
+}
+
+.wiring_editor .canvas .closer {
+    stroke: black;
+    fill:   red;
+    fill-opacity:1;
+    stroke-width: 1;
+    display: none;
+}
+
+.wiring_editor .canvas .selected .arrow {
+    stroke: rgba(138, 131, 226, 0.9);
+    fill:   none;
+    stroke-width: 5;
+}
+
+.wiring_editor .canvas .selected .arrowborder {
+    stroke: orange;
+    fill:   none;
+    stroke-width: 10;
+}
+
+.wiring_editor .canvas .selected .closer {
+    display: inline;
+}
+
+.wiring_editor .canvas .selected .pullerBall {
+    display: inline;
+}
+
+.wiring_editor .canvas .highlighted .arrow {
+    stroke: rgba(10, 131, 226, 1);
+    fill:   none;
+    stroke-width: 5;
+}
+
+.wiring_editor .canvas .highlighted .arrowborder {
+    stroke: #DF7A62;
+    fill:   none;
+    stroke-width: 11;
+}
+
+
+.wiring_editor .menubar .styled_expander {
+    margin: 3px;
+    border: none;
+}
+
+.wiring_editor .menubar .styled_expander .widgetsIcon{
+    background: url('../images/wiring/blue_arrow_right.png');
+    position: absolute;
+    left: 5px;
+    height: 12px;
+    width: 6px;
+}
+
+.wiring_editor .menubar .styled_expander .operatorsIcon{
+    background: url('../images/wiring/blue_arrow_right.png');
+    position: absolute;
+    left: 5px;
+    height: 12px;
+    width: 6px;
+}
+
+.wiring_editor .menubar .styled_expander.expanded .widgetsIcon{
+    background: url('../images/wiring/blue_arrow_down.png');
+    position: absolute;
+    left: 5px;
+    height: 6px;
+    width: 12px;
+    top: 9px;
+}
+
+.wiring_editor .menubar .styled_expander.expanded .operatorsIcon{
+    background: url('../images/wiring/blue_arrow_down.png');
+    position: absolute;
+    left: 5px;
+    height: 6px;
+    width: 12px;
+    top: 35px;
+}
+
+.wiring_editor .menubar .styled_expander .title {
+    background: transparent;
+    padding: 0.1em;
+    font-size: 1.8em;
+    font-style: italic;
+    text-shadow: none;
+    margin-left: 14px;
+}
+
+.wiring_editor .menubar .styled_expander.expanded .title {
+    background: transparent;
+}
+
+.wiring_editor .menubar .styled_expander .contents {
+    width: 0;
+    height: 0;
+    overflow: visible;
+    padding: 0;
+}
+
+.wiring_editor .menubar .styled_expander.expanded .contents {
+    width: auto;
+    height: auto;
+    padding: 1ex;
+}
+
+
+.wiring_editor .menubar .styled_expander .igadget, .wiring_editor .menubar .styled_expander .ioperator{
+    visibility: hidden;
+}
+
+.wiring_editor .menubar .styled_expander.expanded .igadget, .wiring_editor .menubar .styled_expander.expanded .ioperator{
+    visibility: inherit;
+}

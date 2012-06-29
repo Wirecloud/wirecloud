@@ -10,7 +10,6 @@ Dependencies
 * South 0.7.3+
 * lxml
 * django-compressor (BeautifulSoup)
-* johnny-cache
 
 Installing basic dependencies in Debian Wheeze and Ubuntu oneiric
 -----------------------------------------------------------------
@@ -24,7 +23,7 @@ using pip:
 
 .. code-block:: bash
 
-    $ sudo pip install johnny-cache django-compressor
+    $ sudo pip install django-compressor
 
 
 Database Installation and Configuration
@@ -274,11 +273,19 @@ Add a virtualhost to the apache configuration:
             Alias /static <path_to_wirecloud/src/static>
             <Location "/static">
                     SetHandler None
+                    <IfModule mod_expires.c>
+                            ExpiresActive On
+                            ExpiresDefault "access plus 1 week"
+                    </IfModule>
+                    <IfModule mod_headers.c>
+                            Header append Cache-Control "public"
+                    </IfModule>
             </Location>
 
-            Alias /ezweb <path_to_wirecloud/src/media>
-            <Location "/ezweb">
-                    SetHandler None
+            <Location "/static/cache">
+                    <IfModule mod_expires.c>
+                            ExpiresDefault "access plus 3 years"
+                    </IfModule>
             </Location>
 
             ...

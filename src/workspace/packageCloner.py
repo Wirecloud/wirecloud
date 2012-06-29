@@ -173,7 +173,6 @@ class PackageCloner:
     extra_models = {
         'WorkSpace': (
             ('workspace', 'tab', 'workspace'),
-            ('connectable', 'inout', 'workspace'),
             ('preferences', 'workspacepreference', 'workspace'),
         ),
         'Tab': (

@@ -32,7 +32,6 @@
 
 from django.conf.urls.defaults import patterns, url
 
-from connectable.views import ConnectableEntry
 from workspace import views
 
 
@@ -44,16 +43,12 @@ urlpatterns = patterns('workspace.views',
     # Tab
     (r'^/((?P<workspace_id>\d+)/tab(s)?[/]?)?$',
         views.TabCollection(permitted_methods=('GET', 'POST', 'PUT',))),
-    (r'^/((?P<workspace_id>\d+)/tab(s)?/(?P<tab_id>\w+)[/]?)?$',
-        views.TabEntry(permitted_methods=('GET', 'PUT', 'POST', 'DELETE',))),
+    (r'^/(?P<workspace_id>\d+)/tab/(?P<tab_id>\w+)/?$',
+        views.TabEntry(permitted_methods=('GET', 'PUT', 'DELETE',))),
 
     # Variables of the whole workspace
     (r'^/((?P<workspace_id>\d+)/variable(s)?[/]?)?$',
         views.WorkSpaceVariableCollection(permitted_methods=('PUT', ))),
-
-    # Wiring info for the whole workspace
-    (r'^/((?P<workspace_id>\d+)/wiring[/]?)?$',
-        ConnectableEntry(permitted_methods=('PUT', 'POST', ))),
 
     # Sharing workspace
     (r'^/(?P<workspace_id>\d+)/share/groups[/]?$',

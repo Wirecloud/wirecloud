@@ -1,0 +1,33 @@
+{% extends "wirecloud/views/base_plain.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block path %}{% trans "login" %}{% endblock %}
+{% block content %}
+    {% if form.errors %}
+    <p class="errornote">{% trans "Your username and password didn't match. Please try again." %}</p>
+    {% endif %}
+
+    <form method="post" action="{% url 'django.contrib.auth.views.login' %}">
+        {% csrf_token %}
+        <table>
+            <tr>
+                <td>
+                    <label for="id_username">{% trans 'Username' %} </label>
+                </td>
+                <td>
+                    <input type="text" name="username" id="id_username" size="15" autocapitalize="off"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="id_password">{% trans 'Password' %} </label> 
+                </td>
+                <td>
+                    <input type="password" name="password" id="id_password" size="15"/>
+                </td>
+            </tr>
+        </table>
+        <input type="submit" id="submit" value="{% trans 'Log in' %}" />
+    </form>
+{% endblock %}

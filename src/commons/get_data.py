@@ -32,7 +32,6 @@
 import random
 import re
 
-from django.conf import settings
 from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
@@ -40,7 +39,6 @@ from django.utils.translation import get_language
 from django.utils.translation import ugettext as _
 
 from commons.cache import CacheableData
-from connectable.models import In, Out, RelatedInOut, InOut, Filter
 from context.models import Concept, ConceptName, Constant
 from context.utils import get_user_context_providers
 from gadget.models import XHTML, UserPrefOption, Capability, VariableDef
@@ -382,66 +380,6 @@ def get_gadget_capabilities(gadget_id):
     return data_ret
 
 
-def get_input_data(inout):
-    all_inputs = []
-    inputs = In.objects.filter(inout=inout)
-    for ins in inputs:
-        input_data = {}
-        input_data['id'] = ins.pk
-        input_data['name'] = ins.name
-        var = ins.variable
-        input_data['varId'] = var.pk
-        input_data['type'] = var.vardef.aspect
-        all_inputs.append(input_data)
-    return all_inputs
-
-
-def get_output_data(inout):
-    all_outputs = []
-    outputs = Out.objects.filter(inout=inout)
-    for outs in outputs:
-        output_data = {}
-        output_data['id'] = outs.pk
-        output_data['name'] = outs.name
-        var = outs.variable
-        output_data['varId'] = var.pk
-        output_data['type'] = var.vardef.aspect
-        all_outputs.append(output_data)
-    return all_outputs
-
-
-def get_inout_data(inout):
-    """
-        deprecated!!!!
-    """
-    data_ins = get_input_data(inout=inout)
-    data_outs = get_output_data(inout=inout)
-
-    return {
-        'id': inout.pk,
-        'aspect': 'INOUT',
-        'friend_code': inout.friend_code,
-        'name': inout.name,
-        'inputs': [d for d in data_ins],
-        'outputs': [d for d in data_outs],
-    }
-
-
-def get_filter_data(filter__):
-    filter_ = filter__.get_translated_model()
-
-    return {
-        'id': filter_.pk,
-        'name': filter_.name,
-        'nature': filter_.nature,
-        'label': filter_.label,
-        'category': filter_.category,
-        'help_text': filter_.help_text,
-        'code': filter_.code,
-        'params': filter_.params,
-    }
-
-
 def get_workspace_data(workspace, user):
     user_workspace = UserWorkSpace.objects.get(user=user, workspace=workspace)
 
@@ -449,63 +387,11 @@ def get_workspace_data(workspace, user):
         'id': workspace.id,
         'name': workspace.name,
         'shared': workspace.is_shared(),
+        'creator': workspace.creator.username,
         'owned': workspace.creator == user,
         'removable': workspace.creator == user and user_workspace.manager == '',
         'active': user_workspace.active,
     }
-
-
-def get_workspace_variables_data(workSpaceDAO, user):
-    inout_variables = InOut.objects.filter(workspace=workSpaceDAO)
-    return [get_connectable_data(inout) for inout in inout_variables]
-
-
-def get_connectable_data(connectable):
-    res_data = {}
-
-    if isinstance(connectable, InOut):
-        connectable_type = "inout"
-        res_data['id'] = connectable.id
-        res_data['name'] = connectable.name
-
-        # Locating IN connectables linked to this connectable
-        res_data['ins'] = []
-
-        ins = In.objects.filter(inouts__id=connectable.id)
-        for input in ins:
-            res_data['ins'].append(get_connectable_data(input))
-
-        # Locating OUT connectables linked to this connectable
-        res_data['outs'] = []
-
-        outs = Out.objects.filter(inouts__id=connectable.id)
-        for output in outs:
-            res_data['outs'].append(get_connectable_data(output))
-
-        # Locating INOUT connectables linked to this connectable as output
-        res_data['out_inouts'] = []
-        related_inouts = RelatedInOut.objects.filter(in_inout=connectable)
-        for related_inout in related_inouts:
-            res_data['out_inouts'].append(related_inout.out_inout_id)
-
-        # Locating the filter linked to this conectable!
-        res_data['filter'] = connectable.filter_id
-        res_data['filter_params'] = connectable.filter_param_values
-
-        # ReadOnly data
-        res_data['readOnly'] = connectable.readOnly
-
-    elif isinstance(connectable, Out):
-        connectable_type = "out"
-        res_data['var_id'] = connectable.variable.id
-
-    elif isinstance(connectable, In):
-        connectable_type = "in"
-        res_data['var_id'] = connectable.variable.id
-
-    res_data['connectable_type'] = connectable_type
-
-    return res_data
 
 
 class TemplateValueProcessor:
@@ -631,12 +517,7 @@ def _get_global_workspace_data(workSpaceDAO, user):
 
         tab['igadgetList'] = igadget_data
 
-    workspace_variables_data = get_workspace_variables_data(workSpaceDAO, user)
-    data_ret['workspace']['channels'] = workspace_variables_data
-
-    # Filter information
-    filters = Filter.objects.all()
-    data_ret['workspace']['filters'] = [get_filter_data(f) for f in filters]
+    data_ret['workspace']['wiring'] = workSpaceDAO.wiringStatus
 
     # Params
     last_published_workspace = PublishedWorkSpace.objects.filter(workspace=workSpaceDAO).order_by('-pk')
@@ -671,7 +552,6 @@ def get_igadget_data(igadget, user, workspace, cache_manager=None):
         'name': igadget.name,
         'tab': igadget.tab.id,
         'layout': igadget.layout,
-        'menu_color': igadget.menu_color,
         'refused_version': igadget.refused_version,
         'gadget': igadget.gadget.uri,
         'top': igadget.position.posY,
@@ -760,17 +640,7 @@ def get_concept_values(user):
 
     concept_values = constant_context
 
-    data = {}
-    data['user'] = user
-    try:
-        if 'twitterauth' in settings.INSTALLED_APPS:
-            from twitterauth.models import TwitterUserProfile
-            data['twitterauth'] = TwitterUserProfile.objects.get(user__id=user.id)
-        else:
-            data['twitterauth'] = None
-    except Exception:
-        data['twitterauth'] = None
-
+    data = {'user': user}
     for concept in concepts:
         if concept.source == 'PLAT':
             concept_values[concept.concept] = get_concept_value(concept, data)
@@ -833,11 +703,5 @@ def get_concept_value(concept, data):
 
     elif concept.concept == 'language':
         res = get_language()
-
-    elif concept.concept == 'twitterauth' and data['twitterauth']:
-        res = "&".join(['user_screen_name=%s' % data['twitterauth'].screen_name,
-            'oauth_consumer_key=%s' % getattr(settings, 'TWITTER_CONSUMER_KEY', 'YOUR_KEY'),
-            'oauth_consumer_secret=%s' % getattr(settings, 'TWITTER_CONSUMER_SECRET', 'YOUR_SECRET'),
-            data['twitterauth'].access_token])
 
     return res

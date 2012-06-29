@@ -1,0 +1,7 @@
+{% extends 'wirecloud/views/base_plain.html' %}
+{% load i18n %}
+{% block path %}{% trans "error500" %}{% endblock %}
+{% block content %}
+    <h1>{% block title %}{% trans "Error 500 - Internal Server Error" %}{% endblock %}</h1>
+{% endblock %}
+

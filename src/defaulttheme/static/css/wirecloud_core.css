@@ -1,0 +1,302 @@
+body {
+    margin: 0;
+    padding: 0;
+    min-width: 800px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+}
+
+#wirecloud_header {
+    font-family: "Courier New", courier;
+    font-size: 14pt;
+    font-weight: bold;
+    margin-bottom: 0.5ex;
+}
+
+.breadcrum_wrapper img {
+    margin: 0 1ex 0 0;
+    vertical-align: bottom;
+    padding: 0 1ex 1ex;
+    vertical-align: -1.3ex;
+}
+
+#wrapper {
+    position: relative;
+    left: 0px;
+    right: 0px;
+    min-width: 600px;
+}
+
+.container_content {
+    position: relative;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#wirecloud_header .menu_wrapper {
+    text-align: right;
+    font-family: "Arial";
+    font-size: 12px;
+    font-weight: normal;
+    color: #990000;
+}
+
+#wirecloud_header .menu_wrapper > .menu {
+    display: inline-block;
+    background: #E4E6E2;
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
+    padding: 0 0 0 1ex;
+    vertical-align: top;
+}
+
+#wirecloud_header .styled_button {
+    margin: 0;
+}
+
+#wirecloud_header .styled_button > span {
+    color: #FFF;
+    font-size: 12px;
+    margin: 0;
+    padding: 3px 0.75ex;
+    border-width: 0px 1px 0px 1px;
+    border-style: solid;
+    border-color: transparent;
+    background-color: #41768D;
+}
+
+#wirecloud_header .styled_button.open > span {
+    background: white;
+    border-color: #BEBEBE;
+    color: #41768D;
+}
+
+#wirecloud_header > .menu_wrapper > .menu > span {
+    background: #E4E6E2;
+    padding: 0.5ex 0.75ex;
+    cursor: pointer;
+    color: #444;
+    display: inline-block;
+    position: relative;
+}
+
+#wirecloud_header > .menu_wrapper > .menu > .user_menu_wrapper {
+    display: inline-block;
+    width: 30ex;
+    margin: 0 1ex;
+}
+
+#wirecloud_header > .menu_wrapper > .menu > .selected {
+    cursor: default;
+}
+
+#wirecloud_header > .menu_wrapper > .menu .mark {
+    -webkit-transition: height 0.15s ease-in;
+    -moz-transition: height 0.15s ease-in;
+    -o-transition: height 0.15s ease-in;
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
+    position: absolute;
+    right: 0;
+    left: 0;
+    background-color: inherit;
+    height: 0;
+}
+
+#wirecloud_header > .menu_wrapper > .menu > .selected > .mark {
+    height: 2ex;
+}
+
+#wirecloud_header > .menu_wrapper > .menu > .workspace {
+    background: #47A06B;
+}
+
+#wirecloud_header > .menu_wrapper > .menu > .wiring {
+    background: #DFA462;
+}
+
+#wirecloud_header > .menu_wrapper > .menu > .marketplace {
+    background: #DF7A62;
+}
+
+#wirecloud_header > .submenu {
+    display: none;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+}
+
+#wirecloud_breadcrum > span {
+    padding: 0px 1ex;
+}
+
+#wirecloud_breadcrum > .first_level {
+    color: #990000;
+}
+
+#wirecloud_breadcrum > .second_level {
+    color: #006633;
+}
+
+#wirecloud_breadcrum > .third_level {
+    color: #E8A150;
+}
+
+/* window_menu */
+
+.disabled_background {
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 101111;
+    background-color: #4C5054;
+    moz-opacity: .8;
+    opacity: .8;
+    filter: alpha(opacity=80);
+}
+
+.window_menu {
+    background: #E4E6E2;
+    border-radius: 16px;
+    box-shadow: 3px 3px 3px rgba(0,0,0,0.3);
+    position: absolute;
+    text-align: left;
+    z-index: 101112;
+    overflow: hidden;
+    padding: 1em 2em;
+    color: #4C5054;
+    font-weight: bold;
+    font-family: Arial;
+    font-size: 80%;
+}
+
+.window_menu > .window_top {
+    font-size: 150%;
+    font-family: "Courier New", courier;
+    color: #990000;
+}
+
+.window_menu > .window_top > .closebutton {
+    float: right;
+}
+
+.window_menu > .window_content, .window_menu > .styled_form > div > table {
+    margin-top: 2ex;
+    clear: both;
+    overflow: auto;
+}
+
+.window_menu > .window_bottom {
+    margin: 2em 0 0.5em;
+    text-align: center;
+}
+
+.window_menu > .msg {
+    margin: 2ex;
+    border: 1px solid #888;
+    padding: 1ex;
+    border-radius: 1ex;
+}
+
+/* Loading window */
+
+#loading-background {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    bottom: 0;
+    left: 0;
+    z-index: 3;
+}
+
+#loading-window.fadding #loading-background {
+    display: none;
+}
+
+#loading-window.disabled {
+    display: none;
+}
+
+#loading-message {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    width: 70%;
+    max-width: 100%;
+    height: 10ex;
+    z-index: 4;
+    margin: 4ex;
+    height: 8ex;
+}
+
+#loading-message .window_content {
+    margin-top: 1ex;
+}
+
+#loading-subtask-title {
+    margin: 0;
+}
+
+.closebutton {
+    border: 0px none;
+    cursor: pointer;
+    padding: 0px;
+    width: 16px;
+    height: 16px;
+    background: url(../images/icons-sprite.png);
+    background-position: -48px -312px;
+}
+
+.help_button {
+    margin-left: 0px;
+    margin-bottom: 2px;
+    vertical-align: middle;
+    cursor: pointer;
+    border: none;
+    width: 16px;
+    height: 16px;
+    display: block;
+}
+
+.window_menu .styled_form .notebook {
+    height: 400px;
+}
+
+.parametrizable_input > * {
+    display: inline-block;
+}
+
+.parametrizable_input > .readOnlyIcon, .parametrizable_input > .visibilityIcon {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    margin: 3px;
+    vertical-align: bottom;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+}
+
+.parametrizable_input > .readOnlyIcon {
+    background-image: url(../images/icons-sprite.png);
+    background-position: -48px -552px;
+}
+
+.parametrizable_input > .readOnlyIcon.readOnly {
+    background-image: url(../images/icons-sprite.png);
+    background-position: -24px -552px;
+}
+
+.parametrizable_input > .visibilityIcon {
+    background-image: none;
+}
+
+.parametrizable_input > .visibilityIcon.visible {
+    background-image: url(../images/icons-sprite.png);
+    background-position: -48px -384px;
+}

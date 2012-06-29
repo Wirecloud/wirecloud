@@ -44,8 +44,8 @@ from commons.http_utils import download_http_content
 from commons.template import TemplateParser
 from commons.wgt import WgtDeployer, WgtFile
 from gadget.models import ContextOption, VariableDef, UserPrefOption, Gadget, XHTML
-from ezweb.plugins import get_active_features, get_gadget_api_extensions
 from translator.models import Translation
+from wirecloud.plugins import get_active_features, get_gadget_api_extensions
 from workspace.models import WorkSpace, UserWorkSpace
 
 
@@ -155,7 +155,7 @@ def create_gadget_from_template(template, user, request=None, base=None):
         order += 1
 
     order = 0
-    for slot in gadget_info['slots']:
+    for slot in gadget_info['wiring']['slots']:
         vDef = VariableDef.objects.create(
             name=slot['name'],
             order=order,
@@ -171,7 +171,7 @@ def create_gadget_from_template(template, user, request=None, base=None):
         order += 1
 
     order = 0
-    for event in gadget_info['events']:
+    for event in gadget_info['wiring']['events']:
         vDef = VariableDef.objects.create(
             name=event['name'],
             order=order,
@@ -374,14 +374,14 @@ def fix_gadget_code(xhtml_code, base_url, request):
             script.text = ''
 
         if script.get('src', '') == '/ezweb/js/EzWebAPI/EzWebAPI.js':
-            script.set('src', rootURL + script.get('src'))
+            script.set('src', rootURL + settings.STATIC_URL + 'js/EzWebAPI/EzWebAPI.js')
 
             files = get_gadget_api_extensions('index')
             files.reverse()
             for file in files:
                 script.addnext(etree.Element('script', src=rootURL + settings.STATIC_URL + file))
         elif script.get('src', '').startswith('/ezweb/'):
-            script.set('src', rootURL + script.get('src'))
+            script.set('src', rootURL + settings.STATIC_URL + script.get('src')[7:])
 
     # return modified code
     return etree.tostring(xmltree, pretty_print=False, method='html')

@@ -62,6 +62,7 @@ class AddGadgetTestCase(LocalizedTestCase):
 class CatalogueAPITestCase(TestCase):
 
     fixtures = ['catalogue_test_data']
+    urls = 'catalogue.urls'
 
     def setUp(self):
 
@@ -73,7 +74,7 @@ class CatalogueAPITestCase(TestCase):
         self.client.login(username='test', password='test')
 
         # List gadgets in alphabetical order (short_name)
-        result = self.client.get('/user/test/catalogue/resource/1/10?orderby=short_name&search_boolean=AND&scope=gadget')
+        result = self.client.get('////resource/1/10?orderby=short_name&search_boolean=AND&scope=gadget')
 
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
@@ -82,7 +83,7 @@ class CatalogueAPITestCase(TestCase):
         self.assertEqual(result_json['resources'][0]['name'], 'agadget')
 
         # List gadgets in reverse alphabetical order (short_name)
-        result = self.client.get('/user/test/catalogue/resource/1/10?orderby=-short_name&search_boolean=AND&scope=gadget')
+        result = self.client.get('////resource/1/10?orderby=-short_name&search_boolean=AND&scope=gadget')
 
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
@@ -95,14 +96,14 @@ class CatalogueAPITestCase(TestCase):
         self.client.login(username='test', password='test')
 
         # Search gadgets using "gadget1" as keyword
-        result = self.client.get('/user/test/catalogue/search/simple_or/1/10?orderby=-popularity&search_criteria=gadget1&search_boolean=AND&scope=gadget')
+        result = self.client.get('////search/simple_or/1/10?orderby=-popularity&search_criteria=gadget1&search_boolean=AND&scope=gadget')
 
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 1)
 
         # Search gadgets providing "friendcode2" events
-        result = self.client.get('/user/test/catalogue/search/event/1/10?orderby=-popularity&search_criteria=friendcode2&search_boolean=AND&scope=gadget')
+        result = self.client.get('////search/event/1/10?orderby=-popularity&search_criteria=friendcode2&search_boolean=AND&scope=gadget')
 
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
@@ -113,7 +114,7 @@ class CatalogueAPITestCase(TestCase):
         self.assertEqual(gadget_data['versions'][0]['version'], '1.10')
 
         # Search gadgets consuming "friendcode2" events
-        result = self.client.get('/user/test/catalogue/search/slot/1/10?orderby=short_name&search_criteria=friendcode2&search_boolean=AND&scope=gadget')
+        result = self.client.get('////search/slot/1/10?orderby=short_name&search_criteria=friendcode2&search_boolean=AND&scope=gadget')
 
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
@@ -127,13 +128,13 @@ class CatalogueAPITestCase(TestCase):
         self.client.login(username='test', password='test')
 
         # Search gadgets using "gadget1" as keyword
-        result = self.client.get('/user/test/catalogue/globalsearch/1/10?orderby=-popularity&search_criteria=gadget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=&search_criteria=&search_boolean=AND&scope=gadget')
+        result = self.client.get('////globalsearch/1/10?orderby=-popularity&search_criteria=gadget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=&search_criteria=&search_boolean=AND&scope=gadget')
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 1)
 
         # Search by keyworkd "gadget1" and by event "friendcode2"
-        result = self.client.get('/user/test/catalogue/globalsearch/1/10?orderby=-popularity&search_criteria=gadget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=AND&scope=gadget')
+        result = self.client.get('////globalsearch/1/10?orderby=-popularity&search_criteria=gadget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=AND&scope=gadget')
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 1)
@@ -143,13 +144,13 @@ class CatalogueAPITestCase(TestCase):
         self.assertEqual(gadget_data['versions'][0]['version'], '1.10')
 
         # Search by keyworkd "gadget2" and by event "friendcode2"
-        result = self.client.get('/user/test/catalogue/globalsearch/1/10?orderby=-popularity&search_criteria=gadget2&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=AND&scope=gadget')
+        result = self.client.get('////globalsearch/1/10?orderby=-popularity&search_criteria=gadget2&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=AND&scope=gadget')
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 0)
 
         # Search by keyworkd "gadget1" or by event "friendcode2"
-        result = self.client.get('/user/test/catalogue/globalsearch/1/10?orderby=-popularity&search_criteria=gadget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=OR&scope=gadget')
+        result = self.client.get('////globalsearch/1/10?orderby=-popularity&search_criteria=gadget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=OR&scope=gadget')
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 1)
@@ -162,7 +163,7 @@ class CatalogueAPITestCase(TestCase):
             {'name': 'gadget1', 'vendor': 'Test'},
             {'name': 'inexistantgadget', 'vendor': 'Test'},
         ])
-        result = self.client.post('/user/test/catalogue/versions', {'resources': resources})
+        result = self.client.post('////versions', {'resources': resources})
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertTrue('resources' in result_json)
@@ -174,11 +175,11 @@ class CatalogueAPITestCase(TestCase):
         User.objects.create_user('test2', 'test@example.com', 'test')
 
         self.client.login(username='test', password='test')
-        result = self.client.post('/user/test/catalogue/voting/Test/gadget1/1.2', {'vote': 3})
+        result = self.client.post('////voting/Test/gadget1/1.2', {'vote': 3})
         self.assertEqual(result.status_code, 200)
 
         self.client.login(username='test2', password='test')
-        result = self.client.post('/user/test2/catalogue/voting/Test/gadget1/1.2', {'vote': 4})
+        result = self.client.post('////voting/Test/gadget1/1.2', {'vote': 4})
         self.assertEqual(result.status_code, 200)
 
         result_json = simplejson.loads(result.content)
@@ -211,10 +212,10 @@ class WGTDeploymentTestCase(TransactionTestCase):
         c = Client()
 
         f = open(os.path.join(os.path.dirname(__file__), 'basic_gadget.wgt'))
-        response = c.post('/resource', {'file': f}, HTTP_HOST='www.example.com')
+        response = c.post('////resource', {'file': f}, HTTP_HOST='www.example.com')
         f.close()
 
-        self.assertEqual(response.status_code, 403)
+        self.assertFalse(response.status_code > 200 and response.status_code < 300)
 
     def testBasicWGTDeployment(self):
         User.objects.create_user('test', 'test@example.com', 'test')
@@ -223,14 +224,14 @@ class WGTDeploymentTestCase(TransactionTestCase):
 
         f = open(os.path.join(os.path.dirname(__file__), 'basic_gadget.wgt'))
         c.login(username='test', password='test')
-        response = c.post('/resource', {'file': f}, HTTP_HOST='www.example.com')
+        response = c.post('////resource', {'file': f}, HTTP_HOST='www.example.com')
         f.close()
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(os.path.isdir(gadget_path), True)
 
         c.login(username='test', password='test')
-        response = c.delete('/resource/Morfeo/Test/0.1', HTTP_HOST='www.example.com')
+        response = c.delete('////resource/Morfeo/Test/0.1', HTTP_HOST='www.example.com')
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(os.path.exists(gadget_path), False)

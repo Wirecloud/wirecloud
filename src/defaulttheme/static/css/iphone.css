@@ -59,7 +59,7 @@ img {
     white-space: nowrap;
     overflow: hidden;
     height: 20px;
-    background: url(/ezweb/images/iphone/iPhoneToolbar.png) #8191AA repeat-x;
+    background: url(../images/iphone/iPhoneToolbar.png) #8191AA repeat-x;
     color: #fcfcfc;
     font-family: Helvetica;
     text-align: center;
@@ -79,7 +79,7 @@ img {
     position: absolute;
     top: 5px;
     left: 5px;
-    background: url(/ezweb/images/iphone/backButton.png);
+    background: url(../images/iphone/backButton.png);
     width: 65px;
     height: 30px;
 }
@@ -88,7 +88,7 @@ img {
     position: absolute;
     top: 5px;
     right: 5px;
-    background: url(/ezweb/images/iphone/nextButton.png);
+    background: url(../images/iphone/nextButton.png);
     width: 65px;
     height: 30px;
 }
@@ -168,13 +168,14 @@ img {
     text-overflow: ellipsis;
 }
 
-#workspace_list > li > a.arrow {
-    background-image: url(/ezweb/images/iphone/arrow.png);
+#workspace_list > li {
+    background-image: url(../images/iphone/arrow.png);
     background-repeat: no-repeat;
     background-position: right 15px;
 }
 
 #workspace_list > li.selected {
+    background-image: none;
     background: #8fc3f1;
 }
 
@@ -231,6 +232,18 @@ img {
     text-align: center;
     height: 18px;
     vertical-align: top;
+}
+
+.navbar div {
+    width: 9px;
+    height: 9px;
+    display: inline-block;
+    margin: 0px 2px;
+    background: url('../images/iphone/greyball.png') no-repeat;
+}
+
+.navbar .current {
+    background: url('../images/iphone/whiteball.png') no-repeat;
 }
 
 /* MASHUP CATALOGUE */
@@ -293,13 +306,13 @@ img {
     margin: 3px 0;
     color: #000;
     text-shadow: #fff 0px 1px 0;
-    -webkit-border-image: url(/ezweb/images/iphone/whiteButton.png) 0 14 0 14;
+    -webkit-border-image: url(../images/iphone/whiteButton.png) 0 14 0 14;
 }
 
 .mashup_content #add_resource a:hover{
     color: #fff !important;
     text-shadow: #000 0px 1px 0;
-    -webkit-border-image: url(/ezweb/images/iphone/blueButton.png) 0 14 0 14;
+    -webkit-border-image: url(../images/iphone/blueButton.png) 0 14 0 14;
 }
 
 /* DRAGBOARD SECTION */

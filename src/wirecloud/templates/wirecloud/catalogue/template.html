@@ -1,0 +1,26 @@
+{% load i18n %}
+<div id="left_bar">
+<div id="tag_categories" class="bar_widget tag_categories">
+<span class="widget_title">{% trans 'Search by category:' %}</span>
+<div class="widget_content">
+<ul>
+    <li id="Fotos y vídeos" class="category_element"><span class="category_name" onclick='CatalogueFactory.getInstance().user_command_manager.services.search("SIMPLE_SEARCH",1, "AND","","media")'>Photos and videos</span></li>
+    <li id="Información y noticias" class="category_element"><span class="category_name" onclick='CatalogueFactory.getInstance().user_command_manager.services.search("SIMPLE_SEARCH",1, "AND","","information")'>Information and news</span></li>
+    <li id="Ocio y diversión" class="category_element"><span class="category_name" onclick='CatalogueFactory.getInstance().user_command_manager.services.search("SIMPLE_SEARCH",1, "AND","","entertainment")'>Entertainment</span></li>
+    <li id="Productividad y estilo de vida" class="category_element"><span class="category_name" onclick='CatalogueFactory.getInstance().user_command_manager.services.search("SIMPLE_SEARCH",1, "AND","","productivity")'>Productivity and lifestyle</span></li>
+</ul>
+
+</div>
+</div>
+</div>
+<div id="catalogue_content">
+<div id="catalogue_head" class="head">
+<div id="header_always" class="header_always">
+<div id="header_always_error" class="message_error"></div>
+</div>
+</div>
+<div id="catalogue_center" class="center">
+
+</div>
+</div>
+</div>

@@ -224,24 +224,6 @@
         }
     },
     {
-        "model": "connectable.In",
-        "pk": "1",
-        "fields": {
-            "name": "slot",
-            "variable": "3",
-            "inouts": []
-        }
-    },
-    {
-        "model": "connectable.Out",
-        "pk": "1",
-        "fields": {
-            "name": "event",
-            "variable": "5",
-            "inouts": []
-        }
-    },
-    {
         "model": "translator.Translation",
         "pk": "1",
         "fields": {

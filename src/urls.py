@@ -30,32 +30,22 @@
 
 #
 
-from os import path
-
-from django.conf import settings
-from django.conf.urls.defaults import patterns, include
+from django.conf.urls.defaults import patterns, include, url
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.decorators.cache import cache_page
 from django.views.i18n import javascript_catalog
 
-admin.autodiscover()
+import wirecloud.urls
 
-from catalogue.views import ResourceEnabler
+admin.autodiscover()
 
 #JavaScript translation
 js_info_dict = {
-    'packages': ('ezweb', )
+    'packages': ('wirecloud', )
 }
 
 urlpatterns = patterns('',
-    # Static content
-     (r'^ezweb/(.*)$', 'django.views.static.serve', {'document_root': path.join(settings.BASEDIR, 'media')}),
-     (r'^api/html/(.*)$', 'django.views.static.serve', {'document_root': path.join(settings.BASEDIR, 'media/html')}),
-
-    # EzWeb
-    (r'^', include('ezweb.urls')),
-    (r'^user/(?P<user_name>[\.\-\w\@]+)/$', include('ezweb.urls')),
 
     # Gadgets
     (r'^user/(?P<user_name>[\.\-\w\@]+)/gadget(s)?', include('gadget.urls')),
@@ -70,37 +60,24 @@ urlpatterns = patterns('',
     # IGadgets
     (r'^workspace(s)?/(?P<workspace_id>\d+)/tab(s)?/(?P<tab_id>\d+)/igadget(s)?', include('igadget.urls')),
 
-    # Connectables
-    (r'^workspace(s)?/(?P<workspace_id>\d+)/connectable(s)?', include('connectable.urls')),
-
     # context
     (r'^user/(?P<user_name>[\.\-\w\@]+)/context(s)?', include('context.urls')),
 
     # Platform Preferences
     (r'^user/(?P<user_name>[\.\-\w\@]+)/preference(s)?', include('preferences.urls')),
 
-    # Catalogue Resource
-    (r'^user/(?P<user_name>[\.\-\w\@]+)/catalogue/', include('catalogue.urls')),
-
-    # Catalogue: Changing certification status
-    (r'^catalogue/resource/(?P<resource_id>\d+)/activation$', ResourceEnabler(permitted_methods=('GET',))),
-    (r'^catalogue/', include('catalogue.urls')),
-
-    #GadgetGenerator
-    (r'^gadgetGenerator', include('gadgetGenerator.urls')),
+    # Catalogue
+    (r'^catalogue', include('catalogue.urls')),
 
     # Proxy
     (r'^proxy', include('proxy.urls')),
 
-    # Django contrib
-    #(r'^registration/login_form/$', 'registration.views.login_form'),
+    # Login/logout
+    url(r'^login/?$', 'django.contrib.auth.views.login', name="login"),
+    url(r'^logout/?$', 'authentication.logout', name="logout"),
+    url(r'^admin/logout/?$', 'authentication.logout'),
 
-    #(r'^logout$', 'django.contrib.auth.views.logout'),
-    # custom logouts (to enable anonymous access)
-    (r'^logout$', 'authentication.logout'),
-    (r'^admin/logout/$', 'authentication.logout'),
-
-    #Admin interface
+    # Admin interface
     (r'^admin/', include(admin.site.urls)),
 
     # Django "set language" (internacionalitation)
@@ -112,36 +89,12 @@ urlpatterns = patterns('',
     (r'^API', include('API.urls')),
 
     (r'^uploader', include('uploader.urls')),
+
+    (r'^marketAdaptor/', include('marketAdaptor.urls')),
 )
 
+urlpatterns += wirecloud.urls.urlpatterns
 urlpatterns += staticfiles_urlpatterns()
-
-### OpenId URLs
-if 'openid_auth' in settings.INSTALLED_APPS:
-    #urls needed for OpenID authentication
-    urlpatterns += patterns('',
-                            (r'^accounts/login/$', 'openid_auth.views.login'),
-                            (r'^openid/complete/$', 'openid_auth.views.complete_openid_login'),
-                    )
-else:
-    #Usual login
-    urlpatterns += patterns('',
-                             (r'^accounts/login/$', 'django.contrib.auth.views.login'),
-                    )
-
-### Facebook connect URLs
-if 'facebookconnect' in settings.INSTALLED_APPS:
-    #add the facebook url
-    urlpatterns += patterns('',
-                             (r'^facebook/', include('facebookconnect.urls')),
-                    )
-
-##Sign in with Twitter
-if 'twitterauth' in settings.INSTALLED_APPS:
-    #add twitter urls
-    urlpatterns += patterns('',
-                            (r'^twitter/', include('twitterauth.urls')),
-                    )
 
 handler404 = "django.views.defaults.page_not_found"
 handler500 = "django.views.defaults.server_error"

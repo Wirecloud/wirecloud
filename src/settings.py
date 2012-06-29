@@ -32,6 +32,7 @@
 
 # Django settings for mymem project.
 from os import path
+from commons.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 
 DEBUG = False
@@ -52,12 +53,13 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': path.join(BASEDIR, 'ezweb.db'),  # Or path to database file if using sqlite3.
-        'USER': '',                              # Not used with sqlite3.
-        'PASSWORD': '',                          # Not used with sqlite3.
-        'HOST': '',                              # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                              # Set to empty string for default. Not used with sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3',      # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': path.join(BASEDIR, 'wirecloud.db'),  # Or path to database file if using sqlite3.
+        'TEST_NAME': path.join(BASEDIR, 'test_wirecloud.db'),
+        'USER': '',                                  # Not used with sqlite3.
+        'PASSWORD': '',                              # Not used with sqlite3.
+        'HOST': '',                                  # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',                                  # Set to empty string for default. Not used with sqlite3.
     },
 }
 
@@ -97,22 +99,13 @@ LANGUAGES = (
 # to load the internationalization machinery.
 USE_I18N = True
 
-# Absolute path to the directory that holds media.
-# Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = path.join(BASEDIR, 'media')
-
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash if there is a path component (optional in other cases).
-# Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = '/ezweb/'
-
 STATIC_URL = '/static/'
 STATIC_ROOT = path.join(BASEDIR, 'static')
 COMPRESS_ROOT = STATIC_ROOT
-COMPRESS_OUTPUT_DIR = ''
+COMPRESS_OUTPUT_DIR = 'cache'
 COMPRESS_JS_FILTERS = (
     'compressor.filters.jsmin.JSMinFilter',
-    'ezweb.compressor_filters.JSUseStrictFilter',
+    'wirecloud.compressor_filters.JSUseStrictFilter',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -120,18 +113,15 @@ SECRET_KEY = '15=7f)g=)&spodi3bg8%&4fqt%f3rpg%b$-aer5*#a*(rqm79e'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    'ezweb.themes.load_template_source',
+    'wirecloud.themes.load_template_source',
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.gzip.GZipMiddleware',
-    'johnny.middleware.LocalStoreClearMiddleware',  # this has to be first
-    'johnny.middleware.QueryCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
 #    'middleware.session_middleware.SessionMiddleware',
-#    'facebook.djangofb.FacebookMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'middleware.http.ConditionalGetMiddleware',
@@ -141,8 +131,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.doc.XViewMiddleware',
     'middleware.console_middleware.ConsoleExceptionMiddleware',
  #   'middleware.cookie_redirect_middleware.CookieRedirectMiddleware',
- #   'facebookconnect.middleware.FacebookConnectMiddleware',
-
 )
 
 ROOT_URLCONF = 'urls'
@@ -154,31 +142,20 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'ezweb',
+    'wirecloud',
     'gadget',
     'workspace',
     'igadget',
-    'connectable',
     'catalogue',
     'context',
     'preferences',
     'translator',
-    'gadgetGenerator',
-    'remoteChannel',
     'user',
     'API',
     'uploader',
     'south',
     'compressor',
-    'johnny',
-    ### openid authentication ###
-#    'openid_auth',
-#    'openid_auth.django_openidconsumer',
-    # sign in with twitter app
-#    'twitterauth',
-    ### facebook applications ###
-#    'facebook',
-#    'facebookconnect',
+    'marketAdaptor',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -188,17 +165,16 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.request',
     'django.core.context_processors.static',
-    'ezweb.themes.active_theme_context_processor',
+    'wirecloud.themes.active_theme_context_processor',
     'processors.context_processors.server_url',
     'processors.context_processors.is_anonymous',
     'processors.context_processors.tag_categories',
-    'processors.context_processors.installed_apps',
     'processors.context_processors.ezweb_organizations',
     'processors.context_processors.policy_lists',
 )
 
 STATICFILES_FINDERS = (
-    'ezweb.themes.ActiveThemeFinder',
+    'wirecloud.themes.ActiveThemeFinder',
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
@@ -210,9 +186,10 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 AUTH_PROFILE_MODULE = 'user.UserProfile'
 
-# URLs aftetr login and logout
-LOGOUT_URL = '/'
-LOGIN_REDIRECT_URL = '/'
+# Login/logout URLs
+LOGIN_URL = reverse_lazy('login')
+LOGOUT_URL = reverse_lazy('wirecloud.root')
+LOGIN_REDIRECT_URL = reverse_lazy('wirecloud.root')
 
 FIXTURE_DIRS = (
     path.join(BASEDIR, 'fixtures', 'django.contrib.auth'),
@@ -227,13 +204,10 @@ AUTHENTICATION_BACKENDS = (
     #'authentication.tcloud_access.TCloudBackend',
     'authentication.public_access.PublicBackend',
     #'authentication.anonymousaccess.AnonymousBackend',
-    #'openid_auth.models.OpenIDBackend',
     #'authentication.ldapaccess.LDAPBackend',
     #'authentication.ezsteroidsaccess.EzSteroidsBackend',
     'django.contrib.auth.backends.ModelBackend',
-    #'facebookconnect.models.FacebookBackend',
-    #'authentication.twitteroauth.TwitterBackend',
-    )
+)
 
 #LDAP Backend
 #AD_LDAP_URL = 'ldap://host:port'
@@ -262,7 +236,7 @@ CERTIFICATION_ENABLED = False
 # Cache settings
 CACHES = {
     'default': {
-        'BACKEND': 'ezweb.cache.backends.locmem.LocMemCache',
+        'BACKEND': 'wirecloud.cache.backends.locmem.LocMemCache',
         'OPTIONS': {
             'MAX_ENTRIES': 3000,
         },
@@ -295,35 +269,6 @@ PROXY_PROCESSORS = (
 #    'proxy.processors.FixServletBugsProcessor',
     'proxy.processors.SecureDataProcessor',
 )
-
-#Open Id providers. Uncomment this if you only allow certain providers to authenticate users.
-#OPENID_PROVIDERS = ["myopenid.com", "google.com"]
-
-
-#################################
-##### Facebook Connect data #####
-#################################
-
-# To enable Facebook Connect authentication in Wirecloud (having your application set up in Facebook) you must:
-#    1. Enable the facebook and facebookconnect applications
-#    2. Enable the Middlewares (facebook.djangofb.FacebookMiddleware, facebookconnect.middleware.FacebookConnectMiddleware)
-#    3. Enable the backend facebookconnect.models.FacebookBackend
-#    4. Uncomment the following constants and configure the keys: FACEBOOK_API_KEY and FACEBOOK_SECRET_KEY
-#    5. Uncomment the sections of the login templates (change # with %}. These sections are:
-#        * {# load facebook_tags #}
-#        * {# facebook_js #}
-#        * {# initialize_facebook_connect #}
-#        * {# show_connect_button #}
-#FACEBOOK_API_KEY = "YOUR API KEY FROM FACEBOOK"
-#FACEBOOK_SECRET_KEY = "YOUR SECRET KEY FROM FACEBOOK"
-#FACEBOOK_INTERNAL = True
-#FACEBOOK_CACHE_TIMEOUT = 1800
-
-#################################
-
-#Authentication against Twitter (Sign in with twitter)
-#TWITTER_CONSUMER_KEY = "YOUR CONSUMER KEY FROM TWITTER"
-#TWITTER_CONSUMER_SECRET = "YOUR CONSUMER SECRET FROM TWITTER"
 
 # External settings configuration
 try:

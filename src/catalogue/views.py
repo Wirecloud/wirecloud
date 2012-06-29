@@ -34,16 +34,18 @@ from xml.sax import make_parser
 from xml.sax.xmlreader import InputSource
 
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed
+from django.http import HttpResponse, HttpResponseNotAllowed
 from django.http import  HttpResponseBadRequest, HttpResponseServerError, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, get_list_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404, render
 from django.utils import simplejson
+from django.utils.decorators import method_decorator
+from django.utils.encoding import smart_str
 from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext as _
-from django.utils.encoding import smart_str
 from django.views.static import serve
 
 from catalogue.models import CatalogueResource
@@ -58,9 +60,7 @@ from catalogue.catalogue_utils import get_tag_response, update_resource_populari
 from catalogue.catalogue_utils import get_vote_response, group_resources
 from catalogue.utils import add_gadget_from_wgt, add_resource_from_template, delete_resource, get_added_resource_info
 from catalogue.utils import tag_resource
-from commons.authentication import user_authentication, Http403
 from commons.cache import no_cache
-from commons.exceptions import TemplateParseException
 from commons.http_utils import PUT_parameter, download_http_content
 from commons.logs import log
 from commons.logs_exception import TracedServerError
@@ -97,7 +97,7 @@ def iframe_error(func):
         try:
             response = func(self, request, *args, **kwargs)
         except Exception, e:
-            error_msg = str(e)
+            error_msg = unicode(e)
 
         if response is not None and (response.status_code >= 300 or response.status_code < 200):
             error_msg = response.content
@@ -109,6 +109,7 @@ def iframe_error(func):
 
     return wrapper
 
+
 @no_cache
 def error(request):
     msg = request.GET.get('msg', 'Gadget could not be added')
@@ -117,11 +118,12 @@ def error(request):
 
 class ResourceCollection(Resource):
 
+    @method_decorator(login_required)
     @iframe_error
     @commit_on_http_success
-    def create(self, request, user_name=None, fromWGT=False):
+    def create(self, request, fromWGT=False):
 
-        user = user_authentication(request, user_name)
+        user = request.user
         overrides = None
 
         try:
@@ -139,7 +141,7 @@ class ResourceCollection(Resource):
                 json = {"message": msg, "result": "error"}
                 return HttpResponseBadRequest(json_encode(json), mimetype='application/json; charset=UTF-8')
 
-        except IntegrityError, e:
+        except IntegrityError:
             # Resource already exists. Rollback transaction
             json_response = {
                 "result": "error",
@@ -154,9 +156,9 @@ class ResourceCollection(Resource):
                             mimetype='application/json; charset=UTF-8')
 
     @no_cache
-    def read(self, request, user_name, pag=0, offset=0):
+    def read(self, request, pag=0, offset=0):
 
-        user = user_authentication(request, user_name)
+        user = request.user
 
         format = request.GET.get('format', 'default')
         orderby = request.GET.get('orderby', '-creation_date')
@@ -173,10 +175,11 @@ class ResourceCollection(Resource):
 
         return get_resource_response(resources, format, items, user)
 
-    @transaction.commit_on_success
-    def delete(self, request, vendor, name, version=None, user_name=None):
+    @method_decorator(login_required)
+    @commit_on_http_success
+    def delete(self, request, vendor, name, version=None):
 
-        user = user_authentication(request, user_name)
+        user = request.user
 
         response_json = {'result': 'ok', 'removedIGadgets': []}
         if version is not None:
@@ -199,9 +202,9 @@ class ResourceCollection(Resource):
 class ResourceCollectionBySimpleSearch(Resource):
 
     @no_cache
-    def read(self, request, user_name, criteria, pag=0, offset=0):
+    def read(self, request, criteria, pag=0, offset=0):
 
-        user = user_authentication(request, user_name)
+        user = request.user
 
         orderby = request.GET.get('orderby', '-creation_date')
         format = request.GET.get('format', 'default')
@@ -257,9 +260,9 @@ class ResourceCollectionBySimpleSearch(Resource):
 class ResourceCollectionByGlobalSearch(Resource):
 
     @no_cache
-    def read(self, request, user_name, pag=0, offset=0):
+    def read(self, request, pag=0, offset=0):
 
-        user = user_authentication(request, user_name)
+        user = request.user
 
         orderby = request.GET.get('orderby', '-creation_date')
         format = request.GET.get('format', 'default')
@@ -300,10 +303,12 @@ class ResourceCollectionByGlobalSearch(Resource):
 
 class ResourceTagCollection(Resource):
 
-    def create(self, request, user_name, vendor, name, version):
+    @method_decorator(login_required)
+    @commit_on_http_success
+    def create(self, request, vendor, name, version):
         format = request.POST.get('format', 'default')
 
-        user = user_authentication(request, user_name)
+        user = request.user
 
         # Get the xml containing the tags from the request
         tags_xml = request.POST.get('tags_xml')
@@ -335,7 +340,6 @@ class ResourceTagCollection(Resource):
             try:
                 tag_resource(user, e, resource)
             except Exception, ex:
-                transaction.rollback()
                 msg = _("Error tagging resource!!")
 
                 raise TracedServerError(ex, {'resource': vendor + name + version, 'tags': tags_xml},
@@ -344,26 +348,21 @@ class ResourceTagCollection(Resource):
         return get_tag_response(resource, user, format)
 
     @no_cache
-    def read(self, request, user_name, vendor, name, version):
+    def read(self, request, vendor, name, version):
         format = request.GET.get('format', 'default')
 
         # Get the resource's id for those vendor, name and version
         resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version).id
 
-        # Get the user's id for that user_name
-        user = user_authentication(request, user_name)
+        user = request.user
 
         return get_tag_response(resource, user, format)
 
-    def delete(self, request, user_name, vendor, name, version, tag):
+    @method_decorator(login_required)
+    @commit_on_http_success
+    def delete(self, request, vendor, name, version, tag):
 
-        try:
-            user = user_authentication(request, user_name)
-        except Http403, e:
-            msg = _("This tag cannot be deleted: ") + unicode(e)
-            log(msg, request)
-            return HttpResponseForbidden(get_xml_error(msg),
-                                         mimetype='application/xml; charset=UTF-8')
+        user = request.user
 
         format = request.GET.get('format', 'default')
 
@@ -381,10 +380,12 @@ class ResourceTagCollection(Resource):
 
 class ResourceVoteCollection(Resource):
 
-    def create(self, request, user_name, vendor, name, version):
+    @method_decorator(login_required)
+    @commit_on_http_success
+    def create(self, request, vendor, name, version):
         format = request.GET.get('format', 'default')
 
-        user = user_authentication(request, user_name)
+        user = request.user
 
         # Get the vote from the request
         vote = request.POST.get('vote')
@@ -409,25 +410,26 @@ class ResourceVoteCollection(Resource):
         return get_vote_response(resource, user, format)
 
     @no_cache
-    def read(self, request, user_name, vendor, name, version):
+    def read(self, request, vendor, name, version):
         format = request.GET.get('format', 'default')
 
         # Get the resource's id for those vendor, name and version
         resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
 
-        # Get the user's id for that user_name
-        user = user_authentication(request, user_name)
+        user = request.user
 
         return get_vote_response(resource, user, format)
 
-    def update(self, request, user_name, vendor, name, version):
+    @method_decorator(login_required)
+    @commit_on_http_success
+    def update(self, request, vendor, name, version):
 
         try:
             format = PUT_parameter(request, 'format')
         except KeyError:
             format = 'default'
 
-        user = user_authentication(request, user_name)
+        user = request.user
 
         # Get the vote from the request
         vote = PUT_parameter(request, 'vote')
@@ -457,7 +459,7 @@ class ResourceVoteCollection(Resource):
 
 class ResourceVersionCollection(Resource):
 
-    def create(self, request, user_name):
+    def create(self, request):
 
         content_type = request.META.get('CONTENT_TYPE', '')
         if content_type == None:

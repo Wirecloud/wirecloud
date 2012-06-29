@@ -44,7 +44,7 @@
 	-webkit-border-radius: 4px;
 }
 
-#catalogue .center .resources .header_resource, #catalogue .center #resource_details .back_to_resource_list {
+#catalogue .resource_list .header_resource, #catalogue #resource_details .back_to_resource_list {
 	border-color: #DDDDDD;
 }
 
@@ -67,17 +67,12 @@
     background: white;
 }
 
-#catalogue .center .resources .resource .resource_name,  #catalogue .center .resources .resource_details .resource_name{
-	font-weight: bold;
-}
-
-#catalogue .center .resources .resource .image {
-    border-color: #BBBBBB;
-    background: white;
+#catalogue .resource .resource_name {
+    font-weight: bold;
 }
 
 #catalogue .bold {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 #catalogue .link {
@@ -92,8 +87,8 @@
 	border-color: #000000;
 }
 
-#purchase_window_table .center_text {
-  text-align: center;
+#purchase_window_table ._text {
+  text-align: ;
 }
 
 #purchase_window_table .right_border {

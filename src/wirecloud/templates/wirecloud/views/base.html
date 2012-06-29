@@ -1,0 +1,196 @@
+{% load compress i18n %}
+{% load wirecloudtags %}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="{{ LANGUAGE_CODE }}"
+      lang="{{ LANGUAGE_CODE }}">
+<head>
+    <title>{% block title %}{% trans "Wirecloud Platform" %}{% endblock %}</title>
+
+    {% block meta %}
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="google" value="notranslate" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}images/favicon.ico" />
+    {% endblock %}
+
+    <!-- Theme css -->
+    {% block css %}
+    {% compress css %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/styled_elements_core.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/wirecloud_core.css"  />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dragboard_core.css"  />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/catalogue_core.css"  />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dragboard.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/wiring_editor.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/catalogue.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/fi-ware_catalogue.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/catalogue_list.css" />
+
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/default_catalogue.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/default.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/icons.css" />
+    {% endcompress %}
+    <!--[if IE]>
+      <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/ie.css" />
+    <![endif]-->
+    {% endblock %}
+
+    {% block js %}
+    {% endblock %}
+</head>
+
+<body>
+
+<!-- Menu layer -->
+<div id="menu_layer" style="display:none"></div>
+
+<!-- Loading indicator -->
+<div id="loading-window">
+  <div id="loading-background"></div>
+  <div id="loading-message" class="window_menu">
+    <div class="window_top">
+      <div id="loading-task-title" class="window_title">{% trans "Loading Wirecloud Platform" %} 0%</div>
+    </div>
+    <div class="window_content">
+      <div id="loading-indicator"></div>
+      <div id="loading-subtask-title" class="msg">{% trans "Retrieving wirecloud code" %}: 0%</div>
+    </div>
+  </div>
+</div>
+
+{% include "wirecloud/views/header.html" %}
+<script id="wirecloud_catalogue_search_interface" type="wirecloud/template"><![CDATA[{% include "wirecloud/catalogue/search_interface.html" %}]]></script>
+<script id="wirecloud_wiring_template" type="wirecloud/template"><![CDATA[{% include "wirecloud/wiring.html" %}]]></script>
+<script id="catalogue_resource_template" type="html/template"><![CDATA[{% include "wirecloud/catalogue/resource.html" %}]]></script>
+<script id="catalogue_resource_details_template" type="html/template"><![CDATA[{% include "wirecloud/catalogue/resource_details.html" %}]]></script>
+<script id="fiware_catalogue_resource_details_template" type="html/template"><![CDATA[{% include "wirecloud/catalogue/fiware_resource_details.html" %}]]></script>
+<script id="fiware_resource_parts" type="html/template"><![CDATA[{% include "wirecloud/catalogue/fiware_resource_parts.html" %}]]></script>
+<script id="legal_template" type="html/template"><![CDATA[{% include "wirecloud/catalogue/legal_templates/legal_template.html" %}]]></script>
+<script id="legal_clause_template" type="html/template"><![CDATA[{% include "wirecloud/catalogue/legal_templates/legal_clause_template.html" %}]]></script>
+<script id="service_level_template" type="html/template"><![CDATA[{% include "wirecloud/catalogue/sla_templates/service_level_template.html" %}]]></script>
+<script id="sla_expresion_template" type="html/template"><![CDATA[{% include "wirecloud/catalogue/sla_templates/sla_expresion_template.html" %}]]></script>
+<script id="sla_variable_template" type="html/template"><![CDATA[{% include "wirecloud/catalogue/sla_templates/sla_variable_template.html" %}]]></script>
+<script id="pricing_template" type="html/template"><![CDATA[{% include "wirecloud/catalogue/pricing_templates/pricing_template.html" %}]]></script>
+<script id="price_component_template" type="html/template"><![CDATA[{% include "wirecloud/catalogue/pricing_templates/price_component_template.html" %}]]></script>
+<script id="wirecloud_catalogue_publish_interface" type="wirecloud/template"><![CDATA[{% include "wirecloud/catalogue/developers.html" %}]]></script>
+<script id="fiware_catalogue_publish_interface" type="wirecloud/template"><![CDATA[{% include "wirecloud/catalogue/fiware_publish_template.html" %}]]></script>
+<script id="pagination_structure" type="html/template"><![CDATA[{% include "wirecloud/catalogue/pagination_template.html" %}]]></script>
+<script id="wirecloud_catalogue_template" type="wirecloud/template"><![CDATA[{% include "wirecloud/catalogue/template.html" %}]]></script>
+<script id="wirecloud_logs_template" type="wirecloud/template"><![CDATA[{% include "wirecloud/logs.html" %}]]></script>
+
+
+<!-- JavaScript code -->
+
+{% compress js %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/lib/json2.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/lib/strftime.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/lib/strftime-locales.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/lib/prototype/prototype-1.7.js"></script>
+{% endcompress %}
+<!-- jscolor can't be compressed because then it won't find the images -->
+<script type="text/javascript" src="{{ STATIC_URL }}js/common/jscolor/jscolor.js"></script>
+<script type="text/javascript">
+<![CDATA[
+var URIs = {
+  USER: '/user/{{ user.username }}',
+  GET_IGADGET: new Template('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/#{iGadgetId}'),
+  GET_IGADGETS: new Template('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/'),
+  PUT_IGADGET_VERSION: new Template('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/#{iGadgetId}/version'),
+  GET_GADGET: new Template('/user/{{ user.username }}/gadgets/#{vendor}/#{name}/#{version}'),
+  GET_GADGETS: '/user/{{ user.username }}/gadgets',
+  GET_CONTEXT: '/user/{{ user.username }}/context',
+  GET_CONTEXT_VALUE: new Template('/user/{{ user.username }}/context/#{concept}/value'),
+  PLATFORM_PREFERENCES: '/user/{{ user.username }}/preferences/platform',
+  WORKSPACE_PREFERENCES: new Template('/user/{{ user.username }}/preferences/workspace/#{workspace_id}'),
+  TAB_PREFERENCES: new Template('/user/{{ user.username }}/preferences/tab/#{workspace_id}/#{tab_id}'),
+  GET_POST_RESOURCES: '/catalogue/resource',
+  GET_RESOURCES_SIMPLE_SEARCH: '/catalogue/search',
+  GET_RESOURCES_GLOBAL_SEARCH: '/catalogue/globalsearch',
+  DELETE_TAG: '/user/{{ user.username }}/catalogue/tag',
+  POST_RESOURCE_TAGS: '/user/{{ user.username }}/catalogue/tag',
+  POST_RESOURCE_VOTES: '/user/{{ user.username }}/catalogue/voting',
+  POST_IGADGET: new Template('/workspace/#{workspaceId}/tab/#{tabId}/igadgets'),
+  PROXY: '/proxy',
+  GET_IGADGET_VARIABLES: new Template('/user/{{ user.username }}/igadgets/#{iGadgetId}/variables'),
+  GET_POST_GADGET_VARIABLE: new Template('/user/{{ user.username }}/igadgets/#{iGadgetId}/variables/#{varName}'),
+  PUT_VARIABLES: new Template('/workspace/#{workspaceId}/variables'),
+  GET_POST_WORKSPACES: '/workspaces',
+  GET_POST_WIRING: new Template('/workspaces/#{id}/wiring'),
+  GET_POST_WORKSPACE: new Template('/workspaces/#{id}/last_user/#{last_user}'),
+  GET_POST_TABS: new Template('/workspace/#{workspace_id}/tabs'),
+  TAB: new Template('/workspace/#{workspace_id}/tab/#{tab_id}'),
+  POST_PUBLISH_WORKSPACE: new Template('/workspace/#{workspace_id}/publish'),
+  ADD_WORKSPACE: '/workspace/import',
+  MERGE_WORKSPACE: new Template('/workspace/#{to_ws}/merge'),
+  GET_MERGE_WORKSPACE: new Template('/workspace/#{from_ws_id}/merge/#{to_ws_id}'),
+  PUT_SHARE_WORKSPACE: new Template('/workspace/#{workspace_id}/share/#{share_boolean}'),
+  GET_SHARE_GROUPS: new Template('/workspace/#{workspace_id}/share/groups'),
+  GADGET_TEMPLATE_GENERATOR: new Template('{{GADGET_GENERATOR_URL}}/gadgetGenerator/template/#{gadget_type}'),
+  POST_CREATE_EXTERNAL_CHANNEL: '/channel/external',
+  GET_SUBSCRIBE_USER_TO_REMOTE_CHANNELS: new Template('/notifier/channels/register?channels=#{channels}&user={{ user.username }}'),
+  POST_PUBLISH_REMOTE_CHANNELS: new Template('/notifier/channels/notify?channels=#{channels}'),
+  POST_CHECK_VERSIONS: '/user/{{ user.username }}/catalogue/versions',
+  FILE_UPLOADER: '/uploader',
+  BASIC_THEME: '/ezweb/themes/default',
+  ACTIVE_THEME: '{{ STATIC_URL }}'{% if AUTHENTICATION_SERVER_URL %},
+  EZSTEROIDS_API: '{{ AUTHENTICATION_SERVER_URL }}/api'
+{% endif %}
+};
+
+var ezweb_user_name = '{{ user.username }}';
+var ezweb_user_screen_name = '{{ screen_name }}';
+var ezweb_organizations = '{{ ezweb_organizations|safe }}';
+var tag_categories = '{{ tag_categories|safe }}';
+var _currentTheme = null;
+
+var public_workspace = '{{ active_workspace }}';
+var last_logged_user = '{{ last_user }}';
+var post_load_script = '{{ post_load_script|safe }}';
+
+var _SKINS = ["default"];
+//default skin for workspaces. Users may change the skin of a workspace afterwards
+var _DEFAULT_SKIN = 'default';
+
+var policy_lists = {{ policies|safe|default:"null" }};
+
+{% block policies %}
+{% endblock %}
+]]>
+</script>
+
+
+<script type="text/javascript" src="/jsi18n/?language={{ LANGUAGE_CODE }}"></script>
+{% compress js %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/EzSteroidsAPI/EzSteroidsAPI.js"></script>
+{% include "wirecloud/views/js_includes.js" %}
+{% extra_javascripts "index" %}
+{% wirecloud_ajax_endpoints "index" %}
+{% endcompress %}
+
+{% block extra_scripts %}{% endblock %}
+
+<!-- Initialization code -->
+<script type="text/javascript">
+    var LANGUAGE_CODE = "{{LANGUAGE_CODE}}";
+    var LANGUAGES = [];
+    {% for lang in LANGUAGES %} LANGUAGES.push(["{{lang.0}}","{{lang.1}}"]);{% endfor %}
+
+    function setLanguage(language) {
+        var onSuccess = function() {
+            window.location.reload();
+        }
+
+        var onError = function() {}
+
+        var persistenceEngine = PersistenceEngineFactory.getInstance();
+        var params = {language: language};
+        persistenceEngine.send_post("/i18n/setlang/", params, this, onSuccess, onError);
+
+        return false;
+    }
+
+    var opManager = OpManagerFactory.getInstance();
+    opManager.loadEnviroment();
+</script>
+</body>
+</html>

@@ -38,26 +38,9 @@ div.fixed div.gadget_window div.gadget_menu .closebutton, div.fixed div.gadget_w
   display: none;
 }
 
-/*div.dragboard.fixed -> LOCK OR SHARED STATUS*/
-div.fixed div.gadget_menu #settingsbutton {
-  display: inline;
-}
-
 /*div.gadget_window_readonly -> READONLY STATUS*/
 div.gadget_window.gadget_window_readonly div.gadget_menu .closebutton {
   display: none;
-}
-
-div.gadget_window div.gadget_menu input[type="button"] {
-  float: right;
-  display: inline;
-  margin: 0 0 0 5px;
-  padding: 0px;
-  width: 16px;
-  height: 16px;
-  border: 0px none;
-  outline: 0px none;
-  cursor: pointer;
 }
 
 div.gadget_window div.gadget_wrapper {
