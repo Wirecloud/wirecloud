@@ -19,8 +19,13 @@
 
 
 import rdflib
+import urllib2
+from urllib2 import HTTPError
 
 from django.utils.translation import ugettext as _
+
+from commons.template import TemplateParser
+from proxy.views import MethodRequest
 
 FOAF = rdflib.Namespace('http://xmlns.com/foaf/0.1/')
 RDF = rdflib.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#')
@@ -94,24 +99,44 @@ class USDLParser(object):
         self._info['vendor'] = self._get_field(FOAF, vendor, 'name')[0]
         self._info['name'] = self._get_field(DCTERMS, service_uri, 'title')[0]
 
-        # If the service has parts it means that is a mash-up
-        service_parts = self._get_field(USDL, service_uri, 'hasPartMandatory', id_=True)
-
-        if len(service_parts) == 1 and service_parts[0] == '':
-            self._info['type'] = 'gadget'
-        else:
-            self._info['type'] = 'mashup'
-            self._info['parts'] = []
-
-            for part in service_parts:
-                part_info = {}
-                part_info['name'] = self._get_field(DCTERMS, part, 'title')[0]
-                part_info['uri'] = unicode(part)
-                self._info['parts'].append(part_info)
-
         self._info['versions'] = []
 
         artefact = self._get_field(USDL, service_uri, 'utilizedResource', id_=True)[0]
+        uri_template = self._get_field(BLUEPRINT, artefact, 'location')[0]
+
+        # if the document does no have a uri_template is not a widget or operator
+        if uri_template == '':
+            self._info['type'] = 'non-instantiable service'
+        else:
+            # To know if is a widget an operator or another kind of service using an artefact
+            # is necesary to download the technical description
+
+            opener = urllib2.build_opener()
+            headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"}
+            request = MethodRequest('GET', uri_template.encode('utf-8'), '', headers)
+            try:
+                response = opener.open(request)
+                if response.code != 200:
+                    self._info['type'] = 'non-instantiable service'
+                else:
+                    content = response.read()
+                    parser = TemplateParser(content)
+                    technical_info = parser.get_resource_basic_info()
+                    self._info['type'] = technical_info['type']
+
+                    # if the service is a mashup it may has parts
+                    if self._info['type'] == 'mashup':
+                        service_parts = self._get_field(USDL, service_uri, 'hasPartMandatory', id_=True)
+
+                        self._info['parts'] = []
+                        for part in service_parts:
+                            part_info = {}
+                            part_info['name'] = self._get_field(DCTERMS, part, 'title')[0]
+                            part_info['uri'] = unicode(part)
+                            self._info['parts'].append(part_info)
+            except HTTPError:
+                self._info['type'] = 'non-instantiable service'
+
         self._info['versions'].append({
             'shortDescription': self._get_field(DCTERMS, service_uri, 'abstract')[0],
             'longDescription': self._get_field(DCTERMS, service_uri, 'description')[0],
@@ -119,7 +144,7 @@ class USDLParser(object):
             'modified': self._get_field(DCTERMS, service_uri, 'modified')[0],
             'uriImage': self._get_field(FOAF, service_uri, 'depiction')[0],
             'version': self._get_field(USDL, service_uri, 'versionInfo')[0],
-            'uriTemplate': self._get_field(BLUEPRINT, artefact, 'location')[0],
+            'uriTemplate': uri_template,
             'page': self._get_field(FOAF, service_uri, 'page')[0],
         })
 
