@@ -151,7 +151,6 @@ INSTALLED_APPS = (
     'preferences',
     'translator',
     'user',
-    'API',
     'uploader',
     'south',
     'compressor',
