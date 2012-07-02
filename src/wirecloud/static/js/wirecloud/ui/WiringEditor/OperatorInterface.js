@@ -33,7 +33,7 @@
      */
     var OperatorInterface = function OperatorInterface(wiringEditor, ioperator, manager, isMenubarRef) {
         var outputs, inputs, desc, label, key, anchorContext;
-        //TODO: petará cuando se use this.ioperator y este salga del xml
+
         this.ioperator = ioperator;
         this.wiringEditor = wiringEditor;
 
