@@ -2558,7 +2558,9 @@ StyledElements.StyledAlternatives = function(options) {
     this.wrapperElement.appendChild(this.contentArea);
 
     this.visibleAlt = null;
-    this.alternatives = [];
+    this.alternatives = {};
+    this.alternativeList = [];
+    this.nextAltId = 0;
 
     /* Process options */
     if (options['id']) {
@@ -2690,7 +2692,7 @@ StyledElements.StyledAlternatives.prototype.createAlternative = function(options
     };
     options = EzWebExt.merge(defaultOptions, options);
 
-    var altId = this.alternatives.length;
+    var altId = this.nextAltId++;
 
     if ((options.alternative_constructor !== StyledElements.Alternative) && !(options.alternative_constructor.prototype instanceof StyledElements.Alternative)) {
         throw TypeError();
@@ -2700,6 +2702,7 @@ StyledElements.StyledAlternatives.prototype.createAlternative = function(options
     alt.insertInto(this.contentArea);
 
     this.alternatives[altId] = alt;
+    this.alternativeList.push(alt);
 
     if (!this.visibleAlt) {
         this.visibleAlt = alt;
@@ -2710,8 +2713,49 @@ StyledElements.StyledAlternatives.prototype.createAlternative = function(options
     return alt;
 }
 
+StyledElements.StyledAlternatives.prototype.removeAlternative = function removeAlternative(alternative) {
+    var index, id, nextAlternative = null;
+
+    if (alternative instanceof StyledElements.Alternative) {
+        id = alternative.getId();
+        if (this.alternatives[id] !== alternative) {
+            throw new TypeError('Invalid alternative');
+        }
+    } else {
+        id = alternative;
+        if (this.alternatives[id] == null) {
+            throw new TypeError('Invalid alternative');
+        }
+        alternative = this.alternatives[id];
+    }
+
+    delete this.alternatives[id];
+    index = this.alternativeList.indexOf(alternative);
+    this.alternativeList.splice(index, 1);
+
+    alternative.setVisible(false);
+    this.contentArea.removeChild(alternative.wrapperElement);
+
+    if (this.visibleAlt === alternative) {
+        if (this.alternativeList.length > 0) {
+            nextAlternative = this.alternativeList[index];
+            if (!nextAlternative) {
+                nextAlternative = this.alternativeList[index - 1];
+            }
+            nextAlternative.setVisible(true);
+            this.visibleAlt = nextAlternative;
+        } else {
+            this.visibleAlt = null;
+        }
+
+        this.events['postTransition'].dispatch(this, alternative, nextAlternative);
+    }
+};
+
 StyledElements.StyledAlternatives.prototype.clear = function () {
-    this.alternatives = [];
+    this.alternatives = {};
+    this.alternativeList = [];
+    this.nextAltId = 0;
     this.visibleAlt = null;
     this.contentArea.innerHTML = '';
 };
