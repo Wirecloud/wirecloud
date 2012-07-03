@@ -72,15 +72,6 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/MarketplaceView.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/MarketManager.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/ResourcePainter.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/fiware/FiWareCatalogueView.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/fiware/FiWareCatalogue.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/fiware/FiWareCatalogueResource.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/fiware/FiWareCataloguePublishView.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/fiware/FiWareResourceDetailsView.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/fiware/FiWareResourcePainter.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/fiware/FiWareResourceDetailsExtraInfo.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/fiware/FiWareResourceDetailsPainter.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/fiware/FiWareStoreListItems.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/CatalogueResource.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/ResourceDetailsPainter.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/CataloguePublishView.js"></script>

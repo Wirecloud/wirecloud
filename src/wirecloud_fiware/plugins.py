@@ -99,6 +99,23 @@ class FiWarePlugin(WirecloudPlugin):
             'fiware': FiWareMarketManager,
         }
 
+    def get_scripts(self, view):
+
+        if view == 'index':
+            return (
+                "js/wirecloud/FiWare/FiWareCatalogueView.js",
+                "js/wirecloud/FiWare/FiWareCatalogue.js",
+                "js/wirecloud/FiWare/FiWareCatalogueResource.js",
+                "js/wirecloud/FiWare/FiWareCataloguePublishView.js",
+                "js/wirecloud/FiWare/FiWareResourceDetailsView.js",
+                "js/wirecloud/FiWare/FiWareResourcePainter.js",
+                "js/wirecloud/FiWare/FiWareResourceDetailsExtraInfo.js",
+                "js/wirecloud/FiWare/FiWareResourceDetailsPainter.js",
+                "js/wirecloud/FiWare/FiWareStoreListItems.js",
+            )
+        else:
+            return ()
+
     def get_ajax_endpoints(self, views):
         return (
             {'id': 'FIWARE_RESOURCES_COLLECTION', 'url': '/marketAdaptor/marketplace/#{market}/resources'},
