@@ -10,6 +10,7 @@ Dependencies
 * South 0.7.3+
 * lxml
 * django-compressor (BeautifulSoup)
+* rdflib 3.1.0+
 
 Installing basic dependencies in Debian Wheeze and Ubuntu oneiric
 -----------------------------------------------------------------
@@ -23,7 +24,7 @@ using pip:
 
 .. code-block:: bash
 
-    $ sudo pip install django-compressor
+    $ sudo pip install django-compressor rdflib
 
 
 Database Installation and Configuration
