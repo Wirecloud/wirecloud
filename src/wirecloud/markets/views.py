@@ -22,7 +22,7 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.utils.decorators import method_decorator
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
@@ -71,6 +71,9 @@ class MarketEntry(Resource):
 
     @method_decorator(login_required)
     def delete(self, request, market):
+        if market == 'local':
+            return HttpResponseForbidden()
+
         user_entry = request.user
         m = get_object_or_404(Market, user=user_entry, name=market)
         m.delete()

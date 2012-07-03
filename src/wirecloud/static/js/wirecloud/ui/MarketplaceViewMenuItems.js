@@ -111,7 +111,7 @@ if (!Wirecloud.ui) {
             menu.show();
         }.bind(this)));
 
-        if (this.market.number_of_alternatives > 1) {
+        if (this.market.number_of_alternatives > 1 && this.market.alternatives.getCurrentAlternative().getLabel() !== 'local') {
             items.push(new StyledElements.MenuItem(gettext('Delete marketplace'), function () {
                 //First ask if the user really wants to remove the marketplace
                 LayoutManagerFactory.getInstance().showYesNoDialog(gettext('Do you really want to remove the marketplace ') + this.market.alternatives.getCurrentAlternative().getLabel() + '?',
