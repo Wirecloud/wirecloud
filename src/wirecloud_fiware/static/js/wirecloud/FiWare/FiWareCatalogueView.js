@@ -41,7 +41,7 @@
             'publish': this.alternatives.createAlternative({alternative_constructor: FiWareCataloguePublishView, containerOptions: {catalogue: this}})
         };
 
-        this.fiWareCatalogue = new FiWareCatalogue(this.marketplace);
+        this.fiWareCatalogue = new Wirecloud.FiWare.FiWareCatalogue(this.marketplace);
         this.number_of_stores = 0;
         this.generateStoreMenu();
     };

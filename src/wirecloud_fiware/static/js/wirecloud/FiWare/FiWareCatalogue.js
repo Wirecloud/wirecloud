@@ -150,5 +150,5 @@
 
     };
 
-    window.FiWareCatalogue = FiWareCatalogue;
+    Wirecloud.FiWare.FiWareCatalogue = FiWareCatalogue;
 })();
