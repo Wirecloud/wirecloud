@@ -25,6 +25,7 @@ var MarketplaceView = function (id, options) {
     options.id = 'marketplace';
     StyledElements.Alternative.call(this, id, options);
 
+    this.viewsByName = {};
     this.alternatives = new StyledElements.StyledAlternatives();
     this.alternatives.addEventListener('postTransition', function () {
         LayoutManagerFactory.getInstance().header.refresh();
@@ -71,27 +72,37 @@ MarketplaceView.prototype.refreshViewInfo = function () {
 };
 
 MarketplaceView.prototype.addViewInfo = function (view_info) {
-    var info, view_element, view_constructor, first_element, first_iteration = true;
+    var info, old_views, view_element, view_constructor, first_element = null;
+
+    old_views = this.viewsByName;
 
     this.number_of_alternatives = 0;
     this.viewsByName = {};
+
     for (info in view_info) {
 
         view_element = JSON.parse(view_info[info]);
 
-        view_constructor = Wirecloud.MarketManager.getMarketViewClass(view_element.type);
-        this.viewsByName[info] = this.alternatives.createAlternative({alternative_constructor: view_constructor, containerOptions: {catalogue: this, marketplace: info}});
+        if (info in old_views) {
+            this.viewsByName[info] = old_views[info];
+            delete old_views[info];
+        } else {
+            view_constructor = Wirecloud.MarketManager.getMarketViewClass(view_element.type);
+            this.viewsByName[info] = this.alternatives.createAlternative({alternative_constructor: view_constructor, containerOptions: {catalogue: this, marketplace: info}});
+        }
+
         this.number_of_alternatives += 1;
-        if (first_iteration) {
+        if (first_element === null) {
             first_element = this.viewsByName[info];
-            first_iteration = false;
         }
     }
 
-    if (this.number_of_alternatives > 0) {
-        // this is used to avoid an inconsistent state in case a marketplace had been deleted
-        this.alternatives.showAlternative(first_element);
+    for (info in old_views) {
+        this.alternatives.removeAlternative(old_views[info]);
+        old_views[info].destroy();
     }
+
+    // Refresh wirecloud header as current marketplace may have been changed
     LayoutManagerFactory.getInstance().header.refresh();
 };
 
