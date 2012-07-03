@@ -39,10 +39,11 @@ from translator.models import TransModel
 
 class CatalogueResource(TransModel):
 
-    RESOURCE_TYPES = ['gadget', 'mashup']
+    RESOURCE_TYPES = ['gadget', 'mashup', 'operator']
     TYPE_CHOICES = (
         (0, 'Gadget'),
         (1, 'Mashup'),
+        (2, 'Operator'),
     )
 
     short_name = models.CharField(_('Name'), max_length=250)
@@ -76,6 +77,8 @@ class CatalogueResource(TransModel):
 
     popularity = models.DecimalField(_('popularity'), default=0, max_digits=2, decimal_places=1)
     fromWGT = models.BooleanField(_('fromWGT'), default=False)
+
+    json_description = models.TextField(_('JSON description'))
 
     def resource_type(self):
         return self.RESOURCE_TYPES[self.type]

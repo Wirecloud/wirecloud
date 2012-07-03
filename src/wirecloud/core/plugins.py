@@ -28,4 +28,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
             {'id': 'MARKET_COLLECTION', 'url': '/markets'},
             {'id': 'MARKET_ENTRY', 'url': '/market/#{market}'},
             {'id': 'WIRING_ENTRY', 'url': '/workspace/#{id}/wiring'},
+            {'id': 'OPERATOR_COLLECTION', 'url': '/api/operators'},
+            {'id': 'OPERATOR_ENTRY', 'url': '/api/operator/#{vendor}/#{name}/#{version}/html'},
         )

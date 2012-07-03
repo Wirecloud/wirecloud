@@ -30,6 +30,10 @@ urlpatterns = patterns('wirecloud.views',
         wiring_views.WiringEntry(permitted_methods=('PUT',)),
         name='wirecloud.workspace_wiring'),
 
+
+    url(r'^api/operators', wiring_views.OperatorCollection(permitted_methods=('GET',))),
+    url(r'^api/operator/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/html', wiring_views.OperatorEntry(permitted_methods=('GET',))),
+
     url(r'^markets/?$', views.MarketCollection(permitted_methods=('GET', 'POST'))),
     url(r'^market/(?P<market>[\w -]+)/?$', views.MarketEntry(permitted_methods=('PUT', 'DELETE'))),
 

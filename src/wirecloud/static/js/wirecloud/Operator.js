@@ -20,13 +20,32 @@
  */
 
 var OperatorMeta = function OperatorMeta(desc) {
-    var name, description, inputs, outputs;
+    var vendor, name, version, description, inputs, outputs;
 
+    // Vendor
+    if (!('vendor' in desc) || desc.vendor.trim() === '') {
+        throw new TypeError(gettext('missing operator vendor'));
+    }
+    vendor = desc.vendor.trim();
+    Object.defineProperty(this, 'vendor', {value: vendor});
+
+    // Name
     if (!('name' in desc) || desc.name.trim() === '') {
         throw new TypeError(gettext('missing operator name'));
     }
     name = desc.name.trim();
     Object.defineProperty(this, 'name', {value: name});
+
+    // Version
+    if (!('version' in desc) || desc.version.trim() === '') {
+        throw new TypeError(gettext('missing operator version'));
+    }
+    version = desc.version.trim();
+    Object.defineProperty(this, 'version', {value: version});
+
+    // URI
+    uri = desc.name.trim();
+    Object.defineProperty(this, 'uri', {value: vendor + '/' + name + '/' + version});
 
     description = desc.description;
     if (description == null || description.trim() === '') {
@@ -34,13 +53,13 @@ var OperatorMeta = function OperatorMeta(desc) {
     }
     Object.defineProperty(this, 'description', {value: description});
 
-    inputs = desc.inputs;
+    inputs = desc.wiring.slots;
     if (inputs == null) {
         inputs = {};
     }
     Object.defineProperty(this, 'inputs', {value: inputs});
 
-    outputs = desc.outputs;
+    outputs = desc.wiring.events;
     if (outputs == null) {
         outputs = {};
     }
@@ -51,12 +70,12 @@ var OperatorMeta = function OperatorMeta(desc) {
     }
 };
 
-OperatorMeta.prototype.instanciate = function instanciate(id) {
-    return new Operator(this, id);
+OperatorMeta.prototype.instanciate = function instanciate(id/*TODO*/, wiringEditor) {
+    return new Operator(this, id /* TODO */, wiringEditor);
 };
 
-var Operator = function Operator(operator_meta, id) {
-    var key, inputs, outputs;
+var Operator = function Operator(operator_meta, id, /* TODO */ wiringEditor) {
+    var i, inputs, outputs, data_uri;
 
     Object.defineProperty(this, 'meta', {value: operator_meta});
     Object.defineProperty(this, 'name', {value: operator_meta.name});
@@ -64,14 +83,21 @@ var Operator = function Operator(operator_meta, id) {
 
     inputs = this.meta.inputs;
     this.inputs = {};
-    for (key in inputs) {
-        this.inputs[key] = new OperatorTargetEndpoint(this, inputs[key]);
+    for (i = 0; i < inputs.length; i++) {
+        this.inputs[inputs[i].name] = new OperatorTargetEndpoint(this, inputs[i]);
     }
 
     outputs = this.meta.outputs;
     this.outputs = {};
-    for (key in outputs) {
-        this.outputs[key] = new OperatorSourceEndpoint(this, outputs[key]);
+    for (i = 0; i < outputs.length; i++) {
+        this.outputs[outputs[i].name] = new OperatorSourceEndpoint(this, outputs[i]);
+    }
+
+    if (!wiringEditor) {
+        this.element = document.createElement('object');
+        data_uri = Wirecloud.URLs.OPERATOR_ENTRY.evaluate({vendor: operator_meta.vendor, name: operator_meta.name, version: operator_meta.version});
+        this.element.setAttribute('data', data_uri);
+        document.body.appendChild(this.element);
     }
 };
 
@@ -90,6 +116,12 @@ Operator.prototype.fullDisconnect = function fullDisconnect() {
     connectables = this.outputs;
     for (i = 0; i < connectables.length; i++) {
         connectables[i].fullDisconnect();
+    }
+};
+
+Operator.prototype.destroy = function destroy() {
+    if (this.element.parentNode) {
+        this.element.parentNode.removeChild(this.element);
     }
 };
 

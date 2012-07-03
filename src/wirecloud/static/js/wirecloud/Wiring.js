@@ -178,9 +178,13 @@
             operator_info = status.operators[id];
             if (id in old_operators) {
                 this.ioperators[id] = old_operators[id];
+                delete old_operators[id];
             } else {
                 this.ioperators[id] = operators[operator_info.name].instanciate(id);
             }
+        }
+        for (id in old_operators) {
+            old_operators[id].destroy();
         }
 
         for (i = 0; i < status.connections.length; i += 1) {

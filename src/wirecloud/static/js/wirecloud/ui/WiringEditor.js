@@ -317,7 +317,7 @@ if (!Wirecloud.ui) {
         for (key in this.ioperators) {
             operator_interface = this.ioperators[key];
             pos = operator_interface.getStylePosition();
-            WiringStatus.operators[key] = {"name" : operator_interface.getName(), 'id' : key};
+            WiringStatus.operators[key] = {"name" : operator_interface.getIOperator().meta.uri, 'id' : key};
             WiringStatus.views[0].operators[key] = pos;
         }
 
@@ -413,7 +413,7 @@ if (!Wirecloud.ui) {
         var instanciated_operator, operator_interface;
 
         if (ioperator instanceof OperatorMeta) {
-            instanciated_operator = ioperator.instanciate(this.nextOperatorId);
+            instanciated_operator = ioperator.instanciate(this.nextOperatorId/* TODO */, true);
             this.nextOperatorId++;
         } else {
             instanciated_operator = ioperator;

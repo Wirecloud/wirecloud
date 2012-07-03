@@ -20,9 +20,10 @@
 from django.template import loader, Context
 
 
-def generate_xhtml_operator_code(js_files):
+def generate_xhtml_operator_code(js_files, xhtml_url):
+
     t = loader.get_template('wirecloud/operator_xhtml.html')
-    c = Context({'js_files': js_files})
+    c = Context({'base_url': xhtml_url, 'js_files': js_files})
 
     xhtml = t.render(c)
 

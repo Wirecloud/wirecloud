@@ -30,6 +30,7 @@
 
 #
 
+import json
 import os
 from datetime import datetime
 from urlparse import urljoin
@@ -50,6 +51,7 @@ from translator.models import Translation
 
 
 wgt_deployer = WgtDeployer(settings.CATALOGUE_MEDIA_ROOT)
+
 
 def extract_resource_media_from_package(template, package, base_path):
 
@@ -123,8 +125,9 @@ def add_resource_from_template(template_uri, template, user, fromWGT=False, over
     if overrides is not None:
         resource_info.update(overrides)
 
-    resource = CatalogueResource(
+    resource = CatalogueResource.objects.create(
         creator=user,
+        type=CatalogueResource.RESOURCE_TYPES.index(resource_info['type']),
         short_name=resource_info['name'],
         display_name=resource_info['display_name'],
         vendor=resource_info['vendor'],
@@ -138,15 +141,9 @@ def add_resource_from_template(template_uri, template, user, fromWGT=False, over
         template_uri=template_uri,
         creation_date=datetime.today(),
         popularity='0.0',
-        certification=get_certification_status(user)
+        certification=get_certification_status(user),
+        json_description=json.dumps(resource_info)
     )
-
-    if resource_info['type'] == 'mashup':
-        resource.type = 1
-    else:
-        resource.type = 0
-
-    resource.save()
 
     for slot in resource_info['wiring']['slots']:
         GadgetWiring.objects.create(

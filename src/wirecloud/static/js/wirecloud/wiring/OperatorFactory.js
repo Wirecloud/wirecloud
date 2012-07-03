@@ -28,75 +28,22 @@ Wirecloud.wiring = {};
 
     "use strict";
 
-    var operatorList, operators, i, operator, OperatorFactory;
+    var operators, i, operator, OperatorFactory;
 
-    var sendSms = new OperatorMeta({
-        name: 'Send SMS',
-        description: '',
-        inputs: {
-            'message': {
-                "name": "message",
-                "label": "Message",
-                "desc": "The message to send",
-                "action_label": 'Send SMS',
-                "type": "S",
-                "index": 0,
-                "callback": function (data) {
+    operators = {};
 
-                    var element, doc = EzWebExt.XML.createDocument('http://telecomitalia.it/ictservice/smsService/rest', 'rest:SmsOut');
+    Wirecloud.io.makeRequest('api/operators', {
+        method: 'GET',
+        onSuccess: function onSuccess(transport) {
+            var key, operator_jsons, operator;
 
-                    element = doc.createElement('rest:Recipient');
-                    element.textContent = data.recipient;
-                    doc.documentElement.appendChild(element);
-
-                    element = doc.createElement('rest:Sender');
-                    element.textContent = ezweb_user_name;
-                    doc.documentElement.appendChild(element);
-
-                    element = doc.createElement('rest:MessageBody');
-                    element.textContent = data.text;
-                    doc.documentElement.appendChild(element);
-
-                    element = doc.createElement('rest:ContentType');
-                    element.textContent = 'Text';
-                    doc.documentElement.appendChild(element);
-
-                    Wirecloud.io.makeRequest("https://cassiopea.tilab.com:9443/camel-dynamic-container/camelServices/smsService/sms", {
-                        method: 'POST',
-                        postBody: EzWebExt.XML.serializeXML(doc),
-                        contentType: 'application/xml',
-                        requestHeaders: {
-                            'Accept': 'application/xml, text/plain',
-                            'Authorization': 'Basic Zml3YXJlOmZpd2FyZSQ='
-                        },
-                        onSuccess: function () {
-                            this.sendEvent('ack', {id: data.id, result: 'success'});
-                        }.bind(this),
-                        onFailure: function () {
-                            this.sendEvent('ack', {id: data.id, result: 'error'});
-                        }.bind(this)
-                    });
-                }
-            }
-        },
-        outputs: {
-            'ack': {
-                'name': 'ack',
-                'label': "Acknowledge",
-                'desc': '',
-                'type': 'S',
-                'index': 0
+            operator_jsons = JSON.parse(transport.responseText);
+            for (key in operator_jsons) {
+                operator = new OperatorMeta(operator_jsons[key]);
+                operators[operator.uri] = operator;
             }
         }
     });
-
-    operatorList = [sendSms];
-
-    operators = {};
-    for (i = 0; i < operatorList.length; i += 1) {
-        operator = operatorList[i];
-        operators[operator.name] = operator;
-    }
 
     OperatorFactory = {};
 

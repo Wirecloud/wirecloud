@@ -23,9 +23,11 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbid
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
+from catalogue.models import CatalogueResource
 from commons.get_data import _invalidate_cached_variable_values
 from commons.resource import Resource
 from workspace.models import WorkSpace
+from wirecloud.wiring.utils import generate_xhtml_operator_code
 
 
 class WiringEntry(Resource):
@@ -55,3 +57,27 @@ class WiringEntry(Resource):
         _invalidate_cached_variable_values(workspace)
 
         return HttpResponse(status=204)
+
+
+class OperatorCollection(Resource):
+
+    def read(self, request):
+
+        response = {}
+        for operator in CatalogueResource.objects.filter(type=2):
+            options = json.loads(operator.json_description)
+            response[operator.id] = options
+
+        return HttpResponse(json.dumps(response), mimetype='application/json; chatset=UTF-8')
+
+
+class OperatorEntry(Resource):
+
+    def read(self, request, vendor, name, version):
+
+        operator = get_object_or_404(CatalogueResource, type=2, vendor=vendor, short_name=name, version=version)
+        options = json.loads(operator.json_description)
+        js_files = options['js_files']
+        xhtml = generate_xhtml_operator_code(js_files, operator.template_uri)
+
+        return HttpResponse(xhtml, mimetype='application/xhtml+xml; charset=UTF-8')
