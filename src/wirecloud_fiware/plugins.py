@@ -103,6 +103,7 @@ class FiWarePlugin(WirecloudPlugin):
 
         if view == 'index':
             return (
+                "js/wirecloud/FiWare.js",
                 "js/wirecloud/FiWare/FiWareCatalogueView.js",
                 "js/wirecloud/FiWare/FiWareCatalogue.js",
                 "js/wirecloud/FiWare/FiWareCatalogueResource.js",
