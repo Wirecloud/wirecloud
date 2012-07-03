@@ -23,7 +23,15 @@
 
 (function () {
 
-    var MarketManager = {};
+    var market_types, MarketManager;
+
+    market_types = {
+        'wirecloud': {
+            label: 'Wirecloud',
+            view_class: CatalogueView
+        }
+    };
+    MarketManager = {};
 
     MarketManager.getMarkets = function getMarkets(callback) {
         Wirecloud.io.makeRequest(Wirecloud.URLs.MARKET_COLLECTION, {
@@ -84,6 +92,33 @@
                 LayoutManagerFactory.getInstance()._notifyPlatformReady();
             }
         });
+    };
+
+    MarketManager.addMarketType = function addMarketType(type, label, view_class) {
+        market_types[type] = {
+            label: label,
+            view_class: view_class
+        };
+    };
+
+    MarketManager.getMarketViewClass = function getMarketplaceViewClass(type) {
+        if (type in market_types) {
+            return market_types[type].view_class;
+        } else {
+            return null;
+        }
+    };
+
+    MarketManager.getMarketTypes = function getMarketTypes() {
+        var key, market_type, types = [];
+
+        for (key in market_types) {
+            market_type = market_types[key];
+
+            types.push({label: market_type.label, value: key});
+        }
+
+        return types;
     };
 
     Wirecloud.MarketManager = MarketManager;

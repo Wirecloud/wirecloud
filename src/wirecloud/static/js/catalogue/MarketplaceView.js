@@ -71,7 +71,7 @@ MarketplaceView.prototype.refreshViewInfo = function () {
 };
 
 MarketplaceView.prototype.addViewInfo = function (view_info) {
-    var info, view_element, first_element, first_iteration = true;
+    var info, view_element, view_constructor, first_element, first_iteration = true;
 
     this.number_of_alternatives = 0;
     this.viewsByName = {};
@@ -79,23 +79,15 @@ MarketplaceView.prototype.addViewInfo = function (view_info) {
 
         view_element = JSON.parse(view_info[info]);
 
-        if (view_element.type === 'wirecloud') {
-            this.viewsByName[info] = this.alternatives.createAlternative({alternative_constructor: CatalogueView, containerOptions: {catalogue: this, marketplace: info}});
-            this.number_of_alternatives += 1;
-            if (first_iteration) {
-                first_element = this.viewsByName[info];
-                first_iteration = false;
-            }
-        } else if (view_element.type === 'fiware') {
-            this.viewsByName[info] = this.alternatives.createAlternative({alternative_constructor: FiWareCatalogueView, containerOptions: {catalogue: this, marketplace: info}});
-            this.number_of_alternatives += 1;
-            if (first_iteration) {
-                first_element = this.viewsByName[info];
-                first_iteration = false;
-            }
+        view_constructor = Wirecloud.MarketManager.getMarketViewClass(view_element.type);
+        this.viewsByName[info] = this.alternatives.createAlternative({alternative_constructor: view_constructor, containerOptions: {catalogue: this, marketplace: info}});
+        this.number_of_alternatives += 1;
+        if (first_iteration) {
+            first_element = this.viewsByName[info];
+            first_iteration = false;
         }
-
     }
+
     if (this.number_of_alternatives > 0) {
         // this is used to avoid an inconsistent state in case a marketplace had been deleted
         this.alternatives.showAlternative(first_element);

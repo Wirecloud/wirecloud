@@ -10,6 +10,14 @@ class WirecloudCorePlugin(WirecloudPlugin):
         'Wirecloud': '.'.join(map(str, VERSION)),
     }
 
+    def get_scripts(self, view):
+        if view == 'index':
+            return (
+                'js/wirecloud/MarketManager.js',
+            )
+        else:
+            return ()
+
     def get_market_classes(self):
         return {
             'wirecloud': WirecloudCatalogueManager,

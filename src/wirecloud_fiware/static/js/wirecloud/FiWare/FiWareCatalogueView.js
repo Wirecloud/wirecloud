@@ -38,7 +38,7 @@ var FiWareCatalogueView = function (id, options) {
         'publish': this.alternatives.createAlternative({alternative_constructor: FiWareCataloguePublishView, containerOptions: {catalogue: this}})
     };
 
-    this.fiWareCatalogue = new FiWareCatalogue(this.marketplace);
+    this.fiWareCatalogue = new Wirecloud.FiWare.FiWareCatalogue(this.marketplace);
     this.number_of_stores = 0;
     this.generateStoreMenu();
 };
@@ -208,3 +208,5 @@ FiWareCatalogueView.prototype.ui_commands.delete = function (resource, options) 
 FiWareCatalogueView.prototype.refresh_search_results = function () {
     this.viewsByName.search._search();
 };
+
+Wirecloud.MarketManager.addMarketType('fiware', 'FiWare', FiWareCatalogueView);

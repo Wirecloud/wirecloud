@@ -88,12 +88,7 @@ if (!Wirecloud.ui) {
                 },
                 'type': {
                     'type': 'select',
-                    'initialEntries': [{
-                        'label': 'Wirecloud',
-                        'value': 'wirecloud'
-                    },
-                        {'label': 'Fi-ware',
-                        'value': 'fiware'}],
+                    'initialEntries': Wirecloud.MarketManager.getMarketTypes(),
                     'label': gettext('Type'),
                     'required': true
                 }
