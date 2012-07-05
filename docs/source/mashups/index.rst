@@ -10,3 +10,4 @@ create and extend mashups in different ways.
     :maxdepth: 1
 
     mashup_template_schema.rst
+    mashup_rdf_template_schema.rst

@@ -1,23 +1,38 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <Template xmlns="http://morfeo-project.org/2007/Template">
   <Catalog.ResourceDescription>
-    <Vendor>EzWeb Test Suite</Vendor>
+    <Vendor>Wirecloud Test Suite</Vendor>
     <Name>Test Workspace</Name>
     <Version>1</Version>
     <Author>admin</Author>
     <Mail>a@b.com</Mail>
-    <Description>This template defines an empty workspace</Description>
-    <ImageURI>/ezweb/images/headshot_mashup.jpg</ImageURI>
-    <WikiURI>http://trac.morfeo-project.org/trac/ezwebplatform/wiki/options</WikiURI>
+    <Description>This template defines an empty mashup</Description>
+    <ImageURI>images/mashup.png</ImageURI>
+    <WikiURI>docs/index.html</WikiURI>
     <Organization></Organization>
     <IncludedResources>
         <Tab id="1" name="Tab">
+            <Preference name="smart" value="False"/>
+            <Resource title="Test (1)" version="0.9" vendor="Yaco Sistemas S.L." id="1" name="Test">
+               <Position y="0" x="0" z="0"/>
+               <Rendering width="6" layout="0" minimized="False" fulldragboard="False" height="24"/>
+               <Preference name="list" value="default" readonly="true" hidden="true"/>
+               <Preference name="text" value="initial text" readonly="true" hidden="false"/>
+            </Resource>
+            <Resource title="Test (2)" version="0.9" vendor="Yaco Sistemas S.L." id="2" name="Test">
+               <Position y="0" x="0" z="0"/>
+               <Rendering width="6" layout="0" minimized="False" fulldragboard="False" height="24"/>
+               <Preference name="list" value="default"/>
+               <Preference name="text" value="initial text" readonly="true" hidden="true"/>
+            </Resource>
         </Tab>
     </IncludedResources>
   </Catalog.ResourceDescription>
   <Platform.Wiring>
-    <Channel id="1" name="blocked channel" readonly="true">
-    </Channel>
+    <Connection id="1" name="blocked connection" readonly="true">
+        <Source id="1" type="iwidget" endpoint="test" />
+        <Target id="2" type="iwidget" endpoint="test" />
+    </Connection>
   </Platform.Wiring>
 </Template>
 

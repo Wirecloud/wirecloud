@@ -36,22 +36,6 @@ from commons.authentication import Http403
 from gadget.models import Gadget, VariableDef
 from igadget.models import Position, IGadget, Variable
 from workspace.models import Tab, VariableValue
-from connectable.models import In, Out
-
-
-def createConnectable(var):
-    # If var is and SLOT or and EVENT, a proper connectable object must be created!
-    aspect = var.vardef.aspect
-    name = var.vardef.name
-
-    connectable = None
-
-    if aspect == 'SLOT':
-        connectable = Out.objects.create(name=name, variable=var)
-    if aspect == 'EVEN':
-        connectable = In.objects.create(name=name, variable=var)
-
-    return connectable
 
 
 def addIGadgetVariable(igadget, varDef, initial_value=None):
@@ -64,19 +48,14 @@ def addIGadgetVariable(igadget, varDef, initial_value=None):
     else:
         var_value = ''
 
+    # Create Variable
+    variable = Variable.objects.create(igadget=igadget, vardef=varDef)
+
     if varDef.aspect == 'PREF' or varDef.aspect == 'PROP':
-        # Create Variable
-        variable = Variable.objects.create(igadget=igadget, vardef=varDef)
 
         # Creating Variable Values for this variable
         for user in igadget.tab.workspace.users.all():
             VariableValue.objects.create(user=user, variable=variable, value=var_value)
-
-    elif varDef.aspect == 'SLOT' or varDef.aspect == 'EVEN':
-        # Create Variable
-        variable = Variable.objects.create(igadget=igadget, vardef=varDef)
-
-        createConnectable(variable)
 
 
 def UpgradeIGadget(igadget, user, new_gadget):
@@ -261,11 +240,6 @@ def deleteIGadget(igadget, user):
     # Delete all IGadget's variables
     variables = Variable.objects.filter(igadget=igadget)
     for var in variables:
-        if var.vardef.aspect == "SLOT":
-            Out.objects.filter(variable=var).delete()
-
-        if var.vardef.aspect == "EVEN":
-            In.objects.filter(variable=var).delete()
 
         # Deleting variable value
         VariableValue.objects.filter(variable=var).delete()

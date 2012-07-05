@@ -38,7 +38,6 @@
     <Context name="language" type="text" concept="language"/>
     <Context name="user" type="text" concept="username"/>
     <GadgetContext name="width" type="text" concept="widthInPixels"/>
-    <GadgetContext name="lockStatus" type="text" concept="lockStatus"/>
   </Platform.Context>
 
   <Translations default="en">

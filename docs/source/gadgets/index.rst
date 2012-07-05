@@ -34,4 +34,6 @@ More precise documentation of gadgets is explained in the following sections:
     template.rst
     javascript_API.rst
     EzWebAPI.rst
+    widget_mashup_rdf_ontology.rst
     gadget_template_schema.rst
+    widget_rdf_template_schema.rst

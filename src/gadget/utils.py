@@ -33,7 +33,7 @@ import os
 from lxml import etree
 from cStringIO import StringIO
 
-from django.contrib.sites.models import Site
+from django.contrib.sites.models import get_current_site
 from django.conf import settings
 from django.core.urlresolvers import reverse
 
@@ -44,8 +44,8 @@ from commons.http_utils import download_http_content
 from commons.template import TemplateParser
 from commons.wgt import WgtDeployer, WgtFile
 from gadget.models import ContextOption, VariableDef, UserPrefOption, Gadget, XHTML
-from ezweb.plugins import get_active_features, get_gadget_api_extensions
 from translator.models import Translation
+from wirecloud.plugins import get_active_features, get_gadget_api_extensions
 from workspace.models import WorkSpace, UserWorkSpace
 
 
@@ -155,7 +155,7 @@ def create_gadget_from_template(template, user, request=None, base=None):
         order += 1
 
     order = 0
-    for slot in gadget_info['slots']:
+    for slot in gadget_info['wiring']['slots']:
         vDef = VariableDef.objects.create(
             name=slot['name'],
             order=order,
@@ -171,7 +171,7 @@ def create_gadget_from_template(template, user, request=None, base=None):
         order += 1
 
     order = 0
-    for event in gadget_info['events']:
+    for event in gadget_info['wiring']['events']:
         vDef = VariableDef.objects.create(
             name=event['name'],
             order=order,
@@ -388,9 +388,4 @@ def fix_gadget_code(xhtml_code, base_url, request):
 
 
 def get_site_domain(request):
-    try:
-        host = Site.objects.get(id=settings.SITE_ID).domain
-    except Site.DoesNotExist:
-        host = request.META['HTTP_HOST']
-
-    return "//" + host
+    return "//" + get_current_site(request).domain

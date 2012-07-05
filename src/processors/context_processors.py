@@ -99,13 +99,6 @@ def policy_lists(request):
     return {'policies': user_policies}
 
 
-def installed_apps(request):
-    if hasattr(settings, 'INSTALLED_APPS'):
-        return {'installed_apps': settings.INSTALLED_APPS}
-    else:
-        return {'installed_apps': None}
-
-
 def ezweb_organizations(request):
     """Organizations available in Wirecloud"""
     queryGroups = Group.objects.exclude(name__startswith="cert__").order_by('name')

@@ -2,6 +2,8 @@
 
 import codecs
 import os
+import rdflib
+import json
 
 from django.contrib.auth.models import User, Group
 from django.core.cache import cache
@@ -9,12 +11,11 @@ from django.test import Client, TestCase
 from django.utils import simplejson
 
 from commons.get_data import get_global_workspace_data
-from connectable.models import InOut
 from gadget.models import Gadget
 from igadget.models import IGadget, Variable
 from igadget.utils import SaveIGadget, deleteIGadget
 from workspace.packageCloner import PackageCloner
-from workspace.mashupTemplateGenerator import build_template_from_workspace
+from workspace.mashupTemplateGenerator import build_template_from_workspace, build_rdf_template_from_workspace, build_usdl_from_workspace
 from workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from workspace.models import WorkSpace, UserWorkSpace, Tab, VariableValue
 from workspace.utils import sync_base_workspaces
@@ -223,6 +224,14 @@ class WorkspaceTestCase(CacheTestCase):
 
 
 class ParamatrizedWorkspaceGenerationTestCase(TestCase):
+
+    WIRE_M = rdflib.Namespace('http://wirecloud.conwet.fi.upm.es/ns/mashup#')
+    FOAF = rdflib.Namespace('http://xmlns.com/foaf/0.1/')
+    RDF = rdflib.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#')
+    DCTERMS = rdflib.Namespace('http://purl.org/dc/terms/')
+    USDL = rdflib.Namespace('http://www.linked-usdl.org/ns/usdl-core#')
+    VCARD = rdflib.Namespace('http://www.w3.org/2006/vcard/ns#')
+
     fixtures = ['test_workspace']
 
     def setUp(self):
@@ -235,22 +244,102 @@ class ParamatrizedWorkspaceGenerationTestCase(TestCase):
         self.assertEquals(len(elements), 1)
         self.assertEquals(elements[0].text, content)
 
+    def assertRDFElement(self, graph, element, ns, predicate, content):
+        elements = graph.objects(element, ns[predicate])
+        for e in elements:
+            self.assertEquals(unicode(e), content)
+
     def testBuildTemplateFromWorkspace(self):
 
         options = {
-            'vendor': 'EzWeb Test Suite',
-            'name': 'Test Workspace',
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Mashup',
             'version': '1',
             'author': 'test',
             'email': 'a@b.com',
             'readOnlyGadgets': True,
         }
         template = build_template_from_workspace(options, self.workspace, self.user)
-        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Vendor', 'EzWeb Test Suite')
-        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Name', 'Test Workspace')
+        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Vendor', 'Wirecloud Test Suite')
+        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Name', 'Test Mashup')
         self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Version', '1')
         self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Author', 'test')
         self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Mail', 'a@b.com')
+
+    def testBuildRdfTemplateFromWorkspace(self):
+
+        options = {
+            'vendor': u'Wirecloud Test Suite',
+            'name': u'Test Mashup',
+            'version': u'1',
+            'author': u'test',
+            'email': u'a@b.com',
+            'readOnlyGadgets': True,
+        }
+        graph = build_rdf_template_from_workspace(options, self.workspace, self.user)
+        mashup_uri = graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']).next()
+
+        self.assertRDFElement(graph, mashup_uri, self.DCTERMS, 'title', u'Test Mashup')
+        self.assertRDFElement(graph, mashup_uri, self.USDL, 'versionInfo', u'1')
+
+        vendor = graph.objects(mashup_uri, self.USDL['hasProvider']).next()
+        self.assertRDFElement(graph, vendor, self.FOAF, 'name', u'Wirecloud Test Suite')
+
+        addr = graph.objects(mashup_uri, self.VCARD['addr']).next()
+        self.assertRDFElement(graph, addr, self.VCARD, 'email', u'a@b.com')
+
+        author = graph.objects(mashup_uri, self.DCTERMS['creator']).next()
+        self.assertRDFElement(graph, author, self.FOAF, 'name', u'test')
+
+    def testBuildRdfTemplateFromWorkspaceUtf8Char(self):
+        options = {
+            'vendor': u'Wirecloud Test Suite',
+            'name': u'Test Mashup with ñ',
+            'version': u'1',
+            'author': u'author with é',
+            'email': u'a@b.com',
+            'readOnlyGadgets': True,
+        }
+
+        graph = build_rdf_template_from_workspace(options, self.workspace, self.user)
+        mashup_uri = graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']).next()
+
+        self.assertRDFElement(graph, mashup_uri, self.DCTERMS, 'title', u'Test Mashup with ñ')
+        self.assertRDFElement(graph, mashup_uri, self.USDL, 'versionInfo', u'1')
+
+        vendor = graph.objects(mashup_uri, self.USDL['hasProvider']).next()
+        self.assertRDFElement(graph, vendor, self.FOAF, 'name', u'Wirecloud Test Suite')
+
+        addr = graph.objects(mashup_uri, self.VCARD['addr']).next()
+        self.assertRDFElement(graph, addr, self.VCARD, 'email', u'a@b.com')
+
+        author = graph.objects(mashup_uri, self.DCTERMS['creator']).next()
+        self.assertRDFElement(graph, author, self.FOAF, 'name', u'author with é')
+
+    def testBuildUSDLFromWorkspace(self):
+
+        options = {
+            'vendor': u'Wirecloud Test Suite',
+            'name': u'Test Workspace',
+            'version': u'1',
+            'author': u'test',
+            'email': u'a@b.com',
+            'readOnlyGadgets': True,
+        }
+        graph = build_usdl_from_workspace(options, self.workspace, self.user, 'http://wirecloud.conwet.fi.upm.es/ns/mashup#/Wirecloud%20Test%20Suite/Test%20Workspace/1')
+        services = graph.subjects(self.RDF['type'], self.USDL['Service'])
+
+        for service in services:
+            if str(service) == str(self.WIRE_M[options['vendor'] + '/' + options['name'] + '/' + options['version']]):
+                service_uri = service
+                break
+        else:
+            raise Exception
+
+        self.assertRDFElement(graph, service_uri, self.DCTERMS, 'title', u'Test Workspace')
+        self.assertRDFElement(graph, service_uri, self.USDL, 'versionInfo', u'1')
+        vendor = graph.objects(service_uri, self.USDL['hasProvider']).next()
+        self.assertRDFElement(graph, vendor, self.FOAF, 'name', u'Wirecloud Test Suite')
 
 
 class ParametrizedWorkspaceParseTestCase(TestCase):
@@ -263,6 +352,10 @@ class ParametrizedWorkspaceParseTestCase(TestCase):
         self.workspace = createEmptyWorkSpace('Testing', self.user)
         self.template1 = self.read_template('wt1.xml')
         self.template2 = self.read_template('wt2.xml')
+        self.rdfTemplate1 = self.read_template('wt1.rdf')
+        self.rdfTemplate2 = self.read_template('wt2.rdf')
+        self.rdfTemplate3 = self.read_template('wt3.rdf')
+        self.rdfTemplate4 = self.read_template('wt4.rdf')
 
     def read_template(self, filename):
         f = codecs.open(os.path.join(os.path.dirname(__file__), filename), 'rb')
@@ -275,34 +368,56 @@ class ParametrizedWorkspaceParseTestCase(TestCase):
         fillWorkspaceUsingTemplate(self.workspace, self.template1)
         data = get_global_workspace_data(self.workspace, self.user).get_data()
         self.assertEqual(self.workspace.name, 'Testing')
-        self.assertEqual(len(data['workspace']['tabList']), 1)
+        self.assertEqual(len(data['workspace']['tabList']), 2)
 
         # Workspace template 2 adds a new Tab
         fillWorkspaceUsingTemplate(self.workspace, self.template2)
         data = get_global_workspace_data(self.workspace, self.user).get_data()
-        self.assertEqual(len(data['workspace']['tabList']), 2)
+        self.assertEqual(len(data['workspace']['tabList']), 3)
 
         # Check that we handle the case where there are 2 tabs with the same name
         fillWorkspaceUsingTemplate(self.workspace, self.template2)
         data = get_global_workspace_data(self.workspace, self.user).get_data()
-        self.assertEqual(len(data['workspace']['tabList']), 3)
-        self.assertNotEqual(data['workspace']['tabList'][1]['name'],
-            data['workspace']['tabList'][2]['name'])
+        self.assertEqual(len(data['workspace']['tabList']), 4)
+        self.assertNotEqual(data['workspace']['tabList'][2]['name'],
+            data['workspace']['tabList'][3]['name'])
 
     def testBuildWorkspaceFromTemplate(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.template1, self.user)
         get_global_workspace_data(self.workspace, self.user)
 
-        channels = InOut.objects.filter(workspace=workspace)
-        self.assertEqual(channels.count(), 1)
-        self.assertEqual(channels[0].readOnly, False)
+        wiring_status = json.loads(workspace.wiringStatus)
+        self.assertEqual(len(wiring_status['connections']), 1)
+        self.assertEqual(wiring_status['connections'][0]['readonly'], False)
 
-    def testBlockedChannels(self):
+    def testBuildWorkspaceFromRdfTemplate(self):
+        workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate1, self.user)
+        get_global_workspace_data(self.workspace, self.user)
+
+        wiring_status = json.loads(workspace.wiringStatus)
+        self.assertEqual(len(wiring_status['connections']), 1)
+        self.assertEqual(wiring_status['connections'][0]['readonly'], False)
+
+    def testBuildWorkspaceFromRdfTemplateUtf8Char(self):
+        workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate4, self.user)
+        data = get_global_workspace_data(workspace, self.user).get_data()
+
+        for t in data['workspace']['tabList']:
+            self.assertEqual(t['name'][0:7], u'Pestaña')
+
+    def testBlockedConnections(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.template2, self.user)
 
-        connectables = InOut.objects.filter(workspace=workspace)
-        self.assertEqual(connectables.count(), 1)
-        self.assertEqual(connectables[0].readOnly, True)
+        wiring_status = json.loads(workspace.wiringStatus)
+        self.assertEqual(len(wiring_status['connections']), 1)
+        self.assertEqual(wiring_status['connections'][0]['readonly'], True)
+
+    def testBloquedConnectionsRdf(self):
+        workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate2, self.user)
+
+        wiring_status = json.loads(workspace.wiringStatus)
+        self.assertEqual(len(wiring_status['connections']), 1)
+        self.assertEqual(wiring_status['connections'][0]['readonly'], True)
 
     def test_complex_workspaces(self):
         template3 = self.read_template('wt3.xml')
@@ -319,3 +434,29 @@ class ParametrizedWorkspaceParseTestCase(TestCase):
         self.assertEqual(len(data['workspace']['tabList'][2]['igadgetList']), 0)
         self.assertEqual(data['workspace']['tabList'][3]['name'], 'Tab 4')
         self.assertEqual(len(data['workspace']['tabList'][3]['igadgetList']), 0)
+
+    def testComplexWorkspacesRdf(self):
+        workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate3, self.user)
+
+        data = get_global_workspace_data(workspace, self.user).get_data()
+        tabs = [u'Tab', u'Tab 2', u'Tab 3', u'Tab 4']
+
+        self.assertEqual(len(data['workspace']['tabList']), 4)
+
+        for tab in data['workspace']['tabList']:
+            if tab['name'] in tabs:
+                tabs.remove(tab['name'])
+
+                if tab['name'] == u'Tab' or tab['name'] == u'Tab 2':
+                    self.assertEqual(len(tab['igadgetList']), 1)
+                elif tab['name'] == u'Tab 3' or tab['name'] == u'Tab 4':
+                    self.assertEqual(len(tab['igadgetList']), 0)
+
+        self.assertEqual(len(tabs), 0)
+
+        wiring = json.loads(data['workspace']['wiring'])
+        self.assertEqual(len(wiring['connections']), 1)
+        self.assertEqual(wiring['connections'][0]['source']['type'], 'iwidget')
+        self.assertEqual(wiring['connections'][0]['source']['endpoint'], 'event')
+        self.assertEqual(wiring['connections'][0]['target']['type'], 'iwidget')
+        self.assertEqual(wiring['connections'][0]['target']['endpoint'], 'slot')

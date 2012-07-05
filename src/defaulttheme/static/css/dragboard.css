@@ -24,13 +24,21 @@ div.gadget_menu {
     border-radius: 0px;
 }
 
+.notebook.pruebas .tab_area .tab.selected {
+	background: white;
+    z-index: 2;
+}
+
+.notebook.pruebas .tab_area .tab {
+	background: #DF7A62;
+}
 /********************************************/
 
 div.dragboard.fixed {
   background: transparent;
 }
 
-div.gadget_window div.gadget_menu input[type="button"] {
+div.gadget_window div.gadget_menu > .styled_button {
     opacity: 0;
     -moz-transition-property: opacity;
     -moz-transition-duration: 1s;
@@ -40,64 +48,70 @@ div.gadget_window div.gadget_menu input[type="button"] {
     -o-transition-duration: 1s;
     transition-property: opacity;
     transition-duration: 1s;
+    float: right;
+    margin: 0 0 0 5px;
+    padding: 0px;
+    width: 16px;
+    height: 16px;
+    border: 0px none;
 }
 
-div.gadget_window div.gadget_menu:hover input[type="button"] {
+div.gadget_window div.gadget_menu:hover > .styled_button {
     opacity: 1;
 }
 
-div.gadget_window div.gadget_menu input[type="button"].closebutton {
+div.gadget_window div.gadget_menu > .closebutton {
   background: url(../images/icons-sprite.png);
   background-position: -24px -480px;
 }
 
-div.gadget_window div.gadget_menu input[type="button"].closebutton:hover {
+div.gadget_window div.gadget_menu > .closebutton:hover {
   background-position: 0px -480px;
 }
 
-div.gadget_window div.gadget_menu input[type="button"].minimizebutton {
+div.gadget_window div.gadget_menu > .minimizebutton {
   background: url(../images/icons-sprite.png);
   background-position: -24px -432px;
 }
 
-div.gadget_window div.gadget_menu input[type="button"].minimizebutton:hover {
+div.gadget_window div.gadget_menu > .minimizebutton:hover {
   background-position: 0px -432px;
 }
 
-div.gadget_window div.gadget_menu input[type="button"].maximizebutton {
+div.gadget_window div.gadget_menu > .maximizebutton {
   background: url(../images/icons-sprite.png);
   background-position: -24px -336px;
 }
 
-div.gadget_window div.gadget_menu input[type="button"].maximizebutton:hover {
+div.gadget_window div.gadget_menu > .maximizebutton:hover {
   background-position: 0px -336px;
 }
 
-div.gadget_window div.gadget_menu input[type="button"].settingsbutton {
+div.gadget_window div.gadget_menu > .settingsbutton {
   background: url(../images/icons-sprite.png);
   background-position: -24px -456px;
 }
 
-div.gadget_window div.gadget_menu input[type="button"].settingsbutton:hover {
+div.gadget_window div.gadget_menu > .settingsbutton:hover {
   background-position: 0px -456px;
 }
 
-div.gadget_window div.gadget_menu input[type="button"].settings2button {
+div.gadget_window div.gadget_menu > .settings2button {
     background: url(../images/icons-sprite.png);
     background-position: 0px -144px;
 }
 
-div.gadget_window div.gadget_menu input[type="button"].settings2button:hover {
+div.gadget_window div.gadget_menu > .settings2button:hover {
     background-position: -24px -120px;
 }
 
-div.gadget_window div.gadget_menu input[type="button"].errorbutton {
+div.gadget_window div.gadget_menu > .errorbutton {
   background-image: url(../images/icons-sprite.png);
   background-position: -24px -528px;
   background-color: transparent;
 }
 
-div.gadget_window div.gadget_menu input[type="button"].versionbutton {
+div.gadget_window div.gadget_menu > .versionbutton {
     background-image: url(../images/icons-sprite.png);
     background-position: -24px -216px;
     background-color: transparent;

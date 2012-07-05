@@ -41,10 +41,10 @@ span.icon {
     border-color: transparent;
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
-    background-color: white;
 }
 
 .styled_button.icon-menu.open {
+    background-color: white;
     border-color: #BEBEBE;
 }
 

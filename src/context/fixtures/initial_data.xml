@@ -34,11 +34,6 @@
         <field type="CharField" name="description">Language selected by the current user</field>
         <field type="CharField" name="adaptor"><None></None></field>
     </object>
-    <object pk="lockStatus" model="context.concept">
-        <field type="CharField" name="source">PLAT</field>
-        <field type="CharField" name="type">GCTX</field>
-        <field type="CharField" name="adaptor"><None></None></field>
-    </object>
     <object pk="widthInPixels" model="context.concept">
         <field type="CharField" name="source">PLAT</field>
         <field type="CharField" name="type">GCTX</field>
@@ -93,10 +88,6 @@
     <object pk="6" model="context.conceptname">
         <field type="CharField" name="name">language</field>
         <field to="context.concept" name="concept" rel="ManyToOneRel">language</field>
-    </object>
-    <object pk="7" model="context.conceptname">
-        <field type="CharField" name="name">lockStatus</field>
-        <field to="context.concept" name="concept" rel="ManyToOneRel">lockStatus</field>
     </object>
     <object pk="8" model="context.conceptname">
         <field type="CharField" name="name">widthInPixels</field>

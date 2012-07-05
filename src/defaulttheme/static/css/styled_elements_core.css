@@ -151,8 +151,9 @@ div.styled_text_field div input:focus {
 /* Styled Text Area */
 
 div.styled_text_area {
-  overflow: hidden;
-  height: 5em;
+    overflow: hidden;
+    height: 5em;
+    position: relative;
 }
 
 div.styled_text_area > div {
@@ -284,11 +285,11 @@ div.styled_numeric_field div.numeric_bottom_button {
   z-index: 111113;
 }
 
-.styled_button > div, .styled_button.plain {
+.styled_button > div, .styled_button > button, .styled_button.plain {
   cursor: pointer;
 }
 
-.styled_button.disabled > div, .styled_button.plain.disabled {
+.styled_button.disabled > div, , .styled_button.disabled > button, .styled_button.plain.disabled {
   cursor: default;
 }
 
@@ -644,6 +645,12 @@ div.styled_date_field
   margin:  3px;
 }
 
+div.styled_text_field.error,
+div.styled_password_field.error,
+div.styled_date_field.error
+{
+    background-color: #DF7A62;
+}
 /* Styled Text Area */
 
 div.styled_text_area > div {
@@ -699,10 +706,16 @@ div.styled_numeric_field div.numeric_bottom_button {
 
 /* Styled Button */
 
-.styled_button {
+.styled_button, .styled_button > button {
+    border: 0px;
+    padding: 0px;
+    background: transparent;
+    font-family: Arial;
+    font-size: 12px;
+    font-weight: bold;
 }
 
-.styled_button > div {
+.styled_button > div, .styled_button > button {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
@@ -983,10 +996,42 @@ div.styled_numeric_field div.numeric_bottom_button {
   margin: 0.9ex 0;
 }
 
+/* Forms */
+.styled_form .buttons {
+    margin: 2em 0 0.5em;
+    text-align: center;
+}
+
 .error_desc .action_desc {
   font-weight: bold;
 }
 
 .error_desc .cause_desc {
   margin-left: 1em;
+}
+
+.styled_expander {
+    border: 1px solid #8AAD3E;
+    margin: 3px;
+}
+
+.styled_expander .title {
+    background: #F3F4EC;
+    padding: 1.5ex;
+    font-size: 16px;
+    font-style: italic;
+    text-shadow: 2px 2px 3px #999999;
+}
+
+.styled_expander .contents {
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    padding: 0;
+}
+
+.styled_expander.expanded .contents {
+    width: auto;
+    height: auto;
+    padding: 1ex;
 }

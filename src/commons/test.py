@@ -55,6 +55,10 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         # initialize
         self.wgt_dir = os.path.join(settings.BASEDIR, '..', 'tests', 'ezweb-data')
 
+    def fill_form_input(self, form_input, value):
+        # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
+        self.driver.execute_script('arguments[0].value = arguments[1]', form_input, value)
+
     def wait_wirecloud_ready(self, start_timeout=90, timeout=120):
 
         WebDriverWait(self.driver, start_timeout).until(lambda driver: driver.find_element_by_xpath(r'//*[@id="loading-window" and (@class="" or @class="fadding")]'))
@@ -88,18 +92,11 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         if self.get_current_view() != view_name:
             self.driver.find_element_by_css_selector("#wirecloud_header .menu ." + view_name).click()
 
-    def click_submenu_item(self, item_text):
-        submenu_items = self.driver.find_elements_by_css_selector('#wirecloud_header .submenu span')
-        for submenu_item in submenu_items:
-            if submenu_item.text == item_text:
-                submenu_item.click()
-                return
-
     def add_wgt_gadget_to_catalogue(self, wgt_file, gadget_name):
 
         self.change_main_view('marketplace')
-        self.click_submenu_item('publish')
-        time.sleep(1)
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
+        self.popup_menu_click('Upload')
 
         self.driver.find_element_by_id('wgt_file').send_keys(self.wgt_dir + os.sep + wgt_file)
         self.driver.find_element_by_id('upload_wgt_button').click()
@@ -115,11 +112,13 @@ class WirecloudSeleniumTestCase(HttpTestCase):
     def add_template_to_catalogue(self, template_url, resource_name):
 
         self.change_main_view('marketplace')
-        self.click_submenu_item('publish')
-        time.sleep(1)
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
+        self.popup_menu_click('Upload')
+        time.sleep(0.1)
 
-        submit_button = self.driver.find_element_by_css_selector('form.template_submit_form .template_uri')
-        submit_button.send_keys(template_url + Keys.ENTER)
+        template_input = self.driver.find_element_by_css_selector('form.template_submit_form .template_uri')
+        self.fill_form_input(template_input, template_url)
+        self.driver.find_element_by_id('submit_link').click()
 
         self.wait_wirecloud_ready()
         time.sleep(2)
@@ -131,8 +130,8 @@ class WirecloudSeleniumTestCase(HttpTestCase):
 
     def search_resource(self, keyword):
         search_input = self.driver.find_element_by_css_selector('#simple_search input')
-        search_input.clear()
-        search_input.send_keys(keyword + Keys.ENTER)
+        self.fill_form_input(search_input, keyword)
+        self.driver.execute_script('var evt = document.createEvent("KeyboardEvent");evt.initKeyboardEvent ("keypress", true, true, window, 0, 0, 0, 0, 0, 13); arguments[0].dispatchEvent(evt);', search_input)
 
         # TODO
         time.sleep(2)
@@ -147,8 +146,8 @@ class WirecloudSeleniumTestCase(HttpTestCase):
 
         return None
 
-    def instanciate(self, resource):
-        resource.find_element_by_css_selector('.instanciate_button').click()
+    def instanciate(self):#, resource):
+        self.driver.find_element_by_css_selector('.instanciate_button').click()
 
         # TODO
         time.sleep(2)
@@ -198,10 +197,9 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click('New workspace')
 
-        workspace_name_input = self.driver.find_element_by_css_selector('.window_menu .window_content input')
-        workspace_name_input.clear()
-        workspace_name_input.send_keys(workspace_name)
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Create']").click()
+        workspace_name_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input')
+        self.fill_form_input(workspace_name_input, workspace_name)
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 
         self.wait_wirecloud_ready()
         time.sleep(0.5)  # work around race condition
@@ -212,9 +210,8 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click('Rename')
 
-        workspace_name_input = self.driver.find_element_by_css_selector('.window_menu .window_content input')
-        workspace_name_input.clear()
-        workspace_name_input.send_keys(workspace_name)
+        workspace_name_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input')
+        self.fill_form_input(workspace_name_input, workspace_name)
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 
         self.wait_wirecloud_ready()
@@ -244,7 +241,36 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         self.driver.quit()
         super(WirecloudSeleniumTestCase, self).tearDown()
 
+    def add_marketplace(self,name,label,url,type_):
+        
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
+        self.popup_menu_click("Add new marketplace")
+        
+        market_name_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="label"]')
+        self.fill_form_input(market_name_input, name)
+        market_label_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="display_name"]')
+        self.fill_form_input(market_label_input, label)
+        market_url_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="url"]')
+        self.fill_form_input(market_url_input, url)
+        market_type_input = self.driver.find_element_by_css_selector('.window_menu .styled_form select')
+        self.fill_form_input(market_type_input, type_)
 
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+
+    def delete_marketplace(self, market):
+
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
+        self.popup_menu_click(market)
+        
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
+        self.popup_menu_click("Delete marketplace")
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
+
+    def delete_gadget(self, gadget_name):
+        self.driver.find_element_by_css_selector('.click_for_details').click()
+        self.driver.find_element_by_css_selector('.advanced_operations .styled_button').click()
+        self.driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").click()
+        
 browsers = getattr(settings, 'WIRECLOUD_SELENIUM_BROWSER_COMMANDS', {
     'Firefox': {
         'CLASS': 'selenium.webdriver.Firefox',

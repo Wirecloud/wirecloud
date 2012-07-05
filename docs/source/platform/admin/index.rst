@@ -10,7 +10,7 @@ Dependencies
 * South 0.7.3+
 * lxml
 * django-compressor (BeautifulSoup)
-* johnny-cache
+* rdflib 3.1.0+
 
 Installing basic dependencies in Debian Wheeze and Ubuntu oneiric
 -----------------------------------------------------------------
@@ -24,7 +24,7 @@ using pip:
 
 .. code-block:: bash
 
-    $ sudo pip install johnny-cache django-compressor
+    $ sudo pip install django-compressor rdflib
 
 
 Database Installation and Configuration
@@ -88,7 +88,7 @@ following parameters:
 
     .. code-block:: python
 
-        DATABASE = {
+        DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.postgresql_psycopg2',
                 'NAME': '<dbname>',
@@ -185,17 +185,6 @@ be accomplished by running:
 Last remarks to the installation
 --------------------------------
 
-First of all, you must go to the administration panel on:
-
-.. code-block:: bash
-
-    http://wirecloud.server.com/admin/sites/site/
-
-Here you have two options:
-
-* You can remove all entries and wirecloud will use the server name and port from the request for building absolute URLs.
-* Set just one entry with the server name/port to use for building absolute URLs in the domain field (i.e. example.com or example:8080).
-
 Make sure both ``GADGETS_DEPLOYMENT_DIR`` and ``GADGETS_DEPLOYMENT_TMPDIR``
 (by default, these configuration variables point to
 <wirecloud>/src/deployment/gadgets and <wirecloud>/src/deployment/tmps
@@ -231,6 +220,19 @@ performance using the following command:
 .. _`topic`: https://docs.djangoproject.com/en/dev/howto/deployment/
 
 
+Wirecloud integration with django "sites" framework
+---------------------------------------------------
+
+Wirecloud, by default, uses the hostname provided by the http request when
+building internal URLs. This behaviour is good enough for normal use.
+
+When the `sites framework`_ is installed, Wirecloud make use of it to obtain
+the domain to use when building internal urls. This is very useful when the
+hostname of the request doesn't match the public name of the Wirecloud server.
+
+.. _`sites framework`: https://docs.djangoproject.com/en/dev/ref/contrib/sites/
+
+
 Example of deployment using Apache
 ----------------------------------
 
@@ -248,7 +250,7 @@ your wirecloud installation):
     import os
     import sys
 
-    path = '/path/to/wirecloud/src'
+    path = '<path_to_wirecloud/src>'
     if path not in sys.path:
         sys.path.insert(0, path)
 
@@ -266,11 +268,25 @@ Add a virtualhost to the apache configuration:
             ...
 
             ### Wirecloud / EzWeb ###
-            WSGIScriptAlias / /path/to/django.wsgi
+            WSGIScriptAlias / <path_to_django_wsgi>
+            WSGIPassAuthorization On
 
-            Alias /static /path/to/wirecloud/src/static
+            Alias /static <path_to_wirecloud/src/static>
             <Location "/static">
                     SetHandler None
+                    <IfModule mod_expires.c>
+                            ExpiresActive On
+                            ExpiresDefault "access plus 1 week"
+                    </IfModule>
+                    <IfModule mod_headers.c>
+                            Header append Cache-Control "public"
+                    </IfModule>
+            </Location>
+
+            <Location "/static/cache">
+                    <IfModule mod_expires.c>
+                            ExpiresDefault "access plus 3 years"
+                    </IfModule>
             </Location>
 
             ...
