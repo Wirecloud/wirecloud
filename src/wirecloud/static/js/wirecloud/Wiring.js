@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, LogManagerFactory, wEvent, wSlot, Wirecloud*/
+/*global gettext, IGadget, LogManagerFactory, wEvent, wSlot, Wirecloud*/
 
 (function () {
 
@@ -226,6 +226,29 @@
         this.workspace.removeEventListener('iwidgetremoved', this._iwidget_removed_listener);
 
         this.workspace = null;
+    };
+
+    Wiring.prototype.pushEvent = function pushEvent(iWidget, outputName, data) {
+        var entry;
+
+        if (iWidget instanceof IGadget) {
+            iWidget = iWidget.getId();
+        }
+
+        entry = this.connectablesByWidget[iWidget].events[outputName];
+        entry.propagate(data);
+    };
+
+    Wiring.prototype.registerCallback = function registerCallback(iWidget, inputName, callback) {
+        var entry;
+
+        if (iWidget instanceof IGadget) {
+            iWidget = iWidget.getId();
+        }
+
+        entry = this.connectablesByWidget[iWidget].slots[inputName];
+
+        entry.variable.setHandler(callback);
     };
 
     /*****************
