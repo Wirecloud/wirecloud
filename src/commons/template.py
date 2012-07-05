@@ -323,7 +323,10 @@ class USDLTemplateParser(object):
         # Preference info
         self._info['preferences'] = []
 
-        for preference in self._graph.objects(self._rootURI, WIRE['hasPlatformPreference']):
+        # Platform preferences must be sorted
+        sorted_preferences = sorted(self._graph.objects(self._rootURI, WIRE['hasPlatformPreference']), key=lambda pref: self._get_field(WIRE, 'index', pref, required=False))
+
+        for preference in sorted_preferences:
             preference_info = {
                 'name': self._get_field(DCTERMS, 'title', preference, required=False),
                 'type': self._get_field(WIRE, 'type', preference, required=False),
@@ -391,9 +394,15 @@ class USDLTemplateParser(object):
         elif self._info['type'] == 'operator':
             # The tamplate has 1-n javascript elements
 
+            # Javascript files must be sorted
+            sorted_js_files = sorted(self._graph.objects(self._rootURI, USDL['utilizedResource']), key=lambda js_file: int(self._get_field(WIRE, 'index', js_file)))
+
             self._info['js_files'] = []
-            for js_element in self._graph.objects(self._rootURI, USDL['utilizedResource']):
+            for js_element in sorted_js_files:
                 self._info['js_files'].append(unicode(js_element))
+
+            if not len(self._info['js_files']) > 0:
+                raise TemplateParseException(_('Missing required field: Javascript files'))
 
             self._info['code_content_type'] = 'text/javascript'
 
@@ -427,8 +436,10 @@ class USDLTemplateParser(object):
             }
         self._info['params'] = params
 
+        ordered_tabs = sorted(self._graph.objects(self._rootURI, WIRE_M['hasTab']), key=lambda raw_tab: int(self._get_field(WIRE, 'index', raw_tab)))
+
         tabs = []
-        for tab in self._graph.objects(self._rootURI, WIRE_M['hasTab']):
+        for tab in ordered_tabs:
             tab_info = {
                 'name': self._get_field(DCTERMS, 'title', tab),
                 'preferences': {},

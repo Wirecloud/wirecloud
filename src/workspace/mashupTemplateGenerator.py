@@ -305,11 +305,15 @@ def build_rdf_template_from_workspace(options, workspace, user):
 
     # Tabs and their preferences
     tabs = {}
+    tab_index = 0  # This variable is used to know tab order in rdf
     for tab in workspace_tabs:
         tab_element = rdflib.BNode()
         graph.add((tab_element, rdflib.RDF.type, WIRE_M['Tab']))
         graph.add((mashup_uri, WIRE_M['hasTab'], tab_element))
         graph.add((tab_element, DCTERMS['title'], rdflib.Literal(tab.name)))
+        graph.add((tab_element, WIRE['index'], rdflib.Literal(str(tab_index))))
+        tab_index = tab_index + 1
+
         tabs[tab.id] = tab_element
         preferences = TabPreference.objects.filter(tab=tab.pk)
         for preference in preferences:
