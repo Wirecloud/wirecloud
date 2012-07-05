@@ -1,13 +1,13 @@
 <Template xmlns="http://morfeo-project.org/2007/Template">
 
     <Catalog.ResourceDescription>
-        <Vendor>Yaco Sistemas S.L.</Vendor>
+        <Vendor>CoNWeT</Vendor>
         <Name>api-test</Name>
         <DisplayName>Wirecloud API test</DisplayName>
         <Version>0.9</Version>
         <Author>aarranz</Author>
-        <Mail>aarranz@yaco.es</Mail>
-        <Description>This gadget is used to test some of the features of the EzWeb platform</Description>
+        <Mail>aarranz@conwet.com</Mail>
+        <Description>This gadget is used to test some of the features of the Wirecloud platform</Description>
         <ImageURI>images/catalogue.png</ImageURI>
         <iPhoneImageURI>images/catalogue_iphone.png</iPhoneImageURI>
         <WikiURI>doc/index.html</WikiURI>
@@ -16,12 +16,12 @@
     <Platform.Preferences>
     </Platform.Preferences>
 
-    <!-- EzWeb Gadget Persistent State -->
     <Platform.StateProperties>
     </Platform.StateProperties>
 
-    <!-- EzWeb Gadget Data Wiring -->
     <Platform.Wiring>
+        <Slot name="slot" type="text" label="slot" friendcode = "slot"/>
+        <Event name="event" type="text" label="event" friendcode = "event"/>
     </Platform.Wiring>
     <Platform.Link>
         <XHTML href="test.html"/>

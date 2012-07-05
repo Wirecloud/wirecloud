@@ -6,6 +6,11 @@
 MashupPlatform.http.makeRequest('http://localhost:8001/api-test/data/success.html', {
     method: 'GET',
     onSuccess: function (transport) {
-        document.body.innerHTML = transport.responseText;
+        document.getElementById('makerequest_test').innerHTML = transport.responseText;
     }
 });
+
+MashupPlatform.wiring.registerCallback('slot', function (data) {
+    document.getElementById('registercallback_test').innerHTML = data;
+});
+MashupPlatform.wiring.pushEvent('event', 'Success!!');
