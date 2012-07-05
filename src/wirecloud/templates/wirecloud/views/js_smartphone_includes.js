@@ -26,11 +26,8 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/contextManager/ContextPlatform.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/dragboard/iGadget.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/dragboard/dragboard.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wiring/wiring_exceptions.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wiring/filter.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/connectable.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/Wiring.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/Operator.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/wiring/OperatorFactory.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wiring/jsonFilter.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/add-ons/connectable.js"></script>

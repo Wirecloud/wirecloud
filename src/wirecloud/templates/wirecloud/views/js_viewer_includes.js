@@ -31,12 +31,9 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/UserPref.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/ElementPositions.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/wiring_exceptions.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/filter.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/connectable.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/wiring.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/wiringGUI.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/wirecloud/Wiring.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/connectableInterface.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/jsonFilter.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/catalogue.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/user_commands.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/response_command.js"></script>
