@@ -20,7 +20,7 @@
  */
 
 var OperatorMeta = function OperatorMeta(desc) {
-    var vendor, name, version, description, inputs, outputs;
+    var vendor, name, version, display_name, description, inputs, outputs;
 
     // Vendor
     if (!('vendor' in desc) || desc.vendor.trim() === '') {
@@ -46,6 +46,13 @@ var OperatorMeta = function OperatorMeta(desc) {
     // URI
     uri = desc.name.trim();
     Object.defineProperty(this, 'uri', {value: vendor + '/' + name + '/' + version});
+
+    if (!('display_name' in desc) || desc.display_name.trim() === '') {
+        display_name = name;
+    } else {
+        display_name = desc.display_name;
+    }
+    Object.defineProperty(this, 'display_name', {value: display_name});
 
     description = desc.description;
     if (description == null || description.trim() === '') {
@@ -79,6 +86,7 @@ var Operator = function Operator(operator_meta, id, /* TODO */ wiringEditor) {
 
     Object.defineProperty(this, 'meta', {value: operator_meta});
     Object.defineProperty(this, 'name', {value: operator_meta.name});
+    Object.defineProperty(this, 'display_name', {value: operator_meta.display_name});
     Object.defineProperty(this, 'id', {value: id});
 
     inputs = this.meta.inputs;

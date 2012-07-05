@@ -37,7 +37,7 @@
         this.ioperator = ioperator;
         this.wiringEditor = wiringEditor;
 
-        Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.ioperator.name, manager, 'ioperator');
+        Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.ioperator.display_name, manager, 'ioperator');
         if (!isMenubarRef) {
             inputs = ioperator.inputs;
             outputs = ioperator.outputs;
