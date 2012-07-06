@@ -29,6 +29,8 @@
 
 
 #
+from urlparse import urljoin
+
 from django.shortcuts import get_object_or_404
 
 from catalogue.models import GadgetWiring, UserTag, UserVote, Capability
@@ -145,8 +147,8 @@ def get_resource_data(untranslated_resource, user):
         'author': resource.author,
         'mail': resource.mail,
         'description': resource.description,
-        'uriImage': resource.image_uri,
-        'uriWiki': resource.wiki_page_uri,
+        'uriImage': urljoin(resource.template_uri, resource.image_uri),
+        'uriWiki': urljoin(resource.template_uri, resource.wiki_page_uri),
         'type': resource.resource_type(),
         'uriTemplate': resource.template_uri,
         'ieCompatible': resource.ie_compatible,
