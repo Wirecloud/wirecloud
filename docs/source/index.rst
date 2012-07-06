@@ -15,7 +15,7 @@ Contents:
    architecture
    user
    platform/index.rst
-   gadgets/index.rst
+   widgets/index.rst
    mashups/index.rst
 
 
