@@ -21,6 +21,3 @@ parts of EzWeb were not very Pythonic or even Djangoish and we wanted to
 fix that too.
 
 .. _EzWeb project: http://ezweb.morfeo-project.org/
-
-
-TODO: write more information about the project and its features.
