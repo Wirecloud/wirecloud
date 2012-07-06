@@ -1,10 +1,10 @@
 Introduction
 ============
 
-Wirecloud is a gadgets container that allow the user to create and manage
-workspaces where he can add gadget instances picked from a catalogue. One
-big feature of Wirecloud is the capability to connect two or more gadgets
-so that the events that one gadget emits can be received from other gadgets.
+Wirecloud is a widget container that allow the user to create and manage
+workspaces where he can add widget instances picked from a catalogue. One
+big feature of Wirecloud is the capability to connect two or more widgets
+so that the events that one widget emits can be received from other widgets.
 All this is easily configurable by the user. Other important feature is
 sharing workspaces among users.
 

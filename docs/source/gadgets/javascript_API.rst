@@ -128,7 +128,7 @@ Registers a callback for listening preference changes.
 .. method:: MashupPlatform.prefs.registerCallback(callback)
 
 * ``callback`` is the callback function that will be called when the preferences
-  of the gadget changes.
+  of the widget changes.
 
 set
 ...
@@ -146,7 +146,7 @@ MashupPlatform.widget
 getVariable
 ...........
 
-Returns a gadget variable by its name.
+Returns a widget variable by its name.
 
 .. method:: MashupPlatform.Widget.getVariable(name)
 
