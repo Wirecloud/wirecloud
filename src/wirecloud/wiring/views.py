@@ -78,6 +78,6 @@ class OperatorEntry(Resource):
         operator = get_object_or_404(CatalogueResource, type=2, vendor=vendor, short_name=name, version=version)
         options = json.loads(operator.json_description)
         js_files = options['js_files']
-        xhtml = generate_xhtml_operator_code(js_files, operator.template_uri)
+        xhtml = generate_xhtml_operator_code(js_files, operator.template_uri, request)
 
         return HttpResponse(xhtml, mimetype='application/xhtml+xml; charset=UTF-8')

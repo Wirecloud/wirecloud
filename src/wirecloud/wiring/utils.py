@@ -17,13 +17,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.conf import settings
+from django.contrib.sites.models import get_current_site
 from django.template import loader, Context
 
 
-def generate_xhtml_operator_code(js_files, xhtml_url):
+def generate_xhtml_operator_code(js_files, xhtml_url, request):
+
+    api_url = "//" + get_current_site(request).domain + settings.STATIC_URL + 'js/WirecloudAPI/WirecloudOperatorAPI.js'
 
     t = loader.get_template('wirecloud/operator_xhtml.html')
-    c = Context({'base_url': xhtml_url, 'js_files': js_files})
+    c = Context({'base_url': xhtml_url, 'js_files': [api_url] + js_files})
 
     xhtml = t.render(c)
 
