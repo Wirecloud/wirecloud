@@ -11,9 +11,9 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   intro
-   architecture
-   user
+   intro.rst
+   architecture.rst
+   user.rst
    platform/index.rst
    widgets/index.rst
    mashups/index.rst
