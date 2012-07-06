@@ -15,11 +15,17 @@
         <dcterms:creator rdf:resource="http://creatoruri/"/>
         <usdl-core:versionInfo>0.1</usdl-core:versionInfo>
         <wire:hasImageUri rdf:resource="images/catalogue.png"/>
+
         <usdl-core:utilizedResource rdf:resource="/examplecode1.js"/>
+
         <usdl-core:utilizedResource rdf:resource="/examplecode2.js"/>
+
         <usdl-core:utilizedResource rdf:resource="/examplecode3.js"/>
+
         <usdl-core:utilizedResource rdf:resource="/examplecode4.js"/>
+
         <usdl-core:utilizedResource rdf:resource="/examplecode5.js"/>
+
         <foaf:page rdf:resource="doc/index.html"/>
         <usdl-core:hasProvider rdf:resource="http://vendoruri/"/>
 
@@ -50,6 +56,26 @@
             </wire:PlatformWiring>
         </wire:hasPlatformWiring>
     </wire:Operator>
+
+    <usdl-core:utilizedResource rdf:about="/examplecode1.js">
+        <wire:index>0</wire:index>
+    </usdl-core:utilizedResource>
+
+    <usdl-core:utilizedResource rdf:about="/examplecode2.js">
+        <wire:index>1</wire:index>
+    </usdl-core:utilizedResource>
+
+    <usdl-core:utilizedResource rdf:about="/examplecode3.js">
+        <wire:index>2</wire:index>
+    </usdl-core:utilizedResource>
+
+    <usdl-core:utilizedResource rdf:about="/examplecode4.js">
+        <wire:index>3</wire:index>
+    </usdl-core:utilizedResource>
+
+    <usdl-core:utilizedResource rdf:about="/examplecode5.js">
+        <wire:index>4</wire:index>
+    </usdl-core:utilizedResource>
 
     <foaf:Person rdf:about="http://creatoruri/">
         <foaf:name>admin</foaf:name>

@@ -442,17 +442,14 @@ class ParametrizedWorkspaceParseTestCase(TestCase):
         tabs = [u'Tab', u'Tab 2', u'Tab 3', u'Tab 4']
 
         self.assertEqual(len(data['workspace']['tabList']), 4)
-
-        for tab in data['workspace']['tabList']:
-            if tab['name'] in tabs:
-                tabs.remove(tab['name'])
-
-                if tab['name'] == u'Tab' or tab['name'] == u'Tab 2':
-                    self.assertEqual(len(tab['igadgetList']), 1)
-                elif tab['name'] == u'Tab 3' or tab['name'] == u'Tab 4':
-                    self.assertEqual(len(tab['igadgetList']), 0)
-
-        self.assertEqual(len(tabs), 0)
+        self.assertEqual(data['workspace']['tabList'][0]['name'], u'Tab')
+        self.assertEqual(len(data['workspace']['tabList'][0]['igadgetList']), 1)
+        self.assertEqual(data['workspace']['tabList'][1]['name'], u'Tab 2')
+        self.assertEqual(len(data['workspace']['tabList'][1]['igadgetList']), 1)
+        self.assertEqual(data['workspace']['tabList'][2]['name'], u'Tab 3')
+        self.assertEqual(len(data['workspace']['tabList'][2]['igadgetList']), 0)
+        self.assertEqual(data['workspace']['tabList'][3]['name'], u'Tab 4')
+        self.assertEqual(len(data['workspace']['tabList'][3]['igadgetList']), 0)
 
         wiring = json.loads(data['workspace']['wiring'])
         self.assertEqual(len(wiring['connections']), 1)

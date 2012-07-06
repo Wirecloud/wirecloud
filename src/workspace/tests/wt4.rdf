@@ -28,6 +28,7 @@
 
         <wire-m:hasTab>
             <wire-m:Tab rdf:ID="tab-1">
+                <wire:index>0</wire:index>
                 <dcterms:title>Pestaña</dcterms:title>
                 <wire-m:hasTabPreference>
                     <wire-m:TabPreference rdf:ID="tab_pref">
@@ -85,6 +86,7 @@
 
         <wire-m:hasTab>
             <wire-m:Tab rdf:ID="tab-2">
+                <wire:index>1</wire:index>
                 <dcterms:title>Pestaña 2</dcterms:title>
                 <wire-m:hasiWidget>
                     <wire-m:iWidget rdf:ID="iG-2">
@@ -134,12 +136,14 @@
 
         <wire-m:hasTab>
             <wire-m:Tab rdf:ID="tab-3">
+                <wire:index>2</wire:index>
                 <dcterms:title>Pestaña 3</dcterms:title>
             </wire-m:Tab>
         </wire-m:hasTab>
 
         <wire-m:hasTab>
             <wire-m:Tab rdf:ID="tab-4">
+                <wire:index>3</wire:index>
                 <dcterms:title>Pestaña 4</dcterms:title>
             </wire-m:Tab>
         </wire-m:hasTab>

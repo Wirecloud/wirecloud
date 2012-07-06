@@ -126,14 +126,14 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(data['name'], 'test')
         self.assertEqual(data['version'], '0.1')
 
-        self.assertEqual(data['variables']['prop']['label'], 'Property label')
+        self.assertEqual(data['variables']['prop']['label'], u'Property Label')
         self.assertEqual(data['variables']['prop']['aspect'], 'PROP')
-        self.assertEqual(data['variables']['pref']['label'], 'Preference label')
-        self.assertEqual(data['variables']['pref']['value_options'], [['1', 'Option name']])
+        self.assertEqual(data['variables']['pref']['label'], u'Preference Label')
+        self.assertEqual(data['variables']['pref']['value_options'], [[u'1', u'Option Name']])
         self.assertEqual(data['variables']['pref']['aspect'], 'PREF')
-        self.assertEqual(data['variables']['event']['label'], 'event')
+        self.assertEqual(data['variables']['event']['label'], u'Event Label')
         self.assertEqual(data['variables']['event']['aspect'], 'EVEN')
-        self.assertEqual(data['variables']['slot']['label'], 'slot')
+        self.assertEqual(data['variables']['slot']['label'], u'Slot Label')
         self.assertEqual(data['variables']['slot']['aspect'], 'SLOT')
 
         self.assertEqual(data['variables']['language']['aspect'], 'ECTX')
@@ -163,8 +163,11 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(data['wiring']['events'][0]['friendcode'], 'test_friend_code')
         self.assertEqual(len(data['js_files']), 5)
 
-        for file_ in data['js_files']:
-            self.assertEqual(file_[:-4], '/examplecode')
+        self.assertEqual(data['js_files'][0], '/examplecode1.js')
+        self.assertEqual(data['js_files'][1], '/examplecode2.js')
+        self.assertEqual(data['js_files'][2], '/examplecode3.js')
+        self.assertEqual(data['js_files'][3], '/examplecode4.js')
+        self.assertEqual(data['js_files'][4], '/examplecode5.js')
 
     def test_gadget_deletion(self):
         template_uri = "http://example.com/path/gadget.xml"
@@ -223,11 +226,11 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(data['name'], 'test')
         self.assertEqual(data['version'], '0.1')
 
-        self.assertEqual(data['variables']['prop']['label'], 'Property label')
-        self.assertEqual(data['variables']['pref']['label'], 'Preference label')
-        self.assertEqual(data['variables']['pref']['value_options'], [['1', 'Option name']])
-        self.assertEqual(data['variables']['event']['label'], 'event')
-        self.assertEqual(data['variables']['slot']['label'], 'slot')
+        self.assertEqual(data['variables']['prop']['label'], u'Property Label')
+        self.assertEqual(data['variables']['pref']['label'], u'Preference Label')
+        self.assertEqual(data['variables']['pref']['value_options'], [[u'1', u'Option Name']])
+        self.assertEqual(data['variables']['event']['label'], u'Event Label')
+        self.assertEqual(data['variables']['slot']['label'], u'Slot Label')
 
         gadget2 = get_or_add_gadget_from_catalogue('Morfeo', 'test', '0.1', self.user)
         self.assertEqual(gadget, gadget2)
@@ -324,8 +327,8 @@ class ShowcaseTestCase(LocalizedTestCase):
         template = self.read_template('..', '..', 'workspace', 'tests', 'wt1.xml')
         workspace = create_published_workspace_from_template(template, self.user)
 
-        self.assertEqual(workspace.vendor, 'EzWeb Test Suite')
-        self.assertEqual(workspace.name, 'Test Workspace')
+        self.assertEqual(workspace.vendor, 'Wirecloud Test Suite')
+        self.assertEqual(workspace.name, 'Test Mashup')
         self.assertEqual(workspace.version, '1')
         self.assertEqual(workspace.creator, self.user)
 
@@ -333,7 +336,7 @@ class ShowcaseTestCase(LocalizedTestCase):
         template = self.read_template('..', '..', 'workspace', 'tests', 'wt1.rdf')
         workspace = create_published_workspace_from_template(template, self.user)
 
-        self.assertEqual(workspace.vendor, 'EzWeb Test Suite')
+        self.assertEqual(workspace.vendor, 'Wirecloud Test Suite')
         self.assertEqual(workspace.name, 'Test Workspace')
         self.assertEqual(workspace.version, '1')
         self.assertEqual(workspace.creator, self.user)

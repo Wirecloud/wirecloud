@@ -28,6 +28,7 @@
 
         <wire-m:hasTab>
             <wire-m:Tab rdf:ID="tab-1">
+                <wire:index>0</wire:index>
                 <dcterms:title>Tab</dcterms:title>
                 <wire-m:hasTabPreference>
                     <wire-m:TabPreference rdf:ID="tab_pref">
