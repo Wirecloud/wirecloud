@@ -92,7 +92,7 @@ Sends an event through the wiring.
 
 .. method:: MashupPlatform.wiring.pushEvent(outputName, data)
 
-* ``outputName`` is the name of the output endpoint as defined in the GDL.
+* ``outputName`` is the name of the output endpoint as defined in the WDL.
 * ``data`` is the content of the event.
 
 registerCallback
@@ -103,7 +103,7 @@ has registered a callback, it will be replaced by the new one.
 
 .. method:: MashupPlatform.wiring.registerCallback(inputName, callback)
 
-* ``inputName`` is name of the input endpoint as defined in the GDL.
+* ``inputName`` is name of the input endpoint as defined in the WDL.
 * ``callback`` is the callback function to use when an event reaches the given
   input endpoint.
 

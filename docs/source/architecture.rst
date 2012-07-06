@@ -51,5 +51,5 @@ Wirecloud base functionality can be easily enhanced by means of modules:
   fashion using the pub/sub module.
 * Widgets can use the cross-domain proxy for accessing services without taking
   into account whether they are accessed using cross-domain requests.
-* Resources (Widgets and Mashups) can be added to the catalogue using MDL/GDL
+* Resources (Widgets and Mashups) can be added to the catalogue using WDL/MDL
   languages.

@@ -1,4 +1,4 @@
-Widget/Mash-up template ontology
+Widget/Mashup template ontology
 ================================
 
 Abstract
@@ -8,7 +8,7 @@ In order to support MDL/WDL technical descriptions, needed in wirecloud platform
 two  specifications ,that build upon the linked data principles, has been defined
 as RDF(S) vocabularies. The first one defines the information wirecloud uses to
 instantiate a widget, including user preferences, state properties, wiring info etc.
-On the other hand, the second ontology specifies information about a mash-up in wirecloud,
+On the other hand, the second ontology specifies information about a mashup in wirecloud,
 that is a workspace instance, including platform information like tabs, and widget
 composition information like widget instances, wiring and channels between widgets etc.
 
@@ -382,7 +382,7 @@ Properties
   * **Domain**: usdl-core:Resource
   * **Range**: rdfs:Literal
 
-MDL technical description – Mash-up vocabulary
+MDL technical description – Mashup vocabulary
 ----------------------------------------------
 
 This vocabulary provides a way to represent MDL information using existing ontologies
@@ -395,7 +395,7 @@ Classes
 
 * **Class**: wire-m:Mashup
 
-  This class represents a wirecloud mash-up, which is a wirecloud workspace instance.
+  This class represents a wirecloud mashup, which is a wirecloud workspace instance.
 
   * **URI**:http://wirecloud.conwet.fi.upm.es/ns/mashup#Mashup
   * **Properties include**:
