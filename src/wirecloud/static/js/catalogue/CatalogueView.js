@@ -138,6 +138,20 @@ CatalogueView.prototype.getSubMenuItems = function () {
     ];
 };
 
+CatalogueView.prototype.getPublishEndpoint = function getPublishEndpoint() {
+    return [{
+        'name': this.marketplace,
+        'label': this.marketplace,
+        'type': 'boolean'
+    }];
+};
+
+CatalogueView.prototype.getPublishData = function getPublishData(data) {
+    return [{
+        'market': this.marketplace
+    }];
+};
+
 CatalogueView.prototype.changeCurrentView = function (view_name) {
     if (!(view_name in this.viewsByName)) {
         throw new TypeError();

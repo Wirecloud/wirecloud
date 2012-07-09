@@ -125,6 +125,43 @@
         }];
     };
 
+    FiWareCatalogueView.prototype.getPublishEndpoint = function getPublishEndpoint() {
+        var i, form, stores = [];
+
+        form = [{
+            'name': this.marketplace,
+            'label': this.marketplace,
+            'type': 'boolean'
+        }];
+
+        for (i = 0; i < this.store_info.length; i += 1) {
+            stores[i] = {
+                'label': this.store_info[i].name,
+                'value': this.store_info[i].name
+            };
+        }
+
+        form[1] = {
+            'name': this.marketplace + 'Store',
+            'label': this.marketplace + ' store',
+            'type': 'select',
+            'initialEntries': stores
+        };
+        return form;
+    };
+
+    FiWareCatalogueView.prototype.getPublishData = function getPublishData(data) {
+        var publishData = [];
+
+        if (data[this.marketplace]) {
+            publishData = [{
+                'market': this.marketplace,
+                'store': data[this.marketplace + 'Store']
+            }];
+        }
+        return publishData;
+    };
+
     FiWareCatalogueView.prototype.refresh_store_info = function () {
         this.fiWareCatalogue.getStores(this.addStoreInfo.bind(this));
     };

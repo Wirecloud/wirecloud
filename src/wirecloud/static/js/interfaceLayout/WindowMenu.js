@@ -413,9 +413,8 @@ FormWindowMenu.prototype.show = function (parentWindow) {
  */
 function PublishWindowMenu(workspace) {
 
-    var fields;
-    this.marketFields = [];
-    //this._getAvailableMarkets();
+    var fields, marketFields;
+    marketFields = this._loadAvailableMarkets();
 
     fields = [
         {
@@ -453,7 +452,7 @@ function PublishWindowMenu(workspace) {
         {
             'type': 'group',
             'shortTitle': gettext('Publish place'),
-            'fields': this.marketFields
+            'fields': marketFields
         }
     ];
 
@@ -562,21 +561,15 @@ PublishWindowMenu.prototype._sortVariables = function (var1, var2) {
     return var1.variable.vardef.order - var2.variable.vardef.order;
 };
 
-PublishWindowMenu.prototype._addMarketInfo = function _addMarketInfo (marketInfo) {
-    var marketElement;
+PublishWindowMenu.prototype._loadAvailableMarkets = function _loadAvailableMarkets() {
+    // Take available marketplaces from the instance of marketplace view
+    var views = LayoutManagerFactory.getInstance().viewsByName['marketplace'].viewsByName;
+    var key, marketInfo = [];
 
-    for (info in marketInfo) {
-        marketElement = JSON.parse(marketInfo[info]);
-        this.marketFields.append({
-            name: info,
-            label: info,
-            type: 'boolean'
-        })
+    for (key in views) {
+        marketInfo = marketInfo.concat(views[key].getPublishEndpoint());
     }
-};
-
-PublishWindowMenu.prototype._getAvailableMarkets = function _getAvailableMarkets () {
-    Wirecloud.MarketManager.getMarkets(this._addMarketInfo.bind(this));
+    return marketInfo;
 };
 
 PublishWindowMenu.prototype.show = function(parentWindow) {
@@ -588,17 +581,21 @@ PublishWindowMenu.prototype.setFocus = function() {
     this.form.fieldInterfaces['name'].focus();
 };
 
+PublishWindowMenu.prototype._createMarketplaceData = function _createMarketplaceData (data) {
+    var views = LayoutManagerFactory.getInstance().viewsByName['marketplace'].viewsByName;
+    var key, marketplaces = [];
+    for (key in views) {
+        marketplaces = marketplaces.concat(views[key].getPublishData(data))
+    }
+    return marketplaces;
+};
+
 PublishWindowMenu.prototype.executeOperation = function executeOperation (data) {
     var key;
 
     data.parametrization = {};
-    data.marketplaces = [{
-        'market': 'fiware',
-        'store': 'CoNWeT'
-    },
-    {
-        'market': 'local'
-    }]
+    data.marketplaces = this._createMarketplaceData(data);
+
     for (key in data) {
         if (key.startsWith('tab-')) {
             EzWebExt.merge(data.parametrization, data[key]);
