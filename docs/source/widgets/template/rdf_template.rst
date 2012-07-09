@@ -286,7 +286,7 @@ Properties
 
   Indicates the action label of an slot.
 
-  * **URI**: http://wirecloud.conwet.fi.upm.es/ns/Widget#actioLabel
+  * **URI**: http://wirecloud.conwet.fi.upm.es/ns/Widget#actionLabel
   * **Domain**: wire:Slot
   * **Range**: rdfs:Literal
 
