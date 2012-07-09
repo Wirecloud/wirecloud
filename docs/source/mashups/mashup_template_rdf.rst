@@ -141,46 +141,57 @@ Classes
 
     wire-m:hasTabPreference
 
-* **Class**: wire-m:Channel
+* **Class**: wire-m:Connection
 
-  This class represents a wiring channel between two iWidgets.
+  This class represents a wiring connection between two iWidgets or iOperators.
 
-  * **URI**: http://wirecloud.conwet.fi.upm.es/ns/mashup#Channel
+  * **URI**: http://wirecloud.conwet.fi.upm.es/ns/mashup#Connection
   * **Properties include**:
 
-    wire-m:hasIn, wire-m:hasOut, dcterms:title, wire-m:readonly, wire-m:channelFilter,
-    wire-m:channelFilterparam, wire-m:hasOutChannel
+    wire-m:hasSource, wire-m:hasTarget, dcterms:title, wire-m:readonly
 
   * **Used with**:
 
-    wire-m:hasChannel
+    wire-m:hasConnection
 
-* **Class**: wire-m:In
+* **Class**: wire-m:Source
 
-  This class represents an iWidget that is the in of a channel.
+  This class represents an iWidget or iOperator that is the source of a connection.
 
-  * **URI**: http://wirecloud.conwet.fi.upm.es/ns/mashup#In
+  * **URI**: http://wirecloud.conwet.fi.upm.es/ns/mashup#Source
   * **Properties include**:
 
-    wire-m:iniWidget, dcterms:title
+    wire-m:sourceId, wire-m:endpoint, wire:type
 
   * **Used with**:
 
-    wire-m:hasIn
+    wire-m:hasSource
 
-* **Class**: wire-m:In
+* **Class**: wire-m:Target
 
-  This class represents an iWidget that is the out of a channel.
+  This class represents an iWidget or iOperator that is the target of a connection.
 
-  * **URI**: http://wirecloud.conwet.fi.upm.es/ns/mashup#Out
+  * **URI**: http://wirecloud.conwet.fi.upm.es/ns/mashup#Target
   * **Properties include**:
 
-    wire-m:outiWidget, dcterms:title
+    wire-m:targetId, wire-m:endpoint, wire:type
 
   * **Used with**:
 
-    wire-m:hasOut
+    wire-m:hasTarget
 
+* **Class**: wire-m:iOperator
+
+  This class represents an instance of an operator.
+
+  * **URI**: http://wirecloud.conwet.fi.upm.es/ns/mashup#iOperator
+  * **Properties include**:
+
+    wire-m:iOperatorId, dcterms:title
+
+  * **Used with**:
+
+    wire-m:hasiOperator
 
 Properties
 ++++++++++
@@ -257,53 +268,61 @@ Properties
   * **Domain**: wire-m:iWidget
   * **Range**: wire-m:iWidgetRendering
 
-* **Property**: wire-m:hasChannel
+* **Property**: wire-m:hasConnection
 
-  Indicates a channel of the wiring.
+  Indicates a connection of the wiring.
 
-  * **URI**: http://wirecloud.conwet.fi.upm.es/ns/mashup#hasChannel
+  * **URI**: http://wirecloud.conwet.fi.upm.es/ns/mashup#hasConnection
   * **Domain**: wire:PlatformWiring
-  * **Range**: wire-m:Channel
+  * **Range**: wire-m:Connection
 
-* **Property**: wire-m:hasOutChannel
+* **Property**: wire-m:hasSource
 
-  Indicates that a given channel is an out channel of another channel.
+  Indicates the source of a connection.
 
-  * **URI**: http://wirecloud.conwet.fi.upm.es/ns/mashup#hasOutChannel
-  * **Domain**: wire-m:Channel
-  * **Range**: wire-m:Channel
+  * **URI**: http://wirecloud.conwet.fi.upm.es/ns/mashup#hasSource
+  * **Domain**: wire-m:Connection
+  * **Range**: wire-m:Source
 
-* **Property**: wire-m:hasIn
+* **Property**: wire-m:hasTarget
 
-  Indicates an input of a channel.
+  Indicates the target of a connection.
 
-  * **URI**: http://wirecloud.conwet.fi.upm.es/ns/mashup#hasIn
-  * **Domain**: wire-m:Channel
-  * **Range**: wire-m:In
+  * **URI**: http://wirecloud.conwet.fi.upm.es/ns/mashup#hasTarget
+  * **Domain**: wire-m:Connection
+  * **Range**: wire-m:Target
 
-* **Property**: wire-m:hasOut
+* **Property**: wire-m:targetId
 
-  Indicates an output of a channel.
+  Indicates the id of a target.
 
-  * **URI**: http://wirecloud.conwet.fi.upm.es/ns/mashup#hasOut
-  * **Domain**: wire-m:Channel
-  * **Range**: wire-m:Out
-
-* **Property**: wire-m:channelFilter
-
-  Indicates a filter of a channel.
-
-  * **URI**: http://wirecloud.conwet.fi.upm.es/ns/mashup#channelFilter
-  * **Domain**: wire-m:Channel
+  * **URI**: http://wirecloud.conwet.fi.upm.es/ns/mashup#targetId
+  * **Domain**: wire-m:Target
   * **Range**: rdfs:Literal
 
-* **Property**: wire-m:channelFilterParam
+* **Property**: wire-m:sourceId
 
-  Indicates a parameter  of a channel filter.
+  Indicates the id of a source.
 
-  * **URI**: http://wirecloud.conwet.fi.upm.es/ns/mashup#channelFilterParam
-  * **Domain**: wire-m:Channel
+  * **URI**: http://wirecloud.conwet.fi.upm.es/ns/mashup#sourceId
+  * **Domain**: wire-m:Source
   * **Range**: rdfs:Literal
+
+* **Property**: wire-m:endpoint
+
+  Indicates the id of the iWidget or iOperator that is the source or target of a connection.
+
+  * **URI**: http://wirecloud.conwet.fi.upm.es/ns/mashup#endpoint
+  * **Range**: rdfs:Literal
+
+* **Property**: wire-m:hasiOperator
+
+  Indicates the wiring iOperators.
+
+  * **URI**: http://wirecloud.conwet.fi.upm.es/ns/mashup#hasiOperator
+  * **Domain**: wire:PlatformWiring
+  * **Range**: wire-m:iOperator
+
 
 * **Property**: wire-m:x
 
