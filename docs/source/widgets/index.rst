@@ -10,30 +10,16 @@ Widgets are formed by three different components:
   the behaviour of the widget.
 * Static resources, such as images, documentation and other static resources.
 
-Design principles
------------------
-
-Before starting the creation of a widget, the developer should be aware of
-certain design principles of the widgets:
-
-* Widgets are supposed to be small, reusable and user centric web applications.
-* Generic widgets are desirable, but ad-hoc solutions are allowed too if they
-  are quick and cheap enough.
-* Widgets should be adapted to real problems.
-* Widgets are elements of the front-end layer (View). It's not desirable for
-  widgets to perform back-end layer functions (controller or model) because they
-  can be provided by the platform (persistent state).
-* During the development of widgets any technology accepted by web browsers
-  (XHTML, JavaScript, SVG, Flash, applets ....) can be used.
-
-More precise documentation of widgets is explained in the following sections:
+The interaction between widgets and Mashup Execution Engine is performed using a
+Javascript API. Widgets use this Javascript API as an access point to the
+features of the Mashup Execution Engine in the scope of Widgets like the
+interconnection between widgets.
 
 .. toctree::
     :maxdepth: 1
+    :numbered:
 
-    template.rst
+    principles.rst
+    template/index.rst
     javascript_API.rst
-    EzWebAPI.rst
-    widget_mashup_rdf_ontology.rst
-    gadget_template_schema.rst
-    widget_rdf_template_schema.rst
+    backwards/EzWebAPI.rst

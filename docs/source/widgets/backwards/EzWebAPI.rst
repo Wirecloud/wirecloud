@@ -1,5 +1,9 @@
+.. _ezwebapi:
+
 EzWebAPI
 ========
+
+Wirecloud supports this API
 
 request options
 ---------------

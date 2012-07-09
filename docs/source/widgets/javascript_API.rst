@@ -1,6 +1,13 @@
 Widget Javascript API
 =====================
 
+The Widget Javascript API allow Widgets to access the funcionalities offered by
+the **Mashup Execution Engine** as widget interconnection, state persistence,
+cross-domain proxy facilities, ...
+
+.. note::
+
+    Wirecloud also provides :ref:`ezwebapi` for backward compability.
 
 MashupPlatform.http
 -------------------
@@ -160,7 +167,7 @@ Makes wirecloud notify that the widget needs user's attention.
 .. method:: MashupPlatform.Widget.drawAttention()
 
 id
-.....
+..
 
 Returns the widget id.
 

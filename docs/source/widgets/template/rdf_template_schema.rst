@@ -1,11 +1,11 @@
 .. _widget_rdf_template_schema:
 
-Widget Description Language RDF Schema
+RDF Widget Description Language Schema
 ======================================
 
 .. image:: images/widget_datamodel.png
 
-:download:`Download <WDL.rdf>`
+:download:`Download <rdf_template.rdf>`
 
-.. literalinclude:: WDL.rdf
+.. literalinclude:: rdf_template.rdf
     :language: xml

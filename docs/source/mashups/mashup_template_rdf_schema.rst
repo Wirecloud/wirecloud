@@ -5,7 +5,7 @@ Mashup Description Language RDF Schema
 
 .. image:: images/mashup_datamodel.png
 
-:download:`Download <MDL.rdf>`
+:download:`Download <mashup_template_rdf.rdf>`
 
-.. literalinclude:: MDL.rdf
+.. literalinclude:: mashup_template_rdf.rdf
     :language: xml

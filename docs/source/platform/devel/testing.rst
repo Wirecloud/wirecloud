@@ -65,6 +65,7 @@ folder into /var/ezweb-data and provide the test widget code through a HTTP
 server in http://localhost:8001/.
 
 A very easy way for having a HTTP server for the widgets is executing:
+
 .. code-block:: bash
 
     $ cd tests/ezweb-data/gadgets
@@ -81,6 +82,7 @@ independently regardless of whether a test fails messing the databases.
 If you still want to run the tests manually with Selenium IDE you should
 configure not only a wirecloud server, but also populate the database with the
 correct data. This can be done with the following commands:
+
 .. code-block:: bash
 
    $ python manage.py syncdb --migrate

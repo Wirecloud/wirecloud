@@ -119,7 +119,8 @@ Now you have to create the project Database.
 .. note::
 
     We assume that your user has superadmin permissions in PostgreSQL. Usually
-    this means that you have to login as the postgres user (i.e. $ su postgres).
+    this means that you have to login as the postgres user (i.e. $ sudo su
+    postgres).
 
 The PostgreSQL database and user can be created with these instructions:
 

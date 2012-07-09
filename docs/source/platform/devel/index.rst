@@ -6,6 +6,7 @@ extending wirecloud platform functionality.
 
 .. toctree::
     :maxdepth: 1
+    :numbered:
 
     themes.rst
     proxy.rst
