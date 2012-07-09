@@ -350,6 +350,13 @@ Properties
   * **URI**: http://wirecloud.conwet.fi.upm.es/ns/Widget#value
   * **Range**: rdfs:Literal
 
+* **Property**: wire:index
+
+  Specify the logical order of elements with the same type
+
+  * **URI**: http://wirecloud.conwet.fi.upm.es/ns/Widget#value
+  * **Range**: rdfs:Literal
+
 * **Property**: wire:codeContentType
 
   Indicates the MIME type of the Widget code. The Widget code URI is represented using usdl-core:Resource
