@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, IGadget, LogManagerFactory, wEvent, wSlot, Wirecloud*/
+/*global gettext, IGadget, LogManagerFactory, Operator, wEvent, wSlot, Wirecloud*/
 
 (function () {
 
@@ -249,6 +249,28 @@
         entry = this.connectablesByWidget[iWidget].slots[inputName];
 
         entry.variable.setHandler(callback);
+    };
+
+    Wiring.prototype.pushOperatorEvent = function pushOperatorEvent(iOperator, outputName, data) {
+        var entry;
+
+        if (iOperator instanceof Operator) {
+            iOperator = iOperator.id;
+        }
+
+        entry = this.ioperators[iOperator].outputs[outputName];
+        entry.propagate(data);
+    };
+
+    Wiring.prototype.registerOperatorCallback = function registerOperatorCallback(iOperator, inputName, callback) {
+        var entry;
+
+        if (iOperator instanceof Operator) {
+            iOperator = iOperator.id;
+        }
+
+        entry = this.ioperators[iOperator].inputs[inputName];
+        entry.callback = callback;
     };
 
     /*****************
