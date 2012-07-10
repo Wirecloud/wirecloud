@@ -35,8 +35,9 @@ import os
 from django.conf import settings
 from django.core.cache import cache
 from django.db import transaction, IntegrityError
-from django.http import HttpResponse, HttpResponseServerError, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseServerError, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
+from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.views.static import serve
 
