@@ -1,26 +1,20 @@
 Introduction
 ============
 
-Wirecloud is a gadgets container that allow the user to create and manage
-workspaces where he can add gadget instances picked from a catalogue. One
-big feature of Wirecloud is the capability to connect two or more gadgets
-so that the events that one gadget emits can be received from other gadgets.
-All this is easily configurable by the user. Other important feature is
-sharing workspaces among users.
+Wirecloud is a widget mashup platform that enables the user to both create and manage **wired web mashups**. Web mashups integrate heterogeneous data, application logic, and UI components (widgets/gadgets) sourced from the Web to create new coherent and value-adding composite applications. 
 
-Wirecloud is a fork from the `EzWeb project`_. The main reason for doing
-this fork is that we wanted to change the code in many incompatible ways
-from the original one because it was a little bit bloated with many
-different features added by different companies and sometime it was not
-clear the benefits of such complexity. We believe a big cleanup was needed
-and we think a more pluggable architecture is desirable to allow people
-add their custom modifications without losing quality in the core. Other
-reasons are more pragmatic like the lack of a good project infrastructure
-that allow easy collaboration like a DVCS. Finally we think some of the
-parts of EzWeb were not very Pythonic or even Djangoish and we wanted to
-fix that too.
+Some of the Wirecloud's key features are:
+
+* Innovate through experimentation by choosing the best suited widgets and prefab mashup-lets for your devised mashup from a vast, ever-growing distributed catalogue.
+
+* The wiring editor allows you to easily connect widgets in a mashup to create a full-fledged dashboard with RIA functionality.
+
+* The piping editor allows you to easily connect widgets to back-end services or data sources through an extendable set of operators, including filters, aggregators, adapters, etc.
+
+* Sharing your newly created mashup with other colleagues and users. Comment it, tag it and rate it to foster discoverability and shareability.
+
+* Help to build a strong community by commenting, tagging and rating others' widgets, operators and mashups. The platform will also do its best to complement your contribution.  
+
+Wirecloud is a fork from the `EzWeb project`_.
 
 .. _EzWeb project: http://ezweb.morfeo-project.org/
-
-
-TODO: write more information about the project and its features.

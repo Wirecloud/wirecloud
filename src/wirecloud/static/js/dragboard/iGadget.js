@@ -2,6 +2,8 @@
 *     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
 *     S.A.Unipersonal (Telefonica I+D)
 *
+*     (C) Copyright 2011-2012 Universidad Politécnica de Madrid
+*
 *     This file is part of Morfeo EzWeb Platform.
 *
 *     Morfeo EzWeb Platform is free software: you can redistribute it and/or modify
@@ -141,6 +143,8 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
     StyledElements.ObjectWithEvents.call(this, ['load', 'unload']);
     this.menu_color = menu_color ? menu_color : "FFFFFF";
     //this.menu_color = IGadgetColorManager.autogenColor(menu_color, this.code);
+
+    this.prefCallback = null;
 }
 IGadget.prototype = new StyledElements.ObjectWithEvents();
 
@@ -937,6 +941,10 @@ IGadget.prototype.upgradeIGadget = function () {
     });
 };
 
+IGadget.prototype.registerPrefCallback = function registerPrefCallback(prefCallback) {
+    this.prefCallback = prefCallback;
+};
+
 /**
  * This method must be called to avoid memory leaks caused by circular references.
  */
@@ -1134,6 +1142,7 @@ IGadget.prototype._notifyUnloaded = function () {
 
     this.errorButton.addClassName("disabled");
     this.errorButton.setTitle('');
+    this.prefCallback = null;
     this.loaded = false;
     this.events['unload'].dispatch(this);
 };

@@ -50,7 +50,12 @@ Examples
 Request: ::
 
     POST /workspace/1/export
-    options="%7B%22name%22%3A%20%22Test%22%2C%20%22vendor%22%3A%20%22Test%22%2C%20%22version%22%3A%20%220.1%22%2C%20%22email%22%3A%20%22email@server.com%22%7D"
+    {
+         "name" : "Test",
+         "vendor": "Test",
+         "version": "0.1",
+         "email": "email@server.com"
+    }
 
 Response: ::
 

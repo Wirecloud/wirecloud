@@ -61,10 +61,11 @@ Things to be considered before running the selenium tests
 .........................................................
 
 Before running the seleniun test, you must copy wirecloud /tests/ezweb-data
-folder into /var/ezweb-data and provide the test gadget code through a HTTP
+folder into /var/ezweb-data and provide the test widget code through a HTTP
 server in http://localhost:8001/.
 
-A very easy way for having a HTTP server for the gadgets is executing:
+A very easy way for having a HTTP server for the widgets is executing:
+
 .. code-block:: bash
 
     $ cd tests/ezweb-data/gadgets
@@ -81,17 +82,18 @@ independently regardless of whether a test fails messing the databases.
 If you still want to run the tests manually with Selenium IDE you should
 configure not only a wirecloud server, but also populate the database with the
 correct data. This can be done with the following commands:
+
 .. code-block:: bash
 
    $ python manage.py syncdb --migrate
    $ python manage.py loaddata extra_data selenium_test_data
 
-Test gadget
+Test widget
 ...........
 
-This project has a special gadget only for testing wiring and verify that the
-properties of gadgets apply when they are changed. This gadget called "Test"
-works in pairs. This means that in tests this gadget is added to a workspace
-twice and interconected, and what you write in event field of one gadget
-appears in the "slot" field of the other. You can also change a gadget
+This project has a special widget only for testing wiring and verify that the
+properties of widgets apply when they are changed. This widget called "Test"
+works in pairs. This means that in tests this widget is added to a workspace
+twice and interconected, and what you write in event field of one widget
+appears in the "slot" field of the other. You can also change a widget
 preference and it appears in the field "Text Pref".

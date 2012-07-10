@@ -8,6 +8,8 @@ create and extend mashups in different ways.
 
 .. toctree::
     :maxdepth: 1
+    :numbered:
 
-    mashup_template_schema.rst
-    mashup_rdf_template_schema.rst
+    mashup_template_rdf.rst
+    mashup_template_rdf_schema.rst
+    mashup_template_xml_schema.rst

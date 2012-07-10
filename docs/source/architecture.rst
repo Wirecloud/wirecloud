@@ -11,19 +11,19 @@ The Wirecloud Mashup Platform is made up of the following components:
 
 The **Application Mashup Editor** conforms the web-based composition editor that
 end-users utilize to create their mashup applications. It consists of a
-workspace where end-users can place gadgets in a spatial manner, a wiring tool
-to set the interconnection between gadgets, and a catalogue/marketplace where
-end-users can access and look for the gadgets they need.
+workspace where end-users can place widgets in a spatial manner, a wiring tool
+to set the interconnection between widgets, and a catalogue/marketplace where
+end-users can access and look for the widgets they need.
 
-The **Mashup Execution Engine** offers gadget interconnection, mashup state
+The **Mashup Execution Engine** offers widget interconnection, mashup state
 persistence, and cross-domain proxy facilities through an API to the editor. The
 decentralized nature of mashups demands this execution engine to coordinate
-gadget execution and communication within the mashup. Thanks to the plugin API,
+widget execution and communication within the mashup. Thanks to the plugin API,
 extra functionality can be added to the execution engine as external modules
 (i.e. security, publish/subscribe, or piping modules).
 
-End-users will find the gadgets they need from the **catalogue**. The
-availability of a standardized gadget and mashup description languages allows
+End-users will find the widgets they need from the **catalogue**. The
+availability of a standardized widget and mashup description languages allows
 the catalogue to be decoupled from both the editor and the execution engine.
 
 Wirecloud offer technologies to build the front end layer of a new generation
@@ -47,9 +47,9 @@ SOA architecture that supports the following criteria:
 
 Wirecloud base functionality can be easily enhanced by means of modules:
 
-* Gadgets will be able to receive and publish data in a publish/subscribe
+* Widgets will be able to receive and publish data in a publish/subscribe
   fashion using the pub/sub module.
-* Gadgets can use the cross-domain proxy for accessing services without taking
+* Widgets can use the cross-domain proxy for accessing services without taking
   into account whether they are accessed using cross-domain requests.
-* Resources (Gadgets and Mashups) can be added to the catalogue using MDL/GDL
+* Resources (Widgets and Mashups) can be added to the catalogue using WDL/MDL
   languages.
