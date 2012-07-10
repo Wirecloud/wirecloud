@@ -62,6 +62,10 @@ Wirecloud.Widget.PreferencesWindowMenu.prototype._savePrefs = function (form, ne
     varManager.decNestingLevel();
     varManager.sendBufferedVars();
     this.hide();
+
+    if (typeof this._current_igadget.prefCallback === 'function') {
+        this._current_igadget.prefCallback(new_values);
+    }
 };
 
 Wirecloud.Widget.PreferencesWindowMenu.prototype.show = function (igadget, parentWindow) {

@@ -154,11 +154,19 @@ RVariable.prototype.get = function () {
     }
 };
 
-RVariable.prototype.set = function (newValue) {
+RVariable.prototype.set = function (newValue, from_widget) {
+
+    var varInfo = [{id: this.id, value: newValue, aspect: this.vardef.aspect}];
+
+    if (this.vardef.aspect === this.USER_PREF && from_widget === true) {
+        this.value = newValue;
+        this.varManager.markVariablesAsModified(varInfo);
+        this.annotated = false;
+        return;
+    }
+
     if (this.annotated) {
         // If annotated, the value must be managed!
-
-        var varInfo = [{id: this.id, value: newValue, aspect: this.vardef.aspect}];
 
         switch (this.vardef.aspect) {
             case Variable.prototype.SLOT:
