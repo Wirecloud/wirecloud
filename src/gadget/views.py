@@ -225,7 +225,6 @@ class GadgetCodeEntry(Resource):
                 else:
                     code = download_http_content('file://' + os.path.join(settings.GADGETS_DEPLOYMENT_DIR, xhtml.url), user=request.user)
 
-                code = fix_gadget_code(code, xhtml.url, request)
             except Exception, e:
                 # FIXME: Send the error or use the cached original code?
                 msg = _("XHTML code is not accessible: %(errorMsg)s") % {'errorMsg': e.message}
