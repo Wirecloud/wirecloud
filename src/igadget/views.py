@@ -43,8 +43,8 @@ from commons.http_utils import PUT_parameter
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error, json_encode
-from gadget.models import Gadget
-from gadget.utils import get_or_add_gadget_from_catalogue, get_and_add_gadget
+from wirecloud.models import Gadget
+from wirecloud.widget.utils import get_or_add_gadget_from_catalogue, get_and_add_gadget
 from igadget.models import IGadget, Variable
 from igadget.utils import SaveIGadget, UpdateIGadget, UpgradeIGadget, deleteIGadget
 from workspace.models import Tab, WorkSpace, UserWorkSpace

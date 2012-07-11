@@ -36,7 +36,7 @@
         }
     },
     {
-        "model": "gadget.XHTML",
+        "model": "wirecloud.XHTML",
         "pk": "1",
         "fields": {
             "uri": "1",
@@ -91,7 +91,7 @@
         }
     },
     {
-        "model": "gadget.Gadget",
+        "model": "wirecloud.Gadget",
         "pk": "1",
         "fields": {
             "uri": "/Test/Test Gadget/1.0.0",
@@ -103,7 +103,7 @@
         }
     },
     {
-        "model": "gadget.VariableDef",
+        "model": "wirecloud.VariableDef",
         "pk": "1",
         "fields": {
             "name": "password",
@@ -116,7 +116,7 @@
         }
     },
     {
-        "model": "gadget.VariableDef",
+        "model": "wirecloud.VariableDef",
         "pk": "2",
         "fields": {
             "name": "username",
@@ -126,7 +126,7 @@
         }
     },
     {
-        "model": "gadget.VariableDef",
+        "model": "wirecloud.VariableDef",
         "pk": "3",
         "fields": {
             "name": "slot",
@@ -137,7 +137,7 @@
         }
     },
     {
-        "model": "gadget.VariableDef",
+        "model": "wirecloud.VariableDef",
         "pk": "4",
         "fields": {
             "name": "prop",
@@ -147,7 +147,7 @@
         }
     },
     {
-        "model": "gadget.VariableDef",
+        "model": "wirecloud.VariableDef",
         "pk": "5",
         "fields": {
             "name": "event",
@@ -227,7 +227,7 @@
         "model": "translator.Translation",
         "pk": "1",
         "fields": {
-            "table": "gadget.models.VariableDef",
+            "table": "wirecloud.VariableDef",
             "element_id": "1",
             "text_id": "password_pref_label",
             "value": "Password Pref",
@@ -239,7 +239,7 @@
         "model": "translator.Translation",
         "pk": "2",
         "fields": {
-            "table": "gadget.models.VariableDef",
+            "table": "wirecloud.VariableDef",
             "element_id": "1",
             "text_id": "password_pref_label",
             "value": "Contraseña",
@@ -251,7 +251,7 @@
         "model": "translator.Translation",
         "pk": "3",
         "fields": {
-            "table": "gadget.models.Gadget",
+            "table": "wirecloud.Gadget",
             "element_id": "1",
             "text_id": "displayName",
             "value": "Test Gadget",
@@ -263,7 +263,7 @@
         "model": "translator.Translation",
         "pk": "4",
         "fields": {
-            "table": "gadget.models.Gadget",
+            "table": "wirecloud.Gadget",
             "element_id": "1",
             "text_id": "displayName",
             "value": "Gadget de prueba",
@@ -275,7 +275,7 @@
         "model": "translator.Translation",
         "pk": "1",
         "fields": {
-            "table": "gadget.models.VariableDef",
+            "table": "wirecloud.VariableDef",
             "element_id": "1",
             "text_id": "password_pref_label",
             "value": "Password Pref",
@@ -287,7 +287,7 @@
         "model": "translator.Translation",
         "pk": "2",
         "fields": {
-            "table": "gadget.models.VariableDef",
+            "table": "wirecloud.VariableDef",
             "element_id": "1",
             "text_id": "password_pref_label",
             "value": "Contraseña",
@@ -299,7 +299,7 @@
         "model": "translator.Translation",
         "pk": "3",
         "fields": {
-            "table": "gadget.models.Gadget",
+            "table": "wirecloud.Gadget",
             "element_id": "1",
             "text_id": "displayName",
             "value": "Test Gadget",
@@ -311,7 +311,7 @@
         "model": "translator.Translation",
         "pk": "4",
         "fields": {
-            "table": "gadget.models.Gadget",
+            "table": "wirecloud.Gadget",
             "element_id": "1",
             "text_id": "displayName",
             "value": "Gadget de prueba",
@@ -323,7 +323,7 @@
         "model": "translator.Translation",
         "pk": "5",
         "fields": {
-            "table": "gadget.models.VariableDef",
+            "table": "wirecloud.VariableDef",
             "element_id": "3",
             "text_id": "slot_label",
             "value": "Slot Action Label",
@@ -335,7 +335,7 @@
         "model": "translator.Translation",
         "pk": "6",
         "fields": {
-            "table": "gadget.models.VariableDef",
+            "table": "wirecloud.VariableDef",
             "element_id": "3",
             "text_id": "slot_label",
             "value": "Etiqueta de acción del slot",

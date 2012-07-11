@@ -16,12 +16,15 @@ from commons.get_data import get_gadget_data
 from commons.test import LocalizedTestCase
 from commons.wgt import WgtFile, WgtDeployer
 from commons.template import TemplateParser
-from gadget.models import Gadget
-import gadget.utils
-from gadget.utils import create_gadget_from_template, create_gadget_from_wgt, get_or_add_gadget_from_catalogue
-from gadget.views import deleteGadget
+from wirecloud.models import Gadget
+import wirecloud.widget.utils
+from wirecloud.widget.utils import create_gadget_from_template, create_gadget_from_wgt, get_or_add_gadget_from_catalogue
+from wirecloud.widget.views import deleteGadget
 from workspace.utils import create_published_workspace_from_template
 
+
+# Avoid nose to repeat these tests (they are run through wirecloud/tests/__init__.py)
+__test__ = False
 
 BASIC_HTML_GADGET_CODE = "<html><body><p>gadget code</p></body></html>"
 
@@ -75,7 +78,7 @@ class ShowcaseTestCase(LocalizedTestCase):
         http_utils.download_http_content = self._original_function
 
     def read_template(self, *template):
-        f = open(os.path.join(os.path.dirname(__file__), 'tests', *template))
+        f = open(os.path.join(os.path.dirname(__file__), 'test-data', *template))
         contents = f.read()
         f.close()
 
@@ -324,7 +327,7 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertRaises(TemplateParseException, create_gadget_from_template, template_uri, self.user)
 
     def test_basic_mashup(self):
-        template = self.read_template('..', '..', 'workspace', 'tests', 'wt1.xml')
+        template = self.read_template('..', '..', '..', 'workspace', 'tests', 'wt1.xml')
         workspace = create_published_workspace_from_template(template, self.user)
 
         self.assertEqual(workspace.vendor, 'Wirecloud Test Suite')
@@ -333,7 +336,7 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(workspace.creator, self.user)
 
     def test_basic_mashup_usdl(self):
-        template = self.read_template('..', '..', 'workspace', 'tests', 'wt1.rdf')
+        template = self.read_template('..', '..', '..', 'workspace', 'tests', 'wt1.rdf')
         workspace = create_published_workspace_from_template(template, self.user)
 
         self.assertEqual(workspace.vendor, 'Wirecloud Test Suite')
@@ -347,18 +350,18 @@ class WGTShowcaseTestCase(TestCase):
     def setUp(self):
         super(WGTShowcaseTestCase, self).setUp()
 
-        self.old_deployer = gadget.utils.wgt_deployer
+        self.old_deployer = wirecloud.widget.utils.wgt_deployer
         self.tmp_dir = mkdtemp()
-        gadget.utils.wgt_deployer = WgtDeployer(self.tmp_dir)
+        wirecloud.widget.utils.wgt_deployer = WgtDeployer(self.tmp_dir)
         self.user = User.objects.create_user('test', 'test@example.com', 'test')
 
     def tearDown(self):
         rmtree(self.tmp_dir, ignore_errors=True)
-        gadget.utils.wgt_deployer = self.old_deployer
+        wirecloud.widget.utils.wgt_deployer = self.old_deployer
 
     def test_basic_wgt_deployment(self):
-        wgt_file = WgtFile(os.path.join(os.path.dirname(__file__), 'tests', 'basic_gadget.wgt'))
-        gadget_path = gadget.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
+        wgt_file = WgtFile(os.path.join(os.path.dirname(__file__), 'test-data', 'basic_gadget.wgt'))
+        gadget_path = wirecloud.widget.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
 
         create_gadget_from_wgt(wgt_file, self.user)
         Gadget.objects.get(vendor='Morfeo', name='Test', version='0.1')

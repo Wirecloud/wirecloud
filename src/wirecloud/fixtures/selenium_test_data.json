@@ -1,7 +1,7 @@
 [
     {
         "pk": 1,
-        "model": "gadget.xhtml",
+        "model": "wirecloud.xhtml",
         "fields": {
             "cacheable": true,
             "url": "Yaco Sistemas S.L./Test/0.9/test.html",
@@ -13,7 +13,7 @@
     },
     {
         "pk": 1,
-        "model": "gadget.gadget",
+        "model": "wirecloud.gadget",
         "fields": {
             "users": [],
             "menuColor": "",
@@ -36,7 +36,7 @@
     },
     {
         "pk": 1,
-        "model": "gadget.variabledef",
+        "model": "wirecloud.variabledef",
         "fields": {
             "default_value": "default",
             "action_label": null,
@@ -53,7 +53,7 @@
     },
     {
         "pk": 2,
-        "model": "gadget.variabledef",
+        "model": "wirecloud.variabledef",
         "fields": {
             "default_value": "initial text",
             "action_label": null,
@@ -70,7 +70,7 @@
     },
     {
         "pk": 3,
-        "model": "gadget.variabledef",
+        "model": "wirecloud.variabledef",
         "fields": {
             "default_value": null,
             "action_label": "",
@@ -87,7 +87,7 @@
     },
     {
         "pk": 4,
-        "model": "gadget.variabledef",
+        "model": "wirecloud.variabledef",
         "fields": {
             "default_value": null,
             "action_label": null,
@@ -104,7 +104,7 @@
     },
     {
         "pk": 1,
-        "model": "gadget.userprefoption",
+        "model": "wirecloud.userprefoption",
         "fields": {
             "variableDef": 1,
             "name": "Default",
@@ -113,7 +113,7 @@
     },
     {
         "pk": 2,
-        "model": "gadget.userprefoption",
+        "model": "wirecloud.userprefoption",
         "fields": {
             "variableDef": 1,
             "name": "value1",
@@ -122,7 +122,7 @@
     },
     {
         "pk": 3,
-        "model": "gadget.userprefoption",
+        "model": "wirecloud.userprefoption",
         "fields": {
             "variableDef": 1,
             "name": "value2",

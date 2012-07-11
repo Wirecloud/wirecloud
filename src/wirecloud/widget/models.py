@@ -49,6 +49,9 @@ class XHTML(models.Model):
     def __unicode__(self):
         return self.uri
 
+    class Meta:
+        app_label = 'wirecloud'
+
 
 class Gadget(TransModel):
 
@@ -79,6 +82,7 @@ class Gadget(TransModel):
     class Meta:
         unique_together = ('vendor', 'name', 'version')
         ordering = ('uri', )
+        app_label = 'wirecloud'
 
     def __unicode__(self):
         return self.uri
@@ -112,6 +116,7 @@ class Capability(models.Model):
 
     class Meta:
         unique_together = ('name', 'value', 'gadget')
+        app_label = 'wirecloud'
 
 
 class VariableDef(TransModel):
@@ -157,6 +162,9 @@ class VariableDef(TransModel):
         else:
             return self.default_value
 
+    class Meta:
+        app_label = 'wirecloud'
+
 
 class UserPrefOption(TransModel):
 
@@ -166,6 +174,9 @@ class UserPrefOption(TransModel):
 
     def __unicode__(self):
         return self.variableDef.gadget.uri + " " + self.name
+
+    class Meta:
+        app_label = 'wirecloud'
 
 
 class VariableDefAttr(models.Model):
@@ -177,6 +188,9 @@ class VariableDefAttr(models.Model):
     def __unicode__(self):
         return self.variableDef + self.name
 
+    class Meta:
+        app_label = 'wirecloud'
+
 
 class ContextOption(models.Model):
 
@@ -185,3 +199,6 @@ class ContextOption(models.Model):
 
     def __unicode__(self):
         return self.concept
+
+    class Meta:
+        app_label = 'wirecloud'

@@ -33,7 +33,7 @@
 from django.db import models
 from django.utils.translation import ugettext as  _
 
-from gadget.models import Gadget, VariableDef
+from wirecloud.models import Gadget, VariableDef
 from workspace.models import Tab, VariableValue
 
 

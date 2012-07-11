@@ -33,7 +33,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
 from commons.authentication import Http403
-from gadget.models import Gadget, VariableDef
+from wirecloud.models import Gadget, VariableDef
 from igadget.models import Position, IGadget, Variable
 from workspace.models import Tab, VariableValue
 

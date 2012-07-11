@@ -29,15 +29,17 @@
 
 
 #
+from django.conf.urls.defaults import patterns
 
-from django.contrib import admin
+from wirecloud.widget.views import GadgetCollection, GadgetEntry, GadgetCodeEntry
 
-from gadget import models
 
-admin.site.register(models.Gadget)
-admin.site.register(models.XHTML)
-admin.site.register(models.VariableDef)
-admin.site.register(models.UserPrefOption)
-admin.site.register(models.VariableDefAttr)
-admin.site.register(models.ContextOption)
-admin.site.register(models.Capability)
+urlpatterns = patterns('',
+
+    # Gadgets
+    (r'^$', GadgetCollection(permitted_methods=('GET', 'POST'))),
+    (r'^/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)$',
+        GadgetEntry(permitted_methods=('GET', 'DELETE', 'PUT'))),
+    (r'^/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/xhtml$',
+        GadgetCodeEntry(permitted_methods=('GET', 'PUT'))),
+)

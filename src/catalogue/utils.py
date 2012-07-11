@@ -46,7 +46,7 @@ from commons.user_utils import get_certification_status
 from commons.authentication import Http403
 from commons.template import TemplateParser
 from commons.wgt import WgtFile, WgtDeployer
-from gadget.views import deleteGadget
+from wirecloud.widget.views import deleteGadget
 from translator.models import Translation
 
 

@@ -143,7 +143,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'wirecloud',
-    'gadget',
     'workspace',
     'igadget',
     'catalogue',

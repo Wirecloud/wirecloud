@@ -52,9 +52,9 @@ from commons.resource import Resource
 from commons.template import TemplateParser
 from commons.transaction import commit_on_http_success
 
-from gadget.models import Gadget, XHTML
-import gadget.utils as showcase_utils
-from gadget.utils import get_or_create_gadget, create_gadget_from_template, fix_gadget_code, get_site_domain
+from wirecloud.models import Gadget, XHTML
+import wirecloud.widget.utils as showcase_utils
+from wirecloud.widget.utils import get_or_create_gadget, create_gadget_from_template, fix_gadget_code, get_site_domain
 from igadget.models import IGadget
 from igadget.utils import deleteIGadget
 from workspace.utils import create_published_workspace_from_template

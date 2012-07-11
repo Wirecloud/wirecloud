@@ -48,7 +48,7 @@ from django.utils import simplejson, translation
 
 from catalogue.models import CatalogueResource
 from commons.http_utils import download_http_content
-from gadget.models import XHTML
+from wirecloud.models import XHTML
 
 
 def change_language(request, language):

@@ -43,7 +43,7 @@ from commons.authentication import Http403
 from commons.http_utils import download_http_content
 from commons.template import TemplateParser
 from commons.wgt import WgtDeployer, WgtFile
-from gadget.models import ContextOption, VariableDef, UserPrefOption, Gadget, XHTML
+from wirecloud.models import ContextOption, VariableDef, UserPrefOption, Gadget, XHTML
 from translator.models import Translation
 from wirecloud.plugins import get_active_features, get_gadget_api_extensions
 from workspace.models import WorkSpace, UserWorkSpace
@@ -194,7 +194,7 @@ def create_gadget_from_template(template, user, request=None, base=None):
         )
         ContextOption.objects.create(concept=context['concept'], varDef=vDef)
 
-    gadget_table = gadget.__class__.__module__ + "." + gadget.__class__.__name__
+    gadget_table = gadget._get_table_id()
     for lang in gadget_info['translations']:
         translation = gadget_info['translations'][lang]
         for index in translation:
@@ -206,11 +206,11 @@ def create_gadget_from_template(template, user, request=None, base=None):
                     element_id = gadget.id
                 elif use['type'] == 'vdef':
                     vDef = variable_definitions[use['variable']]
-                    table = vDef.__class__.__module__ + "." + vDef.__class__.__name__
+                    table = vDef._get_table_id()
                     element_id = vDef.id
                 elif use['type'] == 'upo':
                     upo = user_options[use['variable']][use['option']]
-                    table = upo.__class__.__module__ + "." + upo.__class__.__name__
+                    table = upo._get_table_id()
                     element_id = upo.id
 
                 Translation.objects.create(

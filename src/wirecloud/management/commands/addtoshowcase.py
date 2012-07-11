@@ -24,9 +24,9 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import IntegrityError
 from django.utils.translation import ugettext as _
 
-from gadget.models import Gadget
-from gadget.utils import create_gadget_from_wgt
-from gadget.views import deleteGadget
+from wirecloud.models import Gadget
+from wirecloud.widget.utils import create_gadget_from_wgt
+from wirecloud.widget.views import deleteGadget
 from commons.wgt import WgtFile
 from commons.template import TemplateParser
 

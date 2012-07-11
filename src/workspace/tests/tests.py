@@ -11,7 +11,7 @@ from django.test import Client, TestCase
 from django.utils import simplejson
 
 from commons.get_data import get_global_workspace_data
-from gadget.models import Gadget
+from wirecloud.models import Gadget
 from igadget.models import IGadget, Variable
 from igadget.utils import SaveIGadget, deleteIGadget
 from workspace.packageCloner import PackageCloner

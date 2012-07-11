@@ -4,10 +4,10 @@
 #
 from django.conf.urls.defaults import patterns, url
 
-from gadget.views import Showcase 
+from wirecloud.widget.views import Showcase
 
 
-urlpatterns = patterns('gadget.views',
+urlpatterns = patterns('wirecloud.widget.views',
     (r'^$', Showcase(permitted_methods=('POST',))),
 
     url(r'^media/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/(?P<file_path>.+)$',
