@@ -95,6 +95,17 @@ class USDLParser(object):
         return result
 
     def _parse_basic_info(self, service_uri):
+
+        count = 0
+
+        for t in self._graph.predicate_objects(service_uri):
+            count = count + 1
+
+        if count < 3:
+            self._info['part_ref'] = True
+            return
+
+        self._info['part_ref'] = False
         vendor = self._get_field(USDL, service_uri, 'hasProvider', id_=True)[0]
         self._info['vendor'] = self._get_field(FOAF, vendor, 'name')[0]
         self._info['name'] = self._get_field(DCTERMS, service_uri, 'title')[0]
@@ -282,12 +293,16 @@ class USDLParser(object):
         result = []
         for service_uri in self._service_list:
             self._parse_basic_info(service_uri)
-            self._parse_legal_info(service_uri)
-            self._parse_sla_info(service_uri)
-            self._parse_pricing_info(service_uri)
+            if not self._info['part_ref']:
+                self._parse_legal_info(service_uri)
+                self._parse_sla_info(service_uri)
+                self._parse_pricing_info(service_uri)
+                del(self._info['part_ref'])
 
-            if self._service_number > 1:
-                result.append(self._info)
+                if self._service_number > 1:
+                    result.append(self._info)
+                    self._info = {}
+            else:
                 self._info = {}
 
         if self._service_number == 1:
