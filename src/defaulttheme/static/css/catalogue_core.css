@@ -602,6 +602,22 @@ Resource
     padding-left: 75px;
 }
 
+#fi-ware_catalogue .part_resource h3 {
+    margin: 0.5ex 0 1ex 0;
+    color: #063;
+    padding-left: 50px;
+	padding-top: 25px;
+}
+
+#fi-ware_catalogue .part_resource h4 {
+    color: #E8A150;
+    padding-left: 75px;
+}
+
+#fi-ware_catalogue .part_resource div.tab_info {
+    padding-left: 75px;
+}
+
 #fi-ware_catalogue .resource .image {
     width: 170px;
     height: 80px;
