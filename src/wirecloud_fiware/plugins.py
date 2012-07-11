@@ -39,6 +39,37 @@ class FiWareMarketManager(MarketManager):
 
         self._options = options
 
+    # TODO remove when repository implementation works !!!
+    def _fix_repository_cuts(self, document, url):
+
+        document_len = len(document)
+        # Upload document to the repository
+        headers = {'content-type': 'application/rdf+xml; charset=utf-8'}
+        opener = urllib2.build_opener()
+        request = MethodRequest('PUT', url.encode('utf-8'), document, headers)
+        try:
+            response = opener.open(request)
+        except HTTPError:
+            pass
+
+        # Get the uploaded document to know how many bytes have been cutted
+        headers = {'Accept': 'application/rdf+xml'}
+        request = MethodRequest('GET', url.encode('utf-8'), '', headers)
+        response = opener.open(request)
+        body = response.read()
+        cut_len = len(body)
+
+        # Add new lines when needed
+        if cut_len < document_len:
+            document += ('\n' * ((document_len - cut_len) + 5))
+
+        # Delete the uploaded document
+        request = MethodRequest('DELETE', url.encode('utf-8'))
+        response = opener.open(request)
+
+        return document
+    #----------------------------------------------------------
+
     def publish_mashup(self, endpoint, published_workspace, user, published_options):
 
         market_url = self._options['url']
@@ -50,17 +81,12 @@ class FiWareMarketManager(MarketManager):
         params = build_rdf_template_from_workspace(published_options, published_workspace.workspace, user)
         headers = {'content-type': 'application/rdf+xml; charset=utf-8'}
         opener = urllib2.build_opener()
-        name = published_options.get('name')
+        name = published_options.get('name').replace(' ', '')
         template_location = urljoin(store_info['url'], '/FiwareRepository/v1/collectionA/collectionB/' + name + 'Mdl')
 
         content = params.serialize()
 
-        # TODO remove this lines when repository implementation works!!
-        i = 0
-        while i < 75:
-            content += '\n'
-            i += 1
-        #--------------------------------------------------------------
+        content = self._fix_repository_cuts(content, template_location)
 
         request = MethodRequest('PUT', template_location.encode('utf-8'), content, headers)
         response = opener.open(request)
@@ -74,7 +100,7 @@ class FiWareMarketManager(MarketManager):
         usdl_content = usdl_document.serialize()
 
         # TODO remove this line when repository implementation works!!
-        usdl_content += '\n\n\n\n\n\n\n'
+        usdl_content = self._fix_repository_cuts(usdl_content, usdl_location)
         # -----------------------------------------------------------
 
         request = MethodRequest('PUT', usdl_location.encode('utf-8'), usdl_content, headers)
