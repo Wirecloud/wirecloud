@@ -159,7 +159,7 @@ def add_resource_from_template(template_uri, template, user, fromWGT=False, over
             friendcode=event['friendcode']
         )
 
-    resource_table = resource.__class__.__module__ + "." + resource.__class__.__name__
+    resource_table = resource._get_table_id()
     for lang in resource_info['translations']:
         translation = resource_info['translations'][lang]
         for index in translation:

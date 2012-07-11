@@ -57,7 +57,7 @@ class TranslatedModel(object):
 class TransModel(models.Model):
 
     def _get_table_id(self):
-        return self.__class__.__module__ + "." + self.__class__.__name__
+        return self._meta.app_label + "." + self.__class__.__name__
 
     def _get_cache_key(self):
         table = self._get_table_id()
