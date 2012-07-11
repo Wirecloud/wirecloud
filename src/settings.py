@@ -149,7 +149,6 @@ INSTALLED_APPS = (
     'context',
     'preferences',
     'translator',
-    'user',
     'uploader',
     'south',
     'compressor',
@@ -181,8 +180,6 @@ STATICFILES_FINDERS = (
 SESSION_COOKIE_AGE = 5184000  # 2 months
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-
-AUTH_PROFILE_MODULE = 'user.UserProfile'
 
 # Login/logout URLs
 LOGIN_URL = reverse_lazy('login')
