@@ -6,7 +6,6 @@
 .disabled {
     background: #E0E0E0;
     opacity: 0.4;
-    filter: alpha(opacity=40);
 }
 
 /*****************************************************************************/
@@ -29,7 +28,6 @@ div.container .disable-layer {
   right: 0;
   background: #E0E0E0;
   opacity: 0.4;
-  filter: alpha(opacity=40);
   z-index: 1111111;
 }
 
@@ -64,7 +62,6 @@ div.styled_select select {
   display:  block;
   height:   20px;
   opacity:  0;
-  filter:   alpha(opacity=0);
   position: absolute;
   left:     0;
   top:      0;
@@ -456,7 +453,6 @@ div.styled_numeric_field div.numeric_bottom_button {
   right: 0;
   background: #E0E0E0;
   opacity: 0.4;
-  filter: alpha(opacity=40);
   z-index: 1111111;
 }
 
@@ -564,7 +560,7 @@ div.styled_numeric_field div.numeric_bottom_button {
 }
 
 .popup_menu .menu_item {
-  cursor:hand; cursor: pointer;
+    cursor: pointer;
 }
 
 .disable-layer {

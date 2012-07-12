@@ -153,9 +153,7 @@ body {
     width: 100%;
     z-index: 101111;
     background-color: #4C5054;
-    moz-opacity: .8;
     opacity: .8;
-    filter: alpha(opacity=80);
 }
 
 .window_menu {
