@@ -114,21 +114,22 @@ if (!Wirecloud.ui) {
      * finds anchors from the serialized string
      */
     var findAnchor = function findAnchor(desc, workspace) {
-        var iObject_interface, iobject;
+        var iwidget_interface, iwidget;
+
         switch (desc.type) {
         case 'iwidget':
             if (this.igadgets[desc.id] != null) {
                 return this.igadgets[desc.id].getAnchor(desc.endpoint);
             } else {
-                iobject = workspace.getIgadget(desc.id);
-                if (iobject != null) {
-                    iObject_interface = this.addIGadget(this, iobject);
-                    //gadget_interface.setPosition({posX: 0, posY: 0});
-                    this.mini_widgets[iobject.getId()].disable();
+                iwidget = workspace.getIgadget(desc.id);
+                if (iwidget != null) {
+                    iwidget_interface = this.addIGadget(this, iwidget);
+                    iwidget_interface.setPosition({posX: 0, posY: 0});
+                    this.mini_widgets[iwidget.getId()].disable();
                 } else {
-                    //ERROR
-                    //console.debug("inconsistent wiring, gadget referenced not found");
+                    throw new Error('Widget not found');
                 }
+                return iwidget_interface.getAnchor(desc.endpoint);
             }
             break;
         case 'ioperator':
