@@ -27,11 +27,56 @@ var CatalogueSearchView = function (id, options) {
     this.catalogue = options.catalogue;
     StyledElements.Alternative.call(this, id, options);
 
-    this.wrapperElement.innerHTML = $('wirecloud_catalogue_search_interface').getTextContent();
+    var builder = new StyledElements.GUIBuilder();
+    var contents = builder.parse($('wirecloud_catalogue_search_interface').getTextContent(), {
+        'reset_button': function () {
+            var button = new StyledElements.StyledButton({text: gettext('View All')});
+            button.addEventListener('click', function () {
+                this.simple_search_input.value = '';
+                this._search();
+            }.bind(this));
+            this.view_allbutton = button;
+            return button;
+        }.bind(this),
+        'orderby': function () {
+            var select = new StyledElements.StyledSelect({
+                'initialValue': '-popularity',
+                'initialEntries': [
+                    {'label': gettext('Popularity'), 'value': '-popularity'},
+                    {'label': gettext('Creation date'), 'value': '-creation_date'},
+                    {'label': gettext('Short name'), 'value': 'short_name'},
+                    {'label': gettext('Vendor'), 'value': 'vendor'},
+                    {'label': gettext('Author'), 'value': 'author'}
+                ]
+            });
+            select.addEventListener('change', function () {
+                this._search();
+            }.bind(this));
+            this.orderby = select;
+            return select;
+        }.bind(this),
+        'widgetsperpage': function () {
+            var select = new StyledElements.StyledSelect({
+                'initialValue': '30',
+                'initialEntries': [
+                    {'value': '10'},
+                    {'value': '20'},
+                    {'value': '30'},
+                    {'value': '40'},
+                    {'value': '100'}
+                ]
+            });
+            select.addEventListener('change', function () {
+                this._search();
+            }.bind(this));
+            this.widgetsperpage = select;
+            return select;
+        }.bind(this)
+    });
+    this.appendChild(contents);
     this.timeout = null;
 
     this.simple_search_input = this.wrapperElement.getElementsByClassName('simple_search_text')[0];
-    this.view_all_button = this.wrapperElement.getElementsByClassName('view_all')[0];
     this.resource_painter = new options.resource_painter(this.catalogue,
         $('catalogue_resource_template').getTextContent(),
         this.wrapperElement.getElementsByClassName('resource_list')[0]
@@ -39,10 +84,6 @@ var CatalogueSearchView = function (id, options) {
 
     EzWebExt.addEventListener(this.simple_search_input, 'keypress', this._onSearchInputKeyPress.bind(this));
 
-    EzWebExt.addEventListener(this.view_all_button, 'click', function () {
-        this.simple_search_input.value = '';
-        this._search();
-    }.bind(this));
 };
 CatalogueSearchView.prototype = new StyledElements.Alternative();
 
@@ -50,12 +91,12 @@ CatalogueSearchView.prototype._search = function (event) {
     var options;
 
     options = {
-        'order_by': $('results_order').value,
+        'order_by': this.orderby.getValue(),
         'search_criteria': this.simple_search_input.value,
         'search_boolean': 'AND',
         'scope': 'all',
         'starting_page': 1,
-        'resources_per_page': $('results_per_page').value
+        'resources_per_page': this.widgetsperpage.getValue()
     };
     if (typeof this.catalogue.getCurrentSearchContext === 'function') {
         options = EzWebExt.merge(options, this.catalogue.getCurrentSearchContext());

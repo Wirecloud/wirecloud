@@ -180,11 +180,6 @@
   color: red;
 }
 
-#catalogue select {
-  height: 20px;
-  font-size: 8pt;
-}
-
 #fi-ware_catalogue select {
   height: 20px;
   font-size: 8pt;
@@ -288,13 +283,22 @@
 	margin-top: 10px;
 }
 
-#catalogue .simple_search {
-	float: left;
-	position: relative;
-	left: 10px;
+#search_interface .search_bar {
+    padding: 0 2ex;
+    z-index: 2;
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
 }
 
-#catalogue .simple_search #simple_search_text {
+#search_interface .search_bar > div {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+#search_interface .search_bar > div .styled_select {
+    display: inline-block;
+}
+
+#search_interface .search_bar .simple_search_text {
     margin: 0px;
     padding: 0px;
     -moz-background-clip:border;
@@ -319,25 +323,6 @@
 	float: left;
 	clear: both;
 	width: 100%;
-}
-
-#catalogue .paginate_show {
-    display: inline;
-    float:right;
-    margin-right: 10px;
-}
-
-#catalogue .orderby {
-	display:inline;
-	float:right;
-	margin-right: 10px;
-}
-
-#catalogue .paginate {
-	padding-top:2px;
-	padding-bottom:7px;
-	float:right;
-	margin-right: 10px;
 }
 
 #catalogue .resource_list .resource {
