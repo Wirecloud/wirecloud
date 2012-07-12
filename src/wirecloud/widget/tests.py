@@ -5,7 +5,6 @@ from shutil import rmtree
 from tempfile import mkdtemp
 from urllib2 import URLError, HTTPError
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.test import TestCase
@@ -113,8 +112,6 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(data['variables']['user']['concept'], 'username')
         self.assertEqual(data['variables']['width']['aspect'], 'GCTX')
         self.assertEqual(data['variables']['width']['concept'], 'widthInPixels')
-        self.assertEqual(data['variables']['lockStatus']['aspect'], 'GCTX')
-        self.assertEqual(data['variables']['lockStatus']['concept'], 'lockStatus')
 
     def test_basic_gadget_creation_from_usdl(self):
         template_uri = "http://example.com/path/gadget.rdf"
@@ -145,8 +142,6 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(data['variables']['user']['concept'], 'username')
         self.assertEqual(data['variables']['width']['aspect'], 'GCTX')
         self.assertEqual(data['variables']['width']['concept'], 'widthInPixels')
-        self.assertEqual(data['variables']['lockStatus']['aspect'], 'GCTX')
-        self.assertEqual(data['variables']['lockStatus']['concept'], 'lockStatus')
 
     def test_basic_operator_creation_from_rdf(self):
         template = self.read_template('operatorTemplate1.rdf')
