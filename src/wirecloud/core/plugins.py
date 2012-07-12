@@ -25,9 +25,9 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
     def get_ajax_endpoints(self, views):
         return (
-            {'id': 'MARKET_COLLECTION', 'url': '/markets'},
-            {'id': 'MARKET_ENTRY', 'url': '/market/#{market}'},
-            {'id': 'WIRING_ENTRY', 'url': '/workspace/#{id}/wiring'},
+            {'id': 'MARKET_COLLECTION', 'url': '/api/markets'},
+            {'id': 'MARKET_ENTRY', 'url': '/api/market/#{market}'},
+            {'id': 'WIRING_ENTRY', 'url': '/api/workspace/#{id}/wiring'},
             {'id': 'OPERATOR_COLLECTION', 'url': '/api/operators'},
             {'id': 'OPERATOR_ENTRY', 'url': '/api/operator/#{vendor}/#{name}/#{version}/html'},
         )

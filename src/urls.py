@@ -88,7 +88,7 @@ urlpatterns = patterns('',
 
     (r'^uploader', include('uploader.urls')),
 
-    (r'^marketAdaptor/', include('marketAdaptor.urls')),
+    (r'^api/marketAdaptor/', include('marketAdaptor.urls')),
 )
 
 urlpatterns += wirecloud.urls.urlpatterns

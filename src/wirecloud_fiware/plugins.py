@@ -145,11 +145,11 @@ class FiWarePlugin(WirecloudPlugin):
 
     def get_ajax_endpoints(self, views):
         return (
-            {'id': 'FIWARE_RESOURCES_COLLECTION', 'url': '/marketAdaptor/marketplace/#{market}/resources'},
-            {'id': 'FIWARE_FULL_SEARCH', 'url': '/marketAdaptor/marketplace/#{market}/search/#{search_string}'},
-            {'id': 'FIWARE_STORE_RESOURCES_COLLECTION', 'url': '/marketAdaptor/marketplace/#{market}/#{store}/resources'},
-            {'id': 'FIWARE_STORE_SEARCH', 'url': '/marketAdaptor/marketplace/#{market}/search/#{store}/#{search_string}'},
-            {'id': 'FIWARE_RESOURCE_ENTRY', 'url': '/marketAdaptor/marketplace/#{market}/#{store}/#{entry}'},
-            {'id': 'FIWARE_STORE_COLLECTION', 'url': '/marketAdaptor/marketplace/#{market}/stores'},
-            {'id': 'FIWARE_STORE_ENTRY', 'url': '/marketAdaptor/marketplace/#{market}/stores/#{store}'},
+            {'id': 'FIWARE_RESOURCES_COLLECTION', 'url': '/api/marketAdaptor/marketplace/#{market}/resources'},
+            {'id': 'FIWARE_FULL_SEARCH', 'url': '/api/marketAdaptor/marketplace/#{market}/search/#{search_string}'},
+            {'id': 'FIWARE_STORE_RESOURCES_COLLECTION', 'url': '/api/marketAdaptor/marketplace/#{market}/#{store}/resources'},
+            {'id': 'FIWARE_STORE_SEARCH', 'url': '/api/marketAdaptor/marketplace/#{market}/search/#{store}/#{search_string}'},
+            {'id': 'FIWARE_RESOURCE_ENTRY', 'url': '/api/marketAdaptor/marketplace/#{market}/#{store}/#{entry}'},
+            {'id': 'FIWARE_STORE_COLLECTION', 'url': '/api/marketAdaptor/marketplace/#{market}/stores'},
+            {'id': 'FIWARE_STORE_ENTRY', 'url': '/api/marketAdaptor/marketplace/#{market}/stores/#{store}'},
         )
