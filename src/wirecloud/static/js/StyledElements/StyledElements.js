@@ -261,6 +261,27 @@ StyledElements.StyledInputElement.prototype.focus = function() {
 }
 
 /**
+ *
+ */
+StyledElements.Fragment = function Fragment(elements) {
+    this.elements = elements;
+};
+StyledElements.Fragment.prototype = new StyledElements.StyledElement();
+
+StyledElements.Fragment.prototype.insertInto = function (element, refElement) {
+    var i, currentElement;
+
+    if (refElement != null) {
+        throw new TypeError("Fragments currently doesn't support inserting them before other components/elements");
+    }
+
+    for (i = 0; i < this.elements.length; i += 1) {
+        currentElement = this.elements[i];
+        element.appendChild(currentElement);
+    }
+};
+
+/**
  * Este componente permite crear un contenedor en el que añadir otros
  * componentes.
  *
@@ -294,7 +315,9 @@ StyledElements.Container = function(options, events) {
 StyledElements.Container.prototype = new StyledElements.StyledElement();
 
 StyledElements.Container.prototype.appendChild = function(element) {
-    if (element instanceof StyledElements.StyledElement) {
+    if (element instanceof StyledElements.Fragment) {
+        element.insertInto(this);
+    } else if (element instanceof StyledElements.StyledElement) {
         element.insertInto(this);
         this.childs.push(element);
     } else {

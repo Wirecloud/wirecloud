@@ -40,7 +40,9 @@
                 element.removeChild(child);
             } else if (child.namespaceURI === TEMPLATE_NAMESPACE) {
                 new_component = processTComponent(child, tcomponents);
-                new_component.insertInto(element, child);
+                if (new_component) {
+                    new_component.insertInto(element, child);
+                }
                 element.removeChild(child);
             }  else {
                 processTree(builder, child, tcomponents);
@@ -69,7 +71,7 @@
             }
         }
 
-        return children;
+        return new StyledElements.Fragment(children);
     };
 
     extractOptions = function extractOptions(element) {
@@ -93,7 +95,7 @@
                 var layout = new StyledElements.BorderLayout(options);
 
                 var populateContainer = function populateContainer(element, xpath, container) {
-                    var container_element, i, childNodes;
+                    var container_element, i, fragment;
 
                     container_element = element.ownerDocument.evaluate(xpath,
                         element,
@@ -107,10 +109,8 @@
                             container.addClassName(options['class']);
                         }
 
-                        childNodes = processRoot(builder, container_element, tcomponents);
-                        for (i = 0; i < childNodes.length; i += 1) {
-                            container.appendChild(childNodes[i]);
-                        }
+                        fragment = processRoot(builder, container_element, tcomponents);
+                        container.appendChild(fragment);
                     }
                 };
 
@@ -126,7 +126,10 @@
                 options = EzWebExt.merge({}, options);
                 options.text = element.textContent;
                 return new StyledElements.StyledButton(options);
-            }
+            },
+            'select': function (builder, element, options) {
+                return new StyledElements.StyledSelect(options);
+            },
         };
 
         this.build = function (element, tcomponents) {
