@@ -38,6 +38,7 @@ var CatalogueView = function (id, options) {
 
     this.view_all_template = new Template(URIs.GET_POST_RESOURCES + '/#{starting_page}/#{resources_per_page}');
     this.simple_search_template = new Template(URIs.GET_RESOURCES_SIMPLE_SEARCH + '/simple_or/#{starting_page}/#{resources_per_page}');
+    this.refresh_search_results();
 
 };
 CatalogueView.prototype = new StyledElements.Alternative();
