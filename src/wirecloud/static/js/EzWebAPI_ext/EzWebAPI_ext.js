@@ -1270,9 +1270,9 @@ var EzWebGadget = function(customSettings) {
     this._babel = []
     this.currentLocale = 'en';
     this._currentLanguage = {
-        'strings': [],
-        'labels': [],
-        'titles': []
+        'strings': {},
+        'labels': {},
+        'titles': {}
     };
     this._babelLoaded = false;
 
@@ -1519,21 +1519,24 @@ EzWebGadget.prototype.loadCatalogueCallback = function() {
 EzWebGadget.prototype.languageCallback = function(newLang) {
     this.currentLocale = newLang;
 
-    if (this._babel[newLang] != undefined) {
+    if (this._babel[newLang] != null) {
         this._currentLanguage = this._babel[newLang];
     } else {
         this._currentLanguage = {
-            'strings': [],
-            'labels': [],
-            'titles': []
+            'strings': {},
+            'labels': {},
+            'titles': {}
         };
     }
-    if (this._currentLanguage.strings == undefined)
-        this._currentLanguage.strings = []
-    if (this._currentLanguage.labels == undefined)
-        this._currentLanguage.labels = []
-    if (this._currentLanguage.titles == undefined)
-        this._currentLanguage.titles = []
+    if (typeof this._currentLanguage.strings !== "object") {
+        this._currentLanguage.strings = {};
+    }
+    if (typeof this._currentLanguage.labels !== "object") {
+        this._currentLanguage.labels = {};
+    }
+    if (typeof this._currentLanguage.titles !== "object") {
+        this._currentLanguage.titles = {};
+    }
 
     this.translate();
 }
@@ -1676,7 +1679,7 @@ EzWebGadget.prototype.translate = function() {
  * @param id identificador del mensaje a traducir
  */
 EzWebGadget.prototype.getTranslatedLabel = function(id) {
-    return this._currentLanguage[id];
+    return this._currentLanguage.labels[id];
 }
 
 /**
