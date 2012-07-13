@@ -20,7 +20,7 @@
  */
 
 /*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50, prototypejs: true */
-/*global alert, CatalogueResource, CatalogueSearchView, CookieManager, gettext, LayoutManagerFactory, OpManagerFactory, Wirecloud, ResourceDetailsView, ResourcePainter, ShowcaseFactory, StyledElements, URIs*/
+/*global CatalogueResource, CatalogueSearchView, CookieManager, gettext, LayoutManagerFactory, OpManagerFactory, Wirecloud, ResourceDetailsView, ResourcePainter, ShowcaseFactory, StyledElements, URIs*/
 
 var CatalogueView = function (id, options) {
     options.id = 'catalogue';
@@ -126,15 +126,6 @@ CatalogueView.prototype.getBreadcrum = function () {
     return [
         {
             'label': 'marketplace'
-        }
-    ];
-};
-
-CatalogueView.prototype.getSubMenuItems = function () {
-    return [
-        {
-            'label': gettext('publish'),
-            'callback': alert.bind(null, 'hola')
         }
     ];
 };
