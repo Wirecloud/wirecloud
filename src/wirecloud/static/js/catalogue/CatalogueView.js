@@ -35,11 +35,11 @@ var CatalogueView = function (id, options) {
         'developer': this.alternatives.createAlternative({alternative_constructor: CataloguePublishView, containerOptions: {catalogue: this}}),
         'details': this.alternatives.createAlternative({alternative_constructor: ResourceDetailsView, containerOptions: {catalogue: this}})
     };
+    this.viewsByName.search.init();
 
     this.view_all_template = new Template(URIs.GET_POST_RESOURCES + '/#{starting_page}/#{resources_per_page}');
     this.simple_search_template = new Template(URIs.GET_RESOURCES_SIMPLE_SEARCH + '/simple_or/#{starting_page}/#{resources_per_page}');
-    this.refresh_search_results();
-
+    this.addEventListener('show', this.refresh_if_needed.bind(this));
 };
 CatalogueView.prototype = new StyledElements.Alternative();
 
@@ -259,6 +259,12 @@ CatalogueView.prototype.ui_commands.delete = function (resource) {
     return function () {
         LayoutManagerFactory.getInstance().showYesNoDialog(msg, doRequest.bind(this));
     }.bind(this);
+};
+
+CatalogueView.prototype.refresh_if_needed = function refresh_if_needed() {
+    if (this.alternatives.getCurrentAlternative() === this.viewsByName.search) {
+        this.viewsByName.search.refresh_if_needed();
+    }
 };
 
 CatalogueView.prototype.refresh_search_results = function () {

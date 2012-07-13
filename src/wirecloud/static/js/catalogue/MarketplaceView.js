@@ -39,6 +39,10 @@
 
         this.marketMenu = new StyledElements.PopupMenu();
         this.marketMenu.append(new Wirecloud.ui.MarketplaceViewMenuItems(this));
+
+        this.addEventListener('show', function (view) {
+            view.alternatives.getCurrentAlternative().refresh_if_needed();
+        });
     };
 
     MarketplaceView.prototype = new StyledElements.Alternative();

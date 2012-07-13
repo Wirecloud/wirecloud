@@ -40,10 +40,12 @@
             'details': this.alternatives.createAlternative({alternative_constructor: FiWareResourceDetailsView, containerOptions: {catalogue: this}}),
             'publish': this.alternatives.createAlternative({alternative_constructor: FiWareCataloguePublishView, containerOptions: {catalogue: this}})
         };
+        this.viewsByName.search.init();
 
         this.fiWareCatalogue = new Wirecloud.FiWare.FiWareCatalogue(this.marketplace);
         this.number_of_stores = 0;
         this.generateStoreMenu();
+        this.addEventListener('show', this.refresh_if_needed.bind(this));
     };
 
     FiWareCatalogueView.prototype = new StyledElements.Alternative();
@@ -245,6 +247,12 @@
         return function () {
             LayoutManagerFactory.getInstance().showYesNoDialog(msg, doRequest.bind(this));
         }.bind(this);
+    };
+
+    FiWareCatalogueView.prototype.refresh_if_needed = function refresh_if_needed() {
+        if (this.alternatives.getCurrentAlternative() === this.viewsByName.search) {
+            this.viewsByName.search.refresh_if_needed();
+        }
     };
 
     FiWareCatalogueView.prototype.refresh_search_results = function () {

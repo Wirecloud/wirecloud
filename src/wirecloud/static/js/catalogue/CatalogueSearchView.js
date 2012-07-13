@@ -75,6 +75,8 @@ var CatalogueSearchView = function (id, options) {
     });
     this.appendChild(contents);
     this.timeout = null;
+    this.initialized = false;
+    this._last_search = false;
 
     this.simple_search_input = this.wrapperElement.getElementsByClassName('simple_search_text')[0];
     this.resource_painter = new options.resource_painter(this.catalogue,
@@ -83,9 +85,19 @@ var CatalogueSearchView = function (id, options) {
     );
 
     EzWebExt.addEventListener(this.simple_search_input, 'keypress', this._onSearchInputKeyPress.bind(this));
-
+    this.addEventListener('show', this.refresh_if_needed.bind(this));
 };
 CatalogueSearchView.prototype = new StyledElements.Alternative();
+
+CatalogueSearchView.prototype.init = function init() {
+    this.initialized = true;
+};
+
+CatalogueSearchView.prototype.refresh_if_needed = function refresh_if_needed() {
+    if (this.initialized && (this._last_search === false || (this._last_search + (2 * 60 * 60 * 1000)) < Date.now())) {
+        this._search();
+    }
+};
 
 CatalogueSearchView.prototype._search = function (event) {
     var options;
@@ -102,6 +114,7 @@ CatalogueSearchView.prototype._search = function (event) {
         options = EzWebExt.merge(options, this.catalogue.getCurrentSearchContext());
     }
 
+    this._last_search = Date.now();
     this.catalogue.search(this.resource_painter.paint.bind(this.resource_painter), options);
 };
 
