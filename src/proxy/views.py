@@ -257,7 +257,7 @@ class Proxy(Resource):
             raise TracedServerError(e, None, request, msg)
 
 
-EZWEB_PROXY = Proxy()
+WIRECLOUD_PROXY = Proxy()
 
 
 def proxy_request(request, protocol, domain, path):
@@ -289,7 +289,7 @@ def proxy_request(request, protocol, domain, path):
     if len(request.GET) > 0:
         url += '?' + request.GET.urlencode()
 
-    response = EZWEB_PROXY.do_request(request, url, method, raw_data)
+    response = WIRECLOUD_PROXY.do_request(request, url, method, raw_data)
 
     # Process cookies
     for key in response.cookies:

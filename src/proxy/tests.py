@@ -11,7 +11,7 @@ from django.core.cache import cache
 from django.test import TestCase, Client
 from django.utils import unittest
 
-from proxy.views import EZWEB_PROXY
+from proxy.views import WIRECLOUD_PROXY
 from workspace.models import VariableValue
 from workspace.utils import HAS_AES, set_variable_value
 
@@ -82,17 +82,17 @@ class ProxyTestsBase(TestCase):
 
     def setUp(self):
         self.user = User.objects.get(username='test')
-        self._original_function = EZWEB_PROXY._do_request
-        EZWEB_PROXY._do_request = FakeDownloader()
+        self._original_function = WIRECLOUD_PROXY._do_request
+        WIRECLOUD_PROXY._do_request = FakeDownloader()
 
     def tearDown(self):
-        EZWEB_PROXY._do_request = self._original_function
+        WIRECLOUD_PROXY._do_request = self._original_function
 
 
 class ProxyTests(ProxyTestsBase):
 
     def test_basic_proxy_requests(self):
-        EZWEB_PROXY._do_request.set_response('http://example.com/path', 'data')
+        WIRECLOUD_PROXY._do_request.set_response('http://example.com/path', 'data')
 
         client = Client()
 
@@ -118,7 +118,7 @@ class ProxyTests(ProxyTestsBase):
         self.assertEquals(response.content, '')
 
         # Simulating an error connecting to the server
-        EZWEB_PROXY._do_request.set_url_error('http://example.com/path')
+        WIRECLOUD_PROXY._do_request.set_url_error('http://example.com/path')
         response = client.get('/proxy/http/example.com/path', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEquals(response.status_code, 504)
         self.assertEquals(response.content, '')
@@ -128,8 +128,8 @@ class ProxyTests(ProxyTestsBase):
         client = Client()
         client.login(username='test', password='test')
 
-        EZWEB_PROXY._do_request.reset()
-        EZWEB_PROXY._do_request.set_response('http://example.com/ca%C3%B1on', 'data')
+        WIRECLOUD_PROXY._do_request.reset()
+        WIRECLOUD_PROXY._do_request.set_response('http://example.com/ca%C3%B1on', 'data')
 
         response = client.get('/proxy/http/example.com/ca%C3%B1on', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEquals(response.status_code, 200)
@@ -145,8 +145,8 @@ class ProxyTests(ProxyTestsBase):
         client.login(username='test', password='test')
         client.cookies['test'] = 'test'
 
-        EZWEB_PROXY._do_request.reset()
-        EZWEB_PROXY._do_request.set_cookie_response('http://example.com/path', {'Set-Cookie': 'newcookie=test; path=/'})
+        WIRECLOUD_PROXY._do_request.reset()
+        WIRECLOUD_PROXY._do_request.set_cookie_response('http://example.com/path', {'Set-Cookie': 'newcookie=test; path=/'})
         response = client.get('/proxy/http/example.com/path', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEquals(response.status_code, 200)
         self.assertEquals(response.content, 'test=test')
@@ -178,8 +178,8 @@ class ProxySecureDataTests(ProxyTestsBase):
         client = Client()
         client.login(username='test', password='test')
 
-        EZWEB_PROXY._do_request.reset()
-        EZWEB_PROXY._do_request.set_echo_response('http://example.com/path')
+        WIRECLOUD_PROXY._do_request.reset()
+        WIRECLOUD_PROXY._do_request.set_echo_response('http://example.com/path')
         pass_ref = '1/password'
         user_ref = '1/username'
         secure_data_header = 'action=data, substr=|password|, var_ref=' + pass_ref
@@ -206,8 +206,8 @@ class ProxySecureDataTests(ProxyTestsBase):
         self.assertEquals(response.content, 'username=|username|&password=|password|')
 
         # Secure data header using constants
-        EZWEB_PROXY._do_request.reset()
-        EZWEB_PROXY._do_request.set_echo_response('http://example.com/path')
+        WIRECLOUD_PROXY._do_request.reset()
+        WIRECLOUD_PROXY._do_request.set_echo_response('http://example.com/path')
         secure_data_header = 'action=data, substr=|password|, var_ref=c/test_password'
         secure_data_header += '&action=data, substr=|username|, var_ref=c/test_username'
         response = client.post('/proxy/http/example.com/path',
@@ -221,8 +221,8 @@ class ProxySecureDataTests(ProxyTestsBase):
         self.assertEquals(response.content, 'username=test_username&password=test_password')
 
         # Secure data header using encoding=url
-        EZWEB_PROXY._do_request.reset()
-        EZWEB_PROXY._do_request.set_echo_response('http://example.com/path')
+        WIRECLOUD_PROXY._do_request.reset()
+        WIRECLOUD_PROXY._do_request.set_echo_response('http://example.com/path')
         secure_data_header = 'action=data, substr=|password|, var_ref=c%2Fa%3D%2C%20z , encoding=url'
         secure_data_header += '&action=data, substr=|username|, var_ref=c%2Fa%3D%2C%20z'
         response = client.post('/proxy/http/example.com/path',
@@ -254,8 +254,8 @@ class ProxySecureDataTests(ProxyTestsBase):
         client = Client()
         client.login(username='test', password='test')
 
-        EZWEB_PROXY._do_request.reset()
-        EZWEB_PROXY._do_request.set_echo_response('http://example.com/path')
+        WIRECLOUD_PROXY._do_request.reset()
+        WIRECLOUD_PROXY._do_request.set_echo_response('http://example.com/path')
         pass_ref = '1/password'
         user_ref = '1/username'
         secure_data_header = 'action=data, substr=|password|, var_ref=' + pass_ref
