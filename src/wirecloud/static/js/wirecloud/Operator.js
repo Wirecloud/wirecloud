@@ -189,7 +189,7 @@ OperatorTargetEndpoint.prototype._annotate = function _anotate(value, source, op
 
 OperatorTargetEndpoint.prototype.propagate = function propagate(newValue, options) {
     if (!options || this._is_target_slot(options.targetSlots)) {
-        this.meta.callback.call(this.operator, newValue);
+        this.callback.call(this.operator, newValue);
     }
 };
 
