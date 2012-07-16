@@ -155,7 +155,7 @@ OperatorTargetEndpoint.prototype.serialize = function serialize() {
     };
 };
 
-OperatorTargetEndpoint.prototype._is_target_slot = function _is_target_slot(variable, list) {
+OperatorTargetEndpoint.prototype._is_target_slot = function _is_target_slot(list) {
     var i, slot;
 
     if (list == null) {
