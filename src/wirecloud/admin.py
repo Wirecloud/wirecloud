@@ -23,3 +23,11 @@ from wirecloud import models
 
 
 admin.site.register(models.Market)
+
+admin.site.register(models.Gadget)
+admin.site.register(models.XHTML)
+admin.site.register(models.VariableDef)
+admin.site.register(models.UserPrefOption)
+admin.site.register(models.VariableDefAttr)
+admin.site.register(models.ContextOption)
+admin.site.register(models.Capability)
