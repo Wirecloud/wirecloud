@@ -156,15 +156,15 @@ OperatorTargetEndpoint.prototype.serialize = function serialize() {
 };
 
 OperatorTargetEndpoint.prototype._is_target_slot = function _is_target_slot(list) {
-    var i, slot;
+    var i, target;
 
     if (list == null) {
         return true;
     }
 
     for (i = 0; i < list.length; i += 1) {
-        slot = list[i];
-        if (slot.ioperator == this.operator.id && slot.name == this.meta.name) {
+        target = list[i];
+        if ((target.type === 'ioperator') && (target.id == this.operator.id) && (target.endpoint == this.meta.name)) {
             return true;
         }
     }
