@@ -326,19 +326,16 @@
 
         from = this.start;
         to = this.end;
-        if (this.pullerStart === null) {
-            difX = from.posX - to.posX;
-            if (from.posX < to.posX) {
-                difX = 50;
-            } else {
-                difX = -50;
+        if (this.pullerStart == null) {
+            difX = Math.abs(from.posX - to.posX);
+            difY = Math.abs(from.posY - to.posY);
+            if (difX > 150) {
+                difX = 150;
             }
-            if (from.posY < to.posXY) {
-                difY = 40;
-            } else {
-                difY = -40;
+            if (difX < 25) {
+                difX = 25;
             }
-            result = {posX: difX, posY: difY};
+            result = {posX: difX, posY: 0};
         } else {
             result = this.pullerStart;
         }
@@ -359,19 +356,16 @@
         from = this.start;
         to = this.end;
 
-        if (this.pullerEnd === null) {
-
-            if (from.posX < to.posX) {
-                difX = 10;
-            } else {
-                difX = -10;
+        if (this.pullerEnd == null) {
+            difX = Math.abs(from.posX - to.posX);
+            difY = Math.abs(from.posY - to.posY);
+            if (difX > 150) {
+                difX = 150;
             }
-            if (from.posY < to.posXY) {
-                difY = 10;
-            } else {
-                difY = -10;
+            if (difX < 25) {
+                difX = 25;
             }
-            result = {posX: -difX, posY: -difY};
+            result = {posX: -difX, posY: 0};
         } else {
             result = this.pullerEnd;
         }
