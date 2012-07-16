@@ -19,6 +19,7 @@
 
 
 from django import template
+from django.utils.safestring import mark_safe
 
 from wirecloud.plugins import get_extra_javascripts, get_wirecloud_ajax_endpoints
 
@@ -44,5 +45,5 @@ def wirecloud_ajax_endpoints(context, view):
             script += "'" + endpoint['url'] + "',\n"
 
     script += '};'
-    return {'script': script}
+    return {'script': mark_safe(script)}
 register.inclusion_tag('wirecloud/inline_javascript.html', takes_context=True)(wirecloud_ajax_endpoints)
