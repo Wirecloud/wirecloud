@@ -103,7 +103,7 @@ var Operator = function Operator(operator_meta, id, /* TODO */ wiringEditor) {
 
     if (!wiringEditor) {
         this.element = document.createElement('object');
-        data_uri = Wirecloud.URLs.OPERATOR_ENTRY.evaluate({vendor: operator_meta.vendor, name: operator_meta.name, version: operator_meta.version});
+        data_uri = Wirecloud.URLs.OPERATOR_ENTRY.evaluate({vendor: operator_meta.vendor, name: operator_meta.name, version: operator_meta.version}) + '#id=' + id;
         this.element.setAttribute('data', data_uri);
         document.body.appendChild(this.element);
     }
