@@ -296,6 +296,7 @@
 
 #search_interface .search_bar > div .styled_select {
     display: inline-block;
+    vertical-align: middle;
 }
 
 #search_interface .search_bar .simple_search_text {
