@@ -189,7 +189,20 @@ class Proxy(Resource):
                 hostName = socket.gethostname()
 
             via_header = "%s %s (EzWeb-python-Proxy/1.1)" % (protocolVersion, hostName)
-            request_data['headers']["Via"] = via_header
+            if 'via' in request_data['headers']:
+                request_data['headers']['via'] += ', ' + via_header
+            else:
+                request_data['headers']['via'] = via_header
+
+            # XFF headers
+            if 'x-forwarded-for' in request_data['headers']:
+                request_data['headers']['x-forwarded-for'] += ', ' + request.META['REMOTE_ADDR']
+            else:
+                request_data['headers']['x-forwarded-for'] = request.META['REMOTE_ADDR']
+
+            request_data['headers']['x-forwarded-host'] = host
+            if 'x-forwarded-server' in request_data['headers']:
+                del request_data['headers']['x-forwarded-server']
 
             # Pass proxy processors to the new request
             try:
