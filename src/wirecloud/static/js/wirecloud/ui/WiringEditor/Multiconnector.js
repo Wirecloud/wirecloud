@@ -227,13 +227,16 @@
 
         //sort by posY coordinate
         lastMax = 99999;
+        highestArrow = -1;
         for (i = 0; i < this.arrows.length; i += 1) {
-            highestArrow = this.searchMaxYArrow(lastMax);
-            arrowsAux.push(this.arrows[highestArrow]);
-            if (this.type == 'source') {
-                lastMax = this.arrows[highestArrow].end.posY;
-            } else if (this.type == 'target') {
-                lastMax = this.arrows[highestArrow].start.posY;
+            highestArrow = this.searchMaxYArrow(lastMax, arrowsAux);
+            if (highestArrow != null) {
+                arrowsAux.push(this.arrows[highestArrow]);
+                if (this.type == 'source') {
+                    lastMax = this.arrows[highestArrow].end.posY;
+                } else if (this.type == 'target') {
+                    lastMax = this.arrows[highestArrow].start.posY;
+                }
             }
         }
         for (j = 0; j < arrowsAux.length ; j += 1) {
@@ -252,7 +255,7 @@
     /**
      * return the highest coordinate Y Arrow
      */
-    Multiconnector.prototype.searchMaxYArrow = function searchMaxArrow(lastMax) {
+    Multiconnector.prototype.searchMaxYArrow = function searchMaxArrow(lastMax, findedArrows) {
         var maxY, i, j, y, highestArrow;
         maxY = 0;
 
@@ -262,13 +265,21 @@
                 if ((y > maxY) && (y < lastMax)) {
                     maxY = y;
                     highestArrow = i;
+                } else if ((y == lastMax) && (findedArrows.indexOf(this.arrows[i]) == -1)) {
+                    maxY = y;
+                    highestArrow = i;
                 }
             } else if (this.type == 'target') {
                 y = this.arrows[i].start.posY;
                 if ((y > maxY) && (y < lastMax)) {
                     maxY = y;
                     highestArrow = i;
+                } else if ((y == lastMax) && (findedArrows.indexOf(this.arrows[i]) == -1)) {
+                    maxY = y;
+                    highestArrow = i;
                 }
+            } else {
+                highestArrow = null;
             }
         }
         return highestArrow;

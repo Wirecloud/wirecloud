@@ -50,6 +50,9 @@
                 this.arrows[i].setStart(coordinates);
                 this.arrows[i].redraw();
             }
+            if (this.arrows[i].endMulti != null) {
+                this.context.iObject.wiringEditor.multiconnectors[this.arrows[i].endMulti].repaint();
+            }
         }
     };
 

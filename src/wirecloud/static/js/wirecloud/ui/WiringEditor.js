@@ -86,10 +86,10 @@ if (!Wirecloud.ui) {
         }.bind(this));
         this.canvas.addEventListener('arrowremoved', function (canvas, arrow) {
             var pos;
-            if (arrow.startMulti !== null) {
+            if (arrow.startMulti != null) {
                 this.multiconnectors[arrow.startMulti].removeArrow(arrow);
             }
-            if (arrow.endMulti !== null) {
+            if (arrow.endMulti != null) {
                 this.multiconnectors[arrow.endMulti].removeArrow(arrow);
             }
             pos = this.arrows.indexOf(arrow);
