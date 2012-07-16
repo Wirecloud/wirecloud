@@ -137,12 +137,13 @@ Operator.prototype.destroy = function destroy() {
 var OperatorTargetEndpoint = function OperatorTargetEndpoint(operator, meta) {
     Object.defineProperty(this, 'meta', {value: meta});
     Object.defineProperty(this, 'name', {value: meta.name});
+    Object.defineProperty(this, 'friendcode', {value: meta.friendcode});
     Object.defineProperty(this, 'label', {value: meta.label});
     Object.defineProperty(this, 'description', {value: meta.description});
     Object.defineProperty(this, 'operator', {value: operator});
 
     this.connectable = this;
-    wOut.call(this, this.meta.name, this.meta.type, this.operator.id + '_' + this.meta.name);
+    wOut.call(this, this.meta.name, this.meta.type, this.meta.friendcode, this.operator.id + '_' + this.meta.name);
 };
 OperatorTargetEndpoint.prototype = new wOut();
 
@@ -196,13 +197,14 @@ OperatorTargetEndpoint.prototype.propagate = function propagate(newValue, option
 var OperatorSourceEndpoint = function OperatorSourceEndpoint(operator, meta) {
     Object.defineProperty(this, 'meta', {value: meta});
     Object.defineProperty(this, 'name', {value: meta.name});
+    Object.defineProperty(this, 'friendcode', {value: meta.friendcode});
     Object.defineProperty(this, 'operator', {value: operator});
     Object.defineProperty(this, 'label', {value: meta.label});
     Object.defineProperty(this, 'description', {value: meta.description});
     Object.defineProperty(this, 'operator', {value: operator});
 
     this.connectable = this; // TODO
-    wIn.call(this, this.meta.name, this.meta.type, this.operator.id + '_' + this.meta.name);
+    wIn.call(this, this.meta.name, this.meta.type, this.friendcode, this.operator.id + '_' + this.meta.name);
 };
 OperatorSourceEndpoint.prototype = new wIn();
 
