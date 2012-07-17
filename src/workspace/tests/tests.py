@@ -429,6 +429,7 @@ class ParamatrizedWorkspaceGenerationTestCase(TestCase):
 class ParametrizedWorkspaceParseTestCase(TestCase):
 
     fixtures = ('selenium_test_data',)
+    tags = ('fiware-ut-2',)
 
     def setUp(self):
 
