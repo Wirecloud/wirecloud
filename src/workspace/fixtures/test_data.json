@@ -81,12 +81,31 @@
         }
     },
     {
+        "model": "igadget.Position",
+        "pk": "2",
+        "fields": {
+            "posX": "5",
+            "posY": "0",
+            "posZ": "1"
+        }
+    },
+    {
         "model": "igadget.IGadget",
         "pk": "1",
         "fields": {
             "gadget": "1",
             "name": "Test Gadget",
             "position": "1",
+            "tab": "1"
+        }
+    },
+    {
+        "model": "igadget.IGadget",
+        "pk": "2",
+        "fields": {
+            "gadget": "1",
+            "name": "Test Gadget",
+            "position": "2",
             "tab": "1"
         }
     },
@@ -133,6 +152,8 @@
             "type": "S",
             "aspect": "SLOT",
             "gadget": "1",
+            "label": "slot",
+            "friend_code": "event",
             "action_label": "__MSG_slot_label__"
         }
     },
@@ -153,7 +174,9 @@
             "name": "event",
             "type": "S",
             "aspect": "EVEN",
-            "gadget": "1"
+            "gadget": "1",
+            "label": "event",
+            "friend_code": "event"
         }
     },
     {
@@ -197,6 +220,46 @@
         }
     },
     {
+        "model": "igadget.Variable",
+        "pk": "6",
+        "fields": {
+            "vardef": "1",
+            "igadget": "2"
+        }
+    },
+    {
+        "model": "igadget.Variable",
+        "pk": "7",
+        "fields": {
+            "vardef": "2",
+            "igadget": "2"
+        }
+    },
+    {
+        "model": "igadget.Variable",
+        "pk": "8",
+        "fields": {
+            "vardef": "3",
+            "igadget": "2"
+        }
+    },
+    {
+        "model": "igadget.Variable",
+        "pk": "9",
+        "fields": {
+            "vardef": "4",
+            "igadget": "2"
+        }
+    },
+    {
+        "model": "igadget.Variable",
+        "pk": "10",
+        "fields": {
+            "vardef": "5",
+            "igadget": "2"
+        }
+    },
+    {
         "model": "workspace.VariableValue",
         "pk": "1",
         "fields": {
@@ -219,6 +282,33 @@
         "pk": "3",
         "fields": {
             "variable": "4",
+            "value": "test_data",
+            "user": "2"
+        }
+    },
+    {
+        "model": "workspace.VariableValue",
+        "pk": "4",
+        "fields": {
+            "variable": "6",
+            "value": "test_password",
+            "user": "2"
+        }
+    },
+    {
+        "model": "workspace.VariableValue",
+        "pk": "5",
+        "fields": {
+            "variable": "7",
+            "value": "test_username",
+            "user": "2"
+        }
+    },
+    {
+        "model": "workspace.VariableValue",
+        "pk": "6",
+        "fields": {
+            "variable": "9",
             "value": "test_data",
             "user": "2"
         }

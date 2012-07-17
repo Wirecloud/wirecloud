@@ -232,11 +232,13 @@ class ParamatrizedWorkspaceGenerationTestCase(TestCase):
     USDL = rdflib.Namespace('http://www.linked-usdl.org/ns/usdl-core#')
     VCARD = rdflib.Namespace('http://www.w3.org/2006/vcard/ns#')
 
-    fixtures = ['test_workspace']
+    fixtures = ['test_data']
+    tags = ('fiware-ut-1',)
 
     def setUp(self):
 
-        self.user = User.objects.create_user('test', 'test@example.com', 'test')
+        self.user = User.objects.get(username='test')
+        self.workspace_with_iwidgets = WorkSpace.objects.get(pk=1)
         self.workspace = createEmptyWorkSpace('Testing', self.user)
 
     def assertXPathText(self, root_element, xpath, content):
@@ -244,10 +246,26 @@ class ParamatrizedWorkspaceGenerationTestCase(TestCase):
         self.assertEquals(len(elements), 1)
         self.assertEquals(elements[0].text, content)
 
+    def assertXPathAttr(self, root_element, xpath, attr, content):
+        elements = root_element.xpath(xpath)
+        self.assertEquals(len(elements), 1)
+        self.assertEquals(elements[0].get(attr), content)
+
+    def assertXPathCount(self, root_element, xpath, count):
+        elements = root_element.xpath(xpath)
+        self.assertEquals(len(elements), count)
+
     def assertRDFElement(self, graph, element, ns, predicate, content):
         elements = graph.objects(element, ns[predicate])
         for e in elements:
             self.assertEquals(unicode(e), content)
+
+    def assertRDFCount(self, graph, element, ns, predicate, count):
+        num = 0
+        for e in graph.objects(element, ns[predicate]):
+            num = num + 1
+
+        self.assertEquals(num, count)
 
     def testBuildTemplateFromWorkspace(self):
 
@@ -260,11 +278,41 @@ class ParamatrizedWorkspaceGenerationTestCase(TestCase):
             'readOnlyGadgets': True,
         }
         template = build_template_from_workspace(options, self.workspace, self.user)
+
+        # Basic info
         self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Vendor', 'Wirecloud Test Suite')
         self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Name', 'Test Mashup')
         self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Version', '1')
         self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Author', 'test')
         self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Mail', 'a@b.com')
+
+        # IWidgets
+        self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab', 1)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]', 'name', 'Tab')
+        self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/IGadget', 0)
+
+        # Workspace with iwidgets
+        options = {
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Mashup',
+            'version': '1',
+            'author': 'test',
+            'email': 'a@b.com',
+            'readOnlyGadgets': True,
+        }
+        template = build_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
+
+        # Basic info
+        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Vendor', 'Wirecloud Test Suite')
+        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Name', 'Test Mashup')
+        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Version', '1')
+        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Author', 'test')
+        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Mail', 'a@b.com')
+
+        # IWidgets
+        self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab', 1)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]', 'name', 'tab')
+        self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource', 2)
 
     def testBuildRdfTemplateFromWorkspace(self):
 
@@ -276,6 +324,7 @@ class ParamatrizedWorkspaceGenerationTestCase(TestCase):
             'email': u'a@b.com',
             'readOnlyGadgets': True,
         }
+        # Basic info
         graph = build_rdf_template_from_workspace(options, self.workspace, self.user)
         mashup_uri = graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']).next()
 
@@ -290,6 +339,41 @@ class ParamatrizedWorkspaceGenerationTestCase(TestCase):
 
         author = graph.objects(mashup_uri, self.DCTERMS['creator']).next()
         self.assertRDFElement(graph, author, self.FOAF, 'name', u'test')
+
+        self.assertRDFCount(graph, mashup_uri, self.WIRE_M, 'hasTab', 1)
+
+        tab = graph.objects(mashup_uri, self.WIRE_M['hasTab']).next()
+        self.assertRDFElement(graph, tab, self.DCTERMS, 'title', u'Tab')
+
+        # Workspace with iwidgets
+        options = {
+            'vendor': u'Wirecloud Test Suite',
+            'name': u'Test Mashup',
+            'version': u'1',
+            'author': u'test',
+            'email': u'a@b.com',
+            'readOnlyGadgets': True,
+        }
+        graph = build_rdf_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
+        mashup_uri = graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']).next()
+
+        self.assertRDFElement(graph, mashup_uri, self.DCTERMS, 'title', u'Test Mashup')
+        self.assertRDFElement(graph, mashup_uri, self.USDL, 'versionInfo', u'1')
+
+        vendor = graph.objects(mashup_uri, self.USDL['hasProvider']).next()
+        self.assertRDFElement(graph, vendor, self.FOAF, 'name', u'Wirecloud Test Suite')
+
+        addr = graph.objects(mashup_uri, self.VCARD['addr']).next()
+        self.assertRDFElement(graph, addr, self.VCARD, 'email', u'a@b.com')
+
+        author = graph.objects(mashup_uri, self.DCTERMS['creator']).next()
+        self.assertRDFElement(graph, author, self.FOAF, 'name', u'test')
+
+        self.assertRDFCount(graph, mashup_uri, self.WIRE_M, 'hasTab', 1)
+
+        tab = graph.objects(mashup_uri, self.WIRE_M['hasTab']).next()
+        self.assertRDFElement(graph, tab, self.DCTERMS, 'title', u'tab')
+        self.assertRDFCount(graph, tab, self.WIRE_M, 'hasiWidget', 2)
 
     def testBuildRdfTemplateFromWorkspaceUtf8Char(self):
         options = {
