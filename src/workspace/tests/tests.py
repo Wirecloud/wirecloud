@@ -523,7 +523,6 @@ class ParametrizedWorkspaceParseTestCase(TestCase):
         workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate3, self.user)
 
         data = get_global_workspace_data(workspace, self.user).get_data()
-        tabs = [u'Tab', u'Tab 2', u'Tab 3', u'Tab 4']
 
         self.assertEqual(len(data['workspace']['tabList']), 4)
         self.assertEqual(data['workspace']['tabList'][0]['name'], u'Tab')
