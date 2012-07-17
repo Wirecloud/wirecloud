@@ -153,6 +153,7 @@ INSTALLED_APPS = (
     'south',
     'compressor',
     'marketAdaptor',
+    'wirecloud_fiware',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -241,6 +242,10 @@ JOHNNY_MIDDLEWARE_KEY_PREFIX = '%s-cache' % DATABASES['default']['NAME']
 
 WORKSPACE_MANAGERS = (
     'workspace.workspace_managers.OrganizationWorkspaceManager',
+)
+
+WIRECLOUD_PLUGINS = (
+    'wirecloud_fiware.plugins.FiWarePlugin',
 )
 
 # Template Generator URL. This URL is only needed to allow publishing
