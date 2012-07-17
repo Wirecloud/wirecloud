@@ -63,7 +63,7 @@ var ResourceDetailsPainter = function (catalogue, details_structure_element, dom
 
         resource_html = this.details_template.evaluate({
             'image_url': resource.getUriImage(),
-            'name': resource.getName(),
+            'name': resource.getDisplayName(),
             'description': resource.getDescription(),
             'type': type,
             'button_text': button_text,

@@ -79,7 +79,7 @@ var FiWareResourceDetailsPainter = function (catalogue, details_structure_elemen
 
         evaluate_dict = {
             'image_url': resource.getUriImage(),
-            'name': resource.getName(),
+            'name': resource.getDisplayName(),
             'type': resource.getType(),
             'longDescription': resource.getLongDescription(),
             'button_text': button_text,

@@ -91,7 +91,7 @@ ResourcePainter.prototype.paint = function (command_data) {
         resource = command_data.resources[i];
 
         context = {
-            'name': resource.getName(),
+            'name': resource.getDisplayName(),
             'image_url': resource.getUriImage(),
             'description': resource.getDescription(),
             'average_popularity': this.get_popularity_html(resource.getPopularity())

@@ -229,6 +229,9 @@ class USDLTemplateParser(object):
 
         self._info['display_name'] = self._get_translation_field(WIRE, 'displayName', self._rootURI, 'display_name', required=False, type='resource', field='display_name')
 
+        if not self._info['display_name']:
+            self._info['display_name'] = self._info['name']
+
         addr_element = self._get_field(VCARD, 'addr', self._rootURI, id_=True)
         self._info['mail'] = self._get_field(VCARD, 'email', addr_element)
         self._info['requirements'] = []
@@ -660,6 +663,10 @@ class WirecloudTemplateParser(object):
 
         self._info['display_name'] = self._get_field(DISPLAY_NAME_XPATH, self._resource_description, required=False)
         self._add_translation_index(self._info['display_name'], type='resource', field='display_name')
+
+        if not self._info['display_name']:
+            self._info['display_name'] = self._info['name']
+
         self._info['description'] = self._get_field(DESCRIPTION_XPATH, self._resource_description)
         self._add_translation_index(self._info['description'], type='resource', field='description')
 
