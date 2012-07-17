@@ -113,7 +113,7 @@
 
         this.movZone = document.createElement("div");
         this.movZone.addClassName('dragZone');
-        this.movZone.style.top = ((height - 20) / 2) + 'px';
+        this.movZone.style.top = (((height - 20) / 2) + 2) + 'px';
         this.mainElement.appendChild(this.movZone);
 
         //general position
@@ -199,14 +199,13 @@
         this.arrowPositions = [];
         if (this.initAnchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
             coord.posX -= 60;
-        } else {
-            //coord.posX -= 5;
         }
+
         if (this.height < 40) {
             this.arrowPositions.push({'coord': {'posX': coord.posX + 30, 'posY': coord.posY + 15}, 'free': true});
             return;
         }
-        for (i = coord.posY + 10; i <= (coord.posY + this.height - 10); i += 15) {
+        for (i = coord.posY + 15; i <= (coord.posY + this.height - 10); i += 15) {
             this.arrowPositions.push({'coord': {'posX': coord.posX + 30, 'posY': i}, 'free': true});
         }
     };
@@ -257,7 +256,7 @@
      */
     Multiconnector.prototype.searchMaxYArrow = function searchMaxArrow(lastMax, findedArrows) {
         var maxY, i, j, y, highestArrow;
-        maxY = 0;
+        maxY = -1000;
 
         for (i = 0; i < this.arrows.length; i += 1) {
             if (this.type == 'source') {

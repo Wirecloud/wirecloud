@@ -92,6 +92,9 @@ if (!Wirecloud.ui) {
             if (arrow.endMulti != null) {
                 this.multiconnectors[arrow.endMulti].removeArrow(arrow);
             }
+            if (arrow.multiId != null) {
+                this.removeMulticonnector(this.multiconnectors[arrow.multiId]);
+            }
             pos = this.arrows.indexOf(arrow);
             this.arrows.splice(pos, 1);
         }.bind(this));
@@ -202,6 +205,8 @@ if (!Wirecloud.ui) {
         this.generalHighlighted = true;
         this.nextOperatorId = 0;
         this.nextMulticonnectorId = 0;
+        this.sourceAnchorsByFriendCode = {};
+        this.targetAnchorsByFriendCode = {};
 
         igadgets = workspace.getIGadgets();
 
@@ -594,6 +599,60 @@ if (!Wirecloud.ui) {
         this.layout.getCenterContainer().removeChild(multiConnector);
         multiConnector.destroy(true);
         delete this.multiconnectors[multiConnector.id];
+    };
+
+    /**
+     * emphasize anchors.
+     */
+    WiringEditor.prototype.emphasize = function emphasize(anchor) {
+        var friendCode, anchors, i;
+
+        anchor.wrapperElement.parentNode.addClassName('highlight_main');
+        friendCode = anchor.context.data.connectable._friendCode;
+        if (anchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
+            anchors = this.sourceAnchorsByFriendCode[friendCode];
+        } else {
+            anchors = this.targetAnchorsByFriendCode[friendCode];
+        }
+        if (anchors != null) {
+            for (i = 0; i < anchors.length; i += 1) {
+                this.highlightAnchorLabel(anchors[i]);
+            }
+        }
+    };
+
+    /**
+     * deemphasize anchors.
+     */
+    WiringEditor.prototype.deemphasize = function deemphasize(anchor) {
+        var friendCode, anchors, i;
+
+        anchor.wrapperElement.parentNode.removeClassName('highlight_main');
+        friendCode = anchor.context.data.connectable._friendCode;
+        if (anchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
+            anchors = this.sourceAnchorsByFriendCode[friendCode];
+        } else {
+            anchors = this.targetAnchorsByFriendCode[friendCode];
+        }
+        if (anchors != null) {
+            for (i = 0; i < anchors.length; i += 1) {
+                this.unhighlightAnchorLabel(anchors[i]);
+            }
+        }
+    };
+
+    /**
+     * highlight anchor.
+     */
+    WiringEditor.prototype.highlightAnchorLabel = function highlightAnchorLabel(anchor) {
+        anchor.wrapperElement.parentNode.addClassName('highlight');
+    };
+
+    /**
+     * unhighlight anchor.
+     */
+    WiringEditor.prototype.unhighlightAnchorLabel = function unhighlightAnchorLabel(anchor) {
+        anchor.wrapperElement.parentNode.removeClassName('highlight');
     };
 
     /**

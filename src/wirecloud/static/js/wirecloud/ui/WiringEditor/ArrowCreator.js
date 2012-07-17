@@ -55,6 +55,12 @@
 
             this.initAnchor = initAnchor;
 
+            if (initAnchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
+                initAnchor.context.iObject.wiringEditor.emphasize(initAnchor.initAnchor);
+            } else {
+                initAnchor.context.iObject.wiringEditor.emphasize(initAnchor);
+            }
+
             document.oncontextmenu = Draggable._cancel; // disable context menu
             document.onmousedown = Draggable._cancel; // disable text selection in Firefox
             document.onselectstart = Draggable._cancel; // disable text selection in IE
@@ -166,6 +172,13 @@
             } else {
                 theArrow.destroy();
             }
+
+            if (this.initAnchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
+                this.initAnchor.context.iObject.wiringEditor.deemphasize(this.initAnchor.initAnchor);
+            } else {
+                this.initAnchor.context.iObject.wiringEditor.deemphasize(this.initAnchor);
+            }
+
             document.removeEventListener("mouseup", this.enddrag, false);
             document.removeEventListener("mousemove", this.drag, false);
             onFinish(draggable, data);

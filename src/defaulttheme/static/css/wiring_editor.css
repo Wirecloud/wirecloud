@@ -130,6 +130,13 @@
     padding-right: 1em;
 }
 
+.wiring_editor .sources > div, .wiring_editor .targets > div {
+    border-radius: 15px;
+    -webkit-transition: background-color 500ms ease-in 250ms, color 750ms ease-out;
+    -moz-transition: background-color 500ms ease-in 250ms, color 750ms ease-out;
+    -o-transition: background-color 500ms ease-in 250ms, color 750ms ease-out;
+}
+
 /* clone mini widget for drag and drop */
 .wiring_editor .border_layout .ioperator.clon, .wiring_editor .border_layout .igadget.clon {
     position: absolute;
@@ -206,6 +213,23 @@
     cursor: no-drop;
 }
 
+.wiring_editor .sources .highlight, .wiring_editor .targets .highlight_main {
+    background: #FF9854;
+    color: white;
+}
+
+.wiring_editor .targets .highlight, .wiring_editor .sources .highlight_main {
+    background: #0A9;
+    color: white;
+}
+
+.wiring_editor .sources .highlight span, .wiring_editor .targets .highlight_main span {
+    pointer-events: none;
+}
+
+.wiring_editor .targets .highlight span, .wiring_editor .sources .highlight_main span {
+    pointer-events: none;
+}
 
 /*ARROWS*/
 .wiring_editor .canvas .arrow {

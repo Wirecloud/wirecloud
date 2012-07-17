@@ -259,7 +259,7 @@
      * add Source.
      */
     GenericInterface.prototype.addSource = function addSource(label, desc, name, anchorContext) {
-        var anchor, anchorDiv, anchorLabel, multiconnector, id, objectId;
+        var anchor, anchorDiv, anchorLabel, multiconnector, id, objectId, friendCode;
         //anchorDiv
         anchorDiv = document.createElement("div");
         //if the output have not description, take the label
@@ -274,6 +274,12 @@
         if (!this.isMiniInterface) {
             anchor = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, this.arrowCreator);
             anchorDiv.appendChild(anchor.wrapperElement);
+
+            friendCode = anchor.context.data.connectable._friendCode;
+            if (this.wiringEditor.sourceAnchorsByFriendCode[friendCode] == null) {
+                this.wiringEditor.sourceAnchorsByFriendCode[friendCode] = [];
+            }
+            this.wiringEditor.sourceAnchorsByFriendCode[friendCode].push(anchor);
 
             //multiconnector button
             this.multiButton = new StyledElements.StyledButton({
@@ -296,6 +302,12 @@
             }.bind(this));
 
             anchorDiv.appendChild(this.multiButton.wrapperElement);
+            anchorLabel.addEventListener('mouseover', function (e) {
+                this.wiringEditor.emphasize(anchor);
+            }.bind(this));
+            anchorLabel.addEventListener('mouseout', function (e) {
+                this.wiringEditor.deemphasize(anchor);
+            }.bind(this));
             this.sourceAnchorsByName[name] = anchor;
             this.sourceAnchors.push(anchor);
         } else {
@@ -311,7 +323,7 @@
      * add Target.
      */
     GenericInterface.prototype.addTarget = function addTarget(label, desc, name, anchorContext) {
-        var anchor, anchorDiv, anchorLabel, multiconnector, id, objectId;
+        var anchor, anchorDiv, anchorLabel, multiconnector, id, objectId, friendCode;
         //anchorDiv
         anchorDiv = document.createElement("div");
         //if the input have not description, take the label
@@ -325,6 +337,13 @@
         anchorDiv.appendChild(anchorLabel);
         if (!this.isMiniInterface) {
             anchor = new Wirecloud.ui.WiringEditor.TargetAnchor(anchorContext, this.arrowCreator);
+
+            friendCode = anchor.context.data.connectable._friendCode;
+            if (this.wiringEditor.targetAnchorsByFriendCode[friendCode] == null) {
+                this.wiringEditor.targetAnchorsByFriendCode[friendCode] = [];
+            }
+            this.wiringEditor.targetAnchorsByFriendCode[friendCode].push(anchor);
+
             //multiconnector button
             this.multiButton = new StyledElements.StyledButton({
                 'title': gettext("highlight"),
@@ -346,6 +365,12 @@
             }.bind(this));
             anchorDiv.appendChild(this.multiButton.wrapperElement);
             anchorDiv.appendChild(anchor.wrapperElement);
+            anchorLabel.addEventListener('mouseover', function (e) {
+                this.wiringEditor.emphasize(anchor);
+            }.bind(this));
+            anchorLabel.addEventListener('mouseout', function (e) {
+                this.wiringEditor.deemphasize(anchor);
+            }.bind(this));
             this.targetAnchorsByName[name] = anchor;
             this.targetAnchors.push(anchor);
         } else {

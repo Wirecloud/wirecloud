@@ -86,7 +86,9 @@
         if (this.selectedArrow === arrow) {
             this.unselectArrow();
         }
-        arrow.wrapperElement.parentNode.removeChild(arrow.wrapperElement);
+        if (arrow.multiId == null) {
+            arrow.wrapperElement.parentNode.removeChild(arrow.wrapperElement);
+        }
         this.events.arrowremoved.dispatch(this, arrow);
     };
 
