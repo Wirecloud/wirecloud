@@ -111,7 +111,7 @@ class USDLParser(object):
         self._info['name'] = self._get_field(DCTERMS, service_uri, 'title')[0]
 
         self._info['versions'] = []
-
+        display_name = None
         artefact = self._get_field(USDL, service_uri, 'utilizedResource', id_=True)[0]
         uri_template = self._get_field(BLUEPRINT, artefact, 'location')[0]
 
@@ -134,6 +134,7 @@ class USDLParser(object):
                     parser = TemplateParser(content)
                     technical_info = parser.get_resource_basic_info()
                     self._info['type'] = technical_info['type']
+                    display_name = technical_info['display_name']
 
                     # if the service is a mashup it may has parts
                     if self._info['type'] == 'mashup':
@@ -148,6 +149,9 @@ class USDLParser(object):
             except HTTPError:
                 self._info['type'] = 'non-instantiable service'
 
+        if self._info['type'] == 'non-instantiable service':
+            display_name = self._info['name']
+
         self._info['versions'].append({
             'shortDescription': self._get_field(DCTERMS, service_uri, 'abstract')[0],
             'longDescription': self._get_field(DCTERMS, service_uri, 'description')[0],
@@ -157,6 +161,7 @@ class USDLParser(object):
             'version': self._get_field(USDL, service_uri, 'versionInfo')[0],
             'uriTemplate': uri_template,
             'page': self._get_field(FOAF, service_uri, 'page')[0],
+            'displayName': display_name,
         })
 
     def _parse_legal_info(self, service_uri):

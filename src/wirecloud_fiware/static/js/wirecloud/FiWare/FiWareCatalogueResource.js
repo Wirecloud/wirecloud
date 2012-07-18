@@ -89,6 +89,10 @@ function FiWareCatalogueResource(resourceJSON_) {
         return allVersions;
     };
 
+    this.getDisplayName = function getDisplayName() {
+        return currentVersion.displayName;
+    };
+
     this.getShortDescription = function () {
         return currentVersion.shortDescription;
     };
