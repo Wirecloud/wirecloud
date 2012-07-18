@@ -51,8 +51,9 @@ div.gadget_window_locked div.gadget_wrapper {
   border: none;
 }
 
-div.gadget_window div.gadget_wrapper object {
-  width: 100%;
+div.gadget_window div.gadget_wrapper iframe {
+    width: 100%;
+    border: none;
 }
 
 div.row {

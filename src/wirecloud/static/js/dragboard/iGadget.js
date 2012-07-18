@@ -465,28 +465,17 @@ IGadget.prototype.build = function () {
     this.element.appendChild(this.contentWrapper);
 
     // Gadget Content
-    if (BrowserUtilsFactory.getInstance().isIE()) {
-        this.content = document.createElement("iframe");
-        Element.extend(this.content);
-        this.content.addClassName("gadget_object");
-        this.content.setAttribute("type", "text/html"); // TODO xhtml? => application/xhtml+xml
-        this.content.setAttribute("standby", "Loading...");
-//      this.content.innerHTML = "Loading...."; // TODO add an animation ?
+    this.content = document.createElement("iframe");
+    Element.extend(this.content);
+    this.content.addClassName("gadget_object");
+    this.content.setAttribute("type", "text/html"); // TODO xhtml? => application/xhtml+xml
+    this.content.setAttribute("standby", "Loading...");
+    this.content.setAttribute("width", "100%");
+    this.content.setAttribute("frameBorder", "0");
+    if (Prototype.Browser.Opera || Prototype.Browser.Safari) {
         this.content.setAttribute("src", this.codeURL);
-        this.content.setAttribute("width", "100%");
-        this.content.setAttribute("frameBorder", "0");
-
-    } else { // non IE6
-        this.content = document.createElement("object");
-        Element.extend(this.content);
-        this.content.addClassName("gadget_object");
-        this.content.setAttribute("type", "text/html"); // TODO xhtml? => application/xhtml+xml
-        this.content.setAttribute("standby", "Loading...");
-        if (Prototype.Browser.Opera || Prototype.Browser.Safari) {
-            this.content.setAttribute("data", this.codeURL);
-        }
-        //this.content.innerHTML = "Loading...."; // TODO add an animation ?
     }
+
     Element.extend(this.content);
     this.content.observe("load",
         function () {
@@ -626,8 +615,8 @@ IGadget.prototype.paint = function (onInit) {
     this.element.style.visibility = "hidden";
     this.layout.dragboard.dragboardElement.appendChild(this.element);
 
-    if (this.content.tagName.toLowerCase() === 'object' && !Prototype.Browser.Safari) {
-        this.content.setAttribute("data", this.codeURL);
+    if (!Prototype.Browser.Safari && !Prototype.Browser.Opera) {
+        this.content.setAttribute("src", this.codeURL);
     }
 
     // Position
