@@ -27,7 +27,7 @@ from django.conf import settings
 from igadget.models import IGadget
 from datetime import datetime
 from workspace.models import Tab
-from preferences.models import WorkSpacePreference, TabPreference
+from wirecloud.models import WorkSpacePreference, TabPreference
 
 
 #definition of namespaces that will be used in rdf documents

@@ -45,13 +45,12 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django.utils import simplejson
 
-from commons.authentication import get_user_authentication
 from commons.cache import no_cache
 from commons.http_utils import PUT_parameter
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error, json_encode
-from preferences.models import PlatformPreference, WorkSpacePreference, TabPreference, update_session_lang
+from wirecloud.models import PlatformPreference, WorkSpacePreference, TabPreference, update_session_lang
 from workspace.models import WorkSpace, Tab
 
 
@@ -166,16 +165,13 @@ def update_workspace_preferences(workspace, preferences_json):
 class PlatformPreferencesCollection(Resource):
 
     @no_cache
-    def read(self, request, user_name):
-        user = get_user_authentication(request)
-
-        result = parseValues(PlatformPreference.objects.filter(user=user))
+    def read(self, request):
+        result = parseValues(PlatformPreference.objects.filter(user=request.user))
 
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
     @transaction.commit_on_success
-    def update(self, request, user_name):
-        user = get_user_authentication(request)
+    def update(self, request):
         received_json = PUT_parameter(request, 'preferences')
 
         if not received_json:
@@ -183,10 +179,10 @@ class PlatformPreferencesCollection(Resource):
 
         try:
             preferences_json = simplejson.loads(received_json)
-            update_preferences(user, preferences_json)
+            update_preferences(request.user, preferences_json)
 
             if 'language' in preferences_json:
-                update_session_lang(request, user)
+                update_session_lang(request, request.user)
 
             return HttpResponse('ok')
         except Exception, e:
@@ -199,19 +195,18 @@ class PlatformPreferencesCollection(Resource):
 class WorkSpacePreferencesCollection(Resource):
 
     @no_cache
-    def read(self, request, user_name, workspace_id):
-        user = get_user_authentication(request)
+    def read(self, request, workspace_id):
 
         # Check WorkSpace existance and owned by this user
-        workspace = get_object_or_404(WorkSpace, users__id=user.id, pk=workspace_id)
+        workspace = get_object_or_404(WorkSpace, users=request.user, pk=workspace_id)
 
         result = get_workspace_preference_values(workspace.id)
 
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
     @transaction.commit_on_success
-    def update(self, request, user_name, workspace_id):
-        user = get_user_authentication(request)
+    def update(self, request, workspace_id):
+
         received_json = PUT_parameter(request, 'preferences')
 
         if not received_json:
@@ -221,7 +216,7 @@ class WorkSpacePreferencesCollection(Resource):
             preferences_json = simplejson.loads(received_json)
 
             # Check WorkSpace existance and owned by this user
-            workspace = get_object_or_404(WorkSpace, users__id=user.id, pk=workspace_id)
+            workspace = get_object_or_404(WorkSpace, users=request.user, pk=workspace_id)
 
             update_workspace_preferences(workspace, preferences_json)
             return HttpResponse('ok')
@@ -235,19 +230,17 @@ class WorkSpacePreferencesCollection(Resource):
 class TabPreferencesCollection(Resource):
 
     @no_cache
-    def read(self, request, user_name, workspace_id, tab_id):
-        user = get_user_authentication(request)
+    def read(self, request, workspace_id, tab_id):
 
         # Check Tab existance and owned by this user
-        tab = get_object_or_404(Tab, workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
+        tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
 
         result = get_tab_preference_values(tab)
 
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
     @transaction.commit_on_success
-    def update(self, request, user_name, workspace_id, tab_id):
-        user = get_user_authentication(request)
+    def update(self, request, workspace_id, tab_id):
         received_json = PUT_parameter(request, 'preferences')
 
         if not received_json:
@@ -257,7 +250,7 @@ class TabPreferencesCollection(Resource):
             preferences_json = simplejson.loads(received_json)
 
             # Check Tab existance and owned by this user
-            tab = get_object_or_404(Tab, workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
+            tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
 
             update_tab_preferences(tab, preferences_json)
             return HttpResponse('ok')

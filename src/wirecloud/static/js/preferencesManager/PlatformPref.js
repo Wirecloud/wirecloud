@@ -539,7 +539,7 @@ PlatformPreferences.prototype.buildTitle = function() {
 }
 
 PlatformPreferences.prototype._build_save_url = function () {
-    return URIs.PLATFORM_PREFERENCES;
+    return Wirecloud.URLs.PLATFORM_PREFERENCES;
 };
 
 /**
@@ -563,7 +563,7 @@ WorkSpacePreferences.prototype.getParentValue = function(name) {
 }
 
 WorkSpacePreferences.prototype._build_save_url = function () {
-    return URIs.WORKSPACE_PREFERENCES.evaluate({workspace_id: this._workspace.workSpaceState.id});
+    return Wirecloud.URLs.WORKSPACE_PREFERENCES.evaluate({workspace_id: this._workspace.workSpaceState.id});
 };
 
 WorkSpacePreferences.prototype.destroy = function() {
@@ -595,7 +595,7 @@ TabPreferences.prototype.getParentValue = function(name) {
 }
 
 TabPreferences.prototype._build_save_url = function(modifiedValues) {
-    return URIs.TAB_PREFERENCES.evaluate({workspace_id: this._workspace.workSpaceState.id, tab_id: this._tab.tabInfo.id});
+    return Wirecloud.URLs.TAB_PREFERENCES.evaluate({workspace_id: this._workspace.workSpaceState.id, tab_id: this._tab.tabInfo.id});
 };
 
 TabPreferences.prototype.destroy = function() {

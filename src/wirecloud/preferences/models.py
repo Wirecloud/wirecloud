@@ -53,6 +53,9 @@ class PlatformPreference(models.Model):
     name = models.CharField(_('Name'), max_length=250)
     value = models.CharField(_('Value'), max_length=250)
 
+    class Meta:
+        app_label = 'wirecloud'
+
 
 class WorkSpacePreference(models.Model):
 
@@ -61,6 +64,8 @@ class WorkSpacePreference(models.Model):
     inherit = models.BooleanField(_('Inherit'), default=False)
     value = models.CharField(_('Value'), max_length=250)
 
+    class Meta:
+        app_label = 'wirecloud'
 
 class TabPreference(models.Model):
 
@@ -68,6 +73,9 @@ class TabPreference(models.Model):
     name = models.CharField(_('Name'), max_length=250)
     inherit = models.BooleanField(_('Inherit'), default=False)
     value = models.CharField(_('Value'), max_length=250)
+
+    class Meta:
+        app_label = 'wirecloud'
 
 
 def update_session_lang(request, user):

@@ -31,3 +31,7 @@ admin.site.register(models.UserPrefOption)
 admin.site.register(models.VariableDefAttr)
 admin.site.register(models.ContextOption)
 admin.site.register(models.Capability)
+
+admin.site.register(models.PlatformPreference)
+admin.site.register(models.WorkSpacePreference)
+admin.site.register(models.TabPreference)

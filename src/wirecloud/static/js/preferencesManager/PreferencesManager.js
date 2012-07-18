@@ -263,7 +263,7 @@ var PreferencesManagerFactory = function () {
 		this.preferencesDef['tab'] = new TabPreferencesDef(definitions);
 
 		// Init platform preferences
-		Wirecloud.io.makeRequest(URIs.PLATFORM_PREFERENCES, {
+		Wirecloud.io.makeRequest(Wirecloud.URLs.PLATFORM_PREFERENCES, {
 			method: 'GET',
 			onSuccess: _onSuccessInitPreferences.bind(this),
 			onFailure: _onErrorInitPreferences.bind(this),

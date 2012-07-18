@@ -43,7 +43,7 @@ from context.models import Concept, ConceptName, Constant
 from context.utils import get_user_context_providers
 from wirecloud.models import XHTML, UserPrefOption, Capability, VariableDef
 from igadget.models import Variable, IGadget
-from preferences.views import get_workspace_preference_values, get_tab_preference_values
+from wirecloud.preferences.views import get_workspace_preference_values, get_tab_preference_values
 from workspace.models import Tab, VariableValue, UserWorkSpace, PublishedWorkSpace
 from workspace.utils import createTab, decrypt_value, encrypt_value
 

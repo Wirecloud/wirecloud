@@ -147,7 +147,6 @@ INSTALLED_APPS = (
     'igadget',
     'catalogue',
     'context',
-    'preferences',
     'translator',
     'uploader',
     'south',

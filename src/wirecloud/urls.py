@@ -21,6 +21,7 @@
 from django.conf.urls.defaults import patterns, url
 from wirecloud.markets import views
 from wirecloud.wiring import views as wiring_views
+from wirecloud.preferences import views as preferences_views
 
 urlpatterns = patterns('wirecloud.views',
 
@@ -30,6 +31,10 @@ urlpatterns = patterns('wirecloud.views',
         wiring_views.WiringEntry(permitted_methods=('PUT',)),
         name='wirecloud.workspace_wiring'),
 
+    # Preferences
+    url(r'^api/preferences/platform/?', preferences_views.PlatformPreferencesCollection(permitted_methods=('GET', 'PUT')), name='wirecloud.platform_preferences'),
+    url(r'^api/workspace/(?P<workspace_id>\d+)/preferences/?$', preferences_views.WorkSpacePreferencesCollection(permitted_methods=('GET', 'PUT')), name='wirecloud.workspace_preferences'),
+    url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/preferences/?$', preferences_views.TabPreferencesCollection(permitted_methods=('GET', 'PUT')), name='wirecloud.tab_preferences'),
 
     url(r'^api/operators', wiring_views.OperatorCollection(permitted_methods=('GET',))),
     url(r'^api/operator/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/html', wiring_views.OperatorEntry(permitted_methods=('GET',))),
