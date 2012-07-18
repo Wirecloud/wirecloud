@@ -13,8 +13,7 @@ except:
 from django.utils.importlib import import_module
 from django.test import TestCase
 from django.utils import translation
-from selenium.common.exceptions import NoSuchElementException, ElementNotVisibleException
-from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 
 
@@ -241,11 +240,11 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         self.driver.quit()
         super(WirecloudSeleniumTestCase, self).tearDown()
 
-    def add_marketplace(self,name,label,url,type_):
-        
+    def add_marketplace(self, name, label, url, type_):
+
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click("Add new marketplace")
-        
+
         market_name_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="label"]')
         self.fill_form_input(market_name_input, name)
         market_label_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="display_name"]')
@@ -261,7 +260,7 @@ class WirecloudSeleniumTestCase(HttpTestCase):
 
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click(market)
-        
+
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click("Delete marketplace")
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
@@ -270,7 +269,7 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         self.driver.find_element_by_css_selector('.click_for_details').click()
         self.driver.find_element_by_css_selector('.advanced_operations .styled_button').click()
         self.driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").click()
-        
+
 browsers = getattr(settings, 'WIRECLOUD_SELENIUM_BROWSER_COMMANDS', {
     'Firefox': {
         'CLASS': 'selenium.webdriver.Firefox',
