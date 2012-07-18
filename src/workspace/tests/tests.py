@@ -7,7 +7,7 @@ import json
 
 from django.contrib.auth.models import User, Group
 from django.core.cache import cache
-from django.test import Client, TestCase
+from django.test import Client, TestCase, TransactionTestCase
 from django.utils import simplejson
 
 from commons.get_data import get_global_workspace_data
@@ -223,7 +223,7 @@ class WorkspaceTestCase(CacheTestCase):
         self.assertEqual(len(igadget_list), 2)
 
 
-class ParamatrizedWorkspaceGenerationTestCase(TestCase):
+class ParamatrizedWorkspaceGenerationTestCase(TransactionTestCase):
 
     WIRE_M = rdflib.Namespace('http://wirecloud.conwet.fi.upm.es/ns/mashup#')
     FOAF = rdflib.Namespace('http://xmlns.com/foaf/0.1/')
@@ -426,7 +426,7 @@ class ParamatrizedWorkspaceGenerationTestCase(TestCase):
         self.assertRDFElement(graph, vendor, self.FOAF, 'name', u'Wirecloud Test Suite')
 
 
-class ParametrizedWorkspaceParseTestCase(TestCase):
+class ParametrizedWorkspaceParseTestCase(TransactionTestCase):
 
     fixtures = ('selenium_test_data',)
     tags = ('fiware-ut-2',)
