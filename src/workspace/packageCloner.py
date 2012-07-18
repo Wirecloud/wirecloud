@@ -173,19 +173,15 @@ class PackageCloner:
     extra_models = {
         'WorkSpace': (
             ('workspace', 'tab', 'workspace'),
-            ('preferences', 'workspacepreference', 'workspace'),
+            ('wirecloud', 'workspacepreference', 'workspace'),
         ),
         'Tab': (
             ('igadget', 'igadget', 'tab'),
-            ('preferences', 'tabpreference', 'tab'),
+            ('wirecloud', 'tabpreference', 'tab'),
         ),
         'IGadget': (
             ('igadget', 'variable', 'igadget'),
-        ),
-        'Variable': (
-            ('connectable', 'in', 'variable'),
-            ('connectable', 'out', 'variable'),
-        ),
+        )
     }
 
     unique_variant = {
@@ -330,7 +326,7 @@ class PackageCloner:
         self.mapping.add_mapping(table_name, from_ws.id, to_ws.id)
 
         self.final_tables = list(self.final_tables)
-        self.extra_models['Variable'] += (
+        self.extra_models['Variable'] = (
             ('workspace', 'variablevalue', 'variable', {'user': from_ws.creator}),
         )
         self.fields_to_overwrite['VariableValue'] = {
