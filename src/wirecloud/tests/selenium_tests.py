@@ -1,8 +1,6 @@
 import time
 
 from commons.test import WirecloudSeleniumTestCase
-from selenium.webdriver import Firefox
-from django.utils.unittest import SkipTest
 
 
 class widget_operation:
@@ -12,11 +10,20 @@ class widget_operation:
         self.widget = widget
 
     def __enter__(self):
-        self.driver.switch_to_frame(self.widget)
+        self.driver.execute_script('return opManager.activeWorkSpace.getIgadget(%d).content.setAttribute("id", "targetframe");' % self.widget)
+
+        # TODO work around webdriver bugs
+        self.driver.switch_to_default_content()
+
+        self.driver.switch_to_frame(self.driver.find_element_by_id('targetframe'))
         return None
 
     def __exit__(self, type, value, traceback):
         self.driver.switch_to_frame(None)
+        self.driver.execute_script('return opManager.activeWorkSpace.getIgadget(%d).content.removeAttribute("id");' % self.widget)
+
+        # TODO work around webdriver bugs
+        self.driver.switch_to_default_content()
 
 
 class BasicSeleniumTests(WirecloudSeleniumTestCase):
@@ -105,9 +112,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_basic_gadget_functionalities(self):
 
-        if not isinstance(self.driver, Firefox):
-            raise SkipTest('Unsupported webdriver instance')
-
         self.login()
         self.add_widget_to_mashup('Test')
 
@@ -119,10 +123,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.find_element_by_css_selector('.gadget_window .settingsbutton').click()
         self.popup_menu_click('Settings')
 
-        self.driver.find_element_by_css_selector('.window_menu [name="list"]').send_keys('value1')
-        pref_input = self.driver.find_element_by_css_selector('.window_menu [name="text"]')
-        pref_input.clear()
-        pref_input.send_keys('test')
+        list_input = self.driver.find_element_by_css_selector('.window_menu [name="list"]')
+        self.fill_form_input(list_input, '1')  # value1
+        text_input = self.driver.find_element_by_css_selector('.window_menu [name="text"]')
+        self.fill_form_input(text_input, 'test')
 
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 

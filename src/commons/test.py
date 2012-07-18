@@ -129,7 +129,7 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         return resource
 
     def search_resource(self, keyword):
-        search_input = self.driver.find_element_by_css_selector('#simple_search input')
+        search_input = self.driver.find_element_by_css_selector('.simple_search_text')
         self.fill_form_input(search_input, keyword)
         self.driver.execute_script('var evt = document.createEvent("KeyboardEvent");evt.initKeyboardEvent ("keypress", true, true, window, 0, 0, 0, 0, 0, 13); arguments[0].dispatchEvent(evt);', search_input)
 
@@ -146,8 +146,8 @@ class WirecloudSeleniumTestCase(HttpTestCase):
 
         return None
 
-    def instanciate(self):#, resource):
-        self.driver.find_element_by_css_selector('.instanciate_button').click()
+    def instanciate(self, resource):
+        resource.find_element_by_css_selector('.instanciate_button').click()
 
         # TODO
         time.sleep(2)
