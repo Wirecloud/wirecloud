@@ -147,18 +147,3 @@ body.dragboard_view, body.wiring_view{
 	font-weight:bold;
 	border-color: #C2CBD2;
 }
-
-/*
- * IGADGET section
- */
-
-/* igadget box */
-div.gadget_window {
-	border-color: #C2CBD2 !important; /* quitar el important cuando se meta el skin al final del body */
-}
-
-/* igadget name */
-.gadget_menu span, .gadget_menu .igadget_name {
-  	color: #4C5054;
-  	font-weight: bold;
-}

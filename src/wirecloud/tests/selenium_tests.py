@@ -120,7 +120,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('textPref').text, 'initial text')
 
         # Change widget settings
-        self.driver.find_element_by_css_selector('.gadget_window .settingsbutton').click()
+        self.driver.find_element_by_css_selector('.iwidget .settingsbutton').click()
         self.popup_menu_click('Settings')
 
         list_input = self.driver.find_element_by_css_selector('.window_menu [name="list"]')

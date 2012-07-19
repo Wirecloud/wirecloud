@@ -376,7 +376,7 @@ IGadget.prototype.toggleTransparency = function () {
 IGadget.prototype.build = function () {
     this.element = document.createElement("div");
     Element.extend(this.element);
-    this.element.addClassName("gadget_window");
+    this.element.addClassName("iwidget");
 
     // Gadget Menu
     this.gadgetMenu = document.createElement("div");

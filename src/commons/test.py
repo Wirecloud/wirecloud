@@ -159,7 +159,7 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         self.instanciate(resource)
 
     def count_iwidgets(self):
-        return len(self.driver.find_elements_by_css_selector('object'))
+        return len(self.driver.find_elements_by_css_selector('div.iwidget'))
 
     def get_popup_menu_item(self, item_name):
 

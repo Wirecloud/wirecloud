@@ -4,7 +4,7 @@ div.dragboard {
   overflow-y: auto;
 }
 
-div.gadget_window {
+div.iwidget {
   position: absolute;
   border: 1px solid;
 }
@@ -34,16 +34,16 @@ div.fixed div.gadget_menu {
 }
 
 /*div.dragboard.fixed -> LOCK OR SHARED STATUS*/
-div.fixed div.gadget_window div.gadget_menu .closebutton, div.fixed div.gadget_window div.gadget_menu .versionbutton {
+div.fixed div.iwidget div.gadget_menu .closebutton, div.fixed div.iwidget div.gadget_menu .versionbutton {
   display: none;
 }
 
 /*div.gadget_window_readonly -> READONLY STATUS*/
-div.gadget_window.gadget_window_readonly div.gadget_menu .closebutton {
+div.iwidget.gadget_window_readonly div.gadget_menu .closebutton {
   display: none;
 }
 
-div.gadget_window div.gadget_wrapper {
+div.iwidget div.gadget_wrapper {
   width: auto;
 }
 
@@ -51,7 +51,7 @@ div.gadget_window_locked div.gadget_wrapper {
   border: none;
 }
 
-div.gadget_window div.gadget_wrapper iframe {
+div.iwidget div.gadget_wrapper iframe {
     width: 100%;
     border: none;
 }
@@ -69,7 +69,7 @@ div.color_button {
   border: 1px solid;
 }
 
-div.gadget_window .button {
+div.iwidget .button {
   display: none;
   margin: 2px 2px 0px 2px;
   float: right;
@@ -78,11 +78,11 @@ div.gadget_window .button {
   cursor: pointer;
 }
 
-div.gadget_window .snapButton, div.gadget_window .extractButton, div.gadget_window .dragboardwiki{
+div.iwidget .snapButton, div.iwidget .extractButton, div.iwidget .dragboardwiki{
 	display: block;
 }
 
-div.gadget_window div.leftResizeHandle {
+div.iwidget div.leftResizeHandle {
   position: absolute;
   width: 32px;
   height: 16px;
@@ -91,7 +91,7 @@ div.gadget_window div.leftResizeHandle {
   cursor: sw-resize;
 }
 
-div.gadget_window div.rightResizeHandle {
+div.iwidget div.rightResizeHandle {
   position: absolute;
   width: 32px;
   height: 16px;
@@ -100,19 +100,19 @@ div.gadget_window div.rightResizeHandle {
   cursor: se-resize;
 }
 
-div.gadget_window div.inUse {
+div.iwidget div.inUse {
   width: 100%;
   height: 100%;
 }
 
-div.gadget_window div.leftResizeHandle.inUse {
+div.iwidget div.leftResizeHandle.inUse {
   right: 0px;
   top: 0px;
   width: auto;
   height: auto;
 }
 
-div.gadget_window div.resizeHandle.inUse {
+div.iwidget div.resizeHandle.inUse {
   left: 0px;
   top: 0px;
   width: auto;
@@ -120,10 +120,10 @@ div.gadget_window div.resizeHandle.inUse {
 }
 
 /*div.dragboard.fixed*/
-div.fixed div.gadget_window div.leftResizeHandle,
-  div.fixed div.gadget_window div.rightResizeHandle,
-  div.fixed div.gadget_window div.extractButton,
-  div.fixed div.gadget_window div.snapButton
+div.fixed div.iwidget div.leftResizeHandle,
+  div.fixed div.iwidget div.rightResizeHandle,
+  div.fixed div.iwidget div.extractButton,
+  div.fixed div.iwidget div.snapButton
 {
   display: none;
 }
@@ -142,14 +142,14 @@ div.fixed .gadget_menu span {
   border: 0px;
 }
 
-div.gadget_window div.statusBar {
+div.iwidget div.statusBar {
   overflow: hidden;
   border: 0px;
   height: 16px;
   padding: 0 32px;
 }
 
-div.gadget_window div.statusBar .button {
+div.iwidget div.statusBar .button {
   margin-top: 0;
   margin-bottom: 0;
 }
@@ -160,7 +160,7 @@ div.gadget_window div.statusBar .button {
  * config_interface
  */
 
-div.gadget_window div.config_interface,
+div.iwidget div.config_interface,
 div.gadget_window_locked div.config_interface {
   display: none;
   padding: 1px 1ex;
