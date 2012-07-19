@@ -28,7 +28,7 @@ from django.utils.translation import ugettext as _
 
 from commons.resource import Resource
 from commons.utils import json_encode
-from wirecloud.models.markets import Market
+from wirecloud.models import Market
 
 
 class MarketCollection(Resource):
