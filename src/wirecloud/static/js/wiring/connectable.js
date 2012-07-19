@@ -614,4 +614,4 @@ wSlot.prototype.getQualifiedName = function () {
 
 wSlot.prototype.getLabel = function () {
     return this.variable.getLabel();
-}
+};
