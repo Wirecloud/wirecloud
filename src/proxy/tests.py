@@ -8,7 +8,7 @@ import urllib2
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.cache import cache
-from django.test import TestCase, Client
+from django.test import TransactionTestCase, Client
 from django.utils import unittest
 
 from proxy.views import WIRECLOUD_PROXY
@@ -76,9 +76,9 @@ class FakeDownloader(object):
             return self.build_response(url, 404, '', 'Not Found')
 
 
-class ProxyTestsBase(TestCase):
+class ProxyTestsBase(TransactionTestCase):
 
-    fixtures = ['test_data.json']
+    fixtures = ('test_data.json',)
 
     def setUp(self):
         self.user = User.objects.get(username='test')

@@ -45,8 +45,8 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         self.add_wgt_gadget_to_catalogue('Morfeo_Calendar_Viewer.wgt', 'Calendar Viewer')
         self.add_wgt_gadget_to_catalogue('Morfeo_Cliente_Correo.wgt', 'Cliente Correo')
-        self.add_wgt_gadget_to_catalogue('Morfeo_FeedList.wgt', 'FeedList')
-        self.add_wgt_gadget_to_catalogue('Morfeo_FeedReader.wgt', 'FeedReader')
+        self.add_wgt_gadget_to_catalogue('Morfeo_FeedList.wgt', 'Feed List')
+        self.add_wgt_gadget_to_catalogue('Morfeo_FeedReader.wgt', 'Feed Reader')
 
         driver.implicitly_wait(30)
         driver.get(self.live_server_url + "/admin/")
@@ -110,8 +110,8 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.change_main_view("marketplace")
         time.sleep(3)
 
-        self.add_template_to_catalogue('http://localhost:8001/test/test.rdf','Test_Selenium')
-        self.instanciate()
+        resource = self.add_template_to_catalogue('http://localhost:8001/test/test.rdf','Test_Selenium')
+        self.instanciate(resource)
 
     def test_add_and_delete_gadget_rdf(self):
 

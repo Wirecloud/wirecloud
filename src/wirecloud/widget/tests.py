@@ -7,7 +7,7 @@ from urllib2 import URLError, HTTPError
 
 from django.contrib.auth.models import User
 from django.core.cache import cache
-from django.test import TestCase
+from django.test import TransactionTestCase
 
 from commons import http_utils
 from commons.exceptions import TemplateParseException
@@ -340,7 +340,7 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(workspace.creator, self.user)
 
 
-class WGTShowcaseTestCase(TestCase):
+class WGTShowcaseTestCase(TransactionTestCase):
 
     def setUp(self):
         super(WGTShowcaseTestCase, self).setUp()

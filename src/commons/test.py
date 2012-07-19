@@ -12,13 +12,13 @@ except:
     class LiveServerTestCase(object):
         pass
 from django.utils.importlib import import_module
-from django.test import TestCase
+from django.test import TransactionTestCase
 from django.utils import translation
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 
 
-class LocalizedTestCase(TestCase):
+class LocalizedTestCase(TransactionTestCase):
 
     def setUp(self):
         self.old_LANGUAGES = settings.LANGUAGES
@@ -98,6 +98,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         self.change_main_view('marketplace')
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click('Upload')
+        time.sleep(2)
 
         self.driver.find_element_by_id('wgt_file').send_keys(self.wgt_dir + os.sep + wgt_file)
         self.driver.find_element_by_id('upload_wgt_button').click()
@@ -270,13 +271,16 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
 
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click(market)
+        time.sleep(2)
 
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click("Delete marketplace")
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
 
-    def delete_gadget(self, gadget_name):
+    def delete_gadget(self, gadget_name, timeout=120):
         self.driver.find_element_by_css_selector('.click_for_details').click()
+        time.sleep(1)
+        WebDriverWait(self.driver, timeout).until(lambda driver: driver.find_element_by_css_selector('.advanced_operations .styled_button').is_displayed())
         self.driver.find_element_by_css_selector('.advanced_operations .styled_button').click()
         self.driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").click()
 

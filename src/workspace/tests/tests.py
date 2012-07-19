@@ -7,7 +7,7 @@ import json
 
 from django.contrib.auth.models import User, Group
 from django.core.cache import cache
-from django.test import Client, TestCase, TransactionTestCase
+from django.test import Client, TransactionTestCase
 from django.utils import simplejson
 
 from commons.get_data import get_global_workspace_data
@@ -26,7 +26,7 @@ from workspace.views import createEmptyWorkSpace, linkWorkspace
 __test__ = False
 
 
-class CacheTestCase(TestCase):
+class CacheTestCase(TransactionTestCase):
 
     def setUp(self):
         super(CacheTestCase, self).setUp()
@@ -118,13 +118,13 @@ class WorkspaceTestCase(CacheTestCase):
         data = get_global_workspace_data(workspace, self.user).get_data()
 
         igadget_list = data['workspace']['tabList'][0]['igadgetList']
-        self.assertEqual(len(igadget_list), 2)
+        self.assertEqual(len(igadget_list), 3)
 
         # Remove the igadget
         deleteIGadget(created_igadget, self.user)
         data = get_global_workspace_data(workspace, self.user).get_data()
         igadget_list = data['workspace']['tabList'][0]['igadgetList']
-        self.assertEqual(len(igadget_list), 1)
+        self.assertEqual(len(igadget_list), 2)
 
     def testLinkWorkspace(self):
 
@@ -198,7 +198,7 @@ class WorkspaceTestCase(CacheTestCase):
         # Check that other_user can access to the shared workspace
         data = get_global_workspace_data(workspace, other_user).get_data()
         igadget_list = data['workspace']['tabList'][0]['igadgetList']
-        self.assertEqual(len(igadget_list), 1)
+        self.assertEqual(len(igadget_list), 2)
 
         # Add a new iGadget to the workspace
         tab = Tab.objects.get(pk=1)
@@ -220,7 +220,7 @@ class WorkspaceTestCase(CacheTestCase):
 
         data = get_global_workspace_data(workspace, other_user).get_data()
         igadget_list = data['workspace']['tabList'][0]['igadgetList']
-        self.assertEqual(len(igadget_list), 2)
+        self.assertEqual(len(igadget_list), 3)
 
 
 class ParamatrizedWorkspaceGenerationTestCase(TransactionTestCase):

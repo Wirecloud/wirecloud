@@ -28,6 +28,7 @@
     </vCard:addr>
     <wire:hasPlatformPreference>
         <wire:PlatformPreference rdf:ID="preference_1">
+            <wire:index>0</wire:index>
             <dcterms:title>pref</dcterms:title>
             <wire:type>list</wire:type>
             <dcterms:description xml:lang="en">Preference description</dcterms:description>
