@@ -2,7 +2,7 @@ from django.utils.importlib import import_module
 from django.core.exceptions import ImproperlyConfigured
 
 
-_ezweb_user_context_providers = None
+_wirecloud_user_context_providers = None
 
 
 class UserContextProvider:
@@ -16,9 +16,9 @@ class UserContextProvider:
 
 def get_user_context_providers():
     from django.conf import settings
-    global _ezweb_user_context_providers
+    global _wirecloud_user_context_providers
 
-    if _ezweb_user_context_providers is None:
+    if _wirecloud_user_context_providers is None:
         if hasattr(settings, 'USER_CONTEXT_PROVIDERS') and settings.USER_CONTEXT_PROVIDERS != None:
             providers = settings.USER_CONTEXT_PROVIDERS
         else:
@@ -40,6 +40,6 @@ def get_user_context_providers():
 
             processors.append(provider)
 
-        _ezweb_user_context_providers = tuple(processors)
+        _wirecloud_user_context_providers = tuple(processors)
 
-    return _ezweb_user_context_providers
+    return _wirecloud_user_context_providers

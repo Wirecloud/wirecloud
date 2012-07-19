@@ -12,7 +12,7 @@ except:
         pass
 
 
-# Avoid nose to repeat these tests (they are run through ezweb/tests/__init__.py)
+# Avoid nose to repeat these tests (they are run through wirecloud/tests/__init__.py)
 __test__ = False
 
 
