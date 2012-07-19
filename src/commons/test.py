@@ -37,7 +37,7 @@ class LocalizedTestCase(TestCase):
 
 class WirecloudSeleniumTestCase(HttpTestCase):
 
-    fixtures = ['extra_data', 'selenium_test_data']
+    fixtures = ('selenium_test_data',)
     __test__ = False
 
     def setUp(self):
