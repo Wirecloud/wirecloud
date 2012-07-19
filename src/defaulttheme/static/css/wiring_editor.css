@@ -35,15 +35,15 @@
 }
 
 .wiring_editor .ioperator {
-    background: -webkit-linear-gradient(white, rgba(255, 255, 0, 0.8));
-    background: -moz-linear-gradient(white, rgba(255, 255, 0, 0.8));
-    background: -o-linear-gradient(white, rgba(255, 255, 0, 0.8));
+    background: -webkit-linear-gradient(white, rgba(206,220,231,0.8));
+    background: -moz-linear-gradient(white, rgba(206,220,231,0.8));
+    background: -o-linear-gradient(white, rgba(206,220,231,0.8));
 }
 
 .wiring_editor .igadget {
-    background: -webkit-linear-gradient(white, rgba(255, 217, 120, 0.8));
-    background: -moz-linear-gradient(white, rgba(255, 217, 120, 0.8));
-    background: -o-linear-gradient(white, rgba(255, 217, 120, 0.8));
+    background: -webkit-linear-gradient(white, rgba(206,220,231,0.8));
+    background: -moz-linear-gradient(white, rgba(206,220,231,0.8));
+    background: -o-linear-gradient(white, rgba(206,220,231,0.8));
 }
 
 .wiring_editor .ioperator, .wiring_editor .igadget {
@@ -52,7 +52,7 @@
     border: 1px solid;
     padding-bottom: 8px;
     border-radius: 1.25ex 1.25ex 1.25ex 1.25ex;
-    box-shadow: 0.1ex 0.1ex 1px black;
+    box-shadow: 4px 4px 4px gray;
     font-family: "Courier New", courier;
 }
 
@@ -64,11 +64,8 @@
     overflow: hidden;
     border-radius: 5px;
     padding-top: 8px;
-    /*padding-right: 16px;*/
     padding-bottom: 8px;
-    /*padding-left: 16px;*/
-    font-style: oblique;
-    color: #221BE2;
+    color: #1D1D2F;
 }
 
 .wiring_editor .grid .ioperator .header span, .wiring_editor .grid .igadget .header span {
@@ -110,10 +107,12 @@
 
 .wiring_editor .menubar .ioperator, .wiring_editor .menubar .igadget {
     position: relative;
-    padding-bottom: 0.6em;
+    padding-bottom: 0em;
     margin: 1em 1em;
+    font-size: 1.2em;
     vertical-align: middle;
     z-index: 10;
+    border-radius: 0.25ex 4.7ex 0.25ex 0.25ex;
 }
 
 .wiring_editor .targets {
@@ -239,14 +238,13 @@
 }
 
 .wiring_editor .canvas .arrow .arrowbody {
-    /*stroke: url(../css/gradient1.svg);*/
-    stroke: rgba(138, 131, 226, 0.9);
+    stroke: hsl(0, 0%, 84%);
     fill:   none;
     stroke-width: 5;
 }
 
 .wiring_editor .canvas .arrowborder {
-    stroke: black;
+    stroke: hsl(0, 0%, 43%);
     fill:   none;
     stroke-width: 8;
 }
@@ -342,7 +340,7 @@
     background: transparent;
     padding: 0.1em;
     font-size: 1.8em;
-    font-style: italic;
+    font-style: normal;
     text-shadow: none;
     margin-left: 14px;
 }
@@ -384,19 +382,24 @@
 
 .wiring_editor .grid .multiconnector.source {
     background: rgb(122, 152, 192);
+    background: -webkit-radial-gradient(center, white, rgba(122, 152, 192, 0.7));
+    background: -moz-radial-gradient(center, white, rgba(122, 152, 192, 0.7));
+    background: -o-radial-gradient(center, white, rgba(122, 152, 192, 0.7));
 }
 
 .wiring_editor .grid .multiconnector.target {
-    background: rgb(223, 164, 98);
+    background: -webkit-radial-gradient(center, white, rgba(239, 130, 6, 0.7));
+    background: -moz-radial-gradient(center, white, rgba(239, 130, 6, 0.7));
+    background: -o-radial-gradient(center, white, rgba(239, 130, 6, 0.7));
 }
 
 .wiring_editor .grid .multiconnector .dragZone {
-    background: rgb(71, 160, 107);
+    background: url('../images/wiring/flechasMov.png');
     position: absolute;
     border-radius: 10px;
-    width: 18px;
-    height: 18px;
-    left: 6px;
+    width: 16px;
+    height: 16px;
+    left: 7px;
 }
 
 .wiring_editor .grid .multiconnector.target .anchor.main {
