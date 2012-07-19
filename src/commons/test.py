@@ -7,9 +7,9 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 try:
-    from djangosanetesting.cases import HttpTestCase
+    from django.test import LiveServerTestCase
 except:
-    class HttpTestCase(object):
+    class LiveServerTestCase(object):
         pass
 from django.utils.importlib import import_module
 from django.test import TestCase
@@ -35,7 +35,7 @@ class LocalizedTestCase(TestCase):
         settings.LANGUAGE_CODE = self.old_LANGUAGE_CODE
 
 
-class WirecloudSeleniumTestCase(HttpTestCase):
+class WirecloudSeleniumTestCase(LiveServerTestCase):
 
     fixtures = ('selenium_test_data',)
     __test__ = False

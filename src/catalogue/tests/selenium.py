@@ -49,7 +49,7 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.add_wgt_gadget_to_catalogue('Morfeo_FeedReader.wgt', 'FeedReader')
 
         driver.implicitly_wait(30)
-        driver.get(self.get_live_server_url() + "admin/")
+        driver.get(self.live_server_url + "/admin/")
         driver.find_element_by_link_text("Catalogue resources").click()
         driver.find_element_by_link_text("Calendar Viewer").click()
         driver.find_element_by_link_text("Delete").click()
