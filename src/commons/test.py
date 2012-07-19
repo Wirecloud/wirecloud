@@ -5,6 +5,7 @@ import time
 
 from django.conf import settings
 from django.core.cache import cache
+from django.core.urlresolvers import reverse
 try:
     from djangosanetesting.cases import HttpTestCase
 except:
@@ -72,13 +73,14 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         time.sleep(0.1)  # work around some problems
 
     def login(self, username='admin', password='admin'):
-        self.driver.get(self.get_live_server_url() + "accounts/login/?next=/")
-        self.driver.find_element_by_id('id_username').clear()
-        self.driver.find_element_by_id('id_username').send_keys(username)
-        self.driver.find_element_by_id('id_password').clear()
-        self.driver.find_element_by_id('id_password').send_keys(password)
-        self.driver.find_element_by_id('submit').click()
-        time.sleep(0.1)  # work around some problems with chromium
+        self.driver.get(self.live_server_url + reverse('login'))
+        username_input = self.driver.find_element_by_id('id_username')
+        self.fill_form_input(username_input, username)
+        password_input = self.driver.find_element_by_id('id_password')
+        self.fill_form_input(password_input, password)
+        password_input.submit()
+
+        WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_tag_name('body'))
         self.wait_wirecloud_ready()
 
     def get_current_view(self):
