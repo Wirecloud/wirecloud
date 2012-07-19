@@ -146,7 +146,6 @@ INSTALLED_APPS = (
     'workspace',
     'igadget',
     'catalogue',
-    'context',
     'translator',
     'uploader',
     'south',

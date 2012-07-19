@@ -60,9 +60,6 @@ urlpatterns = patterns('',
     # IGadgets
     (r'^workspace(s)?/(?P<workspace_id>\d+)/tab(s)?/(?P<tab_id>\d+)/igadget(s)?', include('igadget.urls')),
 
-    # context
-    (r'^user/(?P<user_name>[\.\-\w\@]+)/context(s)?', include('context.urls')),
-
     # Catalogue
     (r'^catalogue', include('catalogue.urls')),
 

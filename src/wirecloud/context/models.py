@@ -52,6 +52,9 @@ class Concept(models.Model):
     description = models.TextField(_('Description'), blank=True)
     adaptor = models.CharField(_('Adaptor'), max_length=256, null=True)
 
+    class Meta:
+        app_label = 'wirecloud'
+
     def __unicode__(self):
         return unicode(self.concept) + ' ' + unicode(self.adaptor)
 
@@ -61,6 +64,9 @@ class ConceptName(models.Model):
     name = models.CharField(_('Name'), max_length=256)
     concept = models.ForeignKey(Concept, verbose_name=_('Concept'))
 
+    class Meta:
+        app_label = 'wirecloud'
+
     def __unicode__(self):
         return self.name
 
@@ -68,6 +74,9 @@ class ConceptName(models.Model):
 class Constant(models.Model):
     concept = models.ForeignKey(Concept, verbose_name=_('Concept'), unique=True, null=False)
     value = models.CharField(_('Value'), max_length=256)
+
+    class Meta:
+        app_label = 'wirecloud'
 
     def __unicode__(self):
         return self.concept.concept
