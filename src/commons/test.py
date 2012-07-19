@@ -130,7 +130,15 @@ class WirecloudSeleniumTestCase(HttpTestCase):
     def search_resource(self, keyword):
         search_input = self.driver.find_element_by_css_selector('.simple_search_text')
         self.fill_form_input(search_input, keyword)
-        self.driver.execute_script('var evt = document.createEvent("KeyboardEvent");evt.initKeyboardEvent ("keypress", true, true, window, 0, 0, 0, 0, 0, 13); arguments[0].dispatchEvent(evt);', search_input)
+        self.driver.execute_script('''
+            var evt = document.createEvent("KeyboardEvent");
+            if (evt.initKeyEvent != null) {
+                evt.initKeyEvent ("keypress", true, true, window, false, false, false, false, 13, 0);
+            } else {
+                evt.initKeyboardEvent ("keypress", true, true, window, 0, 0, 0, 0, 0, 13);
+            }
+            arguments[0].dispatchEvent(evt);
+        ''', search_input)
 
         # TODO
         time.sleep(2)
