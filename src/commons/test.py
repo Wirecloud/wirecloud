@@ -129,6 +129,23 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         self.assertIsNotNone(resource)
         return resource
 
+    def add_template_to_catalogue_with_error(self, template_url, resource_name, msg):
+
+        self.change_main_view('marketplace')
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
+        self.popup_menu_click('Upload')
+        time.sleep(2)
+
+        template_input = self.driver.find_element_by_css_selector('form.template_submit_form .template_uri')
+        self.fill_form_input(template_input, template_url)
+        self.driver.find_element_by_id('submit_link').click()
+
+        self.wait_wirecloud_ready()
+        time.sleep(2)
+        xpath = "//*[contains(@class, 'window_menu')]//*[text()='Error uploading resource: " + msg + "']"
+        self.driver.find_element_by_xpath(xpath)
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+
     def search_resource(self, keyword):
         search_input = self.driver.find_element_by_css_selector('.simple_search_text')
         self.fill_form_input(search_input, keyword)

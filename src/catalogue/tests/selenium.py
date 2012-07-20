@@ -83,6 +83,25 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         self.add_template_to_catalogue('http://localhost:8001/test/test.rdf','Test_Selenium')
 
+    def test_add_invalid_widget_to_catalogue_rdf(self):
+
+        self.login()
+
+        self.change_main_view("marketplace")
+        time.sleep(3)
+
+        self.add_template_to_catalogue_with_error('http://localhost:8001/test/invalidTest.rdf', 'Test_Selenium', '[TemplateParseException] missing required field: versionInfo.')
+
+    def test_add_widget_twice(self):
+
+        self.login()
+
+        self.change_main_view("marketplace")
+        time.sleep(3)
+
+        self.add_template_to_catalogue('http://localhost:8001/test/test.rdf', 'Test_Selenium')
+        self.add_template_to_catalogue_with_error('http://localhost:8001/test/test.rdf', 'Test_Selenium', 'Resource already exists.')
+
     def test_add_fiware_marketplace(self):
 
         self.login()
