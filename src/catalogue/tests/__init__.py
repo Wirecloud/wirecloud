@@ -1,4 +1,4 @@
-from catalogue.tests.tests import AddGadgetTestCase, CatalogueAPITestCase, WGTDeploymentTestCase  # pyflakes:ignore
+from catalogue.tests.tests import AddGadgetTestCase, CatalogueAPITestCase, PublishTestCase, WGTDeploymentTestCase  # pyflakes:ignore
 
 from commons.test import build_selenium_test_cases
 

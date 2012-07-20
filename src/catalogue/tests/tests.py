@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import codecs
 import os
 from shutil import rmtree
 from tempfile import mkdtemp
@@ -13,7 +14,9 @@ import catalogue.utils
 from catalogue.utils import add_resource_from_template
 from catalogue.get_json_catalogue_data import get_resource_data
 from catalogue.models import GadgetWiring
-from commons.test import LocalizedTestCase
+from commons import http_utils
+from commons.exceptions import TemplateParseException
+from commons.test import FakeDownloader, LocalizedTestCase
 from commons.wgt import WgtDeployer
 
 
@@ -56,7 +59,6 @@ class AddGadgetTestCase(LocalizedTestCase):
 
         self.assertEqual(data['displayName'], u'Gadget de pruebas')
         self.assertEqual(data['description'], u'Descripción del Gadget de pruebas')
-
 
 
 class CatalogueAPITestCase(TestCase):
@@ -189,6 +191,55 @@ class CatalogueAPITestCase(TestCase):
         self.assertTrue('user_vote' in result_json['voteData'])
         self.assertEqual(result_json['voteData']['user_vote'], 4)
 
+
+class PublishTestCase(TransactionTestCase):
+
+    tags = ('fiware-ut-4',)
+
+    def setUp(self):
+        super(PublishTestCase, self).setUp()
+        self._original_function = http_utils.download_http_content
+        http_utils.download_http_content = FakeDownloader()
+        self.user = User.objects.create_user('test', 'test@example.com', 'test')
+
+    def tearDown(self):
+        super(PublishTestCase, self).tearDown()
+        http_utils.download_http_content = self._original_function
+
+    def read_template(self, *filename):
+        f = codecs.open(os.path.join(os.path.dirname(__file__), *filename), 'rb')
+        contents = f.read()
+        f.close()
+
+        return contents
+
+    def test_publish_empty_mashup_xml(self):
+        template_uri = "http://example.com/path/mashup.xml"
+        template = self.read_template('test-data', 'mt1.xml')
+
+        mashup = add_resource_from_template(template_uri, template, self.user)
+        self.assertEquals(mashup.vendor, 'Wirecloud Test Suite')
+        self.assertEquals(mashup.short_name, 'Test Mashup')
+        self.assertEquals(mashup.version, '1')
+        self.assertEquals(mashup.description, 'This template defines an empty mashup')
+        self.assertEquals(mashup.author, 'test')
+
+    def test_publish_empty_mashup_rdf(self):
+        template_uri = "http://example.com/path/mashup.rdf"
+        template = self.read_template('test-data', 'mt1.rdf')
+
+        mashup = add_resource_from_template(template_uri, template, self.user)
+        self.assertEquals(mashup.vendor, 'Wirecloud Test Suite')
+        self.assertEquals(mashup.short_name, 'Test Mashup')
+        self.assertEquals(mashup.version, '1')
+        self.assertEquals(mashup.description, 'This template defines an empty mashup')
+        self.assertEquals(mashup.author, 'test')
+
+    def test_publish_invalid_mashup(self):
+        template_uri = "http://example.com/path/mashup.rdf"
+        template = self.read_template('test-data', 'invalid-mt1.rdf')
+
+        self.assertRaises(TemplateParseException, add_resource_from_template, template_uri, template, self.user)
 
 
 class WGTDeploymentTestCase(TransactionTestCase):
