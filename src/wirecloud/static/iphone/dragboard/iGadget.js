@@ -166,8 +166,7 @@ IGadget.prototype.save = function () {
         return;
     }
 
-    var data = {},
-        uri;
+    var url, data = {};
 
     data.left = this.position.x;
     data.top = this.position.y;
@@ -176,12 +175,11 @@ IGadget.prototype.save = function () {
     data.code = this.code;
     data.name = this.name;
 
-    uri = URIs.POST_IGADGET.evaluate({
-        tabId: this.dragboard.tabId,
-        workspaceId: this.dragboard.workSpaceId
+    url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+        tab_id: this.dragboard.tabId,
+        workspace_id: this.dragboard.workSpaceId
     });
 
-    data.uri = uri;
     data.gadget = URIs.GET_GADGET.evaluate({
         vendor: this.gadget.getVendor(),
         name: this.gadget.getName(),
@@ -190,7 +188,7 @@ IGadget.prototype.save = function () {
     data = {
         igadget: Object.toJSON(data)
     };
-    Wirecloud.io.makeRequest(uri, {
+    Wirecloud.io.makeRequest(url, {
         method: 'POST',
         parameters: data,
         onSuccess: onSuccess,

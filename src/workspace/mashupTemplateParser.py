@@ -34,7 +34,7 @@ from commons.get_data import get_concept_values, TemplateValueProcessor
 from commons.template import TemplateParser
 from django.utils import simplejson
 from wirecloud.widget.utils import get_or_add_gadget_from_catalogue
-from igadget.utils import SaveIGadget
+from wirecloud.iwidget.utils import SaveIGadget
 from wirecloud.preferences.views import update_tab_preferences, update_workspace_preferences
 from workspace.models import WorkSpace, UserWorkSpace
 from workspace.utils import createTab

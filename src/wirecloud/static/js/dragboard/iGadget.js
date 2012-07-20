@@ -359,9 +359,11 @@ IGadget.prototype.toggleTransparency = function () {
         id: this.id
     });
     var params = {'igadget': igadgetData};
-    var igadgetUrl = URIs.GET_IGADGET.evaluate({workspaceId: this.layout.dragboard.workSpaceId,
-                                                tabId: this.layout.dragboard.tabId,
-                                                iGadgetId: this.id});
+    var igadgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+        workspace_id: this.layout.dragboard.workSpaceId,
+        tab_id: this.layout.dragboard.tabId,
+        iwidget_id: this.id
+    });
     Wirecloud.io.makeRequest(igadgetUrl, {
         method: 'PUT',
         parameters: params,
@@ -799,9 +801,11 @@ IGadget.prototype.setName = function (igadgetName) {
             id: this.id
         });
         var params = {'igadget': igadgetData};
-        var igadgetUrl = URIs.GET_IGADGET.evaluate({workspaceId: this.layout.dragboard.workSpaceId,
-                                                    tabId: this.layout.dragboard.tabId,
-                                                    iGadgetId: this.id});
+        var igadgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+            workspace_id: this.layout.dragboard.workSpaceId,
+            tab_id: this.layout.dragboard.tabId,
+            iwidget_id: this.id
+        });
         Wirecloud.io.makeRequest(igadgetUrl, {
             method: 'PUT',
             parameters: params,
@@ -873,9 +877,11 @@ IGadget.prototype.setRefusedVersion = function (v) {
         id: this.id
     });
     var params = {'igadget': igadgetData};
-    var igadgetUrl = URIs.GET_IGADGET.evaluate({workspaceId: this.layout.dragboard.workSpaceId,
-                                                    tabId: this.layout.dragboard.tabId,
-                                                    iGadgetId: this.id});
+    var igadgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+        workspace_id: this.layout.dragboard.workSpaceId,
+        tab_id: this.layout.dragboard.tabId,
+        iwidget_id: this.id
+    });
     Wirecloud.io.makeRequest(igadgetUrl, {
         method: 'PUT',
         parameters: params,
@@ -916,11 +922,13 @@ IGadget.prototype.upgradeIGadget = function () {
         newVersion: this.gadget.getLastVersion().text,
         source: this.gadget.getLastVersion().source
     };
-    var igadgetUrl = URIs.PUT_IGADGET_VERSION.evaluate({workspaceId: this.layout.dragboard.workSpaceId,
-                                                tabId: this.layout.dragboard.tabId,
-                                                iGadgetId: this.id});
+    var url = Wirecloud.URLs.IWIDGET_VERSION_ENTRY.evaluate({
+        workspace_id: this.layout.dragboard.workSpaceId,
+        tab_id: this.layout.dragboard.tabId,
+        iwidget_id: this.id
+    });
 
-    Wirecloud.io.makeRequest(igadgetUrl, {
+    Wirecloud.io.makeRequest(url, {
         method: 'PUT',
         onSuccess: onUpgradeOk.bind(this),
         onFailure: onUpgradeError.bind(this),
@@ -996,9 +1004,11 @@ IGadget.prototype.remove = function (orderFromServer) {
             logManager.log(msg);
         };
 
-        var uri = URIs.GET_IGADGET.evaluate({workspaceId: dragboard.workSpaceId,
-                                             tabId: dragboard.tabId,
-                                             iGadgetId: this.id});
+        var uri = Wirecloud.URLs.IWIDGET.evaluate({
+            workspace_id: dragboard.workSpaceId,
+            tab_id: dragboard.tabId,
+            iwidget_id: this.id
+        });
         Wirecloud.io.makeRequest(uri, {
             method: 'DELETE',
             onFailure: onError.bind(this)
@@ -1502,14 +1512,15 @@ IGadget.prototype.save = function (options) {
         this.destroy();
     }
 
-    var uri = URIs.POST_IGADGET.evaluate({tabId: this.layout.dragboard.tabId,
-                                          workspaceId: this.layout.dragboard.workSpaceId});
+    var url = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
+        tab_id: this.layout.dragboard.tabId,
+        workspace_id: this.layout.dragboard.workSpaceId
+    });
     var gadget_uri = URIs.GET_GADGET.evaluate({vendor: this.gadget.getVendor(),
                                                name: this.gadget.getName(),
                                                version: this.gadget.getVersion().text});
 
     var data = Object.toJSON({
-        'uri': uri,
         'gadget': gadget_uri,
         'left': this.position.x,
         'top': this.position.y,
@@ -1522,7 +1533,7 @@ IGadget.prototype.save = function (options) {
         'layout': this.onFreeLayout() ? 1 : 0
     });
     data = {igadget: data};
-    Wirecloud.io.makeRequest(uri, {
+    Wirecloud.io.makeRequest(url, {
         method: 'POST',
         parameters: data,
         onSuccess: onSuccess.bind(this),
@@ -1670,11 +1681,11 @@ IGadget.prototype.moveToLayout = function (newLayout) {
         data = {
             'igadgets': Object.toJSON(data)
         };
-        var uri = URIs.GET_IGADGETS.evaluate({
-            workspaceId: oldLayout.dragboard.workSpaceId,
-            tabId: oldLayout.dragboard.tabId
+        var url = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
+            workspace_id: oldLayout.dragboard.workSpaceId,
+            tab_id: oldLayout.dragboard.tabId
         });
-        Wirecloud.io.makeRequest(uri, {
+        Wirecloud.io.makeRequest(url, {
             method: 'PUT',
             parameters: data,
             onSuccess: onSuccess.bind(this),

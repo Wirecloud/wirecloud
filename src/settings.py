@@ -144,7 +144,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'wirecloud',
     'workspace',
-    'igadget',
     'catalogue',
     'translator',
     'uploader',

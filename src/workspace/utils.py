@@ -44,11 +44,11 @@ from django.utils.translation import ugettext as _
 from commons.http_utils import download_http_content
 from commons.template import TemplateParser
 from commons.utils import save_alternative
+from wirecloud.iwidget.utils import deleteIGadget
+from wirecloud.models import IGadget
 from workspace.managers import get_workspace_managers
 from workspace.models import Category, Tab, PublishedWorkSpace, UserWorkSpace, VariableValue, WorkSpace
 from workspace.packageLinker import PackageLinker
-from igadget.models import IGadget
-from igadget.utils import deleteIGadget
 
 
 def deleteTab(tab, user):

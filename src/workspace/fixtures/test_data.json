@@ -72,7 +72,7 @@
         }
     },
     {
-        "model": "igadget.Position",
+        "model": "wirecloud.Position",
         "pk": "1",
         "fields": {
             "posX": "0",
@@ -81,7 +81,7 @@
         }
     },
     {
-        "model": "igadget.Position",
+        "model": "wirecloud.Position",
         "pk": "2",
         "fields": {
             "posX": "5",
@@ -90,7 +90,7 @@
         }
     },
     {
-        "model": "igadget.IGadget",
+        "model": "wirecloud.IGadget",
         "pk": "1",
         "fields": {
             "gadget": "1",
@@ -100,7 +100,7 @@
         }
     },
     {
-        "model": "igadget.IGadget",
+        "model": "wirecloud.IGadget",
         "pk": "2",
         "fields": {
             "gadget": "1",
@@ -180,7 +180,7 @@
         }
     },
     {
-        "model": "igadget.Variable",
+        "model": "wirecloud.Variable",
         "pk": "1",
         "fields": {
             "vardef": "1",
@@ -188,7 +188,7 @@
         }
     },
     {
-        "model": "igadget.Variable",
+        "model": "wirecloud.Variable",
         "pk": "2",
         "fields": {
             "vardef": "2",
@@ -196,7 +196,7 @@
         }
     },
     {
-        "model": "igadget.Variable",
+        "model": "wirecloud.Variable",
         "pk": "3",
         "fields": {
             "vardef": "3",
@@ -204,7 +204,7 @@
         }
     },
     {
-        "model": "igadget.Variable",
+        "model": "wirecloud.Variable",
         "pk": "4",
         "fields": {
             "vardef": "4",
@@ -212,7 +212,7 @@
         }
     },
     {
-        "model": "igadget.Variable",
+        "model": "wirecloud.Variable",
         "pk": "5",
         "fields": {
             "vardef": "5",
@@ -220,7 +220,7 @@
         }
     },
     {
-        "model": "igadget.Variable",
+        "model": "wirecloud.Variable",
         "pk": "6",
         "fields": {
             "vardef": "1",
@@ -228,7 +228,7 @@
         }
     },
     {
-        "model": "igadget.Variable",
+        "model": "wirecloud.Variable",
         "pk": "7",
         "fields": {
             "vardef": "2",
@@ -236,7 +236,7 @@
         }
     },
     {
-        "model": "igadget.Variable",
+        "model": "wirecloud.Variable",
         "pk": "8",
         "fields": {
             "vardef": "3",
@@ -244,7 +244,7 @@
         }
     },
     {
-        "model": "igadget.Variable",
+        "model": "wirecloud.Variable",
         "pk": "9",
         "fields": {
             "vardef": "4",
@@ -252,7 +252,7 @@
         }
     },
     {
-        "model": "igadget.Variable",
+        "model": "wirecloud.Variable",
         "pk": "10",
         "fields": {
             "vardef": "5",

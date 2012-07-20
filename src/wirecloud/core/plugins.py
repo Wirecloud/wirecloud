@@ -46,6 +46,9 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
     def get_ajax_endpoints(self, views):
         return (
+            {'id': 'IWIDGET_COLLECTION', 'url': '/api/workspace/#{workspace_id}/tab/#{tab_id}/iwidgets'},
+            {'id': 'IWIDGET_ENTRY', 'url': '/api/workspace/#{workspace_id}/tab/#{tab_id}/iwidget/#{iwidget_id}'},
+            {'id': 'IWIDGET_VERSION_ENTRY', 'url': '/api/workspace/#{workspace_id}/tab/#{tab_id}/iwidget/#{iwidget_id}/version'},
             {'id': 'PLATFORM_PREFERENCES', 'url': reverse('wirecloud.platform_preferences')},
             {'id': 'WORKSPACE_PREFERENCES', 'url': '/api/workspace/#{workspace_id}/preferences'},
             {'id': 'TAB_PREFERENCES', 'url': '/api/workspace/#{workspace_id}/tab/#{tab_id}/preferences'},

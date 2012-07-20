@@ -128,7 +128,7 @@ class Category(models.Model):
 
 class VariableValue(models.Model):
 
-    variable = models.ForeignKey('igadget.Variable', verbose_name=_('Variable'))
+    variable = models.ForeignKey('wirecloud.Variable', verbose_name=_('Variable'))
     user = models.ForeignKey(User, verbose_name=_('User'))
     value = models.TextField(_('Value'), blank=True)
 

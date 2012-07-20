@@ -26,6 +26,10 @@ admin.site.register(models.Concept)
 admin.site.register(models.ConceptName)
 admin.site.register(models.Constant)
 
+admin.site.register(models.Position)
+admin.site.register(models.IGadget)
+admin.site.register(models.Variable)
+
 admin.site.register(models.Market)
 
 admin.site.register(models.Gadget)

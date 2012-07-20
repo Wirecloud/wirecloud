@@ -57,9 +57,6 @@ urlpatterns = patterns('',
     # Showcase
     (r'^showcase/', include('wirecloud.widget.showcase_urls')),
 
-    # IGadgets
-    (r'^workspace(s)?/(?P<workspace_id>\d+)/tab(s)?/(?P<tab_id>\d+)/igadget(s)?', include('igadget.urls')),
-
     # Catalogue
     (r'^catalogue', include('catalogue.urls')),
 

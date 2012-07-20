@@ -176,11 +176,11 @@ class PackageCloner:
             ('wirecloud', 'workspacepreference', 'workspace'),
         ),
         'Tab': (
-            ('igadget', 'igadget', 'tab'),
+            ('wirecloud', 'igadget', 'tab'),
             ('wirecloud', 'tabpreference', 'tab'),
         ),
         'IGadget': (
-            ('igadget', 'variable', 'igadget'),
+            ('wirecloud', 'variable', 'igadget'),
         )
     }
 

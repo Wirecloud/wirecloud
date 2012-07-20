@@ -11,9 +11,8 @@ from django.test import Client, TransactionTestCase
 from django.utils import simplejson
 
 from commons.get_data import get_global_workspace_data
-from wirecloud.models import Gadget
-from igadget.models import IGadget, Variable
-from igadget.utils import SaveIGadget, deleteIGadget
+from wirecloud.models import Gadget, IGadget, Variable
+from wirecloud.iwidget.utils import SaveIGadget, deleteIGadget
 from workspace.packageCloner import PackageCloner
 from workspace.mashupTemplateGenerator import build_template_from_workspace, build_rdf_template_from_workspace, build_usdl_from_workspace
 from workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate

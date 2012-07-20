@@ -93,9 +93,6 @@
 <![CDATA[
 var URIs = {
   USER: '/user/{{ user.username }}',
-  GET_IGADGET: new Template('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/#{iGadgetId}'),
-  GET_IGADGETS: new Template('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/'),
-  PUT_IGADGET_VERSION: new Template('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/#{iGadgetId}/version'),
   GET_GADGET: new Template('/user/{{ user.username }}/gadgets/#{vendor}/#{name}/#{version}'),
   GET_GADGETS: '/user/{{ user.username }}/gadgets',
   GET_POST_RESOURCES: '/catalogue/resource',
@@ -104,9 +101,7 @@ var URIs = {
   DELETE_TAG: '/user/{{ user.username }}/catalogue/tag',
   POST_RESOURCE_TAGS: '/user/{{ user.username }}/catalogue/tag',
   POST_RESOURCE_VOTES: '/user/{{ user.username }}/catalogue/voting',
-  POST_IGADGET: new Template('/workspace/#{workspaceId}/tab/#{tabId}/igadgets'),
   PROXY: '/proxy',
-  GET_IGADGET_VARIABLES: new Template('/user/{{ user.username }}/igadgets/#{iGadgetId}/variables'),
   GET_POST_GADGET_VARIABLE: new Template('/user/{{ user.username }}/igadgets/#{iGadgetId}/variables/#{varName}'),
   PUT_VARIABLES: new Template('/workspace/#{workspaceId}/variables'),
   GET_POST_WORKSPACES: '/workspaces',

@@ -48,10 +48,10 @@ from commons.template import TemplateParser
 from commons.transaction import commit_on_http_success
 from commons.service import Service
 from commons.utils import get_xml_error, json_encode
-from igadget.models import IGadget
-from igadget.utils import deleteIGadget
 from packageCloner import PackageCloner
 from packageLinker import PackageLinker
+from wirecloud.iwidget.utils import deleteIGadget
+from wirecloud.models import IGadget
 from workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_template_from_workspace
 from workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from workspace.models import Category

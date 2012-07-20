@@ -125,7 +125,10 @@ function Dragboard(tab, workSpace, dragboardElement) {
             data.push(iGadgetInfo);
         }
 
-        uri = URIs.GET_IGADGETS.evaluate({workspaceId: this.workSpaceId, tabId: this.tabId});
+        uri = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
+            workspace_id: this.workSpaceId,
+            tab_id: this.tabId
+        });
         Wirecloud.io.makeRequest(uri, {
             method: 'PUT',
             contentType: 'application/json',

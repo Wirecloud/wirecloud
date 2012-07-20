@@ -19,6 +19,7 @@
 
 
 from django.conf.urls.defaults import patterns, url
+from wirecloud.iwidget import views as iwidget_views
 from wirecloud.markets import views
 from wirecloud.wiring import views as wiring_views
 from wirecloud.preferences import views as preferences_views
@@ -30,6 +31,11 @@ urlpatterns = patterns('wirecloud.views',
     url(r'^api/workspace/(?P<workspace_id>\d+)/wiring$',
         wiring_views.WiringEntry(permitted_methods=('PUT',)),
         name='wirecloud.workspace_wiring'),
+
+    # IWidgets
+    url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidgets/?$', iwidget_views.IGadgetCollection(permitted_methods=('GET', 'POST', 'PUT',))),
+    url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/?$', iwidget_views.IGadgetEntry(permitted_methods=('GET', 'POST', 'PUT', 'DELETE',))),
+    url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/version/?$', iwidget_views.IGadgetVersion(permitted_methods=('PUT',))),
 
     # Preferences
     url(r'^api/preferences/platform/?', preferences_views.PlatformPreferencesCollection(permitted_methods=('GET', 'PUT')), name='wirecloud.platform_preferences'),

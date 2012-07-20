@@ -30,7 +30,7 @@
 
 #
 
-from igadget.models import Variable, IGadget
+from wirecloud.models import Variable, IGadget
 from workspace.models import VariableValue, UserWorkSpace
 
 

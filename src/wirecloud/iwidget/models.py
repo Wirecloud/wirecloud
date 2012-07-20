@@ -33,7 +33,6 @@
 from django.db import models
 from django.utils.translation import ugettext as  _
 
-from wirecloud.models import Gadget, VariableDef
 from workspace.models import Tab, VariableValue
 
 
@@ -47,6 +46,9 @@ class Position(models.Model):
     minimized = models.BooleanField(_('Minimized'), default=False)
     fulldragboard = models.BooleanField(_('Fulldragboard'), default=False)
 
+    class Meta:
+        app_label = 'wirecloud'
+
     def __unicode__(self):
         return str(self.pk)
 
@@ -54,7 +56,7 @@ class Position(models.Model):
 class IGadget(models.Model):
 
     name = models.CharField(_('Name'), max_length=250)
-    gadget = models.ForeignKey(Gadget, verbose_name=_('Gadget'))
+    gadget = models.ForeignKey('wirecloud.Gadget', verbose_name=_('Gadget'))
     tab = models.ForeignKey(Tab, verbose_name=_('Tab'))
     layout = models.IntegerField(_('Layout'), default=0)
     transparency = models.BooleanField(_('Transparency'), default=False)
@@ -62,6 +64,9 @@ class IGadget(models.Model):
     icon_position = models.ForeignKey(Position, verbose_name=_('Icon Position'), related_name="Icon_Position", blank=True, null=True)
     refused_version = models.CharField(_('Refused Version'), max_length=150, blank=True, null=True)
     readOnly = models.BooleanField(_('Read Only'), default=False)
+
+    class Meta:
+        app_label = 'wirecloud'
 
     def get_var_value(self, vardef, user):
         return VariableValue.objects.get(user=user, variable__igadget=self, variable__vardef=vardef).value
@@ -72,8 +77,11 @@ class IGadget(models.Model):
 
 class Variable(models.Model):
 
-    vardef = models.ForeignKey(VariableDef, verbose_name=_('Variable definition'))
+    vardef = models.ForeignKey('wirecloud.VariableDef', verbose_name=_('Variable definition'))
     igadget = models.ForeignKey(IGadget, verbose_name=_('IGadget'))
+
+    class Meta:
+        app_label = 'wirecloud'
 
     def __unicode__(self):
         return str(self.pk) + " " + self.vardef.name
