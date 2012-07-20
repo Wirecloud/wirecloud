@@ -256,6 +256,19 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         self.wait_wirecloud_ready()
         self.assertNotEqual(workspace_to_remove, self.get_current_workspace_name())
 
+    def add_tab(self):
+
+        old_tab_count = len(self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab'))
+
+        self.change_main_view('workspace')
+        self.driver.find_element_by_css_selector('#workspace .tab_wrapper .add_tab').click()
+        self.wait_wirecloud_ready()
+
+        new_tab_count = len(self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab'))
+        self.assertEqual(new_tab_count, old_tab_count + 1)
+
+        return self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab')[-1]
+
     def tearDown(self):
         self.driver.quit()
         super(WirecloudSeleniumTestCase, self).tearDown()
