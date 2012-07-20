@@ -14,7 +14,6 @@ except:
 from django.utils.importlib import import_module
 from django.test import TransactionTestCase
 from django.utils import translation
-from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 
 
