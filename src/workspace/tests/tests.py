@@ -41,7 +41,7 @@ class WorkspaceTestCase(CacheTestCase):
 
         self.user = User.objects.get(username='test')
 
-    def testGetGlobalWorkspaceData(self):
+    def test_get_global_workspace_data(self):
 
         workspace = WorkSpace.objects.get(pk=1)
         data = get_global_workspace_data(workspace, self.user).get_data()
@@ -54,9 +54,9 @@ class WorkspaceTestCase(CacheTestCase):
         self.assertEqual(variables['password']['secure'], True)
         self.assertEqual(variables['username']['value'], 'test_username')
         self.assertEqual(variables['prop']['value'], 'test_data')
-    testGetGlobalWorkspaceData.tags = ('fiware-ut-3',)
+    test_get_global_workspace_data.tags = ('fiware-ut-3',)
 
-    def testCreateEmptyWorkspace(self):
+    def test_create_empty_workspace(self):
 
         workspace = createEmptyWorkSpace('Testing', self.user)
 
@@ -71,9 +71,9 @@ class WorkspaceTestCase(CacheTestCase):
         self.assertEqual('workspace' in data, True)
         self.assertEqual(data['workspace']['owned'], True)
         self.assertEqual(data['workspace']['shared'], False)
-    testCreateEmptyWorkspace.tags = ('fiware-ut-3',)
+    test_create_empty_workspace.tags = ('fiware-ut-3',)
 
-    def testLinkWorkspace(self):
+    def test_link_workspace(self):
 
         workspace = WorkSpace.objects.get(pk=1)
 
@@ -89,7 +89,7 @@ class WorkspaceTestCase(CacheTestCase):
         self.assertEqual(new_workspace.workspace, workspace)
         self.assertEqual(initial_vars.count(), cloned_vars.count())
 
-    def testCloneWorkspace(self):
+    def test_clone_workspace(self):
 
         workspace = WorkSpace.objects.get(pk=1)
 
@@ -110,7 +110,7 @@ class WorkspaceTestCase(CacheTestCase):
         self.assertEqual(original_variables.count(), cloned_variables.count())
         self.assertNotEqual(original_variables[0].id, cloned_variables[0].id)
 
-    def testMergeWorkspaces(self):
+    def test_merge_workspaces(self):
 
         workspace = WorkSpace.objects.get(pk=1)
 
