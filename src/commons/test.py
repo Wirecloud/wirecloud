@@ -240,13 +240,6 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         self.wait_wirecloud_ready()
         self.assertNotEqual(workspace_to_remove, self.get_current_workspace_name())
 
-    def is_element_present(self, how, what):
-        try:
-            self.driver.find_element(by=how, value=what)
-        except NoSuchElementException:
-            return False
-        return True
-
     def tearDown(self):
         self.driver.quit()
         super(WirecloudSeleniumTestCase, self).tearDown()
