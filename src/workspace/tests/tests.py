@@ -70,61 +70,6 @@ class WorkspaceTestCase(CacheTestCase):
         self.assertEqual(data['workspace']['owned'], True)
         self.assertEqual(data['workspace']['shared'], False)
 
-    def testVariableValuesCacheInvalidation(self):
-
-        workspace = WorkSpace.objects.get(pk=1)
-        # Fill cache
-        data = get_global_workspace_data(workspace, self.user)
-
-        client = Client()
-        put_data = {
-            'igadgetVars': [
-                {'id': 1, 'value': 'new_password'},
-                {'id': 2, 'value': 'new_username'},
-                {'id': 4, 'value': 'new_data'},
-            ],
-        }
-        put_data = simplejson.dumps(put_data, ensure_ascii=False).encode('utf-8')
-        client.login(username='test', password='test')
-        result = client.put('/workspace/1/variables', put_data, content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
-        self.assertEqual(result.status_code, 200)
-
-        data = get_global_workspace_data(workspace, self.user).get_data()
-        variables = data['workspace']['tabList'][0]['igadgetList'][0]['variables']
-        self.assertEqual(variables['password']['value'], '')
-        self.assertEqual(variables['password']['secure'], True)
-        self.assertEqual(variables['username']['value'], 'new_username')
-        self.assertEqual(variables['prop']['value'], 'new_data')
-
-        # Add a new iGadget to the workspace
-        tab = Tab.objects.get(pk=1)
-        igadget_data = {
-            'gadget': '/Test/Test Gadget/1.0.0',
-            'name': 'test',
-            'top': 0,
-            'left': 0,
-            'width': 2,
-            'height': 2,
-            'zIndex': 1,
-            'layout': 0,
-            'icon_top': 0,
-            'icon_left': 0,
-            'menu_color': '',
-        }
-        Gadget.objects.get(pk=1).users.add(self.user)
-        created_igadget = SaveIGadget(igadget_data, self.user, tab, {})
-
-        data = get_global_workspace_data(workspace, self.user).get_data()
-
-        igadget_list = data['workspace']['tabList'][0]['igadgetList']
-        self.assertEqual(len(igadget_list), 3)
-
-        # Remove the igadget
-        deleteIGadget(created_igadget, self.user)
-        data = get_global_workspace_data(workspace, self.user).get_data()
-        igadget_list = data['workspace']['tabList'][0]['igadgetList']
-        self.assertEqual(len(igadget_list), 2)
-
     def testLinkWorkspace(self):
 
         workspace = WorkSpace.objects.get(pk=1)
@@ -220,6 +165,73 @@ class WorkspaceTestCase(CacheTestCase):
         data = get_global_workspace_data(workspace, other_user).get_data()
         igadget_list = data['workspace']['tabList'][0]['igadgetList']
         self.assertEqual(len(igadget_list), 3)
+
+
+class WorkspaceCacheTestCase(CacheTestCase):
+
+    fixtures = ('test_data',)
+
+    def setUp(self):
+        super(WorkspaceCacheTestCase, self).setUp()
+
+        self.user = User.objects.get(username='test')
+        self.workspace = WorkSpace.objects.get(pk=1)
+
+        # Fill cache
+        get_global_workspace_data(self.workspace, self.user)
+
+    def test_variable_updating_invalidates_cache(self):
+
+        client = Client()
+        put_data = {
+            'igadgetVars': [
+                {'id': 1, 'value': 'new_password'},
+                {'id': 2, 'value': 'new_username'},
+                {'id': 4, 'value': 'new_data'},
+            ],
+        }
+        put_data = simplejson.dumps(put_data, ensure_ascii=False).encode('utf-8')
+        client.login(username='test', password='test')
+        result = client.put('/workspace/1/variables', put_data, content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        self.assertEqual(result.status_code, 200)
+
+        data = get_global_workspace_data(self.workspace, self.user).get_data()
+        variables = data['workspace']['tabList'][0]['igadgetList'][0]['variables']
+        self.assertEqual(variables['password']['value'], '')
+        self.assertEqual(variables['password']['secure'], True)
+        self.assertEqual(variables['username']['value'], 'new_username')
+        self.assertEqual(variables['prop']['value'], 'new_data')
+
+    def test_widget_instantiation_invalidates_cache(self):
+
+        tab = Tab.objects.get(pk=1)
+        igadget_data = {
+            'gadget': '/Test/Test Gadget/1.0.0',
+            'name': 'test',
+            'top': 0,
+            'left': 0,
+            'width': 2,
+            'height': 2,
+            'zIndex': 1,
+            'layout': 0,
+            'icon_top': 0,
+            'icon_left': 0,
+            'menu_color': '',
+        }
+        Gadget.objects.get(pk=1).users.add(self.user)
+        SaveIGadget(igadget_data, self.user, tab, {})
+
+        data = get_global_workspace_data(self.workspace, self.user).get_data()
+
+        igadget_list = data['workspace']['tabList'][0]['igadgetList']
+        self.assertEqual(len(igadget_list), 3)
+
+    def test_widget_deletion_invalidates_cache(self):
+
+        deleteIGadget(IGadget.objects.get(pk=1), self.user)
+        data = get_global_workspace_data(self.workspace, self.user).get_data()
+        igadget_list = data['workspace']['tabList'][0]['igadgetList']
+        self.assertEqual(len(igadget_list), 1)
 
 
 class ParamatrizedWorkspaceGenerationTestCase(TransactionTestCase):

@@ -1,1 +1,1 @@
-from workspace.tests.tests import WorkspaceTestCase, ParametrizedWorkspaceParseTestCase, ParamatrizedWorkspaceGenerationTestCase
+from workspace.tests.tests import WorkspaceTestCase, WorkspaceCacheTestCase, ParametrizedWorkspaceParseTestCase, ParamatrizedWorkspaceGenerationTestCase
