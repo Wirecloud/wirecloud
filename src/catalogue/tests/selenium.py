@@ -75,13 +75,13 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.add_template_to_catalogue('http://localhost:8001/test/test.xml', 'Test_Selenium')
 
     def test_add_gadget_to_catalogue_rdf(self):
-        
+
         self.login()
 
         self.change_main_view("marketplace")
         time.sleep(3)
 
-        self.add_template_to_catalogue('http://localhost:8001/test/test.rdf','Test_Selenium')
+        self.add_template_to_catalogue('http://localhost:8001/test/test.rdf', 'Test_Selenium')
 
     def test_add_invalid_widget_to_catalogue_rdf(self):
 
@@ -109,7 +109,7 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.change_main_view("marketplace")
         time.sleep(3)
 
-        self.add_marketplace('fiware','fiware','http://localhost:8080','fiware')
+        self.add_marketplace('fiware', 'fiware', 'http://localhost:8080', 'fiware')
 
     def test_delete_fiware_marketpace(self):
 
@@ -118,7 +118,7 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.change_main_view("marketplace")
         time.sleep(3)
 
-        self.add_marketplace('fiware','fiware','http://localhost:8080','fiware')
+        self.add_marketplace('fiware', 'fiware', 'http://localhost:8080', 'fiware')
         time.sleep(3)
         self.delete_marketplace('fiware')
 
@@ -129,7 +129,7 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.change_main_view("marketplace")
         time.sleep(3)
 
-        resource = self.add_template_to_catalogue('http://localhost:8001/test/test.rdf','Test_Selenium')
+        resource = self.add_template_to_catalogue('http://localhost:8001/test/test.rdf', 'Test_Selenium')
         self.instanciate(resource)
 
     def test_add_and_delete_gadget_rdf(self):
@@ -139,5 +139,5 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.change_main_view("marketplace")
         time.sleep(3)
 
-        self.add_template_to_catalogue('http://localhost:8001/test/test.rdf','Test_Selenium')
-        self.delete_gadget('Test_Selenium')  
+        self.add_template_to_catalogue('http://localhost:8001/test/test.rdf', 'Test_Selenium')
+        self.delete_gadget('Test_Selenium')
