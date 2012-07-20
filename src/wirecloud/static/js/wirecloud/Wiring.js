@@ -217,7 +217,7 @@
         this.connectablesByWidget = null;
 
         for (key in this.ioperators) {
-            this.ioperators[key].fullDisconnect();
+            this.ioperators[key].destroy();
         }
         this.ioperators = null;
 
