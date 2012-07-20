@@ -2,6 +2,7 @@
 
 import os
 import time
+from urllib2 import URLError, HTTPError
 
 from django.conf import settings
 from django.core.cache import cache
@@ -15,6 +16,39 @@ from django.utils.importlib import import_module
 from django.test import TransactionTestCase
 from django.utils import translation
 from selenium.webdriver.support.ui import WebDriverWait
+
+
+class FakeDownloader(object):
+
+    def __init__(self):
+        self.reset()
+
+    def reset(self):
+        self._responses = {}
+        self._exceptions = {}
+
+    def set_response(self, url, response):
+        self._responses[url] = response
+
+    def set_exception(self, url, exception):
+        self._exceptions[url] = exception
+
+    def set_http_error(self, url):
+        self.set_exception(url, HTTPError('url', '404', 'Not Found', None, None))
+
+    def set_url_error(self, url):
+        self.set_exception(url, URLError('not valid'))
+
+    def __call__(self, *args, **kwargs):
+        url = args[0]
+
+        if url in self._exceptions:
+            raise self._exceptions[url]
+
+        if url in self._responses:
+            return self._responses[url]
+        else:
+            raise HTTPError('url', '404', 'Not Found', None, None)
 
 
 class LocalizedTestCase(TransactionTestCase):
