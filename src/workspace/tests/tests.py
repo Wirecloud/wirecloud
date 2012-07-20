@@ -33,7 +33,8 @@ class CacheTestCase(TransactionTestCase):
 
 
 class WorkspaceTestCase(CacheTestCase):
-    fixtures = ['test_data']
+
+    fixtures = ('test_data',)
 
     def setUp(self):
         super(WorkspaceTestCase, self).setUp()
@@ -53,6 +54,7 @@ class WorkspaceTestCase(CacheTestCase):
         self.assertEqual(variables['password']['secure'], True)
         self.assertEqual(variables['username']['value'], 'test_username')
         self.assertEqual(variables['prop']['value'], 'test_data')
+    testGetGlobalWorkspaceData.tags = ('fiware-ut-3',)
 
     def testCreateEmptyWorkspace(self):
 
@@ -69,6 +71,7 @@ class WorkspaceTestCase(CacheTestCase):
         self.assertEqual('workspace' in data, True)
         self.assertEqual(data['workspace']['owned'], True)
         self.assertEqual(data['workspace']['shared'], False)
+    testCreateEmptyWorkspace.tags = ('fiware-ut-3',)
 
     def testLinkWorkspace(self):
 
@@ -170,6 +173,7 @@ class WorkspaceTestCase(CacheTestCase):
 class WorkspaceCacheTestCase(CacheTestCase):
 
     fixtures = ('test_data',)
+    tags = ('fiware-ut-3',)
 
     def setUp(self):
         super(WorkspaceCacheTestCase, self).setUp()
