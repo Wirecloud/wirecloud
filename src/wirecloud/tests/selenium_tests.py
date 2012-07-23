@@ -28,6 +28,8 @@ class widget_operation:
 
 class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
+    tags = ('fiware-ut-5',)
+
     def check_popup_menu(self, must_be, must_be_absent):
 
         time.sleep(0.1)
@@ -97,7 +99,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.add_widget_to_mashup('Test')
         self.assertEqual(self.count_iwidgets(), 1)
 
-    def test_basic_gadget_functionalities(self):
+    def test_basic_widget_functionalities(self):
 
         self.login()
         self.add_widget_to_mashup('Test')
