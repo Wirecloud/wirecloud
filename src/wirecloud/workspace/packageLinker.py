@@ -30,8 +30,7 @@
 
 #
 
-from wirecloud.models import Variable, IGadget
-from workspace.models import VariableValue, UserWorkSpace
+from wirecloud.models import IGadget, UserWorkSpace, Variable, VariableValue
 
 
 class PackageLinker:

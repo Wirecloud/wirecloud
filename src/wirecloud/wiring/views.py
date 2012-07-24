@@ -26,7 +26,7 @@ from django.utils.translation import ugettext as _
 from catalogue.models import CatalogueResource
 from commons.get_data import _invalidate_cached_variable_values
 from commons.resource import Resource
-from workspace.models import WorkSpace
+from wirecloud.models import WorkSpace
 from wirecloud.wiring.utils import generate_xhtml_operator_code
 
 

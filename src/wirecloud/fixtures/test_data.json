@@ -47,7 +47,7 @@
         }
     },
     {
-        "model": "workspace.WorkSpace",
+        "model": "wirecloud.WorkSpace",
         "pk": "1",
         "fields": {
             "name": "workspace",
@@ -55,7 +55,7 @@
         }
     },
     {
-        "model": "workspace.UserWorkSpace",
+        "model": "wirecloud.UserWorkSpace",
         "pk": "1",
         "fields": {
             "user": "2",
@@ -64,7 +64,7 @@
         }
     },
     {
-        "model": "workspace.Tab",
+        "model": "wirecloud.Tab",
         "pk": "1",
         "fields": {
             "workspace": "1",
@@ -260,7 +260,7 @@
         }
     },
     {
-        "model": "workspace.VariableValue",
+        "model": "wirecloud.VariableValue",
         "pk": "1",
         "fields": {
             "variable": "1",
@@ -269,7 +269,7 @@
         }
     },
     {
-        "model": "workspace.VariableValue",
+        "model": "wirecloud.VariableValue",
         "pk": "2",
         "fields": {
             "variable": "2",
@@ -278,7 +278,7 @@
         }
     },
     {
-        "model": "workspace.VariableValue",
+        "model": "wirecloud.VariableValue",
         "pk": "3",
         "fields": {
             "variable": "4",
@@ -287,7 +287,7 @@
         }
     },
     {
-        "model": "workspace.VariableValue",
+        "model": "wirecloud.VariableValue",
         "pk": "4",
         "fields": {
             "variable": "6",
@@ -296,7 +296,7 @@
         }
     },
     {
-        "model": "workspace.VariableValue",
+        "model": "wirecloud.VariableValue",
         "pk": "5",
         "fields": {
             "variable": "7",
@@ -305,7 +305,7 @@
         }
     },
     {
-        "model": "workspace.VariableValue",
+        "model": "wirecloud.VariableValue",
         "pk": "6",
         "fields": {
             "variable": "9",

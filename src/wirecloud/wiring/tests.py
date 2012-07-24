@@ -23,7 +23,7 @@ from django.db import transaction
 from django.test import TransactionTestCase, Client
 from django.utils import simplejson
 
-from workspace.models import WorkSpace
+from wirecloud.workspace.models import WorkSpace
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/tests.py)

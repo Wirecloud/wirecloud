@@ -50,8 +50,7 @@ from commons.http_utils import PUT_parameter
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error, json_encode
-from wirecloud.models import PlatformPreference, WorkSpacePreference, TabPreference, update_session_lang
-from workspace.models import WorkSpace, Tab
+from wirecloud.models import PlatformPreference, WorkSpacePreference, Tab, TabPreference, update_session_lang, WorkSpace
 
 
 def update_preferences(user, preferences_json):

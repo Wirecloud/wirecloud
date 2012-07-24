@@ -143,7 +143,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'wirecloud',
-    'workspace',
     'catalogue',
     'translator',
     'uploader',
@@ -238,7 +237,7 @@ CACHES = {
 JOHNNY_MIDDLEWARE_KEY_PREFIX = '%s-cache' % DATABASES['default']['NAME']
 
 WORKSPACE_MANAGERS = (
-    'workspace.workspace_managers.OrganizationWorkspaceManager',
+    'wirecloud.workspace.workspace_managers.OrganizationWorkspaceManager',
 )
 
 WIRECLOUD_PLUGINS = (

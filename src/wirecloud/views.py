@@ -23,8 +23,8 @@ from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.utils.http import urlencode
 
-from workspace.models import WorkSpace
-from workspace.utils import get_workspace_list
+from wirecloud.models import WorkSpace
+from wirecloud.workspace.utils import get_workspace_list
 
 
 def render_root_page(request):

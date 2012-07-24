@@ -43,10 +43,9 @@ from commons.authentication import Http403
 from commons.http_utils import download_http_content
 from commons.template import TemplateParser
 from commons.wgt import WgtDeployer, WgtFile
-from wirecloud.models import ContextOption, VariableDef, UserPrefOption, Gadget, XHTML
+from wirecloud.models import ContextOption, Gadget, UserPrefOption, UserWorkSpace, VariableDef, WorkSpace, XHTML
 from translator.models import Translation
 from wirecloud.plugins import get_active_features, get_gadget_api_extensions
-from workspace.models import WorkSpace, UserWorkSpace
 
 
 wgt_deployer = WgtDeployer(settings.GADGETS_DEPLOYMENT_DIR)

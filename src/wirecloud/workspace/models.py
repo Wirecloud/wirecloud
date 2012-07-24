@@ -50,6 +50,9 @@ class WorkSpace(models.Model):
     forcedValues = models.TextField(blank=True)
     wiringStatus = models.TextField(blank=True)
 
+    class Meta:
+        app_label = 'wirecloud'
+
     def __unicode__(self):
         return unicode(self.pk) + " " + unicode(self.name)
 
@@ -64,6 +67,9 @@ class UserWorkSpace(models.Model):
     active = models.BooleanField(_('Active'), default=False)
     manager = models.CharField(_('Manager'), max_length=100, blank=True)
     reason_ref = models.CharField(_('Reason Ref'), max_length=100, help_text=_('Reference to the reason why it was added. Used by Workspace Managers to sync workspaces'), blank=True)
+
+    class Meta:
+        app_label = 'wirecloud'
 
     def __unicode__(self):
         return unicode(self.workspace) + " - " + unicode(self.user)
@@ -92,6 +98,9 @@ class PublishedWorkSpace(models.Model):
     template = models.TextField(_('Template'))
     params = models.TextField(_('Params used for publishing'))
 
+    class Meta:
+        app_label = 'wirecloud'
+
     def get_template_url(self, request=None):
         try:
             domain = get_current_site(request).domain
@@ -111,6 +120,9 @@ class GroupPublishedWorkspace(models.Model):
     group = models.ForeignKey(Group)
     workspace = models.ForeignKey(PublishedWorkSpace)
 
+    class Meta:
+        app_label = 'wirecloud'
+
     def __unicode__(self):
         return '%s => %s' % (unicode(self.workspace), unicode(self.group))
 
@@ -121,6 +133,9 @@ class Category(models.Model):
     category_id = models.IntegerField()
     default_workspace = models.ForeignKey(PublishedWorkSpace, verbose_name=_('Default Workspace'), null=True, blank=True)
     new_workspace = models.ForeignKey(PublishedWorkSpace, verbose_name=_('New Workspace'), related_name="new_workspace_", null=True, blank=True)
+
+    class Meta:
+        app_label = 'wirecloud'
 
     def __unicode__(self):
         return unicode(self.category_id)
@@ -133,13 +148,14 @@ class VariableValue(models.Model):
     value = models.TextField(_('Value'), blank=True)
 
     class Meta:
+        app_label = 'wirecloud'
         unique_together = ('variable', 'user')
 
     def get_variable_value(self):
         value = self.value
 
         if self.variable.vardef.secure:
-            from workspace.utils import decrypt_value
+            from wirecloud.workspace.utils import decrypt_value
             value = decrypt_value(value)
 
         return value
@@ -159,6 +175,7 @@ class Tab(models.Model):
         pass
 
     class Meta:
+        app_label = 'wirecloud'
         unique_together = ('name', 'workspace')
 
     def __unicode__(self):

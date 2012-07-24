@@ -51,14 +51,10 @@ from commons.utils import get_xml_error, json_encode
 from packageCloner import PackageCloner
 from packageLinker import PackageLinker
 from wirecloud.iwidget.utils import deleteIGadget
-from wirecloud.models import IGadget
-from workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_template_from_workspace
-from workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
-from workspace.models import Category
-from workspace.models import VariableValue
-from workspace.models import Tab
-from workspace.models import PublishedWorkSpace, UserWorkSpace, WorkSpace
-from workspace.utils import deleteTab, createTab, create_published_workspace_from_template, getCategories, getCategoryId, get_workspace_list, setVisibleTab, set_variable_value
+from wirecloud.models import Category, IGadget, PublishedWorkSpace, Tab, UserWorkSpace, VariableValue, WorkSpace
+from wirecloud.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_template_from_workspace
+from wirecloud.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
+from wirecloud.workspace.utils import deleteTab, createTab, create_published_workspace_from_template, getCategories, getCategoryId, get_workspace_list, setVisibleTab, set_variable_value
 from wirecloud.markets.utils import get_market_managers
 
 

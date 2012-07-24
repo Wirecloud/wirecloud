@@ -19,7 +19,7 @@
 
 from catalogue.utils import add_resource_from_template
 from commons.template import TemplateParser
-from workspace.mashupTemplateGenerator import build_template_from_workspace
+from wirecloud.workspace.mashupTemplateGenerator import build_template_from_workspace
 from wirecloud.markets.utils import MarketManager
 
 

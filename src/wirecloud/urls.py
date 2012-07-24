@@ -23,6 +23,8 @@ from wirecloud.iwidget import views as iwidget_views
 from wirecloud.markets import views
 from wirecloud.wiring import views as wiring_views
 from wirecloud.preferences import views as preferences_views
+from wirecloud.workspace import views as workspace_views
+
 
 urlpatterns = patterns('wirecloud.views',
 

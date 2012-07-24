@@ -25,7 +25,7 @@ from urlparse import urljoin
 from proxy.views import MethodRequest
 from wirecloud.markets.utils import MarketManager
 from wirecloud.plugins import WirecloudPlugin
-from workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_usdl_from_workspace
+from wirecloud.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_usdl_from_workspace
 
 from wirecloud_fiware import VERSION
 from marketAdaptor.marketadaptor import MarketAdaptor

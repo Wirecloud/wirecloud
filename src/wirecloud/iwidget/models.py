@@ -33,8 +33,6 @@
 from django.db import models
 from django.utils.translation import ugettext as  _
 
-from workspace.models import Tab, VariableValue
-
 
 class Position(models.Model):
 
@@ -57,7 +55,7 @@ class IGadget(models.Model):
 
     name = models.CharField(_('Name'), max_length=250)
     gadget = models.ForeignKey('wirecloud.Gadget', verbose_name=_('Gadget'))
-    tab = models.ForeignKey(Tab, verbose_name=_('Tab'))
+    tab = models.ForeignKey('wirecloud.Tab', verbose_name=_('Tab'))
     layout = models.IntegerField(_('Layout'), default=0)
     transparency = models.BooleanField(_('Transparency'), default=False)
     position = models.ForeignKey(Position, verbose_name=_('Position'), related_name="Position")
@@ -67,9 +65,6 @@ class IGadget(models.Model):
 
     class Meta:
         app_label = 'wirecloud'
-
-    def get_var_value(self, vardef, user):
-        return VariableValue.objects.get(user=user, variable__igadget=self, variable__vardef=vardef).value
 
     def __unicode__(self):
         return str(self.pk)

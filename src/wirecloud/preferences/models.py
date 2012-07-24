@@ -44,8 +44,6 @@ from django.contrib.auth.signals import user_logged_in
 from django.db import models
 from django.utils.translation import check_for_language, gettext_lazy as _
 
-from workspace.models import WorkSpace, Tab
-
 
 class PlatformPreference(models.Model):
 
@@ -59,7 +57,7 @@ class PlatformPreference(models.Model):
 
 class WorkSpacePreference(models.Model):
 
-    workspace = models.ForeignKey(WorkSpace)
+    workspace = models.ForeignKey('wirecloud.WorkSpace')
     name = models.CharField(_('Name'), max_length=250)
     inherit = models.BooleanField(_('Inherit'), default=False)
     value = models.CharField(_('Value'), max_length=250)
@@ -69,7 +67,7 @@ class WorkSpacePreference(models.Model):
 
 class TabPreference(models.Model):
 
-    tab = models.ForeignKey(Tab)
+    tab = models.ForeignKey('wirecloud.Tab')
     name = models.CharField(_('Name'), max_length=250)
     inherit = models.BooleanField(_('Inherit'), default=False)
     value = models.CharField(_('Value'), max_length=250)

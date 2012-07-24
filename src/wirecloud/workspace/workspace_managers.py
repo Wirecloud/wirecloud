@@ -1,4 +1,4 @@
-from workspace.models import GroupPublishedWorkspace, PublishedWorkSpace, WorkSpace
+from wirecloud.models import GroupPublishedWorkspace, PublishedWorkSpace, WorkSpace
 
 
 def ref_from_workspace(workspace):

@@ -56,7 +56,7 @@ from wirecloud.iwidget.utils import deleteIGadget
 from wirecloud.models import Gadget, IGadget, XHTML
 import wirecloud.widget.utils as showcase_utils
 from wirecloud.widget.utils import get_or_create_gadget, create_gadget_from_template, fix_gadget_code, get_site_domain
-from workspace.utils import create_published_workspace_from_template
+from wirecloud.workspace.utils import create_published_workspace_from_template
 
 
 def parseAndCreateGadget(request, user, workspaceId):

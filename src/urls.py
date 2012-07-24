@@ -51,9 +51,6 @@ urlpatterns = patterns('',
     (r'^user/(?P<user_name>[\.\-\w\@]+)/gadget(s)?', include('wirecloud.widget.urls')),
     (r'^gadget(s)?', include('wirecloud.widget.urls')),
 
-    # WorkSpaces
-    (r'^workspace(s)?', include('workspace.urls')),
-
     # Showcase
     (r'^showcase/', include('wirecloud.widget.showcase_urls')),
 

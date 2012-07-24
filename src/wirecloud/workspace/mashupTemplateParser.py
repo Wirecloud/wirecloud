@@ -36,8 +36,8 @@ from django.utils import simplejson
 from wirecloud.widget.utils import get_or_add_gadget_from_catalogue
 from wirecloud.iwidget.utils import SaveIGadget
 from wirecloud.preferences.views import update_tab_preferences, update_workspace_preferences
-from workspace.models import WorkSpace, UserWorkSpace
-from workspace.utils import createTab
+from wirecloud.models import WorkSpace, UserWorkSpace
+from wirecloud.workspace.utils import createTab
 
 
 def buildWorkspaceFromTemplate(template, user):

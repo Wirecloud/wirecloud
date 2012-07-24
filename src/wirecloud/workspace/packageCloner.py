@@ -172,7 +172,7 @@ class PackageCloner:
 
     extra_models = {
         'WorkSpace': (
-            ('workspace', 'tab', 'workspace'),
+            ('wirecloud', 'tab', 'workspace'),
             ('wirecloud', 'workspacepreference', 'workspace'),
         ),
         'Tab': (
@@ -327,7 +327,7 @@ class PackageCloner:
 
         self.final_tables = list(self.final_tables)
         self.extra_models['Variable'] = (
-            ('workspace', 'variablevalue', 'variable', {'user': from_ws.creator}),
+            ('wirecloud', 'variablevalue', 'variable', {'user': from_ws.creator}),
         )
         self.fields_to_overwrite['VariableValue'] = {
             'user': user,

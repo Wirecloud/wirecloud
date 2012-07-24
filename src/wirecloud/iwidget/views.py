@@ -44,9 +44,8 @@ from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error, json_encode
 from wirecloud.iwidget.utils import SaveIGadget, UpdateIGadget, UpgradeIGadget, deleteIGadget
-from wirecloud.models import Gadget, IGadget, Variable
+from wirecloud.models import Gadget, IGadget, Tab, UserWorkSpace, Variable, WorkSpace
 from wirecloud.widget.utils import get_or_add_gadget_from_catalogue, get_and_add_gadget
-from workspace.models import Tab, WorkSpace, UserWorkSpace
 
 
 class IGadgetCollection(Resource):

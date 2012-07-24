@@ -18,7 +18,7 @@ from wirecloud.models import Gadget
 import wirecloud.widget.utils
 from wirecloud.widget.utils import create_gadget_from_template, create_gadget_from_wgt, get_or_add_gadget_from_catalogue
 from wirecloud.widget.views import deleteGadget
-from workspace.utils import create_published_workspace_from_template
+from wirecloud.workspace.utils import create_published_workspace_from_template
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/tests/__init__.py)
@@ -29,7 +29,7 @@ BASIC_HTML_GADGET_CODE = "<html><body><p>gadget code</p></body></html>"
 
 class ShowcaseTestCase(LocalizedTestCase):
 
-    fixtures = ['catalogue_test_data', 'test_data']
+    fixtures = ('catalogue_test_data', 'test_data')
 
     def setUp(self):
         super(ShowcaseTestCase, self).setUp()
@@ -288,7 +288,7 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertRaises(TemplateParseException, create_gadget_from_template, template_uri, self.user)
 
     def test_basic_mashup(self):
-        template = self.read_template('..', '..', '..', 'workspace', 'tests', 'wt1.xml')
+        template = self.read_template('..', '..', 'workspace', 'test-data', 'wt1.xml')
         workspace = create_published_workspace_from_template(template, self.user)
 
         self.assertEqual(workspace.vendor, 'Wirecloud Test Suite')
@@ -297,7 +297,7 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(workspace.creator, self.user)
 
     def test_basic_mashup_usdl(self):
-        template = self.read_template('..', '..', '..', 'workspace', 'tests', 'wt1.rdf')
+        template = self.read_template('..', '..', 'workspace', 'test-data', 'wt1.rdf')
         workspace = create_published_workspace_from_template(template, self.user)
 
         self.assertEqual(workspace.vendor, 'Wirecloud Test Suite')

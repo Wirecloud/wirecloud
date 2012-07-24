@@ -40,10 +40,9 @@ from django.utils.translation import ugettext as _
 
 from commons.cache import CacheableData
 from wirecloud.context.utils import get_user_context_providers
-from wirecloud.models import Capability, Concept, ConceptName, Constant, IGadget, UserPrefOption, Variable, VariableDef, XHTML
+from wirecloud.models import Capability, Concept, ConceptName, Constant, IGadget, PublishedWorkSpace, Tab, UserPrefOption, UserWorkSpace, Variable, VariableDef, VariableValue, XHTML
 from wirecloud.preferences.views import get_workspace_preference_values, get_tab_preference_values
-from workspace.models import Tab, VariableValue, UserWorkSpace, PublishedWorkSpace
-from workspace.utils import createTab, decrypt_value, encrypt_value
+from wirecloud.workspace.utils import createTab, decrypt_value, encrypt_value
 
 
 def _variable_cache_key(igadget):

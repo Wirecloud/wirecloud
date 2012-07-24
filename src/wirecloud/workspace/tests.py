@@ -11,17 +11,16 @@ from django.test import Client, TransactionTestCase
 from django.utils import simplejson
 
 from commons.get_data import get_global_workspace_data
-from wirecloud.models import Gadget, IGadget, Variable
+from wirecloud.models import Gadget, IGadget, Tab, UserWorkSpace, Variable, VariableValue, WorkSpace
 from wirecloud.iwidget.utils import SaveIGadget, deleteIGadget
-from workspace.packageCloner import PackageCloner
-from workspace.mashupTemplateGenerator import build_template_from_workspace, build_rdf_template_from_workspace, build_usdl_from_workspace
-from workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
-from workspace.models import WorkSpace, UserWorkSpace, Tab, VariableValue
-from workspace.utils import sync_base_workspaces
-from workspace.views import createEmptyWorkSpace, linkWorkspace
+from wirecloud.workspace.packageCloner import PackageCloner
+from wirecloud.workspace.mashupTemplateGenerator import build_template_from_workspace, build_rdf_template_from_workspace, build_usdl_from_workspace
+from wirecloud.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
+from wirecloud.workspace.utils import sync_base_workspaces
+from wirecloud.workspace.views import createEmptyWorkSpace, linkWorkspace
 
 
-# Avoid nose to repeat these tests (they are run through __init__.py)
+# Avoid nose to repeat these tests (they are run through wirecloud/tests/__init__.py)
 __test__ = False
 
 
@@ -458,7 +457,7 @@ class ParametrizedWorkspaceParseTestCase(TransactionTestCase):
         self.rdfTemplate4 = self.read_template('wt4.rdf')
 
     def read_template(self, filename):
-        f = codecs.open(os.path.join(os.path.dirname(__file__), filename), 'rb')
+        f = codecs.open(os.path.join(os.path.dirname(__file__), 'test-data', filename), 'rb')
         contents = f.read()
         f.close()
 

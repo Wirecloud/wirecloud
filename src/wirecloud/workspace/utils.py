@@ -45,10 +45,9 @@ from commons.http_utils import download_http_content
 from commons.template import TemplateParser
 from commons.utils import save_alternative
 from wirecloud.iwidget.utils import deleteIGadget
-from wirecloud.models import IGadget
-from workspace.managers import get_workspace_managers
-from workspace.models import Category, Tab, PublishedWorkSpace, UserWorkSpace, VariableValue, WorkSpace
-from workspace.packageLinker import PackageLinker
+from wirecloud.models import Category, IGadget, PublishedWorkSpace, Tab, UserWorkSpace, VariableValue, WorkSpace
+from wirecloud.workspace.managers import get_workspace_managers
+from wirecloud.workspace.packageLinker import PackageLinker
 
 
 def deleteTab(tab, user):
@@ -158,7 +157,7 @@ def set_variable_value(var_id, user, value):
 
 def sync_base_workspaces(user):
 
-    from workspace.mashupTemplateParser import buildWorkspaceFromTemplate
+    from wirecloud.workspace.mashupTemplateParser import buildWorkspaceFromTemplate
 
     packageLinker = PackageLinker()
     reload_showcase = False
@@ -227,7 +226,7 @@ def getCategoryId(category):
 
 def get_workspace_list(user):
 
-    from workspace.views import cloneWorkspace, createEmptyWorkSpace, linkWorkspace, setActiveWorkspace
+    from wirecloud.workspace.views import cloneWorkspace, createEmptyWorkSpace, linkWorkspace, setActiveWorkspace
 
     reload_showcase = sync_base_workspaces(user)
 

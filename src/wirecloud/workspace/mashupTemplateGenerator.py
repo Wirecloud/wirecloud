@@ -18,15 +18,15 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from datetime import datetime
 import json
 import rdflib
 from lxml import etree
 
 from django.conf import settings
 
-from datetime import datetime
-from workspace.models import Tab
-from wirecloud.models import IGadget, WorkSpacePreference, TabPreference
+from commons.get_data import get_variable_value_from_varname
+from wirecloud.models import IGadget, Tab, TabPreference, WorkSpacePreference
 
 
 #definition of namespaces that will be used in rdf documents
@@ -188,7 +188,7 @@ def build_template_from_workspace(options, workspace, user):
                 value = igadget_param_desc['value']
                 status = igadget_param_desc['status']
             else:
-                value = igadget.get_var_value(pref, workspace.creator)
+                value = get_variable_value_from_varname(workspace.creator, igadget, pref.name)
 
             element = etree.SubElement(resource, 'Preference', name=pref.name, value=value)
             if status != 'normal':
@@ -207,7 +207,7 @@ def build_template_from_workspace(options, workspace, user):
                 value = igadget_param_desc['value']
                 status = igadget_param_desc['status']
             else:
-                value = igadget.get_var_value(prop, workspace.creator)
+                value = get_variable_value_from_varname(workspace.creator, igadget, prop.name)
 
             element = etree.SubElement(resource, 'Property', name=prop.name, value=value)
             if status != 'normal':
@@ -390,7 +390,7 @@ def build_rdf_template_from_workspace(options, workspace, user):
                 value = iwidget_param_desc['value']
                 status = iwidget_param_desc['status']
             else:
-                value = iwidget.get_var_value(pref, workspace.creator)
+                value = get_variable_value_from_varname(workspace.creator, iwidget, pref.name)
 
             element = rdflib.BNode()
             graph.add((element, rdflib.RDF.type, WIRE_M['iWidgetPreference']))
@@ -415,7 +415,7 @@ def build_rdf_template_from_workspace(options, workspace, user):
                 value = iwidget_param_desc['value']
                 status = iwidget_param_desc['status']
             else:
-                value = iwidget.get_var_value(prop, workspace.creator)
+                value = get_variable_value_from_varname(workspace.creator, iwidget, prop.name)
 
             element = rdflib.BNode()
             graph.add((element, rdflib.RDF.type, WIRE_M['iWidgetProperty']))
