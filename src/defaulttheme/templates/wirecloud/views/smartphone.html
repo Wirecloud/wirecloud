@@ -75,13 +75,9 @@
 <script type="text/javascript" language="javascript">
 _URIConstants = function(){}
 _URIConstants.prototype.GET_GADGETS = '/user/{{ user.username }}/gadgets';
-_URIConstants.prototype.GET_IGADGET = new Template ('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/#{iGadgetId}');
-_URIConstants.prototype.GET_IGADGETS = new Template ('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/');
-_URIConstants.prototype.POST_IGADGET = new Template ('/workspace/#{workspaceId}/tab/#{tabId}/igadgets');
 _URIConstants.prototype.PROXY = '/proxy';
 _URIConstants.prototype.PUT_VARIABLES = new Template ('/workspace/#{workspaceId}/variables');
 _URIConstants.prototype.GET_POST_WORKSPACES = '/workspaces';
-_URIConstants.prototype.GET_POST_WIRING = new Template ('/workspaces/#{id}/wiring');
 _URIConstants.prototype.GET_POST_WORKSPACE = new Template ('/workspaces/#{id}/last_user/#{last_user}');
 _URIConstants.prototype.GET_POST_TABS = new Template('/workspace/#{workspace_id}/tabs');
 _URIConstants.prototype.TAB = new Template('/workspace/#{workspace_id}/tab/#{tab_id}');

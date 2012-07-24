@@ -92,7 +92,6 @@
 <script type="text/javascript">
 <![CDATA[
 var URIs = {
-  USER: '/user/{{ user.username }}',
   GET_GADGET: new Template('/user/{{ user.username }}/gadgets/#{vendor}/#{name}/#{version}'),
   GET_GADGETS: '/user/{{ user.username }}/gadgets',
   GET_POST_RESOURCES: '/catalogue/resource',
@@ -102,10 +101,8 @@ var URIs = {
   POST_RESOURCE_TAGS: '/user/{{ user.username }}/catalogue/tag',
   POST_RESOURCE_VOTES: '/user/{{ user.username }}/catalogue/voting',
   PROXY: '/proxy',
-  GET_POST_GADGET_VARIABLE: new Template('/user/{{ user.username }}/igadgets/#{iGadgetId}/variables/#{varName}'),
   PUT_VARIABLES: new Template('/workspace/#{workspaceId}/variables'),
   GET_POST_WORKSPACES: '/workspaces',
-  GET_POST_WIRING: new Template('/workspaces/#{id}/wiring'),
   GET_POST_WORKSPACE: new Template('/workspaces/#{id}/last_user/#{last_user}'),
   GET_POST_TABS: new Template('/workspace/#{workspace_id}/tabs'),
   TAB: new Template('/workspace/#{workspace_id}/tab/#{tab_id}'),
@@ -115,10 +112,6 @@ var URIs = {
   GET_MERGE_WORKSPACE: new Template('/workspace/#{from_ws_id}/merge/#{to_ws_id}'),
   PUT_SHARE_WORKSPACE: new Template('/workspace/#{workspace_id}/share/#{share_boolean}'),
   GET_SHARE_GROUPS: new Template('/workspace/#{workspace_id}/share/groups'),
-  GADGET_TEMPLATE_GENERATOR: new Template('{{GADGET_GENERATOR_URL}}/gadgetGenerator/template/#{gadget_type}'),
-  POST_CREATE_EXTERNAL_CHANNEL: '/channel/external',
-  GET_SUBSCRIBE_USER_TO_REMOTE_CHANNELS: new Template('/notifier/channels/register?channels=#{channels}&user={{ user.username }}'),
-  POST_PUBLISH_REMOTE_CHANNELS: new Template('/notifier/channels/notify?channels=#{channels}'),
   POST_CHECK_VERSIONS: '/user/{{ user.username }}/catalogue/versions',
   FILE_UPLOADER: '/uploader',
   BASIC_THEME: '/ezweb/themes/default',
