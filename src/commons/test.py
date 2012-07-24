@@ -68,6 +68,29 @@ class LocalizedTestCase(TransactionTestCase):
         settings.LANGUAGE_CODE = self.old_LANGUAGE_CODE
 
 
+class widget_operation:
+
+    def __init__(self, driver, widget):
+        self.driver = driver
+        self.widget = widget
+
+    def __enter__(self):
+        self.driver.execute_script('return opManager.activeWorkSpace.getIgadget(%d).content.setAttribute("id", "targetframe");' % self.widget)
+
+        # TODO work around webdriver bugs
+        self.driver.switch_to_default_content()
+
+        self.driver.switch_to_frame(self.driver.find_element_by_id('targetframe'))
+        return None
+
+    def __exit__(self, type, value, traceback):
+        self.driver.switch_to_frame(None)
+        self.driver.execute_script('return opManager.activeWorkSpace.getIgadget(%d).content.removeAttribute("id");' % self.widget)
+
+        # TODO work around webdriver bugs
+        self.driver.switch_to_default_content()
+
+
 class WirecloudSeleniumTestCase(LiveServerTestCase):
 
     fixtures = ('selenium_test_data',)
