@@ -20,6 +20,9 @@
 
 from django.utils.importlib import import_module
 from django.core.exceptions import ImproperlyConfigured
+from django.core.urlresolvers import get_callable, get_script_prefix, get_resolver, NoReverseMatch
+from django.utils.encoding import force_unicode
+from django.utils.regex_helper import normalize
 
 _wirecloud_plugins = None
 _wirecloud_features = None
@@ -123,6 +126,42 @@ def get_gadget_api_extensions(view):
         files += plugin.get_gadget_api_extensions(view)
 
     return files
+
+
+def build_url_template(viewname, kwargs=[], urlconf=None, prefix=None):
+    resolver = get_resolver(urlconf)
+
+    if prefix is None:
+        prefix = get_script_prefix()
+
+    kwargs = list(kwargs)
+
+    try:
+        lookup_view = get_callable(viewname, True)
+    except (ImportError, AttributeError), e:
+        raise NoReverseMatch("Error importing '%s': %s." % (lookup_view, e))
+    possibilities = resolver.reverse_dict.getlist(lookup_view)
+    prefix_norm, prefix_args = normalize(prefix)[0]
+    for possibility, pattern, defaults in possibilities:
+        for result, params in possibility:
+            if set(kwargs + defaults.keys()) != set(params + defaults.keys() + prefix_args):
+                continue
+
+            unicode_kwargs = dict([(k, u'#{' + force_unicode(k) + u'}') for k in kwargs])
+            unicode_kwargs.update(defaults)
+            return (prefix_norm + result) % unicode_kwargs
+
+    # lookup_view can be URL label, or dotted path, or callable, Any of
+    # these can be passed in at the top, but callables are not friendly in
+    # error messages.
+    m = getattr(lookup_view, '__module__', None)
+    n = getattr(lookup_view, '__name__', None)
+    if m is not None and n is not None:
+        lookup_view_s = "%s.%s" % (m, n)
+    else:
+        lookup_view_s = lookup_view
+    raise NoReverseMatch("Reverse for '%s' with keyword arguments '%s' not "
+            "found." % (lookup_view_s, kwargs))
 
 
 class WirecloudPlugin(object):
