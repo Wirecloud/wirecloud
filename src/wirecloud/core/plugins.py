@@ -17,10 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.core.urlresolvers import reverse
-
 from wirecloud import VERSION
-from wirecloud.plugins import WirecloudPlugin
+from wirecloud.plugins import WirecloudPlugin, build_url_template
 
 from wirecloud.core.catalogue_manager import WirecloudCatalogueManager
 
@@ -46,15 +44,15 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
     def get_ajax_endpoints(self, views):
         return (
-            {'id': 'IWIDGET_COLLECTION', 'url': '/api/workspace/#{workspace_id}/tab/#{tab_id}/iwidgets'},
-            {'id': 'IWIDGET_ENTRY', 'url': '/api/workspace/#{workspace_id}/tab/#{tab_id}/iwidget/#{iwidget_id}'},
-            {'id': 'IWIDGET_VERSION_ENTRY', 'url': '/api/workspace/#{workspace_id}/tab/#{tab_id}/iwidget/#{iwidget_id}/version'},
-            {'id': 'PLATFORM_PREFERENCES', 'url': reverse('wirecloud.platform_preferences')},
-            {'id': 'WORKSPACE_PREFERENCES', 'url': '/api/workspace/#{workspace_id}/preferences'},
-            {'id': 'TAB_PREFERENCES', 'url': '/api/workspace/#{workspace_id}/tab/#{tab_id}/preferences'},
+            {'id': 'IWIDGET_COLLECTION', 'url': build_url_template('wirecloud.iwidget_collection', ['workspace_id', 'tab_id'])},
+            {'id': 'IWIDGET_ENTRY', 'url': build_url_template('wirecloud.iwidget_entry', ['workspace_id', 'tab_id', 'iwidget_id'])},
+            {'id': 'IWIDGET_VERSION_ENTRY', 'url': build_url_template('wirecloud.iwidget_version_entry', ['workspace_id', 'tab_id', 'iwidget_id'])},
+            {'id': 'PLATFORM_PREFERENCES', 'url': build_url_template('wirecloud.platform_preferences')},
+            {'id': 'WORKSPACE_PREFERENCES', 'url': build_url_template('wirecloud.workspace_preferences', ['workspace_id'])},
+            {'id': 'TAB_PREFERENCES', 'url': build_url_template('wirecloud.tab_preferences', ['workspace_id', 'tab_id'])},
             {'id': 'MARKET_COLLECTION', 'url': '/api/markets'},
             {'id': 'MARKET_ENTRY', 'url': '/api/market/#{market}'},
-            {'id': 'WIRING_ENTRY', 'url': '/api/workspace/#{id}/wiring'},
-            {'id': 'OPERATOR_COLLECTION', 'url': '/api/operators'},
-            {'id': 'OPERATOR_ENTRY', 'url': '/api/operator/#{vendor}/#{name}/#{version}/html'},
+            {'id': 'WIRING_ENTRY', 'url': build_url_template('wirecloud.workspace_wiring', ['workspace_id'])},
+            {'id': 'OPERATOR_COLLECTION', 'url': build_url_template('wirecloud.operators')},
+            {'id': 'OPERATOR_ENTRY', 'url': build_url_template('wirecloud.operator_code_entry', ['vendor', 'name', 'version'])},
         )

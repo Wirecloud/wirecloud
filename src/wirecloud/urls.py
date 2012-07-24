@@ -33,17 +33,41 @@ urlpatterns = patterns('wirecloud.views',
         name='wirecloud.workspace_wiring'),
 
     # IWidgets
-    url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidgets/?$', iwidget_views.IGadgetCollection(permitted_methods=('GET', 'POST', 'PUT',))),
-    url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/?$', iwidget_views.IGadgetEntry(permitted_methods=('GET', 'POST', 'PUT', 'DELETE',))),
-    url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/version/?$', iwidget_views.IGadgetVersion(permitted_methods=('PUT',))),
+    url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidgets/?$',
+        iwidget_views.IGadgetCollection(permitted_methods=('GET', 'POST', 'PUT',)),
+        name='wirecloud.iwidget_collection'
+    ),
+    url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/?$',
+        iwidget_views.IGadgetEntry(permitted_methods=('GET', 'POST', 'PUT', 'DELETE',)),
+        name='wirecloud.iwidget_entry'
+    ),
+    url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/version/?$',
+        iwidget_views.IGadgetVersion(permitted_methods=('PUT',)),
+        name='wirecloud.iwidget_version_entry'
+    ),
 
     # Preferences
-    url(r'^api/preferences/platform/?', preferences_views.PlatformPreferencesCollection(permitted_methods=('GET', 'PUT')), name='wirecloud.platform_preferences'),
-    url(r'^api/workspace/(?P<workspace_id>\d+)/preferences/?$', preferences_views.WorkSpacePreferencesCollection(permitted_methods=('GET', 'PUT')), name='wirecloud.workspace_preferences'),
-    url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/preferences/?$', preferences_views.TabPreferencesCollection(permitted_methods=('GET', 'PUT')), name='wirecloud.tab_preferences'),
+    url(r'^api/preferences/platform/?',
+        preferences_views.PlatformPreferencesCollection(permitted_methods=('GET', 'PUT')),
+        name='wirecloud.platform_preferences'
+    ),
+    url(r'^api/workspace/(?P<workspace_id>\d+)/preferences/?$',
+        preferences_views.WorkSpacePreferencesCollection(permitted_methods=('GET', 'PUT')),
+        name='wirecloud.workspace_preferences'
+    ),
+    url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/preferences/?$',
+        preferences_views.TabPreferencesCollection(permitted_methods=('GET', 'PUT')),
+        name='wirecloud.tab_preferences'
+    ),
 
-    url(r'^api/operators', wiring_views.OperatorCollection(permitted_methods=('GET',))),
-    url(r'^api/operator/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/html', wiring_views.OperatorEntry(permitted_methods=('GET',))),
+    url(r'^api/operators',
+        wiring_views.OperatorCollection(permitted_methods=('GET',)),
+        name='wirecloud.operators'
+    ),
+    url(r'^api/operator/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/html',
+        wiring_views.OperatorEntry(permitted_methods=('GET',)),
+        name='wirecloud.operator_code_entry'
+    ),
 
     url(r'^api/markets/?$', views.MarketCollection(permitted_methods=('GET', 'POST'))),
     url(r'^api/market/(?P<market>[\w -]+)/?$', views.MarketEntry(permitted_methods=('PUT', 'DELETE'))),
