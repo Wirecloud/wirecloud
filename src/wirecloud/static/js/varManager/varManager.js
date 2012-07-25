@@ -89,7 +89,7 @@ function VarManager (_workSpace) {
 
             variables['igadgetVars'] = this.igadgetModifiedVars;
 
-            var uri = URIs.PUT_VARIABLES.evaluate({workspaceId: this.workSpace.getId()});
+            var uri = Wirecloud.URLs.VARIABLE_COLLECTION.evaluate({workspace_id: this.workSpace.getId()});
 
             var options = {
                 method: 'PUT',

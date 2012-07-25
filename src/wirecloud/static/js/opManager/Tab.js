@@ -146,7 +146,7 @@ function Tab(id, notebook, options) {
         msg = interpolate(msg, {tabname: this.tabInfo.name, newname: tabName}, true);
         layoutManager.logSubTask(msg);
 
-        tabUrl = URIs.TAB.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
+        tabUrl = Wirecloud.URLs.TAB_ENTRY.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
         params = {'tab': Object.toJSON({'name': tabName})};
         Wirecloud.io.makeRequest(tabUrl, {
             method: 'PUT',
@@ -169,7 +169,7 @@ function Tab(id, notebook, options) {
         msg = interpolate(msg, {tabname: this.tabInfo.name}, true);
         layoutManager.logSubTask(msg);
 
-        tabUrl = URIs.TAB.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
+        tabUrl = Wirecloud.URLs.TAB_ENTRY.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
         Wirecloud.io.makeRequest(tabUrl, {
             method: 'DELETE',
             onSuccess: deleteSuccess.bind(this),
@@ -242,7 +242,7 @@ function Tab(id, notebook, options) {
     this.dragboard = new Dragboard(this, this.workSpace, this.wrapperElement);
 
     this.markAsVisible = function () {
-        var tabUrl = URIs.TAB.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
+        var tabUrl = Wirecloud.URLs.TAB_ENTRY.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
         var params = {'tab': Object.toJSON({visible: "true"})};
         Wirecloud.io.makeRequest(tabUrl, {
             method: 'POST',

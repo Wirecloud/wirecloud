@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global WorkSpace, alert, Hash, $, console, LayoutManagerFactory, ShowcaseFactory, LogManagerFactory, Modules, URIs, setTimeout, Wirecloud */
+/*global WorkSpace, alert, Hash, $, console, LayoutManagerFactory, ShowcaseFactory, LogManagerFactory, Modules, setTimeout, Wirecloud */
 "use strict";
 
 /* 
@@ -160,7 +160,7 @@ var OpManagerFactory = (function () {
             // Asynchronous load of modules
             // Each singleton module notifies OpManager it has finished loading!
 
-            Wirecloud.io.makeRequest(URIs.GET_POST_WORKSPACES, {
+            Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_COLLECTION, {
                 method: 'GET',
                 onSuccess: loadEnvironment.bind(this),
                 onFailure: onError,

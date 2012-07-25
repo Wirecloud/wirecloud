@@ -167,7 +167,7 @@ var OpManagerFactory = function () {
             LayoutManagerFactory.getInstance().logSubTask(gettext("Merging with current workspace"));
 
             var active_ws_id = OpManagerFactory.getInstance().getActiveWorkspaceId();
-            var mergeURL = URIs.MERGE_WORKSPACE.evaluate({'to_ws': active_ws_id});
+            var mergeURL = Wirecloud.URLs.WORKSPACE_MERGE.evaluate({to_ws: active_ws_id});
 
             Wirecloud.io.makeRequest(mergeURL, {
                 method: 'POST',
@@ -211,7 +211,7 @@ var OpManagerFactory = function () {
             LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding the mashup"), 1);
             LayoutManagerFactory.getInstance().logSubTask(gettext("Creating a new workspace"));
 
-            Wirecloud.io.makeRequest(URIs.ADD_WORKSPACE, {
+            Wirecloud.io.makeRequest(Wirecloud.URLs.ADD_WORKSPACE, {
                 method: 'POST',
                 contentType: 'application/json',
                 postBody: Object.toJSON({
@@ -386,7 +386,7 @@ var OpManagerFactory = function () {
             // Asynchronous load of modules
             // Each singleton module notifies OpManager it has finished loading!
 
-            Wirecloud.io.makeRequest(URIs.GET_POST_WORKSPACES, {
+            Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_COLLECTION, {
                 method: 'GET',
                 onSuccess: loadEnvironment.bind(this),
                 onFailure: onError.bind(this)
@@ -425,7 +425,7 @@ var OpManagerFactory = function () {
 
         OpManager.prototype.addWorkSpace = function (newName) {
             var params = {'workspace': Object.toJSON({name: newName})};
-            Wirecloud.io.makeRequest(URIs.GET_POST_WORKSPACES, {
+            Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_COLLECTION, {
                 method: 'POST',
                 parameters: params,
                 onSuccess: createWSSuccess.bind(this),

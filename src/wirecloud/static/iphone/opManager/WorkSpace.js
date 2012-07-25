@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global interpolate, isAnonymousUser, VarManager, ContextManager, Wiring, OpManagerFactory, Modules, gettext, alert, URIs, last_logged_user, document, window, Concept, StyledElements, Tab, $, Wirecloud */
+/*global interpolate, isAnonymousUser, VarManager, ContextManager, Wiring, OpManagerFactory, Modules, gettext, alert, last_logged_user, document, window, Concept, StyledElements, Tab, $, Wirecloud */
 "use strict";
 
  /*
@@ -187,10 +187,7 @@ function WorkSpace(workSpaceState) {
     };
 
     WorkSpace.prototype.downloadWorkSpaceInfo = function () {
-        var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({
-            'id': this.workSpaceState.id,
-            'last_user': last_logged_user
-        });
+        var workSpaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': this.workSpaceState.id});
         Wirecloud.io.makeRequest(workSpaceUrl, {
             method: 'GET',
             onSuccess: loadWorkSpace.bind(this),

@@ -74,5 +74,60 @@ urlpatterns = patterns('wirecloud.views',
     url(r'^api/markets/?$', views.MarketCollection(permitted_methods=('GET', 'POST'))),
     url(r'^api/market/(?P<market>[\w -]+)/?$', views.MarketEntry(permitted_methods=('PUT', 'DELETE'))),
 
+    # Workspace
+    url(r'^api/workspaces/?$',
+        workspace_views.WorkSpaceCollection(permitted_methods=('GET', 'POST', )),
+        name='wirecloud.workspace_collection'
+    ),
+    url(r'^api/workspace/(?P<workspace_id>\d+)/?$',
+        workspace_views.WorkSpaceEntry(permitted_methods=('GET', 'POST', 'PUT', 'DELETE',)),
+        name='wirecloud.workspace_entry'
+    ),
+    url(r'^api/workspace/(?P<workspace_id>\d+)/tabs/?$',
+        workspace_views.TabCollection(permitted_methods=('GET', 'POST', 'PUT',)),
+        name='wirecloud.tab_collection'
+    ),
+    url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\w+)/?$',
+        workspace_views.TabEntry(permitted_methods=('GET', 'PUT', 'DELETE',)),
+        name='wirecloud.tab_entry'
+    ),
+
+    url(r'^api/workspace/(?P<workspace_id>\d+)/variables/?$',
+        workspace_views.WorkSpaceVariableCollection(permitted_methods=('PUT',)),
+        name='wirecloud.variable_collection'
+    ),
+
+    url(r'^api/workspace/(?P<workspace_id>\d+)/share/groups/?$', workspace_views.WorkSpaceSharerEntry(permitted_methods=('GET', ))),
+    url(r'^api/workspace/(?P<workspace_id>\d+)/share/(?P<share_boolean>\w+)/?$',
+        workspace_views.WorkSpaceSharerEntry(permitted_methods=('PUT',)),
+        name='wirecloud.workspace_share'
+    ),
+
+    url(r'^api/workspace/(?P<workspace_id>\d+)/clone/?$', workspace_views.WorkSpaceClonerEntry(permitted_methods=('GET', ))),
+    url(r'^api/workspace/(?P<workspace_id>\d+)/link/?$', workspace_views.WorkSpaceLinkerEntry(permitted_methods=('GET', ))),
+    url(r'^api/workspace/(?P<to_ws_id>\d+)/merge/?$',
+        workspace_views.MashupMergeService(),
+        name='wirecloud.workspace_merge'
+    ),
+    url(r'^api/workspace/(?P<to_ws_id>\d+)/merge/(?P<from_ws_id>\d+)/?$',
+        workspace_views.MashupMergeService(),
+        name='wirecloud.workspace_merge_local'
+    ),
+
+    url(r'^api/workspace/(?P<workspace_id>\d+)/publish/?$',
+        workspace_views.WorkSpacePublisherEntry(permitted_methods=('POST',)),
+        name='wirecloud.workspace_publish'
+    ),
+    url(r'^api/workspace/(?P<workspace_id>\d+)/export/?$',
+        workspace_views.WorkspaceExportService(),
+        name='wirecloud.workspace_export'
+    ),
+
+    url(r'^api/workspaces/import/?$',
+        workspace_views.MashupImportService(),
+        name="wirecloud.workspace_import"
+    ),
+    url(r'^api/workspaces/published/(?P<workspace_id>\d+)/template.xml$', workspace_views.MashupTemplate(permitted_methods=('GET', )), name='wirecloud_showcase.mashup_template'),
+
     url(r'^(?P<creator_user>[^/]+)/(?P<workspace>[^/]+)/?$', 'render_workspace_view', name='wirecloud.workspace_view'),
 )
