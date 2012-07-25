@@ -441,13 +441,14 @@ class ParamatrizedWorkspaceGenerationTestCase(TransactionTestCase):
         self.assertRDFElement(graph, vendor, self.FOAF, 'name', u'Wirecloud Test Suite')
 
 
-class ParametrizedWorkspaceParseTestCase(TransactionTestCase):
+class ParametrizedWorkspaceParseTestCase(CacheTestCase):
 
     fixtures = ('selenium_test_data',)
     tags = ('fiware-ut-2',)
 
     def setUp(self):
 
+        super(ParametrizedWorkspaceParseTestCase, self).setUp()
         self.user = User.objects.create_user('test', 'test@example.com', 'test')
         self.workspace = createEmptyWorkSpace('Testing', self.user)
         self.template1 = self.read_template('wt1.xml')
