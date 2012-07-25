@@ -140,14 +140,14 @@ def _workspace_cache_key(workspace, user):
 
 def get_variable_value_from_varname(user, igadget, var_name):
 
-    if 'id' in igadget:
+    if isinstance(igadget, IGadget):
+        igadget_id = igadget.id
+    elif 'id' in igadget:
         igadget_id = igadget.id
         igadget = IGadget.objects.get(id=igadget_id)
-    elif not isinstance(igadget, IGadget):
+    else:
         igadget_id = int(igadget)
         igadget = IGadget.objects.get(id=igadget_id)
-    else:
-        igadget_id = igadget
 
     workspace = igadget.tab.workspace
     key = _variable_values_cache_key(workspace, user)
