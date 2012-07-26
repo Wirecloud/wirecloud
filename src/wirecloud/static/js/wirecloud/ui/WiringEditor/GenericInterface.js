@@ -103,8 +103,10 @@
         this.sourceDiv.addClassName("sources");
         this.targetDiv = document.createElement("div");
         this.targetDiv.addClassName("targets");
-        this.wrapperElement.appendChild(this.sourceDiv);
-        this.wrapperElement.appendChild(this.targetDiv);
+        this.resourcesDiv = document.createElement("div");
+        this.resourcesDiv.appendChild(this.targetDiv);
+        this.resourcesDiv.appendChild(this.sourceDiv);
+        this.wrapperElement.appendChild(this.resourcesDiv);
 
         //draggable
         if (!this.isMiniInterface) {

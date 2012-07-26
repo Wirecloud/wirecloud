@@ -179,18 +179,18 @@
         this.highlight_counter = 2;
 
         this.canvas = canvas;
-        this.wrapperElement = canvas.canvasElement.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:g");
+        this.wrapperElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:g");
 
-        this.arrowBodyElement = canvas.canvasElement.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:g");
+        this.arrowBodyElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:g");
         this.wrapperElement.appendChild(this.arrowBodyElement);
 
         // Create a path for the arrow's border
-        this.arrowElementBorder = canvas.canvasElement.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
+        this.arrowElementBorder = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
         this.arrowElementBorder.setAttribute('class', 'arrowborder');
         this.arrowBodyElement.appendChild(this.arrowElementBorder);
 
         // And another for the arrow's body
-        this.arrowElement = canvas.canvasElement.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
+        this.arrowElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
         this.arrowElement.setAttribute('class', 'arrowbody');
         this.arrowBodyElement.appendChild(this.arrowElement);
 
@@ -207,7 +207,7 @@
         }.bind(this), true);
 
         // closer
-        this.closerElement = canvas.canvasElement.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
+        this.closerElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
         this.closerElement.setAttribute('class', 'closer');
         this.closerElement.addEventListener('click', function (e) {
             if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
@@ -218,9 +218,9 @@
         }.bind(this));
 
         // pullers definition
-        this.pullerStartElement = canvas.canvasElement.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
+        this.pullerStartElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
         this.pullerStartElement.setAttribute("r", 5);
-        this.pullerEndElement = canvas.canvasElement.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
+        this.pullerEndElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
         this.pullerEndElement.setAttribute("r", 5);
 
         this.pullerStartElement.setAttribute('class', 'pullerBall');

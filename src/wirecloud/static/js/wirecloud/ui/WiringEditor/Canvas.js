@@ -32,6 +32,8 @@
         StyledElements.ObjectWithEvents.call(this, ['arrowadded', 'arrowremoved']);
 
         this.canvasElement = document.createElementNS(this.SVG_NAMESPACE, 'svg:svg');
+        this.canvasElement.generalLayer = document.createElementNS(this.SVG_NAMESPACE, 'svg:g');
+        this.canvasElement.appendChild(this.canvasElement.generalLayer);
         this.canvasElement.setAttribute('class', 'canvas');
         this.selectedArrow = null;
         this.selectedObject = null;
@@ -71,7 +73,7 @@
         arrow.setStart(from);
         arrow.setEnd(to);
         arrow.redraw();
-        arrow.insertInto(this.canvasElement);
+        arrow.insertInto(this.canvasElement.generalLayer);
 
         if (extraClass != 'multiconnector_arrow') {
             this.events.arrowadded.dispatch(this, arrow);
@@ -96,8 +98,8 @@
      * clean the svg canvas.
      */
     Canvas.prototype.clear = function clear() {
-        while (this.canvasElement.childNodes.length > 0) {
-            this.canvasElement.removeChild(this.canvasElement.childNodes[0]);
+        while (this.canvasElement.generalLayer.childNodes.length > 0) {
+            this.canvasElement.generalLayer.removeChild(this.canvasElement.generalLayer.childNodes[0]);
         }
     };
 

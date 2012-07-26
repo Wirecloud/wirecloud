@@ -56,6 +56,8 @@ if (!Wirecloud.ui) {
         this.layout.getWestContainer().appendChild(this.accordion);
         this.layout.getCenterContainer().addClassName('grid');
 
+        this.layout.getCenterContainer().wrapperElement.addEventListener("scroll", this.scrollHandler.bind(this), false);
+
         // general highlight button
         this.highlight_button = new StyledElements.StyledButton({
             'title': gettext("general highlight"),
@@ -475,9 +477,21 @@ if (!Wirecloud.ui) {
      * add IWidget.
      */
     WiringEditor.prototype.addIGadget = function addIGadget(wiringEditor, igadget) {
-        var gadget_interface = new Wirecloud.ui.WiringEditor.GadgetInterface(wiringEditor, igadget, this.arrowCreator);
+        var gadget_interface, auxDiv;
 
+        gadget_interface = new Wirecloud.ui.WiringEditor.GadgetInterface(wiringEditor, igadget, this.arrowCreator);
         this.igadgets[igadget.getId()] = gadget_interface;
+
+        auxDiv = document.createElement('div');
+        auxDiv.style.width = '2000px';
+        auxDiv.style.height = '1000px';
+        this.layout.getCenterContainer().appendChild(auxDiv);
+
+        gadget_interface.insertInto(auxDiv);
+
+        gadget_interface.wrapperElement.style.minWidth = gadget_interface.getBoundingClientRect().width + 'px';
+        this.layout.getCenterContainer().removeChild(auxDiv);
+
         this.layout.getCenterContainer().appendChild(gadget_interface);
 
         gadget_interface.sourceAnchors.map(this._startdrag_map_func);
@@ -486,6 +500,7 @@ if (!Wirecloud.ui) {
         this.targetAnchorList = this.targetAnchorList.concat(gadget_interface.targetAnchors);
         this.sourceAnchorList = this.sourceAnchorList.concat(gadget_interface.sourceAnchors);
 
+        gadget_interface.wrapperElement.style.minWidth = gadget_interface.getBoundingClientRect().width + 'px';
         return gadget_interface;
     };
 
@@ -493,16 +508,26 @@ if (!Wirecloud.ui) {
      * add IOperator.
      */
     WiringEditor.prototype.addIOperator = function addIOperator(ioperator) {
-        var instanciated_operator, operator_interface;
+        var instanciated_operator, operator_interface, auxDiv;
 
         if (ioperator instanceof OperatorMeta) {
-            instanciated_operator = ioperator.instanciate(this.nextOperatorId/* TODO */, true);
+            instanciated_operator = ioperator.instanciate(this.nextOperatorId, true);
             this.nextOperatorId++;
         } else {
             instanciated_operator = ioperator;
         }
 
         operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, instanciated_operator, this.arrowCreator);
+        auxDiv = document.createElement('div');
+        auxDiv.style.width = '2000px';
+        auxDiv.style.height = '1000px';
+        this.layout.getCenterContainer().appendChild(auxDiv);
+
+        operator_interface.insertInto(auxDiv);
+
+        operator_interface.wrapperElement.style.minWidth = operator_interface.getBoundingClientRect().width + 'px';
+        this.layout.getCenterContainer().removeChild(auxDiv);
+
         this.layout.getCenterContainer().appendChild(operator_interface);
 
         operator_interface.sourceAnchors.map(this._startdrag_map_func);
@@ -666,6 +691,23 @@ if (!Wirecloud.ui) {
         });
 
         return workspace_breadcrum;
+    };
+
+   /**
+     *  scrollHandler, using canvas for transformate the arrows layer
+     */
+    WiringEditor.prototype.scrollHandler = function scrollHandler() {
+        var top, left, oc, scrollX, scrollY, param;
+        oc = this.layout.getCenterContainer();
+
+        scrollX = parseInt(oc.wrapperElement.scrollLeft, 10);
+        scrollY = parseInt(oc.wrapperElement.scrollTop, 10);
+        param = "translate(" + (-scrollX) + " " + (-scrollY) + ")";
+        this.canvas.canvasElement.generalLayer.setAttribute('transform', param);
+        this.canvas.canvasElement.style.top = scrollY + 'px';
+        this.canvas.canvasElement.style.left = scrollX + 'px';
+        this.highlight_button.wrapperElement.style.top = scrollY + 'px';
+        this.highlight_button.wrapperElement.style.left = scrollX + 'px';
     };
 
     /*************************************************************************

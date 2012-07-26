@@ -54,6 +54,7 @@
     border-radius: 1.25ex 1.25ex 1.25ex 1.25ex;
     box-shadow: 4px 4px 4px gray;
     font-family: "Courier New", courier;
+    pointer-events: auto;
 }
 
 .wiring_editor .ioperator .header, .wiring_editor .igadget .header {
@@ -378,6 +379,7 @@
     border-radius: 15px;
     border: 1px solid;
     border-color: gray;
+    pointer-events: auto;
 }
 
 .wiring_editor .grid .multiconnector.source {
@@ -405,11 +407,13 @@
 .wiring_editor .grid .multiconnector.target .anchor.main {
     background: transparent;
     right: -0.98em;
+    pointer-events: none;
 }
 
 .wiring_editor .grid .multiconnector.source .anchor.main {
     background: transparent;
     left: -0.98em;
+    pointer-events: none;
 }
 
 .wiring_editor .grid .multiconnector_icon {
