@@ -4,7 +4,7 @@ restricted to Wirecloud platform and all software artefacts extending its
 functionality, and expressly excludes the following software artefacts 
 runing on top of Wirecloud: widgets, operators and their composition as 
 mashup, which are not considered part of Wirecloud and can be either 
-proprietary or be coverd by any other open source license, not neccesary 
+proprietary or be covered by any other open source license, not necessary 
 compatible with AGPL. This clause will prevail in case of conflict.
 
 
