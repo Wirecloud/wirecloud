@@ -1,4 +1,8 @@
-Wirecloud platform is distributed under version 3 of GNU AFFERO General Public License. The work being covered by this license is restricted to Wirecloud platform, and expressly excludes all software artefacts using the platform (e.g. widgets, operators and their composition as mashup running on top of Wirecloud). 
+Wirecloud platform is distributed under version 3 of GNU AFFERO General 
+Public License. The work being covered by this license is restricted to 
+Wirecloud platform, and expressly excludes all software artefacts using 
+the platform (e.g. widgets, operators and their composition as mashup 
+running on top of Wirecloud). 
 
 
                     GNU AFFERO GENERAL PUBLIC LICENSE
