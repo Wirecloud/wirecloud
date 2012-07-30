@@ -451,6 +451,8 @@
     Multiconnector.prototype.destroy = function destroy(totally) {
         var i;
 
+        Wirecloud.ui.WiringEditor.Anchor.prototype.destroy.call(this);
+
         this.wrapperElement = null;
         this.mainElement = null;
         this.statusBar = null;

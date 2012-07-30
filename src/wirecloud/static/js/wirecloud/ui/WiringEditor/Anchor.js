@@ -38,6 +38,7 @@
      * @abstract
      */
     var Anchor = function Anchor(extending, arrowCreator) {
+
         if (extending === true) {
             return;
         }
@@ -47,21 +48,24 @@
 
         this.wrapperElement = document.createElement("div");
         this.wrapperElement.className = 'anchor';
-        this.wrapperElement.addEventListener('mousedown', function (e) {
+
+        this._mousedown_callback = function _mousedown_callback(e) {
             e.stopPropagation();
             if (this.enabled && BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
                 arrowCreator.startdrag(e, this);
                 this.events.startdrag.dispatch(this);
             }
-        }.bind(this));
+        }.bind(this);
+        this.wrapperElement.addEventListener('mousedown', this._mousedown_callback, false);
 
-        this.wrapperElement.addEventListener('mouseup', function (e) {
+        this._mouseup_callback = function _mouseup_callback(e) {
             if (this.enabled && BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
                 e.stopPropagation();
                 arrowCreator.enddrag(e, this);
                 this.events.enddrag.dispatch(this);
             }
-        }.bind(this));
+        }.bind(this);
+        this.wrapperElement.addEventListener('mouseup', this._mouseup_callback, false);
     };
     Anchor.prototype = new StyledElements.StyledElement();
 
@@ -158,6 +162,14 @@
     Anchor.prototype.isHighlighted = function isHighlighted() {
         return this.context.iObject.highlighted;
     };
+
+    Anchor.prototype.destroy = function destroy() {
+        StyledElements.StyledElement.prototype.destroy.call(this);
+
+        this.wrapperElement.removeEventListener('mousedown', this._mousedown_callback, false);
+        this.wrapperElement.removeEventListener('mouseup', this._mouseup_callback, false);
+    };
+
     /*************************************************************************
      * Make Anchor public
      *************************************************************************/

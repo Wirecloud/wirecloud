@@ -467,6 +467,7 @@
                     j = 0;
                 }
             }
+            this.sourceAnchors[i].destroy();
         }
 
         for (i = 0; i < this.targetAnchors.length; i += 1) {
@@ -482,6 +483,7 @@
                     j = 0;
                 }
             }
+            this.targetAnchors[i].destroy();
         }
         this.draggable.destroy();
         this.draggable = null;
