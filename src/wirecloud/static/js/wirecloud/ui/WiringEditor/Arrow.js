@@ -286,7 +286,6 @@
      *  Set the Arrow start point.
      */
     Arrow.prototype.setStart = function setStart(start, anchor) {
-        var difStartX, difStartY;
         this.start = start;
         this.setStartAnchor(anchor);
     };
@@ -304,7 +303,6 @@
      *  Set the Arrow end point.
      */
     Arrow.prototype.setEnd = function setEnd(end, anchor) {
-        var difEndX, difEndY;
         this.end = end;
         this.setEndAnchor(anchor);
     };
