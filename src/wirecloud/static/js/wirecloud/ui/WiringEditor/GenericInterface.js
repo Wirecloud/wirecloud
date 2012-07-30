@@ -112,8 +112,11 @@
         if (!this.isMiniInterface) {
             this.draggable = new Draggable(this.wrapperElement, {iObject: this},
                 function onStart(draggable, context) {
+                    var position;
                     context.y = context.iObject.wrapperElement.style.top === "" ? 0 : parseInt(context.iObject.wrapperElement.style.top, 10);
                     context.x = context.iObject.wrapperElement.style.left === "" ? 0 : parseInt(context.iObject.wrapperElement.style.left, 10);
+                    context.preselected = context.iObject.selected;
+                    context.iObject.select();
                 },
                 function onDrag(e, draggable, context, xDelta, yDelta) {
                     context.iObject.setPosition({posX: context.x + xDelta, posY: context.y + yDelta});
@@ -129,6 +132,16 @@
                     }
                     context.iObject.setPosition(position);
                     context.iObject.repaint();
+                    //pseudoClick
+                    if ((Math.abs(context.x - position.posX) < 2) && (Math.abs(context.y - position.posY) < 2)) {
+                        if (context.preselected) {
+                            context.iObject.unselect();
+                        }
+                    } else {
+                        if (!context.preselected) {
+                            context.iObject.unselect();
+                        }
+                    }
                 },
                 function () {return true; }
             );
@@ -439,10 +452,54 @@
         this.highlight_button.removeClassName('activated');
         for (i = 0; i < this.targetAnchors.length; i++) {
             this.targetAnchors[i].unhighlightArrows();
-
         }
         for (i = 0; i < this.sourceAnchors.length; i++) {
             this.sourceAnchors[i].unhighlightArrows();
+        }
+        this.unselect();
+    };
+
+    GenericInterface.prototype.select = function select() {
+        var i, j, arrows;
+        if (this.hasClassName('disabled')) {
+            return;
+        }
+        if (this.hasClassName('selected')) {
+            return;
+        }
+        this.selected = true;
+        this.addClassName('selected');
+        //arrows
+        for (i = 0; i < this.targetAnchors.length; i += 1) {
+            arrows = this.targetAnchors[i].arrows;
+            for (j = 0; j < arrows.length; j += 1) {
+                arrows[j].emphasize();
+            }
+        }
+        for (i = 0; i < this.sourceAnchors.length; i += 1) {
+            arrows = this.sourceAnchors[i].arrows;
+            for (j = 0; j < arrows.length; j += 1) {
+                arrows[j].emphasize();
+            }
+        }
+    };
+
+    GenericInterface.prototype.unselect = function unselect() {
+        var i, j, arrows;
+        this.selected = false;
+        this.removeClassName('selected');
+        //arrows
+        for (i = 0; i < this.targetAnchors.length; i += 1) {
+            arrows = this.targetAnchors[i].arrows;
+            for (j = 0; j < arrows.length; j += 1) {
+                arrows[j].deemphasize();
+            }
+        }
+        for (i = 0; i < this.sourceAnchors.length; i += 1) {
+            arrows = this.sourceAnchors[i].arrows;
+            for (j = 0; j < arrows.length; j += 1) {
+                arrows[j].deemphasize();
+            }
         }
     };
 

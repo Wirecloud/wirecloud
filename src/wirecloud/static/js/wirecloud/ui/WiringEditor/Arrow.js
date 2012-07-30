@@ -177,6 +177,7 @@
      *************************************************************************/
     var Arrow = function Arrow(canvas) {
         this.highlight_counter = 2;
+        this.emphasize_counter = 0;
 
         this.canvas = canvas;
         this.wrapperElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:g");
@@ -507,6 +508,31 @@
      */
     Arrow.prototype.unselect = function unselect() {
         this.removeClassName('selected');
+    };
+
+    /**
+     *  emphasize the arrow
+     */
+    Arrow.prototype.emphasize = function emphasize() {
+        if (this.emphasize_counter < 2) {
+            this.emphasize_counter += 1;
+            this.addClassName('emphasize');
+        } else if (this.emphasize_counter == 2) {
+            return;
+        }
+    };
+
+    /**
+     *  deemphasize the arrow
+     */
+    Arrow.prototype.deemphasize = function deemphasize() {
+        this.emphasize_counter -= 1;
+        if (this.emphasize_counter === 0) {
+            this.removeClassName('emphasize');
+        } else if (this.emphasize_counter < 0) {
+            this.emphasize_counter = 0;
+            return;
+        }
     };
 
     /**
