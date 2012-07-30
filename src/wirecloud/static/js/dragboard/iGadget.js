@@ -1004,7 +1004,7 @@ IGadget.prototype.remove = function (orderFromServer) {
             logManager.log(msg);
         };
 
-        var uri = Wirecloud.URLs.IWIDGET.evaluate({
+        var uri = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
             workspace_id: dragboard.workSpaceId,
             tab_id: dragboard.tabId,
             iwidget_id: this.id

@@ -22,6 +22,18 @@ from django.contrib.sites.models import get_current_site
 from django.template import loader, Context
 
 
+def remove_related_iwidget_connections(wiring, iwidget):
+
+    connections_to_remove = []
+
+    for connection in wiring['connections']:
+        if (connection['source']['type'] == 'iwidget' and connection['source']['id'] == iwidget.id) or (connection['target']['type'] == 'iwidget' and connection['target']['id'] == iwidget.id):
+            connections_to_remove.append(connection)
+
+    for connection in connections_to_remove:
+        wiring['connections'].remove(connection)
+
+
 def generate_xhtml_operator_code(js_files, xhtml_url, request):
 
     api_url = "//" + get_current_site(request).domain + settings.STATIC_URL + 'js/WirecloudAPI/WirecloudOperatorAPI.js'

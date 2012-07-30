@@ -29,11 +29,14 @@
 
 
 #
+import json
+
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
 from commons.authentication import Http403
 from wirecloud.models import Gadget, IGadget, Position, Tab, Variable, VariableDef, VariableValue
+from wirecloud.wiring.utils import remove_related_iwidget_connections
 
 
 def addIGadgetVariable(igadget, varDef, initial_value=None):
@@ -250,6 +253,12 @@ def deleteIGadget(igadget, user):
     icon_position = igadget.icon_position
     if icon_position != None:
         icon_position.delete()
+
+    # Delete IWidget from wiring
+    wiring = json.loads(igadget.tab.workspace.wiringStatus)
+    remove_related_iwidget_connections(wiring, igadget)
+    igadget.tab.workspace.wiringStatus = json.dumps(wiring, ensure_ascii=False)
+    igadget.tab.workspace.save()
 
     from commons.get_data import _invalidate_cached_variables
     _invalidate_cached_variables(igadget)

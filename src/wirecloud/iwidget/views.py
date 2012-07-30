@@ -178,11 +178,11 @@ class IGadgetEntry(Resource):
             raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
 
     @transaction.commit_on_success
-    def delete(self, request, workspace_id, tab_id, igadget_id):
+    def delete(self, request, workspace_id, tab_id, iwidget_id):
         user = get_user_authentication(request)
 
         # Gets Igadget, if it does not exist, a http 404 error is returned
-        igadget = get_object_or_404(IGadget, tab__workspace__users__id=user.id, tab__workspace__pk=workspace_id, tab__pk=tab_id, pk=igadget_id)
+        igadget = get_object_or_404(IGadget, tab__workspace__users__id=user.id, tab__workspace__pk=workspace_id, tab__pk=tab_id, pk=iwidget_id)
 
         deleteIGadget(igadget, user)
 
