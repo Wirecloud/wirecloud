@@ -185,6 +185,7 @@
      */
     Multiconnector.prototype.addArrow = function addArrow(theArrow) {
         this.arrows.push(theArrow);
+        this.reorganizeArrows();
     };
 
     /**
