@@ -3,20 +3,20 @@
     <object pk="14" model="catalogue.catalogueresource">
         <field type="CharField" name="short_name">Test</field>
         <field type="CharField" name="display_name"></field>
-        <field type="CharField" name="vendor">Yaco Sistemas S.L.</field>
-        <field type="CharField" name="version">0.9</field>
+        <field type="CharField" name="vendor">Wirecloud</field>
+        <field type="CharField" name="version">1.0</field>
         <field type="IntegerField" name="type">0</field>
         <field type="BooleanField" name="ie_compatible">False</field>
         <field type="CharField" name="author">aarranz</field>
-        <field type="CharField" name="mail">aarranz@yaco.es</field>
+        <field type="CharField" name="mail">aarranz@conwet.com</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
-        <field type="TextField" name="description">This gadget is used to test some of the features of the EzWeb platform</field>
+        <field type="TextField" name="description">This widget is used to test some of the features of the Wirecloud platform</field>
         <field type="CharField" name="license"><None></None></field>
         <field type="DateTimeField" name="creation_date">2011-05-13 12:24:03</field>
-        <field type="CharField" name="image_uri">/catalogue/media/Yaco Sistemas S.L./Test/0.9/images/catalogue.png</field>
-        <field type="CharField" name="iphone_image_uri">/catalogue/media/Yaco Sistemas S.L./Test/0.9/images/catalogue_iphone.png</field>
+        <field type="CharField" name="image_uri">/catalogue/media/Wirecloud/Test/1.0/images/catalogue.png</field>
+        <field type="CharField" name="iphone_image_uri">/catalogue/media/Wirecloud/Test/1.0/images/catalogue_iphone.png</field>
         <field type="CharField" name="wiki_page_uri">http://forge.morfeo-project.org/wiki/index.php/Gadgets_EzWeb</field>
-        <field type="CharField" name="template_uri">/catalogue/media/Yaco%20Sistemas%20S.L./Test/0.9/Yaco%20Sistemas%20S.L._Test_0.9.wgt</field>
+        <field type="CharField" name="template_uri">/catalogue/media/Wirecloud/Test/1.0/Wirecloud_Test_1.0.wgt</field>
         <field to="auth.group" name="certification" rel="ManyToOneRel">1</field>
         <field type="DecimalField" name="popularity">0.0</field>
         <field type="BooleanField" name="fromWGT">True</field>

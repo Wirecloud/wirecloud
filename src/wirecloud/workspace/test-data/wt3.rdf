@@ -40,10 +40,10 @@
                     <wire-m:iWidget rdf:ID="iG-1">
                         <wire-m:iWidgetId>iG-1</wire-m:iWidgetId>
                         <dcterms:title>Test (1)</dcterms:title>
-                        <usdl-core:versionInfo>0.9</usdl-core:versionInfo>
+                        <usdl-core:versionInfo>1.0</usdl-core:versionInfo>
                         <usdl-core:hasProvider>
                             <foaf:Organization>
-                                <foaf:name>Yaco Sistemas S.L.</foaf:name>
+                                <foaf:name>Wirecloud</foaf:name>
                             </foaf:Organization>
                         </usdl-core:hasProvider>
                         <rdfs:label>Test</rdfs:label>
@@ -92,10 +92,10 @@
                     <wire-m:iWidget rdf:ID="iG-2">
                         <wire-m:iWidgetId>iG-2</wire-m:iWidgetId>
                         <dcterms:title>Test (2)</dcterms:title>
-                        <usdl-core:versionInfo>0.9</usdl-core:versionInfo>
+                        <usdl-core:versionInfo>1.0</usdl-core:versionInfo>
                         <usdl-core:hasProvider>
                             <foaf:Organization>
-                                <foaf:name>Yaco Sistemas S.L.</foaf:name>
+                                <foaf:name>Wirecloud</foaf:name>
                             </foaf:Organization>
                         </usdl-core:hasProvider>
                         <rdfs:label>Test</rdfs:label>

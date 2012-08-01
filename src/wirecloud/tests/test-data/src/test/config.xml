@@ -2,5 +2,5 @@
 <widget xmlns="http://www.w3.org/ns/widgets/"
                 id="test.xml"
                 name="Test"
-                vendor="Yaco_Sistemas_S.L."
-                version="0.9"/>
+                vendor="Wirecloud"
+                version="1.0"/>

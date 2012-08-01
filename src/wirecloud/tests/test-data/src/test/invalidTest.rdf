@@ -41,7 +41,7 @@
                         <dcterms:title>Test (1)</dcterms:title>
                         <usdl-core:hasProvider>
                             <foaf:Organization>
-                                <foaf:name>Yaco Sistemas S.L.</foaf:name>
+                                <foaf:name>Wirecloud</foaf:name>
                             </foaf:Organization>
                         </usdl-core:hasProvider>
                         <rdfs:label>Test</rdfs:label>
@@ -70,7 +70,7 @@
                         <dcterms:title>Test (2)</dcterms:title>
                         <usdl-core:hasProvider>
                             <foaf:Organization>
-                                <foaf:name>Yaco Sistemas S.L.</foaf:name>
+                                <foaf:name>Wirecloud</foaf:name>
                             </foaf:Organization>
                         </usdl-core:hasProvider>
                         <rdfs:label>Test</rdfs:label>
