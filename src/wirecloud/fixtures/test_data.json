@@ -51,7 +51,8 @@
         "pk": "1",
         "fields": {
             "name": "workspace",
-            "creator": "2"
+            "creator": "2",
+            "wiringStatus": "{\"operators\": {}, \"connections\": []}"
         }
     },
     {
