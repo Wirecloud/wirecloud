@@ -22,13 +22,13 @@ class WirecloudTestPlugin1(WirecloudPlugin):
         'feature1': '0.1',
     }
 
-    def get_scripts(view):
+    def get_scripts(self, view):
         if view == 'index':
             return ('a.js', 'b.js')
         else:
             return ('a.js',)
 
-    def get_gadget_api_extensions(view):
+    def get_gadget_api_extensions(self, view):
         if view == 'index':
             return ('d.js',)
         else:
@@ -61,23 +61,34 @@ class WirecloudPluginTestCase(UnitTestCase):
         super(WirecloudPluginTestCase, self).tearDown()
 
     def test_basic_conf(self):
+
+        settings.WIRECLOUD_PLUGINS = ()
+        clear_cache()
+
+        core_plugins = len(get_plugins())
+        core_features = len(get_active_features())
+        core_index_javascripts = len(get_extra_javascripts('index'))
+        core_iphone_javascripts = len(get_extra_javascripts('iphone'))
+        core_index_extensions = len(get_gadget_api_extensions('index'))
+        core_iphone_extensions = len(get_gadget_api_extensions('iphone'))
+
         settings.WIRECLOUD_PLUGINS = (
-            'WirecloudTestPlugin1',
-            'WirecloudTestPlugin2',
+            'wirecloud.tests.plugins.WirecloudTestPlugin1',
+            'wirecloud.tests.plugins.WirecloudTestPlugin2',
         )
         clear_cache()
 
-        self.assertEqual(len(get_plugins()), 2)
-        self.assertEqual(len(get_active_features()), 3)
-        self.assertEqual(len(get_extra_javascripts('index')), 2)
-        self.assertEqual(len(get_extra_javascripts('iphone')), 1)
-        self.assertEqual(len(get_gadget_api_extensions('index')), 2)
-        self.assertEqual(len(get_gadget_api_extensions('iphone')), 1)
+        self.assertEqual(len(get_plugins()), core_plugins + 2)
+        self.assertEqual(len(get_active_features()), core_features + 2)
+        self.assertEqual(len(get_extra_javascripts('index')), core_index_javascripts + 2)
+        self.assertEqual(len(get_extra_javascripts('iphone')), core_iphone_javascripts + 1)
+        self.assertEqual(len(get_gadget_api_extensions('index')), core_index_extensions + 1)
+        self.assertEqual(len(get_gadget_api_extensions('iphone')), core_iphone_extensions + 0)
 
     def test_several_plugins_with_the_same_feature(self):
         settings.WIRECLOUD_PLUGINS = (
-            'WirecloudTestPlugin1',
-            'WirecloudTestConflictingPlugin',
+            'wirecloud.tests.plugins.WirecloudTestPlugin1',
+            'wirecloud.tests.plugins.WirecloudTestConflictingPlugin',
         )
         clear_cache()
 
