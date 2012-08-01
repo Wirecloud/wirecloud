@@ -164,7 +164,9 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         with widget_operation(self.driver, 1):
             text_input = self.driver.find_element_by_tag_name('input')
             self.fill_form_input(text_input, 'hello world!!')
-            self.driver.find_element_by_id('b1').click()
+            # Work around hang when using Firefox Driver
+            self.driver.execute_script('sendEvent();')
+            #self.driver.find_element_by_id('b1').click()
 
         time.sleep(0.2)
 
