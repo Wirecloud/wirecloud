@@ -42,7 +42,7 @@
         "pk": 1,
         "model": "wirecloud.gadget",
         "fields": {
-            "users": [],
+            "users": [1],
             "menuColor": "",
             "display_name": "",
             "name": "Test",

@@ -86,6 +86,10 @@ class WgtDeployer(object):
 
         self._root_dir = root_dir
 
+    @property
+    def root_dir(self):
+        return self._root_dir
+
     def get_base_dir(self, vendor, name, version):
         return os.path.join(
             self._root_dir,

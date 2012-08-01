@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import os
+from shutil import rmtree
+from tempfile import mkdtemp
 import time
 from urllib2 import URLError, HTTPError
 
@@ -16,6 +18,9 @@ from django.utils.importlib import import_module
 from django.test import TransactionTestCase
 from django.utils import translation
 from selenium.webdriver.support.ui import WebDriverWait
+
+from commons.wgt import WgtDeployer, WgtFile
+from wirecloud.widget import utils as showcase
 
 
 class FakeDownloader(object):
@@ -96,20 +101,52 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
     fixtures = ('selenium_test_data',)
     __test__ = False
 
-    def setUp(self):
-        super(WirecloudSeleniumTestCase, self).setUp()
-        cache.clear()
+
+    @classmethod
+    def setUpClass(cls):
+
+        cls.old_LANGUAGES = settings.LANGUAGES
+        cls.old_LANGUAGE_CODE = settings.LANGUAGE_CODE
+        settings.LANGUAGES = (('en', 'English'),)
+        settings.LANGUAGE_CODE = 'en'
 
         # Load webdriver
-        module_name, klass_name = getattr(self, '_webdriver_class', 'selenium.webdriver.Firefox').rsplit('.', 1)
+        module_name, klass_name = getattr(cls, '_webdriver_class', 'selenium.webdriver.Firefox').rsplit('.', 1)
         module = import_module(module_name)
-        webdriver_args = getattr(self, '_webdriver_args', None)
+        webdriver_args = getattr(cls, '_webdriver_args', None)
         if webdriver_args is None:
             webdriver_args = {}
-        self.driver = getattr(module, klass_name)(**webdriver_args)
+        cls.driver = getattr(module, klass_name)(**webdriver_args)
 
         # initialize
-        self.wgt_dir = os.path.join(settings.BASEDIR, 'wirecloud', 'tests', 'test-data')
+        cls.wgt_dir = os.path.join(settings.BASEDIR, 'wirecloud', 'tests', 'test-data')
+        cls.old_deployer = showcase.wgt_deployer
+        cls.tmp_dir = mkdtemp()
+        showcase.wgt_deployer = WgtDeployer(cls.tmp_dir)
+        wgt_file = WgtFile(os.path.join(cls.wgt_dir, 'Wirecloud_Test_1.0.wgt'))
+        showcase.create_gadget_from_wgt(wgt_file, None, deploy_only=True)
+
+        super(WirecloudSeleniumTestCase, cls).setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+        rmtree(cls.tmp_dir, ignore_errors=True)
+
+        cls.driver.quit()
+
+        settings.LANGUAGES = cls.old_LANGUAGES
+        settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
+
+        super(WirecloudSeleniumTestCase, cls).tearDownClass()
+
+    def setUp(self):
+        showcase.wgt_deployer = WgtDeployer(self.tmp_dir)
+        cache.clear()
+        super(WirecloudSeleniumTestCase, self).setUp()
+
+    def tearDown(self):
+        showcase.wgt_deployer = self.old_deployer
+        super(WirecloudSeleniumTestCase, self).tearDown()
 
     def fill_form_input(self, form_input, value):
         # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
@@ -325,10 +362,6 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         self.assertEqual(new_tab_count, old_tab_count + 1)
 
         return self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab')[-1]
-
-    def tearDown(self):
-        self.driver.quit()
-        super(WirecloudSeleniumTestCase, self).tearDown()
 
     def add_marketplace(self, name, label, url, type_):
 

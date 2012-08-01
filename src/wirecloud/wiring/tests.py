@@ -130,6 +130,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
     tags = ('fiware-ut-6',)
 
+
     def get_iwidget_anchor(self, iwidget, endpoint):
         return self.driver.execute_script('''
             var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
@@ -165,13 +166,15 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             self.fill_form_input(text_input, 'hello world!!')
             self.driver.find_element_by_id('b1').click()
 
+        time.sleep(0.2)
+
         with widget_operation(self.driver, 2):
-            text_div = self.driver.find_element_by_id('wiringOut')
             try:
-                WebDriverWait(self.driver, timeout=30).until(lambda driver: text_div.text == 'hello world!!')
+                WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut') == 'hello world!!')
             except:
                 pass
 
+            text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'hello world!!')
 
         with widget_operation(self.driver, 3):

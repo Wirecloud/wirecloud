@@ -223,7 +223,7 @@ class GadgetCodeEntry(Resource):
                 if xhtml.url.startswith(('http://', 'https://')):
                     code = download_http_content(gadget.get_resource_url(xhtml.url, request), user=request.user)
                 else:
-                    code = download_http_content('file://' + os.path.join(settings.GADGETS_DEPLOYMENT_DIR, xhtml.url), user=request.user)
+                    code = download_http_content('file://' + os.path.join(showcase_utils.wgt_deployer.root_dir, xhtml.url), user=request.user)
 
             except Exception, e:
                 # FIXME: Send the error or use the cached original code?
