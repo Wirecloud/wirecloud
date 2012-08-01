@@ -17,12 +17,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import time
+
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.test import TransactionTestCase, Client
 from django.utils import simplejson
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
 
+from commons.test import WirecloudSeleniumTestCase, widget_operation
 from wirecloud.workspace.models import WorkSpace
 
 
@@ -73,6 +78,7 @@ class WiringTestCase(TransactionTestCase):
         response = client.put(self.wiring_url, data, content_type='application/json')
 
         self.assertEquals(response.status_code, 204)
+    test_basic_wiring_operations.tags = ('fiware-ut-6',)
 
     def test_wiring_modification_fails_with_incorrect_user(self):
         client = Client()
@@ -84,6 +90,7 @@ class WiringTestCase(TransactionTestCase):
         })
         response = client.put(self.wiring_url, data, content_type='application/json')
         self.assertEquals(response.status_code, 403)
+    test_wiring_modification_fails_with_incorrect_user.tags = ('fiware-ut-6',)
 
     def test_read_only_connections_cannot_be_deleted(self):
 
@@ -117,3 +124,60 @@ class WiringTestCase(TransactionTestCase):
         })
         response = client.put(self.wiring_url, data, content_type='application/json')
         self.assertEquals(response.status_code, 403)
+
+
+class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
+
+    tags = ('fiware-ut-6',)
+
+    def get_iwidget_anchor(self, iwidget, endpoint):
+        return self.driver.execute_script('''
+            var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
+            return LayoutManagerFactory.getInstance().viewsByName["wiring"].igadgets[%(iwidget)d].getAnchor("%(endpoint)s").wrapperElement;
+        ''' % {"iwidget": iwidget, "endpoint": endpoint}
+        )
+
+    def test_basic_wiring_operations(self):
+        self.login()
+
+        self.add_widget_to_mashup('Test')
+        self.add_widget_to_mashup('Test')
+        self.add_widget_to_mashup('Test')
+
+        self.change_main_view('wiring')
+        grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+        self.driver.find_element_by_xpath("//*[contains(@class, 'container')]//*[text()='Widgets']").click()
+
+        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container igadget')]//*[text()='Test (1)']")
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-40, -40).release().perform()
+
+        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container igadget')]//*[text()='Test (2)']")
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(40, 40).release().perform()
+
+        source = self.get_iwidget_anchor(1, 'event')
+        target = self.get_iwidget_anchor(2, 'slot')
+        ActionChains(self.driver).drag_and_drop(source, target).perform()
+
+        self.change_main_view('workspace')
+
+        with widget_operation(self.driver, 1):
+            text_input = self.driver.find_element_by_tag_name('input')
+            self.fill_form_input(text_input, 'hello world!!')
+            self.driver.find_element_by_id('b1').click()
+
+        with widget_operation(self.driver, 2):
+            text_div = self.driver.find_element_by_id('wiringOut')
+            try:
+                WebDriverWait(self.driver, timeout=30).until(lambda driver: text_div.text == 'hello world!!')
+            except:
+                pass
+
+            self.assertEqual(text_div.text, 'hello world!!')
+
+        with widget_operation(self.driver, 3):
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, '')
+
+        with widget_operation(self.driver, 1):
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, '')

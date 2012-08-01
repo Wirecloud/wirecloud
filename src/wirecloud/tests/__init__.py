@@ -8,3 +8,4 @@ from wirecloud.workspace.tests import WorkspaceTestCase, WorkspaceCacheTestCase,
 from commons.test import build_selenium_test_cases
 
 build_selenium_test_cases(('wirecloud.tests.selenium_tests.BasicSeleniumTests',), locals())
+build_selenium_test_cases(('wirecloud.wiring.tests.WiringSeleniumTestCase',), locals())
