@@ -116,7 +116,7 @@
                     context.y = context.iObject.wrapperElement.style.top === "" ? 0 : parseInt(context.iObject.wrapperElement.style.top, 10);
                     context.x = context.iObject.wrapperElement.style.left === "" ? 0 : parseInt(context.iObject.wrapperElement.style.left, 10);
                     context.preselected = context.iObject.selected;
-                    context.iObject.select();
+                    context.iObject.select(true);
                 },
                 function onDrag(e, draggable, context, xDelta, yDelta) {
                     context.iObject.setPosition({posX: context.x + xDelta, posY: context.y + yDelta});
@@ -135,11 +135,11 @@
                     //pseudoClick
                     if ((Math.abs(context.x - position.posX) < 2) && (Math.abs(context.y - position.posY) < 2)) {
                         if (context.preselected) {
-                            context.iObject.unselect();
+                            context.iObject.unselect(true);
                         }
                     } else {
                         if (!context.preselected) {
-                            context.iObject.unselect();
+                            context.iObject.unselect(true);
                         }
                     }
                 },
@@ -459,13 +459,16 @@
         this.unselect();
     };
 
-    GenericInterface.prototype.select = function select() {
+    GenericInterface.prototype.select = function select(withCtrl) {
         var i, j, arrows;
         if (this.hasClassName('disabled')) {
             return;
         }
         if (this.hasClassName('selected')) {
             return;
+        }
+        if (!(this.wiringEditor.ctrlPushed) && (this.wiringEditor.selectedCount > 0) && (withCtrl)) {
+            this.wiringEditor.resetSelection();
         }
         this.selected = true;
         this.addClassName('selected');
@@ -482,9 +485,10 @@
                 arrows[j].emphasize();
             }
         }
+        this.wiringEditor.addSelectedObject(this);
     };
 
-    GenericInterface.prototype.unselect = function unselect() {
+    GenericInterface.prototype.unselect = function unselect(withCtrl) {
         var i, j, arrows;
         this.selected = false;
         this.removeClassName('selected');
@@ -500,6 +504,10 @@
             for (j = 0; j < arrows.length; j += 1) {
                 arrows[j].deemphasize();
             }
+        }
+        this.wiringEditor.removeSelectedObject(this);
+        if (!(this.wiringEditor.ctrlPushed) && (this.wiringEditor.selectedCount > 0) && (withCtrl)) {
+            this.wiringEditor.resetSelection();
         }
     };
 

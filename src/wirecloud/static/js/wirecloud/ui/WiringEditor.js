@@ -106,6 +106,21 @@ if (!Wirecloud.ui) {
         this._startdrag_map_func = function (anchor) {
             anchor.addEventListener('startdrag', this.disableAnchors);
         }.bind(this);
+
+        document.addEventListener("keydown", function (event) {
+            // TODO: check this handler in a Mac
+            if (event.keyCode == 17) {
+                this.ctrlPushed = true;
+                this.layout.getCenterContainer().addClassName('selecting');
+            }
+        }.bind(this), false);
+        document.addEventListener("keyup", function (event) {
+            // TODO: check this handler in a Mac
+            if (event.keyCode == 17) {
+                this.ctrlPushed = false;
+                this.layout.getCenterContainer().removeClassName('selecting');
+            }
+        }.bind(this), false);
     };
     WiringEditor.prototype = new StyledElements.Alternative();
 
@@ -196,7 +211,13 @@ if (!Wirecloud.ui) {
         this.multiconnectors = {};
         this.mini_widgets = {};
         this.ioperators = {};
-        this.selectedObjects = [];
+        this.highlightedObjects = [];
+        this.selectedOps = {};
+        this.selectedOps.length = 0;
+        this.selectedWids = {};
+        this.selectedWids.length = 0;
+        this.selectedCount = 0;
+        this.ctrlPushed = false;
         this.generalHighlighted = true;
         this.nextOperatorId = 0;
         this.nextMulticonnectorId = 0;
@@ -412,15 +433,15 @@ if (!Wirecloud.ui) {
     WiringEditor.prototype.generalHighlight = function generalHighlight() {
         var i, key;
 
-        this.selectedObjects = [];
+        this.highlightedObjects = [];
         for (i in this.ioperators) {
             this.ioperators[i].highlight();
-            this.selectedObjects.push(this.ioperators[i]);
+            this.highlightedObjects.push(this.ioperators[i]);
         }
 
         for (key in this.igadgets) {
             this.igadgets[key].highlight();
-            this.selectedObjects.push(this.igadgets[key]);
+            this.highlightedObjects.push(this.igadgets[key]);
         }
     };
 
@@ -438,22 +459,74 @@ if (!Wirecloud.ui) {
             this.igadgets[key].unhighlight();
         }
 
-        this.selectedObjects = [];
+        this.highlightedObjects = [];
+    };
+
+    /**
+     * add selectd object.
+     */
+    WiringEditor.prototype.addSelectedObject = function addSelectedObject(object) {
+        if (object instanceof Wirecloud.ui.WiringEditor.GadgetInterface) {
+            this.selectedOps[object.igadget.getId()] = object;
+            this.selectedOps.length += 1;
+        } else {
+            this.selectedWids[object.getId()] = object;
+            this.selectedWids.length += 1;
+        }
+        this.selectedCount += 1;
+    };
+
+    /**
+     * remove selected object.
+     */
+    WiringEditor.prototype.removeSelectedObject = function removeSelectedObject(object) {
+        if (object instanceof Wirecloud.ui.WiringEditor.GadgetInterface) {
+            delete this.selectedOps[object.igadget.getId()];
+            this.selectedOps.length -= 1;
+        } else {
+            delete this.selectedWids[object.getId()];
+            this.selectedWids.length -= 1;
+        }
+        if (this.selectedCount > 0) {
+            this.selectedCount -= 1;
+        } else {
+            //error
+        }
+    };
+
+    /**
+     * reset selected object.
+     */
+    WiringEditor.prototype.resetSelection = function resetSelection() {
+        var key;
+        for (key in this.selectedOps) {
+            if (key != 'length') {
+                this.selectedOps[key].unselect(false);
+            }
+        }
+        for (key in this.selectedWids) {
+            if (key != 'length') {
+                this.selectedWids[key].unselect(false);
+            }
+        }
+        if ((this.selectedOps.length !== 0) || (this.selectedWids.length !== 0)) {
+            //('error resetSelection' + this.selectedOps + this.selectedWids);
+        }
     };
 
     /**
      * Highlight object.
      */
     WiringEditor.prototype.highlightEntity = function highlightEntity(object) {
-        this.selectedObjects.push(object);
+        this.highlightedObjects.push(object);
     };
 
     /**
      * Unhighlight object.
      */
     WiringEditor.prototype.unhighlightEntity = function unhighlightEntity(object) {
-        var pos = this.selectedObjects.indexOf(object);
-        delete this.selectedObjects[pos];
+        var pos = this.highlightedObjects.indexOf(object);
+        delete this.highlightedObjects[pos];
     };
 
     /**
@@ -573,10 +646,10 @@ if (!Wirecloud.ui) {
      * remove a iWidget.
      */
     WiringEditor.prototype.removeIGadget = function removeIGadget(gadget_interface) {
+        gadget_interface.unselect(false);
         delete this.igadgets[gadget_interface.getIGadget().getId()];
         this.layout.getCenterContainer().removeChild(gadget_interface);
         gadget_interface.destroy();
-
         this.mini_widgets[gadget_interface.getIGadget().getId()].enable();
     };
 
@@ -584,6 +657,7 @@ if (!Wirecloud.ui) {
      * remove a iOperator.
      */
     WiringEditor.prototype.removeIOperator = function removeIOperator(operator_interface) {
+        operator_interface.unselect(false);
         delete this.ioperators[operator_interface.getIOperator().id];
         this.layout.getCenterContainer().removeChild(operator_interface);
         operator_interface.destroy();

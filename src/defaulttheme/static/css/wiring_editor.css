@@ -34,6 +34,10 @@
     box-shadow: inset 0 0 10px #000000;
 }
 
+.wiring_editor .grid.selecting {
+    cursor: url('../images/wiring/cursorAdd.png'), crosshair;
+}
+
 .wiring_editor .ioperator {
     background: -webkit-linear-gradient(white, rgba(206,220,180,0.8));
     background: -moz-linear-gradient(white, rgba(206,220,180,0.8));
@@ -61,12 +65,12 @@
     text-align: center;
     font-size: 1.3em;
     font-weight: bold;
-    cursor: move;
     overflow: hidden;
     border-radius: 5px;
     padding-top: 8px;
     padding-bottom: 8px;
     color: #1D1D2F;
+    cursor: move;
 }
 
 .wiring_editor .grid .ioperator .header span, .wiring_editor .grid .igadget .header span {
