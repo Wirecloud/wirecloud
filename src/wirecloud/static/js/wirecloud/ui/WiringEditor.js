@@ -607,6 +607,130 @@ if (!Wirecloud.ui) {
     };
 
     /**
+     * starDrag all selected objects.
+     */
+    WiringEditor.prototype.onStarDragSelected = function starDragSelected() {
+        var key, pos;
+        if (this.selectedCount <= 1) {
+            return;
+        }
+
+        for (key in this.selectedOps) {
+            if (key != 'length') {
+                pos = this.selectedOps[key].initPos;
+                pos.y = this.selectedOps[key].wrapperElement.style.top === "" ? 0 : parseInt(this.selectedOps[key].wrapperElement.style.top, 10);
+                pos.x = this.selectedOps[key].wrapperElement.style.left === "" ? 0 : parseInt(this.selectedOps[key].wrapperElement.style.left, 10);
+            }
+        }
+        for (key in this.selectedWids) {
+            if (key != 'length') {
+                pos = this.selectedWids[key].initPos;
+                pos.y = this.selectedWids[key].wrapperElement.style.top === "" ? 0 : parseInt(this.selectedWids[key].wrapperElement.style.top, 10);
+                pos.x = this.selectedWids[key].wrapperElement.style.left === "" ? 0 : parseInt(this.selectedWids[key].wrapperElement.style.left, 10);
+            }
+        }
+    };
+
+    /**
+     * drag all selected objects.
+     */
+    WiringEditor.prototype.onDragSelectedObjects = function dragSelectedObjects(xDelta, yDelta) {
+        var key;
+        if (this.selectedCount <= 1) {
+            return;
+        }
+
+        for (key in this.selectedOps) {
+            if (key != 'length') {
+                this.selectedOps[key].setPosition({posX: this.selectedOps[key].initPos.x + xDelta, posY: this.selectedOps[key].initPos.y + yDelta});
+                this.selectedOps[key].repaint();
+            }
+        }
+        for (key in this.selectedWids) {
+            if (key != 'length') {
+                this.selectedWids[key].setPosition({posX: this.selectedWids[key].initPos.x + xDelta, posY: this.selectedWids[key].initPos.y + yDelta});
+                this.selectedWids[key].repaint();
+            }
+        }
+    };
+
+    /**
+     * drag all selected objects.
+     */
+    WiringEditor.prototype.onFinishSelectedObjects = function onFinishSelectedObjects() {
+        var key, position, desp;
+        if (this.selectedCount <= 1) {
+            return;
+        }
+
+        //find the most negative X and Y
+        desp = {'x': 0, 'y': 0};
+        for (key in this.selectedOps) {
+            if (key != 'length') {
+                position = this.selectedOps[key].getStylePosition();
+                if (position.posX < 0) {
+                    if (position.posX < desp.x) {
+                        desp.x = position.posX;
+                    }
+                }
+                if (position.posY < 0) {
+                    if (position.posY < desp.y) {
+                        desp.y = position.posY;
+                    }
+                }
+
+            }
+        }
+        for (key in this.selectedWids) {
+            if (key != 'length') {
+                position = this.selectedWids[key].getStylePosition();
+                if (position.posX < 0) {
+                    if (position.posX < desp.x) {
+                        desp.x = position.posX;
+                    }
+                }
+                if (position.posY < 0) {
+                    if (position.posY < desp.y) {
+                        desp.y = position.posY;
+                    }
+                }
+            }
+        }
+        if ((desp.y >= 0) && (desp.x >= 0)) {
+            return;
+        }
+        if (desp.y >= 0) {
+            desp.y = 0;
+        } else {
+            desp.y -= 8;
+        }
+        if (desp.x >= 0) {
+            desp.x = 0;
+        } else {
+            desp.x -= 8;
+        }
+        //set position of the selected group
+        for (key in this.selectedOps) {
+            if (key != 'length') {
+                position = this.selectedOps[key].getStylePosition();
+                position.posX -= desp.x;
+                position.posY -= desp.y;
+                this.selectedOps[key].setPosition(position);
+                this.selectedOps[key].repaint();
+            }
+        }
+        for (key in this.selectedWids) {
+            if (key != 'length') {
+                position = this.selectedWids[key].getStylePosition();
+                position.posX -= desp.x;
+                position.posY -= desp.y;
+                this.selectedWids[key].setPosition(position);
+                this.selectedWids[key].repaint();
+            }
+        }
+    };
+
+    /**
      * Reenables all anchor disabled previously.
      */
     WiringEditor.prototype.enableAnchors = function enableAnchors() {

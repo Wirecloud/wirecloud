@@ -48,6 +48,8 @@
         this.wiringEditor = wiringEditor;
         this.tittle = tittle;
         this.className = className;
+        this.initPos = {'x': 0, 'y': 0};
+
         if (manager instanceof Wirecloud.ui.WiringEditor.ArrowCreator) {
             this.isMiniInterface = false;
             this.arrowCreator = manager;
@@ -117,12 +119,15 @@
                     context.x = context.iObject.wrapperElement.style.left === "" ? 0 : parseInt(context.iObject.wrapperElement.style.left, 10);
                     context.preselected = context.iObject.selected;
                     context.iObject.select(true);
+                    context.iObject.wiringEditor.onStarDragSelected();
                 },
                 function onDrag(e, draggable, context, xDelta, yDelta) {
                     context.iObject.setPosition({posX: context.x + xDelta, posY: context.y + yDelta});
                     context.iObject.repaint();
+                    context.iObject.wiringEditor.onDragSelectedObjects(xDelta, yDelta);
                 },
                 function onFinish(draggable, context) {
+                    context.iObject.wiringEditor.onFinishSelectedObjects();
                     var position = context.iObject.getStylePosition();
                     if (position.posX < 0) {
                         position.posX = 8;
