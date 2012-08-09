@@ -28,7 +28,6 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/opManager/WorkspaceView.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/opManager/TabMenuItems.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/opManager/Tab.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/opManager/InitialScriptExecuter.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/opManager/OpManager.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/opManager/HistoryManager.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/varManager/VariableGadget.js"></script>

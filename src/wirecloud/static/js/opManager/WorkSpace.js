@@ -311,11 +311,6 @@ function WorkSpace (workSpaceState) {
         return this.tabInstances.get(tabId);
     }
 
-
-    WorkSpace.prototype.run_script = function() {
-        ScriptManagerFactory.getInstance().run_script(this);
-    }
-
     WorkSpace.prototype.igadgetUnloaded = function(igadgetId) {
         var igadget = this.getIgadget(igadgetId);
         if (igadget == null)

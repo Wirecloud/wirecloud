@@ -376,9 +376,6 @@ var OpManagerFactory = function () {
                 layoutManager.logStep('');
                 layoutManager._notifyPlatformReady();
                 this.loadCompleted = true;
-
-                //Additional information that a workspace must do after loading!
-                this.activeWorkSpace.run_script();
             }
         }
 
