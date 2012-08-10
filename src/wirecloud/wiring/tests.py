@@ -172,7 +172,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         with widget_operation(self.driver, 2):
             try:
-                WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut') == 'hello world!!')
+                WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
             except:
                 pass
 
