@@ -279,7 +279,7 @@
      * add Source.
      */
     GenericInterface.prototype.addSource = function addSource(label, desc, name, anchorContext) {
-        var anchor, anchorDiv, anchorLabel, multiconnector, id, objectId, friendCode;
+        var anchor, anchorDiv, labelDiv, anchorLabel, multiconnector, id, objectId, friendCode;
         //anchorDiv
         anchorDiv = document.createElement("div");
         //if the output have not description, take the label
@@ -290,7 +290,12 @@
         //anchor visible label
         anchorLabel = document.createElement("span");
         anchorLabel.setTextContent(label);
-        anchorDiv.appendChild(anchorLabel);
+
+        labelDiv = document.createElement("div");
+        anchorDiv.appendChild(labelDiv);
+        labelDiv.setAttribute('class', 'labelDiv');
+        labelDiv.appendChild(anchorLabel);
+
         if (!this.isMiniInterface) {
             anchor = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, this.arrowCreator);
             anchorDiv.appendChild(anchor.wrapperElement);
@@ -322,10 +327,10 @@
             }.bind(this));
 
             anchorDiv.appendChild(this.multiButton.wrapperElement);
-            anchorLabel.addEventListener('mouseover', function (e) {
+            labelDiv.addEventListener('mouseover', function (e) {
                 this.wiringEditor.emphasize(anchor);
             }.bind(this));
-            anchorLabel.addEventListener('mouseout', function (e) {
+            labelDiv.addEventListener('mouseout', function (e) {
                 this.wiringEditor.deemphasize(anchor);
             }.bind(this));
             this.sourceAnchorsByName[name] = anchor;
@@ -343,7 +348,7 @@
      * add Target.
      */
     GenericInterface.prototype.addTarget = function addTarget(label, desc, name, anchorContext) {
-        var anchor, anchorDiv, anchorLabel, multiconnector, id, objectId, friendCode;
+        var anchor, anchorDiv, labelDiv, anchorLabel, multiconnector, id, objectId, friendCode;
         //anchorDiv
         anchorDiv = document.createElement("div");
         //if the input have not description, take the label
@@ -354,7 +359,12 @@
         //anchor visible label
         anchorLabel = document.createElement("span");
         anchorLabel.setTextContent(label);
-        anchorDiv.appendChild(anchorLabel);
+
+        labelDiv = document.createElement("div");
+        anchorDiv.appendChild(labelDiv);
+        labelDiv.setAttribute('class', 'labelDiv');
+        labelDiv.appendChild(anchorLabel);
+
         if (!this.isMiniInterface) {
             anchor = new Wirecloud.ui.WiringEditor.TargetAnchor(anchorContext, this.arrowCreator);
 
@@ -385,10 +395,10 @@
             }.bind(this));
             anchorDiv.appendChild(this.multiButton.wrapperElement);
             anchorDiv.appendChild(anchor.wrapperElement);
-            anchorLabel.addEventListener('mouseover', function (e) {
+            labelDiv.addEventListener('mouseover', function (e) {
                 this.wiringEditor.emphasize(anchor);
             }.bind(this));
-            anchorLabel.addEventListener('mouseout', function (e) {
+            labelDiv.addEventListener('mouseout', function (e) {
                 this.wiringEditor.deemphasize(anchor);
             }.bind(this));
             this.targetAnchorsByName[name] = anchor;

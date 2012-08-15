@@ -144,12 +144,23 @@
 
 .wiring_editor .sources > div {
     padding-left: 10px;
+    margin-top: 2px;
+	margin-bottom: 2px;
 }
 
 .wiring_editor .targets > div {
     padding-right: 10px;
+    margin-top: 2px;
+	margin-bottom: 2px;
 }
 
+.wiring_editor .sources  div div {
+	display: inline-block;
+}
+
+.wiring_editor .targets > div div {
+    display: inline-block;
+}
 
 /* clone mini widget for drag and drop */
 .wiring_editor .border_layout .ioperator.clon, .wiring_editor .border_layout .igadget.clon {
