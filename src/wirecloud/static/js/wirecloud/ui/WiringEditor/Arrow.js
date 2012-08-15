@@ -226,6 +226,13 @@
 
         this.pullerStartElement.setAttribute('class', 'pullerBall');
         this.pullerEndElement.setAttribute('class', 'pullerBall');
+
+        //pullerLines
+        this.pullerStartLine = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
+        this.pullerStartLine.setAttribute('class', 'pullerLine');
+        this.pullerEndLine = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
+        this.pullerEndLine.setAttribute('class', 'pullerLine');
+
         // make draggable pullers
         this.pullerStartDraggable = new Draggable(this.pullerStartElement, this.pullerStartElement, {arrow: this},
             function onStart(draggable, data) {
@@ -256,6 +263,9 @@
         // closer
         this.wrapperElement.appendChild(this.closerElement);
 
+        // add pullerLines
+        this.wrapperElement.appendChild(this.pullerStartLine);
+        this.wrapperElement.appendChild(this.pullerEndLine);
         // add pullers
         this.wrapperElement.appendChild(this.pullerStartElement);
         this.wrapperElement.appendChild(this.pullerEndElement);
@@ -411,11 +421,15 @@
 
         // Start puller
         startPuller = this.getPullerStart(true);
+        this.pullerStartLine.setAttribute("d",
+                "M " + from.posX + "," + from.posY + " " + startPuller.posX + "," + startPuller.posY);
         this.pullerStartElement.setAttribute("cx", startPuller.posX);
         this.pullerStartElement.setAttribute("cy", startPuller.posY);
 
         // End puller
         endPuller = this.getPullerEnd(true);
+        this.pullerEndLine.setAttribute("d",
+                "M " + to.posX + "," + to.posY + " " + endPuller.posX + "," + endPuller.posY);
         this.pullerEndElement.setAttribute("cx", endPuller.posX);
         this.pullerEndElement.setAttribute("cy", endPuller.posY);
 

@@ -264,6 +264,14 @@
     stroke-width: 1;
     display: none;
 }
+
+.wiring_editor .canvas .pullerLine {
+    stroke: rgb(128, 128, 128);
+    stroke-width: 1;
+    display: none;
+    stroke-dasharray: 2;
+}
+
 .wiring_editor .canvas .selected .arrowbody, .wiring_editor .canvas .selected.emphasize .arrowbody {
     stroke: rgb(214, 214, 214);
     stroke-width: 5;
@@ -300,6 +308,37 @@
 
 .wiring_editor .canvas .selected .pullerBall {
     display: inline;
+}
+
+.wiring_editor .canvas .selected .pullerLine {
+    display: inline;
+}
+
+.wiring_editor .menubar .styled_expander {
+    margin: 3px;
+    border: none;
+}
+
+.wiring_editor .menubar .styled_expander .widgetsIcon{
+    background: url('../images/wiring/blue_arrow_right.png');
+    position: absolute;
+    left: 5px;
+    height: 12px;
+    width: 6px;
+}
+
+.wiring_editor .menubar .styled_expander .operatorsIcon{
+    background: url('../images/wiring/blue_arrow_right.png');
+    position: absolute;
+    left: 5px;
+    height: 12px;
+    width: 6px;
+}
+
+.wiring_editor .canvas .highlighted .arrowborder {
+    stroke: #DF7A62;
+    fill:   none;
+    stroke-width: 11;
 }
 
 .wiring_editor .menubar .styled_expander {
