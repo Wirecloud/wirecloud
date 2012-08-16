@@ -30,12 +30,16 @@ class WirecloudCorePlugin(WirecloudPlugin):
     }
 
     def get_scripts(self, view):
+        common = (
+            'js/gadgetModel/Gadget.js',
+        )
+
         if view == 'index':
-            return (
+            return common + (
                 'js/wirecloud/MarketManager.js',
             )
         else:
-            return ()
+            return common
 
     def get_market_classes(self):
         return {
