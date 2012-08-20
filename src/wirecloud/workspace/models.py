@@ -30,14 +30,11 @@
 
 #
 
-import socket
-
-from django.conf import settings
 from django.contrib.auth.models import User, Group
-from django.contrib.sites.models import get_current_site
-from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext as  _
+
+from wirecloudcommons.utils.http import get_absolute_reverse_url
 
 
 class WorkSpace(models.Model):
@@ -102,14 +99,7 @@ class PublishedWorkSpace(models.Model):
         app_label = 'wirecloud'
 
     def get_template_url(self, request=None):
-        try:
-            domain = get_current_site(request).domain
-        except:
-            domain = socket.gethostbyaddr(socket.gethostname())[0]
-
-        protocol = 'http://'
-
-        return protocol + domain + reverse('wirecloud_showcase.mashup_template', args=(self.id,))
+        return get_absolute_reverse_url('wirecloud_showcase.mashup_template', request, args=(self.id,))
 
     def __unicode__(self):
         return unicode(self.pk) + " " + unicode(self.name)
