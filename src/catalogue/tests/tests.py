@@ -13,7 +13,7 @@ from django.utils import simplejson
 import catalogue.utils
 from catalogue.utils import add_resource_from_template
 from catalogue.get_json_catalogue_data import get_resource_data
-from catalogue.models import GadgetWiring
+from catalogue.models import CatalogueResource, GadgetWiring
 from commons import http_utils
 from commons.exceptions import TemplateParseException
 from commons.test import FakeDownloader, LocalizedTestCase
@@ -280,6 +280,9 @@ class WGTDeploymentTestCase(TransactionTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(os.path.isdir(gadget_path), True)
+        widget = CatalogueResource.objects.get(vendor='Morfeo', short_name='Test', version='0.1')
+        self.assertEqual(widget.template_uri, 'Morfeo_Test_0.1.wgt')
+        self.assertEqual(widget.image_uri, 'images/catalogue.png')
 
         c.login(username='test', password='test')
         response = c.delete('////resource/Morfeo/Test/0.1', HTTP_HOST='www.example.com')

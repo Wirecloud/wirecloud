@@ -29,11 +29,12 @@
 
 
 #
-from urlparse import urljoin
+from urlparse import urljoin, urlparse
 
 from django.shortcuts import get_object_or_404
 
 from catalogue.models import GadgetWiring, UserTag, UserVote, Capability
+from wirecloudcommons.utils.http import get_absolute_reverse_url
 
 
 def get_vote_data(gadget, user):
@@ -125,9 +126,19 @@ def get_gadget_capabilities(gadget_id, user):
     return data_ret
 
 
-def get_resource_data(untranslated_resource, user):
+def get_resource_data(untranslated_resource, user, request=None):
     """Gets all the information related to the given gadget."""
     resource = untranslated_resource.get_translated_model()
+
+    if urlparse(resource.template_uri).scheme == '':
+        template_uri = get_absolute_reverse_url('wirecloud_catalogue.media', kwargs={
+            'vendor': resource.vendor,
+            'name': resource.short_name,
+            'version': resource.version,
+            'file_path': resource.template_uri
+        }, request=request)
+    else:
+        template_uri = resource.template_uri
 
     if resource.display_name and resource.display_name != "":
         displayName = resource.display_name
@@ -147,10 +158,10 @@ def get_resource_data(untranslated_resource, user):
         'author': resource.author,
         'mail': resource.mail,
         'description': resource.description,
-        'uriImage': urljoin(resource.template_uri, resource.image_uri),
-        'uriWiki': urljoin(resource.template_uri, resource.wiki_page_uri),
+        'uriImage': urljoin(template_uri, resource.image_uri),
+        'uriWiki': urljoin(template_uri, resource.wiki_page_uri),
         'type': resource.resource_type(),
-        'uriTemplate': resource.template_uri,
+        'uriTemplate': template_uri,
         'ieCompatible': resource.ie_compatible,
         'capabilities': get_gadget_capabilities(gadget_id=resource.pk, user=user),
         'added_by_user': resource.creator == user,
@@ -161,7 +172,7 @@ def get_resource_data(untranslated_resource, user):
     }
 
 
-def get_resource_group_data(resource_group, user):
+def get_resource_group_data(resource_group, user, request=None):
 
     data = {
         'vendor': resource_group['vendor'],
@@ -170,7 +181,7 @@ def get_resource_group_data(resource_group, user):
         'versions': [],
     }
     for resource in resource_group['variants']:
-        current_resource_data = get_resource_data(resource, user)
+        current_resource_data = get_resource_data(resource, user, request)
         del current_resource_data['vendor']
         del current_resource_data['name']
         del current_resource_data['type']

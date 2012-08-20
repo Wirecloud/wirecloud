@@ -150,7 +150,7 @@ class ResourceCollection(Resource):
             return HttpResponse(simplejson.dumps(json_response),
                 status=409, mimetype='application/json; charset=UTF-8')
 
-        json_response = get_added_resource_info(resource, user)
+        json_response = get_added_resource_info(resource, user, request)
 
         return HttpResponse(simplejson.dumps(json_response),
                             mimetype='application/json; charset=UTF-8')
@@ -173,7 +173,7 @@ class ResourceCollection(Resource):
 
         resources = get_paginatedlist(resources, int(pag), int(offset))
 
-        return get_resource_response(resources, format, items, user)
+        return get_resource_response(resources, format, items, user, request)
 
     @method_decorator(login_required)
     @commit_on_http_success
@@ -254,7 +254,7 @@ class ResourceCollectionBySimpleSearch(Resource):
         items = len(resources)
         resources = get_paginatedlist(resources, pag, offset)
 
-        return get_resource_response(resources, format, items, user)
+        return get_resource_response(resources, format, items, user, request)
 
 
 class ResourceCollectionByGlobalSearch(Resource):
@@ -298,7 +298,7 @@ class ResourceCollectionByGlobalSearch(Resource):
 
         resources = get_paginatedlist(resources, pag, offset)
 
-        return get_resource_response(resources, format, items, user)
+        return get_resource_response(resources, format, items, user, request)
 
 
 class ResourceTagCollection(Resource):

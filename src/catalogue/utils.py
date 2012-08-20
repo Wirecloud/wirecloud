@@ -58,19 +58,17 @@ def extract_resource_media_from_package(template, package, base_path):
     overrides = {}
     resource_info = template.get_resource_info()
 
-    if not resource_info['image_uri'].startswith(('http://', 'https://', '//')):
+    if not resource_info['image_uri'].startswith(('http://', 'https://', '//', '/')):
+        image_path = os.path.normpath(resource_info['image_uri'])
         try:
-            package.extract_file(resource_info['image_uri'], os.path.join(base_path, resource_info['image_uri']), True)
+            package.extract_file(resource_info['image_uri'], os.path.join(base_path, image_path), True)
         except KeyError:
             overrides['image_uri'] = urljoin(settings.STATIC_URL, '/images/catalogue/gadget_image.png')
 
         else:
-            overrides['image_uri'] = reverse('wirecloud_catalogue.media', args=(
-                template.get_resource_vendor(),
-                template.get_resource_name(),
-                template.get_resource_version(),
-                resource_info['image_uri']
-            ))
+            overrides['image_uri'] = image_path
+    elif resource_info['image_uri'].startswith(('//', '/')):
+        overrides['image_uri'] = template.get_absolute_url(resource_info['image_uri'])
 
     return overrides
 
@@ -101,7 +99,6 @@ def add_gadget_from_wgt(file, user, wgt_file=None, template=None, deploy_only=Fa
         os.makedirs(local_dir)
 
     overrides = extract_resource_media_from_package(template, wgt_file, local_dir)
-    template_uri = reverse('wirecloud_catalogue.media', args=resource_id + (file_name,))
     if close_wgt:
         wgt_file.close()
 
@@ -111,7 +108,7 @@ def add_gadget_from_wgt(file, user, wgt_file=None, template=None, deploy_only=Fa
     f.close()
 
     if not deploy_only:
-        return add_resource_from_template(template_uri, template, user, overrides=overrides)
+        return add_resource_from_template(file_name, template, user, overrides=overrides)
 
 
 def add_resource_from_template(template_uri, template, user, fromWGT=False, overrides=None):
@@ -184,18 +181,18 @@ def add_resource_from_template(template_uri, template, user, fromWGT=False, over
     return resource
 
 
-def get_added_resource_info(resource, user):
+def get_added_resource_info(resource, user, request=None):
 
     info = {
         'vendor': resource.vendor,
         'name': resource.short_name,
         'type': resource.resource_type(),
-        'versions': [get_resource_data(resource, user)],
+        'versions': [get_resource_data(resource, user, request)],
     }
 
     latest_version = get_latest_resource_version(resource.short_name, resource.vendor)
     if latest_version != resource:
-        info['versions'].append(get_resource_data(latest_version, user))
+        info['versions'].append(get_resource_data(latest_version, user, request))
 
     return info
 

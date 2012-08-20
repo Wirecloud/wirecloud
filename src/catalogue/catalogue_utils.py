@@ -181,11 +181,11 @@ def get_slot_filter(search_criteria):
     return filters & Q(gadgetwiring__wiring='in')
 
 
-def get_resource_response(resources, format, items, user):
+def get_resource_response(resources, format, items, user, request=None):
     """Obtains all the information related to a resource encoded in the properly format (json or xml)."""
 
     if format == 'json' or format == 'default':
-        data = {'resources': [get_resource_group_data(group, user) for group in resources]}
+        data = {'resources': [get_resource_group_data(group, user, request) for group in resources]}
         response = HttpResponse(json_encode(data), mimetype='application/json; charset=UTF-8')
         response.__setitem__('items', items)
         return response
