@@ -135,56 +135,6 @@ def get_json_error_response(value):
     return response
 
 
-def get_gadgets_files():
-    gadgets_files = []
-    if hasattr(settings, 'GADGETS_ROOT'):
-        for walk_files in os.walk(settings.GADGETS_ROOT):
-            files = walk_files[2]
-            for fil in files:
-                if fil.endswith('.xml') or fil.endswith('.html'):
-                    gadgets_files.append(os.path.join(walk_files[0], fil))
-    return gadgets_files
-
-
-def load_gadgets():
-    errors = 0
-    user = User.objects.all()[0]
-    gadgets_files = []
-    code_files = []
-    for fil in get_gadgets_files():
-        if fil.endswith('.xml'):
-            gadgets_files.append(fil)
-        else:
-            code_files.append(fil)
-
-    for gadget_file in gadgets_files:
-        template_uri = gadget_file
-        template_uri = "file://%s" % gadget_file
-
-        gadget_resources = CatalogueResource.objects.filter(template_uri=template_uri)
-        for gadget_resource in gadget_resources:
-            gadget_resource.delete()
-
-        from catalogue.templateParser import TemplateParser as CatalogueTemplateParser
-        try:
-            catalogue_template_parser = CatalogueTemplateParser(template_uri, user)
-            catalogue_template_parser.parse()
-        except Exception, e:
-            print "The file '%s' is not a valid XML template: %s." % (gadget_file, e)
-            errors += 1
-
-    for code_file in code_files:
-        code_url = "file://%s" % code_file
-        xhtmls = XHTML.objects.filter(url=code_url)
-        for xhtml in xhtmls:
-            try:
-                xhtml.code = download_http_content(xhtml.url)
-                xhtml.save()
-            except Exception, e:
-                print "Unable get contents of %s (%s)." % (code_file, e)
-
-    print "%s errors found" % errors
-
 
 def get_xhtml_content(path):
     if path.startswith("/") or path.startswith("\\"):
