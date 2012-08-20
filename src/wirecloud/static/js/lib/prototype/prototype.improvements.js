@@ -187,6 +187,11 @@ Ajax.Request.prototype.request = function(url) {
     }
 }
 
+Ajax.Request.prototype.success = function success() {
+    var status = this.getStatus();
+    return (status >= 200 && status < 300) || status == 304;
+};
+
 Ajax.Request.prototype.setRequestHeaders = function() {
     var headers = {
       'X-Requested-With': 'XMLHttpRequest',
