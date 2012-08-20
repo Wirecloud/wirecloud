@@ -36,6 +36,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
         if view == 'index':
             return common + (
+                'js/wirecloud/WirecloudCatalogue.js',
                 'js/wirecloud/MarketManager.js',
             )
         else:
@@ -49,6 +50,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
     def get_ajax_endpoints(self, views):
         return (
             {'id': 'ADD_WORKSPACE', 'url': build_url_template('wirecloud.workspace_import')},
+            {'id': 'LOCAL_REPOSITORY', 'url': build_url_template('wirecloud.root')},
             {'id': 'IWIDGET_COLLECTION', 'url': build_url_template('wirecloud.iwidget_collection', ['workspace_id', 'tab_id'])},
             {'id': 'IWIDGET_ENTRY', 'url': build_url_template('wirecloud.iwidget_entry', ['workspace_id', 'tab_id', 'iwidget_id'])},
             {'id': 'IWIDGET_VERSION_ENTRY', 'url': build_url_template('wirecloud.iwidget_version_entry', ['workspace_id', 'tab_id', 'iwidget_id'])},

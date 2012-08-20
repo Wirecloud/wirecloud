@@ -90,13 +90,14 @@
         for (info in view_info) {
 
             view_element = JSON.parse(view_info[info]);
+            view_element.name = info;
 
             if (info in old_views) {
                 this.viewsByName[info] = old_views[info];
                 delete old_views[info];
             } else {
                 view_constructor = Wirecloud.MarketManager.getMarketViewClass(view_element.type);
-                this.viewsByName[info] = this.alternatives.createAlternative({alternative_constructor: view_constructor, containerOptions: {catalogue: this, marketplace: info}});
+                this.viewsByName[info] = this.alternatives.createAlternative({alternative_constructor: view_constructor, containerOptions: {catalogue: this, marketplace_desc: view_element}});
             }
 
             this.number_of_alternatives += 1;

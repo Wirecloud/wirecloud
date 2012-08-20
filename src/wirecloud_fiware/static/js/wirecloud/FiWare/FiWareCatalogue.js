@@ -32,8 +32,8 @@
     };
 
 
-    FiWareCatalogue = function FiWareCatalogue(market_name) {
-        this.market_name = market_name;
+    FiWareCatalogue = function FiWareCatalogue(marketplace_desc) {
+        this.market_name = marketplace_desc.name;
     };
 
     FiWareCatalogue.prototype.search = function search(callback, options) {

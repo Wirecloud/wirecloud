@@ -19,7 +19,7 @@
  *
  */
 
-/*global CatalogueResource, CataloguePublishView, CatalogueSearchView, Constants, CookieManager, Event, gettext, interpolate, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud, ResourceDetailsView, ResourcePainter, ShowcaseFactory, StyledElements, Template, URIs*/
+/*global CatalogueResource, CataloguePublishView, CatalogueSearchView, Constants, CookieManager, Event, gettext, interpolate, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud, ResourceDetailsView, ResourcePainter, ShowcaseFactory, StyledElements*/
 
 (function () {
 
@@ -29,7 +29,7 @@
         options.id = 'catalogue';
         StyledElements.Alternative.call(this, id, options);
 
-        this.marketplace = options.marketplace;
+        this.catalogue = new Wirecloud.WirecloudCatalogue(options.marketplace_desc);
         this.alternatives = new StyledElements.StyledAlternatives();
         this.appendChild(this.alternatives);
 
@@ -40,79 +40,22 @@
         };
         this.viewsByName.search.init();
 
-        this.view_all_template = new Template(URIs.GET_POST_RESOURCES + '/#{starting_page}/#{resources_per_page}');
-        this.simple_search_template = new Template(URIs.GET_RESOURCES_SIMPLE_SEARCH + '/simple_or/#{starting_page}/#{resources_per_page}');
         this.addEventListener('show', this.refresh_if_needed.bind(this));
     };
     CatalogueView.prototype = new StyledElements.Alternative();
 
-    CatalogueView.prototype.getLabel = function () {
-        return this.marketplace;
+    CatalogueView.prototype.getLabel = function getLabel() {
+        return this.catalogue.name;
     };
 
-    CatalogueView.prototype._onShow = function () {
+    CatalogueView.prototype._onShow = function _onShow() {
     };
 
-    CatalogueView.prototype._onSearchSuccess = function (transport) {
-        var preferred_versions, i, data, key, raw_data, resources, resource;
-
-        raw_data = JSON.parse(transport.responseText);
-        if (raw_data.resources) {
-            preferred_versions = CookieManager.readCookie('preferred_versions', true);
-            if (preferred_versions === null) {
-                preferred_versions = {};
-            }
-
-            resources = [];
-
-            for (i = 0; i < raw_data.resources.length; i += 1) {
-                resource = new CatalogueResource(raw_data.resources[i]);
-                resources.push(resource);
-                key = resource.getVendor() + '/' + resource.getName();
-                if (key in preferred_versions) {
-                    resource.changeVersion(preferred_versions[key]);
-                }
-            }
-
-            data = {
-                'resources': resources,
-                'preferred_versions': preferred_versions,
-                'query_results_number': resources.length,
-                'resources_per_page': 10,
-                'current_page': 1
-            };
-
-            this.callback(data);
-        }
+    CatalogueView.prototype.search = function search(callback, options) {
+        return this.catalogue.search(callback, options);
     };
 
-    CatalogueView.prototype.search = function (callback, options) {
-        var params, url, context;
-
-        params = {
-            'orderby': options.order_by,
-            'search_criteria': options.search_criteria,
-            'search_boolean': options.search_boolean,
-            'scope': options.scope
-        };
-
-        context = {
-            'callback': callback
-        };
-
-        if (options.search_criteria.strip() === '') {
-            url = this.view_all_template.evaluate({'starting_page': options.starting_page, 'resources_per_page': options.resources_per_page});
-        } else {
-            url = this.simple_search_template.evaluate({'starting_page': options.starting_page, 'resources_per_page': options.resources_per_page});
-        }
-        Wirecloud.io.makeRequest(url, {
-            method: 'GET',
-            parameters: params,
-            onSuccess: this._onSearchSuccess.bind(context)
-        });
-    };
-
-    CatalogueView.prototype.instanciate = function (resource) {
+    CatalogueView.prototype.instanciate = function instanciate(resource) {
         if (resource.isMashup()) {
             // Ask if the user want to create a new workspace or merge it with the current one
             (new Wirecloud.ui.InstanciateMashupWindowMenu(resource)).show();
@@ -125,7 +68,7 @@
         }
     };
 
-    CatalogueView.prototype.getBreadcrum = function () {
+    CatalogueView.prototype.getBreadcrum = function getBreadcrum() {
         return [
             {
                 'label': 'marketplace'
@@ -135,19 +78,19 @@
 
     CatalogueView.prototype.getPublishEndpoint = function getPublishEndpoint() {
         return [{
-            'name': this.marketplace,
-            'label': this.marketplace,
+            'name': this.catalogue.name,
+            'label': this.catalogue.label,
             'type': 'boolean'
         }];
     };
 
     CatalogueView.prototype.getPublishData = function getPublishData(data) {
         return [{
-            'market': this.marketplace
+            'market': this.catalogue.name
         }];
     };
 
-    CatalogueView.prototype.changeCurrentView = function (view_name) {
+    CatalogueView.prototype.changeCurrentView = function changeCurrentView(view_name) {
         if (!(view_name in this.viewsByName)) {
             throw new TypeError();
         }
