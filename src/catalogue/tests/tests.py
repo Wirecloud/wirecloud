@@ -31,7 +31,7 @@ class AddGadgetTestCase(LocalizedTestCase):
 
         self.user = User.objects.create_user('test', 'test@example.com', 'test')
         self.template_uri = "http://example.com/path/gadget.xml"
-        f = open(os.path.join(os.path.dirname(__file__), 'template1.xml'), 'rb')
+        f = open(os.path.join(os.path.dirname(__file__), 'test-data/template1.xml'), 'rb')
         self.template = f.read()
         f.close()
 
@@ -262,7 +262,7 @@ class WGTDeploymentTestCase(TransactionTestCase):
     def testBasicWGTDeploymentFailsWithoutLogin(self):
         c = Client()
 
-        f = open(os.path.join(os.path.dirname(__file__), 'basic_gadget.wgt'))
+        f = open(os.path.join(os.path.dirname(__file__), 'test-data/basic_widget.wgt'))
         response = c.post('////resource', {'file': f}, HTTP_HOST='www.example.com')
         f.close()
 
@@ -273,7 +273,7 @@ class WGTDeploymentTestCase(TransactionTestCase):
         gadget_path = catalogue.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
         c = Client()
 
-        f = open(os.path.join(os.path.dirname(__file__), 'basic_gadget.wgt'))
+        f = open(os.path.join(os.path.dirname(__file__), 'test-data/basic_widget.wgt'))
         c.login(username='test', password='test')
         response = c.post('////resource', {'file': f}, HTTP_HOST='www.example.com')
         f.close()
