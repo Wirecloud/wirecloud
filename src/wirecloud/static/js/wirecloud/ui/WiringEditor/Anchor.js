@@ -163,6 +163,10 @@
         return this.context.iObject.highlighted;
     };
 
+    Anchor.prototype.isEmphasize = function isEmphasize() {
+        return this.context.iObject.selected;
+    };
+
     Anchor.prototype.destroy = function destroy() {
         StyledElements.StyledElement.prototype.destroy.call(this);
 

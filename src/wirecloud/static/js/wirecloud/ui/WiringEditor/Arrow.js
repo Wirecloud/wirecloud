@@ -550,6 +550,20 @@
     };
 
     /**
+     *  recalculate if the arrow may be emphasize or not
+     */
+    Arrow.prototype.calculateEmphasize = function calculateEmphasize() {
+        this.emphasize_counter = 0;
+        if (this.endAnchor.isEmphasize()) {
+            this.emphasize();
+        }
+        if (this.startAnchor.isEmphasize()) {
+            this.emphasize();
+        }
+        this.redraw();
+    };
+
+    /**
      *  add new class in to the arrow
      */
     Arrow.prototype.addClassName = function addClassName(className) {
