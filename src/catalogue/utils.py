@@ -36,7 +36,6 @@ from datetime import datetime
 from urlparse import urljoin
 
 from django.conf import settings
-from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
 
 from catalogue.catalogue_utils import get_latest_resource_version

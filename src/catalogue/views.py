@@ -40,7 +40,7 @@ from django.db import IntegrityError
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseNotAllowed
 from django.http import  HttpResponseBadRequest, HttpResponseServerError, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, get_list_or_404, render
+from django.shortcuts import get_object_or_404, get_list_or_404
 from django.utils import simplejson
 from django.utils.decorators import method_decorator
 from django.utils.encoding import smart_str
