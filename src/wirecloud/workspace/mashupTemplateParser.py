@@ -115,7 +115,6 @@ def fillWorkspaceUsingTemplate(workspace, template):
         if len(new_values) > 0:
             update_tab_preferences(tab, new_values)
 
-        igadget_uri = "/workspace/" + str(workspace.id) + "/tab/" + str(tab.id) + "/igadgets"
         for resource in tab_entry['resources']:
 
             position = resource['position']
@@ -152,7 +151,6 @@ def fillWorkspaceUsingTemplate(workspace, template):
                 "name": resource.get('title'),
                 "menu_color": "FFFFFF",
                 "layout": int(rendering.get('layout')),
-                "uri": igadget_uri,
                 "gadget": gadget.uri,
             }
 
