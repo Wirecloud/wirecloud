@@ -236,19 +236,6 @@ WIRECLOUD_PLUGINS = (
     'wirecloud_fiware.plugins.FiWarePlugin',
 )
 
-# Template Generator URL. This URL is only needed to allow publishing
-# a Workspace when Wirecloud is running with the develop server (manage.py)
-# PLEASE DON'T SET ITS VALUE IN ANY OTHER CASE.
-
-#TEMPLATE_GENERATOR_URL = 'http://localhost:8001'
-
-
-# Gadget Template Generator URL. This URL is only needed to allow creating
-# a Gadget when Wirecloud is running with the develop server (manage.py)
-# or if this application is moved to another server
-# PLEASE DON'T SET ITS VALUE IN ANY OTHER CASE.
-#GADGET_GENERATOR_URL = 'http://localhost:9001'
-
 FORCE_SCRIPT_NAME = ""
 
 NOT_PROXY_FOR = ['localhost', '127.0.0.1']
