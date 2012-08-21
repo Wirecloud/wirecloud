@@ -61,6 +61,37 @@
     };
     Expander.prototype = new StyledElements.StyledElement();
 
+    Expander.prototype.repaint = function repaint(temporal) {
+        var height, computedStyle;
+
+        if (this.isExpanded()) {
+
+            height = this.wrapperElement.clientHeight;
+            if (height == null) {
+                return; // nothing to do
+            }
+
+            computedStyle = document.defaultView.getComputedStyle(this.titleContainer.wrapperElement, null);
+
+            height -= this.titleContainer.wrapperElement.offsetHeight;
+            height -= computedStyle.getPropertyCSSValue('margin-top').getFloatValue(CSSPrimitiveValue.CSS_PX);
+            height -= computedStyle.getPropertyCSSValue('margin-bottom').getFloatValue(CSSPrimitiveValue.CSS_PX);
+
+            computedStyle = document.defaultView.getComputedStyle(this.contentContainer.wrapperElement, null);
+            height -= computedStyle.getPropertyCSSValue('border-top-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
+            height -= computedStyle.getPropertyCSSValue('border-bottom-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
+            height -= computedStyle.getPropertyCSSValue('padding-top').getFloatValue(CSSPrimitiveValue.CSS_PX);
+            height -= computedStyle.getPropertyCSSValue('padding-bottom').getFloatValue(CSSPrimitiveValue.CSS_PX);
+
+            if (height < 0) {
+                height = 0;
+            }
+
+            this.contentContainer.wrapperElement.style.height = height + 'px';
+            this.contentContainer.repaint(temporal);
+        }
+    };
+
     Expander.prototype.isExpanded = function isExpanded() {
         return this.hasClassName('expanded');
     };
@@ -73,12 +104,13 @@
             this.addClassName('expanded');
         } else {
             this.removeClassName('expanded');
+            this.contentContainer.wrapperElement.style.height = '';
         }
         if (this.toggleButton) {
             this.toggleButton.setChecked(expanded);
         }
 
-        this.events.expandChange.dispatch(expanded);
+        this.events.expandChange.dispatch(this, expanded);
     };
 
     Expander.prototype.getTitleContainer = function getTitleContainer() {

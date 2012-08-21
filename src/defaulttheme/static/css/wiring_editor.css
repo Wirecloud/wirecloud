@@ -361,30 +361,8 @@
     margin-left: 14px;
 }
 
-.wiring_editor .menubar .styled_expander.expanded .title {
-    background: transparent;
-}
-
-.wiring_editor .menubar .styled_expander .contents {
-    width: 0;
-    height: 0;
-    overflow: visible;
-    padding: 0;
-}
-
 .wiring_editor .menubar .styled_expander.expanded .contents {
-    width: auto;
-    height: auto;
     padding: 1ex;
-}
-
-
-.wiring_editor .menubar .styled_expander .igadget, .wiring_editor .menubar .styled_expander .ioperator{
-    visibility: hidden;
-}
-
-.wiring_editor .menubar .styled_expander.expanded .igadget, .wiring_editor .menubar .styled_expander.expanded .ioperator{
-    visibility: inherit;
 }
 
 /* multiconnector */

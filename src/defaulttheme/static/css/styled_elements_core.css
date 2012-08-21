@@ -1009,6 +1009,7 @@ div.styled_numeric_field div.numeric_bottom_button {
 .styled_expander {
     border: 1px solid #8AAD3E;
     margin: 3px;
+    overflow: hidden;
 }
 
 .styled_expander .title {
@@ -1030,4 +1031,5 @@ div.styled_numeric_field div.numeric_bottom_button {
     width: auto;
     height: auto;
     padding: 1ex;
+    overflow: auto;
 }
