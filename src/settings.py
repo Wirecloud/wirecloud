@@ -160,11 +160,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'django.core.context_processors.static',
     'wirecloud.themes.active_theme_context_processor',
-    'processors.context_processors.server_url',
     'processors.context_processors.is_anonymous',
     'processors.context_processors.tag_categories',
     'processors.context_processors.ezweb_organizations',
-    'processors.context_processors.policy_lists',
 )
 
 STATICFILES_FINDERS = (
@@ -197,18 +195,12 @@ AUTHENTICATION_BACKENDS = (
     'authentication.public_access.PublicBackend',
     #'authentication.anonymousaccess.AnonymousBackend',
     #'authentication.ldapaccess.LDAPBackend',
-    #'authentication.ezsteroidsaccess.EzSteroidsBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
 #LDAP Backend
 #AD_LDAP_URL = 'ldap://host:port'
 #AD_SEARCH_DN = 'uid=%s,ou=OUExample,o=OExample'
-
-# Authentication Server URL. This URL is only needed to allow the authentication against
-# third parties. It must be used along with the corresponding authentication backend
-#AUTHENTICATION_SERVER_URL = 'http://localhost:8001'
-
 
 # Absolute path to the directory that holds in development gadgets.
 GADGETS_ROOT = path.join(BASEDIR, 'media', 'gadgets')

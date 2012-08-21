@@ -147,20 +147,6 @@ def get_xhtml_content(path):
     return content
 
 
-def add_user_to_EzSteroids(referer, user):
-
-    if hasattr(settings, 'AUTHENTICATION_SERVER_URL'):
-        urlBase = settings.AUTHENTICATION_SERVER_URL
-
-        if (not urlBase.endswith('/')):
-            urlBase += '/'
-
-        url = urlBase + "api/register"
-        params = {'username': user.username.encode('utf-8')}
-        headers = {'Referer': referer}
-        download_http_content(uri=url, params=params, headers=headers)
-
-
 def accepts(request, mime):
     """Checks if the request accepts a mime type for the response"""
     acc = [a.split(';')[0] for a in request.META['HTTP_ACCEPT'].split(',')]

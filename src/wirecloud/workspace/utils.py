@@ -207,14 +207,7 @@ def sync_base_workspaces(user):
 
 
 def getCategories(user):
-    if 'AUTHENTICATION_SERVER_URL' in settings:
-        # Use EzSteroids
-        url = settings.AUTHENTICATION_SERVER_URL + '/api/user/' + user.username + '/categories.json'
-        received_json = download_http_content(url, user=user)
-        return simplejson.loads(received_json)['category_list']
-    else:
-        # Not use EzSteroids
-        return user.groups.get_query_set()
+    return user.groups.get_query_set()
 
 
 def getCategoryId(category):

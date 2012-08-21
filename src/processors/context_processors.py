@@ -36,23 +36,6 @@ from catalogue.models import Category
 from commons.utils import json_encode
 
 
-def server_url(request):
-    ret = {}
-    # add the Authentication Server (EzSteroids)
-    if hasattr(settings, 'AUTHENTICATION_SERVER_URL'):
-        ret['AUTHENTICATION_SERVER_URL'] = settings.AUTHENTICATION_SERVER_URL
-    else:
-        ret['AUTHENTICATION_SERVER_URL'] = None
-
-    # add the Gadget Template Generator URL (or nothing if it is in the same server)
-    if hasattr(settings, 'GADGET_GENERATOR_URL'):
-        ret['GADGET_GENERATOR_URL'] = settings.GADGET_GENERATOR_URL
-    else:
-        ret['GADGET_GENERATOR_URL'] = ""
-
-    return ret
-
-
 def is_anonymous(request):
     is_anonymous = False
     if hasattr(request, 'anonymous_id') and request.anonymous_id and request.anonymous_id == request.user.username:
@@ -91,12 +74,6 @@ def tag_categories(request):
     categories = root['children']
 
     return {'tag_categories': json_encode(categories)}
-
-
-def policy_lists(request):
-    user_policies = request.session.get("policies")
-
-    return {'policies': user_policies}
 
 
 def ezweb_organizations(request):

@@ -106,9 +106,7 @@ var URIs = {
   POST_CHECK_VERSIONS: '/user/{{ user.username }}/catalogue/versions',
   FILE_UPLOADER: '/uploader',
   BASIC_THEME: '/ezweb/themes/default',
-  ACTIVE_THEME: '{{ STATIC_URL }}'{% if AUTHENTICATION_SERVER_URL %},
-  EZSTEROIDS_API: '{{ AUTHENTICATION_SERVER_URL }}/api'
-{% endif %}
+  ACTIVE_THEME: '{{ STATIC_URL }}'
 };
 
 var ezweb_user_name = '{{ user.username }}';
@@ -123,8 +121,6 @@ var last_logged_user = '{{ last_user }}';
 var _SKINS = ["default"];
 //default skin for workspaces. Users may change the skin of a workspace afterwards
 var _DEFAULT_SKIN = 'default';
-
-var policy_lists = {{ policies|safe|default:"null" }};
 
 {% block policies %}
 {% endblock %}
