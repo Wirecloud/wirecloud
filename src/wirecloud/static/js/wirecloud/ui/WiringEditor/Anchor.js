@@ -19,7 +19,6 @@
  *
  */
 
-/*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50, prototypejs: true */
 /*global Coordinates, CSSPrimitiveValue, BrowserUtilsFactory, StyledElements, Wirecloud */
 
 
