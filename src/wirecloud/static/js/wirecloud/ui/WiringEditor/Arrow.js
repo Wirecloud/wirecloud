@@ -19,158 +19,11 @@
  *
  */
 
-/*global BrowserUtilsFactory, EzWebExt, Wirecloud, Event, EzWebEffectBase, Element */
+/*global Draggable, BrowserUtilsFactory, EzWebExt, Wirecloud, Event, EzWebEffectBase, Element */
 
 (function () {
 
     "use strict";
-
-    function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, canBeDragged) {
-        var xDelta = 0, yDelta = 0;
-        var xStart = 0, yStart = 0;
-        var yScroll = 0;
-        var xOffset = 0, yOffset = 0;
-        var x, y;
-        var dragboardCover;
-        var draggable = this;
-        var enddrag, drag, startdrag, scroll, pullclick;
-        canBeDragged = canBeDragged ? canBeDragged : Draggable._canBeDragged;
-
-        // remove the events
-        enddrag = function (e) {
-            e = e || window.event; // needed for IE
-
-            // Only attend to left button (or right button for left-handed persons) events
-            if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
-                return;
-            }
-            Event.stopObserving(document, "mouseup", enddrag);
-            Event.stopObserving(document, "mousemove", drag);
-
-            onFinish(draggable, data);
-
-            Event.observe(handler, "mousedown", startdrag);
-
-            e.stopPropagation();
-            e.preventDefault();
-            document.onmousedown = null; // reenable context menu
-            document.onselectstart = null; // reenable text selection in IE
-            document.oncontextmenu = null; // reenable text selection
-        };
-
-        // fire each time it's dragged
-        drag = function (e) {
-            e = e || window.event; // needed for IE
-
-            var screenX = parseInt(e.screenX, 10);
-            var screenY = parseInt(e.screenY, 10);
-            xDelta = screenX - xStart;
-            yDelta = screenY - yStart;
-
-            onDrag(e, draggable, data, xDelta, yDelta);
-        };
-
-        // initiate the drag
-        startdrag = function (e) {
-            e = e || window.event; // needed for IE
-
-            // Only attend to left button (or right button for left-handed persons) events
-            if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
-                return false;
-            }
-
-            if (!canBeDragged(draggable, data)) {
-                return false;
-            }
-
-            document.oncontextmenu = Draggable._cancel; // disable context menu
-            document.onmousedown = Draggable._cancel; // disable text selection in Firefox
-            document.onselectstart = Draggable._cancel; // disable text selection in IE
-            Event.stopObserving(handler, "mousedown", startdrag);
-
-            xStart = parseInt(e.screenX, 10);
-            yStart = parseInt(e.screenY, 10);
-
-            Event.observe(document, "mouseup", enddrag);
-            Event.observe(document, "mousemove", drag);
-
-            onStart(draggable, data);
-
-            var dragboard = EzWebEffectBase.findDragboardElement(draggableElement);
-            dragboardCover = document.createElement("div");
-            Element.extend(dragboardCover);
-            dragboardCover.addClassName("cover");
-            dragboardCover.observe("mouseup", enddrag, false);
-            dragboardCover.observe("mousemove", drag, false);
-
-            dragboardCover.style.zIndex = "1000000";
-            dragboardCover.style.position = "absolute";
-            dragboardCover.style.top = "0";
-            dragboardCover.style.left = "0";
-            dragboardCover.style.width = "100%";
-            dragboardCover.style.height = dragboard.scrollHeight + "px";
-
-            yScroll = parseInt(dragboard.scrollTop, 15);
-
-            dragboard.addEventListener("scroll", scroll, true);
-
-            dragboard.insertBefore(dragboardCover, dragboard.firstChild);
-
-            return false;
-        };
-
-        // fire each time the dragboard is scrolled while dragging
-        scroll = function (e) {
-            e = e || window.event; // needed for IE
-
-            var dragboard = dragboardCover.parentNode;
-            dragboardCover.style.height = dragboard.scrollHeight + "px";
-            var scrollTop = parseInt(dragboard.scrollTop, 10);
-            var scrollDelta = yScroll - scrollTop;
-            y -= scrollDelta;
-            yScroll = scrollTop;
-
-            draggableElement.style.top = y + 'px';
-            draggableElement.style.left = x + 'px';
-
-            onDrag(e, draggable, data, x + xOffset, y + yOffset);
-        };
-
-        pullclick = function (e) {
-            e.stopPropagation();
-        };
-
-        // add mousedown event listener
-        handler.addEventListener("mousedown", startdrag, true);
-        handler.addEventListener("click", pullclick, false);
-
-        /**********
-         * Public methods
-         **********/
-
-        this.setXOffset = function (offset) {
-            xOffset = offset;
-        };
-
-        this.setYOffset = function (offset) {
-            yOffset = offset;
-        };
-
-        this.destroy = function () {
-            handler.removeEventListener("mousedown", startdrag, false);
-            startdrag = null;
-            enddrag = null;
-            drag = null;
-            scroll = null;
-            draggable = null;
-            data = null;
-            handler = null;
-        };
-    }
-
-
-
-
 
     /*************************************************************************
      * Constructor
@@ -221,8 +74,10 @@
         // pullers definition
         this.pullerStartElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
         this.pullerStartElement.setAttribute("r", 5);
+        this.pullerStartElement.addEventListener("click", EzWebExt.stopPropagationListener, false);
         this.pullerEndElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
         this.pullerEndElement.setAttribute("r", 5);
+        this.pullerEndElement.addEventListener("click", EzWebExt.stopPropagationListener, false);
 
         this.pullerStartElement.setAttribute('class', 'pullerBall');
         this.pullerEndElement.setAttribute('class', 'pullerBall');
@@ -233,8 +88,8 @@
         this.pullerEndLine = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
         this.pullerEndLine.setAttribute('class', 'pullerLine');
 
-        // make draggable pullers
-        this.pullerStartDraggable = new Draggable(this.pullerStartElement, this.pullerStartElement, {arrow: this},
+        // draggable pullers
+        this.pullerStartDraggable = new Draggable(this.pullerStartElement, {arrow: this},
             function onStart(draggable, data) {
                 data.refPos = data.arrow.getPullerStart();
             },
@@ -247,7 +102,7 @@
             },
             function () {return true; }
         );
-        this.pullerEndDraggable = new Draggable(this.pullerEndElement, this.pullerEndElement, {arrow: this},
+        this.pullerEndDraggable = new Draggable(this.pullerEndElement, {arrow: this},
             function onStart(draggable, data) {
                 data.refPos = data.arrow.getPullerEnd();
             },
@@ -260,6 +115,7 @@
             },
             function () {return true; }
         );
+
         // closer
         this.wrapperElement.appendChild(this.closerElement);
 
