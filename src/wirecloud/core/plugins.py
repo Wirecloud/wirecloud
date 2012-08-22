@@ -31,6 +31,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
     def get_scripts(self, view):
         common = (
+            'js/StyledElements/ToggleButton.js',
             'js/gadgetModel/Gadget.js',
         )
 

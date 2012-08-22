@@ -312,53 +312,15 @@
     stroke-width: 11;
 }
 
-
 .wiring_editor .menubar .styled_expander {
     margin: 3px;
     border: none;
 }
 
-.wiring_editor .menubar .styled_expander .widgetsIcon{
-    background: url('../images/wiring/blue_arrow_right.png');
-    position: absolute;
-    left: 5px;
-    height: 12px;
-    width: 6px;
-}
-
-.wiring_editor .menubar .styled_expander .operatorsIcon{
-    background: url('../images/wiring/blue_arrow_right.png');
-    position: absolute;
-    left: 5px;
-    height: 12px;
-    width: 6px;
-}
-
-.wiring_editor .menubar .styled_expander.expanded .widgetsIcon{
-    background: url('../images/wiring/blue_arrow_down.png');
-    position: absolute;
-    left: 5px;
-    height: 6px;
-    width: 12px;
-    top: 9px;
-}
-
-.wiring_editor .menubar .styled_expander.expanded .operatorsIcon{
-    background: url('../images/wiring/blue_arrow_down.png');
-    position: absolute;
-    left: 5px;
-    height: 6px;
-    width: 12px;
-    top: 35px;
-}
-
 .wiring_editor .menubar .styled_expander .title {
-    background: transparent;
-    padding: 0.1em;
     font-size: 1.8em;
     font-style: normal;
     text-shadow: none;
-    margin-left: 14px;
 }
 
 .wiring_editor .menubar .styled_expander.expanded .contents {

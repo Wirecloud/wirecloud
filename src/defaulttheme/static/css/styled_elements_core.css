@@ -1007,17 +1007,14 @@ div.styled_numeric_field div.numeric_bottom_button {
 }
 
 .styled_expander {
-    border: 1px solid #8AAD3E;
     margin: 3px;
     overflow: hidden;
 }
 
 .styled_expander .title {
-    background: #F3F4EC;
-    padding: 1.5ex;
+    padding: 1ex;
     font-size: 16px;
-    font-style: italic;
-    text-shadow: 2px 2px 3px #999999;
+    display: inline-block;
 }
 
 .styled_expander .contents {
@@ -1025,6 +1022,14 @@ div.styled_numeric_field div.numeric_bottom_button {
     height: 0;
     overflow: hidden;
     padding: 0;
+}
+
+.icon-expand.checked:before {
+    content: "\f0d7";
+}
+
+.icon-expand:before {
+    content: "\f0da";
 }
 
 .styled_expander.expanded .contents {

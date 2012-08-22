@@ -8,10 +8,14 @@
         var defaultOptions = {
             'class': '',
             'listenOnTitle': false,
+            'expandButton': true,
             'buttonFloat': 'left',
             'title': null
         };
         options = EzWebExt.merge(defaultOptions, options);
+        if (!options.expandButton && !options.listenOnTitle) {
+            throw new TypeError();
+        }
 
         StyledElements.StyledElement.call(this, ['expandChange']);
 
@@ -22,18 +26,12 @@
         this.wrapperElement.appendChild(header);
 
         this.toggleButton = null;
-        if (!options.listenOnTitle) {
+        if (options.expandButton) {
             this.toggleButton = new StyledElements.ToggleButton({
-                'text': '+',
-                'checkedText': '-',
-                'class': 'expander_button'
+                'class': 'icon-expand',
+                'plain': true
             });
             this.toggleButton.insertInto(header);
-            if ('cssFloat' in this.toggleButton.wrapperElement.style) {
-                this.toggleButton.wrapperElement.style.cssFloat = options.buttonFloat;
-            } else {
-                this.toggleButton.wrapperElement.style.styleFloat = options.buttonFloat;
-            }
         }
 
         this.titleContainer = new StyledElements.Container({'class': 'title'});
@@ -55,7 +53,8 @@
 
         if (this.toggleButton) {
             this.toggleButton.addEventListener('click', callback);
-        } else {
+        }
+        if (this.listenOnTitle) {
             EzWebExt.addEventListener(this.titleContainer.wrapperElement, 'click', callback, false);
         }
     };

@@ -33,7 +33,6 @@ if (!Wirecloud.ui) {
      * Constructor
      *************************************************************************/
     var WiringEditor = function WiringEditor(id, options) {
-        var widgetIcon, operatorIcon;
         options['class'] = 'wiring_editor';
         StyledElements.Alternative.call(this, id, options);
 
@@ -46,13 +45,7 @@ if (!Wirecloud.ui) {
         this.layout.getWestContainer().addClassName('menubar');
         this.accordion = new StyledElements.Accordion();
         this.mini_widget_section = this.accordion.createContainer({title: 'Widgets'});
-        widgetIcon = document.createElement("span");
-        widgetIcon.addClassName("widgetsIcon");
-        this.mini_widget_section.titleContainer.wrapperElement.appendChild(widgetIcon);
         this.mini_operator_section = this.accordion.createContainer({title: 'Operators'});
-        operatorIcon = document.createElement("span");
-        operatorIcon.addClassName("operatorsIcon");
-        this.mini_operator_section.titleContainer.wrapperElement.appendChild(operatorIcon);
         this.layout.getWestContainer().appendChild(this.accordion);
         this.layout.getCenterContainer().addClassName('grid');
 
