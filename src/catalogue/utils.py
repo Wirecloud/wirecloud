@@ -107,7 +107,7 @@ def add_gadget_from_wgt(file, user, wgt_file=None, template=None, deploy_only=Fa
     f.close()
 
     if not deploy_only:
-        return add_resource_from_template(file_name, template, user, overrides=overrides)
+        return add_resource_from_template(file_name, template, user, fromWGT=True, overrides=overrides)
 
 
 def add_resource_from_template(template_uri, template, user, fromWGT=False, overrides=None):
@@ -122,13 +122,14 @@ def add_resource_from_template(template_uri, template, user, fromWGT=False, over
         resource_info.update(overrides)
 
     resource = CatalogueResource.objects.create(
-        creator=user,
-        type=CatalogueResource.RESOURCE_TYPES.index(resource_info['type']),
         short_name=resource_info['name'],
-        display_name=resource_info['display_name'],
         vendor=resource_info['vendor'],
         version=resource_info['version'],
+        fromWGT=fromWGT,
+        type=CatalogueResource.RESOURCE_TYPES.index(resource_info['type']),
+        creator=user,
         author=resource_info['author'],
+        display_name=resource_info['display_name'],
         description=resource_info['description'],
         mail=resource_info['mail'],
         image_uri=resource_info['image_uri'],

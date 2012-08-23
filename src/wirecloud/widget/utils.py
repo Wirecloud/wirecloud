@@ -284,7 +284,6 @@ def get_or_create_gadget(templateURL, user, workspaceId, request, fromWGT=False)
         raise Http403()
 
     if fromWGT:
-        templateURL = 'file://' + os.path.join(settings.BASEDIR, templateURL[1:])
         wgt_file = WgtFile(StringIO(download_http_content(templateURL)))
         template_content = wgt_file.get_template()
     else:
