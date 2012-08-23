@@ -20,7 +20,8 @@
 
 import urllib2
 from urllib2 import HTTPError
-from urlparse import urljoin
+from urllib import urlencode
+from urlparse import urljoin, urlparse
 
 from marketAdaptor.usdlParser import USDLParser
 from lxml import etree
@@ -38,19 +39,60 @@ SEARCH_STORE_XPATH = 'store'
 class MarketAdaptor(object):
 
     _marketplace_uri = None
+    _session_id = None
 
     def __init__(self, marketplace_uri):
         self._marketplace_uri = marketplace_uri
 
-    def get_all_stores(self):
+    def authenticate(self, user='fdelavega', passwd='fran'):
 
         opener = urllib2.build_opener()
-        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/stores/"))
+
+        # submit field is required
+        credentials = urlencode({'j_username': user, 'j_password': passwd, 'submit': 'Submit'})
+        headers = {'content-type': 'application/x-www-form-urlencoded'}
+        request = MethodRequest("POST", urljoin(self._marketplace_uri, "/FiwareMarketplace/j_spring_security_check"), credentials, headers)
+
+        parsed_url = None
+        try:
+            response = opener.open(request)
+            parsed_url = urlparse(response.url)
+
+        except HTTPError, e:
+            # Marketplace can return an error code but authenticate
+            parsed_url = urlparse(e.url)
+
+        if parsed_url[4] != 'login_error' and parsed_url[3][:10] == 'jsessionid':
+            # parsed_url[3] params field, contains jsessionid
+            self._session_id = parsed_url[3][11:]
+        else:
+            raise Exception('Marketplace login error')
+
+    def get_all_stores(self):
+
+        if self._session_id == None:
+            self.authenticate()
+
+        opener = urllib2.build_opener()
+        session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
+        headers = {'Cookie': session_cookie}
+
+        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/stores/"), '', headers)
         try:
             response = opener.open(request)
         except HTTPError, e:
             if (e.code == 404):
                 return []
+
+        # Marketplace redirects to a login page (sprint_security_login) if
+        # the session expires
+        parsed_url = urlparse(response.url)
+        path = parsed_url[2].split('/')
+
+        if len(path) > 2 and path[2] == 'spring_security_login':
+            # Session has expired
+            self._session_id = None
+            return self.get_all_stores()
 
         if response.code != 200:
             raise HTTPError(response.url, response.code, response.msg, None, None)
@@ -71,12 +113,32 @@ class MarketAdaptor(object):
         return result
 
     def get_store_info(self, store):
+
+        if self._session_id == None:
+            self.authenticate()
+
         opener = urllib2.build_opener()
-        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + store))
-        response = opener.open(request)
+        session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
+        headers = {'Cookie': session_cookie}
+
+        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/offering/store/" + store), '', headers)
+        try:
+            response = opener.open(request)
+        except HTTPError, e:
+            raise HTTPError(e.url, e.code, e.msg, None, None)
 
         if response.code != 200:
             raise HTTPError(response.url, response.code, response.msg, None, None)
+
+        # Marketplace redirects to a login page (sprint_security_login) if
+        # the session expires
+        parsed_url = urlparse(response.url)
+        path = parsed_url[2].split('/')
+
+        if len(path) > 2 and path[2] == 'spring_security_login':
+            # Session has expired
+            self._session_id = None
+            return self.get_store_info()
 
         body = response.read()
         parsed_body = etree.fromstring(body)
@@ -89,12 +151,29 @@ class MarketAdaptor(object):
         return result
 
     def add_store(self, store_info):
+
+        if self._session_id == None:
+            self.authenticate()
+
         params = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><resource name="' + store_info['store_name'] + '" ><url>' + store_info['store_uri'] + '</url></resource>'
-        headers = {'content-type': 'application/xml'}
+        session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
+        headers = {'content-type': 'application/xml', 'Cookie': session_cookie}
 
         opener = urllib2.build_opener()
         request = MethodRequest("PUT", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/"), params, headers)
-        response = opener.open(request)
+        try:
+            response = opener.open(request)
+        except HTTPError, e:
+            # Marketplace redirects to a login page (sprint_security_login) if
+            # the session expires. In addition, python don't follow
+            # redirections when issuing DELETE requests, so we have to check for
+            # a 302 startus code
+            if e.code == 302:
+                self._session_id = None
+                self.add_store(store_info)
+                return
+            else:
+                raise HTTPError(e.url, e.code, e.msg, None, None)
 
         if response.code != 201:
             raise HTTPError(response.url, response.code, response.msg, None, None)
@@ -103,18 +182,58 @@ class MarketAdaptor(object):
         pass
 
     def delete_store(self, store):
+
+        if self._session_id == None:
+            self.authenticate()
+
         opener = urllib2.build_opener()
-        request = MethodRequest("DELETE", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + store))
-        response = opener.open(request)
+        session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
+        headers = {'content-type': 'application/xml', 'Cookie': session_cookie}
+
+        request = MethodRequest("DELETE", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + store), '', headers)
+
+        try:
+            response = opener.open(request)
+        except HTTPError, e:
+            # Marketplace redirects to a login page (sprint_security_login) if
+            # the session expires. In addition, python don't follow
+            # redirections when issuing DELETE requests, so we have to check for
+            # a 302 startus code
+            if e.code == 302:
+                self._session_id = None
+                self.delete_store(store)
+                return
+            else:
+                raise HTTPError(e.url, e.code, e.msg, None, None)
 
         if response.code != 200:
             raise HTTPError(response.url, response.code, response.msg, None, None)
 
     def get_all_services_from_store(self, store):
-        #import ipdb; ipdb.set_trace()
+
+        if self._session_id == None:
+            self.authenticate()
+
         opener = urllib2.build_opener()
-        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + store + "/services"))
-        response = opener.open(request)
+        session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
+        headers = {'Cookie': session_cookie}
+
+        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/offering/store/" + store + "/offerings"), '', headers)
+
+        try:
+            response = opener.open(request)
+        except HTTPError, e:
+            raise HTTPError(e.url, e.code, e.msg, None, None)
+
+        # Marketplace redirects to a login page (sprint_security_login) if
+        # the session expires
+        parsed_url = urlparse(response.url)
+        path = parsed_url[2].split('/')
+
+        if len(path) > 2 and path[2] == 'spring_security_login':
+            # Session has expired
+            self._session_id = None
+            return self.get_all_services_from_store(store)
 
         if response.code != 200:
             raise HTTPError(response.url, response.code, response.msg, None, None)
@@ -154,12 +273,28 @@ class MarketAdaptor(object):
 
     def add_service(self, store, service_info):
 
+        if self._session_id == None:
+            self.authenticate()
+
         params = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><resource name="' + service_info['name'] + '" ><url>' + service_info['url'] + '</url></resource>'
-        headers = {'content-type': 'application/xml'}
+        session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
+        headers = {'content-type': 'application/xml', 'Cookie': session_cookie}
 
         opener = urllib2.build_opener()
-        request = MethodRequest("PUT", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + store + "/service"), params, headers)
-        response = opener.open(request)
+        request = MethodRequest("PUT", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/offering/store/" + store + "/offering"), params, headers)
+        try:
+            response = opener.open(request)
+        except HTTPError, e:
+            # Marketplace redirects to a login page (sprint_security_login) if
+            # the session expires. In addition, python don't follow
+            # redirections when issuing PUT requests, so we have to check for
+            # a 302 startus code
+            if e.code == 302:
+                self._session_id = None
+                self.add_service(store, service_info)
+                return
+            else:
+                raise HTTPError(e.url, e.code, e.msg, None, None)
 
         if response.code != 201:
             raise HTTPError(response.url, response.code, response.msg, None, None)
@@ -169,18 +304,57 @@ class MarketAdaptor(object):
 
     def delete_service(self, store, service):
 
+        if self._session_id == None:
+            self.authenticate()
+
         opener = urllib2.build_opener()
-        request = MethodRequest("DELETE", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + store + "/service/" + service))
-        response = opener.open(request)
+        session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
+        headers = {'Cookie': session_cookie}
+
+        request = MethodRequest("DELETE", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/offering/store/" + store + "/offering/" + service), '', headers)
+
+        try:
+            response = opener.open(request)
+        except HTTPError, e:
+            # Marketplace redirects to a login page (sprint_security_login) if
+            # the session expires. In addition, python don't follow
+            # redirections when issuing DELETE requests, so we have to check for
+            # a 302 startus code
+            if e.code == 302:
+                self._session_id = None
+                self.delete_service(store, service)
+                return
+            else:
+                raise HTTPError(e.url, e.code, e.msg, None, None)
 
         if response.code != 200:
             raise HTTPError(response.url, response.code, response.msg, None, None)
 
     def full_text_search(self, store, search_string):
 
+        if self._session_id == None:
+            self.authenticate()
+
         opener = urllib2.build_opener()
-        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/search/fulltext/" + search_string))
-        response = opener.open(request)
+        session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
+        headers = {'Cookie': session_cookie}
+
+        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/search/offerings/fulltext/" + search_string), '', headers)
+
+        try:
+            response = opener.open(request)
+        except HTTPError, e:
+            raise HTTPError(e.url, e.code, e.msg, None, None)
+
+        # Marketplace redirects to a login page (sprint_security_login) if
+        # the session expires
+        parsed_url = urlparse(response.url)
+        path = parsed_url[2].split('/')
+
+        if len(path) > 2 and path[2] == 'spring_security_login':
+            # Session has expired
+            self._session_id = None
+            return self.full_text_search(store, search_string)
 
         if response.code != 200:
             raise HTTPError(response.url, response.code, response.msg, None, None)
