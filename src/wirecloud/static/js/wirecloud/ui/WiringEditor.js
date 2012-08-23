@@ -238,7 +238,7 @@ if (!Wirecloud.ui) {
             if (iwidget.getId() in WiringStatus.views[0].iwidgets) {
                 miniwidget_interface.disable();
                 widget_interface = this.addIWidget(this, iwidget);
-                widget_interface.setPosition(WiringStatus.views[0].iwidgets[iwidget.getId()]);
+                widget_interface.setPosition(WiringStatus.views[0].iwidgets[iwidget.getId()].widget);
             }
         }
 
@@ -262,7 +262,7 @@ if (!Wirecloud.ui) {
 
             operator_interface = this.addIOperator(operator_instance);
             if (key in WiringStatus.views[0].operators) {
-                operator_interface.setPosition(WiringStatus.views[0].operators[key]);
+                operator_interface.setPosition(WiringStatus.views[0].operators[key].widget);
             }
             if (key >= this.nextOperatorId) {
                 this.nextOperatorId = parseInt(key, 10) + 1;
@@ -363,7 +363,7 @@ if (!Wirecloud.ui) {
      * Saves the wiring state.
      */
     WiringEditor.prototype.serialize = function serialize() {
-        var pos, i, key, widget, arrow, operator_interface, WiringStatus, multiconnector, height;
+        var pos, i, key, widget, arrow, operator_interface, WiringStatus, multiconnector, height, inOutPos, positions;
 
         // positions
         WiringStatus = {
@@ -387,14 +387,18 @@ if (!Wirecloud.ui) {
         for (key in this.iwidgets) {
             widget = this.iwidgets[key];
             pos = widget.getStylePosition();
-            WiringStatus.views[0].iwidgets[key] = pos;
+            inOutPos = widget.getInOutPositions();
+            positions = {'widget' : pos, 'inOuts' : inOutPos};
+            WiringStatus.views[0].iwidgets[key] = positions;
         }
 
         for (key in this.ioperators) {
             operator_interface = this.ioperators[key];
             pos = operator_interface.getStylePosition();
+            inOutPos = widget.getInOutPositions();
+            positions = {'widget' : pos, 'inOuts' : inOutPos};
             WiringStatus.operators[key] = {"name" : operator_interface.getIOperator().meta.uri, 'id' : key};
-            WiringStatus.views[0].operators[key] = pos;
+            WiringStatus.views[0].operators[key] = positions;
         }
 
         for (key in this.multiconnectors) {

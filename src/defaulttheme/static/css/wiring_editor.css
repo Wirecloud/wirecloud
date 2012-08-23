@@ -39,15 +39,29 @@
 }
 
 .wiring_editor .ioperator {
+    -webkit-transition: background 500ms ease-in 250ms;
+    -moz-transition: background 500ms ease-in 250ms;
+    -o-transition: background 500ms ease-in 250ms;
     background: -webkit-linear-gradient(white, rgba(206,220,180,0.8));
     background: -moz-linear-gradient(white, rgba(206,220,180,0.8));
     background: -o-linear-gradient(white, rgba(206,220,180,0.8));
 }
 
 .wiring_editor .iwidget {
+    -webkit-transition: background 500ms ease-in 250ms;
+    -moz-transition: background 500ms ease-in 250ms;
+    -o-transition: background 500ms ease-in 250ms;
     background: -webkit-linear-gradient(white, rgba(206,220,231,0.8));
     background: -moz-linear-gradient(white, rgba(206,220,231,0.8));
     background: -o-linear-gradient(white, rgba(206,220,231,0.8));
+}
+
+.wiring_editor .ioperator.editing {
+    background: rgba(206,220,180,0.8);
+}
+
+.wiring_editor .iwidget.editing {
+    background: rgba(206,220,231,0.8);
 }
 
 .wiring_editor .ioperator, .wiring_editor .iwidget {
@@ -59,6 +73,10 @@
     box-shadow: 4px 4px 4px gray;
     font-family: "Courier New", courier;
     pointer-events: auto;
+}
+
+.wiring_editor .ioperator.editing .header, .wiring_editor .iwidget.editing .header {
+    cursor: default;
 }
 
 .wiring_editor .ioperator .header, .wiring_editor .iwidget .header {
@@ -73,13 +91,24 @@
     cursor: move;
 }
 
-.wiring_editor .grid .ioperator .header span, .wiring_editor .grid .iwidget .header span {
-    padding-left: 1em;
-}
-
 .wiring_editor .grid .header .closebutton {
     top: -0.9em;
     float: right;
+}
+
+.wiring_editor .grid .sources .closebutton {
+    top: 14px;
+    right: 12px;
+}
+
+/*edit targets and sources positions*/
+.wiring_editor .grid .header .editPos_button {
+    float: left;
+    background-image: url(../images/icons-sprite.png);
+    background-position: -49px -337px;
+    top: -10px;
+    width: 16px;
+    height: 16px;
 }
 
 .wiring_editor .grid .generalHighlight_button {
@@ -137,9 +166,31 @@
 
 .wiring_editor .sources > div, .wiring_editor .targets > div {
     border-radius: 15px;
-    -webkit-transition: background-color 500ms ease-in 250ms, color 750ms ease-out;
-    -moz-transition: background-color 500ms ease-in 250ms, color 750ms ease-out;
-    -o-transition: background-color 500ms ease-in 250ms, color 750ms ease-out;
+    -webkit-transition: background-color 500ms ease-in 250ms, color 750ms ease-out, box-shadow 500ms ease-in 250ms;
+    -moz-transition: background-color 500ms ease-in 250ms, color 750ms ease-out, box-shadow 500ms ease-in 250ms;
+    -o-transition: background-color 500ms ease-in 250ms, color 750ms ease-out, box-shadow 500ms ease-in 250ms;
+}
+
+.wiring_editor .sources.editing > div {
+    background: rgba(0, 168, 151, 0.4);
+    color: black;
+    cursor: move;
+}
+
+.wiring_editor .targets.editing > div.highlight_main {
+    box-shadow: inset 0 0 10px hsla(20, 100%, 50%, 0.5);
+    color: #FF5500;
+}
+
+.wiring_editor .sources.editing > div.highlight_main {
+    box-shadow: inset 0 0 10px hsla(240, 94%, 50%, 0.5);
+    color: blue;
+}
+
+.wiring_editor .targets.editing > div {
+    background: rgba(255, 151, 82, 0.4);
+    color: black;
+    cursor: move;
 }
 
 .wiring_editor .sources > div {
@@ -152,6 +203,24 @@
     padding-right: 10px;
     margin-top: 2px;
 	margin-bottom: 2px;
+}
+
+.wiring_editor .sources > div.moving {
+    box-shadow: inset 0 0 10px hsla(240, 94%, 50%, 0.5);
+    color: blue;
+}
+
+.wiring_editor .targets > div.moving {
+    box-shadow: inset 0 0 10px hsla(20, 100%, 50%, 0.5);
+    color: #FF5500;;
+}
+
+.wiring_editor .sources > div.moving.highlight_main{
+    color: blue;
+}
+
+.wiring_editor .targets > div.moving.highlight_main{
+    color: #FF5500;;
 }
 
 .wiring_editor .sources  div div {
@@ -174,12 +243,58 @@
     padding-top: 4px;
 }
 
+/* clone slots */
+.wiring_editor .border_layout .source_clon {
+    position: absolute;
+    margin-top: 2px;
+    background: rgba(0, 168, 151, 0.6);
+    color: blue;
+	border-radius: 15px;
+    opacity: 0.5;
+    cursor: move;
+}
+
+.wiring_editor .border_layout .target_clon {
+    position: absolute;
+    margin-top: 2px;
+    background: rgba(255, 151, 82, 0.6);
+    color: #FF5500;
+    border-radius: 15px;
+    opacity: 0.5;
+    cursor: move;
+}
+
+.wiring_editor .border_layout .source_clon .labelDiv{
+    display: inline-block;
+    float: right;
+    margin-right: 14px;
+    margin-top: 6px;
+}
+
+.wiring_editor .border_layout .target_clon .labelDiv{
+    display: inline-block;
+    float: left;
+    margin-left: 14px;
+    margin-top: 6px;
+}
+
+.wiring_editor .border_layout .target_clon .anchor, .wiring_editor .border_layout .source_clon .anchor, .wiring_editor .border_layout .target_clon .multiconnector_icon, .wiring_editor .border_layout .source_clon .multiconnector_icon {
+    display: none;
+}
+
+.wiring_editor .border_layout .ioperator.clon .header, .wiring_editor .border_layout .iwidget.clon .header {
+    padding-top: 4px;
+}
+
 /* SELECTED OBJECTS */
 .wiring_editor .grid .ioperator.selected {
     background-color: #DF7A62;
     z-index: 15;
     box-shadow: 0 0 20px #000000;
     background: rgb(206, 220, 180);
+    -webkit-transition: none;
+    -moz-transition: none;
+    -o-transition: none;
 }
 
  .wiring_editor .grid .iwidget.selected {
@@ -187,6 +302,9 @@
     z-index: 15;
     box-shadow: 0 0 20px #000000;
     background: rgb(206, 220, 231);
+    -webkit-transition: none;
+    -moz-transition: none;
+    -o-transition: none;
 }
 
 /*ANCHORS*/
@@ -203,6 +321,7 @@
 .wiring_editor .grid .anchor {
     cursor: pointer;
 }
+
 .wiring_editor .sources .anchor {
     background: url('../images/wiring/blue_ball.png');
     right: -1em;

@@ -41,6 +41,7 @@
 
         this.highlighted = true;
 
+        this.editingPos = false;
         this.targetAnchorsByName = {};
         this.sourceAnchorsByName = {};
         this.targetAnchors = [];
@@ -49,6 +50,8 @@
         this.tittle = tittle;
         this.className = className;
         this.initPos = {'x': 0, 'y': 0};
+        this.draggableSources = [];
+        this.draggableTargets = [];
 
         if (manager instanceof Wirecloud.ui.WiringEditor.ArrowCreator) {
             this.isMiniInterface = false;
@@ -98,6 +101,17 @@
                     this.highlight();
                 }
             }.bind(this));
+            // edit_position button, not for miniInterface
+            this.editPos_button = new StyledElements.StyledButton({
+                'title': gettext("edit_Pos"),
+                'class': 'editPos_button',
+                'plain': true
+            });
+            this.editPos_button.insertInto(this.header);
+            this.editPos_button.addEventListener('click', function () {
+                this.wiringEditor.resetSelection();
+                this.editPos();
+            }.bind(this));
         }
 
         //sources and targets for the widget
@@ -112,44 +126,7 @@
 
         //draggable
         if (!this.isMiniInterface) {
-            this.draggable = new Draggable(this.wrapperElement, {iObject: this},
-                function onStart(draggable, context) {
-                    var position;
-                    context.y = context.iObject.wrapperElement.style.top === "" ? 0 : parseInt(context.iObject.wrapperElement.style.top, 10);
-                    context.x = context.iObject.wrapperElement.style.left === "" ? 0 : parseInt(context.iObject.wrapperElement.style.left, 10);
-                    context.preselected = context.iObject.selected;
-                    context.iObject.select(true);
-                    context.iObject.wiringEditor.onStarDragSelected();
-                },
-                function onDrag(e, draggable, context, xDelta, yDelta) {
-                    context.iObject.setPosition({posX: context.x + xDelta, posY: context.y + yDelta});
-                    context.iObject.repaint();
-                    context.iObject.wiringEditor.onDragSelectedObjects(xDelta, yDelta);
-                },
-                function onFinish(draggable, context) {
-                    context.iObject.wiringEditor.onFinishSelectedObjects();
-                    var position = context.iObject.getStylePosition();
-                    if (position.posX < 0) {
-                        position.posX = 8;
-                    }
-                    if (position.posY < 0) {
-                        position.posY = 8;
-                    }
-                    context.iObject.setPosition(position);
-                    context.iObject.repaint();
-                    //pseudoClick
-                    if ((Math.abs(context.x - position.posX) < 2) && (Math.abs(context.y - position.posY) < 2)) {
-                        if (context.preselected) {
-                            context.iObject.unselect(true);
-                        }
-                    } else {
-                        if (!context.preselected) {
-                            context.iObject.unselect(true);
-                        }
-                    }
-                },
-                function () {return true; }
-            );
+            this.makeDraggable();
         } else { //miniInterface
             this.draggable = new Draggable(this.wrapperElement, {iObject: this},
                 function onStart(draggable, context) {
@@ -195,6 +172,134 @@
     /*************************************************************************
      * Public methods
      *************************************************************************/
+    /**
+     * Making Interface Draggable.
+     */
+    GenericInterface.prototype.makeDraggable = function makeDraggable() {
+        this.draggable = new Draggable(this.wrapperElement, {iObject: this},
+            function onStart(draggable, context) {
+                var position;
+                context.y = context.iObject.wrapperElement.style.top === "" ? 0 : parseInt(context.iObject.wrapperElement.style.top, 10);
+                context.x = context.iObject.wrapperElement.style.left === "" ? 0 : parseInt(context.iObject.wrapperElement.style.left, 10);
+                context.preselected = context.iObject.selected;
+                context.iObject.select(true);
+                context.iObject.wiringEditor.onStarDragSelected();
+            },
+            function onDrag(e, draggable, context, xDelta, yDelta) {
+                context.iObject.setPosition({posX: context.x + xDelta, posY: context.y + yDelta});
+                context.iObject.repaint();
+                context.iObject.wiringEditor.onDragSelectedObjects(xDelta, yDelta);
+            },
+            function onFinish(draggable, context) {
+                context.iObject.wiringEditor.onFinishSelectedObjects();
+                var position = context.iObject.getStylePosition();
+                if (position.posX < 0) {
+                    position.posX = 8;
+                }
+                if (position.posY < 0) {
+                    position.posY = 8;
+                }
+                context.iObject.setPosition(position);
+                context.iObject.repaint();
+                //pseudoClick
+                if ((Math.abs(context.x - position.posX) < 2) && (Math.abs(context.y - position.posY) < 2)) {
+                    if (context.preselected) {
+                        context.iObject.unselect(true);
+                    }
+                } else {
+                    if (!context.preselected) {
+                        context.iObject.unselect(true);
+                    }
+                }
+            },
+            function () {return true; }
+        );
+    };
+
+    /**
+     * Make draggable all sources and targets for sorting
+     */
+    GenericInterface.prototype.makeSlotsDraggable = function makeSlotsDraggable() {
+        var i;
+        for (i = 0; i < this.sourceDiv.childNodes.length; i ++) {
+            this.draggableSources[i] = {'wrapperElement': this.sourceDiv.childNodes[i]};
+            //this.draggableSources[i].wrapperElement.prototype = new StyledElements.Container({'extending': true});
+            this.makeSlotDraggable(this.draggableSources[i], this.wiringEditor.layout.center, 'source_clon');
+        }
+        for (i = 0; i < this.targetDiv.childNodes.length; i ++) {
+            this.draggableTargets[i] = {'wrapperElement': this.targetDiv.childNodes[i]};
+            //this.draggableTargets[i].wrapperElement.prototype = new StyledElements.Container({'extending': true});
+            this.makeSlotDraggable(this.draggableTargets[i], this.wiringEditor.layout.center, 'target_clon');
+        }
+    };
+
+    /**
+     * Make draggable a specific sources or targets for sorting
+     */
+    GenericInterface.prototype.makeSlotDraggable = function makeSlotDraggable(element, place, className) {
+        element.draggable = new Draggable(element.wrapperElement, {iObject: element, genInterface: this},
+            function onStart(draggable, context) {
+                    var clon, pos_miniwidget, menuWidth, headerHeight, childsN, childPos;
+
+                    //initial position
+                    pos_miniwidget = context.iObject.wrapperElement.getBoundingClientRect();
+                    menuWidth = document.getElementsByClassName('menubar')[0].getBoundingClientRect().width;
+                    headerHeight = document.getElementById('wirecloud_header').parentNode.getBoundingClientRect().height;
+                    context.y = pos_miniwidget.top - headerHeight;
+                    context.x = pos_miniwidget.left - menuWidth;
+                    //create clon
+                    context.iObject.wrapperElement.addClassName('moving');
+                    clon = context.iObject.wrapperElement.cloneNode(true);
+                    clon.addClassName(className);
+                    // put the clon in place
+                    place.wrapperElement.appendChild(clon);
+                    //set the clon position over the originar miniWidget
+                    clon.style.height = (pos_miniwidget.height) + 'px';
+                    clon.style.left = (context.x) + 'px';
+                    clon.style.top = (context.y) + 'px';
+                    clon.style.width = (pos_miniwidget.width) + 'px';
+                    //put the clon in the context.iObjectClon
+                    context.iObjectClon = clon;
+                    //put the reference height for change position
+                    context.refHeigth = context.iObject.wrapperElement.getBoundingClientRect().height + 2;
+                    context.refHeigthUp = context.refHeigth;
+                    context.refHeigthDown = context.refHeigth;
+                    childsN = context.iObject.wrapperElement.parentNode.childElementCount;
+                    childPos = context.iObject.wrapperElement.parentNode.childElements().indexOf(context.iObject.wrapperElement);
+                    context.maxUps = childPos;
+                    context.maxDowns = childsN - (childPos + 1);
+                },
+                function onDrag(e, draggable, context, xDelta, yDelta) {
+                    var top;
+
+                    context.iObjectClon.style.left = (context.x + xDelta) + 'px';
+                    context.iObjectClon.style.top = (context.y + yDelta) + 'px';
+
+                    top = parseInt(context.iObjectClon.style.top, 10);
+                    if (((context.y - top) > context.refHeigthUp) && (context.maxUps > 0)) {
+                        context.maxDowns += 1;
+                        context.maxUps -= 1;
+                        context.refHeigthUp += context.refHeigth;
+                        context.refHeigthDown -= context.refHeigth;
+                        context.genInterface.up(context.iObject.wrapperElement);
+                    } else if (((top - context.y) > context.refHeigthDown) && (context.maxDowns > 0)) {
+                        context.maxUps += 1;
+                        context.maxDowns -= 1;
+                        context.refHeigthDown += context.refHeigth;
+                        context.refHeigthUp -= context.refHeigth;
+                        context.genInterface.down(context.iObject.wrapperElement);
+                    }
+                },
+                function onFinish(draggable, context, e) {
+                    context.iObject.wrapperElement.removeClassName('moving');
+                    if (context.iObjectClon.parentNode) {
+                        context.iObjectClon.parentNode.removeChild(context.iObjectClon);
+                    }
+                    context.iObjectClon = null;
+                },
+                function () {return true; }
+        );
+    };
 
     /**
      * get the GenericInterface position.
@@ -532,6 +637,10 @@
     GenericInterface.prototype.destroy = function destroy() {
         var i, j, arrows, className;
 
+        this.unselect();
+        if (this.editingPos === true) {
+            this.disableEdit();
+        }
         StyledElements.Container.prototype.destroy.call(this);
 
         for (i = 0; i < this.sourceAnchors.length; i += 1) {
@@ -567,6 +676,85 @@
         }
         this.draggable.destroy();
         this.draggable = null;
+    };
+
+    /**
+     * edit source and targets positions
+     */
+    GenericInterface.prototype.editPos = function editPos() {
+        if (this.targetAnchors.length == this.sourceAnchors.length == 1) {
+            return;
+        }
+        if (this.editingPos === true) {
+            this.disableEdit();
+        } else {
+            this.enableEdit();
+        }
+        this.repaint();
+    };
+
+    /**
+     * enable poditions editor
+     */
+    GenericInterface.prototype.enableEdit = function enableEdit() {
+        this.draggable.destroy();
+        this.editingPos = true;
+        this.sourceDiv.addClassName("editing");
+        this.targetDiv.addClassName("editing");
+        this.addClassName("editing");
+        this.makeSlotsDraggable();
+    };
+
+    /**
+     * disable poditions editor
+     */
+    GenericInterface.prototype.disableEdit = function disableEdit() {
+        var i;
+
+        this.makeDraggable();
+        this.editingPos = false;
+        this.sourceDiv.removeClassName("editing");
+        this.targetDiv.removeClassName("editing");
+        this.removeClassName("editing");
+        for (i = 0; i < this.draggableSources.length; i ++) {
+            this.draggableSources[i].draggable.destroy();
+        }
+        for (i = 0; i < this.draggableTargets.length; i ++) {
+            this.draggableTargets[i].draggable.destroy();
+        }
+        this.draggableSources = this.draggableTargets = [];
+    };
+
+    /**
+     * Move an endpoint up 1 position.
+     */
+    GenericInterface.prototype.up = function up(element) {
+        if (element.hasClassName('lastElement')) {
+            element.removeClassName('lastElement');
+            element.previousElementSibling.addClassName('lastElement');
+        } else if (element.previousElementSibling.hasClassName('firstElement')) {
+            element.previousElementSibling.removeClassName('firstElement');
+            element.addClassName('firstElement');
+        }
+        element.parentNode.insertBefore(element, element.previousElementSibling);
+        this.repaint();
+    };
+
+    /**
+     * Move an endpoint down 1 position.
+     */
+    GenericInterface.prototype.down = function down(element) {
+        if (element.nextElementSibling !== null) {
+            if (element.hasClassName('firstElement')) {
+                element.removeClassName('firstElement');
+                element.nextElementSibling.addClassName('firstElement');
+            } else if (element.nextElementSibling.hasClassName('lastElement')) {
+                element.nextElementSibling.removeClassName('lastElement');
+                element.addClassName('lastElement');
+            }
+            element.parentNode.insertBefore(element, element.nextElementSibling.nextElementSibling);
+            this.repaint();
+        }
     };
 
     /*************************************************************************
