@@ -739,12 +739,8 @@ function WorkSpace (workSpaceState) {
     /**
      * Checks when an action, defined by a basic policy, can be performed.
      */
-    WorkSpace.prototype._isAllowed = function (action) {
-        if (EzSteroidsAPI.is_activated()) {
-            return EzSteroidsAPI.evaluePolicy(action);
-        } else {
-            return true;
-        }
+    WorkSpace.prototype._isAllowed = function _isAllowed(action) {
+        return Wirecloud.PolicyManager.evaluate('workspace', action);
     };
 
     /**
