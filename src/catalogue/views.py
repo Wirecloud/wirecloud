@@ -30,6 +30,7 @@
 #
 
 import os
+from cStringIO import StringIO
 from xml.sax import make_parser
 from xml.sax.xmlreader import InputSource
 
@@ -322,11 +323,6 @@ class ResourceTagCollection(Resource):
         parser.setContentHandler(handler)
 
         # Parse the input
-        try:
-            from cStringIO import StringIO  # pyflakes:ignore
-        except ImportError:
-            from StringIO import StringIO  # pyflakes:ignore
-
         inpsrc = InputSource()
         inpsrc.setByteStream(StringIO(tags_xml))
         parser.parse(inpsrc)
