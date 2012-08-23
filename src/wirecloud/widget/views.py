@@ -100,26 +100,23 @@ def deleteGadget(user, short_name, vendor, version):
 
     result = {'removedIGadgets': []}
 
-    # Remove all igadget that matches this Gadget Resource
     try:
 
-        gadget = Gadget.objects.get(name=short_name, vendor=vendor, version=version)
-        igadgets = IGadget.objects.filter(gadget=gadget)
-        for igadget in igadgets:
-            result['removedIGadgets'].append(igadget.id)
-            deleteIGadget(igadget, user)
+        widget = Gadget.objects.get(name=short_name, vendor=vendor, version=version)
 
-        gadget.delete()
+        # Remove all igadget that matches this Gadget Resource
+        iwidgets = IGadget.objects.filter(gadget=widget)
+        for iwidget in iwidgets:
+            result['removedIGadgets'].append(iwidget.id)
+            deleteIGadget(iwidget, user)
+
+        if widget.xhtml is not None:
+            widget.xhtml.delete()
+
+        widget.delete()
         showcase_utils.wgt_deployer.undeploy(vendor, short_name, version)
 
     except Gadget.DoesNotExist:
-        pass
-
-    try:
-        uri = "/gadgets/" + vendor + '/' + short_name + '/' + version + '/xhtml'
-        xhtml = XHTML.objects.get(uri=uri)
-        xhtml.delete()
-    except XHTML.DoesNotExist:
         pass
 
     return result
