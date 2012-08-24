@@ -59,7 +59,7 @@ from wirecloud.widget.utils import get_or_create_gadget, create_gadget_from_temp
 from wirecloud.workspace.utils import create_published_workspace_from_template
 
 
-def parseAndCreateGadget(request, user, workspaceId):
+def parseAndCreateGadget(request, user, workspaceId, fromWGT):
     try:
 
         templateURL = None
@@ -77,7 +77,6 @@ def parseAndCreateGadget(request, user, workspaceId):
             raise Exception(msg)
 
         #get or create the Gadget
-        fromWGT = not templateURL.startswith('http') and not templateURL.startswith('https')
         return get_or_create_gadget(templateURL, user, workspaceId, request, fromWGT)
 
     except TemplateParseException, e:
@@ -141,10 +140,8 @@ class GadgetCollection(Resource):
             json = json_encode({"message": msg, "result": "error"})
             return HttpResponseServerError(json, mimetype='application/json; charset=UTF-8')
 
-        user = user_authentication(request, user_name)
-
         #create the gadget
-        gadget = parseAndCreateGadget(request, user, request.POST['workspaceId'])
+        gadget = parseAndCreateGadget(request, request.user, request.POST['workspaceId'], request.POST.get('packaged', False))
 
         return HttpResponse(json_encode(get_gadget_data(gadget)), mimetype='application/json; charset=UTF-8')
 
