@@ -1,195 +1,539 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Wirecloud Gadget Template -->
+<!-- Wirecloud Widget Template -->
 <!-- Version: 1.0 -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://morfeo-project.org/2007/Template">
   <xs:element name="Template">
     <xs:complexType>
-      <xs:sequence>
-        <xs:element ref="Catalog.ResourceDescription"/>
-        <xs:element ref="Platform.Preferences"/>
-        <xs:element ref="Platform.StateProperties"/>
-        <xs:element ref="Platform.Wiring"/>
-        <xs:element ref="Platform.Link"/>
-        <xs:element ref="Platform.Rendering"/>
-        <xs:element ref="Platform.Context"/>
-      </xs:sequence>
-      <xs:attribute name="schemaLocation" use="required">
-        <xs:simpleType>
-          <xs:restriction base="xs:anyURI">
-            <xs:enumeration value="http://morfeo-project.org/2007/Template"/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:attribute>
+      <xs:all>
+        <xs:element name="Catalog.ResourceDescription"
+          minOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Vendor">
+                <xs:annotation>
+                  <xs:documentation>
+                    The distributor of the widget.
+                    It cannot contain the "/"
+                    character.
+                  </xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:pattern value="[^/]+"></xs:pattern>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="Name">
+                <xs:annotation>
+                  <xs:documentation>
+                    Name of the widget. It cannot
+                    contain the "/" character.
+                  </xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:pattern value="[^/]+"></xs:pattern>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="Version">
+                <xs:annotation>
+                  <xs:documentation>
+                    Current version of the widget.
+                    It must define starting
+                    sequences of numbers separated
+                    by dots. Moreover, zeros can
+                    only be used alone (e.g. 0.1 is
+                    valid but 03.2 is not).
+                  </xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                  <xs:restriction base="xs:string" />
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="DisplayName" minOccurs="0"
+                maxOccurs="1">
+                <xs:annotation>
+                  <xs:documentation>
+                    Name used in the user interface
+                    for the widget. This field can
+                    be translated, therefore this
+                    field is not used to uniquely
+                    identify the widget.
+                  </xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                  <xs:restriction base="xs:string"></xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="Author" type="xs:string">
+                <xs:annotation>
+                  <xs:documentation>
+                    Developer of the widget.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="Mail" type="xs:string">
+                <xs:annotation>
+                  <xs:documentation>
+                    E-mail address to get in touch
+                    with the developer(s).
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="Description" type="xs:string">
+                <xs:annotation>
+                  <xs:documentation>
+                    A brief textual description of
+                    the widget.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="ImageURI" type="xs:anyURI">
+                <xs:annotation>
+                  <xs:documentation>
+                    Absolute or template-relative
+                    URL of the widget image for the
+                    catalog.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="iPhoneImageURI" type="xs:anyURI">
+                <xs:annotation>
+                  <xs:documentation>
+                    Image to be used in iPhone and
+                    other smartphones.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="WikiURI" type="xs:anyURI">
+                <xs:annotation>
+                  <xs:documentation>
+                    Absolute or template-relative
+                    URL of the widget documentation.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="Require" minOccurs="0"
+                maxOccurs="unbounded">
+                <xs:complexType>
+
+                  <xs:attribute name="feature" use="required">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string">
+                        <xs:pattern value=".+">
+                        </xs:pattern>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="version" type="xs:string">
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Platform.Preferences" minOccurs="0"
+          maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              The user preferences, which may be changed
+              through the platform interface.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="Preference">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Option" minOccurs="0"
+                      maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:attribute name="name" type="xs:string"
+                          use="required">
+                          <xs:annotation>
+                            <xs:documentation>
+                              Text to display in the selection list.
+                            </xs:documentation>
+                          </xs:annotation>
+                        </xs:attribute>
+                        <xs:attribute name="value" type="xs:string"
+                          use="required">
+                          <xs:annotation>
+                            <xs:documentation>
+                              The value used when the option is
+                              selected.
+                            </xs:documentation>
+                          </xs:annotation>
+                        </xs:attribute>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="type" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Data type used by the preference: text (string),
+                        number, boolean, password and list.
+                      </xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string">
+                        <xs:enumeration value="text"></xs:enumeration>
+                        <xs:enumeration value="number"></xs:enumeration>
+                        <xs:enumeration value="boolean">
+                        </xs:enumeration>
+                        <xs:enumeration value="password">
+                        </xs:enumeration>
+                        <xs:enumeration value="list"></xs:enumeration>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="name" use="required"
+                    type="xs:string">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Name that will be used to identify this
+                        preference. This field cannot be translated.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="label" use="required"
+                    type="xs:string">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Text that will be used to reference this
+                        preference in the user interface. This field can
+                        be translated.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="description" type="xs:string">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Descriptive text.
+                      </xs:documentation></xs:annotation></xs:attribute>
+                  <xs:attribute name="default" type="xs:string"
+                    use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Default value.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Platform.StateProperties"
+          minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:all>
+              <xs:element name="Property">
+                <xs:complexType>
+                  <xs:attribute name="type" use="required">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string" />
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="name" use="required">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string" />
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="label" use="required">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string" />
+                    </xs:simpleType>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:all>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Platform.Wiring" minOccurs="0"
+          maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              List of Input/Output endpoints widget will
+              use to communicate with other widgets
+              through the wiring.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="Event">
+                <xs:annotation>
+                  <xs:documentation>
+                    Output Endpoint
+                  </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:attribute name="type" use="required">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string" />
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="name" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Name that will be used
+                        to identify this output
+                        endpoint. This field
+                        cannot be translated.
+                      </xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string" />
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="label" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Text that will be used
+                        to reference this output
+                        endpoint in the user
+                        interface. This field
+                        can be translated.
+                      </xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string" />
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="description" use="required">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string" />
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="friendcode" use="required">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string" />
+                    </xs:simpleType>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="Slot">
+                <xs:complexType>
+                  <xs:attribute name="type" use="required">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string" />
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="name" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Name that will be used
+                        to identify this input
+                        endpoint. This field
+                        cannot be translated.
+                      </xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string" />
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="label" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Text that will be used
+                        to reference this input
+                        endpoint in the user
+                        interface. This field
+                        can be translated.
+                      </xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string" />
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="action_label">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Short text describing what is going to happen if an event is sent to this input endpoint. Other widgets will use this text in buttons, selection boxes, etc... allowing end users to select what to do (and the widget will send a event to the associated target endpoint).</xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string" />
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="description" use="required">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string" />
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="friendcode" use="required">
+                    <xs:annotation>
+                      <xs:documentation>Keyword used to tag the input endpoint, so it can be easily suggested valid conection during the wiring process.</xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string" />
+                    </xs:simpleType>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Platform.Link" minOccurs="1"
+          maxOccurs="1">
+          <xs:complexType>
+            <xs:all>
+              <xs:element minOccurs="1" maxOccurs="1" name="XHTML">
+                <xs:complexType>
+                  <xs:attribute name="href" type="xs:anyURI"
+                    use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Absolute or
+                        template-relative URL of
+                        widget code.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="contenttype" type="xs:string">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Content type of the
+                        linked resource.
+                        Suggested values are:
+                        text/html and
+                        application/xml+xhtml.
+                        Optional attribute,
+                        'text/html' by default.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="cacheable" type="xs:boolean">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Whether this code can be
+                        cached by the platform.
+                        Possible values are
+                        "true" and "false".
+                        Optional attribute,
+                        "true" by default.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:all>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Platform.Rendering" minOccurs="1"
+          maxOccurs="1">
+          <xs:complexType>
+            <xs:attribute name="width" use="required">
+              <xs:simpleType>
+                <xs:restriction base="xs:byte" />
+              </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="height" use="required">
+              <xs:simpleType>
+                <xs:restriction base="xs:byte" />
+              </xs:simpleType>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Platform.Context" minOccurs="0"
+          maxOccurs="1">
+          <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="Context">
+                <xs:annotation>
+                  <xs:documentation></xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:attribute name="name" type="xs:string">
+                    <xs:simpleType>
+                      <xs:annotation>
+                        <xs:documentation>
+                          Name to use to
+                          reference to the
+                          associated concept
+                          when using the old
+                          javascript API. Only
+                          needed when using
+                          the old javascript
+                          API.
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="type" type="xs:string">
+                  </xs:attribute>
+                  <xs:attribute name="concept" type="xs:string" use="required">
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="GadgetContext">
+                <xs:complexType>
+                  <xs:attribute name="name" type="xs:string">
+                    <xs:simpleType>
+                      <xs:annotation>
+                        <xs:documentation>
+                          Name to use to
+                          reference to the
+                          associated concept
+                          when using the old
+                          javascript API. Only
+                          needed when using
+                          the old javascript
+                          API.
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="type" type="xs:string">
+                  </xs:attribute>
+                  <xs:attribute name="concept" type="xs:string" use="required">
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Translations" minOccurs="0"
+          maxOccurs="1">
+          <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="Translation">
+                <xs:complexType>
+                  <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="msg">
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="xs:string">
+                            <xs:attribute name="name" use="required">
+                              <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                  <xs:pattern value=".+">
+                                  </xs:pattern>
+                                </xs:restriction>
+                              </xs:simpleType>
+                            </xs:attribute>
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:choice>
+                  <xs:attribute name="lang" use="required">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string">
+                        <xs:pattern value=".+">
+                        </xs:pattern>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:choice>
+            <xs:attribute name="default" type="xs:string" use="required">
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+      </xs:all>
     </xs:complexType>
-  </xs:element>
-  <xs:element name="iPhoneImageURI">
-    <xs:simpleType>
-      <xs:restriction base="xs:string"/>
-    </xs:simpleType>
-  </xs:element>
-  <xs:element name="XHTML">
-    <xs:complexType>
-      <xs:attribute name="href" type="xs:anyURI" use="required"/>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="WikiURI">
-    <xs:simpleType>
-      <xs:restriction base="xs:string"/>
-    </xs:simpleType>
-  </xs:element>
-  <xs:element name="Version">
-    <xs:simpleType>
-      <xs:restriction base="xs:string"/>
-    </xs:simpleType>
-  </xs:element>
-  <xs:element name="Vendor">
-    <xs:simpleType>
-      <xs:restriction base="xs:string"/>
-    </xs:simpleType>
-  </xs:element>
-  <xs:element name="Slot">
-    <xs:complexType>
-      <xs:attribute name="type" use="required">
-        <xs:simpleType>
-          <xs:restriction base="xs:string"/>
-        </xs:simpleType>
-      </xs:attribute>
-      <xs:attribute name="name" use="required">
-        <xs:simpleType>
-          <xs:restriction base="xs:string"/>
-        </xs:simpleType>
-      </xs:attribute>
-      <xs:attribute name="label" use="required">
-        <xs:simpleType>
-          <xs:restriction base="xs:string"/>
-        </xs:simpleType>
-      </xs:attribute>
-      <xs:attribute name="friendcode" use="required">
-        <xs:simpleType>
-          <xs:restriction base="xs:string"/>
-        </xs:simpleType>
-      </xs:attribute>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="Property">
-    <xs:complexType>
-      <xs:attribute name="type" use="required">
-        <xs:simpleType>
-          <xs:restriction base="xs:string"/>
-        </xs:simpleType>
-      </xs:attribute>
-      <xs:attribute name="name" use="required">
-        <xs:simpleType>
-          <xs:restriction base="xs:string"/>
-        </xs:simpleType>
-      </xs:attribute>
-      <xs:attribute name="label" use="required">
-        <xs:simpleType>
-          <xs:restriction base="xs:string"/>
-        </xs:simpleType>
-      </xs:attribute>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="Platform.Wiring">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element ref="Event" maxOccurs="unbounded"/>
-        <xs:element ref="Slot" maxOccurs="unbounded"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="Platform.StateProperties">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element ref="Property"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="Platform.Rendering">
-    <xs:complexType>
-      <xs:attribute name="width" use="required">
-        <xs:simpleType>
-          <xs:restriction base="xs:byte"/>
-        </xs:simpleType>
-      </xs:attribute>
-      <xs:attribute name="height" use="required">
-        <xs:simpleType>
-          <xs:restriction base="xs:byte"/>
-        </xs:simpleType>
-      </xs:attribute>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="Platform.Preferences" type="xs:string"/>
-  <xs:element name="Platform.Link">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element ref="XHTML"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="Platform.Context" type="xs:string"/>
-  <xs:element name="Name">
-    <xs:simpleType>
-      <xs:restriction base="xs:string"/>
-    </xs:simpleType>
-  </xs:element>
-  <xs:element name="Mail">
-    <xs:simpleType>
-      <xs:restriction base="xs:string"/>
-    </xs:simpleType>
-  </xs:element>
-  <xs:element name="ImageURI">
-    <xs:simpleType>
-      <xs:restriction base="xs:string"/>
-    </xs:simpleType>
-  </xs:element>
-  <xs:element name="Event">
-    <xs:complexType>
-      <xs:attribute name="type" use="required">
-        <xs:simpleType>
-          <xs:restriction base="xs:string"/>
-        </xs:simpleType>
-      </xs:attribute>
-      <xs:attribute name="name" use="required">
-        <xs:simpleType>
-          <xs:restriction base="xs:string"/>
-        </xs:simpleType>
-      </xs:attribute>
-      <xs:attribute name="label" use="required">
-        <xs:simpleType>
-          <xs:restriction base="xs:string"/>
-        </xs:simpleType>
-      </xs:attribute>
-      <xs:attribute name="friendcode" use="required">
-        <xs:simpleType>
-          <xs:restriction base="xs:string"/>
-        </xs:simpleType>
-      </xs:attribute>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="Description">
-    <xs:simpleType>
-      <xs:restriction base="xs:string"/>
-    </xs:simpleType>
-  </xs:element>
-  <xs:element name="Catalog.ResourceDescription">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element ref="Vendor"/>
-        <xs:element ref="Name"/>
-        <xs:element ref="Version"/>
-        <xs:element ref="Author"/>
-        <xs:element ref="Mail"/>
-        <xs:element ref="Description"/>
-        <xs:element ref="ImageURI"/>
-        <xs:element ref="iPhoneImageURI"/>
-        <xs:element ref="WikiURI"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="Author">
-    <xs:simpleType>
-      <xs:restriction base="xs:string"/>
-    </xs:simpleType>
   </xs:element>
 </xs:schema>

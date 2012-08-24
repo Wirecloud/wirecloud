@@ -17,18 +17,22 @@ Template is divided into two main sections:
       starting sequences of numbers separated by dots. Moreover, zeros can only be
       used alone (e.g. 0.1 is valid but 03.2 is not).
 
-      These tree fields (vendor, name and version) identify the widget, therefore
-      there can not be a repetition of such identifier in any collection of
-      wirecloud resources (widgets or mashups).
+      These tree fields (vendor, name and version) uniquely identify the
+      widget, therefore there can not be a repetition of such identifier in any
+      collection of wirecloud resources (including widgets, mashups, operators,
+      ...).
 
-    + **DisplayName**
+    + **DisplayName**. Name used in the user interface for the widget. This
+      field can be translated, therefore this field is not used to uniquely
+      identify the widget.
     + **Author**. Developer of the widget.
     + **Mail**. E-mail address to get in touch with the developer(s).
     + **Description**. A brief textual description of the widget.
     + **ImageURI**. Absolute or template-relative URL of the widget image for
       the catalog.
     + **iPhoneImageURI**. Image to be used in iPhone and other smartphones.
-    + **WikiURI**. Entry to a Wiki where to find a complete description of the widget
+    + **WikiURI**. Absolute or template-relative URL of the widget
+      documentation.
 
 2. **Integration Variables and Platform Elements**. The variables that uses the
    widget to interact with the environment, associating concepts with aspects are
@@ -75,27 +79,33 @@ Template is divided into two main sections:
     + **Platform.Wiring**. Defines the list of variables to communicate with
       other widgets. It may contain any number of these elements:
 
-        + **Event**. Events produced by a widget, which value will be received
-          by other widgets as slots. Must have the following attributes
-          mandatorily:
+        + **Event**. Widgets may send Events through an output endpoint. But
+          before they can use these output endpoints they must declare them
+          using the Event element. Event elements require the following
+          attributes:
 
-            + *name*. Name of the variable.
-            + *type*. Data type of the variable. So far only the type text
-              (string) is allowed.
+            + *name*. Name of the output endpoint.
+            + *type*. Data type used by the output endpoint. So far only the
+              type text (string) is allowed.
             + *label*. Label to be displayed in the user interface.
-            + *friendcode*. Keyword used to tag the event, so it can be easily
-              suggested valid conection during the wiring process.
+            + *friendcode*. Keyword used to tag the output endpoint, so it can
+              be easily suggested valid conection during the wiring process.
 
-        + **Slot**. Define the variable where widget receives the value of the
-          event which another widget has produced. Each slot must have the
-          following attributes:
+        + **Slot**. Define an input endpoint which is going to used by the
+          widget for receiving events from other widgets. Each input endpoint
+          must have the following attributes:
 
-            + *name*. Name of the variable.
-            + *type*. Data type of the variable. So far only the type text
-              (string) is allowed.
+            + *name*. Name of the input endpoint.
+            + *type*. Data type used bye the input endpoint. So far only the
+              type text (string) is allowed.
             + *label*. Label to be displayed in the user interface.
-            + *friendcode*. Keyword used to tag the slot, so it can be easily
-              suggested valid conection during the wiring process.
+            + *action_label*. Short text describing what is going to happen if
+              an event is sent to this input endpoint. Other widgets will use
+              this text in buttons, selection boxes, etc... allowing end users
+              to select what to do (and the widget will send a event to the
+              associated target endpoint).
+            + *friendcode*. Keyword used to tag the input endpoint, so it can be
+              easily suggested valid conection during the wiring process.
 
     + **Platform.Context**. Element in which variables of context are defined.
       These variables provide widgets with a context, which are managed by the
@@ -104,7 +114,7 @@ Template is divided into two main sections:
 
         + **Context**. Defines a context variable within platform scope (e.g.
           username, etc.).
-        + **GadgetContext**. Defines a context  variable within widget scope
+        + **GadgetContext**. Defines a context variable within widget scope
           (e.g. height, width, etc.).
 
       Both of them must have the following attributes:
@@ -128,7 +138,7 @@ Template is divided into two main sections:
               values are: text/html and application/xml+xhtml. Optional
               attribute, 'text/html' by default.
             + *cacheable*: Whether this code can be cached by the platform.
-              Possible values are "true" and "false". Optional attribute, "false"
+              Possible values are "true" and "false". Optional attribute, "true"
               by default.
 
     + **Platform.Rendering**. Contains information about how to show the widget.
