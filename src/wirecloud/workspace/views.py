@@ -45,7 +45,6 @@ from commons.logs import log
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.template import TemplateParser
-from commons.transaction import commit_on_http_success
 from commons.service import Service
 from commons.utils import get_xml_error, json_encode
 from packageCloner import PackageCloner
@@ -56,6 +55,7 @@ from wirecloud.workspace.mashupTemplateGenerator import build_rdf_template_from_
 from wirecloud.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from wirecloud.workspace.utils import deleteTab, createTab, create_published_workspace_from_template, getCategories, getCategoryId, get_workspace_list, setVisibleTab, set_variable_value
 from wirecloud.markets.utils import get_market_managers
+from wirecloudcommons.utils.transaction import commit_on_http_success
 
 
 def clone_original_variable_value(variable, creator, new_user):

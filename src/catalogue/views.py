@@ -66,9 +66,9 @@ from commons.http_utils import PUT_parameter, download_http_content
 from commons.logs import log
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
-from commons.transaction import commit_on_http_success
 from commons.user_utils import get_verified_certification_group
 from commons.utils import get_xml_error, json_encode
+from wirecloudcommons.utils.transaction import commit_on_http_success
 
 
 def serve_catalogue_media(request, vendor, name, version, file_path):
