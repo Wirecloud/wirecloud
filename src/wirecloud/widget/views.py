@@ -34,7 +34,7 @@ import os
 
 from django.conf import settings
 from django.core.cache import cache
-from django.db import transaction, IntegrityError
+from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseServerError, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.utils.encoding import smart_str
@@ -132,7 +132,7 @@ class GadgetCollection(Resource):
         data_list = [get_gadget_data(gadget) for gadget in gadgets]
         return HttpResponse(json_encode(data_list), mimetype='application/json; charset=UTF-8')
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     def create(self, request, user_name=None):
 
         if 'workspaceId' not in request.POST:

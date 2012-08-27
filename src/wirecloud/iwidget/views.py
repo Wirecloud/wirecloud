@@ -30,7 +30,6 @@
 
 #
 
-from django.db import transaction
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
@@ -46,6 +45,7 @@ from commons.utils import get_xml_error, json_encode
 from wirecloud.iwidget.utils import SaveIGadget, UpdateIGadget, UpgradeIGadget, deleteIGadget
 from wirecloud.models import Gadget, IGadget, Tab, UserWorkSpace, Variable, WorkSpace
 from wirecloud.widget.utils import get_or_add_gadget_from_catalogue, get_and_add_gadget
+from wirecloudcommons.utils.transaction import commit_on_http_success
 
 
 class IGadgetCollection(Resource):
@@ -63,7 +63,7 @@ class IGadgetCollection(Resource):
 
         return HttpResponse(json_encode(data_list), mimetype='application/json; charset=UTF-8')
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     def create(self, request, workspace_id, tab_id):
         user = get_user_authentication(request)
 
@@ -100,12 +100,11 @@ class IGadgetCollection(Resource):
 
             raise TracedServerError(e, {'workspace': workspace_id}, request, msg)
         except Exception, e:
-            transaction.rollback()
             msg = _("iGadget cannot be created: ") + unicode(e)
 
             raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     def update(self, request, workspace_id, tab_id):
         user = get_user_authentication(request)
 
@@ -133,7 +132,6 @@ class IGadgetCollection(Resource):
 
             raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
         except Exception, e:
-            transaction.rollback()
             msg = _("iGadgets cannot be updated: ") + unicode(e)
 
             raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
@@ -152,7 +150,7 @@ class IGadgetEntry(Resource):
 
         return HttpResponse(json_encode(igadget_data), mimetype='application/json; charset=UTF-8')
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     def update(self, request, workspace_id, tab_id, igadget_id):
         user = get_user_authentication(request)
 
@@ -172,12 +170,11 @@ class IGadgetEntry(Resource):
 
             raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
         except Exception, e:
-            transaction.rollback()
             msg = _("iGadgets cannot be updated: ") + unicode(e)
 
             raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     def delete(self, request, workspace_id, tab_id, iwidget_id):
         user = get_user_authentication(request)
 
@@ -191,7 +188,7 @@ class IGadgetEntry(Resource):
 
 class IGadgetVersion(Resource):
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     def update(self, request, workspace_id, tab_id, igadget_id):
         user = get_user_authentication(request)
 
@@ -233,7 +230,6 @@ class IGadgetVersion(Resource):
 
             return HttpResponse('ok')
         except Exception, e:
-            transaction.rollback()
             msg = unicode(e)
 
             raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
@@ -253,7 +249,7 @@ class IGadgetVariableCollection(Resource):
 
         return HttpResponse(json_encode(vars_data), mimetype='application/json; charset=UTF-8')
 
-    @transaction.commit_manually
+    @commit_on_http_success
     def update(self, request, workspace_id, tab_id, igadget_id):
         user = get_user_authentication(request)
 
@@ -276,13 +272,11 @@ class IGadgetVariableCollection(Resource):
                         varServer.value = varJSON['value']
                         varServer.save()
 
-            transaction.commit()
         except Tab.DoesNotExist, e:
             msg = _('referred tab %(tab_id)s does not exist.') % {'tab_id': tab_id}
 
             raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id, 'igadget': igadget_id}, request, msg)
         except Exception, e:
-            transaction.rollback()
             msg = _("igadget varaible cannot be updated: ") + unicode(e)
 
             raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id, 'igadget': igadget_id}, request, msg)
@@ -305,6 +299,7 @@ class IGadgetVariable(Resource):
     def create(self, request, workspace_id, tab_id, igadget_id, var_id):
         return self.update(request, workspace_id, tab_id, igadget_id, var_id)
 
+    @commit_on_http_success
     def update(self, request, workspace_id, tab_id, igadget_id, var_id):
         user = get_user_authentication(request)
 
@@ -322,7 +317,6 @@ class IGadgetVariable(Resource):
             variable.value = new_value
             variable.save()
         except Exception, e:
-            transaction.rollback()
             msg = _("igadget varaible cannot be updated: ") + unicode(e)
 
             raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id, 'igadget': igadget_id, 'variable': var_id}, request, msg)

@@ -39,7 +39,6 @@
 # @author jmostazo-upm
 
 from django.core.cache import cache
-from django.db import transaction
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
@@ -51,6 +50,7 @@ from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error, json_encode
 from wirecloud.models import PlatformPreference, WorkSpacePreference, Tab, TabPreference, update_session_lang, WorkSpace
+from wirecloudcommons.utils.transaction import commit_on_http_success
 
 
 def update_preferences(user, preferences_json):
@@ -169,7 +169,7 @@ class PlatformPreferencesCollection(Resource):
 
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     def update(self, request):
         received_json = PUT_parameter(request, 'preferences')
 
@@ -185,7 +185,6 @@ class PlatformPreferencesCollection(Resource):
 
             return HttpResponse('ok')
         except Exception, e:
-            transaction.rollback()
             msg = _("Platform Preferences cannot be updated: ") + unicode(e)
 
             raise TracedServerError(e, {}, request, msg)
@@ -203,7 +202,7 @@ class WorkSpacePreferencesCollection(Resource):
 
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     def update(self, request, workspace_id):
 
         received_json = PUT_parameter(request, 'preferences')
@@ -220,7 +219,6 @@ class WorkSpacePreferencesCollection(Resource):
             update_workspace_preferences(workspace, preferences_json)
             return HttpResponse('ok')
         except Exception, e:
-            transaction.rollback()
             msg = _("WorkSpace Preferences could not be updated: ") + unicode(e)
 
             raise TracedServerError(e, {}, request, msg)
@@ -238,7 +236,7 @@ class TabPreferencesCollection(Resource):
 
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     def update(self, request, workspace_id, tab_id):
         received_json = PUT_parameter(request, 'preferences')
 
@@ -254,7 +252,6 @@ class TabPreferencesCollection(Resource):
             update_tab_preferences(tab, preferences_json)
             return HttpResponse('ok')
         except Exception, e:
-            transaction.rollback()
             msg = _("Tab Preferences could not be updated: ") + unicode(e)
 
             raise TracedServerError(e, {}, request, msg)

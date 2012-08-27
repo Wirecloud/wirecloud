@@ -28,7 +28,6 @@ import urlparse
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib.auth.models import Group, User
 from django.core.urlresolvers import reverse
-from django.db import transaction
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from django.http import HttpResponseForbidden, Http404
 from django.shortcuts import get_object_or_404
@@ -157,7 +156,7 @@ def linkWorkspace(user, workspace_id, creator, link_variable_values=True):
 
 class WorkSpaceCollection(Resource):
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     @no_cache
     def read(self, request):
         user = get_user_authentication(request)
@@ -178,7 +177,7 @@ class WorkSpaceCollection(Resource):
 
         return HttpResponse(json_encode(data_list), mimetype='application/json; charset=UTF-8')
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     def create(self, request):
         user = get_user_authentication(request)
 
@@ -202,7 +201,6 @@ class WorkSpaceCollection(Resource):
             return workspace_data.get_response()
 
         except Exception, e:
-            transaction.rollback()
             msg = _("workspace cannot be created: ") + unicode(e)
 
             raise TracedServerError(e, ts, request, msg)
@@ -210,7 +208,6 @@ class WorkSpaceCollection(Resource):
 
 class WorkSpaceEntry(Resource):
 
-    @transaction.commit_on_success
     def read(self, request, workspace_id, last_user=''):
         #last_user : last_user_after_public autologin
         user = get_user_authentication(request)
@@ -225,7 +222,7 @@ class WorkSpaceEntry(Resource):
 
         return workspace_data.get_response()
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     def update(self, request, workspace_id, last_user=''):
         user = get_user_authentication(request)
 
@@ -255,12 +252,11 @@ class WorkSpaceEntry(Resource):
 
             return HttpResponse('ok')
         except Exception, e:
-            transaction.rollback()
             msg = _("workspace cannot be updated: ") + unicode(e)
 
             raise TracedServerError(e, ts, request, msg)
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     def delete(self, request, workspace_id, last_user=''):
         user = get_user_authentication(request)
 
@@ -301,7 +297,7 @@ class WorkSpaceEntry(Resource):
 
 class TabCollection(Resource):
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     def create(self, request, workspace_id):
         user = get_user_authentication(request)
 
@@ -328,12 +324,11 @@ class TabCollection(Resource):
             return HttpResponse(json_encode(ids), mimetype='application/json; charset=UTF-8')
 
         except Exception, e:
-            transaction.rollback()
             msg = _("tab cannot be created: ") + unicode(e)
 
             raise TracedServerError(e, t, request, msg)
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     def update(self, request, workspace_id):
         user = get_user_authentication(request)
 
@@ -363,7 +358,6 @@ class TabCollection(Resource):
             return HttpResponse(status=204)
 
         except Exception, e:
-            transaction.rollback()
             msg = _("tab order cannot be updated: ") + unicode(e)
 
             raise TracedServerError(e, received_json, request, msg)
@@ -379,7 +373,7 @@ class TabEntry(Resource):
 
         return HttpResponse(json_encode(tab_data), mimetype='application/json; charset=UTF-8')
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     def update(self, request, workspace_id, tab_id):
         user = get_user_authentication(request)
 
@@ -420,12 +414,11 @@ class TabEntry(Resource):
 
             return HttpResponse(status=204)
         except Exception, e:
-            transaction.rollback()
             msg = _("tab cannot be updated: ") + unicode(e)
 
             raise TracedServerError(e, received_json, request, msg)
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     def delete(self, request, workspace_id, tab_id):
         user = get_user_authentication(request)
 
@@ -458,7 +451,7 @@ class TabEntry(Resource):
 
 class WorkSpaceVariableCollection(Resource):
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     def update(self, request, workspace_id):
         user = get_user_authentication(request)
 
@@ -487,7 +480,6 @@ class WorkSpaceVariableCollection(Resource):
             return HttpResponse(json_encode(data), mimetype='application/json; charset=UTF-8')
 
         except Exception, e:
-            transaction.rollback()
             msg = _("cannot update variables: ") + unicode(e)
 
             raise TracedServerError(e, received_json, request, msg)
@@ -495,7 +487,7 @@ class WorkSpaceVariableCollection(Resource):
 
 class WorkSpaceMergerEntry(Resource):
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     @no_cache
     def read(self, request, from_ws_id, to_ws_id):
         from_ws = get_object_or_404(WorkSpace, id=from_ws_id)
@@ -513,7 +505,7 @@ class WorkSpaceMergerEntry(Resource):
 
 class WorkSpaceSharerEntry(Resource):
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     def update(self, request, workspace_id, share_boolean):
         user = get_user_authentication(request)
 
@@ -558,7 +550,6 @@ class WorkSpaceSharerEntry(Resource):
                     linkWorkspaceObject(user, workspace, owner, link_variable_values=True)
 
             except Exception, e:
-                transaction.rollback()
                 msg = _("workspace cannot be shared: ") + unicode(e)
 
                 raise TracedServerError(e, groups, request, msg)
@@ -588,7 +579,7 @@ class WorkSpaceSharerEntry(Resource):
 
 class WorkSpaceLinkerEntry(Resource):
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     @no_cache
     def read(self, request, workspace_id):
         user = get_user_authentication(request)
@@ -601,7 +592,7 @@ class WorkSpaceLinkerEntry(Resource):
 
 class WorkSpaceClonerEntry(Resource):
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     @no_cache
     def read(self, request, workspace_id):
         user = get_user_authentication(request)
@@ -706,7 +697,7 @@ def check_json_fields(json, fields):
 
 class WorkSpacePublisherEntry(Resource):
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     def create(self, request, workspace_id):
         if 'data' not in request.REQUEST:
             return HttpResponseBadRequest(get_xml_error(_("mashup data expected")), mimetype='application/xml; charset=UTF-8')
