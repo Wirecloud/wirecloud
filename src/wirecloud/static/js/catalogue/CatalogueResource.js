@@ -145,6 +145,10 @@ function CatalogueResource(resourceJSON_) {
         return currentVersion.ieCompatible;
     };
 
+    this.isPackaged = function () {
+        return !!currentVersion.packaged;
+    };
+
     //////////////
     // SETTERS
     //////////////

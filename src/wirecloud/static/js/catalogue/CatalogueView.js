@@ -63,7 +63,8 @@
             ShowcaseFactory.getInstance().addGadget(resource.getVendor(),
                 resource.getName(),
                 resource.getVersion().text,
-                resource.getUriTemplate()
+                resource.getUriTemplate(),
+                {packaged: resource.isPackaged()}
             );
         }
     };

@@ -112,7 +112,7 @@ function Gadget(gadget_, url_, options_) {
         // Post Gadget to PersistenceEngine. Asyncrhonous call!
         // params: url of the template, id of the current workspace to check if it is shared
         // and with who it is shared.
-        var params = {url: url_, workspaceId: workspaceId_};
+        var params = {url: url_, workspaceId: workspaceId_, packaged: options_.packaged};
         Wirecloud.io.makeRequest(URIs.GET_GADGETS, {
             method: 'POST',
             parameters: params,
