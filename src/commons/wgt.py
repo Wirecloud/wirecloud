@@ -27,14 +27,26 @@ from commons.template import TemplateParser
 
 class WgtFile(object):
 
+    _template_filename = 'config.xml'
+
     def __init__(self, _file):
         self._zip = zipfile.ZipFile(_file)
         self._parse_config_file()
 
     def _parse_config_file(self):
+
         config = self._zip.read('config.xml')
-        doc = etree.fromstring(config)
-        self._template_filename = doc.get('id')
+        try:
+            doc = etree.fromstring(config)
+            prefix = doc.prefix
+            xmlns = None
+            if prefix in doc.nsmap:
+                xmlns = doc.nsmap[prefix]
+
+            if xmlns == 'http://www.w3.org/ns/widgets/':
+                self._template_filename = doc.get('id')
+        except:
+            pass
 
     def read(self, path):
         return self._zip.read(path)
