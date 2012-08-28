@@ -61,7 +61,7 @@
  * @param {String}            menu_color    background color for the menu.
  *                                          (6 chars with a hexadecimal color)
  */
-function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, transparency, menu_color, refusedVersion, freeLayoutAfterLoading, readOnly) {
+function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, transparency, refusedVersion, freeLayoutAfterLoading, readOnly) {
     this.logManager = new IGadgetLogManager(this);
     this.id = iGadgetId;
     this.code = null;
@@ -141,7 +141,6 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
     layout.addIGadget(this, true);
 
     StyledElements.ObjectWithEvents.call(this, ['load', 'unload']);
-    this.menu_color = menu_color ? menu_color : "FFFFFF";
     //this.menu_color = IGadgetColorManager.autogenColor(menu_color, this.code);
 
     this.prefCallback = null;

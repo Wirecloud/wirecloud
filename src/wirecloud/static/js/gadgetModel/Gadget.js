@@ -79,7 +79,6 @@ function Gadget(gadget_, url_, options_) {
     this.getImage = function() { return state.getImage(); }
     this.setImage = function(image_) { state.setImage(image_); }
     this.getIcon = function() { return state.getIcon(); }
-    this.getMenuColor = function() { return state.getMenuColor(); }
     this.isUpToDate = function() { return state.isUpToDate(); }
     this.setLastVersion = function(lastVersion) { return state.setLastVersion(lastVersion); }
     this.getLastVersion = function(){return state.getLastVersion();}
@@ -161,7 +160,6 @@ function GadgetState(gadget_) {
     var icon = gadget_.iPhoneImageURI;
     var capabilities = gadget_.capabilities;
     var uriwiki = gadget_.wikiURI;
-    var menuColor = gadget_.menuColor;
     var lastVersion = version;
     var showcaseLastVersion = version;
     var catalogueLastVersion = null;
@@ -187,7 +185,6 @@ function GadgetState(gadget_) {
     this.getImage = function() { return image; }
     this.setImage = function(image_) { image = image_; }
     this.getIcon = function() { return (icon!="") ? icon :  image;  }
-    this.getMenuColor = function () {return menuColor;}
     this.isUpToDate = function() { return upToDate; }
     this.getLastVersion = function() {
         if (lastVersion == null) {

@@ -149,7 +149,6 @@ def fillWorkspaceUsingTemplate(workspace, template):
                 "width": int(rendering.get('width')),
                 "height": int(rendering.get('height')),
                 "name": resource.get('title'),
-                "menu_color": "FFFFFF",
                 "layout": int(rendering.get('layout')),
                 "gadget": gadget.uri,
             }

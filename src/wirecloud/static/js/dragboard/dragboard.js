@@ -213,7 +213,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
     Dragboard.prototype.parseTab = function (tabInfo) {
         var curIGadget, position, icon_position, zPos, width, height, igadget,
-            gadget, gadgetid, minimized, layout, menu_color, refusedVersion,
+            gadget, gadgetid, minimized, layout, refusedVersion,
             opManager, i, readOnly;
 
         opManager = OpManagerFactory.getInstance();
@@ -265,7 +265,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
                                   curIGadget.fulldragboard,
                                   curIGadget.minimized,
                                   curIGadget.transparency,
-                                  curIGadget.menu_color,
                                   curIGadget.refused_version,
                                   false,
                                   readOnly);
@@ -323,7 +322,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
         }
 
         // Create the instance
-        var iGadget = new IGadget(gadget, null, options.igadgetName, layout, null, null, null, width, height, false, minimized, false, gadget.getMenuColor(), null, freeLayoutAfterLoading, false);
+        var iGadget = new IGadget(gadget, null, options.igadgetName, layout, null, null, null, width, height, false, minimized, false, null, freeLayoutAfterLoading, false);
 
         iGadget.save(options);
     };

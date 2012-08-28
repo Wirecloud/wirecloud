@@ -343,7 +343,6 @@ def get_gadget_data(gadget):
     data_ret['wikiURI'] = tgadget.wikiURI
     data_ret['imageURI'] = tgadget.imageURI
     data_ret['iPhoneImageURI'] = tgadget.iPhoneImageURI
-    data_ret['menuColor'] = gadget.menuColor
     data_ret['version'] = gadget.version
     data_ret['mail'] = gadget.mail
     data_ret['last_update'] = gadget.last_update

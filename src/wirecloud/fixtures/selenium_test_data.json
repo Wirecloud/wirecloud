@@ -43,7 +43,6 @@
         "model": "wirecloud.gadget",
         "fields": {
             "users": [1],
-            "menuColor": "",
             "display_name": "",
             "name": "Test",
             "author": "aarranz",

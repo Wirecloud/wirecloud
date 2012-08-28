@@ -159,8 +159,7 @@ class WorkspaceTestCase(CacheTestCase):
             'zIndex': 1,
             'layout': 0,
             'icon_top': 0,
-            'icon_left': 0,
-            'menu_color': '',
+            'icon_left': 0
         }
         Gadget.objects.get(pk=1).users.add(self.user)
         SaveIGadget(igadget_data, self.user, tab, {})
@@ -219,8 +218,7 @@ class WorkspaceCacheTestCase(CacheTestCase):
             'zIndex': 1,
             'layout': 0,
             'icon_top': 0,
-            'icon_left': 0,
-            'menu_color': '',
+            'icon_left': 0
         }
         Gadget.objects.get(pk=1).users.add(self.user)
         SaveIGadget(igadget_data, self.user, tab, {})

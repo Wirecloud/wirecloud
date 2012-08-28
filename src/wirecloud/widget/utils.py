@@ -103,7 +103,6 @@ def create_gadget_from_template(template, user, request=None, base=None):
     gadget.iPhoneImageURI = gadget_info['iphone_image_uri']
     gadget.width = gadget_info['gadget_width']
     gadget.height = gadget_info['gadget_height']
-    gadget.menuColor = gadget_info['gadget_menucolor']
 
     gadget.save()
 

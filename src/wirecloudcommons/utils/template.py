@@ -61,7 +61,6 @@ CONTEXT_XPATH = '/t:Template/t:Platform.Context'
 GADGET_CONTEXT_XPATH = 't:GadgetContext'
 PLATFORM_CONTEXT_XPATH = 't:Context'
 PLATFORM_RENDERING_XPATH = '/t:Template/t:Platform.Rendering'
-MENUCOLOR_XPATH = '/t:Template/t:MenuColor'
 REQUIRE_XPATH = 't:Require'
 
 INCLUDED_RESOURCES_XPATH = 't:IncludedResources'
@@ -413,8 +412,6 @@ class USDLTemplateParser(object):
 
         self._info['gadget_width'] = self._get_field(WIRE, 'renderingWidth', rendering_element, required=False)
         self._info['gadget_height'] = self._get_field(WIRE, 'renderingHeight', rendering_element, required=False)
-
-        self._info['gadget_menucolor'] = self._get_field(WIRE, 'hasPlatformMenucolor', self._rootURI, required=False)
 
     def _parse_translation_catalogue(self):
         self._info['default_lang'] = 'en'
@@ -848,8 +845,6 @@ class WirecloudTemplateParser(object):
         rendering_element = self._xpath(PLATFORM_RENDERING_XPATH, self._doc)[0]
         self._info['gadget_width'] = rendering_element.get('width')
         self._info['gadget_height'] = rendering_element.get('height')
-
-        self._info['gadget_menucolor'] = self._get_field(MENUCOLOR_XPATH, self._doc, required=False)
 
     def _parse_workspace_info(self):
 

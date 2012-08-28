@@ -74,8 +74,6 @@ class Gadget(TransModel):
     height = models.IntegerField(_('Height'), default=1)
     description = models.TextField(_('Description'))
 
-    menuColor = models.CharField(max_length=6, default="FFFFFF")
-
     users = models.ManyToManyField(User, verbose_name=_('Users'))
     last_update = models.DateTimeField(_('Last update'), null=True)
 
