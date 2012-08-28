@@ -36,7 +36,7 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.utils.http import urlencode
 
-from commons.authentication import get_user_authentication, get_public_user, logout_request, relogin_after_public
+from commons.authentication import get_user_authentication
 from commons.cache import no_cache
 from commons.get_data import get_workspace_data, get_global_workspace_data, get_tab_data
 from commons.http_utils import PUT_parameter, download_http_content
@@ -208,17 +208,11 @@ class WorkSpaceCollection(Resource):
 
 class WorkSpaceEntry(Resource):
 
-    def read(self, request, workspace_id, last_user=''):
-        #last_user : last_user_after_public autologin
+    def read(self, request, workspace_id):
         user = get_user_authentication(request)
 
         workspace = get_object_or_404(WorkSpace, users__id=user.id, pk=workspace_id)
         workspace_data = get_global_workspace_data(workspace, user)
-
-        #Closing session after downloading public user workspace
-        if (user.username == 'public' and last_user and last_user != 'public' and last_user != ''):
-            logout_request(request)
-            request.user = relogin_after_public(request, last_user, None)
 
         return workspace_data.get_response()
 
@@ -527,7 +521,7 @@ class WorkSpaceSharerEntry(Resource):
         if 'groups' not in request.REQUEST:
             #Share with everybody
             #Linking with public user!
-            public_user = get_public_user(request)
+            public_user = None  # TODO
 
             linkWorkspaceObject(public_user, workspace, owner, link_variable_values=True)
 

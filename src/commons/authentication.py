@@ -32,11 +32,8 @@
 
 
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext as _
-
-import middleware
 
 
 class Http403(Exception):
@@ -75,40 +72,3 @@ def login_with_third_party_cookie(request):
 
     login(request, user)
     return (None, user)
-
-
-def get_public_user(request):
-    try:
-        user = User.objects.get(username=middleware.PUBLIC_NAME)
-    except User.DoesNotExist:
-        user = generate_public_user(request)
-
-    return user
-
-
-def relogin_after_public(request, username, password):
-    user = authenticate(username=username, password=password, isPublic=True)
-    login(request, user)
-
-    return user
-
-
-def logout_request(request):
-    logout(request)
-
-
-def login_public_user(request):
-    user = get_public_user(request)
-
-    user = authenticate(username=user.username, password=middleware.PUBLIC_PWD, isPublic=True)
-    login(request, user)
-
-    return user
-
-
-def generate_public_user(request):
-    user = User(username=middleware.PUBLIC_NAME)
-    user.set_password(middleware.PUBLIC_PWD)
-    user.save()
-
-    return user

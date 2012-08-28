@@ -192,7 +192,6 @@ FIXTURE_DIRS = (
 #Authentication
 AUTHENTICATION_BACKENDS = (
     #'authentication.tcloud_access.TCloudBackend',
-    'authentication.public_access.PublicBackend',
     #'authentication.anonymousaccess.AnonymousBackend',
     #'authentication.ldapaccess.LDAPBackend',
     'django.contrib.auth.backends.ModelBackend',
