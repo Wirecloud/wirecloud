@@ -217,7 +217,7 @@ class WorkSpaceEntry(Resource):
         return workspace_data.get_response()
 
     @commit_on_http_success
-    def update(self, request, workspace_id, last_user=''):
+    def update(self, request, workspace_id):
         user = get_user_authentication(request)
 
         received_json = PUT_parameter(request, 'workspace')
@@ -251,7 +251,7 @@ class WorkSpaceEntry(Resource):
             raise TracedServerError(e, ts, request, msg)
 
     @commit_on_http_success
-    def delete(self, request, workspace_id, last_user=''):
+    def delete(self, request, workspace_id):
         user = get_user_authentication(request)
 
         user_workspaces = UserWorkSpace.objects.select_related('workspace')
