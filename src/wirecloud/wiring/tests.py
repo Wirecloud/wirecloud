@@ -147,19 +147,19 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.change_main_view('wiring')
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
-        self.driver.find_element_by_xpath("//*[contains(@class, 'container')]//*[text()='Widgets']").click()
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container igadget')]//*[text()='Test (1)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-40, -40).release().perform()
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-40, -40).release(None).perform()
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container igadget')]//*[text()='Test (2)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(40, 40).release().perform()
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(40, 40).release(None).perform()
 
         source = self.get_iwidget_anchor(1, 'event')
         target = self.get_iwidget_anchor(2, 'slot')
         ActionChains(self.driver).drag_and_drop(source, target).perform()
 
         self.change_main_view('workspace')
+        time.sleep(0.2)
 
         with widget_operation(self.driver, 1):
             text_input = self.driver.find_element_by_tag_name('input')
