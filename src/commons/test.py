@@ -173,7 +173,6 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         self.fill_form_input(password_input, password)
         password_input.submit()
 
-        WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_tag_name('body'))
         self.wait_wirecloud_ready()
 
     def get_current_view(self):
