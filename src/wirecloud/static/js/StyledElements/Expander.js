@@ -39,9 +39,6 @@
         if (options.title) {
             this.titleContainer.appendChild(document.createTextNode(options.title));
         }
-        if (options.listenOnTitle) {
-            this.titleContainer.wrapperElement.style.cursor = "pointer";
-        }
 
         this.contentContainer = new StyledElements.Container({'class': 'contents'});
         this.contentContainer.insertInto(this.wrapperElement);
@@ -54,7 +51,8 @@
         if (this.toggleButton) {
             this.toggleButton.addEventListener('click', callback);
         }
-        if (this.listenOnTitle) {
+        if (options.listenOnTitle) {
+            this.titleContainer.wrapperElement.style.cursor = "pointer";
             EzWebExt.addEventListener(this.titleContainer.wrapperElement, 'click', callback, false);
         }
     };
