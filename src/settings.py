@@ -129,7 +129,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.doc.XViewMiddleware',
     'middleware.console_middleware.ConsoleExceptionMiddleware',
- #   'middleware.cookie_redirect_middleware.CookieRedirectMiddleware',
 )
 
 ROOT_URLCONF = 'urls'
