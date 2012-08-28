@@ -315,8 +315,8 @@ class USDLTemplateParser(object):
 
         for operator in self._graph.objects(wiring_element, WIRE_M['hasiOperator']):
             operator_info = {
-               'id': self._get_field(WIRE_M, 'iOperatorId', operator),
-               'name': self._get_field(DCTERMS, 'title', operator),
+                'id': self._get_field(WIRE_M, 'iOperatorId', operator),
+                'name': self._get_field(DCTERMS, 'title', operator),
             }
             self._info['wiring']['operators'][operator_info['id']] = operator_info
 
@@ -434,8 +434,8 @@ class USDLTemplateParser(object):
         params = {}
         for param in self._graph.objects(self._rootURI, WIRE_M['hasWorkspaceParam']):
             params[self._get_field(DCTERMS, 'title', param)] = {
-               'label': self._get_field(RDFS, 'label', param),
-               'type': self._get_field(WIRE, 'type', param),
+                'label': self._get_field(RDFS, 'label', param),
+                'type': self._get_field(WIRE, 'type', param),
             }
         self._info['params'] = params
 
@@ -864,8 +864,8 @@ class WirecloudTemplateParser(object):
         params = {}
         for param in self._xpath(PARAM_XPATH, workspace_structure):
             params[param.get('name')] = {
-               'label': param.get('label'),
-               'type': param.get('type'),
+                'label': param.get('label'),
+                'type': param.get('type'),
             }
         self._info['params'] = params
 
