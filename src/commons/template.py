@@ -50,8 +50,7 @@ DOC_URI_XPATH = 't:WikiURI'
 
 DISPLAY_NAME_XPATH = 't:DisplayName'
 CODE_XPATH = '/t:Template/t:Platform.Link/t:XHTML'
-PREFERENCES_XPATH = '/t:Template/t:Platform.Preferences'
-PREFERENCE_XPATH = 't:Preference'
+PREFERENCES_XPATH = '/t:Template/t:Platform.Preferences[0]/t:Preference'
 OPTION_XPATH = 't:Option'
 PROPERTY_XPATH = '/t:Template/t:Platform.StateProperties/t:Property'
 WIRING_XPATH = '/t:Template/t:Platform.Wiring'
@@ -772,9 +771,8 @@ class WirecloudTemplateParser(object):
 
         self._get_url_field('iphone_image_uri', IPHONE_IMAGE_URI_XPATH, self._resource_description, required=False)
 
-        preferences = self._xpath(PREFERENCES_XPATH, self._doc)[0]
         self._info['preferences'] = []
-        for preference in self._xpath(PREFERENCE_XPATH, preferences):
+        for preference in self._xpath(PREFERENCES_XPATH, self._doc):
             self._add_translation_index(preference.get('label'), type='vdef', variable=preference.get('name'))
             self._add_translation_index(preference.get('description', ''), type='vdef', variable=preference.get('name'))
             preference_info = {
