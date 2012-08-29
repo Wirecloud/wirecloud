@@ -233,11 +233,9 @@
 }
 
 #catalogue .developer_block {
-  clear:both;
-  float:left;
-  margin-bottom:25px;
-  padding-left:15px;
-  width: 100%;
+    clear: both;
+    margin-bottom: 25px;
+    padding-left: 15px;
 }
 
 #catalogue .developer_description {

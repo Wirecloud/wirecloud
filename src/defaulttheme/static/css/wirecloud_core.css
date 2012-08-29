@@ -298,3 +298,7 @@ body {
     background-image: url(../images/icons-sprite.png);
     background-position: -48px -384px;
 }
+
+.clearfloats {
+    clear: both;
+}
