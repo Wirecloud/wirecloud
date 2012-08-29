@@ -80,7 +80,7 @@
     CatalogueView.prototype.getPublishEndpoint = function getPublishEndpoint() {
         return [{
             'name': this.catalogue.name,
-            'label': this.catalogue.label,
+            'label': this.catalogue.name,
             'type': 'boolean'
         }];
     };
