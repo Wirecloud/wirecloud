@@ -27,16 +27,20 @@ var CataloguePublishView = function (id, options) {
     this.catalogue = options.catalogue;
     StyledElements.Alternative.call(this, id, options);
 
-    this.wrapperElement.innerHTML = $('wirecloud_catalogue_publish_interface').getTextContent();
+    var builder = new StyledElements.GUIBuilder();
+    var contents = builder.parse($('wirecloud_catalogue_publish_interface').getTextContent(), {
+        'back_button': function () {
+            var button = new StyledElements.StyledButton({text: gettext('Close upload view')});
+            button.addEventListener('click', this.catalogue.home.bind(this.catalogue));
+            return button;
+        }.bind(this)
+    });
+    this.appendChild(contents);
 
     this.wrapperElement.getElementsByClassName('template_submit_form')[0].onsubmit = this._submit_template.bind(this);
-    this.wrapperElement.getElementsByClassName('back_to_resource_list')[0].addEventListener('click', this.catalogue.home.bind(this.catalogue));
-
-    // TODO
-    setTimeout(function () {
-        $('upload_wgt_button').addEventListener('click', this._upload_wgt_file.bind(this), true);
-        $('upload').onload = this._check_upload_wgt_result.bind(this);
-    }.bind(this), 0);
+    this.wrapperElement.getElementsByClassName('upload_wgt_button')[0].addEventListener('click', this._upload_wgt_file.bind(this), true);
+    this._iframe = this.wrapperElement.getElementsByClassName('upload')[0];
+    this._iframe.onload = this._check_upload_wgt_result.bind(this);
 };
 CataloguePublishView.prototype = new StyledElements.Alternative();
 
@@ -75,14 +79,12 @@ CataloguePublishView.prototype._submit_template = function (e) {
 };
 
 CataloguePublishView.prototype._check_upload_wgt_result = function () {
-    var iframe, doc, layoutManager, logManager, msg, processed_response_data;
+    var doc, layoutManager, logManager, msg, processed_response_data;
 
-    iframe = document.getElementById("upload");
-
-    if (iframe.contentDocument) {
-        doc = iframe.contentDocument;
-    } else if (iframe.contentWindow) {
-        doc = iframe.contentWindow.document;
+    if (this._iframe.contentDocument) {
+        doc = this._iframe.contentDocument;
+    } else if (this._iframe.contentWindow) {
+        doc = this._iframe.contentWindow.document;
     } else {
         doc = window.frames.upload.document;
     }

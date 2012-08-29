@@ -1,34 +1,43 @@
 {% load i18n %}
+<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml">
+<s:borderlayout>
 
-<div class="back_to_resource_list link">« {% trans 'Close publish form' %}</div>
+    <s:northcontainer>
+       <t:back_button/>
+    </s:northcontainer>
 
-<div class="developer_block">
-    <h2>{% trans "Adding gadgets from packages" %}</h2>
-    <img class="developer_image" src="{{STATIC_URL}}images/catalogue/developer_package.jpg" />
-    <div class="developer_description">
-        <p>{% trans "Do you have a gadget stored in a wgt file? Then you can upload it to the catalogue by means of this form." %}</p>
-    </div>
+    <s:centercontainer>
+        <div class="developer_block">
+            <h2>{% trans "Adding gadgets from packages" %}</h2>
+            <img class="developer_image" src="{{STATIC_URL}}images/catalogue/developer_package.jpg" />
+            <div class="developer_description">
+                <p>{% trans "Do you have a gadget stored in a wgt file? Then you can upload it to the catalogue by means of this form." %}</p>
+            </div>
 
-    <form target="upload" style="margin: 0px;" enctype="multipart/form-data" method="post" action="/catalogue/resource" class="wgt_upload_form">
-    <div>
-       <input type="hidden" value="true" name="iframe" />
-       <input type="file" name="file" id="wgt_file" />
-       <button id="upload_wgt_button">{% trans "Add" %}</button>
-    </div>
-    </form>
-    <iframe frameborder="0" style="display: none;" id="upload" name="upload"></iframe>
-</div>
-
-<div class="developer_block">
-    <h2>{% trans "Adding gadgets and mashups using a template description" %}</h2>
-    <img class="developer_image" src="{{STATIC_URL}}images/catalogue/developer_template.png" />
-    <div class="developer_description">
-        <p>{% trans "If you have the XML template of a gadget or a mashup, you can add it to the catalogue by writing the URL of the template in the text field below." %}</p>
-    </div>
-    <form class="template_submit_form">
-        <div>
-            <input type="text" name="template_uri" class="template_uri" />
-            <button class="submit_link" id="submit_link">{% trans "Add" %}</button>
+            <form target="upload" style="margin: 0px;" enctype="multipart/form-data" method="post" action="/catalogue/resource" class="wgt_upload_form">
+            <div>
+               <input type="hidden" value="true" name="iframe" />
+               <input type="file" name="file" class="wgt_file" />
+               <button class="upload_wgt_button">{% trans "Add" %}</button>
+            </div>
+            </form>
+            <iframe frameborder="0" style="display: none;" class="upload" name="upload"></iframe>
         </div>
-    </form>
-</div>
+
+        <div class="developer_block">
+            <h2>{% trans "Adding gadgets and mashups using a template description" %}</h2>
+            <img class="developer_image" src="{{STATIC_URL}}images/catalogue/developer_template.png" />
+            <div class="developer_description">
+                <p>{% trans "If you have the XML template of a gadget or a mashup, you can add it to the catalogue by writing the URL of the template in the text field below." %}</p>
+            </div>
+            <form class="template_submit_form">
+                <div>
+                    <input type="text" name="template_uri" class="template_uri" />
+                    <button class="submit_link">{% trans "Add" %}</button>
+                </div>
+            </form>
+        </div>
+    </s:centercontainer>
+
+</s:borderlayout>
+</s:styledgui>
