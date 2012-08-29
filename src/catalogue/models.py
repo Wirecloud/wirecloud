@@ -34,7 +34,7 @@ from django.db import models
 from django.contrib.auth.models import User, Group
 from django.utils.translation import ugettext_lazy as _
 
-from translator.models import TransModel
+from wirecloudcommons.models import TransModel
 
 
 class CatalogueResource(TransModel):

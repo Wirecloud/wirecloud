@@ -163,5 +163,8 @@ class Translation(models.Model):
     default = models.BooleanField(_('Default Value'), default=False)
     value = models.TextField(_('Value'), blank=True)
 
+    class Meta:
+        app_label = 'wirecloudcommons'
+
     def __unicode__(self):
         return u"%s - %s.%d -> %s" % (self.text_id, self.table, self.element_id, self.language)

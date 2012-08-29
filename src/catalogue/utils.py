@@ -46,7 +46,7 @@ from commons.authentication import Http403
 from commons.template import TemplateParser
 from commons.wgt import WgtFile, WgtDeployer
 from wirecloud.widget.views import deleteGadget
-from translator.models import Translation
+from wirecloudcommons.models import Translation
 
 
 wgt_deployer = WgtDeployer(settings.CATALOGUE_MEDIA_ROOT)
