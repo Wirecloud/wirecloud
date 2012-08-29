@@ -42,12 +42,12 @@ from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
 from commons.http_utils import download_http_content
-from commons.template import TemplateParser
 from commons.utils import save_alternative
 from wirecloud.iwidget.utils import deleteIGadget
 from wirecloud.models import Category, IGadget, PublishedWorkSpace, Tab, UserWorkSpace, VariableValue, WorkSpace
 from wirecloud.workspace.managers import get_workspace_managers
 from wirecloud.workspace.packageLinker import PackageLinker
+from wirecloudcommons.utils.template import TemplateParser
 
 
 def deleteTab(tab, user):

@@ -28,7 +28,7 @@ from catalogue.models import CatalogueResource
 from catalogue.utils import delete_resource
 from catalogue.views import add_gadget_from_wgt
 from commons.wgt import WgtFile
-from commons.template import TemplateParser
+from wirecloudcommons.utils.template import TemplateParser
 
 
 class Command(BaseCommand):

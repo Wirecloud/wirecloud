@@ -41,11 +41,11 @@ from catalogue.models import CatalogueResource
 from commons import http_utils
 from commons.authentication import Http403
 from commons.http_utils import download_http_content
-from commons.template import TemplateParser
 from commons.wgt import WgtDeployer, WgtFile
 from wirecloud.models import ContextOption, Gadget, UserPrefOption, UserWorkSpace, VariableDef, WorkSpace, XHTML
 from wirecloud.plugins import get_active_features, get_gadget_api_extensions
 from wirecloudcommons.models import Translation
+from wirecloudcommons.utils.template import TemplateParser
 
 
 wgt_deployer = WgtDeployer(settings.GADGETS_DEPLOYMENT_DIR)

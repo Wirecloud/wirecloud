@@ -49,13 +49,13 @@ from commons.get_data import get_gadget_data
 from commons.http_utils import download_http_content
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
-from commons.template import TemplateParser
 
 from wirecloud.iwidget.utils import deleteIGadget
 from wirecloud.models import Gadget, IGadget, XHTML
 import wirecloud.widget.utils as showcase_utils
 from wirecloud.widget.utils import get_or_create_gadget, create_gadget_from_template, fix_gadget_code, get_site_domain
 from wirecloud.workspace.utils import create_published_workspace_from_template
+from wirecloudcommons.utils.template import TemplateParser
 from wirecloudcommons.utils.transaction import commit_on_http_success
 
 

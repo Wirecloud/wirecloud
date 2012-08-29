@@ -18,9 +18,9 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from catalogue.utils import add_resource_from_template
-from commons.template import TemplateParser
 from wirecloud.workspace.mashupTemplateGenerator import build_template_from_workspace
 from wirecloud.markets.utils import MarketManager
+from wirecloudcommons.utils.template import TemplateParser
 
 
 class WirecloudCatalogueManager(MarketManager):

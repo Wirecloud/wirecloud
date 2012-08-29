@@ -13,7 +13,7 @@ from commons.exceptions import TemplateParseException
 from commons.get_data import get_gadget_data
 from commons.test import FakeDownloader, LocalizedTestCase
 from commons.wgt import WgtFile, WgtDeployer
-from commons.template import TemplateParser
+from wirecloudcommons.utils.template import TemplateParser
 from wirecloud.models import Gadget
 import wirecloud.widget.utils
 from wirecloud.widget.utils import create_gadget_from_template, create_gadget_from_wgt, get_or_add_gadget_from_catalogue

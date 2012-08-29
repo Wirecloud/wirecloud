@@ -28,7 +28,7 @@ from wirecloud.models import Gadget
 from wirecloud.widget.utils import create_gadget_from_wgt
 from wirecloud.widget.views import deleteGadget
 from commons.wgt import WgtFile
-from commons.template import TemplateParser
+from wirecloudcommons.utils.template import TemplateParser
 
 
 class FakeUser():

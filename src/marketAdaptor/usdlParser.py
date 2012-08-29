@@ -24,7 +24,7 @@ from urllib2 import HTTPError
 
 from django.utils.translation import ugettext as _
 
-from commons.template import TemplateParser
+from wirecloudcommons.utils.template import TemplateParser
 from proxy.views import MethodRequest
 
 FOAF = rdflib.Namespace('http://xmlns.com/foaf/0.1/')
