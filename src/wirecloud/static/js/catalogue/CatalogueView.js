@@ -69,14 +69,6 @@
         }
     };
 
-    CatalogueView.prototype.getBreadcrum = function getBreadcrum() {
-        return [
-            {
-                'label': 'marketplace'
-            }
-        ];
-    };
-
     CatalogueView.prototype.getPublishEndpoint = function getPublishEndpoint() {
         return [{
             'name': this.catalogue.name,
