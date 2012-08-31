@@ -140,7 +140,7 @@ class GadgetCollection(Resource):
             return HttpResponseServerError(json, mimetype='application/json; charset=UTF-8')
 
         #create the gadget
-        gadget = parseAndCreateGadget(request, request.user, request.POST['workspaceId'], request.POST.get('packaged', False))
+        gadget = parseAndCreateGadget(request, request.user, request.POST['workspaceId'], request.POST.get('packaged', False) == 'true')
 
         return HttpResponse(json_encode(get_gadget_data(gadget)), mimetype='application/json; charset=UTF-8')
 
