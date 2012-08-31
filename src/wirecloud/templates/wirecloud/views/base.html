@@ -1,5 +1,4 @@
-{% load compress i18n %}
-{% load wirecloudtags %}
+{% load compress i18n wirecloudtags %}
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xml:lang="{{ LANGUAGE_CODE }}"
@@ -91,8 +90,6 @@
 <script type="text/javascript">
 <![CDATA[
 var URIs = {
-  GET_GADGET: new Template('/user/{{ user.username }}/gadgets/#{vendor}/#{name}/#{version}'),
-  GET_GADGETS: '/user/{{ user.username }}/gadgets',
   GET_POST_RESOURCES: 'catalogue/resource',
   GET_RESOURCES_SIMPLE_SEARCH: 'catalogue/search',
   GET_RESOURCES_GLOBAL_SEARCH: 'catalogue/globalsearch',

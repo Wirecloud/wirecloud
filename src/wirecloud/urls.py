@@ -23,6 +23,7 @@ from wirecloud.iwidget import views as iwidget_views
 from wirecloud.markets import views
 from wirecloud.wiring import views as wiring_views
 from wirecloud.preferences import views as preferences_views
+from wirecloud.widget import views as widget_views
 from wirecloud.workspace import views as workspace_views
 
 
@@ -33,6 +34,17 @@ urlpatterns = patterns('wirecloud.views',
     url(r'^api/workspace/(?P<workspace_id>\d+)/wiring$',
         wiring_views.WiringEntry(permitted_methods=('PUT',)),
         name='wirecloud.workspace_wiring'),
+
+    # Widgets
+    url(r'^api/widgets/?$',
+        widget_views.GadgetCollection(permitted_methods=('GET', 'POST')),
+        name='wirecloud.widget_collection'),
+    url(r'^api/widget/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/?$',
+        widget_views.GadgetEntry(permitted_methods=('GET', 'DELETE', 'PUT')),
+        name='wirecloud.widget_entry'),
+    url(r'^api/widget/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/xhtml/?$',
+        widget_views.GadgetCodeEntry(permitted_methods=('GET', 'PUT')),
+        name='wirecloud.widget_code_entry'),
 
     # IWidgets
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidgets/?$',

@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global $, Event, OpManagerFactory, MYMW, window, interpolate, gettext, LogManagerFactory, LayoutManagerFactory, Wirecloud, URIs */
+/*global $, Event, OpManagerFactory, MYMW, window, interpolate, gettext, LogManagerFactory, LayoutManagerFactory, Wirecloud */
 "use strict";
 
 /* 
@@ -92,7 +92,7 @@ IGadget.prototype.paint = function () {
     this.content.addEventListener('load', this._notifyLoaded, true);
     this.content.setAttribute('class', 'gadget_object');
     this.content.setAttribute('type', 'text/html');
-    this.content.setAttribute('data', this.gadget.getXHtml().getURICode() + '#id=' + this.id);
+    this.content.setAttribute('data', this.gadget.code_url + '#id=' + this.id);
     this.element.appendChild(this.content);
 
     this.tab.appendChild(this.element);
@@ -166,25 +166,21 @@ IGadget.prototype.save = function () {
         return;
     }
 
-    var url, data = {};
-
-    data.left = this.position.x;
-    data.top = this.position.y;
-    data.width = this.contentWidth;
-    data.height = this.contentHeight;
-    data.code = this.code;
-    data.name = this.name;
+    var url, data = {
+        gadget: this.gadget.getId(),
+        left: this.position.x,
+        top: this.position.y,
+        width: this.contentWidth,
+        height: this.contentHeight,
+        code: this.code,
+        name: this.name
+    };
 
     url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
         tab_id: this.dragboard.tabId,
         workspace_id: this.dragboard.workSpaceId
     });
 
-    data.gadget = URIs.GET_GADGET.evaluate({
-        vendor: this.gadget.getVendor(),
-        name: this.gadget.getName(),
-        version: this.gadget.getVersion()
-    });
     data = {
         igadget: Object.toJSON(data)
     };

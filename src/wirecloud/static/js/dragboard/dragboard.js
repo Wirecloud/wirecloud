@@ -231,11 +231,8 @@ function Dragboard(tab, workSpace, dragboardElement) {
         for (i = 0; i < tabInfo.igadgetList.length; i++) {
             curIGadget = tabInfo.igadgetList[i];
 
-            // Parse gadget id
-            gadgetid = curIGadget.gadget.split("/");
-            gadgetid = gadgetid[2] + "_" + gadgetid[3] + "_" + gadgetid[4];
             // Get gadget model
-            gadget = ShowcaseFactory.getInstance().getGadget(gadgetid);
+            gadget = ShowcaseFactory.getInstance().getGadget(curIGadget.gadget);
 
             // Parse width, height and the position of the igadget
             width = parseInt(curIGadget.width, 10);

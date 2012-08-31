@@ -111,11 +111,6 @@ def SaveIGadget(igadget, user, tab, initial_variable_values):
     icon_position = Position(posX=icon_left, posY=icon_top)
     icon_position.save()
 
-    # Gadget uri does not contain the prefix "/user" yet
-    if gadget_uri.startswith("/user") or gadget_uri.startswith("user"):
-        gadget_uri_parts = gadget_uri.split("/")
-        gadget_uri = "/" + "/".join(gadget_uri_parts[gadget_uri_parts.index("gadgets"):])
-
     gadget = Gadget.objects.get(uri=gadget_uri, users=user)
 
     new_igadget = IGadget(name=igadget_name, gadget=gadget, tab=tab, layout=layout, position=position, icon_position=icon_position, transparency=False)

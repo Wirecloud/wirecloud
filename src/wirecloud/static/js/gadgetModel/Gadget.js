@@ -79,9 +79,11 @@ function Gadget(gadget_, url_, options_) {
     this.getImage = function() { return state.getImage(); }
     this.setImage = function(image_) { state.setImage(image_); }
     this.getIcon = function() { return state.getIcon(); }
+    this.getIPhoneImageURI = function() { return state.getIcon(); }
     this.isUpToDate = function() { return state.isUpToDate(); }
     this.setLastVersion = function(lastVersion) { return state.setLastVersion(lastVersion); }
     this.getLastVersion = function(){return state.getLastVersion();}
+    Object.defineProperty(this, 'code_url', {get: function () { return state.code_url}});
 
     // *******************
     //  PRIVATE FUNCTIONS
@@ -112,7 +114,7 @@ function Gadget(gadget_, url_, options_) {
         // params: url of the template, id of the current workspace to check if it is shared
         // and with who it is shared.
         var params = {url: url_, workspaceId: workspaceId_, packaged: options_.packaged};
-        Wirecloud.io.makeRequest(URIs.GET_GADGETS, {
+        Wirecloud.io.makeRequest(Wirecloud.URLs.WIDGET_COLLECTION, {
             method: 'POST',
             parameters: params,
             onSuccess: loadGadget,
@@ -122,7 +124,7 @@ function Gadget(gadget_, url_, options_) {
     }
 
     this.getId = function() {
-        return this.getVendor() + '_'+ this.getName() + '_' + this.getVersion().text;
+        return '/gadgets/' + this.getVendor() + '/' + this.getName() + '/' + this.getVersion().text;
     }
 
     // *******************
@@ -164,6 +166,12 @@ function GadgetState(gadget_) {
     var showcaseLastVersion = version;
     var catalogueLastVersion = null;
     var upToDate = true;
+    var code_url = Wirecloud.URLs.WIDGET_CODE_ENTRY.evaluate({
+        vendor: vendor,
+        name: name,
+        version: version.text
+    });
+    Object.defineProperty(this, 'code_url', {value: code_url});
 
     // ******************
     //  PUBLIC FUNCTIONS

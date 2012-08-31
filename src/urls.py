@@ -47,10 +47,6 @@ js_info_dict = {
 
 urlpatterns = patterns('',
 
-    # Gadgets
-    (r'^user/(?P<user_name>[\.\-\w\@]+)/gadget(s)?', include('wirecloud.widget.urls')),
-    (r'^gadget(s)?', include('wirecloud.widget.urls')),
-
     # Showcase
     (r'^showcase/', include('wirecloud.widget.showcase_urls')),
 

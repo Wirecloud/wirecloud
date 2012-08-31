@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global OpManagerFactory, Wirecloud, Hash, Gadget, Modules, URIs */
+/*global OpManagerFactory, Wirecloud, Hash, Gadget, Modules */
 "use strict";
 
 /*
@@ -72,7 +72,7 @@ var ShowcaseFactory = (function () {
             for (i = 0; i < jsonGadgetList.length; i += 1) {
                 jsonGadget = jsonGadgetList[i];
                 gadget = new Gadget(jsonGadget, null);
-                gadgetId = gadget.getVendor() + '_' + gadget.getName() + '_' + gadget.getVersion();
+                gadgetId = gadget.getId();
 
                 // Insert gadget object in showcase object model
                 private_gadgets.set(gadgetId, gadget);
@@ -109,7 +109,7 @@ var ShowcaseFactory = (function () {
 
         Showcase.prototype.init = function () {
             // Initial load from persitence system
-            Wirecloud.io.makeRequest(URIs.GET_GADGETS, {
+            Wirecloud.io.makeRequest(Wirecloud.URLs.WIDGET_COLLECTION, {
                 method: 'GET',
                 onSuccess: loadGadgets,
                 onFailure: onErrorCallback,

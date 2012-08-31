@@ -124,16 +124,15 @@ def deleteGadget(user, short_name, vendor, version):
 class GadgetCollection(Resource):
 
     @no_cache
-    def read(self, request, user_name=None):
-        user = user_authentication(request, user_name)
+    def read(self, request):
 
-        gadgets = Gadget.objects.filter(users=user)
+        gadgets = Gadget.objects.filter(users=request.user)
 
         data_list = [get_gadget_data(gadget) for gadget in gadgets]
         return HttpResponse(json_encode(data_list), mimetype='application/json; charset=UTF-8')
 
     @commit_on_http_success
-    def create(self, request, user_name=None):
+    def create(self, request):
 
         if 'workspaceId' not in request.POST:
             msg = _("Missing workspaceId parameter")
@@ -169,31 +168,22 @@ class Showcase(Resource):
 class GadgetEntry(Resource):
 
     @no_cache
-    def read(self, request, vendor, name, version, user_name=None):
-        user = user_authentication(request, user_name)
-        gadget = get_object_or_404(Gadget, users=user, vendor=vendor, name=name, version=version)
+    def read(self, request, vendor, name, version):
+        gadget = get_object_or_404(Gadget, users=request.user, vendor=vendor, name=name, version=version)
         data_fields = get_gadget_data(gadget)
         return HttpResponse(json_encode(data_fields), mimetype='application/json; charset=UTF-8')
 
-    def update(self, request, vendor, name, version, user_name=None):
-        user = user_authentication(request, user_name)
-        gadget = get_object_or_404(Gadget, users=user, vendor=vendor, name=name, version=version)
-        gadget.save()
-        return HttpResponse('ok')
-
-    def delete(self, request, vendor, name, version, user_name=None):
-        user = user_authentication(request, user_name)
-        gadget = get_object_or_404(Gadget, users=user, vendor=vendor, name=name, version=version)
+    def delete(self, request, vendor, name, version):
+        gadget = get_object_or_404(Gadget, users=request.user, vendor=vendor, name=name, version=version)
         gadget.delete()
         return HttpResponse('ok')
 
 
 class GadgetCodeEntry(Resource):
 
-    def read(self, request, vendor, name, version, user_name=None):
+    def read(self, request, vendor, name, version):
 
-        user = user_authentication(request, user_name)
-        gadget = get_object_or_404(Gadget, vendor=vendor, name=name, version=version, users__id=user.id)
+        gadget = get_object_or_404(Gadget, vendor=vendor, name=name, version=version, users=request.user)
 
         # check if the xhtml code has been cached
         if gadget.xhtml.cacheable:
@@ -250,18 +240,17 @@ class GadgetCodeEntry(Resource):
         patch_cache_headers(response, xhtml.code_timestamp, cache_timeout)
         return response
 
-    def update(self, request, vendor, name, version, user_name=None):
-        user = user_authentication(request, user_name)
-        gadget = get_object_or_404(Gadget, users=user, vendor=vendor, name=name, version=version)
+    def update(self, request, vendor, name, version):
+        gadget = get_object_or_404(Gadget, users=request.user, vendor=vendor, name=name, version=version)
         xhtml = gadget.xhtml
 
         try:
             url = xhtml.url
             if (url.startswith('http')):
-                #Absolute URL
+                # Absolute URL
                 xhtml.code = download_http_content(url, user=user)
             else:
-                #Relative URL
+                # Relative URL
                 if (url.startswith('/deployment/gadgets')):
                     #GWT gadget package
                     xhtml.code = get_xhtml_content(url)

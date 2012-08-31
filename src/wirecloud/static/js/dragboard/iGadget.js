@@ -27,7 +27,7 @@
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
 /*global $, CSSPrimitiveValue, Element, Event, Insertion, document, gettext, ngettext, interpolate, window */
-/*global Constants, DropDownMenu, URIs, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud, ShowcaseFactory*/
+/*global Constants, DropDownMenu, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud, ShowcaseFactory*/
 /*global isElement, IGadgetLogManager, IGadgetResizeHandle, GadgetVersion, DragboardPosition, Concept*/
 /*global IGadgetDraggable, IGadgetIconDraggable, FreeLayout, FullDragboardLayout*/
 /*global ColorDropDownMenu, BrowserUtilsFactory, setTimeout, clearTimeout*/
@@ -78,7 +78,7 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
     this.minimized = minimized;
     this.highlightTimeout = null;
     if (this.id) {
-        this.codeURL = this.gadget.getXHtml().getURICode() + "#id=" + this.id;
+        this.codeURL = this.gadget.code_url + "#id=" + this.id;
     }
 
     if (fulldragboard) {
@@ -1495,7 +1495,7 @@ IGadget.prototype.save = function (options) {
     function onSuccess(transport) {
         var igadgetInfo = JSON.parse(transport.responseText);
         this.id = igadgetInfo['id'];
-        this.codeURL = this.gadget.getXHtml().getURICode() + "#id=" + this.id;
+        this.codeURL = this.gadget.code_url + "#id=" + this.id;
         this.layout.dragboard.addIGadget(this, igadgetInfo, options);
     }
 
@@ -1515,12 +1515,9 @@ IGadget.prototype.save = function (options) {
         tab_id: this.layout.dragboard.tabId,
         workspace_id: this.layout.dragboard.workSpaceId
     });
-    var gadget_uri = URIs.GET_GADGET.evaluate({vendor: this.gadget.getVendor(),
-                                               name: this.gadget.getName(),
-                                               version: this.gadget.getVersion().text});
 
     var data = Object.toJSON({
-        'gadget': gadget_uri,
+        'gadget': this.gadget.getId(),
         'left': this.position.x,
         'top': this.position.y,
         'icon_left': this.iconPosition.x,

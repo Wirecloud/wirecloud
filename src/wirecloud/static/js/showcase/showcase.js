@@ -64,8 +64,8 @@ var ShowcaseFactory = function () {
                 jsonGadget = jsonGadgetList[i];
 
                 gadget = new Gadget(jsonGadget, null);
-                gadgetId = gadget.getVendor() + '_' + gadget.getName()
-                gadgetFullId = gadgetId + '_' + gadget.getVersion().text;
+                gadgetId = gadget.getVendor() + '/' + gadget.getName()
+                gadgetFullId = gadget.getId();
 
                 if (this.gadgetVersions[gadgetId] === undefined) {
                     this.gadgetVersions[gadgetId] = [];
@@ -110,7 +110,7 @@ var ShowcaseFactory = function () {
             }
 
             // Initial load from persitence system
-            Wirecloud.io.makeRequest(URIs.GET_GADGETS, {
+            Wirecloud.io.makeRequest(Wirecloud.URLs.WIDGET_COLLECTION, {
                 method: 'GET',
                 onSuccess: onSuccess.bind(this),
                 onFailure: onError,
@@ -139,7 +139,7 @@ var ShowcaseFactory = function () {
             }
 
             // Initial load from persitence system
-            Wirecloud.io.makeRequest(URIs.GET_GADGETS, {
+            Wirecloud.io.makeRequest(Wirecloud.URLs.WIDGET_COLLECTION, {
                 method: 'GET',
                 onSuccess: onSuccess.bind(this),
                 onFailure: onError.bind(this),
@@ -160,7 +160,7 @@ var ShowcaseFactory = function () {
 
         // Add a new gadget from Internet
         Showcase.prototype.addGadget = function (vendor_, name_, version_, url_, options_) {
-            var gadgetId = vendor_ + '_' + name_ + '_' + version_;
+            var gadgetId = ['/gadgets', vendor_, name_, version_].join('/');
             var gadget = this.gadgets[gadgetId];
 
             if (gadget == null) {
@@ -254,7 +254,7 @@ var ShowcaseFactory = function () {
 
             for (i = 0; i < data.length; i += 1) {
                 resource = data[i];
-                key = resource.getVendor() + '_' + resource.getName();
+                key = resource.getVendor() + '/' + resource.getName();
                 if (key in this.gadgetVersions) {
                     last_version = resource.getLastVersion();
 

@@ -92,7 +92,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
     };
 
     Dragboard.prototype.parseTab = function (tabInfo) {
-        var curIGadget, position, width, height, igadget, gadget, gadgetid, minimized, i,
+        var curIGadget, position, width, height, igadget, gadget, minimized, i,
             container, opManager = OpManagerFactory.getInstance();
 
         this.currentCode = 1;
@@ -103,11 +103,8 @@ function Dragboard(tab, workSpace, dragboardElement) {
         for (i = 0; i < this.igadgets.length; i += 1) {
             curIGadget = this.igadgets[i];
 
-            // Parse gadget id
-            gadgetid = curIGadget.gadget.split("/");
-            gadgetid = gadgetid[2] + "_" + gadgetid[3] + "_" + gadgetid[4];
             // Get gadget model
-            gadget = ShowcaseFactory.getInstance().getGadget(gadgetid);
+            gadget = ShowcaseFactory.getInstance().getGadget(curIGadget.gadget);
 
             // Create instance model
             container = opManager.globalDragboard.newIGadgetContainer();
