@@ -282,6 +282,10 @@ div.styled_numeric_field div.numeric_bottom_button {
   z-index: 111113;
 }
 
+.styled_button.plain {
+    font-size: inherit;
+}
+
 .styled_button > div, .styled_button > button, .styled_button.plain {
   cursor: pointer;
 }
@@ -930,37 +934,6 @@ div.styled_numeric_field div.numeric_bottom_button {
 /* Pagination Interface */
 .pagination .styled_button {
   vertical-align: middle;
-}
-
-.pagination .styled_button div {
-  -moz-border-radius: 0px;
-  -webkit-border-radius: 0px;
-  border-radius: 0px;
-  border: none;
-}
-
-.pagination .go-first-button div {
-  width: 16px;
-  height: 16px;
-  background: transparent url("../images/styledElements/go-first.png") no-repeat center center;
-}
-
-.pagination .go-prev-button div {
-  width: 16px;
-  height: 16px;
-  background: transparent url("../images/styledElements/go-previous.png") no-repeat center center;
-}
-
-.pagination .go-next-button div {
-  width: 16px;
-  height: 16px;
-  background: transparent url("../images/styledElements/go-next.png") no-repeat center center;
-}
-
-.pagination .go-last-button div {
-  width: 16px;
-  height: 16px;
-  background: transparent url("../images/styledElements/go-last.png") no-repeat center center;
 }
 
 /* Popup menu */

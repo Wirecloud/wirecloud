@@ -149,7 +149,7 @@ li[class^="icon-"].icon-large:before, li[class*=" icon-"].icon-large:before {
 .icon-share:before                { content: "\f045"; }
 .icon-check:before                { content: "\f046"; }
 .icon-move:before                 { content: "\f047"; }
-.icon-step-backward:before        { content: "\f048"; }
+.icon-first-page:before, .icon-step-backward:before        { content: "\f048"; }
 .icon-fast-backward:before        { content: "\f049"; }
 .icon-backward:before             { content: "\f04a"; }
 .icon-play:before                 { content: "\f04b"; }
@@ -158,7 +158,7 @@ li[class^="icon-"].icon-large:before, li[class*=" icon-"].icon-large:before {
 .icon-forward:before              { content: "\f04e"; }
 
 .icon-fast-forward:before         { content: "\f050"; }
-.icon-step-forward:before         { content: "\f051"; }
+.icon-last-page:before, .icon-step-forward:before         { content: "\f051"; }
 .icon-eject:before                { content: "\f052"; }
 .icon-chevron-left:before         { content: "\f053"; }
 .icon-chevron-right:before        { content: "\f054"; }
@@ -282,8 +282,8 @@ li[class^="icon-"].icon-large:before, li[class*=" icon-"].icon-large:before {
 .icon-money:before                { content: "\f0d6"; }
 .icon-menu:before, .icon-caret-down:before           { content: "\f0d7"; }
 .icon-tab-menu:before, .icon-caret-up:before             { content: "\f0d8"; }
-.icon-caret-left:before           { content: "\f0d9"; }
-.icon-caret-right:before          { content: "\f0da"; }
+.icon-prev-page:before, .icon-caret-left:before           { content: "\f0d9"; }
+.icon-next-page:before, .icon-caret-right:before          { content: "\f0da"; }
 .icon-columns:before              { content: "\f0db"; }
 .icon-sort:before                 { content: "\f0dc"; }
 .icon-sort-down:before            { content: "\f0dd"; }

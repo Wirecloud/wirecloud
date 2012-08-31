@@ -2910,20 +2910,16 @@ var PaginationInterface = function(pagination, options) {
     this.wrapperContainer.addClassName('pagination');
     this.wrapperElement = this.wrapperContainer.wrapperElement;
 
-    this.firstBtn = new StyledElements.StyledButton();
-    this.firstBtn.addClassName('go-first-button');
+    this.firstBtn = new StyledElements.StyledButton({'plain': true, 'class': 'icon-first-page'});
     this.firstBtn.addEventListener('click', pagination.goToFirst.bind(pagination));
 
-    this.prevBtn = new StyledElements.StyledButton();
-    this.prevBtn.addClassName('go-prev-button');
+    this.prevBtn = new StyledElements.StyledButton({'plain': true, 'class': 'icon-prev-page'});
     this.prevBtn.addEventListener('click', pagination.goToPrevious.bind(pagination));
 
-    this.nextBtn = new StyledElements.StyledButton();
-    this.nextBtn.addClassName('go-next-button');
+    this.nextBtn = new StyledElements.StyledButton({'plain': true, 'class': 'icon-next-page'});
     this.nextBtn.addEventListener('click', pagination.goToNext.bind(pagination));
 
-    this.lastBtn = new StyledElements.StyledButton();
-    this.lastBtn.addClassName('go-last-button');
+    this.lastBtn = new StyledElements.StyledButton({'plain': true, 'class': 'icon-last-page'});
     this.lastBtn.addEventListener('click', pagination.goToLast.bind(pagination));
 
     this.currentPageLabel = document.createElement('span');
