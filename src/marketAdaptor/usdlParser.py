@@ -209,7 +209,7 @@ class USDLParser(object):
             legal_condition = {
                 'type': self._get_field(RDF, legal, 'type')[0],
                 'label': self._get_field(DCTERMS, legal, 'title')[0],
-                'descripion': self._get_field(DCTERMS, legal, 'description')[0],
+                'description': self._get_field(DCTERMS, legal, 'description')[0],
                 'clauses': [],
             }
             clauses = self._get_field(LEGAL, legal, 'hasClause', id_=True)
