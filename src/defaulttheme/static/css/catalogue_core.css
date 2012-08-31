@@ -1,12 +1,3 @@
-#showcase {
-  overflow:hidden;
-}
-
-#showcase #catalogue_content {
-  border-left-width: 1px;
-  border-left-style: solid;
-}
-
 #catalogue #tag_categories ul {
 	list-style-type:none;
 	padding-left: 10px;
@@ -29,39 +20,6 @@
 	cursor: pointer;
 }
 
-
-#catalogue .resource_list .popularity.no_float, .no_float {
-  float: none;
-}
-
-#fi-ware_catalogue .resource_list .popularity.no_float, .no_float {
-  float: none;
-}
-
-#catalogue .tagging_area {
-  float: left;
-}
-
-#fi-ware_catalogue .tagging_area {
-  float: left;
-}
-
-#catalogue .inline {
-  display: inline;
-}
-
-#fi-ware_catalogue .inline {
-  display: inline;
-}
-
-#catalogue .submit_tag_link {
-  margin-left: 15px;
-}
-
-#fi-ware_catalogue .submit_tag_link {
-  margin-left: 15px;
-}
-
 #catalogue .tag_links a, #catalogue .my_tags_area a {
   margin-right: 5px;
   float: left;
@@ -70,46 +28,6 @@
 #fi-ware_catalogue .tag_links a, #catalogue .my_tags_area a {
   margin-right: 5px;
   float: left;
-}
-
-#catalogue .tag_input {
-	-moz-background-clip:border;
-	-moz-background-inline-policy:continuous;
-	-moz-background-origin:padding;
-	-moz-border-radius-bottomleft:5px;
-	-moz-border-radius-bottomright:5px;
-	-moz-border-radius-topleft:5px;
-	-moz-border-radius-topright:5px;
-	background:#EEEEEE none repeat scroll 0 0;
-	border:1px solid #DDDDDD;
-	height:14px;
-	width:120px;
-	margin-left: 5px;
-}
-
-#fi-ware_catalogue .tag_input {
-	-moz-background-clip:border;
-	-moz-background-inline-policy:continuous;
-	-moz-background-origin:padding;
-	-moz-border-radius-bottomleft:5px;
-	-moz-border-radius-bottomright:5px;
-	-moz-border-radius-topleft:5px;
-	-moz-border-radius-topright:5px;
-	background:#EEEEEE none repeat scroll 0 0;
-	border:1px solid #DDDDDD;
-	height:14px;
-	width:120px;
-	margin-left: 5px;
-}
-
-#catalogue .resource_details .tagging_area .operation_area {
-  float: none;
-  overflow: hidden;
-}
-
-#fi-ware_catalogue .resource_details .tagging_area .operation_area {
-  float: none;
-  overflow: hidden;
 }
 
 #catalogue .resource_details .available_version {
@@ -185,22 +103,6 @@
   font-size: 8pt;
 }
 
-.showcase {
-  border-color:#C2CBD2;
-}
-
-#catalogue .paginate a.text,  #catalogue .paginate a.text:visited {
-  cursor: default;
-  text-decoration: none;
-  color: black;
-}
-
-#fi-ware_catalogue .paginate a.text,  #catalogue .paginate a.text:visited {
-  cursor: default;
-  text-decoration: none;
-  color: black;
-}
-
 #catalogue .margin_top {
   margin-top: 10px;
 }
@@ -228,10 +130,6 @@
     float: left;
 }
 
-#catalogue .developer_title {
-  font-size:18px;
-}
-
 #catalogue .developer_block {
     clear: both;
     margin-bottom: 25px;
@@ -251,34 +149,6 @@
 
 #catalogue .float_left {
   float: left;
-}
-
-#catalogue #left_bar {
-	float:left;
-	display:inline;
-	position:relative;
-	width: 13%;
-	padding: 7px 10px 0 10px;
-	margin: 0;
-	height: 1000px;
-}
-
-#catalogue #left_bar a:hover {
-   text-decoration:none;
-}
-
-#catalogue #left_bar .bar_widget {
-	margin: 0 0 20px 0;
-}
-
-#catalogue #left_bar .widget_title {
-	font-size: 105%;
-	margin: 10px 0;
-}
-
-#catalogue #left_bar .widget_content {
-	overflow-x: auto;
-	margin-top: 10px;
 }
 
 #search_interface .search_bar {
@@ -369,10 +239,6 @@
     float: left;
 }
 
-#fi-ware_catalogue .developer_title {
-  font-size:18px;
-}
-
 #fi-ware_catalogue .developer_block {
   clear:both;
   float:left;
@@ -394,34 +260,6 @@
 
 #fi-ware_catalogue .float_left {
   float: left;
-}
-
-#fi-ware_catalogue #left_bar {
-	float:left;
-	display:inline;
-	position:relative;
-	width: 13%;
-	padding: 7px 10px 0 10px;
-	margin: 0;
-	height: 1000px;
-}
-
-#fi-ware_catalogue #left_bar a:hover {
-   text-decoration:none;
-}
-
-#fi-ware_catalogue #left_bar .bar_widget {
-	margin: 0 0 20px 0;
-}
-
-#fi-ware_catalogue #left_bar .widget_title {
-	font-size: 105%;
-	margin: 10px 0;
-}
-
-#fi-ware_catalogue #left_bar .widget_content {
-	overflow-x: auto;
-	margin-top: 10px;
 }
 
 #fi-ware_catalogue .simple_search {
@@ -457,21 +295,8 @@
 	width: 100%;
 }
 
-#fi-ware_catalogue .paginate_show {
-    display: inline;
-    float:right;
-    margin-right: 10px;
-}
-
 #fi-ware_catalogue .orderby {
 	display:inline;
-	float:right;
-	margin-right: 10px;
-}
-
-#fi-ware_catalogue .paginate {
-	padding-top:2px;
-	padding-bottom:7px;
 	float:right;
 	margin-right: 10px;
 }
@@ -792,114 +617,14 @@ Resource
 }
 /* /////////////// */
 
-.purchase_window_table td.app_name {
-	color: darkBlue;
-}
-
-.purchase_window_table tr.total_row td {
-	border-top: 1px solid;
-	border-bottom: 1px solid;
-}
-
-.purchase_window_table tr.total_row {
-	cursor: default;
-}
-
 .tags .tag_links {
   float:left;
   overflow:hidden;
   width:500px;
 }
 
-#catalogue #toolbar {
-  width: 100%;
-}
-
-#catalogue .toolbar_option {
-  float: left;
-}
-
-#fi-ware_catalogue #toolbar {
-  width: 100%;
-}
-
-#fi-ware_catalogue .toolbar_option {
-  float: left;
-}
-
-#gadgetToAppWindow .app_image {
-  position:absolute;
-  right:8px;
-  top:30px;
-  width:140px;
-  height: 65px;
-}
-
-#gadgetToAppWindow .app_info {
-  width: 525px;
-}
-
-#gadgetToAppWindow .app_desc, #gadgetToAppWindow .app_gadgets {
-  clear: both;
-}
-
 .show_external_link {
   padding-bottom: 10px;
-}
-
-#gadgetToAppWindow b {
-  clear: both;
-  float: left;
-  padding-right: 5px;
-}
-
-
-
-#close_info_resource {
-	position:absolute;
-	z-index:2;
-	right:10px;
-	top:10px;
-}
-
-.purchase_window_text {
-	max-width: 500px;
-}
-
-.purchase_window_table {
-	margin-top:10px;
-	width: 100%;
-}
-
-.purchase_window_table th {
-	border-bottom:1px solid;
-	padding-left: 6px;
-	text-align: left;
-}
-
-.purchase_window_table th.app_name {
-	width: 60%;
-}
-
-.purchase_window_table th.app_signup_price,  .purchase_window_table th.app_monthly_price {
-	width: 20%;
-}
-
-.purchase_window_table td {
-	border-left:1px solid;
-	padding-left: 6px;
-	text-align: left;
-	padding: 6px;
-	margin: 0px;
-}
-
-.purchase_window_table tr {
-	cursor: pointer;
-	cursor: hand;
-}
-
-#purchase_window_table .right_border {
-  border-right: 1px solid;
 }
 
 .help_text_enabled {
@@ -912,22 +637,6 @@ Resource
 .help_text_disabled {
 	display: none;
 	position: absolute;
-}
-
-#app_image {
-	width: 150px;
-	height: 70px;
-	border: none;
-	clear: both;
-	float: right;
-}
-
-#app_name {
-	clear: both;
-	font-size: 16px;
-	float: left;
-	padding-bottom: 10px;
-	min-width: 400px;
 }
 
 #app_desc, #app_gadget_list {

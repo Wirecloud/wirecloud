@@ -1,43 +1,3 @@
-#catalogue .developer_title {
-  color: #666666;
-  font-weight:bold;
-}
-
-#catalogue .toolbar {
-  border-color: 1px solid #C2CBD2;
-}
-
-#catalogue .last_toolbar_button {
-  border-color: #C2CBD2;
-}
-
-#catalogue .toolbar_menu .selected_section {
-	background: #C7C7C7;
-	color:#404040;
-}
-
-#catalogue .toolbar_menu div {
-  color: #666666;
-  font-weight: bold;
-  cursor: pointer;
-  background: #e9e9e9;
-  border-color: #C2CBD2;
-}
-
-
-
-#catalogue .toolbar_menu div:hover {
-  color: red;
-}
-
-#catalogue .paginate img {
-  border-style:none;
-}
-
-#catalogue #left_bar .widget_title {
-	font-weight: bold;
-}
-
 #catalogue #menu_options .simple_search #simple_search_text {
 	background: #e6f3ff;
 	-moz-border-radius: 4px;
@@ -46,11 +6,6 @@
 
 #catalogue .resource_list .header_resource, #catalogue #resource_details .back_to_resource_list {
 	border-color: #DDDDDD;
-}
-
-.purchase_window_table tr.total_row td {
-	border-top-color: #cccccc;
-	border-bottom-color: #000000;
 }
 
 #catalogue button {
@@ -81,28 +36,4 @@
 
 #catalogue .link:hover {
   text-decoration: underline
-}
-
-.purchase_window_table th {
-	border-color: #000000;
-}
-
-#purchase_window_table ._text {
-  text-align: ;
-}
-
-#purchase_window_table .right_border {
-  border-color: #cccccc;
-}
-
-.purchase_window_table td.total_name {
-	font-weight: bold;
-}
-
-.purchase_window_table td {
-	border-color:#CCCCCC;
-}
-
-#app_name {
-	font-weight: bold;
 }
