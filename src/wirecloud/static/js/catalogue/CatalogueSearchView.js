@@ -36,6 +36,8 @@ var CatalogueSearchView = function (id, options) {
             this.resource_painter.paint(elements);
         }.bind(this)
     });
+    this.pagination.addEventListener('requestStart', this.disable.bind(this));
+    this.pagination.addEventListener('requestEnd', this.enable.bind(this));
     var contents = builder.parse($('wirecloud_catalogue_search_interface').getTextContent(), {
         'pagination': function () {
             return new PaginationInterface(this.pagination);
