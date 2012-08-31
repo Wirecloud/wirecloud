@@ -142,7 +142,13 @@ def build_url_template(viewname, kwargs=[], urlconf=None, prefix=None):
         raise NoReverseMatch("Error importing '%s': %s." % (lookup_view, e))
     possibilities = resolver.reverse_dict.getlist(lookup_view)
     prefix_norm, prefix_args = normalize(prefix)[0]
-    for possibility, pattern, defaults in possibilities:
+    for entry in possibilities:
+        if len(entry) == 3:
+            possibility, pattern, defaults = entry
+        else:
+            possibility, pattern = entry
+            defaults = {}
+
         for result, params in possibility:
             if set(kwargs + defaults.keys()) != set(params + defaults.keys() + prefix_args):
                 continue
