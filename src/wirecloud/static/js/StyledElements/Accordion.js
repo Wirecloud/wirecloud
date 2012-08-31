@@ -65,7 +65,7 @@
         var height, computedStyle;
 
         height = this._getUsableHeight();
-        if (height == null) {
+        if (height == null && this.currentContainer != null) {
             return; // nothing to do
         }
 
