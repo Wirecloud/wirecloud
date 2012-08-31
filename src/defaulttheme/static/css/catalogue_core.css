@@ -282,14 +282,26 @@
 }
 
 #search_interface .search_bar {
+    background: white;
     padding: 0 2ex;
     z-index: 2;
+}
+
+#search_interface .north_container.search_bar {
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
 }
 
-#search_interface .search_bar > div {
+#search_interface .west_container.search_bar {
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+}
+
+#search_interface .north_container.search_bar > div {
     display: inline-block;
     white-space: nowrap;
+}
+
+#search_interface .west_container > div > label {
+    display: block;
 }
 
 #search_interface .search_bar > div .styled_select {

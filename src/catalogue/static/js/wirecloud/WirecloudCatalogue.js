@@ -51,12 +51,11 @@
             data = {
                 'resources': resources,
                 'preferred_versions': preferred_versions,
-                'query_results_number': resources.length,
-                'resources_per_page': 10,
-                'current_page': 1
+                'current_page': this.options.starting_page,
+                'total_count': parseInt(raw_data.items, 10)
             };
 
-            this.callback(data);
+            this.callback(data, data);
         }
     };
 
@@ -78,13 +77,16 @@
         var params, url, context;
 
         params = {
-            'orderby': options.order_by,
             'search_criteria': options.search_criteria,
             'search_boolean': options.search_boolean,
             'scope': options.scope
         };
+        if (options.order_by !== '') {
+            params.orderby = options.order_by;
+        }
 
         context = {
+            'options': options,
             'callback': callback
         };
 

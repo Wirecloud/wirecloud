@@ -3,12 +3,15 @@
 <s:borderlayout>
 
     <s:northcontainer>
+
         <s:options>{"class": "search_bar"}</s:options>
 
-        <div>
-            <input class="simple_search_text" type="text" />
-            <t:reset_button />
-        </div>
+        <t:pagination />
+
+    </s:northcontainer>
+
+    <s:westcontainer>
+        <s:options>{"class": "search_bar"}</s:options>
 
         <div>
             <label>{% trans 'Order by:' %}</label>
@@ -19,7 +22,14 @@
             <label>{% trans 'Widgets per page:' %}</label>
             <t:widgetsperpage />
         </div>
-    </s:northcontainer>
+
+        <h2>Filtering</h2>
+        <div>
+            <input class="simple_search_text" type="text" />
+            <t:reset_button />
+        </div>
+
+    </s:westcontainer>
 
     <s:centercontainer>
         <s:options>{"class": "resource_list"}</s:options>

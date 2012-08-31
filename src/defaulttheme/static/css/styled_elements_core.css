@@ -521,33 +521,32 @@ div.styled_numeric_field div.numeric_bottom_button {
 }
 
 .border_layout > .north_container {
-  position: absolute;
-  top: 0;
-  width: 100%;
-  left: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
 }
 
 .border_layout > .west_container {
-  position: absolute;
-  left: 0;
-  display: inline-block;
+    position: absolute;
+    left: 0;
+    display: inline-block;
 }
 
 .border_layout > .center_container {
-  position: absolute;
-  overflow: auto;
+    position: absolute;
+    overflow: auto;
 }
 
 .border_layout > .east_container {
-  position: absolute;
-  display: inline-block;
+    position: absolute;
+    display: inline-block;
 }
 
 .border_layout > .south_container {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  right: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
 }
 
 /* Popup menu */

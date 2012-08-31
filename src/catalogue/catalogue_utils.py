@@ -185,9 +185,11 @@ def get_resource_response(resources, format, items, user, request=None):
     """Obtains all the information related to a resource encoded in the properly format (json or xml)."""
 
     if format == 'json' or format == 'default':
-        data = {'resources': [get_resource_group_data(group, user, request) for group in resources]}
+        data = {
+            'resources': [get_resource_group_data(group, user, request) for group in resources],
+            'items': items,
+        }
         response = HttpResponse(json_encode(data), mimetype='application/json; charset=UTF-8')
-        response.__setitem__('items', items)
         return response
     elif format == 'xml':
         response = get_xml_description(resources, user)
