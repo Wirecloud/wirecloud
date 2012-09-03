@@ -29,7 +29,6 @@
 
 
 #
-import os
 from lxml import etree
 from cStringIO import StringIO
 
@@ -333,7 +332,7 @@ def get_and_add_gadget(vendor, name, version, users):
 
 
 def xpath(tree, query, xmlns):
-    if xmlns == None:
+    if xmlns is None:
         query = query.replace('xhtml:', '')
         return tree.xpath(query)
     else:

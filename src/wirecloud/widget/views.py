@@ -41,7 +41,7 @@ from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.views.static import serve
 
-from commons.authentication import user_authentication, Http403
+from commons.authentication import Http403
 from commons.cache import no_cache, patch_cache_headers
 from commons.utils import get_xml_error, json_encode, get_xhtml_content
 from commons.exceptions import TemplateParseException
@@ -51,7 +51,7 @@ from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 
 from wirecloud.iwidget.utils import deleteIGadget
-from wirecloud.models import Gadget, IGadget, XHTML
+from wirecloud.models import Gadget, IGadget
 import wirecloud.widget.utils as showcase_utils
 from wirecloud.widget.utils import get_or_create_gadget, create_gadget_from_template, fix_gadget_code, get_site_domain
 from wirecloud.workspace.utils import create_published_workspace_from_template
@@ -247,7 +247,7 @@ class GadgetCodeEntry(Resource):
             url = xhtml.url
             if (url.startswith('http')):
                 # Absolute URL
-                xhtml.code = download_http_content(url, user=user)
+                xhtml.code = download_http_content(url, user=request.user)
             else:
                 # Relative URL
                 if (url.startswith('/deployment/gadgets')):
@@ -256,7 +256,7 @@ class GadgetCodeEntry(Resource):
                 else:
                     #Gadget with relative url and it's not a GWT package
                     url = gadget.get_resource_url(url, request)
-                    xhtml.code = download_http_content(url, user=user)
+                    xhtml.code = download_http_content(url, user=request.user)
 
             xhtml.save()
         except Exception, e:
