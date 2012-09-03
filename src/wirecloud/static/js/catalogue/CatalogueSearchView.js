@@ -31,6 +31,7 @@ var CatalogueSearchView = function (id, options) {
         'pageSize': 30,
         'order_by': '-popularity',
         'keywords': '',
+        'scope': 'all',
         'requestFunc': this._search.bind(this),
         'processFunc': function (elements) {
             this.resource_painter.paint(elements);
@@ -65,7 +66,21 @@ var CatalogueSearchView = function (id, options) {
             select.addEventListener('change', function (select) {
                 this.pagination.changeOptions({'order_by': select.getValue()});
             }.bind(this));
-            this.orderby = select;
+            return select;
+        }.bind(this),
+        'scope': function () {
+            var select = new StyledElements.StyledSelect({
+                'initialValue': 'all',
+                'initialEntries': [
+                    {'label': gettext('All'), 'value': 'all'},
+                    {'label': gettext('Widgets'), 'value': 'widget'},
+                    {'label': gettext('Mashups'), 'value': 'mashup'},
+                    {'label': gettext('Operators'), 'value': 'operator'}
+                ]
+            });
+            select.addEventListener('change', function (select) {
+                this.pagination.changeOptions({'scope': select.getValue()});
+            }.bind(this));
             return select;
         }.bind(this),
         'widgetsperpage': function () {
@@ -121,7 +136,7 @@ CatalogueSearchView.prototype._search = function (page, options, callback) {
         'order_by': options.order_by,
         'search_criteria': options.keywords,
         'search_boolean': 'AND',
-        'scope': 'all',
+        'scope': options.scope,
         'starting_page': page,
         'resources_per_page': options.pageSize
     };
