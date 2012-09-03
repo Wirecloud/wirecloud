@@ -26,7 +26,7 @@
     "use strict";
 
     var FiWareCatalogueView = function (id, options) {
-        options.id = 'fi-ware_catalogue';
+        options.class = 'fi-ware_catalogue';
         StyledElements.Alternative.call(this, id, options);
 
         this.alternatives = new StyledElements.StyledAlternatives();

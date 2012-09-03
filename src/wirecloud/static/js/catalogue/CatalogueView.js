@@ -26,7 +26,7 @@
     "use strict";
 
     var CatalogueView = function (id, options) {
-        options.id = 'catalogue';
+        options.class = 'catalogue';
         StyledElements.Alternative.call(this, id, options);
 
         this.catalogue = new Wirecloud.WirecloudCatalogue(options.marketplace_desc);

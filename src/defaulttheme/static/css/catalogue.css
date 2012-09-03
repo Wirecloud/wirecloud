@@ -1,14 +1,14 @@
-#catalogue #menu_options .simple_search #simple_search_text {
+.catalogue #menu_options .simple_search #simple_search_text {
 	background: #e6f3ff;
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
 }
 
-#catalogue .resource_list .header_resource, #catalogue #resource_details .back_to_resource_list {
+.catalogue .resource_list .header_resource, .catalogue #resource_details .back_to_resource_list {
 	border-color: #DDDDDD;
 }
 
-#catalogue button {
+.catalogue button {
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
 }
@@ -22,18 +22,18 @@
     background: white;
 }
 
-#catalogue .resource .resource_name {
+.catalogue .resource .resource_name {
     font-weight: bold;
 }
 
-#catalogue .bold {
+.catalogue .bold {
     font-weight: bold;
 }
 
-#catalogue .link {
+.catalogue .link {
 
 }
 
-#catalogue .link:hover {
+.catalogue .link:hover {
   text-decoration: underline
 }
