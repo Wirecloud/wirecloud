@@ -149,7 +149,7 @@
             },
             'select': function (builder, element, options) {
                 return new StyledElements.StyledSelect(options);
-            },
+            }
         };
 
         this.build = function (element, tcomponents) {

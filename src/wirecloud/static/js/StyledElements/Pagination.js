@@ -18,10 +18,11 @@
  *     <http://www.gnu.org/licenses/>.
  *
  */
+/*globals EzWebExt, StyledElements*/
 /**
  *
  * Events supported by this component:
- *      - optionsChanged: 
+ *      - optionsChanged:
  *      - paginationChanged:
  *      - requestStart:
  *      - requestEnd:
@@ -111,7 +112,7 @@
         this.changePage(this.pCachedTotalPages);
     };
 
-    Pagination.prototype._calculatePages = function() {
+    Pagination.prototype._calculatePages = function _calculatePages() {
         this.totalPages = Math.ceil(this.pCachedTotalCount / this.pOptions.pageSize);
         if (this.totalPages <= 0) {
             this.totalPages = 1;

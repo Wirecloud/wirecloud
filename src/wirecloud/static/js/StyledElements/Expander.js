@@ -18,7 +18,7 @@
  *     <http://www.gnu.org/licenses/>.
  *
  */
-/*globals EzWebExt, StyledElements */
+/*globals CSSPrimitiveValue, EzWebExt, StyledElements */
 
 (function () {
 

@@ -18,7 +18,7 @@
  *     <http://www.gnu.org/licenses/>.
  *
  */
-/*globals EzWebExt, StyledElements */
+/*globals CSSPrimitiveValue, EzWebExt, StyledElements */
 
 (function () {
 
@@ -82,7 +82,7 @@
     };
 
     Accordion.prototype.repaint = function repaint(temporal) {
-        var height, computedStyle;
+        var height, computedStyle, i;
 
         height = this._getUsableHeight();
         if (height == null && this.currentContainer != null) {
@@ -90,7 +90,7 @@
         }
 
         for (i = 0; i < this.children.length; i += 1) {
-            if (this.children[i] == this.currentContainer) {
+            if (this.children[i] === this.currentContainer) {
                 continue;
             }
 
@@ -117,7 +117,7 @@
     Accordion.prototype.destroy = function destroy() {
         var i;
 
-        for (i = 0; i < this.children.length; i +=1) {
+        for (i = 0; i < this.children.length; i += 1) {
             this.children[i].destroy();
         }
         this.children = null;
