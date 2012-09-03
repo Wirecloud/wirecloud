@@ -91,8 +91,7 @@ def parseAndCreateGadget(request, user, workspaceId, fromWGT):
     except Http403:
         raise
     except Exception, e:
-        msg = _("Error creating gadget: %(msg)s" % {"msg": str(e)})
-        raise TracedServerError(e, {'url': templateURL}, request, msg)
+        raise TracedServerError(e, {'url': templateURL}, request, str(e))
 
 
 def deleteGadget(user, short_name, vendor, version):

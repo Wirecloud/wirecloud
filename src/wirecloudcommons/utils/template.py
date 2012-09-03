@@ -40,6 +40,7 @@ RESOURCE_DESCRIPTION_XPATH = '/t:Template/t:Catalog.ResourceDescription'
 NAME_XPATH = 't:Name'
 VENDOR_XPATH = 't:Vendor'
 VERSION_XPATH = 't:Version'
+DISPLAY_NAME_XPATH = 't:DisplayName'
 DESCRIPTION_XPATH = 't:Description'
 AUTHOR_XPATH = 't:Author'
 ORGANIZATION_XPATH = 't:Organization'
@@ -47,13 +48,14 @@ IMAGE_URI_XPATH = 't:ImageURI'
 IPHONE_IMAGE_URI_XPATH = 't:iPhoneImageURI'
 MAIL_XPATH = 't:Mail'
 DOC_URI_XPATH = 't:WikiURI'
+REQUIREMENTS_XPATH = 't:Requirements'
 
-DISPLAY_NAME_XPATH = 't:DisplayName'
-CODE_XPATH = '/t:Template/t:Platform.Link/t:XHTML'
+FEATURE_XPATH = 't:Feature'
+CODE_XPATH = '/t:Template/t:Platform.Link[1]/t:XHTML'
 PREFERENCE_XPATH = 't:Preference'
 PREFERENCES_XPATH = '/t:Template/t:Platform.Preferences[1]/t:Preference'
 OPTION_XPATH = 't:Option'
-PROPERTY_XPATH = '/t:Template/t:Platform.StateProperties/t:Property'
+PROPERTY_XPATH = '/t:Template/t:Platform.StateProperties[1]/t:Property'
 WIRING_XPATH = '/t:Template/t:Platform.Wiring'
 SLOT_XPATH = 't:Slot'
 EVENT_XPATH = 't:Event'
@@ -61,7 +63,6 @@ CONTEXT_XPATH = '/t:Template/t:Platform.Context'
 GADGET_CONTEXT_XPATH = 't:GadgetContext'
 PLATFORM_CONTEXT_XPATH = 't:Context'
 PLATFORM_RENDERING_XPATH = '/t:Template/t:Platform.Rendering'
-REQUIRE_XPATH = 't:Require'
 
 INCLUDED_RESOURCES_XPATH = 't:IncludedResources'
 TAB_XPATH = 't:Tab'
@@ -677,10 +678,17 @@ class WirecloudTemplateParser(object):
     def _parse_requirements(self):
 
         self._info['requirements'] = []
-        for requirement in self._xpath(REQUIRE_XPATH, self._resource_description):
+        requirements_elements = self._xpath(REQUIREMENTS_XPATH, self._resource_description)
+        if len(requirements_elements) < 1:
+            return
+
+        for requirement in self._xpath(FEATURE_XPATH, requirements_elements[0]):
+            if requirement.get('name', '').strip() == '':
+                raise TemplateParseException('Missing required feature name')
+
             self._info['requirements'].append({
-                'feature': requirement.get('feature'),
-                'version': requirement.get('version'),
+                'type': 'feature',
+                'name': requirement.get('name')
             })
 
     def _parse_wiring_info(self, parse_connections=False):

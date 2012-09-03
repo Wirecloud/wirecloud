@@ -56,8 +56,15 @@ def check_requirements(resource):
     active_features = get_active_features()
 
     for requirement in resource['requirements']:
-        if requirement['feature'] not in active_features:
-            raise Exception()
+        if requirement['type'] == 'feature':
+
+            if requirement['name'] not in active_features:
+                raise Exception('Required feature is not enabled: %s' % requirement['name'])
+
+        else:
+
+            raise Exception('Unsupported requirement type: %s' % requirement['type'])
+
 
 def create_gadget_from_template(template, user, request=None, base=None):
 
