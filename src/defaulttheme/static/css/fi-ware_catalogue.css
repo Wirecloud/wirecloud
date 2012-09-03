@@ -42,3 +42,12 @@
 #fi-ware_catalogue .link:hover {
   text-decoration: underline
 }
+
+#fi-ware_catalogue .notebook .tab_area .tab.selected {
+    background: white;
+    z-index: 2;
+}
+
+#fi-ware_catalogue .notebook .tab_area .tab {
+    background: #DF7A62;
+}
