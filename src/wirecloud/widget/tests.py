@@ -16,7 +16,7 @@ from commons.wgt import WgtFile, WgtDeployer
 from wirecloudcommons.utils.template import TemplateParser
 from wirecloud.models import Gadget
 import wirecloud.widget.utils
-from wirecloud.widget.utils import create_gadget_from_template, create_gadget_from_wgt, get_or_add_gadget_from_catalogue
+from wirecloud.widget.utils import create_widget_from_template, create_widget_from_wgt, get_or_add_gadget_from_catalogue
 from wirecloud.widget.views import deleteGadget
 from wirecloud.workspace.utils import create_published_workspace_from_template
 
@@ -55,7 +55,7 @@ class ShowcaseTestCase(LocalizedTestCase):
 
         http_utils.download_http_content.set_response(template_uri, template)
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
-        gadget = create_gadget_from_template(template_uri, self.user)
+        gadget = create_widget_from_template(template_uri, self.user)
 
         self.changeLanguage('en')
         data = get_gadget_data(gadget)
@@ -85,7 +85,7 @@ class ShowcaseTestCase(LocalizedTestCase):
 
         http_utils.download_http_content.set_response(template_uri, template)
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
-        gadget = create_gadget_from_template(template_uri, self.user)
+        gadget = create_widget_from_template(template_uri, self.user)
 
         self.changeLanguage('en')
         data = get_gadget_data(gadget)
@@ -139,7 +139,7 @@ class ShowcaseTestCase(LocalizedTestCase):
 
         http_utils.download_http_content.set_response(template_uri, template)
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
-        create_gadget_from_template(template_uri, self.user)
+        create_widget_from_template(template_uri, self.user)
 
         deleteGadget(self.user, 'test', 'Morfeo', '0.1')
         self.assertRaises(Gadget.DoesNotExist, Gadget.objects.get, vendor='Morfeo', name='test', version='0.1')
@@ -150,7 +150,7 @@ class ShowcaseTestCase(LocalizedTestCase):
 
         http_utils.download_http_content.set_response(template_uri, template)
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
-        create_gadget_from_template(template_uri, self.user)
+        create_widget_from_template(template_uri, self.user)
 
         deleteGadget(self.user, 'test', 'Morfeo', '0.1')
         self.assertRaises(Gadget.DoesNotExist, Gadget.objects.get, vendor='Morfeo', name='test', version='0.1')
@@ -238,7 +238,7 @@ class ShowcaseTestCase(LocalizedTestCase):
 
         http_utils.download_http_content.set_response(template_uri, template)
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
-        gadget = create_gadget_from_template(template_uri, self.user)
+        gadget = create_widget_from_template(template_uri, self.user)
 
         self.changeLanguage('en')
         data = get_gadget_data(gadget)
@@ -256,15 +256,15 @@ class ShowcaseTestCase(LocalizedTestCase):
 
         template = self.read_template('template5.xml')
         http_utils.download_http_content.set_response(template_uri, template)
-        self.assertRaises(TemplateParseException, create_gadget_from_template, template_uri, self.user)
+        self.assertRaises(TemplateParseException, create_widget_from_template, template_uri, self.user)
 
         template = self.read_template('template6.xml')
         http_utils.download_http_content.set_response(template_uri, template)
-        self.assertRaises(TemplateParseException, create_gadget_from_template, template_uri, self.user)
+        self.assertRaises(TemplateParseException, create_widget_from_template, template_uri, self.user)
 
         template = self.read_template('template7.xml')
         http_utils.download_http_content.set_response(template_uri, template)
-        self.assertRaises(TemplateParseException, create_gadget_from_template, template_uri, self.user)
+        self.assertRaises(TemplateParseException, create_widget_from_template, template_uri, self.user)
 
     def test_gadget_with_unmet_requirements(self):
 
@@ -272,7 +272,7 @@ class ShowcaseTestCase(LocalizedTestCase):
         template = self.read_template('template8.xml')
 
         http_utils.download_http_content.set_response(template_uri, template)
-        self.assertRaises(Exception, create_gadget_from_template, template_uri, self.user)
+        self.assertRaises(Exception, create_widget_from_template, template_uri, self.user)
         self.assertRaises(Gadget.DoesNotExist, Gadget.objects.get, vendor='Example', name='Test', version='0.1')
 
     def test_gadgets_with_invalid_format_usdl(self):
@@ -281,11 +281,11 @@ class ShowcaseTestCase(LocalizedTestCase):
 
         template = self.read_template('template5.rdf')
         http_utils.download_http_content.set_response(template_uri, template)
-        self.assertRaises(TemplateParseException, create_gadget_from_template, template_uri, self.user)
+        self.assertRaises(TemplateParseException, create_widget_from_template, template_uri, self.user)
 
         template = self.read_template('template6.rdf')
         http_utils.download_http_content.set_response(template_uri, template)
-        self.assertRaises(TemplateParseException, create_gadget_from_template, template_uri, self.user)
+        self.assertRaises(TemplateParseException, create_widget_from_template, template_uri, self.user)
 
     def test_basic_mashup(self):
         template = self.read_template('..', '..', 'workspace', 'test-data', 'wt1.xml')
@@ -324,7 +324,7 @@ class WGTShowcaseTestCase(TransactionTestCase):
         wgt_file = WgtFile(os.path.join(os.path.dirname(__file__), 'test-data', 'basic_gadget.wgt'))
         gadget_path = wirecloud.widget.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
 
-        create_gadget_from_wgt(wgt_file, self.user)
+        create_widget_from_wgt(wgt_file, self.user)
         Gadget.objects.get(vendor='Morfeo', name='Test', version='0.1')
         self.assertEqual(os.path.isdir(gadget_path), True)
 

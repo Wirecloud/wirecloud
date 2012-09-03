@@ -108,7 +108,7 @@ class USDLTemplateParser(object):
         self._graph = graph
         # check if is a mashup, a widget or an operator
         for type_ in self._graph.subjects(RDF['type'], WIRE['Widget']):
-            self._info['type'] = 'gadget'
+            self._info['type'] = 'widget'
             break
         else:
             for t in self._graph.subjects(RDF['type'], WIRE['Operator']):
@@ -182,7 +182,7 @@ class USDLTemplateParser(object):
 
     def _parse_extra_info(self):
 
-        if self._info['type'] == 'gadget' or self._info['type'] == 'operator':
+        if self._info['type'] == 'widget' or self._info['type'] == 'operator':
             self._parse_widget_info()
         elif self._info['type'] == 'mashup':
             self._parse_workspace_info()
@@ -197,7 +197,7 @@ class USDLTemplateParser(object):
         self._info['translations'] = {}
 
         # ------------------------------------------
-        if self._info['type'] == 'gadget':
+        if self._info['type'] == 'widget':
             self._rootURI = self._graph.subjects(RDF['type'], WIRE['Widget']).next()
         elif self._info['type'] == 'mashup':
             self._rootURI = self._graph.subjects(RDF['type'], WIRE_M['Mashup']).next()
@@ -383,7 +383,7 @@ class USDLTemplateParser(object):
                 'aspect': 'ECTX',
             })
 
-        if self._info['type'] == 'gadget':
+        if self._info['type'] == 'widget':
             # It contains the widget code
             xhtml_element = self._get_field(USDL, 'utilizedResource', self._rootURI, id_=True)
 
@@ -411,8 +411,8 @@ class USDLTemplateParser(object):
 
         rendering_element = self._get_field(WIRE, 'hasPlatformRendering', self._rootURI, id_=True, required=False)
 
-        self._info['gadget_width'] = self._get_field(WIRE, 'renderingWidth', rendering_element, required=False)
-        self._info['gadget_height'] = self._get_field(WIRE, 'renderingHeight', rendering_element, required=False)
+        self._info['widget_width'] = self._get_field(WIRE, 'renderingWidth', rendering_element, required=False)
+        self._info['widget_height'] = self._get_field(WIRE, 'renderingHeight', rendering_element, required=False)
 
     def _parse_translation_catalogue(self):
         self._info['default_lang'] = 'en'
@@ -598,7 +598,7 @@ class WirecloudTemplateParser(object):
         if len(included_resources_elements) == 1:
             self._info['type'] = 'mashup'
         else:
-            self._info['type'] = 'gadget'
+            self._info['type'] = 'widget'
 
     def _xpath(self, query, element):
         if self._uses_namespace:
@@ -618,8 +618,8 @@ class WirecloudTemplateParser(object):
         self._translation_indexes[index].append(kwargs)
 
     def _parse_extra_info(self):
-        if self._info['type'] == 'gadget':
-            self._parse_gadget_info()
+        if self._info['type'] == 'widget':
+            self._parse_widget_info()
         elif self._info['type'] == 'mashup':
             self._parse_workspace_info()
 
@@ -773,7 +773,7 @@ class WirecloudTemplateParser(object):
             }
             self._info['wiring']['operators'][operator_info['id']] = operator_info
 
-    def _parse_gadget_info(self):
+    def _parse_widget_info(self):
 
         self._get_url_field('iphone_image_uri', IPHONE_IMAGE_URI_XPATH, self._resource_description, required=False)
 
@@ -851,8 +851,8 @@ class WirecloudTemplateParser(object):
         self._info['code_cacheable'] = xhtml_element.get('cacheable', 'true').lower() == 'true'
 
         rendering_element = self._xpath(PLATFORM_RENDERING_XPATH, self._doc)[0]
-        self._info['gadget_width'] = rendering_element.get('width')
-        self._info['gadget_height'] = rendering_element.get('height')
+        self._info['widget_width'] = rendering_element.get('width')
+        self._info['widget_height'] = rendering_element.get('height')
 
     def _parse_workspace_info(self):
 

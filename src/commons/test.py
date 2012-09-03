@@ -124,7 +124,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         cls.tmp_dir = mkdtemp()
         showcase.wgt_deployer = WgtDeployer(cls.tmp_dir)
         wgt_file = WgtFile(os.path.join(cls.wgt_dir, 'Wirecloud_Test_1.0.wgt'))
-        showcase.create_gadget_from_wgt(wgt_file, None, deploy_only=True)
+        showcase.create_widget_from_wgt(wgt_file, None, deploy_only=True)
 
         super(WirecloudSeleniumTestCase, cls).setUpClass()
 

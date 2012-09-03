@@ -53,7 +53,7 @@ from commons.resource import Resource
 from wirecloud.iwidget.utils import deleteIGadget
 from wirecloud.models import Gadget, IGadget
 import wirecloud.widget.utils as showcase_utils
-from wirecloud.widget.utils import get_or_create_gadget, create_gadget_from_template, fix_gadget_code, get_site_domain
+from wirecloud.widget.utils import get_or_create_gadget, create_widget_from_template, fix_gadget_code, get_site_domain
 from wirecloud.workspace.utils import create_published_workspace_from_template
 from wirecloudcommons.utils.template import TemplateParser
 from wirecloudcommons.utils.transaction import commit_on_http_success
@@ -157,7 +157,7 @@ class Showcase(Resource):
         template = TemplateParser(template_content, base=url)
 
         if template.get_resource_type() == 'gadget':
-            create_gadget_from_template(template, request.user, request)
+            create_widget_from_template(template, request.user, request)
         else:
             create_published_workspace_from_template(template, request.user)
 

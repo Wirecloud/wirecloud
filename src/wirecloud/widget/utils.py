@@ -65,9 +65,9 @@ def check_requirements(resource):
             raise Exception('Unsupported requirement type: %s' % requirement['type'])
 
 
-def create_gadget_from_template(template, user, request=None, base=None):
+def create_widget_from_template(template, user, request=None, base=None):
 
-    """Creates a gadget from a template"""
+    """Creates a widget from a template"""
 
     if isinstance(template, TemplateParser):
         parser = template
@@ -77,46 +77,46 @@ def create_gadget_from_template(template, user, request=None, base=None):
             base = template
         parser = TemplateParser(template_content, base=base)
 
-    if parser.get_resource_type() != 'gadget':
+    if parser.get_resource_type() != 'widget':
         raise Exception()
 
-    gadget_info = parser.get_resource_info()
-    check_requirements(gadget_info)
+    widget_info = parser.get_resource_info()
+    check_requirements(widget_info)
 
-    gadget = Gadget()
+    widget = Gadget()
 
-    gadget.uri = parser.get_resource_uri()
+    widget.uri = parser.get_resource_uri()
 
-    gadget.vendor = gadget_info['vendor']
-    gadget.name = gadget_info['name']
-    gadget.version = gadget_info['version']
+    widget.vendor = widget_info['vendor']
+    widget.name = widget_info['name']
+    widget.version = widget_info['version']
 
-    gadget.description = gadget_info['description']
-    gadget.display_name = gadget_info['display_name']
-    gadget.author = gadget_info['author']
+    widget.description = widget_info['description']
+    widget.display_name = widget_info['display_name']
+    widget.author = widget_info['author']
 
-    gadget_code = parser.get_absolute_url(gadget_info['code_url'], base)
-    gadget.xhtml = XHTML.objects.create(
-        uri=gadget.uri + "/xhtml",
-        url=gadget_code,
-        content_type=gadget_info['code_content_type'],
-        cacheable=gadget_info['code_cacheable']
+    widget_code = parser.get_absolute_url(widget_info['code_url'], base)
+    widget.xhtml = XHTML.objects.create(
+        uri=widget.uri + "/xhtml",
+        url=widget_code,
+        content_type=widget_info['code_content_type'],
+        cacheable=widget_info['code_cacheable']
     )
 
-    gadget.mail = gadget_info['mail']
-    gadget.wikiURI = gadget_info['doc_uri']
-    gadget.imageURI = gadget_info['image_uri']
-    gadget.iPhoneImageURI = gadget_info['iphone_image_uri']
-    gadget.width = gadget_info['gadget_width']
-    gadget.height = gadget_info['gadget_height']
+    widget.mail = widget_info['mail']
+    widget.wikiURI = widget_info['doc_uri']
+    widget.imageURI = widget_info['image_uri']
+    widget.iPhoneImageURI = widget_info['iphone_image_uri']
+    widget.width = widget_info['widget_width']
+    widget.height = widget_info['widget_height']
 
-    gadget.save()
+    widget.save()
 
     variable_definitions = {}
     user_options = {}
 
     order = 0
-    for preference in gadget_info['preferences']:
+    for preference in widget_info['preferences']:
         vDef = VariableDef.objects.create(
             name=preference['name'],
             order=order,
@@ -126,7 +126,7 @@ def create_gadget_from_template(template, user, request=None, base=None):
             friend_code=None,
             label=preference['label'],
             default_value=preference['default_value'],
-            gadget=gadget,
+            gadget=widget,
             secure=preference['secure']
         )
         variable_definitions[vDef.name] = vDef
@@ -142,7 +142,7 @@ def create_gadget_from_template(template, user, request=None, base=None):
         order += 1
 
     order = 0
-    for prop in gadget_info['properties']:
+    for prop in widget_info['properties']:
         vDef = VariableDef.objects.create(
             name=prop['name'],
             order=order,
@@ -152,14 +152,14 @@ def create_gadget_from_template(template, user, request=None, base=None):
             friend_code=None,
             label=prop['label'],
             default_value=prop['default_value'],
-            gadget=gadget,
+            gadget=widget,
             secure=prop['secure'],
         )
         variable_definitions[vDef.name] = vDef
         order += 1
 
     order = 0
-    for slot in gadget_info['wiring']['slots']:
+    for slot in widget_info['wiring']['slots']:
         vDef = VariableDef.objects.create(
             name=slot['name'],
             order=order,
@@ -169,13 +169,13 @@ def create_gadget_from_template(template, user, request=None, base=None):
             friend_code=slot['friendcode'],
             label=slot['label'],
             action_label=slot['action_label'],
-            gadget=gadget,
+            gadget=widget,
         )
         variable_definitions[vDef.name] = vDef
         order += 1
 
     order = 0
-    for event in gadget_info['wiring']['events']:
+    for event in widget_info['wiring']['events']:
         vDef = VariableDef.objects.create(
             name=event['name'],
             order=order,
@@ -184,30 +184,30 @@ def create_gadget_from_template(template, user, request=None, base=None):
             aspect='EVEN',
             friend_code=event['friendcode'],
             label=event['label'],
-            gadget=gadget,
+            gadget=widget,
         )
         variable_definitions[vDef.name] = vDef
         order += 1
 
-    for context in gadget_info['context']:
+    for context in widget_info['context']:
         vDef = VariableDef.objects.create(
             name=context['name'],
             type=parser.typeText2typeCode(context['type']),
             aspect=context['aspect'],
-            gadget=gadget,
+            gadget=widget,
         )
         ContextOption.objects.create(concept=context['concept'], varDef=vDef)
 
-    gadget_table = gadget._get_table_id()
-    for lang in gadget_info['translations']:
-        translation = gadget_info['translations'][lang]
+    widget_table = widget._get_table_id()
+    for lang in widget_info['translations']:
+        translation = widget_info['translations'][lang]
         for index in translation:
             value = translation[index]
-            usages = gadget_info['translation_index_usage'][index]
+            usages = widget_info['translation_index_usage'][index]
             for use in usages:
                 if use['type'] == 'resource':
-                    table = gadget_table
-                    element_id = gadget.id
+                    table = widget_table
+                    element_id = widget.id
                 elif use['type'] == 'vdef':
                     vDef = variable_definitions[use['variable']]
                     table = vDef._get_table_id()
@@ -223,13 +223,13 @@ def create_gadget_from_template(template, user, request=None, base=None):
                     table=table,
                     language=lang,
                     value=value,
-                    default=gadget_info['default_lang'] == lang
+                    default=widget_info['default_lang'] == lang
                 )
 
-    return gadget
+    return widget
 
 
-def create_gadget_from_wgt(wgt, user, deploy_only=False):
+def create_widget_from_wgt(wgt, user, deploy_only=False):
 
     if isinstance(wgt, WgtFile):
         wgt_file = wgt
@@ -238,7 +238,7 @@ def create_gadget_from_wgt(wgt, user, deploy_only=False):
 
     template = wgt_deployer.deploy(wgt_file, user)
     if not deploy_only:
-        return create_gadget_from_template(template, user)
+        return create_widget_from_template(template, user)
 
 
 def get_resource_from_catalogue(vendor, name, **selectors):
@@ -259,9 +259,9 @@ def create_gadget_from_catalogue(user, vendor, name, **selectors):
     selectors['resource_type'] = 0  # Gadget
     resource = get_resource_from_catalogue(vendor, name, **selectors)
     if resource.template_uri.lower().endswith('.wgt'):
-        return create_gadget_from_wgt(resource.template_uri, user)
+        return create_widget_from_wgt(resource.template_uri, user)
     else:
-        return create_gadget_from_template(resource.template_uri, user)
+        return create_widget_from_template(resource.template_uri, user)
 
 
 def get_or_add_gadget_from_catalogue(vendor, name, version, user, request=None, assign_to_users=None):
@@ -302,9 +302,9 @@ def get_or_create_gadget(templateURL, user, workspaceId, request, fromWGT=False)
         gadget = Gadget.objects.get(uri=gadget_uri)
     except Gadget.DoesNotExist:
         if fromWGT:
-            gadget = create_gadget_from_wgt(wgt_file, user)
+            gadget = create_widget_from_wgt(wgt_file, user)
         else:
-            gadget = create_gadget_from_template(templateParser, user, request)
+            gadget = create_widget_from_template(templateParser, user, request)
 
     # A new user has added the gadget in his showcase
     # check if the workspace in which the igadget is being added is shared

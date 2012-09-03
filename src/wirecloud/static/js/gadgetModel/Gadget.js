@@ -124,7 +124,7 @@ function Gadget(gadget_, url_, options_) {
     }
 
     this.getId = function() {
-        return '/gadgets/' + this.getVendor() + '/' + this.getName() + '/' + this.getVersion().text;
+        return '/widgets/' + this.getVendor() + '/' + this.getName() + '/' + this.getVersion().text;
     }
 
     // *******************

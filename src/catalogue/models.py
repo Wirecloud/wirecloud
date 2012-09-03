@@ -39,9 +39,9 @@ from wirecloudcommons.models import TransModel
 
 class CatalogueResource(TransModel):
 
-    RESOURCE_TYPES = ['gadget', 'mashup', 'operator']
+    RESOURCE_TYPES = ['widget', 'mashup', 'operator']
     TYPE_CHOICES = (
-        (0, 'Gadget'),
+        (0, 'Widget'),
         (1, 'Mashup'),
         (2, 'Operator'),
     )

@@ -25,7 +25,7 @@ from django.db import IntegrityError
 from django.utils.translation import ugettext as _
 
 from wirecloud.models import Gadget
-from wirecloud.widget.utils import create_gadget_from_wgt
+from wirecloud.widget.utils import create_widget_from_wgt
 from wirecloud.widget.views import deleteGadget
 from commons.wgt import WgtFile
 from wirecloudcommons.utils.template import TemplateParser
@@ -71,7 +71,7 @@ class Command(BaseCommand):
                 template_contents = wgt_file.get_template()
                 template = TemplateParser(template_contents)
                 try:
-                    create_gadget_from_wgt(wgt_file, user, deploy_only=options['deploy_only'])
+                    create_widget_from_wgt(wgt_file, user, deploy_only=options['deploy_only'])
                 except IntegrityError:
                     if not options['reinstall']:
                         raise
@@ -80,7 +80,7 @@ class Command(BaseCommand):
                             template.get_resource_vendor(),
                             template.get_resource_version()
                         )
-                        create_gadget_from_wgt(wgt_file, user)
+                        create_widget_from_wgt(wgt_file, user)
 
                 wgt_file.close()
                 print _('Successfully imported %(name)s gadget') % {'name': template.get_resource_name()}
