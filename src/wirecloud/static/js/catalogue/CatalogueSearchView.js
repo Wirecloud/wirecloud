@@ -123,7 +123,7 @@ CatalogueSearchView.prototype._search = function (page, options, callback) {
         'search_boolean': 'AND',
         'scope': 'all',
         'starting_page': page,
-        'resources_per_page': this.pagination.pOptions.pageSize
+        'resources_per_page': options.pageSize
     };
     if (typeof this.catalogue.getCurrentSearchContext === 'function') {
         options = EzWebExt.merge(options, this.catalogue.getCurrentSearchContext());

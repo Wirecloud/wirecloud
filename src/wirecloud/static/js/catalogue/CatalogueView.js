@@ -198,7 +198,7 @@
     };
 
     CatalogueView.prototype.refresh_search_results = function () {
-        this.viewsByName.search._search();
+        this.viewsByName.search.pagination.refresh();
     };
 
     window.CatalogueView = CatalogueView;

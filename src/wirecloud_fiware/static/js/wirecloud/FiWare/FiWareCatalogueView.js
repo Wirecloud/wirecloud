@@ -103,7 +103,7 @@
                 'current_page': 1
             };
 
-            callback(data);
+            callback(data, data);
         }
     };
 
@@ -257,7 +257,7 @@
     };
 
     FiWareCatalogueView.prototype.refresh_search_results = function () {
-        this.viewsByName.search._search();
+        this.viewsByName.search.pagination.refresh();
     };
 
 
