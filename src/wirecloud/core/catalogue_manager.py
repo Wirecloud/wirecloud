@@ -28,7 +28,7 @@ class WirecloudCatalogueManager(MarketManager):
     def __init__(self, options):
         pass
 
-    def publish_mashup(self, endpoint, published_workspace, user, publish_options):
+    def publish_mashup(self, endpoint, published_workspace, user, publish_options, request=None):
 
         template = TemplateParser(build_template_from_workspace(publish_options, published_workspace.workspace, user))
-        add_resource_from_template(published_workspace.get_template_url(), template, user)
+        add_resource_from_template(published_workspace.get_template_url(request), template, user)

@@ -70,7 +70,7 @@ class FiWareMarketManager(MarketManager):
         return document
     #----------------------------------------------------------
 
-    def publish_mashup(self, endpoint, published_workspace, user, published_options):
+    def publish_mashup(self, endpoint, published_workspace, user, published_options, request=None):
 
         market_url = self._options['url']
         store = endpoint['store']

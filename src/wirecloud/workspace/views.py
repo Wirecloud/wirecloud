@@ -720,7 +720,7 @@ class WorkSpacePublisherEntry(Resource):
         for market_endpoint in mashup['marketplaces']:
 
             try:
-                market_managers[market_endpoint['market']].publish_mashup(market_endpoint, published_workspace, user, mashup)
+                market_managers[market_endpoint['market']].publish_mashup(market_endpoint, published_workspace, user, mashup, request)
             except Exception, e:
                 errors[market_endpoint['market']] = unicode(e)
 
