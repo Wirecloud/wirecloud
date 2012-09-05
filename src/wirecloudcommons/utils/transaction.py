@@ -25,7 +25,7 @@ def commit_on_http_success(func, using=None):
         else:
             if is_dirty(using=using):
 
-                if not isinstance(res, HttpResponse) or res.status_code > 200 or res.status_code < 200:
+                if not isinstance(res, HttpResponse) or res.status_code < 200 or res.status_code >= 400:
                     rollback(using=using)
                 else:
                     try:
