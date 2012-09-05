@@ -764,10 +764,5 @@ class WorkspaceExportService(Service):
 class MashupTemplate(Resource):
 
     def read(self, request, workspace_id):
-        user = get_user_authentication(request)
-
         published_workspace = get_object_or_404(PublishedWorkSpace, id=workspace_id)
-        if not user.is_staff and published_workspace.creator != user:
-            return HttpResponseForbidden()
-
         return HttpResponse(published_workspace.template, mimetype='application/xml; charset=UTF-8')
