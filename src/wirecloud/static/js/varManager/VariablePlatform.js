@@ -30,12 +30,12 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function Variable (id, iGadget, name, varManager) {
+function Variable (id, iWidget, name, varManager) {
     // True when a the value of the variable has changed and the callback has not been invoked!
     this.annotated = false;
     this.varManager = null;
     this.id = null;
-    this.iGadget = null;
+    this.iWidget = null;
     this.name = null;
     this.value = null;
     this.tab = null;
@@ -45,10 +45,10 @@ function Variable (id, iGadget, name, varManager) {
 // PARENT CONTRUCTOR (Super class emulation)
 //////////////////////////////////////////////
 
-Variable.prototype.Variable = function (id, iGadget_, vardef_, varManager_,  value_, tab_) {
+Variable.prototype.Variable = function (id, iWidget_, vardef_, varManager_,  value_, tab_) {
     this.varManager = varManager_;
     this.id = id;
-    this.iGadget = iGadget_;
+    this.iWidget = iWidget_;
     this.vardef = vardef_;
     this.value = value_;
     this.tab = tab_;
@@ -98,7 +98,7 @@ Variable.prototype.getWorkspace = function () {
 Variable.prototype.serialize = function serialize() {
     return {
         'type': 'iwidget',
-        'id': this.iGadget.getId(),
+        'id': this.iWidget.getId(),
         'endpoint': this.vardef.name
     };
 };
@@ -118,8 +118,8 @@ Variable.prototype.GADGET_CONTEXT = "GCTX"
 // RVARIABLE (Derivated class) <<PLATFORM>>
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function RVariable(id, iGadget_, vardef_, varManager_, value_, tab_) {
-    Variable.prototype.Variable.call(this, id, iGadget_, vardef_, varManager_, value_, tab_);
+function RVariable(id, iWidget_, vardef_, varManager_, value_, tab_) {
+    Variable.prototype.Variable.call(this, id, iWidget_, vardef_, varManager_, value_, tab_);
 
     this.handler = null;
 }
@@ -172,20 +172,20 @@ RVariable.prototype.set = function (newValue, from_widget) {
             case Variable.prototype.SLOT:
 
                 var opManager = OpManagerFactory.getInstance();
-                if (!this.iGadget.loaded) {
-                    this.varManager.addPendingVariable(this.iGadget, this.vardef.name, newValue);
-                    if (!this.iGadget.content) {
-                        this.iGadget.load();
+                if (!this.iWidget.loaded) {
+                    this.varManager.addPendingVariable(this.iWidget, this.vardef.name, newValue);
+                    if (!this.iWidget.content) {
+                        this.iWidget.load();
                     }
                     return;
                 }
-                this.iGadget.notifyEvent();
+                this.iWidget.notifyEvent();
 
             case Variable.prototype.USER_PREF:
             case Variable.prototype.EXTERNAL_CONTEXT:
             case Variable.prototype.GADGET_CONTEXT:
                 if (this.vardef.aspect === this.USER_PREF) {
-                    // Only gadget preferences are persisted
+                    // Only widget preferences are persisted
                     this.varManager.markVariablesAsModified(varInfo);
                 }
 
@@ -195,16 +195,16 @@ RVariable.prototype.set = function (newValue, from_widget) {
                     try {
                         this.handler(newValue);
                     } catch (e) {
-                        var transObj = {iGadgetId: this.iGadget.getId(), varName: this.vardef.name, exceptionMsg: e};
-                        var msg = interpolate(gettext("Error in the handler of the \"%(varName)s\" RVariable in iGadget %(iGadgetId)s: %(exceptionMsg)s."), transObj, true);
-                        OpManagerFactory.getInstance().logIGadgetError(this.iGadget.getId(), msg, Constants.Logging.ERROR_MSG);
+                        var transObj = {iWidgetId: this.iWidget.getId(), varName: this.vardef.name, exceptionMsg: e};
+                        var msg = interpolate(gettext("Error in the handler of the \"%(varName)s\" RVariable in iWidget %(iWidgetId)s: %(exceptionMsg)s."), transObj, true);
+                        OpManagerFactory.getInstance().logIWidgetError(this.iWidget.getId(), msg, Constants.Logging.ERROR_MSG);
                     }
                 } else {
-                    if (this.iGadget.loaded) {
+                    if (this.iWidget.loaded) {
                         var opManager = OpManagerFactory.getInstance();
-                        var transObj = {iGadgetId: this.iGadget.getId(), varName: this.vardef.name};
-                        var msg = interpolate(gettext("IGadget %(iGadgetId)s does not provide a handler for the \"%(varName)s\" RVariable."), transObj, true);
-                        opManager.logIGadgetError(this.iGadget.getId(), msg, Constants.Logging.WARN_MSG);
+                        var transObj = {iWidgetId: this.iWidget.getId(), varName: this.vardef.name};
+                        var msg = interpolate(gettext("IWidget %(iWidgetId)s does not provide a handler for the \"%(varName)s\" RVariable."), transObj, true);
+                        opManager.logIWidgetError(this.iWidget.getId(), msg, Constants.Logging.WARN_MSG);
                     }
                 }
 
@@ -225,8 +225,8 @@ RVariable.prototype.set = function (newValue, from_widget) {
 // RWVARIABLE (Derivated class)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function RWVariable(id, iGadget_, vardef_, varManager_, value_, tab_) {
-    Variable.prototype.Variable.call(this, id, iGadget_, vardef_, varManager_, value_, tab_);
+function RWVariable(id, iWidget_, vardef_, varManager_, value_, tab_) {
+    Variable.prototype.Variable.call(this, id, iWidget_, vardef_, varManager_, value_, tab_);
 }
 
 //////////////////////////////////////////////

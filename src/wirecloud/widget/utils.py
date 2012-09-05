@@ -41,8 +41,8 @@ from commons import http_utils
 from commons.authentication import Http403
 from commons.http_utils import download_http_content
 from commons.wgt import WgtDeployer, WgtFile
-from wirecloud.models import ContextOption, Gadget, UserPrefOption, UserWorkSpace, VariableDef, WorkSpace, XHTML
-from wirecloud.plugins import get_active_features, get_gadget_api_extensions
+from wirecloud.models import ContextOption, Widget, UserPrefOption, UserWorkSpace, VariableDef, WorkSpace, XHTML
+from wirecloud.plugins import get_active_features, get_widget_api_extensions
 from wirecloudcommons.models import Translation
 from wirecloudcommons.utils.template import TemplateParser
 
@@ -83,7 +83,7 @@ def create_widget_from_template(template, user, request=None, base=None):
     widget_info = parser.get_resource_info()
     check_requirements(widget_info)
 
-    widget = Gadget()
+    widget = Widget()
 
     widget.uri = parser.get_resource_uri()
 
@@ -126,7 +126,7 @@ def create_widget_from_template(template, user, request=None, base=None):
             friend_code=None,
             label=preference['label'],
             default_value=preference['default_value'],
-            gadget=widget,
+            widget=widget,
             secure=preference['secure']
         )
         variable_definitions[vDef.name] = vDef
@@ -152,7 +152,7 @@ def create_widget_from_template(template, user, request=None, base=None):
             friend_code=None,
             label=prop['label'],
             default_value=prop['default_value'],
-            gadget=widget,
+            widget=widget,
             secure=prop['secure'],
         )
         variable_definitions[vDef.name] = vDef
@@ -169,7 +169,7 @@ def create_widget_from_template(template, user, request=None, base=None):
             friend_code=slot['friendcode'],
             label=slot['label'],
             action_label=slot['action_label'],
-            gadget=widget,
+            widget=widget,
         )
         variable_definitions[vDef.name] = vDef
         order += 1
@@ -184,7 +184,7 @@ def create_widget_from_template(template, user, request=None, base=None):
             aspect='EVEN',
             friend_code=event['friendcode'],
             label=event['label'],
-            gadget=widget,
+            widget=widget,
         )
         variable_definitions[vDef.name] = vDef
         order += 1
@@ -194,7 +194,7 @@ def create_widget_from_template(template, user, request=None, base=None):
             name=context['name'],
             type=parser.typeText2typeCode(context['type']),
             aspect=context['aspect'],
-            gadget=widget,
+            widget=widget,
         )
         ContextOption.objects.create(concept=context['concept'], varDef=vDef)
 
@@ -255,8 +255,8 @@ def get_resource_from_catalogue(vendor, name, **selectors):
     return resources[0]
 
 
-def create_gadget_from_catalogue(user, vendor, name, **selectors):
-    selectors['resource_type'] = 0  # Gadget
+def create_widget_from_catalogue(user, vendor, name, **selectors):
+    selectors['resource_type'] = 0  # Widget
     resource = get_resource_from_catalogue(vendor, name, **selectors)
     if resource.template_uri.lower().endswith('.wgt'):
         return create_widget_from_wgt(resource.template_uri, user)
@@ -264,24 +264,24 @@ def create_gadget_from_catalogue(user, vendor, name, **selectors):
         return create_widget_from_template(resource.template_uri, user)
 
 
-def get_or_add_gadget_from_catalogue(vendor, name, version, user, request=None, assign_to_users=None):
+def get_or_add_widget_from_catalogue(vendor, name, version, user, request=None, assign_to_users=None):
     try:
-        gadget = Gadget.objects.get(name=name, vendor=vendor, version=version)
+        widget = Widget.objects.get(name=name, vendor=vendor, version=version)
     except:
-        gadget = create_gadget_from_catalogue(user, vendor, name, version=version)
+        widget = create_widget_from_catalogue(user, vendor, name, version=version)
 
     if assign_to_users is None:
         assign_to_users = (user,)
 
     for user in assign_to_users:
-        gadget.users.add(user)
+        widget.users.add(user)
 
-    gadget.save()
+    widget.save()
 
-    return gadget
+    return widget
 
 
-def get_or_create_gadget(templateURL, user, workspaceId, request, fromWGT=False):
+def get_or_create_widget(templateURL, user, workspaceId, request, fromWGT=False):
 
     # Check permissions
     workspace = WorkSpace.objects.get(id=workspaceId)
@@ -296,39 +296,39 @@ def get_or_create_gadget(templateURL, user, workspaceId, request, fromWGT=False)
 
     templateParser = TemplateParser(template_content, templateURL)
 
-    # Gadget is created only once
-    gadget_uri = templateParser.get_resource_uri()
+    # Widget is created only once
+    widget_uri = templateParser.get_resource_uri()
     try:
-        gadget = Gadget.objects.get(uri=gadget_uri)
-    except Gadget.DoesNotExist:
+        widget = Widget.objects.get(uri=widget_uri)
+    except Widget.DoesNotExist:
         if fromWGT:
-            gadget = create_widget_from_wgt(wgt_file, user)
+            widget = create_widget_from_wgt(wgt_file, user)
         else:
-            gadget = create_widget_from_template(templateParser, user, request)
+            widget = create_widget_from_template(templateParser, user, request)
 
-    # A new user has added the gadget in his showcase
-    # check if the workspace in which the igadget is being added is shared
-    # all the user sharing the workspace should have the gadget in their
+    # A new user has added the widget in his showcase
+    # check if the workspace in which the iwidget is being added is shared
+    # all the user sharing the workspace should have the widget in their
     # showcases
     if workspace.is_shared():
-        # add the gadget to the showcase of every user sharing the workspace
-        # there is no problem is the gadget is already in their showcase
-        [gadget.users.add(user_ws.user) for user_ws in UserWorkSpace.objects.filter(workspace=workspace)]
+        # add the widget to the showcase of every user sharing the workspace
+        # there is no problem is the widget is already in their showcase
+        [widget.users.add(user_ws.user) for user_ws in UserWorkSpace.objects.filter(workspace=workspace)]
     else:
-        # add the gadget to the showcase of the user
-        gadget.users.add(user)
+        # add the widget to the showcase of the user
+        widget.users.add(user)
 
-    return gadget
+    return widget
 
 
-def get_and_add_gadget(vendor, name, version, users):
+def get_and_add_widget(vendor, name, version, users):
 
-    gadget = Gadget.objects.get(vendor=vendor, name=name, version=version)
+    widget = Widget.objects.get(vendor=vendor, name=name, version=version)
     for user in users:
-        gadget.users.add(user)
+        widget.users.add(user)
 
-    gadget.save()
-    return gadget
+    widget.save()
+    return widget
 
 
 def xpath(tree, query, xmlns):
@@ -339,7 +339,7 @@ def xpath(tree, query, xmlns):
         return tree.xpath(query, namespaces={'xhtml': xmlns})
 
 
-def fix_gadget_code(xhtml_code, base_url, request):
+def fix_widget_code(xhtml_code, base_url, request):
 
     rootURL = get_site_domain(request)
     force_base = False
@@ -379,7 +379,7 @@ def fix_gadget_code(xhtml_code, base_url, request):
         if script.get('src', '') == '/ezweb/js/EzWebAPI/EzWebAPI.js':
             script.set('src', rootURL + settings.STATIC_URL + 'js/EzWebAPI/EzWebAPI.js')
 
-            files = get_gadget_api_extensions('index')
+            files = get_widget_api_extensions('index')
             files.reverse()
             for file in files:
                 script.addnext(etree.Element('script', src=rootURL + settings.STATIC_URL + file))

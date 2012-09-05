@@ -82,17 +82,17 @@ class FixServletBugsProcessor(object):
             request['headers']['Remote-User'] = request['user'].username
 
 
-VAR_REF_RE = re.compile(r'^(?P<igadget_id>[1-9]\d*|c)/(?P<var_name>.+)$', re.S)
+VAR_REF_RE = re.compile(r'^(?P<iwidget_id>[1-9]\d*|c)/(?P<var_name>.+)$', re.S)
 
 
 def get_variable_value_by_ref(ref, user):
 
     result = VAR_REF_RE.match(ref)
     if result:
-        if result.group('igadget_id') == 'c':
+        if result.group('iwidget_id') == 'c':
             return result.group('var_name')
         else:
-            return get_variable_value_from_varname(user, result.group('igadget_id'), result.group('var_name'))
+            return get_variable_value_from_varname(user, result.group('iwidget_id'), result.group('var_name'))
 
 
 def process_secure_data(text, request, ignore_errors=False):

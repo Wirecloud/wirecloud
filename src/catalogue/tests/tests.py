@@ -13,7 +13,7 @@ from django.utils import simplejson
 import catalogue.utils
 from catalogue.utils import add_resource_from_template
 from catalogue.get_json_catalogue_data import get_resource_data
-from catalogue.models import CatalogueResource, GadgetWiring
+from catalogue.models import CatalogueResource, WidgetWiring
 from commons import http_utils
 from commons.exceptions import TemplateParseException
 from commons.test import FakeDownloader, LocalizedTestCase
@@ -24,41 +24,41 @@ from commons.wgt import WgtDeployer
 __test__ = False
 
 
-class AddGadgetTestCase(LocalizedTestCase):
+class AddWidgetTestCase(LocalizedTestCase):
 
     def setUp(self):
-        super(AddGadgetTestCase, self).setUp()
+        super(AddWidgetTestCase, self).setUp()
 
         self.user = User.objects.create_user('test', 'test@example.com', 'test')
-        self.template_uri = "http://example.com/path/gadget.xml"
+        self.template_uri = "http://example.com/path/widget.xml"
         f = open(os.path.join(os.path.dirname(__file__), 'test-data/template1.xml'), 'rb')
         self.template = f.read()
         f.close()
 
     def test_add_resource_from_template(self):
 
-        gadget = add_resource_from_template(self.template_uri, self.template, self.user)
+        widget = add_resource_from_template(self.template_uri, self.template, self.user)
 
-        events = GadgetWiring.objects.filter(idResource=gadget, wiring='out')
+        events = WidgetWiring.objects.filter(idResource=widget, wiring='out')
         self.assertTrue(events.count() == 1 and events[0].friendcode == 'test_friend_code')
 
-        slots = GadgetWiring.objects.filter(idResource=gadget, wiring='in')
+        slots = WidgetWiring.objects.filter(idResource=widget, wiring='in')
         self.assertTrue(slots.count() == 1 and slots[0].friendcode == 'test_friend_code')
 
     def test_add_resource_from_template_translations(self):
 
-        gadget = add_resource_from_template(self.template_uri, self.template, self.user)
+        widget = add_resource_from_template(self.template_uri, self.template, self.user)
         self.changeLanguage('en')
-        data = get_resource_data(gadget, self.user)
+        data = get_resource_data(widget, self.user)
 
-        self.assertEqual(data['displayName'], 'Test Gadget')
-        self.assertEqual(data['description'], 'Test Gadget description')
+        self.assertEqual(data['displayName'], 'Test Widget')
+        self.assertEqual(data['description'], 'Test Widget description')
 
         self.changeLanguage('es')
-        data = get_resource_data(gadget, self.user)
+        data = get_resource_data(widget, self.user)
 
-        self.assertEqual(data['displayName'], u'Gadget de pruebas')
-        self.assertEqual(data['description'], u'Descripción del Gadget de pruebas')
+        self.assertEqual(data['displayName'], u'Widget de pruebas')
+        self.assertEqual(data['description'], u'Descripción del Widget de pruebas')
 
 
 class CatalogueAPITestCase(TestCase):
@@ -75,84 +75,84 @@ class CatalogueAPITestCase(TestCase):
 
         self.client.login(username='test', password='test')
 
-        # List gadgets in alphabetical order (short_name)
-        result = self.client.get('////resource/1/10?orderby=short_name&search_boolean=AND&scope=gadget')
+        # List widgets in alphabetical order (short_name)
+        result = self.client.get('////resource/1/10?orderby=short_name&search_boolean=AND&scope=widget')
 
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 5)
         self.assertTrue(len(result_json['resources'][0]) > 0)
-        self.assertEqual(result_json['resources'][0]['name'], 'agadget')
+        self.assertEqual(result_json['resources'][0]['name'], 'awidget')
 
-        # List gadgets in reverse alphabetical order (short_name)
-        result = self.client.get('////resource/1/10?orderby=-short_name&search_boolean=AND&scope=gadget')
+        # List widgets in reverse alphabetical order (short_name)
+        result = self.client.get('////resource/1/10?orderby=-short_name&search_boolean=AND&scope=widget')
 
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 5)
         self.assertTrue(len(result_json['resources'][0]) > 0)
-        self.assertEqual(result_json['resources'][0]['name'], 'zgadget')
+        self.assertEqual(result_json['resources'][0]['name'], 'zwidget')
 
     def test_simple_search(self):
 
         self.client.login(username='test', password='test')
 
-        # Search gadgets using "gadget1" as keyword
-        result = self.client.get('////search/simple_or/1/10?orderby=-popularity&search_criteria=gadget1&search_boolean=AND&scope=gadget')
+        # Search widgets using "widget1" as keyword
+        result = self.client.get('////search/simple_or/1/10?orderby=-popularity&search_criteria=widget1&search_boolean=AND&scope=widget')
 
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 1)
 
-        # Search gadgets providing "friendcode2" events
-        result = self.client.get('////search/event/1/10?orderby=-popularity&search_criteria=friendcode2&search_boolean=AND&scope=gadget')
+        # Search widgets providing "friendcode2" events
+        result = self.client.get('////search/event/1/10?orderby=-popularity&search_criteria=friendcode2&search_boolean=AND&scope=widget')
 
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 1)
         self.assertEqual(len(result_json['resources'][0]['versions']), 1)
-        gadget_data = result_json['resources'][0]
-        self.assertEqual(gadget_data['name'], 'gadget1')
-        self.assertEqual(gadget_data['versions'][0]['version'], '1.10')
+        widget_data = result_json['resources'][0]
+        self.assertEqual(widget_data['name'], 'widget1')
+        self.assertEqual(widget_data['versions'][0]['version'], '1.10')
 
-        # Search gadgets consuming "friendcode2" events
-        result = self.client.get('////search/slot/1/10?orderby=short_name&search_criteria=friendcode2&search_boolean=AND&scope=gadget')
+        # Search widgets consuming "friendcode2" events
+        result = self.client.get('////search/slot/1/10?orderby=short_name&search_criteria=friendcode2&search_boolean=AND&scope=widget')
 
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 1)
         self.assertEqual(len(result_json['resources'][0]['versions']), 2)
-        gadget_data = result_json['resources'][0]
-        self.assertEqual(gadget_data['name'], 'gadget1')
+        widget_data = result_json['resources'][0]
+        self.assertEqual(widget_data['name'], 'widget1')
 
     def test_global_search(self):
 
         self.client.login(username='test', password='test')
 
-        # Search gadgets using "gadget1" as keyword
-        result = self.client.get('////globalsearch/1/10?orderby=-popularity&search_criteria=gadget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=&search_criteria=&search_boolean=AND&scope=gadget')
+        # Search widgets using "widget1" as keyword
+        result = self.client.get('////globalsearch/1/10?orderby=-popularity&search_criteria=widget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=&search_criteria=&search_boolean=AND&scope=widget')
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 1)
 
-        # Search by keyworkd "gadget1" and by event "friendcode2"
-        result = self.client.get('////globalsearch/1/10?orderby=-popularity&search_criteria=gadget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=AND&scope=gadget')
+        # Search by keyworkd "widget1" and by event "friendcode2"
+        result = self.client.get('////globalsearch/1/10?orderby=-popularity&search_criteria=widget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=AND&scope=widget')
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 1)
         self.assertEqual(len(result_json['resources'][0]['versions']), 1)
-        gadget_data = result_json['resources'][0]
-        self.assertEqual(gadget_data['name'], 'gadget1')
-        self.assertEqual(gadget_data['versions'][0]['version'], '1.10')
+        widget_data = result_json['resources'][0]
+        self.assertEqual(widget_data['name'], 'widget1')
+        self.assertEqual(widget_data['versions'][0]['version'], '1.10')
 
-        # Search by keyworkd "gadget2" and by event "friendcode2"
-        result = self.client.get('////globalsearch/1/10?orderby=-popularity&search_criteria=gadget2&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=AND&scope=gadget')
+        # Search by keyworkd "widget2" and by event "friendcode2"
+        result = self.client.get('////globalsearch/1/10?orderby=-popularity&search_criteria=widget2&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=AND&scope=widget')
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 0)
 
-        # Search by keyworkd "gadget1" or by event "friendcode2"
-        result = self.client.get('////globalsearch/1/10?orderby=-popularity&search_criteria=gadget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=OR&scope=gadget')
+        # Search by keyworkd "widget1" or by event "friendcode2"
+        result = self.client.get('////globalsearch/1/10?orderby=-popularity&search_criteria=widget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=OR&scope=widget')
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 1)
@@ -162,8 +162,8 @@ class CatalogueAPITestCase(TestCase):
 
         self.client.login(username='test', password='test')
         resources = simplejson.dumps([
-            {'name': 'gadget1', 'vendor': 'Test'},
-            {'name': 'inexistantgadget', 'vendor': 'Test'},
+            {'name': 'widget1', 'vendor': 'Test'},
+            {'name': 'inexistantwidget', 'vendor': 'Test'},
         ])
         result = self.client.post('////versions', {'resources': resources})
         self.assertEqual(result.status_code, 200)
@@ -177,11 +177,11 @@ class CatalogueAPITestCase(TestCase):
         User.objects.create_user('test2', 'test@example.com', 'test')
 
         self.client.login(username='test', password='test')
-        result = self.client.post('////voting/Test/gadget1/1.2', {'vote': 3})
+        result = self.client.post('////voting/Test/widget1/1.2', {'vote': 3})
         self.assertEqual(result.status_code, 200)
 
         self.client.login(username='test2', password='test')
-        result = self.client.post('////voting/Test/gadget1/1.2', {'vote': 4})
+        result = self.client.post('////voting/Test/widget1/1.2', {'vote': 4})
         self.assertEqual(result.status_code, 200)
 
         result_json = simplejson.loads(result.content)
@@ -262,7 +262,7 @@ class WGTDeploymentTestCase(TransactionTestCase):
     def testBasicWGTDeploymentFailsWithoutLogin(self):
         c = Client()
 
-        f = open(os.path.join(os.path.dirname(__file__), 'test-data/basic_widget.wgt'))
+        f = open(os.path.join(os.path.dirname(__file__), 'test-data/basic_gadget.wgt'))
         response = c.post('////resource', {'file': f}, HTTP_HOST='www.example.com')
         f.close()
 
@@ -270,16 +270,16 @@ class WGTDeploymentTestCase(TransactionTestCase):
 
     def testBasicWGTDeployment(self):
         User.objects.create_user('test', 'test@example.com', 'test')
-        gadget_path = catalogue.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
+        widget_path = catalogue.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
         c = Client()
 
-        f = open(os.path.join(os.path.dirname(__file__), 'test-data/basic_widget.wgt'))
+        f = open(os.path.join(os.path.dirname(__file__), 'test-data/basic_gadget.wgt'))
         c.login(username='test', password='test')
         response = c.post('////resource', {'file': f}, HTTP_HOST='www.example.com')
         f.close()
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(os.path.isdir(gadget_path), True)
+        self.assertEqual(os.path.isdir(widget_path), True)
         widget = CatalogueResource.objects.get(vendor='Morfeo', short_name='Test', version='0.1')
         self.assertEqual(widget.template_uri, 'Morfeo_Test_0.1.wgt')
         self.assertEqual(widget.image_uri, 'images/catalogue.png')
@@ -288,4 +288,4 @@ class WGTDeploymentTestCase(TransactionTestCase):
         response = c.delete('////resource/Morfeo/Test/0.1', HTTP_HOST='www.example.com')
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(os.path.exists(gadget_path), False)
+        self.assertEqual(os.path.exists(widget_path), False)

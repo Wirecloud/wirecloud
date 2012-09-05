@@ -47,7 +47,7 @@ function MultiValuedSize(inPixels, inLU) {
  * DragboardLayout is an abstract class, this can not be called directly and is
  * intented to be used by child classes.
  *
- * @class Represents a dragboard layout to be used to place igadgets into the
+ * @class Represents a dragboard layout to be used to place iwidgets into the
  * dragboard. Despite javascript not having a way to mark classes abstract, this
  * class is abstract, so please do not try to create an instance of this class.
  *
@@ -61,25 +61,25 @@ function DragboardLayout(dragboard) {
     }
 
     this.dragboard = dragboard;
-    this.iGadgets = {};
+    this.iWidgets = {};
 }
 
 /**
  *
  */
 DragboardLayout.prototype._notifyWindowResizeEvent = function (widthChanged, heightChanged) {
-    // Notify each igadget
-    var igadget_key, iGadget;
-    for (igadget_key in this.iGadgets) {
-        iGadget = this.iGadgets[igadget_key];
-        iGadget._notifyWindowResizeEvent();
+    // Notify each iwidget
+    var iwidget_key, iWidget;
+    for (iwidget_key in this.iWidgets) {
+        iWidget = this.iWidgets[iwidget_key];
+        iWidget._notifyWindowResizeEvent();
     }
 };
 
 /**
  *
  */
-DragboardLayout.prototype._notifyResizeEvent = function (iGadget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
+DragboardLayout.prototype._notifyResizeEvent = function (iWidget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
 };
 
 /**
@@ -105,7 +105,7 @@ DragboardLayout.prototype.getStatusbarSize = function () {
 };
 
 /**
- * Returns the total vertical extra size that will have an iGadget. For now,
+ * Returns the total vertical extra size that will have an iWidget. For now,
  * thats includes the menu bar and the status bar sizes.
  *
  * @returns {MultiValuedSize} vertical extra size
@@ -199,58 +199,58 @@ Object.defineProperty(DragboardLayout.prototype, "dragboardLeftMargin", {
 });
 
 /**
- * Adds an iGadget to this layout.
+ * Adds an iWidget to this layout.
  *
- * @param {IGadget} iGadget          iGadget to add
+ * @param {IWidget} iWidget          iWidget to add
  * @param {Boolean} affectsDragboard true if the associated dragboard must be notified
  */
-DragboardLayout.prototype.addIGadget = function (iGadget, affectsDragboard) {
-    if (iGadget.layout !== null && iGadget.layout !== undefined) {
-        var msg = gettext("the iGadget could not be associated with this layout as it already has an associated layout.");
+DragboardLayout.prototype.addIWidget = function (iWidget, affectsDragboard) {
+    if (iWidget.layout !== null && iWidget.layout !== undefined) {
+        var msg = gettext("the iWidget could not be associated with this layout as it already has an associated layout.");
         throw new Error(msg);
     }
-    iGadget.layout = this;
+    iWidget.layout = this;
 
     if (affectsDragboard) {
-        this.dragboard._registerIGadget(iGadget);
+        this.dragboard._registerIWidget(iWidget);
 
-        if (iGadget.isVisible()) { // TODO
-            this.dragboard.dragboardElement.appendChild(iGadget.element);
-            this.dragboard.dragboardElement.appendChild(iGadget.iconElement);
+        if (iWidget.isVisible()) { // TODO
+            this.dragboard.dragboardElement.appendChild(iWidget.element);
+            this.dragboard.dragboardElement.appendChild(iWidget.iconElement);
         }
     }
 
-    this.iGadgets[iGadget.code] = iGadget;
+    this.iWidgets[iWidget.code] = iWidget;
 
-    if (iGadget.isVisible()) {
-        iGadget._recomputeSize();
+    if (iWidget.isVisible()) {
+        iWidget._recomputeSize();
     }
 };
 
 /**
  * @private
  *
- * This function should be called at the end of the implementation of addIGadget.
+ * This function should be called at the end of the implementation of addIWidget.
  */
-DragboardLayout.prototype._adaptIGadget = function (iGadget) {
-    if (iGadget.element !== null) {
-        this._ensureMinimalSize(iGadget, false);
+DragboardLayout.prototype._adaptIWidget = function (iWidget) {
+    if (iWidget.element !== null) {
+        this._ensureMinimalSize(iWidget, false);
     }
 };
 
 /**
  * @private
  *
- * Checks that the given iGadget has a minimal size. This check is performed using
- * iGadget content size.
+ * Checks that the given iWidget has a minimal size. This check is performed using
+ * iWidget content size.
  */
-DragboardLayout.prototype._ensureMinimalSize = function (iGadget, persist) {
+DragboardLayout.prototype._ensureMinimalSize = function (iWidget, persist) {
     var minWidth = Math.ceil(this.fromPixelsToHCells(80));
     var minHeight = Math.ceil(this.fromPixelsToVCells(24));
 
     var sizeChange = false;
-    var newWidth = iGadget.getContentWidth();
-    var newHeight = iGadget.getContentHeight();
+    var newWidth = iWidget.getContentWidth();
+    var newHeight = iWidget.getContentHeight();
 
     if (newWidth < minWidth) {
         sizeChange = true;
@@ -263,45 +263,45 @@ DragboardLayout.prototype._ensureMinimalSize = function (iGadget, persist) {
     }
 
     if (sizeChange) {
-        iGadget.setContentSize(newWidth, newHeight, false, persist);
+        iWidget.setContentSize(newWidth, newHeight, false, persist);
     }
 };
 
 /**
- * Removes an iGadget from this layout.
+ * Removes an iWidget from this layout.
  *
- * @param {IGadget} iGadget          iGadget to remove
+ * @param {IWidget} iWidget          iWidget to remove
  * @param {Boolean} affectsDragboard true if the associated dragboard must be notified
  */
-DragboardLayout.prototype.removeIGadget = function (iGadget, affectsDragboard) {
-    delete this.iGadgets[iGadget.code];
+DragboardLayout.prototype.removeIWidget = function (iWidget, affectsDragboard) {
+    delete this.iWidgets[iWidget.code];
 
     if (affectsDragboard) {
-        this.dragboard._deregisterIGadget(iGadget);
+        this.dragboard._deregisterIWidget(iWidget);
 
-        if (iGadget.element !== null) {
-            this.dragboard.dragboardElement.removeChild(iGadget.element);
+        if (iWidget.element !== null) {
+            this.dragboard.dragboardElement.removeChild(iWidget.element);
         }
-        if (iGadget.iconElement !== null) {
-            this.dragboard.dragboardElement.removeChild(iGadget.iconElement);
+        if (iWidget.iconElement !== null) {
+            this.dragboard.dragboardElement.removeChild(iWidget.iconElement);
         }
     }
 
-    iGadget.layout = null;
+    iWidget.layout = null;
 };
 
 /**
  * Moves this layout to another layout.
  *
- * @param {DragboardLayout} destLayout Layout where the iGadgets are going to be
+ * @param {DragboardLayout} destLayout Layout where the iWidgets are going to be
  *        moved.
  */
 DragboardLayout.prototype.moveTo = function (destLayout) {
-    var igadget_key, iGadget;
+    var iwidget_key, iWidget;
 
-    for (igadget_key in this.iGadgets) {
-        iGadget = this.iGadgets[igadget_key];
-        iGadget.moveToLayout(destLayout);
+    for (iwidget_key in this.iWidgets) {
+        iWidget = this.iWidgets[iwidget_key];
+        iWidget.moveToLayout(destLayout);
     }
 };
 
@@ -310,12 +310,12 @@ DragboardLayout.prototype.moveTo = function (destLayout) {
  * references.
  */
 DragboardLayout.prototype.destroy = function () {
-    var igadget_key;
+    var iwidget_key;
 
-    for (igadget_key in this.iGadgets) {
-        this.iGadgets[igadget_key].destroy();
+    for (iwidget_key in this.iWidgets) {
+        this.iWidgets[iwidget_key].destroy();
     }
-    this.iGadgets = null;
+    this.iWidgets = null;
     this.dragboard = null;
 };
 
@@ -324,10 +324,10 @@ DragboardLayout.prototype.destroy = function () {
 /////////////////////////////////////
 
 /**
- * Initializes a temporal iGadget move.
+ * Initializes a temporal iWidget move.
  *
- * @param {IGadget}          iGadget     iGadget to move
- * @param {IGadgetDraggable} [draggable] associated draggable object (only
+ * @param {IWidget}          iWidget     iWidget to move
+ * @param {IWidgetDraggable} [draggable] associated draggable object (only
  *                                       needed in drag & drop operations)
  *
  * @see DragboardLayout.initializeMove
@@ -336,16 +336,16 @@ DragboardLayout.prototype.destroy = function () {
  * @see DragboardLayout.cancelMove
  *
  * @example
- * layout.initializeMove(iGadget, iGadgetDraggable);
+ * layout.initializeMove(iWidget, iWidgetDraggable);
  * layout.moveTemporally(1,0);
  * layout.moveTemporally(10,8);
  * layout.acceptMove();
  */
-DragboardLayout.prototype.initializeMove = function (iGadget, draggable) {
+DragboardLayout.prototype.initializeMove = function (iWidget, draggable) {
 };
 
 /**
- * Moves temporally the configured iGadget (or cursor) to the given position.
+ * Moves temporally the configured iWidget (or cursor) to the given position.
  *
  * @param {Number} x new X coordinate
  * @param {Number} y new Y coordinate

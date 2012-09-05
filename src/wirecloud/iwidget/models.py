@@ -51,10 +51,10 @@ class Position(models.Model):
         return str(self.pk)
 
 
-class IGadget(models.Model):
+class IWidget(models.Model):
 
     name = models.CharField(_('Name'), max_length=250)
-    gadget = models.ForeignKey('wirecloud.Gadget', verbose_name=_('Gadget'))
+    widget = models.ForeignKey('wirecloud.Widget', verbose_name=_('Widget'))
     tab = models.ForeignKey('wirecloud.Tab', verbose_name=_('Tab'))
     layout = models.IntegerField(_('Layout'), default=0)
     transparency = models.BooleanField(_('Transparency'), default=False)
@@ -73,7 +73,7 @@ class IGadget(models.Model):
 class Variable(models.Model):
 
     vardef = models.ForeignKey('wirecloud.VariableDef', verbose_name=_('Variable definition'))
-    igadget = models.ForeignKey(IGadget, verbose_name=_('IGadget'))
+    iwidget = models.ForeignKey(IWidget, verbose_name=_('IWidget'))
 
     class Meta:
         app_label = 'wirecloud'

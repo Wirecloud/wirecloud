@@ -47,8 +47,8 @@ from commons.service import Service
 from commons.utils import get_xml_error, json_encode
 from packageCloner import PackageCloner
 from packageLinker import PackageLinker
-from wirecloud.iwidget.utils import deleteIGadget
-from wirecloud.models import Category, IGadget, PublishedWorkSpace, Tab, UserWorkSpace, VariableValue, WorkSpace
+from wirecloud.iwidget.utils import deleteIWidget
+from wirecloud.models import Category, IWidget, PublishedWorkSpace, Tab, UserWorkSpace, VariableValue, WorkSpace
 from wirecloud.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_template_from_workspace
 from wirecloud.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from wirecloud.workspace.utils import deleteTab, createTab, create_published_workspace_from_template, getCategories, getCategoryId, get_workspace_list, setVisibleTab, set_variable_value
@@ -274,9 +274,9 @@ class WorkSpaceEntry(Resource):
 
         # Remove the workspace
         PublishedWorkSpace.objects.filter(workspace=workspace).update(workspace=None)
-        igadgets = IGadget.objects.filter(tab__workspace=workspace)
-        for igadget in igadgets:
-            deleteIGadget(igadget, user)
+        iwidgets = IWidget.objects.filter(tab__workspace=workspace)
+        for iwidget in iwidgets:
+            deleteIWidget(iwidget, user)
         workspace.delete()
 
         from commons.get_data import _invalidate_cached_variable_values
@@ -464,13 +464,13 @@ class WorkSpaceVariableCollection(Resource):
         try:
             variables = simplejson.loads(received_json)
 
-            igadgetVariables = variables['igadgetVars']
+            iwidgetVariables = variables['iwidgetVars']
 
             variables_to_notify = []
-            for igVar in igadgetVariables:
+            for igVar in iwidgetVariables:
                 variables_to_notify += set_variable_value(igVar['id'], user, igVar['value'])
 
-            data = {'igadgetVars': variables_to_notify}
+            data = {'iwidgetVars': variables_to_notify}
             return HttpResponse(json_encode(data), mimetype='application/json; charset=UTF-8')
 
         except Exception, e:

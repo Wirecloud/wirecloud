@@ -82,7 +82,7 @@ var OpManagerFactory = (function () {
         // ****************
         // PUBLIC METHODS
         // ****************
-        OpManager.prototype.logIGadgetError = function (igadget, msg, type) {
+        OpManager.prototype.logIWidgetError = function (iwidget, msg, type) {
             console.log(msg);
         };
 
@@ -106,11 +106,11 @@ var OpManagerFactory = (function () {
             };
             HistoryManager.pushState(state);
             this.activeWorkSpace.downloadWorkSpaceInfo();
-            this.showGadgetsMenuFromWorskspaceMenu();
+            this.showWidgetsMenuFromWorskspaceMenu();
         };
 
-        OpManager.prototype.sendEvent = function (gadget, event, value) {
-            this.activeWorkSpace.getWiring().sendEvent(gadget, event, value);
+        OpManager.prototype.sendEvent = function (widget, event, value) {
+            this.activeWorkSpace.getWiring().sendEvent(widget, event, value);
         };
 
         OpManager.prototype.loadEnviroment = function () {
@@ -182,22 +182,22 @@ var OpManagerFactory = (function () {
         };
 
 
-        OpManager.prototype.showDragboard = function (iGadgetId) {
-            var dragboard = this.activeWorkSpace.getIgadget(iGadgetId).dragboard;
-            dragboard.paint(iGadgetId);
+        OpManager.prototype.showDragboard = function (iWidgetId) {
+            var dragboard = this.activeWorkSpace.getIwidget(iWidgetId).dragboard;
+            dragboard.paint(iWidgetId);
             this.visibleLayer = "dragboard";
         };
 
-        OpManager.prototype.showGadgetsMenu = function () {
+        OpManager.prototype.showWidgetsMenu = function () {
             this.alternatives.showAlternative(this.workspaceTabsAlternative);
             this.visibleLayer = "tabs_container";
             this.activeWorkSpace.show();
         };
 
-        OpManager.prototype.showGadgetsMenuFromWorskspaceMenu = function () {
+        OpManager.prototype.showWidgetsMenuFromWorskspaceMenu = function () {
             if (!this.loadCompleted) {
                 setTimeout(function () {
-                    OpManagerFactory.getInstance().showGadgetsMenuFromWorskspaceMenu();
+                    OpManagerFactory.getInstance().showWidgetsMenuFromWorskspaceMenu();
                 }, 100);
                 return;
             }
@@ -205,12 +205,12 @@ var OpManagerFactory = (function () {
             this.visibleLayer = "tabs_container";
         };
 
-        OpManager.prototype.showRelatedIgadget = function (iGadgetId, tabId) {
-            this.activeWorkSpace.showRelatedIgadget(iGadgetId, tabId);
+        OpManager.prototype.showRelatedIwidget = function (iWidgetId, tabId) {
+            this.activeWorkSpace.showRelatedIwidget(iWidgetId, tabId);
         };
 
-        OpManager.prototype.markRelatedIgadget = function (iGadgetId) {
-            this.activeWorkSpace.getActiveDragboard().markRelatedIgadget(iGadgetId);
+        OpManager.prototype.markRelatedIwidget = function (iWidgetId) {
+            this.activeWorkSpace.getActiveDragboard().markRelatedIwidget(iWidgetId);
         };
 
         OpManager.prototype.showWorkspaceMenu = function () {
@@ -226,7 +226,7 @@ var OpManagerFactory = (function () {
                 workspaceEntry.textContent = wname;
                 if (workspace === this.activeWorkSpace) {
                     workspaceEntry.setAttribute('class', 'selected');
-                    workspaceEntry.addEventListener('click', this.showGadgetsMenuFromWorskspaceMenu.bind(this), false);
+                    workspaceEntry.addEventListener('click', this.showWidgetsMenuFromWorskspaceMenu.bind(this), false);
                 } else {
                     workspaceEntry.addEventListener('click', this.changeActiveWorkSpace.bind(this, workspace), false);
                 }
@@ -257,10 +257,10 @@ var OpManagerFactory = (function () {
 
         this.workspaceTabsAlternative = this.alternatives.createAlternative({'class': 'tabs_container'});
 
-        this.igadgetViewAlternative = this.alternatives.createAlternative();
+        this.iwidgetViewAlternative = this.alternatives.createAlternative();
         this.globalDragboard = new MobileDragboard();
-        this.igadgetViewAlternative.appendChild(this.globalDragboard);
-        this.igadgetViewAlternative.addEventListener('hide', this.sendBufferedVars.bind(this));
+        this.iwidgetViewAlternative.appendChild(this.globalDragboard);
+        this.iwidgetViewAlternative.addEventListener('hide', this.sendBufferedVars.bind(this));
 
         this.alternatives.insertInto(document.body);
     }

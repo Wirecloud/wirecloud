@@ -445,7 +445,7 @@ function PublishWindowMenu(workspace) {
             'type': 'group',
             'shortTitle': gettext('Advanced'),
             'fields': [
-                {name: 'readOnlyGadgets', label: gettext('Block gadgets'), type: 'boolean'},
+                {name: 'readOnlyWidgets', label: gettext('Block widgets'), type: 'boolean'},
                 {name: 'readOnlyConnectables', label: gettext('Block connections'), type: 'boolean'}
             ]
         },
@@ -484,17 +484,17 @@ PublishWindowMenu.prototype._addVariableParametrization = function (workspace, f
 
 PublishWindowMenu.prototype._parseTab = function (tab) {
 
-    var i, name, igadget, igadgets, igadget_params, pref_params,
+    var i, name, iwidget, iwidgets, iwidget_params, pref_params,
         prop_params, variable, variables, varManager, var_elements,
         fields;
 
     varManager = tab.workSpace.getVarManager();
-    igadgets = tab.getDragboard().getIGadgets();
+    iwidgets = tab.getDragboard().getIWidgets();
     fields = [];
 
-    for (i = 0; i < igadgets.length; i++) {
-        igadget = igadgets[i];
-        variables = varManager.getIGadgetVariables(igadget.getId());
+    for (i = 0; i < iwidgets.length; i++) {
+        iwidget = iwidgets[i];
+        variables = varManager.getIWidgetVariables(iwidget.getId());
         pref_params = [];
         prop_params = [];
 
@@ -536,8 +536,8 @@ PublishWindowMenu.prototype._parseTab = function (tab) {
 
         if (pref_params.length + prop_params.length !== 0) {
             fields.push({
-                name: igadget.id,
-                label: igadget.name,
+                name: iwidget.id,
+                label: iwidget.name,
                 type: 'fieldset',
                 nested: true,
                 fields: var_elements

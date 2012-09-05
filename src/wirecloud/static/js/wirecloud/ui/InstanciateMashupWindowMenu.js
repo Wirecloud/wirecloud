@@ -45,7 +45,7 @@
         WindowMenu.call(this, gettext('Add Mashup'));
 
         this.iconElement.addClassName('icon-warning');
-        this.setMsg(gettext('You are going to add a Mashup that could be composed by more than one gadget. Do you want to add it to a new Workspace or to the current one?'));
+        this.setMsg(gettext('You are going to add a Mashup that could be composed by more than one widget. Do you want to add it to a new Workspace or to the current one?'));
 
         // New Workspace button
         this.acceptButton = new StyledElements.StyledButton({

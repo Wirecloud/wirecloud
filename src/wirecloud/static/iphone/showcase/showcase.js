@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global OpManagerFactory, Wirecloud, Hash, Gadget, Modules */
+/*global OpManagerFactory, Wirecloud, Hash, Widget, Modules */
 "use strict";
 
 /*
@@ -32,7 +32,7 @@
 * @author luismarcos.ayllon
 */
 
-// This module provides a set of gadgets which can be deployed into dragboard as gadget instances
+// This module provides a set of widgets which can be deployed into dragboard as widget instances
 var ShowcaseFactory = (function () {
 
     // *********************************
@@ -46,9 +46,9 @@ var ShowcaseFactory = (function () {
     // *********************************
     function Showcase() {
 
-        var loadGadgets,
+        var loadWidgets,
             onErrorCallback,
-            private_gadgets,
+            private_widgets,
             private_loaded,
             private_opManager,
             private_persistenceEngine;
@@ -62,20 +62,20 @@ var ShowcaseFactory = (function () {
         // CALLBACK METHODS
         // ****************
 
-        // Load gadgets from persistence system
-        loadGadgets = function (receivedData) {
+        // Load widgets from persistence system
+        loadWidgets = function (receivedData) {
             var response = receivedData.responseText,
-                jsonGadgetList = JSON.parse(response),
-                i, jsonGadget, gadget, gadgetId;
+                jsonWidgetList = JSON.parse(response),
+                i, jsonWidget, widget, widgetId;
 
-            // Load all gadgets from persitence system
-            for (i = 0; i < jsonGadgetList.length; i += 1) {
-                jsonGadget = jsonGadgetList[i];
-                gadget = new Gadget(jsonGadget, null);
-                gadgetId = gadget.getId();
+            // Load all widgets from persitence system
+            for (i = 0; i < jsonWidgetList.length; i += 1) {
+                jsonWidget = jsonWidgetList[i];
+                widget = new Widget(jsonWidget, null);
+                widgetId = widget.getId();
 
-                // Insert gadget object in showcase object model
-                private_gadgets.set(gadgetId, gadget);
+                // Insert widget object in showcase object model
+                private_widgets.set(widgetId, widget);
             }
 
             // Showcase loaded
@@ -84,7 +84,7 @@ var ShowcaseFactory = (function () {
 
         };
 
-        // Error callback (empty gadget list)
+        // Error callback (empty widget list)
         onErrorCallback = function (receivedData) {
             private_loaded = true;
             private_opManager.continueLoadingGlobalModules(Modules.prototype.SHOWCASE);
@@ -93,7 +93,7 @@ var ShowcaseFactory = (function () {
         // *******************************
         // PRIVATE METHODS AND VARIABLES
         // *******************************
-        private_gadgets = new Hash();
+        private_widgets = new Hash();
         private_loaded = false;
         private_opManager = OpManagerFactory.getInstance();
 
@@ -101,9 +101,9 @@ var ShowcaseFactory = (function () {
         // PUBLIC METHODS
         // ****************
 
-        // Get a gadget by its gadgetID
-        Showcase.prototype.getGadget = function (gadgetId) {
-            return private_gadgets.get(gadgetId);
+        // Get a widget by its widgetID
+        Showcase.prototype.getWidget = function (widgetId) {
+            return private_widgets.get(widgetId);
         };
 
 
@@ -111,7 +111,7 @@ var ShowcaseFactory = (function () {
             // Initial load from persitence system
             Wirecloud.io.makeRequest(Wirecloud.URLs.WIDGET_COLLECTION, {
                 method: 'GET',
-                onSuccess: loadGadgets,
+                onSuccess: loadWidgets,
                 onFailure: onErrorCallback,
                 onException: onErrorCallback
             });

@@ -13,14 +13,14 @@ div.fulldragboard {
   position: fixed;
 }
 
-div.gadget_window_locked {
+div.widget_window_locked {
 }
 
-div.gadget_window_transparent {
+div.widget_window_transparent {
   background: transparent;
 }
 
-div.gadget_menu {
+div.widget_menu {
   cursor: move;
   overflow: hidden;
   border: 0px;
@@ -29,29 +29,29 @@ div.gadget_menu {
 }
 
 /*div.dragboard.fixed -> LOCK OR SHARED STATUS*/
-div.fixed div.gadget_menu {
+div.fixed div.widget_menu {
   cursor: default;
 }
 
 /*div.dragboard.fixed -> LOCK OR SHARED STATUS*/
-div.fixed div.iwidget div.gadget_menu .closebutton, div.fixed div.iwidget div.gadget_menu .versionbutton {
+div.fixed div.iwidget div.widget_menu .closebutton, div.fixed div.iwidget div.widget_menu .versionbutton {
   display: none;
 }
 
-/*div.gadget_window_readonly -> READONLY STATUS*/
-div.iwidget.gadget_window_readonly div.gadget_menu .closebutton {
+/*div.widget_window_readonly -> READONLY STATUS*/
+div.iwidget.widget_window_readonly div.widget_menu .closebutton {
   display: none;
 }
 
-div.iwidget div.gadget_wrapper {
+div.iwidget div.widget_wrapper {
   width: auto;
 }
 
-div.gadget_window_locked div.gadget_wrapper {
+div.widget_window_locked div.widget_wrapper {
   border: none;
 }
 
-div.iwidget div.gadget_wrapper iframe {
+div.iwidget div.widget_wrapper iframe {
     width: 100%;
     border: none;
 }
@@ -128,15 +128,15 @@ div.fixed div.iwidget div.leftResizeHandle,
   display: none;
 }
 
-.gadget_menu span {
+.widget_menu span {
   cursor: pointer;
 }
 
-div.fixed .gadget_menu span {
+div.fixed .widget_menu span {
 	cursor: default;
 }
 
-.gadget_menu .igadget_name {
+.widget_menu .iwidget_name {
   float:left;
   display:inline;
   border: 0px;
@@ -161,7 +161,7 @@ div.iwidget div.statusBar .button {
  */
 
 div.iwidget div.config_interface,
-div.gadget_window_locked div.config_interface {
+div.widget_window_locked div.config_interface {
   display: none;
   padding: 1px 1ex;
   margin: 0px;
@@ -228,7 +228,7 @@ div.config_interface label.invalid input {
 	border: 1px solid;	
 }
 
-.gadget_menu_locked .hide_on_lock, .gadget_menu_fulldragboard .hide_on_fulldragboard, .gadget_menu_minimized .hide_on_minimize {
+.widget_menu_locked .hide_on_lock, .widget_menu_fulldragboard .hide_on_fulldragboard, .widget_menu_minimized .hide_on_minimize {
   display: none;
 }
 
@@ -241,11 +241,11 @@ div.fulldragboard {
   border: 0px none;
 }
 
-div.fulldragboard div.gadget_menu input[type="button"].minimizebutton {
+div.fulldragboard div.widget_menu input[type="button"].minimizebutton {
   display: none;
 }
 
-div.fulldragboard div.gadget_menu {
+div.fulldragboard div.widget_menu {
   cursor: default;
 }
 
@@ -253,11 +253,11 @@ div.fulldragboard div.gadget_menu {
  * Locked Dragboard
  ******************************/
 
-div.gadget_window_locked {
+div.widget_window_locked {
     border: 1px solid;
 }
 
-div.gadget_window_locked div.gadget_menu, div.gadget_window_locked div.statusBar {
+div.widget_window_locked div.widget_menu, div.widget_window_locked div.statusBar {
     display: none;
 }
 
@@ -285,21 +285,21 @@ div.gadget_window_locked div.gadget_menu, div.gadget_window_locked div.statusBar
 	color: transparent;
 }
 
-.floating_gadget_icon{
+.floating_widget_icon{
 	position: absolute;
 	width: 75px;
 	text-align: center;
 	display: none;
 }
 
-.floating_gadget_icon img{
+.floating_widget_icon img{
 	width: 60px;
 	height: 60px;
 	display: block;
 	padding: 0 5px 2px 5px;
 }
 
-.floating_gadget_icon .floating_gadget_title{
+.floating_widget_icon .floating_widget_title{
 	display: block;
 	cursor: default;
 	font-size:85%;

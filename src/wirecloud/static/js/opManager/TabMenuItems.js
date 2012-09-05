@@ -57,11 +57,11 @@ TabMenuItems.prototype.build = function () {
 
     /*
     this.menu.addOption('icon-show-floating',
-        gettext("Show Floating Gadget"),
+        gettext("Show Floating Widget"),
         function(e) {
-            this.FloatingGadgetsMenu.clearOptions();
-            this.getDragboard().fillFloatingGadgetsMenu(this.FloatingGadgetsMenu);
-            LayoutManagerFactory.getInstance().showDropDownMenu('TabOpsSubMenu',this.FloatingGadgetsMenu, Event.pointerX(e), Event.pointerY(e));
+            this.FloatingWidgetsMenu.clearOptions();
+            this.getDragboard().fillFloatingWidgetsMenu(this.FloatingWidgetsMenu);
+            LayoutManagerFactory.getInstance().showDropDownMenu('TabOpsSubMenu',this.FloatingWidgetsMenu, Event.pointerX(e), Event.pointerY(e));
         }.bind(this),
         4);
     */

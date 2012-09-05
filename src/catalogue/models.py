@@ -68,7 +68,7 @@ class CatalogueResource(TransModel):
     wiki_page_uri = models.CharField(_('wikiURI'), max_length=200, blank=True)
     template_uri = models.CharField(_('templateURI'), max_length=200, blank=True)
 
-    # For implementing "private gadgets" only visible for users that belongs to some concrete organizations
+    # For implementing "private widgets" only visible for users that belongs to some concrete organizations
     organization = models.ManyToManyField(Group, related_name='organization', null=True, blank=True)
 
     # Certification status
@@ -103,7 +103,7 @@ class Capability(models.Model):
         return unicode(self.name)
 
 
-class GadgetWiring(models.Model):
+class WidgetWiring(models.Model):
 
     friendcode = models.CharField(_('Friend code'), max_length=30, blank=True, null=True)
     wiring = models.CharField(_('Wiring'), max_length=5)

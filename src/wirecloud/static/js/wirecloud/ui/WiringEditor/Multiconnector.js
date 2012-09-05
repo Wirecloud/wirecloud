@@ -82,14 +82,14 @@
 
         if (this.initAnchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
             if (endPos == null) {
-                //60 px initial distane between gadget and multionnector + 30 px for the multiconnector width
+                //60 px initial distane between widget and multionnector + 30 px for the multiconnector width
                 coord.posX -= (60 + 30);
             }
             this.wrapperElement.addClassName('target');
             mainAnchor = new Wirecloud.ui.WiringEditor.TargetAnchor(initAnchor.context, initAnchor.context.iObject.arrowCreator);
         } else {
             if (endPos == null) {
-                //60 px initial distane between gadget and multionnector
+                //60 px initial distane between widget and multionnector
                 coord.posX += 60;
             }
             this.wrapperElement.addClassName('source');

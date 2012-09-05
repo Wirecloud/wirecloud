@@ -59,7 +59,7 @@ from catalogue.catalogue_utils import get_and_filter, get_or_filter, get_not_fil
 from catalogue.catalogue_utils import get_tag_filter, get_event_filter, get_slot_filter, get_paginatedlist
 from catalogue.catalogue_utils import get_tag_response, update_resource_popularity
 from catalogue.catalogue_utils import get_vote_response, group_resources
-from catalogue.utils import add_gadget_from_wgt, add_resource_from_template, delete_resource, get_added_resource_info
+from catalogue.utils import add_widget_from_wgt, add_resource_from_template, delete_resource, get_added_resource_info
 from catalogue.utils import tag_resource
 from commons.cache import no_cache
 from commons.http_utils import PUT_parameter, download_http_content
@@ -113,7 +113,7 @@ def iframe_error(func):
 
 @no_cache
 def error(request):
-    msg = request.GET.get('msg', 'Gadget could not be added')
+    msg = request.GET.get('msg', 'Widget could not be added')
     return HttpResponse(msg, mimetype='text/plain')
 
 
@@ -131,7 +131,7 @@ class ResourceCollection(Resource):
             if 'file' in request.FILES:
 
                 request_file = request.FILES['file']
-                resource = add_gadget_from_wgt(request_file, user)
+                resource = add_widget_from_wgt(request_file, user)
 
             elif 'template_uri' in request.POST:
                 template_uri = request.POST['template_uri']
@@ -182,19 +182,19 @@ class ResourceCollection(Resource):
 
         user = request.user
 
-        response_json = {'result': 'ok', 'removedIGadgets': []}
+        response_json = {'result': 'ok', 'removedIWidgets': []}
         if version is not None:
-            #Delete only the specified version of the gadget
+            #Delete only the specified version of the widget
             resource = get_object_or_404(CatalogueResource, short_name=name,
                                          vendor=vendor, version=version)
             result = delete_resource(resource, user)
-            response_json['removedIGadgets'] = result['removedIGadgets']
+            response_json['removedIWidgets'] = result['removedIWidgets']
         else:
-            #Delete all versions of the gadget
+            #Delete all versions of the widget
             resources = get_list_or_404(CatalogueResource, short_name=name, vendor=vendor)
             for resource in resources:
                 result = delete_resource(resource, user)
-                response_json['removedIGadgets'] += result['removedIGadgets']
+                response_json['removedIWidgets'] += result['removedIWidgets']
 
         return HttpResponse(simplejson.dumps(response_json),
                             mimetype='application/json; charset=UTF-8')
@@ -235,16 +235,16 @@ class ResourceCollectionBySimpleSearch(Resource):
             search_criteria = search_criteria.split()
             for e in search_criteria:
                 resources = CatalogueResource.objects.filter(
-                    Q(gadgetwiring__friendcode=e),
-                    Q(gadgetwiring__wiring='out'))
+                    Q(widgetwiring__friendcode=e),
+                    Q(widgetwiring__wiring='out'))
 
         elif criteria == 'connectEvent':
             # get all resource compatible with the given slots
             search_criteria = search_criteria.split()
             filters = Q()
             for e in search_criteria:
-                filters = filters | Q(gadgetwiring__friendcode=e)
-            filters = filters & Q(gadgetwiring__wiring='out')
+                filters = filters | Q(widgetwiring__friendcode=e)
+            filters = filters & Q(widgetwiring__wiring='out')
 
         resources = CatalogueResource.objects.filter(filters)
         resources = filter_resources_by_scope(resources, scope)

@@ -33,32 +33,32 @@ from urlparse import urljoin, urlparse
 
 from django.shortcuts import get_object_or_404
 
-from catalogue.models import GadgetWiring, UserTag, UserVote, Capability
+from catalogue.models import WidgetWiring, UserTag, UserVote, Capability
 from wirecloudcommons.utils.http import get_absolute_reverse_url
 
 
-def get_vote_data(gadget, user):
-    """Gets the vote for a given user and gadget.
+def get_vote_data(widget, user):
+    """Gets the vote for a given user and widget.
 
-    It also gets the number of votes and the popularity of the gadget (average).
+    It also gets the number of votes and the popularity of the widget (average).
     """
 
     vote_data = {}
     try:
-        vote_value = get_object_or_404(UserVote, idResource=gadget.id, idUser=user.id).vote
+        vote_value = get_object_or_404(UserVote, idResource=widget.id, idUser=user.id).vote
     except:
         vote_value = 0
-    votes_number = UserVote.objects.filter(idResource=gadget).count()
+    votes_number = UserVote.objects.filter(idResource=widget).count()
     vote_data['user_vote'] = vote_value
     vote_data['votes_number'] = votes_number
     # Decimal data loses precision when converted to float
-    vote_data['popularity'] = str(gadget.popularity)
+    vote_data['popularity'] = str(widget.popularity)
 
     return vote_data
 
 
-def get_tag_data(gadget_id, user_id):
-    """Gets the non-repeated tags for a given gadget and a logged user.
+def get_tag_data(widget_id, user_id):
+    """Gets the non-repeated tags for a given widget and a logged user.
 
     It also gets the number of appareances of every tag and if one of those
     appareances has been added by the logged user.
@@ -67,7 +67,7 @@ def get_tag_data(gadget_id, user_id):
     all_tags = []
     tags_by_name = {}
     # Get the user's tags
-    tags = UserTag.objects.filter(idResource=gadget_id)
+    tags = UserTag.objects.filter(idResource=widget_id)
     for t in tags:
         if t.tag.name in tags_by_name:
             if t.idUser.id == user_id:
@@ -91,10 +91,10 @@ def get_tag_data(gadget_id, user_id):
     return all_tags
 
 
-def get_event_data(gadget_id):
-    """Gets the events of the given gadget."""
+def get_event_data(widget_id):
+    """Gets the events of the given widget."""
     all_events = []
-    events = GadgetWiring.objects.filter(idResource=gadget_id, wiring='out')
+    events = WidgetWiring.objects.filter(idResource=widget_id, wiring='out')
     for e in events:
         event_data = {}
         event_data['friendcode'] = e.friendcode
@@ -102,10 +102,10 @@ def get_event_data(gadget_id):
     return all_events
 
 
-def get_slot_data(gadget_id):
-    """Gets the slots of the given gadget."""
+def get_slot_data(widget_id):
+    """Gets the slots of the given widget."""
     all_slots = []
-    slots = GadgetWiring.objects.filter(idResource=gadget_id, wiring='in')
+    slots = WidgetWiring.objects.filter(idResource=widget_id, wiring='in')
     for s in slots:
         slot_data = {}
         slot_data['friendcode'] = s.friendcode
@@ -113,9 +113,9 @@ def get_slot_data(gadget_id):
     return all_slots
 
 
-def get_gadget_capabilities(gadget_id, user):
+def get_widget_capabilities(widget_id, user):
     data_ret = []
-    capabilities = Capability.objects.filter(resource__id=gadget_id)
+    capabilities = Capability.objects.filter(resource__id=widget_id)
 
     for capability in capabilities:
         data_ret.append({
@@ -127,7 +127,7 @@ def get_gadget_capabilities(gadget_id, user):
 
 
 def get_resource_data(untranslated_resource, user, request=None):
-    """Gets all the information related to the given gadget."""
+    """Gets all the information related to the given widget."""
     resource = untranslated_resource.get_translated_model()
 
     if urlparse(resource.template_uri).scheme == '':
@@ -145,9 +145,9 @@ def get_resource_data(untranslated_resource, user, request=None):
     else:
         displayName = resource.short_name
 
-    data_tags = get_tag_data(gadget_id=resource.pk, user_id=user.id)
-    data_events = get_event_data(gadget_id=resource.pk)
-    data_slots = get_slot_data(gadget_id=resource.pk)
+    data_tags = get_tag_data(widget_id=resource.pk, user_id=user.id)
+    data_events = get_event_data(widget_id=resource.pk)
+    data_slots = get_slot_data(widget_id=resource.pk)
 
     return {
         'id': resource.pk,
@@ -165,11 +165,11 @@ def get_resource_data(untranslated_resource, user, request=None):
         'uriWiki': urljoin(template_uri, resource.wiki_page_uri),
         'uriTemplate': template_uri,
         'ieCompatible': resource.ie_compatible,
-        'capabilities': get_gadget_capabilities(gadget_id=resource.pk, user=user),
+        'capabilities': get_widget_capabilities(widget_id=resource.pk, user=user),
         'tags': [d for d in data_tags],
         'events': [d for d in data_events],
         'slots': [d for d in data_slots],
-        'votes': get_vote_data(gadget=resource, user=user),
+        'votes': get_vote_data(widget=resource, user=user),
     }
 
 

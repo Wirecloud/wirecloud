@@ -28,20 +28,20 @@ Wirecloud.Widget.PreferencesWindowMenu = function PreferencesWindowMenu (css_cla
 Wirecloud.Widget.PreferencesWindowMenu.prototype = new WindowMenu();
 
 Wirecloud.Widget.PreferencesWindowMenu.prototype._savePrefs = function (form, new_values) {
-    var oldValue, newValue, varName, varManager = this._current_igadget.layout.dragboard.workSpace.varManager;
+    var oldValue, newValue, varName, varManager = this._current_iwidget.layout.dragboard.workSpace.varManager;
 
     // Start propagation of the new values of the user pref variables
     varManager.incNestingLevel();
 
     /*
      * The new value is commited with 2 phases (first setting the value and then
-     * propagating changes). This avoids the case where igadgets read old values.
+     * propagating changes). This avoids the case where iwidgets read old values.
      */
 
     // Phase 1
     // Annotate new value of the variable without invoking callback function!
     for (varName in new_values) {
-        variable = varManager.getVariableByName(this._current_igadget.getId(), varName);
+        variable = varManager.getVariableByName(this._current_iwidget.getId(), varName);
 
         oldValue = variable.get();
         newValue = new_values[varName];
@@ -54,7 +54,7 @@ Wirecloud.Widget.PreferencesWindowMenu.prototype._savePrefs = function (form, ne
     // Phase 2
     // Commit new value of the variable
     for (varName in new_values) {
-        variable = varManager.getVariableByName(this._current_igadget.getId(), varName);
+        variable = varManager.getVariableByName(this._current_iwidget.getId(), varName);
         variable.set(new_values[varName]);
     }
 
@@ -63,25 +63,25 @@ Wirecloud.Widget.PreferencesWindowMenu.prototype._savePrefs = function (form, ne
     varManager.sendBufferedVars();
     this.hide();
 
-    if (typeof this._current_igadget.prefCallback === 'function') {
-        this._current_igadget.prefCallback(new_values);
+    if (typeof this._current_iwidget.prefCallback === 'function') {
+        this._current_iwidget.prefCallback(new_values);
     }
 };
 
-Wirecloud.Widget.PreferencesWindowMenu.prototype.show = function (igadget, parentWindow) {
+Wirecloud.Widget.PreferencesWindowMenu.prototype.show = function (iwidget, parentWindow) {
     var i, prefs, fields;
 
     fields = {};
-    prefs = igadget.getGadget().getTemplate().getUserPrefs();
+    prefs = iwidget.getWidget().getTemplate().getUserPrefs();
 
     for (i = 0; i < prefs.length; i++) {
         pref = prefs[i];
 
-        if (!pref.isHidden(igadget)) {
-            fields[pref.varName] = pref.getInterfaceDescription(igadget);
+        if (!pref.isHidden(iwidget)) {
+            fields[pref.varName] = pref.getInterfaceDescription(iwidget);
         }
     }
-    this._current_igadget = igadget;
+    this._current_iwidget = iwidget;
     this._current_form = new Form(fields);
     this._current_form.insertInto(this.windowContent);
     this._current_form.addEventListener('submit', this._savePrefs.bind(this));

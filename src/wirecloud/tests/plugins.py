@@ -3,7 +3,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.utils import unittest
 
 from wirecloud.plugins import clear_cache, get_active_features, get_plugins, \
-    get_extra_javascripts, get_gadget_api_extensions, WirecloudPlugin
+    get_extra_javascripts, get_widget_api_extensions, WirecloudPlugin
 
 try:
     from djangosanetesting.cases import UnitTestCase
@@ -28,7 +28,7 @@ class WirecloudTestPlugin1(WirecloudPlugin):
         else:
             return ('a.js',)
 
-    def get_gadget_api_extensions(self, view):
+    def get_widget_api_extensions(self, view):
         if view == 'index':
             return ('d.js',)
         else:
@@ -69,8 +69,8 @@ class WirecloudPluginTestCase(UnitTestCase):
         core_features = len(get_active_features())
         core_index_javascripts = len(get_extra_javascripts('index'))
         core_iphone_javascripts = len(get_extra_javascripts('iphone'))
-        core_index_extensions = len(get_gadget_api_extensions('index'))
-        core_iphone_extensions = len(get_gadget_api_extensions('iphone'))
+        core_index_extensions = len(get_widget_api_extensions('index'))
+        core_iphone_extensions = len(get_widget_api_extensions('iphone'))
 
         settings.WIRECLOUD_PLUGINS = (
             'wirecloud.tests.plugins.WirecloudTestPlugin1',
@@ -82,8 +82,8 @@ class WirecloudPluginTestCase(UnitTestCase):
         self.assertEqual(len(get_active_features()), core_features + 2)
         self.assertEqual(len(get_extra_javascripts('index')), core_index_javascripts + 2)
         self.assertEqual(len(get_extra_javascripts('iphone')), core_iphone_javascripts + 1)
-        self.assertEqual(len(get_gadget_api_extensions('index')), core_index_extensions + 1)
-        self.assertEqual(len(get_gadget_api_extensions('iphone')), core_iphone_extensions + 0)
+        self.assertEqual(len(get_widget_api_extensions('index')), core_index_extensions + 1)
+        self.assertEqual(len(get_widget_api_extensions('iphone')), core_iphone_extensions + 0)
 
     def test_several_plugins_with_the_same_feature(self):
         settings.WIRECLOUD_PLUGINS = (

@@ -32,7 +32,7 @@
         <field type="CharField" name="author">fabio</field>
         <field type="CharField" name="mail">fabio@tid.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
-        <field type="TextField" name="description">Este gadget presenta la ubicacion en el plano de una determinada direccion o coordenadas UTM. Si se le pasa la precision, dibuja un circulo con el area seleccionada</field>
+        <field type="TextField" name="description">Este widget presenta la ubicacion en el plano de una determinada direccion o coordenadas UTM. Si se le pasa la precision, dibuja un circulo con el area seleccionada</field>
         <field type="CharField" name="license"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-12-01 15:19:39</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/localizador/google_maps.jpg</field>
@@ -54,7 +54,7 @@
         <field type="CharField" name="author">jmartin</field>
         <field type="CharField" name="mail">jjmr@tid.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
-        <field type="TextField" name="description">Este gadget permite anadir una nota personal</field>
+        <field type="TextField" name="description">Este widget permite anadir una nota personal</field>
         <field type="CharField" name="license"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-12-01 15:19:51</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/notepad/notepad.jpg</field>
@@ -76,7 +76,7 @@
         <field type="CharField" name="author">miglesia</field>
         <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
-        <field type="TextField" name="description">Este gadget presenta la informacion relativa a un equipo perteneciente a la red de encaminadores</field>
+        <field type="TextField" name="description">Este widget presenta la informacion relativa a un equipo perteneciente a la red de encaminadores</field>
         <field type="CharField" name="license"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-12-01 15:20:14</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/visorEquipos/datosEquipo.png</field>
@@ -98,7 +98,7 @@
         <field type="CharField" name="author">jmostazo</field>
         <field type="CharField" name="mail">jmostazo@pegaso.ls.fi.upm.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
-        <field type="TextField" name="description">Este gadget permite mostrar imágenes recibidas en un slot</field>
+        <field type="TextField" name="description">Este widget permite mostrar imágenes recibidas en un slot</field>
         <field type="CharField" name="license"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-12-01 15:20:23</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/visorImagenes/visorImagenes.png</field>
@@ -120,7 +120,7 @@
         <field type="CharField" name="author">miglesia</field>
         <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
-        <field type="TextField" name="description">Este gadget presenta la informacion relativa a un usuario para el cual se ha detectado una averia</field>
+        <field type="TextField" name="description">Este widget presenta la informacion relativa a un usuario para el cual se ha detectado una averia</field>
         <field type="CharField" name="license"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-12-01 15:20:35</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/visorUsuarios/datosUsuario.png</field>
@@ -220,87 +220,87 @@
         <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
-    <object pk="1" model="catalogue.gadgetwiring">
+    <object pk="1" model="catalogue.widgetwiring">
         <field type="CharField" name="friendcode">keyword</field>
         <field type="CharField" name="wiring">in</field>
         <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">1</field>
     </object>
-    <object pk="9" model="catalogue.gadgetwiring">
+    <object pk="9" model="catalogue.widgetwiring">
         <field type="CharField" name="friendcode">address</field>
         <field type="CharField" name="wiring">in</field>
         <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">5</field>
     </object>
-    <object pk="10" model="catalogue.gadgetwiring">
+    <object pk="10" model="catalogue.widgetwiring">
         <field type="CharField" name="friendcode">utmCoord</field>
         <field type="CharField" name="wiring">in</field>
         <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">5</field>
     </object>
-    <object pk="11" model="catalogue.gadgetwiring">
+    <object pk="11" model="catalogue.widgetwiring">
         <field type="CharField" name="friendcode">address</field>
         <field type="CharField" name="wiring">out</field>
         <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">7</field>
     </object>
-    <object pk="12" model="catalogue.gadgetwiring">
+    <object pk="12" model="catalogue.widgetwiring">
         <field type="CharField" name="friendcode">deviceId</field>
         <field type="CharField" name="wiring">in</field>
         <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">7</field>
     </object>
-    <object pk="13" model="catalogue.gadgetwiring">
+    <object pk="13" model="catalogue.widgetwiring">
         <field type="CharField" name="friendcode">deviceStatus</field>
         <field type="CharField" name="wiring">in</field>
         <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">7</field>
     </object>
-    <object pk="14" model="catalogue.gadgetwiring">
+    <object pk="14" model="catalogue.widgetwiring">
         <field type="CharField" name="friendcode">imageUrl</field>
         <field type="CharField" name="wiring">in</field>
         <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">8</field>
     </object>
-    <object pk="15" model="catalogue.gadgetwiring">
+    <object pk="15" model="catalogue.widgetwiring">
         <field type="CharField" name="friendcode">address</field>
         <field type="CharField" name="wiring">out</field>
         <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">9</field>
     </object>
-    <object pk="16" model="catalogue.gadgetwiring">
+    <object pk="16" model="catalogue.widgetwiring">
         <field type="CharField" name="friendcode">phone</field>
         <field type="CharField" name="wiring">in</field>
         <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">9</field>
     </object>
-    <object pk="17" model="catalogue.gadgetwiring">
+    <object pk="17" model="catalogue.widgetwiring">
         <field type="CharField" name="friendcode">yahoo_travel</field>
         <field type="CharField" name="wiring">in</field>
         <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">10</field>
     </object>
-    <object pk="18" model="catalogue.gadgetwiring">
+    <object pk="18" model="catalogue.widgetwiring">
         <field type="CharField" name="friendcode">poi</field>
         <field type="CharField" name="wiring">in</field>
         <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">11</field>
     </object>
-    <object pk="19" model="catalogue.gadgetwiring">
+    <object pk="19" model="catalogue.widgetwiring">
         <field type="CharField" name="friendcode">yahoo_travel</field>
         <field type="CharField" name="wiring">out</field>
         <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">11</field>
     </object>
-    <object pk="20" model="catalogue.gadgetwiring">
+    <object pk="20" model="catalogue.widgetwiring">
         <field type="CharField" name="friendcode">youtube_url</field>
         <field type="CharField" name="wiring">in</field>
         <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">12</field>
     </object>
-    <object pk="21" model="catalogue.gadgetwiring">
+    <object pk="21" model="catalogue.widgetwiring">
         <field type="CharField" name="friendcode">youtube_url</field>
         <field type="CharField" name="wiring">out</field>
         <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">13</field>
     </object>
-    <object pk="22" model="catalogue.gadgetwiring">
+    <object pk="22" model="catalogue.widgetwiring">
         <field type="CharField" name="friendcode">address</field>
         <field type="CharField" name="wiring">out</field>
         <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">13</field>
     </object>
-    <object pk="23" model="catalogue.gadgetwiring">
+    <object pk="23" model="catalogue.widgetwiring">
         <field type="CharField" name="friendcode">title</field>
         <field type="CharField" name="wiring">out</field>
         <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">13</field>
     </object>
-    <object pk="24" model="catalogue.gadgetwiring">
+    <object pk="24" model="catalogue.widgetwiring">
         <field type="CharField" name="friendcode">poi</field>
         <field type="CharField" name="wiring">out</field>
         <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">13</field>

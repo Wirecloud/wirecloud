@@ -112,7 +112,7 @@
         if (resource.isMashup()) {
             (new Wirecloud.ui.InstanciateMashupWindowMenu(resource)).show();
         } else {
-            ShowcaseFactory.getInstance().addGadget(resource.getVendor(), resource.getName(),
+            ShowcaseFactory.getInstance().addWidget(resource.getVendor(), resource.getName(),
             resource.getVersion().text, resource.getUriTemplate());
         }
     };
@@ -229,7 +229,7 @@
         // First ask the user
         var context, doRequest, msg;
 
-        msg = gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") gadget?');
+        msg = gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") widget?');
         context = {
             name: resource.getName(),
             vendor: resource.getVendor(),

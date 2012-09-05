@@ -24,9 +24,9 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import IntegrityError
 from django.utils.translation import ugettext as _
 
-from wirecloud.models import Gadget
+from wirecloud.models import Widget
 from wirecloud.widget.utils import create_widget_from_wgt
-from wirecloud.widget.views import deleteGadget
+from wirecloud.widget.views import deleteWidget
 from commons.wgt import WgtFile
 from wirecloudcommons.utils.template import TemplateParser
 
@@ -39,7 +39,7 @@ class FakeUser():
 
 class Command(BaseCommand):
     args = '<file.wgt>...'
-    help = 'Adds a packaged gadget into the showcase'
+    help = 'Adds a packaged widget into the showcase'
     option_list = BaseCommand.option_list + (
         make_option('-d', '--deploy-only',
             action='store_true',
@@ -76,19 +76,19 @@ class Command(BaseCommand):
                     if not options['reinstall']:
                         raise
                     else:
-                        deleteGadget(user, template.get_resource_name(),
+                        deleteWidget(user, template.get_resource_name(),
                             template.get_resource_vendor(),
                             template.get_resource_version()
                         )
                         create_widget_from_wgt(wgt_file, user)
 
                 wgt_file.close()
-                print _('Successfully imported %(name)s gadget') % {'name': template.get_resource_name()}
+                print _('Successfully imported %(name)s widget') % {'name': template.get_resource_name()}
             except IntegrityError:
-                print _('Version %(version)s of the %(name)s gadget (from %(vendor)s) already exists') % {
+                print _('Version %(version)s of the %(name)s widget (from %(vendor)s) already exists') % {
                     'name': template.get_resource_name(),
                     'version': template.get_resource_version(),
                     'vendor': template.get_resource_vendor(),
                 }
             except:
-                print _('Failed to import gadget from %(file_name)s') % {'file_name': file_name}
+                print _('Failed to import widget from %(file_name)s') % {'file_name': file_name}

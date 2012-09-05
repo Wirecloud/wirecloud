@@ -30,7 +30,7 @@
 
 #
 
-from wirecloud.models import IGadget, UserWorkSpace, Variable, VariableValue
+from wirecloud.models import IWidget, UserWorkSpace, Variable, VariableValue
 
 
 class PackageLinker:
@@ -44,8 +44,8 @@ class PackageLinker:
             # The workspace is already linked to the user
             return user_workspace
 
-        # Linking gadgets to user!
-        variables = self.link_gadgets(workspace, user)
+        # Linking widgets to user!
+        variables = self.link_widgets(workspace, user)
 
         if update_variable_values:
 
@@ -58,20 +58,20 @@ class PackageLinker:
         user_workspace = UserWorkSpace.objects.filter(workspace=workspace, user=user)
         user_workspace.delete()
 
-    def link_gadgets(self, workspace, user):
+    def link_widgets(self, workspace, user):
 
         # Getting all abstract variables of workspace
-        variables = Variable.objects.filter(igadget__tab__workspace=workspace).select_related('vardef')
+        variables = Variable.objects.filter(iwidget__tab__workspace=workspace).select_related('vardef')
 
-        ws_igadgets = IGadget.objects.filter(tab__workspace=workspace)
+        ws_iwidgets = IWidget.objects.filter(tab__workspace=workspace)
 
-        # Linking igadgets' gadget with user
+        # Linking iwidgets' widget with user
         # For user personal showcase
-        for igadget in ws_igadgets:
-            gadget = igadget.gadget
-            gadget.users.add(user)
+        for iwidget in ws_iwidgets:
+            widget = iwidget.widget
+            widget.users.add(user)
 
-            gadget.save()
+            widget.save()
 
         return variables
 

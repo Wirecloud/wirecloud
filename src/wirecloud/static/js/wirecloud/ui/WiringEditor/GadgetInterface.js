@@ -29,17 +29,17 @@
      * Constructor
      *************************************************************************/
     /*
-     * GadgetInterface Class
+     * WidgetInterface Class
      */
-    var GadgetInterface = function GadgetInterface(wiringEditor, igadget, manager, isMenubarRef) {
+    var WidgetInterface = function WidgetInterface(wiringEditor, iwidget, manager, isMenubarRef) {
         var variables, variable, desc, label, name, anchorContext;
-        this.igadget = igadget;
+        this.iwidget = iwidget;
         this.wiringEditor = wiringEditor;
 
-        Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.igadget.name, manager, 'igadget');
+        Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.iwidget.name, manager, 'iwidget');
 
         if (!isMenubarRef) {
-            variables = opManager.activeWorkSpace.varManager.getIGadgetVariables(igadget.getId());
+            variables = opManager.activeWorkSpace.varManager.getIWidgetVariables(iwidget.getId());
             //sources & targets anchors (sourceAnchor and targetAnchor)
             for (name in variables) {
                 variable = variables[name];
@@ -57,13 +57,13 @@
         }
     };
 
-    GadgetInterface.prototype = new Wirecloud.ui.WiringEditor.GenericInterface(true);
+    WidgetInterface.prototype = new Wirecloud.ui.WiringEditor.GenericInterface(true);
 
     /**
      * onFinish for draggable
      */
-    GadgetInterface.prototype.onFinish = function onFinish(draggable, data, e) {
-        var position, initialPosition, movement, igadget_interface;
+    WidgetInterface.prototype.onFinish = function onFinish(draggable, data, e) {
+        var position, initialPosition, movement, iwidget_interface;
 
         position = {posX: 0, posY: 0};
         position = data.iObjectClon.getPosition();
@@ -73,7 +73,7 @@
             return;
         }
 
-        igadget_interface = this.wiringEditor.addIGadget(this.wiringEditor, this.igadget);
+        iwidget_interface = this.wiringEditor.addIWidget(this.wiringEditor, this.iwidget);
 
         position.posX -= 180;
 
@@ -83,7 +83,7 @@
         if (position.posY < 0) {
             position.posY = 8;
         }
-        igadget_interface.setPosition(position);
+        iwidget_interface.setPosition(position);
         this.wiringEditor.layout.wrapperElement.removeChild(data.iObjectClon.wrapperElement);
         this.disable();
     };
@@ -97,14 +97,14 @@
      *************************************************************************/
 
     /**
-     * get the igadget.
+     * get the iwidget.
      */
-    GadgetInterface.prototype.getIGadget = function getIGadget() {
-        return this.igadget;
+    WidgetInterface.prototype.getIWidget = function getIWidget() {
+        return this.iwidget;
     };
 
     /*************************************************************************
-     * Make GadgetInterface public
+     * Make WidgetInterface public
      *************************************************************************/
-    Wirecloud.ui.WiringEditor.GadgetInterface = GadgetInterface;
+    Wirecloud.ui.WiringEditor.WidgetInterface = WidgetInterface;
 })();

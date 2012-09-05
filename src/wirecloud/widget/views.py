@@ -45,21 +45,21 @@ from commons.authentication import Http403
 from commons.cache import no_cache, patch_cache_headers
 from commons.utils import get_xml_error, json_encode, get_xhtml_content
 from commons.exceptions import TemplateParseException
-from commons.get_data import get_gadget_data
+from commons.get_data import get_widget_data
 from commons.http_utils import download_http_content
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 
-from wirecloud.iwidget.utils import deleteIGadget
-from wirecloud.models import Gadget, IGadget
+from wirecloud.iwidget.utils import deleteIWidget
+from wirecloud.models import Widget, IWidget
 import wirecloud.widget.utils as showcase_utils
-from wirecloud.widget.utils import get_or_create_gadget, create_widget_from_template, fix_gadget_code, get_site_domain
+from wirecloud.widget.utils import get_or_create_widget, create_widget_from_template, fix_widget_code, get_site_domain
 from wirecloud.workspace.utils import create_published_workspace_from_template
 from wirecloudcommons.utils.template import TemplateParser
 from wirecloudcommons.utils.transaction import commit_on_http_success
 
 
-def parseAndCreateGadget(request, user, workspaceId, fromWGT):
+def parseAndCreateWidget(request, user, workspaceId, fromWGT):
     try:
 
         templateURL = None
@@ -76,14 +76,14 @@ def parseAndCreateGadget(request, user, workspaceId, fromWGT):
             msg = _("Missing workspaceId parameter")
             raise Exception(msg)
 
-        #get or create the Gadget
-        return get_or_create_gadget(templateURL, user, workspaceId, request, fromWGT)
+        #get or create the Widget
+        return get_or_create_widget(templateURL, user, workspaceId, request, fromWGT)
 
     except TemplateParseException, e:
         msg = _("Error parsing the template: %(msg)s" % {"msg": e.msg})
         raise TracedServerError(e, {'url': templateURL}, request, msg)
     except IntegrityError, e:
-        msg = _("Gadget already exists")
+        msg = _("Widget already exists")
         raise TracedServerError(e, {'url': templateURL}, request, msg)
     except IOError, e:
         msg = _("The url is not accesible")
@@ -94,19 +94,19 @@ def parseAndCreateGadget(request, user, workspaceId, fromWGT):
         raise TracedServerError(e, {'url': templateURL}, request, str(e))
 
 
-def deleteGadget(user, short_name, vendor, version):
+def deleteWidget(user, short_name, vendor, version):
 
-    result = {'removedIGadgets': []}
+    result = {'removedIWidgets': []}
 
     try:
 
-        widget = Gadget.objects.get(name=short_name, vendor=vendor, version=version)
+        widget = Widget.objects.get(name=short_name, vendor=vendor, version=version)
 
-        # Remove all igadget that matches this Gadget Resource
-        iwidgets = IGadget.objects.filter(gadget=widget)
+        # Remove all iwidget that matches this Widget Resource
+        iwidgets = IWidget.objects.filter(widget=widget)
         for iwidget in iwidgets:
-            result['removedIGadgets'].append(iwidget.id)
-            deleteIGadget(iwidget, user)
+            result['removedIWidgets'].append(iwidget.id)
+            deleteIWidget(iwidget, user)
 
         if widget.xhtml is not None:
             widget.xhtml.delete()
@@ -114,20 +114,20 @@ def deleteGadget(user, short_name, vendor, version):
         widget.delete()
         showcase_utils.wgt_deployer.undeploy(vendor, short_name, version)
 
-    except Gadget.DoesNotExist:
+    except Widget.DoesNotExist:
         pass
 
     return result
 
 
-class GadgetCollection(Resource):
+class WidgetCollection(Resource):
 
     @no_cache
     def read(self, request):
 
-        gadgets = Gadget.objects.filter(users=request.user)
+        widgets = Widget.objects.filter(users=request.user)
 
-        data_list = [get_gadget_data(gadget) for gadget in gadgets]
+        data_list = [get_widget_data(widget) for widget in widgets]
         return HttpResponse(json_encode(data_list), mimetype='application/json; charset=UTF-8')
 
     @commit_on_http_success
@@ -138,10 +138,10 @@ class GadgetCollection(Resource):
             json = json_encode({"message": msg, "result": "error"})
             return HttpResponseServerError(json, mimetype='application/json; charset=UTF-8')
 
-        #create the gadget
-        gadget = parseAndCreateGadget(request, request.user, request.POST['workspaceId'], request.POST.get('packaged', False) == 'true')
+        #create the widget
+        widget = parseAndCreateWidget(request, request.user, request.POST['workspaceId'], request.POST.get('packaged', False) == 'true')
 
-        return HttpResponse(json_encode(get_gadget_data(gadget)), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json_encode(get_widget_data(widget)), mimetype='application/json; charset=UTF-8')
 
 
 class Showcase(Resource):
@@ -156,7 +156,7 @@ class Showcase(Resource):
         template_content = download_http_content(url, user=request.user)
         template = TemplateParser(template_content, base=url)
 
-        if template.get_resource_type() == 'gadget':
+        if template.get_resource_type() == 'widget':
             create_widget_from_template(template, request.user, request)
         else:
             create_published_workspace_from_template(template, request.user)
@@ -164,29 +164,29 @@ class Showcase(Resource):
         return HttpResponse(status=201)
 
 
-class GadgetEntry(Resource):
+class WidgetEntry(Resource):
 
     @no_cache
     def read(self, request, vendor, name, version):
-        gadget = get_object_or_404(Gadget, users=request.user, vendor=vendor, name=name, version=version)
-        data_fields = get_gadget_data(gadget)
+        widget = get_object_or_404(Widget, users=request.user, vendor=vendor, name=name, version=version)
+        data_fields = get_widget_data(widget)
         return HttpResponse(json_encode(data_fields), mimetype='application/json; charset=UTF-8')
 
     def delete(self, request, vendor, name, version):
-        gadget = get_object_or_404(Gadget, users=request.user, vendor=vendor, name=name, version=version)
-        gadget.delete()
+        widget = get_object_or_404(Widget, users=request.user, vendor=vendor, name=name, version=version)
+        widget.delete()
         return HttpResponse('ok')
 
 
-class GadgetCodeEntry(Resource):
+class WidgetCodeEntry(Resource):
 
     def read(self, request, vendor, name, version):
 
-        gadget = get_object_or_404(Gadget, vendor=vendor, name=name, version=version, users=request.user)
+        widget = get_object_or_404(Widget, vendor=vendor, name=name, version=version, users=request.user)
 
         # check if the xhtml code has been cached
-        if gadget.xhtml.cacheable:
-            cache_key = '_gadget_xhtml/' + get_site_domain(request) + '/' + str(gadget.xhtml.id)
+        if widget.xhtml.cacheable:
+            cache_key = '_widget_xhtml/' + get_site_domain(request) + '/' + str(widget.xhtml.id)
             cache_entry = cache.get(cache_key)
             if cache_entry is not None:
                 response = HttpResponse(cache_entry['code'], mimetype='%s; charset=UTF-8' % cache_entry['content_type'])
@@ -194,7 +194,7 @@ class GadgetCodeEntry(Resource):
                 return response
 
         # process xhtml
-        xhtml = gadget.xhtml
+        xhtml = widget.xhtml
 
         content_type = xhtml.content_type
         if not content_type:
@@ -204,7 +204,7 @@ class GadgetCodeEntry(Resource):
         if not xhtml.cacheable or code == '':
             try:
                 if xhtml.url.startswith(('http://', 'https://')):
-                    code = download_http_content(gadget.get_resource_url(xhtml.url, request), user=request.user)
+                    code = download_http_content(widget.get_resource_url(xhtml.url, request), user=request.user)
                 else:
                     code = download_http_content('file://' + os.path.join(showcase_utils.wgt_deployer.root_dir, xhtml.url), user=request.user)
 
@@ -222,7 +222,7 @@ class GadgetCodeEntry(Resource):
             xhtml.code_timestamp = None
             xhtml.save()
 
-        code = fix_gadget_code(code, xhtml.url, request)
+        code = fix_widget_code(code, xhtml.url, request)
         if xhtml.cacheable:
             cache_timeout = 31536000  # 1 year
             cache_entry = {
@@ -240,8 +240,8 @@ class GadgetCodeEntry(Resource):
         return response
 
     def update(self, request, vendor, name, version):
-        gadget = get_object_or_404(Gadget, users=request.user, vendor=vendor, name=name, version=version)
-        xhtml = gadget.xhtml
+        widget = get_object_or_404(Widget, users=request.user, vendor=vendor, name=name, version=version)
+        xhtml = widget.xhtml
 
         try:
             url = xhtml.url
@@ -250,12 +250,12 @@ class GadgetCodeEntry(Resource):
                 xhtml.code = download_http_content(url, user=request.user)
             else:
                 # Relative URL
-                if (url.startswith('/deployment/gadgets')):
-                    #GWT gadget package
+                if (url.startswith('/deployment/widgets')):
+                    #GWT widget package
                     xhtml.code = get_xhtml_content(url)
                 else:
-                    #Gadget with relative url and it's not a GWT package
-                    url = gadget.get_resource_url(url, request)
+                    #Widget with relative url and it's not a GWT package
+                    url = widget.get_resource_url(url, request)
                     xhtml.code = download_http_content(url, user=request.user)
 
             xhtml.save()

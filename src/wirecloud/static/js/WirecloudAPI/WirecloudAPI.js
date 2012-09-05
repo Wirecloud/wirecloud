@@ -64,7 +64,7 @@
     });
     Object.defineProperty(window.MashupPlatform.pref, 'registerCallback', {
         value: function registerCallback(callback) {
-            platform.opManager.activeWorkSpace.getIgadget(id).registerPrefCallback(callback);
+            platform.opManager.activeWorkSpace.getIwidget(id).registerPrefCallback(callback);
         }
     });
     Object.defineProperty(window.MashupPlatform.pref, 'set', {

@@ -39,7 +39,7 @@ function WorkSpace(workSpaceState) {
 
     // Not like the remaining methods. This is a callback function to process AJAX requests, so must be public.
     loadWorkSpace = function (transport) {
-        // JSON-coded iGadget-variable mapping
+        // JSON-coded iWidget-variable mapping
         var response = transport.responseText;
         this.workSpaceGlobalInfo = JSON.parse(response);
 
@@ -142,10 +142,10 @@ function WorkSpace(workSpaceState) {
         this.visibleTab = null;
     };
 
-    WorkSpace.prototype.removeIGadgetData = function (iGadgetId) {
-        this.varManager.removeInstance(iGadgetId);
-        this.wiring.removeInstance(iGadgetId);
-        this.contextManager.removeInstance(iGadgetId);
+    WorkSpace.prototype.removeIWidgetData = function (iWidgetId) {
+        this.varManager.removeInstance(iWidgetId);
+        this.wiring.removeInstance(iWidgetId);
+        this.contextManager.removeInstance(iWidgetId);
     };
 
     WorkSpace.prototype.sendBufferedVars = function () {
@@ -196,32 +196,32 @@ function WorkSpace(workSpaceState) {
         });
     };
 
-    WorkSpace.prototype.getIgadget = function (igadgetId) {
-        var i, igadget;
+    WorkSpace.prototype.getIwidget = function (iwidgetId) {
+        var i, iwidget;
         for (i = 0; i < this.tabInstances.length; i += 1) {
-            igadget = this.tabInstances[i].getDragboard().getIGadget(igadgetId);
+            iwidget = this.tabInstances[i].getDragboard().getIWidget(iwidgetId);
 
-            if (igadget) {
-                return igadget;
+            if (iwidget) {
+                return iwidget;
             }
         }
     };
 
-    WorkSpace.prototype.getIGadgets = function () {
+    WorkSpace.prototype.getIWidgets = function () {
         if (!this.loaded) {
             return;
         }
 
-        var iGadgets = [],
+        var iWidgets = [],
             i;
         for (i = 0; i < this.tabInstances.length; i += 1) {
-            iGadgets = iGadgets.concat(this.tabInstances[i].getDragboard().getIGadgets());
+            iWidgets = iWidgets.concat(this.tabInstances[i].getDragboard().getIWidgets());
         }
 
-        return iGadgets;
+        return iWidgets;
     };
 
-    /**** Display the IGadgets menu ***/
+    /**** Display the IWidgets menu ***/
     WorkSpace.prototype.init = function () {
         //Create a menu for each tab of the workspace and paint it as main screen.
         var scrolling = 0,
@@ -247,7 +247,7 @@ function WorkSpace(workSpaceState) {
 
         this.contextManager = new ContextManager(this, this.workSpaceGlobalInfo);
         this.wiring = new Wirecloud.Wiring(this);
-        iwidgets = this.getIGadgets();
+        iwidgets = this.getIWidgets();
         for (i = 0; i < iwidgets.length; i += 1) {
             this.events.iwidgetadded.dispatch(this, iwidgets[i]);
         }
@@ -319,7 +319,7 @@ function WorkSpace(workSpaceState) {
     WorkSpace.prototype.updateLayout = function (orient) {
         var step = window.innerWidth,
             scrolling = 0,
-            iGadgets, contextManager, i;
+            iWidgets, contextManager, i;
 
         //notify this to the ContextManager. The orient value may be "portrait" or "landscape".
         this.contextManager.notifyModifiedConcept(Concept.prototype.ORIENTATION, orient);
@@ -329,9 +329,9 @@ function WorkSpace(workSpaceState) {
             scrolling += step;
         }
 
-        iGadgets = this.getIGadgets();
-        for (i = 0; i < iGadgets.length; i += 1) {
-            this.contextManager.notifyModifiedGadgetConcept(iGadgets[i], Concept.prototype.WIDTHINPIXELS, step);
+        iWidgets = this.getIWidgets();
+        for (i = 0; i < iWidgets.length; i += 1) {
+            this.contextManager.notifyModifiedWidgetConcept(iWidgets[i], Concept.prototype.WIDTHINPIXELS, step);
         }
 
         // set current scroll
@@ -349,10 +349,10 @@ function WorkSpace(workSpaceState) {
         return false;
     };
 
-    WorkSpace.prototype.showRelatedIgadget = function (iGadgetId, tabId) {
+    WorkSpace.prototype.showRelatedIwidget = function (iWidgetId, tabId) {
         this.visibleTab = this.getTab(tabId);
         this.visibleTabIndex = this.tabInstances.indexOf(this.visibleTab);
-        this.visibleTab.getDragboard().paintRelatedIGadget(iGadgetId);
+        this.visibleTab.getDragboard().paintRelatedIWidget(iWidgetId);
     };
 
     // *****************

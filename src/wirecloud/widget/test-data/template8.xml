@@ -1,5 +1,5 @@
 <?xml version="1.0" ?><Template schemaLocation="http://morfeo-project.org/2007/Template">
-  <!-- Gadget Meta-Info -->
+  <!-- Widget Meta-Info -->
   <Catalog.ResourceDescription>
     <Vendor>Example</Vendor>
     <Name>test</Name>
@@ -42,7 +42,7 @@
 
   <Translations default="en">
     <Translation lang="en">
-      <msg name="description">Test Gadget description</msg>
+      <msg name="description">Test Widget description</msg>
       <msg name="prefDescription">Preference description</msg>
       <msg name="prefLabel">Preference label</msg>
       <msg name="optionName">Option name</msg>
@@ -51,7 +51,7 @@
       <msg name="slotLabel">Slot label</msg>
     </Translation>
     <Translation lang="es">
-      <msg name="description">Descripción del Gadget de pruebas</msg>
+      <msg name="description">Descripción del Widget de pruebas</msg>
       <msg name="prefDescription">Descripción de la preferencia</msg>
       <msg name="prefLabel">Etiqueta de la preferencia</msg>
       <msg name="optionName">Nombre de la opción</msg>

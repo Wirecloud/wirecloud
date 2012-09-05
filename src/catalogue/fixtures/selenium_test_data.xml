@@ -22,12 +22,12 @@
         <field type="BooleanField" name="fromWGT">True</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
-    <object pk="25" model="catalogue.gadgetwiring">
+    <object pk="25" model="catalogue.widgetwiring">
         <field type="CharField" name="friendcode">slot</field>
         <field type="CharField" name="wiring">in</field>
         <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">14</field>
     </object>
-    <object pk="26" model="catalogue.gadgetwiring">
+    <object pk="26" model="catalogue.widgetwiring">
         <field type="CharField" name="friendcode">event</field>
         <field type="CharField" name="wiring">out</field>
         <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">14</field>

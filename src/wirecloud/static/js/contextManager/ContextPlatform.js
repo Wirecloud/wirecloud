@@ -23,8 +23,8 @@
 *     http://morfeo-project.org
  */
 
-function ContextVar(igadgetId_, varName_, conceptName_) {
-    this._igadgetId = igadgetId_;
+function ContextVar(iwidgetId_, varName_, conceptName_) {
+    this._iwidgetId = iwidgetId_;
     this._varName = varName_;
     this._conceptName = conceptName_;
     this._varManager = null;
@@ -35,8 +35,8 @@ ContextVar.prototype.getName = function () {
     return this._varName;
 }
 
-ContextVar.prototype.getIGadgetId = function () {
-    return this._igadgetId;
+ContextVar.prototype.getIWidgetId = function () {
+    return this._iwidgetId;
 }
 
 ContextVar.prototype.getConceptName = function () {
@@ -54,7 +54,7 @@ ContextVar.prototype.propagateValue = function () {
 ContextVar.prototype.setValue = function (newValue_) {
     this._value = newValue_;
     if (this._varManager != null) {
-        var variable = this._varManager.getVariableByName(this._igadgetId, this._varName)
+        var variable = this._varManager.getVariableByName(this._iwidgetId, this._varName)
 
         variable.annotate(newValue_);
         variable.set(newValue_);
@@ -63,7 +63,7 @@ ContextVar.prototype.setValue = function (newValue_) {
 
 ContextVar.prototype._clearHandler = function () {
     if (this._varManager != null) {
-        var variable = this._varManager.getVariableByName(this._igadgetId, this._varName)
+        var variable = this._varManager.getVariableByName(this._iwidgetId, this._varName)
 
         variable.setHandler(null);
     }
@@ -74,7 +74,7 @@ ContextVar.prototype.setVarManager = function (varManager_) {
 }
 
 ContextVar.prototype.unload = function () {
-    delete this._igadgetId;
+    delete this._iwidgetId;
     delete this._varName;
     delete this._conceptName;
     delete this._varManager;
@@ -93,7 +93,7 @@ function Concept(data) {
     this._value = null;
     this._initialValue = null;
 
-    this._igadgetVars = new Object();
+    this._iwidgetVars = new Object();
 }
 
 // Known concept types
@@ -122,8 +122,8 @@ Concept.prototype._initAdaptor = function (ivar_) {
         // Adaptor of External Context variable doesn't receives any parameter
         eval ('new ' + this._adaptor + "()");
     } else {
-        // Adaptor of Gadget Context variable receives the IGadget as parameter
-        eval ('new ' + this._adaptor + "("+ ivar_.getIGadgetId() +")");
+        // Adaptor of Widget Context variable receives the IWidget as parameter
+        eval ('new ' + this._adaptor + "("+ ivar_.getIWidgetId() +")");
     }
 }
 
@@ -139,18 +139,18 @@ Concept.prototype.getValue = function () {
     if (this._type == Concept.prototype.EXTERNAL) {
         return this._value;
     }
-    throw gettext("Concept does not have value, this is a Gadget Concept.");
+    throw gettext("Concept does not have value, this is a Widget Concept.");
 }
 
 Concept.prototype.setValue = function (value_) {
     switch (this._type) {
         case Concept.prototype.IGADGET:
-            throw gettext("Concept does not have value, this is a Gadget Concept.");
+            throw gettext("Concept does not have value, this is a Widget Concept.");
             break;
         default:
             this._value = value_;
-            for (var i = 0; i < this._igadgetVars.length; i++){
-                var ivar = this._igadgetVars[i];
+            for (var i = 0; i < this._iwidgetVars.length; i++){
+                var ivar = this._iwidgetVars[i];
                 ivar.setValue(value_);
             }
             break;
@@ -166,21 +166,21 @@ Concept.prototype._setInitialValue = function (initialValue) {
     this._value = initialValue;
 }
 
-Concept.prototype.propagateIGadgetVarValues = function (iGadget) {
-    var ivar = this._igadgetVars[iGadget.getId()];
+Concept.prototype.propagateIWidgetVarValues = function (iWidget) {
+    var ivar = this._iwidgetVars[iWidget.getId()];
     if (ivar != null)
         ivar.propagateValue();
 }
 
-Concept.prototype.addIGadgetVar = function (ivar) {
+Concept.prototype.addIWidgetVar = function (ivar) {
     switch (this._type) {
         case Concept.prototype.EXTERNAL:
-            var iGadgetId = ivar.getIGadgetId();
+            var iWidgetId = ivar.getIWidgetId();
             /* FIXME error control
-            if (this._igadgetVars[iGadgetId] !== null)
+            if (this._iwidgetVars[iWidgetId] !== null)
 
             */
-            this._igadgetVars[iGadgetId] = ivar;
+            this._iwidgetVars[iWidgetId] = ivar;
 
             if (this._value != null) {
                 ivar.setValue(this._value);
@@ -190,38 +190,38 @@ Concept.prototype.addIGadgetVar = function (ivar) {
             }
             break;
         case Concept.prototype.IGADGET:
-            var iGadgetId = ivar.getIGadgetId();
+            var iWidgetId = ivar.getIWidgetId();
             /* FIXME error control
-            if (this._igadgetVars[iGadgetId] !== null)
+            if (this._iwidgetVars[iWidgetId] !== null)
 
             */
-            this._igadgetVars[iGadgetId] = ivar;
+            this._iwidgetVars[iWidgetId] = ivar;
             if (this._adaptor)
                 this._initAdaptor(ivar);
             break;
         default:
-            throw gettext("Unexpected igadget variables. Concept does not have type yet.");
+            throw gettext("Unexpected iwidget variables. Concept does not have type yet.");
             break;
     }
 }
 
-Concept.prototype.deleteIGadgetVars = function (iGadgetId) {
-    delete this._igadgetVars[iGadgetId];
+Concept.prototype.deleteIWidgetVars = function (iWidgetId) {
+    delete this._iwidgetVars[iWidgetId];
 }
 
 /**
- * Returns the iGadget variable assigned to this concept. This method will
- * return <code>null</code> if the given iGadget does not have any variable
+ * Returns the iWidget variable assigned to this concept. This method will
+ * return <code>null</code> if the given iWidget does not have any variable
  * assigend to this concept.
  *
- * @param {Number} iGadgetId id of the igadget
+ * @param {Number} iWidgetId id of the iwidget
  * @return {ContextVar}
  */
-Concept.prototype.getIGadgetVar = function (iGadgetId) {
+Concept.prototype.getIWidgetVar = function (iWidgetId) {
     switch (this._type) {
         case Concept.prototype.EXTERNAL:
         case Concept.prototype.IGADGET:
-            var ivar = this._igadgetVars[iGadgetId];
+            var ivar = this._iwidgetVars[iWidgetId];
             return ivar;
         default:
             throw gettext("Concept does not have type yet.");
@@ -229,7 +229,7 @@ Concept.prototype.getIGadgetVar = function (iGadgetId) {
 }
 
 Concept.prototype.unload = function () {
-    // Delete all the igadget variables related to this concept
-    for (var iGadgetId in this._igadgetVars)
-        this._igadgetVars[keys[i]].unload();
+    // Delete all the iwidget variables related to this concept
+    for (var iWidgetId in this._iwidgetVars)
+        this._iwidgetVars[keys[i]].unload();
 }

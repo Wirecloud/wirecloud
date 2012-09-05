@@ -28,7 +28,7 @@
  * @author luismarcos.ayllon
  */
 
-// This module provides a set of gadgets which can be deployed into dragboard as gadget instances
+// This module provides a set of widgets which can be deployed into dragboard as widget instances
 var ShowcaseFactory = function () {
 
     // *********************************
@@ -51,40 +51,40 @@ var ShowcaseFactory = function () {
         // CALLBACK METHODS
         // ****************
 
-        this.parseGadgets = function (receivedData_) {
-            var i, jsonGadgetList, jsonGadget, gadget, gadgetId, gadgetFullId,
-                currentGadgetVersions, sortedGadgets, key;
+        this.parseWidgets = function (receivedData_) {
+            var i, jsonWidgetList, jsonWidget, widget, widgetId, widgetFullId,
+                currentWidgetVersions, sortedWidgets, key;
 
-            jsonGadgetList = JSON.parse(receivedData_.responseText);
-            this.gadgets = {};
-            this.gadgetVersions = {};
+            jsonWidgetList = JSON.parse(receivedData_.responseText);
+            this.widgets = {};
+            this.widgetVersions = {};
 
-            // Load all gadgets from persitence system
-            for (i = 0; i < jsonGadgetList.length; i += 1) {
-                jsonGadget = jsonGadgetList[i];
+            // Load all widgets from persitence system
+            for (i = 0; i < jsonWidgetList.length; i += 1) {
+                jsonWidget = jsonWidgetList[i];
 
-                gadget = new Gadget(jsonGadget, null);
-                gadgetId = gadget.getVendor() + '/' + gadget.getName()
-                gadgetFullId = gadget.getId();
+                widget = new Widget(jsonWidget, null);
+                widgetId = widget.getVendor() + '/' + widget.getName()
+                widgetFullId = widget.getId();
 
-                if (this.gadgetVersions[gadgetId] === undefined) {
-                    this.gadgetVersions[gadgetId] = [];
+                if (this.widgetVersions[widgetId] === undefined) {
+                    this.widgetVersions[widgetId] = [];
                 }
-                this.gadgetVersions[gadgetId].push(gadget);
+                this.widgetVersions[widgetId].push(widget);
 
-                // Insert gadget object in showcase object model
-                this.gadgets[gadgetFullId] = gadget;
+                // Insert widget object in showcase object model
+                this.widgets[widgetFullId] = widget;
             }
 
-            for (key in this.gadgetVersions) {
-                currentGadgetVersions = this.gadgetVersions[key];
-                sortedGadgets = currentGadgetVersions.sort(function(gadget1, gadget2) {
-                    return -gadget1.getVersion().compareTo(gadget2.getVersion());
+            for (key in this.widgetVersions) {
+                currentWidgetVersions = this.widgetVersions[key];
+                sortedWidgets = currentWidgetVersions.sort(function(widget1, widget2) {
+                    return -widget1.getVersion().compareTo(widget2.getVersion());
                 });
 
-                for (i = 0; i < currentGadgetVersions.length; i += 1) {
-                    gadget = currentGadgetVersions[i];
-                    gadget.setLastVersion(sortedGadgets[0].getVersion());
+                for (i = 0; i < currentWidgetVersions.length; i += 1) {
+                    widget = currentWidgetVersions[i];
+                    widget.setLastVersion(sortedWidgets[0].getVersion());
                 }
             }
         }
@@ -95,7 +95,7 @@ var ShowcaseFactory = function () {
 
             var onSuccess = function (receivedData_) {
 
-                this.parseGadgets(receivedData_);
+                this.parseWidgets(receivedData_);
 
                 opManager = OpManagerFactory.getInstance();
 
@@ -120,17 +120,17 @@ var ShowcaseFactory = function () {
 
         Showcase.prototype.init = function () {
 
-            // Load gadgets from persistence system
+            // Load widgets from persistence system
             var onSuccess = function (receivedData_) {
 
-                this.parseGadgets(receivedData_);
+                this.parseWidgets(receivedData_);
 
                 // Showcase loaded
                 this.opManager.continueLoadingGlobalModules(Modules.prototype.SHOWCASE);
 
             }
 
-            // Error callback (empty gadget list)
+            // Error callback (empty widget list)
             var onError = function (transport, e) {
                 var msg, logManager = LogManagerFactory.getInstance();
                 msg = logManager.formatError(gettext("Error retrieving showcase data: %(errorMsg)s."), transport, e);
@@ -151,40 +151,40 @@ var ShowcaseFactory = function () {
         // *******************************
         // PRIVATE METHODS AND VARIABLES
         // *******************************
-        this.gadgets = {};
+        this.widgets = {};
         this.opManager = OpManagerFactory.getInstance();
 
         // ****************
         // PUBLIC METHODS
         // ****************
 
-        // Add a new gadget from Internet
-        Showcase.prototype.addGadget = function (vendor_, name_, version_, url_, options_) {
-            var gadgetId = ['/gadgets', vendor_, name_, version_].join('/');
-            var gadget = this.gadgets[gadgetId];
+        // Add a new widget from Internet
+        Showcase.prototype.addWidget = function (vendor_, name_, version_, url_, options_) {
+            var widgetId = ['/widgets', vendor_, name_, version_].join('/');
+            var widget = this.widgets[widgetId];
 
-            if (gadget == null) {
-                gadget = new Gadget (null, url_, options_);
+            if (widget == null) {
+                widget = new Widget (null, url_, options_);
             } else {
-                this.opManager.addInstance(gadgetId, options_);
+                this.opManager.addInstance(widgetId, options_);
             }
         }
 
-        // Add a new parameterized gadget from Internet
+        // Add a new parameterized widget from Internet
         // Help:
-        //     - igadget_name_: String. New name for the iGadget
+        //     - iwidget_name_: String. New name for the iWidget
         //     - variable_values_: Object. New values for the user preferences.
         //         Example:
         //             variable_values = {"var1":"value1", "var2": "value2"};
-        Showcase.prototype.addParameterizedGadget = function (vendor_, name_, version_, igadget_name_, variable_values_, url_) {
+        Showcase.prototype.addParameterizedWidget = function (vendor_, name_, version_, iwidget_name_, variable_values_, url_) {
             var url_ = (url_)?url_:null;
             var options = {
-                "igadgetName": igadget_name_,
-                "setDefaultValues" : function(igadgetId_){
+                "iwidgetName": iwidget_name_,
+                "setDefaultValues" : function(iwidgetId_){
                     var varManager = OpManagerFactory.getInstance().activeWorkSpace.getVarManager();
                     $H(variable_values_).each(function(pair) {
                         var msg = "";
-                        var variable = varManager.getVariableByName(igadgetId_, pair.key);
+                        var variable = varManager.getVariableByName(iwidgetId_, pair.key);
                         if (variable) {
                             if(variable.vardef.aspect == Variable.prototype.USER_PREF) {
                                 variable.annotate(pair.value);
@@ -199,46 +199,46 @@ var ShowcaseFactory = function () {
                         }
                         if (msg != "") {
                             msg = interpolate(msg, {"variable": pair.key}, true);
-                            OpManagerFactory.getInstance().logIGadgetError(igadgetId_, msg, Constants.Logging.WARN_MSG);
+                            OpManagerFactory.getInstance().logIWidgetError(iwidgetId_, msg, Constants.Logging.WARN_MSG);
                         }
                     });
                 }
             }
-            this.addGadget(vendor_, name_, version_, url_, options);
+            this.addWidget(vendor_, name_, version_, url_, options);
         }
 
-        // Insert gadget object in showcase object model
-        Showcase.prototype.gadgetToShowcaseGadgetModel = function(gadget_, options_) {
-            var gadgetId = gadget_.getId();
+        // Insert widget object in showcase object model
+        Showcase.prototype.widgetToShowcaseWidgetModel = function(widget_, options_) {
+            var widgetId = widget_.getId();
 
-            this.gadgets[gadgetId] = gadget_;
-            this.opManager.addInstance(gadgetId, options_);
+            this.widgets[widgetId] = widget_;
+            this.opManager.addInstance(widgetId, options_);
         }
 
-        // Remove a Showcase gadget
-        Showcase.prototype.deleteGadget = function (gadgetId_) {
-            var gadget = this.gadgets[gadgetId_];
-            delete this.gadgets[gadgetId_];
-            //gadget.remove();
+        // Remove a Showcase widget
+        Showcase.prototype.deleteWidget = function (widgetId_) {
+            var widget = this.widgets[widgetId_];
+            delete this.widgets[widgetId_];
+            //widget.remove();
         }
 
-        // Update a Showcase gadget
-        Showcase.prototype.updateGadget = function (gadgetId_, url_) {
-            this.remove(gadgetId_);
-            this.addGadget(url_);
+        // Update a Showcase widget
+        Showcase.prototype.updateWidget = function (widgetId_, url_) {
+            this.remove(widgetId_);
+            this.addWidget(url_);
         }
 
-        // Get a gadget by its gadgetID
-        Showcase.prototype.getGadget = function (gadgetId_) {
-            return this.gadgets[gadgetId_];
+        // Get a widget by its widgetID
+        Showcase.prototype.getWidget = function (widgetId_) {
+            return this.widgets[widgetId_];
         }
 
-        //Get all the gadgets name and vendor
-        Showcase.prototype.getGadgetsData = function () {
-            var gadget_key, g, data = [];
+        //Get all the widgets name and vendor
+        Showcase.prototype.getWidgetsData = function () {
+            var widget_key, g, data = [];
 
-            for (gadget_key in this.gadgets) {
-                g = this.gadgets[gadget_key];
+            for (widget_key in this.widgets) {
+                g = this.widgets[widget_key];
                 data.push({
                     "name": g.getName(),
                     "vendor": g.getVendor(),
@@ -248,48 +248,48 @@ var ShowcaseFactory = function () {
             return data;
         }
 
-        //Get all the gadgets name and vendor
-        Showcase.prototype.setGadgetsState = function (data) {
-            var i, j, key, resource, versions, last_version, currentGadgets, updated = false;
+        //Get all the widgets name and vendor
+        Showcase.prototype.setWidgetsState = function (data) {
+            var i, j, key, resource, versions, last_version, currentWidgets, updated = false;
 
             for (i = 0; i < data.length; i += 1) {
                 resource = data[i];
                 key = resource.getVendor() + '/' + resource.getName();
-                if (key in this.gadgetVersions) {
+                if (key in this.widgetVersions) {
                     last_version = resource.getLastVersion();
 
-                    currentGadgets = this.gadgetVersions[key];
-                    for (j = 0; j < currentGadgets.length; j += 1) {
-                        updated = currentGadgets[j].setLastVersion(last_version) || updated;
+                    currentWidgets = this.widgetVersions[key];
+                    for (j = 0; j < currentWidgets.length; j += 1) {
+                        updated = currentWidgets[j].setLastVersion(last_version) || updated;
                     }
                 }
             }
 
             if (updated) {
-                this.opManager.checkForGadgetUpdates();
+                this.opManager.checkForWidgetUpdates();
             }
         }
 
-        // Set gadget properties (User Interface)
-        Showcase.prototype.setGadgetProperties = function (gadgetId_, imageSrc_, tags_) {
-            var gadget = this.gadgets[gadgetId_];
+        // Set widget properties (User Interface)
+        Showcase.prototype.setWidgetProperties = function (widgetId_, imageSrc_, tags_) {
+            var widget = this.widgets[widgetId_];
 
-            gadget.setImage(imageSrc_);
-            gadget.setTags(tags_);
+            widget.setImage(imageSrc_);
+            widget.setTags(tags_);
         };
 
-        // Add a tag to a Showcase gadget
-        Showcase.prototype.tagGadget = function (gadgetId_, tags_) {
+        // Add a tag to a Showcase widget
+        Showcase.prototype.tagWidget = function (widgetId_, tags_) {
             for (var i = 0; i < tags_.length; i++) {
                 var tag = tags_[i];
-                this.gadgets[gadgetId_].addTag(tag);
+                this.widgets[widgetId_].addTag(tag);
             }
         };
 
-        // Deploy a Showcase gadget into dragboard as gadget instance
-        Showcase.prototype.addInstance = function (gadgetId_) {
-            var gadget = this.gadgets[gadgetId_];
-            this.opManager.addInstance (gadget);
+        // Deploy a Showcase widget into dragboard as widget instance
+        Showcase.prototype.addInstance = function (widgetId_) {
+            var widget = this.widgets[widgetId_];
+            this.opManager.addInstance (widget);
         };
     }
 

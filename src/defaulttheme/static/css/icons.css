@@ -98,22 +98,22 @@ span.icon {
     float: right;
 }
 
-.icon-igadget-settings, .icon-channel-settings { background-image: url(../images/icons-sprite.png); background-position: -48px -404px; }
-span.icon-igadget-settings, .icon-channel-settings{ background-position: -48px -408px; }
+.icon-iwidget-settings, .icon-channel-settings { background-image: url(../images/icons-sprite.png); background-position: -48px -404px; }
+span.icon-iwidget-settings, .icon-channel-settings{ background-position: -48px -408px; }
 .icon-info{ background-image: url(../images/icons-sprite.png); background-position: -48px -504px; }
 .icon-warning{ background-image: url(../images/icons-sprite.png); background-position: -24px -528px; }
 .icon-error { background-image: url(../images/icons-sprite.png); background-position: 0px -552px; }
 .icon-filter { background-image: url(../images/icons-sprite.png); background-position: -48px -164px; }
-.icon-igadget-exit-fulldragboard { background-image: url(../images/icons-sprite.png); background-position: -48px -140px; }
-.icon-igadget-extract { background-image: url(../images/icons-sprite.png); background-position: -48px -68px; }
-.icon-igadget-fulldragboard { background-image: url(../images/icons-sprite.png); background-position: -48px -44px; }
-.icon-igadget-lower { background-image: url(../images/icons-sprite.png); background-position: -48px -236px; }
-.icon-igadget-lower-to-bottom { background-image: url(../images/icons-sprite.png); background-position: -48px -92px; }
-.icon-igadget-menu-colors { background-image: url(../images/icons-sprite.png); background-position: -48px -284px; }
-.icon-igadget-raise { background-image: url(../images/icons-sprite.png); background-position: -48px -188px; }
-.icon-igadget-raise-to-top { background-image: url(../images/icons-sprite.png); background-position: -48px -212px; }
-.icon-igadget-snap { background-image: url(../images/icons-sprite.png); background-position: -48px -356px; }
-.icon-igadget-transparency { background-image: url(../images/icons-sprite.png); background-position: -48px -116px; }
+.icon-iwidget-exit-fulldragboard { background-image: url(../images/icons-sprite.png); background-position: -48px -140px; }
+.icon-iwidget-extract { background-image: url(../images/icons-sprite.png); background-position: -48px -68px; }
+.icon-iwidget-fulldragboard { background-image: url(../images/icons-sprite.png); background-position: -48px -44px; }
+.icon-iwidget-lower { background-image: url(../images/icons-sprite.png); background-position: -48px -236px; }
+.icon-iwidget-lower-to-bottom { background-image: url(../images/icons-sprite.png); background-position: -48px -92px; }
+.icon-iwidget-menu-colors { background-image: url(../images/icons-sprite.png); background-position: -48px -284px; }
+.icon-iwidget-raise { background-image: url(../images/icons-sprite.png); background-position: -48px -188px; }
+.icon-iwidget-raise-to-top { background-image: url(../images/icons-sprite.png); background-position: -48px -212px; }
+.icon-iwidget-snap { background-image: url(../images/icons-sprite.png); background-position: -48px -356px; }
+.icon-iwidget-transparency { background-image: url(../images/icons-sprite.png); background-position: -48px -116px; }
 .icon-mark-tab-visible { background-image: url(../images/icons-sprite.png); background-position: -48px -380px; }
 .icon-move { background-image: url(../images/icons-sprite.png); background-position: -48px -476px; }
 .icon-remove { background-image: url(../images/icons-sprite.png); background-position: -48px -308px; }
@@ -123,4 +123,4 @@ span.icon-igadget-settings, .icon-channel-settings{ background-position: -48px -
 .icon-wiring-filter-param { background-image: url(../images/icons-sprite.png); background-position: -50px -455px; padding-left: 20px;}
 .icon-back { background-image: url(../images/icons-sprite.png); background-position: 0px -192px; display: block; }
 .icon-color, .color_button { background-image: url(../images/icons-sprite.png); background-position: 0px -576px; }
-.icon-igadget-reload { background-image: url(../images/icons-sprite.png); background-position: -24px -571px; }
+.icon-iwidget-reload { background-image: url(../images/icons-sprite.png); background-position: -24px -571px; }

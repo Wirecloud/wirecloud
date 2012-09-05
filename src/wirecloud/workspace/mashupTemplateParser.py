@@ -32,8 +32,8 @@
 
 from commons.get_data import get_concept_values, TemplateValueProcessor
 from django.utils import simplejson
-from wirecloud.widget.utils import get_or_add_gadget_from_catalogue
-from wirecloud.iwidget.utils import SaveIGadget
+from wirecloud.widget.utils import get_or_add_widget_from_catalogue
+from wirecloud.iwidget.utils import SaveIWidget
 from wirecloud.preferences.views import update_tab_preferences, update_workspace_preferences
 from wirecloud.models import WorkSpace, UserWorkSpace
 from wirecloud.workspace.utils import createTab
@@ -80,7 +80,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
     read_only_workspace = workspace_info['readonly']
 
     new_values = {}
-    igadget_id_mapping = {}
+    iwidget_id_mapping = {}
     for preference_name in workspace_info['preferences']:
         new_values[preference_name] = {
             'inherit': False,
@@ -92,7 +92,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
 
     forced_values = {
         'extra_prefs': {},
-        'igadget': {},
+        'iwidget': {},
     }
     for param_name in workspace_info['params']:
         param = workspace_info['params'][param_name]
@@ -121,12 +121,12 @@ def fillWorkspaceUsingTemplate(workspace, template):
             rendering = resource['rendering']
 
             initial_variable_values = {}
-            igadget_forced_values = {}
+            iwidget_forced_values = {}
             for prop_name in resource['properties']:
                 prop = resource['properties'][prop_name]
                 read_only = prop.get('readonly')
                 if read_only:
-                    igadget_forced_values[prop.get('name')] = {'value': prop.get('value')}
+                    iwidget_forced_values[prop.get('name')] = {'value': prop.get('value')}
                 else:
                     initial_variable_values[prop.get('name')] = processor.process(prop.get('value'))
 
@@ -134,13 +134,13 @@ def fillWorkspaceUsingTemplate(workspace, template):
                 pref = resource['preferences'][pref_name]
                 read_only = pref.get('readonly')
                 if read_only:
-                    igadget_forced_values[pref.get('name')] = {'value': pref.get('value'), 'hidden': pref.get('hidden')}
+                    iwidget_forced_values[pref.get('name')] = {'value': pref.get('value'), 'hidden': pref.get('hidden')}
                 else:
                     initial_variable_values[pref.get('name')] = processor.process(pref.get('value'))
 
-            gadget = get_or_add_gadget_from_catalogue(resource.get('vendor'), resource.get('name'), resource.get('version'), user, None)
+            widget = get_or_add_widget_from_catalogue(resource.get('vendor'), resource.get('name'), resource.get('version'), user, None)
 
-            igadget_data = {
+            iwidget_data = {
                 "left": int(position.get('x')),
                 "top": int(position.get('y')),
                 "icon_left": -1,
@@ -150,26 +150,26 @@ def fillWorkspaceUsingTemplate(workspace, template):
                 "height": int(rendering.get('height')),
                 "name": resource.get('title'),
                 "layout": int(rendering.get('layout')),
-                "gadget": gadget.uri,
+                "widget": widget.uri,
             }
 
-            igadget = SaveIGadget(igadget_data, user, tab, initial_variable_values)
+            iwidget = SaveIWidget(iwidget_data, user, tab, initial_variable_values)
             if read_only_workspace or resource.get('readonly'):
-                igadget.readOnly = True
-                igadget.save()
+                iwidget.readOnly = True
+                iwidget.save()
 
-            forced_values['igadget'][str(igadget.id)] = igadget_forced_values
-            igadget_id_mapping[resource.get('id')] = igadget
+            forced_values['iwidget'][str(iwidget.id)] = iwidget_forced_values
+            iwidget_id_mapping[resource.get('id')] = iwidget
 
     if workspace.forcedValues != None and workspace.forcedValues != '':
         old_forced_values = simplejson.loads(workspace.forcedValues)
     else:
         old_forced_values = {
             'extra_preferences': {},
-            'igadget': {},
+            'iwidget': {},
         }
 
-    forced_values['igadget'].update(old_forced_values['igadget'])
+    forced_values['iwidget'].update(old_forced_values['iwidget'])
     workspace.forcedValues = simplejson.dumps(forced_values, ensure_ascii=False)
 
     # wiring
@@ -213,12 +213,12 @@ def fillWorkspaceUsingTemplate(workspace, template):
         target_id = connection['target']['id']
 
         if connection['source']['type'] == 'iwidget':
-            source_id = igadget_id_mapping[source_id].id
+            source_id = iwidget_id_mapping[source_id].id
         elif connection['source']['type'] == 'ioperator':
             source_id = operators[source_id]
 
         if connection['target']['type'] == 'iwidget':
-            target_id = igadget_id_mapping[target_id].id
+            target_id = iwidget_id_mapping[target_id].id
         elif connection['target']['type'] == 'ioperator':
             target_id = operators[target_id]
 

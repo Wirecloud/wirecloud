@@ -45,7 +45,7 @@ var CataloguePublishView = function (id, options) {
 CataloguePublishView.prototype = new StyledElements.Alternative();
 
 CataloguePublishView.prototype._upload_wgt_file = function () {
-    LayoutManagerFactory.getInstance()._startComplexTask(gettext("Uploading packaged gadget"), 1);
+    LayoutManagerFactory.getInstance()._startComplexTask(gettext("Uploading packaged widget"), 1);
     this.wrapperElement.getElementsByClassName("wgt_upload_form")[0].submit();
 };
 
@@ -101,7 +101,7 @@ CataloguePublishView.prototype._check_upload_wgt_result = function () {
         layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
         logManager.log(msg);
     } else {
-        layoutManager.logSubTask(gettext('Gadget uploaded successfully'));
+        layoutManager.logSubTask(gettext('Widget uploaded successfully'));
         layoutManager.logStep('');
         layoutManager._notifyPlatformReady();
 

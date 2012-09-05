@@ -65,7 +65,7 @@ function WorkSpace (workSpaceState) {
         var initialTab = {
             'id': 0,
             'readOnly': "true",
-            'igadgetList': [],
+            'iwidgetList': [],
             'name': gettext("Unusable Tab"),
             'visible': 1,
             'preferences': {}
@@ -98,7 +98,7 @@ function WorkSpace (workSpaceState) {
         layoutManager.logSubTask(gettext('Processing workspace data'));
 
         try {
-            // JSON-coded iGadget-variable mapping
+            // JSON-coded iWidget-variable mapping
             this.workSpaceGlobalInfo = JSON.parse(transport.responseText);
 
             // Load workspace preferences
@@ -148,7 +148,7 @@ function WorkSpace (workSpaceState) {
 
             this.contextManager = new ContextManager(this, this.workSpaceGlobalInfo);
             this.wiring = new Wirecloud.Wiring(this);
-            iwidgets = this.getIGadgets();
+            iwidgets = this.getIWidgets();
             for (i = 0; i < iwidgets.length; i += 1) {
                 this.events.iwidgetadded.dispatch(this, iwidgets[i]);
             }
@@ -265,7 +265,7 @@ function WorkSpace (workSpaceState) {
         var response = transport.responseText;
         var tabInfo = JSON.parse(response);
 
-        tabInfo.igadgetList = [];
+        tabInfo.iwidgetList = [];
         tabInfo.preferences = {};
 
         var newTab = this.notebook.createTab({'tab_constructor': Tab, 'tab_info': tabInfo, 'workspace': this});
@@ -286,24 +286,24 @@ function WorkSpace (workSpaceState) {
     // ****************
 
 
-    WorkSpace.prototype.igadgetLoaded = function(igadgetId) {
-        var igadget = this.getIgadget(igadgetId);
-        igadget._notifyLoaded();
+    WorkSpace.prototype.iwidgetLoaded = function(iwidgetId) {
+        var iwidget = this.getIwidget(iwidgetId);
+        iwidget._notifyLoaded();
 
-        // Notify to the context manager the igadget has been loaded
-        this.contextManager.iGadgetLoaded(igadget);
+        // Notify to the context manager the iwidget has been loaded
+        this.contextManager.iWidgetLoaded(iwidget);
 
-        // Notify to the variable manager the igadget has been loaded
-        this.varManager.dispatchPendingVariables(igadgetId);
+        // Notify to the variable manager the iwidget has been loaded
+        this.varManager.dispatchPendingVariables(iwidgetId);
 
     }
 
-    WorkSpace.prototype.checkForGadgetUpdates = function() {
-        var i, igadgets;
+    WorkSpace.prototype.checkForWidgetUpdates = function() {
+        var i, iwidgets;
 
-        igadgets = this.getIGadgets();
-        for (i = 0; i < igadgets.length; i += 1) {
-            igadgets[i]._updateVersionButton();
+        iwidgets = this.getIWidgets();
+        for (i = 0; i < iwidgets.length; i += 1) {
+            iwidgets[i]._updateVersionButton();
         }
     };
 
@@ -311,15 +311,15 @@ function WorkSpace (workSpaceState) {
         return this.tabInstances.get(tabId);
     }
 
-    WorkSpace.prototype.igadgetUnloaded = function(igadgetId) {
-        var igadget = this.getIgadget(igadgetId);
-        if (igadget == null)
+    WorkSpace.prototype.iwidgetUnloaded = function(iwidgetId) {
+        var iwidget = this.getIwidget(iwidgetId);
+        if (iwidget == null)
             return;
 
-        // Notify to the context manager the igadget has been unloaded
-        this.contextManager.iGadgetUnloaded(igadget);
+        // Notify to the context manager the iwidget has been unloaded
+        this.contextManager.iWidgetUnloaded(iwidget);
 
-        igadget._notifyUnloaded();
+        iwidget._notifyUnloaded();
     }
 
     WorkSpace.prototype.sendBufferedVars = function (async) {
@@ -441,14 +441,14 @@ function WorkSpace (workSpaceState) {
         });
     };
 
-    WorkSpace.prototype.getIgadget = function(igadgetId) {
+    WorkSpace.prototype.getIwidget = function(iwidgetId) {
         var i, tab_keys = this.tabInstances.keys();
         for (i = 0; i < tab_keys.length; i += 1) {
             var tab = this.tabInstances.get(tab_keys[i]);
-            var igadget = tab.getDragboard().getIGadget(igadgetId);
+            var iwidget = tab.getDragboard().getIWidget(iwidgetId);
 
-            if (igadget) {
-                return igadget;
+            if (iwidget) {
+                return iwidget;
             }
         }
         return null;
@@ -544,8 +544,8 @@ function WorkSpace (workSpaceState) {
             msg = interpolate(gettext("Error removing tab: %(errorMsg)s."), {
                 errorMsg: msg
             }, true);
-        } else if (tab.hasReadOnlyIGadgets()) {
-            msg = gettext("it contains some gadgets that cannot be removed");
+        } else if (tab.hasReadOnlyIWidgets()) {
+            msg = gettext("it contains some widgets that cannot be removed");
             msg = interpolate(gettext("Error removing tab: %(errorMsg)s."), {
                 errorMsg: msg
             }, true);
@@ -618,39 +618,39 @@ function WorkSpace (workSpaceState) {
         LogManagerFactory.getInstance().newCycle();
     }
 
-    WorkSpace.prototype.addIGadget = function(tab, igadget, igadgetJSON, options) {
-        this.varManager.addInstance(igadget, igadgetJSON, tab);
-        this.contextManager.addInstance(igadget, igadget.getGadget().getTemplate());
-        this.events.iwidgetadded.dispatch(this, igadget);
+    WorkSpace.prototype.addIWidget = function(tab, iwidget, iwidgetJSON, options) {
+        this.varManager.addInstance(iwidget, iwidgetJSON, tab);
+        this.contextManager.addInstance(iwidget, iwidget.getWidget().getTemplate());
+        this.events.iwidgetadded.dispatch(this, iwidget);
 
-        options.setDefaultValues.call(this, igadget.id);
+        options.setDefaultValues.call(this, iwidget.id);
 
-        igadget.paint();
+        iwidget.paint();
     };
 
-    WorkSpace.prototype.removeIGadgetData = function(iGadgetId) {
-            this.varManager.removeInstance(iGadgetId);
-            this.contextManager.removeInstance(iGadgetId);
+    WorkSpace.prototype.removeIWidgetData = function(iWidgetId) {
+            this.varManager.removeInstance(iWidgetId);
+            this.contextManager.removeInstance(iWidgetId);
     }
 
-    WorkSpace.prototype.removeIGadget = function(iGadgetId, orderFromServer) {
-        var igadget = this.getIgadget(iGadgetId);
-        if (igadget) {
-            var dragboard = igadget.layout.dragboard;
-            dragboard.removeInstance(iGadgetId, orderFromServer); // TODO split into hideInstance and removeInstance
-            this.removeIGadgetData(iGadgetId);
-            this.events.iwidgetremoved.dispatch(this, igadget);
+    WorkSpace.prototype.removeIWidget = function(iWidgetId, orderFromServer) {
+        var iwidget = this.getIwidget(iWidgetId);
+        if (iwidget) {
+            var dragboard = iwidget.layout.dragboard;
+            dragboard.removeInstance(iWidgetId, orderFromServer); // TODO split into hideInstance and removeInstance
+            this.removeIWidgetData(iWidgetId);
+            this.events.iwidgetremoved.dispatch(this, iwidget);
         }
     }
 
-    WorkSpace.prototype.getIGadgets = function() {
-        var iGadgets = [];
+    WorkSpace.prototype.getIWidgets = function() {
+        var iWidgets = [];
         var keys = this.tabInstances.keys();
         for (var i = 0; i < keys.length; i++) {
-            iGadgets = iGadgets.concat(this.tabInstances.get(keys[i]).getDragboard().getIGadgets());
+            iWidgets = iWidgets.concat(this.tabInstances.get(keys[i]).getDragboard().getIWidgets());
         }
 
-        return iGadgets;
+        return iWidgets;
     }
 
     WorkSpace.prototype.getActiveDragboard = function () {
@@ -758,9 +758,9 @@ function WorkSpace (workSpaceState) {
             nworkspaces = OpManagerFactory.getInstance().workSpaceInstances.keys().length;
             return /* opManager.isAllow('add_remove_workspaces') && */ (nworkspaces > 1) && this.removable;
         case "merge_workspaces":
-            return this._isAllowed('add_remove_igadgets') || this._isAllowed('merge_workspaces');
-        case "catalogue_view_gadgets":
-            return this._isAllowed('add_remove_igadgets');
+            return this._isAllowed('add_remove_iwidgets') || this._isAllowed('merge_workspaces');
+        case "catalogue_view_widgets":
+            return this._isAllowed('add_remove_iwidgets');
         case "catalogue_view_mashups":
             return this.isAllowed('add_remove_workspaces') || this.isAllowed('merge_workspaces');
         default:
@@ -818,12 +818,12 @@ function WorkSpace (workSpaceState) {
 };
 WorkSpace.prototype = new StyledElements.ObjectWithEvents();
 
-WorkSpace.prototype.drawAttention = function(iGadgetId) {
-    var iGadget = this.getIgadget(iGadgetId);
-    if (iGadget !== null) {
-        this.highlightTab(iGadget.layout.dragboard.tab);
-        iGadget.layout.dragboard.raiseToTop(iGadget);
-        iGadget.highlight();
+WorkSpace.prototype.drawAttention = function(iWidgetId) {
+    var iWidget = this.getIwidget(iWidgetId);
+    if (iWidget !== null) {
+        this.highlightTab(iWidget.layout.dragboard.tab);
+        iWidget.layout.dragboard.raiseToTop(iWidget);
+        iWidget.highlight();
     }
 };
 

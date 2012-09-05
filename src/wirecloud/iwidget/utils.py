@@ -35,11 +35,11 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
 from commons.authentication import Http403
-from wirecloud.models import Gadget, IGadget, Position, Tab, Variable, VariableDef, VariableValue
+from wirecloud.models import Widget, IWidget, Position, Tab, Variable, VariableDef, VariableValue
 from wirecloud.wiring.utils import remove_related_iwidget_connections
 
 
-def addIGadgetVariable(igadget, varDef, initial_value=None):
+def addIWidgetVariable(iwidget, varDef, initial_value=None):
 
     # Sets the default value of variable
     if initial_value:
@@ -50,173 +50,173 @@ def addIGadgetVariable(igadget, varDef, initial_value=None):
         var_value = ''
 
     # Create Variable
-    variable = Variable.objects.create(igadget=igadget, vardef=varDef)
+    variable = Variable.objects.create(iwidget=iwidget, vardef=varDef)
 
     if varDef.aspect == 'PREF' or varDef.aspect == 'PROP':
 
         # Creating Variable Values for this variable
-        for user in igadget.tab.workspace.users.all():
+        for user in iwidget.tab.workspace.users.all():
             VariableValue.objects.create(user=user, variable=variable, value=var_value)
 
 
-def UpgradeIGadget(igadget, user, new_gadget):
-    currentGadget = igadget.gadget
+def UpgradeIWidget(iwidget, user, new_widget):
+    currentWidget = iwidget.widget
 
-    # get the workspace in which the igadget is being added in order to
+    # get the workspace in which the iwidget is being added in order to
     # check if it is shared
-    # workspaceId = igadget.tab.workspace.id
+    # workspaceId = iwidget.tab.workspace.id
 
     #check equivalency and add the variables needed
-    newVariableDefs = VariableDef.objects.filter(gadget=new_gadget)
+    newVariableDefs = VariableDef.objects.filter(widget=new_widget)
     equivalentVarDefs = []
     for varDef in newVariableDefs:
         # search for an equivalent variableDef
-        equivalentVarDef = VariableDef.objects.filter(name=varDef.name, type=varDef.type, aspect=varDef.aspect, gadget=currentGadget)
+        equivalentVarDef = VariableDef.objects.filter(name=varDef.name, type=varDef.type, aspect=varDef.aspect, widget=currentWidget)
         if equivalentVarDef:
             equivalentVarDefs.append(varDef)
             #reassign the variableDef of the Variable
-            var = Variable.objects.get(igadget=igadget, vardef=equivalentVarDef[0])
+            var = Variable.objects.get(iwidget=iwidget, vardef=equivalentVarDef[0])
             var.vardef = varDef
             var.save()
         else:
-            addIGadgetVariable(igadget, varDef)
+            addIWidgetVariable(iwidget, varDef)
 
-    # check if the last version gadget hasn't a super-set of the current version gadget variableDefs
-    currentGadgetVarDefs = VariableDef.objects.filter(gadget=currentGadget)
-    if len(currentGadgetVarDefs) > len(equivalentVarDefs):
-        #some of the current version gadget variableDefs aren't in the last version gadget
-        raise Exception(_("The gadget cannot be automatically updated because it is incompatible with the last version."))
+    # check if the last version widget hasn't a super-set of the current version widget variableDefs
+    currentWidgetVarDefs = VariableDef.objects.filter(widget=currentWidget)
+    if len(currentWidgetVarDefs) > len(equivalentVarDefs):
+        #some of the current version widget variableDefs aren't in the last version widget
+        raise Exception(_("The widget cannot be automatically updated because it is incompatible with the last version."))
 
-    igadget.gadget = new_gadget
-    igadget.save()
+    iwidget.widget = new_widget
+    iwidget.save()
 
 
-def SaveIGadget(igadget, user, tab, initial_variable_values):
-    gadget_uri = igadget.get('gadget')
-    igadget_name = igadget.get('name')
-    width = igadget.get('width')
-    height = igadget.get('height')
-    top = igadget.get('top')
-    left = igadget.get('left')
-    icon_top = igadget.get('icon_top')
-    icon_left = igadget.get('icon_left')
-    zIndex = igadget.get('zIndex')
-    layout = igadget.get('layout')
+def SaveIWidget(iwidget, user, tab, initial_variable_values):
+    widget_uri = iwidget.get('widget')
+    iwidget_name = iwidget.get('name')
+    width = iwidget.get('width')
+    height = iwidget.get('height')
+    top = iwidget.get('top')
+    left = iwidget.get('left')
+    icon_top = iwidget.get('icon_top')
+    icon_left = iwidget.get('icon_left')
+    zIndex = iwidget.get('zIndex')
+    layout = iwidget.get('layout')
 
-    # Creates IGadget position
+    # Creates IWidget position
     position = Position(posX=left, posY=top, posZ=zIndex, height=height, width=width, minimized=False, fulldragboard=False)
     position.save()
 
-    # Creates IGadget icon position
+    # Creates IWidget icon position
     icon_position = Position(posX=icon_left, posY=icon_top)
     icon_position.save()
 
-    gadget = Gadget.objects.get(uri=gadget_uri, users=user)
+    widget = Widget.objects.get(uri=widget_uri, users=user)
 
-    new_igadget = IGadget(name=igadget_name, gadget=gadget, tab=tab, layout=layout, position=position, icon_position=icon_position, transparency=False)
-    new_igadget.save()
+    new_iwidget = IWidget(name=iwidget_name, widget=widget, tab=tab, layout=layout, position=position, icon_position=icon_position, transparency=False)
+    new_iwidget.save()
 
-    variableDefs = VariableDef.objects.filter(gadget=gadget)
+    variableDefs = VariableDef.objects.filter(widget=widget)
     for varDef in variableDefs:
         if initial_variable_values and varDef.name in initial_variable_values:
             initial_value = initial_variable_values[varDef.name]
         else:
             initial_value = None
-        addIGadgetVariable(new_igadget, varDef, initial_value)
+        addIWidgetVariable(new_iwidget, varDef, initial_value)
 
     from commons.get_data import _invalidate_cached_variable_values
-    _invalidate_cached_variable_values(new_igadget.tab.workspace)
+    _invalidate_cached_variable_values(new_iwidget.tab.workspace)
 
-    return new_igadget
+    return new_iwidget
 
 
-def UpdateIGadget(igadget, user, tab):
+def UpdateIWidget(iwidget, user, tab):
 
-    igadget_pk = igadget.get('id')
+    iwidget_pk = iwidget.get('id')
 
     # Checks
-    ig = get_object_or_404(IGadget, tab=tab, pk=igadget_pk)
+    ig = get_object_or_404(IWidget, tab=tab, pk=iwidget_pk)
 
-    if 'name' in igadget:
-        name = igadget['name']
+    if 'name' in iwidget:
+        name = iwidget['name']
         ig.name = name
 
-    if 'tab' in igadget:
-        newtab_id = igadget['tab']
+    if 'tab' in iwidget:
+        newtab_id = iwidget['tab']
         if newtab_id < 0:
-            raise Exception(_('Malformed iGadget JSON'))
+            raise Exception(_('Malformed iWidget JSON'))
 
         if newtab_id != tab.id:
             newtab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=tab.workspace_id, pk=newtab_id)
             ig.tab = newtab
 
-    if 'layout' in igadget:
-        layout = igadget['layout']
+    if 'layout' in iwidget:
+        layout = iwidget['layout']
         ig.layout = layout
 
-    if 'transparency' in igadget:
-        ig.transparency = igadget['transparency']
+    if 'transparency' in iwidget:
+        ig.transparency = iwidget['transparency']
 
-    if 'icon_top' in igadget and 'icon_left' in igadget:
+    if 'icon_top' in iwidget and 'icon_left' in iwidget:
         icon_position = ig.icon_position
         if icon_position:
-            icon_position.posX = igadget["icon_left"]
-            icon_position.posY = igadget["icon_top"]
-        else:  # backward compatibility (old gadgets without icon position)
-            icon_position = Position(posX=igadget["icon_left"], posY=igadget["icon_top"])
+            icon_position.posX = iwidget["icon_left"]
+            icon_position.posY = iwidget["icon_top"]
+        else:  # backward compatibility (old widgets without icon position)
+            icon_position = Position(posX=iwidget["icon_left"], posY=iwidget["icon_top"])
         icon_position.save()
         ig.icon_position = icon_position
 
-    if 'refused_version' in igadget:
-        refused_version = igadget['refused_version']
+    if 'refused_version' in iwidget:
+        refused_version = iwidget['refused_version']
         ig.refused_version = refused_version
 
     ig.save()
 
-    # get IGadget's position
+    # get IWidget's position
     position = ig.position
 
     # update the requested attributes
-    if 'width' in igadget:
-        width = igadget['width']
+    if 'width' in iwidget:
+        width = iwidget['width']
         if width <= 0:
-            raise Exception(_('Malformed iGadget JSON'))
+            raise Exception(_('Malformed iWidget JSON'))
         position.width = width
 
-    if 'height' in igadget:
-        height = igadget['height']
+    if 'height' in iwidget:
+        height = iwidget['height']
         if height <= 0:
-            raise Exception(_('Malformed iGadget JSON'))
+            raise Exception(_('Malformed iWidget JSON'))
         position.height = height
 
-    if 'top' in igadget:
-        top = igadget['top']
+    if 'top' in iwidget:
+        top = iwidget['top']
         if top < 0:
-            raise Exception(_('Malformed iGadget JSON'))
+            raise Exception(_('Malformed iWidget JSON'))
         position.posY = top
 
-    if 'left' in igadget:
-        left = igadget['left']
+    if 'left' in iwidget:
+        left = iwidget['left']
         if left < 0:
-            raise Exception(_('Malformed iGadget JSON'))
+            raise Exception(_('Malformed iWidget JSON'))
         position.posX = left
 
-    if 'zIndex' in igadget:
-        zIndex = igadget['zIndex']
+    if 'zIndex' in iwidget:
+        zIndex = iwidget['zIndex']
         if not isinstance(zIndex, int):
-            raise Exception(_('Malformed iGadget JSON'))
+            raise Exception(_('Malformed iWidget JSON'))
         position.posZ = zIndex
 
-    if 'minimized' in igadget:
-        minimized = igadget['minimized']
+    if 'minimized' in iwidget:
+        minimized = iwidget['minimized']
         if not isinstance(minimized, bool) and not isinstance(minimized, int):
-            raise Exception(_('Malformed iGadget JSON'))
+            raise Exception(_('Malformed iWidget JSON'))
         position.minimized = minimized
 
-    if 'fulldragboard' in igadget:
-        fulldragboard = igadget['fulldragboard']
+    if 'fulldragboard' in iwidget:
+        fulldragboard = iwidget['fulldragboard']
         if not isinstance(fulldragboard, bool) and not isinstance(fulldragboard, int):
-            raise Exception(_('Malformed iGadget JSON'))
+            raise Exception(_('Malformed iWidget JSON'))
         position.fulldragboard = fulldragboard
 
     # save the changes
@@ -226,15 +226,15 @@ def UpdateIGadget(igadget, user, tab):
     _invalidate_cached_variable_values(ig.tab.workspace)
 
 
-def deleteIGadget(igadget, user):
+def deleteIWidget(iwidget, user):
 
     if not user.is_superuser:
-        workspace = igadget.tab.workspace
+        workspace = iwidget.tab.workspace
         if workspace.creator != user:
             raise Http403
 
-    # Delete all IGadget's variables
-    variables = Variable.objects.filter(igadget=igadget)
+    # Delete all IWidget's variables
+    variables = Variable.objects.filter(iwidget=iwidget)
     for var in variables:
 
         # Deleting variable value
@@ -242,20 +242,20 @@ def deleteIGadget(igadget, user):
 
         var.delete()
 
-    # Delete IGadget and its position
-    position = igadget.position
+    # Delete IWidget and its position
+    position = iwidget.position
     position.delete()
-    icon_position = igadget.icon_position
+    icon_position = iwidget.icon_position
     if icon_position != None:
         icon_position.delete()
 
     # Delete IWidget from wiring
-    wiring = json.loads(igadget.tab.workspace.wiringStatus)
-    remove_related_iwidget_connections(wiring, igadget)
-    igadget.tab.workspace.wiringStatus = json.dumps(wiring, ensure_ascii=False)
-    igadget.tab.workspace.save()
+    wiring = json.loads(iwidget.tab.workspace.wiringStatus)
+    remove_related_iwidget_connections(wiring, iwidget)
+    iwidget.tab.workspace.wiringStatus = json.dumps(wiring, ensure_ascii=False)
+    iwidget.tab.workspace.save()
 
     from commons.get_data import _invalidate_cached_variables
-    _invalidate_cached_variables(igadget)
+    _invalidate_cached_variables(iwidget)
 
-    igadget.delete()
+    iwidget.delete()

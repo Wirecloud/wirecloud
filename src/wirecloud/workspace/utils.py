@@ -43,18 +43,18 @@ from django.utils.translation import ugettext as _
 
 from commons.http_utils import download_http_content
 from commons.utils import save_alternative
-from wirecloud.iwidget.utils import deleteIGadget
-from wirecloud.models import Category, IGadget, PublishedWorkSpace, Tab, UserWorkSpace, VariableValue, WorkSpace
+from wirecloud.iwidget.utils import deleteIWidget
+from wirecloud.models import Category, IWidget, PublishedWorkSpace, Tab, UserWorkSpace, VariableValue, WorkSpace
 from wirecloud.workspace.managers import get_workspace_managers
 from wirecloud.workspace.packageLinker import PackageLinker
 from wirecloudcommons.utils.template import TemplateParser
 
 
 def deleteTab(tab, user):
-    #Deleting igadgets
-    igadgets = IGadget.objects.filter(tab=tab)
-    for igadget in igadgets:
-        deleteIGadget(igadget, user)
+    #Deleting iwidgets
+    iwidgets = IWidget.objects.filter(tab=tab)
+    for iwidget in iwidgets:
+        deleteIWidget(iwidget, user)
 
     # Deleting tab
     tab.delete()
@@ -95,10 +95,10 @@ def setVisibleTab(user, workspace_id, tab):
     tab.save()
 
 
-def get_mashup_gadgets(mashup_id):
+def get_mashup_widgets(mashup_id):
     published_workspace = get_object_or_404(PublishedWorkSpace, id=mashup_id)
 
-    return [i.gadget for i in IGadget.objects.filter(tab__workspace=published_workspace.workspace)]
+    return [i.widget for i in IWidget.objects.filter(tab__workspace=published_workspace.workspace)]
 
 
 def create_published_workspace_from_template(template, user):
@@ -150,7 +150,7 @@ def set_variable_value(var_id, user, value):
     variable_value.save()
 
     from commons.get_data import _invalidate_cached_variable_values
-    _invalidate_cached_variable_values(variable_value.variable.igadget.tab.workspace, user)
+    _invalidate_cached_variable_values(variable_value.variable.iwidget.tab.workspace, user)
 
     return variables_to_notify
 

@@ -169,16 +169,16 @@ def get_event_filter(search_criteria):
     search_criteria = search_criteria.split()
     filters = Q()
     for e in search_criteria:
-        filters = filters | Q(gadgetwiring__friendcode__icontains=e)
-    return filters & Q(gadgetwiring__wiring='out')
+        filters = filters | Q(widgetwiring__friendcode__icontains=e)
+    return filters & Q(widgetwiring__wiring='out')
 
 
 def get_slot_filter(search_criteria):
     search_criteria = search_criteria.split()
     filters = Q()
     for e in search_criteria:
-        filters = filters | Q(gadgetwiring__friendcode__icontains=e)
-    return filters & Q(gadgetwiring__wiring='in')
+        filters = filters | Q(widgetwiring__friendcode__icontains=e)
+    return filters & Q(widgetwiring__wiring='in')
 
 
 def get_resource_response(resources, format, items, user, request=None):

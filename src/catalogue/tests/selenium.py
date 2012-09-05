@@ -34,7 +34,7 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         super(CatalogueSeleniumTests, self).tearDown()
 
-    def test_add_gadget_to_catalog_wgt(self):
+    def test_add_widget_to_catalog_wgt(self):
 
         driver = self.driver
 
@@ -43,10 +43,10 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.change_main_view("marketplace")
         time.sleep(3)
 
-        self.add_wgt_gadget_to_catalogue('Morfeo_Calendar_Viewer.wgt', 'Calendar Viewer')
-        self.add_wgt_gadget_to_catalogue('Morfeo_Cliente_Correo.wgt', 'Cliente Correo')
-        self.add_wgt_gadget_to_catalogue('Morfeo_FeedList.wgt', 'Feed List')
-        self.add_wgt_gadget_to_catalogue('Morfeo_FeedReader.wgt', 'Feed Reader')
+        self.add_wgt_widget_to_catalogue('Morfeo_Calendar_Viewer.wgt', 'Calendar Viewer')
+        self.add_wgt_widget_to_catalogue('Morfeo_Cliente_Correo.wgt', 'Cliente Correo')
+        self.add_wgt_widget_to_catalogue('Morfeo_FeedList.wgt', 'Feed List')
+        self.add_wgt_widget_to_catalogue('Morfeo_FeedReader.wgt', 'Feed Reader')
 
         driver.implicitly_wait(30)
         driver.get(self.live_server_url + "/admin/")
@@ -65,7 +65,7 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         driver.find_element_by_xpath("//input[@value=\"Yes, I'm sure\"]").click()
         driver.find_element_by_link_text("Log out").click()
 
-    def test_add_gadget_to_catalogue_xml(self):
+    def test_add_widget_to_catalogue_xml(self):
 
         self.login()
 
@@ -74,7 +74,7 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         self.add_template_to_catalogue('http://localhost:8001/test/test.xml', 'Test_Selenium')
 
-    def test_add_gadget_to_catalogue_rdf(self):
+    def test_add_widget_to_catalogue_rdf(self):
 
         self.login()
 
@@ -122,7 +122,7 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         time.sleep(3)
         self.delete_marketplace('fiware')
 
-    def test_add_and_instantiate_gadget_rdf(self):
+    def test_add_and_instantiate_widget_rdf(self):
 
         self.login()
 
@@ -132,7 +132,7 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         resource = self.add_template_to_catalogue('http://localhost:8001/test/test.rdf', 'Test_Selenium')
         self.instanciate(resource)
 
-    def test_add_and_delete_gadget_rdf(self):
+    def test_add_and_delete_widget_rdf(self):
 
         self.login()
 
@@ -140,4 +140,4 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         time.sleep(3)
 
         self.add_template_to_catalogue('http://localhost:8001/test/test.rdf', 'Test_Selenium')
-        self.delete_gadget('Test_Selenium')
+        self.delete_widget('Test_Selenium')

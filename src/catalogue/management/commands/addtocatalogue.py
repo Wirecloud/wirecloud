@@ -26,14 +26,14 @@ from django.utils.translation import ugettext as _
 
 from catalogue.models import CatalogueResource
 from catalogue.utils import delete_resource
-from catalogue.views import add_gadget_from_wgt
+from catalogue.views import add_widget_from_wgt
 from commons.wgt import WgtFile
 from wirecloudcommons.utils.template import TemplateParser
 
 
 class Command(BaseCommand):
     args = '<file.wgt>...'
-    help = 'Adds a packaged gadget into the catalogue'
+    help = 'Adds a packaged widget into the catalogue'
     option_list = BaseCommand.option_list + (
         make_option('-d', '--deploy-only',
             action='store_true',
@@ -65,7 +65,7 @@ class Command(BaseCommand):
                 template_contents = wgt_file.get_template()
                 template = TemplateParser(template_contents)
                 try:
-                    add_gadget_from_wgt(f, user, wgt_file=wgt_file, template=template, deploy_only=options['deploy_only'])
+                    add_widget_from_wgt(f, user, wgt_file=wgt_file, template=template, deploy_only=options['deploy_only'])
                 except IntegrityError:
                     if not options['reinstall']:
                         raise
@@ -75,16 +75,16 @@ class Command(BaseCommand):
                             version=template.get_resource_version()
                         )
                         delete_resource(old_resource, user)
-                        add_gadget_from_wgt(f, user, wgt_file=wgt_file, template=template)
+                        add_widget_from_wgt(f, user, wgt_file=wgt_file, template=template)
 
                 wgt_file.close()
                 f.close()
-                print _('Successfully imported %(name)s gadget') % {'name': template.get_resource_name()}
+                print _('Successfully imported %(name)s widget') % {'name': template.get_resource_name()}
             except IntegrityError:
-                print _('Version %(version)s of the %(name)s gadget (from %(vendor)s) already exists') % {
+                print _('Version %(version)s of the %(name)s widget (from %(vendor)s) already exists') % {
                     'name': template.get_resource_name(),
                     'version': template.get_resource_version(),
                     'vendor': template.get_resource_vendor(),
                 }
             except:
-                print _('Failed to import gadget from %(file_name)s') % {'file_name': file_name}
+                print _('Failed to import widget from %(file_name)s') % {'file_name': file_name}

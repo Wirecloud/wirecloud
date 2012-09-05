@@ -24,14 +24,14 @@
  */
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
-/*global gettext, Constants, DragboardLayout, DragboardPosition, IGadget, LogManagerFactory, MultiValuedSize*/
+/*global gettext, Constants, DragboardLayout, DragboardPosition, IWidget, LogManagerFactory, MultiValuedSize*/
 
 /////////////////////////////////////
 // FullDragboard
 /////////////////////////////////////
 
 /**
- * @class Represents a dragboard layout to be used to place igadgets into the dragboard.
+ * @class Represents a dragboard layout to be used to place iwidgets into the dragboard.
  *
  * This dragobard uses percentages for horizontal units and px for vertical units.
  *
@@ -102,12 +102,12 @@ FullDragboardLayout.prototype.adaptWidth = function (contentWidth, fullSize) {
 };
 
 FullDragboardLayout.prototype.initialize = function () {
-    var iGadget, key;
+    var iWidget, key;
 
-    // Insert igadgets
-    for (key in this.iGadgets) {
-        iGadget = this.iGadgets[key];
-        iGadget.paint(true);
+    // Insert iwidgets
+    for (key in this.iWidgets) {
+        iWidget = this.iWidgets[key];
+        iWidget.paint(true);
     }
 
     this.initialized = true;
@@ -120,38 +120,38 @@ FullDragboardLayout.prototype.getCellAt = function (x, y) {
     return new DragboardPosition(0, 0);
 };
 
-FullDragboardLayout.prototype.addIGadget = function (iGadget, affectsDragboard) {
-    iGadget.element.addClassName('fulldragboard');
+FullDragboardLayout.prototype.addIWidget = function (iWidget, affectsDragboard) {
+    iWidget.element.addClassName('fulldragboard');
 
-    DragboardLayout.prototype.addIGadget.call(this, iGadget, affectsDragboard);
+    DragboardLayout.prototype.addIWidget.call(this, iWidget, affectsDragboard);
 
     if (!this.initialized) {
         return;
     }
 
-    iGadget.setPosition(new DragboardPosition(0, 0));
+    iWidget.setPosition(new DragboardPosition(0, 0));
 };
 
-FullDragboardLayout.prototype.removeIGadget = function (iGadget, affectsDragboard) {
-    iGadget.element.removeClassName('fulldragboard');
+FullDragboardLayout.prototype.removeIWidget = function (iWidget, affectsDragboard) {
+    iWidget.element.removeClassName('fulldragboard');
 
-    DragboardLayout.prototype.removeIGadget.call(this, iGadget, affectsDragboard);
+    DragboardLayout.prototype.removeIWidget.call(this, iWidget, affectsDragboard);
 };
 
 
-FullDragboardLayout.prototype.initializeMove = function (igadget, draggable) {
+FullDragboardLayout.prototype.initializeMove = function (iwidget, draggable) {
     // Check for pendings moves
-    if (this.igadgetToMove !== null) {
+    if (this.iwidgetToMove !== null) {
         var msg = gettext("There was a pending move that was cancelled because initializedMove function was called before it was finished.");
         LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
         this.cancelMove();
     }
 
-    this.igadgetToMove = igadget;
+    this.iwidgetToMove = iwidget;
 };
 
 FullDragboardLayout.prototype.moveTemporally = function (x, y) {
-    if (!(this.igadgetToMove instanceof IGadget)) {
+    if (!(this.iwidgetToMove instanceof IWidget)) {
         var msg = gettext("Dragboard: You must call initializeMove function before calling to this function (moveTemporally).");
         LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
         return;
@@ -159,23 +159,23 @@ FullDragboardLayout.prototype.moveTemporally = function (x, y) {
 };
 
 FullDragboardLayout.prototype.acceptMove = function () {
-    if (!(this.igadgetToMove instanceof IGadget)) {
-        var msg = gettext("Function acceptMove called when there is not an started igadget move.");
+    if (!(this.iwidgetToMove instanceof IWidget)) {
+        var msg = gettext("Function acceptMove called when there is not an started iwidget move.");
         LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
         return;
     }
 
-    this.igadgetToMove = null;
+    this.iwidgetToMove = null;
 };
 
 FullDragboardLayout.prototype.cancelMove = function () {
-    if (!(this.igadgetToMove instanceof IGadget)) {
+    if (!(this.iwidgetToMove instanceof IWidget)) {
         var msg = gettext("Trying to cancel an inexistant temporal move.");
         LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
         return;
     }
 
-    this.igadgetToMove._notifyWindowResizeEvent();
-    this.igadgetToMove = null;
+    this.iwidgetToMove._notifyWindowResizeEvent();
+    this.iwidgetToMove = null;
     this.newPosition = null;
 };

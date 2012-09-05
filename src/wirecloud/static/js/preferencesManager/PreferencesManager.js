@@ -159,13 +159,13 @@ var PreferencesManagerFactory = function () {
 		    "label":         gettext("Default grid layout"),
 		    "type":          "select",
 		    "initialEntries":       [{value:"Fixed",label:gettext("Fixed to the grid")},{value:"Free",label:gettext("Out of the grid")}],
-		    "description":   gettext("Default layout for the new gadgets.")
+		    "description":   gettext("Default layout for the new widgets.")
 		  },
 		  "smart": {
 		    "defaultValue":  true,
-		    "label":         gettext("Smart grid for gadgets fixed to the grid"),
+		    "label":         gettext("Smart grid for widgets fixed to the grid"),
 		    "type":          "boolean",
-		    "description":   gettext("iGadgets will be automatically reordered if this option is enabled. (default: enabled)")
+		    "description":   gettext("iWidgets will be automatically reordered if this option is enabled. (default: enabled)")
 		  },
 		  "columns": {
 		    "defaultValue":  20,
@@ -181,15 +181,15 @@ var PreferencesManagerFactory = function () {
 		  },
 		  "horizontal-margin": {
 		    "defaultValue":  4,
-		    "label":         gettext("Horizontal Margin between iGadgets (in pixels)"),
+		    "label":         gettext("Horizontal Margin between iWidgets (in pixels)"),
 		    "type":          "integer",
-		    "description":   gettext("Horizontal Margin between iGadgets. Must be specified in pixel units. (default: 4)")
+		    "description":   gettext("Horizontal Margin between iWidgets. Must be specified in pixel units. (default: 4)")
 		  },
 		  "vertical-margin": {
 		    "defaultValue":  3,
-		    "label":         gettext("Vertical Margin between iGadgets (in pixels)"),
+		    "label":         gettext("Vertical Margin between iWidgets (in pixels)"),
 		    "type":          "integer",
-		    "description":   gettext("Vertical Margin between iGadgets. Must be specified in pixel units. (default: 3)")
+		    "description":   gettext("Vertical Margin between iWidgets. Must be specified in pixel units. (default: 3)")
 		  }
 		}
 
@@ -202,15 +202,15 @@ var PreferencesManagerFactory = function () {
 		    "label":         gettext("Default grid layout"),
 		    "type":          "select",
 		    "initialEntries":       [{value:"Fixed",label:gettext("Fixed to the grid")},{value:"Free",label:gettext("Out of the grid")}],
-		    "description":   gettext("Default layout for the new gadgets.")
+		    "description":   gettext("Default layout for the new widgets.")
 		  },
 		  "smart": {
 		    "inheritable":   true,
 		    "inheritByDefault": true,
 		    "defaultValue":  true,
-		    "label":         gettext("Smart grid for gadgets fixed to the grid"),
+		    "label":         gettext("Smart grid for widgets fixed to the grid"),
 		    "type":          "boolean",
-		    "description":   gettext("iGadgets will be automatically reordered if this option is enabled. (default: enabled)")
+		    "description":   gettext("iWidgets will be automatically reordered if this option is enabled. (default: enabled)")
 		  },
 		  "columns": {
 		    "inheritable":   true,
@@ -232,17 +232,17 @@ var PreferencesManagerFactory = function () {
 		    "inheritable":   true,
 		    "inheritByDefault": true,
 		    "defaultValue":  4,
-		    "label":         gettext("Horizontal Margin between iGadgets (in pixels)"),
+		    "label":         gettext("Horizontal Margin between iWidgets (in pixels)"),
 		    "type":          "integer",
-		    "description":   gettext("Horizontal Margin between iGadgets. Must be specified in pixel units. (default: 4)")
+		    "description":   gettext("Horizontal Margin between iWidgets. Must be specified in pixel units. (default: 4)")
 		  },
 		  "vertical-margin": {
 		    "inheritable":   true,
 		    "inheritByDefault": true,
 		    "defaultValue":  3,
-		    "label":         gettext("Vertical Margin between iGadgets (in pixels)"),
+		    "label":         gettext("Vertical Margin between iWidgets (in pixels)"),
 		    "type":          "integer",
-		    "description":   gettext("Vertical Margin between iGadgets. Must be specified in pixel units. (default: 3)")
+		    "description":   gettext("Vertical Margin between iWidgets. Must be specified in pixel units. (default: 3)")
 		  }
 		}
 

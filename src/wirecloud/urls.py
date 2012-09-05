@@ -37,26 +37,26 @@ urlpatterns = patterns('wirecloud.views',
 
     # Widgets
     url(r'^api/widgets/?$',
-        widget_views.GadgetCollection(permitted_methods=('GET', 'POST')),
+        widget_views.WidgetCollection(permitted_methods=('GET', 'POST')),
         name='wirecloud.widget_collection'),
     url(r'^api/widget/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/?$',
-        widget_views.GadgetEntry(permitted_methods=('GET', 'DELETE', 'PUT')),
+        widget_views.WidgetEntry(permitted_methods=('GET', 'DELETE', 'PUT')),
         name='wirecloud.widget_entry'),
     url(r'^api/widget/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/xhtml/?$',
-        widget_views.GadgetCodeEntry(permitted_methods=('GET', 'PUT')),
+        widget_views.WidgetCodeEntry(permitted_methods=('GET', 'PUT')),
         name='wirecloud.widget_code_entry'),
 
     # IWidgets
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidgets/?$',
-        iwidget_views.IGadgetCollection(permitted_methods=('GET', 'POST', 'PUT',)),
+        iwidget_views.IWidgetCollection(permitted_methods=('GET', 'POST', 'PUT',)),
         name='wirecloud.iwidget_collection'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/?$',
-        iwidget_views.IGadgetEntry(permitted_methods=('GET', 'POST', 'PUT', 'DELETE',)),
+        iwidget_views.IWidgetEntry(permitted_methods=('GET', 'POST', 'PUT', 'DELETE',)),
         name='wirecloud.iwidget_entry'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/version/?$',
-        iwidget_views.IGadgetVersion(permitted_methods=('PUT',)),
+        iwidget_views.IWidgetVersion(permitted_methods=('PUT',)),
         name='wirecloud.iwidget_version_entry'
     ),
 

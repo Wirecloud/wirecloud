@@ -40,8 +40,8 @@
         "pk": "1",
         "fields": {
             "uri": "1",
-            "code": "gadget code",
-            "url": "http://example.com/gadget_code",
+            "code": "widget code",
+            "url": "http://example.com/widget_code",
             "content_type": "",
             "cacheable": true
         }
@@ -91,32 +91,32 @@
         }
     },
     {
-        "model": "wirecloud.IGadget",
+        "model": "wirecloud.IWidget",
         "pk": "1",
         "fields": {
-            "gadget": "1",
-            "name": "Test Gadget",
+            "widget": "1",
+            "name": "Test Widget",
             "position": "1",
             "tab": "1"
         }
     },
     {
-        "model": "wirecloud.IGadget",
+        "model": "wirecloud.IWidget",
         "pk": "2",
         "fields": {
-            "gadget": "1",
-            "name": "Test Gadget",
+            "widget": "1",
+            "name": "Test Widget",
             "position": "2",
             "tab": "1"
         }
     },
     {
-        "model": "wirecloud.Gadget",
+        "model": "wirecloud.Widget",
         "pk": "1",
         "fields": {
-            "uri": "/Test/Test Gadget/1.0.0",
+            "uri": "/Test/Test Widget/1.0.0",
             "vendor": "Test",
-            "name": "Test Gadget",
+            "name": "Test Widget",
             "version": "1.0.0",
             "display_name": "__MSG_displayName__",
             "xhtml": "1"
@@ -129,7 +129,7 @@
             "name": "password",
             "type": "P",
             "aspect": "PREF",
-            "gadget": "1",
+            "widget": "1",
             "label": "__MSG_password_pref_label__",
             "description": "__MSG_password_pref_label__",
             "secure": true
@@ -142,7 +142,7 @@
             "name": "username",
             "type": "S",
             "aspect": "PREF",
-            "gadget": "1"
+            "widget": "1"
         }
     },
     {
@@ -152,7 +152,7 @@
             "name": "slot",
             "type": "S",
             "aspect": "SLOT",
-            "gadget": "1",
+            "widget": "1",
             "label": "slot",
             "friend_code": "event",
             "action_label": "__MSG_slot_label__"
@@ -165,7 +165,7 @@
             "name": "prop",
             "type": "S",
             "aspect": "PROP",
-            "gadget": "1"
+            "widget": "1"
         }
     },
     {
@@ -175,7 +175,7 @@
             "name": "event",
             "type": "S",
             "aspect": "EVEN",
-            "gadget": "1",
+            "widget": "1",
             "label": "event",
             "friend_code": "event"
         }
@@ -185,7 +185,7 @@
         "pk": "1",
         "fields": {
             "vardef": "1",
-            "igadget": "1"
+            "iwidget": "1"
         }
     },
     {
@@ -193,7 +193,7 @@
         "pk": "2",
         "fields": {
             "vardef": "2",
-            "igadget": "1"
+            "iwidget": "1"
         }
     },
     {
@@ -201,7 +201,7 @@
         "pk": "3",
         "fields": {
             "vardef": "3",
-            "igadget": "1"
+            "iwidget": "1"
         }
     },
     {
@@ -209,7 +209,7 @@
         "pk": "4",
         "fields": {
             "vardef": "4",
-            "igadget": "1"
+            "iwidget": "1"
         }
     },
     {
@@ -217,7 +217,7 @@
         "pk": "5",
         "fields": {
             "vardef": "5",
-            "igadget": "1"
+            "iwidget": "1"
         }
     },
     {
@@ -225,7 +225,7 @@
         "pk": "6",
         "fields": {
             "vardef": "1",
-            "igadget": "2"
+            "iwidget": "2"
         }
     },
     {
@@ -233,7 +233,7 @@
         "pk": "7",
         "fields": {
             "vardef": "2",
-            "igadget": "2"
+            "iwidget": "2"
         }
     },
     {
@@ -241,7 +241,7 @@
         "pk": "8",
         "fields": {
             "vardef": "3",
-            "igadget": "2"
+            "iwidget": "2"
         }
     },
     {
@@ -249,7 +249,7 @@
         "pk": "9",
         "fields": {
             "vardef": "4",
-            "igadget": "2"
+            "iwidget": "2"
         }
     },
     {
@@ -257,7 +257,7 @@
         "pk": "10",
         "fields": {
             "vardef": "5",
-            "igadget": "2"
+            "iwidget": "2"
         }
     },
     {
@@ -342,10 +342,10 @@
         "model": "wirecloudcommons.Translation",
         "pk": "3",
         "fields": {
-            "table": "wirecloud.Gadget",
+            "table": "wirecloud.Widget",
             "element_id": "1",
             "text_id": "displayName",
-            "value": "Test Gadget",
+            "value": "Test Widget",
             "language": "en",
             "default": false
         }
@@ -354,10 +354,10 @@
         "model": "wirecloudcommons.Translation",
         "pk": "4",
         "fields": {
-            "table": "wirecloud.Gadget",
+            "table": "wirecloud.Widget",
             "element_id": "1",
             "text_id": "displayName",
-            "value": "Gadget de prueba",
+            "value": "Widget de prueba",
             "language": "es",
             "default": false
         }
@@ -390,10 +390,10 @@
         "model": "wirecloudcommons.Translation",
         "pk": "3",
         "fields": {
-            "table": "wirecloud.Gadget",
+            "table": "wirecloud.Widget",
             "element_id": "1",
             "text_id": "displayName",
-            "value": "Test Gadget",
+            "value": "Test Widget",
             "language": "en",
             "default": true
         }
@@ -402,10 +402,10 @@
         "model": "wirecloudcommons.Translation",
         "pk": "4",
         "fields": {
-            "table": "wirecloud.Gadget",
+            "table": "wirecloud.Widget",
             "element_id": "1",
             "text_id": "displayName",
-            "value": "Gadget de prueba",
+            "value": "Widget de prueba",
             "language": "es",
             "default": false
         }

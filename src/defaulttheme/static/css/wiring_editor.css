@@ -44,13 +44,13 @@
     background: -o-linear-gradient(white, rgba(206,220,180,0.8));
 }
 
-.wiring_editor .igadget {
+.wiring_editor .iwidget {
     background: -webkit-linear-gradient(white, rgba(206,220,231,0.8));
     background: -moz-linear-gradient(white, rgba(206,220,231,0.8));
     background: -o-linear-gradient(white, rgba(206,220,231,0.8));
 }
 
-.wiring_editor .ioperator, .wiring_editor .igadget {
+.wiring_editor .ioperator, .wiring_editor .iwidget {
     line-height: 2.2em;
     padding-bottom: 2px;
     border: 1px solid;
@@ -61,7 +61,7 @@
     pointer-events: auto;
 }
 
-.wiring_editor .ioperator .header, .wiring_editor .igadget .header {
+.wiring_editor .ioperator .header, .wiring_editor .iwidget .header {
     text-align: center;
     font-size: 1.3em;
     font-weight: bold;
@@ -73,7 +73,7 @@
     cursor: move;
 }
 
-.wiring_editor .grid .ioperator .header span, .wiring_editor .grid .igadget .header span {
+.wiring_editor .grid .ioperator .header span, .wiring_editor .grid .iwidget .header span {
     padding-left: 1em;
 }
 
@@ -106,11 +106,11 @@
     background: url('../images/wiring/eye2.png');
 }
 
-.wiring_editor .grid .ioperator, .wiring_editor .grid .igadget {
+.wiring_editor .grid .ioperator, .wiring_editor .grid .iwidget {
     position: absolute;
 }
 
-.wiring_editor .menubar .ioperator, .wiring_editor .menubar .igadget {
+.wiring_editor .menubar .ioperator, .wiring_editor .menubar .iwidget {
     position: relative;
     padding-bottom: 0em;
     margin: 1em 1em;
@@ -163,14 +163,14 @@
 }
 
 /* clone mini widget for drag and drop */
-.wiring_editor .border_layout .ioperator.clon, .wiring_editor .border_layout .igadget.clon {
+.wiring_editor .border_layout .ioperator.clon, .wiring_editor .border_layout .iwidget.clon {
     position: absolute;
     font-size: 0.7em;
     z-index: 20;
     border-radius: 0.25ex 4.7ex 0.25ex 0.25ex;
 }
 
-.wiring_editor .border_layout .ioperator.clon .header, .wiring_editor .border_layout .igadget.clon .header {
+.wiring_editor .border_layout .ioperator.clon .header, .wiring_editor .border_layout .iwidget.clon .header {
     padding-top: 4px;
 }
 
@@ -182,7 +182,7 @@
     background: rgb(206, 220, 180);
 }
 
- .wiring_editor .grid .igadget.selected {
+ .wiring_editor .grid .iwidget.selected {
     background-color: #DF7A62;
     z-index: 15;
     box-shadow: 0 0 20px #000000;

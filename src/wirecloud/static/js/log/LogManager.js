@@ -226,27 +226,27 @@ LogManager.prototype.isClosed = function() {
 /**
  *
  */
-function IGadgetLogManager (iGadget) {
+function IWidgetLogManager (iWidget) {
     var globalManager = LogManagerFactory.getInstance();
     LogManager.call(this, globalManager);
 
     globalManager.childManagers.push(this);
-    this.iGadget = iGadget;
+    this.iWidget = iWidget;
 }
 
-IGadgetLogManager.prototype = new LogManager();
+IWidgetLogManager.prototype = new LogManager();
 
-IGadgetLogManager.prototype.buildExtraInfo = function () {
+IWidgetLogManager.prototype.buildExtraInfo = function () {
     var extraInfo = document.createElement('div'),
         extraInfoIcon = document.createElement('div'),
         extraInfoText = document.createElement('span');
     Element.extend(extraInfo);
-    extraInfo.className += " igadget_info_container";
+    extraInfo.className += " iwidget_info_container";
     extraInfo.appendChild(extraInfoIcon);
     extraInfo.appendChild(extraInfoText);
-    extraInfoIcon.className = "igadget_info";
-    extraInfoText.innerHTML = this.iGadget.id;
-    extraInfoText.setAttribute('title', this.iGadget.name + "\n " + this.iGadget.gadget.getInfoString());
+    extraInfoIcon.className = "iwidget_info";
+    extraInfoText.innerHTML = this.iWidget.id;
+    extraInfoText.setAttribute('title', this.iWidget.name + "\n " + this.iWidget.widget.getInfoString());
     extraInfo.style.cursor = "pointer";
     extraInfo.observe('click', function() {
         OpManagerFactory.getInstance().showLogs(this);
@@ -255,32 +255,32 @@ IGadgetLogManager.prototype.buildExtraInfo = function () {
     return extraInfo;
 }
 
-IGadgetLogManager.prototype.buildTitle = function() {
+IWidgetLogManager.prototype.buildTitle = function() {
     var title;
 
-    if (this.iGadget) {
-        title = gettext('iGadget #%(iGadgetId)s Logs');
-        title = interpolate(title, {iGadgetId: this.iGadget.id}, true);
+    if (this.iWidget) {
+        title = gettext('iWidget #%(iWidgetId)s Logs');
+        title = interpolate(title, {iWidgetId: this.iWidget.id}, true);
         return title;
     } else {
         return this.title;
     }
 }
 
-IGadgetLogManager.prototype.buildSubTitle = function() {
+IWidgetLogManager.prototype.buildSubTitle = function() {
     var subtitle;
 
-    if (this.iGadget) {
-        return this.iGadget.name;
+    if (this.iWidget) {
+        return this.iWidget.name;
     } else {
         return this.subtitle;
     }
 }
 
-IGadgetLogManager.prototype.close = function() {
+IWidgetLogManager.prototype.close = function() {
     this.title = this.buildTitle();
     this.subtitle = this.buildSubTitle();
-    this.iGadget = null;
+    this.iWidget = null;
 }
 
 /**
@@ -331,11 +331,11 @@ var LogManagerFactory = function () {
         }
 
         if (logManager === this) {
-            $('logs_igadget_toolbar').removeClassName('selected_section');
+            $('logs_iwidget_toolbar').removeClassName('selected_section');
             $('logs_all_toolbar').addClassName('selected_section');
         } else {
             $('logs_all_toolbar').removeClassName('selected_section');
-            $('logs_igadget_toolbar').addClassName('selected_section');
+            $('logs_iwidget_toolbar').addClassName('selected_section');
         }
         this.logConsole.innerHTML = '';
 

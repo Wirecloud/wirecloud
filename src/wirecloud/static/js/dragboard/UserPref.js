@@ -37,27 +37,27 @@ function UserPref(varName, type, options) {
 }
 
 /**
- * Checks whether this preference is hidden for the given iGadget
+ * Checks whether this preference is hidden for the given iWidget
  *
  * @param {VariableManager} varManager
- * @param {Number} iGadgetId id of the iGadget to check
+ * @param {Number} iWidgetId id of the iWidget to check
  */
-UserPref.prototype.isHidden = function (iGadget) {
+UserPref.prototype.isHidden = function (iWidget) {
     var varManager, variable;
 
-    varManager = iGadget.layout.dragboard.workSpace.varManager;
-    variable = varManager.getVariableByName(iGadget.getId(), this.varName);
+    varManager = iWidget.layout.dragboard.workSpace.varManager;
+    variable = varManager.getVariableByName(iWidget.getId(), this.varName);
 
     return variable.hidden;
 };
 
-UserPref.prototype.getInterfaceDescription = function getInterfaceDescription (iGadget) {
+UserPref.prototype.getInterfaceDescription = function getInterfaceDescription (iWidget) {
     // TODO
-    var varManager = iGadget.layout.dragboard.workSpace.varManager;
+    var varManager = iWidget.layout.dragboard.workSpace.varManager;
 
     var variable, desc;
 
-    variable = varManager.getVariableByName(iGadget.getId(), this.varName);
+    variable = varManager.getVariableByName(iWidget.getId(), this.varName);
 
     desc = EzWebExt.merge(this.options, {
         'type': this.type,

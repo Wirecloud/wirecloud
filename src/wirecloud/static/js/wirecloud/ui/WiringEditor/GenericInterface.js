@@ -61,7 +61,7 @@
         this.header.addClassName("header");
         this.wrapperElement.appendChild(this.header);
 
-        //gadget name
+        //widget name
         this.nameElement = document.createElement("span");
         this.nameElement.setTextContent(tittle);
         this.header.appendChild(this.nameElement);
@@ -75,8 +75,8 @@
             });
             del_button.insertInto(this.header);
             del_button.addEventListener('click', function () {
-                if (className == 'igadget') {
-                    this.wiringEditor.removeIGadget(this);
+                if (className == 'iwidget') {
+                    this.wiringEditor.removeIWidget(this);
                 } else {
                     this.wiringEditor.removeIOperator(this);
                 }
@@ -100,7 +100,7 @@
             }.bind(this));
         }
 
-        //sources and targets for the gadget
+        //sources and targets for the widget
         this.sourceDiv = document.createElement("div");
         this.sourceDiv.addClassName("sources");
         this.targetDiv = document.createElement("div");
@@ -159,19 +159,19 @@
                     pos_miniwidget = context.iObject.getBoundingClientRect();
                     context.y = pos_miniwidget.top - 73;
                     context.x = pos_miniwidget.left;
-                    //create a minigadget clon
-                    if (context.iObject instanceof Wirecloud.ui.WiringEditor.GadgetInterface) {
-                        miniwidget_clon = new Wirecloud.ui.WiringEditor.GadgetInterface(context.iObject.wiringEditor,
-                                            context.iObject.igadget, context.iObject.wiringEditor, true);
+                    //create a miniwidget clon
+                    if (context.iObject instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
+                        miniwidget_clon = new Wirecloud.ui.WiringEditor.WidgetInterface(context.iObject.wiringEditor,
+                                            context.iObject.iwidget, context.iObject.wiringEditor, true);
                     } else {
                         miniwidget_clon = new Wirecloud.ui.WiringEditor.OperatorInterface(context.iObject.wiringEditor,
                                             context.iObject.ioperator, context.iObject.wiringEditor, true);
                     }
                     miniwidget_clon.addClassName('clon');
-                    //set the clon position over the originar miniGadget
+                    //set the clon position over the originar miniWidget
                     miniwidget_clon.setBoundingClientRect(pos_miniwidget,
                      {top: -73, left: 0, width: -2, height: -10});
-                    // put the minigadget clon in the layout
+                    // put the miniwidget clon in the layout
                     context.iObject.wiringEditor.layout.wrapperElement.appendChild(miniwidget_clon.wrapperElement);
                     //put the clon in the context.iObject
                     context.iObjectClon = miniwidget_clon;
@@ -313,8 +313,8 @@
                 'plain': true
             });
             this.multiButton.addEventListener('click', function (e) {
-                if (this instanceof Wirecloud.ui.WiringEditor.GadgetInterface) {
-                    objectId = (this.igadget.getId());
+                if (this instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
+                    objectId = (this.iwidget.getId());
                 } else {
                     objectId = (this.getId());
                 }
@@ -381,8 +381,8 @@
                 'plain': true
             });
             this.multiButton.addEventListener('click', function (e) {
-                if (this instanceof Wirecloud.ui.WiringEditor.GadgetInterface) {
-                    objectId = this.igadget.getId();
+                if (this instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
+                    objectId = this.iwidget.getId();
                 } else {
                     objectId = this.getId();
                 }
@@ -570,7 +570,7 @@
     };
 
     /*************************************************************************
-     * Make GadgetInterface public
+     * Make WidgetInterface public
      *************************************************************************/
     Wirecloud.ui.WiringEditor.GenericInterface = GenericInterface;
 })();

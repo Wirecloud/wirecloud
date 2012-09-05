@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, IGadget, LogManagerFactory, Operator, wEvent, wSlot, Wirecloud*/
+/*global gettext, IWidget, LogManagerFactory, Operator, wEvent, wSlot, Wirecloud*/
 
 (function () {
 
@@ -56,7 +56,7 @@
     unload = function unload() {
         var widgets, key, i, j, connectables;
 
-        widgets = this.workspace.getIGadgets();
+        widgets = this.workspace.getIWidgets();
         for (i = 0; i < widgets.length; i++) {
             connectables = this.connectablesByWidget[widgets[i].getId()].connectables;
             for (j = 0; j < connectables.length; j++) {
@@ -81,7 +81,7 @@
         }
 
         varManager = this.workspace.getVarManager();
-        connectables  = iwidget.getGadget().getTemplate().getConnectables();
+        connectables  = iwidget.getWidget().getTemplate().getConnectables();
 
         widgetEntry = {
             events: {},
@@ -231,7 +231,7 @@
     Wiring.prototype.pushEvent = function pushEvent(iWidget, outputName, data) {
         var entry;
 
-        if (iWidget instanceof IGadget) {
+        if (iWidget instanceof IWidget) {
             iWidget = iWidget.getId();
         }
 
@@ -242,7 +242,7 @@
     Wiring.prototype.registerCallback = function registerCallback(iWidget, inputName, callback) {
         var entry;
 
-        if (iWidget instanceof IGadget) {
+        if (iWidget instanceof IWidget) {
             iWidget = iWidget.getId();
         }
 

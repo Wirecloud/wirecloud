@@ -53,7 +53,7 @@ class XHTML(models.Model):
         app_label = 'wirecloud'
 
 
-class Gadget(TransModel):
+class Widget(TransModel):
 
     uri = models.CharField(_('URI'), max_length=500)
     vendor = models.CharField(_('Vendor'), max_length=250)
@@ -94,26 +94,26 @@ class Gadget(TransModel):
         return url
 
     def get_related_preferences(self):
-        return VariableDef.objects.filter(gadget=self, aspect='PREF')
+        return VariableDef.objects.filter(widget=self, aspect='PREF')
 
     def get_related_properties(self):
-        return VariableDef.objects.filter(gadget=self, aspect='PROP')
+        return VariableDef.objects.filter(widget=self, aspect='PROP')
 
     def get_related_events(self):
-        return VariableDef.objects.filter(gadget=self, aspect='EVEN')
+        return VariableDef.objects.filter(widget=self, aspect='EVEN')
 
     def get_related_slots(self):
-        return VariableDef.objects.filter(gadget=self, aspect='SLOT')
+        return VariableDef.objects.filter(widget=self, aspect='SLOT')
 
 
 class Capability(models.Model):
 
     name = models.CharField(_('Name'), max_length=50)
     value = models.CharField(_('Value'), max_length=50)
-    gadget = models.ForeignKey(Gadget)
+    widget = models.ForeignKey(Widget)
 
     class Meta:
-        unique_together = ('name', 'value', 'gadget')
+        unique_together = ('name', 'value', 'widget')
         app_label = 'wirecloud'
 
 
@@ -134,7 +134,7 @@ class VariableDef(TransModel):
         ('EVEN', _('Event')),
         ('PREF', _('Preference')),
         ('PROP', _('Property')),
-        ('GCTX', _('GadgetContext')),
+        ('GCTX', _('WidgetContext')),
         ('ECTX', _('ExternalContext')),
     )
     secure = models.BooleanField(_('Secure'), default=False)
@@ -144,11 +144,11 @@ class VariableDef(TransModel):
     description = models.CharField(_('Description'), max_length=250, null=True)
     friend_code = models.CharField(_('Friend code'), max_length=30, null=True)
     default_value = models.TextField(_('Default value'), blank=True, null=True)
-    gadget = models.ForeignKey(Gadget)
+    widget = models.ForeignKey(Widget)
     order = models.IntegerField(default=0, blank=True)
 
     def __unicode__(self):
-        return self.gadget.uri + " " + self.aspect
+        return self.widget.uri + " " + self.aspect
 
     #Values that cannot be public: passwords, produced events and consumed events
     def has_public_value(self):
@@ -171,7 +171,7 @@ class UserPrefOption(TransModel):
     variableDef = models.ForeignKey(VariableDef)
 
     def __unicode__(self):
-        return self.variableDef.gadget.uri + " " + self.name
+        return self.variableDef.widget.uri + " " + self.name
 
     class Meta:
         app_label = 'wirecloud'

@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global Hash, $, OpManagerFactory, ShowcaseFactory, IGadget */
+/*global Hash, $, OpManagerFactory, ShowcaseFactory, IWidget */
 "use strict";
 
 /* 
@@ -42,7 +42,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
     this.barElement = $('bar');
 
     //Atributes
-    this.iGadgets = new Hash();
+    this.iWidgets = new Hash();
     this.tab = tab;
     this.tabId = tab.tabInfo.id;
     this.workSpace = workSpace;
@@ -52,38 +52,38 @@ function Dragboard(tab, workSpace, dragboardElement) {
     // PUBLIC METHODS
     // ****************
 
-    Dragboard.prototype.paint = function (iGadgetId) {
-        var opManager, iGadget;
+    Dragboard.prototype.paint = function (iWidgetId) {
+        var opManager, iWidget;
 
         opManager = OpManagerFactory.getInstance();
-        iGadget = this.getIGadget(iGadgetId);
+        iWidget = this.getIWidget(iWidgetId);
 
-        opManager.globalDragboard.show(iGadget.getTab());
-        opManager.alternatives.showAlternative(opManager.igadgetViewAlternative);
+        opManager.globalDragboard.show(iWidget.getTab());
+        opManager.alternatives.showAlternative(opManager.iwidgetViewAlternative);
         opManager.visibleLayer = "dragboard";
         updateLayout();
     };
 
-    Dragboard.prototype.paintRelatedIGadget = function (iGadgetId) {
-        var tabId = this.getIGadget(iGadgetId).getTabId(),
+    Dragboard.prototype.paintRelatedIWidget = function (iWidgetId) {
+        var tabId = this.getIWidget(iWidgetId).getTabId(),
             tabIndex = this.workSpace.tabView.getTabIndexById(tabId);
 
-        if (tabIndex !== null && tabIndex !== undefined) { // the gadget-tab is already visible
-            this.setVisibleIGadget(iGadgetId);
+        if (tabIndex !== null && tabIndex !== undefined) { // the widget-tab is already visible
+            this.setVisibleIWidget(iWidgetId);
             this.workSpace.tabView.set('activeTab', this.workSpace.tabView.getTab(tabIndex));
         } else {
-            this.paint(iGadgetId);
+            this.paint(iWidgetId);
         }
     };
 
-    Dragboard.prototype.markRelatedIgadget = function (iGadgetId) {
-        $("related_" + iGadgetId).addClassName("active");
+    Dragboard.prototype.markRelatedIwidget = function (iWidgetId) {
+        $("related_" + iWidgetId).addClassName("active");
 
         // highlight related tabs
-        var igadget = this.getIGadget(iGadgetId),
+        var iwidget = this.getIWidget(iWidgetId),
             tabId, tabIndex;
-        if (igadget) {
-            tabId = igadget.getTabId();
+        if (iwidget) {
+            tabId = iwidget.getTabId();
             tabIndex = this.workSpace.tabView.getTabIndexById(tabId);
             if (tabIndex !== null && tabIndex !== undefined) { // the tab is already visible
                 this.workSpace.tabView.getTab(tabIndex).set('highlight', true);
@@ -92,77 +92,77 @@ function Dragboard(tab, workSpace, dragboardElement) {
     };
 
     Dragboard.prototype.parseTab = function (tabInfo) {
-        var curIGadget, position, width, height, igadget, gadget, minimized, i,
+        var curIWidget, position, width, height, iwidget, widget, minimized, i,
             container, opManager = OpManagerFactory.getInstance();
 
         this.currentCode = 1;
-        this.iGadgets = new Hash();
+        this.iWidgets = new Hash();
 
-        // For controlling when the igadgets are totally loaded!
-        this.igadgets = tabInfo.igadgetList;
-        for (i = 0; i < this.igadgets.length; i += 1) {
-            curIGadget = this.igadgets[i];
+        // For controlling when the iwidgets are totally loaded!
+        this.iwidgets = tabInfo.iwidgetList;
+        for (i = 0; i < this.iwidgets.length; i += 1) {
+            curIWidget = this.iwidgets[i];
 
-            // Get gadget model
-            gadget = ShowcaseFactory.getInstance().getGadget(curIGadget.gadget);
+            // Get widget model
+            widget = ShowcaseFactory.getInstance().getWidget(curIWidget.widget);
 
             // Create instance model
-            container = opManager.globalDragboard.newIGadgetContainer();
-            igadget = new IGadget(gadget, curIGadget.id, curIGadget.code, curIGadget.name, this, container);
-            this.iGadgets.set(curIGadget.id, igadget);
+            container = opManager.globalDragboard.newIWidgetContainer();
+            iwidget = new IWidget(widget, curIWidget.id, curIWidget.code, curIWidget.name, this, container);
+            this.iWidgets.set(curIWidget.id, iwidget);
 
-            if (curIGadget.code >= this.currentCode) {
-                this.currentCode =  curIGadget.code + 1;
+            if (curIWidget.code >= this.currentCode) {
+                this.currentCode =  curIWidget.code + 1;
             }
         }
         this.loaded = true;
     };
 
-    Dragboard.prototype.igadgetLoaded = function (iGadgetId) {
+    Dragboard.prototype.iwidgetLoaded = function (iWidgetId) {
         //DO NOTHING
     };
 
     Dragboard.prototype.destroy = function () {
-        var keys = this.iGadgets.keys(),
-            i, igadget;
+        var keys = this.iWidgets.keys(),
+            i, iwidget;
 
-        //disconect and delete the connectables and variables of all tab iGadgets
+        //disconect and delete the connectables and variables of all tab iWidgets
         for (i = 0; i < keys.length; i += 1) {
-            igadget = this.iGadgets.get(keys[i]);
-            this.iGadgets.unset(keys[i]);
-            igadget.destroy();
+            iwidget = this.iWidgets.get(keys[i]);
+            this.iWidgets.unset(keys[i]);
+            iwidget.destroy();
         }
-        this.iGadgets = null;
+        this.iWidgets = null;
     };
 
-    Dragboard.prototype.saveConfig = function (iGadgetId) {
-        var igadget = this.iGadgets.get(iGadgetId);
+    Dragboard.prototype.saveConfig = function (iWidgetId) {
+        var iwidget = this.iWidgets.get(iWidgetId);
         try {
-            igadget.saveConfig();
+            iwidget.saveConfig();
 
-            this.setConfigurationVisible(igadget.getId(), false);
+            this.setConfigurationVisible(iwidget.getId(), false);
         } catch (e) {
         }
     };
 
-    Dragboard.prototype.showInstance = function (igadget) {
-        igadget.paint();
+    Dragboard.prototype.showInstance = function (iwidget) {
+        iwidget.paint();
     };
 
-    Dragboard.prototype.getIGadgets = function () {
-        return this.iGadgets.values();
+    Dragboard.prototype.getIWidgets = function () {
+        return this.iWidgets.values();
     };
 
-    Dragboard.prototype.getIGadget = function (iGadgetId) {
-        return this.iGadgets.get(iGadgetId);
+    Dragboard.prototype.getIWidget = function (iWidgetId) {
+        return this.iWidgets.get(iWidgetId);
     };
 
     Dragboard.prototype.getWorkspace = function () {
         return this.workSpace;
     };
 
-    Dragboard.prototype._updateIGadgetInfo = function (iGadget) {
-        OpManagerFactory.getInstance().globalDragboard._updateIGadgetInfo(iGadget);
+    Dragboard.prototype._updateIWidgetInfo = function (iWidget) {
+        OpManagerFactory.getInstance().globalDragboard._updateIWidgetInfo(iWidget);
         this.workSpace.updateVisibleTab(this.tab.index);
     };
 

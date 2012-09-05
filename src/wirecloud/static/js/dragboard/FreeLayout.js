@@ -24,14 +24,14 @@
  */
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
-/*global gettext, Constants, DragboardLayout, DragboardPosition, IGadget, LayoutManagerFactory, LogManagerFactory, MultiValuedSize*/
+/*global gettext, Constants, DragboardLayout, DragboardPosition, IWidget, LayoutManagerFactory, LogManagerFactory, MultiValuedSize*/
 
 /////////////////////////////////////
 // FreeLayout
 /////////////////////////////////////
 
 /**
- * @class Represents a dragboard layout to be used to place igadgets into the dragboard.
+ * @class Represents a dragboard layout to be used to place iwidgets into the dragboard.
  *
  * This dragobard uses percentages for horizontal units and px for vertical units.
  *
@@ -43,7 +43,7 @@ function FreeLayout(dragboard, scrollbarSpace) {
     }
 
     this.initialized = false;
-    this.igadgetToMove = null;
+    this.iwidgetToMove = null;
     DragboardLayout.call(this, dragboard, scrollbarSpace);
 }
 FreeLayout.prototype = new DragboardLayout();
@@ -111,32 +111,32 @@ FreeLayout.prototype._notifyWindowResizeEvent = function (widthChanged, heightCh
 };
 
 
-FreeLayout.prototype._notifyResizeEvent = function (iGadget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
+FreeLayout.prototype._notifyResizeEvent = function (iWidget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
     if (resizeLeftSide) {
         var widthDiff = newWidth - oldWidth;
-        var position = iGadget.getPosition();
+        var position = iWidget.getPosition();
         position.x -= widthDiff;
 
         if (persist) {
-            iGadget.setPosition(position);
+            iWidget.setPosition(position);
         } else {
-            iGadget._notifyWindowResizeEvent();
+            iWidget._notifyWindowResizeEvent();
         }
     }
 
     if (persist) {
         // Save new position into persistence
-        this.dragboard._commitChanges([iGadget.code]);
+        this.dragboard._commitChanges([iWidget.code]);
     }
 };
 
 FreeLayout.prototype.initialize = function () {
-    var iGadget, key;
+    var iWidget, key;
 
-    // Insert igadgets
-    for (key in this.iGadgets) {
-        iGadget = this.iGadgets[key];
-        iGadget.paint(true);
+    // Insert iwidgets
+    for (key in this.iWidgets) {
+        iWidget = this.iWidgets[key];
+        iWidget.paint(true);
     }
 
     this.initialized = true;
@@ -149,37 +149,37 @@ FreeLayout.prototype.getCellAt = function (x, y) {
     return new DragboardPosition((x * this.MAX_HLU) / this.getWidth(), y);
 };
 
-FreeLayout.prototype.addIGadget = function (iGadget, affectsDragboard) {
-    DragboardLayout.prototype.addIGadget.call(this, iGadget, affectsDragboard);
+FreeLayout.prototype.addIWidget = function (iWidget, affectsDragboard) {
+    DragboardLayout.prototype.addIWidget.call(this, iWidget, affectsDragboard);
 
     if (!this.initialized) {
         return;
     }
 
-    var position = iGadget.getPosition();
+    var position = iWidget.getPosition();
     if (!(position instanceof DragboardPosition)) {
         position = new DragboardPosition(0, 0);
     }
 
-    iGadget.setPosition(position);
+    iWidget.setPosition(position);
 
-    this._adaptIGadget(iGadget);
+    this._adaptIWidget(iWidget);
 };
 
-FreeLayout.prototype.initializeMove = function (igadget, draggable) {
+FreeLayout.prototype.initializeMove = function (iwidget, draggable) {
     var msg;
 
     draggable = draggable || null; // default value for the draggable parameter
 
     // Check for pendings moves
-    if (this.igadgetToMove !== null) {
+    if (this.iwidgetToMove !== null) {
         msg = gettext("There was a pending move that was cancelled because initializedMove function was called before it was finished.");
         LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
         this.cancelMove();
     }
 
-    this.igadgetToMove = igadget;
-    this.newPosition = igadget.getPosition().clone();
+    this.iwidgetToMove = iwidget;
+    this.newPosition = iwidget.getPosition().clone();
 
     if (draggable) {
         draggable.setXOffset(0);
@@ -188,7 +188,7 @@ FreeLayout.prototype.initializeMove = function (igadget, draggable) {
 };
 
 FreeLayout.prototype.moveTemporally = function (x, y) {
-    if (!(this.igadgetToMove instanceof IGadget)) {
+    if (!(this.iwidgetToMove instanceof IWidget)) {
         var msg = gettext("Dragboard: You must call initializeMove function before calling to this function (moveTemporally).");
         LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
         return;
@@ -199,8 +199,8 @@ FreeLayout.prototype.moveTemporally = function (x, y) {
 };
 
 FreeLayout.prototype.acceptMove = function () {
-    if (!(this.igadgetToMove instanceof IGadget)) {
-        var msg = gettext("Function acceptMove called when there is not an started igadget move.");
+    if (!(this.iwidgetToMove instanceof IWidget)) {
+        var msg = gettext("Function acceptMove called when there is not an started iwidget move.");
         LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
         return;
     }
@@ -212,49 +212,49 @@ FreeLayout.prototype.acceptMove = function () {
         this.newPosition.y = 0;
     }
 
-    this.igadgetToMove.setPosition(this.newPosition);
+    this.iwidgetToMove.setPosition(this.newPosition);
     // This is needed to check if the scrollbar status has changed (visible/hidden)
     this.dragboard._notifyWindowResizeEvent();
-    // But at least "igadgetToMove" must be updated, so force a call to its _notifyWindowResizeEvent method
-    this.igadgetToMove._notifyWindowResizeEvent();
-    this.dragboard._commitChanges([this.igadgetToMove.code]);
+    // But at least "iwidgetToMove" must be updated, so force a call to its _notifyWindowResizeEvent method
+    this.iwidgetToMove._notifyWindowResizeEvent();
+    this.dragboard._commitChanges([this.iwidgetToMove.code]);
 
-    this.igadgetToMove = null;
+    this.iwidgetToMove = null;
     this.newPosition = null;
 };
 
 FreeLayout.prototype.cancelMove = function () {
     var msg;
 
-    if (!(this.igadgetToMove instanceof IGadget)) {
+    if (!(this.iwidgetToMove instanceof IWidget)) {
         msg = gettext("Trying to cancel an inexistant temporal move.");
         LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
         return;
     }
 
-    this.igadgetToMove._notifyWindowResizeEvent();
-    this.igadgetToMove = null;
+    this.iwidgetToMove._notifyWindowResizeEvent();
+    this.iwidgetToMove = null;
     this.newPosition = null;
 };
 
-FreeLayout.prototype._raiseIGadgetCallback = function () {
-    this.igadget.setMinimizeStatus(false);
-    this.igadget.layout.dragboard.raiseToTop(this.igadget);
+FreeLayout.prototype._raiseIWidgetCallback = function () {
+    this.iwidget.setMinimizeStatus(false);
+    this.iwidget.layout.dragboard.raiseToTop(this.iwidget);
     LayoutManagerFactory.getInstance().hideCover();
 };
 
-FreeLayout.prototype.fillFloatingGadgetsMenu = function (menu) {
-    var i, igadgetKeys, curIGadget, key;
+FreeLayout.prototype.fillFloatingWidgetsMenu = function (menu) {
+    var i, iwidgetKeys, curIWidget, key;
 
-    igadgetKeys = this.iGadgets.keys();
-    if (igadgetKeys.length > 0) {
-        for (i = 0; i < igadgetKeys.length; i++) {
-            key = igadgetKeys[i];
-            curIGadget = this.iGadgets[key];
+    iwidgetKeys = this.iWidgets.keys();
+    if (iwidgetKeys.length > 0) {
+        for (i = 0; i < iwidgetKeys.length; i++) {
+            key = iwidgetKeys[i];
+            curIWidget = this.iWidgets[key];
 
-            menu.addOption(null, curIGadget.name, this._raiseIGadgetCallback.bind({"igadget": curIGadget}), i);
+            menu.addOption(null, curIWidget.name, this._raiseIWidgetCallback.bind({"iwidget": curIWidget}), i);
         }
     } else {
-        menu.addOption(null, gettext("No Floating Gadgets"), function () {}, 0);
+        menu.addOption(null, gettext("No Floating Widgets"), function () {}, 0);
     }
 };

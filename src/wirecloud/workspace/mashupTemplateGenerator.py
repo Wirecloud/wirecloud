@@ -26,7 +26,7 @@ from lxml import etree
 from django.conf import settings
 
 from commons.get_data import get_variable_value_from_varname
-from wirecloud.models import IGadget, Tab, TabPreference, WorkSpacePreference
+from wirecloud.models import IWidget, Tab, TabPreference, WorkSpacePreference
 
 
 #definition of namespaces that will be used in rdf documents
@@ -70,19 +70,19 @@ def typeCode2typeText(typeCode):
     return None
 
 
-def get_igadgets_description(included_igadgets):
+def get_iwidgets_description(included_iwidgets):
     description = "Wirecloud Mashup composed of: "
 
-    for igadget in included_igadgets:
-        description += igadget.gadget.name + ', '
+    for iwidget in included_iwidgets:
+        description += iwidget.widget.name + ', '
 
     return description[:-2]
 
 
 def get_workspace_description(workspace):
-    included_igadgets = IGadget.objects.filter(tab__workspace=workspace)
+    included_iwidgets = IWidget.objects.filter(tab__workspace=workspace)
 
-    return get_igadgets_description(included_igadgets)
+    return get_iwidgets_description(included_iwidgets)
 
 
 def build_template_from_workspace(options, workspace, user):
@@ -115,7 +115,7 @@ def build_template_from_workspace(options, workspace, user):
     if not organization:
         organization = ''
 
-    readOnlyGadgets = options.get('readOnlyGadgets', False)
+    readOnlyWidgets = options.get('readOnlyWidgets', False)
     readOnlyConnectables = options.get('readOnlyConnectables', False)
 
     parametrization = options.get('parametrization')
@@ -124,7 +124,7 @@ def build_template_from_workspace(options, workspace, user):
 
     # Build the template
     workspace_tabs = Tab.objects.filter(workspace=workspace).order_by('position')
-    included_igadgets = IGadget.objects.filter(tab__workspace=workspace)
+    included_iwidgets = IWidget.objects.filter(tab__workspace=workspace)
 
     template = etree.Element('Template', xmlns="http://morfeo-project.org/2007/Template")
     desc = etree.Element('Catalog.ResourceDescription')
@@ -159,36 +159,36 @@ def build_template_from_workspace(options, workspace, user):
 
     wiring = etree.SubElement(template, 'Platform.Wiring')
 
-    # iGadgets
-    for igadget in included_igadgets:
-        gadget = igadget.gadget
-        igadget_id = str(igadget.id)
-        igadget_params = {}
-        if igadget_id in parametrization:
-            igadget_params = parametrization[igadget_id]
+    # iWidgets
+    for iwidget in included_iwidgets:
+        widget = iwidget.widget
+        iwidget_id = str(iwidget.id)
+        iwidget_params = {}
+        if iwidget_id in parametrization:
+            iwidget_params = parametrization[iwidget_id]
 
-        resource = etree.SubElement(tabs[igadget.tab.id], 'Resource', id=igadget_id, vendor=gadget.vendor, name=gadget.name, version=gadget.version, title=igadget.name)
-        if readOnlyGadgets:
+        resource = etree.SubElement(tabs[iwidget.tab.id], 'Resource', id=iwidget_id, vendor=widget.vendor, name=widget.name, version=widget.version, title=iwidget.name)
+        if readOnlyWidgets:
             resource.set('readonly', 'true')
 
-        position = igadget.position
+        position = iwidget.position
         etree.SubElement(resource, 'Position', x=str(position.posX), y=str(position.posY), z=str(position.posZ))
         etree.SubElement(resource, 'Rendering', height=str(position.height),
             width=str(position.width), minimized=str(position.minimized),
-            fulldragboard=str(position.fulldragboard), layout=str(igadget.layout))
+            fulldragboard=str(position.fulldragboard), layout=str(iwidget.layout))
 
-        gadget_preferences = gadget.get_related_preferences()
-        for pref in gadget_preferences:
+        widget_preferences = widget.get_related_preferences()
+        for pref in widget_preferences:
             status = 'normal'
-            if pref.name in igadget_params:
-                igadget_param_desc = igadget_params[pref.name]
-                if igadget_param_desc['source'] == 'default':
+            if pref.name in iwidget_params:
+                iwidget_param_desc = iwidget_params[pref.name]
+                if iwidget_param_desc['source'] == 'default':
                     # Do not issue a Preference element for this preference
                     continue
-                value = igadget_param_desc['value']
-                status = igadget_param_desc['status']
+                value = iwidget_param_desc['value']
+                status = iwidget_param_desc['status']
             else:
-                value = get_variable_value_from_varname(workspace.creator, igadget, pref.name)
+                value = get_variable_value_from_varname(workspace.creator, iwidget, pref.name)
 
             element = etree.SubElement(resource, 'Preference', name=pref.name, value=value)
             if status != 'normal':
@@ -196,29 +196,29 @@ def build_template_from_workspace(options, workspace, user):
                 if status != 'readonly':
                     element.set('hidden', 'true')
 
-        gadget_properties = gadget.get_related_properties()
-        for prop in gadget_properties:
+        widget_properties = widget.get_related_properties()
+        for prop in widget_properties:
             status = 'normal'
-            if prop.name in igadget_params:
-                igadget_param_desc = igadget_params[prop.name]
-                if igadget_param_desc['source'] == 'default':
+            if prop.name in iwidget_params:
+                iwidget_param_desc = iwidget_params[prop.name]
+                if iwidget_param_desc['source'] == 'default':
                     # Do not issue a Property element for this property
                     continue
-                value = igadget_param_desc['value']
-                status = igadget_param_desc['status']
+                value = iwidget_param_desc['value']
+                status = iwidget_param_desc['status']
             else:
-                value = get_variable_value_from_varname(workspace.creator, igadget, prop.name)
+                value = get_variable_value_from_varname(workspace.creator, iwidget, prop.name)
 
             element = etree.SubElement(resource, 'Property', name=prop.name, value=value)
             if status != 'normal':
                 element.set('readonly', 'true')
 
-        events = gadget.get_related_events()
+        events = widget.get_related_events()
 
         for event in events:
             wiring.append(etree.Element('Event', name=event.name, type=typeCode2typeText(event.type), label=event.label, friendcode=event.friend_code))
 
-        slots = gadget.get_related_slots()
+        slots = widget.get_related_slots()
 
         for slot in slots:
             wiring.append(etree.Element('Slot', name=slot.name, type=typeCode2typeText(slot.type), label=slot.label, friendcode=slot.friend_code))
@@ -286,7 +286,7 @@ def build_rdf_template_from_workspace(options, workspace, user):
     graph.add((mashup_uri, VCARD['addr'], addr))
     graph.add((addr, VCARD['email'], rdflib.Literal(options.get('email'))))
 
-    read_only = options.get('readOnlyGadgets', False)
+    read_only = options.get('readOnlyWidgets', False)
     graph.add((mashup_uri, WIRE_M['readonly'], rdflib.Literal(str(read_only))))
 
     # add preferences and tabs
@@ -328,16 +328,16 @@ def build_rdf_template_from_workspace(options, workspace, user):
     graph.add((wiring, rdflib.RDF.type, WIRE['PlatformWiring']))
     graph.add((mashup_uri, WIRE_M['hasMashupWiring'], wiring))
 
-    readOnlyGadgets = options.get('readOnlyGadgets', False)
+    readOnlyWidgets = options.get('readOnlyWidgets', False)
     parametrization = options.get('parametrization')
     if not parametrization:
         parametrization = {}
 
-    included_iwidgets = IGadget.objects.filter(tab__workspace=workspace)
+    included_iwidgets = IWidget.objects.filter(tab__workspace=workspace)
     # iWidgets
     iwidgets = {}
     for iwidget in included_iwidgets:
-        widget = iwidget.gadget
+        widget = iwidget.widget
         iwidget_id = str(iwidget.id)
         iwidget_params = {}
         if iwidget_id in parametrization:
@@ -356,7 +356,7 @@ def build_rdf_template_from_workspace(options, workspace, user):
         graph.add((resource, USDL['versionInfo'], rdflib.Literal(widget.version)))
         graph.add((resource, RDFS['label'], rdflib.Literal(widget.name)))
 
-        if readOnlyGadgets:
+        if readOnlyWidgets:
             graph.add((resource, WIRE['readonly'], rdflib.Literal('true')))
 
         # iWidget position
@@ -540,9 +540,9 @@ def build_usdl_from_workspace(options, workspace, user, template_url):
     graph.add((abstract, BLUEPRINT['location'], abstract))
 
     #Mashup parts
-    included_iwidgets = IGadget.objects.filter(tab__workspace=workspace)
+    included_iwidgets = IWidget.objects.filter(tab__workspace=workspace)
     for iwidget in included_iwidgets:
-        widget = iwidget.gadget
+        widget = iwidget.widget
         part = WIRE_M[widget.vendor + '/' + widget.name + '/' + widget.version]
         graph.add((part, rdflib.RDF.type, USDL['Service']))
         graph.add((usdl_uri, USDL['hasPartMandatory'], part))

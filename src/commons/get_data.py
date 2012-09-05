@@ -40,31 +40,31 @@ from django.utils.translation import ugettext as _
 
 from commons.cache import CacheableData
 from wirecloud.context.utils import get_user_context_providers
-from wirecloud.models import Capability, Concept, ConceptName, Constant, IGadget, PublishedWorkSpace, Tab, UserPrefOption, UserWorkSpace, Variable, VariableDef, VariableValue, XHTML
+from wirecloud.models import Capability, Concept, ConceptName, Constant, IWidget, PublishedWorkSpace, Tab, UserPrefOption, UserWorkSpace, Variable, VariableDef, VariableValue, XHTML
 from wirecloud.preferences.views import get_workspace_preference_values, get_tab_preference_values
 from wirecloud.workspace.utils import createTab, decrypt_value, encrypt_value
 
 
-def _variable_cache_key(igadget):
-    return '_variable_cache/' + str(igadget.id)
+def _variable_cache_key(iwidget):
+    return '_variable_cache/' + str(iwidget.id)
 
 
-def _get_cached_variables(igadget):
-    key = _variable_cache_key(igadget)
+def _get_cached_variables(iwidget):
+    key = _variable_cache_key(iwidget)
 
     variables = cache.get(key)
     if variables == None:
-        variable_query = Variable.objects.filter(igadget__id=igadget.id).select_related('igadget', 'vardef')
+        variable_query = Variable.objects.filter(iwidget__id=iwidget.id).select_related('iwidget', 'vardef')
         variables = variable_query[::1]
         cache.set(key, variables)
 
     return variables
 
 
-def _invalidate_cached_variables(igadget):
-    key = _variable_cache_key(igadget)
+def _invalidate_cached_variables(iwidget):
+    key = _variable_cache_key(iwidget)
     cache.delete(key)
-    _invalidate_cached_variable_values(igadget.tab.workspace)
+    _invalidate_cached_variable_values(iwidget.tab.workspace)
 
 
 def _populate_variables_values_cache(workspace, user, key, forced_values=None):
@@ -77,19 +77,19 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
         preferences = get_workspace_preference_values(workspace)
         forced_values = process_forced_values(workspace, user, concept_values, preferences)
 
-    var_values = VariableValue.objects.filter(user__id=user.id, variable__igadget__tab__workspace=workspace)
+    var_values = VariableValue.objects.filter(user__id=user.id, variable__iwidget__tab__workspace=workspace)
     for var_value in var_values.select_related('variable__vardef'):
-        varigadget = var_value.variable.igadget.id
+        variwidget = var_value.variable.iwidget.id
         varname = var_value.variable.vardef.name
         # forced_values uses string keys
-        svarigadget = str(varigadget)
+        svariwidget = str(variwidget)
 
-        if not varigadget in values_by_varname:
-            values_by_varname[varigadget] = {}
+        if not variwidget in values_by_varname:
+            values_by_varname[variwidget] = {}
 
         entry = {}
-        if svarigadget in forced_values['igadget'] and varname in forced_values['igadget'][svarigadget]:
-            fv_entry = forced_values['igadget'][svarigadget][varname]
+        if svariwidget in forced_values['iwidget'] and varname in forced_values['iwidget'][svariwidget]:
+            fv_entry = forced_values['iwidget'][svariwidget][varname]
 
             entry['value'] = fv_entry['value']
             if var_value.variable.vardef.secure:
@@ -107,7 +107,7 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
 
         entry['secure'] = var_value.variable.vardef.secure
 
-        values_by_varname[varigadget][varname] = entry
+        values_by_varname[variwidget][varname] = entry
         values_by_varid[var_value.variable.id] = entry
 
     values = {
@@ -137,24 +137,24 @@ def _workspace_cache_key(workspace, user):
     return '/'.join(('_workspace_global_data', str(workspace.id), str(version), str(user.id)))
 
 
-def get_variable_value_from_varname(user, igadget, var_name):
+def get_variable_value_from_varname(user, iwidget, var_name):
 
-    if isinstance(igadget, IGadget):
-        igadget_id = igadget.id
-    elif 'id' in igadget:
-        igadget_id = igadget.id
-        igadget = IGadget.objects.get(id=igadget_id)
+    if isinstance(iwidget, IWidget):
+        iwidget_id = iwidget.id
+    elif 'id' in iwidget:
+        iwidget_id = iwidget.id
+        iwidget = IWidget.objects.get(id=iwidget_id)
     else:
-        igadget_id = int(igadget)
-        igadget = IGadget.objects.get(id=igadget_id)
+        iwidget_id = int(iwidget)
+        iwidget = IWidget.objects.get(id=iwidget_id)
 
-    workspace = igadget.tab.workspace
+    workspace = iwidget.tab.workspace
     key = _variable_values_cache_key(workspace, user)
     values = cache.get(key)
     if values == None:
         values = _populate_variables_values_cache(workspace, user, key)
 
-    entry = values['by_varname'][igadget_id][var_name]
+    entry = values['by_varname'][iwidget_id][var_name]
     if entry['secure'] == True:
         return decrypt_value(entry['value'])
     else:
@@ -208,19 +208,19 @@ class VariableValueCacheManager():
         entry = values['by_varid'][variable.id]
         return self._process_entry(entry)
 
-    def get_variable_value_from_varname(self, igadget, var_name):
+    def get_variable_value_from_varname(self, iwidget, var_name):
 
-        if 'id' in igadget:
-            igadget_id = igadget.id
-            igadget = IGadget.objects.get(id=igadget_id)
-        elif not isinstance(igadget, IGadget):
-            igadget_id = int(igadget)
-            igadget = IGadget.objects.get(id=igadget_id)
+        if 'id' in iwidget:
+            iwidget_id = iwidget.id
+            iwidget = IWidget.objects.get(id=iwidget_id)
+        elif not isinstance(iwidget, IWidget):
+            iwidget_id = int(iwidget)
+            iwidget = IWidget.objects.get(id=iwidget_id)
         else:
-            igadget_id = igadget
+            iwidget_id = iwidget
 
         values = self.get_variable_values()
-        entry = values['by_varname'][igadget_id][var_name]
+        entry = values['by_varname'][iwidget_id][var_name]
         return self._process_entry(entry)
 
     def get_variable_data(self, variable):
@@ -254,16 +254,16 @@ def get_wiring_variable_data(var, ig):
     res_data['type'] = var.vardef.type
     res_data['value'] = var.value
     res_data['friend_code'] = var.vardef.friend_code
-    res_data['igadget_id'] = ig.id
+    res_data['iwidget_id'] = ig.id
 
     return res_data
 
 
-def get_wiring_data(igadgets):
+def get_wiring_data(iwidgets):
     res_data = []
 
-    for ig in igadgets:
-        variables = Variable.objects.filter(igadget=ig)
+    for ig in iwidgets:
+        variables = Variable.objects.filter(iwidget=ig)
 
         igObject = {}
         list = []
@@ -284,10 +284,10 @@ def get_wiring_data(igadgets):
     return res_data
 
 
-def get_gadget_data(gadget):
-    tgadget = gadget.get_translated_model()
+def get_widget_data(widget):
+    twidget = widget.get_translated_model()
     data_ret = {}
-    data_variabledef = VariableDef.objects.filter(gadget=gadget)
+    data_variabledef = VariableDef.objects.filter(widget=widget)
     data_vars = {}
     for var in data_variabledef:
         tvar = var.get_translated_model()
@@ -330,38 +330,38 @@ def get_gadget_data(gadget):
 
         data_vars[var.name] = data_var
 
-    data_code = get_object_or_404(XHTML.objects.all().values('uri'), id=gadget.xhtml.id)
+    data_code = get_object_or_404(XHTML.objects.all().values('uri'), id=widget.xhtml.id)
 
-    data_ret['name'] = gadget.name
-    if tgadget.display_name and tgadget.display_name != "":
-        data_ret['displayName'] = tgadget.display_name
+    data_ret['name'] = widget.name
+    if twidget.display_name and twidget.display_name != "":
+        data_ret['displayName'] = twidget.display_name
     else:
-        data_ret['displayName'] = gadget.name
-    data_ret['vendor'] = gadget.vendor
-    data_ret['description'] = tgadget.description
-    data_ret['uri'] = gadget.uri
-    data_ret['wikiURI'] = tgadget.wikiURI
-    data_ret['imageURI'] = tgadget.imageURI
-    data_ret['iPhoneImageURI'] = tgadget.iPhoneImageURI
-    data_ret['version'] = gadget.version
-    data_ret['mail'] = gadget.mail
-    data_ret['last_update'] = gadget.last_update
+        data_ret['displayName'] = widget.name
+    data_ret['vendor'] = widget.vendor
+    data_ret['description'] = twidget.description
+    data_ret['uri'] = widget.uri
+    data_ret['wikiURI'] = twidget.wikiURI
+    data_ret['imageURI'] = twidget.imageURI
+    data_ret['iPhoneImageURI'] = twidget.iPhoneImageURI
+    data_ret['version'] = widget.version
+    data_ret['mail'] = widget.mail
+    data_ret['last_update'] = widget.last_update
     data_ret['size'] = {}
-    data_ret['size']['width'] = gadget.width
-    data_ret['size']['height'] = gadget.height
+    data_ret['size']['width'] = widget.width
+    data_ret['size']['height'] = widget.height
     data_ret['variables'] = data_vars
     data_ret['xhtml'] = data_code
 
-    data_ret['capabilities'] = get_gadget_capabilities(gadget_id=gadget.id)
+    data_ret['capabilities'] = get_widget_capabilities(widget_id=widget.id)
 
     return data_ret
 
 
-def get_gadget_capabilities(gadget_id):
+def get_widget_capabilities(widget_id):
     data_ret = []
 
     try:
-        capability_list = Capability.objects.filter(gadget__id=gadget_id)
+        capability_list = Capability.objects.filter(widget__id=widget_id)
 
         for capability in capability_list:
             cap = {}
@@ -430,16 +430,16 @@ def process_forced_values(workspace, user, concept_values, preferences):
         forced_values = simplejson.loads(workspace.forcedValues)
     except:
         forced_values = {
-            'igadget': {},
+            'iwidget': {},
         }
 
     if not 'extra_prefs' in forced_values:
         forced_values['extra_prefs'] = {}
 
-    if not 'igadget' in forced_values:
-        forced_values['igadget'] = {}
+    if not 'iwidget' in forced_values:
+        forced_values['iwidget'] = {}
 
-    if len(forced_values['igadget']) == 0:
+    if len(forced_values['iwidget']) == 0:
         forced_values['empty_params'] = []
         return forced_values
 
@@ -455,7 +455,7 @@ def process_forced_values(workspace, user, concept_values, preferences):
 
     processor = TemplateValueProcessor({'user': user, 'context': concept_values, 'params': param_values})
 
-    collection = forced_values['igadget']
+    collection = forced_values['iwidget']
     for key in collection:
         values = collection[key]
         for var_name in values:
@@ -505,13 +505,13 @@ def _get_global_workspace_data(workSpaceDAO, user):
 
     for tab in tabs_data:
         tab_pk = tab['id']
-        igadgets = IGadget.objects.filter(tab__id=tab_pk).order_by('id')
+        iwidgets = IWidget.objects.filter(tab__id=tab_pk).order_by('id')
 
-        igadget_data = []
-        for igadget in igadgets:
-            igadget_data.append(get_igadget_data(igadget, user, workSpaceDAO, cache_manager))
+        iwidget_data = []
+        for iwidget in iwidgets:
+            iwidget_data.append(get_iwidget_data(iwidget, user, workSpaceDAO, cache_manager))
 
-        tab['igadgetList'] = igadget_data
+        tab['iwidgetList'] = iwidget_data
 
     data_ret['workspace']['wiring'] = workSpaceDAO.wiringStatus
 
@@ -542,28 +542,28 @@ def get_tab_data(tab):
     }
 
 
-def get_igadget_data(igadget, user, workspace, cache_manager=None):
+def get_iwidget_data(iwidget, user, workspace, cache_manager=None):
 
-    data_ret = {'id': igadget.id,
-        'name': igadget.name,
-        'tab': igadget.tab.id,
-        'layout': igadget.layout,
-        'refused_version': igadget.refused_version,
-        'gadget': igadget.gadget.uri,
-        'top': igadget.position.posY,
-        'left': igadget.position.posX,
-        'zIndex': igadget.position.posZ,
-        'width': igadget.position.width,
-        'height': igadget.position.height,
-        'fulldragboard': igadget.position.fulldragboard,
-        'minimized': igadget.position.minimized,
-        'transparency': igadget.transparency,
-        'readOnly': igadget.readOnly,
+    data_ret = {'id': iwidget.id,
+        'name': iwidget.name,
+        'tab': iwidget.tab.id,
+        'layout': iwidget.layout,
+        'refused_version': iwidget.refused_version,
+        'widget': iwidget.widget.uri,
+        'top': iwidget.position.posY,
+        'left': iwidget.position.posX,
+        'zIndex': iwidget.position.posZ,
+        'width': iwidget.position.width,
+        'height': iwidget.position.height,
+        'fulldragboard': iwidget.position.fulldragboard,
+        'minimized': iwidget.position.minimized,
+        'transparency': iwidget.transparency,
+        'readOnly': iwidget.readOnly,
     }
 
-    if igadget.icon_position:
-        data_ret['icon_top'] = igadget.icon_position.posY
-        data_ret['icon_left'] = igadget.icon_position.posX
+    if iwidget.icon_position:
+        data_ret['icon_top'] = iwidget.icon_position.posY
+        data_ret['icon_left'] = iwidget.icon_position.posX
     else:
         data_ret['icon_top'] = 0
         data_ret['icon_left'] = 0
@@ -571,7 +571,7 @@ def get_igadget_data(igadget, user, workspace, cache_manager=None):
     if cache_manager == None:
         cache_manager = VariableValueCacheManager(workspace, user)
 
-    variables = _get_cached_variables(igadget)
+    variables = _get_cached_variables(iwidget)
     data_ret['variables'] = {}
     for variable in variables:
         var_data = get_variable_data(variable, user, workspace, cache_manager)
@@ -683,7 +683,7 @@ def get_concept_data(concept, concept_values):
     return data_ret
 
 
-# Only for extenal/constant context values (no igadget context values)
+# Only for extenal/constant context values (no iwidget context values)
 def get_concept_value(concept, data):
     res = ''
 

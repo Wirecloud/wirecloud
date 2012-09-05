@@ -142,7 +142,7 @@
   max-width: 700px;
 }
 
-.catalogue .developer_block button, .catalogue #template_uri, .catalogue #gadget_uri {
+.catalogue .developer_block button, .catalogue #template_uri, .catalogue #widget_uri {
   margin-left:15px;
   margin-top:10px;
 }
@@ -253,7 +253,7 @@
   max-width: 700px;
 }
 
-.fi-ware_catalogue .developer_block button, .catalogue #template_uri, .catalogue #gadget_uri {
+.fi-ware_catalogue .developer_block button, .catalogue #template_uri, .catalogue #widget_uri {
   margin-left:15px;
   margin-top:10px;
 }
@@ -639,7 +639,7 @@ Resource
 	position: absolute;
 }
 
-#app_desc, #app_gadget_list {
+#app_desc, #app_widget_list {
 	clear: both;
 }
 

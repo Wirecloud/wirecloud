@@ -24,7 +24,7 @@
 */
 
 /*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global $, GadgetVersion */
+/*global $, WidgetVersion */
 "use strict";
 
 function CatalogueResource(resourceJSON_) {
@@ -101,8 +101,8 @@ function CatalogueResource(resourceJSON_) {
         return type === 'mashup';
     };
 
-    this.isGadget = function () {
-        return type === 'gadget';
+    this.isWidget = function () {
+        return type === 'widget';
     };
 
     this.getAddedBy = function () {
@@ -169,7 +169,7 @@ function CatalogueResource(resourceJSON_) {
     // CONVENIENCE FUNCTIONS
     /////////////////////////////
     this.changeVersion = function (version) {
-        if (version instanceof GadgetVersion) {
+        if (version instanceof WidgetVersion) {
             version = version.text;
         }
 
@@ -192,7 +192,7 @@ function CatalogueResource(resourceJSON_) {
     for (i = 0; i < versions.length; i += 1) {
         version_data = versions[i];
 
-        version_data.version = new GadgetVersion(version_data.version, 'catalogue');
+        version_data.version = new WidgetVersion(version_data.version, 'catalogue');
         version_data.events = version_data.events.map(flat_friendcode);
         version_data.slots = version_data.slots.map(flat_friendcode);
         allVersions.push(version_data.version);

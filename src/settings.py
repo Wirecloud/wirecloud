@@ -195,15 +195,15 @@ AUTHENTICATION_BACKENDS = (
 #AD_LDAP_URL = 'ldap://host:port'
 #AD_SEARCH_DN = 'uid=%s,ou=OUExample,o=OExample'
 
-# Absolute path to the directory that holds in development gadgets.
-GADGETS_ROOT = path.join(BASEDIR, 'media', 'gadgets')
+# Absolute path to the directory that holds in development widgets.
+GADGETS_ROOT = path.join(BASEDIR, 'media', 'widgets')
 
 # WGT deployment dirs
 CATALOGUE_MEDIA_ROOT = path.join(BASEDIR, 'catalogue', 'media')
-GADGETS_DEPLOYMENT_DIR = path.join(BASEDIR, 'deployment', 'gadgets')
+GADGETS_DEPLOYMENT_DIR = path.join(BASEDIR, 'deployment', 'widgets')
 GADGETS_DEPLOYMENT_TMPDIR = path.join(BASEDIR, 'deployment', 'tmp')
 
-# URL prefix in order to complete gadget relative URL
+# URL prefix in order to complete widget relative URL
 #DOMAIN_FOR_GADGETS_LINKED_WITH_RELATIVE_URLS = 'http://mac.hi.inet'
 
 CERTIFICATION_ENABLED = False

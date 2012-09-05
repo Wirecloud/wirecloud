@@ -134,7 +134,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
     def get_iwidget_anchor(self, iwidget, endpoint):
         return self.driver.execute_script('''
             var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
-            return LayoutManagerFactory.getInstance().viewsByName["wiring"].igadgets[%(iwidget)d].getAnchor("%(endpoint)s").wrapperElement;
+            return LayoutManagerFactory.getInstance().viewsByName["wiring"].iwidgets[%(iwidget)d].getAnchor("%(endpoint)s").wrapperElement;
         ''' % {"iwidget": iwidget, "endpoint": endpoint}
         )
 
@@ -148,10 +148,10 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         self.change_main_view('wiring')
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
-        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container igadget')]//*[text()='Test (1)']")
+        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
         ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-40, -40).release(None).perform()
 
-        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container igadget')]//*[text()='Test (2)']")
+        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
         ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(40, 40).release(None).perform()
 
         source = self.get_iwidget_anchor(1, 'event')

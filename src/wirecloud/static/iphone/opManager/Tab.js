@@ -39,12 +39,12 @@ function Tab(tabInfo, workSpace, index) {
     };
 
     /*                                                                       *
-     *  Paint the igadget list of this tab. It is used in the first charge.  *
+     *  Paint the iwidget list of this tab. It is used in the first charge.  *
      *                                                                       */
     Tab.prototype.paint = function (container, scrollLeft, index) {
-        var iGadgets = this.dragboard.getIGadgets(),
+        var iWidgets = this.dragboard.getIWidgets(),
             i, tabsLength, opManager, tabContent,
-            iGadgetElement, icon, navBarElement;
+            iWidgetElement, icon, navBarElement;
 
         this.tabElement = document.createElement('div');
         this.tabElement.setAttribute('class', "ezweb_tab");
@@ -58,17 +58,17 @@ function Tab(tabInfo, workSpace, index) {
 
         tabContent = document.createElement('div');
         tabContent.setAttribute('class', 'tab_content');
-        for (i = 0; i < iGadgets.length; i += 1) {
-            iGadgetElement = document.createElement('div');
-            iGadgetElement.setAttribute('class', 'igadget_item');
+        for (i = 0; i < iWidgets.length; i += 1) {
+            iWidgetElement = document.createElement('div');
+            iWidgetElement.setAttribute('class', 'iwidget_item');
             icon = document.createElement('img');
-            icon.setAttribute('class', "igadget_icon");
-            icon.setAttribute('src', iGadgets[i].getGadget().getIPhoneImageURI());
-            iGadgetElement.appendChild(icon);
+            icon.setAttribute('class', "iwidget_icon");
+            icon.setAttribute('src', iWidgets[i].getWidget().getIPhoneImageURI());
+            iWidgetElement.appendChild(icon);
 
-            iGadgetElement.appendChild(document.createTextNode(iGadgets[i].name));
-            iGadgetElement.addEventListener('click', opManager.showDragboard.bind(opManager, iGadgets[i].id), false);
-            tabContent.appendChild(iGadgetElement);
+            iWidgetElement.appendChild(document.createTextNode(iWidgets[i].name));
+            iWidgetElement.addEventListener('click', opManager.showDragboard.bind(opManager, iWidgets[i].id), false);
+            tabContent.appendChild(iWidgetElement);
         }
         this.tabElement.appendChild(tabContent);
 

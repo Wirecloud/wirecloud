@@ -205,7 +205,7 @@ img {
     overflow: hidden;
 }
 
-.igadget_item {
+.iwidget_item {
     color: #4C5054;
     width: 75px;
     display: inline-block;
@@ -218,7 +218,7 @@ img {
     overflow: hidden;
 }
 
-.igadget_icon {
+.iwidget_icon {
     display: inline-block;
     width: 59px;
     height: 60px;
@@ -395,9 +395,9 @@ body.landscape #mymw-nav {
     top: 0;
     right: 5px;
 }
-/**** iGadget Section ****/
+/**** iWidget Section ****/
 
-.igadget_section {
+.iwidget_section {
     border-top: 2px solid #4C5054;
     margin: auto;
     display: block;
@@ -406,20 +406,20 @@ body.landscape #mymw-nav {
     background: #fcfcfc;
 }
 
-.igadget_section > div {
+.iwidget_section > div {
     position: absolute;
     width: 100%;
     z-index: 2;
 }
 
-.igadget_section div.mymw-inactive {
+.iwidget_section div.mymw-inactive {
     height: 0;
     width: 0;
     /*visibility: hidden;*/
     z-index: -1;
 }
 
-.gadget_content {
+.widget_content {
     overflow: hidden;
     display: block;
     position: absolute;
@@ -431,27 +431,27 @@ body.landscape #mymw-nav {
     margin: 0px;
 }
 
-.igadget_section div.mymw-inactive .related_gadgets{
+.iwidget_section div.mymw-inactive .related_widgets{
     height: 0;
     width: 0;
 }
 
-.igadget_section div.mymw-inactive .gadget_object{
+.iwidget_section div.mymw-inactive .widget_object{
     height: 0;
     width: 0;
 }
-.gadget_object{
+.widget_object{
     width: 100%;
     height: 100%;
 }
 
-/**** Related Gadget Section ****/
-.igadget_section div.mymw-inactive .related_gadgets{
+/**** Related Widget Section ****/
+.iwidget_section div.mymw-inactive .related_widgets{
     height: 0;
     width: 0;
 }
 
-.related_gadgets{
+.related_widgets{
     border: 1px solid #E0E0E0;
     width: 95%;
     height: 36px;
@@ -461,19 +461,19 @@ body.landscape #mymw-nav {
     display: block;
     padding: 2px 0;
 }
-.related_gadget_div{
+.related_widget_div{
     display: inline;
     position: relative;
 }
 
-.related_gadget{
+.related_widget{
     margin: 0 5px;
     height: 35px;
     width: 35px;
     cursor: pointer;
 }
 
-.related_gadgets .active{
+.related_widgets .active{
     border: 2px solid #ebabab;
 }
 

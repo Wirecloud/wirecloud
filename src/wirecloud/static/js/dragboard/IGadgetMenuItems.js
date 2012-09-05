@@ -22,15 +22,15 @@
 /*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50, prototypejs: true */
 /*global gettext, LayoutManagerFactory, StyledElements*/
 
-var IGadgetMenuItems = function (iGadget) {
+var IWidgetMenuItems = function (iWidget) {
     StyledElements.DynamicMenuItems.call(this);
 
-    this.iGadget = iGadget;
-    this.has_prefs = iGadget.gadget.getTemplate().getUserPrefs().length > 0;
+    this.iWidget = iWidget;
+    this.has_prefs = iWidget.widget.getTemplate().getUserPrefs().length > 0;
 };
-IGadgetMenuItems.prototype = new StyledElements.DynamicMenuItems();
+IWidgetMenuItems.prototype = new StyledElements.DynamicMenuItems();
 
-IGadgetMenuItems.prototype.build = function () {
+IWidgetMenuItems.prototype.build = function () {
     var items, fulldragboard_label, layout_label;
 
     items = [];
@@ -41,7 +41,7 @@ IGadgetMenuItems.prototype.build = function () {
             function () {
                 var prueba = new Wirecloud.Widget.PreferencesWindowMenu();
                 prueba.show(this);
-            }.bind(this.iGadget)
+            }.bind(this.iWidget)
         ));
     }
 
@@ -54,10 +54,10 @@ IGadgetMenuItems.prototype.build = function () {
             } else {
                 this.content.src = this.codeURL;
             }
-        }.bind(this.iGadget)
+        }.bind(this.iWidget)
     ));
 
-    if (this.iGadget.isInFullDragboardMode()) {
+    if (this.iWidget.isInFullDragboardMode()) {
         fulldragboard_label = gettext("Exit Full Dragboard");
     } else {
         fulldragboard_label = gettext("Full Dragboard");
@@ -66,18 +66,18 @@ IGadgetMenuItems.prototype.build = function () {
         fulldragboard_label,
         function () {
             this.setFullDragboardMode(!this.isInFullDragboardMode());
-        }.bind(this.iGadget)
+        }.bind(this.iWidget)
     ));
 
-    if (!this.iGadget.isInFullDragboardMode()) {
-        if (this.iGadget.onFreeLayout()) {
+    if (!this.iWidget.isInFullDragboardMode()) {
+        if (this.iWidget.onFreeLayout()) {
             layout_label = gettext("Snap to grid");
         } else {
             layout_label = gettext("Extract from grid");
         }
         items.push(new StyledElements.MenuItem(
             layout_label,
-            this.iGadget.toggleLayout.bind(this.iGadget)
+            this.iWidget.toggleLayout.bind(this.iWidget)
         ));
     }
 

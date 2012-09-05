@@ -28,7 +28,7 @@ var MobileDragboard = function () {
     this.layout.getCenterContainer().appendChild(this.alternatives);
 
     this.toolbar.addEventListener('back', function () {
-        OpManagerFactory.getInstance().showGadgetsMenu();
+        OpManagerFactory.getInstance().showWidgetsMenu();
     });
 
     this.clear();
@@ -46,14 +46,14 @@ MobileDragboard.prototype.repaint = function (temporal) {
     this.layout.repaint(temporal);
 };
 
-MobileDragboard.prototype.newIGadgetContainer = function () {
+MobileDragboard.prototype.newIWidgetContainer = function () {
     return this.alternatives.createAlternative();
 };
 
-MobileDragboard.prototype.show = function (igadget_alternative) {
-    this.alternatives.showAlternative(igadget_alternative);
+MobileDragboard.prototype.show = function (iwidget_alternative) {
+    this.alternatives.showAlternative(iwidget_alternative);
 };
 
-MobileDragboard.prototype._updateIGadgetInfo = function (igadget) {
-    this.toolbar.setTitle(igadget.name);
+MobileDragboard.prototype._updateIWidgetInfo = function (iwidget) {
+    this.toolbar.setTitle(iwidget.name);
 };

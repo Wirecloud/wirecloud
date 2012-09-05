@@ -32,7 +32,7 @@
         "fields": {
             "cacheable": true,
             "url": "Wirecloud/Test/1.0/test.html",
-            "uri": "/gadgets/Wirecloud/Test/1.0/xhtml",
+            "uri": "/widgets/Wirecloud/Test/1.0/xhtml",
             "code": "",
             "content_type": "text/html",
             "code_timestamp": null
@@ -40,14 +40,14 @@
     },
     {
         "pk": 1,
-        "model": "wirecloud.gadget",
+        "model": "wirecloud.widget",
         "fields": {
             "users": [1],
             "display_name": "",
             "name": "Test",
             "author": "aarranz",
             "description": "This widget is used to test some of the features of the Wirecloud platform",
-            "uri": "/gadgets/Wirecloud/Test/1.0",
+            "uri": "/widgets/Wirecloud/Test/1.0",
             "imageURI": "images/catalogue.png",
             "width": 6,
             "version": "1.0",
@@ -73,7 +73,7 @@
             "friend_code": null,
             "order": 0,
             "type": "L",
-            "gadget": 1,
+            "widget": 1,
             "secure": false
         }
     },
@@ -90,7 +90,7 @@
             "friend_code": null,
             "order": 1,
             "type": "S",
-            "gadget": 1,
+            "widget": 1,
             "secure": false
         }
     },
@@ -107,7 +107,7 @@
             "friend_code": "slot",
             "order": 0,
             "type": "S",
-            "gadget": 1,
+            "widget": 1,
             "secure": false
         }
     },
@@ -124,7 +124,7 @@
             "friend_code": "event",
             "order": 0,
             "type": "S",
-            "gadget": 1,
+            "widget": 1,
             "secure": false
         }
     },

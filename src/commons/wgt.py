@@ -115,16 +115,16 @@ class WgtDeployer(object):
         template_content = wgt_file.get_template()
         template_parser = TemplateParser(template_content)
 
-        gadget_rel_dir = os.path.join(
+        widget_rel_dir = os.path.join(
             template_parser.get_resource_vendor(),
             template_parser.get_resource_name(),
             template_parser.get_resource_version(),
         )
-        gadget_dir = os.path.join(self._root_dir, gadget_rel_dir)
-        template_parser.set_base(gadget_rel_dir + os.sep)
+        widget_dir = os.path.join(self._root_dir, widget_rel_dir)
+        template_parser.set_base(widget_rel_dir + os.sep)
 
-        self._create_folders(gadget_dir)
-        wgt_file.extract(gadget_dir)
+        self._create_folders(widget_dir)
+        wgt_file.extract(widget_dir)
 
         return template_parser
 
@@ -135,10 +135,10 @@ class WgtDeployer(object):
         if os.path.isdir(base_dir):
             rmtree(base_dir)
 
-    def _create_folders(self, gadget_dir):
+    def _create_folders(self, widget_dir):
 
         self._create_folder(self._root_dir)
-        self._create_folder(gadget_dir)
+        self._create_folder(widget_dir)
 
     def _create_folder(self, folder):
         if not os.path.isdir(folder):

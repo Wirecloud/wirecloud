@@ -80,7 +80,7 @@ class widget_operation:
         self.widget = widget
 
     def __enter__(self):
-        self.driver.execute_script('return opManager.activeWorkSpace.getIgadget(%d).content.setAttribute("id", "targetframe");' % self.widget)
+        self.driver.execute_script('return opManager.activeWorkSpace.getIwidget(%d).content.setAttribute("id", "targetframe");' % self.widget)
 
         # TODO work around webdriver bugs
         self.driver.switch_to_default_content()
@@ -90,7 +90,7 @@ class widget_operation:
 
     def __exit__(self, type, value, traceback):
         self.driver.switch_to_frame(None)
-        self.driver.execute_script('return opManager.activeWorkSpace.getIgadget(%d).content.removeAttribute("id");' % self.widget)
+        self.driver.execute_script('return opManager.activeWorkSpace.getIwidget(%d).content.removeAttribute("id");' % self.widget)
 
         # TODO work around webdriver bugs
         self.driver.switch_to_default_content()
@@ -185,7 +185,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         if self.get_current_view() != view_name:
             self.driver.find_element_by_css_selector("#wirecloud_header .menu ." + view_name).click()
 
-    def add_wgt_gadget_to_catalogue(self, wgt_file, gadget_name):
+    def add_wgt_widget_to_catalogue(self, wgt_file, widget_name):
 
         self.change_main_view('marketplace')
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
@@ -198,10 +198,10 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         self.wait_wirecloud_ready()
         time.sleep(2)
 
-        self.search_resource(gadget_name)
-        gadget = self.search_in_catalogue_results(gadget_name)
-        self.assertIsNotNone(gadget)
-        return gadget
+        self.search_resource(widget_name)
+        widget = self.search_in_catalogue_results(widget_name)
+        self.assertIsNotNone(widget)
+        return widget
 
     def add_template_to_catalogue(self, template_url, resource_name):
 
@@ -255,12 +255,12 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         # TODO
         time.sleep(2)
 
-    def search_in_catalogue_results(self, gadget_name):
+    def search_in_catalogue_results(self, widget_name):
 
         resources = self.driver.find_elements_by_css_selector('.resource_list .resource')
         for resource in resources:
             resource_name = resource.find_element_by_css_selector('.resource_name')
-            if resource_name.text == gadget_name:
+            if resource_name.text == widget_name:
                 return resource
 
         return None
@@ -271,11 +271,11 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         # TODO
         time.sleep(2)
 
-    def add_widget_to_mashup(self, gadget_name):
+    def add_widget_to_mashup(self, widget_name):
 
         self.change_main_view('marketplace')
-        self.search_resource(gadget_name)
-        resource = self.search_in_catalogue_results(gadget_name)
+        self.search_resource(widget_name)
+        resource = self.search_in_catalogue_results(widget_name)
         self.instanciate(resource)
 
     def count_iwidgets(self):
@@ -388,7 +388,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         self.popup_menu_click("Delete marketplace")
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
 
-    def delete_gadget(self, gadget_name, timeout=120):
+    def delete_widget(self, widget_name, timeout=120):
         self.driver.find_element_by_css_selector('.click_for_details').click()
         time.sleep(1)
         WebDriverWait(self.driver, timeout).until(lambda driver: driver.find_element_by_css_selector('.advanced_operations .styled_button').is_displayed())

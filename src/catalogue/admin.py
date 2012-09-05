@@ -32,7 +32,7 @@
 
 from django.contrib import admin
 
-from catalogue.models import CatalogueResource, GadgetWiring
+from catalogue.models import CatalogueResource, WidgetWiring
 from catalogue.models import UserTag, UserVote, Tag, Category
 from catalogue.models import Capability
 
@@ -49,7 +49,7 @@ class CatalogueResourceAdmin(admin.ModelAdmin):
     verbose_name_plural = 'Resources'
 
 admin.site.register(CatalogueResource, CatalogueResourceAdmin)
-admin.site.register(GadgetWiring)
+admin.site.register(WidgetWiring)
 admin.site.register(UserTag)
 admin.site.register(UserVote)
 admin.site.register(Tag)

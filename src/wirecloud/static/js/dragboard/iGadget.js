@@ -28,30 +28,30 @@
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
 /*global $, CSSPrimitiveValue, Element, Event, Insertion, document, gettext, ngettext, interpolate, window */
 /*global Constants, DropDownMenu, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud, ShowcaseFactory*/
-/*global isElement, IGadgetLogManager, IGadgetResizeHandle, GadgetVersion, DragboardPosition, Concept*/
-/*global IGadgetDraggable, IGadgetIconDraggable, FreeLayout, FullDragboardLayout*/
+/*global isElement, IWidgetLogManager, IWidgetResizeHandle, WidgetVersion, DragboardPosition, Concept*/
+/*global IWidgetDraggable, IWidgetIconDraggable, FreeLayout, FullDragboardLayout*/
 /*global ColorDropDownMenu, BrowserUtilsFactory, setTimeout, clearTimeout*/
 
 /**
- * Creates an instance of a Gadget.
+ * Creates an instance of a Widget.
  *
  * @author Álvaro Arranz
  *
- * @class Represents an instance of a Gadget.
+ * @class Represents an instance of a Widget.
  *
- * @param {Gadget}            gadget        Gadget of this iGadget
- * @param {Number}            iGadgetId     iGadget id in persistence. This
+ * @param {Widget}            widget        Widget of this iWidget
+ * @param {Number}            iWidgetId     iWidget id in persistence. This
  *                                          parameter can be null for new
- *                                          iGadgets (not coming from
+ *                                          iWidgets (not coming from
  *                                          persistence)
- * @param {String}            iGadgetName   current gadget
+ * @param {String}            iWidgetName   current widget
  * @param {DragboardLayout}   layout        associated layout
  * @param {DragboardPosition} position      initial position. This parameter can
- *                                          be null for new iGadgets (not coming
+ *                                          be null for new iWidgets (not coming
  *                                          from persistence)
  * @param {Number}            zPos          initial z coordinate position. This
  *                                          parameter can be null for new
- *                                          iGadgets (not coming from
+ *                                          iWidgets (not coming from
  *                                          persistence)
  * @param {Number}            width         initial content width
  * @param {Number}            height        initial content height
@@ -61,12 +61,12 @@
  * @param {String}            menu_color    background color for the menu.
  *                                          (6 chars with a hexadecimal color)
  */
-function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, transparency, refusedVersion, freeLayoutAfterLoading, readOnly) {
-    this.logManager = new IGadgetLogManager(this);
-    this.id = iGadgetId;
+function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, transparency, refusedVersion, freeLayoutAfterLoading, readOnly) {
+    this.logManager = new IWidgetLogManager(this);
+    this.id = iWidgetId;
     this.code = null;
-    this.name = iGadgetName;
-    this.gadget = gadget;
+    this.name = iWidgetName;
+    this.widget = widget;
     this.position = position;
     this.contentWidth = width;
     this.contentHeight = height;
@@ -78,7 +78,7 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
     this.minimized = minimized;
     this.highlightTimeout = null;
     if (this.id) {
-        this.codeURL = this.gadget.code_url + "#id=" + this.id;
+        this.codeURL = this.widget.code_url + "#id=" + this.id;
     }
 
     if (fulldragboard) {
@@ -99,29 +99,29 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
         this.height = layout.getMenubarSize().inLU;
     }
 
-    this.refusedVersion = refusedVersion !== null ? new GadgetVersion(refusedVersion) : null;
-    this.freeLayoutAfterLoading = freeLayoutAfterLoading; //only used the first time the gadget is used to change its layout after loading to FreeLayout
+    this.refusedVersion = refusedVersion !== null ? new WidgetVersion(refusedVersion) : null;
+    this.freeLayoutAfterLoading = freeLayoutAfterLoading; //only used the first time the widget is used to change its layout after loading to FreeLayout
 
     this.readOnly = readOnly;
 
     // Elements
     this.element = null;
-    this.gadgetMenu = null;
+    this.widgetMenu = null;
     this.contentWrapper = null;
     this.content = null;
     this.closeButton = null;
     this.settingsButton = null;
     this.minimizeButton = null;
     this.errorButton = null;
-    this.igadgetNameHTMLElement = null;
-    this.igadgetInputHTMLElement = null;
+    this.iwidgetNameHTMLElement = null;
+    this.iwidgetInputHTMLElement = null;
     this.statusBar = null;
     this.extractButton = null;
 
     // Icon element for the iconified mode
     this.iconElement = null;
     this.iconImg = null;
-    this.igadgetIconNameHTMLElement =  null;
+    this.iwidgetIconNameHTMLElement =  null;
     this.iconPosition = iconPosition;
     this.iconDraggable =  null;
 
@@ -133,41 +133,41 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
     this.lowerToBottomOpId = null;
     this.raiseToTopOpId = null;
 
-    // iGadget menu
+    // iWidget menu
     this.menu = null;
 
-    // Add the iGadget to the layout
+    // Add the iWidget to the layout
     this.build();
-    layout.addIGadget(this, true);
+    layout.addIWidget(this, true);
 
     StyledElements.ObjectWithEvents.call(this, ['load', 'unload']);
-    //this.menu_color = IGadgetColorManager.autogenColor(menu_color, this.code);
+    //this.menu_color = IWidgetColorManager.autogenColor(menu_color, this.code);
 
     this.prefCallback = null;
 }
-IGadget.prototype = new StyledElements.ObjectWithEvents();
+IWidget.prototype = new StyledElements.ObjectWithEvents();
 
 /**
- * Returns the associated Gadget.
+ * Returns the associated Widget.
  *
- * @returns {Gadget} the associated Gadget.
+ * @returns {Widget} the associated Widget.
  */
-IGadget.prototype.getGadget = function () {
-    return this.gadget;
+IWidget.prototype.getWidget = function () {
+    return this.widget;
 };
 
-IGadget.prototype.invalidIconPosition = function () {
+IWidget.prototype.invalidIconPosition = function () {
     return this.iconPosition.x === -1 && this.iconPosition.y === -1;
 };
 
 /**
- * Sets the position of a gadget instance. The position is calculated relative
- * to the top-left square of the gadget instance box using cells units.
+ * Sets the position of a widget instance. The position is calculated relative
+ * to the top-left square of the widget instance box using cells units.
  *
- * @param {DragboardPosition} position the new position for the iGadget.
+ * @param {DragboardPosition} position the new position for the iWidget.
  */
-IGadget.prototype.setPosition = function (position) {
-    // Set a initial icon position (first time) or it still follows the gadget (both positions are a reference to the same object)
+IWidget.prototype.setPosition = function (position) {
+    // Set a initial icon position (first time) or it still follows the widget (both positions are a reference to the same object)
     if (!this.iconPosition) {
         this.setIconPosition(new DragboardPosition(-1, -1));
     }
@@ -183,19 +183,19 @@ IGadget.prototype.setPosition = function (position) {
 
         // Notify Context Manager about the new position
         var contextManager = this.layout.dragboard.getWorkspace().getContextManager();
-        contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.XPOSITION, this.position.x);
-        contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.YPOSITION, this.position.y);
+        contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.XPOSITION, this.position.x);
+        contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.YPOSITION, this.position.y);
     }
 };
 
 /**
- * Sets the position of the associated icon for this iGadget. The position must
+ * Sets the position of the associated icon for this iWidget. The position must
  * be specified relative to the top-left square of the icon and using pixels
  * units.
  *
- * @param {DragboardPosition} position the new position for the iGadget icon
+ * @param {DragboardPosition} position the new position for the iWidget icon
  */
-IGadget.prototype.setIconPosition = function (position) {
+IWidget.prototype.setIconPosition = function (position) {
     this.iconPosition = position.clone();
     if (this.iconElement) {
         this.iconElement.style.left = this.layout.dragboard.freeLayout.getColumnOffset(this.iconPosition.x) + "px";
@@ -204,11 +204,11 @@ IGadget.prototype.setIconPosition = function (position) {
 };
 
 /**
- * Sets the z coordinate position of this iGadget.
+ * Sets the z coordinate position of this iWidget.
  *
- * @param {Number} zPos the new Z coordinate position for the iGadget.
+ * @param {Number} zPos the new Z coordinate position for the iWidget.
  */
-IGadget.prototype.setZPosition = function (zPos) {
+IWidget.prototype.setZPosition = function (zPos) {
     this.zPos = zPos;
 
     zPos = zPos !== null ? zPos + 1: "";
@@ -222,31 +222,31 @@ IGadget.prototype.setZPosition = function (zPos) {
 };
 
 /**
- * Gets the position of a gadget instance. The position is calculated relative
- * to the top-left square of the gadget instance box using cells units.
+ * Gets the position of a widget instance. The position is calculated relative
+ * to the top-left square of the widget instance box using cells units.
  *
- * @returns {DragboardPosition} the current position of the iGadget.
+ * @returns {DragboardPosition} the current position of the iWidget.
  */
-IGadget.prototype.getPosition = function () {
+IWidget.prototype.getPosition = function () {
     return this.position;
 };
 
 /**
- * Gets the position of a gadget instance minimized. The position is calculated relative
- * to the top-left square of the gadget instance box using cells units.
+ * Gets the position of a widget instance minimized. The position is calculated relative
+ * to the top-left square of the widget instance box using cells units.
  *
- * @returns {DragboardPosition} the current position of the iGadget.
+ * @returns {DragboardPosition} the current position of the iWidget.
  */
-IGadget.prototype.getIconPosition = function () {
+IWidget.prototype.getIconPosition = function () {
     return this.iconPosition;
 };
 
 /**
- * Gets the z coordinate of this iGadget.
+ * Gets the z coordinate of this iWidget.
  *
- * @returns {Number} the Z coordinate of the iGadget.
+ * @returns {Number} the Z coordinate of the iWidget.
  */
-IGadget.prototype.getZPosition = function (zPos) {
+IWidget.prototype.getZPosition = function (zPos) {
     return this.zPos;
 };
 
@@ -255,7 +255,7 @@ IGadget.prototype.getZPosition = function (zPos) {
  *
  * @returns {Number} the content width in cells.
  */
-IGadget.prototype.getContentWidth = function () {
+IWidget.prototype.getContentWidth = function () {
     return this.contentWidth;
 };
 
@@ -264,84 +264,84 @@ IGadget.prototype.getContentWidth = function () {
  *
  * @returns {Number} the content height in cells.
  */
-IGadget.prototype.getContentHeight = function () {
+IWidget.prototype.getContentHeight = function () {
     return this.contentHeight;
 };
 
 /**
- * Returns the Tab where this iGadget is displayed.
+ * Returns the Tab where this iWidget is displayed.
  *
  * @returns {Tab} associated tab
  */
-IGadget.prototype.getTab = function () {
+IWidget.prototype.getTab = function () {
     return this.layout.dragboard.tab;
 };
 
 /**
- * Returns the current width of the gadget in LU. This is not the same to the
- * content with as it depends in the current status of the iGadget (minimized,
+ * Returns the current width of the widget in LU. This is not the same to the
+ * content with as it depends in the current status of the iWidget (minimized,
  * with the configuration dialog, etc...)
  *
- * @returns {Number} the current width of the gadget in LU
+ * @returns {Number} the current width of the widget in LU
  *
  * @see DragboardLayout
  */
-IGadget.prototype.getWidth = function () {
-    // For now, the igadget width is always the width of the igadget content
+IWidget.prototype.getWidth = function () {
+    // For now, the iwidget width is always the width of the iwidget content
     return this.contentWidth;
 };
 
 /**
- * Returns the current height of the gadget in LU. This is not the same to the
- * iGadget's content height as it depends in the current status of the iGadget
+ * Returns the current height of the widget in LU. This is not the same to the
+ * iWidget's content height as it depends in the current status of the iWidget
  * (minimized, with the configuration dialog, etc...)
  *
- * @returns {Number} the current height of the gadget in LU
+ * @returns {Number} the current height of the widget in LU
  *
  * @see DragboardLayout
  */
-IGadget.prototype.getHeight = function () {
+IWidget.prototype.getHeight = function () {
     return this.height;
 };
 
 /**
- * Returns the identifier of this iGadget. This identifier is unique for the
- * current Wirecloud Platform. This identifier can be null if this iGadget is not
+ * Returns the identifier of this iWidget. This identifier is unique for the
+ * current Wirecloud Platform. This identifier can be null if this iWidget is not
  * currently presisted.
  *
- * @returns {Number} the identifier for this iGadget.
+ * @returns {Number} the identifier for this iWidget.
  */
-IGadget.prototype.getId = function () {
+IWidget.prototype.getId = function () {
     return this.id;
 };
 
-IGadget.prototype.getElement = function () {
+IWidget.prototype.getElement = function () {
     return this.element;
 };
 
 /**
- * Returns true if the iGadget is currently visible in a dragboard.
+ * Returns true if the iWidget is currently visible in a dragboard.
  *
- * @returns {Boolean} true if the iGadget is currently visible; false otherwise.
+ * @returns {Boolean} true if the iWidget is currently visible; false otherwise.
  */
-IGadget.prototype.isVisible = function () {
+IWidget.prototype.isVisible = function () {
     return this.visible;
 };
 
 /**
- * Returns true if the iGadget is currently on the free layout of the dragboard.
+ * Returns true if the iWidget is currently on the free layout of the dragboard.
  *
- * @returns {Boolean} true if the iGadget is currently on the free layout of the
+ * @returns {Boolean} true if the iWidget is currently on the free layout of the
  *                    associated dragboard; false otherwise.
  */
-IGadget.prototype.onFreeLayout = function () {
+IWidget.prototype.onFreeLayout = function () {
     return this.layout.dragboard.freeLayout === this.layout;
 };
 
 /**
- * Toggle the gadget transparency
+ * Toggle the widget transparency
  */
-IGadget.prototype.toggleTransparency = function () {
+IWidget.prototype.toggleTransparency = function () {
     function onSuccess() {}
     function onError(transport, e) {
         var msg = gettext("Error saving the new transparency value into persistence: %(errorMsg)s.");
@@ -349,21 +349,21 @@ IGadget.prototype.toggleTransparency = function () {
         this.log(msg, Constants.Logging.ERROR_MSG);
     }
 
-    this.element.toggleClassName("gadget_window_transparent");
+    this.element.toggleClassName("widget_window_transparent");
     this.transparency = !this.transparency;
 
     //Persist the new state
-    var igadgetData = Object.toJSON({
+    var iwidgetData = Object.toJSON({
         transparency: this.transparency,
         id: this.id
     });
-    var params = {'igadget': igadgetData};
-    var igadgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+    var params = {'iwidget': iwidgetData};
+    var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
         workspace_id: this.layout.dragboard.workSpaceId,
         tab_id: this.layout.dragboard.tabId,
         iwidget_id: this.id
     });
-    Wirecloud.io.makeRequest(igadgetUrl, {
+    Wirecloud.io.makeRequest(iwidgetUrl, {
         method: 'PUT',
         parameters: params,
         onSuccess: onSuccess,
@@ -372,25 +372,25 @@ IGadget.prototype.toggleTransparency = function () {
 };
 
 /**
- * Builds the structure of the gadget
+ * Builds the structure of the widget
  */
-IGadget.prototype.build = function () {
+IWidget.prototype.build = function () {
     this.element = document.createElement("div");
     Element.extend(this.element);
     this.element.addClassName("iwidget");
 
-    // Gadget Menu
-    this.gadgetMenu = document.createElement("div");
-    Element.extend(this.gadgetMenu);
-    this.gadgetMenu.addClassName("gadget_menu");
-    this.gadgetMenu.observe("contextmenu",
+    // Widget Menu
+    this.widgetMenu = document.createElement("div");
+    Element.extend(this.widgetMenu);
+    this.widgetMenu.addClassName("widget_menu");
+    this.widgetMenu.observe("contextmenu",
         function (e) {
             Event.stop(e);
         },
         true);
 
-    // Gadget title
-    this.gadgetMenu.setAttribute("title", this.name);
+    // Widget title
+    this.widgetMenu.setAttribute("title", this.name);
 
     //#######################################
     // buttons. Inserted from right to left
@@ -406,7 +406,7 @@ IGadget.prototype.build = function () {
         function () {
             OpManagerFactory.getInstance().removeInstance(this.id);
         }.bind(this));
-    this.closeButton.insertInto(this.gadgetMenu);
+    this.closeButton.insertInto(this.widgetMenu);
 
     // Menu button
     this.settingsButton = new StyledElements.StyledButton({
@@ -418,7 +418,7 @@ IGadget.prototype.build = function () {
         function (button) {
             this.menu.show(button.getBoundingClientRect());
         }.bind(this));
-    this.settingsButton.insertInto(this.gadgetMenu);
+    this.settingsButton.insertInto(this.widgetMenu);
 
     // minimize button
     this.minimizeButton = new StyledElements.StyledButton({
@@ -428,7 +428,7 @@ IGadget.prototype.build = function () {
         function (button) {
             this.toggleMinimizeStatus(true);
         }.bind(this));
-    this.minimizeButton.insertInto(this.gadgetMenu);
+    this.minimizeButton.insertInto(this.widgetMenu);
 
     // error button
     this.errorButton = new StyledElements.StyledButton({
@@ -439,7 +439,7 @@ IGadget.prototype.build = function () {
         function (button) {
             OpManagerFactory.getInstance().showLogs(this.logManager); // TODO
         }.bind(this));
-    this.errorButton.insertInto(this.gadgetMenu);
+    this.errorButton.insertInto(this.widgetMenu);
 
     // New Version button
     this.upgradeButton = document.createElement("input");
@@ -448,27 +448,27 @@ IGadget.prototype.build = function () {
     this.upgradeButton.addClassName("button versionbutton disabled");
     Event.observe(this.upgradeButton, "click",
         function () {
-            var msg = gettext('<p><b>Do you really want to update "%(igadgetName)s" to its latest version?</b><br />The gadget state and connections will be kept, if possible.<p>Note: It will reload your workspace</p>');
-            msg = interpolate(msg, {igadgetName: this.name}, true);
-            LayoutManagerFactory.getInstance().showYesNoDialog(msg, this.upgradeIGadget.bind(this), this.askForIconVersion.bind(this));
+            var msg = gettext('<p><b>Do you really want to update "%(iwidgetName)s" to its latest version?</b><br />The widget state and connections will be kept, if possible.<p>Note: It will reload your workspace</p>');
+            msg = interpolate(msg, {iwidgetName: this.name}, true);
+            LayoutManagerFactory.getInstance().showYesNoDialog(msg, this.upgradeIWidget.bind(this), this.askForIconVersion.bind(this));
         }.bind(this),
         false);
-    this.gadgetMenu.appendChild(this.upgradeButton);
+    this.widgetMenu.appendChild(this.upgradeButton);
 
     this.fillWithLabel();
 
-    this.element.appendChild(this.gadgetMenu);
+    this.element.appendChild(this.widgetMenu);
 
     // Content wrapper
     this.contentWrapper = document.createElement("div");
     Element.extend(this.contentWrapper);
-    this.contentWrapper.addClassName("gadget_wrapper");
+    this.contentWrapper.addClassName("widget_wrapper");
     this.element.appendChild(this.contentWrapper);
 
-    // Gadget Content
+    // Widget Content
     this.content = document.createElement("iframe");
     Element.extend(this.content);
-    this.content.addClassName("gadget_object");
+    this.content.addClassName("widget_object");
     this.content.setAttribute("type", "text/html"); // TODO xhtml? => application/xhtml+xml
     this.content.setAttribute("standby", "Loading...");
     this.content.setAttribute("width", "100%");
@@ -480,12 +480,12 @@ IGadget.prototype.build = function () {
     Element.extend(this.content);
     this.content.observe("load",
         function () {
-            this.layout.dragboard.workSpace.igadgetLoaded(this.id);
+            this.layout.dragboard.workSpace.iwidgetLoaded(this.id);
         }.bind(this),
         true);
     this.contentWrapper.appendChild(this.content);
 
-    // Gadget status bar
+    // Widget status bar
     this.statusBar = document.createElement("div");
     Element.extend(this.statusBar);
     this.statusBar.addClassName("statusBar");
@@ -502,7 +502,7 @@ IGadget.prototype.build = function () {
     Element.extend(resizeHandle);
     resizeHandle.addClassName("leftResizeHandle");
     this.leftResizeHandleElement = resizeHandle;
-    this.leftResizeHandle = new IGadgetResizeHandle(resizeHandle, this, true);
+    this.leftResizeHandle = new IWidgetResizeHandle(resizeHandle, this, true);
 
     // Right one
     resizeHandle = document.createElement("div");
@@ -510,7 +510,7 @@ IGadget.prototype.build = function () {
     resizeHandle.addClassName("rightResizeHandle");
     this.statusBar.appendChild(resizeHandle);
     this.rightResizeHandleElement = resizeHandle;
-    this.rightResizeHandle = new IGadgetResizeHandle(resizeHandle, this, false);
+    this.rightResizeHandle = new IWidgetResizeHandle(resizeHandle, this, false);
 
     // extract/snap button
     this.extractButton = document.createElement("div");
@@ -527,7 +527,7 @@ IGadget.prototype.build = function () {
     this.wikilink = document.createElement('a');
     Element.extend(this.wikilink);
     this.wikilink.addClassName('dragboardwiki button');
-    this.wikilink.href = this.gadget.getUriWiki();
+    this.wikilink.href = this.widget.getUriWiki();
     this.wikilink.setAttribute('target', '_blank');
     this.wikilink.setAttribute('title', gettext('Access to Information'));
     this.statusBar.appendChild(this.wikilink);
@@ -535,12 +535,12 @@ IGadget.prototype.build = function () {
     // Icon Element
     this.iconElement = document.createElement("div");
     Element.extend(this.iconElement);
-    this.iconElement.addClassName("floating_gadget_icon");
+    this.iconElement.addClassName("floating_widget_icon");
 
     this.iconImg = document.createElement("img");
     Element.extend(this.iconImg);
-    this.iconImg.addClassName("floating_gadget_img");
-    this.iconImg.setAttribute("src", this.gadget.getIcon());
+    this.iconImg.addClassName("floating_widget_img");
+    this.iconImg.setAttribute("src", this.widget.getIcon());
     this.iconElement.appendChild(this.iconImg);
 
     // IE hack to allow drag & drop over images
@@ -548,13 +548,13 @@ IGadget.prototype.build = function () {
         return false;
     };
 
-    this.igadgetIconNameHTMLElement = document.createElement("a");
-    Element.extend(this.igadgetIconNameHTMLElement);
-    this.igadgetIconNameHTMLElement.update(this.name);
-    this.igadgetIconNameHTMLElement.addClassName("floating_gadget_title");
-    this.iconElement.appendChild(this.igadgetIconNameHTMLElement);
+    this.iwidgetIconNameHTMLElement = document.createElement("a");
+    Element.extend(this.iwidgetIconNameHTMLElement);
+    this.iwidgetIconNameHTMLElement.update(this.name);
+    this.iwidgetIconNameHTMLElement.addClassName("floating_widget_title");
+    this.iconElement.appendChild(this.iwidgetIconNameHTMLElement);
 
-    this.igadgetIconNameHTMLElement.observe("click",
+    this.iwidgetIconNameHTMLElement.observe("click",
         function () {
             this.toggleMinimizeStatus(false);
             this.layout.dragboard.raiseToTop(this);
@@ -562,10 +562,10 @@ IGadget.prototype.build = function () {
         false);
 };
 
-IGadget.prototype.isAllowed = function (action) {
+IWidget.prototype.isAllowed = function (action) {
     switch (action) {
     case "close":
-        return !this.readOnly && this.layout.dragboard.getWorkspace().isAllowed('add_remove_igadgets');
+        return !this.readOnly && this.layout.dragboard.getWorkspace().isAllowed('add_remove_iwidgets');
     case "move":
     case "resize":
         var dragboard = this.layout.dragboard;
@@ -577,7 +577,7 @@ IGadget.prototype.isAllowed = function (action) {
     }
 };
 
-IGadget.prototype._updateButtons = function () {
+IWidget.prototype._updateButtons = function () {
     this.closeButton.setDisabled(!this.isAllowed('close'));
     this.minimizeButton.setDisabled(!this.isAllowed('minimize'));
 
@@ -596,21 +596,21 @@ IGadget.prototype._updateButtons = function () {
 };
 
 /**
- * Paints this gadget instance into the assigned dragboard.
+ * Paints this widget instance into the assigned dragboard.
  *
- * @param {Boolean} onInit true if this gadget is being painted on Dragboard
+ * @param {Boolean} onInit true if this widget is being painted on Dragboard
  *        initation.
  */
-IGadget.prototype.paint = function (onInit) {
+IWidget.prototype.paint = function (onInit) {
     if (this.visible) {
-        return; // Do nothing if the iGadget is already painted
+        return; // Do nothing if the iWidget is already painted
     }
 
     this.visible = true;
 
-    // Initialize gadget menu
+    // Initialize widget menu
     this.menu = new StyledElements.PopupMenu();
-    this.menu.append(new IGadgetMenuItems(this));
+    this.menu.append(new IWidgetMenuItems(this));
 
     // Insert it into the dragboard (initially hidden)
     this.element.style.visibility = "hidden";
@@ -625,7 +625,7 @@ IGadget.prototype.paint = function (onInit) {
     this.element.style.top = this.layout.getRowOffset(this.position.y) + "px";
     this.setZPosition(this.zPos);
 
-    // Select the correct representation for this iGadget (iconified, minimized or normal)
+    // Select the correct representation for this iWidget (iconified, minimized or normal)
     var minimizedStatusBackup = this.minimized;
     this.minimized = false;
     this._recomputeSize(false);
@@ -635,38 +635,38 @@ IGadget.prototype.paint = function (onInit) {
 
     // Initialize transparency status
     if (this.transparency) {
-        this.element.addClassName("gadget_window_transparent");
+        this.element.addClassName("widget_window_transparent");
     }
 
     //Initialize read-only status
     if (this.readOnly) {
-        this.element.addClassName("gadget_window_readonly");
+        this.element.addClassName("widget_window_readonly");
     }
 
-    // Time to show the igadget (we need to take into account the gadget can be iconified)
+    // Time to show the iwidget (we need to take into account the widget can be iconified)
     if (!this.onFreeLayout() || !minimizedStatusBackup) {
         this.element.style.visibility = "";
     }
 
     // Mark as draggable
-    this.draggable = new IGadgetDraggable(this);
+    this.draggable = new IWidgetDraggable(this);
 
     var contextManager = this.layout.dragboard.getWorkspace().getContextManager();
 
     // Notify Context Manager about the new position
-    contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.XPOSITION, this.position.x);
-    contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.YPOSITION, this.position.y);
+    contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.XPOSITION, this.position.x);
+    contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.YPOSITION, this.position.y);
 
     // Notify Context Manager about the new sizes
-    contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.HEIGHT, this.contentHeight);
-    contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.WIDTH, this.contentWidth);
+    contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.HEIGHT, this.contentHeight);
+    contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.WIDTH, this.contentWidth);
 
     this._updateButtons();
     this._updateVersionButton();
 
     // Icon
     this.layout.dragboard.dragboardElement.appendChild(this.iconElement);
-    this.iconDraggable = new IGadgetIconDraggable(this);
+    this.iconDraggable = new IWidgetIconDraggable(this);
     this.iconElement.style.left = this.layout.dragboard.freeLayout.getColumnOffset(this.iconPosition.x) + "px";
     this.iconElement.style.top = this.layout.dragboard.freeLayout.getRowOffset(this.iconPosition.y) + "px";
 
@@ -679,18 +679,18 @@ IGadget.prototype.paint = function (onInit) {
         true);
 };
 
-IGadget.prototype.load = function () {
+IWidget.prototype.load = function () {
     this.getTab().paint();
 };
 
-IGadget.prototype.isPainted = function () {
+IWidget.prototype.isPainted = function () {
     return this.menu !== null;
 };
 
-IGadget.prototype.fillWithLabel = function () {
-    if (this.igadgetInputHTMLElement !== null) {
+IWidget.prototype.fillWithLabel = function () {
+    if (this.iwidgetInputHTMLElement !== null) {
         //hide the input element
-        this.igadgetInputHTMLElement.hide();
+        this.iwidgetInputHTMLElement.hide();
     }
 
     // get the name
@@ -699,19 +699,19 @@ IGadget.prototype.fillWithLabel = function () {
         nameToShow = nameToShow.substring(0, 30) + "...";
     }
 
-    if (this.igadgetNameHTMLElement !== null) {
+    if (this.iwidgetNameHTMLElement !== null) {
         // update and show the label
-        this.igadgetNameHTMLElement.update(nameToShow);
-        this.igadgetNameHTMLElement.show();
+        this.iwidgetNameHTMLElement.update(nameToShow);
+        this.iwidgetNameHTMLElement.show();
     } else {
         //create the label
-        this.igadgetNameHTMLElement = document.createElement("span");
-        Element.extend(this.igadgetNameHTMLElement);
-        this.igadgetNameHTMLElement.innerHTML = nameToShow;
-        this.gadgetMenu.appendChild(this.igadgetNameHTMLElement);
+        this.iwidgetNameHTMLElement = document.createElement("span");
+        Element.extend(this.iwidgetNameHTMLElement);
+        this.iwidgetNameHTMLElement.innerHTML = nameToShow;
+        this.widgetMenu.appendChild(this.iwidgetNameHTMLElement);
 
-        this.igadgetNameHTMLElement.observe('mousedown', Event.stop);
-        this.igadgetNameHTMLElement.observe('click',
+        this.iwidgetNameHTMLElement.observe('mousedown', Event.stop);
+        this.iwidgetNameHTMLElement.observe('click',
                                             function (e) {
                                                 Event.stop(e);
                                                 this.layout.dragboard.raiseToTop(this);
@@ -720,30 +720,30 @@ IGadget.prototype.fillWithLabel = function () {
     }
 };
 
-IGadget.prototype.fillWithInput = function () {
-    this.igadgetNameHTMLElement.hide();
-    if (this.igadgetInputHTMLElement) {
-        this.igadgetInputHTMLElement.show();
-        this.igadgetInputHTMLElement.setAttribute("value", this.name);
-        this.igadgetInputHTMLElement.setAttribute("size", this.name.length + 5);
+IWidget.prototype.fillWithInput = function () {
+    this.iwidgetNameHTMLElement.hide();
+    if (this.iwidgetInputHTMLElement) {
+        this.iwidgetInputHTMLElement.show();
+        this.iwidgetInputHTMLElement.setAttribute("value", this.name);
+        this.iwidgetInputHTMLElement.setAttribute("size", this.name.length + 5);
     } else {
-        this.igadgetInputHTMLElement = document.createElement("input");
-        Element.extend(this.igadgetInputHTMLElement);
-        this.igadgetInputHTMLElement.addClassName("igadget_name");
-        this.igadgetInputHTMLElement.setAttribute("type", "text");
-        this.igadgetInputHTMLElement.setAttribute("value", this.name);
-        this.igadgetInputHTMLElement.setAttribute("size", this.name.length + 5);
-        this.igadgetInputHTMLElement.setAttribute("maxlength", 30);
+        this.iwidgetInputHTMLElement = document.createElement("input");
+        Element.extend(this.iwidgetInputHTMLElement);
+        this.iwidgetInputHTMLElement.addClassName("iwidget_name");
+        this.iwidgetInputHTMLElement.setAttribute("type", "text");
+        this.iwidgetInputHTMLElement.setAttribute("value", this.name);
+        this.iwidgetInputHTMLElement.setAttribute("size", this.name.length + 5);
+        this.iwidgetInputHTMLElement.setAttribute("maxlength", 30);
 
-        this.gadgetMenu.appendChild(this.igadgetInputHTMLElement);
+        this.widgetMenu.appendChild(this.iwidgetInputHTMLElement);
 
-        this.igadgetInputHTMLElement.observe('blur',
+        this.iwidgetInputHTMLElement.observe('blur',
                                             function (e) {
                                                 Event.stop(e);
                                                 this.fillWithLabel();
                                             }.bind(this));
 
-        this.igadgetInputHTMLElement.observe('keypress',
+        this.iwidgetInputHTMLElement.observe('keypress',
                                             function (e) {
                                                 if (e.keyCode === Event.KEY_RETURN) {
                                                     Event.stop(e);
@@ -752,60 +752,60 @@ IGadget.prototype.fillWithInput = function () {
                                                 }
                                             }.bind(this));
 
-        this.igadgetInputHTMLElement.observe('change',
+        this.iwidgetInputHTMLElement.observe('change',
                                             function (e) {
                                                 var target = BrowserUtilsFactory.getInstance().getTarget(e);
                                                 this.setName(target.value);
                                             }.bind(this));
 
-        this.igadgetInputHTMLElement.observe('keyup',
+        this.iwidgetInputHTMLElement.observe('keyup',
                                             function (e) {
                                                 Event.stop(e);
                                                 var target = BrowserUtilsFactory.getInstance().getTarget(e);
                                                 target.size = (target.value.length === 0) ? 1 : target.value.length + 5;
                                             }.bind(this));
     }
-    this.igadgetInputHTMLElement.focus();
+    this.iwidgetInputHTMLElement.focus();
 };
 
 /**
- * Sets the name of this iGadget. The name of the iGadget is shown at the
- * iGadget's menu bar. Also, this name will be used to refere to this gadget in
+ * Sets the name of this iWidget. The name of the iWidget is shown at the
+ * iWidget's menu bar. Also, this name will be used to refere to this widget in
  * other parts of the Wirecloud Platform, for example it is used in the wiring
  * interface.
  *
- * @param {String} igadgetName New name for this iGadget.
+ * @param {String} iwidgetName New name for this iWidget.
  */
-IGadget.prototype.setName = function (igadgetName) {
+IWidget.prototype.setName = function (iwidgetName) {
     var oldName = this.name;
 
     function onSuccess() {
         var msg = gettext("Name changed from \"%(oldName)s\" to \"%(newName)s\" succesfully");
-        msg = interpolate(msg, {oldName: oldName, newName: igadgetName}, true);
+        msg = interpolate(msg, {oldName: oldName, newName: iwidgetName}, true);
         this.log(msg, Constants.Logging.INFO_MSG);
     }
     function onError(transport, e) {
-        var msg = gettext("Error renaming igadget from persistence: %(errorMsg)s.");
+        var msg = gettext("Error renaming iwidget from persistence: %(errorMsg)s.");
         msg = this.logManager.formatError(msg, transport, e);
         this.log(msg);
     }
 
-    if (igadgetName !== null && igadgetName.length > 0) {
-        this.name = igadgetName;
-        this.gadgetMenu.setAttribute("title", igadgetName);
-        this.igadgetNameHTMLElement.update(this.name);
-        this.igadgetIconNameHTMLElement.update(this.name);
-        var igadgetData = Object.toJSON({
-            name: igadgetName,
+    if (iwidgetName !== null && iwidgetName.length > 0) {
+        this.name = iwidgetName;
+        this.widgetMenu.setAttribute("title", iwidgetName);
+        this.iwidgetNameHTMLElement.update(this.name);
+        this.iwidgetIconNameHTMLElement.update(this.name);
+        var iwidgetData = Object.toJSON({
+            name: iwidgetName,
             id: this.id
         });
-        var params = {'igadget': igadgetData};
-        var igadgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+        var params = {'iwidget': iwidgetData};
+        var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
             workspace_id: this.layout.dragboard.workSpaceId,
             tab_id: this.layout.dragboard.tabId,
             iwidget_id: this.id
         });
-        Wirecloud.io.makeRequest(igadgetUrl, {
+        Wirecloud.io.makeRequest(iwidgetUrl, {
             method: 'PUT',
             parameters: params,
             onSuccess: onSuccess.bind(this),
@@ -815,35 +815,35 @@ IGadget.prototype.setName = function (igadgetName) {
 };
 
 /*
- * Perform the properly actions to show to the user that the gadget has received and event
+ * Perform the properly actions to show to the user that the widget has received and event
  */
-IGadget.prototype.notifyEvent = function () {
-    // if the igadget is out of the grid it has to be raised to the top
+IWidget.prototype.notifyEvent = function () {
+    // if the iwidget is out of the grid it has to be raised to the top
     if (this.layout instanceof FreeLayout) {
         this.layout.dragboard.raiseToTop(this);
-        //Moreover, if the igadget is iconified it has to be opened
+        //Moreover, if the iwidget is iconified it has to be opened
         if (this.isIconified()) {
-            //maximize iconified gadget
+            //maximize iconified widget
             this.toggleMinimizeStatus();
         }
     }
 };
 
-IGadget.prototype.isIconified = function () {
+IWidget.prototype.isIconified = function () {
     return (this.layout instanceof FreeLayout && this.minimized);
 };
 
 /**
  * @private
  */
-IGadget.prototype._updateVersionButton = function () {
-    if (this.gadget.isUpToDate() || this.isRefusedUpgrade()) {
+IWidget.prototype._updateVersionButton = function () {
+    if (this.widget.isUpToDate() || this.isRefusedUpgrade()) {
         this.upgradeButton.addClassName('disabled');
     } else {
-        var msg = gettext("There is a new version of this gadget available. Current version: %(currentVersion)s - Last version: %(lastVersion)s");
+        var msg = gettext("There is a new version of this widget available. Current version: %(currentVersion)s - Last version: %(lastVersion)s");
         msg = interpolate(msg, {
-                currentVersion: this.gadget.getVersion().text,
-                lastVersion: this.gadget.getLastVersion().text
+                currentVersion: this.widget.getVersion().text,
+                lastVersion: this.widget.getLastVersion().text
             }, true);
 
         this.upgradeButton.setAttribute("title", msg);
@@ -851,19 +851,19 @@ IGadget.prototype._updateVersionButton = function () {
     }
 };
 
-IGadget.prototype.askForIconVersion = function () {
+IWidget.prototype.askForIconVersion = function () {
     var msg = gettext('Do you want to remove the notice of the new version available?');
-    msg = interpolate(msg, {igadgetName: this.name}, true);
+    msg = interpolate(msg, {iwidgetName: this.name}, true);
     LayoutManagerFactory.getInstance().showYesNoDialog(msg,
         function () {
-            this.setRefusedVersion(this.gadget.getLastVersion());
+            this.setRefusedVersion(this.widget.getLastVersion());
         }.bind(this));
 };
 
-IGadget.prototype.setRefusedVersion = function (v) {
+IWidget.prototype.setRefusedVersion = function (v) {
     function onSuccess() {}
     function onError(transport, e) {
-        var msg = gettext("Error setting the refused version of the igadget to persistence: %(errorMsg)s.");
+        var msg = gettext("Error setting the refused version of the iwidget to persistence: %(errorMsg)s.");
         msg = this.logManager.formatError(msg, transport, e);
         this.log(msg);
     }
@@ -871,17 +871,17 @@ IGadget.prototype.setRefusedVersion = function (v) {
     this.refusedVersion = v;
     $("version_button_" + this.id).hide();
 
-    var igadgetData = Object.toJSON({
+    var iwidgetData = Object.toJSON({
         refused_version: this.refusedVersion.text,
         id: this.id
     });
-    var params = {'igadget': igadgetData};
-    var igadgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+    var params = {'iwidget': iwidgetData};
+    var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
         workspace_id: this.layout.dragboard.workSpaceId,
         tab_id: this.layout.dragboard.tabId,
         iwidget_id: this.id
     });
-    Wirecloud.io.makeRequest(igadgetUrl, {
+    Wirecloud.io.makeRequest(iwidgetUrl, {
         method: 'PUT',
         parameters: params,
         onFailure: onError.bind(this)
@@ -893,33 +893,33 @@ IGadget.prototype.setRefusedVersion = function (v) {
  *
  * @returns {Boolean}
  */
-IGadget.prototype.isRefusedUpgrade = function () {
-    return this.refusedVersion && this.refusedVersion.compareTo(this.gadget.getLastVersion()) === 0;
+IWidget.prototype.isRefusedUpgrade = function () {
+    return this.refusedVersion && this.refusedVersion.compareTo(this.widget.getLastVersion()) === 0;
 };
 
 /**
- * Update the gadget to its newest version
+ * Update the widget to its newest version
  */
-IGadget.prototype.upgradeIGadget = function () {
+IWidget.prototype.upgradeIWidget = function () {
     function onUpgradeOk(transport) {
         ShowcaseFactory.getInstance().reload(this.layout.dragboard.workSpaceId);
     }
 
     function onUpgradeError(transport, e) {
-        var msg = gettext('<p>Sorry but the "%(igadgetName)s" gadget <b>cannot be automatically updated</b> because its version is not compatible ' +
-                'with the last version.<br/>If you want to update the gadget you must replace <b>by hand</b> the existing one with the gadget ' +
+        var msg = gettext('<p>Sorry but the "%(iwidgetName)s" widget <b>cannot be automatically updated</b> because its version is not compatible ' +
+                'with the last version.<br/>If you want to update the widget you must replace <b>by hand</b> the existing one with the widget ' +
                 'available in the catalogue.</p><b>Do you want to remove the notice of the new version available?</b>');
-        msg = interpolate(msg, {igadgetName: this.name}, true);
+        msg = interpolate(msg, {iwidgetName: this.name}, true);
         LayoutManagerFactory.getInstance().showYesNoDialog(msg,
             function () {
-                this.setRefusedVersion(this.gadget.getLastVersion());
+                this.setRefusedVersion(this.widget.getLastVersion());
             }.bind(this));
     }
 
     var data = {
         id: this.id,
-        newVersion: this.gadget.getLastVersion().text,
-        source: this.gadget.getLastVersion().source
+        newVersion: this.widget.getLastVersion().text,
+        source: this.widget.getLastVersion().source
     };
     var url = Wirecloud.URLs.IWIDGET_VERSION_ENTRY.evaluate({
         workspace_id: this.layout.dragboard.workSpaceId,
@@ -937,14 +937,14 @@ IGadget.prototype.upgradeIGadget = function () {
     });
 };
 
-IGadget.prototype.registerPrefCallback = function registerPrefCallback(prefCallback) {
+IWidget.prototype.registerPrefCallback = function registerPrefCallback(prefCallback) {
     this.prefCallback = prefCallback;
 };
 
 /**
  * This method must be called to avoid memory leaks caused by circular references.
  */
-IGadget.prototype.destroy = function () {
+IWidget.prototype.destroy = function () {
     if (this.draggable !== null) {
         this.draggable.destroy();
         this.draggable = null;
@@ -964,7 +964,7 @@ IGadget.prototype.destroy = function () {
         this.menu.destroy();
         this.menu = null;
     }
-    this.gadget = null;
+    this.widget = null;
     this.layout = null;
     this.position = null;
     this.logManager.close();
@@ -972,23 +972,23 @@ IGadget.prototype.destroy = function () {
 };
 
 /**
- * Removes this igadget form the dragboard.
+ * Removes this iwidget form the dragboard.
  *
- * @param {Boolean} orderFromServer true if his gadget is being removed by Wirecloud
+ * @param {Boolean} orderFromServer true if his widget is being removed by Wirecloud
  *   server request.
  */
-IGadget.prototype.remove = function (orderFromServer) {
+IWidget.prototype.remove = function (orderFromServer) {
     orderFromServer = orderFromServer !== null ? orderFromServer : false;
 
     if (this.layout === null) {
         return;
     }
 
-    this.log(gettext('iGadget deleted'), Constants.Logging.INFO_MSG);
+    this.log(gettext('iWidget deleted'), Constants.Logging.INFO_MSG);
 
     var dragboard = this.layout.dragboard;
     if (isElement(this.element.parentNode)) {
-        this.layout.removeIGadget(this, true);
+        this.layout.removeIWidget(this, true);
     }
 
     this.element = null;
@@ -999,7 +999,7 @@ IGadget.prototype.remove = function (orderFromServer) {
             var msg, logManager;
 
             logManager = LogManagerFactory.getInstance();
-            msg = logManager.formatError(gettext("Error removing igadget from persistence: %(errorMsg)s."), transport, e);
+            msg = logManager.formatError(gettext("Error removing iwidget from persistence: %(errorMsg)s."), transport, e);
             logManager.log(msg);
         };
 
@@ -1022,7 +1022,7 @@ IGadget.prototype.remove = function (orderFromServer) {
  * @param {Number} newHeight
  * @param {Boolean} [persist] default: true
  */
-IGadget.prototype.setContentSize = function (newWidth, newHeight, persist) {
+IWidget.prototype.setContentSize = function (newWidth, newHeight, persist) {
     persist = persist != null ? persist : true;
 
     if (!this.isPainted()) {
@@ -1048,7 +1048,7 @@ IGadget.prototype.setContentSize = function (newWidth, newHeight, persist) {
  *
  * @private
  */
-IGadget.prototype._notifyWindowResizeEvent = function () {
+IWidget.prototype._notifyWindowResizeEvent = function () {
     if (!this.isPainted()) {
         return;
     }
@@ -1077,14 +1077,14 @@ IGadget.prototype._notifyWindowResizeEvent = function () {
 };
 
 /**
- * This function is called when the content of the igadget has been loaded completly.
+ * This function is called when the content of the iwidget has been loaded completly.
  *
  * @private
  */
-IGadget.prototype._notifyLoaded = function () {
+IWidget.prototype._notifyLoaded = function () {
     var msg, unloadElement, errorCount;
 
-    msg = gettext('iGadget loaded');
+    msg = gettext('iWidget loaded');
     this.log(msg, Constants.Logging.INFO_MSG);
 
     if (this.loaded) {
@@ -1095,8 +1095,8 @@ IGadget.prototype._notifyLoaded = function () {
 
     errorCount = this.logManager.getErrorCount();
     if (errorCount > 0) {
-        msg = ngettext("%(errorCount)s error for the iGadget \"%(name)s\" was notified before it was loaded",
-                           "%(errorCount)s errors for the iGadget \"%(name)s\" were notified before it was loaded",
+        msg = ngettext("%(errorCount)s error for the iWidget \"%(name)s\" was notified before it was loaded",
+                           "%(errorCount)s errors for the iWidget \"%(name)s\" were notified before it was loaded",
                            errorCount);
         msg = interpolate(msg, {errorCount: errorCount, name: this.name}, true);
         this.log(msg, Constants.Logging.WARN_MSG);
@@ -1111,13 +1111,13 @@ IGadget.prototype._notifyLoaded = function () {
     Event.observe(unloadElement,
         'unload',
         function () {
-            OpManagerFactory.getInstance().igadgetUnloaded(this.id);
+            OpManagerFactory.getInstance().iwidgetUnloaded(this.id);
         }.bind(this),
         true);
 
-    // Check if the gadget has its correct layout
+    // Check if the widget has its correct layout
     if (this.freeLayoutAfterLoading) {
-        //Change the layout to extract the igadget from the grid
+        //Change the layout to extract the iwidget from the grid
         this.toggleLayout();
     }
 
@@ -1125,12 +1125,12 @@ IGadget.prototype._notifyLoaded = function () {
 };
 
 /**
- * This function is called when the content of the igadget is going to be unloaded.
+ * This function is called when the content of the iwidget is going to be unloaded.
  *
  * @private
  */
-IGadget.prototype._notifyUnloaded = function () {
-    var msg = gettext('iGadget unloaded');
+IWidget.prototype._notifyUnloaded = function () {
+    var msg = gettext('iWidget unloaded');
     this.log(msg, Constants.Logging.INFO_MSG);
     this.logManager.newCycle();
 
@@ -1148,7 +1148,7 @@ IGadget.prototype._notifyUnloaded = function () {
 /**
  * @private
  */
-IGadget.prototype._recomputeWidth = function () {
+IWidget.prototype._recomputeWidth = function () {
     var width = this.layout.getWidthInPixels(this.contentWidth);
 
     width -= this._computeExtraWidthPixels();
@@ -1161,13 +1161,13 @@ IGadget.prototype._recomputeWidth = function () {
 
     // Notify Context Manager
     var contextManager = this.layout.dragboard.getWorkspace().getContextManager();
-    contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.WIDTHINPIXELS, width);
+    contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.WIDTHINPIXELS, width);
 };
 
 /**
  * @private
  */
-IGadget.prototype._recomputeWrapper = function (contentHeight) {
+IWidget.prototype._recomputeWrapper = function (contentHeight) {
     var wrapperHeight;
 
     if (!this.minimized) {
@@ -1186,7 +1186,7 @@ IGadget.prototype._recomputeWrapper = function (contentHeight) {
 /**
  * @private
  */
-IGadget.prototype._computeExtraWidthPixels = function () {
+IWidget.prototype._computeExtraWidthPixels = function () {
     var windowStyle, pixels;
 
     windowStyle = document.defaultView.getComputedStyle(this.element, null);
@@ -1200,7 +1200,7 @@ IGadget.prototype._computeExtraWidthPixels = function () {
 /**
  * @private
  */
-IGadget.prototype._computeExtraHeightPixels = function () {
+IWidget.prototype._computeExtraHeightPixels = function () {
     var windowStyle, menubarStyle, statusbarStyle, pixels;
 
     windowStyle = document.defaultView.getComputedStyle(this.element, null);
@@ -1208,7 +1208,7 @@ IGadget.prototype._computeExtraHeightPixels = function () {
     pixels = windowStyle.getPropertyCSSValue("border-bottom-width").getFloatValue(CSSPrimitiveValue.CSS_PX);
     pixels += windowStyle.getPropertyCSSValue("border-top-width").getFloatValue(CSSPrimitiveValue.CSS_PX);
 
-    menubarStyle = document.defaultView.getComputedStyle(this.gadgetMenu, null);
+    menubarStyle = document.defaultView.getComputedStyle(this.widgetMenu, null);
     pixels += menubarStyle.getPropertyCSSValue("border-bottom-width").getFloatValue(CSSPrimitiveValue.CSS_PX);
     pixels += menubarStyle.getPropertyCSSValue("border-top-width").getFloatValue(CSSPrimitiveValue.CSS_PX);
 
@@ -1222,7 +1222,7 @@ IGadget.prototype._computeExtraHeightPixels = function () {
 /**
  * @private
  */
-IGadget.prototype._recomputeHeight = function (basedOnContent) {
+IWidget.prototype._recomputeHeight = function (basedOnContent) {
     var contentHeight, contextManager, oldHeight;
 
     contextManager = this.layout.dragboard.getWorkspace().getContextManager();
@@ -1235,7 +1235,7 @@ IGadget.prototype._recomputeHeight = function (basedOnContent) {
 
             contentHeight = this.layout.fromVCellsToPixels(this.contentHeight);
             var fullSize = contentHeight;
-            fullSize += this.gadgetMenu.offsetHeight +
+            fullSize += this.widgetMenu.offsetHeight +
                         this.statusBar.offsetHeight;
             fullSize += this._computeExtraHeightPixels();
 
@@ -1244,9 +1244,9 @@ IGadget.prototype._recomputeHeight = function (basedOnContent) {
             this.height = processedSize.inLU;
             this.content.setStyle({height: contentHeight + "px"});
         } else {
-            // Based on full gadget height
+            // Based on full widget height
             contentHeight = this.layout.getHeightInPixels(this.height);
-            contentHeight -= this.gadgetMenu.offsetHeight + this.statusBar.offsetHeight;
+            contentHeight -= this.widgetMenu.offsetHeight + this.statusBar.offsetHeight;
             contentHeight -= this._computeExtraHeightPixels();
 
             if (contentHeight < 0) {
@@ -1260,7 +1260,7 @@ IGadget.prototype._recomputeHeight = function (basedOnContent) {
         this._recomputeWrapper(contentHeight);
 
         // Notify Context Manager about the new size
-        contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.HEIGHTINPIXELS, contentHeight);
+        contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.HEIGHTINPIXELS, contentHeight);
 
     } else { // minimized
         this._recomputeWrapper();
@@ -1271,36 +1271,36 @@ IGadget.prototype._recomputeHeight = function (basedOnContent) {
 
     if (oldHeight !== this.height) {
         // Notify Context Manager about new size
-        contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.HEIGHT, this.height);
+        contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.HEIGHT, this.height);
     }
 };
 
 /**
  * @private
  */
-IGadget.prototype._recomputeSize = function (basedOnContent) {
+IWidget.prototype._recomputeSize = function (basedOnContent) {
     this._recomputeWidth();
     this._recomputeHeight(basedOnContent);
 };
 
 /**
- * Sets the absolute size of the igadget. See setContentSize for resizing the area for the igadget content.
+ * Sets the absolute size of the iwidget. See setContentSize for resizing the area for the iwidget content.
  *
- * @param {Number} newWidth the new width of this igadget in cells. This will be
- *                          the final width for this gadget.
- * @param {Number} newHeight the new height of this igadget in cells. This will
- *                           be the final height for this gadget (that is,
- *                           counting the igadget's title bar, the configuration
+ * @param {Number} newWidth the new width of this iwidget in cells. This will be
+ *                          the final width for this widget.
+ * @param {Number} newHeight the new height of this iwidget in cells. This will
+ *                           be the final height for this widget (that is,
+ *                           counting the iwidget's title bar, the configuration
  *                           form, etc)
- * @param {Boolean} [resizeLeftSide] true if the gadget will be resized using
+ * @param {Boolean} [resizeLeftSide] true if the widget will be resized using
  *                                   the topRight corner as base point.
  *                                   default: false.
  * @param {Boolean} [persist] true if is needed to notify the new
- *                            widths/positions of the iGadget (then the
- *                            associated layout can move other igadgets) to
+ *                            widths/positions of the iWidget (then the
+ *                            associated layout can move other iwidgets) to
  *                            persistence. default: true.
  */
-IGadget.prototype.setSize = function (newWidth, newHeight, resizeLeftSide, persist) {
+IWidget.prototype.setSize = function (newWidth, newHeight, resizeLeftSide, persist) {
     // defaults values for the resizeLeftSide and persist parameters
     resizeLeftSide = resizeLeftSide !== undefined ? resizeLeftSide : false;
     persist = persist !== undefined ? persist : true;
@@ -1324,10 +1324,10 @@ IGadget.prototype.setSize = function (newWidth, newHeight, resizeLeftSide, persi
     if (persist) {
         // Notify Context Manager new sizes
         var contextManager = this.layout.dragboard.getWorkspace().getContextManager();
-        contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.HEIGHT, this.contentHeight);
-        contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.WIDTH, this.contentWidth);
-        contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.HEIGHTINPIXELS, this.content.offsetHeight);
-        contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.WIDTHINPIXELS, this.content.offsetWidth);
+        contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.HEIGHT, this.contentHeight);
+        contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.WIDTH, this.contentWidth);
+        contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.HEIGHTINPIXELS, this.content.offsetHeight);
+        contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.WIDTHINPIXELS, this.content.offsetWidth);
     }
 
     // Notify resize event
@@ -1335,20 +1335,20 @@ IGadget.prototype.setSize = function (newWidth, newHeight, resizeLeftSide, persi
 };
 
 /**
- * Returns true if this igadget is minimized.
+ * Returns true if this iwidget is minimized.
  *
- * @returns {Boolean} true if the iGadget is minimized; false otherwise.
+ * @returns {Boolean} true if the iWidget is minimized; false otherwise.
  */
-IGadget.prototype.isMinimized = function () {
+IWidget.prototype.isMinimized = function () {
     return this.minimized;
 };
 
 /**
- * Changes minimize status of this igadget
+ * Changes minimize status of this iwidget
  *
- * @param newStatus new minimize status of the igadget
+ * @param newStatus new minimize status of the iwidget
  */
-IGadget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveSpace) {
+IWidget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveSpace) {
     if (this.minimized === newStatus) {
         return; // Nothing to do
     }
@@ -1360,7 +1360,7 @@ IGadget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
 
     if (this.minimized) {
         if (this.onFreeLayout()) {
-            // Floating gadget
+            // Floating widget
             this.element.setStyle({"visibility": "hidden"});
             this.iconElement.setStyle({"display": "block"});
         } else {
@@ -1378,7 +1378,7 @@ IGadget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
         this.contentWrapper.setStyle({"visibility": "", "border": ""});
 
         if (this.onFreeLayout()) {
-            // Floating gadget
+            // Floating widget
             this.element.setStyle({"visibility": ""});
             this.iconElement.setStyle({"display": "none"});
         } else {
@@ -1398,11 +1398,11 @@ IGadget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
     }
 };
 
-IGadget.prototype.isInFullDragboardMode = function () {
+IWidget.prototype.isInFullDragboardMode = function () {
     return this.layout instanceof FullDragboardLayout;
 };
 
-IGadget.prototype.setFullDragboardMode = function (enable) {
+IWidget.prototype.setFullDragboardMode = function (enable) {
     if (this.isInFullDragboardMode() === enable) {
         return;
     }
@@ -1423,16 +1423,16 @@ IGadget.prototype.setFullDragboardMode = function (enable) {
 };
 
 /**
- * Toggles the minimize status of this gadget
+ * Toggles the minimize status of this widget
  */
-IGadget.prototype.toggleMinimizeStatus = function (persistence) {
+IWidget.prototype.toggleMinimizeStatus = function (persistence) {
     this.setMinimizeStatus(!this.minimized, persistence);
 };
 
 /**
  * @private
  */
-IGadget.prototype._updateErrorInfo = function () {
+IWidget.prototype._updateErrorInfo = function () {
     var label, errorCount = this.logManager.getErrorCount();
     this.errorButton.setDisabled(errorCount == 0);
 
@@ -1444,7 +1444,7 @@ IGadget.prototype._updateErrorInfo = function () {
 /**
  * Logs a success
  */
-IGadget.prototype.log = function (msg, level) {
+IWidget.prototype.log = function (msg, level) {
     level = level != null ? level : Constants.Logging.ERROR_MSG;
 
     this.logManager.log(msg, level);
@@ -1453,7 +1453,7 @@ IGadget.prototype.log = function (msg, level) {
     }
 };
 
-IGadget.prototype.highlight = function () {
+IWidget.prototype.highlight = function () {
     if (this.isVisible()) {
         this.element.addClassName('highlighted');
 
@@ -1470,9 +1470,9 @@ IGadget.prototype.highlight = function () {
 };
 
 /**
- * Increments the error count for this igadget
+ * Increments the error count for this iwidget
  */
-IGadget.prototype.toggleLayout = function () {
+IWidget.prototype.toggleLayout = function () {
     if (this.onFreeLayout()) {
         this.moveToLayout(this.layout.dragboard.baseLayout);
     } else {
@@ -1481,33 +1481,33 @@ IGadget.prototype.toggleLayout = function () {
 };
 
 /**
- * Check if the igadget belongs to a shared workspace
+ * Check if the iwidget belongs to a shared workspace
  */
-IGadget.prototype.is_shared_workspace = function () {
+IWidget.prototype.is_shared_workspace = function () {
     return this.layout.dragboard.getWorkspace().isShared();
 };
 
 /**
- * Saves the igadget into persistence. Used only for the first time, that is,
- * for creating igadgets.
+ * Saves the iwidget into persistence. Used only for the first time, that is,
+ * for creating iwidgets.
  */
-IGadget.prototype.save = function (options) {
+IWidget.prototype.save = function (options) {
     function onSuccess(transport) {
-        var igadgetInfo = JSON.parse(transport.responseText);
-        this.id = igadgetInfo['id'];
-        this.codeURL = this.gadget.code_url + "#id=" + this.id;
-        this.layout.dragboard.addIGadget(this, igadgetInfo, options);
+        var iwidgetInfo = JSON.parse(transport.responseText);
+        this.id = iwidgetInfo['id'];
+        this.codeURL = this.widget.code_url + "#id=" + this.id;
+        this.layout.dragboard.addIWidget(this, iwidgetInfo, options);
     }
 
     function onError(transport, e) {
         var logManager, msg;
 
         logManager = LogManagerFactory.getInstance();
-        msg = logManager.formatError(gettext("Error adding igadget to persistence: %(errorMsg)s."), transport, e);
+        msg = logManager.formatError(gettext("Error adding iwidget to persistence: %(errorMsg)s."), transport, e);
         logManager.log(msg);
 
-        // Remove this iGadget from the layout
-        this.layout.removeIGadget(this, true);
+        // Remove this iWidget from the layout
+        this.layout.removeIWidget(this, true);
         this.destroy();
     }
 
@@ -1517,7 +1517,7 @@ IGadget.prototype.save = function (options) {
     });
 
     var data = Object.toJSON({
-        'gadget': this.gadget.getId(),
+        'widget': this.widget.getId(),
         'left': this.position.x,
         'top': this.position.y,
         'icon_left': this.iconPosition.x,
@@ -1528,7 +1528,7 @@ IGadget.prototype.save = function (options) {
         'name': this.name,
         'layout': this.onFreeLayout() ? 1 : 0
     });
-    data = {igadget: data};
+    data = {iwidget: data};
     Wirecloud.io.makeRequest(url, {
         method: 'POST',
         parameters: data,
@@ -1539,18 +1539,18 @@ IGadget.prototype.save = function (options) {
 };
 
 /**
- * This function migrates this igadget form a layout to another
+ * This function migrates this iwidget form a layout to another
  *
- * @param {DragboardLayout} newLayout the layout where the iGadget will be moved
+ * @param {DragboardLayout} newLayout the layout where the iWidget will be moved
  *                          to.
  */
-IGadget.prototype.moveToLayout = function (newLayout) {
+IWidget.prototype.moveToLayout = function (newLayout) {
     if (this.layout === newLayout) {
         return;
     }
 
-    var affectedGadgetsRemoving = false;
-    var affectedGadgetsAdding = false;      //is there any other gadget's postion affected
+    var affectedWidgetsRemoving = false;
+    var affectedWidgetsAdding = false;      //is there any other widget's postion affected
 
     var minimizeOnFinish = false;
     if (this.minimized) {
@@ -1565,7 +1565,7 @@ IGadget.prototype.moveToLayout = function (newLayout) {
 
     var contentHeight = this.content.offsetHeight;
     var fullHeight = contentHeight;
-    fullHeight += this.gadgetMenu.offsetHeight +
+    fullHeight += this.widgetMenu.offsetHeight +
                   this.statusBar.offsetHeight;
     fullHeight += this._computeExtraHeightPixels();
     // ##### END TODO
@@ -1575,10 +1575,10 @@ IGadget.prototype.moveToLayout = function (newLayout) {
 
     // Force an unload event
     if (dragboardChange) {
-        OpManagerFactory.getInstance().igadgetUnloaded(this.id);
+        OpManagerFactory.getInstance().iwidgetUnloaded(this.id);
     }
 
-    affectedGadgetsRemoving = oldLayout.removeIGadget(this, dragboardChange);
+    affectedWidgetsRemoving = oldLayout.removeIWidget(this, dragboardChange);
 
 
     if (dragboardChange && !(newLayout instanceof FreeLayout)) {
@@ -1610,7 +1610,7 @@ IGadget.prototype.moveToLayout = function (newLayout) {
     }
     // ##### END TODO
 
-    affectedGadgetsAdding = newLayout.addIGadget(this, dragboardChange);
+    affectedWidgetsAdding = newLayout.addIWidget(this, dragboardChange);
 
     if (minimizeOnFinish) {
         this.toggleMinimizeStatus();
@@ -1627,15 +1627,15 @@ IGadget.prototype.moveToLayout = function (newLayout) {
     }
 
 
-    //if the gadget hasn't been taken to another tab and
-    //the movement affects the rest of gadgets
-    if (!dragboardChange && (affectedGadgetsRemoving || affectedGadgetsAdding)) {
+    //if the widget hasn't been taken to another tab and
+    //the movement affects the rest of widgets
+    if (!dragboardChange && (affectedWidgetsRemoving || affectedWidgetsAdding)) {
         //commit all the dragboard changes
         this.layout.dragboard._commitChanges();
     } else {
-        //commit only the info about this igadget. If it has changed dragboards, it won't
-        //affect the positions of the gadgets of the new tab because it's placed at the
-        //end of the dragboard. It won't either affect the old dragboard's gadgets because
+        //commit only the info about this iwidget. If it has changed dragboards, it won't
+        //affect the positions of the widgets of the new tab because it's placed at the
+        //end of the dragboard. It won't either affect the old dragboard's widgets because
         //they will reallocate themselves and this will be notified in the next action.
 
         // TODO create a changes manager
@@ -1652,30 +1652,30 @@ IGadget.prototype.moveToLayout = function (newLayout) {
         };
 
         var data = {};
-        data['iGadgets'] = [];
+        data['iWidgets'] = [];
 
-        var iGadgetInfo = {};
-        iGadgetInfo['id'] = this.id;
+        var iWidgetInfo = {};
+        iWidgetInfo['id'] = this.id;
         if (!(newLayout instanceof FullDragboardLayout)) {
-            iGadgetInfo['top'] = this.position.y;
-            iGadgetInfo['left'] = this.position.x;
-            iGadgetInfo['width'] = this.contentWidth;
-            iGadgetInfo['height'] = this.contentHeight;
-            iGadgetInfo['layout'] = this.onFreeLayout() ? 1 : 0;
-            iGadgetInfo['fulldragboard'] = false;
+            iWidgetInfo['top'] = this.position.y;
+            iWidgetInfo['left'] = this.position.x;
+            iWidgetInfo['width'] = this.contentWidth;
+            iWidgetInfo['height'] = this.contentHeight;
+            iWidgetInfo['layout'] = this.onFreeLayout() ? 1 : 0;
+            iWidgetInfo['fulldragboard'] = false;
         } else {
-            iGadgetInfo['fulldragboard'] = true;
+            iWidgetInfo['fulldragboard'] = true;
         }
 
-        iGadgetInfo['icon_top'] = this.iconPosition.y;
-        iGadgetInfo['icon_left'] = this.iconPosition.x;
-        iGadgetInfo['zIndex'] = this.zPos;
-        iGadgetInfo['tab'] = this.layout.dragboard.tabId;
+        iWidgetInfo['icon_top'] = this.iconPosition.y;
+        iWidgetInfo['icon_left'] = this.iconPosition.x;
+        iWidgetInfo['zIndex'] = this.zPos;
+        iWidgetInfo['tab'] = this.layout.dragboard.tabId;
 
-        data['iGadgets'].push(iGadgetInfo);
+        data['iWidgets'].push(iWidgetInfo);
 
         data = {
-            'igadgets': Object.toJSON(data)
+            'iwidgets': Object.toJSON(data)
         };
         var url = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
             workspace_id: oldLayout.dragboard.workSpaceId,

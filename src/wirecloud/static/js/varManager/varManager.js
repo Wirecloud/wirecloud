@@ -34,14 +34,14 @@ function VarManager (_workSpace) {
 
 
     VarManager.prototype.parseVariables = function (workSpaceInfo) {
-        // Igadget variables!
+        // Iwidget variables!
         var tabs = workSpaceInfo['workspace']['tabList'];
 
         for (var i=0; i<tabs.length; i++) {
-            var igadgets = tabs[i]['igadgetList'];
+            var iwidgets = tabs[i]['iwidgetList'];
 
-            for (var j=0; j<igadgets.length; j++) {
-                this.parseIGadgetVariables(igadgets[j], this.workSpace.getTabInstance(tabs[i].id));
+            for (var j=0; j<iwidgets.length; j++) {
+                this.parseIWidgetVariables(iwidgets[j], this.workSpace.getTabInstance(tabs[i].id));
             }
         }
     }
@@ -61,18 +61,18 @@ function VarManager (_workSpace) {
         function onSuccess(transport) {
             var response = transport.responseText;
             var modifiedVariables = JSON.parse(response);
-            var igadgetVars = modifiedVariables['igadgetVars']
+            var iwidgetVars = modifiedVariables['iwidgetVars']
 
             this.modificationsEnabled = false; //lock the adding of modified variables to the buffer
-            for (var i = 0; i < igadgetVars.length; i++) {
-                var id = igadgetVars[i].id;
+            for (var i = 0; i < iwidgetVars.length; i++) {
+                var id = iwidgetVars[i].id;
                 var variable = this.getVariableById(id);
-                variable.annotate(igadgetVars[i].value)
+                variable.annotate(iwidgetVars[i].value)
             }
-            for (var i = 0; i < igadgetVars.length; i++) {
-                var id = igadgetVars[i].id;
+            for (var i = 0; i < iwidgetVars.length; i++) {
+                var id = iwidgetVars[i].id;
                 var variable = this.getVariableById(id);
-                variable.set(igadgetVars[i].value) //set will not add the variable to the modified variables to be sent due to the 'disableModifications'
+                variable.set(iwidgetVars[i].value) //set will not add the variable to the modified variables to be sent due to the 'disableModifications'
             }
             this.modificationsEnabled = true; //unlock the adding of modified variables to the buffer
         }
@@ -84,10 +84,10 @@ function VarManager (_workSpace) {
         }
 
         // Max lenght of buffered requests have been reached. Uploading to server!
-        if (this.igadgetModifiedVars.length > 0) {
+        if (this.iwidgetModifiedVars.length > 0) {
             var variables = {};
 
-            variables['igadgetVars'] = this.igadgetModifiedVars;
+            variables['iwidgetVars'] = this.iwidgetModifiedVars;
 
             var uri = Wirecloud.URLs.VARIABLE_COLLECTION.evaluate({workspace_id: this.workSpace.getId()});
 
@@ -105,16 +105,16 @@ function VarManager (_workSpace) {
         }
     }
 
-    VarManager.prototype.parseIGadgetVariables = function (igadget_info, tab) {
-        var name, id, variables, variable, igadget, varInfo, aspect, value,
+    VarManager.prototype.parseIWidgetVariables = function (iwidget_info, tab) {
+        var name, id, variables, variable, iwidget, varInfo, aspect, value,
             objVars = {};
 
-        igadget = this.workSpace.getIgadget(igadget_info['id']);
-        variables = igadget.gadget.getTemplate().getVariables();
+        iwidget = this.workSpace.getIwidget(iwidget_info['id']);
+        variables = iwidget.widget.getTemplate().getVariables();
 
         for (name in variables) {
             variable = variables[name];
-            varInfo = name in igadget_info.variables ? igadget_info.variables[name] : {};
+            varInfo = name in iwidget_info.variables ? iwidget_info.variables[name] : {};
 
             id = varInfo.id;
             aspect = variable.aspect;
@@ -123,17 +123,17 @@ function VarManager (_workSpace) {
             switch (aspect) {
                 case Variable.prototype.PROPERTY:
                 case Variable.prototype.EVENT:
-                    objVars[name] = new RWVariable(id, igadget, variable, this, value, tab);
+                    objVars[name] = new RWVariable(id, iwidget, variable, this, value, tab);
                     this.variables[id] = objVars[name];
                     break;
                 case Variable.prototype.EXTERNAL_CONTEXT:
                 case Variable.prototype.GADGET_CONTEXT:
                 case Variable.prototype.SLOT:
-                    objVars[name] = new RVariable(id, igadget, variable, this, value, tab);
+                    objVars[name] = new RVariable(id, iwidget, variable, this, value, tab);
                     this.variables[id] = objVars[name];
                     break;
                 case Variable.prototype.USER_PREF:
-                    objVars[name] = new RVariable(id, igadget, variable, this, value, tab);
+                    objVars[name] = new RVariable(id, iwidget, variable, this, value, tab);
                     objVars[name].readOnly = 'readOnly' in varInfo ? varInfo.readOnly : false;
                     objVars[name].hidden = 'hidden' in varInfo ? varInfo.hidden : false;
                     this.variables[id] = objVars[name];
@@ -141,41 +141,41 @@ function VarManager (_workSpace) {
             }
         }
 
-        this.iGadgets[igadget_info['id']] = objVars;
+        this.iWidgets[iwidget_info['id']] = objVars;
     }
 
-    VarManager.prototype.registerVariable = function (iGadgetId, variableName, handler) {
-        var variable = this.findVariable(iGadgetId, variableName);
+    VarManager.prototype.registerVariable = function (iWidgetId, variableName, handler) {
+        var variable = this.findVariable(iWidgetId, variableName);
 
         if (variable) {
             variable.setHandler(handler);
         } else {
-            var transObj = {iGadgetId: iGadgetId, varName: variableName};
-            var msg = interpolate(gettext("IGadget %(iGadgetId)s does not have any variable named \"%(varName)s\".\nIf you need it, please insert it into the gadget's template."), transObj, true);
-            OpManagerFactory.getInstance().logIGadgetError(iGadgetId, msg, Constants.Logging.ERROR_MSG);
+            var transObj = {iWidgetId: iWidgetId, varName: variableName};
+            var msg = interpolate(gettext("IWidget %(iWidgetId)s does not have any variable named \"%(varName)s\".\nIf you need it, please insert it into the widget's template."), transObj, true);
+            OpManagerFactory.getInstance().logIWidgetError(iWidgetId, msg, Constants.Logging.ERROR_MSG);
         }
     }
 
-    VarManager.prototype.assignEventConnectable = function (iGadgetId, variableName, wEvent) {
-        var variable = this.findVariable(iGadgetId, variableName);
+    VarManager.prototype.assignEventConnectable = function (iWidgetId, variableName, wEvent) {
+        var variable = this.findVariable(iWidgetId, variableName);
         variable.assignEvent(wEvent);
     }
 
-    VarManager.prototype.getVariable = function (iGadgetId, variableName) {
-        var variable = this.findVariable(iGadgetId, variableName);
+    VarManager.prototype.getVariable = function (iWidgetId, variableName) {
+        var variable = this.findVariable(iWidgetId, variableName);
 
         // Error control
 
         return variable.get();
     }
 
-    VarManager.prototype.setVariable = function (iGadgetId, variableName, value, options) {
-        var variable = this.findVariable(iGadgetId, variableName);
+    VarManager.prototype.setVariable = function (iWidgetId, variableName, value, options) {
+        var variable = this.findVariable(iWidgetId, variableName);
 
         if (variable.vardef.aspect !== Variable.prototype.EVENT && typeof(value) !== 'string') {
-            var transObj = {iGadgetId: iGadgetId, varName: variableName};
-            var msg = interpolate(gettext("IGadget %(iGadgetId)s attempted to establish a non-string value for the variable \"%(varName)s\"."), transObj, true);
-            OpManagerFactory.getInstance().logIGadgetError(iGadgetId, msg, Constants.Logging.ERROR_MSG);
+            var transObj = {iWidgetId: iWidgetId, varName: variableName};
+            var msg = interpolate(gettext("IWidget %(iWidgetId)s attempted to establish a non-string value for the variable \"%(varName)s\"."), transObj, true);
+            OpManagerFactory.getInstance().logIWidgetError(iWidgetId, msg, Constants.Logging.ERROR_MSG);
 
             throw new Error();
         }
@@ -183,11 +183,11 @@ function VarManager (_workSpace) {
         variable.set(value, options);
     }
 
-    VarManager.prototype.addPendingVariable = function (iGadget, variableName, value) {
-        var variables = this.pendingVariables[iGadget.getId()];
+    VarManager.prototype.addPendingVariable = function (iWidget, variableName, value) {
+        var variables = this.pendingVariables[iWidget.getId()];
         if (!variables) {
             variables = [];
-            this.pendingVariables[iGadget.getId()] = variables;
+            this.pendingVariables[iWidget.getId()] = variables;
         }
         variables.push({
             "name": variableName,
@@ -195,36 +195,36 @@ function VarManager (_workSpace) {
         });
     };
 
-    VarManager.prototype.dispatchPendingVariables = function (iGadgetId) {
+    VarManager.prototype.dispatchPendingVariables = function (iWidgetId) {
         var variables, i;
 
-        variables = this.pendingVariables[iGadgetId];
-        delete this.pendingVariables[iGadgetId];
+        variables = this.pendingVariables[iWidgetId];
+        delete this.pendingVariables[iWidgetId];
         if (variables) {
             for (i = 0; i < variables.length; i += 1) {
-                this.setVariable(iGadgetId, variables[i]["name"], variables[i]["value"]);
+                this.setVariable(iWidgetId, variables[i]["name"], variables[i]["value"]);
             }
         }
     };
 
-    VarManager.prototype.addInstance = function (iGadget, igadgetInfo, tab) {
-        this.parseIGadgetVariables(igadgetInfo, tab);
+    VarManager.prototype.addInstance = function (iWidget, iwidgetInfo, tab) {
+        this.parseIWidgetVariables(iwidgetInfo, tab);
     }
 
-    VarManager.prototype.removeInstance = function (iGadgetId) {
-        delete this.iGadgets[iGadgetId];
+    VarManager.prototype.removeInstance = function (iWidgetId) {
+        delete this.iWidgets[iWidgetId];
 
-        this.removeIGadgetVariables(iGadgetId);
+        this.removeIWidgetVariables(iWidgetId);
     }
 
 
-    VarManager.prototype.removeIGadgetVariables = function (iGadgetId) {
+    VarManager.prototype.removeIWidgetVariables = function (iWidgetId) {
         var variable_id, variable;
 
         for (variable_id in this.variables) {
             variable = this.variables[variable_id];
-            if (variable.iGadget === iGadgetId) {
-                this.igadgetModifiedVars.removeById(variable_id);
+            if (variable.iWidget === iWidgetId) {
+                this.iwidgetModifiedVars.removeById(variable_id);
                 delete this.variables[variable_id];
             }
         }
@@ -248,10 +248,10 @@ function VarManager (_workSpace) {
         var variable;
         var vars;
         var varIndex;
-        var gadgetIndex;
+        var widgetIndex;
 
-        for (gadgetIndex in this.iGadgets) {
-        vars = this.iGadgets[gadgetIndex];
+        for (widgetIndex in this.iWidgets) {
+        vars = this.iWidgets[widgetIndex];
 
             for (varIndex in vars) {
                 variable = vars[varIndex];
@@ -285,7 +285,7 @@ function VarManager (_workSpace) {
             for (var j = 0; j < variables.length; j++) {
                 var variable = variables[j];
 
-                var modVar = this.findVariableInCollection(this.igadgetModifiedVars, variable.id)
+                var modVar = this.findVariableInCollection(this.iwidgetModifiedVars, variable.id)
                 if (modVar) {
                     modVar.value = variable.value;
                     return;
@@ -298,7 +298,7 @@ function VarManager (_workSpace) {
                     'value': variable.value
                 }
 
-                this.igadgetModifiedVars.push(varInfo);
+                this.iwidgetModifiedVars.push(varInfo);
             }
         }
 
@@ -320,7 +320,7 @@ function VarManager (_workSpace) {
     VarManager.prototype.resetModifiedVariables = function () {
         this.nestingLevel = 0;
         this.buffered_requests = 0;
-        this.igadgetModifiedVars = [];
+        this.iwidgetModifiedVars = [];
         this.force_commit = false;
     }
 
@@ -330,16 +330,16 @@ function VarManager (_workSpace) {
         }
     }
 
-    VarManager.prototype.getIGadgetVariables = function (iGadgetId) {
-        return this.iGadgets[iGadgetId];
+    VarManager.prototype.getIWidgetVariables = function (iWidgetId) {
+        return this.iWidgets[iWidgetId];
     }
 
     VarManager.prototype.getVariableById = function (varId) {
         return this.variables[varId];
     }
 
-    VarManager.prototype.getVariableByName = function (igadgetId, varName) {
-        return this.findVariable(igadgetId, varName);
+    VarManager.prototype.getVariableByName = function (iwidgetId, varName) {
+        return this.findVariable(iwidgetId, varName);
     }
 
     VarManager.prototype.getWorkspace = function () {
@@ -350,15 +350,15 @@ function VarManager (_workSpace) {
     // PRIVATE VARIABLES AND CONSTRUCTOR
     // *********************************
 
-    VarManager.prototype.findVariable = function (iGadgetId, name) {
-        var variables = this.iGadgets[iGadgetId];
+    VarManager.prototype.findVariable = function (iWidgetId, name) {
+        var variables = this.iWidgets[iWidgetId];
         var variable = variables[name];
 
         return variable;
     }
 
     this.workSpace = _workSpace;
-    this.iGadgets = {};
+    this.iWidgets = {};
     this.variables = {};
 
     // For now workspace variables must be in a separated hash table, because they have a
@@ -368,7 +368,7 @@ function VarManager (_workSpace) {
 
     this.modificationsEnabled = true;
 
-    this.pendingVariables = {}; //to manage igadgets loaded on demand caused by a wiring propagation
+    this.pendingVariables = {}; //to manage iwidgets loaded on demand caused by a wiring propagation
 
     // Creation of ALL Wirecloud variables regarding one workspace
     this.parseVariables(this.workSpace.workSpaceGlobalInfo);

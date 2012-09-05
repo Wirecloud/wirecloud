@@ -321,7 +321,7 @@ wInOut.prototype.fullDisconnect = function() {
 }
 
 /**
- * This class represents a iGadget variable which may produce some data (also
+ * This class represents a iWidget variable which may produce some data (also
  * know as event)
  *
  * @param variable
@@ -551,7 +551,7 @@ wTab.prototype.getQualifiedName = function () {
 }
 
 /**
- * This class representents a iGadget variable which may receive some data.
+ * This class representents a iWidget variable which may receive some data.
  *
  * @param variable
  * @param type
@@ -573,7 +573,7 @@ wSlot.prototype._is_target_slot = function(variable, list) {
 
     for (i = 0; i < list.length; i += 1) {
         slot = list[i];
-        if (slot.iGadget == variable.iGadget && slot.name == variable.vardef.name) {
+        if (slot.iWidget == variable.iWidget && slot.name == variable.vardef.name) {
             return true;
         }
     }
@@ -581,18 +581,18 @@ wSlot.prototype._is_target_slot = function(variable, list) {
 }
 
 wSlot.prototype.getFinalSlots = function() {
-    var iGadgetName, action_label = this.variable.getActionLabel();
+    var iWidgetName, action_label = this.variable.getActionLabel();
     if (!action_label || action_label === '') {
         action_label = gettext('Use in %(slotName)s');
         action_label = interpolate(action_label, {slotName: this.variable.getLabel()}, true);
     }
-    iGadgetName = OpManagerFactory.getInstance().activeWorkSpace.getIgadget(this.variable.iGadget).name;
+    iWidgetName = OpManagerFactory.getInstance().activeWorkSpace.getIwidget(this.variable.iWidget).name;
 
     return [{
         action_label: action_label,
-        iGadget: this.variable.iGadget,
+        iWidget: this.variable.iWidget,
         name: this.variable.vardef.name,
-        iGadgetName: iGadgetName
+        iWidgetName: iWidgetName
     }];
 }
 

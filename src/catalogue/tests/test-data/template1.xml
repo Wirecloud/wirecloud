@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <Template xmlns="http://morfeo-project.org/2007/Template">
-  <!-- Gadget Meta-Info -->
+  <!-- Widget Meta-Info -->
   <Catalog.ResourceDescription>
     <Vendor>Morfeo</Vendor>
     <Name>Test</Name>
@@ -37,8 +37,8 @@
 
   <Translations default="en">
     <Translation lang="en">
-      <msg name="displayName">Test Gadget</msg>
-      <msg name="description">Test Gadget description</msg>
+      <msg name="displayName">Test Widget</msg>
+      <msg name="description">Test Widget description</msg>
       <msg name="prefDescription">Preference description</msg>
       <msg name="prefLabel">Preference label</msg>
       <msg name="propLabel">Property label</msg>
@@ -46,8 +46,8 @@
       <msg name="slotLabel">Slot label</msg>
     </Translation>
     <Translation lang="es">
-      <msg name="displayName">Gadget de pruebas</msg>
-      <msg name="description">Descripción del Gadget de pruebas</msg>
+      <msg name="displayName">Widget de pruebas</msg>
+      <msg name="description">Descripción del Widget de pruebas</msg>
       <msg name="prefDescription">Descripción de la preferencia</msg>
       <msg name="prefLabel">Etiqueta de la preferencia</msg>
       <msg name="propLabel">Etiqueta de la propiedad</msg>

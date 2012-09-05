@@ -12,8 +12,8 @@ from django.test import Client, TransactionTestCase
 from django.utils import simplejson
 
 from commons.get_data import get_global_workspace_data
-from wirecloud.models import Gadget, IGadget, Tab, UserWorkSpace, Variable, VariableValue, WorkSpace
-from wirecloud.iwidget.utils import SaveIGadget, deleteIGadget
+from wirecloud.models import Widget, IWidget, Tab, UserWorkSpace, Variable, VariableValue, WorkSpace
+from wirecloud.iwidget.utils import SaveIWidget, deleteIWidget
 from wirecloud.workspace.packageCloner import PackageCloner
 from wirecloud.workspace.mashupTemplateGenerator import build_template_from_workspace, build_rdf_template_from_workspace, build_usdl_from_workspace
 from wirecloud.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
@@ -49,7 +49,7 @@ class WorkspaceTestCase(CacheTestCase):
         self.assertEqual(len(data['workspace']['tabList']), 1)
 
         tab = data['workspace']['tabList'][0]
-        variables = tab['igadgetList'][0]['variables']
+        variables = tab['iwidgetList'][0]['variables']
         self.assertEqual(variables['password']['value'], '')
         self.assertEqual(variables['password']['secure'], True)
         self.assertEqual(variables['username']['value'], 'test_username')
@@ -80,7 +80,7 @@ class WorkspaceTestCase(CacheTestCase):
         alternative_user = User.objects.get(username='test2')
         new_workspace = linkWorkspace(alternative_user, workspace.id, self.user)
 
-        all_variables = VariableValue.objects.filter(variable__igadget__tab__workspace=workspace)
+        all_variables = VariableValue.objects.filter(variable__iwidget__tab__workspace=workspace)
         initial_vars = all_variables.filter(user=self.user)
         cloned_vars = all_variables.filter(user=alternative_user)
 
@@ -99,13 +99,13 @@ class WorkspaceTestCase(CacheTestCase):
         self.assertNotEqual(workspace, cloned_workspace)
         self.assertEqual(cloned_workspace.users.count(), 0)
 
-        original_igadgets = IGadget.objects.filter(tab__workspace=workspace)
-        cloned_igadgets = IGadget.objects.filter(tab__workspace=cloned_workspace)
-        self.assertEqual(original_igadgets.count(), cloned_igadgets.count())
-        self.assertNotEqual(original_igadgets[0].id, cloned_igadgets[0].id)
+        original_iwidgets = IWidget.objects.filter(tab__workspace=workspace)
+        cloned_iwidgets = IWidget.objects.filter(tab__workspace=cloned_workspace)
+        self.assertEqual(original_iwidgets.count(), cloned_iwidgets.count())
+        self.assertNotEqual(original_iwidgets[0].id, cloned_iwidgets[0].id)
 
-        original_variables = Variable.objects.filter(igadget__tab__workspace=workspace)
-        cloned_variables = Variable.objects.filter(igadget__tab__workspace=cloned_workspace)
+        original_variables = Variable.objects.filter(iwidget__tab__workspace=workspace)
+        cloned_variables = Variable.objects.filter(iwidget__tab__workspace=cloned_workspace)
 
         self.assertEqual(original_variables.count(), cloned_variables.count())
         self.assertNotEqual(original_variables[0].id, cloned_variables[0].id)
@@ -144,13 +144,13 @@ class WorkspaceTestCase(CacheTestCase):
 
         # Check that other_user can access to the shared workspace
         data = get_global_workspace_data(workspace, other_user).get_data()
-        igadget_list = data['workspace']['tabList'][0]['igadgetList']
-        self.assertEqual(len(igadget_list), 2)
+        iwidget_list = data['workspace']['tabList'][0]['iwidgetList']
+        self.assertEqual(len(iwidget_list), 2)
 
-        # Add a new iGadget to the workspace
+        # Add a new iWidget to the workspace
         tab = Tab.objects.get(pk=1)
-        igadget_data = {
-            'gadget': '/Test/Test Gadget/1.0.0',
+        iwidget_data = {
+            'widget': '/Test/Test Widget/1.0.0',
             'name': 'test',
             'top': 0,
             'left': 0,
@@ -161,12 +161,12 @@ class WorkspaceTestCase(CacheTestCase):
             'icon_top': 0,
             'icon_left': 0
         }
-        Gadget.objects.get(pk=1).users.add(self.user)
-        SaveIGadget(igadget_data, self.user, tab, {})
+        Widget.objects.get(pk=1).users.add(self.user)
+        SaveIWidget(iwidget_data, self.user, tab, {})
 
         data = get_global_workspace_data(workspace, other_user).get_data()
-        igadget_list = data['workspace']['tabList'][0]['igadgetList']
-        self.assertEqual(len(igadget_list), 3)
+        iwidget_list = data['workspace']['tabList'][0]['iwidgetList']
+        self.assertEqual(len(iwidget_list), 3)
 
 
 class WorkspaceCacheTestCase(CacheTestCase):
@@ -187,7 +187,7 @@ class WorkspaceCacheTestCase(CacheTestCase):
 
         client = Client()
         put_data = {
-            'igadgetVars': [
+            'iwidgetVars': [
                 {'id': 1, 'value': 'new_password'},
                 {'id': 2, 'value': 'new_username'},
                 {'id': 4, 'value': 'new_data'},
@@ -199,7 +199,7 @@ class WorkspaceCacheTestCase(CacheTestCase):
         self.assertEqual(result.status_code, 200)
 
         data = get_global_workspace_data(self.workspace, self.user).get_data()
-        variables = data['workspace']['tabList'][0]['igadgetList'][0]['variables']
+        variables = data['workspace']['tabList'][0]['iwidgetList'][0]['variables']
         self.assertEqual(variables['password']['value'], '')
         self.assertEqual(variables['password']['secure'], True)
         self.assertEqual(variables['username']['value'], 'new_username')
@@ -208,8 +208,8 @@ class WorkspaceCacheTestCase(CacheTestCase):
     def test_widget_instantiation_invalidates_cache(self):
 
         tab = Tab.objects.get(pk=1)
-        igadget_data = {
-            'gadget': '/Test/Test Gadget/1.0.0',
+        iwidget_data = {
+            'widget': '/Test/Test Widget/1.0.0',
             'name': 'test',
             'top': 0,
             'left': 0,
@@ -220,20 +220,20 @@ class WorkspaceCacheTestCase(CacheTestCase):
             'icon_top': 0,
             'icon_left': 0
         }
-        Gadget.objects.get(pk=1).users.add(self.user)
-        SaveIGadget(igadget_data, self.user, tab, {})
+        Widget.objects.get(pk=1).users.add(self.user)
+        SaveIWidget(iwidget_data, self.user, tab, {})
 
         data = get_global_workspace_data(self.workspace, self.user).get_data()
 
-        igadget_list = data['workspace']['tabList'][0]['igadgetList']
-        self.assertEqual(len(igadget_list), 3)
+        iwidget_list = data['workspace']['tabList'][0]['iwidgetList']
+        self.assertEqual(len(iwidget_list), 3)
 
     def test_widget_deletion_invalidates_cache(self):
 
-        deleteIGadget(IGadget.objects.get(pk=1), self.user)
+        deleteIWidget(IWidget.objects.get(pk=1), self.user)
         data = get_global_workspace_data(self.workspace, self.user).get_data()
-        igadget_list = data['workspace']['tabList'][0]['igadgetList']
-        self.assertEqual(len(igadget_list), 1)
+        iwidget_list = data['workspace']['tabList'][0]['iwidgetList']
+        self.assertEqual(len(iwidget_list), 1)
 
 
 class ParamatrizedWorkspaceGenerationTestCase(TransactionTestCase):
@@ -288,7 +288,7 @@ class ParamatrizedWorkspaceGenerationTestCase(TransactionTestCase):
             'version': '1',
             'author': 'test',
             'email': 'a@b.com',
-            'readOnlyGadgets': True,
+            'readOnlyWidgets': True,
         }
         template = build_template_from_workspace(options, self.workspace, self.user)
 
@@ -302,7 +302,7 @@ class ParamatrizedWorkspaceGenerationTestCase(TransactionTestCase):
         # IWidgets
         self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab', 1)
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]', 'name', 'Tab')
-        self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/IGadget', 0)
+        self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/IWidget', 0)
 
         # Workspace with iwidgets
         options = {
@@ -311,7 +311,7 @@ class ParamatrizedWorkspaceGenerationTestCase(TransactionTestCase):
             'version': '1',
             'author': 'test',
             'email': 'a@b.com',
-            'readOnlyGadgets': True,
+            'readOnlyWidgets': True,
         }
         template = build_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
 
@@ -335,7 +335,7 @@ class ParamatrizedWorkspaceGenerationTestCase(TransactionTestCase):
             'version': u'1',
             'author': u'test',
             'email': u'a@b.com',
-            'readOnlyGadgets': True,
+            'readOnlyWidgets': True,
         }
         # Basic info
         graph = build_rdf_template_from_workspace(options, self.workspace, self.user)
@@ -365,7 +365,7 @@ class ParamatrizedWorkspaceGenerationTestCase(TransactionTestCase):
             'version': u'1',
             'author': u'test',
             'email': u'a@b.com',
-            'readOnlyGadgets': True,
+            'readOnlyWidgets': True,
         }
         graph = build_rdf_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
         mashup_uri = graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']).next()
@@ -395,7 +395,7 @@ class ParamatrizedWorkspaceGenerationTestCase(TransactionTestCase):
             'version': u'1',
             'author': u'author with é',
             'email': u'a@b.com',
-            'readOnlyGadgets': True,
+            'readOnlyWidgets': True,
         }
 
         graph = build_rdf_template_from_workspace(options, self.workspace, self.user)
@@ -421,7 +421,7 @@ class ParamatrizedWorkspaceGenerationTestCase(TransactionTestCase):
             'version': u'1',
             'author': u'test',
             'email': u'a@b.com',
-            'readOnlyGadgets': True,
+            'readOnlyWidgets': True,
         }
         graph = build_usdl_from_workspace(options, self.workspace, self.user, 'http://wirecloud.conwet.fi.upm.es/ns/mashup#/Wirecloud%20Test%20Suite/Test%20Workspace/1')
         services = graph.subjects(self.RDF['type'], self.USDL['Service'])
@@ -526,13 +526,13 @@ class ParametrizedWorkspaceParseTestCase(CacheTestCase):
 
         self.assertEqual(len(data['workspace']['tabList']), 4)
         self.assertEqual(data['workspace']['tabList'][0]['name'], 'Tab')
-        self.assertEqual(len(data['workspace']['tabList'][0]['igadgetList']), 1)
+        self.assertEqual(len(data['workspace']['tabList'][0]['iwidgetList']), 1)
         self.assertEqual(data['workspace']['tabList'][1]['name'], 'Tab 2')
-        self.assertEqual(len(data['workspace']['tabList'][1]['igadgetList']), 1)
+        self.assertEqual(len(data['workspace']['tabList'][1]['iwidgetList']), 1)
         self.assertEqual(data['workspace']['tabList'][2]['name'], 'Tab 3')
-        self.assertEqual(len(data['workspace']['tabList'][2]['igadgetList']), 0)
+        self.assertEqual(len(data['workspace']['tabList'][2]['iwidgetList']), 0)
         self.assertEqual(data['workspace']['tabList'][3]['name'], 'Tab 4')
-        self.assertEqual(len(data['workspace']['tabList'][3]['igadgetList']), 0)
+        self.assertEqual(len(data['workspace']['tabList'][3]['iwidgetList']), 0)
 
     def testComplexWorkspacesRdf(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate3, self.user)
@@ -541,13 +541,13 @@ class ParametrizedWorkspaceParseTestCase(CacheTestCase):
 
         self.assertEqual(len(data['workspace']['tabList']), 4)
         self.assertEqual(data['workspace']['tabList'][0]['name'], u'Tab')
-        self.assertEqual(len(data['workspace']['tabList'][0]['igadgetList']), 1)
+        self.assertEqual(len(data['workspace']['tabList'][0]['iwidgetList']), 1)
         self.assertEqual(data['workspace']['tabList'][1]['name'], u'Tab 2')
-        self.assertEqual(len(data['workspace']['tabList'][1]['igadgetList']), 1)
+        self.assertEqual(len(data['workspace']['tabList'][1]['iwidgetList']), 1)
         self.assertEqual(data['workspace']['tabList'][2]['name'], u'Tab 3')
-        self.assertEqual(len(data['workspace']['tabList'][2]['igadgetList']), 0)
+        self.assertEqual(len(data['workspace']['tabList'][2]['iwidgetList']), 0)
         self.assertEqual(data['workspace']['tabList'][3]['name'], u'Tab 4')
-        self.assertEqual(len(data['workspace']['tabList'][3]['igadgetList']), 0)
+        self.assertEqual(len(data['workspace']['tabList'][3]['iwidgetList']), 0)
 
         wiring = json.loads(data['workspace']['wiring'])
         self.assertEqual(len(wiring['connections']), 1)

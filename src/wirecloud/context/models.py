@@ -45,7 +45,7 @@ class Concept(models.Model):
     TYPE = (
         ('CCTX', _('Constant')),
         ('ECTX', _('External')),
-        ('GCTX', _('iGadget')),
+        ('GCTX', _('iWidget')),
     )
     type = models.CharField(_('Type'), max_length=4, choices=TYPE)
     label = models.CharField(_('Label'), max_length=50, blank=False)

@@ -25,15 +25,15 @@ class Error:
 
     def __init__(self, code):
         self.messages = {-1: "Error: It requires Python 2.6 version or higher", 
-                         0: "Usage: pack_gadget [-nb] [-s pattern directory | directory1 ... directoryN]",
-                         1: "Error: The gadget doesn't have template",
-                         2: "Error: The gadget doesn't have html file",
-                         3: "Error: The source code of the gadget could not be read",
-                         4: "Error: Wgt package could not be copied to gadget directory",
+                         0: "Usage: pack_widget [-nb] [-s pattern directory | directory1 ... directoryN]",
+                         1: "Error: The widget doesn't have template",
+                         2: "Error: The widget doesn't have html file",
+                         3: "Error: The source code of the widget could not be read",
+                         4: "Error: Wgt package could not be copied to widget directory",
                          5: "Error: The directory doesn't exist or isn't a directory",
-                         6: "Error: The gadget has files with an invalid filename",
-                         7: "Error: The gadget has an invalid name or an invalid vendor name",
-                         8: "Error: Gadget template is not well-formed"}
+                         6: "Error: The widget has files with an invalid filename",
+                         7: "Error: The widget has an invalid name or an invalid vendor name",
+                         8: "Error: Widget template is not well-formed"}
         self.code = code
 
     def __str__(self):
@@ -247,7 +247,7 @@ def search_ezweb_template(path):
 class ConfigInfo:
 
     def __init__(self, path, template, pattern):
-        # Path Gadget Folder
+        # Path Widget Folder
         self.html = None
         self.path = os.path.abspath(path)
         self.xml = []
@@ -344,14 +344,14 @@ class ConfigInfo:
 #******************************************************************************
 #******************************************************************************
 
-class PackGadget:
+class PackWidget:
 
     def __init__(self, path, dst_dir = None):
         # Check if the path is a directory
         self.workpath = os.path.abspath('.')
         self.path = os.path.abspath(self._normalize_path(path))
         self.tmp = None
-        self.tmpgadget = None
+        self.tmpwidget = None
         self.pack = None
         if dst_dir != None:
             self.dst_dir = os.path.abspath(dst_dir)
@@ -372,8 +372,8 @@ class PackGadget:
     # Create tmp folder
     def tmp_dir(self):
         self.tmp = tempfile.mkdtemp()
-        # Path to folder gadget in temporal folder
-        self.tmpgadget = os.path.join(self.tmp, "src")
+        # Path to folder widget in temporal folder
+        self.tmpwidget = os.path.join(self.tmp, "src")
 
 
     # Move folder
@@ -382,7 +382,7 @@ class PackGadget:
         if not os.access(self.path, os.R_OK):
             raise Error(3)
 
-        shutil.copytree(self.path, self.tmpgadget, ignore=shutil.ignore_patterns('*~', '.*', "*.wgt"))
+        shutil.copytree(self.path, self.tmpwidget, ignore=shutil.ignore_patterns('*~', '.*', "*.wgt"))
 
 
     # Remove temporal folder
@@ -395,25 +395,25 @@ class PackGadget:
         os.chdir(dir)
 
 
-    # Move wgt file into gadget folder
+    # Move wgt file into widget folder
     def move_wgt(self):
         if ((self.pack == None) or (not os.access(self.dst_dir, os.W_OK))):
             raise Error(4)
         shutil.copy(self.pack+".wgt", self.dst_dir)
 
 
-    # Pack gadget into zip file
-    def pack_gadget(self, pattern=None, replace_base=False, template= None):
+    # Pack widget into zip file
+    def pack_widget(self, pattern=None, replace_base=False, template= None):
         # Create temporal folder
         self.tmp_dir()
-        # Move gadget folder to temporal folder
+        # Move widget folder to temporal folder
         self.move()
         # Get Config Info
-        config = ConfigInfo(self.tmpgadget, template, pattern)
+        config = ConfigInfo(self.tmpwidget, template, pattern)
         if pattern:
             config.replace()
 
-        # Parser gadget's template
+        # Parser widget's template
         parserTemplate = ParserTemplate(config)
         parserTemplate.parse()
 
@@ -422,25 +422,25 @@ class PackGadget:
         parserTemplate.write()
 
 
-        # Parser Html gadget and overwrite html file
+        # Parser Html widget and overwrite html file
         parserHtml = ParserHtml(config)
         parserHtml.parse(replace_base)
         parserHtml.write()
 
         # Write Config File
         configFile = ConfigFile(parserTemplate)
-        configFile.write(self.tmpgadget)
+        configFile.write(self.tmpwidget)
 
         self.filename = "%s_%s_%s" % (configFile.vendor,
                                  configFile.name,
                                  configFile.version)
         self.pack = os.path.join(self.tmp, self.filename)
         # Change directory
-        self.change_working_folder(self.tmpgadget)
-        # Pack gadget into zip file
+        self.change_working_folder(self.tmpwidget)
+        # Pack widget into zip file
         wgtHandler = WgtPackageUtils()
         wgtHandler.create("./", self.pack)
-        # Copy pack into gadget folder
+        # Copy pack into widget folder
         self.move_wgt()
         # Remove temporal dir
         self.rm_tmp_dir()
@@ -488,9 +488,9 @@ if __name__ == '__main__':
         # Pack elements
         for path in parameters[1:]:
             print "--------------------------------------------------------------------------------"
-            print "Packing gadget ........ %s" % path
-            newP = PackGadget(path)
-            newP.pack_gadget(pattern, replace_base)
+            print "Packing widget ........ %s" % path
+            newP = PackWidget(path)
+            newP.pack_widget(pattern, replace_base)
             print "New packed     ........ %s.wgt" % newP.filename
         print "--------------------------------------------------------------------------------"
 

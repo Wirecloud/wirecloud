@@ -37,18 +37,18 @@ from django.shortcuts import get_object_or_404
 
 from commons.authentication import get_user_authentication, Http403
 from commons.cache import no_cache
-from commons.get_data import VariableValueCacheManager, get_igadget_data, get_variable_data
+from commons.get_data import VariableValueCacheManager, get_iwidget_data, get_variable_data
 from commons.http_utils import PUT_parameter
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error, json_encode
-from wirecloud.iwidget.utils import SaveIGadget, UpdateIGadget, UpgradeIGadget, deleteIGadget
-from wirecloud.models import Gadget, IGadget, Tab, UserWorkSpace, Variable, WorkSpace
-from wirecloud.widget.utils import get_or_add_gadget_from_catalogue, get_and_add_gadget
+from wirecloud.iwidget.utils import SaveIWidget, UpdateIWidget, UpgradeIWidget, deleteIWidget
+from wirecloud.models import Widget, IWidget, Tab, UserWorkSpace, Variable, WorkSpace
+from wirecloud.widget.utils import get_or_add_widget_from_catalogue, get_and_add_widget
 from wirecloudcommons.utils.transaction import commit_on_http_success
 
 
-class IGadgetCollection(Resource):
+class IWidgetCollection(Resource):
 
     @no_cache
     def read(self, request, workspace_id, tab_id):
@@ -58,8 +58,8 @@ class IGadgetCollection(Resource):
 
         data_list = {}
         cache_manager = VariableValueCacheManager(workspace, user)
-        igadgets = IGadget.objects.filter(tab__workspace__users__id=user.id, tab__workspace__pk=workspace_id, tab__pk=tab_id)
-        data_list['iGadgets'] = [get_igadget_data(igadget, user, workspace, cache_manager) for igadget in igadgets]
+        iwidgets = IWidget.objects.filter(tab__workspace__users__id=user.id, tab__workspace__pk=workspace_id, tab__pk=tab_id)
+        data_list['iWidgets'] = [get_iwidget_data(iwidget, user, workspace, cache_manager) for iwidget in iwidgets]
 
         return HttpResponse(json_encode(data_list), mimetype='application/json; charset=UTF-8')
 
@@ -67,14 +67,14 @@ class IGadgetCollection(Resource):
     def create(self, request, workspace_id, tab_id):
         user = get_user_authentication(request)
 
-        if 'igadget' not in request.POST:
-            return HttpResponseBadRequest(get_xml_error(_("iGadget JSON expected")), mimetype='application/xml; charset=UTF-8')
+        if 'iwidget' not in request.POST:
+            return HttpResponseBadRequest(get_xml_error(_("iWidget JSON expected")), mimetype='application/xml; charset=UTF-8')
 
         # Data checking and parsing
         try:
-            igadget = simplejson.loads(request.POST['igadget'])
+            iwidget = simplejson.loads(request.POST['iwidget'])
         except:
-            return HttpResponseBadRequest(get_xml_error(_('iGadget data is not valid JSON')))
+            return HttpResponseBadRequest(get_xml_error(_('iWidget data is not valid JSON')))
 
         initial_variable_values = None
         if 'variable_values' in request.POST:
@@ -83,24 +83,24 @@ class IGadgetCollection(Resource):
             except:
                 return HttpResponseBadRequest(get_xml_error(_('variables_values must be a valid JSON value')))
 
-        # iGadget creation
+        # iWidget creation
         try:
             tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
-            igadget = SaveIGadget(igadget, user, tab, initial_variable_values)
-            igadget_data = get_igadget_data(igadget, user, tab.workspace)
+            iwidget = SaveIWidget(iwidget, user, tab, initial_variable_values)
+            iwidget_data = get_iwidget_data(iwidget, user, tab.workspace)
 
-            return HttpResponse(json_encode(igadget_data), mimetype='application/json; charset=UTF-8')
-        except Gadget.DoesNotExist, e:
-            msg = _('referred gadget %(gadget_uri)s does not exist.') % {'gadget_uri': igadget['gadget']}
+            return HttpResponse(json_encode(iwidget_data), mimetype='application/json; charset=UTF-8')
+        except Widget.DoesNotExist, e:
+            msg = _('referred widget %(widget_uri)s does not exist.') % {'widget_uri': iwidget['widget']}
 
-            raise TracedServerError(e, {'igadget': igadget, 'user': user, 'tab': tab}, request, msg)
+            raise TracedServerError(e, {'iwidget': iwidget, 'user': user, 'tab': tab}, request, msg)
 
         except WorkSpace.DoesNotExist, e:
             msg = _('referred workspace %(workspace_id)s does not exist.') % {'workspace_id': workspace_id}
 
             raise TracedServerError(e, {'workspace': workspace_id}, request, msg)
         except Exception, e:
-            msg = _("iGadget cannot be created: ") + unicode(e)
+            msg = _("iWidget cannot be created: ") + unicode(e)
 
             raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
 
@@ -122,9 +122,9 @@ class IGadgetCollection(Resource):
 
         try:
             tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
-            igadgets = received_data
-            for igadget in igadgets:
-                UpdateIGadget(igadget, user, tab)
+            iwidgets = received_data
+            for iwidget in iwidgets:
+                UpdateIWidget(iwidget, user, tab)
 
             return HttpResponse('ok')
         except Tab.DoesNotExist, e:
@@ -132,37 +132,37 @@ class IGadgetCollection(Resource):
 
             raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
         except Exception, e:
-            msg = _("iGadgets cannot be updated: ") + unicode(e)
+            msg = _("iWidgets cannot be updated: ") + unicode(e)
 
             raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
 
 
-class IGadgetEntry(Resource):
+class IWidgetEntry(Resource):
 
     @no_cache
-    def read(self, request, workspace_id, tab_id, igadget_id):
+    def read(self, request, workspace_id, tab_id, iwidget_id):
         user = get_user_authentication(request)
 
         workspace = get_object_or_404(WorkSpace, id=workspace_id)
 
-        igadget = get_object_or_404(IGadget, tab__workspace__users__id=user.id, tab__workspace=workspace, tab__pk=tab_id, pk=igadget_id)
-        igadget_data = get_igadget_data(igadget, user, workspace)
+        iwidget = get_object_or_404(IWidget, tab__workspace__users__id=user.id, tab__workspace=workspace, tab__pk=tab_id, pk=iwidget_id)
+        iwidget_data = get_iwidget_data(iwidget, user, workspace)
 
-        return HttpResponse(json_encode(igadget_data), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json_encode(iwidget_data), mimetype='application/json; charset=UTF-8')
 
     @commit_on_http_success
-    def update(self, request, workspace_id, tab_id, igadget_id):
+    def update(self, request, workspace_id, tab_id, iwidget_id):
         user = get_user_authentication(request)
 
-        received_json = PUT_parameter(request, 'igadget')
+        received_json = PUT_parameter(request, 'iwidget')
 
         if not received_json:
-            return HttpResponseBadRequest(get_xml_error(_("iGadget JSON expected")), mimetype='application/xml; charset=UTF-8')
+            return HttpResponseBadRequest(get_xml_error(_("iWidget JSON expected")), mimetype='application/xml; charset=UTF-8')
 
         try:
-            igadget = simplejson.loads(received_json)
+            iwidget = simplejson.loads(received_json)
             tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
-            UpdateIGadget(igadget, user, tab)
+            UpdateIWidget(iwidget, user, tab)
 
             return HttpResponse('ok')
         except Tab.DoesNotExist, e:
@@ -170,7 +170,7 @@ class IGadgetEntry(Resource):
 
             raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
         except Exception, e:
-            msg = _("iGadgets cannot be updated: ") + unicode(e)
+            msg = _("iWidgets cannot be updated: ") + unicode(e)
 
             raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
 
@@ -178,18 +178,18 @@ class IGadgetEntry(Resource):
     def delete(self, request, workspace_id, tab_id, iwidget_id):
         user = get_user_authentication(request)
 
-        # Gets Igadget, if it does not exist, a http 404 error is returned
-        igadget = get_object_or_404(IGadget, tab__workspace__users__id=user.id, tab__workspace__pk=workspace_id, tab__pk=tab_id, pk=iwidget_id)
+        # Gets Iwidget, if it does not exist, a http 404 error is returned
+        iwidget = get_object_or_404(IWidget, tab__workspace__users__id=user.id, tab__workspace__pk=workspace_id, tab__pk=tab_id, pk=iwidget_id)
 
-        deleteIGadget(igadget, user)
+        deleteIWidget(iwidget, user)
 
         return HttpResponse('ok')
 
 
-class IGadgetVersion(Resource):
+class IWidgetVersion(Resource):
 
     @commit_on_http_success
-    def update(self, request, workspace_id, tab_id, igadget_id):
+    def update(self, request, workspace_id, tab_id, iwidget_id):
         user = get_user_authentication(request)
 
         workspace = WorkSpace.objects.get(id=workspace_id)
@@ -203,17 +203,17 @@ class IGadgetVersion(Resource):
         if content_type.startswith('application/json'):
             received_json = request.raw_post_data
         else:
-            received_json = PUT_parameter(request, 'igadget')
+            received_json = PUT_parameter(request, 'iwidget')
 
         if not received_json:
-            return HttpResponseBadRequest(get_xml_error(_("iGadget JSON expected")), mimetype='application/xml; charset=UTF-8')
+            return HttpResponseBadRequest(get_xml_error(_("iWidget JSON expected")), mimetype='application/xml; charset=UTF-8')
 
         try:
             data = simplejson.loads(received_json)
-            igadget_pk = data.get('id')
+            iwidget_pk = data.get('id')
 
-            # get the iGadget object
-            igadget = get_object_or_404(IGadget, pk=igadget_pk)
+            # get the iWidget object
+            iwidget = get_object_or_404(IWidget, pk=iwidget_pk)
 
             new_version = data.get('newVersion')
             if workspace.is_shared():
@@ -222,11 +222,11 @@ class IGadgetVersion(Resource):
                 users = [user]
 
             if not 'source' in data or data.get('source') == 'catalogue':
-                gadget = get_or_add_gadget_from_catalogue(igadget.gadget.vendor, igadget.gadget.name, new_version, user, request, assign_to_users=users)
+                widget = get_or_add_widget_from_catalogue(iwidget.widget.vendor, iwidget.widget.name, new_version, user, request, assign_to_users=users)
             elif data.get('source') == 'showcase':
-                gadget = get_and_add_gadget(igadget.gadget.vendor, igadget.gadget.name, new_version, users)
+                widget = get_and_add_widget(iwidget.widget.vendor, iwidget.widget.name, new_version, users)
 
-            UpgradeIGadget(igadget, user, gadget)
+            UpgradeIWidget(iwidget, user, widget)
 
             return HttpResponse('ok')
         except Exception, e:
@@ -237,88 +237,88 @@ class IGadgetVersion(Resource):
         return
 
 
-class IGadgetVariableCollection(Resource):
+class IWidgetVariableCollection(Resource):
 
     @no_cache
-    def read(self, request, workspace_id, tab_id, igadget_id):
+    def read(self, request, workspace_id, tab_id, iwidget_id):
         user = get_user_authentication(request)
 
         tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
-        variables = Variable.objects.filter(igadget__tab=tab, igadget__id=igadget_id)
+        variables = Variable.objects.filter(iwidget__tab=tab, iwidget__id=iwidget_id)
         vars_data = [get_variable_data(variable) for variable in variables]
 
         return HttpResponse(json_encode(vars_data), mimetype='application/json; charset=UTF-8')
 
     @commit_on_http_success
-    def update(self, request, workspace_id, tab_id, igadget_id):
+    def update(self, request, workspace_id, tab_id, iwidget_id):
         user = get_user_authentication(request)
 
         received_json = PUT_parameter(request, 'variables')
 
         # Gets JSON parameter from request
         if not received_json:
-            return HttpResponseBadRequest(get_xml_error(_("iGadget variables JSON expected")), mimetype='application/xml; charset=UTF-8')
+            return HttpResponseBadRequest(get_xml_error(_("iWidget variables JSON expected")), mimetype='application/xml; charset=UTF-8')
 
         try:
             received_variables = simplejson.loads(received_json)
 
             tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
-            server_variables = Variable.objects.filter(igadget__tab=tab)
+            server_variables = Variable.objects.filter(iwidget__tab=tab)
 
-            # Gadget variables collection update
+            # Widget variables collection update
             for varServer in server_variables:
                 for varJSON in received_variables:
-                    if (varServer.vardef.pk == varJSON['pk'] and varServer.igadget.pk == varJSON['iGadget']):
+                    if (varServer.vardef.pk == varJSON['pk'] and varServer.iwidget.pk == varJSON['iWidget']):
                         varServer.value = varJSON['value']
                         varServer.save()
 
         except Tab.DoesNotExist, e:
             msg = _('referred tab %(tab_id)s does not exist.') % {'tab_id': tab_id}
 
-            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id, 'igadget': igadget_id}, request, msg)
+            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id, 'iwidget': iwidget_id}, request, msg)
         except Exception, e:
-            msg = _("igadget varaible cannot be updated: ") + unicode(e)
+            msg = _("iwidget varaible cannot be updated: ") + unicode(e)
 
-            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id, 'igadget': igadget_id}, request, msg)
+            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id, 'iwidget': iwidget_id}, request, msg)
 
         return HttpResponse("<ok>", mimetype='text/xml; charset=UTF-8')
 
 
-class IGadgetVariable(Resource):
+class IWidgetVariable(Resource):
 
     @no_cache
-    def read(self, request, workspace_id, tab_id, igadget_id, var_id):
+    def read(self, request, workspace_id, tab_id, iwidget_id, var_id):
         user = get_user_authentication(request)
 
         tab = Tab.objects.get(workspace__user__id=user.id, workspace__pk=workspace_id, pk=tab_id)
-        variable = get_object_or_404(Variable, igadget__tab=tab, igadget__pk=igadget_id, vardef__pk=var_id)
+        variable = get_object_or_404(Variable, iwidget__tab=tab, iwidget__pk=iwidget_id, vardef__pk=var_id)
         var_data = get_variable_data(variable)
 
         return HttpResponse(json_encode(var_data), mimetype='application/json; charset=UTF-8')
 
-    def create(self, request, workspace_id, tab_id, igadget_id, var_id):
-        return self.update(request, workspace_id, tab_id, igadget_id, var_id)
+    def create(self, request, workspace_id, tab_id, iwidget_id, var_id):
+        return self.update(request, workspace_id, tab_id, iwidget_id, var_id)
 
     @commit_on_http_success
-    def update(self, request, workspace_id, tab_id, igadget_id, var_id):
+    def update(self, request, workspace_id, tab_id, iwidget_id, var_id):
         user = get_user_authentication(request)
 
         received_json = PUT_parameter(request, 'value')
 
         # Gets value parameter from request
         if not received_json:
-            return HttpResponseBadRequest(get_xml_error(_("iGadget JSON expected")), mimetype='application/xml; charset=UTF-8')
+            return HttpResponseBadRequest(get_xml_error(_("iWidget JSON expected")), mimetype='application/xml; charset=UTF-8')
 
         new_value = received_json
 
         tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
-        variable = get_object_or_404(Variable, igadget__tab=tab, igadget__pk=igadget_id, vardef__pk=var_id)
+        variable = get_object_or_404(Variable, iwidget__tab=tab, iwidget__pk=iwidget_id, vardef__pk=var_id)
         try:
             variable.value = new_value
             variable.save()
         except Exception, e:
-            msg = _("igadget varaible cannot be updated: ") + unicode(e)
+            msg = _("iwidget varaible cannot be updated: ") + unicode(e)
 
-            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id, 'igadget': igadget_id, 'variable': var_id}, request, msg)
+            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id, 'iwidget': iwidget_id, 'variable': var_id}, request, msg)
 
         return HttpResponse('ok')

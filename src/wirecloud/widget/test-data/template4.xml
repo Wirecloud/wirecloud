@@ -1,5 +1,5 @@
 <?xml version="1.0" ?><Template schemaLocation="http://morfeo-project.org/2007/Template">
-  <!-- Gadget Meta-Info -->
+  <!-- Widget Meta-Info -->
   <Catalog.ResourceDescription>
     <Vendor>Morfeo</Vendor>
     <Name>test</Name>
@@ -36,15 +36,15 @@
 
   <Translations default="en">
     <Translation lang="en">
-      <msg name="displayName">Test Gadget</msg>
-      <msg name="description">Test Gadget description</msg>
+      <msg name="displayName">Test Widget</msg>
+      <msg name="description">Test Widget description</msg>
       <msg name="prefDescription">Preference description</msg>
       <msg name="varLabel">Label</msg>
       <msg name="extraIndex">Boo</msg>
     </Translation>
     <Translation lang="es">
-      <msg name="displayName">Gadget de pruebas</msg>
-      <msg name="description">Descripción del Gadget de pruebas</msg>
+      <msg name="displayName">Widget de pruebas</msg>
+      <msg name="description">Descripción del Widget de pruebas</msg>
       <msg name="prefDescription">Descripción de la preferencia</msg>
       <msg name="varLabel">Etiqueta</msg>
       <msg name="extraIndex">Boo</msg>

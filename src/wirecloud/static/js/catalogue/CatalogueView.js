@@ -60,7 +60,7 @@
             // Ask if the user want to create a new workspace or merge it with the current one
             (new Wirecloud.ui.InstanciateMashupWindowMenu(resource)).show();
         } else {
-            ShowcaseFactory.getInstance().addGadget(resource.getVendor(),
+            ShowcaseFactory.getInstance().addWidget(resource.getVendor(),
                 resource.getName(),
                 resource.getVersion().text,
                 resource.getUriTemplate(),
@@ -128,20 +128,20 @@
 
         success_callback = function (response) {
             // processing command
-            var layoutManager, result, opManager, i, gadgetId;
+            var layoutManager, result, opManager, i, widgetId;
 
             layoutManager = LayoutManagerFactory.getInstance();
             result = JSON.parse(response.responseText);
 
-            layoutManager.logSubTask(gettext('Removing affected iGadgets'));
+            layoutManager.logSubTask(gettext('Removing affected iWidgets'));
             opManager = OpManagerFactory.getInstance();
-            for (i = 0; i < result.removedIGadgets.length; i += 1) {
-                opManager.removeInstance(result.removedIGadgets[i], true);
+            for (i = 0; i < result.removedIWidgets.length; i += 1) {
+                opManager.removeInstance(result.removedIWidgets[i], true);
             }
 
-            layoutManager.logSubTask(gettext('Purging gadget info'));
-            gadgetId = resource.getVendor() + '_' + resource.getName() + '_' + resource.getVersion().text;
-            ShowcaseFactory.getInstance().deleteGadget(gadgetId);
+            layoutManager.logSubTask(gettext('Purging widget info'));
+            widgetId = resource.getVendor() + '_' + resource.getName() + '_' + resource.getVersion().text;
+            ShowcaseFactory.getInstance().deleteWidget(widgetId);
 
             layoutManager._notifyPlatformReady();
             this.home();
@@ -154,7 +154,7 @@
             logManager = LogManagerFactory.getInstance();
             layoutManager = LayoutManagerFactory.getInstance();
 
-            msg = logManager.formatError(gettext("Error deleting the Gadget: %(errorMsg)s."), transport, e);
+            msg = logManager.formatError(gettext("Error deleting the Widget: %(errorMsg)s."), transport, e);
 
             logManager.log(msg);
             layoutManager._notifyPlatformReady();
@@ -165,10 +165,10 @@
             var layoutManager;
 
             layoutManager = LayoutManagerFactory.getInstance();
-            layoutManager._startComplexTask(gettext("Deleting gadget resource from catalogue"), 3);
+            layoutManager._startComplexTask(gettext("Deleting widget resource from catalogue"), 3);
             layoutManager.logSubTask(gettext('Requesting server'));
 
-            // Send request to delete de gadget
+            // Send request to delete de widget
             Wirecloud.io.makeRequest(url, {
                 method: 'DELETE',
                 onSuccess: success_callback.bind(this),
@@ -178,7 +178,7 @@
         };
 
         // First ask the user
-        msg = gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") gadget?');
+        msg = gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") widget?');
         context = {
             name: resource.getName(),
             vendor: resource.getVendor(),

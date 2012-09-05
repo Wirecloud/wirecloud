@@ -30,7 +30,7 @@
 //////////////////////////////////////////////
 
 
-function GadgetVersion(version, source) {
+function WidgetVersion(version, source) {
     if (typeof version == 'string') {
         this.text = version;
         this.array = version.split('.').map(function(x) { return parseInt(x); });
@@ -43,7 +43,7 @@ function GadgetVersion(version, source) {
     this.source = source;
 };
 
-GadgetVersion.prototype.compareTo = function(version) {
+WidgetVersion.prototype.compareTo = function(version) {
     var len, value1, value2;
 
     len = Math.max(this.array.length, version.array.length);
@@ -61,7 +61,7 @@ GadgetVersion.prototype.compareTo = function(version) {
 };
 
 
-function Gadget(gadget_, url_, options_) {
+function Widget(widget_, url_, options_) {
 
     // ******************
     //  PUBLIC FUNCTIONS
@@ -88,7 +88,7 @@ function Gadget(gadget_, url_, options_) {
     // *******************
     //  PRIVATE FUNCTIONS
     // *******************
-    var _solicitarGadget = function(url_) {
+    var _solicitarWidget = function(url_) {
 
         // ******************
         //  CALLBACK METHODS
@@ -96,28 +96,28 @@ function Gadget(gadget_, url_, options_) {
 
         var onError = function(transport, e) {
             var logManager = LogManagerFactory.getInstance();
-            var msg = logManager.formatError(gettext("The gadget could not be added to the showcase: %(errorMsg)s."), transport, e);
+            var msg = logManager.formatError(gettext("The widget could not be added to the showcase: %(errorMsg)s."), transport, e);
             logManager.log(msg);
             var layoutManager = LayoutManagerFactory.getInstance();
             layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
         }
 
-        var loadGadget = function(transport) {
+        var loadWidget = function(transport) {
             var response = transport.responseText;
             var objRes = JSON.parse(response);
-            state = new GadgetState(objRes);
-            ShowcaseFactory.getInstance().gadgetToShowcaseGadgetModel(_this, options_);
+            state = new WidgetState(objRes);
+            ShowcaseFactory.getInstance().widgetToShowcaseWidgetModel(_this, options_);
         }
 
         var workspaceId_ = OpManagerFactory.getInstance().getActiveWorkspaceId();
-        // Post Gadget to PersistenceEngine. Asyncrhonous call!
+        // Post Widget to PersistenceEngine. Asyncrhonous call!
         // params: url of the template, id of the current workspace to check if it is shared
         // and with who it is shared.
         var params = {url: url_, workspaceId: workspaceId_, packaged: options_.packaged};
         Wirecloud.io.makeRequest(Wirecloud.URLs.WIDGET_COLLECTION, {
             method: 'POST',
             parameters: params,
-            onSuccess: loadGadget,
+            onSuccess: loadWidget,
             onFailure: onError,
             onException: onError
         });
@@ -134,9 +134,9 @@ function Gadget(gadget_, url_, options_) {
     var state = null;
 
     if (url_ != null) {
-        _solicitarGadget(url_);
+        _solicitarWidget(url_);
     } else {
-        state = new GadgetState(gadget_);
+        state = new WidgetState(widget_);
     }
 }
 
@@ -144,24 +144,24 @@ function Gadget(gadget_, url_, options_) {
 //       GADGETSTATE (State Object)         //
 //////////////////////////////////////////////
 
-function GadgetState(gadget_) {
+function WidgetState(widget_) {
 
     // *******************
     //  PRIVATE VARIABLES
     // *******************
 
-    // JSON-coded Gadget mapping
+    // JSON-coded Widget mapping
     // Constructing the structure
-    var vendor = gadget_.vendor;
-    var name = gadget_.name;
-    var version = new GadgetVersion(gadget_.version, 'showcase');
-    var displayName = gadget_.displayName
-    var template = new GadgetTemplate(gadget_.variables, gadget_.size);
-    var xhtml = new XHtml(gadget_.xhtml);
-    var image = gadget_.imageURI;
-    var icon = gadget_.iPhoneImageURI;
-    var capabilities = gadget_.capabilities;
-    var uriwiki = gadget_.wikiURI;
+    var vendor = widget_.vendor;
+    var name = widget_.name;
+    var version = new WidgetVersion(widget_.version, 'showcase');
+    var displayName = widget_.displayName
+    var template = new WidgetTemplate(widget_.variables, widget_.size);
+    var xhtml = new XHtml(widget_.xhtml);
+    var image = widget_.imageURI;
+    var icon = widget_.iPhoneImageURI;
+    var capabilities = widget_.capabilities;
+    var uriwiki = widget_.wikiURI;
     var lastVersion = version;
     var showcaseLastVersion = version;
     var catalogueLastVersion = null;
@@ -186,7 +186,7 @@ function GadgetState(gadget_) {
     this.getXHtml = function() { return xhtml; }
     this.getInfoString = function() {
         var transObj = {vendor: vendor, name: name, version: version};
-        var msg = gettext("[GadgetVendor: %(vendor)s, GadgetName: %(name)s, GadgetVersion: %(version)s]");
+        var msg = gettext("[WidgetVendor: %(vendor)s, WidgetName: %(name)s, WidgetVersion: %(version)s]");
         return interpolate(msg, transObj, true);
     }
     this.getUriWiki = function () {return uriwiki;}

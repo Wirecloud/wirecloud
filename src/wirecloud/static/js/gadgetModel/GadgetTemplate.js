@@ -29,7 +29,7 @@
 //                 TEMPLATE                 //
 //////////////////////////////////////////////
 
-function GadgetTemplate(variables_, size_) {
+function WidgetTemplate(variables_, size_) {
 
     // *******************
     //  PRIVATE VARIABLES
@@ -55,7 +55,7 @@ function GadgetTemplate(variables_, size_) {
         return height;
     }
 
-    this.getVariables = function (iGadget) {
+    this.getVariables = function (iWidget) {
         return variableList;
     }
 
@@ -101,7 +101,7 @@ function GadgetTemplate(variables_, size_) {
         return prefs;
     };
 
-    this.getExternalContextVars = function (igadget_) {
+    this.getExternalContextVars = function (iwidget_) {
 
         // JSON-coded Template-Variables mapping
         // Constructing the structure
@@ -114,7 +114,7 @@ function GadgetTemplate(variables_, size_) {
             rawVar = rawVars[i];
             switch (rawVar.aspect) {
                 case Variable.prototype.EXTERNAL_CONTEXT:
-                    currentContextVar = new ContextVar(igadget_, rawVar.name, rawVar.concept)
+                    currentContextVar = new ContextVar(iwidget_, rawVar.name, rawVar.concept)
                     objVars.push(currentContextVar);
                     break;
                 default:
@@ -124,7 +124,7 @@ function GadgetTemplate(variables_, size_) {
         return objVars;
     }
 
-    this.getGadgetContextVars = function (igadget_) {
+    this.getWidgetContextVars = function (iwidget_) {
 
         // JSON-coded Template-Variables mapping
         // Constructing the structure
@@ -137,7 +137,7 @@ function GadgetTemplate(variables_, size_) {
             rawVar = rawVars[i];
             switch (rawVar.aspect) {
                 case Variable.prototype.GADGET_CONTEXT:
-                    currentContextVar = new ContextVar(igadget_, rawVar.name, rawVar.concept);
+                    currentContextVar = new ContextVar(iwidget_, rawVar.name, rawVar.concept);
                     objVars.push(currentContextVar);
                     break;
                 default:
@@ -229,6 +229,6 @@ function GadgetTemplate(variables_, size_) {
     }
 }
 
-GadgetTemplate.prototype._sortVariables = function (var1, var2) {
+WidgetTemplate.prototype._sortVariables = function (var1, var2) {
     return var1.order - var2.order;
 };

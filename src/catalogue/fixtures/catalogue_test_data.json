@@ -3,70 +3,70 @@
         "model": "catalogue.catalogueresource",
         "pk": 1,
         "fields": {
-            "short_name": "gadget1",
+            "short_name": "widget1",
             "vendor": "Test",
             "version": "1.2",
             "author": "test",
             "mail": "test@example.com",
             "type": 0,
             "creation_date": "2009-01-01 00:00",
-            "template_uri": "http://example.com/path/gadget.xml"
+            "template_uri": "http://example.com/path/widget.xml"
         }
     },
     {
         "model": "catalogue.catalogueresource",
         "pk": 2,
         "fields": {
-            "short_name": "gadget1",
+            "short_name": "widget1",
             "vendor": "Test",
             "version": "1.10",
             "author": "test",
             "mail": "test@example.com",
             "type": 0,
             "creation_date": "2009-01-01 00:00",
-            "template_uri": "http://example.com/path/gadget.xml"
+            "template_uri": "http://example.com/path/widget.xml"
         }
     },
     {
         "model": "catalogue.catalogueresource",
         "pk": 3,
         "fields": {
-            "short_name": "gadget2",
+            "short_name": "widget2",
             "vendor": "Test",
             "version": "1.0",
             "author": "test",
             "mail": "test@example.com",
             "type": 0,
             "creation_date": "2009-01-01 00:00",
-            "template_uri": "http://example.com/path/gadget.xml"
+            "template_uri": "http://example.com/path/widget.xml"
         }
     },
     {
         "model": "catalogue.catalogueresource",
         "pk": 4,
         "fields": {
-            "short_name": "agadget",
+            "short_name": "awidget",
             "vendor": "Test",
             "version": "1.0",
             "author": "test",
             "mail": "test@example.com",
             "type": 0,
             "creation_date": "2009-01-01 00:00",
-            "template_uri": "http://example.com/path/gadget.xml"
+            "template_uri": "http://example.com/path/widget.xml"
         }
     },
     {
         "model": "catalogue.catalogueresource",
         "pk": 5,
         "fields": {
-            "short_name": "zgadget",
+            "short_name": "zwidget",
             "vendor": "Test",
             "version": "1.0",
             "author": "test",
             "mail": "test@example.com",
             "type": 0,
             "creation_date": "2009-01-01 00:00",
-            "template_uri": "http://example.com/path/gadget.xml"
+            "template_uri": "http://example.com/path/widget.xml"
         }
     },
     {
@@ -80,11 +80,11 @@
             "mail": "test@example.com",
             "type": 0,
             "creation_date": "2009-01-01 00:00",
-            "template_uri": "http://example.com/path/gadget.xml"
+            "template_uri": "http://example.com/path/widget.xml"
         }
     },
     {
-        "model": "catalogue.GadgetWiring",
+        "model": "catalogue.WidgetWiring",
         "pk": 1,
         "fields": {
             "friendcode": "friendcode1",
@@ -93,7 +93,7 @@
         }
     },
     {
-        "model": "catalogue.GadgetWiring",
+        "model": "catalogue.WidgetWiring",
         "pk": 2,
         "fields": {
             "friendcode": "friendcode2",
@@ -102,7 +102,7 @@
         }
     },
     {
-        "model": "catalogue.GadgetWiring",
+        "model": "catalogue.WidgetWiring",
         "pk": 3,
         "fields": {
             "friendcode": "friendcode1",
@@ -111,7 +111,7 @@
         }
     },
     {
-        "model": "catalogue.GadgetWiring",
+        "model": "catalogue.WidgetWiring",
         "pk": 4,
         "fields": {
             "friendcode": "friendcode2",
@@ -120,7 +120,7 @@
         }
     },
     {
-        "model": "catalogue.GadgetWiring",
+        "model": "catalogue.WidgetWiring",
         "pk": 5,
         "fields": {
             "friendcode": "friendcode2",

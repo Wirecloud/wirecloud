@@ -40,11 +40,11 @@ from django.utils.translation import ugettext as _
 
 from catalogue.catalogue_utils import get_latest_resource_version
 from catalogue.get_json_catalogue_data import get_resource_data
-from catalogue.models import GadgetWiring, CatalogueResource, Tag, UserTag, UserVote
+from catalogue.models import WidgetWiring, CatalogueResource, Tag, UserTag, UserVote
 from commons.user_utils import get_certification_status
 from commons.authentication import Http403
 from commons.wgt import WgtFile, WgtDeployer
-from wirecloud.widget.views import deleteGadget
+from wirecloud.widget.views import deleteWidget
 from wirecloudcommons.models import Translation
 from wirecloudcommons.utils.template import TemplateParser
 
@@ -62,7 +62,7 @@ def extract_resource_media_from_package(template, package, base_path):
         try:
             package.extract_file(resource_info['image_uri'], os.path.join(base_path, image_path), True)
         except KeyError:
-            overrides['image_uri'] = urljoin(settings.STATIC_URL, '/images/catalogue/gadget_image.png')
+            overrides['image_uri'] = urljoin(settings.STATIC_URL, '/images/catalogue/widget_image.png')
 
         else:
             overrides['image_uri'] = image_path
@@ -72,7 +72,7 @@ def extract_resource_media_from_package(template, package, base_path):
     return overrides
 
 
-def add_gadget_from_wgt(file, user, wgt_file=None, template=None, deploy_only=False):
+def add_widget_from_wgt(file, user, wgt_file=None, template=None, deploy_only=False):
 
     close_wgt = False
     if wgt_file is None:
@@ -143,14 +143,14 @@ def add_resource_from_template(template_uri, template, user, fromWGT=False, over
     )
 
     for slot in resource_info['wiring']['slots']:
-        GadgetWiring.objects.create(
+        WidgetWiring.objects.create(
             idResource=resource,
             wiring='in',
             friendcode=slot['friendcode']
         )
 
     for event in resource_info['wiring']['events']:
-        GadgetWiring.objects.create(
+        WidgetWiring.objects.create(
             idResource=resource,
             wiring='out',
             friendcode=event['friendcode']
@@ -206,7 +206,7 @@ def delete_resource(resource, user):
         raise Http403(msg)
 
     # Delete the related wiring information for that resource
-    GadgetWiring.objects.filter(idResource=resource.id).delete()
+    WidgetWiring.objects.filter(idResource=resource.id).delete()
 
     # Delete the related tags for that resource
     UserTag.objects.filter(idResource=resource.id).delete()
@@ -214,10 +214,10 @@ def delete_resource(resource, user):
     # Delete the related votes for that resource
     UserVote.objects.filter(idResource=resource.id).delete()
 
-    result = {'removedIGadgets': []}
-    if resource.resource_type() == 'gadget':
-        # Remove the gadget from the showcase
-        result = deleteGadget(user, resource.short_name, resource.vendor, resource.version)
+    result = {'removedIWidgets': []}
+    if resource.resource_type() == 'widget':
+        # Remove the widget from the showcase
+        result = deleteWidget(user, resource.short_name, resource.vendor, resource.version)
 
         # Delete media resources if needed
         if not resource.template_uri.startswith(('http', 'https')):

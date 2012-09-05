@@ -62,7 +62,7 @@ var OpManagerFactory = function () {
 
             // Total information of the active workspace must be downloaded!
             if (reloadShowcase) {
-                //the showcase must be reloaded to have all new gadgets
+                //the showcase must be reloaded to have all new widgets
                 //it itself changes to the active workspace
                 ShowcaseFactory.getInstance().reload(workSpace.id);
             } else {
@@ -259,27 +259,27 @@ var OpManagerFactory = function () {
             window.location = "/logout";
         }
 
-        OpManager.prototype.addInstance = function (gadgetId, options) {
+        OpManager.prototype.addInstance = function (widgetId, options) {
             if (!this.loadCompleted)
                 return;
 
-            var gadget = this.showcaseModule.getGadget(gadgetId);
-            this.activeWorkSpace.getVisibleTab().getDragboard().addInstance(gadget, options);
+            var widget = this.showcaseModule.getWidget(widgetId);
+            this.activeWorkSpace.getVisibleTab().getDragboard().addInstance(widget, options);
         }
 
-        OpManager.prototype.removeInstance = function (iGadgetId, orderFromServer) {
+        OpManager.prototype.removeInstance = function (iWidgetId, orderFromServer) {
             if (!this.loadCompleted)
                 return;
 
-            this.activeWorkSpace.removeIGadget(iGadgetId, orderFromServer);
+            this.activeWorkSpace.removeIWidget(iWidgetId, orderFromServer);
         }
 
         OpManager.prototype.getActiveWorkspaceId = function () {
             return this.activeWorkSpace.getId();
         }
 
-        OpManager.prototype.sendEvent = function (gadget, event, value) {
-            this.activeWorkSpace.getWiring().sendEvent(gadget, event, value);
+        OpManager.prototype.sendEvent = function (widget, event, value) {
+            this.activeWorkSpace.getWiring().sendEvent(widget, event, value);
         }
 
         /**
@@ -321,16 +321,16 @@ var OpManagerFactory = function () {
             //TODO: unloadCatalogue
         }
 
-        OpManager.prototype.igadgetLoaded = function (igadgetId) {
-            this.activeWorkSpace.igadgetLoaded(igadgetId);
+        OpManager.prototype.iwidgetLoaded = function (iwidgetId) {
+            this.activeWorkSpace.iwidgetLoaded(iwidgetId);
         }
 
-        OpManager.prototype.igadgetUnloaded = function (igadgetId) {
-            this.activeWorkSpace.igadgetUnloaded(igadgetId);
+        OpManager.prototype.iwidgetUnloaded = function (iwidgetId) {
+            this.activeWorkSpace.iwidgetUnloaded(iwidgetId);
         }
 
-        OpManager.prototype.checkForGadgetUpdates = function () {
-            this.activeWorkSpace.checkForGadgetUpdates();
+        OpManager.prototype.checkForWidgetUpdates = function () {
+            this.activeWorkSpace.checkForWidgetUpdates();
         }
 
         OpManager.prototype.showActiveWorkSpace = function (refreshMenu) {
@@ -390,20 +390,20 @@ var OpManagerFactory = function () {
             });
         }
 
-        OpManager.prototype.logIGadgetError = function(iGadgetId, msg, level) {
-            var iGadget = this.activeWorkSpace.getIgadget(iGadgetId);
-            if (iGadget == null) {
-                var msg2 = gettext("Some pice of code tried to notify an error in the iGadget %(iGadgetId)s when it did not exist or it was not loaded yet. This is an error in Wirecloud Platform, please notify it.\nError Message: %(errorMsg)s");
-                msg2 = interpolate(msg2, {iGadgetId: iGadgetId, errorMsg: msg}, true);
+        OpManager.prototype.logIWidgetError = function(iWidgetId, msg, level) {
+            var iWidget = this.activeWorkSpace.getIwidget(iWidgetId);
+            if (iWidget == null) {
+                var msg2 = gettext("Some pice of code tried to notify an error in the iWidget %(iWidgetId)s when it did not exist or it was not loaded yet. This is an error in Wirecloud Platform, please notify it.\nError Message: %(errorMsg)s");
+                msg2 = interpolate(msg2, {iWidgetId: iWidgetId, errorMsg: msg}, true);
                 this.logs.log(msg2);
                 return;
             }
 
-            iGadget.log(msg, level);
+            iWidget.log(msg, level);
         }
 
-        OpManager.prototype.drawAttention = function(iGadgetId) {
-            this.activeWorkSpace.drawAttention(iGadgetId);
+        OpManager.prototype.drawAttention = function(iWidgetId) {
+            this.activeWorkSpace.drawAttention(iWidgetId);
         };
 
         //Operations on workspaces

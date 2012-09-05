@@ -204,16 +204,16 @@ function Tab(id, notebook, options) {
         this.painted = true;
     }
 
-    Tab.prototype.hasIGadget = function(iGadgetIds){
-        for (i in iGadgetIds){
-            if (this.dragboard.getIGadget(iGadgetIds[i]))
+    Tab.prototype.hasIWidget = function(iWidgetIds){
+        for (i in iWidgetIds){
+            if (this.dragboard.getIWidget(iWidgetIds[i]))
                 return true;
         }
         return false;
     }
 
-    Tab.prototype.hasReadOnlyIGadgets = function () {
-        return this.dragboard.hasReadOnlyIGadgets();
+    Tab.prototype.hasReadOnlyIWidgets = function () {
+        return this.dragboard.hasReadOnlyIWidgets();
     };
 
     // *****************
@@ -229,7 +229,7 @@ function Tab(id, notebook, options) {
     this.dragboardLayerName = "dragboard_" + this.workSpace.workSpaceState.id + "_" + this.tabInfo.id;
     this.tabName = "tab_" + this.workSpace.workSpaceState.id + "_" + this.tabInfo.id;
 
-    this.FloatingGadgetsMenu = null;
+    this.FloatingWidgetsMenu = null;
 
     this.preferences = PreferencesManagerFactory.getInstance().buildPreferences('tab', this.tabInfo.preferences, this)
     this.preferences.addCommitHandler(this.preferencesChanged.bind(this));
@@ -273,7 +273,7 @@ Tab.prototype = new StyledElements.Tab();
 Tab.prototype.isAllowed = function (action) {
     switch (action) {
     case "remove":
-        return !this.readOnly && this.workSpace.tabInstances.keys().length > 1 && !this.hasReadOnlyIGadgets();
+        return !this.readOnly && this.workSpace.tabInstances.keys().length > 1 && !this.hasReadOnlyIWidgets();
     default:
         return false;
     }

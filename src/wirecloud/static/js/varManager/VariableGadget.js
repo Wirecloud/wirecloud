@@ -30,19 +30,19 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function GadgetVariable (iGadgetId, name) {
+function WidgetVariable (iWidgetId, name) {
 	this.varManager = null;
-	this.iGadgetId = null;
+	this.iWidgetId = null;
 	this.name = null;
 }
 
 //////////////////////////////////////////////
 // PARENT CONTRUCTOR (Super keyboard emulation)
 //////////////////////////////////////////////
-GadgetVariable.prototype.GadgetVariable = function (iGadget_, name_) {
+WidgetVariable.prototype.WidgetVariable = function (iWidget_, name_) {
 	this.varManager = OpManagerFactory.getInstance().activeWorkSpace.getVarManager();
 
-	this.iGadgetId = iGadget_;
+	this.iWidgetId = iWidget_;
 	this.name = name_;
 }
 
@@ -50,31 +50,31 @@ GadgetVariable.prototype.GadgetVariable = function (iGadget_, name_) {
 // PUBLIC METHODS TO BE INHERITANCED
 //////////////////////////////////////////////
 
-GadgetVariable.prototype.get = function() {
-	return this.varManager.getVariable(this.iGadgetId, this.name);
+WidgetVariable.prototype.get = function() {
+	return this.varManager.getVariable(this.iWidgetId, this.name);
 }
 
-GadgetVariable.prototype.set = function(value, options) { }
+WidgetVariable.prototype.set = function(value, options) { }
 
-GadgetVariable.prototype.register = function(handler) { }
+WidgetVariable.prototype.register = function(handler) { }
 
-GadgetVariable.prototype.getFinalSlots = function() {
+WidgetVariable.prototype.getFinalSlots = function() {
 	var variable;
 
-	variable = this.varManager.getVariableByName(this.iGadgetId, this.name);
+	variable = this.varManager.getVariableByName(this.iWidgetId, this.name);
 	return variable.getFinalSlots();
 }
 
-GadgetVariable.prototype.getRef = function () {
-	return this.iGadgetId + '/' + this.name;
+WidgetVariable.prototype.getRef = function () {
+	return this.iWidgetId + '/' + this.name;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RGADGETVARIABLE (Derivated class)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function RGadgetVariable(iGadget_, name_, handler_) {
-	GadgetVariable.prototype.GadgetVariable.call(this, iGadget_, name_);
+function RWidgetVariable(iWidget_, name_, handler_) {
+	WidgetVariable.prototype.WidgetVariable.call(this, iWidget_, name_);
 
 	this.handler = handler_;
 
@@ -85,29 +85,29 @@ function RGadgetVariable(iGadget_, name_, handler_) {
 // DEFINING INHERITANCE
 //////////////////////////////////////////////
 
-RGadgetVariable.prototype = new GadgetVariable;
+RWidgetVariable.prototype = new WidgetVariable;
 
 //////////////////////////////////////////////
 // OVERWRITTEN METHODS
 //////////////////////////////////////////////
 
-RGadgetVariable.prototype.register = function (handler) {
-	this.varManager.registerVariable(this.iGadgetId, this.name, handler);
+RWidgetVariable.prototype.register = function (handler) {
+	this.varManager.registerVariable(this.iWidgetId, this.name, handler);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RWGADGETVARIABLE (Derivated class)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function RWGadgetVariable(iGadget_, name_) {
-	GadgetVariable.prototype.GadgetVariable.call(this, iGadget_, name_);
+function RWWidgetVariable(iWidget_, name_) {
+	WidgetVariable.prototype.WidgetVariable.call(this, iWidget_, name_);
 }
 
 //////////////////////////////////////////////
 // DEFINING INHERITANCE
 //////////////////////////////////////////////
 
-RWGadgetVariable.prototype = new GadgetVariable;
+RWWidgetVariable.prototype = new WidgetVariable;
 
 //////////////////////////////////////////////
 // PUBLIC METHODS TO BE INHERITANCED
@@ -119,9 +119,9 @@ RWGadgetVariable.prototype = new GadgetVariable;
 // OVERWRITTEN METHODS
 //////////////////////////////////////////////
 
-RWGadgetVariable.prototype.set = function (value, options) {
+RWWidgetVariable.prototype.set = function (value, options) {
 	options = options ? options : {};
-	options.initial = false; // Gadgets cannot use the "initial" option
+	options.initial = false; // Widgets cannot use the "initial" option
 
-	this.varManager.setVariable(this.iGadgetId, this.name, value, options);
+	this.varManager.setVariable(this.iWidgetId, this.name, value, options);
 }

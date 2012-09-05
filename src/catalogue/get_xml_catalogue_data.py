@@ -32,10 +32,10 @@
 
 from django.shortcuts import get_object_or_404
 
-from catalogue.models import CatalogueResource, GadgetWiring, UserTag, UserVote
+from catalogue.models import CatalogueResource, WidgetWiring, UserTag, UserVote
 
 
-def get_xml_description(gadgetlist, user):
+def get_xml_description(widgetlist, user):
 
     xml_resource = ''
     xml_tag = ''
@@ -43,7 +43,7 @@ def get_xml_description(gadgetlist, user):
     xml_slot = ''
     xml_vote = ''
 
-    for e in gadgetlist:
+    for e in widgetlist:
 
         xml_tag = get_tags_by_resource(e.id, user.id)
         xml_event = get_events_by_resource(e.id)
@@ -70,22 +70,22 @@ def get_xml_description(gadgetlist, user):
     return response
 
 
-def get_events_by_resource(gadget_id):
+def get_events_by_resource(widget_id):
 
     xml_event = ''
 
-    for e in GadgetWiring.objects.filter(idResource=gadget_id, wiring='out'):
+    for e in WidgetWiring.objects.filter(idResource=widget_id, wiring='out'):
         xml_event += '<Event>' + e.friendcode + '</Event>'
 
     response = '<Events>' + xml_event + '</Events>'
     return response
 
 
-def get_slots_by_resource(gadget_id):
+def get_slots_by_resource(widget_id):
 
     xml_slot = ''
 
-    for e in GadgetWiring.objects.filter(idResource=gadget_id, wiring='in'):
+    for e in WidgetWiring.objects.filter(idResource=widget_id, wiring='in'):
         xml_slot += '<Slot>' + e.friendcode + '</Slot>'
 
     response = '<Slots>' + xml_slot + '</Slots>'
@@ -106,18 +106,18 @@ def get_all_versions(vendor, name):
     return '\n'.join(["<version>%s</version>" % v['version'] for v in versions_data])
 
 
-def get_tags_by_resource(gadget_id, user_id):
+def get_tags_by_resource(widget_id, user_id):
 
     xml_tag = ''
 
-    for e in UserTag.objects.filter(idResource=gadget_id, idUser=user_id):
+    for e in UserTag.objects.filter(idResource=widget_id, idUser=user_id):
         xml_tag += "".join(['<Tag>\n'
                             '<Identifier>' + str(e.id) + '</Identifier>\n',
                             '<Value>' + e.tag.name + '</Value>\n',
                             '<Added_by>Yes</Added_by>\n',
                             '</Tag>'])
 
-    for e in UserTag.objects.filter(idResource=gadget_id).exclude(idUser=user_id):
+    for e in UserTag.objects.filter(idResource=widget_id).exclude(idUser=user_id):
         xml_tag += "".join(['<Tag>\n',
                             '<Identifier>' + str(e.id) + '</Identifier>\n',
                             '<Value>' + e.tag.name + '</Value>\n',
@@ -128,16 +128,16 @@ def get_tags_by_resource(gadget_id, user_id):
     return response
 
 
-def get_vote_by_resource(gadget, user):
+def get_vote_by_resource(widget, user):
 
     xml_vote = ''
 
     try:
-        vote_value = get_object_or_404(UserVote, idResource=gadget.id, idUser=user.id).vote
+        vote_value = get_object_or_404(UserVote, idResource=widget.id, idUser=user.id).vote
     except:
         vote_value = 0
-    votes_number = UserVote.objects.filter(idResource=gadget).count()
-    popularity = gadget.popularity
+    votes_number = UserVote.objects.filter(idResource=widget).count()
+    popularity = widget.popularity
 
     xml_vote += "".join(['<User_Vote>' + str(vote_value) + '</User_Vote>\n',
                          '<Popularity>' + str(popularity) + '</Popularity>\n',

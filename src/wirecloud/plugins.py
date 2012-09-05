@@ -118,12 +118,12 @@ def get_extra_javascripts(view):
     return files
 
 
-def get_gadget_api_extensions(view):
+def get_widget_api_extensions(view):
     plugins = get_plugins()
     files = []
 
     for plugin in plugins:
-        files += plugin.get_gadget_api_extensions(view)
+        files += plugin.get_widget_api_extensions(view)
 
     return files
 
@@ -186,5 +186,5 @@ class WirecloudPlugin(object):
     def get_ajax_endpoints(self, views):
         return ()
 
-    def get_gadget_api_extensions(self, views):
+    def get_widget_api_extensions(self, views):
         return ()

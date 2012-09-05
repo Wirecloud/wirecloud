@@ -20,7 +20,7 @@
  */
 
 /*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global $, GadgetVersion */
+/*global $, WidgetVersion */
 "use strict";
 
 function FiWareCatalogueResource(resourceJSON_) {
@@ -161,7 +161,7 @@ function FiWareCatalogueResource(resourceJSON_) {
     // CONVENIENCE FUNCTIONS
     /////////////////////////////
     this.changeVersion = function (version) {
-        if (version instanceof GadgetVersion) {
+        if (version instanceof WidgetVersion) {
             version = version.text;
         }
 
@@ -184,7 +184,7 @@ function FiWareCatalogueResource(resourceJSON_) {
     for (i = 0; i < versions.length; i += 1) {
         version_data = versions[i];
 
-        version_data.version = new GadgetVersion(version_data.version, 'catalogue');
+        version_data.version = new WidgetVersion(version_data.version, 'catalogue');
         /*version_data.events = version_data.events.map(flat_friendcode);
         version_data.slots = version_data.slots.map(flat_friendcode);*/
 

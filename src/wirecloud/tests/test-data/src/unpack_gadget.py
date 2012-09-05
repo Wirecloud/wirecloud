@@ -172,7 +172,7 @@ def get_widget_info(config_file):
     return (template, vendor, name, version)
 
 
-def unpack_gadget(wgt_file, dst_dir, baseURL):
+def unpack_widget(wgt_file, dst_dir, baseURL):
 
     if os.path.exists(dst_dir):
         raise UnpackException("Destination directory already exists")
@@ -194,15 +194,15 @@ def unpack_gadget(wgt_file, dst_dir, baseURL):
     shutil.move(tmp_dir, dst_dir)
 
 
-def relocate_base_url(gadget_dir, template, baseURL):
+def relocate_base_url(widget_dir, template, baseURL):
 
     if len(baseURL) > 0 and baseURL[-1] == '/':
         baseURL = baseURL[:-1]
 
-    template_parser = TemplateParser(os.path.join(gadget_dir, template))
+    template_parser = TemplateParser(os.path.join(widget_dir, template))
     html_file = template_parser.get_html_file()
 
-    # Add baseURL to gadget manifest
+    # Add baseURL to widget manifest
     template_parser.set_base(baseURL)
     template_parser.save()
 
@@ -219,7 +219,7 @@ def relocate_base_url(gadget_dir, template, baseURL):
         idx = 0
 
     # Add tag base to html template
-    insertBaseTag(os.path.join(gadget_dir, html_file[idx:]), baseURL)
+    insertBaseTag(os.path.join(widget_dir, html_file[idx:]), baseURL)
 
 
 def usage():
@@ -244,6 +244,6 @@ if __name__ == '__main__':
         baseURL += '/'
 
     try:
-        unpack_gadget(args[0], args[1], baseURL)
+        unpack_widget(args[0], args[1], baseURL)
     except UnpackException, e:
         print e.message

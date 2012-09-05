@@ -28,14 +28,14 @@
  */
 
 /**
-* This class represents a instance of a Gadget.
+* This class represents a instance of a Widget.
 * @author aarranz
 */
-function IGadget(gadget, iGadgetId, iGadgetCode, iGadgetName, dragboard, alternative) {
-    this.id = iGadgetId;
-    this.code = iGadgetCode;
-    this.name = iGadgetName;
-    this.gadget = gadget;
+function IWidget(widget, iWidgetId, iWidgetCode, iWidgetName, dragboard, alternative) {
+    this.id = iWidgetId;
+    this.code = iWidgetCode;
+    this.name = iWidgetName;
+    this.widget = widget;
 
     this.dragboard = dragboard;
     this.element = null;
@@ -43,7 +43,7 @@ function IGadget(gadget, iGadgetId, iGadgetCode, iGadgetName, dragboard, alterna
 
     this.tab = alternative;
     this.tab.addEventListener('show', function () {
-        this.dragboard._updateIGadgetInfo(this);
+        this.dragboard._updateIWidgetInfo(this);
         this.paint();
     }.bind(this));
 
@@ -54,31 +54,31 @@ function IGadget(gadget, iGadgetId, iGadgetCode, iGadgetName, dragboard, alterna
     this._notifyLoaded = this._notifyLoaded.bind(this);
     this._notifyUnloaded = this._notifyUnloaded.bind(this);
 }
-IGadget.prototype = new StyledElements.ObjectWithEvents();
+IWidget.prototype = new StyledElements.ObjectWithEvents();
 
 /**
-* Returns the associated Gadget class.
+* Returns the associated Widget class.
 */
-IGadget.prototype.getGadget = function () {
-    return this.gadget;
+IWidget.prototype.getWidget = function () {
+    return this.widget;
 };
 
 /**
-* Return the Tab of the IGadget
+* Return the Tab of the IWidget
 */
-IGadget.prototype.getTab = function () {
+IWidget.prototype.getTab = function () {
     return this.tab;
 };
 
-IGadget.prototype.getId = function () {
+IWidget.prototype.getId = function () {
     return this.id;
 };
 
 /**
-* Paints the gadget instance
-* @param where HTML Element where the igadget will be painted
+* Paints the widget instance
+* @param where HTML Element where the iwidget will be painted
 */
-IGadget.prototype.paint = function () {
+IWidget.prototype.paint = function () {
     var i, html, tab, opManager;
 
     if (this.element !== null) {
@@ -87,20 +87,20 @@ IGadget.prototype.paint = function () {
 
     opManager = OpManagerFactory.getInstance();
     this.element = document.createElement('div');
-    this.element.setAttribute('class', 'gadget_content');
+    this.element.setAttribute('class', 'widget_content');
     this.content = document.createElement('object');
     this.content.addEventListener('load', this._notifyLoaded, true);
-    this.content.setAttribute('class', 'gadget_object');
+    this.content.setAttribute('class', 'widget_object');
     this.content.setAttribute('type', 'text/html');
-    this.content.setAttribute('data', this.gadget.code_url + '#id=' + this.id);
+    this.content.setAttribute('data', this.widget.code_url + '#id=' + this.id);
     this.element.appendChild(this.content);
 
     this.tab.appendChild(this.element);
 };
 
-IGadget.prototype.load = IGadget.prototype.paint;
+IWidget.prototype.load = IWidget.prototype.paint;
 
-IGadget.prototype._notifyLoaded = function () {
+IWidget.prototype._notifyLoaded = function () {
     if (this.loaded) {
         return;
     }
@@ -120,7 +120,7 @@ IGadget.prototype._notifyLoaded = function () {
     this.events['load'].dispatch(this);
 };
 
-IGadget.prototype._notifyUnloaded = function () {
+IWidget.prototype._notifyUnloaded = function () {
     if (!this.loaded) {
         return;
     }
@@ -130,13 +130,13 @@ IGadget.prototype._notifyUnloaded = function () {
 };
 
 /**
-* Saves the igadget into persistence. Used only for the first time, that is, for creating igadgets.
+* Saves the iwidget into persistence. Used only for the first time, that is, for creating iwidgets.
 */
-IGadget.prototype.save = function () {
+IWidget.prototype.save = function () {
     function onSuccess(transport) {
-        var igadgetInfo = JSON.parse(transport.responseText);
-        window.id = igadgetInfo.id;
-        window.dragboard.addIGadget(window, igadgetInfo);
+        var iwidgetInfo = JSON.parse(transport.responseText);
+        window.id = iwidgetInfo.id;
+        window.dragboard.addIWidget(window, iwidgetInfo);
     }
 
     function onError(transport, e) {
@@ -154,7 +154,7 @@ IGadget.prototype.save = function () {
             msg = "HTTP Error " + transport.status + " - " + transport.statusText;
         }
 
-        msg = interpolate(gettext("Error adding igadget to persistence: %(errorMsg)s."), {errorMsg: msg}, true);
+        msg = interpolate(gettext("Error adding iwidget to persistence: %(errorMsg)s."), {errorMsg: msg}, true);
         LogManagerFactory.getInstance().log(msg);
     }
 
@@ -167,7 +167,7 @@ IGadget.prototype.save = function () {
     }
 
     var url, data = {
-        gadget: this.gadget.getId(),
+        widget: this.widget.getId(),
         left: this.position.x,
         top: this.position.y,
         width: this.contentWidth,
@@ -182,7 +182,7 @@ IGadget.prototype.save = function () {
     });
 
     data = {
-        igadget: Object.toJSON(data)
+        iwidget: Object.toJSON(data)
     };
     Wirecloud.io.makeRequest(url, {
         method: 'POST',
@@ -194,16 +194,16 @@ IGadget.prototype.save = function () {
 };
 
 /*
-* Perform the properly actions to show to the user that the gadget has received and event
+* Perform the properly actions to show to the user that the widget has received and event
 */
-IGadget.prototype.notifyEvent = function () {
+IWidget.prototype.notifyEvent = function () {
     // nothing to do in iphone
 };
 
 /**
  * This method must be called to avoid memory leaks caused by circular references.
  */
-IGadget.prototype.destroy = function () {
+IWidget.prototype.destroy = function () {
     if (this.element) {
         this.element.remove();
         this.element = null;
