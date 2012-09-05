@@ -27,7 +27,7 @@ from wirecloud.markets.utils import MarketManager
 from wirecloud.plugins import WirecloudPlugin
 from wirecloud.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_usdl_from_workspace
 
-from wirecloud_fiware import VERSION
+import wirecloud_fiware
 from marketAdaptor.marketadaptor import MarketAdaptor
 
 
@@ -117,7 +117,7 @@ class FiWareMarketManager(MarketManager):
 class FiWarePlugin(WirecloudPlugin):
 
     features = {
-        'FiWare': '.'.join(map(str, VERSION)),
+        'FiWare': wirecloud_fiware.__version__,
     }
 
     def get_market_classes(self):

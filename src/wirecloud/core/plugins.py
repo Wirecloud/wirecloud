@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from wirecloud import VERSION
+import wirecloud
 from wirecloud.plugins import WirecloudPlugin, build_url_template
 
 from wirecloud.core.catalogue_manager import WirecloudCatalogueManager
@@ -26,7 +26,7 @@ from wirecloud.core.catalogue_manager import WirecloudCatalogueManager
 class WirecloudCorePlugin(WirecloudPlugin):
 
     features = {
-        'Wirecloud': '.'.join(map(str, VERSION)),
+        'Wirecloud': wirecloud.__version__,
     }
 
     def get_scripts(self, view):
