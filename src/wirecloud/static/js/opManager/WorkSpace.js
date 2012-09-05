@@ -697,7 +697,7 @@ function WorkSpace (workSpaceState) {
         var layoutManager = LayoutManagerFactory.getInstance();
         layoutManager._startComplexTask(gettext('Publishing current workspace'), 1);
 
-        var workSpaceUrl = Wirecloud.URLs.PUBLISH_WORKSPACE.evaluate({workspace_id: this.workSpaceState.id});
+        var workSpaceUrl = Wirecloud.URLs.WORKSPACE_PUBLISH.evaluate({workspace_id: this.workSpaceState.id});
         publicationData = Object.toJSON(data);
         params = new Hash({data: publicationData});
         Wirecloud.io.makeRequest(workSpaceUrl, {
