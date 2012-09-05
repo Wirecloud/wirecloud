@@ -26,19 +26,27 @@ from django.core.urlresolvers import reverse
 
 
 def get_current_domain(request=None):
-    try:
-        return get_current_site(request).domain
-    except:
-        return socket.gethostbyaddr(socket.gethostname())[0]
+    if hasattr(settings, 'FORCE_DOMAIN'):
+        return settings.FORCE_DOMAIN
+    else:
+        try:
+            return get_current_site(request).domain
+        except:
+            return socket.gethostbyaddr(socket.gethostname())[0] + ':' + str(getattr(settings, 'FORCE_PORT', 8000))
 
 
-def get_current_scheme():
-    return 'http'
+def get_current_scheme(request=None):
+    if hasattr(settings, 'FORCE_PROTO'):
+        return settings.FORCE_PROTO
+    elif (request is not None) and request.is_secure():
+        return 'https'
+    else:
+        return 'http'
 
 
 def get_absolute_reverse_url(viewname, request=None, **kwargs):
     path = reverse(viewname, **kwargs)
-    scheme = get_current_scheme()
+    scheme = get_current_scheme(request)
     return urljoin(scheme + '://' + get_current_domain(request) + '/', path)
 
 
