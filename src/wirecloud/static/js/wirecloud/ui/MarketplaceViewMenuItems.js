@@ -75,11 +75,6 @@ if (!Wirecloud.ui) {
                     'label': gettext('Name'),
                     'required': true
                 },
-                'display_name': {
-                    'type': 'text',
-                    'label': gettext('Label'),
-                    'required': true
-                },
                 'url': {
                     'type': 'text',
                     'label': gettext('URL'),
