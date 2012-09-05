@@ -101,7 +101,6 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
     fixtures = ('selenium_test_data',)
     __test__ = False
 
-
     @classmethod
     def setUpClass(cls):
 
@@ -212,7 +211,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
 
         template_input = self.driver.find_element_by_css_selector('form.template_submit_form .template_uri')
         self.fill_form_input(template_input, template_url)
-        self.driver.find_element_by_id('submit_link').click()
+        self.driver.find_elements_by_class_name('submit_link')[0].click()
 
         self.wait_wirecloud_ready()
         time.sleep(2)
@@ -389,11 +388,19 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
 
     def delete_widget(self, widget_name, timeout=120):
-        self.driver.find_element_by_css_selector('.click_for_details').click()
+        self.change_main_view('marketplace')
+        self.search_resource(widget_name)
+        resource = self.search_in_catalogue_results(widget_name)
         time.sleep(1)
+        resource.find_element_by_css_selector('.click_for_details').click()
         WebDriverWait(self.driver, timeout).until(lambda driver: driver.find_element_by_css_selector('.advanced_operations .styled_button').is_displayed())
         self.driver.find_element_by_css_selector('.advanced_operations .styled_button').click()
         self.driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").click()
+
+        self.search_resource(widget_name)
+        resource = self.search_in_catalogue_results(widget_name)
+        self.assertIsNone(resource)
+
 
 browsers = getattr(settings, 'WIRECLOUD_SELENIUM_BROWSER_COMMANDS', {
     'Firefox': {
