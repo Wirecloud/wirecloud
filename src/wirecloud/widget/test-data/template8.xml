@@ -11,7 +11,9 @@
     <iPhoneImageURI>images/catalogue_iphone.png</iPhoneImageURI>
     <WikiURI>doc/index.html</WikiURI>
 
-    <Require feature="inexistan-feature" version="0.1"/>
+    <Requirements>
+        <Feature name="inexistan-feature"/>
+    </Requirements>
   </Catalog.ResourceDescription>
 
   <Platform.Preferences>
