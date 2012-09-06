@@ -328,6 +328,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
 
     def search_in_catalogue_results(self, widget_name):
 
+        self.wait_catalogue_ready()
         resources = self.driver.find_elements_by_css_selector('.resource_list .resource')
         for resource in resources:
             resource_name = resource.find_element_by_css_selector('.resource_name')
@@ -459,14 +460,16 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         self.popup_menu_click("Delete marketplace")
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
 
-    def delete_widget(self, widget_name, timeout=120):
+    def delete_widget(self, widget_name, timeout=30):
         self.change_main_view('marketplace')
         self.search_resource(widget_name)
         resource = self.search_in_catalogue_results(widget_name)
-        time.sleep(1)
         resource.find_element_by_css_selector('.click_for_details').click()
+
         WebDriverWait(self.driver, timeout).until(lambda driver: driver.find_element_by_css_selector('.advanced_operations .styled_button').is_displayed())
-        self.driver.find_element_by_css_selector('.advanced_operations .styled_button').click()
+        self.driver.find_element_by_css_selector('.advanced_operations .styled_button > div').click()
+
+        WebDriverWait(self.driver, timeout).until(lambda driver: driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").is_displayed())
         self.driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").click()
 
         self.search_resource(widget_name)
