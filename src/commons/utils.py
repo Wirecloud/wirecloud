@@ -47,7 +47,6 @@ from django.contrib.auth.models import User
 from django.utils import simplejson, translation
 
 from catalogue.models import CatalogueResource
-from commons.http_utils import download_http_content
 from wirecloud.models import XHTML
 
 

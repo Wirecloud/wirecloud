@@ -39,7 +39,6 @@ from django.core.urlresolvers import reverse
 from catalogue.models import CatalogueResource
 from commons import http_utils
 from commons.authentication import Http403
-from commons.http_utils import download_http_content
 from commons.wgt import WgtDeployer, WgtFile
 from wirecloud.models import ContextOption, Widget, UserPrefOption, UserWorkspace, VariableDef, Workspace, XHTML
 from wirecloud.plugins import get_active_features, get_widget_api_extensions
@@ -234,7 +233,7 @@ def create_widget_from_wgt(wgt, user, deploy_only=False):
     if isinstance(wgt, WgtFile):
         wgt_file = wgt
     else:
-        wgt_file = WgtFile(StringIO(download_http_content(wgt)))
+        wgt_file = WgtFile(StringIO(http_utils.download_http_content(wgt)))
 
     template = wgt_deployer.deploy(wgt_file, user)
     if not deploy_only:
@@ -289,7 +288,7 @@ def get_or_create_widget(templateURL, user, workspaceId, request, fromWGT=False)
         raise Http403()
 
     if fromWGT:
-        wgt_file = WgtFile(StringIO(download_http_content(templateURL)))
+        wgt_file = WgtFile(StringIO(http_utils.download_http_content(templateURL)))
         template_content = wgt_file.get_template()
     else:
         template_content = http_utils.download_http_content(templateURL, user=user)

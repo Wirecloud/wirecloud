@@ -39,7 +39,7 @@ from django.utils.http import urlencode
 from commons.authentication import get_user_authentication
 from commons.cache import no_cache
 from commons.get_data import get_workspace_data, get_global_workspace_data, get_tab_data
-from commons.http_utils import PUT_parameter, download_http_content
+from commons import http_utils
 from commons.logs import log
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
@@ -220,7 +220,7 @@ class WorkspaceEntry(Resource):
     def update(self, request, workspace_id):
         user = get_user_authentication(request)
 
-        received_json = PUT_parameter(request, 'workspace')
+        received_json = http_utils.PUT_parameter(request, 'workspace')
 
         if not received_json:
             return HttpResponseBadRequest(get_xml_error(_("workspace JSON expected")), mimetype='application/xml; charset=UTF-8')
@@ -336,7 +336,7 @@ class TabCollection(Resource):
         if workspace.creator != user or user_workspace.manager != '':
             return HttpResponseForbidden()
 
-        received_json = PUT_parameter(request, 'order')
+        received_json = http_utils.PUT_parameter(request, 'order')
         try:
             order = simplejson.loads(received_json)
 
@@ -371,7 +371,7 @@ class TabEntry(Resource):
     def update(self, request, workspace_id, tab_id):
         user = get_user_authentication(request)
 
-        received_json = PUT_parameter(request, 'tab')
+        received_json = http_utils.PUT_parameter(request, 'tab')
 
         if not received_json:
             return HttpResponseBadRequest(get_xml_error(_("tab JSON expected")), mimetype='application/xml; charset=UTF-8')
@@ -456,7 +456,7 @@ class WorkspaceVariableCollection(Resource):
         if content_type.startswith('application/json'):
             received_json = request.raw_post_data
         else:
-            received_json = PUT_parameter(request, 'variables')
+            received_json = http_utils.PUT_parameter(request, 'variables')
 
         if not received_json:
             return HttpResponseBadRequest(get_xml_error(_("variables JSON expected")), mimetype='application/xml; charset=UTF-8')
@@ -533,7 +533,7 @@ class WorkspaceSharerEntry(Resource):
         else:
             #Share only with the scpecified groups
             try:
-                groups = simplejson.loads(PUT_parameter(request, 'groups'))
+                groups = simplejson.loads(http_utils.PUT_parameter(request, 'groups'))
                 queryGroups = Group.objects.filter(id__in=groups)
                 for g in queryGroups:
                     workspace.targetOrganizations.add(g)
@@ -626,7 +626,7 @@ class MashupMergeService(Service):
             pworkspace_id = template_url.split('/')[-2]
             template = PublishedWorkspace.objects.get(id=pworkspace_id).template
         else:
-            template = download_http_content(template_url, user=request.user)
+            template = http_utils.download_http_content(template_url, user=request.user)
 
         fillWorkspaceUsingTemplate(to_ws, template)
 
@@ -660,7 +660,7 @@ class MashupImportService(Service):
             pworkspace_id = template_url.split('/')[-2]
             template = PublishedWorkspace.objects.get(id=pworkspace_id).template
         else:
-            template = download_http_content(template_url, user=request.user)
+            template = http_utils.download_http_content(template_url, user=request.user)
         workspace, _junk = buildWorkspaceFromTemplate(template, request.user)
 
         activate = data.get('active', False) == "true"

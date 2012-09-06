@@ -62,7 +62,7 @@ from catalogue.catalogue_utils import get_vote_response, group_resources
 from catalogue.utils import add_widget_from_wgt, add_resource_from_template, delete_resource, get_added_resource_info
 from catalogue.utils import tag_resource
 from commons.cache import no_cache
-from commons.http_utils import PUT_parameter, download_http_content
+from commons import http_utils
 from commons.logs import log
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
@@ -135,7 +135,7 @@ class ResourceCollection(Resource):
 
             elif 'template_uri' in request.POST:
                 template_uri = request.POST['template_uri']
-                template = download_http_content(template_uri, user=user)
+                template = http_utils.download_http_content(template_uri, user=user)
                 resource = add_resource_from_template(template_uri, template, user, overrides=overrides)
             else:
                 msg = _("Missing parameter: template_uri or file")
@@ -421,14 +421,14 @@ class ResourceVoteCollection(Resource):
     def update(self, request, vendor, name, version):
 
         try:
-            format = PUT_parameter(request, 'format')
+            format = http_utils.PUT_parameter(request, 'format')
         except KeyError:
             format = 'default'
 
         user = request.user
 
         # Get the vote from the request
-        vote = PUT_parameter(request, 'vote')
+        vote = http_utils.PUT_parameter(request, 'vote')
 
         # Get the resource's id for those vendor, name and version
         resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
