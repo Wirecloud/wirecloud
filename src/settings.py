@@ -184,15 +184,8 @@ LOGIN_REDIRECT_URL = reverse_lazy('wirecloud.root')
 
 #Authentication
 AUTHENTICATION_BACKENDS = (
-    #'authentication.tcloud_access.TCloudBackend',
-    #'authentication.anonymousaccess.AnonymousBackend',
-    #'authentication.ldapaccess.LDAPBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
-
-#LDAP Backend
-#AD_LDAP_URL = 'ldap://host:port'
-#AD_SEARCH_DN = 'uid=%s,ou=OUExample,o=OExample'
 
 # WGT deployment dirs
 CATALOGUE_MEDIA_ROOT = path.join(BASEDIR, 'catalogue', 'media')

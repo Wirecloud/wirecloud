@@ -58,8 +58,8 @@ urlpatterns = patterns('',
 
     # Login/logout
     url(r'^login/?$', 'django.contrib.auth.views.login', name="login"),
-    url(r'^logout/?$', 'authentication.logout', name="logout"),
-    url(r'^admin/logout/?$', 'authentication.logout'),
+    url(r'^logout/?$', 'wirecloudcommons.authentication.logout', name="logout"),
+    url(r'^admin/logout/?$', 'wirecloudcommons.authentication.logout'),
 
     # Admin interface
     (r'^admin/', include(admin.site.urls)),
