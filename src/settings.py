@@ -194,9 +194,6 @@ AUTHENTICATION_BACKENDS = (
 #AD_LDAP_URL = 'ldap://host:port'
 #AD_SEARCH_DN = 'uid=%s,ou=OUExample,o=OExample'
 
-# Absolute path to the directory that holds in development widgets.
-GADGETS_ROOT = path.join(BASEDIR, 'media', 'widgets')
-
 # WGT deployment dirs
 CATALOGUE_MEDIA_ROOT = path.join(BASEDIR, 'catalogue', 'media')
 GADGETS_DEPLOYMENT_DIR = path.join(BASEDIR, 'deployment', 'widgets')
