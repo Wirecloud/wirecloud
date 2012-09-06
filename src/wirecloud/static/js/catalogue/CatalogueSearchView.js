@@ -25,7 +25,7 @@
     "use strict";
 
     var CatalogueSearchView = function CatalogueSearchView(id, options) {
-        options.id = 'search_interface';
+        options['class'] = 'search_interface';
         this.catalogue = options.catalogue;
         StyledElements.Alternative.call(this, id, options);
 
