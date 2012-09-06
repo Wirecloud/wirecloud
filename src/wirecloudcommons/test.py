@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import os
+import codecs
 from shutil import rmtree
 from tempfile import mkdtemp
 import time
 from urllib2 import URLError, HTTPError
+from urlparse import urlparse
 
 from django.conf import settings
 from django.core.cache import cache
@@ -19,6 +21,7 @@ from django.test import TransactionTestCase
 from django.utils import translation
 from selenium.webdriver.support.ui import WebDriverWait
 
+from commons import http_utils
 from commons.wgt import WgtDeployer, WgtFile
 from wirecloud.widget import utils as showcase
 
@@ -52,6 +55,27 @@ class FakeDownloader(object):
 
         if url in self._responses:
             return self._responses[url]
+        else:
+            raise HTTPError('url', '404', 'Not Found', None, None)
+
+
+class LocalDownloader(object):
+
+    def __init__(self, servers):
+        self._servers = servers
+
+    def __call__(self, url, *args, **kwargs):
+        parsed_url = urlparse(url)
+
+        base_path = self._servers[parsed_url.scheme][parsed_url.netloc]
+        final_path = os.path.normpath(os.path.join(base_path, parsed_url.path[1:]))
+
+        if final_path.startswith(base_path) and os.path.isfile(final_path):
+            f = codecs.open(final_path, 'rb')
+            contents = f.read()
+            f.close()
+
+            return contents
         else:
             raise HTTPError('url', '404', 'Not Found', None, None)
 
@@ -146,6 +170,14 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         settings.LANGUAGE_CODE = 'en'
         settings.DEFAULT_LANGUAGE = 'en'
 
+        # downloader
+        cls._original_download_function = http_utils.download_http_content
+        http_utils.download_http_content = LocalDownloader(getattr(cls, 'servers', {
+            'http': {
+                'localhost:8001': os.path.join(os.path.dirname(__file__), 'test-data', 'src'),
+            },
+        }))
+
         # Load webdriver
         module_name, klass_name = getattr(cls, '_webdriver_class', 'selenium.webdriver.Firefox').rsplit('.', 1)
         module = import_module(module_name)
@@ -169,6 +201,8 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         rmtree(cls.tmp_dir, ignore_errors=True)
 
         cls.driver.quit()
+
+        http_utils.download_http_content = cls._original_download_function
 
         settings.LANGUAGES = cls.old_LANGUAGES
         settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
