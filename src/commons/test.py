@@ -56,6 +56,29 @@ class FakeDownloader(object):
             raise HTTPError('url', '404', 'Not Found', None, None)
 
 
+class WirecloudTestCase(TransactionTestCase):
+
+    @classmethod
+    def setUpClass(cls):
+
+        cls.old_LANGUAGES = settings.LANGUAGES
+        cls.old_LANGUAGE_CODE = settings.LANGUAGE_CODE
+        cls.old_DEFAULT_LANGUAGE = settings.DEFAULT_LANGUAGE
+        settings.LANGUAGES = (('en', 'English'),)
+        settings.LANGUAGE_CODE = 'en'
+        settings.DEFAULT_LANGUAGE = 'en'
+
+        super(WirecloudTestCase, cls).setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+        settings.LANGUAGES = cls.old_LANGUAGES
+        settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
+        settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
+
+        super(WirecloudTestCase, cls).tearDownClass()
+
+
 class LocalizedTestCase(TransactionTestCase):
 
     @classmethod
