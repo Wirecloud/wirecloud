@@ -262,7 +262,7 @@ class WGTDeploymentTestCase(TransactionTestCase):
     def testBasicWGTDeploymentFailsWithoutLogin(self):
         c = Client()
 
-        f = open(os.path.join(os.path.dirname(__file__), 'test-data/basic_gadget.wgt'))
+        f = open(os.path.join(os.path.dirname(__file__), 'test-data/basic_widget.wgt'))
         response = c.post('////resource', {'file': f}, HTTP_HOST='www.example.com')
         f.close()
 
@@ -273,7 +273,7 @@ class WGTDeploymentTestCase(TransactionTestCase):
         widget_path = catalogue.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
         c = Client()
 
-        f = open(os.path.join(os.path.dirname(__file__), 'test-data/basic_gadget.wgt'))
+        f = open(os.path.join(os.path.dirname(__file__), 'test-data/basic_widget.wgt'))
         c.login(username='test', password='test')
         response = c.post('////resource', {'file': f}, HTTP_HOST='www.example.com')
         f.close()
