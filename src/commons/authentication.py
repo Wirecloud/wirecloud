@@ -31,24 +31,11 @@
 #
 
 
-from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext as _
 
 
 class Http403(Exception):
     pass
-
-
-def user_authentication(request, user_name):
-    user = request.user
-    if not user.is_authenticated():
-        raise Http403(_("You must be logged"))
-
-    if user_name and user.username != user_name:
-        raise Http403(_("You do not have permission"))
-
-    return user
 
 
 def get_user_authentication(request):
@@ -57,18 +44,3 @@ def get_user_authentication(request):
         raise Http403(_("You must be logged"))
 
     return user
-
-
-def login_with_third_party_cookie(request):
-    if 'username' not in request.REQUEST:
-        return (HttpResponseRedirect('/accounts/login/'), None)
-
-    username = request.REQUEST.get('username')
-
-    user = authenticate(username=username, password=None, request=request)
-
-    if (not user):
-        return (HttpResponseRedirect('/accounts/login/'), None)
-
-    login(request, user)
-    return (None, user)
