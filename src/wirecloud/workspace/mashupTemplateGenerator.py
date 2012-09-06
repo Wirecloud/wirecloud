@@ -26,7 +26,7 @@ from lxml import etree
 from django.conf import settings
 
 from commons.get_data import get_variable_value_from_varname
-from wirecloud.models import IWidget, Tab, TabPreference, WorkSpacePreference
+from wirecloud.models import IWidget, Tab, TabPreference, WorkspacePreference
 
 
 #definition of namespaces that will be used in rdf documents
@@ -142,7 +142,7 @@ def build_template_from_workspace(options, workspace, user):
     resources = etree.SubElement(desc, 'IncludedResources')
 
     # Workspace preferences
-    preferences = WorkSpacePreference.objects.filter(workspace=workspace)
+    preferences = WorkspacePreference.objects.filter(workspace=workspace)
     for preference in preferences:
         if not preference.inherit:
             etree.SubElement(resources, 'Preference', name=preference.name, value=preference.value)
@@ -290,7 +290,7 @@ def build_rdf_template_from_workspace(options, workspace, user):
     graph.add((mashup_uri, WIRE_M['readonly'], rdflib.Literal(str(read_only))))
 
     # add preferences and tabs
-    preferences = WorkSpacePreference.objects.filter(workspace=workspace)
+    preferences = WorkspacePreference.objects.filter(workspace=workspace)
     workspace_tabs = Tab.objects.filter(workspace=workspace).order_by('position')
 
     # Workspace preferences

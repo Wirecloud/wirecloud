@@ -35,7 +35,7 @@ from django.utils import simplejson
 from wirecloud.widget.utils import get_or_add_widget_from_catalogue
 from wirecloud.iwidget.utils import SaveIWidget
 from wirecloud.preferences.views import update_tab_preferences, update_workspace_preferences
-from wirecloud.models import WorkSpace, UserWorkSpace
+from wirecloud.models import Workspace, UserWorkspace
 from wirecloud.workspace.utils import createTab
 from wirecloudcommons.utils.template import TemplateParser
 
@@ -50,11 +50,11 @@ def buildWorkspaceFromTemplate(template, user):
     name = parser.get_resource_name()
 
     # Workspace creation
-    workspace = WorkSpace(name=name, creator=user)
+    workspace = Workspace(name=name, creator=user)
     workspace.save()
 
     # Adding user reference to workspace in the many to many relationship
-    user_workspace = UserWorkSpace(user=user, workspace=workspace, active=False)
+    user_workspace = UserWorkspace(user=user, workspace=workspace, active=False)
     user_workspace.save()
 
     fillWorkspaceUsingTemplate(workspace, parser)

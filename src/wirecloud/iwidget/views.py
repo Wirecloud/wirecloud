@@ -43,7 +43,7 @@ from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error, json_encode
 from wirecloud.iwidget.utils import SaveIWidget, UpdateIWidget, UpgradeIWidget, deleteIWidget
-from wirecloud.models import Widget, IWidget, Tab, UserWorkSpace, Variable, WorkSpace
+from wirecloud.models import Widget, IWidget, Tab, UserWorkspace, Variable, Workspace
 from wirecloud.widget.utils import get_or_add_widget_from_catalogue, get_and_add_widget
 from wirecloudcommons.utils.transaction import commit_on_http_success
 
@@ -54,7 +54,7 @@ class IWidgetCollection(Resource):
     def read(self, request, workspace_id, tab_id):
         user = get_user_authentication(request)
 
-        workspace = get_object_or_404(WorkSpace, id=workspace_id)
+        workspace = get_object_or_404(Workspace, id=workspace_id)
 
         data_list = {}
         cache_manager = VariableValueCacheManager(workspace, user)
@@ -95,7 +95,7 @@ class IWidgetCollection(Resource):
 
             raise TracedServerError(e, {'iwidget': iwidget, 'user': user, 'tab': tab}, request, msg)
 
-        except WorkSpace.DoesNotExist, e:
+        except Workspace.DoesNotExist, e:
             msg = _('referred workspace %(workspace_id)s does not exist.') % {'workspace_id': workspace_id}
 
             raise TracedServerError(e, {'workspace': workspace_id}, request, msg)
@@ -143,7 +143,7 @@ class IWidgetEntry(Resource):
     def read(self, request, workspace_id, tab_id, iwidget_id):
         user = get_user_authentication(request)
 
-        workspace = get_object_or_404(WorkSpace, id=workspace_id)
+        workspace = get_object_or_404(Workspace, id=workspace_id)
 
         iwidget = get_object_or_404(IWidget, tab__workspace__users__id=user.id, tab__workspace=workspace, tab__pk=tab_id, pk=iwidget_id)
         iwidget_data = get_iwidget_data(iwidget, user, workspace)
@@ -192,7 +192,7 @@ class IWidgetVersion(Resource):
     def update(self, request, workspace_id, tab_id, iwidget_id):
         user = get_user_authentication(request)
 
-        workspace = WorkSpace.objects.get(id=workspace_id)
+        workspace = Workspace.objects.get(id=workspace_id)
         if workspace.creator != user:
             raise Http403()
 
@@ -217,7 +217,7 @@ class IWidgetVersion(Resource):
 
             new_version = data.get('newVersion')
             if workspace.is_shared():
-                users = UserWorkSpace.objects.filter(workspace=workspace).values_list('user', flat=True)
+                users = UserWorkspace.objects.filter(workspace=workspace).values_list('user', flat=True)
             else:
                 users = [user]
 

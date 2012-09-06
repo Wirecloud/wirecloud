@@ -41,7 +41,7 @@ from commons import http_utils
 from commons.authentication import Http403
 from commons.http_utils import download_http_content
 from commons.wgt import WgtDeployer, WgtFile
-from wirecloud.models import ContextOption, Widget, UserPrefOption, UserWorkSpace, VariableDef, WorkSpace, XHTML
+from wirecloud.models import ContextOption, Widget, UserPrefOption, UserWorkspace, VariableDef, Workspace, XHTML
 from wirecloud.plugins import get_active_features, get_widget_api_extensions
 from wirecloudcommons.models import Translation
 from wirecloudcommons.utils.template import TemplateParser
@@ -284,7 +284,7 @@ def get_or_add_widget_from_catalogue(vendor, name, version, user, request=None, 
 def get_or_create_widget(templateURL, user, workspaceId, request, fromWGT=False):
 
     # Check permissions
-    workspace = WorkSpace.objects.get(id=workspaceId)
+    workspace = Workspace.objects.get(id=workspaceId)
     if workspace.creator != user:
         raise Http403()
 
@@ -313,7 +313,7 @@ def get_or_create_widget(templateURL, user, workspaceId, request, fromWGT=False)
     if workspace.is_shared():
         # add the widget to the showcase of every user sharing the workspace
         # there is no problem is the widget is already in their showcase
-        [widget.users.add(user_ws.user) for user_ws in UserWorkSpace.objects.filter(workspace=workspace)]
+        [widget.users.add(user_ws.user) for user_ws in UserWorkspace.objects.filter(workspace=workspace)]
     else:
         # add the widget to the showcase of the user
         widget.users.add(user)

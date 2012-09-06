@@ -171,7 +171,7 @@ class MappingCollection:
 class PackageCloner:
 
     extra_models = {
-        'WorkSpace': (
+        'Workspace': (
             ('wirecloud', 'tab', 'workspace'),
             ('wirecloud', 'workspacepreference', 'workspace'),
         ),
@@ -195,7 +195,7 @@ class PackageCloner:
         self.mapping = MappingCollection()
         self.fks = FKCollection()
         self.m2ms = Many2ManyCollection()
-        self.final_tables = ('User', 'VariableDef', 'Widget', 'PublishedWorkSpace', 'Filter', 'UserWorkSpace', 'RemoteChannel')
+        self.final_tables = ('User', 'VariableDef', 'Widget', 'PublishedWorkspace', 'Filter', 'UserWorkspace', 'RemoteChannel')
 
     def is_final_table(self, table_name):
         return table_name in self.final_tables

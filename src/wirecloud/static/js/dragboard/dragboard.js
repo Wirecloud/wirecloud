@@ -29,7 +29,7 @@
 /**
  * @author aarranz
  */
-function Dragboard(tab, workSpace, dragboardElement) {
+function Dragboard(tab, workspace, dragboardElement) {
     // *********************************
     // PRIVATE VARIABLES
     // *********************************
@@ -47,8 +47,8 @@ function Dragboard(tab, workSpace, dragboardElement) {
     this.iWidgetsByCode = new Hash();
     this.tab = tab;
     this.tabId = tab.tabInfo.id;
-    this.workSpace = workSpace;
-    this.workSpaceId = workSpace.workSpaceState.id;
+    this.workspace = workspace;
+    this.workspaceId = workspace.workspaceState.id;
     this.readOnly = false;
 
     // ***********************
@@ -102,7 +102,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
             position = iWidget.getPosition();
             iWidgetInfo.id = iWidget.id;
             iWidgetInfo.tab = this.tabId;
-            if (this.workSpace.isOwned()) {
+            if (this.workspace.isOwned()) {
                 iWidgetInfo.minimized = iWidget.isMinimized();
             }
             if (!iWidget.isInFullDragboardMode()) {
@@ -126,7 +126,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
         }
 
         uri = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
-            workspace_id: this.workSpaceId,
+            workspace_id: this.workspaceId,
             tab_id: this.tabId
         });
         Wirecloud.io.makeRequest(uri, {
@@ -203,7 +203,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
         var keys = this.iWidgets.keys();
         //disconect and delete the connectables and variables of all tab iWidgets
         for (var i = 0; i < keys.length; i++) {
-            this.workSpace.removeIWidgetData(keys[i]);
+            this.workspace.removeIWidgetData(keys[i]);
         }
 
         this.iWidgets = null;
@@ -222,7 +222,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
         this.iWidgets = new Hash();
         this.iWidgetsByCode = new Hash();
 
-        if (this.tab.readOnly || !this.workSpace.isOwned()) {
+        if (this.tab.readOnly || !this.workspace.isOwned()) {
             this.readOnly = true;
             this.dragboardElement.addClassName("fixed");
         }
@@ -374,7 +374,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
     };
 
     Dragboard.prototype.getWorkspace = function () {
-        return this.workSpace;
+        return this.workspace;
     };
 
     /**
@@ -444,7 +444,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
         var oldHeight = iWidget.getHeight();
         var oldWidth = iWidget.getWidth();
 
-        this.workSpace.addIWidget(this.tab, iWidget, iwidgetInfo, options);
+        this.workspace.addIWidget(this.tab, iWidget, iwidgetInfo, options);
 
         // Notify resize event
         iWidget.layout._notifyResizeEvent(iWidget, oldWidth, oldHeight, iWidget.getWidth(), iWidget.getHeight(), false, true);
@@ -1007,7 +1007,7 @@ IWidgetDraggable.prototype.finishFunc = function (draggable, context) {
     if (context.selectedTab !== null) {
         context.layout.cancelMove();
 
-        workspace = context.dragboard.workSpace;
+        workspace = context.dragboard.workspace;
         tab = workspace.getTab(context.selectedTab);
 
         // On-demand loading of tabs!

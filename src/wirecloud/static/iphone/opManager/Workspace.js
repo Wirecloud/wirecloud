@@ -28,9 +28,9 @@
  */
 
 
-function WorkSpace(workSpaceState) {
+function Workspace(workspaceState) {
 
-    var loadWorkSpace,
+    var loadWorkspace,
         onError;
 
     // ****************
@@ -38,10 +38,10 @@ function WorkSpace(workSpaceState) {
     // ****************
 
     // Not like the remaining methods. This is a callback function to process AJAX requests, so must be public.
-    loadWorkSpace = function (transport) {
+    loadWorkspace = function (transport) {
         // JSON-coded iWidget-variable mapping
         var response = transport.responseText;
-        this.workSpaceGlobalInfo = JSON.parse(response);
+        this.workspaceGlobalInfo = JSON.parse(response);
 
         this.loaded = true;
 
@@ -62,7 +62,7 @@ function WorkSpace(workSpaceState) {
         alert(msg);
     };
 
-    WorkSpace.prototype._buildInterface = function () {
+    Workspace.prototype._buildInterface = function () {
         var loginButton;
 
         this.tabsContainerElement = OpManagerFactory.getInstance().workspaceTabsAlternative;
@@ -109,7 +109,7 @@ function WorkSpace(workSpaceState) {
         this.layout.repaint();
     };
 
-    WorkSpace.prototype._scroll = function (index) {
+    Workspace.prototype._scroll = function (index) {
         this.layout.getCenterContainer().wrapperElement.scrollLeft = index * window.innerWidth;
     };
 
@@ -117,7 +117,7 @@ function WorkSpace(workSpaceState) {
     // PUBLIC METHODS
     // ****************
 
-    WorkSpace.prototype.unload = function () {
+    Workspace.prototype.unload = function () {
         // After that, tab info is managed
         for (var i = 0; i < this.tabInstances.length; i += 1) {
             this.unloadTab(i);
@@ -134,7 +134,7 @@ function WorkSpace(workSpaceState) {
         this.layout.destroy();
     };
 
-    WorkSpace.prototype.unloadTab = function (tabId) {
+    Workspace.prototype.unloadTab = function (tabId) {
         var tab = this.tabInstances[tabId];
 
         tab.destroy();
@@ -142,17 +142,17 @@ function WorkSpace(workSpaceState) {
         this.visibleTab = null;
     };
 
-    WorkSpace.prototype.removeIWidgetData = function (iWidgetId) {
+    Workspace.prototype.removeIWidgetData = function (iWidgetId) {
         this.varManager.removeInstance(iWidgetId);
         this.wiring.removeInstance(iWidgetId);
         this.contextManager.removeInstance(iWidgetId);
     };
 
-    WorkSpace.prototype.sendBufferedVars = function () {
+    Workspace.prototype.sendBufferedVars = function () {
         this.varManager.sendBufferedVars();
     };
 
-    WorkSpace.prototype.getTabInstance = function (tabId) {
+    Workspace.prototype.getTabInstance = function (tabId) {
         var i;
         for (i = 0; i < this.tabInstances.length; i += 1) {
             if (this.tabInstances[i].getId() === tabId) {
@@ -162,41 +162,41 @@ function WorkSpace(workSpaceState) {
         return null;
     };
 
-    WorkSpace.prototype.getName = function () {
-        return this.workSpaceState.name;
+    Workspace.prototype.getName = function () {
+        return this.workspaceState.name;
     };
 
-    WorkSpace.prototype.getId = function () {
-        return this.workSpaceState.id;
+    Workspace.prototype.getId = function () {
+        return this.workspaceState.id;
     };
 
-    WorkSpace.prototype.getWiring = function () {
+    Workspace.prototype.getWiring = function () {
         return this.wiring;
     };
 
-    WorkSpace.prototype.getVarManager = function () {
+    Workspace.prototype.getVarManager = function () {
         return this.varManager;
     };
 
-    WorkSpace.prototype.getContextManager = function () {
+    Workspace.prototype.getContextManager = function () {
         return this.contextManager;
     };
 
-    WorkSpace.prototype.getActiveDragboard = function () {
+    Workspace.prototype.getActiveDragboard = function () {
         return this.visibleTab.getDragboard();
     };
 
-    WorkSpace.prototype.downloadWorkSpaceInfo = function () {
-        var workSpaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': this.workSpaceState.id});
-        Wirecloud.io.makeRequest(workSpaceUrl, {
+    Workspace.prototype.downloadWorkspaceInfo = function () {
+        var workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': this.workspaceState.id});
+        Wirecloud.io.makeRequest(workspaceUrl, {
             method: 'GET',
-            onSuccess: loadWorkSpace.bind(this),
+            onSuccess: loadWorkspace.bind(this),
             onFailure: onError.bind(this),
             onException: onError.bind(this)
         });
     };
 
-    WorkSpace.prototype.getIwidget = function (iwidgetId) {
+    Workspace.prototype.getIwidget = function (iwidgetId) {
         var i, iwidget;
         for (i = 0; i < this.tabInstances.length; i += 1) {
             iwidget = this.tabInstances[i].getDragboard().getIWidget(iwidgetId);
@@ -207,7 +207,7 @@ function WorkSpace(workSpaceState) {
         }
     };
 
-    WorkSpace.prototype.getIWidgets = function () {
+    Workspace.prototype.getIWidgets = function () {
         if (!this.loaded) {
             return;
         }
@@ -222,13 +222,13 @@ function WorkSpace(workSpaceState) {
     };
 
     /**** Display the IWidgets menu ***/
-    WorkSpace.prototype.init = function () {
+    Workspace.prototype.init = function () {
         //Create a menu for each tab of the workspace and paint it as main screen.
         var scrolling = 0,
             step = window.innerWidth,
             i, tabs, tab, iwidgets;
 
-        tabs = this.workSpaceGlobalInfo.workspace.tabList;
+        tabs = this.workspaceGlobalInfo.workspace.tabList;
 
         if (tabs.length > 0) {
             for (i = 0; i < tabs.length; i += 1) {
@@ -245,13 +245,13 @@ function WorkSpace(workSpaceState) {
 
         this.varManager = new VarManager(this);
 
-        this.contextManager = new ContextManager(this, this.workSpaceGlobalInfo);
+        this.contextManager = new ContextManager(this, this.workspaceGlobalInfo);
         this.wiring = new Wirecloud.Wiring(this);
         iwidgets = this.getIWidgets();
         for (i = 0; i < iwidgets.length; i += 1) {
             this.events.iwidgetadded.dispatch(this, iwidgets[i]);
         }
-        this.wiring.load(this.workSpaceGlobalInfo.workspace.wiring);
+        this.wiring.load(this.workspaceGlobalInfo.workspace.wiring);
         this._buildInterface();
 
         for (i = 0; i < this.tabInstances.length; i += 1) {
@@ -266,16 +266,16 @@ function WorkSpace(workSpaceState) {
         this.updateVisibleTab(this.visibleTabIndex);
     };
 
-    WorkSpace.prototype.show = function () {
+    Workspace.prototype.show = function () {
         var step = window.innerWidth;
         window.scrollTo(this.visibleTabIndex * step, 1);
     };
 
-    WorkSpace.prototype.getTab = function (tabId) {
+    Workspace.prototype.getTab = function (tabId) {
         return this.tabInstances.getElementById(tabId);
     };
 
-    WorkSpace.prototype.setTab = function (tab) {
+    Workspace.prototype.setTab = function (tab) {
         if (!this.loaded) {
             return;
         }
@@ -283,7 +283,7 @@ function WorkSpace(workSpaceState) {
         this.visibleTab.show();
     };
 
-    WorkSpace.prototype.getVisibleTab = function () {
+    Workspace.prototype.getVisibleTab = function () {
         if (!this.loaded) {
             return;
         }
@@ -291,11 +291,11 @@ function WorkSpace(workSpaceState) {
         return this.visibleTab;
     };
 
-    WorkSpace.prototype.getNumberOfTabs = function () {
+    Workspace.prototype.getNumberOfTabs = function () {
         return this.tabInstances.length;
     };
 
-    WorkSpace.prototype.updateVisibleTab = function (index) {
+    Workspace.prototype.updateVisibleTab = function (index) {
         var i, mark, tabsLength = this.getNumberOfTabs();
 
         if (this.visibleTabIndex !== index) {
@@ -316,7 +316,7 @@ function WorkSpace(workSpaceState) {
         this._scroll(index);
     };
 
-    WorkSpace.prototype.updateLayout = function (orient) {
+    Workspace.prototype.updateLayout = function (orient) {
         var step = window.innerWidth,
             scrolling = 0,
             iWidgets, contextManager, i;
@@ -340,7 +340,7 @@ function WorkSpace(workSpaceState) {
         }
     };
 
-    WorkSpace.prototype.tabExists = function (tabName) {
+    Workspace.prototype.tabExists = function (tabName) {
         for (var i = 0; i < this.tabInstances.length; i += 1) {
             if (this.tabInstances[i].tabInfo.name === tabName) {
                 return true;
@@ -349,7 +349,7 @@ function WorkSpace(workSpaceState) {
         return false;
     };
 
-    WorkSpace.prototype.showRelatedIwidget = function (iWidgetId, tabId) {
+    Workspace.prototype.showRelatedIwidget = function (iWidgetId, tabId) {
         this.visibleTab = this.getTab(tabId);
         this.visibleTabIndex = this.tabInstances.indexOf(this.visibleTab);
         this.visibleTab.getDragboard().paintRelatedIWidget(iWidgetId);
@@ -359,8 +359,8 @@ function WorkSpace(workSpaceState) {
     //  CONSTRUCTOR
     // *****************
 
-    this.workSpaceState = workSpaceState;
-    this.workSpaceGlobal = null;
+    this.workspaceState = workspaceState;
+    this.workspaceGlobal = null;
     this.varManager = null;
     this.tabInstances = [];
     this.wiring = null;
@@ -374,4 +374,4 @@ function WorkSpace(workSpaceState) {
 
     StyledElements.ObjectWithEvents.call(this, ['iwidgetadded', 'iwidgetremoved']);
 }
-WorkSpace.prototype = new StyledElements.ObjectWithEvents();
+Workspace.prototype = new StyledElements.ObjectWithEvents();

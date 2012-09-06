@@ -44,7 +44,7 @@ from django.utils.translation import ugettext as _
 from commons.http_utils import download_http_content
 from commons.utils import save_alternative
 from wirecloud.iwidget.utils import deleteIWidget
-from wirecloud.models import Category, IWidget, PublishedWorkSpace, Tab, UserWorkSpace, VariableValue, WorkSpace
+from wirecloud.models import Category, IWidget, PublishedWorkspace, Tab, UserWorkspace, VariableValue, Workspace
 from wirecloud.workspace.managers import get_workspace_managers
 from wirecloud.workspace.packageLinker import PackageLinker
 from wirecloudcommons.utils.template import TemplateParser
@@ -96,7 +96,7 @@ def setVisibleTab(user, workspace_id, tab):
 
 
 def get_mashup_widgets(mashup_id):
-    published_workspace = get_object_or_404(PublishedWorkSpace, id=mashup_id)
+    published_workspace = get_object_or_404(PublishedWorkspace, id=mashup_id)
 
     return [i.widget for i in IWidget.objects.filter(tab__workspace=published_workspace.workspace)]
 
@@ -107,7 +107,7 @@ def create_published_workspace_from_template(template, user):
         template = TemplateParser(template)
 
     workspace_info = template.get_resource_basic_info()
-    return PublishedWorkSpace.objects.create(name=workspace_info['name'],
+    return PublishedWorkspace.objects.create(name=workspace_info['name'],
         vendor=workspace_info['vendor'], version=workspace_info['version'],
         author=workspace_info['author'], mail=workspace_info['mail'],
         description=workspace_info['description'], imageURI=workspace_info['image_uri'],
@@ -169,7 +169,7 @@ def sync_base_workspaces(user):
         workspaces_by_manager[manager.get_id()] = []
         workspaces_by_ref[manager.get_id()] = {}
 
-    workspaces = UserWorkSpace.objects.filter(user=user)
+    workspaces = UserWorkspace.objects.filter(user=user)
     for workspace in workspaces:
         if workspace.manager != '':
             workspaces_by_manager[workspace.manager].append(workspace.reason_ref)
@@ -190,9 +190,9 @@ def sync_base_workspaces(user):
         for workspace_to_add in result[1]:
             from_workspace = workspace_to_add[1]
 
-            if isinstance(from_workspace, WorkSpace):
+            if isinstance(from_workspace, Workspace):
                 user_workspace = packageLinker.link_workspace(from_workspace, user, from_workspace.creator)
-            elif isinstance(from_workspace, PublishedWorkSpace):
+            elif isinstance(from_workspace, PublishedWorkspace):
                 _junk, user_workspace = buildWorkspaceFromTemplate(from_workspace.template, user)
             else:
                 # TODO warning
@@ -219,12 +219,12 @@ def getCategoryId(category):
 
 def get_workspace_list(user):
 
-    from wirecloud.workspace.views import cloneWorkspace, createEmptyWorkSpace, linkWorkspace, setActiveWorkspace
+    from wirecloud.workspace.views import cloneWorkspace, createEmptyWorkspace, linkWorkspace, setActiveWorkspace
 
     reload_showcase = sync_base_workspaces(user)
 
     # updated user workspaces
-    workspaces = WorkSpace.objects.filter(users=user)
+    workspaces = Workspace.objects.filter(users=user)
 
     if not reload_showcase and workspaces.count() == 0:
         # There is no workspace for the user
@@ -256,17 +256,17 @@ def get_workspace_list(user):
 
         if not cloned_workspace:
             # create an empty workspace
-            createEmptyWorkSpace(_('WorkSpace'), user)
+            createEmptyWorkspace(_('Workspace'), user)
 
     # Now we can fetch all the workspaces of an user
-    workspaces = WorkSpace.objects.filter(users__id=user.id)
+    workspaces = Workspace.objects.filter(users__id=user.id)
 
     # if there is no active workspace
-    active_workspaces = UserWorkSpace.objects.filter(user=user, active=True)
+    active_workspaces = UserWorkspace.objects.filter(user=user, active=True)
     if len(active_workspaces) == 0:
 
         # set the first workspace as active
-        active_workspace = UserWorkSpace.objects.filter(user=user)[0]
+        active_workspace = UserWorkspace.objects.filter(user=user)[0]
         setActiveWorkspace(user, active_workspace.workspace)
 
     elif len(active_workspaces) > 1:

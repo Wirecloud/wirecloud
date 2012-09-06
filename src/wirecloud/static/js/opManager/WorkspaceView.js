@@ -28,7 +28,7 @@ var WorkspaceView = function (id, options) {
 
     this.wsMenu = new StyledElements.PopupMenu();
     this.wsMenu.append(new WorkspaceListItems(function (workspace) {
-        OpManagerFactory.getInstance().changeActiveWorkSpace(workspace);
+        OpManagerFactory.getInstance().changeActiveWorkspace(workspace);
     }));
     this.wsMenu.appendSeparator();
     this.wsMenu.append(new WorkspaceItems());
@@ -38,7 +38,7 @@ var WorkspaceView = function (id, options) {
     }.bind(this)));
 
     this.wsMenu.append(new StyledElements.MenuItem(gettext('Publish'), function () {
-        var window = new PublishWindowMenu(OpManagerFactory.getInstance().activeWorkSpace);
+        var window = new PublishWindowMenu(OpManagerFactory.getInstance().activeWorkspace);
         window.show();
     }.bind(this)));
 };
@@ -55,7 +55,7 @@ WorkspaceView.prototype.getBreadcrum = function () {
         }
     ];
 
-    workspace = OpManagerFactory.getInstance().activeWorkSpace;
+    workspace = OpManagerFactory.getInstance().activeWorkspace;
     if (workspace != null) {
         entries.push({
             'label': workspace.getName(),

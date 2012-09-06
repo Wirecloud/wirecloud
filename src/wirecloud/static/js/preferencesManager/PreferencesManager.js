@@ -257,7 +257,7 @@ var PreferencesManagerFactory = function () {
 		this.preferencesDef['platform'] = new PlatformPreferencesDef(definitions);
 
 		this.preferencesDef['workspace'] = this._processDefinitions(workspacePreferences);
-		this.preferenceManagers['workspace'] = WorkSpacePreferencesDef;
+		this.preferenceManagers['workspace'] = WorkspacePreferencesDef;
 
 		definitions = this._processDefinitions(tabPreferences);
 		this.preferencesDef['tab'] = new TabPreferencesDef(definitions);

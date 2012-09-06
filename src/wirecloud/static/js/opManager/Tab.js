@@ -79,7 +79,7 @@ function Tab(id, notebook, options) {
     var deleteSuccess = function (transport) {
         var layoutManager = LayoutManagerFactory.getInstance();
 
-        this.workSpace.unloadTab(this.getId());
+        this.workspace.unloadTab(this.getId());
 
         layoutManager.logSubTask(gettext('Tab deleted successfully'));
         layoutManager.logStep('');
@@ -131,8 +131,8 @@ function Tab(id, notebook, options) {
 
         if (tabName === "") {
             msg = interpolate(gettext("Error updating a tab: invalid name"), true);
-        } else if (this.workSpace.tabExists(tabName)) {
-            msg = interpolate(gettext("Error updating a tab: the name %(tabName)s is already in use in workspace %(wsName)s."), {tabName: tabName, wsName: this.workSpace.workSpaceState.name}, true);
+        } else if (this.workspace.tabExists(tabName)) {
+            msg = interpolate(gettext("Error updating a tab: the name %(tabName)s is already in use in workspace %(wsName)s."), {tabName: tabName, wsName: this.workspace.workspaceState.name}, true);
         }
 
         if (msg !== null) {
@@ -146,7 +146,7 @@ function Tab(id, notebook, options) {
         msg = interpolate(msg, {tabname: this.tabInfo.name, newname: tabName}, true);
         layoutManager.logSubTask(msg);
 
-        tabUrl = Wirecloud.URLs.TAB_ENTRY.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
+        tabUrl = Wirecloud.URLs.TAB_ENTRY.evaluate({'workspace_id': this.workspace.workspaceState.id, 'tab_id': this.tabInfo.id});
         params = {'tab': Object.toJSON({'name': tabName})};
         Wirecloud.io.makeRequest(tabUrl, {
             method: 'PUT',
@@ -169,7 +169,7 @@ function Tab(id, notebook, options) {
         msg = interpolate(msg, {tabname: this.tabInfo.name}, true);
         layoutManager.logSubTask(msg);
 
-        tabUrl = Wirecloud.URLs.TAB_ENTRY.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
+        tabUrl = Wirecloud.URLs.TAB_ENTRY.evaluate({'workspace_id': this.workspace.workspaceState.id, 'tab_id': this.tabInfo.id});
         Wirecloud.io.makeRequest(tabUrl, {
             method: 'DELETE',
             onSuccess: deleteSuccess.bind(this),
@@ -197,7 +197,7 @@ function Tab(id, notebook, options) {
     * Gets the banner related to the workspace this dragboard belongs to
     */
     Tab.prototype.getHeader = function(){
-        return this.workSpace.getHeader();
+        return this.workspace.getHeader();
     }
 
     Tab.prototype.mark_as_painted = function () {
@@ -224,10 +224,10 @@ function Tab(id, notebook, options) {
     /*constructor*/
 
     // The name of the dragboard HTML elements correspond to the Tab name
-    this.workSpace = options.workspace;
+    this.workspace = options.workspace;
     this.tabInfo = tabInfo;
-    this.dragboardLayerName = "dragboard_" + this.workSpace.workSpaceState.id + "_" + this.tabInfo.id;
-    this.tabName = "tab_" + this.workSpace.workSpaceState.id + "_" + this.tabInfo.id;
+    this.dragboardLayerName = "dragboard_" + this.workspace.workspaceState.id + "_" + this.tabInfo.id;
+    this.tabName = "tab_" + this.workspace.workspaceState.id + "_" + this.tabInfo.id;
 
     this.FloatingWidgetsMenu = null;
 
@@ -239,10 +239,10 @@ function Tab(id, notebook, options) {
 
     this.readOnly = false;
 
-    this.dragboard = new Dragboard(this, this.workSpace, this.wrapperElement);
+    this.dragboard = new Dragboard(this, this.workspace, this.wrapperElement);
 
     this.markAsVisible = function () {
-        var tabUrl = Wirecloud.URLs.TAB_ENTRY.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
+        var tabUrl = Wirecloud.URLs.TAB_ENTRY.evaluate({'workspace_id': this.workspace.workspaceState.id, 'tab_id': this.tabInfo.id});
         var params = {'tab': Object.toJSON({visible: "true"})};
         Wirecloud.io.makeRequest(tabUrl, {
             method: 'POST',
@@ -254,9 +254,9 @@ function Tab(id, notebook, options) {
     }.bind(this);
 
     this.markAsVisibleSuccess = function() {
-        var tabIds = this.workSpace.tabInstances.keys();
+        var tabIds = this.workspace.tabInstances.keys();
         for (var i = 0; i < tabIds.length; i++){
-            var tab = this.workSpace.tabInstances.get(tabIds[i]);
+            var tab = this.workspace.tabInstances.get(tabIds[i]);
             tab.tabInfo.visible = false;
         }
         this.tabInfo.visible = true;
@@ -273,7 +273,7 @@ Tab.prototype = new StyledElements.Tab();
 Tab.prototype.isAllowed = function (action) {
     switch (action) {
     case "remove":
-        return !this.readOnly && this.workSpace.tabInstances.keys().length > 1 && !this.hasReadOnlyIWidgets();
+        return !this.readOnly && this.workspace.tabInstances.keys().length > 1 && !this.hasReadOnlyIWidgets();
     default:
         return false;
     }

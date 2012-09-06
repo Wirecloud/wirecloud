@@ -40,33 +40,33 @@ var OpManagerFactory = function () {
         var loadEnvironment = function (transport) {
             // JSON-coded user tabspaces
             var response = transport.responseText;
-            var workSpacesStructure = JSON.parse(response);
+            var workspacesStructure = JSON.parse(response);
 
-            var reloadShowcase = workSpacesStructure.reloadShowcase;
-            var workSpaces = workSpacesStructure.workspaces;
+            var reloadShowcase = workspacesStructure.reloadShowcase;
+            var workspaces = workspacesStructure.workspaces;
 
-            for (var i = 0; i < workSpaces.length; i++) {
-                var workSpace = workSpaces[i];
+            for (var i = 0; i < workspaces.length; i++) {
+                var workspace = workspaces[i];
 
-                var workspace_instance = new WorkSpace(workSpace);
-                this.workSpaceInstances.set(workSpace.id, workspace_instance);
-                if (!(workSpace.creator in this.workspacesByUserAndName)) {
-                    this.workspacesByUserAndName[workSpace.creator] = {};
+                var workspace_instance = new Workspace(workspace);
+                this.workspaceInstances.set(workspace.id, workspace_instance);
+                if (!(workspace.creator in this.workspacesByUserAndName)) {
+                    this.workspacesByUserAndName[workspace.creator] = {};
                 }
-                this.workspacesByUserAndName[workSpace.creator][workSpace.name] = workspace_instance;
+                this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace_instance;
             }
 
             HistoryManager.init();
             var state = HistoryManager.getCurrentState();
-            this.activeWorkSpace = this.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
+            this.activeWorkspace = this.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
 
             // Total information of the active workspace must be downloaded!
             if (reloadShowcase) {
                 //the showcase must be reloaded to have all new widgets
                 //it itself changes to the active workspace
-                ShowcaseFactory.getInstance().reload(workSpace.id);
+                ShowcaseFactory.getInstance().reload(workspace.id);
             } else {
-                this.activeWorkSpace.downloadWorkSpaceInfo(HistoryManager.getCurrentState().tab);
+                this.activeWorkspace.downloadWorkspaceInfo(HistoryManager.getCurrentState().tab);
             }
         }
 
@@ -91,7 +91,7 @@ var OpManagerFactory = function () {
             var wsInfo = JSON.parse(response);
 
             //create the new workspace and go to it
-            this.workSpaceInstances.set(wsInfo.workspace.id, new WorkSpace(wsInfo.workspace));
+            this.workspaceInstances.set(wsInfo.workspace.id, new Workspace(wsInfo.workspace));
 
             LayoutManagerFactory.getInstance().hideCover();
             ShowcaseFactory.getInstance().reload(wsInfo.workspace.id);
@@ -118,10 +118,10 @@ var OpManagerFactory = function () {
         this.loadCompleted = false;
 
         // Variables for controlling the collection of wiring and dragboard instances of a user
-        this.workSpaceInstances = new Hash();
+        this.workspaceInstances = new Hash();
         this.workspacesByUserAndName = {};
 
-        this.activeWorkSpace = null;
+        this.activeWorkspace = null;
 
         // ****************
         // PUBLIC METHODS
@@ -130,8 +130,8 @@ var OpManagerFactory = function () {
         OpManager.prototype.showLogs = function (logManager) {
             logManager = arguments.length > 0 ? logManager : LogManagerFactory.getInstance();
 
-            if (this.activeWorkSpace && this.activeWorkSpace.getVisibleTab()) {
-                this.activeWorkSpace.getVisibleTab().unmark();
+            if (this.activeWorkspace && this.activeWorkspace.getVisibleTab()) {
+                this.activeWorkspace.getVisibleTab().unmark();
                         }
 
             LogManagerFactory.getInstance().show(logManager);
@@ -187,7 +187,7 @@ var OpManagerFactory = function () {
                 var wsInfo = JSON.parse(response);
                 //create the new workspace and go to it
                 opManager = OpManagerFactory.getInstance();
-                opManager.workSpaceInstances.set(wsInfo.workspace.id, new WorkSpace(wsInfo.workspace));
+                opManager.workspaceInstances.set(wsInfo.workspace.id, new Workspace(wsInfo.workspace));
 
                 ShowcaseFactory.getInstance().reload(wsInfo.workspace.id);
 
@@ -227,11 +227,11 @@ var OpManagerFactory = function () {
             PreferencesManagerFactory.getInstance().show();
         }
 
-        OpManager.prototype.changeActiveWorkSpace = function (workspace, initial_tab) {
-            var state, steps = this.activeWorkSpace != null ? 2 : 1;
+        OpManager.prototype.changeActiveWorkspace = function (workspace, initial_tab) {
+            var state, steps = this.activeWorkspace != null ? 2 : 1;
 
             state = {
-                workspace_creator: workspace.workSpaceState.creator,
+                workspace_creator: workspace.workspaceState.creator,
                 workspace_name: workspace.getName(),
                 view: "workspace"
             };
@@ -241,12 +241,12 @@ var OpManagerFactory = function () {
             HistoryManager.pushState(state);
             LayoutManagerFactory.getInstance()._startComplexTask(gettext("Changing current workspace"), steps);
 
-            if (this.activeWorkSpace != null) {
-                this.activeWorkSpace.unload();
+            if (this.activeWorkspace != null) {
+                this.activeWorkspace.unload();
             }
 
-            this.activeWorkSpace = workspace;
-            this.activeWorkSpace.downloadWorkSpaceInfo(initial_tab);
+            this.activeWorkspace = workspace;
+            this.activeWorkspace.downloadWorkspaceInfo(initial_tab);
         }
 
 
@@ -264,22 +264,22 @@ var OpManagerFactory = function () {
                 return;
 
             var widget = this.showcaseModule.getWidget(widgetId);
-            this.activeWorkSpace.getVisibleTab().getDragboard().addInstance(widget, options);
+            this.activeWorkspace.getVisibleTab().getDragboard().addInstance(widget, options);
         }
 
         OpManager.prototype.removeInstance = function (iWidgetId, orderFromServer) {
             if (!this.loadCompleted)
                 return;
 
-            this.activeWorkSpace.removeIWidget(iWidgetId, orderFromServer);
+            this.activeWorkspace.removeIWidget(iWidgetId, orderFromServer);
         }
 
         OpManager.prototype.getActiveWorkspaceId = function () {
-            return this.activeWorkSpace.getId();
+            return this.activeWorkspace.getId();
         }
 
         OpManager.prototype.sendEvent = function (widget, event, value) {
-            this.activeWorkSpace.getWiring().sendEvent(widget, event, value);
+            this.activeWorkspace.getWiring().sendEvent(widget, event, value);
         }
 
         /**
@@ -314,26 +314,26 @@ var OpManagerFactory = function () {
             layoutManager.hideCover();
             layoutManager._startComplexTask(gettext('Unloading Wirecloud Platform'));
 
-            if (this.activeWorkSpace) {
-                this.activeWorkSpace.unload();
+            if (this.activeWorkspace) {
+                this.activeWorkspace.unload();
             }
 
             //TODO: unloadCatalogue
         }
 
         OpManager.prototype.iwidgetLoaded = function (iwidgetId) {
-            this.activeWorkSpace.iwidgetLoaded(iwidgetId);
+            this.activeWorkspace.iwidgetLoaded(iwidgetId);
         }
 
         OpManager.prototype.iwidgetUnloaded = function (iwidgetId) {
-            this.activeWorkSpace.iwidgetUnloaded(iwidgetId);
+            this.activeWorkspace.iwidgetUnloaded(iwidgetId);
         }
 
         OpManager.prototype.checkForWidgetUpdates = function () {
-            this.activeWorkSpace.checkForWidgetUpdates();
+            this.activeWorkspace.checkForWidgetUpdates();
         }
 
-        OpManager.prototype.showActiveWorkSpace = function (refreshMenu) {
+        OpManager.prototype.showActiveWorkspace = function (refreshMenu) {
             // TODO
         }
 
@@ -364,14 +364,14 @@ var OpManagerFactory = function () {
             case Modules.prototype.CATALOGUE:
                 // All singleton modules has been loaded!
                 // It's time for loading tabspace information!
-                this.loadActiveWorkSpace();
+                this.loadActiveWorkspace();
                 break;
 
             case Modules.prototype.ACTIVE_WORKSPACE:
                 var layoutManager = LayoutManagerFactory.getInstance();
                 layoutManager.logSubTask(gettext("Activating current Workspace"));
 
-                this.showActiveWorkSpace();
+                this.showActiveWorkspace();
 
                 layoutManager.logStep('');
                 layoutManager._notifyPlatformReady();
@@ -379,7 +379,7 @@ var OpManagerFactory = function () {
             }
         }
 
-        OpManager.prototype.loadActiveWorkSpace = function () {
+        OpManager.prototype.loadActiveWorkspace = function () {
             // Asynchronous load of modules
             // Each singleton module notifies OpManager it has finished loading!
 
@@ -391,7 +391,7 @@ var OpManagerFactory = function () {
         }
 
         OpManager.prototype.logIWidgetError = function(iWidgetId, msg, level) {
-            var iWidget = this.activeWorkSpace.getIwidget(iWidgetId);
+            var iWidget = this.activeWorkspace.getIwidget(iWidgetId);
             if (iWidget == null) {
                 var msg2 = gettext("Some pice of code tried to notify an error in the iWidget %(iWidgetId)s when it did not exist or it was not loaded yet. This is an error in Wirecloud Platform, please notify it.\nError Message: %(errorMsg)s");
                 msg2 = interpolate(msg2, {iWidgetId: iWidgetId, errorMsg: msg}, true);
@@ -403,24 +403,24 @@ var OpManagerFactory = function () {
         }
 
         OpManager.prototype.drawAttention = function(iWidgetId) {
-            this.activeWorkSpace.drawAttention(iWidgetId);
+            this.activeWorkspace.drawAttention(iWidgetId);
         };
 
         //Operations on workspaces
 
-        OpManager.prototype.workSpaceExists = function (newName) {
+        OpManager.prototype.workspaceExists = function (newName) {
             var workspace_keys, workspace, i;
-            workspace_keys = this.workSpaceInstances.keys();
+            workspace_keys = this.workspaceInstances.keys();
             for (i = 0; i < workspace_keys.length; i += 1) {
-                workspace = this.workSpaceInstances.get(workspace_keys[i]);
-                if (workspace.workSpaceState.name === newName) {
+                workspace = this.workspaceInstances.get(workspace_keys[i]);
+                if (workspace.workspaceState.name === newName) {
                     return true;
                 }
             }
             return false;
         }
 
-        OpManager.prototype.addWorkSpace = function (newName) {
+        OpManager.prototype.addWorkspace = function (newName) {
             var params = {'workspace': Object.toJSON({name: newName})};
             Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_COLLECTION, {
                 method: 'POST',
@@ -430,22 +430,22 @@ var OpManagerFactory = function () {
             });
         };
 
-        OpManager.prototype.unloadWorkSpace = function(workSpaceId) {
+        OpManager.prototype.unloadWorkspace = function(workspaceId) {
             //Unloading the Workspace
-            this.workSpaceInstances.get(workSpaceId).unload();
+            this.workspaceInstances.get(workspaceId).unload();
         }
 
-        OpManager.prototype.removeWorkSpace = function(workSpaceId) {
+        OpManager.prototype.removeWorkspace = function(workspaceId) {
             // Removing reference
-            this.workSpaceInstances.unset(workSpaceId);
+            this.workspaceInstances.unset(workspaceId);
 
             // Set the first workspace as current
-            this.changeActiveWorkSpace(this.workSpaceInstances.values()[0]);
+            this.changeActiveWorkspace(this.workspaceInstances.values()[0]);
         };
 
 
         OpManager.prototype.getWorkspaceCount = function(){
-            return this.workSpaceInstances.keys().length;
+            return this.workspaceInstances.keys().length;
         }
     }
 

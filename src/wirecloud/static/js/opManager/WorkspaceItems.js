@@ -31,11 +31,11 @@ WorkspaceItems.prototype.build = function () {
     var current_workspace, items;
 
     items = [];
-    current_workspace = OpManagerFactory.getInstance().activeWorkSpace;
+    current_workspace = OpManagerFactory.getInstance().activeWorkspace;
 
     if (current_workspace.isAllowed('rename_workspace')) {
         items.push(new StyledElements.MenuItem(gettext('Rename'), function () {
-            (new Wirecloud.ui.RenameWindowMenu(opManager.activeWorkSpace, 'rename')).show();
+            (new Wirecloud.ui.RenameWindowMenu(opManager.activeWorkspace, 'rename')).show();
         }.bind(this)));
     }
 
@@ -48,7 +48,7 @@ WorkspaceItems.prototype.build = function () {
     if (current_workspace.isAllowed('remove')) {
         items.push(new StyledElements.MenuItem(gettext("Remove"), function() {
             var msg = gettext('Do you really want to remove the "%(workspaceName)s" workspace?');
-            msg = interpolate(msg, {workspaceName: current_workspace.workSpaceState.name}, true);
+            msg = interpolate(msg, {workspaceName: current_workspace.workspaceState.name}, true);
             LayoutManagerFactory.getInstance().showYesNoDialog(msg, function() {
                 current_workspace.delete();
             });

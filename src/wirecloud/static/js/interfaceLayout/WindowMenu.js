@@ -488,7 +488,7 @@ PublishWindowMenu.prototype._parseTab = function (tab) {
         prop_params, variable, variables, varManager, var_elements,
         fields;
 
-    varManager = tab.workSpace.getVarManager();
+    varManager = tab.workspace.getVarManager();
     iwidgets = tab.getDragboard().getIWidgets();
     fields = [];
 
@@ -574,7 +574,7 @@ PublishWindowMenu.prototype._loadAvailableMarkets = function _loadAvailableMarke
 
 PublishWindowMenu.prototype.show = function(parentWindow) {
     WindowMenu.prototype.show.call(this, parentWindow);
-    this.setValue(this.workspace.workSpaceGlobalInfo.workspace.params);
+    this.setValue(this.workspace.workspaceGlobalInfo.workspace.params);
 };
 
 PublishWindowMenu.prototype.setFocus = function() {
@@ -602,7 +602,7 @@ PublishWindowMenu.prototype.executeOperation = function executeOperation (data) 
             delete data[key];
         }
     }
-    OpManagerFactory.getInstance().activeWorkSpace.publish(data);
+    OpManagerFactory.getInstance().activeWorkspace.publish(data);
 };
 
 /**
@@ -666,7 +666,7 @@ ShareWindowMenu.prototype.showGroups = function() {
         this.calculatePosition();
     }
 
-    var url = URIs.GET_SHARE_GROUPS.evaluate({'workspace_id': OpManagerFactory.getInstance().activeWorkSpace.workSpaceState.id});
+    var url = URIs.GET_SHARE_GROUPS.evaluate({'workspace_id': OpManagerFactory.getInstance().activeWorkspace.workspaceState.id});
     Wirecloud.io.makeRequest(url, {
         method: 'GET',
         onSuccess: onSuccess.bind(this),
@@ -694,7 +694,7 @@ ShareWindowMenu.prototype.extraValidation = function(form) {
 
 ShareWindowMenu.prototype.executeOperation = function(form) {
     var groups = this.fields['groups'].inputInterface.getValue();
-    OpManagerFactory.getInstance().activeWorkSpace.shareWorkspace(true, groups);
+    OpManagerFactory.getInstance().activeWorkspace.shareWorkspace(true, groups);
 }
 
 ShareWindowMenu.prototype.show = function(parentWindow) {
@@ -707,8 +707,8 @@ ShareWindowMenu.prototype.show = function(parentWindow) {
  * Specific class for Sharing workspace results window!
  */
  //TODO: change this class to work as the rest of windows
-function SharedWorkSpaceMenu() {
-    WindowMenu.call(this, gettext('Shared WorkSpace Info'));
+function SharedWorkspaceMenu() {
+    WindowMenu.call(this, gettext('Shared Workspace Info'));
 
     // Extra HTML Elements
     this.iconElement.className += ' icon-info';
@@ -756,27 +756,27 @@ function SharedWorkSpaceMenu() {
     this.html_codeElement.setAttribute('cols', 30);
     this.html_codeElement.setAttribute('rows', 3);
 }
-SharedWorkSpaceMenu.prototype = new WindowMenu();
+SharedWorkspaceMenu.prototype = new WindowMenu();
 
-SharedWorkSpaceMenu.prototype.addElement = function(element_name, html_tag, father_name) {
+SharedWorkspaceMenu.prototype.addElement = function(element_name, html_tag, father_name) {
     this[element_name] = document.createElement(html_tag);
     Element.extend(this[element_name]);
     this[father_name].appendChild(this[element_name]);
 }
 
-SharedWorkSpaceMenu.prototype.setURL = function(url) {
+SharedWorkspaceMenu.prototype.setURL = function(url) {
     this.urlElement.value = url;
     this.tr1Element.style.display='table-row';
 }
 
-SharedWorkSpaceMenu.prototype.setHTML = function(url) {
+SharedWorkspaceMenu.prototype.setHTML = function(url) {
     var html_code = '<object width="" height="" data="' + url + '"></object>';
 
     this.html_codeElement.value = html_code;
     this.tr2Element.style.display='table-row';
 }
 
-SharedWorkSpaceMenu.prototype.hide = function(url) {
+SharedWorkspaceMenu.prototype.hide = function(url) {
     this.urlElement.value = "";
     this.html_codeElement.value = "";
     this.tr1Element.style.display='none';

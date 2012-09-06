@@ -30,7 +30,7 @@
 
 #
 
-from wirecloud.models import IWidget, UserWorkSpace, Variable, VariableValue
+from wirecloud.models import IWidget, UserWorkspace, Variable, VariableValue
 
 
 class PackageLinker:
@@ -38,7 +38,7 @@ class PackageLinker:
     def link_workspace(self, workspace, user, creator, update_variable_values=True):
 
         # Linking user to workspace
-        user_workspace, created = UserWorkSpace.objects.get_or_create(user=user, workspace=workspace, defaults={'active': False})
+        user_workspace, created = UserWorkspace.objects.get_or_create(user=user, workspace=workspace, defaults={'active': False})
 
         if not created:
             # The workspace is already linked to the user
@@ -55,7 +55,7 @@ class PackageLinker:
         return user_workspace
 
     def unlink_workspace(self, workspace, user):
-        user_workspace = UserWorkSpace.objects.filter(workspace=workspace, user=user)
+        user_workspace = UserWorkspace.objects.filter(workspace=workspace, user=user)
         user_workspace.delete()
 
     def link_widgets(self, workspace, user):
@@ -78,7 +78,7 @@ class PackageLinker:
     def add_user_to_workspace(self, workspace, user):
          #Checking if user is already linked to workspace
         if (len(workspace.users.filter(id=user.id)) == 0):
-            user_workspace = UserWorkSpace(user=user, workspace=workspace, active=False)
+            user_workspace = UserWorkspace(user=user, workspace=workspace, active=False)
             user_workspace.save()
 
     def update_variable_value(self, user_variable_value, creator_value_available, variable, created):

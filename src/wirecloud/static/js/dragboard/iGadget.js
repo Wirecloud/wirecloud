@@ -359,7 +359,7 @@ IWidget.prototype.toggleTransparency = function () {
     });
     var params = {'iwidget': iwidgetData};
     var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-        workspace_id: this.layout.dragboard.workSpaceId,
+        workspace_id: this.layout.dragboard.workspaceId,
         tab_id: this.layout.dragboard.tabId,
         iwidget_id: this.id
     });
@@ -480,7 +480,7 @@ IWidget.prototype.build = function () {
     Element.extend(this.content);
     this.content.observe("load",
         function () {
-            this.layout.dragboard.workSpace.iwidgetLoaded(this.id);
+            this.layout.dragboard.workspace.iwidgetLoaded(this.id);
         }.bind(this),
         true);
     this.contentWrapper.appendChild(this.content);
@@ -801,7 +801,7 @@ IWidget.prototype.setName = function (iwidgetName) {
         });
         var params = {'iwidget': iwidgetData};
         var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-            workspace_id: this.layout.dragboard.workSpaceId,
+            workspace_id: this.layout.dragboard.workspaceId,
             tab_id: this.layout.dragboard.tabId,
             iwidget_id: this.id
         });
@@ -877,7 +877,7 @@ IWidget.prototype.setRefusedVersion = function (v) {
     });
     var params = {'iwidget': iwidgetData};
     var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-        workspace_id: this.layout.dragboard.workSpaceId,
+        workspace_id: this.layout.dragboard.workspaceId,
         tab_id: this.layout.dragboard.tabId,
         iwidget_id: this.id
     });
@@ -902,7 +902,7 @@ IWidget.prototype.isRefusedUpgrade = function () {
  */
 IWidget.prototype.upgradeIWidget = function () {
     function onUpgradeOk(transport) {
-        ShowcaseFactory.getInstance().reload(this.layout.dragboard.workSpaceId);
+        ShowcaseFactory.getInstance().reload(this.layout.dragboard.workspaceId);
     }
 
     function onUpgradeError(transport, e) {
@@ -922,7 +922,7 @@ IWidget.prototype.upgradeIWidget = function () {
         source: this.widget.getLastVersion().source
     };
     var url = Wirecloud.URLs.IWIDGET_VERSION_ENTRY.evaluate({
-        workspace_id: this.layout.dragboard.workSpaceId,
+        workspace_id: this.layout.dragboard.workspaceId,
         tab_id: this.layout.dragboard.tabId,
         iwidget_id: this.id
     });
@@ -1004,7 +1004,7 @@ IWidget.prototype.remove = function (orderFromServer) {
         };
 
         var uri = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-            workspace_id: dragboard.workSpaceId,
+            workspace_id: dragboard.workspaceId,
             tab_id: dragboard.tabId,
             iwidget_id: this.id
         });
@@ -1513,7 +1513,7 @@ IWidget.prototype.save = function (options) {
 
     var url = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
         tab_id: this.layout.dragboard.tabId,
-        workspace_id: this.layout.dragboard.workSpaceId
+        workspace_id: this.layout.dragboard.workspaceId
     });
 
     var data = Object.toJSON({
@@ -1678,7 +1678,7 @@ IWidget.prototype.moveToLayout = function (newLayout) {
             'iwidgets': Object.toJSON(data)
         };
         var url = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
-            workspace_id: oldLayout.dragboard.workSpaceId,
+            workspace_id: oldLayout.dragboard.workspaceId,
             tab_id: oldLayout.dragboard.tabId
         });
         Wirecloud.io.makeRequest(url, {

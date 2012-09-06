@@ -48,7 +48,7 @@ from commons.utils import get_xml_error, json_encode
 from packageCloner import PackageCloner
 from packageLinker import PackageLinker
 from wirecloud.iwidget.utils import deleteIWidget
-from wirecloud.models import Category, IWidget, PublishedWorkSpace, Tab, UserWorkSpace, VariableValue, WorkSpace
+from wirecloud.models import Category, IWidget, PublishedWorkspace, Tab, UserWorkspace, VariableValue, Workspace
 from wirecloud.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_template_from_workspace
 from wirecloud.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from wirecloud.workspace.utils import deleteTab, createTab, create_published_workspace_from_template, getCategories, getCategoryId, get_workspace_list, setVisibleTab, set_variable_value
@@ -65,7 +65,7 @@ def clone_original_variable_value(variable, creator, new_user):
     return VariableValue.objects.create(variable=variable, user=new_user, value=value)
 
 
-def createWorkSpace(workspaceName, user):
+def createWorkspace(workspaceName, user):
     cloned_workspace = None
     #try to assign a new workspace according to user category
     try:
@@ -92,25 +92,25 @@ def createWorkSpace(workspaceName, user):
 
     if not cloned_workspace:
         #create an empty workspace
-        return createEmptyWorkSpace(workspaceName, user)
+        return createEmptyWorkspace(workspaceName, user)
 
     # Returning created Ids
     return cloned_workspace
 
 
-def createEmptyWorkSpace(workSpaceName, user):
+def createEmptyWorkspace(workspaceName, user):
     active = False
-    workspaces = UserWorkSpace.objects.filter(user__id=user.id, active=True)
+    workspaces = UserWorkspace.objects.filter(user__id=user.id, active=True)
     if workspaces.count() == 0:
         # there isn't yet an active workspace
         active = True
 
     #Workspace creation
-    workspace = WorkSpace(name=workSpaceName, creator=user)
+    workspace = Workspace(name=workspaceName, creator=user)
     workspace.save()
 
     #Adding user reference to workspace in the many to many relationship
-    user_workspace = UserWorkSpace(user=user, workspace=workspace, active=active)
+    user_workspace = UserWorkspace(user=user, workspace=workspace, active=active)
     user_workspace.save()
 
     #Tab creation
@@ -121,13 +121,13 @@ def createEmptyWorkSpace(workSpaceName, user):
 
 def setActiveWorkspace(user, workspace):
 
-    UserWorkSpace.objects.filter(user=user, active=True).exclude(workspace=workspace).update(active=False)
-    UserWorkSpace.objects.filter(user=user, workspace=workspace).update(active=True)
+    UserWorkspace.objects.filter(user=user, active=True).exclude(workspace=workspace).update(active=False)
+    UserWorkspace.objects.filter(user=user, workspace=workspace).update(active=True)
 
 
 def cloneWorkspace(workspace_id, user):
 
-    published_workspace = get_object_or_404(PublishedWorkSpace, id=workspace_id)
+    published_workspace = get_object_or_404(PublishedWorkspace, id=workspace_id)
 
     workspace = published_workspace.workspace
 
@@ -149,12 +149,12 @@ def linkWorkspaceObject(user, workspace, creator, link_variable_values=True):
 
 
 def linkWorkspace(user, workspace_id, creator, link_variable_values=True):
-    workspace = get_object_or_404(WorkSpace, id=workspace_id)
+    workspace = get_object_or_404(Workspace, id=workspace_id)
 
     return linkWorkspaceObject(user, workspace, creator, link_variable_values)
 
 
-class WorkSpaceCollection(Resource):
+class WorkspaceCollection(Resource):
 
     @commit_on_http_success
     @no_cache
@@ -195,7 +195,7 @@ class WorkSpaceCollection(Resource):
 
             workspace_name = ts['name']
 
-            workspace = createWorkSpace(workspace_name, user)
+            workspace = createWorkspace(workspace_name, user)
             workspace_data = get_global_workspace_data(workspace, user)
 
             return workspace_data.get_response()
@@ -206,12 +206,12 @@ class WorkSpaceCollection(Resource):
             raise TracedServerError(e, ts, request, msg)
 
 
-class WorkSpaceEntry(Resource):
+class WorkspaceEntry(Resource):
 
     def read(self, request, workspace_id):
         user = get_user_authentication(request)
 
-        workspace = get_object_or_404(WorkSpace, users__id=user.id, pk=workspace_id)
+        workspace = get_object_or_404(Workspace, users__id=user.id, pk=workspace_id)
         workspace_data = get_global_workspace_data(workspace, user)
 
         return workspace_data.get_response()
@@ -227,7 +227,7 @@ class WorkSpaceEntry(Resource):
 
         try:
             ts = simplejson.loads(received_json)
-            workspace = WorkSpace.objects.get(users__id=user.id, pk=workspace_id)
+            workspace = Workspace.objects.get(users__id=user.id, pk=workspace_id)
 
             if 'active' in ts:
                 active = ts['active']
@@ -235,7 +235,7 @@ class WorkSpaceEntry(Resource):
                     #Only one active workspace
                     setActiveWorkspace(user, workspace)
                 else:
-                    currentUserWorkspace = UserWorkSpace.objects.get(workspace=workspace, user=user)
+                    currentUserWorkspace = UserWorkspace.objects.get(workspace=workspace, user=user)
                     currentUserWorkspace.active = True
                     currentUserWorkspace.save()
 
@@ -254,10 +254,10 @@ class WorkSpaceEntry(Resource):
     def delete(self, request, workspace_id):
         user = get_user_authentication(request)
 
-        user_workspaces = UserWorkSpace.objects.select_related('workspace')
+        user_workspaces = UserWorkspace.objects.select_related('workspace')
         try:
             user_workspace = user_workspaces.get(user__id=user.id, workspace__id=workspace_id)
-        except UserWorkSpace.DoesNotExist:
+        except UserWorkspace.DoesNotExist:
             raise Http404
 
         workspace = user_workspace.workspace
@@ -265,7 +265,7 @@ class WorkSpaceEntry(Resource):
             return HttpResponseForbidden()
 
         # Check if the user does not have any other workspace
-        workspaces = WorkSpace.objects.filter(users__id=user.id).exclude(pk=workspace_id)
+        workspaces = Workspace.objects.filter(users__id=user.id).exclude(pk=workspace_id)
 
         if workspaces.count() == 0:
             msg = _("workspace cannot be deleted")
@@ -273,7 +273,7 @@ class WorkSpaceEntry(Resource):
             raise TracedServerError(None, {'workspace': workspace_id}, request, msg)
 
         # Remove the workspace
-        PublishedWorkSpace.objects.filter(workspace=workspace).update(workspace=None)
+        PublishedWorkspace.objects.filter(workspace=workspace).update(workspace=None)
         iwidgets = IWidget.objects.filter(tab__workspace=workspace)
         for iwidget in iwidgets:
             deleteIWidget(iwidget, user)
@@ -308,7 +308,7 @@ class TabCollection(Resource):
                 raise Exception(_('Malformed tab JSON: expecting tab name.'))
 
             tab_name = t['name']
-            workspace = WorkSpace.objects.get(users__id=user.id, pk=workspace_id)
+            workspace = Workspace.objects.get(users__id=user.id, pk=workspace_id)
 
             tab = createTab(tab_name, user, workspace)
 
@@ -326,10 +326,10 @@ class TabCollection(Resource):
     def update(self, request, workspace_id):
         user = get_user_authentication(request)
 
-        user_workspaces = UserWorkSpace.objects.select_related('workspace')
+        user_workspaces = UserWorkspace.objects.select_related('workspace')
         try:
             user_workspace = user_workspaces.get(user__id=user.id, workspace__id=workspace_id)
-        except UserWorkSpace.DoesNotExist:
+        except UserWorkspace.DoesNotExist:
             raise Http404
 
         workspace = user_workspace.workspace
@@ -383,7 +383,7 @@ class TabEntry(Resource):
             raise Http404
 
         workspace = tab.workspace
-        user_workspace = UserWorkSpace.objects.get(user__id=user.id, workspace__id=workspace_id)
+        user_workspace = UserWorkspace.objects.get(user__id=user.id, workspace__id=workspace_id)
         if workspace.creator != user or user_workspace.manager != '':
             return HttpResponseForbidden()
 
@@ -433,7 +433,7 @@ class TabEntry(Resource):
             log(msg, request)
             return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
 
-        #Delete WorkSpace variables too!
+        #Delete Workspace variables too!
         deleteTab(tab, user)
 
         #set a new visible tab (first tab by default)
@@ -443,7 +443,7 @@ class TabEntry(Resource):
         return HttpResponse('ok')
 
 
-class WorkSpaceVariableCollection(Resource):
+class WorkspaceVariableCollection(Resource):
 
     @commit_on_http_success
     def update(self, request, workspace_id):
@@ -479,13 +479,13 @@ class WorkSpaceVariableCollection(Resource):
             raise TracedServerError(e, received_json, request, msg)
 
 
-class WorkSpaceMergerEntry(Resource):
+class WorkspaceMergerEntry(Resource):
 
     @commit_on_http_success
     @no_cache
     def read(self, request, from_ws_id, to_ws_id):
-        from_ws = get_object_or_404(WorkSpace, id=from_ws_id)
-        to_ws = get_object_or_404(WorkSpace, id=to_ws_id)
+        from_ws = get_object_or_404(Workspace, id=from_ws_id)
+        to_ws = get_object_or_404(Workspace, id=to_ws_id)
 
         user = get_user_authentication(request)
 
@@ -497,15 +497,15 @@ class WorkSpaceMergerEntry(Resource):
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
 
-class WorkSpaceSharerEntry(Resource):
+class WorkspaceSharerEntry(Resource):
 
     @commit_on_http_success
     def update(self, request, workspace_id, share_boolean):
         user = get_user_authentication(request)
 
         try:
-            workspace = WorkSpace.objects.get(id=workspace_id)
-        except WorkSpace.DoesNotExist:
+            workspace = Workspace.objects.get(id=workspace_id)
+        except Workspace.DoesNotExist:
             msg = 'The workspace does not exist!'
             result = {'result': 'error', 'description': msg}
             HttpResponseServerError(json_encode(result), mimetype='application/json; charset=UTF-8')
@@ -563,7 +563,7 @@ class WorkSpaceSharerEntry(Resource):
                 group.workspace_set.get(id=workspace_id)
                 #boolean for js
                 data['sharing'] = 'true'
-            except WorkSpace.DoesNotExist:
+            except Workspace.DoesNotExist:
                 data['sharing'] = 'false'
 
             groups.append(data)
@@ -571,7 +571,7 @@ class WorkSpaceSharerEntry(Resource):
         return HttpResponse(json_encode(groups), mimetype='application/json; charset=UTF-8')
 
 
-class WorkSpaceLinkerEntry(Resource):
+class WorkspaceLinkerEntry(Resource):
 
     @commit_on_http_success
     @no_cache
@@ -584,7 +584,7 @@ class WorkSpaceLinkerEntry(Resource):
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
 
-class WorkSpaceClonerEntry(Resource):
+class WorkspaceClonerEntry(Resource):
 
     @commit_on_http_success
     @no_cache
@@ -614,7 +614,7 @@ class MashupMergeService(Service):
         data = simplejson.loads(received_json)
         template_url = data['workspace']
 
-        to_ws = get_object_or_404(WorkSpace, id=to_ws_id)
+        to_ws = get_object_or_404(Workspace, id=to_ws_id)
         if not request.user.is_staff and to_ws.creator != request.user:
             return HttpResponseForbidden()
 
@@ -624,7 +624,7 @@ class MashupMergeService(Service):
         if ((not login_scheme or login_scheme == current_scheme) and
             (not login_netloc or login_netloc == current_netloc)):
             pworkspace_id = template_url.split('/')[-2]
-            template = PublishedWorkSpace.objects.get(id=pworkspace_id).template
+            template = PublishedWorkspace.objects.get(id=pworkspace_id).template
         else:
             template = download_http_content(template_url, user=request.user)
 
@@ -658,14 +658,14 @@ class MashupImportService(Service):
         if ((not login_scheme or login_scheme == current_scheme) and
             (not login_netloc or login_netloc == current_netloc)):
             pworkspace_id = template_url.split('/')[-2]
-            template = PublishedWorkSpace.objects.get(id=pworkspace_id).template
+            template = PublishedWorkspace.objects.get(id=pworkspace_id).template
         else:
             template = download_http_content(template_url, user=request.user)
         workspace, _junk = buildWorkspaceFromTemplate(template, request.user)
 
         activate = data.get('active', False) == "true"
         if not activate:
-            workspaces = UserWorkSpace.objects.filter(user__id=request.user.id, active=True)
+            workspaces = UserWorkspace.objects.filter(user__id=request.user.id, active=True)
             if workspaces.count() == 0:
                 # there aren't any active workspace yet
                 activate = True
@@ -689,7 +689,7 @@ def check_json_fields(json, fields):
     return missing_fields
 
 
-class WorkSpacePublisherEntry(Resource):
+class WorkspacePublisherEntry(Resource):
 
     @commit_on_http_success
     def create(self, request, workspace_id):
@@ -708,7 +708,7 @@ class WorkSpacePublisherEntry(Resource):
             return HttpResponseBadRequest(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
 
         user = get_user_authentication(request)
-        workspace = get_object_or_404(WorkSpace, id=workspace_id)
+        workspace = get_object_or_404(Workspace, id=workspace_id)
         template = TemplateParser(build_rdf_template_from_workspace(mashup, workspace, user))
         published_workspace = create_published_workspace_from_template(template, user)
         published_workspace.workspace = workspace
@@ -741,7 +741,7 @@ class WorkspaceExportService(Service):
             return HttpResponseBadRequest(get_xml_error(_("exporting options expected")), mimetype='application/xml; charset=UTF-8')
 
         user = get_user_authentication(request)
-        workspace = get_object_or_404(WorkSpace, id=workspace_id)
+        workspace = get_object_or_404(Workspace, id=workspace_id)
 
         if not user.is_staff and workspace.creator != user:
             return HttpResponseForbidden()
@@ -764,5 +764,5 @@ class WorkspaceExportService(Service):
 class MashupTemplate(Resource):
 
     def read(self, request, workspace_id):
-        published_workspace = get_object_or_404(PublishedWorkSpace, id=workspace_id)
+        published_workspace = get_object_or_404(PublishedWorkspace, id=workspace_id)
         return HttpResponse(published_workspace.template, mimetype='application/xml; charset=UTF-8')

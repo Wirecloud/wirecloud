@@ -256,29 +256,29 @@ PlatformPreferencesDef.prototype.buildPreferences = function(values) {
 /**
  *
  */
-function WorkSpacePreferencesDef(definitions, args) {
+function WorkspacePreferencesDef(definitions, args) {
 	var extra_prefs, prefManager, empty_params, param, workspace = args[1];
 
 	if (args[2] instanceof Array && args[2].length > 0) {
 		prefManager = PreferencesManagerFactory.getInstance();
-		extra_prefs = prefManager._processDefinitions(workspace.workSpaceGlobalInfo.workspace.extra_prefs);
+		extra_prefs = prefManager._processDefinitions(workspace.workspaceGlobalInfo.workspace.extra_prefs);
 		empty_params = args[2];
 		definitions = {};
 		for (i = 0; i < empty_params.length; i += 1) {
 			param = empty_params[i];
 			definitions[param] = extra_prefs[param];
 		}
-	} else if (workspace.workSpaceGlobalInfo != null) {
+	} else if (workspace.workspaceGlobalInfo != null) {
 		prefManager = PreferencesManagerFactory.getInstance();
-		extra_prefs = prefManager._processDefinitions(workspace.workSpaceGlobalInfo.workspace.extra_prefs);
+		extra_prefs = prefManager._processDefinitions(workspace.workspaceGlobalInfo.workspace.extra_prefs);
 		definitions = Object.extend(definitions, extra_prefs);
 	}
 	PreferencesDef.call(this, definitions);
 }
-WorkSpacePreferencesDef.prototype = new PreferencesDef();
+WorkspacePreferencesDef.prototype = new PreferencesDef();
 
-WorkSpacePreferencesDef.prototype.buildPreferences = function(values, workspace) {
-	return new WorkSpacePreferences(this, workspace, values);
+WorkspacePreferencesDef.prototype.buildPreferences = function(values, workspace) {
+	return new WorkspacePreferences(this, workspace, values);
 }
 
 /**
@@ -545,28 +545,28 @@ PlatformPreferences.prototype._build_save_url = function () {
 /**
  *
  */
-function WorkSpacePreferences(definitions, workspace, values) {
+function WorkspacePreferences(definitions, workspace, values) {
 	Preferences.call(this, definitions, values);
 	this._workspace = workspace;
 
 	PreferencesManagerFactory.getInstance().getPlatformPreferences().addCommitHandler(this._handleParentChanges);
 }
-WorkSpacePreferences.prototype = new Preferences();
+WorkspacePreferences.prototype = new Preferences();
 
-WorkSpacePreferences.prototype.buildTitle = function() {
-	var msg = gettext("WorkSpace preferences (%(workspaceName)s)");
-	return interpolate(msg, {workspaceName: this._workspace.workSpaceState.name}, true);
+WorkspacePreferences.prototype.buildTitle = function() {
+	var msg = gettext("Workspace preferences (%(workspaceName)s)");
+	return interpolate(msg, {workspaceName: this._workspace.workspaceState.name}, true);
 }
 
-WorkSpacePreferences.prototype.getParentValue = function(name) {
+WorkspacePreferences.prototype.getParentValue = function(name) {
 	return PreferencesManagerFactory.getInstance().getPlatformPreferences().get(name);
 }
 
-WorkSpacePreferences.prototype._build_save_url = function () {
-    return Wirecloud.URLs.WORKSPACE_PREFERENCES.evaluate({workspace_id: this._workspace.workSpaceState.id});
+WorkspacePreferences.prototype._build_save_url = function () {
+    return Wirecloud.URLs.WORKSPACE_PREFERENCES.evaluate({workspace_id: this._workspace.workspaceState.id});
 };
 
-WorkSpacePreferences.prototype.destroy = function() {
+WorkspacePreferences.prototype.destroy = function() {
 	PreferencesManagerFactory.getInstance().getPlatformPreferences().removeCommitHandler(this._handleParentChanges);
 
 	Preferences.prototype.destroy.call(this);
@@ -579,7 +579,7 @@ WorkSpacePreferences.prototype.destroy = function() {
 function TabPreferences(definitions, tab, values) {
 	Preferences.call(this, definitions, values);
 	this._tab = tab;
-	this._workspace = this._tab.workSpace;
+	this._workspace = this._tab.workspace;
 
 	this._workspace.preferences.addCommitHandler(this._handleParentChanges);
 }
@@ -595,7 +595,7 @@ TabPreferences.prototype.getParentValue = function(name) {
 }
 
 TabPreferences.prototype._build_save_url = function(modifiedValues) {
-    return Wirecloud.URLs.TAB_PREFERENCES.evaluate({workspace_id: this._workspace.workSpaceState.id, tab_id: this._tab.tabInfo.id});
+    return Wirecloud.URLs.TAB_PREFERENCES.evaluate({workspace_id: this._workspace.workspaceState.id, tab_id: this._tab.tabInfo.id});
 };
 
 TabPreferences.prototype.destroy = function() {

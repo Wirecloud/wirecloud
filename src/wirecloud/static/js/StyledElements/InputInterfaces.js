@@ -941,7 +941,7 @@ ParametrizedTextInputInterface.prototype.getAvailableParameters = function getAv
     var concepts, contextFields, conceptName, dashIndex, provider, concept, parameters, label;
 
     if (ParametrizedTextInputInterface.prototype._CONTEXT_PARAMS === null) {
-        concepts = OpManagerFactory.getInstance().activeWorkSpace.contextManager._concepts;
+        concepts = OpManagerFactory.getInstance().activeWorkspace.contextManager._concepts;
         contextFields = {
             '': []
         };

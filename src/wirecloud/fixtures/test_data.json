@@ -47,7 +47,7 @@
         }
     },
     {
-        "model": "wirecloud.WorkSpace",
+        "model": "wirecloud.Workspace",
         "pk": "1",
         "fields": {
             "name": "workspace",
@@ -56,7 +56,7 @@
         }
     },
     {
-        "model": "wirecloud.UserWorkSpace",
+        "model": "wirecloud.UserWorkspace",
         "pk": "1",
         "fields": {
             "user": "2",

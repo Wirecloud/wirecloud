@@ -61,7 +61,7 @@ var LayoutManagerFactory = function () {
         this.header._notifyViewChange(this.viewsByName['workspace']);
 
         // Container managed by LayOutManager: {showcase_tab}
-        // Remaining containers managed by WorkSpaces!!
+        // Remaining containers managed by Workspaces!!
         this.logs = LogManagerFactory.getInstance();
         this.logsLink = $('logs_link');
 
@@ -252,9 +252,9 @@ var LayoutManagerFactory = function () {
             opManager = OpManagerFactory.getInstance();
 
             ws_id = parseInt(state.workspace, 10);
-            if (ws_id !== opManager.activeWorkSpace.getId()) {
-                nextWorkspace = opManager.workSpaceInstances[ws_id];
-                opManager.changeActiveWorkSpace(nextWorkspace, state.tab);
+            if (ws_id !== opManager.activeWorkspace.getId()) {
+                nextWorkspace = opManager.workspaceInstances[ws_id];
+                opManager.changeActiveWorkspace(nextWorkspace, state.tab);
                 return;
             }
 
@@ -389,7 +389,7 @@ var LayoutManagerFactory = function () {
             this.showUnclickableCover();
 
             if (!this.menus['sharingWorksSpaceMenu']) {
-                this.menus['sharingWorksSpaceMenu'] = new SharedWorkSpaceMenu();
+                this.menus['sharingWorksSpaceMenu'] = new SharedWorkspaceMenu();
             }
 
             this.currentMenu = this.menus['sharingWorksSpaceMenu'];

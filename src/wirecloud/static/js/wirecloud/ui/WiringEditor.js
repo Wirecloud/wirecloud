@@ -170,7 +170,7 @@ if (!Wirecloud.ui) {
             arrow, workspace, WiringStatus, isMenubarRef, miniwidget_clon, pos, op_id, multiconnectors,
             multi, multi_id, anchor;
 
-        workspace = opManager.activeWorkSpace; // FIXME this is the current way to obtain the current workspace
+        workspace = opManager.activeWorkspace; // FIXME this is the current way to obtain the current workspace
         WiringStatus = workspace.wiring.status;
 
         if (WiringStatus == null) {
@@ -329,7 +329,7 @@ if (!Wirecloud.ui) {
     var clearInterface = function clearInterface() {
         var key, workspace;
 
-        workspace = opManager.activeWorkSpace; // FIXME this is the current way to obtain the current workspace
+        workspace = opManager.activeWorkspace; // FIXME this is the current way to obtain the current workspace
         workspace.wiring.load(this.serialize());
         workspace.wiring.save();
         for (key in this.iwidgets) {

@@ -24,7 +24,7 @@
  */
 
 
-function VarManager (_workSpace) {
+function VarManager (_workspace) {
 
     VarManager.prototype.MAX_BUFFERED_REQUESTS = 10
 
@@ -33,15 +33,15 @@ function VarManager (_workSpace) {
     // ****************
 
 
-    VarManager.prototype.parseVariables = function (workSpaceInfo) {
+    VarManager.prototype.parseVariables = function (workspaceInfo) {
         // Iwidget variables!
-        var tabs = workSpaceInfo['workspace']['tabList'];
+        var tabs = workspaceInfo['workspace']['tabList'];
 
         for (var i=0; i<tabs.length; i++) {
             var iwidgets = tabs[i]['iwidgetList'];
 
             for (var j=0; j<iwidgets.length; j++) {
-                this.parseIWidgetVariables(iwidgets[j], this.workSpace.getTabInstance(tabs[i].id));
+                this.parseIWidgetVariables(iwidgets[j], this.workspace.getTabInstance(tabs[i].id));
             }
         }
     }
@@ -89,7 +89,7 @@ function VarManager (_workSpace) {
 
             variables['iwidgetVars'] = this.iwidgetModifiedVars;
 
-            var uri = Wirecloud.URLs.VARIABLE_COLLECTION.evaluate({workspace_id: this.workSpace.getId()});
+            var uri = Wirecloud.URLs.VARIABLE_COLLECTION.evaluate({workspace_id: this.workspace.getId()});
 
             var options = {
                 method: 'PUT',
@@ -109,7 +109,7 @@ function VarManager (_workSpace) {
         var name, id, variables, variable, iwidget, varInfo, aspect, value,
             objVars = {};
 
-        iwidget = this.workSpace.getIwidget(iwidget_info['id']);
+        iwidget = this.workspace.getIwidget(iwidget_info['id']);
         variables = iwidget.widget.getTemplate().getVariables();
 
         for (name in variables) {
@@ -343,7 +343,7 @@ function VarManager (_workSpace) {
     }
 
     VarManager.prototype.getWorkspace = function () {
-        return this.workSpace;
+        return this.workspace;
     }
 
     // *********************************
@@ -357,7 +357,7 @@ function VarManager (_workSpace) {
         return variable;
     }
 
-    this.workSpace = _workSpace;
+    this.workspace = _workspace;
     this.iWidgets = {};
     this.variables = {};
 
@@ -371,5 +371,5 @@ function VarManager (_workSpace) {
     this.pendingVariables = {}; //to manage iwidgets loaded on demand caused by a wiring propagation
 
     // Creation of ALL Wirecloud variables regarding one workspace
-    this.parseVariables(this.workSpace.workSpaceGlobalInfo);
+    this.parseVariables(this.workspace.workspaceGlobalInfo);
 }

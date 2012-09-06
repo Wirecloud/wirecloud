@@ -147,7 +147,7 @@ RVariable.prototype.setHandler = function (handler_) {
 RVariable.prototype.get = function () {
     var concept;
     if (this.vardef.aspect === this.EXTERNAL_CONTEXT) {
-        concept = this.varManager.workSpace.getContextManager().getConcept(this.vardef.concept);
+        concept = this.varManager.workspace.getContextManager().getConcept(this.vardef.concept);
         return concept.getValue();
     } else {
         return this.value;

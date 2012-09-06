@@ -948,7 +948,7 @@ msgid "Operation"
 msgstr "Descrição"
 
 #: connectable/models.py:81 workspace/models.py:178
-msgid "WorkSpace"
+msgid "Workspace"
 msgstr ""
 
 #: connectable/models.py:83
@@ -2263,12 +2263,12 @@ msgstr "iGadgets não podem ser atualizados: "
 
 #: preferences/views.py:192
 #, fuzzy
-msgid "WorkSpace Preferences JSON expected"
+msgid "Workspace Preferences JSON expected"
 msgstr "iGadget JSON esperado"
 
 #: preferences/views.py:204
 #, fuzzy
-msgid "WorkSpace Preferences could not be updated: "
+msgid "Workspace Preferences could not be updated: "
 msgstr "iGadgets não podem ser atualizados: "
 
 #: preferences/views.py:239
@@ -2543,7 +2543,7 @@ msgstr ""
 #~ msgstr "ERRO: atributo faltando no elemento Rendering (Renderização)"
 
 #, fuzzy
-#~ msgid "WorkSpaceVariable"
+#~ msgid "WorkspaceVariable"
 #~ msgstr "Variável"
 
 #, fuzzy

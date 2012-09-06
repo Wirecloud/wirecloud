@@ -34,9 +34,9 @@ WorkspaceListItems.prototype.build = function () {
 
     items = [];
 
-    workspace_keys = OpManagerFactory.getInstance().workSpaceInstances.keys();
+    workspace_keys = OpManagerFactory.getInstance().workspaceInstances.keys();
     for (i = 0; i < workspace_keys.length; i += 1) {
-        workspace = OpManagerFactory.getInstance().workSpaceInstances.get(workspace_keys[i]);
+        workspace = OpManagerFactory.getInstance().workspaceInstances.get(workspace_keys[i]);
 
         items.push(new StyledElements.MenuItem(
             workspace.getName(),

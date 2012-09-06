@@ -37,12 +37,12 @@ from django.utils.translation import ugettext as  _
 from wirecloudcommons.utils.http import get_absolute_reverse_url
 
 
-class WorkSpace(models.Model):
+class Workspace(models.Model):
 
     name = models.CharField(_('Name'), max_length=30)
     creator = models.ForeignKey(User, related_name='creator', verbose_name=_('Creator'), blank=False, null=False)
 
-    users = models.ManyToManyField(User, verbose_name=_('Users'), through='UserWorkSpace')
+    users = models.ManyToManyField(User, verbose_name=_('Users'), through='UserWorkspace')
     targetOrganizations = models.ManyToManyField(Group, verbose_name=_('Target Organizations'), blank=True, null=True)
     forcedValues = models.TextField(blank=True)
     wiringStatus = models.TextField(blank=True)
@@ -57,9 +57,9 @@ class WorkSpace(models.Model):
         return len(self.users.all()) > 1
 
 
-class UserWorkSpace(models.Model):
+class UserWorkspace(models.Model):
 
-    workspace = models.ForeignKey(WorkSpace)
+    workspace = models.ForeignKey(Workspace)
     user = models.ForeignKey(User)
     active = models.BooleanField(_('Active'), default=False)
     manager = models.CharField(_('Manager'), max_length=100, blank=True)
@@ -72,7 +72,7 @@ class UserWorkSpace(models.Model):
         return unicode(self.workspace) + " - " + unicode(self.user)
 
 
-class PublishedWorkSpace(models.Model):
+class PublishedWorkspace(models.Model):
 
     vendor = models.CharField(_('Vendor'), max_length=250)
     name = models.CharField(_('Name'), max_length=250)
@@ -90,7 +90,7 @@ class PublishedWorkSpace(models.Model):
     #For implementing "private mashups" only visible for users that belongs to a concrete group
     organization = models.CharField(_('Organization'), max_length=80, null=True, blank=True)
 
-    workspace = models.ForeignKey(WorkSpace, verbose_name=_('Original Workspace'), null=True, blank=True)
+    workspace = models.ForeignKey(Workspace, verbose_name=_('Original Workspace'), null=True, blank=True)
 
     template = models.TextField(_('Template'))
     params = models.TextField(_('Params used for publishing'))
@@ -108,7 +108,7 @@ class PublishedWorkSpace(models.Model):
 class GroupPublishedWorkspace(models.Model):
 
     group = models.ForeignKey(Group)
-    workspace = models.ForeignKey(PublishedWorkSpace)
+    workspace = models.ForeignKey(PublishedWorkspace)
 
     class Meta:
         app_label = 'wirecloud'
@@ -121,8 +121,8 @@ class GroupPublishedWorkspace(models.Model):
 class Category(models.Model):
 
     category_id = models.IntegerField()
-    default_workspace = models.ForeignKey(PublishedWorkSpace, verbose_name=_('Default Workspace'), null=True, blank=True)
-    new_workspace = models.ForeignKey(PublishedWorkSpace, verbose_name=_('New Workspace'), related_name="new_workspace_", null=True, blank=True)
+    default_workspace = models.ForeignKey(PublishedWorkspace, verbose_name=_('Default Workspace'), null=True, blank=True)
+    new_workspace = models.ForeignKey(PublishedWorkspace, verbose_name=_('New Workspace'), related_name="new_workspace_", null=True, blank=True)
 
     class Meta:
         app_label = 'wirecloud'
@@ -159,7 +159,7 @@ class Tab(models.Model):
     name = models.CharField(_('Name'), max_length=30)
     visible = models.BooleanField(_('Visible'))
     position = models.IntegerField(null=True, blank=True)
-    workspace = models.ForeignKey(WorkSpace, verbose_name=_('WorkSpace'))
+    workspace = models.ForeignKey(Workspace, verbose_name=_('Workspace'))
 
     class Admin:
         pass

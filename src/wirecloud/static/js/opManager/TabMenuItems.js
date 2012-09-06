@@ -51,7 +51,7 @@ TabMenuItems.prototype.build = function () {
     if (this.tab.isAllowed('remove')) {
         items.push(new StyledElements.MenuItem(
             gettext("Remove"),
-            this.tab.workSpace.removeTab.bind(this.tab.workSpace, this.tab)
+            this.tab.workspace.removeTab.bind(this.tab.workspace, this.tab)
         ));
     }
 

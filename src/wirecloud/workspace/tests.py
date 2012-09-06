@@ -12,13 +12,13 @@ from django.test import Client
 from django.utils import simplejson
 
 from commons.get_data import get_global_workspace_data
-from wirecloud.models import Widget, IWidget, Tab, UserWorkSpace, Variable, VariableValue, WorkSpace
+from wirecloud.models import Widget, IWidget, Tab, UserWorkspace, Variable, VariableValue, Workspace
 from wirecloud.iwidget.utils import SaveIWidget, deleteIWidget
 from wirecloud.workspace.packageCloner import PackageCloner
 from wirecloud.workspace.mashupTemplateGenerator import build_template_from_workspace, build_rdf_template_from_workspace, build_usdl_from_workspace
 from wirecloud.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from wirecloud.workspace.utils import sync_base_workspaces
-from wirecloud.workspace.views import createEmptyWorkSpace, linkWorkspace
+from wirecloud.workspace.views import createEmptyWorkspace, linkWorkspace
 from wirecloudcommons.test import WirecloudTestCase
 
 
@@ -44,7 +44,7 @@ class WorkspaceTestCase(CacheTestCase):
 
     def test_get_global_workspace_data(self):
 
-        workspace = WorkSpace.objects.get(pk=1)
+        workspace = Workspace.objects.get(pk=1)
         data = get_global_workspace_data(workspace, self.user).get_data()
         self.assertEqual('workspace' in data, True)
         self.assertEqual(len(data['workspace']['tabList']), 1)
@@ -59,9 +59,9 @@ class WorkspaceTestCase(CacheTestCase):
 
     def test_create_empty_workspace(self):
 
-        workspace = createEmptyWorkSpace('Testing', self.user)
+        workspace = createEmptyWorkspace('Testing', self.user)
 
-        user_workspace = UserWorkSpace.objects.filter(user=self.user, workspace=workspace)
+        user_workspace = UserWorkspace.objects.filter(user=self.user, workspace=workspace)
         self.assertEqual(user_workspace.count(), 1)
         self.assertEqual(user_workspace[0].active, True)
 
@@ -76,7 +76,7 @@ class WorkspaceTestCase(CacheTestCase):
 
     def test_link_workspace(self):
 
-        workspace = WorkSpace.objects.get(pk=1)
+        workspace = Workspace.objects.get(pk=1)
 
         alternative_user = User.objects.get(username='test2')
         new_workspace = linkWorkspace(alternative_user, workspace.id, self.user)
@@ -92,7 +92,7 @@ class WorkspaceTestCase(CacheTestCase):
 
     def test_clone_workspace(self):
 
-        workspace = WorkSpace.objects.get(pk=1)
+        workspace = Workspace.objects.get(pk=1)
 
         packageCloner = PackageCloner()
         cloned_workspace = packageCloner.clone_tuple(workspace)
@@ -113,7 +113,7 @@ class WorkspaceTestCase(CacheTestCase):
 
     def test_merge_workspaces(self):
 
-        workspace = WorkSpace.objects.get(pk=1)
+        workspace = Workspace.objects.get(pk=1)
 
         packageCloner = PackageCloner()
         cloned_workspace = packageCloner.clone_tuple(workspace)
@@ -130,7 +130,7 @@ class WorkspaceTestCase(CacheTestCase):
 
     def test_shared_workspace(self):
 
-        workspace = WorkSpace.objects.get(pk=1)
+        workspace = Workspace.objects.get(pk=1)
 
         # Create a new group and share the workspace with it
         group = Group.objects.create(name='test_users')
@@ -179,7 +179,7 @@ class WorkspaceCacheTestCase(CacheTestCase):
         super(WorkspaceCacheTestCase, self).setUp()
 
         self.user = User.objects.get(username='test')
-        self.workspace = WorkSpace.objects.get(pk=1)
+        self.workspace = Workspace.objects.get(pk=1)
 
         # Fill cache
         get_global_workspace_data(self.workspace, self.user)
@@ -254,8 +254,8 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         super(ParameterizedWorkspaceGenerationTestCase, self).setUp()
 
         self.user = User.objects.get(username='test')
-        self.workspace_with_iwidgets = WorkSpace.objects.get(pk=1)
-        self.workspace = createEmptyWorkSpace('Testing', self.user)
+        self.workspace_with_iwidgets = Workspace.objects.get(pk=1)
+        self.workspace = createEmptyWorkspace('Testing', self.user)
 
     def assertXPathText(self, root_element, xpath, content):
         elements = root_element.xpath(xpath)
@@ -452,7 +452,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         super(ParameterizedWorkspaceParseTestCase, self).setUp()
 
         self.user = User.objects.create_user('test', 'test@example.com', 'test')
-        self.workspace = createEmptyWorkSpace('Testing', self.user)
+        self.workspace = createEmptyWorkspace('Testing', self.user)
         self.template1 = self.read_template('wt1.xml')
         self.template2 = self.read_template('wt2.xml')
         self.rdfTemplate1 = self.read_template('wt1.rdf')

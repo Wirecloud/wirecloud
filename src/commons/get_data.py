@@ -40,7 +40,7 @@ from django.utils.translation import ugettext as _
 
 from commons.cache import CacheableData
 from wirecloud.context.utils import get_user_context_providers
-from wirecloud.models import Capability, Concept, ConceptName, Constant, IWidget, PublishedWorkSpace, Tab, UserPrefOption, UserWorkSpace, Variable, VariableDef, VariableValue, XHTML
+from wirecloud.models import Capability, Concept, ConceptName, Constant, IWidget, PublishedWorkspace, Tab, UserPrefOption, UserWorkspace, Variable, VariableDef, VariableValue, XHTML
 from wirecloud.preferences.views import get_workspace_preference_values, get_tab_preference_values
 from wirecloud.workspace.utils import createTab, decrypt_value, encrypt_value
 
@@ -377,7 +377,7 @@ def get_widget_capabilities(widget_id):
 
 
 def get_workspace_data(workspace, user):
-    user_workspace = UserWorkSpace.objects.get(user=user, workspace=workspace)
+    user_workspace = UserWorkspace.objects.get(user=user, workspace=workspace)
 
     return {
         'id': workspace.id,
@@ -464,30 +464,30 @@ def process_forced_values(workspace, user, concept_values, preferences):
     return forced_values
 
 
-def _get_global_workspace_data(workSpaceDAO, user):
+def _get_global_workspace_data(workspaceDAO, user):
     data_ret = {}
-    data_ret['workspace'] = get_workspace_data(workSpaceDAO, user)
+    data_ret['workspace'] = get_workspace_data(workspaceDAO, user)
 
     # Context information
     concept_values = get_concept_values(user)
     data_ret['workspace']['concepts'] = get_concepts_data(concept_values)
 
     # Workspace preferences
-    preferences = get_workspace_preference_values(workSpaceDAO.pk)
+    preferences = get_workspace_preference_values(workspaceDAO.pk)
     data_ret['workspace']['preferences'] = preferences
 
     # Process forced variable values
-    forced_values = process_forced_values(workSpaceDAO, user, concept_values, preferences)
+    forced_values = process_forced_values(workspaceDAO, user, concept_values, preferences)
     data_ret['workspace']['empty_params'] = forced_values['empty_params']
     data_ret['workspace']['extra_prefs'] = forced_values['extra_prefs']
     if len(forced_values['empty_params']) > 0:
         return data_ret
 
-    cache_manager = VariableValueCacheManager(workSpaceDAO, user, forced_values)
+    cache_manager = VariableValueCacheManager(workspaceDAO, user, forced_values)
 
     # Tabs processing
     # Check if the workspace's tabs have order
-    tabs = Tab.objects.filter(workspace=workSpaceDAO).order_by('position')
+    tabs = Tab.objects.filter(workspace=workspaceDAO).order_by('position')
     if tabs.count() > 0:
         if tabs[0].position != None:
             tabs = tabs.order_by('position')
@@ -497,7 +497,7 @@ def _get_global_workspace_data(workSpaceDAO, user):
                 tabs[i].position = i
                 tabs[i].save()
     else:
-        tabs = [createTab(_('Tab'), user, workSpaceDAO)]
+        tabs = [createTab(_('Tab'), user, workspaceDAO)]
 
     tabs_data = [get_tab_data(tab) for tab in tabs]
 
@@ -509,14 +509,14 @@ def _get_global_workspace_data(workSpaceDAO, user):
 
         iwidget_data = []
         for iwidget in iwidgets:
-            iwidget_data.append(get_iwidget_data(iwidget, user, workSpaceDAO, cache_manager))
+            iwidget_data.append(get_iwidget_data(iwidget, user, workspaceDAO, cache_manager))
 
         tab['iwidgetList'] = iwidget_data
 
-    data_ret['workspace']['wiring'] = workSpaceDAO.wiringStatus
+    data_ret['workspace']['wiring'] = workspaceDAO.wiringStatus
 
     # Params
-    last_published_workspace = PublishedWorkSpace.objects.filter(workspace=workSpaceDAO).order_by('-pk')
+    last_published_workspace = PublishedWorkspace.objects.filter(workspace=workspaceDAO).order_by('-pk')
     if len(last_published_workspace) > 0:
         data_ret["workspace"]["params"] = simplejson.loads(last_published_workspace[0].params)
 

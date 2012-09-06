@@ -23,7 +23,7 @@ from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.utils.http import urlencode
 
-from wirecloud.models import WorkSpace
+from wirecloud.models import Workspace
 from wirecloud.workspace.utils import get_workspace_list
 
 
@@ -48,7 +48,7 @@ def auto_select_workspace(request, mode=None):
 
 @login_required
 def render_workspace_view(request, creator_user, workspace):
-    workspace = get_object_or_404(WorkSpace, creator__username=creator_user, name=workspace)
+    workspace = get_object_or_404(Workspace, creator__username=creator_user, name=workspace)
     if request.user not in workspace.users.all():
         return HttpResponseForbidden()
 

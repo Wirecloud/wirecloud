@@ -58,12 +58,12 @@
     Object.defineProperty(window.MashupPlatform, 'wiring', {value: {}});
     Object.defineProperty(window.MashupPlatform.wiring, 'registerCallback', {
         value: function registerCallback(inputName, callback) {
-            platform.opManager.activeWorkSpace.wiring.registerOperatorCallback(id, inputName, callback);
+            platform.opManager.activeWorkspace.wiring.registerOperatorCallback(id, inputName, callback);
         }
     });
     Object.defineProperty(window.MashupPlatform.wiring, 'pushEvent', {
         value: function pushEvent(outputName, data) {
-            platform.opManager.activeWorkSpace.wiring.pushOperatorEvent(id, outputName, data);
+            platform.opManager.activeWorkspace.wiring.pushOperatorEvent(id, outputName, data);
         }
     });
     Object.preventExtensions(window.MashupPlatform.wiring);

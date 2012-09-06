@@ -49,7 +49,7 @@ from commons.http_utils import PUT_parameter
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error, json_encode
-from wirecloud.models import PlatformPreference, WorkSpacePreference, Tab, TabPreference, update_session_lang, WorkSpace
+from wirecloud.models import PlatformPreference, WorkspacePreference, Tab, TabPreference, update_session_lang, Workspace
 from wirecloudcommons.utils.transaction import commit_on_http_success
 
 
@@ -121,7 +121,7 @@ def make_workspace_preferences_cache_key(workspace_id):
 
 
 def get_workspace_preference_values(workspace):
-    if isinstance(workspace, WorkSpace):
+    if isinstance(workspace, Workspace):
         workspace_id = workspace.id
     else:
         workspace_id = int(workspace)
@@ -129,14 +129,14 @@ def get_workspace_preference_values(workspace):
     cache_key = make_workspace_preferences_cache_key(workspace_id)
     values = cache.get(cache_key)
     if values == None:
-        values = parseInheritableValues(WorkSpacePreference.objects.filter(workspace=workspace_id))
+        values = parseInheritableValues(WorkspacePreference.objects.filter(workspace=workspace_id))
         cache.set(cache_key, values)
 
     return values
 
 
 def update_workspace_preferences(workspace, preferences_json):
-    _currentPreferences = WorkSpacePreference.objects.filter(workspace=workspace)
+    _currentPreferences = WorkspacePreference.objects.filter(workspace=workspace)
     currentPreferences = {}
     for currentPreference in _currentPreferences:
         currentPreferences[currentPreference.name] = currentPreference
@@ -147,7 +147,7 @@ def update_workspace_preferences(workspace, preferences_json):
         if name in currentPreferences:
             preference = currentPreferences[name]
         else:
-            preference = WorkSpacePreference(workspace=workspace, name=name)
+            preference = WorkspacePreference(workspace=workspace, name=name)
 
         if 'value' in preference_data:
             preference.value = unicode(preference_data['value'])
@@ -190,13 +190,13 @@ class PlatformPreferencesCollection(Resource):
             raise TracedServerError(e, {}, request, msg)
 
 
-class WorkSpacePreferencesCollection(Resource):
+class WorkspacePreferencesCollection(Resource):
 
     @no_cache
     def read(self, request, workspace_id):
 
-        # Check WorkSpace existance and owned by this user
-        workspace = get_object_or_404(WorkSpace, users=request.user, pk=workspace_id)
+        # Check Workspace existance and owned by this user
+        workspace = get_object_or_404(Workspace, users=request.user, pk=workspace_id)
 
         result = get_workspace_preference_values(workspace.id)
 
@@ -208,18 +208,18 @@ class WorkSpacePreferencesCollection(Resource):
         received_json = PUT_parameter(request, 'preferences')
 
         if not received_json:
-            return HttpResponseBadRequest(get_xml_error(_("WorkSpace Preferences JSON expected")), mimetype='application/xml; charset=UTF-8')
+            return HttpResponseBadRequest(get_xml_error(_("Workspace Preferences JSON expected")), mimetype='application/xml; charset=UTF-8')
 
         try:
             preferences_json = simplejson.loads(received_json)
 
-            # Check WorkSpace existance and owned by this user
-            workspace = get_object_or_404(WorkSpace, users=request.user, pk=workspace_id)
+            # Check Workspace existance and owned by this user
+            workspace = get_object_or_404(Workspace, users=request.user, pk=workspace_id)
 
             update_workspace_preferences(workspace, preferences_json)
             return HttpResponse('ok')
         except Exception, e:
-            msg = _("WorkSpace Preferences could not be updated: ") + unicode(e)
+            msg = _("Workspace Preferences could not be updated: ") + unicode(e)
 
             raise TracedServerError(e, {}, request, msg)
 

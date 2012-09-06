@@ -30,7 +30,7 @@
 /**
 * @author aarranz
 */
-function Dragboard(tab, workSpace, dragboardElement) {
+function Dragboard(tab, workspace, dragboardElement) {
     // *********************************
     // PRIVATE VARIABLES
     // *********************************
@@ -45,8 +45,8 @@ function Dragboard(tab, workSpace, dragboardElement) {
     this.iWidgets = new Hash();
     this.tab = tab;
     this.tabId = tab.tabInfo.id;
-    this.workSpace = workSpace;
-    this.workSpaceId = workSpace.workSpaceState.id;
+    this.workspace = workspace;
+    this.workspaceId = workspace.workspaceState.id;
 
     // ****************
     // PUBLIC METHODS
@@ -66,11 +66,11 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
     Dragboard.prototype.paintRelatedIWidget = function (iWidgetId) {
         var tabId = this.getIWidget(iWidgetId).getTabId(),
-            tabIndex = this.workSpace.tabView.getTabIndexById(tabId);
+            tabIndex = this.workspace.tabView.getTabIndexById(tabId);
 
         if (tabIndex !== null && tabIndex !== undefined) { // the widget-tab is already visible
             this.setVisibleIWidget(iWidgetId);
-            this.workSpace.tabView.set('activeTab', this.workSpace.tabView.getTab(tabIndex));
+            this.workspace.tabView.set('activeTab', this.workspace.tabView.getTab(tabIndex));
         } else {
             this.paint(iWidgetId);
         }
@@ -84,9 +84,9 @@ function Dragboard(tab, workSpace, dragboardElement) {
             tabId, tabIndex;
         if (iwidget) {
             tabId = iwidget.getTabId();
-            tabIndex = this.workSpace.tabView.getTabIndexById(tabId);
+            tabIndex = this.workspace.tabView.getTabIndexById(tabId);
             if (tabIndex !== null && tabIndex !== undefined) { // the tab is already visible
-                this.workSpace.tabView.getTab(tabIndex).set('highlight', true);
+                this.workspace.tabView.getTab(tabIndex).set('highlight', true);
             }
         }
     };
@@ -158,12 +158,12 @@ function Dragboard(tab, workSpace, dragboardElement) {
     };
 
     Dragboard.prototype.getWorkspace = function () {
-        return this.workSpace;
+        return this.workspace;
     };
 
     Dragboard.prototype._updateIWidgetInfo = function (iWidget) {
         OpManagerFactory.getInstance().globalDragboard._updateIWidgetInfo(iWidget);
-        this.workSpace.updateVisibleTab(this.tab.index);
+        this.workspace.updateVisibleTab(this.tab.index);
     };
 
     // *******************

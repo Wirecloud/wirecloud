@@ -24,7 +24,7 @@
  */
 
 
-function ContextManager (workspace_, workSpaceInfo_) {
+function ContextManager (workspace_, workspaceInfo_) {
 
 
     // ***********************
@@ -55,11 +55,11 @@ function ContextManager (workspace_, workSpaceInfo_) {
     }
 
     // Loads all concept from workspace data model.
-    this._loadConceptsFromWorkspace = function (workSpaceInfo_) {
+    this._loadConceptsFromWorkspace = function (workspaceInfo_) {
         this._concepts = {};
         this._name2Concept = {};
 
-        var conceptsJson = workSpaceInfo_['workspace']['concepts'];
+        var conceptsJson = workspaceInfo_['workspace']['concepts'];
 
         // Parses concepts json
         for (var i = 0; i < conceptsJson.length; i++) {
@@ -88,11 +88,11 @@ function ContextManager (workspace_, workSpaceInfo_) {
     }
 
     // Load iwidget's context variables from workspace data model
-    this._loadIWidgetContextVarsFromWorkspace = function (workSpaceInfo) {
+    this._loadIWidgetContextVarsFromWorkspace = function (workspaceInfo) {
         var i, j, tabs, currentTab, currentIWidget, currentVar, contextVar,
             dragboard, varname, relatedConcept, msg;
 
-        tabs = workSpaceInfo['workspace']['tabList'];
+        tabs = workspaceInfo['workspace']['tabList'];
 
         // Tabs in workspace
         for (i = 0; i < tabs.length; i++) {
@@ -270,6 +270,6 @@ function ContextManager (workspace_, workSpaceInfo_) {
     this._workspace = workspace_;
 
     // Load all iwidget context variables and concepts (in this order!)
-    this._loadConceptsFromWorkspace (workSpaceInfo_);
-    this._loadIWidgetContextVarsFromWorkspace (workSpaceInfo_);
+    this._loadConceptsFromWorkspace (workspaceInfo_);
+    this._loadIWidgetContextVarsFromWorkspace (workspaceInfo_);
 }

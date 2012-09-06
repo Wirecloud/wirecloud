@@ -39,7 +39,7 @@
         Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.iwidget.name, manager, 'iwidget');
 
         if (!isMenubarRef) {
-            variables = opManager.activeWorkSpace.varManager.getIWidgetVariables(iwidget.getId());
+            variables = opManager.activeWorkspace.varManager.getIWidgetVariables(iwidget.getId());
             //sources & targets anchors (sourceAnchor and targetAnchor)
             for (name in variables) {
                 variable = variables[name];

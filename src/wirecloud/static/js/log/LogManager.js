@@ -305,7 +305,7 @@ var LogManagerFactory = function () {
             this.show();
         }.bind(this));
         $('logs_dragboard_link').observe('click', function() {
-            OpManagerFactory.getInstance().showActiveWorkSpace(false);
+            OpManagerFactory.getInstance().showActiveWorkspace(false);
         });
         $('logs_clear_button').observe('click', function() {
             var i;

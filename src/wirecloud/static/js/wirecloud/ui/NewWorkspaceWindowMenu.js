@@ -43,7 +43,7 @@
     };
 
     NewWorkspaceWindowMenu.prototype.executeOperation = function executeOperation (data) {
-        OpManagerFactory.getInstance().addWorkSpace(data.name);
+        OpManagerFactory.getInstance().addWorkspace(data.name);
     };
 
     Wirecloud.ui.NewWorkspaceWindowMenu = NewWorkspaceWindowMenu;

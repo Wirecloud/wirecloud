@@ -26,7 +26,7 @@ msgid "Wizard"
 msgstr ""
 
 #: media/iphone/dragboard/iGadget.js:145 media/iphone/gadgetModel/Gadget.js:60
-#: media/iphone/opManager/WorkSpace.js:69 media/js/log/LogManager.js:164
+#: media/iphone/opManager/Workspace.js:69 media/js/log/LogManager.js:164
 msgid ""
 "JavaScript exception on file %(errorFile)s (line: %(errorLine)s): "
 "%(errorDesc)s"
@@ -371,7 +371,7 @@ msgid "Access to Information"
 msgstr ""
 
 #: media/js/dragboard/iGadget.js:776 media/js/opManager/Tab.js:619
-#: media/js/opManager/WorkSpace.js:850
+#: media/js/opManager/Workspace.js:850
 msgid "Preferences"
 msgstr ""
 
@@ -558,7 +558,7 @@ msgid "Configuration"
 msgstr ""
 
 #: media/js/interfaceLayout/LayoutManager.js:856
-#: media/js/opManager/WorkSpace.js:907
+#: media/js/opManager/Workspace.js:907
 msgid "Share"
 msgstr ""
 
@@ -636,7 +636,7 @@ msgid "TOTAL"
 msgstr ""
 
 #: media/js/interfaceLayout/WindowMenu.js:545
-msgid "Create workSpace"
+msgid "Create workspace"
 msgstr ""
 
 #: media/js/interfaceLayout/WindowMenu.js:553
@@ -929,7 +929,7 @@ msgid "The new name is too long. It must have less than 30 characters."
 msgstr ""
 
 #: media/js/interfaceLayout/WindowMenu.js:1407
-msgid "Shared WorkSpace Info"
+msgid "Shared Workspace Info"
 msgstr ""
 
 #: media/js/interfaceLayout/WindowMenu.js:1425
@@ -950,24 +950,24 @@ msgid ""
 "responsible for the content of the uploaded files."
 msgstr ""
 
-#: ezweb/static/js/opManager/WorkSpace.js:602
+#: ezweb/static/js/opManager/Workspace.js:602
 msgid "Tab"
 msgstr ""
 
-#: ezweb/static/js/opManager/WorkSpace.js:906
+#: ezweb/static/js/opManager/Workspace.js:906
 msgid ""
-"This WorkSpace is blocked, please create a new one if you want to configure "
+"This Workspace is blocked, please create a new one if you want to configure "
 "it."
 msgstr ""
 
-#: ezweb/static/js/opManager/WorkSpace.js:955
+#: ezweb/static/js/opManager/Workspace.js:955
 msgid ""
-"This WorkSpace is blocked, please create a new one if you want to share it."
+"This Workspace is blocked, please create a new one if you want to share it."
 msgstr ""
 
-#: ezweb/static/js/opManager/WorkSpace.js:1006
+#: ezweb/static/js/opManager/Workspace.js:1006
 msgid ""
-"This WorkSpace is blocked, please create a new one if you want to modify it."
+"This Workspace is blocked, please create a new one if you want to modify it."
 msgstr ""
 
 #: media/js/log/LogManager.js:160
@@ -1091,7 +1091,7 @@ msgstr ""
 msgid "Mark as Visible"
 msgstr ""
 
-#: media/js/opManager/Tab.js:533 media/js/opManager/WorkSpace.js:842
+#: media/js/opManager/Tab.js:533 media/js/opManager/Workspace.js:842
 msgid "Rename"
 msgstr ""
 
@@ -1107,7 +1107,7 @@ msgstr ""
 msgid "Move before..."
 msgstr ""
 
-#: media/js/opManager/Tab.js:597 media/js/opManager/WorkSpace.js:858
+#: media/js/opManager/Tab.js:597 media/js/opManager/Workspace.js:858
 #: media/js/wiring/connectableInterface.js:445
 msgid "Remove"
 msgstr ""
@@ -1120,113 +1120,113 @@ msgstr ""
 msgid "Show Floating Gadget"
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:92
+#: media/js/opManager/Workspace.js:92
 msgid "Error loading workspace: %(errorMsg)s"
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:96
+#: media/js/opManager/Workspace.js:96
 msgid ""
 "Error loading workspace. Please, change active workspace or create a new one."
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:111
+#: media/js/opManager/Workspace.js:111
 msgid "Unusable Tab"
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:139
+#: media/js/opManager/Workspace.js:139
 msgid "Processing workspace data"
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:215
+#: media/js/opManager/Workspace.js:215
 msgid "workspace loaded"
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:226
+#: media/js/opManager/Workspace.js:226
 msgid "Error renaming workspace, changes will not be saved: %(errorMsg)s."
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:242
+#: media/js/opManager/Workspace.js:242
 msgid "Error removing workspace, changes will not be saved: %(errorMsg)s."
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:257
+#: media/js/opManager/Workspace.js:257
 msgid "Error publishing workspace: %(errorMsg)s."
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:274
+#: media/js/opManager/Workspace.js:274
 msgid "Error merging workspace: %(errorMsg)s."
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:301
+#: media/js/opManager/Workspace.js:301
 msgid "Error creating a tab: %(errorMsg)s."
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:393
+#: media/js/opManager/Workspace.js:393
 msgid "Error updating a workspace: invalid name"
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:405
+#: media/js/opManager/Workspace.js:405
 msgid ""
-"Error updating a workspace: the name %(workSpaceName)s is already in use."
+"Error updating a workspace: the name %(workspaceName)s is already in use."
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:450
+#: media/js/opManager/Workspace.js:450
 msgid "Downloading workspace data"
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:569
+#: media/js/opManager/Workspace.js:569
 msgid "there must be one tab at least"
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:570 media/js/opManager/WorkSpace.js:575
+#: media/js/opManager/Workspace.js:570 media/js/opManager/Workspace.js:575
 msgid "Error removing tab: %(errorMsg)s."
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:574
+#: media/js/opManager/Workspace.js:574
 msgid "it contains some gadgets that cannot be removed"
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:625
+#: media/js/opManager/Workspace.js:625
 msgid "Unloading current workspace"
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:664
+#: media/js/opManager/Workspace.js:664
 msgid "workspace unloaded"
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:729 media/js/opManager/WorkSpace.js:738
+#: media/js/opManager/Workspace.js:729 media/js/opManager/Workspace.js:738
 msgid "The Workspace has NOT been successfully shared."
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:731
+#: media/js/opManager/Workspace.js:731
 msgid "The Workspace has been successfully shared."
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:833
+#: media/js/opManager/Workspace.js:833
 msgid "Initial"
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:860
+#: media/js/opManager/Workspace.js:860
 msgid "Do you really want to remove the \"%(workspaceName)s\" workspace?"
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:872
+#: media/js/opManager/Workspace.js:872
 msgid "Merge"
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:915
+#: media/js/opManager/Workspace.js:915
 msgid "Publish in gallery"
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:949
+#: media/js/opManager/Workspace.js:949
 msgid "Go to Gallery"
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:959
+#: media/js/opManager/Workspace.js:959
 msgid "Go to Wiring tool"
 msgstr ""
 
-#: media/js/opManager/WorkSpace.js:1133
+#: media/js/opManager/Workspace.js:1133
 msgid ""
 "Error marking as first active workspace, changes will not be saved: "
 "%(errorMsg)s."
@@ -1241,7 +1241,7 @@ msgid "Platform Preferences"
 msgstr ""
 
 #: media/js/preferencesManager/PlatformPref.js:488
-msgid "WorkSpace preferences (%(workspaceName)s)"
+msgid "Workspace preferences (%(workspaceName)s)"
 msgstr ""
 
 #: media/js/preferencesManager/PlatformPref.js:523

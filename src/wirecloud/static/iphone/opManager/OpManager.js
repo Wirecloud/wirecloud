@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global WorkSpace, alert, Hash, $, console, LayoutManagerFactory, ShowcaseFactory, LogManagerFactory, Modules, setTimeout, Wirecloud */
+/*global Workspace, alert, Hash, $, console, LayoutManagerFactory, ShowcaseFactory, LogManagerFactory, Modules, setTimeout, Wirecloud */
 "use strict";
 
 /* 
@@ -47,27 +47,27 @@ var OpManagerFactory = (function () {
 
         loadEnvironment = function (transport) {
             var response = transport.responseText,
-                workSpacesStructure = JSON.parse(response),
-                workSpaces = workSpacesStructure.workspaces,
-                workSpace, workspace_instance, state, i;
+                workspacesStructure = JSON.parse(response),
+                workspaces = workspacesStructure.workspaces,
+                workspace, workspace_instance, state, i;
 
-            for (i = 0; i < workSpaces.length; i += 1) {
-                workSpace = workSpaces[i];
+            for (i = 0; i < workspaces.length; i += 1) {
+                workspace = workspaces[i];
 
-                workspace_instance = new WorkSpace(workSpace);
-                this.workSpaceInstances.set(workSpace.id, workspace_instance);
-                if (!(workSpace.creator in this.workspacesByUserAndName)) {
-                    this.workspacesByUserAndName[workSpace.creator] = {};
+                workspace_instance = new Workspace(workspace);
+                this.workspaceInstances.set(workspace.id, workspace_instance);
+                if (!(workspace.creator in this.workspacesByUserAndName)) {
+                    this.workspacesByUserAndName[workspace.creator] = {};
                 }
-                this.workspacesByUserAndName[workSpace.creator][workSpace.name] = workspace_instance;
+                this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace_instance;
             }
 
             HistoryManager.init();
             state = HistoryManager.getCurrentState();
-            this.activeWorkSpace = this.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
+            this.activeWorkspace = this.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
 
             // Total information of the active workspace must be downloaded!
-            this.activeWorkSpace.downloadWorkSpaceInfo();
+            this.activeWorkspace.downloadWorkspaceInfo();
         };
 
         onError = function (transport, e) {
@@ -87,30 +87,30 @@ var OpManagerFactory = (function () {
         };
 
         OpManager.prototype.sendBufferedVars = function () {
-            this.activeWorkSpace.sendBufferedVars();
+            this.activeWorkspace.sendBufferedVars();
         };
 
-        OpManager.prototype.changeActiveWorkSpace = function (workspace) {
+        OpManager.prototype.changeActiveWorkspace = function (workspace) {
             var state;
 
-            if (this.activeWorkSpace !== null && this.activeWorkSpace !== undefined) {
-                this.activeWorkSpace.unload();
+            if (this.activeWorkspace !== null && this.activeWorkspace !== undefined) {
+                this.activeWorkspace.unload();
             }
 
             this.loadCompleted = false;
-            this.activeWorkSpace = workspace;
+            this.activeWorkspace = workspace;
             state = {
-                workspace_creator: workspace.workSpaceState.creator,
+                workspace_creator: workspace.workspaceState.creator,
                 workspace_name: workspace.getName(),
                 view: "workspace"
             };
             HistoryManager.pushState(state);
-            this.activeWorkSpace.downloadWorkSpaceInfo();
+            this.activeWorkspace.downloadWorkspaceInfo();
             this.showWidgetsMenuFromWorskspaceMenu();
         };
 
         OpManager.prototype.sendEvent = function (widget, event, value) {
-            this.activeWorkSpace.getWiring().sendEvent(widget, event, value);
+            this.activeWorkspace.getWiring().sendEvent(widget, event, value);
         };
 
         OpManager.prototype.loadEnviroment = function () {
@@ -123,18 +123,18 @@ var OpManagerFactory = (function () {
             this.logs = LogManagerFactory.getInstance();
         };
 
-        OpManager.prototype.showActiveWorkSpace = function () {
-            var workSpaceIds = this.workSpaceInstances.keys(),
-                disabledWorkSpaces = [],
-                j = 0, i, workSpace;
-            for (i = 0; i < workSpaceIds.length; i += 1) {
-                workSpace = this.workSpaceInstances.get(workSpaceIds[i]);
-                if (workSpace !== this.activeWorkSpace) {
-                    disabledWorkSpaces[j] = workSpace;
+        OpManager.prototype.showActiveWorkspace = function () {
+            var workspaceIds = this.workspaceInstances.keys(),
+                disabledWorkspaces = [],
+                j = 0, i, workspace;
+            for (i = 0; i < workspaceIds.length; i += 1) {
+                workspace = this.workspaceInstances.get(workspaceIds[i]);
+                if (workspace !== this.activeWorkspace) {
+                    disabledWorkspaces[j] = workspace;
                     j += 1;
                 }
             }
-            this.activeWorkSpace.init();
+            this.activeWorkspace.init();
         };
 
         OpManager.prototype.continueLoadingGlobalModules = function (module) {
@@ -143,20 +143,20 @@ var OpManagerFactory = (function () {
             if (module === Modules.prototype.SHOWCASE) {
                 // All singleton modules has been loaded!
                 // It's time for loading tabspace information!
-                this.loadActiveWorkSpace();
+                this.loadActiveWorkspace();
                 return;
             }
             if (module === Modules.prototype.ACTIVE_WORKSPACE) {
                 this.loadCompleted = true;
                 if (!this.visibleLayer) {
-                    this.showActiveWorkSpace(this.activeWorkSpace);
+                    this.showActiveWorkspace(this.activeWorkspace);
                     this.visibleLayer = "tabs_container";
                 }
                 return;
             }
         };
 
-        OpManager.prototype.loadActiveWorkSpace = function () {
+        OpManager.prototype.loadActiveWorkspace = function () {
             // Asynchronous load of modules
             // Each singleton module notifies OpManager it has finished loading!
 
@@ -170,11 +170,11 @@ var OpManagerFactory = (function () {
 
         //Operations on workspaces
 
-        OpManager.prototype.workSpaceExists = function (newName) {
-            var workSpaceValues = this.workSpaceInstances.values(),
+        OpManager.prototype.workspaceExists = function (newName) {
+            var workspaceValues = this.workspaceInstances.values(),
                 i;
-            for (i = 0; i < workSpaceValues.length; i += 1) {
-                if (workSpaceValues[i].workSpaceState.name === newName) {
+            for (i = 0; i < workspaceValues.length; i += 1) {
+                if (workspaceValues[i].workspaceState.name === newName) {
                     return true;
                 }
             }
@@ -183,7 +183,7 @@ var OpManagerFactory = (function () {
 
 
         OpManager.prototype.showDragboard = function (iWidgetId) {
-            var dragboard = this.activeWorkSpace.getIwidget(iWidgetId).dragboard;
+            var dragboard = this.activeWorkspace.getIwidget(iWidgetId).dragboard;
             dragboard.paint(iWidgetId);
             this.visibleLayer = "dragboard";
         };
@@ -191,7 +191,7 @@ var OpManagerFactory = (function () {
         OpManager.prototype.showWidgetsMenu = function () {
             this.alternatives.showAlternative(this.workspaceTabsAlternative);
             this.visibleLayer = "tabs_container";
-            this.activeWorkSpace.show();
+            this.activeWorkspace.show();
         };
 
         OpManager.prototype.showWidgetsMenuFromWorskspaceMenu = function () {
@@ -201,34 +201,34 @@ var OpManagerFactory = (function () {
                 }, 100);
                 return;
             }
-            this.showActiveWorkSpace(this.activeWorkSpace);
+            this.showActiveWorkspace(this.activeWorkspace);
             this.visibleLayer = "tabs_container";
         };
 
         OpManager.prototype.showRelatedIwidget = function (iWidgetId, tabId) {
-            this.activeWorkSpace.showRelatedIwidget(iWidgetId, tabId);
+            this.activeWorkspace.showRelatedIwidget(iWidgetId, tabId);
         };
 
         OpManager.prototype.markRelatedIwidget = function (iWidgetId) {
-            this.activeWorkSpace.getActiveDragboard().markRelatedIwidget(iWidgetId);
+            this.activeWorkspace.getActiveDragboard().markRelatedIwidget(iWidgetId);
         };
 
         OpManager.prototype.showWorkspaceMenu = function () {
             //generate the workspace list
-            var wkeys = this.workSpaceInstances.keys(),
+            var wkeys = this.workspaceInstances.keys(),
                 i, wname, workspace, workspaceEntry;
 
             this.workspaceListElement.innerHTML = '';
             for (i = 0; i < wkeys.length; i += 1) {
-                workspace = this.workSpaceInstances.get(wkeys[i]);
+                workspace = this.workspaceInstances.get(wkeys[i]);
                 wname = workspace.getName();
                 workspaceEntry = document.createElement('li');
                 workspaceEntry.textContent = wname;
-                if (workspace === this.activeWorkSpace) {
+                if (workspace === this.activeWorkspace) {
                     workspaceEntry.setAttribute('class', 'selected');
                     workspaceEntry.addEventListener('click', this.showWidgetsMenuFromWorskspaceMenu.bind(this), false);
                 } else {
-                    workspaceEntry.addEventListener('click', this.changeActiveWorkSpace.bind(this, workspace), false);
+                    workspaceEntry.addEventListener('click', this.changeActiveWorkspace.bind(this, workspace), false);
                 }
                 this.workspaceListElement.appendChild(workspaceEntry);
             }
@@ -244,9 +244,9 @@ var OpManagerFactory = (function () {
         this.visibleLayer = null;
 
         // Variables for controlling the collection of wiring and dragboard instances of a user
-        this.workSpaceInstances = new Hash();
+        this.workspaceInstances = new Hash();
         this.workspacesByUserAndName = {};
-        this.activeWorkSpace = null;
+        this.activeWorkspace = null;
 
         // workspace menu element
         this.workspaceMenuElement = $('workspace_menu');

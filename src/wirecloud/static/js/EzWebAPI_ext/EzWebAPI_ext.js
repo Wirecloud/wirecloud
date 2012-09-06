@@ -5164,7 +5164,7 @@ StyledElements.PopupMenu.prototype.show = function(refPosition) {
     platform.document.body.appendChild(this._disableLayer);
 
     opManager = platform.OpManagerFactory.getInstance();
-    gadgetObject = opManager.activeWorkSpace.getIgadget(EzWebAPI.getId()).content;
+    gadgetObject = opManager.activeWorkspace.getIgadget(EzWebAPI.getId()).content;
     position = EzWebExt.getRelativePosition(gadgetObject, platform.document.body);
     refPosition.x += position.x;
     refPosition.y += position.y;

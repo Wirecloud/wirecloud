@@ -31,7 +31,7 @@ function Modules () {
 Modules.prototype.THEME_MANAGER = 3;
 Modules.prototype.PLATFORM_PREFERENCES = 4;
 
-// Singleton modules (valid for every WorkSpace)
+// Singleton modules (valid for every Workspace)
 Modules.prototype.SHOWCASE = 0;
 Modules.prototype.CATALOGUE = 1;
 

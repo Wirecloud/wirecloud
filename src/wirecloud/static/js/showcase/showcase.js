@@ -99,7 +99,7 @@ var ShowcaseFactory = function () {
 
                 opManager = OpManagerFactory.getInstance();
 
-                opManager.changeActiveWorkSpace(opManager.workSpaceInstances.get(id));
+                opManager.changeActiveWorkspace(opManager.workspaceInstances.get(id));
             }
 
             var onError = function (transport, e) {
@@ -181,7 +181,7 @@ var ShowcaseFactory = function () {
             var options = {
                 "iwidgetName": iwidget_name_,
                 "setDefaultValues" : function(iwidgetId_){
-                    var varManager = OpManagerFactory.getInstance().activeWorkSpace.getVarManager();
+                    var varManager = OpManagerFactory.getInstance().activeWorkspace.getVarManager();
                     $H(variable_values_).each(function(pair) {
                         var msg = "";
                         var variable = varManager.getVariableByName(iwidgetId_, pair.key);

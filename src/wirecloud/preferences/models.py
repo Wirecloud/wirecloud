@@ -55,9 +55,9 @@ class PlatformPreference(models.Model):
         app_label = 'wirecloud'
 
 
-class WorkSpacePreference(models.Model):
+class WorkspacePreference(models.Model):
 
-    workspace = models.ForeignKey('wirecloud.WorkSpace')
+    workspace = models.ForeignKey('wirecloud.Workspace')
     name = models.CharField(_('Name'), max_length=250)
     inherit = models.BooleanField(_('Inherit'), default=False)
     value = models.CharField(_('Value'), max_length=250)

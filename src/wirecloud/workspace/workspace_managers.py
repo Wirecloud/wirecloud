@@ -1,11 +1,11 @@
-from wirecloud.models import GroupPublishedWorkspace, PublishedWorkSpace, WorkSpace
+from wirecloud.models import GroupPublishedWorkspace, PublishedWorkspace, Workspace
 
 
 def ref_from_workspace(workspace):
 
-    if isinstance(workspace, WorkSpace):
+    if isinstance(workspace, Workspace):
         return 'group/' + str(workspace.id)
-    elif isinstance(workspace, PublishedWorkSpace):
+    elif isinstance(workspace, PublishedWorkspace):
         return 'group_published/' + str(workspace.id)
 
 
@@ -25,7 +25,7 @@ class OrganizationWorkspaceManager:
         # the compression list outside the inside compression list is for flattening
         # the inside list
         workspaces = [workspace for sublist in
-                      [WorkSpace.objects.filter(targetOrganizations=org)
+                      [Workspace.objects.filter(targetOrganizations=org)
                        for org in user_groups]
                       for workspace in sublist]
 

@@ -28,7 +28,7 @@
  */
 
 
-function Tab(tabInfo, workSpace, index) {
+function Tab(tabInfo, workspace, index) {
 
     // ****************
     // PUBLIC METHODS
@@ -100,11 +100,11 @@ function Tab(tabInfo, workSpace, index) {
     // *****************
 
     // The name of the dragboard HTML elements correspond to the Tab name
-    this.workSpace = workSpace;
+    this.workspace = workspace;
     this.tabInfo = tabInfo;
     this.index = index;
-    this.tabName = "tab_" + this.workSpace.workSpaceState.id + "_" + this.tabInfo.id;
+    this.tabName = "tab_" + this.workspace.workspaceState.id + "_" + this.tabInfo.id;
 
-    this.dragboard = new Dragboard(this, this.workSpace, this.dragboardElement);
+    this.dragboard = new Dragboard(this, this.workspace, this.dragboardElement);
     this.tabElement = null;
 }

@@ -27,7 +27,7 @@ from django.utils import simplejson
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 
-from wirecloud.workspace.models import WorkSpace
+from wirecloud.workspace.models import Workspace
 from wirecloudcommons.test import WirecloudSeleniumTestCase, widget_operation
 
 
@@ -42,7 +42,7 @@ class WiringTestCase(TransactionTestCase):
     def setUp(self):
         self.user = User.objects.get(username='test')
 
-        workspace = WorkSpace.objects.get(id=1)
+        workspace = Workspace.objects.get(id=1)
         self.workspace_id = workspace.pk
 
         workspace.wiringStatus = simplejson.dumps({
@@ -94,7 +94,7 @@ class WiringTestCase(TransactionTestCase):
 
     def test_read_only_connections_cannot_be_deleted(self):
 
-        workspace = WorkSpace.objects.get(id=1)
+        workspace = Workspace.objects.get(id=1)
         workspace.wiringStatus = simplejson.dumps({
             'operators': [],
             'connections': [

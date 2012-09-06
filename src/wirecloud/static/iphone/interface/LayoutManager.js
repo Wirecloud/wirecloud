@@ -36,9 +36,9 @@ var LayoutManagerFactory = function () {
         opManager = OpManagerFactory.getInstance();
 
         ws_id = parseInt(state.workspace, 10);
-        if (ws_id !== opManager.activeWorkSpace.getId()) {
-            nextWorkspace = opManager.workSpaceInstances.get(ws_id);
-            opManager.changeActiveWorkSpace(nextWorkspace, state.tab);
+        if (ws_id !== opManager.activeWorkspace.getId()) {
+            nextWorkspace = opManager.workspaceInstances.get(ws_id);
+            opManager.changeActiveWorkspace(nextWorkspace, state.tab);
             return;
         }
 
@@ -47,14 +47,14 @@ var LayoutManagerFactory = function () {
             case "dragboard":
                 dragboard = null;
                 tab_id = parseInt(state.tab, 10);
-                if (state.tab !== opManager.activeWorkSpace.visibleTab.getId()) {
-                    tab = opManager.activeWorkSpace.getTab(state.tab);
+                if (state.tab !== opManager.activeWorkspace.visibleTab.getId()) {
+                    tab = opManager.activeWorkspace.getTab(state.tab);
                     if (typeof tab !== "undefined") {
                         dragboard = tab.getDragboard();
                     }
                 }
                 if (dragboard === null) {
-                    dragboard = opManager.activeWorkSpace.getActiveDragboard();
+                    dragboard = opManager.activeWorkspace.getActiveDragboard();
                 }
                 this.showDragboard(dragboard);
                 break;

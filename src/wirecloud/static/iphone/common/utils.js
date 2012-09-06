@@ -81,7 +81,7 @@ function updateLayout () {
     OpManagerFactory.getInstance().alternatives.repaint();
 
     if (OpManagerFactory.getInstance().loadCompleted) {
-        OpManagerFactory.getInstance().activeWorkSpace.updateLayout(orient);
+        OpManagerFactory.getInstance().activeWorkspace.updateLayout(orient);
     }
 }
 
@@ -93,12 +93,12 @@ function checkTab () {
     opManager = OpManagerFactory.getInstance();
     if (opManager.visibleLayer === "tabs_container") {
 
-        tabContainer = opManager.activeWorkSpace.layout.getCenterContainer().wrapperElement;
+        tabContainer = opManager.activeWorkspace.layout.getCenterContainer().wrapperElement;
         xoffset = tabContainer.scrollLeft;
         tabWidth = window.innerWidth;
         newTabIndex = Math.round(xoffset / tabWidth);
 
         //update the visible Tab
-        opManager.activeWorkSpace.updateVisibleTab(newTabIndex);
+        opManager.activeWorkspace.updateVisibleTab(newTabIndex);
     }
 }

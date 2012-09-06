@@ -40,7 +40,7 @@ function WidgetVariable (iWidgetId, name) {
 // PARENT CONTRUCTOR (Super keyboard emulation)
 //////////////////////////////////////////////
 WidgetVariable.prototype.WidgetVariable = function (iWidget_, name_) {
-	this.varManager = OpManagerFactory.getInstance().activeWorkSpace.getVarManager();
+	this.varManager = OpManagerFactory.getInstance().activeWorkspace.getVarManager();
 
 	this.iWidgetId = iWidget_;
 	this.name = name_;

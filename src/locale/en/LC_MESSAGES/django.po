@@ -900,7 +900,7 @@ msgid "Operation"
 msgstr ""
 
 #: connectable/models.py:81 workspace/models.py:179
-msgid "WorkSpace"
+msgid "Workspace"
 msgstr ""
 
 #: connectable/models.py:83
@@ -2006,11 +2006,11 @@ msgid "Platform Preferences cannot be updated: "
 msgstr ""
 
 #: preferences/views.py:206
-msgid "WorkSpace Preferences JSON expected"
+msgid "Workspace Preferences JSON expected"
 msgstr ""
 
 #: preferences/views.py:218
-msgid "WorkSpace Preferences could not be updated: "
+msgid "Workspace Preferences could not be updated: "
 msgstr ""
 
 #: preferences/views.py:253

@@ -871,7 +871,7 @@ msgid "Operation"
 msgstr "Organización"
 
 #: connectable/models.py:81 workspace/models.py:166 workspace/views.py:225
-msgid "WorkSpace"
+msgid "Workspace"
 msgstr "Entorno de trabajo"
 
 #: connectable/models.py:83
@@ -2008,11 +2008,11 @@ msgid "Platform Preferences cannot be updated: "
 msgstr "No se pudo actualizar las preferencias de plataforma: "
 
 #: preferences/views.py:215
-msgid "WorkSpace Preferences JSON expected"
+msgid "Workspace Preferences JSON expected"
 msgstr "Se esperaba un JSON con las preferencias del workspace"
 
 #: preferences/views.py:227
-msgid "WorkSpace Preferences could not be updated: "
+msgid "Workspace Preferences could not be updated: "
 msgstr "No se pudo actualizar las preferencias del workspace: "
 
 #: preferences/views.py:262

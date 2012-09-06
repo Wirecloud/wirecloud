@@ -21,7 +21,7 @@ msgstr ""
 
 #: ezweb/static/iphone/dragboard/iGadget.js:155
 #: ezweb/static/iphone/gadgetModel/Gadget.js:159
-#: ezweb/static/iphone/opManager/WorkSpace.js:74
+#: ezweb/static/iphone/opManager/Workspace.js:74
 #: ezweb/static/js/log/LogManager.js:155
 msgid ""
 "JavaScript exception on file %(errorFile)s (line: %(errorLine)s): "
@@ -452,7 +452,7 @@ msgstr "Acceder a la información"
 #: ezweb/static/js/dragboard/iGadget.js:794
 #: ezweb/static/js/interfaceLayout/WindowMenu.js:872
 #: ezweb/static/js/opManager/Tab.js:573
-#: ezweb/static/js/opManager/WorkSpace.js:888
+#: ezweb/static/js/opManager/Workspace.js:888
 msgid "Preferences"
 msgstr "Preferencias"
 
@@ -650,7 +650,7 @@ msgid "Configuration"
 msgstr "Configuración"
 
 #: ezweb/static/js/interfaceLayout/LayoutManager.js:843
-#: ezweb/static/js/opManager/WorkSpace.js:951
+#: ezweb/static/js/opManager/Workspace.js:951
 msgid "Share"
 msgstr "Compartir"
 
@@ -663,7 +663,7 @@ msgid "Error updating order: %(errorMsg)s."
 msgstr "Error al actualizar el orden: %(errorMsg)s."
 
 #: ezweb/static/js/interfaceLayout/WindowMenu.js:218
-msgid "Create workSpace"
+msgid "Create workspace"
 msgstr "Crear entorno de trabajo"
 
 #: ezweb/static/js/interfaceLayout/WindowMenu.js:226
@@ -985,8 +985,8 @@ msgid "Error updating a tab: invalid name"
 msgstr "Al actualizar una pestaña: nombre no válido"
 
 #: ezweb/static/js/interfaceLayout/WindowMenu.js:1262
-msgid "Shared WorkSpace Info"
-msgstr "Información del WorkSpace"
+msgid "Shared Workspace Info"
+msgstr "Información del Workspace"
 
 #: ezweb/static/js/interfaceLayout/WindowMenu.js:1277
 msgid "URL:"
@@ -1159,7 +1159,7 @@ msgid "Mark as Visible"
 msgstr "Marcar como visible"
 
 #: ezweb/static/js/opManager/Tab.js:488
-#: ezweb/static/js/opManager/WorkSpace.js:880
+#: ezweb/static/js/opManager/Workspace.js:880
 msgid "Rename"
 msgstr "Renombrar"
 
@@ -1176,7 +1176,7 @@ msgid "Move before..."
 msgstr "Mover antes de..."
 
 #: ezweb/static/js/opManager/Tab.js:551
-#: ezweb/static/js/opManager/WorkSpace.js:896
+#: ezweb/static/js/opManager/Workspace.js:896
 #: ezweb/static/js/wiring/connectableInterface.js:412
 msgid "Remove"
 msgstr "Eliminar"
@@ -1189,169 +1189,169 @@ msgstr "¿Realmente desea eliminar la pestaña \"%(tabName)s\"?"
 msgid "Show Floating Gadget"
 msgstr "Mostrar Gadgets flotantes"
 
-#: ezweb/static/js/opManager/WorkSpace.js:92
+#: ezweb/static/js/opManager/Workspace.js:92
 msgid "Error loading workspace: %(errorMsg)s"
 msgstr "Error al cargar el entorno de trabajo: %(errorMsg)s."
 
-#: ezweb/static/js/opManager/WorkSpace.js:96
+#: ezweb/static/js/opManager/Workspace.js:96
 msgid ""
 "Error loading workspace. Please, change active workspace or create a new one."
 msgstr ""
 "Error al cargar el entorno de trabajo. Por favor, cambia el entorno de "
 "trabajo o crea uno nuevo."
 
-#: ezweb/static/js/opManager/WorkSpace.js:111
+#: ezweb/static/js/opManager/Workspace.js:111
 msgid "Unusable Tab"
 msgstr "Tab no usable"
 
-#: ezweb/static/js/opManager/WorkSpace.js:141
+#: ezweb/static/js/opManager/Workspace.js:141
 msgid "Processing workspace data"
 msgstr "Procesando los datos del entorno de trabajo"
 
-#: ezweb/static/js/opManager/WorkSpace.js:224
+#: ezweb/static/js/opManager/Workspace.js:224
 msgid "workspace loaded"
 msgstr "El entorno de trabajo fue cargado"
 
-#: ezweb/static/js/opManager/WorkSpace.js:235
+#: ezweb/static/js/opManager/Workspace.js:235
 msgid "Error renaming workspace, changes will not be saved: %(errorMsg)s."
 msgstr ""
 "Error al renombrar el entorno de trabajo, los cambios no se guardarán: "
 "%(errorMsg)s."
 
-#: ezweb/static/js/opManager/WorkSpace.js:251
+#: ezweb/static/js/opManager/Workspace.js:251
 msgid "Error removing workspace, changes will not be saved: %(errorMsg)s."
 msgstr ""
 "Error al eliminar el entorno de trabajo, los cambios no se guardarán: "
 "%(errorMsg)s."
 
-#: ezweb/static/js/opManager/WorkSpace.js:258
+#: ezweb/static/js/opManager/Workspace.js:258
 msgid "Workspace published successfully"
 msgstr "El entorno de trabajo ha sido publicado correctamente"
 
-#: ezweb/static/js/opManager/WorkSpace.js:270
+#: ezweb/static/js/opManager/Workspace.js:270
 msgid "Error publishing workspace: %(errorMsg)s."
 msgstr "Error al publicar el entorno de trabajo: %(errorMsg)s."
 
-#: ezweb/static/js/opManager/WorkSpace.js:290
+#: ezweb/static/js/opManager/Workspace.js:290
 msgid "Error merging workspaces: %(errorMsg)s."
 msgstr "Error al mezclar los entornos de trabajo: %(errorMsg)s."
 
-#: ezweb/static/js/opManager/WorkSpace.js:318
+#: ezweb/static/js/opManager/Workspace.js:318
 msgid "Error creating a tab: %(errorMsg)s."
 msgstr "Error al crear una pestaña: %(errorMsg)s"
 
-#: ezweb/static/js/opManager/WorkSpace.js:420
+#: ezweb/static/js/opManager/Workspace.js:420
 msgid "Error updating a workspace: invalid name"
 msgstr "Error al actualizar el entorno de trabajo: nombre no válido"
 
-#: ezweb/static/js/opManager/WorkSpace.js:432
+#: ezweb/static/js/opManager/Workspace.js:432
 msgid ""
-"Error updating a workspace: the name %(workSpaceName)s is already in use."
+"Error updating a workspace: the name %(workspaceName)s is already in use."
 msgstr ""
-"Error al actualizar un entorno de trabajo: el nombre %(workSpaceName)s ya se "
+"Error al actualizar un entorno de trabajo: el nombre %(workspaceName)s ya se "
 "está usando."
 
-#: ezweb/static/js/opManager/WorkSpace.js:477
+#: ezweb/static/js/opManager/Workspace.js:477
 msgid "Downloading workspace data"
 msgstr "Descargando los datos del entorno de trabajo"
 
-#: ezweb/static/js/opManager/WorkSpace.js:580
+#: ezweb/static/js/opManager/Workspace.js:580
 msgid "Tab"
 msgstr "Pestaña"
 
-#: ezweb/static/js/opManager/WorkSpace.js:597
+#: ezweb/static/js/opManager/Workspace.js:597
 msgid "there must be one tab at least"
 msgstr "debe haber al menos una pestaña"
 
-#: ezweb/static/js/opManager/WorkSpace.js:598
-#: ezweb/static/js/opManager/WorkSpace.js:603
+#: ezweb/static/js/opManager/Workspace.js:598
+#: ezweb/static/js/opManager/Workspace.js:603
 msgid "Error removing tab: %(errorMsg)s."
 msgstr "Error al eliminar la pestaña: %(errorMsg)s"
 
-#: ezweb/static/js/opManager/WorkSpace.js:602
+#: ezweb/static/js/opManager/Workspace.js:602
 msgid "it contains some gadgets that cannot be removed"
 msgstr "contiene algunos gadgets que no pueden ser eliminados"
 
-#: ezweb/static/js/opManager/WorkSpace.js:649
+#: ezweb/static/js/opManager/Workspace.js:649
 msgid "Unloading current workspace"
 msgstr "Cerrando el entorno de trabajo actual"
 
-#: ezweb/static/js/opManager/WorkSpace.js:686
+#: ezweb/static/js/opManager/Workspace.js:686
 msgid "workspace unloaded"
 msgstr "Se cerró el entorno de trabajo"
 
-#: ezweb/static/js/opManager/WorkSpace.js:756
-#: ezweb/static/js/opManager/WorkSpace.js:765
+#: ezweb/static/js/opManager/Workspace.js:756
+#: ezweb/static/js/opManager/Workspace.js:765
 msgid "The Workspace has NOT been successfully shared."
 msgstr "El entorno de trabajo no ha podido ser compartido."
 
-#: ezweb/static/js/opManager/WorkSpace.js:758
+#: ezweb/static/js/opManager/Workspace.js:758
 msgid "The Workspace has been successfully shared."
 msgstr "El entorno de trabajo ha sido compartido correctamente."
 
-#: ezweb/static/js/opManager/WorkSpace.js:777
+#: ezweb/static/js/opManager/Workspace.js:777
 msgid "Publishing current workspace"
 msgstr "Publicando el entorno de trabajo actual"
 
-#: ezweb/static/js/opManager/WorkSpace.js:789
+#: ezweb/static/js/opManager/Workspace.js:789
 msgid "Merging workspaces"
 msgstr "Mezclando los entornos de trabajo"
 
-#: ezweb/static/js/opManager/WorkSpace.js:790
+#: ezweb/static/js/opManager/Workspace.js:790
 msgid "Merging \"%(srcworkspace)s\" into \"%(dstworkspace)s\""
 msgstr "Mezclando \"%(srcworkspace)s\" con \"%(dstworkspace)s\""
 
-#: ezweb/static/js/opManager/WorkSpace.js:871
+#: ezweb/static/js/opManager/Workspace.js:871
 msgid "Initial"
 msgstr "Inicial"
 
-#: ezweb/static/js/opManager/WorkSpace.js:898
+#: ezweb/static/js/opManager/Workspace.js:898
 msgid "Do you really want to remove the \"%(workspaceName)s\" workspace?"
 msgstr "¿Realmente desea eliminar el entorno de trabajo \"%(workspaceName)s\"?"
 
-#: ezweb/static/js/opManager/WorkSpace.js:910
+#: ezweb/static/js/opManager/Workspace.js:910
 msgid "Merge"
 msgstr "Mezclar"
 
-#: ezweb/static/js/opManager/WorkSpace.js:928
+#: ezweb/static/js/opManager/Workspace.js:928
 msgid ""
-"This WorkSpace is blocked, please create a new one if you want to configure "
+"This Workspace is blocked, please create a new one if you want to configure "
 "it."
 msgstr ""
 "Este espacio de trabajo está bloqueado, por favor cree uno nuevo si desea "
 "poder configurarlo."
 
-#: ezweb/static/js/opManager/WorkSpace.js:959
+#: ezweb/static/js/opManager/Workspace.js:959
 msgid "Publish in gallery"
 msgstr "Publicar en galería"
 
-#: ezweb/static/js/opManager/WorkSpace.js:977
+#: ezweb/static/js/opManager/Workspace.js:977
 msgid ""
-"This WorkSpace is blocked, please create a new one if you want to share it."
+"This Workspace is blocked, please create a new one if you want to share it."
 msgstr ""
 "Este espacio de trabajo está bloqueado, por favor cree uno nuevo si desea "
 "poder compartirlo."
 
-#: ezweb/static/js/opManager/WorkSpace.js:1000
+#: ezweb/static/js/opManager/Workspace.js:1000
 msgid "Go to Gallery"
 msgstr "Ir a Galería"
 
-#: ezweb/static/js/opManager/WorkSpace.js:1008
+#: ezweb/static/js/opManager/Workspace.js:1008
 msgid "Go to Wiring tool"
 msgstr "Ir a Wiring"
 
-#: ezweb/static/js/opManager/WorkSpace.js:1028
+#: ezweb/static/js/opManager/Workspace.js:1028
 msgid ""
-"This WorkSpace is blocked, please create a new one if you want to modify it."
+"This Workspace is blocked, please create a new one if you want to modify it."
 msgstr ""
 "Este espacio de trabajo está bloqueado, por favor cree uno nuevo si desea "
 "poder modificarlo."
 
-#: ezweb/static/js/opManager/WorkSpace.js:1065
+#: ezweb/static/js/opManager/Workspace.js:1065
 msgid "New Application"
 msgstr "Nueva Aplicación"
 
-#: ezweb/static/js/opManager/WorkSpace.js:1230
+#: ezweb/static/js/opManager/Workspace.js:1230
 msgid ""
 "Error marking as first active workspace, changes will not be saved: "
 "%(errorMsg)s."
@@ -1368,7 +1368,7 @@ msgid "Platform Preferences"
 msgstr "Preferencias de Plataforma"
 
 #: ezweb/static/js/preferencesManager/PlatformPref.js:542
-msgid "WorkSpace preferences (%(workspaceName)s)"
+msgid "Workspace preferences (%(workspaceName)s)"
 msgstr "Preferencias del entorno de trabajo (%(workspaceName)s)"
 
 #: ezweb/static/js/preferencesManager/PlatformPref.js:582

@@ -24,9 +24,9 @@
  */
 
 
-function WorkSpace (workSpaceState) {
+function Workspace (workspaceState) {
 
-    WorkSpace.prototype._updateAddTabButton = function () {
+    Workspace.prototype._updateAddTabButton = function () {
         if (this.addTabButton) {
             this.addTabButton.setDisabled(!this.isAllowed('add_tab'));
         }
@@ -37,7 +37,7 @@ function WorkSpace (workSpaceState) {
     // ****************
 
     /**
-     * Initializes this WorkSpace in failsafe mode.
+     * Initializes this Workspace in failsafe mode.
      */
     var _failsafeInit = function(transport, e) {
         this.valid = false;
@@ -71,7 +71,7 @@ function WorkSpace (workSpaceState) {
             'preferences': {}
         };
 
-        this.workSpaceGlobalInfo = {
+        this.workspaceGlobalInfo = {
                                     'workspace': {
                                        'tabList': [
                                          initialTab
@@ -90,7 +90,7 @@ function WorkSpace (workSpaceState) {
     };
 
     // Not like the remaining methods. This is a callback function to process AJAX requests, so must be public.
-    var loadWorkSpace = function (transport) {
+    var loadWorkspace = function (transport) {
         var layoutManager, params, param, preferenceValues, iwidgets;
 
         layoutManager = LayoutManagerFactory.getInstance();
@@ -99,26 +99,26 @@ function WorkSpace (workSpaceState) {
 
         try {
             // JSON-coded iWidget-variable mapping
-            this.workSpaceGlobalInfo = JSON.parse(transport.responseText);
+            this.workspaceGlobalInfo = JSON.parse(transport.responseText);
 
             // Load workspace preferences
-            params = this.workSpaceGlobalInfo.workspace.empty_params;
-            preferenceValues = this.workSpaceGlobalInfo['workspace']['preferences'];
+            params = this.workspaceGlobalInfo.workspace.empty_params;
+            preferenceValues = this.workspaceGlobalInfo['workspace']['preferences'];
             this.preferences = PreferencesManagerFactory.getInstance().buildPreferences('workspace', preferenceValues, this, params);
 
             // Check if the workspace needs to ask some values before loading this workspace
-            if (this.workSpaceGlobalInfo.workspace.empty_params.length > 0) {
+            if (this.workspaceGlobalInfo.workspace.empty_params.length > 0) {
                 preferenceValues = {};
                 for (i = 0; i < params.length; i += 1) {
                     param = params[i];
-                    if (this.workSpaceGlobalInfo.workspace.preferences[param] != null) {
-                        preferenceValues[param] = this.workSpaceGlobalInfo.workspace.preferences[param];
+                    if (this.workspaceGlobalInfo.workspace.preferences[param] != null) {
+                        preferenceValues[param] = this.workspaceGlobalInfo.workspace.preferences[param];
                     }
                 }
 
                 this.preferences.addCommitHandler(function() {
                     setTimeout(function() {
-                        OpManagerFactory.getInstance().changeActiveWorkSpace(this);
+                        OpManagerFactory.getInstance().changeActiveWorkspace(this);
                     }.bind(this), 0);
                 }.bind(this));
                 LayoutManagerFactory.getInstance().showPreferencesWindow('workspace', this.preferences, false);
@@ -126,7 +126,7 @@ function WorkSpace (workSpaceState) {
             }
 
             // Load workspace tabs
-            var tabs = this.workSpaceGlobalInfo['workspace']['tabList'];
+            var tabs = this.workspaceGlobalInfo['workspace']['tabList'];
             var visibleTabId = null;
             var loading_tab = this.notebook.createTab({'closeable': false});
 
@@ -146,7 +146,7 @@ function WorkSpace (workSpaceState) {
 
             this.varManager = new VarManager(this);
 
-            this.contextManager = new ContextManager(this, this.workSpaceGlobalInfo);
+            this.contextManager = new ContextManager(this, this.workspaceGlobalInfo);
             this.wiring = new Wirecloud.Wiring(this);
             iwidgets = this.getIWidgets();
             for (i = 0; i < iwidgets.length; i += 1) {
@@ -158,14 +158,14 @@ function WorkSpace (workSpaceState) {
             LayoutManagerFactory.getInstance().header._paintBreadcrum(LayoutManagerFactory.getInstance().viewsByName['workspace']);
 
             this.restricted = !this.isOwned() && this.isShared();
-            this.removable = !this.restricted && this.workSpaceGlobalInfo.workspace.removable;
+            this.removable = !this.restricted && this.workspaceGlobalInfo.workspace.removable;
             this.valid = true;
 
             if (this.initial_tab_id && this.tabInstances.get(this.initial_tab_id)) {
                 visibleTabId = this.initial_tab_id;
             }
 
-            this.wiring.load(this.workSpaceGlobalInfo.workspace.wiring);
+            this.wiring.load(this.workspaceGlobalInfo.workspace.wiring);
             this.notebook.goToTab(this.tabInstances.get(visibleTabId));
             loading_tab.close();
 
@@ -199,7 +199,7 @@ function WorkSpace (workSpaceState) {
     };
 
     var deleteSuccess = function (transport) {
-        OpManagerFactory.getInstance().removeWorkSpace(this.workSpaceState.id);
+        OpManagerFactory.getInstance().removeWorkspace(this.workspaceState.id);
         LayoutManagerFactory.getInstance().logSubTask(gettext('Workspace renamed successfully'));
         LayoutManagerFactory.getInstance().logStep('');
     };
@@ -218,7 +218,7 @@ function WorkSpace (workSpaceState) {
         layoutManager.logSubTask(gettext('Workspace published successfully'));
         layoutManager.logStep('');
         layoutManager._notifyPlatformReady();
-        this.workspace.workSpaceGlobalInfo.workspace.params = this.params;
+        this.workspace.workspaceGlobalInfo.workspace.params = this.params;
         CatalogueFactory.getInstance().invalidate_last_results('mashup');
     };
 
@@ -240,7 +240,7 @@ function WorkSpace (workSpaceState) {
         var data = JSON.parse(response);
         //update the new wsInfo
         opManager = OpManagerFactory.getInstance();
-        opManager.changeActiveWorkSpace(opManager.workSpaceInstances.get(data.merged_workspace_id));
+        opManager.changeActiveWorkspace(opManager.workspaceInstances.get(data.merged_workspace_id));
         LayoutManagerFactory.getInstance().hideCover();
     }
 
@@ -286,7 +286,7 @@ function WorkSpace (workSpaceState) {
     // ****************
 
 
-    WorkSpace.prototype.iwidgetLoaded = function(iwidgetId) {
+    Workspace.prototype.iwidgetLoaded = function(iwidgetId) {
         var iwidget = this.getIwidget(iwidgetId);
         iwidget._notifyLoaded();
 
@@ -298,7 +298,7 @@ function WorkSpace (workSpaceState) {
 
     }
 
-    WorkSpace.prototype.checkForWidgetUpdates = function() {
+    Workspace.prototype.checkForWidgetUpdates = function() {
         var i, iwidgets;
 
         iwidgets = this.getIWidgets();
@@ -307,11 +307,11 @@ function WorkSpace (workSpaceState) {
         }
     };
 
-    WorkSpace.prototype.getTabInstance = function(tabId) {
+    Workspace.prototype.getTabInstance = function(tabId) {
         return this.tabInstances.get(tabId);
     }
 
-    WorkSpace.prototype.iwidgetUnloaded = function(iwidgetId) {
+    Workspace.prototype.iwidgetUnloaded = function(iwidgetId) {
         var iwidget = this.getIwidget(iwidgetId);
         if (iwidget == null)
             return;
@@ -322,22 +322,22 @@ function WorkSpace (workSpaceState) {
         iwidget._notifyUnloaded();
     }
 
-    WorkSpace.prototype.sendBufferedVars = function (async) {
+    Workspace.prototype.sendBufferedVars = function (async) {
         if (this.varManager) this.varManager.sendBufferedVars(async);
     }
 
-    WorkSpace.prototype.getHeader = function(){
+    Workspace.prototype.getHeader = function(){
         return this.headerHTML;
     }
 
-    WorkSpace.prototype.rename = function (name) {
+    Workspace.prototype.rename = function (name) {
         var layoutManager, workspaceUrl, params, msg = null;
 
         name = name.strip()
 
         if (name === "") {
             msg = gettext("Invalid workspace name");
-        } else if (OpManagerFactory.getInstance().workSpaceExists(name)) {
+        } else if (OpManagerFactory.getInstance().workspaceExists(name)) {
             msg = interpolate(gettext("Error updating workspace: the name %(name)s is already in use."), {name: name}, true);
         }
 
@@ -349,10 +349,10 @@ function WorkSpace (workSpaceState) {
         layoutManager = LayoutManagerFactory.getInstance();
         layoutManager._startComplexTask(gettext("Renaming workspace"), 1);
         msg = gettext('Renaming "%(workspacename)s" to "%(newname)s"');
-        msg = interpolate(msg, {workspacename: this.workSpaceState.name, newname: name}, true);
+        msg = interpolate(msg, {workspacename: this.workspaceState.name, newname: name}, true);
         layoutManager.logSubTask(msg);
 
-        workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({workspace_id: this.workSpaceState.id});
+        workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({workspace_id: this.workspaceState.id});
         params = {'workspace': Object.toJSON({name: name})};
         Wirecloud.io.makeRequest(workspaceUrl, {
             method: 'PUT',
@@ -360,7 +360,7 @@ function WorkSpace (workSpaceState) {
             onSuccess: function () {
                 var layoutManager = LayoutManagerFactory.getInstance();
 
-                this.workSpaceState.name = name;
+                this.workspaceState.name = name;
                 layoutManager.header.refresh();
                 layoutManager.logSubTask(gettext('Workspace renamed successfully'));
                 layoutManager.logStep('');
@@ -373,17 +373,17 @@ function WorkSpace (workSpaceState) {
         });
     };
 
-    WorkSpace.prototype.delete = function () {
+    Workspace.prototype.delete = function () {
         var layoutManager, workspaceUrl;
 
         layoutManager = LayoutManagerFactory.getInstance();
         layoutManager._startComplexTask(gettext("Removing workspace"), 2);
         msg = gettext('Removing "%(workspacename)s"');
-        msg = interpolate(msg, {workspacename: this.workSpaceState.name}, true);
+        msg = interpolate(msg, {workspacename: this.workspaceState.name}, true);
         layoutManager.logSubTask(msg);
 
-        workSpaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({workspace_id: this.workSpaceState.id});
-        Wirecloud.io.makeRequest(workSpaceUrl, {
+        workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({workspace_id: this.workspaceState.id});
+        Wirecloud.io.makeRequest(workspaceUrl, {
             method: 'DELETE',
             onSuccess: deleteSuccess.bind(this),
             onFailure: deleteError,
@@ -391,32 +391,32 @@ function WorkSpace (workSpaceState) {
         });
     };
 
-    WorkSpace.prototype.getName = function () {
-        return this.workSpaceState.name;
+    Workspace.prototype.getName = function () {
+        return this.workspaceState.name;
     }
 
 
-    WorkSpace.prototype.getId = function () {
-        return this.workSpaceState.id;
+    Workspace.prototype.getId = function () {
+        return this.workspaceState.id;
     }
 
-    WorkSpace.prototype.getWiring = function () {
+    Workspace.prototype.getWiring = function () {
         return this.wiring;
     }
 
-    WorkSpace.prototype.getWiringInterface = function () {
+    Workspace.prototype.getWiringInterface = function () {
         return this.wiringInterface;
     }
 
-    WorkSpace.prototype.getVarManager = function () {
+    Workspace.prototype.getVarManager = function () {
         return this.varManager;
     }
 
-    WorkSpace.prototype.getContextManager = function () {
+    Workspace.prototype.getContextManager = function () {
         return this.contextManager;
     }
 
-    WorkSpace.prototype.downloadWorkSpaceInfo = function (initial_tab) {
+    Workspace.prototype.downloadWorkspaceInfo = function (initial_tab) {
         // TODO
         this.addTabButton = new StyledElements.StyledButton({
             'class': 'add_tab',
@@ -433,15 +433,15 @@ function WorkSpace (workSpaceState) {
 
         LayoutManagerFactory.getInstance().logSubTask(gettext("Downloading workspace data"), 1);
         this.initial_tab_id = initial_tab;
-        var workSpaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': this.workSpaceState.id});
-        Wirecloud.io.makeRequest(workSpaceUrl, {
+        var workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': this.workspaceState.id});
+        Wirecloud.io.makeRequest(workspaceUrl, {
             method: 'GET',
-            onSuccess: loadWorkSpace.bind(this),
+            onSuccess: loadWorkspace.bind(this),
             onFailure: onError.bind(this)
         });
     };
 
-    WorkSpace.prototype.getIwidget = function(iwidgetId) {
+    Workspace.prototype.getIwidget = function(iwidgetId) {
         var i, tab_keys = this.tabInstances.keys();
         for (i = 0; i < tab_keys.length; i += 1) {
             var tab = this.tabInstances.get(tab_keys[i]);
@@ -454,7 +454,7 @@ function WorkSpace (workSpaceState) {
         return null;
     }
 
-    WorkSpace.prototype.prepareToShow = function() {
+    Workspace.prototype.prepareToShow = function() {
         var layoutManager = LayoutManagerFactory.getInstance();
 
         if (!this.loaded) {
@@ -464,15 +464,15 @@ function WorkSpace (workSpaceState) {
 
     };
 
-    WorkSpace.prototype.isValid = function() {
+    Workspace.prototype.isValid = function() {
         return this.valid;
     }
 
-    WorkSpace.prototype.getTab = function(tabId) {
+    Workspace.prototype.getTab = function(tabId) {
         return this.tabInstances.get(tabId);
     }
 
-    WorkSpace.prototype.setTab = function(tab) {
+    Workspace.prototype.setTab = function(tab) {
         if (!this.loaded || tab == null) {
             return;
         }
@@ -483,14 +483,14 @@ function WorkSpace (workSpaceState) {
         this.notebook.goToTab(tab);
     }
 
-    WorkSpace.prototype.getVisibleTab = function() {
+    Workspace.prototype.getVisibleTab = function() {
         if (!this.loaded)
             return;
 
         return this.notebook.getVisibleTab();
     }
 
-    WorkSpace.prototype.tabExists = function(tabName){
+    Workspace.prototype.tabExists = function(tabName){
         var tabValues = this.tabInstances.values();
         for (var i = 0; i < tabValues.length; i++) {
             if (tabValues[i].tabInfo.name === tabName) {
@@ -500,7 +500,7 @@ function WorkSpace (workSpaceState) {
         return false;
     }
 
-    WorkSpace.prototype.addTab = function() {
+    Workspace.prototype.addTab = function() {
         var layoutManager, msg, counter, prefixName, tabName, url, params;
 
         if (!this.isValid()) {
@@ -510,7 +510,7 @@ function WorkSpace (workSpaceState) {
         layoutManager = LayoutManagerFactory.getInstance();
         layoutManager._startComplexTask(gettext("Adding a tab to the workspace"), 1);
         msg = gettext('Adding tab to "%(workspacename)s"');
-        msg = interpolate(msg, {workspacename: this.workSpaceState.name}, true);
+        msg = interpolate(msg, {workspacename: this.workspaceState.name}, true);
         layoutManager.logSubTask(msg);
 
         counter = this.tabInstances.keys().length + 1;
@@ -520,7 +520,7 @@ function WorkSpace (workSpaceState) {
         while (this.tabExists(tabName)) {
             tabName = prefixName + " " + (counter++).toString();
         }
-        url = Wirecloud.URLs.TAB_COLLECTION.evaluate({workspace_id: this.workSpaceState.id});
+        url = Wirecloud.URLs.TAB_COLLECTION.evaluate({workspace_id: this.workspaceState.id});
         params = {
             tab: Object.toJSON({name: tabName})
         };
@@ -537,7 +537,7 @@ function WorkSpace (workSpaceState) {
     }
 
     //It returns if the tab can be removed and shows an error window if it isn't possible
-    WorkSpace.prototype.removeTab = function(tab) {
+    Workspace.prototype.removeTab = function(tab) {
         var msg = null;
         if (this.tabInstances.keys().length <= 1) {
             msg = gettext("there must be one tab at least");
@@ -563,7 +563,7 @@ function WorkSpace (workSpaceState) {
         return true;
     }
 
-    WorkSpace.prototype.unloadTab = function(tabId) {
+    Workspace.prototype.unloadTab = function(tabId) {
         if (!this.valid)
             return;
 
@@ -574,7 +574,7 @@ function WorkSpace (workSpaceState) {
         tab.destroy();
     };
 
-    WorkSpace.prototype.unload = function() {
+    Workspace.prototype.unload = function() {
 
         var layoutManager = LayoutManagerFactory.getInstance();
         layoutManager.logSubTask(gettext("Unloading current workspace"));
@@ -618,7 +618,7 @@ function WorkSpace (workSpaceState) {
         LogManagerFactory.getInstance().newCycle();
     }
 
-    WorkSpace.prototype.addIWidget = function(tab, iwidget, iwidgetJSON, options) {
+    Workspace.prototype.addIWidget = function(tab, iwidget, iwidgetJSON, options) {
         this.varManager.addInstance(iwidget, iwidgetJSON, tab);
         this.contextManager.addInstance(iwidget, iwidget.getWidget().getTemplate());
         this.events.iwidgetadded.dispatch(this, iwidget);
@@ -628,12 +628,12 @@ function WorkSpace (workSpaceState) {
         iwidget.paint();
     };
 
-    WorkSpace.prototype.removeIWidgetData = function(iWidgetId) {
+    Workspace.prototype.removeIWidgetData = function(iWidgetId) {
             this.varManager.removeInstance(iWidgetId);
             this.contextManager.removeInstance(iWidgetId);
     }
 
-    WorkSpace.prototype.removeIWidget = function(iWidgetId, orderFromServer) {
+    Workspace.prototype.removeIWidget = function(iWidgetId, orderFromServer) {
         var iwidget = this.getIwidget(iWidgetId);
         if (iwidget) {
             var dragboard = iwidget.layout.dragboard;
@@ -643,7 +643,7 @@ function WorkSpace (workSpaceState) {
         }
     }
 
-    WorkSpace.prototype.getIWidgets = function() {
+    Workspace.prototype.getIWidgets = function() {
         var iWidgets = [];
         var keys = this.tabInstances.keys();
         for (var i = 0; i < keys.length; i++) {
@@ -653,7 +653,7 @@ function WorkSpace (workSpaceState) {
         return iWidgets;
     }
 
-    WorkSpace.prototype.getActiveDragboard = function () {
+    Workspace.prototype.getActiveDragboard = function () {
         var current_tab = this.notebook.getVisibleTab();
         if (current_tab) {
             return current_tab.getDragboard();
@@ -662,7 +662,7 @@ function WorkSpace (workSpaceState) {
         }
     };
 
-    WorkSpace.prototype.shareWorkspace = function(value, groups) {
+    Workspace.prototype.shareWorkspace = function(value, groups) {
         var share_workspace_success = function (transport) {
             var response = transport.responseText;
             var result = JSON.parse(response);
@@ -681,7 +681,7 @@ function WorkSpace (workSpaceState) {
             LayoutManagerFactory.getInstance().showSharingWorkspaceResults(gettext("The Workspace has NOT been successfully shared."), '');
         };
 
-        var url = Wirecloud.URLs.WORKSPACE_SHARE.evaluate({'workspace_id': this.workSpaceState.id, 'share_boolean': value});
+        var url = Wirecloud.URLs.WORKSPACE_SHARE.evaluate({'workspace_id': this.workspaceState.id, 'share_boolean': value});
         var sharingData = Object.toJSON(groups);
         var params = (groups.length>0)?{'groups':sharingData}:{};
 
@@ -693,14 +693,14 @@ function WorkSpace (workSpaceState) {
         });
     }
 
-    WorkSpace.prototype.publish = function(data) {
+    Workspace.prototype.publish = function(data) {
         var layoutManager = LayoutManagerFactory.getInstance();
         layoutManager._startComplexTask(gettext('Publishing current workspace'), 1);
 
-        var workSpaceUrl = Wirecloud.URLs.WORKSPACE_PUBLISH.evaluate({workspace_id: this.workSpaceState.id});
+        var workspaceUrl = Wirecloud.URLs.WORKSPACE_PUBLISH.evaluate({workspace_id: this.workspaceState.id});
         publicationData = Object.toJSON(data);
         params = new Hash({data: publicationData});
-        Wirecloud.io.makeRequest(workSpaceUrl, {
+        Wirecloud.io.makeRequest(workspaceUrl, {
             method: 'POST',
             parameters: params,
             context: {workspace: this, params: data},
@@ -709,8 +709,8 @@ function WorkSpace (workSpaceState) {
         });
     };
 
-    WorkSpace.prototype.mergeWith = function(workspace) {
-        var workSpaceUrl, layoutManager, msg;
+    Workspace.prototype.mergeWith = function(workspace) {
+        var workspaceUrl, layoutManager, msg;
 
         layoutManager = LayoutManagerFactory.getInstance();
         layoutManager._startComplexTask(gettext("Merging workspaces"), 1);
@@ -718,8 +718,8 @@ function WorkSpace (workSpaceState) {
         msg = interpolate(msg, {srcworkspace: workspace.name, dstworkspace: this.getName()}, true);
         layoutManager.logSubTask(msg);
 
-        workSpaceUrl = Wirecloud.URLs.WORKSPACE_MERGE_LOCAL.evaluate({from_ws_id: workspace.id, to_ws_id: this.workSpaceState.id});
-        Wirecloud.io.markeRequest(workSpaceUrl, {
+        workspaceUrl = Wirecloud.URLs.WORKSPACE_MERGE_LOCAL.evaluate({from_ws_id: workspace.id, to_ws_id: this.workspaceState.id});
+        Wirecloud.io.markeRequest(workspaceUrl, {
             method: 'GET',
             onSuccess: mergeSuccess,
             onFailure: mergeError
@@ -727,26 +727,26 @@ function WorkSpace (workSpaceState) {
     };
 
     // Checks if this workspace is shared with other users
-    WorkSpace.prototype.isShared = function() {
-        return this.workSpaceState['shared'];
+    Workspace.prototype.isShared = function() {
+        return this.workspaceState['shared'];
     };
 
     // Checks if the current user is the creator of this workspace
-    WorkSpace.prototype.isOwned = function() {
-        return this.workSpaceState['owned'];
+    Workspace.prototype.isOwned = function() {
+        return this.workspaceState['owned'];
     };
 
     /**
      * Checks when an action, defined by a basic policy, can be performed.
      */
-    WorkSpace.prototype._isAllowed = function _isAllowed(action) {
+    Workspace.prototype._isAllowed = function _isAllowed(action) {
         return Wirecloud.PolicyManager.evaluate('workspace', action);
     };
 
     /**
      * Checks if an action can be performed in this workspace by current user.
      */
-    WorkSpace.prototype.isAllowed = function (action) {
+    Workspace.prototype.isAllowed = function (action) {
         var nworkspaces;
 
         if (action !== "remove" && (!this.valid || this.restricted)) {
@@ -755,7 +755,7 @@ function WorkSpace (workSpaceState) {
 
         switch (action) {
         case "remove":
-            nworkspaces = OpManagerFactory.getInstance().workSpaceInstances.keys().length;
+            nworkspaces = OpManagerFactory.getInstance().workspaceInstances.keys().length;
             return /* opManager.isAllow('add_remove_workspaces') && */ (nworkspaces > 1) && this.removable;
         case "merge_workspaces":
             return this._isAllowed('add_remove_iwidgets') || this._isAllowed('merge_workspaces');
@@ -772,8 +772,8 @@ function WorkSpace (workSpaceState) {
     //  CONSTRUCTOR
     // *****************
 
-    this.workSpaceState = workSpaceState;
-    this.workSpaceGlobal = null;
+    this.workspaceState = workspaceState;
+    this.workspaceGlobal = null;
     this.wiringInterface = null;
     this.varManager = null;
     this.tabInstances = new Hash();
@@ -791,9 +791,9 @@ function WorkSpace (workSpaceState) {
      * OPERATIONS
      */
     this.markAsActive = function () {
-        var workSpaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': this.workSpaceState.id});
+        var workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': this.workspaceState.id});
         var params = {'workspace': Object.toJSON({active: "true"})};
-        Wirecloud.io.makeRequest(workSpaceUrl, {
+        Wirecloud.io.makeRequest(workspaceUrl, {
             method: 'PUT',
             parameters: params,
             onSuccess: this.markAsActiveSuccess.bind(this),
@@ -802,8 +802,8 @@ function WorkSpace (workSpaceState) {
     }.bind(this);
 
     this.markAsActiveSuccess = function() {
-        this.workSpaceGlobalInfo.workspace.active = true;
-        this.workSpaceState.active = true;
+        this.workspaceGlobalInfo.workspace.active = true;
+        this.workspaceState.active = true;
         if (this.activeEntryId != null) {
             this.confMenu.removeOption(this.activeEntryId);
             this.activeEntryId = null;
@@ -816,9 +816,9 @@ function WorkSpace (workSpaceState) {
         logManager.log(msg);
     }.bind(this);
 };
-WorkSpace.prototype = new StyledElements.ObjectWithEvents();
+Workspace.prototype = new StyledElements.ObjectWithEvents();
 
-WorkSpace.prototype.drawAttention = function(iWidgetId) {
+Workspace.prototype.drawAttention = function(iWidgetId) {
     var iWidget = this.getIwidget(iWidgetId);
     if (iWidget !== null) {
         this.highlightTab(iWidget.layout.dragboard.tab);
@@ -827,7 +827,7 @@ WorkSpace.prototype.drawAttention = function(iWidgetId) {
     }
 };
 
-WorkSpace.prototype.highlightTab = function(tab) {
+Workspace.prototype.highlightTab = function(tab) {
     var tabElement;
 
     if (typeof tab === 'number') {

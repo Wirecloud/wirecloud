@@ -26,7 +26,7 @@ from django.utils.translation import ugettext as _
 from catalogue.models import CatalogueResource
 from commons.get_data import _invalidate_cached_variable_values
 from commons.resource import Resource
-from wirecloud.models import WorkSpace
+from wirecloud.models import Workspace
 from wirecloud.wiring.utils import generate_xhtml_operator_code
 
 
@@ -47,7 +47,7 @@ class WiringEntry(Resource):
         except:
             return HttpResponseBadRequest(_("Request body is not valid JSON data"), mimetype='text/plain; charset=UTF-8')
 
-        workspace = get_object_or_404(WorkSpace, id=workspace_id)
+        workspace = get_object_or_404(Workspace, id=workspace_id)
         if not request.user.is_staff and workspace.creator != request.user:
             return HttpResponseForbidden()
 
