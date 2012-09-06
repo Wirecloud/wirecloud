@@ -8,10 +8,11 @@ import json
 from django.contrib.auth.models import User, Group
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
-from django.test import Client, TransactionTestCase
+from django.test import Client
 from django.utils import simplejson
 
 from commons.get_data import get_global_workspace_data
+from commons.test import WirecloudTestCase
 from wirecloud.models import Widget, IWidget, Tab, UserWorkSpace, Variable, VariableValue, WorkSpace
 from wirecloud.iwidget.utils import SaveIWidget, deleteIWidget
 from wirecloud.workspace.packageCloner import PackageCloner
@@ -25,7 +26,7 @@ from wirecloud.workspace.views import createEmptyWorkSpace, linkWorkspace
 __test__ = False
 
 
-class CacheTestCase(TransactionTestCase):
+class CacheTestCase(WirecloudTestCase):
 
     def setUp(self):
         super(CacheTestCase, self).setUp()
@@ -236,7 +237,7 @@ class WorkspaceCacheTestCase(CacheTestCase):
         self.assertEqual(len(iwidget_list), 1)
 
 
-class ParamatrizedWorkspaceGenerationTestCase(TransactionTestCase):
+class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
     WIRE_M = rdflib.Namespace('http://wirecloud.conwet.fi.upm.es/ns/mashup#')
     FOAF = rdflib.Namespace('http://xmlns.com/foaf/0.1/')
@@ -245,10 +246,12 @@ class ParamatrizedWorkspaceGenerationTestCase(TransactionTestCase):
     USDL = rdflib.Namespace('http://www.linked-usdl.org/ns/usdl-core#')
     VCARD = rdflib.Namespace('http://www.w3.org/2006/vcard/ns#')
 
-    fixtures = ['test_data']
+    fixtures = ('test_data',)
     tags = ('fiware-ut-1',)
 
     def setUp(self):
+
+        super(ParameterizedWorkspaceGenerationTestCase, self).setUp()
 
         self.user = User.objects.get(username='test')
         self.workspace_with_iwidgets = WorkSpace.objects.get(pk=1)
@@ -439,14 +442,15 @@ class ParamatrizedWorkspaceGenerationTestCase(TransactionTestCase):
         self.assertRDFElement(graph, vendor, self.FOAF, 'name', u'Wirecloud Test Suite')
 
 
-class ParametrizedWorkspaceParseTestCase(CacheTestCase):
+class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
     fixtures = ('selenium_test_data',)
     tags = ('fiware-ut-2',)
 
     def setUp(self):
 
-        super(ParametrizedWorkspaceParseTestCase, self).setUp()
+        super(ParameterizedWorkspaceParseTestCase, self).setUp()
+
         self.user = User.objects.create_user('test', 'test@example.com', 'test')
         self.workspace = createEmptyWorkSpace('Testing', self.user)
         self.template1 = self.read_template('wt1.xml')
