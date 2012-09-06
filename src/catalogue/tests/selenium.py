@@ -8,7 +8,7 @@ from tempfile import mkdtemp
 from django.conf import settings
 
 import catalogue.utils
-from commons.test import WirecloudSeleniumTestCase
+from wirecloudcommons.test import WirecloudSeleniumTestCase
 from commons.wgt import WgtDeployer
 
 __test__ = False

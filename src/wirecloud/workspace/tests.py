@@ -12,7 +12,6 @@ from django.test import Client
 from django.utils import simplejson
 
 from commons.get_data import get_global_workspace_data
-from commons.test import WirecloudTestCase
 from wirecloud.models import Widget, IWidget, Tab, UserWorkSpace, Variable, VariableValue, WorkSpace
 from wirecloud.iwidget.utils import SaveIWidget, deleteIWidget
 from wirecloud.workspace.packageCloner import PackageCloner
@@ -20,6 +19,7 @@ from wirecloud.workspace.mashupTemplateGenerator import build_template_from_work
 from wirecloud.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from wirecloud.workspace.utils import sync_base_workspaces
 from wirecloud.workspace.views import createEmptyWorkSpace, linkWorkspace
+from wirecloudcommons.test import WirecloudTestCase
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/tests/__init__.py)

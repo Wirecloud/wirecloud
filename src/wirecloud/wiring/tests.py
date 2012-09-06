@@ -27,8 +27,8 @@ from django.utils import simplejson
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 
-from commons.test import WirecloudSeleniumTestCase, widget_operation
 from wirecloud.workspace.models import WorkSpace
+from wirecloudcommons.test import WirecloudSeleniumTestCase, widget_operation
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/tests.py)
@@ -129,7 +129,6 @@ class WiringTestCase(TransactionTestCase):
 class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
     tags = ('fiware-ut-6',)
-
 
     def get_iwidget_anchor(self, iwidget, endpoint):
         return self.driver.execute_script('''

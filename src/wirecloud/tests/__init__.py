@@ -4,8 +4,7 @@ from wirecloud.wiring.tests import WiringTestCase
 from wirecloud.widget.tests import ShowcaseTestCase, WGTShowcaseTestCase
 from wirecloud.workspace.tests import WorkspaceTestCase, WorkspaceCacheTestCase, ParameterizedWorkspaceParseTestCase, ParameterizedWorkspaceGenerationTestCase
 
-
-from commons.test import build_selenium_test_cases
+from wirecloudcommons.test import build_selenium_test_cases
 
 build_selenium_test_cases(('wirecloud.tests.selenium_tests.BasicSeleniumTests',), locals())
 build_selenium_test_cases(('wirecloud.wiring.tests.WiringSeleniumTestCase',), locals())

@@ -1,6 +1,6 @@
 import time
 
-from commons.test import widget_operation, WirecloudSeleniumTestCase
+from wirecloudcommons.test import widget_operation, WirecloudSeleniumTestCase
 
 
 class BasicSeleniumTests(WirecloudSeleniumTestCase):
