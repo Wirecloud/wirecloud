@@ -833,9 +833,6 @@ div.styled_numeric_field div.numeric_bottom_button {
 	height:100%;
 	position:absolute;
 	background-color:white;
-	filter:alpha(opacity=50);
-	-moz-opacity:0.6;
-	-khtml-opacity: 0.6;
 	opacity: 0.6;
 }
 

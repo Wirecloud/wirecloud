@@ -1,25 +1,3 @@
-.catalogue #tag_categories ul {
-	list-style-type:none;
-	padding-left: 10px;
-	margin: 0;
-}
-
-.fi-ware_catalogue #tag_categories ul {
-	list-style-type:none;
-	padding-left: 10px;
-	margin: 0;
-}
-
-.catalogue #tag_categories li {
-	padding: 5px 0;
-	cursor: pointer;
-}
-
-.fi-ware_catalogue #tag_categories li {
-	padding: 5px 0;
-	cursor: pointer;
-}
-
 .catalogue .tag_links a, .catalogue .my_tags_area a {
   margin-right: 5px;
   float: left;
@@ -192,14 +170,6 @@
 	background:#E6F3FF none repeat scroll 0 0;
 }
 
-.catalogue #catalogue_content {
-	float:left;
-    padding-left:10px;
-    position:relative;
-    width:84%;
-    padding-top: 7px;
-}
-
 .catalogue #catalogue_resources_header{
 	float: left;
 	clear: both;
@@ -279,14 +249,6 @@
 	-moz-border-radius-topleft:4px;
 	-moz-border-radius-topright:4px;
 	background:#E6F3FF none repeat scroll 0 0;
-}
-
-.fi-ware_catalogue #catalogue_content {
-	float:left;
-    padding-left:10px;
-    position:relative;
-    width:84%;
-    padding-top: 7px;
 }
 
 .fi-ware_catalogue #catalogue_resources_header{
@@ -621,37 +583,6 @@ Resource
   float:left;
   overflow:hidden;
   width:500px;
-}
-
-.show_external_link {
-  padding-bottom: 10px;
-}
-
-.help_text_enabled {
-	display: block;
-	position: absolute;
-	z-index: 5;
-	max-width: 450px;
-}
-
-.help_text_disabled {
-	display: none;
-	position: absolute;
-}
-
-#app_desc, #app_widget_list {
-	clear: both;
-}
-
-#app_vendor, #app_signup_fee, #app_monthly_fee {
-	padding-left: 6px;
-	float: left;
-}
-
-#app_close{
-	position: absolute;
-	top: 5px;
-	right: 5px;
 }
 
 .floating_left {
