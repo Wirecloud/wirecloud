@@ -266,8 +266,8 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         self.popup_menu_click('Upload')
         time.sleep(2)
 
-        self.driver.find_element_by_id('wgt_file').send_keys(self.wgt_dir + os.sep + wgt_file)
-        self.driver.find_element_by_id('upload_wgt_button').click()
+        self.driver.find_element_by_class_name('wgt_file').send_keys(self.wgt_dir + os.sep + wgt_file)
+        self.driver.find_element_by_class_name('upload_wgt_button').click()
         self.wait_wirecloud_ready()
 
         self.search_resource(widget_name)
@@ -284,7 +284,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
 
         template_input = self.driver.find_element_by_css_selector('form.template_submit_form .template_uri')
         self.fill_form_input(template_input, template_url)
-        self.driver.find_elements_by_class_name('submit_link')[0].click()
+        self.driver.find_element_by_class_name('submit_link').click()
         self.wait_wirecloud_ready()
 
         self.search_resource(resource_name)
@@ -301,7 +301,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
 
         template_input = self.driver.find_element_by_css_selector('form.template_submit_form .template_uri')
         self.fill_form_input(template_input, template_url)
-        self.driver.find_element_by_id('submit_link').click()
+        self.driver.find_element_by_class_name('submit_link').click()
 
         self.wait_wirecloud_ready()
         time.sleep(2)
