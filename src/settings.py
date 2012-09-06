@@ -143,7 +143,6 @@ INSTALLED_APPS = (
     'wirecloudcommons',
     'wirecloud',
     'catalogue',
-    'uploader',
     'south',
     'compressor',
     'marketAdaptor',

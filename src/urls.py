@@ -70,8 +70,6 @@ urlpatterns = patterns('',
     # Django JavaScript Internacionalitation
     (r'^jsi18n/$', cache_page(60 * 60 * 24)(javascript_catalog), js_info_dict),
 
-    (r'^uploader', include('uploader.urls')),
-
     (r'^api/marketAdaptor/', include('marketAdaptor.urls')),
 )
 
