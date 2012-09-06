@@ -17,7 +17,7 @@ from catalogue.models import CatalogueResource, WidgetWiring
 from commons import http_utils
 from commons.exceptions import TemplateParseException
 from wirecloudcommons.test import FakeDownloader, LocalizedTestCase
-from commons.wgt import WgtDeployer
+from wirecloudcommons.utils.wgt import WgtDeployer
 
 
 # Avoid nose to repeat these tests (they are run through __init__.py)

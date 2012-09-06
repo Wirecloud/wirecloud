@@ -39,11 +39,11 @@ from django.core.urlresolvers import reverse
 from catalogue.models import CatalogueResource
 from commons import http_utils
 from commons.authentication import Http403
-from commons.wgt import WgtDeployer, WgtFile
 from wirecloud.models import ContextOption, Widget, UserPrefOption, UserWorkspace, VariableDef, Workspace, XHTML
 from wirecloud.plugins import get_active_features, get_widget_api_extensions
 from wirecloudcommons.models import Translation
 from wirecloudcommons.utils.template import TemplateParser
+from wirecloudcommons.utils.wgt import WgtDeployer, WgtFile
 
 
 wgt_deployer = WgtDeployer(settings.GADGETS_DEPLOYMENT_DIR)

@@ -27,8 +27,8 @@ from django.utils.translation import ugettext as _
 from catalogue.models import CatalogueResource
 from catalogue.utils import delete_resource
 from catalogue.views import add_widget_from_wgt
-from commons.wgt import WgtFile
 from wirecloudcommons.utils.template import TemplateParser
+from wirecloudcommons.utils.wgt import WgtFile
 
 
 class Command(BaseCommand):

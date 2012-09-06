@@ -40,8 +40,8 @@ from django.utils import translation
 from selenium.webdriver.support.ui import WebDriverWait
 
 from commons import http_utils
-from commons.wgt import WgtDeployer, WgtFile
 from wirecloud.widget import utils as showcase
+from wirecloudcommons.utils.wgt import WgtDeployer, WgtFile
 
 
 class FakeDownloader(object):

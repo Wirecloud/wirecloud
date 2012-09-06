@@ -11,7 +11,6 @@ from django.test import TransactionTestCase
 from commons import http_utils
 from commons.exceptions import TemplateParseException
 from commons.get_data import get_widget_data
-from commons.wgt import WgtFile, WgtDeployer
 from wirecloudcommons.utils.template import TemplateParser
 from wirecloud.models import Widget
 import wirecloud.widget.utils
@@ -19,6 +18,7 @@ from wirecloud.widget.utils import create_widget_from_template, create_widget_fr
 from wirecloud.widget.views import deleteWidget
 from wirecloud.workspace.utils import create_published_workspace_from_template
 from wirecloudcommons.test import FakeDownloader, LocalizedTestCase
+from wirecloudcommons.utils.wgt import WgtDeployer, WgtFile
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/tests/__init__.py)

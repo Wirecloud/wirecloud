@@ -9,7 +9,7 @@ from django.conf import settings
 
 import catalogue.utils
 from wirecloudcommons.test import WirecloudSeleniumTestCase
-from commons.wgt import WgtDeployer
+from wirecloudcommons.utils.wgt import WgtDeployer
 
 __test__ = False
 
