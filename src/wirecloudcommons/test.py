@@ -236,6 +236,9 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
 
         time.sleep(0.1)  # work around some problems
 
+    def wait_catalogue_ready(self, timeout=90):
+        WebDriverWait(self.driver, timeout).until(lambda driver: 'disabled' not in driver.find_element_by_class_name('catalogue').find_element_by_class_name('search_interface').get_attribute('class'))
+
     def login(self, username='admin', password='admin'):
         self.driver.get(self.live_server_url + reverse('login'))
         username_input = self.driver.find_element_by_id('id_username')
@@ -265,9 +268,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
 
         self.driver.find_element_by_id('wgt_file').send_keys(self.wgt_dir + os.sep + wgt_file)
         self.driver.find_element_by_id('upload_wgt_button').click()
-
         self.wait_wirecloud_ready()
-        time.sleep(2)
 
         self.search_resource(widget_name)
         widget = self.search_in_catalogue_results(widget_name)
@@ -284,9 +285,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         template_input = self.driver.find_element_by_css_selector('form.template_submit_form .template_uri')
         self.fill_form_input(template_input, template_url)
         self.driver.find_elements_by_class_name('submit_link')[0].click()
-
         self.wait_wirecloud_ready()
-        time.sleep(2)
 
         self.search_resource(resource_name)
         resource = self.search_in_catalogue_results(resource_name)
@@ -311,6 +310,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 
     def search_resource(self, keyword):
+        self.wait_catalogue_ready()
         search_input = self.driver.find_element_by_css_selector('.simple_search_text')
         self.fill_form_input(search_input, keyword)
         self.driver.execute_script('''
