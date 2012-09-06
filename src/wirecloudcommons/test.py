@@ -155,7 +155,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         cls.driver = getattr(module, klass_name)(**webdriver_args)
 
         # initialize
-        cls.wgt_dir = os.path.join(settings.BASEDIR, 'wirecloud', 'tests', 'test-data')
+        cls.wgt_dir = os.path.join(os.path.dirname(__file__), 'test-data')
         cls.old_deployer = showcase.wgt_deployer
         cls.tmp_dir = mkdtemp()
         showcase.wgt_deployer = WgtDeployer(cls.tmp_dir)
