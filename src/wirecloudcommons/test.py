@@ -1,5 +1,23 @@
 # -*- coding: utf-8 -*-
 
+# Copyright 2012 Universidad Politécnica de Madrid
+
+# This file is part of Wirecloud.
+
+# Wirecloud is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Wirecloud is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+
+
 import os
 import codecs
 from shutil import rmtree
@@ -223,7 +241,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
         self.driver.execute_script('arguments[0].value = arguments[1]', form_input, value)
 
-    def wait_wirecloud_ready(self, start_timeout=90, timeout=120):
+    def wait_wirecloud_ready(self, start_timeout=30, timeout=30):
 
         WebDriverWait(self.driver, start_timeout).until(lambda driver: driver.find_element_by_xpath(r'//*[@id="loading-window" and (@class="" or @class="fadding")]'))
         WebDriverWait(self.driver, timeout).until(lambda driver: driver.find_element_by_css_selector('#loading-window.fadding'))
@@ -236,7 +254,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
 
         time.sleep(0.1)  # work around some problems
 
-    def wait_catalogue_ready(self, timeout=90):
+    def wait_catalogue_ready(self, timeout=30):
         WebDriverWait(self.driver, timeout).until(lambda driver: 'disabled' not in driver.find_element_by_class_name('catalogue').find_element_by_class_name('search_interface').get_attribute('class'))
 
     def login(self, username='admin', password='admin'):
