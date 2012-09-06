@@ -157,9 +157,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'django.core.context_processors.static',
     'wirecloud.themes.active_theme_context_processor',
-    'processors.context_processors.is_anonymous',
-    'processors.context_processors.tag_categories',
-    'processors.context_processors.ezweb_organizations',
+    'wirecloudcommons.context_processors.is_anonymous',
+    'wirecloudcommons.context_processors.tag_categories',
+    'wirecloudcommons.context_processors.ezweb_organizations',
 )
 
 STATICFILES_FINDERS = (
