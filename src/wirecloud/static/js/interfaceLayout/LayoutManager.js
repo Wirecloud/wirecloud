@@ -166,7 +166,7 @@ var LayoutManagerFactory = function () {
             loadingElement.removeClassName('fadding');
             loadingMessage.setStyle({'opacity': '1'});
 
-            if (this.timeout) {
+            if (this.timeout !== null) {
                 clearTimeout(this.timeout);
                 this.timeout = null;
             }
@@ -200,6 +200,9 @@ var LayoutManagerFactory = function () {
                 } else {
                     layoutManager._hideProgressIndicator();
                 }
+            }
+            if (layoutManager.timeout !== null) {
+                clearTimeout(layoutManager.timeout);
             }
             layoutManager.timeout = setTimeout(fadder, 50);
         }
