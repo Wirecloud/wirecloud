@@ -41,15 +41,17 @@ class MarketAdaptor(object):
     _marketplace_uri = None
     _session_id = None
 
-    def __init__(self, marketplace_uri):
+    def __init__(self, marketplace_uri, user='demo1234', passwd='demo1234'):
         self._marketplace_uri = marketplace_uri
+        self._user = user
+        self._passwd = passwd
 
-    def authenticate(self, user='fdelavega', passwd='fran'):
+    def authenticate(self):
 
         opener = urllib2.build_opener()
 
         # submit field is required
-        credentials = urlencode({'j_username': user, 'j_password': passwd, 'submit': 'Submit'})
+        credentials = urlencode({'j_username': self._user, 'j_password': self._passwd, 'submit': 'Submit'})
         headers = {'content-type': 'application/x-www-form-urlencoded'}
         request = MethodRequest("POST", urljoin(self._marketplace_uri, "/FiwareMarketplace/j_spring_security_check"), credentials, headers)
 
