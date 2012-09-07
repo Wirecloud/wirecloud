@@ -72,7 +72,7 @@ class MarketAdaptor(object):
 
     def get_all_stores(self):
 
-        if self._session_id == None:
+        if self._session_id is None:
             self.authenticate()
 
         opener = urllib2.build_opener()
@@ -116,7 +116,7 @@ class MarketAdaptor(object):
 
     def get_store_info(self, store):
 
-        if self._session_id == None:
+        if self._session_id is None:
             self.authenticate()
 
         opener = urllib2.build_opener()
@@ -154,7 +154,7 @@ class MarketAdaptor(object):
 
     def add_store(self, store_info):
 
-        if self._session_id == None:
+        if self._session_id is None:
             self.authenticate()
 
         params = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><resource name="' + store_info['store_name'] + '" ><url>' + store_info['store_uri'] + '</url></resource>'
@@ -185,7 +185,7 @@ class MarketAdaptor(object):
 
     def delete_store(self, store):
 
-        if self._session_id == None:
+        if self._session_id is None:
             self.authenticate()
 
         opener = urllib2.build_opener()
@@ -213,7 +213,7 @@ class MarketAdaptor(object):
 
     def get_all_services_from_store(self, store):
 
-        if self._session_id == None:
+        if self._session_id is None:
             self.authenticate()
 
         opener = urllib2.build_opener()
@@ -275,7 +275,7 @@ class MarketAdaptor(object):
 
     def add_service(self, store, service_info):
 
-        if self._session_id == None:
+        if self._session_id is None:
             self.authenticate()
 
         params = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><resource name="' + service_info['name'] + '" ><url>' + service_info['url'] + '</url></resource>'
@@ -306,7 +306,7 @@ class MarketAdaptor(object):
 
     def delete_service(self, store, service):
 
-        if self._session_id == None:
+        if self._session_id is None:
             self.authenticate()
 
         opener = urllib2.build_opener()
@@ -334,7 +334,7 @@ class MarketAdaptor(object):
 
     def full_text_search(self, store, search_string):
 
-        if self._session_id == None:
+        if self._session_id is None:
             self.authenticate()
 
         opener = urllib2.build_opener()
