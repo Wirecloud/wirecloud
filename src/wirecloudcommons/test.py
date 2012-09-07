@@ -452,15 +452,13 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
 
         return self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab')[-1]
 
-    def add_marketplace(self, name, label, url, type_):
+    def add_marketplace(self, name, url, type_):
 
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click("Add new marketplace")
 
         market_name_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="label"]')
         self.fill_form_input(market_name_input, name)
-        market_label_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="display_name"]')
-        self.fill_form_input(market_label_input, label)
         market_url_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="url"]')
         self.fill_form_input(market_url_input, url)
         market_type_input = self.driver.find_element_by_css_selector('.window_menu .styled_form select')

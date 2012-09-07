@@ -109,7 +109,7 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.change_main_view("marketplace")
         time.sleep(3)
 
-        self.add_marketplace('fiware', 'fiware', 'http://localhost:8080', 'fiware')
+        self.add_marketplace('fiware', 'http://localhost:8080', 'fiware')
 
     def test_delete_fiware_marketpace(self):
 
@@ -118,7 +118,7 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.change_main_view("marketplace")
         time.sleep(3)
 
-        self.add_marketplace('fiware', 'fiware', 'http://localhost:8080', 'fiware')
+        self.add_marketplace('fiware', 'http://localhost:8080', 'fiware')
         time.sleep(3)
         self.delete_marketplace('fiware')
 
