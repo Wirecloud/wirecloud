@@ -320,6 +320,8 @@ class WGTShowcaseTestCase(TransactionTestCase):
         rmtree(self.tmp_dir, ignore_errors=True)
         wirecloud.widget.utils.wgt_deployer = self.old_deployer
 
+        super(WGTShowcaseTestCase, self).tearDown()
+
     def test_basic_wgt_deployment(self):
         wgt_file = WgtFile(os.path.join(os.path.dirname(__file__), 'test-data', 'basic_widget.wgt'))
         widget_path = wirecloud.widget.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')

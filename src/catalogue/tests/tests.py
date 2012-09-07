@@ -68,6 +68,8 @@ class CatalogueAPITestCase(TestCase):
 
     def setUp(self):
 
+        super(CatalogueAPITestCase, self).setUp()
+
         self.user = User.objects.create_user('test', 'test@example.com', 'test')
         self.client = Client()
 
@@ -258,6 +260,8 @@ class WGTDeploymentTestCase(TransactionTestCase):
         rmtree(settings.CATALOGUE_MEDIA_ROOT, ignore_errors=True)
         settings.CATALOGUE_MEDIA_ROOT = self.old_CATALOGUE_MEDIA_ROOT
         catalogue.utils.wgt_deployer = self.old_deployer
+
+        super(WGTDeploymentTestCase, self).tearDown()
 
     def testBasicWGTDeploymentFailsWithoutLogin(self):
         c = Client()

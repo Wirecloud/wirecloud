@@ -40,6 +40,9 @@ class WiringTestCase(TransactionTestCase):
     fixtures = ['test_data']
 
     def setUp(self):
+
+        super(WiringTestCase, self).setUp()
+
         self.user = User.objects.get(username='test')
 
         workspace = Workspace.objects.get(id=1)

@@ -142,6 +142,8 @@ class LocalizedTestCase(TransactionTestCase):
         super(LocalizedTestCase, cls).tearDownClass()
 
     def setUp(self):
+        super(LocalizedTestCase, self).setUp()
+
         self.changeLanguage('en')
 
     def changeLanguage(self, new_language):

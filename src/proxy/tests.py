@@ -85,8 +85,12 @@ class ProxyTestsBase(TransactionTestCase):
         self._original_function = WIRECLOUD_PROXY._do_request
         WIRECLOUD_PROXY._do_request = FakeDownloader()
 
+        super(ProxyTestsBase, self).setUp();
+
     def tearDown(self):
         WIRECLOUD_PROXY._do_request = self._original_function
+
+        super(ProxyTestsBase, self).tearDown()
 
 
 class ProxyTests(ProxyTestsBase):
