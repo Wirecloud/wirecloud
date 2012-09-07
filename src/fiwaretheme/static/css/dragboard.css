@@ -1,0 +1,234 @@
+div.iwidget {
+    -moz-transition: box-shadow 0.7s ease-in;
+    -webkit-transition: box-shadow 0.7s ease-in;
+    transition: box-shadow 0.7s ease-in;
+	border-color: #C2CBD2;
+}
+
+div.widget_window_transparent {
+  background: transparent;
+}
+
+div.widget_menu {
+    background: transparent;
+    font-size: 24px;
+    font-family: "Comfortaa";
+    margin-bottom: 2px;
+}
+
+.widget_menu span, .widget_menu .iwidget_name {
+  	color: #4C5054;
+}
+
+.notebook.workspace .wrapper {
+    border: 0px none;
+    border-radius: 0px;
+}
+
+/********************************************/
+
+div.dragboard.fixed {
+  background: transparent;
+}
+
+div.iwidget div.widget_menu > .styled_button {
+    opacity: 0;
+    -moz-transition-property: opacity;
+    -moz-transition-duration: 1s;
+    -webkit-transition-property: opacity;
+    -webkit-transition-duration: 1s;
+    -o-transition-property: opacity;
+    -o-transition-duration: 1s;
+    transition-property: opacity;
+    transition-duration: 1s;
+    float: right;
+    margin: 0 0 0 5px;
+    padding: 0px;
+    width: 16px;
+    height: 16px;
+    border: 0px none;
+}
+
+div.iwidget div.widget_menu:hover > .styled_button {
+    opacity: 1;
+}
+
+div.iwidget div.widget_menu > .closebutton {
+  background: url(../images/icons-sprite.png);
+  background-position: -24px -480px;
+}
+
+div.iwidget div.widget_menu > .closebutton:hover {
+  background-position: 0px -480px;
+}
+
+div.iwidget div.widget_menu > .minimizebutton {
+  background: url(../images/icons-sprite.png);
+  background-position: -24px -432px;
+}
+
+div.iwidget div.widget_menu > .minimizebutton:hover {
+  background-position: 0px -432px;
+}
+
+div.iwidget div.widget_menu > .maximizebutton {
+  background: url(../images/icons-sprite.png);
+  background-position: -24px -336px;
+}
+
+div.iwidget div.widget_menu > .maximizebutton:hover {
+  background-position: 0px -336px;
+}
+
+div.iwidget div.widget_menu > .settingsbutton {
+  background: url(../images/icons-sprite.png);
+  background-position: -24px -456px;
+}
+
+div.iwidget div.widget_menu > .settingsbutton:hover {
+  background-position: 0px -456px;
+}
+
+div.iwidget div.widget_menu > .settings2button {
+    background: url(../images/icons-sprite.png);
+    background-position: 0px -144px;
+}
+
+div.iwidget div.widget_menu > .settings2button:hover {
+    background-position: -24px -120px;
+}
+
+div.iwidget div.widget_menu > .errorbutton {
+  background-image: url(../images/icons-sprite.png);
+  background-position: -24px -528px;
+  background-color: transparent;
+}
+
+div.iwidget div.widget_menu > .versionbutton {
+    background-image: url(../images/icons-sprite.png);
+    background-position: -24px -216px;
+    background-color: transparent;
+}
+
+div.color_button {
+  border-color: #888;
+  -moz-border-radius: 4px;
+}
+
+div.iwidget div.snapButton {
+  /* This icon represents that the iGadget is outside the grid */
+  background: url(../images/icons-sprite.png);
+  background-position: -48px -72px;
+}
+
+div.iwidget .dragboardwiki {
+  background: url(../images/icons-sprite.png);
+  background-position: -24px -360px;
+}
+
+div.iwidget .dragboardwiki:hover {
+  background-position: 0px -360px;
+}
+
+div.iwidget div.extractButton {
+  background: url(../images/icons-sprite.png);
+  background-position: -48px -360px;
+}
+
+.widget_menu .iwidget_name {
+  font-size:   12px;
+  /*color:       #4C5054;
+  font-weight: bold;*/
+  background:transparent none repeat scroll 0%;
+}
+
+div.widget_window_locked {
+    border-color: transparent;
+}
+
+/***
+ *
+ */
+
+#dragboardcursor {
+  border-color: #97A0A8;
+  background: #F2F9FF;
+  -moz-border-radius-topleft:  6px;
+  -moz-border-radius-topright: 6px;
+  -webkit-border-top-left-radius: 6px;
+  -webkit-border-top-right-radius: 6px;
+}
+
+div.iwidget.highlighted {
+    box-shadow: 0px 0px 3px 3px rgba(250, 0, 0, 0.7);
+}
+
+.notebook.full.workspace > div {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.notebook.workspace .tab_wrapper {
+    background: #800D00;
+    top: auto;
+    bottom: 0;
+    border-top: 1px solid #600000;
+    height: 23px;
+}
+
+.notebook.workspace .tab_wrapper .move_left {
+    left: 10px;
+}
+
+.notebook.workspace .tab_wrapper .move_right {
+    right: 4px;
+}
+
+.notebook.workspace .tab_wrapper .add_tab {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    right: 24px;
+    top: 0px;
+    margin: 0px;
+}
+
+.notebook.workspace .wrapper {
+    top: 0;
+    bottom: 24px;
+}
+
+.notebook.workspace .tab_area {
+    height: 23px;
+    top: -1px;
+}
+
+.notebook.workspace .tab_area .tab {
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    background: #E4E6E2;
+    color: #900;
+    height: 15px;
+    line-height: 16px;
+    border: 1px solid #600000;
+    vertical-align: top;
+    padding: 1px 19px 2px 1ex;
+    -moz-border-radius: 0 0 3px 3px;
+    -webkit-border-radius: 0 0 3px 3px;
+    border-radius: 0 0 8px 3px;
+}
+
+.notebook.workspace .tab_area .tab > span {
+    vertical-align: middle;
+}
+
+.notebook.workspace .tab_area .tab.selected {
+    background: #FFFFFF;
+    color: #990000;
+    border-top: 0px none;
+    border-bottom: 1px solid #600000;
+    height: 16px;
+}

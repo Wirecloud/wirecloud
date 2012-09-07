@@ -1,0 +1,310 @@
+div.dragboard {
+  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+div.iwidget {
+  position: absolute;
+}
+
+div.fulldragboard {
+  position: fixed;
+}
+
+div.widget_window_locked {
+}
+
+div.widget_window_transparent {
+  background: transparent;
+}
+
+div.widget_menu {
+  cursor: move;
+  overflow: hidden;
+  border: 0px;
+}
+
+/*div.dragboard.fixed -> LOCK OR SHARED STATUS*/
+div.fixed div.widget_menu {
+  cursor: default;
+}
+
+/*div.dragboard.fixed -> LOCK OR SHARED STATUS*/
+div.fixed div.iwidget div.widget_menu .closebutton, div.fixed div.iwidget div.widget_menu .versionbutton {
+  display: none;
+}
+
+/*div.widget_window_readonly -> READONLY STATUS*/
+div.iwidget.widget_window_readonly div.widget_menu .closebutton {
+  display: none;
+}
+
+div.iwidget div.widget_wrapper {
+    width: auto;
+    border-width: 1px 1px 0px 1px;
+    border-radius: 4px 4px 0px 0px;
+    border-style: solid;
+    border-color: #DDD;
+}
+
+div.widget_window_locked div.widget_wrapper {
+  border: none;
+}
+
+div.iwidget div.widget_wrapper iframe {
+    width: 100%;
+    border: none;
+}
+
+div.row {
+  white-space: nowrap;
+}
+
+div.color_button {
+  float: left;
+  cursor: pointer;
+  margin: 3px;
+  width: 16px;
+  height: 16px;
+  border: 1px solid;
+}
+
+div.iwidget .button {
+  display: none;
+  margin: 2px 2px 0px 2px;
+  float: right;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+div.iwidget .snapButton, div.iwidget .extractButton, div.iwidget .dragboardwiki{
+	display: block;
+}
+
+div.iwidget div.leftResizeHandle {
+  position: absolute;
+  width: 32px;
+  height: 16px;
+  bottom: -1px;
+  left: -1px;
+  cursor: sw-resize;
+}
+
+div.iwidget div.rightResizeHandle {
+  position: absolute;
+  width: 32px;
+  height: 16px;
+  bottom: -1px;
+  right: -1px;
+  cursor: se-resize;
+}
+
+div.iwidget div.inUse {
+  width: 100%;
+  height: 100%;
+}
+
+div.iwidget div.leftResizeHandle.inUse {
+  right: 0px;
+  top: 0px;
+  width: auto;
+  height: auto;
+}
+
+div.iwidget div.resizeHandle.inUse {
+  left: 0px;
+  top: 0px;
+  width: auto;
+  height: auto;
+}
+
+/*div.dragboard.fixed*/
+div.fixed div.iwidget div.leftResizeHandle,
+  div.fixed div.iwidget div.rightResizeHandle,
+  div.fixed div.iwidget div.extractButton,
+  div.fixed div.iwidget div.snapButton
+{
+  display: none;
+}
+
+.widget_menu span {
+  cursor: pointer;
+}
+
+div.fixed .widget_menu span {
+	cursor: default;
+}
+
+.widget_menu .iwidget_name {
+  float:left;
+  display:inline;
+  border: 0px;
+}
+
+div.iwidget div.statusBar {
+    overflow: hidden;
+    border: 0px;
+    height: 16px;
+    padding: 0 32px;
+    border: 1px solid #DDD;
+    border-radius: 0px 0px 4px 4px;
+}
+
+div.iwidget div.statusBar .button {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+
+
+/*****
+ * config_interface
+ */
+
+div.iwidget div.config_interface,
+div.widget_window_locked div.config_interface {
+  display: none;
+  padding: 1px 1ex;
+  margin: 0px;
+  border-bottom: 1px solid;
+}
+
+div.config_interface div.buttons {
+  margin: 1ex 0px;
+  float: right;
+}
+
+div.config_interface table {
+  width: 100%;
+}
+
+div.config_interface label {
+  margin: 1ex;
+  display: block;
+}
+
+div.config_interface input, div.config_interface select {
+  margin: 0px 1ex;
+  border: 1px solid;
+}
+
+div.config_interface table input {
+  width: 90%;
+  max-width: 100ex;
+  padding: 0px 0.5ex;
+}
+
+div.config_interface table input[type="checkbox"] {
+  width: auto;
+}
+
+div.config_interface select {
+  padding: 0px;
+}
+
+div.config_interface h4{
+	margin: 10px 0;
+}
+
+div.shared_conf_area label {
+	display:inline;
+	margin:0 10px 0 0;
+	vertical-align:middle;
+}
+
+div.shared_conf_area input{
+	margin-right:2px;
+	vertical-align:middle;
+}
+
+div.shared_conf_area a{
+	cursor: pointer;
+}
+
+div.shared_conf_area a{
+	vertical-align:middle;
+}
+
+div.config_interface label.invalid input {
+	border: 1px solid;	
+}
+
+.widget_menu_locked .hide_on_lock, .widget_menu_fulldragboard .hide_on_fulldragboard, .widget_menu_minimized .hide_on_minimize {
+  display: none;
+}
+
+/********************************************/
+div.fulldragboard div.statusBar {
+  display: none;
+}
+
+div.fulldragboard {
+  border: 0px none;
+}
+
+div.fulldragboard div.widget_menu input[type="button"].minimizebutton {
+  display: none;
+}
+
+div.fulldragboard div.widget_menu {
+  cursor: default;
+}
+
+/******************************
+ * Locked Dragboard
+ ******************************/
+
+div.widget_window_locked {
+    border: 1px solid;
+}
+
+div.widget_window_locked div.widget_menu, div.widget_window_locked div.statusBar {
+    display: none;
+}
+
+/***
+ *
+ */
+.floatleft {
+  float: left;
+}
+
+.floatright {
+  float: right;
+}
+
+#dragboardcursor {
+  position: absolute;
+  z-index: 1;
+  border: 2px dashed;
+}
+
+.dragboardwikilink {
+	color: transparent;
+}
+.dragboardwikilink:hover {
+	color: transparent;
+}
+
+.floating_widget_icon{
+	position: absolute;
+	width: 75px;
+	text-align: center;
+	display: none;
+}
+
+.floating_widget_icon img{
+	width: 60px;
+	height: 60px;
+	display: block;
+	padding: 0 5px 2px 5px;
+}
+
+.floating_widget_icon .floating_widget_title{
+	display: block;
+	cursor: default;
+	font-size:85%;
+}
+
