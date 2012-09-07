@@ -387,7 +387,8 @@ if (!Wirecloud.ui) {
         for (key in this.iwidgets) {
             widget = this.iwidgets[key];
             pos = widget.getStylePosition();
-            inOutPos = widget.getInOutPositions();
+            //inOutPos = widget.getInOutPositions();
+            inOutPos = null;
             positions = {'widget' : pos, 'inOuts' : inOutPos};
             WiringStatus.views[0].iwidgets[key] = positions;
         }
@@ -395,7 +396,8 @@ if (!Wirecloud.ui) {
         for (key in this.ioperators) {
             operator_interface = this.ioperators[key];
             pos = operator_interface.getStylePosition();
-            inOutPos = widget.getInOutPositions();
+            //inOutPos = widget.getInOutPositions();
+            inOutPos = null;
             positions = {'widget' : pos, 'inOuts' : inOutPos};
             WiringStatus.operators[key] = {"name" : operator_interface.getIOperator().meta.uri, 'id' : key};
             WiringStatus.views[0].operators[key] = positions;

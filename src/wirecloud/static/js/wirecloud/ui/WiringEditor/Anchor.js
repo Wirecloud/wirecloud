@@ -49,8 +49,76 @@
         this.wrapperElement.className = 'anchor';
 
         this._mousedown_callback = function _mousedown_callback(e) {
+            var arrow, i, end, start;
+
             e.stopPropagation();
             if (this.enabled && BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
+                arrow = this.hasSelectedArrow();
+                if (arrow != null) {
+                    if (arrow.hasClassName('multiconnector_arrow')) {
+                        arrow.canvas.unselectArrow();
+                    } else {
+                        // Changing the imput/output endpoint of an arow
+                        if (arrow.startAnchor === this) {
+                            if (arrow.endMulti == null) {
+                                // Normal arrow, click in startAnchor
+                                arrow.endAnchor.arrowCreator.startdrag(e, arrow.endAnchor);
+                                this.events.startdrag.dispatch(arrow.endAnchor);
+                                arrow.destroy();
+                            } else {
+                                // Click in startAnchor, endAnchor is multiconector
+                                arrow.destroy();
+                                end = this.context.iObject.wiringEditor.multiconnectors[arrow.endMulti];
+                                end.arrowCreator.startdrag(e, end);
+                                end.events.startdrag.dispatch(end);
+                            }
+                        } else if (arrow.endAnchor === this) {
+                            if (arrow.startMulti == null) {
+                                // Normal arrow, click in endAnchor
+                                arrow.startAnchor.arrowCreator.startdrag(e, arrow.startAnchor);
+                                this.events.startdrag.dispatch(arrow.startAnchor);
+                                arrow.destroy();
+                            } else {
+                                // Click in endAnchor, startAnchor is multiconector
+                                arrow.destroy();
+                                start = this.context.iObject.wiringEditor.multiconnectors[arrow.startMulti];
+                                start.arrowCreator.startdrag(e, start);
+                                start.events.startdrag.dispatch(start);
+                            }
+                        } else {
+                            if ((arrow.startMulti != null) && (arrow.endMulti != null)) {
+                                var multi;
+                                start = this.context.iObject.wiringEditor.multiconnectors[arrow.startMulti];
+                                end = this.context.iObject.wiringEditor.multiconnectors[arrow.endMulti];
+                                arrow.destroy();
+                                if (start === this) {
+                                    // Start and end Anchor are multiconnectors, click in start Multiconnector
+                                    multi = end;
+                                } else {
+                                    // Start and end Anchor are multiconnectors, click in end Multiconnector
+                                    multi = start;
+                                }
+                                multi.arrowCreator.startdrag(e, multi);
+                                multi.events.startdrag.dispatch(multi);
+                            } else if (arrow.startMulti != null) {
+                                // Click in startAnchor (multiconnector)
+                                end = arrow.endAnchor;
+                                end.arrowCreator.startdrag(e, end);
+                                end.events.startdrag.dispatch(end);
+                                arrow.destroy();
+                            } else {
+                                // Click in endAnchor (multiconnector)
+                                start = arrow.startAnchor;
+                                start.arrowCreator.startdrag(e, start);
+                                start.events.startdrag.dispatch(start);
+                                arrow.destroy();
+                            }
+                        }
+                        return;
+                    }
+                    return;
+                }
+                // No selected arrows in this anchor
                 arrowCreator.startdrag(e, this);
                 this.events.startdrag.dispatch(this);
             }
@@ -157,6 +225,17 @@
         return this.context.data.serialize();
     };
 
+    Anchor.prototype.hasSelectedArrow = function hasSelectedArrow() {
+        var arrow, i;
+
+        for (i = 0; i < this.arrows.length; i ++) {
+            arrow = this.arrows[i];
+            if (arrow.hasClassName('selected')) {
+                return arrow;
+            }
+        }
+        return null;
+    };
 
     Anchor.prototype.isHighlighted = function isHighlighted() {
         return this.context.iObject.highlighted;

@@ -454,6 +454,24 @@
     };
 
     /**
+     * hasClassName
+     */
+    Arrow.prototype.hasClassName = function hasClassName(className) {
+        var atr, exp;
+
+        if (className == null || this.wrapperElement == null) {
+            return false;
+        }
+
+        atr = this.wrapperElement.getAttribute('class');
+        if (atr == null) {
+            return false;
+        }
+        exp = new RegExp("(^\\s*|\\s+)" + className + "(\\s+|\\s*$)", "g");
+        return (atr.match(exp) != null);
+    };
+
+    /**
      * destroy the arrow.
      */
     Arrow.prototype.destroy = function destroy() {
