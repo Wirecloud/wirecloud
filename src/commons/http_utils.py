@@ -30,20 +30,30 @@
 
 #
 import cookielib
+import platform
 import urllib2
 from urllib import urlcleanup, urlencode
 from urlparse import urlparse
 
 from django.conf import settings
 
+import wirecloud
 
-def download_http_content(uri, params=None, user=None, headers={}):
+VERSIONS = {
+    'wirecloud_version': wirecloud.__version__,
+    'system': platform.system(),
+    'machine': platform.machine(),
+    'urllib2_version': getattr(urllib2, '__version__', '1.0')
+}
+
+
+def download_http_content(url, params=None, user=None, headers={}):
     urlcleanup()
 
     #proxy = settings.PROXY_SERVER
 
     #The proxy must not be used with local address
-    host = urlparse(uri)[1]
+    host = urlparse(url)[1]
 
     #manage proxies with authentication (get it from environment)
     proxy = None
@@ -62,38 +72,34 @@ def download_http_content(uri, params=None, user=None, headers={}):
 
     has_cookie = 'cookie' in params
 
-    if referer or user or has_cookie:
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.0; en-GB) Gecko/20080201 Firefox/2.0.0.12 Python-urllib2/%s' % getattr(urllib2, '__version__', '1.0'),
-            'Accept': 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5',
-            'Accept-Language': 'en-gb,en;q=0.5',
-            'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
-        }
-        if referer:
-            headers.update({
-                'Referer': referer,
-            })
-        if user and not user.is_anonymous():
-            headers.update({
-                'Remote-User': user.username,
-            })
-        if has_cookie:
-            headers.update({
-                'Cookie': params['cookie'],
-            })
+    custom_headers = headers
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (%(system)s %(machine)s;U) Wirecloud/%(wirecloud_version)s Python-urllib2/%(urllib2_version)s' % VERSIONS,
+        'Accept': '*/*',
+        'Accept-Language': 'en-gb,en;q=0.8,*;q=0.7',
+        'Accept-Charset': 'utf-8;q=1,*;q=0.2',
+    }
+    headers.update(custom_headers)
+
+    if referer is not None:
+        headers.update({
+            'Referer': referer,
+        })
+    if user and not user.is_anonymous():
+        headers.update({
+            'Remote-User': user.username,
+        })
+    if has_cookie:
+        headers.update({
+            'Cookie': params['cookie'],
+        })
         cookies = cookielib.LWPCookieJar()
         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookies))
         urllib2.install_opener(opener)
-        data = params and urlencode(params) or None
-        request = urllib2.Request(uri, data, headers)
-        return urllib2.urlopen(request).read()
-    elif params:
-        data = params and urlencode(params)
-        request = urllib2.Request(url=uri, data=data, headers=headers)
-        return urllib2.urlopen(request).read()
-    else:
-        request = urllib2.Request(url=uri, headers=headers)
-        return urllib2.urlopen(request).read()
+
+    data = params and urlencode(params) or None
+    request = urllib2.Request(url, data, headers)
+    return urllib2.urlopen(request).read()
 
 
 def PUT_parameter(request, parameter_name):
