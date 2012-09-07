@@ -53,11 +53,11 @@ _EzWebAPI.prototype.getId = function() {
 }
 
 _EzWebAPI.prototype.createRWGadgetVariable = function(name) {
-	return new EzWebAPI.platform.RWGadgetVariable(EzWebAPI.id, name);
+	return new EzWebAPI.platform.RWWidgetVariable(EzWebAPI.id, name);
 }
 
 _EzWebAPI.prototype.createRGadgetVariable = function(name, handler) {
-	return new EzWebAPI.platform.RGadgetVariable(EzWebAPI.id, name, handler);
+	return new EzWebAPI.platform.RWidgetVariable(EzWebAPI.id, name, handler);
 }
 
 _EzWebAPI.prototype.send_get = function(url, context, successHandler, errorHandler, requestHeaders) {
@@ -158,7 +158,7 @@ _EzWebAPI.prototype.WARN_MSG   = 2;
 _EzWebAPI.prototype.INFO_MSG   = 3;
 
 _EzWebAPI.prototype.log = function(msg, level) {
-	EzWebAPI.platform.OpManagerFactory.getInstance().logIGadgetError(this.getId(), msg, level);
+	EzWebAPI.platform.OpManagerFactory.getInstance().logIWidgetError(this.getId(), msg, level);
 }
 
 _EzWebAPI.prototype.getHTTPStatusCodeDescription = function(code) {
