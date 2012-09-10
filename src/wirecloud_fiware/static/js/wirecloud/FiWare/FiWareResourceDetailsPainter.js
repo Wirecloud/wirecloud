@@ -99,6 +99,9 @@ var FiWareResourceDetailsPainter = function (catalogue, details_structure_elemen
         details_element = document.createElement('div');
         Element.extend(details_element);
         details_element.update(resource_html);
+        details_element.getElementsByClassName('image')[0].onerror = function (event) {
+            event.target.src = '/static/images/noimage.png';
+        };
 
         // If the resource is a mashup another tab is appended with information
         // about the services that compose it

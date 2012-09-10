@@ -58,6 +58,9 @@ FiWareResourcePainter.prototype.paint = function (command_data) {
         resource_element.className = 'resource';
 
         resource_element.update(this.structure_template.evaluate(context));
+        resource_element.getElementsByClassName('image')[0].onerror = function (event) {
+            event.target.src = '/static/images/noimage.png';
+        };
 
         // Inserting resource html in the DOM
         this.dom_element.appendChild(resource_element);

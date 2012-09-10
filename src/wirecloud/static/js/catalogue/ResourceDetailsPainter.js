@@ -79,6 +79,9 @@ var ResourceDetailsPainter = function (catalogue, details_structure_element, dom
 
         // Inserting resource html to the root_element
         this.dom_element.update(resource_html);
+        this.dom_element.getElementsByClassName('image')[0].onerror = function (event) {
+            event.target.src = '/static/images/noimage.png';
+        };
 
         ///////////////////////////////
         // Binding events to GUI
