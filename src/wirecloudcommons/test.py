@@ -300,6 +300,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         self.change_main_view('marketplace')
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click('Upload')
+        WebDriverWait(self.driver, 30).until(lambda driver: driver.find_element_by_css_selector('form.template_submit_form .template_uri').is_displayed())
         time.sleep(0.1)
 
         template_input = self.driver.find_element_by_css_selector('form.template_submit_form .template_uri')
@@ -485,6 +486,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         resource.find_element_by_css_selector('.click_for_details').click()
 
         WebDriverWait(self.driver, timeout).until(lambda driver: driver.find_element_by_css_selector('.advanced_operations .styled_button').is_displayed())
+        time.sleep(0.1)
         self.driver.find_element_by_css_selector('.advanced_operations .styled_button > div').click()
 
         WebDriverWait(self.driver, timeout).until(lambda driver: driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").is_displayed())
