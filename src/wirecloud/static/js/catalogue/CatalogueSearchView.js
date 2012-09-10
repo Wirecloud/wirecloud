@@ -50,7 +50,7 @@
                 var button = new StyledElements.StyledButton({text: gettext('View All')});
                 button.addEventListener('click', function () {
                     this.simple_search_input.value = '';
-                    this.pagination.changeOptions({'keywords': {}});
+                    this.pagination.changeOptions({'keywords': ''});
                 }.bind(this));
                 this.view_allbutton = button;
                 return button;
