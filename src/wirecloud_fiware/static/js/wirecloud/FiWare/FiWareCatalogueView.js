@@ -70,8 +70,8 @@
         };
     };
 
-    FiWareCatalogueView.prototype.search = function (callback, options) {
-        this.fiWareCatalogue.search(this._onSearch.bind(this, callback), options);
+    FiWareCatalogueView.prototype.search = function search(onSuccess, onFailure, options) {
+        this.fiWareCatalogue.search(this._onSearch.bind(this, onSuccess), onFailure, options);
     };
 
     FiWareCatalogueView.prototype._onSearch = function (callback, raw_data) {

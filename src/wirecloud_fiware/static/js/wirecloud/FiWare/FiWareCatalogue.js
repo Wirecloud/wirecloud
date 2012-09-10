@@ -24,20 +24,23 @@
 
     "use strict";
 
-    var FiWareCatalogue, _onSearchSuccess;
+    var FiWareCatalogue, _onSearchSuccess, _onSearchError;
 
     _onSearchSuccess = function _onSearchSuccess(transport) {
         var raw_data = JSON.parse(transport.responseText);
-        this.callback(raw_data);
+        this.onSuccess(raw_data);
     };
 
+    _onSearchError = function _onSearchError(transport) {
+        this.onError();
+    };
 
     FiWareCatalogue = function FiWareCatalogue(marketplace_desc) {
         this.market_name = marketplace_desc.name;
     };
 
-    FiWareCatalogue.prototype.search = function search(callback, options) {
-        var url;
+    FiWareCatalogue.prototype.search = function search(onSuccess, onError, options) {
+        var url, context;
 
         if (options.search_criteria === '' && options.store === 'All stores') {
             url = Wirecloud.URLs.FIWARE_RESOURCES_COLLECTION.evaluate({market: this.market_name});
@@ -49,9 +52,15 @@
             url = Wirecloud.URLs.FIWARE_STORE_SEARCH.evaluate({market: this.market_name, store: options.store, search_string: options.search_criteria});
         }
 
+        context = {
+            'onSuccess': onSuccess,
+            'onError': onError
+        };
+
         Wirecloud.io.makeRequest(url, {
             method: 'GET',
-            onSuccess: _onSearchSuccess.bind({'callback': callback})
+            onSuccess: _onSearchSuccess.bind(context),
+            onFailure: _onSearchError.bind(context)
         });
     };
 

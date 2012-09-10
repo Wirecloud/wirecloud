@@ -41,7 +41,13 @@
             }.bind(this)
         });
         this.pagination.addEventListener('requestStart', this.disable.bind(this));
-        this.pagination.addEventListener('requestEnd', this.enable.bind(this));
+        this.pagination.addEventListener('requestEnd', function (pagination, error) {
+            if (error != null) {
+                this.resource_painter.setError(gettext('Connection error: No resources retrieved.'));
+            }
+
+            this.enable();
+        }.bind(this));
         var contents = builder.parse($('wirecloud_catalogue_search_interface').getTextContent(), {
             'pagination': function () {
                 return new PaginationInterface(this.pagination);
@@ -132,7 +138,7 @@
         }
     };
 
-    CatalogueSearchView.prototype._search = function _search(page, options, callback) {
+    CatalogueSearchView.prototype._search = function _search(page, options, onSuccess, onError) {
         options = {
             'order_by': options.order_by,
             'search_criteria': options.keywords,
@@ -146,7 +152,7 @@
         }
 
         this._last_search = Date.now();
-        this.catalogue.search(callback, options);
+        this.catalogue.search(onSuccess, onError, options);
     };
 
     CatalogueSearchView.prototype._keywordTimeoutHandler = function _keywordTimeoutHandler() {

@@ -19,13 +19,13 @@
  *
  */
 
-/*global CatalogueResource, Wirecloud, Template, URIs*/
+/*global CatalogueResource, CookieManager, Wirecloud, Template, URIs*/
 
 (function () {
 
     "use strict";
 
-    var WirecloudCatalogue, _onSearchSuccess;
+    var WirecloudCatalogue, _onSearchSuccess, _onSearchError;
 
     _onSearchSuccess = function _onSearchSuccess(transport) {
         var preferred_versions, i, data, key, raw_data, resources, resource;
@@ -55,8 +55,12 @@
                 'total_count': parseInt(raw_data.items, 10)
             };
 
-            this.callback(data, data);
+            this.onSuccess(data, data);
         }
+    };
+
+    _onSearchError = function _onSearchError(transport) {
+        this.onError();
     };
 
     WirecloudCatalogue = function (options) {
@@ -65,7 +69,7 @@
 
         if (options.url == null) {
             options.url = Wirecloud.URLs.LOCAL_REPOSITORY;
-        } else if (options.url[options.url.length-1] !== '/') {
+        } else if (options.url[options.url.length - 1] !== '/') {
             options.url += '/';
         }
 
@@ -73,7 +77,7 @@
         this.simple_search_template = new Template(options.url + URIs.GET_RESOURCES_SIMPLE_SEARCH + '/simple_or/#{starting_page}/#{resources_per_page}');
     };
 
-    WirecloudCatalogue.prototype.search = function (callback, options) {
+    WirecloudCatalogue.prototype.search = function search(onSuccess, onError, options) {
         var params, url, context;
 
         params = {
@@ -87,7 +91,8 @@
 
         context = {
             'options': options,
-            'callback': callback
+            'onSuccess': onSuccess,
+            'onError': onError
         };
 
         if (options.search_criteria.strip() === '') {
@@ -98,7 +103,8 @@
         Wirecloud.io.makeRequest(url, {
             method: 'GET',
             parameters: params,
-            onSuccess: _onSearchSuccess.bind(context)
+            onSuccess: _onSearchSuccess.bind(context),
+            onFailure: _onSearchError.bind(context)
         });
     };
 

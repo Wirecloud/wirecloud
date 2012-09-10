@@ -46,8 +46,14 @@
         this.events.requestEnd.dispatch(this);
     };
 
-    onErrorCallback = function onErrorCallback() {
-        this.events.requestEnd.dispatch(this);
+    onErrorCallback = function onErrorCallback(error) {
+        if (error == null) {
+            error = {
+                'message': 'unknown cause'
+            };
+        }
+
+        this.events.requestEnd.dispatch(this, error);
     };
 
     Pagination = function Pagination(options) {
@@ -121,7 +127,7 @@
 
     Pagination.prototype.refresh = function refresh() {
         this.events.requestStart.dispatch(this);
-        this.pOptions.requestFunc(this.currentPage, this.pOptions, onSuccessCallback.bind(this));
+        this.pOptions.requestFunc(this.currentPage, this.pOptions, onSuccessCallback.bind(this), onErrorCallback.bind(this));
     };
 
     Pagination.prototype.changePage = function changePage(idx) {
@@ -132,7 +138,7 @@
         }
 
         this.events.requestStart.dispatch(this);
-        this.pOptions.requestFunc(idx, this.pOptions, onSuccessCallback.bind(this));
+        this.pOptions.requestFunc(idx, this.pOptions, onSuccessCallback.bind(this), onErrorCallback.bind(this));
     };
 
     StyledElements.Pagination = Pagination;

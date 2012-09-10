@@ -176,6 +176,20 @@
 	width: 100%;
 }
 
+.catalogue .resource_list .error {
+    background: #FDDFDE;
+    color: #444;
+    text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.3);
+    border: 1px solid #FBC9C8;
+    padding: 15px;
+    border-radius: 6px;
+    font-weight: normal;
+    margin: 2ex;
+    text-align: center;
+    font-size: 101%;
+    font-family: Comfortaa;
+}
+
 .catalogue .resource_list .resource {
     clear: both;
     margin-right: 10px;

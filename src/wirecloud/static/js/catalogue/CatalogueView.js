@@ -51,8 +51,8 @@
     CatalogueView.prototype._onShow = function _onShow() {
     };
 
-    CatalogueView.prototype.search = function search(callback, options) {
-        return this.catalogue.search(callback, options);
+    CatalogueView.prototype.search = function search(onSuccess, onError, options) {
+        return this.catalogue.search(onSuccess, onError, options);
     };
 
     CatalogueView.prototype.instanciate = function instanciate(resource) {

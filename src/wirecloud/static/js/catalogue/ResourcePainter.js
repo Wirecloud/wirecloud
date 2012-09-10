@@ -1,4 +1,4 @@
-/* 
+/*
 *     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
 *     S.A.Unipersonal (Telefonica I+D)
 *
@@ -23,7 +23,6 @@
 *     http://morfeo-project.org
  */
 
-/*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
 /*global alert, Constants, Element, document, gettext, interpolate, LayoutManagerFactory, Template */
 "use strict";
 
@@ -76,9 +75,21 @@ var ResourcePainter = function (catalogue, resource_template, dom_element) {
 
     this.catalogue = catalogue;
     this.structure_template = new Template(resource_template);
+    this.error_template = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div class="error"><t:message/></div></s:styledgui>';
     this.dom_element = dom_element;
 };
 ResourcePainter.prototype = new HTML_Painter();
+
+ResourcePainter.prototype.setError = function setError(message) {
+    this.dom_element.innerHTML = '';
+
+    var builder = new StyledElements.GUIBuilder();
+    var contents = builder.parse(this.error_template, {
+        'message': message
+    });
+
+    contents.insertInto(this.dom_element);
+};
 
 ResourcePainter.prototype.paint = function (command_data) {
     var resource, i, j, context, resource_element,
@@ -104,6 +115,9 @@ ResourcePainter.prototype.paint = function (command_data) {
         resource_element.className = 'resource';
 
         resource_element.update(this.structure_template.evaluate(context));
+        resource_element.getElementsByClassName('image')[0].onerror = function (event) {
+            event.target.src = '/static/images/noimage.png';
+        };
 
         // Inserting resource html in the DOM
         this.dom_element.appendChild(resource_element);
