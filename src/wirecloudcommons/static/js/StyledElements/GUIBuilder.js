@@ -30,16 +30,19 @@
     TEMPLATE_NAMESPACE = 'http://wirecloud.conwet.fi.upm.es/Template';
 
     processTComponent = function processTComponent(element, tcomponents) {
-        var options, new_component;
+        var options, tcomponent, new_component;
 
-        if (typeof tcomponents[element.localName] === 'function') {
+        tcomponent = tcomponents[element.localName];
+        if (typeof tcomponent === 'function') {
             try {
                 options = JSON.parse(element.textContent);
             } catch (e) {}
 
-            new_component = tcomponents[element.localName](options);
+            new_component = tcomponent(options);
+        } else if (typeof tcomponent === 'string') {
+            new_component = element.ownerDocument.createTextNode(tcomponent);
         } else {
-            new_component = tcomponents[element.localName];
+            new_component = tcomponent;
         }
 
         return new_component;
@@ -60,8 +63,10 @@
                 element.removeChild(child);
             } else if (child.namespaceURI === TEMPLATE_NAMESPACE) {
                 new_component = processTComponent(child, tcomponents);
-                if (new_component) {
+                if (new_component instanceof StyledElements.StyledElement) {
                     new_component.insertInto(element, child);
+                } else {
+                    element.insertBefore(new_component, child);
                 }
                 element.removeChild(child);
             }  else {
