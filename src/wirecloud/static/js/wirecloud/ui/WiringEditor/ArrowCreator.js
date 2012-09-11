@@ -222,6 +222,10 @@
             return false;
         }
 
+        if (target.context.iObject === source.context.iObject) {
+            return false;
+        }
+
         arrows = source.getArrows();
         for (i = 0; i < arrows.length; i++) {
             if (arrows[i].endAnchor === target) {
