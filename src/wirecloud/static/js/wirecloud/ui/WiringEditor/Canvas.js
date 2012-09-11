@@ -36,7 +36,6 @@
         this.canvasElement.appendChild(this.canvasElement.generalLayer);
         this.canvasElement.setAttribute('class', 'canvas');
         this.selectedArrow = null;
-        this.selectedObject = null;
         this.canvasElement.addEventListener('click', this.unselectArrow.bind(this), false);
     };
     Canvas.prototype = new StyledElements.ObjectWithEvents();
