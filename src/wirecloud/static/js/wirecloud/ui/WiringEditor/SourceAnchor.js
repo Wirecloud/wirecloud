@@ -35,6 +35,7 @@
     var SourceAnchor = function SourceAnchor(context, arrowCreator) {
         this.context = context;
         Wirecloud.ui.WiringEditor.Anchor.call(this, false, arrowCreator);
+        this.arrowCreator = arrowCreator;
     };
     SourceAnchor.prototype = new Wirecloud.ui.WiringEditor.Anchor(true);
 
