@@ -1,3 +1,25 @@
+@font-face {
+  font-family: 'Comfortaa';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Comfortaa'), local('Comfortaa-Regular'),
+       url("../fonts/comfortaa_regular-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/comfortaa_regular-webfont.woff") format("woff"),
+       url("../fonts/comfortaa_regular-webfont.ttf") format("truetype"),
+       url("../fonts/comfortaa_regular-webfont.svg#ComfortaaRegular") format("svg");
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans'), local('OpenSans'),
+       url("../fonts/opensans-regular-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/opensans-regular-webfont.woff") format("woff"),
+       url("../fonts/opensans-regular-webfont.ttf") format("truetype"),
+       url("../fonts/opensans-regular-webfont.svg#OpenSansRegular") format("svg");
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -8,6 +30,11 @@ body {
     bottom: 0;
     left: 0;
     overflow: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: Comfortaa;
+    font-weight: normal;
 }
 
 #wirecloud_header {

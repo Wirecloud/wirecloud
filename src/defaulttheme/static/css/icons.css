@@ -32,14 +32,7 @@ span.icon {
     display: none;
 }
 
-.styled_button.plain {
-    font-size: 16px;
-    vertical-align: baseline;
-}
-
 .styled_button.icon-menu {
-    width: 16px;
-    height: 16px;
     border-width: 1px 1px 0px 1px;
     border-style: solid;
     border-color: transparent;
@@ -54,8 +47,6 @@ span.icon {
 }
 
 .styled_button.icon-tab-menu {
-    width: 16px;
-    height: 16px;
     display: none;
     vertical-align: middle;
     position: absolute;

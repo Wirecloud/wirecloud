@@ -114,40 +114,73 @@ body {
 
 #wirecloud_header .menu_wrapper > .menu {
     display: inline-block;
-    background: #E4E6E2;
-    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
     padding: 0 0 0 1ex;
     vertical-align: top;
 }
 
-#wirecloud_header .styled_button {
-    margin: 0;
-}
-
 #wirecloud_header .styled_button > span {
     color: #FFF;
-    font-size: 12px;
     margin: 0;
-    padding: 3px 0.75ex;
-    border-width: 0px 1px 0px 1px;
+    padding: 8px;
+    border-width: 1px;
     border-style: solid;
-    border-color: transparent;
-    background-color: #41768D;
+    background-color: #5BB75B;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    -webkit-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.125), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.125), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.125), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    border-color: rgb(81, 163, 81) rgb(81, 163, 81) rgb(56, 112, 56);
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    border-radius: 4px;
+}
+
+#wirecloud_header .styled_button > span:before {
+    font-family: FontAwesome;
+    font-weight: normal;
+    font-style: normal;
+    display: inline-block;
+    text-decoration: inherit;
+    content: "\f007";
+    margin-right: 1ex;
+}
+
+#wirecloud_header .styled_button > span:after {
+    font-family: FontAwesome;
+    font-weight: normal;
+    font-style: normal;
+    display: inline-block;
+    text-decoration: inherit;
+    content: "\f0d7";
+    margin-left: 1ex;
+}
+
+#wirecloud_header .styled_button:hover > span {
+    background: rgb(81, 163, 81);
 }
 
 #wirecloud_header .styled_button.open > span {
-    background: white;
-    border-color: #BEBEBE;
-    color: #41768D;
+    background: rgb(81, 163, 81);
+    -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 #wirecloud_header > .menu_wrapper > .menu > span {
-    background: #E4E6E2;
     padding: 0.5ex 0.75ex;
     cursor: pointer;
-    color: #444;
+    color: #08C;
+    text-decoration: none;
     display: inline-block;
     position: relative;
+    padding: 8px 12px;
+    margin: 2px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+#wirecloud_header > .menu_wrapper > .menu > span:hover {
+    text-decorator: none;
+    background-color: #EEE;
 }
 
 #wirecloud_header > .menu_wrapper > .menu > .user_menu_wrapper {
@@ -156,36 +189,18 @@ body {
     margin: 0 1ex;
 }
 
-#wirecloud_header > .menu_wrapper > .menu > .selected {
+#wirecloud_header > .menu_wrapper > .menu > span.selected {
     cursor: default;
+    background-color: #08C;
+    color: white;
 }
 
 #wirecloud_header > .menu_wrapper > .menu .mark {
-    -webkit-transition: height 0.15s ease-in;
-    -moz-transition: height 0.15s ease-in;
-    -o-transition: height 0.15s ease-in;
-    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
-    position: absolute;
-    right: 0;
-    left: 0;
-    background-color: inherit;
-    height: 0;
+    display: none;
 }
 
 #wirecloud_header > .menu_wrapper > .menu > .selected > .mark {
     height: 2ex;
-}
-
-#wirecloud_header > .menu_wrapper > .menu > .workspace {
-    background: #47A06B;
-}
-
-#wirecloud_header > .menu_wrapper > .menu > .wiring {
-    background: #DFA462;
-}
-
-#wirecloud_header > .menu_wrapper > .menu > .marketplace {
-    background: #DF7A62;
 }
 
 #wirecloud_header > .submenu {
