@@ -96,14 +96,19 @@
         });
     };
 
-    FiWareCatalogue.prototype.getStores = function getStores(callback) {
-        var url = Wirecloud.URLs.FIWARE_STORE_COLLECTION.evaluate({market: this.market_name});
+    FiWareCatalogue.prototype.getStores = function getStores(onSuccess, onError) {
+        var context, url = Wirecloud.URLs.FIWARE_STORE_COLLECTION.evaluate({market: this.market_name});
+
+        context = {
+            onSuccess: onSuccess,
+            onError: onError
+        };
 
         Wirecloud.io.makeRequest(url, {
             method: 'GET',
-            onSuccess: _onSearchSuccess.bind({'callback': callback})
+            onSuccess: _onSearchSuccess.bind(context),
+            onFailure: _onSearchError.bind(context)
         });
-
     };
 
     FiWareCatalogue.prototype.delete_store = function delete_store(store, callback) {
