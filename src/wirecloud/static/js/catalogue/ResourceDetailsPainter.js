@@ -166,8 +166,18 @@ ResourceDetailsPainter.prototype.populate_advanced_operations = function (resour
     var button, element = this.dom_element.getElementsByClassName('advanced_operations')[0];
 
     button = new StyledElements.StyledButton({
-        'text': gettext('Delete'),
+        'text': gettext('Download'),
     });
-    button.addEventListener('click', this.catalogue.createUserCommand('delete', resource));
+    button.addEventListener('click', function () {
+        window.open(resource.getUriTemplate(), '_blank')
+    });
     button.insertInto(element);
+
+    if (resource.added_by_user) {
+        button = new StyledElements.StyledButton({
+            'text': gettext('Delete'),
+        });
+        button.addEventListener('click', this.catalogue.createUserCommand('delete', resource));
+        button.insertInto(element);
+    }
 };

@@ -261,6 +261,10 @@ class MarketAdaptor(object):
             if isinstance(parsed_usdl, dict):
                 parsed_usdl['store'] = store
                 parsed_usdl['marketName'] = res.get('name')
+
+                if parsed_usdl['versions'][0]['uriTemplate'] == '':
+                    parsed_usdl['versions'][0]['uriTemplate'] = url
+
                 result['resources'].append(parsed_usdl)
             else:
                 for ser in parsed_usdl:
