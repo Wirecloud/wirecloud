@@ -40,7 +40,6 @@ from commons.authentication import get_user_authentication
 from commons.cache import no_cache
 from commons.get_data import get_workspace_data, get_global_workspace_data, get_tab_data
 from commons import http_utils
-from commons.logs import log
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.service import Service
@@ -430,8 +429,7 @@ class TabEntry(Resource):
 
         if tabs.count() == 0:
             msg = _("tab cannot be deleted")
-            log(msg, request)
-            return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
+            return HttpResponseForbidden(msg)
 
         #Delete Workspace variables too!
         deleteTab(tab, user)

@@ -40,7 +40,7 @@ from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseNotAllowed
-from django.http import  HttpResponseBadRequest, HttpResponseServerError, HttpResponseRedirect
+from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.utils import simplejson
 from django.utils.decorators import method_decorator
@@ -63,7 +63,6 @@ from catalogue.utils import add_widget_from_wgt, add_resource_from_template, del
 from catalogue.utils import tag_resource
 from commons.cache import no_cache
 from commons import http_utils
-from commons.logs import log
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.user_utils import get_verified_certification_group
@@ -389,19 +388,8 @@ class ResourceVoteCollection(Resource):
         resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
 
         # Insert the vote for these resource and user in the database
-        try:
-            UserVote.objects.create(vote=vote, idUser=user, idResource=resource)
-        except Exception, ex:
-            log(ex, request)
-            return HttpResponseServerError(get_xml_error(unicode(ex)),
-                                           mimetype='application/xml; charset=UTF-8')
-
-        try:
-            update_resource_popularity(resource)
-        except Exception, ex:
-            log(ex, request)
-            return HttpResponseServerError(get_xml_error(unicode(ex)),
-                                           mimetype='application/xml; charset=UTF-8')
+        UserVote.objects.create(vote=vote, idUser=user, idResource=resource)
+        update_resource_popularity(resource)
 
         return get_vote_response(resource, user, format)
 
@@ -434,21 +422,11 @@ class ResourceVoteCollection(Resource):
         resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
 
         # Insert the vote for these resource and user in the database
-        try:
-            userVote = get_object_or_404(UserVote, idUser=user, idResource=resource)
-            userVote.vote = vote
-            userVote.save()
-        except Exception, ex:
-            log(ex, request)
-            return HttpResponseServerError(get_xml_error(unicode(ex)),
-                                           mimetype='application/xml; charset=UTF-8')
+        userVote = get_object_or_404(UserVote, idUser=user, idResource=resource)
+        userVote.vote = vote
+        userVote.save()
 
-        try:
-            update_resource_popularity(resource)
-        except Exception, ex:
-            log(ex, request)
-            return HttpResponseServerError(get_xml_error(unicode(ex)),
-                                           mimetype='application/xml; charset=UTF-8')
+        update_resource_popularity(resource)
 
         return get_vote_response(resource, user, format)
 

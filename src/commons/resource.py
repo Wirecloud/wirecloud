@@ -30,13 +30,9 @@
 
 #
 
-from django.http import Http404, HttpResponseNotAllowed
-from django.http import HttpResponseServerError, HttpResponseForbidden
+from django.http import Http404, HttpResponseNotAllowed, HttpResponseForbidden
 
 from commons.authentication import Http403
-from commons.logs import log_exception, log_detailed_exception, log_request
-from commons.utils import get_json_error_response
-from logs_exception import TracedServerError
 
 
 class HttpMethodNotAllowed(Exception):
@@ -61,31 +57,15 @@ class Resource(object):
         try:
             response = self.dispatch(request, self, *args, **kwargs)
 
-            log_request(request, response, 'access')
-
             return response
         except Http404:
             raise
         except Http403:
-            log_request(request, None, 'access')
-
             return HttpResponseForbidden()
         except HttpMethodNotAllowed:
-            log_request(request, None, 'access')
-
-            response = HttpResponseNotAllowed(self.permitted_methods)
-            response.mimetype = self.mimetype
-            return response
-        except TracedServerError, e:
-            log_request(request, None, 'access')
-
-            msg = log_detailed_exception(request, e)
-        except Exception, e:
-            log_request(request, None, 'access')
-
-            msg = log_exception(request, e)
-
-        return HttpResponseServerError(get_json_error_response(msg), mimetype='application/json; charset=UTF-8')
+            return HttpResponseNotAllowed(self.permitted_methods)
+        except:
+            raise
 
     def adaptRequest(self, request):
         if request.META.get('CONTENT_LENGTH', '') != '':

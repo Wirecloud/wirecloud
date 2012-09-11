@@ -63,17 +63,6 @@ DATABASES = {
     },
 }
 
-
-#################################################################
-# LOGGING
-#################################################################
-# 0 => no logging
-# 1 => only access and errors
-# 2 => access and arguments when exception
-# 3 => access and arguments in every call
-LOGGING_LEVEL = 2
-#################################################################
-
 THEME_ACTIVE = "defaulttheme"
 
 # Local time zone for this installation. Choices can be found here:
