@@ -39,10 +39,16 @@
             } catch (e) {}
 
             new_component = tcomponent(options);
-        } else if (typeof tcomponent === 'string') {
-            new_component = element.ownerDocument.createTextNode(tcomponent);
         } else {
             new_component = tcomponent;
+        }
+
+        if (typeof new_component === 'string') {
+            new_component = element.ownerDocument.createTextNode(new_component);
+        } else if (new_component != null) {
+            new_component = new_component;
+        } else {
+            new_component = element.ownerDocument.createTextNode('');
         }
 
         return new_component;
