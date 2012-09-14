@@ -104,15 +104,12 @@ def createEmptyWorkspace(workspaceName, user):
         # there isn't yet an active workspace
         active = True
 
-    #Workspace creation
-    workspace = Workspace(name=workspaceName, creator=user)
-    workspace.save()
+    empty_wiring = '{"operators": {}, "connections": []}'
 
-    #Adding user reference to workspace in the many to many relationship
-    user_workspace = UserWorkspace(user=user, workspace=workspace, active=active)
-    user_workspace.save()
+    workspace = Workspace.objects.create(name=workspaceName, creator=user, wiringStatus=empty_wiring)
+    UserWorkspace.objects.create(user=user, workspace=workspace, active=active)
 
-    #Tab creation
+    # Tab creation
     createTab(_('Tab'), user, workspace)
 
     return workspace
