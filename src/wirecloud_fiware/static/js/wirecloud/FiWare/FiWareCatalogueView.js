@@ -112,8 +112,13 @@
         if (resource.isMashup()) {
             (new Wirecloud.ui.InstanciateMashupWindowMenu(resource)).show();
         } else {
-            ShowcaseFactory.getInstance().addWidget(resource.getVendor(), resource.getName(),
-            resource.getVersion().text, resource.getUriTemplate());
+            ShowcaseFactory.getInstance().addWidget(
+                resource.getVendor(),
+                resource.getName(),
+                resource.getVersion().text,
+                resource.getUriTemplate(),
+                {packaged: false}
+            );
         }
     };
 
