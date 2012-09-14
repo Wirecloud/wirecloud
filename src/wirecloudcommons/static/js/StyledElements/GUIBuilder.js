@@ -30,15 +30,18 @@
     TEMPLATE_NAMESPACE = 'http://wirecloud.conwet.fi.upm.es/Template';
 
     processTComponent = function processTComponent(element, tcomponents) {
-        var options, tcomponent, new_component;
+        var options, parsed_options, tcomponent, new_component;
 
         tcomponent = tcomponents[element.localName];
         if (typeof tcomponent === 'function') {
-            try {
-                options = JSON.parse(element.textContent);
-            } catch (e) {}
+            options = element.textContent.strip();
+            if (options !== '') {
+                try {
+                    parsed_options = JSON.parse(options);
+                } catch (e) {}
+            }
 
-            new_component = tcomponent(options);
+            new_component = tcomponent(parsed_options);
         } else {
             new_component = tcomponent;
         }
