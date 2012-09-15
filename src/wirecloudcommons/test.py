@@ -485,12 +485,20 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         resource = self.search_in_catalogue_results(widget_name)
         resource.find_element_by_css_selector('.click_for_details').click()
 
-        WebDriverWait(self.driver, timeout).until(lambda driver: driver.find_element_by_css_selector('.advanced_operations .styled_button').is_displayed())
+        WebDriverWait(self.driver, timeout).until(lambda driver: driver.find_element_by_css_selector('.advanced_operations').is_displayed())
         time.sleep(0.1)
-        self.driver.find_element_by_css_selector('.advanced_operations .styled_button > div').click()
+
+        found = False
+        for operation in self.driver.find_elements_by_css_selector('.advanced_operations .styled_button'):
+            if operation.text == 'Delete':
+                found = True
+                operation.find_element_by_css_selector('div').click()
+                break
+        self.assertTrue(found)
 
         WebDriverWait(self.driver, timeout).until(lambda driver: driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").is_displayed())
         self.driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").click()
+        self.wait_wirecloud_ready()
 
         self.search_resource(widget_name)
         resource = self.search_in_catalogue_results(widget_name)

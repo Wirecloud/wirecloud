@@ -39,6 +39,7 @@ function CatalogueResource(resourceJSON_) {
         allVersions = [],
         data_by_version = {},
         extra_data = null,
+        deleteable = true,
     ///////////////////////////
     // CONSTRUCTOR VARIABLES
     ///////////////////////////
@@ -145,6 +146,15 @@ function CatalogueResource(resourceJSON_) {
         return currentVersion.ieCompatible;
     };
 
+    this.isAllow = function isAllow(action) {
+        switch (action) {
+        case 'delete':
+            return currentVersion.added_by_user;
+        case 'delete-all':
+            return deleteable;
+        }
+    };
+
     this.isPackaged = function () {
         return !!currentVersion.packaged;
     };
@@ -195,6 +205,9 @@ function CatalogueResource(resourceJSON_) {
         version_data.version = new WidgetVersion(version_data.version, 'catalogue');
         version_data.events = version_data.events.map(flat_friendcode);
         version_data.slots = version_data.slots.map(flat_friendcode);
+
+        deleteable = deleteable && version_data.added_by_user;
+
         allVersions.push(version_data.version);
         data_by_version[version_data.version.text] = version_data;
     }

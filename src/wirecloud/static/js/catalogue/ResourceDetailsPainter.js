@@ -173,9 +173,17 @@ ResourceDetailsPainter.prototype.populate_advanced_operations = function (resour
     });
     button.insertInto(element);
 
-    if (resource.added_by_user) {
+    if (resource.isAllow('delete')) {
         button = new StyledElements.StyledButton({
             'text': gettext('Delete'),
+        });
+        button.addEventListener('click', this.catalogue.createUserCommand('delete', resource));
+        button.insertInto(element);
+    }
+
+    if ((resource.getAllVersions().length > 1) && resource.isAllow('delete-all')) {
+        button = new StyledElements.StyledButton({
+            'text': gettext('Delete all versions'),
         });
         button.addEventListener('click', this.catalogue.createUserCommand('delete', resource));
         button.insertInto(element);
