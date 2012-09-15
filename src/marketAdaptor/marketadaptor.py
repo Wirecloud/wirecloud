@@ -26,7 +26,7 @@ from urlparse import urljoin, urlparse
 from marketAdaptor.usdlParser import USDLParser
 from lxml import etree
 
-from proxy.views import MethodRequest
+from wirecloud.proxy.views import MethodRequest
 
 RESOURCE_XPATH = '/collection/resource'
 URL_XPATH = 'url'

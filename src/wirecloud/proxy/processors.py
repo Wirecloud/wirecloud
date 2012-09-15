@@ -6,7 +6,7 @@ from django.utils.importlib import import_module
 from django.core.exceptions import ImproperlyConfigured
 
 from commons.get_data import get_variable_value_from_varname
-from proxy.utils import check_empty_params, check_invalid_refs
+from wirecloud.proxy.utils import check_empty_params, check_invalid_refs
 
 
 _wirecloud_proxy_processors = None

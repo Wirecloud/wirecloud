@@ -25,7 +25,7 @@ from urllib2 import HTTPError
 from django.utils.translation import ugettext as _
 
 from wirecloudcommons.utils.template import TemplateParser
-from proxy.views import MethodRequest
+from wirecloud.proxy.views import MethodRequest
 
 FOAF = rdflib.Namespace('http://xmlns.com/foaf/0.1/')
 RDF = rdflib.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#')

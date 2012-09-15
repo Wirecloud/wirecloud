@@ -47,8 +47,8 @@ from django.utils.translation import ugettext as _
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error
-from proxy.processors import get_request_proxy_processors, get_response_proxy_processors
-from proxy.utils import encode_query, is_valid_header, ValidationError
+from wirecloud.proxy.processors import get_request_proxy_processors, get_response_proxy_processors
+from wirecloud.proxy.utils import encode_query, is_valid_header, ValidationError
 
 
 class MethodRequest(urllib2.Request):

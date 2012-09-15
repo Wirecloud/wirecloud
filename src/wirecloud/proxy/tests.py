@@ -11,8 +11,8 @@ from django.core.cache import cache
 from django.test import TransactionTestCase, Client
 from django.utils import unittest
 
-from proxy.views import WIRECLOUD_PROXY
 from wirecloud.models import VariableValue
+from wirecloud.proxy.views import WIRECLOUD_PROXY
 from wirecloud.workspace.utils import HAS_AES, set_variable_value
 
 
