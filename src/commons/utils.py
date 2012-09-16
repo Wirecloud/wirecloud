@@ -43,17 +43,7 @@ from urllib import url2pathname
 from django.db import models
 from django.conf import settings
 from django.core.serializers.json import DateTimeAwareJSONEncoder
-from django.contrib.auth.models import User
-from django.utils import simplejson, translation
-
-from catalogue.models import CatalogueResource
-from wirecloud.models import XHTML
-
-
-def change_language(request, language):
-    request.session['django_language'] = language
-    request.LANGUAGE_CODE = language
-    translation.activate(language)
+from django.utils import simplejson
 
 
 def json_encode(data, ensure_ascii=False):
@@ -134,7 +124,6 @@ def get_json_error_response(value):
     return response
 
 
-
 def get_xhtml_content(path):
     if path.startswith("/") or path.startswith("\\"):
         path = os.path.join(settings.BASEDIR, url2pathname(path[1:]))
@@ -144,13 +133,6 @@ def get_xhtml_content(path):
     content = f.read()
     f.close()
     return content
-
-
-def accepts(request, mime):
-    """Checks if the request accepts a mime type for the response"""
-    acc = [a.split(';')[0] for a in request.META['HTTP_ACCEPT'].split(',')]
-
-    return mime in acc
 
 
 def db_table_exists(table, cursor=None):
