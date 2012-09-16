@@ -23,6 +23,20 @@ from urlparse import urljoin
 from django.conf import settings
 from django.contrib.sites.models import get_current_site
 from django.core.urlresolvers import reverse
+from django.http import HttpResponse
+
+from commons.utils import get_json_error_response, get_xml_error
+from wirecloudcommons.utils import mimeparser
+
+ERROR_FORMATTERS = {
+    'application/json; charset=utf-8': get_json_error_response,
+    'application/xml; charset=utf-8': get_xml_error,
+}
+
+
+def build_error_response(request, status_code, error_msg):
+    mimetype = mimeparser.best_match(ERROR_FORMATTERS.keys(), request.META['HTTP_ACCEPT'])
+    return HttpResponse(ERROR_FORMATTERS[mimetype](error_msg), mimetype=mimetype, status=status_code)
 
 
 def get_current_domain(request=None):
