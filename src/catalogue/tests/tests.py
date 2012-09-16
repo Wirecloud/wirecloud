@@ -77,7 +77,7 @@ class CatalogueAPITestCase(TestCase):
 
         self.client.login(username='test', password='test')
 
-        base_url = reverse('wirecloud_catalogue.resource_list', kwargs={'pag': 1, 'offset': 10})
+        base_url = reverse('wirecloud_catalogue.resource_list', kwargs={'pag': '1', 'offset': '10'})
 
         # List widgets in alphabetical order (short_name)
         result = self.client.get(base_url + '?orderby=short_name&search_boolean=AND&scope=widget')
@@ -102,7 +102,7 @@ class CatalogueAPITestCase(TestCase):
         self.client.login(username='test', password='test')
 
         # Search widgets using "widget1" as keyword
-        base_url = reverse('wirecloud_catalogue.simple_search', kwargs={'pag': 1, 'offset': 10, 'criteria': 'simple_or'})
+        base_url = reverse('wirecloud_catalogue.simple_search', kwargs={'criteria': 'simple_or', 'pag': '1', 'offset': '10'})
         result = self.client.get(base_url + '?orderby=-popularity&search_criteria=widget1&search_boolean=AND&scope=widget')
 
         self.assertEqual(result.status_code, 200)
@@ -110,7 +110,7 @@ class CatalogueAPITestCase(TestCase):
         self.assertEqual(len(result_json['resources']), 1)
 
         # Search widgets providing "friendcode2" events
-        base_url = reverse('wirecloud_catalogue.simple_search', kwargs={'pag': 1, 'offset': 10, 'criteria': 'event'})
+        base_url = reverse('wirecloud_catalogue.simple_search', kwargs={'criteria': 'event', 'pag': '1', 'offset': '10'})
         result = self.client.get(base_url + '?orderby=-popularity&search_criteria=friendcode2&search_boolean=AND&scope=widget')
 
         self.assertEqual(result.status_code, 200)
@@ -122,7 +122,7 @@ class CatalogueAPITestCase(TestCase):
         self.assertEqual(widget_data['versions'][0]['version'], '1.10')
 
         # Search widgets consuming "friendcode2" events
-        base_url = reverse('wirecloud_catalogue.simple_search', kwargs={'pag': 1, 'offset': 10, 'criteria': 'slot'})
+        base_url = reverse('wirecloud_catalogue.simple_search', kwargs={'criteria': 'slot', 'pag': '1', 'offset': '10'})
         result = self.client.get(base_url + '?orderby=short_name&search_criteria=friendcode2&search_boolean=AND&scope=widget')
 
         self.assertEqual(result.status_code, 200)
@@ -136,7 +136,7 @@ class CatalogueAPITestCase(TestCase):
 
         self.client.login(username='test', password='test')
 
-        base_url = reverse('wirecloud_catalogue.global_search', kwargs={'pag': 1, 'offset': 10})
+        base_url = reverse('wirecloud_catalogue.global_search', kwargs={'pag': '1', 'offset': '10'})
 
         # Search widgets using "widget1" as keyword
         result = self.client.get(base_url + '?orderby=-popularity&search_criteria=widget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=&search_criteria=&search_boolean=AND&scope=widget')

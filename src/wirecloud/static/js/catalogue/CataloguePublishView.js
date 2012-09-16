@@ -19,19 +19,19 @@
  *
  */
 
-/*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50, prototypejs: true */
 /*global EzWebExt, gettext, StyledElements*/
 
 var CataloguePublishView = function (id, options) {
     options.class = 'publish_view';
     this.catalogue = options.catalogue;
+    this.mainview = options.mainview;
     StyledElements.Alternative.call(this, id, options);
 
     var builder = new StyledElements.GUIBuilder();
     var contents = builder.parse($('wirecloud_catalogue_publish_interface').getTextContent(), {
         'back_button': function () {
             var button = new StyledElements.StyledButton({text: gettext('Close upload view')});
-            button.addEventListener('click', this.catalogue.home.bind(this.catalogue));
+            button.addEventListener('click', this.mainview.home.bind(this.mainview));
             return button;
         }.bind(this)
     });
@@ -39,7 +39,11 @@ var CataloguePublishView = function (id, options) {
 
     this.wrapperElement.getElementsByClassName('template_submit_form')[0].onsubmit = this._submit_template.bind(this);
     this.wrapperElement.getElementsByClassName('upload_wgt_button')[0].addEventListener('click', this._upload_wgt_file.bind(this), true);
+
+    this.wrapperElement.getElementsByClassName("wgt_upload_form")[0].target = 'upload_' + id;
+    this.wrapperElement.getElementsByClassName("wgt_upload_form")[0].action = this.catalogue.RESOURCE_COLLECTION;
     this._iframe = this.wrapperElement.getElementsByClassName('upload')[0];
+    this._iframe.id = this._iframe.name = 'upload_' + id;
     this._iframe.onload = this._check_upload_wgt_result.bind(this);
 };
 CataloguePublishView.prototype = new StyledElements.Alternative();
@@ -55,15 +59,15 @@ CataloguePublishView.prototype._submit_template = function (e) {
     LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding resource to the catalogue"), 1);
     LayoutManagerFactory.getInstance().logSubTask(gettext('Sending resource template to catalogue'));
 
-    Wirecloud.io.makeRequest(URIs.GET_POST_RESOURCES, {
+    Wirecloud.io.makeRequest(this.catalogue.RESOURCE_COLLECTION, {
         method: 'POST',
         parameters: {'template_uri': template_uri},
         onSuccess: function (transport) {
             LayoutManagerFactory.getInstance().logSubTask(gettext('Resource uploaded successfully'));
             LayoutManagerFactory.getInstance().logStep('');
 
-            this.catalogue.home();
-            this.catalogue.refresh_search_results();
+            this.mainview.home();
+            this.mainview.refresh_search_results();
         }.bind(this),
         onFailure: function (transport) {
             var msg = LogManagerFactory.getInstance().formatError(gettext("Error uploading resource: %(errorMsg)s."), transport);
@@ -105,7 +109,7 @@ CataloguePublishView.prototype._check_upload_wgt_result = function () {
         layoutManager.logStep('');
         layoutManager._notifyPlatformReady();
 
-        this.catalogue.home();
-        this.catalogue.refresh_search_results();
+        this.mainview.home();
+        this.mainview.refresh_search_results();
     }
 };
