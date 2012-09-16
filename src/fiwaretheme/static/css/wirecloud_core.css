@@ -8,6 +8,18 @@
        url("../fonts/comfortaa_regular-webfont.ttf") format("truetype"),
        url("../fonts/comfortaa_regular-webfont.svg#ComfortaaRegular") format("svg");
 }
+
+@font-face {
+  font-family: 'Comfortaa';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Comfortaa Bold'), local('Comfortaa-Bold'),
+       url("../fonts/comfortaa_bold-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/comfortaa_bold-webfont.woff") format("woff"),
+       url("../fonts/comfortaa_bold-webfont.ttf") format("truetype"),
+       url("../fonts/comfortaa_bold-webfont.svg#ComfortaaBold") format("svg");
+}
+
 @font-face {
   font-family: 'Open Sans';
   font-style: normal;
