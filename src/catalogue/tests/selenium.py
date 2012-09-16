@@ -90,7 +90,7 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.change_main_view("marketplace")
         time.sleep(3)
 
-        self.add_template_to_catalogue_with_error('http://localhost:8001/test/invalidTest.rdf', 'Test_Selenium', '[TemplateParseException] missing required field: versionInfo.')
+        self.add_template_to_catalogue_with_error('http://localhost:8001/test/invalidTest.rdf', 'Test_Selenium', 'missing required field: versionInfo.')
 
     def test_add_widget_twice(self):
 

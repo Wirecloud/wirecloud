@@ -318,14 +318,15 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         self.change_main_view('marketplace')
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click('Upload')
-        time.sleep(2)
+        WebDriverWait(self.driver, 30).until(lambda driver: driver.find_element_by_css_selector('form.template_submit_form .template_uri').is_displayed())
+        time.sleep(0.1)
 
         template_input = self.driver.find_element_by_css_selector('form.template_submit_form .template_uri')
         self.fill_form_input(template_input, template_url)
         self.driver.find_element_by_class_name('submit_link').click()
 
         self.wait_wirecloud_ready()
-        time.sleep(2)
+        time.sleep(0.1)
         xpath = "//*[contains(@class, 'window_menu')]//*[text()='Error uploading resource: " + msg + "']"
         self.driver.find_element_by_xpath(xpath)
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()

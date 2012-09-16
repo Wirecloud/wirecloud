@@ -67,6 +67,8 @@ from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.user_utils import get_verified_certification_group
 from commons.utils import get_xml_error, json_encode
+from wirecloudcommons.utils.http import build_error_response
+from wirecloudcommons.utils.template import TemplateParseException
 from wirecloudcommons.utils.transaction import commit_on_http_success
 
 
@@ -140,6 +142,10 @@ class ResourceCollection(Resource):
                 msg = _("Missing parameter: template_uri or file")
                 json = {"message": msg, "result": "error"}
                 return HttpResponseBadRequest(json_encode(json), mimetype='application/json; charset=UTF-8')
+
+        except TemplateParseException, e:
+
+            return build_error_response(request, 400, unicode(e.msg))
 
         except IntegrityError:
             # Resource already exists. Rollback transaction
