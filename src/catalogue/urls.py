@@ -39,15 +39,29 @@ from catalogue.views import ResourceEnabler
 
 urlpatterns = patterns('catalogue.views',
     # Resources
-    url(r'^/resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)$', ResourceCollection(permitted_methods=('DELETE', 'PUT'))),
-    url(r'^/resource/(?P<pag>\d+)/(?P<offset>\d+)$', ResourceCollection(permitted_methods=('GET',))),
+    url(r'^/resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)$',
+        ResourceCollection(permitted_methods=('DELETE', 'PUT')),
+        name='wirecloud_catalogue.resource_entry'),
     url(r'^/resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)$', ResourceCollection(permitted_methods=('DELETE',))),
-    url(r'^/resource$', ResourceCollection(permitted_methods=('GET', 'POST',))),
+    url(r'^/resource$',
+        ResourceCollection(permitted_methods=('GET', 'POST',)),
+        name='wirecloud_catalogue.resource_collection'),
     url(r'^/resource/(?P<resource_id>\d+)/activation$', ResourceEnabler(permitted_methods=('GET',))),
+    url(r'^/voting/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)$',
+        ResourceVoteCollection(permitted_methods=('GET', 'POST', 'PUT',)),
+        name='wirecloud_catalogue.resource_vote'),
+
 
     # Search Resources
-    (r'^/globalsearch/(?P<pag>\d+)/(?P<offset>\d+)$', ResourceCollectionByGlobalSearch(permitted_methods=('GET',))),
-    (r'^/search/(?P<criteria>\w+)/(?P<pag>\d+)/(?P<offset>\d+)$', ResourceCollectionBySimpleSearch(permitted_methods=('GET',))),
+    url(r'^/resources/(?P<pag>\d+)/(?P<offset>\d+)$',
+        ResourceCollection(permitted_methods=('GET',)),
+        name="wirecloud_catalogue.resource_list"),
+    url(r'^/search/(?P<criteria>\w+)/(?P<pag>\d+)/(?P<offset>\d+)$',
+        ResourceCollectionBySimpleSearch(permitted_methods=('GET',)),
+        name="Wirecloud_catalogue.simple_search"),
+    url(r'^/globalsearch/(?P<pag>\d+)/(?P<offset>\d+)$',
+        ResourceCollectionByGlobalSearch(permitted_methods=('GET',)),
+        name="wirecloud_catalogue.global_search"),
 
     # Tags
     (r'^/tag(s)?/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/(?P<tag>\d+)$',
@@ -55,12 +69,10 @@ urlpatterns = patterns('catalogue.views',
     (r'^/tag(s)?/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)$',
         ResourceTagCollection(permitted_methods=('GET', 'POST',))),
 
-    # Vote resources
-    (r'^/voting/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)$',
-        ResourceVoteCollection(permitted_methods=('GET', 'POST', 'PUT',))),
-
     #version check
-    (r'^/versions', ResourceVersionCollection(permitted_methods=('POST',))),
+    url(r'^/versions',
+        ResourceVersionCollection(permitted_methods=('POST',)),
+        name='wirecloud_catalogue.resource_versions'),
 
     url(r'^/error', 'error', name='iframe_error'),
     url(r'^/media/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/(?P<file_path>.+)', 'serve_catalogue_media', name='wirecloud_catalogue.media'),

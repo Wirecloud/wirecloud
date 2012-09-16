@@ -7,6 +7,7 @@ from tempfile import mkdtemp
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.test import TransactionTestCase, TestCase, Client
 from django.utils import simplejson
 
@@ -64,7 +65,6 @@ class AddWidgetTestCase(LocalizedTestCase):
 class CatalogueAPITestCase(TestCase):
 
     fixtures = ['catalogue_test_data']
-    urls = 'catalogue.urls'
 
     def setUp(self):
 
@@ -77,8 +77,10 @@ class CatalogueAPITestCase(TestCase):
 
         self.client.login(username='test', password='test')
 
+        base_url = reverse('wirecloud_catalogue.resource_list', kwargs={'pag': 1, 'offset': 10})
+
         # List widgets in alphabetical order (short_name)
-        result = self.client.get('////resource/1/10?orderby=short_name&search_boolean=AND&scope=widget')
+        result = self.client.get(base_url + '?orderby=short_name&search_boolean=AND&scope=widget')
 
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
@@ -87,7 +89,7 @@ class CatalogueAPITestCase(TestCase):
         self.assertEqual(result_json['resources'][0]['name'], 'awidget')
 
         # List widgets in reverse alphabetical order (short_name)
-        result = self.client.get('////resource/1/10?orderby=-short_name&search_boolean=AND&scope=widget')
+        result = self.client.get(base_url + '?orderby=-short_name&search_boolean=AND&scope=widget')
 
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
@@ -100,14 +102,16 @@ class CatalogueAPITestCase(TestCase):
         self.client.login(username='test', password='test')
 
         # Search widgets using "widget1" as keyword
-        result = self.client.get('////search/simple_or/1/10?orderby=-popularity&search_criteria=widget1&search_boolean=AND&scope=widget')
+        base_url = reverse('wirecloud_catalogue.simple_search', kwargs={'pag': 1, 'offset': 10, 'criteria': 'simple_or'})
+        result = self.client.get(base_url + '?orderby=-popularity&search_criteria=widget1&search_boolean=AND&scope=widget')
 
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 1)
 
         # Search widgets providing "friendcode2" events
-        result = self.client.get('////search/event/1/10?orderby=-popularity&search_criteria=friendcode2&search_boolean=AND&scope=widget')
+        base_url = reverse('wirecloud_catalogue.simple_search', kwargs={'pag': 1, 'offset': 10, 'criteria': 'event'})
+        result = self.client.get(base_url + '?orderby=-popularity&search_criteria=friendcode2&search_boolean=AND&scope=widget')
 
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
@@ -118,7 +122,8 @@ class CatalogueAPITestCase(TestCase):
         self.assertEqual(widget_data['versions'][0]['version'], '1.10')
 
         # Search widgets consuming "friendcode2" events
-        result = self.client.get('////search/slot/1/10?orderby=short_name&search_criteria=friendcode2&search_boolean=AND&scope=widget')
+        base_url = reverse('wirecloud_catalogue.simple_search', kwargs={'pag': 1, 'offset': 10, 'criteria': 'slot'})
+        result = self.client.get(base_url + '?orderby=short_name&search_criteria=friendcode2&search_boolean=AND&scope=widget')
 
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
@@ -131,14 +136,16 @@ class CatalogueAPITestCase(TestCase):
 
         self.client.login(username='test', password='test')
 
+        base_url = reverse('wirecloud_catalogue.global_search', kwargs={'pag': 1, 'offset': 10})
+
         # Search widgets using "widget1" as keyword
-        result = self.client.get('////globalsearch/1/10?orderby=-popularity&search_criteria=widget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=&search_criteria=&search_boolean=AND&scope=widget')
+        result = self.client.get(base_url + '?orderby=-popularity&search_criteria=widget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=&search_criteria=&search_boolean=AND&scope=widget')
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 1)
 
         # Search by keyworkd "widget1" and by event "friendcode2"
-        result = self.client.get('////globalsearch/1/10?orderby=-popularity&search_criteria=widget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=AND&scope=widget')
+        result = self.client.get(base_url + '?orderby=-popularity&search_criteria=widget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=AND&scope=widget')
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 1)
@@ -148,13 +155,13 @@ class CatalogueAPITestCase(TestCase):
         self.assertEqual(widget_data['versions'][0]['version'], '1.10')
 
         # Search by keyworkd "widget2" and by event "friendcode2"
-        result = self.client.get('////globalsearch/1/10?orderby=-popularity&search_criteria=widget2&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=AND&scope=widget')
+        result = self.client.get(base_url + '?orderby=-popularity&search_criteria=widget2&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=AND&scope=widget')
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 0)
 
         # Search by keyworkd "widget1" or by event "friendcode2"
-        result = self.client.get('////globalsearch/1/10?orderby=-popularity&search_criteria=widget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=OR&scope=widget')
+        result = self.client.get(base_url + '?orderby=-popularity&search_criteria=widget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=OR&scope=widget')
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 1)
@@ -167,7 +174,7 @@ class CatalogueAPITestCase(TestCase):
             {'name': 'widget1', 'vendor': 'Test'},
             {'name': 'inexistantwidget', 'vendor': 'Test'},
         ])
-        result = self.client.post('////versions', {'resources': resources})
+        result = self.client.post(reverse('wirecloud_catalogue.resource_versions'), {'resources': resources})
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertTrue('resources' in result_json)
@@ -177,13 +184,14 @@ class CatalogueAPITestCase(TestCase):
     def test_vote_queries(self):
 
         User.objects.create_user('test2', 'test@example.com', 'test')
+        vote_url = reverse('wirecloud_catalogue.resource_vote', kwargs={'vendor': 'Test', 'name': 'widget1', 'version': '1.2'})
 
         self.client.login(username='test', password='test')
-        result = self.client.post('////voting/Test/widget1/1.2', {'vote': 3})
+        result = self.client.post(vote_url, {'vote': 3})
         self.assertEqual(result.status_code, 200)
 
         self.client.login(username='test2', password='test')
-        result = self.client.post('////voting/Test/widget1/1.2', {'vote': 4})
+        result = self.client.post(vote_url, {'vote': 4})
         self.assertEqual(result.status_code, 200)
 
         result_json = simplejson.loads(result.content)
@@ -246,8 +254,6 @@ class PublishTestCase(TransactionTestCase):
 
 class WGTDeploymentTestCase(TransactionTestCase):
 
-    urls = 'catalogue.urls'
-
     def setUp(self):
         super(WGTDeploymentTestCase, self).setUp()
 
@@ -255,6 +261,7 @@ class WGTDeploymentTestCase(TransactionTestCase):
         settings.CATALOGUE_MEDIA_ROOT = mkdtemp()
         self.old_deployer = catalogue.utils.wgt_deployer
         catalogue.utils.wgt_deployer = WgtDeployer(settings.CATALOGUE_MEDIA_ROOT)
+        self.resource_collection_url = reverse('wirecloud_catalogue.resource_collection')
 
     def tearDown(self):
         rmtree(settings.CATALOGUE_MEDIA_ROOT, ignore_errors=True)
@@ -263,23 +270,23 @@ class WGTDeploymentTestCase(TransactionTestCase):
 
         super(WGTDeploymentTestCase, self).tearDown()
 
-    def testBasicWGTDeploymentFailsWithoutLogin(self):
+    def test_wgt_uploading_requires_login(self):
         c = Client()
 
         f = open(os.path.join(os.path.dirname(__file__), 'test-data/basic_widget.wgt'))
-        response = c.post('////resource', {'file': f}, HTTP_HOST='www.example.com')
+        response = c.post(self.resource_collection_url, {'file': f}, HTTP_HOST='www.example.com')
         f.close()
 
         self.assertFalse(response.status_code > 200 and response.status_code < 300)
 
-    def testBasicWGTDeployment(self):
+    def test_upload_of_basic_wgt(self):
         User.objects.create_user('test', 'test@example.com', 'test')
         widget_path = catalogue.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
         c = Client()
 
         f = open(os.path.join(os.path.dirname(__file__), 'test-data/basic_widget.wgt'))
         c.login(username='test', password='test')
-        response = c.post('////resource', {'file': f}, HTTP_HOST='www.example.com')
+        response = c.post(self.resource_collection_url, {'file': f}, HTTP_HOST='www.example.com')
         f.close()
 
         self.assertEqual(response.status_code, 200)
@@ -288,8 +295,13 @@ class WGTDeploymentTestCase(TransactionTestCase):
         self.assertEqual(widget.template_uri, 'Morfeo_Test_0.1.wgt')
         self.assertEqual(widget.image_uri, 'images/catalogue.png')
 
+        resource_entry_url = reverse('wirecloud_catalogue.resource_entry', kwargs={
+            'vendor': 'Morfeo',
+            'name': 'Test',
+            'version': '0.1',
+        })
         c.login(username='test', password='test')
-        response = c.delete('////resource/Morfeo/Test/0.1', HTTP_HOST='www.example.com')
+        response = c.delete(resource_entry_url, HTTP_HOST='www.example.com')
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(os.path.exists(widget_path), False)
