@@ -15,8 +15,8 @@ from catalogue.utils import add_resource_from_template
 from catalogue.get_json_catalogue_data import get_resource_data
 from catalogue.models import CatalogueResource, WidgetWiring
 from commons import http_utils
-from commons.exceptions import TemplateParseException
 from wirecloudcommons.test import FakeDownloader, LocalizedTestCase
+from wirecloudcommons.utils.template import TemplateParseException
 from wirecloudcommons.utils.wgt import WgtDeployer
 
 

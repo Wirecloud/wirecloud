@@ -44,7 +44,6 @@ from django.views.static import serve
 from commons.authentication import Http403
 from commons.cache import no_cache, patch_cache_headers
 from commons.utils import get_xml_error, json_encode, get_xhtml_content
-from commons.exceptions import TemplateParseException
 from commons.get_data import get_widget_data
 from commons.http_utils import download_http_content
 from commons.logs_exception import TracedServerError
@@ -55,7 +54,7 @@ from wirecloud.models import Widget, IWidget
 import wirecloud.widget.utils as showcase_utils
 from wirecloud.widget.utils import get_or_create_widget, create_widget_from_template, fix_widget_code, get_site_domain
 from wirecloud.workspace.utils import create_published_workspace_from_template
-from wirecloudcommons.utils.template import TemplateParser
+from wirecloudcommons.utils.template import TemplateParseException, TemplateParser
 from wirecloudcommons.utils.transaction import commit_on_http_success
 
 

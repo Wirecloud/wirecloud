@@ -9,7 +9,6 @@ from django.core.cache import cache
 from django.test import TransactionTestCase
 
 from commons import http_utils
-from commons.exceptions import TemplateParseException
 from commons.get_data import get_widget_data
 from wirecloudcommons.utils.template import TemplateParser
 from wirecloud.models import Widget
@@ -18,6 +17,7 @@ from wirecloud.widget.utils import create_widget_from_template, create_widget_fr
 from wirecloud.widget.views import deleteWidget
 from wirecloud.workspace.utils import create_published_workspace_from_template
 from wirecloudcommons.test import FakeDownloader, LocalizedTestCase
+from wirecloudcommons.utils.template import TemplateParseException
 from wirecloudcommons.utils.wgt import WgtDeployer, WgtFile
 
 

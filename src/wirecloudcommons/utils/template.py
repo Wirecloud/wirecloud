@@ -24,7 +24,6 @@ import rdflib
 from django.utils.translation import ugettext as _
 from lxml import etree
 
-from commons.exceptions import TemplateParseException
 from commons.translation_utils import get_trans_index
 
 
@@ -90,6 +89,18 @@ RDF = rdflib.Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
 RDFS = rdflib.Namespace("http://www.w3.org/2000/01/rdf-schema#")
 VCARD = rdflib.Namespace("http://www.w3.org/2006/vcard/ns#")
 BLUEPRINT = rdflib.Namespace("http://bizweb.sap.com/TR/blueprint#")
+
+
+class TemplateParseException(Exception):
+
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return str(self.msg)
+
+    def __unicode__(self):
+        return unicode(self.msg)
 
 
 class USDLTemplateParser(object):
