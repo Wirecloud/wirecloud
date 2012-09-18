@@ -32,15 +32,14 @@
 from lxml import etree
 from cStringIO import StringIO
 
-from django.contrib.sites.models import get_current_site
 from django.conf import settings
-from django.core.urlresolvers import reverse
 
 from catalogue.models import CatalogueResource
 from commons import http_utils
 from commons.authentication import Http403
 from wirecloud.models import ContextOption, Widget, UserPrefOption, UserWorkspace, VariableDef, Workspace, XHTML
 from wirecloud.plugins import get_active_features, get_widget_api_extensions
+from wirecloudcommons.utils.http import get_absolute_reverse_url, get_absolute_static_url
 from wirecloudcommons.models import Translation
 from wirecloudcommons.utils.template import TemplateParser
 from wirecloudcommons.utils.wgt import WgtDeployer, WgtFile
@@ -340,10 +339,9 @@ def xpath(tree, query, xmlns):
 
 def fix_widget_code(xhtml_code, base_url, request):
 
-    rootURL = get_site_domain(request)
     force_base = False
     if not base_url.startswith(('http://', 'https://')):
-        base_url = rootURL + reverse('wirecloud_showcase.media', args=(base_url.split('/', 4)))
+        base_url = get_absolute_reverse_url('wirecloud_showcase.media', args=(base_url.split('/', 4)), request=request)
         force_base = True
 
     try:
@@ -376,18 +374,14 @@ def fix_widget_code(xhtml_code, base_url, request):
             script.text = ''
 
         if script.get('src', '') == '/ezweb/js/EzWebAPI/EzWebAPI.js':
-            script.set('src', rootURL + settings.STATIC_URL + 'js/EzWebAPI/EzWebAPI.js')
+            script.set('src', get_absolute_static_url('js/EzWebAPI/EzWebAPI.js', request=request))
 
             files = get_widget_api_extensions('index')
             files.reverse()
             for file in files:
-                script.addnext(etree.Element('script', src=rootURL + settings.STATIC_URL + file))
+                script.addnext(etree.Element('script', src=get_absolute_static_url(file, request=request)))
         elif script.get('src', '').startswith('/ezweb/'):
-            script.set('src', rootURL + settings.STATIC_URL + script.get('src')[7:])
+            script.set('src', get_absolute_static_url(script.get('src')[7:], request=request))
 
     # return modified code
     return etree.tostring(xmltree, pretty_print=False, method='html')
-
-
-def get_site_domain(request):
-    return "//" + get_current_site(request).domain

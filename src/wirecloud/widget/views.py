@@ -52,8 +52,9 @@ from commons.resource import Resource
 from wirecloud.iwidget.utils import deleteIWidget
 from wirecloud.models import Widget, IWidget
 import wirecloud.widget.utils as showcase_utils
-from wirecloud.widget.utils import get_or_create_widget, create_widget_from_template, fix_widget_code, get_site_domain
+from wirecloud.widget.utils import get_or_create_widget, create_widget_from_template, fix_widget_code
 from wirecloud.workspace.utils import create_published_workspace_from_template
+from wirecloudcommons.utils.http import get_current_domain
 from wirecloudcommons.utils.template import TemplateParseException, TemplateParser
 from wirecloudcommons.utils.transaction import commit_on_http_success
 
@@ -185,7 +186,7 @@ class WidgetCodeEntry(Resource):
 
         # check if the xhtml code has been cached
         if widget.xhtml.cacheable:
-            cache_key = '_widget_xhtml/' + get_site_domain(request) + '/' + str(widget.xhtml.id)
+            cache_key = '_widget_xhtml/' + get_current_domain(request) + '/' + str(widget.xhtml.id)
             cache_entry = cache.get(cache_key)
             if cache_entry is not None:
                 response = HttpResponse(cache_entry['code'], mimetype='%s; charset=UTF-8' % cache_entry['content_type'])
