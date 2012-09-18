@@ -19,13 +19,13 @@
  *
  */
 
-/*global CatalogueResource, CataloguePublishView, CatalogueSearchView, Constants, CookieManager, Event, gettext, interpolate, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud, ResourceDetailsView, ResourcePainter, ShowcaseFactory, StyledElements*/
+/*global CatalogueResource, CataloguePublishView, CatalogueSearchView, Constants, CookieManager, Event, gettext, interpolate, LayoutManagerFactory, LogManagerFactory, Wirecloud, ResourceDetailsView, ResourcePainter, ShowcaseFactory, StyledElements*/
 
 (function () {
 
     "use strict";
 
-    var CatalogueView = function (id, options) {
+    var CatalogueView = function CatalogueView(id, options) {
         options.class = 'catalogue';
         StyledElements.Alternative.call(this, id, options);
 
@@ -122,41 +122,19 @@
     };
 
     CatalogueView.prototype.ui_commands.delete = function (resource) {
-        var url, success_callback, error_callback, doRequest, msg, context;
-
-        url = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + resource.getName() + "/" + resource.getVersion().text;
+        var success_callback, error_callback, doRequest, msg, context;
 
         success_callback = function (response) {
-            // processing command
-            var layoutManager, result, opManager, i, widgetId;
-
-            layoutManager = LayoutManagerFactory.getInstance();
-            result = JSON.parse(response.responseText);
-
-            layoutManager.logSubTask(gettext('Removing affected iWidgets'));
-            opManager = OpManagerFactory.getInstance();
-            for (i = 0; i < result.removedIWidgets.length; i += 1) {
-                opManager.removeInstance(result.removedIWidgets[i], true);
-            }
-
-            layoutManager.logSubTask(gettext('Purging widget info'));
-            widgetId = resource.getVendor() + '_' + resource.getName() + '_' + resource.getVersion().text;
-            ShowcaseFactory.getInstance().deleteWidget(widgetId);
-
-            layoutManager._notifyPlatformReady();
+            LayoutManagerFactory.getInstance()._notifyPlatformReady();
             this.home();
             this.refresh_search_results();
-        };
+        }.bind(this);
 
-        error_callback = function (transport, e) {
-            var logManager, layoutManager, msg;
+        error_callback = function (msg) {
+            var logManager, layoutManager;
 
-            logManager = LogManagerFactory.getInstance();
             layoutManager = LayoutManagerFactory.getInstance();
 
-            msg = logManager.formatError(gettext("Error deleting the Widget: %(errorMsg)s."), transport, e);
-
-            logManager.log(msg);
             layoutManager._notifyPlatformReady();
             layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
         };
@@ -168,13 +146,7 @@
             layoutManager._startComplexTask(gettext("Deleting widget resource from catalogue"), 3);
             layoutManager.logSubTask(gettext('Requesting server'));
 
-            // Send request to delete de widget
-            Wirecloud.io.makeRequest(url, {
-                method: 'DELETE',
-                onSuccess: success_callback.bind(this),
-                onFailure: error_callback,
-                onException: error_callback
-            });
+            this.catalogue.deleteResource(resource, success_callback, error_callback);
         };
 
         // First ask the user

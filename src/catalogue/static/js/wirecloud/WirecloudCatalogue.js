@@ -19,13 +19,13 @@
  *
  */
 
-/*global CatalogueResource, CookieManager, Wirecloud, Template, URIs*/
+/*global CatalogueResource, CookieManager, gettext, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, ShowcaseFactory, Wirecloud, Template, URIs*/
 
 (function () {
 
     "use strict";
 
-    var WirecloudCatalogue, _onSearchSuccess, _onSearchError;
+    var WirecloudCatalogue, _onSearchSuccess, _onSearchError, deleteSuccessCallback, deleteErrorCallback;
 
     _onSearchSuccess = function _onSearchSuccess(transport) {
         var preferred_versions, i, data, key, raw_data, resources, resource;
@@ -63,6 +63,37 @@
         this.onError();
     };
 
+    deleteSuccessCallback = function deleteSuccessCallback(transport) {
+        // processing command
+        var layoutManager, result, opManager, i, widgetId;
+
+        layoutManager = LayoutManagerFactory.getInstance();
+        result = JSON.parse(transport.responseText);
+
+        layoutManager.logSubTask(gettext('Removing affected iWidgets'));
+        opManager = OpManagerFactory.getInstance();
+        for (i = 0; i < result.removedIWidgets.length; i += 1) {
+            opManager.removeInstance(result.removedIWidgets[i], true);
+        }
+
+        layoutManager.logSubTask(gettext('Purging widget info'));
+        ShowcaseFactory.getInstance().deleteWidget(this.resource.getId());
+
+        this.onSuccess();
+    };
+
+    deleteErrorCallback = function deleteErrorCallback(transport, e) {
+        var msg, logManager;
+
+        logManager = LogManagerFactory.getInstance();
+        msg = logManager.formatError(gettext("Error deleting the Widget: %(errorMsg)s."), transport, e);
+
+        logManager.log(msg);
+
+        this.onError(msg);
+    };
+
+    /*************************************************************************/
     WirecloudCatalogue = function WirecloudCatalogue(options) {
 
         Object.defineProperty(this, 'name', {'value': options.name});
@@ -76,6 +107,9 @@
         this.view_all_template = new Template(options.url + URIs.GET_POST_RESOURCES + '/#{starting_page}/#{resources_per_page}');
         this.simple_search_template = new Template(options.url + URIs.GET_RESOURCES_SIMPLE_SEARCH + '/simple_or/#{starting_page}/#{resources_per_page}');
 
+        Object.defineProperty(this, 'RESOURCE_ENTRY', {
+            value: new Template(options.url + 'catalogue/resource/#{vendor}/#{name}/#{version}')
+        });
         Object.defineProperty(this, 'RESOURCE_COLLECTION', {value: options.url + 'catalogue/resources'});
     };
 
@@ -107,6 +141,30 @@
             parameters: params,
             onSuccess: _onSearchSuccess.bind(context),
             onFailure: _onSearchError.bind(context)
+        });
+    };
+
+    WirecloudCatalogue.prototype.deleteResource = function deleteResource(resource, onSuccess, onError) {
+        var url, context;
+
+        url = this.RESOURCE_ENTRY.evaluate({
+            vendor: resource.getVendor(),
+            name: resource.getName(),
+            version: resource.getVersion().text
+        });
+
+        context = {
+            resource: resource,
+            onSuccess: onSuccess,
+            onError: onError
+        };
+
+        // Send request to delete de widget
+        Wirecloud.io.makeRequest(url, {
+            method: 'DELETE',
+            onSuccess: deleteSuccessCallback.bind(context),
+            onFailure: deleteErrorCallback.bind(context),
+            onException: deleteErrorCallback.bind(context)
         });
     };
 
