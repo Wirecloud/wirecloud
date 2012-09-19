@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import codecs
 import os.path
 from shutil import rmtree
 from tempfile import mkdtemp
@@ -7,13 +8,14 @@ from tempfile import mkdtemp
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.test import TransactionTestCase
+from django.utils.unittest import TestCase
 
 from commons import http_utils
 from commons.get_data import get_widget_data
 from wirecloudcommons.utils.template import TemplateParser
 from wirecloud.models import Widget
 import wirecloud.widget.utils
-from wirecloud.widget.utils import create_widget_from_template, create_widget_from_wgt, get_or_add_widget_from_catalogue
+from wirecloud.widget.utils import create_widget_from_template, create_widget_from_wgt, fix_widget_code, get_or_add_widget_from_catalogue
 from wirecloud.widget.views import deleteWidget
 from wirecloud.workspace.utils import create_published_workspace_from_template
 from wirecloudcommons.test import FakeDownloader, LocalizedTestCase
@@ -25,6 +27,34 @@ from wirecloudcommons.utils.wgt import WgtDeployer, WgtFile
 __test__ = False
 
 BASIC_HTML_GADGET_CODE = "<html><body><p>widget code</p></body></html>"
+
+
+class CodeTransformationTestCase(TestCase):
+
+    def read_file(self, *filename):
+        f = codecs.open(os.path.join(os.path.dirname(__file__), *filename), 'rb')
+        contents = f.read()
+        f.close()
+
+        return contents
+
+    def test_basic_html(self):
+        initial_code = self.read_file('test-data/xhtml1-initial.html')
+        final_code = fix_widget_code(initial_code, 'http://server.com/widget', 'text/html', None) + '\n'
+        expected_code = self.read_file('test-data/xhtml1-expected.html')
+        self.assertEqual(final_code, expected_code)
+
+    def test_basic_xhtml(self):
+        initial_code = self.read_file('test-data/xhtml2-initial.html')
+        final_code = fix_widget_code(initial_code, 'http://server.com/widget', 'application/xhtml+xml', None) + '\n'
+        expected_code = self.read_file('test-data/xhtml2-expected.html')
+        self.assertEqual(final_code, expected_code)
+
+    def test_html_without_head_element(self):
+        initial_code = self.read_file('test-data/xhtml3-initial.html')
+        final_code = fix_widget_code(initial_code, 'http://server.com/widget', 'application/xhtml+xml', None) + '\n'
+        expected_code = self.read_file('test-data/xhtml3-expected.html')
+        self.assertEqual(final_code, expected_code)
 
 
 class ShowcaseTestCase(LocalizedTestCase):
@@ -333,3 +363,10 @@ class WGTShowcaseTestCase(TransactionTestCase):
         deleteWidget(self.user, 'Test', 'Morfeo', '0.1')
         self.assertRaises(Widget.DoesNotExist, Widget.objects.get, vendor='Morfeo', name='Test', version='0.1')
         self.assertEqual(os.path.exists(widget_path), False)
+
+    def test_invalid_wgt_deployment(self):
+        wgt_file = WgtFile(os.path.join(os.path.dirname(__file__), 'test-data', 'invalid_widget.wgt'))
+        widget_path = wirecloud.widget.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
+
+        self.assertRaises(TemplateParseException, create_widget_from_wgt, wgt_file, self.user)
+        self.assertRaises(Widget.DoesNotExist, Widget.objects.get, vendor='Morfeo', name='Test', version='0.1.')
