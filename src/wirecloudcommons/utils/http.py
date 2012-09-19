@@ -66,5 +66,5 @@ def get_absolute_reverse_url(viewname, request=None, **kwargs):
 
 def get_absolute_static_url(url, request=None):
     scheme = get_current_scheme()
-    base = scheme + '://' + get_current_domain(request) + '/' + settings.STATIC_URL
+    base = urljoin(scheme + '://' + get_current_domain(request), settings.STATIC_URL)
     return urljoin(base, url)
