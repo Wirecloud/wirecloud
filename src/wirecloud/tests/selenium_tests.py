@@ -84,6 +84,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         with widget_operation(self.driver, 1):
             self.assertEqual(self.driver.find_element_by_id('listPref').text, 'default')
             self.assertEqual(self.driver.find_element_by_id('textPref').text, 'initial text')
+            self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'false')
+            self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'default')
 
         # Change widget settings
         self.driver.find_element_by_css_selector('.iwidget .settingsbutton').click()
@@ -93,9 +95,17 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.fill_form_input(list_input, '1')  # value1
         text_input = self.driver.find_element_by_css_selector('.window_menu [name="text"]')
         self.fill_form_input(text_input, 'test')
+        boolean_input = self.driver.find_element_by_css_selector('.window_menu [name="boolean"]')
+        boolean_input.click()
+        password_input = self.driver.find_element_by_css_selector('.window_menu [name="password"]')
+        self.fill_form_input(password_input, 'password')
 
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 
         with widget_operation(self.driver, 1):
             self.assertEqual(self.driver.find_element_by_id('listPref').text, '1')
             self.assertEqual(self.driver.find_element_by_id('textPref').text, 'test')
+            self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'true')
+            self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'password')
+
+    test_basic_widget_functionalities.tags=('current',)

@@ -98,6 +98,40 @@
         "pk": 3,
         "model": "wirecloud.variabledef",
         "fields": {
+            "default_value": "false",
+            "action_label": null,
+            "name": "boolean",
+            "description": "boolean preference",
+            "label": "boolean",
+            "aspect": "PREF",
+            "friend_code": null,
+            "order": 2,
+            "type": "B",
+            "widget": 1,
+            "secure": false
+        }
+    },
+    {
+        "pk": 4,
+        "model": "wirecloud.variabledef",
+        "fields": {
+            "default_value": "default",
+            "action_label": null,
+            "name": "password",
+            "description": "password preference",
+            "label": "password",
+            "aspect": "PREF",
+            "friend_code": null,
+            "order": 3,
+            "type": "P",
+            "widget": 1,
+            "secure": false
+        }
+    },
+    {
+        "pk": 5,
+        "model": "wirecloud.variabledef",
+        "fields": {
             "default_value": null,
             "action_label": "",
             "name": "slot",
@@ -112,7 +146,7 @@
         }
     },
     {
-        "pk": 4,
+        "pk": 6,
         "model": "wirecloud.variabledef",
         "fields": {
             "default_value": null,

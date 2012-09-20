@@ -13,10 +13,10 @@
         <field type="TextField" name="description">This widget is used to test some of the features of the Wirecloud platform</field>
         <field type="CharField" name="license"><None></None></field>
         <field type="DateTimeField" name="creation_date">2011-05-13 12:24:03</field>
-        <field type="CharField" name="image_uri">/catalogue/media/Wirecloud/Test/1.0/images/catalogue.png</field>
-        <field type="CharField" name="iphone_image_uri">/catalogue/media/Wirecloud/Test/1.0/images/catalogue_iphone.png</field>
+        <field type="CharField" name="image_uri">images/catalogue.png</field>
+        <field type="CharField" name="iphone_image_uri">images/catalogue_iphone.png</field>
         <field type="CharField" name="wiki_page_uri">http://forge.morfeo-project.org/wiki/index.php/Gadgets_EzWeb</field>
-        <field type="CharField" name="template_uri">/catalogue/media/Wirecloud/Test/1.0/Wirecloud_Test_1.0.wgt</field>
+        <field type="CharField" name="template_uri">Wirecloud_Test_1.0.wgt</field>
         <field to="auth.group" name="certification" rel="ManyToOneRel">1</field>
         <field type="DecimalField" name="popularity">0.0</field>
         <field type="BooleanField" name="fromWGT">True</field>
