@@ -68,8 +68,8 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
     this.name = iWidgetName;
     this.widget = widget;
     this.position = position;
-    this.contentWidth = width;
-    this.contentHeight = height;
+    this.contentWidth = Number(width);
+    this.contentHeight = Number(height);
     this.loaded = false;
     this.zPos = zPos;
     this.transparency = transparency;
