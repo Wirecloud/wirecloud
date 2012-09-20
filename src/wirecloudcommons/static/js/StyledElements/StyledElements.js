@@ -1258,10 +1258,11 @@ StyledElements.ButtonsGroup.prototype.getSelectedButtons = function() {
 /**
  *
  */
-StyledElements.StyledCheckBox = function(nameGroup_, value, options) {
+StyledElements.StyledCheckBox = function StyledCheckBox(options) {
     var defaultOptions = {
         'initiallyChecked': false,
-        'class': ''
+        'class': '',
+        'group': null
     };
     options = EzWebExt.merge(defaultOptions, options);
 
@@ -1270,23 +1271,25 @@ StyledElements.StyledCheckBox = function(nameGroup_, value, options) {
     this.wrapperElement = document.createElement("input");
 
     this.wrapperElement.setAttribute("type", "checkbox");
-    this.wrapperElement.setAttribute("value", value);
     this.inputElement = this.wrapperElement;
 
-    if (options['name'] != undefined)
+    if (options['name'] != undefined) {
         this.inputElement.setAttribute("name", options['name']);
+    }
 
-    if (options['id'] != undefined)
+    if (options['id'] != undefined) {
         this.wrapperElement.setAttribute("id", options['id']);
+    }
 
-    if (options['initiallyChecked'] == true)
+    if (options['initiallyChecked'] == true) {
         this.inputElement.setAttribute("checked", true);
+    }
 
-    if (nameGroup_ instanceof StyledElements.ButtonsGroup) {
-        this.wrapperElement.setAttribute("name", nameGroup_.getName());
-        nameGroup_.insertButton(this);
-    } else if (nameGroup_) {
-        this.wrapperElement.setAttribute("name", nameGroup_);
+    if (options.group_ instanceof StyledElements.ButtonsGroup) {
+        this.wrapperElement.setAttribute("name", options.group.getName());
+        option.group.insertButton(this);
+    } else if (typeof options.group === 'string') {
+        this.wrapperElement.setAttribute("name", options.group);
     }
 
     /* Internal events */

@@ -425,7 +425,12 @@ EMailInputInterface.prototype._checkValue = function _checkValue(newValue) {
 function BooleanInputInterface(fieldId, options) {
     InputInterface.call(this, fieldId, options);
 
-    this.inputElement = new StyledElements.StyledCheckBox(options = options);
+    if (typeof options.initialValue === 'string') {
+        options.initiallyChecked = options.initialValue.toLowerCase() === 'true';
+    } else if (typeof options.initialValue === 'boolean') {
+        options.initiallyChecked = options.initialValue;
+    }
+    this.inputElement = new StyledElements.StyledCheckBox(options);
 }
 BooleanInputInterface.prototype = new InputInterface();
 
