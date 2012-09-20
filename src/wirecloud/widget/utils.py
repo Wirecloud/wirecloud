@@ -337,18 +337,20 @@ def xpath(tree, query, xmlns):
         return tree.xpath(query, namespaces={'xhtml': xmlns})
 
 
-def fix_widget_code(xhtml_code, base_url, request):
+def fix_widget_code(widget_code, base_url, content_type, request):
+
+    if content_type == 'text/html':
+        parser = etree.HTMLParser()
+        xmltree = etree.parse(StringIO(widget_code), parser)
+    elif content_type == 'application/xhtml+xml':
+        xmltree = etree.fromstring(widget_code).getroottree()
+    else:
+        return widget_code
 
     force_base = False
     if not base_url.startswith(('http://', 'https://')):
         base_url = get_absolute_reverse_url('wirecloud_showcase.media', args=(base_url.split('/', 4)), request=request)
         force_base = True
-
-    try:
-        xmltree = etree.fromstring(xhtml_code).getroottree()
-    except:
-        parser = etree.HTMLParser()
-        xmltree = etree.parse(StringIO(xhtml_code), parser)
 
     prefix = xmltree.getroot().prefix
     xmlns = None
@@ -356,14 +358,20 @@ def fix_widget_code(xhtml_code, base_url, request):
         xmlns = xmltree.getroot().nsmap[prefix]
 
     # Fix base element
-    base_elements = xpath(xmltree, '/xhtml:html//xhtml:base', xmlns)
+    base_elements = xpath(xmltree, '/xhtml:html/xhtml:head/xhtml:base', xmlns)
     for base_element in base_elements[1:]:
         base_element.parent.remove(base_element)
 
     if len(base_elements) >= 1 and force_base:
         base_elements[0].set('href', base_url)
     elif len(base_elements) == 0:
-        head_element = xpath(xmltree, '/xhtml:html/xhtml:head', xmlns)[0]
+        head_elements = xpath(xmltree, '/xhtml:html/xhtml:head', xmlns)
+        if len(head_elements) == 0:
+            head_element = etree.Element("head")
+            xmltree.getroot().insert(0, head_element)
+        else:
+            head_element = head_elements[0]
+
         head_element.insert(0, etree.Element('base', href=base_url))
 
     # Fix scripts
