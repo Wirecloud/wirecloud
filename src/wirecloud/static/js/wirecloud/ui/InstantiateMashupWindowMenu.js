@@ -26,7 +26,7 @@
 
     "use strict";
 
-    var newWorkspace, mergeWorkspace, InstanciateMashupWindowMenu;
+    var newWorkspace, mergeWorkspace, InstantiateMashupWindowMenu;
 
     newWorkspace = function (mashup) {
         OpManagerFactory.getInstance().addMashupResource(mashup);
@@ -41,7 +41,7 @@
     /*
      * Constructor
      */
-    InstanciateMashupWindowMenu = function InstanciateMashupWindowMenu (mashup) {
+    InstantiateMashupWindowMenu = function InstantiateMashupWindowMenu (mashup) {
         WindowMenu.call(this, gettext('Add Mashup'));
 
         this.iconElement.addClassName('icon-warning');
@@ -63,13 +63,13 @@
         this.cancelButton.addEventListener("click", mergeWorkspace.bind(this, mashup));
         this.cancelButton.insertInto(this.windowBottom);
     };
-    InstanciateMashupWindowMenu.prototype = new WindowMenu();
+    InstantiateMashupWindowMenu.prototype = new WindowMenu();
 
-    InstanciateMashupWindowMenu.prototype.destroy = function destroy () {
+    InstantiateMashupWindowMenu.prototype.destroy = function destroy () {
         this.hide();
         this.acceptButton.destroy();
         this.cancelButton.destroy();
     };
 
-    Wirecloud.ui.InstanciateMashupWindowMenu = InstanciateMashupWindowMenu;
+    Wirecloud.ui.InstantiateMashupWindowMenu = InstantiateMashupWindowMenu;
 })();

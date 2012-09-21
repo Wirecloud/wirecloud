@@ -107,10 +107,10 @@
         }
     };
 
-    FiWareCatalogueView.prototype.instanciate = function (resource) {
+    FiWareCatalogueView.prototype.instantiate = function (resource) {
         //is mashup?
         if (resource.isMashup()) {
-            (new Wirecloud.ui.InstanciateMashupWindowMenu(resource)).show();
+            (new Wirecloud.ui.InstantiateMashupWindowMenu(resource)).show();
         } else {
             ShowcaseFactory.getInstance().addWidget(
                 resource.getVendor(),
@@ -208,10 +208,10 @@
 
     FiWareCatalogueView.prototype.ui_commands = {};
 
-    FiWareCatalogueView.prototype.ui_commands.instanciate = function (resource) {
+    FiWareCatalogueView.prototype.ui_commands.instantiate = function (resource) {
         return function (e) {
             Event.stop(e);
-            this.instanciate(resource);
+            this.instantiate(resource);
             LayoutManagerFactory.getInstance().changeCurrentView('workspace');
         }.bind(this);
     };

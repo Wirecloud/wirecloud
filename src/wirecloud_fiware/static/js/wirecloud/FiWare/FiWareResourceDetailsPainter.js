@@ -141,7 +141,7 @@ var FiWareResourceDetailsPainter = function (catalogue, details_structure_elemen
         this.create_simple_command(this.back_part, '.back_to_resource_list', 'click', this.catalogue.home.bind(this.catalogue));
 
         // "Instantiate"
-        this.create_simple_command(this.dom_element, '.instanciate_button', 'click', this.catalogue.createUserCommand('instanciate', resource));
+        this.create_simple_command(this.dom_element, '.instantiate_button', 'click', this.catalogue.createUserCommand('instantiate', resource));
 
         this.populate_advanced_operations(resource);
 

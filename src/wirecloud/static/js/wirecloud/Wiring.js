@@ -180,7 +180,7 @@
                 this.ioperators[id] = old_operators[id];
                 delete old_operators[id];
             } else {
-                this.ioperators[id] = operators[operator_info.name].instanciate(id);
+                this.ioperators[id] = operators[operator_info.name].instantiate(id);
             }
         }
         for (id in old_operators) {

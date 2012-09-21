@@ -55,10 +55,10 @@
         return this.catalogue.search(onSuccess, onError, options);
     };
 
-    CatalogueView.prototype.instanciate = function instanciate(resource) {
+    CatalogueView.prototype.instantiate = function instantiate(resource) {
         if (resource.isMashup()) {
             // Ask if the user want to create a new workspace or merge it with the current one
-            (new Wirecloud.ui.InstanciateMashupWindowMenu(resource)).show();
+            (new Wirecloud.ui.InstantiateMashupWindowMenu(resource)).show();
         } else {
             ShowcaseFactory.getInstance().addWidget(resource.getVendor(),
                 resource.getName(),
@@ -105,10 +105,10 @@
 
     CatalogueView.prototype.ui_commands = {};
 
-    CatalogueView.prototype.ui_commands.instanciate = function instanciate(resource) {
+    CatalogueView.prototype.ui_commands.instantiate = function instantiate(resource) {
         return function (e) {
             Event.stop(e);
-            this.instanciate(resource);
+            this.instantiate(resource);
             LayoutManagerFactory.getInstance().changeCurrentView('workspace');
         }.bind(this);
     };

@@ -574,16 +574,16 @@ if (!Wirecloud.ui) {
      * add IOperator.
      */
     WiringEditor.prototype.addIOperator = function addIOperator(ioperator) {
-        var instanciated_operator, operator_interface, auxDiv;
+        var instantiated_operator, operator_interface, auxDiv;
 
         if (ioperator instanceof OperatorMeta) {
-            instanciated_operator = ioperator.instanciate(this.nextOperatorId, true);
+            instantiated_operator = ioperator.instantiate(this.nextOperatorId, true);
             this.nextOperatorId++;
         } else {
-            instanciated_operator = ioperator;
+            instantiated_operator = ioperator;
         }
 
-        operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, instanciated_operator, this.arrowCreator);
+        operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, instantiated_operator, this.arrowCreator);
         auxDiv = document.createElement('div');
         auxDiv.style.width = '2000px';
         auxDiv.style.height = '1000px';

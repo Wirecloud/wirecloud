@@ -127,7 +127,7 @@ ResourcePainter.prototype.paint = function (command_data) {
         ///////////////////////////////
 
         // "Instantiate"
-        this.create_simple_command(resource_element, '.instanciate_button', 'click', this.catalogue.createUserCommand('instanciate', resource));
+        this.create_simple_command(resource_element, '.instantiate_button', 'click', this.catalogue.createUserCommand('instantiate', resource));
 
         // "Show details"
         this.create_simple_command(resource_element, '.click_for_details', 'click', this.catalogue.createUserCommand('showDetails', resource));

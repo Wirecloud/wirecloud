@@ -130,7 +130,7 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         time.sleep(3)
 
         resource = self.add_template_to_catalogue('http://localhost:8001/test/test.rdf', 'Test_Selenium')
-        self.instanciate(resource)
+        self.instantiate(resource)
 
     def test_add_and_delete_widget_rdf(self):
 

@@ -359,8 +359,8 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
 
         return None
 
-    def instanciate(self, resource):
-        resource.find_element_by_css_selector('.instanciate_button').click()
+    def instantiate(self, resource):
+        resource.find_element_by_css_selector('.instantiate_button').click()
 
         # TODO
         time.sleep(2)
@@ -370,7 +370,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         self.change_main_view('marketplace')
         self.search_resource(widget_name)
         resource = self.search_in_catalogue_results(widget_name)
-        self.instanciate(resource)
+        self.instantiate(resource)
 
     def count_iwidgets(self):
         return len(self.driver.find_elements_by_css_selector('div.iwidget'))

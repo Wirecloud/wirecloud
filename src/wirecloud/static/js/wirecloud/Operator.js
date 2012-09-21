@@ -77,7 +77,7 @@ var OperatorMeta = function OperatorMeta(desc) {
     }
 };
 
-OperatorMeta.prototype.instanciate = function instanciate(id/*TODO*/, wiringEditor) {
+OperatorMeta.prototype.instantiate = function instantiate(id/*TODO*/, wiringEditor) {
     return new Operator(this, id /* TODO */, wiringEditor);
 };
 
