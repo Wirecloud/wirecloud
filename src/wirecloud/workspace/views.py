@@ -36,7 +36,6 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.utils.http import urlencode
 
-from commons.authentication import get_user_authentication
 from commons.cache import no_cache
 from commons.get_data import get_workspace_data, get_global_workspace_data, get_tab_data
 from commons import http_utils
@@ -155,11 +154,10 @@ class WorkspaceCollection(Resource):
     @commit_on_http_success
     @no_cache
     def read(self, request):
-        user = get_user_authentication(request)
 
         try:
 
-            workspaces, _junk, reload_showcase = get_workspace_list(user)
+            workspaces, _junk, reload_showcase = get_workspace_list(request.user)
 
         except Exception, e:
             msg = _("error reading workspace: ") + unicode(e)
@@ -167,7 +165,7 @@ class WorkspaceCollection(Resource):
             raise TracedServerError(e, "bad creation of default workspaces", request, msg)
 
         data_list = {
-            'workspaces': [get_workspace_data(workspace, user) for workspace in workspaces],
+            'workspaces': [get_workspace_data(workspace, request.user) for workspace in workspaces],
             'reloadShowcase': reload_showcase,
         }
 
@@ -175,7 +173,6 @@ class WorkspaceCollection(Resource):
 
     @commit_on_http_success
     def create(self, request):
-        user = get_user_authentication(request)
 
         if 'workspace' not in request.POST:
             return HttpResponseBadRequest(get_xml_error(_("workspace JSON expected")), mimetype='application/xml; charset=UTF-8')
@@ -191,8 +188,8 @@ class WorkspaceCollection(Resource):
 
             workspace_name = ts['name']
 
-            workspace = createWorkspace(workspace_name, user)
-            workspace_data = get_global_workspace_data(workspace, user)
+            workspace = createWorkspace(workspace_name, request.user)
+            workspace_data = get_global_workspace_data(workspace, request.user)
 
             return workspace_data.get_response()
 
@@ -205,16 +202,14 @@ class WorkspaceCollection(Resource):
 class WorkspaceEntry(Resource):
 
     def read(self, request, workspace_id):
-        user = get_user_authentication(request)
 
-        workspace = get_object_or_404(Workspace, users__id=user.id, pk=workspace_id)
-        workspace_data = get_global_workspace_data(workspace, user)
+        workspace = get_object_or_404(Workspace, users__id=request.user.id, pk=workspace_id)
+        workspace_data = get_global_workspace_data(workspace, request.user)
 
         return workspace_data.get_response()
 
     @commit_on_http_success
     def update(self, request, workspace_id):
-        user = get_user_authentication(request)
 
         received_json = http_utils.PUT_parameter(request, 'workspace')
 
@@ -223,15 +218,15 @@ class WorkspaceEntry(Resource):
 
         try:
             ts = simplejson.loads(received_json)
-            workspace = Workspace.objects.get(users__id=user.id, pk=workspace_id)
+            workspace = Workspace.objects.get(users__id=request.user.id, pk=workspace_id)
 
             if 'active' in ts:
                 active = ts['active']
                 if (active == 'true'):
                     #Only one active workspace
-                    setActiveWorkspace(user, workspace)
+                    setActiveWorkspace(request.user, workspace)
                 else:
-                    currentUserWorkspace = UserWorkspace.objects.get(workspace=workspace, user=user)
+                    currentUserWorkspace = UserWorkspace.objects.get(workspace=workspace, user=request.user)
                     currentUserWorkspace.active = True
                     currentUserWorkspace.save()
 
@@ -248,20 +243,19 @@ class WorkspaceEntry(Resource):
 
     @commit_on_http_success
     def delete(self, request, workspace_id):
-        user = get_user_authentication(request)
 
         user_workspaces = UserWorkspace.objects.select_related('workspace')
         try:
-            user_workspace = user_workspaces.get(user__id=user.id, workspace__id=workspace_id)
+            user_workspace = user_workspaces.get(user__id=request.user.id, workspace__id=workspace_id)
         except UserWorkspace.DoesNotExist:
             raise Http404
 
         workspace = user_workspace.workspace
-        if workspace.creator != user or user_workspace.manager != '':
+        if workspace.creator != request.user or user_workspace.manager != '':
             return HttpResponseForbidden()
 
         # Check if the user does not have any other workspace
-        workspaces = Workspace.objects.filter(users__id=user.id).exclude(pk=workspace_id)
+        workspaces = Workspace.objects.filter(users__id=request.user.id).exclude(pk=workspace_id)
 
         if workspaces.count() == 0:
             msg = _("workspace cannot be deleted")
@@ -272,7 +266,7 @@ class WorkspaceEntry(Resource):
         PublishedWorkspace.objects.filter(workspace=workspace).update(workspace=None)
         iwidgets = IWidget.objects.filter(tab__workspace=workspace)
         for iwidget in iwidgets:
-            deleteIWidget(iwidget, user)
+            deleteIWidget(iwidget, request.user)
         workspace.delete()
 
         from commons.get_data import _invalidate_cached_variable_values
@@ -280,7 +274,7 @@ class WorkspaceEntry(Resource):
 
         # Set a new active workspace (first workspace by default)
         activeWorkspace = workspaces[0]
-        setActiveWorkspace(user, activeWorkspace)
+        setActiveWorkspace(request.user, activeWorkspace)
 
         return HttpResponse(status=204)
 
@@ -289,7 +283,6 @@ class TabCollection(Resource):
 
     @commit_on_http_success
     def create(self, request, workspace_id):
-        user = get_user_authentication(request)
 
         if 'tab' not in request.POST:
             return HttpResponseBadRequest(get_xml_error(_("tab JSON expected")), mimetype='application/xml; charset=UTF-8')
@@ -304,9 +297,9 @@ class TabCollection(Resource):
                 raise Exception(_('Malformed tab JSON: expecting tab name.'))
 
             tab_name = t['name']
-            workspace = Workspace.objects.get(users__id=user.id, pk=workspace_id)
+            workspace = Workspace.objects.get(users__id=request.user.id, pk=workspace_id)
 
-            tab = createTab(tab_name, user, workspace)
+            tab = createTab(tab_name, request.user, workspace)
 
             # Returning created Ids
             ids = {'id': tab.id, 'name': tab.name}
@@ -320,16 +313,15 @@ class TabCollection(Resource):
 
     @commit_on_http_success
     def update(self, request, workspace_id):
-        user = get_user_authentication(request)
 
         user_workspaces = UserWorkspace.objects.select_related('workspace')
         try:
-            user_workspace = user_workspaces.get(user__id=user.id, workspace__id=workspace_id)
+            user_workspace = user_workspaces.get(user__id=request.user.id, workspace__id=workspace_id)
         except UserWorkspace.DoesNotExist:
             raise Http404
 
         workspace = user_workspace.workspace
-        if workspace.creator != user or user_workspace.manager != '':
+        if workspace.creator != request.user or user_workspace.manager != '':
             return HttpResponseForbidden()
 
         received_json = http_utils.PUT_parameter(request, 'order')
@@ -356,16 +348,14 @@ class TabCollection(Resource):
 class TabEntry(Resource):
 
     def read(self, request, workspace_id, tab_id):
-        user = get_user_authentication(request)
 
-        tab = get_object_or_404(Tab, workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
+        tab = get_object_or_404(Tab, workspace__users__id=request.user.id, workspace__pk=workspace_id, pk=tab_id)
         tab_data = get_tab_data(tab)
 
         return HttpResponse(json_encode(tab_data), mimetype='application/json; charset=UTF-8')
 
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id):
-        user = get_user_authentication(request)
 
         received_json = http_utils.PUT_parameter(request, 'tab')
 
@@ -374,13 +364,13 @@ class TabEntry(Resource):
 
         tabs = Tab.objects.select_related('workspace')
         try:
-            tab = tabs.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
+            tab = tabs.get(workspace__users__id=request.user.id, workspace__pk=workspace_id, pk=tab_id)
         except Tab.DoesNotExist:
             raise Http404
 
         workspace = tab.workspace
-        user_workspace = UserWorkspace.objects.get(user__id=user.id, workspace__id=workspace_id)
-        if workspace.creator != user or user_workspace.manager != '':
+        user_workspace = UserWorkspace.objects.get(user__id=request.user.id, workspace__id=workspace_id)
+        if workspace.creator != request.user or user_workspace.manager != '':
             return HttpResponseForbidden()
 
         try:
@@ -390,7 +380,7 @@ class TabEntry(Resource):
                 visible = t['visible']
                 if (visible == 'true'):
                     #Only one visible tab
-                    setVisibleTab(user, workspace_id, tab)
+                    setVisibleTab(request.user, workspace_id, tab)
                 else:
                     tab.visible = False
 
@@ -410,7 +400,6 @@ class TabEntry(Resource):
 
     @commit_on_http_success
     def delete(self, request, workspace_id, tab_id):
-        user = get_user_authentication(request)
 
         #set new order
         tabs = Tab.objects.filter(workspace__pk=workspace_id).order_by('position')
@@ -429,11 +418,11 @@ class TabEntry(Resource):
             return HttpResponseForbidden(msg)
 
         #Delete Workspace variables too!
-        deleteTab(tab, user)
+        deleteTab(tab, request.user)
 
         #set a new visible tab (first tab by default)
         activeTab = tabs[0]
-        setVisibleTab(user, workspace_id, activeTab)
+        setVisibleTab(request.user, workspace_id, activeTab)
 
         return HttpResponse('ok')
 
@@ -442,7 +431,6 @@ class WorkspaceVariableCollection(Resource):
 
     @commit_on_http_success
     def update(self, request, workspace_id):
-        user = get_user_authentication(request)
 
         content_type = request.META.get('CONTENT_TYPE', '')
         if content_type == None:
@@ -463,7 +451,7 @@ class WorkspaceVariableCollection(Resource):
 
             variables_to_notify = []
             for igVar in iwidgetVariables:
-                variables_to_notify += set_variable_value(igVar['id'], user, igVar['value'])
+                variables_to_notify += set_variable_value(igVar['id'], request.user, igVar['value'])
 
             data = {'iwidgetVars': variables_to_notify}
             return HttpResponse(json_encode(data), mimetype='application/json; charset=UTF-8')
@@ -482,11 +470,9 @@ class WorkspaceMergerEntry(Resource):
         from_ws = get_object_or_404(Workspace, id=from_ws_id)
         to_ws = get_object_or_404(Workspace, id=to_ws_id)
 
-        user = get_user_authentication(request)
-
         packageCloner = PackageCloner()
 
-        to_workspace = packageCloner.merge_workspaces(from_ws, to_ws, user)
+        to_workspace = packageCloner.merge_workspaces(from_ws, to_ws, request.user)
 
         result = {'result': 'ok', 'merged_workspace_id': to_workspace.id}
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
@@ -496,7 +482,6 @@ class WorkspaceSharerEntry(Resource):
 
     @commit_on_http_success
     def update(self, request, workspace_id, share_boolean):
-        user = get_user_authentication(request)
 
         try:
             workspace = Workspace.objects.get(id=workspace_id)
@@ -507,7 +492,7 @@ class WorkspaceSharerEntry(Resource):
 
         owner = workspace.creator
 
-        if (owner != user):
+        if (owner != request.user):
             msg = 'You are not the owner of the workspace, so you can not share it!'
             result = {'result': 'error', 'description': msg}
             return HttpResponseForbidden(json_encode(result), mimetype='application/json; charset=UTF-8')
@@ -547,7 +532,6 @@ class WorkspaceSharerEntry(Resource):
 
     @no_cache
     def read(self, request, workspace_id):
-        get_user_authentication(request)
 
         groups = []
         #read the groups that can be related to a workspace
@@ -571,9 +555,8 @@ class WorkspaceLinkerEntry(Resource):
     @commit_on_http_success
     @no_cache
     def read(self, request, workspace_id):
-        user = get_user_authentication(request)
 
-        linkWorkspace(user, workspace_id)
+        linkWorkspace(request.user, workspace_id)
 
         result = {"result": "ok"}
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
@@ -584,9 +567,8 @@ class WorkspaceClonerEntry(Resource):
     @commit_on_http_success
     @no_cache
     def read(self, request, workspace_id):
-        user = get_user_authentication(request)
 
-        cloned_workspace = cloneWorkspace(workspace_id, user)
+        cloned_workspace = cloneWorkspace(workspace_id, request.user)
         result = {'result': 'ok', 'new_workspace_id': cloned_workspace.id}
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
@@ -702,10 +684,9 @@ class WorkspacePublisherEntry(Resource):
             msg = _("mashup cannot be published: ") + unicode(e)
             return HttpResponseBadRequest(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
 
-        user = get_user_authentication(request)
         workspace = get_object_or_404(Workspace, id=workspace_id)
-        template = TemplateParser(build_rdf_template_from_workspace(mashup, workspace, user))
-        published_workspace = create_published_workspace_from_template(template, user)
+        template = TemplateParser(build_rdf_template_from_workspace(mashup, workspace, request.user))
+        published_workspace = create_published_workspace_from_template(template, request.user)
         published_workspace.workspace = workspace
         published_workspace.params = received_json
         published_workspace.save()
@@ -715,7 +696,7 @@ class WorkspacePublisherEntry(Resource):
         for market_endpoint in mashup['marketplaces']:
 
             try:
-                market_managers[market_endpoint['market']].publish_mashup(market_endpoint, published_workspace, user, mashup, request)
+                market_managers[market_endpoint['market']].publish_mashup(market_endpoint, published_workspace, request.user, mashup, request)
             except Exception, e:
                 errors[market_endpoint['market']] = unicode(e)
 
@@ -735,10 +716,9 @@ class WorkspaceExportService(Service):
         if 'options' not in request.POST:
             return HttpResponseBadRequest(get_xml_error(_("exporting options expected")), mimetype='application/xml; charset=UTF-8')
 
-        user = get_user_authentication(request)
         workspace = get_object_or_404(Workspace, id=workspace_id)
 
-        if not user.is_staff and workspace.creator != user:
+        if not request.user.is_staff and workspace.creator != request.user:
             return HttpResponseForbidden()
 
         received_json = request.POST['options']
@@ -752,7 +732,7 @@ class WorkspaceExportService(Service):
             msg = _("mashup cannot be exported: ") + unicode(e)
             return HttpResponseBadRequest(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
 
-        template = build_template_from_workspace(mashup, workspace, user)
+        template = build_template_from_workspace(mashup, workspace, request.user)
         return HttpResponse(template, mimetype='application/xml; charset=UTF-8')
 
 
