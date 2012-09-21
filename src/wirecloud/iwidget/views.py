@@ -35,7 +35,7 @@ from django.utils import simplejson
 from django.utils.translation import ugettext as _
 from django.shortcuts import get_object_or_404
 
-from commons.authentication import get_user_authentication, Http403
+from commons.authentication import Http403
 from commons.cache import no_cache
 from commons.get_data import VariableValueCacheManager, get_iwidget_data, get_variable_data
 from commons.http_utils import PUT_parameter
@@ -52,20 +52,18 @@ class IWidgetCollection(Resource):
 
     @no_cache
     def read(self, request, workspace_id, tab_id):
-        user = get_user_authentication(request)
 
         workspace = get_object_or_404(Workspace, id=workspace_id)
 
         data_list = {}
-        cache_manager = VariableValueCacheManager(workspace, user)
-        iwidgets = IWidget.objects.filter(tab__workspace__users__id=user.id, tab__workspace__pk=workspace_id, tab__pk=tab_id)
-        data_list['iWidgets'] = [get_iwidget_data(iwidget, user, workspace, cache_manager) for iwidget in iwidgets]
+        cache_manager = VariableValueCacheManager(workspace, request.user)
+        iwidgets = IWidget.objects.filter(tab__workspace__users=request.user, tab__workspace__pk=workspace_id, tab__pk=tab_id)
+        data_list['iWidgets'] = [get_iwidget_data(iwidget, request.user, workspace, cache_manager) for iwidget in iwidgets]
 
         return HttpResponse(json_encode(data_list), mimetype='application/json; charset=UTF-8')
 
     @commit_on_http_success
     def create(self, request, workspace_id, tab_id):
-        user = get_user_authentication(request)
 
         if 'iwidget' not in request.POST:
             return HttpResponseBadRequest(get_xml_error(_("iWidget JSON expected")), mimetype='application/xml; charset=UTF-8')
@@ -85,15 +83,15 @@ class IWidgetCollection(Resource):
 
         # iWidget creation
         try:
-            tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
-            iwidget = SaveIWidget(iwidget, user, tab, initial_variable_values)
-            iwidget_data = get_iwidget_data(iwidget, user, tab.workspace)
+            tab = Tab.objects.get(workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
+            iwidget = SaveIWidget(iwidget, request.user, tab, initial_variable_values)
+            iwidget_data = get_iwidget_data(iwidget, request.user, tab.workspace)
 
             return HttpResponse(json_encode(iwidget_data), mimetype='application/json; charset=UTF-8')
         except Widget.DoesNotExist, e:
             msg = _('referred widget %(widget_uri)s does not exist.') % {'widget_uri': iwidget['widget']}
 
-            raise TracedServerError(e, {'iwidget': iwidget, 'user': user, 'tab': tab}, request, msg)
+            raise TracedServerError(e, {'iwidget': iwidget, 'user': request.user, 'tab': tab}, request, msg)
 
         except Workspace.DoesNotExist, e:
             msg = _('referred workspace %(workspace_id)s does not exist.') % {'workspace_id': workspace_id}
@@ -106,7 +104,6 @@ class IWidgetCollection(Resource):
 
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id):
-        user = get_user_authentication(request)
 
         content_type = request.META.get('CONTENT_TYPE', '')
         if content_type == None:
@@ -121,10 +118,10 @@ class IWidgetCollection(Resource):
             return HttpResponseBadRequest(get_xml_error(_("Request body is not valid JSON data")), mimetype='application/xml; charset=UTF-8')
 
         try:
-            tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
+            tab = Tab.objects.get(workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
             iwidgets = received_data
             for iwidget in iwidgets:
-                UpdateIWidget(iwidget, user, tab)
+                UpdateIWidget(iwidget, request.user, tab)
 
             return HttpResponse('ok')
         except Tab.DoesNotExist, e:
@@ -141,18 +138,16 @@ class IWidgetEntry(Resource):
 
     @no_cache
     def read(self, request, workspace_id, tab_id, iwidget_id):
-        user = get_user_authentication(request)
 
         workspace = get_object_or_404(Workspace, id=workspace_id)
 
-        iwidget = get_object_or_404(IWidget, tab__workspace__users__id=user.id, tab__workspace=workspace, tab__pk=tab_id, pk=iwidget_id)
-        iwidget_data = get_iwidget_data(iwidget, user, workspace)
+        iwidget = get_object_or_404(IWidget, tab__workspace__users=request.user, tab__workspace=workspace, tab__pk=tab_id, pk=iwidget_id)
+        iwidget_data = get_iwidget_data(iwidget, request.user, workspace)
 
         return HttpResponse(json_encode(iwidget_data), mimetype='application/json; charset=UTF-8')
 
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id, iwidget_id):
-        user = get_user_authentication(request)
 
         received_json = PUT_parameter(request, 'iwidget')
 
@@ -161,8 +156,8 @@ class IWidgetEntry(Resource):
 
         try:
             iwidget = simplejson.loads(received_json)
-            tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
-            UpdateIWidget(iwidget, user, tab)
+            tab = Tab.objects.get(workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
+            UpdateIWidget(iwidget, request.user, tab)
 
             return HttpResponse('ok')
         except Tab.DoesNotExist, e:
@@ -176,12 +171,11 @@ class IWidgetEntry(Resource):
 
     @commit_on_http_success
     def delete(self, request, workspace_id, tab_id, iwidget_id):
-        user = get_user_authentication(request)
 
         # Gets Iwidget, if it does not exist, a http 404 error is returned
-        iwidget = get_object_or_404(IWidget, tab__workspace__users__id=user.id, tab__workspace__pk=workspace_id, tab__pk=tab_id, pk=iwidget_id)
+        iwidget = get_object_or_404(IWidget, tab__workspace__users=request.user, tab__workspace__pk=workspace_id, tab__pk=tab_id, pk=iwidget_id)
 
-        deleteIWidget(iwidget, user)
+        deleteIWidget(iwidget, request.user)
 
         return HttpResponse('ok')
 
@@ -190,10 +184,9 @@ class IWidgetVersion(Resource):
 
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id, iwidget_id):
-        user = get_user_authentication(request)
 
         workspace = Workspace.objects.get(id=workspace_id)
-        if workspace.creator != user:
+        if workspace.creator != request.user:
             raise Http403()
 
         content_type = request.META.get('CONTENT_TYPE', '')
@@ -219,14 +212,14 @@ class IWidgetVersion(Resource):
             if workspace.is_shared():
                 users = UserWorkspace.objects.filter(workspace=workspace).values_list('user', flat=True)
             else:
-                users = [user]
+                users = [request.user]
 
             if not 'source' in data or data.get('source') == 'catalogue':
-                widget = get_or_add_widget_from_catalogue(iwidget.widget.vendor, iwidget.widget.name, new_version, user, request, assign_to_users=users)
+                widget = get_or_add_widget_from_catalogue(iwidget.widget.vendor, iwidget.widget.name, new_version, request.user, request, assign_to_users=users)
             elif data.get('source') == 'showcase':
                 widget = get_and_add_widget(iwidget.widget.vendor, iwidget.widget.name, new_version, users)
 
-            UpgradeIWidget(iwidget, user, widget)
+            UpgradeIWidget(iwidget, request.user, widget)
 
             return HttpResponse('ok')
         except Exception, e:
@@ -241,9 +234,8 @@ class IWidgetVariableCollection(Resource):
 
     @no_cache
     def read(self, request, workspace_id, tab_id, iwidget_id):
-        user = get_user_authentication(request)
 
-        tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
+        tab = Tab.objects.get(workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
         variables = Variable.objects.filter(iwidget__tab=tab, iwidget__id=iwidget_id)
         vars_data = [get_variable_data(variable) for variable in variables]
 
@@ -251,7 +243,6 @@ class IWidgetVariableCollection(Resource):
 
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id, iwidget_id):
-        user = get_user_authentication(request)
 
         received_json = PUT_parameter(request, 'variables')
 
@@ -262,7 +253,7 @@ class IWidgetVariableCollection(Resource):
         try:
             received_variables = simplejson.loads(received_json)
 
-            tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
+            tab = Tab.objects.get(workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
             server_variables = Variable.objects.filter(iwidget__tab=tab)
 
             # Widget variables collection update
@@ -288,9 +279,8 @@ class IWidgetVariable(Resource):
 
     @no_cache
     def read(self, request, workspace_id, tab_id, iwidget_id, var_id):
-        user = get_user_authentication(request)
 
-        tab = Tab.objects.get(workspace__user__id=user.id, workspace__pk=workspace_id, pk=tab_id)
+        tab = Tab.objects.get(workspace__user=request.user, workspace__pk=workspace_id, pk=tab_id)
         variable = get_object_or_404(Variable, iwidget__tab=tab, iwidget__pk=iwidget_id, vardef__pk=var_id)
         var_data = get_variable_data(variable)
 
@@ -301,7 +291,6 @@ class IWidgetVariable(Resource):
 
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id, iwidget_id, var_id):
-        user = get_user_authentication(request)
 
         received_json = PUT_parameter(request, 'value')
 
@@ -311,7 +300,7 @@ class IWidgetVariable(Resource):
 
         new_value = received_json
 
-        tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
+        tab = Tab.objects.get(workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
         variable = get_object_or_404(Variable, iwidget__tab=tab, iwidget__pk=iwidget_id, vardef__pk=var_id)
         try:
             variable.value = new_value
