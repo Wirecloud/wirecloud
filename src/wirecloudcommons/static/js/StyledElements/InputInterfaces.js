@@ -315,6 +315,20 @@ TextInputInterface.prototype = new InputInterface();
 /**
  *
  */
+function PasswordInputInterface(fieldId, options) {
+    if (arguments.length === 0) {
+        return;
+    }
+
+    InputInterface.call(this, fieldId, options);
+
+    this.inputElement = new StyledElements.StyledPasswordField(options);
+}
+PasswordInputInterface.prototype = new InputInterface();
+
+/**
+ *
+ */
 function ListInputInterface(fieldId, options) {
     if (arguments.length === 0) {
         return;
@@ -1074,6 +1088,7 @@ var InterfaceFactory = function InterfaceFactory() {
     var mapping = {
         'boolean': BooleanInputInterface,
         'text': TextInputInterface,
+        'password': PasswordInputInterface,
         'hidden': HiddenInputInterface,
         'list': ListInputInterface,
         'integer': IntegerInputInterface,
