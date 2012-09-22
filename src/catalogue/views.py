@@ -95,6 +95,7 @@ def iframe_error(func):
         if not request.REQUEST.get('iframe', False):
             return func(self, request, *args, **kwargs)
 
+        request.META['HTTP_ACCEPT'] = 'text/plain'
         error_msg = response = None
         try:
             response = func(self, request, *args, **kwargs)
@@ -115,7 +116,7 @@ def iframe_error(func):
 @no_cache
 def error(request):
     msg = request.GET.get('msg', 'Widget could not be added')
-    return HttpResponse(msg, mimetype='text/plain')
+    return HttpResponse(msg, mimetype='text/plain; charset=utf-8')
 
 
 class ResourceCollection(Resource):
@@ -135,26 +136,22 @@ class ResourceCollection(Resource):
                 resource = add_widget_from_wgt(request_file, user)
 
             elif 'template_uri' in request.POST:
+
                 template_uri = request.POST['template_uri']
                 template = http_utils.download_http_content(template_uri, user=user)
                 resource = add_resource_from_template(template_uri, template, user, overrides=overrides)
+
             else:
-                msg = _("Missing parameter: template_uri or file")
-                json = {"message": msg, "result": "error"}
-                return HttpResponseBadRequest(json_encode(json), mimetype='application/json; charset=UTF-8')
+
+                return build_error_response(request, 400, _("Missing parameter: template_uri or file"))
 
         except TemplateParseException, e:
 
             return build_error_response(request, 400, unicode(e.msg))
 
         except IntegrityError:
-            # Resource already exists. Rollback transaction
-            json_response = {
-                "result": "error",
-                "message": _('Resource already exists'),
-            }
-            return HttpResponse(simplejson.dumps(json_response),
-                status=409, mimetype='application/json; charset=UTF-8')
+
+            return build_error_response(request, 409, _('Resource already exists'))
 
         json_response = get_added_resource_info(resource, user, request)
 

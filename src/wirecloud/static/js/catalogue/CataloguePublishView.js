@@ -98,7 +98,7 @@ CataloguePublishView.prototype._check_upload_wgt_result = function () {
     doc.body.getTextContent = Element.prototype.getTextContent;
     if (doc.location.href.search("error") >= 0) {
         logManager = LogManagerFactory.getInstance();
-        msg = gettext("The resource could not be added to the catalogue: %(errorMsg)s");
+        msg = gettext("The resource could not be added to the catalogue: %(errorMsg)s.");
         msg = interpolate(msg, {errorMsg: doc.body.getTextContent()}, true);
 
         layoutManager._notifyPlatformReady();

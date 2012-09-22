@@ -31,6 +31,7 @@ from wirecloudcommons.utils import mimeparser
 ERROR_FORMATTERS = {
     'application/json; charset=utf-8': get_json_error_response,
     'application/xml; charset=utf-8': get_xml_error,
+    'text/plain; charset=utf-8': unicode,
 }
 
 
