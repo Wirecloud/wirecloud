@@ -109,9 +109,9 @@
             });
             this.editPos_button.insertInto(this.header);
             this.editPos_button.addEventListener('click', function () {
-                this.wiringEditor.resetSelection();
-                this.editPos();
+                this.wiringEditor.ChangeObjectEditing(this);
             }.bind(this));
+
         }
 
         //sources and targets for the widget
@@ -682,6 +682,8 @@
      * edit source and targets positions
      */
     GenericInterface.prototype.editPos = function editPos() {
+        var obj;
+        obj = null;
         if (this.targetAnchors.length == this.sourceAnchors.length == 1) {
             return;
         }
@@ -689,8 +691,10 @@
             this.disableEdit();
         } else {
             this.enableEdit();
+            obj = this;
         }
         this.repaint();
+        return obj;
     };
 
     /**
@@ -722,7 +726,8 @@
         for (i = 0; i < this.draggableTargets.length; i ++) {
             this.draggableTargets[i].draggable.destroy();
         }
-        this.draggableSources = this.draggableTargets = [];
+        this.draggableSources = [];
+        this.draggableTargets = [];
     };
 
     /**

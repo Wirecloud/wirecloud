@@ -94,6 +94,10 @@ if (!Wirecloud.ui) {
             this.arrows.splice(pos, 1);
         }.bind(this));
 
+        this.canvas.addEventListener('unselectall', function () {
+            this.ChangeObjectEditing(null);
+        }.bind(this));
+
         this.enableAnchors = this.enableAnchors.bind(this);
         this.disableAnchors = this.disableAnchors.bind(this);
 
@@ -223,6 +227,7 @@ if (!Wirecloud.ui) {
         this.nextMulticonnectorId = 0;
         this.sourceAnchorsByFriendCode = {};
         this.targetAnchorsByFriendCode = {};
+        this.EditingObject = null;
 
         iwidgets = workspace.getIWidgets();
 
@@ -732,6 +737,30 @@ if (!Wirecloud.ui) {
                 position.posY -= desp.y;
                 this.selectedWids[key].setPosition(position);
                 this.selectedWids[key].repaint();
+            }
+        }
+    };
+
+    /**
+     * Reenables all anchor disabled previously.
+     */
+    WiringEditor.prototype.ChangeObjectEditing = function ChangeObjectEditing(obj) {
+        this.resetSelection();
+        if (obj == null) {
+            if (this.EditingObject != null) {
+                this.EditingObject.editPos();
+                this.EditingObject = null;
+            }
+        } else {
+            if (this.EditingObject == obj){
+                this.EditingObject.editPos();
+                this.EditingObject = null;
+            } else {
+                obj.editPos();
+                if (this.EditingObject != null) {
+                    this.EditingObject.editPos();
+                }
+                this.EditingObject = obj;
             }
         }
     };

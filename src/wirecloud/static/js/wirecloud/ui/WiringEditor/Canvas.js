@@ -29,14 +29,18 @@
      * Constructor
      *************************************************************************/
     var Canvas = function Canvas() {
-        StyledElements.ObjectWithEvents.call(this, ['arrowadded', 'arrowremoved']);
+        StyledElements.ObjectWithEvents.call(this, ['arrowadded', 'arrowremoved', 'unselectall']);
 
         this.canvasElement = document.createElementNS(this.SVG_NAMESPACE, 'svg:svg');
         this.canvasElement.generalLayer = document.createElementNS(this.SVG_NAMESPACE, 'svg:g');
         this.canvasElement.appendChild(this.canvasElement.generalLayer);
         this.canvasElement.setAttribute('class', 'canvas');
         this.selectedArrow = null;
-        this.canvasElement.addEventListener('click', this.unselectArrow.bind(this), false);
+        this.canvasElement.addEventListener('click', function () {
+            this.unselectArrow();
+            this.events.unselectall.dispatch();
+        }.bind(this), false);
+
     };
     Canvas.prototype = new StyledElements.ObjectWithEvents();
 
