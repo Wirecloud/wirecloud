@@ -130,11 +130,13 @@
         } else { //miniInterface
             this.draggable = new Draggable(this.wrapperElement, {iObject: this},
                 function onStart(draggable, context) {
-                    var miniwidget_clon, pos_miniwidget;
+                    var miniwidget_clon, pos_miniwidget, headerHeight;
+
+                    headerHeight = context.iObject.wiringEditor.getBoundingClientRect().top;
 
                     //initial position
                     pos_miniwidget = context.iObject.getBoundingClientRect();
-                    context.y = pos_miniwidget.top - 73;
+                    context.y = pos_miniwidget.top - (headerHeight);
                     context.x = pos_miniwidget.left;
                     //create a miniwidget clon
                     if (context.iObject instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
@@ -147,7 +149,7 @@
                     miniwidget_clon.addClassName('clon');
                     //set the clon position over the originar miniWidget
                     miniwidget_clon.setBoundingClientRect(pos_miniwidget,
-                     {top: -73, left: 0, width: -2, height: -10});
+                     {top: -headerHeight, left: 0, width: -2, height: -10});
                     // put the miniwidget clon in the layout
                     context.iObject.wiringEditor.layout.wrapperElement.appendChild(miniwidget_clon.wrapperElement);
                     //put the clon in the context.iObject
