@@ -223,12 +223,10 @@
         var i;
         for (i = 0; i < this.sourceDiv.childNodes.length; i ++) {
             this.draggableSources[i] = {'wrapperElement': this.sourceDiv.childNodes[i]};
-            //this.draggableSources[i].wrapperElement.prototype = new StyledElements.Container({'extending': true});
             this.makeSlotDraggable(this.draggableSources[i], this.wiringEditor.layout.center, 'source_clon');
         }
         for (i = 0; i < this.targetDiv.childNodes.length; i ++) {
             this.draggableTargets[i] = {'wrapperElement': this.targetDiv.childNodes[i]};
-            //this.draggableTargets[i].wrapperElement.prototype = new StyledElements.Container({'extending': true});
             this.makeSlotDraggable(this.draggableTargets[i], this.wiringEditor.layout.center, 'target_clon');
         }
     };
@@ -734,13 +732,6 @@
      * Move an endpoint up 1 position.
      */
     GenericInterface.prototype.up = function up(element) {
-        if (element.hasClassName('lastElement')) {
-            element.removeClassName('lastElement');
-            element.previousElementSibling.addClassName('lastElement');
-        } else if (element.previousElementSibling.hasClassName('firstElement')) {
-            element.previousElementSibling.removeClassName('firstElement');
-            element.addClassName('firstElement');
-        }
         element.parentNode.insertBefore(element, element.previousElementSibling);
         this.repaint();
     };
@@ -750,13 +741,6 @@
      */
     GenericInterface.prototype.down = function down(element) {
         if (element.nextElementSibling !== null) {
-            if (element.hasClassName('firstElement')) {
-                element.removeClassName('firstElement');
-                element.nextElementSibling.addClassName('firstElement');
-            } else if (element.nextElementSibling.hasClassName('lastElement')) {
-                element.nextElementSibling.removeClassName('lastElement');
-                element.addClassName('lastElement');
-            }
             element.parentNode.insertBefore(element, element.nextElementSibling.nextElementSibling);
             this.repaint();
         }
