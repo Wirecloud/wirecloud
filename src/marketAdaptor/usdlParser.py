@@ -46,6 +46,7 @@ SKOS = rdflib.Namespace('http://www.w3.org/2004/02/skos/core#')
 TIME = rdflib.Namespace('http://www.w3.org/2006/time#')
 GR = rdflib.Namespace('http://purl.org/goodrelations/v1#')
 DOAP = rdflib.Namespace('http://usefulinc.com/ns/doap#')
+GEO = rdflib.Namespace('http://www.w3.org/2003/01/geo/wgs84_pos#')
 
 
 class USDLParser(object):
@@ -108,6 +109,38 @@ class USDLParser(object):
         self._info['part_ref'] = False
         vendor = self._get_field(USDL, service_uri, 'hasProvider', id_=True)[0]
         self._info['vendor'] = self._get_field(FOAF, vendor, 'name')[0]
+
+        # provider vCard
+        vcard = self._get_field(VCARD, vendor, 'adr', id_=True)[0]
+
+        if vcard != '':
+            self._info['vcard'] = {
+                'BEGIN': [{
+                    'properties': {},
+                    'value':'VCARD',
+                }],
+                'FN': [{
+                    'properties': {},
+                    'value': self._info['vendor']
+                }],
+                'ADR': [{
+                    'properties': {},
+                    'value': self._get_field(VCARD, vcard, 'street-address')[0] + ';' + self._get_field(VCARD, vcard, 'postal-code')[0] + ';' + self._get_field(VCARD, vcard, 'locality')[0] + ';' + self._get_field(VCARD, vcard, 'country-name')[0]
+                }],
+                'TEL': [{
+                    'properties': {},
+                    'value': self._get_field(VCARD, vcard, 'tel')[0]
+                }],
+                'EMAIL': [{
+                    'properties': {},
+                    'value': self._get_field(VCARD, vcard, 'email')[0]
+                }],
+                'END':  [{
+                    'properties': {},
+                    'value': "VCARD"
+                }]
+            }
+
         self._info['name'] = self._get_field(DCTERMS, service_uri, 'title')[0]
 
         self._info['versions'] = []
@@ -218,13 +251,43 @@ class USDLParser(object):
                     variables = self._get_field(SLA, exp, 'hasVariable', id_=True)
 
                     for var in variables:
+                        # The sla variables may defines service availibility or location, defined
+                        # by a point in utm coodinates plus a radius, in this case this property is
+                        # set in the sla expresion.
+                        radius = False
                         default_value = self._get_field(SLA, var, 'hasDefault', id_=True)[0]
-                        expresion['variables'].append({
-                            'label': self._get_field(RDFS, var, 'label')[0],
-                            'type': self._get_field(RDF, default_value, 'type')[0],
-                            'value': self._get_field(GR, default_value, 'hasValue')[0],
-                            'unit': self._get_field(GR, default_value, 'hasUnitOfMeasurement')[0],
-                        })
+
+                        if default_value == '':
+                            default_value = self._get_field(SLA, var, 'hasServiceRadius', id_=True)[0]
+                            if default_value != '':
+                                radius = True
+                                if 'location' not in expresion:
+                                    expresion['location'] = {}
+
+                        type_ = self._get_field(RDF, default_value, 'type', id_=True)[0]
+
+                        # The sla variable may contains a location, i.e service availability
+                        if type_ == GR['QualitativeValue']:
+                            location = self._get_field(GEO, default_value, 'location', id_=True)[0]
+                            if location != '':
+                                if 'location' not in expresion:
+                                    expresion['location'] = {}
+
+                                expresion['location']['coordinates'] = {
+                                    'lat': self._get_field(GEO, location, 'lat')[0],
+                                    'long': self._get_field(GEO, location, 'long')[0],
+                                }
+                        else:
+                            variable_info = {
+                                'label': self._get_field(RDFS, var, 'label')[0],
+                                'type': self._get_field(RDF, default_value, 'type')[0],
+                                'value': self._get_field(GR, default_value, 'hasValue')[0],
+                                'unit': self._get_field(GR, default_value, 'hasUnitOfMeasurement')[0],
+                            }
+
+                            expresion['variables'].append(variable_info)
+                            if radius:
+                                expresion['location']['radius'] = variable_info
 
                     service_level['slaExpresions'].append(expresion)
 
@@ -256,40 +319,48 @@ class USDLParser(object):
 
                 # TODO add price components and taxes, is necesary to create an usdl document
                 # using the available tool in order to see real property names used in pricing
-                price_plan['priceComponents'] = []
-                price_plan['taxes'] = []
 
-                for pc in self._get_field(PRICE, price, 'hasPriceComponent', id_=True):
-                    price_component = {
-                        'title': self._get_field(DCTERMS, pc, 'title')[0],
-                        'description': self._get_field(DCTERMS, pc, 'description')[0],
-                        'currency': self._get_field(GR, pc, 'hasCurrency')[0],
-                    }
-                    value = self._get_field(GR, pc, 'hasCurrencyValue')
+                price_components = self._get_field(PRICE, price, 'hasPriceComponent', id_=True)
 
-                    if not value:
-                        price_component['value'] = self._get_field(GR, pc, 'hasValueFloat')[0]
-                    else:
-                        price_component['value'] = value[0]
+                if len(price_components) > 1 or price_components[0] != '':
+                    price_plan['priceComponents'] = []
 
-                    price_component['unit'] = self._get_field(GR, pc, 'hasUnitOfMeasurement')[0]
-                    price_plan['priceComponents'].append(price_component)
+                    for pc in price_components:
+                        price_component = {
+                            'title': self._get_field(DCTERMS, pc, 'title')[0],
+                            'description': self._get_field(DCTERMS, pc, 'description')[0],
+                            'currency': self._get_field(GR, pc, 'hasCurrency')[0],
+                        }
+                        value = self._get_field(GR, pc, 'hasCurrencyValue')
 
-                for pc in self._get_field(PRICE, price, 'hasTax', id_=True):
-                    tax = {
-                        'title': self._get_field(DCTERMS, pc, 'title')[0],
-                        'description': self._get_field(DCTERMS, pc, 'description')[0],
-                        'currency': self._get_field(GR, pc, 'hasCurrency')[0],
-                    }
-                    value = self._get_field(GR, pc, 'hasCurrencyValue')
+                        if not value:
+                            price_component['value'] = self._get_field(GR, pc, 'hasValueFloat')[0]
+                        else:
+                            price_component['value'] = value[0]
 
-                    if not value:
-                        tax['value'] = value[0]
-                    else:
-                        tax['value'] = self._get_field(GR, pc, 'hasValueFloat')[0]
+                        price_component['unit'] = self._get_field(GR, pc, 'hasUnitOfMeasurement')[0]
+                        price_plan['priceComponents'].append(price_component)
 
-                    tax['unit'] = self._get_field(GR, pc, 'hasUnitOfMeasurement')[0]
-                    price_plan['taxes'].append(tax)
+                taxes = self._get_field(PRICE, price, 'hasTax', id_=True)
+
+                if len(taxes) > 1 or taxes[0] != '':
+                    price_plan['taxes'] = []
+
+                    for pc in taxes:
+                        tax = {
+                            'title': self._get_field(DCTERMS, pc, 'title')[0],
+                            'description': self._get_field(DCTERMS, pc, 'description')[0],
+                            'currency': self._get_field(GR, pc, 'hasCurrency')[0],
+                        }
+                        value = self._get_field(GR, pc, 'hasCurrencyValue')
+
+                        if not value:
+                            tax['value'] = value[0]
+                        else:
+                            tax['value'] = self._get_field(GR, pc, 'hasValueFloat')[0]
+
+                        tax['unit'] = self._get_field(GR, pc, 'hasUnitOfMeasurement')[0]
+                        price_plan['taxes'].append(tax)
 
                 self._info['versions'][0]['pricing'].append(price_plan)
 
