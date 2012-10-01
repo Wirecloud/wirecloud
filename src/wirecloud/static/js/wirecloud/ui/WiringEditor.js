@@ -111,20 +111,9 @@ if (!Wirecloud.ui) {
             anchor.addEventListener('startdrag', this.disableAnchors);
         }.bind(this);
 
-        document.addEventListener("keydown", function (event) {
-            // TODO: check this handler in a Mac
-            if (event.keyCode == 17) {
-                this.ctrlPushed = true;
-                this.layout.getCenterContainer().addClassName('selecting');
-            }
-        }.bind(this), false);
-        document.addEventListener("keyup", function (event) {
-            // TODO: check this handler in a Mac
-            if (event.keyCode == 17) {
-                this.ctrlPushed = false;
-                this.layout.getCenterContainer().removeClassName('selecting');
-            }
-        }.bind(this), false);
+        // Initialize key listener
+        this._keydownListener = keydownListener.bind(this);
+        this._keyupListener = keyupListener.bind(this);
     };
     WiringEditor.prototype = new StyledElements.Alternative();
 
@@ -133,6 +122,27 @@ if (!Wirecloud.ui) {
     /*************************************************************************
      * Private methods
      *************************************************************************/
+    /**
+     * @Private
+     * keydown handler for ctrl Multiselection
+     */
+    var keydownListener = function keydownListener(event) {
+        if (event.keyCode == 17) {
+            this.ctrlPushed = true;
+            this.layout.getCenterContainer().addClassName('selecting');
+        }
+    };
+
+    /**
+     * @Private
+     * keyup handler for ctrl Multiselection
+     */
+    var keyupListener = function keyupListener(event) {
+        if (event.keyCode == 17) {
+            this.ctrlPushed = false;
+            this.layout.getCenterContainer().removeClassName('selecting');
+        }
+    };
 
     /**
      * @Private
@@ -325,6 +335,7 @@ if (!Wirecloud.ui) {
                 multi.addArrow(arrow);
             }
         }
+        this.activateCtrlMultiSelect();
     };
 
     /**
@@ -349,6 +360,7 @@ if (!Wirecloud.ui) {
             this.layout.getCenterContainer().removeChild(this.multiconnectors[key]);
             this.multiconnectors[key].destroy();
         }
+        this.deactivateCtrlMultiSelect();
 
         this.canvas.clear();
         this.mini_widget_section.clear();
@@ -363,6 +375,23 @@ if (!Wirecloud.ui) {
     /*************************************************************************
      * Public methods
      *************************************************************************/
+    /**
+     * activate handlers for ctrl Multiselection
+     */
+    WiringEditor.prototype.activateCtrlMultiSelect = function activateCtrlMultiSelect() {
+        document.addEventListener("keydown", this._keydownListener, false);
+        document.addEventListener("keyup", this._keyupListener, false);
+    };
+
+    /**
+     * deactivate handlers for ctrl Multiselection
+     */
+    WiringEditor.prototype.deactivateCtrlMultiSelect = function deactivateCtrlMultiSelect() {
+        document.removeEventListener("keydown", this._keydownListener, false);
+        document.removeEventListener("keyup", this._keyupListener, false);
+        this.ctrlPushed = false;
+        this.layout.getCenterContainer().removeClassName('selecting');
+    };
 
     /**
      * Saves the wiring state.
