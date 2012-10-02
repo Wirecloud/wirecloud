@@ -50,6 +50,7 @@
         this.height = height;
         this.arrowPositions = [];
         this.type = null;
+        this.initPos = {'x': 0, 'y': 0};
 
         if (height == null) {
             //default 50 px height for multiconnector
@@ -127,26 +128,42 @@
         //Draggable
         this.draggable = new Draggable(this.movZone, {iObject: this},
             function onStart(draggable, context) {
-                    context.y = context.iObject.wrapperElement.style.top === "" ? 0 : parseInt(context.iObject.wrapperElement.style.top, 10);
-                    context.x = context.iObject.wrapperElement.style.left === "" ? 0 : parseInt(context.iObject.wrapperElement.style.left, 10);
-                    context.iObject.disable();
-                },
+                var position;
+                context.y = context.iObject.wrapperElement.style.top === "" ? 0 : parseInt(context.iObject.wrapperElement.style.top, 10);
+                context.x = context.iObject.wrapperElement.style.left === "" ? 0 : parseInt(context.iObject.wrapperElement.style.left, 10);
+                context.iObject.disable();
+                context.preselected = context.iObject.selected;
+                context.iObject.select(true);
+                context.iObject.wiringEditor.onStarDragSelected();
+            },
             function onDrag(e, draggable, context, xDelta, yDelta) {
-                    context.iObject.setPosition({posX: context.x + xDelta, posY: context.y + yDelta});
-                    context.iObject.repaint();
-                },
+                context.iObject.setPosition({posX: context.x + xDelta, posY: context.y + yDelta});
+                context.iObject.repaint();
+                context.iObject.wiringEditor.onDragSelectedObjects(xDelta, yDelta);
+            },
             function onFinish(draggable, context) {
-                    var position = context.iObject.getStylePosition();
-                    if (position.posX < 0) {
-                        position.posX = 8;
+                context.iObject.wiringEditor.onFinishSelectedObjects();
+                var position = context.iObject.getStylePosition();
+                if (position.posX < 0) {
+                    position.posX = 8;
+                }
+                if (position.posY < 0) {
+                    position.posY = 8;
+                }
+                context.iObject.setPosition(position);
+                context.iObject.repaint();
+                //pseudoClick
+                if ((Math.abs(context.x - position.posX) < 2) && (Math.abs(context.y - position.posY) < 2)) {
+                    if (context.preselected) {
+                        context.iObject.unselect(true);
                     }
-                    if (position.posY < 0) {
-                        position.posY = 8;
+                } else {
+                    if (!context.preselected) {
+                        context.iObject.unselect(true);
                     }
-                    context.iObject.setPosition(position);
-                    context.iObject.repaint();
-                    context.iObject.enable();
-                },
+                }
+                context.iObject.enable();
+            },
             function () {return true; }
         );
     };
@@ -186,6 +203,13 @@
     Multiconnector.prototype.addArrow = function addArrow(theArrow) {
         this.arrows.push(theArrow);
         this.reorganizeArrows();
+    };
+
+    /**
+     * @addArrow
+     */
+    Multiconnector.prototype.getId = function getId() {
+        return this.id;
     };
 
     /**
@@ -444,6 +468,29 @@
             atr = '';
         }
         this.wrapperElement.setAttribute('class', EzWebExt.removeWord(atr, className));
+    };
+
+    Multiconnector.prototype.select = function select(withCtrl) {
+        var i, j, arrows;
+        if (this.hasClassName('selected')) {
+            return;
+        }
+        if (!(this.wiringEditor.ctrlPushed) && (this.wiringEditor.selectedCount > 0) && (withCtrl)) {
+            this.wiringEditor.resetSelection();
+        }
+        this.selected = true;
+        this.addClassName('selected');
+        this.wiringEditor.addSelectedObject(this);
+    };
+
+    Multiconnector.prototype.unselect = function unselect(withCtrl) {
+        var i, j, arrows;
+        this.selected = false;
+        this.removeClassName('selected');
+        this.wiringEditor.removeSelectedObject(this);
+        if (!(this.wiringEditor.ctrlPushed) && (this.wiringEditor.selectedCount > 0) && (withCtrl)) {
+            this.wiringEditor.resetSelection();
+        }
     };
 
     /**

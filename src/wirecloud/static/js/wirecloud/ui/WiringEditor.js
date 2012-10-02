@@ -230,6 +230,8 @@ if (!Wirecloud.ui) {
         this.selectedOps.length = 0;
         this.selectedWids = {};
         this.selectedWids.length = 0;
+        this.selectedMulti = {};
+        this.selectedMulti.length = 0;
         this.selectedCount = 0;
         this.ctrlPushed = false;
         this.generalHighlighted = true;
@@ -507,11 +509,14 @@ if (!Wirecloud.ui) {
      */
     WiringEditor.prototype.addSelectedObject = function addSelectedObject(object) {
         if (object instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
-            this.selectedOps[object.iwidget.getId()] = object;
-            this.selectedOps.length += 1;
-        } else {
-            this.selectedWids[object.getId()] = object;
+            this.selectedWids[object.iwidget.getId()] = object;
             this.selectedWids.length += 1;
+        } else if (object instanceof Wirecloud.ui.WiringEditor.OperatorInterface){
+            this.selectedOps[object.getId()] = object;
+            this.selectedOps.length += 1;
+        } else if (object instanceof Wirecloud.ui.WiringEditor.Multiconnector){
+            this.selectedMulti[object.getId()] = object;
+            this.selectedMulti.length += 1;
         }
         this.selectedCount += 1;
     };
@@ -521,11 +526,14 @@ if (!Wirecloud.ui) {
      */
     WiringEditor.prototype.removeSelectedObject = function removeSelectedObject(object) {
         if (object instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
-            delete this.selectedOps[object.iwidget.getId()];
-            this.selectedOps.length -= 1;
-        } else {
-            delete this.selectedWids[object.getId()];
+            delete this.selectedWids[object.iwidget.getId()];
             this.selectedWids.length -= 1;
+        } else if (object instanceof Wirecloud.ui.WiringEditor.OperatorInterface) {
+            delete this.selectedOps[object.getId()];
+            this.selectedOps.length -= 1;
+        } else if (object instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
+            delete this.selectedMulti[object.getId()];
+            this.selectedMulti.length -= 1;
         }
         if (this.selectedCount > 0) {
             this.selectedCount -= 1;
@@ -549,7 +557,12 @@ if (!Wirecloud.ui) {
                 this.selectedWids[key].unselect(false);
             }
         }
-        if ((this.selectedOps.length !== 0) || (this.selectedWids.length !== 0)) {
+        for (key in this.selectedMulti) {
+            if (key != 'length') {
+                this.selectedMulti[key].unselect(false);
+            }
+        }
+        if ((this.selectedOps.length !== 0) || (this.selectedWids.length !== 0) || (this.selectedMulti.length !== 0)){
             //('error resetSelection' + this.selectedOps + this.selectedWids);
         }
     };
@@ -669,6 +682,13 @@ if (!Wirecloud.ui) {
                 pos.x = this.selectedWids[key].wrapperElement.style.left === "" ? 0 : parseInt(this.selectedWids[key].wrapperElement.style.left, 10);
             }
         }
+        for (key in this.selectedMulti) {
+            if (key != 'length') {
+                pos = this.selectedMulti[key].initPos;
+                pos.y = this.selectedMulti[key].wrapperElement.style.top === "" ? 0 : parseInt(this.selectedMulti[key].wrapperElement.style.top, 10);
+                pos.x = this.selectedMulti[key].wrapperElement.style.left === "" ? 0 : parseInt(this.selectedMulti[key].wrapperElement.style.left, 10);
+            }
+        }
     };
 
     /**
@@ -690,6 +710,12 @@ if (!Wirecloud.ui) {
             if (key != 'length') {
                 this.selectedWids[key].setPosition({posX: this.selectedWids[key].initPos.x + xDelta, posY: this.selectedWids[key].initPos.y + yDelta});
                 this.selectedWids[key].repaint();
+            }
+        }
+        for (key in this.selectedMulti) {
+            if (key != 'length') {
+                this.selectedMulti[key].setPosition({posX: this.selectedMulti[key].initPos.x + xDelta, posY: this.selectedMulti[key].initPos.y + yDelta});
+                this.selectedMulti[key].repaint();
             }
         }
     };
@@ -736,6 +762,21 @@ if (!Wirecloud.ui) {
                 }
             }
         }
+        for (key in this.selectedMulti) {
+            if (key != 'length') {
+                position = this.selectedMulti[key].getStylePosition();
+                if (position.posX < 0) {
+                    if (position.posX < desp.x) {
+                        desp.x = position.posX;
+                    }
+                }
+                if (position.posY < 0) {
+                    if (position.posY < desp.y) {
+                        desp.y = position.posY;
+                    }
+                }
+            }
+        }
         if ((desp.y >= 0) && (desp.x >= 0)) {
             return;
         }
@@ -766,6 +807,15 @@ if (!Wirecloud.ui) {
                 position.posY -= desp.y;
                 this.selectedWids[key].setPosition(position);
                 this.selectedWids[key].repaint();
+            }
+        }
+        for (key in this.selectedMulti) {
+            if (key != 'length') {
+                position = this.selectedMulti[key].getStylePosition();
+                position.posX -= desp.x;
+                position.posY -= desp.y;
+                this.selectedMulti[key].setPosition(position);
+                this.selectedMulti[key].repaint();
             }
         }
     };
