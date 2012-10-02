@@ -149,7 +149,7 @@ if (!Wirecloud.ui) {
      * finds anchors from the serialized string
      */
     var findAnchor = function findAnchor(desc, workspace) {
-        var iwidget_interface, iwidget;
+        var iwidget_interface, iwidget, endPointPos;
 
         switch (desc.type) {
         case 'iwidget':
@@ -158,7 +158,8 @@ if (!Wirecloud.ui) {
             } else {
                 iwidget = workspace.getIWidget(desc.id);
                 if (iwidget != null) {
-                    iwidget_interface = this.addIWidget(this, iwidget);
+                    endPointPos = {'sources': [], 'targets': []};
+                    iwidget_interface = this.addIWidget(this, iwidget, endPointPos);
                     iwidget_interface.setPosition({posX: 0, posY: 0});
                     this.mini_widgets[iwidget.getId()].disable();
                 } else {
@@ -254,7 +255,7 @@ if (!Wirecloud.ui) {
             // widget
             if (iwidget.getId() in WiringStatus.views[0].iwidgets) {
                 miniwidget_interface.disable();
-                widget_interface = this.addIWidget(this, iwidget);
+                widget_interface = this.addIWidget(this, iwidget, WiringStatus.views[0].iwidgets[iwidget.getId()].endPointsInOuts);
                 widget_interface.setPosition(WiringStatus.views[0].iwidgets[iwidget.getId()].widget);
             }
         }
@@ -277,7 +278,7 @@ if (!Wirecloud.ui) {
                 this.NextOperatorId = op_id;
             }
 
-            operator_interface = this.addIOperator(operator_instance);
+            operator_interface = this.addIOperator(operator_instance, WiringStatus.views[0].operators[key].endPointsInOuts);
             if (key in WiringStatus.views[0].operators) {
                 operator_interface.setPosition(WiringStatus.views[0].operators[key].widget);
             }
@@ -423,18 +424,16 @@ if (!Wirecloud.ui) {
         for (key in this.iwidgets) {
             widget = this.iwidgets[key];
             pos = widget.getStylePosition();
-            //inOutPos = widget.getInOutPositions();
-            inOutPos = null;
-            positions = {'widget' : pos, 'inOuts' : inOutPos};
+            inOutPos = widget.getInOutPositions();
+            positions = {'widget' : pos, 'endPointsInOuts' : inOutPos};
             WiringStatus.views[0].iwidgets[key] = positions;
         }
 
         for (key in this.ioperators) {
             operator_interface = this.ioperators[key];
             pos = operator_interface.getStylePosition();
-            //inOutPos = widget.getInOutPositions();
-            inOutPos = null;
-            positions = {'widget' : pos, 'inOuts' : inOutPos};
+            inOutPos = operator_interface.getInOutPositions();
+            positions = {'widget' : pos, 'endPointsInOuts' : inOutPos};
             WiringStatus.operators[key] = {"name" : operator_interface.getIOperator().meta.uri, 'id' : key};
             WiringStatus.views[0].operators[key] = positions;
         }
@@ -511,10 +510,10 @@ if (!Wirecloud.ui) {
         if (object instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
             this.selectedWids[object.iwidget.getId()] = object;
             this.selectedWids.length += 1;
-        } else if (object instanceof Wirecloud.ui.WiringEditor.OperatorInterface){
+        } else if (object instanceof Wirecloud.ui.WiringEditor.OperatorInterface) {
             this.selectedOps[object.getId()] = object;
             this.selectedOps.length += 1;
-        } else if (object instanceof Wirecloud.ui.WiringEditor.Multiconnector){
+        } else if (object instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
             this.selectedMulti[object.getId()] = object;
             this.selectedMulti.length += 1;
         }
@@ -562,7 +561,7 @@ if (!Wirecloud.ui) {
                 this.selectedMulti[key].unselect(false);
             }
         }
-        if ((this.selectedOps.length !== 0) || (this.selectedWids.length !== 0) || (this.selectedMulti.length !== 0)){
+        if ((this.selectedOps.length !== 0) || (this.selectedWids.length !== 0) || (this.selectedMulti.length !== 0)) {
             //('error resetSelection' + this.selectedOps + this.selectedWids);
         }
     };
@@ -595,10 +594,10 @@ if (!Wirecloud.ui) {
     /**
      * add IWidget.
      */
-    WiringEditor.prototype.addIWidget = function addIWidget(wiringEditor, iwidget) {
+    WiringEditor.prototype.addIWidget = function addIWidget(wiringEditor, iwidget, enpPointPos) {
         var widget_interface, auxDiv;
 
-        widget_interface = new Wirecloud.ui.WiringEditor.WidgetInterface(wiringEditor, iwidget, this.arrowCreator);
+        widget_interface = new Wirecloud.ui.WiringEditor.WidgetInterface(wiringEditor, iwidget, this.arrowCreator, false, enpPointPos);
         this.iwidgets[iwidget.getId()] = widget_interface;
 
         auxDiv = document.createElement('div');
@@ -626,7 +625,7 @@ if (!Wirecloud.ui) {
     /**
      * add IOperator.
      */
-    WiringEditor.prototype.addIOperator = function addIOperator(ioperator) {
+    WiringEditor.prototype.addIOperator = function addIOperator(ioperator, enpPointPos) {
         var instantiated_operator, operator_interface, auxDiv;
 
         if (ioperator instanceof OperatorMeta) {
@@ -636,7 +635,7 @@ if (!Wirecloud.ui) {
             instantiated_operator = ioperator;
         }
 
-        operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, instantiated_operator, this.arrowCreator);
+        operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, instantiated_operator, this.arrowCreator, false, enpPointPos);
         auxDiv = document.createElement('div');
         auxDiv.style.width = '2000px';
         auxDiv.style.height = '1000px';
@@ -831,7 +830,7 @@ if (!Wirecloud.ui) {
                 this.EditingObject = null;
             }
         } else {
-            if (this.EditingObject == obj){
+            if (this.EditingObject === obj) {
                 this.EditingObject.editPos();
                 this.EditingObject = null;
             } else {

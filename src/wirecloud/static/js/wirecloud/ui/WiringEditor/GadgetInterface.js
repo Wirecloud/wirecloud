@@ -31,28 +31,39 @@
     /*
      * WidgetInterface Class
      */
-    var WidgetInterface = function WidgetInterface(wiringEditor, iwidget, manager, isMenubarRef) {
-        var variables, variable, desc, label, name, anchorContext;
+    var WidgetInterface = function WidgetInterface(wiringEditor, iwidget, manager, isMenubarRef, endPointsPos) {
+        var variables, variable, desc, label, name, anchorContext, i, wids;
         this.iwidget = iwidget;
         this.wiringEditor = wiringEditor;
 
         Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.iwidget.name, manager, 'iwidget');
 
         if (!isMenubarRef) {
+            if ((endPointsPos.sources.length === 0) && (endPointsPos.targets.length === 0)) {
+                wids = opManager.activeWorkspace.getIWidgets();
+                endPointsPos.sources = wids[wids.indexOf(iwidget)].getWidget().getTemplate().getConnectables().events.slice();
+                endPointsPos.targets = wids[wids.indexOf(iwidget)].getWidget().getTemplate().getConnectables().slots.slice();
+                for (i = 0; i < endPointsPos.sources.length; i ++) {
+                    endPointsPos.sources[i] = endPointsPos.sources[i].name;
+                }
+                for (i = 0; i < endPointsPos.targets.length; i ++) {
+                    endPointsPos.targets[i] = endPointsPos.targets[i].name;
+                }
+            }
             variables = opManager.activeWorkspace.varManager.getIWidgetVariables(iwidget.getId());
-            //sources & targets anchors (sourceAnchor and targetAnchor)
-            for (name in variables) {
-                variable = variables[name];
+            for (i = 0; i < endPointsPos.sources.length; i ++) {
+                variable = variables[endPointsPos.sources[i]];
                 desc = variable.vardef.description;
                 label = variable.vardef.label;
-                //each Event
-                if (variable.vardef.aspect === Variable.prototype.EVENT) {
-                    anchorContext = {'data': variables[name], 'iObject': this};
-                    this.addSource(label, desc, variable.vardef.name, anchorContext);
-                } else if (variable.vardef.aspect === Variable.prototype.SLOT) {
-                    anchorContext = {'data': variables[name], 'iObject': this};
-                    this.addTarget(label, desc, variable.vardef.name, anchorContext);
-                }
+                anchorContext = {'data': variable, 'iObject': this};
+                this.addSource(label, desc, variable.vardef.name, anchorContext);
+            }
+            for (i = 0; i < endPointsPos.targets.length; i ++) {
+                variable = variables[endPointsPos.targets[i]];
+                desc = variable.vardef.description;
+                label = variable.vardef.label;
+                anchorContext = {'data': variable, 'iObject': this};
+                this.addTarget(label, desc, variable.vardef.name, anchorContext);
             }
         }
     };
@@ -63,7 +74,7 @@
      * onFinish for draggable
      */
     WidgetInterface.prototype.onFinish = function onFinish(draggable, data, e) {
-        var position, initialPosition, movement, iwidget_interface;
+        var position, initialPosition, movement, iwidget_interface, endPointPos;
 
         position = {posX: 0, posY: 0};
         position = data.iObjectClon.getPosition();
@@ -73,7 +84,8 @@
             return;
         }
 
-        iwidget_interface = this.wiringEditor.addIWidget(this.wiringEditor, this.iwidget);
+        endPointPos = {'sources': [], 'targets': []};
+        iwidget_interface = this.wiringEditor.addIWidget(this.wiringEditor, this.iwidget, endPointPos);
 
         position.posX -= 180;
 

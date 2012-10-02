@@ -223,12 +223,10 @@
      */
     GenericInterface.prototype.makeSlotsDraggable = function makeSlotsDraggable() {
         var i;
-        for (i = 0; i < this.sourceDiv.childNodes.length; i ++) {
-            this.draggableSources[i] = {'wrapperElement': this.sourceDiv.childNodes[i]};
+        for (i = 0; i < this.draggableSources.length; i ++) {
             this.makeSlotDraggable(this.draggableSources[i], this.wiringEditor.layout.center, 'source_clon');
         }
-        for (i = 0; i < this.targetDiv.childNodes.length; i ++) {
-            this.draggableTargets[i] = {'wrapperElement': this.targetDiv.childNodes[i]};
+        for (i = 0; i < this.draggableTargets.length; i ++) {
             this.makeSlotDraggable(this.draggableTargets[i], this.wiringEditor.layout.center, 'target_clon');
         }
     };
@@ -281,13 +279,13 @@
                         context.maxUps -= 1;
                         context.refHeigthUp += context.refHeigth;
                         context.refHeigthDown -= context.refHeigth;
-                        context.genInterface.up(context.iObject.wrapperElement);
+                        context.genInterface.up(context.iObject);
                     } else if (((top - context.y) > context.refHeigthDown) && (context.maxDowns > 0)) {
                         context.maxUps += 1;
                         context.maxDowns -= 1;
                         context.refHeigthDown += context.refHeigth;
                         context.refHeigthUp -= context.refHeigth;
-                        context.genInterface.down(context.iObject.wrapperElement);
+                        context.genInterface.down(context.iObject);
                     }
                 },
                 function onFinish(draggable, context, e) {
@@ -447,6 +445,7 @@
             anchorDiv.appendChild(anchor);
         }
         this.sourceDiv.appendChild(anchorDiv);
+        this.draggableSources.push({'wrapperElement': anchorDiv, 'context': anchorContext});
     };
 
     /**
@@ -515,6 +514,7 @@
             anchorDiv.appendChild(anchor);
         }
         this.targetDiv.appendChild(anchorDiv);
+        this.draggableTargets.push({'wrapperElement': anchorDiv, 'context': anchorContext});
     };
 
     /**
@@ -651,7 +651,6 @@
                     arrows[j].destroy();
                 } else {
                     this.wiringEditor.removeMulticonnector(this.wiringEditor.multiconnectors[arrows[j].multiId]);
-                    // TODO restarting current loop due to removeMulticonnector removing arrows
                     arrows = this.sourceAnchors[i].arrows.clone();
                     j = 0;
                 }
@@ -667,7 +666,6 @@
                     arrows[j].destroy();
                 } else {
                     this.wiringEditor.removeMulticonnector(this.wiringEditor.multiconnectors[arrows[j].multiId]);
-                    // TODO restarting current loop due to removeMulticonnector removing arrows
                     arrows = this.targetAnchors[i].arrows.clone();
                     j = 0;
                 }
@@ -676,6 +674,8 @@
         }
         this.draggable.destroy();
         this.draggable = null;
+        this.draggableSources = null;
+        this.draggableTargets = null;
     };
 
     /**
@@ -684,9 +684,10 @@
     GenericInterface.prototype.editPos = function editPos() {
         var obj;
         obj = null;
-        if (this.targetAnchors.length == this.sourceAnchors.length == 1) {
+        if (this.targetAnchors.length === this.sourceAnchors.length === 1) {
             return;
         }
+
         if (this.editingPos === true) {
             this.disableEdit();
         } else {
@@ -726,15 +727,13 @@
         for (i = 0; i < this.draggableTargets.length; i ++) {
             this.draggableTargets[i].draggable.destroy();
         }
-        this.draggableSources = [];
-        this.draggableTargets = [];
     };
 
     /**
      * Move an endpoint up 1 position.
      */
     GenericInterface.prototype.up = function up(element) {
-        element.parentNode.insertBefore(element, element.previousElementSibling);
+        element.wrapperElement.parentNode.insertBefore(element.wrapperElement, element.wrapperElement.previousElementSibling);
         this.repaint();
     };
 
@@ -742,11 +741,58 @@
      * Move an endpoint down 1 position.
      */
     GenericInterface.prototype.down = function down(element) {
-        if (element.nextElementSibling !== null) {
-            element.parentNode.insertBefore(element, element.nextElementSibling.nextElementSibling);
+        if (element.wrapperElement.nextElementSibling !== null) {
+            element.wrapperElement.parentNode.insertBefore(element.wrapperElement, element.wrapperElement.nextElementSibling.nextElementSibling);
             this.repaint();
         }
     };
+
+    /**
+     * get sources and targets tittles lists in order to save positions
+     */
+    GenericInterface.prototype.getInOutPositions = function getInOutPositions() {
+        var i, sources, targets;
+
+        sources = [];
+        targets = [];
+        for (i = 0; i < this.sourceDiv.childNodes.length; i ++) {
+            sources[i] = this.getNameForSort(this.sourceDiv.childNodes[i], 'source');
+        }
+        for (i = 0; i < this.targetDiv.childNodes.length; i ++) {
+            targets[i] = this.getNameForSort(this.targetDiv.childNodes[i], 'target');
+        }
+        return {'sources': sources, 'targets': targets};
+    };
+
+    /**
+     * get the source or target name for the especific node
+     */
+    GenericInterface.prototype.getNameForSort = function getNameForSort(node, type) {
+        var i;
+
+        if (type === 'source') {
+            for (i = 0; this.draggableSources.length; i ++) {
+                if (this.draggableSources[i].wrapperElement === node) {
+                    if (this.className === 'iwidget') {
+                        return this.draggableSources[i].context.data.vardef.name;
+                    } else {
+                        return this.draggableSources[i].context.data.name;
+                    }
+                }
+            }
+        } else {
+            for (i = 0; this.draggableTargets.length; i ++) {
+                if (this.draggableTargets[i].wrapperElement === node) {
+                    if (this.className === 'iwidget') {
+                        return this.draggableTargets[i].context.data.vardef.name;
+                    } else {
+                        return this.draggableTargets[i].context.data.name;
+                    }
+                }
+            }
+        }
+    };
+
 
     /*************************************************************************
      * Make WidgetInterface public
