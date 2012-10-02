@@ -278,7 +278,7 @@ function Dragboard(tab, workspace, dragboardElement) {
      */
     Dragboard.prototype.addInstance = function (widget, options_) {
         var options = {
-            "iwidgetName": widget.getDisplayName() + ' (' + this.currentCode + ')',
+            "iwidgetName": widget.getDisplayName(),
             "setDefaultValues" : function () {}
         };
 
