@@ -68,7 +68,6 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/MarketplaceView.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/ResourcePainter.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/CatalogueResource.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/ResourceDetailsPainter.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/CataloguePublishView.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/CatalogueSearchView.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/ResourceDetailsView.js"></script>

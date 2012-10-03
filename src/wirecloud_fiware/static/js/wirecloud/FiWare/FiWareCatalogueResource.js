@@ -69,6 +69,10 @@ function FiWareCatalogueResource(resourceJSON_) {
 		return type;
 	};
 
+	this.getCreator = function() {
+		return "";
+	};
+
 	this.getParts = function() {
 		return parts;
 	};
@@ -93,7 +97,7 @@ function FiWareCatalogueResource(resourceJSON_) {
         return currentVersion.displayName;
     };
 
-    this.getShortDescription = function () {
+    this.getDescription = function () {
         return currentVersion.shortDescription;
     };
 
@@ -145,9 +149,13 @@ function FiWareCatalogueResource(resourceJSON_) {
         return extra_data;
     };
 
-   this.getPopularity = function () {
-       return 0;
-   }
+    this.getTags = function () {
+        return [];
+    };
+
+    this.getPopularity = function () {
+        return 0;
+    };
 
     //////////////
     // SETTERS

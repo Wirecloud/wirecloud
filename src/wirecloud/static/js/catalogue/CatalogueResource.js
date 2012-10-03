@@ -98,6 +98,10 @@ function CatalogueResource(resourceJSON_) {
         return currentVersion.uriWiki;
     };
 
+    this.getType = function () {
+        return type;
+    };
+
     this.isMashup = function () {
         return type === 'mashup';
     };

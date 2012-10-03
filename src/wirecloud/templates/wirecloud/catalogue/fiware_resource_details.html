@@ -4,7 +4,7 @@
 </div>
 
 <div class="content_part">
-<div class="resource detailed">
+<div class="resource_details">
 
     <div class="left_column_resource">
         <img src="#{image_url}" class="image"/>
@@ -28,24 +28,15 @@
         <div class="tag_links padding_left"></div>
 
         <h3>{% trans 'Detailed data' %}</h3>
-		<div class="bold padding_left floating_left padding_right">{% trans 'Store:' %}</div>
-        <div>#{store}</div>
-		<div class="bold padding_left floating_left padding_right">{% trans 'Type:' %}</div>
-        <div>#{type}</div>
-        <div class="bold padding_left floating_left padding_right">{% trans 'Vendor:' %}</div>
-        <div>#{vendor}</div>
-        <div class="bold padding_left floating_left padding_right">{% trans 'Name:' %}</div>
-        <div>#{name}</div>
-        <div class="bold padding_left floating_left padding_right">{% trans 'Version:' %}</div>
-        <div>#{version}</div>
-        <div class="bold padding_left floating_left padding_right">{% trans 'Created:' %}</div>
-        <div>#{created}</div>
-		<div class="bold padding_left floating_left padding_right">{% trans 'Modified:' %}</div>
-        <div>#{created}</div>
-        <div class="bold padding_left floating_left padding_right">{% trans 'Available versions:' %}</div>
-        <div>#{versions}</div>
-		<div class="bold padding_left floating_left padding_right">{% trans 'More info at:' %}</div>
-        <div class="link"><a target="_blank" href="#{page}">#{page}</a></div>
+		<div><span class="attr_title">{% trans 'Store:' %}</span> <span>#{store}</span></div>
+		<div><span class="attr_title">{% trans 'Type:' %}</span> <span>#{type}</span></div>
+        <div><span class="attr_title">{% trans 'Vendor:' %}</span> <span>#{vendor}</span></div>
+        <div><span class="attr_title">{% trans 'Name:' %}</span> <span>#{name}</span></div>
+        <div><span class="attr_title">{% trans 'Version:' %}</span> <span>#{version}</span></div>
+        <div><span class="attr_title">{% trans 'Created:' %}</span> <span>#{created}</span></div>
+		<div><span class="attr_title">{% trans 'Modified:' %}</span> <span>#{created}</span></div>
+        <div><span class="attr_title">{% trans 'Available versions:' %}</span> <span>#{versions}</span></div>
+		<div><span class="attr_title">{% trans 'More info at:' %}</span> <span class="link"><a target="_blank" href="#{page}">#{page}</a></span></div>
         <h3>{% trans 'Advanced operations' %}</h3>
         <div class="advanced_operations"></div>
     </div>

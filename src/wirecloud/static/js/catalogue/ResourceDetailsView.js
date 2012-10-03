@@ -19,15 +19,34 @@
  *
  */
 
-var ResourceDetailsView = function(id, options) {
-    options['class'] = 'resource_details';
-    this.catalogue = options.catalogue;
-    StyledElements.Alternative.call(this, id, options);
+/*global $, gettext, StyledElements, Wirecloud */
 
-    this.resource_details_painter = new ResourceDetailsPainter(this.catalogue, $('catalogue_resource_details_template').getTextContent(), this.wrapperElement);
-}
-ResourceDetailsView.prototype = new StyledElements.Alternative();
+(function () {
 
-ResourceDetailsView.prototype.paint = function(resource) {
-    this.resource_details_painter.paint(resource);
-};
+    "use strict";
+
+    var ResourceDetailsView = function ResourceDetailsView(id, options) {
+        var extra_context;
+
+        this.mainview = options.catalogue;
+        StyledElements.Alternative.call(this, id, options);
+
+        extra_context = {
+            'back_button': function () {
+                var button = new StyledElements.StyledButton({text: gettext('Close details')});
+                button.addEventListener('click', this.mainview.home.bind(this.mainview));
+                return button;
+            }.bind(this)
+        };
+
+        this.resource_details_painter = new Wirecloud.ui.ResourcePainter(this.mainview, $('catalogue_resource_details_template').getTextContent(), this, extra_context);
+    };
+    ResourceDetailsView.prototype = new StyledElements.Alternative();
+
+    ResourceDetailsView.prototype.paint = function paint(resource) {
+        this.clear();
+        this.appendChild(this.resource_details_painter.paint(resource));
+    };
+
+    Wirecloud.ui.ResourceDetailsView = ResourceDetailsView;
+})();

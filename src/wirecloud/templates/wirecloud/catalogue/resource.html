@@ -1,20 +1,14 @@
-{% load i18n %}
-<div class="header_resource"></div>
-<div class="left_column_resource">
-    <img src="#{image_url}" class="image click_for_details" />
-    <div class="buttons">
-        <button class="instantiate_button #{type}">#{button_text}</button>
+{% load i18n %}<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml">
+    <div class="resource">
+        <t:popularity/>
+        <h2 class="click_for_details resource_name"><t:displayname/></h2>
+        <t:mainbutton/>
+
+        <t:image/>
+
+        <h3>{% trans "Vendor Name" %}</h3>
+        <t:vendor/>
+        <h3>{% trans "Description" %}</h3>
+        <div class="description"><t:description/></div>
     </div>
-</div>
-<div class="right_column_resource">
-    <div>
-        <h2 class="resource_name click_for_details">#{name}</h2>
-        <div class="popularity">#{average_popularity}</div>
-    </div>
-    <div class="desc padding_left">#{description}</div>
-    <div class="tags">
-        <div class="bold floating_left padding_left">{% trans 'Tags:' %}</div>
-        <div class="tag_links padding_left"></div>
-    </div>
-    <div class="footer_resource"></div>
-</div>
+</s:styledgui>

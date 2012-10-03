@@ -19,14 +19,14 @@
  *
  */
 
-/*global Event, OpManagerFactory, StyledElements, gettext, interpolate, LayoutManagerFactory, FormWindowMenu, CatalogueSearchView, FiWareResourcePainter, FiWareResourceDetailsView, FiWareCataloguePublishView, FiWareCatalogue, CookieManager, Wirecloud, FiWareCatalogueResource, ShowcaseFactory, FiWareStoreListItems*/
+/*global Event, OpManagerFactory, StyledElements, gettext, interpolate, LayoutManagerFactory, FormWindowMenu, CatalogueSearchView, FiWareResourceDetailsView, FiWareCataloguePublishView, FiWareCatalogue, CookieManager, Wirecloud, FiWareCatalogueResource, ShowcaseFactory, FiWareStoreListItems*/
 
 (function () {
 
     "use strict";
 
     var FiWareCatalogueView = function (id, options) {
-        options.class = 'fi-ware_catalogue';
+        options.class = 'catalogue fiware';
         StyledElements.Alternative.call(this, id, options);
 
         this.alternatives = new StyledElements.StyledAlternatives();
@@ -37,7 +37,7 @@
         this.store_info = [];
 
         this.viewsByName = {
-            'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: {catalogue: this, resource_painter: FiWareResourcePainter}}),
+            'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: {catalogue: this, resource_painter: Wirecloud.ui.ResourcePainter}}),
             'details': this.alternatives.createAlternative({alternative_constructor: FiWareResourceDetailsView, containerOptions: {catalogue: this}}),
             'publish': this.alternatives.createAlternative({alternative_constructor: FiWareCataloguePublishView, containerOptions: {catalogue: this}})
         };

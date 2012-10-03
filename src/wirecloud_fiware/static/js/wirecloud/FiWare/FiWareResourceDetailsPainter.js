@@ -91,7 +91,7 @@ var FiWareResourceDetailsPainter = function (catalogue, details_structure_elemen
             'template_url': resource.getUriTemplate(),
             'store': resource.getStore(),
             'page':resource.getPage(),
-            'average_popularity':this.get_popularity_html(resource.getPopularity())
+            'average_popularity': this.get_popularity_html(resource.getPopularity()).innerHTML
 
         }
 
@@ -217,7 +217,7 @@ var FiWareResourceDetailsPainter = function (catalogue, details_structure_elemen
         }*/
     };
 };
-FiWareResourceDetailsPainter.prototype = new HTML_Painter();
+FiWareResourceDetailsPainter.prototype = new Wirecloud.ui.ResourcePainter();
 
 FiWareResourceDetailsPainter.prototype.populate_advanced_operations = function (resource) {
     var button, element = this.dom_element.getElementsByClassName('advanced_operations')[0];

@@ -1,0 +1,20 @@
+.resource_details img {
+    width: 170px;
+    height: 80px;
+    border: 1px solid;
+    border-color: #BBBBBB;
+    background: white;
+    display: block;
+}
+
+.resource_details .north_container {
+    padding: 0 3ex;
+}
+
+.resource_details .panel .summary {
+    text-align: left;
+}
+
+.resource_details .attr_title {
+    font-weight: bold;
+}

@@ -1,53 +1,25 @@
-.fi-ware_catalogue #menu_options .simple_search #simple_search_text {
-	background: #e6f3ff;
-	-moz-border-radius: 4px;
-	-webkit-border-radius: 4px;
-}
-
-.fi-ware_catalogue .resource_list .header_resource, #catalogue #resource_details .back_to_resource_list {
-	border-color: #DDDDDD;
-}
-
-.purchase_window_table tr.total_row td {
-	border-top-color: #cccccc;
-	border-bottom-color: #000000;
-}
-
-.fi-ware_catalogue button {
-	-moz-border-radius: 4px;
-	-webkit-border-radius: 4px;
-}
-
-.window_menu button {
-	-moz-border-radius: 4px;
-	-webkit-border-radius: 4px;
-}
-
-.resource_details img {
-    background: white;
-}
-
-.fi-ware_catalogue .resource .resource_name {
-    font-weight: bold;
-}
-
-.fi-ware_catalogue .bold {
-    font-weight: bold;
-}
-
-.fi-ware_catalogue .link {
-
-}
-
-.fi-ware_catalogue .link:hover {
-  text-decoration: underline
-}
-
-.fi-ware_catalogue .notebook .tab_area .tab.selected {
+.catalogue .notebook .tab_area .tab.selected {
     background: white;
     z-index: 2;
 }
 
-.fi-ware_catalogue .notebook .tab_area .tab {
+.catalogue .notebook .tab_area .tab {
     background: #DF7A62;
 }
+
+.catalogue.fiware .resource_details .operation_area {
+  border: 1px solid #DDDDDD;
+  width:400px;
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  float: left;
+  margin-left: 20px;
+  padding-bottom: 3px;
+  margin-bottom: 5px;
+}
+
+.catalogue.fiware .resource_details .operation_area>div {
+  margin-left: 10px;
+}
+
+

@@ -1,206 +1,210 @@
 /*
-*     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
-*     S.A.Unipersonal (Telefonica I+D)
-*
-*     This file is part of Morfeo EzWeb Platform.
-*
-*     Morfeo EzWeb Platform is free software: you can redistribute it and/or modify
-*     it under the terms of the GNU Affero General Public License as published by
-*     the Free Software Foundation, either version 3 of the License, or
-*     (at your option) any later version.
-*
-*     Morfeo EzWeb Platform is distributed in the hope that it will be useful,
-*     but WITHOUT ANY WARRANTY; without even the implied warranty of
-*     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*     GNU Affero General Public License for more details.
-*
-*     You should have received a copy of the GNU Affero General Public License
-*     along with Morfeo EzWeb Platform.  If not, see <http://www.gnu.org/licenses/>.
-*
-*     Info about members and contributors of the MORFEO project
-*     is available at
-*
-*     http://morfeo-project.org
+ *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *
+ *     This file is part of Wirecloud Platform.
+ *
+ *     Wirecloud Platform is free software: you can redistribute it and/or
+ *     modify it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
+ *
+ *     Wirecloud is distributed in the hope that it will be useful, but WITHOUT
+ *     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+ *     License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with Wirecloud Platform.  If not, see
+ *     <http://www.gnu.org/licenses/>.
+ *
  */
 
-/*global alert, Constants, Element, document, gettext, interpolate, LayoutManagerFactory, Template */
-"use strict";
+/*global document, EzWebExt, gettext, interpolate, StyledElements */
 
-var HTML_Painter = function () {
-    this.dom_element = null;
-};
+(function () {
 
-HTML_Painter.prototype.create_simple_command = function (element, selector, _event, handler, required) {
-    var i, elements = element.getElementsBySelector(selector);
+    "use strict";
 
-    if (required && elements.length < 1) {
-        throw new Error();
-    }
+    var ResourcePainter = function ResourcePainter(catalogue, resource_template, container, extra_context) {
+        if (arguments.length === 0) {
+            return;
+        }
 
-    for (i = 0; i < elements.length; i += 1) {
-        EzWebExt.addEventListener(elements[i], _event, handler);
-    }
-};
+        this.builder = new StyledElements.GUIBuilder();
+        this.catalogue = catalogue;
+        this.structure_template = resource_template;
+        this.error_template = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div class="error"><t:message/></div></s:styledgui>';
+        this.container = container;
+        if (typeof extra_context === 'object') {
+            this.extra_context = extra_context;
+        } else {
+            this.extra_context = {};
+        }
+    };
 
-HTML_Painter.prototype.get_popularity_html = function (popularity) {
-    var on_stars, md_star, off_stars, result_html, i;
+    ResourcePainter.prototype.setError = function setError(message) {
+        this.container.clear();
 
-    on_stars = Math.floor(popularity);
-    md_star = popularity - on_stars;
-    off_stars = 5 - popularity;
+        var contents = this.builder.parse(this.error_template, {
+            'message': message
+        });
 
-    result_html = '';
+        this.container.appendChild(contents);
+    };
 
-    // "On" stars
-    for (i = 0; i < on_stars; i += 1) {
-        result_html += '<a class="on"></a>';
-    }
+    ResourcePainter.prototype.paint = function paint(resource) {
+        var button_list, i, click_for_details_list, context, resource_element;
 
-    if (md_star) {
-        result_html += '<a class="md"></a>';
-    }
-
-    // "Off" stars
-    for (i = 0; i < Math.floor(off_stars); i += 1) {
-        result_html += '<a class="off"></a>';
-    }
-
-    return result_html;
-};
-
-var ResourcePainter = function (catalogue, resource_template, dom_element) {
-    if (arguments.length === 0) {
-        return;
-    }
-
-    this.catalogue = catalogue;
-    this.structure_template = new Template(resource_template);
-    this.error_template = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div class="error"><t:message/></div></s:styledgui>';
-    this.dom_element = dom_element;
-};
-ResourcePainter.prototype = new HTML_Painter();
-
-ResourcePainter.prototype.setError = function setError(message) {
-    this.dom_element.innerHTML = '';
-
-    var builder = new StyledElements.GUIBuilder();
-    var contents = builder.parse(this.error_template, {
-        'message': message
-    });
-
-    contents.insertInto(this.dom_element);
-};
-
-ResourcePainter.prototype.paint = function (command_data) {
-    var resource, i, j, context, resource_element,
-        button_list, button, click_for_details_list, tag_links_list, important_tag_links_list;
-
-
-    this.dom_element.update('');
-
-    for (i = 0; i < command_data.resources.length; i += 1) {
-        resource = command_data.resources[i];
-
-        context = {
-            'name': resource.getDisplayName(),
-            'image_url': resource.getUriImage(),
+        context = EzWebExt.merge(EzWebExt.clone(this.extra_context), {
+            'displayname': resource.getDisplayName(),
+            'name': resource.getName(),
+            'vendor': resource.getVendor(),
+            'version': resource.getVersion().text,
+            'author': resource.getCreator(),
             'description': resource.getDescription(),
-            'average_popularity': this.get_popularity_html(resource.getPopularity())
-        };
-        context.button_text = gettext('Add');
-        context.type = '';
+            'popularity': this.get_popularity_html.bind(this, resource.getPopularity()),
+            'mainbutton': function () {
+                var button;
 
-        resource_element = document.createElement('div');
-        Element.extend(resource_element);
-        resource_element.className = 'resource';
+                if (this.resource.getType() !== 'non-instantiable service') {
+                    button = new StyledElements.StyledButton({
+                        'class': 'instantiate_button',
+                        'text': gettext('Add to workspace')
+                    });
+                    button.addEventListener('click', this.catalogue.createUserCommand('instantiate', this.resource));
+                } else {
+                    button = new StyledElements.StyledButton({text: gettext('Download')});
+                }
+                button.addClassName('mainbutton');
+                return button;
+            }.bind({catalogue: this.catalogue, resource: resource}),
+            'image': function () {
+                var image = document.createElement('img');
+                image.onerror = function (event) {
+                    event.target.src = '/static/images/noimage.png';
+                };
+                image.src = resource.getUriImage();
+                return image;
+            },
+            'tags': function (options) {
+                return this.painter.renderTagList(this.resource, options.max);
+            }.bind({painter: this, resource: resource}),
+            'advancedops': this.renderAdvancedOperations.bind(this, resource)
+        });
 
-        resource_element.update(this.structure_template.evaluate(context));
-        resource_element.getElementsByClassName('image')[0].onerror = function (event) {
-            event.target.src = '/static/images/noimage.png';
-        };
+        resource_element = this.builder.parse(this.structure_template, context);
 
-        // Inserting resource html in the DOM
-        this.dom_element.appendChild(resource_element);
-
-        ///////////////////////////////
-        // Binding events to GUI
-        ///////////////////////////////
-
-        // "Instantiate"
-        this.create_simple_command(resource_element, '.instantiate_button', 'click', this.catalogue.createUserCommand('instantiate', resource));
-
-        // "Show details"
-        this.create_simple_command(resource_element, '.click_for_details', 'click', this.catalogue.createUserCommand('showDetails', resource));
-
-        // Full tag list
-        tag_links_list = resource_element.getElementsByClassName('tag_links');
-        if (tag_links_list && tag_links_list.length === 1) {
-            this._renderFullTagList(resource, tag_links_list[0]);
+        // TODO "Show details"
+        for (i = 0; i < resource_element.elements.length; i += 1) {
+            if (!EzWebExt.XML.isElement(resource_element.elements[i])) {
+                continue;
+            }
+            this.create_simple_command(resource_element.elements[i], '.click_for_details', 'click', this.catalogue.createUserCommand('showDetails', resource));
         }
 
-        // Important tag list
-        important_tag_links_list = resource_element.getElementsByClassName('important_tag_links');
-        if (important_tag_links_list && important_tag_links_list.length === 1) {
-            this._renderImportantTagList(resource, important_tag_links_list[0]);
+        return resource_element;
+    };
+
+    ResourcePainter.prototype.renderAdvancedOperations = function renderAdvancedOperations(resource) {
+        var button, fragment = new StyledElements.Fragment();
+
+        button = new StyledElements.StyledButton({
+            'text': gettext('Download')
+        });
+        button.addEventListener('click', function () {
+            window.open(resource.getUriTemplate(), '_blank');
+        });
+        fragment.appendChild(button);
+
+        if (resource.isAllow('delete')) {
+            button = new StyledElements.StyledButton({
+                'text': gettext('Delete')
+            });
+            button.addEventListener('click', this.catalogue.createUserCommand('delete', resource));
+            fragment.appendChild(button);
         }
 
-    }
-};
+        if ((resource.getAllVersions().length > 1) && resource.isAllow('delete-all')) {
+            button = new StyledElements.StyledButton({
+                'text': gettext('Delete all versions')
+            });
+            button.addEventListener('click', this.catalogue.createUserCommand('delete', resource));
+            fragment.appendChild(button);
+        }
 
-ResourcePainter.prototype._renderFullTagList = function (resource, tag_links, user_command_manager) {
-    var i, search_options, tags, tag, tag_element;
-
-    search_options = {
-        starting_page: 1,
-        boolean_operator: 'AND',
-        scope: ''
+        return fragment;
     };
 
-    tags = resource.getTags();
-    for (i = 0; i < tags.length; i += 1) {
-        tag = tags[i];
+    ResourcePainter.prototype.renderTagList = function renderTagList(resource, listener, max) {
+        var i, fragment, tags, tag, tag_element, len;
 
-        tag_element = document.createElement('a');
+        fragment = new StyledElements.Fragment();
 
-        Element.extend(tag_element);
-        tag_element.update(tag.value);
-        tag_element.addClassName('link');
-        tag_links.appendChild(tag_element);
+        tags = resource.getTags();
+        tags = tags.sort(function (a, b) {
+            return b.apparences - a.apparences;
+        });
 
-        search_options.criteria = tag.value;
+        if (typeof max === 'undefined') {
+            max = tags.length;
+        }
+        len = Math.min(max, tags.length);
 
-        user_command_manager.create_command_from_data('SIMPLE_SEARCH', tag_element, search_options, 'click');
-    }
-};
+        for (i = 0; i < len; i += 1) {
+            tag = tags[i];
 
-ResourcePainter.prototype._renderImportantTagList = function (resource, tag_links, user_command_manager) {
-    var i, search_options, tags, tag, tag_element, len;
+            tag_element = document.createElement('a');
+            tag_element.textContent = tag.value;
+            fragment.appendChild(tag_element);
+        }
 
-    search_options = {
-        starting_page: 1,
-        boolean_operator: 'AND',
-        scope: ''
+        return fragment;
     };
 
-    tags = resource.getTags();
-    tags = tags.sort(function (a, b) {
-        return b.apparences - a.apprences;
-    });
+    ResourcePainter.prototype.create_simple_command = function (element, selector, _event, handler, required) {
+        var i, elements = element.getElementsBySelector(selector);
 
-    len = Math.min(3, tags.length);
+        if (required && elements.length < 1) {
+            throw new Error();
+        }
 
-    for (i = 0; i < len; i += 1) {
-        tag = tags[i];
+        for (i = 0; i < elements.length; i += 1) {
+            EzWebExt.addEventListener(elements[i], _event, handler);
+        }
+    };
 
-        tag_element = document.createElement('a');
+    ResourcePainter.prototype.get_popularity_html = function (popularity) {
+        var on_stars, md_star, off_stars, stars, star, i;
 
-        Element.extend(tag_element);
-        tag_element.update(tag.value);
-        tag_element.addClassName('link');
-        tag_links.appendChild(tag_element);
+        on_stars = Math.floor(popularity);
+        md_star = popularity - on_stars;
+        off_stars = 5 - popularity;
 
-        search_options.criteria = tag.value;
+        stars = document.createElement('div');
+        stars.className = 'popularity';
 
-        user_command_manager.create_command_from_data('SIMPLE_SEARCH', tag_element, search_options, 'click');
-    }
-};
+        // "On" stars
+        for (i = 0; i < on_stars; i += 1) {
+            star = document.createElement('span');
+            star.className = 'on star';
+            stars.appendChild(star);
+        }
+
+        if (md_star) {
+            star = document.createElement('span');
+            star.className = 'md star';
+            stars.appendChild(star);
+        }
+
+        // "Off" stars
+        for (i = 0; i < Math.floor(off_stars); i += 1) {
+            star = document.createElement('span');
+            star.className = 'off star';
+            stars.appendChild(star);
+        }
+
+        return stars;
+    };
+
+    Wirecloud.ui.ResourcePainter = ResourcePainter;
+})();

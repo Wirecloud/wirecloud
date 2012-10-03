@@ -1,101 +1,3 @@
-.catalogue .tag_links a, .catalogue .my_tags_area a {
-  margin-right: 5px;
-  float: left;
-}
-
-.fi-ware_catalogue .tag_links a, .catalogue .my_tags_area a {
-  margin-right: 5px;
-  float: left;
-}
-
-.catalogue .resource_details .available_version {
-  float: left;
-  margin-right: 15px;
-}
-
-.fi-ware_catalogue .resource_details .available_version {
-  float: left;
-  margin-right: 15px;
-}
-
-.catalogue .resource_details .operation_area {
-  border: 1px solid #DDDDDD;
-  width:400px;
-  -moz-border-radius:5px;
-  -webkit-border-radius:5px;
-  float: left;
-  margin-left: 20px;
-  padding-bottom: 3px;
-  margin-bottom: 5px;
-}
-
-.fi-ware_catalogue .resource_details .operation_area {
-  border: 1px solid #DDDDDD;
-  width:400px;
-  -moz-border-radius:5px;
-  -webkit-border-radius:5px;
-  float: left;
-  margin-left: 20px;
-  padding-bottom: 3px;
-  margin-bottom: 5px;
-}
-
-.catalogue .resource_details .operation_area>div {
-  margin-left: 10px;
-}
-
-.fi-ware_catalogue .resource_details .operation_area>div {
-  margin-left: 10px;
-}
-
-.catalogue .resource_details .operation_area .operation_content {
-  margin-left: 15px;
-  margin-top: 3px;
-  margin-bottom: 3px;
-}
-
-.fi-ware_catalogue .resource_details .operation_area .operation_content {
-  margin-left: 15px;
-  margin-top: 3px;
-  margin-bottom: 3px;
-}
-
-.catalogue .resource_details .message {
-  float: left;
-  padding-left: 15px;
-  font-weight: bold;
-  text-decoration: none;
-  color: red;
-}
-
-.fi-ware_catalogue .resource_details .message {
-  float: left;
-  padding-left: 15px;
-  font-weight: bold;
-  text-decoration: none;
-  color: red;
-}
-
-.fi-ware_catalogue select {
-  height: 20px;
-  font-size: 8pt;
-}
-
-.catalogue .margin_top {
-  margin-top: 10px;
-}
-
-.fi-ware_catalogue .margin_top {
-  margin-top: 10px;
-}
-
-.catalogue .link:hover  {
-  text-decoration: underline;
-}
-
-.fi-ware_catalogue .link:hover  {
-  text-decoration: underline;
-}
 .catalogue .link {
   cursor: pointer;
   color: darkBlue;
@@ -135,14 +37,6 @@
     z-index: 2;
 }
 
-.catalogue .search_interface .north_container.search_bar {
-    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
-}
-
-.catalogue .search_interface .west_container.search_bar {
-    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
-}
-
 .catalogue .search_interface .north_container.search_bar > div {
     display: inline-block;
     white-space: nowrap;
@@ -170,12 +64,6 @@
 	background:#E6F3FF none repeat scroll 0 0;
 }
 
-.catalogue #catalogue_resources_header{
-	float: left;
-	clear: both;
-	width: 100%;
-}
-
 .catalogue .resource_list .error {
     background: #FDDFDE;
     color: #444;
@@ -185,247 +73,99 @@
     border-radius: 6px;
     font-weight: normal;
     margin: 2ex;
-    text-align: center;
     font-size: 101%;
     font-family: Comfortaa;
 }
 
-.catalogue .resource_list .resource {
-    clear: both;
-    margin-right: 10px;
-    position: relative;
-}
-
-.catalogue .resource_list .header_resource {
-	border-top: 1px solid;
-}
-
-.catalogue .section_ie_compatibility .warning {
-    background-color: #FFFFA8;
-    border: black solid 1px;
-    padding: 3px;
-    margin-top: 2px;
-}
-
-.catalogue .section_ie_compatibility .hidden {
-    display: none;
-}
-
-.fi-ware_catalogue .link {
-  cursor: pointer;
-  color: darkBlue;
-}
-
-.fi-ware_catalogue .developer_image {
-    width: 200px;
-    height: 120px;
-    margin: 1ex 2ex 2ex 0;
-    float: left;
-}
-
-.fi-ware_catalogue .developer_block {
-  clear:both;
-  float:left;
-  margin-bottom:25px;
-  padding-left:15px;
-  width: 100%;
-}
-
-.fi-ware_catalogue .developer_description {
-  padding-left: 15px;
-  padding-top: 8px;
-  max-width: 700px;
-}
-
-.fi-ware_catalogue .developer_block button, .catalogue #template_uri, .catalogue #widget_uri {
-  margin-left:15px;
-  margin-top:10px;
-}
-
-.fi-ware_catalogue .float_left {
+.catalogue.fiware .float_left {
   float: left;
 }
 
-.fi-ware_catalogue .simple_search {
-	float: left;
-	position: relative;
-	left: 10px;
-}
-
-.fi-ware_catalogue .simple_search #simple_search_text {
-    margin: 0px;
-    padding: 0px;
-    -moz-background-clip:border;
-    -moz-background-inline-policy:continuous;
-	-moz-background-origin:padding;
-	-moz-border-radius-bottomleft:4px;
-	-moz-border-radius-bottomright:4px;
-	-moz-border-radius-topleft:4px;
-	-moz-border-radius-topright:4px;
-	background:#E6F3FF none repeat scroll 0 0;
-}
-
-.fi-ware_catalogue #catalogue_resources_header{
-	float: left;
-	clear: both;
-	width: 100%;
-}
-
-.fi-ware_catalogue .orderby {
-	display:inline;
-	float:right;
-	margin-right: 10px;
-}
-
-.fi-ware_catalogue .resource_list .resource {
-    clear: both;
-    margin-right: 10px;
-    position: relative;
-}
-
-.fi-ware_catalogue .resource_list .header_resource {
-	border-top: 1px solid;
-}
-
-.fi-ware_catalogue .section_ie_compatibility .warning {
-    background-color: #FFFFA8;
-    border: black solid 1px;
-    padding: 3px;
-    margin-top: 2px;
-}
-
-.fi-ware_catalogue .section_ie_compatibility .hidden {
-    display: none;
-}
-
-/*
-///////////
-Resource
-///////////
-*/
-
-.catalogue .resource_list > .resource .resource_name {
+.catalogue.fiware .resource_list > .resource .resource_name {
     padding-bottom: 8px;
     max-width: 350px;
     font-size: 20px;
     cursor: pointer;
 }
 
-.catalogue .resource h2 {
-    display: inline-block;
-}
-
-.catalogue .resource h3 {
-    margin: 0.5ex 0 1ex 0;
-}
-
-.catalogue .resource .image {
-    width: 170px;
-    height: 80px;
-    border: 1px solid;
-    border-color: #BBBBBB;
-    background: white;
-    display: block;
-}
-
-.fi-ware_catalogue .resource_list > .resource .resource_name {
-    padding-bottom: 8px;
-    max-width: 350px;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-.fi-ware_catalogue .resource h2 {
-    display: inline-block;
-    color: #900;
-}
-
-.fi-ware_catalogue .resource h3 {
-    margin: 0.5ex 0 1ex 0;
-    color: #063;
-}
-.fi-ware_catalogue div.second_level {
+.catalogue.fiware div.second_level {
     padding-left: 25px;
 }
-.fi-ware_catalogue .legal_resource h3 {
+.catalogue.fiware .legal_resource h3 {
     margin: 0.5ex 0 1ex 0;
     color: #063;
     padding-left: 50px;
     padding-top: 25px;
 }
 
-.fi-ware_catalogue .legal_resource h4{
+.catalogue.fiware .legal_resource h4{
     color: #E8A150;
     padding-left: 75px;
 }
 
-.fi-ware_catalogue .legal_resource div.tab_info {
+.catalogue.fiware .legal_resource div.tab_info {
     padding-left: 75px;
 }
 
-.fi-ware_catalogue .sla_resource h3 {
+.catalogue.fiware .sla_resource h3 {
     margin: 0.5ex 0 1ex 0;
     color: #063;
     padding-left: 50px;
 	padding-top: 25px;
 }
 
-.fi-ware_catalogue .sla_resource h4{
+.catalogue.fiware .sla_resource h4{
     color: #E8A150;
     padding-left: 75px;
 }
 
-.fi-ware_catalogue .sla_resource h4.second_level{
+.catalogue.fiware .sla_resource h4.second_level{
     padding-left: 25px;
 }
 
-.fi-ware_catalogue .sla_resource div.tab_info {
+.catalogue.fiware .sla_resource div.tab_info {
     padding-left: 75px;
 }
 
-.fi-ware_catalogue .pricing_resource h3 {
+.catalogue.fiware .pricing_resource h3 {
     margin: 0.5ex 0 1ex 0;
     color: #063;
     padding-left: 50px;
 	padding-top: 25px;
 }
 
-.fi-ware_catalogue .pricing_resource h4{
+.catalogue.fiware .pricing_resource h4{
     color: #E8A150;
     padding-left: 75px;
 }
 
-.fi-ware_catalogue .pricing_resource div.tab_info {
+.catalogue.fiware .pricing_resource div.tab_info {
     padding-left: 75px;
 }
 
-.fi-ware_catalogue .part_resource h3 {
+.catalogue.fiware .part_resource h3 {
     margin: 0.5ex 0 1ex 0;
     color: #063;
     padding-left: 50px;
 	padding-top: 25px;
 }
 
-.fi-ware_catalogue .part_resource h4 {
+.catalogue.fiware .part_resource h4 {
     color: #E8A150;
     padding-left: 75px;
 }
 
-.fi-ware_catalogue .part_resource div.tab_info {
+.catalogue.fiware .part_resource div.tab_info {
     padding-left: 75px;
 }
 
-.fi-ware_catalogue .resource .image {
+.catalogue.fiware .resource .image {
     width: 170px;
     height: 80px;
     border: 1px solid;
     border-color: #BBBBBB;
     background: white;
     display: block;
-}
-.resource .popularity {
-    display: inline-block;
-    margin-left: 15px;
 }
 
 .catalogue .resource_list .resource_details .voting_label {
@@ -433,45 +173,48 @@ Resource
   margin: 5px;
 }
 
-.fi-ware_catalogue .resource_list .resource_details .voting_label {
-  float: left;
-  margin: 5px;
+.popularity {
+    display: inline-block;
+    margin-top: 22px;
+    margin-left: 15px;
+    font-size: 14pt;
+    font-family: FontAwesome;
+    font-weight: bold;
+    font-style: normal;
 }
 
-.resource .popularity > .off {
-    -moz-background-clip: border;
-    -moz-background-inline-policy: continuous;
-    -moz-background-origin: padding;
-    background-image: url(../images/icons-sprite.png);
-    background-position: 0px -168px;
-    display: inline-block;
-    height: 15px;
-    width: 15px;
-    cursor: default;
+.resource .popularity {
+    float: right;
 }
 
-.resource .popularity > .on {
-    -moz-background-clip: border;
-    -moz-background-inline-policy: continuous;
-    -moz-background-origin: padding;
-    display: inline-block;
-    height: 15px;
-    width: 15px;
-    cursor: default;
-    background-image: url(../images/icons-sprite.png);
-    background-position: -24px -168px;
+.resource_details .popularity {
+    margin-left: 0;
+    display: block;
 }
 
-.resource .popularity > .md {
-    -moz-background-clip:border;
-    -moz-background-inline-policy:continuous;
-    -moz-background-origin:padding;
+.popularity > .star {
+    margin: 2px;
     display: inline-block;
-    height: 15px;
-    width:15px;
-    cursor: default;
-    background-image: url(../images/icons-sprite.png);
-    background-position: -24px -144px;
+}
+
+.popularity > .star:after {
+    color: rgb(102, 102, 102);
+    content: "\f006";
+}
+
+.popularity > .star.off:before {
+    color: rgb(227, 207, 122);
+    content: "";
+}
+
+.popularity > .star.on:before {
+    color: rgb(227, 207, 122);
+    content: "\f005";
+}
+
+.popularity > .star.middle:before {
+    color: rgb(227, 207, 122);
+    content: "\f089";
 }
 
 .catalogue .padding_left {
@@ -511,82 +254,54 @@ Resource
   float: left;
 }
 
-.catalogue .resource .left_column_resource {
-  float: left;
-  width: 25%;
-  text-align: center;
-}
-
-.catalogue .resource > .left_column_resource > img {
-    display: inline;
-}
-
-.catalogue .resource .right_column_resource {
-  float: left;
-  width: 75%;
-}
-
-.catalogue .resource_list .header_resource, .catalogue .resource_list .header_resource {
-  height: 10px;
-  clear: both;
-  top: 0px;
-}
-
-
-
-.fi-ware_catalogue .padding_left {
+.catalogue.fiware .padding_left {
   padding-left: 5px;
 }
 
-.fi-ware_catalogue .padding_right {
+.catalogue.fiware .padding_right {
   padding-right: 5px;
 }
 
-.fi-ware_catalogue .section_title {
+.catalogue.fiware .section_title {
   clear:both;
   font-size:13pt;
   padding-bottom:5px;
   padding-top:10px;
 }
 
-.fi-ware_catalogue .resource_list .resource .desc, .catalogue .resource_list .resource_details .desc {
+.catalogue.fiware .resource_list .resource .desc, .catalogue .resource_list .resource_details .desc {
   clear: both;
   max-width: 650px;
 }
 
-.fi-ware_catalogue .resource_list .resource .tags, .catalogue .resource_list .resource_details .tags {
+.catalogue.fiware .resource_list .resource .tags, .catalogue .resource_list .resource_details .tags {
   float: left;
   padding-top: 10px;
 }
 
-.fi-ware_catalogue .resource_list .resource .tags .tags_label, .catalogue .resource_list .resource_details .tags {
+.catalogue.fiware .resource_list .resource .tags .tags_label, .catalogue .resource_list .resource_details .tags {
   float: left;
   margin-right:10px;
 }
 
-.fi-ware_catalogue .resource_list .resource .footer_resource {
+.catalogue.fiware .resource_list .resource .footer_resource {
   height: 10px;
   clear: both;
   bottom: 0px;
   float: left;
 }
 
-.fi-ware_catalogue .resource .left_column_resource {
+.catalogue.fiware .resource .left_column_resource {
   float: left;
   width: 25%;
   text-align: center;
 }
 
-.fi-ware_catalogue .resource > .left_column_resource > img {
+.catalogue.fiware .resource > .left_column_resource > img {
     display: inline;
 }
 
-.fi-ware_catalogue .resource .right_column_resource {
-  float: left;
-  width: 75%;
-}
-
-.fi-ware_catalogue .resource_list .header_resource, .catalogue .resource_list .header_resource {
+.catalogue.fiware .resource_list .header_resource, .catalogue .resource_list .header_resource {
   height: 10px;
   clear: both;
   top: 0px;
@@ -597,11 +312,6 @@ Resource
   float:left;
   overflow:hidden;
   width:500px;
-}
-
-.floating_left {
-	float: left;
-	clear: left;
 }
 
 .clearing_both {

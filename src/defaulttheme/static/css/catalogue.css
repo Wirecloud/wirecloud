@@ -22,14 +22,6 @@
     background: white;
 }
 
-.catalogue .resource .resource_name {
-    font-weight: bold;
-}
-
-.catalogue .bold {
-    font-weight: bold;
-}
-
 .catalogue .link:hover {
   text-decoration: underline
 }

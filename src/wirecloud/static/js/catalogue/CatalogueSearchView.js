@@ -37,7 +37,14 @@
             'scope': 'all',
             'requestFunc': this._search.bind(this),
             'processFunc': function (elements) {
-                this.resource_painter.paint(elements);
+                var i, resource;
+
+                this.resource_list.clear();
+
+                for (i = 0; i < elements.resources.length; i += 1) {
+                    resource = elements.resources[i];
+                    this.resource_list.appendChild(this.resource_painter.paint(resource));
+                }
             }.bind(this)
         });
         this.pagination.addEventListener('requestStart', this.disable.bind(this));
@@ -48,7 +55,9 @@
 
             this.enable();
         }.bind(this));
+        this.resource_list = new StyledElements.Container({'class': 'resource_list'});
         var contents = builder.parse($('wirecloud_catalogue_search_interface').getTextContent(), {
+            'resourcelist': this.resource_list,
             'pagination': function () {
                 return new PaginationInterface(this.pagination);
             }.bind(this),
@@ -119,7 +128,7 @@
         this.simple_search_input = this.wrapperElement.getElementsByClassName('simple_search_text')[0];
         this.resource_painter = new options.resource_painter(this.catalogue,
             $('catalogue_resource_template').getTextContent(),
-            this.wrapperElement.getElementsByClassName('resource_list')[0]
+            this.resource_list
         );
 
         EzWebExt.addEventListener(this.simple_search_input, 'keypress', this._onSearchInputKeyPress.bind(this));

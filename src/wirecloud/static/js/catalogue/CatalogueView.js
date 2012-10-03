@@ -19,7 +19,7 @@
  *
  */
 
-/*global CatalogueResource, CataloguePublishView, CatalogueSearchView, Constants, CookieManager, Event, gettext, interpolate, LayoutManagerFactory, LogManagerFactory, Wirecloud, ResourceDetailsView, ResourcePainter, ShowcaseFactory, StyledElements*/
+/*global CatalogueResource, CataloguePublishView, CatalogueSearchView, Constants, CookieManager, Event, gettext, interpolate, LayoutManagerFactory, LogManagerFactory, Wirecloud, ShowcaseFactory, StyledElements*/
 
 (function () {
 
@@ -34,9 +34,9 @@
         this.appendChild(this.alternatives);
 
         this.viewsByName = {
-            'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: {catalogue: this, resource_painter: ResourcePainter}}),
+            'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: {catalogue: this, resource_painter: Wirecloud.ui.ResourcePainter}}),
             'developer': this.alternatives.createAlternative({alternative_constructor: CataloguePublishView, containerOptions: {catalogue: this.catalogue, mainview: this}}),
-            'details': this.alternatives.createAlternative({alternative_constructor: ResourceDetailsView, containerOptions: {catalogue: this}})
+            'details': this.alternatives.createAlternative({alternative_constructor: Wirecloud.ui.ResourceDetailsView, containerOptions: {catalogue: this}})
         };
         this.viewsByName.search.init();
 
@@ -106,8 +106,7 @@
     CatalogueView.prototype.ui_commands = {};
 
     CatalogueView.prototype.ui_commands.instantiate = function instantiate(resource) {
-        return function (e) {
-            Event.stop(e);
+        return function () {
             this.instantiate(resource);
             LayoutManagerFactory.getInstance().changeCurrentView('workspace');
         }.bind(this);
