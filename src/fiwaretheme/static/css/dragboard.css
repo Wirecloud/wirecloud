@@ -171,11 +171,11 @@ div.iwidget.highlighted {
 }
 
 .notebook.workspace .tab_wrapper {
-    background: #800D00;
     top: auto;
     bottom: 0;
-    border-top: 1px solid #600000;
-    height: 23px;
+    border-top: 1px solid rgb(221, 221, 221);
+    height: 35px;
+    line-height: 35px;
 }
 
 .notebook.workspace .tab_wrapper .move_left {
@@ -186,39 +186,50 @@ div.iwidget.highlighted {
     right: 4px;
 }
 
-.notebook.workspace .tab_wrapper .add_tab {
+.notebook.workspace .tab_wrapper .icon-add-tab {
     position: absolute;
     width: 16px;
     height: 16px;
     right: 24px;
     top: 0px;
     margin: 0px;
+    color: rgb(85, 85, 85);
+}
+
+.notebook.workspace .tab_wrapper .icon-add-tab:hover {
+    color: black;
+}
+
+.notebook.workspace .tab_wrapper .icon-add-tab:before {
+    content: "\f055";
 }
 
 .notebook.workspace .wrapper {
     top: 0;
-    bottom: 24px;
+    bottom: 36px;
 }
 
 .notebook.workspace .tab_area {
-    height: 23px;
+    height: 35px;
     top: -1px;
 }
 
 .notebook.workspace .tab_area .tab {
-    -moz-border-radius: 0px;
-    -webkit-border-radius: 0px;
-    border-radius: 0px;
-    background: #E4E6E2;
-    color: #900;
+    background: transparent;
+    color: rgb(0, 136, 204);
     height: 15px;
     line-height: 16px;
-    border: 1px solid #600000;
+    border: 1px solid transparent;
     vertical-align: top;
-    padding: 1px 19px 2px 1ex;
-    -moz-border-radius: 0 0 3px 3px;
-    -webkit-border-radius: 0 0 3px 3px;
-    border-radius: 0 0 8px 3px;
+    padding: 8px 19px 8px 1ex;
+    border-radius: 0 0 4px 4px;
+    font-family: "Open Sans", sans-serif;
+    font-size: 13px;
+}
+
+.notebook.workspace .tab_area .tab:hover {
+    border-color: transparent rgb(238, 238, 238) rgb(238, 238, 238) rgb(221, 221, 221);
+    color: rgb(0, 85, 128);
 }
 
 .notebook.workspace .tab_area .tab > span {
@@ -227,8 +238,6 @@ div.iwidget.highlighted {
 
 .notebook.workspace .tab_area .tab.selected {
     background: #FFFFFF;
-    color: #990000;
-    border-top: 0px none;
-    border-bottom: 1px solid #600000;
-    height: 16px;
+    color: rgb(85, 85, 85);
+    border-color: transparent rgb(221, 221, 221) rgb(221, 221, 221) rgb(221, 221, 221);
 }
