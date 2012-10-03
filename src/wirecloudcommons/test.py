@@ -448,7 +448,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         old_tab_count = len(self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab'))
 
         self.change_main_view('workspace')
-        self.driver.find_element_by_css_selector('#workspace .tab_wrapper .add_tab').click()
+        self.driver.find_element_by_css_selector('#workspace .tab_wrapper .icon-add-tab').click()
         self.wait_wirecloud_ready()
 
         new_tab_count = len(self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab'))

@@ -202,13 +202,22 @@ div.iwidget.highlighted {
     right: 4px;
 }
 
-.notebook.workspace .tab_wrapper .add_tab {
+.notebook.workspace .tab_wrapper .icon-add-tab {
     position: absolute;
     width: 16px;
     height: 16px;
     right: 24px;
     top: 0px;
     margin: 0px;
+    color: rgb(85, 85, 85);
+}
+
+.notebook.workspace .tab_wrapper .icon-add-tab:hover {
+    color: black;
+}
+
+.notebook.workspace .tab_wrapper .icon-add-tab:before {
+    content: "\f055";
 }
 
 .notebook.workspace .wrapper {

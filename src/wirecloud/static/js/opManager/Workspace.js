@@ -419,9 +419,8 @@ function Workspace (workspaceState) {
     Workspace.prototype.downloadWorkspaceInfo = function (initial_tab) {
         // TODO
         this.addTabButton = new StyledElements.StyledButton({
-            'class': 'add_tab',
+            'class': 'icon-add-tab',
             'plain': true,
-            'text': '+',
             'title': gettext('Add a new tab')
         });
 
