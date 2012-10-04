@@ -391,7 +391,7 @@ var OpManagerFactory = function () {
         }
 
         OpManager.prototype.logIWidgetError = function(iWidgetId, msg, level) {
-            var iWidget = this.activeWorkspace.getIwidget(iWidgetId);
+            var iWidget = this.activeWorkspace.getIWidget(iWidgetId);
             if (iWidget == null) {
                 var msg2 = gettext("Some pice of code tried to notify an error in the iWidget %(iWidgetId)s when it did not exist or it was not loaded yet. This is an error in Wirecloud Platform, please notify it.\nError Message: %(errorMsg)s");
                 msg2 = interpolate(msg2, {iWidgetId: iWidgetId, errorMsg: msg}, true);

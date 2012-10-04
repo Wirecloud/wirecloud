@@ -196,7 +196,7 @@ function Workspace(workspaceState) {
         });
     };
 
-    Workspace.prototype.getIwidget = function (iwidgetId) {
+    Workspace.prototype.getIWidget = function (iwidgetId) {
         var i, iwidget;
         for (i = 0; i < this.tabInstances.length; i += 1) {
             iwidget = this.tabInstances[i].getDragboard().getIWidget(iwidgetId);

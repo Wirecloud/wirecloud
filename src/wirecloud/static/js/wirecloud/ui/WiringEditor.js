@@ -156,7 +156,7 @@ if (!Wirecloud.ui) {
             if (this.iwidgets[desc.id] != null) {
                 return this.iwidgets[desc.id].getAnchor(desc.endpoint);
             } else {
-                iwidget = workspace.getIwidget(desc.id);
+                iwidget = workspace.getIWidget(desc.id);
                 if (iwidget != null) {
                     iwidget_interface = this.addIWidget(this, iwidget);
                     iwidget_interface.setPosition({posX: 0, posY: 0});

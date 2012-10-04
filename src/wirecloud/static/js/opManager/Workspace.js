@@ -287,7 +287,7 @@ function Workspace (workspaceState) {
 
 
     Workspace.prototype.iwidgetLoaded = function(iwidgetId) {
-        var iwidget = this.getIwidget(iwidgetId);
+        var iwidget = this.getIWidget(iwidgetId);
         iwidget._notifyLoaded();
 
         // Notify to the context manager the iwidget has been loaded
@@ -312,7 +312,7 @@ function Workspace (workspaceState) {
     }
 
     Workspace.prototype.iwidgetUnloaded = function(iwidgetId) {
-        var iwidget = this.getIwidget(iwidgetId);
+        var iwidget = this.getIWidget(iwidgetId);
         if (iwidget == null)
             return;
 
@@ -440,7 +440,7 @@ function Workspace (workspaceState) {
         });
     };
 
-    Workspace.prototype.getIwidget = function(iwidgetId) {
+    Workspace.prototype.getIWidget = function(iwidgetId) {
         var i, tab_keys = this.tabInstances.keys();
         for (i = 0; i < tab_keys.length; i += 1) {
             var tab = this.tabInstances.get(tab_keys[i]);
@@ -633,7 +633,7 @@ function Workspace (workspaceState) {
     }
 
     Workspace.prototype.removeIWidget = function(iWidgetId, orderFromServer) {
-        var iwidget = this.getIwidget(iWidgetId);
+        var iwidget = this.getIWidget(iWidgetId);
         if (iwidget) {
             var dragboard = iwidget.layout.dragboard;
             dragboard.removeInstance(iWidgetId, orderFromServer); // TODO split into hideInstance and removeInstance
@@ -818,7 +818,7 @@ function Workspace (workspaceState) {
 Workspace.prototype = new StyledElements.ObjectWithEvents();
 
 Workspace.prototype.drawAttention = function(iWidgetId) {
-    var iWidget = this.getIwidget(iWidgetId);
+    var iWidget = this.getIWidget(iWidgetId);
     if (iWidget !== null) {
         this.highlightTab(iWidget.layout.dragboard.tab);
         iWidget.layout.dragboard.raiseToTop(iWidget);

@@ -586,7 +586,7 @@ wSlot.prototype.getFinalSlots = function() {
         action_label = gettext('Use in %(slotName)s');
         action_label = interpolate(action_label, {slotName: this.variable.getLabel()}, true);
     }
-    iWidgetName = OpManagerFactory.getInstance().activeWorkspace.getIwidget(this.variable.iWidget).name;
+    iWidgetName = OpManagerFactory.getInstance().activeWorkspace.getIWidget(this.variable.iWidget).name;
 
     return [{
         action_label: action_label,

@@ -109,7 +109,7 @@ function VarManager (_workspace) {
         var name, id, variables, variable, iwidget, varInfo, aspect, value,
             objVars = {};
 
-        iwidget = this.workspace.getIwidget(iwidget_info['id']);
+        iwidget = this.workspace.getIWidget(iwidget_info['id']);
         variables = iwidget.widget.getTemplate().getVariables();
 
         for (name in variables) {

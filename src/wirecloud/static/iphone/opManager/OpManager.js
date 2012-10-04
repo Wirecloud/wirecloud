@@ -183,7 +183,7 @@ var OpManagerFactory = (function () {
 
 
         OpManager.prototype.showDragboard = function (iWidgetId) {
-            var dragboard = this.activeWorkspace.getIwidget(iWidgetId).dragboard;
+            var dragboard = this.activeWorkspace.getIWidget(iWidgetId).dragboard;
             dragboard.paint(iWidgetId);
             this.visibleLayer = "dragboard";
         };
