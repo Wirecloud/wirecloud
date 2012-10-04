@@ -40,6 +40,14 @@ def build_error_response(request, status_code, error_msg):
     return HttpResponse(ERROR_FORMATTERS[mimetype](error_msg), mimetype=mimetype, status=status_code)
 
 
+def get_content_type(request):
+    content_type_header = request.META.get('CONTENT_TYPE')
+    if content_type_header is None:
+        return '', ''
+    else:
+        return content_type_header.split(';', 1)
+
+
 def get_current_domain(request=None):
     if hasattr(settings, 'FORCE_DOMAIN'):
         return settings.FORCE_DOMAIN
