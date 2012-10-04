@@ -261,42 +261,6 @@ StyledElements.StyledInputElement.prototype.focus = function() {
 }
 
 /**
- *
- */
-StyledElements.Fragment = function Fragment(elements) {
-    if (Array.isArray(elements)) {
-        this.elements = elements;
-    } else {
-        this.elements = [];
-    }
-};
-StyledElements.Fragment.prototype = new StyledElements.StyledElement();
-
-StyledElements.Fragment.prototype.insertInto = function (element, refElement) {
-    var i, currentElement;
-
-    if (refElement instanceof StyledElements.StyledElement) {
-        refElement = refElement.wrapperElement;
-    }
-
-    if (refElement != null) {
-        for (i = 0; i < this.elements.length; i += 1) {
-            currentElement = this.elements[i];
-            element.insertBefore(currentElement, refElement);
-        }
-    } else {
-        for (i = 0; i < this.elements.length; i += 1) {
-            currentElement = this.elements[i];
-            element.appendChild(currentElement);
-        }
-    }
-};
-
-StyledElements.Fragment.prototype.appendChild = function(element) {
-    this.elements.push(element);
-};
-
-/**
  * Este componente permite crear un contenedor en el que añadir otros
  * componentes.
  *
