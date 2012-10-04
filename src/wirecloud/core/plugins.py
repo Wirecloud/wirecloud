@@ -41,6 +41,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             return common + (
                 'js/wirecloud/WirecloudCatalogue.js',
                 'js/wirecloud/MarketManager.js',
+                'js/wirecloud/ui/ResourcePainter.js',
             )
         else:
             return common

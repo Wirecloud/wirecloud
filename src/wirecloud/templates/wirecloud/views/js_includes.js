@@ -66,7 +66,6 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/NewWorkspaceWindowMenu.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/RenameWindowMenu.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/MarketplaceView.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/ResourcePainter.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/CatalogueResource.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/CataloguePublishView.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/CatalogueSearchView.js"></script>
