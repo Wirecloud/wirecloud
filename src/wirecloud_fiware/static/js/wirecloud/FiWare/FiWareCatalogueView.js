@@ -210,7 +210,6 @@
 
     FiWareCatalogueView.prototype.ui_commands.instantiate = function (resource) {
         return function (e) {
-            Event.stop(e);
             this.instantiate(resource);
             LayoutManagerFactory.getInstance().changeCurrentView('workspace');
         }.bind(this);
