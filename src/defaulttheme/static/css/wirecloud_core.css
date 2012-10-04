@@ -41,11 +41,20 @@ body {
     bottom: 0;
     left: 0;
     overflow: hidden;
+    font-family: "Open Sans";
 }
 
 h1, h2, h3, h4, h5, h6 {
     font-family: Comfortaa;
-    font-weight: normal;
+    font-weight: bold;
+}
+
+h2 {
+    color: #900;
+}
+
+h3 {
+    color: #063;
 }
 
 #wirecloud_header {

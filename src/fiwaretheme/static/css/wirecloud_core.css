@@ -41,6 +41,13 @@ body {
     bottom: 0;
     left: 0;
     overflow: hidden;
+    font-family: "Open Sans";
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #3E80AD;
+    font-family: Comfortaa;
+    font-weight: bold;
 }
 
 #wirecloud_header {
@@ -76,6 +83,7 @@ body {
 }
 
 .fiware_title {
+    color: #000;
     font-size: 30px;
 }
 
