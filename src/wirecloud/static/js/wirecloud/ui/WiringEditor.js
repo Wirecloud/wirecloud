@@ -19,7 +19,7 @@
  *
  */
 
-/*global LayoutManagerFactory, OperatorMeta, opManager, StyledElements, Wirecloud, gettext, Draggable, BrowserUtilsFactory */
+/*global Constants, EzWebExt, LayoutManagerFactory, OperatorMeta, opManager, StyledElements, Wirecloud, gettext, Draggable, BrowserUtilsFactory */
 if (!Wirecloud.ui) {
     // TODO this line should live in another file
     Wirecloud.ui = {};
@@ -175,18 +175,11 @@ if (!Wirecloud.ui) {
         }
     };
 
-    /**
-     * @Private
-     * repaint the wiringEditor interface
-     */
-    var renewInterface = function renewInterface() {
+
+    var loadWiring = function loadWiring(workspace, WiringStatus) {
         var iwidgets, iwidget, key, i, widget_interface, miniwidget_interface, ioperators, operator,
             operator_interface, operator_instance, operatorKeys, connection, startAnchor, endAnchor,
-            arrow, workspace, WiringStatus, isMenubarRef, miniwidget_clon, pos, op_id, multiconnectors,
-            multi, multi_id, anchor;
-
-        workspace = opManager.activeWorkspace; // FIXME this is the current way to obtain the current workspace
-        WiringStatus = workspace.wiring.status;
+            arrow, isMenubarRef, miniwidget_clon, pos, op_id, multiconnectors, multi, multi_id, anchor;
 
         if (WiringStatus == null) {
             WiringStatus = {
@@ -218,7 +211,8 @@ if (!Wirecloud.ui) {
             ];
         }
 
-        this.targetsOn = this.sourcesOn = true;
+        this.targetsOn = true;
+        this.sourcesOn = true;
         this.targetAnchorList = [];
         this.sourceAnchorList = [];
         this.arrows = [];
@@ -339,6 +333,58 @@ if (!Wirecloud.ui) {
             }
         }
         this.activateCtrlMultiSelect();
+        this.valid = true;
+    };
+
+    /**
+     * @Private
+     * repaint the wiringEditor interface
+     */
+    var renewInterface = function renewInterface() {
+        var workspace, wiringStatus, layoutManager, msg;
+
+        layoutManager = LayoutManagerFactory.getInstance();
+        this.valid = false;
+
+        try {
+
+            workspace = opManager.activeWorkspace; // FIXME this is the current way to obtain the current workspace
+            wiringStatus = workspace.wiring.status;
+            loadWiring.call(this, workspace, wiringStatus);
+
+        } catch (err) {
+
+            try {
+                clearInterface.call(this);
+            } catch (e1) {
+                msg = gettext('Unrecoverable error while loading wiring data into the wiring editor');
+                layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+            }
+
+            var yesHandler = function () {
+                wiringStatus = EzWebExt.clone(wiringStatus);
+                delete wiringStatus.views;
+                try {
+                    loadWiring.call(this, workspace, wiringStatus);
+                } catch (e2) {
+                    try {
+                        clearInterface.call(this);
+                    } catch (e3) {}
+                    // Use setTimeout as at the end of the yesHandler all window menus are closed including the one we are opening now
+                    setTimeout(function () {
+                        msg = gettext('Error trying to recover wiring status.');
+                        layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                    }, 0);
+                }
+            };
+            var noHandler = function () {
+                layoutManager.changeCurrentView('workspace');
+            };
+            layoutManager.showYesNoDialog(
+                gettext("There was an error loading the wiring status into the Wiring Editor. Do you want Wirecloud to try to recover the state of your connections automatically?"),
+                yesHandler.bind(this),
+                noHandler.bind(this));
+        }
     };
 
     /**
@@ -349,8 +395,10 @@ if (!Wirecloud.ui) {
         var key, workspace;
 
         workspace = opManager.activeWorkspace; // FIXME this is the current way to obtain the current workspace
-        workspace.wiring.load(this.serialize());
-        workspace.wiring.save();
+        if (this.valid) {
+            workspace.wiring.load(this.serialize());
+            workspace.wiring.save();
+        }
         for (key in this.iwidgets) {
             this.layout.getCenterContainer().removeChild(this.iwidgets[key]);
             this.iwidgets[key].destroy();
@@ -378,6 +426,7 @@ if (!Wirecloud.ui) {
     /*************************************************************************
      * Public methods
      *************************************************************************/
+
     /**
      * activate handlers for ctrl Multiselection
      */
