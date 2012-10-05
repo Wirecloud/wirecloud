@@ -34,6 +34,8 @@
         this.currentStore = 'All stores';
         this.marketplace_desc = options.marketplace_desc;
         this.marketplace = this.marketplace_desc.name;
+        this.loading = false;
+        this.error = false;
         this.store_info = [];
 
         this.viewsByName = {
@@ -124,8 +126,13 @@
 
     FiWareCatalogueView.prototype.getExtraBreadcrum = function () {
         var label = this.currentStore;
-        if (this.number_of_stores === 0) {
-            label = 'No stores registered';
+
+        if (this.loading) {
+            label = gettext('loading...');
+        } else if (this.error) {
+            label = gettext('list not available');
+        } else if (this.number_of_stores === 0) {
+            label = gettext('no registered stores');
         }
         return [{
             'label': label,
@@ -170,8 +177,22 @@
         return publishData;
     };
 
-    FiWareCatalogueView.prototype.refresh_store_info = function () {
-        this.fiWareCatalogue.getStores(this.addStoreInfo.bind(this));
+    FiWareCatalogueView.prototype.refresh_store_info = function refresh_store_info() {
+        if (this.loading) {
+            return;
+        }
+
+        this.loading = true;
+        this.store_info = [];
+        this.number_of_stores = 0;
+        LayoutManagerFactory.getInstance().header.refresh();
+        this.fiWareCatalogue.getStores(this.addStoreInfo.bind(this), this._getStoresErrorCallback.bind(this));
+    };
+
+    FiWareCatalogueView.prototype._getStoresErrorCallback = function _getStoresErrorCallback() {
+        this.loading = false;
+        this.error = true;
+        LayoutManagerFactory.getInstance().header.refresh();
     };
 
     FiWareCatalogueView.prototype.addStoreInfo = function (store_info) {
@@ -179,13 +200,16 @@
         this.store_info = store_info;
         this.number_of_stores = store_info.length;
         this.storeMenu.setContext(store_info);
+
+        this.loading = false;
+        this.error = false;
         LayoutManagerFactory.getInstance().header.refresh();
     };
 
     FiWareCatalogueView.prototype.generateStoreMenu = function () {
         this.storeMenu = new StyledElements.PopupMenu();
 
-        this.fiWareCatalogue.getStores(this.addStoreInfo.bind(this));
+        this.refresh_store_info();
 
         this.storeMenu.append(new FiWareStoreListItems(this));
     };
