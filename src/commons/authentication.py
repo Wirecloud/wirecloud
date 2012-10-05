@@ -31,16 +31,5 @@
 #
 
 
-from django.utils.translation import ugettext as _
-
-
 class Http403(Exception):
     pass
-
-
-def get_user_authentication(request):
-    user = request.user
-    if not user.is_authenticated():
-        raise Http403(_("You must be logged"))
-
-    return user
