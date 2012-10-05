@@ -32,7 +32,7 @@
 
 # Django settings for mymem project.
 from os import path
-from commons.urlresolvers import reverse_lazy
+from wirecloudcommons.utils.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 
 DEBUG = False
