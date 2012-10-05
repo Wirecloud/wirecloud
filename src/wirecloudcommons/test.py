@@ -159,7 +159,7 @@ class widget_operation:
         self.widget = widget
 
     def __enter__(self):
-        self.driver.execute_script('return opManager.activeWorkspace.getIwidget(%d).content.setAttribute("id", "targetframe");' % self.widget)
+        self.driver.execute_script('return opManager.activeWorkspace.getIWidget(%d).content.setAttribute("id", "targetframe");' % self.widget)
 
         # TODO work around webdriver bugs
         self.driver.switch_to_default_content()
@@ -169,7 +169,7 @@ class widget_operation:
 
     def __exit__(self, type, value, traceback):
         self.driver.switch_to_frame(None)
-        self.driver.execute_script('return opManager.activeWorkspace.getIwidget(%d).content.removeAttribute("id");' % self.widget)
+        self.driver.execute_script('return opManager.activeWorkspace.getIWidget(%d).content.removeAttribute("id");' % self.widget)
 
         # TODO work around webdriver bugs
         self.driver.switch_to_default_content()
