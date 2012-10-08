@@ -185,6 +185,15 @@ var ExpresionPainter = function(catalogue, expresion_structure_element, dom_elem
             resource_element.className="slaExpresion_resource";
             resource_element.update(this.expresion_template.evaluate(resource_html));
             variable_painter = new VariablePainter(this.catalogue,$("sla_variable_template").getTextContent(),resource_element.getElementsByClassName('variable_list')[0]);
+
+            if ('location' in slaExpresion_element) {
+                slaExpresion_element.variables.push({
+                    'label': 'Centre',
+                    'value': 'UTM X:' + slaExpresion_element.location.coordinates.lat + ', UTM Y:' + slaExpresion_element.location.coordinates.long,
+                    'type': '',
+                    'unit': ''
+                });
+            }
             variable_painter.paint(slaExpresion_element.variables);
 
             this.dom_element.appendChild(resource_element)
@@ -250,12 +259,12 @@ var PricingPainter = function(catalogue,pricing_structure_element, dom_element){
             resource_element.className="pricing_resource";
             resource_element.update(this.pricing_template.evaluate(resource_html));
 
-            if (pricing_element.priceComponents.length > 0 && pricing_element.priceComponents[0].title != ''){
+            if ('priceComponents' in pricing_element && pricing_element.priceComponents.length > 0 && pricing_element.priceComponents[0].title !== '') {
                 pricing_component_painter = new PriceElementPainter(this.catalogue,$("price_component_template").getTextContent(),resource_element.getElementsByClassName('price_components_list')[0]);
                 pricing_component_painter.paint(pricing_element.priceComponents);
             }
 
-            if (pricing_element.taxes.length > 0 && pricing_element.taxes[0].title != ''){ 
+            if ('taxes' in pricing_element && pricing_element.taxes.length > 0 && pricing_element.taxes[0].title !== '') {
                 tax_painter = new PriceElementPainter(this.catalogue,$("price_component_template").getTextContent(),resource_element.getElementsByClassName('taxes_list')[0]);
                 tax_painter.paint(pricing_element.taxes);
             }
