@@ -40,7 +40,7 @@ from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseNotAllowed
-from django.http import HttpResponseBadRequest, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.utils import simplejson
 from django.utils.decorators import method_decorator
@@ -66,8 +66,8 @@ from commons import http_utils
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.user_utils import get_verified_certification_group
-from commons.utils import get_xml_error, json_encode
-from wirecloudcommons.utils.http import build_error_response
+from commons.utils import json_encode
+from wirecloudcommons.utils.http import build_error_response, get_content_type
 from wirecloudcommons.utils.template import TemplateParseException
 from wirecloudcommons.utils.transaction import commit_on_http_success
 
@@ -125,6 +125,10 @@ class ResourceCollection(Resource):
     @iframe_error
     @commit_on_http_success
     def create(self, request, fromWGT=False):
+
+        if get_content_type(request)[0] not in ('application/x-www-form-urlencoded', 'multipart/form-data'):
+            msg = _("unsupported request media type")
+            return build_error_response(request, 415, msg)
 
         overrides = None
 
@@ -417,22 +421,15 @@ class ResourceVersionCollection(Resource):
 
     def create(self, request):
 
-        content_type = request.META.get('CONTENT_TYPE', '')
-        if content_type == None:
-            content_type = ''
-
-        if content_type.startswith('application/json'):
-            received_json = request.raw_post_data
-        else:
-            received_json = request.POST.get('resources', None)
-
-        if not received_json:
-            return HttpResponseBadRequest(get_xml_error(_("resources JSON expected")), mimetype='application/xml; charset=UTF-8')
+        if get_content_type(request)[0] != 'application/json':
+            msg = _("unsupported request media type")
+            return build_error_response(request, 415, msg)
 
         try:
-            resources = simplejson.loads(received_json)
+            resources = simplejson.loads(request.raw_post_data)
         except simplejson.JSONDecodeError, e:
-            return HttpResponse(get_xml_error(_("malformed json data: %s") % unicode(e)), status=422, mimetype='application/xml; charset=UTF-8')
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
 
         result = []
         for g in resources:
