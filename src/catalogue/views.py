@@ -126,20 +126,19 @@ class ResourceCollection(Resource):
     @commit_on_http_success
     def create(self, request, fromWGT=False):
 
-        user = request.user
         overrides = None
 
         try:
             if 'file' in request.FILES:
 
                 request_file = request.FILES['file']
-                resource = add_widget_from_wgt(request_file, user)
+                resource = add_widget_from_wgt(request_file, request.user)
 
             elif 'template_uri' in request.POST:
 
                 template_uri = request.POST['template_uri']
-                template = http_utils.download_http_content(template_uri, user=user)
-                resource = add_resource_from_template(template_uri, template, user, overrides=overrides)
+                template = http_utils.download_http_content(template_uri, user=request.user)
+                resource = add_resource_from_template(template_uri, template, request.user, overrides=overrides)
 
             else:
 
@@ -153,15 +152,13 @@ class ResourceCollection(Resource):
 
             return build_error_response(request, 409, _('Resource already exists'))
 
-        json_response = get_added_resource_info(resource, user, request)
+        json_response = get_added_resource_info(resource, request.user, request)
 
         return HttpResponse(simplejson.dumps(json_response),
                             mimetype='application/json; charset=UTF-8')
 
     @no_cache
     def read(self, request, pag=0, offset=0):
-
-        user = request.user
 
         format = request.GET.get('format', 'default')
         orderby = request.GET.get('orderby', '-creation_date')
@@ -171,31 +168,29 @@ class ResourceCollection(Resource):
         resources = filter_resources_by_scope(CatalogueResource.objects.all(), scope)
         resources = resources.order_by(orderby)
         resources = group_resources(resources)
-        resources = filter_resources_by_organization(user, resources, user.groups.all())
+        resources = filter_resources_by_organization(request.user, resources, request.user.groups.all())
         items = len(resources)
 
         resources = get_paginatedlist(resources, int(pag), int(offset))
 
-        return get_resource_response(resources, format, items, user, request)
+        return get_resource_response(resources, format, items, request.user, request)
 
     @method_decorator(login_required)
     @commit_on_http_success
     def delete(self, request, vendor, name, version=None):
-
-        user = request.user
 
         response_json = {'result': 'ok', 'removedIWidgets': []}
         if version is not None:
             #Delete only the specified version of the widget
             resource = get_object_or_404(CatalogueResource, short_name=name,
                                          vendor=vendor, version=version)
-            result = delete_resource(resource, user)
+            result = delete_resource(resource, request.user)
             response_json['removedIWidgets'] = result['removedIWidgets']
         else:
             #Delete all versions of the widget
             resources = get_list_or_404(CatalogueResource, short_name=name, vendor=vendor)
             for resource in resources:
-                result = delete_resource(resource, user)
+                result = delete_resource(resource, request.user)
                 response_json['removedIWidgets'] += result['removedIWidgets']
 
         return HttpResponse(simplejson.dumps(response_json),
@@ -206,8 +201,6 @@ class ResourceCollectionBySimpleSearch(Resource):
 
     @no_cache
     def read(self, request, criteria, pag=0, offset=0):
-
-        user = request.user
 
         orderby = request.GET.get('orderby', '-creation_date')
         format = request.GET.get('format', 'default')
@@ -221,11 +214,11 @@ class ResourceCollectionBySimpleSearch(Resource):
         resources = CatalogueResource.objects.none()
 
         if criteria == 'and':
-            filters = get_and_filter(search_criteria, user)
+            filters = get_and_filter(search_criteria, request.user)
         elif criteria == 'or' or criteria == 'simple_or':
-            filters = get_or_filter(search_criteria, user)
+            filters = get_or_filter(search_criteria, request.user)
         elif criteria == 'not':
-            filters = get_not_filter(search_criteria, user)
+            filters = get_not_filter(search_criteria, request.user)
         elif criteria == 'event':
             filters = get_event_filter(search_criteria)
         elif criteria == 'slot':
@@ -252,20 +245,18 @@ class ResourceCollectionBySimpleSearch(Resource):
         resources = filter_resources_by_scope(resources, scope)
         resources = resources.order_by(orderby)
         resources = group_resources(resources)
-        resources = filter_resources_by_organization(user, resources, user.groups.all())
+        resources = filter_resources_by_organization(request.user, resources, request.user.groups.all())
 
         items = len(resources)
         resources = get_paginatedlist(resources, pag, offset)
 
-        return get_resource_response(resources, format, items, user, request)
+        return get_resource_response(resources, format, items, request.user, request)
 
 
 class ResourceCollectionByGlobalSearch(Resource):
 
     @no_cache
     def read(self, request, pag=0, offset=0):
-
-        user = request.user
 
         orderby = request.GET.get('orderby', '-creation_date')
         format = request.GET.get('format', 'default')
@@ -280,11 +271,11 @@ class ResourceCollectionByGlobalSearch(Resource):
 
         filters = Q()
         if search_criteria[0] != "":
-            filters = get_and_filter(search_criteria[0], user)
+            filters = get_and_filter(search_criteria[0], request.user)
         if search_criteria[1] != "":
-            filters = join_filters(filters, get_or_filter(search_criteria[1], user))
+            filters = join_filters(filters, get_or_filter(search_criteria[1], request.user))
         if search_criteria[2] != "":
-            filters = join_filters(filters, get_not_filter(search_criteria[2], user))
+            filters = join_filters(filters, get_not_filter(search_criteria[2], request.user))
         if search_criteria[3] != "":
             filters = join_filters(filters, get_tag_filter(search_criteria[3]))
         if search_criteria[4] != "":
@@ -296,12 +287,12 @@ class ResourceCollectionByGlobalSearch(Resource):
         resources = filter_resources_by_scope(resources, scope).distinct()
         resources = resources.order_by(orderby)
         resources = group_resources(resources)
-        resources = filter_resources_by_organization(user, resources, user.groups.all())
+        resources = filter_resources_by_organization(request.user, resources, request.user.groups.all())
         items = len(resources)
 
         resources = get_paginatedlist(resources, pag, offset)
 
-        return get_resource_response(resources, format, items, user, request)
+        return get_resource_response(resources, format, items, request.user, request)
 
 
 class ResourceTagCollection(Resource):
@@ -310,8 +301,6 @@ class ResourceTagCollection(Resource):
     @commit_on_http_success
     def create(self, request, vendor, name, version):
         format = request.POST.get('format', 'default')
-
-        user = request.user
 
         # Get the xml containing the tags from the request
         tags_xml = request.POST.get('tags_xml')
@@ -336,14 +325,14 @@ class ResourceTagCollection(Resource):
         # Insert the tags for these resource and user in the database
         for e in handler._tags:
             try:
-                tag_resource(user, e, resource)
+                tag_resource(request.user, e, resource)
             except Exception, ex:
                 msg = _("Error tagging resource!!")
 
                 raise TracedServerError(ex, {'resource': vendor + name + version, 'tags': tags_xml},
                                         request, msg)
 
-        return get_tag_response(resource, user, format)
+        return get_tag_response(resource, request.user, format)
 
     @no_cache
     def read(self, request, vendor, name, version):
@@ -352,15 +341,11 @@ class ResourceTagCollection(Resource):
         # Get the resource's id for those vendor, name and version
         resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version).id
 
-        user = request.user
-
-        return get_tag_response(resource, user, format)
+        return get_tag_response(resource, request.user, format)
 
     @method_decorator(login_required)
     @commit_on_http_success
     def delete(self, request, vendor, name, version, tag):
-
-        user = request.user
 
         format = request.GET.get('format', 'default')
 
@@ -373,7 +358,7 @@ class ResourceTagCollection(Resource):
 
         userTag.delete()
 
-        return get_tag_response(resource, user, format)
+        return get_tag_response(resource, request.user, format)
 
 
 class ResourceVoteCollection(Resource):
@@ -383,18 +368,16 @@ class ResourceVoteCollection(Resource):
     def create(self, request, vendor, name, version):
         format = request.GET.get('format', 'default')
 
-        user = request.user
-
         # Get the vote from the request
         vote = request.POST.get('vote')
 
         resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
 
         # Insert the vote for these resource and user in the database
-        UserVote.objects.create(vote=vote, idUser=user, idResource=resource)
+        UserVote.objects.create(vote=vote, idUser=request.user, idResource=resource)
         update_resource_popularity(resource)
 
-        return get_vote_response(resource, user, format)
+        return get_vote_response(resource, request.user, format)
 
     @no_cache
     def read(self, request, vendor, name, version):
@@ -403,9 +386,7 @@ class ResourceVoteCollection(Resource):
         # Get the resource's id for those vendor, name and version
         resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
 
-        user = request.user
-
-        return get_vote_response(resource, user, format)
+        return get_vote_response(resource, request.user, format)
 
     @method_decorator(login_required)
     @commit_on_http_success
@@ -416,8 +397,6 @@ class ResourceVoteCollection(Resource):
         except KeyError:
             format = 'default'
 
-        user = request.user
-
         # Get the vote from the request
         vote = http_utils.PUT_parameter(request, 'vote')
 
@@ -425,13 +404,13 @@ class ResourceVoteCollection(Resource):
         resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
 
         # Insert the vote for these resource and user in the database
-        userVote = get_object_or_404(UserVote, idUser=user, idResource=resource)
+        userVote = get_object_or_404(UserVote, idUser=request.user, idResource=resource)
         userVote.vote = vote
         userVote.save()
 
         update_resource_popularity(resource)
 
-        return get_vote_response(resource, user, format)
+        return get_vote_response(resource, request.user, format)
 
 
 class ResourceVersionCollection(Resource):
