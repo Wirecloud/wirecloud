@@ -342,8 +342,10 @@ def fix_widget_code(widget_code, base_url, content_type, request):
     if content_type == 'text/html':
         parser = etree.HTMLParser()
         xmltree = etree.parse(StringIO(widget_code), parser)
+        serialization_method = 'html'
     elif content_type == 'application/xhtml+xml':
         xmltree = etree.fromstring(widget_code).getroottree()
+        serialization_method = 'xml'
     else:
         return widget_code
 
@@ -392,4 +394,4 @@ def fix_widget_code(widget_code, base_url, content_type, request):
             script.set('src', get_absolute_static_url(script.get('src')[7:], request=request))
 
     # return modified code
-    return etree.tostring(xmltree, pretty_print=False, method='html')
+    return etree.tostring(xmltree, pretty_print=False, method=serialization_method)
