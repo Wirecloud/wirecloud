@@ -124,11 +124,8 @@ class ResourceCollection(Resource):
     @method_decorator(login_required)
     @iframe_error
     @commit_on_http_success
+    @supported_request_mime_types(('application/x-www-form-urlencoded', 'multipart/form-data'))
     def create(self, request, fromWGT=False):
-
-        if get_content_type(request)[0] not in ('application/x-www-form-urlencoded', 'multipart/form-data'):
-            msg = _("unsupported request media type")
-            return build_error_response(request, 415, msg)
 
         overrides = None
 
