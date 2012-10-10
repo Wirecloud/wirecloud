@@ -59,7 +59,7 @@ from catalogue.catalogue_utils import get_and_filter, get_or_filter, get_not_fil
 from catalogue.catalogue_utils import get_tag_filter, get_event_filter, get_slot_filter, get_paginatedlist
 from catalogue.catalogue_utils import get_tag_response, update_resource_popularity
 from catalogue.catalogue_utils import get_vote_response, group_resources
-from catalogue.utils import add_widget_from_wgt, add_resource_from_template, delete_resource, get_added_resource_info
+from catalogue.utils import add_widget_from_wgt, add_resource_from_template, delete_resource
 from catalogue.utils import tag_resource
 from commons.cache import no_cache
 from commons import http_utils
@@ -156,10 +156,7 @@ class ResourceCollection(Resource):
 
             return build_error_response(request, 409, _('Resource already exists'))
 
-        json_response = get_added_resource_info(resource, request.user, request)
-
-        return HttpResponse(simplejson.dumps(json_response),
-                            mimetype='application/json; charset=UTF-8')
+        return HttpResponse(resource.json_description, mimetype='application/json; charset=UTF-8')
 
     @no_cache
     def read(self, request, pag=0, offset=0):
