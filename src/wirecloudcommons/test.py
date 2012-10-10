@@ -345,8 +345,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
             arguments[0].dispatchEvent(evt);
         ''', search_input)
 
-        # TODO
-        time.sleep(2)
+        self.wait_catalogue_ready()
 
     def search_in_catalogue_results(self, widget_name):
 
