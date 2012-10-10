@@ -19,7 +19,7 @@
  *
  */
 
-/*global document, EzWebExt, gettext, interpolate, StyledElements */
+/*global document, EzWebExt, LayoutManagerFactory, gettext, interpolate, StyledElements, Wirecloud */
 
 (function () {
 
@@ -64,9 +64,26 @@
             'description': resource.getDescription(),
             'popularity': this.get_popularity_html.bind(this, resource.getPopularity()),
             'mainbutton': function () {
-                var button;
+                var button, local_repository, operators, op_id;
 
-                if (this.resource.getType() !== 'non-instantiable service') {
+                if (this.resource.getType() === 'operator') {
+                    operators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
+                    op_id = [this.resource.getVendor(), this.resource.getName(), this.resource.getVersion().text].join('/');
+
+                    if (this.catalogue.getLabel() === 'local' || op_id in operators) {
+                        button = new StyledElements.StyledButton({
+                            'text': gettext('Uninstall')
+                        });
+                    } else {
+
+                        button = new StyledElements.StyledButton({
+                            'text': gettext('Install')
+                        });
+
+                        local_repository = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
+                        button.addEventListener('click', local_repository.createUserCommand('import', this.resource, this.catalogue));
+                    }
+                } else if (this.resource.getType() !== 'non-instantiable service') {
                     button = new StyledElements.StyledButton({
                         'class': 'instantiate_button',
                         'text': gettext('Add to workspace')

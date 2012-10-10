@@ -105,6 +105,37 @@
 
     CatalogueView.prototype.ui_commands = {};
 
+    CatalogueView.prototype.ui_commands.import = function _import(resource, catalogue_source) {
+        return function () {
+            var layoutManager;
+
+            layoutManager = LayoutManagerFactory.getInstance();
+            layoutManager._startComplexTask(gettext("Importing operator into local repository"), 3);
+            layoutManager.logSubTask(gettext('Uploading operator'));
+
+            this.catalogue.addResourceFromURL(resource.getUriTemplate(), {
+                onSuccess: function () {
+                    var local_repository;
+
+                    LayoutManagerFactory.getInstance().logSubTask(gettext('Operator installed successfully'));
+                    LayoutManagerFactory.getInstance().logStep('');
+
+                    this.refresh_search_results();
+
+                    catalogue_source.home();
+                    catalogue_source.refresh_search_results();
+                }.bind(this),
+                onFailure: function (msg) {
+                    LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                    LayoutManagerFactory.getInstance().log(msg);
+                },
+                onComplete: function () {
+                    LayoutManagerFactory.getInstance()._notifyPlatformReady();
+                }
+            });
+        }.bind(this);
+    };
+
     CatalogueView.prototype.ui_commands.instantiate = function instantiate(resource) {
         return function () {
             this.instantiate(resource);

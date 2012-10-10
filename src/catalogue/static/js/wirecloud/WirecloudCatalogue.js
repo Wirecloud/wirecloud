@@ -153,13 +153,20 @@
             method: 'POST',
             parameters: {'template_uri': url},
             onSuccess: function (transport) {
+                if ('wiring' in Wirecloud && 'OperatorFactory' in Wirecloud.wiring) {
+                    Wirecloud.wiring.OperatorFactory.addOperator(JSON.parse(transport.responseText));
+                }
+
                 if (typeof options.onSuccess === 'function') {
                     options.onSuccess();
                 }
             }.bind(this),
             onFailure: function (transport) {
+                var msg = LogManagerFactory.getInstance().formatError(gettext("Error adding resource from URL: %(errorMsg)s."), transport);
+                LogManagerFactory.getInstance().log(msg);
+
                 if (typeof options.onFailure === 'function') {
-                    options.onFailure();
+                    options.onFailure(msg);
                 }
             },
             onComplete: function () {

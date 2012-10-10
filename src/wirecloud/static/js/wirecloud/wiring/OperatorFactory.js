@@ -63,6 +63,11 @@ Wirecloud.wiring = {};
         return operators[name];
     };
 
+    OperatorFactory.addOperator = function addOperator(description) {
+        var operator = new OperatorMeta(description);
+        operators[operator.uri] = operator;
+    };
+
     /*************************************************************************
      * Make Anchor public
      *************************************************************************/
