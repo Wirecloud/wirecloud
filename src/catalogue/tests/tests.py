@@ -66,6 +66,15 @@ class CatalogueAPITestCase(TestCase):
 
     fixtures = ['catalogue_test_data']
 
+    @classmethod
+    def setUpClass(cls):
+
+        cls.basic_request_meta = {
+            'HTTP_ACCEPT': 'application/json',
+            'content_type': 'application/json',
+        }
+        super(CatalogueAPITestCase, cls).setUpClass()
+
     def setUp(self):
 
         super(CatalogueAPITestCase, self).setUp()
@@ -187,11 +196,11 @@ class CatalogueAPITestCase(TestCase):
         vote_url = reverse('wirecloud_catalogue.resource_vote', kwargs={'vendor': 'Test', 'name': 'widget1', 'version': '1.2'})
 
         self.client.login(username='test', password='test')
-        result = self.client.post(vote_url, {'vote': 3})
+        result = self.client.post(vote_url, simplejson.dumps({'vote': 3}), **self.basic_request_meta)
         self.assertEqual(result.status_code, 200)
 
         self.client.login(username='test2', password='test')
-        result = self.client.post(vote_url, {'vote': 4})
+        result = self.client.post(vote_url, simplejson.dumps({'vote': 4}), **self.basic_request_meta)
         self.assertEqual(result.status_code, 200)
 
         result_json = simplejson.loads(result.content)

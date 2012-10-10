@@ -67,7 +67,7 @@ from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.user_utils import get_verified_certification_group
 from commons.utils import json_encode
-from wirecloudcommons.utils.http import build_error_response, get_content_type
+from wirecloudcommons.utils.http import build_error_response, get_content_type, supported_request_mime_types
 from wirecloudcommons.utils.template import TemplateParseException
 from wirecloudcommons.utils.transaction import commit_on_http_success
 
@@ -369,11 +369,20 @@ class ResourceVoteCollection(Resource):
 
     @method_decorator(login_required)
     @commit_on_http_success
+    @supported_request_mime_types(('application/x-www-form-urlencoded', 'application/json'))
     def create(self, request, vendor, name, version):
         format = request.GET.get('format', 'default')
 
         # Get the vote from the request
-        vote = request.POST.get('vote')
+        content_type = get_content_type(request)[0]
+        if content_type == 'application/json':
+            try:
+                vote = simplejson.loads(request.raw_post_data)['vote']
+            except Exception, e:
+                msg = _("malformed json data: %s") % unicode(e)
+                return build_error_response(request, 400, msg)
+        else:
+            vote = request.POST.get('vote')
 
         resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
 
