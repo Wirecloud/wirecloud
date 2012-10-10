@@ -59,9 +59,7 @@ CataloguePublishView.prototype._submit_template = function (e) {
     LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding resource to the catalogue"), 1);
     LayoutManagerFactory.getInstance().logSubTask(gettext('Sending resource template to catalogue'));
 
-    Wirecloud.io.makeRequest(this.catalogue.RESOURCE_COLLECTION, {
-        method: 'POST',
-        parameters: {'template_uri': template_uri},
+    this.catalogue.addResourceFromURL(template_uri, {
         onSuccess: function (transport) {
             LayoutManagerFactory.getInstance().logSubTask(gettext('Resource uploaded successfully'));
             LayoutManagerFactory.getInstance().logStep('');

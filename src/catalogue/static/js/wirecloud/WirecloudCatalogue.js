@@ -144,6 +144,32 @@
         });
     };
 
+    WirecloudCatalogue.prototype.addResourceFromURL = function addResourceFromURL(url, options) {
+        if (typeof options != 'object') {
+            options = {};
+        }
+
+        Wirecloud.io.makeRequest(this.RESOURCE_COLLECTION, {
+            method: 'POST',
+            parameters: {'template_uri': url},
+            onSuccess: function (transport) {
+                if (typeof options.onSuccess === 'function') {
+                    options.onSuccess();
+                }
+            }.bind(this),
+            onFailure: function (transport) {
+                if (typeof options.onFailure === 'function') {
+                    options.onFailure();
+                }
+            },
+            onComplete: function () {
+                if (typeof options.onComplete === 'function') {
+                    options.onComplete();
+                }
+            }
+        });
+    };
+
     WirecloudCatalogue.prototype.deleteResource = function deleteResource(resource, onSuccess, onError) {
         var url, context;
 
