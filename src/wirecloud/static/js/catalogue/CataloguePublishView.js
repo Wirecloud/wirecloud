@@ -60,18 +60,15 @@ CataloguePublishView.prototype._submit_template = function (e) {
     LayoutManagerFactory.getInstance().logSubTask(gettext('Sending resource template to catalogue'));
 
     this.catalogue.addResourceFromURL(template_uri, {
-        onSuccess: function (transport) {
+        onSuccess: function () {
             LayoutManagerFactory.getInstance().logSubTask(gettext('Resource uploaded successfully'));
             LayoutManagerFactory.getInstance().logStep('');
 
             this.mainview.home();
             this.mainview.refresh_search_results();
         }.bind(this),
-        onFailure: function (transport) {
-            var msg = LogManagerFactory.getInstance().formatError(gettext("Error uploading resource: %(errorMsg)s."), transport);
-            LogManagerFactory.getInstance().log(msg);
+        onFailure: function (msg) {
             LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-            LayoutManagerFactory.getInstance().log(msg);
         },
         onComplete: function () {
             LayoutManagerFactory.getInstance()._notifyPlatformReady();
