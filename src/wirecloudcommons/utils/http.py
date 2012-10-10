@@ -37,7 +37,7 @@ ERROR_FORMATTERS = {
 
 
 def build_error_response(request, status_code, error_msg):
-    mimetype = mimeparser.best_match(ERROR_FORMATTERS.keys(), request.META['HTTP_ACCEPT'])
+    mimetype = mimeparser.best_match(ERROR_FORMATTERS.keys(), request.META.get('HTTP_ACCEPT', 'text/plain'))
     return HttpResponse(ERROR_FORMATTERS[mimetype](error_msg), mimetype=mimetype, status=status_code)
 
 
