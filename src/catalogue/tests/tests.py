@@ -183,7 +183,7 @@ class CatalogueAPITestCase(TestCase):
             {'name': 'widget1', 'vendor': 'Test'},
             {'name': 'inexistantwidget', 'vendor': 'Test'},
         ])
-        result = self.client.post(reverse('wirecloud_catalogue.resource_versions'), {'resources': resources})
+        result = self.client.post(reverse('wirecloud_catalogue.resource_versions'), resources, **self.basic_request_meta)
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertTrue('resources' in result_json)

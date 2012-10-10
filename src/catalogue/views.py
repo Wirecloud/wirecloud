@@ -422,11 +422,8 @@ class ResourceVoteCollection(Resource):
 
 class ResourceVersionCollection(Resource):
 
+    @supported_request_mime_types(('application/json',))
     def create(self, request):
-
-        if get_content_type(request)[0] != 'application/json':
-            msg = _("unsupported request media type")
-            return build_error_response(request, 415, msg)
 
         try:
             resources = simplejson.loads(request.raw_post_data)
