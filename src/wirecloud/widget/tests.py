@@ -50,7 +50,7 @@ class CodeTransformationTestCase(TestCase):
         expected_code = self.read_file('test-data/xhtml2-expected.html')
         self.assertEqual(final_code, expected_code)
 
-    def test_html_without_head_element(self):
+    def test_xhtml_without_head_element(self):
         initial_code = self.read_file('test-data/xhtml3-initial.html')
         final_code = fix_widget_code(initial_code, 'http://server.com/widget', 'application/xhtml+xml', None) + '\n'
         expected_code = self.read_file('test-data/xhtml3-expected.html')
