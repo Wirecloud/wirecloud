@@ -43,6 +43,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/WirecloudCatalogue.js',
                 'js/wirecloud/MarketManager.js',
                 'js/wirecloud/ui/ResourcePainter.js',
+                'js/wirecloud/ui/WirecloudCatalogue/PublishView.js',
             )
         else:
             return common

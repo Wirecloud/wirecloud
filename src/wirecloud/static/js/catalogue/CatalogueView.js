@@ -35,7 +35,7 @@
 
         this.viewsByName = {
             'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: {catalogue: this, resource_painter: Wirecloud.ui.ResourcePainter}}),
-            'developer': this.alternatives.createAlternative({alternative_constructor: Wirecloud.ui.WirecloudCatalogue.CataloguePublishView, containerOptions: {catalogue: this.catalogue, mainview: this}}),
+            'developer': this.alternatives.createAlternative({alternative_constructor: Wirecloud.ui.WirecloudCatalogue.PublishView, containerOptions: {catalogue: this.catalogue, mainview: this}}),
             'details': this.alternatives.createAlternative({alternative_constructor: Wirecloud.ui.ResourceDetailsView, containerOptions: {catalogue: this}})
         };
         this.viewsByName.search.init();

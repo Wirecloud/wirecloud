@@ -25,7 +25,7 @@
 
     "use strict";
 
-    var CataloguePublishView, upload_wgt_file, submit_template;
+    var PublishView, upload_wgt_file, submit_template;
 
     /*************************************************************************
      *                            Private methods                            *
@@ -61,10 +61,10 @@
     };
 
     /*************************************************************************
-     *                         CataloguePublishView                          *
+     *                              PublishView                              *
      *************************************************************************/
 
-    CataloguePublishView = function CataloguePublishView(id, options) {
+    PublishView = function PublishView(id, options) {
         options.class = 'publish_view';
         this.catalogue = options.catalogue;
         this.mainview = options.mainview;
@@ -89,9 +89,9 @@
         this._iframe.id = this._iframe.name = 'upload_' + this.mainview.altId;
         this._iframe.onload = this._check_upload_wgt_result.bind(this);
     };
-    CataloguePublishView.prototype = new StyledElements.Alternative();
+    PublishView.prototype = new StyledElements.Alternative();
 
-    CataloguePublishView.prototype._check_upload_wgt_result = function () {
+    PublishView.prototype._check_upload_wgt_result = function () {
         var doc, layoutManager, logManager, msg, processed_response_data;
 
         if (this._iframe.contentDocument) {
@@ -124,5 +124,5 @@
     };
 
     Wirecloud.ui.WirecloudCatalogue = {};
-    Wirecloud.ui.WirecloudCatalogue.CataloguePublishView = CataloguePublishView;
+    Wirecloud.ui.WirecloudCatalogue.PublishView = PublishView;
 })();
