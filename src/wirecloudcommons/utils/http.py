@@ -24,6 +24,7 @@ from django.conf import settings
 from django.contrib.sites.models import get_current_site
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
+from django.utils.translation import ugettext as _
 
 from commons.utils import get_json_error_response, get_xml_error
 from wirecloudcommons.utils import mimeparser
@@ -46,6 +47,20 @@ def get_content_type(request):
         return '', ''
     else:
         return content_type_header.split(';', 1)
+
+
+def supported_request_mime_types(mime_types):
+
+    def wrap(func):
+        def wrapper(self, request, *args, **kwargs):
+            if get_content_type(request)[0] not in mime_types:
+                msg = _("Unsupported request media type")
+                return build_error_response(request, 415, msg)
+
+            return func(self, request, *args, **kwargs)
+        return wrapper
+
+    return wrap
 
 
 def get_current_domain(request=None):
