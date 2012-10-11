@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, StyledElements*/
+/*global CatalogueView, Constants, gettext, LayoutManagerFactory, LogManagerFactory, StyledElements, Wirecloud*/
 
 (function () {
 
