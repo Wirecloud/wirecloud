@@ -387,6 +387,15 @@
 .wiring_editor .canvas .arrow {
     fill:   none;
     cursor: crosshair;
+    opacity: 0.3;
+}
+
+.wiring_editor .canvas .arrow.selected {
+    opacity: 1;
+}
+
+.wiring_editor .canvas .arrow.emphasize{
+    opacity: 1;
 }
 
 .wiring_editor .canvas .arrow .arrowbody {
