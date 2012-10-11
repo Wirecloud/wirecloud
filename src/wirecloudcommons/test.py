@@ -369,7 +369,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         return None
 
     def instantiate(self, resource):
-        resource.find_element_by_css_selector('.instantiate_button').click()
+        resource.find_element_by_css_selector('.instantiate_button div').click()
 
         # TODO
         time.sleep(2)
