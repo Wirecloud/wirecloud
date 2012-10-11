@@ -175,6 +175,13 @@ class widget_operation:
         self.driver.switch_to_default_content()
 
 
+def marketplace_loaded(driver):
+    if driver.find_element_by_css_selector('#wirecloud_breadcrum .first_level').text == 'marketplace':
+        return driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text != 'loading'
+    else:
+        return False
+
+
 class WirecloudSeleniumTestCase(LiveServerTestCase):
 
     fixtures = ('selenium_test_data',)
@@ -282,6 +289,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
     def add_wgt_widget_to_catalogue(self, wgt_file, widget_name):
 
         self.change_main_view('marketplace')
+        WebDriverWait(self.driver, 30).until(marketplace_loaded)
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click('Upload')
         time.sleep(2)
@@ -298,6 +306,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
     def add_template_to_catalogue(self, template_url, resource_name):
 
         self.change_main_view('marketplace')
+        WebDriverWait(self.driver, 30).until(marketplace_loaded)
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click('Upload')
         WebDriverWait(self.driver, 30).until(lambda driver: driver.find_element_by_css_selector('form.template_submit_form .template_uri').is_displayed())
@@ -316,6 +325,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
     def add_template_to_catalogue_with_error(self, template_url, resource_name, msg):
 
         self.change_main_view('marketplace')
+        WebDriverWait(self.driver, 30).until(marketplace_loaded)
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click('Upload')
         WebDriverWait(self.driver, 30).until(lambda driver: driver.find_element_by_css_selector('form.template_submit_form .template_uri').is_displayed())
@@ -367,6 +377,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
     def add_widget_to_mashup(self, widget_name):
 
         self.change_main_view('marketplace')
+        WebDriverWait(self.driver, 30).until(marketplace_loaded)
         self.search_resource(widget_name)
         resource = self.search_in_catalogue_results(widget_name)
         self.instantiate(resource)
@@ -457,6 +468,8 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
 
     def add_marketplace(self, name, url, type_):
 
+        self.change_main_view('marketplace')
+        WebDriverWait(self.driver, 30).until(marketplace_loaded)
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click("Add new marketplace")
 
@@ -468,6 +481,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         self.fill_form_input(market_type_input, type_)
 
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+        self.wait_wirecloud_ready()
 
     def delete_marketplace(self, market):
 
