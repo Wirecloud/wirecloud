@@ -107,5 +107,3 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('textPref').text, 'test')
             self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'true')
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'password')
-
-    test_basic_widget_functionalities.tags=('current',)
