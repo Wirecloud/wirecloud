@@ -337,7 +337,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
 
         self.wait_wirecloud_ready()
         time.sleep(0.1)
-        xpath = "//*[contains(@class, 'window_menu')]//*[text()='Error uploading resource: " + msg + "']"
+        xpath = "//*[contains(@class, 'window_menu')]//*[text()='Error adding resource from URL: " + msg + "']"
         self.driver.find_element_by_xpath(xpath)
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 
