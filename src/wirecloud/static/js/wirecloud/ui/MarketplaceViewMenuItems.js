@@ -65,46 +65,52 @@ if (!Wirecloud.ui) {
             }
         }
 
-        items.push(new StyledElements.MenuItem(gettext('Add new marketplace'), function () {
-            var menu, fields, type_entries;
-            //type_entries = this.market.market_types;
+        items.push(new StyledElements.MenuItem(gettext('Refresh marketplace list'), function () {
+            this.refreshViewInfo();
+        }.bind(this.market)));
 
-            fields = {
-                'label': {
-                    'type': 'text',
-                    'label': gettext('Name'),
-                    'required': true
-                },
-                'url': {
-                    'type': 'text',
-                    'label': gettext('URL'),
-                    'required': true,
-                    'initialValue': 'http://'
-                },
-                'type': {
-                    'type': 'select',
-                    'initialEntries': Wirecloud.MarketManager.getMarketTypes(),
-                    'label': gettext('Type'),
-                    'required': true
-                }
-            };
-            menu = new FormWindowMenu(fields, gettext('Add Marketplace'));
+        if (!this.loading && !this.error) {
+            items.push(new StyledElements.MenuItem(gettext('Add new marketplace'), function () {
+                var menu, fields, type_entries;
+                //type_entries = this.market.market_types;
 
-            // Form data is sent to server
-            menu.executeOperation = function (data) {
-                var market_info = {
-                    "name": data.label,
-                    "options": {
-                        "label": data.display_name,
-                        "url": data.url,
-                        "type": data.type
+                fields = {
+                    'label': {
+                        'type': 'text',
+                        'label': gettext('Name'),
+                        'required': true
+                    },
+                    'url': {
+                        'type': 'text',
+                        'label': gettext('URL'),
+                        'required': true,
+                        'initialValue': 'http://'
+                    },
+                    'type': {
+                        'type': 'select',
+                        'initialEntries': Wirecloud.MarketManager.getMarketTypes(),
+                        'label': gettext('Type'),
+                        'required': true
                     }
                 };
-                Wirecloud.MarketManager.addMarket(market_info, this.market.refreshViewInfo.bind(this.market));
-            }.bind(this);
+                menu = new FormWindowMenu(fields, gettext('Add Marketplace'));
 
-            menu.show();
-        }.bind(this)));
+                // Form data is sent to server
+                menu.executeOperation = function (data) {
+                    var market_info = {
+                        "name": data.label,
+                        "options": {
+                            "label": data.display_name,
+                            "url": data.url,
+                            "type": data.type
+                        }
+                    };
+                    Wirecloud.MarketManager.addMarket(market_info, this.market.refreshViewInfo.bind(this.market));
+                }.bind(this);
+
+                menu.show();
+            }.bind(this)));
+        }
 
         if (this.market.number_of_alternatives > 1 && this.market.alternatives.getCurrentAlternative().getLabel() !== 'local') {
             items.push(new StyledElements.MenuItem(gettext('Delete marketplace'), function () {

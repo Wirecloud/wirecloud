@@ -25,66 +25,15 @@
 
     "use strict";
 
-    var MarketplaceView = function MarketplaceView(id, options) {
-        options.id = 'marketplace';
-        StyledElements.Alternative.call(this, id, options);
+    var MarketplaceView, onGetStoresSuccess, onGetStoresFailure;
 
-        this.viewsByName = {};
-        this.alternatives = new StyledElements.StyledAlternatives();
-        this.alternatives.addEventListener('postTransition', function () {
-            LayoutManagerFactory.getInstance().header.refresh();
-        });
-        this.appendChild(this.alternatives);
-        this.generateViews();
-
-        this.marketMenu = new StyledElements.PopupMenu();
-        this.marketMenu.append(new Wirecloud.ui.MarketplaceViewMenuItems(this));
-
-        this.addEventListener('show', function (view) {
-            view.alternatives.getCurrentAlternative().refresh_if_needed();
-        });
-    };
-
-    MarketplaceView.prototype = new StyledElements.Alternative();
-
-    MarketplaceView.prototype.view_name = 'marketplace';
-
-    MarketplaceView.prototype.getBreadcrum = function () {
-        var label, breadcrum;
-
-        label = gettext('No marketplace registered');
-        if (this.number_of_alternatives > 0) {
-            label = this.alternatives.getCurrentAlternative().getLabel();
-        }
-
-        breadcrum = [
-            {
-                'label': 'marketplace'
-            },
-            {
-                'label': label,
-                'menu': this.marketMenu
-            }
-        ];
-        // If no alternatives exist, it is no posible to have an extra breadcrum
-        if (this.number_of_alternatives > 0) {
-            if (typeof this.alternatives.getCurrentAlternative().getExtraBreadcrum === 'function') {
-                breadcrum = breadcrum.concat(this.alternatives.getCurrentAlternative().getExtraBreadcrum());
-            }
-        }
-        return breadcrum;
-    };
-
-    MarketplaceView.prototype.refreshViewInfo = function () {
-        Wirecloud.MarketManager.getMarkets(this.addViewInfo.bind(this));
-    };
-
-    MarketplaceView.prototype.addViewInfo = function (view_info) {
+    onGetStoresSuccess = function onGetStoresSuccess(view_info) {
         var info, old_views, view_element, view_constructor, first_element = null;
 
-        old_views = this.viewsByName;
+        this.loading = false;
+        this.error = false;
 
-        this.number_of_alternatives = 0;
+        old_views = this.viewsByName;
         this.viewsByName = {};
 
         for (info in view_info) {
@@ -115,10 +64,86 @@
         LayoutManagerFactory.getInstance().header.refresh();
     };
 
-    MarketplaceView.prototype.generateViews = function () {
-        Wirecloud.MarketManager.getMarkets(this.addViewInfo.bind(this));
+    onGetStoresFailure = function onGetStoresFailure(msg) {
+        this.loading = false;
+        this.error = true;
+
+        LayoutManagerFactory.getInstance().header.refresh();
     };
 
+
+    MarketplaceView = function MarketplaceView(id, options) {
+        options.id = 'marketplace';
+        StyledElements.Alternative.call(this, id, options);
+
+        this.viewsByName = {};
+        this.alternatives = new StyledElements.StyledAlternatives();
+        this.alternatives.addEventListener('postTransition', function () {
+            LayoutManagerFactory.getInstance().header.refresh();
+        });
+        this.appendChild(this.alternatives);
+
+        this.marketMenu = new StyledElements.PopupMenu();
+        this.marketMenu.append(new Wirecloud.ui.MarketplaceViewMenuItems(this));
+
+        this.addEventListener('show', function (view) {
+            view.alternatives.getCurrentAlternative().refresh_if_needed();
+        });
+
+        this.number_of_alternatives = 0;
+        this.loading = true;
+        this.error = false;
+        Wirecloud.MarketManager.getMarkets(onGetStoresSuccess.bind(this), onGetStoresFailure.bind(this));
+    };
+
+    MarketplaceView.prototype = new StyledElements.Alternative();
+
+    MarketplaceView.prototype.view_name = 'marketplace';
+
+    MarketplaceView.prototype.getBreadcrum = function () {
+        var label, breadcrum;
+
+        if (this.loading) {
+            label = gettext('loading...');
+        } else if (this.error) {
+            label = gettext('list not available');
+        } else if (this.number_of_alternatives > 0) {
+            label = this.alternatives.getCurrentAlternative().getLabel();
+        } else {
+            label = gettext('no registered marketplace');
+        }
+
+        breadcrum = [
+            {
+                'label': 'marketplace'
+            },
+            {
+                'label': label,
+                'menu': this.marketMenu
+            }
+        ];
+
+        // If no alternatives exist, it is no posible to have an extra breadcrum
+        if (!this.loading && !this.error && this.number_of_alternatives > 0) {
+            if (typeof this.alternatives.getCurrentAlternative().getExtraBreadcrum === 'function') {
+                breadcrum = breadcrum.concat(this.alternatives.getCurrentAlternative().getExtraBreadcrum());
+            }
+        }
+        return breadcrum;
+    };
+
+    MarketplaceView.prototype.refreshViewInfo = function refreshViewInfo() {
+        if (this.loading) {
+            return;
+        }
+
+        this.loading = true;
+        LayoutManagerFactory.getInstance().header.refresh();
+
+        this.number_of_alternatives = 0;
+
+        Wirecloud.MarketManager.getMarkets(onGetStoresSuccess.bind(this), onGetStoresFailure.bind(this));
+    };
 
     window.MarketplaceView = MarketplaceView;
 })();

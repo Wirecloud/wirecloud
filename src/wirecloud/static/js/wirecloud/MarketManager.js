@@ -23,6 +23,8 @@
 
 (function () {
 
+    "use strict";
+
     var market_types, MarketManager;
 
     market_types = {
@@ -33,12 +35,20 @@
     };
     MarketManager = {};
 
-    MarketManager.getMarkets = function getMarkets(callback) {
+    MarketManager.getMarkets = function getMarkets(callback, onFailureCallback) {
         Wirecloud.io.makeRequest(Wirecloud.URLs.MARKET_COLLECTION, {
             method: 'GET',
             onSuccess: function onSuccess(transport) {
                 var raw_data = JSON.parse(transport.responseText);
                 callback(raw_data);
+            },
+            onFailure: function onFailure(transport) {
+                var msg = LogManagerFactory.getInstance().formatError(gettext("Error retrieving market list from the server: %(errorMsg)s."), transport);
+                LogManagerFactory.getInstance().log(msg);
+
+                if (typeof onFailureCallback === 'function') {
+                    onFailureCallback(msg);
+                }
             }
         });
     };
