@@ -369,10 +369,14 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         return None
 
     def instantiate(self, resource):
+        old_iwidget_count = self.count_iwidgets()
         resource.find_element_by_css_selector('.instantiate_button div').click()
 
         # TODO
         time.sleep(2)
+
+        iwidget_count = self.count_iwidgets()
+        self.assertEquals(iwidget_count, old_iwidget_count + 1)
 
     def add_widget_to_mashup(self, widget_name):
 

@@ -72,9 +72,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     def test_add_widget_from_catalogue(self):
 
         self.login()
-        self.assertEqual(self.count_iwidgets(), 0)
         self.add_widget_to_mashup('Test')
-        self.assertEqual(self.count_iwidgets(), 1)
 
     def test_basic_widget_functionalities(self):
 
