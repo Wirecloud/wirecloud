@@ -34,31 +34,12 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_add_widget_to_catalog_wgt(self):
 
-        driver = self.driver
-
         self.login()
 
         self.add_wgt_widget_to_catalogue('Morfeo_Calendar_Viewer.wgt', 'Calendar Viewer')
         self.add_wgt_widget_to_catalogue('Morfeo_Cliente_Correo.wgt', 'Cliente Correo')
         self.add_wgt_widget_to_catalogue('Morfeo_FeedList.wgt', 'Feed List')
         self.add_wgt_widget_to_catalogue('Morfeo_FeedReader.wgt', 'Feed Reader')
-
-        driver.implicitly_wait(30)
-        driver.get(self.live_server_url + "/admin/")
-        driver.find_element_by_link_text("Catalogue resources").click()
-        driver.find_element_by_link_text("Calendar Viewer").click()
-        driver.find_element_by_link_text("Delete").click()
-        driver.find_element_by_xpath("//input[@value=\"Yes, I'm sure\"]").click()
-        driver.find_element_by_link_text("Cliente Correo").click()
-        driver.find_element_by_link_text("Delete").click()
-        driver.find_element_by_xpath("//input[@value=\"Yes, I'm sure\"]").click()
-        driver.find_element_by_link_text("FeedList").click()
-        driver.find_element_by_link_text("Delete").click()
-        driver.find_element_by_xpath("//input[@value=\"Yes, I'm sure\"]").click()
-        driver.find_element_by_link_text("FeedReader").click()
-        driver.find_element_by_link_text("Delete").click()
-        driver.find_element_by_xpath("//input[@value=\"Yes, I'm sure\"]").click()
-        driver.find_element_by_link_text("Log out").click()
 
     def test_add_widget_to_catalogue_xml(self):
 
