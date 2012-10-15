@@ -36,6 +36,7 @@ except:
         pass
 from django.utils.importlib import import_module
 from django.test import TransactionTestCase
+from django.test.client import Client
 from django.utils import translation
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -81,9 +82,19 @@ class LocalDownloader(object):
 
     def __init__(self, servers):
         self._servers = servers
+        self._client = Client()
+
+    def set_live_server(self, host, port):
+        self._live_netloc = host + ':' + str(port)
 
     def __call__(self, url, *args, **kwargs):
         parsed_url = urlparse(url)
+
+        if parsed_url.netloc == self._live_netloc:
+            return self._client.get(url).content
+
+        if parsed_url.scheme not in self._servers or parsed_url.netloc not in self._servers[parsed_url.scheme]:
+            raise URLError('not valid')
 
         base_path = self._servers[parsed_url.scheme][parsed_url.netloc]
         final_path = os.path.normpath(os.path.join(base_path, parsed_url.path[1:]))
@@ -222,6 +233,8 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         showcase.create_widget_from_wgt(wgt_file, None, deploy_only=True)
 
         super(WirecloudSeleniumTestCase, cls).setUpClass()
+
+        http_utils.download_http_content.set_live_server(cls.server_thread.host, cls.server_thread.port)
 
     @classmethod
     def tearDownClass(cls):
