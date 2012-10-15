@@ -163,6 +163,10 @@ function CatalogueResource(resourceJSON_) {
         return !!currentVersion.packaged;
     };
 
+    this.getURI = function () {
+        return [vendor, name, currentVersion.version.text].join('/');
+    };
+
     //////////////
     // SETTERS
     //////////////

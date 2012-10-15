@@ -68,7 +68,7 @@
 
                 if (this.resource.getType() === 'operator') {
                     operators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
-                    op_id = [this.resource.getVendor(), this.resource.getName(), this.resource.getVersion().text].join('/');
+                    op_id = this.resource.getURI();
 
                     if (this.catalogue.getLabel() === 'local' || op_id in operators) {
                         button = new StyledElements.StyledButton({

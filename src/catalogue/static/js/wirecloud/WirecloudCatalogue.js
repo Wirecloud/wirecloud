@@ -64,20 +64,22 @@
     };
 
     deleteSuccessCallback = function deleteSuccessCallback(transport) {
-        // processing command
         var layoutManager, result, opManager, i, widgetId;
 
-        layoutManager = LayoutManagerFactory.getInstance();
-        result = JSON.parse(transport.responseText);
+        if (this.catalogue.name === 'local' && this.resource.getType() === 'widget') {
 
-        layoutManager.logSubTask(gettext('Removing affected iWidgets'));
-        opManager = OpManagerFactory.getInstance();
-        for (i = 0; i < result.removedIWidgets.length; i += 1) {
-            opManager.removeInstance(result.removedIWidgets[i], true);
+            layoutManager = LayoutManagerFactory.getInstance();
+            result = JSON.parse(transport.responseText);
+
+            layoutManager.logSubTask(gettext('Removing affected iWidgets'));
+            opManager = OpManagerFactory.getInstance();
+            for (i = 0; i < result.removedIWidgets.length; i += 1) {
+                opManager.removeInstance(result.removedIWidgets[i], true);
+            }
+
+            layoutManager.logSubTask(gettext('Purging widget info'));
+            ShowcaseFactory.getInstance().deleteWidget('/widgets/' + this.resource.getURI());
         }
-
-        layoutManager.logSubTask(gettext('Purging widget info'));
-        ShowcaseFactory.getInstance().deleteWidget(this.resource.getId());
 
         this.onSuccess();
     };
@@ -187,6 +189,7 @@
         });
 
         context = {
+            catalogue: this,
             resource: resource,
             onSuccess: onSuccess,
             onError: onError

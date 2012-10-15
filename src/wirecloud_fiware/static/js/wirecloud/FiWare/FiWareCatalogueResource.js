@@ -157,6 +157,10 @@ function FiWareCatalogueResource(resourceJSON_) {
         return 0;
     };
 
+    this.getURI = function () {
+        return [vendor, name, currentVersion.version.text].join('/');
+    };
+
     //////////////
     // SETTERS
     //////////////
