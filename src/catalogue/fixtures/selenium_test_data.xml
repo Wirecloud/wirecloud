@@ -9,7 +9,7 @@
         <field type="BooleanField" name="ie_compatible">False</field>
         <field type="CharField" name="author">aarranz</field>
         <field type="CharField" name="mail">aarranz@conwet.com</field>
-        <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
+        <field to="auth.user" name="creator" rel="ManyToOneRel">1</field>
         <field type="TextField" name="description">This widget is used to test some of the features of the Wirecloud platform</field>
         <field type="CharField" name="license"><None></None></field>
         <field type="DateTimeField" name="creation_date">2011-05-13 12:24:03</field>
