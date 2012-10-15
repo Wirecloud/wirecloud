@@ -471,7 +471,7 @@
     };
 
     Multiconnector.prototype.select = function select(withCtrl) {
-        var i, j, arrows;
+        var i, arrows;
         if (this.hasClassName('selected')) {
             return;
         }
@@ -480,13 +480,25 @@
         }
         this.selected = true;
         this.addClassName('selected');
+
+        //arrows
+        this.mainArrow.emphasize();
+        for (i = 0; i < this.arrows.length; i += 1) {
+            this.arrows[i].emphasize();
+        }
         this.wiringEditor.addSelectedObject(this);
     };
 
     Multiconnector.prototype.unselect = function unselect(withCtrl) {
-        var i, j, arrows;
+        var i, arrows;
         this.selected = false;
         this.removeClassName('selected');
+        //arrows
+        this.mainArrow.deemphasize();
+        for (i = 0; i < this.arrows.length; i += 1) {
+            this.arrows[i].deemphasize();
+        }
+
         this.wiringEditor.removeSelectedObject(this);
         if (!(this.wiringEditor.ctrlPushed) && (this.wiringEditor.selectedCount > 0) && (withCtrl)) {
             this.wiringEditor.resetSelection();
