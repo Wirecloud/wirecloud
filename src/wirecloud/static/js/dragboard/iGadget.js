@@ -1506,8 +1506,6 @@ IWidget.prototype.save = function (options) {
         msg = logManager.formatError(gettext("Error adding iwidget to persistence: %(errorMsg)s."), transport, e);
         logManager.log(msg);
 
-        // Remove this iWidget from the layout
-        this.layout.removeIWidget(this, true);
         this.destroy();
     }
 
