@@ -41,6 +41,14 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.add_wgt_widget_to_catalogue('Morfeo_FeedList.wgt', 'Feed List')
         self.add_wgt_widget_to_catalogue('Morfeo_FeedReader.wgt', 'Feed Reader')
 
+    def test_reinstall_widget_to_catalog_wgt(self):
+
+        self.login()
+
+        self.delete_widget('Test')
+        resource = self.add_wgt_widget_to_catalogue('Wirecloud_Test_1.0.wgt', 'Test')
+        self.instantiate(resource)
+
     def test_add_widget_to_catalogue_xml(self):
 
         self.login()
