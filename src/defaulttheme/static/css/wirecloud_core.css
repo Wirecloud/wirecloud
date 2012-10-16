@@ -224,6 +224,10 @@ h3 {
     color: #990000;
 }
 
+.window_menu > .window_top > .window_title:before {
+    content: '/';
+}
+
 .window_menu > .window_top > .closebutton {
     float: right;
 }
@@ -257,6 +261,10 @@ h3 {
     bottom: 0;
     left: 0;
     z-index: 3;
+}
+
+#loading-window .window_title:before {
+    content: none;
 }
 
 #loading-window.fadding #loading-background {

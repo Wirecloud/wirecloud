@@ -90,8 +90,8 @@ function WindowMenu(title, extra_class) {
 }
 
 
-WindowMenu.prototype.setTitle = function(title) {
-    this.titleElement.setTextContent('/' + title);
+WindowMenu.prototype.setTitle = function setTitle(title) {
+    this.titleElement.setTextContent(title);
 };
 
 /**
