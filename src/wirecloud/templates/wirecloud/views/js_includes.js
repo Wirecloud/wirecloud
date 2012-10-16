@@ -45,7 +45,6 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/dragboard/dragboard.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/dragboard/UserPref.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/dragboard/ElementPositions.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wiring/ChannelWindowMenu.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/connectable.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/Wiring.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/Operator.js"></script>
