@@ -944,7 +944,12 @@ IWidget.prototype.registerPrefCallback = function registerPrefCallback(prefCallb
 /**
  * This method must be called to avoid memory leaks caused by circular references.
  */
-IWidget.prototype.destroy = function () {
+IWidget.prototype.destroy = function destroy() {
+
+    if (this.loaded) {
+        this.events.unload.dispatch(this);
+    }
+
     if (this.draggable !== null) {
         this.draggable.destroy();
         this.draggable = null;
