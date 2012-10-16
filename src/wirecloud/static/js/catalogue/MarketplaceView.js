@@ -55,6 +55,11 @@
             }
         }
 
+        if (this.marketToShow !== null) {
+            this.alternatives.showAlternative(this.viewsByName[this.marketToShow]);
+            this.marketToShow = null;
+        }
+
         for (info in old_views) {
             this.alternatives.removeAlternative(old_views[info]);
             old_views[info].destroy();
@@ -90,6 +95,7 @@
             view.alternatives.getCurrentAlternative().refresh_if_needed();
         });
 
+        this.marketToShow = null;
         this.number_of_alternatives = 0;
         this.loading = true;
         this.error = false;
@@ -132,7 +138,9 @@
         return breadcrum;
     };
 
-    MarketplaceView.prototype.refreshViewInfo = function refreshViewInfo() {
+    MarketplaceView.prototype.refreshViewInfo = function refreshViewInfo(marketToShow) {
+        this.marketToShow = marketToShow;
+
         if (this.loading) {
             return;
         }

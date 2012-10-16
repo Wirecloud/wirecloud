@@ -105,7 +105,7 @@ if (!Wirecloud.ui) {
                             "type": data.type
                         }
                     };
-                    Wirecloud.MarketManager.addMarket(market_info, this.market.refreshViewInfo.bind(this.market));
+                    Wirecloud.MarketManager.addMarket(market_info, this.market.refreshViewInfo.bind(this.market, data.label));
                 }.bind(this);
 
                 menu.show();
