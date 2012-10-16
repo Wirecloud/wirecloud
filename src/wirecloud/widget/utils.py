@@ -389,7 +389,7 @@ def fix_widget_code(widget_code, base_url, content_type, request):
             files = get_widget_api_extensions('index')
             files.reverse()
             for file in files:
-                script.addnext(etree.Element('script', src=get_absolute_static_url(file, request=request)))
+                script.addnext(etree.Element('script', type="text/javascript", src=get_absolute_static_url(file, request=request)))
         elif script.get('src', '').startswith('/ezweb/'):
             script.set('src', get_absolute_static_url(script.get('src')[7:], request=request))
 
