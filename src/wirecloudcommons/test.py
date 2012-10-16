@@ -229,8 +229,6 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         cls.old_deployer = showcase.wgt_deployer
         cls.tmp_dir = mkdtemp()
         showcase.wgt_deployer = WgtDeployer(cls.tmp_dir)
-        wgt_file = WgtFile(os.path.join(cls.wgt_dir, 'Wirecloud_Test_1.0.wgt'))
-        showcase.create_widget_from_wgt(wgt_file, None, deploy_only=True)
 
         super(WirecloudSeleniumTestCase, cls).setUpClass()
 
@@ -238,8 +236,6 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        rmtree(cls.tmp_dir, ignore_errors=True)
-
         cls.driver.quit()
 
         http_utils.download_http_content = cls._original_download_function
@@ -251,12 +247,15 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         super(WirecloudSeleniumTestCase, cls).tearDownClass()
 
     def setUp(self):
-        showcase.wgt_deployer = WgtDeployer(self.tmp_dir)
+        wgt_file = WgtFile(os.path.join(self.wgt_dir, 'Wirecloud_Test_1.0.wgt'))
+        showcase.create_widget_from_wgt(wgt_file, None, deploy_only=True)
+
         cache.clear()
         super(WirecloudSeleniumTestCase, self).setUp()
 
     def tearDown(self):
-        showcase.wgt_deployer = self.old_deployer
+        rmtree(self.tmp_dir, ignore_errors=True)
+
         super(WirecloudSeleniumTestCase, self).tearDown()
 
     def fill_form_input(self, form_input, value):
