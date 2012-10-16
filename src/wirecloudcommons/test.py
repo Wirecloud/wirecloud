@@ -500,8 +500,12 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
         self.wait_wirecloud_ready()
 
+        self.assertEqual(self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text, name)
+
     def delete_marketplace(self, market):
 
+        self.change_main_view('marketplace')
+        WebDriverWait(self.driver, 30).until(marketplace_loaded)
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click(market)
         time.sleep(2)
@@ -509,6 +513,9 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click("Delete marketplace")
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
+        self.wait_wirecloud_ready()
+
+        self.assertNotEqual(self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text, market)
 
     def delete_widget(self, widget_name, timeout=30):
         self.change_main_view('marketplace')
