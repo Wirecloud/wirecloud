@@ -74,19 +74,6 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.add_template_to_catalogue('http://localhost:8001/test/test.rdf', 'Test_Selenium')
         self.add_template_to_catalogue_with_error('http://localhost:8001/test/test.rdf', 'Test_Selenium', 'Resource already exists.')
 
-    def test_add_fiware_marketplace(self):
-
-        self.login()
-
-        self.add_marketplace('fiware', 'http://localhost:8080', 'fiware')
-
-    def test_delete_fiware_marketpace(self):
-
-        self.login()
-
-        self.add_marketplace('fiware', 'http://localhost:8080', 'fiware')
-        self.delete_marketplace('fiware')
-
     def test_add_and_instantiate_widget_rdf(self):
 
         self.login()
