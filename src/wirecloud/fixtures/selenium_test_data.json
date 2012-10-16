@@ -188,5 +188,30 @@
             "name": "value2",
             "value": "2"
         }
+    },
+    {
+        "pk": 2,
+        "model": "auth.user",
+        "fields": {
+            "username": "user_with_markets",
+            "first_name": "",
+            "last_name": "",
+            "email": "admin@c.com",
+            "password": "sha1$5AphFrMHRX5o$bd3394cfeb25266a67d88683d24ae0c7b0647bd8",
+            "is_staff": false,
+            "is_active": true,
+            "is_superuser": false,
+            "last_login": "2011-10-10 11:27:12",
+            "date_joined": "2011-10-10 11:27:12"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "wirecloud.market",
+        "fields": {
+            "name": "deleteme",
+            "options": "{\"url\": null, \"type\":\"wirecloud\", \"label\":\"deleteme\"}",
+            "user": 2
+        }
     }
 ]
