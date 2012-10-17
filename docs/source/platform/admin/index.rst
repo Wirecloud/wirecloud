@@ -6,12 +6,12 @@ Dependencies
 
 * A Database Manager (MySQL, PostgreSQL, Sqlite3...)
 * Python 2.5, 2.6 or 2.7. Python 3 and other versions are not supported.
-* Django 1.3
+* Django 1.3/1.4
 * South 0.7.3+
 * lxml
 * BeautifulSoup
-* django-compressor 1.2a2 
-* rdflib 3.1.0+
+* django-compressor 1.2
+* rdflib 3.2.0+
 
 Installing basic dependencies in Debian Wheeze and Ubuntu oneiric
 -----------------------------------------------------------------
@@ -25,7 +25,7 @@ using pip:
 
 .. code-block:: bash
 
-    $ sudo pip install django-compressor==1.2a2 rdflib
+    $ sudo pip install "django-compressor==1.2" "rdflib>=3.2.0"
 
 
 Database Installation and Configuration
@@ -187,9 +187,9 @@ be accomplished by running:
 Last remarks to the installation
 --------------------------------
 
-Make sure both ``GADGETS_DEPLOYMENT_DIR`` and ``GADGETS_DEPLOYMENT_TMPDIR``
+Make sure both ``GADGETS_DEPLOYMENT_DIR`` and ``CATALOGUE_MEDIA_ROOT``
 (by default, these configuration variables point to
-<wirecloud>/src/deployment/gadgets and <wirecloud>/src/deployment/tmps
+<wirecloud>/src/deployment/widgets and <wirecloud>/src/catalogue/media
 respectively) exist and the server has enough permissions to write over them.
 
 If ``DEBUG`` is False you will need to collect Wirecloud static files using the
@@ -206,12 +206,13 @@ static files when not debugging.
 Anyway, you should serve the static files with a fast performance http server
 like Nginx or Apache. Django has documentation for this `topic`_.
 
-In addition, you can compress css and javascript code files for better
-performance using the following command:
+In addition, Wirecloud delivers compressed css and javascript files to clients
+when ``DEBUG`` is False, so you have to generate these files using the
+following command:
 
 .. code-block:: bash
 
-    $ python manage.py compress
+    $ python manage.py compress --force
 
 .. note::
 
