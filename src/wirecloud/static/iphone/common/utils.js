@@ -27,29 +27,6 @@
 *     http://morfeo-project.org
  */
 
-/******GENERAL UTILS **********/
-
-/* Slide utility function */
-var percent = 100;
-var slideSpeed = 20;
-var timer;
-var percent;
-
-function slide(backwards, element) {
-    percent -= slideSpeed;
-    if (percent <= 0) {
-        percent = 0;
-    }
-    element.style.left = (backwards ? -percent : percent) + "%";
-    if (percent !== 0) {
-        setTimeout(function () {
-            slide(backwards, element);
-        }, 0);
-    } else {
-        percent = 100;
-    }
-}
-
 /* language selection */
 function setLanguage(language) {
     var onSuccess, onError, params;
