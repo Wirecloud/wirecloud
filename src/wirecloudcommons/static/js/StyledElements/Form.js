@@ -80,6 +80,7 @@ function Form(fields, options) {
     } else if (options.acceptButton === true) {
         this.acceptButton = new StyledElements.StyledButton({
             usedInForm: true,
+            class: 'btn-primary',
             text: 'Accept'
         });
     }
