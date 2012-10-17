@@ -1,4 +1,4 @@
-/*global $, EzWebExt, InterfaceFactory, StyledElements, Element, ValidationErrorManager, Wirecloud */
+/*global $, EzWebExt, gettext, InterfaceFactory, StyledElements, Element, ValidationErrorManager, Wirecloud */
 
 (function () {
 
@@ -83,7 +83,7 @@
             this.acceptButton = new StyledElements.StyledButton({
                 'usedInForm': true,
                 'class': 'btn-primary',
-                'text': 'Accept'
+                'text': gettext('Accept')
             });
         }
         if (this.acceptButton !== null) {
@@ -99,7 +99,7 @@
         } else if (options.cancelButton === true) {
             this.cancelButton = new StyledElements.StyledButton({
                 usedInForm: true,
-                text: 'Cancel'
+                text: gettext('Cancel')
             });
         }
         if (this.cancelButton !== null) {
