@@ -73,6 +73,7 @@
             tmpPos = initAnchor.getCoordinates(layer);
             // arrow pointer
             theArrow = canvas.drawArrow(tmpPos, tmpPos, "arrow");
+            theArrow.emphasize();
             // we can draw invert arrows from the end to the start
             if (initAnchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
                 this.invert = true;
@@ -151,6 +152,7 @@
                             theArrow.setStart(fAnchor.getCoordinates(layer), fAnchor);
                         }
                     }
+                    theArrow.deemphasize();
                     if (isVal(currentSource, currentTarget)) {
                         theArrow.calculateHighlight();
                         theArrow.calculateEmphasize();
