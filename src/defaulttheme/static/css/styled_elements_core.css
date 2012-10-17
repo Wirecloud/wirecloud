@@ -273,13 +273,13 @@ div.styled_numeric_field div.numeric_bottom_button {
 /* Styled Button */
 
 .styled_button {
-  display: inline-block;
-  margin: 3px;
-  position: relative;
+    display: inline-block;
+    margin: 3px;
+    position: relative;
 }
 
 .styled_button.open {
-  z-index: 111113;
+    z-index: 111113;
 }
 
 .styled_button.plain {
@@ -287,20 +287,15 @@ div.styled_numeric_field div.numeric_bottom_button {
 }
 
 .styled_button > div, .styled_button > button, .styled_button.plain {
-  cursor: pointer;
+    cursor: pointer;
 }
 
-.styled_button.disabled > div, , .styled_button.disabled > button, .styled_button.plain.disabled {
-  cursor: default;
+.styled_button.disabled > div, .styled_button.disabled > button, .styled_button.plain.disabled {
+    cursor: default;
 }
 
-.styled_button > div > div.icon {
-}
-
-.styled_button span {
-  margin: 0px 3px 1px 3px;
-  font-size: 13px;
-  display: inline-block;
+.styled_button > span {
+    display: inline-block;
 }
 
 /* Styled HPaned */
@@ -701,34 +696,6 @@ div.styled_numeric_field div.numeric_bottom_button {
   top:        9px;
   width:      25px;
   border: 1px solid #888888;
-}
-
-/* Styled Button */
-
-.styled_button, .styled_button > button {
-    border: 0px;
-    padding: 0px;
-    background: transparent;
-    font-family: Arial;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-.styled_button > div, .styled_button > button {
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-  border: 1px solid #888888;
-  background: transparent url("../images/styledElements/button.png") repeat-x scroll 0 0;
-}
-
-.styled_button span {
-  color: white;
-}
-
-.styled_button img.icon {
-  margin: 3px;
-  vertical-align: middle;
 }
 
 /* Styled Notebook */

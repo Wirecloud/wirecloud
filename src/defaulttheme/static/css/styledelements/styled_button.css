@@ -1,0 +1,83 @@
+.styled_button {
+    border: 0px;
+    padding: 0px;
+    background: transparent;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.styled_button > button {
+    border: 0px;
+    padding: 0px;
+    background: transparent;
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+.styled_button > div, .styled_button > button {
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(197, 197, 197);
+    border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
+    color: rgb(51, 51, 51);
+    background-color: whiteSmoke;
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(white), to(rgb(230, 230, 230)));
+    background-image: -webkit-linear-gradient(top, white, rgb(230, 230, 230));
+    background-image: -o-linear-gradient(top, white, rgb(230, 230, 230));
+    background-image: linear-gradient(to bottom, white, rgb(230, 230, 230));
+    background-image: -moz-linear-gradient(top, white, rgb(230, 230, 230));
+    background-repeat: repeat-x;
+    border-radius: 5px;
+    padding: 4px 14px;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.styled_button > div > span {
+    margin: 0px 3px 1px 3px;
+}
+
+.styled_button > div:active, .styled_button > button:active {
+    background-color: rgb(230, 230, 230);
+    -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.styled_button > div:hover, .styled_button > button:hover {
+    color: rgb(51, 51, 51);
+    text-decoration: none;
+    background-color: rgb(230, 230, 230);
+    background-position: 0 -15px;
+    -webkit-transition: background-position 0.1s linear;
+    -moz-transition: background-position 0.1s linear;
+    -o-transition: background-position 0.1s linear;
+    transition: background-position 0.1s linear;
+}
+
+.styled_button img.icon {
+    margin: 3px;
+    vertical-align: middle;
+}
+
+/* Primary button */
+
+.styled_button.btn-primary > div, .styled_button.btn-primary > button {
+    color: #ffffff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    background-color: #006dcc;
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
+    background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
+    background-image: -o-linear-gradient(top, #0088cc, #0044cc);
+    background-image: linear-gradient(to bottom, #0088cc, #0044cc);
+    background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
+    background-repeat: repeat-x;
+    border-color: #0044cc #0044cc #002a80;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
+
+.styled_button.btn-primary > div:hover, .styled_button.btn-primary > button:hover, .styled_button.btn-primary > div:active, .styled_button.btn-primary > button:active {
+    color: white;
+    background-color: rgb(0, 68, 204);
+}
