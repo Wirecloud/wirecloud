@@ -73,3 +73,34 @@
     background-color: rgb(81, 163, 81);
     border-color: rgb(81, 163, 81);
 }
+
+/* Warning button */
+
+.styled_button.btn-warning > div, .styled_button.btn-warning > button {
+    color: #FFF;
+    background-color: rgb(250, 167, 50);
+    border-color: rgb(250, 167, 50);
+}
+
+.styled_button.btn-warning > div:hover, .styled_button.btn-warning > button:hover,
+.styled_button.btn-warning > div:active, .styled_button.btn-warning > button:active
+{
+    background-color: rgb(248, 148, 6);
+    border-color: rgb(248, 148, 6);
+}
+
+/* Danger button */
+
+.styled_button.btn-danger > div, .styled_button.btn-danger > button {
+    color: #FFF;
+    background-color: rgb(218, 79, 73);
+    border-color: rgb(218, 79, 73);
+}
+
+.styled_button.btn-danger > div:hover, .styled_button.btn-danger > button:hover,
+.styled_button.btn-danger > div:active, .styled_button.btn-danger > button:active
+{
+    background-color: rgb(189, 54, 47);
+    border-color: rgb(189, 54, 47);
+}
+
