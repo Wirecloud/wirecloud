@@ -163,7 +163,7 @@ def get_resource_data(untranslated_resource, user, request=None):
         'type': resource.resource_type(),
         'packaged': resource.fromWGT,
         'uploader': uploader,
-        'added_by_user': resource.creator == user,
+        'added_by_user': user.is_staff or resource.creator == user,
         'author': resource.author,
         'displayName': displayName,
         'description': resource.description,
