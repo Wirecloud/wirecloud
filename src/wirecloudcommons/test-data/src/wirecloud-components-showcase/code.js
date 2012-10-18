@@ -420,6 +420,31 @@ StyledGadget.prototype.init = function() {
     insertExample("PopupMenu", code);
 
     /*
+     * Buttons example
+     */
+    code = "\n\
+    var button;\n\
+\n\
+    button = new StyledElements.StyledButton({text:'Default'});\n\
+    container.appendChild(button);\n\
+\n\
+    button = new StyledElements.StyledButton({text:'Primary', 'class': 'btn-primary'});\n\
+    container.appendChild(button);\n\
+\n\
+    button = new StyledElements.StyledButton({text:'Success', 'class': 'btn-success'});\n\
+    container.appendChild(button);\n\
+\n\
+    button = new StyledElements.StyledButton({text:'Warning', 'class': 'btn-warning'});\n\
+    container.appendChild(button);\n\
+\n\
+    button = new StyledElements.StyledButton({text:'Danger', 'class': 'btn-danger'});\n\
+    container.appendChild(button);\n\
+\n\
+\n";
+
+    insertExample("Buttons", code);
+
+    /*
      * Init
      */
 

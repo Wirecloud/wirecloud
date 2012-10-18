@@ -4,7 +4,7 @@
 		<Vendor>CoNWeT</Vendor>
 		<Name>wirecloud-components-showcase</Name>
         <DisplayName>__MSG_displayName__</DisplayName>
-		<Version>1.0.1</Version>
+		<Version>1.0.2</Version>
 		<Author>aarranz</Author>
 		<Mail>aarranz@conwet.com</Mail>
 		<Description>TODO</Description>
@@ -25,7 +25,7 @@
 		<XHTML content-type="application/xhtml+xml" href="index.html"/>
 	</Platform.Link>
 
-	<Platform.Rendering width="6" height="24"/>
+	<Platform.Rendering width="11" height="24"/>
 
 	<Platform.Context>
 		<Context       name="user"       type="text" concept="user_name"/>
