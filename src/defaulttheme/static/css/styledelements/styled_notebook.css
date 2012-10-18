@@ -1,0 +1,99 @@
+/* Styled Notebook */
+
+.notebook .tab_wrapper {
+    font-size: 16px;
+    border-bottom: 1px solid #DDD;
+    height: 32px;
+    line-height: 33px;
+}
+
+.notebook .tab_area {
+    height: 33px;
+    margin: 0 3ex;
+}
+
+.notebook .tab_area .tab {
+    background: transparent;
+    color: rgb(0, 136, 204);
+    height: 15px;
+    line-height: 16px;
+    border: 1px solid transparent;
+    vertical-align: top;
+    padding: 8px 19px 8px 1ex;
+    border-radius: 4px 4px 0 0;
+    font-size: 13px;
+    font-weight: normal;
+    min-width: 5em;
+    margin: 0 3px;
+}
+
+.notebook .tab_area .tab:hover {
+    border-color: rgb(238, 238, 238) rgb(238, 238, 238) transparent rgb(221, 221, 221);
+    color: rgb(0, 85, 128);
+}
+
+.notebook .tab_area .tab img {
+  height: 16px;
+  margin: 0 0.5ex 0 0;
+  position: relative;
+  top: 1px;
+  vertical-align: sub;
+}
+
+.notebook .tab_area .tab .close_button {
+  position: absolute;
+  right: 2px;
+  top: 5px;
+  overflow: hidden;
+  margin: -2px 0px 0px 2px;
+}
+
+
+.notebook .tab_area .tab.selected .close_button div > span {
+  display: inline-block;
+}
+
+.notebook .tab_area .tab.selected .close_button div {
+  display: inline-block;
+}
+
+.notebook .tab_area .tab .close_button div {
+  display: none;
+}
+
+.notebook .tab_area .tab .close_button div {
+  border: 0px none;
+  height: 12px;
+  width: 12px;
+}
+
+.notebook .tab_area .tab.selected {
+    background: #FFFFFF;
+    color: rgb(85, 85, 85);
+    border-color: rgb(221, 221, 221) rgb(221, 221, 221) transparent rgb(221, 221, 221);
+}
+
+.notebook div.tab_wrapper > .tab_area_msg {
+  right: 80px;
+  border: 1px solid #3B7614;
+  background-color: #B6F48E;
+  background: #a5f2c9 url("../images/styledElements/icon_success.gif") no-repeat right;
+  padding: 2px 5px;
+  font-size: 90%;
+  min-width: 250px;
+}
+
+.notebook > div > .wrapper {
+    background: transparent;
+    top: 33px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.notebook > div > .wrapper > div {
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  padding: 3px;
+}
