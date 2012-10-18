@@ -40,6 +40,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
         if view == 'index':
             return common + (
+                'js/wirecloud/utils/CookieManager.js',
                 'js/wirecloud/WirecloudCatalogue.js',
                 'js/wirecloud/MarketManager.js',
                 'js/wirecloud/ui/ResourcePainter.js',
