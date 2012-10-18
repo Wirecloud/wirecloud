@@ -255,7 +255,7 @@ Ajax.Base.prototype.initialize = function(options) {
 
 Array.prototype.elementExists = function (element) {
 	return this.indexOf(element) !== -1;
-}
+};
 
 Array.prototype.getElementById = function (id) {
 	for (var i = 0; i < this.length; i++) {
@@ -263,7 +263,7 @@ Array.prototype.getElementById = function (id) {
 			return this[i];
 	}
 	return null;
-}
+};
 
 Array.prototype.getElementByName = function (elementName) {
 	for (var i = 0; i < this.length; i++) {
@@ -271,13 +271,13 @@ Array.prototype.getElementByName = function (elementName) {
 			return this[i];
 	}
 	return null;
-}
+};
 
 Array.prototype.remove = function(element) {
 	var index = this.indexOf(element);
 	if (index != -1)
 		this.splice(index, 1);
-}
+};
 
 Array.prototype.removeById = function (id) {
 	var element;
@@ -296,4 +296,4 @@ Array.prototype.removeById = function (id) {
 		}
 	}
 	return null;
-}
+};
