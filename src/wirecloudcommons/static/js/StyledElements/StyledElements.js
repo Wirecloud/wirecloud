@@ -855,48 +855,6 @@ StyledElements.StyledList.prototype.toggleElementSelection = function(element) {
 /**
  * Añade un campo de texto.
  */
-StyledElements.StyledTextField = function(options) {
-    var defaultOptions = {
-        'initialValue': '',
-        'class': ''
-    };
-    options = EzWebExt.merge(defaultOptions, options);
-
-    StyledElements.StyledInputElement.call(this, options.initialValue, ['change']);
-
-    this.wrapperElement = document.createElement("div");
-    this.wrapperElement.className = "styled_text_field";
-    if (options['class'] !== "") {
-        this.wrapperElement.className += " " + options['class'];
-    };
-
-    this.inputElement = document.createElement("input");
-    this.inputElement.setAttribute("type", "text");
-
-    if (options['name'])
-        this.inputElement.setAttribute("name", options['name']);
-
-    if (options['id'] != undefined)
-        this.wrapperElement.setAttribute("id", options['id']);
-
-    this.inputElement.setAttribute("value", options['initialValue']);
-
-    var div = document.createElement("div");
-    div.appendChild(this.inputElement);
-    this.wrapperElement.appendChild(div);
-
-    /* Internal events */
-    EzWebExt.addEventListener(this.inputElement, 'mousedown', EzWebExt.stopPropagationListener, true);
-    EzWebExt.addEventListener(this.inputElement, 'click', EzWebExt.stopPropagationListener, true);
-    this.inputElement.addEventListener('input', function () {
-        this.events.change.dispatch(this);
-    }.bind(this), true);
-}
-StyledElements.StyledTextField.prototype = new StyledElements.StyledInputElement();
-
-/**
- * Añade un campo de texto.
- */
 StyledElements.StyledTextArea = function(options) {
     var defaultOptions = {
         'initialValue': '',
