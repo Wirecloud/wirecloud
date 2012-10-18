@@ -149,6 +149,12 @@ def get_resource_data(untranslated_resource, user, request=None):
     data_events = get_event_data(widget_id=resource.pk)
     data_slots = get_slot_data(widget_id=resource.pk)
 
+    uploader = None
+    if resource.creator is not None:
+        uploader = resource.creator.get_full_name()
+        if uploader.strip() == '':
+            uploader = resource.creator.username
+
     return {
         'id': resource.pk,
         'vendor': resource.vendor,
@@ -156,6 +162,7 @@ def get_resource_data(untranslated_resource, user, request=None):
         'version': resource.version,
         'type': resource.resource_type(),
         'packaged': resource.fromWGT,
+        'uploader': uploader,
         'added_by_user': resource.creator == user,
         'author': resource.author,
         'displayName': displayName,

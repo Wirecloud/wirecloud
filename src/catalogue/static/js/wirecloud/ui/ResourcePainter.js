@@ -106,7 +106,14 @@
             'tags': function (options) {
                 return this.painter.renderTagList(this.resource, options.max);
             }.bind({painter: this, resource: resource}),
-            'advancedops': this.renderAdvancedOperations.bind(this, resource)
+            'advancedops': this.renderAdvancedOperations.bind(this, resource),
+            'uploader': function () {
+                if (resource.uploader != null) {
+                    return resource.uploader;
+                } else {
+                    return gettext('Anonymous');
+                }
+            }
         });
 
         resource_element = this.builder.parse(this.structure_template, context);
