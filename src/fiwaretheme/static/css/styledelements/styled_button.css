@@ -2,7 +2,7 @@
     border: 0px;
     padding: 0px;
     background: transparent;
-    font-family: Arial;
+    font-family: Arial, sans-serif;
     font-size: 12px;
     font-weight: bold;
 }
@@ -43,7 +43,6 @@
 /* Primary button */
 
 .styled_button.btn-primary > div, .styled_button.btn-primary > button {
-    font-size: 12px;
     color: #FFF;
     text-shadow: 0 1px 1px rgba(0, 134, 181, 0.1);
     border: 1px solid #50BCBC;
@@ -53,7 +52,24 @@
     background-color:#0093C6;
 }
 
-.styled_button.btn-primary > div:hover, .styled_button.btn-primary > button:hover {
+.styled_button.btn-primary > div:hover, .styled_button.btn-primary > button:hover,
+.styled_button.btn-primary > div:active, .styled_button.btn-primary > button:active
+{
     border-color: rgb(0, 204, 219);
     background-color: rgb(4, 137, 183);
+}
+
+/* Success button */
+
+.styled_button.btn-success > div, .styled_button.btn-success > button {
+    color: #FFF;
+    background-color: rgb(91, 183, 91);
+    border-color: rgb(91, 183, 91);
+}
+
+.styled_button.btn-success > div:hover, .styled_button.btn-success > button:hover,
+.styled_button.btn-success > div:active, .styled_button.btn-success > button:active
+{
+    background-color: rgb(81, 163, 81);
+    border-color: rgb(81, 163, 81);
 }
