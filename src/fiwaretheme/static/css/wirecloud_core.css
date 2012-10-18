@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'Comfortaa';
   font-style: normal;
-  font-weight: 400;
+  font-weight: normal;
   src: local('Comfortaa'), local('Comfortaa-Regular'),
        url("../fonts/comfortaa_regular-webfont.eot?#iefix") format("embedded-opentype"),
        url("../fonts/comfortaa_regular-webfont.woff") format("woff"),
@@ -12,7 +12,7 @@
 @font-face {
   font-family: 'Comfortaa';
   font-style: normal;
-  font-weight: 700;
+  font-weight: bold;
   src: local('Comfortaa Bold'), local('Comfortaa-Bold'),
        url("../fonts/comfortaa_bold-webfont.eot?#iefix") format("embedded-opentype"),
        url("../fonts/comfortaa_bold-webfont.woff") format("woff"),
@@ -23,12 +23,23 @@
 @font-face {
   font-family: 'Open Sans';
   font-style: normal;
-  font-weight: 400;
+  font-weight: normal;
   src: local('Open Sans'), local('OpenSans'),
        url("../fonts/opensans-regular-webfont.eot?#iefix") format("embedded-opentype"),
        url("../fonts/opensans-regular-webfont.woff") format("woff"),
        url("../fonts/opensans-regular-webfont.ttf") format("truetype"),
        url("../fonts/opensans-regular-webfont.svg#OpenSansRegular") format("svg");
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: bold;
+  src: local('Open Sans Bold'), local('OpenSansBold'),
+       url("../fonts/opensans-bold-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/opensans-bold-webfont.woff") format("woff"),
+       url("../fonts/opensans-bold-webfont.ttf") format("truetype"),
+       url("../fonts/opensans-bold-webfont.svg#OpenSansRegular") format("svg");
 }
 
 body {
