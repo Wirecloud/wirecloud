@@ -19,7 +19,7 @@
  *
  */
 
-/*global Event, OpManagerFactory, StyledElements, gettext, interpolate, LayoutManagerFactory, FormWindowMenu, CatalogueSearchView, FiWareResourceDetailsView, FiWareCataloguePublishView, FiWareCatalogue, CookieManager, Wirecloud, FiWareCatalogueResource, ShowcaseFactory, FiWareStoreListItems*/
+/*global Event, OpManagerFactory, StyledElements, gettext, interpolate, LayoutManagerFactory, FormWindowMenu, CatalogueSearchView, FiWareResourceDetailsView, FiWareCataloguePublishView, FiWareCatalogue, Wirecloud, FiWareCatalogueResource, ShowcaseFactory, FiWareStoreListItems*/
 
 (function () {
 
@@ -80,7 +80,7 @@
         var preferred_versions, i, data, key, resources, resource, fiWareCatalogue;
 
         if (raw_data.resources) {
-            preferred_versions = CookieManager.readCookie('preferred_versions', true);
+            preferred_versions = Wirecloud.utils.CookieManager.readCookie('preferred_versions', true);
 
             if (preferred_versions === null) {
                 preferred_versions = {};

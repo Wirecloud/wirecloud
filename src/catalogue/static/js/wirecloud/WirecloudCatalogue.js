@@ -19,7 +19,7 @@
  *
  */
 
-/*global CatalogueResource, CookieManager, gettext, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, ShowcaseFactory, Wirecloud, Template, URIs*/
+/*global CatalogueResource, gettext, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, ShowcaseFactory, Wirecloud, Template, URIs*/
 
 (function () {
 
@@ -32,7 +32,7 @@
 
         raw_data = JSON.parse(transport.responseText);
         if (raw_data.resources) {
-            preferred_versions = CookieManager.readCookie('preferred_versions', true);
+            preferred_versions = Wirecloud.utils.CookieManager.readCookie('preferred_versions', true);
             if (preferred_versions === null) {
                 preferred_versions = {};
             }

@@ -19,7 +19,7 @@
  *
  */
 
-/*global CatalogueResource, CatalogueSearchView, Constants, CookieManager, Event, gettext, interpolate, LayoutManagerFactory, LogManagerFactory, Wirecloud, ShowcaseFactory, StyledElements*/
+/*global CatalogueResource, CatalogueSearchView, Constants, Event, gettext, interpolate, LayoutManagerFactory, LogManagerFactory, Wirecloud, ShowcaseFactory, StyledElements*/
 
 (function () {
 

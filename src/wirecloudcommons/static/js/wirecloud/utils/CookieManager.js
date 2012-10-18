@@ -1,3 +1,4 @@
+/*global Wirecloud*/
 
 (function () {
 
@@ -80,5 +81,8 @@
         }
     };
 
-    window.CookieManager = CookieManager;
+    if (!('utils' in Wirecloud)) {
+        Wirecloud.utils = {};
+    }
+    Wirecloud.utils.CookieManager = CookieManager;
 })();
