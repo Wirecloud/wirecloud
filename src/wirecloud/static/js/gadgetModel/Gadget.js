@@ -73,7 +73,6 @@ function Widget(widget_, url_, options_) {
     this.getDisplayName = function() { return state.getDisplayName(); }
     this.getVersion = function() { return state.getVersion(); }
     this.getTemplate = function() { return state.getTemplate(); }
-    this.getXHtml = function() { return state.getXHtml(); }
     this.getInfoString = function() { return state.getInfoString(); }
     this.getUriWiki = function() { return state.getUriWiki();}
     this.getImage = function() { return state.getImage(); }
@@ -157,7 +156,6 @@ function WidgetState(widget_) {
     var version = new WidgetVersion(widget_.version, 'showcase');
     var displayName = widget_.displayName
     var template = new WidgetTemplate(widget_.variables, widget_.size);
-    var xhtml = new XHtml(widget_.xhtml);
     var image = widget_.imageURI;
     var icon = widget_.iPhoneImageURI;
     var capabilities = widget_.capabilities;
@@ -183,7 +181,6 @@ function WidgetState(widget_) {
     this.getDisplayName = function() { return displayName; }
     this.getVersion = function() { return version; }
     this.getTemplate = function() { return template; }
-    this.getXHtml = function() { return xhtml; }
     this.getInfoString = function() {
         var transObj = {vendor: vendor, name: name, version: version};
         var msg = gettext("[WidgetVendor: %(vendor)s, WidgetName: %(name)s, WidgetVersion: %(version)s]");
