@@ -142,6 +142,7 @@
 
         if (resource.isAllow('delete')) {
             button = new StyledElements.StyledButton({
+                'class': 'btn-danger',
                 'text': gettext('Delete')
             });
             button.addEventListener('click', this.catalogue.createUserCommand('delete', resource));
@@ -150,6 +151,7 @@
 
         if ((resource.getAllVersions().length > 1) && resource.isAllow('delete-all')) {
             button = new StyledElements.StyledButton({
+                'class': 'btn-danger',
                 'text': gettext('Delete all versions')
             });
             button.addEventListener('click', this.catalogue.createUserCommand('delete', resource));
