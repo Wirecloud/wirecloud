@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Template xmlns="http://morfeo-project.org/2007/Template">
+	<Catalog.ResourceDescription>
+		<Vendor>CoNWeT</Vendor>
+		<Name>wirecloud-components-showcase</Name>
+        <DisplayName>__MSG_displayName__</DisplayName>
+		<Version>1.0.1</Version>
+		<Author>aarranz</Author>
+		<Mail>aarranz@conwet.com</Mail>
+		<Description>TODO</Description>
+		<ImageURI>TODO</ImageURI>
+		<WikiURI>TODO</WikiURI>
+	</Catalog.ResourceDescription>
+
+	<Platform.Preferences>
+	</Platform.Preferences>
+
+	<Platform.StateProperties>
+	</Platform.StateProperties>
+
+	<Platform.Wiring>
+	</Platform.Wiring>
+
+	<Platform.Link>
+		<XHTML content-type="application/xhtml+xml" href="index.html"/>
+	</Platform.Link>
+
+	<Platform.Rendering width="6" height="24"/>
+
+	<Platform.Context>
+		<Context       name="user"       type="text" concept="user_name"/>
+		<Context       name="language"   type="text" concept="language"/>
+		<GadgetContext name="height"     type="text" concept="heightInPixels"/>
+		<GadgetContext name="lockStatus" type="text" concept="lockStatus"/>
+	</Platform.Context>
+
+	<Translations default="en">
+        <Translation lang="en">
+            <msg name="displayName">Wirecloud Components Showcase</msg>
+        </Translation>
+
+        <Translation lang="es">
+            <msg name="displayName">Escaparate de Componentes Wirecloud</msg>
+        </Translation>
+
+    </Translations>
+
+</Template>
