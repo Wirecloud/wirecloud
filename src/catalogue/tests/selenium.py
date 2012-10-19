@@ -14,8 +14,6 @@ __test__ = False
 
 class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
-    __test__ = True
-
     def setUp(self):
 
         self.old_CATALOGUE_MEDIA_ROOT = settings.CATALOGUE_MEDIA_ROOT
