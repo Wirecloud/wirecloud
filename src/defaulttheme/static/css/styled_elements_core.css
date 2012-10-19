@@ -118,27 +118,19 @@ div.styled_list div.row.selected {
 /* Styled Text Field */
 
 div.styled_text_field {
-  padding: 0;
-  width:   10em;
-  font-size: 13px;
+    padding: 0;
+    width:   10em;
 }
 
-div.styled_text_field div {
-  border:  0px none;
-  margin:  1px 4px 0px 4px;
-  padding: 0px;
-  width:   auto;
+div.styled_text_field > div {
+    width:   auto;
 }
 
-div.styled_text_field div input {
-  background: inherit; /* transparent fails in IE8 */
-  border: 0 none;
-  color: black;
-  display: block;
-  height: 18px;
-  width: 100%;
-  padding: 0;
-  margin: 0;
+div.styled_text_field > div > input {
+    background: inherit; /* transparent fails in IE8 */
+    color: inherit;
+    display: inline-block;
+    width: 100%;
 }
 
 div.styled_text_field div input:focus {
@@ -619,7 +611,6 @@ div.styled_list div.row.selected {
 
 /* Styled Text Field, Styled Password Field and Styled Date Field */
 
-div.styled_text_field,
 div.styled_password_field,
 div.styled_date_field
 {
@@ -632,7 +623,6 @@ div.styled_date_field
   margin:  3px;
 }
 
-div.styled_text_field.error,
 div.styled_password_field.error,
 div.styled_date_field.error
 {
