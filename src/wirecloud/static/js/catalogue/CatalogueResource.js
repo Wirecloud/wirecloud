@@ -167,6 +167,11 @@ function CatalogueResource(resourceJSON_) {
         return [vendor, name, currentVersion.version.text].join('/');
     };
 
+    Object.defineProperty(this, 'uploader', {
+        get: function () {
+            return currentVersion.uploader;
+        }
+    });
     //////////////
     // SETTERS
     //////////////
