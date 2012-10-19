@@ -31,7 +31,7 @@
     /*
      * GenericInterface Class
      */
-    var GenericInterface = function GenericInterface(extending, wiringEditor, tittle, manager, className, clone) {
+    var GenericInterface = function GenericInterface(extending, wiringEditor, title, manager, className, clone) {
         if (extending === true) {
             return;
         }
@@ -47,7 +47,7 @@
         this.targetAnchors = [];
         this.sourceAnchors = [];
         this.wiringEditor = wiringEditor;
-        this.tittle = tittle;
+        this.title = title;
         this.className = className;
         this.initPos = {'x': 0, 'y': 0};
         this.draggableSources = [];
@@ -66,7 +66,7 @@
 
         //widget name
         this.nameElement = document.createElement("span");
-        this.nameElement.setTextContent(tittle);
+        this.nameElement.setTextContent(title);
         this.header.appendChild(this.nameElement);
 
         // close button, not for miniInterface
@@ -748,7 +748,7 @@
     };
 
     /**
-     * get sources and targets tittles lists in order to save positions
+     * get sources and targets titles lists in order to save positions
      */
     GenericInterface.prototype.getInOutPositions = function getInOutPositions() {
         var i, sources, targets;
