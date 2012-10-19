@@ -330,8 +330,6 @@ def get_widget_data(widget):
 
         data_vars[var.name] = data_var
 
-    data_code = get_object_or_404(XHTML.objects.all().values('uri'), id=widget.xhtml.id)
-
     data_ret['name'] = widget.name
     if twidget.display_name and twidget.display_name != "":
         data_ret['displayName'] = twidget.display_name
@@ -350,7 +348,7 @@ def get_widget_data(widget):
     data_ret['size']['width'] = widget.width
     data_ret['size']['height'] = widget.height
     data_ret['variables'] = data_vars
-    data_ret['xhtml'] = data_code
+    data_ret['code_content_type'] = widget.xhtml.content_type
 
     data_ret['capabilities'] = get_widget_capabilities(widget_id=widget.id)
 

@@ -91,7 +91,7 @@ IWidget.prototype.paint = function () {
     this.content = document.createElement('object');
     this.content.addEventListener('load', this._notifyLoaded, true);
     this.content.setAttribute('class', 'widget_object');
-    this.content.setAttribute('type', 'text/html');
+    this.content.setAttribute('type', this.widget.code_content_type);
     this.content.setAttribute('data', this.widget.code_url + '#id=' + this.id);
     this.element.appendChild(this.content);
 

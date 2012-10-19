@@ -83,6 +83,7 @@ function Widget(widget_, url_, options_) {
     this.setLastVersion = function(lastVersion) { return state.setLastVersion(lastVersion); }
     this.getLastVersion = function(){return state.getLastVersion();}
     Object.defineProperty(this, 'code_url', {get: function () { return state.code_url}});
+    Object.defineProperty(this, 'code_content_type', {get: function () { return state.code_content_type}});
 
     // *******************
     //  PRIVATE FUNCTIONS
@@ -170,6 +171,7 @@ function WidgetState(widget_) {
         version: version.text
     });
     Object.defineProperty(this, 'code_url', {value: code_url});
+    Object.defineProperty(this, 'code_content_type', {value: widget_.code_content_type});
 
     // ******************
     //  PUBLIC FUNCTIONS

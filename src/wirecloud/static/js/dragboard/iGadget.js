@@ -469,7 +469,7 @@ IWidget.prototype.build = function () {
     this.content = document.createElement("iframe");
     Element.extend(this.content);
     this.content.addClassName("widget_object");
-    this.content.setAttribute("type", "text/html"); // TODO xhtml? => application/xhtml+xml
+    this.content.setAttribute("type", this.widget.code_content_type);
     this.content.setAttribute("standby", "Loading...");
     this.content.setAttribute("width", "100%");
     this.content.setAttribute("frameBorder", "0");
