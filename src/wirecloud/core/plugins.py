@@ -34,6 +34,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/PolicyManager.js',
             'js/StyledElements/Fragment.js',
             'js/StyledElements/Pagination.js',
+            'js/StyledElements/TextField.js',
             'js/StyledElements/ToggleButton.js',
             'js/gadgetModel/Gadget.js',
         )
