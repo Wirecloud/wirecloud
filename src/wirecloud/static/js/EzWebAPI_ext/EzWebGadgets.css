@@ -1,14 +1,11 @@
+@import url('/static/css/styled_elements_core.css');
+@import url('/static/css/styledelements/styled_button.css');
+@import url('/static/css/styledelements/styled_notebook.css');
+@import url('/static/css/styledelements/styled_text_field.css');
+
 html {
   width: 100%;
   height: 100%;
-}
-
-body {
-  padding: 0;
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  background: #EDECEB;
 }
 
 div.loading {
@@ -158,36 +155,6 @@ div.styled_list div.row.selected {
   background: #A1BDE1
 }
 
-/* Styled Text Field */
-
-div.styled_text_field {
-  padding: 0;
-  width:   10em;
-  font-size: 13px;
-}
-
-div.styled_text_field div {
-  border:  0px none;
-  margin:  1px 4px 0px 4px;
-  padding: 0px;
-  width:   auto;
-}
-
-div.styled_text_field div input {
-  background: inherit; /* transparent fails in IE8 */
-  border: 0 none;
-  color: black;
-  display: block;
-  height: 18px;
-  width: 100%;
-  padding: 0;
-  margin: 0;
-}
-
-div.styled_text_field div input:focus {
-  outline: 0 none;
-}
-
 /* Styled Text Area */
 
 div.styled_text_area {
@@ -312,31 +279,6 @@ div.styled_numeric_field div.numeric_bottom_button {
   padding: 0;
 }
 
-/* Styled Button */
-
-.styled_button {
-  display: inline-block;
-  margin: 3px;
-  position: relative;
-}
-
-.styled_button > div {
-  cursor: pointer;
-}
-
-.styled_button.disabled > div {
-  cursor: default;
-}
-
-.styled_button > div > div.icon {
-}
-
-.styled_button span {
-  margin: 0px 3px 1px 3px;
-  font-size: 13px;
-  display: inline-block;
-}
-
 /* Styled HPaned */
 
 .hpaned {
@@ -367,135 +309,6 @@ div.styled_numeric_field div.numeric_bottom_button {
   background: transparent url(images/styledElements/vhandler.png) no-repeat scroll 0 center;
   cursor: col-resize;
   float:left;
-}
-
-/* Styled Notebook */
-
-.notebook {
-  min-width: 5em;
-  min-height: 5em;
-  position: relative;
-  margin: 3px;
-  padding: 0px;
-  overflow: hidden;
-}
-
-.notebook.full {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-}
-
-.notebook.full > div {
-  position: absolute;
-  left: 3px;
-  right: 3px;
-  top: 3px;
-  bottom: 3px;
-}
-
-.notebook .tab_wrapper > .tab_area_msg {
-  z-index: 3;
-  left: auto;
-  position: absolute;
-  top: 1px;
-  display: none;
-}
-
-.notebook .tab_wrapper .move_left, .notebook .tab_wrapper .move_right {
-  color: #AAA;
-  cursor: default;
-  position: absolute;
-  width: 16px;
-  top: 0px !important;
-  -moz-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -o-user-select: none;
-  user-select: none;
-}
-
-.notebook .tab_wrapper .move_left {
-  left: 0px;
-}
-
-.notebook .tab_wrapper .move_right {
-  right: 0px;
-}
-
-.notebook .tab_wrapper .move_left.enabled, .notebook .tab_wrapper .move_right.enabled {
-  color: black;
-  cursor: pointer;
-}
-
-.notebook .tab_wrapper {
-  position: absolute;
-  left: 0;
-  right: 0;
-}
-
-.notebook .tab_area {
-  position: relative;
-  margin: 0 3ex;
-  overflow: hidden;
-  white-space: nowrap;
-  z-index: 2;
-  height: 22px;
-}
-
-.notebook .tab_area .tab {
-  position: relative;
-  cursor: pointer;
-  display: inline-block;
-}
-
-/*
-.notebook .tab_area .tab.selected {
-}
-*/
-
-.notebook .tab_area .tab.hidden {
-    height: 0px;
-    overflow: hidden;
-}
-
-.notebook > div > .wrapper {
-  position: absolute;
-  overflow: hidden;
-  padding: 0;
-  z-index: 1;
-}
-
-.notebook > div > .wrapper > div {
-  background: transparent;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  overflow: auto;
-  position: absolute;
-  visibility: visible;
-  z-index: 2;
-}
-
-.hidden .notebook > div > .wrapper > div,
-.notebook > div > .wrapper > div.hidden {
-  z-index: 1;
-  visibility: hidden;
-}
-
-.notebook .disable-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  bottom: 0;
-  right: 0;
-  background: #E0E0E0;
-  opacity: 0.4;
-  filter: alpha(opacity=40);
-  z-index: 1111111;
 }
 
 /* Styled Alternatives */
@@ -671,7 +484,6 @@ div.styled_list div.row.selected {
 
 /* Styled Text Field, Styled Password Field and Styled Date Field */
 
-div.styled_text_field,
 div.styled_password_field,
 div.styled_date_field
 {
@@ -739,124 +551,9 @@ div.styled_numeric_field div.numeric_bottom_button {
 
 /* Styled Button */
 
-.styled_button {
-}
-
-.styled_button > div {
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-  border: 1px solid #888888;
-  background: transparent url(images/styledElements/button.png) repeat-x scroll 0 0;
-}
-
-.styled_button span {
-  color: white;
-}
-
-.styled_button img.icon {
-  margin: 3px;
-  vertical-align: middle;
-}
-
-/* Styled Notebook */
-
-.notebook .tab_wrapper {
-  font-size: 16px;
-}
-
-.notebook .tab_area .tab {
-  -moz-border-radius-topleft:3px;
-  -moz-border-radius-topright:9px;
-  -webkit-border-top-left-radius: 3px;
-  -webkit-border-top-right-radius: 9px;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 9px;
-  background: #CFCDCA;
-  min-width: 5em;
-  border-width: 1px 1px 0 1px;
-  border-style: solid;
-  border-color: #888888 #888888 #F2F1F0 #888888;
-  font-size: 12px;
-  padding: 3px 19px 0 3px;
-  margin: 0 3px;
-  height: 17px;
-  line-height: 17px;
-}
-
-.notebook .tab_area .tab img {
-  height: 16px;
-  margin: 0 0.5ex 0 0;
-  position: relative;
-  top: 1px;
-  vertical-align: sub;
-}
-
-.notebook .tab_area .tab .close_button {
-  position: absolute;
-  right: 2px;
-  top: 5px;
-  overflow: hidden;
-  margin: -2px 0px 0px 2px;
-}
-
-
-.notebook .tab_area .tab.selected .close_button div > span {
-  display: inline-block;
-}
-
-.notebook .tab_area .tab.selected .close_button div {
-  display: inline-block;
-}
-
-.notebook .tab_area .tab .close_button div {
-  display: none;
-}
-
-.notebook .tab_area .tab .close_button div {
-  border: 0px none;
-  height: 12px;
-  width: 12px;
-}
-
-.notebook .tab_area .tab.selected {
-  height: 18px;
-  border-bottom: 0 none;
-  background: #EDECEB url(images/styledElements/selectedTab.png) repeat-x scroll 0 0;
-}
-
-.notebook div.tab_wrapper > .tab_area_msg {
-  right: 80px;
-  border: 1px solid #3B7614;
-  background-color: #B6F48E;
-  background: #a5f2c9 url(images/icon_success.gif) no-repeat right;
-  padding: 2px 5px;
-  font-size: 90%;
-  min-width: 250px;
-}
-
-.notebook > div > .wrapper {
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
-  background: white;
-  border: 1px solid #888888;
-  top: 21px;
-  right: 0;
-  bottom: 0;
-  left: 0;
-}
-
-.notebook > div > .wrapper > div {
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  border-radius: 2px;
-  padding: 3px;
-}
-
 /* Styled alert */
 
-.styled_alert .background{
+.styled_alert .background {
 	width:100%;
 	height:100%;
 	position:absolute;
