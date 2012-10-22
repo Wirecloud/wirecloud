@@ -2,6 +2,7 @@
 @import url('/static/css/styledelements/styled_button.css');
 @import url('/static/css/styledelements/styled_notebook.css');
 @import url('/static/css/styledelements/styled_text_field.css');
+@import url('/static/css/styledelements/styled_password_field.css');
 
 html {
   width: 100%;
@@ -172,32 +173,6 @@ div.styled_text_area > div > textarea {
   resize: none;
   height: 100%;
   width: 100%;
-}
-
-/* Styled Password Field */
-
-div.styled_password_field {
-  padding: 0;
-  width:   10em;
-  font-size: 13px;
-}
-
-div.styled_password_field div {
-  border:  0px none;
-  margin:  1px 4px 0px 4px;
-  padding: 0px;
-  width:   auto;
-}
-
-div.styled_password_field div input {
-  background: inherit; /* transparent fails in IE8 */
-  border: 0 none;
-  color: black;
-  display: block;
-  height: 18px;
-  width: 100%;
-  padding: 0;
-  margin: 0;
 }
 
 /* Styled Hidden Field */
@@ -484,7 +459,6 @@ div.styled_list div.row.selected {
 
 /* Styled Text Field, Styled Password Field and Styled Date Field */
 
-div.styled_password_field,
 div.styled_date_field
 {
   -moz-border-radius: 4px;

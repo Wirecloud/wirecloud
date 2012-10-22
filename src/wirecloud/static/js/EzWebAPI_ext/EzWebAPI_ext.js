@@ -1944,6 +1944,9 @@ var StyledElements = {
     'ObjectWithEvents': window.parent.StyledElements.ObjectWithEvents,
     'StyledElement': window.parent.StyledElements.StyledElement,
     'StyledInputElement': window.parent.StyledElements.StyledInputElement,
+    'StyledTextField': window.parent.StyledElements.StyledTextField,
+    'StyledPasswordField': window.parent.StyledElements.StyledPasswordField,
+    'StyledTextArea': window.parent.StyledElements.StyledTextArea,
     'BorderLayout': window.parent.StyledElements.BorderLayout,
     'Tab': window.parent.StyledElements.Tab,
     'StyledNotebook': window.parent.StyledElements.StyledNotebook
@@ -2442,42 +2445,6 @@ StyledElements.StyledList.prototype.toggleElementSelection = function(element) {
         this.removeSelection([element]);
     }
 }
-
-StyledElements.StyledTextField = window.parent.StyledElements.StyledTextField;
-StyledElements.StyledTextArea = window.parent.StyledElements.StyledTextArea;
-
-/**
- *
- */
-StyledElements.StyledPasswordField = function(options) {
-    var defaultOptions = {
-        'initialValue': '',
-        'class': ''
-    };
-    options = EzWebExt.merge(defaultOptions, options);
-
-    StyledElements.StyledInputElement.call(this, options.initialValue, ['change']);
-
-    this.wrapperElement = document.createElement("div");
-    this.wrapperElement.className = EzWebExt.prependWord(options['class'], 'styled_password_field');
-
-    this.inputElement = document.createElement("input");
-    this.inputElement.setAttribute("type", "password");
-
-    if (options['name'] !== undefined)
-        this.inputElement.setAttribute("name", options['name']);
-
-    if (options['id'] != undefined)
-        this.wrapperElement.setAttribute("id", options['id']);
-
-    this.inputElement.setAttribute("value", options['initialValue']);
-
-    var div = document.createElement("div");
-    div.appendChild(this.inputElement);
-    this.wrapperElement.appendChild(div);
-}
-StyledElements.StyledPasswordField.prototype = new StyledElements.StyledInputElement();
-
 
 /**
  *
