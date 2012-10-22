@@ -121,10 +121,6 @@ function FiWareCatalogueResource(resourceJSON_) {
         return currentVersion.created;
     };
 
-	this.getModified = function () {
-        return currentVersion.modified;
-    };
-
 	this.getPricing = function() {
 		return currentVersion.pricing;
 	};
@@ -160,6 +156,16 @@ function FiWareCatalogueResource(resourceJSON_) {
     this.getURI = function () {
         return [vendor, name, currentVersion.version.text].join('/');
     };
+
+    this.isAllow = function isAllow(action) {
+        return false;
+    };
+
+    Object.defineProperties(this, {
+        'date': {
+            get: function () { return currentVersion.modified; }
+        }
+    });
 
     //////////////
     // SETTERS
@@ -197,8 +203,7 @@ function FiWareCatalogueResource(resourceJSON_) {
         version_data = versions[i];
 
         version_data.version = new WidgetVersion(version_data.version, 'catalogue');
-        /*version_data.events = version_data.events.map(flat_friendcode);
-        version_data.slots = version_data.slots.map(flat_friendcode);*/
+        version_data.modified = new Date(version_data.modified);
 
         allVersions.push(version_data.version);
         data_by_version[version_data.version.text] = version_data;

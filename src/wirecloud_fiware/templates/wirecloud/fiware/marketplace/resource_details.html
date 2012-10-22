@@ -1,45 +1,45 @@
-{% load i18n %}
-<div class="back_part">
-	<div class="back_to_resource_list link">« {% trans 'Close resource details' %}</div>
-</div>
+{% load i18n %}<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml">
+<s:borderlayout>
 
-<div class="content_part">
-<div class="resource_details">
+    <s:options>{"class": "resource_details"}</s:options>
 
-    <div class="left_column_resource">
-        <img src="#{image_url}" class="image"/>
-        <div class="buttons">
-            <button class="instantiate_button">#{button_text}</button>
+    <s:northcontainer>
+       <t:back_button/>
+       <h2 class="resource_name"><t:displayname/></h2>
+    </s:northcontainer>
+
+    <s:westcontainer>
+        <div class="panel">
+            <t:image/>
+            <t:popularity/>
+            <t:mainbutton/>
+
+            <div class="summary">
+                <div><span class="attr_title">{% trans 'Vendor:' %}</span> <t:vendor/></div>
+                <div><span class="attr_title">{% trans 'Version:' %}</span> <t:version/></div>
+                <div><span class="attr_title">{% trans 'Author:' %}</span> <t:author/></div>
+                <div><span class="attr_title">{% trans 'Last Update:' %}</span> <t:lastupdate/></div>
+            </div>
         </div>
-    </div>
+    </s:westcontainer>
 
-    <div class="right_column_resource">
-        <div>
-            <h2 class="resource_name">#{name}</h2>
-            <div class="popularity">#{average_popularity}</div>
-        </div>
+    <s:centercontainer>
 
-		<div class="fiware_descriptions">
-		<h3>{% trans 'Description' %}</h3>
-        <div class="desc padding_left">#{longDescription}</div>
-		</div>
+        <s:options>{"class": "description_column"}</s:options>
+
+        <h3>{% trans 'Description' %}</h3>
+        <div class="desc padding_left"><t:description/></div>
 
         <h3>{% trans 'Tags' %}</h3>
-        <div class="tag_links padding_left"></div>
+        <div class="tag_cloud"><t:tags>{"max": 3}</t:tags></div>
 
         <h3>{% trans 'Detailed data' %}</h3>
-		<div><span class="attr_title">{% trans 'Store:' %}</span> <span>#{store}</span></div>
-		<div><span class="attr_title">{% trans 'Type:' %}</span> <span>#{type}</span></div>
-        <div><span class="attr_title">{% trans 'Vendor:' %}</span> <span>#{vendor}</span></div>
-        <div><span class="attr_title">{% trans 'Name:' %}</span> <span>#{name}</span></div>
-        <div><span class="attr_title">{% trans 'Version:' %}</span> <span>#{version}</span></div>
-        <div><span class="attr_title">{% trans 'Created:' %}</span> <span>#{created}</span></div>
-		<div><span class="attr_title">{% trans 'Modified:' %}</span> <span>#{created}</span></div>
-        <div><span class="attr_title">{% trans 'Available versions:' %}</span> <span>#{versions}</span></div>
-		<div><span class="attr_title">{% trans 'More info at:' %}</span> <span class="link"><a target="_blank" href="#{page}">#{page}</a></span></div>
+        <div><span class="attr_title">{% trans 'Internal Name:' %}</span> <t:name/></div>
+
         <h3>{% trans 'Advanced operations' %}</h3>
-        <div class="advanced_operations"></div>
-    </div>
-    <div class="footer_resource"></div>
-</div>
-</div>
+        <div class="advanced_operations"><t:advancedops/></div>
+
+    </s:centercontainer>
+
+</s:borderlayout>
+</s:styledgui>

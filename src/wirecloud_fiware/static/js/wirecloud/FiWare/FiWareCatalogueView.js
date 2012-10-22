@@ -40,7 +40,7 @@
 
         this.viewsByName = {
             'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: {catalogue: this, resource_painter: Wirecloud.ui.ResourcePainter}}),
-            'details': this.alternatives.createAlternative({alternative_constructor: FiWareResourceDetailsView, containerOptions: {catalogue: this}}),
+            'details': this.alternatives.createAlternative({alternative_constructor: Wirecloud.FiWare.ui.ResourceDetailsView, containerOptions: {catalogue: this}}),
             'publish': this.alternatives.createAlternative({alternative_constructor: FiWareCataloguePublishView, containerOptions: {catalogue: this}})
         };
         this.viewsByName.search.init();
