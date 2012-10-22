@@ -57,7 +57,7 @@ class USDLParser(object):
     _service_list = None
     _service_number = None
 
-    def __init__(self, usdl_document):
+    def __init__(self, usdl_document, mime_type):
         self._usdl_document = usdl_document
         self._info = {}
         self._service_list = []
@@ -65,10 +65,13 @@ class USDLParser(object):
         self._graph = rdflib.Graph()
 
         #Check rdf format
-        try:
+        if mime_type == 'application/rdf+xml':
             self._graph.parse(data=usdl_document, format="application/rdf+xml")
-        except:
+        elif mime_type == 'text/n3' or mime_type == 'text/turtle' or mime_type == 'text/plain':
             self._graph.parse(data=usdl_document, format='n3')
+        else:
+            msg = _('Error the document has not a valid rdf format')
+            raise Exception(msg)
 
         # take all the services in the document
         for ser in self._graph.subjects(RDF['type'], USDL['Service']):

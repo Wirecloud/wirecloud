@@ -252,7 +252,14 @@ class MarketAdaptor(object):
                 request = MethodRequest("GET", url, '', headers)
                 response = opener.open(request)
                 usdl_document = response.read()
-                parser = USDLParser(usdl_document)
+                content_type = response.headers.get('content-type')
+
+                # Remove the charset
+                pos = content_type.find(';')
+                if pos > -1:
+                    content_type = content_type[:pos]
+
+                parser = USDLParser(usdl_document, content_type)
             except:
                 continue
 
@@ -379,16 +386,30 @@ class MarketAdaptor(object):
                         headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"}
                         request = MethodRequest("GET", url, '', headers)
                         response = opener.open(request)
+                        content_type = response.headers.get('content-type')
+
+                        # Remove the charset
+                        pos = content_type.find(';')
+                        if pos > -1:
+                            content_type = content_type[:pos]
+
                         usdl_document = response.read()
-                        parser = USDLParser(usdl_document)
+                        parser = USDLParser(usdl_document, content_type)
                     else:
                         continue
                 else:
                     headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"}
                     request = MethodRequest("GET", url, '', headers)
                     response = opener.open(request)
+                    content_type = response.headers.get('content-type')
+
+                    # Remove the charset
+                    pos = content_type.find(';')
+                    if pos > -1:
+                        content_type = content_type[:pos]
+
                     usdl_document = response.read()
-                    parser = USDLParser(usdl_document)
+                    parser = USDLParser(usdl_document, content_type)
             except:
                 continue
 
