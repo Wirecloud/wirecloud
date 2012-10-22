@@ -77,10 +77,6 @@
     font-family: Comfortaa;
 }
 
-.catalogue.fiware .float_left {
-  float: left;
-}
-
 .catalogue.fiware .resource_list > .resource .resource_name {
     padding-bottom: 8px;
     max-width: 350px;
@@ -91,67 +87,8 @@
 .catalogue.fiware div.second_level {
     padding-left: 25px;
 }
-.catalogue.fiware .legal_resource h3 {
-    margin: 0.5ex 0 1ex 0;
-    color: #063;
-    padding-left: 50px;
-    padding-top: 25px;
-}
-
-.catalogue.fiware .legal_resource h4{
-    color: #E8A150;
-    padding-left: 75px;
-}
-
-.catalogue.fiware .legal_resource div.tab_info {
-    padding-left: 75px;
-}
-
-.catalogue.fiware .sla_resource h3 {
-    margin: 0.5ex 0 1ex 0;
-    color: #063;
-    padding-left: 50px;
-	padding-top: 25px;
-}
-
-.catalogue.fiware .sla_resource h4{
-    color: #E8A150;
-    padding-left: 75px;
-}
-
-.catalogue.fiware .sla_resource h4.second_level{
-    padding-left: 25px;
-}
-
-.catalogue.fiware .sla_resource div.tab_info {
-    padding-left: 75px;
-}
-
-.catalogue.fiware .pricing_resource h3 {
-    margin: 0.5ex 0 1ex 0;
-    color: #063;
-    padding-left: 50px;
-	padding-top: 25px;
-}
-
-.catalogue.fiware .pricing_resource h4{
-    color: #E8A150;
-    padding-left: 75px;
-}
 
 .catalogue.fiware .pricing_resource div.tab_info {
-    padding-left: 75px;
-}
-
-.catalogue.fiware .part_resource h3 {
-    margin: 0.5ex 0 1ex 0;
-    color: #063;
-    padding-left: 50px;
-	padding-top: 25px;
-}
-
-.catalogue.fiware .part_resource h4 {
-    color: #E8A150;
     padding-left: 75px;
 }
 
@@ -252,14 +189,6 @@
   clear: both;
   bottom: 0px;
   float: left;
-}
-
-.catalogue.fiware .padding_left {
-  padding-left: 5px;
-}
-
-.catalogue.fiware .padding_right {
-  padding-right: 5px;
 }
 
 .catalogue.fiware .section_title {
