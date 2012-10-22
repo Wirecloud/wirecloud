@@ -893,43 +893,6 @@ StyledElements.StyledTextArea.prototype = new StyledElements.StyledInputElement(
 /**
  *
  */
-StyledElements.StyledPasswordField = function(options) {
-    var defaultOptions = {
-        'initialValue': '',
-        'class': ''
-    };
-    options = EzWebExt.merge(defaultOptions, options);
-
-    StyledElements.StyledInputElement.call(this, options.initialValue, ['change']);
-
-    this.wrapperElement = document.createElement("div");
-    this.wrapperElement.className = EzWebExt.prependWord(options['class'], 'styled_password_field');
-
-    this.inputElement = document.createElement("input");
-    this.inputElement.setAttribute("type", "password");
-
-    if (options['name'] !== undefined)
-        this.inputElement.setAttribute("name", options['name']);
-
-    if (options['id'] != undefined)
-        this.wrapperElement.setAttribute("id", options['id']);
-
-    this.inputElement.setAttribute("value", options['initialValue']);
-
-    var div = document.createElement("div");
-    div.appendChild(this.inputElement);
-    this.wrapperElement.appendChild(div);
-
-    /* Internal events */
-    EzWebExt.addEventListener(this.inputElement, 'mousedown', EzWebExt.stopPropagationListener, true);
-    EzWebExt.addEventListener(this.inputElement, 'click', EzWebExt.stopPropagationListener, true);
-}
-StyledElements.StyledPasswordField.prototype = new StyledElements.StyledInputElement();
-
-
-/**
- *
- */
 StyledElements.StyledHiddenField = function(options) {
     var defaultOptions = {
         'initialValue': '',
