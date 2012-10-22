@@ -86,7 +86,7 @@ StyledGadget.prototype.init = function() {
 
     function insertExample(name, code) {
         var panelNotebook = new StyledElements.StyledNotebook();
-        var container = panelNotebook.createTab({name: "View", closeable: false});
+        var container = panelNotebook.createTab({name: "View", closable: false});
 
         try {
             eval("var codeFunc = function() {\n" + code + "\n}");
@@ -102,7 +102,7 @@ StyledGadget.prototype.init = function() {
         list.addEntries([[alternative.getId(), name]]);
 
         var preText = document.createElement("pre");
-        var codeTab = panelNotebook.createTab({name: "Code", closeable: false});
+        var codeTab = panelNotebook.createTab({name: "Code", closable: false});
         preText.appendChild(document.createTextNode(code));
         codeTab.appendChild(preText);
     }
@@ -272,7 +272,7 @@ StyledGadget.prototype.init = function() {
     tab1.appendChild(document.createTextNode('Contenido 1.\\n Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna nibh, viverra non, semper suscipit, posuere a, pede.'));\n\
     tab2 = notebook.createTab({name: 'dos'});\n\
     tab2.appendChild(document.createTextNode('Contenido 2.\\n Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis.'));\n\
-    tab3 = notebook.createTab({name: 'tres', closeable: false});\n\
+    tab3 = notebook.createTab({name: 'tres', closable: false});\n\
     tab3.appendChild(document.createTextNode('Contenido 3.\\n Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis.'));\n\
     tab4 = notebook.createTab({name: 'una pestaña grande (cuatro)'});\n\
     tab4.appendChild(document.createTextNode('Contenido 4.\\n Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis.'));\n\
