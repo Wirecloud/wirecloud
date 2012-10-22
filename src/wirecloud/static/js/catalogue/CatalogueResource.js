@@ -167,11 +167,15 @@ function CatalogueResource(resourceJSON_) {
         return [vendor, name, currentVersion.version.text].join('/');
     };
 
-    Object.defineProperty(this, 'uploader', {
-        get: function () {
-            return currentVersion.uploader;
+    Object.defineProperties(this, {
+        'uploader': {
+            get: function () { return currentVersion.uploader; }
+        },
+        'date': {
+            get: function () { return currentVersion.date; }
         }
     });
+
     //////////////
     // SETTERS
     //////////////
@@ -218,6 +222,7 @@ function CatalogueResource(resourceJSON_) {
         version_data.version = new WidgetVersion(version_data.version, 'catalogue');
         version_data.events = version_data.events.map(flat_friendcode);
         version_data.slots = version_data.slots.map(flat_friendcode);
+        version_data.date = new Date(version_data.date);
 
         deleteable = deleteable && version_data.added_by_user;
 

@@ -29,6 +29,7 @@
 
 
 #
+import time
 from urlparse import urljoin, urlparse
 
 from django.shortcuts import get_object_or_404
@@ -155,6 +156,9 @@ def get_resource_data(untranslated_resource, user, request=None):
         if uploader.strip() == '':
             uploader = resource.creator.username
 
+    cdate = resource.creation_date
+    creation_timestamp = time.mktime(cdate.timetuple()) * 1e3 + cdate.microsecond / 1e3
+
     return {
         'id': resource.pk,
         'vendor': resource.vendor,
@@ -162,6 +166,7 @@ def get_resource_data(untranslated_resource, user, request=None):
         'version': resource.version,
         'type': resource.resource_type(),
         'packaged': resource.fromWGT,
+        'date': creation_timestamp,
         'uploader': uploader,
         'added_by_user': user.is_staff or resource.creator == user,
         'author': resource.author,

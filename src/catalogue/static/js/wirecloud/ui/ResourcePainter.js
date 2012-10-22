@@ -62,6 +62,7 @@
             'version': resource.getVersion().text,
             'author': resource.getCreator(),
             'description': resource.getDescription(),
+            'lastupdate': function () { return resource.date.strftime('%x'); },
             'popularity': this.get_popularity_html.bind(this, resource.getPopularity()),
             'mainbutton': function () {
                 var button, local_repository, operators, op_id;
