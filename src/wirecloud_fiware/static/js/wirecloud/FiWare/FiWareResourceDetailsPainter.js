@@ -24,7 +24,7 @@
 "use strict";
 
 var FiWareResourceDetailsPainter = function (catalogue, details_structure_element, container) {
-    var get_extra_data, get_all_versions_html;
+    var get_extra_data;
 
     this.catalogue = catalogue;
     this.details_template_element = details_structure_element;
@@ -44,17 +44,6 @@ var FiWareResourceDetailsPainter = function (catalogue, details_structure_elemen
     this.sla_description = this.notebook.createTab({'name': gettext('Service level agreement'), 'closable': false});
     this.dom_element = this.main_description.wrapperElement; // Esto para borrar
     /***********************************/
-
-    get_all_versions_html = function (versions) {
-        var i, html = '';
-
-        for (i = 0; i < versions.length; i += 1) {
-            html += 'v' + versions[i].text + ' ';
-        }
-
-        return html;
-    };
-	
 
     this.paint = function (resource, user_command_manager) {
         var ieCompatibleClass, type, button_text,legal_more_info,legal_painter,
@@ -87,7 +76,6 @@ var FiWareResourceDetailsPainter = function (catalogue, details_structure_elemen
             'version': resource.getVersion().text,
             'created': resource.getCreated(),
             'modified': resource.getModified(),
-            'versions': get_all_versions_html(resource.getAllVersions()),
             'template_url': resource.getUriTemplate(),
             'store': resource.getStore(),
             'page':resource.getPage(),
