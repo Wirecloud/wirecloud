@@ -102,6 +102,10 @@
             doc = window.frames.upload.document;
         }
 
+        if (doc.location.href === 'about:blank') {
+            return;
+        }
+
         layoutManager = LayoutManagerFactory.getInstance();
 
         doc.body.getTextContent = Element.prototype.getTextContent;
