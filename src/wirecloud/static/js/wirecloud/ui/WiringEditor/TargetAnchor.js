@@ -1,5 +1,6 @@
 /*
  *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     (C) Copyright 2012 Center for Open Middleware
  *
  *     This file is part of Wirecloud Platform.
  *
