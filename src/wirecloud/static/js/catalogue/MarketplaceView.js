@@ -55,7 +55,7 @@
             }
         }
 
-        if (this.marketToShow !== null) {
+        if (this.marketToShow != null) {
             this.alternatives.showAlternative(this.viewsByName[this.marketToShow]);
             this.marketToShow = null;
         }
