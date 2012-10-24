@@ -1,0 +1,12 @@
+{% load i18n %}<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml">
+
+    <h3>{% trans 'Description' %}</h3>
+    <div class="desc padding_left"><t:description/></div>
+
+    <h3>{% trans 'Detailed data' %}</h3>
+    <div><span class="attr_title">{% trans 'Internal Name:' %}</span> <t:name/></div>
+    <div><span class="attr_title">{% trans 'Uploaded By:' %}</span> <t:uploader/></div>
+
+    <h3>{% trans 'Advanced operations' %}</h3>
+    <div class="advanced_operations"><t:advancedops/></div>
+</s:styledgui>

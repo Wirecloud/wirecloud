@@ -23,8 +23,7 @@
 /*global alert, Constants, Element, document, gettext, interpolate, LayoutManagerFactory, Template */
 "use strict";
 
-var PartsPainter = function(catalogue, part_structure_element, dom_element){
-    this.catalogue=catalogue;
+var PartsPainter = function(part_structure_element, dom_element){
     this.part_template_element = part_structure_element;
     this.part_template = new Template(this.part_template_element);
     this.dom_element = dom_element;
@@ -51,8 +50,7 @@ var PartsPainter = function(catalogue, part_structure_element, dom_element){
     };
 };
 
-var LegalPainter = function(catalogue, legal_structure_element, dom_element){
-    this.catalogue=catalogue;
+var LegalPainter = function(legal_structure_element, dom_element){
     this.legal_template_element = legal_structure_element;
     this.legal_template = new Template(this.legal_template_element);
     this.dom_element = dom_element;
@@ -75,7 +73,7 @@ var LegalPainter = function(catalogue, legal_structure_element, dom_element){
                 Element.extend(resource_element);
                 resource_element.className="legal_resource";
                 resource_element.update(this.legal_template.evaluate(resource_html));
-                clause_painter = new ClausePainter(this.catalogue,$("legal_clause_template").getTextContent(),resource_element.getElementsByClassName('clause_list')[0]);
+                clause_painter = new ClausePainter($("legal_clause_template").getTextContent(),resource_element.getElementsByClassName('clause_list')[0]);
                 clause_painter.paint(legal_element.clauses);
 
                 this.dom_element.appendChild(resource_element);
@@ -91,8 +89,7 @@ var LegalPainter = function(catalogue, legal_structure_element, dom_element){
     }
 };
 
-var ClausePainter = function(catalogue,clause_structure_element, dom_element){
-    this.catalogue = catalogue;
+var ClausePainter = function(clause_structure_element, dom_element){
     this.clause_template_element = clause_structure_element;
     this.clause_template = new Template(this.clause_template_element);
     this.dom_element = dom_element;
@@ -119,8 +116,7 @@ var ClausePainter = function(catalogue,clause_structure_element, dom_element){
     }
 };
 
-var SlaPainter = function(catalogue, sla_structure_element, dom_element){
-    this.catalogue=catalogue;
+var SlaPainter = function(sla_structure_element, dom_element){
     this.sla_template_element = sla_structure_element;
     this.sla_template = new Template(this.sla_template_element);
     this.dom_element = dom_element;
@@ -145,7 +141,7 @@ var SlaPainter = function(catalogue, sla_structure_element, dom_element){
                 Element.extend(resource_element);
                 resource_element.className="sla_resource";
                 resource_element.update(this.sla_template.evaluate(resource_html));
-                expresion_painter = new ExpresionPainter(this.catalogue,$("sla_expresion_template").getTextContent(),resource_element.getElementsByClassName('expresions_list')[0]);
+                expresion_painter = new ExpresionPainter($("sla_expresion_template").getTextContent(),resource_element.getElementsByClassName('expresions_list')[0]);
                 expresion_painter.paint(sla_element.slaExpresions);
 
                 this.dom_element.appendChild(resource_element)
@@ -161,8 +157,7 @@ var SlaPainter = function(catalogue, sla_structure_element, dom_element){
     }
 };
 
-var ExpresionPainter = function(catalogue, expresion_structure_element, dom_element){
-    this.catalogue=catalogue;
+var ExpresionPainter = function(expresion_structure_element, dom_element){
     this.expresion_template_element = expresion_structure_element;
     this.expresion_template = new Template(this.expresion_template_element);
     this.dom_element = dom_element;
@@ -184,7 +179,7 @@ var ExpresionPainter = function(catalogue, expresion_structure_element, dom_elem
             Element.extend(resource_element);
             resource_element.className="slaExpresion_resource";
             resource_element.update(this.expresion_template.evaluate(resource_html));
-            variable_painter = new VariablePainter(this.catalogue,$("sla_variable_template").getTextContent(),resource_element.getElementsByClassName('variable_list')[0]);
+            variable_painter = new VariablePainter($("sla_variable_template").getTextContent(),resource_element.getElementsByClassName('variable_list')[0]);
 
             if ('location' in slaExpresion_element) {
                 slaExpresion_element.variables.push({
@@ -203,8 +198,7 @@ var ExpresionPainter = function(catalogue, expresion_structure_element, dom_elem
     }
 };
 
-var VariablePainter = function(catalogue,variable_structure_element, dom_element){
-    this.catalogue = catalogue;
+var VariablePainter = function(variable_structure_element, dom_element){
     this.variable_template_element = variable_structure_element;
     this.variable_template = new Template(this.variable_template_element);
     this.dom_element = dom_element;
@@ -233,8 +227,7 @@ var VariablePainter = function(catalogue,variable_structure_element, dom_element
     }
 };
 
-var PricingPainter = function(catalogue,pricing_structure_element, dom_element){
-    this.catalogue = catalogue;
+var PricingPainter = function(pricing_structure_element, dom_element){
     this.pricing_template_element = pricing_structure_element;
     this.pricing_template = new Template(this.pricing_template_element);
     this.dom_element = dom_element;
@@ -260,12 +253,12 @@ var PricingPainter = function(catalogue,pricing_structure_element, dom_element){
             resource_element.update(this.pricing_template.evaluate(resource_html));
 
             if ('priceComponents' in pricing_element && pricing_element.priceComponents.length > 0 && pricing_element.priceComponents[0].title !== '') {
-                pricing_component_painter = new PriceElementPainter(this.catalogue,$("price_component_template").getTextContent(),resource_element.getElementsByClassName('price_components_list')[0]);
+                pricing_component_painter = new PriceElementPainter($("price_component_template").getTextContent(),resource_element.getElementsByClassName('price_components_list')[0]);
                 pricing_component_painter.paint(pricing_element.priceComponents);
             }
 
             if ('taxes' in pricing_element && pricing_element.taxes.length > 0 && pricing_element.taxes[0].title !== '') {
-                tax_painter = new PriceElementPainter(this.catalogue,$("price_component_template").getTextContent(),resource_element.getElementsByClassName('taxes_list')[0]);
+                tax_painter = new PriceElementPainter($("price_component_template").getTextContent(),resource_element.getElementsByClassName('taxes_list')[0]);
                 tax_painter.paint(pricing_element.taxes);
             }
 
@@ -281,8 +274,7 @@ var PricingPainter = function(catalogue,pricing_structure_element, dom_element){
     }
 };
 
-var PriceElementPainter = function(catalogue,price_structure_element, dom_element){
-    this.catalogue = catalogue;
+var PriceElementPainter = function(price_structure_element, dom_element){
     this.price_template_element = price_structure_element;
     this.price_template = new Template(this.price_template_element);
     this.dom_element = dom_element;

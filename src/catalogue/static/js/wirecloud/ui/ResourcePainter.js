@@ -35,7 +35,7 @@
         this.structure_template = resource_template;
         this.error_template = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div class="error"><t:message/></div></s:styledgui>';
         this.container = container;
-        if (typeof extra_context === 'object') {
+        if (typeof extra_context === 'object' || typeof extra_context === 'function') {
             this.extra_context = extra_context;
         } else {
             this.extra_context = {};
@@ -53,9 +53,15 @@
     };
 
     ResourcePainter.prototype.paint = function paint(resource) {
-        var button_list, i, click_for_details_list, context, resource_element;
+        var extra_context, i, context, resource_element;
 
-        context = EzWebExt.merge(EzWebExt.clone(this.extra_context), {
+        if (typeof this.extra_context === 'function') {
+            extra_context = this.extra_context(resource);
+        } else {
+            extra_context = EzWebExt.clone(this.extra_context);
+        }
+
+        context = EzWebExt.merge(extra_context, {
             'displayname': resource.getDisplayName(),
             'name': resource.getName(),
             'vendor': resource.getVendor(),

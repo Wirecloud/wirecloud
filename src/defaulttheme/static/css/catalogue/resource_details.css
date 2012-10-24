@@ -2,9 +2,10 @@
     width: 170px;
     height: 80px;
     border: 1px solid;
-    border-color: #BBBBBB;
+    border-color: #CDCED1;
+    border-radius: 4px;
     background: white;
-    display: block;
+    display: inline-block;
 }
 
 .resource_details .north_container {
@@ -13,6 +14,12 @@
 
 .resource_details .panel .summary {
     text-align: left;
+}
+
+.resource_details .popularity {
+    margin-left: 0;
+    display: block;
+    margin-top: 0.5ex;
 }
 
 .resource_details .attr_title {

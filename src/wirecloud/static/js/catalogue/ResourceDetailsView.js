@@ -31,14 +31,31 @@
         this.mainview = options.catalogue;
         StyledElements.Alternative.call(this, id, options);
 
-        extra_context = {
-            'back_button': function () {
-                var button = new StyledElements.StyledButton({text: gettext('Close details')});
-                button.addEventListener('click', this.mainview.home.bind(this.mainview));
-                return button;
-            }.bind(this)
-        };
+        extra_context = function (resource) {
+            return {
+                'back_button': function () {
+                    var button = new StyledElements.StyledButton({text: gettext('Close details')});
+                    button.addEventListener('click', this.mainview.home.bind(this.mainview));
+                    return button;
+                }.bind(this),
+                'details': function (options, context) {
+                    var details, painter;
 
+                    details = new StyledElements.StyledNotebook();
+
+                    var button = new StyledElements.StyledButton({text: gettext('Close details')});
+                    button.addEventListener('click', this.mainview.home.bind(this.mainview));
+                    details.addButton(button);
+
+                    var main_description = details.createTab({'name': gettext('Main Info'), 'closable': false});
+                    main_description.appendChild(this.main_details_painter.paint(resource));
+
+                    return details;
+                }.bind(this)
+            };
+        }.bind(this);
+
+        this.main_details_painter = new Wirecloud.ui.ResourcePainter(this.mainview, $('catalogue_main_resource_details_template').getTextContent(), this);
         this.resource_details_painter = new Wirecloud.ui.ResourcePainter(this.mainview, $('catalogue_resource_details_template').getTextContent(), this, extra_context);
     };
     ResourceDetailsView.prototype = new StyledElements.Alternative();

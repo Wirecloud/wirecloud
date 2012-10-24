@@ -19,7 +19,7 @@
  *
  */
 
-/*global $, gettext, StyledElements, Wirecloud */
+/*global $, gettext, LegalPainter, PricingPainter, SlaPainter, StyledElements, Wirecloud */
 
 (function () {
 
@@ -31,14 +31,46 @@
         this.mainview = options.catalogue;
         StyledElements.Alternative.call(this, id, options);
 
-        extra_context = {
-            'back_button': function () {
-                var button = new StyledElements.StyledButton({text: gettext('Close details')});
-                button.addEventListener('click', this.mainview.home.bind(this.mainview));
-                return button;
-            }.bind(this)
-        };
+        extra_context = function (resource) {
+            return {
+                'store': resource.getStore(),
+                'back_button': function () {
+                    var button = new StyledElements.StyledButton({text: gettext('Close details')});
+                    button.addEventListener('click', this.mainview.home.bind(this.mainview));
+                    return button;
+                }.bind(this),
+                'details': function (options, context) {
+                    var details, painter, button, main_description,
+                        legal_description, pricing_description,
+                        sla_description;
+ 
+                    details = new StyledElements.StyledNotebook();
 
+                    button = new StyledElements.StyledButton({text: gettext('Close details')});
+                    button.addEventListener('click', this.mainview.home.bind(this.mainview));
+                    details.addButton(button);
+
+                    main_description = details.createTab({'name': gettext('Main Info'), 'closable': false});
+                    main_description.appendChild(this.main_details_painter.paint(resource));
+
+                    legal_description = details.createTab({'name': gettext('Legal'), 'closable': false});
+                    painter = new LegalPainter($('legal_template').getTextContent(), legal_description.wrapperElement);
+                    painter.paint(resource);
+
+                    pricing_description = details.createTab({'name': gettext('Pricing'), 'closable': false});
+                    painter = new PricingPainter($('pricing_template').getTextContent(), pricing_description.wrapperElement);
+                    painter.paint(resource);
+
+                    sla_description = details.createTab({'name': gettext('Service level agreement'), 'closable': false});
+                    painter = new SlaPainter($('service_level_template').getTextContent(), sla_description.wrapperElement);
+                    painter.paint(resource);
+
+                    return details;
+                }.bind(this)
+            };
+        }.bind(this);
+
+        this.main_details_painter = new Wirecloud.ui.ResourcePainter(this.mainview, $('fiware_main_details_template').getTextContent(), this);
         this.resource_details_painter = new Wirecloud.ui.ResourcePainter(this.mainview, $('fiware_catalogue_resource_details_template').getTextContent(), this, extra_context);
     };
     ResourceDetailsView.prototype = new StyledElements.Alternative();

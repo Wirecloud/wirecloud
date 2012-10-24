@@ -4,7 +4,6 @@
     <s:options>{"class": "resource_details"}</s:options>
 
     <s:northcontainer>
-       <t:back_button/>
        <h2 class="resource_name"><t:displayname/></h2>
     </s:northcontainer>
 
@@ -15,6 +14,7 @@
             <t:mainbutton/>
 
             <div class="summary">
+                <div><span class="attr_title">{% trans 'Store:' %}</span> <t:store/></div>
                 <div><span class="attr_title">{% trans 'Vendor:' %}</span> <t:vendor/></div>
                 <div><span class="attr_title">{% trans 'Version:' %}</span> <t:version/></div>
                 <div><span class="attr_title">{% trans 'Author:' %}</span> <t:author/></div>
@@ -26,18 +26,7 @@
     <s:centercontainer>
 
         <s:options>{"class": "description_column"}</s:options>
-
-        <h3>{% trans 'Description' %}</h3>
-        <div class="desc padding_left"><t:description/></div>
-
-        <h3>{% trans 'Tags' %}</h3>
-        <div class="tag_cloud"><t:tags>{"max": 3}</t:tags></div>
-
-        <h3>{% trans 'Detailed data' %}</h3>
-        <div><span class="attr_title">{% trans 'Internal Name:' %}</span> <t:name/></div>
-
-        <h3>{% trans 'Advanced operations' %}</h3>
-        <div class="advanced_operations"><t:advancedops/></div>
+        <t:details/>
 
     </s:centercontainer>
 

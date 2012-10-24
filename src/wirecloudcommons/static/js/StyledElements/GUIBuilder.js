@@ -41,7 +41,7 @@
                 } catch (e) {}
             }
 
-            new_component = tcomponent(parsed_options);
+            new_component = tcomponent(parsed_options, tcomponents);
         } else {
             new_component = tcomponent;
         }

@@ -111,11 +111,6 @@
     float: right;
 }
 
-.resource_details .popularity {
-    margin-left: 0;
-    display: block;
-}
-
 .popularity > .star {
     margin: 2px;
     display: inline-block;
