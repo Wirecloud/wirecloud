@@ -3,6 +3,7 @@
 @import url('/static/css/styledelements/styled_notebook.css');
 @import url('/static/css/styledelements/styled_text_field.css');
 @import url('/static/css/styledelements/styled_password_field.css');
+@import url('/static/css/styledelements/styled_horizontal_layout.css');
 
 html {
   width: 100%;

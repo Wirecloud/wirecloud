@@ -1947,6 +1947,7 @@ var StyledElements = {
     'StyledTextField': window.parent.StyledElements.StyledTextField,
     'StyledPasswordField': window.parent.StyledElements.StyledPasswordField,
     'StyledTextArea': window.parent.StyledElements.StyledTextArea,
+    'HorizontalLayout': window.parent.StyledElements.HorizontalLayout,
     'BorderLayout': window.parent.StyledElements.BorderLayout,
     'Tab': window.parent.StyledElements.Tab,
     'StyledNotebook': window.parent.StyledElements.StyledNotebook
