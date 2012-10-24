@@ -56,6 +56,10 @@
             this.enable();
         }.bind(this));
         this.resource_list = new StyledElements.Container({'class': 'resource_list'});
+        this.simple_search_input = new StyledElements.StyledTextField();
+        this.simple_search_input.inputElement.className = 'simple_search_text';
+        EzWebExt.addEventListener(this.simple_search_input.inputElement, 'keypress', this._onSearchInputKeyPress.bind(this));
+        this.simple_search_input.addEventListener('change', this._onSearchInput.bind(this));
         var contents = builder.parse($('wirecloud_catalogue_search_interface').getTextContent(), {
             'resourcelist': this.resource_list,
             'pagination': function () {
@@ -64,7 +68,7 @@
             'reset_button': function () {
                 var button = new StyledElements.StyledButton({text: gettext('View All')});
                 button.addEventListener('click', function () {
-                    this.simple_search_input.value = '';
+                    this.simple_search_input.setValue('');
                     this.pagination.changeOptions({'keywords': ''});
                 }.bind(this));
                 this.view_allbutton = button;
@@ -117,7 +121,8 @@
                 }.bind(this));
                 this.widgetsperpage = select;
                 return select;
-            }.bind(this)
+            }.bind(this),
+            'searchinput': this.simple_search_input
         });
         this.appendChild(contents);
         this.timeout = null;
@@ -125,14 +130,11 @@
         this.initialized = false;
         this._last_search = false;
 
-        this.simple_search_input = this.wrapperElement.getElementsByClassName('simple_search_text')[0];
         this.resource_painter = new options.resource_painter(this.catalogue,
             $('catalogue_resource_template').getTextContent(),
             this.resource_list
         );
 
-        EzWebExt.addEventListener(this.simple_search_input, 'keypress', this._onSearchInputKeyPress.bind(this));
-        EzWebExt.addEventListener(this.simple_search_input, 'input', this._onSearchInput.bind(this));
         this.addEventListener('show', this.refresh_if_needed.bind(this));
     };
     CatalogueSearchView.prototype = new StyledElements.Alternative();
@@ -166,7 +168,7 @@
 
     CatalogueSearchView.prototype._keywordTimeoutHandler = function _keywordTimeoutHandler() {
         this.timeout = null;
-        this.pagination.changeOptions({'keywords': this.simple_search_input.value});
+        this.pagination.changeOptions({'keywords': this.simple_search_input.getValue()});
     };
 
     CatalogueSearchView.prototype._onSearchInput = function _onSearchInput(event) {

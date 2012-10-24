@@ -51,19 +51,6 @@
     vertical-align: middle;
 }
 
-.catalogue .search_interface .search_bar .simple_search_text {
-    margin: 0px;
-    padding: 0px;
-    -moz-background-clip:border;
-    -moz-background-inline-policy:continuous;
-	-moz-background-origin:padding;
-	-moz-border-radius-bottomleft:4px;
-	-moz-border-radius-bottomright:4px;
-	-moz-border-radius-topleft:4px;
-	-moz-border-radius-topright:4px;
-	background:#E6F3FF none repeat scroll 0 0;
-}
-
 .catalogue .resource_list .error {
     background: #FDDFDE;
     color: #444;
