@@ -51,8 +51,10 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/MarketManager.js',
                 'js/wirecloud/ui/ResourcePainter.js',
                 'js/wirecloud/ui/WirecloudCatalogue/PublishView.js',
+                'js/wirecloud/ui/NewWorkspaceWindowMenu.js',
                 'js/wirecloud/ui/ParametrizeWindowMenu.js',
                 'js/wirecloud/ui/PublishWindowMenu.js',
+                'js/wirecloud/ui/RenameWindowMenu.js',
             )
         else:
             return common
