@@ -26,6 +26,7 @@
     {% endif %}
 
         {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}" />
         <div class="grid-12-12">
             <input type="text" name="username" id="id_username" autocapitalize="off" autofocus="autofocus" placeholder="{% trans "Username" %}"/>
         </div>
