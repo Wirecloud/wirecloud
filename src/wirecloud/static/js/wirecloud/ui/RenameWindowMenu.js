@@ -38,10 +38,10 @@
         }
         this.what = what;
         this.rename_method = rename_method;
-        FormWindowMenu.call(this, fields, gettext('Rename Workspace'));
+        Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Rename Workspace'));
 
     };
-    RenameWindowMenu.prototype = new FormWindowMenu();
+    RenameWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
 
     RenameWindowMenu.prototype.setFocus = function setFocus () {
         this.form.fieldInterfaces['name'].focus();

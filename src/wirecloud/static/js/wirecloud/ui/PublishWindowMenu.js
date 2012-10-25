@@ -1,4 +1,4 @@
-/*global ezweb_user_name, EzWebExt, FormWindowMenu, gettext, LayoutManagerFactory, OpManagerFactory, Variable, Wirecloud*/
+/*global ezweb_user_name, EzWebExt, gettext, LayoutManagerFactory, OpManagerFactory, Variable, Wirecloud*/
 
 (function () {
 
@@ -53,7 +53,7 @@
         ];
 
         this._addVariableParametrization(workspace, fields);
-        FormWindowMenu.call(this, fields, gettext('Publish Workspace'), 'publish_workspace');
+        Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Publish Workspace'), 'publish_workspace');
 
         //fill a warning message
         var warning = document.createElement('div');
@@ -61,7 +61,7 @@
         warning.update(gettext("WARNING: configured and stored data in your workspace (properties and preferences except passwords) will be shared!"));
         this.windowContent.insertBefore(warning, this.form.wrapperElement);
     };
-    PublishWindowMenu.prototype = new FormWindowMenu();
+    PublishWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
 
     PublishWindowMenu.prototype._addVariableParametrization = function (workspace, fields) {
         var i, tab_keys, tab_field;
@@ -168,7 +168,7 @@
     };
 
     PublishWindowMenu.prototype.show = function show(parentWindow) {
-        FormWindowMenu.prototype.show.call(this, parentWindow);
+        Wirecloud.ui.FormWindowMenu.prototype.show.call(this, parentWindow);
         this.setValue(this.workspace.workspaceGlobalInfo.workspace.params);
     };
 

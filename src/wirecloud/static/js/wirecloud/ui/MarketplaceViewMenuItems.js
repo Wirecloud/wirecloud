@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, StyledElements, Wirecloud, FormWindowMenu, LayoutManagerFactory*/
+/*global gettext, StyledElements, Wirecloud, LayoutManagerFactory*/
 
 if (!Wirecloud.ui) {
     Wirecloud.ui = {};
@@ -93,7 +93,7 @@ if (!Wirecloud.ui) {
                         'required': true
                     }
                 };
-                menu = new FormWindowMenu(fields, gettext('Add Marketplace'));
+                menu = new Wirecloud.ui.FormWindowMenu(fields, gettext('Add Marketplace'));
 
                 // Form data is sent to server
                 menu.executeOperation = function (data) {

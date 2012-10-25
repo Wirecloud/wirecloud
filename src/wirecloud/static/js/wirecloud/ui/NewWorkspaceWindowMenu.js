@@ -34,9 +34,9 @@
                 required: true
             }
         }
-        FormWindowMenu.call(this, fields, gettext('Create Workspace'));
+        Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Create Workspace'));
     };
-    NewWorkspaceWindowMenu.prototype = new WindowMenu();
+    NewWorkspaceWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
 
     NewWorkspaceWindowMenu.prototype.setFocus = function setFocus () {
         this.form.fieldInterfaces['name'].focus();

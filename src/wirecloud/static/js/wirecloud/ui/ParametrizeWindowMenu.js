@@ -22,7 +22,7 @@ function ParametrizeWindowMenu(inputInterface) {
         'separator': {type: 'separator'},
         'value': {label: gettext('Value'), type: 'parametrizedText', variable: inputInterface.variable}
     }
-    FormWindowMenu.call(this, fields, gettext('Parametrization'), 'variable_parametrization');
+    Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Parametrization'), 'variable_parametrization');
 
     this.inputInterface = inputInterface;
 
@@ -35,7 +35,7 @@ function ParametrizeWindowMenu(inputInterface) {
     valueInput.update = updateFunc;
     Event.observe(sourceInput.inputElement, 'change', updateFunc);
 }
-ParametrizeWindowMenu.prototype = new FormWindowMenu();
+ParametrizeWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
 
 ParametrizeWindowMenu.prototype.executeOperation = function(newValue) {
     this.inputInterface.setValue(newValue);

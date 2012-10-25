@@ -19,7 +19,7 @@
  *
  */
 
-/*global OpManagerFactory, StyledElements, gettext, LayoutManagerFactory, FormWindowMenu*/
+/*global OpManagerFactory, StyledElements, gettext, LayoutManagerFactory */
 
 var FiWareStoreListItems = function FiWareStoreListItems(view) {
     StyledElements.DynamicMenuItems.call(this);
@@ -96,7 +96,7 @@ FiWareStoreListItems.prototype.build = function build(store_info) {
                     'initialValue': 'http://'
                 }
             };
-            menu = new FormWindowMenu(fields, gettext('Add Store'));
+            menu = new Wirecloud.ui.FormWindowMenu(fields, gettext('Add Store'));
 
             // Form data is sent to server
             menu.executeOperation = function (data) {
