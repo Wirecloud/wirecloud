@@ -382,32 +382,6 @@ var LayoutManagerFactory = function () {
             this.currentMenu.show();
         }
 
-        //Show sharing workspace results!
-        LayoutManager.prototype.showSharingWorkspaceResults = function(msg, shared_ws_data) {
-            // the disabling layer is displayed as long as a menu is shown. If there is not a menu, there is not a layer.
-            if (this.currentMenu != null) {//only if the layer is displayed.
-                this.hideCover();
-            }
-
-            this.showUnclickableCover();
-
-            if (!this.menus['sharingWorksSpaceMenu']) {
-                this.menus['sharingWorksSpaceMenu'] = new SharedWorkspaceMenu();
-            }
-
-            this.currentMenu = this.menus['sharingWorksSpaceMenu'];
-
-            if (shared_ws_data != []) {
-                if(shared_ws_data['url']){
-                    this.currentMenu.setURL(shared_ws_data['url']);
-                    this.currentMenu.setHTML(shared_ws_data['url']);
-                }
-            }
-
-            this.currentMenu.setMsg(msg);
-            this.currentMenu.show();
-        }
-
         /**
          * Shows the message window menu using the specified text. By default,
          * it will be interpreted as an information message, but you can use the

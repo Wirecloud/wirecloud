@@ -661,37 +661,6 @@ function Workspace (workspaceState) {
         }
     };
 
-    Workspace.prototype.shareWorkspace = function(value, groups) {
-        var share_workspace_success = function (transport) {
-            var response = transport.responseText;
-            var result = JSON.parse(response);
-
-            if (result['result'] !== 'ok') {
-                LayoutManagerFactory.getInstance().showSharingWorkspaceResults(gettext("The Workspace has NOT been successfully shared."), '');
-            } else {
-                LayoutManagerFactory.getInstance().showSharingWorkspaceResults(gettext("The Workspace has been successfully shared."), result);
-            }
-        };
-
-        var share_workspace_error = function (transport) {
-            var response = transport.responseText;
-            var result = JSON.parse(response);
-
-            LayoutManagerFactory.getInstance().showSharingWorkspaceResults(gettext("The Workspace has NOT been successfully shared."), '');
-        };
-
-        var url = Wirecloud.URLs.WORKSPACE_SHARE.evaluate({'workspace_id': this.workspaceState.id, 'share_boolean': value});
-        var sharingData = Object.toJSON(groups);
-        var params = (groups.length>0)?{'groups':sharingData}:{};
-
-        Wirecloud.io.makeRequest(url, {
-            method: 'PUT',
-            parameters: params,
-            onSuccess: share_workspace_success,
-            onFailure: share_workspace_error
-        });
-    }
-
     Workspace.prototype.publish = function(data) {
         var layoutManager = LayoutManagerFactory.getInstance();
         layoutManager._startComplexTask(gettext('Publishing current workspace'), 1);
