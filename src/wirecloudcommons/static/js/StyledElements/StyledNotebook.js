@@ -38,28 +38,22 @@
         var div = document.createElement("div");
         this.wrapperElement.appendChild(div);
 
-        tabWrapper = document.createElement("div");
+        tabWrapper = new StyledElements.HorizontalLayout({'class': 'tab_wrapper', 'autoHeight': false});
         this.tabWrapper = tabWrapper;
-        tabWrapper.className = "tab_wrapper";
-        div.appendChild(tabWrapper);
+        tabWrapper.insertInto(div);
 
-        this.tabArea = document.createElement("div");
-        this.tabArea.className = "tab_area";
-        tabWrapper.appendChild(this.tabArea);
-
-        this.tabAreaMsg = document.createElement("div");
-        this.tabAreaMsg.className = "tab_area_msg";
-        tabWrapper.appendChild(this.tabAreaMsg);
+        this.tabArea = tabWrapper.getCenterContainer();
+        this.tabArea.addClassName('tab_area');
 
         this.moveLeftButton = document.createElement("div");
         this.moveLeftButton.className = "move_left";
         this.moveLeftButton.appendChild(document.createTextNode("<"));
-        tabWrapper.appendChild(this.moveLeftButton);
+        tabWrapper.getWestContainer().appendChild(this.moveLeftButton);
 
         this.moveRightButton = document.createElement("div");
         this.moveRightButton.className = "move_right";
         this.moveRightButton.appendChild(document.createTextNode(">"));
-        tabWrapper.appendChild(this.moveRightButton);
+        tabWrapper.getEastContainer().appendChild(this.moveRightButton);
 
         this.contentArea = document.createElement("div");
         this.contentArea.className = "wrapper";
@@ -96,11 +90,11 @@
 
             if ((context.inc < 0) && (scrollLeft > context.finalScrollLeft) ||
                 (context.inc > 0) && (scrollLeft < context.finalScrollLeft)) {
-                context.control.tabArea.scrollLeft = Math.round(scrollLeft);
+                context.control.tabArea.wrapperElement.scrollLeft = Math.round(scrollLeft);
                 return true;  // we need to do more iterations
             } else {
                 // Finish current transition
-                context.control.tabArea.scrollLeft = context.finalScrollLeft;
+                context.control.tabArea.wrapperElement.scrollLeft = context.finalScrollLeft;
                 context.control._enableDisableButtons();
 
                 return false;
@@ -110,7 +104,7 @@
         var initFunc = function initFunc(context, command) {
             var firstVisibleTab, currentTab, maxScrollLeft, baseTime, stepTimes;
 
-            context.initialScrollLeft = context.control.tabArea.scrollLeft;
+            context.initialScrollLeft = context.control.tabArea.wrapperElement.scrollLeft;
             switch (command.type) {
             case 'shiftLeft':
 
@@ -142,7 +136,7 @@
                 break;
             }
 
-            maxScrollLeft = this.scrollWidth - this.clientWidth;
+            maxScrollLeft = context.control.tabArea.wrapperElement.scrollWidth - context.control.tabArea.wrapperElement.clientWidth;
             if (context.finalScrollLeft > maxScrollLeft) {
                 context.finalScrollLeft = maxScrollLeft;
             }
@@ -179,8 +173,8 @@
 
         tabElement = this.tabs[tabIndex].getTabElement();
 
-        tabAreaStart = this.tabArea.scrollLeft;
-        tabAreaEnd = tabAreaStart + this.tabArea.clientWidth;
+        tabAreaStart = this.tabArea.wrapperElement.scrollLeft;
+        tabAreaEnd = tabAreaStart + this.tabArea.wrapperElement.clientWidth;
 
         if (full) {
             tabOffsetRight = tabElement.offsetLeft + tabElement.offsetWidth;
@@ -476,7 +470,7 @@
             return;
         }
 
-        tabAreaWidth = this.tabArea.clientWidth;
+        tabAreaWidth = this.tabArea.wrapperElement.clientWidth;
         tabElement = this.tabs[0].getTabElement();
 
         computedStyle = document.defaultView.getComputedStyle(tabElement, null);
@@ -497,6 +491,8 @@
         }
 
         this.wrapperElement.style.height = (height + "px");
+
+        this.tabWrapper.repaint();
 
         // Enable/Disable tab scrolling buttons
         this._enableDisableButtons();
@@ -559,7 +555,7 @@
         this.tabsById = [];
         this.visibleTab = null;
 
-        this.tabArea.innerHTML = '';
+        this.tabArea.clear();
         this.contentArea.innerHTML = '';
 
         // Enable/Disable tab scrolling buttons
@@ -571,7 +567,7 @@
             throw new TypeError();
         }
 
-        button.insertInto(this.tabWrapper);
+        this.tabWrapper.getEastContainer().appendChild(button);
     };
 
     StyledNotebook.prototype.destroy = function destroy() {

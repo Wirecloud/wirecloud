@@ -176,6 +176,7 @@ div.iwidget.highlighted {
     border-top: 1px solid rgb(221, 221, 221);
     height: 35px;
     line-height: 35px;
+    z-index: 2;
 }
 
 .notebook.workspace .tab_wrapper .move_left {

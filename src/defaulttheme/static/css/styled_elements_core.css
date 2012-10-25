@@ -351,40 +351,13 @@ div.styled_numeric_field div.numeric_bottom_button {
   display: none;
 }
 
-.notebook .tab_wrapper .move_left, .notebook .tab_wrapper .move_right {
-  color: #AAA;
-  cursor: default;
-  position: absolute;
-  width: 16px;
-  top: 0px !important;
-  -moz-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -o-user-select: none;
-  user-select: none;
-}
-
-.notebook .tab_wrapper .move_left {
-  left: 0px;
-}
-
-.notebook .tab_wrapper .move_right {
-  right: 0px;
-}
-
-.notebook .tab_wrapper .move_left.enabled, .notebook .tab_wrapper .move_right.enabled {
-  color: black;
-  cursor: pointer;
-}
-
 .notebook .tab_wrapper {
   position: absolute;
   left: 0;
   right: 0;
 }
 
-.notebook .tab_area {
-    position: relative;
+.notebook > div > .tab_wrapper > .tab_area {
     overflow: hidden;
     white-space: nowrap;
 }

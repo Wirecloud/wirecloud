@@ -11,12 +11,13 @@
     var HorizontalLayout = function HorizontalLayout(options) {
         StyledElements.StyledElement.call(this, []);
 
-        options = EzWebExt.merge({
-            'class': ''
+        this.options = EzWebExt.merge({
+            'class': '',
+            'autoHeight': true
         }, options);
 
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = EzWebExt.appendWord(options['class'], "horizontal_layout");
+        this.wrapperElement.className = EzWebExt.appendWord(this.options['class'], "horizontal_layout");
 
         this.west = new StyledElements.Container({'class': 'west_container'});
         this.center = new StyledElements.Container({'class': 'center_container'});
@@ -52,7 +53,9 @@
         this.center.wrapperElement.style.width = centerWidth + 'px';
         this.center.wrapperElement.style.left = v1 + 'px';
         this.east.wrapperElement.style.left = v2 + 'px';
-        this.wrapperElement.style.height = height + 'px';
+        if (this.options.autoHeight) {
+            this.wrapperElement.style.height = height + 'px';
+        }
 
         this.west.repaint(temporal);
         this.center.repaint(temporal);

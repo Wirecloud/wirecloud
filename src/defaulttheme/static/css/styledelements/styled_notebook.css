@@ -5,11 +5,37 @@
     border-bottom: 1px solid #DDD;
     height: 32px;
     line-height: 33px;
+    overflow: visible;
+}
+
+.notebook .tab_wrapper .move_left {
+    margin: 0 5px;
+}
+
+.notebook .tab_wrapper .move_right {
+    margin: 0 5px;
+}
+
+.notebook .tab_wrapper .move_left, .notebook .tab_wrapper .move_right {
+    color: black;
+    cursor: default;
+    display: inline-block;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+    visibility: hidden;
+}
+
+.notebook .tab_wrapper .move_left.enabled, .notebook .tab_wrapper .move_right.enabled {
+    cursor: pointer;
+    visibility: visible;
 }
 
 .notebook .tab_area {
     height: 33px;
-    margin: 0 3ex;
+    margin: 0;
 }
 
 .notebook .tab_area .tab {
@@ -19,11 +45,11 @@
     line-height: 16px;
     border: 1px solid transparent;
     vertical-align: top;
-    padding: 8px 19px 8px 1ex;
+    padding: 8px 12px;
     border-radius: 4px 4px 0 0;
     font-size: 13px;
     font-weight: normal;
-    min-width: 5em;
+    min-width: 1ex;
     margin: 0 3px;
 }
 
@@ -40,31 +66,15 @@
   vertical-align: sub;
 }
 
-.notebook .tab_area .tab .close_button {
-  position: absolute;
-  right: 2px;
-  top: 5px;
-  overflow: hidden;
-  margin: -2px 0px 0px 2px;
-}
-
-
-.notebook .tab_area .tab.selected .close_button div > span {
-  display: inline-block;
-}
-
-.notebook .tab_area .tab.selected .close_button div {
-  display: inline-block;
-}
-
-.notebook .tab_area .tab .close_button div {
-  display: none;
-}
-
-.notebook .tab_area .tab .close_button div {
-  border: 0px none;
-  height: 12px;
-  width: 12px;
+.notebook .tab_area .tab > .close_button {
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 12px;
+    color: black;
+    text-shadow: 0 1px 0 white;
+    opacity: 0.2;
+    margin: 0 0 0 10px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .notebook .tab_area .tab.selected {
