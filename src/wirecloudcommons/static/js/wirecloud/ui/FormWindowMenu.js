@@ -41,6 +41,7 @@
     FormWindowMenu.prototype.show = function show(parentWindow) {
         this.form.reset();
         WindowMenu.prototype.show.call(this, parentWindow);
+        this.form.repaint();
     };
 
     Wirecloud.ui.FormWindowMenu = FormWindowMenu;
