@@ -89,6 +89,7 @@ span.icon {
     float: right;
 }
 
+.icon-doc:before { content: "\f02d"; }
 .icon-iwidget-settings, .icon-channel-settings { background-image: url(../images/icons-sprite.png); background-position: -48px -404px; }
 span.icon-iwidget-settings, .icon-channel-settings{ background-position: -48px -408px; }
 .icon-info{ background-image: url(../images/icons-sprite.png); background-position: -48px -504px; }

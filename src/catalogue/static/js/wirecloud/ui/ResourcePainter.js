@@ -69,6 +69,34 @@
             'author': resource.getCreator(),
             'description': resource.getDescription(),
             'lastupdate': function () { return resource.date.strftime('%x'); },
+            'doc': function () {
+                var button;
+
+                button = new StyledElements.StyledButton({
+                    'plain': true,
+                    'class': 'icon-doc',
+                    'title': gettext('Documentation')
+                });
+                button.addEventListener('click', function () {
+                    window.open(resource.getUriWiki(), '_blank');
+                });
+
+                return button;
+            },
+            'home': function () {
+                var button;
+
+                button = new StyledElements.StyledButton({
+                    'plain': true,
+                    'class': 'icon-home',
+                    'title': gettext('Home page')
+                });
+                button.addEventListener('click', function () {
+                    window.open(resource.getUriWiki(), '_blank');
+                });
+
+                return button;
+            },
             'popularity': this.get_popularity_html.bind(this, resource.getPopularity()),
             'mainbutton': function () {
                 var button, local_repository, operators, op_id;
