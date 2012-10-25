@@ -123,7 +123,7 @@ StyledGadget.prototype.init = function() {
 
 
     /*
-     * Components example
+     * Input Components example
      */
     code = "\
     var row = document.createElement('div');\n\
@@ -248,7 +248,7 @@ StyledGadget.prototype.init = function() {
 \n\
     container.appendChild(group2Viewer);\n";
 
-    insertExample("Components", code);
+    insertExample("Input Components", code);
 
 
 
@@ -259,7 +259,6 @@ StyledGadget.prototype.init = function() {
     var layout, goToTab3Button, createTabButton, notebook, tab1, tab2, tab3, tab4, tab5; \n\
 \n\
     layout = new StyledElements.BorderLayout();\n\
-    container.appendChild(layout);\n\
 \n\
     goToTab3Button = new StyledElements.StyledButton({'text': 'Go to Tab \"tres\"'});\n\
     layout.getNorthContainer().appendChild(goToTab3Button);\n\
@@ -279,6 +278,7 @@ StyledGadget.prototype.init = function() {
     tab5 = notebook.createTab({name: 'cinco'});\n\
     tab5.appendChild(document.createTextNode('Contenido 5.\\n Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis.'));\n\
     layout.getCenterContainer().appendChild(notebook);\n\
+    container.appendChild(layout);\n\
 \n\
     goToTab3Button.addEventListener('click', function() {notebook.goToTab(tab3.getId())});\n\
     createTabButton.addEventListener('click', function() {notebook.createTab({name: 'Tab', initiallyVisible: true})});\n\
