@@ -1,0 +1,65 @@
+.disabled_background {
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 101111;
+    background-color: #4C5054;
+    opacity: .8;
+}
+
+.window_menu {
+    background: white;
+    border-radius: 6px;
+    box-shadow: 3px 3px 3px rgba(0,0,0,0.3);
+    position: absolute;
+    text-align: left;
+    z-index: 101112;
+    overflow: hidden;
+    color: #4C5054;
+    font-weight: bold;
+    font-family: Arial;
+    font-size: 80%;
+}
+
+.window_menu > .window_top {
+    padding: 9px 15px;
+    border-bottom: 1px solid #EEE;
+}
+
+.window_menu > .window_top > .closebutton {
+    float: right;
+}
+
+.window_menu > .window_content {
+    padding: 15px;
+}
+
+.window_menu > .window_content, .window_menu > .styled_form > div > table {
+    clear: both;
+    overflow: auto;
+}
+
+.window_menu > .window_bottom {
+    padding: 14px 15px 15px;
+    margin-bottom: 0;
+    text-align: right;
+    background-color: whiteSmoke;
+    border-top: 1px solid #DDD;
+    -webkit-border-radius: 0 0 6px 6px;
+    -moz-border-radius: 0 0 6px 6px;
+    border-radius: 0 0 6px 6px;
+    -webkit-box-shadow: inset 0 1px 0 white;
+    -moz-box-shadow: inset 0 1px 0 #ffffff;
+    box-shadow: inset 0 1px 0 white;
+}
+
+.window_menu > .msg {
+    margin: 2ex;
+    border: 1px solid #888;
+    padding: 1ex;
+    border-radius: 1ex;
+}
+
+

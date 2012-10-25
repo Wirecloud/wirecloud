@@ -243,62 +243,6 @@ h1, h2, h3, h4, h5, h6 {
     padding: 0px 1ex;
 }
 
-/* window_menu */
-
-.disabled_background {
-    height: 100%;
-    left: 0;
-    position: absolute;
-    top: 0;
-    width: 100%;
-    z-index: 101111;
-    background-color: #4C5054;
-    opacity: .8;
-}
-
-.window_menu {
-    background: #E4E6E2;
-    border-radius: 16px;
-    box-shadow: 3px 3px 3px rgba(0,0,0,0.3);
-    position: absolute;
-    text-align: left;
-    z-index: 101112;
-    overflow: hidden;
-    padding: 1em 2em;
-    color: #4C5054;
-    font-weight: bold;
-    font-family: Arial;
-    font-size: 80%;
-}
-
-.window_menu > .window_top {
-    font-size: 150%;
-    font-family: "Courier New", courier;
-    color: #990000;
-}
-
-.window_menu > .window_top > .closebutton {
-    float: right;
-}
-
-.window_menu > .window_content, .window_menu > .styled_form > div > table {
-    margin-top: 2ex;
-    clear: both;
-    overflow: auto;
-}
-
-.window_menu > .window_bottom {
-    margin: 2em 0 0.5em;
-    text-align: center;
-}
-
-.window_menu > .msg {
-    margin: 2ex;
-    border: 1px solid #888;
-    padding: 1ex;
-    border-radius: 1ex;
-}
-
 /* Loading window */
 
 #loading-background {
