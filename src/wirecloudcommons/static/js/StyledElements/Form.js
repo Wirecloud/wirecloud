@@ -28,6 +28,7 @@
 
         StyledElements.StyledElement.call(this, ['submit', 'cancel']);
 
+        this.childComponents = [];
         this.readOnly = options.readOnly;
         this.fields = {};
         this.fieldInterfaces = {};
@@ -109,6 +110,14 @@
     };
     Form.prototype = new StyledElements.StyledElement();
 
+    Form.prototype.repaint = function repaint(temporal) {
+        var i;
+
+        for (i = 0; i < this.childComponents.length; i += 1) {
+            this.childComponents[i].repaint(temporal);
+        }
+    };
+
     Form.prototype.pSetMsgs = function (msgs) {
         var i, wrapper;
 
@@ -130,6 +139,7 @@
         var notebook, i, field, tab, tmp_field, tmp_input;
 
         notebook = new StyledElements.StyledNotebook();
+        this.childComponents.push(notebook);
 
         for (i = 0; i < fields.length; i += 1) {
             field = fields[i];
@@ -429,7 +439,14 @@
         this.wrapperElement.submit();
     };
 
-    Form.prototype.destroy = function () {
+    Form.prototype.destroy = function destroy() {
+        var i = 0;
+
+        for (i = 0; i < this.childComponents.length; i += 1) {
+            this.childComponents[i].destroy();
+        }
+        this.childComponents = null;
+
         this.pAcceptHandler = null;
         this.pCancelHandler = null;
     };
