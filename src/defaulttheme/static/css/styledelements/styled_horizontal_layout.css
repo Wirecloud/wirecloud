@@ -1,0 +1,21 @@
+.horizontal_layout {
+    position: relative;
+    width: auto;
+    overflow: hidden;
+}
+
+.horizontal_layout > .west_container {
+    position: absolute;
+    left: 0;
+    display: inline-block;
+}
+
+.horizontal_layout > .center_container {
+    position: absolute;
+    overflow: auto;
+}
+
+.horizontal_layout > .east_container {
+    position: absolute;
+    display: inline-block;
+}
