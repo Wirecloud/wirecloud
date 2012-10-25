@@ -40,6 +40,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/StyledElements/StyledNotebook.js',
             'js/StyledElements/HorizontalLayout.js',
             'js/StyledElements/BorderLayout.js',
+            'js/wirecloud/ui/FormWindowMenu.js',
             'js/gadgetModel/Gadget.js',
         )
 
