@@ -105,3 +105,61 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('textPref').text, 'test')
             self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'true')
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'password')
+
+    def test_http_cache(self):
+
+        self.login()
+        self.create_workspace('Test')
+
+        self.driver.refresh()
+        self.wait_wirecloud_ready()
+
+        self.assertEqual(self.get_current_workspace_name(), 'Test')
+        self.add_tab()
+
+        self.driver.refresh()
+        self.wait_wirecloud_ready()
+
+        tabs = len(self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab'))
+        self.assertEquals(tabs, 2)
+
+        tab = self.get_workspace_tab_by_name('Tab')
+        tab_menu_button = tab.find_element_by_css_selector('.icon-tab-menu')
+        tab_menu_button.click()
+        self.popup_menu_click('Rename')
+        tab_name_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input')
+        self.fill_form_input(tab_name_input, 'Other Name')
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+        self.wait_wirecloud_ready()
+
+        self.driver.refresh()
+        self.wait_wirecloud_ready()
+
+        tab = self.get_workspace_tab_by_name('Other Name')
+        self.assertIsNotNone(tab)
+        tab = self.get_workspace_tab_by_name('Tab')
+        self.assertIsNone(tab)
+
+        self.add_widget_to_mashup('Test')
+
+        self.driver.refresh()
+        self.wait_wirecloud_ready()
+
+        self.assertEqual(self.count_iwidgets(), 1)
+        self.rename_workspace('test2')
+
+        self.driver.refresh()
+        self.wait_wirecloud_ready()
+
+        self.assertEqual(self.get_current_workspace_name(), 'test2')
+
+        tab = self.get_workspace_tab_by_name('Other Name')
+        tab_menu_button = tab.find_element_by_css_selector('.icon-tab-menu')
+        tab_menu_button.click()
+        self.popup_menu_click('Remove')
+        self.wait_wirecloud_ready()
+
+        self.driver.refresh()
+        self.wait_wirecloud_ready()
+
+        self.assertEqual(self.count_iwidgets(), 0)
