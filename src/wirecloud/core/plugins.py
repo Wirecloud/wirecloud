@@ -36,6 +36,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/StyledElements/Pagination.js',
             'js/StyledElements/TextField.js',
             'js/StyledElements/PasswordField.js',
+            'js/StyledElements/Select.js',
             'js/StyledElements/ToggleButton.js',
             'js/StyledElements/StyledNotebook.js',
             'js/StyledElements/HorizontalLayout.js',
