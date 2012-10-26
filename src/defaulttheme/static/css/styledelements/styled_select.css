@@ -1,0 +1,87 @@
+div.styled_select {
+    font-size: 13px;
+    font-weight: normal;
+    margin-bottom: 9px;
+}
+
+div.styled_select > div {
+    height: 18px;
+    padding: 4px 6px;
+    font-family: Arial, sans-serif;
+    line-height: 18px;
+    color: #555;
+    background-color: white;
+    border: 1px solid #CCC;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    margin: 1px 4px 0px 4px;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    width: auto;
+    display: block;
+    -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -o-transition: border linear 0.2s, box-shadow linear 0.2s;
+    transition: border linear 0.2s, box-shadow linear 0.2s;
+}
+
+div.styled_select > div > div.text {
+    height: 16px;
+    line-height: normal;
+    margin: 0 22px 0px 0px;
+    overflow: hidden;
+    padding: 0px 0;
+    width: auto;
+}
+
+div.styled_select > div > div.arrow {
+    height:   20px;
+    position: absolute;
+    right:    6px;
+    top:      4px;
+    padding:  0px 5px;
+    z-index:  2;
+}
+
+div.styled_select > div > div.arrow:before {
+    font-family: FontAwesome;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    display: inline-block;
+    text-decoration: inherit;
+    content: "\f0d7";
+}
+
+div.styled_select > div > select {
+    border:   0 none;
+    outline:  0 none;
+    display:  block;
+    height:   100%;
+    opacity:  0;
+    position: absolute;
+    left:     0;
+    top:      0;
+    width:    100%;
+    padding:  0;
+    margin:   0;
+    z-index:  3;
+}
+
+div.styled_select.focus > div {
+    border-color: rgba(82, 168, 236, 0.8);
+    outline: 0;
+    outline: thin dotted \9;
+    /* IE6-9 */
+
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+}
+
+div.styled_select.error.focus > div {
+    border-color: #953b39;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #d59392;
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #d59392;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #d59392;
+}

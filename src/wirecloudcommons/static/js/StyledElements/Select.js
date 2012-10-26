@@ -36,6 +36,9 @@
         this.wrapperElement = document.createElement("div");
         this.wrapperElement.className = EzWebExt.prependWord(options['class'], "styled_select");
 
+        var wrapper = document.createElement("div");
+        this.wrapperElement.appendChild(wrapper);
+
         var div =  document.createElement("div");
         div.className = "arrow";
         this.inputElement = document.createElement("select");
@@ -66,9 +69,9 @@
                                     }, this),
                                     true);
 
-        this.wrapperElement.appendChild(this.textDiv);
-        this.wrapperElement.appendChild(div);
-        this.wrapperElement.appendChild(this.inputElement);
+        wrapper.appendChild(this.textDiv);
+        wrapper.appendChild(div);
+        wrapper.appendChild(this.inputElement);
 
         // initialize the textDiv with the initial selection
         var selectedIndex = this.inputElement.options.selectedIndex;

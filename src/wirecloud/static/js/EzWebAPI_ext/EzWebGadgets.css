@@ -3,6 +3,7 @@
 @import url('/static/css/styledelements/styled_notebook.css');
 @import url('/static/css/styledelements/styled_text_field.css');
 @import url('/static/css/styledelements/styled_password_field.css');
+@import url('/static/css/styledelements/styled_select.css');
 @import url('/static/css/styledelements/styled_horizontal_layout.css');
 
 html {
@@ -70,45 +71,6 @@ div.container .disable-layer {
   opacity: 0.4;
   filter: alpha(opacity=40);
   z-index: 1111111;
-}
-
-/* Styled Select */
-
-div.styled_select {
-  position: relative;
-  white-space: nowrap;
-  width:    10em;
-}
-
-div.styled_select div.text {
-  height:   20px;
-  margin:   0 22px 1px 4px;
-  overflow: hidden;
-  padding:  1px 0;
-  width:    auto;
-}
-
-div.styled_select div.arrow {
-  background: transparent url(images/styledElements/select_button.png) no-repeat scroll 0 0;
-  height:   20px;
-  position: absolute;
-  right:    0px;
-  top:      0px;
-  width:    20px;
-  z-index:  2;
-}
-
-div.styled_select select {
-  border:   0 none;
-  display:  block;
-  height:   20px;
-  opacity:  0;
-  filter:   alpha(opacity=0);
-  position: absolute;
-  left:     0;
-  top:      0;
-  width:    100%;
-  z-index:  3;
 }
 
 /* Styled List */
@@ -424,20 +386,6 @@ div.styled_numeric_field div.numeric_bottom_button {
 /*****************************************************************************
  *                              Tema por defecto                             *
  *****************************************************************************/
-
-/* Styled Select */
-
-div.styled_select {
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-  background:  transparent url(images/styledElements/button.png) repeat-x scroll 0 0;
-  border:      1px solid #888888;
-  color:       white;
-  height:      20px;
-  margin:      3px;
-  font-size:   13px;
-}
 
 /* Styled List */
 
