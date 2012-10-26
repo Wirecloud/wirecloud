@@ -426,7 +426,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
 
     def get_workspace_tab_by_name(self, tab_name):
 
-        tabs = self.driver.find_elements_by_css_selector('.notebook.workspace .tab')
+        tabs = self.driver.find_elements_by_css_selector('.notebook.workspace .tab_wrapper .tab')
         for tab in tabs:
             span = tab.find_element_by_css_selector('span')
             if span.text == tab_name:
