@@ -27,7 +27,7 @@
 
     var MarketplaceView, onGetStoresSuccess, onGetStoresFailure;
 
-    onGetStoresSuccess = function onGetStoresSuccess(view_info) {
+    onGetStoresSuccess = function onGetStoresSuccess(options, view_info) {
         var info, old_views, view_element, view_constructor, first_element = null;
 
         this.loading = false;
@@ -62,13 +62,26 @@
 
         // Refresh wirecloud header as current marketplace may have been changed
         LayoutManagerFactory.getInstance().header.refresh();
+
+        if (typeof options.onSuccess === 'function') {
+            options.onSuccess();
+        }
+        if (typeof options.onComplete === 'function') {
+            options.onComplete();
+        }
     };
 
-    onGetStoresFailure = function onGetStoresFailure(msg) {
+    onGetStoresFailure = function onGetStoresFailure(options, msg) {
         this.loading = false;
         this.error = true;
 
         LayoutManagerFactory.getInstance().header.refresh();
+        if (typeof options.onFailure === 'function') {
+            options.onSuccess();
+        }
+        if (typeof options.onFailure === 'function') {
+            options.onComplete();
+        }
     };
 
 
@@ -93,7 +106,7 @@
         this.number_of_alternatives = 0;
         this.loading = true;
         this.error = false;
-        Wirecloud.MarketManager.getMarkets(onGetStoresSuccess.bind(this), onGetStoresFailure.bind(this));
+        Wirecloud.MarketManager.getMarkets(onGetStoresSuccess.bind(this, {}), onGetStoresFailure.bind(this, {}));
     };
 
     MarketplaceView.prototype = new StyledElements.Alternative();
@@ -132,10 +145,14 @@
         return breadcrum;
     };
 
-    MarketplaceView.prototype.refreshViewInfo = function refreshViewInfo() {
+    MarketplaceView.prototype.refreshViewInfo = function refreshViewInfo(options) {
 
         if (this.loading) {
             return;
+        }
+
+        if (typeof options !== 'object') {
+            options = {};
         }
 
         this.loading = true;
@@ -143,7 +160,7 @@
 
         this.number_of_alternatives = 0;
 
-        Wirecloud.MarketManager.getMarkets(onGetStoresSuccess.bind(this), onGetStoresFailure.bind(this));
+        Wirecloud.MarketManager.getMarkets(onGetStoresSuccess.bind(this, options), onGetStoresFailure.bind(this, options));
     };
 
     MarketplaceView.prototype.addMarket = function addMarket(market_info) {

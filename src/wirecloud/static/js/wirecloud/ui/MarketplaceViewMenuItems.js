@@ -117,8 +117,25 @@ if (!Wirecloud.ui) {
                 //First ask if the user really wants to remove the marketplace
                 LayoutManagerFactory.getInstance().showYesNoDialog(gettext('Do you really want to remove the marketplace ') + this.market.alternatives.getCurrentAlternative().getLabel() + '?',
                 function () {
-                    Wirecloud.MarketManager.deleteMarket(this.market.alternatives.getCurrentAlternative().getLabel(), this.market.refreshViewInfo.bind(this.market));
+                    LayoutManagerFactory.getInstance()._startComplexTask(gettext("Deleting marketplace"), 1);
+                    LayoutManagerFactory.getInstance().logSubTask(gettext('Deleting marketplace'));
 
+                    Wirecloud.MarketManager.deleteMarket(this.market.alternatives.getCurrentAlternative().getLabel(), {
+                        onSuccess: function () {
+                            LayoutManagerFactory.getInstance().logSubTask(gettext('Marketplace deleted successfully'));
+                            LayoutManagerFactory.getInstance().logStep('');
+                            this.market.refreshViewInfo({
+                                onComplete: function () {
+                                    LayoutManagerFactory.getInstance()._notifyPlatformReady();
+                                }
+                            });
+                        }.bind(this),
+                        onFailure: function (msg) {
+                            LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                            LayoutManagerFactory.getInstance().log(msg);
+                            LayoutManagerFactory.getInstance()._notifyPlatformReady();
+                        }
+                    });
                 }.bind(this));
             }.bind(this)));
         }

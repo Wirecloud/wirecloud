@@ -53,27 +53,23 @@
         });
     };
 
-    MarketManager.deleteMarket = function deleteMarket(marketplace, callback) {
+    MarketManager.deleteMarket = function deleteMarket(marketplace, options) {
 
-        LayoutManagerFactory.getInstance()._startComplexTask(gettext("Deleting marketplace"), 1);
-        LayoutManagerFactory.getInstance().logSubTask(gettext('Deleting marketplace'));
+        if (typeof options !== 'object') {
+            options = {};
+        }
 
         Wirecloud.io.makeRequest(Wirecloud.URLs.MARKET_ENTRY.evaluate({market: marketplace}), {
             method: 'DELETE',
-            onSuccess: function (transport) {
-                LayoutManagerFactory.getInstance().logSubTask(gettext('Marketplace deleted successfully'));
-                LayoutManagerFactory.getInstance().logStep('');
-                callback();
-            },
+            onSuccess: options.onSuccess,
             onFailure: function (transport) {
                 var msg = LogManagerFactory.getInstance().formatError(gettext("Error deleting marketplace: %(errorMsg)s."), transport);
                 LogManagerFactory.getInstance().log(msg);
-                LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-                LayoutManagerFactory.getInstance().log(msg);
+                if (typeof options.onFailure === 'function') {
+                    options.onFailure(msg);
+                }
             },
-            onComplete: function () {
-                LayoutManagerFactory.getInstance()._notifyPlatformReady();
-            }
+            onComplete: options.onComplete
         });
     };
 
