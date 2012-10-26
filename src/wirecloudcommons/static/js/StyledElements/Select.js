@@ -4,6 +4,26 @@
 
     "use strict";
 
+    var StyledSelect, onchange, onfocus, onblur;
+
+    onchange = function onchange(event) {
+        if (this.enabled) {
+            var optionList = event.target;
+            EzWebExt.setTextContent(this.textDiv, optionList[optionList.selectedIndex].text);
+            this.events.change.dispatch(this);
+        }
+    };
+
+    onfocus = function onfocus() {
+        EzWebExt.addClassName(this.wrapperElement, 'focus');
+        this.events.focus.dispatch(this);
+    };
+
+    onblur = function onblur() {
+        EzWebExt.removeClassName(this.wrapperElement, 'focus');
+        this.events.blur.dispatch(this);
+    };
+
     /**
      *
      * Options:
@@ -12,7 +32,7 @@
      *     * idFunc: In case you want to assign non-string values, you must provide
      *     a function for converting them into strings.
      */
-    var StyledSelect = function StyledSelect(options) {
+    StyledSelect = function StyledSelect(options) {
         options = EzWebExt.merge({
             'class': '',
             'initialEntries': [],
@@ -54,29 +74,31 @@
         this.textDiv = document.createElement("div");
         this.textDiv.className = "text";
 
+        wrapper.appendChild(this.textDiv);
+        wrapper.appendChild(div);
+        wrapper.appendChild(this.inputElement);
+
         this.optionsByValue = {};
         this.optionValues = {};
         this.idFunc = options.idFunc;
         this.addEntries(options.initialEntries);
 
-        EzWebExt.addEventListener(this.inputElement, "change",
-                                    EzWebExt.bind(function (event) {
-                                        if (this.enabled) {
-                                            var optionList = event.target;
-                                            EzWebExt.setTextContent(this.textDiv, optionList[optionList.selectedIndex].text);
-                                            this.events.change.dispatch(this);
-                                        }
-                                    }, this),
-                                    true);
+        /* Internal events */
+        this._onchange = onchange.bind(this);
+        this._onfocus = onfocus.bind(this);
+        this._onblur = onblur.bind(this);
 
-        wrapper.appendChild(this.textDiv);
-        wrapper.appendChild(div);
-        wrapper.appendChild(this.inputElement);
+        this.inputElement.addEventListener('mousedown', EzWebExt.stopPropagationListener, true);
+        this.inputElement.addEventListener('click', EzWebExt.stopPropagationListener, true);
+        this.inputElement.addEventListener('change', this._onchange, true);
+        this.inputElement.addEventListener('focus', this._onfocus, true);
+        this.inputElement.addEventListener('blur', this._onblur, true);
 
         // initialize the textDiv with the initial selection
         var selectedIndex = this.inputElement.options.selectedIndex;
-        if (selectedIndex !== -1)
+        if (selectedIndex !== -1) {
             EzWebExt.setTextContent(this.textDiv, this.inputElement.options[selectedIndex].text);
+        }
     };
     StyledSelect.prototype = new StyledElements.StyledInputElement();
 
@@ -170,6 +192,17 @@
 
         this.optionsByValue = {};
         this.optionsValues = {};
+    };
+
+    StyledSelect.prototype.destroy = function destroy() {
+
+        this.inputElement.removeEventListener('mousedown', EzWebExt.stopPropagationListener, true);
+        this.inputElement.removeEventListener('click', EzWebExt.stopPropagationListener, true);
+        this.inputElement.removeEventListener('change', this._onchange, true);
+        this.inputElement.removeEventListener('focus', this._onfocus, true);
+        this.inputElement.removeEventListener('blur', this._onblur, true);
+
+        StyledElements.StyledInputElement.prototype.destroy.call(this);
     };
 
     StyledElements.StyledSelect = StyledSelect;
