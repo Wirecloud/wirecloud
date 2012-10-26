@@ -330,7 +330,7 @@ function Workspace (workspaceState) {
         return this.headerHTML;
     }
 
-    Workspace.prototype.rename = function (name) {
+    Workspace.prototype.rename = function rename(name) {
         var layoutManager, workspaceUrl, params, msg = null;
 
         name = name.strip()
@@ -358,10 +358,18 @@ function Workspace (workspaceState) {
             method: 'PUT',
             parameters: params,
             onSuccess: function () {
-                var layoutManager = LayoutManagerFactory.getInstance();
+                var state, layoutManager = LayoutManagerFactory.getInstance();
 
                 this.workspaceState.name = name;
                 layoutManager.header.refresh();
+                state = {
+                    workspace_creator: this.workspaceState.creator,
+                    workspace_name: name,
+                    view: "workspace",
+                    tab: HistoryManager.getCurrentState().tab
+                };
+                HistoryManager.pushState(state);
+
                 layoutManager.logSubTask(gettext('Workspace renamed successfully'));
                 layoutManager.logStep('');
             }.bind(this),
