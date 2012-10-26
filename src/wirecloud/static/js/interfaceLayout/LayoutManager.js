@@ -327,47 +327,6 @@ var LayoutManagerFactory = function () {
             Event.observe( this.coverLayerElement, "click", this.coverLayerEvent);
         }
 
-        //Shows the message information
-        LayoutManager.prototype.showTipMessage = function(msg, type) {
-            var platformPreferences = PreferencesManagerFactory.getInstance().getPlatformPreferences();
-
-            if (!platformPreferences.get('tip-' + type)) // Do not show me anymore
-                return;
-
-            // the disabling layer is displayed as long as a menu is shown. If there is not a menu, there is not a layer.
-            if (this.currentMenu != null) {//only if the layer is displayed.
-                this.hideCover();
-            }
-
-            this.showUnclickableCover();
-
-            if (!this.menus['tipMenu'])
-                this.menus['tipMenu'] = new TipWindowMenu();
-
-            this.currentMenu = this.menus['tipMenu'];
-            this.currentMenu.setMsg(msg);
-            this.currentMenu.show(type);
-        }
-
-        // Shows a generic information dialog
-        LayoutManager.prototype.showInfoMessage = function(msg, type, title) {
-            var platformPreferences = PreferencesManagerFactory.getInstance().getPlatformPreferences();
-
-            if (!platformPreferences.get('tip-' + type)) // Do not show me anymore
-                return;
-
-            // the disabling layer is displayed as long as a menu is shown. If there is not a menu, there is not a layer.
-            if (this.currentMenu != null) {//only if the layer is displayed.
-                this.hideCover();
-            }
-
-            this.showUnclickableCover();
-
-            this.currentMenu = new InfoWindowMenu(title);
-            this.currentMenu.setMsg(msg);
-            this.currentMenu.show(type);
-        }
-
         // Shows a generic alert dialog
         LayoutManager.prototype.showAlertMessage = function(msg) {
             // the disabling layer is displayed as long as a menu is shown. If there is not a menu, there is not a layer.

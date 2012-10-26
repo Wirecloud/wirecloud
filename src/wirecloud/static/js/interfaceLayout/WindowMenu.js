@@ -314,59 +314,6 @@ MessageWindowMenu.prototype.setType = function(type) {
 }
 
 /**
- * Specific class for info dialogs.
- */
-function InfoWindowMenu(title) {
-    if (arguments.length == 0)
-        return;
-
-    WindowMenu.call(this, title);
-
-    // Extra HTML Elements
-    this.iconElement.className += ' icon-info';
-
-    this.checkbox = document.createElement('input');
-    Element.extend(this.checkbox);
-    this.checkbox.setAttribute('type', 'checkbox');
-    this.windowBottom.appendChild(this.checkbox);
-    this.windowBottom.appendChild(document.createTextNode(gettext('Don\'t show me anymore')));
-
-    // Event Listeners
-    this._dontShowAnymore = this._dontShowAnymore.bind(this);
-
-    this.checkbox.observe("click", this._dontShowAnymore);
-}
-InfoWindowMenu.prototype = new WindowMenu();
-
-InfoWindowMenu.prototype._dontShowAnymore = function(e) {
-    var layoutManager = LayoutManagerFactory.getInstance();
-    var changes = {};
-    changes['tip-' + this.type] = {value: false};
-    PreferencesManagerFactory.getInstance().getPlatformPreferences().set(changes);
-
-    this.hide();
-}
-
-/**
- *
- */
-InfoWindowMenu.prototype.show = function (type, parentWindow) {
-    this.type = type;
-    this.checkbox.checked = false;
-
-    WindowMenu.prototype.show.call(this, parentWindow);
-}
-
-/**
- * Specific class for tip dialogs.
- */
-function TipWindowMenu() {
-    InfoWindowMenu.call(this, gettext('Do you know what ... ?'));
-}
-TipWindowMenu.prototype = new InfoWindowMenu();
-
-
-/**
  * Specific class for platform preferences windows.
  *
  * @param manager
