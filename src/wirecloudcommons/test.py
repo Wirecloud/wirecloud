@@ -187,10 +187,13 @@ class widget_operation:
 
 
 def marketplace_loaded(driver):
-    if driver.find_element_by_css_selector('#wirecloud_breadcrum .first_level').text == 'marketplace':
-        return driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text != 'loading'
-    else:
-        return False
+    try:
+        if driver.find_element_by_css_selector('#wirecloud_breadcrum .first_level').text == 'marketplace':
+            return driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text != 'loading'
+    except:
+        pass
+
+    return False
 
 
 class WirecloudSeleniumTestCase(LiveServerTestCase):
