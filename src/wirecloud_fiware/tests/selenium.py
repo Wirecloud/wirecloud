@@ -6,8 +6,6 @@ __test__ = False
 
 class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
-    tags = ('current',)
-
     def test_add_fiware_marketplace(self):
 
         self.login()
