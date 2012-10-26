@@ -501,6 +501,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
 
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
         self.wait_wirecloud_ready()
+        time.sleep(0.1)  # work around some problems
 
         self.assertEqual(self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text, name)
 
