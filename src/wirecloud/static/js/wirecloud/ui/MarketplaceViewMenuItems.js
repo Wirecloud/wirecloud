@@ -100,12 +100,12 @@ if (!Wirecloud.ui) {
                     var market_info = {
                         "name": data.label,
                         "options": {
-                            "label": data.display_name,
+                            "name": data.label,
                             "url": data.url,
                             "type": data.type
                         }
                     };
-                    Wirecloud.MarketManager.addMarket(market_info, this.market.refreshViewInfo.bind(this.market, data.label));
+                    Wirecloud.MarketManager.addMarket(market_info, this.market.addMarket.bind(this.market, market_info.options));
                 }.bind(this);
 
                 menu.show();

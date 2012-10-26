@@ -55,11 +55,6 @@
             }
         }
 
-        if (this.marketToShow != null) {
-            this.alternatives.showAlternative(this.viewsByName[this.marketToShow]);
-            this.marketToShow = null;
-        }
-
         for (info in old_views) {
             this.alternatives.removeAlternative(old_views[info]);
             old_views[info].destroy();
@@ -95,7 +90,6 @@
             view.alternatives.getCurrentAlternative().refresh_if_needed();
         });
 
-        this.marketToShow = null;
         this.number_of_alternatives = 0;
         this.loading = true;
         this.error = false;
@@ -138,8 +132,7 @@
         return breadcrum;
     };
 
-    MarketplaceView.prototype.refreshViewInfo = function refreshViewInfo(marketToShow) {
-        this.marketToShow = marketToShow;
+    MarketplaceView.prototype.refreshViewInfo = function refreshViewInfo() {
 
         if (this.loading) {
             return;
@@ -151,6 +144,14 @@
         this.number_of_alternatives = 0;
 
         Wirecloud.MarketManager.getMarkets(onGetStoresSuccess.bind(this), onGetStoresFailure.bind(this));
+    };
+
+    MarketplaceView.prototype.addMarket = function addMarket(market_info) {
+        var view_constructor = Wirecloud.MarketManager.getMarketViewClass(market_info.type);
+        this.viewsByName[market_info.name] = this.alternatives.createAlternative({alternative_constructor: view_constructor, containerOptions: {catalogue: this, marketplace_desc: market_info}});
+
+        this.number_of_alternatives += 1;
+        this.alternatives.showAlternative(this.viewsByName[market_info.name]);
     };
 
     window.MarketplaceView = MarketplaceView;
