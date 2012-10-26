@@ -135,6 +135,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.refresh()
         self.wait_wirecloud_ready()
 
+        self.assertEqual(self.count_workspace_tabs(), 2)
         tab = self.get_workspace_tab_by_name('Other Name')
         self.assertIsNotNone(tab)
         tab = self.get_workspace_tab_by_name('Tab')
@@ -162,4 +163,5 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.refresh()
         self.wait_wirecloud_ready()
 
+        self.assertEqual(self.count_workspace_tabs(), 1)
         self.assertEqual(self.count_iwidgets(), 0)
