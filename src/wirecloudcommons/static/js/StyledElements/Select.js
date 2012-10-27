@@ -51,7 +51,7 @@
         },
         options);
 
-        StyledElements.StyledInputElement.call(this, options.initialValue, ['change']);
+        StyledElements.StyledInputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
 
         this.wrapperElement = document.createElement("div");
         this.wrapperElement.className = EzWebExt.prependWord(options['class'], "styled_select");
