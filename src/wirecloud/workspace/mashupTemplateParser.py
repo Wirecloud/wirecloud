@@ -29,9 +29,12 @@
 
 
 #
+from django.db import IntegrityError
+from django.utils import simplejson
 
 from commons.get_data import get_concept_values, TemplateValueProcessor
-from django.utils import simplejson
+from commons.utils import save_alternative
+
 from wirecloud.widget.utils import get_or_add_widget_from_catalogue
 from wirecloud.iwidget.utils import SaveIWidget
 from wirecloud.preferences.views import update_tab_preferences, update_workspace_preferences
@@ -40,7 +43,7 @@ from wirecloud.workspace.utils import createTab
 from wirecloudcommons.utils.template import TemplateParser
 
 
-def buildWorkspaceFromTemplate(template, user):
+def buildWorkspaceFromTemplate(template, user, allow_renaming=False):
 
     parser = TemplateParser(template)
 
@@ -51,7 +54,13 @@ def buildWorkspaceFromTemplate(template, user):
 
     # Workspace creation
     workspace = Workspace(name=name, creator=user)
-    workspace.save()
+    try:
+        workspace.save()
+    except IntegrityError:
+        if allow_renaming:
+            save_alternative(Workspace, 'name', workspace)
+        else:
+            raise
 
     # Adding user reference to workspace in the many to many relationship
     user_workspace = UserWorkspace(user=user, workspace=workspace, active=False)

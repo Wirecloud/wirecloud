@@ -49,6 +49,7 @@ class Workspace(models.Model):
 
     class Meta:
         app_label = 'wirecloud'
+        unique_together = ('creator', 'name')
 
     def __unicode__(self):
         return unicode(self.pk) + " " + unicode(self.name)

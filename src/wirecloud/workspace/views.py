@@ -638,7 +638,7 @@ class MashupImportService(Service):
             template = PublishedWorkspace.objects.get(id=pworkspace_id).template
         else:
             template = http_utils.download_http_content(template_url, user=request.user)
-        workspace, _junk = buildWorkspaceFromTemplate(template, request.user)
+        workspace, _junk = buildWorkspaceFromTemplate(template, request.user, True)
 
         activate = data.get('active', False) == "true"
         if not activate:
