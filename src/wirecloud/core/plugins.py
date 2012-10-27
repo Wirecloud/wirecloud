@@ -41,7 +41,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/StyledElements/StyledNotebook.js',
             'js/StyledElements/HorizontalLayout.js',
             'js/StyledElements/BorderLayout.js',
-            'js/wirecloud/ui/FormWindowMenu.js',
             'js/gadgetModel/Gadget.js',
         )
 
@@ -52,6 +51,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/MarketManager.js',
                 'js/wirecloud/ui/ResourcePainter.js',
                 'js/wirecloud/ui/WirecloudCatalogue/PublishView.js',
+                'js/wirecloud/ui/FormWindowMenu.js',
                 'js/wirecloud/ui/NewWorkspaceWindowMenu.js',
                 'js/wirecloud/ui/ParametrizeWindowMenu.js',
                 'js/wirecloud/ui/PublishWindowMenu.js',
