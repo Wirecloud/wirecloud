@@ -36,12 +36,10 @@ except ImportError:
     HAS_AES = False
 
 from django.conf import settings
-from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
-from commons.http_utils import download_http_content
 from commons.utils import save_alternative
 from wirecloud.iwidget.utils import deleteIWidget
 from wirecloud.models import Category, IWidget, PublishedWorkspace, Tab, UserWorkspace, VariableValue, Workspace
@@ -72,13 +70,10 @@ def createTab(tab_name, user, workspace, allow_renaming=False):
 
     # Creating tab
     tab = Tab(name=tab_name, visible=visible, position=position, workspace=workspace)
-    try:
+    if allow_renaming:
+        save_alternative(Tab, 'name', tab)
+    else:
         tab.save()
-    except IntegrityError:
-        if allow_renaming:
-            save_alternative(Tab, 'name', tab)
-        else:
-            raise
 
     from commons.get_data import _invalidate_cached_variable_values
     _invalidate_cached_variable_values(workspace)

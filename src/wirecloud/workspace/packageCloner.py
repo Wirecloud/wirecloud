@@ -1,4 +1,4 @@
-from django.db import models, IntegrityError
+from django.db import models
 from django.db.models import get_model
 
 from commons.utils import save_alternative
@@ -244,13 +244,10 @@ class PackageCloner:
                     setattr(cloned_tuple, field.name, value)
 
             # Getting an id!
-            try:
+            variant_field = self.unique_variant.get(table_name, None)
+            if variant_field is None:
                 cloned_tuple.save()
-            except IntegrityError:
-                variant_field = self.unique_variant.get(table_name, None)
-                if variant_field == None:
-                    raise
-
+            else:
                 save_alternative(model, variant_field, cloned_tuple)
 
             self.mapping.add_mapping(table_name, tuple.id, cloned_tuple.id)
