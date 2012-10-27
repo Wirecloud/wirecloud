@@ -72,7 +72,7 @@ def createWorkspace(workspaceName, user):
         for category in categories:
             try:
                 new_workspace = Category.objects.get(category_id=getCategoryId(category)).new_workspace
-                if new_workspace != None:
+                if new_workspace is not None:
                     cloned_workspace, _junk = buildWorkspaceFromTemplate(new_workspace.template, user)
 
                     cloned_workspace.name = workspaceName
@@ -433,7 +433,7 @@ class WorkspaceVariableCollection(Resource):
     def update(self, request, workspace_id):
 
         content_type = request.META.get('CONTENT_TYPE', '')
-        if content_type == None:
+        if content_type is None:
             content_type = ''
 
         if content_type.startswith('application/json'):
@@ -580,7 +580,7 @@ class MashupMergeService(Service):
     def process(self, request, to_ws_id):
 
         content_type = request.META.get('CONTENT_TYPE', '')
-        if content_type == None:
+        if content_type is None:
             content_type = ''
 
         if content_type.startswith('application/json'):
@@ -618,7 +618,7 @@ class MashupImportService(Service):
     def process(self, request):
 
         content_type = request.META.get('CONTENT_TYPE', '')
-        if content_type == None:
+        if content_type is None:
             content_type = ''
 
         if content_type.startswith('application/json'):

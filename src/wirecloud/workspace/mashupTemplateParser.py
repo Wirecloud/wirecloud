@@ -170,7 +170,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
             forced_values['iwidget'][str(iwidget.id)] = iwidget_forced_values
             iwidget_id_mapping[resource.get('id')] = iwidget
 
-    if workspace.forcedValues != None and workspace.forcedValues != '':
+    if workspace.forcedValues is not None and workspace.forcedValues != '':
         old_forced_values = simplejson.loads(workspace.forcedValues)
     else:
         old_forced_values = {
@@ -233,13 +233,15 @@ def fillWorkspaceUsingTemplate(workspace, template):
 
         wiring_status['connections'].append({
             'readonly': connection['readonly'],
-            'source': {'id': source_id,
-                       'type': connection['source']['type'],
-                       'endpoint': connection['source']['endpoint'],
+            'source': {
+                'id': source_id,
+                'type': connection['source']['type'],
+                'endpoint': connection['source']['endpoint'],
             },
-            'target': {'id': target_id,
-                       'type': connection['target']['type'],
-                       'endpoint': connection['target']['endpoint'],
+            'target': {
+                'id': target_id,
+                'type': connection['target']['type'],
+                'endpoint': connection['target']['endpoint'],
             },
         })
 

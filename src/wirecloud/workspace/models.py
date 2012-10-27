@@ -32,7 +32,7 @@
 
 from django.contrib.auth.models import User, Group
 from django.db import models
-from django.utils.translation import ugettext as  _
+from django.utils.translation import ugettext as _
 
 from wirecloudcommons.utils.http import get_absolute_reverse_url
 
