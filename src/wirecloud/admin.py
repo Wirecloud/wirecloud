@@ -44,7 +44,12 @@ admin.site.register(models.PlatformPreference)
 admin.site.register(models.WorkspacePreference)
 admin.site.register(models.TabPreference)
 
-admin.site.register(models.Workspace)
+
+class WorkspaceAdmin(admin.ModelAdmin):
+    list_display = ('creator', 'name')
+    ordering = ('creator', 'name')
+
+admin.site.register(models.Workspace, WorkspaceAdmin)
 admin.site.register(models.UserWorkspace)
 admin.site.register(models.PublishedWorkspace)
 admin.site.register(models.VariableValue)
