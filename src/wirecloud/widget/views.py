@@ -41,11 +41,11 @@ from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.views.static import serve
 
+from commons import http_utils
 from commons.authentication import Http403
 from commons.cache import no_cache, patch_cache_headers
 from commons.utils import get_xml_error, json_encode, get_xhtml_content
 from commons.get_data import get_widget_data
-from commons.http_utils import download_http_content
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 
@@ -153,7 +153,7 @@ class Showcase(Resource):
             return HttpResponseBadRequest()
 
         url = request.POST['url']
-        template_content = download_http_content(url, user=request.user)
+        template_content = http_utils.download_http_content(url, user=request.user)
         template = TemplateParser(template_content, base=url)
 
         if template.get_resource_type() == 'widget':
@@ -205,9 +205,9 @@ class WidgetCodeEntry(Resource):
         if not xhtml.cacheable or code == '':
             try:
                 if xhtml.url.startswith(('http://', 'https://')):
-                    code = download_http_content(widget.get_resource_url(xhtml.url, request), user=request.user)
+                    code = http_utils.download_http_content(widget.get_resource_url(xhtml.url, request), user=request.user)
                 else:
-                    code = download_http_content('file://' + os.path.join(showcase_utils.wgt_deployer.root_dir, xhtml.url), user=request.user)
+                    code = http_utils.download_http_content('file://' + os.path.join(showcase_utils.wgt_deployer.root_dir, xhtml.url), user=request.user)
 
             except Exception, e:
                 # FIXME: Send the error or use the cached original code?
@@ -248,7 +248,7 @@ class WidgetCodeEntry(Resource):
             url = xhtml.url
             if (url.startswith('http')):
                 # Absolute URL
-                xhtml.code = download_http_content(url, user=request.user)
+                xhtml.code = http_utils.download_http_content(url, user=request.user)
             else:
                 # Relative URL
                 if (url.startswith('/deployment/widgets')):
@@ -257,7 +257,7 @@ class WidgetCodeEntry(Resource):
                 else:
                     #Widget with relative url and it's not a GWT package
                     url = widget.get_resource_url(url, request)
-                    xhtml.code = download_http_content(url, user=request.user)
+                    xhtml.code = http_utils.download_http_content(url, user=request.user)
 
             xhtml.save()
         except Exception, e:
