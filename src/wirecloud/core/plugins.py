@@ -30,7 +30,7 @@ WIRING_EDITOR_FILES = (
     'js/wirecloud/ui/WiringEditor/ArrowCreator.js',
     'js/wirecloud/ui/WiringEditor/Canvas.js',
     'js/wirecloud/ui/WiringEditor/GenericInterface.js',
-    'js/wirecloud/ui/WiringEditor/GadgetInterface.js',
+    'js/wirecloud/ui/WiringEditor/WidgetInterface.js',
     'js/wirecloud/ui/WiringEditor/OperatorInterface.js',
     'js/wirecloud/ui/WiringEditor/SourceAnchor.js',
     'js/wirecloud/ui/WiringEditor/TargetAnchor.js',
