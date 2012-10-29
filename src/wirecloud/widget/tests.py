@@ -7,7 +7,8 @@ from tempfile import mkdtemp
 
 from django.contrib.auth.models import User
 from django.core.cache import cache
-from django.test import TransactionTestCase
+from django.core.urlresolvers import reverse
+from django.test import TransactionTestCase, Client
 from django.utils.unittest import TestCase
 
 from commons import http_utils
@@ -173,6 +174,43 @@ class ShowcaseTestCase(LocalizedTestCase):
 
         deleteWidget(self.user, 'test', 'Morfeo', '0.1')
         self.assertRaises(Widget.DoesNotExist, Widget.objects.get, vendor='Morfeo', name='test', version='0.1')
+
+    def test_widget_code_cache(self):
+        template_uri = "http://example.com/path/widget.xml"
+        template = self.read_template('template1.xml')
+
+        client = Client()
+        client.login(username='test', password='test')
+        widget_id = {
+            'vendor': 'Morfeo',
+            'name': 'test',
+            'version': '0.1',
+        }
+
+        import ipdb; ipdb.set_trace()
+        http_utils.download_http_content.set_response(template_uri, template)
+        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        widget = create_widget_from_template(template_uri, self.user)
+        widget.users.add(self.user)
+
+        # Cache widget code
+        response = client.get(reverse('wirecloud.widget_code_entry', kwargs=widget_id))
+        self.assertEquals(response.status_code, 200)
+        old_code = response.content
+
+        deleteWidget(self.user, **widget_id)
+        self.assertRaises(Widget.DoesNotExist, Widget.objects.get, vendor='Morfeo', name='test', version='0.1')
+
+        # Use a different xhtml code
+        http_utils.download_http_content.set_response('http://example.com/path/test.html', 'cache')
+        create_widget_from_template(template_uri, self.user)
+        widget.users.add(self.user)
+
+        response = client.get(reverse('wirecloud.widget_code_entry', kwargs=widget_id))
+        self.assertEquals(response.status_code, 200)
+        new_code = response.content
+
+        self.assertNotEqual(old_code, new_code)
 
     def test_widget_deletion_usdl(self):
         template_uri = "http://example.com/path/widget.rdf"

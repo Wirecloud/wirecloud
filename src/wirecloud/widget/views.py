@@ -94,13 +94,13 @@ def parseAndCreateWidget(request, user, workspaceId, fromWGT):
         raise TracedServerError(e, {'url': templateURL}, request, str(e))
 
 
-def deleteWidget(user, short_name, vendor, version):
+def deleteWidget(user, name, vendor, version):
 
     result = {'removedIWidgets': []}
 
     try:
 
-        widget = Widget.objects.get(name=short_name, vendor=vendor, version=version)
+        widget = Widget.objects.get(name=name, vendor=vendor, version=version)
 
         # Remove all iwidget that matches this Widget Resource
         iwidgets = IWidget.objects.filter(widget=widget)
@@ -112,7 +112,7 @@ def deleteWidget(user, short_name, vendor, version):
             widget.xhtml.delete()
 
         widget.delete()
-        showcase_utils.wgt_deployer.undeploy(vendor, short_name, version)
+        showcase_utils.wgt_deployer.undeploy(vendor, name, version)
 
     except Widget.DoesNotExist:
         pass
