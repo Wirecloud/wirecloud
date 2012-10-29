@@ -196,70 +196,7 @@ def marketplace_loaded(driver):
     return False
 
 
-class WirecloudSeleniumTestCase(LiveServerTestCase):
-
-    fixtures = ('selenium_test_data',)
-    __test__ = False
-
-    @classmethod
-    def setUpClass(cls):
-
-        cls.old_LANGUAGES = settings.LANGUAGES
-        cls.old_LANGUAGE_CODE = settings.LANGUAGE_CODE
-        cls.old_DEFAULT_LANGUAGE = settings.DEFAULT_LANGUAGE
-        settings.LANGUAGES = (('en', 'English'),)
-        settings.LANGUAGE_CODE = 'en'
-        settings.DEFAULT_LANGUAGE = 'en'
-
-        # downloader
-        cls._original_download_function = http_utils.download_http_content
-        http_utils.download_http_content = LocalDownloader(getattr(cls, 'servers', {
-            'http': {
-                'localhost:8001': os.path.join(os.path.dirname(__file__), 'test-data', 'src'),
-            },
-        }))
-
-        # Load webdriver
-        module_name, klass_name = getattr(cls, '_webdriver_class', 'selenium.webdriver.Firefox').rsplit('.', 1)
-        module = import_module(module_name)
-        webdriver_args = getattr(cls, '_webdriver_args', None)
-        if webdriver_args is None:
-            webdriver_args = {}
-        cls.driver = getattr(module, klass_name)(**webdriver_args)
-
-        # initialize
-        cls.wgt_dir = os.path.join(os.path.dirname(__file__), 'test-data')
-        cls.old_deployer = showcase.wgt_deployer
-        cls.tmp_dir = mkdtemp()
-        showcase.wgt_deployer = WgtDeployer(cls.tmp_dir)
-
-        super(WirecloudSeleniumTestCase, cls).setUpClass()
-
-        http_utils.download_http_content.set_live_server(cls.server_thread.host, cls.server_thread.port)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.driver.quit()
-
-        http_utils.download_http_content = cls._original_download_function
-
-        settings.LANGUAGES = cls.old_LANGUAGES
-        settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
-        settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
-
-        super(WirecloudSeleniumTestCase, cls).tearDownClass()
-
-    def setUp(self):
-        wgt_file = WgtFile(os.path.join(self.wgt_dir, 'Wirecloud_Test_1.0.wgt'))
-        showcase.create_widget_from_wgt(wgt_file, None, deploy_only=True)
-
-        cache.clear()
-        super(WirecloudSeleniumTestCase, self).setUp()
-
-    def tearDown(self):
-        rmtree(self.tmp_dir, ignore_errors=True)
-
-        super(WirecloudSeleniumTestCase, self).tearDown()
+class WirecloudRemoteTestCase(object):
 
     def fill_form_input(self, form_input, value):
         # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
@@ -548,6 +485,71 @@ class WirecloudSeleniumTestCase(LiveServerTestCase):
         resource = self.search_in_catalogue_results(widget_name)
         self.assertIsNone(resource)
 
+
+class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
+
+    fixtures = ('selenium_test_data',)
+    __test__ = False
+
+    @classmethod
+    def setUpClass(cls):
+
+        cls.old_LANGUAGES = settings.LANGUAGES
+        cls.old_LANGUAGE_CODE = settings.LANGUAGE_CODE
+        cls.old_DEFAULT_LANGUAGE = settings.DEFAULT_LANGUAGE
+        settings.LANGUAGES = (('en', 'English'),)
+        settings.LANGUAGE_CODE = 'en'
+        settings.DEFAULT_LANGUAGE = 'en'
+
+        # downloader
+        cls._original_download_function = http_utils.download_http_content
+        http_utils.download_http_content = LocalDownloader(getattr(cls, 'servers', {
+            'http': {
+                'localhost:8001': os.path.join(os.path.dirname(__file__), 'test-data', 'src'),
+            },
+        }))
+
+        # Load webdriver
+        module_name, klass_name = getattr(cls, '_webdriver_class', 'selenium.webdriver.Firefox').rsplit('.', 1)
+        module = import_module(module_name)
+        webdriver_args = getattr(cls, '_webdriver_args', None)
+        if webdriver_args is None:
+            webdriver_args = {}
+        cls.driver = getattr(module, klass_name)(**webdriver_args)
+
+        # initialize
+        cls.wgt_dir = os.path.join(os.path.dirname(__file__), 'test-data')
+        cls.old_deployer = showcase.wgt_deployer
+        cls.tmp_dir = mkdtemp()
+        showcase.wgt_deployer = WgtDeployer(cls.tmp_dir)
+
+        super(WirecloudSeleniumTestCase, cls).setUpClass()
+
+        http_utils.download_http_content.set_live_server(cls.server_thread.host, cls.server_thread.port)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.driver.quit()
+
+        http_utils.download_http_content = cls._original_download_function
+
+        settings.LANGUAGES = cls.old_LANGUAGES
+        settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
+        settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
+
+        super(WirecloudSeleniumTestCase, cls).tearDownClass()
+
+    def setUp(self):
+        wgt_file = WgtFile(os.path.join(self.wgt_dir, 'Wirecloud_Test_1.0.wgt'))
+        showcase.create_widget_from_wgt(wgt_file, None, deploy_only=True)
+
+        cache.clear()
+        super(WirecloudSeleniumTestCase, self).setUp()
+
+    def tearDown(self):
+        rmtree(self.tmp_dir, ignore_errors=True)
+
+        super(WirecloudSeleniumTestCase, self).tearDown()
 
 browsers = getattr(settings, 'WIRECLOUD_SELENIUM_BROWSER_COMMANDS', {
     'Firefox': {
