@@ -23,6 +23,17 @@ from wirecloud.plugins import WirecloudPlugin, build_url_template
 from wirecloud.core.catalogue_manager import WirecloudCatalogueManager
 
 
+STYLED_ELEMENTS_CSS = (
+    'css/styled_elements_core.css',
+    'css/styledelements/styled_button.css',
+    'css/styledelements/styled_notebook.css',
+    'css/styledelements/styled_text_field.css',
+    'css/styledelements/styled_password_field.css',
+    'css/styledelements/styled_select.css',
+    'css/styledelements/styled_horizontal_layout.css',
+)
+
+
 class WirecloudCorePlugin(WirecloudPlugin):
 
     features = {
@@ -93,3 +104,8 @@ class WirecloudCorePlugin(WirecloudPlugin):
             {'id': 'WORKSPACE_MERGE_LOCAL', 'url': build_url_template('wirecloud.workspace_merge_local', ['from_ws_id', 'to_ws_id'])},
             {'id': 'WORKSPACE_SHARE', 'url': build_url_template('wirecloud.workspace_share', ['workspace_id', 'share_boolean'])},
         )
+
+    def get_platform_css(self, view):
+        common = STYLED_ELEMENTS_CSS
+
+        return common
