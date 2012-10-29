@@ -185,6 +185,7 @@ class PackageCloner:
     }
 
     unique_variant = {
+        'Workspace': 'name',
         'Tab': 'name',
     }
 
