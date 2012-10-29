@@ -403,7 +403,7 @@ class WGTShowcaseTestCase(TransactionTestCase):
 
     def test_invalid_wgt_deployment(self):
         wgt_file = WgtFile(os.path.join(os.path.dirname(__file__), 'test-data', 'invalid_widget.wgt'))
-        widget_path = wirecloud.widget.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
+        wirecloud.widget.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
 
         self.assertRaises(TemplateParseException, create_widget_from_wgt, wgt_file, self.user)
         self.assertRaises(Widget.DoesNotExist, Widget.objects.get, vendor='Morfeo', name='Test', version='0.1.')
