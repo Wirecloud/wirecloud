@@ -90,6 +90,12 @@ class LocalDownloader(object):
     def __call__(self, url, *args, **kwargs):
         parsed_url = urlparse(url)
 
+        if parsed_url.scheme == 'file':
+            f = codecs.open(parsed_url.path, 'rb')
+            contents = f.read()
+            f.close()
+            return contents
+
         if parsed_url.netloc == self._live_netloc:
             return self._client.get(url).content
 
