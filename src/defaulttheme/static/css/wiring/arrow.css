@@ -1,0 +1,99 @@
+.wiring_editor .canvas .arrow {
+    fill:   none;
+    cursor: crosshair;
+    opacity: 0.3;
+}
+
+.wiring_editor .canvas .arrow.selected {
+    opacity: 1;
+}
+
+.wiring_editor .canvas .arrow.emphasize{
+    opacity: 1;
+}
+
+.wiring_editor .canvas .arrow .arrowbody {
+    stroke: rgb(214, 214, 214);
+    stroke-width: 5;
+}
+
+.wiring_editor .canvas .arrowborder {
+    stroke: rgb(110, 110, 110);
+    stroke-width: 8;
+}
+
+.wiring_editor .canvas .pullerBall {
+    stroke: black;
+    fill:   rgba(138, 131, 226, 0.9);
+    stroke-width: 1;
+    display: none;
+}
+
+.wiring_editor .canvas .pullerLine {
+    stroke: rgb(128, 128, 128);
+    stroke-width: 1;
+    display: none;
+    stroke-dasharray: 2;
+}
+
+.wiring_editor .canvas .selected .arrowbody, .wiring_editor .canvas .selected.emphasize .arrowbody {
+    stroke: rgb(214, 214, 214);
+    stroke-width: 5;
+}
+
+.wiring_editor .canvas .selected .arrowborder, .wiring_editor .canvas .selected.emphasize .arrowborder {
+    stroke: orange;
+    stroke-width: 10;
+}
+
+.wiring_editor .canvas .emphasize .arrowbody {
+    stroke: rgba(138, 131, 226, 0.9);
+    fill:   none;
+    stroke-width: 5;
+}
+
+.wiring_editor .canvas .emphasize .arrowborder {
+    stroke: black;
+    fill:   none;
+    stroke-width: 8;
+}
+
+.wiring_editor .canvas .closer {
+    stroke: black;
+    fill:   red;
+    fill-opacity:1;
+    stroke-width: 1;
+    display: none;
+}
+
+.wiring_editor .canvas .selected .closer {
+    display: inline;
+}
+
+.wiring_editor .canvas .selected .pullerBall {
+    display: inline;
+}
+
+.wiring_editor .canvas .selected .pullerLine {
+    display: inline;
+}
+.wiring_editor .canvas .highlighted .arrowborder {
+    stroke: #DF7A62;
+    fill:   none;
+    stroke-width: 11;
+}
+
+.wiring_editor .menubar .styled_expander {
+    margin: 3px;
+    border: none;
+}
+
+.wiring_editor .menubar .styled_expander .title {
+    font-size: 1.8em;
+    font-style: normal;
+    text-shadow: none;
+}
+
+.wiring_editor .menubar .styled_expander.expanded .contents {
+    padding: 1ex;
+}

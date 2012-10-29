@@ -37,6 +37,14 @@ WIRING_EDITOR_FILES = (
     'js/wirecloud/ui/WiringEditor/Multiconnector.js',
 )
 
+WIRING_EDITOR_CSS = (
+    'css/wiring/editor.css',
+    'css/wiring/anchor.css',
+    'css/wiring/arrow.css',
+    'css/wiring/entities.css',
+    'css/wiring/multiconnector.css',
+)
+
 STYLED_ELEMENTS_CSS = (
     'css/styled_elements_core.css',
     'css/styledelements/styled_button.css',
@@ -122,4 +130,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
     def get_platform_css(self, view):
         common = STYLED_ELEMENTS_CSS
 
-        return common
+        if view == 'index':
+            return common + WIRING_EDITOR_CSS
+        else:
+            return common

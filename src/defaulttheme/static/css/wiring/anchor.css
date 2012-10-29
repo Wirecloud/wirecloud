@@ -1,0 +1,44 @@
+.wiring_editor .anchor {
+    background: rgb(122, 152, 192);
+    position: absolute;
+    display: inline;
+    width: 16px;
+    height: 16px;
+    margin: 2px;
+}
+
+.wiring_editor .grid .anchor {
+    cursor: pointer;
+}
+
+.wiring_editor .sources .anchor {
+    background: url('../../images/wiring/blue_ball.png');
+    right: -1em;
+}
+
+.wiring_editor .targets .anchor {
+    background: url('../../images/wiring/orange_ball.png');
+    left: -1em;
+}
+
+.wiring_editor .menubar .sources .anchor {
+    width: 1em;
+    height: 1em;
+
+}
+
+.wiring_editor .menubar .targets .anchor {
+    width: 1em;
+    height: 1em;
+
+}
+
+.wiring_editor .sources .anchor.disabled {
+    opacity: 0.7;
+    cursor: no-drop;
+}
+
+.wiring_editor .targets .anchor.disabled {
+    opacity: 0.7;
+    cursor: no-drop;
+}
