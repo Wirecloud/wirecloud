@@ -186,7 +186,8 @@ class WidgetCodeEntry(Resource):
 
         # check if the xhtml code has been cached
         if widget.xhtml.cacheable:
-            cache_key = '_widget_xhtml/' + get_current_domain(request) + '/' + str(widget.xhtml.id)
+
+            cache_key = widget.xhtml.get_cache_key(get_current_domain(request))
             cache_entry = cache.get(cache_key)
             if cache_entry is not None:
                 response = HttpResponse(cache_entry['code'], mimetype='%s; charset=UTF-8' % cache_entry['content_type'])

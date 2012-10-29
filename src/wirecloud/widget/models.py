@@ -29,8 +29,11 @@
 
 
 #
-from django.db import models
+import random
+
 from django.contrib.auth.models import User
+from django.core.cache import cache
+from django.db import models
 from django.utils.translation import ugettext as _
 from django.conf import settings
 
@@ -48,6 +51,19 @@ class XHTML(models.Model):
 
     def __unicode__(self):
         return self.uri
+
+    def get_cache_key(self, domain):
+        version = cache.get('_widget_xhtml_version/' + str(self.id))
+        if version is None:
+            version = random.randrange(1, 100000)
+            cache.set('_widget_xhtml_version/' + str(self.id), version)
+
+        return '_widget_xhtml/' + str(version) + '/' + domain + '/' + str(self.id)
+
+    def delete(self, *args, **kwargs):
+        old_id = self.id
+        super(XHTML, self).delete(*args, **kwargs)
+        cache.incr('_widget_xhtml_version/' + str(old_id))
 
     class Meta:
         app_label = 'wirecloud'
