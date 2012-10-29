@@ -190,13 +190,13 @@ class WirecloudPlugin(object):
     def get_features(self):
         return self.features
 
-    def get_scripts(self, views):
+    def get_scripts(self, view):
         return ()
 
-    def get_ajax_endpoints(self, views):
+    def get_ajax_endpoints(self, view):
         return ()
 
-    def get_widget_api_extensions(self, views):
+    def get_widget_api_extensions(self, view):
         return ()
 
     def get_platform_css(self, view):
