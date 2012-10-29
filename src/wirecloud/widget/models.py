@@ -63,7 +63,10 @@ class XHTML(models.Model):
     def delete(self, *args, **kwargs):
         old_id = self.id
         super(XHTML, self).delete(*args, **kwargs)
-        cache.incr('_widget_xhtml_version/' + str(old_id))
+        try:
+            cache.incr('_widget_xhtml_version/' + str(old_id))
+        except ValueError:
+            pass
 
     class Meta:
         app_label = 'wirecloud'
