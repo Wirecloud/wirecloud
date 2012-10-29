@@ -23,6 +23,20 @@ from wirecloud.plugins import WirecloudPlugin, build_url_template
 from wirecloud.core.catalogue_manager import WirecloudCatalogueManager
 
 
+WIRING_EDITOR_FILES = (
+    'js/wirecloud/ui/WiringEditor.js',
+    'js/wirecloud/ui/WiringEditor/Anchor.js',
+    'js/wirecloud/ui/WiringEditor/Arrow.js',
+    'js/wirecloud/ui/WiringEditor/ArrowCreator.js',
+    'js/wirecloud/ui/WiringEditor/Canvas.js',
+    'js/wirecloud/ui/WiringEditor/GenericInterface.js',
+    'js/wirecloud/ui/WiringEditor/GadgetInterface.js',
+    'js/wirecloud/ui/WiringEditor/OperatorInterface.js',
+    'js/wirecloud/ui/WiringEditor/SourceAnchor.js',
+    'js/wirecloud/ui/WiringEditor/TargetAnchor.js',
+    'js/wirecloud/ui/WiringEditor/Multiconnector.js',
+)
+
 STYLED_ELEMENTS_CSS = (
     'css/styled_elements_core.css',
     'css/styledelements/styled_button.css',
@@ -67,7 +81,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/ui/ParametrizeWindowMenu.js',
                 'js/wirecloud/ui/PublishWindowMenu.js',
                 'js/wirecloud/ui/RenameWindowMenu.js',
-            )
+            ) + WIRING_EDITOR_FILES
         else:
             return common
 

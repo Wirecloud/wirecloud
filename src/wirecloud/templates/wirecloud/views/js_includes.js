@@ -48,17 +48,6 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/Wiring.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/Operator.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/wiring/OperatorFactory.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/Anchor.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/Arrow.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/ArrowCreator.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/Canvas.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/GenericInterface.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/GadgetInterface.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/OperatorInterface.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/SourceAnchor.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/TargetAnchor.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/WiringEditor/Multiconnector.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/MarketplaceViewMenuItems.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/InstantiateMashupWindowMenu.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/MarketplaceView.js"></script>
