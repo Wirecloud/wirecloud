@@ -128,6 +128,16 @@ def get_widget_api_extensions(view):
     return files
 
 
+def get_platform_css(view):
+    plugins = get_plugins()
+    files = []
+
+    for plugin in plugins:
+        files += plugin.get_platform_css(view)
+
+    return files
+
+
 def build_url_template(viewname, kwargs=[], urlconf=None, prefix=None):
     resolver = get_resolver(urlconf)
 
@@ -187,4 +197,7 @@ class WirecloudPlugin(object):
         return ()
 
     def get_widget_api_extensions(self, views):
+        return ()
+
+    def get_platform_css(self, view):
         return ()

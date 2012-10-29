@@ -15,6 +15,7 @@
     <!-- Theme css -->
     {% block css %}
     {% compress css %}
+    {% platform_css "index" %}
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/styled_elements_core.css" />
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/styledelements/styled_button.css" />
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/styledelements/styled_notebook.css" />
