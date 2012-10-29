@@ -187,7 +187,6 @@ class ShowcaseTestCase(LocalizedTestCase):
             'version': '0.1',
         }
 
-        import ipdb; ipdb.set_trace()
         http_utils.download_http_content.set_response(template_uri, template)
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
         widget = create_widget_from_template(template_uri, self.user)
