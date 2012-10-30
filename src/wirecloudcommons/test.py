@@ -344,6 +344,29 @@ class WirecloudRemoteTestCase(object):
         resource = self.search_in_catalogue_results(widget_name)
         self.instantiate(resource)
 
+    def create_workspace_from_catalogue(self, mashup_name):
+
+        self.change_main_view('marketplace')
+        WebDriverWait(self.driver, 30).until(marketplace_loaded)
+        self.search_resource(mashup_name)
+        resource = self.search_in_catalogue_results(mashup_name)
+
+        resource.find_element_by_css_selector('.instantiate_button div').click()
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='New Workspace']").click()
+        self.wait_wirecloud_ready()
+        self.assertTrue(self.get_current_workspace_name().startswith('Test Mashup'), 'Invalid workspace name after creating workspace from catalogue')
+
+    def merge_mashup_from_catalogue(self, mashup_name):
+
+        self.change_main_view('marketplace')
+        WebDriverWait(self.driver, 30).until(marketplace_loaded)
+        self.search_resource(mashup_name)
+        resource = self.search_in_catalogue_results(mashup_name)
+
+        resource.find_element_by_css_selector('.instantiate_button div').click()
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Current Workspace']").click()
+        self.wait_wirecloud_ready()
+
     def count_iwidgets(self):
         return len(self.driver.find_elements_by_css_selector('div.iwidget'))
 
