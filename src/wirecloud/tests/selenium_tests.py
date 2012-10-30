@@ -165,3 +165,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.assertEqual(self.count_workspace_tabs(), 1)
         self.assertEqual(self.count_iwidgets(), 0)
+
+    def test_duplicated_workspaces(self):
+
+        self.login()
+        self.create_workspace('Test Mashup')
+        self.create_workspace_from_catalogue('Test Mashup')
+        self.assertNotEqual(self.get_current_workspace_name(), 'Test Mashup')

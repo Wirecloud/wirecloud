@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+   xmlns:ns1="http://wirecloud.conwet.fi.upm.es/ns/mashup#"
+   xmlns:ns2="http://wirecloud.conwet.fi.upm.es/ns/widget#"
+   xmlns:ns3="http://purl.org/dc/terms/"
+   xmlns:ns4="http://www.linked-usdl.org/ns/usdl-core#"
+   xmlns:ns5="http://xmlns.com/foaf/0.1/"
+   xmlns:ns6="http://www.w3.org/2006/vcard/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+>
+  <rdf:Description rdf:about="http://wirecloud.conwet.fi.upm.es/ns/mashup#Wirecloud/test/1.0">
+    <ns4:versionInfo>1.0</ns4:versionInfo>
+    <ns6:addr rdf:nodeID="_752da499-0e78-481a-af9f-53beb318398e"/>
+    <ns3:title>Test Mashup</ns3:title>
+    <ns1:readonly>False</ns1:readonly>
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/mashup#Mashup"/>
+    <ns2:hasImageUri rdf:resource="None"/>
+    <ns3:description>Wirecloud Mashup composed of: Test, Test</ns3:description>
+    <ns3:creator rdf:nodeID="_4ed40bc8-0b99-4c78-a338-6cc0f1ca6171"/>
+    <ns1:hasTab rdf:nodeID="_dc07d12c-5645-4178-9e4b-b5bf2151a445"/>
+    <ns1:hasTab rdf:nodeID="_3dd2ad96-0cbb-43b9-a8a8-afe276847c06"/>
+    <ns4:hasProvider rdf:nodeID="_20dd5866-8dd3-42dd-93ff-f843314e43a8"/>
+    <ns1:hasMashupWiring rdf:nodeID="_ff645ae3-503a-4d84-aaf9-6f09fb93df0b"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_64bfd24c-5ae8-4232-b78d-c7e5f0efbc6b">
+    <ns4:versionInfo>1.0</ns4:versionInfo>
+    <ns1:iWidgetId>_64bfd24c-5ae8-4232-b78d-c7e5f0efbc6b</ns1:iWidgetId>
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/mashup#iWidget"/>
+    <ns1:hasiWidgetRendering rdf:nodeID="_e9c995fe-3bec-4481-adef-992ec8c0b46e"/>
+    <rdfs:label>Test</rdfs:label>
+    <ns4:hasProvider rdf:nodeID="_1fe9997f-5f09-4ecf-b5bb-1ea01457a0e7"/>
+    <ns3:title>Test</ns3:title>
+    <ns1:hasPosition rdf:nodeID="_64f251af-dc4b-4daf-9d2e-64de8eabaab0"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_4c3ea58f-1c5d-42ac-acdb-e4e32ae632b9">
+    <ns2:friendcode>event</ns2:friendcode>
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/widget#Event"/>
+    <ns2:type>text</ns2:type>
+    <rdfs:label>event</rdfs:label>
+    <ns3:title>event</ns3:title>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_f8a49b1a-e921-4507-a895-936967852e2d">
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/widget#Slot"/>
+    <ns2:frindcode>slot</ns2:frindcode>
+    <ns2:type>text</ns2:type>
+    <rdfs:label>slot</rdfs:label>
+    <ns3:title>slot</ns3:title>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_1f89bc33-3d19-43e8-afa5-d08f8dab258a">
+    <ns1:targetId>_64bfd24c-5ae8-4232-b78d-c7e5f0efbc6b</ns1:targetId>
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/mashup#Target"/>
+    <ns2:type>iwidget</ns2:type>
+    <ns1:endpoint>slot</ns1:endpoint>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_02e6a1e8-b3f4-435d-8051-6c0ba3d25a5b">
+    <ns2:friendcode>event</ns2:friendcode>
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/widget#Event"/>
+    <ns2:type>text</ns2:type>
+    <rdfs:label>event</rdfs:label>
+    <ns3:title>event</ns3:title>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_c0fc63f3-d33b-4490-9a5b-7ee2942570d4">
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/mashup#Connection"/>
+    <ns1:hasTarget rdf:nodeID="_1f89bc33-3d19-43e8-afa5-d08f8dab258a"/>
+    <ns1:hasSource rdf:nodeID="_ec0df68a-6af4-4bbb-a89d-6a26d02b26de"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_e3bf0b06-cf82-4b48-8f62-e3be72872698">
+    <ns4:versionInfo>1.0</ns4:versionInfo>
+    <ns1:iWidgetId>_e3bf0b06-cf82-4b48-8f62-e3be72872698</ns1:iWidgetId>
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/mashup#iWidget"/>
+    <ns1:hasiWidgetRendering rdf:nodeID="_0e14751a-b4d5-48d5-a341-77b1f9db9cac"/>
+    <rdfs:label>Test</rdfs:label>
+    <ns4:hasProvider rdf:nodeID="_3447945a-c48a-4acb-823a-16d11de6ecbf"/>
+    <ns3:title>Test</ns3:title>
+    <ns1:hasPosition rdf:nodeID="_7b53f554-37b3-458f-bba3-261dd3181cf1"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_6556ae96-b8b2-4f5b-8f39-8ceb5286a4ec">
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/mashup#Source"/>
+    <ns1:sourceId>_64bfd24c-5ae8-4232-b78d-c7e5f0efbc6b</ns1:sourceId>
+    <ns2:type>iwidget</ns2:type>
+    <ns1:endpoint>event</ns1:endpoint>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_dc07d12c-5645-4178-9e4b-b5bf2151a445">
+    <ns1:hasiWidget rdf:nodeID="_64bfd24c-5ae8-4232-b78d-c7e5f0efbc6b"/>
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/mashup#Tab"/>
+    <ns2:index>1</ns2:index>
+    <ns3:title>Tab 2</ns3:title>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_e9c995fe-3bec-4481-adef-992ec8c0b46e">
+    <ns2:renderingWidth>6</ns2:renderingWidth>
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/mashup#iWidgetRendering"/>
+    <ns1:layout>0</ns1:layout>
+    <ns1:minimized>False</ns1:minimized>
+    <ns1:fullDragboard>False</ns1:fullDragboard>
+    <ns2:renderingHeight>34</ns2:renderingHeight>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_db79f0d9-ab8e-4c2c-bddf-8a163017ed51">
+    <ns1:targetId>_e3bf0b06-cf82-4b48-8f62-e3be72872698</ns1:targetId>
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/mashup#Target"/>
+    <ns2:type>iwidget</ns2:type>
+    <ns1:endpoint>slot</ns1:endpoint>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_3dd2ad96-0cbb-43b9-a8a8-afe276847c06">
+    <ns1:hasiWidget rdf:nodeID="_e3bf0b06-cf82-4b48-8f62-e3be72872698"/>
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/mashup#Tab"/>
+    <ns2:index>0</ns2:index>
+    <ns3:title>Tab</ns3:title>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_7b53f554-37b3-458f-bba3-261dd3181cf1">
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/mashup#Position"/>
+    <ns1:x>0</ns1:x>
+    <ns1:z>0</ns1:z>
+    <ns1:y>0</ns1:y>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_0e14751a-b4d5-48d5-a341-77b1f9db9cac">
+    <ns2:renderingWidth>6</ns2:renderingWidth>
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/mashup#iWidgetRendering"/>
+    <ns1:layout>0</ns1:layout>
+    <ns1:minimized>False</ns1:minimized>
+    <ns1:fullDragboard>False</ns1:fullDragboard>
+    <ns2:renderingHeight>34</ns2:renderingHeight>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_4ed40bc8-0b99-4c78-a338-6cc0f1ca6171">
+    <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
+    <ns5:name>admin</ns5:name>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_ff645ae3-503a-4d84-aaf9-6f09fb93df0b">
+    <ns2:hasSlot rdf:nodeID="_f8a49b1a-e921-4507-a895-936967852e2d"/>
+    <ns2:hasSlot rdf:nodeID="_65c9f0f2-1ce3-4e37-9ce3-34b0170b765a"/>
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/widget#PlatformWiring"/>
+    <ns2:hasEvent rdf:nodeID="_4c3ea58f-1c5d-42ac-acdb-e4e32ae632b9"/>
+    <ns2:hasEvent rdf:nodeID="_02e6a1e8-b3f4-435d-8051-6c0ba3d25a5b"/>
+    <ns1:hasConnection rdf:nodeID="_c0fc63f3-d33b-4490-9a5b-7ee2942570d4"/>
+    <ns1:hasConnection rdf:nodeID="_2eba5d07-8a9f-4201-ba15-3532a1b22a18"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_752da499-0e78-481a-af9f-53beb318398e">
+    <rdf:type rdf:resource="http://www.w3.org/2006/vcard/ns#Work"/>
+    <ns6:email>wirecloud@conwet.com</ns6:email>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_64f251af-dc4b-4daf-9d2e-64de8eabaab0">
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/mashup#Position"/>
+    <ns1:x>0</ns1:x>
+    <ns1:z>0</ns1:z>
+    <ns1:y>0</ns1:y>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_2eba5d07-8a9f-4201-ba15-3532a1b22a18">
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/mashup#Connection"/>
+    <ns1:hasTarget rdf:nodeID="_db79f0d9-ab8e-4c2c-bddf-8a163017ed51"/>
+    <ns1:hasSource rdf:nodeID="_6556ae96-b8b2-4f5b-8f39-8ceb5286a4ec"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_20dd5866-8dd3-42dd-93ff-f843314e43a8">
+    <rdf:type rdf:resource="http://purl.org/goodrelations/v1#BussisnessEntity"/>
+    <ns5:name>Wirecloud</ns5:name>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_65c9f0f2-1ce3-4e37-9ce3-34b0170b765a">
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/widget#Slot"/>
+    <ns2:frindcode>slot</ns2:frindcode>
+    <ns2:type>text</ns2:type>
+    <rdfs:label>slot</rdfs:label>
+    <ns3:title>slot</ns3:title>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_1fe9997f-5f09-4ecf-b5bb-1ea01457a0e7">
+    <rdf:type rdf:resource="http://purl.org/goodrelations/v1#BussisnessEntity"/>
+    <ns5:name>Wirecloud</ns5:name>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_ec0df68a-6af4-4bbb-a89d-6a26d02b26de">
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/mashup#Source"/>
+    <ns1:sourceId>_e3bf0b06-cf82-4b48-8f62-e3be72872698</ns1:sourceId>
+    <ns2:type>iwidget</ns2:type>
+    <ns1:endpoint>event</ns1:endpoint>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="_3447945a-c48a-4acb-823a-16d11de6ecbf">
+    <rdf:type rdf:resource="http://purl.org/goodrelations/v1#BussisnessEntity"/>
+    <ns5:name>Wirecloud</ns5:name>
+  </rdf:Description>
+</rdf:RDF>

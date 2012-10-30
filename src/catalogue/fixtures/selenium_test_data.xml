@@ -32,4 +32,26 @@
         <field type="CharField" name="wiring">out</field>
         <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">14</field>
     </object>
+    <object pk="15" model="catalogue.catalogueresource">
+        <field type="CharField" name="short_name">test-mashup</field>
+        <field type="CharField" name="display_name">Test Mashup</field>
+        <field type="CharField" name="vendor">Wirecloud</field>
+        <field type="CharField" name="version">1.0</field>
+        <field type="IntegerField" name="type">1</field>
+        <field type="BooleanField" name="ie_compatible">False</field>
+        <field type="CharField" name="author">aarranz</field>
+        <field type="CharField" name="mail">aarranz@conwet.com</field>
+        <field to="auth.user" name="creator" rel="ManyToOneRel">1</field>
+        <field type="TextField" name="description">This mashup is used to test some of the features of the Wirecloud platform</field>
+        <field type="CharField" name="license"><None></None></field>
+        <field type="DateTimeField" name="creation_date">2011-05-13 12:24:03</field>
+        <field type="CharField" name="image_uri">images/catalogue.png</field>
+        <field type="CharField" name="iphone_image_uri">images/catalogue_iphone.png</field>
+        <field type="CharField" name="wiki_page_uri">http://forge.morfeo-project.org/wiki/index.php/Gadgets_EzWeb</field>
+        <field type="CharField" name="template_uri">http://localhost:8001/test-mashup.rdf</field>
+        <field to="auth.group" name="certification" rel="ManyToOneRel">1</field>
+        <field type="DecimalField" name="popularity">0.0</field>
+        <field type="BooleanField" name="fromWGT">False</field>
+        <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
+    </object>
 </django-objects>
