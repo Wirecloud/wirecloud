@@ -432,7 +432,7 @@ class USDLTemplateParser(object):
 
     def _parse_workspace_info(self):
 
-        self._info['readonly'] = self._get_field(WIRE_M, 'readonly', self._rootURI, required=False)
+        self._info['readonly'] = self._get_field(WIRE_M, 'readonly', self._rootURI, required=False).lower() == 'true'
         preferences = {}
 
         for preference in self._graph.objects(self._rootURI, WIRE_M['hasWorkspacePreference']):
