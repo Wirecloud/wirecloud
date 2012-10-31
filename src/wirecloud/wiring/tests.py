@@ -143,11 +143,12 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
     def test_basic_wiring_operations(self):
         self.login()
 
-        self.add_widget_to_mashup('Test')
-        self.add_widget_to_mashup('Test')
-        self.add_widget_to_mashup('Test')
+        self.add_widget_to_mashup('Test', 'Test (1)')
+        self.add_widget_to_mashup('Test', 'Test (2)')
+        self.add_widget_to_mashup('Test', 'Test (3)')
 
         self.change_main_view('wiring')
+        time.sleep(2)
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
