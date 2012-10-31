@@ -740,6 +740,8 @@ IWidget.prototype.fillWithInput = function () {
         this.iwidgetInputHTMLElement.observe('blur',
                                             function (e) {
                                                 Event.stop(e);
+                                                var target = BrowserUtilsFactory.getInstance().getTarget(e);
+                                                this.setName(target.value);
                                                 this.fillWithLabel();
                                             }.bind(this));
 
@@ -752,16 +754,12 @@ IWidget.prototype.fillWithInput = function () {
                                                 }
                                             }.bind(this));
 
-        this.iwidgetInputHTMLElement.observe('change',
+        this.iwidgetInputHTMLElement.observe('input',
                                             function (e) {
-                                                var target = BrowserUtilsFactory.getInstance().getTarget(e);
-                                                this.setName(target.value);
-                                            }.bind(this));
+                                                var target;
 
-        this.iwidgetInputHTMLElement.observe('keyup',
-                                            function (e) {
                                                 Event.stop(e);
-                                                var target = BrowserUtilsFactory.getInstance().getTarget(e);
+                                                target = BrowserUtilsFactory.getInstance().getTarget(e);
                                                 target.size = (target.value.length === 0) ? 1 : target.value.length + 5;
                                             }.bind(this));
     }
