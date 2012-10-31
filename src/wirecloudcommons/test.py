@@ -208,6 +208,13 @@ class WirecloudRemoteTestCase(object):
         # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
         self.driver.execute_script('arguments[0].value = arguments[1]', form_input, value)
 
+    def wait_element_visible_by_css_selector(self, selector, timeout=30, element=None):
+        if element is None:
+            element = self.driver
+
+        WebDriverWait(self.driver, timeout).until(lambda driver: element.find_element_by_css_selector(selector).is_displayed())
+        return element.find_element_by_css_selector(selector)
+
     def wait_wirecloud_ready(self, start_timeout=30, timeout=30):
 
         WebDriverWait(self.driver, start_timeout).until(lambda driver: driver.find_element_by_xpath(r'//*[@id="loading-window" and (@class="" or @class="fadding")]'))
