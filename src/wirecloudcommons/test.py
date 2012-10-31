@@ -334,22 +334,35 @@ class WirecloudRemoteTestCase(object):
         return None
 
     def instantiate(self, resource):
-        old_iwidget_count = self.count_iwidgets()
+        old_iwidget_ids = [iwidget.id for iwidget in self.driver.find_elements_by_css_selector('div.iwidget')]
+        old_iwidget_count = len(old_iwidget_ids)
         resource.find_element_by_css_selector('.instantiate_button div').click()
 
         # TODO
         time.sleep(2)
 
-        iwidget_count = self.count_iwidgets()
+        iwidgets = self.driver.find_elements_by_css_selector('div.iwidget')
+        iwidget_count = len(iwidgets)
         self.assertEquals(iwidget_count, old_iwidget_count + 1)
 
-    def add_widget_to_mashup(self, widget_name):
+        for iwidget in iwidgets:
+            if iwidget.id not in old_iwidget_ids:
+                return iwidget
+
+    def add_widget_to_mashup(self, widget_name, new_name=None):
 
         self.change_main_view('marketplace')
         WebDriverWait(self.driver, 30).until(marketplace_loaded)
         self.search_resource(widget_name)
         resource = self.search_in_catalogue_results(widget_name)
-        self.instantiate(resource)
+        iwidget = self.instantiate(resource)
+
+        if new_name is not None:
+            self.wait_element_visible_by_css_selector('.widget_menu > span', element=iwidget).click()
+            name_input = iwidget.find_element_by_css_selector('.widget_menu > input.iwidget_name')
+            self.fill_form_input(name_input, new_name)
+            time.sleep(0.1)
+            iwidget.find_element_by_css_selector('.statusBar').click()
 
     def create_workspace_from_catalogue(self, mashup_name):
 
