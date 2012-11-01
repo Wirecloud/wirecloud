@@ -19,30 +19,29 @@
  *
  */
 
-/*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50 */
-/*global gettext, StyledElements*/
+/*global gettext, OpManagerFactory, Wirecloud*/
 
 (function () {
 
     "use strict";
 
-    var NewWorkspaceWindowMenu = function NewWorkspaceWindowMenu () {
+    var NewWorkspaceWindowMenu = function NewWorkspaceWindowMenu() {
         var fields = {
             'name': {
                 label: gettext('Name'),
                 type: 'text',
                 required: true
             }
-        }
+        };
         Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Create Workspace'));
     };
     NewWorkspaceWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
 
-    NewWorkspaceWindowMenu.prototype.setFocus = function setFocus () {
-        this.form.fieldInterfaces['name'].focus();
+    NewWorkspaceWindowMenu.prototype.setFocus = function setFocus() {
+        this.form.fieldInterfaces.name.focus();
     };
 
-    NewWorkspaceWindowMenu.prototype.executeOperation = function executeOperation (data) {
+    NewWorkspaceWindowMenu.prototype.executeOperation = function executeOperation(data) {
         OpManagerFactory.getInstance().addWorkspace(data.name);
     };
 
