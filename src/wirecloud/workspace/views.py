@@ -51,6 +51,7 @@ from wirecloud.workspace.mashupTemplateGenerator import build_rdf_template_from_
 from wirecloud.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from wirecloud.workspace.utils import deleteTab, createTab, create_published_workspace_from_template, getCategories, getCategoryId, get_workspace_list, setVisibleTab, set_variable_value
 from wirecloud.markets.utils import get_market_managers
+from wirecloudcommons.utils.http import build_error_response, get_content_type, supported_request_mime_types
 from wirecloudcommons.utils.template import TemplateParser
 from wirecloudcommons.utils.transaction import commit_on_http_success
 
@@ -172,31 +173,28 @@ class WorkspaceCollection(Resource):
         return HttpResponse(json_encode(data_list), mimetype='application/json; charset=UTF-8')
 
     @commit_on_http_success
+    @supported_request_mime_types(('application/x-www-form-urlencoded', 'application/json'))
     def create(self, request):
 
-        if 'workspace' not in request.POST:
-            return HttpResponseBadRequest(get_xml_error(_("workspace JSON expected")), mimetype='application/xml; charset=UTF-8')
+        content_type = get_content_type(request)[0]
+        if content_type == 'application/json':
+            try:
+                data = simplejson.loads(request.raw_post_data)
+            except Exception, e:
+                msg = _("malformed json data: %s") % unicode(e)
+                return build_error_response(request, 400, msg)
 
-        #TODO we can make this with deserializers (simplejson)
-        received_json = request.POST['workspace']
+            workspace_name = data.get('name', '').strip()
+        else:
+            workspace_name = request.POST.get('name', '').strip()
 
-        try:
-            ts = simplejson.loads(received_json)
+        if workspace_name == '':
+            return build_error_response(request, 400, _('missing workspace name'))
 
-            if 'name' not in ts:
-                raise Exception(_('Malformed workspace JSON: expecting workspace uri.'))
+        workspace = createWorkspace(workspace_name, request.user)
+        workspace_data = get_global_workspace_data(workspace, request.user)
 
-            workspace_name = ts['name']
-
-            workspace = createWorkspace(workspace_name, request.user)
-            workspace_data = get_global_workspace_data(workspace, request.user)
-
-            return workspace_data.get_response()
-
-        except Exception, e:
-            msg = _("workspace cannot be created: ") + unicode(e)
-
-            raise TracedServerError(e, ts, request, msg)
+        return workspace_data.get_response(status_code=201)
 
 
 class WorkspaceEntry(Resource):

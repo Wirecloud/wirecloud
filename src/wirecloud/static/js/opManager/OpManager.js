@@ -420,11 +420,11 @@ var OpManagerFactory = function () {
             return false;
         }
 
-        OpManager.prototype.addWorkspace = function (newName) {
-            var params = {'workspace': Object.toJSON({name: newName})};
+        OpManager.prototype.addWorkspace = function addWorkspace(newName) {
             Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_COLLECTION, {
                 method: 'POST',
-                parameters: params,
+                contentType: 'application/json',
+                postBody: Object.toJSON({name: newName}),
                 onSuccess: createWSSuccess.bind(this),
                 onFailure: createWSError.bind(this)
             });
