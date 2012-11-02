@@ -36,9 +36,16 @@ ERROR_FORMATTERS = {
 }
 
 
-def build_error_response(request, status_code, error_msg):
-    mimetype = mimeparser.best_match(ERROR_FORMATTERS.keys(), request.META.get('HTTP_ACCEPT', 'text/plain'))
-    return HttpResponse(ERROR_FORMATTERS[mimetype](error_msg), mimetype=mimetype, status=status_code)
+def build_error_response(request, status_code, error_msg, extra_formats=None):
+
+    if extra_formats is not None:
+        formatters = extra_formats.copy()
+        formatters.update(ERROR_FORMATTERS)
+    else:
+        formatters = ERROR_FORMATTERS
+
+    mimetype = mimeparser.best_match(formatters.keys(), request.META.get('HTTP_ACCEPT', 'text/plain'))
+    return HttpResponse(formatters[mimetype](error_msg), mimetype=mimetype, status=status_code)
 
 
 def get_content_type(request):
