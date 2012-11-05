@@ -19,12 +19,26 @@
 
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseForbidden, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
+from django.utils import simplejson
 from django.utils.http import urlencode
 
+from commons.resource import Resource
+from wirecloud.plugins import get_active_features
 from wirecloud.models import Workspace
 from wirecloud.workspace.utils import get_workspace_list
+
+
+class FeatureCollection(Resource):
+
+    def read(self, request):
+        info = get_active_features()
+        features = {}
+        for feature_name in info:
+            features[feature_name] = info[feature_name]['version']
+
+        return HttpResponse(simplejson.dumps(features), mimetype='application/json; charset=UTF-8')
 
 
 def render_root_page(request):

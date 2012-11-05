@@ -19,8 +19,9 @@
 
 
 from django.conf.urls.defaults import patterns, url
+from wirecloud import views
 from wirecloud.iwidget import views as iwidget_views
-from wirecloud.markets import views
+from wirecloud.markets import views as market_views
 from wirecloud.wiring import views as wiring_views
 from wirecloud.preferences import views as preferences_views
 from wirecloud.widget import views as widget_views
@@ -30,6 +31,10 @@ from wirecloud.workspace import views as workspace_views
 urlpatterns = patterns('wirecloud.views',
 
     url(r'^$', 'render_root_page', name='wirecloud.root'),
+
+    url(r'^api/features/?$',
+        views.FeatureCollection(permitted_methods=('GET',)),
+        name='wirecloud.features'),
 
     url(r'^api/workspace/(?P<workspace_id>\d+)/wiring$',
         wiring_views.WiringEntry(permitted_methods=('PUT',)),
@@ -83,8 +88,8 @@ urlpatterns = patterns('wirecloud.views',
         name='wirecloud.operator_code_entry'
     ),
 
-    url(r'^api/markets/?$', views.MarketCollection(permitted_methods=('GET', 'POST'))),
-    url(r'^api/market/(?P<market>[\w -]+)/?$', views.MarketEntry(permitted_methods=('PUT', 'DELETE'))),
+    url(r'^api/markets/?$', market_views.MarketCollection(permitted_methods=('GET', 'POST'))),
+    url(r'^api/market/(?P<market>[\w -]+)/?$', market_views.MarketEntry(permitted_methods=('PUT', 'DELETE'))),
 
     # Workspace
     url(r'^api/workspaces/?$',
