@@ -171,7 +171,7 @@
 
     Multiconnector.prototype = new Wirecloud.ui.WiringEditor.Anchor(true);
 
-    Multiconnector.prototype.addMainArrow = function addMainArrow() {
+    Multiconnector.prototype.addMainArrow = function addMainArrow(pullerStart, pullerEnd) {
         var arrow;
         if (this.initAnchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
             arrow = this.wiringEditor.canvas.drawArrow(this.mainAnchor.getCoordinates(this.layer),
@@ -191,6 +191,12 @@
             arrow.multiId = this.id;
         }
         arrow.addClassName('arrow');
+        if (pullerStart != null) {
+            arrow.setPullerStart(pullerStart);
+        }
+        if (pullerEnd != null) {
+            arrow.setPullerEnd(pullerEnd);
+        }
         this.mainArrow = arrow;
 
         //recalculate positions for arrows

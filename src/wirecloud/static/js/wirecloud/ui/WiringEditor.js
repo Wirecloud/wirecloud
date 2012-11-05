@@ -179,8 +179,9 @@ if (!Wirecloud.ui) {
 
     var loadWiring = function loadWiring(workspace, WiringStatus) {
         var iwidgets, iwidget, key, i, widget_interface, miniwidget_interface, ioperators, operator,
-            operator_interface, operator_instance, operatorKeys, connection, connectionViews, startAnchor,
-            endAnchor, arrow, isMenubarRef, miniwidget_clon, pos, op_id, multiconnectors, multi, multi_id, anchor;
+            operator_interface, operator_instance, operatorKeys, connection, connectionView, startAnchor,
+            endAnchor, arrow, isMenubarRef, miniwidget_clon, pos, op_id, multiconnectors, multi, multiInstance,
+            multi_id, anchor;
 
         if (WiringStatus == null) {
             WiringStatus = {
@@ -296,11 +297,11 @@ if (!Wirecloud.ui) {
             } else {
                 anchor = this.iwidgets[multi.objectId].getAnchor(multi.sourceName);
             }
-            multi = new Wirecloud.ui.WiringEditor.Multiconnector(multi.id, multi.objectId, multi.sourceName,
+            multiInstance = new Wirecloud.ui.WiringEditor.Multiconnector(multi.id, multi.objectId, multi.sourceName,
                                             this.layout.getCenterContainer().wrapperElement,
                                             this, anchor, multi.pos, multi.height);
-            multi = this.addMulticonnector(multi);
-            multi.addMainArrow();
+            multiInstance = this.addMulticonnector(multiInstance);
+            multiInstance.addMainArrow(multi.pullerStart, multi.pullerEnd);
         }
 
         // connections
@@ -504,7 +505,9 @@ if (!Wirecloud.ui) {
                 'height' : height,
                 'objectId' : multiconnector.objectId,
                 'sourceName' : multiconnector.sourceName,
-                'objectType' : multiconnector.context.iObject.className
+                'objectType' : multiconnector.context.iObject.className,
+                'pullerStart': multiconnector.mainArrow.getPullerStart(),
+                'pullerEnd': multiconnector.mainArrow.getPullerEnd()
             };
         }
 
