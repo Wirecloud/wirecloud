@@ -179,8 +179,8 @@ if (!Wirecloud.ui) {
 
     var loadWiring = function loadWiring(workspace, WiringStatus) {
         var iwidgets, iwidget, key, i, widget_interface, miniwidget_interface, ioperators, operator,
-            operator_interface, operator_instance, operatorKeys, connection, startAnchor, endAnchor,
-            arrow, isMenubarRef, miniwidget_clon, pos, op_id, multiconnectors, multi, multi_id, anchor;
+            operator_interface, operator_instance, operatorKeys, connection, connectionViews, startAnchor,
+            endAnchor, arrow, isMenubarRef, miniwidget_clon, pos, op_id, multiconnectors, multi, multi_id, anchor;
 
         if (WiringStatus == null) {
             WiringStatus = {
@@ -192,7 +192,9 @@ if (!Wirecloud.ui) {
                         operators: {
                         },
                         multiconnectors: {
-                        }
+                        },
+                        connections: [
+                        ]
                     }
                 ],
                 operators: {
@@ -304,6 +306,7 @@ if (!Wirecloud.ui) {
         // connections
         for (i = 0; i < WiringStatus.connections.length; i += 1) {
             connection = WiringStatus.connections[i];
+            connectionView = WiringStatus.views[0].connections[i];
             startAnchor = findAnchor.call(this, connection.source, workspace);
             endAnchor = findAnchor.call(this, connection.target, workspace);
 
@@ -314,19 +317,19 @@ if (!Wirecloud.ui) {
             arrow.endAnchor = endAnchor;
             endAnchor.addArrow(arrow);
             arrow.addClassName('arrow');
-            arrow.setPullerStart(connection.pullerStart);
-            arrow.setPullerEnd(connection.pullerEnd);
-            if (connection.startMulti != null) {
-                multi = this.multiconnectors[connection.startMulti];
-                arrow.startMulti = connection.startMulti;
+            arrow.setPullerStart(connectionView.pullerStart);
+            arrow.setPullerEnd(connectionView.pullerEnd);
+            if (connectionView.startMulti != null) {
+                multi = this.multiconnectors[connectionView.startMulti];
+                arrow.startMulti = connectionView.startMulti;
                 pos = multi.getCoordinates(this.layout);
                 arrow.setStart(pos);
                 arrow.redraw();
                 multi.addArrow(arrow);
             }
-            if (connection.endMulti != null) {
-                arrow.endMulti = connection.endMulti;
-                multi = this.multiconnectors[connection.endMulti];
+            if (connectionView.endMulti != null) {
+                arrow.endMulti = connectionView.endMulti;
+                multi = this.multiconnectors[connectionView.endMulti];
                 pos = multi.getCoordinates(this.layout);
                 arrow.setEnd(pos);
                 arrow.redraw();
@@ -462,7 +465,9 @@ if (!Wirecloud.ui) {
                     operators: {
                     },
                     multiconnectors: {
-                    }
+                    },
+                    connections: [
+                    ]
                 }
             ],
             operators: {
@@ -507,7 +512,9 @@ if (!Wirecloud.ui) {
             arrow = this.arrows[i];
             WiringStatus.connections.push({
                 'source': arrow.startAnchor.serialize(),
-                'target': arrow.endAnchor.serialize(),
+                'target': arrow.endAnchor.serialize()
+            });
+            WiringStatus.views[0].connections.push({
                 'pullerStart': arrow.getPullerStart(),
                 'pullerEnd': arrow.getPullerEnd(),
                 'startMulti': arrow.startMulti,
