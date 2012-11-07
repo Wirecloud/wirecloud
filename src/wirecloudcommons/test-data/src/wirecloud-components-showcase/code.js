@@ -445,6 +445,30 @@ StyledGadget.prototype.init = function() {
     insertExample("Buttons", code);
 
     /*
+     * Table example
+     */
+    code = "\n\
+    var table;\n\
+\n\
+    table = new StyledElements.ModelTable([\n\
+        {field: 'id', label: '#', type: 'number'},\n\
+        {field: 'description', label: 'description'}\n\
+    ]);\n\
+    container.appendChild(table);\n\
+\n\
+    table.pagination.changeElements([\n\
+        {id: 1, description: 'First Entry'},\n\
+        {id: 2, description: 'Second Entry'},\n\
+        {id: 3, description: 'Third Entry'},\n\
+        {id: 4, description: 'Fourth Entry'},\n\
+        {id: 5, description: 'Fifth Entry'},\n\
+        {id: 6, description: 'Sixth Entry. This entry comes with a more detailed description'},\n\
+        {id: 7, description: 'Seventh Entry'}\n\
+    ])\n";
+
+    insertExample("Tables", code);
+
+    /*
      * Init
      */
 
