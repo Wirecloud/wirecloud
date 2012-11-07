@@ -6,6 +6,7 @@
 @import url('/static/css/styledelements/styled_select.css');
 @import url('/static/css/styledelements/styled_horizontal_layout.css');
 @import url('/static/css/styledelements/styled_table.css');
+@import url('/static/css/styledelements/styled_label_badge.css');
 
 html {
   width: 100%;

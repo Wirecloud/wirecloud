@@ -54,6 +54,7 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_select.css',
     'css/styledelements/styled_horizontal_layout.css',
     'css/styledelements/styled_table.css',
+    'css/styledelements/styled_label_badge.css',
 )
 
 
