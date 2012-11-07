@@ -18,15 +18,8 @@
  *     <http://www.gnu.org/licenses/>.
  *
  */
+
 /*globals EzWebExt, StyledElements*/
-/**
- *
- * Events supported by this component:
- *      - optionsChanged:
- *      - paginationChanged:
- *      - requestStart:
- *      - requestEnd:
- */
 
 (function () {
 
@@ -35,8 +28,11 @@
     var Pagination, onSuccessCallback, onErrorCallback;
 
     onSuccessCallback = function onSuccessCallback(elements, options) {
-        this.pOptions.processFunc(elements);
+        if (typeof this.pOptions.processFunc === 'function') {
+            this.pOptions.processFunc(elements);
+        }
         this.currentPage = parseInt(options.current_page, 10);
+        this.currentElements = elements;
 
         if (this.pCachedTotalCount !== options.total_count) {
             this.pCachedTotalCount = options.total_count;
@@ -47,6 +43,7 @@
     };
 
     onErrorCallback = function onErrorCallback(error) {
+        this.currentElements = [];
         if (error == null) {
             error = {
                 'message': 'unknown cause'
@@ -56,6 +53,14 @@
         this.events.requestEnd.dispatch(this, error);
     };
 
+    /**
+     *
+     * Events supported by this component:
+     *      - optionsChanged:
+     *      - paginationChanged:
+     *      - requestStart:
+     *      - requestEnd:
+     */
     Pagination = function Pagination(options) {
         var defaultOptions = {
             'pageSize': 25,
@@ -66,11 +71,15 @@
         StyledElements.ObjectWithEvents.call(this, ['optionsChanged', 'paginationChanged', 'requestStart', 'requestEnd']);
 
         this.pOptions = EzWebExt.merge(defaultOptions, options);
-        this.currentData = null;
         this.currentPage = 1;
+        this.currentElements = [];
         this.totalPages = 1;
     };
     Pagination.prototype = new StyledElements.ObjectWithEvents();
+
+    Pagination.prototype.getCurrentPage = function getCurrentPage() {
+        return this.currentElements;
+    };
 
     Pagination.prototype.changeOptions = function changeOptions(options) {
         var new_page_size, old_offset, key, changed = false;

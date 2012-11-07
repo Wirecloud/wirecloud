@@ -1948,6 +1948,8 @@ var StyledElements = {
     'StyledPasswordField': window.parent.StyledElements.StyledPasswordField,
     'StyledSelect': window.parent.StyledElements.StyledSelect,
     'StyledTextArea': window.parent.StyledElements.StyledTextArea,
+    'StaticPaginatedSource': window.parent.StyledElements.StaticPaginatedSource,
+    'ModelTable': window.parent.StyledElements.ModelTable,
     'HorizontalLayout': window.parent.StyledElements.HorizontalLayout,
     'BorderLayout': window.parent.StyledElements.BorderLayout,
     'Tab': window.parent.StyledElements.Tab,

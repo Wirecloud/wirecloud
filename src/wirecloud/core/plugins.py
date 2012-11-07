@@ -53,6 +53,7 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_password_field.css',
     'css/styledelements/styled_select.css',
     'css/styledelements/styled_horizontal_layout.css',
+    'css/styledelements/styled_table.css',
 )
 
 
@@ -68,6 +69,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/PolicyManager.js',
             'js/StyledElements/Fragment.js',
             'js/StyledElements/Pagination.js',
+            'js/StyledElements/StaticPaginatedSource.js',
             'js/StyledElements/TextField.js',
             'js/StyledElements/PasswordField.js',
             'js/StyledElements/Select.js',
@@ -75,6 +77,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/StyledElements/StyledNotebook.js',
             'js/StyledElements/HorizontalLayout.js',
             'js/StyledElements/BorderLayout.js',
+            'js/StyledElements/ModelTable.js',
             'js/gadgetModel/Gadget.js',
         )
 

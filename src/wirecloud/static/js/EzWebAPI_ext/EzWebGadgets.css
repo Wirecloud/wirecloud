@@ -5,6 +5,7 @@
 @import url('/static/css/styledelements/styled_password_field.css');
 @import url('/static/css/styledelements/styled_select.css');
 @import url('/static/css/styledelements/styled_horizontal_layout.css');
+@import url('/static/css/styledelements/styled_table.css');
 
 html {
   width: 100%;
