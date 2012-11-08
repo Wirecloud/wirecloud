@@ -75,7 +75,7 @@
      * onFinish for draggable
      */
     WidgetInterface.prototype.onFinish = function onFinish(draggable, data, e) {
-        var position, initialPosition, movement, iwidget_interface, endPointPos;
+        var position, initialPosition, movement, iwidget_interface, endPointPos, oc, scrollX, scrollY;
 
         position = {posX: 0, posY: 0};
         position = data.iObjectClon.getPosition();
@@ -84,6 +84,13 @@
             this.wiringEditor.layout.wrapperElement.removeChild(data.iObjectClon.wrapperElement);
             return;
         }
+
+        //scroll correction
+        oc = this.wiringEditor.layout.getCenterContainer();
+        scrollX = parseInt(oc.wrapperElement.scrollLeft, 10);
+        scrollY = parseInt(oc.wrapperElement.scrollTop, 10);
+        position.posX += scrollX;
+        position.posY += scrollY;
 
         endPointPos = {'sources': [], 'targets': []};
         iwidget_interface = this.wiringEditor.addIWidget(this.wiringEditor, this.iwidget, endPointPos);

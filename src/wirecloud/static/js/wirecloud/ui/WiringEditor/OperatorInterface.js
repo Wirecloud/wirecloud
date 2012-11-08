@@ -64,10 +64,17 @@
      * onFinish for draggable
      */
     OperatorInterface.prototype.onFinish = function onFinish(draggable, data, e) {
-        var operator_interface, position, initialPosition, movement, endPointPos;
+        var operator_interface, position, initialPosition, movement, endPointPos, oc, scrollX, scrollY;
         
         position = {posX: 0, posY: 0};
         position = data.iObjectClon.getPosition();
+
+        //scroll correction
+        oc = this.wiringEditor.layout.getCenterContainer();
+        scrollX = parseInt(oc.wrapperElement.scrollLeft, 10);
+        scrollY = parseInt(oc.wrapperElement.scrollTop, 10);
+        position.posX += scrollX;
+        position.posY += scrollY;
 
         if (!this.wiringEditor.withinGrid(e)) {
             this.wiringEditor.layout.wrapperElement.removeChild(data.iObjectClon.wrapperElement);
