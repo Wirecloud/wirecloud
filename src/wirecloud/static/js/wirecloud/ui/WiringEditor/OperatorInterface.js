@@ -84,7 +84,7 @@
         endPointPos = {'sources': [], 'targets': []};
         operator_interface = this.wiringEditor.addIOperator(this.ioperator, endPointPos);
 
-        position.posX -= 180;
+        position.posX -= document.getElementsByClassName('menubar')[0].getWidth();
         if (position.posX < 0) {
             position.posX = 8;
         }

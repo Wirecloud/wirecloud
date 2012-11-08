@@ -95,7 +95,7 @@
         endPointPos = {'sources': [], 'targets': []};
         iwidget_interface = this.wiringEditor.addIWidget(this.wiringEditor, this.iwidget, endPointPos);
 
-        position.posX -= 180;
+        position.posX -= document.getElementsByClassName('menubar')[0].getWidth();
 
         if (position.posX < 0) {
             position.posX = 8;
