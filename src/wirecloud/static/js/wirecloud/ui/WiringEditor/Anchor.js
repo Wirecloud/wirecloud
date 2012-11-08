@@ -128,9 +128,11 @@
 
         this._mouseup_callback = function _mouseup_callback(e) {
             if (this.enabled && BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
-                e.stopPropagation();
-                arrowCreator.enddrag(e, this);
-                this.events.enddrag.dispatch(this);
+                if (arrowCreator.initAnchor != null) {
+                    e.stopPropagation();
+                    arrowCreator.enddrag(e, this);
+                    this.events.enddrag.dispatch(this);
+                }
             }
         }.bind(this);
         this.wrapperElement.addEventListener('mouseup', this._mouseup_callback, false);
