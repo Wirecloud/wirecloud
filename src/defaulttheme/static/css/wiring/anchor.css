@@ -5,6 +5,10 @@
     width: 16px;
     height: 16px;
     margin: 2px;
+    border-radius: 6px;
+    -webkit-transition: box-shadow 500ms ease-in 150ms;
+    -moz-transition: box-shadow 500ms ease-in 150ms;
+    -o-transition: box-shadow 500ms ease-in 150ms;
 }
 
 .wiring_editor .grid .anchor {
@@ -41,4 +45,12 @@
 .wiring_editor .targets .anchor.disabled {
     opacity: 0.7;
     cursor: no-drop;
+}
+
+.wiring_editor .targets .anchor:hover {
+    box-shadow: 0 0 20px rgba(255, 103, 0, 1);
+}
+
+.wiring_editor .sources .anchor:hover {
+    box-shadow: 0 0 20px rgba(0, 0, 255, 1);
 }
