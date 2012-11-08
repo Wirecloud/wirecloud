@@ -219,9 +219,9 @@ def delete_resource(resource, user):
         # Remove the widget from the showcase
         result = deleteWidget(user, resource.short_name, resource.vendor, resource.version)
 
-        # Delete media resources if needed
-        if not resource.template_uri.startswith(('http', 'https')):
-            wgt_deployer.undeploy(resource.vendor, resource.short_name, resource.version)
+    # Delete media resources if needed
+    if not resource.template_uri.startswith(('http', 'https')):
+        wgt_deployer.undeploy(resource.vendor, resource.short_name, resource.version)
 
     # Delete the object
     resource.delete()
