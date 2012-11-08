@@ -445,6 +445,81 @@ StyledGadget.prototype.init = function() {
     insertExample("Buttons", code);
 
     /*
+     * Labels and Badges example
+     */
+    code = "\n\
+    var wrapper, label, badge;\n\
+\n\
+    wrapper = document.createElement('div');\n\
+    container.appendChild(wrapper);\n\
+\n\
+    label = document.createElement('span');\n\
+    label.className = 'label';\n\
+    label.textContent = 'Default';\n\
+    wrapper.appendChild(label);\n\
+\n\
+    label = document.createElement('span');\n\
+    label.className = 'label label-success';\n\
+    label.textContent = 'Success';\n\
+    wrapper.appendChild(label);\n\
+\n\
+    label = document.createElement('span');\n\
+    label.className = 'label label-warning';\n\
+    label.textContent = 'Warning';\n\
+    wrapper.appendChild(label);\n\
+\n\
+    label = document.createElement('span');\n\
+    label.className = 'label label-important';\n\
+    label.textContent = 'Important';\n\
+    wrapper.appendChild(label);\n\
+\n\
+    label = document.createElement('span');\n\
+    label.className = 'label label-info';\n\
+    label.textContent = 'Info';\n\
+    wrapper.appendChild(label);\n\
+\n\
+    label = document.createElement('span');\n\
+    label.className = 'label label-inverse';\n\
+    label.textContent = 'Inverse';\n\
+    wrapper.appendChild(label);\n\
+\n\
+    wrapper = document.createElement('div');\n\
+    container.appendChild(wrapper);\n\
+\n\
+    badge = document.createElement('span');\n\
+    badge.className = 'badge';\n\
+    badge.textContent = 'Default';\n\
+    wrapper.appendChild(badge);\n\
+\n\
+    badge = document.createElement('span');\n\
+    badge.className = 'badge badge-success';\n\
+    badge.textContent = 'Success';\n\
+    wrapper.appendChild(badge);\n\
+\n\
+    badge = document.createElement('span');\n\
+    badge.className = 'badge badge-warning';\n\
+    badge.textContent = 'Warning';\n\
+    wrapper.appendChild(badge);\n\
+\n\
+    badge = document.createElement('span');\n\
+    badge.className = 'badge badge-important';\n\
+    badge.textContent = 'Important';\n\
+    wrapper.appendChild(badge);\n\
+\n\
+    badge = document.createElement('span');\n\
+    badge.className = 'badge badge-info';\n\
+    badge.textContent = 'Info';\n\
+    wrapper.appendChild(badge);\n\
+\n\
+    badge = document.createElement('span');\n\
+    badge.className = 'badge badge-inverse';\n\
+    badge.textContent = 'Inverse';\n\
+    wrapper.appendChild(badge);\n\
+\n";
+
+    insertExample("Labels and Badges", code);
+
+    /*
      * Table example
      */
     code = "\n\
