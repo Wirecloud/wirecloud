@@ -46,9 +46,20 @@
         return currentNode;
     };
 
-    var sortElements = function sortElements(elements, column, inverse) {
-        var sortFunc, parseDate;
+    var sortElements = function sortElements(order) {
+        var sort_id, inverse, column, sortFunc, parseDate;
 
+        if (order == null) {
+            return this.elements;
+        }
+
+        sort_id = order[0];
+        inverse = false;
+        if (sort_id[0] === '-') {
+            inverse = true;
+            sort_id = sort_id.substr(1);
+        }
+        column = this.sort_info[sort_id];
         sortFunc = column.sortFunc;
 
         if (sortFunc == null) {
@@ -109,7 +120,7 @@
                 return -this(value1, value2);
             }, sortFunc);
         }
-        return elements.sort(sortFunc);
+        this.sortedElements = this.elements.sort(sortFunc);
     };
 
     var requestFunc = function requestFunc(index, options, onSuccess, onError) {
@@ -152,26 +163,17 @@
         var column, sort_id, inverse;
 
         if ('order' in newOptions) {
-            if (newOptions.order != null) {
-                sort_id = newOptions.order[0];
-                inverse = false;
-                if (sort_id[0] === '-') {
-                    inverse = true;
-                    sort_id = sort_id.substr(1);
-                }
-                column = this.sort_info[sort_id];
-                this.sortedElements = sortElements(this.elements, column, inverse);
-            } else {
-                this.sortedElements = this.elements;
-            }
+            sortElements.call(this, newOptions.order);
         }
         StyledElements.Pagination.prototype.changeOptions.call(this, newOptions);
     };
 
     StaticPaginatedSource.prototype.changeElements = function changeElements(newElements) {
+        var sort_id, column;
+
         this.elements = newElements;
-        var column = this.sort_info[this.pOptions.order];
-        this.sortedElements = sortElements(this.elements, column);
+        sortElements.call(this, this.pOptions.order);
+
         this.pCachedTotalCount = newElements.length;
         this._calculatePages();
         this.refresh();
@@ -179,6 +181,8 @@
 
     StaticPaginatedSource.prototype.addElement = function addElement(newElement) {
         this.elements.push(newElement);
+        sortElements.call(this, this.pOptions.order);
+
         this.pCachedTotalCount = this.elements.length;
         this._calculatePages();
         this.refresh();
