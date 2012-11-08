@@ -205,23 +205,10 @@ def delete_resource(resource, user):
 
         raise Http403(msg)
 
-    # Delete the related wiring information for that resource
-    WidgetWiring.objects.filter(idResource=resource.id).delete()
-
-    # Delete the related tags for that resource
-    UserTag.objects.filter(idResource=resource.id).delete()
-
-    # Delete the related votes for that resource
-    UserVote.objects.filter(idResource=resource.id).delete()
-
     result = {'removedIWidgets': []}
     if resource.resource_type() == 'widget':
         # Remove the widget from the showcase
         result = deleteWidget(user, resource.short_name, resource.vendor, resource.version)
-
-    # Delete media resources if needed
-    if not resource.template_uri.startswith(('http', 'https')):
-        wgt_deployer.undeploy(resource.vendor, resource.short_name, resource.version)
 
     # Delete the object
     resource.delete()

@@ -80,6 +80,25 @@ class CatalogueResource(TransModel):
 
     json_description = models.TextField(_('JSON description'))
 
+    def delete(self, *args, **kwargs):
+
+        from catalogue.utils import wgt_deployer
+
+        # Delete the related wiring information for that resource
+        WidgetWiring.objects.filter(idResource=self.id).delete()
+
+        # Delete the related tags for that resource
+        UserTag.objects.filter(idResource=self.id).delete()
+
+        # Delete the related votes for that resource
+        UserVote.objects.filter(idResource=self.id).delete()
+
+        # Delete media resources if needed
+        if not self.template_uri.startswith(('http', 'https')):
+            wgt_deployer.undeploy(self.vendor, self.short_name, self.version)
+
+        super(CatalogueResource, self).delete(*args, **kwargs)
+
     def resource_type(self):
         return self.RESOURCE_TYPES[self.type]
 
