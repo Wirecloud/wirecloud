@@ -314,3 +314,30 @@ class WGTDeploymentTestCase(TransactionTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(os.path.exists(widget_path), False)
+
+    def test_upload_of_packaged_operators(self):
+        User.objects.create_user('test', 'test@example.com', 'test')
+        operator_path = catalogue.utils.wgt_deployer.get_base_dir('Wirecloud', 'basic-operator', '0.1')
+        c = Client()
+
+        f = open(os.path.join(os.path.dirname(__file__), 'test-data/basic_operator.zip'))
+        c.login(username='test', password='test')
+        response = c.post(self.resource_collection_url, {'file': f}, HTTP_HOST='www.example.com')
+        f.close()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(os.path.isdir(operator_path), True)
+        operator = CatalogueResource.objects.get(vendor='Wirecloud', short_name='basic-operator', version='0.1')
+        self.assertEqual(operator.template_uri, 'Wirecloud_basic-operator_0.1.wgt')
+        self.assertEqual(operator.image_uri, 'images/catalogue.png')
+
+        resource_entry_url = reverse('wirecloud_catalogue.resource_entry', kwargs={
+            'vendor': 'Wirecloud',
+            'name': 'basic-operator',
+            'version': '0.1',
+        })
+        c.login(username='test', password='test')
+        response = c.delete(resource_entry_url, HTTP_HOST='www.example.com')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(os.path.exists(operator_path), False)
