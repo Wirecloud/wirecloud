@@ -234,7 +234,7 @@ def create_widget_from_wgt(wgt, user, deploy_only=False):
     else:
         wgt_file = WgtFile(StringIO(http_utils.download_http_content(wgt)))
 
-    template = wgt_deployer.deploy(wgt_file, user)
+    template = wgt_deployer.deploy(wgt_file)
     if not deploy_only:
         return create_widget_from_template(template, user)
 

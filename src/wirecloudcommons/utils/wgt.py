@@ -110,7 +110,7 @@ class WgtDeployer(object):
             version,
         )
 
-    def deploy(self, wgt_file, user):
+    def deploy(self, wgt_file):
 
         template_content = wgt_file.get_template()
         template_parser = TemplateParser(template_content)
