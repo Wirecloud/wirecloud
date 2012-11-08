@@ -10,11 +10,17 @@
 }
 
 .model_table > .headrow > .cell, .model_table > .tbody > .row > .cell {
-    padding: 8px;
+    padding: 4px 8px;
+    text-overflow: ellipsis;
 }
 
 .model_table > .headrow > .cell.sortable {
     cursor: pointer;
+}
+
+.model_table > .headrow > .cell.ascending, .model_table > .headrow > .cell.descending {
+    background-color: rgba(141, 192, 219, 0.25);
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
 }
 
 .model_table > .headrow > .cell.ascending:before {
@@ -59,4 +65,8 @@
 
 .table-striped > .tbody > .row:nth-child(odd) {
     background-color: #F9F9F9;
+}
+
+.tab.container > .model_table:first-child > .headrow {
+    padding-top: 3px;
 }

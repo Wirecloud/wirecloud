@@ -1,4 +1,4 @@
-/*global EzWebExt, PaginationInterface, StyledElements */
+/*global CSSPrimitiveValue, EzWebExt, PaginationInterface, StyledElements */
 
 (function () {
 
@@ -24,6 +24,16 @@
             this.header.appendChild(cell);
             this.pHeaderCells.push(cell);
         }
+    };
+
+    var applyWidth = function applyWidth(cell, width) {
+        var cellStyle, paddingLeft, paddingRight;
+
+        cellStyle = document.defaultView.getComputedStyle(cell, null);
+        paddingLeft = cellStyle.getPropertyCSSValue('padding-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
+        paddingRight = cellStyle.getPropertyCSSValue('padding-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
+
+        cell.style.width = (width - paddingLeft - paddingRight) + 'px';
     };
 
     var ModelTable = function ModelTable(columns, options) {
@@ -131,9 +141,10 @@
 
         for (i = 0; i < autocells.length; i += 1) {
             columnCells = this.columnsCells[autocells[i]];
-            this.pHeaderCells[autocells[i]].style.width = (autowidth - 16) + 'px';
+
+            applyWidth(this.pHeaderCells[autocells[i]], autowidth);
             for (j = 0; j < columnCells.length; j += 1) {
-                columnCells[j].style.width = (autowidth - 16) + 'px';
+                applyWidth(columnCells[j], autowidth);
             }
         }
     };
@@ -258,7 +269,7 @@
     };
 
     ModelTable.prototype.pPaintTable = function pPaintTable(items) {
-        var i, j, item, row, cell, cellWrapper, callback, today, cellContent,
+        var i, j, item, row, cell, callback, today, cellContent,
             column;
 
         this.pClearTable();
@@ -283,12 +294,8 @@
                 if (typeof column.width === 'string') {
                     cell.style.width = column.width;
                 }
-
-                cellWrapper = document.createElement('div');
-                cellWrapper.className = 'cellWrapper';
-                cell.appendChild(cellWrapper);
                 if (typeof column['class'] === 'string') {
-                    EzWebExt.addClassName(cellWrapper, column['class']);
+                    EzWebExt.addClassName(cell, column['class']);
                 }
 
                 if (column.contentBuilder) {
@@ -311,17 +318,17 @@
                 }
 
                 if (typeof cellContent === 'string') {
-                    EzWebExt.setTextContent(cellWrapper, cellContent);
+                    EzWebExt.setTextContent(cell, cellContent);
                 } else if (typeof cellContent === 'number' || typeof cellContent === 'boolean') {
-                    EzWebExt.setTextContent(cellWrapper, "" + cellContent);
+                    EzWebExt.setTextContent(cell, "" + cellContent);
                 } else if (cellContent instanceof StyledElements.StyledElement) {
-                    cellContent.insertInto(cellWrapper);
+                    cellContent.insertInto(cell);
                 } else {
-                    cellWrapper.appendChild(cellContent);
+                    cell.appendChild(cellContent);
                 }
 
-                EzWebExt.addEventListener(cellWrapper, 'click', callback, false);
-                this.pListeners.push({element: cellWrapper, callback: callback});
+                EzWebExt.addEventListener(cell, 'click', callback, false);
+                this.pListeners.push({element: cell, callback: callback});
 
                 row.appendChild(cell);
             }
