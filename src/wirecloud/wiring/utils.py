@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf import settings
-from django.contrib.sites.models import get_current_site
 from django.template import loader, Context
 
 from wirecloudcommons.utils.http import get_absolute_static_url

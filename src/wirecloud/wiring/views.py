@@ -36,7 +36,7 @@ class WiringEntry(Resource):
     def update(self, request, workspace_id):
 
         content_type = request.META.get('CONTENT_TYPE', '')
-        if content_type == None:
+        if content_type is None:
             content_type = ''
 
         if not content_type.startswith('application/json'):
