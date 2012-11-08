@@ -287,6 +287,9 @@
                 cellWrapper = document.createElement('div');
                 cellWrapper.className = 'cellWrapper';
                 cell.appendChild(cellWrapper);
+                if (typeof column['class'] === 'string') {
+                    EzWebExt.addClassName(cellWrapper, column['class']);
+                }
 
                 if (column.contentBuilder) {
                     cellContent = column.contentBuilder(item);
