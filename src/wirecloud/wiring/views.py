@@ -28,6 +28,7 @@ from commons.get_data import _invalidate_cached_variable_values
 from commons.resource import Resource
 from wirecloud.models import Workspace
 from wirecloud.wiring.utils import generate_xhtml_operator_code
+from wirecloudcommons.utils.http import get_absolute_reverse_url
 
 
 class WiringEntry(Resource):
@@ -78,6 +79,16 @@ class OperatorEntry(Resource):
         operator = get_object_or_404(CatalogueResource, type=2, vendor=vendor, short_name=name, version=version)
         options = json.loads(operator.json_description)
         js_files = options['js_files']
-        xhtml = generate_xhtml_operator_code(js_files, operator.template_uri, request)
+
+        base_url = operator.template_uri
+        if not base_url.startswith(('http://', 'https://')):
+            base_url = get_absolute_reverse_url('wirecloud_catalogue.media', kwargs={
+                'vendor': operator.vendor,
+                'name': operator.short_name,
+                'version': operator.version,
+                'file_path': operator.template_uri
+            }, request=request)
+
+        xhtml = generate_xhtml_operator_code(js_files, base_url, request)
 
         return HttpResponse(xhtml, mimetype='application/xhtml+xml; charset=UTF-8')

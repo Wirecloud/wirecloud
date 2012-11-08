@@ -21,6 +21,8 @@ from django.conf import settings
 from django.contrib.sites.models import get_current_site
 from django.template import loader, Context
 
+from wirecloudcommons.utils.http import get_absolute_static_url
+
 
 def remove_related_iwidget_connections(wiring, iwidget):
 
@@ -34,12 +36,12 @@ def remove_related_iwidget_connections(wiring, iwidget):
         wiring['connections'].remove(connection)
 
 
-def generate_xhtml_operator_code(js_files, xhtml_url, request):
+def generate_xhtml_operator_code(js_files, base_url, request):
 
-    api_url = "//" + get_current_site(request).domain + settings.STATIC_URL + 'js/WirecloudAPI/WirecloudOperatorAPI.js'
+    api_url = get_absolute_static_url('js/WirecloudAPI/WirecloudOperatorAPI.js', request=request)
 
     t = loader.get_template('wirecloud/operator_xhtml.html')
-    c = Context({'base_url': xhtml_url, 'js_files': [api_url] + js_files})
+    c = Context({'base_url': base_url, 'js_files': [api_url] + js_files})
 
     xhtml = t.render(c)
 
