@@ -488,32 +488,32 @@ StyledGadget.prototype.init = function() {
 \n\
     badge = document.createElement('span');\n\
     badge.className = 'badge';\n\
-    badge.textContent = 'Default';\n\
+    badge.textContent = '1';\n\
     wrapper.appendChild(badge);\n\
 \n\
     badge = document.createElement('span');\n\
     badge.className = 'badge badge-success';\n\
-    badge.textContent = 'Success';\n\
+    badge.textContent = '2';\n\
     wrapper.appendChild(badge);\n\
 \n\
     badge = document.createElement('span');\n\
     badge.className = 'badge badge-warning';\n\
-    badge.textContent = 'Warning';\n\
+    badge.textContent = '3';\n\
     wrapper.appendChild(badge);\n\
 \n\
     badge = document.createElement('span');\n\
     badge.className = 'badge badge-important';\n\
-    badge.textContent = 'Important';\n\
+    badge.textContent = '4';\n\
     wrapper.appendChild(badge);\n\
 \n\
     badge = document.createElement('span');\n\
     badge.className = 'badge badge-info';\n\
-    badge.textContent = 'Info';\n\
+    badge.textContent = '5';\n\
     wrapper.appendChild(badge);\n\
 \n\
     badge = document.createElement('span');\n\
     badge.className = 'badge badge-inverse';\n\
-    badge.textContent = 'Inverse';\n\
+    badge.textContent = '6';\n\
     wrapper.appendChild(badge);\n\
 \n";
 
@@ -526,19 +526,20 @@ StyledGadget.prototype.init = function() {
     var table;\n\
 \n\
     table = new StyledElements.ModelTable([\n\
-        {field: 'id', label: '#', type: 'number'},\n\
-        {field: 'description', label: 'description'}\n\
+        {field: 'id', label: '#', width: '3ex', type: 'number'},\n\
+        {field: 'description', label: 'description'},\n\
+        {field: 'odd', label: 'odd', width: '3ex', sortable: false}\n\
     ]);\n\
     container.appendChild(table);\n\
 \n\
     table.pagination.changeElements([\n\
-        {id: 1, description: 'First Entry'},\n\
-        {id: 2, description: 'Second Entry'},\n\
-        {id: 3, description: 'Third Entry'},\n\
-        {id: 4, description: 'Fourth Entry'},\n\
-        {id: 5, description: 'Fifth Entry'},\n\
-        {id: 6, description: 'Sixth Entry. This entry comes with a more detailed description'},\n\
-        {id: 7, description: 'Seventh Entry'}\n\
+        {id: 1, description: 'First Entry', odd: true},\n\
+        {id: 2, description: 'Second Entry', odd: false},\n\
+        {id: 3, description: 'Third Entry', odd: true},\n\
+        {id: 4, description: 'Fourth Entry', odd: false},\n\
+        {id: 5, description: 'Fifth Entry', odd: true},\n\
+        {id: 6, description: 'Sixth Entry. This entry comes with a more detailed description', odd: false},\n\
+        {id: 7, description: 'Seventh Entry', odd: true}\n\
     ])\n";
 
     insertExample("Tables", code);
