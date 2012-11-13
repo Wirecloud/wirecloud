@@ -106,6 +106,23 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'true')
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'password')
 
+        # Change widget settings again
+        self.driver.find_element_by_css_selector('.iwidget .settingsbutton').click()
+        self.popup_menu_click('Settings')
+
+        text_input = self.driver.find_element_by_css_selector('.window_menu [name="text"]')
+        self.fill_form_input(text_input, '')
+        password_input = self.driver.find_element_by_css_selector('.window_menu [name="password"]')
+        self.fill_form_input(password_input, '')
+
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+
+        with widget_operation(self.driver, 1):
+            self.assertEqual(self.driver.find_element_by_id('listPref').text, '1')
+            self.assertEqual(self.driver.find_element_by_id('textPref').text, '')
+            self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'true')
+            self.assertEqual(self.driver.find_element_by_id('passwordPref').text, '')
+
     def test_http_cache(self):
 
         self.login()
