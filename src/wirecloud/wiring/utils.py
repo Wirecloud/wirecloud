@@ -26,12 +26,19 @@ def remove_related_iwidget_connections(wiring, iwidget):
 
     connections_to_remove = []
 
-    for connection in wiring['connections']:
+    for index, connection in enumerate(wiring['connections']):
         if (connection['source']['type'] == 'iwidget' and connection['source']['id'] == iwidget.id) or (connection['target']['type'] == 'iwidget' and connection['target']['id'] == iwidget.id):
+            connection['index'] = index
             connections_to_remove.append(connection)
+
+    view_available = 'views' in wiring and len(wiring['views']) > 0
+    if view_available and ('iwidgets' in wiring['views'][0]) and (iwidget.id in wiring['views'][0]['iwidgets']):
+        del wiring['views'][0]['iwidgets'][iwidget.id]
 
     for connection in connections_to_remove:
         wiring['connections'].remove(connection)
+        if view_available:
+            del wiring['views'][0]['connections'][connection['index']]
 
 
 def generate_xhtml_operator_code(js_files, base_url, request):
