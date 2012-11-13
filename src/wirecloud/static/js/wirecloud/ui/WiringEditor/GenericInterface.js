@@ -238,14 +238,13 @@
     GenericInterface.prototype.makeSlotDraggable = function makeSlotDraggable(element, place, className) {
         element.draggable = new Draggable(element.wrapperElement, {iObject: element, genInterface: this},
             function onStart(draggable, context) {
-                    var clon, pos_miniwidget, menuWidth, headerHeight, childsN, childPos;
+                    var clon, pos_miniwidget, gridbounds, childsN, childPos;
 
                     //initial position
                     pos_miniwidget = context.iObject.wrapperElement.getBoundingClientRect();
-                    menuWidth = document.getElementsByClassName('menubar')[0].getBoundingClientRect().width;
-                    headerHeight = document.getElementById('wirecloud_header').parentNode.getBoundingClientRect().height;
-                    context.y = pos_miniwidget.top - headerHeight;
-                    context.x = pos_miniwidget.left - menuWidth;
+                    gridbounds = context.iObject.wiringEditor.getGridElement().getBoundingClientRect();
+                    context.y = pos_miniwidget.top - gridbounds.top;
+                    context.x = pos_miniwidget.left - gridbounds.left;
                     //create clon
                     context.iObject.wrapperElement.addClassName('moving');
                     clon = context.iObject.wrapperElement.cloneNode(true);

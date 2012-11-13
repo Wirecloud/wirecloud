@@ -433,6 +433,13 @@ if (!Wirecloud.ui) {
      *************************************************************************/
 
     /**
+     * returns the dom element asociated with the grid
+     */
+    WiringEditor.prototype.getGridElement = function getGridElement() {
+        return this.layout.getCenterContainer().wrapperElement;
+    };
+
+    /**
      * activate handlers for ctrl Multiselection
      */
     WiringEditor.prototype.activateCtrlMultiSelect = function activateCtrlMultiSelect() {

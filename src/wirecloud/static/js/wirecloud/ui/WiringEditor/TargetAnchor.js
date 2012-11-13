@@ -46,7 +46,7 @@
     TargetAnchor.prototype.repaint = function repaint(temporal) {
         var i, coordinates;
 
-        coordinates = this.getCoordinates(document.getElementsByClassName('grid')[0]);
+        coordinates = this.getCoordinates(this.context.iObject.wiringEditor.getGridElement());
         /* Multiple Connector */
         for (i = 0; i < this.arrows.length; i += 1) {
             if (this.arrows[i].endMulti == null) {
