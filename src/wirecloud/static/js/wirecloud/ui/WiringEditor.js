@@ -933,8 +933,14 @@ if (!Wirecloud.ui) {
      * Disables all anchor that cannot be connected to the given anchor.
      */
     WiringEditor.prototype.disableAnchors = function disableAnchors(anchor) {
-        var i, anchorList = [];
-        if (anchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
+        var i, anchorList, anchor_aux;
+        anchorList = [];
+        if (anchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
+            anchor_aux = anchor.initAnchor;
+        } else {
+            anchor_aux = anchor;
+        }
+        if (anchor_aux instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
             anchorList = this.targetAnchorList;
             this.targetsOn = false;
         } else {
@@ -981,11 +987,15 @@ if (!Wirecloud.ui) {
         }
         this.layout.getCenterContainer().appendChild(multiconnector);
         this.multiconnectors[id] = multiconnector;
+
+        this._startdrag_map_func(multiconnector);
+
+        if (multiconnector.initAnchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
+            this.targetAnchorList = this.targetAnchorList.concat(multiconnector);
+        } else {
+            this.sourceAnchorList = this.sourceAnchorList.concat(multiconnector);
+        }
         return this.multiconnectors[id];
-        /* TODO: anchor enable-disable for multiconnector
-        this.targetAnchorList = this.targetAnchorList.concat(widget_interface.targetAnchors);
-        this.sourceAnchorList = this.sourceAnchorList.concat(widget_interface.sourceAnchors);
-*/
     };
 
     /**
