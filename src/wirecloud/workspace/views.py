@@ -590,7 +590,7 @@ class MashupMergeService(Service):
         template_url = data['workspace']
 
         to_ws = get_object_or_404(Workspace, id=to_ws_id)
-        if not request.user.is_staff and to_ws.creator != request.user:
+        if not request.user.is_superuser and to_ws.creator != request.user:
             return HttpResponseForbidden()
 
         path = request.build_absolute_uri()
@@ -716,7 +716,7 @@ class WorkspaceExportService(Service):
 
         workspace = get_object_or_404(Workspace, id=workspace_id)
 
-        if not request.user.is_staff and workspace.creator != request.user:
+        if not request.user.is_superuser and workspace.creator != request.user:
             return HttpResponseForbidden()
 
         received_json = request.POST['options']

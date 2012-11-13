@@ -49,7 +49,7 @@ class WiringEntry(Resource):
             return HttpResponseBadRequest(_("Request body is not valid JSON data"), mimetype='text/plain; charset=UTF-8')
 
         workspace = get_object_or_404(Workspace, id=workspace_id)
-        if not request.user.is_staff and workspace.creator != request.user:
+        if not request.user.is_superuser and workspace.creator != request.user:
             return HttpResponseForbidden()
 
         workspace.wiringStatus = wiringStatus
