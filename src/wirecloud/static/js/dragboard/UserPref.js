@@ -62,12 +62,12 @@ UserPref.prototype.getInterfaceDescription = function getInterfaceDescription (i
     desc = EzWebExt.merge(this.options, {
         'type': this.type,
         'disabled': variable.readOnly,
-        'initialValue': variable.get(),
-        'required': true,
+        'initialValue': variable.get()
     });
 
     if (this.type === 'select') {
         desc.initialEntries = this.options.value_options;
+        desc.required = true;
     }
 
     return desc;
