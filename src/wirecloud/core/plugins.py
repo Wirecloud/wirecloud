@@ -76,6 +76,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/StyledElements/Select.js',
             'js/StyledElements/ToggleButton.js',
             'js/StyledElements/StyledNotebook.js',
+            'js/StyledElements/Alternatives.js',
             'js/StyledElements/HorizontalLayout.js',
             'js/StyledElements/BorderLayout.js',
             'js/StyledElements/ModelTable.js',
