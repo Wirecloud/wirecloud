@@ -124,13 +124,19 @@
             widgetEntry.connectables[i].destroy();
         }
 
+        if (this.status.views != null && this.status.views[0].iwidgets[iwidget.getId()]) {
+            delete this.status.views[0].iwidgets[iwidget.getId()];
+        }
+
         for (i = this.status.connections.length - 1; i >= 0 ; i -= 1) {
             connection = this.status.connections[i];
 
             if (connection.source.type === 'iwidget' && connection.source.id === iwidget.getId()) {
                 this.status.connections.splice(i, 1);
+                this.status.views[0].connections.splice(i, 1);
             } else if (connection.target.type === 'iwidget' && connection.target.id === iwidget.getId()) {
                 this.status.connections.splice(i, 1);
+                this.status.views[0].connections.splice(i, 1);
             }
         }
 
