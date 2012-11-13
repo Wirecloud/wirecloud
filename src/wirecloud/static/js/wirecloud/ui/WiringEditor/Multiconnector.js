@@ -52,6 +52,7 @@
         this.arrowPositions = [];
         this.type = null;
         this.initPos = {'x': 0, 'y': 0};
+        this.sticky = null;
 
         if (height == null) {
             //default 50 px height for multiconnector
@@ -317,26 +318,56 @@
     };
 
     /**
+     * stick arrow
+     */
+    Multiconnector.prototype.stick = function stick() {
+        return this.getCoordinates(null, true);
+    }
+
+    /**
+     * unstick arrow
+     */
+    Multiconnector.prototype.unstick = function unstick() {
+        if(this.sticky != null) {
+            this.arrowPositions[this.sticky].free = true;
+            this.sticky = null;
+            this.resize(-15);
+        } else {
+            //changing endpoints positions or bug
+        }
+    }
+
+    /**
      * get the coordinates to put an arrow in the multiconnector
      */
-    Multiconnector.prototype.getCoordinates = function getCoordinates() {
+    Multiconnector.prototype.getCoordinates = function getCoordinates(layer, sticky) {
         var coordinates, i;
+
         for (i = 0; i < this.arrowPositions.length; i += 1) {
+            if (this.sticky != null) {
+                i = this.sticky;
+                this.sticky = null;
+                return this.arrowPositions[i].coord;
+            }
             if (this.arrowPositions[i].free) {
                 this.arrowPositions[i].free = false;
+                if (sticky){
+                    this.sticky = i;
+                    return this.arrowPositions[i].coord;
+                }
                 return this.arrowPositions[i].coord;
             }
         }
         //no free anchors
         this.resize(15);
-        return this.getCoordinates();
+        return this.getCoordinates(layer, sticky);
     };
 
     /**
      * resize the multiconnector
      */
     Multiconnector.prototype.resize = function resize(dif) {
-        if (this.wrapperElement == null) {
+        if (this.wrapperElement == null || (this.height + dif) < 30) {
             return;
         }
         this.height += dif;
@@ -400,8 +431,8 @@
     /**
      * Repaint
      */
-    Multiconnector.prototype.repaint = function repaint() {
-        var key, i;
+    Multiconnector.prototype.repaint = function repaint(special) {
+        var key, i, entity;
 
         if (this.initAnchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
             this.mainArrow.setStart(this.mainAnchor.getCoordinates(this.layer));
@@ -414,6 +445,21 @@
         //connections
         this.calculatePosibleAnchors();
         this.reorganizeArrows();
+        //'special' indicate if this repaint is invoked from another multiconnector
+        if (!special) {
+            //making repaints if this multiconnector is connected with others multiconnectors
+            for (i = 0; i < this.arrows.length; i += 1) {
+                if (this.initAnchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
+                    entity = this.arrows[i].startMulti;
+                } else if (this.initAnchor instanceof Wirecloud.ui.WiringEditor.SourceAnchor) {
+                    entity = this.arrows[i].endMulti;
+                }
+                if (entity != null) {
+                    //special = true;
+                    this.wiringEditor.multiconnectors[entity].repaint(true);
+                }
+            }
+        }
     };
 
     /**

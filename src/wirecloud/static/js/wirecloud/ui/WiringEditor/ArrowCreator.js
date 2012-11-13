@@ -40,7 +40,7 @@
         var drag, currentSource, currentTarget;
         var layer = canvas.getHTMLElement().parentNode; // TODO Trampa
         canBeDragged = canBeDragged ? canBeDragged : Draggable._canBeDragged;
-
+        this.layer = layer;
         /*************************************************************************
          * Public methods
          *************************************************************************/
@@ -74,6 +74,7 @@
             tmpPos = initAnchor.getCoordinates(layer);
             // arrow pointer
             theArrow = canvas.drawArrow(tmpPos, tmpPos, "arrow");
+            this.theArrow = theArrow;
             theArrow.emphasize();
             // we can draw invert arrows from the end to the start
             if (initAnchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {

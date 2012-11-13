@@ -51,3 +51,7 @@
 .wiring_editor .grid .multiconnector.disabled {
     opacity: 1;
 }
+
+.wiring_editor .grid .multiconnector.pointed .dragZone{
+    pointer-events: none;
+}

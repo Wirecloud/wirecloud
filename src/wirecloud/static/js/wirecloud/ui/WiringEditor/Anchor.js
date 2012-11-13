@@ -132,10 +132,49 @@
                     e.stopPropagation();
                     arrowCreator.enddrag(e, this);
                     this.events.enddrag.dispatch(this);
+                    this.removeClassName('pointed');
                 }
             }
         }.bind(this);
         this.wrapperElement.addEventListener('mouseup', this._mouseup_callback, false);
+
+        //sticky arrows
+        this._mouseover_callback = function _mouseover_callback(e) {
+            if (this.enabled && BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
+                var pos;
+                if (arrowCreator.initAnchor != null) {
+                    this.addClassName('pointed');
+                    document.removeEventListener("mousemove", arrowCreator.drag, false);
+                    e.stopPropagation();
+                    if (this instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
+                        pos = this.stick();
+                    } else {
+                        pos = this.getCoordinates(arrowCreator.layer);
+                    }
+                    if (!arrowCreator.invert) {
+                        arrowCreator.theArrow.setEnd(pos);
+                    } else {
+                        arrowCreator.theArrow.setStart(pos);
+                    }
+                    arrowCreator.theArrow.redraw();
+                }
+            }
+        }.bind(this);
+        this._mouseout_callback = function _mouseout_callback(e) {
+            if (this.enabled && BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
+                var pos;
+                if (arrowCreator.initAnchor != null) {
+                    e.stopPropagation();
+                    this.removeClassName('pointed');
+                    document.addEventListener("mousemove", arrowCreator.drag, false);
+                    if (this instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
+                        this.unstick();
+                    }
+                }
+            }
+        }.bind(this);
+        this.wrapperElement.addEventListener('mouseover', this._mouseover_callback, false);
+        this.wrapperElement.addEventListener('mouseout', this._mouseout_callback, false);
     };
     Anchor.prototype = new StyledElements.StyledElement();
 
