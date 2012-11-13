@@ -82,7 +82,9 @@ Wirecloud.Widget.PreferencesWindowMenu.prototype.show = function (iwidget, paren
         }
     }
     this._current_iwidget = iwidget;
-    this._current_form = new Form(fields);
+    this._current_form = new Form(fields, {
+            buttonArea: this.windowBottom
+    });
     this._current_form.insertInto(this.windowContent);
     this._current_form.addEventListener('submit', this._savePrefs.bind(this));
     this._current_form.addEventListener('cancel', this.hide.bind(this));
