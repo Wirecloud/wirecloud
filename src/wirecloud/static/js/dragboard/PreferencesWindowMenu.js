@@ -19,75 +19,86 @@
  *
  */
 
+/*global Form, gettext, WindowMenu, Wirecloud*/
+
 Wirecloud.Widget = {};
 
-Wirecloud.Widget.PreferencesWindowMenu = function PreferencesWindowMenu (css_class) {
+(function () {
 
-    WindowMenu.call(this, gettext('Widget Settings'), css_class);
-};
-Wirecloud.Widget.PreferencesWindowMenu.prototype = new WindowMenu();
+    "use strict";
 
-Wirecloud.Widget.PreferencesWindowMenu.prototype._savePrefs = function (form, new_values) {
-    var oldValue, newValue, varName, varManager = this._current_iwidget.layout.dragboard.workspace.varManager;
+    var PreferencesWindowMenu = function PreferencesWindowMenu(css_class) {
 
-    // Start propagation of the new values of the user pref variables
-    varManager.incNestingLevel();
+        WindowMenu.call(this, gettext('Widget Settings'), css_class);
+    };
+    PreferencesWindowMenu.prototype = new WindowMenu();
 
-    /*
-     * The new value is commited with 2 phases (first setting the value and then
-     * propagating changes). This avoids the case where iwidgets read old values.
-     */
+    PreferencesWindowMenu.prototype._savePrefs = function _savePrefs(form, new_values) {
+        var oldValue, newValue, varName, varManager, variable;
+        
+        varManager = this._current_iwidget.layout.dragboard.workspace.varManager;
 
-    // Phase 1
-    // Annotate new value of the variable without invoking callback function!
-    for (varName in new_values) {
-        variable = varManager.getVariableByName(this._current_iwidget.getId(), varName);
+        // Start propagation of the new values of the user pref variables
+        varManager.incNestingLevel();
 
-        oldValue = variable.get();
-        newValue = new_values[varName];
+        /*
+         * The new value is commited with 2 phases (first setting the value and then
+         * propagating changes). This avoids the case where iwidgets read old values.
+         */
 
-        if (newValue !== oldValue) {
-            variable.annotate(newValue);
+        // Phase 1
+        // Annotate new value of the variable without invoking callback function!
+        for (varName in new_values) {
+            variable = varManager.getVariableByName(this._current_iwidget.getId(), varName);
+
+            oldValue = variable.get();
+            newValue = new_values[varName];
+
+            if (newValue !== oldValue) {
+                variable.annotate(newValue);
+            }
         }
-    }
 
-    // Phase 2
-    // Commit new value of the variable
-    for (varName in new_values) {
-        variable = varManager.getVariableByName(this._current_iwidget.getId(), varName);
-        variable.set(new_values[varName]);
-    }
-
-    // Commit
-    varManager.decNestingLevel();
-    varManager.sendBufferedVars();
-    this.hide();
-
-    if (typeof this._current_iwidget.prefCallback === 'function') {
-        this._current_iwidget.prefCallback(new_values);
-    }
-};
-
-Wirecloud.Widget.PreferencesWindowMenu.prototype.show = function (iwidget, parentWindow) {
-    var i, prefs, fields;
-
-    fields = {};
-    prefs = iwidget.getWidget().getTemplate().getUserPrefs();
-
-    for (i = 0; i < prefs.length; i++) {
-        pref = prefs[i];
-
-        if (!pref.isHidden(iwidget)) {
-            fields[pref.varName] = pref.getInterfaceDescription(iwidget);
+        // Phase 2
+        // Commit new value of the variable
+        for (varName in new_values) {
+            variable = varManager.getVariableByName(this._current_iwidget.getId(), varName);
+            variable.set(new_values[varName]);
         }
-    }
-    this._current_iwidget = iwidget;
-    this._current_form = new Form(fields, {
+
+        // Commit
+        varManager.decNestingLevel();
+        varManager.sendBufferedVars();
+        this.hide();
+
+        if (typeof this._current_iwidget.prefCallback === 'function') {
+            this._current_iwidget.prefCallback(new_values);
+        }
+    };
+
+    PreferencesWindowMenu.prototype.show = function show(iwidget, parentWindow) {
+        var i, prefs, pref, fields;
+
+        fields = {};
+        prefs = iwidget.getWidget().getTemplate().getUserPrefs();
+
+        for (i = 0; i < prefs.length; i++) {
+            pref = prefs[i];
+
+            if (!pref.isHidden(iwidget)) {
+                fields[pref.varName] = pref.getInterfaceDescription(iwidget);
+            }
+        }
+        this._current_iwidget = iwidget;
+        this._current_form = new Form(fields, {
             buttonArea: this.windowBottom
-    });
-    this._current_form.insertInto(this.windowContent);
-    this._current_form.addEventListener('submit', this._savePrefs.bind(this));
-    this._current_form.addEventListener('cancel', this.hide.bind(this));
+        });
+        this._current_form.insertInto(this.windowContent);
+        this._current_form.addEventListener('submit', this._savePrefs.bind(this));
+        this._current_form.addEventListener('cancel', this.hide.bind(this));
 
-    WindowMenu.prototype.show.call(this, parentWindow);
-};
+        WindowMenu.prototype.show.call(this, parentWindow);
+    };
+
+    Wirecloud.Widget.PreferencesWindowMenu = PreferencesWindowMenu;
+})();
