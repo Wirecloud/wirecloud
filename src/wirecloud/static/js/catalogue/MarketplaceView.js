@@ -81,7 +81,7 @@
 
         LayoutManagerFactory.getInstance().header.refresh();
         if (typeof options.onFailure === 'function') {
-            options.onSuccess();
+            options.onFailure();
         }
         if (typeof options.onFailure === 'function') {
             options.onComplete();
