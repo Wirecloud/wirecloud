@@ -181,23 +181,11 @@ if (!Wirecloud.ui) {
         var iwidgets, iwidget, key, i, widget_interface, miniwidget_interface, ioperators, operator,
             operator_interface, operator_instance, operatorKeys, connection, connectionView, startAnchor,
             endAnchor, arrow, isMenubarRef, miniwidget_clon, pos, op_id, multiconnectors, multi, multiInstance,
-            multi_id, anchor;
+            multi_id, anchor, endpoint_order;
 
         if (WiringStatus == null) {
             WiringStatus = {
-                views: [
-                    {
-                        label: 'default',
-                        iwidgets: {
-                        },
-                        operators: {
-                        },
-                        multiconnectors: {
-                        },
-                        connections: [
-                        ]
-                    }
-                ],
+                views: null, // Filled in the next step
                 operators: {
                 },
                 connections: [
@@ -210,7 +198,9 @@ if (!Wirecloud.ui) {
                 {
                     label: 'default',
                     iwidgets: {},
-                    operators: {}
+                    operators: {},
+                    multiconnectors: {},
+                    connections: []
                 }
             ];
         }
@@ -276,7 +266,13 @@ if (!Wirecloud.ui) {
                 this.NextOperatorId = op_id;
             }
 
-            operator_interface = this.addIOperator(operator_instance, WiringStatus.views[0].operators[key].endPointsInOuts);
+            if (key in WiringStatus.views[0].operators && 'endPointsInOuts' in WiringStatus.views[0].operators[key]) {
+                endpoint_order = WiringStatus.views[0].operators[key].endPointsInOuts;
+            } else {
+                endpoint_order = {'sources': [], 'targets': []};
+            }
+            operator_interface = this.addIOperator(operator_instance, endpoint_order);
+
             if (key in WiringStatus.views[0].operators) {
                 operator_interface.setPosition(WiringStatus.views[0].operators[key].widget);
             }
@@ -305,9 +301,17 @@ if (!Wirecloud.ui) {
         }
 
         // connections
+        if (!('connections' in WiringStatus.views[0])) {
+            WiringStatus.views[0].connections = {};
+        }
+
         for (i = 0; i < WiringStatus.connections.length; i += 1) {
             connection = WiringStatus.connections[i];
-            connectionView = WiringStatus.views[0].connections[i];
+            if (i in WiringStatus.views[0].connections) {
+                connectionView = WiringStatus.views[0].connections[i];
+            } else {
+                connectionView = {};
+            }
             startAnchor = findAnchor.call(this, connection.source, workspace);
             endAnchor = findAnchor.call(this, connection.target, workspace);
 
