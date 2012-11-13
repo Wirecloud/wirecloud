@@ -156,6 +156,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
         ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(40, 40).release(None).perform()
+        time.sleep(0.2)
 
         source = self.get_iwidget_anchor(1, 'event')
         target = self.get_iwidget_anchor(2, 'slot')
