@@ -60,6 +60,10 @@
             old_views[info].destroy();
         }
 
+        if (this.alternatives.getCurrentAlternative() === this.emptyAlternative) {
+            this.alternatives.showAlternative(this.viewsByName.local);
+        }
+
         // Refresh wirecloud header as current marketplace may have been changed
         LayoutManagerFactory.getInstance().header.refresh();
 
@@ -91,6 +95,7 @@
 
         this.viewsByName = {};
         this.alternatives = new StyledElements.StyledAlternatives();
+        this.emptyAlternative = this.alternatives.createAlternative();
         this.alternatives.addEventListener('postTransition', function () {
             LayoutManagerFactory.getInstance().header.refresh();
         });
@@ -100,7 +105,9 @@
         this.marketMenu.append(new Wirecloud.ui.MarketplaceViewMenuItems(this));
 
         this.addEventListener('show', function (view) {
-            view.alternatives.getCurrentAlternative().refresh_if_needed();
+            if (!this.loading && !this.error) {
+                view.alternatives.getCurrentAlternative().refresh_if_needed();
+            }
         });
 
         this.number_of_alternatives = 0;
