@@ -272,7 +272,8 @@
         if (field.type === 'label') {
             labelRow = row.insertCell(-1);
             Element.extend(labelRow);
-            labelRow.addClassName('label');
+            labelRow.setAttribute('colspan', '2');
+            labelRow.addClassName('label-row');
             if (field.url) {
                 label = document.createElement('a');
                 label.setAttribute("href", field.url);
@@ -287,7 +288,7 @@
 
         // Label Cell
         labelCell = row.insertCell(-1);
-        EzWebExt.addClassName(labelCell, 'label');
+        EzWebExt.addClassName(labelCell, 'label-cell');
 
         label = document.createElement('label');
         EzWebExt.setTextContent(label, field.label);

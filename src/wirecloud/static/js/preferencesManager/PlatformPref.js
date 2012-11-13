@@ -194,7 +194,7 @@ function PreferencesDef(definitions) {
 		if (!preference.isInheritable()) {
 			var row = tbody.insertRow(-1);
 			var columnLabel = row.insertCell(-1);
-			columnLabel.className = "label";
+			columnLabel.className = "label-cell";
 			var columnValue = row.insertCell(-1);
 			columnLabel.appendChild(preference.getLabelInterface());
 			preference.getInterface().insertInto(columnValue);
@@ -214,7 +214,7 @@ function PreferencesDef(definitions) {
 
 			var labelRow = complexTBody.insertRow(-1);
 			var columnLabel = labelRow.insertCell(-1);
-			columnLabel.className = "label";
+			columnLabel.className = "label-cell";
 			columnLabel.colSpan = "2";
 
 			var prefRow = complexTBody.insertRow(-1);
