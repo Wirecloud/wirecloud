@@ -50,7 +50,8 @@
         var sort_id, inverse, column, sortFunc, parseDate;
 
         if (order == null) {
-            return this.elements;
+            this.sortedElements = this.elements;
+            return;
         }
 
         sort_id = order[0];
@@ -155,6 +156,7 @@
             this.changeElements(options.initialElements);
         } else {
             this.elements = [];
+            this.sortedElements = [];
         }
     };
     StaticPaginatedSource.prototype = new StyledElements.Pagination();
