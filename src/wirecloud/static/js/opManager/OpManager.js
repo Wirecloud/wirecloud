@@ -167,7 +167,7 @@ var OpManagerFactory = function () {
             LayoutManagerFactory.getInstance().logSubTask(gettext("Merging with current workspace"));
 
             var active_ws_id = OpManagerFactory.getInstance().getActiveWorkspaceId();
-            var mergeURL = Wirecloud.URLs.WORKSPACE_MERGE.evaluate({to_ws: active_ws_id});
+            var mergeURL = Wirecloud.URLs.WORKSPACE_MERGE.evaluate({to_ws_id: active_ws_id});
 
             Wirecloud.io.makeRequest(mergeURL, {
                 method: 'POST',
