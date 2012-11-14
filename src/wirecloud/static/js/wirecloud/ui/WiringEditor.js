@@ -302,7 +302,7 @@ if (!Wirecloud.ui) {
 
         // connections
         if (!('connections' in WiringStatus.views[0])) {
-            WiringStatus.views[0].connections = {};
+            WiringStatus.views[0].connections = [];
         }
 
         for (i = 0; i < WiringStatus.connections.length; i += 1) {
