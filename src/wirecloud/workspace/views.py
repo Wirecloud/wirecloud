@@ -667,11 +667,10 @@ def check_json_fields(json, fields):
 class WorkspacePublisherEntry(Resource):
 
     @commit_on_http_success
+    @supported_request_mime_types(('application/json',))
     def create(self, request, workspace_id):
-        if 'data' not in request.REQUEST:
-            return HttpResponseBadRequest(get_xml_error(_("mashup data expected")), mimetype='application/xml; charset=UTF-8')
 
-        received_json = request.REQUEST['data']
+        received_json = request.raw_post_data
         try:
             mashup = simplejson.loads(received_json)
             missing_fields = check_json_fields(mashup, ['name', 'vendor', 'version', 'email'])

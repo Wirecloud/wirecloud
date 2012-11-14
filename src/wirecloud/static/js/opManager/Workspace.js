@@ -674,11 +674,10 @@ function Workspace (workspaceState) {
         layoutManager._startComplexTask(gettext('Publishing current workspace'), 1);
 
         var workspaceUrl = Wirecloud.URLs.WORKSPACE_PUBLISH.evaluate({workspace_id: this.workspaceState.id});
-        publicationData = Object.toJSON(data);
-        params = new Hash({data: publicationData});
         Wirecloud.io.makeRequest(workspaceUrl, {
             method: 'POST',
-            parameters: params,
+            contentType: 'application/json',
+            postBody: Object.toJSON(data),
             context: {workspace: this, params: data},
             onSuccess: publishSuccess,
             onFailure: publishError
