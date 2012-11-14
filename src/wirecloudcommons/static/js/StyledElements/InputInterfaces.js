@@ -100,7 +100,8 @@ var InputInterface = function InputInterface(fieldId, options) {
     this._initialValue = options.initialValue;
     this._defaultValue = options.defaultValue;
     this._label = options.label;
-    this._required = options.required ? options.required : false;
+    Object.defineProperty(this, 'blank', {value: 'blank' in options ? !!options.blank : false});
+    Object.defineProperty(this, 'required', {value: 'required' in options ? !!options.required : false});
     this._readOnly = !!options.readOnly;
     this._hidden = !!options.hidden;
 

@@ -330,7 +330,7 @@
         return [];
     };
 
-    Form.prototype.getData = function () {
+    Form.prototype.getData = function getData() {
         var value, data, fieldId, field;
 
         data = {};
@@ -339,7 +339,7 @@
                 field = this.fieldInterfaces[fieldId];
                 value = field.getValue();
 
-                if (this.edition || field.required || value !== "") {
+                if (this.edition || field.required || field.blank || !field.isEmpty(value)) {
                     data[fieldId] = value;
                 }
             }
