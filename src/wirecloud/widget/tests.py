@@ -61,7 +61,6 @@ class CodeTransformationTestCase(TestCase):
 class ShowcaseTestCase(LocalizedTestCase):
 
     fixtures = ('catalogue_test_data', 'test_data')
-    tags = ('current',)
 
     def setUp(self):
         super(ShowcaseTestCase, self).setUp()
