@@ -35,9 +35,10 @@ def remove_related_iwidget_connections(wiring, iwidget):
     if view_available and ('iwidgets' in wiring['views'][0]) and (iwidget.id in wiring['views'][0]['iwidgets']):
         del wiring['views'][0]['iwidgets'][iwidget.id]
 
+    connection_view_available = view_available and 'connections' in wiring['views'][0]
     for connection in connections_to_remove:
         wiring['connections'].remove(connection)
-        if view_available:
+        if connection_view_available and len(wiring['views'][0]['connections']) > connection['index']:
             del wiring['views'][0]['connections'][connection['index']]
 
 
