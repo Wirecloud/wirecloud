@@ -236,13 +236,13 @@
      * Make draggable a specific sources or targets for sorting
      */
     GenericInterface.prototype.makeSlotDraggable = function makeSlotDraggable(element, place, className) {
-        element.draggable = new Draggable(element.wrapperElement, {iObject: element, genInterface: this},
+        element.draggable = new Draggable(element.wrapperElement, {iObject: element, genInterface: this, wiringEditor: this.wiringEditor},
             function onStart(draggable, context) {
                     var clon, pos_miniwidget, gridbounds, childsN, childPos;
 
                     //initial position
                     pos_miniwidget = context.iObject.wrapperElement.getBoundingClientRect();
-                    gridbounds = context.iObject.wiringEditor.getGridElement().getBoundingClientRect();
+                    gridbounds = context.wiringEditor.getGridElement().getBoundingClientRect();
                     context.y = pos_miniwidget.top - gridbounds.top;
                     context.x = pos_miniwidget.left - gridbounds.left;
                     //create clon
