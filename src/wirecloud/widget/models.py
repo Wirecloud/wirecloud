@@ -101,6 +101,14 @@ class Widget(TransModel):
         ordering = ('uri', )
         app_label = 'wirecloud'
 
+    def delete(self, *args, **kwargs):
+        if self.xhtml is not None:
+            self.xhtml.delete()
+
+        import wirecloud.widget.utils as showcase_utils
+        showcase_utils.wgt_deployer.undeploy(self.vendor, self.name, self.version)
+        super(Widget, self).delete(*args, **kwargs)
+
     def __unicode__(self):
         return self.uri
 

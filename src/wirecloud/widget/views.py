@@ -102,17 +102,14 @@ def deleteWidget(user, name, vendor, version):
 
         widget = Widget.objects.get(name=name, vendor=vendor, version=version)
 
+        # TODO
         # Remove all iwidget that matches this Widget Resource
         iwidgets = IWidget.objects.filter(widget=widget)
         for iwidget in iwidgets:
             result['removedIWidgets'].append(iwidget.id)
             deleteIWidget(iwidget, user)
 
-        if widget.xhtml is not None:
-            widget.xhtml.delete()
-
         widget.delete()
-        showcase_utils.wgt_deployer.undeploy(vendor, name, version)
 
     except Widget.DoesNotExist:
         pass
