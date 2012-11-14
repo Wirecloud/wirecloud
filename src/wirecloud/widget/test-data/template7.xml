@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<Template xmlns="http://morfeo-project.org/2007/Template">
+<Template xmlns="http://wirecloud.conwet.fi.upm.es/ns/template#">
   <Catalog.ResourceDescription>
     <Vendor>Morfeo</Vendor>
     <Name>test</Name>

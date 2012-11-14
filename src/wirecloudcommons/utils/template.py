@@ -33,7 +33,8 @@ NAME_RE = re.compile(r'^[^/]+$')
 VENDOR_RE = re.compile(r'^[^/]+$')
 VERSION_RE = re.compile(r'^(?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0)$')
 
-WIRECLOUD_TEMPLATE_NS = 'http://morfeo-project.org/2007/Template'
+EZWEB_TEMPLATE_NS = 'http://morfeo-project.org/2007/Template'
+WIRECLOUD_TEMPLATE_NS = 'http://wirecloud.conwet.fi.upm.es/ns/template#'
 
 RESOURCE_DESCRIPTION_XPATH = '/t:Template/t:Catalog.ResourceDescription'
 NAME_XPATH = 't:Name'
@@ -56,10 +57,10 @@ PREFERENCES_XPATH = '/t:Template/t:Platform.Preferences[1]/t:Preference'
 OPTION_XPATH = 't:Option'
 PROPERTY_XPATH = '/t:Template/t:Platform.StateProperties[1]/t:Property'
 WIRING_XPATH = '/t:Template/t:Platform.Wiring'
-SLOT_XPATH = 't:Slot'
-EVENT_XPATH = 't:Event'
+SLOT_XPATH = 't:Slot | t:InputEndpoint'
+EVENT_XPATH = 't:Event | t:OutputEndpoint'
 CONTEXT_XPATH = '/t:Template/t:Platform.Context'
-GADGET_CONTEXT_XPATH = 't:GadgetContext'
+WIDGET_CONTEXT_XPATH = 't:GadgetContext | t:WidgetContext'
 PLATFORM_CONTEXT_XPATH = 't:Context'
 PLATFORM_RENDERING_XPATH = '/t:Template/t:Platform.Rendering'
 
@@ -269,7 +270,7 @@ class USDLTemplateParser(object):
                 'type': self._get_field(WIRE, 'type', slot, required=False),
                 'label': self._get_translation_field(RDFS, 'label', slot, 'slotLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', slot, required=False)),
                 'description': self._get_translation_field(DCTERMS, 'description', slot, 'slotDescription', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', slot, required=False)),
-                'action_label': self._get_translation_field(WIRE, 'slotActionLabel', slot, 'slotActionLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', slot, required=False)),
+                'actionlabel': self._get_translation_field(WIRE, 'slotActionLabel', slot, 'slotActionLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', slot, required=False)),
                 'friendcode': self._get_field(WIRE, 'slotFriendcode', slot, required=False),
             })
 
@@ -379,11 +380,11 @@ class USDLTemplateParser(object):
 
         context_element = self._get_field(WIRE, 'hasContext', self._rootURI, id_=True, required=False)
 
-        for gcontext in self._graph.objects(context_element, WIRE['hasWidgetContext']):
+        for wcontext in self._graph.objects(context_element, WIRE['hasWidgetContext']):
             self._info['context'].append({
-                'name': self._get_field(DCTERMS, 'title', gcontext, required=False),
-                'type': self._get_field(WIRE, 'type', gcontext, required=False),
-                'concept': self._get_field(WIRE, 'widgetContextConcept', gcontext, required=False),
+                'name': self._get_field(DCTERMS, 'title', wcontext, required=False),
+                'type': self._get_field(WIRE, 'type', wcontext, required=False),
+                'concept': self._get_field(WIRE, 'widgetContextConcept', wcontext, required=False),
                 'aspect': 'GCTX',
             })
         for pcontext in self._graph.objects(context_element, WIRE['hasPlatformContext']):
@@ -600,7 +601,10 @@ class WirecloudTemplateParser(object):
         if prefix in self._doc.nsmap:
             xmlns = self._doc.nsmap[prefix]
 
-        self._uses_namespace = xmlns is not None
+        if xmlns is not None and xmlns not in (EZWEB_TEMPLATE_NS, WIRECLOUD_TEMPLATE_NS):
+            raise TemplateParseException("Invalid namespace: " + xmlns)
+
+        self._namespace = xmlns
 
         self._resource_description = self._xpath(RESOURCE_DESCRIPTION_XPATH, self._doc)[0]
         self._parse_basic_info()
@@ -612,8 +616,8 @@ class WirecloudTemplateParser(object):
             self._info['type'] = 'widget'
 
     def _xpath(self, query, element):
-        if self._uses_namespace:
-            return element.xpath(query, namespaces={'t': WIRECLOUD_TEMPLATE_NS})
+        if self._namespace is not None:
+            return element.xpath(query, namespaces={'t': self._namespace})
         else:
             query = query.replace('t:', '')
             return element.xpath(query)
@@ -713,14 +717,14 @@ class WirecloudTemplateParser(object):
 
         for slot in self._xpath(SLOT_XPATH, wiring_element):
             self._add_translation_index(slot.get('label'), type='vdef', variable=slot.get('name'))
-            self._add_translation_index(slot.get('action_label', ''), type='vdef', variable=slot.get('name'))
+            self._add_translation_index(slot.get('actionlabel', ''), type='vdef', variable=slot.get('name'))
             self._add_translation_index(slot.get('description', ''), type='vdef', variable=slot.get('name'))
             self._info['wiring']['slots'].append({
                 'name': slot.get('name'),
                 'type': slot.get('type'),
                 'label': slot.get('label'),
                 'description': slot.get('description', ''),
-                'action_label': slot.get('action_label', ''),
+                'actionlabel': slot.get('actionlabel', slot.get('action_label', '')),
                 'friendcode': slot.get('friendcode'),
             })
 
@@ -835,11 +839,11 @@ class WirecloudTemplateParser(object):
 
             context_element = context_elements[0]
 
-            for gcontext in self._xpath(GADGET_CONTEXT_XPATH, context_element):
+            for wcontext in self._xpath(WIDGET_CONTEXT_XPATH, context_element):
                 self._info['context'].append({
-                    'name': gcontext.get('name'),
-                    'type': gcontext.get('type'),
-                    'concept': gcontext.get('concept'),
+                    'name': wcontext.get('name'),
+                    'type': wcontext.get('type'),
+                    'concept': wcontext.get('concept'),
                     'aspect': 'GCTX',
                 })
             for pcontext in self._xpath(PLATFORM_CONTEXT_XPATH, context_element):
@@ -1075,7 +1079,7 @@ class TemplateParser(object):
             if prefix in self._doc.nsmap:
                 xmlns = self._doc.nsmap[prefix]
 
-            if xmlns is not None and xmlns != WIRECLOUD_TEMPLATE_NS:
+            if xmlns is not None and xmlns not in (EZWEB_TEMPLATE_NS, WIRECLOUD_TEMPLATE_NS):
                 raise TemplateParseException(_('The document is not valid'))
 
             self._parser = WirecloudTemplateParser(self._doc, base)
@@ -1106,7 +1110,7 @@ class TemplateParser(object):
                 if prefix in self._doc.nsmap:
                     xmlns = self._doc.nsmap[prefix]
 
-                if xmlns is not None and xmlns != WIRECLOUD_TEMPLATE_NS:
+                if xmlns is not None and xmlns not in (EZWEB_TEMPLATE_NS, WIRECLOUD_TEMPLATE_NS):
                     try:
                         graph.parse(data=template)
                     except:

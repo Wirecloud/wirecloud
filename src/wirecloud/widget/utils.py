@@ -166,7 +166,7 @@ def create_widget_from_template(template, user, request=None, base=None):
             aspect='SLOT',
             friend_code=slot['friendcode'],
             label=slot['label'],
-            action_label=slot['action_label'],
+            action_label=slot['actionlabel'],
             widget=widget,
         )
         variable_definitions[vDef.name] = vDef

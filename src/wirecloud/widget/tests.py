@@ -61,6 +61,7 @@ class CodeTransformationTestCase(TestCase):
 class ShowcaseTestCase(LocalizedTestCase):
 
     fixtures = ('catalogue_test_data', 'test_data')
+    tags = ('current',)
 
     def setUp(self):
         super(ShowcaseTestCase, self).setUp()
@@ -83,6 +84,36 @@ class ShowcaseTestCase(LocalizedTestCase):
     def test_basic_widget_creation(self):
         template_uri = "http://example.com/path/widget.xml"
         template = self.read_template('template1.xml')
+
+        http_utils.download_http_content.set_response(template_uri, template)
+        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        widget = create_widget_from_template(template_uri, self.user)
+
+        self.changeLanguage('en')
+        data = get_widget_data(widget)
+        self.assertEqual(data['name'], 'test')
+        self.assertEqual(data['version'], '0.1')
+
+        self.assertEqual(data['variables']['prop']['label'], 'Property label')
+        self.assertEqual(data['variables']['prop']['aspect'], 'PROP')
+        self.assertEqual(data['variables']['pref']['label'], 'Preference label')
+        self.assertEqual(data['variables']['pref']['value_options'], [['1', 'Option name']])
+        self.assertEqual(data['variables']['pref']['aspect'], 'PREF')
+        self.assertEqual(data['variables']['event']['label'], 'Event label')
+        self.assertEqual(data['variables']['event']['aspect'], 'EVEN')
+        self.assertEqual(data['variables']['slot']['label'], 'Slot label')
+        self.assertEqual(data['variables']['slot']['aspect'], 'SLOT')
+
+        self.assertEqual(data['variables']['language']['aspect'], 'ECTX')
+        self.assertEqual(data['variables']['language']['concept'], 'language')
+        self.assertEqual(data['variables']['user']['aspect'], 'ECTX')
+        self.assertEqual(data['variables']['user']['concept'], 'username')
+        self.assertEqual(data['variables']['width']['aspect'], 'GCTX')
+        self.assertEqual(data['variables']['width']['concept'], 'widthInPixels')
+
+    def test_basic_ezweb_widget_creation(self):
+        template_uri = "http://example.com/path/widget.xml"
+        template = self.read_template('old-template.xml')
 
         http_utils.download_http_content.set_response(template_uri, template)
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)

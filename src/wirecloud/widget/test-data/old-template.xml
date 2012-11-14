@@ -1,7 +1,7 @@
-<?xml version="1.0" ?><Template xmlns="http://wirecloud.conwet.fi.upm.es/ns/template#">
+<?xml version="1.0" ?><Template xmlns="http://morfeo-project.org/2007/Template">
   <!-- Widget Meta-Info -->
   <Catalog.ResourceDescription>
-    <Vendor>Example</Vendor>
+    <Vendor>Morfeo</Vendor>
     <Name>test</Name>
     <Version>0.1</Version>
     <Author>admin</Author>
@@ -11,9 +11,7 @@
     <iPhoneImageURI>images/catalogue_iphone.png</iPhoneImageURI>
     <WikiURI>doc/index.html</WikiURI>
 
-    <Requirements>
-        <Feature name="inexistan-feature"/>
-    </Requirements>
+    <Require feature="Wirecloud" version="0.3.0"/>
   </Catalog.ResourceDescription>
 
   <Platform.Preferences>
@@ -27,8 +25,8 @@
   </Platform.StateProperties>
 
   <Platform.Wiring>
-    <OutputEndpoint friendcode="test_friend_code" label="__MSG_eventLabel__" name="event" type="text"/>
-    <InputEndpoint friendcode="test_friend_code" label="__MSG_slotLabel__" name="slot" type="text"/>
+    <Event friendcode="test_friend_code" label="__MSG_eventLabel__" name="event" type="text"/>
+    <Slot friendcode="test_friend_code" label="__MSG_slotLabel__" name="slot" type="text"/>
   </Platform.Wiring>
 
   <Platform.Link>
@@ -39,7 +37,7 @@
   <Platform.Context>
     <Context name="language" type="text" concept="language"/>
     <Context name="user" type="text" concept="username"/>
-    <WidgetContext name="width" type="text" concept="widthInPixels"/>
+    <GadgetContext name="width" type="text" concept="widthInPixels"/>
   </Platform.Context>
 
   <Translations default="en">
