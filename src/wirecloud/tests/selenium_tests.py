@@ -189,3 +189,18 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.create_workspace('Test Mashup')
         self.create_workspace_from_catalogue('Test Mashup')
         self.assertNotEqual(self.get_current_workspace_name(), 'Test Mashup')
+
+    def test_merge_mashup(self):
+
+        self.login()
+        self.merge_mashup_from_catalogue('Test Mashup')
+
+        self.assertEqual(self.count_workspace_tabs(), 3)
+        tab = self.get_workspace_tab_by_name('Tab')
+        self.assertIsNotNone(tab)
+        tab = self.get_workspace_tab_by_name('Tab 2')
+        self.assertIsNotNone(tab)
+        tab = self.get_workspace_tab_by_name('Tab 2 2')
+        self.assertIsNotNone(tab)
+
+        self.assertEqual(self.count_iwidgets(), 0)
