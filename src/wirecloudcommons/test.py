@@ -458,6 +458,35 @@ class WirecloudRemoteTestCase(object):
         self.wait_wirecloud_ready()
         self.assertNotEqual(workspace_to_remove, self.get_current_workspace_name())
 
+    def publish_workspace(self, info):
+        self.change_main_view('workspace')
+
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
+        self.popup_menu_click('Publish')
+
+        name_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="name"]')
+        self.fill_form_input(name_input, info['name'])
+        vendor_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="vendor"]')
+        self.fill_form_input(vendor_input, info['vendor'])
+        version_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="version"]')
+        self.fill_form_input(version_input, info['version'])
+        email_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="email"]')
+        self.fill_form_input(email_input, info['email'])
+
+        tabs = self.driver.find_elements_by_css_selector('.window_menu .notebook .tab_wrapper .tab')
+        for tab in tabs:
+            span = tab.find_element_by_css_selector('span')
+            if span.text == 'Publish place':
+                tab.click()
+
+        self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="local"]').click()
+
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+        window_menus = self.driver.find_elements_by_css_selector('.window_menu')
+        self.assertEqual(len(window_menus), 0, 'Error publishing workspace')
+
+        self.wait_wirecloud_ready()
+
     def count_workspace_tabs(self):
         return len(self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab'))
 

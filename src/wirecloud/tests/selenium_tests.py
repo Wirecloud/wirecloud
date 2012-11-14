@@ -204,3 +204,19 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertIsNotNone(tab)
 
         self.assertEqual(self.count_iwidgets(), 0)
+
+    def test_workspace_publish(self):
+
+        self.login()
+        # TODO workspace must come from fixtures
+        self.create_workspace_from_catalogue('Test Mashup')
+
+        self.publish_workspace({
+            'vendor': 'Wirecloud',
+            'name': 'Published Workspace',
+            'version': '1.0',
+            'email': 'a@b.com',
+        })
+        self.search_resource('Published Workspace')
+        mashup = self.search_in_catalogue_results('Published Workspace')
+        self.assertIsNotNone(mashup)
