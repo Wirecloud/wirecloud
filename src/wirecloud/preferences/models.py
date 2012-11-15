@@ -65,6 +65,7 @@ class WorkspacePreference(models.Model):
     class Meta:
         app_label = 'wirecloud'
 
+
 class TabPreference(models.Model):
 
     tab = models.ForeignKey('wirecloud.Tab')
@@ -79,11 +80,12 @@ class TabPreference(models.Model):
 def update_session_lang(request, user):
     lang_code = None
     pref_exists = True
-    try:
-        lang_pref = PlatformPreference.objects.get(user=user, name="language")
+    lang_prefs = PlatformPreference.objects.filter(user=user, name="language")
+    if len(lang_prefs) != 0:
+        lang_pref = lang_prefs[0]
         if lang_pref.value in ('default', 'browser') or check_for_language(lang_pref.value):
             lang_code = lang_pref.value
-    except PlatformPreference.DoesNotExist:
+    else:
         pref_exists = False
 
     if lang_code in (None, 'default'):
