@@ -29,6 +29,7 @@ from django.utils.translation import ugettext as _
 from commons.resource import Resource
 from commons.utils import json_encode
 from wirecloud.models import Market
+from wirecloudcommons.utils.http import supported_request_mime_types
 
 
 class MarketCollection(Resource):
@@ -43,14 +44,8 @@ class MarketCollection(Resource):
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
     @method_decorator(login_required)
+    @supported_request_mime_types(('multipart/form-data'))
     def create(self, request):
-
-        content_type = request.META.get('CONTENT_TYPE', '')
-        if content_type == None:
-            content_type = ''
-
-        if not content_type.startswith('application/json'):
-            return HttpResponseBadRequest(_("Invalid content type"), mimetype='text/plain; charset=UTF-8')
 
         try:
             received_data = json.loads(request.raw_post_data)
