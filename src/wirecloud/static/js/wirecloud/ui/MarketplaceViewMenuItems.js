@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, StyledElements, Wirecloud, LayoutManagerFactory*/
+/*global Constants, gettext, LogManagerFactory, StyledElements, Wirecloud, LayoutManagerFactory*/
 
 if (!Wirecloud.ui) {
     Wirecloud.ui = {};
@@ -120,7 +120,7 @@ if (!Wirecloud.ui) {
                     LayoutManagerFactory.getInstance()._startComplexTask(gettext("Deleting marketplace"), 1);
                     LayoutManagerFactory.getInstance().logSubTask(gettext('Deleting marketplace'));
 
-                    Wirecloud.MarketManager.deleteMarket(this.market.alternatives.getCurrentAlternative().getLabel(), {
+                    Wirecloud.MarketManager.deleteMarket(this.market.alternatives.getCurrentAlternative().desc, {
                         onSuccess: function () {
                             LayoutManagerFactory.getInstance().logSubTask(gettext('Marketplace deleted successfully'));
                             LayoutManagerFactory.getInstance().logStep('');
@@ -132,7 +132,7 @@ if (!Wirecloud.ui) {
                         }.bind(this),
                         onFailure: function (msg) {
                             LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-                            LayoutManagerFactory.getInstance().log(msg);
+                            LogManagerFactory.getInstance().log(msg);
                             LayoutManagerFactory.getInstance()._notifyPlatformReady();
                         }
                     });

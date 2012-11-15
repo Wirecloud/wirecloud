@@ -38,7 +38,7 @@
 
         for (info in view_info) {
 
-            view_element = JSON.parse(view_info[info]);
+            view_element = view_info[info];
             view_element.name = info;
 
             if (info in old_views) {

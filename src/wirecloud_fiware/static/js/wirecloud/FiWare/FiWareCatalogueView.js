@@ -32,8 +32,8 @@
         this.alternatives = new StyledElements.StyledAlternatives();
         this.appendChild(this.alternatives);
         this.currentStore = 'All stores';
-        this.marketplace_desc = options.marketplace_desc;
-        this.marketplace = this.marketplace_desc.name;
+        Object.defineProperty(this, 'desc', {value: options.marketplace_desc});
+        this.marketplace = this.desc.name;
         this.loading = false;
         this.error = false;
         this.store_info = [];
@@ -45,7 +45,7 @@
         };
         this.viewsByName.search.init();
 
-        this.fiWareCatalogue = new Wirecloud.FiWare.FiWareCatalogue(this.marketplace_desc);
+        this.fiWareCatalogue = new Wirecloud.FiWare.FiWareCatalogue(this.desc);
         this.number_of_stores = 0;
         this.generateStoreMenu();
         this.addEventListener('show', this.refresh_if_needed.bind(this));

@@ -55,11 +55,19 @@
 
     MarketManager.deleteMarket = function deleteMarket(marketplace, options) {
 
+        var url;
+
         if (typeof options !== 'object') {
             options = {};
         }
 
-        Wirecloud.io.makeRequest(Wirecloud.URLs.MARKET_ENTRY.evaluate({market: marketplace}), {
+        if (marketplace.user != null) {
+            url = Wirecloud.URLs.MARKET_ENTRY.evaluate({user: marketplace.user, market: marketplace.label});
+        } else {
+            url = Wirecloud.URLs.GLOBAL_MARKET_ENTRY.evaluate({market: marketplace});
+        }
+
+        Wirecloud.io.makeRequest(url, {
             method: 'DELETE',
             onSuccess: options.onSuccess,
             onFailure: function (transport) {
