@@ -161,7 +161,7 @@ if (!Wirecloud.ui) {
         var iwidgets, iwidget, key, i, widget_interface, miniwidget_interface, ioperators, operator,
             operator_interface, operator_instance, operatorKeys, connection, connectionView, startAnchor,
             endAnchor, arrow, isMenubarRef, miniwidget_clon, pos, op_id, multiconnectors, multi, multiInstance,
-            multi_id, anchor, endpoint_order;
+            multi_id, anchor, endpoint_order, operators;
 
         if (WiringStatus == null) {
             WiringStatus = {
@@ -237,7 +237,8 @@ if (!Wirecloud.ui) {
 
         // operators
         ioperators = workspace.wiring.ioperators;
-        for (key in ioperators) {
+        operators = WiringStatus.operators;
+        for (key in operators) {
             operator_instance = ioperators[key];
             op_id = operator_instance.id;
             if (this.NextOperatorId < op_id) {
