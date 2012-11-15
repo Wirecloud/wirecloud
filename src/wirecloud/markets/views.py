@@ -53,7 +53,7 @@ class MarketCollection(Resource):
             return HttpResponseBadRequest(_("Request body is not valid JSON data"), mimetype='text/plain; charset=UTF-8')
 
         user_entry = request.user
-        if received_data['options'].get('share', '') == True and request.user.is_superuser:
+        if received_data['options'].get('share', '') is True and request.user.is_superuser:
             user_entry = None
 
         m = Market.objects.create(user=user_entry, name=received_data['name'], options=json.dumps(received_data['options']))
