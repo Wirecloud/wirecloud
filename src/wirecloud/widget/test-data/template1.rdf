@@ -59,24 +59,24 @@
 
 		<wire:hasPlatformWiring>
 			<wire:PlatformWiring rdf:ID="wiring">
-				<wire:hasSlot>
-					<wire:Slot rdf:ID="slot_1">
+				<wire:hasInputEndpoint>
+					<wire:InputEndpoint rdf:ID="slot_1">
 						<dcterms:title>slot</dcterms:title>
 						<wire:type>text</wire:type>
 						<rdfs:label xml:lang="en">Slot label</rdfs:label>
 						<rdfs:label xml:lang="es">Etiqueta de la ranura</rdfs:label>
 						<wire:slotFriendcode>test_friend_code</wire:slotFriendcode>
-					</wire:Slot>
-				</wire:hasSlot>
-				<wire:hasEvent>
-					<wire:Event rdf:ID="event_1">
+					</wire:InputEndpoint>
+				</wire:hasInputEndpoint>
+				<wire:hasOutputEndpoint>
+					<wire:OutputEndpoint rdf:ID="event_1">
 						<dcterms:title>event</dcterms:title>
 						<wire:type>text</wire:type>
 						<rdfs:label xml:lang="en">Event label</rdfs:label>
 						<rdfs:label xml:lang="es">Etiqueta del evento</rdfs:label>
 						<wire:eventFriendcode>test_friend_code</wire:eventFriendcode>
-					</wire:Event>
-				</wire:hasEvent>
+					</wire:OutputEndpoint>
+				</wire:hasOutputEndpoint>
 			</wire:PlatformWiring>
 		</wire:hasPlatformWiring>
 

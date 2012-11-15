@@ -264,14 +264,33 @@ class USDLTemplateParser(object):
 
         wiring_element = self._get_field(wiring_type, wiring_property, self._rootURI, id_=True, required=False)
 
+        for input_endpoint in self._graph.objects(wiring_element, WIRE['hasInputEndpoint']):
+            self._info['wiring']['slots'].append({
+                'name': self._get_field(DCTERMS, 'title', input_endpoint, required=False),
+                'type': self._get_field(WIRE, 'type', input_endpoint, required=False),
+                'label': self._get_translation_field(RDFS, 'label', input_endpoint, 'inputLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', input_endpoint, required=False)),
+                'description': self._get_translation_field(DCTERMS, 'description', input_endpoint, 'inputDescription', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', input_endpoint, required=False)),
+                'actionlabel': self._get_translation_field(WIRE, 'actionLabel', input_endpoint, 'inputActionLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', input_endpoint, required=False)),
+                'friendcode': self._get_field(WIRE, 'friendcode', input_endpoint, required=False),
+            })
+
         for slot in self._graph.objects(wiring_element, WIRE['hasSlot']):
             self._info['wiring']['slots'].append({
                 'name': self._get_field(DCTERMS, 'title', slot, required=False),
                 'type': self._get_field(WIRE, 'type', slot, required=False),
                 'label': self._get_translation_field(RDFS, 'label', slot, 'slotLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', slot, required=False)),
                 'description': self._get_translation_field(DCTERMS, 'description', slot, 'slotDescription', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', slot, required=False)),
-                'actionlabel': self._get_translation_field(WIRE, 'slotActionLabel', slot, 'slotActionLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', slot, required=False)),
+                'actionlabel': self._get_translation_field(WIRE, 'actionLabel', slot, 'slotActionLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', slot, required=False)),
                 'friendcode': self._get_field(WIRE, 'slotFriendcode', slot, required=False),
+            })
+
+        for output_endpoint in self._graph.objects(wiring_element, WIRE['hasOutputEndpoint']):
+            self._info['wiring']['events'].append({
+                'name': self._get_field(DCTERMS, 'title', output_endpoint, required=False),
+                'type': self._get_field(WIRE, 'type', output_endpoint, required=False),
+                'label': self._get_translation_field(RDFS, 'label', output_endpoint, 'outputLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', output_endpoint, required=False)),
+                'description': self._get_translation_field(DCTERMS, 'description', output_endpoint, 'outputDescription', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', output_endpoint, required=False)),
+                'friendcode': self._get_field(WIRE, 'friendcode', output_endpoint, required=False),
             })
 
         for event in self._graph.objects(wiring_element, WIRE['hasEvent']):

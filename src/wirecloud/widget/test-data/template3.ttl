@@ -72,18 +72,18 @@ _:b3
 
 _:b4
 	a wire:PlatformWiring ;
-	wire:hasSlot _:b8 ;
-	wire:hasEvent _:b9 .
+	wire:hasInputEndpoint _:b8 ;
+	wire:hasOutputEndpoint _:b9 .
 
 _:b8
-	a wire:Slot ;
+	a wire:InputEndpoint ;
 	dcterms:title "slot" ;
 	wire:type "text" ;
 	rdfs:label "slot" ;
 	wire:slotFriendcode "test_friend_code" .
 
 _:b9
-	a wire:Event ;
+	a wire:OutputEndpoint ;
 	dcterms:title "event" ;
 	wire:type "text" ;
 	rdfs:label "event" ;
