@@ -346,6 +346,7 @@ class WirecloudRemoteTestCase(object):
             if (evt.initKeyEvent != null) {
                 evt.initKeyEvent ("keypress", true, true, window, false, false, false, false, 13, 0);
             } else {
+                Object.defineProperty(evt, 'keyCode', {get: function () { return 13;}});
                 evt.initKeyboardEvent ("keypress", true, true, window, 0, 0, 0, 0, 0, 13);
             }
             arguments[0].dispatchEvent(evt);
