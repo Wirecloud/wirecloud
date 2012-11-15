@@ -8,4 +8,4 @@ from wirecloudcommons.test import build_selenium_test_cases
 
 build_selenium_test_cases(('wirecloud.tests.selenium_tests.BasicSeleniumTests',), locals())
 build_selenium_test_cases(('wirecloud.wiring.tests.WiringSeleniumTestCase',), locals())
-build_selenium_test_cases(('wirecloud.markets.tests.MarketManagementTestCase',), locals())
+build_selenium_test_cases(('wirecloud.markets.tests.MarketManagementSeleniumTestCase',), locals())

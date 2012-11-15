@@ -546,7 +546,7 @@ class WirecloudRemoteTestCase(object):
 
         return self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab')[-1]
 
-    def add_marketplace(self, name, url, type_):
+    def add_marketplace(self, name, url, type_, expect_error=False):
 
         self.change_main_view('marketplace')
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
@@ -563,21 +563,45 @@ class WirecloudRemoteTestCase(object):
         self.wait_wirecloud_ready()
         time.sleep(0.1)  # work around some problems
 
-        self.assertEqual(self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text, name)
+        window_menus = len(self.driver.find_elements_by_css_selector('.window_menu'))
+        if expect_error:
+            if window_menus == 1:
+                self.fail('Error: marketplace shouldn\'t be added')
 
-    def delete_marketplace(self, market):
+            self.assertNotEqual(self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text, name)
+        else:
+            if window_menus != 1:
+                self.fail('Error: marketplace was not added')
+
+            self.assertEqual(self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text, name)
+
+    def change_marketplace(self, market):
 
         self.change_main_view('marketplace')
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click(market)
         time.sleep(2)
 
+    def delete_marketplace(self, market, expect_error=False):
+
+        self.change_marketplace(market)
+
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click("Delete marketplace")
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
         self.wait_wirecloud_ready()
 
-        self.assertNotEqual(self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text, market)
+        window_menus = len(self.driver.find_elements_by_css_selector('.window_menu'))
+        if expect_error:
+            if window_menus == 1:
+                self.fail('Error: marketplace shouldn\'t be deleted')
+
+            self.assertEqual(self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text, market)
+        else:
+            if window_menus != 1:
+                self.fail('Error: marketplace was not deleted')
+
+            self.assertNotEqual(self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text, market)
 
     def delete_widget(self, widget_name, timeout=30):
         self.change_main_view('marketplace')
