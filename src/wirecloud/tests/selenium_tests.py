@@ -219,4 +219,4 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         })
         self.search_resource('Published Workspace')
         mashup = self.search_in_catalogue_results('Published Workspace')
-        self.assertIsNotNone(mashup)
+        self.assertIsNotNone(mashup, 'The published workspace is not available on the local catalogue')

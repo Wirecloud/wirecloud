@@ -510,10 +510,12 @@ class WirecloudRemoteTestCase(object):
         self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="local"]').click()
 
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
-        window_menus = self.driver.find_elements_by_css_selector('.window_menu')
-        self.assertEqual(len(window_menus), 0, 'Error publishing workspace')
-
         self.wait_wirecloud_ready()
+
+        # Check that there are not windows showing errors
+        # (the loading indicator has the window_menu class so always there is one window_menu)
+        window_menus = self.driver.find_elements_by_css_selector('.window_menu')
+        self.assertEqual(len(window_menus), 1, 'Error publishing workspace')
 
     def count_workspace_tabs(self):
         return len(self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab'))
