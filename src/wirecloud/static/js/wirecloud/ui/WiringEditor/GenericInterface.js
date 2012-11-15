@@ -436,6 +436,20 @@
             labelDiv.addEventListener('mouseout', function (e) {
                 this.wiringEditor.deemphasize(anchor);
             }.bind(this));
+            // Sticky effect
+
+            anchorDiv.addEventListener('mouseover', function (e) {
+                anchor._mouseover_callback(e);
+            }.bind(this));
+            anchorDiv.addEventListener('mouseout', function (e) {
+                anchor._mouseout_callback(e);
+            }.bind(this));
+
+            // Connect anchor whith mouseup on the label
+            anchorDiv.addEventListener('mouseup', function (e) {
+                anchor._mouseup_callback(e);
+            }.bind(this));
+
             this.sourceAnchorsByName[name] = anchor;
             this.sourceAnchors.push(anchor);
         } else {
@@ -505,6 +519,20 @@
             labelDiv.addEventListener('mouseout', function (e) {
                 this.wiringEditor.deemphasize(anchor);
             }.bind(this));
+
+            // Sticky effect
+            anchorDiv.addEventListener('mouseover', function (e) {
+                anchor._mouseover_callback(e);
+            }.bind(this));
+            anchorDiv.addEventListener('mouseout', function (e) {
+                anchor._mouseout_callback(e);
+            }.bind(this));
+
+            // Connect anchor whith mouseup on the label
+            anchorDiv.addEventListener('mouseup', function (e) {
+                anchor._mouseup_callback(e);
+            }.bind(this));
+
             this.targetAnchorsByName[name] = anchor;
             this.targetAnchors.push(anchor);
         } else {
