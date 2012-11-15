@@ -270,9 +270,8 @@ def serve_showcase_media(request, vendor, name, version, file_path):
     if request.method != 'GET':
         return HttpResponseNotAllowed(('GET',))
 
-    local_path = os.path.join(
-        showcase_utils.wgt_deployer.get_base_dir(vendor, name, version),
-        file_path)
+    base_dir = showcase_utils.wgt_deployer.get_base_dir(vendor, name, version)
+    local_path = os.path.join(base_dir, file_path)
 
     if not os.path.isfile(local_path):
         return HttpResponse(status=404)

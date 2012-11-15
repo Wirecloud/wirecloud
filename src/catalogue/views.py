@@ -59,6 +59,7 @@ from catalogue.catalogue_utils import get_and_filter, get_or_filter, get_not_fil
 from catalogue.catalogue_utils import get_tag_filter, get_event_filter, get_slot_filter, get_paginatedlist
 from catalogue.catalogue_utils import get_tag_response, update_resource_popularity
 from catalogue.catalogue_utils import get_vote_response, group_resources
+import catalogue.utils as catalogue_utils
 from catalogue.utils import add_widget_from_wgt, add_resource_from_template, delete_resource
 from catalogue.utils import tag_resource
 from commons.cache import no_cache
@@ -77,12 +78,14 @@ def serve_catalogue_media(request, vendor, name, version, file_path):
     if request.method != 'GET':
         return HttpResponseNotAllowed(('GET',))
 
-    local_path = os.path.join(settings.CATALOGUE_MEDIA_ROOT, vendor, name, version, file_path)
+    base_dir = catalogue_utils.wgt_deployer.get_base_dir(vendor, name, version)
+    local_path = os.path.normpath(os.path.join(base_dir, file_path))
+
     if not os.path.isfile(local_path):
         return HttpResponse(status=404)
 
     if not getattr(settings, 'USE_XSENDFILE', False):
-        return serve(request, '/'.join((vendor, name, version, file_path)), document_root=settings.CATALOGUE_MEDIA_ROOT)
+        return serve(request, local_path, document_root='/')
     else:
         response = HttpResponse()
         response['X-Sendfile'] = smart_str(local_path)

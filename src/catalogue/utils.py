@@ -93,10 +93,8 @@ def add_widget_from_wgt(file, user, wgt_file=None, template=None, deploy_only=Fa
         template.get_resource_version(),
     )
     file_name = '_'.join(resource_id) + '.wgt'
-    wgt_dir = os.path.join(*resource_id)
-    local_dir = os.path.join(settings.CATALOGUE_MEDIA_ROOT, wgt_dir)
-    wgt_path = os.path.join(wgt_dir, file_name)
-    local_wgt = os.path.join(settings.CATALOGUE_MEDIA_ROOT, wgt_path)
+    local_dir = wgt_deployer.get_base_dir(*resource_id)
+    local_wgt = os.path.join(local_dir, file_name)
 
     if not os.path.exists(local_dir):
         os.makedirs(local_dir)
