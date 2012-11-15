@@ -298,12 +298,14 @@ class WirecloudRemoteTestCase(object):
     def add_wgt_widget_to_catalogue(self, wgt_file, widget_name):
 
         self.change_main_view('marketplace')
+        catalogue_base_element = self.get_current_catalogue_base_element()
+
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click('Upload')
         time.sleep(2)
 
-        self.driver.find_element_by_class_name('wgt_file').send_keys(self.wgt_dir + os.sep + wgt_file)
-        self.driver.find_element_by_class_name('upload_wgt_button').click()
+        catalogue_base_element.find_element_by_class_name('wgt_file').send_keys(self.wgt_dir + os.sep + wgt_file)
+        catalogue_base_element.find_element_by_class_name('upload_wgt_button').click()
         self.wait_wirecloud_ready()
 
         self.search_resource(widget_name)
@@ -314,14 +316,16 @@ class WirecloudRemoteTestCase(object):
     def add_template_to_catalogue(self, template_url, resource_name):
 
         self.change_main_view('marketplace')
+        catalogue_base_element = self.get_current_catalogue_base_element()
+
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click('Upload')
-        WebDriverWait(self.driver, 30).until(lambda driver: driver.find_element_by_css_selector('form.template_submit_form .template_uri').is_displayed())
+        WebDriverWait(self.driver, 30).until(lambda driver: catalogue_base_element.find_element_by_css_selector('form.template_submit_form .template_uri').is_displayed())
         time.sleep(0.1)
 
-        template_input = self.driver.find_element_by_css_selector('form.template_submit_form .template_uri')
+        template_input = catalogue_base_element.find_element_by_css_selector('form.template_submit_form .template_uri')
         self.fill_form_input(template_input, template_url)
-        self.driver.find_element_by_class_name('submit_link').click()
+        catalogue_base_element.find_element_by_class_name('submit_link').click()
         self.wait_wirecloud_ready()
 
         self.search_resource(resource_name)
@@ -332,14 +336,16 @@ class WirecloudRemoteTestCase(object):
     def add_template_to_catalogue_with_error(self, template_url, resource_name, msg):
 
         self.change_main_view('marketplace')
+        catalogue_base_element = self.get_current_catalogue_base_element()
+
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click('Upload')
-        WebDriverWait(self.driver, 30).until(lambda driver: driver.find_element_by_css_selector('form.template_submit_form .template_uri').is_displayed())
+        WebDriverWait(self.driver, 30).until(lambda driver: catalogue_base_element.find_element_by_css_selector('form.template_submit_form .template_uri').is_displayed())
         time.sleep(0.1)
 
-        template_input = self.driver.find_element_by_css_selector('form.template_submit_form .template_uri')
+        template_input = catalogue_base_element.find_element_by_css_selector('form.template_submit_form .template_uri')
         self.fill_form_input(template_input, template_url)
-        self.driver.find_element_by_class_name('submit_link').click()
+        catalogue_base_element.find_element_by_class_name('submit_link').click()
 
         self.wait_wirecloud_ready()
         time.sleep(0.1)
@@ -350,8 +356,9 @@ class WirecloudRemoteTestCase(object):
     def search_resource(self, keyword):
         self.change_main_view('marketplace')
         self.wait_catalogue_ready()
+        catalogue_base_element = self.get_current_catalogue_base_element()
 
-        search_input = self.driver.find_element_by_css_selector('.simple_search_text')
+        search_input = catalogue_base_element.find_element_by_css_selector('.simple_search_text')
         self.fill_form_input(search_input, keyword)
         self.driver.execute_script('''
             var evt = document.createEvent("KeyboardEvent");
@@ -369,7 +376,9 @@ class WirecloudRemoteTestCase(object):
     def search_in_catalogue_results(self, widget_name):
 
         self.wait_catalogue_ready()
-        resources = self.driver.find_elements_by_css_selector('.resource_list .resource')
+        catalogue_base_element = self.get_current_catalogue_base_element()
+
+        resources = catalogue_base_element.find_elements_by_css_selector('.resource_list .resource')
         for resource in resources:
             resource_name = resource.find_element_by_css_selector('.resource_name')
             if resource_name.text == widget_name:
@@ -553,13 +562,22 @@ class WirecloudRemoteTestCase(object):
         except:
             return self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text
 
+    def get_current_catalogue_base_element(self):
+
+        catalogues = self.driver.find_elements_by_css_selector('#marketplace > .alternatives > .wrapper > .catalogue')
+        for catalogue_element in catalogues:
+            if 'hidden' not in catalogue_element.get_attribute('class'):
+                return catalogue_element
+
+        return None
+
     def add_marketplace(self, name, url, type_, expect_error=False):
 
         self.change_main_view('marketplace')
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click("Add new marketplace")
 
-        market_name_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="label"]')
+        market_name_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="name"]')
         self.fill_form_input(market_name_input, name)
         market_url_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="url"]')
         self.fill_form_input(market_url_input, url)
@@ -617,11 +635,13 @@ class WirecloudRemoteTestCase(object):
 
     def delete_widget(self, widget_name, timeout=30):
         self.change_main_view('marketplace')
+        catalogue_base_element = self.get_current_catalogue_base_element()
+
         self.search_resource(widget_name)
         resource = self.search_in_catalogue_results(widget_name)
         resource.find_element_by_css_selector('.click_for_details').click()
 
-        WebDriverWait(self.driver, timeout).until(lambda driver: driver.find_element_by_css_selector('.advanced_operations').is_displayed())
+        WebDriverWait(self.driver, timeout).until(lambda driver: catalogue_base_element.find_element_by_css_selector('.advanced_operations').is_displayed())
         time.sleep(0.1)
 
         found = False
