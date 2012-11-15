@@ -28,7 +28,7 @@ import urlparse
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib.auth.models import Group, User
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
+from django.http import HttpResponse, HttpResponseServerError
 from django.http import HttpResponseForbidden, Http404
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
@@ -42,7 +42,7 @@ from commons import http_utils
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.service import Service
-from commons.utils import get_xml_error, json_encode
+from commons.utils import json_encode
 from packageCloner import PackageCloner
 from packageLinker import PackageLinker
 from wirecloud.iwidget.utils import deleteIWidget
@@ -212,7 +212,7 @@ class WorkspaceEntry(Resource):
         received_json = http_utils.PUT_parameter(request, 'workspace')
 
         if not received_json:
-            return HttpResponseBadRequest(get_xml_error(_("workspace JSON expected")), mimetype='application/xml; charset=UTF-8')
+            return build_error_response(request, 400, _("workspace JSON expected"))
 
         try:
             ts = simplejson.loads(received_json)
@@ -283,7 +283,7 @@ class TabCollection(Resource):
     def create(self, request, workspace_id):
 
         if 'tab' not in request.POST:
-            return HttpResponseBadRequest(get_xml_error(_("tab JSON expected")), mimetype='application/xml; charset=UTF-8')
+            return build_error_response(request, 400, _("tab JSON expected"))
 
         #TODO we can make this with deserializers (simplejson)
         received_json = request.POST['tab']
@@ -358,7 +358,7 @@ class TabEntry(Resource):
         received_json = http_utils.PUT_parameter(request, 'tab')
 
         if not received_json:
-            return HttpResponseBadRequest(get_xml_error(_("tab JSON expected")), mimetype='application/xml; charset=UTF-8')
+            return build_error_response(request, 400, _("tab JSON expected"))
 
         tabs = Tab.objects.select_related('workspace')
         try:
@@ -440,7 +440,7 @@ class WorkspaceVariableCollection(Resource):
             received_json = http_utils.PUT_parameter(request, 'variables')
 
         if not received_json:
-            return HttpResponseBadRequest(get_xml_error(_("variables JSON expected")), mimetype='application/xml; charset=UTF-8')
+            return build_error_response(request, 400, _("variables JSON expected"))
 
         try:
             variables = simplejson.loads(received_json)
@@ -574,19 +574,11 @@ class WorkspaceClonerEntry(Resource):
 class MashupMergeService(Service):
 
     @method_decorator(login_required)
+    @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def process(self, request, to_ws_id):
 
-        content_type = request.META.get('CONTENT_TYPE', '')
-        if content_type is None:
-            content_type = ''
-
-        if content_type.startswith('application/json'):
-            received_json = request.raw_post_data
-        else:
-            return HttpResponseBadRequest(get_xml_error(_("merge data expected")), mimetype='application/xml; charset=UTF-8')
-
-        data = simplejson.loads(received_json)
+        data = simplejson.loads(request.raw_post_data)
         template_url = data['workspace']
 
         to_ws = get_object_or_404(Workspace, id=to_ws_id)
@@ -612,19 +604,11 @@ class MashupMergeService(Service):
 class MashupImportService(Service):
 
     @method_decorator(login_required)
+    @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def process(self, request):
 
-        content_type = request.META.get('CONTENT_TYPE', '')
-        if content_type is None:
-            content_type = ''
-
-        if content_type.startswith('application/json'):
-            received_json = request.raw_post_data
-        else:
-            return HttpResponseBadRequest(get_xml_error(_("import data expected")), mimetype='application/xml; charset=UTF-8')
-
-        data = simplejson.loads(received_json)
+        data = simplejson.loads(request.raw_post_data)
         template_url = data['workspace']
 
         path = request.build_absolute_uri()
@@ -679,7 +663,7 @@ class WorkspacePublisherEntry(Resource):
 
         except Exception, e:
             msg = _("mashup cannot be published: ") + unicode(e)
-            return HttpResponseBadRequest(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
+            return build_error_response(request, 400, msg)
 
         workspace = get_object_or_404(Workspace, id=workspace_id)
         template = TemplateParser(build_rdf_template_from_workspace(mashup, workspace, request.user))
@@ -711,7 +695,7 @@ class WorkspaceExportService(Service):
     def process(self, request, workspace_id):
 
         if 'options' not in request.POST:
-            return HttpResponseBadRequest(get_xml_error(_("exporting options expected")), mimetype='application/xml; charset=UTF-8')
+            return build_error_response(request, 400, _("exporting options expected"))
 
         workspace = get_object_or_404(Workspace, id=workspace_id)
 
@@ -727,7 +711,7 @@ class WorkspaceExportService(Service):
 
         except Exception, e:
             msg = _("mashup cannot be exported: ") + unicode(e)
-            return HttpResponseBadRequest(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
+            return build_error_response(request, 400, msg)
 
         template = build_template_from_workspace(mashup, workspace, request.user)
         return HttpResponse(template, mimetype='application/xml; charset=UTF-8')
