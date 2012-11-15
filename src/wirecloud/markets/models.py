@@ -30,3 +30,9 @@ class Market(models.Model):
     class Meta:
         unique_together = ('user', 'name')
         app_label = 'wirecloud'
+
+    def __unicode__(self):
+        if self.user is None:
+            return self.name
+        else:
+            return self.user.username + '/' + self.name

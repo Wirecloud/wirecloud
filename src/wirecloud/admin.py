@@ -30,7 +30,12 @@ admin.site.register(models.Position)
 admin.site.register(models.IWidget)
 admin.site.register(models.Variable)
 
-admin.site.register(models.Market)
+
+class MarketAdmin(admin.ModelAdmin):
+    list_display = ('user', 'name')
+    ordering = ('user', 'name')
+
+admin.site.register(models.Market, MarketAdmin)
 
 admin.site.register(models.Widget)
 admin.site.register(models.XHTML)
