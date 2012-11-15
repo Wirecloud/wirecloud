@@ -376,21 +376,44 @@ if (!Wirecloud.ui) {
                 try {
                     loadWiring.call(this, workspace, wiringStatus);
                 } catch (e2) {
-                    try {
-                        clearInterface.call(this);
-                    } catch (e3) {}
-                    // Use setTimeout as at the end of the yesHandler all window menus are closed including the one we are opening now
                     setTimeout(function () {
-                        msg = gettext('Error trying to recover wiring status.');
-                        layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-                    }, 0);
+                        try {
+                            clearInterface.call(this);
+                        } catch (e1) {
+                            msg = gettext('Fatal error loading wiring data');
+                            layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                        }
+                        // private functions
+                        var yesHandler2 = function () {
+                            wiringStatus = null;
+                            try {
+                                loadWiring.call(this, workspace, wiringStatus);
+                            } catch (e4) {
+                                try {
+                                    clearInterface.call(this);
+                                } catch (e5) {}
+                                // Use setTimeout as at the end of the yesHandler all window menus are closed including the one we are opening now
+                                setTimeout(function () {
+                                    msg = gettext('Fatal error loading wiring data');
+                                    layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                                }, 0);
+                            }
+                        }.bind(this);
+                        var noHandler2 = function () {
+                            layoutManager.changeCurrentView('workspace');
+                        }.bind(this);
+                        layoutManager.showYesNoDialog(
+                            gettext("Unrecoverable error while loading wiring data. Do you want to start with an empty wiring?"),
+                                yesHandler2,
+                                noHandler2);
+                    }.bind(this), 0);
                 }
             };
             var noHandler = function () {
                 layoutManager.changeCurrentView('workspace');
             };
             layoutManager.showYesNoDialog(
-                gettext("There was an error loading the wiring status into the Wiring Editor. Do you want Wirecloud to try to recover the state of your connections automatically?"),
+                gettext("There was an error loading the wiring status. Do you want Wirecloud to try to recover the state of your connections automatically?"),
                 yesHandler.bind(this),
                 noHandler.bind(this));
         }
