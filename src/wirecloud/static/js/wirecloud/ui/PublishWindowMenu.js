@@ -180,7 +180,9 @@
         var views = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName;
         var key, marketplaces = [];
         for (key in views) {
-            marketplaces = marketplaces.concat(views[key].getPublishData(data));
+            if (data[key] === true) {
+                marketplaces = marketplaces.concat(views[key].getPublishData(data));
+            }
         }
         return marketplaces;
     };

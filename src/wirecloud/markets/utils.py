@@ -19,6 +19,8 @@
 
 import json
 
+from django.db.models import Q
+
 from wirecloud.models import Market
 from wirecloud.plugins import get_plugins
 
@@ -38,7 +40,7 @@ _market_classes = None
 def get_market_classes():
     global _market_classes
 
-    if _market_classes == None:
+    if _market_classes is None:
         _market_classes = {}
         plugins = get_plugins()
 
@@ -48,18 +50,14 @@ def get_market_classes():
     return _market_classes
 
 
-_managers = None
-
-
-def get_market_managers():
-    global _managers
+def get_market_managers(user):
 
     manager_classes = get_market_classes()
 
-    _managers = {}
-    for market in Market.objects.all():
+    managers = {}
+    for market in Market.objects.filter(Q(user=None) | Q(user=user)):
         options = json.loads(market.options)
         if options['type'] in manager_classes:
-            _managers[market.name] = manager_classes[options['type']](options)
+            managers[unicode(market)] = manager_classes[options['type']](options)
 
-    return _managers
+    return managers

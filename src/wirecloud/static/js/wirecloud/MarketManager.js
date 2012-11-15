@@ -62,9 +62,9 @@
         }
 
         if (marketplace.user != null) {
-            url = Wirecloud.URLs.MARKET_ENTRY.evaluate({user: marketplace.user, market: marketplace.label});
+            url = Wirecloud.URLs.MARKET_ENTRY.evaluate({user: marketplace.user, market: marketplace.name});
         } else {
-            url = Wirecloud.URLs.GLOBAL_MARKET_ENTRY.evaluate({market: marketplace});
+            url = Wirecloud.URLs.GLOBAL_MARKET_ENTRY.evaluate({market: marketplace.name});
         }
 
         Wirecloud.io.makeRequest(url, {

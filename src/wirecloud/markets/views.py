@@ -41,11 +41,13 @@ class MarketCollection(Resource):
         result = {}
 
         for market in Market.objects.filter(Q(user=None) | Q(user=request.user)):
-            result[market.name] = simplejson.loads(market.options)
+            market_key = unicode(market)
+            result[market_key] = simplejson.loads(market.options)
+            result[market_key]['name'] = market.name
             if market.user is not None:
-                result[market.name]['user'] = market.user.username
+                result[market_key]['user'] = market.user.username
             else:
-                result[market.name]['user'] = None
+                result[market_key]['user'] = None
 
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 

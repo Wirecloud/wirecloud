@@ -33,7 +33,11 @@
         this.appendChild(this.alternatives);
         this.currentStore = 'All stores';
         Object.defineProperty(this, 'desc', {value: options.marketplace_desc});
-        this.marketplace = this.desc.name;
+        if (this.desc.user != null) {
+            this.marketplace = this.desc.user + '/' + this.desc.name;
+        } else {
+            this.marketplace = this.desc.name;
+        }
         this.loading = false;
         this.error = false;
         this.store_info = [];
@@ -54,7 +58,7 @@
     FiWareCatalogueView.prototype = new StyledElements.Alternative();
 
     FiWareCatalogueView.prototype.getLabel = function () {
-        return this.marketplace;
+        return this.desc.name;
     };
 
     // this functions are used to update and know the current store in diferent views

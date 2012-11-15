@@ -688,7 +688,7 @@ class WorkspacePublisherEntry(Resource):
         published_workspace.params = received_json
         published_workspace.save()
 
-        market_managers = get_market_managers()
+        market_managers = get_market_managers(request.user)
         errors = {}
         for market_endpoint in mashup['marketplaces']:
 

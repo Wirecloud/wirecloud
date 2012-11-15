@@ -39,7 +39,6 @@
         for (info in view_info) {
 
             view_element = view_info[info];
-            view_element.name = info;
 
             if (info in old_views) {
                 this.viewsByName[info] = old_views[info];
@@ -121,27 +120,29 @@
     MarketplaceView.prototype.view_name = 'marketplace';
 
     MarketplaceView.prototype.getBreadcrum = function () {
-        var label, breadcrum;
+        var label, breadcrum, user;
 
+        user = null;
         if (this.loading) {
             label = gettext('loading...');
         } else if (this.error) {
             label = gettext('list not available');
         } else if (this.number_of_alternatives > 0) {
             label = this.alternatives.getCurrentAlternative().getLabel();
+            user = this.alternatives.getCurrentAlternative().desc.user;
         } else {
             label = gettext('no registered marketplace');
         }
 
-        breadcrum = [
-            {
-                'label': 'marketplace'
-            },
-            {
-                'label': label,
-                'menu': this.marketMenu
-            }
-        ];
+        breadcrum = [{'label': 'marketplace'}];
+        if (user != null) {
+            breadcrum.push({'label': user});
+        }
+
+        breadcrum.push({
+            'label': label,
+            'menu': this.marketMenu
+        });
 
         // If no alternatives exist, it is no posible to have an extra breadcrum
         if (!this.loading && !this.error && this.number_of_alternatives > 0) {

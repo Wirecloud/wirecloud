@@ -30,6 +30,11 @@
         StyledElements.Alternative.call(this, id, options);
 
         Object.defineProperty(this, 'desc', {value: options.marketplace_desc});
+        if (this.desc.user != null) {
+            this.market_id = this.desc.user + '/' + this.desc.name;
+        } else {
+            this.market_id = this.desc.name;
+        }
         this.catalogue = new Wirecloud.WirecloudCatalogue(options.marketplace_desc);
         this.alternatives = new StyledElements.StyledAlternatives();
         this.appendChild(this.alternatives);
@@ -72,15 +77,15 @@
 
     CatalogueView.prototype.getPublishEndpoint = function getPublishEndpoint() {
         return [{
-            'name': this.catalogue.name,
-            'label': this.catalogue.name,
+            'name': this.market_id,
+            'label': this.market_id,
             'type': 'boolean'
         }];
     };
 
     CatalogueView.prototype.getPublishData = function getPublishData(data) {
         return [{
-            'market': this.catalogue.name
+            'market': this.market_id
         }];
     };
 

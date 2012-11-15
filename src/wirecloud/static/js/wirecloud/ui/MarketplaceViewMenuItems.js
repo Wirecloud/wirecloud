@@ -19,7 +19,7 @@
  *
  */
 
-/*global Constants, gettext, LogManagerFactory, StyledElements, Wirecloud, LayoutManagerFactory*/
+/*global Constants, ezweb_user_name, gettext, LogManagerFactory, StyledElements, Wirecloud, LayoutManagerFactory*/
 
 if (!Wirecloud.ui) {
     Wirecloud.ui = {};
@@ -75,7 +75,7 @@ if (!Wirecloud.ui) {
                 //type_entries = this.market.market_types;
 
                 fields = {
-                    'label': {
+                    'name': {
                         'type': 'text',
                         'label': gettext('Name'),
                         'required': true
@@ -98,11 +98,12 @@ if (!Wirecloud.ui) {
                 // Form data is sent to server
                 menu.executeOperation = function (data) {
                     var market_info = {
-                        "name": data.label,
+                        "name": data.name,
                         "options": {
-                            "name": data.label,
+                            "name": data.name,
                             "url": data.url,
-                            "type": data.type
+                            "type": data.type,
+                            "user": ezweb_user_name
                         }
                     };
                     Wirecloud.MarketManager.addMarket(market_info, this.market.addMarket.bind(this.market, market_info.options));
