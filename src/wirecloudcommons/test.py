@@ -283,6 +283,18 @@ class WirecloudRemoteTestCase(object):
             if view_name == 'marketplace':
                 WebDriverWait(self.driver, 30).until(marketplace_loaded)
 
+    def check_popup_menu(self, must_be, must_be_absent):
+
+        time.sleep(0.1)
+
+        for item in must_be:
+            menu_item = self.get_popup_menu_item(item)
+            self.assertIsNotNone(menu_item)
+
+        for item in must_be_absent:
+            menu_item = self.get_popup_menu_item(item)
+            self.assertIsNone(menu_item)
+
     def add_wgt_widget_to_catalogue(self, wgt_file, widget_name):
 
         self.change_main_view('marketplace')

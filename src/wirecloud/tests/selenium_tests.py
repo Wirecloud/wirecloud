@@ -1,4 +1,22 @@
-import time
+# -*- coding: utf-8 -*-
+
+# Copyright 2012 Universidad Politécnica de Madrid
+
+# This file is part of Wirecloud.
+
+# Wirecloud is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Wirecloud is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+
 
 from wirecloudcommons.test import widget_operation, WirecloudSeleniumTestCase
 
@@ -6,18 +24,6 @@ from wirecloudcommons.test import widget_operation, WirecloudSeleniumTestCase
 class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     tags = ('fiware-ut-5',)
-
-    def check_popup_menu(self, must_be, must_be_absent):
-
-        time.sleep(0.1)
-
-        for item in must_be:
-            menu_item = self.get_popup_menu_item(item)
-            self.assertIsNotNone(menu_item)
-
-        for item in must_be_absent:
-            menu_item = self.get_popup_menu_item(item)
-            self.assertIsNone(menu_item)
 
     def test_basic_workspace_operations(self):
 
