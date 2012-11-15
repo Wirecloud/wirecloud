@@ -300,8 +300,7 @@ class WirecloudRemoteTestCase(object):
         self.change_main_view('marketplace')
         catalogue_base_element = self.get_current_catalogue_base_element()
 
-        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
-        self.popup_menu_click('Upload')
+        self.perform_market_action('Upload')
         time.sleep(2)
 
         catalogue_base_element.find_element_by_class_name('wgt_file').send_keys(self.wgt_dir + os.sep + wgt_file)
@@ -318,8 +317,7 @@ class WirecloudRemoteTestCase(object):
         self.change_main_view('marketplace')
         catalogue_base_element = self.get_current_catalogue_base_element()
 
-        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
-        self.popup_menu_click('Upload')
+        self.perform_market_action('Upload')
         WebDriverWait(self.driver, 30).until(lambda driver: catalogue_base_element.find_element_by_css_selector('form.template_submit_form .template_uri').is_displayed())
         time.sleep(0.1)
 
@@ -338,8 +336,7 @@ class WirecloudRemoteTestCase(object):
         self.change_main_view('marketplace')
         catalogue_base_element = self.get_current_catalogue_base_element()
 
-        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
-        self.popup_menu_click('Upload')
+        self.perform_market_action('Upload')
         WebDriverWait(self.driver, 30).until(lambda driver: catalogue_base_element.find_element_by_css_selector('form.template_submit_form .template_uri').is_displayed())
         time.sleep(0.1)
 
@@ -562,6 +559,13 @@ class WirecloudRemoteTestCase(object):
         except:
             return self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text
 
+    def perform_market_action(self, action):
+        try:
+            self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
+        except:
+            self.driver.find_element_by_css_selector('#wirecloud_breadcrum .third_level > .icon-menu').click()
+        self.popup_menu_click(action)
+
     def get_current_catalogue_base_element(self):
 
         catalogues = self.driver.find_elements_by_css_selector('#marketplace > .alternatives > .wrapper > .catalogue')
@@ -574,8 +578,7 @@ class WirecloudRemoteTestCase(object):
     def add_marketplace(self, name, url, type_, expect_error=False):
 
         self.change_main_view('marketplace')
-        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
-        self.popup_menu_click("Add new marketplace")
+        self.perform_market_action("Add new marketplace")
 
         market_name_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="name"]')
         self.fill_form_input(market_name_input, name)
@@ -603,21 +606,14 @@ class WirecloudRemoteTestCase(object):
     def change_marketplace(self, market):
 
         self.change_main_view('marketplace')
-        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
-        self.popup_menu_click(market)
+        self.perform_market_action(market)
         time.sleep(2)
         self.assertEqual(self.get_current_marketplace_name(), market)
 
     def delete_marketplace(self, market, expect_error=False):
 
         self.change_marketplace(market)
-
-        try:
-            self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
-        except:
-            self.driver.find_element_by_css_selector('#wirecloud_breadcrum .third_level > .icon-menu').click()
-
-        self.popup_menu_click("Delete marketplace")
+        self.perform_market_action("Delete marketplace")
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
         self.wait_wirecloud_ready()
 
