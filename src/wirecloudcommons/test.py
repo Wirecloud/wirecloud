@@ -280,10 +280,12 @@ class WirecloudRemoteTestCase(object):
         if self.get_current_view() != view_name:
             self.driver.find_element_by_css_selector("#wirecloud_header .menu ." + view_name).click()
 
+            if view_name == 'marketplace':
+                WebDriverWait(self.driver, 30).until(marketplace_loaded)
+
     def add_wgt_widget_to_catalogue(self, wgt_file, widget_name):
 
         self.change_main_view('marketplace')
-        WebDriverWait(self.driver, 30).until(marketplace_loaded)
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click('Upload')
         time.sleep(2)
@@ -300,7 +302,6 @@ class WirecloudRemoteTestCase(object):
     def add_template_to_catalogue(self, template_url, resource_name):
 
         self.change_main_view('marketplace')
-        WebDriverWait(self.driver, 30).until(marketplace_loaded)
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click('Upload')
         WebDriverWait(self.driver, 30).until(lambda driver: driver.find_element_by_css_selector('form.template_submit_form .template_uri').is_displayed())
@@ -319,7 +320,6 @@ class WirecloudRemoteTestCase(object):
     def add_template_to_catalogue_with_error(self, template_url, resource_name, msg):
 
         self.change_main_view('marketplace')
-        WebDriverWait(self.driver, 30).until(marketplace_loaded)
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click('Upload')
         WebDriverWait(self.driver, 30).until(lambda driver: driver.find_element_by_css_selector('form.template_submit_form .template_uri').is_displayed())
@@ -336,7 +336,9 @@ class WirecloudRemoteTestCase(object):
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 
     def search_resource(self, keyword):
+        self.change_main_view('marketplace')
         self.wait_catalogue_ready()
+
         search_input = self.driver.find_element_by_css_selector('.simple_search_text')
         self.fill_form_input(search_input, keyword)
         self.driver.execute_script('''
@@ -381,7 +383,6 @@ class WirecloudRemoteTestCase(object):
     def add_widget_to_mashup(self, widget_name, new_name=None):
 
         self.change_main_view('marketplace')
-        WebDriverWait(self.driver, 30).until(marketplace_loaded)
         self.search_resource(widget_name)
         resource = self.search_in_catalogue_results(widget_name)
         iwidget = self.instantiate(resource)
@@ -396,7 +397,6 @@ class WirecloudRemoteTestCase(object):
     def create_workspace_from_catalogue(self, mashup_name):
 
         self.change_main_view('marketplace')
-        WebDriverWait(self.driver, 30).until(marketplace_loaded)
         self.search_resource(mashup_name)
         resource = self.search_in_catalogue_results(mashup_name)
 
@@ -408,7 +408,6 @@ class WirecloudRemoteTestCase(object):
     def merge_mashup_from_catalogue(self, mashup_name):
 
         self.change_main_view('marketplace')
-        WebDriverWait(self.driver, 30).until(marketplace_loaded)
         self.search_resource(mashup_name)
         resource = self.search_in_catalogue_results(mashup_name)
 
@@ -535,7 +534,6 @@ class WirecloudRemoteTestCase(object):
     def add_marketplace(self, name, url, type_):
 
         self.change_main_view('marketplace')
-        WebDriverWait(self.driver, 30).until(marketplace_loaded)
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click("Add new marketplace")
 
@@ -555,7 +553,6 @@ class WirecloudRemoteTestCase(object):
     def delete_marketplace(self, market):
 
         self.change_main_view('marketplace')
-        WebDriverWait(self.driver, 30).until(marketplace_loaded)
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.popup_menu_click(market)
         time.sleep(2)
