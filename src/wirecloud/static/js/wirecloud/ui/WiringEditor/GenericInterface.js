@@ -36,11 +36,9 @@
         if (extending === true) {
             return;
         }
-        var i, name, variables, variable, anchor, anchorDiv, anchorLabel, desc, nameDiv, nameElement, del_button, highlight_button, copy;
+        var i, name, variables, variable, anchor, anchorDiv, anchorLabel, desc, nameDiv, nameElement, del_button, copy;
 
         StyledElements.Container.call(this, {'class': className}, []);
-
-        this.highlighted = true;
 
         this.editingPos = false;
         this.targetAnchorsByName = {};
@@ -86,22 +84,6 @@
                 }
             }.bind(this));
 
-            // highlight button, not for miniInterface
-            this.highlight_button = new StyledElements.StyledButton({
-                'title': gettext("highlight"),
-                'class': 'highlight_button activated',
-                'plain': true
-            });
-            this.highlight_button.insertInto(this.header);
-            this.highlight_button.addEventListener('click', function () {
-                if (this.highlighted) {
-                    this.wiringEditor.unhighlightEntity(this);
-                    this.unhighlight();
-                } else {
-                    this.wiringEditor.highlightEntity(this);
-                    this.highlight();
-                }
-            }.bind(this));
             // edit_position button, not for miniInterface
             this.editPos_button = new StyledElements.StyledButton({
                 'title': gettext("edit_Pos"),
@@ -577,34 +559,6 @@
             atr = '';
         }
         this.wrapperElement.setAttribute('class', EzWebExt.removeWord(atr, className));
-    };
-
-    GenericInterface.prototype.highlight = function highlight() {
-        var i;
-        this.highlighted = true;
-        this.removeClassName('disabled');
-        this.highlight_button.addClassName('activated');
-        for (i = 0; i < this.targetAnchors.length; i++) {
-            this.targetAnchors[i].highlightArrows();
-
-        }
-        for (i = 0; i < this.sourceAnchors.length; i++) {
-            this.sourceAnchors[i].highlightArrows();
-        }
-    };
-
-    GenericInterface.prototype.unhighlight = function unhighlight() {
-        var i;
-        this.highlighted = false;
-        this.addClassName('disabled');
-        this.highlight_button.removeClassName('activated');
-        for (i = 0; i < this.targetAnchors.length; i++) {
-            this.targetAnchors[i].unhighlightArrows();
-        }
-        for (i = 0; i < this.sourceAnchors.length; i++) {
-            this.sourceAnchors[i].unhighlightArrows();
-        }
-        this.unselect();
     };
 
     GenericInterface.prototype.select = function select(withCtrl) {

@@ -52,26 +52,6 @@ if (!Wirecloud.ui) {
 
         this.layout.getCenterContainer().wrapperElement.addEventListener("scroll", this.scrollHandler.bind(this), false);
 
-        // general highlight button
-        this.highlight_button = new StyledElements.StyledButton({
-            'title': gettext("general highlight"),
-            'class': 'generalHighlight_button',
-            'plain': true
-        });
-        this.highlight_button.insertInto(this.layout.getCenterContainer());
-        this.highlight_button.addClassName('activated');
-        this.highlight_button.addEventListener('click', function () {
-            if (this.generalHighlighted) {
-                this.highlight_button.removeClassName('activated');
-                this.generalUnhighlight();
-                this.generalHighlighted = false;
-            } else {
-                this.generalHighlight();
-                this.highlight_button.addClassName('activated');
-                this.generalHighlighted = true;
-            }
-        }.bind(this), true);
-
         //canvas for arrows
         this.canvas = new Wirecloud.ui.WiringEditor.Canvas();
         this.canvasElement = this.canvas.getHTMLElement();
@@ -214,7 +194,6 @@ if (!Wirecloud.ui) {
         this.multiconnectors = {};
         this.mini_widgets = {};
         this.ioperators = {};
-        this.highlightedObjects = [];
         this.selectedOps = {};
         this.selectedOps.length = 0;
         this.selectedWids = {};
@@ -223,7 +202,6 @@ if (!Wirecloud.ui) {
         this.selectedMulti.length = 0;
         this.selectedCount = 0;
         this.ctrlPushed = false;
-        this.generalHighlighted = true;
         this.nextOperatorId = 0;
         this.nextMulticonnectorId = 0;
         this.sourceAnchorsByFriendCode = {};
@@ -563,41 +541,6 @@ if (!Wirecloud.ui) {
     };
 
     /**
-     * general Highlight switch on.
-     */
-    WiringEditor.prototype.generalHighlight = function generalHighlight() {
-        var i, key;
-
-        this.highlightedObjects = [];
-        for (i in this.ioperators) {
-            this.ioperators[i].highlight();
-            this.highlightedObjects.push(this.ioperators[i]);
-        }
-
-        for (key in this.iwidgets) {
-            this.iwidgets[key].highlight();
-            this.highlightedObjects.push(this.iwidgets[key]);
-        }
-    };
-
-    /**
-     * general Highlight switch off.
-     */
-    WiringEditor.prototype.generalUnhighlight = function generalUnhighlight() {
-        var key;
-
-        for (key in this.ioperators) {
-            this.ioperators[key].unhighlight();
-        }
-
-        for (key in this.iwidgets) {
-            this.iwidgets[key].unhighlight();
-        }
-
-        this.highlightedObjects = [];
-    };
-
-    /**
      * add selectd object.
      */
     WiringEditor.prototype.addSelectedObject = function addSelectedObject(object) {
@@ -658,21 +601,6 @@ if (!Wirecloud.ui) {
         if ((this.selectedOps.length !== 0) || (this.selectedWids.length !== 0) || (this.selectedMulti.length !== 0)) {
             //('error resetSelection' + this.selectedOps + this.selectedWids);
         }
-    };
-
-    /**
-     * Highlight object.
-     */
-    WiringEditor.prototype.highlightEntity = function highlightEntity(object) {
-        this.highlightedObjects.push(object);
-    };
-
-    /**
-     * Unhighlight object.
-     */
-    WiringEditor.prototype.unhighlightEntity = function unhighlightEntity(object) {
-        var pos = this.highlightedObjects.indexOf(object);
-        delete this.highlightedObjects[pos];
     };
 
     /**
@@ -1114,8 +1042,6 @@ if (!Wirecloud.ui) {
         this.canvas.canvasElement.generalLayer.setAttribute('transform', param);
         this.canvas.canvasElement.style.top = scrollY + 'px';
         this.canvas.canvasElement.style.left = scrollX + 'px';
-        this.highlight_button.wrapperElement.style.top = scrollY + 'px';
-        this.highlight_button.wrapperElement.style.left = scrollX + 'px';
     };
 
     /*************************************************************************

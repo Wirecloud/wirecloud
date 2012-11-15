@@ -294,28 +294,3 @@
     width: 16px;
     height: 16px;
 }
-
-/* highlight button DEPRECATED */
-.wiring_editor .grid .generalHighlight_button {
-    float: right;
-    background: url('../../images/wiring/big_eye1.png');
-    width: 20px;
-    height: 20px;
-    z-index: 100;
-}
-
-.wiring_editor .grid .generalHighlight_button.activated {
-    background: url('../../images/wiring/big_eye2.png');
-}
-
-.wiring_editor .grid .header .highlight_button {
-    float: left;
-    background: url('../../images/wiring/eye1.png');
-    top: -10px;
-    width: 16px;
-    height: 16px;
-}
-
-.wiring_editor .grid .header .highlight_button.activated {
-    background: url('../../images/wiring/eye2.png');
-}
