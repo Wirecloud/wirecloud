@@ -21,6 +21,7 @@
 import os
 import codecs
 from shutil import rmtree
+import stat
 from tempfile import mkdtemp
 import time
 from urllib2 import URLError, HTTPError
@@ -42,7 +43,35 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from commons import http_utils
 from wirecloud.widget import utils as showcase
+from catalogue import utils as catalogue
 from wirecloudcommons.utils.wgt import WgtDeployer, WgtFile
+
+
+def cleartree(path):
+
+    if os.path.islink(path):
+        # symlinks to directories are forbidden, see bug #1669
+        raise OSError("Cannot call cleartree on a symbolic link")
+
+    names = []
+    try:
+        names = os.listdir(path)
+    except os.error:
+        pass
+
+    for name in names:
+        fullname = os.path.join(path, name)
+        try:
+            mode = os.lstat(fullname).st_mode
+        except os.error:
+            mode = 0
+        if stat.S_ISDIR(mode):
+            rmtree(fullname, ignore_errors=True)
+        else:
+            try:
+                os.remove(fullname)
+            except os.error:
+                pass
 
 
 class FakeDownloader(object):
@@ -572,6 +601,8 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
     @classmethod
     def setUpClass(cls):
 
+        cls.wgt_dir = os.path.join(os.path.dirname(__file__), 'test-data')
+
         cls.old_LANGUAGES = settings.LANGUAGES
         cls.old_LANGUAGE_CODE = settings.LANGUAGE_CODE
         cls.old_DEFAULT_LANGUAGE = settings.DEFAULT_LANGUAGE
@@ -595,8 +626,12 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
             webdriver_args = {}
         cls.driver = getattr(module, klass_name)(**webdriver_args)
 
-        # initialize
-        cls.wgt_dir = os.path.join(os.path.dirname(__file__), 'test-data')
+        # catalogue deployer
+        cls.old_catalogue_deployer = catalogue.wgt_deployer
+        cls.catalogue_tmp_dir = mkdtemp()
+        catalogue.wgt_deployer = WgtDeployer(cls.catalogue_tmp_dir)
+
+        # showcase deployer
         cls.old_deployer = showcase.wgt_deployer
         cls.tmp_dir = mkdtemp()
         showcase.wgt_deployer = WgtDeployer(cls.tmp_dir)
@@ -610,6 +645,10 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         cls.driver.quit()
 
         http_utils.download_http_content = cls._original_download_function
+        catalogue.wgt_deployer = cls.old_catalogue_deployer
+        rmtree(cls.catalogue_tmp_dir, ignore_errors=True)
+        showcase.wgt_deployer = cls.old_deployer
+        rmtree(cls.tmp_dir, ignore_errors=True)
 
         settings.LANGUAGES = cls.old_LANGUAGES
         settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
@@ -625,7 +664,8 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         super(WirecloudSeleniumTestCase, self).setUp()
 
     def tearDown(self):
-        rmtree(self.tmp_dir, ignore_errors=True)
+        cleartree(self.tmp_dir)
+        cleartree(self.catalogue_tmp_dir)
 
         super(WirecloudSeleniumTestCase, self).tearDown()
 
