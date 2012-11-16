@@ -33,8 +33,9 @@ def commit_on_http_success(func, using=None):
                     except:
                         rollback(using=using)
                         raise
+        finally:
+            leave_transaction_management(using=using)
 
-        leave_transaction_management(using=using)
         return res
 
     return wrapped_func
