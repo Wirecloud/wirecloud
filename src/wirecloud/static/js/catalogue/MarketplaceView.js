@@ -104,7 +104,7 @@
         this.marketMenu.append(new Wirecloud.ui.MarketplaceViewMenuItems(this));
 
         this.addEventListener('show', function (view) {
-            if (!this.loading && !this.error) {
+            if (!view.loading && !view.error) {
                 view.alternatives.getCurrentAlternative().refresh_if_needed();
             }
         });
