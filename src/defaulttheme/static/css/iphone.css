@@ -9,6 +9,7 @@ body {
     -webkit-text-size-adjust: none;
     color: #E0E0E0;
     font-size: 11pt;
+    overflow: hidden;
 }
 
 a, a:link, a:visited, a:hover {

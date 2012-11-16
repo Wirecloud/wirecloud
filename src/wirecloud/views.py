@@ -42,7 +42,7 @@ class FeatureCollection(Resource):
 
 
 def render_root_page(request):
-    return auto_select_workspace(request)
+    return auto_select_workspace(request, request.GET.get('view', None))
 
 
 @login_required
