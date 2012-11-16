@@ -18,7 +18,7 @@
     <img style="vertical-align: middle; heigth: 250px; width: 416px;" src="{{ STATIC_URL }}images/logos/wc{{ "123456"|make_list|random }}.png" />
 
     <div style="display: inline-block; vertical-align:middle; margin: 4ex 10ex;">
-    <form class="formee" style="text-align: left;width: 400px" method="post" action="{% url 'django.contrib.auth.views.login' %}">
+    <form class="formee" style="text-align: left;width: 400px" method="post">
     <fieldset style="background: #E7EDF2;">
 
     {% if form.errors %}
