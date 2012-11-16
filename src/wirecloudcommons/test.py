@@ -261,7 +261,10 @@ class WirecloudRemoteTestCase(object):
         WebDriverWait(self.driver, timeout).until(lambda driver: 'disabled' not in driver.find_element_by_class_name('catalogue').find_element_by_class_name('search_interface').get_attribute('class'))
 
     def login(self, username='admin', password='admin'):
+
         self.driver.get(self.live_server_url + reverse('login'))
+        self.wait_element_visible_by_css_selector('#id_username')
+
         username_input = self.driver.find_element_by_id('id_username')
         self.fill_form_input(username_input, username)
         password_input = self.driver.find_element_by_id('id_password')
