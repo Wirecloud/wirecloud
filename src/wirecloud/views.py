@@ -62,6 +62,8 @@ def auto_select_workspace(request, mode=None):
 
 @login_required
 def render_workspace_view(request, creator_user, workspace):
+    get_workspace_list(request.user)
+
     workspace = get_object_or_404(Workspace, creator__username=creator_user, name=workspace)
     if request.user not in workspace.users.all():
         return HttpResponseForbidden()
