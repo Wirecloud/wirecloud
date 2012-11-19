@@ -52,13 +52,16 @@ class WirecloudTestConflictingPlugin(WirecloudPlugin):
 
 class WirecloudPluginTestCase(UnitTestCase):
 
-    def setUp(self):
-        self.OLD_WIRECLOUD_PLUGINS = getattr(settings, 'WIRECLOUD_PLUGINS', ())
-        super(WirecloudPluginTestCase, self).setUp()
+    @classmethod
+    def setUpClass(cls):
+        cls.OLD_WIRECLOUD_PLUGINS = getattr(settings, 'WIRECLOUD_PLUGINS', ())
+        super(WirecloudPluginTestCase, cls).setUpClass()
 
-    def tearDown(self):
-        settings.WIRECLOUD_PLUGINS = self.OLD_WIRECLOUD_PLUGINS
-        super(WirecloudPluginTestCase, self).tearDown()
+    @classmethod
+    def tearDown(cls):
+        cls.WIRECLOUD_PLUGINS = cls.OLD_WIRECLOUD_PLUGINS
+        clear_cache()
+        super(WirecloudPluginTestCase, cls).tearDownClass()
 
     def test_basic_conf(self):
 
