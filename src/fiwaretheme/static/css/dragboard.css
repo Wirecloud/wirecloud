@@ -242,3 +242,19 @@ div.iwidget.highlighted {
     color: rgb(85, 85, 85);
     border-color: transparent rgb(221, 221, 221) rgb(221, 221, 221) rgb(221, 221, 221);
 }
+
+.emptyWorkspaceInfoBox {
+    max-width: 582px;
+    border-radius: 7px;
+    padding: 18px;
+    margin: 10px;
+    border: 2px dashed rgba(62, 128, 173, 0.5);
+}
+.emptyWorkspaceInfoBox .titleInfoBox {
+    font-weight:bold;
+    font-size: 1.2em;
+}
+
+.emptyWorkspaceInfoBox .special {
+    font-weight:bold;
+}

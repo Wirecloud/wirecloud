@@ -1,7 +1,7 @@
 .wiring_editor .canvas .arrow {
     fill:   none;
     cursor: crosshair;
-    opacity: 0.3;
+    opacity: 0.5;
 }
 
 .wiring_editor .canvas .arrow.selected {
