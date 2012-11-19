@@ -27,6 +27,7 @@
     font-weight: bold;
     font-family: "Courier New", courier;
     color: #990000;
+    cursor: move;
 }
 
 .window_menu > .window_top > .window_title:before {

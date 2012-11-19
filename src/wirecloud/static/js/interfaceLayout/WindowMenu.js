@@ -41,27 +41,27 @@ function WindowMenu(title, extra_class) {
     }
 
     // Window Top
-    var windowTop = document.createElement('div');
-    windowTop.className = "window_top";
-    this.htmlElement.appendChild(windowTop);
+    this.windowTop = document.createElement('div');
+    this.windowTop.className = "window_top";
+    this.htmlElement.appendChild(this.windowTop);
 
     this._closeListener = this._closeListener.bind(this);
     this.closeButton = new StyledElements.StyledButton({
         'class': "closebutton",
         'plain': true
     });
-    this.closeButton.insertInto(windowTop);
+    this.closeButton.insertInto(this.windowTop);
     this.closeButton.addEventListener("click", this._closeListener);
 
     this.titleElement = document.createElement('div');
     Element.extend(this.titleElement);
     this.titleElement.className = "window_title";
-    windowTop.appendChild(this.titleElement);
+    this.windowTop.appendChild(this.titleElement);
 
     var clearer = document.createElement('div');
     Element.extend(clearer);
     clearer.addClassName("floatclearer");
-    windowTop.appendChild(clearer);
+    this.windowTop.appendChild(clearer);
 
     // Window Content
     this.windowContent = document.createElement('div');
@@ -82,8 +82,55 @@ function WindowMenu(title, extra_class) {
 
     // Initial title
     this.setTitle(title);
+
+    // Make draggable
+    this.makeDraggable();
 }
 
+/**
+ * Make Draggable.
+ */
+WindowMenu.prototype.makeDraggable = function makeDraggable() {
+    this.draggable = new Draggable(this.windowTop, {window_menu: this},
+        function onStart(draggable, context) {
+            var position;
+            context.y = context.window_menu.htmlElement.style.top === "" ? 0 : parseInt(context.window_menu.htmlElement.style.top, 10);
+            context.x = context.window_menu.htmlElement.style.left === "" ? 0 : parseInt(context.window_menu.htmlElement.style.left, 10);
+        },
+        function onDrag(e, draggable, context, xDelta, yDelta) {
+            context.window_menu.setPosition({posX: context.x + xDelta, posY: context.y + yDelta});
+        },
+        function onFinish(draggable, context) {
+            var position = context.window_menu.getStylePosition();
+            if (position.posX < 0) {
+                position.posX = 8;
+            }
+            if (position.posY < 0) {
+                position.posY = 8;
+            }
+            context.window_menu.setPosition(position);
+        },
+        function () { return true; }
+    );
+};
+
+/**
+ * set position.
+ */
+WindowMenu.prototype.setPosition = function setPosition(coordinates) {
+    this.htmlElement.style.left = coordinates.posX + 'px';
+    this.htmlElement.style.top = coordinates.posY + 'px';
+};
+
+/**
+ * get style position.
+ */
+WindowMenu.prototype.getStylePosition = function getStylePosition() {
+    return {
+        posX: parseInt(this.htmlElement.style.left, 10),
+        posY: parseInt(this.htmlElement.style.top, 10)
+    };
+};
 
 WindowMenu.prototype.setTitle = function setTitle(title) {
     this.titleElement.setTextContent(title);
