@@ -246,8 +246,16 @@ class WirecloudRemoteTestCase(object):
 
     def wait_wirecloud_ready(self, start_timeout=30, timeout=30):
 
-        WebDriverWait(self.driver, start_timeout).until(lambda driver: driver.find_element_by_xpath(r'//*[@id="loading-window" and (@class="" or @class="fadding")]'))
-        WebDriverWait(self.driver, timeout).until(lambda driver: driver.find_element_by_css_selector('#loading-window.fadding'))
+        loading_window = self.driver.find_element_by_css_selector('#loading-window')
+
+        def wait_loading_window(driver):
+            return loading_window.get_attribute('class').strip() in ('', 'disabled')
+
+        def wait_loading_window_hidden(driver):
+            return loading_window.get_attribute('class').strip() in ('fadding', 'disabled')
+
+        WebDriverWait(self.driver, start_timeout).until(wait_loading_window)
+        WebDriverWait(self.driver, timeout).until(wait_loading_window_hidden)
 
         loading_message = self.driver.find_element_by_id('loading-message')
         try:
