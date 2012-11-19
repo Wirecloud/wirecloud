@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, IWidget, LogManagerFactory, Operator, wEvent, wSlot, Wirecloud*/
+/*global gettext, IWidget, LogManagerFactory, wEvent, wSlot, Wirecloud*/
 
 (function () {
 
@@ -260,7 +260,7 @@
     Wiring.prototype.pushOperatorEvent = function pushOperatorEvent(iOperator, outputName, data) {
         var entry;
 
-        if (iOperator instanceof Operator) {
+        if (iOperator instanceof Wirecloud.Operator) {
             iOperator = iOperator.id;
         }
 
@@ -271,7 +271,7 @@
     Wiring.prototype.registerOperatorCallback = function registerOperatorCallback(iOperator, inputName, callback) {
         var entry;
 
-        if (iOperator instanceof Operator) {
+        if (iOperator instanceof Wirecloud.Operator) {
             iOperator = iOperator.id;
         }
 
