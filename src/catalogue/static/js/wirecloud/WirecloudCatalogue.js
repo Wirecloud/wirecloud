@@ -153,7 +153,7 @@
 
         Wirecloud.io.makeRequest(this.RESOURCE_COLLECTION, {
             method: 'POST',
-            parameters: {'template_uri': url},
+            parameters: {'template_uri': url, packaged: !!options.packaged},
             onSuccess: function (transport) {
                 if ('wiring' in Wirecloud && 'OperatorFactory' in Wirecloud.wiring) {
                     Wirecloud.wiring.OperatorFactory.addOperator(JSON.parse(transport.responseText));

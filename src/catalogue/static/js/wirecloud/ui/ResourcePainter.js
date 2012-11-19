@@ -118,14 +118,35 @@
                         local_repository = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
                         button.addEventListener('click', local_repository.createUserCommand('import', this.resource, this.catalogue));
                     }
-                } else if (this.resource.getType() !== 'non-instantiable service') {
-                    button = new StyledElements.StyledButton({
-                        'class': 'instantiate_button',
-                        'text': gettext('Add to workspace')
-                    });
-                    button.addEventListener('click', this.catalogue.createUserCommand('instantiate', this.resource));
+                } else if (this.catalogue.getLabel() === 'local') {
+                    switch (this.resource.getType()) {
+                    case 'mashup':
+                    case 'widget':
+                        button = new StyledElements.StyledButton({
+                            'class': 'instantiate_button',
+                            'text': gettext('Add to workspace')
+                        });
+                        button.addEventListener('click', this.catalogue.createUserCommand('instantiate', this.resource));
+                        break;
+                    default:
+                        button = new StyledElements.StyledButton({text: gettext('Download')});
+                        button.addEventListener('click', function (resource) {
+                            window.open(resource.getUriTemplate(), '_blank');
+                        }.bind(null, this.resource));
+                    }
                 } else {
-                    button = new StyledElements.StyledButton({text: gettext('Download')});
+                    if (Wirecloud.LocalCatalogue.resourceExists(resource)) {
+                        button = new StyledElements.StyledButton({
+                            'text': gettext('Uninstall')
+                        });
+                    } else {
+                        button = new StyledElements.StyledButton({
+                            'text': gettext('Install')
+                        });
+
+                        local_repository = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
+                        button.addEventListener('click', local_repository.createUserCommand('import', this.resource, this.catalogue));
+                    }
                 }
                 button.addClassName('mainbutton');
                 return button;

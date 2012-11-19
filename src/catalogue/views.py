@@ -130,8 +130,6 @@ class ResourceCollection(Resource):
     @supported_request_mime_types(('application/x-www-form-urlencoded', 'multipart/form-data'))
     def create(self, request, fromWGT=False):
 
-        overrides = None
-
         try:
             if 'file' in request.FILES:
 
@@ -141,8 +139,11 @@ class ResourceCollection(Resource):
             elif 'template_uri' in request.POST:
 
                 template_uri = request.POST['template_uri']
-                template = http_utils.download_http_content(template_uri, user=request.user)
-                resource = add_resource_from_template(template_uri, template, request.user, overrides=overrides)
+                downloaded_file = http_utils.download_http_content(template_uri, user=request.user)
+                if str(request.POST.get('packaged', 'false')).lower() == 'true':
+                    resource = add_widget_from_wgt(StringIO(downloaded_file), request.user)
+                else:
+                    resource = add_resource_from_template(template_uri, downloaded_file, request.user)
 
             else:
 

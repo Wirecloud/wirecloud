@@ -81,6 +81,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/StyledElements/BorderLayout.js',
             'js/StyledElements/ModelTable.js',
             'js/gadgetModel/Gadget.js',
+            'js/wirecloud/LocalCatalogue.js',
         )
 
         if view == 'index':

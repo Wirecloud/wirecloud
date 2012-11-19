@@ -120,6 +120,7 @@
             layoutManager.logSubTask(gettext('Uploading operator'));
 
             this.catalogue.addResourceFromURL(resource.getUriTemplate(), {
+                packaged: resource.isPackaged(),
                 onSuccess: function () {
                     var local_repository;
 
