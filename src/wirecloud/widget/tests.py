@@ -62,7 +62,7 @@ class CodeTransformationTestCase(TestCase):
         else:
             del settings.FORCE_PROTO
 
-        cls.WIRECLOUD_PLUGINS = cls.OLD_WIRECLOUD_PLUGINS
+        settings.WIRECLOUD_PLUGINS = cls.OLD_WIRECLOUD_PLUGINS
         plugins.clear_cache()
 
         super(CodeTransformationTestCase, cls).tearDownClass()
