@@ -1,15 +1,9 @@
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from django.utils import unittest
+from django.utils.unittest import TestCase
 
 from wirecloud.plugins import clear_cache, get_active_features, get_plugins, \
     get_extra_javascripts, get_widget_api_extensions, WirecloudPlugin
-
-try:
-    from djangosanetesting.cases import UnitTestCase
-except:
-    class UnitTestCase(unittest.TestCase):
-        pass
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/tests/__init__.py)
@@ -50,7 +44,7 @@ class WirecloudTestConflictingPlugin(WirecloudPlugin):
     }
 
 
-class WirecloudPluginTestCase(UnitTestCase):
+class WirecloudPluginTestCase(TestCase):
 
     @classmethod
     def setUpClass(cls):
