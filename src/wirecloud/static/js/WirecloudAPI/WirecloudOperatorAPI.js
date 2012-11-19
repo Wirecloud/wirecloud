@@ -68,8 +68,4 @@
     });
     Object.preventExtensions(window.MashupPlatform.wiring);
 
-    Object.preventExtensions(window.MashupPlatform);
-
-    // Remove link to wirecloud
-    window.parent = window;
 })();

@@ -128,6 +128,16 @@ def get_widget_api_extensions(view):
     return files
 
 
+def get_operator_api_extensions(view):
+    plugins = get_plugins()
+    files = []
+
+    for plugin in plugins:
+        files += plugin.get_operator_api_extensions(view)
+
+    return files
+
+
 def get_platform_css(view):
     plugins = get_plugins()
     files = []
@@ -197,6 +207,9 @@ class WirecloudPlugin(object):
         return ()
 
     def get_widget_api_extensions(self, view):
+        return ()
+
+    def get_operator_api_extensions(self, view):
         return ()
 
     def get_platform_css(self, view):

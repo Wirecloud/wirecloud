@@ -19,6 +19,7 @@
 
 from django.template import loader, Context
 
+from wirecloud.plugins import get_operator_api_extensions
 from wirecloudcommons.utils.http import get_absolute_static_url
 
 
@@ -45,9 +46,12 @@ def remove_related_iwidget_connections(wiring, iwidget):
 def generate_xhtml_operator_code(js_files, base_url, request):
 
     api_url = get_absolute_static_url('js/WirecloudAPI/WirecloudOperatorAPI.js', request=request)
+    api_closure_url = get_absolute_static_url('js/WirecloudAPI/WirecloudAPIClosure.js', request=request)
+    api_js_files = [get_absolute_static_url(url, request=request) for url in get_operator_api_extensions('index')]
+    api_js = [api_url] + api_js_files + [api_closure_url]
 
     t = loader.get_template('wirecloud/operator_xhtml.html')
-    c = Context({'base_url': base_url, 'js_files': [api_url] + js_files})
+    c = Context({'base_url': base_url, 'js_files': api_js + js_files})
 
     xhtml = t.render(c)
 

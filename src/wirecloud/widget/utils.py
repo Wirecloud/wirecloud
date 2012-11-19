@@ -359,6 +359,14 @@ def fix_widget_code(widget_code, base_url, content_type, request):
     if prefix in xmltree.getroot().nsmap:
         xmlns = xmltree.getroot().nsmap[prefix]
 
+    # Fix head element
+    head_elements = xpath(xmltree, '/xhtml:html/xhtml:head', xmlns)
+    if len(head_elements) == 0:
+        head_element = etree.Element("head")
+        xmltree.getroot().insert(0, head_element)
+    else:
+        head_element = head_elements[0]
+
     # Fix base element
     base_elements = xpath(xmltree, '/xhtml:html/xhtml:head/xhtml:base', xmlns)
     for base_element in base_elements[1:]:
@@ -367,23 +375,22 @@ def fix_widget_code(widget_code, base_url, content_type, request):
     if len(base_elements) >= 1 and force_base:
         base_elements[0].set('href', base_url)
     elif len(base_elements) == 0:
-        head_elements = xpath(xmltree, '/xhtml:html/xhtml:head', xmlns)
-        if len(head_elements) == 0:
-            head_element = etree.Element("head")
-            xmltree.getroot().insert(0, head_element)
-        else:
-            head_element = head_elements[0]
-
         head_element.insert(0, etree.Element('base', href=base_url))
 
     # Fix scripts
+    uses_old_api = False
     scripts = xpath(xmltree, '/xhtml:html//xhtml:script', xmlns)
     for script in scripts:
 
         if 'src' in script.attrib:
             script.text = ''
 
-        if script.get('src', '') == '/ezweb/js/EzWebAPI/EzWebAPI.js':
+        if script.get('src', '') == '/ezweb/js/WirecloudAPI/WirecloudAPI.js':
+
+            script.getparent().remove(script)
+
+        elif script.get('src', '') == '/ezweb/js/EzWebAPI/EzWebAPI.js':
+            uses_old_api = True
             script.set('src', get_absolute_static_url('js/EzWebAPI/EzWebAPI.js', request=request))
 
             files = get_widget_api_extensions('index')
@@ -392,6 +399,14 @@ def fix_widget_code(widget_code, base_url, content_type, request):
                 script.addnext(etree.Element('script', type="text/javascript", src=get_absolute_static_url(file, request=request)))
         elif script.get('src', '').startswith('/ezweb/'):
             script.set('src', get_absolute_static_url(script.get('src')[7:], request=request))
+
+    if not uses_old_api:
+        head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url('js/WirecloudAPI/WirecloudAPIClosure.js', request=request)))
+        files = get_widget_api_extensions('index')
+        files.reverse()
+        for file in files:
+            head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url(file, request=request)))
+        head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url('js/WirecloudAPI/WirecloudAPI.js', request=request)))
 
     # return modified code
     return etree.tostring(xmltree, pretty_print=False, method=serialization_method)

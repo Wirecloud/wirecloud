@@ -78,61 +78,84 @@ var OperatorMeta = function OperatorMeta(desc) {
 };
 
 OperatorMeta.prototype.instantiate = function instantiate(id/*TODO*/, wiringEditor) {
-    return new Operator(this, id /* TODO */, wiringEditor);
+    return new Wirecloud.Operator(this, id /* TODO */, wiringEditor);
 };
 
-var Operator = function Operator(operator_meta, id, /* TODO */ wiringEditor) {
-    var i, inputs, outputs, data_uri;
+(function () {
 
-    Object.defineProperty(this, 'meta', {value: operator_meta});
-    Object.defineProperty(this, 'name', {value: operator_meta.name});
-    Object.defineProperty(this, 'display_name', {value: operator_meta.display_name});
-    Object.defineProperty(this, 'id', {value: id});
+    "use strict";
 
-    inputs = this.meta.inputs;
-    this.inputs = {};
-    for (i = 0; i < inputs.length; i++) {
-        this.inputs[inputs[i].name] = new OperatorTargetEndpoint(this, inputs[i]);
-    }
+    var Operator = function Operator(operator_meta, id, /* TODO */ wiringEditor) {
+        var i, inputs, outputs, data_uri;
 
-    outputs = this.meta.outputs;
-    this.outputs = {};
-    for (i = 0; i < outputs.length; i++) {
-        this.outputs[outputs[i].name] = new OperatorSourceEndpoint(this, outputs[i]);
-    }
+        StyledElements.ObjectWithEvents.call(this, ['load', 'unload']);
 
-    if (!wiringEditor) {
-        this.element = document.createElement('object');
-        data_uri = Wirecloud.URLs.OPERATOR_ENTRY.evaluate({vendor: operator_meta.vendor, name: operator_meta.name, version: operator_meta.version}) + '#id=' + id;
-        this.element.setAttribute('data', data_uri);
-        document.body.appendChild(this.element);
-    }
-};
+        Object.defineProperty(this, 'meta', {value: operator_meta});
+        Object.defineProperty(this, 'name', {value: operator_meta.name});
+        Object.defineProperty(this, 'display_name', {value: operator_meta.display_name});
+        Object.defineProperty(this, 'id', {value: id});
 
-Operator.prototype.sendEvent = function sendEvent(endpoint_name, data) {
-    this.outputs[endpoint_name].propagate(data);
-};
+        this.loaded = false;
 
-Operator.prototype.fullDisconnect = function fullDisconnect() {
-    var i, connectables;
+        inputs = this.meta.inputs;
+        this.inputs = {};
+        for (i = 0; i < inputs.length; i++) {
+            this.inputs[inputs[i].name] = new OperatorTargetEndpoint(this, inputs[i]);
+        }
 
-    connectables = this.inputs;
-    for (i = 0; i < connectables.length; i++) {
-        connectables[i].fullDisconnect();
-    }
+        outputs = this.meta.outputs;
+        this.outputs = {};
+        for (i = 0; i < outputs.length; i++) {
+            this.outputs[outputs[i].name] = new OperatorSourceEndpoint(this, outputs[i]);
+        }
 
-    connectables = this.outputs;
-    for (i = 0; i < connectables.length; i++) {
-        connectables[i].fullDisconnect();
-    }
-};
+        if (!wiringEditor) {
+            this.element = document.createElement('object');
+            data_uri = Wirecloud.URLs.OPERATOR_ENTRY.evaluate({vendor: operator_meta.vendor, name: operator_meta.name, version: operator_meta.version}) + '#id=' + id;
+            this.element.addEventListener('load', function () {
+                this.loaded = true;
+                this.events.load.dispatch(this);
+            }.bind(this), true);
+            this.element.addEventListener('unload', function () {
+                this.loaded = false;
+                this.events.unload.dispatch(this);
+            }.bind(this), true);
+            this.element.setAttribute('data', data_uri);
+            document.body.appendChild(this.element);
+        }
+    };
+    Operator.prototype = new StyledElements.ObjectWithEvents();
 
-Operator.prototype.destroy = function destroy() {
-    if (this.element.parentNode) {
-        this.element.parentNode.removeChild(this.element);
-    }
-};
+    Operator.prototype.sendEvent = function sendEvent(endpoint_name, data) {
+        this.outputs[endpoint_name].propagate(data);
+    };
 
+    Operator.prototype.fullDisconnect = function fullDisconnect() {
+        var i, connectables;
+
+        connectables = this.inputs;
+        for (i = 0; i < connectables.length; i++) {
+            connectables[i].fullDisconnect();
+        }
+
+        connectables = this.outputs;
+        for (i = 0; i < connectables.length; i++) {
+            connectables[i].fullDisconnect();
+        }
+    };
+
+    Operator.prototype.destroy = function destroy() {
+        if (this.loaded) {
+            this.events.unload.dispatch(this);
+        }
+
+        if (this.element.parentNode) {
+            this.element.parentNode.removeChild(this.element);
+        }
+    };
+
+    Wirecloud.Operator = Operator;
+})();
 
 var OperatorTargetEndpoint = function OperatorTargetEndpoint(operator, meta) {
     Object.defineProperty(this, 'meta', {value: meta});
