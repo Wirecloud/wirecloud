@@ -5,6 +5,7 @@ import os.path
 from shutil import rmtree
 from tempfile import mkdtemp
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
@@ -15,6 +16,7 @@ from commons import http_utils
 from commons.get_data import get_widget_data
 from wirecloudcommons.utils.template import TemplateParser
 from wirecloud.models import Widget
+from wirecloud import plugins
 import wirecloud.widget.utils
 from wirecloud.widget.utils import create_widget_from_template, create_widget_from_wgt, fix_widget_code, get_or_add_widget_from_catalogue
 from wirecloud.widget.views import deleteWidget
@@ -31,6 +33,38 @@ BASIC_HTML_GADGET_CODE = "<html><body><p>widget code</p></body></html>"
 
 
 class CodeTransformationTestCase(TestCase):
+
+    tags = ('current1',)
+
+    @classmethod
+    def setUpClass(cls):
+        cls.old_FORCE_DOMAIN = getattr(settings, 'FORCE_DOMAIN', None)
+        cls.old_FORCE_PROTO = getattr(settings, 'FORCE_PROTO', 'http')
+        settings.FORCE_DOMAIN = 'example.com'
+        settings.FORCE_PROTO = 'http'
+        cls.OLD_WIRECLOUD_PLUGINS = getattr(settings, 'WIRECLOUD_PLUGINS', ())
+
+        settings.WIRECLOUD_PLUGINS = ()
+        plugins.clear_cache()
+
+        super(CodeTransformationTestCase, cls).setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls.old_FORCE_DOMAIN is None:
+            del cls.old_FORCE_DOMAIN
+        else:
+            settings.FORCE_DOMAIN = cls.old_FORCE_DOMAIN
+
+        if cls.old_FORCE_PROTO is None:
+            del cls.old_FORCE_PROTO
+        else:
+            settings.FORCE_PROTO = cls.old_FORCE_PROTO
+
+        cls.WIRECLOUD_PLUGINS = cls.OLD_WIRECLOUD_PLUGINS
+        plugins.clear_cache()
+
+        super(CodeTransformationTestCase, cls).tearDownClass()
 
     def read_file(self, *filename):
         f = codecs.open(os.path.join(os.path.dirname(__file__), *filename), 'rb')
