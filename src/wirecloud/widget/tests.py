@@ -34,12 +34,13 @@ BASIC_HTML_GADGET_CODE = "<html><body><p>widget code</p></body></html>"
 
 class CodeTransformationTestCase(TestCase):
 
-    tags = ('current1',)
-
     @classmethod
     def setUpClass(cls):
-        cls.old_FORCE_DOMAIN = getattr(settings, 'FORCE_DOMAIN', None)
-        cls.old_FORCE_PROTO = getattr(settings, 'FORCE_PROTO', 'http')
+        if hasattr(settings, 'FORCE_DOMAIN'):
+            cls.old_FORCE_DOMAIN = settings.FORCE_DOMAIN
+        if hasattr(settings, 'FORCE_PROTO'):
+            cls.old_FORCE_PROTO = settings.FORCE_PROTO
+
         settings.FORCE_DOMAIN = 'example.com'
         settings.FORCE_PROTO = 'http'
         cls.OLD_WIRECLOUD_PLUGINS = getattr(settings, 'WIRECLOUD_PLUGINS', ())
@@ -51,15 +52,15 @@ class CodeTransformationTestCase(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        if cls.old_FORCE_DOMAIN is None:
-            del cls.old_FORCE_DOMAIN
-        else:
+        if hasattr(cls, 'old_FORCE_DOMAIN'):
             settings.FORCE_DOMAIN = cls.old_FORCE_DOMAIN
-
-        if cls.old_FORCE_PROTO is None:
-            del cls.old_FORCE_PROTO
         else:
+            del settings.FORCE_DOMAIN
+
+        if hasattr(cls, 'old_FORCE_PROTO'):
             settings.FORCE_PROTO = cls.old_FORCE_PROTO
+        else:
+            del settings.FORCE_PROTO
 
         cls.WIRECLOUD_PLUGINS = cls.OLD_WIRECLOUD_PLUGINS
         plugins.clear_cache()
