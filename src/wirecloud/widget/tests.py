@@ -221,6 +221,9 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(data['wiring']['events'][0]['label'], 'event')
         self.assertEqual(data['wiring']['events'][0]['type'], 'text')
         self.assertEqual(data['wiring']['events'][0]['friendcode'], 'test_friend_code')
+        self.assertEqual(data['preferences'][0]['label'], 'Preference label')
+        self.assertEqual(data['preferences'][0]['description'], 'Preference description')
+        self.assertEqual(data['preferences'][0]['default_value'], 'value')
         self.assertEqual(len(data['js_files']), 5)
 
         self.assertEqual(data['js_files'][0], '/examplecode1.js')

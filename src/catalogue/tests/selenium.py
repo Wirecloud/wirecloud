@@ -16,6 +16,13 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.add_wgt_widget_to_catalogue('Morfeo_FeedList.wgt', 'Feed List')
         self.add_wgt_widget_to_catalogue('Morfeo_FeedReader.wgt', 'Feed Reader')
 
+    def test_widgets_are_deletable_by_the_uploader(self):
+
+        self.login('normuser', 'admin')
+
+        self.add_wgt_widget_to_catalogue('Morfeo_Calendar_Viewer.wgt', 'Calendar Viewer')
+        self.delete_widget('Calendar Viewer')
+
     def test_reinstall_widget_to_catalog_wgt(self):
 
         self.login()

@@ -35,6 +35,16 @@
             </vCard:Work>
         </vCard:addr>
 
+        <wire:hasPlatformPreference>
+            <wire:PlatformPreference rdf:ID="preference_1">
+                <dcterms:title>pref</dcterms:title>
+                <wire:type>text</wire:type>
+                <dcterms:description>Preference description</dcterms:description>
+                <rdfs:label>Preference label</rdfs:label>
+                <wire:default>value</wire:default>
+            </wire:PlatformPreference>
+        </wire:hasPlatformPreference>
+
         <wire:hasPlatformWiring>
             <wire:PlatformWiring rdf:ID="wiring">
                 <wire:hasInputEndpoint>
