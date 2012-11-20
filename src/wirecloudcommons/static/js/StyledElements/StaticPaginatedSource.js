@@ -173,10 +173,14 @@
     StaticPaginatedSource.prototype.changeElements = function changeElements(newElements) {
         var sort_id, column;
 
-        this.elements = newElements;
+        if (Array.isArray(newElements)) {
+            this.elements = newElements;
+        } else {
+            this.elements = [];
+        }
         sortElements.call(this, this.pOptions.order);
 
-        this.pCachedTotalCount = newElements.length;
+        this.pCachedTotalCount = this.elements.length;
         this._calculatePages();
         this.refresh();
     };
