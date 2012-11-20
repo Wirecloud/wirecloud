@@ -124,7 +124,7 @@
     };
 
     Pagination.prototype.goToLast = function goToLast() {
-        this.changePage(this.pCachedTotalPages);
+        this.changePage(this.totalPages);
     };
 
     Pagination.prototype._calculatePages = function _calculatePages() {
