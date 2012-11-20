@@ -35,7 +35,6 @@ from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.db import models
 from django.utils.translation import ugettext as _
-from django.conf import settings
 
 from wirecloudcommons.models import TransModel
 
@@ -111,14 +110,6 @@ class Widget(TransModel):
 
     def __unicode__(self):
         return self.uri
-
-    def get_resource_url(self, url, request):
-        if hasattr(settings, 'DOMAIN_FOR_GADGETS_LINKED_WITH_RELATIVE_URLS'):
-            url = settings.DOMAIN_FOR_GADGETS_LINKED_WITH_RELATIVE_URLS + url
-        else:
-            url = request.build_absolute_uri(url)
-
-        return url
 
     def get_related_preferences(self):
         return VariableDef.objects.filter(widget=self, aspect='PREF')

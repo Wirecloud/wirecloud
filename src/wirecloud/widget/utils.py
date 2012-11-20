@@ -39,7 +39,7 @@ from commons import http_utils
 from commons.authentication import Http403
 from wirecloud.models import ContextOption, Widget, UserPrefOption, UserWorkspace, VariableDef, Workspace, XHTML
 from wirecloud.plugins import get_active_features, get_widget_api_extensions
-from wirecloudcommons.utils.http import get_absolute_reverse_url, get_absolute_static_url
+from wirecloudcommons.utils.http import get_absolute_static_url
 from wirecloudcommons.models import Translation
 from wirecloudcommons.utils.template import TemplateParser
 from wirecloudcommons.utils.wgt import WgtDeployer, WgtFile
@@ -337,7 +337,7 @@ def xpath(tree, query, xmlns):
         return tree.xpath(query, namespaces={'xhtml': xmlns})
 
 
-def fix_widget_code(widget_code, base_url, content_type, request):
+def fix_widget_code(widget_code, base_url, content_type, request, force_base=False):
 
     if content_type == 'text/html':
         parser = etree.HTMLParser()
@@ -348,11 +348,6 @@ def fix_widget_code(widget_code, base_url, content_type, request):
         serialization_method = 'xml'
     else:
         return widget_code
-
-    force_base = False
-    if not base_url.startswith(('http://', 'https://')):
-        base_url = get_absolute_reverse_url('wirecloud_showcase.media', args=(base_url.split('/', 4)), request=request)
-        force_base = True
 
     prefix = xmltree.getroot().prefix
     xmlns = None

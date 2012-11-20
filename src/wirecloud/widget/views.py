@@ -31,6 +31,7 @@
 #
 import time
 import os
+from urlparse import urljoin
 
 from django.conf import settings
 from django.core.cache import cache
@@ -54,7 +55,7 @@ from wirecloud.models import Widget, IWidget
 import wirecloud.widget.utils as showcase_utils
 from wirecloud.widget.utils import get_or_create_widget, create_widget_from_template, fix_widget_code
 from wirecloud.workspace.utils import create_published_workspace_from_template
-from wirecloudcommons.utils.http import get_current_domain
+from wirecloudcommons.utils.http import get_absolute_reverse_url, get_current_domain
 from wirecloudcommons.utils.template import TemplateParseException, TemplateParser
 from wirecloudcommons.utils.transaction import commit_on_http_success
 
@@ -198,11 +199,17 @@ class WidgetCodeEntry(Resource):
         if not content_type:
             content_type = 'text/html'
 
+        force_base = False
+        base_url = xhtml.url
+        if not base_url.startswith(('http://', 'https://')):
+            base_url = get_absolute_reverse_url('wirecloud_showcase.media', args=(base_url.split('/', 4)), request=request)
+            force_base = True
+
         code = xhtml.code
         if not xhtml.cacheable or code == '':
             try:
                 if xhtml.url.startswith(('http://', 'https://')):
-                    code = http_utils.download_http_content(widget.get_resource_url(xhtml.url, request), user=request.user)
+                    code = http_utils.download_http_content(urljoin(base_url, xhtml.url), user=request.user)
                 else:
                     code = http_utils.download_http_content('file://' + os.path.join(showcase_utils.wgt_deployer.root_dir, xhtml.url), user=request.user)
 
@@ -220,7 +227,7 @@ class WidgetCodeEntry(Resource):
             xhtml.code_timestamp = None
             xhtml.save()
 
-        code = fix_widget_code(code, xhtml.url, content_type, request)
+        code = fix_widget_code(code, base_url, content_type, request, force_base=force_base)
         if xhtml.cacheable:
             cache_timeout = 31536000  # 1 year
             cache_entry = {

@@ -178,9 +178,6 @@ AUTHENTICATION_BACKENDS = (
 CATALOGUE_MEDIA_ROOT = path.join(BASEDIR, 'catalogue', 'media')
 GADGETS_DEPLOYMENT_DIR = path.join(BASEDIR, 'deployment', 'widgets')
 
-# URL prefix in order to complete widget relative URL
-#DOMAIN_FOR_GADGETS_LINKED_WITH_RELATIVE_URLS = 'http://mac.hi.inet'
-
 CERTIFICATION_ENABLED = False
 
 #SESSION_COOKIE_DOMAIN = '.domain'
