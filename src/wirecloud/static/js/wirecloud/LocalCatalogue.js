@@ -29,7 +29,7 @@
 
         Wirecloud.io.makeRequest(Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION, {
             method: 'POST',
-            parameters: {'template_uri': url, packaged: !!options.packaged},
+            parameters: {'template_uri': url, packaged: !!options.packaged, force_create: !!options.forceCreate},
             onSuccess: function (transport) {
                 var resource_data = JSON.parse(transport.responseText);
                 switch (resource_data.type) {

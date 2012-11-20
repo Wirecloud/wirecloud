@@ -43,6 +43,7 @@
         LayoutManagerFactory.getInstance().logSubTask(gettext('Sending resource template to catalogue'));
 
         this.catalogue.addResourceFromURL(template_uri, {
+            forceCreate: true,
             onSuccess: function () {
                 LayoutManagerFactory.getInstance().logSubTask(gettext('Resource uploaded successfully'));
                 LayoutManagerFactory.getInstance().logStep('');

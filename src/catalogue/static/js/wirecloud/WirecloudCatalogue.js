@@ -153,7 +153,7 @@
 
         Wirecloud.io.makeRequest(this.RESOURCE_COLLECTION, {
             method: 'POST',
-            parameters: {'template_uri': url, packaged: !!options.packaged},
+            parameters: {'template_uri': url, packaged: !!options.packaged, force_create: !!options.forceCreate},
             onSuccess: function (transport) {
                 if (typeof options.onSuccess === 'function') {
                     options.onSuccess();
