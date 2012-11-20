@@ -155,10 +155,6 @@
             method: 'POST',
             parameters: {'template_uri': url, packaged: !!options.packaged},
             onSuccess: function (transport) {
-                if ('wiring' in Wirecloud && 'OperatorFactory' in Wirecloud.wiring) {
-                    Wirecloud.wiring.OperatorFactory.addOperator(JSON.parse(transport.responseText));
-                }
-
                 if (typeof options.onSuccess === 'function') {
                     options.onSuccess();
                 }

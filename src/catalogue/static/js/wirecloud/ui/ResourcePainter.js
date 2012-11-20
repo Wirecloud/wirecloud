@@ -99,13 +99,13 @@
             },
             'popularity': this.get_popularity_html.bind(this, resource.getPopularity()),
             'mainbutton': function () {
-                var button, local_repository, operators, op_id;
+                var button, local_catalogue_view;
 
+
+                local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
                 if (this.resource.getType() === 'operator') {
-                    operators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
-                    op_id = this.resource.getURI();
 
-                    if (this.catalogue.getLabel() === 'local' || op_id in operators) {
+                    if (Wirecloud.LocalCatalogue.resourceExists(this.resource)) {
                         button = new StyledElements.StyledButton({
                             'text': gettext('Uninstall')
                         });
@@ -115,8 +115,7 @@
                             'text': gettext('Install')
                         });
 
-                        local_repository = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
-                        button.addEventListener('click', local_repository.createUserCommand('import', this.resource, this.catalogue));
+                        button.addEventListener('click', local_catalogue_view.createUserCommand('import', this.resource, this.catalogue));
                     }
                 } else if (this.catalogue.getLabel() === 'local') {
                     switch (this.resource.getType()) {
@@ -135,7 +134,7 @@
                         }.bind(null, this.resource));
                     }
                 } else {
-                    if (Wirecloud.LocalCatalogue.resourceExists(resource)) {
+                    if (Wirecloud.LocalCatalogue.resourceExists(this.resource)) {
                         button = new StyledElements.StyledButton({
                             'text': gettext('Uninstall')
                         });
@@ -144,8 +143,7 @@
                             'text': gettext('Install')
                         });
 
-                        local_repository = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
-                        button.addEventListener('click', local_repository.createUserCommand('import', this.resource, this.catalogue));
+                        button.addEventListener('click', local_catalogue_view.createUserCommand('import', this.resource, this.catalogue));
                     }
                 }
                 button.addClassName('mainbutton');

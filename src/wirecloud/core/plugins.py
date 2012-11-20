@@ -81,13 +81,13 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/StyledElements/BorderLayout.js',
             'js/StyledElements/ModelTable.js',
             'js/gadgetModel/Gadget.js',
+            'js/wirecloud/WirecloudCatalogue.js',
             'js/wirecloud/LocalCatalogue.js',
         )
 
         if view == 'index':
             return common + (
                 'js/wirecloud/utils/CookieManager.js',
-                'js/wirecloud/WirecloudCatalogue.js',
                 'js/wirecloud/MarketManager.js',
                 'js/wirecloud/ui/ResourcePainter.js',
                 'js/wirecloud/ui/WirecloudCatalogue/PublishView.js',
@@ -109,6 +109,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
         return (
             {'id': 'ADD_WORKSPACE', 'url': build_url_template('wirecloud.workspace_import')},
             {'id': 'LOCAL_REPOSITORY', 'url': build_url_template('wirecloud.root')},
+            {'id': 'LOCAL_RESOURCE_COLLECTION', 'url': build_url_template('wirecloud_showcase.resource_collection')},
             {'id': 'IWIDGET_COLLECTION', 'url': build_url_template('wirecloud.iwidget_collection', ['workspace_id', 'tab_id'])},
             {'id': 'IWIDGET_ENTRY', 'url': build_url_template('wirecloud.iwidget_entry', ['workspace_id', 'tab_id', 'iwidget_id'])},
             {'id': 'IWIDGET_VERSION_ENTRY', 'url': build_url_template('wirecloud.iwidget_version_entry', ['workspace_id', 'tab_id', 'iwidget_id'])},

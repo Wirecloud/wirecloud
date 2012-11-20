@@ -35,7 +35,11 @@
         } else {
             this.market_id = this.desc.name;
         }
-        this.catalogue = new Wirecloud.WirecloudCatalogue(options.marketplace_desc);
+        if (this.desc.name === 'local') {
+            this.catalogue = Wirecloud.LocalCatalogue;
+        } else {
+            this.catalogue = new Wirecloud.WirecloudCatalogue(options.marketplace_desc);
+        }
         this.alternatives = new StyledElements.StyledAlternatives();
         this.appendChild(this.alternatives);
 
