@@ -410,9 +410,12 @@ class WirecloudRemoteTestCase(object):
             if iwidget.id not in old_iwidget_ids:
                 return iwidget
 
-    def add_widget_to_mashup(self, widget_name, new_name=None):
+    def add_widget_to_mashup(self, widget_name, market=None, new_name=None):
 
         self.change_main_view('marketplace')
+        if market is not None:
+            self.change_marketplace(market)
+
         self.search_resource(widget_name)
         resource = self.search_in_catalogue_results(widget_name)
         iwidget = self.instantiate(resource)
