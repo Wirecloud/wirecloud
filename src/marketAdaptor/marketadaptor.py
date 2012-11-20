@@ -26,6 +26,8 @@ from urlparse import urljoin, urlparse
 from marketAdaptor.usdlParser import USDLParser
 from lxml import etree
 
+from django.utils.http import urlquote, urlquote_plus
+
 from wirecloud.proxy.views import MethodRequest
 
 RESOURCE_XPATH = '/collection/resource'
@@ -123,7 +125,7 @@ class MarketAdaptor(object):
         session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
         headers = {'Cookie': session_cookie}
 
-        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/offering/store/" + store), '', headers)
+        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/offering/store/" + urlquote(store)), '', headers)
         try:
             response = opener.open(request)
         except HTTPError, e:
@@ -192,7 +194,7 @@ class MarketAdaptor(object):
         session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
         headers = {'content-type': 'application/xml', 'Cookie': session_cookie}
 
-        request = MethodRequest("DELETE", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + store), '', headers)
+        request = MethodRequest("DELETE", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + urlquote(store)), '', headers)
 
         try:
             response = opener.open(request)
@@ -220,7 +222,7 @@ class MarketAdaptor(object):
         session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
         headers = {'Cookie': session_cookie}
 
-        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/offering/store/" + store + "/offerings"), '', headers)
+        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/offering/store/" + urlquote(store) + "/offerings"), '', headers)
 
         try:
             response = opener.open(request)
@@ -294,7 +296,7 @@ class MarketAdaptor(object):
         headers = {'content-type': 'application/xml', 'Cookie': session_cookie}
 
         opener = urllib2.build_opener()
-        request = MethodRequest("PUT", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/offering/store/" + store + "/offering"), params, headers)
+        request = MethodRequest("PUT", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/offering/store/" + urlquote(store) + "/offering"), params, headers)
         try:
             response = opener.open(request)
         except HTTPError, e:
@@ -324,7 +326,7 @@ class MarketAdaptor(object):
         session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
         headers = {'Cookie': session_cookie}
 
-        request = MethodRequest("DELETE", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/offering/store/" + store + "/offering/" + service), '', headers)
+        request = MethodRequest("DELETE", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/offering/store/" + urlquote(store) + "/offering/" + urlquote(service)), '', headers)
 
         try:
             response = opener.open(request)
@@ -352,7 +354,7 @@ class MarketAdaptor(object):
         session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
         headers = {'Cookie': session_cookie}
 
-        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/search/offerings/fulltext/" + search_string), '', headers)
+        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/search/offerings/fulltext/" + urlquote_plus(search_string)), '', headers)
 
         try:
             response = opener.open(request)
