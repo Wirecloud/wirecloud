@@ -138,7 +138,7 @@
                 }.bind(this),
                 onFailure: function (msg) {
                     LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-                    LayoutManagerFactory.getInstance().log(msg);
+                    LogManagerFactory.getInstance().log(msg);
                 },
                 onComplete: function () {
                     LayoutManagerFactory.getInstance()._notifyPlatformReady();
