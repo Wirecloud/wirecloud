@@ -157,6 +157,10 @@ function FiWareCatalogueResource(resourceJSON_) {
         return [vendor, name, currentVersion.version.text].join('/');
     };
 
+    this.isPackaged = function isPackaged() {
+        return currentVersion.uriTemplate.endsWith('.wgt') || currentVersion.uriTemplate.endsWith('.zip');
+    };
+
     this.isAllow = function isAllow(action) {
         return false;
     };
