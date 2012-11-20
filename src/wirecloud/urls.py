@@ -52,7 +52,7 @@ urlpatterns = patterns('wirecloud.views',
         widget_views.WidgetEntry(permitted_methods=('GET', 'DELETE', 'PUT')),
         name='wirecloud.widget_entry'),
     url(r'^api/widget/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/xhtml/?$',
-        widget_views.WidgetCodeEntry(permitted_methods=('GET', 'PUT')),
+        widget_views.WidgetCodeEntry(permitted_methods=('GET',)),
         name='wirecloud.widget_code_entry'),
 
     # IWidgets

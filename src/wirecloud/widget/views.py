@@ -45,7 +45,7 @@ from django.views.static import serve
 from commons import http_utils
 from commons.authentication import Http403
 from commons.cache import no_cache, patch_cache_headers
-from commons.utils import get_xml_error, json_encode, get_xhtml_content
+from commons.utils import get_xml_error, json_encode
 from commons.get_data import get_widget_data
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
@@ -243,33 +243,6 @@ class WidgetCodeEntry(Resource):
         response = HttpResponse(code, mimetype='%s; charset=UTF-8' % content_type)
         patch_cache_headers(response, xhtml.code_timestamp, cache_timeout)
         return response
-
-    def update(self, request, vendor, name, version):
-        widget = get_object_or_404(Widget, users=request.user, vendor=vendor, name=name, version=version)
-        xhtml = widget.xhtml
-
-        try:
-            url = xhtml.url
-            if (url.startswith('http')):
-                # Absolute URL
-                xhtml.code = http_utils.download_http_content(url, user=request.user)
-            else:
-                # Relative URL
-                if (url.startswith('/deployment/widgets')):
-                    #GWT widget package
-                    xhtml.code = get_xhtml_content(url)
-                else:
-                    #Widget with relative url and it's not a GWT package
-                    url = widget.get_resource_url(url, request)
-                    xhtml.code = http_utils.download_http_content(url, user=request.user)
-
-            xhtml.save()
-        except Exception, e:
-            msg = _("XHTML code is not accessible")
-
-            raise TracedServerError(e, {'vendor': vendor, 'name': name, 'version': version}, request, msg)
-
-        return HttpResponse('ok')
 
 
 def serve_showcase_media(request, vendor, name, version, file_path):
