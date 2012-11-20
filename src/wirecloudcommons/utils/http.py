@@ -44,7 +44,11 @@ def build_error_response(request, status_code, error_msg, extra_formats=None):
     else:
         formatters = ERROR_FORMATTERS
 
-    mimetype = mimeparser.best_match(formatters.keys(), request.META.get('HTTP_ACCEPT', 'text/plain'))
+    if request.META.get('HTTP_X_REQUESTED_WITH', '') == 'XMLHttpRequest':
+        mimetype = 'application/json; charset=utf-8'
+    else:
+        mimetype = mimeparser.best_match(formatters.keys(), request.META.get('HTTP_ACCEPT', 'text/plain'))
+
     return HttpResponse(formatters[mimetype](error_msg), mimetype=mimetype, status=status_code)
 
 
