@@ -28,7 +28,7 @@ from wirecloud.plugins import WirecloudPlugin
 from wirecloud.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_usdl_from_workspace
 
 import wirecloud_fiware
-from marketAdaptor.marketadaptor import MarketAdaptor
+from wirecloud_fiware.marketAdaptor.marketadaptor import MarketAdaptor
 
 
 class FiWareMarketManager(MarketManager):

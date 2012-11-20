@@ -132,7 +132,6 @@ INSTALLED_APPS = (
     'catalogue',
     'south',
     'compressor',
-    'marketAdaptor',
     'wirecloud_fiware',
 )
 

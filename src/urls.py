@@ -70,7 +70,7 @@ urlpatterns = patterns('',
     # Django JavaScript Internacionalitation
     (r'^jsi18n/$', cache_page(60 * 60 * 24)(javascript_catalog), js_info_dict),
 
-    (r'^api/marketAdaptor/', include('marketAdaptor.urls')),
+    (r'^api/marketAdaptor/', include('wirecloud_fiware.marketAdaptor.urls')),
 )
 
 urlpatterns += wirecloud.urls.urlpatterns
