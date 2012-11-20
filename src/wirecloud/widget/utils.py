@@ -38,7 +38,7 @@ from catalogue.models import CatalogueResource
 from commons import http_utils
 from commons.authentication import Http403
 from wirecloud.models import ContextOption, Widget, UserPrefOption, UserWorkspace, VariableDef, Workspace, XHTML
-from wirecloud.plugins import get_active_features, get_widget_api_extensions
+from wirecloud.plugins import get_active_features, get_old_widget_api_extensions, get_widget_api_extensions
 from wirecloudcommons.utils.http import get_absolute_static_url
 from wirecloudcommons.models import Translation
 from wirecloudcommons.utils.template import TemplateParser
@@ -388,7 +388,7 @@ def fix_widget_code(widget_code, base_url, content_type, request, force_base=Fal
             uses_old_api = True
             script.set('src', get_absolute_static_url('js/EzWebAPI/EzWebAPI.js', request=request))
 
-            files = get_widget_api_extensions('index')
+            files = get_old_widget_api_extensions('index')
             files.reverse()
             for file in files:
                 script.addnext(etree.Element('script', type="text/javascript", src=get_absolute_static_url(file, request=request)))
