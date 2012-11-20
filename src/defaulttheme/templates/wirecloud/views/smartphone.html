@@ -69,8 +69,8 @@
 <script type="text/javascript" src="/jsi18n/?language={{ LANGUAGE_CODE }}"></script>
 {% compress js %}
     {% include "wirecloud/views/js_smartphone_includes.js" %}
-    {% extra_javascripts "smartphone" %}
     {% wirecloud_ajax_endpoints "smartphone" %}
+    {% extra_javascripts "smartphone" %}
 {% endcompress %}
 <!-- <script src="http://perseo.ls.fi.upm.es:8484/target/target-script-min.js"></script> -->
 
