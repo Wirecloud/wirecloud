@@ -138,7 +138,7 @@ class USDLParser(object):
                     'properties': {},
                     'value': self._get_field(VCARD, vcard, 'email')[0]
                 }],
-                'END':  [{
+                'END': [{
                     'properties': {},
                     'value': "VCARD"
                 }]
@@ -150,7 +150,7 @@ class USDLParser(object):
         display_name = None
         artefact = self._get_field(USDL, service_uri, 'utilizedResource', id_=True)[0]
         uri_template = self._get_field(BLUEPRINT, artefact, 'location')[0]
-
+        version = self._get_field(USDL, service_uri, 'versionInfo')[0]
         # if the document does no have a uri_template is not a widget or operator
         if uri_template == '':
             self._info['type'] = 'non-instantiable service'
@@ -171,7 +171,8 @@ class USDLParser(object):
                     technical_info = parser.get_resource_basic_info()
                     self._info['type'] = technical_info['type']
                     display_name = technical_info['display_name']
-
+                    version = technical_info['version']
+                    self._info['name'] = technical_info['name']
                     # if the service is a mashup it may has parts
                     if self._info['type'] == 'mashup':
                         service_parts = self._get_field(USDL, service_uri, 'hasPartMandatory', id_=True)
@@ -194,7 +195,7 @@ class USDLParser(object):
             'created': self._get_field(DCTERMS, service_uri, 'created')[0],
             'modified': self._get_field(DCTERMS, service_uri, 'modified')[0],
             'uriImage': self._get_field(FOAF, service_uri, 'depiction')[0],
-            'version': self._get_field(USDL, service_uri, 'versionInfo')[0],
+            'version': version,
             'uriTemplate': uri_template,
             'page': self._get_field(FOAF, service_uri, 'page')[0],
             'displayName': display_name,
