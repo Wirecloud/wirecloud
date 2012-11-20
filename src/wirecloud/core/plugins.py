@@ -83,6 +83,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/gadgetModel/Gadget.js',
             'js/wirecloud/WirecloudCatalogue.js',
             'js/wirecloud/LocalCatalogue.js',
+            'js/wirecloud/OperatorMeta.js',
         )
 
         if view == 'index':

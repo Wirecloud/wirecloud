@@ -19,7 +19,7 @@
  *
  */
 
-/*global EzWebExt, ezweb_user_name, OperatorMeta, Wirecloud */
+/*global EzWebExt, ezweb_user_name, Wirecloud */
 
 // TODO
 Wirecloud.wiring = {};
@@ -39,7 +39,7 @@ Wirecloud.wiring = {};
 
             operator_jsons = JSON.parse(transport.responseText);
             for (key in operator_jsons) {
-                operator = new OperatorMeta(operator_jsons[key]);
+                operator = new Wirecloud.OperatorMeta(operator_jsons[key]);
                 operators[operator.uri] = operator;
             }
         }
@@ -64,7 +64,7 @@ Wirecloud.wiring = {};
     };
 
     OperatorFactory.addOperator = function addOperator(description) {
-        var operator = new OperatorMeta(description);
+        var operator = new Wirecloud.OperatorMeta(description);
         operators[operator.uri] = operator;
     };
 

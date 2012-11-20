@@ -20,7 +20,7 @@
  *
  */
 
-/*global Constants, EzWebExt, LayoutManagerFactory, OperatorMeta, opManager, StyledElements, Wirecloud, gettext, Draggable, BrowserUtilsFactory */
+/*global Constants, EzWebExt, LayoutManagerFactory, opManager, StyledElements, Wirecloud, gettext, Draggable, BrowserUtilsFactory */
 if (!Wirecloud.ui) {
     // TODO this line should live in another file
     Wirecloud.ui = {};
@@ -722,7 +722,7 @@ if (!Wirecloud.ui) {
     WiringEditor.prototype.addIOperator = function addIOperator(ioperator, enpPointPos) {
         var instantiated_operator, operator_interface, auxDiv;
 
-        if (ioperator instanceof OperatorMeta) {
+        if (ioperator instanceof Wirecloud.OperatorMeta) {
             instantiated_operator = ioperator.instantiate(this.nextOperatorId, true);
             this.nextOperatorId++;
         } else {
