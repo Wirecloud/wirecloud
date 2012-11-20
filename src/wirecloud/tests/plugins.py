@@ -53,7 +53,7 @@ class WirecloudPluginTestCase(TestCase):
 
     @classmethod
     def tearDown(cls):
-        cls.WIRECLOUD_PLUGINS = cls.OLD_WIRECLOUD_PLUGINS
+        settings.WIRECLOUD_PLUGINS = cls.OLD_WIRECLOUD_PLUGINS
         clear_cache()
         super(WirecloudPluginTestCase, cls).tearDownClass()
 
