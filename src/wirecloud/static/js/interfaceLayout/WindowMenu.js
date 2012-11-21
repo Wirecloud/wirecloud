@@ -291,30 +291,31 @@ function PreferencesWindowMenu(scope, manager) {
     this.windowContent.insertBefore(table, this.msgElement);
 
     // Accept button
-    this.acceptButton = document.createElement('button');
-
-    Element.extend(this.acceptButton);
-    this.acceptButton.appendChild(document.createTextNode(gettext('Save')));
+    this.acceptButton = new StyledElements.StyledButton({
+        text: gettext('Save'),
+        'class': 'btn-primary'
+    });
     this._executeOperation = this._executeOperation.bind(this);
-    this.acceptButton.observe("click", this._executeOperation);
-    this.windowBottom.appendChild(this.acceptButton);
+    this.acceptButton.addEventListener("click", this._executeOperation);
+    this.acceptButton.insertInto(this.windowBottom);
 
     // Cancel button
-    this.cancelButton = document.createElement('button');
+    this.cancelButton = new StyledElements.StyledButton({
+        text: gettext('Cancel')
+    });
 
     Element.extend(this.cancelButton);
-    this.cancelButton.appendChild(document.createTextNode(gettext('Cancel')));
-    this.cancelButton.observe("click", this._closeListener);
-    this.windowBottom.appendChild(this.cancelButton);
+    this.cancelButton.addEventListener("click", this._closeListener);
+    this.cancelButton.insertInto(this.windowBottom);
 }
 PreferencesWindowMenu.prototype = new WindowMenu();
 
 PreferencesWindowMenu.prototype.setCancelable = function(cancelable) {
     this.closeButton.setDisabled(!cancelable);
     if (cancelable === true) {
-        this.cancelButton.style.display = '';
+        this.cancelButton.enable();
     } else {
-        this.cancelButton.style.display = 'none';
+        this.cancelButton.disable();
     }
 };
 
