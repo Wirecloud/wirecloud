@@ -195,8 +195,8 @@ def fillWorkspaceUsingTemplate(workspace, template):
     operators = {}
 
     for id_ in workspace_wiring_status['operators'].keys():
-        if id_ > max_id:
-            max_id = id_
+        if int(id_) > max_id:
+            max_id = int(id_)
 
     # Change string ids by integer ids
     for id_, op in workspace_info['wiring']['operators'].iteritems():
@@ -240,6 +240,25 @@ def fillWorkspaceUsingTemplate(workspace, template):
                 'endpoint': connection['target']['endpoint'],
             },
         })
+
+    if 'views' in workspace_info['wiring']:
+        wiring_status['views'] = []
+        for wiring_view in workspace_info['wiring']['views']:
+           iwidgets_views =  {}
+           for key, widget in wiring_view['iwidgets'].iteritems():
+               iwidgets_views[iwidget_id_mapping[key].id] = widget
+
+           operators_views = {}
+           for key, operator in wiring_view['operators'].iteritems():
+               operators_views[operators[key]] = operator
+
+           wiring_status['views'].append({
+               'iwidgets': iwidgets_views,
+               'operators': operators_views,
+               'label': wiring_view['label'],
+               'multiconnectors': {},
+               'connections': []
+           })
 
     workspace.wiringStatus = simplejson.dumps(wiring_status)
 

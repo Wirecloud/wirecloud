@@ -502,6 +502,72 @@ def build_rdf_template_from_workspace(options, workspace, user):
         graph.add((target, WIRE_M['targetId'], rdflib.Literal(id_)))
         graph.add((target, WIRE_M['endpoint'], rdflib.Literal(connection['target']['endpoint'])))
 
+    # Create the view node
+
+    for view in wiring_status['views']:
+        wiring_view = rdflib.BNode()
+        graph.add((wiring_view, rdflib.RDF.type, WIRE_M['WiringView']))
+        graph.add((wiring, WIRE_M['hasWiringView'], wiring_view))
+        graph.add((wiring_view, RDFS['label'], rdflib.Literal(view['label'])))
+
+        for key, widget in view['iwidgets'].iteritems():
+            widget_view = rdflib.BNode()
+            graph.add((widget_view, rdflib.RDF.type, WIRE_M['View']))
+            graph.add((widget_view, WIRE['type'], rdflib.Literal('widget')))
+            graph.add((wiring_view, WIRE_M['hasView'], widget_view))
+            graph.add((widget_view, WIRE['id'], rdflib.Literal(str(iwidgets[key]))))
+            position = rdflib.BNode()
+            graph.add((position, rdflib.RDF.type, WIRE_M['Position']))
+            graph.add((widget_view, WIRE_M['hasPosition'], position))
+            graph.add((position, WIRE_M['x'], rdflib.Literal(str(widget['widget']['posX']))))
+            graph.add((position, WIRE_M['y'], rdflib.Literal(str(widget['widget']['posY']))))
+            i = 0
+            for sourc in widget['endPointsInOuts']['sources']:
+                source = rdflib.BNode()
+                graph.add((source, rdflib.RDF.type, WIRE_M['Source']))
+                graph.add((widget_view, WIRE_M['hasSource'], source))
+                graph.add((source, RDFS['label'], rdflib.Literal(sourc)))
+                graph.add((source, WIRE['index'], rdflib.Literal(str(i))))
+                i += 1
+
+            i = 0
+            for targ in widget['endPointsInOuts']['targets']:
+                target = rdflib.BNode()
+                graph.add((target, rdflib.RDF.type, WIRE_M['Target']))
+                graph.add((widget_view, WIRE_M['hasTarget'], target))
+                graph.add((target, RDFS['label'], rdflib.Literal(targ)))
+                graph.add((target, WIRE['index'], rdflib.Literal(str(i))))
+                i += 1
+
+        for key, operator in view['operators'].iteritems():
+            operator_view = rdflib.BNode()
+            graph.add((operator_view, rdflib.RDF.type, WIRE_M['View']))
+            graph.add((operator_view, WIRE['type'], rdflib.Literal('operator')))
+            graph.add((wiring_view, WIRE_M['hasView'], operator_view))
+            graph.add((operator_view, WIRE['id'], rdflib.Literal(str(operators[key]))))
+            position = rdflib.BNode()
+            graph.add((position, rdflib.RDF.type, WIRE_M['Position']))
+            graph.add((operator_view, WIRE_M['hasPosition'], position))
+            graph.add((position, WIRE_M['x'], rdflib.Literal(str(operator['widget']['posX']))))
+            graph.add((position, WIRE_M['y'], rdflib.Literal(str(operator['widget']['posY']))))
+            i = 0
+            for sourc in operator['endPointsInOuts']['sources']:
+                source = rdflib.BNode()
+                graph.add((source, rdflib.RDF.type, WIRE_M['Source']))
+                graph.add((operator_view, WIRE_M['hasSource'], source))
+                graph.add((source, RDFS['label'], rdflib.Literal(sourc)))
+                graph.add((source, WIRE['index'], rdflib.Literal(str(i))))
+                i += 1
+
+            i = 0
+            for targ in operator['endPointsInOuts']['targets']:
+                target = rdflib.BNode()
+                graph.add((target, rdflib.RDF.type, WIRE_M['Target']))
+                graph.add((operator_view, WIRE_M['hasTarget'], target))
+                graph.add((target, RDFS['label'], rdflib.Literal(targ)))
+                graph.add((target, WIRE['index'], rdflib.Literal(str(i))))
+                i += 1
+
     return graph
 
 

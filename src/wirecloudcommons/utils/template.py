@@ -305,6 +305,7 @@ class USDLTemplateParser(object):
         if parse_connections:
             self._parse_wiring_connection_info(wiring_element)
             self._parse_wiring_operator_info(wiring_element)
+            self._parse_wiring_views(wiring_element)
 
     def _parse_wiring_connection_info(self, wiring_element):
 
@@ -350,6 +351,54 @@ class USDLTemplateParser(object):
                 'name': self._get_field(DCTERMS, 'title', operator),
             }
             self._info['wiring']['operators'][operator_info['id']] = operator_info
+
+    def _parse_wiring_views(self, wiring_element):
+
+        wiring_views = []
+
+        for view in self._graph.objects(wiring_element, WIRE_M['hasWiringView']):
+            element_view = {}
+            element_view['label'] = self._get_field(RDFS, 'label', view)
+            element_view['iwidgets'] = {}
+            element_view['operators'] = {}
+
+            for entity_view in self._graph.objects(view, WIRE_M['hasView']):
+
+                type_ = self._get_field(WIRE, 'type', entity_view)
+                id_ = self._get_field(WIRE, 'id', entity_view)
+                position = self._get_field(WIRE_M, 'hasPosition', entity_view, id_=True)
+                pos = {
+                    'posX':self._get_field(WIRE_M, 'x', position),
+                    'posY':self._get_field(WIRE_M, 'y', position)
+                }
+                endPointOut = {}
+                sorted_sources = sorted(self._graph.objects(entity_view, WIRE_M['hasSource']), key=lambda source: self._get_field(WIRE, 'index', source, required=False))
+                source = []
+                for sourc in sorted_sources:
+                    source.append(self._get_field(RDFS, 'label', sourc))
+
+                endPointOut['sources'] = source
+
+                sorted_targets = sorted(self._graph.objects(entity_view, WIRE_M['hasTarget']), key=lambda target: self._get_field(WIRE, 'index', target, required=False))
+                target = []
+                for targ in sorted_targets:
+                    target.append(self._get_field(RDFS, 'label', targ))
+
+                endPointOut['targets'] = target
+
+                if type_ == 'widget':
+                    element_view['iwidgets'][id_] = {
+                        'widget': pos,
+                        'endPointsInOuts' :endPointOut
+                    }
+                elif type_ == 'operator':
+                    element_view['operators'][id_] = {
+                        'widget': pos,
+                        'endPointsInOuts' :endPointOut
+                    }
+
+            wiring_views.append(element_view)
+        self._info['wiring']['views'] = wiring_views
 
     def _parse_widget_info(self):
 
