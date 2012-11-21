@@ -1,4 +1,4 @@
-/*global gettext, LogManagerFactory, ShowcaseFactory, Widget, Wirecloud*/
+/*global gettext, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, ShowcaseFactory, Widget, Wirecloud*/
 
 (function () {
 
@@ -21,6 +21,64 @@
     };
 
     var LocalCatalogue = new Wirecloud.WirecloudCatalogue({name: 'local'});
+
+    var uninstallSuccessCallback = function uninstallSuccessCallback(transport) {
+        var layoutManager, result, opManager, i, widgetId;
+
+        if (this.resource.getType() === 'widget') {
+
+            layoutManager = LayoutManagerFactory.getInstance();
+            result = JSON.parse(transport.responseText);
+
+            layoutManager.logSubTask(gettext('Removing affected iWidgets'));
+            opManager = OpManagerFactory.getInstance();
+            for (i = 0; i < result.removedIWidgets.length; i += 1) {
+                opManager.removeInstance(result.removedIWidgets[i], true);
+            }
+
+            layoutManager.logSubTask(gettext('Purging widget info'));
+            ShowcaseFactory.getInstance().deleteWidget('/widgets/' + this.resource.getURI());
+        }
+
+        this.onSuccess();
+    };
+
+    var uninstallErrorCallback = function uninstallErrorCallback(transport, e) {
+        var msg, logManager;
+
+        logManager = LogManagerFactory.getInstance();
+        msg = logManager.formatError(gettext("Error deleting the Widget: %(errorMsg)s."), transport, e);
+
+        logManager.log(msg);
+
+        this.onError(msg);
+    };
+
+    LocalCatalogue.uninstallResource = function uninstallResource(resource, options) {
+        var url, context;
+
+        url = Wirecloud.URLs.LOCAL_RESOURCE_ENTRY.evaluate({
+            vendor: resource.getVendor(),
+            name: resource.getName(),
+            version: resource.getVersion().text
+        });
+
+        context = {
+            catalogue: this,
+            resource: resource,
+            onSuccess: options.onSuccess,
+            onError: options.onFailure
+        };
+
+        // Send request to uninstall de widget
+        Wirecloud.io.makeRequest(url, {
+            method: 'DELETE',
+            onSuccess: uninstallSuccessCallback.bind(context),
+            onFailure: uninstallErrorCallback.bind(context),
+            onException: uninstallErrorCallback.bind(context),
+            onComplete: options.onComplete
+        });
+    };
 
     LocalCatalogue.addResourceFromURL = function addResourceFromURL(url, options) {
         if (typeof options != 'object') {

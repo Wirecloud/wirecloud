@@ -64,23 +64,6 @@
     };
 
     deleteSuccessCallback = function deleteSuccessCallback(transport) {
-        var layoutManager, result, opManager, i, widgetId;
-
-        if (this.catalogue.name === 'local' && this.resource.getType() === 'widget') {
-
-            layoutManager = LayoutManagerFactory.getInstance();
-            result = JSON.parse(transport.responseText);
-
-            layoutManager.logSubTask(gettext('Removing affected iWidgets'));
-            opManager = OpManagerFactory.getInstance();
-            for (i = 0; i < result.removedIWidgets.length; i += 1) {
-                opManager.removeInstance(result.removedIWidgets[i], true);
-            }
-
-            layoutManager.logSubTask(gettext('Purging widget info'));
-            ShowcaseFactory.getInstance().deleteWidget('/widgets/' + this.resource.getURI());
-        }
-
         this.onSuccess();
     };
 
@@ -88,7 +71,7 @@
         var msg, logManager;
 
         logManager = LogManagerFactory.getInstance();
-        msg = logManager.formatError(gettext("Error deleting the Widget: %(errorMsg)s."), transport, e);
+        msg = logManager.formatError(gettext("Error deleting resource: %(errorMsg)s."), transport, e);
 
         logManager.log(msg);
 

@@ -2,6 +2,7 @@ from cStringIO import StringIO
 
 from django.db import IntegrityError
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
 from catalogue.utils import add_widget_from_wgt, add_resource_from_template
@@ -69,6 +70,8 @@ class ResourceCollection(Resource):
             else:
                 resource = add_resource_from_template(templateURL, template_contents, request.user)
 
+        resource.users.add(request.user)
+
         if resource.type == 0:  # Widgets
             if not force_create and Widget.objects.filter(uri=template.get_resource_uri()).exists():
                 local_resource = Widget.objects.get(uri=template.get_resource_uri())
@@ -87,3 +90,11 @@ class ResourceCollection(Resource):
             return HttpResponse(json_encode(data), mimetype='application/json; charset=UTF-8')
         else:  # Mashups and Operators
             return HttpResponse(resource.json_description, mimetype='application/json; charset=UTF-8')
+
+class ResourceEntry(Resource):
+
+    @commit_on_http_success
+    def delete(self, request, vendor, name, version):
+        local_resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
+        local_resource.users.remove(request.user)
+        return HttpResponse(status=204)

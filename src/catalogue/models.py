@@ -57,7 +57,9 @@ class CatalogueResource(TransModel):
     mail = models.CharField(_('Mail'), max_length=100)
 
     # Person who added the resource to catalogue!
-    creator = models.ForeignKey(User, null=True, blank=True)
+    creator = models.ForeignKey(User, null=True, blank=True, related_name='uploaded_resources')
+    public = models.BooleanField(_('Available to all users'), default=False)
+    users = models.ManyToManyField(User, verbose_name=_('Users'), related_name='local_resources')
 
     description = models.TextField(_('Description'))
     license = models.CharField(_('License'), max_length=20, null=True, blank=True)

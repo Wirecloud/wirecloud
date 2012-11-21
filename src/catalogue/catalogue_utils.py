@@ -68,6 +68,9 @@ def group_resources(resources):
 
 def _valid_resource(resource, user, organization_list):
 
+    if resource.public or resource.users.filter(id=user.id).exists():
+        return True
+
     if settings.CERTIFICATION_ENABLED:
         certification_status = resource.certification
 
@@ -77,10 +80,6 @@ def _valid_resource(resource, user, organization_list):
 
     # Checking organizations!
     resource_organizations = resource.organization.all()
-
-    if len(resource_organizations) == 0:
-        # There is no organization => always returned to client app!
-        return True
 
     # There are organizations, if a resource organization corresponds to a user organization
     return len(set(resource_organizations) & set(organization_list)) > 0

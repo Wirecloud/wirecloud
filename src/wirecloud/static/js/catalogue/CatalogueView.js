@@ -126,8 +126,6 @@
             this.catalogue.addResourceFromURL(resource.getUriTemplate(), {
                 packaged: resource.isPackaged(),
                 onSuccess: function () {
-                    var local_repository;
-
                     LayoutManagerFactory.getInstance().logSubTask(gettext('Operator installed successfully'));
                     LayoutManagerFactory.getInstance().logStep('');
 
@@ -147,6 +145,32 @@
         }.bind(this);
     };
 
+    CatalogueView.prototype.ui_commands.uninstall = function uninstall(resource) {
+        return function () {
+            var layoutManager;
+
+            layoutManager = LayoutManagerFactory.getInstance();
+            layoutManager._startComplexTask(gettext("Uninstalling resource"), 3);
+            layoutManager.logSubTask(gettext('Uninstalling resource'));
+
+            this.catalogue.uninstallResource(resource, {
+                onSuccess: function () {
+                    LayoutManagerFactory.getInstance().logSubTask(gettext('Resource uninstalled successfully'));
+                    LayoutManagerFactory.getInstance().logStep('');
+
+                    this.refresh_search_results();
+                    this.home();
+                }.bind(this),
+                onFailure: function (msg) {
+                    LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                    LogManagerFactory.getInstance().log(msg);
+                },
+                onComplete: function () {
+                    LayoutManagerFactory.getInstance()._notifyPlatformReady();
+                }
+            });
+        }.bind(this);
+    };
     CatalogueView.prototype.ui_commands.instantiate = function instantiate(resource) {
         return function () {
             this.instantiate(resource);

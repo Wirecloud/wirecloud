@@ -109,6 +109,7 @@
                         button = new StyledElements.StyledButton({
                             'text': gettext('Uninstall')
                         });
+                        button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', this.resource, this.catalogue));
                     } else {
 
                         button = new StyledElements.StyledButton({
@@ -138,6 +139,7 @@
                         button = new StyledElements.StyledButton({
                             'text': gettext('Uninstall')
                         });
+                        button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', this.resource, this.catalogue));
                     } else {
                         button = new StyledElements.StyledButton({
                             'text': gettext('Install')

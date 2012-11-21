@@ -84,6 +84,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/WirecloudCatalogue.js',
             'js/wirecloud/LocalCatalogue.js',
             'js/wirecloud/OperatorMeta.js',
+            'js/wirecloud/wiring/OperatorFactory.js',
         )
 
         if view == 'index':
@@ -112,6 +113,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             {'id': 'ADD_WORKSPACE', 'url': build_url_template('wirecloud.workspace_import')},
             {'id': 'LOCAL_REPOSITORY', 'url': build_url_template('wirecloud.root')},
             {'id': 'LOCAL_RESOURCE_COLLECTION', 'url': build_url_template('wirecloud_showcase.resource_collection')},
+            {'id': 'LOCAL_RESOURCE_ENTRY', 'url': build_url_template('wirecloud_showcase.resource_entry', ['vendor', 'name', 'version'])},
             {'id': 'IWIDGET_COLLECTION', 'url': build_url_template('wirecloud.iwidget_collection', ['workspace_id', 'tab_id'])},
             {'id': 'IWIDGET_ENTRY', 'url': build_url_template('wirecloud.iwidget_entry', ['workspace_id', 'tab_id', 'iwidget_id'])},
             {'id': 'IWIDGET_VERSION_ENTRY', 'url': build_url_template('wirecloud.iwidget_version_entry', ['workspace_id', 'tab_id', 'iwidget_id'])},
