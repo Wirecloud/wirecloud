@@ -181,6 +181,41 @@ function Workspace (workspaceState) {
         layoutManager.logStep('');
         OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.ACTIVE_WORKSPACE);
         LogManagerFactory.getInstance().log(gettext('workspace loaded'), Constants.Logging.INFO_MSG);
+
+        // tutorial layer for empty workspaces
+        this.emptyWorkspaceInfoBox = document.createElement('div');
+        this.emptyWorkspaceInfoBox.addClassName('emptyWorkspaceInfoBox');
+        var subBox = document.createElement('div');
+        subBox.addClassName('alert');
+        // Title
+        var pTitle = document.createElement('p');
+        pTitle.addClassName('titleInfoBox');
+        pTitle.setTextContent("Hey! Welcome to Wirecloud! This is an empty workspace");
+        // p1
+        var p1Msg_1 = "To create really impressive mashup applications, the first step to take is always to add widgets in this area. To do so, please surf the";
+        var p1Msg_2 = "the place where resources are all in there, by clicking on the proper button up in the right corner!";
+        p1_1 = document.createElement('span');
+        p1_1.setTextContent(p1Msg_1);
+        p1_2 = document.createElement('span');
+        p1_2.setTextContent(p1Msg_2);
+        var w1 = document.createElement('span');
+        w1.setTextContent(" Marketplace ");
+        w1.addClassName('special')
+        var p1 = document.createElement('p');
+        p1.addClassName('p1InfoBox');
+        p1.appendChild(p1_1);
+        p1.appendChild(w1);
+        p1.appendChild(p1_2);
+
+        subBox.appendChild(pTitle);
+        subBox.appendChild(p1);
+        this.emptyWorkspaceInfoBox.appendChild(subBox);
+        this.notebook.wrapperElement.appendChild(this.emptyWorkspaceInfoBox);
+        var pos = subBox.getBoundingClientRect();
+        this.emptyWorkspaceInfoBox.style.height = pos.height + 'px';
+        if (this.getIWidgets().length !== 0) {
+            this.emptyWorkspaceInfoBox.addClassName('hidden');
+        }
     }
 
     var onError = function (transport, e) {
@@ -626,6 +661,9 @@ function Workspace (workspaceState) {
     }
 
     Workspace.prototype.addIWidget = function(tab, iwidget, iwidgetJSON, options) {
+        // emptyWorkspaceInfoBox
+        this.emptyWorkspaceInfoBox.addClassName('hidden');
+
         this.varManager.addInstance(iwidget, iwidgetJSON, tab);
         this.contextManager.addInstance(iwidget, iwidget.getWidget().getTemplate());
         this.events.iwidgetadded.dispatch(this, iwidget);
@@ -641,12 +679,18 @@ function Workspace (workspaceState) {
     }
 
     Workspace.prototype.removeIWidget = function(iWidgetId, orderFromServer) {
+
         var iwidget = this.getIWidget(iWidgetId);
         if (iwidget) {
             var dragboard = iwidget.layout.dragboard;
             dragboard.removeInstance(iWidgetId, orderFromServer); // TODO split into hideInstance and removeInstance
             this.removeIWidgetData(iWidgetId);
             this.events.iwidgetremoved.dispatch(this, iwidget);
+        }
+
+        // emptyWorkspaceInfoBox
+        if (this.getIWidgets().length == 0) {
+            this.emptyWorkspaceInfoBox.removeClassName('hidden');
         }
     }
 
