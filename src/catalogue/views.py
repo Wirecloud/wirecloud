@@ -157,6 +157,7 @@ class ResourceCollection(Resource):
 
             return build_error_response(request, 409, _('Resource already exists'))
 
+        resource.users.add(request.user)
         return HttpResponse(resource.json_description, mimetype='application/json; charset=UTF-8')
 
     @no_cache
