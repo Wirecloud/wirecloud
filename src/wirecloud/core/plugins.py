@@ -93,6 +93,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/ui/ResourcePainter.js',
                 'js/wirecloud/ui/WirecloudCatalogue/PublishView.js',
                 'js/wirecloud/ui/FormWindowMenu.js',
+                'js/wirecloud/ui/MessageWindowMenu.js',
                 'js/wirecloud/ui/NewWorkspaceWindowMenu.js',
                 'js/wirecloud/ui/ParametrizeWindowMenu.js',
                 'js/wirecloud/ui/PublishWindowMenu.js',

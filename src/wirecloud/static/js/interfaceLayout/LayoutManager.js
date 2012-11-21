@@ -353,7 +353,7 @@ var LayoutManagerFactory = function () {
         LayoutManager.prototype.showMessageMenu = function(msg, type) {
             var menu;
             if (!this.menus['messageMenu']) {
-                this.menus['messageMenu'] = new MessageWindowMenu(null);
+                this.menus['messageMenu'] = new Wirecloud.ui.MessageWindowMenu(null);
             }
             menu = this.menus['messageMenu'];
 

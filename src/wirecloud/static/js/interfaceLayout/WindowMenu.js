@@ -276,43 +276,6 @@ AlertWindowMenu.prototype.setFocus = function() {
     this.acceptButton.focus();
 }
 
-
-/**
- * Specific class representing alert dialogs.
- */
-function MessageWindowMenu (element) {
-    WindowMenu.call(this, '');
-
-    // Accept button
-    this.button = document.createElement('button');
-    Element.extend(this.button);
-    this.button.appendChild(document.createTextNode(gettext('Accept')));
-    this.windowBottom.appendChild(this.button);
-    this.button.observe("click", this._closeListener);
-}
-MessageWindowMenu.prototype = new WindowMenu();
-
-MessageWindowMenu.prototype.setFocus = function() {
-    setTimeout(this.button.focus.bind(this.button), 0);
-    //this.button.focus();
-};
-
-MessageWindowMenu.prototype.show = function (parentWindow) {
-    WindowMenu.prototype.show.call(this, parentWindow);
-    this.setFocus();
-};
-
-MessageWindowMenu.prototype.setType = function(type) {
-    var titles = ['', gettext('Error'), gettext('Warning'), gettext('Info')];
-    var icons = ['', 'icon-error', 'icon-warning', 'icon-info'];
-
-    // Update title
-    this.setTitle(titles[type]);
-
-    // Update icon
-    this.iconElement.className += ' ' + icons[type];
-}
-
 /**
  * Specific class for platform preferences windows.
  *
