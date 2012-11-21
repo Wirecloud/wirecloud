@@ -19,6 +19,7 @@
 
 import json
 
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
@@ -65,7 +66,7 @@ class OperatorCollection(Resource):
     def read(self, request):
 
         response = {}
-        for operator in CatalogueResource.objects.filter(type=2):
+        for operator in CatalogueResource.objects.filter(Q(type=2) & (Q(public=True) | Q(users=request.user))):
             options = json.loads(operator.json_description)
             response[operator.id] = options
 
