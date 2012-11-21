@@ -68,6 +68,10 @@ Wirecloud.wiring = {};
         operators[operator.uri] = operator;
     };
 
+    OperatorFactory.removeOperator = function removeOperator(name) {
+        delete operators[name];
+    };
+
     /*************************************************************************
      * Make Anchor public
      *************************************************************************/

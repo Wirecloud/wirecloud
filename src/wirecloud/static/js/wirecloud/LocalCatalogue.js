@@ -25,7 +25,8 @@
     var uninstallSuccessCallback = function uninstallSuccessCallback(transport) {
         var layoutManager, result, opManager, i, widgetId;
 
-        if (this.resource.getType() === 'widget') {
+        switch (this.resource.getType()) {
+        case 'widget':
 
             layoutManager = LayoutManagerFactory.getInstance();
             result = JSON.parse(transport.responseText);
@@ -38,6 +39,11 @@
 
             layoutManager.logSubTask(gettext('Purging widget info'));
             ShowcaseFactory.getInstance().deleteWidget('/widgets/' + this.resource.getURI());
+
+            break;
+        case 'operator':
+            Wirecloud.wiring.OperatorFactory.removeOperator(this.resource.getURI());
+            break;
         }
 
         this.onSuccess();
