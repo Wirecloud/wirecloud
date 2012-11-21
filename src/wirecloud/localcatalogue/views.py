@@ -27,7 +27,8 @@ class ResourceCollection(Resource):
         force_create = False
         content_type = get_content_type(request)[0]
         if content_type == 'application/octet-stream':
-            wgt_file = WgtFile(StringIO(request.raw_post_data))
+            downloaded_file = StringIO(request.raw_post_content)
+            wgt_file = WgtFile(downloaded_file)
             template_contents = wgt_file.get_template()
         else:
             force_create = request.POST.get('force_create', False) == 'true'
@@ -43,10 +44,11 @@ class ResourceCollection(Resource):
                 return build_error_response(request, 409, _('Content cannot be downloaded'))
 
             if packaged:
-                wgt_file = WgtFile(StringIO(downloaded_file))
+                downloaded_file = StringIO(downloaded_file)
+                wgt_file = WgtFile(downloaded_file)
                 template_contents = wgt_file.get_template()
             else:
-                template_contents = http_utils.download_http_content(templateURL, user=request.user)
+                template_contents = downloaded_file
 
         # Check if the resource already exist on the catalogue
         try:
@@ -63,7 +65,7 @@ class ResourceCollection(Resource):
             resource = resources[0]
         else:
             if packaged:
-                resource = add_widget_from_wgt(wgt_file, request.user)
+                resource = add_widget_from_wgt(downloaded_file, request.user, wgt_file=wgt_file)
             else:
                 resource = add_resource_from_template(templateURL, template_contents, request.user)
 
@@ -73,12 +75,11 @@ class ResourceCollection(Resource):
             else:
                 try:
                     if resource.template_uri.lower().endswith('.wgt'):
-                        local_resource = create_widget_from_wgt(resource.template_uri, request.user)
+                        local_resource = create_widget_from_wgt(wgt_file, request.user)
                     else:
                         local_resource = create_widget_from_template(resource.template_uri, request.user)
                 except IntegrityError:
                     return build_error_response(request, 409, _('Resource already exists'))
-
 
             local_resource.users.add(request.user)
             data = get_widget_data(local_resource)
