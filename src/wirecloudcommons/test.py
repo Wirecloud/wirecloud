@@ -312,8 +312,7 @@ class WirecloudRemoteTestCase(object):
         catalogue_base_element = self.get_current_catalogue_base_element()
 
         self.perform_market_action('Upload')
-        self.wait_element_visible_by_css_selector('.wgt_file', element=catalogue_base_element)
-        time.sleep(0.1)
+        time.sleep(2)
 
         catalogue_base_element.find_element_by_class_name('wgt_file').send_keys(self.wgt_dir + os.sep + wgt_file)
         catalogue_base_element.find_element_by_class_name('upload_wgt_button').click()
@@ -330,10 +329,10 @@ class WirecloudRemoteTestCase(object):
         catalogue_base_element = self.get_current_catalogue_base_element()
 
         self.perform_market_action('Upload')
-        self.wait_element_visible_by_css_selector('form.template_submit_form .template_uri', element=catalogue_base_element)
+        WebDriverWait(self.driver, 30).until(lambda driver: catalogue_base_element.find_element_by_css_selector('form.template_submit_form .template_uri').is_displayed())
         time.sleep(0.1)
 
-        template_input = self.wait_element_visible_by_css_selector('.wgt_file', element=catalogue_base_element)
+        template_input = catalogue_base_element.find_element_by_css_selector('form.template_submit_form .template_uri')
         self.fill_form_input(template_input, template_url)
         catalogue_base_element.find_element_by_class_name('submit_link').click()
         self.wait_wirecloud_ready()
