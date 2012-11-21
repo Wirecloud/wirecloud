@@ -101,7 +101,6 @@
             'mainbutton': function () {
                 var button, local_catalogue_view;
 
-
                 local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
                 if (this.resource.getType() === 'operator') {
 
@@ -195,6 +194,15 @@
             window.open(resource.getUriTemplate(), '_blank');
         });
         fragment.appendChild(button);
+
+        if (Wirecloud.LocalCatalogue.resourceExists(resource)) {
+            var local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
+            button = new StyledElements.StyledButton({
+                'text': gettext('Uninstall')
+            });
+            button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', this.resource, this.catalogue));
+            fragment.appendChild(button);
+        }
 
         if (resource.isAllow('delete')) {
             button = new StyledElements.StyledButton({
