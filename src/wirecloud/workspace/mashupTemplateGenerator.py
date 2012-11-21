@@ -481,10 +481,10 @@ def build_rdf_template_from_workspace(options, workspace, user):
         graph.add((element, WIRE_M['hasSource'], source))
         graph.add((source, WIRE['type'], rdflib.Literal(connection['source']['type'])))
 
-        id_ = str(iwidgets[str(connection['source']['id'])])
-
         if connection['source']['type'] == 'ioperator':
             id_ = str(operators[str(connection['source']['id'])])
+        else:
+            id_ = str(iwidgets[str(connection['source']['id'])])
 
         graph.add((source, WIRE_M['sourceId'], rdflib.Literal(id_)))
         graph.add((source, WIRE_M['endpoint'], rdflib.Literal(connection['source']['endpoint'])))
@@ -494,10 +494,10 @@ def build_rdf_template_from_workspace(options, workspace, user):
         graph.add((element, WIRE_M['hasTarget'], target))
         graph.add((target, WIRE['type'], rdflib.Literal(connection['target']['type'])))
 
-        id_ = str(iwidgets[str(connection['target']['id'])])
-
         if connection['target']['type'] == 'ioperator':
             id_ = str(operators[str(connection['target']['id'])])
+        else:
+            id_ = str(iwidgets[str(connection['target']['id'])])
 
         graph.add((target, WIRE_M['targetId'], rdflib.Literal(id_)))
         graph.add((target, WIRE_M['endpoint'], rdflib.Literal(connection['target']['endpoint'])))
