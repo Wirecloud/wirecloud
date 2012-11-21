@@ -7,6 +7,7 @@
         <field type="CharField" name="version">1.0</field>
         <field type="IntegerField" name="type">0</field>
         <field type="BooleanField" name="ie_compatible">False</field>
+        <field type="BooleanField" name="public">True</field>
         <field type="CharField" name="author">aarranz</field>
         <field type="CharField" name="mail">aarranz@conwet.com</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel">1</field>
@@ -39,6 +40,7 @@
         <field type="CharField" name="version">1.0</field>
         <field type="IntegerField" name="type">1</field>
         <field type="BooleanField" name="ie_compatible">False</field>
+        <field type="BooleanField" name="public">True</field>
         <field type="CharField" name="author">aarranz</field>
         <field type="CharField" name="mail">aarranz@conwet.com</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel">1</field>

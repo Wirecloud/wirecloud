@@ -9,6 +9,7 @@
             "author": "test",
             "mail": "test@example.com",
             "type": 0,
+            "public": true,
             "creation_date": "2009-01-01 00:00",
             "template_uri": "http://example.com/path/widget.xml"
         }
@@ -23,6 +24,7 @@
             "author": "test",
             "mail": "test@example.com",
             "type": 0,
+            "public": true,
             "creation_date": "2009-01-01 00:00",
             "template_uri": "http://example.com/path/widget.xml"
         }
@@ -37,6 +39,7 @@
             "author": "test",
             "mail": "test@example.com",
             "type": 0,
+            "public": true,
             "creation_date": "2009-01-01 00:00",
             "template_uri": "http://example.com/path/widget.xml"
         }
@@ -51,6 +54,7 @@
             "author": "test",
             "mail": "test@example.com",
             "type": 0,
+            "public": true,
             "creation_date": "2009-01-01 00:00",
             "template_uri": "http://example.com/path/widget.xml"
         }
@@ -65,6 +69,7 @@
             "author": "test",
             "mail": "test@example.com",
             "type": 0,
+            "public": true,
             "creation_date": "2009-01-01 00:00",
             "template_uri": "http://example.com/path/widget.xml"
         }
@@ -79,6 +84,7 @@
             "author": "test",
             "mail": "test@example.com",
             "type": 0,
+            "public": true,
             "creation_date": "2009-01-01 00:00",
             "template_uri": "http://example.com/path/widget.xml"
         }
