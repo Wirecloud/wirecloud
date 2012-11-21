@@ -148,7 +148,7 @@
                         button.addEventListener('click', local_catalogue_view.createUserCommand('import', this.resource, this.catalogue));
                     }
                 }
-                button.addClassName('mainbutton');
+                button.addClassName('mainbutton btn-primary');
                 return button;
             }.bind({catalogue: this.catalogue, resource: resource}),
             'image': function () {
