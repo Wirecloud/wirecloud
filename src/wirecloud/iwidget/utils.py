@@ -29,14 +29,11 @@
 
 
 #
-import json
-
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
 from commons.authentication import Http403
 from wirecloud.models import Widget, IWidget, Position, Tab, Variable, VariableDef, VariableValue
-from wirecloud.wiring.utils import remove_related_iwidget_connections
 
 
 def addIWidgetVariable(iwidget, varDef, initial_value=None):
@@ -232,30 +229,5 @@ def deleteIWidget(iwidget, user):
         workspace = iwidget.tab.workspace
         if workspace.creator != user:
             raise Http403
-
-    # Delete all IWidget's variables
-    variables = Variable.objects.filter(iwidget=iwidget)
-    for var in variables:
-
-        # Deleting variable value
-        VariableValue.objects.filter(variable=var).delete()
-
-        var.delete()
-
-    # Delete IWidget and its position
-    position = iwidget.position
-    position.delete()
-    icon_position = iwidget.icon_position
-    if icon_position != None:
-        icon_position.delete()
-
-    # Delete IWidget from wiring
-    wiring = json.loads(iwidget.tab.workspace.wiringStatus)
-    remove_related_iwidget_connections(wiring, iwidget)
-    iwidget.tab.workspace.wiringStatus = json.dumps(wiring, ensure_ascii=False)
-    iwidget.tab.workspace.save()
-
-    from commons.get_data import _invalidate_cached_variables
-    _invalidate_cached_variables(iwidget)
 
     iwidget.delete()

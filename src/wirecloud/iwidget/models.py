@@ -29,9 +29,12 @@
 
 
 #
+import json
 
 from django.db import models
-from django.utils.translation import ugettext as  _
+from django.utils.translation import ugettext as _
+
+from wirecloud.wiring.utils import remove_related_iwidget_connections
 
 
 class Position(models.Model):
@@ -68,6 +71,36 @@ class IWidget(models.Model):
 
     def __unicode__(self):
         return str(self.pk)
+
+    def delete(self, *args, **kwargs):
+
+        from wirecloud.workspace.models import VariableValue
+
+        # Delete all IWidget's variables
+        variables = Variable.objects.filter(iwidget=self)
+        for var in variables:
+
+            # Deleting variable value
+            VariableValue.objects.filter(variable=var).delete()
+
+            var.delete()
+
+        # Delete IWidget and its position
+        self.position.delete()
+        icon_position = self.icon_position
+        if icon_position is not None:
+            icon_position.delete()
+
+        # Delete IWidget from wiring
+        wiring = json.loads(self.tab.workspace.wiringStatus)
+        remove_related_iwidget_connections(wiring, self)
+        self.tab.workspace.wiringStatus = json.dumps(wiring, ensure_ascii=False)
+        self.tab.workspace.save()
+
+        from commons.get_data import _invalidate_cached_variables
+        _invalidate_cached_variables(self)
+
+        super(IWidget, self).delete(*args, **kwargs)
 
 
 class Variable(models.Model):

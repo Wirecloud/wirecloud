@@ -14,7 +14,7 @@ from commons import http_utils
 from commons.get_data import get_widget_data
 from commons.resource import Resource
 from commons.utils import json_encode
-from wirecloud.models import Widget
+from wirecloud.models import Widget, IWidget
 from wirecloud.widget.utils import create_widget_from_template, create_widget_from_wgt
 from wirecloudcommons.utils.http import build_error_response, get_content_type, supported_request_mime_types
 from wirecloudcommons.utils.template import TemplateParseException, TemplateParser
@@ -112,6 +112,27 @@ class ResourceEntry(Resource):
     @method_decorator(login_required)
     @commit_on_http_success
     def delete(self, request, vendor, name, version):
-        local_resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
-        local_resource.users.remove(request.user)
-        return HttpResponse(status=204)
+
+        resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
+        resource.users.remove(request.user)
+
+        if resource.resource_type() == 'widget':
+            result = {'removedIWidgets': []}
+
+            widgets = Widget.objects.filter(vendor=resource.vendor, name=resource.short_name, version=resource.version)[:1]
+            if len(widgets) == 1:
+
+                widget = widgets[0]
+
+                # Remove all iwidgets that matches the resource
+                iwidgets = IWidget.objects.filter(widget=widget, tab__workspace__creator=request.user)
+                for iwidget in iwidgets:
+                    result['removedIWidgets'].append(iwidget.id)
+                    iwidget.delete()
+
+                widget.delete()
+
+            return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
+
+        else:
+            return HttpResponse(status=204)
