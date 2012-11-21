@@ -97,7 +97,7 @@
   margin: 5px;
 }
 
-.popularity {
+.rating {
     display: inline-block;
     margin-top: 22px;
     margin-left: 15px;
@@ -107,33 +107,8 @@
     font-style: normal;
 }
 
-.resource .popularity {
+.resource .rating {
     float: right;
-}
-
-.popularity > .star {
-    margin: 2px;
-    display: inline-block;
-}
-
-.popularity > .star:after {
-    color: rgb(102, 102, 102);
-    content: "\f006";
-}
-
-.popularity > .star.off:before {
-    color: rgb(227, 207, 122);
-    content: "";
-}
-
-.popularity > .star.on:before {
-    color: rgb(227, 207, 122);
-    content: "\f005";
-}
-
-.popularity > .star.middle:before {
-    color: rgb(227, 207, 122);
-    content: "\f089";
 }
 
 .catalogue .padding_left {

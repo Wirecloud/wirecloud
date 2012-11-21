@@ -56,6 +56,7 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_table.css',
     'css/styledelements/styled_label_badge.css',
     'css/styledelements/styled_message.css',
+    'css/styledelements/styled_rating.css',
 )
 
 

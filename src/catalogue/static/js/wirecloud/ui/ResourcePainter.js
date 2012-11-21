@@ -97,7 +97,7 @@
 
                 return button;
             },
-            'popularity': this.get_popularity_html.bind(this, resource.getPopularity()),
+            'rating': this.get_popularity_html.bind(this, resource.getPopularity()),
             'mainbutton': function () {
                 var button, local_catalogue_view;
 
@@ -271,7 +271,7 @@
         off_stars = 5 - popularity;
 
         stars = document.createElement('div');
-        stars.className = 'popularity';
+        stars.className = 'rating';
 
         // "On" stars
         for (i = 0; i < on_stars; i += 1) {

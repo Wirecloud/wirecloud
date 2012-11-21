@@ -1,0 +1,19 @@
+.rating > .star {
+    margin: 2px;
+    display: inline-block;
+}
+
+.rating > .star.off:before {
+    color: rgb(102, 102, 102);
+    content: "\f006";
+}
+
+.rating > .star.on:before {
+    color: rgb(227, 207, 122);
+    content: "\f005";
+}
+
+.rating > .star.middle:before {
+    color: rgb(227, 207, 122);
+    content: "\f089";
+}
