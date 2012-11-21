@@ -85,7 +85,11 @@
         this.wrapperElement.getElementsByClassName('upload_wgt_button')[0].addEventListener('click', upload_wgt_file.bind(this), true);
 
         this.wrapperElement.getElementsByClassName("wgt_upload_form")[0].target = 'upload_' + this.mainview.altId;
-        this.wrapperElement.getElementsByClassName("wgt_upload_form")[0].action = this.catalogue.RESOURCE_COLLECTION;
+        if (this.catalogue.name === 'local') {
+            this.wrapperElement.getElementsByClassName("wgt_upload_form")[0].action = Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION;
+        } else {
+            this.wrapperElement.getElementsByClassName("wgt_upload_form")[0].action = this.catalogue.RESOURCE_COLLECTION;
+        }
         this._iframe = this.wrapperElement.getElementsByClassName('upload')[0];
         this._iframe.id = this._iframe.name = 'upload_' + this.mainview.altId;
         this._iframe.onload = this._check_upload_wgt_result.bind(this);

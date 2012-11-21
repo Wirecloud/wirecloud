@@ -1,12 +1,15 @@
 from cStringIO import StringIO
 
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 
 from catalogue.utils import add_widget_from_wgt, add_resource_from_template
 from catalogue.models import CatalogueResource
+from catalogue.views import iframe_error
 from commons import http_utils
 from commons.get_data import get_widget_data
 from commons.resource import Resource
@@ -21,13 +24,25 @@ from wirecloudcommons.utils.wgt import WgtFile
 
 class ResourceCollection(Resource):
 
-    @supported_request_mime_types(('application/x-www-form-urlencoded', 'application/octet-stream'))
+    @method_decorator(login_required)
+    @iframe_error
+    @supported_request_mime_types(('application/x-www-form-urlencoded', 'multipart/form-data', 'application/octet-stream'))
     @commit_on_http_success
     def create(self, request):
 
         force_create = False
         content_type = get_content_type(request)[0]
-        if content_type == 'application/octet-stream':
+        if content_type == 'multipart/form-data':
+            packaged = True
+            if not 'file' in request.FILES:
+                return build_error_response(request, 400, _('Missing file to upload'))
+
+            downloaded_file = request.FILES['file']
+            wgt_file = WgtFile(downloaded_file)
+            template_contents = wgt_file.get_template()
+
+        elif content_type == 'application/octet-stream':
+            packaged = True
             downloaded_file = StringIO(request.raw_post_content)
             wgt_file = WgtFile(downloaded_file)
             template_contents = wgt_file.get_template()
@@ -91,8 +106,10 @@ class ResourceCollection(Resource):
         else:  # Mashups and Operators
             return HttpResponse(resource.json_description, mimetype='application/json; charset=UTF-8')
 
+
 class ResourceEntry(Resource):
 
+    @method_decorator(login_required)
     @commit_on_http_success
     def delete(self, request, vendor, name, version):
         local_resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
