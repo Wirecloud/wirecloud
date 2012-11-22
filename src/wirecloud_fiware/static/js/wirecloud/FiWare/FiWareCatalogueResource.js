@@ -150,7 +150,7 @@ function FiWareCatalogueResource(resourceJSON_) {
     };
 
     this.getPopularity = function () {
-        return 0;
+        return 5;
     };
 
     this.getURI = function () {
