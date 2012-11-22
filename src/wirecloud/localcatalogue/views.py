@@ -100,7 +100,7 @@ class ResourceCollection(Resource):
                     return build_error_response(request, 409, _('Resource already exists'))
 
             local_resource.users.add(request.user)
-            data = get_widget_data(local_resource)
+            data = get_widget_data(local_resource, request)
             data['type'] = 'widget'
             return HttpResponse(json_encode(data), mimetype='application/json; charset=UTF-8')
         else:  # Mashups and Operators

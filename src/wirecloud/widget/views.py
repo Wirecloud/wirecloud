@@ -125,7 +125,7 @@ class WidgetCollection(Resource):
 
         widgets = Widget.objects.filter(users=request.user)
 
-        data_list = [get_widget_data(widget) for widget in widgets]
+        data_list = [get_widget_data(widget, request) for widget in widgets]
         return HttpResponse(json_encode(data_list), mimetype='application/json; charset=UTF-8')
 
     @commit_on_http_success
@@ -139,7 +139,7 @@ class WidgetCollection(Resource):
         #create the widget
         widget = parseAndCreateWidget(request, request.user, request.POST['workspaceId'], request.POST.get('packaged', False) == 'true')
 
-        return HttpResponse(json_encode(get_widget_data(widget)), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json_encode(get_widget_data(widget, request)), mimetype='application/json; charset=UTF-8')
 
 
 class Showcase(Resource):
@@ -167,7 +167,7 @@ class WidgetEntry(Resource):
     @no_cache
     def read(self, request, vendor, name, version):
         widget = get_object_or_404(Widget, users=request.user, vendor=vendor, name=name, version=version)
-        data_fields = get_widget_data(widget)
+        data_fields = get_widget_data(widget, request)
         return HttpResponse(json_encode(data_fields), mimetype='application/json; charset=UTF-8')
 
     def delete(self, request, vendor, name, version):

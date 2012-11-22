@@ -31,18 +31,19 @@
 #
 import random
 import re
+from urlparse import urljoin
 
 from django.core.cache import cache
-from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.utils.translation import get_language
 from django.utils.translation import ugettext as _
 
 from commons.cache import CacheableData
 from wirecloud.context.utils import get_user_context_providers
-from wirecloud.models import Capability, Concept, ConceptName, Constant, IWidget, PublishedWorkspace, Tab, UserPrefOption, UserWorkspace, Variable, VariableDef, VariableValue, XHTML
+from wirecloud.models import Capability, Concept, ConceptName, Constant, IWidget, PublishedWorkspace, Tab, UserPrefOption, UserWorkspace, Variable, VariableDef, VariableValue
 from wirecloud.preferences.views import get_workspace_preference_values, get_tab_preference_values
 from wirecloud.workspace.utils import createTab, decrypt_value, encrypt_value
+from wirecloudcommons.utils.http import get_absolute_reverse_url
 
 
 def _variable_cache_key(iwidget):
@@ -284,7 +285,12 @@ def get_wiring_data(iwidgets):
     return res_data
 
 
-def get_widget_data(widget):
+def get_widget_data(widget, request=None):
+
+    base_url = widget.xhtml.url
+    if not base_url.startswith(('http://', 'https://')):
+        base_url = get_absolute_reverse_url('wirecloud_showcase.media', args=(base_url.split('/', 4)), request=request)
+
     twidget = widget.get_translated_model()
     data_ret = {}
     data_variabledef = VariableDef.objects.filter(widget=widget)
@@ -338,9 +344,9 @@ def get_widget_data(widget):
     data_ret['vendor'] = widget.vendor
     data_ret['description'] = twidget.description
     data_ret['uri'] = widget.uri
-    data_ret['wikiURI'] = twidget.wikiURI
-    data_ret['imageURI'] = twidget.imageURI
-    data_ret['iPhoneImageURI'] = twidget.iPhoneImageURI
+    data_ret['wikiURI'] = urljoin(base_url, twidget.wikiURI)
+    data_ret['imageURI'] = urljoin(base_url, twidget.imageURI)
+    data_ret['iPhoneImageURI'] = urljoin(base_url, twidget.iPhoneImageURI)
     data_ret['version'] = widget.version
     data_ret['mail'] = widget.mail
     data_ret['last_update'] = widget.last_update
