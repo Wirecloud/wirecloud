@@ -32,5 +32,5 @@ class WirecloudCatalogueManager(MarketManager):
 
         template = TemplateParser(build_template_from_workspace(publish_options, published_workspace.workspace, user))
         resource = add_resource_from_template(published_workspace.get_template_url(request), template, user)
-        resource.publish = True
+        resource.public = True
         resource.save()
