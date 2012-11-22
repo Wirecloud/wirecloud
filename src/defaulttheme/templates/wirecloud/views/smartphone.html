@@ -64,6 +64,12 @@
 
 <script type="text/javascript" language="javascript">
     var policy_lists = {{ policies|safe|default:"null" }};
+    var URIs = {
+        'PROXY': '/proxy',
+        'GET_RESOURCES_SIMPLE_SEARCH': '/user/{{ user.username }}/catalogue/search',
+        'GET_POST_RESOURCES': '',
+        'ACTIVE_THEME': '{{ STATIC_URL }}'
+    };
 </script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/lib/prototype/prototype-1.7.js"></script>
 <script type="text/javascript" src="/jsi18n/?language={{ LANGUAGE_CODE }}"></script>
@@ -73,14 +79,6 @@
     {% extra_javascripts "smartphone" %}
 {% endcompress %}
 <!-- <script src="http://perseo.ls.fi.upm.es:8484/target/target-script-min.js"></script> -->
-
-<script type="text/javascript" language="javascript">
-_URIConstants = function(){}
-_URIConstants.prototype.PROXY = '/proxy';
-_URIConstants.prototype.GET_RESOURCES_SIMPLE_SEARCH = '/user/{{ user.username }}/catalogue/search';
-
-var URIs = new _URIConstants();
-</script>
 
 <!-- Initialization code -->
 <script type="text/javascript">

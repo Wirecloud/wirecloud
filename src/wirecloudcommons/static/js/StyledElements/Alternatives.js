@@ -78,7 +78,7 @@
                 context.inAlternative.wrapperElement.style.width = '';
 
                 context.alternativesObject.visibleAlt = context.inAlternative;
-                context.alternativesObject.events.postTransition.dispatch(this, context.outAlternative, context.inAlternative);
+                context.alternativesObject.events.postTransition.dispatch(context.alternativesObject, context.outAlternative, context.inAlternative);
                 return false; // we have finished here
             }
         };
@@ -94,7 +94,7 @@
                 return false; // we are not going to process this command
             }
 
-            context.alternativesObject.events.preTransition.dispatch(this, context.outAlternative, context.inAlternative);
+            context.alternativesObject.events.preTransition.dispatch(context.alternativesObject, context.outAlternative, context.inAlternative);
             var baseTime = (new Date()).getTime() + 150;
 
             context.width = context.alternativesObject.wrapperElement.offsetWidth;

@@ -260,6 +260,10 @@ var OpManagerFactory = (function () {
         this.iwidgetViewAlternative = this.alternatives.createAlternative();
         this.globalDragboard = new MobileDragboard();
         this.iwidgetViewAlternative.appendChild(this.globalDragboard);
+        this.alternatives.addEventListener('preTransition', function (alternatives, out_alternative, in_alternative) {
+            alternatives.repaint();
+            in_alternative.repaint();
+        });
         this.iwidgetViewAlternative.addEventListener('hide', this.sendBufferedVars.bind(this));
 
         this.alternatives.insertInto(document.body);

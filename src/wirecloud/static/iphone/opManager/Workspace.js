@@ -332,6 +332,9 @@ function Workspace(workspaceState) {
         iWidgets = this.getIWidgets();
         for (i = 0; i < iWidgets.length; i += 1) {
             this.contextManager.notifyModifiedWidgetConcept(iWidgets[i], Concept.prototype.WIDTHINPIXELS, step);
+            if (iWidgets[i].element != null) {
+                this.contextManager.notifyModifiedWidgetConcept(iWidgets[i], Concept.prototype.HEIGHTINPIXELS, iWidgets[i].element.offsetHeight);
+            }
         }
 
         // set current scroll
