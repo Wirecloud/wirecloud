@@ -92,7 +92,7 @@ class ResourceCollection(Resource):
                 local_resource = Widget.objects.get(uri=template.get_resource_uri())
             else:
                 try:
-                    if resource.template_uri.lower().endswith('.wgt'):
+                    if packaged:
                         local_resource = create_widget_from_wgt(wgt_file, request.user)
                     else:
                         local_resource = create_widget_from_template(resource.template_uri, request.user)

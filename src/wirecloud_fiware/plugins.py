@@ -70,6 +70,9 @@ class FiWareMarketManager(MarketManager):
         return document
     #----------------------------------------------------------
 
+    def search_resource(self, vendor, name, version, user):
+        return None
+
     def publish_mashup(self, endpoint, published_workspace, user, published_options, request=None):
 
         market_url = self._options['url']

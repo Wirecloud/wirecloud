@@ -33,6 +33,7 @@ from lxml import etree
 from cStringIO import StringIO
 
 from django.conf import settings
+from django.db.models import Q
 
 from catalogue.models import CatalogueResource
 from commons import http_utils
@@ -239,42 +240,22 @@ def create_widget_from_wgt(wgt, user, deploy_only=False):
         return create_widget_from_template(template, user)
 
 
-def get_resource_from_catalogue(vendor, name, **selectors):
-    resources = CatalogueResource.objects.filter(vendor=vendor, short_name=name)
-
-    version = selectors.get('version', None)
-    if version is not None:
-        resources = resources.filter(version=version)
-
-    resource_type = selectors.get('resource_type', None)
-    if resource_type is not None:
-        resources = resources.filter(type=resource_type)
-
-    return resources[0]
-
-
-def create_widget_from_catalogue(user, vendor, name, **selectors):
-    selectors['resource_type'] = 0  # Widget
-    resource = get_resource_from_catalogue(vendor, name, **selectors)
-    if resource.template_uri.lower().endswith('.wgt'):
-        return create_widget_from_wgt(resource.template_uri, user)
-    else:
-        return create_widget_from_template(resource.template_uri, user)
-
-
 def get_or_add_widget_from_catalogue(vendor, name, version, user, request=None, assign_to_users=None):
-    try:
-        widget = Widget.objects.get(name=name, vendor=vendor, version=version)
-    except:
-        widget = create_widget_from_catalogue(user, vendor, name, version=version)
+    resource_exists = CatalogueResource.objects.filter(vendor=vendor, short_name=name, version=version).filter(Q(public=True) | Q(users=user)).exists()
+    widget_exists = Widget.objects.filter(vendor=vendor, name=name, version=version).exists()
+    if resource_exists and widget_exists:
+        resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
+    else:
+        from wirecloud.localcatalogue.utils import install_resource_from_available_marketplaces
+        resource = install_resource_from_available_marketplaces(vendor, name, version, user)
 
+    widget = Widget.objects.get(name=name, vendor=vendor, version=version)
     if assign_to_users is None:
         assign_to_users = (user,)
 
     for user in assign_to_users:
+        resource.users.add(user)
         widget.users.add(user)
-
-    widget.save()
 
     return widget
 
