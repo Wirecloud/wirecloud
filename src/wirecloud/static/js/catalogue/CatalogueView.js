@@ -145,7 +145,7 @@
         }.bind(this);
     };
 
-    CatalogueView.prototype.ui_commands.uninstall = function uninstall(resource) {
+    CatalogueView.prototype.ui_commands.uninstall = function uninstall(resource, catalogue_source) {
         return function () {
             var layoutManager;
 
@@ -159,7 +159,11 @@
                     LayoutManagerFactory.getInstance().logStep('');
 
                     this.refresh_search_results();
-                    this.home();
+
+                    if (catalogue_source != null) {
+                        catalogue_source.home();
+                        catalogue_source.refresh_search_results();
+                    }
                 }.bind(this),
                 onFailure: function (msg) {
                     LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
