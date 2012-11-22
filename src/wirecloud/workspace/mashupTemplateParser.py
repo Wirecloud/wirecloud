@@ -245,8 +245,9 @@ def fillWorkspaceUsingTemplate(workspace, template):
             },
         })
 
+    wiring_status['views'] = workspace_wiring_status['views']
+
     if 'views' in workspace_info['wiring']:
-        wiring_status['views'] = []
         for wiring_view in workspace_info['wiring']['views']:
             iwidgets_views = {}
             for key, widget in wiring_view['iwidgets'].iteritems():

@@ -176,7 +176,7 @@ if (!Wirecloud.ui) {
         var iwidgets, iwidget, key, i, widget_interface, miniwidget_interface, ioperators, operator,
             operator_interface, operator_instance, operatorKeys, connection, connectionView, startAnchor,
             endAnchor, arrow, isMenubarRef, miniwidget_clon, pos, op_id, multiconnectors, multi, multiInstance,
-            multi_id, anchor, endpoint_order, operators;
+            multi_id, anchor, endpoint_order, operators, k;
 
         if (WiringStatus == null) {
             WiringStatus = {
@@ -188,7 +188,7 @@ if (!Wirecloud.ui) {
             };
         }
 
-        if (WiringStatus.views == null) {
+        if (!Array.isArray(WiringStatus.views)) {
             WiringStatus.views = [
                 {
                     label: 'default',
@@ -235,10 +235,13 @@ if (!Wirecloud.ui) {
             this.mini_widget_section.appendChild(miniwidget_interface);
 
             // widget
-            if (iwidget.getId() in WiringStatus.views[0].iwidgets) {
-                miniwidget_interface.disable();
-                widget_interface = this.addIWidget(this, iwidget, WiringStatus.views[0].iwidgets[iwidget.getId()].endPointsInOuts);
-                widget_interface.setPosition(WiringStatus.views[0].iwidgets[iwidget.getId()].widget);
+            for (k = 0; k < WiringStatus.views.length; k ++) {
+                if (iwidget.getId() in WiringStatus.views[k].iwidgets) {
+                    miniwidget_interface.disable();
+                    widget_interface = this.addIWidget(this, iwidget, WiringStatus.views[k].iwidgets[iwidget.getId()].endPointsInOuts);
+                    widget_interface.setPosition(WiringStatus.views[k].iwidgets[iwidget.getId()].widget);
+                    break;
+                }
             }
         }
 
@@ -260,19 +263,23 @@ if (!Wirecloud.ui) {
             if (this.NextOperatorId < op_id) {
                 this.NextOperatorId = op_id;
             }
+            for (i = 0; i < WiringStatus.views.length; i ++) {
+                if (key in WiringStatus.views[i].operators) {
+                    if ('endPointsInOuts' in WiringStatus.views[i].operators[key]) {
+                        endpoint_order = WiringStatus.views[i].operators[key].endPointsInOuts;
+                    } else {
+                        endpoint_order = {'sources': [], 'targets': []};
+                    }
+                    operator_interface = this.addIOperator(operator_instance, endpoint_order);
+                    if (key in WiringStatus.views[i].operators) {
+                        operator_interface.setPosition(WiringStatus.views[i].operators[key].widget);
+                    }
+                    if (key >= this.nextOperatorId) {
+                        this.nextOperatorId = parseInt(key, 10) + 1;
+                    }
+                    break;
+                }
 
-            if (key in WiringStatus.views[0].operators && 'endPointsInOuts' in WiringStatus.views[0].operators[key]) {
-                endpoint_order = WiringStatus.views[0].operators[key].endPointsInOuts;
-            } else {
-                endpoint_order = {'sources': [], 'targets': []};
-            }
-            operator_interface = this.addIOperator(operator_instance, endpoint_order);
-
-            if (key in WiringStatus.views[0].operators) {
-                operator_interface.setPosition(WiringStatus.views[0].operators[key].widget);
-            }
-            if (key >= this.nextOperatorId) {
-                this.nextOperatorId = parseInt(key, 10) + 1;
             }
         }
 
@@ -338,7 +345,7 @@ if (!Wirecloud.ui) {
         }
         this.activateCtrlMultiSelect();
         this.valid = true;
-        if (this.entitiesNumber == 0) {
+        if (this.entitiesNumber === 0) {
             this.emptyBox.removeClassName('hidden');
         }
     };
@@ -946,7 +953,7 @@ if (!Wirecloud.ui) {
         this.mini_widgets[widget_interface.getIWidget().getId()].enable();
 
         this.entitiesNumber -= 1;
-        if (this.entitiesNumber == 0) {
+        if (this.entitiesNumber === 0) {
             this.emptyBox.removeClassName('hidden');
         }
     };
@@ -961,7 +968,7 @@ if (!Wirecloud.ui) {
         operator_interface.destroy();
 
         this.entitiesNumber -= 1;
-        if (this.entitiesNumber == 0) {
+        if (this.entitiesNumber === 0) {
             this.emptyBox.removeClassName('hidden');
         }
     };
