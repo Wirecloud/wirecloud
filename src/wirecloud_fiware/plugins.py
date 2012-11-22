@@ -78,7 +78,10 @@ class FiWareMarketManager(MarketManager):
         market_url = self._options['url']
         store = endpoint['store']
         adaptor = MarketAdaptor(market_url)
-        store_info = adaptor.get_store_info(store)
+        if "store_url" in self._options:
+            store_info = {'url': self._options['store_url']}
+        else:
+            store_info = adaptor.get_store_info(store)
 
         # Create rdf template and publish it into the repository
         params = build_rdf_template_from_workspace(published_options, published_workspace.workspace, user)
