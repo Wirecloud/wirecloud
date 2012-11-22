@@ -190,6 +190,7 @@ var OpManagerFactory = function () {
                 opManager.workspaceInstances.set(wsInfo.workspace.id, new Workspace(wsInfo.workspace));
 
                 ShowcaseFactory.getInstance().reload(wsInfo.workspace.id);
+                Wirecloud.wiring.OperatorFactory.reload();
 
                 LayoutManagerFactory.getInstance().logStep('');
             };

@@ -36,6 +36,7 @@ from commons.utils import save_alternative
 
 from wirecloud.widget.utils import get_or_add_widget_from_catalogue
 from wirecloud.iwidget.utils import SaveIWidget
+from wirecloud.localcatalogue.utils import get_or_add_resource_from_available_marketplaces
 from wirecloud.preferences.views import update_tab_preferences, update_workspace_preferences
 from wirecloud.models import Workspace, UserWorkspace
 from wirecloud.workspace.utils import createTab
@@ -198,7 +199,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
         if int(id_) > max_id:
             max_id = int(id_)
 
-    # Change string ids by integer ids
+    # Change string ids by integer ids and install unavailable operators
     for id_, op in workspace_info['wiring']['operators'].iteritems():
         max_id += 1
         #mapping between string ids and integer id
@@ -207,6 +208,9 @@ def fillWorkspaceUsingTemplate(workspace, template):
             'id': max_id,
             'name': op['name']
         }
+        op_id_args = op['name'].split('/')
+        op_id_args.append(user)
+        get_or_add_resource_from_available_marketplaces(*op_id_args)
 
     wiring_status['operators'].update(workspace_wiring_status['operators'])
 
@@ -244,21 +248,21 @@ def fillWorkspaceUsingTemplate(workspace, template):
     if 'views' in workspace_info['wiring']:
         wiring_status['views'] = []
         for wiring_view in workspace_info['wiring']['views']:
-           iwidgets_views =  {}
-           for key, widget in wiring_view['iwidgets'].iteritems():
-               iwidgets_views[iwidget_id_mapping[key].id] = widget
+            iwidgets_views = {}
+            for key, widget in wiring_view['iwidgets'].iteritems():
+                iwidgets_views[iwidget_id_mapping[key].id] = widget
 
-           operators_views = {}
-           for key, operator in wiring_view['operators'].iteritems():
-               operators_views[operators[key]] = operator
+            operators_views = {}
+            for key, operator in wiring_view['operators'].iteritems():
+                operators_views[operators[key]] = operator
 
-           wiring_status['views'].append({
-               'iwidgets': iwidgets_views,
-               'operators': operators_views,
-               'label': wiring_view['label'],
-               'multiconnectors': {},
-               'connections': []
-           })
+            wiring_status['views'].append({
+                'iwidgets': iwidgets_views,
+                'operators': operators_views,
+                'label': wiring_view['label'],
+                'multiconnectors': {},
+                'connections': []
+            })
 
     workspace.wiringStatus = simplejson.dumps(wiring_status)
 

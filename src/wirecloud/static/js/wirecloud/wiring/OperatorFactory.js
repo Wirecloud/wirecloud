@@ -32,18 +32,6 @@ Wirecloud.wiring = {};
 
     operators = {};
 
-    Wirecloud.io.makeRequest('api/operators', {
-        method: 'GET',
-        onSuccess: function onSuccess(transport) {
-            var key, operator_jsons, operator;
-
-            operator_jsons = JSON.parse(transport.responseText);
-            for (key in operator_jsons) {
-                operator = new Wirecloud.OperatorMeta(operator_jsons[key]);
-                operators[operator.uri] = operator;
-            }
-        }
-    });
 
     OperatorFactory = {};
 
@@ -54,6 +42,22 @@ Wirecloud.wiring = {};
     /*************************************************************************
      * Public methods
      *************************************************************************/
+
+    OperatorFactory.reload = function reload() {
+        operators = {};
+        Wirecloud.io.makeRequest('api/operators', {
+            method: 'GET',
+            onSuccess: function onSuccess(transport) {
+                var key, operator_jsons, operator;
+
+                operator_jsons = JSON.parse(transport.responseText);
+                for (key in operator_jsons) {
+                    operator = new Wirecloud.OperatorMeta(operator_jsons[key]);
+                    operators[operator.uri] = operator;
+                }
+            }
+        });
+    };
 
     OperatorFactory.getAvailableOperators = function getAvailableOperators() {
         return operators;
@@ -73,7 +77,8 @@ Wirecloud.wiring = {};
     };
 
     /*************************************************************************
-     * Make Anchor public
+     * Make OperatorFactory public
      *************************************************************************/
     Wirecloud.wiring.OperatorFactory = OperatorFactory;
+    OperatorFactory.reload();
 })();

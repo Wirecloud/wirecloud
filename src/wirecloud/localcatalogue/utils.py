@@ -1,5 +1,7 @@
 from cStringIO import StringIO
 
+from django.db.models import Q
+
 from catalogue.utils import add_widget_from_wgt, add_resource_from_template
 from catalogue.models import CatalogueResource
 from wirecloud.markets.utils import get_market_managers
@@ -66,3 +68,11 @@ def install_resource_from_available_marketplaces(vendor, name, version, user):
         return install_resource(resource_info['downloaded_file'], resource_info['template_url'], user, resource_info['packaged'])
     else:
         raise Exception
+
+
+def get_or_add_resource_from_available_marketplaces(vendor, name, version, user):
+
+    if not CatalogueResource.objects.filter(vendor=vendor, short_name=name, version=version).filter(Q(public=True) | Q(users=user)).exists():
+        return install_resource_from_available_marketplaces(vendor, name, version, user)
+    else:
+        return CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
