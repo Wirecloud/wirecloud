@@ -18,6 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
+import urlparse
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -27,9 +28,13 @@ from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
+from commons import http_utils
 from commons.resource import Resource
+from commons.service import Service
 from commons.utils import json_encode
-from wirecloud.models import Market
+from wirecloud.markets.utils import get_market_managers
+from wirecloud.models import Market, PublishedWorkspace
+from wirecloud.workspace.mashupTemplateGenerator import build_usdl_from_workspace
 from wirecloudcommons.utils.http import supported_request_mime_types
 from wirecloudcommons.utils.transaction import commit_on_http_success
 
@@ -93,3 +98,43 @@ class MarketEntry(Resource):
 
     def update(self, request, market):
         pass
+
+
+class PublishService(Service):
+
+    @method_decorator(login_required)
+    @supported_request_mime_types(('application/json'))
+    def process(self, request):
+        data = json.loads(request.raw_post_data)
+        template_url = data['template_url']
+
+        path = request.build_absolute_uri()
+        login_scheme, login_netloc = urlparse.urlparse(template_url)[:2]
+        current_scheme, current_netloc = urlparse.urlparse(path)[:2]
+        if ((not login_scheme or login_scheme == current_scheme) and
+            (not login_netloc or login_netloc == current_netloc)):
+            pworkspace_id = template_url.split('/')[-2]
+            published_workspace = PublishedWorkspace.objects.get(id=pworkspace_id)
+            description = published_workspace.template
+        else:
+            description = http_utils.download_http_content(template_url, user=request.user)
+
+        market_managers = get_market_managers(request.user)
+        errors = {}
+        publish_options = json.loads(published_workspace.params)
+        for market_endpoint in data['marketplaces']:
+
+            try:
+                name = publish_options.get('name').replace(' ', '')
+                template_location = market_managers[market_endpoint['market']].build_repository_url(market_endpoint, name)
+                usdl = build_usdl_from_workspace(publish_options, published_workspace.workspace, request.user, template_location)
+                market_managers[market_endpoint['market']].publish(market_endpoint, description, name, request.user, usdl=usdl, request=request)
+            except Exception, e:
+                errors[market_endpoint['market']] = unicode(e)
+
+        if len(errors) == 0:
+            return HttpResponse(status=204)
+        elif len(errors) == len(data['marketplaces']):
+            return HttpResponse(json_encode(errors), status=502, mimetype='application/json; charset=UTF-8')
+        else:
+            return HttpResponse(json_encode(errors), status=200, mimetype='application/json; charset=UTF-8')

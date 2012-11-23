@@ -1,4 +1,4 @@
-/*global ezweb_user_name, EzWebExt, gettext, LayoutManagerFactory, OpManagerFactory, Variable, Wirecloud*/
+/*global Constants, ezweb_user_name, EzWebExt, gettext, LayoutManagerFactory, LogManagerFactory, Wirecloud*/
 
 (function () {
 
@@ -8,6 +8,8 @@
      * Specific class for publish windows
      */
     var PublishResourceWindowMenu = function PublishResourceWindowMenu(resource, origin_market) {
+
+        this.resource = resource;
 
         var fields = this._loadAvailableMarkets(origin_market);
         fields.image = {name: 'image', label: gettext('URL of the image'), type: 'text'};
@@ -58,14 +60,26 @@
         var url = Wirecloud.URLs.PUBLISH_ON_OTHER_MARKETPLACE;
 
         data.marketplaces = this._createMarketplaceData(data);
+        data.template_url = this.resource.getUriTemplate();
+
+        var layoutManager;
+
+        layoutManager = LayoutManagerFactory.getInstance();
+        layoutManager._startComplexTask(gettext("Publishing resource"), 3);
+        layoutManager.logSubTask(gettext('Publishing resource'));
 
         Wirecloud.io.makeRequest(url, {
             method: 'POST',
             contentType: 'application/json',
             postBody: Object.toJSON(data),
             onSuccess: function () {
+                layoutManager.logSubTask(gettext('Resource published successfully'));
+                layoutManager.getInstance().logStep('');
             },
-            onFailure: function () {
+            onFailure: function (transport) {
+                var msg = LogManagerFactory.getInstance().formatError(gettext("Error publishing resource: %(errorMsg)s."), transport, null);
+                layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                LogManagerFactory.getInstance().log(msg);
             },
             onComplete: function () {
                 LayoutManagerFactory.getInstance()._notifyPlatformReady();

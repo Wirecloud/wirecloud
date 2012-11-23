@@ -102,6 +102,10 @@ urlpatterns = patterns('wirecloud.views',
     url(r'^api/market/(?P<user>[^/]*)/(?P<market>[\w -]+)/?$',
         market_views.MarketEntry(permitted_methods=('PUT', 'DELETE')),
         name='wirecloud.market_entry'),
+    url(r'^api/markets/publish/?$',
+        market_views.PublishService(),
+        name='wirecloud.publish_on_other_marketplace'
+    ),
 
     # Workspace
     url(r'^api/workspaces/?$',

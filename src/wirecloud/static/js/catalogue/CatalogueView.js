@@ -175,6 +175,7 @@
             });
         }.bind(this);
     };
+
     CatalogueView.prototype.ui_commands.instantiate = function instantiate(resource) {
         return function () {
             this.instantiate(resource);

@@ -73,26 +73,31 @@ class FiWareMarketManager(MarketManager):
     def search_resource(self, vendor, name, version, user):
         return None
 
-    def publish_mashup(self, endpoint, published_workspace, user, published_options, request=None):
+    def build_repository_url(self, endpoint, name):
+
+        if "store_url" in self._options:
+            store_url = self._options['store_url']
+        else:
+            market_url = self._options['url']
+            store = endpoint['store']
+            adaptor = MarketAdaptor(market_url)
+
+            store_url = adaptor.get_store_info(store)
+
+        return urljoin(store_url, '/FiwareRepository/v1/collectionA/collectionB/' + name)
+
+    def publish(self, endpoint, description, name, user, usdl=None, request=None):
 
         market_url = self._options['url']
         store = endpoint['store']
         adaptor = MarketAdaptor(market_url)
-        if "store_url" in self._options:
-            store_info = {'url': self._options['store_url']}
-        else:
-            store_info = adaptor.get_store_info(store)
 
         # Create rdf template and publish it into the repository
-        params = build_rdf_template_from_workspace(published_options, published_workspace.workspace, user)
         headers = {'content-type': 'application/rdf+xml; charset=utf-8'}
         opener = urllib2.build_opener()
-        name = published_options.get('name').replace(' ', '')
-        template_location = urljoin(store_info['url'], '/FiwareRepository/v1/collectionA/collectionB/' + name + 'Mdl')
+        template_location = self.build_repository_url(endpoint, name + 'Mdl')
 
-        content = params.serialize()
-
-        content = self._fix_repository_cuts(content, template_location)
+        content = self._fix_repository_cuts(description, template_location)
 
         request = MethodRequest('PUT', template_location.encode('utf-8'), content, headers)
         response = opener.open(request)
@@ -101,9 +106,8 @@ class FiWareMarketManager(MarketManager):
             raise HTTPError(response.url, response.code, response.msg, None, None)
 
         # Create usdl document and publish it into the repository
-        usdl_document = build_usdl_from_workspace(published_options, published_workspace.workspace, user, template_location)
-        usdl_location = urljoin(store_info['url'], '/FiwareRepository/v1/collectionA/collectionB/' + name)
-        usdl_content = usdl_document.serialize()
+        usdl_location = self.build_repository_url(endpoint, name)
+        usdl_content = usdl.serialize()
 
         # TODO remove this line when repository implementation works!!
         usdl_content = self._fix_repository_cuts(usdl_content, usdl_location)
@@ -118,6 +122,16 @@ class FiWareMarketManager(MarketManager):
 
         # add the published service to the marketplace in the chosen store
         adaptor.add_service(store, {'name': name, 'url': usdl_location})
+
+    def publish_mashup(self, endpoint, published_workspace, user, published_options, request=None):
+
+        name = published_options.get('name').replace(' ', '')
+        description = build_rdf_template_from_workspace(published_options, published_workspace.workspace, user)
+
+        template_location = self.build_repository_url(endpoint, name)
+        usdl = build_usdl_from_workspace(published_options, published_workspace.workspace, user, template_location)
+
+        self.publish(endpoint, description, name, user, usdl, request)
 
 
 class FiWarePlugin(WirecloudPlugin):
