@@ -259,19 +259,3 @@ div.iwidget.highlighted {
     border-bottom: 1px solid #600000;
     height: 16px;
 }
-
-.emptyWorkspaceInfoBox {
-    max-width: 582px;
-    border-radius: 7px;
-    padding: 18px;
-    margin: 10px;
-    border: 2px dashed rgba(62, 128, 173, 0.5);
-}
-.emptyWorkspaceInfoBox .titleInfoBox {
-    font-weight:bold;
-    font-size: 1.2em;
-}
-
-.emptyWorkspaceInfoBox .special {
-    font-weight:bold;
-}

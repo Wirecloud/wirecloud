@@ -10,6 +10,7 @@
 
 .alert h4 {
     margin: 0;
+    color: inherit;
 }
 
 .alert .close {

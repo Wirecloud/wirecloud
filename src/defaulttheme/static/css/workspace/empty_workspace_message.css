@@ -1,0 +1,12 @@
+.workspace > div.emptyWorkspaceInfoBox {
+    max-width: 582px;
+    border-radius: 7px;
+    padding: 18px;
+    margin: 10px;
+    border: 2px dashed rgba(62, 128, 173, 0.5);
+    position: static;
+}
+
+.emptyWorkspaceInfoBox > .alert {
+    margin: 0;
+}
