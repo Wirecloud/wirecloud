@@ -38,7 +38,7 @@ var WorkspaceView = function (id, options) {
     }.bind(this)));
 
     this.wsMenu.append(new StyledElements.MenuItem(gettext('Publish'), function () {
-        var window = new Wirecloud.ui.PublishWindowMenu(OpManagerFactory.getInstance().activeWorkspace);
+        var window = new Wirecloud.ui.PublishWorkspaceWindowMenu(OpManagerFactory.getInstance().activeWorkspace);
         window.show();
     }.bind(this)));
 };

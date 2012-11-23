@@ -7,7 +7,7 @@
     /**
      * Specific class for publish windows
      */
-    var PublishWindowMenu = function PublishWindowMenu(workspace) {
+    var PublishWorkspaceWindowMenu = function PublishWorkspaceWindowMenu(workspace) {
 
         var fields, marketFields;
         marketFields = this._loadAvailableMarkets();
@@ -61,9 +61,9 @@
         warning.update(gettext("WARNING: configured and stored data in your workspace (properties and preferences except passwords) will be shared!"));
         this.windowContent.insertBefore(warning, this.form.wrapperElement);
     };
-    PublishWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
+    PublishWorkspaceWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
 
-    PublishWindowMenu.prototype._addVariableParametrization = function (workspace, fields) {
+    PublishWorkspaceWindowMenu.prototype._addVariableParametrization = function _addVariableParametrization(workspace, fields) {
         var i, tab_keys, tab_field;
 
         this.workspace = workspace;
@@ -77,7 +77,7 @@
         }
     };
 
-    PublishWindowMenu.prototype._parseTab = function (tab) {
+    PublishWorkspaceWindowMenu.prototype._parseTab = function _parseTab(tab) {
 
         var i, name, iwidget, iwidgets, iwidget_params, pref_params,
             prop_params, variable, variables, varManager, var_elements,
@@ -152,11 +152,11 @@
         }
     };
 
-    PublishWindowMenu.prototype._sortVariables = function (var1, var2) {
+    PublishWorkspaceWindowMenu.prototype._sortVariables = function _sortVariables(var1, var2) {
         return var1.variable.vardef.order - var2.variable.vardef.order;
     };
 
-    PublishWindowMenu.prototype._loadAvailableMarkets = function _loadAvailableMarkets() {
+    PublishWorkspaceWindowMenu.prototype._loadAvailableMarkets = function _loadAvailableMarkets() {
         // Take available marketplaces from the instance of marketplace view
         var views = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName;
         var key, marketInfo = [];
@@ -167,16 +167,16 @@
         return marketInfo;
     };
 
-    PublishWindowMenu.prototype.show = function show(parentWindow) {
+    PublishWorkspaceWindowMenu.prototype.show = function show(parentWindow) {
         Wirecloud.ui.FormWindowMenu.prototype.show.call(this, parentWindow);
         this.setValue(this.workspace.workspaceGlobalInfo.workspace.params);
     };
 
-    PublishWindowMenu.prototype.setFocus = function setFocus() {
+    PublishWorkspaceWindowMenu.prototype.setFocus = function setFocus() {
         this.form.fieldInterfaces.name.focus();
     };
 
-    PublishWindowMenu.prototype._createMarketplaceData = function _createMarketplaceData(data) {
+    PublishWorkspaceWindowMenu.prototype._createMarketplaceData = function _createMarketplaceData(data) {
         var views = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName;
         var key, marketplaces = [];
         for (key in views) {
@@ -187,7 +187,7 @@
         return marketplaces;
     };
 
-    PublishWindowMenu.prototype.executeOperation = function executeOperation(data) {
+    PublishWorkspaceWindowMenu.prototype.executeOperation = function executeOperation(data) {
         var key;
 
         data.parametrization = {};
@@ -202,5 +202,5 @@
         OpManagerFactory.getInstance().activeWorkspace.publish(data);
     };
 
-    Wirecloud.ui.PublishWindowMenu = PublishWindowMenu;
+    Wirecloud.ui.PublishWorkspaceWindowMenu = PublishWorkspaceWindowMenu;
 })();
