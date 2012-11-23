@@ -99,6 +99,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/MarketManager.js',
                 'js/wirecloud/ui/ResourcePainter.js',
                 'js/wirecloud/ui/WirecloudCatalogue/PublishView.js',
+                'js/wirecloud/ui/AlertWindowMenu.js',
                 'js/wirecloud/ui/FormWindowMenu.js',
                 'js/wirecloud/ui/MessageWindowMenu.js',
                 'js/wirecloud/ui/NewWorkspaceWindowMenu.js',

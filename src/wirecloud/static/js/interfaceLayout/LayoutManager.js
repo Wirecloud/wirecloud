@@ -293,8 +293,9 @@ var LayoutManagerFactory = function () {
 
             this.showUnclickableCover();
 
-            if (!this.menus['alertMenu'])
-                this.menus['alertMenu'] = new AlertWindowMenu();
+            if (!this.menus['alertMenu']) {
+                this.menus['alertMenu'] = new Wirecloud.ui.AlertWindowMenu();
+            }
 
             this.currentMenu = this.menus['alertMenu'];
             this.currentMenu.setMsg(msg);
