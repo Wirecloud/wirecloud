@@ -52,6 +52,21 @@ if (!Wirecloud.ui) {
 
         this.layout.getCenterContainer().wrapperElement.addEventListener("scroll", this.scrollHandler.bind(this), false);
 
+        // Wiring alert for empty WiringEditor
+        this.entitiesNumber = 0;
+        this.emptyBox = document.createElement('div');
+        this.emptyBox.addClassName('wiringEmptyBox alert alert-info alert-block');
+        // Title
+        var pTitle = document.createElement('h4');
+        pTitle.setTextContent(gettext("Welcome to the Wiring Editor view!"));
+        this.emptyBox.appendChild(pTitle);
+        // Message
+        var message = document.createElement('p');
+        message.innerHTML = gettext("Please drag some widgets and operators from the stencil on the left, and drop them into this area. <br/>Then, link outputs with inputs to wire the resources.");
+        this.emptyBox.appendChild(message);
+        this.layout.getCenterContainer().wrapperElement.appendChild(this.emptyBox);
+        this.emptyBox.addClassName('hidden');
+
         //canvas for arrows
         this.canvas = new Wirecloud.ui.WiringEditor.Canvas();
         this.canvasElement = this.canvas.getHTMLElement();
@@ -207,6 +222,7 @@ if (!Wirecloud.ui) {
         this.sourceAnchorsByFriendCode = {};
         this.targetAnchorsByFriendCode = {};
         this.EditingObject = null;
+        this.entitiesNumber = 0;
 
         iwidgets = workspace.getIWidgets();
 
@@ -322,6 +338,9 @@ if (!Wirecloud.ui) {
         }
         this.activateCtrlMultiSelect();
         this.valid = true;
+        if (this.entitiesNumber == 0) {
+            this.emptyBox.removeClassName('hidden');
+        }
     };
 
     /**
@@ -642,6 +661,10 @@ if (!Wirecloud.ui) {
         this.sourceAnchorList = this.sourceAnchorList.concat(widget_interface.sourceAnchors);
 
         widget_interface.wrapperElement.style.minWidth = widget_interface.getBoundingClientRect().width + 'px';
+
+        this.entitiesNumber += 1;
+        this.emptyBox.addClassName('hidden');
+
         return widget_interface;
     };
 
@@ -678,6 +701,10 @@ if (!Wirecloud.ui) {
         this.sourceAnchorList = this.sourceAnchorList.concat(operator_interface.sourceAnchors);
 
         this.ioperators[operator_interface.getId()] = operator_interface;
+
+        this.entitiesNumber += 1;
+        this.emptyBox.addClassName('hidden');
+
         return operator_interface;
     };
 
@@ -917,6 +944,11 @@ if (!Wirecloud.ui) {
         this.layout.getCenterContainer().removeChild(widget_interface);
         widget_interface.destroy();
         this.mini_widgets[widget_interface.getIWidget().getId()].enable();
+
+        this.entitiesNumber -= 1;
+        if (this.entitiesNumber == 0) {
+            this.emptyBox.removeClassName('hidden');
+        }
     };
 
     /**
@@ -927,6 +959,11 @@ if (!Wirecloud.ui) {
         delete this.ioperators[operator_interface.getIOperator().id];
         this.layout.getCenterContainer().removeChild(operator_interface);
         operator_interface.destroy();
+
+        this.entitiesNumber -= 1;
+        if (this.entitiesNumber == 0) {
+            this.emptyBox.removeClassName('hidden');
+        }
     };
 
     /**

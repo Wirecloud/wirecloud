@@ -47,6 +47,7 @@ WIRING_EDITOR_CSS = (
     'css/wiring/arrow.css',
     'css/wiring/entities.css',
     'css/wiring/multiconnector.css',
+    'css/wiring/emptyWiringBox.css',
 )
 
 STYLED_ELEMENTS_CSS = (
