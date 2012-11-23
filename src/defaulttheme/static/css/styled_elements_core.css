@@ -728,20 +728,6 @@ div.styled_numeric_field div.numeric_bottom_button {
   margin: 0.9ex 0;
 }
 
-/* Forms */
-.styled_form .buttons {
-    margin: 2em 0 0.5em;
-    text-align: center;
-}
-
-.error_desc .action_desc {
-  font-weight: bold;
-}
-
-.error_desc .cause_desc {
-  margin-left: 1em;
-}
-
 .styled_expander {
     margin: 3px;
     overflow: hidden;

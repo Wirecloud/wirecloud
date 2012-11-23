@@ -53,6 +53,7 @@ STYLED_ELEMENTS_CSS = (
     'css/styled_elements_core.css',
     'css/styledelements/styled_button.css',
     'css/styledelements/styled_notebook.css',
+    'css/styledelements/styled_form.css',
     'css/styledelements/styled_text_field.css',
     'css/styledelements/styled_password_field.css',
     'css/styledelements/styled_select.css',
