@@ -27,6 +27,10 @@ WORKSPACE_CSS = (
     'css/workspace/empty_workspace_message.css',
 )
 
+CATALOGUE_CSS = (
+    'css/catalogue/emptyCatalogueBox.css',
+)
+
 WIRING_EDITOR_FILES = (
     'js/wirecloud/ui/WiringEditor.js',
     'js/wirecloud/ui/WiringEditor/Anchor.js',
@@ -155,6 +159,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
         common = STYLED_ELEMENTS_CSS
 
         if view == 'index':
-            return common + WORKSPACE_CSS + WIRING_EDITOR_CSS
+            return common + WORKSPACE_CSS + WIRING_EDITOR_CSS + CATALOGUE_CSS
         else:
             return common

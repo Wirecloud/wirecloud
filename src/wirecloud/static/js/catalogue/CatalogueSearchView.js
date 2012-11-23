@@ -53,6 +53,10 @@
                 this.resource_painter.setError(gettext('Connection error: No resources retrieved.'));
             }
 
+            if (pagination.pCachedTotalCount === 0 && pagination.pOptions.keywords.strip() === "" && pagination.pOptions.scope === 'all') {
+                this.resource_list.appendChild(this.emptyBox);
+            }
+
             this.enable();
         }.bind(this));
         this.resource_list = new StyledElements.Container({'class': 'resource_list'});
@@ -136,11 +140,33 @@
         );
 
         this.addEventListener('show', this.refresh_if_needed.bind(this));
+        this.initEmptyInfoBox();
     };
     CatalogueSearchView.prototype = new StyledElements.Alternative();
 
     CatalogueSearchView.prototype.init = function init() {
         this.initialized = true;
+    };
+
+    CatalogueSearchView.prototype.initEmptyInfoBox = function () {
+        // Tutorial layer for empty catalogues
+        this.emptyBox = document.createElement('div');
+        this.emptyBox.className = 'catalogueEmptyBox';
+
+        var wrapper = document.createElement('div');
+        wrapper.className = 'alert alert-info';
+
+        // Title
+        var pTitle = document.createElement('h4');
+        pTitle.setTextContent(gettext("Empty Marketplace!"));
+        wrapper.appendChild(pTitle);
+
+        // Message
+        var message = document.createElement('p');
+        message.innerHTML = gettext("This is an empty Marketplace. You can upload widgets or operators using the button to the right of the name of the marketplace");
+        wrapper.appendChild(message);
+
+        this.emptyBox.appendChild(wrapper);
     };
 
     CatalogueSearchView.prototype.refresh_if_needed = function refresh_if_needed() {
