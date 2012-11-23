@@ -69,11 +69,6 @@ function WindowMenu(title, extra_class) {
     this.windowContent.className = "window_content";
     this.htmlElement.appendChild(this.windowContent);
 
-    this.iconElement = document.createElement('div');
-    Element.extend(this.iconElement);
-    this.iconElement.className = "window-icon icon-size";
-    this.windowContent.appendChild(this.iconElement);
-
     this.msgElement = document.createElement('div');
     Element.extend(this.msgElement);
     this.msgElement.className = "msg";
@@ -234,7 +229,10 @@ function AlertWindowMenu () {
     WindowMenu.call(this, gettext('Warning'));
 
     // Warning icon
-    this.iconElement.className += ' icon-warning';
+    this.iconElement = document.createElement('div');
+    Element.extend(this.iconElement);
+    this.iconElement.className = "icon-size icon-warning";
+    this.windowContent.insertBefore(this.iconElement, this.windowContent.childNodes[0]);
 
     // Accept button
     this.acceptButton = document.createElement('button');
