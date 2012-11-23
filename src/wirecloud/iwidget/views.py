@@ -30,8 +30,10 @@
 
 #
 
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils import simplejson
+from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.shortcuts import get_object_or_404
 
@@ -51,6 +53,7 @@ from wirecloudcommons.utils.http import build_error_response, supported_request_
 
 class IWidgetCollection(Resource):
 
+    @method_decorator(login_required)
     @no_cache
     def read(self, request, workspace_id, tab_id):
 
@@ -63,6 +66,7 @@ class IWidgetCollection(Resource):
 
         return HttpResponse(json_encode(data_list), mimetype='application/json; charset=UTF-8')
 
+    @method_decorator(login_required)
     @commit_on_http_success
     def create(self, request, workspace_id, tab_id):
 
@@ -103,6 +107,7 @@ class IWidgetCollection(Resource):
 
             raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
 
+    @method_decorator(login_required)
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id):
@@ -122,6 +127,7 @@ class IWidgetCollection(Resource):
 
 class IWidgetEntry(Resource):
 
+    @method_decorator(login_required)
     @no_cache
     def read(self, request, workspace_id, tab_id, iwidget_id):
 
@@ -132,6 +138,7 @@ class IWidgetEntry(Resource):
 
         return HttpResponse(json_encode(iwidget_data), mimetype='application/json; charset=UTF-8')
 
+    @method_decorator(login_required)
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id, iwidget_id):
 
@@ -155,6 +162,7 @@ class IWidgetEntry(Resource):
 
             raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
 
+    @method_decorator(login_required)
     @commit_on_http_success
     def delete(self, request, workspace_id, tab_id, iwidget_id):
 
@@ -168,6 +176,7 @@ class IWidgetEntry(Resource):
 
 class IWidgetVersion(Resource):
 
+    @method_decorator(login_required)
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id, iwidget_id):
 
@@ -218,6 +227,7 @@ class IWidgetVersion(Resource):
 
 class IWidgetVariableCollection(Resource):
 
+    @method_decorator(login_required)
     @no_cache
     def read(self, request, workspace_id, tab_id, iwidget_id):
 
@@ -227,6 +237,7 @@ class IWidgetVariableCollection(Resource):
 
         return HttpResponse(json_encode(vars_data), mimetype='application/json; charset=UTF-8')
 
+    @method_decorator(login_required)
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id, iwidget_id):
 
@@ -263,6 +274,7 @@ class IWidgetVariableCollection(Resource):
 
 class IWidgetVariable(Resource):
 
+    @method_decorator(login_required)
     @no_cache
     def read(self, request, workspace_id, tab_id, iwidget_id, var_id):
 
@@ -275,6 +287,7 @@ class IWidgetVariable(Resource):
     def create(self, request, workspace_id, tab_id, iwidget_id, var_id):
         return self.update(request, workspace_id, tab_id, iwidget_id, var_id)
 
+    @method_decorator(login_required)
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id, iwidget_id, var_id):
 
