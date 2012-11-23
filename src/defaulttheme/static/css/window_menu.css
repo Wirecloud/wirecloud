@@ -18,13 +18,13 @@
     z-index: 101112;
     overflow: hidden;
     color: #4C5054;
-    font-weight: bold;
-    font-family: Arial;
+    font-weight: normal;
     font-size: 80%;
 }
 
 .window_menu > .window_top {
     font-size: 150%;
+    font-weight: bold;
     font-family: "Courier New", courier;
     color: #990000;
 }

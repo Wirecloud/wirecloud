@@ -57,8 +57,8 @@
 
         //fill a warning message
         var warning = document.createElement('div');
-        warning.addClassName('msg warning');
-        warning.update(gettext("WARNING: configured and stored data in your workspace (properties and preferences except passwords) will be shared!"));
+        warning.addClassName('alert');
+        warning.innerHTML = gettext("<strong>Warning!</strong> Configured and stored data in your workspace (properties and preferences except passwords) will be shared by default!");
         this.windowContent.insertBefore(warning, this.form.wrapperElement);
     };
     PublishWorkspaceWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
