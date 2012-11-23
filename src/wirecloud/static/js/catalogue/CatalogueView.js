@@ -182,6 +182,12 @@
         }.bind(this);
     };
 
+    CatalogueView.prototype.ui_commands.publishOtherMarket = function publishOtherMarket(resource) {
+        return function () {
+            (new Wirecloud.ui.PublishResourceWindowMenu(resource, this.getLabel())).show();
+        }.bind(this);
+    };
+
     CatalogueView.prototype.ui_commands.showDetails = function showDetails(resource) {
         return function (e) {
             Event.stop(e);

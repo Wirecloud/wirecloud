@@ -1,0 +1,77 @@
+/*global ezweb_user_name, EzWebExt, gettext, LayoutManagerFactory, OpManagerFactory, Variable, Wirecloud*/
+
+(function () {
+
+    "use strict";
+
+    /**
+     * Specific class for publish windows
+     */
+    var PublishResourceWindowMenu = function PublishResourceWindowMenu(resource, origin_market) {
+
+        var fields = this._loadAvailableMarkets(origin_market);
+        fields.image = {name: 'image', label: gettext('URL of the image'), type: 'text'};
+        fields.usdl = {name: 'usdl', label: gettext('URL of the USDL'), type: 'text'};
+        Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Publish Resource'), 'publish_resource', {legend: false});
+
+        // fill a warning message
+        var warning = document.createElement('div');
+        warning.addClassName('alert');
+        warning.innerHTML = gettext("<strong>Warning!</strong> Configured and stored data in your workspace (properties and preferences except passwords) will be shared by default!");
+        this.windowContent.insertBefore(warning, this.form.wrapperElement);
+    };
+    PublishResourceWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
+
+    PublishResourceWindowMenu.prototype._loadAvailableMarkets = function _loadAvailableMarkets(origin_market) {
+        // Take available marketplaces from the instance of marketplace view
+        var views = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName;
+        var key, marketInfo = [];
+
+        for (key in views) {
+            if (key !== origin_market) {
+                marketInfo = marketInfo.concat(views[key].getPublishEndpoint());
+            }
+        }
+        return marketInfo;
+    };
+
+    PublishResourceWindowMenu.prototype.show = function show(parentWindow) {
+        Wirecloud.ui.FormWindowMenu.prototype.show.call(this, parentWindow);
+    };
+
+    PublishResourceWindowMenu.prototype.setFocus = function setFocus() {
+        this.form.fieldInterfaces.name.focus();
+    };
+
+    PublishResourceWindowMenu.prototype._createMarketplaceData = function _createMarketplaceData(data) {
+        var views = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName;
+        var key, marketplaces = [];
+        for (key in views) {
+            if (data[key] === true) {
+                marketplaces = marketplaces.concat(views[key].getPublishData(data));
+            }
+        }
+        return marketplaces;
+    };
+
+    PublishResourceWindowMenu.prototype.executeOperation = function executeOperation(data) {
+        var url = Wirecloud.URLs.PUBLISH_ON_OTHER_MARKETPLACE;
+
+        data.marketplaces = this._createMarketplaceData(data);
+
+        Wirecloud.io.makeRequest(url, {
+            method: 'POST',
+            contentType: 'application/json',
+            postBody: Object.toJSON(data),
+            onSuccess: function () {
+            },
+            onFailure: function () {
+            },
+            onComplete: function () {
+                LayoutManagerFactory.getInstance()._notifyPlatformReady();
+            }
+        });
+    };
+
+    Wirecloud.ui.PublishResourceWindowMenu = PublishResourceWindowMenu;
+})();

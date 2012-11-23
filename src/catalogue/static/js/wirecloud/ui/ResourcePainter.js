@@ -25,13 +25,13 @@
 
     "use strict";
 
-    var ResourcePainter = function ResourcePainter(catalogue, resource_template, container, extra_context) {
+    var ResourcePainter = function ResourcePainter(catalogue_view, resource_template, container, extra_context) {
         if (arguments.length === 0) {
             return;
         }
 
         this.builder = new StyledElements.GUIBuilder();
-        this.catalogue = catalogue;
+        this.catalogue_view = catalogue_view;
         this.structure_template = resource_template;
         this.error_template = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div class="error"><t:message/></div></s:styledgui>';
         this.container = container;
@@ -108,16 +108,16 @@
                         button = new StyledElements.StyledButton({
                             'text': gettext('Uninstall')
                         });
-                        button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', this.resource, this.catalogue));
+                        button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', this.resource, this.catalogue_view));
                     } else {
 
                         button = new StyledElements.StyledButton({
                             'text': gettext('Install')
                         });
 
-                        button.addEventListener('click', local_catalogue_view.createUserCommand('import', this.resource, this.catalogue));
+                        button.addEventListener('click', local_catalogue_view.createUserCommand('import', this.resource, this.catalogue_view));
                     }
-                } else if (this.catalogue.getLabel() === 'local') {
+                } else if (this.catalogue_view.catalogue === Wirecloud.LocalCatalogue) {
                     switch (this.resource.getType()) {
                     case 'mashup':
                     case 'widget':
@@ -125,7 +125,7 @@
                             'class': 'instantiate_button',
                             'text': gettext('Add to workspace')
                         });
-                        button.addEventListener('click', this.catalogue.createUserCommand('instantiate', this.resource));
+                        button.addEventListener('click', this.catalogue_view.createUserCommand('instantiate', this.resource));
                         break;
                     default:
                         button = new StyledElements.StyledButton({text: gettext('Download')});
@@ -138,18 +138,18 @@
                         button = new StyledElements.StyledButton({
                             'text': gettext('Uninstall')
                         });
-                        button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', this.resource, this.catalogue));
+                        button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', this.resource, this.catalogue_view));
                     } else {
                         button = new StyledElements.StyledButton({
                             'text': gettext('Install')
                         });
 
-                        button.addEventListener('click', local_catalogue_view.createUserCommand('import', this.resource, this.catalogue));
+                        button.addEventListener('click', local_catalogue_view.createUserCommand('import', this.resource, this.catalogue_view));
                     }
                 }
                 button.addClassName('mainbutton btn-primary');
                 return button;
-            }.bind({catalogue: this.catalogue, resource: resource}),
+            }.bind({catalogue_view: this.catalogue_view, resource: resource}),
             'image': function () {
                 var image = document.createElement('img');
                 image.onerror = function (event) {
@@ -178,7 +178,7 @@
             if (!EzWebExt.XML.isElement(resource_element.elements[i])) {
                 continue;
             }
-            this.create_simple_command(resource_element.elements[i], '.click_for_details', 'click', this.catalogue.createUserCommand('showDetails', resource));
+            this.create_simple_command(resource_element.elements[i], '.click_for_details', 'click', this.catalogue_view.createUserCommand('showDetails', resource));
         }
 
         return resource_element;
@@ -195,12 +195,20 @@
         });
         fragment.appendChild(button);
 
+        if (this.catalogue_view.catalogue === Wirecloud.LocalCatalogue && resource.getType() === 'mashup') {
+            button = new StyledElements.StyledButton({
+                'text': gettext('Publish')
+            });
+            button.addEventListener('click', this.catalogue_view.createUserCommand('publishOtherMarket', resource));
+            fragment.appendChild(button);
+        }
+
         if (Wirecloud.LocalCatalogue.resourceExists(resource)) {
             var local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
             button = new StyledElements.StyledButton({
                 'text': gettext('Uninstall')
             });
-            button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', resource, this.catalogue));
+            button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', resource, this.catalogue_view));
             fragment.appendChild(button);
         }
 
@@ -209,7 +217,7 @@
                 'class': 'btn-danger',
                 'text': gettext('Delete')
             });
-            button.addEventListener('click', this.catalogue.createUserCommand('delete', resource));
+            button.addEventListener('click', this.catalogue_view.createUserCommand('delete', resource));
             fragment.appendChild(button);
         }
 
@@ -218,7 +226,7 @@
                 'class': 'btn-danger',
                 'text': gettext('Delete all versions')
             });
-            button.addEventListener('click', this.catalogue.createUserCommand('delete', resource));
+            button.addEventListener('click', this.catalogue_view.createUserCommand('delete', resource));
             fragment.appendChild(button);
         }
 
