@@ -1,4 +1,4 @@
-/*global WindowMenu*/
+/*global gettext, Element, StyledElements, WindowMenu, Wirecloud*/
 
 (function () {
 
@@ -17,20 +17,21 @@
         this.windowContent.insertBefore(this.iconElement, this.windowContent.childNodes[0]);
 
         // Accept button
-        this.acceptButton = document.createElement('button');
-
-        Element.extend(this.acceptButton);
-        this.acceptButton.appendChild(document.createTextNode(gettext('Yes')));
+        this.acceptButton = new StyledElements.StyledButton({
+            text: gettext('Yes'),
+            'class': 'btn-danger'
+        });
         this._acceptListener = this._acceptListener.bind(this);
-        this.acceptButton.observe("click", this._acceptListener);
-        this.windowBottom.appendChild(this.acceptButton);
+        this.acceptButton.addEventListener("click", this._acceptListener);
+        this.acceptButton.insertInto(this.windowBottom);
 
         // Cancel button
-        this.cancelButton = document.createElement('button');
-        Element.extend(this.cancelButton);
-        this.cancelButton.appendChild(document.createTextNode(gettext('No')));
-        this.cancelButton.observe("click", this._closeListener);
-        this.windowBottom.appendChild(this.cancelButton);
+        this.cancelButton = new StyledElements.StyledButton({
+            text: gettext('No'),
+            'class': 'btn-primary'
+        });
+        this.cancelButton.addEventListener("click", this._closeListener);
+        this.cancelButton.insertInto(this.windowBottom);
 
         this.acceptHandler = null;
         this.cancelHandler = null;
@@ -55,7 +56,7 @@
     };
 
     AlertWindowMenu.prototype.setFocus = function setFocus() {
-        this.acceptButton.focus();
+        this.cancelButton.focus();
     };
 
     Wirecloud.ui.AlertWindowMenu = AlertWindowMenu;
