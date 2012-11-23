@@ -46,12 +46,6 @@ function WindowMenu(title, extra_class) {
     this.htmlElement.appendChild(this.windowTop);
 
     this._closeListener = this._closeListener.bind(this);
-    this.closeButton = new StyledElements.StyledButton({
-        'class': "closebutton",
-        'plain': true
-    });
-    this.closeButton.insertInto(this.windowTop);
-    this.closeButton.addEventListener("click", this._closeListener);
 
     this.titleElement = document.createElement('div');
     Element.extend(this.titleElement);
@@ -304,12 +298,7 @@ function PreferencesWindowMenu(scope, manager) {
 PreferencesWindowMenu.prototype = new WindowMenu();
 
 PreferencesWindowMenu.prototype.setCancelable = function(cancelable) {
-    this.closeButton.setDisabled(!cancelable);
-    if (cancelable === true) {
-        this.cancelButton.enable();
-    } else {
-        this.cancelButton.disable();
-    }
+    this.ccancelButton.setDisabled(!cancelable);
 };
 
 PreferencesWindowMenu.prototype._executeOperation = function() {
