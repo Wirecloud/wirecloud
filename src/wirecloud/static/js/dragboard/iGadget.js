@@ -931,7 +931,7 @@ IWidget.prototype.upgradeIWidget = function () {
         onFailure: onUpgradeError.bind(this),
         onException: onUpgradeError.bind(this),
         postBody: Object.toJSON(data),
-        contentType: 'application/json; UTF-8'
+        contentType: 'application/json'
     });
 };
 
@@ -1652,8 +1652,7 @@ IWidget.prototype.moveToLayout = function (newLayout) {
             logManager.log(msg);
         };
 
-        var data = {};
-        data['iWidgets'] = [];
+        var data = [];
 
         var iWidgetInfo = {};
         iWidgetInfo['id'] = this.id;
@@ -1673,20 +1672,18 @@ IWidget.prototype.moveToLayout = function (newLayout) {
         iWidgetInfo['zIndex'] = this.zPos;
         iWidgetInfo['tab'] = this.layout.dragboard.tabId;
 
-        data['iWidgets'].push(iWidgetInfo);
+        data.push(iWidgetInfo);
 
-        data = {
-            'iwidgets': Object.toJSON(data)
-        };
         var url = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
             workspace_id: oldLayout.dragboard.workspaceId,
             tab_id: oldLayout.dragboard.tabId
         });
         Wirecloud.io.makeRequest(url, {
             method: 'PUT',
-            parameters: data,
+            postBody: Object.toJSON(data),
             onSuccess: onSuccess.bind(this),
-            onFailure: onError.bind(this)
+            onFailure: onError.bind(this),
+            contentType: 'application/json'
         });
     }
 };

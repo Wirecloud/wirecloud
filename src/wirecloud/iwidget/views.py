@@ -46,6 +46,7 @@ from wirecloud.iwidget.utils import SaveIWidget, UpdateIWidget, UpgradeIWidget, 
 from wirecloud.models import Widget, IWidget, Tab, UserWorkspace, Variable, Workspace
 from wirecloud.widget.utils import get_or_add_widget_from_catalogue, get_and_add_widget
 from wirecloudcommons.utils.transaction import commit_on_http_success
+from wirecloudcommons.utils.http import build_error_response, supported_request_mime_types
 
 
 class IWidgetCollection(Resource):
@@ -102,36 +103,21 @@ class IWidgetCollection(Resource):
 
             raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
 
+    @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id):
 
-        content_type = request.META.get('CONTENT_TYPE', '')
-        if content_type == None:
-            content_type = ''
-
-        if not content_type.startswith('application/json'):
-            return HttpResponseBadRequest(get_xml_error(_("Invalid content type")), mimetype='application/xml; charset=UTF-8')
-
         try:
-            received_data = simplejson.loads(request.raw_post_data)
-        except:
-            return HttpResponseBadRequest(get_xml_error(_("Request body is not valid JSON data")), mimetype='application/xml; charset=UTF-8')
+            iwidgets = simplejson.loads(request.raw_post_data)
+        except simplejson.JSONDecodeError, e:
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
 
-        try:
-            tab = Tab.objects.get(workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
-            iwidgets = received_data
-            for iwidget in iwidgets:
-                UpdateIWidget(iwidget, request.user, tab)
+        tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
+        for iwidget in iwidgets:
+            UpdateIWidget(iwidget, request.user, tab)
 
-            return HttpResponse('ok')
-        except Tab.DoesNotExist, e:
-            msg = _('referred tab %(tab_id)s does not exist.') % {'tab_id': tab_id}
-
-            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
-        except Exception, e:
-            msg = _("iWidgets cannot be updated: ") + unicode(e)
-
-            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
+        return HttpResponse(status=204)
 
 
 class IWidgetEntry(Resource):
