@@ -186,7 +186,7 @@ function Workspace (workspaceState) {
         this.emptyWorkspaceInfoBox = document.createElement('div');
         this.emptyWorkspaceInfoBox.addClassName('emptyWorkspaceInfoBox');
         var subBox = document.createElement('div');
-        subBox.addClassName('alert alert-block');
+        subBox.addClassName('alert alert-info alert-block');
         // Title
         var pTitle = document.createElement('h4');
         pTitle.setTextContent(gettext("Hey! Welcome to Wirecloud! This is an empty workspace"));
