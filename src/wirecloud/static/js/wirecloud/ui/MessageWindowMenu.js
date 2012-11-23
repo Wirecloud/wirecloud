@@ -23,7 +23,7 @@
 *     http://morfeo-project.org
  */
 
-/*global gettext, StyledElements, WindowMenu, Wirecloud*/
+/*global Element, gettext, StyledElements, WindowMenu, Wirecloud*/
 
 (function () {
 
@@ -34,6 +34,12 @@
      */
     var MessageWindowMenu = function MessageWindowMenu(element) {
         WindowMenu.call(this, '');
+
+        // Warning icon
+        this.iconElement = document.createElement('div');
+        Element.extend(this.iconElement);
+        this.iconElement.className = "window-icon icon-size icon-warning";
+        this.windowContent.insertBefore(this.iconElement, this.windowContent.childNodes[0]);
 
         // Accept button
         this.button = new StyledElements.StyledButton({
