@@ -34,7 +34,12 @@
     display: inline;
 }
 
+.resource h2 {
+    font-size: 24px;
+}
+
 .resource h3 {
+    font-size: 19px;
     margin: 0.5ex 0 1ex 0;
 }
 

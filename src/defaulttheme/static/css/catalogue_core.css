@@ -37,6 +37,10 @@
     z-index: 2;
 }
 
+.catalogue .search_interface .search_bar h2 {
+    font-size: 24px;
+}
+
 .catalogue .search_interface .north_container.search_bar > div {
     display: inline-block;
     white-space: nowrap;
