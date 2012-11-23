@@ -1,0 +1,32 @@
+.styled_form table {
+    padding: 19px 0;
+    width: 100%;
+}
+
+.styled_form .buttons {
+    margin: 2em 0 0.5em;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.error_desc .action_desc {
+    font-weight: bold;
+}
+
+.error_desc .cause_desc {
+    margin-left: 1em;
+}
+
+.styled_form td {
+    padding: 0px 10px;
+    text-align: left;
+}
+
+.styled_form td.label-cell {
+    text-align: right;
+    width: 160px;
+}
+
+.styled_form td > .styled_text_field {
+    width: auto;
+}
