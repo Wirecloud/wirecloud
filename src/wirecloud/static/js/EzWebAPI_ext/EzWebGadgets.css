@@ -9,6 +9,7 @@
 @import url('/static/css/styledelements/styled_label_badge.css');
 @import url('/static/css/styledelements/styled_message.css');
 @import url('/static/css/styledelements/styled_rating.css');
+@import url('/static/css/font-awesome.css');
 
 html {
   width: 100%;
