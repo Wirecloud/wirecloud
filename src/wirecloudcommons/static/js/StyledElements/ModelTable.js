@@ -344,6 +344,7 @@
         }
 
         this.resizeColumns();
+        this.resizeColumns();
     };
 
     ModelTable.prototype.destroy = function destroy() {
