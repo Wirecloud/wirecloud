@@ -61,7 +61,6 @@ FiWareCataloguePublishView.prototype._submit_usdl = function (e) {
             var msg = LogManagerFactory.getInstance().formatError(gettext("Error uploading resource: %(errorMsg)s."), transport);
             LogManagerFactory.getInstance().log(msg);
             LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-            LayoutManagerFactory.getInstance().log(msg);
         },
         onComplete: function () {
             LayoutManagerFactory.getInstance()._notifyPlatformReady();
