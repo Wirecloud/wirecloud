@@ -126,7 +126,7 @@ class PublishService(Service):
 
             try:
                 name = publish_options.get('name').replace(' ', '')
-                template_location = market_managers[market_endpoint['market']].build_repository_url(market_endpoint, name)
+                template_location = market_managers[market_endpoint['market']].build_repository_url(market_endpoint, name + 'Mdl')
                 usdl = build_usdl_from_workspace(publish_options, published_workspace.workspace, request.user, template_location)
                 market_managers[market_endpoint['market']].publish(market_endpoint, description, name, request.user, usdl=usdl, request=request)
             except Exception, e:

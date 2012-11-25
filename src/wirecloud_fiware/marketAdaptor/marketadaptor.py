@@ -293,7 +293,11 @@ class MarketAdaptor(object):
 
         params = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><resource name="' + service_info['name'] + '" ><url>' + service_info['url'] + '</url></resource>'
         session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
-        headers = {'content-type': 'application/xml', 'Cookie': session_cookie}
+        headers = {
+            'Accept': 'application/xml, application/json, text/plain',
+            'Content-Type': 'application/xml',
+            'Cookie': session_cookie
+        }
 
         opener = urllib2.build_opener()
         request = MethodRequest("PUT", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/offering/store/" + urlquote(store) + "/offering"), params, headers)
