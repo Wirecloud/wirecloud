@@ -62,6 +62,7 @@
         /*
          * Table body
          */
+        this.pComponents = [];
         this.pListeners = [];
         this.tableBody = this.layout.getCenterContainer();
         this.tableBody.addClassName('tbody');
@@ -146,6 +147,10 @@
             for (j = 0; j < columnCells.length; j += 1) {
                 applyWidth(columnCells[j], autowidth);
             }
+        }
+
+        for (i = 0; i < this.pComponents.length; i += 1) {
+            this.pComponents[i].repaint();
         }
     };
 
@@ -256,6 +261,7 @@
             entry = this.pListeners[i];
             EzWebExt.removeEventListener(entry.element, 'click', entry.callback, false);
         }
+        this.pComponents = [];
         this.pListeners = [];
         this.columnsCells = [];
         for (i = 0; i < this.columns.length; i += 1) {
@@ -323,6 +329,7 @@
                     EzWebExt.setTextContent(cell, "" + cellContent);
                 } else if (cellContent instanceof StyledElements.StyledElement) {
                     cellContent.insertInto(cell);
+                    this.pComponents.push(cellContent);
                 } else {
                     cell.appendChild(cellContent);
                 }
