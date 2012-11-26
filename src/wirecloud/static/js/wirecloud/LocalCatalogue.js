@@ -4,6 +4,10 @@
 
     "use strict";
 
+    /*************************************************************************
+     * Private methods
+     *************************************************************************/
+
     var processWidget = function processWidget(widget_data) {
         var widget, widgetId, widgetFullId;
 
@@ -11,7 +15,7 @@
         widgetId = widget.getVendor() + '/' + widget.getName();
         widgetFullId = widget.getId();
 
-        if (this.widgetVersions[widgetId] === undefined) {
+        if (!(widgetId in this.widgetVersions[widgetId])) {
             this.widgetVersions[widgetId] = [];
         }
         this.widgetVersions[widgetId].push(widget);
@@ -19,8 +23,6 @@
         // Insert widget object in showcase object model
         this.widgets[widgetFullId] = widget;
     };
-
-    var LocalCatalogue = new Wirecloud.WirecloudCatalogue({name: 'local'});
 
     var uninstallSuccessCallback = function uninstallSuccessCallback(transport) {
         var layoutManager, result, opManager, i, widgetId;
@@ -46,6 +48,10 @@
             break;
         }
 
+        try {
+            delete this.catalogue.resources[this.resource.getURI()];
+        } catch (e) {}
+
         this.onSuccess();
     };
 
@@ -58,6 +64,30 @@
         logManager.log(msg);
 
         this.onError(msg);
+    };
+
+    var loadSuccessCallback = function loadFailureCallback(transport) {
+        var response = JSON.parse(transport.responseText);
+
+        this.resources = response;
+    };
+
+    var loadFailureCallback = function loadFailureCallback(transport) {
+    };
+
+    /*************************************************************************
+     * Public methods
+     *************************************************************************/
+
+    var LocalCatalogue = new Wirecloud.WirecloudCatalogue({name: 'local'});
+
+    LocalCatalogue.reload = function reload() {
+
+        Wirecloud.io.makeRequest(Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION, {
+            method: 'GET',
+            onSuccess: loadSuccessCallback.bind(this),
+            onFailure: loadFailureCallback.bind(this)
+        });
     };
 
     LocalCatalogue.uninstallResource = function uninstallResource(resource, options) {
@@ -103,9 +133,10 @@
                 case "widget":
                     processWidget.call(ShowcaseFactory.getInstance(), resource_data);
                     break;
-                case "mashup":
-                    break;
                 }
+
+                var id = [resource_data.vendor, resource_data.name, resource_data.version].join('/');
+                this.resources[id] = resource_data;
 
                 if (typeof options.onSuccess === 'function') {
                     options.onSuccess();
@@ -133,7 +164,7 @@
         id = [resource.getVendor(), resource.getName(), resource.getVersion().text].join('/');
 
         widget = ShowcaseFactory.getInstance().getWidget('/widgets/' + id);
-        return widget || id in Wirecloud.wiring.OperatorFactory.getAvailableOperators();
+        return widget || id in Wirecloud.wiring.OperatorFactory.getAvailableOperators() || id in this.resources;
     };
 
     Wirecloud.LocalCatalogue = LocalCatalogue;

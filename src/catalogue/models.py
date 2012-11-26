@@ -82,6 +82,10 @@ class CatalogueResource(TransModel):
 
     json_description = models.TextField(_('JSON description'))
 
+    @property
+    def local_uri_part(self):
+        return self.vendor + '/' + self.short_name + '/' + self.version
+
     def delete(self, *args, **kwargs):
 
         from catalogue.utils import wgt_deployer

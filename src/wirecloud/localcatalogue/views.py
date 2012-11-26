@@ -1,7 +1,9 @@
+import json
 from cStringIO import StringIO
 
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
@@ -23,6 +25,26 @@ from wirecloudcommons.utils.wgt import WgtFile
 
 
 class ResourceCollection(Resource):
+
+    @method_decorator(login_required)
+    @commit_on_http_success
+    def read(self, request):
+
+        resources = {}
+        for resource in CatalogueResource.objects.filter(Q(public=True) | Q(users=request.user)):
+            if resource.resource_type() == 'widget':
+                widgets = Widget.objects.filter(vendor=resource.vendor, name=resource.short_name, version=resource.version)[:1]
+                if len(widgets) == 1:
+
+                    widget = widgets[0]
+
+                    resources[resource.local_uri_part] = get_widget_data(widget, request)
+                    resources[resource.local_uri_part]['type'] = 'widget'
+            else:
+                options = json.loads(resource.json_description)
+                resources[resource.local_uri_part] = options
+
+        return HttpResponse(json.dumps(resources), mimetype='application/json; chatset=UTF-8')
 
     @method_decorator(login_required)
     @iframe_error

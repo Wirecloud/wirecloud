@@ -43,7 +43,7 @@ urlpatterns = patterns('wirecloud.views',
 
     # Widgets
     url(r'^api/resources/?',
-        localcatalogue_views.ResourceCollection(permitted_methods=('POST',)),
+        localcatalogue_views.ResourceCollection(permitted_methods=('GET', 'POST',)),
         name='wirecloud_showcase.resource_collection'),
     url(r'^api/resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/?',
         localcatalogue_views.ResourceEntry(permitted_methods=('DELETE',)),
