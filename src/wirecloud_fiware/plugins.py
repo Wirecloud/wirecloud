@@ -102,7 +102,7 @@ class FiWareMarketManager(MarketManager):
         request = MethodRequest('PUT', template_location.encode('utf-8'), content, headers)
         response = opener.open(request)
 
-        if response.code != 200:
+        if response.code not in (200, 201):
             raise HTTPError(response.url, response.code, response.msg, None, None)
 
         # Create usdl document and publish it into the repository
@@ -117,7 +117,7 @@ class FiWareMarketManager(MarketManager):
 
         response = opener.open(request)
 
-        if response.code != 200:
+        if response.code not in (200, 201):
             raise HTTPError(response.url, response.code, response.msg, None, None)
 
         # add the published service to the marketplace in the chosen store
