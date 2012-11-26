@@ -19,8 +19,7 @@
  *
  */
 
-/*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50 */
-/*global gettext, StyledElements*/
+/*global Element, gettext, OpManagerFactory, StyledElements, WindowMenu, Wirecloud*/
 
 (function () {
 
@@ -41,7 +40,7 @@
     /*
      * Constructor
      */
-    InstantiateMashupWindowMenu = function InstantiateMashupWindowMenu (mashup) {
+    InstantiateMashupWindowMenu = function InstantiateMashupWindowMenu(mashup) {
         WindowMenu.call(this, gettext('Add Mashup'));
 
         this.iconElement = document.createElement('div');
@@ -69,7 +68,7 @@
     };
     InstantiateMashupWindowMenu.prototype = new WindowMenu();
 
-    InstantiateMashupWindowMenu.prototype.destroy = function destroy () {
+    InstantiateMashupWindowMenu.prototype.destroy = function destroy() {
         this.hide();
         this.acceptButton.destroy();
         this.cancelButton.destroy();
