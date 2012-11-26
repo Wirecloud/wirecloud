@@ -44,7 +44,11 @@
     InstantiateMashupWindowMenu = function InstantiateMashupWindowMenu (mashup) {
         WindowMenu.call(this, gettext('Add Mashup'));
 
-        this.iconElement.addClassName('icon-warning');
+        this.iconElement = document.createElement('div');
+        Element.extend(this.iconElement);
+        this.iconElement.className = "window-icon icon-size icon-warning";
+        this.windowContent.insertBefore(this.iconElement, this.windowContent.childNodes[0]);
+
         this.setMsg(gettext('You are going to add a Mashup that could be composed by more than one widget. Do you want to add it to a new Workspace or to the current one?'));
 
         // New Workspace button
