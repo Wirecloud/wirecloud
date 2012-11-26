@@ -44,15 +44,15 @@
                     {name: 'readOnlyWidgets', label: gettext('Block widgets'), type: 'boolean'},
                     {name: 'readOnlyConnectables', label: gettext('Block connections'), type: 'boolean'}
                 ]
-            },
+            }/*,
             {
                 'type': 'group',
                 'shortTitle': gettext('Publish place'),
                 'fields': marketFields
-            }
+            }*/
         ];
 
-        this._addVariableParametrization(workspace, fields);
+        //this._addVariableParametrization(workspace, fields);
         Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Publish Workspace'), 'publish_workspace');
 
         //fill a warning message
@@ -177,14 +177,15 @@
     };
 
     PublishWorkspaceWindowMenu.prototype._createMarketplaceData = function _createMarketplaceData(data) {
-        var views = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName;
+        /*var views = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName;
         var key, marketplaces = [];
         for (key in views) {
             if (data[key] === true) {
                 marketplaces = marketplaces.concat(views[key].getPublishData(data));
             }
         }
-        return marketplaces;
+        return marketplaces;*/
+        return [{market: 'local'}];
     };
 
     PublishWorkspaceWindowMenu.prototype.executeOperation = function executeOperation(data) {
