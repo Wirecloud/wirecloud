@@ -571,18 +571,61 @@ def build_rdf_template_from_workspace(options, workspace, user):
     return graph
 
 
-def build_usdl_from_workspace(options, workspace, user, template_url):
+def build_usdl_from_workspace(options, workspace, user, template_url, usdl_info=None):
 
-    usdl_uri = WIRE_M[options.get('vendor') + '/' + options.get('name') + '/' + options.get('version')]
     graph = rdflib.Graph()
 
-    graph.add((usdl_uri, rdflib.RDF.type, USDL['Service']))
+    usdl_uri = WIRE_M[options.get('vendor') + '/' + options.get('name') + '/' + options.get('version')]
+    vendor = None
+
+    if usdl_info != None:
+        graph.parse(data=usdl_info['data'], format=usdl_info['content_type'])
+        for service in graph.subjects(rdflib.RDF.type, USDL['Service']):
+            usdl_uri = service
+
+        # remove triples that are going to be replaced
+        for title in graph.objects(usdl_uri, DCTERMS['title']):
+            graph.remove((usdl_uri, DCTERMS['title'], title))
+
+        for version in graph.objects(usdl_uri, USDL['versionInfo']):
+            graph.remove((usdl_uri, USDL['versionInfo'], version))
+
+        for abstract in graph.objects(usdl_uri, DCTERMS['abstract']):
+            graph.remove((usdl_uri, DCTERMS['abstract'], abstract))
+
+        for description in graph.objects(usdl_uri, DCTERMS['description']):
+                graph.remove((usdl_uri, DCTERMS['description'], description))
+
+        for page in graph.objects(usdl_uri, FOAF['page']):
+            graph.remove((usdl_uri, FOAF['page'], page))
+
+        for depiction in graph.objects(usdl_uri, FOAF['depiction']):
+            graph.remove((usdl_uri, FOAF['depiction'], depiction))
+
+        for created in graph.objects(usdl_uri, DCTERMS['created']):
+            graph.remove((usdl_uri, DCTERMS['created'], created))
+
+        for modified in graph.objects(usdl_uri, DCTERMS['modified']):
+            graph.remove((usdl_uri, DCTERMS['modified'], page))
+
+        for provider in graph.objects(usdl_uri, USDL['hasProvider']):
+
+            for name in graph.objects(provider, FOAF['name']):
+                graph.remove((provider, FOAF['name'], name))
+
+            vendor = provider
+
+    else:
+        graph.add((usdl_uri, rdflib.RDF.type, USDL['Service']))
+
     graph.add((usdl_uri, DCTERMS['title'], rdflib.Literal(options.get('name'))))
     graph.add((usdl_uri, USDL['versionInfo'], rdflib.Literal(options.get('version'))))
 
-    vendor = rdflib.BNode()
-    graph.add((vendor, rdflib.RDF.type, GR['BussisnessEntity']))
-    graph.add((usdl_uri, USDL['hasProvider'], vendor))
+    if vendor == None:
+        vendor = rdflib.BNode()
+        graph.add((vendor, rdflib.RDF.type, GR['BussisnessEntity']))
+        graph.add((usdl_uri, USDL['hasProvider'], vendor))
+
     graph.add((vendor, FOAF['name'], rdflib.Literal(options.get('vendor'))))
 
     description = get_workspace_description(workspace)
