@@ -35,12 +35,12 @@ from django.conf.urls.defaults import patterns, url
 from catalogue.views import ResourceCollection, ResourceCollectionByGlobalSearch
 from catalogue.views import ResourceCollectionBySimpleSearch, ResourceTagCollection
 from catalogue.views import ResourceVoteCollection, ResourceVersionCollection
-from catalogue.views import ResourceEnabler
+from catalogue.views import ResourceEnabler, ResourceEntry
 
 urlpatterns = patterns('catalogue.views',
     # Resources
     url(r'^/resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)$',
-        ResourceCollection(permitted_methods=('DELETE', 'PUT')),
+        ResourceEntry(permitted_methods=('GET', 'DELETE')),
         name='wirecloud_catalogue.resource_entry'),
     url(r'^/resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)$', ResourceCollection(permitted_methods=('DELETE',))),
     url(r'^/resources$',

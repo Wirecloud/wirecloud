@@ -59,6 +59,7 @@ from catalogue.catalogue_utils import get_and_filter, get_or_filter, get_not_fil
 from catalogue.catalogue_utils import get_tag_filter, get_event_filter, get_slot_filter, get_paginatedlist
 from catalogue.catalogue_utils import get_tag_response, update_resource_popularity
 from catalogue.catalogue_utils import get_vote_response, group_resources
+from catalogue.get_json_catalogue_data import get_resource_data
 import catalogue.utils as catalogue_utils
 from catalogue.utils import add_widget_from_wgt, add_resource_from_template, delete_resource
 from catalogue.utils import tag_resource
@@ -177,6 +178,14 @@ class ResourceCollection(Resource):
         resources = get_paginatedlist(resources, int(pag), int(offset))
 
         return get_resource_response(resources, format, items, request.user, request)
+
+
+class ResourceEntry(Resource):
+
+    #@method_decorator(login_required)
+    def read(self, request, vendor, name, version):
+        resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
+        return HttpResponse(simplejson.dumps(get_resource_data(resource, request.user, request)), mimetype='application/json; charset=UTF-8')
 
     @method_decorator(login_required)
     @commit_on_http_success
