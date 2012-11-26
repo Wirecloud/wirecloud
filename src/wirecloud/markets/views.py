@@ -119,6 +119,10 @@ class PublishService(Service):
         else:
             description = http_utils.download_http_content(template_url, user=request.user)
 
+        usdl = None
+        if data.get('usdl', None) is not None:
+            usdl = http_utils.download_http_content(data['usdl'], user=request.user)
+
         market_managers = get_market_managers(request.user)
         errors = {}
         publish_options = json.loads(published_workspace.params)
@@ -127,7 +131,7 @@ class PublishService(Service):
             try:
                 name = publish_options.get('name').replace(' ', '')
                 template_location = market_managers[market_endpoint['market']].build_repository_url(market_endpoint, name + 'Mdl')
-                usdl = build_usdl_from_workspace(publish_options, published_workspace.workspace, request.user, template_location)
+                usdl = build_usdl_from_workspace(publish_options, published_workspace.workspace, request.user, template_location, usdl)
                 market_managers[market_endpoint['market']].publish(market_endpoint, description, name, request.user, usdl=usdl, request=request)
             except Exception, e:
                 errors[market_endpoint['market']] = unicode(e)
