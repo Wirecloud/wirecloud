@@ -88,7 +88,7 @@
         if (this.catalogue.name === 'local') {
             this.wrapperElement.getElementsByClassName("wgt_upload_form")[0].action = Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION;
         } else {
-            this.wrapperElement.getElementsByClassName("wgt_upload_form")[0].action = this.catalogue.RESOURCE_COLLECTION;
+            this.wrapperElement.getElementsByClassName("wgt_upload_form")[0].action = Wirecloud.io.buildProxyURL(this.catalogue.RESOURCE_COLLECTION);
         }
         this._iframe = this.wrapperElement.getElementsByClassName('upload')[0];
         this._iframe.id = this._iframe.name = 'upload_' + this.mainview.altId;
