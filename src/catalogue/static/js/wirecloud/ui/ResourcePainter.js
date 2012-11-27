@@ -115,7 +115,7 @@
                             'text': gettext('Install')
                         });
 
-                        button.addEventListener('click', local_catalogue_view.createUserCommand('import', this.resource, this.catalogue_view));
+                        button.addEventListener('click', local_catalogue_view.createUserCommand('install', this.resource, this.catalogue_view));
                     }
                 } else if (this.catalogue_view.catalogue === Wirecloud.LocalCatalogue) {
                     switch (this.resource.getType()) {
@@ -144,7 +144,7 @@
                             'text': gettext('Install')
                         });
 
-                        button.addEventListener('click', local_catalogue_view.createUserCommand('import', this.resource, this.catalogue_view));
+                        button.addEventListener('click', local_catalogue_view.createUserCommand('install', this.resource, this.catalogue_view));
                     }
                 }
                 button.addClassName('mainbutton btn-primary');

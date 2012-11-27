@@ -115,18 +115,18 @@
 
     CatalogueView.prototype.ui_commands = {};
 
-    CatalogueView.prototype.ui_commands.import = function _import(resource, catalogue_source) {
+    CatalogueView.prototype.ui_commands.install = function install(resource, catalogue_source) {
         return function () {
             var layoutManager;
 
             layoutManager = LayoutManagerFactory.getInstance();
-            layoutManager._startComplexTask(gettext("Importing operator into local repository"), 3);
-            layoutManager.logSubTask(gettext('Uploading operator'));
+            layoutManager._startComplexTask(gettext("Importing resource into local repository"), 3);
+            layoutManager.logSubTask(gettext('Uploading resource'));
 
             this.catalogue.addResourceFromURL(resource.getUriTemplate(), {
                 packaged: resource.isPackaged(),
                 onSuccess: function () {
-                    LayoutManagerFactory.getInstance().logSubTask(gettext('Operator installed successfully'));
+                    LayoutManagerFactory.getInstance().logSubTask(gettext('Resource installed successfully'));
                     LayoutManagerFactory.getInstance().logStep('');
 
                     this.refresh_search_results();
