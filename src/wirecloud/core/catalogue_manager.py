@@ -17,12 +17,18 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
 import os
+import urllib2
+from urlparse import urljoin
+
+from django.utils.encoding import iri_to_uri
 
 from catalogue.models import CatalogueResource
 import catalogue.utils as catalogue_utils
 from catalogue.utils import add_resource_from_template
 from commons import http_utils
+from wirecloud.proxy.views import MethodRequest
 from wirecloud.workspace.mashupTemplateGenerator import build_template_from_workspace
 from wirecloud.markets.utils import MarketManager
 from wirecloudcommons.utils.template import TemplateParser
@@ -58,7 +64,22 @@ class WirecloudCatalogueManager(MarketManager):
                 return None
         else:
 
-            return None
+            opener = urllib2.build_opener()
+            path = '/'.join(('catalogue', 'resource', vendor, name, version))
+            url = iri_to_uri(urljoin(self._options['url'], path))
+            request = MethodRequest('GET', url)
+            response = opener.open(request)
+
+            if response.code == 200:
+                data = json.loads(response.read())
+                downloaded_file = http_utils.download_http_content(data['uriTemplate'], user=user)
+                return {
+                    'downloaded_file': downloaded_file,
+                    'template_url': data['uriTemplate'],
+                    'packaged': data['packaged']
+                }
+            else:
+                return None
 
     def publish_mashup(self, endpoint, published_workspace, user, publish_options, request=None):
 

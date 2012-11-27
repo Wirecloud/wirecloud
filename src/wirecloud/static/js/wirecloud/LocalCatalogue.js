@@ -15,7 +15,7 @@
         widgetId = widget.getVendor() + '/' + widget.getName();
         widgetFullId = widget.getId();
 
-        if (!(widgetId in this.widgetVersions[widgetId])) {
+        if (!(widgetId in this.widgetVersions)) {
             this.widgetVersions[widgetId] = [];
         }
         this.widgetVersions[widgetId].push(widget);
@@ -125,18 +125,28 @@
             method: 'POST',
             parameters: {'template_uri': url, packaged: !!options.packaged, force_create: !!options.forceCreate},
             onSuccess: function (transport) {
-                var resource_data = JSON.parse(transport.responseText);
-                switch (resource_data.type) {
-                case "operator":
-                    Wirecloud.wiring.OperatorFactory.addOperator(resource_data);
-                    break;
-                case "widget":
-                    processWidget.call(ShowcaseFactory.getInstance(), resource_data);
-                    break;
-                }
+                var i, id, resources_data, resource_data;
 
-                var id = [resource_data.vendor, resource_data.name, resource_data.version].join('/');
-                this.resources[id] = resource_data;
+                resources_data = JSON.parse(transport.responseText);
+
+                for (i = 0; i < resources_data.length; i += 1) {
+                    resource_data = resources_data[i];
+                    id = [resource_data.vendor, resource_data.name, resource_data.version].join('/');
+                    if (this.resourceExistsId(id)) {
+                        continue;
+                    }
+
+                    switch (resource_data.type) {
+                    case "operator":
+                        Wirecloud.wiring.OperatorFactory.addOperator(resource_data);
+                        break;
+                    case "widget":
+                        processWidget.call(ShowcaseFactory.getInstance(), resource_data);
+                        break;
+                    }
+
+                    this.resources[id] = resource_data;
+                }
 
                 if (typeof options.onSuccess === 'function') {
                     options.onSuccess();
@@ -158,13 +168,18 @@
         });
     };
 
-    LocalCatalogue.resourceExists = function resourceExists(resource) {
-        var id, widget;
-
-        id = [resource.getVendor(), resource.getName(), resource.getVersion().text].join('/');
+    LocalCatalogue.resourceExistsId = function resourceExistsId(id) {
+        var widget;
 
         widget = ShowcaseFactory.getInstance().getWidget('/widgets/' + id);
         return widget || id in Wirecloud.wiring.OperatorFactory.getAvailableOperators() || id in this.resources;
+    };
+
+    LocalCatalogue.resourceExists = function resourceExists(resource) {
+        var id;
+
+        id = [resource.getVendor(), resource.getName(), resource.getVersion().text].join('/');
+        return this.resourceExistsId(id);
     };
 
     Wirecloud.LocalCatalogue = LocalCatalogue;

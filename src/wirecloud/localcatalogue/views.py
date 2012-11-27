@@ -17,7 +17,8 @@ from commons.get_data import get_widget_data
 from commons.resource import Resource
 from commons.utils import json_encode
 from wirecloud.models import Widget, IWidget
-from wirecloud.widget.utils import create_widget_from_template, create_widget_from_wgt
+from wirecloud.localcatalogue.utils import get_or_add_resource_from_available_marketplaces
+from wirecloud.widget.utils import get_or_add_widget_from_catalogue, create_widget_from_template, create_widget_from_wgt
 from wirecloudcommons.utils.http import build_error_response, get_content_type, supported_request_mime_types
 from wirecloudcommons.utils.template import TemplateParseException, TemplateParser
 from wirecloudcommons.utils.transaction import commit_on_http_success
@@ -109,7 +110,7 @@ class ResourceCollection(Resource):
 
         resource.users.add(request.user)
 
-        if resource.type == 0:  # Widgets
+        if resource.resource_type() == 'widget':
             if not force_create and Widget.objects.filter(uri=template.get_resource_uri()).exists():
                 local_resource = Widget.objects.get(uri=template.get_resource_uri())
             else:
@@ -124,9 +125,28 @@ class ResourceCollection(Resource):
             local_resource.users.add(request.user)
             data = get_widget_data(local_resource, request)
             data['type'] = 'widget'
-            return HttpResponse(json_encode(data), mimetype='application/json; charset=UTF-8')
+            return HttpResponse(json_encode((data,)), mimetype='application/json; charset=UTF-8')
+
+        elif resource.resource_type() == 'mashup':
+            resources = [json.loads(resource.json_description)]
+            workspace_info = json.loads(resource.json_description)
+            for tab_entry in workspace_info['tabs']:
+                for resource in tab_entry['resources']:
+                    widget = get_or_add_widget_from_catalogue(resource.get('vendor'), resource.get('name'), resource.get('version'), request.user)
+                    widget_data = get_widget_data(widget)
+                    widget_data['type'] = 'widget'
+                    resources.append(widget_data)
+
+            for id_, op in workspace_info['wiring']['operators'].iteritems():
+                op_id_args = op['name'].split('/')
+                op_id_args.append(request.user)
+                operator = get_or_add_resource_from_available_marketplaces(*op_id_args)
+                resources.append(json.loads(operator.json_description))
+
+            return HttpResponse(json_encode(resources), mimetype='application/json; charset=UTF-8')
+
         else:  # Mashups and Operators
-            return HttpResponse(resource.json_description, mimetype='application/json; charset=UTF-8')
+            return HttpResponse('[' + resource.json_description + ']', mimetype='application/json; charset=UTF-8')
 
 
 class ResourceEntry(Resource):
