@@ -123,7 +123,7 @@ class PublishService(Service):
         if data.get('usdl', None) is not None:
             usdl_info = {
                 'data': http_utils.download_http_content(data['usdl'], user=request.user),
-                'format': 'application/rdf+xml'
+                'content_type': 'application/rdf+xml'
             }
 
         market_managers = get_market_managers(request.user)
@@ -134,7 +134,7 @@ class PublishService(Service):
             try:
                 name = publish_options.get('name').replace(' ', '')
                 template_location = market_managers[market_endpoint['market']].build_repository_url(market_endpoint, name + 'Mdl')
-                usdl = build_usdl_from_workspace(publish_options, published_workspace.workspace, request.user, template_location, usdl_info)
+                usdl = build_usdl_from_workspace(publish_options, published_workspace.workspace, request.user, template_location, usdl_info=usdl_info)
                 market_managers[market_endpoint['market']].publish(market_endpoint, description, name, request.user, usdl=usdl, request=request)
             except Exception, e:
                 errors[market_endpoint['market']] = unicode(e)
