@@ -298,7 +298,7 @@ function PreferencesWindowMenu(scope, manager) {
 PreferencesWindowMenu.prototype = new WindowMenu();
 
 PreferencesWindowMenu.prototype.setCancelable = function(cancelable) {
-    this.ccancelButton.setDisabled(!cancelable);
+    this.cancelButton.setDisabled(!cancelable);
 };
 
 PreferencesWindowMenu.prototype._executeOperation = function() {
