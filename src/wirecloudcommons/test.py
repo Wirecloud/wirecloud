@@ -643,7 +643,7 @@ class WirecloudRemoteTestCase(object):
 
             self.assertNotEqual(self.get_current_marketplace_name(), market)
 
-    def delete_widget(self, widget_name, timeout=30):
+    def delete_resource(self, widget_name, timeout=30):
         self.change_main_view('marketplace')
         catalogue_base_element = self.get_current_catalogue_base_element()
 

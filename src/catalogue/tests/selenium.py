@@ -21,13 +21,13 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.login('normuser', 'admin')
 
         self.add_wgt_widget_to_catalogue('Morfeo_Calendar_Viewer.wgt', 'Calendar Viewer')
-        self.delete_widget('Calendar Viewer')
+        self.delete_resource('Calendar Viewer')
 
     def test_reinstall_widget_to_catalog_wgt(self):
 
         self.login()
 
-        self.delete_widget('Test')
+        self.delete_resource('Test')
         resource = self.add_wgt_widget_to_catalogue('Wirecloud_Test_1.0.wgt', 'Test')
         self.instantiate(resource)
 
@@ -68,4 +68,4 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.login()
 
         self.add_template_to_catalogue('http://localhost:8001/test/test.rdf', 'Test_Selenium')
-        self.delete_widget('Test_Selenium')
+        self.delete_resource('Test_Selenium')
