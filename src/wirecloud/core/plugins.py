@@ -82,6 +82,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/PolicyManager.js',
             'js/StyledElements/Fragment.js',
             'js/StyledElements/Pagination.js',
+            'js/StyledElements/Button.js',
             'js/StyledElements/StaticPaginatedSource.js',
             'js/StyledElements/TextField.js',
             'js/StyledElements/PasswordField.js',
