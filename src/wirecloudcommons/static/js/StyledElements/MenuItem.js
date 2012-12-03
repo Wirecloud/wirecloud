@@ -43,7 +43,7 @@
                 this.events.click.dispatch(this);
             }
         }, this);
-        EzWebExt.addEventListener(this.wrapperElement, "click", this._clickHandler, false);
+        EzWebExt.addEventListener(this.wrapperElement, "click", this._clickHandler, true);
     };
     MenuItem.prototype = new StyledElements.StyledElement();
 
@@ -53,7 +53,7 @@
         }
         EzWebExt.removeEventListener(this.wrapperElement, "mouseover", this._mouseoverEventHandler, false);
         EzWebExt.removeEventListener(this.wrapperElement, "mouseout", this._mouseoutEventHandler, false);
-        EzWebExt.removeEventListener(this.wrapperElement, "click", this._clickHandler, false);
+        EzWebExt.removeEventListener(this.wrapperElement, "click", this._clickHandler, true);
 
         this._mouseoverEventHandler = null;
         this._mouseoutEventHandler = null;

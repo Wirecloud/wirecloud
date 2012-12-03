@@ -10,21 +10,19 @@
     var PopupMenu = function PopupMenu(options) {
         StyledElements.PopupMenuBase.call(this, options);
 
-        this._disableCallback = EzWebExt.bind(function (event) {
-            event.stopPropagation();
-            event.preventDefault();
-            this.hide();
-        }, this);
+        this._disableCallback = EzWebExt.bind(function (e) {
+            var boundingBox = this.wrapperElement.getBoundingClientRect();
 
-        this._disableLayer = document.createElement('div');
-        this._disableLayer.className = 'disable-layer';
-        EzWebExt.addEventListener(this._disableLayer, "click", this._disableCallback, false);
-        EzWebExt.addEventListener(this._disableLayer, "contextmenu", this._disableCallback, false);
+            if (e.clientX < boundingBox.left || e.clientX > boundingBox.right || e.clientY < boundingBox.top || e.clientY > boundingBox.bottom) {
+                setTimeout(this.hide.bind(this), 0);
+            }
+        }, this);
     };
     PopupMenu.prototype = new StyledElements.PopupMenuBase({extending: true});
 
     PopupMenu.prototype.show = function show(refPosition) {
-        document.body.appendChild(this._disableLayer);
+        EzWebExt.addEventListener(document, "click", this._disableCallback, true);
+        EzWebExt.addEventListener(document, "contextmenu", this._disableCallback, true);
 
         StyledElements.PopupMenuBase.prototype.show.call(this, refPosition);
     };
@@ -32,14 +30,11 @@
     PopupMenu.prototype.hide = function hide() {
         StyledElements.PopupMenuBase.prototype.hide.call(this);
 
-        if (EzWebExt.XML.isElement(this._disableLayer.parentNode)) {
-            EzWebExt.removeFromParent(this._disableLayer);
-        }
+        EzWebExt.removeEventListener(document, "click", this._disableCallback, true);
+        EzWebExt.removeEventListener(document, "contextmenu", this._disableCallback, true);
     };
 
     PopupMenu.prototype.destroy = function destroy() {
-        EzWebExt.removeEventListener(this._disableLayer, "click", this._disableCallback, false);
-        EzWebExt.removeEventListener(this._disableLayer, "contextmenu", this._disableCallback, false);
         this._disableCallback = null;
 
         StyledElements.PopupMenuBase.prototype.destroy.call(this);
