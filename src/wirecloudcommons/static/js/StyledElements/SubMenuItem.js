@@ -1,66 +1,77 @@
-/**
- *
- */
-StyledElements.SubMenuItem = function(text, handler) {
-    StyledElements.PopupMenuBase.call(this);
+/*global EzWebExt, StyledElements*/
 
-    this.menuItem = new StyledElements.MenuItem(text, handler);
-    this.menuItem.addClassName('submenu');
-}
-StyledElements.SubMenuItem.prototype = new StyledElements.PopupMenuBase({extending: true});
+(function () {
 
-StyledElements.SubMenuItem.prototype._getContext = function() {
-    if (this.parentMenu instanceof StyledElements.SubMenuItem) {
-        return this.parentMenu._getContext();
-    } else {
-        return this.parentMenu._context;
-    }
-}
+    "use strict";
 
-StyledElements.SubMenuItem.prototype._menuItemCallback = function(menuItem) {
-    var currentMenu = this;
-    while (currentMenu.parentMenu) {
-        currentMenu = currentMenu.parentMenu;
-    }
-    currentMenu.hide();
-    menuItem.run(currentMenu._context);
-}
+    /**
+     *
+     */
+    var SubMenuItem = function SubMenuItem(text, handler) {
+        StyledElements.PopupMenuBase.call(this);
 
-StyledElements.SubMenuItem.prototype._setParentPopupMenu = function(popupMenu) {
-    this.parentMenu = popupMenu;
+        this.menuItem = new StyledElements.MenuItem(text, handler);
+        this.menuItem.addClassName('submenu');
+    };
+    SubMenuItem.prototype = new StyledElements.PopupMenuBase({extending: true});
 
-    this.parentMenu.addEventListener('itemOver', EzWebExt.bind(function(popupMenu, item) {
-        var position;
-
-        if (item === this.menuItem) {
-            position = EzWebExt.getRelativePosition(this.menuItem.wrapperElement, this.menuItem.wrapperElement.ownerDocument.body);
-            position.x += this.menuItem.wrapperElement.offsetWidth;
-            this.show(position);
+    SubMenuItem.prototype._getContext = function _getContext() {
+        if (this.parentMenu instanceof SubMenuItem) {
+            return this.parentMenu._getContext();
         } else {
-            this.hide();
+            return this.parentMenu._context;
         }
-    }, this));
-}
+    };
 
-StyledElements.SubMenuItem.prototype._getMenuItem = function() {
-    return this.menuItem;
-}
+    SubMenuItem.prototype._menuItemCallback = function _menuItemCallback(menuItem) {
+        var currentMenu = this;
+        while (currentMenu.parentMenu) {
+            currentMenu = currentMenu.parentMenu;
+        }
+        currentMenu.hide();
+        menuItem.run(currentMenu._context);
+    };
 
-StyledElements.SubMenuItem.prototype.addEventListener = function(eventId, handler) {
-    switch (eventId) {
-    case 'mouseover':
-    case 'click':
-        return this.menuItem.addEventListener(eventId, handler);
-    default:
-        return StyledElements.PopupMenuBase.prototype.addEventListener.call(this, eventId, handler);
-    }
-}
+    SubMenuItem.prototype._setParentPopupMenu = function _setParentPopupMenu(popupMenu) {
+        this.parentMenu = popupMenu;
 
-StyledElements.SubMenuItem.prototype.destroy = function() {
-    if (this.menuItem) {
-        this.menuItem.destroy();
-    }
-    this.menuItem = null;
+        this.parentMenu.addEventListener('itemOver', EzWebExt.bind(function (popupMenu, item) {
+            var position;
 
-    StyledElements.PopupMenuBase.prototype.destroy.call(this);
-}
+            if (item === this.menuItem) {
+                position = EzWebExt.getRelativePosition(this.menuItem.wrapperElement, this.menuItem.wrapperElement.ownerDocument.body);
+                position.x += this.menuItem.wrapperElement.offsetWidth;
+                this.show(position);
+            } else {
+                this.hide();
+            }
+        }, this));
+    };
+
+    SubMenuItem.prototype._getMenuItem = function _getMenuItem() {
+        return this.menuItem;
+    };
+
+    SubMenuItem.prototype.addEventListener = function addEventListener(eventId, handler) {
+        switch (eventId) {
+        case 'mouseover':
+        case 'click':
+            return this.menuItem.addEventListener(eventId, handler);
+        default:
+            return StyledElements.PopupMenuBase.prototype.addEventListener.call(this, eventId, handler);
+        }
+    };
+
+    SubMenuItem.prototype.destroy = function destroy() {
+        if (this.menuItem) {
+            this.menuItem.destroy();
+        }
+        this.menuItem = null;
+
+        StyledElements.PopupMenuBase.prototype.destroy.call(this);
+    };
+
+
+    StyledElements.SubMenuItem = SubMenuItem;
+
+})();
