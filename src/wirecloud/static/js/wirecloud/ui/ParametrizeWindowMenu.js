@@ -37,6 +37,10 @@ function ParametrizeWindowMenu(inputInterface) {
 }
 ParametrizeWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
 
+ParametrizeWindowMenu.prototype.setFocus = function setFocus() {
+    this.form.fieldInterfaces.status.focus();
+};
+
 ParametrizeWindowMenu.prototype.executeOperation = function(newValue) {
     this.inputInterface.setValue(newValue);
 };

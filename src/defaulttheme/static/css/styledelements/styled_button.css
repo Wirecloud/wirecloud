@@ -62,6 +62,11 @@
     vertical-align: middle;
 }
 
+.styled_button > div:focus, .styled_button > button:focus, .styled_button.plain:focus {
+    outline: none;
+    box-shadow: 0 0 8px rgba(82, 168, 236, 0.6);
+}
+
 /* Primary button */
 
 .styled_button.btn-primary > div, .styled_button.btn-primary > button {

@@ -52,13 +52,7 @@
     MessageWindowMenu.prototype = new WindowMenu();
 
     MessageWindowMenu.prototype.setFocus = function setFocus() {
-        // TODO
-        //setTimeout(this.button.focus.bind(this.button), 0);
-    };
-
-    MessageWindowMenu.prototype.show = function show(parentWindow) {
-        WindowMenu.prototype.show.call(this, parentWindow);
-        this.setFocus();
+        this.button.focus();
     };
 
     MessageWindowMenu.prototype.setType = function setType(type) {

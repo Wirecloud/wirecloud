@@ -43,6 +43,7 @@
             button = document.createElement("div");
             this.wrapperElement.appendChild(button);
         }
+        button.setAttribute('tabindex', '0');
 
         if (options.title) {
             button.setAttribute('title', options.title);
@@ -77,6 +78,10 @@
         if (this.enabled) {
             this.events.click.dispatch(this);
         }
+    };
+
+    StyledButton.prototype.focus = function focus() {
+        this.buttonElement.focus();
     };
 
     StyledButton.prototype.setLabel = function setLabel(label) {

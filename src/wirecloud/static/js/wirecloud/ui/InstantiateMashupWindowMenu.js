@@ -51,27 +51,30 @@
         this.setMsg(gettext('You are going to add a Mashup that could be composed by more than one widget. Do you want to add it to a new Workspace or to the current one?'));
 
         // New Workspace button
-        this.acceptButton = new StyledElements.StyledButton({
+        this.newWorkspaceButton = new StyledElements.StyledButton({
             text: gettext('New Workspace'),
-            useInForm: true
+            'class': 'btn-primary'
         });
-        this.acceptButton.addEventListener("click", newWorkspace.bind(this, mashup));
-        this.acceptButton.insertInto(this.windowBottom);
+        this.newWorkspaceButton.addEventListener("click", newWorkspace.bind(this, mashup));
+        this.newWorkspaceButton.insertInto(this.windowBottom);
 
         // Cancel button
-        this.cancelButton = new StyledElements.StyledButton({
-            text: gettext('Current Workspace'),
-            useInForm: true
+        this.mergeWorkspaceButton = new StyledElements.StyledButton({
+            text: gettext('Current Workspace')
         });
-        this.cancelButton.addEventListener("click", mergeWorkspace.bind(this, mashup));
-        this.cancelButton.insertInto(this.windowBottom);
+        this.mergeWorkspaceButton.addEventListener("click", mergeWorkspace.bind(this, mashup));
+        this.mergeWorkspaceButton.insertInto(this.windowBottom);
     };
     InstantiateMashupWindowMenu.prototype = new WindowMenu();
 
+    InstantiateMashupWindowMenu.prototype.setFocus = function setFocus() {
+        this.newWorkspaceButton.focus();
+    };
+
     InstantiateMashupWindowMenu.prototype.destroy = function destroy() {
         this.hide();
-        this.acceptButton.destroy();
-        this.cancelButton.destroy();
+        this.newWorkspaceButton.destroy();
+        this.mergeWorkspaceButton.destroy();
     };
 
     Wirecloud.ui.InstantiateMashupWindowMenu = InstantiateMashupWindowMenu;

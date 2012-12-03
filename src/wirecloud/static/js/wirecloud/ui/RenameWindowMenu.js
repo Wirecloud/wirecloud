@@ -19,14 +19,13 @@
  *
  */
 
-/*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50 */
-/*global gettext, StyledElements*/
+/*global gettext, StyledElements, Wirecloud*/
 
 (function () {
 
     "use strict";
 
-    var RenameWindowMenu = function RenameWindowMenu (what, rename_method) {
+    var RenameWindowMenu = function RenameWindowMenu(what, rename_method) {
 
         var fields = {
             'name': {
@@ -35,7 +34,7 @@
                 required: true,
                 initialValue: what.getName()
             }
-        }
+        };
         this.what = what;
         this.rename_method = rename_method;
         Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Rename Workspace'));
@@ -43,11 +42,11 @@
     };
     RenameWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
 
-    RenameWindowMenu.prototype.setFocus = function setFocus () {
-        this.form.fieldInterfaces['name'].focus();
+    RenameWindowMenu.prototype.setFocus = function setFocus() {
+        this.form.fieldInterfaces.name.focus();
     };
 
-    RenameWindowMenu.prototype.executeOperation = function executeOperation (data) {
+    RenameWindowMenu.prototype.executeOperation = function executeOperation(data) {
         this.what[this.rename_method](data.name);
     };
 
