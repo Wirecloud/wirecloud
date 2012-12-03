@@ -18,7 +18,7 @@
 }
 
 .styled_form td {
-    padding: 0px 10px;
+    padding: 3px 10px;
     text-align: left;
 }
 
@@ -29,4 +29,10 @@
 
 .styled_form td > .styled_text_field {
     width: auto;
+}
+
+.styled_form td > .styled_text_field,
+.styled_form td > .styled_text_area
+{
+    margin: 0;
 }

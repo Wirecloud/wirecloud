@@ -60,6 +60,7 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_notebook.css',
     'css/styledelements/styled_form.css',
     'css/styledelements/styled_text_field.css',
+    'css/styledelements/styled_text_area.css',
     'css/styledelements/styled_password_field.css',
     'css/styledelements/styled_select.css',
     'css/styledelements/styled_horizontal_layout.css',

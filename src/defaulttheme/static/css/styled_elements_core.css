@@ -109,10 +109,6 @@ div.styled_text_field > div > input {
     width: 100%;
 }
 
-div.styled_text_field > div > input:focus {
-    outline: 0 none;
-}
-
 /* Styled Text Area */
 
 div.styled_text_area {
@@ -122,15 +118,15 @@ div.styled_text_area {
 }
 
 div.styled_text_area > div {
-  overflow: hidden;
-  position: absolute;
+    overflow: hidden;
+    position: absolute;
 }
 
 div.styled_text_area > div > textarea {
-  overflow: auto;
-  resize: none;
-  height: 100%;
-  width: 100%;
+    overflow: auto;
+    resize: none;
+    height: 100%;
+    width: 100%;
 }
 
 /* Styled Password Field */
@@ -538,25 +534,6 @@ div.styled_list div.row {
 div.styled_list div.row.selected {
   background: #A1BDE1;
   color:      #FAFAFA;
-}
-
-/* Styled Text Area */
-
-div.styled_text_area > div {
-  top: 3px;
-  left: 3px;
-  right: 3px;
-  bottom: 3px;
-  border: 1px solid #888888;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-  background: white;
-}
-
-div.styled_text_area > div > textarea {
-  background: transparent;
-  border: 0px;
 }
 
 /* Styled Numeric Field */

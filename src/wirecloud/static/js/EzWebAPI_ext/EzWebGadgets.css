@@ -2,6 +2,7 @@
 @import url('/static/css/styledelements/styled_button.css');
 @import url('/static/css/styledelements/styled_notebook.css');
 @import url('/static/css/styledelements/styled_text_field.css');
+@import url('/static/css/styledelements/styled_text_area.css');
 @import url('/static/css/styledelements/styled_password_field.css');
 @import url('/static/css/styledelements/styled_select.css');
 @import url('/static/css/styledelements/styled_horizontal_layout.css');
@@ -122,25 +123,6 @@ div.styled_list div.row {
 div.styled_list div.row.selected {
   padding:    1px 0;
   background: #A1BDE1
-}
-
-/* Styled Text Area */
-
-div.styled_text_area {
-  overflow: hidden;
-  height: 5em;
-}
-
-div.styled_text_area > div {
-  overflow: hidden;
-  position: absolute;
-}
-
-div.styled_text_area > div > textarea {
-  overflow: auto;
-  resize: none;
-  height: 100%;
-  width: 100%;
 }
 
 /* Styled Hidden Field */
@@ -422,25 +404,6 @@ div.styled_date_field
   border:  1px solid #888888;
   height:  20px;
   margin:  3px;
-}
-
-/* Styled Text Area */
-
-div.styled_text_area > div {
-  top: 3px;
-  left: 3px;
-  right: 3px;
-  bottom: 3px;
-  border: 1px solid #888888;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-  background: white;
-}
-
-div.styled_text_area > div > textarea {
-  background: transparent;
-  border: 0px;
 }
 
 /* Styled Numeric Field */
