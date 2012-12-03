@@ -601,44 +601,6 @@ StyledElements.StyledList.prototype.toggleElementSelection = function(element) {
 }
 
 /**
- * Añade un campo de texto.
- */
-StyledElements.StyledTextArea = function(options) {
-    var defaultOptions = {
-        'initialValue': '',
-        'class': ''
-    };
-    options = EzWebExt.merge(defaultOptions, options);
-
-    StyledElements.StyledInputElement.call(this, options.initialValue, ['change']);
-
-    this.wrapperElement = document.createElement("div");
-    this.wrapperElement.className = "styled_text_area";
-    if (options['class'] !== "") {
-        this.wrapperElement.className += " " + options['class'];
-    };
-
-    this.inputElement = document.createElement("textarea");
-
-    if (options['name'])
-        this.inputElement.setAttribute("name", options['name']);
-
-    if (options['id'] != undefined)
-        this.wrapperElement.setAttribute("id", options['id']);
-
-    this.setValue(options['initialValue']);
-
-    var div = document.createElement("div");
-    div.appendChild(this.inputElement);
-    this.wrapperElement.appendChild(div);
-
-    /* Internal events */
-    EzWebExt.addEventListener(this.inputElement, 'mousedown', EzWebExt.stopPropagationListener, true);
-    EzWebExt.addEventListener(this.inputElement, 'click', EzWebExt.stopPropagationListener, true);
-}
-StyledElements.StyledTextArea.prototype = new StyledElements.StyledInputElement();
-
-/**
  *
  */
 StyledElements.StyledHiddenField = function(options) {

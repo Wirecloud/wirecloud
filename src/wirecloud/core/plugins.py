@@ -90,6 +90,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/StyledElements/PopupButton.js',
             'js/StyledElements/StaticPaginatedSource.js',
             'js/StyledElements/TextField.js',
+            'js/StyledElements/TextArea.js',
             'js/StyledElements/PasswordField.js',
             'js/StyledElements/Select.js',
             'js/StyledElements/ToggleButton.js',
