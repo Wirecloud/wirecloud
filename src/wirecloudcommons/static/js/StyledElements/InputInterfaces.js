@@ -1,4 +1,4 @@
-/*global $, document, gettext, interpolate, Element, EzWebExt, Form, OpManagerFactory, ParametrizeWindowMenu, SelectInputInterface, StyledElements, Wirecloud */
+/*global $, document, gettext, interpolate, Element, EzWebExt, Form, OpManagerFactory, SelectInputInterface, StyledElements, Wirecloud */
 "use strict";
 
 var ValidationErrorManager, InputValidationError = {};
@@ -774,7 +774,7 @@ function ParametrizableValueInputInterface(fieldId, options) {
 
     this.buttonElement = new StyledElements.StyledButton({text: ''});
     this.buttonElement.addEventListener('click', function () {
-        var dialog = new ParametrizeWindowMenu(this);
+        var dialog = new Wirecloud.ui.ParametrizeWindowMenu(this);
         dialog.show(this.parentWindow);
         dialog.setValue(this.getValue());
     }.bind(this));
