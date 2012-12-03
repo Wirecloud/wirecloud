@@ -4,7 +4,6 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/opManager/io.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/EzWebExt/EzWebExt.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/StyledElements.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/PopupButton.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/Form.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/Expander.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/Accordion.js"></script>
