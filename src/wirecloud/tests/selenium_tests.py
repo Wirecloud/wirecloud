@@ -32,14 +32,12 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # We need atleast one Workspace, so we cannot delete current workspace
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.check_popup_menu(('Rename', 'Settings', 'New workspace', 'Publish'), ('Remove',))
-        self.driver.find_element_by_class_name('disable-layer').click()
 
         self.create_workspace('Test')
 
         # Now we have two workspaces so we can remove any of them
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.check_popup_menu(('Rename', 'Settings', 'New workspace', 'Publish', 'Remove'), ())
-        self.driver.find_element_by_class_name('disable-layer').click()
 
         self.rename_workspace('test2')
         tab = self.get_workspace_tab_by_name('Tab')
@@ -48,7 +46,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         tab_menu_button = tab.find_element_by_css_selector('.icon-tab-menu')
         tab_menu_button.click()
         self.check_popup_menu(('Rename',), ('Remove',))
-        self.driver.find_element_by_class_name('disable-layer').click()
 
         new_tab = self.add_tab()
 
@@ -56,7 +53,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         tab_menu_button = tab.find_element_by_css_selector('.icon-tab-menu')
         tab_menu_button.click()
         self.check_popup_menu(('Rename', 'Remove'), ())
-        self.driver.find_element_by_class_name('disable-layer').click()
 
         new_tab.click()
         tab_menu_button = new_tab.find_element_by_css_selector('.icon-tab-menu')
@@ -73,7 +69,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Now we have only one workspace, so we cannot remove it
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.check_popup_menu(('Rename', 'Settings', 'New workspace'), ('Remove',))
-        self.driver.find_element_by_class_name('disable-layer').click()
 
     def test_add_widget_from_catalogue(self):
 
