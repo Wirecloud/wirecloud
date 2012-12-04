@@ -503,6 +503,8 @@ def build_rdf_template_from_workspace(options, workspace, user):
         graph.add((target, WIRE_M['endpoint'], rdflib.Literal(connection['target']['endpoint'])))
 
     # Create the view node
+    if 'views' not in wiring_status:
+        wiring_status['views'] = ()
 
     for view in wiring_status['views']:
         wiring_view = rdflib.BNode()
