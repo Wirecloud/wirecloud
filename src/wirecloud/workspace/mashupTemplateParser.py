@@ -189,8 +189,12 @@ def fillWorkspaceUsingTemplate(workspace, template):
     else:
         workspace_wiring_status = {
             'operators': {},
-            'connections': []
+            'connections': [],
+            'views': []
         }
+
+    if 'views' not in workspace_wiring_status:
+        workspace_wiring_status['views'] = []
 
     max_id = 0
     operators = {}
