@@ -483,8 +483,7 @@ class WirecloudRemoteTestCase(object):
 
     def create_workspace(self, workspace_name):
         self.change_main_view('workspace')
-        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
-        self.popup_menu_click('New workspace')
+        self.perform_workspace_action('New workspace')
 
         workspace_name_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input')
         self.fill_form_input(workspace_name_input, workspace_name)
@@ -496,8 +495,7 @@ class WirecloudRemoteTestCase(object):
 
     def rename_workspace(self, workspace_name):
         self.change_main_view('workspace')
-        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
-        self.popup_menu_click('Rename')
+        self.perform_workspace_action('Rename')
 
         workspace_name_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input')
         self.fill_form_input(workspace_name_input, workspace_name)
@@ -510,9 +508,7 @@ class WirecloudRemoteTestCase(object):
     def remove_workspace(self):
         self.change_main_view('workspace')
         workspace_to_remove = self.get_current_workspace_name()
-
-        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
-        self.popup_menu_click('Remove')
+        self.perform_workspace_action('Remove')
 
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
 
@@ -578,6 +574,15 @@ class WirecloudRemoteTestCase(object):
             self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         except:
             self.driver.find_element_by_css_selector('#wirecloud_breadcrum .third_level > .icon-menu').click()
+        self.popup_menu_click(action)
+
+    def perform_workspace_action(self, action):
+        self.change_main_view('workspace')
+        popup_button = self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu')
+
+        if 'open' not in popup_button.get_attribute('class'):
+            popup_button.click()
+
         self.popup_menu_click(action)
 
     def get_current_catalogue_base_element(self):
