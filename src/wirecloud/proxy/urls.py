@@ -33,7 +33,7 @@ from django.conf.urls.defaults import patterns
 from wirecloud.proxy.views import Proxy, proxy_request
 
 
-urlpatterns = patterns('proxy.views',
+urlpatterns = patterns('wirecloud.proxy.views',
 
     # Proxy
     (r'^/(?P<protocol>[^/]+)/(?P<domain>[^/]+)(?P<path>|/.*)$', proxy_request),

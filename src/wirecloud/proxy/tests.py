@@ -11,9 +11,9 @@ from django.core.cache import cache
 from django.test import TransactionTestCase, Client
 from django.utils import unittest
 
-from wirecloud.models import VariableValue
+from wirecloud.platform.models import VariableValue
 from wirecloud.proxy.views import WIRECLOUD_PROXY
-from wirecloud.workspace.utils import HAS_AES, set_variable_value
+from wirecloud.platform.workspace.utils import HAS_AES, set_variable_value
 
 
 # Avoid nose to repeat these tests (they are run through ezweb/tests/__init__.py)

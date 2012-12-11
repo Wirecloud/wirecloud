@@ -36,19 +36,19 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.decorators.cache import cache_page
 from django.views.i18n import javascript_catalog
 
-import wirecloud.urls
+import wirecloud.platform.urls
 
 admin.autodiscover()
 
 #JavaScript translation
 js_info_dict = {
-    'packages': ('wirecloud', )
+    'packages': ('wirecloud.platform.', )
 }
 
 urlpatterns = patterns('',
 
     # Showcase
-    (r'^showcase/', include('wirecloud.widget.showcase_urls')),
+    (r'^showcase/', include('wirecloud.platform.widget.showcase_urls')),
 
     # Catalogue
     (r'^catalogue', include('catalogue.urls')),
@@ -73,7 +73,7 @@ urlpatterns = patterns('',
     (r'^api/marketAdaptor/', include('wirecloud_fiware.marketAdaptor.urls')),
 )
 
-urlpatterns += wirecloud.urls.urlpatterns
+urlpatterns += wirecloud.platform.urls.urlpatterns
 urlpatterns += staticfiles_urlpatterns()
 
 handler404 = "django.views.defaults.page_not_found"

@@ -94,7 +94,7 @@ COMPRESS_ROOT = STATIC_ROOT
 COMPRESS_OUTPUT_DIR = 'cache'
 COMPRESS_JS_FILTERS = (
     'compressor.filters.jsmin.JSMinFilter',
-    'wirecloud.compressor_filters.JSUseStrictFilter',
+    'wirecloud.platform.compressor_filters.JSUseStrictFilter',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -102,7 +102,7 @@ SECRET_KEY = '15=7f)g=)&spodi3bg8%&4fqt%f3rpg%b$-aer5*#a*(rqm79e'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    'wirecloud.themes.load_template_source',
+    'wirecloud.platform.themes.load_template_source',
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
 )
@@ -128,7 +128,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'wirecloud.commons',
-    'wirecloud',
+    'wirecloud.platform',
     'catalogue',
     'south',
     'compressor',
@@ -142,14 +142,14 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.request',
     'django.core.context_processors.static',
-    'wirecloud.themes.active_theme_context_processor',
+    'wirecloud.platform.themes.active_theme_context_processor',
     'wirecloud.commons.context_processors.is_anonymous',
     'wirecloud.commons.context_processors.tag_categories',
     'wirecloud.commons.context_processors.ezweb_organizations',
 )
 
 STATICFILES_FINDERS = (
-    'wirecloud.themes.ActiveThemeFinder',
+    'wirecloud.platform.themes.ActiveThemeFinder',
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
@@ -184,7 +184,7 @@ CERTIFICATION_ENABLED = False
 # Cache settings
 CACHES = {
     'default': {
-        'BACKEND': 'wirecloud.cache.backends.locmem.LocMemCache',
+        'BACKEND': 'wirecloud.platform.cache.backends.locmem.LocMemCache',
         'OPTIONS': {
             'MAX_ENTRIES': 3000,
         },
@@ -193,7 +193,7 @@ CACHES = {
 JOHNNY_MIDDLEWARE_KEY_PREFIX = '%s-cache' % DATABASES['default']['NAME']
 
 WORKSPACE_MANAGERS = (
-    'wirecloud.workspace.workspace_managers.OrganizationWorkspaceManager',
+    'wirecloud.platform.workspace.workspace_managers.OrganizationWorkspaceManager',
 )
 
 WIRECLOUD_PLUGINS = (

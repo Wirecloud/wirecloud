@@ -42,7 +42,7 @@ from django.utils import translation
 from selenium.webdriver.support.ui import WebDriverWait
 
 from commons import http_utils
-from wirecloud.widget import utils as showcase
+from wirecloud.platform.widget import utils as showcase
 from catalogue import utils as catalogue
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 

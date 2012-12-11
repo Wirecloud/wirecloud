@@ -1,0 +1,241 @@
+[
+    {
+        "pk": 1,
+        "model": "platform.platformpreference",
+        "fields": {
+            "user": 1,
+            "name": "tip-0",
+            "value": "False"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "platform.platformpreference",
+        "fields": {
+            "user": 1,
+            "name": "tip-1",
+            "value": "False"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "platform.platformpreference",
+        "fields": {
+            "user": 1,
+            "name": "tip-2",
+            "value": "False"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "platform.xhtml",
+        "fields": {
+            "cacheable": true,
+            "url": "Wirecloud/Test/1.0/test.html",
+            "uri": "/widgets/Wirecloud/Test/1.0/xhtml",
+            "code": "",
+            "content_type": "text/html",
+            "code_timestamp": null
+        }
+    },
+    {
+        "pk": 1,
+        "model": "platform.widget",
+        "fields": {
+            "users": [1],
+            "display_name": "",
+            "name": "Test",
+            "author": "aarranz",
+            "description": "This widget is used to test some of the features of the Wirecloud platform",
+            "uri": "/widgets/Wirecloud/Test/1.0",
+            "imageURI": "images/catalogue.png",
+            "width": 6,
+            "version": "1.0",
+            "mail": "aarranz@conwet.com",
+            "vendor": "Wirecloud",
+            "xhtml": 1,
+            "height": 24,
+            "last_update": null,
+            "iPhoneImageURI": "images/catalogue_iphone.png",
+            "wikiURI": "http://forge.morfeo-project.org/wiki/index.php/Gadgets_EzWeb"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "platform.variabledef",
+        "fields": {
+            "default_value": "default",
+            "action_label": null,
+            "name": "list",
+            "description": "list preference",
+            "label": "list",
+            "aspect": "PREF",
+            "friend_code": null,
+            "order": 0,
+            "type": "L",
+            "widget": 1,
+            "secure": false
+        }
+    },
+    {
+        "pk": 2,
+        "model": "platform.variabledef",
+        "fields": {
+            "default_value": "initial text",
+            "action_label": null,
+            "name": "text",
+            "description": "text preference",
+            "label": "text",
+            "aspect": "PREF",
+            "friend_code": null,
+            "order": 1,
+            "type": "S",
+            "widget": 1,
+            "secure": false
+        }
+    },
+    {
+        "pk": 3,
+        "model": "platform.variabledef",
+        "fields": {
+            "default_value": "false",
+            "action_label": null,
+            "name": "boolean",
+            "description": "boolean preference",
+            "label": "boolean",
+            "aspect": "PREF",
+            "friend_code": null,
+            "order": 2,
+            "type": "B",
+            "widget": 1,
+            "secure": false
+        }
+    },
+    {
+        "pk": 4,
+        "model": "platform.variabledef",
+        "fields": {
+            "default_value": "default",
+            "action_label": null,
+            "name": "password",
+            "description": "password preference",
+            "label": "password",
+            "aspect": "PREF",
+            "friend_code": null,
+            "order": 3,
+            "type": "P",
+            "widget": 1,
+            "secure": false
+        }
+    },
+    {
+        "pk": 5,
+        "model": "platform.variabledef",
+        "fields": {
+            "default_value": null,
+            "action_label": "",
+            "name": "slot",
+            "description": "",
+            "label": "slot",
+            "aspect": "SLOT",
+            "friend_code": "slot",
+            "order": 0,
+            "type": "S",
+            "widget": 1,
+            "secure": false
+        }
+    },
+    {
+        "pk": 6,
+        "model": "platform.variabledef",
+        "fields": {
+            "default_value": null,
+            "action_label": null,
+            "name": "event",
+            "description": "",
+            "label": "event",
+            "aspect": "EVEN",
+            "friend_code": "event",
+            "order": 0,
+            "type": "S",
+            "widget": 1,
+            "secure": false
+        }
+    },
+    {
+        "pk": 1,
+        "model": "platform.userprefoption",
+        "fields": {
+            "variableDef": 1,
+            "name": "Default",
+            "value": "default"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "platform.userprefoption",
+        "fields": {
+            "variableDef": 1,
+            "name": "value1",
+            "value": "1"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "platform.userprefoption",
+        "fields": {
+            "variableDef": 1,
+            "name": "value2",
+            "value": "2"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "auth.user",
+        "fields": {
+            "username": "normuser",
+            "first_name": "",
+            "last_name": "",
+            "email": "admin@c.com",
+            "password": "sha1$5AphFrMHRX5o$bd3394cfeb25266a67d88683d24ae0c7b0647bd8",
+            "is_staff": false,
+            "is_active": true,
+            "is_superuser": false,
+            "last_login": "2011-10-10 11:27:12",
+            "date_joined": "2011-10-10 11:27:12"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "auth.user",
+        "fields": {
+            "username": "user_with_markets",
+            "first_name": "",
+            "last_name": "",
+            "email": "admin@c.com",
+            "password": "sha1$5AphFrMHRX5o$bd3394cfeb25266a67d88683d24ae0c7b0647bd8",
+            "is_staff": false,
+            "is_active": true,
+            "is_superuser": false,
+            "last_login": "2011-10-10 11:27:12",
+            "date_joined": "2011-10-10 11:27:12"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "platform.market",
+        "fields": {
+            "name": "deleteme",
+            "options": "{\"url\": null, \"type\":\"wirecloud\", \"label\":\"deleteme\"}",
+            "user": 3
+        }
+    },
+    {
+        "pk": 3,
+        "model": "platform.market",
+        "fields": {
+            "name": "origin",
+            "options": "{\"url\": null, \"type\":\"wirecloud\", \"label\":\"origin\"}"
+        }
+    }
+]

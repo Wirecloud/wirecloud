@@ -22,10 +22,10 @@ import urllib2
 from urllib2 import HTTPError
 from urlparse import urljoin
 
-from wirecloud.markets.utils import MarketManager
+from wirecloud.platform.markets.utils import MarketManager
+from wirecloud.platform.plugins import WirecloudPlugin
+from wirecloud.platform.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_usdl_from_workspace
 from wirecloud.proxy.views import MethodRequest
-from wirecloud.plugins import WirecloudPlugin
-from wirecloud.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_usdl_from_workspace
 
 import wirecloud_fiware
 from wirecloud_fiware.marketAdaptor.marketadaptor import MarketAdaptor

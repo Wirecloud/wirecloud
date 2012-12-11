@@ -37,10 +37,10 @@ from urlparse import urlparse
 
 from django.conf import settings
 
-import wirecloud
+import wirecloud.platform
 
 VERSIONS = {
-    'wirecloud_version': wirecloud.__version__,
+    'wirecloud_version': wirecloud.platform.__version__,
     'system': platform.system(),
     'machine': platform.machine(),
     'urllib2_version': getattr(urllib2, '__version__', '1.0')

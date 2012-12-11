@@ -24,7 +24,7 @@ from django.shortcuts import get_object_or_404
 from wirecloud_fiware.marketAdaptor.marketadaptor import MarketAdaptor
 from commons.resource import Resource
 from commons.utils import json_encode
-from wirecloud.models import Market
+from wirecloud.platform.models import Market
 
 
 class ServiceCollection(Resource):
