@@ -143,9 +143,9 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
     def test_basic_wiring_operations(self):
         self.login()
 
-        self.add_widget_to_mashup('Test', 'Test (1)')
-        self.add_widget_to_mashup('Test', 'Test (2)')
-        self.add_widget_to_mashup('Test', 'Test (3)')
+        self.add_widget_to_mashup('Test', new_name='Test (1)')
+        self.add_widget_to_mashup('Test', new_name='Test (2)')
+        self.add_widget_to_mashup('Test', new_name='Test (3)')
 
         self.change_main_view('wiring')
         time.sleep(2)
