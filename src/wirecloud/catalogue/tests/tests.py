@@ -11,10 +11,10 @@ from django.core.urlresolvers import reverse
 from django.test import TransactionTestCase, TestCase, Client
 from django.utils import simplejson
 
-import catalogue.utils
-from catalogue.utils import add_resource_from_template
-from catalogue.get_json_catalogue_data import get_resource_data
-from catalogue.models import CatalogueResource, WidgetWiring
+import wirecloud.catalogue.utils
+from wirecloud.catalogue.utils import add_resource_from_template
+from wirecloud.catalogue.get_json_catalogue_data import get_resource_data
+from wirecloud.catalogue.models import CatalogueResource, WidgetWiring
 from commons import http_utils
 from wirecloud.commons.test import FakeDownloader, LocalizedTestCase
 from wirecloud.commons.utils.template import TemplateParseException
@@ -268,14 +268,14 @@ class WGTDeploymentTestCase(TransactionTestCase):
 
         self.old_CATALOGUE_MEDIA_ROOT = settings.CATALOGUE_MEDIA_ROOT
         settings.CATALOGUE_MEDIA_ROOT = mkdtemp()
-        self.old_deployer = catalogue.utils.wgt_deployer
-        catalogue.utils.wgt_deployer = WgtDeployer(settings.CATALOGUE_MEDIA_ROOT)
+        self.old_deployer = wirecloud.catalogue.utils.wgt_deployer
+        wirecloud.catalogue.utils.wgt_deployer = WgtDeployer(settings.CATALOGUE_MEDIA_ROOT)
         self.resource_collection_url = reverse('wirecloud_catalogue.resource_collection')
 
     def tearDown(self):
         rmtree(settings.CATALOGUE_MEDIA_ROOT, ignore_errors=True)
         settings.CATALOGUE_MEDIA_ROOT = self.old_CATALOGUE_MEDIA_ROOT
-        catalogue.utils.wgt_deployer = self.old_deployer
+        wirecloud.catalogue.utils.wgt_deployer = self.old_deployer
 
         super(WGTDeploymentTestCase, self).tearDown()
 
@@ -290,7 +290,7 @@ class WGTDeploymentTestCase(TransactionTestCase):
 
     def test_upload_of_basic_wgt(self):
         User.objects.create_user('test', 'test@example.com', 'test')
-        widget_path = catalogue.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
+        widget_path = wirecloud.catalogue.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
         c = Client()
 
         f = open(os.path.join(os.path.dirname(__file__), 'test-data/basic_widget.wgt'))
@@ -317,7 +317,7 @@ class WGTDeploymentTestCase(TransactionTestCase):
 
     def test_upload_of_packaged_operators(self):
         User.objects.create_user('test', 'test@example.com', 'test')
-        operator_path = catalogue.utils.wgt_deployer.get_base_dir('Wirecloud', 'basic-operator', '0.1')
+        operator_path = wirecloud.catalogue.utils.wgt_deployer.get_base_dir('Wirecloud', 'basic-operator', '0.1')
         c = Client()
 
         f = open(os.path.join(os.path.dirname(__file__), 'test-data/basic_operator.zip'))

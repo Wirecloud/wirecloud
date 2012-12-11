@@ -51,7 +51,7 @@ urlpatterns = patterns('',
     (r'^showcase/', include('wirecloud.platform.widget.showcase_urls')),
 
     # Catalogue
-    (r'^catalogue', include('catalogue.urls')),
+    (r'^catalogue', include('wirecloud.catalogue.urls')),
 
     # Proxy
     (r'^proxy', include('wirecloud.proxy.urls')),

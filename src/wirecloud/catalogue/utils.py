@@ -38,9 +38,9 @@ from urlparse import urljoin
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from catalogue.catalogue_utils import get_latest_resource_version
-from catalogue.get_json_catalogue_data import get_resource_data
-from catalogue.models import WidgetWiring, CatalogueResource, Tag, UserTag
+from wirecloud.catalogue.catalogue_utils import get_latest_resource_version
+from wirecloud.catalogue.get_json_catalogue_data import get_resource_data
+from wirecloud.catalogue.models import WidgetWiring, CatalogueResource, Tag, UserTag
 from commons.user_utils import get_certification_status
 from commons.authentication import Http403
 from wirecloud.commons.models import Translation

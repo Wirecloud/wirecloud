@@ -21,7 +21,7 @@ class Command(LabelCommand):
     help = "Load widgets from a catalog URL. Catalog URL will be a URL list to the widgets (separated by \\n)"
 
     def handle(self, *labels, **options):
-        from catalogue.views import WidgetsCollection
+        from wirecloud.catalogue.views import WidgetsCollection
         user = User.objects.filter(is_superuser=True)[0]
         print 'Using user %s as widget creator...' % user
         url = urllib.urlopen(labels[0])

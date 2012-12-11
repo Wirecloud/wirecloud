@@ -24,9 +24,9 @@ from urlparse import urljoin
 
 from django.utils.encoding import iri_to_uri
 
-from catalogue.models import CatalogueResource
-import catalogue.utils as catalogue_utils
-from catalogue.utils import add_resource_from_template
+from wirecloud.catalogue.models import CatalogueResource
+import wirecloud.catalogue.utils as catalogue_utils
+from wirecloud.catalogue.utils import add_resource_from_template
 from commons import http_utils
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.proxy.views import MethodRequest

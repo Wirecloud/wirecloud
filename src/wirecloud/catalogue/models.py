@@ -88,7 +88,7 @@ class CatalogueResource(TransModel):
 
     def delete(self, *args, **kwargs):
 
-        from catalogue.utils import wgt_deployer
+        from wirecloud.catalogue.utils import wgt_deployer
 
         # Delete the related wiring information for that resource
         WidgetWiring.objects.filter(idResource=self.id).delete()

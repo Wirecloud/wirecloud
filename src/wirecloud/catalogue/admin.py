@@ -32,9 +32,9 @@
 
 from django.contrib import admin
 
-from catalogue.models import CatalogueResource, WidgetWiring
-from catalogue.models import UserTag, UserVote, Tag, Category
-from catalogue.models import Capability
+from wirecloud.catalogue.models import CatalogueResource, WidgetWiring
+from wirecloud.catalogue.models import UserTag, UserVote, Tag, Category
+from wirecloud.catalogue.models import Capability
 
 
 class CategoyAdminView(admin.ModelAdmin):

@@ -43,7 +43,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from commons import http_utils
 from wirecloud.platform.widget import utils as showcase
-from catalogue import utils as catalogue
+from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 
 

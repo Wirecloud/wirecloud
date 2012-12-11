@@ -24,9 +24,9 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import IntegrityError
 from django.utils.translation import ugettext as _
 
-from catalogue.models import CatalogueResource
-from catalogue.utils import delete_resource
-from catalogue.views import add_widget_from_wgt
+from wirecloud.catalogue.models import CatalogueResource
+from wirecloud.catalogue.utils import delete_resource
+from wirecloud.catalogue.views import add_widget_from_wgt
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtFile
 

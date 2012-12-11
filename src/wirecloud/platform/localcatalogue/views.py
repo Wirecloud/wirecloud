@@ -9,9 +9,9 @@ from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 
-from catalogue.utils import add_widget_from_wgt, add_resource_from_template
-from catalogue.models import CatalogueResource
-from catalogue.views import iframe_error
+from wirecloud.catalogue.utils import add_widget_from_wgt, add_resource_from_template
+from wirecloud.catalogue.models import CatalogueResource
+from wirecloud.catalogue.views import iframe_error
 from commons import http_utils
 from commons.get_data import get_widget_data
 from commons.resource import Resource

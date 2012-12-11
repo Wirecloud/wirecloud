@@ -35,7 +35,7 @@ from cStringIO import StringIO
 from django.conf import settings
 from django.db.models import Q
 
-from catalogue.models import CatalogueResource
+from wirecloud.catalogue.models import CatalogueResource
 from commons import http_utils
 from commons.authentication import Http403
 from wirecloud.commons.utils.http import get_absolute_static_url

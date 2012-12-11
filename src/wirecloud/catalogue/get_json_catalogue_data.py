@@ -34,7 +34,7 @@ from urlparse import urljoin, urlparse
 
 from django.shortcuts import get_object_or_404
 
-from catalogue.models import WidgetWiring, UserTag, UserVote, Capability
+from wirecloud.catalogue.models import WidgetWiring, UserTag, UserVote, Capability
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 
 

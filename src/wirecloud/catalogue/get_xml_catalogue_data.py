@@ -32,7 +32,7 @@
 
 from django.shortcuts import get_object_or_404
 
-from catalogue.models import CatalogueResource, WidgetWiring, UserTag, UserVote
+from wirecloud.catalogue.models import CatalogueResource, WidgetWiring, UserTag, UserVote
 
 
 def get_xml_description(widgetlist, user):

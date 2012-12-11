@@ -2,8 +2,8 @@ from cStringIO import StringIO
 
 from django.db.models import Q
 
-from catalogue.utils import add_widget_from_wgt, add_resource_from_template
-from catalogue.models import CatalogueResource
+from wirecloud.catalogue.utils import add_widget_from_wgt, add_resource_from_template
+from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.platform.markets.utils import get_market_managers
 from wirecloud.platform.models import Widget
 from wirecloud.platform.widget.utils import create_widget_from_template, create_widget_from_wgt

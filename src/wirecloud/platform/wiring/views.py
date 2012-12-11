@@ -24,7 +24,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbid
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
-from catalogue.models import CatalogueResource
+from wirecloud.catalogue.models import CatalogueResource
 from commons.get_data import _invalidate_cached_variable_values
 from commons.resource import Resource
 from wirecloud.commons.utils.http import get_absolute_reverse_url

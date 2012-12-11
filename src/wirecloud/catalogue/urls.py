@@ -32,12 +32,12 @@
 
 from django.conf.urls.defaults import patterns, url
 
-from catalogue.views import ResourceCollection, ResourceCollectionByGlobalSearch
-from catalogue.views import ResourceCollectionBySimpleSearch, ResourceTagCollection
-from catalogue.views import ResourceVoteCollection, ResourceVersionCollection
-from catalogue.views import ResourceEnabler, ResourceEntry
+from wirecloud.catalogue.views import ResourceCollection, ResourceCollectionByGlobalSearch
+from wirecloud.catalogue.views import ResourceCollectionBySimpleSearch, ResourceTagCollection
+from wirecloud.catalogue.views import ResourceVoteCollection, ResourceVersionCollection
+from wirecloud.catalogue.views import ResourceEnabler, ResourceEntry
 
-urlpatterns = patterns('catalogue.views',
+urlpatterns = patterns('wirecloud.catalogue.views',
     # Resources
     url(r'^/resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)$',
         ResourceEntry(permitted_methods=('GET', 'DELETE')),

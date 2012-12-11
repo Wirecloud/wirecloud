@@ -49,20 +49,19 @@ from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext as _
 from django.views.static import serve
 
-from catalogue.models import CatalogueResource
-from catalogue.models import UserTag, UserVote
-from catalogue.tagsParser import TagsXMLHandler
-from catalogue.catalogue_utils import get_latest_resource_version
-from catalogue.catalogue_utils import get_resource_response, filter_resources_by_organization
-from catalogue.catalogue_utils import filter_resources_by_scope
-from catalogue.catalogue_utils import get_and_filter, get_or_filter, get_not_filter
-from catalogue.catalogue_utils import get_tag_filter, get_event_filter, get_slot_filter, get_paginatedlist
-from catalogue.catalogue_utils import get_tag_response, update_resource_popularity
-from catalogue.catalogue_utils import get_vote_response, group_resources
-from catalogue.get_json_catalogue_data import get_resource_data
-import catalogue.utils as catalogue_utils
-from catalogue.utils import add_widget_from_wgt, add_resource_from_template, delete_resource
-from catalogue.utils import tag_resource
+from wirecloud.catalogue.models import CatalogueResource, UserTag, UserVote
+from wirecloud.catalogue.tagsParser import TagsXMLHandler
+from wirecloud.catalogue.catalogue_utils import get_latest_resource_version
+from wirecloud.catalogue.catalogue_utils import get_resource_response, filter_resources_by_organization
+from wirecloud.catalogue.catalogue_utils import filter_resources_by_scope
+from wirecloud.catalogue.catalogue_utils import get_and_filter, get_or_filter, get_not_filter
+from wirecloud.catalogue.catalogue_utils import get_tag_filter, get_event_filter, get_slot_filter, get_paginatedlist
+from wirecloud.catalogue.catalogue_utils import get_tag_response, update_resource_popularity
+from wirecloud.catalogue.catalogue_utils import get_vote_response, group_resources
+from wirecloud.catalogue.get_json_catalogue_data import get_resource_data
+import wirecloud.catalogue.utils as catalogue_utils
+from wirecloud.catalogue.utils import add_widget_from_wgt, add_resource_from_template, delete_resource
+from wirecloud.catalogue.utils import tag_resource
 from commons.cache import no_cache
 from commons import http_utils
 from commons.logs_exception import TracedServerError
