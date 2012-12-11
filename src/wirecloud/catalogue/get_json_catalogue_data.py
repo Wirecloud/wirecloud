@@ -34,7 +34,7 @@ from urlparse import urljoin, urlparse
 
 from django.shortcuts import get_object_or_404
 
-from wirecloud.catalogue.models import WidgetWiring, UserTag, UserVote, Capability
+from wirecloud.catalogue.models import WidgetWiring, UserTag, UserVote
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 
 
@@ -114,19 +114,6 @@ def get_slot_data(widget_id):
     return all_slots
 
 
-def get_widget_capabilities(widget_id, user):
-    data_ret = []
-    capabilities = Capability.objects.filter(resource__id=widget_id)
-
-    for capability in capabilities:
-        data_ret.append({
-            'name': capability.name,
-            'value': capability.value,
-        })
-
-    return data_ret
-
-
 def get_resource_data(untranslated_resource, user, request=None):
     """Gets all the information related to the given widget."""
     resource = untranslated_resource.get_translated_model()
@@ -177,7 +164,6 @@ def get_resource_data(untranslated_resource, user, request=None):
         'uriWiki': urljoin(template_uri, resource.wiki_page_uri),
         'uriTemplate': template_uri,
         'ieCompatible': resource.ie_compatible,
-        'capabilities': get_widget_capabilities(widget_id=resource.pk, user=user),
         'tags': [d for d in data_tags],
         'events': [d for d in data_events],
         'slots': [d for d in data_slots],

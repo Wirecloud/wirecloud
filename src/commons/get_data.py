@@ -41,7 +41,7 @@ from django.utils.translation import ugettext as _
 from commons.cache import CacheableData
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.platform.context.utils import get_user_context_providers
-from wirecloud.platform.models import Capability, Concept, ConceptName, Constant, IWidget, PublishedWorkspace, Tab, UserPrefOption, UserWorkspace, Variable, VariableDef, VariableValue
+from wirecloud.platform.models import Concept, ConceptName, Constant, IWidget, PublishedWorkspace, Tab, UserPrefOption, UserWorkspace, Variable, VariableDef, VariableValue
 from wirecloud.platform.preferences.views import get_workspace_preference_values, get_tab_preference_values
 from wirecloud.platform.workspace.utils import createTab, decrypt_value, encrypt_value
 
@@ -355,27 +355,6 @@ def get_widget_data(widget, request=None):
     data_ret['size']['height'] = widget.height
     data_ret['variables'] = data_vars
     data_ret['code_content_type'] = widget.xhtml.content_type
-
-    data_ret['capabilities'] = get_widget_capabilities(widget_id=widget.id)
-
-    return data_ret
-
-
-def get_widget_capabilities(widget_id):
-    data_ret = []
-
-    try:
-        capability_list = Capability.objects.filter(widget__id=widget_id)
-
-        for capability in capability_list:
-            cap = {}
-
-            cap['name'] = capability.name
-            cap['value'] = capability.value
-
-            data_ret.append(cap)
-    except Capability.DoesNotExist:
-        data_ret = {}
 
     return data_ret
 

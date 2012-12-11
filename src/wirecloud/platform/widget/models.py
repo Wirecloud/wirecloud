@@ -126,18 +126,6 @@ class Widget(TransModel):
         return VariableDef.objects.filter(widget=self, aspect='SLOT')
 
 
-class Capability(models.Model):
-
-    name = models.CharField(_('Name'), max_length=50)
-    value = models.CharField(_('Value'), max_length=50)
-    widget = models.ForeignKey(Widget)
-
-    class Meta:
-        unique_together = ('name', 'value', 'widget')
-        app_label = 'platform'
-        db_table = 'wirecloud_capability'
-
-
 class VariableDef(TransModel):
 
     name = models.CharField(_('Name'), max_length=30)

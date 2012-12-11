@@ -34,7 +34,6 @@ from django.contrib import admin
 
 from wirecloud.catalogue.models import CatalogueResource, WidgetWiring
 from wirecloud.catalogue.models import UserTag, UserVote, Tag, Category
-from wirecloud.catalogue.models import Capability
 
 
 class CategoyAdminView(admin.ModelAdmin):
@@ -54,4 +53,3 @@ admin.site.register(UserTag)
 admin.site.register(UserVote)
 admin.site.register(Tag)
 admin.site.register(Category, CategoyAdminView)
-admin.site.register(Capability)

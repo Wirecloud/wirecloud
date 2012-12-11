@@ -115,19 +115,6 @@ class CatalogueResource(TransModel):
         return unicode(self.short_name)
 
 
-class Capability(models.Model):
-
-    name = models.CharField(_('Name'), max_length=50)
-    value = models.CharField(_('Value'), max_length=50)
-    resource = models.ForeignKey(CatalogueResource)
-
-    class Meta:
-        unique_together = ('name', 'value', 'resource')
-
-    def __unicode__(self):
-        return unicode(self.name)
-
-
 class WidgetWiring(models.Model):
 
     friendcode = models.CharField(_('Friend code'), max_length=30, blank=True, null=True)
