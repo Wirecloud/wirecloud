@@ -31,10 +31,8 @@
 #
 
 import re
-from urllib import unquote
 
 from django.http import HttpResponse
-from django.utils.http import urlencode
 from django.utils.translation import ugettext as _
 
 
@@ -89,14 +87,3 @@ def is_localhost(host):
 
 def is_valid_header(header):
     return not header in BLACKLISTED_HEADERS
-
-
-def encode_query(query):
-    params = query.split("&")
-    query_params = {}
-    for param in params:
-        elements = param.split("=")
-        if len(elements) > 1:
-            key, value = elements
-            query_params[unquote(key.encode('utf8')).decode('utf8')] = unquote(value.encode('utf8')).decode('utf8')
-    return urlencode(query_params)

@@ -38,17 +38,15 @@ import urllib2
 import urlparse
 
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotFound, HttpResponseServerError
-from django.utils import simplejson
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotFound
 from django.utils.encoding import iri_to_uri
-from django.utils.http import urlencode, urlquote
+from django.utils.http import urlquote
 from django.utils.translation import ugettext as _
 
 from commons.logs_exception import TracedServerError
-from commons.resource import Resource
 from commons.utils import get_xml_error
 from wirecloud.proxy.processors import get_request_proxy_processors, get_response_proxy_processors
-from wirecloud.proxy.utils import encode_query, is_valid_header, ValidationError
+from wirecloud.proxy.utils import is_valid_header, ValidationError
 
 
 class MethodRequest(urllib2.Request):
@@ -61,7 +59,7 @@ class MethodRequest(urllib2.Request):
         return self._method
 
 
-class Proxy(Resource):
+class Proxy():
 
     http_headerRE = re.compile('^http_')
     protocolRE = re.compile('HTTP/(.*)')
@@ -84,40 +82,6 @@ class Proxy(Resource):
             return opener.open(req)
         except urllib2.HTTPError, e:
             return e
-
-    def create(self, request):
-        if not request.user.is_authenticated():
-            return HttpResponseForbidden(_('Your must be logged in to access this service'))
-
-        try:
-            if request.get_host() != urlparse.urlparse(request.META["HTTP_REFERER"])[1]:
-                return HttpResponseServerError(get_xml_error(_(u"Invalid request Referer")), mimetype='application/xml; charset=UTF-8')
-        except:
-            return HttpResponseServerError(get_xml_error(_(u"Invalid request Referer")), mimetype='application/xml; charset=UTF-8')
-
-        # URI to be called
-        if 'url' in request.POST:
-            url = request.POST['url']
-        else:
-            return HttpResponseNotFound(get_xml_error(_(u"Url not specified")), mimetype='application/xml; charset=UTF-8')
-
-        # HTTP method, by default is GET
-        method = request.POST.get('method', 'GET').upper()
-
-        # Params
-        if method != 'GET' and 'params' in request.POST:
-            # if Content-Type is xml or json then skipping encode function.
-            if re.search("application/(json|xml|[a-zA-Z-]+\+xml)|text/xml", request.META["CONTENT_TYPE"]) != None:
-                params = request.POST['params'].encode('utf-8')
-            else:
-                try:
-                    params = urlencode(simplejson.loads(request.POST['params']))
-                except Exception:
-                    params = encode_query(request.POST['params'])
-        else:
-            params = None
-
-        return self.do_request(request, url, method, params)
 
     def do_request(self, request, url, method, data):
 
