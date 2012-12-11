@@ -44,7 +44,7 @@ from django.utils.http import urlquote
 from django.utils.translation import ugettext as _
 
 from commons.logs_exception import TracedServerError
-from commons.utils import get_xml_error
+from wirecloud.commons.utils.http import build_error_response
 from wirecloud.proxy.processors import get_request_proxy_processors, get_response_proxy_processors
 from wirecloud.proxy.utils import is_valid_header, ValidationError
 
@@ -258,9 +258,9 @@ def proxy_request(request, protocol, domain, path):
 
     try:
         if request.get_host() != urlparse.urlparse(request.META["HTTP_REFERER"])[1]:
-            return HttpResponseServerError(get_xml_error(_(u"Invalid request Referer")), mimetype='application/xml; charset=UTF-8')
+            return build_error_response(request, 400, _(u"Invalid request Referer"))
     except:
-        return HttpResponseServerError(get_xml_error(_(u"Invalid request Referer")), mimetype='application/xml; charset=UTF-8')
+        return build_error_response(request, 400, _(u"Invalid request Referer"))
 
     url = protocol + '://' + domain + path
     if len(request.GET) > 0:
