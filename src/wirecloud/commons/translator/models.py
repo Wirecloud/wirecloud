@@ -164,7 +164,8 @@ class Translation(models.Model):
     value = models.TextField(_('Value'), blank=True)
 
     class Meta:
-        app_label = 'wirecloudcommons'
+        app_label = 'commons'
+        db_table = 'wirecloudcommons_translation'
 
     def __unicode__(self):
         return u"%s - %s.%d -> %s" % (self.text_id, self.table, self.element_id, self.language)

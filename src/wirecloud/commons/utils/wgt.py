@@ -22,7 +22,7 @@ import zipfile
 from lxml import etree
 from shutil import rmtree
 
-from wirecloudcommons.utils.template import TemplateParser
+from wirecloud.commons.utils.template import TemplateParser
 
 
 class WgtFile(object):

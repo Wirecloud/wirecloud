@@ -55,9 +55,9 @@ from wirecloud.models import Widget, IWidget
 import wirecloud.widget.utils as showcase_utils
 from wirecloud.widget.utils import get_or_create_widget, create_widget_from_template, fix_widget_code
 from wirecloud.workspace.utils import create_published_workspace_from_template
-from wirecloudcommons.utils.http import get_absolute_reverse_url, get_current_domain
-from wirecloudcommons.utils.template import TemplateParseException, TemplateParser
-from wirecloudcommons.utils.transaction import commit_on_http_success
+from wirecloud.commons.utils.http import get_absolute_reverse_url, get_current_domain
+from wirecloud.commons.utils.template import TemplateParseException, TemplateParser
+from wirecloud.commons.utils.transaction import commit_on_http_success
 
 
 def parseAndCreateWidget(request, user, workspaceId, fromWGT):

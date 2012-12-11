@@ -47,8 +47,8 @@ from commons.utils import get_xml_error, json_encode
 from wirecloud.iwidget.utils import SaveIWidget, UpdateIWidget, UpgradeIWidget, deleteIWidget
 from wirecloud.models import Widget, IWidget, Tab, UserWorkspace, Variable, Workspace
 from wirecloud.widget.utils import get_or_add_widget_from_catalogue, get_and_add_widget
-from wirecloudcommons.utils.transaction import commit_on_http_success
-from wirecloudcommons.utils.http import build_error_response, supported_request_mime_types
+from wirecloud.commons.utils.transaction import commit_on_http_success
+from wirecloud.commons.utils.http import build_error_response, supported_request_mime_types
 
 
 class IWidgetCollection(Resource):

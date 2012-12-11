@@ -31,7 +31,7 @@ from commons import http_utils
 from wirecloud.proxy.views import MethodRequest
 from wirecloud.workspace.mashupTemplateGenerator import build_template_from_workspace
 from wirecloud.markets.utils import MarketManager
-from wirecloudcommons.utils.template import TemplateParser
+from wirecloud.commons.utils.template import TemplateParser
 
 
 class WirecloudCatalogueManager(MarketManager):

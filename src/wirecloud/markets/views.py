@@ -35,8 +35,8 @@ from commons.utils import json_encode
 from wirecloud.markets.utils import get_market_managers
 from wirecloud.models import Market, PublishedWorkspace
 from wirecloud.workspace.mashupTemplateGenerator import build_usdl_from_workspace
-from wirecloudcommons.utils.http import supported_request_mime_types
-from wirecloudcommons.utils.transaction import commit_on_http_success
+from wirecloud.commons.utils.http import supported_request_mime_types
+from wirecloud.commons.utils.transaction import commit_on_http_success
 
 
 class MarketCollection(Resource):

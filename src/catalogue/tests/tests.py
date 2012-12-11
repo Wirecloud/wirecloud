@@ -16,9 +16,9 @@ from catalogue.utils import add_resource_from_template
 from catalogue.get_json_catalogue_data import get_resource_data
 from catalogue.models import CatalogueResource, WidgetWiring
 from commons import http_utils
-from wirecloudcommons.test import FakeDownloader, LocalizedTestCase
-from wirecloudcommons.utils.template import TemplateParseException
-from wirecloudcommons.utils.wgt import WgtDeployer
+from wirecloud.commons.test import FakeDownloader, LocalizedTestCase
+from wirecloud.commons.utils.template import TemplateParseException
+from wirecloud.commons.utils.wgt import WgtDeployer
 
 
 # Avoid nose to repeat these tests (they are run through __init__.py)

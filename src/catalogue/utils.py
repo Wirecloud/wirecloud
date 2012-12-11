@@ -44,9 +44,9 @@ from catalogue.models import WidgetWiring, CatalogueResource, Tag, UserTag
 from commons.user_utils import get_certification_status
 from commons.authentication import Http403
 from wirecloud.widget.views import deleteWidget
-from wirecloudcommons.models import Translation
-from wirecloudcommons.utils.template import TemplateParser
-from wirecloudcommons.utils.wgt import WgtDeployer, WgtFile
+from wirecloud.commons.models import Translation
+from wirecloud.commons.utils.template import TemplateParser
+from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 
 
 wgt_deployer = WgtDeployer(settings.CATALOGUE_MEDIA_ROOT)

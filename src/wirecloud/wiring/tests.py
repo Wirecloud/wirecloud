@@ -28,7 +28,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 
 from wirecloud.workspace.models import Workspace
-from wirecloudcommons.test import WirecloudSeleniumTestCase, widget_operation
+from wirecloud.commons.test import WirecloudSeleniumTestCase, widget_operation
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/tests.py)

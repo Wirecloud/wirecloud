@@ -17,15 +17,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.shortcuts import render
 
-from wirecloudcommons.utils.http import build_error_response
+from django.contrib import admin
+from wirecloud.commons import models
 
 
-def server_error(request):
-
-    extra_formatters = {
-        'text/html': lambda msg: render(request, '500.html', status=500, content_type='text/html'),
-        'application/xhtml+xml': lambda msg: render(request, '500.html', status=500, content_type='application/xhtml+xml'),
-    }
-    return build_error_response(request, 500, 'Internal Server Error', extra_formatters)
+admin.site.register(models.Translation)

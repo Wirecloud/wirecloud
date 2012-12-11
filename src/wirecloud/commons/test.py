@@ -44,7 +44,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from commons import http_utils
 from wirecloud.widget import utils as showcase
 from catalogue import utils as catalogue
-from wirecloudcommons.utils.wgt import WgtDeployer, WgtFile
+from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 
 
 def cleartree(path):

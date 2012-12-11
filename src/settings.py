@@ -32,7 +32,7 @@
 
 # Django settings for mymem project.
 from os import path
-from wirecloudcommons.utils.urlresolvers import reverse_lazy
+from wirecloud.commons.utils.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 
 DEBUG = False
@@ -112,7 +112,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'wirecloudcommons.middleware.ConditionalGetMiddleware',
+    'wirecloud.commons.middleware.ConditionalGetMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.doc.XViewMiddleware',
@@ -127,7 +127,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'wirecloudcommons',
+    'wirecloud.commons',
     'wirecloud',
     'catalogue',
     'south',
@@ -143,9 +143,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'django.core.context_processors.static',
     'wirecloud.themes.active_theme_context_processor',
-    'wirecloudcommons.context_processors.is_anonymous',
-    'wirecloudcommons.context_processors.tag_categories',
-    'wirecloudcommons.context_processors.ezweb_organizations',
+    'wirecloud.commons.context_processors.is_anonymous',
+    'wirecloud.commons.context_processors.tag_categories',
+    'wirecloud.commons.context_processors.ezweb_organizations',
 )
 
 STATICFILES_FINDERS = (

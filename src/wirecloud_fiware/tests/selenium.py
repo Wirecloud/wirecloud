@@ -1,4 +1,4 @@
-from wirecloudcommons.test import WirecloudSeleniumTestCase
+from wirecloud.commons.test import WirecloudSeleniumTestCase
 
 
 __test__ = False

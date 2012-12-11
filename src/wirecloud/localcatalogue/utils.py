@@ -7,8 +7,8 @@ from catalogue.models import CatalogueResource
 from wirecloud.markets.utils import get_market_managers
 from wirecloud.models import Widget
 from wirecloud.widget.utils import create_widget_from_template, create_widget_from_wgt
-from wirecloudcommons.utils.template import TemplateParser
-from wirecloudcommons.utils.wgt import WgtFile
+from wirecloud.commons.utils.template import TemplateParser
+from wirecloud.commons.utils.wgt import WgtFile
 
 
 def install_resource(downloaded_file, templateURL, user, packaged):

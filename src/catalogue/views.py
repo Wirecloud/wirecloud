@@ -69,9 +69,9 @@ from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.user_utils import get_verified_certification_group
 from commons.utils import json_encode
-from wirecloudcommons.utils.http import build_error_response, get_content_type, supported_request_mime_types
-from wirecloudcommons.utils.template import TemplateParseException
-from wirecloudcommons.utils.transaction import commit_on_http_success
+from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
+from wirecloud.commons.utils.template import TemplateParseException
+from wirecloud.commons.utils.transaction import commit_on_http_success
 
 
 def serve_catalogue_media(request, vendor, name, version, file_path):

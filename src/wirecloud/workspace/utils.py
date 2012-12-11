@@ -45,7 +45,7 @@ from wirecloud.iwidget.utils import deleteIWidget
 from wirecloud.models import Category, IWidget, PublishedWorkspace, Tab, UserWorkspace, VariableValue, Workspace
 from wirecloud.workspace.managers import get_workspace_managers
 from wirecloud.workspace.packageLinker import PackageLinker
-from wirecloudcommons.utils.template import TemplateParser
+from wirecloud.commons.utils.template import TemplateParser
 
 
 def deleteTab(tab, user):

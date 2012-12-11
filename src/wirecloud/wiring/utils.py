@@ -20,7 +20,7 @@
 from django.template import loader, Context
 
 from wirecloud.plugins import get_operator_api_extensions
-from wirecloudcommons.utils.http import get_absolute_static_url
+from wirecloud.commons.utils.http import get_absolute_static_url
 
 
 def remove_related_iwidget_connections(wiring, iwidget):

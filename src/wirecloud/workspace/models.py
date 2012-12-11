@@ -34,7 +34,7 @@ from django.contrib.auth.models import User, Group
 from django.db import models
 from django.utils.translation import ugettext as _
 
-from wirecloudcommons.utils.http import get_absolute_reverse_url
+from wirecloud.commons.utils.http import get_absolute_reverse_url
 
 
 class Workspace(models.Model):

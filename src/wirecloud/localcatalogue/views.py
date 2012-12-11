@@ -19,10 +19,10 @@ from commons.utils import json_encode
 from wirecloud.models import Widget, IWidget
 from wirecloud.localcatalogue.utils import get_or_add_resource_from_available_marketplaces
 from wirecloud.widget.utils import get_or_add_widget_from_catalogue, create_widget_from_template, create_widget_from_wgt
-from wirecloudcommons.utils.http import build_error_response, get_content_type, supported_request_mime_types
-from wirecloudcommons.utils.template import TemplateParseException, TemplateParser
-from wirecloudcommons.utils.transaction import commit_on_http_success
-from wirecloudcommons.utils.wgt import WgtFile
+from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
+from wirecloud.commons.utils.template import TemplateParseException, TemplateParser
+from wirecloud.commons.utils.transaction import commit_on_http_success
+from wirecloud.commons.utils.wgt import WgtFile
 
 
 class ResourceCollection(Resource):

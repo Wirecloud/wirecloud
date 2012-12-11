@@ -51,9 +51,9 @@ from wirecloud.workspace.mashupTemplateGenerator import build_rdf_template_from_
 from wirecloud.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from wirecloud.workspace.utils import deleteTab, createTab, create_published_workspace_from_template, getCategories, getCategoryId, get_workspace_list, setVisibleTab, set_variable_value
 from wirecloud.markets.utils import get_market_managers
-from wirecloudcommons.utils.http import build_error_response, get_content_type, supported_request_mime_types
-from wirecloudcommons.utils.template import TemplateParser
-from wirecloudcommons.utils.transaction import commit_on_http_success
+from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
+from wirecloud.commons.utils.template import TemplateParser
+from wirecloud.commons.utils.transaction import commit_on_http_success
 
 
 def clone_original_variable_value(variable, creator, new_user):

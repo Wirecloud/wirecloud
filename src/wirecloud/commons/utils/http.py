@@ -27,7 +27,7 @@ from django.http import HttpResponse
 from django.utils.translation import ugettext as _
 
 from commons.utils import get_json_error_response, get_xml_error
-from wirecloudcommons.utils import mimeparser
+from wirecloud.commons.utils import mimeparser
 
 ERROR_FORMATTERS = {
     'application/json; charset=utf-8': get_json_error_response,

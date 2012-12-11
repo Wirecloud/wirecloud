@@ -50,7 +50,7 @@ from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error, json_encode
 from wirecloud.models import PlatformPreference, WorkspacePreference, Tab, TabPreference, update_session_lang, Workspace
-from wirecloudcommons.utils.transaction import commit_on_http_success
+from wirecloud.commons.utils.transaction import commit_on_http_success
 
 
 def update_preferences(user, preferences_json):

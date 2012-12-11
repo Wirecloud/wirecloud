@@ -36,7 +36,7 @@ from django.core.cache import cache
 from django.db import models
 from django.utils.translation import ugettext as _
 
-from wirecloudcommons.models import TransModel
+from wirecloud.commons.models import TransModel
 
 
 class XHTML(models.Model):

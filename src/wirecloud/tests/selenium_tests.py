@@ -18,7 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from wirecloudcommons.test import widget_operation, WirecloudSeleniumTestCase
+from wirecloud.commons.test import widget_operation, WirecloudSeleniumTestCase
 
 
 class BasicSeleniumTests(WirecloudSeleniumTestCase):

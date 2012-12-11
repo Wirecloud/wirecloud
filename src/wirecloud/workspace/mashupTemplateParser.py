@@ -40,7 +40,7 @@ from wirecloud.localcatalogue.utils import get_or_add_resource_from_available_ma
 from wirecloud.preferences.views import update_tab_preferences, update_workspace_preferences
 from wirecloud.models import Workspace, UserWorkspace
 from wirecloud.workspace.utils import createTab
-from wirecloudcommons.utils.template import TemplateParser
+from wirecloud.commons.utils.template import TemplateParser
 
 
 def buildWorkspaceFromTemplate(template, user, allow_renaming=False):

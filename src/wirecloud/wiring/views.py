@@ -29,7 +29,7 @@ from commons.get_data import _invalidate_cached_variable_values
 from commons.resource import Resource
 from wirecloud.models import Workspace
 from wirecloud.wiring.utils import generate_xhtml_operator_code
-from wirecloudcommons.utils.http import get_absolute_reverse_url
+from wirecloud.commons.utils.http import get_absolute_reverse_url
 
 
 class WiringEntry(Resource):

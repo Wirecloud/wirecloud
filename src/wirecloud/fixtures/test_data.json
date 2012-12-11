@@ -315,7 +315,7 @@
         }
     },
     {
-        "model": "wirecloudcommons.Translation",
+        "model": "commons.Translation",
         "pk": "1",
         "fields": {
             "table": "wirecloud.VariableDef",
@@ -327,7 +327,7 @@
         }
     },
     {
-        "model": "wirecloudcommons.Translation",
+        "model": "commons.Translation",
         "pk": "2",
         "fields": {
             "table": "wirecloud.VariableDef",
@@ -339,7 +339,7 @@
         }
     },
     {
-        "model": "wirecloudcommons.Translation",
+        "model": "commons.Translation",
         "pk": "3",
         "fields": {
             "table": "wirecloud.Widget",
@@ -351,7 +351,7 @@
         }
     },
     {
-        "model": "wirecloudcommons.Translation",
+        "model": "commons.Translation",
         "pk": "4",
         "fields": {
             "table": "wirecloud.Widget",
@@ -363,7 +363,7 @@
         }
     },
     {
-        "model": "wirecloudcommons.Translation",
+        "model": "commons.Translation",
         "pk": "1",
         "fields": {
             "table": "wirecloud.VariableDef",
@@ -375,7 +375,7 @@
         }
     },
     {
-        "model": "wirecloudcommons.Translation",
+        "model": "commons.Translation",
         "pk": "2",
         "fields": {
             "table": "wirecloud.VariableDef",
@@ -387,7 +387,7 @@
         }
     },
     {
-        "model": "wirecloudcommons.Translation",
+        "model": "commons.Translation",
         "pk": "3",
         "fields": {
             "table": "wirecloud.Widget",
@@ -399,7 +399,7 @@
         }
     },
     {
-        "model": "wirecloudcommons.Translation",
+        "model": "commons.Translation",
         "pk": "4",
         "fields": {
             "table": "wirecloud.Widget",
@@ -411,7 +411,7 @@
         }
     },
     {
-        "model": "wirecloudcommons.Translation",
+        "model": "commons.Translation",
         "pk": "5",
         "fields": {
             "table": "wirecloud.VariableDef",
@@ -423,7 +423,7 @@
         }
     },
     {
-        "model": "wirecloudcommons.Translation",
+        "model": "commons.Translation",
         "pk": "6",
         "fields": {
             "table": "wirecloud.VariableDef",

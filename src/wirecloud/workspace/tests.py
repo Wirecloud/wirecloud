@@ -19,7 +19,7 @@ from wirecloud.workspace.mashupTemplateGenerator import build_template_from_work
 from wirecloud.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from wirecloud.workspace.utils import sync_base_workspaces
 from wirecloud.workspace.views import createEmptyWorkspace, linkWorkspace
-from wirecloudcommons.test import WirecloudTestCase
+from wirecloud.commons.test import WirecloudTestCase
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/tests/__init__.py)
