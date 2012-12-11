@@ -63,7 +63,7 @@ UserPref.prototype.getInterfaceDescription = function getInterfaceDescription (i
         'type': this.type,
         'disabled': variable.readOnly,
         'initialValue': variable.get(),
-        'blank': true
+        'required': false
     });
 
     if (this.type === 'select') {

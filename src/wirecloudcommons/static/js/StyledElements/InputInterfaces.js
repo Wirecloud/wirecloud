@@ -100,7 +100,6 @@ var InputInterface = function InputInterface(fieldId, options) {
     this._initialValue = options.initialValue;
     this._defaultValue = options.defaultValue;
     this._label = options.label;
-    Object.defineProperty(this, 'blank', {value: 'blank' in options ? !!options.blank : false});
     Object.defineProperty(this, 'required', {value: 'required' in options ? !!options.required : false});
     this._readOnly = !!options.readOnly;
     this._hidden = !!options.hidden;
@@ -200,11 +199,11 @@ InputInterface.prototype.checkValue = function checkValue(newValue) {
     }
 
     if (!(this instanceof SelectInputInterface)) {
-        if (this._required && this._isEmptyValue(newValue)) {
+        if (this.required && this._isEmptyValue(newValue)) {
             return InputValidationError.REQUIRED_ERROR;
         }
 
-        if (!this._required && this._isEmptyValue(newValue)) {
+        if (!this.required && this._isEmptyValue(newValue)) {
             return InputValidationError.NO_ERROR;
         }
     }
@@ -464,16 +463,29 @@ BooleanInputInterface.prototype.parseFromPersistence = function parseFromPersist
 /**
  *
  */
-function SelectInputInterface(fieldId, fieldDesc) {
-    var desc = fieldDesc;
+function SelectInputInterface(fieldId, desc) {
 
-    InputInterface.call(this, fieldId, fieldDesc);
+    if (!('required' in desc)) {
+        desc.required = true;
+    }
+
+    InputInterface.call(this, fieldId, desc);
 
     if (typeof desc.entries === 'function') {
-        this._update = fieldDesc.entries;
-    } else if (desc.initialEntries && !this._required) {
-        desc = EzWebExt.clone(fieldDesc);
-        desc.initialEntries = [{label: '---------', value: null}].concat(fieldDesc.initialEntries);
+        this._update = desc.entries;
+    } else if (desc.initialEntries && !this.required) {
+        var i, found = false;
+
+        for (i = 0; i < desc.initialEntries.length; i += 1) {
+            if (this._isEmptyValue(desc.initialEntries[i].value)) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            desc.initialEntries = [{label: '---------', value: null}].concat(desc.initialEntries);
+        }
     }
     this.inputElement = new StyledElements.StyledSelect(desc);
 }
@@ -485,7 +497,7 @@ SelectInputInterface.prototype._setValue = function _setValue(newValue) {
     if (this._update) {
         this.inputElement.clear();
         entries = this._update();
-        if (!this._required) {
+        if (!this.required) {
             entries = [{label: '---------', value: null}].concat(entries);
         }
         this.inputElement.addEntries(entries);

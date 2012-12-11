@@ -331,17 +331,13 @@
     };
 
     Form.prototype.getData = function getData() {
-        var value, data, fieldId, field;
+        var data, fieldId, field;
 
         data = {};
         for (fieldId in this.fieldInterfaces) {
             if (this.fieldInterfaces.hasOwnProperty(fieldId)) {
                 field = this.fieldInterfaces[fieldId];
-                value = field.getValue();
-
-                if (this.edition || field.required || field.blank || !field.isEmpty(value)) {
-                    data[fieldId] = value;
-                }
+                data[fieldId] = field.getValue();
             }
         }
         return data;
