@@ -24,38 +24,14 @@
  */
 
 
-/**
- * @class
- *
- * @param id id inside the notebook
- * @param notebook notebook owner of this Tab
- * @param options options of this Tab
- */
-function Tab(id, notebook, options) {
+/*global Constants, Dragboard, gettext, interpolate, LayoutManagerFactory, LogManagerFactory, PreferencesManagerFactory, TabMenuItems, StyledElements, Wirecloud*/
 
-    var button, tabInfo = options.tab_info;
-    options.name = tabInfo.name;
-    options.closable = false;
-    StyledElements.Tab.call(this, id, notebook, options);
+(function () {
 
-    this.addEventListener('show', function (tab) {
-        if (!tab.is_painted()) {
-            tab.paint();
-        }
-    });
-
-    this.menu_button = new StyledElements.PopupButton({
-        'class': 'icon-tab-menu',
-        'plain': true,
-        'menuOptions': {
-            'position': 'top-left'
-        }
-    });
-    this.menu_button.getPopupMenu().append(new TabMenuItems(this));
-    this.menu_button.insertInto(this.tabElement);
+    "use strict";
 
     //CALLBACK METHODS
-    var renameSuccess = function(transport) {
+    var renameSuccess = function renameSuccess(transport) {
         var layoutManager = LayoutManagerFactory.getInstance();
 
         this.tab.tabInfo.name = this.newName;
@@ -65,7 +41,7 @@ function Tab(id, notebook, options) {
         layoutManager.logStep('');
     };
 
-    var renameError = function(transport, e) {
+    var renameError = function renameError(transport, e) {
         var layoutManager, logManager, msg;
 
         layoutManager = LayoutManagerFactory.getInstance();
@@ -76,7 +52,7 @@ function Tab(id, notebook, options) {
         layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
     };
 
-    var deleteSuccess = function (transport) {
+    var deleteSuccess = function deleteSuccess(transport) {
         var layoutManager = LayoutManagerFactory.getInstance();
 
         this.workspace.unloadTab(this.getId());
@@ -85,7 +61,7 @@ function Tab(id, notebook, options) {
         layoutManager.logStep('');
     };
 
-    var deleteError = function(transport, e) {
+    var deleteError = function deleteError(transport, e) {
         var layoutManager, logManager, msg;
 
         layoutManager = LayoutManagerFactory.getInstance();
@@ -96,19 +72,124 @@ function Tab(id, notebook, options) {
         layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
     };
 
+    /**
+     * @private
+     *
+     * This method is called when tab preferences are changed
+     */
+    var preferencesChanged = function preferencesChanged(modifiedValues) {
+        var preferenceName, newLayout;
+
+        for (preferenceName in modifiedValues) {
+            newLayout = false;
+
+            switch (preferenceName) {
+            case "smart":
+            case "columns":
+            case "cell-height":
+            case "vertical-margin":
+            case "horizontal-margin":
+                newLayout = true;
+                break;
+            default:
+                continue;
+            }
+            break;
+        }
+
+        if (newLayout) {
+            this.dragboard._updateBaseLayout();
+        }
+    };
+
+    /**
+     * @class
+     *
+     * @param id id inside the notebook
+     * @param notebook notebook owner of this Tab
+     * @param options options of this Tab
+     */
+    var Tab = function Tab(id, notebook, options) {
+
+        var button, tabInfo = options.tab_info;
+        options.name = tabInfo.name;
+        options.closable = false;
+        StyledElements.Tab.call(this, id, notebook, options);
+
+        this.addEventListener('show', function (tab) {
+            if (!tab.is_painted()) {
+                tab.paint();
+            }
+        });
+
+        this.menu_button = new StyledElements.PopupButton({
+            'class': 'icon-tab-menu',
+            'plain': true,
+            'menuOptions': {
+                'position': 'top-left'
+            }
+        });
+        this.menu_button.getPopupMenu().append(new TabMenuItems(this));
+        this.menu_button.insertInto(this.tabElement);
+
+        // The name of the dragboard HTML elements correspond to the Tab name
+        this.workspace = options.workspace;
+        this.tabInfo = tabInfo;
+        this.dragboardLayerName = "dragboard_" + this.workspace.workspaceState.id + "_" + this.tabInfo.id;
+        this.tabName = "tab_" + this.workspace.workspaceState.id + "_" + this.tabInfo.id;
+
+        this.FloatingWidgetsMenu = null;
+
+        this.preferences = PreferencesManagerFactory.getInstance().buildPreferences('tab', this.tabInfo.preferences, this);
+        this.preferences.addCommitHandler(preferencesChanged.bind(this));
+
+        this.painted = false;
+        this.readOnly = false;
+
+        this.dragboard = new Dragboard(this, this.workspace, this.wrapperElement);
+
+        this.markAsVisible = function markAsVisible() {
+            var tabUrl = Wirecloud.URLs.TAB_ENTRY.evaluate({'workspace_id': this.workspace.workspaceState.id, 'tab_id': this.tabInfo.id});
+            var params = {'tab': Object.toJSON({visible: "true"})};
+            Wirecloud.io.makeRequest(tabUrl, {
+                method: 'POST',
+                parameters: params,
+                onSuccess: this.markAsVisibleSuccess,
+                onFailure: this.markAsVisibleError,
+                onException: this.markAsVisibleError
+            });
+        }.bind(this);
+
+        this.markAsVisibleSuccess = function markAsVisibleSuccess() {
+            var tabIds = this.workspace.tabInstances.keys();
+            for (var i = 0; i < tabIds.length; i++) {
+                var tab = this.workspace.tabInstances.get(tabIds[i]);
+                tab.tabInfo.visible = false;
+            }
+            this.tabInfo.visible = true;
+        }.bind(this);
+
+        this.markAsVisibleError = function markAsVisibleError(transport, e) {
+            var logManager = LogManagerFactory.getInstance();
+            var msg = logManager.formatError(gettext("Error marking as first visible tab, changes will not be saved: %(errorMsg)s."), transport, e);
+            logManager.log(msg);
+        }.bind(this);
+    };
+    Tab.prototype = new StyledElements.Tab();
+
     // ****************
     // PUBLIC METHODS
     // ****************
 
-    Tab.prototype.getId = function(){
+    Tab.prototype.getId = function getId() {
         return this.tabInfo.id;
-    }
+    };
 
-    Tab.prototype.getName = function getName () {
+    Tab.prototype.getName = function getName() {
         return this.tabInfo.name;
     };
 
-    Tab.prototype.destroy = function() {
+    Tab.prototype.destroy = function destroy() {
         this.preferences.destroy();
         this.preferences = null;
 
@@ -120,11 +201,10 @@ function Tab(id, notebook, options) {
         StyledElements.Alternative.prototype.destroy.call(this);
     };
 
-
     /**
      * NOTE: rename conflicts with StyledElements.Tab.rename
      */
-    Tab.prototype.updateInfo = function (tabName) {
+    Tab.prototype.updateInfo = function updateInfo(tabName) {
         var layoutManager, tabUrl, params, msg = null;
 
         tabName = tabName.strip();
@@ -181,136 +261,61 @@ function Tab(id, notebook, options) {
         });
     };
 
-    Tab.prototype.is_painted = function () {
+    Tab.prototype.is_painted = function is_painted() {
         return this.painted;
-    }
+    };
 
-    Tab.prototype.paint = function () {
+    Tab.prototype.paint = function paint() {
         this.getDragboard().paint();
-    }
+    };
 
-    Tab.prototype.getDragboard = function () {
+    Tab.prototype.getDragboard = function getDragboard() {
         return this.dragboard;
-    }
+    };
 
     /**
     * Gets the banner related to the workspace this dragboard belongs to
     */
-    Tab.prototype.getHeader = function(){
+    Tab.prototype.getHeader = function getHeader() {
         return this.workspace.getHeader();
-    }
+    };
 
-    Tab.prototype.mark_as_painted = function () {
+    Tab.prototype.mark_as_painted = function mark_as_painted() {
         this.painted = true;
-    }
+    };
 
-    Tab.prototype.hasIWidget = function(iWidgetIds){
-        for (i in iWidgetIds){
-            if (this.dragboard.getIWidget(iWidgetIds[i]))
+    Tab.prototype.hasIWidget = function hasIWidget(iWidgetIds) {
+        var i;
+
+        for (i in iWidgetIds) {
+            if (this.dragboard.getIWidget(iWidgetIds[i])) {
                 return true;
+            }
         }
-        return false;
-    }
 
-    Tab.prototype.hasReadOnlyIWidgets = function () {
+        return false;
+    };
+
+    Tab.prototype.hasReadOnlyIWidgets = function hasReadOnlyIWidgets() {
         return this.dragboard.hasReadOnlyIWidgets();
     };
 
-    // *****************
-    //  PRIVATE METHODS
-    // *****************
-
-
-    /*constructor*/
-
-    // The name of the dragboard HTML elements correspond to the Tab name
-    this.workspace = options.workspace;
-    this.tabInfo = tabInfo;
-    this.dragboardLayerName = "dragboard_" + this.workspace.workspaceState.id + "_" + this.tabInfo.id;
-    this.tabName = "tab_" + this.workspace.workspaceState.id + "_" + this.tabInfo.id;
-
-    this.FloatingWidgetsMenu = null;
-
-    this.preferences = PreferencesManagerFactory.getInstance().buildPreferences('tab', this.tabInfo.preferences, this)
-    this.preferences.addCommitHandler(this.preferencesChanged.bind(this));
-
-    //Now, a TAB is painted on-demand. Only the active tab is rendered automatically!
-    this.painted = false;
-
-    this.readOnly = false;
-
-    this.dragboard = new Dragboard(this, this.workspace, this.wrapperElement);
-
-    this.markAsVisible = function () {
-        var tabUrl = Wirecloud.URLs.TAB_ENTRY.evaluate({'workspace_id': this.workspace.workspaceState.id, 'tab_id': this.tabInfo.id});
-        var params = {'tab': Object.toJSON({visible: "true"})};
-        Wirecloud.io.makeRequest(tabUrl, {
-            method: 'POST',
-            parameters: params,
-            onSuccess: this.markAsVisibleSuccess,
-            onFailure: this.markAsVisibleError,
-            onException: this.markAsVisibleError
-        });
-    }.bind(this);
-
-    this.markAsVisibleSuccess = function() {
-        var tabIds = this.workspace.tabInstances.keys();
-        for (var i = 0; i < tabIds.length; i++){
-            var tab = this.workspace.tabInstances.get(tabIds[i]);
-            tab.tabInfo.visible = false;
-        }
-        this.tabInfo.visible = true;
-    }.bind(this);
-
-    this.markAsVisibleError = function(transport, e){
-        var logManager = LogManagerFactory.getInstance();
-        var msg = logManager.formatError(gettext("Error marking as first visible tab, changes will not be saved: %(errorMsg)s."), transport, e);
-        logManager.log(msg);
-    }.bind(this);
-}
-Tab.prototype = new StyledElements.Tab();
-
-Tab.prototype.isAllowed = function (action) {
-    switch (action) {
-    case "remove":
-        return !this.readOnly && this.workspace.tabInstances.keys().length > 1 && !this.hasReadOnlyIWidgets();
-    default:
-        return false;
-    }
-};
-
-Tab.prototype.repaint = function(temporal) {
-    StyledElements.Tab.prototype.repaint.call(this, temporal);
-
-    if (!temporal) {
-        this.dragboard._notifyWindowResizeEvent();
-    }
-};
-
-/**
- * @private
- *
- * This method is called when tab preferences are changed
- */
-Tab.prototype.preferencesChanged = function(modifiedValues) {
-    for (preferenceName in modifiedValues) {
-        var newLayout = false;
-
-        switch (preferenceName) {
-        case "smart":
-        case "columns":
-        case "cell-height":
-        case "vertical-margin":
-        case "horizontal-margin":
-            newLayout = true;
-            break;
+    Tab.prototype.isAllowed = function isAllowed(action) {
+        switch (action) {
+        case "remove":
+            return !this.readOnly && this.workspace.tabInstances.keys().length > 1 && !this.hasReadOnlyIWidgets();
         default:
-            continue;
+            return false;
         }
-        break;
-    }
+    };
 
-    if (newLayout) {
-        this.dragboard._updateBaseLayout();
-    }
-}
+    Tab.prototype.repaint = function repaint(temporal) {
+        StyledElements.Tab.prototype.repaint.call(this, temporal);
+
+        if (!temporal) {
+            this.dragboard._notifyWindowResizeEvent();
+        }
+    };
+
+    window.Tab = Tab;
+})();
