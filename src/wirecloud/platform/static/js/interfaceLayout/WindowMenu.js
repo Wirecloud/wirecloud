@@ -195,13 +195,6 @@ WindowMenu.prototype.calculatePosition = function() {
 }
 
 /**
- *
- */
-WindowMenu.prototype.setHandler = function (handler) {
-    this.operationHandler = handler;
-}
-
-/**
  * Makes this WindowMenu visible.
  *
  * @param parentWindow
