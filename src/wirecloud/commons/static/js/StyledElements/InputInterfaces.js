@@ -452,6 +452,10 @@ BooleanInputInterface.prototype.isEmpty = function isEmpty() {
     return false;
 };
 
+BooleanInputInterface.prototype._normalize = function _normalize(value) {
+    return !!value;
+};
+
 BooleanInputInterface.prototype._checkValue = function _checkValue(newValue) {
     return (typeof newValue === 'boolean') ? InputValidationError.NO_ERROR : InputValidationError.BOOLEAN_ERROR;
 };
