@@ -225,6 +225,7 @@ WindowMenu.prototype.show = function (parentWindow) {
  * Makes this WindowMenu hidden.
  */
 WindowMenu.prototype.hide = function () {
+
     if (!isElement(this.htmlElement.parentNode)) {
         // This windowmenu is currently hidden => Nothing to do
         return;
@@ -261,7 +262,13 @@ WindowMenu.prototype._removeChildWindow = function (windowMenu) {
 };
 
 WindowMenu.prototype.setFocus = function () {
-}
+};
+
+WindowMenu.prototype.destroy = function destroy() {
+    this.hide();
+
+    this._closeListener = null;
+};
 
 /**
  * Specific class for platform preferences windows.
