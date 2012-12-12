@@ -1,65 +1,81 @@
-/**
- * Specific class for platform preferences windows.
- *
- * @param manager
- *
- */
-function PreferencesWindowMenu(scope, manager) {
-    WindowMenu.call(this, '');
+/*global gettext, StyledElements, ValidationErrorManager, WindowMenu, Wirecloud*/
 
-    this.manager = manager;
+(function () {
 
-    // Accept button
-    this.acceptButton = new StyledElements.StyledButton({
-        text: gettext('Save'),
-        'class': 'btn-primary'
-    });
-    this._executeOperation = this._executeOperation.bind(this);
-    this.acceptButton.addEventListener("click", this._executeOperation);
-    this.acceptButton.insertInto(this.windowBottom);
+    "use strict";
 
-    // Cancel button
-    this.cancelButton = new StyledElements.StyledButton({
-        text: gettext('Cancel')
-    });
+    var _executeOperation = function _executeOperation() {
+        // Validate input fields
+        var validationManager = new ValidationErrorManager();
+        var preferences = this.manager._preferencesDef._preferences;
+        for (var prefId in preferences) {
+            validationManager.validate(preferences[prefId].inputInterface);
+        }
 
-    Element.extend(this.cancelButton);
-    this.cancelButton.addEventListener("click", this._closeListener);
-    this.cancelButton.insertInto(this.windowBottom);
-}
-PreferencesWindowMenu.prototype = new WindowMenu();
+        // Build Error Message
+        var errorMsg = validationManager.toHTML();
 
-PreferencesWindowMenu.prototype.setCancelable = function(cancelable) {
-    this.cancelButton.setDisabled(!cancelable);
-};
+        // Show error message if needed
+        if (errorMsg.length !== 0) {
+            // FIXME
+            this.setMsg(errorMsg[0]);
+        } else {
+            this.manager.save();
+            this.hide();
+        }
+    };
 
-PreferencesWindowMenu.prototype._executeOperation = function() {
-    // Validate input fields
-    var validationManager = new ValidationErrorManager();
-    var preferences = this.manager._preferencesDef._preferences;
-    for (var prefId in preferences) {
-        validationManager.validate(preferences[prefId].inputInterface);
-    }
+    /**
+     * Specific class for platform preferences windows.
+     *
+     * @param manager
+     *
+     */
+    var PreferencesWindowMenu = function PreferencesWindowMenu(scope, manager) {
+        WindowMenu.call(this, '');
 
-    // Build Error Message
-    var errorMsg = validationManager.toHTML();
+        this.manager = manager;
 
-    // Show error message if needed
-    if (errorMsg != "") {
-        this.setMsg(errorMsg);
-    } else {
-        this.manager.save();
-        this.hide();
-    }
-}
+        // Accept button
+        this.acceptButton = new StyledElements.StyledButton({
+            text: gettext('Save'),
+            'class': 'btn-primary'
+        });
+        this.acceptButton.addEventListener("click", _executeOperation.bind(this));
+        this.acceptButton.insertInto(this.windowBottom);
 
-PreferencesWindowMenu.prototype.show = function (parentWindow) {
-    this.setTitle(this.manager.buildTitle());
+        // Cancel button
+        this.cancelButton = new StyledElements.StyledButton({
+            text: gettext('Cancel')
+        });
 
-    // TODO
-    var table = this.manager.getPreferencesDef().getInterface();
-    this.windowContent.insertBefore(table, this.msgElement);
+        this.cancelButton.addEventListener("click", this._closeListener);
+        this.cancelButton.insertInto(this.windowBottom);
+    };
+    PreferencesWindowMenu.prototype = new WindowMenu();
 
-    this.manager.resetInterface();
-    WindowMenu.prototype.show.call(this, parentWindow);
-}
+    PreferencesWindowMenu.prototype.setCancelable = function setCancelable(cancelable) {
+        this.cancelButton.setDisabled(!cancelable);
+    };
+
+    PreferencesWindowMenu.prototype.show = function show(parentWindow) {
+        this.setTitle(this.manager.buildTitle());
+
+        // TODO
+        var table = this.manager.getPreferencesDef().getInterface();
+        this.windowContent.insertBefore(table, this.msgElement);
+
+        this.manager.resetInterface();
+        WindowMenu.prototype.show.call(this, parentWindow);
+    };
+
+    PreferencesWindowMenu.prototype.destroy = function destroy() {
+        this.acceptButton.destroy();
+        this.cancelButton.destroy();
+
+        WindowMenu.prototype.destroy.call(this);
+    };
+
+    Wirecloud.ui.PreferencesWindowMenu = PreferencesWindowMenu;
+
+})();

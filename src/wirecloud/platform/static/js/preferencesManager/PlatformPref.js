@@ -465,7 +465,7 @@ Preferences.prototype._save = function(modifiedValues) {
 
 /**
  * Saves the modified preferences. The new values are taken from the relevant
- * <code>PreferencesWindowMenu</code>.
+ * <code>Wirecloud.ui.PreferencesWindowMenu</code>.
  */
 Preferences.prototype.save = function() {
 	var modifiedPreferences = [];

@@ -24,7 +24,7 @@
  */
 
 
-/*global Constants, Dragboard, gettext, interpolate, LayoutManagerFactory, LogManagerFactory, PreferencesManagerFactory, PreferencesWindowMenu, TabMenuItems, StyledElements, Wirecloud*/
+/*global Constants, Dragboard, gettext, interpolate, LayoutManagerFactory, LogManagerFactory, PreferencesManagerFactory, TabMenuItems, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -290,7 +290,7 @@
 
     Tab.prototype.getPreferencesWindow = function getPreferencesWindow() {
         if (this.pref_window_menu == null) {
-            this.pref_window_menu = new PreferencesWindowMenu('tab', this.preferences);
+            this.pref_window_menu = new Wirecloud.ui.PreferencesWindowMenu('tab', this.preferences);
         }
         return this.pref_window_menu;
     };

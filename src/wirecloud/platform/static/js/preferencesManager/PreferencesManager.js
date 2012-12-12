@@ -79,7 +79,7 @@ var PreferencesManagerFactory = function () {
 		 */
 		PreferencesManager.prototype.show = function show() {
 			if (this.window_menu == null) {
-				this.window_menu = new PreferencesWindowMenu('platform', this.preferences);
+				this.window_menu = new Wirecloud.ui.PreferencesWindowMenu('platform', this.preferences);
 			}
 			this.window_menu.show();
 		};
