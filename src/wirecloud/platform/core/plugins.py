@@ -117,6 +117,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/ui/MessageWindowMenu.js',
                 'js/wirecloud/ui/NewWorkspaceWindowMenu.js',
                 'js/wirecloud/ui/ParametrizeWindowMenu.js',
+                'js/wirecloud/ui/PreferencesWindowMenu.js',
                 'js/wirecloud/ui/PublishWorkspaceWindowMenu.js',
                 'js/wirecloud/ui/PublishResourceWindowMenu.js',
                 'js/wirecloud/ui/RenameWindowMenu.js',
