@@ -39,6 +39,7 @@
         this._clickHandler = EzWebExt.bind(function (event) {
             event.stopPropagation();
             if (this.enabled) {
+                EzWebExt.removeClassName(this.wrapperElement, "hovered");
                 this.events.mouseout.dispatch(this);
                 this.events.click.dispatch(this);
             }
