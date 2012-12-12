@@ -69,7 +69,7 @@ TabMenuItems.prototype.build = function () {
     items.push(new StyledElements.MenuItem(
         gettext("Settings"),
         function () {
-            LayoutManagerFactory.getInstance().showPreferencesWindow('tab', this.preferences);
+            this.getPreferencesWindow().show();
         }.bind(this.tab)
     ));
 

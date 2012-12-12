@@ -41,7 +41,7 @@ WorkspaceItems.prototype.build = function () {
 
     if (current_workspace.isAllowed('change_workspace_preferences')) {
         items.push(new StyledElements.MenuItem(gettext('Settings'), function () {
-            LayoutManagerFactory.getInstance().showPreferencesWindow('workspace', current_workspace.preferences);
+            current_workspace.getPreferencesWindow().show();
         }));
     }
 

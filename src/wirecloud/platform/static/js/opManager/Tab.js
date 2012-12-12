@@ -24,7 +24,7 @@
  */
 
 
-/*global Constants, Dragboard, gettext, interpolate, LayoutManagerFactory, LogManagerFactory, PreferencesManagerFactory, TabMenuItems, StyledElements, Wirecloud*/
+/*global Constants, Dragboard, gettext, interpolate, LayoutManagerFactory, LogManagerFactory, PreferencesManagerFactory, PreferencesWindowMenu, TabMenuItems, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -189,18 +189,6 @@
         return this.tabInfo.name;
     };
 
-    Tab.prototype.destroy = function destroy() {
-        this.preferences.destroy();
-        this.preferences = null;
-
-        this.menu_button.destroy();
-        this.menu_button = null;
-        this.dragboard.destroy();
-        this.dragboard = null;
-
-        StyledElements.Alternative.prototype.destroy.call(this);
-    };
-
     /**
      * NOTE: rename conflicts with StyledElements.Tab.rename
      */
@@ -300,6 +288,13 @@
         return this.dragboard.hasReadOnlyIWidgets();
     };
 
+    Tab.prototype.getPreferencesWindow = function getPreferencesWindow() {
+        if (this.pref_window_menu == null) {
+            this.pref_window_menu = new PreferencesWindowMenu('tab', this.preferences);
+        }
+        return this.pref_window_menu;
+    };
+
     Tab.prototype.isAllowed = function isAllowed(action) {
         switch (action) {
         case "remove":
@@ -315,6 +310,24 @@
         if (!temporal) {
             this.dragboard._notifyWindowResizeEvent();
         }
+    };
+
+    Tab.prototype.destroy = function destroy() {
+        if (this.pref_window_menu != null) {
+            this.pref_window_menu.destroy();
+            this.pref_window_menu = null;
+        }
+
+        this.preferences.destroy();
+        this.preferences = null;
+
+        this.menu_button.destroy();
+        this.menu_button = null;
+
+        this.dragboard.destroy();
+        this.dragboard = null;
+
+        StyledElements.Alternative.prototype.destroy.call(this);
     };
 
     window.Tab = Tab;

@@ -365,35 +365,6 @@ var LayoutManagerFactory = function () {
             menu.show(this.currentMenu);
         }
 
-        /**
-         * Shows a dialog to changing platform preferences.
-         *
-         * @param scope
-         * @param manager
-         */
-        LayoutManager.prototype.showPreferencesWindow = function(scope, manager, cancelable) {
-            // the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
-            if (this.currentMenu != null) {//only if the layer is displayed.
-                this.hideCover();
-            }
-            this.showUnclickableCover();
-
-            var dialog, menuId = 'preferences/' + scope;
-
-
-            if (scope == 'workspace') {
-                dialog = new PreferencesWindowMenu(scope, manager);
-            } else if (!(menuId in this.menus)) {
-                this.menus[menuId] = new PreferencesWindowMenu(scope, manager);
-                dialog = this.menus[menuId];
-            } else {
-                dialog = this.menus[menuId];
-            }
-            dialog.setCancelable(cancelable != null ? cancelable : true);
-            this.currentMenu = dialog;
-            this.currentMenu.show();
-        }
-
         //hides the disabling layer and so, the current menu
         LayoutManager.prototype.hideCover = function() {
             if (this.currentMenu) {

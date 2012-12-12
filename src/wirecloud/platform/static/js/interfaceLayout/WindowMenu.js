@@ -281,8 +281,6 @@ function PreferencesWindowMenu(scope, manager) {
     WindowMenu.call(this, '');
 
     this.manager = manager;
-    var table = manager.getPreferencesDef().getInterface();
-    this.windowContent.insertBefore(table, this.msgElement);
 
     // Accept button
     this.acceptButton = new StyledElements.StyledButton({
@@ -311,8 +309,10 @@ PreferencesWindowMenu.prototype.setCancelable = function(cancelable) {
 PreferencesWindowMenu.prototype._executeOperation = function() {
     // Validate input fields
     var validationManager = new ValidationErrorManager();
-    for (var fieldId in this.fields)
-        validationManager.validate(this.fields[fieldId].inputInterface);
+    var preferences = this.manager._preferencesDef._preferences;
+    for (var prefId in preferences) {
+        validationManager.validate(preferences[prefId].inputInterface);
+    }
 
     // Build Error Message
     var errorMsg = validationManager.toHTML();
@@ -328,6 +328,11 @@ PreferencesWindowMenu.prototype._executeOperation = function() {
 
 PreferencesWindowMenu.prototype.show = function (parentWindow) {
     this.setTitle(this.manager.buildTitle());
-    this.manager.resetInterface('platform');
+
+    // TODO
+    var table = this.manager.getPreferencesDef().getInterface();
+    this.windowContent.insertBefore(table, this.msgElement);
+
+    this.manager.resetInterface();
     WindowMenu.prototype.show.call(this, parentWindow);
 }

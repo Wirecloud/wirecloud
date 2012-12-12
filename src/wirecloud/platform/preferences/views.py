@@ -39,16 +39,14 @@
 # @author jmostazo-upm
 
 from django.core.cache import cache
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django.utils import simplejson
 
 from commons.cache import no_cache
-from commons.http_utils import PUT_parameter
-from commons.logs_exception import TracedServerError
 from commons.resource import Resource
-from commons.utils import get_xml_error, json_encode
+from wirecloud.commons.utils.http import build_error_response, supported_request_mime_types
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.platform.models import PlatformPreference, WorkspacePreference, Tab, TabPreference, update_session_lang, Workspace
 
@@ -128,7 +126,7 @@ def get_workspace_preference_values(workspace):
 
     cache_key = make_workspace_preferences_cache_key(workspace_id)
     values = cache.get(cache_key)
-    if values == None:
+    if values is None:
         values = parseInheritableValues(WorkspacePreference.objects.filter(workspace=workspace_id))
         cache.set(cache_key, values)
 
@@ -167,27 +165,23 @@ class PlatformPreferencesCollection(Resource):
     def read(self, request):
         result = parseValues(PlatformPreference.objects.filter(user=request.user))
 
-        return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
+    @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request):
-        received_json = PUT_parameter(request, 'preferences')
-
-        if not received_json:
-            return HttpResponseBadRequest(get_xml_error(_("Platform Preferences JSON expected")), mimetype='application/xml; charset=UTF-8')
-
         try:
-            preferences_json = simplejson.loads(received_json)
-            update_preferences(request.user, preferences_json)
-
-            if 'language' in preferences_json:
-                update_session_lang(request, request.user)
-
-            return HttpResponse('ok')
+            preferences_json = simplejson.loads(request.raw_post_data)
         except Exception, e:
-            msg = _("Platform Preferences cannot be updated: ") + unicode(e)
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
 
-            raise TracedServerError(e, {}, request, msg)
+        update_preferences(request.user, preferences_json)
+
+        if 'language' in preferences_json:
+            update_session_lang(request, request.user)
+
+        return HttpResponse(status=204)
 
 
 class WorkspacePreferencesCollection(Resource):
@@ -200,28 +194,23 @@ class WorkspacePreferencesCollection(Resource):
 
         result = get_workspace_preference_values(workspace.id)
 
-        return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
+    @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id):
 
-        received_json = PUT_parameter(request, 'preferences')
-
-        if not received_json:
-            return HttpResponseBadRequest(get_xml_error(_("Workspace Preferences JSON expected")), mimetype='application/xml; charset=UTF-8')
+        # Check Workspace existance and owned by this user
+        workspace = get_object_or_404(Workspace, users=request.user, pk=workspace_id)
 
         try:
-            preferences_json = simplejson.loads(received_json)
-
-            # Check Workspace existance and owned by this user
-            workspace = get_object_or_404(Workspace, users=request.user, pk=workspace_id)
-
-            update_workspace_preferences(workspace, preferences_json)
-            return HttpResponse('ok')
+            preferences_json = simplejson.loads(request.raw_post_data)
         except Exception, e:
-            msg = _("Workspace Preferences could not be updated: ") + unicode(e)
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
 
-            raise TracedServerError(e, {}, request, msg)
+        update_workspace_preferences(workspace, preferences_json)
+        return HttpResponse(status=204)
 
 
 class TabPreferencesCollection(Resource):
@@ -234,24 +223,20 @@ class TabPreferencesCollection(Resource):
 
         result = get_tab_preference_values(tab)
 
-        return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
+    @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id):
-        received_json = PUT_parameter(request, 'preferences')
 
-        if not received_json:
-            return HttpResponseBadRequest(get_xml_error(_("Platform Preferences JSON expected")), mimetype='application/xml; charset=UTF-8')
+        # Check Tab existance and owned by this user
+        tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
 
         try:
-            preferences_json = simplejson.loads(received_json)
-
-            # Check Tab existance and owned by this user
-            tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
-
-            update_tab_preferences(tab, preferences_json)
-            return HttpResponse('ok')
+            preferences_json = simplejson.loads(request.raw_post_data)
         except Exception, e:
-            msg = _("Tab Preferences could not be updated: ") + unicode(e)
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
 
-            raise TracedServerError(e, {}, request, msg)
+        update_tab_preferences(tab, preferences_json)
+        return HttpResponse(status=204)

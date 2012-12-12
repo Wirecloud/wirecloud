@@ -77,9 +77,12 @@ var PreferencesManagerFactory = function () {
 		/**
 		 * Shows the platform preferences dialog.
 		 */
-		PreferencesManager.prototype.show = function() {
-			LayoutManagerFactory.getInstance().showPreferencesWindow('platform', this.preferences);
-		}
+		PreferencesManager.prototype.show = function show() {
+			if (this.window_menu == null) {
+				this.window_menu = new PreferencesWindowMenu('platform', this.preferences);
+			}
+			this.window_menu.show();
+		};
 
 		/**
 		 * Returns the platform preferences.

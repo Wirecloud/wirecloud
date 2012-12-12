@@ -91,7 +91,7 @@ function Workspace (workspaceState) {
 
     // Not like the remaining methods. This is a callback function to process AJAX requests, so must be public.
     var loadWorkspace = function (transport) {
-        var layoutManager, params, param, preferenceValues, iwidgets;
+        var layoutManager, params, param, preferencesWindow, preferenceValues, iwidgets;
 
         layoutManager = LayoutManagerFactory.getInstance();
         layoutManager.logStep('');
@@ -121,7 +121,9 @@ function Workspace (workspaceState) {
                         OpManagerFactory.getInstance().changeActiveWorkspace(this);
                     }.bind(this), 0);
                 }.bind(this));
-                LayoutManagerFactory.getInstance().showPreferencesWindow('workspace', this.preferences, false);
+                preferencesWindow = this.getPreferencesWindow();
+                preferencesWindow.setCancelable(false);
+                preferencesWindow.show();
                 return;
             }
 
@@ -624,6 +626,11 @@ function Workspace (workspaceState) {
             this.unloadTab(tabKeys[i]);
         }
 
+        if (this.pref_window_menu != null) {
+            this.pref_window_menu.destroy();
+            this.pref_window_menu = null;
+        }
+
         if (this.preferences) {
             this.preferences.destroy();
             this.preferences = null;
@@ -820,6 +827,13 @@ function Workspace (workspaceState) {
     }.bind(this);
 };
 Workspace.prototype = new StyledElements.ObjectWithEvents();
+
+Workspace.prototype.getPreferencesWindow = function getPreferencesWindow() {
+    if (this.pref_window_menu == null) {
+        this.pref_window_menu = new PreferencesWindowMenu('tab', this.preferences);
+    }
+    return this.pref_window_menu;
+};
 
 Workspace.prototype.drawAttention = function(iWidgetId) {
     var iWidget = this.getIWidget(iWidgetId);
