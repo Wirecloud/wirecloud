@@ -774,10 +774,14 @@ def build_selenium_test_cases(classes, namespace):
         for browser_name in browsers:
             browser = browsers[browser_name]
 
-            module_name, klass_name = class_name.rsplit('.', 1)
-            tests_class_name = browser_name + klass_name
-            module = import_module(module_name)
-            klass_instance = getattr(module, klass_name)
+            if isinstance(class_name, basestring):
+                module_name, klass_name = class_name.rsplit('.', 1)
+                tests_class_name = browser_name + klass_name
+                module = import_module(module_name)
+                klass_instance = getattr(module, klass_name)
+            else:
+                tests_class_name = browser_name + class_name.__name__
+                klass_instance = class_name
 
             namespace[tests_class_name] = type(
                 tests_class_name,
