@@ -28,7 +28,7 @@ def patch_cache_headers(response, timestamp=None, cache_timeout=None):
     response['Last-Modified'] = http_date(timestamp / 1000)
     response['ETag'] = '"' + str(timestamp) + '"'
 
-    if cache_timeout != None and timestamp + cache_timeout > current_timestamp:
+    if cache_timeout is not None and timestamp + cache_timeout > current_timestamp:
         timeout_str = str(timestamp + cache_timeout - current_timestamp)
         response['Cache-Control'] = 'private, max-age=' + timeout_str
         response['Expires'] = http_date((timestamp / 1000) + cache_timeout)
