@@ -763,10 +763,10 @@ function Draggable(handler, data, onStart, onDrag, onFinish, canBeDragged, onScr
     drag = function (e) {
         e = e || window.event; // needed for IE
 
-        var screenX = parseInt(e.screenX, 10);
-        var screenY = parseInt(e.screenY, 10);
-        var xDelta = screenX - xStart - xScrollDelta;
-        var yDelta = screenY - yStart - yScrollDelta;
+        var clientX = parseInt(e.clientX, 10);
+        var clientY = parseInt(e.clientY, 10);
+        var xDelta = clientX - xStart - xScrollDelta;
+        var yDelta = clientY - yStart - yScrollDelta;
 
         onDrag(e, draggable, data, xDelta, yDelta);
     };
@@ -789,8 +789,8 @@ function Draggable(handler, data, onStart, onDrag, onFinish, canBeDragged, onScr
         document.onselectstart = Draggable._cancel; // disable text selection in IE
         handler.removeEventListener("mousedown", startdrag, false);
 
-        xStart = parseInt(e.screenX, 10);
-        yStart = parseInt(e.screenY, 10);
+        xStart = parseInt(e.clientX, 10);
+        yStart = parseInt(e.clientY, 10);
 
         Event.observe(document, "mouseup", enddrag);
         Event.observe(document, "mousemove", drag);
