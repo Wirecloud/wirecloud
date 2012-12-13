@@ -38,13 +38,14 @@ from django.core.cache import cache
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseServerError, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
+from django.utils import simplejson
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.views.static import serve
 
 from commons import http_utils
 from commons.cache import no_cache, patch_cache_headers
-from commons.utils import get_xml_error, json_encode
+from commons.utils import get_xml_error
 from commons.get_data import get_widget_data
 from commons.resource import Resource
 
@@ -109,14 +110,14 @@ class WidgetCollection(Resource):
         widgets = Widget.objects.filter(users=request.user)
 
         data_list = [get_widget_data(widget, request) for widget in widgets]
-        return HttpResponse(json_encode(data_list), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(data_list), mimetype='application/json; charset=UTF-8')
 
     @commit_on_http_success
     def create(self, request):
 
         if 'workspaceId' not in request.POST:
             msg = _("Missing workspaceId parameter")
-            json = json_encode({"message": msg, "result": "error"})
+            json = simplejson.dumps({"message": msg, "result": "error"})
             return HttpResponseServerError(json, mimetype='application/json; charset=UTF-8')
 
         #create the widget
@@ -132,7 +133,7 @@ class WidgetCollection(Resource):
             msg = _("The url is not accesible")
             return build_error_response(request, 502, msg)
 
-        return HttpResponse(json_encode(get_widget_data(widget, request)), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(get_widget_data(widget, request)), mimetype='application/json; charset=UTF-8')
 
 
 class Showcase(Resource):
@@ -161,7 +162,7 @@ class WidgetEntry(Resource):
     def read(self, request, vendor, name, version):
         widget = get_object_or_404(Widget, users=request.user, vendor=vendor, name=name, version=version)
         data_fields = get_widget_data(widget, request)
-        return HttpResponse(json_encode(data_fields), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(data_fields), mimetype='application/json; charset=UTF-8')
 
     def delete(self, request, vendor, name, version):
         widget = get_object_or_404(Widget, users=request.user, vendor=vendor, name=name, version=version)

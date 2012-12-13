@@ -43,7 +43,7 @@ from commons.get_data import VariableValueCacheManager, get_iwidget_data, get_va
 from commons.http_utils import PUT_parameter
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
-from commons.utils import get_xml_error, json_encode
+from commons.utils import get_xml_error
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.http import build_error_response, supported_request_mime_types
 from wirecloud.platform.iwidget.utils import SaveIWidget, UpdateIWidget, UpgradeIWidget, deleteIWidget
@@ -64,7 +64,7 @@ class IWidgetCollection(Resource):
         iwidgets = IWidget.objects.filter(tab__workspace__users=request.user, tab__workspace__pk=workspace_id, tab__pk=tab_id)
         data_list['iWidgets'] = [get_iwidget_data(iwidget, request.user, workspace, cache_manager) for iwidget in iwidgets]
 
-        return HttpResponse(json_encode(data_list), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(data_list), mimetype='application/json; charset=UTF-8')
 
     @method_decorator(login_required)
     @commit_on_http_success
@@ -92,7 +92,7 @@ class IWidgetCollection(Resource):
             iwidget = SaveIWidget(iwidget, request.user, tab, initial_variable_values)
             iwidget_data = get_iwidget_data(iwidget, request.user, tab.workspace)
 
-            return HttpResponse(json_encode(iwidget_data), mimetype='application/json; charset=UTF-8')
+            return HttpResponse(simplejson.dumps(iwidget_data), mimetype='application/json; charset=UTF-8')
         except Widget.DoesNotExist, e:
             msg = _('referred widget %(widget_uri)s does not exist.') % {'widget_uri': iwidget['widget']}
 
@@ -136,7 +136,7 @@ class IWidgetEntry(Resource):
         iwidget = get_object_or_404(IWidget, tab__workspace__users=request.user, tab__workspace=workspace, tab__pk=tab_id, pk=iwidget_id)
         iwidget_data = get_iwidget_data(iwidget, request.user, workspace)
 
-        return HttpResponse(json_encode(iwidget_data), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(iwidget_data), mimetype='application/json; charset=UTF-8')
 
     @method_decorator(login_required)
     @commit_on_http_success
@@ -235,7 +235,7 @@ class IWidgetVariableCollection(Resource):
         variables = Variable.objects.filter(iwidget__tab=tab, iwidget__id=iwidget_id)
         vars_data = [get_variable_data(variable) for variable in variables]
 
-        return HttpResponse(json_encode(vars_data), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(vars_data), mimetype='application/json; charset=UTF-8')
 
     @method_decorator(login_required)
     @commit_on_http_success
@@ -282,7 +282,7 @@ class IWidgetVariable(Resource):
         variable = get_object_or_404(Variable, iwidget__tab=tab, iwidget__pk=iwidget_id, vardef__pk=var_id)
         var_data = get_variable_data(variable)
 
-        return HttpResponse(json_encode(var_data), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(var_data), mimetype='application/json; charset=UTF-8')
 
     def create(self, request, workspace_id, tab_id, iwidget_id, var_id):
         return self.update(request, workspace_id, tab_id, iwidget_id, var_id)

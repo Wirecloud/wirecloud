@@ -33,12 +33,13 @@
 from django.http import HttpResponse, HttpResponseServerError
 from django.db.models import Q
 from django.conf import settings
+from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
 from wirecloud.catalogue.get_json_catalogue_data import get_resource_group_data, get_tag_data, get_vote_data
 from wirecloud.catalogue.get_xml_catalogue_data import get_xml_description, get_tags_by_resource, get_vote_by_resource
 from wirecloud.catalogue.models import CatalogueResource, UserVote
-from commons.utils import get_xml_error, json_encode
+from commons.utils import get_xml_error
 from commons.user_utils import CERTIFICATION_VERIFIED
 
 
@@ -188,7 +189,7 @@ def get_resource_response(resources, format, items, user, request=None):
             'resources': [get_resource_group_data(group, user, request) for group in resources],
             'items': items,
         }
-        response = HttpResponse(json_encode(data), mimetype='application/json; charset=UTF-8')
+        response = HttpResponse(simplejson.dumps(data), mimetype='application/json; charset=UTF-8')
         return response
     elif format == 'xml':
         response = get_xml_description(resources, user)
@@ -207,7 +208,7 @@ def get_tag_response(resource, user, format):
         tag = {}
         tag_data_list = get_tag_data(resource, user.id)
         tag['tagList'] = tag_data_list
-        return HttpResponse(json_encode(tag), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(tag), mimetype='application/json; charset=UTF-8')
     elif format == 'xml':
         response = '<?xml version="1.0" encoding="UTF-8" ?>\n'
         response += get_tags_by_resource(resource, user)
@@ -223,7 +224,7 @@ def get_vote_response(resource, user, format):
         vote = {}
         vote_data = get_vote_data(resource, user)
         vote['voteData'] = vote_data
-        return HttpResponse(json_encode(vote), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(vote), mimetype='application/json; charset=UTF-8')
     elif format == 'xml':
         response = '<?xml version="1.0" encoding="UTF-8" ?>\n'
         response += get_vote_by_resource(resource, user)

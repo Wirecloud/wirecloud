@@ -42,7 +42,6 @@ from commons import http_utils
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.service import Service
-from commons.utils import json_encode
 from packageCloner import PackageCloner
 from packageLinker import PackageLinker
 from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
@@ -170,7 +169,7 @@ class WorkspaceCollection(Resource):
             'reloadShowcase': reload_showcase,
         }
 
-        return HttpResponse(json_encode(data_list), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(data_list), mimetype='application/json; charset=UTF-8')
 
     @commit_on_http_success
     @supported_request_mime_types(('application/x-www-form-urlencoded', 'application/json'))
@@ -302,7 +301,7 @@ class TabCollection(Resource):
             # Returning created Ids
             ids = {'id': tab.id, 'name': tab.name}
 
-            return HttpResponse(json_encode(ids), mimetype='application/json; charset=UTF-8')
+            return HttpResponse(simplejson.dumps(ids), mimetype='application/json; charset=UTF-8')
 
         except Exception, e:
             msg = _("tab cannot be created: ") + unicode(e)
@@ -350,7 +349,7 @@ class TabEntry(Resource):
         tab = get_object_or_404(Tab, workspace__users__id=request.user.id, workspace__pk=workspace_id, pk=tab_id)
         tab_data = get_tab_data(tab)
 
-        return HttpResponse(json_encode(tab_data), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(tab_data), mimetype='application/json; charset=UTF-8')
 
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id):
@@ -452,7 +451,7 @@ class WorkspaceVariableCollection(Resource):
                 variables_to_notify += set_variable_value(igVar['id'], request.user, igVar['value'])
 
             data = {'iwidgetVars': variables_to_notify}
-            return HttpResponse(json_encode(data), mimetype='application/json; charset=UTF-8')
+            return HttpResponse(simplejson.dumps(data), mimetype='application/json; charset=UTF-8')
 
         except Exception, e:
             msg = _("cannot update variables: ") + unicode(e)
@@ -473,7 +472,7 @@ class WorkspaceMergerEntry(Resource):
         to_workspace = packageCloner.merge_workspaces(from_ws, to_ws, request.user)
 
         result = {'result': 'ok', 'merged_workspace_id': to_workspace.id}
-        return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
 
 class WorkspaceSharerEntry(Resource):
@@ -486,14 +485,14 @@ class WorkspaceSharerEntry(Resource):
         except Workspace.DoesNotExist:
             msg = 'The workspace does not exist!'
             result = {'result': 'error', 'description': msg}
-            HttpResponseServerError(json_encode(result), mimetype='application/json; charset=UTF-8')
+            HttpResponseServerError(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
         owner = workspace.creator
 
         if (owner != request.user):
             msg = 'You are not the owner of the workspace, so you can not share it!'
             result = {'result': 'error', 'description': msg}
-            return HttpResponseForbidden(json_encode(result), mimetype='application/json; charset=UTF-8')
+            return HttpResponseForbidden(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
         #Everything right!
         if 'groups' not in request.REQUEST:
@@ -507,7 +506,7 @@ class WorkspaceSharerEntry(Resource):
             url = request.build_absolute_uri(workspace_path + '?' + urlencode({u'view': 'viewer'}))
 
             result = {"result": "ok", "url": url}
-            return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
+            return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
         else:
             #Share only with the scpecified groups
             try:
@@ -526,7 +525,7 @@ class WorkspaceSharerEntry(Resource):
 
                 raise TracedServerError(e, groups, request, msg)
             result = {"result": "ok"}
-            return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
+            return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
     @no_cache
     def read(self, request, workspace_id):
@@ -545,7 +544,7 @@ class WorkspaceSharerEntry(Resource):
 
             groups.append(data)
 
-        return HttpResponse(json_encode(groups), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(groups), mimetype='application/json; charset=UTF-8')
 
 
 class WorkspaceLinkerEntry(Resource):
@@ -557,7 +556,7 @@ class WorkspaceLinkerEntry(Resource):
         linkWorkspace(request.user, workspace_id)
 
         result = {"result": "ok"}
-        return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
 
 class WorkspaceClonerEntry(Resource):
@@ -568,7 +567,7 @@ class WorkspaceClonerEntry(Resource):
 
         cloned_workspace = cloneWorkspace(workspace_id, request.user)
         result = {'result': 'ok', 'new_workspace_id': cloned_workspace.id}
-        return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
 
 class MashupMergeService(Service):
@@ -598,7 +597,7 @@ class MashupMergeService(Service):
         fillWorkspaceUsingTemplate(to_ws, template)
 
         result = {'result': 'ok', 'workspace_id': to_ws_id}
-        return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
 
 class MashupImportService(Service):
@@ -635,7 +634,7 @@ class MashupImportService(Service):
 
         workspace_data = get_global_workspace_data(workspace, request.user)
 
-        return HttpResponse(json_encode(workspace_data.get_data()), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(workspace_data.get_data()), mimetype='application/json; charset=UTF-8')
 
 
 def check_json_fields(json, fields):
@@ -684,9 +683,9 @@ class WorkspacePublisherEntry(Resource):
         if len(errors) == 0:
             return HttpResponse(status=201)
         elif len(errors) == len(mashup['marketplaces']):
-            return HttpResponse(json_encode(errors), status=502, mimetype='application/json; charset=UTF-8')
+            return HttpResponse(simplejson.dumps(errors), status=502, mimetype='application/json; charset=UTF-8')
         else:
-            return HttpResponse(json_encode(errors), status=200, mimetype='application/json; charset=UTF-8')
+            return HttpResponse(simplejson.dumps(errors), status=200, mimetype='application/json; charset=UTF-8')
 
 
 class WorkspaceExportService(Service):

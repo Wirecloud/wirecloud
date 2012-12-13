@@ -31,7 +31,6 @@ from django.utils.translation import ugettext as _
 from commons import http_utils
 from commons.resource import Resource
 from commons.service import Service
-from commons.utils import json_encode
 from wirecloud.commons.utils.http import supported_request_mime_types
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.platform.markets.utils import get_market_managers
@@ -54,7 +53,7 @@ class MarketCollection(Resource):
             else:
                 result[market_key]['user'] = None
 
-        return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
     @method_decorator(login_required)
     @supported_request_mime_types(('application/json'))
@@ -142,6 +141,6 @@ class PublishService(Service):
         if len(errors) == 0:
             return HttpResponse(status=204)
         elif len(errors) == len(data['marketplaces']):
-            return HttpResponse(json_encode(errors), status=502, mimetype='application/json; charset=UTF-8')
+            return HttpResponse(simplejson.dumps(errors), status=502, mimetype='application/json; charset=UTF-8')
         else:
-            return HttpResponse(json_encode(errors), status=200, mimetype='application/json; charset=UTF-8')
+            return HttpResponse(simplejson.dumps(errors), status=200, mimetype='application/json; charset=UTF-8')

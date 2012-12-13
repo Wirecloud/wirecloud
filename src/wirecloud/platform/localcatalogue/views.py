@@ -6,6 +6,7 @@ from django.db import IntegrityError
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django.utils import simplejson
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 
@@ -15,7 +16,6 @@ from wirecloud.catalogue.views import iframe_error
 from commons import http_utils
 from commons.get_data import get_widget_data
 from commons.resource import Resource
-from commons.utils import json_encode
 from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
 from wirecloud.commons.utils.template import TemplateParseException, TemplateParser
 from wirecloud.commons.utils.transaction import commit_on_http_success
@@ -125,7 +125,7 @@ class ResourceCollection(Resource):
             local_resource.users.add(request.user)
             data = get_widget_data(local_resource, request)
             data['type'] = 'widget'
-            return HttpResponse(json_encode((data,)), mimetype='application/json; charset=UTF-8')
+            return HttpResponse(simplejson.dumps((data,)), mimetype='application/json; charset=UTF-8')
 
         elif resource.resource_type() == 'mashup':
             resources = [json.loads(resource.json_description)]
@@ -143,7 +143,7 @@ class ResourceCollection(Resource):
                 operator = get_or_add_resource_from_available_marketplaces(*op_id_args)
                 resources.append(json.loads(operator.json_description))
 
-            return HttpResponse(json_encode(resources), mimetype='application/json; charset=UTF-8')
+            return HttpResponse(simplejson.dumps(resources), mimetype='application/json; charset=UTF-8')
 
         else:  # Mashups and Operators
             return HttpResponse('[' + resource.json_description + ']', mimetype='application/json; charset=UTF-8')
@@ -174,7 +174,7 @@ class ResourceEntry(Resource):
 
                 widget.delete()
 
-            return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
+            return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
         else:
             return HttpResponse(status=204)

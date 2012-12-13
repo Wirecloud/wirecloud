@@ -31,9 +31,9 @@
 from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.models import Group
+from django.utils import simplejson
 
 from wirecloud.catalogue.models import Category
-from commons.utils import json_encode
 
 
 def is_anonymous(request):
@@ -73,10 +73,10 @@ def tag_categories(request):
     root = _get_Category_Info(None, userOrgs)
     categories = root['children']
 
-    return {'tag_categories': json_encode(categories)}
+    return {'tag_categories': simplejson.dumps(categories)}
 
 
 def ezweb_organizations(request):
     """Organizations available in Wirecloud"""
     queryGroups = Group.objects.exclude(name__startswith="cert__").order_by('name')
-    return {'ezweb_organizations': json_encode([g.name for g in queryGroups])}
+    return {'ezweb_organizations': simplejson.dumps([g.name for g in queryGroups])}

@@ -67,7 +67,6 @@ from commons import http_utils
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.user_utils import get_verified_certification_group
-from commons.utils import json_encode
 from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
@@ -453,7 +452,7 @@ class ResourceVersionCollection(Resource):
                 g["lastVersionURL"] = latest_resource_version.template_uri
                 result.append(g)
 
-        return HttpResponse(json_encode({'resources': result}),
+        return HttpResponse(simplejson.dumps({'resources': result}),
                             mimetype='application/json; charset=UTF-8')
 
 

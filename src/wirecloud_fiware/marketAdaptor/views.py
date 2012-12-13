@@ -19,11 +19,13 @@
 
 
 import json
+
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django.utils import simplejson
+
 from wirecloud_fiware.marketAdaptor.marketadaptor import MarketAdaptor
 from commons.resource import Resource
-from commons.utils import json_encode
 from wirecloud.platform.models import Market
 
 
@@ -40,7 +42,7 @@ class ServiceCollection(Resource):
         except:
             return HttpResponse(status=502)
 
-        return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
     def create(self, request, marketplace, store):
 
@@ -93,7 +95,7 @@ class ServiceSearchCollection(Resource):
         except:
             return HttpResponse(status=502)
 
-        return HttpResponse(json_encode(result), mimetype='application/json; chaset=UTF-8')
+        return HttpResponse(simplejson.dumps(result), mimetype='application/json; chaset=UTF-8')
 
 
 class AllStoresServiceCollection(Resource):
@@ -117,7 +119,7 @@ class AllStoresServiceCollection(Resource):
         except:
             return HttpResponse(status=502)
 
-        return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
 
 class StoreCollection(Resource):
@@ -135,7 +137,7 @@ class StoreCollection(Resource):
         except:
             return HttpResponse(status=502)
 
-        return HttpResponse(json_encode(result), mimetype='application/json; chaset=UTF-8')
+        return HttpResponse(simplejson.dumps(result), mimetype='application/json; chaset=UTF-8')
 
     def create(self, request, marketplace):
 
