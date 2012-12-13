@@ -43,14 +43,12 @@ from django.utils.translation import ugettext as _
 from django.views.static import serve
 
 from commons import http_utils
-from commons.authentication import Http403
 from commons.cache import no_cache, patch_cache_headers
 from commons.utils import get_xml_error, json_encode
 from commons.get_data import get_widget_data
-from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 
-from wirecloud.commons.utils.http import get_absolute_reverse_url, get_current_domain
+from wirecloud.commons.utils.http import build_error_response, get_absolute_reverse_url, get_current_domain
 from wirecloud.commons.utils.template import TemplateParseException, TemplateParser
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.platform.iwidget.utils import deleteIWidget
@@ -61,38 +59,23 @@ from wirecloud.platform.workspace.utils import create_published_workspace_from_t
 
 
 def parseAndCreateWidget(request, user, workspaceId, fromWGT):
-    try:
 
-        templateURL = None
+    templateURL = None
 
-        if 'url' in request.POST:
-            templateURL = request.POST['url']
-        elif 'template_uri' in request.POST:
-            templateURL = request.POST['template_uri']
-        else:
-            msg = _("Missing template URL parameter")
-            raise Exception(msg)
+    if 'url' in request.POST:
+        templateURL = request.POST['url']
+    elif 'template_uri' in request.POST:
+        templateURL = request.POST['template_uri']
+    else:
+        msg = _("Missing template URL parameter")
+        raise Exception(msg)
 
-        if not workspaceId:
-            msg = _("Missing workspaceId parameter")
-            raise Exception(msg)
+    if not workspaceId:
+        msg = _("Missing workspaceId parameter")
+        raise Exception(msg)
 
-        #get or create the Widget
-        return get_or_create_widget(templateURL, user, workspaceId, request, fromWGT)
-
-    except TemplateParseException, e:
-        msg = _("Error parsing the template: %(msg)s" % {"msg": e.msg})
-        raise TracedServerError(e, {'url': templateURL}, request, msg)
-    except IntegrityError, e:
-        msg = _("Widget already exists")
-        raise TracedServerError(e, {'url': templateURL}, request, msg)
-    except IOError, e:
-        msg = _("The url is not accesible")
-        raise TracedServerError(e, {'url': templateURL}, request, msg)
-    except Http403:
-        raise
-    except Exception, e:
-        raise TracedServerError(e, {'url': templateURL}, request, str(e))
+    # get or create the Widget
+    return get_or_create_widget(templateURL, user, workspaceId, request, fromWGT)
 
 
 def deleteWidget(user, name, vendor, version):
@@ -137,7 +120,17 @@ class WidgetCollection(Resource):
             return HttpResponseServerError(json, mimetype='application/json; charset=UTF-8')
 
         #create the widget
-        widget = parseAndCreateWidget(request, request.user, request.POST['workspaceId'], request.POST.get('packaged', False) == 'true')
+        try:
+            widget = parseAndCreateWidget(request, request.user, request.POST['workspaceId'], request.POST.get('packaged', False) == 'true')
+        except TemplateParseException, e:
+            msg = _("Error parsing the template: %(msg)s" % {"msg": e.msg})
+            return build_error_response(request, 400, msg)
+        except IntegrityError, e:
+            msg = _("Widget already exists")
+            return build_error_response(request, 409, msg)
+        except IOError, e:
+            msg = _("The url is not accesible")
+            return build_error_response(request, 502, msg)
 
         return HttpResponse(json_encode(get_widget_data(widget, request)), mimetype='application/json; charset=UTF-8')
 
