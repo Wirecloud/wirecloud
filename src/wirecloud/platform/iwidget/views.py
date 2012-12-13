@@ -31,7 +31,7 @@
 #
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse
 from django.utils import simplejson
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
@@ -40,10 +40,7 @@ from django.shortcuts import get_object_or_404
 from commons.authentication import Http403
 from commons.cache import no_cache
 from commons.get_data import VariableValueCacheManager, get_iwidget_data, get_variable_data
-from commons.http_utils import PUT_parameter
-from commons.logs_exception import TracedServerError
 from commons.resource import Resource
-from commons.utils import get_xml_error
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.http import build_error_response, supported_request_mime_types
 from wirecloud.platform.iwidget.utils import SaveIWidget, UpdateIWidget, UpgradeIWidget, deleteIWidget
@@ -67,28 +64,22 @@ class IWidgetCollection(Resource):
         return HttpResponse(simplejson.dumps(data_list), mimetype='application/json; charset=UTF-8')
 
     @method_decorator(login_required)
+    @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def create(self, request, workspace_id, tab_id):
 
-        if 'iwidget' not in request.POST:
-            return HttpResponseBadRequest(get_xml_error(_("iWidget JSON expected")), mimetype='application/xml; charset=UTF-8')
-
-        # Data checking and parsing
         try:
-            iwidget = simplejson.loads(request.POST['iwidget'])
-        except:
-            return HttpResponseBadRequest(get_xml_error(_('iWidget data is not valid JSON')))
+            data = simplejson.loads(request.raw_post_data)
+        except simplejson.JSONDecodeError, e:
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
 
-        initial_variable_values = None
-        if 'variable_values' in request.POST:
-            try:
-                initial_variable_values = simplejson.loads(request.POST['variable_values'])
-            except:
-                return HttpResponseBadRequest(get_xml_error(_('variables_values must be a valid JSON value')))
+        iwidget = data['iwidget']
+        initial_variable_values = data.get('variable_values', None)
 
         # iWidget creation
+        tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
         try:
-            tab = Tab.objects.get(workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
             iwidget = SaveIWidget(iwidget, request.user, tab, initial_variable_values)
             iwidget_data = get_iwidget_data(iwidget, request.user, tab.workspace)
 
@@ -96,16 +87,7 @@ class IWidgetCollection(Resource):
         except Widget.DoesNotExist, e:
             msg = _('referred widget %(widget_uri)s does not exist.') % {'widget_uri': iwidget['widget']}
 
-            raise TracedServerError(e, {'iwidget': iwidget, 'user': request.user, 'tab': tab}, request, msg)
-
-        except Workspace.DoesNotExist, e:
-            msg = _('referred workspace %(workspace_id)s does not exist.') % {'workspace_id': workspace_id}
-
-            raise TracedServerError(e, {'workspace': workspace_id}, request, msg)
-        except Exception, e:
-            msg = _("iWidget cannot be created: ") + unicode(e)
-
-            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
+            raise build_error_response(request, 400, msg)
 
     @method_decorator(login_required)
     @supported_request_mime_types(('application/json',))
@@ -139,28 +121,20 @@ class IWidgetEntry(Resource):
         return HttpResponse(simplejson.dumps(iwidget_data), mimetype='application/json; charset=UTF-8')
 
     @method_decorator(login_required)
+    @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id, iwidget_id):
 
-        received_json = PUT_parameter(request, 'iwidget')
-
-        if not received_json:
-            return HttpResponseBadRequest(get_xml_error(_("iWidget JSON expected")), mimetype='application/xml; charset=UTF-8')
-
         try:
-            iwidget = simplejson.loads(received_json)
-            tab = Tab.objects.get(workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
-            UpdateIWidget(iwidget, request.user, tab)
+            iwidget = simplejson.loads(request.raw_post_data)
+        except simplejson.JSONDecodeError, e:
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
 
-            return HttpResponse('ok')
-        except Tab.DoesNotExist, e:
-            msg = _('referred tab %(tab_id)s does not exist.') % {'tab_id': tab_id}
+        tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
+        UpdateIWidget(iwidget, request.user, tab)
 
-            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
-        except Exception, e:
-            msg = _("iWidgets cannot be updated: ") + unicode(e)
-
-            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
+        return HttpResponse(status=204)
 
     @method_decorator(login_required)
     @commit_on_http_success
@@ -171,12 +145,13 @@ class IWidgetEntry(Resource):
 
         deleteIWidget(iwidget, request.user)
 
-        return HttpResponse('ok')
+        return HttpResponse(status=204)
 
 
 class IWidgetVersion(Resource):
 
     @method_decorator(login_required)
+    @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id, iwidget_id):
 
@@ -184,45 +159,31 @@ class IWidgetVersion(Resource):
         if workspace.creator != request.user:
             raise Http403()
 
-        content_type = request.META.get('CONTENT_TYPE', '')
-        if content_type == None:
-            content_type = ''
-
-        if content_type.startswith('application/json'):
-            received_json = request.raw_post_data
-        else:
-            received_json = PUT_parameter(request, 'iwidget')
-
-        if not received_json:
-            return HttpResponseBadRequest(get_xml_error(_("iWidget JSON expected")), mimetype='application/xml; charset=UTF-8')
-
         try:
-            data = simplejson.loads(received_json)
-            iwidget_pk = data.get('id')
+            data = simplejson.loads(request.raw_post_data)
+        except simplejson.JSONDecodeError, e:
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
 
-            # get the iWidget object
-            iwidget = get_object_or_404(IWidget, pk=iwidget_pk)
+        iwidget_pk = data.get('id')
 
-            new_version = data.get('newVersion')
-            if workspace.is_shared():
-                users = UserWorkspace.objects.filter(workspace=workspace).values_list('user', flat=True)
-            else:
-                users = [request.user]
+        # get the iWidget object
+        iwidget = get_object_or_404(IWidget, pk=iwidget_pk)
 
-            if not 'source' in data or data.get('source') == 'catalogue':
-                widget = get_or_add_widget_from_catalogue(iwidget.widget.vendor, iwidget.widget.name, new_version, request.user, request, assign_to_users=users)
-            elif data.get('source') == 'showcase':
-                widget = get_and_add_widget(iwidget.widget.vendor, iwidget.widget.name, new_version, users)
+        new_version = data.get('newVersion')
+        if workspace.is_shared():
+            users = UserWorkspace.objects.filter(workspace=workspace).values_list('user', flat=True)
+        else:
+            users = [request.user]
 
-            UpgradeIWidget(iwidget, request.user, widget)
+        if not 'source' in data or data.get('source') == 'catalogue':
+            widget = get_or_add_widget_from_catalogue(iwidget.widget.vendor, iwidget.widget.name, new_version, request.user, request, assign_to_users=users)
+        elif data.get('source') == 'showcase':
+            widget = get_and_add_widget(iwidget.widget.vendor, iwidget.widget.name, new_version, users)
 
-            return HttpResponse('ok')
-        except Exception, e:
-            msg = unicode(e)
+        UpgradeIWidget(iwidget, request.user, widget)
 
-            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
-
-        return
+        return HttpResponse(status=204)
 
 
 class IWidgetVariableCollection(Resource):
@@ -238,38 +199,27 @@ class IWidgetVariableCollection(Resource):
         return HttpResponse(simplejson.dumps(vars_data), mimetype='application/json; charset=UTF-8')
 
     @method_decorator(login_required)
+    @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id, iwidget_id):
 
-        received_json = PUT_parameter(request, 'variables')
-
-        # Gets JSON parameter from request
-        if not received_json:
-            return HttpResponseBadRequest(get_xml_error(_("iWidget variables JSON expected")), mimetype='application/xml; charset=UTF-8')
-
         try:
-            received_variables = simplejson.loads(received_json)
+            received_variables = simplejson.loads(request.raw_post_data)
+        except simplejson.JSONDecodeError, e:
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
 
-            tab = Tab.objects.get(workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
-            server_variables = Variable.objects.filter(iwidget__tab=tab)
+        tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
+        server_variables = Variable.objects.filter(iwidget__tab=tab)
 
-            # Widget variables collection update
-            for varServer in server_variables:
-                for varJSON in received_variables:
-                    if (varServer.vardef.pk == varJSON['pk'] and varServer.iwidget.pk == varJSON['iWidget']):
-                        varServer.value = varJSON['value']
-                        varServer.save()
+        # Widget variables collection update
+        for varServer in server_variables:
+            for varJSON in received_variables:
+                if (varServer.vardef.pk == varJSON['pk'] and varServer.iwidget.pk == varJSON['iWidget']):
+                    varServer.value = varJSON['value']
+                    varServer.save()
 
-        except Tab.DoesNotExist, e:
-            msg = _('referred tab %(tab_id)s does not exist.') % {'tab_id': tab_id}
-
-            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id, 'iwidget': iwidget_id}, request, msg)
-        except Exception, e:
-            msg = _("iwidget varaible cannot be updated: ") + unicode(e)
-
-            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id, 'iwidget': iwidget_id}, request, msg)
-
-        return HttpResponse("<ok>", mimetype='text/xml; charset=UTF-8')
+        return HttpResponse(status=204)
 
 
 class IWidgetVariable(Resource):
@@ -288,25 +238,19 @@ class IWidgetVariable(Resource):
         return self.update(request, workspace_id, tab_id, iwidget_id, var_id)
 
     @method_decorator(login_required)
+    @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id, iwidget_id, var_id):
 
-        received_json = PUT_parameter(request, 'value')
-
-        # Gets value parameter from request
-        if not received_json:
-            return HttpResponseBadRequest(get_xml_error(_("iWidget JSON expected")), mimetype='application/xml; charset=UTF-8')
-
-        new_value = received_json
-
-        tab = Tab.objects.get(workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
-        variable = get_object_or_404(Variable, iwidget__tab=tab, iwidget__pk=iwidget_id, vardef__pk=var_id)
         try:
-            variable.value = new_value
-            variable.save()
-        except Exception, e:
-            msg = _("iwidget varaible cannot be updated: ") + unicode(e)
+            new_value = simplejson.loads(request.raw_post_data)
+        except simplejson.JSONDecodeError, e:
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
 
-            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id, 'iwidget': iwidget_id, 'variable': var_id}, request, msg)
+        tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
+        variable = get_object_or_404(Variable, iwidget__tab=tab, iwidget__pk=iwidget_id, vardef__pk=var_id)
+        variable.value = new_value
+        variable.save()
 
-        return HttpResponse('ok')
+        return HttpResponse(status=204)

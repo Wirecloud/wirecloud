@@ -353,11 +353,6 @@ IWidget.prototype.toggleTransparency = function () {
     this.transparency = !this.transparency;
 
     //Persist the new state
-    var iwidgetData = Object.toJSON({
-        transparency: this.transparency,
-        id: this.id
-    });
-    var params = {'iwidget': iwidgetData};
     var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
         workspace_id: this.layout.dragboard.workspaceId,
         tab_id: this.layout.dragboard.tabId,
@@ -365,7 +360,11 @@ IWidget.prototype.toggleTransparency = function () {
     });
     Wirecloud.io.makeRequest(iwidgetUrl, {
         method: 'PUT',
-        parameters: params,
+        contentType: 'application/json',
+        postBody: Object.toJSON({
+            transparency: this.transparency,
+            id: this.id
+        }),
         onSuccess: onSuccess,
         onFailure: onError
     });
@@ -793,11 +792,6 @@ IWidget.prototype.setName = function (iwidgetName) {
         this.widgetMenu.setAttribute("title", iwidgetName);
         this.iwidgetNameHTMLElement.update(this.name);
         this.iwidgetIconNameHTMLElement.update(this.name);
-        var iwidgetData = Object.toJSON({
-            name: iwidgetName,
-            id: this.id
-        });
-        var params = {'iwidget': iwidgetData};
         var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
             workspace_id: this.layout.dragboard.workspaceId,
             tab_id: this.layout.dragboard.tabId,
@@ -805,7 +799,11 @@ IWidget.prototype.setName = function (iwidgetName) {
         });
         Wirecloud.io.makeRequest(iwidgetUrl, {
             method: 'PUT',
-            parameters: params,
+            contentType: 'application/json',
+            postBody: Object.toJSON({
+                name: iwidgetName,
+                id: this.id
+            }),
             onSuccess: onSuccess.bind(this),
             onFailure: onError.bind(this)
         });
@@ -869,11 +867,6 @@ IWidget.prototype.setRefusedVersion = function (v) {
     this.refusedVersion = v;
     $("version_button_" + this.id).hide();
 
-    var iwidgetData = Object.toJSON({
-        refused_version: this.refusedVersion.text,
-        id: this.id
-    });
-    var params = {'iwidget': iwidgetData};
     var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
         workspace_id: this.layout.dragboard.workspaceId,
         tab_id: this.layout.dragboard.tabId,
@@ -881,7 +874,11 @@ IWidget.prototype.setRefusedVersion = function (v) {
     });
     Wirecloud.io.makeRequest(iwidgetUrl, {
         method: 'PUT',
-        parameters: params,
+        contentType: 'application/json',
+        parameters: Object.toJSON({
+            refused_version: this.refusedVersion.text,
+            id: this.id
+        }),
         onFailure: onError.bind(this)
     });
 };
@@ -997,7 +994,6 @@ IWidget.prototype.remove = function (orderFromServer) {
     this.element = null;
 
     if (!orderFromServer) {
-        var onSuccess = function () {};
         var onError = function (transport, e) {
             var msg, logManager;
 
@@ -1518,21 +1514,23 @@ IWidget.prototype.save = function (options) {
     });
 
     var data = Object.toJSON({
-        'widget': this.widget.getId(),
-        'left': this.position.x,
-        'top': this.position.y,
-        'icon_left': this.iconPosition.x,
-        'icon_top': this.iconPosition.y,
-        'zIndex': this.zPos,
-        'width': this.contentWidth,
-        'height': this.contentHeight,
-        'name': this.name,
-        'layout': this.onFreeLayout() ? 1 : 0
+        'iwidget': {
+            'widget': this.widget.getId(),
+            'left': this.position.x,
+            'top': this.position.y,
+            'icon_left': this.iconPosition.x,
+            'icon_top': this.iconPosition.y,
+            'zIndex': this.zPos,
+            'width': this.contentWidth,
+            'height': this.contentHeight,
+            'name': this.name,
+            'layout': this.onFreeLayout() ? 1 : 0
+        }
     });
-    data = {iwidget: data};
     Wirecloud.io.makeRequest(url, {
         method: 'POST',
-        parameters: data,
+        contentType: 'application/json',
+        postBody: data,
         onSuccess: onSuccess.bind(this),
         onFailure: onError.bind(this),
         onException: onError.bind(this)
@@ -1680,6 +1678,7 @@ IWidget.prototype.moveToLayout = function (newLayout) {
         });
         Wirecloud.io.makeRequest(url, {
             method: 'PUT',
+            contentType: 'application/json',
             postBody: Object.toJSON(data),
             onSuccess: onSuccess.bind(this),
             onFailure: onError.bind(this),
