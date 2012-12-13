@@ -22,6 +22,7 @@ import os
 import codecs
 from shutil import rmtree
 import stat
+import sys
 from tempfile import mkdtemp
 import time
 from urllib2 import URLError, HTTPError
@@ -242,6 +243,7 @@ class WirecloudRemoteTestCase(object):
             element = self.driver
 
         WebDriverWait(self.driver, timeout).until(lambda driver: element.find_element_by_css_selector(selector).is_displayed())
+        time.sleep(0.1)
         return element.find_element_by_css_selector(selector)
 
     def wait_wirecloud_ready(self, start_timeout=30, timeout=30):
@@ -306,15 +308,19 @@ class WirecloudRemoteTestCase(object):
             menu_item = self.get_popup_menu_item(item)
             self.assertIsNone(menu_item)
 
-    def add_wgt_widget_to_catalogue(self, wgt_file, widget_name):
+    def add_packaged_resource_to_catalogue(self, wgt_file, widget_name, shared=False):
+
+        if shared:
+            wgt_path = os.path.join(self.shared_test_data_dir, wgt_file)
+        else:
+            wgt_path = os.path.join(self.test_data_dir, wgt_file)
 
         self.change_main_view('marketplace')
         catalogue_base_element = self.get_current_catalogue_base_element()
 
         self.perform_market_action('Upload')
-        time.sleep(2)
 
-        catalogue_base_element.find_element_by_class_name('wgt_file').send_keys(self.wgt_dir + os.sep + wgt_file)
+        self.wait_element_visible_by_css_selector('.wgt_file', element=catalogue_base_element).send_keys(wgt_path)
         catalogue_base_element.find_element_by_class_name('upload_wgt_button').click()
         self.wait_wirecloud_ready()
 
@@ -684,7 +690,8 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
     @classmethod
     def setUpClass(cls):
 
-        cls.wgt_dir = os.path.join(os.path.dirname(__file__), 'test-data')
+        cls.shared_test_data_dir = os.path.join(os.path.dirname(__file__), 'test-data')
+        cls.test_data_dir = os.path.join(os.path.dirname(sys.modules[cls.__module__].__file__), 'test-data')
 
         cls.old_LANGUAGES = settings.LANGUAGES
         cls.old_LANGUAGE_CODE = settings.LANGUAGE_CODE
@@ -740,7 +747,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         super(WirecloudSeleniumTestCase, cls).tearDownClass()
 
     def setUp(self):
-        wgt_file = WgtFile(os.path.join(self.wgt_dir, 'Wirecloud_Test_1.0.wgt'))
+        wgt_file = WgtFile(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_1.0.wgt'))
         showcase.create_widget_from_wgt(wgt_file, None, deploy_only=True)
 
         cache.clear()

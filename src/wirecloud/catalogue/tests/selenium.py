@@ -11,16 +11,16 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login()
 
-        self.add_wgt_widget_to_catalogue('Morfeo_Calendar_Viewer.wgt', 'Calendar Viewer')
-        self.add_wgt_widget_to_catalogue('Morfeo_Cliente_Correo.wgt', 'Cliente Correo')
-        self.add_wgt_widget_to_catalogue('Morfeo_FeedList.wgt', 'Feed List')
-        self.add_wgt_widget_to_catalogue('Morfeo_FeedReader.wgt', 'Feed Reader')
+        self.add_packaged_resource_to_catalogue('Morfeo_Calendar_Viewer.wgt', 'Calendar Viewer', shared=True)
+        self.add_packaged_resource_to_catalogue('Morfeo_Cliente_Correo.wgt', 'Cliente Correo', shared=True)
+        self.add_packaged_resource_to_catalogue('Morfeo_FeedList.wgt', 'Feed List', shared=True)
+        self.add_packaged_resource_to_catalogue('Morfeo_FeedReader.wgt', 'Feed Reader', shared=True)
 
     def test_widgets_are_deletable_by_the_uploader(self):
 
         self.login('normuser', 'admin')
 
-        self.add_wgt_widget_to_catalogue('Morfeo_Calendar_Viewer.wgt', 'Calendar Viewer')
+        self.add_packaged_resource_to_catalogue('Morfeo_Calendar_Viewer.wgt', 'Calendar Viewer', shared=True)
         self.delete_resource('Calendar Viewer')
 
     def test_reinstall_widget_to_catalog_wgt(self):
@@ -28,7 +28,7 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.login()
 
         self.delete_resource('Test')
-        resource = self.add_wgt_widget_to_catalogue('Wirecloud_Test_1.0.wgt', 'Test')
+        resource = self.add_packaged_resource_to_catalogue('Wirecloud_Test_1.0.wgt', 'Test', shared=True)
         self.instantiate(resource)
 
     def test_add_widget_to_catalogue_xml(self):
