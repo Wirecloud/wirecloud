@@ -100,8 +100,3 @@ def download_http_content(url, params=None, user=None, headers={}):
     data = params and urlencode(params) or None
     request = urllib2.Request(url, data, headers)
     return urllib2.urlopen(request).read()
-
-
-def PUT_parameter(request, parameter_name):
-    # Checking GET and POST space!
-    return request.POST[parameter_name]
