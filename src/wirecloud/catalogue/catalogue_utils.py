@@ -220,17 +220,15 @@ def get_tag_response(resource, user, format):
 def get_vote_response(resource, user, format):
     """Obtains the vote related to a resource and a user encoded in the properly format (json or xml)."""
 
-    if format == 'json' or format == 'default':
+    if format == 'application/json':
         vote = {}
         vote_data = get_vote_data(resource, user)
         vote['voteData'] = vote_data
         return HttpResponse(simplejson.dumps(vote), mimetype='application/json; charset=UTF-8')
-    elif format == 'xml':
+    elif format == 'application/xml':
         response = '<?xml version="1.0" encoding="UTF-8" ?>\n'
         response += get_vote_by_resource(resource, user)
         return HttpResponse(response, mimetype='text/xml; charset=UTF-8')
-    else:
-        return HttpResponseServerError(get_xml_error(_("Invalid format. Format must be either xml or json")), mimetype='application/xml; charset=UTF-8')
 
 
 def get_all_resource_versions(vendor, name):

@@ -66,6 +66,7 @@ from commons.cache import no_cache
 from commons import http_utils
 from commons.resource import Resource
 from commons.user_utils import get_verified_certification_group
+from wirecloud.commons.utils import mimeparser
 from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
@@ -367,10 +368,16 @@ class ResourceTagCollection(Resource):
 class ResourceVoteCollection(Resource):
 
     @method_decorator(login_required)
-    @commit_on_http_success
     @supported_request_mime_types(('application/x-www-form-urlencoded', 'application/json'))
+    @commit_on_http_success
     def create(self, request, vendor, name, version):
-        format = request.GET.get('format', 'default')
+
+        formats = ('application/json', 'application/xml')
+
+        if request.META.get('HTTP_X_REQUESTED_WITH', '') == 'XMLHttpRequest':
+            mimetype = 'application/json; charset=utf-8'
+        else:
+            mimetype = mimeparser.best_match(formats, request.META.get('HTTP_ACCEPT', ''))
 
         # Get the vote from the request
         content_type = get_content_type(request)[0]
@@ -389,28 +396,45 @@ class ResourceVoteCollection(Resource):
         UserVote.objects.create(vote=vote, idUser=request.user, idResource=resource)
         update_resource_popularity(resource)
 
-        return get_vote_response(resource, request.user, format)
+        return get_vote_response(resource, request.user, mimetype)
 
     @no_cache
     def read(self, request, vendor, name, version):
-        format = request.GET.get('format', 'default')
+
+        formats = ('application/json', 'application/xml')
+
+        if request.META.get('HTTP_X_REQUESTED_WITH', '') == 'XMLHttpRequest':
+            mimetype = 'application/json; charset=utf-8'
+        else:
+            mimetype = mimeparser.best_match(formats, request.META.get('HTTP_ACCEPT', ''))
 
         # Get the resource's id for those vendor, name and version
         resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
 
-        return get_vote_response(resource, request.user, format)
+        return get_vote_response(resource, request.user, mimetype)
 
     @method_decorator(login_required)
+    @supported_request_mime_types(('application/x-www-form-urlencoded', 'application/json'))
     @commit_on_http_success
     def update(self, request, vendor, name, version):
 
-        try:
-            format = http_utils.PUT_parameter(request, 'format')
-        except KeyError:
-            format = 'default'
+        formats = ('application/json', 'application/xml')
+
+        if request.META.get('HTTP_X_REQUESTED_WITH', '') == 'XMLHttpRequest':
+            mimetype = 'application/json; charset=utf-8'
+        else:
+            mimetype = mimeparser.best_match(formats, request.META.get('HTTP_ACCEPT', ''))
 
         # Get the vote from the request
-        vote = http_utils.PUT_parameter(request, 'vote')
+        content_type = get_content_type(request)[0]
+        if content_type == 'application/json':
+            try:
+                vote = simplejson.loads(request.raw_post_data)['vote']
+            except Exception, e:
+                msg = _("malformed json data: %s") % unicode(e)
+                return build_error_response(request, 400, msg)
+        else:
+            vote = request.POST.get('vote')
 
         # Get the resource's id for those vendor, name and version
         resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
@@ -422,7 +446,7 @@ class ResourceVoteCollection(Resource):
 
         update_resource_popularity(resource)
 
-        return get_vote_response(resource, request.user, format)
+        return get_vote_response(resource, request.user, mimetype)
 
 
 class ResourceVersionCollection(Resource):
