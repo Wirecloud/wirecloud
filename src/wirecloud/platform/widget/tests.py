@@ -13,11 +13,11 @@ from django.test import TransactionTestCase, Client
 from django.utils.unittest import TestCase
 
 from commons import http_utils
-from commons.get_data import get_widget_data
 from wirecloud.commons.test import FakeDownloader, LocalizedTestCase
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 from wirecloud.platform import plugins
+from wirecloud.platform.get_data import get_widget_data
 import wirecloud.platform.widget.utils
 from wirecloud.platform.models import Widget
 from wirecloud.platform.widget.utils import create_widget_from_template, create_widget_from_wgt, fix_widget_code, get_or_add_widget_from_catalogue

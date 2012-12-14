@@ -75,7 +75,7 @@ def createTab(tab_name, user, workspace, allow_renaming=False):
     else:
         tab.save()
 
-    from commons.get_data import _invalidate_cached_variable_values
+    from wirecloud.platform.get_data import _invalidate_cached_variable_values
     _invalidate_cached_variable_values(workspace)
 
     return tab
@@ -144,7 +144,7 @@ def set_variable_value(var_id, user, value):
     variable_value.value = new_value
     variable_value.save()
 
-    from commons.get_data import _invalidate_cached_variable_values
+    from wirecloud.platform.get_data import _invalidate_cached_variable_values
     _invalidate_cached_variable_values(variable_value.variable.iwidget.tab.workspace, user)
 
     return variables_to_notify

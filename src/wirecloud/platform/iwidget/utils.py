@@ -121,7 +121,7 @@ def SaveIWidget(iwidget, user, tab, initial_variable_values):
             initial_value = None
         addIWidgetVariable(new_iwidget, varDef, initial_value)
 
-    from commons.get_data import _invalidate_cached_variable_values
+    from wirecloud.platform.get_data import _invalidate_cached_variable_values
     _invalidate_cached_variable_values(new_iwidget.tab.workspace)
 
     return new_iwidget
@@ -219,7 +219,7 @@ def UpdateIWidget(iwidget, user, tab):
     # save the changes
     position.save()
 
-    from commons.get_data import _invalidate_cached_variable_values
+    from wirecloud.platform.get_data import _invalidate_cached_variable_values
     _invalidate_cached_variable_values(ig.tab.workspace)
 
 

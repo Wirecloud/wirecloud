@@ -46,12 +46,12 @@ from django.views.static import serve
 from commons import http_utils
 from commons.cache import no_cache, patch_cache_headers
 from commons.utils import get_xml_error
-from commons.get_data import get_widget_data
 from commons.resource import Resource
 
 from wirecloud.commons.utils.http import build_error_response, get_absolute_reverse_url, get_current_domain
 from wirecloud.commons.utils.template import TemplateParseException, TemplateParser
 from wirecloud.commons.utils.transaction import commit_on_http_success
+from wirecloud.platform.get_data import get_widget_data
 from wirecloud.platform.iwidget.utils import deleteIWidget
 from wirecloud.platform.models import Widget, IWidget
 import wirecloud.platform.widget.utils as showcase_utils

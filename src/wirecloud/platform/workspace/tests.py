@@ -11,8 +11,8 @@ from django.core.urlresolvers import reverse
 from django.test import Client
 from django.utils import simplejson
 
-from commons.get_data import get_global_workspace_data
 from wirecloud.commons.test import WirecloudTestCase
+from wirecloud.platform.get_data import get_global_workspace_data
 from wirecloud.platform.models import Widget, IWidget, Tab, UserWorkspace, Variable, VariableValue, Workspace
 from wirecloud.platform.iwidget.utils import SaveIWidget, deleteIWidget
 from wirecloud.platform.workspace.packageCloner import PackageCloner

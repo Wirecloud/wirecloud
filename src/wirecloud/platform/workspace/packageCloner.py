@@ -341,7 +341,7 @@ class PackageCloner:
             for related_tuple in related_tuples:
                 self.clone_tuple(related_tuple)
 
-        from commons.get_data import _invalidate_cached_variable_values
+        from wirecloud.platform.get_data import _invalidate_cached_variable_values
         _invalidate_cached_variable_values(to_ws)
 
         return to_ws

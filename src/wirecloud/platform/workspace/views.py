@@ -36,7 +36,6 @@ from django.utils.translation import ugettext as _
 from django.utils.http import urlencode
 
 from commons.cache import no_cache
-from commons.get_data import get_workspace_data, get_global_workspace_data, get_tab_data
 from commons import http_utils
 from commons.resource import Resource
 from commons.service import Service
@@ -45,6 +44,7 @@ from packageLinker import PackageLinker
 from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.transaction import commit_on_http_success
+from wirecloud.platform.get_data import get_workspace_data, get_global_workspace_data, get_tab_data
 from wirecloud.platform.iwidget.utils import deleteIWidget
 from wirecloud.platform.models import Category, IWidget, PublishedWorkspace, Tab, UserWorkspace, VariableValue, Workspace
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_template_from_workspace
@@ -252,7 +252,7 @@ class WorkspaceEntry(Resource):
             deleteIWidget(iwidget, request.user)
         workspace.delete()
 
-        from commons.get_data import _invalidate_cached_variable_values
+        from wirecloud.platform.get_data import _invalidate_cached_variable_values
         _invalidate_cached_variable_values(workspace)
 
         # Set a new active workspace (first workspace by default)
@@ -313,7 +313,7 @@ class TabCollection(Resource):
             tab.position = order.index(tab.id)
             tab.save()
 
-        from commons.get_data import _invalidate_cached_variable_values
+        from wirecloud.platform.get_data import _invalidate_cached_variable_values
         _invalidate_cached_variable_values(workspace)
 
         return HttpResponse(status=204)
@@ -362,7 +362,7 @@ class TabEntry(Resource):
 
         tab.save()
 
-        from commons.get_data import _invalidate_cached_variable_values
+        from wirecloud.platform.get_data import _invalidate_cached_variable_values
         _invalidate_cached_variable_values(workspace)
 
         return HttpResponse(status=204)

@@ -14,12 +14,12 @@ from wirecloud.catalogue.utils import add_widget_from_wgt, add_resource_from_tem
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.views import iframe_error
 from commons import http_utils
-from commons.get_data import get_widget_data
 from commons.resource import Resource
 from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
 from wirecloud.commons.utils.template import TemplateParseException, TemplateParser
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
+from wirecloud.platform.get_data import get_widget_data
 from wirecloud.platform.models import Widget, IWidget
 from wirecloud.platform.localcatalogue.utils import get_or_add_resource_from_available_marketplaces
 from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue, create_widget_from_template, create_widget_from_wgt

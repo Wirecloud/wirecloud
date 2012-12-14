@@ -99,7 +99,7 @@ class IWidget(models.Model):
         self.tab.workspace.wiringStatus = json.dumps(wiring, ensure_ascii=False)
         self.tab.workspace.save()
 
-        from commons.get_data import _invalidate_cached_variables
+        from wirecloud.platform.get_data import _invalidate_cached_variables
         _invalidate_cached_variables(self)
 
         super(IWidget, self).delete(*args, **kwargs)

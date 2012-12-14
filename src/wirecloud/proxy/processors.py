@@ -5,7 +5,7 @@ from django.utils.http import urlquote
 from django.utils.importlib import import_module
 from django.core.exceptions import ImproperlyConfigured
 
-from commons.get_data import get_variable_value_from_varname
+from wirecloud.platform.get_data import get_variable_value_from_varname
 from wirecloud.proxy.utils import check_empty_params, check_invalid_refs
 
 

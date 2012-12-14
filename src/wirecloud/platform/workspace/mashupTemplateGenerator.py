@@ -25,7 +25,7 @@ from lxml import etree
 
 from django.conf import settings
 
-from commons.get_data import get_variable_value_from_varname
+from wirecloud.platform.get_data import get_variable_value_from_varname
 from wirecloud.platform.models import IWidget, Tab, TabPreference, WorkspacePreference
 
 
