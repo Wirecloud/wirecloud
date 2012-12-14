@@ -110,13 +110,11 @@ function Widget(widget_, url_, options_) {
         }
 
         var workspaceId_ = OpManagerFactory.getInstance().getActiveWorkspaceId();
-        // Post Widget to PersistenceEngine. Asyncrhonous call!
-        // params: url of the template, id of the current workspace to check if it is shared
-        // and with who it is shared.
         var params = {url: url_, workspaceId: workspaceId_, packaged: options_.packaged};
         Wirecloud.io.makeRequest(Wirecloud.URLs.WIDGET_COLLECTION, {
             method: 'POST',
-            parameters: params,
+            contentType: 'application/json',
+            postBody: Object.toJSON(params),
             onSuccess: loadWidget,
             onFailure: onError,
             onException: onError

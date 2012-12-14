@@ -43,7 +43,6 @@ from django.utils.encoding import iri_to_uri
 from django.utils.http import urlquote
 from django.utils.translation import ugettext as _
 
-from commons.logs_exception import TracedServerError
 from wirecloud.commons.utils.http import build_error_response
 from wirecloud.proxy.processors import get_request_proxy_processors, get_response_proxy_processors
 from wirecloud.proxy.utils import is_valid_header, ValidationError
@@ -231,7 +230,7 @@ class Proxy():
 
         except Exception, e:
             msg = _("Error processing proxy request: %s") % unicode(e)
-            raise TracedServerError(e, None, request, msg)
+            return build_error_response(request, 500, msg)
 
 
 WIRECLOUD_PROXY = Proxy()

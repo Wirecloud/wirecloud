@@ -64,7 +64,6 @@ from wirecloud.catalogue.utils import add_widget_from_wgt, add_resource_from_tem
 from wirecloud.catalogue.utils import tag_resource
 from commons.cache import no_cache
 from commons import http_utils
-from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.user_utils import get_verified_certification_group
 from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
@@ -334,13 +333,7 @@ class ResourceTagCollection(Resource):
 
         # Insert the tags for these resource and user in the database
         for e in handler._tags:
-            try:
-                tag_resource(request.user, e, resource)
-            except Exception, ex:
-                msg = _("Error tagging resource!!")
-
-                raise TracedServerError(ex, {'resource': vendor + name + version, 'tags': tags_xml},
-                                        request, msg)
+            tag_resource(request.user, e, resource)
 
         return get_tag_response(resource, request.user, format)
 

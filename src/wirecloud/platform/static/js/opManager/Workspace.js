@@ -352,7 +352,7 @@ function Workspace (workspaceState) {
     }
 
     Workspace.prototype.rename = function rename(name) {
-        var layoutManager, workspaceUrl, params, msg = null;
+        var layoutManager, workspaceUrl, msg = null;
 
         name = name.strip()
 
@@ -374,10 +374,10 @@ function Workspace (workspaceState) {
         layoutManager.logSubTask(msg);
 
         workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({workspace_id: this.workspaceState.id});
-        params = {'workspace': Object.toJSON({name: name})};
         Wirecloud.io.makeRequest(workspaceUrl, {
             method: 'PUT',
-            parameters: params,
+            contentType: 'application/json',
+            postBody: Object.toJSON({name: name}),
             onSuccess: function () {
                 var state, layoutManager = LayoutManagerFactory.getInstance();
 
@@ -529,7 +529,7 @@ function Workspace (workspaceState) {
     }
 
     Workspace.prototype.addTab = function() {
-        var layoutManager, msg, counter, prefixName, tabName, url, params;
+        var layoutManager, msg, counter, prefixName, tabName, url;
 
         if (!this.isValid()) {
             return;
@@ -549,12 +549,10 @@ function Workspace (workspaceState) {
             tabName = prefixName + " " + (counter++).toString();
         }
         url = Wirecloud.URLs.TAB_COLLECTION.evaluate({workspace_id: this.workspaceState.id});
-        params = {
-            tab: Object.toJSON({name: tabName})
-        };
         Wirecloud.io.makeRequest(url, {
             method: 'POST',
-            parameters: params,
+            contentType: 'application/json',
+            postBody: Object.toJSON({name: tabName}),
             onSuccess: createTabSuccess.bind(this),
             onFailure: createTabError,
             onException: createTabError,
@@ -802,10 +800,10 @@ function Workspace (workspaceState) {
      */
     this.markAsActive = function () {
         var workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': this.workspaceState.id});
-        var params = {'workspace': Object.toJSON({active: "true"})};
         Wirecloud.io.makeRequest(workspaceUrl, {
             method: 'PUT',
-            parameters: params,
+            contentType: 'application/json',
+            postBody: Object.toJSON({active: "true"}),
             onSuccess: this.markAsActiveSuccess.bind(this),
             onFailure: this.markAsActiveError.bind(this)
         });

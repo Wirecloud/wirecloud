@@ -123,7 +123,8 @@
 
         Wirecloud.io.makeRequest(Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION, {
             method: 'POST',
-            parameters: {'template_uri': url, packaged: !!options.packaged, force_create: !!options.forceCreate},
+            contentType: 'application/json',
+            postBody: Object.toJSON({'template_uri': url, packaged: !!options.packaged, force_create: !!options.forceCreate}),
             onSuccess: function (transport) {
                 var i, id, resources_data, resource_data;
 

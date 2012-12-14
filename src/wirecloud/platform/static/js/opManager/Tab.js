@@ -150,10 +150,10 @@
 
         this.markAsVisible = function markAsVisible() {
             var tabUrl = Wirecloud.URLs.TAB_ENTRY.evaluate({'workspace_id': this.workspace.workspaceState.id, 'tab_id': this.tabInfo.id});
-            var params = {'tab': Object.toJSON({visible: "true"})};
             Wirecloud.io.makeRequest(tabUrl, {
                 method: 'POST',
-                parameters: params,
+                contentType: 'application/json',
+                parameters: Object.toJSON({visible: "true"}),
                 onSuccess: this.markAsVisibleSuccess,
                 onFailure: this.markAsVisibleError,
                 onException: this.markAsVisibleError
@@ -193,7 +193,7 @@
      * NOTE: rename conflicts with StyledElements.Tab.rename
      */
     Tab.prototype.updateInfo = function updateInfo(tabName) {
-        var layoutManager, tabUrl, params, msg = null;
+        var layoutManager, tabUrl, msg = null;
 
         tabName = tabName.strip();
 
@@ -215,10 +215,10 @@
         layoutManager.logSubTask(msg);
 
         tabUrl = Wirecloud.URLs.TAB_ENTRY.evaluate({'workspace_id': this.workspace.workspaceState.id, 'tab_id': this.tabInfo.id});
-        params = {'tab': Object.toJSON({'name': tabName})};
         Wirecloud.io.makeRequest(tabUrl, {
             method: 'PUT',
-            parameters: params,
+            contentType: 'application/json',
+            postBody: Object.toJSON({'name': tabName}),
             onSuccess: renameSuccess.bind({tab: this, newName: tabName}),
             onFailure: renameError,
             onException: renameError,

@@ -28,8 +28,7 @@ import urlparse
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib.auth.models import Group, User
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseServerError
-from django.http import HttpResponseForbidden, Http404
+from django.http import HttpResponse, HttpResponseForbidden, Http404
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.utils.decorators import method_decorator
@@ -39,7 +38,6 @@ from django.utils.http import urlencode
 from commons.cache import no_cache
 from commons.get_data import get_workspace_data, get_global_workspace_data, get_tab_data
 from commons import http_utils
-from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.service import Service
 from packageCloner import PackageCloner
@@ -155,14 +153,7 @@ class WorkspaceCollection(Resource):
     @no_cache
     def read(self, request):
 
-        try:
-
-            workspaces, _junk, reload_showcase = get_workspace_list(request.user)
-
-        except Exception, e:
-            msg = _("error reading workspace: ") + unicode(e)
-
-            raise TracedServerError(e, "bad creation of default workspaces", request, msg)
+        workspaces, _junk, reload_showcase = get_workspace_list(request.user)
 
         data_list = {
             'workspaces': [get_workspace_data(workspace, request.user) for workspace in workspaces],
@@ -171,8 +162,8 @@ class WorkspaceCollection(Resource):
 
         return HttpResponse(simplejson.dumps(data_list), mimetype='application/json; charset=UTF-8')
 
-    @commit_on_http_success
     @supported_request_mime_types(('application/x-www-form-urlencoded', 'application/json'))
+    @commit_on_http_success
     def create(self, request):
 
         content_type = get_content_type(request)[0]
@@ -205,38 +196,33 @@ class WorkspaceEntry(Resource):
 
         return workspace_data.get_response()
 
+    @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id):
 
-        received_json = http_utils.PUT_parameter(request, 'workspace')
-
-        if not received_json:
-            return build_error_response(request, 400, _("workspace JSON expected"))
-
         try:
-            ts = simplejson.loads(received_json)
-            workspace = Workspace.objects.get(users__id=request.user.id, pk=workspace_id)
-
-            if 'active' in ts:
-                active = ts['active']
-                if (active == 'true'):
-                    #Only one active workspace
-                    setActiveWorkspace(request.user, workspace)
-                else:
-                    currentUserWorkspace = UserWorkspace.objects.get(workspace=workspace, user=request.user)
-                    currentUserWorkspace.active = True
-                    currentUserWorkspace.save()
-
-            if 'name' in ts:
-                workspace.name = ts['name']
-
-            workspace.save()
-
-            return HttpResponse('ok')
+            ts = simplejson.loads(request.raw_post_data)
         except Exception, e:
-            msg = _("workspace cannot be updated: ") + unicode(e)
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
 
-            raise TracedServerError(e, ts, request, msg)
+        workspace = Workspace.objects.get(users__id=request.user.id, pk=workspace_id)
+
+        if 'active' in ts:
+            if ts['active'] == 'true':
+                #Only one active workspace
+                setActiveWorkspace(request.user, workspace)
+            else:
+                currentUserWorkspace = UserWorkspace.objects.get(workspace=workspace, user=request.user)
+                currentUserWorkspace.active = True
+                currentUserWorkspace.save()
+
+        if 'name' in ts:
+            workspace.name = ts['name']
+
+        workspace.save()
+
+        return HttpResponse(status=204)
 
     @commit_on_http_success
     def delete(self, request, workspace_id):
@@ -257,7 +243,7 @@ class WorkspaceEntry(Resource):
         if workspaces.count() == 0:
             msg = _("workspace cannot be deleted")
 
-            raise TracedServerError(None, {'workspace': workspace_id}, request, msg)
+            raise build_error_response(request, 409, msg)
 
         # Remove the workspace
         PublishedWorkspace.objects.filter(workspace=workspace).update(workspace=None)
@@ -278,36 +264,30 @@ class WorkspaceEntry(Resource):
 
 class TabCollection(Resource):
 
+    @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def create(self, request, workspace_id):
 
-        if 'tab' not in request.POST:
-            return build_error_response(request, 400, _("tab JSON expected"))
-
-        #TODO we can make this with deserializers (simplejson)
-        received_json = request.POST['tab']
-
         try:
-            t = simplejson.loads(received_json)
-
-            if 'name' not in t:
-                raise Exception(_('Malformed tab JSON: expecting tab name.'))
-
-            tab_name = t['name']
-            workspace = Workspace.objects.get(users__id=request.user.id, pk=workspace_id)
-
-            tab = createTab(tab_name, request.user, workspace)
-
-            # Returning created Ids
-            ids = {'id': tab.id, 'name': tab.name}
-
-            return HttpResponse(simplejson.dumps(ids), mimetype='application/json; charset=UTF-8')
-
+            data = simplejson.loads(request.raw_post_data)
         except Exception, e:
-            msg = _("tab cannot be created: ") + unicode(e)
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
 
-            raise TracedServerError(e, t, request, msg)
+        if 'name' not in data:
+            return build_error_response(request, 400, _('Malformed tab JSON: expecting tab name.'))
 
+        tab_name = data['name']
+        workspace = Workspace.objects.get(users__id=request.user.id, pk=workspace_id)
+
+        tab = createTab(tab_name, request.user, workspace)
+
+        # Returning created Ids
+        ids = {'id': tab.id, 'name': tab.name}
+
+        return HttpResponse(simplejson.dumps(ids), mimetype='application/json; charset=UTF-8')
+
+    @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id):
 
@@ -321,25 +301,22 @@ class TabCollection(Resource):
         if workspace.creator != request.user or user_workspace.manager != '':
             return HttpResponseForbidden()
 
-        received_json = http_utils.PUT_parameter(request, 'order')
         try:
-            order = simplejson.loads(received_json)
-
-            tabs = Tab.objects.filter(id__in=order)
-
-            for tab in tabs:
-                tab.position = order.index(tab.id)
-                tab.save()
-
-            from commons.get_data import _invalidate_cached_variable_values
-            _invalidate_cached_variable_values(workspace)
-
-            return HttpResponse(status=204)
-
+            order = simplejson.loads(request.raw_post_data)
         except Exception, e:
-            msg = _("tab order cannot be updated: ") + unicode(e)
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
 
-            raise TracedServerError(e, received_json, request, msg)
+        tabs = Tab.objects.filter(id__in=order)
+
+        for tab in tabs:
+            tab.position = order.index(tab.id)
+            tab.save()
+
+        from commons.get_data import _invalidate_cached_variable_values
+        _invalidate_cached_variable_values(workspace)
+
+        return HttpResponse(status=204)
 
 
 class TabEntry(Resource):
@@ -351,13 +328,9 @@ class TabEntry(Resource):
 
         return HttpResponse(simplejson.dumps(tab_data), mimetype='application/json; charset=UTF-8')
 
+    @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id):
-
-        received_json = http_utils.PUT_parameter(request, 'tab')
-
-        if not received_json:
-            return build_error_response(request, 400, _("tab JSON expected"))
 
         tabs = Tab.objects.select_related('workspace')
         try:
@@ -371,29 +344,28 @@ class TabEntry(Resource):
             return HttpResponseForbidden()
 
         try:
-            t = simplejson.loads(received_json)
-
-            if 'visible' in t:
-                visible = t['visible']
-                if (visible == 'true'):
-                    #Only one visible tab
-                    setVisibleTab(request.user, workspace_id, tab)
-                else:
-                    tab.visible = False
-
-            if 'name' in t:
-                tab.name = t['name']
-
-            tab.save()
-
-            from commons.get_data import _invalidate_cached_variable_values
-            _invalidate_cached_variable_values(workspace)
-
-            return HttpResponse(status=204)
+            data = simplejson.loads(request.raw_post_data)
         except Exception, e:
-            msg = _("tab cannot be updated: ") + unicode(e)
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
 
-            raise TracedServerError(e, received_json, request, msg)
+        if 'visible' in data:
+            visible = data['visible']
+            if (visible == 'true'):
+                #Only one visible tab
+                setVisibleTab(request.user, workspace_id, tab)
+            else:
+                tab.visible = False
+
+        if 'name' in data:
+            tab.name = data['name']
+
+        tab.save()
+
+        from commons.get_data import _invalidate_cached_variable_values
+        _invalidate_cached_variable_values(workspace)
+
+        return HttpResponse(status=204)
 
     @commit_on_http_success
     def delete(self, request, workspace_id, tab_id):
@@ -421,42 +393,27 @@ class TabEntry(Resource):
         activeTab = tabs[0]
         setVisibleTab(request.user, workspace_id, activeTab)
 
-        return HttpResponse('ok')
+        return HttpResponse(status=204)
 
 
 class WorkspaceVariableCollection(Resource):
 
+    @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id):
 
-        content_type = request.META.get('CONTENT_TYPE', '')
-        if content_type is None:
-            content_type = ''
-
-        if content_type.startswith('application/json'):
-            received_json = request.raw_post_data
-        else:
-            received_json = http_utils.PUT_parameter(request, 'variables')
-
-        if not received_json:
-            return build_error_response(request, 400, _("variables JSON expected"))
-
         try:
-            variables = simplejson.loads(received_json)
-
-            iwidgetVariables = variables['iwidgetVars']
-
-            variables_to_notify = []
-            for igVar in iwidgetVariables:
-                variables_to_notify += set_variable_value(igVar['id'], request.user, igVar['value'])
-
-            data = {'iwidgetVars': variables_to_notify}
-            return HttpResponse(simplejson.dumps(data), mimetype='application/json; charset=UTF-8')
-
+            iwidgetVariables = simplejson.loads(request.raw_post_data)
         except Exception, e:
-            msg = _("cannot update variables: ") + unicode(e)
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
 
-            raise TracedServerError(e, received_json, request, msg)
+        variables_to_notify = []
+        for igVar in iwidgetVariables:
+            variables_to_notify += set_variable_value(igVar['id'], request.user, igVar['value'])
+
+        data = {'iwidgetVars': variables_to_notify}
+        return HttpResponse(simplejson.dumps(data), mimetype='application/json; charset=UTF-8')
 
 
 class WorkspaceMergerEntry(Resource):
@@ -480,22 +437,16 @@ class WorkspaceSharerEntry(Resource):
     @commit_on_http_success
     def update(self, request, workspace_id, share_boolean):
 
-        try:
-            workspace = Workspace.objects.get(id=workspace_id)
-        except Workspace.DoesNotExist:
-            msg = 'The workspace does not exist!'
-            result = {'result': 'error', 'description': msg}
-            HttpResponseServerError(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
-
+        workspace = get_object_or_404(Workspace.objects.get(id=workspace_id))
         owner = workspace.creator
 
-        if (owner != request.user):
+        if owner != request.user:
             msg = 'You are not the owner of the workspace, so you can not share it!'
             result = {'result': 'error', 'description': msg}
             return HttpResponseForbidden(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
         #Everything right!
-        if 'groups' not in request.REQUEST:
+        if request.raw_post_data == '':
             #Share with everybody
             #Linking with public user!
             public_user = None  # TODO
@@ -510,22 +461,21 @@ class WorkspaceSharerEntry(Resource):
         else:
             #Share only with the scpecified groups
             try:
-                groups = simplejson.loads(http_utils.PUT_parameter(request, 'groups'))
-                queryGroups = Group.objects.filter(id__in=groups)
-                for g in queryGroups:
-                    workspace.targetOrganizations.add(g)
-
-                users = User.objects.filter(groups__in=groups).distinct()
-                for user in users:
-                    #link the workspace with each user
-                    linkWorkspaceObject(user, workspace, owner, link_variable_values=True)
-
+                groups = simplejson.loads(request.raw_post_data)
             except Exception, e:
-                msg = _("workspace cannot be shared: ") + unicode(e)
+                msg = _("malformed json data: %s") % unicode(e)
+                return build_error_response(request, 400, msg)
 
-                raise TracedServerError(e, groups, request, msg)
-            result = {"result": "ok"}
-            return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
+            queryGroups = Group.objects.filter(id__in=groups)
+            for g in queryGroups:
+                workspace.targetOrganizations.add(g)
+
+            users = User.objects.filter(groups__in=groups).distinct()
+            for user in users:
+                #link the workspace with each user
+                linkWorkspaceObject(user, workspace, owner, link_variable_values=True)
+
+            return HttpResponse(status=204)
 
     @no_cache
     def read(self, request, workspace_id):
@@ -555,8 +505,7 @@ class WorkspaceLinkerEntry(Resource):
 
         linkWorkspace(request.user, workspace_id)
 
-        result = {"result": "ok"}
-        return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(status=204)
 
 
 class WorkspaceClonerEntry(Resource):
@@ -577,7 +526,12 @@ class MashupMergeService(Service):
     @commit_on_http_success
     def process(self, request, to_ws_id):
 
-        data = simplejson.loads(request.raw_post_data)
+        try:
+            data = simplejson.loads(request.raw_post_data)
+        except Exception, e:
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
+
         template_url = data['workspace']
 
         to_ws = get_object_or_404(Workspace, id=to_ws_id)
@@ -607,7 +561,12 @@ class MashupImportService(Service):
     @commit_on_http_success
     def process(self, request):
 
-        data = simplejson.loads(request.raw_post_data)
+        try:
+            data = simplejson.loads(request.raw_post_data)
+        except Exception, e:
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
+
         template_url = data['workspace']
 
         path = request.build_absolute_uri()
@@ -649,20 +608,20 @@ def check_json_fields(json, fields):
 
 class WorkspacePublisherEntry(Resource):
 
-    @commit_on_http_success
     @supported_request_mime_types(('application/json',))
+    @commit_on_http_success
     def create(self, request, workspace_id):
 
         received_json = request.raw_post_data
         try:
             mashup = simplejson.loads(received_json)
-            missing_fields = check_json_fields(mashup, ['name', 'vendor', 'version', 'email'])
-            if len(missing_fields) > 0:
-                raise Exception(_('Malformed mashup JSON. The following field(s) are missing: %(fields)s.') % {'fields': missing_fields})
-
         except Exception, e:
-            msg = _("mashup cannot be published: ") + unicode(e)
+            msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
+
+        missing_fields = check_json_fields(mashup, ['name', 'vendor', 'version', 'email'])
+        if len(missing_fields) > 0:
+            return build_error_response(request, 400, _('Malformed mashup JSON. The following field(s) are missing: %(fields)s.') % {'fields': missing_fields})
 
         workspace = get_object_or_404(Workspace, id=workspace_id)
         template = TemplateParser(build_rdf_template_from_workspace(mashup, workspace, request.user))
@@ -691,26 +650,23 @@ class WorkspacePublisherEntry(Resource):
 class WorkspaceExportService(Service):
 
     @method_decorator(user_passes_test(lambda u: u.is_authenticated() and u.username != 'public'))
+    @supported_request_mime_types(('application/json',))
     def process(self, request, workspace_id):
-
-        if 'options' not in request.POST:
-            return build_error_response(request, 400, _("exporting options expected"))
 
         workspace = get_object_or_404(Workspace, id=workspace_id)
 
         if not request.user.is_superuser and workspace.creator != request.user:
             return HttpResponseForbidden()
 
-        received_json = request.POST['options']
         try:
-            mashup = simplejson.loads(received_json)
-            missing_fields = check_json_fields(mashup, ['name', 'vendor', 'version', 'email'])
-            if len(missing_fields) > 0:
-                raise Exception(_('Malformed mashup JSON. The following field(s) are missing: %(fields)s.') % {'fields': missing_fields})
-
+            mashup = simplejson.loads(request.raw_post_data)
         except Exception, e:
-            msg = _("mashup cannot be exported: ") + unicode(e)
+            msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
+
+        missing_fields = check_json_fields(mashup, ['name', 'vendor', 'version', 'email'])
+        if len(missing_fields) > 0:
+            raise build_error_response(request, 400, _('Malformed mashup JSON. The following field(s) are missing: %(fields)s.') % {'fields': missing_fields})
 
         template = build_template_from_workspace(mashup, workspace, request.user)
         return HttpResponse(template, mimetype='application/xml; charset=UTF-8')
