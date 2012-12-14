@@ -21,7 +21,7 @@ def get_proxy_processors():
     global _wirecloud_response_proxy_processors
 
     if _wirecloud_proxy_processors is None:
-        if hasattr(settings, 'PROXY_PROCESSORS') and settings.PROXY_PROCESSORS != None:
+        if getattr(settings, 'PROXY_PROCESSORS', None) is not None:
             modules = settings.PROXY_PROCESSORS
         else:
             modules = ()
@@ -55,14 +55,14 @@ def get_proxy_processors():
 
 
 def get_request_proxy_processors():
-    if _wirecloud_proxy_processors == None:
+    if _wirecloud_proxy_processors is None:
         get_proxy_processors()
 
     return _wirecloud_request_proxy_processors
 
 
 def get_response_proxy_processors():
-    if _wirecloud_proxy_processors == None:
+    if _wirecloud_proxy_processors is None:
         get_proxy_processors()
 
     return _wirecloud_response_proxy_processors
@@ -156,6 +156,6 @@ class SecureDataProcessor(object):
         # Process secure data cookie
         cookie_parser = request['cookies']
 
-        if cookie_parser != None and 'X-EzWeb-Secure-Data' in cookie_parser:
+        if cookie_parser is not None and 'X-EzWeb-Secure-Data' in cookie_parser:
             process_secure_data(cookie_parser['X-EzWeb-Secure-Data'].value, request, ignore_errors=True)
             del cookie_parser['X-EzWeb-Secure-Data']
