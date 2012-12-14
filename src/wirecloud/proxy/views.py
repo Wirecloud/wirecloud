@@ -140,13 +140,13 @@ class Proxy():
 
             # Build the Via header
             protocolVersion = self.protocolRE.match(request.META['SERVER_PROTOCOL'])
-            if protocolVersion != None:
+            if protocolVersion is not None:
                 protocolVersion = protocolVersion.group(1)
             else:
                 protocolVersion = '1.1'
 
             hostName = self.hostRE.match(request.META['HTTP_HOST'])
-            if hostName != None:
+            if hostName is not None:
                 hostName = hostName.group(1)
             else:
                 hostName = socket.gethostname()
@@ -238,7 +238,7 @@ WIRECLOUD_PROXY = Proxy()
 
 def proxy_request(request, protocol, domain, path):
     content_type = request.META.get('CONTENT_TYPE', '')
-    if content_type == None:
+    if content_type is None:
         content_type = ''
 
     if not content_type.startswith('multipart') and '_method' in request.POST:
