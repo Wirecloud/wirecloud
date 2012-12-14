@@ -124,10 +124,6 @@ var ShowcaseFactory = function () {
             var onSuccess = function (receivedData_) {
 
                 this.parseWidgets(receivedData_);
-
-                // Showcase loaded
-                this.opManager.continueLoadingGlobalModules(Modules.prototype.SHOWCASE);
-
             }
 
             // Error callback (empty widget list)
@@ -157,18 +153,6 @@ var ShowcaseFactory = function () {
         // ****************
         // PUBLIC METHODS
         // ****************
-
-        // Add a new widget from Internet
-        Showcase.prototype.addWidget = function (vendor_, name_, version_, url_, options_) {
-            var widgetId = ['/widgets', vendor_, name_, version_].join('/');
-            var widget = this.widgets[widgetId];
-
-            if (widget == null) {
-                widget = new Widget (null, url_, options_);
-            } else {
-                this.opManager.addInstance(widgetId, options_);
-            }
-        }
 
         // Add a new parameterized widget from Internet
         // Help:
@@ -213,24 +197,6 @@ var ShowcaseFactory = function () {
 
             this.widgets[widgetId] = widget_;
             this.opManager.addInstance(widgetId, options_);
-        }
-
-        // Remove a Showcase widget
-        Showcase.prototype.deleteWidget = function (widgetId_) {
-            var widget = this.widgets[widgetId_];
-            delete this.widgets[widgetId_];
-            //widget.remove();
-        }
-
-        // Update a Showcase widget
-        Showcase.prototype.updateWidget = function (widgetId_, url_) {
-            this.remove(widgetId_);
-            this.addWidget(url_);
-        }
-
-        // Get a widget by its widgetID
-        Showcase.prototype.getWidget = function (widgetId_) {
-            return this.widgets[widgetId_];
         }
 
         //Get all the widgets name and vendor

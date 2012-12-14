@@ -260,13 +260,13 @@ var OpManagerFactory = function () {
             window.location = "/logout";
         }
 
-        OpManager.prototype.addInstance = function (widgetId, options) {
-            if (!this.loadCompleted)
+        OpManager.prototype.addInstance = function (widget, options) {
+            if (!this.loadCompleted) {
                 return;
+            }
 
-            var widget = this.showcaseModule.getWidget(widgetId);
             this.activeWorkspace.getVisibleTab().getDragboard().addInstance(widget, options);
-        }
+        };
 
         OpManager.prototype.removeInstance = function (iWidgetId, orderFromServer) {
             if (!this.loadCompleted)
@@ -359,7 +359,17 @@ var OpManagerFactory = function () {
                 preferencesManager.getPlatformPreferences().addCommitHandler(this.preferencesChanged.bind(this), 'post-commit');
                 this.showcaseModule = ShowcaseFactory.getInstance();
                 this.showcaseModule.init();
-                Wirecloud.LocalCatalogue.reload();
+                Wirecloud.LocalCatalogue.reload({
+                    onSuccess: function () {
+                        this.continueLoadingGlobalModules(Modules.prototype.SHOWCASE);
+                    }.bind(this),
+                    onFailure: function () {
+                        var msg, logManager = LogManagerFactory.getInstance();
+                        msg = logManager.formatError(gettext("Error retrieving available resources: %(errorMsg)s."), transport, e);
+                        logManager.log(msg);
+                        LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                    }
+                });
                 break;
 
             case Modules.prototype.SHOWCASE:

@@ -8,20 +8,24 @@
      * Private methods
      *************************************************************************/
 
-    var processWidget = function processWidget(widget_data) {
-        var widget, widgetId, widgetFullId;
+    var includeResource = function includeResource(resource_data) {
+        var resource, resource_id, resource_full_id;
 
-        widget = new Widget(widget_data, null);
-        widgetId = widget.getVendor() + '/' + widget.getName();
-        widgetFullId = widget.getId();
+        resource_id = resource_data.vendor + '/' + resource_data.name;
+        resource_full_id = resource_id + '/' + resource_data.version;
 
-        if (!(widgetId in this.widgetVersions)) {
-            this.widgetVersions[widgetId] = [];
+        if (resource_data.type === 'widget') {
+            resource = new Widget(resource_data, null);
+        } else {
+            resource = resource_data;
         }
-        this.widgetVersions[widgetId].push(widget);
 
-        // Insert widget object in showcase object model
-        this.widgets[widgetFullId] = widget;
+        if (!(resource_id in this.resourceVersions)) {
+            this.resourceVersions[resource_id] = [];
+        }
+
+        this.resourceVersions[resource_id].push(resource);
+        this.resources[resource_full_id] = resource;
     };
 
     var uninstallSuccessCallback = function uninstallSuccessCallback(transport) {
@@ -40,7 +44,6 @@
             }
 
             layoutManager.logSubTask(gettext('Purging widget info'));
-            ShowcaseFactory.getInstance().deleteWidget('/widgets/' + this.resource.getURI());
 
             break;
         case 'operator':
@@ -66,13 +69,27 @@
         this.onError(msg);
     };
 
-    var loadSuccessCallback = function loadFailureCallback(transport) {
-        var response = JSON.parse(transport.responseText);
+    var loadSuccessCallback = function loadFailureCallback(context, transport) {
+        var resources, resource_id;
 
-        this.resources = response;
+        resources = JSON.parse(transport.responseText);
+
+        this.resources = {};
+        this.resourceVersions = {};
+
+        for (resource_id in resources) {
+            includeResource.call(this, resources[resource_id]);
+        }
+
+        if (context.onSuccess) {
+            context.onSuccess();
+        }
     };
 
-    var loadFailureCallback = function loadFailureCallback(transport) {
+    var loadFailureCallback = function loadFailureCallback(context, transport) {
+        if (context.onError) {
+            context.onError();
+        }
     };
 
     /*************************************************************************
@@ -81,12 +98,21 @@
 
     var LocalCatalogue = new Wirecloud.WirecloudCatalogue({name: 'local'});
 
-    LocalCatalogue.reload = function reload() {
+    LocalCatalogue.reload = function reload(options) {
+
+        if (typeof options !== 'object') {
+            options = {};
+        }
+
+        var context = {
+            'onSuccess': options.onSuccess,
+            'onError': options.onError
+        };
 
         Wirecloud.io.makeRequest(Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION, {
             method: 'GET',
-            onSuccess: loadSuccessCallback.bind(this),
-            onFailure: loadFailureCallback.bind(this)
+            onSuccess: loadSuccessCallback.bind(this, context),
+            onFailure: loadFailureCallback.bind(this, context)
         });
     };
 
@@ -137,16 +163,11 @@
                         continue;
                     }
 
-                    switch (resource_data.type) {
-                    case "operator":
+                    if (resource_data.type !== "operator") {
                         Wirecloud.wiring.OperatorFactory.addOperator(resource_data);
-                        break;
-                    case "widget":
-                        processWidget.call(ShowcaseFactory.getInstance(), resource_data);
-                        break;
                     }
 
-                    this.resources[id] = resource_data;
+                    includeResource.call(this, resource_data);
                 }
 
                 if (typeof options.onSuccess === 'function') {
@@ -169,17 +190,21 @@
         });
     };
 
-    LocalCatalogue.resourceExistsId = function resourceExistsId(id) {
-        var widget;
+    LocalCatalogue.getResourceId = function getResourceId(id) {
+        return this.resources[id];
+    };
 
-        widget = ShowcaseFactory.getInstance().getWidget('/widgets/' + id);
-        return widget || id in Wirecloud.wiring.OperatorFactory.getAvailableOperators() || id in this.resources;
+    LocalCatalogue.getResource = function getResource(vendor, name, version) {
+        var id = [vendor, name, version].join('/');
+        return this.getResourceId(id);
+    };
+
+    LocalCatalogue.resourceExistsId = function resourceExistsId(id) {
+        return this.getResourceId(id) != null;
     };
 
     LocalCatalogue.resourceExists = function resourceExists(resource) {
-        var id;
-
-        id = [resource.getVendor(), resource.getName(), resource.getVersion().text].join('/');
+        var id = [resource.getVendor(), resource.getName(), resource.getVersion().text].join('/');
         return this.resourceExistsId(id);
     };
 

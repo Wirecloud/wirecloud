@@ -605,7 +605,6 @@ class USDLTemplateParser(object):
     def get_resource_uri(self):
         return '/'.join((
             '',
-            self._info['type'] + 's',
             self._info['vendor'],
             self._info['name'],
             self._info['version'],

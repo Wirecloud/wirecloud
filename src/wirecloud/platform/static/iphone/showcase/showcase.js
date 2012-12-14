@@ -101,12 +101,6 @@ var ShowcaseFactory = (function () {
         // PUBLIC METHODS
         // ****************
 
-        // Get a widget by its widgetID
-        Showcase.prototype.getWidget = function (widgetId) {
-            return private_widgets.get(widgetId);
-        };
-
-
         Showcase.prototype.init = function () {
             // Initial load from persitence system
             Wirecloud.io.makeRequest(Wirecloud.URLs.WIDGET_COLLECTION, {

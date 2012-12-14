@@ -232,7 +232,7 @@ function Dragboard(tab, workspace, dragboardElement) {
             curIWidget = tabInfo.iwidgetList[i];
 
             // Get widget model
-            widget = ShowcaseFactory.getInstance().getWidget(curIWidget.widget);
+            widget = Wirecloud.LocalCatalogue.getResourceId(curIWidget.widget);
 
             // Parse width, height and the position of the iwidget
             width = parseInt(curIWidget.width, 10);

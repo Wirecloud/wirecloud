@@ -19,7 +19,7 @@
  *
  */
 
-/*global CatalogueResource, CatalogueSearchView, Constants, Event, gettext, interpolate, LayoutManagerFactory, LogManagerFactory, Wirecloud, ShowcaseFactory, StyledElements*/
+/*global CatalogueResource, CatalogueSearchView, Constants, Event, gettext, interpolate, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud, ShowcaseFactory, StyledElements*/
 
 (function () {
 
@@ -66,16 +66,13 @@
     };
 
     CatalogueView.prototype.instantiate = function instantiate(resource) {
+
         if (resource.isMashup()) {
             // Ask if the user want to create a new workspace or merge it with the current one
             (new Wirecloud.ui.InstantiateMashupWindowMenu(resource)).show();
         } else {
-            ShowcaseFactory.getInstance().addWidget(resource.getVendor(),
-                resource.getName(),
-                resource.getVersion().text,
-                resource.getUriTemplate(),
-                {packaged: resource.isPackaged()}
-            );
+            var local_widget = Wirecloud.LocalCatalogue.getResourceId(resource.getURI());
+            OpManagerFactory.getInstance().addInstance(local_widget);
         }
     };
 

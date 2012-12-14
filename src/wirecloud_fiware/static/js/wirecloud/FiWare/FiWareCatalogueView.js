@@ -118,13 +118,8 @@
         if (resource.isMashup()) {
             (new Wirecloud.ui.InstantiateMashupWindowMenu(resource)).show();
         } else {
-            ShowcaseFactory.getInstance().addWidget(
-                resource.getVendor(),
-                resource.getName(),
-                resource.getVersion().text,
-                resource.getUriTemplate(),
-                {packaged: false}
-            );
+            var local_widget = Wirecloud.LocalCatalogue.getResourceId(resource.getURI());
+            OpManagerFactory.getInstance().addInstance(local_widget);
         }
     };
 
