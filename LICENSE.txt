@@ -1,6 +1,6 @@
                           Wirecloud LICENSE
 
-The Wirecloud platform is distributed under version 3 of GNU AFFERO 
+  The Wirecloud platform is distributed under version 3 of GNU AFFERO 
 General Public License (AGPL). The work being covered by this license is 
 limited to the Wirecloud platform, and expressly excludes the following 
 software artefacts running on top of Wirecloud: widgets, operators and 
@@ -9,7 +9,7 @@ and can be either proprietary or be covered by any other open source
 license, not necessary compatible with AGPL. This clause will prevail 
 in case of conflict.
 
-A literal transcription of the AGPL license follows:
+  A literal transcription of the AGPL license follows:
 
                     GNU AFFERO GENERAL PUBLIC LICENSE
                        Version 3, 19 November 2007
