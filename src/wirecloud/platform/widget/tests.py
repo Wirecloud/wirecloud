@@ -236,15 +236,8 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(data['js_files'][4], '/examplecode5.js')
 
     def test_widget_deletion(self):
-        template_uri = "http://example.com/path/widget.xml"
-        template = self.read_template('template1.xml')
-
-        http_utils.download_http_content.set_response(template_uri, template)
-        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
-        create_widget_from_template(template_uri, self.user)
-
-        deleteWidget(self.user, 'test', 'Morfeo', '0.1')
-        self.assertRaises(Widget.DoesNotExist, Widget.objects.get, vendor='Morfeo', name='test', version='0.1')
+        deleteWidget(self.user, 'Test Widget', 'Test', '1.0.0')
+        self.assertRaises(Widget.DoesNotExist, Widget.objects.get, vendor='Test', name='Test Widget', version='1.0.0')
 
     def test_widget_code_cache(self):
         template_uri = "http://example.com/path/widget.xml"
