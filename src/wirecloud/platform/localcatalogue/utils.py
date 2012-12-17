@@ -55,6 +55,7 @@ def install_resource_from_available_marketplaces(vendor, name, version, user):
 
     # Now search it on other marketplaces
     market_managers = get_market_managers(user)
+    resource_info = None
 
     for manager in market_managers:
 
