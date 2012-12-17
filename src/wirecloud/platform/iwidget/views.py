@@ -87,7 +87,7 @@ class IWidgetCollection(Resource):
         except Widget.DoesNotExist, e:
             msg = _('referred widget %(widget_uri)s does not exist.') % {'widget_uri': iwidget['widget']}
 
-            raise build_error_response(request, 400, msg)
+            return build_error_response(request, 400, msg)
 
     @method_decorator(login_required)
     @supported_request_mime_types(('application/json',))
