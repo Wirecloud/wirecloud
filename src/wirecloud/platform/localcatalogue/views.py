@@ -49,7 +49,7 @@ class ResourceCollection(Resource):
 
     @method_decorator(login_required)
     @iframe_error
-    @supported_request_mime_types(('application/x-www-form-urlencoded', 'multipart/form-data', 'application/octet-stream'))
+    @supported_request_mime_types(('application/x-www-form-urlencoded', 'application/json', 'multipart/form-data', 'application/octet-stream'))
     @commit_on_http_success
     def create(self, request):
 
@@ -57,6 +57,7 @@ class ResourceCollection(Resource):
         content_type = get_content_type(request)[0]
         if content_type == 'multipart/form-data':
             packaged = True
+            force_create = request.POST.get('force_create', False) == 'true'
             if not 'file' in request.FILES:
                 return build_error_response(request, 400, _('Missing file to upload'))
 
@@ -70,12 +71,23 @@ class ResourceCollection(Resource):
             wgt_file = WgtFile(downloaded_file)
             template_contents = wgt_file.get_template()
         else:
-            force_create = request.POST.get('force_create', False) == 'true'
-            packaged = request.POST.get('packaged', False) == 'true'
-            if 'url' in request.POST:
-                templateURL = request.POST['url']
-            elif 'template_uri' in request.POST:
-                templateURL = request.POST['template_uri']
+            if content_type == 'application/json':
+                try:
+                    data = simplejson.loads(request.raw_post_data)
+                except Exception, e:
+                    msg = _("malformed json data: %s") % unicode(e)
+                    return build_error_response(request, 400, msg)
+
+                force_create = data.get('force_create', False)
+                packaged = data.get('packaged', False)
+                templateURL = data.get('template_uri')
+            else:
+                force_create = request.POST.get('force_create', False) == 'true'
+                packaged = request.POST.get('packaged', False) == 'true'
+                if 'url' in request.POST:
+                    templateURL = request.POST['url']
+                elif 'template_uri' in request.POST:
+                    templateURL = request.POST['template_uri']
 
             try:
                 downloaded_file = http_utils.download_http_content(templateURL)

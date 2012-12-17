@@ -1,4 +1,4 @@
-/*global gettext, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, ShowcaseFactory, Widget, Wirecloud*/
+/*global gettext, interpolate, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, ShowcaseFactory, Widget, Wirecloud*/
 
 (function () {
 
@@ -92,6 +92,61 @@
         }
     };
 
+    var process_upload_response = function process_upload_response(response_data) {
+        var i, id, resource_data;
+
+        for (i = 0; i < response_data.length; i += 1) {
+            resource_data = response_data[i];
+            id = [resource_data.vendor, resource_data.name, resource_data.version].join('/');
+            if (this.resourceExistsId(id)) {
+                continue;
+            }
+
+            if (resource_data.type === "operator") {
+                Wirecloud.wiring.OperatorFactory.addOperator(resource_data);
+            }
+
+            includeResource.call(this, resource_data);
+        }
+    };
+
+    var check_upload_iframe_result = function check_upload_iframe_result() {
+        var doc, logManager, response_content, msg, response_data;
+
+        if (this.iframe.contentDocument) {
+            doc = this.iframe.contentDocument;
+        } else if (this.iframe.contentWindow) {
+            doc = this.iframe.contentWindow.document;
+        } else {
+            doc = window.frames[this.iframe.id].document;
+        }
+
+        if (doc.location.href === 'about:blank') {
+            return;
+        }
+
+        response_content = doc.body.textContent;
+
+        if (doc.location.href.search("error") >= 0) {
+            logManager = LogManagerFactory.getInstance();
+            msg = gettext("The resource could not be added to the catalogue: %(errorMsg)s.");
+            msg = interpolate(msg, {errorMsg: response_content}, true);
+            logManager.log(msg);
+
+            if (typeof this.onFailure === 'function') {
+                this.onFailure(msg);
+            }
+        } else if (typeof this.onSuccess === 'function') {
+
+            response_data = JSON.parse(response_content);
+            process_upload_response.call(this.catalogue, response_data);
+
+            if (typeof this.onSuccess === 'function') {
+                this.onSuccess();
+            }
+        }
+    };
+
     /*************************************************************************
      * Public methods
      *************************************************************************/
@@ -152,23 +207,10 @@
             contentType: 'application/json',
             postBody: Object.toJSON({'template_uri': url, packaged: !!options.packaged, force_create: !!options.forceCreate}),
             onSuccess: function (transport) {
-                var i, id, resources_data, resource_data;
+                var i, id, response_data, resource_data;
 
-                resources_data = JSON.parse(transport.responseText);
-
-                for (i = 0; i < resources_data.length; i += 1) {
-                    resource_data = resources_data[i];
-                    id = [resource_data.vendor, resource_data.name, resource_data.version].join('/');
-                    if (this.resourceExistsId(id)) {
-                        continue;
-                    }
-
-                    if (resource_data.type !== "operator") {
-                        Wirecloud.wiring.OperatorFactory.addOperator(resource_data);
-                    }
-
-                    includeResource.call(this, resource_data);
-                }
+                response_data = JSON.parse(transport.responseText);
+                process_upload_response.call(this, response_data);
 
                 if (typeof options.onSuccess === 'function') {
                     options.onSuccess();
@@ -188,6 +230,26 @@
                 }
             }
         });
+    };
+
+    LocalCatalogue.buildUploadIframe = function buildUploadIframe(iframe_id, onSuccess, onFailure) {
+        var context, iframe;
+
+        iframe = document.createElement('iframe');
+        iframe.frameborder = 0;
+        iframe.style.cssText = 'display:none;';
+        iframe.id = iframe.name = iframe_id;
+
+        context = {
+            catalogue: this,
+            iframe: iframe,
+            onSuccess: onSuccess,
+            onFailure: onFailure
+        };
+
+        iframe.onload = check_upload_iframe_result.bind(context);
+
+        return iframe;
     };
 
     LocalCatalogue.getResourceId = function getResourceId(id) {

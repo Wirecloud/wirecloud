@@ -90,46 +90,29 @@
         } else {
             this.wrapperElement.getElementsByClassName("wgt_upload_form")[0].action = Wirecloud.io.buildProxyURL(this.catalogue.RESOURCE_COLLECTION);
         }
-        this._iframe = this.wrapperElement.getElementsByClassName('upload')[0];
-        this._iframe.id = this._iframe.name = 'upload_' + this.mainview.altId;
-        this._iframe.onload = this._check_upload_wgt_result.bind(this);
+        this._iframe = this.catalogue.buildUploadIframe('upload_' + this.mainview.altId,
+            this._onUploadSuccess.bind(this),
+            this._onUploadFailure.bind(this));
+        this.appendChild(this._iframe);
     };
     PublishView.prototype = new StyledElements.Alternative();
 
-    PublishView.prototype._check_upload_wgt_result = function () {
-        var doc, layoutManager, logManager, msg, processed_response_data;
+    PublishView.prototype._onUploadSuccess = function _onUploadSuccess() {
+        var layoutManager = LayoutManagerFactory.getInstance();
 
-        if (this._iframe.contentDocument) {
-            doc = this._iframe.contentDocument;
-        } else if (this._iframe.contentWindow) {
-            doc = this._iframe.contentWindow.document;
-        } else {
-            doc = window.frames.upload.document;
-        }
+        layoutManager.logSubTask(gettext('Resource uploaded successfully'));
+        layoutManager.logStep('');
+        layoutManager._notifyPlatformReady();
 
-        if (doc.location.href === 'about:blank') {
-            return;
-        }
+        this.mainview.home();
+        this.mainview.refresh_search_results();
+    };
 
-        layoutManager = LayoutManagerFactory.getInstance();
+    PublishView.prototype._onUploadFailure = function _onUploadFailure(msg) {
+        var layoutManager = LayoutManagerFactory.getInstance();
 
-        doc.body.getTextContent = Element.prototype.getTextContent;
-        if (doc.location.href.search("error") >= 0) {
-            logManager = LogManagerFactory.getInstance();
-            msg = gettext("The resource could not be added to the catalogue: %(errorMsg)s.");
-            msg = interpolate(msg, {errorMsg: doc.body.getTextContent()}, true);
-
-            layoutManager._notifyPlatformReady();
-            layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-            logManager.log(msg);
-        } else {
-            layoutManager.logSubTask(gettext('Widget uploaded successfully'));
-            layoutManager.logStep('');
-            layoutManager._notifyPlatformReady();
-
-            this.mainview.home();
-            this.mainview.refresh_search_results();
-        }
+        layoutManager._notifyPlatformReady();
+        layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
     };
 
     Wirecloud.ui.WirecloudCatalogue = {};

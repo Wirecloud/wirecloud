@@ -16,12 +16,12 @@
 
             <form style="margin: 0px;" enctype="multipart/form-data" method="post" class="wgt_upload_form">
             <div>
-               <input type="hidden" value="true" name="iframe" />
+               <input type="hidden" name="iframe" value="true" />
+               <input type="hidden" name="force_create" value="true" />
                <input type="file" name="file" class="wgt_file" />
                <button class="upload_wgt_button">{% trans "Add" %}</button>
             </div>
             </form>
-            <iframe frameborder="0" style="display: none;" class="upload" name="upload"></iframe>
             <div class="clearfloats"></div>
         </div>
 
