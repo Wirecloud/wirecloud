@@ -538,6 +538,14 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(data['workspace']['tabList'][3]['name'], 'Tab 4')
         self.assertEqual(len(data['workspace']['tabList'][3]['iwidgetList']), 0)
 
+        wiring_status = json.loads(data['workspace']['wiring'])
+        self.assertEqual(len(wiring_status['operators']), 1)
+        self.assertEqual(len(wiring_status['connections']), 1)
+        self.assertEqual(wiring_status['connections'][0]['source']['type'], 'iwidget')
+        self.assertEqual(wiring_status['connections'][0]['source']['endpoint'], 'event')
+        self.assertEqual(wiring_status['connections'][0]['target']['type'], 'iwidget')
+        self.assertEqual(wiring_status['connections'][0]['target']['endpoint'], 'slot')
+
     def testComplexWorkspacesRdf(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate3, self.user)
 

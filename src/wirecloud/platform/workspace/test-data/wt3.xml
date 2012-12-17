@@ -36,7 +36,7 @@
     <Slot label="slot" type="text" friendcode="slot" name="slot"/>
     <Event label="event" type="text" friendcode="event" name="event"/>
     <Slot label="slot" type="text" friendcode="slot" name="slot"/>
-    <Operator id="1" name="Send SMS" />
+    <Operator id="1" name="Wirecloud/TestOperator/1.0" />
     <Connection>
         <Source type="iwidget" endpoint="event" id="1"/>
         <Target type="iwidget" endpoint="slot" id="2"/>
