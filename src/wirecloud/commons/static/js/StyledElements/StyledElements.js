@@ -1585,9 +1585,9 @@ StyledElements.Alternative.prototype = new StyledElements.Container({extending: 
 
 StyledElements.Alternative.prototype.setVisible = function (newStatus) {
     if (newStatus) {
-        this.events['show'].dispatch(this);
         EzWebExt.removeClassName(this.wrapperElement, "hidden");
         this.repaint(false);
+        this.events['show'].dispatch(this);
     } else {
         EzWebExt.appendClassName(this.wrapperElement, "hidden");
         this.events['hide'].dispatch(this);
