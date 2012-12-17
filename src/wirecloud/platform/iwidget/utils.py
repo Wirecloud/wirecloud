@@ -108,7 +108,8 @@ def SaveIWidget(iwidget, user, tab, initial_variable_values):
     icon_position = Position(posX=icon_left, posY=icon_top)
     icon_position.save()
 
-    widget = Widget.objects.get(uri=widget_uri, users=user)
+    (widget_vendor, widget_name, widget_version) = widget_uri.split('/')
+    widget = Widget.objects.get(vendor=widget_vendor, name=widget_name, version=widget_version, users=user)
 
     new_iwidget = IWidget(name=iwidget_name, widget=widget, tab=tab, layout=layout, position=position, icon_position=icon_position, transparency=False)
     new_iwidget.save()

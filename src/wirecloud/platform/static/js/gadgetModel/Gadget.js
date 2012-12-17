@@ -122,7 +122,7 @@ function Widget(widget_, url_, options_) {
     }
 
     this.getId = function() {
-        return '/widgets/' + this.getVendor() + '/' + this.getName() + '/' + this.getVersion().text;
+        return this.getVendor() + '/' + this.getName() + '/' + this.getVersion().text;
     }
 
     // *******************
