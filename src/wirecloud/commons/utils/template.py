@@ -368,8 +368,8 @@ class USDLTemplateParser(object):
                 id_ = self._get_field(WIRE, 'id', entity_view)
                 position = self._get_field(WIRE_M, 'hasPosition', entity_view, id_=True)
                 pos = {
-                    'posX':self._get_field(WIRE_M, 'x', position),
-                    'posY':self._get_field(WIRE_M, 'y', position)
+                    'posX': self._get_field(WIRE_M, 'x', position),
+                    'posY': self._get_field(WIRE_M, 'y', position)
                 }
                 endPointOut = {}
                 sorted_sources = sorted(self._graph.objects(entity_view, WIRE_M['hasSource']), key=lambda source: self._get_field(WIRE, 'index', source, required=False))
@@ -389,12 +389,12 @@ class USDLTemplateParser(object):
                 if type_ == 'widget':
                     element_view['iwidgets'][id_] = {
                         'widget': pos,
-                        'endPointsInOuts' :endPointOut
+                        'endPointsInOuts': endPointOut
                     }
                 elif type_ == 'operator':
                     element_view['operators'][id_] = {
                         'widget': pos,
-                        'endPointsInOuts' :endPointOut
+                        'endPointsInOuts': endPointOut
                     }
 
             wiring_views.append(element_view)
