@@ -44,13 +44,19 @@
         this.appendChild(this.alternatives);
 
         this.viewsByName = {
+            'initial': this.alternatives.createAlternative(),
             'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: {catalogue: this, resource_painter: Wirecloud.ui.ResourcePainter}}),
             'developer': this.alternatives.createAlternative({alternative_constructor: Wirecloud.ui.WirecloudCatalogue.PublishView, containerOptions: {catalogue: this.catalogue, mainview: this}}),
             'details': this.alternatives.createAlternative({alternative_constructor: Wirecloud.ui.ResourceDetailsView, containerOptions: {catalogue: this}})
         };
         this.viewsByName.search.init();
 
-        this.addEventListener('show', this.refresh_if_needed.bind(this));
+        this.addEventListener('show', function () {
+            if (this.alternatives.getCurrentAlternative() === this.viewsByName.initial) {
+                this.changeCurrentView('search');
+            }
+            this.refresh_if_needed();
+        }.bind(this));
     };
     CatalogueView.prototype = new StyledElements.Alternative();
 

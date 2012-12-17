@@ -59,10 +59,6 @@
             old_views[info].destroy();
         }
 
-        if (this.alternatives.getCurrentAlternative() === this.emptyAlternative) {
-            this.alternatives.showAlternative(this.viewsByName.local);
-        }
-
         // Refresh wirecloud header as current marketplace may have been changed
         LayoutManagerFactory.getInstance().header.refresh();
 
@@ -105,7 +101,11 @@
 
         this.addEventListener('show', function (view) {
             if (!view.loading && !view.error) {
-                view.alternatives.getCurrentAlternative().refresh_if_needed();
+                if (view.alternatives.getCurrentAlternative() === view.emptyAlternative) {
+                    view.alternatives.showAlternative(view.viewsByName.local);
+                } else {
+                    view.alternatives.getCurrentAlternative().refresh_if_needed();
+                }
             }
         });
 
@@ -123,7 +123,7 @@
         var label, breadcrum, user;
 
         user = null;
-        if (this.loading) {
+        if (this.loading || (!this.error && this.alternatives.getCurrentAlternative() === this.emptyAlternative)) {
             label = gettext('loading...');
         } else if (this.error) {
             label = gettext('list not available');
