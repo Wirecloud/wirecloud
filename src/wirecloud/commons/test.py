@@ -728,6 +728,12 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         cls.catalogue_tmp_dir = mkdtemp()
         catalogue.wgt_deployer = WgtDeployer(cls.catalogue_tmp_dir)
 
+        cls.widget_wgt_file = open(os.path.join(cls.shared_test_data_dir, 'Wirecloud_Test_1.0.wgt'))
+        cls.widget_wgt = WgtFile(cls.widget_wgt_file)
+
+        cls.operator_wgt_file = open(os.path.join(cls.shared_test_data_dir, 'Wirecloud_TestOperator_1.0.zip'), 'rb')
+        cls.operator_wgt = WgtFile(cls.operator_wgt_file)
+
         # showcase deployer
         cls.old_deployer = showcase.wgt_deployer
         cls.tmp_dir = mkdtemp()
@@ -747,6 +753,9 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         showcase.wgt_deployer = cls.old_deployer
         rmtree(cls.tmp_dir, ignore_errors=True)
 
+        cls.widget_wgt_file.close()
+        cls.operator_wgt_file.close()
+
         settings.LANGUAGES = cls.old_LANGUAGES
         settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
         settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
@@ -754,8 +763,10 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         super(WirecloudSeleniumTestCase, cls).tearDownClass()
 
     def setUp(self):
-        wgt_file = WgtFile(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_1.0.wgt'))
-        showcase.create_widget_from_wgt(wgt_file, None, deploy_only=True)
+        catalogue.add_widget_from_wgt(self.widget_wgt_file, None, wgt_file=self.widget_wgt, deploy_only=True)
+        showcase.create_widget_from_wgt(self.widget_wgt, None, deploy_only=True)
+
+        catalogue.add_widget_from_wgt(self.operator_wgt_file, None, wgt_file=self.operator_wgt, deploy_only=True)
 
         cache.clear()
         super(WirecloudSeleniumTestCase, self).setUp()

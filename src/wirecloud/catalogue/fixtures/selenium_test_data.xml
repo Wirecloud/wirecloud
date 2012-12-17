@@ -58,4 +58,29 @@
         <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
+    <object pk="16" model="catalogue.catalogueresource">
+        <field type="CharField" name="short_name">TestOperator</field>
+        <field type="CharField" name="display_name"></field>
+        <field type="CharField" name="vendor">Wirecloud</field>
+        <field type="CharField" name="version">1.0</field>
+        <field type="IntegerField" name="type">2</field>
+        <field type="BooleanField" name="ie_compatible">False</field>
+        <field type="BooleanField" name="public">False</field>
+        <field to="auth.user" name="users" rel="ManyToOneRel"><object pk="1"></object><object pk="2"></object></field>
+        <field type="CharField" name="author">admin</field>
+        <field type="CharField" name="mail">test@example.com</field>
+        <field to="auth.user" name="creator" rel="ManyToOneRel">1</field>
+        <field type="TextField" name="description">Test operator description</field>
+        <field type="CharField" name="license"><None></None></field>
+        <field type="DateTimeField" name="creation_date">2011-05-13 12:24:03</field>
+        <field type="CharField" name="image_uri">images/catalogue.png</field>
+        <field type="CharField" name="iphone_image_uri">images/catalogue_iphone.png</field>
+        <field type="CharField" name="wiki_page_uri">doc/index.html</field>
+        <field type="CharField" name="template_uri">Wirecloud_TestOperator_1.0.wgt</field>
+        <field type="TextField" name="json_description">{"default_lang": "en", "vendor": "Wirecloud", "description": "Test operator description", "code_content_type": "text/javascript", "translations": {}, "iphone_image_uri": "", "translation_index_usage": {}, "display_name": "TestOperator", "properties": [], "js_files": ["js/main.js"], "requirements": [], "preferences": [], "author": "admin", "wiring": {"slots": [{"friendcode": "test_friend_code", "actionlabel": "", "name": "input", "label": "input", "type": "text", "description": ""}], "events": [{"friendcode": "test_friend_code", "description": "", "type": "text", "name": "output", "label": "output"}]}, "name": "TestOperator", "image_uri": "images/catalogue.png", "version": "1.0", "context": [], "widget_height": "", "mail": "test@example.com", "type": "operator", "widget_width": "", "doc_uri": "doc/index.html"}</field>
+        <field to="auth.group" name="certification" rel="ManyToOneRel">1</field>
+        <field type="DecimalField" name="popularity">0.0</field>
+        <field type="BooleanField" name="fromWGT">True</field>
+        <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
+    </object>
 </django-objects>
