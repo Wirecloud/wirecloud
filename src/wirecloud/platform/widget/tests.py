@@ -124,6 +124,8 @@ class ShowcaseTestCase(LocalizedTestCase):
 
         self.changeLanguage('en')
         data = get_widget_data(widget)
+        self.assertEqual(data['uri'], 'Wirecloud/test/0.1')
+        self.assertEqual(data['vendor'], 'Wirecloud')
         self.assertEqual(data['name'], 'test')
         self.assertEqual(data['version'], '0.1')
 
@@ -154,6 +156,8 @@ class ShowcaseTestCase(LocalizedTestCase):
 
         self.changeLanguage('en')
         data = get_widget_data(widget)
+        self.assertEqual(data['uri'], 'Wirecloud/test/0.1')
+        self.assertEqual(data['vendor'], 'Wirecloud')
         self.assertEqual(data['name'], 'test')
         self.assertEqual(data['version'], '0.1')
 
@@ -249,7 +253,7 @@ class ShowcaseTestCase(LocalizedTestCase):
         client = Client()
         client.login(username='test', password='test')
         widget_id = {
-            'vendor': 'Morfeo',
+            'vendor': 'Wirecloud',
             'name': 'test',
             'version': '0.1',
         }
@@ -295,10 +299,12 @@ class ShowcaseTestCase(LocalizedTestCase):
 
         http_utils.download_http_content.set_response(template_uri, template)
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
-        widget = get_or_add_widget_from_catalogue('Morfeo', 'test', '0.1', self.user)
+        widget = get_or_add_widget_from_catalogue('Wirecloud', 'test', '0.1', self.user)
 
         self.changeLanguage('en')
         data = get_widget_data(widget)
+        self.assertEqual(data['uri'], 'Wirecloud/test/0.1')
+        self.assertEqual(data['vendor'], 'Wirecloud')
         self.assertEqual(data['name'], 'test')
         self.assertEqual(data['version'], '0.1')
 
@@ -308,7 +314,7 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(data['variables']['event']['label'], 'Event label')
         self.assertEqual(data['variables']['slot']['label'], 'Slot label')
 
-        widget2 = get_or_add_widget_from_catalogue('Morfeo', 'test', '0.1', self.user)
+        widget2 = get_or_add_widget_from_catalogue('Wirecloud', 'test', '0.1', self.user)
         self.assertEqual(widget, widget2)
 
     def test_widget_creation_from_catalogue_usdl(self):

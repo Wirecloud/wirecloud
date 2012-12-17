@@ -74,7 +74,6 @@ class XHTML(models.Model):
 
 class Widget(TransModel):
 
-    uri = models.CharField(_('URI'), max_length=500)
     vendor = models.CharField(_('Vendor'), max_length=250)
     name = models.CharField(_('Name'), max_length=250)
     version = models.CharField(_('Version'), max_length=150)
@@ -96,9 +95,13 @@ class Widget(TransModel):
     users = models.ManyToManyField(User, verbose_name=_('Users'))
     last_update = models.DateTimeField(_('Last update'), null=True)
 
+    @property
+    def uri(self):
+        return '/'.join((self.vendor, self.name, self.version))
+
     class Meta:
         unique_together = ('vendor', 'name', 'version')
-        ordering = ('uri', )
+        ordering = ('vendor', 'name', 'version')
         app_label = 'platform'
         db_table = 'wirecloud_widget'
 

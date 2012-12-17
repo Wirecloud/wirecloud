@@ -151,7 +151,7 @@ class WorkspaceTestCase(CacheTestCase):
         # Add a new iWidget to the workspace
         tab = Tab.objects.get(pk=1)
         iwidget_data = {
-            'widget': '/Test/Test Widget/1.0.0',
+            'widget': 'Test/Test Widget/1.0.0',
             'name': 'test',
             'top': 0,
             'left': 0,
@@ -210,7 +210,7 @@ class WorkspaceCacheTestCase(CacheTestCase):
 
         tab = Tab.objects.get(pk=1)
         iwidget_data = {
-            'widget': '/Test/Test Widget/1.0.0',
+            'widget': 'Test/Test Widget/1.0.0',
             'name': 'test',
             'top': 0,
             'left': 0,

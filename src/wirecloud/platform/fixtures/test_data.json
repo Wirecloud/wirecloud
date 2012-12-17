@@ -114,7 +114,6 @@
         "model": "platform.Widget",
         "pk": "1",
         "fields": {
-            "uri": "/Test/Test Widget/1.0.0",
             "vendor": "Test",
             "name": "Test Widget",
             "version": "1.0.0",

@@ -84,8 +84,6 @@ def create_widget_from_template(template, user, request=None, base=None):
 
     widget = Widget()
 
-    widget.uri = parser.get_resource_uri()
-
     widget.vendor = widget_info['vendor']
     widget.name = widget_info['name']
     widget.version = widget_info['version']

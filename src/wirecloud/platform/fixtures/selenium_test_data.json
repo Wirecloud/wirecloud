@@ -32,7 +32,6 @@
         "fields": {
             "cacheable": true,
             "url": "Wirecloud/Test/1.0/test.html",
-            "uri": "/widgets/Wirecloud/Test/1.0/xhtml",
             "code": "",
             "content_type": "text/html",
             "code_timestamp": null
@@ -47,7 +46,6 @@
             "name": "Test",
             "author": "aarranz",
             "description": "This widget is used to test some of the features of the Wirecloud platform",
-            "uri": "/widgets/Wirecloud/Test/1.0",
             "imageURI": "images/catalogue.png",
             "width": 6,
             "version": "1.0",

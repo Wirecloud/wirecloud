@@ -79,7 +79,7 @@
         "pk": 6,
         "fields": {
             "short_name": "test",
-            "vendor": "Morfeo",
+            "vendor": "Wirecloud",
             "version": "0.1",
             "author": "test",
             "mail": "test@example.com",

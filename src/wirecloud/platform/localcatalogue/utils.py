@@ -35,8 +35,11 @@ def install_resource(downloaded_file, templateURL, user, packaged):
     resource.users.add(user)
 
     if resource.resource_type() == 'widget':
-        if Widget.objects.filter(uri=template.get_resource_uri()).exists():
-            local_resource = Widget.objects.get(uri=template.get_resource_uri())
+        widget_vendor = template.get_resource_vendor()
+        widget_name = template.get_resource_name()
+        widget_version = template.get_resource_version()
+        if Widget.objects.filter(vendor=widget_vendor, name=widget_name, version=widget_version).exists():
+            local_resource = Widget.objects.get(vendor=widget_vendor, name=widget_name, version=widget_version)
         else:
             if resource.template_uri.lower().endswith('.wgt'):
                 local_resource = create_widget_from_wgt(wgt_file, user)
