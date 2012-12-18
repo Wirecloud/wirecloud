@@ -1,7 +1,9 @@
 from cStringIO import StringIO
+import os.path
 
 from django.db.models import Q
 
+from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.utils import add_widget_from_wgt, add_resource_from_template
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.platform.markets.utils import get_market_managers
@@ -41,7 +43,9 @@ def install_resource(downloaded_file, templateURL, user, packaged):
         if Widget.objects.filter(vendor=widget_vendor, name=widget_name, version=widget_version).exists():
             local_resource = Widget.objects.get(vendor=widget_vendor, name=widget_name, version=widget_version)
         else:
-            if resource.template_uri.lower().endswith('.wgt'):
+            if resource.fromWGT:
+                base_dir = catalogue.wgt_deployer.get_base_dir(resource.vendor, resource.name, resource.version)
+                wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
                 local_resource = create_widget_from_wgt(wgt_file, user)
             else:
                 local_resource = create_widget_from_template(resource.template_uri, user)

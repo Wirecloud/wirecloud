@@ -1,5 +1,6 @@
 import json
 from cStringIO import StringIO
+import os.path
 
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -15,6 +16,7 @@ from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.views import iframe_error
 from commons import http_utils
 from commons.resource import Resource
+from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
 from wirecloud.commons.utils.template import TemplateParseException, TemplateParser
 from wirecloud.commons.utils.transaction import commit_on_http_success
@@ -127,7 +129,9 @@ class ResourceCollection(Resource):
                 local_resource = Widget.objects.get(uri=template.get_resource_uri())
             else:
                 try:
-                    if packaged:
+                    if resource.fromWGT:
+                        base_dir = catalogue.wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
+                        wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
                         local_resource = create_widget_from_wgt(wgt_file, request.user)
                     else:
                         local_resource = create_widget_from_template(resource.template_uri, request.user)
