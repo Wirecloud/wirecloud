@@ -32,7 +32,6 @@
 
 from django.http import HttpResponse, HttpResponseServerError
 from django.db.models import Q
-from django.conf import settings
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
@@ -40,7 +39,6 @@ from wirecloud.catalogue.get_json_catalogue_data import get_resource_group_data,
 from wirecloud.catalogue.get_xml_catalogue_data import get_xml_description, get_tags_by_resource, get_vote_by_resource
 from wirecloud.catalogue.models import CatalogueResource, UserVote
 from commons.utils import get_xml_error
-from commons.user_utils import CERTIFICATION_VERIFIED
 
 
 def group_resources(resources):
@@ -71,13 +69,6 @@ def _valid_resource(resource, user, organization_list):
 
     if resource.public or resource.users.filter(id=user.id).exists():
         return True
-
-    if settings.CERTIFICATION_ENABLED:
-        certification_status = resource.certification
-
-        # Checking certification status!
-        if certification_status and certification_status.name != CERTIFICATION_VERIFIED and user != resource.creator:
-            return False
 
     # Checking organizations!
     resource_organizations = resource.organization.all()

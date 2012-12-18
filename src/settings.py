@@ -177,8 +177,6 @@ AUTHENTICATION_BACKENDS = (
 CATALOGUE_MEDIA_ROOT = path.join(BASEDIR, 'catalogue', 'media')
 GADGETS_DEPLOYMENT_DIR = path.join(BASEDIR, 'deployment', 'widgets')
 
-CERTIFICATION_ENABLED = False
-
 #SESSION_COOKIE_DOMAIN = '.domain'
 
 # Cache settings
