@@ -85,17 +85,13 @@ function VarManager (_workspace) {
 
         // Max lenght of buffered requests have been reached. Uploading to server!
         if (this.iwidgetModifiedVars.length > 0) {
-            var variables = {};
-
-            variables['iwidgetVars'] = this.iwidgetModifiedVars;
-
             var uri = Wirecloud.URLs.VARIABLE_COLLECTION.evaluate({workspace_id: this.workspace.getId()});
 
             var options = {
                 method: 'PUT',
                 asynchronous: async,
                 contentType: 'application/json',
-                postBody: Object.toJSON(variables),
+                postBody: Object.toJSON(this.iwidgetModifiedVars),
                 onSuccess: onSuccess.bind(this),
                 onFailure: onError.bind(this),
                 onException: onError.bind(this)

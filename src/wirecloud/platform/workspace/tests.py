@@ -187,13 +187,12 @@ class WorkspaceCacheTestCase(CacheTestCase):
     def test_variable_updating_invalidates_cache(self):
 
         client = Client()
-        put_data = {
-            'iwidgetVars': [
-                {'id': 1, 'value': 'new_password'},
-                {'id': 2, 'value': 'new_username'},
-                {'id': 4, 'value': 'new_data'},
-            ],
-        }
+        put_data = [
+            {'id': 1, 'value': 'new_password'},
+            {'id': 2, 'value': 'new_username'},
+            {'id': 4, 'value': 'new_data'},
+        ]
+
         put_data = simplejson.dumps(put_data, ensure_ascii=False).encode('utf-8')
         client.login(username='test', password='test')
         result = client.put(reverse('wirecloud.variable_collection', kwargs={'workspace_id': 1}), put_data, content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
