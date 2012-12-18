@@ -24,7 +24,7 @@ import rdflib
 from django.utils.translation import ugettext as _
 from lxml import etree
 
-from commons.translation_utils import get_trans_index
+from wirecloud.commons.utils.translation import get_trans_index
 
 
 __all__ = ('TemplateParser',)

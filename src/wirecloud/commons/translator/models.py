@@ -35,7 +35,7 @@ from django.core.cache import cache
 from django.db import models
 from django.utils.translation import get_language, ugettext as  _
 
-from commons.translation_utils import get_trans_index
+from wirecloud.commons.utils.translation import get_trans_index
 
 
 class TranslatedModel(object):
