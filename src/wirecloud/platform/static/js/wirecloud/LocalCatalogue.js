@@ -28,7 +28,7 @@
         this.resources[resource_full_id] = resource;
     };
 
-    var uninstallSuccessCallback = function uninstallSuccessCallback(transport) {
+    var uninstallOrDeleteSuccessCallback = function uninstallOrDeleteSuccessCallback(transport) {
         var layoutManager, result, opManager, i, widgetId;
 
         switch (this.resource.getType()) {
@@ -62,7 +62,18 @@
         var msg, logManager;
 
         logManager = LogManagerFactory.getInstance();
-        msg = logManager.formatError(gettext("Error deleting the Widget: %(errorMsg)s."), transport, e);
+        msg = logManager.formatError(gettext("Error uninstalling resource: %(errorMsg)s."), transport, e);
+
+        logManager.log(msg);
+
+        this.onError(msg);
+    };
+
+    var deleteErrorCallback = function deleteErrorCallback(transport, e) {
+        var msg, logManager;
+
+        logManager = LogManagerFactory.getInstance();
+        msg = logManager.formatError(gettext("Error deleting resource: %(errorMsg)s."), transport, e);
 
         logManager.log(msg);
 
@@ -190,10 +201,35 @@
         // Send request to uninstall de widget
         Wirecloud.io.makeRequest(url, {
             method: 'DELETE',
-            onSuccess: uninstallSuccessCallback.bind(context),
+            onSuccess: uninstallOrDeleteSuccessCallback.bind(context),
             onFailure: uninstallErrorCallback.bind(context),
             onException: uninstallErrorCallback.bind(context),
             onComplete: options.onComplete
+        });
+    };
+
+    LocalCatalogue.deleteResource = function deleteResource(resource, onSuccess, onError) {
+        var url, context;
+
+        url = this.RESOURCE_ENTRY.evaluate({
+            vendor: resource.getVendor(),
+            name: resource.getName(),
+            version: resource.getVersion().text
+        });
+
+        context = {
+            catalogue: this,
+            resource: resource,
+            onSuccess: onSuccess,
+            onError: onError
+        };
+
+        // Send request to delete de widget
+        Wirecloud.io.makeRequest(url, {
+            method: 'DELETE',
+            onSuccess: uninstallOrDeleteSuccessCallback.bind(context),
+            onFailure: deleteErrorCallback.bind(context),
+            onException: deleteErrorCallback.bind(context)
         });
     };
 
