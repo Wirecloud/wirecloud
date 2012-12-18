@@ -663,12 +663,12 @@ class WirecloudRemoteTestCase(object):
 
             self.assertNotEqual(self.get_current_marketplace_name(), market)
 
-    def delete_resource(self, widget_name, timeout=30):
+    def delete_resource(self, resource_name, timeout=30):
         self.change_main_view('marketplace')
         catalogue_base_element = self.get_current_catalogue_base_element()
 
-        self.search_resource(widget_name)
-        resource = self.search_in_catalogue_results(widget_name)
+        self.search_resource(resource_name)
+        resource = self.search_in_catalogue_results(resource_name)
         resource.find_element_by_css_selector('.click_for_details').click()
 
         WebDriverWait(self.driver, timeout).until(lambda driver: catalogue_base_element.find_element_by_css_selector('.advanced_operations').is_displayed())
@@ -686,8 +686,33 @@ class WirecloudRemoteTestCase(object):
         self.driver.find_element_by_xpath("//*[contains(@class,'window_menu')]//*[text()='Yes']").click()
         self.wait_wirecloud_ready()
 
-        self.search_resource(widget_name)
-        resource = self.search_in_catalogue_results(widget_name)
+        self.search_resource(resource_name)
+        resource = self.search_in_catalogue_results(resource_name)
+        self.assertIsNone(resource)
+
+    def uninstall_resource(self, resource_name, timeout=30):
+        self.change_main_view('marketplace')
+        catalogue_base_element = self.get_current_catalogue_base_element()
+
+        self.search_resource(resource_name)
+        resource = self.search_in_catalogue_results(resource_name)
+        resource.find_element_by_css_selector('.click_for_details').click()
+
+        WebDriverWait(self.driver, timeout).until(lambda driver: catalogue_base_element.find_element_by_css_selector('.advanced_operations').is_displayed())
+        time.sleep(0.1)
+
+        found = False
+        for operation in self.driver.find_elements_by_css_selector('.advanced_operations .styled_button'):
+            if operation.text == 'Uninstall':
+                found = True
+                operation.find_element_by_css_selector('div').click()
+                break
+        self.assertTrue(found)
+
+        self.wait_wirecloud_ready()
+
+        self.search_resource(resource_name)
+        resource = self.search_in_catalogue_results(resource_name)
         self.assertIsNone(resource)
 
     def get_iwidget_anchor(self, iwidget, endpoint):
