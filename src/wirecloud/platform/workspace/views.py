@@ -35,12 +35,12 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.utils.http import urlencode
 
-from commons.cache import no_cache
 from commons import http_utils
 from commons.resource import Resource
 from commons.service import Service
 from packageCloner import PackageCloner
 from packageLinker import PackageLinker
+from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.transaction import commit_on_http_success

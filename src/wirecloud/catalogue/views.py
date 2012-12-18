@@ -62,11 +62,11 @@ from wirecloud.catalogue.get_json_catalogue_data import get_resource_data
 import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.catalogue.utils import add_widget_from_wgt, add_resource_from_template, delete_resource
 from wirecloud.catalogue.utils import tag_resource
-from commons.cache import no_cache
 from commons import http_utils
 from commons.resource import Resource
 from commons.user_utils import get_verified_certification_group
 from wirecloud.commons.utils import mimeparser
+from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success

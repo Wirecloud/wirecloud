@@ -38,7 +38,7 @@ from django.utils import simplejson
 from django.utils.translation import get_language
 from django.utils.translation import ugettext as _
 
-from commons.cache import CacheableData
+from wirecloud.commons.utils.cache import CacheableData
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.platform.context.utils import get_user_context_providers
 from wirecloud.platform.models import Concept, ConceptName, Constant, IWidget, PublishedWorkspace, Tab, UserPrefOption, UserWorkspace, Variable, VariableDef, VariableValue
