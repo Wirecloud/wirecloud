@@ -55,7 +55,9 @@
             delete this.catalogue.resources[this.resource.getURI()];
         } catch (e) {}
 
-        this.onSuccess();
+        if (typeof this.onSuccess === 'function') {
+            this.onSuccess();
+        }
     };
 
     var uninstallErrorCallback = function uninstallErrorCallback(transport, e) {
@@ -66,7 +68,9 @@
 
         logManager.log(msg);
 
-        this.onError(msg);
+        if (typeof this.onError === 'function') {
+            this.onError(msg);
+        }
     };
 
     var deleteErrorCallback = function deleteErrorCallback(transport, e) {
@@ -77,7 +81,9 @@
 
         logManager.log(msg);
 
-        this.onError(msg);
+        if (typeof this.onError === 'function') {
+            this.onError(msg);
+        }
     };
 
     var loadSuccessCallback = function loadFailureCallback(context, transport) {
@@ -92,13 +98,13 @@
             includeResource.call(this, resources[resource_id]);
         }
 
-        if (context.onSuccess) {
+        if (typeof context.onSuccess === 'function') {
             context.onSuccess();
         }
     };
 
     var loadFailureCallback = function loadFailureCallback(context, transport) {
-        if (context.onError) {
+        if (typeof context.onError === 'function') {
             context.onError();
         }
     };
