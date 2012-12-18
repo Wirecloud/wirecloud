@@ -47,14 +47,19 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login()
 
-        self.add_template_to_catalogue_with_error('http://localhost:8001/test/invalidTest.rdf', 'Test_Selenium', 'missing required field: versionInfo.')
+        self.add_template_to_catalogue('http://localhost:8001/test/invalidTest.rdf', 'Test_Selenium', expect_error='missing required field: versionInfo.')
 
     def test_add_widget_twice(self):
 
         self.login()
 
-        self.add_template_to_catalogue('http://localhost:8001/test/test.rdf', 'Test_Selenium')
-        self.add_template_to_catalogue_with_error('http://localhost:8001/test/test.rdf', 'Test_Selenium', 'Resource already exists.')
+        self.add_template_to_catalogue('http://localhost:8001/test/test_duplicated.rdf', 'Test', expect_error='Resource already exists.')
+
+    def test_upload_duplicated_packaged_widget(self):
+
+        self.login()
+
+        self.add_packaged_resource_to_catalogue('Wirecloud_Test_1.0.wgt', 'Test', shared=True, expect_error='Resource already exists.')
 
     def test_add_and_instantiate_widget_rdf(self):
 

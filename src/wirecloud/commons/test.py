@@ -308,7 +308,7 @@ class WirecloudRemoteTestCase(object):
             menu_item = self.get_popup_menu_item(item)
             self.assertIsNone(menu_item)
 
-    def add_packaged_resource_to_catalogue(self, wgt_file, widget_name, shared=False):
+    def add_packaged_resource_to_catalogue(self, wgt_file, widget_name, shared=False, expect_error=False):
 
         if shared:
             wgt_path = os.path.join(self.shared_test_data_dir, wgt_file)
@@ -324,12 +324,26 @@ class WirecloudRemoteTestCase(object):
         catalogue_base_element.find_element_by_class_name('upload_wgt_button').click()
         self.wait_wirecloud_ready()
 
-        self.search_resource(widget_name)
-        widget = self.search_in_catalogue_results(widget_name)
-        self.assertIsNotNone(widget)
-        return widget
+        window_menus = len(self.driver.find_elements_by_css_selector('.window_menu'))
+        if expect_error:
+            if window_menus == 1:
+                self.fail('Error: resource shouldn\'t be added')
 
-    def add_template_to_catalogue(self, template_url, resource_name):
+            xpath = "//*[contains(@class, 'window_menu')]//*[text()='The resource could not be added to the catalogue: " + expect_error + "']"
+            self.driver.find_element_by_xpath(xpath)
+            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+
+            return None
+        else:
+            if window_menus != 1:
+                self.fail('Error: resource was not added')
+
+            self.search_resource(widget_name)
+            widget = self.search_in_catalogue_results(widget_name)
+            self.assertIsNotNone(widget)
+            return widget
+
+    def add_template_to_catalogue(self, template_url, resource_name, expect_error=False):
 
         self.change_main_view('marketplace')
         catalogue_base_element = self.get_current_catalogue_base_element()
@@ -343,29 +357,24 @@ class WirecloudRemoteTestCase(object):
         catalogue_base_element.find_element_by_class_name('submit_link').click()
         self.wait_wirecloud_ready()
 
-        self.search_resource(resource_name)
-        resource = self.search_in_catalogue_results(resource_name)
-        self.assertIsNotNone(resource)
-        return resource
+        window_menus = len(self.driver.find_elements_by_css_selector('.window_menu'))
+        if expect_error:
+            if window_menus == 1:
+                self.fail('Error: resource shouldn\'t be added')
 
-    def add_template_to_catalogue_with_error(self, template_url, resource_name, msg):
+            xpath = "//*[contains(@class, 'window_menu')]//*[text()='Error adding resource from URL: " + expect_error + "']"
+            self.driver.find_element_by_xpath(xpath)
+            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 
-        self.change_main_view('marketplace')
-        catalogue_base_element = self.get_current_catalogue_base_element()
+            return None
+        else:
+            if window_menus != 1:
+                self.fail('Error: resource was not added')
 
-        self.perform_market_action('Upload')
-        WebDriverWait(self.driver, 30).until(lambda driver: catalogue_base_element.find_element_by_css_selector('form.template_submit_form .template_uri').is_displayed())
-        time.sleep(0.1)
-
-        template_input = catalogue_base_element.find_element_by_css_selector('form.template_submit_form .template_uri')
-        self.fill_form_input(template_input, template_url)
-        catalogue_base_element.find_element_by_class_name('submit_link').click()
-
-        self.wait_wirecloud_ready()
-        time.sleep(0.1)
-        xpath = "//*[contains(@class, 'window_menu')]//*[text()='Error adding resource from URL: " + msg + "']"
-        self.driver.find_element_by_xpath(xpath)
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+            self.search_resource(resource_name)
+            resource = self.search_in_catalogue_results(resource_name)
+            self.assertIsNotNone(resource)
+            return resource
 
     def search_resource(self, keyword):
         self.change_main_view('marketplace')
