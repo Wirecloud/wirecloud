@@ -178,7 +178,7 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(data['variables']['width']['aspect'], 'GCTX')
         self.assertEqual(data['variables']['width']['concept'], 'widthInPixels')
 
-    def test_basic_widget_creation_from_usdl(self):
+    def test_basic_widget_creation_from_rdf(self):
         template_uri = "http://example.com/path/widget.rdf"
         template = self.read_template('template1.rdf')
 
@@ -275,7 +275,7 @@ class ShowcaseTestCase(LocalizedTestCase):
 
         self.assertNotEqual(old_code, new_code)
 
-    def test_widget_deletion_usdl(self):
+    def test_widget_deletion_rdf(self):
         template_uri = "http://example.com/path/widget.rdf"
         template = self.read_template('template1.rdf')
 
@@ -408,7 +408,7 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertRaises(Exception, create_widget_from_template, template_uri, self.user)
         self.assertRaises(Widget.DoesNotExist, Widget.objects.get, vendor='Example', name='Test', version='0.1')
 
-    def test_widgets_with_invalid_format_usdl(self):
+    def test_widgets_with_invalid_format_rdf(self):
         template_uri = "http://example.com/path/widget.rdf"
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
 
@@ -429,7 +429,7 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(workspace.version, '1')
         self.assertEqual(workspace.creator, self.user)
 
-    def test_basic_mashup_usdl(self):
+    def test_basic_mashup_rdf(self):
         template = self.read_template('..', '..', 'workspace', 'test-data', 'wt1.rdf')
         workspace = create_published_workspace_from_template(template, self.user)
 
