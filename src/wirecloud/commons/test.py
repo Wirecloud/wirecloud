@@ -742,7 +742,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         settings.DEFAULT_LANGUAGE = 'en'
 
         # downloader
-        cls._original_download_function = http_utils.download_http_content
+        cls._original_download_function = staticmethod(http_utils.download_http_content)
         http_utils.download_http_content = LocalDownloader(getattr(cls, 'servers', {
             'http': {
                 'localhost:8001': os.path.join(os.path.dirname(__file__), 'test-data', 'src'),
