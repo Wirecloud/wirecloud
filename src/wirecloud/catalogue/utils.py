@@ -41,7 +41,6 @@ from django.utils.translation import ugettext as _
 from wirecloud.catalogue.catalogue_utils import get_latest_resource_version
 from wirecloud.catalogue.get_json_catalogue_data import get_resource_data
 from wirecloud.catalogue.models import WidgetWiring, CatalogueResource, Tag, UserTag
-from commons.user_utils import get_certification_status
 from commons.authentication import Http403
 from wirecloud.commons.models import Translation
 from wirecloud.commons.utils.template import TemplateParser
@@ -140,7 +139,6 @@ def add_resource_from_template(template_uri, template, user, fromWGT=False, over
         template_uri=template_uri,
         creation_date=datetime.today(),
         popularity='0.0',
-        certification=get_certification_status(user),
         json_description=json.dumps(resource_info)
     )
 

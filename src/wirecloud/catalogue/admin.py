@@ -44,7 +44,7 @@ class CategoyAdminView(admin.ModelAdmin):
 class CatalogueResourceAdmin(admin.ModelAdmin):
 
     search_fields = ['short_name', 'vendor', 'author']
-    list_display = ['short_name', 'vendor', 'author', 'resource_type', 'certification']
+    list_display = ['short_name', 'vendor', 'author', 'resource_type']
     verbose_name_plural = 'Resources'
 
 admin.site.register(CatalogueResource, CatalogueResourceAdmin)

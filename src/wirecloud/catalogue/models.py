@@ -73,10 +73,6 @@ class CatalogueResource(TransModel):
     # For implementing "private widgets" only visible for users that belongs to some concrete organizations
     organization = models.ManyToManyField(Group, related_name='organization', null=True, blank=True)
 
-    # Certification status
-    # Done via User groups!
-    certification = models.ForeignKey(Group, related_name='certification', null=True, blank=True)
-
     popularity = models.DecimalField(_('popularity'), default=0, max_digits=2, decimal_places=1)
     fromWGT = models.BooleanField(_('fromWGT'), default=False)
 

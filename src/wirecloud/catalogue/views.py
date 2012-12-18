@@ -64,7 +64,6 @@ from wirecloud.catalogue.utils import add_widget_from_wgt, add_resource_from_tem
 from wirecloud.catalogue.utils import tag_resource
 from commons import http_utils
 from commons.resource import Resource
-from commons.user_utils import get_verified_certification_group
 from wirecloud.commons.utils import mimeparser
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
@@ -474,16 +473,3 @@ class ResourceVersionCollection(Resource):
 
         return HttpResponse(simplejson.dumps({'resources': result}),
                             mimetype='application/json; charset=UTF-8')
-
-
-class ResourceEnabler(Resource):
-
-    @no_cache
-    def read(self, request, resource_id):
-        resource = get_object_or_404(CatalogueResource, id=resource_id)
-
-        resource.certification = get_verified_certification_group()
-
-        resource.save()
-
-        return HttpResponse('{"result": "ok"}', mimetype='application/json; charset=UTF-8')

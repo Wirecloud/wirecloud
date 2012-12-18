@@ -35,7 +35,7 @@ from django.conf.urls.defaults import patterns, url
 from wirecloud.catalogue.views import ResourceCollection, ResourceCollectionByGlobalSearch
 from wirecloud.catalogue.views import ResourceCollectionBySimpleSearch, ResourceTagCollection
 from wirecloud.catalogue.views import ResourceVoteCollection, ResourceVersionCollection
-from wirecloud.catalogue.views import ResourceEnabler, ResourceEntry
+from wirecloud.catalogue.views import ResourceEntry
 
 urlpatterns = patterns('wirecloud.catalogue.views',
     # Resources
@@ -46,7 +46,6 @@ urlpatterns = patterns('wirecloud.catalogue.views',
     url(r'^/resources$',
         ResourceCollection(permitted_methods=('GET', 'POST',)),
         name='wirecloud_catalogue.resource_collection'),
-    url(r'^/resource/(?P<resource_id>\d+)/activation$', ResourceEnabler(permitted_methods=('GET',))),
     url(r'^/voting/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)$',
         ResourceVoteCollection(permitted_methods=('GET', 'POST', 'PUT',)),
         name='wirecloud_catalogue.resource_vote'),
