@@ -24,6 +24,7 @@ from django.contrib.auth.models import User
 from django.db import transaction
 from django.test import TransactionTestCase, Client
 from django.utils import simplejson
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -132,6 +133,51 @@ class WiringTestCase(TransactionTestCase):
 class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
     tags = ('fiware-ut-6',)
+
+    def test_operators_are_useable_after_uploading(self):
+
+        self.login()
+
+        self.add_packaged_resource_to_catalogue('Wirecloud_TestOperatorSelenium_1.0.zip', 'TestOperatorSelenium', shared=True)
+
+        self.change_main_view('wiring')
+        time.sleep(2)
+
+        wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
+        menubar = wiring_base_element.find_element_by_css_selector('.menubar')
+
+        menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
+        menubar.find_element_by_xpath("//*[contains(@class, 'container ioperator')]//*[text()='TestOperatorSelenium']")
+
+    def test_operators_are_not_useable_after_being_uninstalled(self):
+
+        self.login()
+
+        self.uninstall_resource('TestOperator')
+
+        self.change_main_view('wiring')
+        time.sleep(2)
+
+        wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
+        menubar = wiring_base_element.find_element_by_css_selector('.menubar')
+
+        menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
+        self.assertRaises(NoSuchElementException, menubar.find_element_by_xpath, "//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
+
+    def test_operators_are_not_useable_after_being_deleted(self):
+
+        self.login()
+
+        self.delete_resource('TestOperator')
+
+        self.change_main_view('wiring')
+        time.sleep(2)
+
+        wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
+        menubar = wiring_base_element.find_element_by_css_selector('.menubar')
+
+        menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
+        self.assertRaises(NoSuchElementException, menubar.find_element_by_xpath, "//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
 
     def test_basic_wiring_operations(self):
         self.login()
