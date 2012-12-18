@@ -91,7 +91,7 @@
 	</foaf:Person>
 
 	<gr:BusinessEntity rdf:about="http://vendoruri/">
-		<foaf:name>Morfeo</foaf:name>
+		<foaf:name>Wirecloud</foaf:name>
 	</gr:BusinessEntity>
 
 	<usdl-core:Resource rdf:about="test.html">

@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <Template xmlns="http://wirecloud.conwet.fi.upm.es/ns/template#">
   <Catalog.ResourceDescription>
-    <Vendor>Morfeo</Vendor>
+    <Vendor>Wirecloud</Vendor>
     <Name>test/</Name>
     <Version>0.1</Version>
     <Author>admin</Author>

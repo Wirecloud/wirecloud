@@ -44,7 +44,7 @@
 
 <http://vendoruri/>
 	a gr:BusinessEntity ;
-	foaf:name "Morfeo" .
+	foaf:name "Wirecloud" .
 
 _:b1
 	a vcard:Work ;

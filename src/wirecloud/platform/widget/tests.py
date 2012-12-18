@@ -213,11 +213,11 @@ class ShowcaseTestCase(LocalizedTestCase):
         parser = TemplateParser(template)
         data = parser.get_resource_info()
 
+        self.assertEqual(data['vendor'], 'Wirecloud')
         self.assertEqual(data['name'], 'test operator')
         self.assertEqual(data['type'], 'operator')
         self.assertEqual(data['version'], '0.1')
         self.assertEqual(data['mail'], 'test@example.com')
-        self.assertEqual(data['vendor'], 'Morfeo')
         self.assertEqual(data['wiring']['slots'][0]['label'], 'slot')
         self.assertEqual(data['wiring']['slots'][0]['type'], 'text')
         self.assertEqual(data['wiring']['slots'][0]['friendcode'], 'test_friend_code')
@@ -262,7 +262,7 @@ class ShowcaseTestCase(LocalizedTestCase):
         old_code = response.content
 
         deleteWidget(self.user, **widget_id)
-        self.assertRaises(Widget.DoesNotExist, Widget.objects.get, vendor='Morfeo', name='test', version='0.1')
+        self.assertRaises(Widget.DoesNotExist, Widget.objects.get, vendor='Wirecloud', name='test', version='0.1')
 
         # Use a different xhtml code
         http_utils.download_http_content.set_response('http://example.com/path/test.html', 'cache')
@@ -283,8 +283,8 @@ class ShowcaseTestCase(LocalizedTestCase):
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
         create_widget_from_template(template_uri, self.user)
 
-        deleteWidget(self.user, 'test', 'Morfeo', '0.1')
-        self.assertRaises(Widget.DoesNotExist, Widget.objects.get, vendor='Morfeo', name='test', version='0.1')
+        deleteWidget(self.user, 'test', 'Wirecloud', '0.1')
+        self.assertRaises(Widget.DoesNotExist, Widget.objects.get, vendor='Wirecloud', name='test', version='0.1')
 
     def test_widget_creation_from_catalogue(self):
         template_uri = "http://example.com/path/widget.xml"
@@ -310,13 +310,13 @@ class ShowcaseTestCase(LocalizedTestCase):
         widget2 = get_or_add_widget_from_catalogue('Wirecloud', 'test', '0.1', self.user)
         self.assertEqual(widget, widget2)
 
-    def test_widget_creation_from_catalogue_usdl(self):
+    def test_widget_creation_from_catalogue_rdf(self):
         template_uri = "http://example.com/path/widget.xml"
         template = self.read_template('template1.rdf')
 
         http_utils.download_http_content.set_response(template_uri, template)
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
-        widget = get_or_add_widget_from_catalogue('Morfeo', 'test', '0.1', self.user)
+        widget = get_or_add_widget_from_catalogue('Wirecloud', 'test', '0.1', self.user)
 
         self.changeLanguage('en')
         data = get_widget_data(widget)
@@ -329,7 +329,7 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(data['variables']['event']['label'], u'Event Label')
         self.assertEqual(data['variables']['slot']['label'], u'Slot Label')
 
-        widget2 = get_or_add_widget_from_catalogue('Morfeo', 'test', '0.1', self.user)
+        widget2 = get_or_add_widget_from_catalogue('Wirecloud', 'test', '0.1', self.user)
         self.assertEqual(widget, widget2)
 
     def test_widget_template_with_missing_translation_indexes(self):
@@ -338,8 +338,8 @@ class ShowcaseTestCase(LocalizedTestCase):
 
         http_utils.download_http_content.set_response(template_uri, template)
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
-        self.assertRaises(TemplateParseException, get_or_add_widget_from_catalogue, 'Morfeo', 'test', '0.1', self.user)
-        self.assertRaises(Widget.DoesNotExist, Widget.objects.get, vendor='Morfeo', name='test', version='0.1')
+        self.assertRaises(TemplateParseException, get_or_add_widget_from_catalogue, 'Wirecloud', 'test', '0.1', self.user)
+        self.assertRaises(Widget.DoesNotExist, Widget.objects.get, vendor='Wirecloud', name='test', version='0.1')
 
     def test_widget_template_with_notused_translation_indexes(self):
         template_uri = "http://example.com/path/widget.xml"
@@ -347,8 +347,8 @@ class ShowcaseTestCase(LocalizedTestCase):
 
         http_utils.download_http_content.set_response(template_uri, template)
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
-        self.assertRaises(TemplateParseException, get_or_add_widget_from_catalogue, 'Morfeo', 'test', '0.1', self.user)
-        self.assertRaises(Widget.DoesNotExist, Widget.objects.get, vendor='Morfeo', name='test', version='0.1')
+        self.assertRaises(TemplateParseException, get_or_add_widget_from_catalogue, 'Wirecloud', 'test', '0.1', self.user)
+        self.assertRaises(Widget.DoesNotExist, Widget.objects.get, vendor='Wirecloud', name='test', version='0.1')
 
     def testTranslations(self):
         widget = Widget.objects.get(pk=1)
