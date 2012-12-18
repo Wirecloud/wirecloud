@@ -37,8 +37,8 @@ setup(
     packages=('wirecloud',),
     include_package_data=True,
     data_files=data_files,
-    install_requires=('Django>=1.3', 'django-compressor>=1.2', 'rdflib>=3.2.0', 'south'),
-    tests_require=('django-nose',),
+    install_requires=('Django>=1.3', 'south', 'lxml', 'BeautifulSoup', 'django-compressor>=1.2', 'rdflib>=3.2.0'),
+    tests_require=('django-nose', 'selenium'),
     classifiers=(
         'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
