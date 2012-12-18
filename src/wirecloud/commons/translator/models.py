@@ -33,7 +33,7 @@
 from django.conf import settings
 from django.core.cache import cache
 from django.db import models
-from django.utils.translation import get_language, ugettext as  _
+from django.utils.translation import get_language, ugettext as _
 
 from wirecloud.commons.utils.translation import get_trans_index
 
@@ -81,7 +81,7 @@ class TransModel(models.Model):
 
         key = self._get_cache_key()
         translations = cache.get(key)
-        if translations == None:
+        if translations is None:
             translations = {
                 'default': {},
             }
