@@ -349,7 +349,6 @@ def get_widget_data(widget, request=None):
     data_ret['iPhoneImageURI'] = urljoin(base_url, twidget.iPhoneImageURI)
     data_ret['version'] = widget.version
     data_ret['mail'] = widget.mail
-    data_ret['last_update'] = widget.last_update
     data_ret['size'] = {}
     data_ret['size']['width'] = widget.width
     data_ret['size']['height'] = widget.height

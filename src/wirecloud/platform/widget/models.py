@@ -93,7 +93,6 @@ class Widget(TransModel):
     description = models.TextField(_('Description'))
 
     users = models.ManyToManyField(User, verbose_name=_('Users'))
-    last_update = models.DateTimeField(_('Last update'), null=True)
 
     @property
     def uri(self):
