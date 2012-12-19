@@ -32,14 +32,7 @@
 
 from django.http import Http404, HttpResponseNotAllowed, HttpResponseForbidden
 
-from wirecloud.commons.exceptions import Http403
-
-
-class HttpMethodNotAllowed(Exception):
-    """
-    Signals that request.method was not part of
-    the list of permitted methods.
-    """
+from wirecloud.commons.exceptions import Http403, HttpMethodNotAllowed
 
 
 class Resource(object):

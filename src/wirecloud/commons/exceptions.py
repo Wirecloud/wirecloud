@@ -20,3 +20,10 @@
 
 class Http403(Exception):
     pass
+
+
+class HttpMethodNotAllowed(Exception):
+    """
+    Signals that request.method was not part of
+    the list of permitted methods.
+    """
