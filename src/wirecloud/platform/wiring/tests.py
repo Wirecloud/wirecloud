@@ -84,6 +84,66 @@ class WiringTestCase(TransactionTestCase):
         self.assertEquals(response.status_code, 204)
     test_basic_wiring_operations.tags = ('fiware-ut-6',)
 
+    def test_basic_wiring_operations_with_read_only_connections(self):
+        workspace = Workspace.objects.get(id=1)
+        workspace.wiringStatus = simplejson.dumps({
+            'operators': [],
+            'connections': [
+                {
+                    'readOnly': True,
+                    'source': {
+                        'type': 'iwidget',
+                        'id': 1,
+                        'endpoint': 'event',
+                    },
+                    'target': {
+                        'type': 'iwidget',
+                        'id': 1,
+                        'endpoint': 'slot',
+                    },
+                },
+            ],
+        })
+        workspace.save()
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        data = simplejson.dumps({
+            'operators': [],
+            'connections': [
+                {
+                    'readOnly': True,
+                    'source': {
+                        'type': 'iwidget',
+                        'id': 1,
+                        'endpoint': 'event',
+                    },
+                    'target': {
+                        'type': 'iwidget',
+                        'id': 1,
+                        'endpoint': 'slot',
+                    },
+                },
+                {
+                    'source': {
+                        'type': 'iwidget',
+                        'id': 1,
+                        'endpoint': 'event',
+                    },
+                    'target': {
+                        'type': 'iwidget',
+                        'id': 2,
+                        'endpoint': 'slot',
+                    },
+                },
+            ],
+        })
+        response = client.put(self.wiring_url, data, content_type='application/json')
+
+        self.assertEquals(response.status_code, 204)
+    test_basic_wiring_operations_with_read_only_connections.tags = ('fiware-ut-6',)
+
     def test_wiring_modification_fails_with_incorrect_user(self):
         client = Client()
         client.login(username='test2', password='test')
@@ -125,6 +185,53 @@ class WiringTestCase(TransactionTestCase):
         data = simplejson.dumps({
             'operators': [],
             'connections': [],
+        })
+        response = client.put(self.wiring_url, data, content_type='application/json')
+        self.assertEquals(response.status_code, 403)
+
+    def test_read_only_connections_cannot_be_modified(self):
+
+        workspace = Workspace.objects.get(id=1)
+        workspace.wiringStatus = simplejson.dumps({
+            'operators': [],
+            'connections': [
+                {
+                    'readOnly': True,
+                    'source': {
+                        'type': 'iwidget',
+                        'id': 1,
+                        'endpoint': 'event',
+                    },
+                    'target': {
+                        'type': 'iwidget',
+                        'id': 1,
+                        'endpoint': 'slot',
+                    },
+                },
+            ],
+        })
+        workspace.save()
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        data = simplejson.dumps({
+            'operators': [],
+            'connections': [
+                {
+                    'readOnly': True,
+                    'source': {
+                        'type': 'iwidget',
+                        'id': 1,
+                        'endpoint': 'event',
+                    },
+                    'target': {
+                        'type': 'iwidget',
+                        'id': 2,
+                        'endpoint': 'slot',
+                    },
+                },
+            ],
         })
         response = client.put(self.wiring_url, data, content_type='application/json')
         self.assertEquals(response.status_code, 403)

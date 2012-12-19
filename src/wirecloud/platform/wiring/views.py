@@ -22,6 +22,7 @@ import json
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
+from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
 from wirecloud.catalogue.models import CatalogueResource
@@ -43,9 +44,9 @@ class WiringEntry(Resource):
         if not content_type.startswith('application/json'):
             return HttpResponseBadRequest(_("Invalid content type"), mimetype='text/plain; charset=UTF-8')
 
-        wiringStatus = request.raw_post_data
+        wiring_status_string = request.raw_post_data
         try:
-            json.loads(wiringStatus)
+            wiring_status = json.loads(wiring_status_string)
         except:
             return HttpResponseBadRequest(_("Request body is not valid JSON data"), mimetype='text/plain; charset=UTF-8')
 
@@ -53,7 +54,25 @@ class WiringEntry(Resource):
         if not request.user.is_superuser and workspace.creator != request.user:
             return HttpResponseForbidden()
 
-        workspace.wiringStatus = wiringStatus
+        old_wiring_status = simplejson.loads(workspace.wiringStatus)
+        old_read_only_connections = []
+        for connection in old_wiring_status['connections']:
+            if connection.get('readOnly', False):
+                old_read_only_connections.append(connection)
+
+        read_only_connections = []
+        for connection in wiring_status['connections']:
+            if connection.get('readOnly', False):
+                read_only_connections.append(connection)
+
+        if len(old_read_only_connections) > len(read_only_connections):
+            return HttpResponseForbidden()
+
+        for connection in old_read_only_connections:
+            if connection not in read_only_connections:
+                return HttpResponseForbidden()
+
+        workspace.wiringStatus = wiring_status_string
         workspace.save()
 
         _invalidate_cached_variable_values(workspace)
