@@ -28,8 +28,8 @@ from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
-from commons import http_utils
 from wirecloud.commons.baseviews import Resource, Service
+from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.http import supported_request_mime_types
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.platform.markets.utils import get_market_managers
@@ -115,12 +115,12 @@ class PublishService(Service):
             published_workspace = PublishedWorkspace.objects.get(id=pworkspace_id)
             description = published_workspace.template
         else:
-            description = http_utils.download_http_content(template_url, user=request.user)
+            description = downloader.download_http_content(template_url, user=request.user)
 
         usdl_info = None
         if data.get('usdl', None) is not None:
             usdl_info = {
-                'data': http_utils.download_http_content(data['usdl'], user=request.user),
+                'data': downloader.download_http_content(data['usdl'], user=request.user),
                 'content_type': 'application/rdf+xml'
             }
 

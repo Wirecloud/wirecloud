@@ -42,9 +42,9 @@ from django.test.client import Client
 from django.utils import translation
 from selenium.webdriver.support.ui import WebDriverWait
 
-from commons import http_utils
 from wirecloud.platform.widget import utils as showcase
 from wirecloud.catalogue import utils as catalogue
+from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 
 
@@ -744,8 +744,8 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         settings.DEFAULT_LANGUAGE = 'en'
 
         # downloader
-        cls._original_download_function = staticmethod(http_utils.download_http_content)
-        http_utils.download_http_content = LocalDownloader(getattr(cls, 'servers', {
+        cls._original_download_function = staticmethod(downloader.download_http_content)
+        downloader.download_http_content = LocalDownloader(getattr(cls, 'servers', {
             'http': {
                 'localhost:8001': os.path.join(os.path.dirname(__file__), 'test-data', 'src'),
             },
@@ -777,13 +777,13 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
         super(WirecloudSeleniumTestCase, cls).setUpClass()
 
-        http_utils.download_http_content.set_live_server(cls.server_thread.host, cls.server_thread.port)
+        downloader.download_http_content.set_live_server(cls.server_thread.host, cls.server_thread.port)
 
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()
 
-        http_utils.download_http_content = cls._original_download_function
+        downloader.download_http_content = cls._original_download_function
         catalogue.wgt_deployer = cls.old_catalogue_deployer
         rmtree(cls.catalogue_tmp_dir, ignore_errors=True)
         showcase.wgt_deployer = cls.old_deployer

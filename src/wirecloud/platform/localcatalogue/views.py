@@ -14,9 +14,9 @@ from django.utils.translation import ugettext as _
 from wirecloud.catalogue.utils import add_widget_from_wgt, add_resource_from_template
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.views import iframe_error
-from commons import http_utils
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.baseviews import Resource
+from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
 from wirecloud.commons.utils.template import TemplateParseException, TemplateParser
 from wirecloud.commons.utils.transaction import commit_on_http_success
@@ -92,7 +92,7 @@ class ResourceCollection(Resource):
                     templateURL = request.POST['template_uri']
 
             try:
-                downloaded_file = http_utils.download_http_content(templateURL)
+                downloaded_file = downloader.download_http_content(templateURL)
             except:
                 return build_error_response(request, 409, _('Content cannot be downloaded'))
 

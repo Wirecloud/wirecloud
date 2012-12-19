@@ -36,10 +36,10 @@ from django.conf import settings
 from django.db.models import Q
 
 from wirecloud.catalogue.models import CatalogueResource
-from commons import http_utils
 from wirecloud.commons.exceptions import Http403
-from wirecloud.commons.utils.http import get_absolute_static_url
 from wirecloud.commons.models import Translation
+from wirecloud.commons.utils import downloader
+from wirecloud.commons.utils.http import get_absolute_static_url
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 from wirecloud.platform.models import ContextOption, Widget, UserPrefOption, UserWorkspace, VariableDef, Workspace, XHTML
@@ -71,7 +71,7 @@ def create_widget_from_template(template, user, request=None, base=None):
     if isinstance(template, TemplateParser):
         parser = template
     else:
-        template_content = http_utils.download_http_content(template, user=user)
+        template_content = downloader.download_http_content(template, user=user)
         if base is None:
             base = template
         parser = TemplateParser(template_content, base=base)
@@ -231,7 +231,7 @@ def create_widget_from_wgt(wgt, user, deploy_only=False):
     if isinstance(wgt, WgtFile):
         wgt_file = wgt
     else:
-        wgt_file = WgtFile(StringIO(http_utils.download_http_content(wgt)))
+        wgt_file = WgtFile(StringIO(downloader.download_http_content(wgt)))
 
     template = wgt_deployer.deploy(wgt_file)
     if not deploy_only:
@@ -266,10 +266,10 @@ def get_or_create_widget(templateURL, user, workspaceId, request, fromWGT=False)
         raise Http403()
 
     if fromWGT:
-        wgt_file = WgtFile(StringIO(http_utils.download_http_content(templateURL)))
+        wgt_file = WgtFile(StringIO(downloader.download_http_content(templateURL)))
         template_content = wgt_file.get_template()
     else:
-        template_content = http_utils.download_http_content(templateURL, user=user)
+        template_content = downloader.download_http_content(templateURL, user=user)
 
     templateParser = TemplateParser(template_content, templateURL)
 

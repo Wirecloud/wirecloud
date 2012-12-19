@@ -12,8 +12,8 @@ from django.core.urlresolvers import reverse
 from django.test import TransactionTestCase, Client
 from django.utils.unittest import TestCase
 
-from commons import http_utils
 from wirecloud.commons.test import FakeDownloader, LocalizedTestCase
+from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 from wirecloud.platform import plugins
@@ -98,14 +98,14 @@ class ShowcaseTestCase(LocalizedTestCase):
 
     def setUp(self):
         super(ShowcaseTestCase, self).setUp()
-        self._original_function = http_utils.download_http_content
-        http_utils.download_http_content = FakeDownloader()
+        self._original_function = downloader.download_http_content
+        downloader.download_http_content = FakeDownloader()
         self.user = User.objects.get(username='test')
         cache.clear()
 
     def tearDown(self):
         super(ShowcaseTestCase, self).tearDown()
-        http_utils.download_http_content = self._original_function
+        downloader.download_http_content = self._original_function
 
     def read_template(self, *template):
         f = open(os.path.join(os.path.dirname(__file__), 'test-data', *template))
@@ -118,8 +118,8 @@ class ShowcaseTestCase(LocalizedTestCase):
         template_uri = "http://example.com/path/widget.xml"
         template = self.read_template('template1.xml')
 
-        http_utils.download_http_content.set_response(template_uri, template)
-        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        downloader.download_http_content.set_response(template_uri, template)
+        downloader.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
         widget = create_widget_from_template(template_uri, self.user)
 
         self.changeLanguage('en')
@@ -150,8 +150,8 @@ class ShowcaseTestCase(LocalizedTestCase):
         template_uri = "http://example.com/path/widget.xml"
         template = self.read_template('old-template.xml')
 
-        http_utils.download_http_content.set_response(template_uri, template)
-        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        downloader.download_http_content.set_response(template_uri, template)
+        downloader.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
         widget = create_widget_from_template(template_uri, self.user)
 
         self.changeLanguage('en')
@@ -182,8 +182,8 @@ class ShowcaseTestCase(LocalizedTestCase):
         template_uri = "http://example.com/path/widget.rdf"
         template = self.read_template('template1.rdf')
 
-        http_utils.download_http_content.set_response(template_uri, template)
-        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        downloader.download_http_content.set_response(template_uri, template)
+        downloader.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
         widget = create_widget_from_template(template_uri, self.user)
 
         self.changeLanguage('en')
@@ -251,8 +251,8 @@ class ShowcaseTestCase(LocalizedTestCase):
             'version': '0.1',
         }
 
-        http_utils.download_http_content.set_response(template_uri, template)
-        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        downloader.download_http_content.set_response(template_uri, template)
+        downloader.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
         widget = create_widget_from_template(template_uri, self.user)
         widget.users.add(self.user)
 
@@ -265,7 +265,7 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertRaises(Widget.DoesNotExist, Widget.objects.get, vendor='Wirecloud', name='test', version='0.1')
 
         # Use a different xhtml code
-        http_utils.download_http_content.set_response('http://example.com/path/test.html', 'cache')
+        downloader.download_http_content.set_response('http://example.com/path/test.html', 'cache')
         create_widget_from_template(template_uri, self.user)
         widget.users.add(self.user)
 
@@ -279,8 +279,8 @@ class ShowcaseTestCase(LocalizedTestCase):
         template_uri = "http://example.com/path/widget.rdf"
         template = self.read_template('template1.rdf')
 
-        http_utils.download_http_content.set_response(template_uri, template)
-        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        downloader.download_http_content.set_response(template_uri, template)
+        downloader.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
         create_widget_from_template(template_uri, self.user)
 
         deleteWidget(self.user, 'test', 'Wirecloud', '0.1')
@@ -290,8 +290,8 @@ class ShowcaseTestCase(LocalizedTestCase):
         template_uri = "http://example.com/path/widget.xml"
         template = self.read_template('template1.xml')
 
-        http_utils.download_http_content.set_response(template_uri, template)
-        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        downloader.download_http_content.set_response(template_uri, template)
+        downloader.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
         widget = get_or_add_widget_from_catalogue('Wirecloud', 'test', '0.1', self.user)
 
         self.changeLanguage('en')
@@ -314,8 +314,8 @@ class ShowcaseTestCase(LocalizedTestCase):
         template_uri = "http://example.com/path/widget.xml"
         template = self.read_template('template1.rdf')
 
-        http_utils.download_http_content.set_response(template_uri, template)
-        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        downloader.download_http_content.set_response(template_uri, template)
+        downloader.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
         widget = get_or_add_widget_from_catalogue('Wirecloud', 'test', '0.1', self.user)
 
         self.changeLanguage('en')
@@ -336,8 +336,8 @@ class ShowcaseTestCase(LocalizedTestCase):
         template_uri = "http://example.com/path/widget.xml"
         template = self.read_template('template3.xml')
 
-        http_utils.download_http_content.set_response(template_uri, template)
-        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        downloader.download_http_content.set_response(template_uri, template)
+        downloader.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
         self.assertRaises(TemplateParseException, get_or_add_widget_from_catalogue, 'Wirecloud', 'test', '0.1', self.user)
         self.assertRaises(Widget.DoesNotExist, Widget.objects.get, vendor='Wirecloud', name='test', version='0.1')
 
@@ -345,8 +345,8 @@ class ShowcaseTestCase(LocalizedTestCase):
         template_uri = "http://example.com/path/widget.xml"
         template = self.read_template('template4.xml')
 
-        http_utils.download_http_content.set_response(template_uri, template)
-        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        downloader.download_http_content.set_response(template_uri, template)
+        downloader.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
         self.assertRaises(TemplateParseException, get_or_add_widget_from_catalogue, 'Wirecloud', 'test', '0.1', self.user)
         self.assertRaises(Widget.DoesNotExist, Widget.objects.get, vendor='Wirecloud', name='test', version='0.1')
 
@@ -369,8 +369,8 @@ class ShowcaseTestCase(LocalizedTestCase):
         template_uri = "http://example.com/path/widget.xml"
         template = self.read_template('template2.xml')
 
-        http_utils.download_http_content.set_response(template_uri, template)
-        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        downloader.download_http_content.set_response(template_uri, template)
+        downloader.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
         widget = create_widget_from_template(template_uri, self.user)
 
         self.changeLanguage('en')
@@ -385,18 +385,18 @@ class ShowcaseTestCase(LocalizedTestCase):
 
     def test_widgets_with_invalid_format(self):
         template_uri = "http://example.com/path/widget.xml"
-        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        downloader.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
 
         template = self.read_template('template5.xml')
-        http_utils.download_http_content.set_response(template_uri, template)
+        downloader.download_http_content.set_response(template_uri, template)
         self.assertRaises(TemplateParseException, create_widget_from_template, template_uri, self.user)
 
         template = self.read_template('template6.xml')
-        http_utils.download_http_content.set_response(template_uri, template)
+        downloader.download_http_content.set_response(template_uri, template)
         self.assertRaises(TemplateParseException, create_widget_from_template, template_uri, self.user)
 
         template = self.read_template('template7.xml')
-        http_utils.download_http_content.set_response(template_uri, template)
+        downloader.download_http_content.set_response(template_uri, template)
         self.assertRaises(TemplateParseException, create_widget_from_template, template_uri, self.user)
 
     def test_widget_with_unmet_requirements(self):
@@ -404,20 +404,20 @@ class ShowcaseTestCase(LocalizedTestCase):
         template_uri = "http://example.com/path/widget.xml"
         template = self.read_template('template8.xml')
 
-        http_utils.download_http_content.set_response(template_uri, template)
+        downloader.download_http_content.set_response(template_uri, template)
         self.assertRaises(Exception, create_widget_from_template, template_uri, self.user)
         self.assertRaises(Widget.DoesNotExist, Widget.objects.get, vendor='Example', name='Test', version='0.1')
 
     def test_widgets_with_invalid_format_rdf(self):
         template_uri = "http://example.com/path/widget.rdf"
-        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        downloader.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
 
         template = self.read_template('template5.rdf')
-        http_utils.download_http_content.set_response(template_uri, template)
+        downloader.download_http_content.set_response(template_uri, template)
         self.assertRaises(TemplateParseException, create_widget_from_template, template_uri, self.user)
 
         template = self.read_template('template6.rdf')
-        http_utils.download_http_content.set_response(template_uri, template)
+        downloader.download_http_content.set_response(template_uri, template)
         self.assertRaises(TemplateParseException, create_widget_from_template, template_uri, self.user)
 
     def test_basic_mashup(self):

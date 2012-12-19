@@ -43,9 +43,8 @@ from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.views.static import serve
 
-from commons import http_utils
-
 from wirecloud.commons.baseviews import Resource
+from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.cache import no_cache, patch_cache_headers
 from wirecloud.commons.utils.http import build_error_response, get_absolute_reverse_url, get_current_domain, get_xml_error_response
 from wirecloud.commons.utils.template import TemplateParseException, TemplateParser
@@ -144,7 +143,7 @@ class Showcase(Resource):
             return HttpResponseBadRequest()
 
         url = request.POST['url']
-        template_content = http_utils.download_http_content(url, user=request.user)
+        template_content = downloader.download_http_content(url, user=request.user)
         template = TemplateParser(template_content, base=url)
 
         if template.get_resource_type() == 'widget':
@@ -202,9 +201,9 @@ class WidgetCodeEntry(Resource):
         if not xhtml.cacheable or code == '':
             try:
                 if xhtml.url.startswith(('http://', 'https://')):
-                    code = http_utils.download_http_content(urljoin(base_url, xhtml.url), user=request.user)
+                    code = downloader.download_http_content(urljoin(base_url, xhtml.url), user=request.user)
                 else:
-                    code = http_utils.download_http_content('file://' + os.path.join(showcase_utils.wgt_deployer.root_dir, xhtml.url), user=request.user)
+                    code = downloader.download_http_content('file://' + os.path.join(showcase_utils.wgt_deployer.root_dir, xhtml.url), user=request.user)
 
             except Exception, e:
                 # FIXME: Send the error or use the cached original code?

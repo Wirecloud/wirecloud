@@ -35,8 +35,8 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.utils.http import urlencode
 
-from commons import http_utils
 from wirecloud.commons.baseviews import Resource, Service
+from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
 from wirecloud.commons.utils.template import TemplateParser
@@ -545,7 +545,7 @@ class MashupMergeService(Service):
             pworkspace_id = template_url.split('/')[-2]
             template = PublishedWorkspace.objects.get(id=pworkspace_id).template
         else:
-            template = http_utils.download_http_content(template_url, user=request.user)
+            template = downloader.download_http_content(template_url, user=request.user)
 
         fillWorkspaceUsingTemplate(to_ws, template)
 
@@ -576,7 +576,7 @@ class MashupImportService(Service):
             pworkspace_id = template_url.split('/')[-2]
             template = PublishedWorkspace.objects.get(id=pworkspace_id).template
         else:
-            template = http_utils.download_http_content(template_url, user=request.user)
+            template = downloader.download_http_content(template_url, user=request.user)
         workspace, _junk = buildWorkspaceFromTemplate(template, request.user, True)
 
         activate = data.get('active', False) == "true"

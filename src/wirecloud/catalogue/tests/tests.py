@@ -15,8 +15,8 @@ import wirecloud.catalogue.utils
 from wirecloud.catalogue.utils import add_resource_from_template
 from wirecloud.catalogue.get_json_catalogue_data import get_resource_data
 from wirecloud.catalogue.models import CatalogueResource, WidgetWiring
-from commons import http_utils
 from wirecloud.commons.test import FakeDownloader, LocalizedTestCase
+from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.wgt import WgtDeployer
 
@@ -217,13 +217,13 @@ class PublishTestCase(TransactionTestCase):
 
     def setUp(self):
         super(PublishTestCase, self).setUp()
-        self._original_function = http_utils.download_http_content
-        http_utils.download_http_content = FakeDownloader()
+        self._original_function = downloader.download_http_content
+        downloader.download_http_content = FakeDownloader()
         self.user = User.objects.create_user('test', 'test@example.com', 'test')
 
     def tearDown(self):
         super(PublishTestCase, self).tearDown()
-        http_utils.download_http_content = self._original_function
+        downloader.download_http_content = self._original_function
 
     def read_template(self, *filename):
         f = codecs.open(os.path.join(os.path.dirname(__file__), *filename), 'rb')
