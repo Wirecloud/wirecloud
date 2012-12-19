@@ -113,6 +113,7 @@
     WirecloudCatalogue = function WirecloudCatalogue(options) {
 
         Object.defineProperty(this, 'name', {'value': options.name});
+        Object.defineProperty(this, 'permissions', {'value': options.permissions});
 
         if (options.url == null) {
             options.url = Wirecloud.URLs.LOCAL_REPOSITORY;
@@ -127,6 +128,14 @@
             value: new Template(options.url + 'catalogue/resource/#{vendor}/#{name}/#{version}')
         });
         Object.defineProperty(this, 'RESOURCE_COLLECTION', {value: options.url + 'catalogue/resources'});
+    };
+
+    WirecloudCatalogue.prototype.isAllow = function isAllow(action) {
+        if (action in this.permissions) {
+            return this.permissions[action];
+        } else {
+            return false;
+        }
     };
 
     WirecloudCatalogue.prototype.search = function search(onSuccess, onError, options) {

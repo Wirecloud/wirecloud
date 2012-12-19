@@ -45,12 +45,20 @@ class MarketCollection(Resource):
 
         for market in Market.objects.filter(Q(user=None) | Q(user=request.user)):
             market_key = unicode(market)
-            result[market_key] = simplejson.loads(market.options)
-            result[market_key]['name'] = market.name
+            market_data = simplejson.loads(market.options)
+
+            market_data['name'] = market.name
+
             if market.user is not None:
-                result[market_key]['user'] = market.user.username
+                market_data['user'] = market.user.username
             else:
-                result[market_key]['user'] = None
+                market_data['user'] = None
+
+            market_data['permissions'] = {
+                'delete': request.user.is_superuser or market.user == request.user
+            }
+
+            result[market_key] = market_data
 
         return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 

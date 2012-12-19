@@ -35,8 +35,17 @@
         this.onError();
     };
 
-    FiWareCatalogue = function FiWareCatalogue(marketplace_desc) {
-        this.market_name = marketplace_desc.name;
+    FiWareCatalogue = function FiWareCatalogue(options) {
+        this.market_name = options.name;
+        Object.defineProperty(this, 'permissions', {'value': options.permissions});
+    };
+
+    FiWareCatalogue.prototype.isAllow = function isAllow(action) {
+        if (action in this.permissions) {
+            return this.permissions[action];
+        } else {
+            return false;
+        }
     };
 
     FiWareCatalogue.prototype.search = function search(onSuccess, onError, options) {

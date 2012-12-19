@@ -173,6 +173,7 @@
 
     MarketplaceView.prototype.addMarket = function addMarket(market_info) {
         var view_constructor = Wirecloud.MarketManager.getMarketViewClass(market_info.type);
+        market_info.permissions = {'delete': true};
         this.viewsByName[market_info.name] = this.alternatives.createAlternative({alternative_constructor: view_constructor, containerOptions: {catalogue: this, marketplace_desc: market_info}});
 
         this.number_of_alternatives += 1;

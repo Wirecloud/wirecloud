@@ -168,7 +168,7 @@
      * Public methods
      *************************************************************************/
 
-    var LocalCatalogue = new Wirecloud.WirecloudCatalogue({name: 'local'});
+    var LocalCatalogue = new Wirecloud.WirecloudCatalogue({name: 'local', permissions: {'delete': false}});
 
     LocalCatalogue.reload = function reload(options) {
 

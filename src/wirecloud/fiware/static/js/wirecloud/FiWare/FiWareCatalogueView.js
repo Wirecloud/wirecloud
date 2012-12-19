@@ -50,7 +50,7 @@
         };
         this.viewsByName.search.init();
 
-        this.fiWareCatalogue = new Wirecloud.FiWare.FiWareCatalogue(this.desc);
+        this.catalogue = new Wirecloud.FiWare.FiWareCatalogue(this.desc);
         this.number_of_stores = 0;
         this.generateStoreMenu();
         this.addEventListener('show', function () {
@@ -83,11 +83,11 @@
     };
 
     FiWareCatalogueView.prototype.search = function search(onSuccess, onFailure, options) {
-        this.fiWareCatalogue.search(this._onSearch.bind(this, onSuccess), onFailure, options);
+        this.catalogue.search(this._onSearch.bind(this, onSuccess), onFailure, options);
     };
 
     FiWareCatalogueView.prototype._onSearch = function (callback, raw_data) {
-        var preferred_versions, i, data, key, resources, resource, fiWareCatalogue;
+        var preferred_versions, i, data, key, resources, resource;
 
         if (raw_data.resources) {
             preferred_versions = Wirecloud.utils.CookieManager.readCookie('preferred_versions', true);
@@ -191,7 +191,7 @@
         this.store_info = [];
         this.number_of_stores = 0;
         LayoutManagerFactory.getInstance().header.refresh();
-        this.fiWareCatalogue.getStores(this.addStoreInfo.bind(this), this._getStoresErrorCallback.bind(this));
+        this.catalogue.getStores(this.addStoreInfo.bind(this), this._getStoresErrorCallback.bind(this));
     };
 
     FiWareCatalogueView.prototype._getStoresErrorCallback = function _getStoresErrorCallback() {
@@ -275,7 +275,7 @@
         options.onComplete = this.home.bind(this);
 
         doRequest = function () {
-            this.fiWareCatalogue.deleteResource(options);
+            this.catalogue.deleteResource(options);
         };
 
         msg = interpolate(msg, context, true);
