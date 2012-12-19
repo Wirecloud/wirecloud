@@ -36,10 +36,7 @@ from django.utils.translation import ugettext as _
 from django.utils.http import urlencode
 
 from commons import http_utils
-from commons.resource import Resource
-from commons.service import Service
-from packageCloner import PackageCloner
-from packageLinker import PackageLinker
+from wirecloud.commons.baseviews import Resource, Service
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
 from wirecloud.commons.utils.template import TemplateParser
@@ -49,6 +46,8 @@ from wirecloud.platform.iwidget.utils import deleteIWidget
 from wirecloud.platform.models import Category, IWidget, PublishedWorkspace, Tab, UserWorkspace, VariableValue, Workspace
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
+from wirecloud.platform.workspace.packageCloner import PackageCloner
+from wirecloud.platform.workspace.packageLinker import PackageLinker
 from wirecloud.platform.workspace.utils import deleteTab, createTab, create_published_workspace_from_template, getCategories, getCategoryId, get_workspace_list, setVisibleTab, set_variable_value
 from wirecloud.platform.markets.utils import get_market_managers
 

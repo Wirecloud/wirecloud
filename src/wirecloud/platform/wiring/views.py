@@ -25,7 +25,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
 from wirecloud.catalogue.models import CatalogueResource
-from commons.resource import Resource
+from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.platform.get_data import _invalidate_cached_variable_values
 from wirecloud.platform.models import Workspace

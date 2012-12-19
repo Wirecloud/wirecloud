@@ -63,7 +63,7 @@ import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.catalogue.utils import add_widget_from_wgt, add_resource_from_template, delete_resource
 from wirecloud.catalogue.utils import tag_resource
 from commons import http_utils
-from commons.resource import Resource
+from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils import mimeparser
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types

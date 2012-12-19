@@ -29,8 +29,7 @@ from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
 from commons import http_utils
-from commons.resource import Resource
-from commons.service import Service
+from wirecloud.commons.baseviews import Resource, Service
 from wirecloud.commons.utils.http import supported_request_mime_types
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.platform.markets.utils import get_market_managers

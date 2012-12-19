@@ -18,7 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from commons.resource import Resource
+from wirecloud.commons.baseviews.resource import Resource
 
 
 class Service(Resource):

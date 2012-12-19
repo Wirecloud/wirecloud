@@ -44,8 +44,8 @@ from django.utils.translation import ugettext as _
 from django.views.static import serve
 
 from commons import http_utils
-from commons.resource import Resource
 
+from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import no_cache, patch_cache_headers
 from wirecloud.commons.utils.http import build_error_response, get_absolute_reverse_url, get_current_domain, get_xml_error_response
 from wirecloud.commons.utils.template import TemplateParseException, TemplateParser

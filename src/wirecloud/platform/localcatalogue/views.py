@@ -15,8 +15,8 @@ from wirecloud.catalogue.utils import add_widget_from_wgt, add_resource_from_tem
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.views import iframe_error
 from commons import http_utils
-from commons.resource import Resource
 from wirecloud.catalogue import utils as catalogue
+from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
 from wirecloud.commons.utils.template import TemplateParseException, TemplateParser
 from wirecloud.commons.utils.transaction import commit_on_http_success

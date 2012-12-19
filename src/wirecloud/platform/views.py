@@ -24,7 +24,7 @@ from django.shortcuts import get_object_or_404, render
 from django.utils import simplejson
 from django.utils.http import urlencode
 
-from commons.resource import Resource
+from wirecloud.commons.baseviews import Resource
 from wirecloud.platform.plugins import get_active_features
 from wirecloud.platform.models import Workspace
 from wirecloud.platform.workspace.utils import get_workspace_list
