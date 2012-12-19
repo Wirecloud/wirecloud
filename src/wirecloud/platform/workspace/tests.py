@@ -3,6 +3,8 @@
 import codecs
 import os
 import rdflib
+from tempfile import mkdtemp
+from shutil import rmtree
 import json
 
 from django.contrib.auth.models import User, Group
@@ -11,7 +13,9 @@ from django.core.urlresolvers import reverse
 from django.test import Client
 from django.utils import simplejson
 
+from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.test import WirecloudTestCase
+from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 from wirecloud.platform.get_data import get_global_workspace_data
 from wirecloud.platform.models import Widget, IWidget, Tab, UserWorkspace, Variable, VariableValue, Workspace
 from wirecloud.platform.iwidget.utils import SaveIWidget, deleteIWidget
@@ -445,6 +449,35 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
     fixtures = ('selenium_test_data',)
     tags = ('fiware-ut-2',)
+
+    @classmethod
+    def setUpClass(cls):
+
+        super(ParameterizedWorkspaceParseTestCase, cls).setUpClass()
+
+        # catalogue deployer
+        cls.old_catalogue_deployer = catalogue.wgt_deployer
+        cls.catalogue_tmp_dir = mkdtemp()
+        catalogue.wgt_deployer = WgtDeployer(cls.catalogue_tmp_dir)
+
+        cls.widget_wgt_file = open(os.path.join(cls.shared_test_data_dir, 'Wirecloud_Test_1.0.wgt'))
+        cls.widget_wgt = WgtFile(cls.widget_wgt_file)
+        catalogue.add_widget_from_wgt(cls.widget_wgt_file, None, wgt_file=cls.widget_wgt, deploy_only=True)
+
+        cls.operator_wgt_file = open(os.path.join(cls.shared_test_data_dir, 'Wirecloud_TestOperator_1.0.zip'), 'rb')
+        cls.operator_wgt = WgtFile(cls.operator_wgt_file)
+        catalogue.add_widget_from_wgt(cls.operator_wgt_file, None, wgt_file=cls.operator_wgt, deploy_only=True)
+
+    @classmethod
+    def tearDownClass(cls):
+
+        catalogue.wgt_deployer = cls.old_catalogue_deployer
+        rmtree(cls.catalogue_tmp_dir, ignore_errors=True)
+
+        cls.widget_wgt_file.close()
+        cls.operator_wgt_file.close()
+
+        super(ParameterizedWorkspaceParseTestCase, cls).tearDownClass()
 
     def setUp(self):
 

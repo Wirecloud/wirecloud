@@ -157,6 +157,8 @@ class WirecloudTestCase(TransactionTestCase):
         settings.LANGUAGE_CODE = 'en'
         settings.DEFAULT_LANGUAGE = 'en'
 
+        cls.shared_test_data_dir = os.path.join(os.path.dirname(__file__), 'test-data')
+
         super(WirecloudTestCase, cls).setUpClass()
 
     @classmethod
