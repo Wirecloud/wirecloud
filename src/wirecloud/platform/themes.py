@@ -25,6 +25,7 @@ from django.contrib.staticfiles.finders import BaseFinder
 from django.contrib.staticfiles import utils
 from django.core.files.storage import FileSystemStorage
 from django.template import TemplateDoesNotExist
+from django.utils.importlib import import_module
 from django.utils._os import safe_join
 
 DEFAULT_THEME = 'wirecloud.defaulttheme'
@@ -43,7 +44,7 @@ def active_theme_context_processor(request):
 
 def get_theme_dir(theme_name, dir_type):
     try:
-        active_theme_module = __import__(theme_name)
+        active_theme_module = import_module(theme_name)
     except ImportError:
         return
 
