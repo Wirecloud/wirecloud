@@ -19,9 +19,9 @@
 
 
 from django.conf.urls.defaults import patterns, url
-from wirecloud_fiware.marketAdaptor import views
+from wirecloud.fiware.marketAdaptor import views
 
-urlpatterns = patterns('wirecloud_fiware.marketAdaptor.views',
+urlpatterns = patterns('wirecloud.fiware.marketAdaptor.views',
     url(r'^marketplace/(?P<marketplace>[\w -]+)/resources/?$', views.AllStoresServiceCollection(permitted_methods=('GET',))),
     url(r'^marketplace/(?P<marketplace>[\w -]+)/(?P<store>[\w -]+)/resources/?$', views.ServiceCollection(permitted_methods=('GET', 'POST'))),
     url(r'^marketplace/(?P<marketplace>[\w -]+)/search/(?P<keyword>[\w -]+)/?$', views.ServiceSearchCollection(permitted_methods=('GET',))),

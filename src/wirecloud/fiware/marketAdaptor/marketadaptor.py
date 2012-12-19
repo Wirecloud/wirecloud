@@ -22,12 +22,11 @@ import urllib2
 from urllib2 import HTTPError
 from urllib import urlencode
 from urlparse import urljoin, urlparse
-
-from wirecloud_fiware.marketAdaptor.usdlParser import USDLParser
 from lxml import etree
 
 from django.utils.http import urlquote, urlquote_plus
 
+from wirecloud.fiware.marketAdaptor.usdlParser import USDLParser
 from wirecloud.proxy.views import MethodRequest
 
 RESOURCE_XPATH = '/collection/resource'

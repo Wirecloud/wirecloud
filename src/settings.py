@@ -130,9 +130,9 @@ INSTALLED_APPS = (
     'wirecloud.commons',
     'wirecloud.catalogue',
     'wirecloud.platform',
+    'wirecloud.fiware',
     'south',
     'compressor',
-    'wirecloud_fiware',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -195,7 +195,7 @@ WORKSPACE_MANAGERS = (
 )
 
 WIRECLOUD_PLUGINS = (
-    'wirecloud_fiware.plugins.FiWarePlugin',
+    'wirecloud.fiware.plugins.FiWarePlugin',
 )
 
 FORCE_SCRIPT_NAME = ""

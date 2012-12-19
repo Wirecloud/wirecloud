@@ -24,8 +24,8 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 
-from wirecloud_fiware.marketAdaptor.marketadaptor import MarketAdaptor
 from wirecloud.commons.baseviews import Resource
+from wirecloud.fiware.marketAdaptor.marketadaptor import MarketAdaptor
 from wirecloud.platform.models import Market
 
 
