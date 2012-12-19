@@ -32,7 +32,7 @@
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
-from commons.authentication import Http403
+from wirecloud.commons.exceptions import Http403
 from wirecloud.platform.models import Widget, IWidget, Position, Tab, Variable, VariableDef, VariableValue
 
 

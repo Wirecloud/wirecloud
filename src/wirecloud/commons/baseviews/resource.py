@@ -32,7 +32,7 @@
 
 from django.http import Http404, HttpResponseNotAllowed, HttpResponseForbidden
 
-from commons.authentication import Http403
+from wirecloud.commons.exceptions import Http403
 
 
 class HttpMethodNotAllowed(Exception):

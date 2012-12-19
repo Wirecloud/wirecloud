@@ -37,8 +37,8 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.shortcuts import get_object_or_404
 
-from commons.authentication import Http403
 from wirecloud.commons.baseviews import Resource
+from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.http import build_error_response, supported_request_mime_types

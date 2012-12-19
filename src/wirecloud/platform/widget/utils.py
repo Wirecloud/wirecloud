@@ -37,7 +37,7 @@ from django.db.models import Q
 
 from wirecloud.catalogue.models import CatalogueResource
 from commons import http_utils
-from commons.authentication import Http403
+from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.utils.http import get_absolute_static_url
 from wirecloud.commons.models import Translation
 from wirecloud.commons.utils.template import TemplateParser
