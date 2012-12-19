@@ -40,7 +40,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
-from commons.utils import save_alternative
+from wirecloud.commons.utils.db import save_alternative
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.platform.iwidget.utils import deleteIWidget
 from wirecloud.platform.models import Category, IWidget, PublishedWorkspace, Tab, UserWorkspace, VariableValue, Workspace

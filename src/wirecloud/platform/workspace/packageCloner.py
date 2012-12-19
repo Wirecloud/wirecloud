@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models import get_model
 
-from commons.utils import save_alternative
+from wirecloud.commons.utils.db import save_alternative
 
 #########################################
 # Auxiliar functions
