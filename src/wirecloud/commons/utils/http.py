@@ -19,19 +19,41 @@
 
 import socket
 from urlparse import urljoin
+from xml.dom.minidom import getDOMImplementation
 
 from django.conf import settings
 from django.contrib.sites.models import get_current_site
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
+from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
-from commons.utils import get_json_error_response, get_xml_error
 from wirecloud.commons.utils import mimeparser
+
+
+def get_xml_error_response(value):
+    dom = getDOMImplementation()
+
+    doc = dom.createDocument(None, "error", None)
+    rootelement = doc.documentElement
+    text = doc.createTextNode(value)
+    rootelement.appendChild(text)
+    errormsg = doc.toxml("utf-8")
+    doc.unlink()
+
+    return errormsg
+
+
+def get_json_error_response(message):
+    return simplejson.dumps({
+        'result': 'error',
+        'message': message
+    })
+
 
 ERROR_FORMATTERS = {
     'application/json; charset=utf-8': get_json_error_response,
-    'application/xml; charset=utf-8': get_xml_error,
+    'application/xml; charset=utf-8': get_xml_error_response,
     'text/plain; charset=utf-8': unicode,
 }
 

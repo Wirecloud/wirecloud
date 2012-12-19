@@ -38,7 +38,7 @@ from django.utils.translation import ugettext as _
 from wirecloud.catalogue.get_json_catalogue_data import get_resource_group_data, get_tag_data, get_vote_data
 from wirecloud.catalogue.get_xml_catalogue_data import get_xml_description, get_tags_by_resource, get_vote_by_resource
 from wirecloud.catalogue.models import CatalogueResource, UserVote
-from commons.utils import get_xml_error
+from wirecloud.commons.utils.http import get_xml_error_response
 
 
 def group_resources(resources):
@@ -188,7 +188,7 @@ def get_resource_response(resources, format, items, user, request=None):
         response.__setitem__('items', items)
         return response
     else:
-        return HttpResponseServerError(get_xml_error(_("Invalid format. Format must be either xml or json")), mimetype='application/xml; charset=UTF-8')
+        return HttpResponseServerError(get_xml_error_response(_("Invalid format. Format must be either xml or json")), mimetype='application/xml; charset=UTF-8')
 
 
 def get_tag_response(resource, user, format):
@@ -205,7 +205,7 @@ def get_tag_response(resource, user, format):
         response += get_tags_by_resource(resource, user)
         return HttpResponse(response, mimetype='text/xml; charset=UTF-8')
     else:
-        return HttpResponseServerError(get_xml_error(_("Invalid format. Format must be either xml or json")), mimetype='application/xml; charset=UTF-8')
+        return HttpResponseServerError(get_xml_error_response(_("Invalid format. Format must be either xml or json")), mimetype='application/xml; charset=UTF-8')
 
 
 def get_vote_response(resource, user, format):
