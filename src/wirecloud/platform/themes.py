@@ -27,7 +27,7 @@ from django.core.files.storage import FileSystemStorage
 from django.template import TemplateDoesNotExist
 from django.utils._os import safe_join
 
-DEFAULT_THEME = 'defaulttheme'
+DEFAULT_THEME = 'wirecloud.defaulttheme'
 
 
 def get_active_theme_name():

@@ -63,7 +63,7 @@ DATABASES = {
     },
 }
 
-THEME_ACTIVE = "defaulttheme"
+THEME_ACTIVE = "wirecloud.defaulttheme"
 
 # Local time zone for this installation. Choices can be found here:
 # http://www.postgresql.org/docs/8.1/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE
