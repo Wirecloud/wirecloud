@@ -95,10 +95,7 @@ class MarketEntry(Resource):
         if user != request.user.username and not request.user.is_superuser:
             return HttpResponseForbidden()
 
-        if user != request.user.username:
-            get_object_or_404(Market, user=request.user, name=market).delete()
-        else:
-            get_object_or_404(Market, user__username=user, name=market).delete()
+        get_object_or_404(Market, user__username=user, name=market).delete()
 
         return HttpResponse(status=204)
 
