@@ -55,17 +55,8 @@
     vertical-align: middle;
 }
 
-.catalogue .resource_list .error {
-    background: #FDDFDE;
-    color: #444;
-    text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.3);
-    border: 1px solid #FBC9C8;
-    padding: 15px;
-    border-radius: 6px;
-    font-weight: normal;
+.catalogue .resource_list > .alert {
     margin: 2ex;
-    font-size: 101%;
-    font-family: Comfortaa;
 }
 
 .catalogue.fiware .resource_list > .resource .resource_name {
