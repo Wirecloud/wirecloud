@@ -298,10 +298,12 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-40, -40).release(None).perform()
+        # TODO there are several bugs in the firefox, for now, this line of code "works"
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-40, -40).click().perform()
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(40, 40).release(None).perform()
+        # TODO there are several bugs in the firefox, for now, this line of code "works"
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(40, 40).click().perform()
         time.sleep(0.2)
 
         source = self.get_iwidget_anchor(1, 'event')
