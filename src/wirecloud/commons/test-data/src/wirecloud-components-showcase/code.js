@@ -458,7 +458,7 @@ StyledGadget.prototype.init = function() {
      * Buttons example
      */
     code = "\n\
-    var button;\n\
+    var title, button;\n\
 \n\
     button = new StyledElements.StyledButton({text:'Default'});\n\
     container.appendChild(button);\n\
@@ -475,6 +475,29 @@ StyledGadget.prototype.init = function() {
     button = new StyledElements.StyledButton({text:'Danger', 'class': 'btn-danger'});\n\
     container.appendChild(button);\n\
 \n\
+    title = document.createElement('h3');\n\
+    title.textContent = 'Disabled state';\n\
+    container.appendChild(title);\n\
+\n\
+    button = new StyledElements.StyledButton({text:'Default'});\n\
+    button.disable();\n\
+    container.appendChild(button);\n\
+\n\
+    button = new StyledElements.StyledButton({text:'Primary', 'class': 'btn-primary'});\n\
+    button.disable();\n\
+    container.appendChild(button);\n\
+\n\
+    button = new StyledElements.StyledButton({text:'Success', 'class': 'btn-success'});\n\
+    button.disable();\n\
+    container.appendChild(button);\n\
+\n\
+    button = new StyledElements.StyledButton({text:'Warning', 'class': 'btn-warning'});\n\
+    button.disable();\n\
+    container.appendChild(button);\n\
+\n\
+    button = new StyledElements.StyledButton({text:'Danger', 'class': 'btn-danger'});\n\
+    button.disable();\n\
+    container.appendChild(button);\n\
 \n";
 
     insertExample("Buttons", code);
