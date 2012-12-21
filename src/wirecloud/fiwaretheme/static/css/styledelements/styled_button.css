@@ -31,7 +31,8 @@
     margin: 0px 3px 1px 3px;
 }
 
-.styled_button > div:hover, .styled_button > button:hover {
+.styled_button > div:hover, .styled_button > button:hover,
+.styled_button.disabled > div, .styled_button.disabled > button {
     border-color: rgb(204, 204, 204);
     background-color: rgb(252, 253, 252);
 }
@@ -39,6 +40,16 @@
 .styled_button img.icon {
     margin: 3px;
     vertical-align: middle;
+}
+
+.styled_button.disabled {
+    opacity: 0.65;
+    filter: alpha(opacity=65);
+}
+
+.styled_button.disabled > div, .styled_button.disabled > button {
+    background-image: none;
+    text-decoration: none;
 }
 
 /* Primary button */
@@ -60,6 +71,16 @@
     background-color: rgb(4, 137, 183);
 }
 
+.styled_button.btn-primary.disabled > div, .styled_button.btn-primary.disabled > button {
+    background-color: #3E80AD;
+    border: 1px solid #50BCBC;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    border-color: #56CCCC #56CCCC #50BCBC;
+    border-bottom-color: #4BB2B2;
+    background-color:#0093C6;
+    color: #fff;
+}
+
 /* Success button */
 
 .styled_button.btn-success > div, .styled_button.btn-success > button {
@@ -69,7 +90,8 @@
 }
 
 .styled_button.btn-success > div:hover, .styled_button.btn-success > button:hover,
-.styled_button.btn-success > div:active, .styled_button.btn-success > button:active
+.styled_button.btn-success > div:active, .styled_button.btn-success > button:active,
+.styled_button.btn-success.disabled > div, .styled_button.btn-success.disabled > button
 {
     background-color: rgb(81, 163, 81);
     border-color: rgb(81, 163, 81);
@@ -84,7 +106,8 @@
 }
 
 .styled_button.btn-warning > div:hover, .styled_button.btn-warning > button:hover,
-.styled_button.btn-warning > div:active, .styled_button.btn-warning > button:active
+.styled_button.btn-warning > div:active, .styled_button.btn-warning > button:active,
+.styled_button.btn-warning.disabled > div, .styled_button.btn-warning.disabled > button
 {
     background-color: rgb(248, 148, 6);
     border-color: rgb(248, 148, 6);
@@ -99,7 +122,8 @@
 }
 
 .styled_button.btn-danger > div:hover, .styled_button.btn-danger > button:hover,
-.styled_button.btn-danger > div:active, .styled_button.btn-danger > button:active
+.styled_button.btn-danger > div:active, .styled_button.btn-danger > button:active,
+.styled_button.btn-danger.disabled > div, .styled_button.btn-danger.disabled > button
 {
     background-color: rgb(189, 54, 47);
     border-color: rgb(189, 54, 47);
