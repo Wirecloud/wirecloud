@@ -70,9 +70,9 @@ var LayoutManagerFactory = function () {
         $("loading-window").observe('click', this._clickCallback);
 
         // Menu Layer
-        this.currentMenu = null;                                                // current menu (either dropdown or window)
-        this.coverLayerElement = $('menu_layer');                               // disabling background layer
-        this.coverLayerEvent = function () {this.hideCover()}.bind(this);       // disabling layer onclick event (by default)
+        this.currentMenu = null;                                // current menu (either dropdown or window)
+        this.coverLayerElement = $('menu_layer');               // disabling background layer
+        this.coverLayerElement.addClassName('disabled_background fade');
 
         this.menus = new Array();
 
@@ -266,15 +266,11 @@ var LayoutManagerFactory = function () {
             }
         };
 
-        //the disabling layer can be clicable (in order to hide a menu) or not
-        LayoutManager.prototype.showClickableCover = function() {
-            this.coverLayerElement.style.display = "block";
-            Event.observe(this.coverLayerElement, "click", this.coverLayerEvent);
-        };
-
         LayoutManager.prototype.showUnclickableCover = function() {
-            this.coverLayerElement.addClassName('disabled_background');
-            this.coverLayerElement.style.display="block";
+            this.coverLayerElement.style.display = "block";
+            setTimeout(function () {
+                this.coverLayerElement.addClassName('in');
+            }.bind(this), 0);
         };
 
         /**
@@ -320,14 +316,6 @@ var LayoutManagerFactory = function () {
             this.currentMenu = window_menu;
         };
 
-        //Shows the background and on click the message on front disappear
-        LayoutManager.prototype.showTransparentBackground = function() {
-            this.coverLayerElement.addClassName('disabled_background');
-            this.coverLayerElement.style.display="block";
-
-            Event.observe( this.coverLayerElement, "click", this.coverLayerEvent);
-        }
-
         // Shows a generic alert dialog
         LayoutManager.prototype.showAlertMessage = function(msg) {
             // the disabling layer is displayed as long as a menu is shown. If there is not a menu, there is not a layer.
@@ -371,9 +359,8 @@ var LayoutManagerFactory = function () {
                 this.currentMenu.hide();
             }
             this.currentMenu = null;
-            this.coverLayerElement.style.display="none";
-            this.coverLayerElement.removeClassName('disabled_background');
-            Event.stopObserving( this.coverLayerElement, "click", this.coverLayerEvent);
+            this.coverLayerElement.removeClassName('in');
+            this.coverLayerElement.style.display = "none";
         }
 
         LayoutManager.prototype.FADE_TAB_INI = "#F0E68C";

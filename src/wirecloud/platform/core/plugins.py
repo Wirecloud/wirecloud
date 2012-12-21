@@ -44,6 +44,10 @@ WIRING_EDITOR_FILES = (
     'js/wirecloud/ui/WiringEditor/Multiconnector.js',
 )
 
+BASE_CSS = (
+    'css/base/fade.css',
+)
+
 WIRING_EDITOR_CSS = (
     'css/wiring/editor.css',
     'css/wiring/anchor.css',
@@ -164,7 +168,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
         )
 
     def get_platform_css(self, view):
-        common = STYLED_ELEMENTS_CSS
+        common = BASE_CSS + STYLED_ELEMENTS_CSS
 
         if view == 'index':
             return common + WORKSPACE_CSS + WIRING_EDITOR_CSS + CATALOGUE_CSS

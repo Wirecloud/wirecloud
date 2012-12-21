@@ -1,12 +1,12 @@
 .disabled_background {
-    height: 100%;
-    left: 0;
-    position: absolute;
+    position: fixed;
     top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     width: 100%;
     z-index: 101111;
-    background-color: #4C5054;
-    opacity: .8;
+    background-color: #000;
 }
 
 .window_menu {
@@ -18,15 +18,18 @@
     text-align: left;
     z-index: 101112;
     overflow: hidden;
-    color: #4C5054;
     font-weight: normal;
-    font-size: 80%;
 }
 
 .window_menu > .window_top {
     padding: 9px 15px;
     border-bottom: 1px solid #EEE;
     font-weight: bold;
+    cursor: move;
+}
+
+.window_menu > .window_top > h3 {
+    margin: 0;
 }
 
 .window_menu > .window_top > .closebutton {

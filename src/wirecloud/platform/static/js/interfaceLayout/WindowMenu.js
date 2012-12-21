@@ -47,9 +47,8 @@ function WindowMenu(title, extra_class) {
 
     this._closeListener = this._closeListener.bind(this);
 
-    this.titleElement = document.createElement('div');
+    this.titleElement = document.createElement('h3');
     Element.extend(this.titleElement);
-    this.titleElement.className = "window_title";
     this.windowTop.appendChild(this.titleElement);
 
     var clearer = document.createElement('div');
