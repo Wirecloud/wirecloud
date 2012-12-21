@@ -107,7 +107,42 @@ StyledGadget.prototype.init = function() {
         codeTab.appendChild(preText);
     }
 
+    function insertHTMLExample(name, code) {
+        var panelNotebook = new StyledElements.StyledNotebook();
+        var container = panelNotebook.createTab({name: "View", closable: false});
+
+        try {
+            container.wrapperElement.innerHTML = code;
+        } catch (e) {
+            container.clear();
+            container.appendChild(document.createTextNode(e));
+        }
+
+        var alternative = alternatives.createAlternative();
+        alternative.appendChild(panelNotebook);
+
+        list.addEntries([[alternative.getId(), name]]);
+
+        var preText = document.createElement("pre");
+        var codeTab = panelNotebook.createTab({name: "HTML", closable: false});
+        preText.appendChild(document.createTextNode(code));
+        codeTab.appendChild(preText);
+    }
+
     var code;
+
+    /*
+     * Headings
+     */
+    code = "\
+    <h1>h1. Heading 1</h1>\n\
+    <h2>h2. Heading 2</h2>\n\
+    <h3>h3. Heading 3</h3>\n\
+    <h4>h4. Heading 4</h4>\n\
+    <h5>h5. Heading 5</h5>\n\
+    <h6>h6. Heading 6</h6>\n\
+";
+    insertHTMLExample("Headings", code);
 
     /*
      * BorderLayout example
