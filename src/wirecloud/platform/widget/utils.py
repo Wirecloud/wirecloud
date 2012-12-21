@@ -274,9 +274,8 @@ def get_or_create_widget(templateURL, user, workspaceId, request, fromWGT=False)
     templateParser = TemplateParser(template_content, templateURL)
 
     # Widget is created only once
-    widget_uri = templateParser.get_resource_uri()
     try:
-        widget = Widget.objects.get(uri=widget_uri)
+        widget = Widget.objects.get(vendor=templateParser.get_resource_vendor(), name=templateParser.get_resource_name(), version=templateParser.get_resource_version())
     except Widget.DoesNotExist:
         if fromWGT:
             widget = create_widget_from_wgt(wgt_file, user)

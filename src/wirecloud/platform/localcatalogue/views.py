@@ -125,8 +125,9 @@ class ResourceCollection(Resource):
         resource.users.add(request.user)
 
         if resource.resource_type() == 'widget':
-            if not force_create and Widget.objects.filter(uri=template.get_resource_uri()).exists():
-                local_resource = Widget.objects.get(uri=template.get_resource_uri())
+            query = Widget.objects.filter(vendor=resource.vendor, name=resource.short_name, version=resource.version)
+            if not force_create and query.exists():
+                local_resource = query.get()
             else:
                 try:
                     if resource.fromWGT:
