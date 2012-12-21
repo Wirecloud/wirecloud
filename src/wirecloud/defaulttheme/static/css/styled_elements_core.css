@@ -476,17 +476,6 @@ div.styled_numeric_field div.numeric_bottom_button {
 
 /* Popup menu */
 
-.popup_menu {
-  position: absolute;
-  z-index: 111112;
-  margin: 0;
-  white-space: nowrap;
-}
-
-.popup_menu .menu_item {
-    cursor: pointer;
-}
-
 .disable-layer {
   position: absolute;
   z-index: 111111;
@@ -675,34 +664,6 @@ div.styled_numeric_field div.numeric_bottom_button {
 /* Pagination Interface */
 .pagination .styled_button {
   vertical-align: middle;
-}
-
-/* Popup menu */
-
-.popup_menu {
-    padding: 1ex 0;
-    background: #FFFFFF;
-    border: 1px solid #BEBEBE;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    color: #333;
-    font-size: 10pt;
-    font-family: arial,sans-serif;
-}
-
-.popup_menu .menu_item {
-    margin: 0.4ex 0;
-    padding: 0.3ex 0.7ex;
-}
-
-.popup_menu .menu_item.hovered {
-    background: #FEF9DB;
-}
-
-.popup_menu hr {
-  border-width: 1px 0 0 0;
-  border-style: solid;
-  border-color: #BEBEBE;
-  margin: 0.9ex 0;
 }
 
 .styled_expander {

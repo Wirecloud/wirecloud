@@ -71,6 +71,7 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_label_badge.css',
     'css/styledelements/styled_message.css',
     'css/styledelements/styled_rating.css',
+    'css/styledelements/styled_popup_menu.css',
 )
 
 
