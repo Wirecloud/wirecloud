@@ -63,6 +63,9 @@ var LayoutManagerFactory = function () {
         }
     };
 
+    LayoutManager.prototype.resizeWrapper = function resizeWrapper(state) {
+        updateLayout();
+    };
 
     // *********************************
     // SINGLETON GET INSTANCE
