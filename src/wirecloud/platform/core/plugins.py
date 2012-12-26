@@ -106,6 +106,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/StyledElements/ModelTable.js',
             'js/gadgetModel/Gadget.js',
             'js/wirecloud/WirecloudCatalogue.js',
+            'js/showcase/showcase.js',
             'js/wirecloud/LocalCatalogue.js',
             'js/wirecloud/OperatorMeta.js',
             'js/wirecloud/wiring/OperatorFactory.js',

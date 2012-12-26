@@ -119,28 +119,8 @@ var ShowcaseFactory = function () {
         }
 
         Showcase.prototype.init = function () {
-
-            // Load widgets from persistence system
-            var onSuccess = function (receivedData_) {
-
-                this.parseWidgets(receivedData_);
-            }
-
-            // Error callback (empty widget list)
-            var onError = function (transport, e) {
-                var msg, logManager = LogManagerFactory.getInstance();
-                msg = logManager.formatError(gettext("Error retrieving showcase data: %(errorMsg)s."), transport, e);
-                logManager.log(msg);
-                LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-            }
-
-            // Initial load from persitence system
-            Wirecloud.io.makeRequest(Wirecloud.URLs.WIDGET_COLLECTION, {
-                method: 'GET',
-                onSuccess: onSuccess.bind(this),
-                onFailure: onError.bind(this),
-                onException: onError.bind(this)
-            });
+            this.widgets = {};
+            this.widgetVersions = {};
         };
 
 

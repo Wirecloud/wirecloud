@@ -118,9 +118,22 @@ var OpManagerFactory = (function () {
             // First, global modules must be loades (Showcase, Catalogue)
             // Showcase is the first!
             // When it finish, it will invoke continueLoadingGlobalModules method!
+            this.logs = LogManagerFactory.getInstance();
+
             this.showcaseModule = ShowcaseFactory.getInstance();
             this.showcaseModule.init();
-            this.logs = LogManagerFactory.getInstance();
+
+            Wirecloud.LocalCatalogue.reload({
+                onSuccess: function () {
+                    this.continueLoadingGlobalModules(Modules.prototype.SHOWCASE);
+                }.bind(this),
+                onFailure: function () {
+                    var msg, logManager = LogManagerFactory.getInstance();
+                    msg = logManager.formatError(gettext("Error retrieving available resources: %(errorMsg)s."), transport, e);
+                    logManager.log(msg);
+                    LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                }
+            });
         };
 
         OpManager.prototype.showActiveWorkspace = function () {
