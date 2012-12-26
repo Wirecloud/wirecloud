@@ -19,7 +19,7 @@
  *
  */
 
-/*global EzWebExt, ezweb_user_name, Wirecloud */
+/*global Wirecloud */
 
 // TODO
 Wirecloud.wiring = {};
@@ -28,57 +28,22 @@ Wirecloud.wiring = {};
 
     "use strict";
 
-    var operators, i, operator, OperatorFactory;
+    var OperatorFactory = {};
 
-    operators = {};
-
-
-    OperatorFactory = {};
-
-    /*************************************************************************
-     * Private methods
-     *************************************************************************/
-     
     /*************************************************************************
      * Public methods
      *************************************************************************/
 
-    OperatorFactory.reload = function reload() {
-        operators = {};
-        Wirecloud.io.makeRequest('api/operators', {
-            method: 'GET',
-            onSuccess: function onSuccess(transport) {
-                var key, operator_jsons, operator;
-
-                operator_jsons = JSON.parse(transport.responseText);
-                for (key in operator_jsons) {
-                    operator = new Wirecloud.OperatorMeta(operator_jsons[key]);
-                    operators[operator.uri] = operator;
-                }
-            }
-        });
-    };
-
     OperatorFactory.getAvailableOperators = function getAvailableOperators() {
-        return operators;
+        return Wirecloud.LocalCatalogue.getAvailableResourcesByType('operator');
     };
 
     OperatorFactory.getOperatorMeta = function getOperatorMeta(name) {
-        return operators[name];
-    };
-
-    OperatorFactory.addOperator = function addOperator(description) {
-        var operator = new Wirecloud.OperatorMeta(description);
-        operators[operator.uri] = operator;
-    };
-
-    OperatorFactory.removeOperator = function removeOperator(name) {
-        delete operators[name];
+        return Wirecloud.LocalCatalogue.getResourceId(name);
     };
 
     /*************************************************************************
      * Make OperatorFactory public
      *************************************************************************/
     Wirecloud.wiring.OperatorFactory = OperatorFactory;
-    OperatorFactory.reload();
 })();

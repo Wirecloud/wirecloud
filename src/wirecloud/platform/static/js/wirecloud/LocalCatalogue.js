@@ -14,9 +14,14 @@
         resource_id = resource_data.vendor + '/' + resource_data.name;
         resource_full_id = resource_id + '/' + resource_data.version;
 
-        if (resource_data.type === 'widget') {
+        switch (resource_data.type) {
+        case 'widget':
             resource = new Widget(resource_data);
-        } else {
+            break;
+        case 'operator':
+            resource = new Wirecloud.OperatorMeta(resource_data);
+            break;
+        default:
             resource = resource_data;
         }
 
@@ -26,14 +31,17 @@
 
         this.resourceVersions[resource_id].push(resource);
         this.resources[resource_full_id] = resource;
+
+        if (!(resource_data.type in this.resourcesByType)) {
+            this.resourcesByType[resource_data.type] = {};
+        }
+        this.resourcesByType[resource_data.type][resource_full_id] = resource;
     };
 
     var uninstallOrDeleteSuccessCallback = function uninstallOrDeleteSuccessCallback(transport) {
         var layoutManager, result, opManager, i, widgetId;
 
-        switch (this.resource.getType()) {
-        case 'widget':
-
+        if (this.resource.getType() === 'widget') {
             layoutManager = LayoutManagerFactory.getInstance();
             result = JSON.parse(transport.responseText);
 
@@ -44,15 +52,11 @@
             }
 
             layoutManager.logSubTask(gettext('Purging widget info'));
-
-            break;
-        case 'operator':
-            Wirecloud.wiring.OperatorFactory.removeOperator(this.resource.getURI());
-            break;
         }
 
         try {
             delete this.catalogue.resources[this.resource.getURI()];
+            delete this.catalogue.resourcesByType[this.resource.getType()][this.resource.getURI()];
         } catch (e) {}
 
         if (typeof this.onSuccess === 'function') {
@@ -93,6 +97,7 @@
 
         this.resources = {};
         this.resourceVersions = {};
+        this.resourcesByType = {};
 
         for (resource_id in resources) {
             includeResource.call(this, resources[resource_id]);
@@ -117,10 +122,6 @@
             id = [resource_data.vendor, resource_data.name, resource_data.version].join('/');
             if (this.resourceExistsId(id)) {
                 continue;
-            }
-
-            if (resource_data.type === "operator") {
-                Wirecloud.wiring.OperatorFactory.addOperator(resource_data);
             }
 
             includeResource.call(this, resource_data);
@@ -292,6 +293,10 @@
         iframe.onload = check_upload_iframe_result.bind(context);
 
         return iframe;
+    };
+
+    LocalCatalogue.getAvailableResourcesByType = function getAvailableResourcesByType(type) {
+        return this.resourcesByType[type];
     };
 
     LocalCatalogue.getResourceId = function getResourceId(id) {
