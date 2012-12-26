@@ -109,8 +109,8 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/log/LogManager.js',
             'js/showcase/showcase.js',
             'js/wirecloud/LocalCatalogue.js',
-            'js/wirecloud/OperatorMeta.js',
             'js/wirecloud/wiring/OperatorFactory.js',
+            'js/wirecloud/wiring/OperatorMeta.js',
         )
 
         if view == 'index':

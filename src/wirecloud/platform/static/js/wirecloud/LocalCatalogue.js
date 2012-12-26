@@ -19,7 +19,7 @@
             resource = new Widget(resource_data);
             break;
         case 'operator':
-            resource = new Wirecloud.OperatorMeta(resource_data);
+            resource = new Wirecloud.wiring.OperatorMeta(resource_data);
             break;
         default:
             resource = resource_data;

@@ -88,5 +88,5 @@
         return new Wirecloud.Operator(this, id /* TODO */, wiringEditor);
     };
 
-    Wirecloud.OperatorMeta = OperatorMeta;
+    Wirecloud.wiring.OperatorMeta = OperatorMeta;
 })();

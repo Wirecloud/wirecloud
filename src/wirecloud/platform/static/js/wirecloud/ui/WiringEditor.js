@@ -681,7 +681,7 @@ if (!Wirecloud.ui) {
     WiringEditor.prototype.addIOperator = function addIOperator(ioperator, enpPointPos) {
         var instantiated_operator, operator_interface, auxDiv;
 
-        if (ioperator instanceof Wirecloud.OperatorMeta) {
+        if (ioperator instanceof Wirecloud.wiring.OperatorMeta) {
             instantiated_operator = ioperator.instantiate(this.nextOperatorId, true);
             this.nextOperatorId++;
         } else {
