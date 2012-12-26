@@ -1,5 +1,4 @@
-/*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global Hash, $, OpManagerFactory, ShowcaseFactory, IWidget */
+/*global Hash, $, OpManagerFactory, IWidget */
 "use strict";
 
 /* 
@@ -104,7 +103,7 @@ function Dragboard(tab, workspace, dragboardElement) {
             curIWidget = this.iwidgets[i];
 
             // Get widget model
-            widget = ShowcaseFactory.getInstance().getWidget(curIWidget.widget);
+            widget = Wirecloud.LocalCatalogue.getResourceId(curIWidget.widget);
 
             // Create instance model
             container = opManager.globalDragboard.newIWidgetContainer();
