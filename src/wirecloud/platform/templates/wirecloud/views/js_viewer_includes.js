@@ -10,7 +10,6 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/opManager/io.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/gadgetModel/GadgetTemplate.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/gadgetModel/Gadget.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/log/LogManager.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/opManager/Workspace.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/opManager/Tab.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/opManager/InitialScriptExecuter.js"></script>
