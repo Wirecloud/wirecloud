@@ -61,7 +61,7 @@ WidgetVersion.prototype.compareTo = function(version) {
 };
 
 
-function Widget(widget_, url_, options_) {
+function Widget(widget_) {
 
     // ******************
     //  PUBLIC FUNCTIONS
@@ -85,42 +85,6 @@ function Widget(widget_, url_, options_) {
     Object.defineProperty(this, 'code_url', {get: function () { return state.code_url}});
     Object.defineProperty(this, 'code_content_type', {get: function () { return state.code_content_type}});
 
-    // *******************
-    //  PRIVATE FUNCTIONS
-    // *******************
-    var _solicitarWidget = function(url_) {
-
-        // ******************
-        //  CALLBACK METHODS
-        // ******************
-
-        var onError = function(transport, e) {
-            var logManager = LogManagerFactory.getInstance();
-            var msg = logManager.formatError(gettext("The widget could not be added to the showcase: %(errorMsg)s."), transport, e);
-            logManager.log(msg);
-            var layoutManager = LayoutManagerFactory.getInstance();
-            layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-        }
-
-        var loadWidget = function(transport) {
-            var response = transport.responseText;
-            var objRes = JSON.parse(response);
-            state = new WidgetState(objRes);
-            ShowcaseFactory.getInstance().widgetToShowcaseWidgetModel(_this, options_);
-        }
-
-        var workspaceId_ = OpManagerFactory.getInstance().getActiveWorkspaceId();
-        var params = {url: url_, workspaceId: workspaceId_, packaged: options_.packaged};
-        Wirecloud.io.makeRequest(Wirecloud.URLs.WIDGET_COLLECTION, {
-            method: 'POST',
-            contentType: 'application/json',
-            postBody: Object.toJSON(params),
-            onSuccess: loadWidget,
-            onFailure: onError,
-            onException: onError
-        });
-    }
-
     this.getId = function() {
         return this.getVendor() + '/' + this.getName() + '/' + this.getVersion().text;
     }
@@ -129,13 +93,7 @@ function Widget(widget_, url_, options_) {
     //  PRIVATE VARIABLES
     // *******************
 
-    var state = null;
-
-    if (url_ != null) {
-        _solicitarWidget(url_);
-    } else {
-        state = new WidgetState(widget_);
-    }
+    var state = new WidgetState(widget_);
 }
 
 //////////////////////////////////////////////

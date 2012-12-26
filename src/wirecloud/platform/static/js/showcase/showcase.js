@@ -63,7 +63,7 @@ var ShowcaseFactory = function () {
             for (i = 0; i < jsonWidgetList.length; i += 1) {
                 jsonWidget = jsonWidgetList[i];
 
-                widget = new Widget(jsonWidget, null);
+                widget = new Widget(jsonWidget);
                 widgetId = widget.getVendor() + '/' + widget.getName()
                 widgetFullId = widget.getId();
 

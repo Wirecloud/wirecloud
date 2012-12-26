@@ -15,7 +15,7 @@
         resource_full_id = resource_id + '/' + resource_data.version;
 
         if (resource_data.type === 'widget') {
-            resource = new Widget(resource_data, null);
+            resource = new Widget(resource_data);
         } else {
             resource = resource_data;
         }

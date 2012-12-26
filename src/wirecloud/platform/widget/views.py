@@ -35,8 +35,7 @@ from urlparse import urljoin
 
 from django.conf import settings
 from django.core.cache import cache
-from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseServerError, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.utils.encoding import smart_str
@@ -46,35 +45,12 @@ from django.views.static import serve
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.cache import no_cache, patch_cache_headers
-from wirecloud.commons.utils.http import build_error_response, get_absolute_reverse_url, get_current_domain, get_xml_error_response
-from wirecloud.commons.utils.template import TemplateParseException, TemplateParser
-from wirecloud.commons.utils.transaction import commit_on_http_success
+from wirecloud.commons.utils.http import get_absolute_reverse_url, get_current_domain, get_xml_error_response
 from wirecloud.platform.get_data import get_widget_data
 from wirecloud.platform.iwidget.utils import deleteIWidget
 from wirecloud.platform.models import Widget, IWidget
 import wirecloud.platform.widget.utils as showcase_utils
-from wirecloud.platform.widget.utils import get_or_create_widget, create_widget_from_template, fix_widget_code
-from wirecloud.platform.workspace.utils import create_published_workspace_from_template
-
-
-def parseAndCreateWidget(request, user, workspaceId, fromWGT):
-
-    templateURL = None
-
-    if 'url' in request.POST:
-        templateURL = request.POST['url']
-    elif 'template_uri' in request.POST:
-        templateURL = request.POST['template_uri']
-    else:
-        msg = _("Missing template URL parameter")
-        raise Exception(msg)
-
-    if not workspaceId:
-        msg = _("Missing workspaceId parameter")
-        raise Exception(msg)
-
-    # get or create the Widget
-    return get_or_create_widget(templateURL, user, workspaceId, request, fromWGT)
+from wirecloud.platform.widget.utils import fix_widget_code
 
 
 def deleteWidget(user, name, vendor, version):
@@ -109,49 +85,6 @@ class WidgetCollection(Resource):
 
         data_list = [get_widget_data(widget, request) for widget in widgets]
         return HttpResponse(simplejson.dumps(data_list), mimetype='application/json; charset=UTF-8')
-
-    @commit_on_http_success
-    def create(self, request):
-
-        if 'workspaceId' not in request.POST:
-            msg = _("Missing workspaceId parameter")
-            json = simplejson.dumps({"message": msg, "result": "error"})
-            return HttpResponseServerError(json, mimetype='application/json; charset=UTF-8')
-
-        #create the widget
-        try:
-            widget = parseAndCreateWidget(request, request.user, request.POST['workspaceId'], request.POST.get('packaged', False) == 'true')
-        except TemplateParseException, e:
-            msg = _("Error parsing the template: %(msg)s" % {"msg": e.msg})
-            return build_error_response(request, 400, msg)
-        except IntegrityError, e:
-            msg = _("Widget already exists")
-            return build_error_response(request, 409, msg)
-        except IOError, e:
-            msg = _("The url is not accesible")
-            return build_error_response(request, 502, msg)
-
-        return HttpResponse(simplejson.dumps(get_widget_data(widget, request)), mimetype='application/json; charset=UTF-8')
-
-
-class Showcase(Resource):
-
-    @commit_on_http_success
-    def create(self, request):
-
-        if 'url' not in request.POST:
-            return HttpResponseBadRequest()
-
-        url = request.POST['url']
-        template_content = downloader.download_http_content(url, user=request.user)
-        template = TemplateParser(template_content, base=url)
-
-        if template.get_resource_type() == 'widget':
-            create_widget_from_template(template, request.user, request)
-        else:
-            create_published_workspace_from_template(template, request.user)
-
-        return HttpResponse(status=201)
 
 
 class WidgetEntry(Resource):
