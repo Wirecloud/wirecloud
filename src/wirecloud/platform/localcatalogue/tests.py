@@ -11,7 +11,7 @@ from django.test import TransactionTestCase, Client
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.utils import delete_resource
-from wirecloud.commons.test import FakeDownloader, LocalizedTestCase
+from wirecloud.commons.test import FakeDownloader, LocalizedTestCase, WirecloudSeleniumTestCase
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
@@ -370,3 +370,58 @@ class WGTLocalCatalogueTestCase(TransactionTestCase):
 
         self.assertRaises(TemplateParseException, install_resource, wgt_file, None, self.user, True)
         self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Morfeo', short_name='Test', version='0.1')
+
+
+class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
+
+    def test_public_resources(self):
+
+        self.login()
+
+        self.add_widget_to_mashup('Test')
+
+        self.login(username='normuser')
+
+        self.add_widget_to_mashup('Test')
+
+    def test_resource_deletion(self):
+
+        self.login()
+
+        self.add_widget_to_mashup('Test')
+        self.delete_resource('Test')
+
+        self.assertEqual(self.count_iwidgets(), 0)
+
+        self.login(username='normuser')
+
+        self.search_resource('Test')
+        widget = self.search_in_catalogue_results('Test')
+        self.assertIsNone(widget)
+
+    def test_resource_uninstall(self):
+
+        test_widget = CatalogueResource.objects.get(short_name='Test')
+        test_widget.public = False
+        test_widget.save()
+        test_widget.users.add(User.objects.get(username='admin'))
+        test_widget.users.add(User.objects.get(username='normuser'))
+
+        self.login(username='normuser')
+
+        self.add_widget_to_mashup('Test')
+        self.uninstall_resource('Test')
+
+        self.assertEqual(self.count_iwidgets(), 0)
+
+        self.login()
+
+        self.add_widget_to_mashup('Test')
+
+    def test_resources_are_always_deletable_by_superusers(self):
+
+        self.login()
+
+        self.delete_resource('Test')
+        self.delete_resource('TestOperator')
+        self.delete_resource('Test Mashup')
