@@ -21,6 +21,11 @@ import wirecloud.platform.widget.utils
 from wirecloud.platform.models import Widget, XHTML
 from wirecloud.platform.workspace.utils import create_published_workspace_from_template
 
+
+# Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
+__test__ = False
+
+
 BASIC_HTML_GADGET_CODE = "<html><body><p>widget code</p></body></html>"
 
 
