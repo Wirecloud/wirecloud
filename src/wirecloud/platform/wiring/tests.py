@@ -241,7 +241,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
     tags = ('fiware-ut-6',)
 
-    def test_operators_are_useable_after_uploading(self):
+    def test_operators_are_usable_after_uploading(self):
 
         self.login()
 
@@ -256,7 +256,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
         menubar.find_element_by_xpath("//*[contains(@class, 'container ioperator')]//*[text()='TestOperatorSelenium']")
 
-    def test_operators_are_not_useable_after_being_uninstalled(self):
+    def test_operators_are_not_usable_after_being_uninstalled(self):
 
         self.login()
 
@@ -271,7 +271,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
         self.assertRaises(NoSuchElementException, menubar.find_element_by_xpath, "//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
 
-    def test_operators_are_not_useable_after_being_deleted(self):
+    def test_operators_are_not_usable_after_being_deleted(self):
 
         self.login()
 
