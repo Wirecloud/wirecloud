@@ -74,7 +74,7 @@ def get_iwidgets_description(included_iwidgets):
     description = "Wirecloud Mashup composed of: "
 
     for iwidget in included_iwidgets:
-        description += iwidget.widget.name + ', '
+        description += iwidget.widget.resource.display_name + ', '
 
     return description[:-2]
 
@@ -167,7 +167,7 @@ def build_template_from_workspace(options, workspace, user):
         if iwidget_id in parametrization:
             iwidget_params = parametrization[iwidget_id]
 
-        resource = etree.SubElement(tabs[iwidget.tab.id], 'Resource', id=iwidget_id, vendor=widget.vendor, name=widget.name, version=widget.version, title=iwidget.name)
+        resource = etree.SubElement(tabs[iwidget.tab.id], 'Resource', id=iwidget_id, vendor=widget.resource.vendor, name=widget.resource.short_name, version=widget.resource.version, title=iwidget.name)
         if readOnlyWidgets:
             resource.set('readonly', 'true')
 
@@ -350,11 +350,11 @@ def build_rdf_template_from_workspace(options, workspace, user):
         graph.add((tabs[iwidget.tab.id], WIRE_M['hasiWidget'], resource))
         provider = rdflib.BNode()
         graph.add((provider, rdflib.RDF.type, GR['BussisnessEntity']))
-        graph.add((provider, FOAF['name'], rdflib.Literal(widget.vendor)))
+        graph.add((provider, FOAF['name'], rdflib.Literal(widget.resource.vendor)))
         graph.add((resource, USDL['hasProvider'], provider))
         graph.add((resource, DCTERMS['title'], rdflib.Literal(iwidget.name)))
-        graph.add((resource, USDL['versionInfo'], rdflib.Literal(widget.version)))
-        graph.add((resource, RDFS['label'], rdflib.Literal(widget.name)))
+        graph.add((resource, USDL['versionInfo'], rdflib.Literal(widget.resource.version)))
+        graph.add((resource, RDFS['label'], rdflib.Literal(widget.resource.short_name)))
 
         if readOnlyWidgets:
             graph.add((resource, WIRE['readonly'], rdflib.Literal('true')))
@@ -654,9 +654,9 @@ def build_usdl_from_workspace(options, workspace, user, template_url, usdl_info=
     included_iwidgets = IWidget.objects.filter(tab__workspace=workspace)
     for iwidget in included_iwidgets:
         widget = iwidget.widget
-        part = WIRE_M[widget.vendor + '/' + widget.name + '/' + widget.version]
+        part = WIRE_M[widget.resource.vendor + '/' + widget.resource.short_name + '/' + widget.resource.version]
         graph.add((part, rdflib.RDF.type, USDL['Service']))
         graph.add((usdl_uri, USDL['hasPartMandatory'], part))
-        graph.add((part, DCTERMS['title'], rdflib.Literal(widget.name)))
+        graph.add((part, DCTERMS['title'], rdflib.Literal(iwidget.name)))
 
     return graph

@@ -44,7 +44,6 @@ class PackageLinker:
             # The workspace is already linked to the user
             return user_workspace
 
-        # Linking widgets to user!
         variables = self.link_widgets(workspace, user)
 
         if update_variable_values:
@@ -65,13 +64,9 @@ class PackageLinker:
 
         ws_iwidgets = IWidget.objects.filter(tab__workspace=workspace)
 
-        # Linking iwidgets' widget with user
-        # For user personal showcase
         for iwidget in ws_iwidgets:
-            widget = iwidget.widget
-            widget.users.add(user)
-
-            widget.save()
+            if not iwidget.widget.is_available_for(user):
+                raise Exception()
 
         return variables
 

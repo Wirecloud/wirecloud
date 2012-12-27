@@ -291,7 +291,7 @@ def get_widget_data(widget, request=None):
     if not base_url.startswith(('http://', 'https://')):
         base_url = get_absolute_reverse_url('wirecloud_showcase.media', args=(base_url.split('/', 4)), request=request)
 
-    twidget = widget.get_translated_model()
+    twidget = widget.resource.get_translated_model()
     data_ret = {}
     data_variabledef = VariableDef.objects.filter(widget=widget)
     data_vars = {}
@@ -336,19 +336,20 @@ def get_widget_data(widget, request=None):
 
         data_vars[var.name] = data_var
 
-    data_ret['name'] = widget.name
+    data_ret['vendor'] = widget.resource.vendor
+    data_ret['name'] = widget.resource.short_name
+    data_ret['version'] = widget.resource.version
+    data_ret['uri'] = widget.uri
+
     if twidget.display_name and twidget.display_name != "":
         data_ret['displayName'] = twidget.display_name
     else:
-        data_ret['displayName'] = widget.name
-    data_ret['vendor'] = widget.vendor
+        data_ret['displayName'] = widget.resource.short_name
     data_ret['description'] = twidget.description
-    data_ret['uri'] = '/'.join((widget.vendor, widget.name, widget.version))
-    data_ret['wikiURI'] = urljoin(base_url, twidget.wikiURI)
-    data_ret['imageURI'] = urljoin(base_url, twidget.imageURI)
-    data_ret['iPhoneImageURI'] = urljoin(base_url, twidget.iPhoneImageURI)
-    data_ret['version'] = widget.version
-    data_ret['mail'] = widget.mail
+    data_ret['wikiURI'] = urljoin(base_url, twidget.wiki_page_uri)
+    data_ret['imageURI'] = urljoin(base_url, twidget.image_uri)
+    data_ret['iPhoneImageURI'] = urljoin(base_url, twidget.iphone_image_uri)
+    data_ret['mail'] = widget.resource.mail
     data_ret['size'] = {}
     data_ret['size']['width'] = widget.width
     data_ret['size']['height'] = widget.height

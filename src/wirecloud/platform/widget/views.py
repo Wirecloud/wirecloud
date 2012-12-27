@@ -43,6 +43,7 @@ from django.utils.translation import ugettext as _
 from django.views.static import serve
 
 from wirecloud.commons.baseviews import Resource
+from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.cache import no_cache, patch_cache_headers
 from wirecloud.commons.utils.http import get_absolute_reverse_url, get_current_domain, get_xml_error_response
@@ -59,7 +60,7 @@ def deleteWidget(user, name, vendor, version):
 
     try:
 
-        widget = Widget.objects.get(name=name, vendor=vendor, version=version)
+        widget = Widget.objects.get(resource__short_name=name, resource__vendor=vendor, resource__version=version)
 
         # TODO
         # Remove all iwidget that matches this Widget Resource
@@ -95,17 +96,13 @@ class WidgetEntry(Resource):
         data_fields = get_widget_data(widget, request)
         return HttpResponse(simplejson.dumps(data_fields), mimetype='application/json; charset=UTF-8')
 
-    def delete(self, request, vendor, name, version):
-        widget = get_object_or_404(Widget, users=request.user, vendor=vendor, name=name, version=version)
-        widget.delete()
-        return HttpResponse('ok')
-
-
 class WidgetCodeEntry(Resource):
 
     def read(self, request, vendor, name, version):
 
-        widget = get_object_or_404(Widget, vendor=vendor, name=name, version=version, users=request.user)
+        widget = get_object_or_404(Widget, resource__vendor=vendor, resource__short_name=name, resource__version=version)
+        if not widget.is_available_for(request.user):
+            raise Http403()
 
         # check if the xhtml code has been cached
         if widget.xhtml.cacheable:

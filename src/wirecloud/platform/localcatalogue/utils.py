@@ -16,8 +16,13 @@ from wirecloud.commons.utils.wgt import WgtFile
 def install_resource(downloaded_file, templateURL, user, packaged):
 
     if packaged:
-        downloaded_file = StringIO(downloaded_file)
-        wgt_file = WgtFile(downloaded_file)
+        if isinstance(downloaded_file, basestring):
+            downloaded_file = StringIO(downloaded_file)
+            wgt_file = WgtFile(downloaded_file)
+        else:
+            wgt_file = downloaded_file
+            downloaded_file = wgt_file.get_underlying_file()
+
         template_contents = wgt_file.get_template()
     else:
         template_contents = downloaded_file
@@ -40,17 +45,16 @@ def install_resource(downloaded_file, templateURL, user, packaged):
         widget_vendor = template.get_resource_vendor()
         widget_name = template.get_resource_name()
         widget_version = template.get_resource_version()
-        if Widget.objects.filter(vendor=widget_vendor, name=widget_name, version=widget_version).exists():
-            local_resource = Widget.objects.get(vendor=widget_vendor, name=widget_name, version=widget_version)
-        else:
+
+        try:
+            local_resource = resource.widget
+        except Widget.DoesNotExist:
             if resource.fromWGT:
-                base_dir = catalogue.wgt_deployer.get_base_dir(resource.vendor, resource.name, resource.version)
+                base_dir = catalogue.wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
                 wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
                 local_resource = create_widget_from_wgt(wgt_file, user)
             else:
                 local_resource = create_widget_from_template(resource.template_uri, user)
-
-        local_resource.users.add(user)
 
     return resource
 

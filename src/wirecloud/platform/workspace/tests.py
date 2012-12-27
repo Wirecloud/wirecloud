@@ -166,7 +166,6 @@ class WorkspaceTestCase(CacheTestCase):
             'icon_top': 0,
             'icon_left': 0
         }
-        Widget.objects.get(pk=1).users.add(self.user)
         SaveIWidget(iwidget_data, self.user, tab, {})
 
         data = get_global_workspace_data(workspace, other_user).get_data()
@@ -224,7 +223,6 @@ class WorkspaceCacheTestCase(CacheTestCase):
             'icon_top': 0,
             'icon_left': 0
         }
-        Widget.objects.get(pk=1).users.add(self.user)
         SaveIWidget(iwidget_data, self.user, tab, {})
 
         data = get_global_workspace_data(self.workspace, self.user).get_data()

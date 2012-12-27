@@ -41,20 +41,10 @@
         "pk": 1,
         "model": "platform.widget",
         "fields": {
-            "users": [1],
-            "display_name": "",
-            "name": "Test",
-            "author": "aarranz",
-            "description": "This widget is used to test some of the features of the Wirecloud platform",
-            "imageURI": "images/catalogue.png",
+            "resource": 14,
             "width": 6,
-            "version": "1.0",
-            "mail": "aarranz@conwet.com",
-            "vendor": "Wirecloud",
             "xhtml": 1,
-            "height": 24,
-            "iPhoneImageURI": "images/catalogue_iphone.png",
-            "wikiURI": "http://forge.morfeo-project.org/wiki/index.php/Gadgets_EzWeb"
+            "height": 24
         }
     },
     {

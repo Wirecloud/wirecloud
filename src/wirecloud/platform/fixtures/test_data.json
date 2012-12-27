@@ -111,13 +111,24 @@
         }
     },
     {
-        "model": "platform.Widget",
+        "model": "catalogue.CatalogueResource",
         "pk": "1",
         "fields": {
             "vendor": "Test",
-            "name": "Test Widget",
+            "short_name": "Test Widget",
             "version": "1.0.0",
+            "creator": 2,
             "display_name": "__MSG_displayName__",
+            "type": 0,
+            "public": true,
+            "creation_date": "2011-05-13 12:24:03"
+        }
+    },
+    {
+        "model": "platform.Widget",
+        "pk": "1",
+        "fields": {
+            "resource": 1,
             "xhtml": "1"
         }
     },
@@ -322,54 +333,6 @@
             "text_id": "password_pref_label",
             "value": "Password Pref",
             "language": "en",
-            "default": false
-        }
-    },
-    {
-        "model": "commons.Translation",
-        "pk": "2",
-        "fields": {
-            "table": "platform.VariableDef",
-            "element_id": "1",
-            "text_id": "password_pref_label",
-            "value": "Contraseña",
-            "language": "es",
-            "default": false
-        }
-    },
-    {
-        "model": "commons.Translation",
-        "pk": "3",
-        "fields": {
-            "table": "platform.Widget",
-            "element_id": "1",
-            "text_id": "displayName",
-            "value": "Test Widget",
-            "language": "en",
-            "default": false
-        }
-    },
-    {
-        "model": "commons.Translation",
-        "pk": "4",
-        "fields": {
-            "table": "platform.Widget",
-            "element_id": "1",
-            "text_id": "displayName",
-            "value": "Widget de prueba",
-            "language": "es",
-            "default": false
-        }
-    },
-    {
-        "model": "commons.Translation",
-        "pk": "1",
-        "fields": {
-            "table": "platform.VariableDef",
-            "element_id": "1",
-            "text_id": "password_pref_label",
-            "value": "Password Pref",
-            "language": "en",
             "default": true
         }
     },
@@ -389,7 +352,7 @@
         "model": "commons.Translation",
         "pk": "3",
         "fields": {
-            "table": "platform.Widget",
+            "table": "catalogue.CatalogueResource",
             "element_id": "1",
             "text_id": "displayName",
             "value": "Test Widget",
@@ -401,7 +364,7 @@
         "model": "commons.Translation",
         "pk": "4",
         "fields": {
-            "table": "platform.Widget",
+            "table": "catalogue.CatalogueResource",
             "element_id": "1",
             "text_id": "displayName",
             "value": "Widget de prueba",

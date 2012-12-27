@@ -72,44 +72,42 @@ class XHTML(models.Model):
         db_table = 'wirecloud_xhtml'
 
 
-class Widget(TransModel):
+class WidgetManager(models.Manager):
 
-    vendor = models.CharField(_('Vendor'), max_length=250)
-    name = models.CharField(_('Name'), max_length=250)
-    version = models.CharField(_('Version'), max_length=150)
-    display_name = models.CharField(_('Display Name'), max_length=250, null=True, blank=True)
+    def get_query_set(self):
+        return super(WidgetManager, self).get_query_set().select_related('resource')
+
+
+class Widget(models.Model):
+
+    resource = models.OneToOneField('catalogue.CatalogueResource')
 
     xhtml = models.ForeignKey(XHTML)
 
-    author = models.CharField(_('Author'), max_length=250)
-    mail = models.CharField(_('Mail'), max_length=100)
-
-    wikiURI = models.URLField(_('wikiURI'))
-    imageURI = models.URLField(_('imageURI'))
-    iPhoneImageURI = models.URLField(_('iPhoneImageURI'))
-
     width = models.IntegerField(_('Width'), default=1)
     height = models.IntegerField(_('Height'), default=1)
-    description = models.TextField(_('Description'))
 
-    users = models.ManyToManyField(User, verbose_name=_('Users'))
+    objects = WidgetManager()
 
     @property
     def uri(self):
-        return '/'.join((self.vendor, self.name, self.version))
+        return '/'.join((self.resource.vendor, self.resource.short_name, self.resource.version))
 
     class Meta:
-        unique_together = ('vendor', 'name', 'version')
-        ordering = ('vendor', 'name', 'version')
+        ordering = ('resource__vendor', 'resource__short_name', 'resource__version')
         app_label = 'platform'
         db_table = 'wirecloud_widget'
+
+    def is_available_for(self, user):
+
+        return self.resource.public or self.resource.users.filter(id=user.id).exists()
 
     def delete(self, *args, **kwargs):
         if self.xhtml is not None:
             self.xhtml.delete()
 
         import wirecloud.platform.widget.utils as showcase_utils
-        showcase_utils.wgt_deployer.undeploy(self.vendor, self.name, self.version)
+        showcase_utils.wgt_deployer.undeploy(self.resource.vendor, self.resource.short_name, self.resource.version)
         super(Widget, self).delete(*args, **kwargs)
 
     def __unicode__(self):

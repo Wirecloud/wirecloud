@@ -83,15 +83,7 @@ def create_widget_from_template(template, user, request=None, base=None):
     check_requirements(widget_info)
 
     widget = Widget()
-
-    widget.vendor = widget_info['vendor']
-    widget.name = widget_info['name']
-    widget.version = widget_info['version']
-
-    widget.description = widget_info['description']
-    widget.display_name = widget_info['display_name']
-    widget.author = widget_info['author']
-
+    widget.resource = CatalogueResource.objects.get(vendor=parser.get_resource_vendor(), short_name=parser.get_resource_name(), version=parser.get_resource_version())
     widget_code = parser.get_absolute_url(widget_info['code_url'], base)
     widget.xhtml = XHTML.objects.create(
         uri=widget.uri + "/xhtml",
@@ -100,10 +92,6 @@ def create_widget_from_template(template, user, request=None, base=None):
         cacheable=widget_info['code_cacheable']
     )
 
-    widget.mail = widget_info['mail']
-    widget.wikiURI = widget_info['doc_uri']
-    widget.imageURI = widget_info['image_uri']
-    widget.iPhoneImageURI = widget_info['iphone_image_uri']
     widget.width = widget_info['widget_width']
     widget.height = widget_info['widget_height']
 
@@ -195,17 +183,13 @@ def create_widget_from_template(template, user, request=None, base=None):
         )
         ContextOption.objects.create(concept=context['concept'], varDef=vDef)
 
-    widget_table = widget._get_table_id()
     for lang in widget_info['translations']:
         translation = widget_info['translations'][lang]
         for index in translation:
             value = translation[index]
             usages = widget_info['translation_index_usage'][index]
             for use in usages:
-                if use['type'] == 'resource':
-                    table = widget_table
-                    element_id = widget.id
-                elif use['type'] == 'vdef':
+                if use['type'] == 'vdef':
                     vDef = variable_definitions[use['variable']]
                     table = vDef._get_table_id()
                     element_id = vDef.id
@@ -213,6 +197,8 @@ def create_widget_from_template(template, user, request=None, base=None):
                     upo = user_options[use['variable']][use['option']]
                     table = upo._get_table_id()
                     element_id = upo.id
+                else:
+                    continue
 
                 Translation.objects.create(
                     text_id=index,
@@ -240,22 +226,20 @@ def create_widget_from_wgt(wgt, user, deploy_only=False):
 
 def get_or_add_widget_from_catalogue(vendor, name, version, user, request=None, assign_to_users=None):
     resource_exists = CatalogueResource.objects.filter(vendor=vendor, short_name=name, version=version).filter(Q(public=True) | Q(users=user)).exists()
-    widget_exists = Widget.objects.filter(vendor=vendor, name=name, version=version).exists()
+    widget_exists = resource_exists and Widget.objects.filter(resource__vendor=vendor, resource__short_name=name, resource__version=version).exists()
     if resource_exists and widget_exists:
         resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
     else:
         from wirecloud.platform.localcatalogue.utils import install_resource_from_available_marketplaces
         resource = install_resource_from_available_marketplaces(vendor, name, version, user)
 
-    widget = Widget.objects.get(name=name, vendor=vendor, version=version)
     if assign_to_users is None:
         assign_to_users = (user,)
 
     for user in assign_to_users:
         resource.users.add(user)
-        widget.users.add(user)
 
-    return widget
+    return resource.widget
 
 
 def get_or_create_widget(templateURL, user, workspaceId, request, fromWGT=False):

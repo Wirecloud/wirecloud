@@ -36,13 +36,15 @@ class ResourceCollection(Resource):
         resources = {}
         for resource in CatalogueResource.objects.filter(Q(public=True) | Q(users=request.user)):
             if resource.resource_type() == 'widget':
-                widgets = Widget.objects.filter(vendor=resource.vendor, name=resource.short_name, version=resource.version)[:1]
-                if len(widgets) == 1:
-
-                    widget = widgets[0]
+                try:
+                    widget = resource.widget
 
                     resources[resource.local_uri_part] = get_widget_data(widget, request)
                     resources[resource.local_uri_part]['type'] = 'widget'
+
+                except Widget.DoesNotExist:
+                    pass
+
             else:
                 options = json.loads(resource.json_description)
                 resources[resource.local_uri_part] = options
@@ -125,7 +127,7 @@ class ResourceCollection(Resource):
         resource.users.add(request.user)
 
         if resource.resource_type() == 'widget':
-            query = Widget.objects.filter(vendor=resource.vendor, name=resource.short_name, version=resource.version)
+            query = Widget.objects.filter(resource=resource)
             if not force_create and query.exists():
                 local_resource = query.get()
             else:
@@ -139,7 +141,6 @@ class ResourceCollection(Resource):
                 except IntegrityError:
                     return build_error_response(request, 409, _('Resource already exists'))
 
-            local_resource.users.add(request.user)
             data = get_widget_data(local_resource, request)
             data['type'] = 'widget'
             return HttpResponse(simplejson.dumps((data,)), mimetype='application/json; charset=UTF-8')
@@ -178,18 +179,16 @@ class ResourceEntry(Resource):
         if resource.resource_type() == 'widget':
             result = {'removedIWidgets': []}
 
-            widgets = Widget.objects.filter(vendor=resource.vendor, name=resource.short_name, version=resource.version)[:1]
-            if len(widgets) == 1:
+            query = Widget.objects.filter(resource=resource)
+            if query.exists():
 
-                widget = widgets[0]
+                widget = query.get()
 
                 # Remove all iwidgets that matches the resource
                 iwidgets = IWidget.objects.filter(widget=widget, tab__workspace__creator=request.user)
                 for iwidget in iwidgets:
                     result['removedIWidgets'].append(iwidget.id)
                     iwidget.delete()
-
-                widget.delete()
 
             return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
