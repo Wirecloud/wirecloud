@@ -81,7 +81,7 @@ class WiringTestCase(TransactionTestCase):
         })
         response = client.put(self.wiring_url, data, content_type='application/json')
 
-        self.assertEquals(response.status_code, 204)
+        self.assertEqual(response.status_code, 204)
     test_basic_wiring_operations.tags = ('fiware-ut-6',)
 
     def test_basic_wiring_operations_with_read_only_connections(self):
@@ -141,7 +141,7 @@ class WiringTestCase(TransactionTestCase):
         })
         response = client.put(self.wiring_url, data, content_type='application/json')
 
-        self.assertEquals(response.status_code, 204)
+        self.assertEqual(response.status_code, 204)
     test_basic_wiring_operations_with_read_only_connections.tags = ('fiware-ut-6',)
 
     def test_wiring_modification_fails_with_incorrect_user(self):
@@ -153,7 +153,7 @@ class WiringTestCase(TransactionTestCase):
             'connections': [],
         })
         response = client.put(self.wiring_url, data, content_type='application/json')
-        self.assertEquals(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
     test_wiring_modification_fails_with_incorrect_user.tags = ('fiware-ut-6',)
 
     def test_read_only_connections_cannot_be_deleted(self):
@@ -187,7 +187,7 @@ class WiringTestCase(TransactionTestCase):
             'connections': [],
         })
         response = client.put(self.wiring_url, data, content_type='application/json')
-        self.assertEquals(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
 
     def test_read_only_connections_cannot_be_modified(self):
 
@@ -234,7 +234,7 @@ class WiringTestCase(TransactionTestCase):
             ],
         })
         response = client.put(self.wiring_url, data, content_type='application/json')
-        self.assertEquals(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
 
 
 class WiringSeleniumTestCase(WirecloudSeleniumTestCase):

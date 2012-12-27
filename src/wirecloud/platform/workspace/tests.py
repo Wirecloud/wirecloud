@@ -260,29 +260,29 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
     def assertXPathText(self, root_element, xpath, content):
         elements = root_element.xpath(xpath)
-        self.assertEquals(len(elements), 1)
-        self.assertEquals(elements[0].text, content)
+        self.assertEqual(len(elements), 1)
+        self.assertEqual(elements[0].text, content)
 
     def assertXPathAttr(self, root_element, xpath, attr, content):
         elements = root_element.xpath(xpath)
-        self.assertEquals(len(elements), 1)
-        self.assertEquals(elements[0].get(attr), content)
+        self.assertEqual(len(elements), 1)
+        self.assertEqual(elements[0].get(attr), content)
 
     def assertXPathCount(self, root_element, xpath, count):
         elements = root_element.xpath(xpath)
-        self.assertEquals(len(elements), count)
+        self.assertEqual(len(elements), count)
 
     def assertRDFElement(self, graph, element, ns, predicate, content):
         elements = graph.objects(element, ns[predicate])
         for e in elements:
-            self.assertEquals(unicode(e), content)
+            self.assertEqual(unicode(e), content)
 
     def assertRDFCount(self, graph, element, ns, predicate, count):
         num = 0
         for e in graph.objects(element, ns[predicate]):
             num = num + 1
 
-        self.assertEquals(num, count)
+        self.assertEqual(num, count)
 
     def testBuildTemplateFromWorkspace(self):
 

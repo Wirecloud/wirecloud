@@ -205,7 +205,7 @@ class LocalCatalogueTestCase(LocalizedTestCase):
 
         # Cache widget code
         response = client.get(reverse('wirecloud.widget_code_entry', kwargs=widget_id))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         old_code = response.content
 
         delete_resource(resource, self.user)
@@ -218,7 +218,7 @@ class LocalCatalogueTestCase(LocalizedTestCase):
         install_resource(template, template_uri, self.user, False)
 
         response = client.get(reverse('wirecloud.widget_code_entry', kwargs=widget_id))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         new_code = response.content
 
         self.assertNotEqual(old_code, new_code)

@@ -139,7 +139,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.wait_wirecloud_ready()
 
         tabs = len(self.driver.find_elements_by_css_selector('#workspace .tab_wrapper .tab'))
-        self.assertEquals(tabs, 2)
+        self.assertEqual(tabs, 2)
 
         tab = self.get_workspace_tab_by_name('Tab')
         tab_menu_button = tab.find_element_by_css_selector('.icon-tab-menu')

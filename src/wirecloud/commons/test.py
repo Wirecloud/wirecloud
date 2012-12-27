@@ -421,7 +421,7 @@ class WirecloudRemoteTestCase(object):
 
         iwidgets = self.driver.find_elements_by_css_selector('div.iwidget')
         iwidget_count = len(iwidgets)
-        self.assertEquals(iwidget_count, old_iwidget_count + 1)
+        self.assertEqual(iwidget_count, old_iwidget_count + 1)
 
         for iwidget in iwidgets:
             if iwidget.id not in old_iwidget_ids:

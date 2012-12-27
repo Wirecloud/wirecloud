@@ -237,22 +237,22 @@ class PublishTestCase(TransactionTestCase):
         template = self.read_template('test-data', 'mt1.xml')
 
         mashup = add_resource_from_template(template_uri, template, self.user)
-        self.assertEquals(mashup.vendor, 'Wirecloud Test Suite')
-        self.assertEquals(mashup.short_name, 'Test Mashup')
-        self.assertEquals(mashup.version, '1')
-        self.assertEquals(mashup.description, 'This template defines an empty mashup')
-        self.assertEquals(mashup.author, 'test')
+        self.assertEqual(mashup.vendor, 'Wirecloud Test Suite')
+        self.assertEqual(mashup.short_name, 'Test Mashup')
+        self.assertEqual(mashup.version, '1')
+        self.assertEqual(mashup.description, 'This template defines an empty mashup')
+        self.assertEqual(mashup.author, 'test')
 
     def test_publish_empty_mashup_rdf(self):
         template_uri = "http://example.com/path/mashup.rdf"
         template = self.read_template('test-data', 'mt1.rdf')
 
         mashup = add_resource_from_template(template_uri, template, self.user)
-        self.assertEquals(mashup.vendor, 'Wirecloud Test Suite')
-        self.assertEquals(mashup.short_name, 'Test Mashup')
-        self.assertEquals(mashup.version, '1')
-        self.assertEquals(mashup.description, 'This template defines an empty mashup')
-        self.assertEquals(mashup.author, 'test')
+        self.assertEqual(mashup.vendor, 'Wirecloud Test Suite')
+        self.assertEqual(mashup.short_name, 'Test Mashup')
+        self.assertEqual(mashup.version, '1')
+        self.assertEqual(mashup.description, 'This template defines an empty mashup')
+        self.assertEqual(mashup.author, 'test')
 
     def test_publish_invalid_mashup(self):
         template_uri = "http://example.com/path/mashup.rdf"
