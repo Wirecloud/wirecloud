@@ -42,7 +42,6 @@ var OpManagerFactory = function () {
             var response = transport.responseText;
             var workspacesStructure = JSON.parse(response);
 
-            var reloadShowcase = workspacesStructure.reloadShowcase;
             var workspaces = workspacesStructure.workspaces;
 
             for (var i = 0; i < workspaces.length; i++) {
@@ -60,14 +59,7 @@ var OpManagerFactory = function () {
             var state = HistoryManager.getCurrentState();
             this.activeWorkspace = this.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
 
-            // Total information of the active workspace must be downloaded!
-            if (reloadShowcase) {
-                //the showcase must be reloaded to have all new widgets
-                //it itself changes to the active workspace
-                ShowcaseFactory.getInstance().reload(workspace.id);
-            } else {
-                this.activeWorkspace.downloadWorkspaceInfo(HistoryManager.getCurrentState().tab);
-            }
+            this.activeWorkspace.downloadWorkspaceInfo(HistoryManager.getCurrentState().tab);
         }
 
         var onError = function (transport, e) {
@@ -91,11 +83,10 @@ var OpManagerFactory = function () {
             var wsInfo = JSON.parse(response);
 
             //create the new workspace and go to it
-            this.workspaceInstances.set(wsInfo.workspace.id, new Workspace(wsInfo.workspace));
-
-            LayoutManagerFactory.getInstance().hideCover();
-            ShowcaseFactory.getInstance().reload(wsInfo.workspace.id);
-        }
+            var workspace = new Workspace(wsInfo.workspace);
+            this.workspaceInstances.set(wsInfo.workspace.id, workspace);
+            this.changeActiveWorkspace(workspace);
+        };
 
         var createWSError = function(transport, e) {
             var logManager = LogManagerFactory.getInstance();
@@ -138,16 +129,14 @@ var OpManagerFactory = function () {
         }
 
         OpManager.prototype.mergeMashupResource = function(resource) {
-            var mergeOk = function(transport){
+            var mergeOk = function(transport) {
                 var response = transport.responseText;
                 response = JSON.parse(response);
 
-                //create the new workspace and go to it
-                opManager = OpManagerFactory.getInstance();
-
-                ShowcaseFactory.getInstance().reload(response['workspace_id']);
                 LayoutManagerFactory.getInstance().logStep('');
-
+                // Reload current workspace
+                var workspace = this.workspaceInstances.get(response['workspace_id']);
+                this.changeActiveWorkspace(workspace);
             }
             var mergeError = function(transport, e) {
                 var logManager, layoutManager, msg;
@@ -185,13 +174,14 @@ var OpManagerFactory = function () {
             var cloneOk = function(transport) {
                 var response = transport.responseText;
                 var wsInfo = JSON.parse(response);
-                //create the new workspace and go to it
-                opManager = OpManagerFactory.getInstance();
-                opManager.workspaceInstances.set(wsInfo.workspace.id, new Workspace(wsInfo.workspace));
-
-                ShowcaseFactory.getInstance().reload(wsInfo.workspace.id);
 
                 LayoutManagerFactory.getInstance().logStep('');
+
+                //create the new workspace and go to it
+                var opManager = OpManagerFactory.getInstance();
+                var workspace = new Workspace(wsInfo.workspace);
+                opManager.workspaceInstances.set(wsInfo.workspace.id, workspace);
+                opManager.changeActiveWorkspace(workspace);
             };
 
             var cloneError = function(transport, e) {
