@@ -48,6 +48,9 @@ class WgtFile(object):
         except:
             pass
 
+    def get_underlying_file(self):
+        return self._zip.fp
+
     def read(self, path):
         return self._zip.read(path)
 
