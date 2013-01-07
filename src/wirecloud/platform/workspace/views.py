@@ -39,7 +39,7 @@ from wirecloud.commons.baseviews import Resource, Service
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
-from wirecloud.commons.utils.template import TemplateParser
+from wirecloud.commons.utils.template import TemplateParseException, TemplateParser
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.platform.get_data import get_workspace_data, get_global_workspace_data, get_tab_data
 from wirecloud.platform.iwidget.utils import deleteIWidget
@@ -577,7 +577,11 @@ class MashupImportService(Service):
             template = PublishedWorkspace.objects.get(id=pworkspace_id).template
         else:
             template = downloader.download_http_content(template_url, user=request.user)
-        workspace, _junk = buildWorkspaceFromTemplate(template, request.user, True)
+
+        try:
+            workspace, _junk = buildWorkspaceFromTemplate(template, request.user, True)
+        except TemplateParseException, e:
+            return build_error_response(request, 400, unicode(e.msg))
 
         activate = data.get('active', False) == "true"
         if not activate:
