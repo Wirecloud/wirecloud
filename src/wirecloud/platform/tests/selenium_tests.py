@@ -18,6 +18,10 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import time
+
+from selenium.webdriver.support.ui import WebDriverWait
+
 from wirecloud.commons.test import widget_operation, WirecloudSeleniumTestCase
 
 
@@ -183,6 +187,40 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.assertEqual(self.count_workspace_tabs(), 1)
         self.assertEqual(self.count_iwidgets(), 0)
+
+    def test_create_workspace_from_catalogue(self):
+
+        self.login()
+        self.create_workspace_from_catalogue('Test Mashup')
+
+        # Test that wiring works as expected
+        tab = self.get_workspace_tab_by_name('Tab')
+        tab2 = self.get_workspace_tab_by_name('Tab 2')
+
+        # Load tab2
+        tab2.click()
+        tab.click()
+
+        # Send wiring event
+        with widget_operation(self.driver, 1):
+            text_input = self.driver.find_element_by_tag_name('input')
+            self.fill_form_input(text_input, 'hello world!!')
+            # Work around hang when using Firefox Driver
+            self.driver.execute_script('sendEvent();')
+            #self.driver.find_element_by_id('b1').click()
+
+        time.sleep(0.2)
+
+        # Check event is received by the second test widget
+        tab2.click()
+        with widget_operation(self.driver, 2):
+            try:
+                WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
+            except:
+                pass
+
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, 'hello world!!')
 
     def test_duplicated_workspaces(self):
 
