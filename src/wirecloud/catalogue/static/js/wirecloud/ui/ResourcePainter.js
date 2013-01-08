@@ -169,6 +169,10 @@
                 } else {
                     return gettext('Anonymous');
                 }
+            },
+            'versions': function () {
+                var versions = resource.getAllVersions().map(function (version) { return 'v' + version.text; });
+                return versions.join(', ');
             }
         });
 
