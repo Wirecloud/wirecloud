@@ -110,7 +110,7 @@ def SaveIWidget(iwidget, user, tab, initial_variable_values):
 
     (widget_vendor, widget_name, widget_version) = widget_uri.split('/')
     widget = Widget.objects.get(resource__vendor=widget_vendor, resource__short_name=widget_name, resource__version=widget_version)
-    if not widget.resource.public and not widget.resource.users.filter(id=user.id).exists():
+    if not widget.is_available_for(user):
         raise Http403
 
     new_iwidget = IWidget(name=iwidget_name, widget=widget, tab=tab, layout=layout, position=position, icon_position=icon_position, transparency=False)

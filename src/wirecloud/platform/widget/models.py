@@ -100,7 +100,7 @@ class Widget(models.Model):
 
     def is_available_for(self, user):
 
-        return self.resource.public or self.resource.users.filter(id=user.id).exists()
+        return self.resource.public or self.resource.users.filter(id=user.id).exists() or len(set(self.resource.groups.all()) & set(user.groups.all())) > 0
 
     def delete(self, *args, **kwargs):
         if self.xhtml is not None:
