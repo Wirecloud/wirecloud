@@ -20,7 +20,7 @@
 
 import os
 import codecs
-from shutil import rmtree
+import shutil
 import stat
 import sys
 from tempfile import mkdtemp
@@ -67,12 +67,36 @@ def cleartree(path):
         except os.error:
             mode = 0
         if stat.S_ISDIR(mode):
-            rmtree(fullname, ignore_errors=True)
+            shutil.rmtree(fullname, ignore_errors=True)
         else:
             try:
                 os.remove(fullname)
             except os.error:
                 pass
+
+
+def restoretree(backup_path, dest_path):
+    cleartree(dest_path)
+
+    names = []
+    try:
+        names = os.listdir(backup_path)
+    except os.error:
+        pass
+
+    for name in names:
+        srcname = os.path.join(backup_path, name)
+        dstname = os.path.join(dest_path, name)
+
+        try:
+            mode = os.lstat(srcname).st_mode
+        except os.error:
+            mode = 0
+
+        if stat.S_ISDIR(mode):
+            shutil.copytree(srcname, dstname)
+        else:
+            shutil.copy2(srcname, dstname)
 
 
 class FakeDownloader(object):
@@ -761,19 +785,30 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
         # catalogue deployer
         cls.old_catalogue_deployer = catalogue.wgt_deployer
+        cls.catalogue_tmp_dir_backup = mkdtemp()
         cls.catalogue_tmp_dir = mkdtemp()
         catalogue.wgt_deployer = WgtDeployer(cls.catalogue_tmp_dir)
 
-        cls.widget_wgt_file = open(os.path.join(cls.shared_test_data_dir, 'Wirecloud_Test_1.0.wgt'))
-        cls.widget_wgt = WgtFile(cls.widget_wgt_file)
-
-        cls.operator_wgt_file = open(os.path.join(cls.shared_test_data_dir, 'Wirecloud_TestOperator_1.0.zip'), 'rb')
-        cls.operator_wgt = WgtFile(cls.operator_wgt_file)
-
         # showcase deployer
         cls.old_deployer = showcase.wgt_deployer
+        cls.localcatalogue_tmp_dir_backup = mkdtemp()
         cls.tmp_dir = mkdtemp()
         showcase.wgt_deployer = WgtDeployer(cls.tmp_dir)
+
+        # deploy resource files
+        operator_wgt_file = open(os.path.join(cls.shared_test_data_dir, 'Wirecloud_TestOperator_1.0.zip'), 'rb')
+        operator_wgt = WgtFile(operator_wgt_file)
+        catalogue.add_widget_from_wgt(operator_wgt_file, None, wgt_file=operator_wgt, deploy_only=True)
+        operator_wgt_file.close()
+
+        widget_wgt_file = open(os.path.join(cls.shared_test_data_dir, 'Wirecloud_Test_1.0.wgt'))
+        widget_wgt = WgtFile(widget_wgt_file)
+        catalogue.add_widget_from_wgt(widget_wgt_file, None, wgt_file=widget_wgt, deploy_only=True)
+        showcase.wgt_deployer.deploy(widget_wgt)
+        widget_wgt_file.close()
+
+        restoretree(cls.tmp_dir, cls.localcatalogue_tmp_dir_backup)
+        restoretree(cls.catalogue_tmp_dir, cls.catalogue_tmp_dir_backup)
 
         super(WirecloudSeleniumTestCase, cls).setUpClass()
 
@@ -785,12 +820,11 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
         downloader.download_http_content = cls._original_download_function
         catalogue.wgt_deployer = cls.old_catalogue_deployer
-        rmtree(cls.catalogue_tmp_dir, ignore_errors=True)
+        shutil.rmtree(cls.catalogue_tmp_dir_backup, ignore_errors=True)
+        shutil.rmtree(cls.catalogue_tmp_dir, ignore_errors=True)
         showcase.wgt_deployer = cls.old_deployer
-        rmtree(cls.tmp_dir, ignore_errors=True)
-
-        cls.widget_wgt_file.close()
-        cls.operator_wgt_file.close()
+        shutil.rmtree(cls.localcatalogue_tmp_dir_backup, ignore_errors=True)
+        shutil.rmtree(cls.tmp_dir, ignore_errors=True)
 
         settings.LANGUAGES = cls.old_LANGUAGES
         settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
@@ -799,19 +833,11 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         super(WirecloudSeleniumTestCase, cls).tearDownClass()
 
     def setUp(self):
-        catalogue.add_widget_from_wgt(self.widget_wgt_file, None, wgt_file=self.widget_wgt, deploy_only=True)
-        showcase.create_widget_from_wgt(self.widget_wgt, None, deploy_only=True)
-
-        catalogue.add_widget_from_wgt(self.operator_wgt_file, None, wgt_file=self.operator_wgt, deploy_only=True)
-
+        restoretree(self.localcatalogue_tmp_dir_backup, self.tmp_dir)
+        restoretree(self.catalogue_tmp_dir_backup, self.catalogue_tmp_dir)
         cache.clear()
         super(WirecloudSeleniumTestCase, self).setUp()
 
-    def tearDown(self):
-        cleartree(self.tmp_dir)
-        cleartree(self.catalogue_tmp_dir)
-
-        super(WirecloudSeleniumTestCase, self).tearDown()
 
 browsers = getattr(settings, 'WIRECLOUD_SELENIUM_BROWSER_COMMANDS', {
     'Firefox': {

@@ -111,10 +111,6 @@ def build_template_from_workspace(options, workspace, user):
     if not wikiURI:
         wikiURI = 'http://trac.morfeo-project.org/trac/ezwebplatform/wiki/options'
 
-    organization = options.get('organization')
-    if not organization:
-        organization = ''
-
     readOnlyWidgets = options.get('readOnlyWidgets', False)
     readOnlyConnectables = options.get('readOnlyConnectables', False)
 
@@ -137,7 +133,6 @@ def build_template_from_workspace(options, workspace, user):
     etree.SubElement(desc, 'Description').text = description
     etree.SubElement(desc, 'ImageURI').text = imageURI
     etree.SubElement(desc, 'WikiURI').text = wikiURI
-    etree.SubElement(desc, 'Organization').text = organization
 
     resources = etree.SubElement(desc, 'IncludedResources')
 

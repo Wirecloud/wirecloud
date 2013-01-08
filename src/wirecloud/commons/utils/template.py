@@ -205,7 +205,6 @@ class USDLTemplateParser(object):
 
     def _parse_basic_info(self):
 
-        # Missing organization
         self._info['translations'] = {}
 
         # ------------------------------------------
@@ -752,7 +751,6 @@ class WirecloudTemplateParser(object):
 
         self._info['author'] = self._get_field(AUTHOR_XPATH, self._resource_description)
         self._info['mail'] = self._get_field(MAIL_XPATH, self._resource_description)
-        self._info['organization'] = self._get_field(ORGANIZATION_XPATH, self._resource_description, required=False)
         self._get_url_field('image_uri', IMAGE_URI_XPATH, self._resource_description)
         self._get_url_field('doc_uri', DOC_URI_XPATH, self._resource_description, required=False)
         self._parse_requirements()

@@ -52,7 +52,7 @@ from django.views.static import serve
 from wirecloud.catalogue.models import CatalogueResource, UserTag, UserVote
 from wirecloud.catalogue.tagsParser import TagsXMLHandler
 from wirecloud.catalogue.catalogue_utils import get_latest_resource_version
-from wirecloud.catalogue.catalogue_utils import get_resource_response, filter_resources_by_organization
+from wirecloud.catalogue.catalogue_utils import get_resource_response, filter_resources_by_user
 from wirecloud.catalogue.catalogue_utils import filter_resources_by_scope
 from wirecloud.catalogue.catalogue_utils import get_and_filter, get_or_filter, get_not_filter
 from wirecloud.catalogue.catalogue_utils import get_tag_filter, get_event_filter, get_slot_filter, get_paginatedlist
@@ -172,7 +172,7 @@ class ResourceCollection(Resource):
         resources = filter_resources_by_scope(CatalogueResource.objects.all(), scope)
         resources = resources.order_by(orderby)
         resources = group_resources(resources)
-        resources = filter_resources_by_organization(request.user, resources, request.user.groups.all())
+        resources = filter_resources_by_user(request.user, resources)
         items = len(resources)
 
         resources = get_paginatedlist(resources, int(pag), int(offset))
@@ -257,7 +257,7 @@ class ResourceCollectionBySimpleSearch(Resource):
         resources = filter_resources_by_scope(resources, scope)
         resources = resources.order_by(orderby)
         resources = group_resources(resources)
-        resources = filter_resources_by_organization(request.user, resources, request.user.groups.all())
+        resources = filter_resources_by_user(request.user, resources)
 
         items = len(resources)
         resources = get_paginatedlist(resources, pag, offset)
@@ -299,7 +299,7 @@ class ResourceCollectionByGlobalSearch(Resource):
         resources = filter_resources_by_scope(resources, scope).distinct()
         resources = resources.order_by(orderby)
         resources = group_resources(resources)
-        resources = filter_resources_by_organization(request.user, resources, request.user.groups.all())
+        resources = filter_resources_by_user(request.user, resources)
         items = len(resources)
 
         resources = get_paginatedlist(resources, pag, offset)

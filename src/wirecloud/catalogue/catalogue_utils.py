@@ -65,31 +65,27 @@ def group_resources(resources):
     return ordered_list
 
 
-def _valid_resource(resource, user, organization_list):
+def _valid_resource(resource, user, user_groups):
 
     if resource.public or resource.users.filter(id=user.id).exists():
         return True
 
-    # Checking organizations!
-    resource_organizations = resource.organization.all()
-
-    # There are organizations, if a resource organization corresponds to a user organization
-    return len(set(resource_organizations) & set(organization_list)) > 0
+    # Check if the user is listed in any of the resource groups
+    return len(set(resource.groups.all()) & set(user_groups)) > 0
 
 
-def _filter_resource_by_organization(entry, user, organization_list):
+def _filter_resource_by_user(entry, user, user_groups):
 
-    entry['variants'] = [r for r in entry['variants'] if _valid_resource(r, user, organization_list)]
+    entry['variants'] = [r for r in entry['variants'] if _valid_resource(r, user, user_groups)]
     return len(entry['variants']) > 0
 
 
-def filter_resources_by_organization(user, resources, organization_list):
+def filter_resources_by_user(user, resources):
     """
-    Filter resources that don't belong to given organization.
-    Also filter resources that are not certificated!
+    Filter resources visible to a given user
     """
-
-    return [r for r in resources if _filter_resource_by_organization(r, user, organization_list)]
+    user_groups = user.groups.all()
+    return [r for r in resources if _filter_resource_by_user(r, user, user_groups)]
 
 
 def filter_resources_by_scope(resources, scope):

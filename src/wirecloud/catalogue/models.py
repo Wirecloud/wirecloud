@@ -60,6 +60,7 @@ class CatalogueResource(TransModel):
     creator = models.ForeignKey(User, null=True, blank=True, related_name='uploaded_resources')
     public = models.BooleanField(_('Available to all users'), default=False)
     users = models.ManyToManyField(User, verbose_name=_('Users'), related_name='local_resources', blank=True)
+    groups = models.ManyToManyField(Group, verbose_name=_('Groups'), related_name='local_resources', blank=True)
 
     description = models.TextField(_('Description'))
     license = models.CharField(_('License'), max_length=20, null=True, blank=True)
@@ -69,9 +70,6 @@ class CatalogueResource(TransModel):
     iphone_image_uri = models.CharField(_('iPhoneImageURI'), max_length=200, blank=True)
     wiki_page_uri = models.CharField(_('wikiURI'), max_length=200, blank=True)
     template_uri = models.CharField(_('templateURI'), max_length=200, blank=True)
-
-    # For implementing "private widgets" only visible for users that belongs to some concrete organizations
-    organization = models.ManyToManyField(Group, related_name='organization', null=True, blank=True)
 
     popularity = models.DecimalField(_('popularity'), default=0, max_digits=2, decimal_places=1)
     fromWGT = models.BooleanField(_('fromWGT'), default=False)
