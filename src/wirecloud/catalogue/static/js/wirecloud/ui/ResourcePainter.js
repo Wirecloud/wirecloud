@@ -64,6 +64,7 @@
         context = EzWebExt.merge(extra_context, {
             'displayname': resource.getDisplayName(),
             'name': resource.getName(),
+            'internalname': resource.getURI(),
             'vendor': resource.getVendor(),
             'version': resource.getVersion().text,
             'author': resource.getCreator(),
