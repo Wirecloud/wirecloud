@@ -106,7 +106,7 @@ def iframe_error(func):
         if response is not None and (response.status_code >= 300 or response.status_code < 200):
             error_msg = response.content
 
-        if error_msg:
+        if error_msg is not None:
             return HttpResponseRedirect(reverse('iframe_error') + '?msg=' + urlquote_plus(str(error_msg)) + '#error')
         elif response['Content-Type'] != 'text/plain':
             response['Content-Type'] = 'text/plain; charset=UTF-8'
