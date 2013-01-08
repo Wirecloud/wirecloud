@@ -34,7 +34,7 @@ class ResourceCollection(Resource):
     def read(self, request):
 
         resources = {}
-        for resource in CatalogueResource.objects.filter(Q(public=True) | Q(users=request.user)):
+        for resource in CatalogueResource.objects.filter(Q(public=True) | Q(users=request.user) | Q(groups=request.user.groups.all())):
             if resource.resource_type() == 'widget':
                 try:
                     widget = resource.widget
