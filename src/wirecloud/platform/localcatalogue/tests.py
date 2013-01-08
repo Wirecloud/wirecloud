@@ -4,7 +4,7 @@ import os.path
 from shutil import rmtree
 from tempfile import mkdtemp
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.test import TransactionTestCase, Client
@@ -340,8 +340,6 @@ class LocalCatalogueTestCase(LocalizedTestCase):
 
 class WGTLocalCatalogueTestCase(TransactionTestCase):
 
-    tags = ('current',)
-
     def setUp(self):
         super(WGTLocalCatalogueTestCase, self).setUp()
 
@@ -388,6 +386,38 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.login(username='normuser')
 
         self.add_widget_to_mashup('Test')
+
+    def test_resource_visibility(self):
+
+        norm_user = User.objects.get(username='normuser')
+        normusers_group = Group.objects.get(name='normusers')
+        test_widget = CatalogueResource.objects.get(short_name='Test')
+
+        self.login(username='normuser')
+
+        self.search_resource('Test')
+        widget = self.search_in_catalogue_results('Test')
+        self.assertIsNotNone(widget)
+
+        test_widget.public = False
+        test_widget.save()
+
+        self.search_resource('Test')
+        widget = self.search_in_catalogue_results('Test')
+        self.assertIsNone(widget)
+
+        test_widget.users.add(norm_user)
+
+        self.search_resource('Test')
+        widget = self.search_in_catalogue_results('Test')
+        self.assertIsNotNone(widget)
+
+        test_widget.users.remove(norm_user)
+        test_widget.groups.add(normusers_group)
+
+        self.search_resource('Test')
+        widget = self.search_in_catalogue_results('Test')
+        self.assertIsNotNone(widget)
 
     def test_resource_deletion(self):
 
