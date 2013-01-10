@@ -1,0 +1,2 @@
+recursive-include wirecloud *
+recursive-exclude wirecloud *.py[co]
