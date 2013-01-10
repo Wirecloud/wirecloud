@@ -164,10 +164,6 @@ LOGIN_URL = reverse_lazy('login')
 LOGOUT_URL = reverse_lazy('wirecloud.root')
 LOGIN_REDIRECT_URL = reverse_lazy('wirecloud.root')
 
-# Set the log path
-# When empty, defaults to MEDIA_ROOT/logs
-#LOG_PATH='/var/log/ezweb'
-
 #Authentication
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
@@ -188,7 +184,6 @@ CACHES = {
         },
     }
 }
-JOHNNY_MIDDLEWARE_KEY_PREFIX = '%s-cache' % DATABASES['default']['NAME']
 
 WORKSPACE_MANAGERS = (
     'wirecloud.platform.workspace.workspace_managers.OrganizationWorkspaceManager',
