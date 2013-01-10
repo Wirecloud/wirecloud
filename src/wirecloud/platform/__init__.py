@@ -18,5 +18,5 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
-__version_info__ = (0, 3, 0)
-__version__ = '.'.join(map(str, __version_info__))
+__version_info__ = (0, 4, 0)
+__version__ = '.'.join(map(str, __version_info__)) + 'a1'
