@@ -90,7 +90,10 @@ class CommandLineUtility(object):
 
 
 def execute_from_command_line():
-    utility = CommandLineUtility(())
+    from wirecloud.commons.commands.convert import ConvertCommand
+    utility = CommandLineUtility({
+        "convert": ConvertCommand(),
+    })
     utility.execute()
 
 if __name__ == "__main__":
