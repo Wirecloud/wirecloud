@@ -35,6 +35,11 @@ setup(
     url='http://github.com/Wirecloud/wirecloud',
     license='AGPL3',
     packages=('wirecloud',),
+    entry_points={
+        'console_scripts': (
+            'wirecloud-admin = wirecloud.commons.wirecloud_admin:execute_from_command_line',
+        ),
+    },
     include_package_data=True,
     data_files=data_files,
     install_requires=('Django>=1.3', 'south', 'lxml', 'BeautifulSoup', 'django-compressor>=1.2', 'rdflib>=3.2.0'),
