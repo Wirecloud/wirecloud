@@ -27,7 +27,7 @@ from lxml import etree
 from wirecloud.commons.utils.translation import get_trans_index
 
 
-__all__ = ('TemplateParser',)
+__all__ = ('TemplateParseException', 'TemplateParser')
 
 NAME_RE = re.compile(r'^[^/]+$')
 VENDOR_RE = re.compile(r'^[^/]+$')
