@@ -183,8 +183,10 @@ class Proxy():
             try:
                 res = self._do_request(opener, request_data['method'], request_data['url'], request_data['data'], request_data['headers'])
             except urllib2.URLError, e:
-                if e.reason[0] in (errno.ECONNREFUSED, errno.ETIMEDOUT):
+                if isinstance(e.reason, socket.timeout) or isinstance(e.reason, socket.error) and e.reason[0] == errno.ETIMEDOUT:
                     return HttpResponse(status=504)
+                elif isinstance(e.reason, socket.error) and e.reason[0] == errno.ECONNREFUSED:
+                    return HttpResponse(status=502)
                 else:
                     return HttpResponseNotFound(str(e.reason))
 
