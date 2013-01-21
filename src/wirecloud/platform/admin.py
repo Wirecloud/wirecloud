@@ -23,7 +23,6 @@ from wirecloud.platform import models
 
 
 admin.site.register(models.Concept)
-admin.site.register(models.ConceptName)
 admin.site.register(models.Constant)
 
 admin.site.register(models.Position)

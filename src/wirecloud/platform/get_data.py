@@ -41,7 +41,7 @@ from django.utils.translation import ugettext as _
 from wirecloud.commons.utils.cache import CacheableData
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.platform.context.utils import get_user_context_providers
-from wirecloud.platform.models import Concept, ConceptName, Constant, IWidget, PublishedWorkspace, Tab, UserPrefOption, UserWorkspace, Variable, VariableDef, VariableValue
+from wirecloud.platform.models import Concept, Constant, IWidget, PublishedWorkspace, Tab, UserPrefOption, UserWorkspace, Variable, VariableDef, VariableValue
 from wirecloud.platform.preferences.views import get_workspace_preference_values, get_tab_preference_values
 from wirecloud.platform.workspace.utils import createTab, decrypt_value, encrypt_value
 
@@ -645,14 +645,12 @@ def get_concepts_data(concept_values):
 
 def get_concept_data(concept, concept_values):
 
-    cnames = ConceptName.objects.filter(concept=concept).values('name')
-
     data_ret = {
         'concept': concept.pk,
         'type': concept.type,
         'label': concept.label,
         'description': concept.description,
-        'names': [cname['name'] for cname in cnames],
+        'names': (concept.pk, ),
     }
 
     if concept.source == 'PLAT':

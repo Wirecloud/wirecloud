@@ -60,19 +60,6 @@ class Concept(models.Model):
         return unicode(self.concept) + ' ' + unicode(self.adaptor)
 
 
-class ConceptName(models.Model):
-
-    name = models.CharField(_('Name'), max_length=256)
-    concept = models.ForeignKey(Concept, verbose_name=_('Concept'))
-
-    class Meta:
-        app_label = 'platform'
-        db_table = 'wirecloud_conceptname'
-
-    def __unicode__(self):
-        return self.name
-
-
 class Constant(models.Model):
     concept = models.ForeignKey(Concept, verbose_name=_('Concept'), unique=True, null=False)
     value = models.CharField(_('Value'), max_length=256)
