@@ -80,6 +80,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
     features = {
         'Wirecloud': wirecloud.platform.__version__,
         'ApplicationMashup': '1.0',
+        'StyledElements': '0.5',
     }
 
     def get_scripts(self, view):

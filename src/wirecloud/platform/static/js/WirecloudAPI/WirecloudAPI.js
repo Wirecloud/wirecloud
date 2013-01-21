@@ -89,4 +89,23 @@
     });
     Object.preventExtensions(window.MashupPlatform.wiring);
 
+    // StyledElements
+    window.StyledElements = {
+        'Event': window.parent.StyledElements.Event,
+        'ObjectWithEvents': window.parent.StyledElements.ObjectWithEvents,
+        'StyledElement': window.parent.StyledElements.StyledElement,
+        'StyledButton': window.parent.StyledElements.StyledButton,
+        'StyledInputElement': window.parent.StyledElements.StyledInputElement,
+        'StyledTextField': window.parent.StyledElements.StyledTextField,
+        'StyledPasswordField': window.parent.StyledElements.StyledPasswordField,
+        'StyledSelect': window.parent.StyledElements.StyledSelect,
+        'StyledTextArea': window.parent.StyledElements.StyledTextArea,
+        'StaticPaginatedSource': window.parent.StyledElements.StaticPaginatedSource,
+        'ModelTable': window.parent.StyledElements.ModelTable,
+        'HorizontalLayout': window.parent.StyledElements.HorizontalLayout,
+        'BorderLayout': window.parent.StyledElements.BorderLayout,
+        'Tab': window.parent.StyledElements.Tab,
+        'StyledNotebook': window.parent.StyledElements.StyledNotebook
+    };
+
 })();
