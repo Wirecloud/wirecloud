@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<Template xmlns="http://morfeo-project.org/2007/Template">
+    <Catalog.ResourceDescription>
+        <Vendor>Wirecloud</Vendor>
+        <Name>context-inspector</Name>
+        <DisplayName>Context Inspector</DisplayName>
+        <Version>0.2</Version>
+        <Author>aarranz</Author>
+        <Mail>aarranz@conwet.com</Mail>
+        <Description>This widget is used to test some of the features of the Wirecloud platform</Description>
+        <ImageURI>images/catalogue.png</ImageURI>
+        <iPhoneImageURI>images/catalogue_iphone.png</iPhoneImageURI>
+    </Catalog.ResourceDescription>
+
+    <Platform.Preferences>
+    </Platform.Preferences>
+
+    <Platform.StateProperties>
+    </Platform.StateProperties>
+
+    <Platform.Wiring>
+    </Platform.Wiring>
+    <Platform.Link>
+        <XHTML content-type="application/xhtml+xml" href="context-inspector.html"/>
+    </Platform.Link>
+    <Platform.Rendering height="24" width="6"/>
+</Template>
