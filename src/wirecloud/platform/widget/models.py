@@ -46,6 +46,7 @@ class XHTML(models.Model):
     code_timestamp = models.BigIntegerField(_('Cache timestamp'), null=True, blank=True)
     url = models.CharField(_('URL'), max_length=500)
     content_type = models.CharField(_('Content type'), max_length=50, blank=True, null=True)
+    use_platform_style = models.BooleanField(_('Uses platform style'), default=False)
     cacheable = models.BooleanField(_('Cacheable'), default=True, blank=True)
 
     def __unicode__(self):

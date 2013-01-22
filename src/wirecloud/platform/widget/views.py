@@ -149,7 +149,7 @@ class WidgetCodeEntry(Resource):
             xhtml.code_timestamp = None
             xhtml.save()
 
-        code = fix_widget_code(code, base_url, content_type, request, force_base=force_base)
+        code = fix_widget_code(code, base_url, content_type, request, xhtml.use_platform_style, force_base=force_base)
         if xhtml.cacheable:
             cache_timeout = 31536000  # 1 year
             cache_entry = {

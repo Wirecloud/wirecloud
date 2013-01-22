@@ -89,6 +89,7 @@ def create_widget_from_template(template, user, request=None, base=None):
         uri=widget.uri + "/xhtml",
         url=widget_code,
         content_type=widget_info['code_content_type'],
+        use_platform_style=widget_info['code_uses_platform_style'],
         cacheable=widget_info['code_cacheable']
     )
 
@@ -299,7 +300,7 @@ def xpath(tree, query, xmlns):
         return tree.xpath(query, namespaces={'xhtml': xmlns})
 
 
-def fix_widget_code(widget_code, base_url, content_type, request, force_base=False):
+def fix_widget_code(widget_code, base_url, content_type, request, use_platform_style, force_base=False):
 
     if content_type == 'text/html':
         parser = etree.HTMLParser()
@@ -364,6 +365,10 @@ def fix_widget_code(widget_code, base_url, content_type, request, force_base=Fal
         for file in files:
             head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url(file, request=request)))
         head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url('js/WirecloudAPI/WirecloudAPI.js', request=request)))
+
+        if use_platform_style:
+            head_element.insert(0, etree.Element('link', rel="stylesheet", type="text/css", href=get_absolute_static_url('js/EzWebAPI_ext/EzWebGadgets.css', request=request)))
+            head_element.insert(0, etree.Element('link', rel="stylesheet", type="text/css", href=get_absolute_static_url('css/gadget.css', request=request)))
 
     # return modified code
     return etree.tostring(xmltree, pretty_print=False, method=serialization_method)

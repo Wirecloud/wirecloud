@@ -471,6 +471,7 @@ class USDLTemplateParser(object):
             if self._info['code_content_type'] == '':
                 self._info['code_content_type'] = 'text/html'
 
+            self._info['code_uses_platform_style'] = self._get_field(DCTERMS, 'usePlatformStyle', xhtml_element, required=False).lower() == 'true'
             self._info['code_cacheable'] = self._get_field(WIRE, 'codeCacheable', xhtml_element, required=False).lower() == 'true'
 
         elif self._info['type'] == 'operator':
@@ -928,6 +929,7 @@ class WirecloudTemplateParser(object):
             raise TemplateParseException(msg)
 
         self._info['code_content_type'] = xhtml_element.get('content-type', 'text/html')
+        self._info['code_uses_platform_style'] = xhtml_element.get('use-platform-style', 'false').lower() == 'true'
         self._info['code_cacheable'] = xhtml_element.get('cacheable', 'true').lower() == 'true'
 
         rendering_element = self._xpath(PLATFORM_RENDERING_XPATH, self._doc)[0]
