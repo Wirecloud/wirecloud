@@ -69,48 +69,4 @@
         <field type="CharField" name="description">Current theme</field>
         <field type="CharField" name="adaptor"><None></None></field>
     </object>
-    <object pk="1" model="platform.conceptname">
-        <field type="CharField" name="name">user_name</field>
-        <field to="platform.concept" name="concept" rel="ManyToOneRel">username</field>
-    </object>
-    <object pk="2" model="platform.conceptname">
-        <field type="CharField" name="name">width</field>
-        <field to="platform.concept" name="concept" rel="ManyToOneRel">width</field>
-    </object>
-    <object pk="3" model="platform.conceptname">
-        <field type="CharField" name="name">height</field>
-        <field to="platform.concept" name="concept" rel="ManyToOneRel">height</field>
-    </object>
-    <object pk="4" model="platform.conceptname">
-        <field type="CharField" name="name">xPosition</field>
-        <field to="platform.concept" name="concept" rel="ManyToOneRel">xPosition</field>
-    </object>
-    <object pk="5" model="platform.conceptname">
-        <field type="CharField" name="name">yPosition</field>
-        <field to="platform.concept" name="concept" rel="ManyToOneRel">yPosition</field>
-    </object>
-    <object pk="6" model="platform.conceptname">
-        <field type="CharField" name="name">language</field>
-        <field to="platform.concept" name="concept" rel="ManyToOneRel">language</field>
-    </object>
-    <object pk="8" model="platform.conceptname">
-        <field type="CharField" name="name">widthInPixels</field>
-        <field to="platform.concept" name="concept" rel="ManyToOneRel">widthInPixels</field>
-    </object>
-    <object pk="9" model="platform.conceptname">
-        <field type="CharField" name="name">heightInPixels</field>
-        <field to="platform.concept" name="concept" rel="ManyToOneRel">heightInPixels</field>
-    </object>
-    <object pk="10" model="platform.conceptname">
-        <field type="CharField" name="name">orientation</field>
-        <field to="platform.concept" name="concept" rel="ManyToOneRel">orientation</field>
-    </object>
-    <object pk="11" model="platform.conceptname">
-        <field type="CharField" name="name">twitterauth</field>
-        <field to="platform.concept" name="concept" rel="ManyToOneRel">twitterauth</field>
-    </object>
-    <object pk="12" model="platform.conceptname">
-        <field type="CharField" name="name">theme</field>
-        <field to="platform.concept" name="concept" rel="ManyToOneRel">theme</field>
-    </object>
 </django-objects>
