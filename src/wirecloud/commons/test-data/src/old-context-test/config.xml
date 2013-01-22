@@ -1,12 +1,13 @@
 <?xml version="1.0" ?>
 <Template xmlns="http://morfeo-project.org/2007/Template">
     <Catalog.ResourceDescription>
-        <Vendor>UPM</Vendor>
-        <Name>Wirecloud Context Test</Name>
+        <Vendor>Wirecloud</Vendor>
+        <Name>old-context-test</Name>
         <Version>0.1</Version>
+        <DisplayName>Old Context Test Widget</DisplayName>
         <Author>aarranz</Author>
         <Mail>aarranz@conwet.com</Mail>
-        <Description>This gadget is used to test some of the features of the EzWeb platform</Description>
+        <Description>This widget is used to test some of the features of the EzWeb platform</Description>
         <ImageURI>images/catalogue.png</ImageURI>
         <iPhoneImageURI>images/catalogue_iphone.png</iPhoneImageURI>
     </Catalog.ResourceDescription>
