@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import errno
+import socket
 from httplib import HTTPMessage
 from StringIO import StringIO
 import urllib2
@@ -47,7 +48,7 @@ class FakeDownloader(object):
         self._responses[url] = (url, error_code, data, msg)
 
     def set_url_error(self, url):
-        self.set_exception(url, urllib2.URLError((errno.ECONNREFUSED,)))
+        self.set_exception(url, urllib2.URLError(socket.error(errno.ECONNREFUSED,)))
 
     def build_response(self, url, code, data, msg, headers={}):
         response = urllib2.addinfourl(StringIO(data), headers, url)
@@ -121,8 +122,28 @@ class ProxyTests(ProxyTestsBase):
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.content, '')
 
+    def test_connection_refused(self):
+
+        client = Client()
+        client.login(username='test', password='test')
+
         # Simulating an error connecting to the server
         WIRECLOUD_PROXY._do_request.set_url_error('http://example.com/path')
+        response = client.get('/proxy/http/example.com/path', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        self.assertEqual(response.status_code, 502)
+        self.assertEqual(response.content, '')
+
+    def test_connection_timeout(self):
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        WIRECLOUD_PROXY._do_request.set_exception('http://example.com/path', urllib2.URLError(socket.error(errno.ETIMEDOUT,)))
+        response = client.get('/proxy/http/example.com/path', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        self.assertEqual(response.status_code, 504)
+        self.assertEqual(response.content, '')
+
+        WIRECLOUD_PROXY._do_request.set_exception('http://example.com/path', urllib2.URLError(socket.timeout()))
         response = client.get('/proxy/http/example.com/path', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 504)
         self.assertEqual(response.content, '')
