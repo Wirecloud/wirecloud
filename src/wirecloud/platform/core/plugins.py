@@ -85,6 +85,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
     def get_scripts(self, view):
         common = (
+            'js/wirecloud/ContextManager.js',
             'js/wirecloud/PolicyManager.js',
             'js/StyledElements/Fragment.js',
             'js/StyledElements/Pagination.js',
