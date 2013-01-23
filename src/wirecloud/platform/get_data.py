@@ -40,7 +40,6 @@ from django.utils.translation import ugettext as _
 
 from wirecloud.commons.utils.cache import CacheableData
 from wirecloud.commons.utils.http import get_absolute_reverse_url
-from wirecloud.platform.context.utils import get_user_context_providers
 from wirecloud.platform.models import Concept, Constant, IWidget, PublishedWorkspace, Tab, UserPrefOption, UserWorkspace, Variable, VariableDef, VariableValue
 from wirecloud.platform.preferences.views import get_workspace_preference_values, get_tab_preference_values
 from wirecloud.platform.workspace.utils import createTab, decrypt_value, encrypt_value
@@ -591,30 +590,13 @@ def get_constant_values():
     return res
 
 
-def get_extra_concepts():
-    extra_concepts = []
-
-    user_context_providers = get_user_context_providers()
-    for provider in user_context_providers:
-        extra_concepts += provider.get_concepts()
-
-    return extra_concepts
-
-
 def get_concept_values(user):
     concepts = Concept.objects.all()
 
     cache_key = 'constant_context/' + str(user.id)
     constant_context = cache.get(cache_key)
     if constant_context == None:
-        constant_context = {}
-
-        user_context_providers = get_user_context_providers()
-        for provider in user_context_providers:
-            context_values = provider.get_context_values(user)
-            constant_context.update(context_values)
-
-        constant_context.update(get_constant_values())
+        constant_context = get_constant_values()
         cache.set(cache_key, constant_context)
 
     concept_values = constant_context
@@ -630,15 +612,6 @@ def get_concept_values(user):
 def get_concepts_data(concept_values):
     concepts = Concept.objects.all()
     data = [get_concept_data(concept, concept_values) for concept in concepts]
-
-    extra_concepts = get_extra_concepts()
-    for concept in extra_concepts:
-        concept['type'] = 'ECTX'
-        if concept['concept'] in concept_values:
-            concept['value'] = concept_values[concept['concept']]
-        else:
-            concept['value'] = ''
-        data.append(concept)
 
     return data
 
