@@ -496,7 +496,7 @@ def _get_global_workspace_data(workspaceDAO, user):
 
         tab['iwidgetList'] = iwidget_data
 
-    data_ret['workspace']['wiring'] = workspaceDAO.wiringStatus
+    data_ret['workspace']['wiring'] = simplejson.loads(workspaceDAO.wiringStatus)
 
     # Params
     last_published_workspace = PublishedWorkspace.objects.filter(workspace=workspaceDAO).order_by('-pk')
