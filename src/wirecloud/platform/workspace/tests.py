@@ -568,7 +568,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(data['workspace']['tabList'][3]['name'], 'Tab 4')
         self.assertEqual(len(data['workspace']['tabList'][3]['iwidgetList']), 0)
 
-        wiring_status = json.loads(data['workspace']['wiring'])
+        wiring_status = data['workspace']['wiring']
         self.assertEqual(len(wiring_status['operators']), 1)
         self.assertEqual(len(wiring_status['connections']), 1)
         self.assertEqual(wiring_status['connections'][0]['source']['type'], 'iwidget')
@@ -591,7 +591,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(data['workspace']['tabList'][3]['name'], u'Tab 4')
         self.assertEqual(len(data['workspace']['tabList'][3]['iwidgetList']), 0)
 
-        wiring = json.loads(data['workspace']['wiring'])
+        wiring = data['workspace']['wiring']
         self.assertEqual(len(wiring['connections']), 1)
         self.assertEqual(wiring['connections'][0]['source']['type'], 'iwidget')
         self.assertEqual(wiring['connections'][0]['source']['endpoint'], 'event')
