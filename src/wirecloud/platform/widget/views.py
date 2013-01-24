@@ -37,7 +37,6 @@ from django.conf import settings
 from django.core.cache import cache
 from django.http import HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404
-from django.utils import simplejson
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.views.static import serve
@@ -45,9 +44,8 @@ from django.views.static import serve
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.utils import downloader
-from wirecloud.commons.utils.cache import no_cache, patch_cache_headers
+from wirecloud.commons.utils.cache import patch_cache_headers
 from wirecloud.commons.utils.http import get_absolute_reverse_url, get_current_domain, get_xml_error_response
-from wirecloud.platform.get_data import get_widget_data
 from wirecloud.platform.iwidget.utils import deleteIWidget
 from wirecloud.platform.models import Widget, IWidget
 import wirecloud.platform.widget.utils as showcase_utils
@@ -76,25 +74,6 @@ def deleteWidget(user, name, vendor, version):
 
     return result
 
-
-class WidgetCollection(Resource):
-
-    @no_cache
-    def read(self, request):
-
-        widgets = Widget.objects.filter(users=request.user)
-
-        data_list = [get_widget_data(widget, request) for widget in widgets]
-        return HttpResponse(simplejson.dumps(data_list), mimetype='application/json; charset=UTF-8')
-
-
-class WidgetEntry(Resource):
-
-    @no_cache
-    def read(self, request, vendor, name, version):
-        widget = get_object_or_404(Widget, users=request.user, vendor=vendor, name=name, version=version)
-        data_fields = get_widget_data(widget, request)
-        return HttpResponse(simplejson.dumps(data_fields), mimetype='application/json; charset=UTF-8')
 
 class WidgetCodeEntry(Resource):
 

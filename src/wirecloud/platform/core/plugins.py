@@ -159,8 +159,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
             {'id': 'OPERATOR_COLLECTION', 'url': build_url_template('wirecloud.operators')},
             {'id': 'OPERATOR_ENTRY', 'url': build_url_template('wirecloud.operator_code_entry', ['vendor', 'name', 'version'])},
             {'id': 'VARIABLE_COLLECTION', 'url': build_url_template('wirecloud.variable_collection', ['workspace_id'])},
-            {'id': 'WIDGET_COLLECTION', 'url': build_url_template('wirecloud.widget_collection')},
-            {'id': 'WIDGET_ENTRY', 'url': build_url_template('wirecloud.widget_entry', ['vendor', 'name', 'version'])},
             {'id': 'WIDGET_CODE_ENTRY', 'url': build_url_template('wirecloud.widget_code_entry', ['vendor', 'name', 'version'])},
             {'id': 'WORKSPACE_COLLECTION', 'url': build_url_template('wirecloud.workspace_collection')},
             {'id': 'WORKSPACE_ENTRY', 'url': build_url_template('wirecloud.workspace_entry', ['workspace_id'])},
