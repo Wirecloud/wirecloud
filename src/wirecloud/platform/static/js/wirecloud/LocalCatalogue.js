@@ -1,4 +1,4 @@
-/*global gettext, interpolate, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, ShowcaseFactory, Widget, Wirecloud*/
+/*global gettext, interpolate, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Widget, Wirecloud*/
 
 (function () {
 

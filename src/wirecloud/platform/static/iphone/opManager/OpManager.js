@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global Workspace, alert, Hash, $, console, LayoutManagerFactory, ShowcaseFactory, LogManagerFactory, Modules, setTimeout, Wirecloud */
+/*global Workspace, alert, Hash, $, console, LayoutManagerFactory, LogManagerFactory, Modules, setTimeout, Wirecloud */
 "use strict";
 
 /* 
@@ -119,9 +119,6 @@ var OpManagerFactory = (function () {
             // Showcase is the first!
             // When it finish, it will invoke continueLoadingGlobalModules method!
             this.logs = LogManagerFactory.getInstance();
-
-            this.showcaseModule = ShowcaseFactory.getInstance();
-            this.showcaseModule.init();
 
             Wirecloud.LocalCatalogue.reload({
                 onSuccess: function () {

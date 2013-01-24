@@ -19,7 +19,7 @@
  *
  */
 
-/*global CatalogueResource, gettext, interpolate, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, ShowcaseFactory, Wirecloud, Template, URIs*/
+/*global CatalogueResource, gettext, interpolate, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud, Template, URIs*/
 
 (function () {
 

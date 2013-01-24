@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012 Universidad Politécnica de Madrid
+# Copyright 2012-2013 Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -108,7 +108,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/gadgetModel/Gadget.js',
             'js/wirecloud/WirecloudCatalogue.js',
             'js/log/LogManager.js',
-            'js/showcase/showcase.js',
             'js/wirecloud/LocalCatalogue.js',
             'js/wirecloud/wiring/OperatorFactory.js',
             'js/wirecloud/wiring/OperatorMeta.js',

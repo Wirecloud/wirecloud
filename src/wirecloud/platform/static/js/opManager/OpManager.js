@@ -346,8 +346,6 @@ var OpManagerFactory = function () {
             case Modules.prototype.PLATFORM_PREFERENCES:
                 preferencesManager = PreferencesManagerFactory.getInstance();
                 preferencesManager.getPlatformPreferences().addCommitHandler(this.preferencesChanged.bind(this), 'post-commit');
-                this.showcaseModule = ShowcaseFactory.getInstance();
-                this.showcaseModule.init();
                 Wirecloud.LocalCatalogue.reload({
                     onSuccess: function () {
                         this.continueLoadingGlobalModules(Modules.prototype.SHOWCASE);

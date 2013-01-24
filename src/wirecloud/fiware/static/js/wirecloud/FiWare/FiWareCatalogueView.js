@@ -19,7 +19,7 @@
  *
  */
 
-/*global Event, OpManagerFactory, StyledElements, gettext, interpolate, LayoutManagerFactory, CatalogueSearchView, FiWareResourceDetailsView, FiWareCataloguePublishView, FiWareCatalogue, Wirecloud, FiWareCatalogueResource, ShowcaseFactory, FiWareStoreListItems*/
+/*global Event, OpManagerFactory, StyledElements, gettext, interpolate, LayoutManagerFactory, CatalogueSearchView, FiWareResourceDetailsView, FiWareCataloguePublishView, FiWareCatalogue, Wirecloud, FiWareCatalogueResource, FiWareStoreListItems*/
 
 (function () {
 

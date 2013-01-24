@@ -27,7 +27,7 @@
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
 /*global $, CSSPrimitiveValue, Element, Event, Insertion, document, gettext, ngettext, interpolate, window */
-/*global Constants, DropDownMenu, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud, ShowcaseFactory*/
+/*global Constants, DropDownMenu, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud*/
 /*global isElement, IWidgetLogManager, IWidgetResizeHandle, WidgetVersion, DragboardPosition, Concept*/
 /*global IWidgetDraggable, IWidgetIconDraggable, FreeLayout, FullDragboardLayout*/
 /*global ColorDropDownMenu, BrowserUtilsFactory, setTimeout, clearTimeout*/
@@ -897,7 +897,6 @@ IWidget.prototype.isRefusedUpgrade = function () {
  */
 IWidget.prototype.upgradeIWidget = function () {
     function onUpgradeOk(transport) {
-        ShowcaseFactory.getInstance().reload(this.layout.dragboard.workspaceId);
     }
 
     function onUpgradeError(transport, e) {
