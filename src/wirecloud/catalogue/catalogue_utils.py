@@ -30,15 +30,12 @@
 
 #
 
-from django.http import HttpResponse, HttpResponseServerError
+from django.http import HttpResponse
 from django.db.models import Q
 from django.utils import simplejson
-from django.utils.translation import ugettext as _
 
 from wirecloud.catalogue.get_json_catalogue_data import get_resource_group_data, get_tag_data, get_vote_data
-from wirecloud.catalogue.get_xml_catalogue_data import get_xml_description, get_tags_by_resource, get_vote_by_resource
 from wirecloud.catalogue.models import CatalogueResource, UserVote
-from wirecloud.commons.utils.http import get_xml_error_response
 
 
 def group_resources(resources):
@@ -169,53 +166,24 @@ def get_slot_filter(search_criteria):
 
 
 def get_resource_response(resources, format, items, user, request=None):
-    """Obtains all the information related to a resource encoded in the properly format (json or xml)."""
-
-    if format == 'json' or format == 'default':
-        data = {
-            'resources': [get_resource_group_data(group, user, request) for group in resources],
-            'items': items,
-        }
-        response = HttpResponse(simplejson.dumps(data), mimetype='application/json; charset=UTF-8')
-        return response
-    elif format == 'xml':
-        response = get_xml_description(resources, user)
-        response = HttpResponse(response, mimetype='text/xml; charset=UTF-8')
-        response.__setitem__('items', items)
-        return response
-    else:
-        return HttpResponseServerError(get_xml_error_response(_("Invalid format. Format must be either xml or json")), mimetype='application/xml; charset=UTF-8')
-
+    data = {
+        'resources': [get_resource_group_data(group, user, request) for group in resources],
+        'items': items,
+    }
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json; charset=UTF-8')
 
 def get_tag_response(resource, user, format):
-    """Obtains the all the tags related to a resource encoded in
-    the properly format (json or xml).
-    """
-    if format == 'json' or format == 'default':
-        tag = {}
-        tag_data_list = get_tag_data(resource, user.id)
-        tag['tagList'] = tag_data_list
-        return HttpResponse(simplejson.dumps(tag), mimetype='application/json; charset=UTF-8')
-    elif format == 'xml':
-        response = '<?xml version="1.0" encoding="UTF-8" ?>\n'
-        response += get_tags_by_resource(resource, user)
-        return HttpResponse(response, mimetype='text/xml; charset=UTF-8')
-    else:
-        return HttpResponseServerError(get_xml_error_response(_("Invalid format. Format must be either xml or json")), mimetype='application/xml; charset=UTF-8')
+    tag = {}
+    tag_data_list = get_tag_data(resource, user.id)
+    tag['tagList'] = tag_data_list
+    return HttpResponse(simplejson.dumps(tag), mimetype='application/json; charset=UTF-8')
 
 
 def get_vote_response(resource, user, format):
-    """Obtains the vote related to a resource and a user encoded in the properly format (json or xml)."""
-
-    if format == 'application/json':
-        vote = {}
-        vote_data = get_vote_data(resource, user)
-        vote['voteData'] = vote_data
-        return HttpResponse(simplejson.dumps(vote), mimetype='application/json; charset=UTF-8')
-    elif format == 'application/xml':
-        response = '<?xml version="1.0" encoding="UTF-8" ?>\n'
-        response += get_vote_by_resource(resource, user)
-        return HttpResponse(response, mimetype='text/xml; charset=UTF-8')
+    vote = {}
+    vote_data = get_vote_data(resource, user)
+    vote['voteData'] = vote_data
+    return HttpResponse(simplejson.dumps(vote), mimetype='application/json; charset=UTF-8')
 
 
 def get_all_resource_versions(vendor, name):
