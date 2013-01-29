@@ -3,7 +3,7 @@
  * @param handler {HTMLElement} Element where the drag & drop operation must to be started
  * @param data {Object} context
  */
-function Draggable(handler, data, onStart, onDrag, onFinish, canBeDragged, onScroll) {
+var Draggable = function Draggable(handler, data, onStart, onDrag, onFinish, canBeDragged, onScroll) {
     var xStart = 0, yStart = 0, xScrollStart = 0, yScrollStart = 0;
     var xScrollDelta, yScrollDelta;
     var dragboardCover;
@@ -13,15 +13,14 @@ function Draggable(handler, data, onStart, onDrag, onFinish, canBeDragged, onScr
 
     // remove the events
     enddrag = function (e) {
-        e = e || window.event; // needed for IE
 
         // Only attend to left button (or right button for left-handed persons) events
-        if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
+        if (e.button !== 0) {
             return;
         }
 
-        Event.stopObserving(document, "mouseup", enddrag);
-        Event.stopObserving(document, "mousemove", drag);
+        document.removeEventListener("mouseup", enddrag, false);
+        document.removeEventListener("mousemove", drag, false);
 
         if (dragboardCover != null) {
             dragboardCover.parentNode.removeEventListener("scroll", scroll, true);
@@ -40,7 +39,6 @@ function Draggable(handler, data, onStart, onDrag, onFinish, canBeDragged, onScr
 
     // fire each time it's dragged
     drag = function (e) {
-        e = e || window.event; // needed for IE
 
         var clientX = parseInt(e.clientX, 10);
         var clientY = parseInt(e.clientY, 10);
@@ -52,10 +50,9 @@ function Draggable(handler, data, onStart, onDrag, onFinish, canBeDragged, onScr
 
     // initiate the drag
     startdrag = function (e) {
-        e = e || window.event; // needed for IE
 
         // Only attend to left button (or right button for left-handed persons) events
-        if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
+        if (e.button !== 0) {
             return false;
         }
 
@@ -71,8 +68,8 @@ function Draggable(handler, data, onStart, onDrag, onFinish, canBeDragged, onScr
         xStart = parseInt(e.clientX, 10);
         yStart = parseInt(e.clientY, 10);
 
-        Event.observe(document, "mouseup", enddrag);
-        Event.observe(document, "mousemove", drag);
+        document.addEventListener("mouseup", enddrag, false);
+        document.addEventListener("mousemove", drag, false);
 
         yScrollDelta = 0;
         xScrollDelta = 0;
@@ -82,10 +79,9 @@ function Draggable(handler, data, onStart, onDrag, onFinish, canBeDragged, onScr
         if (options != null && options.dragboard) {
             var dragboard = options.dragboard;
             dragboardCover = document.createElement("div");
-            Element.extend(dragboardCover);
-            dragboardCover.addClassName("cover");
-            dragboardCover.observe("mouseup", enddrag, true);
-            dragboardCover.observe("mousemove", drag, true);
+            dragboardCover.className = "cover";
+            dragboardCover.addEventListener("mouseup", enddrag, true);
+            dragboardCover.addEventListener("mousemove", drag, true);
 
             dragboardCover.style.zIndex = "1000000";
             dragboardCover.style.position = "absolute";
@@ -107,7 +103,6 @@ function Draggable(handler, data, onStart, onDrag, onFinish, canBeDragged, onScr
 
     // fire each time the dragboard is scrolled while dragging
     scroll = function (e) {
-        e = e || window.event; // needed for IE
 
         var dragboard = dragboardCover.parentNode;
         dragboardCover.style.height = dragboard.scrollHeight + "px";
@@ -144,11 +139,6 @@ function Draggable(handler, data, onStart, onDrag, onFinish, canBeDragged, onScr
         data = null;
         handler = null;
     };
-}
-
-Draggable._cancelbubbling = function (e) {
-    e = e || window.event; // needed for IE
-    Event.stop(e);
 };
 
 Draggable._canBeDragged = function () {
