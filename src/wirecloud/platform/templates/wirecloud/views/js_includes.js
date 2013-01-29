@@ -38,7 +38,6 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/dragboard/IGadgetMenuItems.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/dragboard/PreferencesWindowMenu.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/dragboard/iGadget.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/dragboard/dragboard.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/dragboard/UserPref.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/dragboard/ElementPositions.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/connectable.js"></script>

@@ -106,6 +106,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/StyledElements/BorderLayout.js',
             'js/StyledElements/ModelTable.js',
             'js/gadgetModel/Gadget.js',
+            'js/wirecloud/ui/Draggable.js',
             'js/wirecloud/WirecloudCatalogue.js',
             'js/log/LogManager.js',
             'js/wirecloud/LocalCatalogue.js',
@@ -115,6 +116,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
         if view == 'index':
             return common + (
+                'js/dragboard/dragboard.js',
                 'js/wirecloud/utils/CookieManager.js',
                 'js/wirecloud/MarketManager.js',
                 'js/wirecloud/ui/ResourcePainter.js',
