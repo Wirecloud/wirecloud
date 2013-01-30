@@ -19,16 +19,15 @@
 
 from optparse import make_option
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import CommandError
 
+from wirecloud.commons.utils.commands import BaseCommand
 from wirecloud.commons.utils.template.parsers import TemplateParser
 from wirecloud.commons.utils.template.writers import rdf
 
 class ConvertCommand(BaseCommand):
     args = '<source_widget_descriptor>...'
-    help = 'Converts a description from one format to another'
-    can_import_settings = False
-    requires_model_validation = False
+    help = 'Converts a widget description from one format to another'
 
     option_list = BaseCommand.option_list + (
         make_option('-d', '--dest-format',
