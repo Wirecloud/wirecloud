@@ -143,7 +143,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'django.core.context_processors.static',
     'wirecloud.platform.themes.active_theme_context_processor',
-    'wirecloud.commons.context_processors.is_anonymous',
     'wirecloud.commons.context_processors.tag_categories',
     'wirecloud.commons.context_processors.ezweb_organizations',
 )

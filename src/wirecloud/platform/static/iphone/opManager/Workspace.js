@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global interpolate, isAnonymousUser, VarManager, ContextManager, Wiring, OpManagerFactory, Modules, gettext, alert, last_logged_user, document, window, Concept, StyledElements, Tab, $, Wirecloud */
+/*global interpolate, VarManager, ContextManager, Wiring, OpManagerFactory, Modules, gettext, alert, last_logged_user, document, window, Concept, StyledElements, Tab, $, Wirecloud */
 "use strict";
 
  /*
@@ -76,13 +76,8 @@ function Workspace(workspaceState) {
 
         loginButton = document.createElement('a');
         loginButton.setAttribute('class', 'logout');
-        if (isAnonymousUser) {
-            loginButton.setAttribute('href', '/accounts/login/?next=' + document.location.path);
-            loginButton.textContent = gettext('Sign in');
-        } else {
-            loginButton.setAttribute('href', '/logout')
-            loginButton.textContent = gettext('Sign out');
-        }
+        loginButton.setAttribute('href', '/logout')
+        loginButton.textContent = gettext('Sign out');
 
         this.toolbar = new StyledElements.NavigationHeader({
             backButton: gettext('Menu'),

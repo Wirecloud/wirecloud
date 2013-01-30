@@ -35,13 +35,6 @@ from django.utils import simplejson
 from wirecloud.catalogue.models import Category
 
 
-def is_anonymous(request):
-    is_anonymous = False
-    if hasattr(request, 'anonymous_id') and request.anonymous_id and request.anonymous_id == request.user.username:
-        is_anonymous = True
-    return {'is_anonymous': is_anonymous}
-
-
 #private method: gets the tags and category children from an specific category (Category model)
 def _get_Category_Info(cat, userOrgs):
     catObject = {}
