@@ -18,7 +18,10 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls.defaults import include, patterns, url
+from django.views.decorators.cache import cache_page
+from django.views.i18n import javascript_catalog
+
 from wirecloud.platform import views
 from wirecloud.platform.iwidget import views as iwidget_views
 from wirecloud.platform.localcatalogue import views as localcatalogue_views
@@ -36,6 +39,12 @@ urlpatterns = patterns('wirecloud.platform.views',
     url(r'^api/features/?$',
         views.FeatureCollection(permitted_methods=('GET',)),
         name='wirecloud.features'),
+
+    # i18n
+    url(r'^api/i18n/', include('django.conf.urls.i18n')),
+    url(r'^api/i18n/js_catalogue/?$',
+        cache_page(60 * 60 * 24)(javascript_catalog), {'packages': ()},
+        name="wirecloud.javascript_translation_catalogue"),
 
     url(r'^api/workspace/(?P<workspace_id>\d+)/wiring$',
         wiring_views.WiringEntry(permitted_methods=('PUT',)),

@@ -27,27 +27,6 @@
 *     http://morfeo-project.org
  */
 
-/* language selection */
-function setLanguage(language) {
-    var onSuccess, onError, params;
-
-    onSuccess = function () {
-        window.location.reload();
-    };
-    onError = function () {};
-
-    params = {
-        language: language
-    };
-    Wirecloud.io.makeRequest("/i18n/setlang/", {
-        method: 'POST',
-        parameters: params,
-        onSuccess: onSuccess,
-        onFailure: onError
-    });
-    return false;
-}
-
 /* layout change function (landscape or portrait) */
 function updateLayout () {
     var orient = (window.orientation === 0 || window.orientation === 180) ? "portrait" : "landscape";

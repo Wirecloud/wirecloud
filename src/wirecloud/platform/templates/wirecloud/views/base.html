@@ -1,4 +1,4 @@
-{% load compress i18n wirecloudtags %}
+{% load compress i18n wirecloudtags %}{% load url from future %}
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xml:lang="{{ LANGUAGE_CODE }}"
@@ -119,7 +119,7 @@ var _DEFAULT_SKIN = 'default';
 </script>
 
 
-<script type="text/javascript" src="/jsi18n/?language={{ LANGUAGE_CODE }}"></script>
+<script type="text/javascript" src="{% url "wirecloud.javascript_translation_catalogue" %}?language={{ LANGUAGE_CODE }}"></script>
 {% compress js %}
 {% include "wirecloud/views/js_includes.js" %}
 {% wirecloud_ajax_endpoints "index" %}
@@ -133,20 +133,6 @@ var _DEFAULT_SKIN = 'default';
     var LANGUAGE_CODE = "{{LANGUAGE_CODE}}";
     var LANGUAGES = [];
     {% for lang in LANGUAGES %} LANGUAGES.push(["{{lang.0}}","{{lang.1}}"]);{% endfor %}
-
-    function setLanguage(language) {
-        var onSuccess = function() {
-            window.location.reload();
-        }
-
-        var onError = function() {}
-
-        var persistenceEngine = PersistenceEngineFactory.getInstance();
-        var params = {language: language};
-        persistenceEngine.send_post("/i18n/setlang/", params, this, onSuccess, onError);
-
-        return false;
-    }
 
     var opManager = OpManagerFactory.getInstance();
     opManager.loadEnviroment();
