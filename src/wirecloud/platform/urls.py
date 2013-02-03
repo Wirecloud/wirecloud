@@ -20,6 +20,7 @@
 
 from django.conf.urls.defaults import patterns, url
 from wirecloud.platform import views
+from wirecloud.platform.context import views as context_views
 from wirecloud.platform.iwidget import views as iwidget_views
 from wirecloud.platform.localcatalogue import views as localcatalogue_views
 from wirecloud.platform.markets import views as market_views
@@ -40,6 +41,11 @@ urlpatterns = patterns('wirecloud.platform.views',
     url(r'^api/workspace/(?P<workspace_id>\d+)/wiring$',
         wiring_views.WiringEntry(permitted_methods=('PUT',)),
         name='wirecloud.workspace_wiring'),
+
+    # Context
+    url(r'^api/context/?',
+        context_views.PlatformContextCollection(permitted_methods=('GET',)),
+        name='wirecloud.platform_context_collection'),
 
     # Widgets
     url(r'^api/resources/?',

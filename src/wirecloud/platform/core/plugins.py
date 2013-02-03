@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.utils.translation import ugettext_lazy as _
+
 import wirecloud.platform
 from wirecloud.platform.core.catalogue_manager import WirecloudCatalogueManager
 from wirecloud.platform.plugins import WirecloudPlugin, build_url_template
@@ -83,9 +85,46 @@ class WirecloudCorePlugin(WirecloudPlugin):
         'StyledElements': '0.5',
     }
 
+    def get_platform_context_definitions(self):
+        return {
+            'language': {
+                'label': _('Language'),
+                'description': _('Current language used in the platform'),
+            },
+            'username': {
+                'label': _('Username'),
+                'description': _('User name of the current logged user'),
+            },
+            'orientation': {
+                'label': _('Orientation'),
+                'description': _(''),
+            },
+        }
+
+    def get_platform_context_current_values(self, user):
+        return {
+            'language': 'es',
+            'orientation': 'landscape',
+            'username': user.username,
+        }
+
+    def get_workspace_context_definitions(self):
+        return {
+            'name': {
+                'label': _('Name'),
+                'description': _('Current name of the workspace'),
+            },
+        }
+
+    def get_workspace_context_current_values(self, user_workspace):
+        return {
+            'name': user_workspace.workspace.name
+        }
+
     def get_scripts(self, view):
         common = (
             'js/wirecloud/ContextManager.js',
+            'js/wirecloud/IWidget.js',
             'js/wirecloud/PolicyManager.js',
             'js/StyledElements/Fragment.js',
             'js/StyledElements/Pagination.js',
@@ -147,6 +186,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             {'id': 'IWIDGET_COLLECTION', 'url': build_url_template('wirecloud.iwidget_collection', ['workspace_id', 'tab_id'])},
             {'id': 'IWIDGET_ENTRY', 'url': build_url_template('wirecloud.iwidget_entry', ['workspace_id', 'tab_id', 'iwidget_id'])},
             {'id': 'IWIDGET_VERSION_ENTRY', 'url': build_url_template('wirecloud.iwidget_version_entry', ['workspace_id', 'tab_id', 'iwidget_id'])},
+            {'id': 'PLATFORM_CONTEXT_COLLECTION', 'url': build_url_template('wirecloud.platform_context_collection')},
             {'id': 'PLATFORM_PREFERENCES', 'url': build_url_template('wirecloud.platform_preferences')},
             {'id': 'WORKSPACE_PREFERENCES', 'url': build_url_template('wirecloud.workspace_preferences', ['workspace_id'])},
             {'id': 'TAB_COLLECTION', 'url': build_url_template('wirecloud.tab_collection', ['workspace_id'])},

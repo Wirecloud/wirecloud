@@ -62,11 +62,9 @@
  *                                          (6 chars with a hexadecimal color)
  */
 function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, transparency, refusedVersion, freeLayoutAfterLoading, readOnly) {
-    this.logManager = new IWidgetLogManager(this);
-    this.id = iWidgetId;
+
     this.code = null;
     this.name = iWidgetName;
-    this.widget = widget;
     this.position = position;
     this.contentWidth = Number(width);
     this.contentHeight = Number(height);
@@ -77,9 +75,6 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
     this.visible = false;
     this.minimized = minimized;
     this.highlightTimeout = null;
-    if (this.id) {
-        this.codeURL = this.widget.code_url + "#id=" + this.id;
-    }
 
     if (fulldragboard) {
         this.minimized = false;
@@ -99,10 +94,19 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
         this.height = layout.getMenubarSize().inLU;
     }
 
+    this.internal_iwidget = new Wirecloud.IWidget(widget, {
+        id: iWidgetId,
+        readOnly: readOnly,
+        layout: layout
+    });
+    Object.defineProperty(this, 'id', {get: function () {return this.internal_iwidget.id;}});
+    Object.defineProperty(this, 'widget', {get: function () {return this.internal_iwidget.widget;}});
+    if (this.id) {
+        this.codeURL = this.internal_iwidget.widget.code_url + "#id=" + this.id;
+    }
+
     this.refusedVersion = refusedVersion !== null ? new WidgetVersion(refusedVersion) : null;
     this.freeLayoutAfterLoading = freeLayoutAfterLoading; //only used the first time the widget is used to change its layout after loading to FreeLayout
-
-    this.readOnly = readOnly;
 
     // Elements
     this.element = null;
@@ -141,9 +145,6 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
     layout.addIWidget(this, true);
 
     StyledElements.ObjectWithEvents.call(this, ['load', 'unload']);
-    //this.menu_color = IWidgetColorManager.autogenColor(menu_color, this.code);
-
-    this.prefCallback = null;
 }
 IWidget.prototype = new StyledElements.ObjectWithEvents();
 
@@ -153,7 +154,7 @@ IWidget.prototype = new StyledElements.ObjectWithEvents();
  * @returns {Widget} the associated Widget.
  */
 IWidget.prototype.getWidget = function () {
-    return this.widget;
+    return this.internal_iwidget.widget;
 };
 
 IWidget.prototype.invalidIconPosition = function () {
@@ -178,13 +179,13 @@ IWidget.prototype.setPosition = function (position) {
     this.position = position;
 
     if (this.element !== null) { // if visible
-        this.element.style.left = this.layout.getColumnOffset(position.x) + "px";
-        this.element.style.top = this.layout.getRowOffset(position.y) + "px";
+        this.element.style.left = this.internal_iwidget.layout.getColumnOffset(position.x) + "px";
+        this.element.style.top = this.internal_iwidget.layout.getRowOffset(position.y) + "px";
 
-        // Notify Context Manager about the new position
-        var contextManager = this.layout.dragboard.getWorkspace().getContextManager();
-        contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.XPOSITION, this.position.x);
-        contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.YPOSITION, this.position.y);
+        this.internal_iwidget.contextManager.modify({
+            'xPosition': this.position.x,
+            'yPosition': this.position.y
+        });
     }
 };
 
@@ -198,8 +199,8 @@ IWidget.prototype.setPosition = function (position) {
 IWidget.prototype.setIconPosition = function (position) {
     this.iconPosition = position.clone();
     if (this.iconElement) {
-        this.iconElement.style.left = this.layout.dragboard.freeLayout.getColumnOffset(this.iconPosition.x) + "px";
-        this.iconElement.style.top = this.layout.dragboard.freeLayout.getRowOffset(this.iconPosition.y) + "px";
+        this.iconElement.style.left = this.internal_iwidget.layout.dragboard.freeLayout.getColumnOffset(this.iconPosition.x) + "px";
+        this.iconElement.style.top = this.internal_iwidget.layout.dragboard.freeLayout.getRowOffset(this.iconPosition.y) + "px";
     }
 };
 
@@ -274,7 +275,7 @@ IWidget.prototype.getContentHeight = function () {
  * @returns {Tab} associated tab
  */
 IWidget.prototype.getTab = function () {
-    return this.layout.dragboard.tab;
+    return this.internal_iwidget.layout.dragboard.tab;
 };
 
 /**
@@ -335,7 +336,7 @@ IWidget.prototype.isVisible = function () {
  *                    associated dragboard; false otherwise.
  */
 IWidget.prototype.onFreeLayout = function () {
-    return this.layout.dragboard.freeLayout === this.layout;
+    return this.internal_iwidget.layout.dragboard.freeLayout === this.internal_iwidget.layout;
 };
 
 /**
@@ -345,7 +346,7 @@ IWidget.prototype.toggleTransparency = function () {
     function onSuccess() {}
     function onError(transport, e) {
         var msg = gettext("Error saving the new transparency value into persistence: %(errorMsg)s.");
-        msg = this.logManager.formatError(msg, transport, e);
+        msg = this.internal_iwidget.logManager.formatError(msg, transport, e);
         this.log(msg, Constants.Logging.ERROR_MSG);
     }
 
@@ -354,8 +355,8 @@ IWidget.prototype.toggleTransparency = function () {
 
     //Persist the new state
     var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-        workspace_id: this.layout.dragboard.workspaceId,
-        tab_id: this.layout.dragboard.tabId,
+        workspace_id: this.internal_iwidget.layout.dragboard.workspaceId,
+        tab_id: this.internal_iwidget.layout.dragboard.tabId,
         iwidget_id: this.id
     });
     Wirecloud.io.makeRequest(iwidgetUrl, {
@@ -436,7 +437,7 @@ IWidget.prototype.build = function () {
     });
     this.errorButton.addEventListener("click",
         function (button) {
-            OpManagerFactory.getInstance().showLogs(this.logManager); // TODO
+            OpManagerFactory.getInstance().showLogs(this.internal_iwidget.logManager); // TODO
         }.bind(this));
     this.errorButton.insertInto(this.widgetMenu);
 
@@ -468,18 +469,15 @@ IWidget.prototype.build = function () {
     this.content = document.createElement("iframe");
     Element.extend(this.content);
     this.content.addClassName("widget_object");
-    this.content.setAttribute("type", this.widget.code_content_type);
+    this.content.setAttribute("type", this.internal_iwidget.widget.code_content_type);
     this.content.setAttribute("standby", "Loading...");
     this.content.setAttribute("width", "100%");
     this.content.setAttribute("frameBorder", "0");
-    if (Prototype.Browser.Opera || Prototype.Browser.Safari) {
-        this.content.setAttribute("src", this.codeURL);
-    }
 
     Element.extend(this.content);
     this.content.observe("load",
         function () {
-            this.layout.dragboard.workspace.iwidgetLoaded(this.id);
+            this.internal_iwidget.layout.dragboard.workspace.iwidgetLoaded(this.id);
         }.bind(this),
         true);
     this.contentWrapper.appendChild(this.content);
@@ -490,7 +488,7 @@ IWidget.prototype.build = function () {
     this.statusBar.addClassName("statusBar");
     this.element.appendChild(this.statusBar);
     this.statusBar.observe("click", function () {
-                                        this.layout.dragboard.raiseToTop(this);
+                                        this.internal_iwidget.layout.dragboard.raiseToTop(this);
                                     }.bind(this), false);
 
     // resize handles
@@ -526,7 +524,7 @@ IWidget.prototype.build = function () {
     this.wikilink = document.createElement('a');
     Element.extend(this.wikilink);
     this.wikilink.addClassName('dragboardwiki button');
-    this.wikilink.href = this.widget.getUriWiki();
+    this.wikilink.href = this.internal_iwidget.widget.getUriWiki();
     this.wikilink.setAttribute('target', '_blank');
     this.wikilink.setAttribute('title', gettext('Access to Information'));
     this.statusBar.appendChild(this.wikilink);
@@ -539,7 +537,7 @@ IWidget.prototype.build = function () {
     this.iconImg = document.createElement("img");
     Element.extend(this.iconImg);
     this.iconImg.addClassName("floating_widget_img");
-    this.iconImg.setAttribute("src", this.widget.getIcon());
+    this.iconImg.setAttribute("src", this.internal_iwidget.widget.getIcon());
     this.iconElement.appendChild(this.iconImg);
 
     // IE hack to allow drag & drop over images
@@ -556,24 +554,13 @@ IWidget.prototype.build = function () {
     this.iwidgetIconNameHTMLElement.observe("click",
         function () {
             this.toggleMinimizeStatus(false);
-            this.layout.dragboard.raiseToTop(this);
+            this.internal_iwidget.layout.dragboard.raiseToTop(this);
         }.bind(this),
         false);
 };
 
-IWidget.prototype.isAllowed = function (action) {
-    switch (action) {
-    case "close":
-        return !this.readOnly && this.layout.dragboard.getWorkspace().isAllowed('add_remove_iwidgets');
-    case "move":
-    case "resize":
-        var dragboard = this.layout.dragboard;
-        return !dragboard.tab.readOnly && dragboard.getWorkspace().isAllowed('edit_layout');
-    case "minimize":
-        return this.layout.dragboard.getWorkspace().isAllowed('edit_layout');
-    default:
-        return false;
-    }
+IWidget.prototype.isAllowed = function isAllowed(action) {
+    return this.internal_iwidget.isAllowed(action);
 };
 
 IWidget.prototype._updateButtons = function () {
@@ -586,7 +573,6 @@ IWidget.prototype._updateButtons = function () {
     if (isElement(this.rightResizeHandleElement.parentNode)) {
         this.rightResizeHandleElement.remove();
     }
-
 
     if (this.isAllowed('resize')) {
         this.statusBar.appendChild(this.leftResizeHandleElement);
@@ -613,15 +599,13 @@ IWidget.prototype.paint = function (onInit) {
 
     // Insert it into the dragboard (initially hidden)
     this.element.style.visibility = "hidden";
-    this.layout.dragboard.dragboardElement.appendChild(this.element);
+    this.internal_iwidget.layout.dragboard.dragboardElement.appendChild(this.element);
 
-    if (!Prototype.Browser.Safari && !Prototype.Browser.Opera) {
-        this.content.setAttribute("src", this.codeURL);
-    }
+    this.content.setAttribute("src", this.codeURL);
 
     // Position
-    this.element.style.left = this.layout.getColumnOffset(this.position.x) + "px";
-    this.element.style.top = this.layout.getRowOffset(this.position.y) + "px";
+    this.element.style.left = this.internal_iwidget.layout.getColumnOffset(this.position.x) + "px";
+    this.element.style.top = this.internal_iwidget.layout.getRowOffset(this.position.y) + "px";
     this.setZPosition(this.zPos);
 
     // Select the correct representation for this iWidget (iconified, minimized or normal)
@@ -638,7 +622,7 @@ IWidget.prototype.paint = function (onInit) {
     }
 
     //Initialize read-only status
-    if (this.readOnly) {
+    if (this.internal_iwidget.readOnly) {
         this.element.addClassName("widget_window_readonly");
     }
 
@@ -650,30 +634,28 @@ IWidget.prototype.paint = function (onInit) {
     // Mark as draggable
     this.draggable = new IWidgetDraggable(this);
 
-    var contextManager = this.layout.dragboard.getWorkspace().getContextManager();
-
-    // Notify Context Manager about the new position
-    contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.XPOSITION, this.position.x);
-    contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.YPOSITION, this.position.y);
-
-    // Notify Context Manager about the new sizes
-    contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.HEIGHT, this.contentHeight);
-    contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.WIDTH, this.contentWidth);
+    // Notify Context Manager about the new position and new sizes
+    this.internal_iwidget.contextManager.modify({
+        'xPosition': this.position.x,
+        'yPosition': this.position.y,
+        'height': this.contentHeight,
+        'width': this.contentWidth
+    });
 
     this._updateButtons();
     this._updateVersionButton();
 
     // Icon
-    this.layout.dragboard.dragboardElement.appendChild(this.iconElement);
+    this.internal_iwidget.layout.dragboard.dragboardElement.appendChild(this.iconElement);
     this.iconDraggable = new IWidgetIconDraggable(this);
-    this.iconElement.style.left = this.layout.dragboard.freeLayout.getColumnOffset(this.iconPosition.x) + "px";
-    this.iconElement.style.top = this.layout.dragboard.freeLayout.getRowOffset(this.iconPosition.y) + "px";
+    this.iconElement.style.left = this.internal_iwidget.layout.dragboard.freeLayout.getColumnOffset(this.iconPosition.x) + "px";
+    this.iconElement.style.top = this.internal_iwidget.layout.dragboard.freeLayout.getRowOffset(this.iconPosition.y) + "px";
 
     Event.observe(this.iconImg,
         "click",
         function () {
             this.setMinimizeStatus(false);
-            this.layout.dragboard.raiseToTop(this);
+            this.internal_iwidget.layout.dragboard.raiseToTop(this);
         }.bind(this),
         true);
 };
@@ -713,7 +695,7 @@ IWidget.prototype.fillWithLabel = function () {
         this.iwidgetNameHTMLElement.observe('click',
                                             function (e) {
                                                 Event.stop(e);
-                                                this.layout.dragboard.raiseToTop(this);
+                                                this.internal_iwidget.layout.dragboard.raiseToTop(this);
                                                 this.fillWithInput();
                                             }.bind(this)); //do not propagate to div.
     }
@@ -783,7 +765,7 @@ IWidget.prototype.setName = function (iwidgetName) {
     }
     function onError(transport, e) {
         var msg = gettext("Error renaming iwidget from persistence: %(errorMsg)s.");
-        msg = this.logManager.formatError(msg, transport, e);
+        msg = this.internal_iwidget.logManager.formatError(msg, transport, e);
         this.log(msg);
     }
 
@@ -793,8 +775,8 @@ IWidget.prototype.setName = function (iwidgetName) {
         this.iwidgetNameHTMLElement.update(this.name);
         this.iwidgetIconNameHTMLElement.update(this.name);
         var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-            workspace_id: this.layout.dragboard.workspaceId,
-            tab_id: this.layout.dragboard.tabId,
+            workspace_id: this.internal_iwidget.layout.dragboard.workspaceId,
+            tab_id: this.internal_iwidget.layout.dragboard.tabId,
             iwidget_id: this.id
         });
         Wirecloud.io.makeRequest(iwidgetUrl, {
@@ -815,8 +797,8 @@ IWidget.prototype.setName = function (iwidgetName) {
  */
 IWidget.prototype.notifyEvent = function () {
     // if the iwidget is out of the grid it has to be raised to the top
-    if (this.layout instanceof FreeLayout) {
-        this.layout.dragboard.raiseToTop(this);
+    if (this.internal_iwidget.layout instanceof FreeLayout) {
+        this.internal_iwidget.layout.dragboard.raiseToTop(this);
         //Moreover, if the iwidget is iconified it has to be opened
         if (this.isIconified()) {
             //maximize iconified widget
@@ -826,20 +808,20 @@ IWidget.prototype.notifyEvent = function () {
 };
 
 IWidget.prototype.isIconified = function () {
-    return (this.layout instanceof FreeLayout && this.minimized);
+    return (this.internal_iwidget.layout instanceof FreeLayout && this.minimized);
 };
 
 /**
  * @private
  */
 IWidget.prototype._updateVersionButton = function () {
-    if (this.widget.isUpToDate() || this.isRefusedUpgrade()) {
+    if (this.internal_iwidget.widget.isUpToDate() || this.isRefusedUpgrade()) {
         this.upgradeButton.addClassName('disabled');
     } else {
         var msg = gettext("There is a new version of this widget available. Current version: %(currentVersion)s - Last version: %(lastVersion)s");
         msg = interpolate(msg, {
-                currentVersion: this.widget.getVersion().text,
-                lastVersion: this.widget.getLastVersion().text
+                currentVersion: this.internal_iwidget.widget.getVersion().text,
+                lastVersion: this.internal_iwidget.widget.getLastVersion().text
             }, true);
 
         this.upgradeButton.setAttribute("title", msg);
@@ -852,7 +834,7 @@ IWidget.prototype.askForIconVersion = function () {
     msg = interpolate(msg, {iwidgetName: this.name}, true);
     LayoutManagerFactory.getInstance().showYesNoDialog(msg,
         function () {
-            this.setRefusedVersion(this.widget.getLastVersion());
+            this.setRefusedVersion(this.internal_iwidget.widget.getLastVersion());
         }.bind(this));
 };
 
@@ -860,7 +842,7 @@ IWidget.prototype.setRefusedVersion = function (v) {
     function onSuccess() {}
     function onError(transport, e) {
         var msg = gettext("Error setting the refused version of the iwidget to persistence: %(errorMsg)s.");
-        msg = this.logManager.formatError(msg, transport, e);
+        msg = this.internal_iwidget.logManager.formatError(msg, transport, e);
         this.log(msg);
     }
 
@@ -868,8 +850,8 @@ IWidget.prototype.setRefusedVersion = function (v) {
     $("version_button_" + this.id).hide();
 
     var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-        workspace_id: this.layout.dragboard.workspaceId,
-        tab_id: this.layout.dragboard.tabId,
+        workspace_id: this.internal_iwidget.layout.dragboard.workspaceId,
+        tab_id: this.internal_iwidget.layout.dragboard.tabId,
         iwidget_id: this.id
     });
     Wirecloud.io.makeRequest(iwidgetUrl, {
@@ -889,7 +871,7 @@ IWidget.prototype.setRefusedVersion = function (v) {
  * @returns {Boolean}
  */
 IWidget.prototype.isRefusedUpgrade = function () {
-    return this.refusedVersion && this.refusedVersion.compareTo(this.widget.getLastVersion()) === 0;
+    return this.refusedVersion && this.refusedVersion.compareTo(this.internal_iwidget.widget.getLastVersion()) === 0;
 };
 
 /**
@@ -906,18 +888,18 @@ IWidget.prototype.upgradeIWidget = function () {
         msg = interpolate(msg, {iwidgetName: this.name}, true);
         LayoutManagerFactory.getInstance().showYesNoDialog(msg,
             function () {
-                this.setRefusedVersion(this.widget.getLastVersion());
+                this.setRefusedVersion(this.internal_iwidget.widget.getLastVersion());
             }.bind(this));
     }
 
     var data = {
         id: this.id,
-        newVersion: this.widget.getLastVersion().text,
-        source: this.widget.getLastVersion().source
+        newVersion: this.internal_iwidget.widget.getLastVersion().text,
+        source: this.internal_iwidget.widget.getLastVersion().source
     };
     var url = Wirecloud.URLs.IWIDGET_VERSION_ENTRY.evaluate({
-        workspace_id: this.layout.dragboard.workspaceId,
-        tab_id: this.layout.dragboard.tabId,
+        workspace_id: this.internal_iwidget.layout.dragboard.workspaceId,
+        tab_id: this.internal_iwidget.layout.dragboard.tabId,
         iwidget_id: this.id
     });
 
@@ -932,7 +914,7 @@ IWidget.prototype.upgradeIWidget = function () {
 };
 
 IWidget.prototype.registerPrefCallback = function registerPrefCallback(prefCallback) {
-    this.prefCallback = prefCallback;
+    this.internal_iwidget.prefCallback = prefCallback;
 };
 
 /**
@@ -963,11 +945,12 @@ IWidget.prototype.destroy = function destroy() {
         this.menu.destroy();
         this.menu = null;
     }
-    this.widget = null;
-    this.layout = null;
     this.position = null;
-    this.logManager.close();
-    this.logManager = null;
+
+    if (this.internal_iwidget != null) {
+        this.internal_iwidget.destroy();
+        this.internal_iwidget = null;
+    }
 };
 
 /**
@@ -979,15 +962,15 @@ IWidget.prototype.destroy = function destroy() {
 IWidget.prototype.remove = function (orderFromServer) {
     orderFromServer = orderFromServer !== null ? orderFromServer : false;
 
-    if (this.layout === null) {
+    if (this.internal_iwidget.layout === null) {
         return;
     }
 
     this.log(gettext('iWidget deleted'), Constants.Logging.INFO_MSG);
 
-    var dragboard = this.layout.dragboard;
+    var dragboard = this.internal_iwidget.layout.dragboard;
     if (isElement(this.element.parentNode)) {
-        this.layout.removeIWidget(this, true);
+        this.internal_iwidget.layout.removeIWidget(this, true);
     }
 
     this.element = null;
@@ -1038,7 +1021,7 @@ IWidget.prototype.setContentSize = function (newWidth, newHeight, persist) {
     this._recomputeSize(true);
 
     // Notify resize event
-    this.layout._notifyResizeEvent(this, oldWidth, oldHeight, this.getWidth(), this.getHeight(), false, persist);
+    this.internal_iwidget.layout._notifyResizeEvent(this, oldWidth, oldHeight, this.getWidth(), this.getHeight(), false, persist);
 };
 
 /**
@@ -1057,8 +1040,8 @@ IWidget.prototype._notifyWindowResizeEvent = function () {
     /* TODO end of temporally workaround */
 
     // Recompute position
-    this.element.style.left = this.layout.getColumnOffset(this.position.x) + "px";
-    this.element.style.top = this.layout.getRowOffset(this.position.y) + "px";
+    this.element.style.left = this.internal_iwidget.layout.getColumnOffset(this.position.x) + "px";
+    this.element.style.top = this.internal_iwidget.layout.getRowOffset(this.position.y) + "px";
 
     // Recompute size
     this._recomputeSize(true);
@@ -1069,7 +1052,7 @@ IWidget.prototype._notifyWindowResizeEvent = function () {
     var newWidth = this.getWidth();
 
     if ((oldHeight !== newHeight) || (oldWidth !== newWidth)) {
-        this.layout._notifyResizeEvent(this, oldWidth, oldHeight, newWidth, newHeight, false, false);
+        this.internal_iwidget.layout._notifyResizeEvent(this, oldWidth, oldHeight, newWidth, newHeight, false, false);
     }
     /* TODO end of temporally workaround */
 };
@@ -1091,7 +1074,7 @@ IWidget.prototype._notifyLoaded = function () {
 
     this.loaded = true;
 
-    errorCount = this.logManager.getErrorCount();
+    errorCount = this.internal_iwidget.logManager.getErrorCount();
     if (errorCount > 0) {
         msg = ngettext("%(errorCount)s error for the iWidget \"%(name)s\" was notified before it was loaded",
                            "%(errorCount)s errors for the iWidget \"%(name)s\" were notified before it was loaded",
@@ -1130,7 +1113,7 @@ IWidget.prototype._notifyLoaded = function () {
 IWidget.prototype._notifyUnloaded = function () {
     var msg = gettext('iWidget unloaded');
     this.log(msg, Constants.Logging.INFO_MSG);
-    this.logManager.newCycle();
+    this.internal_iwidget.logManager.newCycle();
 
     if (!this.loaded) {
         return;
@@ -1138,7 +1121,7 @@ IWidget.prototype._notifyUnloaded = function () {
 
     this.errorButton.addClassName("disabled");
     this.errorButton.setTitle('');
-    this.prefCallback = null;
+    this.internal_iwidget.prefCallback = null;
     this.loaded = false;
     this.events['unload'].dispatch(this);
 };
@@ -1147,7 +1130,7 @@ IWidget.prototype._notifyUnloaded = function () {
  * @private
  */
 IWidget.prototype._recomputeWidth = function () {
-    var width = this.layout.getWidthInPixels(this.contentWidth);
+    var width = this.internal_iwidget.layout.getWidthInPixels(this.contentWidth);
 
     width -= this._computeExtraWidthPixels();
 
@@ -1158,8 +1141,9 @@ IWidget.prototype._recomputeWidth = function () {
     this.element.style.width = width + "px";
 
     // Notify Context Manager
-    var contextManager = this.layout.dragboard.getWorkspace().getContextManager();
-    contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.WIDTHINPIXELS, width);
+    this.internal_iwidget.contextManager.modify({
+        'widthInPixels': width
+    });
 };
 
 /**
@@ -1221,9 +1205,7 @@ IWidget.prototype._computeExtraHeightPixels = function () {
  * @private
  */
 IWidget.prototype._recomputeHeight = function (basedOnContent) {
-    var contentHeight, contextManager, oldHeight;
-
-    contextManager = this.layout.dragboard.getWorkspace().getContextManager();
+    var contentHeight, oldHeight;
 
     oldHeight = this.height;
 
@@ -1231,19 +1213,19 @@ IWidget.prototype._recomputeHeight = function (basedOnContent) {
         if (basedOnContent) {
             // Based on content height
 
-            contentHeight = this.layout.fromVCellsToPixels(this.contentHeight);
+            contentHeight = this.internal_iwidget.layout.fromVCellsToPixels(this.contentHeight);
             var fullSize = contentHeight;
             fullSize += this.widgetMenu.offsetHeight +
                         this.statusBar.offsetHeight;
             fullSize += this._computeExtraHeightPixels();
 
-            var processedSize = this.layout.adaptHeight(contentHeight, fullSize);
+            var processedSize = this.internal_iwidget.layout.adaptHeight(contentHeight, fullSize);
             contentHeight = processedSize.inPixels;
             this.height = processedSize.inLU;
             this.content.setStyle({height: contentHeight + "px"});
         } else {
             // Based on full widget height
-            contentHeight = this.layout.getHeightInPixels(this.height);
+            contentHeight = this.internal_iwidget.layout.getHeightInPixels(this.height);
             contentHeight -= this.widgetMenu.offsetHeight + this.statusBar.offsetHeight;
             contentHeight -= this._computeExtraHeightPixels();
 
@@ -1252,24 +1234,28 @@ IWidget.prototype._recomputeHeight = function (basedOnContent) {
             }
 
             this.content.setStyle({height: contentHeight + "px"});
-            this.contentHeight = Math.floor(this.layout.fromPixelsToVCells(contentHeight));
+            this.contentHeight = Math.floor(this.internal_iwidget.layout.fromPixelsToVCells(contentHeight));
         }
 
         this._recomputeWrapper(contentHeight);
 
         // Notify Context Manager about the new size
-        contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.HEIGHTINPIXELS, contentHeight);
+        this.internal_iwidget.contextManager.modify({
+            'heightInPixels': contentHeight
+        });
 
     } else { // minimized
         this._recomputeWrapper();
         contentHeight = this.element.offsetHeight;
         this.content.setStyle({height: "0px"});
-        this.height = Math.ceil(this.layout.fromPixelsToVCells(contentHeight));
+        this.height = Math.ceil(this.internal_iwidget.layout.fromPixelsToVCells(contentHeight));
     }
 
     if (oldHeight !== this.height) {
         // Notify Context Manager about new size
-        contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.HEIGHT, this.height);
+        this.internal_iwidget.contextManager.modify({
+            'height': this.height
+        });
     }
 };
 
@@ -1320,16 +1306,16 @@ IWidget.prototype.setSize = function (newWidth, newHeight, resizeLeftSide, persi
     this._recomputeSize(false);
 
     if (persist) {
-        // Notify Context Manager new sizes
-        var contextManager = this.layout.dragboard.getWorkspace().getContextManager();
-        contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.HEIGHT, this.contentHeight);
-        contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.WIDTH, this.contentWidth);
-        contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.HEIGHTINPIXELS, this.content.offsetHeight);
-        contextManager.notifyModifiedWidgetConcept(this, Concept.prototype.WIDTHINPIXELS, this.content.offsetWidth);
+        this.internal_iwidget.contextManager.modify({
+            'height': this.contentHeight,
+            'width': this.contentWidth,
+            'heightInPixels': this.content.offsetHeight,
+            'widthInPixels': this.content.offsetWidth
+        });
     }
 
     // Notify resize event
-    this.layout._notifyResizeEvent(this, oldWidth, oldHeight, this.contentWidth, this.height, resizeLeftSide, persist);
+    this.internal_iwidget.layout._notifyResizeEvent(this, oldWidth, oldHeight, this.contentWidth, this.height, resizeLeftSide, persist);
 };
 
 /**
@@ -1392,12 +1378,12 @@ IWidget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
     reserveSpace = (typeof reserveSpace !== 'undefined' && reserveSpace !== null) ? reserveSpace : true;
     if (reserveSpace) {
         var persist = persistence !== null ? persistence : true;
-        this.layout._notifyResizeEvent(this, this.contentWidth, oldHeight, this.contentWidth, this.getHeight(), false, persist, reserveSpace);
+        this.internal_iwidget.layout._notifyResizeEvent(this, this.contentWidth, oldHeight, this.contentWidth, this.getHeight(), false, persist, reserveSpace);
     }
 };
 
 IWidget.prototype.isInFullDragboardMode = function () {
-    return this.layout instanceof FullDragboardLayout;
+    return this.internal_iwidget.layout instanceof FullDragboardLayout;
 };
 
 IWidget.prototype.setFullDragboardMode = function (enable) {
@@ -1405,12 +1391,12 @@ IWidget.prototype.setFullDragboardMode = function (enable) {
         return;
     }
 
-    var dragboard = this.layout.dragboard;
+    var dragboard = this.internal_iwidget.layout.dragboard;
 
     if (enable) {
         this.previousContentWidth = this.contentWidth;
         this.previousHeight = this.height;
-        this.previousLayout = this.layout;
+        this.previousLayout = this.internal_iwidget.layout;
         this.previousPosition = this.position.clone();
 
         this.moveToLayout(dragboard.fulldragboardLayout);
@@ -1431,7 +1417,7 @@ IWidget.prototype.toggleMinimizeStatus = function (persistence) {
  * @private
  */
 IWidget.prototype._updateErrorInfo = function () {
-    var label, errorCount = this.logManager.getErrorCount();
+    var label, errorCount = this.internal_iwidget.logManager.getErrorCount();
     this.errorButton.setDisabled(errorCount == 0);
 
     label = ngettext("%(errorCount)s error", "%(errorCount)s errors", errorCount);
@@ -1445,7 +1431,7 @@ IWidget.prototype._updateErrorInfo = function () {
 IWidget.prototype.log = function (msg, level) {
     level = level != null ? level : Constants.Logging.ERROR_MSG;
 
-    this.logManager.log(msg, level);
+    this.internal_iwidget.logManager.log(msg, level);
     if (this.isVisible()) {
         this._updateErrorInfo();
     }
@@ -1472,9 +1458,9 @@ IWidget.prototype.highlight = function () {
  */
 IWidget.prototype.toggleLayout = function () {
     if (this.onFreeLayout()) {
-        this.moveToLayout(this.layout.dragboard.baseLayout);
+        this.moveToLayout(this.internal_iwidget.layout.dragboard.baseLayout);
     } else {
-        this.moveToLayout(this.layout.dragboard.freeLayout);
+        this.moveToLayout(this.internal_iwidget.layout.dragboard.freeLayout);
     }
 };
 
@@ -1482,7 +1468,7 @@ IWidget.prototype.toggleLayout = function () {
  * Check if the iwidget belongs to a shared workspace
  */
 IWidget.prototype.is_shared_workspace = function () {
-    return this.layout.dragboard.getWorkspace().isShared();
+    return this.internal_iwidget.layout.dragboard.getWorkspace().isShared();
 };
 
 /**
@@ -1492,9 +1478,9 @@ IWidget.prototype.is_shared_workspace = function () {
 IWidget.prototype.save = function (options) {
     function onSuccess(transport) {
         var iwidgetInfo = JSON.parse(transport.responseText);
-        this.id = iwidgetInfo['id'];
-        this.codeURL = this.widget.code_url + "#id=" + this.id;
-        this.layout.dragboard.addIWidget(this, iwidgetInfo, options);
+        this.internal_iwidget.id = iwidgetInfo['id'];
+        this.codeURL = this.internal_iwidget.widget.code_url + "#id=" + this.id;
+        this.internal_iwidget.layout.dragboard.addIWidget(this, iwidgetInfo, options);
     }
 
     function onError(transport, e) {
@@ -1508,13 +1494,13 @@ IWidget.prototype.save = function (options) {
     }
 
     var url = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
-        tab_id: this.layout.dragboard.tabId,
-        workspace_id: this.layout.dragboard.workspaceId
+        tab_id: this.internal_iwidget.layout.dragboard.tabId,
+        workspace_id: this.internal_iwidget.layout.dragboard.workspaceId
     });
 
     var data = Object.toJSON({
         'iwidget': {
-            'widget': this.widget.getId(),
+            'widget': this.internal_iwidget.widget.getId(),
             'left': this.position.x,
             'top': this.position.y,
             'icon_left': this.iconPosition.x,
@@ -1543,7 +1529,7 @@ IWidget.prototype.save = function (options) {
  *                          to.
  */
 IWidget.prototype.moveToLayout = function (newLayout) {
-    if (this.layout === newLayout) {
+    if (this.internal_iwidget.layout === newLayout) {
         return;
     }
 
@@ -1568,8 +1554,8 @@ IWidget.prototype.moveToLayout = function (newLayout) {
     fullHeight += this._computeExtraHeightPixels();
     // ##### END TODO
 
-    var dragboardChange = this.layout.dragboard !== newLayout.dragboard;
-    var oldLayout = this.layout;
+    var dragboardChange = this.internal_iwidget.layout.dragboard !== newLayout.dragboard;
+    var oldLayout = this.internal_iwidget.layout;
 
     // Force an unload event
     if (dragboardChange) {
@@ -1629,7 +1615,7 @@ IWidget.prototype.moveToLayout = function (newLayout) {
     //the movement affects the rest of widgets
     if (!dragboardChange && (affectedWidgetsRemoving || affectedWidgetsAdding)) {
         //commit all the dragboard changes
-        this.layout.dragboard._commitChanges();
+        this.internal_iwidget.layout.dragboard._commitChanges();
     } else {
         //commit only the info about this iwidget. If it has changed dragboards, it won't
         //affect the positions of the widgets of the new tab because it's placed at the
@@ -1667,7 +1653,7 @@ IWidget.prototype.moveToLayout = function (newLayout) {
         iWidgetInfo['icon_top'] = this.iconPosition.y;
         iWidgetInfo['icon_left'] = this.iconPosition.x;
         iWidgetInfo['zIndex'] = this.zPos;
-        iWidgetInfo['tab'] = this.layout.dragboard.tabId;
+        iWidgetInfo['tab'] = this.internal_iwidget.layout.dragboard.tabId;
 
         data.push(iWidgetInfo);
 

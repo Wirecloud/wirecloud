@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2011-2012 Universidad Politécnica de Madrid
+# Copyright 2011-2013 Universidad Politécnica de Madrid
 
 # This file is part of Wirecluod.
 
@@ -209,6 +209,18 @@ class WirecloudPlugin(object):
 
     def get_features(self):
         return self.features
+
+    def get_platform_context_definitions(self):
+        return {}
+
+    def get_platform_context_current_values(self, user):
+        return {}
+
+    def get_workspace_context_definitions(self):
+        return {}
+
+    def get_workspace_context_current_values(self, user_workspace):
+        return {}
 
     def get_scripts(self, view):
         return ()

@@ -120,15 +120,11 @@ var OpManagerFactory = (function () {
             // When it finish, it will invoke continueLoadingGlobalModules method!
             this.logs = LogManagerFactory.getInstance();
 
-            Wirecloud.LocalCatalogue.reload({
-                onSuccess: function () {
-                    this.continueLoadingGlobalModules(Modules.prototype.SHOWCASE);
-                }.bind(this),
-                onFailure: function () {
-                    var msg, logManager = LogManagerFactory.getInstance();
-                    msg = logManager.formatError(gettext("Error retrieving available resources: %(errorMsg)s."), transport, e);
-                    logManager.log(msg);
-                    LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+            Wirecloud.io.makeRequest(Wirecloud.URLs.PLATFORM_CONTEXT_COLLECTION, {
+                method: 'GET',
+                onSuccess: function (transport) {
+                    OpManagerFactory.getInstance().contextManager = new Wirecloud.ContextManager(this, JSON.parse(transport.responseText));
+                    OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
                 }
             });
         };
@@ -150,19 +146,33 @@ var OpManagerFactory = (function () {
         OpManager.prototype.continueLoadingGlobalModules = function (module) {
             // Asynchronous load of modules
             // Each singleton module notifies OpManager it has finished loading!
-            if (module === Modules.prototype.SHOWCASE) {
+            switch (module) {
+            case Modules.prototype.THEME_MANAGER:
+
+                Wirecloud.LocalCatalogue.reload({
+                    onSuccess: function () {
+                        this.continueLoadingGlobalModules(Modules.prototype.SHOWCASE);
+                    }.bind(this),
+                    onFailure: function () {
+                        var msg, logManager = LogManagerFactory.getInstance();
+                        msg = logManager.formatError(gettext("Error retrieving available resources: %(errorMsg)s."), transport, e);
+                        logManager.log(msg);
+                        LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                    }
+                });
+                break;
+            case Modules.prototype.SHOWCASE:
                 // All singleton modules has been loaded!
                 // It's time for loading tabspace information!
                 this.loadActiveWorkspace();
-                return;
-            }
-            if (module === Modules.prototype.ACTIVE_WORKSPACE) {
+                break;
+            case Modules.prototype.ACTIVE_WORKSPACE:
                 this.loadCompleted = true;
                 if (!this.visibleLayer) {
                     this.showActiveWorkspace(this.activeWorkspace);
                     this.visibleLayer = "tabs_container";
                 }
-                return;
+                break;
             }
         };
 
@@ -249,7 +259,6 @@ var OpManagerFactory = (function () {
         };
 
         // Singleton modules
-        //this.contextManagerModule = null;
         this.loadCompleted = false;
         this.visibleLayer = null;
 

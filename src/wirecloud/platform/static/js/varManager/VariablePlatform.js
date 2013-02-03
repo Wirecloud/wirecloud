@@ -145,11 +145,12 @@ RVariable.prototype.setHandler = function (handler_) {
 }
 
 RVariable.prototype.get = function () {
-    var concept;
-    if (this.vardef.aspect === this.EXTERNAL_CONTEXT) {
-        concept = this.varManager.workspace.getContextManager().getConcept(this.vardef.concept);
-        return concept.getValue();
-    } else {
+    switch (this.vardef.aspect) {
+    case this.EXTERNAL_CONTEXT:
+        return OpManagerFactory.getInstance().contextManager.get(this.vardef.concept);
+    case this.GADGET_CONTEXT:
+        return this.iWidget.internal_iwidget.contextManager.get(this.vardef.concept);
+    default:
         return this.value;
     }
 };

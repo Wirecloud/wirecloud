@@ -49,7 +49,7 @@ Wirecloud.Widget = {};
         // Phase 1
         // Annotate new value of the variable without invoking callback function!
         for (varName in new_values) {
-            variable = varManager.getVariableByName(this._current_iwidget.getId(), varName);
+            variable = varManager.getVariableByName(this._current_iwidget.id, varName);
 
             oldValue = variable.get();
             newValue = new_values[varName];
@@ -62,7 +62,7 @@ Wirecloud.Widget = {};
         // Phase 2
         // Commit new value of the variable
         for (varName in new_values) {
-            variable = varManager.getVariableByName(this._current_iwidget.getId(), varName);
+            variable = varManager.getVariableByName(this._current_iwidget.id, varName);
             variable.set(new_values[varName]);
         }
 
@@ -89,7 +89,7 @@ Wirecloud.Widget = {};
                 fields[pref.varName] = pref.getInterfaceDescription(iwidget);
             }
         }
-        this._current_iwidget = iwidget;
+        this._current_iwidget = iwidget.internal_iwidget; // TODO
         this._current_form = new Form(fields, {
             buttonArea: this.windowBottom
         });

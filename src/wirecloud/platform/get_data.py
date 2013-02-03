@@ -40,7 +40,8 @@ from django.utils.translation import ugettext as _
 
 from wirecloud.commons.utils.cache import CacheableData
 from wirecloud.commons.utils.http import get_absolute_reverse_url
-from wirecloud.platform.models import Concept, Constant, IWidget, PublishedWorkspace, Tab, UserPrefOption, UserWorkspace, Variable, VariableDef, VariableValue
+from wirecloud.platform.models import IWidget, PublishedWorkspace, Tab, UserPrefOption, UserWorkspace, Variable, VariableDef, VariableValue
+from wirecloud.platform.context.utils import get_workspace_context, get_context_values
 from wirecloud.platform.preferences.views import get_workspace_preference_values, get_tab_preference_values
 from wirecloud.platform.workspace.utils import createTab, decrypt_value, encrypt_value
 
@@ -73,7 +74,8 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
     values_by_varname = {}
 
     if forced_values == None:
-        concept_values = get_concept_values(user)
+        user_workspace = UserWorkspace.objects.get(user=user, workspace=workspaceDAO)
+        context_values = get_context_values(user_workspace)
         preferences = get_workspace_preference_values(workspace)
         forced_values = process_forced_values(workspace, user, concept_values, preferences)
 
@@ -447,18 +449,19 @@ def process_forced_values(workspace, user, concept_values, preferences):
 
 
 def _get_global_workspace_data(workspaceDAO, user):
+    user_workspace = UserWorkspace.objects.get(user=user, workspace=workspaceDAO)
     data_ret = {}
     data_ret['workspace'] = get_workspace_data(workspaceDAO, user)
 
     # Context information
-    concept_values = get_concept_values(user)
-    data_ret['workspace']['concepts'] = get_concepts_data(concept_values)
+    data_ret['workspace']['context'] = get_workspace_context(user_workspace)
 
     # Workspace preferences
     preferences = get_workspace_preference_values(workspaceDAO.pk)
     data_ret['workspace']['preferences'] = preferences
 
     # Process forced variable values
+    concept_values = get_context_values(user_workspace)
     forced_values = process_forced_values(workspaceDAO, user, concept_values, preferences)
     data_ret['workspace']['empty_params'] = forced_values['empty_params']
     data_ret['workspace']['extra_prefs'] = forced_values['extra_prefs']
@@ -578,80 +581,3 @@ def get_variable_data(variable, user, workspace, cache_manager=None):
     data_ret.update(cache_manager.get_variable_data(variable))
 
     return data_ret
-
-
-def get_constant_values():
-    res = {}
-
-    constants = Constant.objects.all()
-    for constant in constants:
-        res[constant.concept.concept] = constant.value
-
-    return res
-
-
-def get_concept_values(user):
-    concepts = Concept.objects.all()
-
-    cache_key = 'constant_context/' + str(user.id)
-    constant_context = cache.get(cache_key)
-    if constant_context == None:
-        constant_context = get_constant_values()
-        cache.set(cache_key, constant_context)
-
-    concept_values = constant_context
-
-    data = {'user': user}
-    for concept in concepts:
-        if concept.source == 'PLAT':
-            concept_values[concept.concept] = get_concept_value(concept, data)
-
-    return concept_values
-
-
-def get_concepts_data(concept_values):
-    concepts = Concept.objects.all()
-    data = [get_concept_data(concept, concept_values) for concept in concepts]
-
-    return data
-
-
-def get_concept_data(concept, concept_values):
-
-    data_ret = {
-        'concept': concept.pk,
-        'type': concept.type,
-        'label': concept.label,
-        'description': concept.description,
-        'names': (concept.pk, ),
-    }
-
-    if concept.source == 'PLAT':
-        if concept.concept in concept_values:
-            data_ret['value'] = concept_values[concept.concept]
-        else:
-            data_ret['value'] = ''
-    else:
-        data_ret['adaptor'] = concept.adaptor
-
-    return data_ret
-
-
-# Only for extenal/constant context values (no iwidget context values)
-def get_concept_value(concept, data):
-    res = ''
-
-    if concept.type == 'CCTX':
-        try:
-            constant = Constant.objects.get(concept=concept)
-            res = constant.value
-        except Constant.DoesNotExist:
-            pass
-
-    elif concept.concept == 'username':
-        res = data['user'].username
-
-    elif concept.concept == 'language':
-        res = get_language()
-
-    return res

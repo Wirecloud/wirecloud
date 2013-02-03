@@ -25,15 +25,25 @@
 
     "use strict";
 
-    var ContextManager = function ContextManager(contextInstance, initialContext) {
+    var ContextManager = function ContextManager(contextInstance, context_description) {
         Object.defineProperty(this, 'instance', {value: contextInstance});
 
-        var context = initialContext;
+        var context = {};
         var handlers = [];
+
+        Object.freeze(context_description);
+        for (var key in context_description) {
+            context_description[key];
+            if (typeof context_description[key] === 'object' && 'value' in context_description[key]) {
+                context[key] = context_description[key].value;
+            } else {
+                context[key] = null;
+            }
+        }
 
         Object.defineProperty(this, 'getAvailableContext', {
             value: function getAvailableContext() {
-                return Object.getOwnPropertyNames(context);
+                return context_description;
             }
         });
 
