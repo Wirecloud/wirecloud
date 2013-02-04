@@ -35,7 +35,6 @@ from urlparse import urljoin
 
 from django.core.cache import cache
 from django.utils import simplejson
-from django.utils.translation import get_language
 from django.utils.translation import ugettext as _
 
 from wirecloud.commons.utils.cache import CacheableData
@@ -74,10 +73,10 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
     values_by_varname = {}
 
     if forced_values == None:
-        user_workspace = UserWorkspace.objects.get(user=user, workspace=workspaceDAO)
+        user_workspace = UserWorkspace.objects.get(user=user, workspace=workspace)
         context_values = get_context_values(user_workspace)
         preferences = get_workspace_preference_values(workspace)
-        forced_values = process_forced_values(workspace, user, concept_values, preferences)
+        forced_values = process_forced_values(workspace, user, context_values, preferences)
 
     var_values = VariableValue.objects.filter(user__id=user.id, variable__iwidget__tab__workspace=workspace)
     for var_value in var_values.select_related('variable__vardef'):
