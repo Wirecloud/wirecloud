@@ -25,6 +25,19 @@
 
     "use strict";
 
+    var old_context_api_adaptor_callback = function old_context_api_adaptor_callback(new_values) {
+        var key, variables;
+
+        variables = this.layout.dragboard.getWorkspace().varManager.getIWidgetVariables(this.id);
+        for (key in variables) {
+            var variable = variables[key];
+            if (variable.vardef.aspect === 'GCTX' && variable.vardef.concept in new_values) {
+                variable.annotate(new_values[variable.vardef.concept]);
+                variable.set(new_values[variable.vardef.concept]);
+            }
+        }
+    };
+
     /**
      */
     var IWidget = function IWidget(widget, options) {
@@ -46,6 +59,8 @@
             'heightInPixels': 0,
             'widthInPixels': 0
         });
+        this._old_context_api_adaptor_callback = old_context_api_adaptor_callback.bind(this);
+        this.contextManager.addCallback(this._old_context_api_adaptor_callback);
         this.logManager = new IWidgetLogManager(this);
         this.prefCallback = null;
 
@@ -81,6 +96,7 @@
             this.events.unload.dispatch(this);
         }
 
+        this.contextManager.removeCallback(this._old_context_api_adaptor_callback);
         this.contextManager = null;
         this.logManager.close();
         this.logManager = null;
