@@ -1,7 +1,9 @@
 from django.core.urlresolvers import reverse
 from django.test import TestCase, Client
+from django.utils import unittest
 
 
+@unittest.skip('wip tests')
 class ProxyTests(TestCase):
 
     def test_add_tenant(self):
