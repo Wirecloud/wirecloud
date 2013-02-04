@@ -43,15 +43,75 @@
     // API declaration
     Object.defineProperty(window, 'MashupPlatform', {value: {}});
 
+    // Platform context module
+    Object.defineProperty(window.MashupPlatform, 'context', {value: {}});
+    Object.defineProperty(window.MashupPlatform.context, 'getAvailableContext', {
+        value: function getAvailableContext(callback) {
+            return platform.opManager.contextManager.getAvailableContext();
+        }
+    });
+    Object.defineProperty(window.MashupPlatform.context, 'get', {
+        value: function get(name) {
+            return platform.opManager.contextManager.get(name);
+        }
+    });
+    Object.defineProperty(window.MashupPlatform.context, 'registerCallback', {
+        value: function registerCallback(callback) {
+            platform.opManager.activeWorkspace.getIWidget(id).internal_iwidget.registerContextAPICallback('platform', callback);
+        }
+    });
+    Object.preventExtensions(window.MashupPlatform.context);
+
     // HTTP module
     Object.defineProperty(window.MashupPlatform, 'http', {value: {}});
     Object.defineProperty(window.MashupPlatform.http, 'buildProxyURL', {value: platform.Wirecloud.io.buildProxyURL});
     Object.defineProperty(window.MashupPlatform.http, 'makeRequest', {value: platform.Wirecloud.io.makeRequest});
     Object.preventExtensions(window.MashupPlatform.http);
 
-    // Widget Module
+    // Mashup module
+    Object.defineProperty(window.MashupPlatform, 'mashup', {value: {}});
+    Object.defineProperty(window.MashupPlatform.mashup, 'context', {value: {}});
+    Object.defineProperty(window.MashupPlatform.mashup.context, 'getAvailableContext', {
+        value: function getAvailableContext(callback) {
+            return platform.opManager.activeWorkspace.contextManager.getAvailableContext();
+        }
+    });
+    Object.defineProperty(window.MashupPlatform.mashup.context, 'get', {
+        value: function get(name) {
+            return platform.opManager.activeWorkspace.contextManager.get(name);
+        }
+    });
+    Object.defineProperty(window.MashupPlatform.mashup.context, 'registerCallback', {
+        value: function registerCallback(callback) {
+            platform.opManager.activeWorkspace.getIWidget(id).internal_iwidget.registerContextAPICallback('mashup', callback);
+        }
+    });
+    Object.preventExtensions(window.MashupPlatform.mashup.context);
+
+    Object.preventExtensions(window.MashupPlatform.mashup);
+
+    // Widget module
     Object.defineProperty(window.MashupPlatform, 'widget', {value: {}});
     Object.defineProperty(window.MashupPlatform.widget, 'id', {value: id});
+
+    Object.defineProperty(window.MashupPlatform.widget, 'context', {value: {}});
+    Object.defineProperty(window.MashupPlatform.widget.context, 'getAvailableContext', {
+        value: function getAvailableContext() {
+            return platform.opManager.activeWorkspace.getIWidget(id).internal_iwidget.contextManager.getAvailableContext();
+        }
+    });
+    Object.defineProperty(window.MashupPlatform.widget.context, 'get', {
+        value: function get(name) {
+            return platform.opManager.activeWorkspace.getIWidget(id).internal_iwidget.contextManager.get(name);
+        }
+    });
+    Object.defineProperty(window.MashupPlatform.widget.context, 'registerCallback', {
+        value: function registerCallback(callback) {
+            platform.opManager.activeWorkspace.getIWidget(id).internal_iwidget.registerContextAPICallback('iwidget', callback);
+        }
+    });
+    Object.preventExtensions(window.MashupPlatform.widget.context);
+
     Object.preventExtensions(window.MashupPlatform.widget);
 
     // Pref Module

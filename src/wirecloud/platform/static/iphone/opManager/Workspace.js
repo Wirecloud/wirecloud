@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global interpolate, VarManager, ContextManager, Wiring, OpManagerFactory, Modules, gettext, alert, last_logged_user, document, window, Concept, StyledElements, Tab, $, Wirecloud */
+/*global interpolate, VarManager, Wiring, OpManagerFactory, Modules, gettext, alert, last_logged_user, document, window, Concept, StyledElements, Tab, $, Wirecloud */
 "use strict";
 
  /*
@@ -123,7 +123,6 @@ function Workspace(workspaceState) {
         }
         this.tabInstances = [];
         this.wiring.destroy();
-        this.contextManager.unload();
         OpManagerFactory.getInstance().globalDragboard.clear();
         this.tabsContainerElement = null;
         this.layout.destroy();
@@ -140,7 +139,6 @@ function Workspace(workspaceState) {
     Workspace.prototype.removeIWidgetData = function (iWidgetId) {
         this.varManager.removeInstance(iWidgetId);
         this.wiring.removeInstance(iWidgetId);
-        this.contextManager.removeInstance(iWidgetId);
     };
 
     Workspace.prototype.sendBufferedVars = function () {
@@ -171,10 +169,6 @@ function Workspace(workspaceState) {
 
     Workspace.prototype.getVarManager = function () {
         return this.varManager;
-    };
-
-    Workspace.prototype.getContextManager = function () {
-        return this.contextManager;
     };
 
     Workspace.prototype.getActiveDragboard = function () {
@@ -240,7 +234,7 @@ function Workspace(workspaceState) {
 
         this.varManager = new VarManager(this);
 
-        this.contextManager = new ContextManager(this, this.workspaceGlobalInfo);
+        this.contextManager = new Wirecloud.ContextManager(this, this.workspaceGlobalInfo.workspace.context);
         this.wiring = new Wirecloud.Wiring(this);
         iwidgets = this.getIWidgets();
         for (i = 0; i < iwidgets.length; i += 1) {
@@ -311,13 +305,15 @@ function Workspace(workspaceState) {
         this._scroll(index);
     };
 
-    Workspace.prototype.updateLayout = function (orient) {
+    Workspace.prototype.updateLayout = function (orientation) {
         var step = window.innerWidth,
             scrolling = 0,
             iWidgets, contextManager, i;
 
-        //notify this to the ContextManager. The orient value may be "portrait" or "landscape".
-        this.contextManager.notifyModifiedConcept(Concept.prototype.ORIENTATION, orient);
+        // Notify this to the ContextManager. The orientation value may be "portrait" or "landscape".
+        OpManagerFactory.getInstance().contextManager.modify({
+            'orientation': orientation
+        });
 
         for (i = 0; i < this.tabInstances.length; i += 1) {
             this.tabInstances[i].updateLayout(scrolling);
@@ -326,9 +322,11 @@ function Workspace(workspaceState) {
 
         iWidgets = this.getIWidgets();
         for (i = 0; i < iWidgets.length; i += 1) {
-            this.contextManager.notifyModifiedWidgetConcept(iWidgets[i], Concept.prototype.WIDTHINPIXELS, step);
             if (iWidgets[i].element != null) {
-                this.contextManager.notifyModifiedWidgetConcept(iWidgets[i], Concept.prototype.HEIGHTINPIXELS, iWidgets[i].element.offsetHeight);
+                iWidgets[i].internal_iwidget.contextManager.modify({
+                    'widthInPixels': step,
+                    'heightInPixels': iWidgets[i].element.offsetHeight
+                });
             }
         }
 

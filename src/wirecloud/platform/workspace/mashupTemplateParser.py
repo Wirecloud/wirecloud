@@ -33,7 +33,8 @@ from django.utils import simplejson
 
 from wirecloud.commons.utils.db import save_alternative
 from wirecloud.commons.utils.template import TemplateParser
-from wirecloud.platform.get_data import get_concept_values, TemplateValueProcessor
+from wirecloud.platform.context.utils import get_context_values
+from wirecloud.platform.get_data import TemplateValueProcessor
 from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue
 from wirecloud.platform.iwidget.utils import SaveIWidget
 from wirecloud.platform.localcatalogue.utils import get_or_add_resource_from_available_marketplaces

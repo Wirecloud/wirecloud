@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012 Universidad Politécnica de Madrid
+# Copyright 2012-2013 Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -22,7 +22,6 @@ from django.contrib import admin
 from wirecloud.platform import models
 
 
-admin.site.register(models.Concept)
 admin.site.register(models.Constant)
 
 admin.site.register(models.Position)

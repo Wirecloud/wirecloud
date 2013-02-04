@@ -29,8 +29,6 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/varManager/VariableGadget.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/varManager/VariablePlatform.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/varManager/varManager.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/contextManager/ContextManager.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/contextManager/ContextPlatform.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/dragboard/DragboardLayout.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/dragboard/SmartColumnLayout.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/dragboard/FreeLayout.js"></script>

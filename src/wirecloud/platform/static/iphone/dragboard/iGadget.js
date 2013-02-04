@@ -32,10 +32,8 @@
 * @author aarranz
 */
 function IWidget(widget, iWidgetId, iWidgetCode, iWidgetName, dragboard, alternative) {
-    this.id = iWidgetId;
     this.code = iWidgetCode;
     this.name = iWidgetName;
-    this.widget = widget;
 
     this.dragboard = dragboard;
     this.element = null;
@@ -47,6 +45,15 @@ function IWidget(widget, iWidgetId, iWidgetCode, iWidgetName, dragboard, alterna
         this.paint();
     }.bind(this));
 
+    this.internal_iwidget = new Wirecloud.IWidget(widget, {
+        id: iWidgetId,
+        readOnly: true, // TODO
+        layout: {
+            dragboard: dragboard
+        }
+    });
+    Object.defineProperty(this, 'id', {get: function () {return this.internal_iwidget.id;}});
+    Object.defineProperty(this, 'widget', {get: function () {return this.internal_iwidget.widget;}});
     this.loaded = false;
 
     StyledElements.ObjectWithEvents.call(this, ['load', 'unload']);
@@ -126,6 +133,7 @@ IWidget.prototype._notifyUnloaded = function () {
     }
 
     this.loaded = false;
+    this.internal_iwidget._unload();
     this.events['unload'].dispatch(this);
 };
 

@@ -101,7 +101,6 @@ var OpManagerFactory = function () {
 
         // Singleton modules
         this.showcaseModule = null;
-        this.contextManagerModule = null;
         this.catalogue = null;
         this.logs = null;
         this.platformPreferences = null;
@@ -291,8 +290,13 @@ var OpManagerFactory = function () {
                           this.unloadEnvironment.bind(this),
                           true);
 
-            // Load initial theme
-            OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
+            Wirecloud.io.makeRequest(Wirecloud.URLs.PLATFORM_CONTEXT_COLLECTION, {
+                method: 'GET',
+                onSuccess: function (transport) {
+                    OpManagerFactory.getInstance().contextManager = new Wirecloud.ContextManager(this, JSON.parse(transport.responseText));
+                    OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
+                }
+            });
         }
 
         /**

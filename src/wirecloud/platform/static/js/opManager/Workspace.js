@@ -148,7 +148,7 @@ function Workspace (workspaceState) {
 
             this.varManager = new VarManager(this);
 
-            this.contextManager = new ContextManager(this, this.workspaceGlobalInfo);
+            this.contextManager = new Wirecloud.ContextManager(this, this.workspaceGlobalInfo.workspace.context);
             this.wiring = new Wirecloud.Wiring(this);
             iwidgets = this.getIWidgets();
             for (i = 0; i < iwidgets.length; i += 1) {
@@ -311,9 +311,6 @@ function Workspace (workspaceState) {
         var iwidget = this.getIWidget(iwidgetId);
         iwidget._notifyLoaded();
 
-        // Notify to the context manager the iwidget has been loaded
-        this.contextManager.iWidgetLoaded(iwidget);
-
         // Notify to the variable manager the iwidget has been loaded
         this.varManager.dispatchPendingVariables(iwidgetId);
 
@@ -336,9 +333,6 @@ function Workspace (workspaceState) {
         var iwidget = this.getIWidget(iwidgetId);
         if (iwidget == null)
             return;
-
-        // Notify to the context manager the iwidget has been unloaded
-        this.contextManager.iWidgetUnloaded(iwidget);
 
         iwidget._notifyUnloaded();
     }
@@ -382,6 +376,7 @@ function Workspace (workspaceState) {
                 var state, layoutManager = LayoutManagerFactory.getInstance();
 
                 this.workspaceState.name = name;
+                this.contextManager.modify({'name': name});
                 layoutManager.header.refresh();
                 state = {
                     workspace_creator: this.workspaceState.creator,
@@ -439,10 +434,6 @@ function Workspace (workspaceState) {
 
     Workspace.prototype.getVarManager = function () {
         return this.varManager;
-    }
-
-    Workspace.prototype.getContextManager = function () {
-        return this.contextManager;
     }
 
     Workspace.prototype.downloadWorkspaceInfo = function (initial_tab) {
@@ -639,10 +630,7 @@ function Workspace (workspaceState) {
             this.wiring = null;
         }
 
-        if (this.contextManager !== null) {
-            this.contextManager.unload();
-            this.contextManager = null;
-        }
+        this.contextManager = null;
 
         layoutManager.logStep('');
         LogManagerFactory.getInstance().log(gettext('workspace unloaded'), Constants.Logging.INFO_MSG);
@@ -654,7 +642,6 @@ function Workspace (workspaceState) {
         this.emptyWorkspaceInfoBox.addClassName('hidden');
 
         this.varManager.addInstance(iwidget, iwidgetJSON, tab);
-        this.contextManager.addInstance(iwidget, iwidget.getWidget().getTemplate());
         this.events.iwidgetadded.dispatch(this, iwidget);
 
         options.setDefaultValues.call(this, iwidget.id);
@@ -664,7 +651,6 @@ function Workspace (workspaceState) {
 
     Workspace.prototype.removeIWidgetData = function(iWidgetId) {
             this.varManager.removeInstance(iWidgetId);
-            this.contextManager.removeInstance(iWidgetId);
     }
 
     Workspace.prototype.removeIWidget = function(iWidgetId, orderFromServer) {
