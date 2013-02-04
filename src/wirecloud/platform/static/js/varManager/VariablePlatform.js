@@ -145,9 +145,16 @@ RVariable.prototype.setHandler = function (handler_) {
 }
 
 RVariable.prototype.get = function () {
+    var concept;
+
     switch (this.vardef.aspect) {
     case this.EXTERNAL_CONTEXT:
-        return OpManagerFactory.getInstance().contextManager.get(this.vardef.concept);
+        if (this.vardef.concept !== 'user_name') {
+            concept = this.vardef.concept;
+        } else {
+            concept = 'username';
+        }
+        return OpManagerFactory.getInstance().contextManager.get(concept);
     case this.GADGET_CONTEXT:
         return this.iWidget.internal_iwidget.contextManager.get(this.vardef.concept);
     default:
