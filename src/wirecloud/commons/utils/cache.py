@@ -5,6 +5,8 @@ from django.utils import simplejson
 from django.utils.cache import patch_cache_control
 from django.utils.http import http_date
 
+from wirecloud.commons.utils.encoding import LazyEncoder
+
 
 def no_cache(func):
 
@@ -51,6 +53,6 @@ class CacheableData(object):
         return self.data
 
     def get_response(self, status_code=200):
-        response = HttpResponse(simplejson.dumps(self.data), status=status_code, mimetype='application/json; charset=UTF-8')
+        response = HttpResponse(simplejson.dumps(self.data, cls=LazyEncoder), status=status_code, mimetype='application/json; charset=UTF-8')
         patch_cache_headers(response, self.timestamp, self.timeout)
         return response
