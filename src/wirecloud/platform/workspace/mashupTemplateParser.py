@@ -79,8 +79,9 @@ def fillWorkspaceUsingTemplate(workspace, template):
         raise Exception()
 
     user = workspace.creator
-    concept_values = get_concept_values(user)
-    processor = TemplateValueProcessor({'user': user, 'context': concept_values})
+    user_workspace = UserWorkspace.objects.get(user=workspace.creator, workspace=workspace)
+    context_values = get_context_values(user_workspace)
+    processor = TemplateValueProcessor({'user': user, 'context': context_values})
 
     workspace_info = parser.get_resource_info()
     read_only_workspace = workspace_info['readonly']

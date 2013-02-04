@@ -38,6 +38,7 @@ from django.utils.http import urlencode
 from wirecloud.commons.baseviews import Resource, Service
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.cache import no_cache
+from wirecloud.commons.utils.encoding import LazyEncoder
 from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
 from wirecloud.commons.utils.template import TemplateParseException, TemplateParser
 from wirecloud.commons.utils.transaction import commit_on_http_success
@@ -596,7 +597,7 @@ class MashupImportService(Service):
 
         workspace_data = get_global_workspace_data(workspace, request.user)
 
-        return HttpResponse(simplejson.dumps(workspace_data.get_data()), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(workspace_data.get_data(), cls=LazyEncoder), mimetype='application/json; charset=UTF-8')
 
 
 def check_json_fields(json, fields):
