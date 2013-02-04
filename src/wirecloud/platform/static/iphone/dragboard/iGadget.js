@@ -133,6 +133,7 @@ IWidget.prototype._notifyUnloaded = function () {
     }
 
     this.loaded = false;
+    this.internal_iwidget._unload();
     this.events['unload'].dispatch(this);
 };
 

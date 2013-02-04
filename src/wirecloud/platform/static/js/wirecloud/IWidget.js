@@ -51,6 +51,11 @@
         this.readOnly = options.readOnly;
         this.layout = options.layout;
 
+        this.callbacks = {
+            'iwidget': [],
+            'mashup': [],
+            'platform': []
+        };
         this.contextManager = new Wirecloud.ContextManager(this, {
             'xPosition': 0,
             'yPosition': 0,
@@ -85,6 +90,52 @@
 
     IWidget.prototype.registerPrefCallback = function registerPrefCallback(prefCallback) {
         this.prefCallback = prefCallback;
+    };
+
+    IWidget.prototype.registerContextAPICallback = function registerContextAPICallback(scope, callback) {
+        switch (scope) {
+        case 'iwidget':
+            this.contextManager.addCallback(callback);
+            break;
+        case 'mashup':
+            this.layout.dragboard.getWorkspace().contextManager.addCallback(callback);
+            break;
+        case 'platform':
+            OpManagerFactory.getInstance().contextManager.addCallback(callback);
+            break;
+        default:
+            throw new TypeError('invalid scope');
+        }
+
+        this.callbacks[scope].push(callback);
+    };
+
+    IWidget.prototype._unload = function _unload() {
+        var i, workspace, opManager;
+
+        // Remove context callbacks
+        for (i = 0; i < this.callbacks.iwidget.length; i += 1) {
+            this.contextManager.removeCallback(this.callbacks.iwidget[i]);
+        }
+
+        workspace = this.layout.dragboard.getWorkspace();
+        for (i = 0; i < this.callbacks.mashup.length; i += 1) {
+            workspace.contextManager.removeCallback(this.callbacks.mashup[i]);
+        }
+
+        opManager = OpManagerFactory.getInstance();
+        for (i = 0; i < this.callbacks.platform.length; i += 1) {
+            opManager.contextManager.removeCallback(this.callbacks.platform[i]);
+        }
+
+        this.callbacks = {
+            'iwidget': [],
+            'mashup': [],
+            'platform': []
+        };
+
+        // Remove preferences callback
+        this.prefCallback = null;
     };
 
     /**

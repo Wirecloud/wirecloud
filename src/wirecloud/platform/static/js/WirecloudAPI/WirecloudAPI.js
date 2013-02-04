@@ -57,7 +57,7 @@
     });
     Object.defineProperty(window.MashupPlatform.context, 'registerCallback', {
         value: function registerCallback(callback) {
-            platform.opManager.contextManager.addCallback(callback);
+            platform.opManager.activeWorkspace.getIWidget(id).internal_iwidget.registerContextAPICallback('platform', callback);
         }
     });
     Object.preventExtensions(window.MashupPlatform.context);
@@ -83,7 +83,7 @@
     });
     Object.defineProperty(window.MashupPlatform.mashup.context, 'registerCallback', {
         value: function registerCallback(callback) {
-            platform.opManager.activeWorkspace.contextManager.addCallback(callback);
+            platform.opManager.activeWorkspace.getIWidget(id).internal_iwidget.registerContextAPICallback('mashup', callback);
         }
     });
     Object.preventExtensions(window.MashupPlatform.mashup.context);
@@ -107,7 +107,7 @@
     });
     Object.defineProperty(window.MashupPlatform.widget.context, 'registerCallback', {
         value: function registerCallback(callback) {
-            platform.opManager.activeWorkspace.getIWidget(id).internal_iwidget.contextManager.addCallback(callback);
+            platform.opManager.activeWorkspace.getIWidget(id).internal_iwidget.registerContextAPICallback('iwidget', callback);
         }
     });
     Object.preventExtensions(window.MashupPlatform.widget.context);

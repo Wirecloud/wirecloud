@@ -1121,7 +1121,7 @@ IWidget.prototype._notifyUnloaded = function () {
 
     this.errorButton.addClassName("disabled");
     this.errorButton.setTitle('');
-    this.internal_iwidget.prefCallback = null;
+    this.internal_iwidget._unload();
     this.loaded = false;
     this.events['unload'].dispatch(this);
 };
