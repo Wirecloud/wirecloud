@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012 Universidad Politécnica de Madrid
+# Copyright 2012-2013 Universidad Politécnica de Madrid
 
 # This file is part of Wirecluod.
 
@@ -22,6 +22,7 @@ import urllib2
 from urllib2 import HTTPError
 from urlparse import urljoin
 
+from django.conf.urls.defaults import patterns, include
 from wirecloud.platform.markets.utils import MarketManager
 from wirecloud.platform.plugins import WirecloudPlugin
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_usdl_from_workspace
@@ -160,6 +161,11 @@ class FiWarePlugin(WirecloudPlugin):
             )
         else:
             return ()
+
+    def get_urls(self):
+            return patterns('',
+                (r'^api/marketAdaptor/', include('wirecloud.fiware.marketAdaptor.urls')),
+            )
 
     def get_ajax_endpoints(self, views):
         return (

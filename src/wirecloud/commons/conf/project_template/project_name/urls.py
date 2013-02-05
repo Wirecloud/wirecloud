@@ -26,8 +26,6 @@ urlpatterns = patterns('',
 
     # Admin interface
     (r'^admin/', include(admin.site.urls)),
-
-    (r'^api/marketAdaptor/', include('wirecloud.fiware.marketAdaptor.urls')),
 )
 
 urlpatterns += wirecloud.platform.urls.urlpatterns
