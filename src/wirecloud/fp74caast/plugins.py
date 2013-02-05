@@ -2,8 +2,13 @@ from django.utils.translation import ugettext_lazy as _
 
 from wirecloud.platform.plugins import WirecloudPlugin
 
+from wirecloud.fp74caast.urls import urlpatterns
+
 
 class FP74CaastPlugin(WirecloudPlugin):
+
+    def get_urls(self):
+        return urlpatterns
 
     def get_workspace_context_definitions(self):
         return {

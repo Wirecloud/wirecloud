@@ -2,10 +2,12 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 
-from commons.resource import Resource
-from wirecloud.workspace.packageLinker import PackageLinker
-from wirecloud.workspace.views import setActiveWorkspace
-from wirecloud.models import Workspace, UserWorkspace
+from wirecloud.commons.baseviews.resource import Resource
+from wirecloud.platform.workspace.packageLinker import PackageLinker
+from wirecloud.platform.workspace.utils import get_workspace_list
+from wirecloud.platform.workspace.views import setActiveWorkspace
+from wirecloud.platform.models import Workspace, UserWorkspace
+
 from wirecloud.fp74caast.models import Profile4CaaSt
 
 
@@ -16,9 +18,13 @@ def parse_username(tenant_id):
 
 class TenantCollection(Resource):
 
-    def read(self, request, creator_user, workspace):
+    def read(self, request, creator, workspace):
 
-        workspace = get_object_or_404(Workspace, creator__username=creator_user, name=workspace)
+        # Sync workspace list before searching it
+        creator_user = get_object_or_404(User, username=creator)
+        get_workspace_list(creator_user)
+
+        workspace = get_object_or_404(Workspace, creator=creator_user, name=workspace)
 
         status = 201
 
@@ -32,9 +38,8 @@ class TenantCollection(Resource):
         try:
             user_workspace = UserWorkspace.objects.get(user=user, workspace=workspace)
         except:
-            creator = User.objects.get(username=creator_user)
             packageLinker = PackageLinker()
-            user_workspace = packageLinker.link_workspace(workspace, user, creator)
+            user_workspace = packageLinker.link_workspace(workspace, user, creator_user)
 
         setActiveWorkspace(user, user_workspace.workspace)
 
