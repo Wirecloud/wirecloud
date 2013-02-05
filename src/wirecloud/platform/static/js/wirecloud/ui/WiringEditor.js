@@ -946,9 +946,22 @@ if (!Wirecloud.ui) {
      * remove a iWidget.
      */
     WiringEditor.prototype.removeIWidget = function removeIWidget(widget_interface) {
+        var i, anchor;
         widget_interface.unselect(false);
         delete this.iwidgets[widget_interface.getIWidget().getId()];
         this.layout.getCenterContainer().removeChild(widget_interface);
+        for (i = 0; i < widget_interface.sourceAnchors.length; i += 1) {
+            anchor = widget_interface.sourceAnchors[i];
+            this.sourceAnchorList.splice(this.sourceAnchorList.indexOf(anchor), 1);
+            anchorList = this.sourceAnchorsByFriendCode[anchor.context.data.connectable._friendCode];
+            anchorList.splice(anchorList.indexOf(anchor), 1);
+        }
+        for (i = 0; i < widget_interface.targetAnchors.length; i += 1) {
+            anchor = widget_interface.targetAnchors[i];
+            this.targetAnchorList.splice(this.targetAnchorList.indexOf(anchor), 1);
+            anchorList = this.targetAnchorsByFriendCode[anchor.context.data.connectable._friendCode];
+            anchorList.splice(anchorList.indexOf(anchor), 1);
+        }
         widget_interface.destroy();
         this.mini_widgets[widget_interface.getIWidget().getId()].enable();
 
@@ -962,9 +975,22 @@ if (!Wirecloud.ui) {
      * remove a iOperator.
      */
     WiringEditor.prototype.removeIOperator = function removeIOperator(operator_interface) {
+        var i, anchor, anchorList;
         operator_interface.unselect(false);
         delete this.ioperators[operator_interface.getIOperator().id];
         this.layout.getCenterContainer().removeChild(operator_interface);
+        for (i = 0; i < operator_interface.sourceAnchors.length; i += 1) {
+            anchor = operator_interface.sourceAnchors[i];
+            this.sourceAnchorList.splice(this.sourceAnchorList.indexOf(anchor), 1);
+            anchorList = this.sourceAnchorsByFriendCode[anchor.context.data.connectable._friendCode];
+            anchorList.splice(anchorList.indexOf(anchor), 1);
+        }
+        for (i = 0; i < operator_interface.targetAnchors.length; i += 1) {
+            anchor = operator_interface.targetAnchors[i];
+            this.targetAnchorList.splice(this.targetAnchorList.indexOf(anchor), 1);
+            anchorList = this.targetAnchorsByFriendCode[anchor.context.data.connectable._friendCode];
+            anchorList.splice(anchorList.indexOf(anchor), 1);
+        }
         operator_interface.destroy();
 
         this.entitiesNumber -= 1;
@@ -1003,6 +1029,11 @@ if (!Wirecloud.ui) {
      */
     WiringEditor.prototype.removeMulticonnector = function removeMulticonnector(multiConnector) {
         this.layout.getCenterContainer().removeChild(multiConnector);
+        if (multiConnector.initAnchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
+            this.targetAnchorList.splice(this.targetAnchorList.indexOf(multiConnector), 1);
+        } else {
+            this.sourceAnchorList.splice(this.sourceAnchorList.indexOf(multiConnector), 1);
+        }
         multiConnector.destroy(true);
         delete this.multiconnectors[multiConnector.id];
     };
