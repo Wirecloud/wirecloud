@@ -19,6 +19,7 @@
 
 
 from django.utils.importlib import import_module
+from django.conf.urls.defaults import patterns
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import get_callable, get_script_prefix, get_resolver, NoReverseMatch
 from django.utils.encoding import force_unicode
@@ -96,6 +97,17 @@ def clear_cache():
 
     _wirecloud_plugins = None
     _wirecloud_features = None
+
+
+def get_plugin_urls():
+    plugins = get_plugins()
+
+    urls = patterns('',)
+
+    for plugin in plugins:
+        urls += plugin.get_urls()
+
+    return urls
 
 
 def get_wirecloud_ajax_endpoints(view):
@@ -203,6 +215,7 @@ def build_url_template(viewname, kwargs=[], urlconf=None, prefix=None):
 class WirecloudPlugin(object):
 
     features = {}
+    urls = patterns('',)
 
     def get_market_classes(self):
         return {}
@@ -224,6 +237,9 @@ class WirecloudPlugin(object):
 
     def get_scripts(self, view):
         return ()
+
+    def get_urls(self):
+        return self.urls
 
     def get_ajax_endpoints(self, view):
         return ()

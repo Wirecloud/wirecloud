@@ -27,6 +27,7 @@ from wirecloud.platform.context import views as context_views
 from wirecloud.platform.iwidget import views as iwidget_views
 from wirecloud.platform.localcatalogue import views as localcatalogue_views
 from wirecloud.platform.markets import views as market_views
+from wirecloud.platform.plugins import get_plugin_urls
 from wirecloud.platform.wiring import views as wiring_views
 from wirecloud.platform.preferences import views as preferences_views
 from wirecloud.platform.widget import views as widget_views
@@ -172,4 +173,4 @@ urlpatterns = patterns('wirecloud.platform.views',
     url(r'^api/workspaces/published/(?P<workspace_id>\d+)/template.xml$', workspace_views.MashupTemplate(permitted_methods=('GET', )), name='wirecloud_showcase.mashup_template'),
 
     url(r'^(?P<creator_user>[^/]+)/(?P<workspace>[^/]+)/?$', 'render_workspace_view', name='wirecloud.workspace_view'),
-)
+) + get_plugin_urls()
