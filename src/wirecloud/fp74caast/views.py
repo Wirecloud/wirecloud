@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django.views.decorators.http import require_GET
 
 from wirecloud.commons.baseviews.resource import Resource
 from wirecloud.platform.workspace.packageLinker import PackageLinker
@@ -50,3 +51,21 @@ class TenantCollection(Resource):
             Profile4CaaSt.objects.create(user_workspace=user_workspace, id_4CaaSt=id_4CaaSt)
 
         return HttpResponse(status=status)
+
+@require_GET
+def remove_saas_tenant(request, creator, workspace):
+
+    id_4CaaSt = request.GET['message']
+    username = parse_username(id_4CaaSt)
+
+    db_filter = {
+        'user_workspace__user__username': username,
+        'user_workspace__workspace__creator__username': creator,
+        'user_workspace__workspace__name': workspace,
+        'id_4CaaSt': id_4CaaSt,
+    }
+    profile = get_object_or_404(Profile4CaaSt, **db_filter)
+    profile.user_workspace.delete()
+    profile.delete()
+
+    return HttpResponse(status=204)

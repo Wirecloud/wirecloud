@@ -9,7 +9,7 @@ from wirecloud.fp74caast.models import Profile4CaaSt
 @unittest.skipIf(not 'wirecloud.fp74caast' in settings.INSTALLED_APPS, '4CaaSt support not enabled')
 class FP74CaastTests(TestCase):
 
-    fixtures = ('selenium_test_data',)
+    fixtures = ('4caast_test_data',)
 
     @unittest.skip('wip tests')
     def test_add_tenant(self):
@@ -48,31 +48,32 @@ class FP74CaastTests(TestCase):
 
         client = Client()
 
-        url = reverse('wirecloud.4caast.add_saas_tenant', kwargs={'creator': 'admin', 'workspace': 'Workspace'})
-        response = client.get(url + '?message=org.4caast.customers.tourist5.services.app55365', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        url = reverse('wirecloud.4caast.add_saas_tenant', kwargs={'creator': '4caast_developer2', 'workspace': 'Workspace'})
+        response = client.get(url + '?message=org.4caast.customers.tourist5.services.app55366', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 201)
 
         # Check user exists
         db_filter = {
             'user_workspace__user__username': 'tourist5',
-            'user_workspace__workspace__creator__username': 'admin',
-            'id_4CaaSt': 'org.4caast.customers.tourist5.services.app55365',
+            'user_workspace__workspace__creator__username': '4caast_developer2',
+            'user_workspace__workspace__name': 'Workspace',
+            'id_4CaaSt': 'org.4caast.customers.tourist5.services.app55366',
         }
         self.assertTrue(Profile4CaaSt.objects.filter(**db_filter).exists())
 
-    @unittest.skip('wip tests')
     def test_saas_disabling(self):
 
         client = Client()
 
-        url = reverse('wirecloud.4caast.remove_saas_tentant', kwargs={'creator': 'admin', 'workspace': 'Workspace'})
-        response = client.get(url + '?message=org.4caast.customers.tourist5.services.app55365', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        url = reverse('wirecloud.4caast.remove_saas_tenant', kwargs={'creator': '4caast_developer', 'workspace': 'Workspace'})
+        response = client.get(url + '?message=org.4caast.customers.4caast_customer.services.app55365', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 204)
 
         # Check user does not exist
         db_filter = {
-            'user_workspace__user__username': 'tourist5',
-            'user_workspace__workspace__creator__username': 'admin',
-            'id_4CaaSt': 'org.4caast.customers.tourist5.services.app55365',
+            'user_workspace__user__username': '4caast_customer',
+            'user_workspace__workspace__creator__username': '4caast_developer',
+            'user_workspace__workspace__name': 'Workspace',
+            'id_4CaaSt': 'org.4caast.customers.4caast_customer.services.app55365',
         }
         self.assertFalse(Profile4CaaSt.objects.filter(**db_filter).exists())
