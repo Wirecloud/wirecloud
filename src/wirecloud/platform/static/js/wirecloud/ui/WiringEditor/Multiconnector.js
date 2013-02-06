@@ -199,7 +199,7 @@
             arrow.setPullerEnd(pullerEnd);
         }
         this.mainArrow = arrow;
-
+        this.mainArrow.redraw();
         //recalculate positions for arrows
         this.calculatePosibleAnchors();
     };
