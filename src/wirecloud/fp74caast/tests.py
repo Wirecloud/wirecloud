@@ -3,7 +3,10 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase, Client
 from django.utils import unittest
 
-from wirecloud.fp74caast.models import Profile4CaaSt
+
+if 'wirecloud.fp74caast' in settings.INSTALLED_APPS:
+    # Only import 4caast models if the django app is installed
+    from wirecloud.fp74caast.models import Profile4CaaSt
 
 
 @unittest.skipIf(not 'wirecloud.fp74caast' in settings.INSTALLED_APPS, '4CaaSt support not enabled')
@@ -30,7 +33,6 @@ class FP74CaastTests(TestCase):
 
         response = client.get('/4caast-enabling/remove_tenant?4caastID=', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 200)
-
 
     @unittest.skip('wip tests')
     def test_ac_deployment(self):
