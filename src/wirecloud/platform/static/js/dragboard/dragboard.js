@@ -200,12 +200,6 @@ function Dragboard(tab, workspace, dragboardElement) {
         this.baseLayout = null;
         this.freeLayout = null;
 
-        var keys = this.iWidgets.keys();
-        //disconect and delete the connectables and variables of all tab iWidgets
-        for (var i = 0; i < keys.length; i++) {
-            this.workspace.removeIWidgetData(keys[i]);
-        }
-
         this.iWidgets = null;
         this.iWidgetsByCode = null;
         this.dragboardElement = null;
@@ -332,7 +326,6 @@ function Dragboard(tab, workspace, dragboardElement) {
         var iwidget = this.iWidgets.get(iWidgetId);
 
         iwidget.remove(orderFromServer);
-        iwidget.destroy();
     };
 
     Dragboard.prototype.saveConfig = function (iWidgetId) {

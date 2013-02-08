@@ -147,6 +147,7 @@
             this.events.unload.dispatch(this);
         }
 
+        this.layout.dragboard.getWorkspace().varManager.removeInstance(this.id);
         this.contextManager.removeCallback(this._old_context_api_adaptor_callback);
         this.contextManager = null;
         this.logManager.close();

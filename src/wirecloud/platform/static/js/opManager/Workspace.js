@@ -649,19 +649,18 @@ function Workspace (workspaceState) {
         iwidget.paint();
     };
 
-    Workspace.prototype.removeIWidgetData = function(iWidgetId) {
-            this.varManager.removeInstance(iWidgetId);
-    }
-
     Workspace.prototype.removeIWidget = function(iWidgetId, orderFromServer) {
 
         var iwidget = this.getIWidget(iWidgetId);
-        if (iwidget) {
-            var dragboard = iwidget.layout.dragboard;
-            dragboard.removeInstance(iWidgetId, orderFromServer); // TODO split into hideInstance and removeInstance
-            this.removeIWidgetData(iWidgetId);
-            this.events.iwidgetremoved.dispatch(this, iwidget);
+        if (iwidget == null) {
+            throw new TypeError();
         }
+
+        var dragboard = iwidget.layout.dragboard;
+        dragboard.removeInstance(iWidgetId, orderFromServer); // TODO split into hideInstance and removeInstance
+        this.events.iwidgetremoved.dispatch(this, iwidget);
+
+        iwidget.destroy();
 
         // emptyWorkspaceInfoBox
         if (this.getIWidgets().length == 0) {
