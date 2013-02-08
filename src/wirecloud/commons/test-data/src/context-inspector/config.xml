@@ -21,7 +21,7 @@
     <Platform.Wiring>
     </Platform.Wiring>
     <Platform.Link>
-        <XHTML content-type="application/xhtml+xml" href="context-inspector.html"/>
+        <XHTML content-type="application/xhtml+xml" use-platform-style="true" href="context-inspector.html"/>
     </Platform.Link>
     <Platform.Rendering height="24" width="6"/>
 </Template>
