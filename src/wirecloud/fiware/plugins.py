@@ -139,6 +139,7 @@ class FiWarePlugin(WirecloudPlugin):
 
     features = {
         'FiWare': wirecloud.fiware.__version__,
+        'NGSI': '1.0',
     }
 
     def get_market_classes(self):
@@ -176,4 +177,14 @@ class FiWarePlugin(WirecloudPlugin):
             {'id': 'FIWARE_RESOURCE_ENTRY', 'url': '/api/marketAdaptor/marketplace/#{market}/#{store}/#{entry}'},
             {'id': 'FIWARE_STORE_COLLECTION', 'url': '/api/marketAdaptor/marketplace/#{market}/stores'},
             {'id': 'FIWARE_STORE_ENTRY', 'url': '/api/marketAdaptor/marketplace/#{market}/stores/#{store}'},
+        )
+
+    def get_widget_api_extensions(self, view):
+        return (
+            'js/NGSI/NGSI.js',
+        )
+
+    def get_operator_api_extensions(self, view):
+        return (
+            'js/NGSI/NGSI.js',
         )
