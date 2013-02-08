@@ -946,7 +946,7 @@ if (!Wirecloud.ui) {
      * remove a iWidget.
      */
     WiringEditor.prototype.removeIWidget = function removeIWidget(widget_interface) {
-        var i, anchor;
+        var i, anchor, anchorList;
         widget_interface.unselect(false);
         delete this.iwidgets[widget_interface.getIWidget().getId()];
         this.layout.getCenterContainer().removeChild(widget_interface);
