@@ -40,9 +40,7 @@ var OpManagerFactory = function () {
         var loadEnvironment = function (transport) {
             // JSON-coded user tabspaces
             var response = transport.responseText;
-            var workspacesStructure = JSON.parse(response);
-
-            var workspaces = workspacesStructure.workspaces;
+            var workspaces = JSON.parse(response);
 
             for (var i = 0; i < workspaces.length; i++) {
                 var workspace = workspaces[i];

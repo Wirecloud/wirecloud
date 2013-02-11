@@ -154,11 +154,7 @@ class WorkspaceCollection(Resource):
     def read(self, request):
 
         workspaces, _junk, reload_showcase = get_workspace_list(request.user)
-
-        data_list = {
-            'workspaces': [get_workspace_data(workspace, request.user) for workspace in workspaces],
-            'reloadShowcase': reload_showcase,
-        }
+        data_list = [get_workspace_data(workspace, request.user) for workspace in workspaces]
 
         return HttpResponse(simplejson.dumps(data_list), mimetype='application/json; charset=UTF-8')
 

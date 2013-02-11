@@ -46,9 +46,7 @@ var OpManagerFactory = (function () {
         // ****************
 
         loadEnvironment = function (transport) {
-            var response = transport.responseText,
-                workspacesStructure = JSON.parse(response),
-                workspaces = workspacesStructure.workspaces,
+            var workspaces = JSON.parse(transport.responseText),
                 workspace, workspace_instance, state, i;
 
             for (i = 0; i < workspaces.length; i += 1) {
