@@ -35,7 +35,7 @@ function VarManager (_workspace) {
 
     VarManager.prototype.parseVariables = function (workspaceInfo) {
         // Iwidget variables!
-        var tabs = workspaceInfo['workspace']['tabList'];
+        var tabs = workspaceInfo['tabList'];
 
         for (var i=0; i<tabs.length; i++) {
             var iwidgets = tabs[i]['iwidgetList'];

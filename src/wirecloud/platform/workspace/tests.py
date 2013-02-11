@@ -50,10 +50,9 @@ class WorkspaceTestCase(CacheTestCase):
 
         workspace = Workspace.objects.get(pk=1)
         data = get_global_workspace_data(workspace, self.user).get_data()
-        self.assertEqual('workspace' in data, True)
-        self.assertEqual(len(data['workspace']['tabList']), 1)
+        self.assertEqual(len(data['tabList']), 1)
 
-        tab = data['workspace']['tabList'][0]
+        tab = data['tabList'][0]
         variables = tab['iwidgetList'][0]['variables']
         self.assertEqual(variables['password']['value'], '')
         self.assertEqual(variables['password']['secure'], True)
@@ -73,9 +72,8 @@ class WorkspaceTestCase(CacheTestCase):
         self.assertEqual(workspace_tabs.count(), 1)
 
         data = get_global_workspace_data(workspace, self.user).get_data()
-        self.assertEqual('workspace' in data, True)
-        self.assertEqual(data['workspace']['owned'], True)
-        self.assertEqual(data['workspace']['shared'], False)
+        self.assertEqual(data['owned'], True)
+        self.assertEqual(data['shared'], False)
     test_create_empty_workspace.tags = ('fiware-ut-3',)
 
     def test_link_workspace(self):
@@ -128,7 +126,7 @@ class WorkspaceTestCase(CacheTestCase):
 
         # Check cache invalidation
         data = get_global_workspace_data(workspace, self.user).get_data()
-        tab_list = data['workspace']['tabList']
+        tab_list = data['tabList']
 
         self.assertEqual(len(tab_list), 2)
 
@@ -149,7 +147,7 @@ class WorkspaceTestCase(CacheTestCase):
 
         # Check that other_user can access to the shared workspace
         data = get_global_workspace_data(workspace, other_user).get_data()
-        iwidget_list = data['workspace']['tabList'][0]['iwidgetList']
+        iwidget_list = data['tabList'][0]['iwidgetList']
         self.assertEqual(len(iwidget_list), 2)
 
         # Add a new iWidget to the workspace
@@ -169,7 +167,7 @@ class WorkspaceTestCase(CacheTestCase):
         SaveIWidget(iwidget_data, self.user, tab, {})
 
         data = get_global_workspace_data(workspace, other_user).get_data()
-        iwidget_list = data['workspace']['tabList'][0]['iwidgetList']
+        iwidget_list = data['tabList'][0]['iwidgetList']
         self.assertEqual(len(iwidget_list), 3)
 
 
@@ -202,7 +200,7 @@ class WorkspaceCacheTestCase(CacheTestCase):
         self.assertEqual(result.status_code, 200)
 
         data = get_global_workspace_data(self.workspace, self.user).get_data()
-        variables = data['workspace']['tabList'][0]['iwidgetList'][0]['variables']
+        variables = data['tabList'][0]['iwidgetList'][0]['variables']
         self.assertEqual(variables['password']['value'], '')
         self.assertEqual(variables['password']['secure'], True)
         self.assertEqual(variables['username']['value'], 'new_username')
@@ -227,14 +225,14 @@ class WorkspaceCacheTestCase(CacheTestCase):
 
         data = get_global_workspace_data(self.workspace, self.user).get_data()
 
-        iwidget_list = data['workspace']['tabList'][0]['iwidgetList']
+        iwidget_list = data['tabList'][0]['iwidgetList']
         self.assertEqual(len(iwidget_list), 3)
 
     def test_widget_deletion_invalidates_cache(self):
 
         deleteIWidget(IWidget.objects.get(pk=1), self.user)
         data = get_global_workspace_data(self.workspace, self.user).get_data()
-        iwidget_list = data['workspace']['tabList'][0]['iwidgetList']
+        iwidget_list = data['tabList'][0]['iwidgetList']
         self.assertEqual(len(iwidget_list), 1)
 
 
@@ -501,19 +499,18 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         fillWorkspaceUsingTemplate(self.workspace, self.template1)
         data = get_global_workspace_data(self.workspace, self.user).get_data()
         self.assertEqual(self.workspace.name, 'Testing')
-        self.assertEqual(len(data['workspace']['tabList']), 2)
+        self.assertEqual(len(data['tabList']), 2)
 
         # Workspace template 2 adds a new Tab
         fillWorkspaceUsingTemplate(self.workspace, self.template2)
         data = get_global_workspace_data(self.workspace, self.user).get_data()
-        self.assertEqual(len(data['workspace']['tabList']), 3)
+        self.assertEqual(len(data['tabList']), 3)
 
         # Check that we handle the case where there are 2 tabs with the same name
         fillWorkspaceUsingTemplate(self.workspace, self.template2)
         data = get_global_workspace_data(self.workspace, self.user).get_data()
-        self.assertEqual(len(data['workspace']['tabList']), 4)
-        self.assertNotEqual(data['workspace']['tabList'][2]['name'],
-            data['workspace']['tabList'][3]['name'])
+        self.assertEqual(len(data['tabList']), 4)
+        self.assertNotEqual(data['tabList'][2]['name'], data['tabList'][3]['name'])
 
     def testBuildWorkspaceFromTemplate(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.template1, self.user)
@@ -535,7 +532,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate4, self.user)
         data = get_global_workspace_data(workspace, self.user).get_data()
 
-        for t in data['workspace']['tabList']:
+        for t in data['tabList']:
             self.assertEqual(t['name'][0:7], u'Pestaña')
 
     def testBlockedConnections(self):
@@ -558,17 +555,17 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         workspace, _junk = buildWorkspaceFromTemplate(template3, self.user)
         data = get_global_workspace_data(workspace, self.user).get_data()
 
-        self.assertEqual(len(data['workspace']['tabList']), 4)
-        self.assertEqual(data['workspace']['tabList'][0]['name'], 'Tab')
-        self.assertEqual(len(data['workspace']['tabList'][0]['iwidgetList']), 1)
-        self.assertEqual(data['workspace']['tabList'][1]['name'], 'Tab 2')
-        self.assertEqual(len(data['workspace']['tabList'][1]['iwidgetList']), 1)
-        self.assertEqual(data['workspace']['tabList'][2]['name'], 'Tab 3')
-        self.assertEqual(len(data['workspace']['tabList'][2]['iwidgetList']), 0)
-        self.assertEqual(data['workspace']['tabList'][3]['name'], 'Tab 4')
-        self.assertEqual(len(data['workspace']['tabList'][3]['iwidgetList']), 0)
+        self.assertEqual(len(data['tabList']), 4)
+        self.assertEqual(data['tabList'][0]['name'], 'Tab')
+        self.assertEqual(len(data['tabList'][0]['iwidgetList']), 1)
+        self.assertEqual(data['tabList'][1]['name'], 'Tab 2')
+        self.assertEqual(len(data['tabList'][1]['iwidgetList']), 1)
+        self.assertEqual(data['tabList'][2]['name'], 'Tab 3')
+        self.assertEqual(len(data['tabList'][2]['iwidgetList']), 0)
+        self.assertEqual(data['tabList'][3]['name'], 'Tab 4')
+        self.assertEqual(len(data['tabList'][3]['iwidgetList']), 0)
 
-        wiring_status = data['workspace']['wiring']
+        wiring_status = data['wiring']
         self.assertEqual(len(wiring_status['operators']), 1)
         self.assertEqual(len(wiring_status['connections']), 1)
         self.assertEqual(wiring_status['connections'][0]['source']['type'], 'iwidget')
@@ -581,17 +578,17 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
         data = get_global_workspace_data(workspace, self.user).get_data()
 
-        self.assertEqual(len(data['workspace']['tabList']), 4)
-        self.assertEqual(data['workspace']['tabList'][0]['name'], u'Tab')
-        self.assertEqual(len(data['workspace']['tabList'][0]['iwidgetList']), 1)
-        self.assertEqual(data['workspace']['tabList'][1]['name'], u'Tab 2')
-        self.assertEqual(len(data['workspace']['tabList'][1]['iwidgetList']), 1)
-        self.assertEqual(data['workspace']['tabList'][2]['name'], u'Tab 3')
-        self.assertEqual(len(data['workspace']['tabList'][2]['iwidgetList']), 0)
-        self.assertEqual(data['workspace']['tabList'][3]['name'], u'Tab 4')
-        self.assertEqual(len(data['workspace']['tabList'][3]['iwidgetList']), 0)
+        self.assertEqual(len(data['tabList']), 4)
+        self.assertEqual(data['tabList'][0]['name'], u'Tab')
+        self.assertEqual(len(data['tabList'][0]['iwidgetList']), 1)
+        self.assertEqual(data['tabList'][1]['name'], u'Tab 2')
+        self.assertEqual(len(data['tabList'][1]['iwidgetList']), 1)
+        self.assertEqual(data['tabList'][2]['name'], u'Tab 3')
+        self.assertEqual(len(data['tabList'][2]['iwidgetList']), 0)
+        self.assertEqual(data['tabList'][3]['name'], u'Tab 4')
+        self.assertEqual(len(data['tabList'][3]['iwidgetList']), 0)
 
-        wiring = data['workspace']['wiring']
+        wiring = data['wiring']
         self.assertEqual(len(wiring['connections']), 1)
         self.assertEqual(wiring['connections'][0]['source']['type'], 'iwidget')
         self.assertEqual(wiring['connections'][0]['source']['endpoint'], 'event')

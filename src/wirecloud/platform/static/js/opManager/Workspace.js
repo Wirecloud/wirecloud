@@ -72,11 +72,9 @@ function Workspace (workspaceState) {
         };
 
         this.workspaceGlobalInfo = {
-                                    'workspace': {
                                        'tabList': [
                                          initialTab
                                        ]
-                                     }
                                    };
         this.tabInstances = new Hash();
         // TODO
@@ -102,17 +100,17 @@ function Workspace (workspaceState) {
             this.workspaceGlobalInfo = JSON.parse(transport.responseText);
 
             // Load workspace preferences
-            params = this.workspaceGlobalInfo.workspace.empty_params;
-            preferenceValues = this.workspaceGlobalInfo['workspace']['preferences'];
+            params = this.workspaceGlobalInfo.empty_params;
+            preferenceValues = this.workspaceGlobalInfo['preferences'];
             this.preferences = PreferencesManagerFactory.getInstance().buildPreferences('workspace', preferenceValues, this, params);
 
             // Check if the workspace needs to ask some values before loading this workspace
-            if (this.workspaceGlobalInfo.workspace.empty_params.length > 0) {
+            if (this.workspaceGlobalInfo.empty_params.length > 0) {
                 preferenceValues = {};
                 for (i = 0; i < params.length; i += 1) {
                     param = params[i];
-                    if (this.workspaceGlobalInfo.workspace.preferences[param] != null) {
-                        preferenceValues[param] = this.workspaceGlobalInfo.workspace.preferences[param];
+                    if (this.workspaceGlobalInfo.preferences[param] != null) {
+                        preferenceValues[param] = this.workspaceGlobalInfo.preferences[param];
                     }
                 }
 
@@ -128,7 +126,7 @@ function Workspace (workspaceState) {
             }
 
             // Load workspace tabs
-            var tabs = this.workspaceGlobalInfo['workspace']['tabList'];
+            var tabs = this.workspaceGlobalInfo['tabList'];
             var visibleTabId = null;
             var loading_tab = this.notebook.createTab({'closeable': false});
 
@@ -148,7 +146,7 @@ function Workspace (workspaceState) {
 
             this.varManager = new VarManager(this);
 
-            this.contextManager = new Wirecloud.ContextManager(this, this.workspaceGlobalInfo.workspace.context);
+            this.contextManager = new Wirecloud.ContextManager(this, this.workspaceGlobalInfo.context);
             this.wiring = new Wirecloud.Wiring(this);
             iwidgets = this.getIWidgets();
             for (i = 0; i < iwidgets.length; i += 1) {
@@ -160,14 +158,14 @@ function Workspace (workspaceState) {
             LayoutManagerFactory.getInstance().header._paintBreadcrum(LayoutManagerFactory.getInstance().viewsByName['workspace']);
 
             this.restricted = !this.isOwned() && this.isShared();
-            this.removable = !this.restricted && this.workspaceGlobalInfo.workspace.removable;
+            this.removable = !this.restricted && this.workspaceGlobalInfo.removable;
             this.valid = true;
 
             if (this.initial_tab_id && this.tabInstances.get(this.initial_tab_id)) {
                 visibleTabId = this.initial_tab_id;
             }
 
-            this.wiring.load(this.workspaceGlobalInfo.workspace.wiring);
+            this.wiring.load(this.workspaceGlobalInfo.wiring);
             this.notebook.goToTab(this.tabInstances.get(visibleTabId));
             loading_tab.close();
 
@@ -239,7 +237,7 @@ function Workspace (workspaceState) {
         layoutManager.logSubTask(gettext('Workspace published successfully'));
         layoutManager.logStep('');
         layoutManager._notifyPlatformReady();
-        this.workspace.workspaceGlobalInfo.workspace.params = this.params;
+        this.workspace.workspaceGlobalInfo.params = this.params;
         CatalogueFactory.getInstance().invalidate_last_results('mashup');
     };
 
@@ -795,7 +793,7 @@ function Workspace (workspaceState) {
     }.bind(this);
 
     this.markAsActiveSuccess = function() {
-        this.workspaceGlobalInfo.workspace.active = true;
+        this.workspaceGlobalInfo.active = true;
         this.workspaceState.active = true;
         if (this.activeEntryId != null) {
             this.confMenu.removeOption(this.activeEntryId);

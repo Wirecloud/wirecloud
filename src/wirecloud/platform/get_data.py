@@ -449,21 +449,20 @@ def process_forced_values(workspace, user, concept_values, preferences):
 
 def _get_global_workspace_data(workspaceDAO, user):
     user_workspace = UserWorkspace.objects.get(user=user, workspace=workspaceDAO)
-    data_ret = {}
-    data_ret['workspace'] = get_workspace_data(workspaceDAO, user)
+    data_ret = get_workspace_data(workspaceDAO, user)
 
     # Context information
-    data_ret['workspace']['context'] = get_workspace_context(user_workspace)
+    data_ret['context'] = get_workspace_context(user_workspace)
 
     # Workspace preferences
     preferences = get_workspace_preference_values(workspaceDAO.pk)
-    data_ret['workspace']['preferences'] = preferences
+    data_ret['preferences'] = preferences
 
     # Process forced variable values
     concept_values = get_context_values(user_workspace)
     forced_values = process_forced_values(workspaceDAO, user, concept_values, preferences)
-    data_ret['workspace']['empty_params'] = forced_values['empty_params']
-    data_ret['workspace']['extra_prefs'] = forced_values['extra_prefs']
+    data_ret['empty_params'] = forced_values['empty_params']
+    data_ret['extra_prefs'] = forced_values['extra_prefs']
     if len(forced_values['empty_params']) > 0:
         return data_ret
 
@@ -485,7 +484,7 @@ def _get_global_workspace_data(workspaceDAO, user):
 
     tabs_data = [get_tab_data(tab) for tab in tabs]
 
-    data_ret['workspace']['tabList'] = tabs_data
+    data_ret['tabList'] = tabs_data
 
     for tab in tabs_data:
         tab_pk = tab['id']
@@ -497,12 +496,12 @@ def _get_global_workspace_data(workspaceDAO, user):
 
         tab['iwidgetList'] = iwidget_data
 
-    data_ret['workspace']['wiring'] = simplejson.loads(workspaceDAO.wiringStatus)
+    data_ret['wiring'] = simplejson.loads(workspaceDAO.wiringStatus)
 
     # Params
     last_published_workspace = PublishedWorkspace.objects.filter(workspace=workspaceDAO).order_by('-pk')
     if len(last_published_workspace) > 0:
-        data_ret["workspace"]["params"] = simplejson.loads(last_published_workspace[0].params)
+        data_ret["params"] = simplejson.loads(last_published_workspace[0].params)
 
     return data_ret
 

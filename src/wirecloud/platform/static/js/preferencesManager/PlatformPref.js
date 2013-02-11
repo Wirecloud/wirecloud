@@ -261,7 +261,7 @@ function WorkspacePreferencesDef(definitions, args) {
 
 	if (args[2] instanceof Array && args[2].length > 0) {
 		prefManager = PreferencesManagerFactory.getInstance();
-		extra_prefs = prefManager._processDefinitions(workspace.workspaceGlobalInfo.workspace.extra_prefs);
+		extra_prefs = prefManager._processDefinitions(workspace.workspaceGlobalInfo.extra_prefs);
 		empty_params = args[2];
 		definitions = {};
 		for (i = 0; i < empty_params.length; i += 1) {
@@ -270,7 +270,7 @@ function WorkspacePreferencesDef(definitions, args) {
 		}
 	} else if (workspace.workspaceGlobalInfo != null) {
 		prefManager = PreferencesManagerFactory.getInstance();
-		extra_prefs = prefManager._processDefinitions(workspace.workspaceGlobalInfo.workspace.extra_prefs);
+		extra_prefs = prefManager._processDefinitions(workspace.workspaceGlobalInfo.extra_prefs);
 		definitions = Object.extend(definitions, extra_prefs);
 	}
 	PreferencesDef.call(this, definitions);

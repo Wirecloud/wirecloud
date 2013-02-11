@@ -217,7 +217,7 @@ function Workspace(workspaceState) {
             step = window.innerWidth,
             i, tabs, tab, iwidgets;
 
-        tabs = this.workspaceGlobalInfo.workspace.tabList;
+        tabs = this.workspaceGlobalInfo.tabList;
 
         if (tabs.length > 0) {
             for (i = 0; i < tabs.length; i += 1) {
@@ -234,13 +234,13 @@ function Workspace(workspaceState) {
 
         this.varManager = new VarManager(this);
 
-        this.contextManager = new Wirecloud.ContextManager(this, this.workspaceGlobalInfo.workspace.context);
+        this.contextManager = new Wirecloud.ContextManager(this, this.workspaceGlobalInfo.context);
         this.wiring = new Wirecloud.Wiring(this);
         iwidgets = this.getIWidgets();
         for (i = 0; i < iwidgets.length; i += 1) {
             this.events.iwidgetadded.dispatch(this, iwidgets[i]);
         }
-        this.wiring.load(this.workspaceGlobalInfo.workspace.wiring);
+        this.wiring.load(this.workspaceGlobalInfo.wiring);
         this._buildInterface();
 
         for (i = 0; i < this.tabInstances.length; i += 1) {

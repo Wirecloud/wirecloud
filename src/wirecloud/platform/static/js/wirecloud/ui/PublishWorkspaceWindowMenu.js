@@ -169,7 +169,7 @@
 
     PublishWorkspaceWindowMenu.prototype.show = function show(parentWindow) {
         Wirecloud.ui.FormWindowMenu.prototype.show.call(this, parentWindow);
-        this.setValue(this.workspace.workspaceGlobalInfo.workspace.params);
+        this.setValue(this.workspace.workspaceGlobalInfo.params);
     };
 
     PublishWorkspaceWindowMenu.prototype.setFocus = function setFocus() {
