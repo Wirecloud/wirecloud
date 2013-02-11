@@ -1,4 +1,4 @@
-{% load compress i18n wirecloudtags %}
+{% load compress i18n wirecloudtags %}{% load url from future %}
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -72,7 +72,7 @@
     };
 </script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/lib/prototype/prototype-1.7.js"></script>
-<script type="text/javascript" src="/jsi18n/?language={{ LANGUAGE_CODE }}"></script>
+<script type="text/javascript" src="{% url "wirecloud.javascript_translation_catalogue" %}?language={{ LANGUAGE_CODE }}"></script>
 {% compress js %}
     {% include "wirecloud/views/js_smartphone_includes.js" %}
     {% wirecloud_ajax_endpoints "smartphone" %}
