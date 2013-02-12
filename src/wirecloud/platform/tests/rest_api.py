@@ -23,6 +23,7 @@ from django.test import Client
 from django.utils import simplejson
 
 from wirecloud.commons.test import WirecloudTestCase
+from wirecloud.platform.models import Workspace
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
@@ -43,11 +44,18 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         url = reverse('wirecloud.features')
 
-        response = self.client.get(url)
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
 
         response_data = simplejson.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
+
+    def test_workspace_collection_read_requires_authentication(self):
+
+        url = reverse('wirecloud.workspace_collection')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
 
     def test_workspace_collection_read(self):
 
@@ -55,9 +63,72 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         self.client.login(username='admin', password='admin')
 
-        response = self.client.get(url)
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
 
         response_data = simplejson.loads(response.content)
         self.assertTrue(isinstance(response_data, list))
         self.assertTrue(isinstance(response_data[0], dict))
+
+    def test_workspace_collection_post_requires_authentication(self):
+
+        url = reverse('wirecloud.workspace_collection')
+
+        data = {
+            'name': 'test',
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+        # Error response should be a dict
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
+        # Workspace should be not created
+        self.assertFalse(Workspace.objects.filter(name='test').exists())
+
+        # Check using Accept: text/html
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='text/html')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+        # Content type of the response should be text/html
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'text/html')
+
+    def test_workspace_collection_post(self):
+
+        url = reverse('wirecloud.workspace_collection')
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        data = {
+            'name': 'test',
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+
+        # Check basic response structure
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertEqual(response_data['name'], 'test')
+
+        # Workspace should be created
+        self.assertTrue(Workspace.objects.filter(creator=1, name='test').exists())
+
+    def test_workspace_collection_post_conflict(self):
+
+        url = reverse('wirecloud.workspace_collection')
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'name': 'ExistingWorkspace',
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 409)
