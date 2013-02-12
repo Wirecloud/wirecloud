@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012 Universidad Politécnica de Madrid
+# Copyright 2012-2013 Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -25,13 +25,18 @@ from django.conf import settings
 from django.contrib.sites.models import get_current_site
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
+from django.shortcuts import render
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
 from wirecloud.commons.utils import mimeparser
 
 
-def get_xml_error_response(value):
+def get_html_basic_error_response(request, mimetype, status_code, message):
+    return render(request, '%s.html' % status_code, {'request_path': request.path}, status=status_code, content_type=mimetype)
+
+
+def get_xml_error_response(request, mimetype, status_code, value):
     dom = getDOMImplementation()
 
     doc = dom.createDocument(None, "error", None)
@@ -44,7 +49,7 @@ def get_xml_error_response(value):
     return errormsg
 
 
-def get_json_error_response(message):
+def get_json_error_response(request, mimetype, status_code, message):
     return simplejson.dumps({
         'result': 'error',
         'message': message
@@ -58,7 +63,7 @@ ERROR_FORMATTERS = {
 }
 
 
-def build_error_response(request, status_code, error_msg, extra_formats=None):
+def build_error_response(request, status_code, error_msg, extra_formats=None, headers=None):
 
     if extra_formats is not None:
         formatters = extra_formats.copy()
@@ -71,7 +76,14 @@ def build_error_response(request, status_code, error_msg, extra_formats=None):
     else:
         mimetype = mimeparser.best_match(formatters.keys(), request.META.get('HTTP_ACCEPT', 'text/plain'))
 
-    return HttpResponse(formatters[mimetype](error_msg), mimetype=mimetype, status=status_code)
+    response = HttpResponse(formatters[mimetype](request, mimetype, status_code, error_msg), mimetype=mimetype, status=status_code)
+    if headers is None:
+        headers = {}
+
+    for header_name in headers:
+        response[header_name] = headers[header_name]
+
+    return response
 
 
 def get_content_type(request):
@@ -80,6 +92,24 @@ def get_content_type(request):
         return '', ''
     else:
         return content_type_header.split(';', 1)
+
+
+def authentication_required(func):
+
+    def wrapper(self, request, *args, **kwargs):
+        if request.user.is_anonymous():
+            from django.conf import settings
+
+            return build_error_response(request, 401, 'Authentication required', extra_formats={
+                'text/html; charset=utf-8': get_html_basic_error_response,
+                'application/xhtml+xml; charset=utf-8': get_html_basic_error_response,
+            }, headers={
+                'WWW-Authenticate': 'Cookie realm="Acme" form-action="%s" cookie-name="%s"' % (settings.LOGIN_URL, settings.SESSION_COOKIE_NAME)
+            })
+
+        return func(self, request, *args, **kwargs)
+
+    return wrapper
 
 
 def supported_request_mime_types(mime_types):

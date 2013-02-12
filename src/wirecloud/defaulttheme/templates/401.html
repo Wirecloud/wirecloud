@@ -1,0 +1,8 @@
+{% extends 'wirecloud/views/base_plain.html' %}
+{% load i18n %}
+{% block path %}{% trans "error404" %}{% endblock %}
+{% block content %}
+    <h1>{% block title %}{% trans "Error 401 - Unauthorized" %}{% endblock %}</h1>
+    <p>{% blocktrans %}This server could not verify that you are authorized to access the document you requested ({{request_path}}). Either you supplied the wrong credentials (e.g., bad password), or your browser/application does not understand how to supply the credentials required.{% endblocktrans %}</p>
+    <p>{% trans "Authentication required" %}</p>
+{% endblock %}

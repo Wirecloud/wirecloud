@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012 Universidad Politécnica de Madrid
+# Copyright 2012-2013 Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,15 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.shortcuts import render
+from wirecloud.commons.utils.http import build_error_response, get_html_basic_error_response
 
-from wirecloud.commons.utils.http import build_error_response
+extra_formatters = {
+    'text/html; charset=utf-8': get_html_basic_error_response,
+    'application/xhtml+xml; charset=utf-8': get_html_basic_error_response,
+}
 
 
 def server_error(request):
 
-    extra_formatters = {
-        'text/html': lambda msg: render(request, '500.html', status=500, content_type='text/html'),
-        'application/xhtml+xml': lambda msg: render(request, '500.html', status=500, content_type='application/xhtml+xml'),
-    }
     return build_error_response(request, 500, 'Internal Server Error', extra_formatters)
