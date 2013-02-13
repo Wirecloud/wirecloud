@@ -56,10 +56,14 @@ def get_json_error_response(request, mimetype, status_code, message):
     })
 
 
+def get_plain_text_error_response(request, mimetype, status_code, message):
+    return unicode(message)
+
+
 ERROR_FORMATTERS = {
     'application/json; charset=utf-8': get_json_error_response,
     'application/xml; charset=utf-8': get_xml_error_response,
-    'text/plain; charset=utf-8': unicode,
+    'text/plain; charset=utf-8': get_plain_text_error_response,
 }
 
 
