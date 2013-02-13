@@ -27,6 +27,7 @@ import urlparse
 
 from django.contrib.auth.models import Group, User
 from django.core.urlresolvers import reverse
+from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseForbidden, Http404
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
@@ -178,7 +179,12 @@ class WorkspaceCollection(Resource):
         if workspace_name == '':
             return build_error_response(request, 400, _('missing workspace name'))
 
-        workspace = createWorkspace(workspace_name, request.user)
+        try:
+            workspace = createWorkspace(workspace_name, request.user)
+        except IntegrityError:
+            msg = _('A workspace with the given name already exists')
+            return build_error_response(request, 409, msg)
+
         workspace_data = get_global_workspace_data(workspace, request.user)
 
         return workspace_data.get_response(status_code=201)
