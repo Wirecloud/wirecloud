@@ -1,0 +1,88 @@
+[
+    {
+        "pk": 101,
+        "model": "auth.user",
+        "fields": {
+            "username": "4caast_customer",
+            "first_name": "",
+            "last_name": "",
+            "email": "admin@c.com",
+            "password": "sha1$5AphFrMHRX5o$bd3394cfeb25266a67d88683d24ae0c7b0647bd8",
+            "is_staff": false,
+            "is_active": true,
+            "is_superuser": false,
+            "groups": [1],
+            "last_login": "2011-10-10 11:27:12",
+            "date_joined": "2011-10-10 11:27:12"
+        }
+    },
+    {
+        "pk": 102,
+        "model": "auth.user",
+        "fields": {
+            "username": "4caast_developer",
+            "first_name": "",
+            "last_name": "",
+            "email": "admin@c.com",
+            "password": "sha1$5AphFrMHRX5o$bd3394cfeb25266a67d88683d24ae0c7b0647bd8",
+            "is_staff": false,
+            "is_active": true,
+            "is_superuser": false,
+            "groups": [1],
+            "last_login": "2011-10-10 11:27:12",
+            "date_joined": "2011-10-10 11:27:12"
+        }
+    },
+    {
+        "pk": 103,
+        "model": "auth.user",
+        "fields": {
+            "username": "4caast_developer2",
+            "first_name": "",
+            "last_name": "",
+            "email": "admin@c.com",
+            "password": "sha1$5AphFrMHRX5o$bd3394cfeb25266a67d88683d24ae0c7b0647bd8",
+            "is_staff": false,
+            "is_active": true,
+            "is_superuser": false,
+            "groups": [1],
+            "last_login": "2011-10-10 11:27:12",
+            "date_joined": "2011-10-10 11:27:12"
+        }
+    },
+    {
+        "model": "platform.workspace",
+        "pk": 101,
+        "fields": {
+            "name": "Workspace",
+            "creator": 102,
+            "wiringStatus": "{\"operators\": {}, \"connections\": []}"
+        }
+    },
+    {
+        "model": "platform.userworkspace",
+        "pk": 101,
+        "fields": {
+            "user": 102,
+            "workspace": 101,
+            "active": false
+        }
+    },
+    {
+        "model": "platform.userworkspace",
+        "pk": 102,
+        "fields": {
+            "user": 101,
+            "workspace": 101,
+            "active": false
+        }
+    },
+    {
+        "model": "fp74caast.profile4caast",
+        "pk": 101,
+        "fields": {
+            "user_workspace": 102,
+            "id_4CaaSt": "org.4caast.customers.4caast_customer.services.app55365"
+        }
+    }
+]
