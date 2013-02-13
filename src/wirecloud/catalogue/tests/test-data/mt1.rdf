@@ -128,7 +128,7 @@
     </foaf:Person>
 
     <gr:BusinessEntity rdf:about="http://vendoruri/">
-        <foaf:name>Wirecloud Test Suite</foaf:name>
+        <foaf:name>Wirecloud</foaf:name>
     </gr:BusinessEntity>
 
     <usdl-core:Resource rdf:about="docs/index.html">

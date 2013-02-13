@@ -237,7 +237,7 @@ class PublishTestCase(TransactionTestCase):
         template = self.read_template('test-data', 'mt1.xml')
 
         mashup = add_resource_from_template(template_uri, template, self.user)
-        self.assertEqual(mashup.vendor, 'Wirecloud Test Suite')
+        self.assertEqual(mashup.vendor, 'Wirecloud')
         self.assertEqual(mashup.short_name, 'Test Mashup')
         self.assertEqual(mashup.version, '1')
         self.assertEqual(mashup.description, 'This template defines an empty mashup')
@@ -248,7 +248,7 @@ class PublishTestCase(TransactionTestCase):
         template = self.read_template('test-data', 'mt1.rdf')
 
         mashup = add_resource_from_template(template_uri, template, self.user)
-        self.assertEqual(mashup.vendor, 'Wirecloud Test Suite')
+        self.assertEqual(mashup.vendor, 'Wirecloud')
         self.assertEqual(mashup.short_name, 'Test Mashup')
         self.assertEqual(mashup.version, '1')
         self.assertEqual(mashup.description, 'This template defines an empty mashup')
