@@ -306,8 +306,8 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(40, 40).click().perform()
         time.sleep(0.2)
 
-        source = self.get_iwidget_anchor(1, 'event')
-        target = self.get_iwidget_anchor(2, 'slot')
+        source = self.get_iwidget_anchor(1, 'outputendpoint')
+        target = self.get_iwidget_anchor(2, 'inputendpoint')
         ActionChains(self.driver).drag_and_drop(source, target).perform()
 
         self.change_main_view('workspace')

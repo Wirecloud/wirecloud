@@ -23,8 +23,8 @@
   </Platform.StateProperties>
 
   <Platform.Wiring>
-    <Event friendcode="test_friend_code" label="__MSG_eventLabel__" name="event" type="text"/>
-    <Slot friendcode="test_friend_code" label="__MSG_slotLabel__" name="slot" type="text"/>
+    <OutputEndpoint friendcode="test_friend_code" label="__MSG_eventLabel__" name="event" type="text"/>
+    <InputEndpoint friendcode="test_friend_code" label="__MSG_slotLabel__" name="slot" type="text"/>
   </Platform.Wiring>
 
   <Platform.Link>

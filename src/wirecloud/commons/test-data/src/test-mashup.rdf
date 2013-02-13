@@ -34,31 +34,31 @@
     <ns1:hasPosition rdf:nodeID="_64f251af-dc4b-4daf-9d2e-64de8eabaab0"/>
   </rdf:Description>
   <rdf:Description rdf:nodeID="_4c3ea58f-1c5d-42ac-acdb-e4e32ae632b9">
-    <ns2:friendcode>event</ns2:friendcode>
+    <ns2:friendcode>test-data</ns2:friendcode>
     <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/widget#Event"/>
     <ns2:type>text</ns2:type>
-    <rdfs:label>event</rdfs:label>
-    <ns3:title>event</ns3:title>
+    <rdfs:label>Output</rdfs:label>
+    <ns3:title>outputendpoint</ns3:title>
   </rdf:Description>
   <rdf:Description rdf:nodeID="_f8a49b1a-e921-4507-a895-936967852e2d">
     <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/widget#Slot"/>
-    <ns2:frindcode>slot</ns2:frindcode>
+    <ns2:frindcode>test-data</ns2:frindcode>
     <ns2:type>text</ns2:type>
-    <rdfs:label>slot</rdfs:label>
-    <ns3:title>slot</ns3:title>
+    <rdfs:label>Input</rdfs:label>
+    <ns3:title>inputendpoint</ns3:title>
   </rdf:Description>
   <rdf:Description rdf:nodeID="_1f89bc33-3d19-43e8-afa5-d08f8dab258a">
     <ns1:targetId>_64bfd24c-5ae8-4232-b78d-c7e5f0efbc6b</ns1:targetId>
     <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/mashup#Target"/>
     <ns2:type>iwidget</ns2:type>
-    <ns1:endpoint>slot</ns1:endpoint>
+    <ns1:endpoint>inputendpoint</ns1:endpoint>
   </rdf:Description>
   <rdf:Description rdf:nodeID="_02e6a1e8-b3f4-435d-8051-6c0ba3d25a5b">
-    <ns2:friendcode>event</ns2:friendcode>
+    <ns2:friendcode>test-data</ns2:friendcode>
     <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/widget#Event"/>
     <ns2:type>text</ns2:type>
-    <rdfs:label>event</rdfs:label>
-    <ns3:title>event</ns3:title>
+    <rdfs:label>Output</rdfs:label>
+    <ns3:title>outputendpoint</ns3:title>
   </rdf:Description>
   <rdf:Description rdf:nodeID="_c0fc63f3-d33b-4490-9a5b-7ee2942570d4">
     <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/mashup#Connection"/>
@@ -79,7 +79,7 @@
     <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/mashup#Source"/>
     <ns1:sourceId>_64bfd24c-5ae8-4232-b78d-c7e5f0efbc6b</ns1:sourceId>
     <ns2:type>iwidget</ns2:type>
-    <ns1:endpoint>event</ns1:endpoint>
+    <ns1:endpoint>outputendpoint</ns1:endpoint>
   </rdf:Description>
   <rdf:Description rdf:nodeID="_dc07d12c-5645-4178-9e4b-b5bf2151a445">
     <ns1:hasiWidget rdf:nodeID="_64bfd24c-5ae8-4232-b78d-c7e5f0efbc6b"/>
@@ -99,7 +99,7 @@
     <ns1:targetId>_e3bf0b06-cf82-4b48-8f62-e3be72872698</ns1:targetId>
     <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/mashup#Target"/>
     <ns2:type>iwidget</ns2:type>
-    <ns1:endpoint>slot</ns1:endpoint>
+    <ns1:endpoint>inputendpoint</ns1:endpoint>
   </rdf:Description>
   <rdf:Description rdf:nodeID="_3dd2ad96-0cbb-43b9-a8a8-afe276847c06">
     <ns1:hasiWidget rdf:nodeID="_e3bf0b06-cf82-4b48-8f62-e3be72872698"/>
@@ -155,10 +155,10 @@
   </rdf:Description>
   <rdf:Description rdf:nodeID="_65c9f0f2-1ce3-4e37-9ce3-34b0170b765a">
     <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/widget#Slot"/>
-    <ns2:frindcode>slot</ns2:frindcode>
+    <ns2:frindcode>test-data</ns2:frindcode>
     <ns2:type>text</ns2:type>
-    <rdfs:label>slot</rdfs:label>
-    <ns3:title>slot</ns3:title>
+    <rdfs:label>Input</rdfs:label>
+    <ns3:title>inputendpoint</ns3:title>
   </rdf:Description>
   <rdf:Description rdf:nodeID="_1fe9997f-5f09-4ecf-b5bb-1ea01457a0e7">
     <rdf:type rdf:resource="http://purl.org/goodrelations/v1#BussisnessEntity"/>
@@ -168,7 +168,7 @@
     <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/mashup#Source"/>
     <ns1:sourceId>_e3bf0b06-cf82-4b48-8f62-e3be72872698</ns1:sourceId>
     <ns2:type>iwidget</ns2:type>
-    <ns1:endpoint>event</ns1:endpoint>
+    <ns1:endpoint>outputendpoint</ns1:endpoint>
   </rdf:Description>
   <rdf:Description rdf:nodeID="_3447945a-c48a-4acb-823a-16d11de6ecbf">
     <rdf:type rdf:resource="http://purl.org/goodrelations/v1#BussisnessEntity"/>

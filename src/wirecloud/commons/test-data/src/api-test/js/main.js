@@ -12,10 +12,10 @@ MashupPlatform.http.makeRequest('http://localhost:8001/api-test/data/success.htm
     }
 });
 
-MashupPlatform.wiring.registerCallback('slot', function (data) {
+MashupPlatform.wiring.registerCallback('inputendpoint', function (data) {
     document.getElementById('registercallback_test').innerHTML = data;
 });
-MashupPlatform.wiring.pushEvent('event', 'Success!!');
+MashupPlatform.wiring.pushEvent('outputendpoint', 'Success!!');
 
 MashupPlatform.pref.registerCallback(function (new_values) {
     document.getElementById('pref_registercallback_test').innerHTML = new_values.text;

@@ -1,5 +1,6 @@
-<Template xmlns="http://morfeo-project.org/2007/Template">
-<!-- Meta tags define gadgets properties -->
+<?xml version="1.0" encoding="utf-8"?>
+<Template xmlns="http://wirecloud.conwet.fi.upm.es/ns/template#">
+
     <Catalog.ResourceDescription>
         <Vendor>Wirecloud</Vendor>
         <Name>Test_Selenium</Name>
@@ -25,18 +26,13 @@
     </Platform.StateProperties>
 
     <Platform.Wiring>
-        <Slot name="slot" type="text" label="slot" friendcode = "slot"/>
-        <Event name="event" type="text" label="event" friendcode = "event"/>
+        <InputEndpoint name="slot" type="text" label="slot" friendcode="slot"/>
+        <OutputEndpoint name="event" type="text" label="event" friendcode="event"/>
     </Platform.Wiring>
     <Platform.Link>
         <XHTML href="test.html"/>
     </Platform.Link>
     <Platform.Rendering width="6" height="24"/>
     <Platform.Context>
-        <!--
-        <Context name="lang" type="text" concept="language"/>
-        <GadgetContext name="height" type="text" concept="heightInPixels"/>
-        <GadgetContext name="lockStatus" type="text" concept="lockStatus"/>
-        -->
     </Platform.Context>
 </Template>

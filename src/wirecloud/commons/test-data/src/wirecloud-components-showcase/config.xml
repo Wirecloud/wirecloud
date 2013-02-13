@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Template xmlns="http://morfeo-project.org/2007/Template">
+<Template xmlns="http://wirecloud.conwet.fi.upm.es/ns/template#">
 	<Catalog.ResourceDescription>
-		<Vendor>CoNWeT</Vendor>
+		<Vendor>Wirecloud</Vendor>
 		<Name>wirecloud-components-showcase</Name>
         <DisplayName>__MSG_displayName__</DisplayName>
 		<Version>1.1.4</Version>
