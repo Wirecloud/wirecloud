@@ -81,8 +81,8 @@ var OpManagerFactory = function () {
             var wsInfo = JSON.parse(response);
 
             //create the new workspace and go to it
-            var workspace = new Workspace(wsInfo.workspace);
-            this.workspaceInstances.set(wsInfo.workspace.id, workspace);
+            var workspace = new Workspace(wsInfo);
+            this.workspaceInstances.set(wsInfo.id, workspace);
             this.changeActiveWorkspace(workspace);
         };
 
@@ -176,8 +176,8 @@ var OpManagerFactory = function () {
 
                 //create the new workspace and go to it
                 var opManager = OpManagerFactory.getInstance();
-                var workspace = new Workspace(wsInfo.workspace);
-                opManager.workspaceInstances.set(wsInfo.workspace.id, workspace);
+                var workspace = new Workspace(wsInfo);
+                opManager.workspaceInstances.set(wsInfo.id, workspace);
                 opManager.changeActiveWorkspace(workspace);
             };
 
