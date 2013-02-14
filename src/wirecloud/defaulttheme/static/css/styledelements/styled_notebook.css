@@ -6,6 +6,11 @@
     height: 32px;
     line-height: 33px;
     overflow: visible;
+    color: rgb(85, 85, 85);
+}
+
+.notebook .tab_wrapper > .east_container {
+    white-space: nowrap;
 }
 
 .notebook .tab_wrapper .move_left {
@@ -17,7 +22,6 @@
 }
 
 .notebook .tab_wrapper .move_left, .notebook .tab_wrapper .move_right {
-    color: black;
     cursor: default;
     display: inline-block;
     -moz-user-select: none;

@@ -180,20 +180,15 @@ div.iwidget.highlighted {
 }
 
 .notebook.workspace .tab_wrapper .move_left {
-    left: 10px;
+    margin: 0px 5px;
 }
 
 .notebook.workspace .tab_wrapper .move_right {
-    right: 4px;
+    margin: 0px 5px;
 }
 
 .notebook.workspace .tab_wrapper .icon-add-tab {
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    right: 24px;
-    top: 0px;
-    margin: 0px;
+    margin: 0px 4px;
     color: rgb(85, 85, 85);
 }
 

@@ -244,6 +244,9 @@ div.styled_numeric_field div.numeric_bottom_button {
 
 .styled_button.plain {
     font-size: inherit;
+    line-height: inherit;
+    margin-bottom: 0px;
+    margin-top: 0px;
 }
 
 .styled_button > div, .styled_button > button, .styled_button.plain {
