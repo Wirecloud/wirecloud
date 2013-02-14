@@ -442,9 +442,15 @@ function Workspace (workspaceState) {
             'title': gettext('Add a new tab')
         });
 
+        this.poweredByWirecloudButton = new StyledElements.StyledButton({
+            'class': 'powered-by-wirecloud'
+        });
+
         this.notebook = new StyledElements.StyledNotebook({'class': 'workspace'});
         this.notebook.addButton(this.addTabButton);
         this.addTabButton.addEventListener('click', this.addTab.bind(this));
+        this.notebook.addButton(this.poweredByWirecloudButton);
+        this.poweredByWirecloudButton.addEventListener('click', function () {window.open('http://github.com/Wirecloud/wirecloud', '_blank')});
         LayoutManagerFactory.getInstance().viewsByName['workspace'].clear();
         LayoutManagerFactory.getInstance().viewsByName['workspace'].appendChild(this.notebook);
 

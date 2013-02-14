@@ -380,3 +380,21 @@ h6 {
 .clearfloats {
     clear: both;
 }
+
+.powered-by-wirecloud {
+    vertical-align: top;
+}
+
+.powered-by-wirecloud > div:before {
+    content: 'Powered by ';
+    vertical-align: middle;
+}
+
+.powered-by-wirecloud > div:after {
+    content: '';
+    display: inline-block;
+    vertical-align: middle;
+    width: 33px;
+    height: 20px;
+    background: url("../images/logos/wc1-mini.png");
+}

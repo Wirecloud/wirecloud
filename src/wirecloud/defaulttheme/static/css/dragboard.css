@@ -191,8 +191,9 @@ div.iwidget.highlighted {
     top: auto;
     bottom: 0;
     border-top: 1px solid #600000;
-    height: 23px;
-    line-height: 23px;
+    border-bottom: 0px none;
+    height: 25px;
+    line-height: 25px;
     z-index: 2;
 }
 
@@ -218,11 +219,11 @@ div.iwidget.highlighted {
 
 .notebook.workspace .wrapper {
     top: 0;
-    bottom: 24px;
+    bottom: 26px;
 }
 
 .notebook.workspace .tab_area {
-    height: 23px;
+    height: 26px;
     top: -1px;
 }
 
