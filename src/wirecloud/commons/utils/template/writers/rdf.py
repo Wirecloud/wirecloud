@@ -91,28 +91,28 @@ def write_rdf_description(template_info, format='xml'):
     graph.add((wiring, rdflib.RDF.type, WIRE['PlatformWiring']))
     graph.add((widget_uri, WIRE['hasPlatformWiring'], wiring))
 
-    # Events
-    for event in template_info['wiring']['events']:
-        event_node = rdflib.BNode()
-        graph.add((event_node, rdflib.RDF.type, WIRE['Event']))
-        graph.add((wiring, WIRE['hasEvent'], event_node))
-        graph.add((event_node, DCTERMS['title'], rdflib.Literal(event.get('name'))))
-        graph.add((event_node, RDFS['label'], rdflib.Literal(event.get('label'))))
-        graph.add((event_node, WIRE['type'], rdflib.Literal(event.get('type'))))
-        graph.add((event_node, WIRE['eventFriendcode'], rdflib.Literal(event.get('friendcode'))))
-        graph.add((event_node, DCTERMS['description'], rdflib.Literal(event.get('description'))))
+    # Output endpoints
+    for output_endpoint in template_info['wiring']['events']:
+        output_node = rdflib.BNode()
+        graph.add((output_node, rdflib.RDF.type, WIRE['OutputEndpoint']))
+        graph.add((wiring, WIRE['hasOutputEndpoint'], output_node))
+        graph.add((output_node, DCTERMS['title'], rdflib.Literal(output_endpoint.get('name'))))
+        graph.add((output_node, RDFS['label'], rdflib.Literal(output_endpoint.get('label'))))
+        graph.add((output_node, WIRE['type'], rdflib.Literal(output_endpoint.get('type'))))
+        graph.add((output_node, WIRE['friendcode'], rdflib.Literal(output_endpoint.get('friendcode'))))
+        graph.add((output_node, DCTERMS['description'], rdflib.Literal(output_endpoint.get('description'))))
 
-    # Slots
-    for slot in template_info['wiring']['slots']:
-        slot_node = rdflib.BNode()
-        graph.add((slot_node, rdflib.RDF.type, WIRE['Slot']))
-        graph.add((wiring, WIRE['hasSlot'], slot_node))
-        graph.add((slot_node, DCTERMS['title'], rdflib.Literal(slot.get('name'))))
-        graph.add((slot_node, RDFS['label'], rdflib.Literal(slot.get('label'))))
-        graph.add((slot_node, WIRE['type'], rdflib.Literal(slot.get('type'))))
-        graph.add((slot_node, WIRE['slotFriendcode'], rdflib.Literal(slot.get('friendcode'))))
-        graph.add((slot_node, DCTERMS['description'], rdflib.Literal(slot.get('description'))))
-        graph.add((slot_node, WIRE['slotActionLabel'], rdflib.Literal(slot.get('action_label'))))
+    # Input endpoints
+    for input_endpoint in template_info['wiring']['slots']:
+        input_node = rdflib.BNode()
+        graph.add((input_node, rdflib.RDF.type, WIRE['InputEndpoint']))
+        graph.add((wiring, WIRE['hasInputEndpoint'], input_node))
+        graph.add((input_node, DCTERMS['title'], rdflib.Literal(input_endpoint.get('name'))))
+        graph.add((input_node, RDFS['label'], rdflib.Literal(input_endpoint.get('label'))))
+        graph.add((input_node, WIRE['type'], rdflib.Literal(input_endpoint.get('type'))))
+        graph.add((input_node, WIRE['friendcode'], rdflib.Literal(input_endpoint.get('friendcode'))))
+        graph.add((input_node, DCTERMS['description'], rdflib.Literal(input_endpoint.get('description'))))
+        graph.add((input_node, WIRE['inputActionLabel'], rdflib.Literal(input_endpoint.get('action_label'))))
 
     if template_info.get('iphone_image_uri'):
         graph.add((widget_uri, WIRE['hasiPhoneImageUri'], rdflib.URIRef(template_info.get('iphone_image_uri'))))
