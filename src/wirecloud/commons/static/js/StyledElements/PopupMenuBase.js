@@ -4,6 +4,32 @@
 
     "use strict";
 
+    var setPosition = function setPosition(refPosition, position) {
+        switch (position) {
+        case 'top-left':
+            this.wrapperElement.style.top = (refPosition.top - this.wrapperElement.offsetHeight + 1) + "px";
+            this.wrapperElement.style.left = (refPosition.right - this.wrapperElement.offsetWidth) + "px";
+            break;
+        case 'top-right':
+            this.wrapperElement.style.top = (refPosition.top - this.wrapperElement.offsetHeight + 1) + "px";
+            this.wrapperElement.style.left = refPosition.left + "px";
+            break;
+        case 'bottom-right':
+            this.wrapperElement.style.top = (refPosition.bottom - 1) + "px";
+            this.wrapperElement.style.left = refPosition.left + "px";
+            break;
+        default:
+        case 'bottom-left':
+            this.wrapperElement.style.top = (refPosition.bottom - 1) + "px";
+            this.wrapperElement.style.left = (refPosition.right - this.wrapperElement.offsetWidth) + "px";
+            break;
+        }
+    };
+
+    var standsOut = function () {
+        return this.wrapperElement.offsetTop < 0 || this.wrapperElement.offsetLeft < 0;
+    };
+
     /**
      * @abstract
      */
@@ -106,24 +132,14 @@
             this.wrapperElement.style.top = refPosition.y + "px";
             this.wrapperElement.style.left = refPosition.x + "px";
         } else {
-            switch (this._position) {
-            case 'top-left':
-                this.wrapperElement.style.top = (refPosition.top - this.wrapperElement.offsetHeight + 1) + "px";
-                this.wrapperElement.style.left = (refPosition.right - this.wrapperElement.offsetWidth) + "px";
-                break;
-            case 'top-right':
-                this.wrapperElement.style.top = (refPosition.top - this.wrapperElement.offsetHeight + 1) + "px";
-                this.wrapperElement.style.left = refPosition.left + "px";
-                break;
-            case 'bottom-right':
-                this.wrapperElement.style.top = (refPosition.bottom - 1) + "px";
-                this.wrapperElement.style.left = refPosition.left + "px";
-                break;
-            default:
-            case 'bottom-left':
-                this.wrapperElement.style.top = (refPosition.bottom - 1) + "px";
-                this.wrapperElement.style.left = (refPosition.right - this.wrapperElement.offsetWidth) + "px";
-                break;
+            if (Array.isArray(this._position)) {
+                var i = 0;
+                do {
+                    setPosition.call(this, refPosition, this._position[i]);
+                    i += 1;
+                } while (standsOut.call(this) && i < this._position.length)
+            } else {
+                setPosition.call(this, refPosition, this._position);
             }
         }
         this.wrapperElement.style.display = 'block';
