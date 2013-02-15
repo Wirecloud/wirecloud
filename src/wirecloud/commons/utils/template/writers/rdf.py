@@ -160,27 +160,6 @@ def write_rdf_description(template_info, format='xml'):
         if prop.get('secure'):
             graph.add((prop_node, WIRE['secure'], rdflib.Literal(prop.get('secure'))))
 
-    # Context
-    context = rdflib.BNode()
-    graph.add((context, rdflib.RDF.type, WIRE['Context']))
-    graph.add((widget_uri, WIRE['hasContext'], context))
-
-    for cont in template_info['context']:
-        context_node = rdflib.BNode()
-
-        if cont.get('aspect') == 'GCTX':
-            graph.add((context_node, rdflib.RDF.type, WIRE['WidgetContext']))
-            graph.add((context, WIRE['hasWidgetContext'], context_node))
-            graph.add((context_node, WIRE['widgetContextConcept'], rdflib.Literal(cont.get('concept'))))
-
-        elif cont.get('aspect') == 'ECTX':
-            graph.add((context_node, rdflib.RDF.type, WIRE['PlatformContext']))
-            graph.add((context, WIRE['hasPlatformContext'], context_node))
-            graph.add((context_node, WIRE['platformContextConcept'], rdflib.Literal(cont.get('concept'))))
-
-        graph.add((context_node, DCTERMS['title'], rdflib.Literal(cont.get('name'))))
-        graph.add((context_node, WIRE['type'], rdflib.Literal(cont.get('type'))))
-
     # Code
     if template_info['type'] == 'widget':
         xhtml_element = rdflib.URIRef(template_info.get('code_url'))
