@@ -1,3 +1,22 @@
+# -*- coding: utf-8 -*-
+
+# Copyright 2012-2013 Universidad Politécnica de Madrid
+
+# This file is part of Wirecloud.
+
+# Wirecloud is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Wirecloud is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+
 import rdflib
 
 WIRE = rdflib.Namespace("http://wirecloud.conwet.fi.upm.es/ns/widget#")
@@ -31,7 +50,6 @@ def write_rdf_description(template_info, format='xml'):
     graph.bind('usdl', USDL)
     graph.bind('vcard', VCARD)
     graph.bind('wire', WIRE)
-
 
     widget_uri = rdflib.URIRef(WIRE[template_info.get('vendor') + '/' + template_info.get('name') + '/' + template_info.get('version')])
 
