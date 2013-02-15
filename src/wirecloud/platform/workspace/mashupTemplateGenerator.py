@@ -208,15 +208,15 @@ def build_template_from_workspace(options, workspace, user):
             if status != 'normal':
                 element.set('readonly', 'true')
 
-        events = widget.get_related_events()
+        outputs = widget.get_related_events()
 
-        for event in events:
-            wiring.append(etree.Element('Event', name=event.name, type=typeCode2typeText(event.type), label=event.label, friendcode=event.friend_code))
+        for output_endpoint in outputs:
+            wiring.append(etree.Element('Event', name=output_endpoint.name, type=typeCode2typeText(output_endpoint.type), label=output_endpoint.label, friendcode=output_endpoint.friend_code))
 
-        slots = widget.get_related_slots()
+        inputs = widget.get_related_slots()
 
-        for slot in slots:
-            wiring.append(etree.Element('Slot', name=slot.name, type=typeCode2typeText(slot.type), label=slot.label, friendcode=slot.friend_code))
+        for input_endpoint in inputs:
+            wiring.append(etree.Element('Slot', name=input_endpoint.name, type=typeCode2typeText(input_endpoint.type), label=input_endpoint.label, friendcode=input_endpoint.friend_code))
 
     # wiring
     try:
@@ -421,28 +421,28 @@ def build_rdf_template_from_workspace(options, workspace, user):
             if status != 'normal':
                 graph.add((element, WIRE_M['readonly'], rdflib.Literal('true')))
 
-        # slots and events
-        events = widget.get_related_events()
+        # input and output endpoints
+        outputs = widget.get_related_events()
 
-        for event in events:
+        for output_endpoint in outputs:
             ev = rdflib.BNode()
-            graph.add((ev, rdflib.RDF.type, WIRE['Event']))
-            graph.add((wiring, WIRE['hasEvent'], ev))
-            graph.add((ev, DCTERMS['title'], rdflib.Literal(event.name)))
-            graph.add((ev, WIRE['type'], rdflib.Literal(typeCode2typeText(event.type))))
-            graph.add((ev, RDFS['label'], rdflib.Literal(event.label)))
-            graph.add((ev, WIRE['friendcode'], rdflib.Literal(event.friend_code)))
+            graph.add((ev, rdflib.RDF.type, WIRE['OutputEndpoint']))
+            graph.add((wiring, WIRE['hasOutputEndpoint'], ev))
+            graph.add((ev, DCTERMS['title'], rdflib.Literal(output_endpoint.name)))
+            graph.add((ev, WIRE['type'], rdflib.Literal(typeCode2typeText(output_endpoint.type))))
+            graph.add((ev, RDFS['label'], rdflib.Literal(output_endpoint.label)))
+            graph.add((ev, WIRE['friendcode'], rdflib.Literal(output_endpoint.friend_code)))
 
-        slots = widget.get_related_slots()
+        inputs = widget.get_related_slots()
 
-        for slot in slots:
+        for input_endpoint in inputs:
             sl = rdflib.BNode()
-            graph.add((sl, rdflib.RDF.type, WIRE['Slot']))
-            graph.add((wiring, WIRE['hasSlot'], sl))
-            graph.add((sl, DCTERMS['title'], rdflib.Literal(slot.name)))
-            graph.add((sl, WIRE['type'], rdflib.Literal(typeCode2typeText(slot.type))))
-            graph.add((sl, RDFS['label'], rdflib.Literal(slot.label)))
-            graph.add((sl, WIRE['frindcode'], rdflib.Literal(slot.friend_code)))
+            graph.add((sl, rdflib.RDF.type, WIRE['InputEndpoint']))
+            graph.add((wiring, WIRE['hasInputEndpoint'], sl))
+            graph.add((sl, DCTERMS['title'], rdflib.Literal(input_endpoint.name)))
+            graph.add((sl, WIRE['type'], rdflib.Literal(typeCode2typeText(input_endpoint.type))))
+            graph.add((sl, RDFS['label'], rdflib.Literal(input_endpoint.label)))
+            graph.add((sl, WIRE['frindcode'], rdflib.Literal(input_endpoint.friend_code)))
 
     # wiring conections and operators
     readOnlyConnectables = options.get('readOnlyConnectables', False)

@@ -92,7 +92,7 @@ def write_rdf_description(template_info, format='xml'):
     graph.add((widget_uri, WIRE['hasPlatformWiring'], wiring))
 
     # Output endpoints
-    for output_endpoint in template_info['wiring']['events']:
+    for output_endpoint in template_info['wiring']['outputs']:
         output_node = rdflib.BNode()
         graph.add((output_node, rdflib.RDF.type, WIRE['OutputEndpoint']))
         graph.add((wiring, WIRE['hasOutputEndpoint'], output_node))
@@ -103,7 +103,7 @@ def write_rdf_description(template_info, format='xml'):
         graph.add((output_node, DCTERMS['description'], rdflib.Literal(output_endpoint.get('description'))))
 
     # Input endpoints
-    for input_endpoint in template_info['wiring']['slots']:
+    for input_endpoint in template_info['wiring']['inputs']:
         input_node = rdflib.BNode()
         graph.add((input_node, rdflib.RDF.type, WIRE['InputEndpoint']))
         graph.add((wiring, WIRE['hasInputEndpoint'], input_node))

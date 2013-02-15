@@ -142,18 +142,18 @@ def add_resource_from_template(template_uri, template, user, fromWGT=False, over
         json_description=json.dumps(resource_info)
     )
 
-    for slot in resource_info['wiring']['slots']:
+    for input_endpoint in resource_info['wiring']['inputs']:
         WidgetWiring.objects.create(
             idResource=resource,
             wiring='in',
-            friendcode=slot['friendcode']
+            friendcode=input_endpoint['friendcode']
         )
 
-    for event in resource_info['wiring']['events']:
+    for output_endpoint in resource_info['wiring']['outputs']:
         WidgetWiring.objects.create(
             idResource=resource,
             wiring='out',
-            friendcode=event['friendcode']
+            friendcode=output_endpoint['friendcode']
         )
 
     resource_table = resource._get_table_id()

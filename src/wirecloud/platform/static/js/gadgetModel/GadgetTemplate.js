@@ -173,25 +173,25 @@ function WidgetTemplate(variables_, size_) {
 
         if (connectables === null) {
             connectables = {
-                'events': [],
-                'slots': []
+                'outputs': [],
+                'inputs': []
             };
 
             for (var_name in variableList) {
                 rawVar = variableList[var_name];
                 switch (rawVar.aspect) {
                 case Variable.prototype.EVENT:
-                    connectables.events.push(rawVar);
+                    connectables.outputs.push(rawVar);
                     break;
                 case Variable.prototype.SLOT:
-                    connectables.slots.push(rawVar);
+                    connectables.inputs.push(rawVar);
                     break;
                 default:
                 }
             }
 
-            connectables.events = connectables.events.sort(this._sortVariables);
-            connectables.slots = connectables.slots.sort(this._sortVariables);
+            connectables.outputs = connectables.outputs.sort(this._sortVariables);
+            connectables.inputs = connectables.inputs.sort(this._sortVariables);
         }
 
         return connectables;

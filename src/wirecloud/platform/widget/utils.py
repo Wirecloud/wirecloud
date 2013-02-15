@@ -145,31 +145,31 @@ def create_widget_from_template(template, user, request=None, base=None):
         order += 1
 
     order = 0
-    for slot in widget_info['wiring']['slots']:
+    for input_endpoint in widget_info['wiring']['inputs']:
         vDef = VariableDef.objects.create(
-            name=slot['name'],
+            name=input_endpoint['name'],
             order=order,
-            description=slot['description'],
-            type=parser.typeText2typeCode(slot['type']),
+            description=input_endpoint['description'],
+            type=parser.typeText2typeCode(input_endpoint['type']),
             aspect='SLOT',
-            friend_code=slot['friendcode'],
-            label=slot['label'],
-            action_label=slot['actionlabel'],
+            friend_code=input_endpoint['friendcode'],
+            label=input_endpoint['label'],
+            action_label=input_endpoint['actionlabel'],
             widget=widget,
         )
         variable_definitions[vDef.name] = vDef
         order += 1
 
     order = 0
-    for event in widget_info['wiring']['events']:
+    for output_endpoint in widget_info['wiring']['outputs']:
         vDef = VariableDef.objects.create(
-            name=event['name'],
+            name=output_endpoint['name'],
             order=order,
-            description=event['description'],
-            type=parser.typeText2typeCode(event['type']),
+            description=output_endpoint['description'],
+            type=parser.typeText2typeCode(output_endpoint['type']),
             aspect='EVEN',
-            friend_code=event['friendcode'],
-            label=event['label'],
+            friend_code=output_endpoint['friendcode'],
+            label=output_endpoint['label'],
             widget=widget,
         )
         variable_definitions[vDef.name] = vDef

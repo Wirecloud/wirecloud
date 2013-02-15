@@ -118,14 +118,6 @@ function CatalogueResource(resourceJSON_) {
         return currentVersion.tags;
     };
 
-    this.getSlots = function () {
-        return currentVersion.slots;
-    };
-
-    this.getEvents = function () {
-        return currentVersion.events;
-    };
-
     this.getVotes = function () {
         return currentVersion.votes.votes_number;
     };
@@ -220,8 +212,6 @@ function CatalogueResource(resourceJSON_) {
         version_data = versions[i];
 
         version_data.version = new WidgetVersion(version_data.version, 'catalogue');
-        version_data.events = version_data.events.map(flat_friendcode);
-        version_data.slots = version_data.slots.map(flat_friendcode);
         version_data.date = new Date(version_data.date);
 
         deleteable = deleteable && version_data.added_by_user;

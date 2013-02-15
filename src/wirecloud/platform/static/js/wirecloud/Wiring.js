@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     (C) Copyright 2012-2013 Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -36,10 +36,10 @@
         switch (desc.type) {
         case 'iwidget':
             entry = this.connectablesByWidget[desc.id];
-            if (desc.endpoint in entry.events) {
-                return entry.events[desc.endpoint];
+            if (desc.endpoint in entry.outputs) {
+                return entry.outputs[desc.endpoint];
             } else {
-                return entry.slots[desc.endpoint];
+                return entry.inputs[desc.endpoint];
             }
             break;
         case 'ioperator':
@@ -84,25 +84,25 @@
         connectables  = iwidget.getWidget().getTemplate().getConnectables();
 
         widgetEntry = {
-            events: {},
-            slots: {},
+            outputs: {},
+            inputs: {},
             connectables: []
         };
 
         // IWidget variables
-        for (i = 0; i < connectables.events.length; i += 1) {
-            variableDef = connectables.events[i];
+        for (i = 0; i < connectables.outputs.length; i += 1) {
+            variableDef = connectables.outputs[i];
             variable = varManager.getVariableByName(iWidgetId, variableDef.name);
             connectable = new wEvent(variable, variableDef.type, variableDef.friend_code, variableDef.connectable_id);
-            widgetEntry.events[connectable._name] = connectable;
+            widgetEntry.outputs[connectable._name] = connectable;
             widgetEntry.connectables.push(connectable);
         }
 
-        for (i = 0; i < connectables.slots.length; i += 1) {
-            variableDef = connectables.slots[i];
+        for (i = 0; i < connectables.inputs.length; i += 1) {
+            variableDef = connectables.inputs[i];
             variable = varManager.getVariableByName(iWidgetId, variableDef.name);
             connectable = new wSlot(variable, variableDef.type, variableDef.friend_code, variableDef.connectable_id);
-            widgetEntry.slots[connectable._name] = connectable;
+            widgetEntry.inputs[connectable._name] = connectable;
             widgetEntry.connectables.push(connectable);
         }
 
@@ -241,7 +241,7 @@
             iWidget = iWidget.getId();
         }
 
-        entry = this.connectablesByWidget[iWidget].events[outputName];
+        entry = this.connectablesByWidget[iWidget].outputs[outputName];
         entry.propagate(data);
     };
 
@@ -252,7 +252,7 @@
             iWidget = iWidget.getId();
         }
 
-        entry = this.connectablesByWidget[iWidget].slots[inputName];
+        entry = this.connectablesByWidget[iWidget].inputs[inputName];
 
         entry.variable.setHandler(callback);
     };
@@ -294,8 +294,8 @@
     Wiring.prototype._iwidget_unload_listener = function _iwidget_unload_listener(iWidget) {
         var key, entry = this.connectablesByWidget[iWidget.getId()];
 
-        for (key in entry.slots) {
-            entry.slots[key].variable.setHandler(null);
+        for (key in entry.inputs) {
+            entry.inputs[key].variable.setHandler(null);
         }
     };
 

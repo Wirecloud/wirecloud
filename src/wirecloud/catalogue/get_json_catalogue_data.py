@@ -165,8 +165,8 @@ def get_resource_data(untranslated_resource, user, request=None):
         'uriTemplate': template_uri,
         'ieCompatible': resource.ie_compatible,
         'tags': [d for d in data_tags],
-        'events': [d for d in data_events],
-        'slots': [d for d in data_slots],
+        'outputs': [d for d in data_events],
+        'inputs': [d for d in data_slots],
         'votes': get_vote_data(widget=resource, user=user),
     }
 

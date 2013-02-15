@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     (C) Copyright 2012-2013 Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -67,13 +67,13 @@
         }
         Object.defineProperty(this, 'description', {value: description});
 
-        inputs = desc.wiring.slots;
+        inputs = desc.wiring.inputs;
         if (inputs == null) {
             inputs = {};
         }
         Object.defineProperty(this, 'inputs', {value: inputs});
 
-        outputs = desc.wiring.events;
+        outputs = desc.wiring.outputs;
         if (outputs == null) {
             outputs = {};
         }

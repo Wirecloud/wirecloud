@@ -58,11 +58,11 @@ class AddWidgetTestCase(LocalizedTestCase):
 
         widget = add_resource_from_template(self.template_uri, self.template, self.user)
 
-        events = WidgetWiring.objects.filter(idResource=widget, wiring='out')
-        self.assertTrue(events.count() == 1 and events[0].friendcode == 'test_friend_code')
+        outputs = WidgetWiring.objects.filter(idResource=widget, wiring='out')
+        self.assertTrue(outputs.count() == 1 and outputs[0].friendcode == 'test_friend_code')
 
-        slots = WidgetWiring.objects.filter(idResource=widget, wiring='in')
-        self.assertTrue(slots.count() == 1 and slots[0].friendcode == 'test_friend_code')
+        inputs = WidgetWiring.objects.filter(idResource=widget, wiring='in')
+        self.assertTrue(inputs.count() == 1 and inputs[0].friendcode == 'test_friend_code')
 
     def test_add_resource_from_template_translations(self):
 

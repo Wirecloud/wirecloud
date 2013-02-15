@@ -250,8 +250,8 @@ class USDLTemplateParser(object):
     def _parse_wiring_info(self, wiring_property='hasPlatformWiring', parse_connections=False):
 
         self._info['wiring'] = {
-            'slots': [],
-            'events': [],
+            'inputs': [],
+            'outputs': [],
         }
 
         # method self._graph.objects always returns an iterable object not subscriptable,
@@ -264,7 +264,7 @@ class USDLTemplateParser(object):
         wiring_element = self._get_field(wiring_type, wiring_property, self._rootURI, id_=True, required=False)
 
         for input_endpoint in self._graph.objects(wiring_element, WIRE['hasInputEndpoint']):
-            self._info['wiring']['slots'].append({
+            self._info['wiring']['inputs'].append({
                 'name': self._get_field(DCTERMS, 'title', input_endpoint, required=False),
                 'type': self._get_field(WIRE, 'type', input_endpoint, required=False),
                 'label': self._get_translation_field(RDFS, 'label', input_endpoint, 'inputLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', input_endpoint, required=False)),
@@ -274,7 +274,7 @@ class USDLTemplateParser(object):
             })
 
         for slot in self._graph.objects(wiring_element, WIRE['hasSlot']):
-            self._info['wiring']['slots'].append({
+            self._info['wiring']['inputs'].append({
                 'name': self._get_field(DCTERMS, 'title', slot, required=False),
                 'type': self._get_field(WIRE, 'type', slot, required=False),
                 'label': self._get_translation_field(RDFS, 'label', slot, 'slotLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', slot, required=False)),
@@ -284,7 +284,7 @@ class USDLTemplateParser(object):
             })
 
         for output_endpoint in self._graph.objects(wiring_element, WIRE['hasOutputEndpoint']):
-            self._info['wiring']['events'].append({
+            self._info['wiring']['outputs'].append({
                 'name': self._get_field(DCTERMS, 'title', output_endpoint, required=False),
                 'type': self._get_field(WIRE, 'type', output_endpoint, required=False),
                 'label': self._get_translation_field(RDFS, 'label', output_endpoint, 'outputLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', output_endpoint, required=False)),
@@ -293,7 +293,7 @@ class USDLTemplateParser(object):
             })
 
         for event in self._graph.objects(wiring_element, WIRE['hasEvent']):
-            self._info['wiring']['events'].append({
+            self._info['wiring']['outputs'].append({
                 'name': self._get_field(DCTERMS, 'title', event, required=False),
                 'type': self._get_field(WIRE, 'type', event, required=False),
                 'label': self._get_translation_field(RDFS, 'label', event, 'eventLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', event, required=False)),
@@ -775,8 +775,8 @@ class WirecloudTemplateParser(object):
     def _parse_wiring_info(self, parse_connections=False):
 
         self._info['wiring'] = {
-            'slots': [],
-            'events': [],
+            'inputs': [],
+            'outputs': [],
         }
 
         wiring_element = self._xpath(WIRING_XPATH, self._doc)[0]
@@ -785,7 +785,7 @@ class WirecloudTemplateParser(object):
             self._add_translation_index(slot.get('label'), type='vdef', variable=slot.get('name'))
             self._add_translation_index(slot.get('actionlabel', ''), type='vdef', variable=slot.get('name'))
             self._add_translation_index(slot.get('description', ''), type='vdef', variable=slot.get('name'))
-            self._info['wiring']['slots'].append({
+            self._info['wiring']['inputs'].append({
                 'name': slot.get('name'),
                 'type': slot.get('type'),
                 'label': slot.get('label'),
@@ -797,7 +797,7 @@ class WirecloudTemplateParser(object):
         for event in self._xpath(EVENT_XPATH, wiring_element):
             self._add_translation_index(event.get('label'), type='vdef', variable=event.get('name'))
             self._add_translation_index(event.get('description', ''), type='vdef', variable=event.get('name'))
-            self._info['wiring']['events'].append({
+            self._info['wiring']['outputs'].append({
                 'name': event.get('name'),
                 'type': event.get('type'),
                 'label': event.get('label'),
