@@ -126,7 +126,7 @@
             'class': 'icon-tab-menu',
             'plain': true,
             'menuOptions': {
-                'position': 'top-left'
+                'position': ['top-left', 'top-right']
             }
         });
         this.menu_button.getPopupMenu().append(new TabMenuItems(this));
