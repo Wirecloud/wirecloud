@@ -68,9 +68,7 @@ Wirecloud.io.buildProxyURL = function(url, options) {
 
     if (forceProxy || protocol !== Wirecloud.location.protocol || host !== Wirecloud.location.host) {
         final_url = Wirecloud.location.domain +
-            URIs.PROXY + '/' +
-            encodeURIComponent(protocol) + '/' +
-            encodeURIComponent(host) + rest;
+            Wirecloud.URLs.PROXY.evaluate({protocol: protocol, domain: host, path: path});
     }
 
     return final_url;

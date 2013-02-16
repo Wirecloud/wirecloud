@@ -23,5 +23,8 @@ from wirecloud.proxy.views import proxy_request
 
 
 urlpatterns = patterns('wirecloud.proxy.views',
-    url(r'^/(?P<protocol>[^/]+)/(?P<domain>[^/]+)(?P<path>|/.*)$', proxy_request, name="wirecloud.proxy"),
+    url(r'^/(?P<protocol>[^/]+)/(?P<domain>[^/]+)(?P<path>|/.*)$',
+        proxy_request,
+        name="wirecloud.proxy"
+    ),
 )
