@@ -343,7 +343,7 @@ var OpManagerFactory = function () {
             switch (module) {
             case Modules.prototype.CONTEXT:
 
-                Wirecloud.io.makeRequest(Wirecloud.URLs.THEME_ENTRY.evaluate({name: 'default'/*this.contextManager.get('theme')*/}), {
+                Wirecloud.io.makeRequest(Wirecloud.URLs.THEME_ENTRY.evaluate({name: this.contextManager.get('theme')}), {
                     method: 'GET',
                     onSuccess: function (transport) {
                         Wirecloud.currentTheme = new Wirecloud.ui.Theme(JSON.parse(transport.responseText));

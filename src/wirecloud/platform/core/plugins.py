@@ -99,13 +99,20 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'label': _('Orientation'),
                 'description': _(''),
             },
+            'theme': {
+                'label': _('Theme'),
+                'description': _('Name of the theme used by the platform'),
+            },
         }
 
     def get_platform_context_current_values(self, user):
+        from django.conf import settings
+
         return {
             'language': 'es',
             'orientation': 'landscape',
             'username': user.username,
+            'theme': settings.THEME_ACTIVE
         }
 
     def get_workspace_context_definitions(self):
