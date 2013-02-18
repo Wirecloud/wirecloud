@@ -347,6 +347,11 @@
         this.resizeColumns();
     };
 
+    ModelTable.prototype.insertInto = function insertInto() {
+        StyledElements.StyledElement.prototype.insertInto.apply(this, arguments);
+        this.repaint();
+    };
+
     ModelTable.prototype.destroy = function destroy() {
         var i, cell;
 
