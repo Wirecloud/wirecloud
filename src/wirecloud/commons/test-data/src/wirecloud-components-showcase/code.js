@@ -581,14 +581,30 @@ StyledGadget.prototype.init = function() {
      * Table example
      */
     code = "\n\
-    var table;\n\
+    var layout, table, south_layout, text_input, search_button;\n\
+\n\
+    layout = new StyledElements.BorderLayout();\n\
+    container.appendChild(layout);\n\
 \n\
     table = new StyledElements.ModelTable([\n\
         {field: 'id', label: '#', width: '3ex', type: 'number'},\n\
         {field: 'description', label: 'description'},\n\
         {field: 'odd', label: 'odd', width: '3ex', sortable: false}\n\
     ]);\n\
-    container.appendChild(table);\n\
+    layout.getCenterContainer().appendChild(table);\n\
+\n\
+    south_layout = new StyledElements.HorizontalLayout();\n\
+    layout.getSouthContainer().appendChild(south_layout);\n\
+\n\
+    text_input = new StyledElements.StyledTextField({\n\
+        'id': 'input'\n\
+    });\n\
+    south_layout.getCenterContainer().appendChild(text_input);\n\
+\n\
+    search_button = new StyledElements.StyledButton({\n\
+        text: 'Search'\n\
+    });\n\
+    south_layout.getEastContainer().appendChild(search_button);\n\
 \n\
     table.pagination.changeElements([\n\
         {id: 1, description: 'First Entry', odd: true},\n\
