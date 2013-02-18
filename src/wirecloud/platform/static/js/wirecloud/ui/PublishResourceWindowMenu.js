@@ -1,4 +1,4 @@
-/*global Constants, ezweb_user_name, EzWebExt, gettext, LayoutManagerFactory, LogManagerFactory, Wirecloud*/
+/*global Constants, EzWebExt, gettext, LayoutManagerFactory, LogManagerFactory, Wirecloud*/
 
 (function () {
 

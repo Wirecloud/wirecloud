@@ -1,4 +1,4 @@
-/*global ezweb_user_name, EzWebExt, gettext, LayoutManagerFactory, OpManagerFactory, Variable, Wirecloud*/
+/*global EzWebExt, gettext, LayoutManagerFactory, OpManagerFactory, Variable, Wirecloud*/
 
 (function () {
 
@@ -9,9 +9,10 @@
      */
     var PublishWorkspaceWindowMenu = function PublishWorkspaceWindowMenu(workspace) {
 
-        var fields, marketFields;
+        var fields, user_name, marketFields;
         marketFields = this._loadAvailableMarkets();
 
+        user_name = OpManagerFactory.getInstance().contextManager.get('username');
         fields = [
             {
                 'type': 'group',
@@ -23,7 +24,7 @@
                     {name: 'email', label: gettext('Email'), type: 'text',  required: true},
                     {name: 'description', label: gettext('Description'), type: 'longtext'},
                     {name: 'wikiURI', label: gettext('Homepage'), type: 'text'},
-                    {name: 'author', label: gettext('Author'), type: 'text',  initialValue: ezweb_user_name, defaultValue: ezweb_user_name}
+                    {name: 'author', label: gettext('Author'), type: 'text',  initialValue: user_name, defaultValue: user_name}
                 ]
             },
             {

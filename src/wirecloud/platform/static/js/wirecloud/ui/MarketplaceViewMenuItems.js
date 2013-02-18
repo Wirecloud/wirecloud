@@ -19,7 +19,7 @@
  *
  */
 
-/*global Constants, ezweb_user_name, gettext, LogManagerFactory, StyledElements, Wirecloud, LayoutManagerFactory*/
+/*global Constants, gettext, LogManagerFactory, StyledElements, Wirecloud, LayoutManagerFactory*/
 
 if (!Wirecloud.ui) {
     Wirecloud.ui = {};
@@ -104,7 +104,7 @@ if (!Wirecloud.ui) {
                             "name": data.name,
                             "url": data.url,
                             "type": data.type,
-                            "user": ezweb_user_name
+                            "user": OpManagerFactory.getInstance().contextManager.get('username')
                         }
                     };
                     Wirecloud.MarketManager.addMarket(market_info, this.market.addMarket.bind(this.market, market_info.options));
