@@ -22,6 +22,8 @@ from django.http import HttpResponse
 from django.template import RequestContext
 from django.template.loader import get_template
 from django.utils import simplejson
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 from wirecloud.commons.baseviews.resource import Resource
 from wirecloud.platform.plugins import get_plugins
@@ -46,6 +48,7 @@ def get_templates(view):
 
 class ThemeEntry(Resource):
 
+    @method_decorator(cache_page(60 * 60 * 24 * 365))
     def read(self, request, name):
 
         context = RequestContext(request)
