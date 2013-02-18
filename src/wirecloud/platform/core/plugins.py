@@ -147,6 +147,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/StyledElements/ModelTable.js',
             'js/gadgetModel/Gadget.js',
             'js/wirecloud/ui/Draggable.js',
+            'js/wirecloud/ui/Theme.js',
             'js/wirecloud/WirecloudCatalogue.js',
             'js/log/LogManager.js',
             'js/wirecloud/LocalCatalogue.js',
@@ -179,7 +180,21 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'wirecloud': WirecloudCatalogueManager,
         }
 
-    def get_ajax_endpoints(self, views):
+    def get_templates(self, view):
+        if view == 'index':
+            return {
+                "wirecloud_catalogue_search_interface": "wirecloud/catalogue/search_interface.html",
+                "wirecloud_wiring_template": "wirecloud/wiring.html",
+                "catalogue_resource_template": "wirecloud/catalogue/resource.html",
+                "catalogue_main_resource_details_template": "wirecloud/catalogue/main_resource_details.html",
+                "catalogue_resource_details_template": "wirecloud/catalogue/resource_details.html",
+                "wirecloud_catalogue_publish_interface": "wirecloud/catalogue/developers.html",
+                "wirecloud_logs_template": "wirecloud/logs.html",
+            }
+        else:
+            return {}
+
+    def get_ajax_endpoints(self, view):
         return (
             {'id': 'ADD_WORKSPACE', 'url': build_url_template('wirecloud.workspace_import')},
             {'id': 'LOCAL_REPOSITORY', 'url': build_url_template('wirecloud.root')},
@@ -195,7 +210,8 @@ class WirecloudCorePlugin(WirecloudPlugin):
             {'id': 'TAB_COLLECTION', 'url': build_url_template('wirecloud.tab_collection', ['workspace_id'])},
             {'id': 'TAB_ENTRY', 'url': build_url_template('wirecloud.tab_entry', ['workspace_id', 'tab_id'])},
             {'id': 'TAB_PREFERENCES', 'url': build_url_template('wirecloud.tab_preferences', ['workspace_id', 'tab_id'])},
-            {'id': 'MARKET_COLLECTION', 'url': '/api/markets'},
+            {'id': 'THEME_ENTRY', 'url': build_url_template('wirecloud.theme_entry', ['name'])},
+            {'id': 'MARKET_COLLECTION', 'url': build_url_template('wirecloud.market_collection')},
             {'id': 'GLOBAL_MARKET_ENTRY', 'url': build_url_template('wirecloud.market_entry', ['market'])},
             {'id': 'MARKET_ENTRY', 'url': build_url_template('wirecloud.market_entry', ['user', 'market'])},
             {'id': 'WIRING_ENTRY', 'url': build_url_template('wirecloud.workspace_wiring', ['workspace_id'])},

@@ -54,15 +54,15 @@
                     main_description.appendChild(this.main_details_painter.paint(resource));
 
                     legal_description = details.createTab({'name': gettext('Legal'), 'closable': false});
-                    painter = new LegalPainter($('legal_template').getTextContent(), legal_description.wrapperElement);
+                    painter = new LegalPainter(Wirecloud.currentTheme.templates['legal_template'], legal_description.wrapperElement);
                     painter.paint(resource);
 
                     pricing_description = details.createTab({'name': gettext('Pricing'), 'closable': false});
-                    painter = new PricingPainter($('pricing_template').getTextContent(), pricing_description.wrapperElement);
+                    painter = new PricingPainter(Wirecloud.currentTheme.templates['pricing_template'], pricing_description.wrapperElement);
                     painter.paint(resource);
 
                     sla_description = details.createTab({'name': gettext('Service level agreement'), 'closable': false});
-                    painter = new SlaPainter($('service_level_template').getTextContent(), sla_description.wrapperElement);
+                    painter = new SlaPainter(Wirecloud.currentTheme.templates['service_level_template'], sla_description.wrapperElement);
                     painter.paint(resource);
 
                     return details;
@@ -70,8 +70,8 @@
             };
         }.bind(this);
 
-        this.main_details_painter = new Wirecloud.ui.ResourcePainter(this.mainview, $('fiware_main_details_template').getTextContent(), this);
-        this.resource_details_painter = new Wirecloud.ui.ResourcePainter(this.mainview, $('fiware_catalogue_resource_details_template').getTextContent(), this, extra_context);
+        this.main_details_painter = new Wirecloud.ui.ResourcePainter(this.mainview, Wirecloud.currentTheme.templates['fiware_main_details_template'], this);
+        this.resource_details_painter = new Wirecloud.ui.ResourcePainter(this.mainview, Wirecloud.currentTheme.templates['fiware_catalogue_resource_details_template'], this, extra_context);
     };
     ResourceDetailsView.prototype = new StyledElements.Alternative();
 

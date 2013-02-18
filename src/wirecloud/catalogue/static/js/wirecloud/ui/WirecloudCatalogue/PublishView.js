@@ -19,7 +19,7 @@
  *
  */
 
-/*global $, Constants, Element, EzWebExt, gettext, interpolate, LayoutManagerFactory, LogManagerFactory, StyledElements, Wirecloud*/
+/*global Constants, Element, EzWebExt, gettext, interpolate, LayoutManagerFactory, LogManagerFactory, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -72,7 +72,7 @@
         StyledElements.Alternative.call(this, id, options);
 
         var builder = new StyledElements.GUIBuilder();
-        var contents = builder.parse($('wirecloud_catalogue_publish_interface').getTextContent(), {
+        var contents = builder.parse(Wirecloud.currentTheme.templates['wirecloud_catalogue_publish_interface'], {
             'back_button': function () {
                 var button = new StyledElements.StyledButton({text: gettext('Close upload view')});
                 button.addEventListener('click', this.mainview.home.bind(this.mainview));

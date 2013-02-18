@@ -225,6 +225,9 @@ class WirecloudPlugin(object):
     def get_scripts(self, view):
         return ()
 
+    def get_templates(self, view):
+        return {}
+
     def get_urls(self):
         return self.urls
 

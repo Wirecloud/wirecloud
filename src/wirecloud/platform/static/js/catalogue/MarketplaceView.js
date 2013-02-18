@@ -59,8 +59,14 @@
             old_views[info].destroy();
         }
 
-        // Refresh wirecloud header as current marketplace may have been changed
-        LayoutManagerFactory.getInstance().header.refresh();
+        if (this.isVisible()) {
+            if (this.alternatives.getCurrentAlternative() === this.emptyAlternative) {
+                this.alternatives.showAlternative(this.viewsByName.local);
+            } else {
+                // Refresh wirecloud header as current marketplace may have been changed
+                LayoutManagerFactory.getInstance().header.refresh();
+            }
+        }
 
         if (typeof options.onSuccess === 'function') {
             options.onSuccess();
@@ -100,7 +106,12 @@
         this.marketMenu.append(new Wirecloud.ui.MarketplaceViewMenuItems(this));
 
         this.addEventListener('show', function (view) {
-            if (!view.loading && !view.error) {
+            if (view.loading === null) {
+                Wirecloud.MarketManager.getMarkets(onGetStoresSuccess.bind(view, {}), onGetStoresFailure.bind(view, {}));
+                view.loading = true;
+            }
+
+            if (view.loading === false && !view.error) {
                 if (view.alternatives.getCurrentAlternative() === view.emptyAlternative) {
                     view.alternatives.showAlternative(view.viewsByName.local);
                 } else {
@@ -110,9 +121,8 @@
         });
 
         this.number_of_alternatives = 0;
-        this.loading = true;
+        this.loading = null;
         this.error = false;
-        Wirecloud.MarketManager.getMarkets(onGetStoresSuccess.bind(this, {}), onGetStoresFailure.bind(this, {}));
     };
 
     MarketplaceView.prototype = new StyledElements.Alternative();
@@ -123,7 +133,7 @@
         var label, breadcrum, user;
 
         user = null;
-        if (this.loading || (!this.error && this.alternatives.getCurrentAlternative() === this.emptyAlternative)) {
+        if (this.loading !== false || (!this.error && this.alternatives.getCurrentAlternative() === this.emptyAlternative)) {
             label = gettext('loading...');
         } else if (this.error) {
             label = gettext('list not available');
@@ -145,7 +155,7 @@
         });
 
         // If no alternatives exist, it is no posible to have an extra breadcrum
-        if (!this.loading && !this.error && this.number_of_alternatives > 0) {
+        if (this.loading !== true && !this.error && this.number_of_alternatives > 0) {
             if (typeof this.alternatives.getCurrentAlternative().getExtraBreadcrum === 'function') {
                 breadcrum = breadcrum.concat(this.alternatives.getCurrentAlternative().getExtraBreadcrum());
             }
@@ -155,7 +165,7 @@
 
     MarketplaceView.prototype.refreshViewInfo = function refreshViewInfo(options) {
 
-        if (this.loading) {
+        if (this.loading === true) {
             return;
         }
 

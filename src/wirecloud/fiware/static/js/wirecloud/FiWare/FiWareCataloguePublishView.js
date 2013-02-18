@@ -27,7 +27,7 @@ var FiWareCataloguePublishView = function (id, options) {
     this.catalogue = options.catalogue;
     StyledElements.Alternative.call(this, id, options);
 
-    this.wrapperElement.innerHTML = $('fiware_catalogue_publish_interface').getTextContent();
+    this.wrapperElement.innerHTML = Wirecloud.currentTheme.templates['fiware_catalogue_publish_interface'];
 
     this.wrapperElement.getElementsByClassName('usdl_submit_form')[0].onsubmit = this._submit_usdl.bind(this);
 

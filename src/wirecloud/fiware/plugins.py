@@ -168,6 +168,24 @@ class FiWarePlugin(WirecloudPlugin):
                 (r'^api/marketAdaptor/', include('wirecloud.fiware.marketAdaptor.urls')),
             )
 
+    def get_templates(self, view):
+        if view == 'index':
+            return {
+                "fiware_catalogue_resource_details_template": "wirecloud/fiware/marketplace/resource_details.html",
+                "fiware_resource_parts": "wirecloud/fiware/marketplace/resource_parts.html",
+                "fiware_main_details_template": "wirecloud/fiware/marketplace/main_resource_details.html",
+                "legal_template": "wirecloud/fiware/marketplace/legal/legal_template.html",
+                "legal_clause_template": "wirecloud/fiware/marketplace/legal/legal_clause_template.html",
+                "service_level_template": "wirecloud/fiware/marketplace/sla/service_level_template.html",
+                "sla_expresion_template": "wirecloud/fiware/marketplace/sla/sla_expresion_template.html",
+                "sla_variable_template": "wirecloud/fiware/marketplace/sla/sla_variable_template.html",
+                "pricing_template": "wirecloud/fiware/marketplace/pricing/pricing_template.html",
+                "price_component_template": "wirecloud/fiware/marketplace/pricing/price_component_template.html",
+                "fiware_catalogue_publish_interface": "wirecloud/fiware/marketplace/publish_template.html",
+            }
+        else:
+            return {}
+
     def get_ajax_endpoints(self, views):
         return (
             {'id': 'FIWARE_RESOURCES_COLLECTION', 'url': '/api/marketAdaptor/marketplace/#{market}/resources'},

@@ -30,6 +30,7 @@ from wirecloud.platform.markets import views as market_views
 from wirecloud.platform.plugins import get_plugin_urls
 from wirecloud.platform.wiring import views as wiring_views
 from wirecloud.platform.preferences import views as preferences_views
+from wirecloud.platform.theme import views as theme_views
 from wirecloud.platform.widget import views as widget_views
 from wirecloud.platform.workspace import views as workspace_views
 
@@ -105,16 +106,27 @@ urlpatterns = patterns('wirecloud.platform.views',
         name='wirecloud.operator_code_entry'
     ),
 
-    url(r'^api/markets/?$', market_views.MarketCollection(permitted_methods=('GET', 'POST'))),
+    url(r'^api/markets/?$',
+        market_views.MarketCollection(permitted_methods=('GET', 'POST')),
+        name='wirecloud.market_collection'
+    ),
     url(r'^api/market/(?P<market>[\w -]+)/?$',
         market_views.MarketEntry(permitted_methods=('PUT', 'DELETE')),
-        name='wirecloud.market_entry'),
-    url(r'^api/market/(?P<user>[^/]*)/(?P<market>[\w -]+)/?$',
+        name='wirecloud.market_entry'
+    ),
+    url(r'^api/market/(?P<user>[^/]+)/(?P<market>[\w -]+)/?$',
         market_views.MarketEntry(permitted_methods=('PUT', 'DELETE')),
-        name='wirecloud.market_entry'),
+        name='wirecloud.market_entry'
+    ),
     url(r'^api/markets/publish/?$',
         market_views.PublishService(),
         name='wirecloud.publish_on_other_marketplace'
+    ),
+
+    # Themes
+    url(r'^api/theme/(?P<name>[^/]+)/?$',
+        theme_views.ThemeEntry(permitted_methods=('GET',)),
+        name='wirecloud.theme_entry'
     ),
 
     # Workspace

@@ -19,7 +19,7 @@
  *
  */
 
-/*global $, EzWebExt, gettext, PaginationInterface, StyledElements*/
+/*global EzWebExt, gettext, PaginationInterface, StyledElements*/
 (function () {
 
     "use strict";
@@ -64,7 +64,7 @@
         this.simple_search_input.inputElement.className = 'simple_search_text';
         EzWebExt.addEventListener(this.simple_search_input.inputElement, 'keypress', this._onSearchInputKeyPress.bind(this));
         this.simple_search_input.addEventListener('change', this._onSearchInput.bind(this));
-        var contents = builder.parse($('wirecloud_catalogue_search_interface').getTextContent(), {
+        var contents = builder.parse(Wirecloud.currentTheme.templates['wirecloud_catalogue_search_interface'], {
             'resourcelist': this.resource_list,
             'pagination': function () {
                 return new PaginationInterface(this.pagination);
@@ -135,7 +135,7 @@
         this._last_search = false;
 
         this.resource_painter = new options.resource_painter(this.catalogue,
-            $('catalogue_resource_template').getTextContent(),
+            Wirecloud.currentTheme.templates['catalogue_resource_template'],
             this.resource_list
         );
 

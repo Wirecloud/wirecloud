@@ -73,7 +73,7 @@ var LegalPainter = function(legal_structure_element, dom_element){
                 Element.extend(resource_element);
                 resource_element.className="legal_resource";
                 resource_element.update(this.legal_template.evaluate(resource_html));
-                clause_painter = new ClausePainter($("legal_clause_template").getTextContent(),resource_element.getElementsByClassName('clause_list')[0]);
+                clause_painter = new ClausePainter(Wirecloud.currentTheme.templates['legal_clause_template'], resource_element.getElementsByClassName('clause_list')[0]);
                 clause_painter.paint(legal_element.clauses);
 
                 this.dom_element.appendChild(resource_element);
@@ -141,7 +141,7 @@ var SlaPainter = function(sla_structure_element, dom_element){
                 Element.extend(resource_element);
                 resource_element.className="sla_resource";
                 resource_element.update(this.sla_template.evaluate(resource_html));
-                expresion_painter = new ExpresionPainter($("sla_expresion_template").getTextContent(),resource_element.getElementsByClassName('expresions_list')[0]);
+                expresion_painter = new ExpresionPainter(Wirecloud.currentTheme.templates['sla_expresion_template'], resource_element.getElementsByClassName('expresions_list')[0]);
                 expresion_painter.paint(sla_element.slaExpresions);
 
                 this.dom_element.appendChild(resource_element)
@@ -179,7 +179,7 @@ var ExpresionPainter = function(expresion_structure_element, dom_element){
             Element.extend(resource_element);
             resource_element.className="slaExpresion_resource";
             resource_element.update(this.expresion_template.evaluate(resource_html));
-            variable_painter = new VariablePainter($("sla_variable_template").getTextContent(),resource_element.getElementsByClassName('variable_list')[0]);
+            variable_painter = new VariablePainter(Wirecloud.currentTheme.templates['sla_variable_template'], resource_element.getElementsByClassName('variable_list')[0]);
 
             if ('location' in slaExpresion_element) {
                 slaExpresion_element.variables.push({
@@ -253,12 +253,12 @@ var PricingPainter = function(pricing_structure_element, dom_element){
             resource_element.update(this.pricing_template.evaluate(resource_html));
 
             if ('priceComponents' in pricing_element && pricing_element.priceComponents.length > 0 && pricing_element.priceComponents[0].title !== '') {
-                pricing_component_painter = new PriceElementPainter($("price_component_template").getTextContent(),resource_element.getElementsByClassName('price_components_list')[0]);
+                pricing_component_painter = new PriceElementPainter(Wirecloud.currentTheme.templates['price_component_template'], resource_element.getElementsByClassName('price_components_list')[0]);
                 pricing_component_painter.paint(pricing_element.priceComponents);
             }
 
             if ('taxes' in pricing_element && pricing_element.taxes.length > 0 && pricing_element.taxes[0].title !== '') {
-                tax_painter = new PriceElementPainter($("price_component_template").getTextContent(),resource_element.getElementsByClassName('taxes_list')[0]);
+                tax_painter = new PriceElementPainter(Wirecloud.currentTheme.templates['price_component_template'], resource_element.getElementsByClassName('taxes_list')[0]);
                 tax_painter.paint(pricing_element.taxes);
             }
 

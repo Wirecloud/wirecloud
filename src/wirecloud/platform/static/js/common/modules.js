@@ -28,6 +28,7 @@ function Modules () {
 
 }
 
+Modules.prototype.CONTEXT = 5;
 Modules.prototype.THEME_MANAGER = 3;
 Modules.prototype.PLATFORM_PREFERENCES = 4;
 
