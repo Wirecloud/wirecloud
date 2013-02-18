@@ -178,11 +178,7 @@ def build_url_template(viewname, kwargs=[], urlconf=None, prefix=None):
 
     kwargs = list(kwargs)
 
-    try:
-        lookup_view = get_callable(viewname, True)
-    except (ImportError, AttributeError), e:
-        raise NoReverseMatch("Error importing '%s': %s." % (lookup_view, e))
-    possibilities = resolver.reverse_dict.getlist(lookup_view)
+    possibilities = resolver.reverse_dict.getlist(viewname)
     prefix_norm, prefix_args = normalize(prefix)[0]
     for entry in possibilities:
         if len(entry) == 3:
@@ -199,17 +195,8 @@ def build_url_template(viewname, kwargs=[], urlconf=None, prefix=None):
             unicode_kwargs.update(defaults)
             return (prefix_norm + result) % unicode_kwargs
 
-    # lookup_view can be URL label, or dotted path, or callable, Any of
-    # these can be passed in at the top, but callables are not friendly in
-    # error messages.
-    m = getattr(lookup_view, '__module__', None)
-    n = getattr(lookup_view, '__name__', None)
-    if m is not None and n is not None:
-        lookup_view_s = "%s.%s" % (m, n)
-    else:
-        lookup_view_s = lookup_view
     raise NoReverseMatch("Reverse for '%s' with keyword arguments '%s' not "
-            "found." % (lookup_view_s, kwargs))
+            "found." % (viewname, kwargs))
 
 
 class WirecloudPlugin(object):
