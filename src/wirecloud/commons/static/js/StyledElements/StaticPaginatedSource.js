@@ -46,11 +46,44 @@
         return currentNode;
     };
 
+    var elementPassFilter = function elementPassFilter(element, pattern) {
+        return Object.getOwnPropertyNames(element).some(function (key, index, array) {
+            var value = getFieldValue(element, key);
+            switch (typeof value) {
+            case "number":
+                return pattern.test("" + value);
+            case "string":
+                return pattern.test(value);
+            default:
+                return false;
+            }
+        });
+    };
+
+    var filterElements = function filterElements(keywords) {
+        var filteredElements, i, element;
+
+        if (!keywords) {
+            this.filteredElements = this.elements;
+            return;
+        }
+
+        this._currentPattern = new RegExp(EzWebExt.escapeRegExp(keywords), 'i');
+        filteredElements = [];
+        for (i = 0; i < this.elements.length; i += 1) {
+            element = this.elements[i];
+            if (elementPassFilter.call(this, element, this._currentPattern)) {
+                filteredElements.push(element);
+            }
+        }
+        this.filteredElements = filteredElements;
+    };
+
     var sortElements = function sortElements(order) {
         var sort_id, inverse, column, sortFunc, parseDate;
 
         if (order == null) {
-            this.sortedElements = this.elements;
+            this.sortedElements = this.filteredElements;
             return;
         }
 
@@ -121,7 +154,7 @@
                 return -this(value1, value2);
             }, sortFunc);
         }
-        this.sortedElements = this.elements.sort(sortFunc);
+        this.sortedElements = this.filteredElements.sort(sortFunc);
     };
 
     var requestFunc = function requestFunc(index, options, onSuccess, onError) {
@@ -136,7 +169,7 @@
         var end = start + options.pageSize;
 
         var elements = this.sortedElements.slice(start, end);
-        onSuccess(elements, {current_page: page, total_count: this.pCachedTotalCount});
+        onSuccess(elements, {current_page: page, total_count: this.filteredElements.length});
     };
 
     var StaticPaginatedSource = function StaticPaginatedSource(options) {
@@ -156,16 +189,24 @@
             this.changeElements(options.initialElements);
         } else {
             this.elements = [];
+            this.filteredElements = [];
             this.sortedElements = [];
         }
     };
     StaticPaginatedSource.prototype = new StyledElements.Pagination();
 
     StaticPaginatedSource.prototype.changeOptions = function changeOptions(newOptions) {
-        var column, sort_id, inverse;
+        var column, sort_id, inverse, force_sort = false;
+
+        if ('keywords' in newOptions) {
+            filterElements.call(this, newOptions.keywords);
+            force_sort = true;
+        }
 
         if ('order' in newOptions) {
             sortElements.call(this, newOptions.order);
+        } else if (force_sort) {
+            sortElements.call(this, this.pOptions.order);
         }
         StyledElements.Pagination.prototype.changeOptions.call(this, newOptions);
     };
@@ -178,20 +219,21 @@
         } else {
             this.elements = [];
         }
+        filterElements.call(this, this.pOptions.keywords);
         sortElements.call(this, this.pOptions.order);
 
-        this.pCachedTotalCount = this.elements.length;
-        this._calculatePages();
         this.refresh();
     };
 
     StaticPaginatedSource.prototype.addElement = function addElement(newElement) {
         this.elements.push(newElement);
-        sortElements.call(this, this.pOptions.order);
 
-        this.pCachedTotalCount = this.elements.length;
-        this._calculatePages();
-        this.refresh();
+        if (elementPassFilter.call(this, newElement, this._currentPattern)) {
+            this.filteredElements.push(newElement);
+            sortElements.call(this, this.pOptions.order);
+
+            this.refresh();
+        }
     };
 
     StyledElements.StaticPaginatedSource = StaticPaginatedSource;
