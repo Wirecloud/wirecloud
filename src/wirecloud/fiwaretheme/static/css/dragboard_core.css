@@ -84,21 +84,21 @@ div.iwidget .snapButton, div.iwidget .extractButton, div.iwidget .dragboardwiki{
 }
 
 div.iwidget div.leftResizeHandle {
-  position: absolute;
-  width: 32px;
-  height: 16px;
-  bottom: -1px;
-  left: -1px;
-  cursor: sw-resize;
+    position: absolute;
+    width: 40px;
+    height: 5px;
+    bottom: -1px;
+    left: -1px;
+    cursor: sw-resize;
 }
 
 div.iwidget div.rightResizeHandle {
-  position: absolute;
-  width: 32px;
-  height: 16px;
-  bottom: -1px;
-  right: -1px;
-  cursor: se-resize;
+    position: absolute;
+    width: 40px;
+    height: 5px;
+    bottom: -1px;
+    right: -1px;
+    cursor: se-resize;
 }
 
 div.iwidget div.inUse {
@@ -145,11 +145,11 @@ div.fixed .widget_menu span {
 
 div.iwidget div.statusBar {
     overflow: hidden;
-    border: 0px;
-    height: 16px;
+    height: 1px;
     padding: 0 32px;
     border: 1px solid #DDD;
     border-radius: 0px 0px 4px 4px;
+    background: #DDD;
 }
 
 div.iwidget div.statusBar .button {

@@ -77,12 +77,21 @@
                 var button = new StyledElements.StyledButton({text: gettext('Close upload view')});
                 button.addEventListener('click', this.mainview.home.bind(this.mainview));
                 return button;
+            }.bind(this),
+            'upload_wgt_button': function () {
+                var button = new StyledElements.StyledButton({text: gettext('Add')});
+                button.addEventListener('click', upload_wgt_file.bind(this), true);
+                return button;
+            }.bind(this),
+            'submit_link_button': function () {
+                var button = new StyledElements.StyledButton({text: gettext('Add')});
+                button.addEventListener('click', submit_template.bind(this), true);
+                return button;
             }.bind(this)
         });
         this.appendChild(contents);
 
-        this.wrapperElement.getElementsByClassName('template_submit_form')[0].onsubmit = submit_template.bind(this);
-        this.wrapperElement.getElementsByClassName('upload_wgt_button')[0].addEventListener('click', upload_wgt_file.bind(this), true);
+        this.wrapperElement.getElementsByClassName('template_submit_form')[0].onsubmit = function () {return false;};
 
         this.wrapperElement.getElementsByClassName("wgt_upload_form")[0].target = 'upload_' + this.mainview.altId;
         if (this.catalogue.name === 'local') {
