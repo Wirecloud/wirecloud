@@ -29,8 +29,6 @@
         options.id = 'workspace';
         StyledElements.Alternative.call(this, id, options);
 
-        this.createWorkspaceWindow = new Wirecloud.ui.NewWorkspaceWindowMenu();
-
         this.wsMenu = new StyledElements.PopupMenu();
         this.wsMenu.append(new WorkspaceListItems(function (workspace) {
             OpManagerFactory.getInstance().changeActiveWorkspace(workspace);
@@ -52,13 +50,16 @@
     WorkspaceView.prototype.view_name = 'workspace';
 
     WorkspaceView.prototype.getBreadcrum = function getBreadcrum() {
-        var workspace, workspace_name, entries, opManager;
+        var workspace, workspace_name, entries;
 
-        opManager = OpManagerFactory.getInstance();
-
-
-        workspace = opManager.activeWorkspace;
+        workspace = OpManagerFactory.getInstance().activeWorkspace;
         if (workspace != null) {
+            // TODO
+            // Moved here to ensure the initial theme has been loaded
+            if (this.createWorkspaceWindow == null) {
+                this.createWorkspaceWindow = new Wirecloud.ui.NewWorkspaceWindowMenu();
+            }
+
             entries = [
                 {
                     'label': workspace.workspaceGlobalInfo.creator

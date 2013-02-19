@@ -4,66 +4,13 @@
 
     "use strict";
 
-    var WindowMenu = function WindowMenu(title, extra_class) {
-
-        // Allow hierarchy
-        if (arguments.length === 0) {
-            return;
-        }
-
-        this.childWindow = null;
-        this.htmlElement = document.createElement('div');  // create the root HTML element
-        Element.extend(this.htmlElement);
-        this.htmlElement.className = "window_menu";
-        if (extra_class != null) {
-            this.htmlElement.addClassName(extra_class);
-        }
-
-        // Window Top
-        this.windowTop = document.createElement('div');
-        this.windowTop.className = "window_top";
-        this.htmlElement.appendChild(this.windowTop);
-
-        this._closeListener = this._closeListener.bind(this);
-
-        this.titleElement = document.createElement('h3');
-        Element.extend(this.titleElement);
-        this.windowTop.appendChild(this.titleElement);
-
-        var clearer = document.createElement('div');
-        Element.extend(clearer);
-        clearer.addClassName("floatclearer");
-        this.windowTop.appendChild(clearer);
-
-        // Window Content
-        this.windowContent = document.createElement('div');
-        Element.extend(this.windowContent);
-        this.windowContent.className = "window_content";
-        this.htmlElement.appendChild(this.windowContent);
-
-        this.msgElement = document.createElement('div');
-        Element.extend(this.msgElement);
-        this.msgElement.className = "msg";
-        this.windowContent.appendChild(this.msgElement);
-
-        // Window Bottom
-        this.windowBottom = document.createElement('div');
-        Element.extend(this.windowBottom);
-        this.windowBottom.className = "window_bottom";
-        this.htmlElement.appendChild(this.windowBottom);
-
-        // Initial title
-        this.setTitle(title);
-
-        // Make draggable
-        this.makeDraggable();
-    };
+    var builder = new StyledElements.GUIBuilder();
 
     /**
      * Make Draggable.
      */
-    WindowMenu.prototype.makeDraggable = function makeDraggable() {
-        this.draggable = new Draggable(this.windowTop, {window_menu: this},
+    var makeDraggable = function makeDraggable(handler) {
+        this.draggable = new Draggable(handler, {window_menu: this},
             function onStart(draggable, context) {
                 var position;
                 context.y = context.window_menu.htmlElement.style.top === "" ? 0 : parseInt(context.window_menu.htmlElement.style.top, 10);
@@ -84,6 +31,58 @@
             },
             function () { return true; }
         );
+    };
+
+    var WindowMenu = function WindowMenu(title, extra_class) {
+
+        var ui_fragment, i, element;
+
+        // Allow hierarchy
+        if (arguments.length === 0) {
+            return;
+        }
+
+        this.childWindow = null;
+        this._closeListener = this._closeListener.bind(this);
+
+        ui_fragment = builder.parse(Wirecloud.currentTheme.templates['window_menu'], {
+            'title': function (options) {
+                this.titleElement = document.createElement('h3');
+                return this.titleElement;
+            }.bind(this),
+            'body': function (options) {
+                this.windowContent = document.createElement('div');
+                if (options && typeof options['class'] === 'string') {
+                    this.windowContent.className = options['class'];
+                }
+                return this.windowContent;
+            }.bind(this),
+            'footer': function (options) {
+                this.windowBottom = document.createElement('div');
+                if (options && typeof options['class'] === 'string') {
+                    this.windowBottom.className = options['class'];
+                }
+                return this.windowBottom;
+            }.bind(this)
+        });
+
+        for (i = 0; i < ui_fragment.elements.length; i += 1) {
+            element = ui_fragment.elements[i];
+            if (isElement(element)) {
+                this.htmlElement = element;
+                break;
+            }
+        }
+        this.htmlElement.classList.add('window_menu');
+        if (extra_class != null) {
+            this.htmlElement.classList.add(extra_class);
+        }
+
+        // Initial title
+        this.setTitle(title);
+
+        // Make draggable
+        makeDraggable.call(this, this.titleElement);
     };
 
     /**
