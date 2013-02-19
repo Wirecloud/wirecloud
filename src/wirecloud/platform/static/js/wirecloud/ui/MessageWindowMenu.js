@@ -23,7 +23,7 @@
 *     http://morfeo-project.org
  */
 
-/*global Element, gettext, StyledElements, Wirecloud*/
+/*global Element, gettext, isElement, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -41,6 +41,11 @@
         this.iconElement.className = "window-icon icon-size icon-warning";
         this.windowContent.insertBefore(this.iconElement, this.windowContent.childNodes[0]);
 
+        this.msgElement = document.createElement('div');
+        Element.extend(this.msgElement);
+        this.msgElement.className = "msg";
+        this.windowContent.appendChild(this.msgElement);
+
         // Accept button
         this.button = new StyledElements.StyledButton({
             text: gettext('Accept'),
@@ -50,6 +55,17 @@
         this.button.addEventListener("click", this._closeListener);
     };
     MessageWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
+
+    /**
+     * Updates the message displayed by this <code>WindowMenu</code>
+     */
+    MessageWindowMenu.prototype.setMsg = function setMsg(msg) {
+        this.msgElement.textContent = msg;
+
+        if (isElement(this.htmlElement.parentNode)) {
+            this.calculatePosition();
+        }
+    };
 
     MessageWindowMenu.prototype.setFocus = function setFocus() {
         this.button.focus();

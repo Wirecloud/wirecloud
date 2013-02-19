@@ -48,7 +48,11 @@
         this.iconElement.className = "window-icon icon-size icon-warning";
         this.windowContent.insertBefore(this.iconElement, this.windowContent.childNodes[0]);
 
-        this.setMsg(gettext('You are going to add a Mashup that could be composed by more than one widget. Do you want to add it to a new Workspace or to the current one?'));
+        this.msgElement = document.createElement('div');
+        Element.extend(this.msgElement);
+        this.msgElement.className = "msg";
+        this.windowContent.appendChild(this.msgElement);
+        this.msgElement.textContent = gettext('You are going to add a Mashup that could be composed by more than one widget. Do you want to add it to a new Workspace or to the current one?');
 
         // New Workspace button
         this.newWorkspaceButton = new StyledElements.StyledButton({

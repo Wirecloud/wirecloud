@@ -117,17 +117,6 @@
     };
 
     /**
-     * Updates the message displayed by this <code>WindowMenu</code>
-     */
-    WindowMenu.prototype.setMsg = function setMsg(msg) {
-        this.msgElement.setTextContent(msg);
-
-        if (isElement(this.htmlElement.parentNode)) {
-            this.calculatePosition();
-        }
-    };
-
-    /**
      * @private
      *
      * Calculates a usable absolute position for the window
