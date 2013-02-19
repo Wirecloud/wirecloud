@@ -10,7 +10,6 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/InputInterfaces.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/GUIBuilder.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/BrowserUtils.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/BackgroundFadder.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/WindowMenu.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/WirecloudHeader.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/LayoutManager.js"></script>
