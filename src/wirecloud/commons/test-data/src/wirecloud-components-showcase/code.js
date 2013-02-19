@@ -61,8 +61,6 @@ var StyledGadget = function() {
 }
 StyledGadget.prototype = new EzWebGadget(); /* Extend from EzWebGadget */
 
-StyledGadget.prototype.resourcesURL = "http://jupiter.ls.fi.upm.es/svn/ezweb-gadgets/eskel/1.0_beta2/examples/StyledGadget";
-
 StyledGadget.prototype.init = function() {
     var hpaned = new StyledElements.StyledHPaned({handlerPosition: 30,
                                                   leftMinWidth: 100,
