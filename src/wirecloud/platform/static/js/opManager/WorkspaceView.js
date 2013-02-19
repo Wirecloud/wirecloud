@@ -56,22 +56,21 @@
 
         opManager = OpManagerFactory.getInstance();
 
-        entries = [
-            {
-                'label': opManager.contextManager.get('username')
-            }
-        ];
 
         workspace = opManager.activeWorkspace;
         if (workspace != null) {
-            entries.push({
-                'label': workspace.getName(),
-                'menu': this.wsMenu
-            });
+            entries = [
+                {
+                    'label': workspace.workspaceGlobalInfo.creator
+                }, {
+                    'label': workspace.getName(),
+                    'menu': this.wsMenu
+                }
+            ];
         } else {
-            entries.push({
+            entries = [{
                 'label': gettext('loading...')
-            });
+            }];
         }
 
         return entries;
