@@ -65,12 +65,16 @@ FiWareStoreListItems.prototype.build = function build(store_info) {
         // This is used to delete the current store
         items.push(new StyledElements.MenuItem(gettext('Delete store'), function () {
             //First ask if the user really wants to remove the store
-            LayoutManagerFactory.getInstance().showYesNoDialog(gettext('Do you really want to remove the store ') + this.currentStore + '?',
-            function () {
-                this.fiWareCatalogue.delete_store(this.currentStore, this.refresh_store_info.bind(this));
-                this.currentStore = 'All stores';
-                this.number_of_stores -= 1;
-            }.bind(this));
+            var msg = gettext('Do you really want to remove the store ') + this.currentStore + '?';
+
+            var dialog = new Wirecloud.ui.AlertWindowMenu();
+            dialog.setMsg(msg);
+            dialog.setHandler(function () {
+                    this.fiWareCatalogue.delete_store(this.currentStore, this.refresh_store_info.bind(this));
+                    this.currentStore = 'All stores';
+                    this.number_of_stores -= 1;
+                }.bind(this));
+            dialog.show();
         }.bind(this.view)));
 
         items.push(new StyledElements.MenuItem(gettext('Publish service'),

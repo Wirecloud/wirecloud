@@ -238,7 +238,10 @@
 
         msg = interpolate(msg, context, true);
         return function () {
-            LayoutManagerFactory.getInstance().showYesNoDialog(msg, doRequest.bind(this));
+            var dialog = new Wirecloud.ui.AlertWindowMenu();
+            dialog.setMsg(msg);
+            dialog.setHandler(doRequest.bind(this));
+            dialog.show();
         }.bind(this);
     };
 

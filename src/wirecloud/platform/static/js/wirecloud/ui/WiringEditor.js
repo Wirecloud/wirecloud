@@ -407,20 +407,22 @@ if (!Wirecloud.ui) {
                         var noHandler2 = function () {
                             layoutManager.changeCurrentView('workspace');
                         }.bind(this);
-                        layoutManager.showYesNoDialog(
-                            gettext("Unrecoverable error while loading wiring data. Do you want to start with an empty wiring?"),
-                                yesHandler2,
-                                noHandler2);
+                        var msg = gettext("Unrecoverable error while loading wiring data. Do you want to start with an empty wiring?");
+                        var dialog = new Wirecloud.ui.AlertWindowMenu();
+                        dialog.setMsg(msg);
+                        dialog.setHandler(yesHandler2, noHandler2);
+                        dialog.show();
                     }.bind(this), 0);
                 }
             };
             var noHandler = function () {
                 layoutManager.changeCurrentView('workspace');
             };
-            layoutManager.showYesNoDialog(
-                gettext("There was an error loading the wiring status. Do you want Wirecloud to try to recover the state of your connections automatically?"),
-                yesHandler.bind(this),
-                noHandler.bind(this));
+            var msg = gettext("There was an error loading the wiring status. Do you want Wirecloud to try to recover the state of your connections automatically?");
+            var dialog = new Wirecloud.ui.AlertWindowMenu();
+            dialog.setMsg(msg);
+            dialog.setHandler(yesHandler, noHandler);
+            dialog.show();
         }
     };
 

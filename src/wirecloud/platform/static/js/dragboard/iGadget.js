@@ -450,7 +450,11 @@ IWidget.prototype.build = function () {
         function () {
             var msg = gettext('<p><b>Do you really want to update "%(iwidgetName)s" to its latest version?</b><br />The widget state and connections will be kept, if possible.<p>Note: It will reload your workspace</p>');
             msg = interpolate(msg, {iwidgetName: this.name}, true);
-            LayoutManagerFactory.getInstance().showYesNoDialog(msg, this.upgradeIWidget.bind(this), this.askForIconVersion.bind(this));
+
+            var dialog = new Wirecloud.ui.AlertWindowMenu();
+            dialog.setMsg(msg);
+            dialog.setHandler(this.upgradeIWidget.bind(this), this.askForIconVersion.bind(this));
+            dialog.show();
         }.bind(this),
         false);
     this.widgetMenu.appendChild(this.upgradeButton);
@@ -832,10 +836,13 @@ IWidget.prototype._updateVersionButton = function () {
 IWidget.prototype.askForIconVersion = function () {
     var msg = gettext('Do you want to remove the notice of the new version available?');
     msg = interpolate(msg, {iwidgetName: this.name}, true);
-    LayoutManagerFactory.getInstance().showYesNoDialog(msg,
-        function () {
+
+    var dialog = new Wirecloud.ui.AlertWindowMenu();
+    dialog.setMsg(msg);
+    dialog.setHandler(function () {
             this.setRefusedVersion(this.internal_iwidget.widget.getLastVersion());
         }.bind(this));
+    dialog.show();
 };
 
 IWidget.prototype.setRefusedVersion = function (v) {
@@ -886,10 +893,12 @@ IWidget.prototype.upgradeIWidget = function () {
                 'with the last version.<br/>If you want to update the widget you must replace <b>by hand</b> the existing one with the widget ' +
                 'available in the catalogue.</p><b>Do you want to remove the notice of the new version available?</b>');
         msg = interpolate(msg, {iwidgetName: this.name}, true);
-        LayoutManagerFactory.getInstance().showYesNoDialog(msg,
-            function () {
+        var dialog = new Wirecloud.ui.AlertWindowMenu();
+        dialog.setMsg(msg);
+        dialog.setHandler(function () {
                 this.setRefusedVersion(this.internal_iwidget.widget.getLastVersion());
             }.bind(this));
+        dialog.show();
     }
 
     var data = {

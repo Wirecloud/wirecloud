@@ -49,9 +49,12 @@ WorkspaceItems.prototype.build = function () {
         items.push(new StyledElements.MenuItem(gettext("Remove"), function() {
             var msg = gettext('Do you really want to remove the "%(workspaceName)s" workspace?');
             msg = interpolate(msg, {workspaceName: current_workspace.workspaceState.name}, true);
-            LayoutManagerFactory.getInstance().showYesNoDialog(msg, function() {
-                current_workspace.delete();
-            });
+            var dialog = new Wirecloud.ui.AlertWindowMenu();
+            dialog.setMsg(msg);
+            dialog.setHandler(function () {
+                    current_workspace.delete();
+                });
+            dialog.show();
         }.bind(this)));
     }
 

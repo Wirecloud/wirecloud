@@ -274,32 +274,6 @@ var LayoutManagerFactory = function () {
         };
 
         /**
-         * Shows a yes/no question dialog.
-         *
-         * @param {String} msg message to show to the user
-         * @param {function} yesHandler
-         * @param {function}
-         * @param {Constants.Logging} type (default: Constants.logging.INFO_MSG)
-         */
-        LayoutManager.prototype.showYesNoDialog = function(msg, yesHandler, noHandler, type) {
-            if (this.currentMenu != null) {
-                // only if the layer is displayed.
-                this.hideCover();
-            }
-
-            this.showUnclickableCover();
-
-            if (!this.menus['alertMenu']) {
-                this.menus['alertMenu'] = new Wirecloud.ui.AlertWindowMenu();
-            }
-
-            this.currentMenu = this.menus['alertMenu'];
-            this.currentMenu.setMsg(msg);
-            this.currentMenu.setHandler(yesHandler, noHandler);
-            this.currentMenu.show();
-        }
-
-        /**
          * @private
          * Only to be used by WindowMenu.
          */
