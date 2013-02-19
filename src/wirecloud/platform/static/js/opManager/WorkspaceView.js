@@ -47,15 +47,17 @@ WorkspaceView.prototype = new StyledElements.Alternative();
 WorkspaceView.prototype.view_name = 'workspace';
 
 WorkspaceView.prototype.getBreadcrum = function () {
-    var workspace, workspace_name, entries;
+    var workspace, workspace_name, entries, opManager;
+
+    opManager = OpManagerFactory.getInstance();
 
     entries = [
         {
-            'label': ezweb_user_name,
+            'label': opManager.contextManager.get('username'),
         }
     ];
 
-    workspace = OpManagerFactory.getInstance().activeWorkspace;
+    workspace = opManager.activeWorkspace;
     if (workspace != null) {
         entries.push({
             'label': workspace.getName(),
