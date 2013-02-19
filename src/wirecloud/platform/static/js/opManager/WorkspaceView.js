@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     (C) Copyright 2012-2013 Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,65 +19,74 @@
  *
  */
 
+/*global gettext, OpManagerFactory, StyledElements, Wirecloud, WorkspaceItems, WorkspaceListItems*/
 
-var WorkspaceView = function (id, options) {
-    options.id = 'workspace';
-    StyledElements.Alternative.call(this, id, options);
+(function () {
 
-    this.createWorkspaceWindow = new Wirecloud.ui.NewWorkspaceWindowMenu();
+    "use strict";
 
-    this.wsMenu = new StyledElements.PopupMenu();
-    this.wsMenu.append(new WorkspaceListItems(function (workspace) {
-        OpManagerFactory.getInstance().changeActiveWorkspace(workspace);
-    }));
-    this.wsMenu.appendSeparator();
-    this.wsMenu.append(new WorkspaceItems());
+    var WorkspaceView = function WorkspaceView(id, options) {
+        options.id = 'workspace';
+        StyledElements.Alternative.call(this, id, options);
 
-    this.wsMenu.append(new StyledElements.MenuItem(gettext('New workspace'), function () {
-        this.createWorkspaceWindow.show();
-    }.bind(this)));
+        this.createWorkspaceWindow = new Wirecloud.ui.NewWorkspaceWindowMenu();
 
-    this.wsMenu.append(new StyledElements.MenuItem(gettext('Publish'), function () {
-        var window = new Wirecloud.ui.PublishWorkspaceWindowMenu(OpManagerFactory.getInstance().activeWorkspace);
-        window.show();
-    }.bind(this)));
-};
-WorkspaceView.prototype = new StyledElements.Alternative();
+        this.wsMenu = new StyledElements.PopupMenu();
+        this.wsMenu.append(new WorkspaceListItems(function (workspace) {
+            OpManagerFactory.getInstance().changeActiveWorkspace(workspace);
+        }));
+        this.wsMenu.appendSeparator();
+        this.wsMenu.append(new WorkspaceItems());
 
-WorkspaceView.prototype.view_name = 'workspace';
+        this.wsMenu.append(new StyledElements.MenuItem(gettext('New workspace'), function () {
+            this.createWorkspaceWindow.show();
+        }.bind(this)));
 
-WorkspaceView.prototype.getBreadcrum = function () {
-    var workspace, workspace_name, entries, opManager;
+        this.wsMenu.append(new StyledElements.MenuItem(gettext('Publish'), function () {
+            var window = new Wirecloud.ui.PublishWorkspaceWindowMenu(OpManagerFactory.getInstance().activeWorkspace);
+            window.show();
+        }.bind(this)));
+    };
+    WorkspaceView.prototype = new StyledElements.Alternative();
 
-    opManager = OpManagerFactory.getInstance();
+    WorkspaceView.prototype.view_name = 'workspace';
 
-    entries = [
-        {
-            'label': opManager.contextManager.get('username'),
+    WorkspaceView.prototype.getBreadcrum = function getBreadcrum() {
+        var workspace, workspace_name, entries, opManager;
+
+        opManager = OpManagerFactory.getInstance();
+
+        entries = [
+            {
+                'label': opManager.contextManager.get('username')
+            }
+        ];
+
+        workspace = opManager.activeWorkspace;
+        if (workspace != null) {
+            entries.push({
+                'label': workspace.getName(),
+                'menu': this.wsMenu
+            });
+        } else {
+            entries.push({
+                'label': gettext('loading...')
+            });
         }
-    ];
 
-    workspace = opManager.activeWorkspace;
-    if (workspace != null) {
-        entries.push({
-            'label': workspace.getName(),
-            'menu': this.wsMenu
-        });
-    } else {
-        entries.push({
-            'label': gettext('loading...')
-        });
-    }
+        return entries;
+    };
 
-    return entries;
-};
+    WorkspaceView.prototype.destroy = function destroy() {
 
-WorkspaceView.prototype.destroy = function() {
+        if (this.wsMenu) {
+            this.wsMenu.destroy();
+            this.wsMenu = null;
+        }
 
-    if (this.wsMenu) {
-        this.wsMenu.destroy();
-        this.wsMenu = null;
-    }
+        StyledElements.Alternative.destroy();
+    };
 
-    StyledElements.Alternative.destroy();
-};
+    window.WorkspaceView = WorkspaceView;
+
+})();
