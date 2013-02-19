@@ -1,4 +1,4 @@
-/*global gettext, StyledElements, ValidationErrorManager, WindowMenu, Wirecloud*/
+/*global gettext, StyledElements, ValidationErrorManager, Wirecloud*/
 
 (function () {
 
@@ -32,7 +32,7 @@
      *
      */
     var PreferencesWindowMenu = function PreferencesWindowMenu(scope, manager) {
-        WindowMenu.call(this, '');
+        Wirecloud.ui.WindowMenu.call(this, '');
 
         this.manager = manager;
 
@@ -52,7 +52,7 @@
         this.cancelButton.addEventListener("click", this._closeListener);
         this.cancelButton.insertInto(this.windowBottom);
     };
-    PreferencesWindowMenu.prototype = new WindowMenu();
+    PreferencesWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
 
     PreferencesWindowMenu.prototype.setCancelable = function setCancelable(cancelable) {
         this.cancelButton.setDisabled(!cancelable);
@@ -66,14 +66,14 @@
         this.windowContent.insertBefore(table, this.msgElement);
 
         this.manager.resetInterface();
-        WindowMenu.prototype.show.call(this, parentWindow);
+        Wirecloud.ui.WindowMenu.prototype.show.call(this, parentWindow);
     };
 
     PreferencesWindowMenu.prototype.destroy = function destroy() {
         this.acceptButton.destroy();
         this.cancelButton.destroy();
 
-        WindowMenu.prototype.destroy.call(this);
+        Wirecloud.ui.WindowMenu.prototype.destroy.call(this);
     };
 
     Wirecloud.ui.PreferencesWindowMenu = PreferencesWindowMenu;

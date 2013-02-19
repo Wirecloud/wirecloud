@@ -19,7 +19,7 @@
  *
  */
 
-/*global Element, gettext, OpManagerFactory, StyledElements, WindowMenu, Wirecloud*/
+/*global Element, gettext, OpManagerFactory, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -41,7 +41,7 @@
      * Constructor
      */
     InstantiateMashupWindowMenu = function InstantiateMashupWindowMenu(mashup) {
-        WindowMenu.call(this, gettext('Add Mashup'));
+        Wirecloud.ui.WindowMenu.call(this, gettext('Add Mashup'));
 
         this.iconElement = document.createElement('div');
         Element.extend(this.iconElement);
@@ -65,7 +65,7 @@
         this.mergeWorkspaceButton.addEventListener("click", mergeWorkspace.bind(this, mashup));
         this.mergeWorkspaceButton.insertInto(this.windowBottom);
     };
-    InstantiateMashupWindowMenu.prototype = new WindowMenu();
+    InstantiateMashupWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
 
     InstantiateMashupWindowMenu.prototype.setFocus = function setFocus() {
         this.newWorkspaceButton.focus();

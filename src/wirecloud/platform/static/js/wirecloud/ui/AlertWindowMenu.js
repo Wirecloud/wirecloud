@@ -1,4 +1,4 @@
-/*global gettext, Element, StyledElements, WindowMenu, Wirecloud*/
+/*global gettext, Element, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -8,7 +8,7 @@
      * Specific class representing alert dialogs
      */
     var AlertWindowMenu = function AlertWindowMenu() {
-        WindowMenu.call(this, gettext('Warning'));
+        Wirecloud.ui.WindowMenu.call(this, gettext('Warning'));
 
         // Warning icon
         this.iconElement = document.createElement('div');
@@ -36,7 +36,7 @@
         this.acceptHandler = null;
         this.cancelHandler = null;
     };
-    AlertWindowMenu.prototype = new WindowMenu();
+    AlertWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
 
     AlertWindowMenu.prototype._acceptListener = function _acceptListener(e) {
         this.acceptHandler();
@@ -44,7 +44,7 @@
     };
 
     AlertWindowMenu.prototype._closeListener = function _closeListener(e) {
-        WindowMenu.prototype._closeListener.call(this, e);
+        Wirecloud.ui.WindowMenu.prototype._closeListener.call(this, e);
         if (this.cancelHandler) {
             this.cancelHandler();
         }

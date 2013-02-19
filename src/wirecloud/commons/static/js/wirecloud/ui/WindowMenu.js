@@ -1,4 +1,4 @@
-/*global BrowserUtilsFactory, CSSPrimitiveValue, Draggable, Element, isElement, LayoutManagerFactory*/
+/*global BrowserUtilsFactory, CSSPrimitiveValue, Draggable, Element, isElement, LayoutManagerFactory, Wirecloud*/
 
 (function () {
 
@@ -244,6 +244,6 @@
         this._closeListener = null;
     };
 
-    window.WindowMenu = WindowMenu;
+    Wirecloud.ui.WindowMenu = WindowMenu;
 
 })();

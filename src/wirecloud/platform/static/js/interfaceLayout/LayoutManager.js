@@ -304,7 +304,7 @@ var LayoutManagerFactory = function () {
          * Only to be used by WindowMenu.
          */
         LayoutManager.prototype._showWindowMenu = function (window_menu) {
-            if (!(window_menu instanceof WindowMenu)) {
+            if (!(window_menu instanceof Wirecloud.ui.WindowMenu)) {
                 throw TypeError('window_menu must be a WindowMenu instance');
             }
 

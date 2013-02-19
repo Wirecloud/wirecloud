@@ -23,7 +23,7 @@
 *     http://morfeo-project.org
  */
 
-/*global Element, gettext, StyledElements, WindowMenu, Wirecloud*/
+/*global Element, gettext, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -33,7 +33,7 @@
      * Specific class representing alert dialogs.
      */
     var MessageWindowMenu = function MessageWindowMenu(element) {
-        WindowMenu.call(this, '');
+        Wirecloud.ui.WindowMenu.call(this, '');
 
         // Warning icon
         this.iconElement = document.createElement('div');
@@ -49,7 +49,7 @@
         this.button.insertInto(this.windowBottom);
         this.button.addEventListener("click", this._closeListener);
     };
-    MessageWindowMenu.prototype = new WindowMenu();
+    MessageWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
 
     MessageWindowMenu.prototype.setFocus = function setFocus() {
         this.button.focus();

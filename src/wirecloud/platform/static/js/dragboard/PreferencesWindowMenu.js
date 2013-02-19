@@ -19,7 +19,7 @@
  *
  */
 
-/*global Form, gettext, WindowMenu, Wirecloud*/
+/*global Form, gettext, Wirecloud*/
 
 Wirecloud.Widget = {};
 
@@ -28,10 +28,9 @@ Wirecloud.Widget = {};
     "use strict";
 
     var PreferencesWindowMenu = function PreferencesWindowMenu(css_class) {
-
-        WindowMenu.call(this, gettext('Widget Settings'), css_class);
+        Wirecloud.ui.WindowMenu.call(this, gettext('Widget Settings'), css_class);
     };
-    PreferencesWindowMenu.prototype = new WindowMenu();
+    PreferencesWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
 
     PreferencesWindowMenu.prototype._savePrefs = function _savePrefs(form, new_values) {
         var oldValue, newValue, varName, varManager, variable;
@@ -97,7 +96,7 @@ Wirecloud.Widget = {};
         this._current_form.addEventListener('submit', this._savePrefs.bind(this));
         this._current_form.addEventListener('cancel', this.hide.bind(this));
 
-        WindowMenu.prototype.show.call(this, parentWindow);
+        Wirecloud.ui.WindowMenu.prototype.show.call(this, parentWindow);
     };
 
     Wirecloud.Widget.PreferencesWindowMenu = PreferencesWindowMenu;

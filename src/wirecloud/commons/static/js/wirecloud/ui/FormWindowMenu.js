@@ -1,4 +1,4 @@
-/*global EzWebExt, Form, WindowMenu, Wirecloud */
+/*global EzWebExt, Form, Wirecloud */
 
 (function () {
 
@@ -18,7 +18,7 @@
             options = {};
         }
 
-        WindowMenu.call(this, title, extra_class);
+        Wirecloud.ui.WindowMenu.call(this, title, extra_class);
         // TODO
         this.iconElement = null;
         this.msgElement = null;
@@ -36,7 +36,7 @@
         }.bind(this));
         this.form.addEventListener('cancel', this._closeListener);
     };
-    FormWindowMenu.prototype = new WindowMenu();
+    FormWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
 
     FormWindowMenu.prototype.setValue = function setValue(newValue) {
         this.form.setData(newValue);
@@ -44,7 +44,7 @@
 
     FormWindowMenu.prototype.show = function show(parentWindow) {
         this.form.reset();
-        WindowMenu.prototype.show.call(this, parentWindow);
+        Wirecloud.ui.WindowMenu.prototype.show.call(this, parentWindow);
         this.form.repaint();
     };
 
