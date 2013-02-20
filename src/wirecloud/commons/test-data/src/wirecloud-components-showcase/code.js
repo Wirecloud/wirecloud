@@ -458,6 +458,10 @@ StyledGadget.prototype.init = function() {
     code = "\n\
     var title, button;\n\
 \n\
+    title = document.createElement('h3');\n\
+    title.textContent = 'Normal buttons';\n\
+    container.appendChild(title);\n\
+\n\
     button = new StyledElements.StyledButton({text:'Default'});\n\
     container.appendChild(button);\n\
 \n\
@@ -471,6 +475,22 @@ StyledGadget.prototype.init = function() {
     container.appendChild(button);\n\
 \n\
     button = new StyledElements.StyledButton({text:'Danger', 'class': 'btn-danger'});\n\
+    container.appendChild(button);\n\
+\n\
+    title = document.createElement('h3');\n\
+    title.textContent = 'Sizes';\n\
+    container.appendChild(title);\n\
+\n\
+    button = new StyledElements.StyledButton({text:'Large button', 'class': 'btn-large'});\n\
+    container.appendChild(button);\n\
+\n\
+    button = new StyledElements.StyledButton({text:'Normal button'});\n\
+    container.appendChild(button);\n\
+\n\
+    button = new StyledElements.StyledButton({text:'Small button', 'class': 'btn-small'});\n\
+    container.appendChild(button);\n\
+\n\
+    button = new StyledElements.StyledButton({text:'Mini button', 'class': 'btn-mini'});\n\
     container.appendChild(button);\n\
 \n\
     title = document.createElement('h3');\n\
