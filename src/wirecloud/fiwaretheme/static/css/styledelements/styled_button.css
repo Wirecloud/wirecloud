@@ -5,7 +5,34 @@
     font-family: Arial, sans-serif;
     font-size: 12px;
     line-height: 20px;
-    font-weight: bold;
+    font-weight: normal;
+    display: inline-block;
+    margin: 3px;
+    position: relative;
+    vertical-align: middle;
+}
+
+.styled_button.open {
+    z-index: 111113;
+}
+
+.styled_button.plain {
+    font-size: inherit;
+    line-height: inherit;
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+
+.styled_button > div, .styled_button > button, .styled_button.plain {
+    cursor: pointer;
+}
+
+.styled_button.disabled > div, .styled_button.disabled > button, .styled_button.plain.disabled {
+    cursor: default;
+}
+
+.styled_button > span {
+    display: inline-block;
 }
 
 .styled_button > button {
@@ -50,6 +77,36 @@
 .styled_button.disabled > div, .styled_button.disabled > button {
     background-image: none;
     text-decoration: none;
+}
+
+.styled_button.btn-large {
+    font-size: 15px;
+    line-height: normal;
+}
+
+.styled_button.btn-large > div, .styled_button.btn-large > button {
+    padding: 9px 14px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.styled_button.btn-small {
+    font-size: 10px;
+    line-height: 11px;
+}
+
+.styled_button.btn-small > div, .styled_button.btn-small > button {
+    padding: 5px 9px;
+}
+
+.styled_button.btn-mini {
+    font-size: 10px;
+    line-height: 11px;
+}
+
+.styled_button.btn-mini > div, .styled_button.btn-mini > button {
+    padding: 2px 6px;
 }
 
 /* Primary button */

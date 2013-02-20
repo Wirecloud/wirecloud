@@ -230,37 +230,6 @@ div.styled_numeric_field div.numeric_bottom_button {
   padding: 0;
 }
 
-/* Styled Button */
-
-.styled_button {
-    display: inline-block;
-    margin: 3px;
-    position: relative;
-}
-
-.styled_button.open {
-    z-index: 111113;
-}
-
-.styled_button.plain {
-    font-size: inherit;
-    line-height: inherit;
-    margin-bottom: 0px;
-    margin-top: 0px;
-}
-
-.styled_button > div, .styled_button > button, .styled_button.plain {
-    cursor: pointer;
-}
-
-.styled_button.disabled > div, .styled_button.disabled > button, .styled_button.plain.disabled {
-    cursor: default;
-}
-
-.styled_button > span {
-    display: inline-block;
-}
-
 /* Styled HPaned */
 
 .hpaned {
