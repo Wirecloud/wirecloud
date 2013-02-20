@@ -30,7 +30,7 @@
         };
         options = EzWebExt.merge(defaultOptions, options);
 
-        StyledElements.StyledInputElement.call(this, options.initialValue, ['change', 'focus']);
+        StyledElements.StyledInputElement.call(this, options.initialValue, ['blur', 'change', 'focus']);
 
         this.wrapperElement = document.createElement("div");
         this.wrapperElement.className = "styled_text_area";
