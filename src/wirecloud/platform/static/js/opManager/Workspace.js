@@ -233,12 +233,19 @@ function Workspace (workspaceState) {
     };
 
     var publishSuccess = function (transport) {
-        var layoutManager = LayoutManagerFactory.getInstance();
+        var layoutManager, i, marketplaceView, market;
+
+        layoutManager = LayoutManagerFactory.getInstance();
         layoutManager.logSubTask(gettext('Workspace published successfully'));
         layoutManager.logStep('');
         layoutManager._notifyPlatformReady();
         this.workspace.workspaceGlobalInfo.params = this.params;
-        CatalogueFactory.getInstance().invalidate_last_results('mashup');
+
+        marketplaceView = layoutManager.viewsByName.marketplace;
+        for (i = 0; i < this.params.marketplaces.length; i += 1) {
+            market = this.params.marketplaces[i].market;
+            marketplaceView.viewsByName[market].viewsByName.search.mark_outdated();
+        }
     };
 
     var publishError = function(transport, e) {

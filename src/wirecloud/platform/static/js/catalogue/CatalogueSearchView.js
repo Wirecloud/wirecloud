@@ -169,6 +169,10 @@
         this.emptyBox.appendChild(wrapper);
     };
 
+    CatalogueSearchView.prototype.mark_outdated = function mark_outdated() {
+        this._last_search = false;
+    };
+
     CatalogueSearchView.prototype.refresh_if_needed = function refresh_if_needed() {
         if (this.initialized && (this._last_search === false || (this._last_search + (2 * 60 * 60 * 1000)) < Date.now())) {
             this.pagination.refresh(); // TODO
