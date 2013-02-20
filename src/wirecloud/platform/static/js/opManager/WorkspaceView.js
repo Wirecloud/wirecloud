@@ -41,8 +41,10 @@
         }.bind(this)));
 
         this.wsMenu.append(new StyledElements.MenuItem(gettext('Publish'), function () {
-            var window = new Wirecloud.ui.PublishWorkspaceWindowMenu(OpManagerFactory.getInstance().activeWorkspace);
-            window.show();
+            LayoutManagerFactory.getInstance().viewsByName.marketplace.waitMarketListReady(function () {
+                var window = new Wirecloud.ui.PublishWorkspaceWindowMenu(OpManagerFactory.getInstance().activeWorkspace);
+                window.show();
+            });
         }.bind(this)));
     };
     WorkspaceView.prototype = new StyledElements.Alternative();

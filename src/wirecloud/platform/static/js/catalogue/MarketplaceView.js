@@ -25,7 +25,7 @@
 
     "use strict";
 
-    var MarketplaceView, onGetStoresSuccess, onGetStoresFailure;
+    var MarketplaceView, onGetStoresSuccess, onGetStoresFailure, onGetStoresComplete;
 
     onGetStoresSuccess = function onGetStoresSuccess(options, view_info) {
         var info, old_views, view_element, view_constructor, first_element = null;
@@ -71,9 +71,6 @@
         if (typeof options.onSuccess === 'function') {
             options.onSuccess();
         }
-        if (typeof options.onComplete === 'function') {
-            options.onComplete();
-        }
     };
 
     onGetStoresFailure = function onGetStoresFailure(options, msg) {
@@ -84,7 +81,19 @@
         if (typeof options.onFailure === 'function') {
             options.onFailure();
         }
-        if (typeof options.onFailure === 'function') {
+    };
+
+    onGetStoresComplete = function onGetStoresComplete(options) {
+        var i;
+
+        for (i = 0; i < this.callbacks.length; i+= 1) {
+            try {
+                this.callbacks[i]();
+            } catch (e) {}
+        }
+        this.callbacks = [];
+
+        if (typeof options.onComplete === 'function') {
             options.onComplete();
         }
     };
@@ -107,7 +116,7 @@
 
         this.addEventListener('show', function (view) {
             if (view.loading === null) {
-                Wirecloud.MarketManager.getMarkets(onGetStoresSuccess.bind(view, {}), onGetStoresFailure.bind(view, {}));
+                Wirecloud.MarketManager.getMarkets(onGetStoresSuccess.bind(view, {}), onGetStoresFailure.bind(view, {}), onGetStoresComplete.bind(view, {}));
                 view.loading = true;
             }
 
@@ -123,6 +132,7 @@
         this.number_of_alternatives = 0;
         this.loading = null;
         this.error = false;
+        this.callbacks = [];
     };
 
     MarketplaceView.prototype = new StyledElements.Alternative();
@@ -163,6 +173,19 @@
         return breadcrum;
     };
 
+    MarketplaceView.prototype.waitMarketListReady = function waitMarketListReady(callback) {
+        if (this.loading === false) {
+            callback();
+            return;
+        }
+
+        this.callbacks.push(callback);
+        if (this.loading === null) {
+            Wirecloud.MarketManager.getMarkets(onGetStoresSuccess.bind(this, {}), onGetStoresFailure.bind(this, {}), onGetStoresComplete.bind(this, {}));
+            this.loading = true;
+        }
+    };
+
     MarketplaceView.prototype.refreshViewInfo = function refreshViewInfo(options) {
 
         if (this.loading === true) {
@@ -178,7 +201,7 @@
 
         this.number_of_alternatives = 0;
 
-        Wirecloud.MarketManager.getMarkets(onGetStoresSuccess.bind(this, options), onGetStoresFailure.bind(this, options));
+        Wirecloud.MarketManager.getMarkets(onGetStoresSuccess.bind(this, options), onGetStoresFailure.bind(this, options), onGetStoresComplete.bind(this, options));
     };
 
     MarketplaceView.prototype.addMarket = function addMarket(market_info) {

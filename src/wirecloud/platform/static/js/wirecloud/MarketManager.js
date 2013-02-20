@@ -35,7 +35,7 @@
     };
     MarketManager = {};
 
-    MarketManager.getMarkets = function getMarkets(callback, onFailureCallback) {
+    MarketManager.getMarkets = function getMarkets(callback, onFailureCallback, onCompleteCallback) {
         Wirecloud.io.makeRequest(Wirecloud.URLs.MARKET_COLLECTION, {
             method: 'GET',
             onSuccess: function onSuccess(transport) {
@@ -48,6 +48,11 @@
 
                 if (typeof onFailureCallback === 'function') {
                     onFailureCallback(msg);
+                }
+            },
+            onComplete: function onComplete(transport) {
+                if (typeof onCompleteCallback === 'function') {
+                    onCompleteCallback();
                 }
             }
         });
