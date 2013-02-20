@@ -184,23 +184,7 @@ h6 {
     vertical-align: top;
 }
 
-#wirecloud_header .styled_button > span {
-    color: #FFF;
-    margin: 0;
-    padding: 8px;
-    border-width: 1px;
-    border-style: solid;
-    background-color: #5BB75B;
-    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-    -webkit-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.125), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-    -moz-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.125), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-    box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.125), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-    border-color: rgb(81, 163, 81) rgb(81, 163, 81) rgb(56, 112, 56);
-    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-    border-radius: 4px;
-}
-
-#wirecloud_header .styled_button > span:before {
+#wirecloud_header .styled_button > div:before {
     font-family: FontAwesome;
     font-weight: normal;
     font-style: normal;
@@ -210,7 +194,7 @@ h6 {
     margin-right: 1ex;
 }
 
-#wirecloud_header .styled_button > span:after {
+#wirecloud_header .styled_button > div:after {
     font-family: FontAwesome;
     font-weight: normal;
     font-style: normal;
@@ -218,10 +202,6 @@ h6 {
     text-decoration: inherit;
     content: "\f0d7";
     margin-left: 1ex;
-}
-
-#wirecloud_header .styled_button:hover > span {
-    background: rgb(81, 163, 81);
 }
 
 #wirecloud_header .styled_button.open > span {

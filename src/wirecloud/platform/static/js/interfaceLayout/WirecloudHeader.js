@@ -81,7 +81,7 @@ WirecloudHeader.prototype._initUserMenu = function () {
     this.menu.appendChild(wrapper);
 
     this.user_button = new StyledElements.PopupButton({
-        'plain': true,
+        'class': 'btn-success',
         'text': ezweb_user_name
     });
     this.user_button.insertInto(wrapper);
