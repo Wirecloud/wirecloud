@@ -75,5 +75,16 @@ Wirecloud.io.buildProxyURL = function(url, options) {
 };
 
 Wirecloud.io.makeRequest = function(url, options) {
+    var handlerRegExp, key;
+
+    if (options != null && options.context != null) {
+        var handlerRegExp = new RegExp(/^on(?:Create|Complete|Exception|Failure|Interactive|Loaded|Loading|Success|Uninitialized|\d{3})$/);
+        for (var key in options) {
+            if (handlerRegExp.test(key) && typeof options[key] === 'function') {
+                options[key] = options[key].bind(options.context);
+            }
+        }
+    }
+
     return new Ajax.Request(Wirecloud.io.buildProxyURL(url, options), options);
 };
