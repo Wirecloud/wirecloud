@@ -80,11 +80,13 @@
             }.bind(this),
             'upload_wgt_button': function () {
                 var button = new StyledElements.StyledButton({text: gettext('Add')});
+                button.addClassName('upload_wgt_button');
                 button.addEventListener('click', upload_wgt_file.bind(this), true);
                 return button;
             }.bind(this),
             'submit_link_button': function () {
                 var button = new StyledElements.StyledButton({text: gettext('Add')});
+                button.addClassName('submit_link');
                 button.addEventListener('click', submit_template.bind(this), true);
                 return button;
             }.bind(this)

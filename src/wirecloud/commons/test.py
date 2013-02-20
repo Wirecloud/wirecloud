@@ -347,7 +347,7 @@ class WirecloudRemoteTestCase(object):
         self.perform_market_action('Upload')
 
         self.wait_element_visible_by_css_selector('.wgt_file', element=catalogue_base_element).send_keys(wgt_path)
-        catalogue_base_element.find_element_by_class_name('upload_wgt_button').click()
+        catalogue_base_element.find_element_by_css_selector('.upload_wgt_button div').click()
         self.wait_wirecloud_ready()
 
         window_menus = len(self.driver.find_elements_by_css_selector('.window_menu'))
@@ -380,7 +380,7 @@ class WirecloudRemoteTestCase(object):
 
         template_input = catalogue_base_element.find_element_by_css_selector('form.template_submit_form .template_uri')
         self.fill_form_input(template_input, template_url)
-        catalogue_base_element.find_element_by_class_name('submit_link').click()
+        catalogue_base_element.find_element_by_css_selector('.submit_link div').click()
         self.wait_wirecloud_ready()
 
         window_menus = len(self.driver.find_elements_by_css_selector('.window_menu'))
