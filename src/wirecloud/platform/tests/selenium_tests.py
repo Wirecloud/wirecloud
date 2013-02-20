@@ -27,6 +27,7 @@ from wirecloud.commons.test import widget_operation, WirecloudSeleniumTestCase
 
 class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
+    fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('fiware-ut-5',)
 
     def test_basic_workspace_operations(self):
@@ -246,9 +247,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_workspace_publish(self):
 
-        self.login()
-        # TODO workspace must come from fixtures
-        self.create_workspace_from_catalogue('Test Mashup')
+        self.login(username='user_with_workspaces')
 
         self.publish_workspace({
             'vendor': 'Wirecloud',

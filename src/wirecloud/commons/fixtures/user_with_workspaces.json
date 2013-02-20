@@ -1,0 +1,436 @@
+[
+    {
+        "pk": 1,
+        "model": "platform.position",
+        "fields": {
+            "minimized": false,
+            "height": 24,
+            "width": 6,
+            "posZ": 0,
+            "posX": 0,
+            "posY": 0,
+            "fulldragboard": false
+        }
+    },
+    {
+        "pk": 2,
+        "model": "platform.position",
+        "fields": {
+            "minimized": false,
+            "height": null,
+            "width": null,
+            "posZ": 0,
+            "posX": -1,
+            "posY": -1,
+            "fulldragboard": false
+        }
+    },
+    {
+        "pk": 3,
+        "model": "platform.position",
+        "fields": {
+            "minimized": false,
+            "height": 24,
+            "width": 6,
+            "posZ": 1,
+            "posX": 6,
+            "posY": 0,
+            "fulldragboard": false
+        }
+    },
+    {
+        "pk": 4,
+        "model": "platform.position",
+        "fields": {
+            "minimized": false,
+            "height": null,
+            "width": null,
+            "posZ": 0,
+            "posX": -1,
+            "posY": -1,
+            "fulldragboard": false
+        }
+    },
+    {
+        "pk": 1,
+        "model": "platform.iwidget",
+        "fields": {
+            "widget": 1,
+            "layout": 0,
+            "name": "Test 1",
+            "tab": 1,
+            "refused_version": null,
+            "readOnly": false,
+            "transparency": false,
+            "position": 1,
+            "icon_position": 2
+        }
+    },
+    {
+        "pk": 2,
+        "model": "platform.iwidget",
+        "fields": {
+            "widget": 1,
+            "layout": 0,
+            "name": "Test 2",
+            "tab": 1,
+            "refused_version": null,
+            "readOnly": false,
+            "transparency": false,
+            "position": 3,
+            "icon_position": 4
+        }
+    },
+    {
+        "pk": 1,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 1,
+            "vardef": 1
+        }
+    },
+    {
+        "pk": 2,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 1,
+            "vardef": 2
+        }
+    },
+    {
+        "pk": 3,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 1,
+            "vardef": 3
+        }
+    },
+    {
+        "pk": 4,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 1,
+            "vardef": 4
+        }
+    },
+    {
+        "pk": 5,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 1,
+            "vardef": 5
+        }
+    },
+    {
+        "pk": 6,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 1,
+            "vardef": 6
+        }
+    },
+    {
+        "pk": 7,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 2,
+            "vardef": 1
+        }
+    },
+    {
+        "pk": 8,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 2,
+            "vardef": 2
+        }
+    },
+    {
+        "pk": 9,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 2,
+            "vardef": 3
+        }
+    },
+    {
+        "pk": 10,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 2,
+            "vardef": 4
+        }
+    },
+    {
+        "pk": 11,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 2,
+            "vardef": 5
+        }
+    },
+    {
+        "pk": 12,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 2,
+            "vardef": 6
+        }
+    },
+    {
+        "pk": 1,
+        "model": "platform.xhtml",
+        "fields": {
+            "code": "<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n    <head>\n        <meta http-equiv=\"Content-Type\" content=\"application/xhtml+xml; charset=UTF-8\"></meta>\n        <title>Test</title>\n        <style type=\"text/css\">\n\n            #send {\n                white-space: nowrap;\n            }\n\n            .title {\n                white-space: nowrap;\n                margin-top: 7px;\n                margin-bottom: 2px;\n                display: block;\n                width: 100%;\n                font-weight: bold;\n            }\n\n            .content {\n                display:block;\n                min-height: 20px;\n                padding: 2px;\n                border:2px solid #4c5054;\n                background-color:#ccffcc;\n            }\n\n            input {\n                width:200px;\n                display:inline;\n            }\n\n            button {\n                display:inline;\n            }\n\n            body {\n                padding-left:5px;\n                padding-right:5px;\n            }\n        </style>\n        <script language=\"javascript\">\n            function _PrefHandler(new_values) {\n                if ('list' in new_values) {\n                    document.getElementById(\"listPref\").textContent = new_values.list;\n                }\n                if ('text' in new_values) {\n                    document.getElementById(\"textPref\").textContent = new_values.text;\n                }\n                if ('boolean' in new_values) {\n                    document.getElementById(\"booleanPref\").textContent = new_values['boolean'];\n                }\n                if ('password' in new_values) {\n                    document.getElementById(\"passwordPref\").textContent = new_values.password;\n                }\n            }\n\n            function _wiringOutHandler(value) {\n                document.getElementById(\"wiringOut\").textContent = value;\n            }\n\n            function sendEvent() {\n                MashupPlatform.wiring.pushEvent('outputendpoint', document.getElementById(\"textWiringIn\").value);\n                document.getElementById(\"textWiringIn\").value = \"\";\n            }\n\n            MashupPlatform.wiring.registerCallback('inputendpoint', _wiringOutHandler);\n            MashupPlatform.pref.registerCallback(_PrefHandler);\n\n            function init() {\n                document.getElementById(\"listPref\").textContent = MashupPlatform.pref.get('list');\n                document.getElementById(\"textPref\").textContent = MashupPlatform.pref.get('text');\n                document.getElementById(\"booleanPref\").textContent = MashupPlatform.pref.get('boolean');\n                document.getElementById(\"passwordPref\").textContent = MashupPlatform.pref.get('password');\n            }\n        </script>\n    </head>\n    <body onload=\"init();\">\n        <div class=\"title\">List Pref:</div>\n        <div class=\"content\" id=\"listPref\"></div>\n        <div class=\"title\">Text Pref:</div>\n        <div class=\"content\" id=\"textPref\"></div>\n        <div class=\"title\">Boolean Pref:</div>\n        <div class=\"content\" id=\"booleanPref\"></div>\n        <div class=\"title\">Password Pref:</div>\n        <div class=\"content\" id=\"passwordPref\"></div>\n        <div class=\"title\">Send event:</div>\n        <div id=\"send\">\n            <input class=\"text_field\" type=\"text\" id=\"textWiringIn\"/>\n            <button id='b1' onclick=\"sendEvent();\">Send</button>\n        </div>\n        <div class=\"title\">Last received event:</div>\n        <div class=\"content\" id=\"wiringOut\"></div>\n    </body>\n</html>\n",
+            "url": "Wirecloud/Test/1.0/test.html",
+            "uri": "Wirecloud/Test/1.0/xhtml",
+            "cacheable": true,
+            "content_type": "text/html",
+            "code_timestamp": 1361355679962,
+            "use_platform_style": false
+        }
+    },
+    {
+        "pk": 1,
+        "model": "platform.widget",
+        "fields": {
+            "width": 6,
+            "xhtml": 1,
+            "resource": 14,
+            "height": 24
+        }
+    },
+    {
+        "pk": 1,
+        "model": "platform.variabledef",
+        "fields": {
+            "default_value": "default",
+            "action_label": null,
+            "widget": 1,
+            "name": "list",
+            "description": "list preference",
+            "label": "list",
+            "aspect": "PREF",
+            "friend_code": null,
+            "type": "L",
+            "order": 0,
+            "secure": false
+        }
+    },
+    {
+        "pk": 2,
+        "model": "platform.variabledef",
+        "fields": {
+            "default_value": "initial text",
+            "action_label": null,
+            "widget": 1,
+            "name": "text",
+            "description": "text preference",
+            "label": "text",
+            "aspect": "PREF",
+            "friend_code": null,
+            "type": "S",
+            "order": 1,
+            "secure": false
+        }
+    },
+    {
+        "pk": 3,
+        "model": "platform.variabledef",
+        "fields": {
+            "default_value": "false",
+            "action_label": null,
+            "widget": 1,
+            "name": "boolean",
+            "description": "boolean preference",
+            "label": "boolean",
+            "aspect": "PREF",
+            "friend_code": null,
+            "type": "B",
+            "order": 2,
+            "secure": false
+        }
+    },
+    {
+        "pk": 4,
+        "model": "platform.variabledef",
+        "fields": {
+            "default_value": "default",
+            "action_label": null,
+            "widget": 1,
+            "name": "password",
+            "description": "password preference",
+            "label": "password",
+            "aspect": "PREF",
+            "friend_code": null,
+            "type": "P",
+            "order": 3,
+            "secure": false
+        }
+    },
+    {
+        "pk": 5,
+        "model": "platform.variabledef",
+        "fields": {
+            "default_value": null,
+            "action_label": "",
+            "widget": 1,
+            "name": "inputendpoint",
+            "description": "",
+            "label": "Input",
+            "aspect": "SLOT",
+            "friend_code": "test-data",
+            "type": "S",
+            "order": 0,
+            "secure": false
+        }
+    },
+    {
+        "pk": 6,
+        "model": "platform.variabledef",
+        "fields": {
+            "default_value": null,
+            "action_label": null,
+            "widget": 1,
+            "name": "outputendpoint",
+            "description": "",
+            "label": "Output",
+            "aspect": "EVEN",
+            "friend_code": "test-data",
+            "type": "S",
+            "order": 0,
+            "secure": false
+        }
+    },
+    {
+        "pk": 1,
+        "model": "platform.userprefoption",
+        "fields": {
+            "variableDef": 1,
+            "name": "Default",
+            "value": "default"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "platform.userprefoption",
+        "fields": {
+            "variableDef": 1,
+            "name": "value1",
+            "value": "1"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "platform.userprefoption",
+        "fields": {
+            "variableDef": 1,
+            "name": "value2",
+            "value": "2"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "platform.tab",
+        "fields": {
+            "visible": true,
+            "name": "Tab",
+            "workspace": 2,
+            "position": 0
+        }
+    },
+    {
+        "pk": 2,
+        "model": "platform.workspace",
+        "fields": {
+            "forcedValues": "",
+            "wiringStatus": "{\"views\":[{\"label\":\"default\",\"iwidgets\":{\"1\":{\"widget\":{\"posX\":84,\"posY\":44},\"endPointsInOuts\":{\"sources\":[\"outputendpoint\"],\"targets\":[\"inputendpoint\"]}},\"2\":{\"widget\":{\"posX\":84,\"posY\":153},\"endPointsInOuts\":{\"sources\":[\"outputendpoint\"],\"targets\":[\"inputendpoint\"]}}},\"operators\":{},\"multiconnectors\":{},\"connections\":[{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null},{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null}]}],\"operators\":{},\"connections\":[{\"source\":{\"type\":\"iwidget\",\"id\":1,\"endpoint\":\"outputendpoint\"},\"target\":{\"type\":\"iwidget\",\"id\":2,\"endpoint\":\"inputendpoint\"}},{\"source\":{\"type\":\"iwidget\",\"id\":2,\"endpoint\":\"outputendpoint\"},\"target\":{\"type\":\"iwidget\",\"id\":1,\"endpoint\":\"inputendpoint\"}}]}",
+            "name": "Workspace",
+            "targetOrganizations": [],
+            "creator": 4
+        }
+    },
+    {
+        "pk": 2,
+        "model": "platform.userworkspace",
+        "fields": {
+            "active": true,
+            "reason_ref": "",
+            "manager": "",
+            "user": 4,
+            "workspace": 2
+        }
+    },
+    {
+        "pk": 1,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 1,
+            "user": 4,
+            "value": "default"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 2,
+            "user": 4,
+            "value": "initial text"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 3,
+            "user": 4,
+            "value": "false"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 4,
+            "user": 4,
+            "value": "default"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 7,
+            "user": 4,
+            "value": "default"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 8,
+            "user": 4,
+            "value": "initial text"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 9,
+            "user": 4,
+            "value": "false"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 10,
+            "user": 4,
+            "value": "default"
+        }
+    }
+]
