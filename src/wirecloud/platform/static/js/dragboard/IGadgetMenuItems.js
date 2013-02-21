@@ -60,6 +60,13 @@
             }.bind(this.iWidget)
         ));
 
+        items.push(new StyledElements.MenuItem(
+            gettext("User's Manual"),
+            function () {
+                window.open(this.widget.getUriWiki(), '_blank');
+            }.bind(this.iWidget)
+        ));
+
         if (this.iWidget.isInFullDragboardMode()) {
             fulldragboard_label = gettext("Exit Full Dragboard");
         } else {

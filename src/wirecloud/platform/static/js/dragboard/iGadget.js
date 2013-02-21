@@ -120,7 +120,6 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
     this.iwidgetNameHTMLElement = null;
     this.iwidgetInputHTMLElement = null;
     this.statusBar = null;
-    this.extractButton = null;
 
     // Icon element for the iconified mode
     this.iconElement = null;
@@ -512,26 +511,6 @@ IWidget.prototype.build = function () {
     this.statusBar.appendChild(resizeHandle);
     this.rightResizeHandleElement = resizeHandle;
     this.rightResizeHandle = new IWidgetResizeHandle(resizeHandle, this, false);
-
-    // extract/snap button
-    this.extractButton = document.createElement("div");
-    Element.extend(this.extractButton);
-    this.extractButton.className = "button";
-    this.extractButton.observe("click",
-        function () {
-            this.toggleLayout();
-        }.bind(this),
-        false);
-    this.statusBar.appendChild(this.extractButton);
-
-    // wikilink
-    this.wikilink = document.createElement('a');
-    Element.extend(this.wikilink);
-    this.wikilink.addClassName('dragboardwiki button');
-    this.wikilink.href = this.internal_iwidget.widget.getUriWiki();
-    this.wikilink.setAttribute('target', '_blank');
-    this.wikilink.setAttribute('title', gettext('Access to Information'));
-    this.statusBar.appendChild(this.wikilink);
 
     // Icon Element
     this.iconElement = document.createElement("div");
