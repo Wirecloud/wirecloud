@@ -60,12 +60,12 @@
             this.arrowCreator = null;
         }
         this.header = document.createElement("div");
-        this.header.addClassName("header");
+        this.header.classList.add('header');
         this.wrapperElement.appendChild(this.header);
 
         //widget name
         this.nameElement = document.createElement("span");
-        this.nameElement.setTextContent(title);
+        this.nameElement.textContent = title;
         this.header.appendChild(this.nameElement);
 
         // close button, not for miniInterface
@@ -99,9 +99,9 @@
 
         //sources and targets for the widget
         this.sourceDiv = document.createElement("div");
-        this.sourceDiv.addClassName("sources");
+        this.sourceDiv.classList.add("sources");
         this.targetDiv = document.createElement("div");
-        this.targetDiv.addClassName("targets");
+        this.targetDiv.classList.add("targets");
         this.resourcesDiv = document.createElement("div");
         this.resourcesDiv.appendChild(this.targetDiv);
         this.resourcesDiv.appendChild(this.sourceDiv);
@@ -153,7 +153,15 @@
     /*************************************************************************
      * Private methods
      *************************************************************************/
+    var getElementPos = function getElementPos(elemList, elem) {
+        var i;
 
+        for (i = 0; i < elemList.length; i++){
+            if(elem == elemList[i]) {
+                return i;
+            }
+        }
+    };
     /*************************************************************************
      * Public methods
      *************************************************************************/
@@ -228,9 +236,9 @@
                     context.y = pos_miniwidget.top - gridbounds.top;
                     context.x = pos_miniwidget.left - gridbounds.left;
                     //create clon
-                    context.iObject.wrapperElement.addClassName('moving');
+                    context.iObject.wrapperElement.classList.add('moving');
                     clon = context.iObject.wrapperElement.cloneNode(true);
-                    clon.addClassName(className);
+                    clon.classList.add(className);
                     // put the clon in place
                     place.wrapperElement.appendChild(clon);
                     //set the clon position over the originar miniWidget
@@ -245,7 +253,7 @@
                     context.refHeigthUp = context.refHeigth;
                     context.refHeigthDown = context.refHeigth;
                     childsN = context.iObject.wrapperElement.parentNode.childElementCount;
-                    childPos = context.iObject.wrapperElement.parentNode.childElements().indexOf(context.iObject.wrapperElement);
+                    childPos = getElementPos(context.iObject.wrapperElement.parentNode.children, context.iObject.wrapperElement);
                     context.maxUps = childPos;
                     context.maxDowns = childsN - (childPos + 1);
                 },
@@ -271,7 +279,7 @@
                     }
                 },
                 function onFinish(draggable, context, e) {
-                    context.iObject.wrapperElement.removeClassName('moving');
+                    context.iObject.wrapperElement.classList.remove('moving');
                     if (context.iObjectClon.parentNode) {
                         context.iObjectClon.parentNode.removeChild(context.iObjectClon);
                     }
@@ -374,7 +382,7 @@
         anchorDiv.setAttribute('title', desc);
         //anchor visible label
         anchorLabel = document.createElement("span");
-        anchorLabel.setTextContent(label);
+        anchorLabel.textContent = label;
 
         labelDiv = document.createElement("div");
         anchorDiv.appendChild(labelDiv);
@@ -458,7 +466,7 @@
         anchorDiv.setAttribute('title', desc);
         //anchor visible label
         anchorLabel = document.createElement("span");
-        anchorLabel.setTextContent(label);
+        anchorLabel.textContent= label;
 
         labelDiv = document.createElement("div");
         anchorDiv.appendChild(labelDiv);
@@ -617,7 +625,7 @@
      * Destroy
      */
     GenericInterface.prototype.destroy = function destroy() {
-        var i, j, arrows, className;
+        var i, j, arrows, cList;
 
         this.unselect();
         if (this.editingPos === true) {
@@ -626,14 +634,14 @@
         StyledElements.Container.prototype.destroy.call(this);
 
         for (i = 0; i < this.sourceAnchors.length; i += 1) {
-            arrows = this.sourceAnchors[i].arrows.clone();
+            arrows = this.sourceAnchors[i].arrows.slice(0);
             for (j = 0; j < arrows.length; j += 1) {
-                className = arrows[j].wrapperElement.getAttribute('class');
-                if (!className.include('multiconnector_arrow')) {
+                cList = arrows[j].wrapperElement.classList;
+                if (!cList.contains('multiconnector_arrow')) {
                     arrows[j].destroy();
                 } else {
                     this.wiringEditor.removeMulticonnector(this.wiringEditor.multiconnectors[arrows[j].multiId]);
-                    arrows = this.sourceAnchors[i].arrows.clone();
+                    arrows = this.sourceAnchors[i].arrows.slice(0);
                     j = 0;
                 }
             }
@@ -641,14 +649,14 @@
         }
 
         for (i = 0; i < this.targetAnchors.length; i += 1) {
-            arrows = this.targetAnchors[i].arrows.clone();
+            arrows = this.targetAnchors[i].arrows.slice(0);
             for (j = 0; j < arrows.length; j += 1) {
-                className = arrows[j].wrapperElement.getAttribute('class');
-                if (!className.include('multiconnector_arrow')) {
+                cList = arrows[j].wrapperElement.classList;
+                if (!cList.contains('multiconnector_arrow')) {
                     arrows[j].destroy();
                 } else {
                     this.wiringEditor.removeMulticonnector(this.wiringEditor.multiconnectors[arrows[j].multiId]);
-                    arrows = this.targetAnchors[i].arrows.clone();
+                    arrows = this.targetAnchors[i].arrows.slice(0);
                     j = 0;
                 }
             }
@@ -686,8 +694,8 @@
     GenericInterface.prototype.enableEdit = function enableEdit() {
         this.draggable.destroy();
         this.editingPos = true;
-        this.sourceDiv.addClassName("editing");
-        this.targetDiv.addClassName("editing");
+        this.sourceDiv.classList.add("editing");
+        this.targetDiv.classList.add("editing");
         this.addClassName("editing");
         this.makeSlotsDraggable();
     };
@@ -700,8 +708,8 @@
 
         this.makeDraggable();
         this.editingPos = false;
-        this.sourceDiv.removeClassName("editing");
-        this.targetDiv.removeClassName("editing");
+        this.sourceDiv.classList.remove("editing");
+        this.targetDiv.classList.remove("editing");
         this.removeClassName("editing");
         for (i = 0; i < this.draggableSources.length; i ++) {
             this.draggableSources[i].draggable.destroy();
