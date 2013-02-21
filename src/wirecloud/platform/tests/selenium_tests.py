@@ -83,9 +83,9 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     def test_basic_widget_functionalities(self):
 
         self.login()
-        self.add_widget_to_mashup('Test')
+        iwidget_id = self.add_widget_to_mashup('Test')['id']
 
-        with widget_operation(self.driver, 1):
+        with widget_operation(self.driver, iwidget_id):
             self.assertEqual(self.driver.find_element_by_id('listPref').text, 'default')
             self.assertEqual(self.driver.find_element_by_id('textPref').text, 'initial text')
             self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'false')
@@ -106,7 +106,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 
-        with widget_operation(self.driver, 1):
+        with widget_operation(self.driver, iwidget_id):
             self.assertEqual(self.driver.find_element_by_id('listPref').text, '1')
             self.assertEqual(self.driver.find_element_by_id('textPref').text, 'test')
             self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'true')
@@ -123,7 +123,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 
-        with widget_operation(self.driver, 1):
+        with widget_operation(self.driver, iwidget_id):
             self.assertEqual(self.driver.find_element_by_id('listPref').text, '1')
             self.assertEqual(self.driver.find_element_by_id('textPref').text, '')
             self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'true')
@@ -202,8 +202,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         tab2.click()
         tab.click()
 
+        iwidgets = self.get_current_iwidgets()
+
         # Send wiring event
-        with widget_operation(self.driver, 1):
+        with widget_operation(self.driver, iwidgets[0]['id']):
             text_input = self.driver.find_element_by_tag_name('input')
             self.fill_form_input(text_input, 'hello world!!')
             # Work around hang when using Firefox Driver
@@ -214,7 +216,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Check event is received by the second test widget
         tab2.click()
-        with widget_operation(self.driver, 2):
+        with widget_operation(self.driver, iwidgets[1]['id']):
             try:
                 WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
             except:

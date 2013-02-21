@@ -435,20 +435,27 @@ class WirecloudRemoteTestCase(object):
 
         return None
 
+    def get_current_iwidgets(self):
+        iwidget_ids = self.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
+        iwidget_elements = self.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.element;});')
+
+        return [{'id': iwidget_ids[i], 'element': iwidget_elements[i]} for i in range(len(iwidget_ids))]
+
     def instantiate(self, resource):
-        old_iwidget_ids = [iwidget.id for iwidget in self.driver.find_elements_by_css_selector('div.iwidget')]
+
+        old_iwidget_ids = self.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
         old_iwidget_count = len(old_iwidget_ids)
         resource.find_element_by_css_selector('.instantiate_button div').click()
 
         # TODO
         time.sleep(2)
 
-        iwidgets = self.driver.find_elements_by_css_selector('div.iwidget')
+        iwidgets = self.get_current_iwidgets()
         iwidget_count = len(iwidgets)
         self.assertEqual(iwidget_count, old_iwidget_count + 1)
 
         for iwidget in iwidgets:
-            if iwidget.id not in old_iwidget_ids:
+            if iwidget['id'] not in old_iwidget_ids:
                 return iwidget
 
     def add_widget_to_mashup(self, widget_name, market=None, new_name=None):
@@ -462,11 +469,13 @@ class WirecloudRemoteTestCase(object):
         iwidget = self.instantiate(resource)
 
         if new_name is not None:
-            self.wait_element_visible_by_css_selector('.widget_menu > span', element=iwidget).click()
-            name_input = iwidget.find_element_by_css_selector('.widget_menu > input.iwidget_name')
+            self.wait_element_visible_by_css_selector('.widget_menu > span', element=iwidget['element']).click()
+            name_input = iwidget['element'].find_element_by_css_selector('.widget_menu > input.iwidget_name')
             self.fill_form_input(name_input, new_name)
             time.sleep(0.1)
-            iwidget.find_element_by_css_selector('.statusBar').click()
+            iwidget['element'].find_element_by_css_selector('.statusBar').click()
+
+        return iwidget
 
     def create_workspace_from_catalogue(self, mashup_name):
 
