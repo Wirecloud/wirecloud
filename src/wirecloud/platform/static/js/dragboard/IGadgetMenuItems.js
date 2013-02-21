@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     (C) Copyright 2012-2013 Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,67 +19,74 @@
  *
  */
 
-/*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50, prototypejs: true */
-/*global gettext, LayoutManagerFactory, StyledElements*/
+/*global gettext, StyledElements, Wirecloud*/
 
-var IWidgetMenuItems = function (iWidget) {
-    StyledElements.DynamicMenuItems.call(this);
+(function () {
 
-    this.iWidget = iWidget;
-    this.has_prefs = iWidget.widget.getTemplate().getUserPrefs().length > 0;
-};
-IWidgetMenuItems.prototype = new StyledElements.DynamicMenuItems();
+    "use strict";
 
-IWidgetMenuItems.prototype.build = function () {
-    var items, fulldragboard_label, layout_label;
+    var IWidgetMenuItems = function IWidgetMenuItems(iWidget) {
+        StyledElements.DynamicMenuItems.call(this);
 
-    items = [];
+        this.iWidget = iWidget;
+        this.has_prefs = iWidget.widget.getTemplate().getUserPrefs().length > 0;
+    };
+    IWidgetMenuItems.prototype = new StyledElements.DynamicMenuItems();
 
-    if (this.has_prefs) {
+    IWidgetMenuItems.prototype.build = function () {
+        var items, fulldragboard_label, layout_label;
+
+        items = [];
+
+        if (this.has_prefs) {
+            items.push(new StyledElements.MenuItem(
+                gettext("Settings"),
+                function () {
+                    var prueba = new Wirecloud.Widget.PreferencesWindowMenu();
+                    prueba.show(this);
+                }.bind(this.iWidget)
+            ));
+        }
+
         items.push(new StyledElements.MenuItem(
-            gettext("Settings"),
+            gettext("Reload"),
             function () {
-                var prueba = new Wirecloud.Widget.PreferencesWindowMenu();
-                prueba.show(this);
+                if ('data' in this.content) {
+                    this.contentWrapper.removeChild(this.content);
+                    this.contentWrapper.appendChild(this.content);
+                } else {
+                    this.content.src = this.codeURL;
+                }
             }.bind(this.iWidget)
         ));
-    }
 
-    items.push(new StyledElements.MenuItem(
-        gettext("Reload"),
-        function () {
-            if ('data' in this.content) {
-                this.contentWrapper.removeChild(this.content);
-                this.contentWrapper.appendChild(this.content);
-            } else {
-                this.content.src = this.codeURL;
-            }
-        }.bind(this.iWidget)
-    ));
-
-    if (this.iWidget.isInFullDragboardMode()) {
-        fulldragboard_label = gettext("Exit Full Dragboard");
-    } else {
-        fulldragboard_label = gettext("Full Dragboard");
-    }
-    items.push(new StyledElements.MenuItem(
-        fulldragboard_label,
-        function () {
-            this.setFullDragboardMode(!this.isInFullDragboardMode());
-        }.bind(this.iWidget)
-    ));
-
-    if (!this.iWidget.isInFullDragboardMode()) {
-        if (this.iWidget.onFreeLayout()) {
-            layout_label = gettext("Snap to grid");
+        if (this.iWidget.isInFullDragboardMode()) {
+            fulldragboard_label = gettext("Exit Full Dragboard");
         } else {
-            layout_label = gettext("Extract from grid");
+            fulldragboard_label = gettext("Full Dragboard");
         }
         items.push(new StyledElements.MenuItem(
-            layout_label,
-            this.iWidget.toggleLayout.bind(this.iWidget)
+            fulldragboard_label,
+            function () {
+                this.setFullDragboardMode(!this.isInFullDragboardMode());
+            }.bind(this.iWidget)
         ));
-    }
 
-    return items;
-};
+        if (!this.iWidget.isInFullDragboardMode()) {
+            if (this.iWidget.onFreeLayout()) {
+                layout_label = gettext("Snap to grid");
+            } else {
+                layout_label = gettext("Extract from grid");
+            }
+            items.push(new StyledElements.MenuItem(
+                layout_label,
+                this.iWidget.toggleLayout.bind(this.iWidget)
+            ));
+        }
+
+        return items;
+    };
+
+    window.IWidgetMenuItems = IWidgetMenuItems;
+
+})();
