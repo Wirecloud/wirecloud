@@ -445,23 +445,6 @@ class USDLTemplateParser(object):
 
         self._info['context'] = []
 
-        context_element = self._get_field(WIRE, 'hasContext', self._rootURI, id_=True, required=False)
-
-        for wcontext in self._graph.objects(context_element, WIRE['hasWidgetContext']):
-            self._info['context'].append({
-                'name': self._get_field(DCTERMS, 'title', wcontext, required=False),
-                'type': self._get_field(WIRE, 'type', wcontext, required=False),
-                'concept': self._get_field(WIRE, 'widgetContextConcept', wcontext, required=False),
-                'aspect': 'GCTX',
-            })
-        for pcontext in self._graph.objects(context_element, WIRE['hasPlatformContext']):
-            self._info['context'].append({
-                'name': self._get_field(DCTERMS, 'title', pcontext, required=False),
-                'type': self._get_field(WIRE, 'type', pcontext, required=False),
-                'concept': self._get_field(WIRE, 'platformContextConcept', pcontext, required=False),
-                'aspect': 'ECTX',
-            })
-
         if self._info['type'] == 'widget':
             # It contains the widget code
             xhtml_element = self._get_field(USDL, 'utilizedResource', self._rootURI, id_=True)

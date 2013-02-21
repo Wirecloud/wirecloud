@@ -78,11 +78,6 @@
 			</wire:PlatformRendering>
 		</wire:hasPlatformRendering>
 
-		<wire:hasContext>
-			<wire:Context>
-			</wire:Context>
-		</wire:hasContext>
-
 	</wire:Widget>
 
 

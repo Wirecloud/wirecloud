@@ -85,39 +85,6 @@
         </wire:PlatformRendering>
     </wire:hasPlatformRendering>
 
-    <wire:hasContext>
-        <wire:Context>
-            <wire:hasPlatformContext>
-                <wire:PlatformContext rdf:ID="Context_1">
-                    <dcterms:title>language</dcterms:title>
-                    <wire:type>text</wire:type>
-                    <wire:platformContextConcept>language</wire:platformContextConcept>
-                </wire:PlatformContext>
-            </wire:hasPlatformContext>
-            <wire:hasPlatformContext>
-                <wire:PlatformContext rdf:ID="Context_2">
-                    <dcterms:title>user</dcterms:title>
-                    <wire:type>text</wire:type>
-                    <wire:platformContextConcept>username</wire:platformContextConcept>
-                </wire:PlatformContext>
-            </wire:hasPlatformContext>
-            <wire:hasWidgetContext>
-                <wire:WidgetContext rdf:ID="WidgetContext_1">
-                    <dcterms:title>lockStatus</dcterms:title>
-                    <wire:type>text</wire:type>
-                    <wire:widgetContextConcept>lockStatus</wire:widgetContextConcept>
-                </wire:WidgetContext>
-            </wire:hasWidgetContext>
-            <wire:hasWidgetContext>
-                <wire:WidgetContext rdf:ID="WidgetContext_2">
-                    <dcterms:title>width</dcterms:title>
-                    <wire:type>text</wire:type>
-                    <wire:widgetContextConcept>widthInPixels</wire:widgetContextConcept>
-                </wire:WidgetContext>
-            </wire:hasWidgetContext>
-        </wire:Context>
-    </wire:hasContext>
-
 </wire:Widget>
 
 <foaf:Person rdf:about="http://creatoruri/">
