@@ -37,7 +37,6 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/dragboard/ElementPositions.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/connectable.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/Wiring.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/Operator.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/MarketplaceViewMenuItems.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/MarketplaceView.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/CatalogueResource.js"></script>
