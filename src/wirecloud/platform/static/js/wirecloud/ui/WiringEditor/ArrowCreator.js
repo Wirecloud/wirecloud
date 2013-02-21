@@ -20,8 +20,7 @@
  *
  */
 
-/*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50, prototypejs: true */
-/*global BrowserUtilsFactory, Wirecloud */
+/*global Draggable, Wirecloud */
 
 (function () {
 
@@ -50,7 +49,8 @@
          */
         this.startdrag = function startdrag(e, initAnchor) {
             var tmpPos, xStart, yStart;
-            if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
+            // Only process left mouse button events
+            if (e.button !== 0) {
                 return;
             }
 
@@ -130,7 +130,8 @@
          * enddrag, last step to draw a dragable arrow.
          */
         this.enddrag = function enddrag(e, fAnchor) {
-            if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
+            // Only process left mouse button events
+            if (e.button !== 0) {
                 return;
             }
             if (fAnchor !== this.initAnchor) {

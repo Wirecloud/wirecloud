@@ -20,7 +20,7 @@
  *
  */
 
-/*global Draggable, BrowserUtilsFactory, EzWebExt, Wirecloud, Event, EzWebEffectBase, Element */
+/*global Draggable, EzWebExt, Wirecloud, Event, EzWebEffectBase, Element */
 
 (function () {
 
@@ -50,7 +50,8 @@
         this.arrowBodyElement.appendChild(this.arrowElement);
 
         this.arrowBodyElement.addEventListener('click', function (e) {
-            if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
+            // Only process left mouse button events
+            if (e.button !== 0) {
                 return;
             }
             e.stopPropagation();
@@ -65,7 +66,8 @@
         this.closerElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
         this.closerElement.setAttribute('class', 'closer');
         this.closerElement.addEventListener('click', function (e) {
-            if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
+            // Only process left mouse button events
+            if (e.button !== 0) {
                 return;
             }
             this.destroy();

@@ -41,11 +41,11 @@
         this.wiringEditor = wiringEditor;
         this.initAnchor = initAnchor;
         this.mainElement = document.createElement("div");
-        this.mainElement.addClassName('mainElement');
+        this.mainElement.classList.add('mainElement');
         this.statusBar = document.createElement("div");
-        this.statusBar.addClassName('statusBar');
+        this.statusBar.classList.add('statusBar');
         this.menuBar = document.createElement("div");
-        this.menuBar.addClassName('menuBar');
+        this.menuBar.classList.add('menuBar');
         this.arrows = [];
         this.layer = layer;
         this.height = height;
@@ -88,17 +88,17 @@
                 //60 px initial distane between widget and multionnector + 30 px for the multiconnector width
                 coord.posX -= (60 + 30);
             }
-            this.wrapperElement.addClassName('target');
+            this.wrapperElement.classList.add('target');
             mainAnchor = new Wirecloud.ui.WiringEditor.TargetAnchor(initAnchor.context, initAnchor.context.iObject.arrowCreator);
         } else {
             if (endPos == null) {
                 //60 px initial distane between widget and multionnector
                 coord.posX += 60;
             }
-            this.wrapperElement.addClassName('source');
+            this.wrapperElement.classList.add('source');
             mainAnchor = new Wirecloud.ui.WiringEditor.SourceAnchor(initAnchor.context, initAnchor.context.iObject.arrowCreator);
         }
-        mainAnchor.wrapperElement.addClassName('main');
+        mainAnchor.wrapperElement.classList.add('main');
 
         //put this main anchor in the middle
         mainAnchor.wrapperElement.style.top = ((height - 20) / 2) + 'px';
@@ -115,7 +115,7 @@
         });
 
         this.movZone = document.createElement("div");
-        this.movZone.addClassName('dragZone');
+        this.movZone.classList.add('dragZone');
         this.movZone.style.top = (((height - 20) / 2) + 2) + 'px';
         this.mainElement.appendChild(this.movZone);
 
@@ -322,20 +322,20 @@
      */
     Multiconnector.prototype.stick = function stick() {
         return this.getCoordinates(null, true);
-    }
+    };
 
     /**
      * unstick arrow
      */
     Multiconnector.prototype.unstick = function unstick() {
-        if(this.sticky != null) {
+        if (this.sticky != null) {
             this.arrowPositions[this.sticky].free = true;
             this.sticky = null;
             this.resize(-15);
         } else {
             //changing endpoints positions or bug
         }
-    }
+    };
 
     /**
      * get the coordinates to put an arrow in the multiconnector
@@ -351,7 +351,7 @@
             }
             if (this.arrowPositions[i].free) {
                 this.arrowPositions[i].free = false;
-                if (sticky){
+                if (sticky) {
                     this.sticky = i;
                     return this.arrowPositions[i].coord;
                 }
