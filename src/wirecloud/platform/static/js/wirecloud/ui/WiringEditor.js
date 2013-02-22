@@ -67,7 +67,7 @@ if (!Wirecloud.ui) {
 
         // Title
         var pTitle = document.createElement('h4');
-        pTitle.setTextContent(gettext("Welcome to the Wiring Editor view!"));
+        pTitle.textContent = gettext("Welcome to the Wiring Editor view!");
         this.emptyBox.appendChild(pTitle);
 
         // Message
