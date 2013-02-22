@@ -622,6 +622,10 @@ StyledGadget.prototype.init = function() {
     search_button = new StyledElements.StyledButton({\n\
         text: 'Search'\n\
     });\n\
+    search_button.addEventListener('click', function () {\n\
+        table.pagination.changeOptions({'keywords': text_input.getValue()});\n\
+    });\n\
+    \n\
     south_layout.getEastContainer().appendChild(search_button);\n\
 \n\
     table.pagination.changeElements([\n\
