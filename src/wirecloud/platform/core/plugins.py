@@ -249,3 +249,8 @@ class WirecloudCorePlugin(WirecloudPlugin):
             return common + WORKSPACE_CSS + WIRING_EDITOR_CSS + CATALOGUE_CSS
         else:
             return common
+
+    def get_widget_api_extensions(self, view):
+        return (
+            'js/WirecloudAPI/StyledElements.js',
+        )
