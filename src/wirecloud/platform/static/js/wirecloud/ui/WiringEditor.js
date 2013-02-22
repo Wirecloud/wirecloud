@@ -66,7 +66,7 @@ if (!Wirecloud.ui) {
         this.emptyBox.classList.add('alert-block');
         // Title
         var pTitle = document.createElement('h4');
-        pTitle.setTextContent(gettext("Welcome to the Wiring Editor view!"));
+        pTitle.textContent = gettext("Welcome to the Wiring Editor view!");
         this.emptyBox.appendChild(pTitle);
         // Message
         var message = document.createElement('p');
