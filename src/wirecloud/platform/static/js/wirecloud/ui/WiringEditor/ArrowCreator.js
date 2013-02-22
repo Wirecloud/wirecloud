@@ -28,7 +28,7 @@
     /*************************************************************************
      * Constructor
      *************************************************************************/
-    /*
+    /**
      * ArrowCreator.
      */
     var ArrowCreator = function ArrowCreator(canvas, data, onStart, onDrag, onFinish, canBeDragged) {

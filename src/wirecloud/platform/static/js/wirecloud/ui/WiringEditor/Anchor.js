@@ -22,7 +22,6 @@
 
 /*global Coordinates, CSSPrimitiveValue, StyledElements, Wirecloud */
 
-
 (function () {
 
     "use strict";
@@ -36,7 +35,7 @@
      * represented by a checkbox and used as target or source of arrows.
      *
      * @abstract
-     */
+    */
     var Anchor = function Anchor(extending, arrowCreator) {
 
         if (extending === true) {
@@ -186,7 +185,6 @@
     /*************************************************************************
      * Public methods
      *************************************************************************/
-
     /**
      * Retrieves the coordinates of this anchor relative to another HTML Element.
      *
@@ -205,7 +203,6 @@
             }
             parentNode = parentNode.parentNode;
         }
-
         return {
             posX: Math.round(coordinates.posX + (this.wrapperElement.offsetWidth / 2)),
             posY: Math.round(coordinates.posY + (this.wrapperElement.offsetWidth / 2))
@@ -234,12 +231,15 @@
     };
 
     /**
-     * @addArrow
+     * @add new Arrow in the Anchor
      */
     Anchor.prototype.addArrow = function addArrow(theArrow) {
         this.arrows.push(theArrow);
     };
 
+    /**
+     * @remove an Arrow from Anchor
+     */
     Anchor.prototype.removeArrow = function removeArrow(theArrow) {
         var index = this.arrows.indexOf(theArrow);
 
@@ -248,6 +248,9 @@
         }
     };
 
+    /**
+     * @highlight all Arrows from Anchor
+     */
     Anchor.prototype.highlightArrows = function highlightArrows() {
         var i;
 
@@ -256,6 +259,9 @@
         }
     };
 
+    /**
+     * @unhighlight all Arrows from Anchor
+     */
     Anchor.prototype.unhighlightArrows = function unhighlightArrows() {
         var i;
 
@@ -264,10 +270,16 @@
         }
     };
 
+    /**
+     * @serialize an Anchor
+     */
     Anchor.prototype.serialize = function serialize() {
         return this.context.data.serialize();
     };
 
+    /**
+     * @find selected arrow in Anchor
+     */
     Anchor.prototype.hasSelectedArrow = function hasSelectedArrow() {
         var arrow, i;
 
@@ -280,14 +292,23 @@
         return null;
     };
 
+    /**
+     * @return if the widget/operator is Highlighted
+     */
     Anchor.prototype.isHighlighted = function isHighlighted() {
         return this.context.iObject.highlighted;
     };
 
+    /**
+     * @return if the widget/operator is Emphasized
+     */
     Anchor.prototype.isEmphasize = function isEmphasize() {
         return this.context.iObject.selected;
     };
 
+    /**
+     * @destroy the anchor
+     */
     Anchor.prototype.destroy = function destroy() {
         StyledElements.StyledElement.prototype.destroy.call(this);
 

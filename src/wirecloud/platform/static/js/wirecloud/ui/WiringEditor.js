@@ -22,7 +22,7 @@
 
 /*global Constants, EzWebExt, LayoutManagerFactory, opManager, StyledElements, Wirecloud, gettext, Draggable */
 if (!Wirecloud.ui) {
-    // TODO this line should live in another file
+
     Wirecloud.ui = {};
 }
 
@@ -179,7 +179,10 @@ if (!Wirecloud.ui) {
         }
     };
 
-
+    /**
+     * @Private
+     * load wiring from status and workspace info
+     */
     var loadWiring = function loadWiring(workspace, WiringStatus) {
         var iwidgets, iwidget, key, i, widget_interface, miniwidget_interface, ioperators, operator,
             operator_interface, operator_instance, operatorKeys, connection, connectionView, startAnchor,
@@ -663,6 +666,7 @@ if (!Wirecloud.ui) {
         this.iwidgets[iwidget.getId()] = widget_interface;
 
         auxDiv = document.createElement('div');
+        //width and height to avoid scroll problems
         auxDiv.style.width = '2000px';
         auxDiv.style.height = '1000px';
         this.layout.getCenterContainer().appendChild(auxDiv);
@@ -702,7 +706,9 @@ if (!Wirecloud.ui) {
         }
 
         operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, instantiated_operator, this.arrowCreator, false, enpPointPos);
+
         auxDiv = document.createElement('div');
+        //width and height to avoid scroll problems
         auxDiv.style.width = '2000px';
         auxDiv.style.height = '1000px';
         this.layout.getCenterContainer().appendChild(auxDiv);

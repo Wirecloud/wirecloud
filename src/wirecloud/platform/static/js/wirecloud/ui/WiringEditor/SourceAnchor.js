@@ -30,7 +30,7 @@
     /*************************************************************************
      * Constructor SourceAnchor
      *************************************************************************/
-    /*
+    /**
      * SourceAnchor Class
      */
     var SourceAnchor = function SourceAnchor(context, arrowCreator) {
@@ -43,6 +43,9 @@
     /*************************************************************************
      * Public methods
      *************************************************************************/
+    /**
+     * repaint the SourceAnchor
+     */
     SourceAnchor.prototype.repaint = function repaint(temporal) {
         var i, coordinates;
 

@@ -29,7 +29,7 @@
     /*************************************************************************
      * Constructor
      *************************************************************************/
-    /*
+    /**
      * GenericInterface Class
      */
     var GenericInterface = function GenericInterface(extending, wiringEditor, title, manager, className, clone) {
@@ -569,6 +569,9 @@
         this.wrapperElement.setAttribute('class', EzWebExt.removeWord(atr, className));
     };
 
+    /**
+     * select this genericInterface
+     */
     GenericInterface.prototype.select = function select(withCtrl) {
         var i, j, arrows;
         if (this.hasClassName('disabled')) {
@@ -598,6 +601,9 @@
         this.wiringEditor.addSelectedObject(this);
     };
 
+    /**
+     * unselect this genericInterface
+     */
     GenericInterface.prototype.unselect = function unselect(withCtrl) {
         var i, j, arrows;
         this.selected = false;
@@ -785,7 +791,7 @@
 
 
     /*************************************************************************
-     * Make WidgetInterface public
+     * Make GenericInterface public
      *************************************************************************/
     Wirecloud.ui.WiringEditor.GenericInterface = GenericInterface;
 })();

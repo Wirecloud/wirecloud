@@ -172,7 +172,7 @@
         }
     };
 
-    /*
+    /**
      *  Set the Arrow end point.
      */
     Arrow.prototype.setEnd = function setEnd(end, anchor) {
@@ -189,7 +189,7 @@
         }
     };
 
-    /*
+    /**
      *  Get the Arrow pullerStart point.
      */
     Arrow.prototype.getPullerStart = function getPullerStart(absolute) {
@@ -222,7 +222,7 @@
         }
     };
 
-    /*
+    /**
      *  Get the Arrow pullerEnd point.
      */
     Arrow.prototype.getPullerEnd = function getPullerEnd(absolute) {
@@ -255,7 +255,7 @@
         }
     };
 
-    /*
+    /**
      *  Set the Arrow pullerStart point.
      */
     Arrow.prototype.setPullerStart = function setPullerStart(pStart) {
@@ -498,7 +498,7 @@
         this.end = null;
     };
 
-    /*
+    /**
      * disconnet the arrow
      */
     Arrow.prototype.disconnect = function disconnect() {

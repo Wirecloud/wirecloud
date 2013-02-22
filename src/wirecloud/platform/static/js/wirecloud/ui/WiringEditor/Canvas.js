@@ -98,7 +98,7 @@
         this.events.arrowremoved.dispatch(this, arrow);
     };
 
-    /*
+    /**
      * clean the svg canvas.
      */
     Canvas.prototype.clear = function clear() {
@@ -107,7 +107,7 @@
         }
     };
 
-    /*
+    /**
      * get the htmlElement of Canvas.
      */
     Canvas.prototype.getHTMLElement = function getHTMLElement() {

@@ -29,7 +29,7 @@
     /*************************************************************************
      * Constructor SourceAnchor
      *************************************************************************/
-    /*
+    /**
      * Multiconnector Class
      */
     var Multiconnector = function Multiconnector(id, objectId, sourceName, layer, wiringEditor, initAnchor, endPos, height) {
@@ -172,6 +172,9 @@
 
     Multiconnector.prototype = new Wirecloud.ui.WiringEditor.Anchor(true);
 
+    /**
+     * add the main arrow betwen the widget/operator and this multiconnector
+     */
     Multiconnector.prototype.addMainArrow = function addMainArrow(pullerStart, pullerEnd) {
         var arrow;
         if (this.initAnchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
@@ -206,7 +209,7 @@
 
 
     /**
-     * @addArrow
+     * @add an Arrow in Multiconnector
      */
     Multiconnector.prototype.addArrow = function addArrow(theArrow) {
         this.arrows.push(theArrow);
@@ -214,7 +217,7 @@
     };
 
     /**
-     * @addArrow
+     * @get the Multiconnector Id
      */
     Multiconnector.prototype.getId = function getId() {
         return this.id;
@@ -523,6 +526,9 @@
         this.wrapperElement.setAttribute('class', EzWebExt.removeWord(atr, className));
     };
 
+    /**
+     * select this Multiconnector
+     */
     Multiconnector.prototype.select = function select(withCtrl) {
         var i, arrows;
         if (this.hasClassName('selected')) {
@@ -542,6 +548,9 @@
         this.wiringEditor.addSelectedObject(this);
     };
 
+    /**
+     * unselect this Multiconnector
+     */
     Multiconnector.prototype.unselect = function unselect(withCtrl) {
         var i, arrows;
         this.selected = false;
@@ -581,7 +590,7 @@
     };
 
     /*************************************************************************
-     * Make SourceAnchor public
+     * Make Multiconnector public
      *************************************************************************/
     Wirecloud.ui.WiringEditor.Multiconnector = Multiconnector;
 })();
