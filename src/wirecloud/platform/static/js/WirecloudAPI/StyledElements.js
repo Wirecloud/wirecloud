@@ -32,6 +32,7 @@
         'StyledElement': window.parent.StyledElements.StyledElement,
         'StyledButton': window.parent.StyledElements.StyledButton,
         'StyledInputElement': window.parent.StyledElements.StyledInputElement,
+        'StyledList': window.parent.StyledElements.StyledList,
         'StyledTextField': window.parent.StyledElements.StyledTextField,
         'StyledPasswordField': window.parent.StyledElements.StyledPasswordField,
         'StyledSelect': window.parent.StyledElements.StyledSelect,
