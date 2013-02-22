@@ -78,6 +78,11 @@
                 }
                 return this.windowContent;
             }.bind(this),
+            'closebutton': function (options) {
+                var button = new StyledElements.StyledButton({text: 'x', plain: 'true', 'class': 'close'});
+                button.addEventListener('click', this._closeListener);
+                return button;
+            }.bind(this),
             'footer': function (options) {
                 this.windowBottom = document.createElement('div');
                 if (options && typeof options['class'] === 'string') {

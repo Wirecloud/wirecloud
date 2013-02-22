@@ -36,10 +36,6 @@
     content: '/';
 }
 
-.window_menu > .window_top > .closebutton {
-    float: right;
-}
-
 .window_menu > .window_content, .window_menu > .styled_form > div > table {
     margin-top: 2ex;
     clear: both;
