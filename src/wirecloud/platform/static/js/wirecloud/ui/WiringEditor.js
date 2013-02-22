@@ -1126,7 +1126,7 @@ if (!Wirecloud.ui) {
      * remove a iWidget.
      */
     WiringEditor.prototype.removeIWidget = function removeIWidget(widget_interface) {
-        var i, anchor, anchorList;
+        var i;
         widget_interface.unselect(false);
         delete this.iwidgets[widget_interface.getIWidget().getId()];
         this.layout.getCenterContainer().removeChild(widget_interface);
@@ -1156,7 +1156,7 @@ if (!Wirecloud.ui) {
      * remove a iOperator.
      */
     WiringEditor.prototype.removeIOperator = function removeIOperator(operator_interface) {
-        var i, anchor, anchorList;
+        var i;
         operator_interface.unselect(false);
         delete this.ioperators[operator_interface.getIOperator().id];
         this.layout.getCenterContainer().removeChild(operator_interface);
@@ -1386,7 +1386,7 @@ if (!Wirecloud.ui) {
         anchor.wrapperElement.parentNode.classList.add('highlight');
         anchor.wrapperElement.parentNode.classList.add(code);
     };
- 
+
      /**
       * unhighlight anchor.
       */
