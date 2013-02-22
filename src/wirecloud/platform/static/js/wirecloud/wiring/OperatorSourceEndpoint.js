@@ -19,25 +19,34 @@
  *
  */
 
-var OperatorSourceEndpoint = function OperatorSourceEndpoint(operator, meta) {
-    Object.defineProperty(this, 'meta', {value: meta});
-    Object.defineProperty(this, 'name', {value: meta.name});
-    Object.defineProperty(this, 'friendcode', {value: meta.friendcode});
-    Object.defineProperty(this, 'operator', {value: operator});
-    Object.defineProperty(this, 'label', {value: meta.label});
-    Object.defineProperty(this, 'description', {value: meta.description});
-    Object.defineProperty(this, 'operator', {value: operator});
+/*global wIn*/
 
-    this.connectable = this; // TODO
-    wIn.call(this, this.meta.name, this.meta.type, this.friendcode, this.operator.id + '_' + this.meta.name);
-};
-OperatorSourceEndpoint.prototype = new wIn();
+(function () {
 
-OperatorSourceEndpoint.prototype.serialize = function serialize() {
-    return {
-        'type': 'ioperator',
-        'id': this.operator.id,
-        'endpoint': this.meta.name
+    "use strict";
+
+    var OperatorSourceEndpoint = function OperatorSourceEndpoint(operator, meta) {
+        Object.defineProperty(this, 'meta', {value: meta});
+        Object.defineProperty(this, 'name', {value: meta.name});
+        Object.defineProperty(this, 'friendcode', {value: meta.friendcode});
+        Object.defineProperty(this, 'operator', {value: operator});
+        Object.defineProperty(this, 'label', {value: meta.label});
+        Object.defineProperty(this, 'description', {value: meta.description});
+        Object.defineProperty(this, 'operator', {value: operator});
+
+        this.connectable = this; // TODO
+        wIn.call(this, this.meta.name, this.meta.type, this.friendcode, this.operator.id + '_' + this.meta.name);
     };
-};
+    OperatorSourceEndpoint.prototype = new wIn();
 
+    OperatorSourceEndpoint.prototype.serialize = function serialize() {
+        return {
+            'type': 'ioperator',
+            'id': this.operator.id,
+            'endpoint': this.meta.name
+        };
+    };
+
+    window.OperatorSourceEndpoint = OperatorSourceEndpoint;
+
+})();

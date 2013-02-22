@@ -19,61 +19,71 @@
  *
  */
 
-var OperatorTargetEndpoint = function OperatorTargetEndpoint(operator, meta) {
-    Object.defineProperty(this, 'meta', {value: meta});
-    Object.defineProperty(this, 'name', {value: meta.name});
-    Object.defineProperty(this, 'friendcode', {value: meta.friendcode});
-    Object.defineProperty(this, 'label', {value: meta.label});
-    Object.defineProperty(this, 'description', {value: meta.description});
-    Object.defineProperty(this, 'operator', {value: operator});
+/*global gettext, interpolate, wOut*/
 
-    this.connectable = this;
-    wOut.call(this, this.meta.name, this.meta.type, this.meta.friendcode, this.operator.id + '_' + this.meta.name);
-};
-OperatorTargetEndpoint.prototype = new wOut();
+(function () {
 
-OperatorTargetEndpoint.prototype.serialize = function serialize() {
-    return {
-        'type': 'ioperator',
-        'id': this.operator.id,
-        'endpoint': this.meta.name
+    "use strict";
+
+    var OperatorTargetEndpoint = function OperatorTargetEndpoint(operator, meta) {
+        Object.defineProperty(this, 'meta', {value: meta});
+        Object.defineProperty(this, 'name', {value: meta.name});
+        Object.defineProperty(this, 'friendcode', {value: meta.friendcode});
+        Object.defineProperty(this, 'label', {value: meta.label});
+        Object.defineProperty(this, 'description', {value: meta.description});
+        Object.defineProperty(this, 'operator', {value: operator});
+
+        this.connectable = this;
+        wOut.call(this, this.meta.name, this.meta.type, this.meta.friendcode, this.operator.id + '_' + this.meta.name);
     };
-};
+    OperatorTargetEndpoint.prototype = new wOut();
 
-OperatorTargetEndpoint.prototype._is_target_slot = function _is_target_slot(list) {
-    var i, target;
+    OperatorTargetEndpoint.prototype.serialize = function serialize() {
+        return {
+            'type': 'ioperator',
+            'id': this.operator.id,
+            'endpoint': this.meta.name
+        };
+    };
 
-    if (list == null) {
-        return true;
-    }
+    OperatorTargetEndpoint.prototype._is_target_slot = function _is_target_slot(list) {
+        var i, target;
 
-    for (i = 0; i < list.length; i += 1) {
-        target = list[i];
-        if ((target.type === 'ioperator') && (target.id == this.operator.id) && (target.endpoint == this.meta.name)) {
+        if (list == null) {
             return true;
         }
-    }
-    return false;
-};
 
-OperatorTargetEndpoint.prototype.getFinalSlots = function getFinalSlots() {
-    var action_label = this.meta.action_label, result;
-    if (!action_label || action_label === '') {
-        action_label = gettext('Use in %(slotName)s');
-        action_label = interpolate(action_label, {slotName: this.meta.label}, true);
-    }
+        for (i = 0; i < list.length; i += 1) {
+            target = list[i];
+            if ((target.type === 'ioperator') && (target.id == this.operator.id) && (target.endpoint == this.meta.name)) {
+                return true;
+            }
+        }
+        return false;
+    };
 
-    result = this.serialize();
-    result.action_label = action_label;
+    OperatorTargetEndpoint.prototype.getFinalSlots = function getFinalSlots() {
+        var action_label = this.meta.action_label, result;
+        if (!action_label || action_label === '') {
+            action_label = gettext('Use in %(slotName)s');
+            action_label = interpolate(action_label, {slotName: this.meta.label}, true);
+        }
 
-    return [result];
-};
+        result = this.serialize();
+        result.action_label = action_label;
 
-OperatorTargetEndpoint.prototype._annotate = function _anotate(value, source, options) {
-};
+        return [result];
+    };
 
-OperatorTargetEndpoint.prototype.propagate = function propagate(newValue, options) {
-    if (!options || this._is_target_slot(options.targetSlots)) {
-        this.callback.call(this.operator, newValue);
-    }
-};
+    OperatorTargetEndpoint.prototype._annotate = function _anotate(value, source, options) {
+    };
+
+    OperatorTargetEndpoint.prototype.propagate = function propagate(newValue, options) {
+        if (!options || this._is_target_slot(options.targetSlots)) {
+            this.callback.call(this.operator, newValue);
+        }
+    };
+
+    window.OperatorTargetEndpoint = OperatorTargetEndpoint;
+
+})();
