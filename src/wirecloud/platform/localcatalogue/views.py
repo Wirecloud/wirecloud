@@ -43,6 +43,8 @@ from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.get_data import get_widget_data
 from wirecloud.platform.models import Widget, IWidget
+from wirecloud.platform.localcatalogue.semantics import add_widget_semantic_data
+from wirecloud.platform.localcatalogue.semantics import remove_widget_semantic_data
 from wirecloud.platform.localcatalogue.utils import get_or_add_resource_from_available_marketplaces
 from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue, create_widget_from_template, create_widget_from_wgt
 
@@ -161,6 +163,8 @@ class ResourceCollection(Resource):
                 except IntegrityError:
                     return build_error_response(request, 409, _('Resource already exists'))
 
+            add_widget_semantic_data(request.user, resource)
+
             data = get_widget_data(local_resource, request)
             data['type'] = 'widget'
             return HttpResponse(simplejson.dumps((data,)), mimetype='application/json; charset=UTF-8')
@@ -183,7 +187,7 @@ class ResourceCollection(Resource):
 
             return HttpResponse(simplejson.dumps(resources), mimetype='application/json; charset=UTF-8')
 
-        else:  # Mashups and Operators
+        else:  # Operators
             return HttpResponse('[' + resource.json_description + ']', mimetype='application/json; charset=UTF-8')
 
 
@@ -209,6 +213,8 @@ class ResourceEntry(Resource):
                 for iwidget in iwidgets:
                     result['removedIWidgets'].append(iwidget.id)
                     iwidget.delete()
+
+            remove_widget_semantic_data(request.user, resource)
 
             return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
