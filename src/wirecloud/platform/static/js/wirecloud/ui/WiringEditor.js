@@ -687,7 +687,7 @@ if (!Wirecloud.ui) {
         widget_interface.wrapperElement.style.minWidth = widget_interface.getBoundingClientRect().width + 'px';
 
         this.entitiesNumber += 1;
-        this.emptyBox.addClassName('hidden');
+        this.emptyBox.classList.add('hidden');
 
         return widget_interface;
     };
@@ -729,7 +729,7 @@ if (!Wirecloud.ui) {
         this.ioperators[operator_interface.getId()] = operator_interface;
 
         this.entitiesNumber += 1;
-        this.emptyBox.addClassName('hidden');
+        this.emptyBox.classList.add('hidden');
 
         return operator_interface;
     };
@@ -986,7 +986,7 @@ if (!Wirecloud.ui) {
 
         this.entitiesNumber -= 1;
         if (this.entitiesNumber === 0) {
-            this.emptyBox.removeClassName('hidden');
+            this.emptyBox.classList.remove('hidden');
         }
     };
 
@@ -1014,7 +1014,7 @@ if (!Wirecloud.ui) {
 
         this.entitiesNumber -= 1;
         if (this.entitiesNumber === 0) {
-            this.emptyBox.removeClassName('hidden');
+            this.emptyBox.classList.remove('hidden');
         }
     };
 
