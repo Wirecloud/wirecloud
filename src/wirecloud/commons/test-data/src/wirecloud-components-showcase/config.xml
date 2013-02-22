@@ -22,17 +22,10 @@
 	</Platform.Wiring>
 
 	<Platform.Link>
-		<XHTML content-type="application/xhtml+xml" href="index.html"/>
+		<XHTML content-type="application/xhtml+xml" use-platform-style="true" href="index.html"/>
 	</Platform.Link>
 
 	<Platform.Rendering width="11" height="24"/>
-
-	<Platform.Context>
-		<Context       name="user"       type="text" concept="user_name"/>
-		<Context       name="language"   type="text" concept="language"/>
-		<GadgetContext name="height"     type="text" concept="heightInPixels"/>
-		<GadgetContext name="lockStatus" type="text" concept="lockStatus"/>
-	</Platform.Context>
 
 	<Translations default="en">
         <Translation lang="en">

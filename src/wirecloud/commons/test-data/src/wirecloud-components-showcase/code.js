@@ -2,17 +2,14 @@
  *                               Styled Gadget                               *
  *---------------------------------------------------------------------------*/
 
-var StyledGadget = function() {
-    /* Call to the parent constructor */
-    EzWebGadget.call(this, {translatable: false});
-}
-StyledGadget.prototype = new EzWebGadget(); /* Extend from EzWebGadget */
-
-StyledGadget.prototype.init = function() {
-    var hpaned = new StyledElements.StyledHPaned({handlerPosition: 30,
-                                                  leftMinWidth: 100,
-                                                  rightMinWidth: 100});
-    hpaned.insertInto(document.body);
+var init = function init() {
+    var layout = new StyledElements.BorderLayout();
+    layout.insertInto(document.body);
+    MashupPlatform.widget.context.registerCallback(function (new_values) {
+        if ('heightInPixels' in new_values || 'widthInPixels' in new_values) {
+            layout.repaint();
+        }
+    });
 
     var alternatives = new StyledElements.StyledAlternatives();
 
@@ -21,12 +18,12 @@ StyledGadget.prototype.init = function() {
         if (newSelection.length > 0)
             alternatives.showAlternative(newSelection[0]);
     }
-    var list = new StyledElements.StyledList({full: true, multivalued: false});
+    var list = new StyledElements.StyledList({id: 'list', multivalued: false});
     list.addEventListener('change', onChange);
-    hpaned.getLeftPanel().appendChild(list);
+    layout.getWestContainer().appendChild(list);
 
     /* Right Content */
-    hpaned.getRightPanel().appendChild(alternatives);
+    layout.getCenterContainer().appendChild(alternatives);
 
 
     function insertExample(name, code) {
@@ -164,7 +161,7 @@ StyledGadget.prototype.init = function() {
     var row = document.createElement('div');\n\
     var button = new StyledElements.StyledButton({text: 'Reset'});\n\
     button.wrapperElement.style.cssText += 'float: right;';\n\
-    button.addEventListener('click', EzWebExt.bind(group1.reset, group1));\n\
+    button.addEventListener('click', group1.reset.bind(group1));\n\
     button.insertInto(row);\n\
 \n\
     radiobutton = new StyledElements.StyledCheckBox(group1, 'uno');\n\
@@ -201,7 +198,7 @@ StyledGadget.prototype.init = function() {
         for (var i = 1; i < value.length; i++) {\n\
             text += ', ' + value[i];\n\
         }\n\
-        EzWebExt.setTextContent(group1Viewer, text);\n\
+        group1Viewer.textContent = text;\n\
     }\n\
     showGroup1(group1);\n\
     group1.addEventListener('change', showGroup1);\n\
@@ -221,7 +218,7 @@ StyledGadget.prototype.init = function() {
         for (var i = 1; i < value.length; i++) {\n\
             text += ', ' + value[i];\n\
         }\n\
-        EzWebExt.setTextContent(group2Viewer, text);\n\
+        group2Viewer.textContent = text;\n\
     }\n\
     showGroup2(group2);\n\
     group2.addEventListener('change', showGroup2);\n\
@@ -319,7 +316,7 @@ StyledGadget.prototype.init = function() {
     container.appendChild(button);\n\
 \n\
     function showWarningAlert() {\n\
-        var alert = new StyledElements.StyledAlert('titulo', 'contenido', {'type': EzWebExt.ALERT_WARNING});\n\
+        var alert = new StyledElements.StyledAlert('titulo', 'contenido', {'type': 1});\n\
         container.appendChild(alert);\n\
     }\n\
     var button = new StyledElements.StyledButton({text: 'Show Warning Alert'});\n\
@@ -327,7 +324,7 @@ StyledGadget.prototype.init = function() {
     container.appendChild(button);\n\
 \n\
     function showErrorAlert() {\n\
-        var alert = new StyledElements.StyledAlert('titulo', 'contenido', {'type': EzWebExt.ALERT_ERROR});\n\
+        var alert = new StyledElements.StyledAlert('titulo', 'contenido', {'type': 2});\n\
         container.appendChild(alert);\n\
     }\n\
     var button = new StyledElements.StyledButton({text: 'Show Error Alert'});\n\
@@ -359,7 +356,7 @@ StyledGadget.prototype.init = function() {
         for (var i = 1; i < value.length; i++) {\n\
             text += ', ' + value[i];\n\
         }\n\
-        EzWebExt.setTextContent(valueSpan, text);\n\
+        valueSpan.textContent = text;\n\
     }\n\
     showSelection(null, list.getSelection());\n\
     list.addEventListener('change', showSelection);\n\
@@ -599,7 +596,9 @@ StyledGadget.prototype.init = function() {
     if (loadingElement) {
         loadingElement.parentNode.removeChild(loadingElement);
     }
-}
 
-/* Instanciate the Gadget class */
-StyledGadget = new StyledGadget();
+    layout.repaint();
+
+};
+
+window.addEventListener('load', init, true);
