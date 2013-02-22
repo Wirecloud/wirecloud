@@ -372,7 +372,7 @@
      * add Source.
      */
     GenericInterface.prototype.addSource = function addSource(label, desc, name, anchorContext) {
-        var anchor, anchorDiv, labelDiv, anchorLabel, multiconnector, id, objectId, friendCode;
+        var anchor, anchorDiv, labelDiv, anchorLabel, multiconnector, id, objectId;
         //anchorDiv
         anchorDiv = document.createElement("div");
         //if the output have not description, take the label
@@ -392,12 +392,6 @@
         if (!this.isMiniInterface) {
             anchor = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, this.arrowCreator);
             anchorDiv.appendChild(anchor.wrapperElement);
-
-            friendCode = anchor.context.data.connectable._friendCode;
-            if (this.wiringEditor.sourceAnchorsByFriendCode[friendCode] == null) {
-                this.wiringEditor.sourceAnchorsByFriendCode[friendCode] = [];
-            }
-            this.wiringEditor.sourceAnchorsByFriendCode[friendCode].push(anchor);
 
             //multiconnector button
             this.multiButton = new StyledElements.StyledButton({
@@ -456,7 +450,7 @@
      * add Target.
      */
     GenericInterface.prototype.addTarget = function addTarget(label, desc, name, anchorContext) {
-        var anchor, anchorDiv, labelDiv, anchorLabel, multiconnector, id, objectId, friendCode;
+        var anchor, anchorDiv, labelDiv, anchorLabel, multiconnector, id, objectId;
         //anchorDiv
         anchorDiv = document.createElement("div");
         //if the input have not description, take the label
@@ -475,12 +469,6 @@
 
         if (!this.isMiniInterface) {
             anchor = new Wirecloud.ui.WiringEditor.TargetAnchor(anchorContext, this.arrowCreator);
-
-            friendCode = anchor.context.data.connectable._friendCode;
-            if (this.wiringEditor.targetAnchorsByFriendCode[friendCode] == null) {
-                this.wiringEditor.targetAnchorsByFriendCode[friendCode] = [];
-            }
-            this.wiringEditor.targetAnchorsByFriendCode[friendCode].push(anchor);
 
             //multiconnector button
             this.multiButton = new StyledElements.StyledButton({

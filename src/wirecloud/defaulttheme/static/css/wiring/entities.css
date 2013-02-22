@@ -232,23 +232,45 @@
     -o-transition: none;
 }
 
-/* highlight events and slots by friendcode */
-.wiring_editor .sources .highlight, .wiring_editor .targets .highlight_main {
-    background: #FF9854;
-    color: white;
-}
+/* highlight events and slots by semantic */
+/*colorCodes = {'EQUIVALENT': 'green', 'SUBSUMED':'green', 'SUBSUMES':'orange', 'DISJOINT':'red', 'OVERLAP':'grey', 'NONE':'grey'}*/
 
-.wiring_editor .targets .highlight, .wiring_editor .sources .highlight_main {
-    background: #0A9;
-    color: white;
-}
-
-.wiring_editor .sources .highlight span, .wiring_editor .targets .highlight_main span {
+ .wiring_editor .sources .highlight span, .wiring_editor .targets .highlight_main span {
     pointer-events: none;
 }
 
 .wiring_editor .targets .highlight span, .wiring_editor .sources .highlight_main span {
     pointer-events: none;
+}
+
+.wiring_editor .highlight.equivalent {
+    background: green;
+    color: white;
+}
+
+.wiring_editor .highlight.subsumed {
+    background: blue;
+    color: white;
+}
+
+.wiring_editor .highlight.subsumes {
+    background: violet;
+    color: white;
+}
+
+.wiring_editor .highlight.disjoint {
+    background: red;
+    color: white;
+}
+
+.wiring_editor .highlight.overlap {
+    background: grey;
+    color: white;
+}
+
+.wiring_editor .highlight.none {
+    background: grey;
+    color: white;
 }
 
 /* multiconnector button */
