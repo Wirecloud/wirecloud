@@ -672,6 +672,7 @@
         this.draggable = null;
         this.draggableSources = null;
         this.draggableTargets = null;
+        this.wrapperElement = null;
     };
 
     /**

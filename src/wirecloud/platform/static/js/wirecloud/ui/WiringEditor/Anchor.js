@@ -314,6 +314,7 @@
 
         this.wrapperElement.removeEventListener('mousedown', this._mousedown_callback, false);
         this.wrapperElement.removeEventListener('mouseup', this._mouseup_callback, false);
+        this.wrapperElement = null;
     };
 
     /*************************************************************************
