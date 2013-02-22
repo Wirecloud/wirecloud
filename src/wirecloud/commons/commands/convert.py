@@ -23,10 +23,10 @@ from django.core.management.base import CommandError
 
 from wirecloud.commons.utils.commands import BaseCommand
 from wirecloud.commons.utils.template.parsers import TemplateParser
-from wirecloud.commons.utils.template.writers import rdf
+from wirecloud.commons.utils.template.writers import json, rdf
 
 class ConvertCommand(BaseCommand):
-    args = '<source_widget_descriptor>...'
+    args = '<source_widget_descriptor> [dest_file]'
     help = 'Converts a widget description from one format to another'
 
     option_list = BaseCommand.option_list + (
@@ -44,14 +44,19 @@ class ConvertCommand(BaseCommand):
         if len(args) < 1 or len(args) > 2:
             raise CommandError('Wrong number of arguments')
 
-        if options['dest_format'] == 'rdf':
-            template_file = open(args[0], "rb")
-            template_contents = template_file.read()
-            template_file.close()
-            parsed_template = TemplateParser(template_contents)
-            converted_template = rdf.write_rdf_description(parsed_template.get_resource_info(), format=options['rdf_format'])
-        else:
+        if options['dest_format'] not in ('json', 'rdf'):
             raise CommandError('Invalid dest format: %s' % options['dest_format'])
+
+        template_file = open(args[0], "rb")
+        template_contents = template_file.read()
+        template_file.close()
+        parsed_template = TemplateParser(template_contents)
+        template_info = parsed_template.get_resource_info()
+
+        if options['dest_format'] == 'rdf':
+            converted_template = rdf.write_rdf_description(template_info, format=options['rdf_format'])
+        elif options['dest_format'] == 'json':
+            converted_template = json.write_json_description(template_info)
 
         if len(args) == 2:
             output_file = open(args[1], "wb")
