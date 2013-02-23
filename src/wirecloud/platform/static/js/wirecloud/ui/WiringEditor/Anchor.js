@@ -210,13 +210,6 @@
     };
 
     /**
-     * @addArrow
-     */
-    Anchor.prototype.addArrow = function addArrow(theArrow) {
-        this.arrows.push(theArrow);
-    };
-
-    /**
      * get the arrow list
      */
     Anchor.prototype.getArrows = function getArrows() {
