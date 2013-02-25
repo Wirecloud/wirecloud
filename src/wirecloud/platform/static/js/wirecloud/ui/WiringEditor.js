@@ -1223,8 +1223,8 @@ if (!Wirecloud.ui) {
      * colorCodes = {'EQUIVALENT': 'green', 'SUBSUMED':'green', 'SUBSUMES':'orange', 'DISJOINT':'red', 'OVERLAP':'grey', 'NONE':'grey'}
      */
     WiringEditor.prototype.emphasize = function emphasize(anchor) {
-        var anchorsEQ, anchorsSD, anchorsSS, anchorsDJ, anchorsOP, anchorsNE, widgetId, achorId,
-            mainAnchorClass;
+        var anchorsEQ, anchorsSD, anchorsSS, anchorsDJ, anchorsOP, anchorsNE, widgetId,
+            achorId, mainAnchorClass, i;
 
         if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.OperatorInterface) {
             widgetId = anchor.context.iObject.ioperator.meta.uri;
@@ -1302,7 +1302,8 @@ if (!Wirecloud.ui) {
      * deemphasize anchors.
      */
     WiringEditor.prototype.deemphasize = function deemphasize(anchor) {
-        var anchorsEQ, anchorsSD, anchorsSS, anchorsDJ, anchorsOP, anchorsNE, widgetId, achorId, mainAnchorClass;
+        var anchorsEQ, anchorsSD, anchorsSS, anchorsDJ, anchorsOP, anchorsNE, widgetId,
+            achorId, mainAnchorClass, i;
 
         if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.OperatorInterface) {
             widgetId = anchor.context.iObject.ioperator.meta.uri;
