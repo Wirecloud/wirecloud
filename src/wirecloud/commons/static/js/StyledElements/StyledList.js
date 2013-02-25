@@ -24,6 +24,7 @@
     var StyledList = function StyledList(options) {
         options = EzWebExt.merge({
             'class':            '',
+            'id':               null,
             'multivalued':      false,
             'initialEntries':   [],
             'initialSelection': []
@@ -33,6 +34,10 @@
 
         this.wrapperElement = document.createElement("div");
         this.wrapperElement.className = EzWebExt.prependWord(options['class'], "styled_list");
+
+        if (options.id != null) {
+            this.wrapperElement.id = options.id;
+        }
 
         this.content = document.createElement("div");
         this.wrapperElement.appendChild(this.content);
@@ -75,7 +80,7 @@
 
         for (var i = 0; i < entries.length; i++) {
             var entry = entries[i];
-            if (entry instanceof Array) {
+            if (Array.isArray(entry)) {
                 entryValue = entry[0];
                 entryText = entry[1];
             } else {

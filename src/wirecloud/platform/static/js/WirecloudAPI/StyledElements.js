@@ -25,8 +25,9 @@
 
     // StyledElements
     window.StyledElements = {
+        'Accordion': window.parent.StyledElements.Accordion,
         'Event': window.parent.StyledElements.Event,
-        'Form': window.parent.StyledElements.Form,
+        'Form': window.parent.Form,
         'ObjectWithEvents': window.parent.StyledElements.ObjectWithEvents,
         'StyledAlternatives': window.parent.StyledElements.StyledAlternatives,
         'StyledElement': window.parent.StyledElements.StyledElement,
