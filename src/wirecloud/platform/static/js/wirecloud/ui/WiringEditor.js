@@ -449,7 +449,6 @@ if (!Wirecloud.ui) {
                     arrow.startMulti = connectionView.startMulti;
                     pos = multi.getCoordinates(this.layout);
                     arrow.setStart(pos);
-                    arrow.redraw();
                     multi.addArrow(arrow);
                 }
                 if (connectionView.endMulti != null) {
@@ -457,9 +456,9 @@ if (!Wirecloud.ui) {
                     multi = this.multiconnectors[connectionView.endMulti];
                     pos = multi.getCoordinates(this.layout);
                     arrow.setEnd(pos);
-                    arrow.redraw();
                     multi.addArrow(arrow);
                 }
+                arrow.redraw();
             }
         }
         this.activateCtrlMultiSelect();
