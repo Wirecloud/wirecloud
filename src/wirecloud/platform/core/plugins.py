@@ -97,7 +97,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             },
             'orientation': {
                 'label': _('Orientation'),
-                'description': _(''),
+                'description': _('Current screen orientation'),
             },
             'theme': {
                 'label': _('Theme'),
