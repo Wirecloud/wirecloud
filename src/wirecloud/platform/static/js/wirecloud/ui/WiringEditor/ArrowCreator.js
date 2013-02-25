@@ -25,6 +25,12 @@
 (function () {
 
     "use strict";
+
+    var _cancel = function () {
+        return false;
+    };
+
+
     /*************************************************************************
      * Constructor
      *************************************************************************/
@@ -62,9 +68,9 @@
                 initAnchor.context.iObject.wiringEditor.emphasize(initAnchor);
             }
 
-            document.oncontextmenu = Draggable._cancel; // disable context menu
-            document.onmousedown = Draggable._cancel; // disable text selection in Firefox
-            document.onselectstart = Draggable._cancel; // disable text selection in IE
+            document.oncontextmenu = _cancel; // disable context menu
+            document.onmousedown = _cancel; // disable text selection in Firefox
+            document.onselectstart = _cancel; // disable text selection in IE
             // enddrag when mouseup in no-anchor
             document.addEventListener('mouseup', this.enddrag, false);
 
