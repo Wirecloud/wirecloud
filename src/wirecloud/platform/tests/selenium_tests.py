@@ -82,8 +82,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_basic_widget_functionalities(self):
 
-        self.login()
-        iwidget_id = self.add_widget_to_mashup('Test')['id']
+        self.login(username='user_with_workspaces')
+        iwidget_id = self.get_current_iwidgets()[0]['id']
 
         with widget_operation(self.driver, iwidget_id):
             self.assertEqual(self.driver.find_element_by_id('listPref').text, 'default')
