@@ -284,8 +284,11 @@ var init = function init() {
      * Alternatives example
      */
     code = "\
+    var layout = layout = new StyledElements.BorderLayout();\n\
+    container.appendChild(layout);\n\
+\n\
     var goToAlt2Button = new StyledElements.StyledButton({'text': 'Go to Alternative 2'});\n\
-    container.appendChild(goToAlt2Button);\n\
+    layout.getNorthContainer().appendChild(goToAlt2Button);\n\
 \n\
     var alternatives = new StyledElements.StyledAlternatives();\n\
     var alt1 = alternatives.createAlternative();\n\
@@ -468,8 +471,11 @@ var init = function init() {
      * Labels and Badges example
      */
     code = "\n\
-    var wrapper, label, badge;\n\
+    var title, wrapper, label, badge;\n\
 \n\
+    title = document.createElement('h3');\n\
+    title.textContent = 'Labels';\n\
+    container.appendChild(title);\n\
     wrapper = document.createElement('div');\n\
     container.appendChild(wrapper);\n\
 \n\
@@ -503,6 +509,9 @@ var init = function init() {
     label.textContent = 'Inverse';\n\
     wrapper.appendChild(label);\n\
 \n\
+    title = document.createElement('h3');\n\
+    title.textContent = 'Badges';\n\
+    container.appendChild(title);\n\
     wrapper = document.createElement('div');\n\
     container.appendChild(wrapper);\n\
 \n\
@@ -583,6 +592,21 @@ var init = function init() {
     ])\n";
 
     insertExample("Tables", code);
+
+    /*
+     * Form example
+     */
+    code = "\n\
+    var form;\n\
+\n\
+    form = new StyledElements.Form([\n\
+        {field: 'id', type: 'text', label: '#'},\n\
+        {field: 'description', type: 'longtext', label: 'description'},\n\
+        {field: 'odd', type: 'boolean', label: 'odd'}\n\
+    ]);\n\
+    container.appendChild(form);";
+
+    insertExample("Forms", code);
 
     /*
      * Init
