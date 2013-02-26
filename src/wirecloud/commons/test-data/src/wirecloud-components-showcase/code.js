@@ -287,19 +287,30 @@ var init = function init() {
     var layout = layout = new StyledElements.BorderLayout();\n\
     container.appendChild(layout);\n\
 \n\
-    var goToAlt2Button = new StyledElements.StyledButton({'text': 'Go to Alternative 2'});\n\
+    var goToAlt1Button = new StyledElements.StyledButton({'text': 'Go to first alternative'});\n\
+    goToAlt1Button.disable();\n\
+    layout.getNorthContainer().appendChild(goToAlt1Button);\n\
+\n\
+    var goToAlt2Button = new StyledElements.StyledButton({'text': 'Go to second alternative'});\n\
     layout.getNorthContainer().appendChild(goToAlt2Button);\n\
 \n\
     var alternatives = new StyledElements.StyledAlternatives();\n\
     var alt1 = alternatives.createAlternative();\n\
-    alt1.appendChild(document.createTextNode('Contenido 1.\\n Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna nibh, viverra non, semper suscipit, posuere a, pede.'));\n\
+    alt1.appendChild(document.createTextNode('First Alternative.\\n Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna nibh, viverra non, semper suscipit, posuere a, pede.'));\n\
     var alt2 = alternatives.createAlternative();\n\
-    alt2.appendChild(document.createTextNode('Contenido 2.\\n Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis.'));\n\
-    var alt3 = alternatives.createAlternative();\n\
-    alt3.appendChild(document.createTextNode('Contenido 3.\\n Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis.'));\n\
-    container.appendChild(alternatives);\n\
+    alt2.appendChild(document.createTextNode('Second Alternative.\\n Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis.'));\n\
+    layout.getCenterContainer().appendChild(alternatives);\n\
 \n\
-    goToAlt2Button.addEventListener('click', function() {alternatives.showAlternative(alt2.getId())});\n\
+    goToAlt1Button.addEventListener('click', function() {\n\
+        goToAlt2Button.enable();\n\
+        goToAlt1Button.disable();\n\
+        alternatives.showAlternative(alt1);\n\
+    });\n\
+    goToAlt2Button.addEventListener('click', function() {\n\
+        goToAlt1Button.enable();\n\
+        goToAlt2Button.disable();\n\
+        alternatives.showAlternative(alt2);\n\
+    });\n\
 \n";
 
     insertExample("Alternatives", code);
