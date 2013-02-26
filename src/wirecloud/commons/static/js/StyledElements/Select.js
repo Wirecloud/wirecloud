@@ -202,6 +202,10 @@
         this.inputElement.removeEventListener('focus', this._onfocus, true);
         this.inputElement.removeEventListener('blur', this._onblur, true);
 
+        delete this._onchange;
+        delete this._onfocus;
+        delete this._onblur;
+
         StyledElements.StyledInputElement.prototype.destroy.call(this);
     };
 
