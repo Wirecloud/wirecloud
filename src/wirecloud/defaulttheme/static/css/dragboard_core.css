@@ -60,15 +60,6 @@ div.row {
   white-space: nowrap;
 }
 
-div.color_button {
-  float: left;
-  cursor: pointer;
-  margin: 3px;
-  width: 16px;
-  height: 16px;
-  border: 1px solid;
-}
-
 div.iwidget .button {
   display: none;
   margin: 2px 2px 0px 2px;

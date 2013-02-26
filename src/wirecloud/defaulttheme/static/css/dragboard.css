@@ -116,11 +116,6 @@ div.iwidget div.widget_menu > .versionbutton {
     background-color: transparent;
 }
 
-div.color_button {
-  border-color: #888;
-  -moz-border-radius: 4px;
-}
-
 div.iwidget div.snapButton {
   /* This icon represents that the iWidget is outside the grid */
   background: url(../images/icons-sprite.png);
