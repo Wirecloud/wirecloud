@@ -2,14 +2,15 @@ div.styled_text_field {
     font-size: 13px;
     color: #555555;
     margin-bottom: 9px;
+    position: relative;
 }
 
 div.styled_text_field > div {
     display: block;
-    height: 18px;
+    height: 20px;
     padding: 4px 6px;
     font-size: 14px;
-    line-height: 18px;
+    line-height: 20px;
     color: #555555;
     border-radius: 3px;
     background-color: #ffffff;
@@ -26,10 +27,16 @@ div.styled_text_field > div > input {
     border: 0 none;
     padding: 0;
     margin: 0;
+    line-height: inherit;
+    font-size: inherit;
 }
 
 div.styled_text_field > div > input:focus {
     outline: 0 none;
+}
+
+div.styled_text_field.focus {
+    z-index: 2;
 }
 
 div.styled_text_field.focus > div {
@@ -48,4 +55,22 @@ div.styled_text_field.error.focus > div {
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #d59392;
     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #d59392;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #d59392;
+}
+
+.horizontal_layout > .center_container > .styled_text_field {
+    width: 100%;
+}
+
+.horizontal_layout > .center_container > .styled_text_field > div {
+    margin: 0;
+}
+
+.input-prepend > .center_container > .styled_text_field > div {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.input-append > .center_container > .styled_text_field > div {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
 }

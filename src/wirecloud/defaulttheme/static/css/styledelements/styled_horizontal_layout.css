@@ -19,3 +19,12 @@
     position: absolute;
     display: inline-block;
 }
+
+.horizontal_layout.input {
+    margin: 3px;
+    overflow: visible;
+}
+
+.horizontal_layout.input > .west_container, .horizontal_layout.input > .center_container, .horizontal_layout.input > .east_container {
+    overflow: visible;
+}

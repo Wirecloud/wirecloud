@@ -127,6 +127,34 @@
     border-radius: 3px;
 }
 
+/* Grouped buttons */
+
+.input-prepend > .west_container > .styled_button {
+    margin: 0 -1px 0 0;
+}
+
+.input-prepend > .west_container > .styled_button > div, .input-prepend > .west_container > .styled_button > button {
+    border-radius: 0px;
+}
+
+.input-prepend > .west_container > .styled_button:first-child > div, .input-prepend > .west_container > .styled_button:first-child > button {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+
+.input-append > .east_container > .styled_button {
+    margin: 0 0 0 -1px;
+}
+
+.input-append > .east_container > .styled_button > div, .input-append > .east_container > .styled_button > button {
+    border-radius: 0px;
+}
+
+.input-append > .east_container > .styled_button:last-child > div, .input-append > .east_container > .styled_button:last-child > button {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
 /* Primary button */
 
 .styled_button.btn-primary > div, .styled_button.btn-primary > button {
