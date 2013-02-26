@@ -3,11 +3,14 @@ div.styled_text_field {
     color: #555555;
     margin-bottom: 9px;
     position: relative;
+    padding: 0;
+    width:   10em;
 }
 
 div.styled_text_field > div {
     display: block;
     height: 19px;
+    width: auto;
     padding: 3px 6px;
     font-size: 14px;
     line-height: 19px;
@@ -24,9 +27,13 @@ div.styled_text_field > div {
 }
 
 div.styled_text_field > div > input {
+    display: inline-block;
+    width: 100%;
     border: 0 none;
     padding: 0;
     margin: 0;
+    background: inherit;
+    color: inherit;
     line-height: inherit;
     font-size: inherit;
 }

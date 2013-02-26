@@ -91,24 +91,6 @@ div.styled_list div.row.selected {
   background: #A1BDE1
 }
 
-/* Styled Text Field */
-
-div.styled_text_field {
-    padding: 0;
-    width:   10em;
-}
-
-div.styled_text_field > div {
-    width:   auto;
-}
-
-div.styled_text_field > div > input {
-    background: inherit; /* transparent fails in IE8 */
-    color: inherit;
-    display: inline-block;
-    width: 100%;
-}
-
 /* Styled Text Area */
 
 div.styled_text_area {
