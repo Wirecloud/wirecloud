@@ -69,7 +69,14 @@ span.icon {
     display: inline-block;
 }
 
-.icon-doc:before { content: "\f02d"; }
+.icon-doc:before        { content: "\f02d"; }
+.icon-first-page:before { content: "\f048"; }
+.icon-last-page:before  { content: "\f051"; }
+.icon-prev-page:before  { content: "\f0d9"; }
+.icon-next-page:before  { content: "\f0da"; }
+.icon-menu:before       { content: "\f0d7"; }
+.icon-tab-menu:before   { content: "\f0d8"; }
+
 .icon-info{ background-image: url(../images/icons-sprite.png); background-position: -48px -504px; }
 .icon-warning{ background-image: url(../images/icons-sprite.png); background-position: -24px -528px; }
 .icon-error { background-image: url(../images/icons-sprite.png); background-position: 0px -552px; }
