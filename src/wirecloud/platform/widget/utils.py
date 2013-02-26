@@ -304,7 +304,7 @@ def fix_widget_code(widget_code, base_url, content_type, request, use_platform_s
 
     if content_type == 'text/html':
         parser = etree.HTMLParser()
-        xmltree = etree.parse(StringIO(widget_code), parser)
+        xmltree = etree.parse(StringIO(str(widget_code)), parser)
         serialization_method = 'html'
     elif content_type == 'application/xhtml+xml':
         xmltree = etree.fromstring(widget_code).getroottree()
