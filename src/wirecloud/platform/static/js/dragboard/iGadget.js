@@ -440,24 +440,6 @@ IWidget.prototype.build = function () {
         }.bind(this));
     this.errorButton.insertInto(this.widgetMenu);
 
-    // New Version button
-    this.upgradeButton = document.createElement("input");
-    Element.extend(this.upgradeButton);
-    this.upgradeButton.setAttribute("type", "button");
-    this.upgradeButton.addClassName("button versionbutton disabled");
-    Event.observe(this.upgradeButton, "click",
-        function () {
-            var msg = gettext('<p><b>Do you really want to update "%(iwidgetName)s" to its latest version?</b><br />The widget state and connections will be kept, if possible.<p>Note: It will reload your workspace</p>');
-            msg = interpolate(msg, {iwidgetName: this.name}, true);
-
-            var dialog = new Wirecloud.ui.AlertWindowMenu();
-            dialog.setMsg(msg);
-            dialog.setHandler(this.upgradeIWidget.bind(this), this.askForIconVersion.bind(this));
-            dialog.show();
-        }.bind(this),
-        false);
-    this.widgetMenu.appendChild(this.upgradeButton);
-
     this.fillWithLabel();
 
     this.element.appendChild(this.widgetMenu);
@@ -626,7 +608,6 @@ IWidget.prototype.paint = function (onInit) {
     });
 
     this._updateButtons();
-    this._updateVersionButton();
 
     // Icon
     this.internal_iwidget.layout.dragboard.dragboardElement.appendChild(this.iconElement);
@@ -792,24 +773,6 @@ IWidget.prototype.notifyEvent = function () {
 
 IWidget.prototype.isIconified = function () {
     return (this.internal_iwidget.layout instanceof FreeLayout && this.minimized);
-};
-
-/**
- * @private
- */
-IWidget.prototype._updateVersionButton = function () {
-    if (this.internal_iwidget.widget.isUpToDate() || this.isRefusedUpgrade()) {
-        this.upgradeButton.addClassName('disabled');
-    } else {
-        var msg = gettext("There is a new version of this widget available. Current version: %(currentVersion)s - Last version: %(lastVersion)s");
-        msg = interpolate(msg, {
-                currentVersion: this.internal_iwidget.widget.getVersion().text,
-                lastVersion: this.internal_iwidget.widget.getLastVersion().text
-            }, true);
-
-        this.upgradeButton.setAttribute("title", msg);
-        this.upgradeButton.removeClassName('disabled');
-    }
 };
 
 IWidget.prototype.askForIconVersion = function () {
