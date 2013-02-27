@@ -563,7 +563,7 @@ var init = function init() {
      * Table example
      */
     code = "\n\
-    var layout, table, south_layout, text_input, search_button;\n\
+    var layout, table, south_layout, text_input, search_icon, search_button;\n\
 \n\
     layout = new StyledElements.BorderLayout();\n\
     container.appendChild(layout);\n\
@@ -575,12 +575,15 @@ var init = function init() {
     ]);\n\
     layout.getCenterContainer().appendChild(table);\n\
 \n\
-    south_layout = new StyledElements.HorizontalLayout();\n\
+    south_layout = new StyledElements.HorizontalLayout({'class': 'input input-prepend input-append'});\n\
     layout.getSouthContainer().appendChild(south_layout);\n\
 \n\
-    text_input = new StyledElements.StyledTextField({\n\
-        'id': 'input'\n\
+    search_icon = new StyledElements.StyledButton({\n\
+        'class': 'icon-search'\n\
     });\n\
+    south_layout.getWestContainer().appendChild(search_icon);\n\
+\n\
+    text_input = new StyledElements.StyledTextField();\n\
     south_layout.getCenterContainer().appendChild(text_input);\n\
 \n\
     search_button = new StyledElements.StyledButton({\n\
@@ -611,9 +614,11 @@ var init = function init() {
     var form;\n\
 \n\
     form = new StyledElements.Form([\n\
-        {field: 'id', type: 'text', label: '#'},\n\
-        {field: 'description', type: 'longtext', label: 'description'},\n\
-        {field: 'odd', type: 'boolean', label: 'odd'}\n\
+        {label: 'Identifier', field: 'id', type: 'text', },\n\
+        {label: 'Description', field: 'description', type: 'longtext'},\n\
+        {label: 'Odd', field: 'odd', type: 'boolean'},\n\
+        {label: 'Photo Quality', field: 'quality', type: 'buttons', kind: 'radio', buttons: [{label: 'Great', value: 'great'}, {label: 'Good', value: 'good'}, {label: 'Poor', value: 'poor'}]},\n\
+        {label: 'Photo Type', field: 'type', type: 'select', initialEntries: [{label: 'Great', value: 'great'}, {label: 'Good', value: 'good'}, {label: 'Poor', value: 'poor'}]}\n\
     ]);\n\
     container.appendChild(form);";
 
