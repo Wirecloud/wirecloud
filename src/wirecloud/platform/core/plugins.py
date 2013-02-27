@@ -132,6 +132,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
         common = (
             'js/wirecloud/ContextManager.js',
             'js/wirecloud/IWidget.js',
+            'js/wirecloud/ui/IWidgetResizeHandle.js',
             'js/wirecloud/PolicyManager.js',
             'js/StyledElements/Fragment.js',
             'js/StyledElements/Pagination.js',
@@ -197,6 +198,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
     def get_templates(self, view):
         if view == 'index':
             return {
+                "iwidget": "wirecloud/ui/iwidget.html",
                 "window_menu": "wirecloud/ui/window_menu.html",
                 "wirecloud_catalogue_search_interface": "wirecloud/catalogue/search_interface.html",
                 "wirecloud_wiring_template": "wirecloud/wiring.html",
