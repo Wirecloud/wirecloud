@@ -26,7 +26,6 @@ div.container .disable-layer {
   height: 100%;
   bottom: 0;
   right: 0;
-  background: #E0E0E0;
   opacity: 0.4;
   z-index: 1111111;
 }
@@ -626,16 +625,22 @@ div.styled_numeric_field div.numeric_bottom_button {
 }
 
 .styled_expander .title {
-    padding: 1ex;
-    font-size: 16px;
+    font-size: inherit;
+    vertical-align: middle;
     display: inline-block;
 }
 
-.styled_expander .contents {
+.styled_expander > .contents {
     width: 0;
     height: 0;
     overflow: hidden;
     padding: 0;
+}
+
+.styled_expander > div > .icon-expand {
+    width: 1em;
+    text-align: center;
+    display: inline-block;
 }
 
 .icon-expand.checked:before {
