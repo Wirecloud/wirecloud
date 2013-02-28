@@ -477,10 +477,10 @@ class WirecloudRemoteTestCase(object):
         iwidget = self.instantiate(resource)
 
         if new_name is not None:
-            self.wait_element_visible_by_css_selector('.widget_menu > span', element=iwidget['element']).click()
-            name_input = iwidget['element'].find_element_by_css_selector('.widget_menu > input.iwidget_name')
-            self.fill_form_input(name_input, new_name)
-            time.sleep(0.1)
+            iwidget['element'].find_element_by_css_selector('.icon-cogs').click()
+            self.popup_menu_click('Rename')
+            name_input = iwidget['element'].find_element_by_css_selector('.widget_menu > span')
+            name_input.send_keys(new_name)
             iwidget['element'].find_element_by_css_selector('.statusBar').click()
 
         return iwidget
