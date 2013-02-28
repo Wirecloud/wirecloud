@@ -1,25 +1,3 @@
-div.iwidget {
-    -moz-transition: box-shadow 0.7s ease-in;
-    -webkit-transition: box-shadow 0.7s ease-in;
-    transition: box-shadow 0.7s ease-in;
-	border-color: #C2CBD2;
-}
-
-div.widget_window_transparent {
-  background: transparent;
-}
-
-div.widget_menu {
-    background: transparent;
-    font-size: 24px;
-    font-family: "Comfortaa";
-    margin-bottom: 2px;
-}
-
-.widget_menu span, .widget_menu .iwidget_name {
-  	color: #4C5054;
-}
-
 .notebook.workspace .wrapper {
     border: 0px none;
     border-radius: 0px;
@@ -29,73 +7,6 @@ div.widget_menu {
 
 div.dragboard.fixed {
   background: transparent;
-}
-
-div.iwidget div.widget_menu > .styled_button {
-    opacity: 0;
-    -moz-transition-property: opacity;
-    -moz-transition-duration: 1s;
-    -webkit-transition-property: opacity;
-    -webkit-transition-duration: 1s;
-    -o-transition-property: opacity;
-    -o-transition-duration: 1s;
-    transition-property: opacity;
-    transition-duration: 1s;
-    float: right;
-    margin: 0 0 0 5px;
-    padding: 0px;
-    width: 16px;
-    height: 16px;
-    border: 0px none;
-}
-
-div.iwidget div.widget_menu:hover > .styled_button {
-    opacity: 1;
-}
-
-div.iwidget div.widget_menu > .closebutton {
-  background: url(../images/icons-sprite.png);
-  background-position: -24px -480px;
-}
-
-div.iwidget div.widget_menu > .closebutton:hover {
-  background-position: 0px -480px;
-}
-
-div.iwidget div.widget_menu > .minimizebutton {
-  background: url(../images/icons-sprite.png);
-  background-position: -24px -432px;
-}
-
-div.iwidget div.widget_menu > .minimizebutton:hover {
-  background-position: 0px -432px;
-}
-
-div.iwidget div.widget_menu > .maximizebutton {
-  background: url(../images/icons-sprite.png);
-  background-position: -24px -336px;
-}
-
-div.iwidget div.widget_menu > .maximizebutton:hover {
-  background-position: 0px -336px;
-}
-
-div.iwidget div.widget_menu > .settingsbutton {
-  background: url(../images/icons-sprite.png);
-  background-position: -24px -456px;
-}
-
-div.iwidget div.widget_menu > .settingsbutton:hover {
-  background-position: 0px -456px;
-}
-
-div.iwidget div.widget_menu > .settings2button {
-    background: url(../images/icons-sprite.png);
-    background-position: 0px -144px;
-}
-
-div.iwidget div.widget_menu > .settings2button:hover {
-    background-position: -24px -120px;
 }
 
 div.iwidget div.widget_menu > .errorbutton {
@@ -128,13 +39,6 @@ div.iwidget .dragboardwiki:hover {
 div.iwidget div.extractButton {
   background: url(../images/icons-sprite.png);
   background-position: -48px -360px;
-}
-
-.widget_menu .iwidget_name {
-  font-size:   12px;
-  /*color:       #4C5054;
-  font-weight: bold;*/
-  background:transparent none repeat scroll 0%;
 }
 
 div.widget_window_locked {

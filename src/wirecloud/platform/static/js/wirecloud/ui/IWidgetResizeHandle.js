@@ -1,33 +1,34 @@
-/////////////////////////////////////
-// IWidget resize support
-/////////////////////////////////////
-function IWidgetResizeHandle(handleElement, iWidget, resizeLeftSide) {
-    ResizeHandle.call(this, iWidget.element, handleElement,
+var IWidgetResizeHandle = function IWidgetResizeHandle(iWidget, resizeLeftSide) {
+    StyledElements.StyledElement.call(this, []);
+
+    this.wrapperElement = document.createElement('div');
+
+    ResizeHandle.call(this, iWidget.element, this.wrapperElement,
                             {iWidget: iWidget, resizeLeftSide: resizeLeftSide},
                             IWidgetResizeHandle.prototype.startFunc,
                             IWidgetResizeHandle.prototype.updateFunc,
                             IWidgetResizeHandle.prototype.finishFunc,
                             IWidgetResizeHandle.prototype.canBeResizedFunc);
-}
+};
+IWidgetResizeHandle.prototype = new StyledElements.StyledElement();
 
-IWidgetResizeHandle.prototype.canBeResizedFunc = function (resizableElement, data) {
+IWidgetResizeHandle.prototype.canBeResizedFunc = function canBeResizedFunc(resizableElement, data) {
     return data.iWidget.isAllowed('resize');
 };
 
-IWidgetResizeHandle.prototype.startFunc = function (resizableElement, handleElement, data) {
+IWidgetResizeHandle.prototype.startFunc = function startFunc(resizableElement, handleElement, data) {
     handleElement.addClassName("inUse");
     // TODO merge with iwidget minimum sizes
     data.minWidth = Math.ceil(data.iWidget.layout.fromPixelsToHCells(80));
     data.minHeight = Math.ceil(data.iWidget.layout.fromPixelsToVCells(50));
     data.innitialWidth = data.iWidget.getWidth();
     data.innitialHeight = data.iWidget.getHeight();
-    data.iWidget.iwidgetNameHTMLElement.blur();
     data.oldZIndex = data.iWidget.getZPosition();
     data.iWidget.setZPosition("999999");
     data.dragboard = data.iWidget.layout.dragboard;
 };
 
-IWidgetResizeHandle.prototype.updateFunc = function (resizableElement, handleElement, data, x, y) {
+IWidgetResizeHandle.prototype.updateFunc = function updateFunc(resizableElement, handleElement, data, x, y) {
     var iWidget = data.iWidget;
 
     // Skip if the mouse is outside the dragboard
@@ -59,7 +60,7 @@ IWidgetResizeHandle.prototype.updateFunc = function (resizableElement, handleEle
     }
 };
 
-IWidgetResizeHandle.prototype.finishFunc = function (resizableElement, handleElement, data) {
+IWidgetResizeHandle.prototype.finishFunc = function finishFunc(resizableElement, handleElement, data) {
     var iWidget = data.iWidget;
     data.iWidget.setZPosition(data.oldZIndex);
     if (data.innitialWidth !== data.iWidget.getWidth() || data.innitialHeight !== data.iWidget.getHeight()) {

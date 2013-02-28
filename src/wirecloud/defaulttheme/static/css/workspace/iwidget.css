@@ -1,0 +1,65 @@
+.iwidget {
+    position: absolute;
+    -moz-transition: box-shadow 0.7s ease-in;
+    -webkit-transition: box-shadow 0.7s ease-in;
+    transition: box-shadow 0.7s ease-in;
+    background: white;
+	border-color: #C2CBD2;
+    overflow: visible;
+}
+
+.iwidget > .widget_menu {
+    background: transparent;
+  	color: #4C5054;
+    font-size: 24px;
+    cursor: move;
+    line-height: 30px;
+}
+
+.iwidget > .widget_menu > span {
+    font-family: Comfortaa;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 100%;
+    display: inline-block;
+}
+
+.iwidget > .widget_menu > .styled_button {
+    opacity: 0;
+    -moz-transition-property: opacity;
+    -moz-transition-duration: 1s;
+    -webkit-transition-property: opacity;
+    -webkit-transition-duration: 1s;
+    -o-transition-property: opacity;
+    -o-transition-duration: 1s;
+    transition-property: opacity;
+    transition-duration: 1s;
+    float: right;
+    font-size: 75%;
+    margin: 0 0 0 5px;
+    padding: 0px;
+    border: 0px none;
+}
+.iwidget > .widget_menu:hover > .styled_button {
+    opacity: 0.3;
+}
+
+.iwidget > .widget_menu > .styled_button:focus, .iwidget > .widget_menu > .styled_button:hover {
+    opacity: 0.6;
+}
+
+.iwidget > .widget_wrapper {
+    clear: both;
+    overflow: hidden;
+    width: auto;
+    border-width: 1px 1px 0px 1px;
+    border-radius: 4px 4px 0px 0px;
+    border-style: solid;
+    border-color: #DDD;
+}
+
+.iwidget > .statusBar {
+    border: 1px solid #DDD;
+    height: 16px;
+    padding: 0 32px;
+}

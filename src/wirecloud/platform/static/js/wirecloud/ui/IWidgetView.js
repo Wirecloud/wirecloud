@@ -1,0 +1,126 @@
+/*
+ *     (C) Copyright 2013 Universidad Politécnica de Madrid
+ *
+ *     This file is part of Wirecloud Platform.
+ *
+ *     Wirecloud Platform is free software: you can redistribute it and/or
+ *     modify it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
+ *
+ *     Wirecloud is distributed in the hope that it will be useful, but WITHOUT
+ *     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+ *     License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with Wirecloud Platform.  If not, see
+ *     <http://www.gnu.org/licenses/>.
+ *
+ */
+
+(function () {
+
+    var builder = new StyledElements.GUIBuilder();
+
+    var IWidgetView = function IWidgetView(iwidget, /* TODO */ view) {
+
+        var tmp = {};
+
+        var ui_fragment = builder.parse(Wirecloud.currentTheme.templates['iwidget'], {
+            'closebutton': function () {
+                var button = new StyledElements.StyledButton({
+                    'plain': true,
+                    'class': 'icon-remove',
+                    'title': gettext('Close')
+                });
+
+                button.addEventListener("click",
+                    function () {
+                        OpManagerFactory.getInstance().removeInstance(iwidget.id);
+                    }.bind(this));
+
+                tmp.closebutton = button;
+                return button;
+            }.bind(iwidget),
+            'errorbutton': function () {
+                var button = new StyledElements.StyledButton({
+                    'plain': true,
+                    'class': 'errorbutton'
+                });
+                button.addEventListener("click",
+                    function (button) {
+                        OpManagerFactory.getInstance().showLogs(iwidget.logManager);
+                    }.bind(this));
+
+                tmp.errorbutton = button;
+                return button;
+            }.bind(iwidget),
+            'menubutton': function () {
+                var button = new StyledElements.StyledButton({
+                    'plain': true,
+                    'class': 'icon-cogs',
+                    'title': gettext('Menu')
+                });
+                button.addEventListener("click",
+                    function (button) {
+                        view.menu.show(button.getBoundingClientRect());
+                    });
+                tmp.menubutton = button;
+                return button;
+            },
+            'minimizebutton': function () {
+                var button = new StyledElements.StyledButton({
+                    'plain': true
+                });
+                button.addEventListener("click",
+                    function (button) {
+                        view.toggleMinimizeStatus(true);
+                    });
+                tmp.minimizebutton = button;
+                return button;
+            },
+            'title': function () {
+                var element = new StyledElements.EditableElement({initialContent: view.name});
+                element.addEventListener('change', function (element, new_name) { view.setName(new_name); });
+                tmp.titleelement = element;
+                return element;
+            },
+            'leftresizehandle': function () {
+                var handle = new IWidgetResizeHandle(view, true);
+                tmp.leftresizehandle = handle;
+                handle.addClassName("leftResizeHandle");
+                return handle;
+            },
+            'rightresizehandle': function () {
+                var handle = new IWidgetResizeHandle(view, false);
+                tmp.rightresizehandle = handle;
+                handle.addClassName("rightResizeHandle");
+                return handle;
+            },
+            'iframe': function () {
+                var content = document.createElement("iframe");
+                content.addClassName("widget_object");
+                content.setAttribute("type", this.widget.code_content_type);
+                content.setAttribute("frameBorder", "0");
+
+                content.observe("load",
+                    function () {
+                        this.layout.dragboard.workspace.iwidgetLoaded(this.id);
+                    }.bind(this),
+                    true);
+
+                return content;
+            }.bind(iwidget)
+        });
+
+        tmp.leftresizehandle.setResizableElement(ui_fragment.elements[1]);
+        tmp.rightresizehandle.setResizableElement(ui_fragment.elements[1]);
+
+        this.element = ui_fragment.elements[1];
+        this.element.classList.add('iwidget');
+        this.tmp = tmp;
+    };
+
+    Wirecloud.ui.IWidgetView = IWidgetView;
+})();

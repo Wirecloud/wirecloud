@@ -38,6 +38,13 @@
 
         items = [];
 
+        items.push(new StyledElements.MenuItem(
+            gettext('Rename'),
+            function () {
+                this.titleelement.enableEdition();
+            }.bind(this.iWidget)
+        ));
+
         if (this.has_prefs) {
             items.push(new StyledElements.MenuItem(
                 gettext("Settings"),

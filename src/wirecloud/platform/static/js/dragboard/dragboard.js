@@ -1059,6 +1059,10 @@ function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, 
     // Add event listener
     Event.observe(handleElement, "mousedown", startresize);
 
+    this.setResizableElement = function (element) {
+        resizableElement = element;
+    };
+
     this.destroy = function () {
         Event.stopObserving(handleElement, "mousedown", startresize);
         startresize = null;

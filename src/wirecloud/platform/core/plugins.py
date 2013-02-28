@@ -25,6 +25,7 @@ from wirecloud.platform.plugins import WirecloudPlugin, build_url_template
 
 
 WORKSPACE_CSS = (
+    'css/workspace/iwidget.css',
     'css/workspace/empty_workspace_message.css',
 )
 
@@ -133,6 +134,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/ContextManager.js',
             'js/wirecloud/IWidget.js',
             'js/wirecloud/ui/IWidgetResizeHandle.js',
+            'js/wirecloud/ui/IWidgetView.js',
             'js/wirecloud/PolicyManager.js',
             'js/StyledElements/Fragment.js',
             'js/StyledElements/Pagination.js',
