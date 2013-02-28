@@ -82,18 +82,3 @@
     fill:   none;
     stroke-width: 11;
 }
-
-.wiring_editor .menubar .styled_expander {
-    margin: 3px;
-    border: none;
-}
-
-.wiring_editor .menubar .styled_expander .title {
-    font-size: 1.8em;
-    font-style: normal;
-    text-shadow: none;
-}
-
-.wiring_editor .menubar .styled_expander.expanded .contents {
-    padding: 1ex;
-}

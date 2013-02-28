@@ -15,8 +15,6 @@
 }
 
 .wiring_editor .menubar {
-    white-space: nowrap;
-    font-size: 0.6em;
     vertical-align: middle;
     overflow-x: visible;
     overflow-y: auto;
@@ -38,6 +36,21 @@
 .wiring_editor .menubar .styled_expander {
     margin: 3px;
     border: none;
+}
+
+.wiring_editor .menubar .styled_expander > div {
+    font-size: 120%;
+}
+
+.wiring_editor .menubar .styled_expander .title {
+    font-style: normal;
+    text-shadow: none;
+}
+
+.wiring_editor .menubar .styled_expander.expanded .contents {
+    white-space: nowrap;
+    font-size: 0.7em;
+    padding: 1ex;
 }
 
 .wiring_editor .menubar .styled_expander .widgetsIcon{
