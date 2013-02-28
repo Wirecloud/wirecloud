@@ -72,7 +72,7 @@
         if (!this.isMiniInterface) {
             del_button = new StyledElements.StyledButton({
                 'title': gettext("Remove"),
-                'class': 'closebutton',
+                'class': 'closebutton icon-remove',
                 'plain': true
             });
             del_button.insertInto(this.header);
@@ -87,7 +87,7 @@
             // edit_position button, not for miniInterface
             this.editPos_button = new StyledElements.StyledButton({
                 'title': gettext("edit_Pos"),
-                'class': 'editPos_button',
+                'class': 'editPos_button icon-cog',
                 'plain': true
             });
             this.editPos_button.insertInto(this.header);

@@ -35,14 +35,15 @@
 }
 
 .wiring_editor .grid .header .closebutton {
-    top: -10px;
+    font-family: FontAwesome;
+    background: transparent;
+    top: -12px;
     float: right;
+    margin-right: 0px;
+    font-size: 15px;
+    color: rgb(83, 83, 134);
 }
 
-.wiring_editor .grid .sources .closebutton {
-    top: 14px;
-    right: 12px;
-}
 
 .wiring_editor .grid .ioperator, .wiring_editor .grid .iwidget {
     position: absolute;
@@ -305,9 +306,8 @@
 /* edit Button */
 .wiring_editor .grid .header .editPos_button {
     float: left;
-    background-image: url(../../images/icons-sprite.png);
-    background-position: -49px -337px;
+    font-family: FontAwesome;
     top: -10px;
-    width: 16px;
-    height: 16px;
+    font-size: 15px;
+    color: rgb(83, 83, 134);
 }
