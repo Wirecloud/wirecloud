@@ -113,7 +113,7 @@ def SaveIWidget(iwidget, user, tab, initial_variable_values):
     if not widget.is_available_for(user):
         raise Http403
 
-    new_iwidget = IWidget(name=iwidget_name, widget=widget, tab=tab, layout=layout, position=position, icon_position=icon_position, transparency=False)
+    new_iwidget = IWidget(name=iwidget_name, widget=widget, tab=tab, layout=layout, position=position, icon_position=icon_position)
     new_iwidget.save()
 
     variableDefs = VariableDef.objects.filter(widget=widget)
@@ -153,9 +153,6 @@ def UpdateIWidget(iwidget, user, tab):
     if 'layout' in iwidget:
         layout = iwidget['layout']
         ig.layout = layout
-
-    if 'transparency' in iwidget:
-        ig.transparency = iwidget['transparency']
 
     if 'icon_top' in iwidget and 'icon_left' in iwidget:
         icon_position = ig.icon_position

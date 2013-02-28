@@ -57,11 +57,10 @@
  * @param {Number}            height        initial content height
  * @param {Boolean}           fulldragboard initial fulldragboard mode
  * @param {Boolean}           minimized     initial minimized status
- * @param {Boolean}           transparency  initial transparency status
  * @param {String}            menu_color    background color for the menu.
  *                                          (6 chars with a hexadecimal color)
  */
-function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, transparency, refusedVersion, freeLayoutAfterLoading, readOnly) {
+function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, refusedVersion, freeLayoutAfterLoading, readOnly) {
 
     this.code = null;
     this.name = iWidgetName;
@@ -70,7 +69,6 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
     this.contentHeight = Number(height);
     this.loaded = false;
     this.zPos = zPos;
-    this.transparency = transparency;
     this.draggable = null;
     this.visible = false;
     this.minimized = minimized;
@@ -338,38 +336,6 @@ IWidget.prototype.onFreeLayout = function () {
 };
 
 /**
- * Toggle the widget transparency
- */
-IWidget.prototype.toggleTransparency = function () {
-    function onSuccess() {}
-    function onError(transport, e) {
-        var msg = gettext("Error saving the new transparency value into persistence: %(errorMsg)s.");
-        msg = this.internal_iwidget.logManager.formatError(msg, transport, e);
-        this.log(msg, Constants.Logging.ERROR_MSG);
-    }
-
-    this.element.toggleClassName("widget_window_transparent");
-    this.transparency = !this.transparency;
-
-    //Persist the new state
-    var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-        workspace_id: this.internal_iwidget.layout.dragboard.workspaceId,
-        tab_id: this.internal_iwidget.layout.dragboard.tabId,
-        iwidget_id: this.id
-    });
-    Wirecloud.io.makeRequest(iwidgetUrl, {
-        method: 'PUT',
-        contentType: 'application/json',
-        postBody: Object.toJSON({
-            transparency: this.transparency,
-            id: this.id
-        }),
-        onSuccess: onSuccess,
-        onFailure: onError
-    });
-};
-
-/**
  * Builds the structure of the widget
  */
 IWidget.prototype.build = function () {
@@ -466,11 +432,6 @@ IWidget.prototype.paint = function (onInit) {
 
     this.minimized = null;
     this.setMinimizeStatus(minimizedStatusBackup, false, false);
-
-    // Initialize transparency status
-    if (this.transparency) {
-        this.element.addClassName("widget_window_transparent");
-    }
 
     //Initialize read-only status
     if (this.internal_iwidget.readOnly) {

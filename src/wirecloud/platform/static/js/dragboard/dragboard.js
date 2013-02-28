@@ -255,7 +255,6 @@ function Dragboard(tab, workspace, dragboardElement) {
                                   height,
                                   curIWidget.fulldragboard,
                                   curIWidget.minimized,
-                                  curIWidget.transparency,
                                   curIWidget.refused_version,
                                   false,
                                   readOnly);
@@ -313,7 +312,7 @@ function Dragboard(tab, workspace, dragboardElement) {
         }
 
         // Create the instance
-        var iWidget = new IWidget(widget, null, options.iwidgetName, layout, null, null, null, width, height, false, minimized, false, null, freeLayoutAfterLoading, false);
+        var iWidget = new IWidget(widget, null, options.iwidgetName, layout, null, null, null, width, height, false, minimized, null, freeLayoutAfterLoading, false);
 
         iWidget.save(options);
     };

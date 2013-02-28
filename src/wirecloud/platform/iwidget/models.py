@@ -61,7 +61,6 @@ class IWidget(models.Model):
     widget = models.ForeignKey('platform.Widget', verbose_name=_('Widget'))
     tab = models.ForeignKey('platform.Tab', verbose_name=_('Tab'))
     layout = models.IntegerField(_('Layout'), default=0)
-    transparency = models.BooleanField(_('Transparency'), default=False)
     position = models.ForeignKey(Position, verbose_name=_('Position'), related_name="Position")
     icon_position = models.ForeignKey(Position, verbose_name=_('Icon Position'), related_name="Icon_Position", blank=True, null=True)
     refused_version = models.CharField(_('Refused Version'), max_length=150, blank=True, null=True)
