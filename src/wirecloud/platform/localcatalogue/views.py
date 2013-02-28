@@ -163,6 +163,7 @@ class ResourceCollection(Resource):
                 except IntegrityError:
                     return build_error_response(request, 409, _('Resource already exists'))
 
+            # add semantic relations
             add_widget_semantic_data(request.user, resource)
 
             data = get_widget_data(local_resource, request)
@@ -214,6 +215,7 @@ class ResourceEntry(Resource):
                     result['removedIWidgets'].append(iwidget.id)
                     iwidget.delete()
 
+            # remove semantic relations
             remove_widget_semantic_data(request.user, resource)
 
             return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
