@@ -32,18 +32,14 @@
     margin: 0;
 }
 
-.window_menu > .window_top > .styled_button.close {
+.window_menu > .window_top > .icon-remove {
     float: right;
     font-size: 20px;
-    font-weight: bold;
-    color: #000000;
-    text-shadow: 0 1px 0 #ffffff;
     opacity: 0.2;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    line-height: 40px;
 }
 
-.window_menu > .window_top > .styled_button.close:hover, .window_menu > .window_top > .styled_button.close:focus {
-    cursor: pointer;
+.window_menu > .window_top >.icon-remove:hover, .window_menu > .window_top > .icon-remove:focus {
     opacity: 0.4;
 }
 
