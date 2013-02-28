@@ -154,6 +154,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/StyledElements/HorizontalLayout.js',
             'js/StyledElements/BorderLayout.js',
             'js/StyledElements/ModelTable.js',
+            'js/StyledElements/EditableElement.js',
             'js/gadgetModel/Gadget.js',
             'js/wirecloud/ui/Draggable.js',
             'js/wirecloud/ui/Theme.js',
