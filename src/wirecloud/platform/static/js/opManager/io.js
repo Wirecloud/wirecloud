@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     (C) Copyright 2012-2013 Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,72 +19,82 @@
  *
  */
 
+/*global Ajax*/
+
 var Wirecloud = {};
 
 Wirecloud.location = {
     'domain': document.location.protocol + '//' + document.location.host,
-    'protocol': document.location.protocol.substr(0, document.location.protocol.length -1),
+    'protocol': document.location.protocol.substr(0, document.location.protocol.length - 1),
     'host': document.location.host
 };
 
-Wirecloud.io = {}
+(function () {
 
-Wirecloud.io.buildProxyURL = function(url, options) {
-    var final_url, protocolEnd, link, forceProxy, hostStart, pathStart, protocol,
-        host, rest;
+    "use strict";
 
-    forceProxy = options != null && !!options.forceProxy;
+    var io = {};
 
-    if (url.length > 4 && url.indexOf('www.') === 0) {
-        url = 'http://' + url;
-    }
+    io.buildProxyURL = function buildProxyURL(url, options) {
+        var final_url, protocolEnd, link, forceProxy, hostStart, pathStart, protocol,
+            host, rest;
 
-    protocol = Wirecloud.location.protocol;
-    host = Wirecloud.location.host;
+        forceProxy = options != null && !!options.forceProxy;
 
-    protocolEnd = url.indexOf('://');
-    if (protocolEnd !== -1) {
-        hostStart = protocolEnd + 3;
-        pathStart = url.indexOf('/', hostStart);
-        if (pathStart === -1) {
-            pathStart = url.length;
+        if (url.length > 4 && url.indexOf('www.') === 0) {
+            url = 'http://' + url;
         }
 
-        protocol = url.substr(0, protocolEnd);
-        host = url.substr(hostStart, pathStart - hostStart);
-        rest = url.substring(pathStart);
-        final_url = url;
-    } else {
-        if (url.charAt(0) === '/') {
-            rest = url;
+        protocol = Wirecloud.location.protocol;
+        host = Wirecloud.location.host;
+
+        protocolEnd = url.indexOf('://');
+        if (protocolEnd !== -1) {
+            hostStart = protocolEnd + 3;
+            pathStart = url.indexOf('/', hostStart);
+            if (pathStart === -1) {
+                pathStart = url.length;
+            }
+
+            protocol = url.substr(0, protocolEnd);
+            host = url.substr(hostStart, pathStart - hostStart);
+            rest = url.substring(pathStart);
+            final_url = url;
         } else {
-            rest = '/' + url;
-        }
+            if (url.charAt(0) === '/') {
+                rest = url;
+            } else {
+                rest = '/' + url;
+            }
 
-        if (!forceProxy) {
-            final_url = Wirecloud.location.domain + rest;
-        }
-    }
-
-    if (forceProxy || protocol !== Wirecloud.location.protocol || host !== Wirecloud.location.host) {
-        final_url = Wirecloud.location.domain +
-            Wirecloud.URLs.PROXY.evaluate({protocol: protocol, domain: host, path: rest});
-    }
-
-    return final_url;
-};
-
-Wirecloud.io.makeRequest = function(url, options) {
-    var handlerRegExp, key;
-
-    if (options != null && options.context != null) {
-        var handlerRegExp = new RegExp(/^on(?:Create|Complete|Exception|Failure|Interactive|Loaded|Loading|Success|Uninitialized|\d{3})$/);
-        for (var key in options) {
-            if (handlerRegExp.test(key) && typeof options[key] === 'function') {
-                options[key] = options[key].bind(options.context);
+            if (!forceProxy) {
+                final_url = Wirecloud.location.domain + rest;
             }
         }
-    }
 
-    return new Ajax.Request(Wirecloud.io.buildProxyURL(url, options), options);
-};
+        if (forceProxy || protocol !== Wirecloud.location.protocol || host !== Wirecloud.location.host) {
+            final_url = Wirecloud.location.domain +
+                Wirecloud.URLs.PROXY.evaluate({protocol: protocol, domain: host, path: rest});
+        }
+
+        return final_url;
+    };
+
+    io.makeRequest = function makeRequest(url, options) {
+        var handlerRegExp, key;
+
+        if (options != null && options.context != null) {
+            handlerRegExp = new RegExp(/^on(?:Create|Complete|Exception|Failure|Interactive|Loaded|Loading|Success|Uninitialized|\d{3})$/);
+            for (key in options) {
+                if (handlerRegExp.test(key) && typeof options[key] === 'function') {
+                    options[key] = options[key].bind(options.context);
+                }
+            }
+        }
+
+        return new Ajax.Request(Wirecloud.io.buildProxyURL(url, options), options);
+    };
+
+    Wirecloud.io = io;
+
+})();
