@@ -480,7 +480,8 @@ class WirecloudRemoteTestCase(object):
             iwidget['element'].find_element_by_css_selector('.icon-cogs').click()
             self.popup_menu_click('Rename')
             name_input = iwidget['element'].find_element_by_css_selector('.widget_menu > span')
-            name_input.send_keys(new_name)
+            # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
+            self.driver.execute_script('arguments[0].textContent = arguments[1]', name_input, new_name)
             iwidget['element'].find_element_by_css_selector('.statusBar').click()
 
         return iwidget
