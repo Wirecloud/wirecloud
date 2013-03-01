@@ -4,7 +4,6 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/common/ComputedStyle.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/BrowserUtils.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/common/modules.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/InputInterfaces.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/preferencesManager/PreferencesManager.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/preferencesManager/PlatformPref.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/gadgetModel/GadgetTemplate.js"></script>
@@ -25,7 +24,6 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/ElementPositions.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/wiring_exceptions.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/connectable.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/wirecloud/Wiring.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/connectableInterface.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/catalogue.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/user_commands.js"></script>

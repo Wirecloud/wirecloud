@@ -21,8 +21,6 @@
 
 /*global Ajax*/
 
-var Wirecloud = {};
-
 Wirecloud.location = {
     'domain': document.location.protocol + '//' + document.location.host,
     'protocol': document.location.protocol.substr(0, document.location.protocol.length - 1),

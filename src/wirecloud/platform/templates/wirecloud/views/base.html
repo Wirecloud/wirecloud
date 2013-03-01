@@ -102,8 +102,8 @@ var _DEFAULT_SKIN = 'default';
 
 <script type="text/javascript" src="{% url "wirecloud.javascript_translation_catalogue" %}?language={{ LANGUAGE_CODE }}"></script>
 {% compress js %}
-{% include "wirecloud/views/js_includes.js" %}
 {% wirecloud_ajax_endpoints "index" %}
+{% include "wirecloud/views/js_includes.js" %}
 {% extra_javascripts "index" %}
 {% endcompress %}
 

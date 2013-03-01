@@ -69,6 +69,9 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/BorderLayout.js',
     'js/StyledElements/ModelTable.js',
     'js/StyledElements/EditableElement.js',
+    'js/StyledElements/InputInterfaces.js',
+    'js/StyledElements/Form.js',
+    'js/StyledElements/GUIBuilder.js',
 )
 
 BASE_CSS = (
@@ -158,11 +161,12 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/io.js',
             'js/wirecloud/ContextManager.js',
             'js/wirecloud/IWidget.js',
+            'js/wirecloud/PolicyManager.js',
+            'js/wirecloud/Wiring.js',
+            'js/gadgetModel/Gadget.js',
+        ) + STYLED_ELEMENTS_FILES + (
             'js/wirecloud/ui/IWidgetResizeHandle.js',
             'js/wirecloud/ui/IWidgetView.js',
-            'js/wirecloud/PolicyManager.js',
-        ) + STYLED_ELEMENTS_FILES + (
-            'js/gadgetModel/Gadget.js',
             'js/wirecloud/ui/Draggable.js',
             'js/wirecloud/ui/Theme.js',
             'js/wirecloud/WirecloudCatalogue.js',
@@ -180,6 +184,8 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/dragboard/dragboard.js',
                 'js/wirecloud/utils/CookieManager.js',
                 'js/wirecloud/MarketManager.js',
+                'js/wirecloud/ui/MarketplaceViewMenuItems.js',
+                'js/catalogue/ResourceDetailsView.js',
                 'js/wirecloud/ui/ResourcePainter.js',
                 'js/wirecloud/ui/WirecloudCatalogue/PublishView.js',
                 'js/wirecloud/ui/WindowMenu.js',

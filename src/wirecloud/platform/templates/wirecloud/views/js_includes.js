@@ -3,11 +3,8 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/common/ComputedStyle.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/EzWebExt/EzWebExt.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/StyledElements.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/Form.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/Expander.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/Accordion.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/InputInterfaces.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/GUIBuilder.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/BrowserUtils.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/WirecloudHeader.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/LayoutManager.js"></script>
@@ -35,10 +32,7 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/dragboard/UserPref.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/dragboard/ElementPositions.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/connectable.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/Wiring.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/ui/MarketplaceViewMenuItems.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/MarketplaceView.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/CatalogueResource.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/CatalogueSearchView.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/ResourceDetailsView.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/CatalogueView.js"></script>

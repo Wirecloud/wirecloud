@@ -21,10 +21,6 @@
 
 /*global Constants, gettext, LogManagerFactory, StyledElements, Wirecloud, LayoutManagerFactory*/
 
-if (!Wirecloud.ui) {
-    Wirecloud.ui = {};
-}
-
 (function () {
 
     "use strict";
