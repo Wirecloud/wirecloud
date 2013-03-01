@@ -18,7 +18,10 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.utils.functional import Promise
-from django.utils.translation import force_unicode
+try:
+    from django.utils.encoding import force_unicode
+except:
+    from django.utils.encoding import force_text as force_unicode
 from django.utils.simplejson import JSONEncoder
 
 class LazyEncoder(JSONEncoder):
