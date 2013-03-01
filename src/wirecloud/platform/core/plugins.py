@@ -47,6 +47,30 @@ WIRING_EDITOR_FILES = (
     'js/wirecloud/ui/WiringEditor/Multiconnector.js',
 )
 
+STYLED_ELEMENTS_FILES = (
+    'js/StyledElements/Fragment.js',
+    'js/StyledElements/Pagination.js',
+    'js/StyledElements/Button.js',
+    'js/StyledElements/PopupMenuBase.js',
+    'js/StyledElements/PopupMenu.js',
+    'js/StyledElements/MenuItem.js',
+    'js/StyledElements/SubMenuItem.js',
+    'js/StyledElements/PopupButton.js',
+    'js/StyledElements/StaticPaginatedSource.js',
+    'js/StyledElements/TextField.js',
+    'js/StyledElements/TextArea.js',
+    'js/StyledElements/StyledList.js',
+    'js/StyledElements/PasswordField.js',
+    'js/StyledElements/Select.js',
+    'js/StyledElements/ToggleButton.js',
+    'js/StyledElements/StyledNotebook.js',
+    'js/StyledElements/Alternatives.js',
+    'js/StyledElements/HorizontalLayout.js',
+    'js/StyledElements/BorderLayout.js',
+    'js/StyledElements/ModelTable.js',
+    'js/StyledElements/EditableElement.js',
+)
+
 BASE_CSS = (
     'css/base/fade.css',
 )
@@ -131,32 +155,13 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
     def get_scripts(self, view):
         common = (
+            'js/wirecloud/io.js',
             'js/wirecloud/ContextManager.js',
             'js/wirecloud/IWidget.js',
             'js/wirecloud/ui/IWidgetResizeHandle.js',
             'js/wirecloud/ui/IWidgetView.js',
             'js/wirecloud/PolicyManager.js',
-            'js/StyledElements/Fragment.js',
-            'js/StyledElements/Pagination.js',
-            'js/StyledElements/Button.js',
-            'js/StyledElements/PopupMenuBase.js',
-            'js/StyledElements/PopupMenu.js',
-            'js/StyledElements/MenuItem.js',
-            'js/StyledElements/SubMenuItem.js',
-            'js/StyledElements/PopupButton.js',
-            'js/StyledElements/StaticPaginatedSource.js',
-            'js/StyledElements/TextField.js',
-            'js/StyledElements/TextArea.js',
-            'js/StyledElements/StyledList.js',
-            'js/StyledElements/PasswordField.js',
-            'js/StyledElements/Select.js',
-            'js/StyledElements/ToggleButton.js',
-            'js/StyledElements/StyledNotebook.js',
-            'js/StyledElements/Alternatives.js',
-            'js/StyledElements/HorizontalLayout.js',
-            'js/StyledElements/BorderLayout.js',
-            'js/StyledElements/ModelTable.js',
-            'js/StyledElements/EditableElement.js',
+        ) + STYLED_ELEMENTS_FILES + (
             'js/gadgetModel/Gadget.js',
             'js/wirecloud/ui/Draggable.js',
             'js/wirecloud/ui/Theme.js',

@@ -7,7 +7,6 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/InputInterfaces.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/preferencesManager/PreferencesManager.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/preferencesManager/PlatformPref.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/opManager/io.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/gadgetModel/GadgetTemplate.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/gadgetModel/Gadget.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/opManager/Workspace.js"></script>
