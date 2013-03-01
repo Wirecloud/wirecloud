@@ -302,7 +302,9 @@ class WirecloudRemoteTestCase(object):
         time.sleep(0.1)  # work around some problems
 
     def wait_catalogue_ready(self, timeout=30):
-        WebDriverWait(self.driver, timeout).until(lambda driver: 'disabled' not in driver.find_element_by_class_name('catalogue').find_element_by_class_name('search_interface').get_attribute('class'))
+        catalogue_element = self.get_current_catalogue_base_element()
+        search_view = catalogue_element.find_element_by_class_name('search_interface')
+        WebDriverWait(self.driver, timeout).until(lambda driver: 'disabled' not in search_view.get_attribute('class'))
 
     def login(self, username='admin', password='admin'):
 
@@ -691,6 +693,7 @@ class WirecloudRemoteTestCase(object):
 
     def delete_marketplace(self, market, expect_error=False):
 
+        self.change_main_view('marketplace')
         self.change_marketplace(market)
         self.perform_market_action("Delete marketplace")
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
