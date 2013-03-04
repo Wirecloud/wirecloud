@@ -5,7 +5,7 @@ from wirecloud.platform.plugins import WirecloudPlugin
 from wirecloud.fp74caast.urls import urlpatterns
 
 
-class FP74CaastPlugin(WirecloudPlugin):
+class FP74CaaStPlugin(WirecloudPlugin):
 
     def get_urls(self):
         return urlpatterns

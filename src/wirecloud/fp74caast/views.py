@@ -9,12 +9,44 @@ from wirecloud.platform.workspace.utils import get_workspace_list
 from wirecloud.platform.workspace.views import setActiveWorkspace
 from wirecloud.platform.models import Workspace, UserWorkspace
 
-from wirecloud.fp74caast.models import Profile4CaaSt
+from wirecloud.fp74caast.models import Profile4CaaSt, TenantProfile
 
 
 def parse_username(tenant_id):
 
     return tenant_id.split('.', 4)[3]
+
+
+@require_GET
+def add_tenant(request):
+
+    id_4CaaSt = request.GET['message']
+    username = parse_username(id_4CaaSt)
+
+    status = 201
+    try:
+        user = User.objects.create_user(username, 'test@example.com', username)
+        TenantProfile.objects.create(user=user, id_4CaaSt=id_4CaaSt)
+    except:
+        status = 209
+
+    return HttpResponse(status)
+
+
+@require_GET
+def remove_tenant(request):
+
+    id_4CaaSt = request.GET['message']
+    username = parse_username(id_4CaaSt)
+
+    user = get_object_or_404(User, username=username)
+    try:
+        if user.tenantprofile_4CaaSt.id_4CaaSt != id_4CaaSt:
+            raise Http404
+    except TenantProfile.DoesNotExist:
+        raise Http404
+
+    return HttpResponse(status=204)
 
 
 class TenantCollection(Resource):
