@@ -35,13 +35,13 @@
   </rdf:Description>
   <rdf:Description rdf:nodeID="_4c3ea58f-1c5d-42ac-acdb-e4e32ae632b9">
     <ns2:friendcode>test-data</ns2:friendcode>
-    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/widget#Event"/>
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/widget#OutputEndpoint"/>
     <ns2:type>text</ns2:type>
     <rdfs:label>Output</rdfs:label>
     <ns3:title>outputendpoint</ns3:title>
   </rdf:Description>
   <rdf:Description rdf:nodeID="_f8a49b1a-e921-4507-a895-936967852e2d">
-    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/widget#Slot"/>
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/widget#InputEndpoint"/>
     <ns2:frindcode>test-data</ns2:frindcode>
     <ns2:type>text</ns2:type>
     <rdfs:label>Input</rdfs:label>
@@ -55,7 +55,7 @@
   </rdf:Description>
   <rdf:Description rdf:nodeID="_02e6a1e8-b3f4-435d-8051-6c0ba3d25a5b">
     <ns2:friendcode>test-data</ns2:friendcode>
-    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/widget#Event"/>
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/widget#OutputEndpoint"/>
     <ns2:type>text</ns2:type>
     <rdfs:label>Output</rdfs:label>
     <ns3:title>outputendpoint</ns3:title>
@@ -126,11 +126,11 @@
     <ns5:name>admin</ns5:name>
   </rdf:Description>
   <rdf:Description rdf:nodeID="_ff645ae3-503a-4d84-aaf9-6f09fb93df0b">
-    <ns2:hasSlot rdf:nodeID="_f8a49b1a-e921-4507-a895-936967852e2d"/>
-    <ns2:hasSlot rdf:nodeID="_65c9f0f2-1ce3-4e37-9ce3-34b0170b765a"/>
+    <ns2:hasInputEndpoint rdf:nodeID="_f8a49b1a-e921-4507-a895-936967852e2d"/>
+    <ns2:hasInputEndpoint rdf:nodeID="_65c9f0f2-1ce3-4e37-9ce3-34b0170b765a"/>
     <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/widget#PlatformWiring"/>
-    <ns2:hasEvent rdf:nodeID="_4c3ea58f-1c5d-42ac-acdb-e4e32ae632b9"/>
-    <ns2:hasEvent rdf:nodeID="_02e6a1e8-b3f4-435d-8051-6c0ba3d25a5b"/>
+    <ns2:hasOutputEndpoint rdf:nodeID="_4c3ea58f-1c5d-42ac-acdb-e4e32ae632b9"/>
+    <ns2:hasOutputEndpoint rdf:nodeID="_02e6a1e8-b3f4-435d-8051-6c0ba3d25a5b"/>
     <ns1:hasConnection rdf:nodeID="_c0fc63f3-d33b-4490-9a5b-7ee2942570d4"/>
     <ns1:hasConnection rdf:nodeID="_2eba5d07-8a9f-4201-ba15-3532a1b22a18"/>
   </rdf:Description>
@@ -154,7 +154,7 @@
     <ns5:name>Wirecloud</ns5:name>
   </rdf:Description>
   <rdf:Description rdf:nodeID="_65c9f0f2-1ce3-4e37-9ce3-34b0170b765a">
-    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/widget#Slot"/>
+    <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/widget#InputEndpoint"/>
     <ns2:frindcode>test-data</ns2:frindcode>
     <ns2:type>text</ns2:type>
     <rdfs:label>Input</rdfs:label>
