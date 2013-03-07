@@ -33,19 +33,21 @@ from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtFile
 
 
-def install_resource(downloaded_file, templateURL, user, packaged):
+def install_resource(file_contents, templateURL, executor_user, packaged):
 
     if packaged:
-        if isinstance(downloaded_file, basestring):
-            downloaded_file = StringIO(downloaded_file)
-            wgt_file = WgtFile(downloaded_file)
+        if isinstance(file_contents, basestring):
+            file_contents = StringIO(file_contents)
+            wgt_file = WgtFile(file_contents)
+        elif isinstance(file_contents, WgtFile):
+            wgt_file = file_contents
+            file_contents = wgt_file.get_underlying_file()
         else:
-            wgt_file = downloaded_file
-            downloaded_file = wgt_file.get_underlying_file()
+            raise Exception
 
         template_contents = wgt_file.get_template()
     else:
-        template_contents = downloaded_file
+        template_contents = file_contents
 
     template = TemplateParser(template_contents)
     resources = CatalogueResource.objects.filter(vendor=template.get_resource_vendor(), short_name=template.get_resource_name(), version=template.get_resource_version())[:1]
@@ -55,9 +57,9 @@ def install_resource(downloaded_file, templateURL, user, packaged):
         resource = resources[0]
     else:
         if packaged:
-            resource = add_widget_from_wgt(downloaded_file, user, wgt_file=wgt_file)
+            resource = add_widget_from_wgt(file_contents, executor_user, wgt_file=wgt_file)
         else:
-            resource = add_resource_from_template(templateURL, template_contents, user)
+            resource = add_resource_from_template(templateURL, template_contents, executor_user)
 
     if resource.resource_type() == 'widget':
         widget_vendor = template.get_resource_vendor()
