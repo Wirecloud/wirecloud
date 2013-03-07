@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012 Universidad Politécnica de Madrid
+# Copyright 2012-2013 Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -22,7 +22,7 @@ import time
 
 from selenium.webdriver.support.ui import WebDriverWait
 
-from wirecloud.commons.test import widget_operation, WirecloudSeleniumTestCase
+from wirecloud.commons.test import uses_extra_resources, widget_operation, WirecloudSeleniumTestCase
 
 
 class BasicSeleniumTests(WirecloudSeleniumTestCase):
@@ -80,10 +80,12 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.login()
         self.add_widget_to_mashup('Test')
 
+    @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_basic_widget_functionalities(self):
 
         self.login(username='user_with_workspaces')
         iwidget_id = self.get_current_iwidgets()[0]['id']
+        api_test_iwidget_id = self.add_widget_to_mashup('Wirecloud API test')['id']
 
         with widget_operation(self.driver, iwidget_id):
             self.assertEqual(self.driver.find_element_by_id('listPref').text, 'default')
@@ -128,6 +130,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('textPref').text, '')
             self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'true')
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, '')
+
+        # Use api test widget to test other API features
+        with widget_operation(self.driver, api_test_iwidget_id):
+            self.assertEqual(self.driver.find_element_by_id('makerequest_test').text, 'Success!!')
 
     def test_http_cache(self):
 
