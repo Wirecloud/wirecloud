@@ -34,7 +34,7 @@ from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 from wirecloud.platform.get_data import get_widget_data
-from wirecloud.platform.localcatalogue.utils import install_resource
+from wirecloud.platform.localcatalogue.utils import install_resource, install_resource_to_user
 import wirecloud.platform.widget.utils
 from wirecloud.platform.models import Widget, XHTML
 from wirecloud.platform.workspace.utils import create_published_workspace_from_template
@@ -75,13 +75,14 @@ class LocalCatalogueTestCase(LocalizedTestCase):
 
         downloader.download_http_content.set_response(template_uri, template)
         downloader.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
-        resource = install_resource(template, template_uri, self.user, False)
+        resource = install_resource_to_user(self.user, file_contents=template, templateURL=template_uri)
 
         self.assertEqual(resource.vendor, 'Wirecloud')
         self.assertEqual(resource.short_name, 'test')
         self.assertEqual(resource.version, '0.1')
         self.assertEqual(resource.public, False)
         self.assertEqual(tuple(resource.users.values_list('username', flat=True)), (u'test',))
+        self.assertEqual(tuple(resource.groups.values_list('name', flat=True)), ())
 
         widget = resource.widget
 
@@ -215,7 +216,7 @@ class LocalCatalogueTestCase(LocalizedTestCase):
 
         downloader.download_http_content.set_response(template_uri, template)
         downloader.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
-        resource = install_resource(template, template_uri, self.user, False)
+        resource = install_resource_to_user(self.user, file_contents=template, templateURL=template_uri)
         resource_pk = resource.pk
         xhtml_pk = resource.widget.pk
 
@@ -231,7 +232,7 @@ class LocalCatalogueTestCase(LocalizedTestCase):
 
         # Use a different xhtml code
         downloader.download_http_content.set_response('http://example.com/path/test.html', 'cache')
-        install_resource(template, template_uri, self.user, False)
+        install_resource_to_user(self.user, file_contents=template, templateURL=template_uri)
 
         response = client.get(reverse('wirecloud.widget_code_entry', kwargs=widget_id))
         self.assertEqual(response.status_code, 200)
@@ -369,7 +370,7 @@ class WGTLocalCatalogueTestCase(TransactionTestCase):
         wgt_file = WgtFile(os.path.join(os.path.dirname(__file__), 'test-data', 'basic_widget.wgt'))
         widget_path = wirecloud.platform.widget.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
 
-        install_resource(wgt_file, None, self.user, True)
+        install_resource_to_user(self.user, file_contents=wgt_file, packaged=True)
         resource = CatalogueResource.objects.get(vendor='Morfeo', short_name='Test', version='0.1')
         resource.widget
         self.assertEqual(os.path.isdir(widget_path), True)

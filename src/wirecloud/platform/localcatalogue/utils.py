@@ -59,8 +59,6 @@ def install_resource(downloaded_file, templateURL, user, packaged):
         else:
             resource = add_resource_from_template(templateURL, template_contents, user)
 
-    resource.users.add(user)
-
     if resource.resource_type() == 'widget':
         widget_vendor = template.get_resource_vendor()
         widget_name = template.get_resource_name()
@@ -75,6 +73,45 @@ def install_resource(downloaded_file, templateURL, user, packaged):
                 local_resource = create_widget_from_wgt(wgt_file, user)
             else:
                 local_resource = create_widget_from_template(resource.template_uri, user)
+    return resource
+
+
+def install_resource_to_user(user, **kwargs):
+
+    packaged = kwargs.get('packaged', False)
+    executor_user = kwargs.get('executor_user', user)
+    templateURL = kwargs.get('templateURL', None)
+    downloaded_file = kwargs.get('file_contents', None)
+
+    resource = install_resource(downloaded_file, templateURL, executor_user, packaged)
+    resource.users.add(user)
+
+    return resource
+
+
+def install_resource_to_group(group, **kwargs):
+
+    packaged = kwargs.get('packaged', False)
+    executor_user = kwargs.get('executor_user', None)
+    templateURL = kwargs.get('templateURL', None)
+    downloaded_file = kwargs.get('file_contents', None)
+
+    resource = install_resource(downloaded_file, templateURL, executor_user, packaged)
+    resource.groups.add(group)
+
+    return resource
+
+
+def install_resource_to_all_users(**kwargs):
+
+    packaged = kwargs.get('packaged', False)
+    executor_user = kwargs.get('executor_user', None)
+    templateURL = kwargs.get('templateURL', None)
+    downloaded_file = kwargs.get('file_contents', None)
+
+    resource = install_resource(downloaded_file, templateURL, executor_user, packaged)
+    resource.public = True
+    resource.save()
 
     return resource
 
@@ -97,7 +134,7 @@ def install_resource_from_available_marketplaces(vendor, name, version, user):
 
     if resource_info is not None:
 
-        return install_resource(resource_info['downloaded_file'], resource_info['template_url'], user, resource_info['packaged'])
+        return install_resource_to_user(user, file_contents=resource_info['downloaded_file'], templateURL=resource_info['template_url'], packaged=resource_info['packaged'])
     else:
         raise Exception
 
