@@ -45,7 +45,6 @@ from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.models import Translation
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
-from wirecloud.platform.widget.views import deleteWidget
 
 
 wgt_deployer = WgtDeployer(settings.CATALOGUE_MEDIA_ROOT)
@@ -206,7 +205,9 @@ def delete_resource(resource, user):
         raise Http403(msg)
 
     result = {'removedIWidgets': []}
-    if resource.resource_type() == 'widget':
+    if 'wirecloud.platform' in settings.INSTALLED_APPS and resource.resource_type() == 'widget':
+        from wirecloud.platform.widget.views import deleteWidget
+
         # Remove the widget from the showcase
         result = deleteWidget(user, resource.short_name, resource.vendor, resource.version)
 
