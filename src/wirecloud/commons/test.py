@@ -42,6 +42,7 @@ from django.test.client import Client
 from django.utils import translation
 from selenium.webdriver.support.ui import WebDriverWait
 
+from wirecloud.platform.localcatalogue.utils import install_resource_to_all_users
 from wirecloud.platform.widget import utils as showcase
 from wirecloud.proxy.tests import FakeDownloader as ProxyFakeDownloader
 from wirecloud.proxy.views import WIRECLOUD_PROXY
@@ -248,6 +249,31 @@ class widget_operation:
 
         # TODO work around webdriver bugs
         self.driver.switch_to_default_content()
+
+
+def uses_extra_resources(resources, shared=False):
+
+    def wrap(test_func):
+
+        def wrapper(self, *args, **kwargs):
+
+            if shared:
+                base = self.shared_test_data_dir
+            else:
+                base = self.test_data_dir
+
+            for resource in resources:
+                wgt_file = open(os.path.join(base, resource), 'rb')
+                wgt = WgtFile(wgt_file)
+                resource = install_resource_to_all_users(file_contents=wgt, packaged=True)
+                wgt_file.close()
+
+            return test_func(self, *args, **kwargs)
+
+        wrapper.func_name = test_func.func_name
+        return wrapper
+
+    return wrap
 
 
 def marketplace_loaded(driver):
