@@ -457,7 +457,15 @@ class WirecloudRemoteTestCase(object):
 
         old_iwidget_ids = self.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
         old_iwidget_count = len(old_iwidget_ids)
-        resource.find_element_by_css_selector('.instantiate_button div').click()
+
+        instanciate_button = resource.find_element_by_css_selector('.instantiate_button div')
+        # Work around a chromedriver bug
+        if self.driver.capabilities['browserName'] == "chrome":
+            try:
+                self.driver.execute_script("arguments[0].scrollIntoView(true);", instanciate_button);
+            except:
+                pass
+        instanciate_button.click()
 
         # TODO
         time.sleep(2)
