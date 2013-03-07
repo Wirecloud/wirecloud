@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012 Universidad Politécnica de Madrid
+# Copyright 2012-2013 Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -43,6 +43,8 @@ from django.utils import translation
 from selenium.webdriver.support.ui import WebDriverWait
 
 from wirecloud.platform.widget import utils as showcase
+from wirecloud.proxy.tests import FakeDownloader as ProxyFakeDownloader
+from wirecloud.proxy.views import WIRECLOUD_PROXY
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
@@ -796,6 +798,9 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
                 'localhost:8001': os.path.join(os.path.dirname(__file__), 'test-data', 'src'),
             },
         }))
+        cls._original_proxy_do_request_function = WIRECLOUD_PROXY._do_request
+        WIRECLOUD_PROXY._do_request = ProxyFakeDownloader()
+        WIRECLOUD_PROXY._do_request.set_response('http://example.com/success.html', 'remote makerequest succeded')
 
         # Load webdriver
         module_name, klass_name = getattr(cls, '_webdriver_class', 'selenium.webdriver.Firefox').rsplit('.', 1)
@@ -840,7 +845,11 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
     def tearDownClass(cls):
         cls.driver.quit()
 
+        # downloader
         downloader.download_http_content = cls._original_download_function
+        WIRECLOUD_PROXY._do_request = cls._original_proxy_do_request_function
+
+        # deployers
         catalogue.wgt_deployer = cls.old_catalogue_deployer
         shutil.rmtree(cls.catalogue_tmp_dir_backup, ignore_errors=True)
         shutil.rmtree(cls.catalogue_tmp_dir, ignore_errors=True)
