@@ -29,14 +29,18 @@
 
 
 #
+import os
 import random
 
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.db import models
+from django.db.models.signals import post_save
 from django.utils.translation import ugettext as _
 
+from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.models import TransModel
+from wirecloud.commons.utils.wgt import WgtFile
 
 
 class XHTML(models.Model):
@@ -214,3 +218,26 @@ class ContextOption(models.Model):
     class Meta:
         app_label = 'platform'
         db_table = 'wirecloud_contextoption'
+
+
+def create_widget_on_resource_creation(sender, instance, created, raw, **kwargs):
+
+    from wirecloud.catalogue import utils as catalogue
+    from wirecloud.platform.widget.utils import create_widget_from_template, create_widget_from_wgt
+
+    if not created or raw:
+        return
+
+    resource = instance
+    if resource.resource_type() == 'widget':
+        try:
+            resource.widget
+        except Widget.DoesNotExist:
+            if resource.fromWGT:
+                base_dir = catalogue.wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
+                wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
+                create_widget_from_wgt(wgt_file, resource.creator)
+            else:
+                create_widget_from_template(resource.template_uri, resource.creator)
+
+post_save.connect(create_widget_on_resource_creation, sender=CatalogueResource)
