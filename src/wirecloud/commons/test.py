@@ -140,6 +140,7 @@ class LocalDownloader(object):
     def __init__(self, servers):
         self._servers = servers
         self._client = Client()
+        self._live_netloc = None
 
     def set_live_server(self, host, port):
         self._live_netloc = host + ':' + str(port)
@@ -153,7 +154,7 @@ class LocalDownloader(object):
             f.close()
             return contents
 
-        if parsed_url.netloc == self._live_netloc:
+        if self._live_netloc is not None and parsed_url.netloc == self._live_netloc:
             return self._client.get(url).content
 
         if parsed_url.scheme not in self._servers or parsed_url.netloc not in self._servers[parsed_url.scheme]:
