@@ -18,11 +18,15 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import os
+
 from django.core.urlresolvers import reverse
 from django.test import Client
 from django.utils import simplejson
 
-from wirecloud.commons.test import WirecloudTestCase
+import wirecloud.commons.test
+from wirecloud.commons.test import LocalDownloader, WirecloudTestCase
+from wirecloud.commons.utils import downloader
 from wirecloud.platform.models import Workspace
 
 
@@ -33,12 +37,24 @@ __test__ = False
 class ApplicationMashupAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data',)
+    tags = ('rest_api',)
 
     @classmethod
     def setUpClass(cls):
         super(ApplicationMashupAPI, cls).setUpClass()
 
         cls.client = Client()
+        cls._original_download_function = staticmethod(downloader.download_http_content)
+        downloader.download_http_content = LocalDownloader({
+            'http': {
+                'localhost:8001': os.path.join(os.path.dirname(wirecloud.commons.test.__file__), 'test-data', 'src'),
+            },
+        })
+
+    @classmethod
+    def tearDownClass(cls):
+
+        downloader.download_http_content = cls._original_download_function
 
     def test_features(self):
 
@@ -132,3 +148,25 @@ class ApplicationMashupAPI(WirecloudTestCase):
         }
         response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 409)
+
+    def test_workspace_collection_post_creation_from_mashup(self):
+
+        url = reverse('wirecloud.workspace_collection')
+
+        # Authenticate
+        self.client.login(username='normuser', password='admin')
+
+        # Make the request
+        data = {
+            'mashup': 'Wirecloud/test-mashup/1.0',
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+
+        # Check basic response structure
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertEqual(response_data['name'], 'Test Mashup')
+
+        # Workspace should be created
+        self.assertTrue(Workspace.objects.filter(creator=2, name='Test Mashup').exists())
