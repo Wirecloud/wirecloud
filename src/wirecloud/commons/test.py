@@ -480,30 +480,42 @@ class WirecloudRemoteTestCase(object):
 
         return [{'id': iwidget_ids[i], 'element': iwidget_elements[i]} for i in range(len(iwidget_ids))]
 
-    def instantiate(self, resource):
+    def instantiate(self, resource, timeout=30):
 
         old_iwidget_ids = self.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
         old_iwidget_count = len(old_iwidget_ids)
 
-        instanciate_button = resource.find_element_by_css_selector('.instantiate_button div')
+        instantiate_button = resource.find_element_by_css_selector('.instantiate_button div')
         # Work around a chromedriver bug
         if self.driver.capabilities['browserName'] == "chrome":
             try:
-                self.driver.execute_script("arguments[0].scrollIntoView(true);", instanciate_button);
+                self.driver.execute_script("arguments[0].scrollIntoView(true);", instantiate_button);
             except:
                 pass
-        instanciate_button.click()
+        instantiate_button.click()
 
-        # TODO
-        time.sleep(2)
+        tmp = {
+            'new_iwidget': None,
+        }
+        def iwidget_loaded(driver):
+            if tmp['new_iwidget'] is not None:
+                return tmp['new_iwidget']['element'].is_displayed()
 
-        iwidgets = self.get_current_iwidgets()
-        iwidget_count = len(iwidgets)
-        self.assertEqual(iwidget_count, old_iwidget_count + 1)
+            iwidgets = self.get_current_iwidgets()
+            iwidget_count = len(iwidgets)
+            if iwidget_count != old_iwidget_count + 1:
+                return False
 
-        for iwidget in iwidgets:
-            if iwidget['id'] not in old_iwidget_ids:
-                return iwidget
+            for iwidget in iwidgets:
+                if iwidget['id'] not in old_iwidget_ids:
+                    tmp['new_iwidget'] = iwidget
+
+            return tmp['new_iwidget']['element'].is_displayed()
+
+        WebDriverWait(self.driver, timeout).until(iwidget_loaded)
+        # TODO firefox
+        time.sleep(0.1)
+        return tmp['new_iwidget']
 
     def add_widget_to_mashup(self, widget_name, market=None, new_name=None):
 
