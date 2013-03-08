@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012 Universidad Politécnica de Madrid
+# Copyright 2012-2013 Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -35,6 +35,8 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.utils.http import urlencode
 
+from wirecloud.catalogue import utils as catalogue
+from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource, Service
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.cache import no_cache
@@ -173,21 +175,40 @@ class WorkspaceCollection(Resource):
                 return build_error_response(request, 400, msg)
 
             workspace_name = data.get('name', '').strip()
+            mashup_id = data.get('mashup', '')
         else:
             workspace_name = request.POST.get('name', '').strip()
+            mashup_id = request.POST.get('mashup', '')
 
-        if workspace_name == '':
+        if mashup_id == '' and workspace_name == '':
             return build_error_response(request, 400, _('missing workspace name'))
 
-        try:
-            workspace = createWorkspace(workspace_name, request.user)
-        except IntegrityError:
-            msg = _('A workspace with the given name already exists')
-            return build_error_response(request, 409, msg)
+        if mashup_id == '':
+            try:
+                workspace = createWorkspace(workspace_name, request.user)
+            except IntegrityError:
+                msg = _('A workspace with the given name already exists')
+                return build_error_response(request, 409, msg)
+        else:
+            values = mashup_id.split('/', 3)
+            if len(values) != 3:
+                return build_error_response(request, 400, _('invalid mashup id'))
+
+            (mashup_vendor, mashup_name, mashup_version) = values
+            resource = CatalogueResource.objects.get(vendor=mashup_vendor, short_name=mashup_name, version=mashup_version)
+            if resource.fromWGT:
+                base_dir = catalogue.wgt_deployer.get_base_dir(mashup_vendor, mashup_name, mashup_version)
+                wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
+                template = wgt_file.get_template()
+            else:
+                template = downloader.download_http_content(resource.template_uri, user=request.user)
+
+            workspace, _junk = buildWorkspaceFromTemplate(template, request.user, True)
+
 
         workspace_data = get_global_workspace_data(workspace, request.user)
 
-        return workspace_data.get_response(status_code=201)
+        return workspace_data.get_response(status_code=201, cacheable=False)
 
 
 class WorkspaceEntry(Resource):
