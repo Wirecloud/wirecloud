@@ -431,8 +431,6 @@ function Dragboard(tab, workspace, dragboardElement) {
             throw new Error();
         }
 
-        this.iWidgets.set(iWidget.id, iWidget);
-
         var oldHeight = iWidget.getHeight();
         var oldWidth = iWidget.getWidth();
 
@@ -440,6 +438,8 @@ function Dragboard(tab, workspace, dragboardElement) {
 
         // Notify resize event
         iWidget.layout._notifyResizeEvent(iWidget, oldWidth, oldHeight, iWidget.getWidth(), iWidget.getHeight(), false, true);
+
+        this.iWidgets.set(iWidget.id, iWidget);
     };
 
     Dragboard.prototype.fillFloatingWidgetsMenu = function (menu) {

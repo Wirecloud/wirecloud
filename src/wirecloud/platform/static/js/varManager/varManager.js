@@ -101,11 +101,13 @@ function VarManager (_workspace) {
         }
     }
 
-    VarManager.prototype.parseIWidgetVariables = function (iwidget_info, tab) {
+    VarManager.prototype.parseIWidgetVariables = function (iwidget_info, tab, iwidget) {
         var name, id, variables, variable, iwidget, varInfo, aspect, value,
             objVars = {};
 
-        iwidget = this.workspace.getIWidget(iwidget_info['id']);
+        if (iwidget == null) {
+            iwidget = this.workspace.getIWidget(iwidget_info['id']);
+        }
         variables = iwidget.widget.getTemplate().getVariables();
 
         for (name in variables) {
@@ -203,9 +205,12 @@ function VarManager (_workspace) {
         }
     };
 
-    VarManager.prototype.addInstance = function (iWidget, iwidgetInfo, tab) {
-        this.parseIWidgetVariables(iwidgetInfo, tab);
-    }
+    VarManager.prototype.addInstance = function addInstance(iWidget, iwidgetInfo, tab) {
+        this.parseIWidgetVariables(iwidgetInfo, tab, iWidget);
+        iWidget.addEventListener('load', function (iWidget) {
+            this.dispatchPendingVariables(iWidget.id);
+        }.bind(this));
+    };
 
     VarManager.prototype.removeInstance = function (iWidgetId) {
         delete this.iWidgets[iWidgetId];

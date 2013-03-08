@@ -103,12 +103,7 @@
                 content.addClassName("widget_object");
                 content.setAttribute("type", this.widget.code_content_type);
                 content.setAttribute("frameBorder", "0");
-
-                content.observe("load",
-                    function () {
-                        this.layout.dragboard.workspace.iwidgetLoaded(this.id);
-                    }.bind(this),
-                    true);
+                content.addEventListener("load", view._notifyLoaded.bind(view), true);
 
                 return content;
             }.bind(iwidget)

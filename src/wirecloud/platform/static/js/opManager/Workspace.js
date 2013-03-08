@@ -312,15 +312,6 @@ function Workspace (workspaceState) {
     // ****************
 
 
-    Workspace.prototype.iwidgetLoaded = function(iwidgetId) {
-        var iwidget = this.getIWidget(iwidgetId);
-        iwidget._notifyLoaded();
-
-        // Notify to the variable manager the iwidget has been loaded
-        this.varManager.dispatchPendingVariables(iwidgetId);
-
-    }
-
     Workspace.prototype.checkForWidgetUpdates = function() {
         var i, iwidgets;
 
