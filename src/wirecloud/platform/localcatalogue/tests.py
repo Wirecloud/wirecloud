@@ -412,6 +412,7 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.assertIsNotNone(widget)
 
         test_widget.public = False
+        test_widget.users.clear()
         test_widget.save()
 
         self.search_resource('Test')
@@ -451,8 +452,6 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         test_widget = CatalogueResource.objects.get(short_name='Test')
         test_widget.public = False
         test_widget.save()
-        test_widget.users.add(User.objects.get(username='admin'))
-        test_widget.users.add(User.objects.get(username='normuser'))
 
         self.login(username='normuser')
 
