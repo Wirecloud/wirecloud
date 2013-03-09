@@ -293,6 +293,16 @@ class WirecloudRemoteTestCase(object):
         # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
         self.driver.execute_script('arguments[0].value = arguments[1]', form_input, value)
 
+    def scroll_and_click(self, element):
+
+        # Work around chromedriver bugs
+        if self.driver.capabilities['browserName'] == "chrome":
+            try:
+                self.driver.execute_script("arguments[0].scrollIntoView(false);", element);
+            except:
+                pass
+        element.click()
+
     def wait_element_visible_by_css_selector(self, selector, timeout=30, element=None):
         if element is None:
             element = self.driver
@@ -485,14 +495,7 @@ class WirecloudRemoteTestCase(object):
         old_iwidget_ids = self.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
         old_iwidget_count = len(old_iwidget_ids)
 
-        instantiate_button = resource.find_element_by_css_selector('.instantiate_button div')
-        # Work around a chromedriver bug
-        if self.driver.capabilities['browserName'] == "chrome":
-            try:
-                self.driver.execute_script("arguments[0].scrollIntoView(true);", instantiate_button);
-            except:
-                pass
-        instantiate_button.click()
+        self.scroll_and_click(resource.find_element_by_css_selector('.instantiate_button div'))
 
         tmp = {
             'new_iwidget': None,
