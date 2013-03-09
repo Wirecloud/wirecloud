@@ -34,11 +34,6 @@
   </Platform.Link>
 
   <Platform.Rendering height="24" width="10"/>
-  <Platform.Context>
-    <Context name="language" type="text" concept="language"/>
-    <Context name="user" type="text" concept="username"/>
-    <WidgetContext name="width" type="text" concept="widthInPixels"/>
-  </Platform.Context>
 
   <Translations default="en">
     <Translation lang="en">

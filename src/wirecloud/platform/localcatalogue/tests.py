@@ -105,13 +105,6 @@ class LocalCatalogueTestCase(LocalizedTestCase):
         self.assertEqual(data['variables']['slot']['label'], 'Slot label')
         self.assertEqual(data['variables']['slot']['aspect'], 'SLOT')
 
-        self.assertEqual(data['variables']['language']['aspect'], 'ECTX')
-        self.assertEqual(data['variables']['language']['concept'], 'language')
-        self.assertEqual(data['variables']['user']['aspect'], 'ECTX')
-        self.assertEqual(data['variables']['user']['concept'], 'username')
-        self.assertEqual(data['variables']['width']['aspect'], 'GCTX')
-        self.assertEqual(data['variables']['width']['concept'], 'widthInPixels')
-
     def test_basic_ezweb_widget_creation(self):
         template_uri = "http://example.com/path/widget.xml"
         template = self.read_template('old-template.xml')

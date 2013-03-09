@@ -26,6 +26,4 @@
   </Platform.Link>
 
   <Platform.Rendering height="24" width="10"/>
-  <Platform.Context>
-  </Platform.Context>
 </Template>
