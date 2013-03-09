@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-
-# Copyright 2012 Universidad Politécnica de Madrid
+# Copyright 2012-2013 Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -211,12 +210,12 @@ def build_template_from_workspace(options, workspace, user):
         outputs = widget.get_related_events()
 
         for output_endpoint in outputs:
-            wiring.append(etree.Element('Event', name=output_endpoint.name, type=typeCode2typeText(output_endpoint.type), label=output_endpoint.label, friendcode=output_endpoint.friend_code))
+            wiring.append(etree.Element('OutputEndpoint', name=output_endpoint.name, type=typeCode2typeText(output_endpoint.type), label=output_endpoint.label, friendcode=output_endpoint.friend_code))
 
         inputs = widget.get_related_slots()
 
         for input_endpoint in inputs:
-            wiring.append(etree.Element('Slot', name=input_endpoint.name, type=typeCode2typeText(input_endpoint.type), label=input_endpoint.label, friendcode=input_endpoint.friend_code))
+            wiring.append(etree.Element('InputEndpoint', name=input_endpoint.name, type=typeCode2typeText(input_endpoint.type), label=input_endpoint.label, friendcode=input_endpoint.friend_code))
 
     # wiring
     try:
