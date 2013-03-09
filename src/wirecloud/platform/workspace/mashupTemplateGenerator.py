@@ -243,6 +243,14 @@ def build_template_from_workspace(options, workspace, user):
 def build_rdf_template_from_workspace(options, workspace, user):
 
     graph = rdflib.Graph()
+
+    graph.bind('dcterms', DCTERMS)
+    graph.bind('foaf', FOAF)
+    graph.bind('usdl', USDL)
+    graph.bind('vcard', VCARD)
+    graph.bind('wire', WIRE)
+    graph.bind('wire_m', WIRE_M)
+
     # build the root node
     mashup_uri = WIRE_M[options.get('vendor') + '/' + options.get('name') + '/' + options.get('version')]
     graph.add((mashup_uri, rdflib.RDF.type, WIRE_M['Mashup']))
