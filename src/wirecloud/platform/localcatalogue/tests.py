@@ -27,9 +27,11 @@ from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.test import TransactionTestCase, Client
 
+from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.utils import delete_resource
-from wirecloud.commons.test import FakeDownloader, LocalizedTestCase, WirecloudSeleniumTestCase
+import wirecloud.commons.test
+from wirecloud.commons.test import cleartree, FakeDownloader, LocalizedTestCase, WirecloudSeleniumTestCase
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
@@ -350,41 +352,68 @@ class LocalCatalogueTestCase(LocalizedTestCase):
         self.assertEqual(workspace.creator, self.user)
 
 
-class WGTLocalCatalogueTestCase(TransactionTestCase):
+class PackagedResourcesTestCase(TransactionTestCase):
+
+    @classmethod
+    def setUpClass(cls):
+
+        super(PackagedResourcesTestCase, cls).setUpClass()
+
+        cls.old_catalogue_deployer = catalogue.wgt_deployer
+        cls.catalogue_tmp_dir = mkdtemp()
+        catalogue.wgt_deployer = WgtDeployer(cls.catalogue_tmp_dir)
+
+        cls.old_deployer = wirecloud.platform.widget.utils.wgt_deployer
+        cls.tmp_dir = mkdtemp()
+        wirecloud.platform.widget.utils.wgt_deployer = WgtDeployer(cls.tmp_dir)
+
+    @classmethod
+    def tearDownClass(cls):
+
+        wirecloud.platform.widget.utils.wgt_deployer = cls.old_deployer
+        rmtree(cls.tmp_dir, ignore_errors=True)
+        catalogue.wgt_deployer = cls.old_catalogue_deployer
+        rmtree(cls.catalogue_tmp_dir, ignore_errors=True)
+
+        super(PackagedResourcesTestCase, cls).tearDownClass()
 
     def setUp(self):
-        super(WGTLocalCatalogueTestCase, self).setUp()
 
-        self.old_deployer = wirecloud.platform.widget.utils.wgt_deployer
-        self.tmp_dir = mkdtemp()
-        wirecloud.platform.widget.utils.wgt_deployer = WgtDeployer(self.tmp_dir)
         self.user = User.objects.create_user('test', 'test@example.com', 'test')
 
     def tearDown(self):
-        rmtree(self.tmp_dir, ignore_errors=True)
-        wirecloud.platform.widget.utils.wgt_deployer = self.old_deployer
 
-        super(WGTLocalCatalogueTestCase, self).tearDown()
+        cleartree(self.tmp_dir)
+        cleartree(self.catalogue_tmp_dir)
+        super(PackagedResourcesTestCase, self).tearDown()
 
-    def test_basic_wgt_deployment(self):
+    def test_basic_packaged_widget_deployment(self):
+
         wgt_file = WgtFile(os.path.join(os.path.dirname(__file__), 'test-data', 'basic_widget.wgt'))
-        widget_path = wirecloud.platform.widget.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
+        catalogue_deployment_path = catalogue.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
+        deployment_path = wirecloud.platform.widget.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
 
         install_resource_to_user(self.user, file_contents=wgt_file, packaged=True)
         resource = CatalogueResource.objects.get(vendor='Morfeo', short_name='Test', version='0.1')
         resource.widget
-        self.assertEqual(os.path.isdir(widget_path), True)
+        self.assertTrue(os.path.isdir(deployment_path))
+        self.assertTrue(os.path.isdir(catalogue_deployment_path))
 
         delete_resource(resource, self.user)
         self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Morfeo', short_name='Test', version='0.1')
-        self.assertEqual(os.path.exists(widget_path), False)
+        self.assertFalse(os.path.exists(deployment_path))
+        self.assertFalse(os.path.exists(catalogue_deployment_path))
 
-    def test_invalid_wgt_deployment(self):
+    def test_invalid_packaged_widget_deployment(self):
+
         wgt_file = WgtFile(os.path.join(os.path.dirname(__file__), 'test-data', 'invalid_widget.wgt'))
-        wirecloud.platform.widget.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
+        catalogue_deployment_path = catalogue.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
+        deployment_path = wirecloud.platform.widget.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
 
         self.assertRaises(TemplateParseException, install_resource, wgt_file, None, self.user, True)
         self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Morfeo', short_name='Test', version='0.1')
+        self.assertFalse(os.path.exists(deployment_path))
+        self.assertFalse(os.path.exists(catalogue_deployment_path))
 
 
 class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
