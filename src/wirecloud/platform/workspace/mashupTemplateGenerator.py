@@ -325,7 +325,7 @@ def build_rdf_template_from_workspace(options, workspace, user):
                 graph.add((pref, DCTERMS['title'], rdflib.Literal(preference.name)))
                 graph.add((pref, WIRE['value'], rdflib.Literal(preference.value)))
 
-    #Create wiring node
+    # Create wiring node
     wiring = rdflib.BNode()
     graph.add((wiring, rdflib.RDF.type, WIRE['PlatformWiring']))
     graph.add((mashup_uri, WIRE_M['hasMashupWiring'], wiring))
@@ -582,7 +582,7 @@ def build_usdl_from_workspace(options, workspace, user, template_url, usdl_info=
     usdl_uri = WIRE_M[options.get('vendor') + '/' + options.get('name') + '/' + options.get('version')]
     vendor = None
 
-    if usdl_info != None:
+    if usdl_info is not None:
         graph.parse(data=usdl_info['data'], format=usdl_info['content_type'])
         for service in graph.subjects(rdflib.RDF.type, USDL['Service']):
             usdl_uri = service
@@ -625,7 +625,7 @@ def build_usdl_from_workspace(options, workspace, user, template_url, usdl_info=
     graph.add((usdl_uri, DCTERMS['title'], rdflib.Literal(options.get('name'))))
     graph.add((usdl_uri, USDL['versionInfo'], rdflib.Literal(options.get('version'))))
 
-    if vendor == None:
+    if vendor is None:
         vendor = rdflib.BNode()
         graph.add((vendor, rdflib.RDF.type, GR['BussisnessEntity']))
         graph.add((usdl_uri, USDL['hasProvider'], vendor))
