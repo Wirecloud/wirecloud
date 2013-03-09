@@ -421,6 +421,19 @@ class PackagedResourcesTestCase(TransactionTestCase):
         self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Wirecloud', short_name='PackagedTestMashup', version='1.0')
         self.assertFalse(os.path.exists(deployment_path))
 
+    def test_basic_packaged_operator_deployment(self):
+
+        wgt_file = WgtFile(os.path.join(os.path.dirname(wirecloud.commons.test.__file__), 'test-data', 'Wirecloud_TestOperator_1.0.zip'))
+        deployment_path = catalogue.wgt_deployer.get_base_dir('Wirecloud', 'TestOperator', '1.0')
+
+        install_resource_to_user(self.user, file_contents=wgt_file, packaged=True)
+        resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='TestOperator', version='1.0')
+        self.assertTrue(os.path.isdir(deployment_path))
+
+        delete_resource(resource, self.user)
+        self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Wirecloud', short_name='TestOperator', version='1.0')
+        self.assertFalse(os.path.exists(deployment_path))
+
 
 class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
