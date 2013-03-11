@@ -405,28 +405,27 @@ class TabEntry(Resource):
     @commit_on_http_success
     def delete(self, request, workspace_id, tab_id):
 
-        #set new order
-        tabs = Tab.objects.filter(workspace__pk=workspace_id).order_by('position')
-
         # Get tab, if it does not exist, an http 404 error is returned
         tab = get_object_or_404(Tab, workspace__pk=workspace_id, pk=tab_id)
+        tabs = Tab.objects.filter(workspace__pk=workspace_id).order_by('position')[::1]
 
-        #decrease the position of the following tabs
-        for t in range(tab.position, tabs.count()):
-            tabs[t].position = tabs[t].position - 1
-
-        tabs = tabs.exclude(pk=tab_id)
-
-        if tabs.count() == 0:
+        if len(tabs) == 1:
             msg = _("tab cannot be deleted")
             return HttpResponseForbidden(msg)
 
-        #Delete Workspace variables too!
+        # decrease the position of the following tabs
+        for t in range(tab.position + 1, len(tabs)):
+            tabs[t].position = tabs[t].position - 1
+            tabs[t].save()
+
+        # Remove the tab
+        tabs.remove(tab)
         deleteTab(tab, request.user)
 
-        #set a new visible tab (first tab by default)
-        activeTab = tabs[0]
-        setVisibleTab(request.user, workspace_id, activeTab)
+        if tab.visible:
+            # set a new visible tab (first tab by default)
+            activeTab = tabs[0]
+            setVisibleTab(request.user, workspace_id, activeTab)
 
         return HttpResponse(status=204)
 
