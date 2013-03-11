@@ -252,6 +252,16 @@
         }
     },
     {
+        "pk": 2,
+        "model": "platform.tab",
+        "fields": {
+            "visible": true,
+            "name": "OtherTab",
+            "workspace": 1,
+            "position": 1
+        }
+    },
+    {
         "model": "platform.userworkspace",
         "pk": 1,
         "fields": {
