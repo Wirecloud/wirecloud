@@ -354,13 +354,6 @@ class TabCollection(Resource):
 
 class TabEntry(Resource):
 
-    def read(self, request, workspace_id, tab_id):
-
-        tab = get_object_or_404(Tab, workspace__users__id=request.user.id, workspace__pk=workspace_id, pk=tab_id)
-        tab_data = get_tab_data(tab)
-
-        return HttpResponse(simplejson.dumps(tab_data), mimetype='application/json; charset=UTF-8')
-
     @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success

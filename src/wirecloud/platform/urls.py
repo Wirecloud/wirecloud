@@ -139,11 +139,11 @@ urlpatterns = patterns('wirecloud.platform.views',
         name='wirecloud.workspace_entry'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tabs/?$',
-        workspace_views.TabCollection(permitted_methods=('GET', 'POST', 'PUT',)),
+        workspace_views.TabCollection(permitted_methods=('POST', 'PUT',)),
         name='wirecloud.tab_collection'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\w+)/?$',
-        workspace_views.TabEntry(permitted_methods=('GET', 'PUT', 'DELETE',)),
+        workspace_views.TabEntry(permitted_methods=('PUT', 'DELETE',)),
         name='wirecloud.tab_entry'
     ),
 
