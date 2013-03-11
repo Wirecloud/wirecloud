@@ -308,12 +308,16 @@ class TabCollection(Resource):
         tab_name = data['name']
         workspace = Workspace.objects.get(users__id=request.user.id, pk=workspace_id)
 
-        tab = createTab(tab_name, request.user, workspace)
+        try:
+            tab = createTab(tab_name, request.user, workspace)
+        except IntegrityError:
+            msg = _('A tab with the given name already exists for the workspace')
+            return build_error_response(request, 409, msg)
 
         # Returning created Ids
         ids = {'id': tab.id, 'name': tab.name}
 
-        return HttpResponse(simplejson.dumps(ids), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(ids), status=201, mimetype='application/json; charset=UTF-8')
 
     @authentication_required
     @supported_request_mime_types(('application/json',))
