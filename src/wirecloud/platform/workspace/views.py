@@ -46,12 +46,12 @@ from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.get_data import get_workspace_data, get_global_workspace_data
 from wirecloud.platform.iwidget.utils import deleteIWidget
-from wirecloud.platform.models import Category, IWidget, PublishedWorkspace, Tab, UserWorkspace, VariableValue, Workspace
+from wirecloud.platform.models import IWidget, PublishedWorkspace, Tab, UserWorkspace, VariableValue, Workspace
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from wirecloud.platform.workspace.packageCloner import PackageCloner
 from wirecloud.platform.workspace.packageLinker import PackageLinker
-from wirecloud.platform.workspace.utils import deleteTab, createTab, create_published_workspace_from_template, getCategories, getCategoryId, get_workspace_list, setVisibleTab, set_variable_value
+from wirecloud.platform.workspace.utils import deleteTab, createTab, create_published_workspace_from_template, get_workspace_list, setVisibleTab, set_variable_value
 from wirecloud.platform.markets.utils import get_market_managers
 
 
@@ -61,39 +61,6 @@ def clone_original_variable_value(variable, creator, new_user):
     value = original_var_value.get_variable_value()
 
     return VariableValue.objects.create(variable=variable, user=new_user, value=value)
-
-
-def createWorkspace(workspaceName, user):
-    cloned_workspace = None
-    #try to assign a new workspace according to user category
-    try:
-        categories = getCategories(user)
-        # take the first one which has a new workspace
-        for category in categories:
-            try:
-                new_workspace = Category.objects.get(category_id=getCategoryId(category)).new_workspace
-                if new_workspace is not None:
-                    cloned_workspace, _junk = buildWorkspaceFromTemplate(new_workspace.template, user)
-
-                    cloned_workspace.name = workspaceName
-                    cloned_workspace.save()
-
-                    setActiveWorkspace(user, cloned_workspace)
-                    break
-            except Category.DoesNotExist:
-                #the user category doesn't have a new workspace
-                #try with other categories
-                continue
-
-    except:
-        pass
-
-    if not cloned_workspace:
-        #create an empty workspace
-        return createEmptyWorkspace(workspaceName, user)
-
-    # Returning created Ids
-    return cloned_workspace
 
 
 def createEmptyWorkspace(workspaceName, user):
@@ -185,7 +152,7 @@ class WorkspaceCollection(Resource):
 
         if mashup_id == '':
             try:
-                workspace = createWorkspace(workspace_name, request.user)
+                workspace = createEmptyWorkspace(workspace_name, request.user)
             except IntegrityError:
                 msg = _('A workspace with the given name already exists')
                 return build_error_response(request, 409, msg)

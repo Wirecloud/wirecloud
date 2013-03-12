@@ -43,7 +43,7 @@ from django.utils.translation import ugettext as _
 from wirecloud.commons.utils.db import save_alternative
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.platform.iwidget.utils import deleteIWidget
-from wirecloud.platform.models import Category, IWidget, PublishedWorkspace, Tab, UserWorkspace, VariableValue, Workspace
+from wirecloud.platform.models import IWidget, PublishedWorkspace, Tab, UserWorkspace, VariableValue, Workspace
 from wirecloud.platform.workspace.managers import get_workspace_managers
 from wirecloud.platform.workspace.packageLinker import PackageLinker
 
@@ -201,57 +201,15 @@ def sync_base_workspaces(user):
     return reload_showcase
 
 
-def getCategories(user):
-    return user.groups.get_query_set()
-
-
-def getCategoryId(category):
-    if category.__class__ == {}.__class__:
-        return category["id"]
-    else:
-        return category.id
-
-
 def get_workspace_list(user):
 
-    from wirecloud.platform.workspace.views import cloneWorkspace, createEmptyWorkspace, linkWorkspace, setActiveWorkspace
+    from wirecloud.platform.workspace.views import createEmptyWorkspace, setActiveWorkspace
 
     reload_showcase = sync_base_workspaces(user)
 
-    # updated user workspaces
-    workspaces = Workspace.objects.filter(users=user)
-
-    if not reload_showcase and workspaces.count() == 0:
-        # There is no workspace for the user
-
-        cloned_workspace = None
-
-        # it's the first time the user has logged in.
-        # try to assign a default workspace according to user category
-        try:
-            categories = getCategories(user)
-            if len(categories) > 0:
-                #take the first one which has a default workspace
-                for category in categories:
-                    try:
-                        default_workspace = Category.objects.get(category_id=getCategoryId(category)).default_workspace
-                        # duplicate the workspace for the user
-                        cloned_workspace = cloneWorkspace(default_workspace.id, user)
-                        linkWorkspace(user, cloned_workspace.id, default_workspace.workspace.creator)
-                        setActiveWorkspace(user, cloned_workspace)
-                        reload_showcase = True
-                        break
-                    except Category.DoesNotExist:
-                        # the user category doesn't have a default workspace
-                        # try with other categories
-                        continue
-
-        except Exception:
-            pass
-
-        if not cloned_workspace:
-            # create an empty workspace
-            createEmptyWorkspace(_('Workspace'), user)
+    if Workspace.objects.filter(users=user).count() == 0:
+        # create an empty workspace
+        createEmptyWorkspace(_('Workspace'), user)
 
     # Now we can fetch all the workspaces of an user
     workspaces = Workspace.objects.filter(users__id=user.id)

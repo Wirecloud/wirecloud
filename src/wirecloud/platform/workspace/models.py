@@ -119,21 +119,6 @@ class GroupPublishedWorkspace(models.Model):
         return '%s => %s' % (unicode(self.workspace), unicode(self.group))
 
 
-#Category for which a workspace is the defalult workspace
-class Category(models.Model):
-
-    category_id = models.IntegerField()
-    default_workspace = models.ForeignKey(PublishedWorkspace, verbose_name=_('Default Workspace'), null=True, blank=True)
-    new_workspace = models.ForeignKey(PublishedWorkspace, verbose_name=_('New Workspace'), related_name="new_workspace_", null=True, blank=True)
-
-    class Meta:
-        app_label = 'platform'
-        db_table = 'wirecloud_category'
-
-    def __unicode__(self):
-        return unicode(self.category_id)
-
-
 class VariableValue(models.Model):
 
     variable = models.ForeignKey('platform.Variable', verbose_name=_('Variable'))
