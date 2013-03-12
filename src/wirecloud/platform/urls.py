@@ -158,7 +158,6 @@ urlpatterns = patterns('wirecloud.platform.views',
         name='wirecloud.workspace_share'
     ),
 
-    url(r'^api/workspace/(?P<workspace_id>\d+)/clone/?$', workspace_views.WorkspaceClonerEntry(permitted_methods=('GET', ))),
     url(r'^api/workspace/(?P<workspace_id>\d+)/link/?$', workspace_views.WorkspaceLinkerEntry(permitted_methods=('GET', ))),
     url(r'^api/workspace/(?P<to_ws_id>\d+)/merge/?$',
         workspace_views.MashupMergeService(),

@@ -87,23 +87,6 @@ def setActiveWorkspace(user, workspace):
     UserWorkspace.objects.filter(user=user, workspace=workspace).update(active=True)
 
 
-def cloneWorkspace(workspace_id, user):
-
-    published_workspace = get_object_or_404(PublishedWorkspace, id=workspace_id)
-
-    workspace = published_workspace.workspace
-
-    packageCloner = PackageCloner()
-
-    cloned_workspace = packageCloner.clone_tuple(workspace)
-
-    cloned_workspace.creator = user
-
-    cloned_workspace.save()
-
-    return cloned_workspace
-
-
 def linkWorkspaceObject(user, workspace, creator, link_variable_values=True):
     packageLinker = PackageLinker()
 
@@ -504,18 +487,6 @@ class WorkspaceLinkerEntry(Resource):
         linkWorkspace(request.user, workspace_id)
 
         return HttpResponse(status=204)
-
-
-class WorkspaceClonerEntry(Resource):
-
-    @authentication_required
-    @commit_on_http_success
-    @no_cache
-    def read(self, request, workspace_id):
-
-        cloned_workspace = cloneWorkspace(workspace_id, request.user)
-        result = {'result': 'ok', 'new_workspace_id': cloned_workspace.id}
-        return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
 
 class MashupMergeService(Service):
