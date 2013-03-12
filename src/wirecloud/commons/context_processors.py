@@ -52,17 +52,3 @@ def _get_Category_Info(cat, userOrgs):
         catObject['children'][catChild.name] = _get_Category_Info(catChild, userOrgs)
 
     return catObject
-
-
-# tag categories from the catalogue specified by db admin
-def tag_categories(request):
-    try:
-        userOrgs = request.user.groups.exclude(name__startswith="cert__")
-    except:
-        userOrgs = {}
-
-    #Categories whose parent is None are root categories
-    root = _get_Category_Info(None, userOrgs)
-    categories = root['children']
-
-    return {'tag_categories': simplejson.dumps(categories)}
