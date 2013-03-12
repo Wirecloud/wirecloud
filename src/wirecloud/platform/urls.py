@@ -178,10 +178,6 @@ urlpatterns = patterns('wirecloud.platform.views',
         name='wirecloud.workspace_export'
     ),
 
-    url(r'^api/workspaces/import/?$',
-        workspace_views.MashupImportService(),
-        name="wirecloud.workspace_import"
-    ),
     url(r'^api/workspaces/published/(?P<workspace_id>\d+)/template.xml$', workspace_views.MashupTemplate(permitted_methods=('GET', )), name='wirecloud_showcase.mashup_template'),
 
     url(r'^(?P<creator_user>[^/]+)/(?P<workspace>[^/]+)/?$', 'render_workspace_view', name='wirecloud.workspace_view'),

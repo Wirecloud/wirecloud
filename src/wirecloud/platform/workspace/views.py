@@ -586,52 +586,6 @@ class MashupMergeService(Service):
         return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
 
-class MashupImportService(Service):
-
-    @authentication_required
-    @supported_request_mime_types(('application/json',))
-    @commit_on_http_success
-    def process(self, request):
-
-        try:
-            data = simplejson.loads(request.raw_post_data)
-        except Exception, e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
-
-        template_url = data['workspace']
-
-        path = request.build_absolute_uri()
-        login_scheme, login_netloc = urlparse.urlparse(template_url)[:2]
-        current_scheme, current_netloc = urlparse.urlparse(path)[:2]
-        if ((not login_scheme or login_scheme == current_scheme) and
-            (not login_netloc or login_netloc == current_netloc)):
-            pworkspace_id = template_url.split('/')[-2]
-            template = PublishedWorkspace.objects.get(id=pworkspace_id).template
-        else:
-            template = downloader.download_http_content(template_url, user=request.user)
-
-        try:
-            workspace, _junk = buildWorkspaceFromTemplate(template, request.user, True)
-        except TemplateParseException, e:
-            return build_error_response(request, 400, unicode(e.msg))
-
-        activate = data.get('active', False) == "true"
-        if not activate:
-            workspaces = UserWorkspace.objects.filter(user__id=request.user.id, active=True)
-            if workspaces.count() == 0:
-                # there aren't any active workspace yet
-                activate = True
-
-        # Mark the mashup as the active workspace if it's requested. For example, solutions
-        if activate:
-            setActiveWorkspace(request.user, workspace)
-
-        workspace_data = get_global_workspace_data(workspace, request.user)
-
-        return HttpResponse(simplejson.dumps(workspace_data.get_data(), cls=LazyEncoder), mimetype='application/json; charset=UTF-8')
-
-
 def check_json_fields(json, fields):
     missing_fields = []
 
