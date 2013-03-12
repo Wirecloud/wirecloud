@@ -23,6 +23,7 @@
 #     S.A.Unipersonal (Telefonica I+D)
 
 
+import os
 import urlparse
 
 from django.contrib.auth.models import Group, User
@@ -31,7 +32,6 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseForbidden, Http404
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
-from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.utils.http import urlencode
 
@@ -40,11 +40,11 @@ from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource, Service
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.cache import no_cache
-from wirecloud.commons.utils.encoding import LazyEncoder
 from wirecloud.commons.utils.http import authentication_required, build_error_response, get_content_type, supported_request_mime_types
-from wirecloud.commons.utils.template import TemplateParseException, TemplateParser
+from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.transaction import commit_on_http_success
-from wirecloud.platform.get_data import get_workspace_data, get_global_workspace_data, get_tab_data
+from wirecloud.commons.utils.wgt import WgtFile
+from wirecloud.platform.get_data import get_workspace_data, get_global_workspace_data
 from wirecloud.platform.iwidget.utils import deleteIWidget
 from wirecloud.platform.models import Category, IWidget, PublishedWorkspace, Tab, UserWorkspace, VariableValue, Workspace
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_template_from_workspace
