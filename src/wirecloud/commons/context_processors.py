@@ -66,9 +66,3 @@ def tag_categories(request):
     categories = root['children']
 
     return {'tag_categories': simplejson.dumps(categories)}
-
-
-def ezweb_organizations(request):
-    """Organizations available in Wirecloud"""
-    queryGroups = Group.objects.exclude(name__startswith="cert__").order_by('name')
-    return {'ezweb_organizations': simplejson.dumps([g.name for g in queryGroups])}

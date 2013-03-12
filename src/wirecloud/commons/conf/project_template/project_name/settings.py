@@ -146,7 +146,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
     'wirecloud.platform.themes.active_theme_context_processor',
     'wirecloud.commons.context_processors.tag_categories',
-    'wirecloud.commons.context_processors.ezweb_organizations',
 )
 
 # Login/logout URLs
