@@ -70,12 +70,6 @@ class PackageLinker:
 
         return variables
 
-    def add_user_to_workspace(self, workspace, user):
-         #Checking if user is already linked to workspace
-        if (len(workspace.users.filter(id=user.id)) == 0):
-            user_workspace = UserWorkspace(user=user, workspace=workspace, active=False)
-            user_workspace.save()
-
     def update_variable_value(self, user_variable_value, creator_value_available, variable, created):
         if creator_value_available:
 
