@@ -1111,7 +1111,11 @@ if (!Wirecloud.ui) {
      * getBreadcrum
      */
     WiringEditor.prototype.getBreadcrum = function getBreadcrum() {
-        var workspace_breadcrum = LayoutManagerFactory.getInstance().viewsByName.workspace.getBreadcrum().slice();
+        var i, workspace_breadcrum = LayoutManagerFactory.getInstance().viewsByName.workspace.getBreadcrum();
+
+        for (i = 0; i < workspace_breadcrum.length; i += 1) {
+            delete workspace_breadcrum[i].menu;
+        }
 
         workspace_breadcrum.push({
             'label': 'wiring'
