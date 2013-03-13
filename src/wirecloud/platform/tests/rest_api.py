@@ -130,7 +130,9 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Check basic response structure
         response_data = simplejson.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
+        self.assertTrue('id' in response_data)
         self.assertEqual(response_data['name'], 'test')
+        self.assertTrue(isinstance(response_data['wiring'], dict))
 
         # Workspace should be created
         self.assertTrue(Workspace.objects.filter(creator=1, name='test').exists())
@@ -166,7 +168,9 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Check basic response structure
         response_data = simplejson.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
+        self.assertTrue('id' in response_data)
         self.assertEqual(response_data['name'], 'Test Mashup')
+        self.assertTrue(isinstance(response_data['wiring'], dict))
 
         # Workspace should be created
         self.assertTrue(Workspace.objects.filter(creator=2, name='Test Mashup').exists())
