@@ -250,7 +250,6 @@ if (!Wirecloud.ui) {
                     this.mini_widgets[iwidget.getId()].disable();
                 } else {
                     throw new Error('Widget not found');
-                    return null;
                 }
                 return iwidget_interface.getAnchor(desc.endpoint);
             }
