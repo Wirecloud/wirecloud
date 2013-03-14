@@ -550,7 +550,7 @@ class WirecloudRemoteTestCase(object):
         resource.find_element_by_css_selector('.instantiate_button div').click()
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='New Workspace']").click()
         self.wait_wirecloud_ready()
-        self.assertTrue(self.get_current_workspace_name().startswith('Test Mashup'), 'Invalid workspace name after creating workspace from catalogue')
+        self.assertTrue(self.get_current_workspace_name().startswith(mashup_name), 'Invalid workspace name after creating workspace from catalogue')
 
     def merge_mashup_from_catalogue(self, mashup_name):
 
