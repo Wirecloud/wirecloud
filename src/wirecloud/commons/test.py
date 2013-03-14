@@ -229,7 +229,7 @@ class LocalizedTestCase(TransactionTestCase):
         translation.activate(new_language)
 
 
-class widget_operation:
+class iwidget_context:
 
     def __init__(self, driver, widget):
         self.driver = driver
@@ -389,6 +389,7 @@ class WirecloudRemoteTestCase(object):
             wgt_path = os.path.join(self.shared_test_data_dir, wgt_file)
         else:
             wgt_path = os.path.join(self.test_data_dir, wgt_file)
+        wgt_path = os.path.abspath(wgt_path)
 
         self.change_main_view('marketplace')
         catalogue_base_element = self.get_current_catalogue_base_element()
