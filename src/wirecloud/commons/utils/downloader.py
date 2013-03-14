@@ -29,10 +29,9 @@
 
 
 #
-import cookielib
 import platform
 import urllib2
-from urllib import urlcleanup, urlencode
+from urllib import urlcleanup
 from urlparse import urlparse
 
 from django.conf import settings
@@ -47,7 +46,7 @@ VERSIONS = {
 }
 
 
-def download_http_content(url, params=None, user=None, headers={}):
+def download_http_content(url, user=None):
     urlcleanup()
 
     #proxy = settings.PROXY_SERVER
@@ -67,36 +66,18 @@ def download_http_content(url, params=None, user=None, headers={}):
         proxy = urllib2.ProxyHandler()  # proxies from environment
 
     opener = urllib2.build_opener(proxy)
-    referer = getattr(settings, 'HTTP_REFERER', None)
-    params = params or {}
 
-    has_cookie = 'cookie' in params
-
-    custom_headers = headers
     headers = {
         'User-Agent': 'Mozilla/5.0 (%(system)s %(machine)s;U) Wirecloud/%(wirecloud_version)s Python-urllib2/%(urllib2_version)s' % VERSIONS,
         'Accept': '*/*',
         'Accept-Language': 'en-gb,en;q=0.8,*;q=0.7',
         'Accept-Charset': 'utf-8;q=1,*;q=0.2',
     }
-    headers.update(custom_headers)
 
-    if referer is not None:
-        headers.update({
-            'Referer': referer,
-        })
     if user and not user.is_anonymous():
         headers.update({
             'Remote-User': user.username,
         })
-    if has_cookie:
-        headers.update({
-            'Cookie': params['cookie'],
-        })
-        cookies = cookielib.LWPCookieJar()
-        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookies))
-        urllib2.install_opener(opener)
 
-    data = params and urlencode(params) or None
-    request = urllib2.Request(url, data, headers)
-    return urllib2.urlopen(request).read()
+    request = urllib2.Request(url, None, headers)
+    return opener.open(request).read()
