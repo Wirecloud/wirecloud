@@ -147,7 +147,7 @@ class ResourceCollection(Resource):
             for tab_entry in workspace_info['tabs']:
                 for resource in tab_entry['resources']:
                     widget = get_or_add_widget_from_catalogue(resource.get('vendor'), resource.get('name'), resource.get('version'), request.user)
-                    widget_data = get_widget_data(widget)
+                    widget_data = get_widget_data(widget, request)
                     widget_data['type'] = 'widget'
                     resources.append(widget_data)
 
