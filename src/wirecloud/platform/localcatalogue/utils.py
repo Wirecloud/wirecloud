@@ -19,33 +19,32 @@
 
 
 from cStringIO import StringIO
-import os.path
 
+from django.db import IntegrityError
 from django.db.models import Q
 
-from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.utils import add_widget_from_wgt, add_resource_from_template
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.platform.markets.utils import get_market_managers
-from wirecloud.platform.models import Widget
-from wirecloud.platform.widget.utils import create_widget_from_template, create_widget_from_wgt
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtFile
 
 
-def install_resource(downloaded_file, templateURL, user, packaged):
+def install_resource(file_contents, templateURL, executor_user, packaged):
 
     if packaged:
-        if isinstance(downloaded_file, basestring):
-            downloaded_file = StringIO(downloaded_file)
-            wgt_file = WgtFile(downloaded_file)
+        if isinstance(file_contents, basestring):
+            file_contents = StringIO(file_contents)
+            wgt_file = WgtFile(file_contents)
+        elif isinstance(file_contents, WgtFile):
+            wgt_file = file_contents
+            file_contents = wgt_file.get_underlying_file()
         else:
-            wgt_file = downloaded_file
-            downloaded_file = wgt_file.get_underlying_file()
+            raise Exception
 
         template_contents = wgt_file.get_template()
     else:
-        template_contents = downloaded_file
+        template_contents = file_contents
 
     template = TemplateParser(template_contents)
     resources = CatalogueResource.objects.filter(vendor=template.get_resource_vendor(), short_name=template.get_resource_name(), version=template.get_resource_version())[:1]
@@ -55,26 +54,53 @@ def install_resource(downloaded_file, templateURL, user, packaged):
         resource = resources[0]
     else:
         if packaged:
-            resource = add_widget_from_wgt(downloaded_file, user, wgt_file=wgt_file)
+            resource = add_widget_from_wgt(file_contents, executor_user, wgt_file=wgt_file)
         else:
-            resource = add_resource_from_template(templateURL, template_contents, user)
+            resource = add_resource_from_template(templateURL, template_contents, executor_user)
+
+    return resource
+
+
+def install_resource_to_user(user, **kwargs):
+
+    packaged = kwargs.get('packaged', False)
+    executor_user = kwargs.get('executor_user', user)
+    templateURL = kwargs.get('templateURL', None)
+    downloaded_file = kwargs.get('file_contents', None)
+    raise_conflicts = kwargs.get('raise_conflicts', False)
+
+    resource = install_resource(downloaded_file, templateURL, executor_user, packaged)
+    if raise_conflicts and resource.users.filter(pk=user.pk).exists():
+        raise IntegrityError
 
     resource.users.add(user)
 
-    if resource.resource_type() == 'widget':
-        widget_vendor = template.get_resource_vendor()
-        widget_name = template.get_resource_name()
-        widget_version = template.get_resource_version()
+    return resource
 
-        try:
-            local_resource = resource.widget
-        except Widget.DoesNotExist:
-            if resource.fromWGT:
-                base_dir = catalogue.wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
-                wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
-                local_resource = create_widget_from_wgt(wgt_file, user)
-            else:
-                local_resource = create_widget_from_template(resource.template_uri, user)
+
+def install_resource_to_group(group, **kwargs):
+
+    packaged = kwargs.get('packaged', False)
+    executor_user = kwargs.get('executor_user', None)
+    templateURL = kwargs.get('templateURL', None)
+    downloaded_file = kwargs.get('file_contents', None)
+
+    resource = install_resource(downloaded_file, templateURL, executor_user, packaged)
+    resource.groups.add(group)
+
+    return resource
+
+
+def install_resource_to_all_users(**kwargs):
+
+    packaged = kwargs.get('packaged', False)
+    executor_user = kwargs.get('executor_user', None)
+    templateURL = kwargs.get('templateURL', None)
+    downloaded_file = kwargs.get('file_contents', None)
+
+    resource = install_resource(downloaded_file, templateURL, executor_user, packaged)
+    resource.public = True
+    resource.save()
 
     return resource
 
@@ -97,7 +123,7 @@ def install_resource_from_available_marketplaces(vendor, name, version, user):
 
     if resource_info is not None:
 
-        return install_resource(resource_info['downloaded_file'], resource_info['template_url'], user, resource_info['packaged'])
+        return install_resource_to_user(user, file_contents=resource_info['downloaded_file'], templateURL=resource_info['template_url'], packaged=resource_info['packaged'])
     else:
         raise Exception
 

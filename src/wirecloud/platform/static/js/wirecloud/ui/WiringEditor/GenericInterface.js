@@ -156,8 +156,8 @@
     var getElementPos = function getElementPos(elemList, elem) {
         var i;
 
-        for (i = 0; i < elemList.length; i++){
-            if(elem == elemList[i]) {
+        for (i = 0; i < elemList.length; i++) {
+            if (elem == elemList[i]) {
                 return i;
             }
         }
@@ -460,7 +460,7 @@
         anchorDiv.setAttribute('title', desc);
         //anchor visible label
         anchorLabel = document.createElement("span");
-        anchorLabel.textContent= label;
+        anchorLabel.textContent = label;
 
         labelDiv = document.createElement("div");
         anchorDiv.appendChild(labelDiv);

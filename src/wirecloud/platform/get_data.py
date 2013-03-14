@@ -540,7 +540,6 @@ def get_iwidget_data(iwidget, user, workspace, cache_manager=None):
         'height': iwidget.position.height,
         'fulldragboard': iwidget.position.fulldragboard,
         'minimized': iwidget.position.minimized,
-        'transparency': iwidget.transparency,
         'readOnly': iwidget.readOnly,
     }
 

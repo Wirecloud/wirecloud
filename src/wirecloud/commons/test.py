@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012 Universidad Politécnica de Madrid
+# Copyright 2012-2013 Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -42,7 +42,10 @@ from django.test.client import Client
 from django.utils import translation
 from selenium.webdriver.support.ui import WebDriverWait
 
+from wirecloud.platform.localcatalogue.utils import install_resource_to_all_users
 from wirecloud.platform.widget import utils as showcase
+from wirecloud.proxy.tests import FakeDownloader as ProxyFakeDownloader
+from wirecloud.proxy.views import WIRECLOUD_PROXY
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
@@ -137,6 +140,7 @@ class LocalDownloader(object):
     def __init__(self, servers):
         self._servers = servers
         self._client = Client()
+        self._live_netloc = None
 
     def set_live_server(self, host, port):
         self._live_netloc = host + ':' + str(port)
@@ -150,7 +154,7 @@ class LocalDownloader(object):
             f.close()
             return contents
 
-        if parsed_url.netloc == self._live_netloc:
+        if self._live_netloc is not None and parsed_url.netloc == self._live_netloc:
             return self._client.get(url).content
 
         if parsed_url.scheme not in self._servers or parsed_url.netloc not in self._servers[parsed_url.scheme]:
@@ -248,6 +252,31 @@ class widget_operation:
         self.driver.switch_to_default_content()
 
 
+def uses_extra_resources(resources, shared=False):
+
+    def wrap(test_func):
+
+        def wrapper(self, *args, **kwargs):
+
+            if shared:
+                base = self.shared_test_data_dir
+            else:
+                base = self.test_data_dir
+
+            for resource in resources:
+                wgt_file = open(os.path.join(base, resource), 'rb')
+                wgt = WgtFile(wgt_file)
+                resource = install_resource_to_all_users(file_contents=wgt, packaged=True)
+                wgt_file.close()
+
+            return test_func(self, *args, **kwargs)
+
+        wrapper.func_name = test_func.func_name
+        return wrapper
+
+    return wrap
+
+
 def marketplace_loaded(driver):
     try:
         if driver.find_element_by_css_selector('#wirecloud_breadcrum .first_level').text == 'marketplace':
@@ -263,6 +292,16 @@ class WirecloudRemoteTestCase(object):
     def fill_form_input(self, form_input, value):
         # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
         self.driver.execute_script('arguments[0].value = arguments[1]', form_input, value)
+
+    def scroll_and_click(self, element):
+
+        # Work around chromedriver bugs
+        if self.driver.capabilities['browserName'] == "chrome":
+            try:
+                self.driver.execute_script("arguments[0].scrollIntoView(false);", element);
+            except:
+                pass
+        element.click()
 
     def wait_element_visible_by_css_selector(self, selector, timeout=30, element=None):
         if element is None:
@@ -302,7 +341,9 @@ class WirecloudRemoteTestCase(object):
         time.sleep(0.1)  # work around some problems
 
     def wait_catalogue_ready(self, timeout=30):
-        WebDriverWait(self.driver, timeout).until(lambda driver: 'disabled' not in driver.find_element_by_class_name('catalogue').find_element_by_class_name('search_interface').get_attribute('class'))
+        catalogue_element = self.get_current_catalogue_base_element()
+        search_view = catalogue_element.find_element_by_class_name('search_interface')
+        WebDriverWait(self.driver, timeout).until(lambda driver: 'disabled' not in search_view.get_attribute('class'))
 
     def login(self, username='admin', password='admin'):
 
@@ -449,22 +490,35 @@ class WirecloudRemoteTestCase(object):
 
         return [{'id': iwidget_ids[i], 'element': iwidget_elements[i]} for i in range(len(iwidget_ids))]
 
-    def instantiate(self, resource):
+    def instantiate(self, resource, timeout=30):
 
         old_iwidget_ids = self.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
         old_iwidget_count = len(old_iwidget_ids)
-        resource.find_element_by_css_selector('.instantiate_button div').click()
 
-        # TODO
-        time.sleep(2)
+        self.scroll_and_click(resource.find_element_by_css_selector('.instantiate_button div'))
 
-        iwidgets = self.get_current_iwidgets()
-        iwidget_count = len(iwidgets)
-        self.assertEqual(iwidget_count, old_iwidget_count + 1)
+        tmp = {
+            'new_iwidget': None,
+        }
+        def iwidget_loaded(driver):
+            if tmp['new_iwidget'] is not None:
+                return tmp['new_iwidget']['element'].is_displayed()
 
-        for iwidget in iwidgets:
-            if iwidget['id'] not in old_iwidget_ids:
-                return iwidget
+            iwidgets = self.get_current_iwidgets()
+            iwidget_count = len(iwidgets)
+            if iwidget_count != old_iwidget_count + 1:
+                return False
+
+            for iwidget in iwidgets:
+                if iwidget['id'] not in old_iwidget_ids:
+                    tmp['new_iwidget'] = iwidget
+
+            return tmp['new_iwidget']['element'].is_displayed()
+
+        WebDriverWait(self.driver, timeout).until(iwidget_loaded)
+        # TODO firefox
+        time.sleep(0.1)
+        return tmp['new_iwidget']
 
     def add_widget_to_mashup(self, widget_name, market=None, new_name=None):
 
@@ -477,10 +531,11 @@ class WirecloudRemoteTestCase(object):
         iwidget = self.instantiate(resource)
 
         if new_name is not None:
-            self.wait_element_visible_by_css_selector('.widget_menu > span', element=iwidget['element']).click()
-            name_input = iwidget['element'].find_element_by_css_selector('.widget_menu > input.iwidget_name')
-            self.fill_form_input(name_input, new_name)
-            time.sleep(0.1)
+            iwidget['element'].find_element_by_css_selector('.icon-cogs').click()
+            self.popup_menu_click('Rename')
+            name_input = iwidget['element'].find_element_by_css_selector('.widget_menu > span')
+            # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
+            self.driver.execute_script('arguments[0].textContent = arguments[1]', name_input, new_name)
             iwidget['element'].find_element_by_css_selector('.statusBar').click()
 
         return iwidget
@@ -690,6 +745,7 @@ class WirecloudRemoteTestCase(object):
 
     def delete_marketplace(self, market, expect_error=False):
 
+        self.change_main_view('marketplace')
         self.change_marketplace(market)
         self.perform_market_action("Delete marketplace")
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
@@ -713,7 +769,7 @@ class WirecloudRemoteTestCase(object):
 
         self.search_resource(resource_name)
         resource = self.search_in_catalogue_results(resource_name)
-        resource.find_element_by_css_selector('.click_for_details').click()
+        self.scroll_and_click(resource.find_element_by_css_selector('.click_for_details'))
 
         WebDriverWait(self.driver, timeout).until(lambda driver: catalogue_base_element.find_element_by_css_selector('.advanced_operations').is_displayed())
         time.sleep(0.1)
@@ -740,7 +796,7 @@ class WirecloudRemoteTestCase(object):
 
         self.search_resource(resource_name)
         resource = self.search_in_catalogue_results(resource_name)
-        resource.find_element_by_css_selector('.click_for_details').click()
+        self.scroll_and_click(resource.find_element_by_css_selector('.click_for_details'))
 
         WebDriverWait(self.driver, timeout).until(lambda driver: catalogue_base_element.find_element_by_css_selector('.advanced_operations').is_displayed())
         time.sleep(0.1)
@@ -792,6 +848,9 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
                 'localhost:8001': os.path.join(os.path.dirname(__file__), 'test-data', 'src'),
             },
         }))
+        cls._original_proxy_do_request_function = WIRECLOUD_PROXY._do_request
+        WIRECLOUD_PROXY._do_request = ProxyFakeDownloader()
+        WIRECLOUD_PROXY._do_request.set_response('http://example.com/success.html', 'remote makerequest succeded')
 
         # Load webdriver
         module_name, klass_name = getattr(cls, '_webdriver_class', 'selenium.webdriver.Firefox').rsplit('.', 1)
@@ -836,7 +895,11 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
     def tearDownClass(cls):
         cls.driver.quit()
 
+        # downloader
         downloader.download_http_content = cls._original_download_function
+        WIRECLOUD_PROXY._do_request = cls._original_proxy_do_request_function
+
+        # deployers
         catalogue.wgt_deployer = cls.old_catalogue_deployer
         shutil.rmtree(cls.catalogue_tmp_dir_backup, ignore_errors=True)
         shutil.rmtree(cls.catalogue_tmp_dir, ignore_errors=True)

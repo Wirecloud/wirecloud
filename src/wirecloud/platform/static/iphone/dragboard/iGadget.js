@@ -117,7 +117,7 @@ IWidget.prototype._notifyLoaded = function () {
     var opManager = OpManagerFactory.getInstance(),
         unloadElement = this.content.contentDocument.defaultView;
 
-    unloadElement.addEventListener('unload', this._notifyLoaded, true);
+    unloadElement.addEventListener('unload', this._notifyUnloaded, true);
     // FIXME
     new MobileScrollManager(this.content.contentDocument, {
         'capture': true,

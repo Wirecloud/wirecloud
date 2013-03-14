@@ -78,6 +78,22 @@
         }
     },
     {
+        "model": "fp74caast.tenantprofile",
+        "pk": 101,
+        "fields": {
+            "user": 102,
+            "id_4CaaSt": "org.4caast.customers.4caast_developer.services.app1"
+        }
+    },
+    {
+        "model": "fp74caast.tenantprofile",
+        "pk": 102,
+        "fields": {
+            "user": 103,
+            "id_4CaaSt": "org.4caast.customers.4caast_developer2.services.app2"
+        }
+    },
+    {
         "model": "fp74caast.profile4caast",
         "pk": 101,
         "fields": {

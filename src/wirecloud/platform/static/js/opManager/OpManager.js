@@ -198,11 +198,11 @@ var OpManagerFactory = function () {
             LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding the mashup"), 1);
             LayoutManagerFactory.getInstance().logSubTask(gettext("Creating a new workspace"));
 
-            Wirecloud.io.makeRequest(Wirecloud.URLs.ADD_WORKSPACE, {
+            Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_COLLECTION, {
                 method: 'POST',
                 contentType: 'application/json',
                 postBody: Object.toJSON({
-                    'workspace': resource.getUriTemplate(),
+                    'mashup': resource.getURI(),
                 }),
                 onSuccess: cloneOk.bind(this),
                 onFailure: cloneError.bind(this),

@@ -19,12 +19,6 @@ div.widget_window_transparent {
   background: transparent;
 }
 
-div.widget_menu {
-  cursor: move;
-  overflow: hidden;
-  border: 0px;
-}
-
 /*div.dragboard.fixed -> LOCK OR SHARED STATUS*/
 div.fixed div.widget_menu {
   cursor: default;
@@ -41,11 +35,6 @@ div.iwidget.widget_window_readonly div.widget_menu .closebutton {
 }
 
 div.iwidget div.widget_wrapper {
-    width: auto;
-    border-width: 1px 1px 0px 1px;
-    border-radius: 4px 4px 0px 0px;
-    border-style: solid;
-    border-color: #DDD;
 }
 
 div.widget_window_locked div.widget_wrapper {
@@ -120,18 +109,8 @@ div.fixed div.iwidget div.leftResizeHandle,
   display: none;
 }
 
-.widget_menu span {
-  cursor: pointer;
-}
-
 div.fixed .widget_menu span {
 	cursor: default;
-}
-
-.widget_menu .iwidget_name {
-  float:left;
-  display:inline;
-  border: 0px;
 }
 
 div.iwidget div.statusBar {
@@ -146,80 +125,6 @@ div.iwidget div.statusBar {
 div.iwidget div.statusBar .button {
   margin-top: 0;
   margin-bottom: 0;
-}
-
-
-
-/*****
- * config_interface
- */
-
-div.iwidget div.config_interface,
-div.widget_window_locked div.config_interface {
-  display: none;
-  padding: 1px 1ex;
-  margin: 0px;
-  border-bottom: 1px solid;
-}
-
-div.config_interface div.buttons {
-  margin: 1ex 0px;
-  float: right;
-}
-
-div.config_interface table {
-  width: 100%;
-}
-
-div.config_interface label {
-  margin: 1ex;
-  display: block;
-}
-
-div.config_interface input, div.config_interface select {
-  margin: 0px 1ex;
-  border: 1px solid;
-}
-
-div.config_interface table input {
-  width: 90%;
-  max-width: 100ex;
-  padding: 0px 0.5ex;
-}
-
-div.config_interface table input[type="checkbox"] {
-  width: auto;
-}
-
-div.config_interface select {
-  padding: 0px;
-}
-
-div.config_interface h4{
-	margin: 10px 0;
-}
-
-div.shared_conf_area label {
-	display:inline;
-	margin:0 10px 0 0;
-	vertical-align:middle;
-}
-
-div.shared_conf_area input{
-	margin-right:2px;
-	vertical-align:middle;
-}
-
-div.shared_conf_area a{
-	cursor: pointer;
-}
-
-div.shared_conf_area a{
-	vertical-align:middle;
-}
-
-div.config_interface label.invalid input {
-	border: 1px solid;	
 }
 
 .widget_menu_locked .hide_on_lock, .widget_menu_fulldragboard .hide_on_fulldragboard, .widget_menu_minimized .hide_on_minimize {

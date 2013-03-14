@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-
-# Copyright 2012 Universidad Politécnica de Madrid
+# Copyright 2012-2013 Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -211,12 +210,12 @@ def build_template_from_workspace(options, workspace, user):
         outputs = widget.get_related_events()
 
         for output_endpoint in outputs:
-            wiring.append(etree.Element('Event', name=output_endpoint.name, type=typeCode2typeText(output_endpoint.type), label=output_endpoint.label, friendcode=output_endpoint.friend_code))
+            wiring.append(etree.Element('OutputEndpoint', name=output_endpoint.name, type=typeCode2typeText(output_endpoint.type), label=output_endpoint.label, friendcode=output_endpoint.friend_code))
 
         inputs = widget.get_related_slots()
 
         for input_endpoint in inputs:
-            wiring.append(etree.Element('Slot', name=input_endpoint.name, type=typeCode2typeText(input_endpoint.type), label=input_endpoint.label, friendcode=input_endpoint.friend_code))
+            wiring.append(etree.Element('InputEndpoint', name=input_endpoint.name, type=typeCode2typeText(input_endpoint.type), label=input_endpoint.label, friendcode=input_endpoint.friend_code))
 
     # wiring
     try:
@@ -244,6 +243,14 @@ def build_template_from_workspace(options, workspace, user):
 def build_rdf_template_from_workspace(options, workspace, user):
 
     graph = rdflib.Graph()
+
+    graph.bind('dcterms', DCTERMS)
+    graph.bind('foaf', FOAF)
+    graph.bind('usdl', USDL)
+    graph.bind('vcard', VCARD)
+    graph.bind('wire', WIRE)
+    graph.bind('wire_m', WIRE_M)
+
     # build the root node
     mashup_uri = WIRE_M[options.get('vendor') + '/' + options.get('name') + '/' + options.get('version')]
     graph.add((mashup_uri, rdflib.RDF.type, WIRE_M['Mashup']))
@@ -318,7 +325,7 @@ def build_rdf_template_from_workspace(options, workspace, user):
                 graph.add((pref, DCTERMS['title'], rdflib.Literal(preference.name)))
                 graph.add((pref, WIRE['value'], rdflib.Literal(preference.value)))
 
-    #Create wiring node
+    # Create wiring node
     wiring = rdflib.BNode()
     graph.add((wiring, rdflib.RDF.type, WIRE['PlatformWiring']))
     graph.add((mashup_uri, WIRE_M['hasMashupWiring'], wiring))
@@ -575,7 +582,7 @@ def build_usdl_from_workspace(options, workspace, user, template_url, usdl_info=
     usdl_uri = WIRE_M[options.get('vendor') + '/' + options.get('name') + '/' + options.get('version')]
     vendor = None
 
-    if usdl_info != None:
+    if usdl_info is not None:
         graph.parse(data=usdl_info['data'], format=usdl_info['content_type'])
         for service in graph.subjects(rdflib.RDF.type, USDL['Service']):
             usdl_uri = service
@@ -618,7 +625,7 @@ def build_usdl_from_workspace(options, workspace, user, template_url, usdl_info=
     graph.add((usdl_uri, DCTERMS['title'], rdflib.Literal(options.get('name'))))
     graph.add((usdl_uri, USDL['versionInfo'], rdflib.Literal(options.get('version'))))
 
-    if vendor == None:
+    if vendor is None:
         vendor = rdflib.BNode()
         graph.add((vendor, rdflib.RDF.type, GR['BussisnessEntity']))
         graph.add((usdl_uri, USDL['hasProvider'], vendor))

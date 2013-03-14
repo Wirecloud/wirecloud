@@ -138,6 +138,10 @@
         this.prefCallback = null;
     };
 
+    IWidget.prototype.buildInterface = function buildInterface(view) {
+        return new Wirecloud.ui.IWidgetView(this, view);
+    };
+
     /**
      * This method must be called to avoid memory leaks caused by circular references.
      */

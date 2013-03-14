@@ -52,8 +52,8 @@
             var arrow, i, end, start;
 
             e.stopPropagation();
-            //(e.button == 0) is the mouse left button
-            if (this.enabled && e.button == 0) {
+            // Only process left mouse button events
+            if (this.enabled && e.button === 0) {
                 arrow = this.hasSelectedArrow();
                 if (arrow != null) {
                     if (arrow.hasClassName('multiconnector_arrow')) {
@@ -127,7 +127,9 @@
         this.wrapperElement.addEventListener('mousedown', this._mousedown_callback, false);
 
         this._mouseup_callback = function _mouseup_callback(e) {
-            if (this.enabled && e.button == 0) {
+
+            // Only process left mouse button events
+            if (this.enabled && e.button === 0) {
                 if (arrowCreator.initAnchor != null) {
                     e.stopPropagation();
                     arrowCreator.enddrag(e, this);
@@ -138,9 +140,10 @@
         }.bind(this);
         this.wrapperElement.addEventListener('mouseup', this._mouseup_callback, false);
 
-        //sticky arrows
+        // sticky arrows
         this._mouseover_callback = function _mouseover_callback(e) {
-            if (this.enabled && e.button == 0) {
+            // Only process left mouse button events
+            if (this.enabled && e.button === 0) {
                 var pos;
                 if (arrowCreator.initAnchor != null) {
                     this.addClassName('pointed');
@@ -161,7 +164,8 @@
             }
         }.bind(this);
         this._mouseout_callback = function _mouseout_callback(e) {
-            if (this.enabled && e.button == 0) {
+            // Only process left mouse button events
+            if (this.enabled && e.button === 0) {
                 var pos;
                 if (arrowCreator.initAnchor != null) {
                     e.stopPropagation();

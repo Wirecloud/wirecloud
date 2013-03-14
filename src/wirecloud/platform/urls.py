@@ -139,11 +139,11 @@ urlpatterns = patterns('wirecloud.platform.views',
         name='wirecloud.workspace_entry'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tabs/?$',
-        workspace_views.TabCollection(permitted_methods=('GET', 'POST', 'PUT',)),
+        workspace_views.TabCollection(permitted_methods=('POST', 'PUT',)),
         name='wirecloud.tab_collection'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\w+)/?$',
-        workspace_views.TabEntry(permitted_methods=('GET', 'PUT', 'DELETE',)),
+        workspace_views.TabEntry(permitted_methods=('PUT', 'DELETE',)),
         name='wirecloud.tab_entry'
     ),
 
@@ -158,7 +158,6 @@ urlpatterns = patterns('wirecloud.platform.views',
         name='wirecloud.workspace_share'
     ),
 
-    url(r'^api/workspace/(?P<workspace_id>\d+)/clone/?$', workspace_views.WorkspaceClonerEntry(permitted_methods=('GET', ))),
     url(r'^api/workspace/(?P<workspace_id>\d+)/link/?$', workspace_views.WorkspaceLinkerEntry(permitted_methods=('GET', ))),
     url(r'^api/workspace/(?P<to_ws_id>\d+)/merge/?$',
         workspace_views.MashupMergeService(),
@@ -178,10 +177,6 @@ urlpatterns = patterns('wirecloud.platform.views',
         name='wirecloud.workspace_export'
     ),
 
-    url(r'^api/workspaces/import/?$',
-        workspace_views.MashupImportService(),
-        name="wirecloud.workspace_import"
-    ),
     url(r'^api/workspaces/published/(?P<workspace_id>\d+)/template.xml$', workspace_views.MashupTemplate(permitted_methods=('GET', )), name='wirecloud_showcase.mashup_template'),
 
     url(r'^(?P<creator_user>[^/]+)/(?P<workspace>[^/]+)/?$', 'render_workspace_view', name='wirecloud.workspace_view'),

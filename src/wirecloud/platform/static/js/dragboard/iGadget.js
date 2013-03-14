@@ -28,9 +28,9 @@
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
 /*global $, CSSPrimitiveValue, Element, Event, Insertion, document, gettext, ngettext, interpolate, window */
 /*global Constants, DropDownMenu, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud*/
-/*global isElement, IWidgetLogManager, IWidgetResizeHandle, WidgetVersion, DragboardPosition, Concept*/
+/*global isElement, IWidgetLogManager, WidgetVersion, DragboardPosition*/
 /*global IWidgetDraggable, IWidgetIconDraggable, FreeLayout, FullDragboardLayout*/
-/*global ColorDropDownMenu, BrowserUtilsFactory, setTimeout, clearTimeout*/
+/*global ColorDropDownMenu, BrowserUtilsFactory*/
 
 /**
  * Creates an instance of a Widget.
@@ -57,11 +57,10 @@
  * @param {Number}            height        initial content height
  * @param {Boolean}           fulldragboard initial fulldragboard mode
  * @param {Boolean}           minimized     initial minimized status
- * @param {Boolean}           transparency  initial transparency status
  * @param {String}            menu_color    background color for the menu.
  *                                          (6 chars with a hexadecimal color)
  */
-function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, transparency, refusedVersion, freeLayoutAfterLoading, readOnly) {
+function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, refusedVersion, freeLayoutAfterLoading, readOnly) {
 
     this.code = null;
     this.name = iWidgetName;
@@ -70,7 +69,6 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
     this.contentHeight = Number(height);
     this.loaded = false;
     this.zPos = zPos;
-    this.transparency = transparency;
     this.draggable = null;
     this.visible = false;
     this.minimized = minimized;
@@ -117,7 +115,6 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
     this.settingsButton = null;
     this.minimizeButton = null;
     this.errorButton = null;
-    this.iwidgetNameHTMLElement = null;
     this.iwidgetInputHTMLElement = null;
     this.statusBar = null;
 
@@ -339,160 +336,23 @@ IWidget.prototype.onFreeLayout = function () {
 };
 
 /**
- * Toggle the widget transparency
- */
-IWidget.prototype.toggleTransparency = function () {
-    function onSuccess() {}
-    function onError(transport, e) {
-        var msg = gettext("Error saving the new transparency value into persistence: %(errorMsg)s.");
-        msg = this.internal_iwidget.logManager.formatError(msg, transport, e);
-        this.log(msg, Constants.Logging.ERROR_MSG);
-    }
-
-    this.element.toggleClassName("widget_window_transparent");
-    this.transparency = !this.transparency;
-
-    //Persist the new state
-    var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-        workspace_id: this.internal_iwidget.layout.dragboard.workspaceId,
-        tab_id: this.internal_iwidget.layout.dragboard.tabId,
-        iwidget_id: this.id
-    });
-    Wirecloud.io.makeRequest(iwidgetUrl, {
-        method: 'PUT',
-        contentType: 'application/json',
-        postBody: Object.toJSON({
-            transparency: this.transparency,
-            id: this.id
-        }),
-        onSuccess: onSuccess,
-        onFailure: onError
-    });
-};
-
-/**
  * Builds the structure of the widget
  */
 IWidget.prototype.build = function () {
-    this.element = document.createElement("div");
-    Element.extend(this.element);
-    this.element.addClassName("iwidget");
+    var contents = this.internal_iwidget.buildInterface(this);
 
-    // Widget Menu
-    this.widgetMenu = document.createElement("div");
-    Element.extend(this.widgetMenu);
-    this.widgetMenu.addClassName("widget_menu");
-    this.widgetMenu.observe("contextmenu",
-        function (e) {
-            Event.stop(e);
-        },
-        true);
+    this.element = contents.element;
 
-    // Widget title
-    this.widgetMenu.setAttribute("title", this.name);
-
-    //#######################################
-    // buttons. Inserted from right to left
-    //#######################################
-
-    // close button
-    this.closeButton = new StyledElements.StyledButton({
-        'plain': true,
-        'class': 'closebutton',
-        'title': gettext('Close')
-    });
-    this.closeButton.addEventListener("click",
-        function () {
-            OpManagerFactory.getInstance().removeInstance(this.id);
-        }.bind(this));
-    this.closeButton.insertInto(this.widgetMenu);
-
-    // Menu button
-    this.settingsButton = new StyledElements.StyledButton({
-        'plain': true,
-        'class': 'settingsbutton',
-        'title': gettext('Menu')
-    });
-    this.settingsButton.addEventListener("click",
-        function (button) {
-            this.menu.show(button.getBoundingClientRect());
-        }.bind(this));
-    this.settingsButton.insertInto(this.widgetMenu);
-
-    // minimize button
-    this.minimizeButton = new StyledElements.StyledButton({
-        'plain': true
-    });
-    this.minimizeButton.addEventListener("click",
-        function (button) {
-            this.toggleMinimizeStatus(true);
-        }.bind(this));
-    this.minimizeButton.insertInto(this.widgetMenu);
-
-    // error button
-    this.errorButton = new StyledElements.StyledButton({
-        'plain': true,
-        'class': 'errorbutton'
-    });
-    this.errorButton.addEventListener("click",
-        function (button) {
-            OpManagerFactory.getInstance().showLogs(this.internal_iwidget.logManager); // TODO
-        }.bind(this));
-    this.errorButton.insertInto(this.widgetMenu);
-
-    this.fillWithLabel();
-
-    this.element.appendChild(this.widgetMenu);
-
-    // Content wrapper
-    this.contentWrapper = document.createElement("div");
-    Element.extend(this.contentWrapper);
-    this.contentWrapper.addClassName("widget_wrapper");
-    this.element.appendChild(this.contentWrapper);
-
-    // Widget Content
-    this.content = document.createElement("iframe");
-    Element.extend(this.content);
-    this.content.addClassName("widget_object");
-    this.content.setAttribute("type", this.internal_iwidget.widget.code_content_type);
-    this.content.setAttribute("standby", "Loading...");
-    this.content.setAttribute("width", "100%");
-    this.content.setAttribute("frameBorder", "0");
-
-    Element.extend(this.content);
-    this.content.observe("load",
-        function () {
-            this.internal_iwidget.layout.dragboard.workspace.iwidgetLoaded(this.id);
-        }.bind(this),
-        true);
-    this.contentWrapper.appendChild(this.content);
-
-    // Widget status bar
-    this.statusBar = document.createElement("div");
-    Element.extend(this.statusBar);
-    this.statusBar.addClassName("statusBar");
-    this.element.appendChild(this.statusBar);
-    this.statusBar.observe("click", function () {
-                                        this.internal_iwidget.layout.dragboard.raiseToTop(this);
-                                    }.bind(this), false);
-
-    // resize handles
-    var resizeHandle;
-
-    // Left one
-    resizeHandle = document.createElement("div");
-    Element.extend(resizeHandle);
-    resizeHandle.addClassName("leftResizeHandle");
-    this.leftResizeHandleElement = resizeHandle;
-    this.leftResizeHandle = new IWidgetResizeHandle(resizeHandle, this, true);
-
-    // Right one
-    resizeHandle = document.createElement("div");
-    Element.extend(resizeHandle);
-    resizeHandle.addClassName("rightResizeHandle");
-    this.statusBar.appendChild(resizeHandle);
-    this.rightResizeHandleElement = resizeHandle;
-    this.rightResizeHandle = new IWidgetResizeHandle(resizeHandle, this, false);
+    this.widgetMenu = this.element.getElementsByClassName('widget_menu')[0];
+    this.contentWrapper = this.element.getElementsByClassName('widget_wrapper')[0];
+    this.statusBar = this.element.getElementsByClassName('statusBar')[0];
+    this.content = this.element.getElementsByTagName('iframe')[0];
+    this.closeButton = contents.tmp.closebutton;
+    this.errorButton = contents.tmp.errorbutton;
+    this.minimizeButton = contents.tmp.minimizebutton;
+    this.leftResizeHandle = contents.tmp.leftresizehandle;
+    this.rightResizeHandle = contents.tmp.rightresizehandle;
+    this.titleelement = contents.tmp.titleelement;
 
     // Icon Element
     this.iconElement = document.createElement("div");
@@ -532,17 +392,9 @@ IWidget.prototype._updateButtons = function () {
     this.closeButton.setDisabled(!this.isAllowed('close'));
     this.minimizeButton.setDisabled(!this.isAllowed('minimize'));
 
-    if (isElement(this.leftResizeHandleElement.parentNode)) {
-        this.leftResizeHandleElement.remove();
-    }
-    if (isElement(this.rightResizeHandleElement.parentNode)) {
-        this.rightResizeHandleElement.remove();
-    }
-
-    if (this.isAllowed('resize')) {
-        this.statusBar.appendChild(this.leftResizeHandleElement);
-        this.statusBar.appendChild(this.rightResizeHandleElement);
-    }
+    var resizable = this.isAllowed('resize');
+    this.leftResizeHandle.setDisabled(!resizable);
+    this.rightResizeHandle.setDisabled(!resizable);
 };
 
 /**
@@ -580,11 +432,6 @@ IWidget.prototype.paint = function (onInit) {
 
     this.minimized = null;
     this.setMinimizeStatus(minimizedStatusBackup, false, false);
-
-    // Initialize transparency status
-    if (this.transparency) {
-        this.element.addClassName("widget_window_transparent");
-    }
 
     //Initialize read-only status
     if (this.internal_iwidget.readOnly) {
@@ -632,85 +479,6 @@ IWidget.prototype.isPainted = function () {
     return this.menu !== null;
 };
 
-IWidget.prototype.fillWithLabel = function () {
-    if (this.iwidgetInputHTMLElement !== null) {
-        //hide the input element
-        this.iwidgetInputHTMLElement.hide();
-    }
-
-    // get the name
-    var nameToShow = this.name;
-    if (nameToShow.length > 30) {
-        nameToShow = nameToShow.substring(0, 30) + "...";
-    }
-
-    if (this.iwidgetNameHTMLElement !== null) {
-        // update and show the label
-        this.iwidgetNameHTMLElement.update(nameToShow);
-        this.iwidgetNameHTMLElement.show();
-    } else {
-        //create the label
-        this.iwidgetNameHTMLElement = document.createElement("span");
-        Element.extend(this.iwidgetNameHTMLElement);
-        this.iwidgetNameHTMLElement.innerHTML = nameToShow;
-        this.widgetMenu.appendChild(this.iwidgetNameHTMLElement);
-
-        this.iwidgetNameHTMLElement.observe('mousedown', Event.stop);
-        this.iwidgetNameHTMLElement.observe('click',
-                                            function (e) {
-                                                Event.stop(e);
-                                                this.internal_iwidget.layout.dragboard.raiseToTop(this);
-                                                this.fillWithInput();
-                                            }.bind(this)); //do not propagate to div.
-    }
-};
-
-IWidget.prototype.fillWithInput = function () {
-    this.iwidgetNameHTMLElement.hide();
-    if (this.iwidgetInputHTMLElement) {
-        this.iwidgetInputHTMLElement.show();
-        this.iwidgetInputHTMLElement.setAttribute("value", this.name);
-        this.iwidgetInputHTMLElement.setAttribute("size", this.name.length + 5);
-    } else {
-        this.iwidgetInputHTMLElement = document.createElement("input");
-        Element.extend(this.iwidgetInputHTMLElement);
-        this.iwidgetInputHTMLElement.addClassName("iwidget_name");
-        this.iwidgetInputHTMLElement.setAttribute("type", "text");
-        this.iwidgetInputHTMLElement.setAttribute("value", this.name);
-        this.iwidgetInputHTMLElement.setAttribute("size", this.name.length + 5);
-        this.iwidgetInputHTMLElement.setAttribute("maxlength", 30);
-
-        this.widgetMenu.appendChild(this.iwidgetInputHTMLElement);
-
-        this.iwidgetInputHTMLElement.observe('blur',
-                                            function (e) {
-                                                Event.stop(e);
-                                                var target = BrowserUtilsFactory.getInstance().getTarget(e);
-                                                this.setName(target.value);
-                                                this.fillWithLabel();
-                                            }.bind(this));
-
-        this.iwidgetInputHTMLElement.observe('keypress',
-                                            function (e) {
-                                                if (e.keyCode === Event.KEY_RETURN) {
-                                                    Event.stop(e);
-                                                    var target = BrowserUtilsFactory.getInstance().getTarget(e);
-                                                    target.blur();
-                                                }
-                                            }.bind(this));
-
-        this.iwidgetInputHTMLElement.observe('input',
-                                            function (e) {
-                                                var target;
-
-                                                Event.stop(e);
-                                                target = BrowserUtilsFactory.getInstance().getTarget(e);
-                                                target.size = (target.value.length === 0) ? 1 : target.value.length + 5;
-                                            }.bind(this));
-    }
-    this.iwidgetInputHTMLElement.focus();
-};
-
 /**
  * Sets the name of this iWidget. The name of the iWidget is shown at the
  * iWidget's menu bar. Also, this name will be used to refere to this widget in
@@ -736,7 +504,6 @@ IWidget.prototype.setName = function (iwidgetName) {
     if (iwidgetName !== null && iwidgetName.length > 0) {
         this.name = iwidgetName;
         this.widgetMenu.setAttribute("title", iwidgetName);
-        this.iwidgetNameHTMLElement.update(this.name);
         this.iwidgetIconNameHTMLElement.update(this.name);
         var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
             workspace_id: this.internal_iwidget.layout.dragboard.workspaceId,
@@ -1303,13 +1070,13 @@ IWidget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
             this.contentWrapper.setStyle({"visibility": "hidden", "border": "0px"});
             this.statusBar.setStyle({"display": "none"});
             this.minimizeButton.setTitle(gettext("Maximize"));
-            this.minimizeButton.removeClassName("minimizebutton");
-            this.minimizeButton.addClassName("maximizebutton");
+            this.minimizeButton.removeClassName("icon-minus");
+            this.minimizeButton.addClassName("icon-plus");
         }
     } else {
         this.minimizeButton.setTitle(gettext("Minimize"));
-        this.minimizeButton.removeClassName("maximizebutton");
-        this.minimizeButton.addClassName("minimizebutton");
+        this.minimizeButton.removeClassName("icon-plus");
+        this.minimizeButton.addClassName("icon-minus");
         this.contentWrapper.setStyle({"visibility": "", "border": ""});
 
         if (this.onFreeLayout()) {

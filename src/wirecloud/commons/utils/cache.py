@@ -52,7 +52,8 @@ class CacheableData(object):
     def get_data(self):
         return self.data
 
-    def get_response(self, status_code=200):
+    def get_response(self, status_code=200, cacheable=True):
         response = HttpResponse(simplejson.dumps(self.data, cls=LazyEncoder), status=status_code, mimetype='application/json; charset=UTF-8')
-        patch_cache_headers(response, self.timestamp, self.timeout)
+        if cacheable:
+            patch_cache_headers(response, self.timestamp, self.timeout)
         return response

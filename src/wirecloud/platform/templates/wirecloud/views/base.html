@@ -85,10 +85,6 @@ var URIs = {
 };
 
 var ezweb_user_name = '{{ user.username }}';
-var ezweb_user_screen_name = '{{ screen_name }}';
-var ezweb_organizations = '{{ ezweb_organizations|safe }}';
-var tag_categories = '{{ tag_categories|safe }}';
-var _currentTheme = null;
 
 var _SKINS = ["default"];
 //default skin for workspaces. Users may change the skin of a workspace afterwards
@@ -102,8 +98,8 @@ var _DEFAULT_SKIN = 'default';
 
 <script type="text/javascript" src="{% url "wirecloud.javascript_translation_catalogue" %}?language={{ LANGUAGE_CODE }}"></script>
 {% compress js %}
-{% include "wirecloud/views/js_includes.js" %}
 {% wirecloud_ajax_endpoints "index" %}
+{% include "wirecloud/views/js_includes.js" %}
 {% extra_javascripts "index" %}
 {% endcompress %}
 

@@ -50,7 +50,7 @@
         this.arrowBodyElement.appendChild(this.arrowElement);
 
         this.arrowBodyElement.addEventListener('click', function (e) {
-            //(e.button == 0) is the mouse left button
+            // Only process left mouse button events
             if (e.button !== 0) {
                 return;
             }
@@ -66,7 +66,7 @@
         this.closerElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
         this.closerElement.setAttribute('class', 'closer');
         this.closerElement.addEventListener('click', function (e) {
-            //(e.button == 0) is the mouse left button
+            // Only process left mouse button events
             if (e.button !== 0) {
                 return;
             }

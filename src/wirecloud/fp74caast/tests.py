@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase, Client
 from django.utils import unittest
@@ -14,25 +15,27 @@ class FP74CaastTests(TestCase):
 
     fixtures = ('4caast_test_data',)
 
-    @unittest.skip('wip tests')
     def test_add_tenant(self):
 
         client = Client()
 
-        url = reverse('')
-        response = client.get('/4caast-enabling/add_tenant?4caastID=', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        url = reverse('wirecloud.4caast.add_tenant')
+        response = client.get(url + '?message=org.4caast.customers.developer2.services.app2', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 200)
 
         # Check user exists
-        User.object.filter(username='').exists()
+        self.assertTrue(User.objects.filter(username='developer2').exists())
 
-    @unittest.skip('wip tests')
     def test_remove_tenant(self):
 
         client = Client()
 
-        response = client.get('/4caast-enabling/remove_tenant?4caastID=', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
-        self.assertEqual(response.status_code, 200)
+        url = reverse('wirecloud.4caast.remove_tenant')
+        response = client.get(url + '?message=org.4caast.customers.4caast_developer.services.app1', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        self.assertEqual(response.status_code, 204)
+
+        # Check user does not exist
+        self.assertFalse(User.objects.filter(username='developer1').exists())
 
     @unittest.skip('wip tests')
     def test_ac_deployment(self):

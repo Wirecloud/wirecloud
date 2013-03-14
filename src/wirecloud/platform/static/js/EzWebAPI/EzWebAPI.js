@@ -128,7 +128,7 @@ _EzWebAPI.prototype.buildProxyURL = function(url, options) {
 
     if (forceProxy || protocol !== this.platform_protocol || host !== this.platform_host) {
         final_url = this.platform_domain +
-            Wirecloud.URLs.PROXY.evaluate({protocol: protocol, domain: host, path: rest});
+            EzWebAPI.platform.Wirecloud.URLs.PROXY.evaluate({protocol: protocol, domain: host, path: rest});
     }
 
     return final_url;

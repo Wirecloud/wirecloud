@@ -33,7 +33,7 @@ import wirecloud.catalogue.utils
 from wirecloud.catalogue.utils import add_resource_from_template
 from wirecloud.catalogue.get_json_catalogue_data import get_resource_data
 from wirecloud.catalogue.models import CatalogueResource, WidgetWiring
-from wirecloud.commons.test import FakeDownloader, LocalizedTestCase
+from wirecloud.commons.test import FakeDownloader, LocalDownloader, LocalizedTestCase
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.wgt import WgtDeployer
@@ -45,14 +45,34 @@ __test__ = False
 
 class AddWidgetTestCase(LocalizedTestCase):
 
+    @classmethod
+    def setUpClass(cls):
+
+        super(AddWidgetTestCase, cls).setUpClass()
+
+        cls.template_uri = "http://example.com/template1.xml"
+        f = open(os.path.join(os.path.dirname(__file__), 'test-data/template1.xml'), 'rb')
+        cls.template = f.read()
+        f.close()
+
+        cls._original_download_function = staticmethod(downloader.download_http_content)
+        downloader.download_http_content = LocalDownloader({
+            'http': {
+                'example.com': os.path.join(os.path.dirname(__file__), 'test-data'),
+            },
+        })
+
+    @classmethod
+    def tearDownClass(cls):
+
+        downloader.download_http_content = cls._original_download_function
+
+        super(AddWidgetTestCase, cls).tearDownClass()
+
     def setUp(self):
         super(AddWidgetTestCase, self).setUp()
 
         self.user = User.objects.create_user('test', 'test@example.com', 'test')
-        self.template_uri = "http://example.com/path/widget.xml"
-        f = open(os.path.join(os.path.dirname(__file__), 'test-data/template1.xml'), 'rb')
-        self.template = f.read()
-        f.close()
 
     def test_add_resource_from_template(self):
 

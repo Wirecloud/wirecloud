@@ -18,12 +18,16 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import os
+
 from django.core.urlresolvers import reverse
 from django.test import Client
 from django.utils import simplejson
 
-from wirecloud.commons.test import WirecloudTestCase
-from wirecloud.platform.models import Workspace
+import wirecloud.commons.test
+from wirecloud.commons.test import LocalDownloader, WirecloudTestCase
+from wirecloud.commons.utils import downloader
+from wirecloud.platform.models import Tab, Workspace
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
@@ -33,12 +37,24 @@ __test__ = False
 class ApplicationMashupAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data',)
+    tags = ('rest_api',)
 
     @classmethod
     def setUpClass(cls):
         super(ApplicationMashupAPI, cls).setUpClass()
 
         cls.client = Client()
+        cls._original_download_function = staticmethod(downloader.download_http_content)
+        downloader.download_http_content = LocalDownloader({
+            'http': {
+                'localhost:8001': os.path.join(os.path.dirname(wirecloud.commons.test.__file__), 'test-data', 'src'),
+            },
+        })
+
+    @classmethod
+    def tearDownClass(cls):
+
+        downloader.download_http_content = cls._original_download_function
 
     def test_features(self):
 
@@ -114,7 +130,9 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Check basic response structure
         response_data = simplejson.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
+        self.assertTrue('id' in response_data)
         self.assertEqual(response_data['name'], 'test')
+        self.assertTrue(isinstance(response_data['wiring'], dict))
 
         # Workspace should be created
         self.assertTrue(Workspace.objects.filter(creator=1, name='test').exists())
@@ -132,3 +150,128 @@ class ApplicationMashupAPI(WirecloudTestCase):
         }
         response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 409)
+
+    def test_workspace_collection_post_creation_from_mashup(self):
+
+        url = reverse('wirecloud.workspace_collection')
+
+        # Authenticate
+        self.client.login(username='normuser', password='admin')
+
+        # Make the request
+        data = {
+            'mashup': 'Wirecloud/test-mashup/1.0',
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+
+        # Check basic response structure
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertTrue('id' in response_data)
+        self.assertEqual(response_data['name'], 'Test Mashup')
+        self.assertTrue(isinstance(response_data['wiring'], dict))
+
+        # Workspace should be created
+        self.assertTrue(Workspace.objects.filter(creator=2, name='Test Mashup').exists())
+
+    def test_tab_collection_post_requires_authentication(self):
+
+        url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
+
+        data = {
+            'name': 'rest_api_test',
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+        # Error response should be a dict
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
+        # Tab should be not created
+        self.assertFalse(Tab.objects.filter(name='rest_api_test').exists())
+
+        # Check using Accept: text/html
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='text/html')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+        # Content type of the response should be text/html
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'text/html')
+
+    def test_tab_collection_post(self):
+
+        url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'name': 'rest_api_test',
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+
+        # Check basic response structure
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertEqual(response_data['name'], 'rest_api_test')
+
+        # Tab should be created
+        self.assertTrue(Tab.objects.filter(name='rest_api_test').exists())
+
+    def test_tab_collection_post_conflict(self):
+
+        url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'name': 'ExistingTab',
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 409)
+
+    def test_tab_entry_delete_requires_authentication(self):
+
+        url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 1, 'tab_id': 1})
+
+        response = self.client.delete(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+        # Error response should be a dict
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
+        # Tab should be not deleted
+        self.assertTrue(Tab.objects.filter(name='ExistingTab').exists())
+
+        # Check using Accept: text/html
+        response = self.client.delete(url, HTTP_ACCEPT='text/html')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+        # Content type of the response should be text/html
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'text/html')
+
+    def test_tab_entry_delete(self):
+
+        url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 1, 'tab_id': 1})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        response = self.client.delete(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+
+        # Tab should be removed
+        self.assertFalse(Tab.objects.filter(name='ExistingTab').exists())

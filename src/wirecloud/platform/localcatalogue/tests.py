@@ -27,14 +27,16 @@ from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.test import TransactionTestCase, Client
 
+from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.utils import delete_resource
-from wirecloud.commons.test import FakeDownloader, LocalizedTestCase, WirecloudSeleniumTestCase
+import wirecloud.commons.test
+from wirecloud.commons.test import cleartree, FakeDownloader, LocalizedTestCase, WirecloudSeleniumTestCase
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 from wirecloud.platform.get_data import get_widget_data
-from wirecloud.platform.localcatalogue.utils import install_resource
+from wirecloud.platform.localcatalogue.utils import install_resource, install_resource_to_user
 import wirecloud.platform.widget.utils
 from wirecloud.platform.models import Widget, XHTML
 from wirecloud.platform.workspace.utils import create_published_workspace_from_template
@@ -75,13 +77,14 @@ class LocalCatalogueTestCase(LocalizedTestCase):
 
         downloader.download_http_content.set_response(template_uri, template)
         downloader.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
-        resource = install_resource(template, template_uri, self.user, False)
+        resource = install_resource_to_user(self.user, file_contents=template, templateURL=template_uri)
 
         self.assertEqual(resource.vendor, 'Wirecloud')
         self.assertEqual(resource.short_name, 'test')
         self.assertEqual(resource.version, '0.1')
         self.assertEqual(resource.public, False)
         self.assertEqual(tuple(resource.users.values_list('username', flat=True)), (u'test',))
+        self.assertEqual(tuple(resource.groups.values_list('name', flat=True)), ())
 
         widget = resource.widget
 
@@ -101,13 +104,6 @@ class LocalCatalogueTestCase(LocalizedTestCase):
         self.assertEqual(data['variables']['event']['aspect'], 'EVEN')
         self.assertEqual(data['variables']['slot']['label'], 'Slot label')
         self.assertEqual(data['variables']['slot']['aspect'], 'SLOT')
-
-        self.assertEqual(data['variables']['language']['aspect'], 'ECTX')
-        self.assertEqual(data['variables']['language']['concept'], 'language')
-        self.assertEqual(data['variables']['user']['aspect'], 'ECTX')
-        self.assertEqual(data['variables']['user']['concept'], 'username')
-        self.assertEqual(data['variables']['width']['aspect'], 'GCTX')
-        self.assertEqual(data['variables']['width']['concept'], 'widthInPixels')
 
     def test_basic_ezweb_widget_creation(self):
         template_uri = "http://example.com/path/widget.xml"
@@ -215,7 +211,7 @@ class LocalCatalogueTestCase(LocalizedTestCase):
 
         downloader.download_http_content.set_response(template_uri, template)
         downloader.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
-        resource = install_resource(template, template_uri, self.user, False)
+        resource = install_resource_to_user(self.user, file_contents=template, templateURL=template_uri)
         resource_pk = resource.pk
         xhtml_pk = resource.widget.pk
 
@@ -231,7 +227,7 @@ class LocalCatalogueTestCase(LocalizedTestCase):
 
         # Use a different xhtml code
         downloader.download_http_content.set_response('http://example.com/path/test.html', 'cache')
-        install_resource(template, template_uri, self.user, False)
+        install_resource_to_user(self.user, file_contents=template, templateURL=template_uri)
 
         response = client.get(reverse('wirecloud.widget_code_entry', kwargs=widget_id))
         self.assertEqual(response.status_code, 200)
@@ -349,41 +345,94 @@ class LocalCatalogueTestCase(LocalizedTestCase):
         self.assertEqual(workspace.creator, self.user)
 
 
-class WGTLocalCatalogueTestCase(TransactionTestCase):
+class PackagedResourcesTestCase(TransactionTestCase):
+
+    @classmethod
+    def setUpClass(cls):
+
+        super(PackagedResourcesTestCase, cls).setUpClass()
+
+        cls.old_catalogue_deployer = catalogue.wgt_deployer
+        cls.catalogue_tmp_dir = mkdtemp()
+        catalogue.wgt_deployer = WgtDeployer(cls.catalogue_tmp_dir)
+
+        cls.old_deployer = wirecloud.platform.widget.utils.wgt_deployer
+        cls.tmp_dir = mkdtemp()
+        wirecloud.platform.widget.utils.wgt_deployer = WgtDeployer(cls.tmp_dir)
+
+    @classmethod
+    def tearDownClass(cls):
+
+        wirecloud.platform.widget.utils.wgt_deployer = cls.old_deployer
+        rmtree(cls.tmp_dir, ignore_errors=True)
+        catalogue.wgt_deployer = cls.old_catalogue_deployer
+        rmtree(cls.catalogue_tmp_dir, ignore_errors=True)
+
+        super(PackagedResourcesTestCase, cls).tearDownClass()
 
     def setUp(self):
-        super(WGTLocalCatalogueTestCase, self).setUp()
 
-        self.old_deployer = wirecloud.platform.widget.utils.wgt_deployer
-        self.tmp_dir = mkdtemp()
-        wirecloud.platform.widget.utils.wgt_deployer = WgtDeployer(self.tmp_dir)
         self.user = User.objects.create_user('test', 'test@example.com', 'test')
 
     def tearDown(self):
-        rmtree(self.tmp_dir, ignore_errors=True)
-        wirecloud.platform.widget.utils.wgt_deployer = self.old_deployer
 
-        super(WGTLocalCatalogueTestCase, self).tearDown()
+        cleartree(self.tmp_dir)
+        cleartree(self.catalogue_tmp_dir)
+        super(PackagedResourcesTestCase, self).tearDown()
 
-    def test_basic_wgt_deployment(self):
+    def test_basic_packaged_widget_deployment(self):
+
         wgt_file = WgtFile(os.path.join(os.path.dirname(__file__), 'test-data', 'basic_widget.wgt'))
-        widget_path = wirecloud.platform.widget.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
+        catalogue_deployment_path = catalogue.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
+        deployment_path = wirecloud.platform.widget.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
 
-        install_resource(wgt_file, None, self.user, True)
+        install_resource_to_user(self.user, file_contents=wgt_file, packaged=True)
         resource = CatalogueResource.objects.get(vendor='Morfeo', short_name='Test', version='0.1')
         resource.widget
-        self.assertEqual(os.path.isdir(widget_path), True)
+        self.assertTrue(os.path.isdir(deployment_path))
+        self.assertTrue(os.path.isdir(catalogue_deployment_path))
 
         delete_resource(resource, self.user)
         self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Morfeo', short_name='Test', version='0.1')
-        self.assertEqual(os.path.exists(widget_path), False)
+        self.assertFalse(os.path.exists(deployment_path))
+        self.assertFalse(os.path.exists(catalogue_deployment_path))
 
-    def test_invalid_wgt_deployment(self):
+    def test_invalid_packaged_widget_deployment(self):
+
         wgt_file = WgtFile(os.path.join(os.path.dirname(__file__), 'test-data', 'invalid_widget.wgt'))
-        wirecloud.platform.widget.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
+        catalogue_deployment_path = catalogue.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
+        deployment_path = wirecloud.platform.widget.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
 
         self.assertRaises(TemplateParseException, install_resource, wgt_file, None, self.user, True)
         self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Morfeo', short_name='Test', version='0.1')
+        self.assertFalse(os.path.exists(deployment_path))
+        self.assertFalse(os.path.exists(catalogue_deployment_path))
+
+    def test_basic_packaged_mashup_deployment(self):
+
+        wgt_file = WgtFile(os.path.join(os.path.dirname(wirecloud.commons.test.__file__), 'test-data', 'Wirecloud_PackagedTestMashup_1.0.zip'))
+        deployment_path = catalogue.wgt_deployer.get_base_dir('Wirecloud', 'PackagedTestMashup', '1.0')
+
+        install_resource_to_user(self.user, file_contents=wgt_file, packaged=True)
+        resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='PackagedTestMashup', version='1.0')
+        self.assertTrue(os.path.isdir(deployment_path))
+
+        delete_resource(resource, self.user)
+        self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Wirecloud', short_name='PackagedTestMashup', version='1.0')
+        self.assertFalse(os.path.exists(deployment_path))
+
+    def test_basic_packaged_operator_deployment(self):
+
+        wgt_file = WgtFile(os.path.join(os.path.dirname(wirecloud.commons.test.__file__), 'test-data', 'Wirecloud_TestOperator_1.0.zip'))
+        deployment_path = catalogue.wgt_deployer.get_base_dir('Wirecloud', 'TestOperator', '1.0')
+
+        install_resource_to_user(self.user, file_contents=wgt_file, packaged=True)
+        resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='TestOperator', version='1.0')
+        self.assertTrue(os.path.isdir(deployment_path))
+
+        delete_resource(resource, self.user)
+        self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Wirecloud', short_name='TestOperator', version='1.0')
+        self.assertFalse(os.path.exists(deployment_path))
 
 
 class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
@@ -411,6 +460,7 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         self.assertIsNotNone(widget)
 
         test_widget.public = False
+        test_widget.users.clear()
         test_widget.save()
 
         self.search_resource('Test')
@@ -450,8 +500,6 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         test_widget = CatalogueResource.objects.get(short_name='Test')
         test_widget.public = False
         test_widget.save()
-        test_widget.users.add(User.objects.get(username='admin'))
-        test_widget.users.add(User.objects.get(username='normuser'))
 
         self.login(username='normuser')
 

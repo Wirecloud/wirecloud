@@ -64,7 +64,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = os.path.join(BASEDIR, '../static')
+STATIC_ROOT = path.join(BASEDIR, '../static')
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
@@ -145,8 +145,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.tz',
     'django.contrib.messages.context_processors.messages',
     'wirecloud.platform.themes.active_theme_context_processor',
-    'wirecloud.commons.context_processors.tag_categories',
-    'wirecloud.commons.context_processors.ezweb_organizations',
 )
 
 # Login/logout URLs

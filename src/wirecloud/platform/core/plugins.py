@@ -25,6 +25,7 @@ from wirecloud.platform.plugins import WirecloudPlugin, build_url_template
 
 
 WORKSPACE_CSS = (
+    'css/workspace/iwidget.css',
     'css/workspace/empty_workspace_message.css',
 )
 
@@ -44,6 +45,33 @@ WIRING_EDITOR_FILES = (
     'js/wirecloud/ui/WiringEditor/SourceAnchor.js',
     'js/wirecloud/ui/WiringEditor/TargetAnchor.js',
     'js/wirecloud/ui/WiringEditor/Multiconnector.js',
+)
+
+STYLED_ELEMENTS_FILES = (
+    'js/StyledElements/Fragment.js',
+    'js/StyledElements/Pagination.js',
+    'js/StyledElements/Button.js',
+    'js/StyledElements/PopupMenuBase.js',
+    'js/StyledElements/PopupMenu.js',
+    'js/StyledElements/MenuItem.js',
+    'js/StyledElements/SubMenuItem.js',
+    'js/StyledElements/PopupButton.js',
+    'js/StyledElements/StaticPaginatedSource.js',
+    'js/StyledElements/TextField.js',
+    'js/StyledElements/TextArea.js',
+    'js/StyledElements/StyledList.js',
+    'js/StyledElements/PasswordField.js',
+    'js/StyledElements/Select.js',
+    'js/StyledElements/ToggleButton.js',
+    'js/StyledElements/StyledNotebook.js',
+    'js/StyledElements/Alternatives.js',
+    'js/StyledElements/HorizontalLayout.js',
+    'js/StyledElements/BorderLayout.js',
+    'js/StyledElements/ModelTable.js',
+    'js/StyledElements/EditableElement.js',
+    'js/StyledElements/InputInterfaces.js',
+    'js/StyledElements/Form.js',
+    'js/StyledElements/GUIBuilder.js',
 )
 
 BASE_CSS = (
@@ -130,30 +158,15 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
     def get_scripts(self, view):
         common = (
+            'js/wirecloud/io.js',
             'js/wirecloud/ContextManager.js',
             'js/wirecloud/IWidget.js',
             'js/wirecloud/PolicyManager.js',
-            'js/StyledElements/Fragment.js',
-            'js/StyledElements/Pagination.js',
-            'js/StyledElements/Button.js',
-            'js/StyledElements/PopupMenuBase.js',
-            'js/StyledElements/PopupMenu.js',
-            'js/StyledElements/MenuItem.js',
-            'js/StyledElements/SubMenuItem.js',
-            'js/StyledElements/PopupButton.js',
-            'js/StyledElements/StaticPaginatedSource.js',
-            'js/StyledElements/TextField.js',
-            'js/StyledElements/TextArea.js',
-            'js/StyledElements/StyledList.js',
-            'js/StyledElements/PasswordField.js',
-            'js/StyledElements/Select.js',
-            'js/StyledElements/ToggleButton.js',
-            'js/StyledElements/StyledNotebook.js',
-            'js/StyledElements/Alternatives.js',
-            'js/StyledElements/HorizontalLayout.js',
-            'js/StyledElements/BorderLayout.js',
-            'js/StyledElements/ModelTable.js',
+            'js/wirecloud/Wiring.js',
             'js/gadgetModel/Gadget.js',
+        ) + STYLED_ELEMENTS_FILES + (
+            'js/wirecloud/ui/IWidgetResizeHandle.js',
+            'js/wirecloud/ui/IWidgetView.js',
             'js/wirecloud/ui/Draggable.js',
             'js/wirecloud/ui/Theme.js',
             'js/wirecloud/WirecloudCatalogue.js',
@@ -171,6 +184,8 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/dragboard/dragboard.js',
                 'js/wirecloud/utils/CookieManager.js',
                 'js/wirecloud/MarketManager.js',
+                'js/wirecloud/ui/MarketplaceViewMenuItems.js',
+                'js/catalogue/ResourceDetailsView.js',
                 'js/wirecloud/ui/ResourcePainter.js',
                 'js/wirecloud/ui/WirecloudCatalogue/PublishView.js',
                 'js/wirecloud/ui/WindowMenu.js',
@@ -197,6 +212,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
     def get_templates(self, view):
         if view == 'index':
             return {
+                "iwidget": "wirecloud/ui/iwidget.html",
                 "window_menu": "wirecloud/ui/window_menu.html",
                 "wirecloud_catalogue_search_interface": "wirecloud/catalogue/search_interface.html",
                 "wirecloud_wiring_template": "wirecloud/wiring.html",
@@ -211,7 +227,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
     def get_ajax_endpoints(self, view):
         return (
-            {'id': 'ADD_WORKSPACE', 'url': build_url_template('wirecloud.workspace_import')},
             {'id': 'LOCAL_REPOSITORY', 'url': build_url_template('wirecloud.root')},
             {'id': 'LOCAL_RESOURCE_COLLECTION', 'url': build_url_template('wirecloud_showcase.resource_collection')},
             {'id': 'LOCAL_RESOURCE_ENTRY', 'url': build_url_template('wirecloud_showcase.resource_entry', ['vendor', 'name', 'version'])},

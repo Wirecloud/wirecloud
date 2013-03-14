@@ -34,8 +34,7 @@
 	wire:hasPlatformPreference _:b2 ;
 	wire:hasPlatformStateProperty _:b3 ;
 	wire:hasPlatformWiring _:b4 ;
-	wire:hasPlatformRendering _:b5 ;
-	wire:hasContext _:b6 .
+	wire:hasPlatformRendering _:b5 .
 
 
 <http://creatoruri/>
@@ -93,6 +92,3 @@ _:b5
 	a wire:PlatformRendering ;
 	wire:renderingWidth "24" ;
 	wire:renderingHeight "10" .
-
-_:b6
-	a wire:Context .

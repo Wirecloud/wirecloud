@@ -585,14 +585,6 @@ class USDLTemplateParser(object):
     def get_resource_type(self):
         return self._info['type']
 
-    def get_resource_uri(self):
-        return '/'.join((
-            '',
-            self._info['vendor'],
-            self._info['name'],
-            self._info['version'],
-        ))
-
     def get_resource_name(self):
         return self._info['name']
 
@@ -1058,15 +1050,6 @@ class WirecloudTemplateParser(object):
 
     def get_resource_type(self):
         return self._info['type']
-
-    def get_resource_uri(self):
-        return '/'.join((
-            '',
-            self._info['type'] + 's',
-            self._info['vendor'],
-            self._info['name'],
-            self._info['version'],
-        ))
 
     def get_resource_name(self):
         return self._info['name']

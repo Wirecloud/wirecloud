@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012 Universidad Politécnica de Madrid
+# Copyright 2012-2013 Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -23,6 +23,7 @@
 #     S.A.Unipersonal (Telefonica I+D)
 
 
+import os
 import urlparse
 
 from django.contrib.auth.models import Group, User
@@ -31,25 +32,26 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseForbidden, Http404
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
-from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.utils.http import urlencode
 
+from wirecloud.catalogue import utils as catalogue
+from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource, Service
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.cache import no_cache
-from wirecloud.commons.utils.encoding import LazyEncoder
 from wirecloud.commons.utils.http import authentication_required, build_error_response, get_content_type, supported_request_mime_types
-from wirecloud.commons.utils.template import TemplateParseException, TemplateParser
+from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.transaction import commit_on_http_success
-from wirecloud.platform.get_data import get_workspace_data, get_global_workspace_data, get_tab_data
+from wirecloud.commons.utils.wgt import WgtFile
+from wirecloud.platform.get_data import get_workspace_data, get_global_workspace_data
 from wirecloud.platform.iwidget.utils import deleteIWidget
-from wirecloud.platform.models import Category, IWidget, PublishedWorkspace, Tab, UserWorkspace, VariableValue, Workspace
+from wirecloud.platform.models import IWidget, PublishedWorkspace, Tab, UserWorkspace, VariableValue, Workspace
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from wirecloud.platform.workspace.packageCloner import PackageCloner
 from wirecloud.platform.workspace.packageLinker import PackageLinker
-from wirecloud.platform.workspace.utils import deleteTab, createTab, create_published_workspace_from_template, getCategories, getCategoryId, get_workspace_list, setVisibleTab, set_variable_value
+from wirecloud.platform.workspace.utils import deleteTab, createTab, create_published_workspace_from_template, get_workspace_list, setVisibleTab, set_variable_value
 from wirecloud.platform.markets.utils import get_market_managers
 
 
@@ -59,39 +61,6 @@ def clone_original_variable_value(variable, creator, new_user):
     value = original_var_value.get_variable_value()
 
     return VariableValue.objects.create(variable=variable, user=new_user, value=value)
-
-
-def createWorkspace(workspaceName, user):
-    cloned_workspace = None
-    #try to assign a new workspace according to user category
-    try:
-        categories = getCategories(user)
-        # take the first one which has a new workspace
-        for category in categories:
-            try:
-                new_workspace = Category.objects.get(category_id=getCategoryId(category)).new_workspace
-                if new_workspace is not None:
-                    cloned_workspace, _junk = buildWorkspaceFromTemplate(new_workspace.template, user)
-
-                    cloned_workspace.name = workspaceName
-                    cloned_workspace.save()
-
-                    setActiveWorkspace(user, cloned_workspace)
-                    break
-            except Category.DoesNotExist:
-                #the user category doesn't have a new workspace
-                #try with other categories
-                continue
-
-    except:
-        pass
-
-    if not cloned_workspace:
-        #create an empty workspace
-        return createEmptyWorkspace(workspaceName, user)
-
-    # Returning created Ids
-    return cloned_workspace
 
 
 def createEmptyWorkspace(workspaceName, user):
@@ -116,23 +85,6 @@ def setActiveWorkspace(user, workspace):
 
     UserWorkspace.objects.filter(user=user, active=True).exclude(workspace=workspace).update(active=False)
     UserWorkspace.objects.filter(user=user, workspace=workspace).update(active=True)
-
-
-def cloneWorkspace(workspace_id, user):
-
-    published_workspace = get_object_or_404(PublishedWorkspace, id=workspace_id)
-
-    workspace = published_workspace.workspace
-
-    packageCloner = PackageCloner()
-
-    cloned_workspace = packageCloner.clone_tuple(workspace)
-
-    cloned_workspace.creator = user
-
-    cloned_workspace.save()
-
-    return cloned_workspace
 
 
 def linkWorkspaceObject(user, workspace, creator, link_variable_values=True):
@@ -173,21 +125,40 @@ class WorkspaceCollection(Resource):
                 return build_error_response(request, 400, msg)
 
             workspace_name = data.get('name', '').strip()
+            mashup_id = data.get('mashup', '')
         else:
             workspace_name = request.POST.get('name', '').strip()
+            mashup_id = request.POST.get('mashup', '')
 
-        if workspace_name == '':
+        if mashup_id == '' and workspace_name == '':
             return build_error_response(request, 400, _('missing workspace name'))
 
-        try:
-            workspace = createWorkspace(workspace_name, request.user)
-        except IntegrityError:
-            msg = _('A workspace with the given name already exists')
-            return build_error_response(request, 409, msg)
+        if mashup_id == '':
+            try:
+                workspace = createEmptyWorkspace(workspace_name, request.user)
+            except IntegrityError:
+                msg = _('A workspace with the given name already exists')
+                return build_error_response(request, 409, msg)
+        else:
+            values = mashup_id.split('/', 3)
+            if len(values) != 3:
+                return build_error_response(request, 400, _('invalid mashup id'))
+
+            (mashup_vendor, mashup_name, mashup_version) = values
+            resource = CatalogueResource.objects.get(vendor=mashup_vendor, short_name=mashup_name, version=mashup_version)
+            if resource.fromWGT:
+                base_dir = catalogue.wgt_deployer.get_base_dir(mashup_vendor, mashup_name, mashup_version)
+                wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
+                template = wgt_file.get_template()
+            else:
+                template = downloader.download_http_content(resource.template_uri, user=request.user)
+
+            workspace, _junk = buildWorkspaceFromTemplate(template, request.user, True)
+
 
         workspace_data = get_global_workspace_data(workspace, request.user)
 
-        return workspace_data.get_response(status_code=201)
+        return workspace_data.get_response(status_code=201, cacheable=False)
 
 
 class WorkspaceEntry(Resource):
@@ -287,12 +258,16 @@ class TabCollection(Resource):
         tab_name = data['name']
         workspace = Workspace.objects.get(users__id=request.user.id, pk=workspace_id)
 
-        tab = createTab(tab_name, request.user, workspace)
+        try:
+            tab = createTab(tab_name, request.user, workspace)
+        except IntegrityError:
+            msg = _('A tab with the given name already exists for the workspace')
+            return build_error_response(request, 409, msg)
 
         # Returning created Ids
         ids = {'id': tab.id, 'name': tab.name}
 
-        return HttpResponse(simplejson.dumps(ids), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(ids), status=201, mimetype='application/json; charset=UTF-8')
 
     @authentication_required
     @supported_request_mime_types(('application/json',))
@@ -328,13 +303,6 @@ class TabCollection(Resource):
 
 
 class TabEntry(Resource):
-
-    def read(self, request, workspace_id, tab_id):
-
-        tab = get_object_or_404(Tab, workspace__users__id=request.user.id, workspace__pk=workspace_id, pk=tab_id)
-        tab_data = get_tab_data(tab)
-
-        return HttpResponse(simplejson.dumps(tab_data), mimetype='application/json; charset=UTF-8')
 
     @authentication_required
     @supported_request_mime_types(('application/json',))
@@ -380,28 +348,27 @@ class TabEntry(Resource):
     @commit_on_http_success
     def delete(self, request, workspace_id, tab_id):
 
-        #set new order
-        tabs = Tab.objects.filter(workspace__pk=workspace_id).order_by('position')
-
         # Get tab, if it does not exist, an http 404 error is returned
         tab = get_object_or_404(Tab, workspace__pk=workspace_id, pk=tab_id)
+        tabs = Tab.objects.filter(workspace__pk=workspace_id).order_by('position')[::1]
 
-        #decrease the position of the following tabs
-        for t in range(tab.position, tabs.count()):
-            tabs[t].position = tabs[t].position - 1
-
-        tabs = tabs.exclude(pk=tab_id)
-
-        if tabs.count() == 0:
+        if len(tabs) == 1:
             msg = _("tab cannot be deleted")
             return HttpResponseForbidden(msg)
 
-        #Delete Workspace variables too!
+        # decrease the position of the following tabs
+        for t in range(tab.position + 1, len(tabs)):
+            tabs[t].position = tabs[t].position - 1
+            tabs[t].save()
+
+        # Remove the tab
+        tabs.remove(tab)
         deleteTab(tab, request.user)
 
-        #set a new visible tab (first tab by default)
-        activeTab = tabs[0]
-        setVisibleTab(request.user, workspace_id, activeTab)
+        if tab.visible:
+            # set a new visible tab (first tab by default)
+            activeTab = tabs[0]
+            setVisibleTab(request.user, workspace_id, activeTab)
 
         return HttpResponse(status=204)
 
@@ -522,18 +489,6 @@ class WorkspaceLinkerEntry(Resource):
         return HttpResponse(status=204)
 
 
-class WorkspaceClonerEntry(Resource):
-
-    @authentication_required
-    @commit_on_http_success
-    @no_cache
-    def read(self, request, workspace_id):
-
-        cloned_workspace = cloneWorkspace(workspace_id, request.user)
-        result = {'result': 'ok', 'new_workspace_id': cloned_workspace.id}
-        return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
-
-
 class MashupMergeService(Service):
 
     @authentication_required
@@ -567,52 +522,6 @@ class MashupMergeService(Service):
 
         result = {'result': 'ok', 'workspace_id': to_ws_id}
         return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
-
-
-class MashupImportService(Service):
-
-    @authentication_required
-    @supported_request_mime_types(('application/json',))
-    @commit_on_http_success
-    def process(self, request):
-
-        try:
-            data = simplejson.loads(request.raw_post_data)
-        except Exception, e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
-
-        template_url = data['workspace']
-
-        path = request.build_absolute_uri()
-        login_scheme, login_netloc = urlparse.urlparse(template_url)[:2]
-        current_scheme, current_netloc = urlparse.urlparse(path)[:2]
-        if ((not login_scheme or login_scheme == current_scheme) and
-            (not login_netloc or login_netloc == current_netloc)):
-            pworkspace_id = template_url.split('/')[-2]
-            template = PublishedWorkspace.objects.get(id=pworkspace_id).template
-        else:
-            template = downloader.download_http_content(template_url, user=request.user)
-
-        try:
-            workspace, _junk = buildWorkspaceFromTemplate(template, request.user, True)
-        except TemplateParseException, e:
-            return build_error_response(request, 400, unicode(e.msg))
-
-        activate = data.get('active', False) == "true"
-        if not activate:
-            workspaces = UserWorkspace.objects.filter(user__id=request.user.id, active=True)
-            if workspaces.count() == 0:
-                # there aren't any active workspace yet
-                activate = True
-
-        # Mark the mashup as the active workspace if it's requested. For example, solutions
-        if activate:
-            setActiveWorkspace(request.user, workspace)
-
-        workspace_data = get_global_workspace_data(workspace, request.user)
-
-        return HttpResponse(simplejson.dumps(workspace_data.get_data(), cls=LazyEncoder), mimetype='application/json; charset=UTF-8')
 
 
 def check_json_fields(json, fields):

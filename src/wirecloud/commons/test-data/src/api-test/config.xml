@@ -8,7 +8,7 @@
         <Version>0.9</Version>
         <Author>aarranz</Author>
         <Mail>aarranz@conwet.com</Mail>
-        <Description>This gadget is used to test some of the features of the Wirecloud platform</Description>
+        <Description>This widget is used to test some of the features of the Wirecloud platform</Description>
         <ImageURI>images/catalogue.png</ImageURI>
         <iPhoneImageURI>images/catalogue_iphone.png</iPhoneImageURI>
         <WikiURI>doc/index.html</WikiURI>
@@ -18,17 +18,14 @@
         <Preference name="text" type="text" label="text" description="text preference" default="initial text"/>
     </Platform.Preferences>
 
-    <Platform.StateProperties>
-    </Platform.StateProperties>
-
     <Platform.Wiring>
         <InputEndpoint name="inputendpoint" type="text" label="Input" friendcode="test-data"/>
         <OutputEndpoint name="outputendpoint" type="text" label="Output" friendcode="test-data"/>
     </Platform.Wiring>
+
     <Platform.Link>
         <XHTML href="test.html"/>
     </Platform.Link>
     <Platform.Rendering width="6" height="24"/>
-    <Platform.Context>
-    </Platform.Context>
+
 </Template>

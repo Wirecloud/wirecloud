@@ -35,7 +35,7 @@ if (!Wirecloud.ui) {
      *************************************************************************/
 
     var WiringEditor = function WiringEditor(id, options) {
-        if (id == null){
+        if (id == null) {
             return;
         }
         options['class'] = 'wiring_editor';
@@ -64,17 +64,20 @@ if (!Wirecloud.ui) {
         this.emptyBox.classList.add('alert');
         this.emptyBox.classList.add('alert-info');
         this.emptyBox.classList.add('alert-block');
+
         // Title
         var pTitle = document.createElement('h4');
         pTitle.textContent = gettext("Welcome to the Wiring Editor view!");
         this.emptyBox.appendChild(pTitle);
+
         // Message
         var message = document.createElement('p');
         message.innerHTML = gettext("Please drag some widgets and operators from the stencil on the left, and drop them into this area. <br/>Then, link outputs with inputs to wire the resources.");
         this.emptyBox.appendChild(message);
         this.layout.getCenterContainer().wrapperElement.appendChild(this.emptyBox);
         this.emptyBox.classList.add('hidden');
-        //canvas for arrows
+
+        // canvas for arrows
         this.canvas = new Wirecloud.ui.WiringEditor.Canvas();
         this.canvasElement = this.canvas.getHTMLElement();
         this.layout.getCenterContainer().appendChild(this.canvasElement);
@@ -434,7 +437,7 @@ if (!Wirecloud.ui) {
             startAnchor = findAnchor.call(this, connection.source, workspace);
             endAnchor = findAnchor.call(this, connection.target, workspace);
 
-            if(startAnchor !== null && endAnchor !== null) {
+            if (startAnchor !== null && endAnchor !== null) {
                 arrow = this.canvas.drawArrow(startAnchor.getCoordinates(this.layout.getCenterContainer().wrapperElement),
                 endAnchor.getCoordinates(this.layout.getCenterContainer().wrapperElement));
                 arrow.startAnchor = startAnchor;
@@ -1402,7 +1405,11 @@ if (!Wirecloud.ui) {
      * getBreadcrum
      */
     WiringEditor.prototype.getBreadcrum = function getBreadcrum() {
-        var workspace_breadcrum = LayoutManagerFactory.getInstance().viewsByName.workspace.getBreadcrum().slice();
+        var i, workspace_breadcrum = LayoutManagerFactory.getInstance().viewsByName.workspace.getBreadcrum();
+
+        for (i = 0; i < workspace_breadcrum.length; i += 1) {
+            delete workspace_breadcrum[i].menu;
+        }
 
         workspace_breadcrum.push({
             'label': 'wiring'

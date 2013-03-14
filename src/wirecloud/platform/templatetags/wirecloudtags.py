@@ -43,7 +43,7 @@ register.inclusion_tag('css_includes.html', takes_context=True)(platform_css)
 
 def wirecloud_ajax_endpoints(context, view):
     endpoints = get_wirecloud_ajax_endpoints(view)
-    script = 'Wirecloud.URLs = {\n'
+    script = 'var Wirecloud = {\n  "ui": {}\n};\n\nWirecloud.URLs = {\n'
     for endpoint in endpoints:
         script += '    "' + endpoint['id'] + '": '
         if '#{' in endpoint['url']:

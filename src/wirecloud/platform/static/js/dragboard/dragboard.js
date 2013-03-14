@@ -255,7 +255,6 @@ function Dragboard(tab, workspace, dragboardElement) {
                                   height,
                                   curIWidget.fulldragboard,
                                   curIWidget.minimized,
-                                  curIWidget.transparency,
                                   curIWidget.refused_version,
                                   false,
                                   readOnly);
@@ -313,7 +312,7 @@ function Dragboard(tab, workspace, dragboardElement) {
         }
 
         // Create the instance
-        var iWidget = new IWidget(widget, null, options.iwidgetName, layout, null, null, null, width, height, false, minimized, false, null, freeLayoutAfterLoading, false);
+        var iWidget = new IWidget(widget, null, options.iwidgetName, layout, null, null, null, width, height, false, minimized, null, freeLayoutAfterLoading, false);
 
         iWidget.save(options);
     };
@@ -432,8 +431,6 @@ function Dragboard(tab, workspace, dragboardElement) {
             throw new Error();
         }
 
-        this.iWidgets.set(iWidget.id, iWidget);
-
         var oldHeight = iWidget.getHeight();
         var oldWidth = iWidget.getWidth();
 
@@ -441,6 +438,8 @@ function Dragboard(tab, workspace, dragboardElement) {
 
         // Notify resize event
         iWidget.layout._notifyResizeEvent(iWidget, oldWidth, oldHeight, iWidget.getWidth(), iWidget.getHeight(), false, true);
+
+        this.iWidgets.set(iWidget.id, iWidget);
     };
 
     Dragboard.prototype.fillFloatingWidgetsMenu = function (menu) {
@@ -1059,6 +1058,10 @@ function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, 
     // Add event listener
     Event.observe(handleElement, "mousedown", startresize);
 
+    this.setResizableElement = function (element) {
+        resizableElement = element;
+    };
+
     this.destroy = function () {
         Event.stopObserving(handleElement, "mousedown", startresize);
         startresize = null;
@@ -1076,77 +1079,4 @@ ResizeHandle._canBeResized = function () {
 
 ResizeHandle._cancel = function () {
     return false;
-};
-
-/////////////////////////////////////
-// IWidget resize support
-/////////////////////////////////////
-function IWidgetResizeHandle(handleElement, iWidget, resizeLeftSide) {
-    ResizeHandle.call(this, iWidget.element, handleElement,
-                            {iWidget: iWidget, resizeLeftSide: resizeLeftSide},
-                            IWidgetResizeHandle.prototype.startFunc,
-                            IWidgetResizeHandle.prototype.updateFunc,
-                            IWidgetResizeHandle.prototype.finishFunc,
-                            IWidgetResizeHandle.prototype.canBeResizedFunc);
-}
-
-IWidgetResizeHandle.prototype.canBeResizedFunc = function (resizableElement, data) {
-    return data.iWidget.isAllowed('resize');
-};
-
-IWidgetResizeHandle.prototype.startFunc = function (resizableElement, handleElement, data) {
-    handleElement.addClassName("inUse");
-    // TODO merge with iwidget minimum sizes
-    data.minWidth = Math.ceil(data.iWidget.layout.fromPixelsToHCells(80));
-    data.minHeight = Math.ceil(data.iWidget.layout.fromPixelsToVCells(50));
-    data.innitialWidth = data.iWidget.getWidth();
-    data.innitialHeight = data.iWidget.getHeight();
-    data.iWidget.iwidgetNameHTMLElement.blur();
-    data.oldZIndex = data.iWidget.getZPosition();
-    data.iWidget.setZPosition("999999");
-    data.dragboard = data.iWidget.layout.dragboard;
-};
-
-IWidgetResizeHandle.prototype.updateFunc = function (resizableElement, handleElement, data, x, y) {
-    var iWidget = data.iWidget;
-
-    // Skip if the mouse is outside the dragboard
-    if (iWidget.layout.isInside(x, y)) {
-        var position = iWidget.layout.getCellAt(x, y);
-        var currentPosition = iWidget.getPosition();
-        var width;
-
-        if (data.resizeLeftSide) {
-            width = currentPosition.x + iWidget.getWidth() - position.x;
-        } else {
-            width = position.x - currentPosition.x + 1;
-        }
-        var height = position.y - currentPosition.y + 1;
-
-        // Minimum width
-        if (width < data.minWidth) {
-            width = data.minWidth;
-        }
-
-        // Minimum height
-        if (height < data.minHeight) {
-            height = data.minHeight;
-        }
-
-        if (width !== iWidget.getWidth() || height !== iWidget.getHeight()) {
-            iWidget.setSize(width, height, data.resizeLeftSide, false);
-        }
-    }
-};
-
-IWidgetResizeHandle.prototype.finishFunc = function (resizableElement, handleElement, data) {
-    var iWidget = data.iWidget;
-    data.iWidget.setZPosition(data.oldZIndex);
-    if (data.innitialWidth !== data.iWidget.getWidth() || data.innitialHeight !== data.iWidget.getHeight()) {
-        iWidget.setSize(iWidget.getWidth(), iWidget.getHeight(), data.resizeLeftSide, true);
-    }
-    handleElement.removeClassName("inUse");
-
-    // This is needed to check if the scrollbar status has changed (visible/hidden)
-    data.dragboard._notifyWindowResizeEvent();
 };

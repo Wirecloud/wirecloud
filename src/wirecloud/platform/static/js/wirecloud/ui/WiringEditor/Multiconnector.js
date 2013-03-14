@@ -325,20 +325,20 @@
      */
     Multiconnector.prototype.stick = function stick() {
         return this.getCoordinates(null, true);
-    }
+    };
 
     /**
      * unstick arrow
      */
     Multiconnector.prototype.unstick = function unstick() {
-        if(this.sticky != null) {
+        if (this.sticky != null) {
             this.arrowPositions[this.sticky].free = true;
             this.sticky = null;
             this.resize(-15);
         } else {
             //changing endpoints positions or bug
         }
-    }
+    };
 
     /**
      * get the coordinates to put an arrow in the multiconnector
@@ -354,7 +354,7 @@
             }
             if (this.arrowPositions[i].free) {
                 this.arrowPositions[i].free = false;
-                if (sticky){
+                if (sticky) {
                     this.sticky = i;
                     return this.arrowPositions[i].coord;
                 }

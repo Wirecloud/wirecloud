@@ -4,11 +4,6 @@ div.dragboard {
   overflow-y: auto;
 }
 
-div.iwidget {
-  position: absolute;
-  border: 1px solid;
-}
-
 div.fulldragboard {
   position: fixed;
 }
@@ -21,11 +16,7 @@ div.widget_window_transparent {
 }
 
 div.widget_menu {
-  cursor: move;
-  overflow: hidden;
-  border: 0px;
   padding: 1px 3px 1px 7px;
-  height: 16px;
 }
 
 /*div.dragboard.fixed -> LOCK OR SHARED STATUS*/
@@ -131,92 +122,6 @@ div.fixed .widget_menu span {
   float:left;
   display:inline;
   border: 0px;
-}
-
-div.iwidget div.statusBar {
-  overflow: hidden;
-  border: 0px;
-  height: 16px;
-  padding: 0 32px;
-}
-
-div.iwidget div.statusBar .button {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-
-
-/*****
- * config_interface
- */
-
-div.iwidget div.config_interface,
-div.widget_window_locked div.config_interface {
-  display: none;
-  padding: 1px 1ex;
-  margin: 0px;
-  border-bottom: 1px solid;
-}
-
-div.config_interface div.buttons {
-  margin: 1ex 0px;
-  float: right;
-}
-
-div.config_interface table {
-  width: 100%;
-}
-
-div.config_interface label {
-  margin: 1ex;
-  display: block;
-}
-
-div.config_interface input, div.config_interface select {
-  margin: 0px 1ex;
-  border: 1px solid;
-}
-
-div.config_interface table input {
-  width: 90%;
-  max-width: 100ex;
-  padding: 0px 0.5ex;
-}
-
-div.config_interface table input[type="checkbox"] {
-  width: auto;
-}
-
-div.config_interface select {
-  padding: 0px;
-}
-
-div.config_interface h4{
-	margin: 10px 0;
-}
-
-div.shared_conf_area label {
-	display:inline;
-	margin:0 10px 0 0;
-	vertical-align:middle;
-}
-
-div.shared_conf_area input{
-	margin-right:2px;
-	vertical-align:middle;
-}
-
-div.shared_conf_area a{
-	cursor: pointer;
-}
-
-div.shared_conf_area a{
-	vertical-align:middle;
-}
-
-div.config_interface label.invalid input {
-	border: 1px solid;	
 }
 
 .widget_menu_locked .hide_on_lock, .widget_menu_fulldragboard .hide_on_fulldragboard, .widget_menu_minimized .hide_on_minimize {

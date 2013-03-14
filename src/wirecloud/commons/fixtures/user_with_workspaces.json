@@ -58,10 +58,9 @@
             "widget": 1,
             "layout": 0,
             "name": "Test 1",
-            "tab": 1,
+            "tab": 101,
             "refused_version": null,
             "readOnly": false,
-            "transparency": false,
             "position": 1,
             "icon_position": 2
         }
@@ -73,10 +72,9 @@
             "widget": 1,
             "layout": 0,
             "name": "Test 2",
-            "tab": 1,
+            "tab": 101,
             "refused_version": null,
             "readOnly": false,
-            "transparency": false,
             "position": 3,
             "icon_position": 4
         }
@@ -330,7 +328,7 @@
         }
     },
     {
-        "pk": 1,
+        "pk": 101,
         "model": "platform.tab",
         "fields": {
             "visible": true,

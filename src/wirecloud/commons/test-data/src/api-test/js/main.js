@@ -5,10 +5,21 @@
 
 var OK_HTML = '<b>Success!!</b>';
 
-MashupPlatform.http.makeRequest('http://localhost:8001/api-test/data/success.html', {
+MashupPlatform.http.makeRequest('data/success.html', {
     method: 'GET',
     onSuccess: function (transport) {
-        document.getElementById('makerequest_test').innerHTML = transport.responseText;
+        if (transport.responseText === 'local makerequest succeded') {
+            document.getElementById('makerequest_local_test').innerHTML = OK_HTML;
+        }
+    }
+});
+
+MashupPlatform.http.makeRequest('http://example.com/success.html', {
+    method: 'GET',
+    onSuccess: function (transport) {
+        if (transport.responseText === 'remote makerequest succeded') {
+            document.getElementById('makerequest_test').innerHTML = OK_HTML;
+        }
     }
 });
 

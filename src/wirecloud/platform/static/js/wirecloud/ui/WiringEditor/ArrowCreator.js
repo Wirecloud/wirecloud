@@ -20,7 +20,7 @@
  *
  */
 
-/*global Wirecloud */
+/*global Draggable, Wirecloud */
 
 (function () {
 
@@ -55,7 +55,7 @@
          */
         this.startdrag = function startdrag(e, initAnchor) {
             var tmpPos, xStart, yStart;
-            //(e.button == 0) is the mouse left button
+            // Only process left mouse button events
             if (e.button !== 0) {
                 return;
             }
@@ -136,7 +136,8 @@
          * enddrag, last step to draw a dragable arrow.
          */
         this.enddrag = function enddrag(e, fAnchor) {
-            //(e.button == 0) is the mouse left button
+
+            // Only process left mouse button events
             if (e.button !== 0) {
                 return;
             }

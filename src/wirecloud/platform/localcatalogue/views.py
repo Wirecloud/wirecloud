@@ -45,7 +45,7 @@ from wirecloud.platform.get_data import get_widget_data
 from wirecloud.platform.models import Widget, IWidget
 from wirecloud.platform.localcatalogue.semantics import add_widget_semantic_data
 from wirecloud.platform.localcatalogue.semantics import remove_widget_semantic_data
-from wirecloud.platform.localcatalogue.utils import get_or_add_resource_from_available_marketplaces
+from wirecloud.platform.localcatalogue.utils import install_resource_to_user, get_or_add_resource_from_available_marketplaces
 from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue, create_widget_from_template, create_widget_from_wgt
 
 
@@ -80,6 +80,8 @@ class ResourceCollection(Resource):
     def create(self, request):
 
         force_create = False
+        templateURL = None
+        file_contents = None
         content_type = get_content_type(request)[0]
         if content_type == 'multipart/form-data':
             packaged = True
@@ -88,14 +90,12 @@ class ResourceCollection(Resource):
                 return build_error_response(request, 400, _('Missing file to upload'))
 
             downloaded_file = request.FILES['file']
-            wgt_file = WgtFile(downloaded_file)
-            template_contents = wgt_file.get_template()
+            file_contents = WgtFile(downloaded_file)
 
         elif content_type == 'application/octet-stream':
             packaged = True
             downloaded_file = StringIO(request.raw_post_content)
-            wgt_file = WgtFile(downloaded_file)
-            template_contents = wgt_file.get_template()
+            file_contents = WgtFile(downloaded_file)
         else:
             if content_type == 'application/json':
                 try:
@@ -122,51 +122,27 @@ class ResourceCollection(Resource):
 
             if packaged:
                 downloaded_file = StringIO(downloaded_file)
-                wgt_file = WgtFile(downloaded_file)
-                template_contents = wgt_file.get_template()
+                file_contents = WgtFile(downloaded_file)
             else:
-                template_contents = downloaded_file
+                file_contents = downloaded_file
 
-        # Check if the resource already exist on the catalogue
         try:
-            template = TemplateParser(template_contents)
+            resource = install_resource_to_user(request.user, file_contents=file_contents, templateURL=templateURL, packaged=packaged, raise_conflicts=force_create)
 
         except TemplateParseException, e:
 
             return build_error_response(request, 400, unicode(e.msg))
 
-        resources = CatalogueResource.objects.filter(vendor=template.get_resource_vendor(), short_name=template.get_resource_name(), version=template.get_resource_version())[:1]
+        except IntegrityError:
 
-        # Create/recover catalogue resource
-        if len(resources) == 1:
-            resource = resources[0]
-        else:
-            if packaged:
-                resource = add_widget_from_wgt(downloaded_file, request.user, wgt_file=wgt_file)
-            else:
-                resource = add_resource_from_template(templateURL, template_contents, request.user)
-
-        resource.users.add(request.user)
+            return build_error_response(request, 409, _('Resource already exists'))
 
         if resource.resource_type() == 'widget':
-            query = Widget.objects.filter(resource=resource)
-            if not force_create and query.exists():
-                local_resource = query.get()
-            else:
-                try:
-                    if resource.fromWGT:
-                        base_dir = catalogue.wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
-                        wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
-                        local_resource = create_widget_from_wgt(wgt_file, request.user)
-                    else:
-                        local_resource = create_widget_from_template(resource.template_uri, request.user)
-                except IntegrityError:
-                    return build_error_response(request, 409, _('Resource already exists'))
 
             # add semantic relations
             add_widget_semantic_data(request.user, resource)
 
-            data = get_widget_data(local_resource, request)
+            data = get_widget_data(resource.widget, request)
             data['type'] = 'widget'
             return HttpResponse(simplejson.dumps((data,)), mimetype='application/json; charset=UTF-8')
 
