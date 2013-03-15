@@ -54,12 +54,11 @@ class IWidgetCollection(Resource):
 
         workspace = get_object_or_404(Workspace, id=workspace_id)
 
-        data_list = {}
         cache_manager = VariableValueCacheManager(workspace, request.user)
         iwidgets = IWidget.objects.filter(tab__workspace__users=request.user, tab__workspace__pk=workspace_id, tab__pk=tab_id)
-        data_list['iWidgets'] = [get_iwidget_data(iwidget, request.user, workspace, cache_manager) for iwidget in iwidgets]
+        data = [get_iwidget_data(iwidget, request.user, workspace, cache_manager) for iwidget in iwidgets]
 
-        return HttpResponse(simplejson.dumps(data_list), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(data), mimetype='application/json; charset=UTF-8')
 
     @authentication_required
     @supported_request_mime_types(('application/json',))
