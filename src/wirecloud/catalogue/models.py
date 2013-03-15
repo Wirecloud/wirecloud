@@ -78,7 +78,12 @@ class CatalogueResource(TransModel):
 
     @property
     def local_uri_part(self):
+
         return self.vendor + '/' + self.short_name + '/' + self.version
+
+    def is_available_for(self, user):
+
+        return self.public or self.users.filter(id=user.id).exists() or len(set(self.groups.all()) & set(user.groups.all())) > 0
 
     def delete(self, *args, **kwargs):
 
