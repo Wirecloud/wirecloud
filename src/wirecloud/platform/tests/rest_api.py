@@ -275,3 +275,99 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         # Tab should be removed
         self.assertFalse(Tab.objects.filter(name='ExistingTab').exists())
+
+    def test_iwidget_collection_post_requires_authentication(self):
+
+        url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 1})
+
+        # Make the request
+        data = {
+            'widget': 'Wirecloud/Test/1.0',
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+        # IWidget should be not created
+        # TODO
+
+    def test_iwidget_collection_post(self):
+
+        url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 1})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'widget': 'Wirecloud/Test/1.0',
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
+
+class ExtraApplicationMashupAPI(WirecloudTestCase):
+
+    fixtures = ('selenium_test_data', 'user_with_workspaces')
+    tags = ('extra_rest_api',)
+
+    @classmethod
+    def setUpClass(cls):
+        super(ExtraApplicationMashupAPI, cls).setUpClass()
+
+        cls.client = Client()
+        cls._original_download_function = staticmethod(downloader.download_http_content)
+        downloader.download_http_content = LocalDownloader({
+            'http': {
+                'localhost:8001': os.path.join(os.path.dirname(wirecloud.commons.test.__file__), 'test-data', 'src'),
+            },
+        })
+
+    @classmethod
+    def tearDownClass(cls):
+
+        downloader.download_http_content = cls._original_download_function
+
+        super(ExtraApplicationMashupAPI, cls).tearDownClass()
+
+    def test_iwidget_collection_read_requires_authentication(self):
+
+        url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 2, 'tab_id': 101})
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+    def test_iwidget_collection_read(self):
+
+        url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 2, 'tab_id': 101})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, list))
+
+    def test_iwidget_entry_read_requires_authentication(self):
+
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+    def test_iwidget_entry_read(self):
+
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
