@@ -30,10 +30,8 @@
 
 #
 
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.utils import simplejson
-from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.shortcuts import get_object_or_404
 
@@ -41,7 +39,7 @@ from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.transaction import commit_on_http_success
-from wirecloud.commons.utils.http import build_error_response, supported_request_mime_types
+from wirecloud.commons.utils.http import authentication_required, build_error_response, supported_request_mime_types
 from wirecloud.platform.get_data import VariableValueCacheManager, get_iwidget_data, get_variable_data
 from wirecloud.platform.iwidget.utils import SaveIWidget, UpdateIWidget, UpgradeIWidget, deleteIWidget
 from wirecloud.platform.models import Widget, IWidget, Tab, UserWorkspace, Variable, Workspace
@@ -50,7 +48,7 @@ from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue, ge
 
 class IWidgetCollection(Resource):
 
-    @method_decorator(login_required)
+    @authentication_required
     @no_cache
     def read(self, request, workspace_id, tab_id):
 
@@ -63,7 +61,7 @@ class IWidgetCollection(Resource):
 
         return HttpResponse(simplejson.dumps(data_list), mimetype='application/json; charset=UTF-8')
 
-    @method_decorator(login_required)
+    @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def create(self, request, workspace_id, tab_id):
@@ -89,7 +87,7 @@ class IWidgetCollection(Resource):
 
             return build_error_response(request, 400, msg)
 
-    @method_decorator(login_required)
+    @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id):
@@ -109,7 +107,7 @@ class IWidgetCollection(Resource):
 
 class IWidgetEntry(Resource):
 
-    @method_decorator(login_required)
+    @authentication_required
     @no_cache
     def read(self, request, workspace_id, tab_id, iwidget_id):
 
@@ -120,7 +118,7 @@ class IWidgetEntry(Resource):
 
         return HttpResponse(simplejson.dumps(iwidget_data), mimetype='application/json; charset=UTF-8')
 
-    @method_decorator(login_required)
+    @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id, iwidget_id):
@@ -136,7 +134,7 @@ class IWidgetEntry(Resource):
 
         return HttpResponse(status=204)
 
-    @method_decorator(login_required)
+    @authentication_required
     @commit_on_http_success
     def delete(self, request, workspace_id, tab_id, iwidget_id):
 
@@ -150,7 +148,7 @@ class IWidgetEntry(Resource):
 
 class IWidgetVersion(Resource):
 
-    @method_decorator(login_required)
+    @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id, iwidget_id):
@@ -188,7 +186,7 @@ class IWidgetVersion(Resource):
 
 class IWidgetVariableCollection(Resource):
 
-    @method_decorator(login_required)
+    @authentication_required
     @no_cache
     def read(self, request, workspace_id, tab_id, iwidget_id):
 
@@ -198,7 +196,7 @@ class IWidgetVariableCollection(Resource):
 
         return HttpResponse(simplejson.dumps(vars_data), mimetype='application/json; charset=UTF-8')
 
-    @method_decorator(login_required)
+    @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id, iwidget_id):
@@ -224,7 +222,7 @@ class IWidgetVariableCollection(Resource):
 
 class IWidgetVariable(Resource):
 
-    @method_decorator(login_required)
+    @authentication_required
     @no_cache
     def read(self, request, workspace_id, tab_id, iwidget_id, var_id):
 
@@ -237,7 +235,7 @@ class IWidgetVariable(Resource):
     def create(self, request, workspace_id, tab_id, iwidget_id, var_id):
         return self.update(request, workspace_id, tab_id, iwidget_id, var_id)
 
-    @method_decorator(login_required)
+    @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id, iwidget_id, var_id):
