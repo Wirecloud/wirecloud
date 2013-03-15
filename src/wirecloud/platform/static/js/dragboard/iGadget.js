@@ -1217,18 +1217,16 @@ IWidget.prototype.save = function (options) {
     });
 
     var data = Object.toJSON({
-        'iwidget': {
-            'widget': this.internal_iwidget.widget.getId(),
-            'left': this.position.x,
-            'top': this.position.y,
-            'icon_left': this.iconPosition.x,
-            'icon_top': this.iconPosition.y,
-            'zIndex': this.zPos,
-            'width': this.contentWidth,
-            'height': this.contentHeight,
-            'name': this.name,
-            'layout': this.onFreeLayout() ? 1 : 0
-        }
+        'widget': this.internal_iwidget.widget.getId(),
+        'left': this.position.x,
+        'top': this.position.y,
+        'icon_left': this.iconPosition.x,
+        'icon_top': this.iconPosition.y,
+        'zIndex': this.zPos,
+        'width': this.contentWidth,
+        'height': this.contentHeight,
+        'name': this.name,
+        'layout': this.onFreeLayout() ? 1 : 0
     });
     Wirecloud.io.makeRequest(url, {
         method: 'POST',

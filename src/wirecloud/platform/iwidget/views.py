@@ -66,13 +66,12 @@ class IWidgetCollection(Resource):
     def create(self, request, workspace_id, tab_id):
 
         try:
-            data = simplejson.loads(request.raw_post_data)
+            iwidget = simplejson.loads(request.raw_post_data)
         except simplejson.JSONDecodeError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
-        iwidget = data['iwidget']
-        initial_variable_values = data.get('variable_values', None)
+        initial_variable_values = iwidget.get('variable_values', None)
 
         # iWidget creation
         tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
