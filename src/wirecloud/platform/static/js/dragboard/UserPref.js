@@ -73,13 +73,3 @@ UserPref.prototype.getInterfaceDescription = function getInterfaceDescription (i
 
     return desc;
 };
-
-//////////////////////////////////////////////
-// PUBLIC CONSTANTS
-//////////////////////////////////////////////
-UserPref.prototype.TEXT    = "S"; // "S"tring
-UserPref.prototype.INTEGER = "N"; // "N"umber
-UserPref.prototype.DATE    = "D"; // "D"ate
-UserPref.prototype.LIST    = "L"; // "L"ist
-UserPref.prototype.BOOLEAN = "B"; // "B"oolean
-UserPref.prototype.PASSWORD = "P"; // "P"assword
