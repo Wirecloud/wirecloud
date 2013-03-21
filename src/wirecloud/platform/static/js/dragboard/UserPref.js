@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     (C) Copyright 2012-2013 Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,57 +19,67 @@
  *
  */
 
-/**
- * @author aarranz
- */
-function UserPref(varName, type, options) {
-    Object.defineProperty(this, 'varName', {value: varName});
-    Object.defineProperty(this, 'type', {value: type});
-    Object.defineProperty(this, 'label', {value: options.label});
-    Object.defineProperty(this, 'description', {value: options.description});
-    Object.defineProperty(this, 'options', {value: options});
+/*global EzWebExt*/
 
-    if (options.default_value == null) {
-        Object.defineProperty(this, 'defaultValue', {value: ''});
-    } else {
-        Object.defineProperty(this, 'defaultValue', {value: options.default_value});
-    }
-}
+(function () {
 
-/**
- * Checks whether this preference is hidden for the given iWidget
- *
- * @param {VariableManager} varManager
- * @param {Number} iWidgetId id of the iWidget to check
- */
-UserPref.prototype.isHidden = function (iWidget) {
-    var varManager, variable;
+    "use strict";
 
-    varManager = iWidget.layout.dragboard.workspace.varManager;
-    variable = varManager.getVariableByName(iWidget.getId(), this.varName);
+    /**
+     * @author aarranz
+     */
+    var UserPref = function UserPref(varName, type, options) {
+        Object.defineProperty(this, 'varName', {value: varName});
+        Object.defineProperty(this, 'type', {value: type});
+        Object.defineProperty(this, 'label', {value: options.label});
+        Object.defineProperty(this, 'description', {value: options.description});
+        Object.defineProperty(this, 'options', {value: options});
 
-    return variable.hidden;
-};
+        if (options.default_value == null) {
+            Object.defineProperty(this, 'defaultValue', {value: ''});
+        } else {
+            Object.defineProperty(this, 'defaultValue', {value: options.default_value});
+        }
+    };
 
-UserPref.prototype.getInterfaceDescription = function getInterfaceDescription (iWidget) {
-    // TODO
-    var varManager = iWidget.layout.dragboard.workspace.varManager;
+    /**
+     * Checks whether this preference is hidden for the given iWidget
+     *
+     * @param {VariableManager} varManager
+     * @param {Number} iWidgetId id of the iWidget to check
+     */
+    UserPref.prototype.isHidden = function isHidden(iWidget) {
+        var varManager, variable;
 
-    var variable, desc;
+        varManager = iWidget.layout.dragboard.workspace.varManager;
+        variable = varManager.getVariableByName(iWidget.getId(), this.varName);
 
-    variable = varManager.getVariableByName(iWidget.getId(), this.varName);
+        return variable.hidden;
+    };
 
-    desc = EzWebExt.merge(this.options, {
-        'type': this.type,
-        'disabled': variable.readOnly,
-        'initialValue': variable.get(),
-        'required': false
-    });
+    UserPref.prototype.getInterfaceDescription = function getInterfaceDescription(iWidget) {
+        // TODO
+        var varManager = iWidget.layout.dragboard.workspace.varManager;
 
-    if (this.type === 'select') {
-        desc.initialEntries = this.options.value_options;
-        desc.required = true;
-    }
+        var variable, desc;
 
-    return desc;
-};
+        variable = varManager.getVariableByName(iWidget.getId(), this.varName);
+
+        desc = EzWebExt.merge(this.options, {
+            'type': this.type,
+            'disabled': variable.readOnly,
+            'initialValue': variable.get(),
+            'required': false
+        });
+
+        if (this.type === 'select') {
+            desc.initialEntries = this.options.value_options;
+            desc.required = true;
+        }
+
+        return desc;
+    };
+
+    window.UserPref = UserPref;
+
+})();
