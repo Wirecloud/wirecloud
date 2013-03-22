@@ -287,6 +287,49 @@ def marketplace_loaded(driver):
     return False
 
 
+class IWidgetTester(object):
+
+    def __init__(self, testcase, iwidget_id, element):
+
+        self.testcase = testcase
+        self.id = iwidget_id
+        self.element = element
+
+    def __getitem__(self, key):
+
+        if key == 'id':
+            return self.id
+        elif key == 'element':
+            return self.element
+
+    @property
+    def name(self):
+        return self.element.find_element_by_css_selector('.widget_menu > span').text
+
+    def rename(self, new_name):
+
+        self.element.find_element_by_css_selector('.icon-cogs').click()
+        self.testcase.popup_menu_click('Rename')
+        name_input = self['element'].find_element_by_css_selector('.widget_menu > span')
+        # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
+        self.testcase.driver.execute_script('arguments[0].textContent = arguments[1]', name_input, new_name)
+        self.element.find_element_by_css_selector('.statusBar').click()
+
+    def remove(self, timeout=30):
+
+        old_iwidget_ids = self.testcase.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
+        old_iwidget_count = len(old_iwidget_ids)
+
+        self.element.find_element_by_css_selector('.icon-remove').click()
+
+        def iwidget_unloaded(driver):
+            iwidgets = self.testcase.get_current_iwidgets()
+            iwidget_count = len(iwidgets)
+            return iwidget_count == old_iwidget_count - 1
+
+        WebDriverWait(self.testcase.driver, timeout).until(iwidget_unloaded)
+
+
 class WirecloudRemoteTestCase(object):
 
     def fill_form_input(self, form_input, value):
@@ -489,7 +532,7 @@ class WirecloudRemoteTestCase(object):
         iwidget_ids = self.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
         iwidget_elements = self.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.element;});')
 
-        return [{'id': iwidget_ids[i], 'element': iwidget_elements[i]} for i in range(len(iwidget_ids))]
+        return [IWidgetTester(self, iwidget_ids[i], iwidget_elements[i]) for i in range(len(iwidget_ids))]
 
     def instantiate(self, resource, timeout=30):
 
@@ -532,12 +575,7 @@ class WirecloudRemoteTestCase(object):
         iwidget = self.instantiate(resource)
 
         if new_name is not None:
-            iwidget['element'].find_element_by_css_selector('.icon-cogs').click()
-            self.popup_menu_click('Rename')
-            name_input = iwidget['element'].find_element_by_css_selector('.widget_menu > span')
-            # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
-            self.driver.execute_script('arguments[0].textContent = arguments[1]', name_input, new_name)
-            iwidget['element'].find_element_by_css_selector('.statusBar').click()
+            iwidget.rename(new_name)
 
         return iwidget
 
