@@ -783,12 +783,12 @@ IWidget.prototype._notifyWindowResizeEvent = function () {
 IWidget.prototype._notifyLoaded = function () {
     var msg, unloadElement, errorCount;
 
-    msg = gettext('iWidget loaded');
-    this.log(msg, Constants.Logging.INFO_MSG);
-
-    if (this.loaded) {
+    if (this.loaded || !this.content.hasAttribute('src') ) {
         return;
     }
+
+    msg = gettext('iWidget loaded');
+    this.log(msg, Constants.Logging.INFO_MSG);
 
     this.loaded = true;
 
@@ -829,13 +829,14 @@ IWidget.prototype._notifyLoaded = function () {
  * @private
  */
 IWidget.prototype._notifyUnloaded = function () {
-    var msg = gettext('iWidget unloaded');
-    this.log(msg, Constants.Logging.INFO_MSG);
-    this.internal_iwidget.logManager.newCycle();
 
     if (!this.loaded) {
         return;
     }
+
+    var msg = gettext('iWidget unloaded');
+    this.log(msg, Constants.Logging.INFO_MSG);
+    this.internal_iwidget.logManager.newCycle();
 
     this.errorButton.addClassName("disabled");
     this.errorButton.setTitle('');

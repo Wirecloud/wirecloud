@@ -178,6 +178,7 @@ function VarManager (_workspace) {
             throw new Error();
         }
 
+        variable.annotate(value);
         variable.set(value, options);
     }
 
@@ -207,9 +208,6 @@ function VarManager (_workspace) {
 
     VarManager.prototype.addInstance = function addInstance(iWidget, iwidgetInfo, tab) {
         this.parseIWidgetVariables(iwidgetInfo, tab, iWidget);
-        iWidget.addEventListener('load', function (iWidget) {
-            this.dispatchPendingVariables(iWidget.id);
-        }.bind(this));
     };
 
     VarManager.prototype.removeInstance = function (iWidgetId) {
@@ -373,4 +371,10 @@ function VarManager (_workspace) {
 
     // Creation of ALL Wirecloud variables regarding one workspace
     this.parseVariables(this.workspace.workspaceGlobalInfo);
+
+    _workspace.addEventListener('iwidgetadded', function (workspace, iWidget) {
+        iWidget.addEventListener('load', function (iWidget) {
+            this.dispatchPendingVariables(iWidget.id);
+        }.bind(this));
+    }.bind(this));
 }
