@@ -69,7 +69,9 @@
             layoutManager.logSubTask(gettext('Removing affected iWidgets'));
             opManager = OpManagerFactory.getInstance();
             for (i = 0; i < result.removedIWidgets.length; i += 1) {
-                opManager.removeInstance(result.removedIWidgets[i], true);
+                if (opManager.activeWorkspace.getIWidget(result.removedIWidgets[i]) != null) {
+                    opManager.removeInstance(result.removedIWidgets[i], true);
+                }
             }
 
             layoutManager.logSubTask(gettext('Purging widget info'));
