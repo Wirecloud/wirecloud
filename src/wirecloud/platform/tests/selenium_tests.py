@@ -138,12 +138,16 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     def test_http_cache(self):
 
         self.login()
+
+        # Create a new workspace
         self.create_workspace('Test')
 
         self.driver.refresh()
         self.wait_wirecloud_ready()
 
         self.assertEqual(self.get_current_workspace_name(), 'Test')
+
+        # Add a new tab
         self.add_tab()
 
         self.driver.refresh()
@@ -153,6 +157,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(tabs, 2)
 
         tab = self.get_workspace_tab_by_name('Tab')
+
+        # Rename the created tab
         tab_menu_button = tab.find_element_by_css_selector('.icon-tab-menu')
         tab_menu_button.click()
         self.popup_menu_click('Rename')
@@ -170,12 +176,39 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         tab = self.get_workspace_tab_by_name('Tab')
         self.assertIsNone(tab)
 
+        # Add two widgets to the mashup
+        self.add_widget_to_mashup('Test')
         self.add_widget_to_mashup('Test')
 
         self.driver.refresh()
         self.wait_wirecloud_ready()
 
+        self.assertEqual(self.count_iwidgets(), 2)
+
+        # Rename a widget
+
+        iwidget = self.get_current_iwidgets()[1]
+        iwidget.rename('Other Test')
+
+        self.driver.refresh()
+        self.wait_wirecloud_ready()
+
+        iwidget = self.get_current_iwidgets()[0]
+        self.assertEqual(iwidget.name, 'Test')
+
+        iwidget = self.get_current_iwidgets()[1]
+        self.assertEqual(iwidget.name, 'Other Test')
+
+        # Remove a widget
+
+        iwidget.remove()
+
+        self.driver.refresh()
+        self.wait_wirecloud_ready()
+
         self.assertEqual(self.count_iwidgets(), 1)
+
+        # Rename the workspace
         self.rename_workspace('test2')
 
         self.driver.refresh()
@@ -183,6 +216,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.assertEqual(self.get_current_workspace_name(), 'test2')
 
+        # Remove the tab with widgets
         tab = self.get_workspace_tab_by_name('Other Name')
         tab_menu_button = tab.find_element_by_css_selector('.icon-tab-menu')
         tab_menu_button.click()
