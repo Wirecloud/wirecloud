@@ -40,9 +40,9 @@ from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.http import authentication_required, build_error_response, supported_request_mime_types
-from wirecloud.platform.get_data import VariableValueCacheManager, get_iwidget_data, get_variable_data
+from wirecloud.platform.get_data import VariableValueCacheManager, get_iwidget_data
 from wirecloud.platform.iwidget.utils import SaveIWidget, UpdateIWidget, UpgradeIWidget, deleteIWidget
-from wirecloud.platform.models import Widget, IWidget, Tab, UserWorkspace, Variable, Workspace
+from wirecloud.platform.models import Widget, IWidget, Tab, UserWorkspace, Workspace
 from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue, get_and_add_widget
 
 
@@ -178,75 +178,5 @@ class IWidgetVersion(Resource):
             widget = get_and_add_widget(iwidget.widget.vendor, iwidget.widget.name, new_version, users)
 
         UpgradeIWidget(iwidget, request.user, widget)
-
-        return HttpResponse(status=204)
-
-
-class IWidgetVariableCollection(Resource):
-
-    @authentication_required
-    @no_cache
-    def read(self, request, workspace_id, tab_id, iwidget_id):
-
-        tab = Tab.objects.get(workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
-        variables = Variable.objects.filter(iwidget__tab=tab, iwidget__id=iwidget_id)
-        vars_data = [get_variable_data(variable) for variable in variables]
-
-        return HttpResponse(simplejson.dumps(vars_data), mimetype='application/json; charset=UTF-8')
-
-    @authentication_required
-    @supported_request_mime_types(('application/json',))
-    @commit_on_http_success
-    def update(self, request, workspace_id, tab_id, iwidget_id):
-
-        try:
-            received_variables = simplejson.loads(request.raw_post_data)
-        except simplejson.JSONDecodeError, e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
-
-        tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
-        server_variables = Variable.objects.filter(iwidget__tab=tab)
-
-        # Widget variables collection update
-        for varServer in server_variables:
-            for varJSON in received_variables:
-                if (varServer.vardef.pk == varJSON['pk'] and varServer.iwidget.pk == varJSON['iWidget']):
-                    varServer.value = varJSON['value']
-                    varServer.save()
-
-        return HttpResponse(status=204)
-
-
-class IWidgetVariable(Resource):
-
-    @authentication_required
-    @no_cache
-    def read(self, request, workspace_id, tab_id, iwidget_id, var_id):
-
-        tab = Tab.objects.get(workspace__user=request.user, workspace__pk=workspace_id, pk=tab_id)
-        variable = get_object_or_404(Variable, iwidget__tab=tab, iwidget__pk=iwidget_id, vardef__pk=var_id)
-        var_data = get_variable_data(variable)
-
-        return HttpResponse(simplejson.dumps(var_data), mimetype='application/json; charset=UTF-8')
-
-    def create(self, request, workspace_id, tab_id, iwidget_id, var_id):
-        return self.update(request, workspace_id, tab_id, iwidget_id, var_id)
-
-    @authentication_required
-    @supported_request_mime_types(('application/json',))
-    @commit_on_http_success
-    def update(self, request, workspace_id, tab_id, iwidget_id, var_id):
-
-        try:
-            new_value = simplejson.loads(request.raw_post_data)
-        except simplejson.JSONDecodeError, e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
-
-        tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
-        variable = get_object_or_404(Variable, iwidget__tab=tab, iwidget__pk=iwidget_id, vardef__pk=var_id)
-        variable.value = new_value
-        variable.save()
 
         return HttpResponse(status=204)

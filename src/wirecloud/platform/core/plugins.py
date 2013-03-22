@@ -160,6 +160,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
         common = (
             'js/wirecloud/io.js',
             'js/wirecloud/ContextManager.js',
+            'js/wirecloud/UserPref.js',
             'js/wirecloud/IWidget.js',
             'js/wirecloud/PolicyManager.js',
             'js/wirecloud/Wiring.js',
