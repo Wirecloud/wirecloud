@@ -75,6 +75,13 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.check_popup_menu(('Rename', 'Settings', 'New workspace'), ('Remove',))
 
+    def test_remove_widget_from_workspace(self):
+
+        self.login(username='user_with_workspaces')
+
+        iwidget = self.get_current_iwidgets()[0]
+        iwidget.remove()
+
     def test_add_widget_from_catalogue(self):
 
         self.login()
