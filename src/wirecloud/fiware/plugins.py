@@ -200,9 +200,11 @@ class FiWarePlugin(WirecloudPlugin):
     def get_widget_api_extensions(self, view):
         return (
             'js/NGSI/NGSI.js',
+            'js/NGSI/eventsource.js',
         )
 
     def get_operator_api_extensions(self, view):
         return (
             'js/NGSI/NGSI.js',
+            'js/NGSI/eventsource.js',
         )
