@@ -47,6 +47,7 @@
 
         this.wrapperElement = document.createElement("div");
         this.wrapperElement.className = 'anchor';
+        this.menu = new StyledElements.PopupMenu({'position': ['bottom-left', 'top-left', 'bottom-right', 'top-right']});
 
         this._mousedown_callback = function _mousedown_callback(e) {
             var arrow, i, end, start;
@@ -122,9 +123,13 @@
                 // No selected arrows in this anchor
                 arrowCreator.startdrag(e, this);
                 this.events.startdrag.dispatch(this);
+            } else if (e.button == 2) {
+                e.preventDefault();
+                this.menu.show(this.wrapperElement.getBoundingClientRect());
             }
         }.bind(this);
         this.wrapperElement.addEventListener('mousedown', this._mousedown_callback, false);
+        this.wrapperElement.addEventListener('contextmenu', function (e) { e.preventDefault(); }, true);
 
         this._mouseup_callback = function _mouseup_callback(e) {
 

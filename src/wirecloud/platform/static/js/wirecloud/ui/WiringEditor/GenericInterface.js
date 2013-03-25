@@ -171,6 +171,23 @@
             }
         }
     };
+
+    var createMulticonnector = function createMulticonnector(name, anchor) {
+        var objectId, multiconnector;
+
+        if (this instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
+            objectId = (this.iwidget.getId());
+        } else {
+            objectId = (this.getId());
+        }
+        multiconnector = new Wirecloud.ui.WiringEditor.Multiconnector(this.wiringEditor.nextMulticonnectorId, objectId, name,
+                                    this.wiringEditor.layout.getCenterContainer().wrapperElement,
+                                    this.wiringEditor, anchor, null, null);
+        this.wiringEditor.nextMulticonnectorId = parseInt(this.wiringEditor.nextMulticonnectorId, 10) + 1;
+        this.wiringEditor.addMulticonnector(multiconnector);
+        multiconnector.addMainArrow();
+    };
+
     /*************************************************************************
      * Public methods
      *************************************************************************/
@@ -432,7 +449,7 @@
             'plain': true
         });
         close_button.insertInto(treeFrame);
-        close_button.addEventListener('click', closeHandler, false);
+        close_button.addEventListener('click', function () {closeHandler();}, false);
 
         subAnchors = anchor.subAnchors;
         subTreeFrame = null;
@@ -530,7 +547,7 @@
     /**
      *  handler for show/hide anchorTrees
      */
-    GenericInterface.prototype.subdataHandler = function subdataHandler(e, treeDiv) {
+    GenericInterface.prototype.subdataHandler = function subdataHandler(treeDiv) {
         var labelsAux, initialHeiht, initialWidth;
 
         if (treeDiv == null) {
@@ -555,8 +572,7 @@
      * add Source.
      */
     GenericInterface.prototype.addSource = function addSource(label, desc, name, anchorContext) {
-        var anchor, anchorDiv, labelDiv, anchorLabel, multiconnector, multiButton, id,
-            objectId, treeDiv, treeButton, buttonsDiv;
+        var anchor, anchorDiv, labelDiv, anchorLabel, treeDiv, buttonsDiv;
 
         // anchorDiv
         anchorDiv = document.createElement("div");
@@ -583,34 +599,7 @@
             anchor = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, this.arrowCreator);
             labelDiv.appendChild(anchor.wrapperElement);
 
-            // multiconnector button
-            multiButton = new StyledElements.StyledButton({
-                'title': gettext("highlight"),
-                'class': 'multiconnector_icon icon-plus',
-                'plain': true
-            });
-            multiButton.addEventListener('click', function (e) {
-                if (this instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
-                    objectId = (this.iwidget.getId());
-                } else {
-                    objectId = (this.getId());
-                }
-                multiconnector = new Wirecloud.ui.WiringEditor.Multiconnector(this.wiringEditor.nextMulticonnectorId, objectId, name,
-                                            this.wiringEditor.layout.getCenterContainer().wrapperElement,
-                                            this.wiringEditor, anchor, null, null);
-                this.wiringEditor.nextMulticonnectorId = parseInt(this.wiringEditor.nextMulticonnectorId, 10) + 1;
-                this.wiringEditor.addMulticonnector(multiconnector);
-                multiconnector.addMainArrow();
-            }.bind(this));
-
-            buttonsDiv.appendChild(multiButton.wrapperElement);
-
-            // tree button
-            treeButton = new StyledElements.StyledButton({
-                'title': gettext("Unpack data structure"),
-                'class': 'treeButton_icon icon-cog',
-                'plain': true
-            });
+            anchor.menu.append(new StyledElements.MenuItem(gettext('Add multiconnector'), createMulticonnector.bind(this, name, anchor)));
 
             // start tree test y me lo saco de la manga?
             var children = {label: 'asdfasdf',
@@ -648,16 +637,11 @@
             treeDiv.addEventListener('mousedown', function (e) {
                 e.stopPropagation();
             }.bind(this), false);
-            treeDiv.appendChild (generateTree(anchor, label, this.subdataHandler.bind(this)));
+            treeDiv.appendChild(generateTree(anchor, label, this.subdataHandler.bind(this)));
             this.wrapperElement.appendChild(treeDiv);
             this.trees.push(treeDiv);
-            treeButton.tree = treeDiv;
             // handler para activar/desactivar/cambiar de arbol
-            treeButton.addEventListener('click', function (e) {
-				this.subdataHandler(e, treeDiv);
-            }.bind(this));
-
-            buttonsDiv.appendChild(treeButton.wrapperElement);
+            anchor.menu.append(new StyledElements.MenuItem(gettext("Unpack data structure"), this.subdataHandler.bind(this, treeDiv)));
 
             labelDiv.addEventListener('mouseover', function (e) {
                 this.wiringEditor.emphasize(anchor);
@@ -695,7 +679,8 @@
      * add Target.
      */
     GenericInterface.prototype.addTarget = function addTarget(label, desc, name, anchorContext) {
-        var anchor, anchorDiv, labelDiv, anchorLabel, multiconnector, multiButton, id, objectId, buttonsDiv;
+        var anchor, anchorDiv, labelDiv, anchorLabel, multiconnector, buttonsDiv;
+
         //anchorDiv
         anchorDiv = document.createElement("div");
         //if the input have not description, take the label
@@ -721,27 +706,7 @@
             anchor = new Wirecloud.ui.WiringEditor.TargetAnchor(anchorContext, this.arrowCreator);
             labelDiv.appendChild(anchor.wrapperElement);
 
-            //multiconnector button
-            multiButton = new StyledElements.StyledButton({
-                'title': gettext("highlight"),
-                'class': 'multiconnector_icon icon-plus',
-                'plain': true
-            });
-            multiButton.addEventListener('click', function (e) {
-                if (this instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
-                    objectId = this.iwidget.getId();
-                } else {
-                    objectId = this.getId();
-                }
-                multiconnector = new Wirecloud.ui.WiringEditor.Multiconnector(this.wiringEditor.nextMulticonnectorId, objectId, name,
-                                            this.wiringEditor.layout.getCenterContainer().wrapperElement,
-                                            this.wiringEditor, anchor, null, null);
-                this.wiringEditor.nextMulticonnectorId = parseInt(this.wiringEditor.nextMulticonnectorId, 10) + 1;
-                this.wiringEditor.addMulticonnector(multiconnector);
-                multiconnector.addMainArrow();
-            }.bind(this));
-
-            buttonsDiv.appendChild(multiButton.wrapperElement);
+            anchor.menu.append(new StyledElements.MenuItem(gettext('Add multiconnector'), createMulticonnector.bind(this, name, anchor)));
 
             labelDiv.addEventListener('mouseover', function (e) {
                 this.wiringEditor.emphasize(anchor);
