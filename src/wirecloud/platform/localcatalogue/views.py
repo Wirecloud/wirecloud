@@ -140,7 +140,11 @@ class ResourceCollection(Resource):
         if resource.resource_type() == 'widget':
 
             # add semantic relations
-            add_widget_semantic_data(request.user, resource)
+            try:
+				add_widget_semantic_data(request.user, resource)
+            except Exception, e:
+                #return build_error_response(request, 502, _('Error connecting with the semantic server: %s') + str(e))
+                pass
 
             data = get_widget_data(resource.widget, request)
             data['type'] = 'widget'
