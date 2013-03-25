@@ -1,20 +1,16 @@
 /* generic entities --> widgets and operators */
 .wiring_editor .ioperator {
-    -webkit-transition: background 500ms ease-in 250ms;
-    -moz-transition: background 500ms ease-in 250ms;
-    -o-transition: background 500ms ease-in 250ms;
     background: rgba(220, 240, 220, 0.8);
 }
 
 .wiring_editor .iwidget {
-    -webkit-transition: background 500ms ease-in 250ms;
-    -moz-transition: background 500ms ease-in 250ms;
-    -o-transition: background 500ms ease-in 250ms;
     background: rgba(230, 228, 231, 0.8);
 }
 
 .wiring_editor .ioperator, .wiring_editor .iwidget {
-    line-height: 2.2em;
+    -webkit-transition: background 500ms ease-in 250ms;
+    -moz-transition: background 500ms ease-in 250ms;
+    -o-transition: background 500ms ease-in 250ms;
     padding-bottom: 2px;
     border: 1px solid #B4B4B4;
     padding-bottom: 8px;
