@@ -20,9 +20,238 @@
     padding-bottom: 8px;
     border-radius: 1.25ex 1.25ex 1.25ex 1.25ex;
     pointer-events: auto;
+    position: absolute;
+}
+ /* subdataMode */
+.wiring_editor .ioperator.subdataMode {
+    pointer-events: none;
+    background: rgba(220, 240, 220, 0.3);
 }
 
-.wiring_editor .ioperator .header, .wiring_editor .iwidget .header {
+.wiring_editor .iwidget.subdataMode {
+    pointer-events: none;
+    background: rgba(230, 228, 231, 0.3);
+}
+
+.wiring_editor .grid .subdataMode .geContainer {
+    -webkit-transition: opacity 500ms ease-in 250ms;
+    -moz-transition: opacity 500ms ease-in 250ms;
+    -o-transition: opacity 500ms ease-in 250ms;
+    opacity: 0.3;
+}
+
+.wiring_editor .grid .subdataMode .header {
+    -webkit-transition: opacity 500ms ease-in 250ms;
+    -moz-transition: opacity 500ms ease-in 250ms;
+    -o-transition: opacity 500ms ease-in 250ms;
+    opacity: 0.3;
+}
+
+.wiring_editor .grid .geContainer {
+    position: relative;
+    display: inline;
+}
+
+.wiring_editor .grid .geContainer .header {
+    position: relative;
+    display: block;
+    text-align: center;
+    font-size: 1.3em;
+    font-weight: bold;
+    overflow: hidden;
+    border-radius: 15px;
+    padding: 8px;
+    color: #1D1D2F;
+    cursor: move;
+    text-overflow: ellipsis;
+}
+
+.wiring_editor .grid .geContainer .sources {
+    position: relative;
+    display: inline-block;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    vertical-align: top;
+    float: right;
+    padding-left: 1em;
+    padding-right: 1em;
+    text-align: right;
+}
+
+.wiring_editor .grid .geContainer .targets {
+    position: relative;
+    display: inline-block;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    vertical-align: top;
+    float: left;
+    padding-left: 1em;
+    padding-right: 1em;
+    text-align: left;
+}
+
+.wiring_editor .grid .header .closebutton {
+    font-family: FontAwesome;
+    background: transparent;
+    top: -7px;
+    float: right;
+    margin-right: 0px;
+    font-size: 15px;
+    color: rgb(83, 83, 134);
+}
+
+/* edit Button */
+.wiring_editor .grid .header .editPos_button {
+    float: left;
+    font-family: FontAwesome;
+    top: -7px;
+    font-size: 15px;
+    color: rgb(83, 83, 134);
+}
+
+/* anchorDivs */
+.wiring_editor .grid .geContainer .anchorDiv {
+    white-space: nowrap;
+}
+
+/* buttonsDiv */
+.wiring_editor .grid .buttonsDiv {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 0.8em;
+}
+
+.wiring_editor .grid .sources .buttonsDiv {
+    width: 0px;
+    right: 2px;
+}
+
+.wiring_editor .grid .targets .buttonsDiv {
+    width: 0px;
+    left: -7px;
+}
+
+/* multiconnector button */
+.wiring_editor .grid .multiconnector_icon {
+    display: block;
+    cursor: pointer;
+    margin: 0;
+    color: rgb(83, 83, 134);
+}
+
+.wiring_editor .grid .sources .multiconnector_icon {
+	font-family: fontAwesome;
+}
+
+.wiring_editor .grid .targets .multiconnector_icon {
+    font-family: fontAwesome;
+}
+
+/* Tree button */
+.wiring_editor .grid .sources .treeButton_icon {
+	font-family: fontAwesome;
+	margin: 0;
+	color: rgb(83, 83, 134);
+}
+
+.wiring_editor .grid .sources .treeButton_icon {
+	font-family: fontAwesome;
+}
+
+.wiring_editor .grid .sources .treeButton_icon.activated {
+	font-family: fontAwesome;
+}
+
+.wiring_editor .sources .labelDiv, .wiring_editor .targets .labelDiv {
+    border-radius: 15px;
+    -webkit-transition: background-color 500ms ease-in 250ms, color 750ms ease-out, box-shadow 500ms ease-in 250ms;
+    -moz-transition: background-color 500ms ease-in 250ms, color 750ms ease-out, box-shadow 500ms ease-in 250ms;
+    -o-transition: background-color 500ms ease-in 250ms, color 750ms ease-out, box-shadow 500ms ease-in 250ms;
+}
+.wiring_editor .labelDiv {
+    padding: 4px 6px;
+    display: inline-block;
+}
+
+.wiring_editor .sources .labelDiv {
+    margin-right: 3px;
+}
+
+.wiring_editor .targets .labelDiv {
+    margin-left: 3px;
+}
+
+/* anchorTree */
+.wiring_editor .grid .anchorTree {
+	/*margin: auto;*/
+	background: rgb(197, 197, 197);
+    display: none;
+    opacity: 0.9;
+    border-radius: 25px 4px 25px 25px;
+    box-shadow: 0px 0px 50px 5px black;
+}
+
+.wiring_editor .grid .tree {
+	position: relative;
+}
+
+.wiring_editor .grid .anchorTree.activated {
+	display: block;
+    position: relative;
+    pointer-events: auto;
+    opacity: 1;
+}
+
+.wiring_editor .grid .anchorTree .subTree {
+    display: inline-block;
+    border-right: 2px solid black;
+    border-radius: 12px;
+}
+
+.wiring_editor .grid .anchorTree .labelsFrame {
+    display: inline-block;
+    text-align: right;
+    position: relative;
+}
+
+.wiring_editor .grid .anchorTree .dataTree {
+    padding: 2px;
+    position: relative;
+}
+
+.wiring_editor .grid .anchorTree .dataTree .labelTree {
+    display: inline-block;
+    margin-left: 5px;
+    position: relative;
+}
+
+.wiring_editor .grid .anchorTree .dataTree .subAnchor {
+    display: inline-block;
+    margin: 2px;
+    position: relative;
+    width: 12px;
+    height: 12px;
+    font-size: 1.4em;
+    background: transparent;
+    color: rgb(22, 85, 248);
+}
+
+.wiring_editor .grid .anchorTree .dataTree.leaf {
+    display: block;
+}
+
+.wiring_editor .grid .anchorTree .hideTreeButton {
+    color: rgb(22, 85, 248);
+    position: absolute;
+    right: -2px;
+    top: -1px;
+    font-size: 1.3em;
+    z-index: 1;
+}
+
+/* menubar entities */
+.wiring_editor .menubar .ioperator .header, .wiring_editor .menubar .iwidget .header {
     text-align: center;
     font-size: 1.3em;
     font-weight: bold;
@@ -34,51 +263,6 @@
     text-overflow: ellipsis;
 }
 
-.wiring_editor .grid .header .closebutton {
-    font-family: FontAwesome;
-    background: transparent;
-    top: -12px;
-    float: right;
-    margin-right: 0px;
-    font-size: 15px;
-    color: rgb(83, 83, 134);
-}
-
-
-.wiring_editor .grid .ioperator, .wiring_editor .grid .iwidget {
-    position: absolute;
-}
-
-.wiring_editor .targets {
-    float: left;
-    text-align: left;
-    padding-left: 1em;
-    padding-right: 1em;
-}
-
-.wiring_editor .sources {
-    float: right;
-    text-align: right;
-    padding-left: 1em;
-    padding-right: 1em;
-}
-
-.wiring_editor .sources > div, .wiring_editor .targets > div {
-    border-radius: 15px;
-    -webkit-transition: background-color 500ms ease-in 250ms, color 750ms ease-out, box-shadow 500ms ease-in 250ms;
-    -moz-transition: background-color 500ms ease-in 250ms, color 750ms ease-out, box-shadow 500ms ease-in 250ms;
-    -o-transition: background-color 500ms ease-in 250ms, color 750ms ease-out, box-shadow 500ms ease-in 250ms;
-}
-
-.wiring_editor .sources  div div {
-    display: inline-block;
-}
-
-.wiring_editor .targets > div div {
-    display: inline-block;
-}
-
-/* menubar entities */
 .wiring_editor .menubar .ioperator, .wiring_editor .menubar .iwidget {
     position: relative;
     padding-bottom: 0em;
@@ -86,12 +270,22 @@
     vertical-align: middle;
     line-height: 1em;
     z-index: 10;
+    border: 1px solid #B4B4B4;
     border-radius: 0.25ex 4.7ex 0.25ex 0.25ex;
+    pointer-events: auto;
 }
 
 /* edit mode */
 .wiring_editor .ioperator.editing .header, .wiring_editor .iwidget.editing .header {
     cursor: default;
+    text-align: center;
+    font-size: 1.3em;
+    font-weight: bold;
+    overflow: hidden;
+    border-radius: 5px;
+    padding: 8px;
+    color: #1D1D2F;
+    text-overflow: ellipsis;
 }
 
 .wiring_editor .ioperator.editing {
@@ -102,56 +296,67 @@
     background: rgba(206,220,231,0.8);
 }
 
-.wiring_editor .sources.editing > div {
+.wiring_editor .sources.editing .labelDiv {
     color: black;
     cursor: move;
     box-shadow: inset 0 0 6px #000000;
 }
 
-.wiring_editor .targets.editing > div.highlight_main {
-    box-shadow: inset 0 0 6px #000000;
-    color: #FF5500;
-}
-
-.wiring_editor .sources.editing > div.highlight_main {
-    box-shadow: inset 0 0 6px #000000;
-    color: blue;
-}
-
-.wiring_editor .targets.editing > div {
+.wiring_editor .targets.editing .labelDiv {
     color: black;
     cursor: move;
     box-shadow: inset 0 0 6px #000000;
 }
 
-.wiring_editor .sources > div {
-    padding-left: 10px;
-    margin-top: 2px;
-    margin-bottom: 2px;
-}
-
-.wiring_editor .targets > div {
-    padding-right: 10px;
-    margin-top: 2px;
-    margin-bottom: 2px;
-}
-
-.wiring_editor .sources > div.moving {
+.wiring_editor .sources .moving .labelDiv {
     box-shadow: inset 0 0 10px hsla(240, 94%, 50%, 0.5);
     color: blue;
 }
 
-.wiring_editor .targets > div.moving {
+.wiring_editor .targets .moving .labelDiv {
     box-shadow: inset 0 0 10px hsla(20, 100%, 50%, 0.5);
     color: #FF5500;;
 }
 
-.wiring_editor .sources > div.moving.highlight_main{
-    color: blue;
+/* clone slots and events during editing Drag&Drop */
+.wiring_editor .border_layout .source_clon {
+    position: absolute;
+    margin-top: 2px;
 }
 
-.wiring_editor .targets > div.moving.highlight_main{
-    color: #FF5500;;
+.wiring_editor .border_layout .target_clon {
+    position: absolute;
+    margin-top: 2px;
+}
+
+.wiring_editor .border_layout .source_clon .labelDiv{
+    display: inline-block;
+    float: right;
+    margin-right: 14px;
+    margin-top: 6px;
+    background: rgba(0, 168, 151, 0.6);
+    color: blue;
+    border-radius: 15px;
+    opacity: 0.5;
+    cursor: move;
+    white-space: nowrap;
+}
+
+.wiring_editor .border_layout .target_clon .labelDiv{
+    display: inline-block;
+    float: left;
+    margin-left: 14px;
+    margin-top: 6px;
+    background: rgba(255, 151, 82, 0.6);
+    color: #FF5500;
+    border-radius: 15px;
+    opacity: 0.5;
+    cursor: move;
+    white-space: nowrap;
+}
+
+.wiring_editor .border_layout .target_clon .buttonsDiv, .wiring_editor .border_layout .source_clon .buttonsDiv, .wiring_editor .border_layout .target_clon .anchor, .wiring_editor .border_layout .source_clon .anchor {
+    display: none;
 }
 
 /* clone mini widget for Drag&Drop from menubar to grid */
@@ -171,45 +376,6 @@
 
 .wiring_editor .border_layout .ioperator.clon .header, .wiring_editor .border_layout .iwidget.clon .header {
     padding-top: 4px;
-}
-
-/* clone slots and events during editing Drag&Drop */
-.wiring_editor .border_layout .source_clon {
-    position: absolute;
-    margin-top: 2px;
-    background: rgba(0, 168, 151, 0.6);
-    color: blue;
-    border-radius: 15px;
-    opacity: 0.5;
-    cursor: move;
-}
-
-.wiring_editor .border_layout .target_clon {
-    position: absolute;
-    margin-top: 2px;
-    background: rgba(255, 151, 82, 0.6);
-    color: #FF5500;
-    border-radius: 15px;
-    opacity: 0.5;
-    cursor: move;
-}
-
-.wiring_editor .border_layout .source_clon .labelDiv{
-    display: inline-block;
-    float: right;
-    margin-right: 14px;
-    margin-top: 6px;
-}
-
-.wiring_editor .border_layout .target_clon .labelDiv{
-    display: inline-block;
-    float: left;
-    margin-left: 14px;
-    margin-top: 6px;
-}
-
-.wiring_editor .border_layout .target_clon .anchor, .wiring_editor .border_layout .source_clon .anchor, .wiring_editor .border_layout .target_clon .multiconnector_icon, .wiring_editor .border_layout .source_clon .multiconnector_icon {
-    display: none;
 }
 
 /* SELECTED OBJECTS */
@@ -271,42 +437,4 @@
 .wiring_editor .highlight.none {
     background: grey;
     color: white;
-}
-
-/* multiconnector button */
-.wiring_editor .grid .multiconnector_icon {
-    background: rgb(122, 152, 192);
-    position: absolute;
-    display: inline;
-    width: 9px;
-    height: 9px;
-    margin: 2px;
-}
-
-.wiring_editor .grid .multiconnector_icon{
-    cursor: pointer;
-}
-.wiring_editor .grid .sources .multiconnector_icon {
-    background: url('../../images/wiring/multiconnector_button.png');
-    float: right;
-    right: -6px;
-    top: 5px;
-    position: relative;
-}
-
-.wiring_editor .grid .targets .multiconnector_icon {
-    background: url('../../images/wiring/multiconnector_button.png');
-    float: left;
-    left: -7px;
-    top: 5px;
-    position: relative;
-}
-
-/* edit Button */
-.wiring_editor .grid .header .editPos_button {
-    float: left;
-    font-family: FontAwesome;
-    top: -10px;
-    font-size: 15px;
-    color: rgb(83, 83, 134);
 }

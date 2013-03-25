@@ -205,6 +205,10 @@
                 coordinates.posY += parentNode.offsetTop + cssStyle.getPropertyCSSValue('border-top-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
                 coordinates.posX += parentNode.offsetLeft + cssStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
             }
+            // add the height of the widget/operator header
+            if (parentNode.classList.contains("geContainer")) {
+                coordinates.posY += parentNode.getElementsByClassName("container north_container header")[0].getHeight();
+            }
             parentNode = parentNode.parentNode;
         }
         return {
