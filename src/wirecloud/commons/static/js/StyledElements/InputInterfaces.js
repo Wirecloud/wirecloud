@@ -609,7 +609,7 @@ FileInputInterface.prototype.insertInto = function insertInto(element) {
 };
 
 FileInputInterface.prototype.getValue = function getValue() {
-    return this.inputElement.value;
+    return this.inputElement.files[0];
 };
 
 FileInputInterface.prototype._setValue = function _setValue(newValue) {
