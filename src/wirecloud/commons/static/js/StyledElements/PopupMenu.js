@@ -22,7 +22,6 @@
 
     PopupMenu.prototype.show = function show(refPosition) {
         EzWebExt.addEventListener(document, "click", this._disableCallback, true);
-        EzWebExt.addEventListener(document, "contextmenu", this._disableCallback, true);
 
         StyledElements.PopupMenuBase.prototype.show.call(this, refPosition);
     };
@@ -31,7 +30,6 @@
         StyledElements.PopupMenuBase.prototype.hide.call(this);
 
         EzWebExt.removeEventListener(document, "click", this._disableCallback, true);
-        EzWebExt.removeEventListener(document, "contextmenu", this._disableCallback, true);
     };
 
     PopupMenu.prototype.destroy = function destroy() {
