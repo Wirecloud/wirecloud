@@ -21,7 +21,7 @@
 from django.utils.importlib import import_module
 from django.conf.urls.defaults import patterns
 from django.core.exceptions import ImproperlyConfigured
-from django.core.urlresolvers import get_callable, get_script_prefix, get_resolver, NoReverseMatch
+from django.core.urlresolvers import get_ns_resolver, get_resolver, get_script_prefix, NoReverseMatch
 from django.utils.encoding import force_unicode
 from django.utils.regex_helper import normalize
 
@@ -170,7 +170,7 @@ def get_platform_css(view):
     return files
 
 
-def build_url_template(viewname, kwargs=[], urlconf=None, prefix=None):
+def build_url_template(viewname, kwargs=[], urlconf=None, prefix=None, current_app=None):
     resolver = get_resolver(urlconf)
 
     if prefix is None:
@@ -178,7 +178,48 @@ def build_url_template(viewname, kwargs=[], urlconf=None, prefix=None):
 
     kwargs = list(kwargs)
 
-    possibilities = resolver.reverse_dict.getlist(viewname)
+    parts = viewname.split(':')
+    parts.reverse()
+    view = parts[0]
+    path = parts[1:]
+
+    resolved_path = []
+    ns_pattern = ''
+    while path:
+        ns = path.pop()
+
+        # Lookup the name to see if it could be an app identifier
+        try:
+            app_list = resolver.app_dict[ns]
+            # Yes! Path part matches an app in the current Resolver
+            if current_app and current_app in app_list:
+                # If we are reversing for a particular app,
+                # use that namespace
+                ns = current_app
+            elif ns not in app_list:
+                # The name isn't shared by one of the instances
+                # (i.e., the default) so just pick the first instance
+                # as the default.
+                ns = app_list[0]
+        except KeyError:
+            pass
+
+        try:
+            extra, resolver = resolver.namespace_dict[ns]
+            resolved_path.append(ns)
+            ns_pattern = ns_pattern + extra
+        except KeyError, key:
+            if resolved_path:
+                raise NoReverseMatch(
+                    "%s is not a registered namespace inside '%s'" %
+                    (key, ':'.join(resolved_path)))
+            else:
+                raise NoReverseMatch("%s is not a registered namespace" %
+                                     key)
+    if ns_pattern:
+        resolver = get_ns_resolver(ns_pattern, resolver)
+
+    possibilities = resolver.reverse_dict.getlist(view)
     prefix_norm, prefix_args = normalize(prefix)[0]
     for entry in possibilities:
         if len(entry) == 3:
