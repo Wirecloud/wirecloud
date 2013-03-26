@@ -111,7 +111,7 @@ class CatalogueResource(TransModel):
         unique_together = ("short_name", "vendor", "version")
 
     def __unicode__(self):
-        return unicode(self.short_name)
+        return unicode(self.local_uri_part)
 
 
 class WidgetWiring(models.Model):
