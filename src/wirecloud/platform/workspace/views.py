@@ -220,7 +220,7 @@ class WorkspaceEntry(Resource):
         if workspaces.count() == 0:
             msg = _("workspace cannot be deleted")
 
-            raise build_error_response(request, 409, msg)
+            return build_error_response(request, 403, msg)
 
         # Remove the workspace
         PublishedWorkspace.objects.filter(workspace=workspace).update(workspace=None)
