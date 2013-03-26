@@ -59,13 +59,6 @@
     margin: 2ex;
 }
 
-.catalogue.fiware .resource_list > .resource .resource_name {
-    padding-bottom: 8px;
-    max-width: 350px;
-    font-size: 20px;
-    cursor: pointer;
-}
-
 .catalogue.fiware div.second_level {
     padding-left: 25px;
 }
@@ -94,11 +87,9 @@
 
 .rating {
     display: inline-block;
-    margin-top: 22px;
-    margin-left: 15px;
     font-size: 14pt;
     font-family: FontAwesome;
-    font-weight: bold;
+    font-weight: normal;
     font-style: normal;
 }
 
