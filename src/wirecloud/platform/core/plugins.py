@@ -229,7 +229,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             return {}
 
     def get_ajax_endpoints(self, view):
-        return (
+        endpoints = (
             {'id': 'LOCAL_REPOSITORY', 'url': build_url_template('wirecloud.root')},
             {'id': 'LOCAL_RESOURCE_COLLECTION', 'url': build_url_template('wirecloud_showcase.resource_collection')},
             {'id': 'LOCAL_RESOURCE_ENTRY', 'url': build_url_template('wirecloud_showcase.resource_entry', ['vendor', 'name', 'version'])},
@@ -260,6 +260,12 @@ class WirecloudCorePlugin(WirecloudPlugin):
             {'id': 'WORKSPACE_MERGE_LOCAL', 'url': build_url_template('wirecloud.workspace_merge_local', ['from_ws_id', 'to_ws_id'])},
             {'id': 'WORKSPACE_SHARE', 'url': build_url_template('wirecloud.workspace_share', ['workspace_id', 'share_boolean'])},
         )
+
+        from django.conf import settings
+        if 'django.contrib.admin' in settings.INSTALLED_APPS:
+            endpoints += ({'id': 'DJANGO_ADMIN', 'url': build_url_template('admin:index')},)
+
+        return endpoints
 
     def get_platform_css(self, view):
         common = BASE_CSS + STYLED_ELEMENTS_CSS
