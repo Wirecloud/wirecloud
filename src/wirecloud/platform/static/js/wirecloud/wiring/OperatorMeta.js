@@ -27,7 +27,7 @@
 
     var OperatorMeta = function OperatorMeta(desc) {
         var vendor, name, version, uri, display_name, description, inputs,
-            outputs;
+            outputs, prefList, prefs, pref;
 
         // Vendor
         if (!('vendor' in desc) || desc.vendor.trim() === '') {
@@ -67,6 +67,18 @@
         }
         Object.defineProperty(this, 'description', {value: description});
 
+        prefList = desc.preferences;
+        if (!Array.isArray(prefList)) {
+            prefList = [];
+        }
+        prefs = {};
+        for (i = 0; i < prefList.length; i += 1) {
+            pref = prefList[i] = new Wirecloud.wiring.OperatorUserPref(prefList[i]);
+            prefs[pref.name] = pref;
+        }
+        Object.defineProperty(this, 'preferences', {value: prefs});
+        Object.defineProperty(this, 'preferenceList', {value: prefList});
+
         inputs = desc.wiring.inputs;
         if (inputs == null) {
             inputs = {};
@@ -84,8 +96,8 @@
         }
     };
 
-    OperatorMeta.prototype.instantiate = function instantiate(id/*TODO*/, wiringEditor) {
-        return new Wirecloud.Operator(this, id /* TODO */, wiringEditor);
+    OperatorMeta.prototype.instantiate = function instantiate(id, operator_status /*TODO*/, wiringEditor) {
+        return new Wirecloud.Operator(this, id, operator_status /* TODO */, wiringEditor);
     };
 
     Wirecloud.wiring.OperatorMeta = OperatorMeta;

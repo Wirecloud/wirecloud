@@ -36,7 +36,8 @@
         if (extending === true) {
             return;
         }
-        var i, name, variables, variable, anchor, anchorDiv, anchorLabel, desc, nameDiv, nameElement, del_button, copy;
+        var i, name, variables, variable, anchor, anchorDiv, anchorLabel, desc,
+            nameDiv, nameElement, del_button, item, copy;
 
         StyledElements.Container.call(this, {'class': className}, []);
 
@@ -84,17 +85,25 @@
                 }
             }.bind(this));
 
-            // edit_position button, not for miniInterface
-            this.editPos_button = new StyledElements.StyledButton({
-                'title': gettext("edit_Pos"),
+            // add a menu button except on mini interfaces
+            this.menu_button = new StyledElements.PopupButton({
+                'title': gettext("Menu"),
                 'class': 'editPos_button',
                 'plain': true
             });
-            this.editPos_button.insertInto(this.header);
-            this.editPos_button.addEventListener('click', function () {
-                this.wiringEditor.ChangeObjectEditing(this);
+            this.menu_button.insertInto(this.header);
+            item = new StyledElements.MenuItem(gettext('Reorder endpoints'), function () {
+                    this.wiringEditor.ChangeObjectEditing(this);
+                }.bind(this));
+            this.menu_button.popup_menu.append(item);
+            item = new  StyledElements.MenuItem(gettext('Settings'), function () {
+                var window_menu;
+                if (this.ioperator) {
+                    window_menu = new Wirecloud.ui.OperatorPreferencesWindowMenu();
+                    window_menu.show(this.ioperator);
+                }
             }.bind(this));
-
+            this.menu_button.popup_menu.append(item);
         }
 
         //sources and targets for the widget

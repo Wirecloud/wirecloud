@@ -508,7 +508,7 @@ if (!Wirecloud.ui) {
      * Saves the wiring state.
      */
     WiringEditor.prototype.serialize = function serialize() {
-        var pos, i, key, widget, arrow, operator_interface, WiringStatus, multiconnector, height, inOutPos, positions;
+        var pos, i, key, widget, arrow, operator_interface, ioperator, WiringStatus, multiconnector, height, inOutPos, positions;
 
         // positions
         WiringStatus = {
@@ -544,7 +544,8 @@ if (!Wirecloud.ui) {
             pos = operator_interface.getStylePosition();
             inOutPos = operator_interface.getInOutPositions();
             positions = {'widget' : pos, 'endPointsInOuts' : inOutPos};
-            WiringStatus.operators[key] = {"name" : operator_interface.getIOperator().meta.uri, 'id' : key};
+            ioperator = operator_interface.getIOperator();
+            WiringStatus.operators[key] = {"name" : ioperator.meta.uri, 'id' : key, 'preferences': ioperator.preferences};
             WiringStatus.views[0].operators[key] = positions;
         }
 

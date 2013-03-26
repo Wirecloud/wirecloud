@@ -186,7 +186,7 @@
                 this.ioperators[id] = old_operators[id];
                 delete old_operators[id];
             } else {
-                this.ioperators[id] = operators[operator_info.name].instantiate(id);
+                this.ioperators[id] = operators[operator_info.name].instantiate(id, operator_info);
             }
         }
         for (id in old_operators) {
@@ -277,6 +277,36 @@
 
         entry = this.ioperators[iOperator].inputs[inputName];
         entry.callback = callback;
+    };
+
+    Wiring.prototype.getOperatorPrefValue = function getOperatorPrefValue(iOperator, key) {
+        var entry;
+
+        if (iOperator instanceof Wirecloud.Operator) {
+            iOperator = iOperator.id;
+        }
+
+        return this.ioperators[iOperator].preferences[key];
+    };
+
+    Wiring.prototype.setOperatorPrefValue = function setOperatorPrefValue(iOperator, key, value) {
+        var entry;
+
+        if (iOperator instanceof Wirecloud.Operator) {
+            iOperator = iOperator.id;
+        }
+
+        this.ioperators[iOperator].preferences[key] = value;
+    };
+
+    Wiring.prototype.registerOperatorPrefCallback = function registerOperatorPrefCallback(iOperator, callback) {
+        var entry;
+
+        if (iOperator instanceof Wirecloud.Operator) {
+            iOperator = iOperator.id;
+        }
+
+        this.ioperators[iOperator].prefCallback = callback;
     };
 
     /*****************

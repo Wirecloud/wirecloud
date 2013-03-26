@@ -54,6 +54,25 @@
     Object.defineProperty(window.MashupPlatform.operator, 'id', {value: id});
     Object.preventExtensions(window.MashupPlatform.operator);
 
+    // Pref Module
+    Object.defineProperty(window.MashupPlatform, 'pref', {value: {}});
+    Object.defineProperty(window.MashupPlatform.pref, 'get', {
+        value: function get(key) {
+            return platform.opManager.activeWorkspace.wiring.getOperatorPrefValue(id, key);
+        }
+    });
+    Object.defineProperty(window.MashupPlatform.pref, 'registerCallback', {
+        value: function registerCallback(callback) {
+            platform.opManager.activeWorkspace.wiring.registerOperatorPrefCallback(id, callback);
+        }
+    });
+    Object.defineProperty(window.MashupPlatform.pref, 'set', {
+        value: function get(key, value) {
+            platform.opManager.activeWorkspace.wiring.setOperatorPrefValue(id, key, value);
+        }
+    });
+    Object.preventExtensions(window.MashupPlatform.pref);
+
     // Wiring Module
     Object.defineProperty(window.MashupPlatform, 'wiring', {value: {}});
     Object.defineProperty(window.MashupPlatform.wiring, 'registerCallback', {

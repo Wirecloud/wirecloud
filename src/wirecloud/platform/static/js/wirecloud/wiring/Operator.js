@@ -23,8 +23,8 @@
 
     "use strict";
 
-    var Operator = function Operator(operator_meta, id, /* TODO */ wiringEditor) {
-        var i, inputs, outputs, data_uri;
+    var Operator = function Operator(operator_meta, id, operator_status, /* TODO */ wiringEditor) {
+        var i, inputs, outputs, data_uri, preferences, key;
 
         StyledElements.ObjectWithEvents.call(this, ['load', 'unload']);
 
@@ -46,6 +46,20 @@
         for (i = 0; i < outputs.length; i++) {
             this.outputs[outputs[i].name] = new OperatorSourceEndpoint(this, outputs[i]);
         }
+
+        preferences = {}
+        if (operator_status) {
+            for (key in operator_status.preferences) {
+                preferences[key] = operator_status.preferences[key];
+            }
+        }
+
+        for (key in this.meta.preferences) {
+            if (!(key in preferences)) {
+                preferences[key] = this.meta.preferences[key].default_value;
+            }
+        }
+        Object.defineProperty(this, 'preferences', {value: preferences});
 
         if (!wiringEditor) {
             this.element = document.createElement('object');
