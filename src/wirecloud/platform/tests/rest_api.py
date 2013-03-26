@@ -175,6 +175,44 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Workspace should be created
         self.assertTrue(Workspace.objects.filter(creator=2, name='Test Mashup').exists())
 
+    def test_workspace_entry_delete_requires_authentication(self):
+
+        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 1})
+
+        response = self.client.delete(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+        # Error response should be a dict
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
+        # Workspace should be not deleted
+        self.assertTrue(Workspace.objects.filter(name='ExistingWorkspace').exists())
+
+        # Check using Accept: text/html
+        response = self.client.delete(url, HTTP_ACCEPT='text/html')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+        # Content type of the response should be text/html
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'text/html')
+
+    def test_workspace_entry_delete(self):
+
+        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 1})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        response = self.client.delete(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+
+        # Workspace should be removed
+        self.assertFalse(Workspace.objects.filter(name='ExistingWorkspace').exists())
+
     def test_tab_collection_post_requires_authentication(self):
 
         url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
