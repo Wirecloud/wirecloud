@@ -332,6 +332,25 @@ class IWidgetTester(object):
 
 class WirecloudRemoteTestCase(object):
 
+    @classmethod
+    def setUpClass(cls):
+
+        cls.shared_test_data_dir = os.path.join(os.path.dirname(__file__), 'test-data')
+        cls.test_data_dir = os.path.join(os.path.dirname(sys.modules[cls.__module__].__file__), 'test-data')
+
+        # Load webdriver
+        module_name, klass_name = getattr(cls, '_webdriver_class', 'selenium.webdriver.Firefox').rsplit('.', 1)
+        module = import_module(module_name)
+        webdriver_args = getattr(cls, '_webdriver_args', None)
+        if webdriver_args is None:
+            webdriver_args = {}
+        cls.driver = getattr(module, klass_name)(**webdriver_args)
+
+    @classmethod
+    def tearDownClass(cls):
+
+        cls.driver.quit()
+
     def fill_form_input(self, form_input, value):
         # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
         self.driver.execute_script('arguments[0].value = arguments[1]', form_input, value)
@@ -870,9 +889,6 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
     @classmethod
     def setUpClass(cls):
 
-        cls.shared_test_data_dir = os.path.join(os.path.dirname(__file__), 'test-data')
-        cls.test_data_dir = os.path.join(os.path.dirname(sys.modules[cls.__module__].__file__), 'test-data')
-
         cls.old_LANGUAGES = settings.LANGUAGES
         cls.old_LANGUAGE_CODE = settings.LANGUAGE_CODE
         cls.old_DEFAULT_LANGUAGE = settings.DEFAULT_LANGUAGE
@@ -890,14 +906,6 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         cls._original_proxy_do_request_function = WIRECLOUD_PROXY._do_request
         WIRECLOUD_PROXY._do_request = ProxyFakeDownloader()
         WIRECLOUD_PROXY._do_request.set_response('http://example.com/success.html', 'remote makerequest succeded')
-
-        # Load webdriver
-        module_name, klass_name = getattr(cls, '_webdriver_class', 'selenium.webdriver.Firefox').rsplit('.', 1)
-        module = import_module(module_name)
-        webdriver_args = getattr(cls, '_webdriver_args', None)
-        if webdriver_args is None:
-            webdriver_args = {}
-        cls.driver = getattr(module, klass_name)(**webdriver_args)
 
         # catalogue deployer
         cls.old_catalogue_deployer = catalogue.wgt_deployer
@@ -932,7 +940,6 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.driver.quit()
 
         # downloader
         downloader.download_http_content = cls._original_download_function
