@@ -41,7 +41,6 @@ var WirecloudHeader = function () {
     this.wrapperElement.insertBefore(menu_wrapper, this.wrapperElement.firstChild);
 
     this._initMenuBar();
-    this._initUserMenu();
 }
 
 WirecloudHeader.prototype._initMenuBar = function () {
@@ -82,7 +81,7 @@ WirecloudHeader.prototype._initUserMenu = function () {
 
     this.user_button = new StyledElements.PopupButton({
         'class': 'btn-success',
-        'text': ezweb_user_name
+        'text': OpManagerFactory.getInstance().contextManager.get('username')
     });
     this.user_button.insertInto(wrapper);
 
