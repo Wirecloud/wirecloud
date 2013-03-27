@@ -87,6 +87,12 @@ WirecloudHeader.prototype._initUserMenu = function () {
 
     user_menu = this.user_button.getPopupMenu();
     user_menu.append(new StyledElements.MenuItem(gettext('Settings'), OpManagerFactory.getInstance().showPlatformPreferences));
+
+    if (OpManagerFactory.getInstance().contextManager.get('isstaff') === true && 'DJANGO_ADMIN' in Wirecloud.URLs) {
+        user_menu.append(new StyledElements.MenuItem(gettext('DJango Admin panel'), function () {
+            window.open(Wirecloud.URLs.DJANGO_ADMIN, '_blank');
+        }));
+    }
     user_menu.append(new StyledElements.MenuItem(gettext('Sign out'), OpManagerFactory.getInstance().logout));
 };
 
