@@ -123,6 +123,10 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'label': _('Username'),
                 'description': _('User name of the current logged user'),
             },
+            'isstaff': {
+                'label': _('Is Staff'),
+                'description': _('Boolean. Designates whether current user can access the admin site.'),
+            },
             'orientation': {
                 'label': _('Orientation'),
                 'description': _('Current screen orientation'),
@@ -140,6 +144,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'language': 'es',
             'orientation': 'landscape',
             'username': user.username,
+            'isstaff': user.is_staff,
             'theme': settings.THEME_ACTIVE
         }
 
