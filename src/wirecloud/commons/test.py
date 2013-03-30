@@ -40,6 +40,7 @@ from django.utils.importlib import import_module
 from django.test import TransactionTestCase
 from django.test.client import Client
 from django.utils import translation
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.support.ui import WebDriverWait
 
 from wirecloud.platform.localcatalogue.utils import install_resource_to_all_users
@@ -800,7 +801,7 @@ class WirecloudRemoteTestCase(object):
             return
 
         self.perform_market_action(market)
-        WebDriverWait(self.driver, timeout).until(lambda driver: self.get_current_marketplace_name() == market)
+        WebDriverWait(self.driver, timeout, ignored_exceptions=(StaleElementReferenceException,)).until(lambda driver: self.get_current_marketplace_name() == market)
         self.wait_catalogue_ready()
 
     def delete_marketplace(self, market, expect_error=False):
