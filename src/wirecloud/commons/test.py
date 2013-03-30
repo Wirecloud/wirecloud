@@ -41,6 +41,7 @@ from django.test import TransactionTestCase
 from django.test.client import Client
 from django.utils import translation
 from selenium.common.exceptions import StaleElementReferenceException
+from selenium.webdriver import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 
 from wirecloud.platform.localcatalogue.utils import install_resource_to_all_users
@@ -358,13 +359,12 @@ class WirecloudRemoteTestCase(object):
 
     def scroll_and_click(self, element):
 
-        # Work around chromedriver bugs
-        if self.driver.capabilities['browserName'] == "chrome":
-            try:
-                self.driver.execute_script("arguments[0].scrollIntoView(false);", element);
-            except:
-                pass
-        element.click()
+        # Work around chrome and firefox driver bugs
+        try:
+            self.driver.execute_script("arguments[0].scrollIntoView(false);", element);
+        except:
+            pass
+        ActionChains(self.driver).click(element).perform()
 
     def wait_element_visible_by_css_selector(self, selector, timeout=30, element=None):
         if element is None:
