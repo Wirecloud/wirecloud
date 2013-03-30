@@ -583,11 +583,10 @@ class WirecloudRemoteTestCase(object):
         time.sleep(0.1)
         return tmp['new_iwidget']
 
-    def add_widget_to_mashup(self, widget_name, market=None, new_name=None):
+    def add_widget_to_mashup(self, widget_name, new_name=None):
 
         self.change_main_view('marketplace')
-        if market is not None:
-            self.change_marketplace(market)
+        self.change_marketplace('local')
 
         self.search_resource(widget_name)
         resource = self.search_in_catalogue_results(widget_name)
@@ -794,12 +793,15 @@ class WirecloudRemoteTestCase(object):
 
             self.assertEqual(self.get_current_marketplace_name(), name)
 
-    def change_marketplace(self, market):
+    def change_marketplace(self, market, timeout=30):
 
         self.change_main_view('marketplace')
+        if self.get_current_marketplace_name() == market:
+            return
+
         self.perform_market_action(market)
-        time.sleep(2)
-        self.assertEqual(self.get_current_marketplace_name(), market)
+        WebDriverWait(self.driver, timeout).until(lambda driver: self.get_current_marketplace_name() == market)
+        self.wait_catalogue_ready()
 
     def delete_marketplace(self, market, expect_error=False):
 
