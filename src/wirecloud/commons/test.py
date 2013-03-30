@@ -891,7 +891,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
     @classmethod
     def setUpClass(cls):
 
-        WirecloudRemoteTestCase.setUpClass()
+        WirecloudRemoteTestCase.setUpClass.im_func(cls)
 
         cls.old_LANGUAGES = settings.LANGUAGES
         cls.old_LANGUAGE_CODE = settings.LANGUAGE_CODE
@@ -945,7 +945,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
     @classmethod
     def tearDownClass(cls):
 
-        WirecloudRemoteTestCase.tearDownClass()
+        WirecloudRemoteTestCase.tearDownClass.im_func(cls)
 
         # downloader
         downloader.download_http_content = cls._original_download_function
