@@ -130,6 +130,14 @@
             }
             theArrow.redraw();
             onDrag(e, draggable, data, x, y);
+            //emphasize
+            if (!this.initAnchor.wrapperElement.parentNode.classList.contains('highlight')) {
+                if (this.initAnchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
+                    this.initAnchor.context.iObject.wiringEditor.emphasize(this.initAnchor.initAnchor);
+                } else {
+                    this.initAnchor.context.iObject.wiringEditor.emphasize(this.initAnchor);
+                }
+            }
         }.bind(this);
 
         /**

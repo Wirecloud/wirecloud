@@ -9,6 +9,7 @@
     -webkit-transition: box-shadow 500ms ease-in 150ms;
     -moz-transition: box-shadow 500ms ease-in 150ms;
     -o-transition: box-shadow 500ms ease-in 150ms;
+    z-index: 3;
 }
 
 .wiring_editor .grid .anchor {
@@ -18,11 +19,13 @@
 .wiring_editor .sources .anchor {
     background: url('../../images/wiring/blue_ball.png');
     right: -1em;
+    position: absolute;
 }
 
 .wiring_editor .targets .anchor {
     background: url('../../images/wiring/orange_ball.png');
     left: -1em;
+    position: absolute;
 }
 
 .wiring_editor .menubar .sources .anchor {

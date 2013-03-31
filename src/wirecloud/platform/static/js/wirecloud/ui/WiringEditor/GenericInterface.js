@@ -52,7 +52,6 @@
         this.draggableSources = [];
         this.draggableTargets = [];
         this.activatedTree = null;
-        this.trees = [];
 
         if (manager instanceof Wirecloud.ui.WiringEditor.ArrowCreator) {
             this.isMiniInterface = false;
@@ -172,6 +171,17 @@
         }
     };
 
+    /**
+     * @Private
+     * is empty object?
+     */
+    var isEmpty = function isEmpty(obj) {
+        for(var key in obj) {
+            return false;
+        }
+        return true;
+    };
+
     var createMulticonnector = function createMulticonnector(name, anchor) {
         var objectId, multiconnector;
 
@@ -188,6 +198,44 @@
         multiconnector.addMainArrow();
     };
 
+    /**
+     * format Tree
+     */
+    var formatTree = function(treeDiv, entityHeiht, entityWidth) {
+        var nLeafs, heightPerLeaf, branchList, i, nleafsAux, desp,
+            checkbox, label, height, firstFrame, firstTree, height,
+            width, diff, treeWidth;
+
+        firstFrame = treeDiv.getElementsByClassName("labelsFrame")[0];
+        firstTree = treeDiv.getElementsByClassName("tree")[0];
+        diff = (firstTree.getBoundingClientRect().top - firstFrame.getBoundingClientRect().top);
+        if (diff == -10) {
+            return;
+        }
+        firstFrame.style.top = diff + 10 + 'px';
+        height = firstFrame.getBoundingClientRect().height + 10;
+        width = firstFrame.getBoundingClientRect().width;
+        firstTree.style.height = height + 10 + 'px';
+        treeWidth = treeDiv.getBoundingClientRect().width;
+        if (treeWidth < entityWidth- 14) {
+            treeDiv.style.width = entityWidth - 14 + 'px';
+            treeDiv.style.left = 7 + 'px';
+        }
+        treeDiv.style.height = height + 'px';
+        // Vertical Alignment
+        nLeafs = treeDiv.getElementsByClassName('leaf').length;
+        heightPerLeaf = height/nLeafs;
+
+        branchList = treeDiv.getElementsByClassName("dataTree branch");
+        for (i = 0; i < branchList.length; i += 1) {
+            nleafsAux = branchList[i].getElementsByClassName('leaf').length;
+            desp = -(((nleafsAux/2) * heightPerLeaf) - (heightPerLeaf/2)) +"px";
+            label = branchList[i].getElementsByClassName('labelTree')[branchList[i].getElementsByClassName('labelTree').length - 1];
+            checkbox = branchList[i].getElementsByClassName('subAnchor')[branchList[i].getElementsByClassName('subAnchor').length - 1];
+            label.style.top = desp;
+            checkbox.style.top = desp;
+        }
+    };
     /*************************************************************************
      * Public methods
      *************************************************************************/
@@ -397,7 +445,7 @@
     /**
      * generate SubTree
      */
-    var generateSubTree = function(anchor) {
+    GenericInterface.prototype.generateSubTree = function(anchorContext, subAnchors, anchor) {
         var treeFrame, key, lab, checkbox, subdata, subTree, labelsFrame;
 
         treeFrame = document.createElement("div");
@@ -405,18 +453,25 @@
         labelsFrame = document.createElement("div");
         labelsFrame.classList.add('labelsFrame');
         treeFrame.appendChild(labelsFrame);
-        if (anchor.subAnchors !== null) {
-            for (key in anchor.subAnchors) {
+        if (!isEmpty(subAnchors.subdata)) {
+            for (key in subAnchors.subdata) {
                 lab = document.createElement("span");
                 lab.classList.add("labelTree");
                 lab.textContent = key;
-                checkbox = anchor.subAnchors[key].wrapperElement;
-                checkbox.classList.add("subAnchor");
-                checkbox.classList.add("icon-circle");
+                checkbox = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, anchorContext.iObject.arrowCreator);
+                checkbox.wrapperElement.classList.add("subAnchor");
+                checkbox.wrapperElement.classList.add("icon-circle");
                 subdata = document.createElement("div");
                 subdata.classList.add("dataTree");
-
-                subTree = generateSubTree(anchor.subAnchors[key], key);
+                // emphasize listeners
+                lab.addEventListener('mouseover', checkbox.emphasize.bind(checkbox), false);
+                lab.addEventListener('mouseout', checkbox.deemphasize.bind(checkbox), false);
+                // Sticky effect
+                lab.addEventListener('mouseover', checkbox._mouseover_callback, false);
+                lab.addEventListener('mouseout', checkbox._mouseout_callback, false);
+                // Connect anchor whith mouseup on the label
+                lab.addEventListener('mouseup', checkbox._mouseup_callback, false);
+                subTree = this.generateSubTree(anchorContext, subAnchors.subdata[key], checkbox);
                 if (subTree !== null) {
                     subdata.appendChild(subTree);
                     subdata.classList.add("branch");
@@ -424,7 +479,7 @@
                     subdata.classList.add("leaf");
                 }
                 subdata.appendChild(lab);
-                subdata.appendChild(checkbox);
+                subdata.appendChild(checkbox.wrapperElement);
                 labelsFrame.appendChild(subdata);
             }
             return treeFrame;
@@ -436,8 +491,8 @@
     /**
      * generate Tree
      */
-    var generateTree = function(anchor, label, closeHandler) {
-        var anchorAux, subAnchors, treeFrame, lab, checkbox, subdata,
+    GenericInterface.prototype.generateTree = function(anchorContext, subtree, anchor, label, closeHandler) {
+        var subAnchors, treeFrame, lab, checkbox, subdata,
             key, subTree, subTreeFrame, labelsFrame, labelMain, close_button;
 
         treeFrame = document.createElement("div");
@@ -451,7 +506,7 @@
         close_button.insertInto(treeFrame);
         close_button.addEventListener('click', function () {closeHandler();}, false);
 
-        subAnchors = anchor.subAnchors;
+        subAnchors = JSON.parse(subtree);
         subTreeFrame = null;
         labelsFrame = document.createElement("div");
         labelsFrame.classList.add('labelsFrame');
@@ -462,13 +517,21 @@
                 lab = document.createElement("span");
                 lab.classList.add("labelTree");
                 lab.textContent = key;
-                checkbox = subAnchors[key].wrapperElement;
-                checkbox.classList.add("subAnchor");
-                checkbox.classList.add("icon-circle");
+                //checkbox = subAnchors[key].wrapperElement;
+                checkbox = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, anchorContext.iObject.arrowCreator);
+                checkbox.wrapperElement.classList.add("subAnchor");
+                checkbox.wrapperElement.classList.add("icon-circle");
                 subdata = document.createElement("div");
                 subdata.classList.add("dataTree");
-
-                subTree = generateSubTree(subAnchors[key], key);
+                // emphasize listeners
+                lab.addEventListener('mouseover', checkbox.emphasize.bind(checkbox), false);
+                lab.addEventListener('mouseout', checkbox.deemphasize.bind(checkbox), false);
+                // Sticky effect
+                lab.addEventListener('mouseover', checkbox._mouseover_callback, false);
+                lab.addEventListener('mouseout', checkbox._mouseout_callback, false);
+                // Connect anchor whith mouseup on the label
+                lab.addEventListener('mouseup', checkbox._mouseup_callback, false);
+                subTree = this.generateSubTree(anchorContext, subAnchors[key], checkbox);
                 if (subTree !== null) {
                     subdata.appendChild(subTree);
                     subdata.classList.add("branch");
@@ -477,7 +540,7 @@
                 }
 
                 subdata.appendChild(lab);
-                subdata.appendChild(checkbox);
+                subdata.appendChild(checkbox.wrapperElement);
                 labelsFrame.appendChild(subdata);
                 subTreeFrame.appendChild(labelsFrame);
             }
@@ -486,11 +549,31 @@
         lab = document.createElement("span");
         lab.classList.add("labelTree");
         lab.textContent = label;
-        checkbox = document.createElement("div");
-        checkbox.classList.add("subAnchor");
-        checkbox.classList.add("icon-circle");
+        checkbox = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, anchorContext.iObject.arrowCreator);;
+        checkbox.wrapperElement.classList.add("subAnchor");
+        checkbox.wrapperElement.classList.add("icon-circle");
         subdata = document.createElement("div");
         subdata.classList.add("dataTree");
+        // emphasize listeners
+        lab.addEventListener('mouseover', function (e) {
+            this.wiringEditor.emphasize(checkbox);
+        }.bind(this));
+        lab.addEventListener('mouseout', function (e) {
+            this.wiringEditor.deemphasize(checkbox);
+        }.bind(this));
+
+        // Sticky effect
+        lab.addEventListener('mouseover', function (e) {
+            checkbox._mouseover_callback(e);
+        }.bind(this));
+        lab.addEventListener('mouseout', function (e) {
+            checkbox._mouseout_callback(e);
+        }.bind(this));
+
+        // Connect anchor whith mouseup on the label
+        lab.addEventListener('mouseup', function (e) {
+            checkbox._mouseup_callback(e);
+        }.bind(this));
         if (subTreeFrame !== null) {
             subdata.appendChild(subTreeFrame);
             subdata.classList.add("branch");
@@ -498,7 +581,7 @@
             subdata.classList.add("leaf");
         }
         subdata.appendChild(lab);
-        subdata.appendChild(checkbox);
+        subdata.appendChild(checkbox.wrapperElement);
         labelMain = document.createElement("div");
         labelMain.classList.add('labelsFrame');
         labelMain.appendChild(subdata);
@@ -507,56 +590,22 @@
     };
 
     /**
-     * format Tree
-     */
-    var formatTree = function(treeDiv, entityHeiht, entityWidth) {
-        var nLeafs, heightPerLeaf, branchList, i, nleafsAux, desp,
-            checkbox, label, height, firstFrame, firstTree, height,
-            width, diff;
-
-        firstFrame = treeDiv.getElementsByClassName("labelsFrame")[0];
-        firstTree = treeDiv.getElementsByClassName("tree")[0];
-        diff = (firstTree.getBoundingClientRect().top - firstFrame.getBoundingClientRect().top);
-        if (diff == -10) {
-            return;
-        }
-        firstFrame.style.top = diff + 10 + 'px';
-        height = firstFrame.getBoundingClientRect().height + 10;
-        width = firstFrame.getBoundingClientRect().width;
-        firstTree.style.height = height + 10 + 'px';
-        treeDiv.style.width = entityWidth - 14 + 'px';
-        treeDiv.style.left = 7 + 'px';
-        treeDiv.style.height = height + 'px';
-        // Vertical Alignment
-
-        treeDiv.style.top = ((entityHeiht - height)/2) - 8 + 'px';
-        nLeafs = treeDiv.getElementsByClassName('leaf').length;
-        heightPerLeaf = height/nLeafs;
-
-        branchList = treeDiv.getElementsByClassName("dataTree branch");
-        for (i = 0; i < branchList.length; i += 1) {
-            nleafsAux = branchList[i].getElementsByClassName('leaf').length;
-            desp = -(((nleafsAux/2) * heightPerLeaf) - (heightPerLeaf/2)) +"px";
-            label = branchList[i].getElementsByClassName('labelTree')[branchList[i].getElementsByClassName('labelTree').length - 1];
-            checkbox = branchList[i].getElementsByClassName('subAnchor')[branchList[i].getElementsByClassName('subAnchor').length - 1];
-            label.style.top = desp;
-            checkbox.style.top = desp;
-        }
-    };
-
-    /**
      *  handler for show/hide anchorTrees
      */
     GenericInterface.prototype.subdataHandler = function subdataHandler(treeDiv) {
-        var labelsAux, initialHeiht, initialWidth;
+        var initialHeiht, initialWidth;
 
         if (treeDiv == null) {
+            // elevate canvas
+            this.wiringEditor.canvas.canvasElement.classList.remove("elevated");
             // hide tree
             this.activatedTree.classList.remove('activated');
             this.activatedTree = null;
             // deactivate subdataMode
             this.wrapperElement.classList.remove('subdataMode');
         } else {
+            // descend canvas
+            this.wiringEditor.canvas.canvasElement.classList.add("elevated");
             // show tree
             initialHeiht = this.wrapperElement.getBoundingClientRect().height - this.header.getBoundingClientRect().height;
             initialWidth = this.wrapperElement.getBoundingClientRect().width;
@@ -572,7 +621,7 @@
      * add Source.
      */
     GenericInterface.prototype.addSource = function addSource(label, desc, name, anchorContext) {
-        var anchor, anchorDiv, labelDiv, anchorLabel, treeDiv, buttonsDiv;
+        var anchor, anchorDiv, labelDiv, anchorLabel, treeDiv, buttonsDiv, subAnchors;
 
         // anchorDiv
         anchorDiv = document.createElement("div");
@@ -601,47 +650,28 @@
 
             anchor.menu.append(new StyledElements.MenuItem(gettext('Add multiconnector'), createMulticonnector.bind(this, name, anchor)));
 
-            // start tree test y me lo saco de la manga?
-            var children = {label: 'asdfasdf',
-                            context: 'anchorContext',
-                            children: {}
-            };
-
-            anchor.subAnchors = null;
-
-            if (label == "Title") {
-                var anchorAux, anchorAux1, anchorAux2, anchorAux3, anchorAux4, anchorAux5;
-                anchorAux1 = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, this.arrowCreator);
-                anchorAux2 = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, this.arrowCreator);
-                anchorAux3 = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, this.arrowCreator);
-                anchorAux4 = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, this.arrowCreator);
-                anchorAux5 = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, this.arrowCreator);
-                anchorAux1.subAnchors = null;
-                anchorAux2.subAnchors = null;
-                anchorAux3.subAnchors = null;
-                anchorAux4.subAnchors = null;
-                anchorAux5.subAnchors = null;
-                anchorAux = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, this.arrowCreator);
-                anchorAux.subAnchors = null;
-                anchorAux.subAnchors = {'subX1': anchorAux3, 'subX2': anchorAux4};
-                anchor.subAnchors = {'sub1': anchorAux1, 'subY': anchorAux2, 'sub4': anchorAux5, 'subX': anchorAux};
+            // tree test
+            if (label == "Image URL") {
+                anchorContext.data.subdata = "{\"FN\": {\"label\": \"Full Name\", \"description\": \"Full name of the contact\", \"semanticType\": \"pedrooooo\", \"subdata\": {\"firstname\": {\"label\": \"First name\", \"description\": \"First name of the contact\", \"semanticType\": \"pedrooooo2\", \"subdata\": {}}, \"lastname\": {\"label\": \"Last name\", \"description\": \"Last name of the contact\", \"semanticType\": \"pedrooooo3\", \"subdata\": {}}}}, \"ADDR\": {\"label\": \"Address\", \"description\": \"Address of the contact\", \"semanticType\": \"pedrooooo4\", \"subdata\": {}}}";
+                subAnchors = anchorContext.data.subdata;
+            } else {
+                subAnchors = null;
             }
-            // end tree test
-
-            // generate tree
-            treeDiv = document.createElement("div");
-            treeDiv.classList.add('anchorTree');
-            treeDiv.addEventListener('click', function (e) {
-                e.stopPropagation();
-            }.bind(this), false);
-            treeDiv.addEventListener('mousedown', function (e) {
-                e.stopPropagation();
-            }.bind(this), false);
-            treeDiv.appendChild(generateTree(anchor, label, this.subdataHandler.bind(this)));
-            this.wrapperElement.appendChild(treeDiv);
-            this.trees.push(treeDiv);
-            // handler para activar/desactivar/cambiar de arbol
-            anchor.menu.append(new StyledElements.MenuItem(gettext("Unpack data structure"), this.subdataHandler.bind(this, treeDiv)));
+            if (subAnchors !== null) {
+                // generate tree
+                treeDiv = document.createElement("div");
+                treeDiv.classList.add('anchorTree');
+                treeDiv.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                }.bind(this), false);
+                treeDiv.addEventListener('mousedown', function (e) {
+                    e.stopPropagation();
+                }.bind(this), false);
+                treeDiv.appendChild(this.generateTree(anchorContext, subAnchors, anchor, label, this.subdataHandler.bind(this)));
+                this.wrapperElement.appendChild(treeDiv);
+                // handler para activar/desactivar/cambiar de arbol
+                anchor.menu.append(new StyledElements.MenuItem(gettext("Unfold data structure"), this.subdataHandler.bind(this, treeDiv)));
+            }
 
             labelDiv.addEventListener('mouseover', function (e) {
                 this.wiringEditor.emphasize(anchor);
@@ -649,8 +679,8 @@
             labelDiv.addEventListener('mouseout', function (e) {
                 this.wiringEditor.deemphasize(anchor);
             }.bind(this));
-            // Sticky effect
 
+            // Sticky effect
             anchorDiv.addEventListener('mouseover', function (e) {
                 anchor._mouseover_callback(e);
             }.bind(this));
@@ -878,7 +908,6 @@
         this.draggableSources = null;
         this.draggableTargets = null;
         this.wrapperElement = null;
-        this.trees = null;
     };
 
     /**
@@ -887,7 +916,7 @@
     GenericInterface.prototype.editPos = function editPos() {
         var obj;
         obj = null;
-        if ((this.targetAnchors.length == 1) && (this.sourceAnchors.length == 1)) {
+        if ((this.targetAnchors.length <= 1) && (this.sourceAnchors.length <= 1)) {
             return;
         }
 

@@ -212,7 +212,7 @@
             }
             // add the height of the widget/operator header
             if (parentNode.classList.contains("geContainer")) {
-                coordinates.posY += parentNode.getElementsByClassName("container north_container header")[0].getHeight();
+                coordinates.posY += parentNode.getElementsByClassName("container north_container header")[0].getBoundingClientRect().height;
             }
             parentNode = parentNode.parentNode;
         }
@@ -310,6 +310,20 @@
      */
     Anchor.prototype.isEmphasize = function isEmphasize() {
         return this.context.iObject.selected;
+    };
+
+    /**
+     * emphasize compatible anchors
+     */
+    Anchor.prototype.emphasize = function emphasize() {
+        return this.context.iObject.wiringEditor.emphasize(this);
+    };
+
+    /**
+     * deemphasize compatible anchors
+     */
+    Anchor.prototype.deemphasize = function deemphasize() {
+        return this.context.iObject.wiringEditor.deemphasize(this);
     };
 
     /**
