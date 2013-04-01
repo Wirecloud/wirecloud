@@ -27,7 +27,7 @@
 
     var OperatorMeta = function OperatorMeta(desc) {
         var vendor, name, version, uri, display_name, description, inputs,
-            outputs, prefList, prefs, pref;
+            outputs, prefList, prefs, pref, i;
 
         // Vendor
         if (!('vendor' in desc) || desc.vendor.trim() === '') {
