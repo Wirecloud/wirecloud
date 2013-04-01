@@ -754,7 +754,10 @@ class WirecloudTemplateParser(object):
             'outputs': [],
         }
 
-        wiring_element = self._xpath(WIRING_XPATH, self._doc)[0]
+        wiring_elements = self._xpath(WIRING_XPATH, self._doc)
+        if len(wiring_elements) < 1:
+            return
+        wiring_element = wiring_elements[0]
 
         for slot in self._xpath(SLOT_XPATH, wiring_element):
             self._add_translation_index(slot.get('label'), type='vdef', variable=slot.get('name'))
