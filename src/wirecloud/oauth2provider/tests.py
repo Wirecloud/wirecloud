@@ -20,12 +20,14 @@
 
 from urlparse import parse_qs, urlparse
 
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
-from django.utils import simplejson
+from django.utils import simplejson, unittest
 from django.utils.http import urlencode
 
 
+@unittest.skipIf(not 'wirecloud.oauth2provider' in settings.INSTALLED_APPS, 'OAuth2 provider not enabled')
 class Oauth2TestCase(TestCase):
 
     fixtures = ('selenium_test_data', 'oauth2_test_data')
