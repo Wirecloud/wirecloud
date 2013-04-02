@@ -80,7 +80,14 @@
 
     OperatorTargetEndpoint.prototype.propagate = function propagate(newValue, options) {
         if (!options || this._is_target_slot(options.targetSlots)) {
-            this.callback.call(this.operator, newValue);
+            if (this.operator.loaded) {
+                try {
+                    this.callback.call(this.operator, newValue);
+                } catch (e) {
+                }
+            } else {
+                this.operator.pending_events.push({'endpoint': this.meta.name, 'value': newValue});
+            }
         }
     };
 

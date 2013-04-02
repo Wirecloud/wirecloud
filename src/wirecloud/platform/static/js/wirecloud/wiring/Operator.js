@@ -19,6 +19,8 @@
  *
  */
 
+/*global OperatorSourceEndpoint, OperatorTargetEndpoint, StyledElements, Wirecloud*/
+
 (function () {
 
     "use strict";
@@ -47,7 +49,9 @@
             this.outputs[outputs[i].name] = new OperatorSourceEndpoint(this, outputs[i]);
         }
 
-        preferences = {}
+        this.pending_events = [];
+
+        preferences = {};
         if (operator_status) {
             for (key in operator_status.preferences) {
                 preferences[key] = operator_status.preferences[key];
@@ -67,6 +71,10 @@
             this.element.addEventListener('load', function () {
                 this.loaded = true;
                 this.events.load.dispatch(this);
+                for (var i = 0; i < this.pending_events.length; i += 1) {
+                    this.inputs[this.pending_events[i].endpoint].propagate(this.pending_events[i].value);
+                }
+                this.pending_events = [];
             }.bind(this), true);
             this.element.addEventListener('unload', function () {
                 this.loaded = false;
