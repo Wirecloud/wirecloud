@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2013 Universidad Politécnica de Madrid
+ *     (C) Copyright 2013 CoNWeT Lab - Universidad Politécnica de Madrid
  *
  *     This file is part of ngsijs.
  *
@@ -15,6 +15,23 @@
  *
  *     You should have received a copy of the GNU Affero General Public License
  *     along with ngsijs. If not, see <http://www.gnu.org/licenses/>.
+ *
+ *     Linking this library statically or dynamically with other modules is
+ *     making a combined work based on this library.  Thus, the terms and
+ *     conditions of the GNU Affero General Public License cover the whole
+ *     combination.
+ *
+ *     As a special exception, the copyright holders of this library give you
+ *     permission to link this library with independent modules to produce an
+ *     executable, regardless of the license terms of these independent
+ *     modules, and to copy and distribute the resulting executable under
+ *     terms of your choice, provided that you also meet, for each linked
+ *     independent module, the terms and conditions of the license of that
+ *     module.  An independent module is a module which is not derived from
+ *     or based on this library.  If you modify this library, you may extend
+ *     this exception to your version of the library, but you are not
+ *     obligated to do so.  If you do not wish to do so, delete this
+ *     exception statement from your version.
  *
  */
 
@@ -216,12 +233,29 @@
         });
     };
 
+    var ngsi_build_entity_id_element = function ngsi_build_entity_id_element(doc, entity) {
+        var entityId, id;
+
+        entityId = doc.createElement('entityId');
+
+        if (entity.type != null) {
+            entityId.setAttribute('type', entity.type);
+        }
+        entityId.setAttribute('isPattern', 'false');
+
+        id = doc.createElement('id');
+        NGSI.XML.setTextContent(id, entity.id);
+        entityId.appendChild(id);
+
+        return entityId;
+    };
+
     /* Request builders */
 
     var ngsi_build_register_context_request = function ngsi_build_register_context_request(e, attr, duration, providingApplication, regId) {
-        var doc, list, registration, entityIdList, entity, entityId, i, id,
-            attributeList, attribute, attributeElement, name, type, isDomain,
-            durationElement, registrationIdElement, providingApplicationElement;
+        var doc, list, registration, entityIdList, i, attributeList, attribute,
+            attributeElement, name, type, isDomain, durationElement,
+            registrationIdElement, providingApplicationElement;
 
         doc = NGSI.XML.createDocument(null, 'registerContextRequest');
 
@@ -235,17 +269,7 @@
         registration.appendChild(entityIdList);
 
         for (i = 0; i < e.length; i += 1) {
-            entity = e[i];
-
-            entityId = doc.createElement('entityId');
-            entityId.setAttribute('type', entity.type);
-            entityId.setAttribute('isPattern', 'false');
-
-            id = doc.createElement('id');
-            NGSI.XML.setTextContent(id, entity.id);
-            entityId.appendChild(id);
-
-            entityIdList.appendChild(entityId);
+            entityIdList.appendChild(ngsi_build_entity_id_element(doc, e[i]));
         }
 
         attributeList = doc.createElement('contextRegistrationAttributeList');
@@ -291,8 +315,8 @@
     };
 
     var ngsi_build_query_context_request = function ngsi_build_query_context_request(e, attrNames) {
-        var doc, entityIdList, entity, entityId, i, id,
-            attributeList, attribute, attributeElement;
+        var doc, entityIdList, i, id, attributeList, attribute,
+            attributeElement;
 
         doc = NGSI.XML.createDocument(null, 'queryContextRequest');
 
@@ -300,17 +324,7 @@
         doc.documentElement.appendChild(entityIdList);
 
         for (i = 0; i < e.length; i += 1) {
-            entity = e[i];
-
-            entityId = doc.createElement('entityId');
-            entityId.setAttribute('type', entity.type);
-            entityId.setAttribute('isPattern', 'false');
-
-            id = doc.createElement('id');
-            NGSI.XML.setTextContent(id, entity.id);
-            entityId.appendChild(id);
-
-            entityIdList.appendChild(entityId);
+            entityIdList.appendChild(ngsi_build_entity_id_element(doc, e[i]));
         }
 
         if (Array.isArray(attrNames)) {
@@ -330,9 +344,9 @@
     };
 
     var ngsi_build_update_context_request = function ngsi_build_update_context_request(updateAction, update) {
-        var doc, list, entityIdList, entity, entityId, i, j, id, contextElement,
-            attributeListElement, attributes, attribute, attributeElement,
-            name, type, contextValue, updateActionElement;
+        var doc, list, i, j, contextElement, attributeListElement, attributes,
+            attribute, attributeElement, name, type, contextValue,
+            updateActionElement;
 
         doc = NGSI.XML.createDocument(null, 'updateContextRequest');
 
@@ -344,17 +358,7 @@
             contextElement = doc.createElement('contextElement');
 
             // Entity id
-            entity = update[i].entity;
-
-            entityId = doc.createElement('entityId');
-            entityId.setAttribute('type', entity.type);
-            entityId.setAttribute('isPattern', 'false');
-
-            id = doc.createElement('id');
-            NGSI.XML.setTextContent(id, entity.id);
-            entityId.appendChild(id);
-
-            contextElement.appendChild(entityId);
+            contextElement.appendChild(ngsi_build_entity_id_element(doc, update[i].entity));
 
             // attribute list
             attributes = update[i].attributes;
@@ -392,8 +396,7 @@
     };
 
     var ngsi_build_discover_context_availability_request = function ngsi_build_discover_context_availability_request(e, attr) {
-        var doc, entityIdList, entity, entityId, i, id,
-            attributeList, attribute, attributeElement;
+        var doc, entityIdList, i, attributeList, attribute, attributeElement;
 
         doc = NGSI.XML.createDocument(null, 'discoverContextAvailabilityRequest');
 
@@ -401,17 +404,7 @@
         doc.documentElement.appendChild(entityIdList);
 
         for (i = 0; i < e.length; i += 1) {
-            entity = e[i];
-
-            entityId = doc.createElement('entityId');
-            entityId.setAttribute('type', entity.type);
-            entityId.setAttribute('isPattern', 'false');
-
-            id = doc.createElement('id');
-            NGSI.XML.setTextContent(id, entity.id);
-            entityId.appendChild(id);
-
-            entityIdList.appendChild(entityId);
+            entityIdList.appendChild(ngsi_build_entity_id_element(doc, e[i]));
         }
 
         attributeList = doc.createElement('attributeList');
@@ -429,23 +422,17 @@
     };
 
     var ngsi_build_subscribe_update_context_availability_request = function ngsi_build_subscribe_update_context_availability_request(rootElement, e, attr, duration, restriction, subscriptionId, callbacks) {
-        var doc, entityIdListElement, i, entity, entityIdElement, idElement, attributeListElement, attributeElement, referenceElement, durationElement, restrictionElement, attributeExpressionElement, subscriptionIdElement;
+        var doc, entityIdListElement, i, attributeListElement,
+            attributeElement, referenceElement, durationElement,
+            restrictionElement, attributeExpressionElement,
+            subscriptionIdElement;
 
         doc = NGSI.XML.createDocument(null, rootElement);
 
         entityIdListElement = doc.createElement('entityIdList');
         doc.documentElement.appendChild(entityIdListElement);
         for (i = 0; i < e.length; i += 1) {
-            entity = e[i];
-
-            entityIdElement = doc.createElement('entityId');
-            entityIdElement.setAttribute('type', entity.type);
-            entityIdElement.setAttribute('isPattern', 'true');
-            entityIdListElement.appendChild(entityIdElement);
-
-            idElement = doc.createElement('id');
-            NGSI.XML.setTextContent(idElement, entity.id);
-            entityIdElement.appendChild(idElement);
+            entityIdListElement.appendChild(ngsi_build_entity_id_element(doc, e[i]));
         }
 
         if (Array.isArray(attr) && attr.length > 0) {
@@ -501,27 +488,18 @@
     };
 
     var ngsi_build_subscribe_update_context_request = function ngsi_build_subscribe_update_context_request(rootElement, e, attr, duration, throttling, conditions, onNotify) {
-        var doc, entityIdListElement, i, j, entity, entityIdElement, idElement,
-            attributeListElement, attributeElement, referenceElement,
-            durationElement, notifyConditionsElement, condition,
-            notifyConditionElement, typeElement, condValueListElement,
-            condValueElement, throttlingElement;
+        var doc, entityIdListElement, i, j, attributeListElement,
+            attributeElement, referenceElement, durationElement,
+            notifyConditionsElement, condition, notifyConditionElement,
+            typeElement, condValueListElement, condValueElement,
+            throttlingElement;
 
         doc = NGSI.XML.createDocument(null, rootElement);
 
         entityIdListElement = doc.createElement('entityIdList');
         doc.documentElement.appendChild(entityIdListElement);
         for (i = 0; i < e.length; i += 1) {
-            entity = e[i];
-
-            entityIdElement = doc.createElement('entityId');
-            entityIdElement.setAttribute('type', entity.type);
-            entityIdElement.setAttribute('isPattern', 'true');
-            entityIdListElement.appendChild(entityIdElement);
-
-            idElement = doc.createElement('id');
-            NGSI.XML.setTextContent(idElement, entity.id);
-            entityIdElement.appendChild(idElement);
+            entityIdListElement.appendChild(ngsi_build_entity_id_element(doc, e[i]));
         }
 
         if (Array.isArray(attr)) {
@@ -778,7 +756,7 @@
 
         var subIdElement = NGSI.XML.getChildElementByTagName(element, 'subscriptionId');
         data = {
-            subscriptionId: NGSI.XML.getTextContent(subIdElement),
+            subscriptionId: NGSI.XML.getTextContent(subIdElement)
         };
 
         durationElement = NGSI.XML.getChildElementByTagName(element, 'duration');
