@@ -63,7 +63,7 @@
 
         // Mark our message div as an error msg
         this.msgElement = document.createElement('div');
-        this.msgElement.className = 'msg error';
+        this.msgElement.className = 'alert alert-error';
         div.appendChild(this.msgElement);
         this.pSetMsgs([]);
 
