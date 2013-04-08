@@ -74,8 +74,10 @@
         this.statusBar.addClassName('statusrow');
 
         this.sortColumn = null;
-        if (options.pagination != null) {
-            this.pagination = options.pagination;
+        if (options.source != null) {
+            this.source = options.source;
+        } else if (options.pagination != null) {
+            this.source = options.pagination;
         } else {
             sort_info = {};
             for (i = 0; i < columns.length; i += 1) {
@@ -88,12 +90,13 @@
                 }
                 sort_info[sort_id] = column;
             }
-            this.pagination = new StyledElements.StaticPaginatedSource({pageSize: 5, sort_info: sort_info});
+            this.source = new StyledElements.StaticPaginatedSource({pageSize: 5, sort_info: sort_info});
         }
-        this.paginationInterface = new PaginationInterface(this.pagination);
+        Object.defineProperty(this, 'pagination', {get: function () { return this.source; }});
+        this.paginationInterface = new PaginationInterface(this.source);
 
         this.pRefreshBody = EzWebExt.bind(this.reload, this);
-        this.pagination.addEventListener('requestEnd', this.pRefreshBody);
+        this.source.addEventListener('requestEnd', this.pRefreshBody);
         this.statusBar.appendChild(this.paginationInterface);
 
         if (options.initialSortColumn === -1) {
@@ -188,7 +191,7 @@
         } else {
             order = null;
         }
-        this.pagination.changeOptions({order: order});
+        this.source.changeOptions({order: order});
     };
 
     ModelTable.prototype.pSortByColumnCallback = function pSortByColumnCallback() {
@@ -271,7 +274,7 @@
     };
 
     ModelTable.prototype.reload = function reload() {
-        this.pPaintTable(this.pagination.getCurrentPage());
+        this.pPaintTable(this.source.getCurrentPage());
     };
 
     ModelTable.prototype.pPaintTable = function pPaintTable(items) {
@@ -370,8 +373,8 @@
         this.paginationInterface.destroy();
         this.paginationInterface = null;
 
-        this.pagination.destroy();
-        this.pagination = null;
+        this.source.destroy();
+        this.source = null;
 
         this.pRefreshBody = null;
     };
