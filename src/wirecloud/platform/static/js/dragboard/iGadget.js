@@ -556,7 +556,7 @@ IWidget.prototype.setRefusedVersion = function (v) {
     Wirecloud.io.makeRequest(iwidgetUrl, {
         method: 'POST',
         contentType: 'application/json',
-        parameters: Object.toJSON({
+        postBody: Object.toJSON({
             refused_version: this.refusedVersion.text,
             id: this.id
         }),

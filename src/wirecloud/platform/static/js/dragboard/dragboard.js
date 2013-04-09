@@ -129,7 +129,6 @@ function Dragboard(tab, workspace, dragboardElement) {
             method: 'PUT',
             contentType: 'application/json',
             postBody: Object.toJSON(data),
-            parameters: data,
             onSuccess: onSuccess,
             onFailure: onError
         });

@@ -153,7 +153,7 @@
             Wirecloud.io.makeRequest(tabUrl, {
                 method: 'POST',
                 contentType: 'application/json',
-                parameters: Object.toJSON({visible: "true"}),
+                postBody: Object.toJSON({visible: "true"}),
                 onSuccess: this.markAsVisibleSuccess,
                 onFailure: this.markAsVisibleError,
                 onException: this.markAsVisibleError
