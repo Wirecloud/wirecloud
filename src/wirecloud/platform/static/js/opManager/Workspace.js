@@ -65,7 +65,7 @@ function Workspace (workspaceState) {
         var initialTab = {
             'id': 0,
             'readOnly': "true",
-            'iwidgetList': [],
+            'iwidgets': [],
             'name': gettext("Unusable Tab"),
             'visible': 1,
             'preferences': {}
@@ -291,7 +291,7 @@ function Workspace (workspaceState) {
         var response = transport.responseText;
         var tabInfo = JSON.parse(response);
 
-        tabInfo.iwidgetList = [];
+        tabInfo.iwidgets = [];
         tabInfo.preferences = {};
 
         var newTab = this.notebook.createTab({'tab_constructor': Tab, 'tab_info': tabInfo, 'workspace': this});

@@ -53,7 +53,7 @@ class WorkspaceTestCase(CacheTestCase):
         self.assertEqual(len(data['tabs']), 1)
 
         tab = data['tabs'][0]
-        variables = tab['iwidgetList'][0]['variables']
+        variables = tab['iwidgets'][0]['variables']
         self.assertEqual(variables['password']['value'], '')
         self.assertEqual(variables['password']['secure'], True)
         self.assertEqual(variables['username']['value'], 'test_username')
@@ -147,7 +147,7 @@ class WorkspaceTestCase(CacheTestCase):
 
         # Check that other_user can access to the shared workspace
         data = get_global_workspace_data(workspace, other_user).get_data()
-        iwidget_list = data['tabs'][0]['iwidgetList']
+        iwidget_list = data['tabs'][0]['iwidgets']
         self.assertEqual(len(iwidget_list), 2)
 
         # Add a new iWidget to the workspace
@@ -167,7 +167,7 @@ class WorkspaceTestCase(CacheTestCase):
         SaveIWidget(iwidget_data, self.user, tab, {})
 
         data = get_global_workspace_data(workspace, other_user).get_data()
-        iwidget_list = data['tabs'][0]['iwidgetList']
+        iwidget_list = data['tabs'][0]['iwidgets']
         self.assertEqual(len(iwidget_list), 3)
 
 
@@ -200,7 +200,7 @@ class WorkspaceCacheTestCase(CacheTestCase):
         self.assertEqual(result.status_code, 200)
 
         data = get_global_workspace_data(self.workspace, self.user).get_data()
-        variables = data['tabs'][0]['iwidgetList'][0]['variables']
+        variables = data['tabs'][0]['iwidgets'][0]['variables']
         self.assertEqual(variables['password']['value'], '')
         self.assertEqual(variables['password']['secure'], True)
         self.assertEqual(variables['username']['value'], 'new_username')
@@ -225,14 +225,14 @@ class WorkspaceCacheTestCase(CacheTestCase):
 
         data = get_global_workspace_data(self.workspace, self.user).get_data()
 
-        iwidget_list = data['tabs'][0]['iwidgetList']
+        iwidget_list = data['tabs'][0]['iwidgets']
         self.assertEqual(len(iwidget_list), 3)
 
     def test_widget_deletion_invalidates_cache(self):
 
         deleteIWidget(IWidget.objects.get(pk=1), self.user)
         data = get_global_workspace_data(self.workspace, self.user).get_data()
-        iwidget_list = data['tabs'][0]['iwidgetList']
+        iwidget_list = data['tabs'][0]['iwidgets']
         self.assertEqual(len(iwidget_list), 1)
 
 
@@ -557,13 +557,13 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
         self.assertEqual(len(data['tabs']), 4)
         self.assertEqual(data['tabs'][0]['name'], 'Tab')
-        self.assertEqual(len(data['tabs'][0]['iwidgetList']), 1)
+        self.assertEqual(len(data['tabs'][0]['iwidgets']), 1)
         self.assertEqual(data['tabs'][1]['name'], 'Tab 2')
-        self.assertEqual(len(data['tabs'][1]['iwidgetList']), 1)
+        self.assertEqual(len(data['tabs'][1]['iwidgets']), 1)
         self.assertEqual(data['tabs'][2]['name'], 'Tab 3')
-        self.assertEqual(len(data['tabs'][2]['iwidgetList']), 0)
+        self.assertEqual(len(data['tabs'][2]['iwidgets']), 0)
         self.assertEqual(data['tabs'][3]['name'], 'Tab 4')
-        self.assertEqual(len(data['tabs'][3]['iwidgetList']), 0)
+        self.assertEqual(len(data['tabs'][3]['iwidgets']), 0)
 
         wiring_status = data['wiring']
         self.assertEqual(len(wiring_status['operators']), 1)
@@ -580,13 +580,13 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
         self.assertEqual(len(data['tabs']), 4)
         self.assertEqual(data['tabs'][0]['name'], u'Tab')
-        self.assertEqual(len(data['tabs'][0]['iwidgetList']), 1)
+        self.assertEqual(len(data['tabs'][0]['iwidgets']), 1)
         self.assertEqual(data['tabs'][1]['name'], u'Tab 2')
-        self.assertEqual(len(data['tabs'][1]['iwidgetList']), 1)
+        self.assertEqual(len(data['tabs'][1]['iwidgets']), 1)
         self.assertEqual(data['tabs'][2]['name'], u'Tab 3')
-        self.assertEqual(len(data['tabs'][2]['iwidgetList']), 0)
+        self.assertEqual(len(data['tabs'][2]['iwidgets']), 0)
         self.assertEqual(data['tabs'][3]['name'], u'Tab 4')
-        self.assertEqual(len(data['tabs'][3]['iwidgetList']), 0)
+        self.assertEqual(len(data['tabs'][3]['iwidgets']), 0)
 
         wiring = data['wiring']
         self.assertEqual(len(wiring['connections']), 1)

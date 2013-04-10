@@ -494,7 +494,7 @@ def _get_global_workspace_data(workspaceDAO, user):
         for iwidget in iwidgets:
             iwidget_data.append(get_iwidget_data(iwidget, user, workspaceDAO, cache_manager))
 
-        tab['iwidgetList'] = iwidget_data
+        tab['iwidgets'] = iwidget_data
 
     data_ret['wiring'] = simplejson.loads(workspaceDAO.wiringStatus)
 

@@ -38,7 +38,7 @@ function VarManager (_workspace) {
         var tabs = workspaceInfo['tabs'];
 
         for (var i=0; i<tabs.length; i++) {
-            var iwidgets = tabs[i]['iwidgetList'];
+            var iwidgets = tabs[i]['iwidgets'];
 
             for (var j=0; j<iwidgets.length; j++) {
                 this.parseIWidgetVariables(iwidgets[j], this.workspace.getTabInstance(tabs[i].id));

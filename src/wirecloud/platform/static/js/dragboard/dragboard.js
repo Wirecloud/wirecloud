@@ -222,8 +222,8 @@ function Dragboard(tab, workspace, dragboardElement) {
         }
 
         // For controlling when the iwidgets are totally loaded!
-        for (i = 0; i < tabInfo.iwidgetList.length; i++) {
-            curIWidget = tabInfo.iwidgetList[i];
+        for (i = 0; i < tabInfo.iwidgets.length; i++) {
+            curIWidget = tabInfo.iwidgets[i];
 
             // Get widget model
             widget = Wirecloud.LocalCatalogue.getResourceId(curIWidget.widget);
