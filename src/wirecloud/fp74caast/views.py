@@ -26,9 +26,19 @@ def add_tenant(request):
     status = 201
     try:
         user = User.objects.create_user(username, 'test@example.com', username)
-        TenantProfile.objects.create(user=user, id_4CaaSt=id_4CaaSt)
     except:
         status = 209
+        user = User.objects.get(username=username)
+        try:
+            if user.tenantprofile_4CaaSt.id_4CaaSt != id_4CaaSt:
+                msg = "A user with the same name and with different tenant id already exists."
+                return build_error_response(request, 400, msg)
+            else:
+                return HttpResponse(status)
+        except TenantProfile.DoesNotExist:
+            pass
+
+    TenantProfile.objects.create(user=user, id_4CaaSt=id_4CaaSt)
 
     return HttpResponse(status)
 
