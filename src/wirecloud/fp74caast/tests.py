@@ -59,6 +59,14 @@ class FP74CaastTests(TestCase):
 
         # Check user exists
         self.assertTrue(User.objects.filter(username='developer2').exists())
+        self.assertEqual(User.objects.get(username='developer2').tenantprofile_4CaaSt.id_4CaaSt, 'org.4caast.customers.developer2.services.app2')
+
+    def test_add_existing_tenant(self):
+
+        url = reverse('wirecloud.4caast.add_tenant')
+        response = self.client.get(url + '?message=org.4caast.customers.4caast_developer.services.app1', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(User.objects.get(username='4caast_developer').tenantprofile_4CaaSt.id_4CaaSt, 'org.4caast.customers.4caast_developer.services.app1')
 
     def test_remove_tenant(self):
 
