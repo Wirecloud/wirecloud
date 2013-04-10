@@ -175,6 +175,64 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Workspace should be created
         self.assertTrue(Workspace.objects.filter(creator=2, name='Test Mashup').exists())
 
+    def test_workspace_entry_read_requires_authentication(self):
+
+        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 1})
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+        # Error response should be a dict
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
+        # Workspace should be not deleted
+        self.assertTrue(Workspace.objects.filter(name='ExistingWorkspace').exists())
+
+        # Check using Accept: text/html
+        response = self.client.delete(url, HTTP_ACCEPT='text/html')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+        # Content type of the response should be text/html
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'text/html')
+
+    def test_workspace_entry_read(self):
+
+        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 1})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        # Response should be a dict
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertTrue('id' in response_data)
+        self.assertEqual(response_data['name'], 'ExistingWorkspace')
+        self.assertEqual(response_data['creator'], 'user_with_workspaces')
+        self.assertTrue('wiring' in response_data)
+
+        self.assertTrue('tabs' in response_data)
+        self.assertTrue(isinstance(response_data['tabs'], list))
+        self.assertTrue(len(response_data['tabs']) > 0)
+        self.assertTrue(isinstance(response_data['tabs'][0], dict))
+        self.assertTrue('id' in response_data['tabs'][0])
+        self.assertTrue('name' in response_data['tabs'][0])
+        self.assertTrue('preferences' in response_data['tabs'][0])
+        self.assertTrue(isinstance(response_data['tabs'][0]['preferences'], dict))
+        self.assertTrue('iwidgets' in response_data['tabs'][0])
+        self.assertTrue(isinstance(response_data['tabs'][0]['iwidgets'], list))
+
+        self.assertTrue('preferences' in response_data)
+        self.assertTrue(isinstance(response_data['preferences'], dict))
+
     def test_workspace_entry_delete_requires_authentication(self):
 
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 1})
