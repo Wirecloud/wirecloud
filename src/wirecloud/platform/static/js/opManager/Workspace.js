@@ -72,7 +72,7 @@ function Workspace (workspaceState) {
         };
 
         this.workspaceGlobalInfo = {
-                                       'tabList': [
+                                       'tabs': [
                                          initialTab
                                        ]
                                    };
@@ -126,7 +126,7 @@ function Workspace (workspaceState) {
             }
 
             // Load workspace tabs
-            var tabs = this.workspaceGlobalInfo['tabList'];
+            var tabs = this.workspaceGlobalInfo['tabs'];
             var visibleTabId = null;
             var loading_tab = this.notebook.createTab({'closeable': false});
 

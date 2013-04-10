@@ -484,7 +484,7 @@ def _get_global_workspace_data(workspaceDAO, user):
 
     tabs_data = [get_tab_data(tab) for tab in tabs]
 
-    data_ret['tabList'] = tabs_data
+    data_ret['tabs'] = tabs_data
 
     for tab in tabs_data:
         tab_pk = tab['id']
