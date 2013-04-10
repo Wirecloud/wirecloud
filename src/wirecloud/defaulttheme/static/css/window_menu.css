@@ -26,10 +26,15 @@
     font-family: "Courier New", courier;
     color: #990000;
     cursor: move;
+    padding: 9px 15px;
 }
 
 .window_menu > .window_top > h3 {
-    margin: 0;
+    margin-bottom: 0;
+    line-height: normal;
+    font-size: 17pt;
+    font-family: "Courier New";
+    color: #990000;
 }
 
 .window_menu > .window_top > h3::before {
@@ -37,7 +42,7 @@
 }
 
 .window_menu > .window_content, .window_menu > .styled_form > div > table {
-    margin-top: 2ex;
+    padding: 0px 15px;
     clear: both;
     overflow: auto;
 }
