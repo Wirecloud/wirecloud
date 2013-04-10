@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase, Client
 from django.utils import unittest
 
+from wirecloud.platform.context.utils import get_platform_context_current_values, get_workspace_context_current_values
 
 if 'wirecloud.fp74caast' in settings.INSTALLED_APPS:
     # Only import 4caast models if the django app is installed
@@ -13,7 +14,8 @@ if 'wirecloud.fp74caast' in settings.INSTALLED_APPS:
 @unittest.skipIf(not 'wirecloud.fp74caast' in settings.INSTALLED_APPS, '4CaaSt support not enabled')
 class FP74CaastTests(TestCase):
 
-    fixtures = ('4caast_test_data',)
+    fixtures = ('selenium_test_data', '4caast_test_data')
+    tags = ('fp74CaaSt',)
 
     @classmethod
     def setUpClass(cls):
@@ -22,6 +24,32 @@ class FP74CaastTests(TestCase):
 
         cls.client = Client()
 
+    def test_context(self):
+
+        user = User.objects.get(username='4caast_customer')
+
+        platform_context = get_platform_context_current_values(user)
+        self.assertNotIn('tenant_4CaaSt_id', platform_context)
+        self.assertNotIn('SaaS_tenant_4CaaSt_id', platform_context)
+
+        workspace_context = get_workspace_context_current_values(user.userworkspace_set.get(workspace__name="Workspace"))
+        self.assertDictContainsSubset({
+                'tenant_4CaaSt_id': 'org.4caast.customers.4caast_developer.services.app1',
+                'SaaS_tenant_4CaaSt_id': 'org.4caast.customers.4caast_customer.services.app55365'
+            }, workspace_context)
+
+        # Check the context variables are empty for normal users
+        user = User.objects.get(username='user_with_workspaces')
+
+        platform_context = get_platform_context_current_values(user)
+        self.assertNotIn('tenant_4CaaSt_id', platform_context)
+        self.assertNotIn('SaaS_tenant_4CaaSt_id', platform_context)
+
+        workspace_context = get_workspace_context_current_values(user.userworkspace_set.get(workspace__name="ExistingWorkspace"))
+        self.assertDictContainsSubset({
+                'tenant_4CaaSt_id': '',
+                'SaaS_tenant_4CaaSt_id': ''
+            }, workspace_context)
 
     def test_add_tenant(self):
 
