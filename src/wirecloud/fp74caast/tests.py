@@ -15,12 +15,18 @@ class FP74CaastTests(TestCase):
 
     fixtures = ('4caast_test_data',)
 
+    @classmethod
+    def setUpClass(cls):
+
+        super(FP74CaastTests, cls).setUpClass()
+
+        cls.client = Client()
+
+
     def test_add_tenant(self):
 
-        client = Client()
-
         url = reverse('wirecloud.4caast.add_tenant')
-        response = client.get(url + '?message=org.4caast.customers.developer2.services.app2', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        response = self.client.get(url + '?message=org.4caast.customers.developer2.services.app2', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 200)
 
         # Check user exists
@@ -28,10 +34,8 @@ class FP74CaastTests(TestCase):
 
     def test_remove_tenant(self):
 
-        client = Client()
-
         url = reverse('wirecloud.4caast.remove_tenant')
-        response = client.get(url + '?message=org.4caast.customers.4caast_developer.services.app1', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        response = self.client.get(url + '?message=org.4caast.customers.4caast_developer.services.app1', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 204)
 
         # Check user does not exist
@@ -40,10 +44,8 @@ class FP74CaastTests(TestCase):
     @unittest.skip('wip tests')
     def test_ac_deployment(self):
 
-        client = Client()
-
         # Mashups/Widgets/Operators ...
-        response = client.get('/4caast-enabling/remove_tenant?4caastID=', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        response = self.client.get('/4caast-enabling/remove_tenant?4caastID=', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 200)
 
     # moritoring probe
@@ -51,10 +53,8 @@ class FP74CaastTests(TestCase):
 
     def test_saas_enabling(self):
 
-        client = Client()
-
         url = reverse('wirecloud.4caast.add_saas_tenant', kwargs={'creator': '4caast_developer2', 'workspace': 'Workspace'})
-        response = client.get(url + '?message=org.4caast.customers.tourist5.services.app55366', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        response = self.client.get(url + '?message=org.4caast.customers.tourist5.services.app55366', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 201)
 
         # Check user exists
@@ -68,10 +68,8 @@ class FP74CaastTests(TestCase):
 
     def test_saas_disabling(self):
 
-        client = Client()
-
         url = reverse('wirecloud.4caast.remove_saas_tenant', kwargs={'creator': '4caast_developer', 'workspace': 'Workspace'})
-        response = client.get(url + '?message=org.4caast.customers.4caast_customer.services.app55365', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        response = self.client.get(url + '?message=org.4caast.customers.4caast_customer.services.app55365', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 204)
 
         # Check user does not exist
