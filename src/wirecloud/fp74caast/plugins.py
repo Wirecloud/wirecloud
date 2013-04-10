@@ -10,11 +10,29 @@ class FP74CaaStPlugin(WirecloudPlugin):
     def get_urls(self):
         return urlpatterns
 
-    def get_workspace_context_definitions(self):
+    def get_platform_context_definitions(self):
         return {
-            'user_4CaaSt_id': {
-                'label': _('4Caast Id of the user'),
-            },
+            'tenant_4CaaSt_id': {
+                'label': _('Tenant Id (4CaaSt)'),
+            }
+        }
+
+    def get_platform_context_current_values(self, user):
+        try:
+            id_4CaaSt = user.tenantprofile_4CaaSt.id_4CaaSt
+        except:
+            id_4CaaSt = ""
+
+        return {
+            'tenant_4CaaSt_id': id_4CaaSt
+        }
+
+    def get_workspace_context_definitions(self):
+
+        return {
+            'SaaS_tenant_4CaaSt_id': {
+                'label': _('SaaS tenant Id (4CaaSt)'),
+            }
         }
 
     def get_workspace_context_current_values(self, user_workspace):
@@ -22,8 +40,8 @@ class FP74CaaStPlugin(WirecloudPlugin):
         try:
             id_4CaaSt = user_workspace.profile4caast.id_4CaaSt
         except:
-            id_4CaaSt = None
+            id_4CaaSt = ""
 
         return {
-            'user_4CaaSt_id': id_4CaaSt,
+            'SaaS_tenant_4CaaSt_id': id_4CaaSt,
         }
