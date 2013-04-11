@@ -67,6 +67,8 @@ def remove_tenant(request):
     except TenantProfile.DoesNotExist:
         raise Http404
 
+    user.delete()
+
     return HttpResponse(status=204)
 
 @require_POST
