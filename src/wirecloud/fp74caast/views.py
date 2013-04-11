@@ -7,10 +7,12 @@ from django.utils import simplejson
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_GET, require_POST
 
+from wirecloud.catalogue.models import CatalogueResource
+from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews.resource import Resource
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.http import build_error_response, get_content_type
-from wirecloud.commons.utils.template import TemplateParseException
+from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.localcatalogue.utils import install_resource_to_user
 from wirecloud.platform.workspace.packageLinker import PackageLinker
@@ -138,6 +140,85 @@ def add_tenant_ac(request):
     except TemplateParseException, e:
 
         return build_error_response(request, 400, unicode(e.msg))
+
+    return HttpResponse(status=204)
+
+
+@require_POST
+def remove_tenant_ac(request):
+
+    id_4CaaSt = request.GET.get('message', None)
+    fileURL = None
+    file_contents = None
+    content_type = get_content_type(request)[0]
+
+    if content_type == 'multipart/form-data':
+
+        if not 'file' in request.FILES:
+            return build_error_response(request, 400, _('Missing widget file'))
+
+        downloaded_file = request.FILES['file']
+        file_contents = WgtFile(downloaded_file)
+
+    elif content_type == 'application/octet-stream':
+
+        downloaded_file = StringIO(request.raw_post_content)
+        file_contents = WgtFile(downloaded_file)
+
+    else:
+
+        if content_type == 'application/json':
+
+            try:
+                data = simplejson.loads(request.raw_post_data)
+            except Exception, e:
+                msg = _("malformed json data: %s") % unicode(e)
+                return build_error_response(request, 400, msg)
+
+            if 'url' not in data:
+                return build_error_response(request, 400, _('Missing widget URL'))
+
+            fileURL = data.get('url')
+            if 'id_4caast' in data:
+                id_4CaaSt = data.get('id_4caast')
+
+        elif content_type == 'application/x-www-form-urlencoded':
+
+            if 'url' not in request.POST:
+                return build_error_response(request, 400, _('Missing widget URL'))
+
+            fileURL = request.POST['url']
+
+        try:
+            downloaded_file = downloader.download_http_content(fileURL)
+        except:
+            return build_error_response(request, 409, _('Widget content could not be downloaded'))
+
+        downloaded_file = StringIO(downloaded_file)
+        file_contents = WgtFile(downloaded_file)
+
+    # Process 4CaaSt Id
+    username = parse_username(id_4CaaSt)
+
+    user = get_object_or_404(User, username=username)
+    try:
+        if user.tenantprofile_4CaaSt.id_4CaaSt != id_4CaaSt:
+            raise Http404
+    except TenantProfile.DoesNotExist:
+        raise Http404
+
+    # Install uploaded MAC resource
+    if isinstance(file_contents, basestring):
+        file_contents = StringIO(file_contents)
+        wgt_file = WgtFile(file_contents)
+    elif isinstance(file_contents, WgtFile):
+        wgt_file = file_contents
+    else:
+        raise Exception
+
+    template = TemplateParser(wgt_file.get_template())
+    resource = CatalogueResource.objects.get(vendor=template.get_resource_vendor(), short_name=template.get_resource_name(), version=template.get_resource_version())
+    resource.users.remove(user)
 
     return HttpResponse(status=204)
 
