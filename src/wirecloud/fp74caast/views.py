@@ -70,6 +70,7 @@ def remove_tenant(request):
 @require_POST
 def add_tenant_ac(request):
 
+    id_4CaaSt = request.GET.get('message', None)
     fileURL = None
     file_contents = None
     content_type = get_content_type(request)[0]
@@ -101,6 +102,8 @@ def add_tenant_ac(request):
                 return build_error_response(request, 400, _('Missing widget URL'))
 
             fileURL = data.get('url')
+            if 'id_4caast' in data:
+                id_4CaaSt = data.get('id_4caast')
 
         elif content_type == 'application/x-www-form-urlencoded':
 
@@ -117,10 +120,20 @@ def add_tenant_ac(request):
         downloaded_file = StringIO(downloaded_file)
         file_contents = WgtFile(downloaded_file)
 
+    # Process 4CaaSt Id
+    username = parse_username(id_4CaaSt)
+
+    user = get_object_or_404(User, username=username)
+    try:
+        if user.tenantprofile_4CaaSt.id_4CaaSt != id_4CaaSt:
+            raise Http404
+    except TenantProfile.DoesNotExist:
+        raise Http404
+
     # Install uploaded MAC resource
     try:
 
-        install_resource_to_user(request.user, file_contents=file_contents, templateURL=fileURL, packaged=True)
+        install_resource_to_user(user, file_contents=file_contents, templateURL=fileURL, packaged=True)
 
     except TemplateParseException, e:
 
