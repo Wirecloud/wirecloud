@@ -70,7 +70,7 @@ def remove_tenant(request):
     return HttpResponse(status=204)
 
 @require_POST
-def add_tenant_ac(request):
+def deploy_tenant_ac(request):
 
     id_4CaaSt = request.GET.get('message', None)
     fileURL = None
@@ -145,7 +145,7 @@ def add_tenant_ac(request):
 
 
 @require_POST
-def remove_tenant_ac(request):
+def undeploy_tenant_ac(request):
 
     id_4CaaSt = request.GET.get('message', None)
     fileURL = None
