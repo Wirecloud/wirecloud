@@ -20,7 +20,6 @@
 
 import json
 from cStringIO import StringIO
-import os.path
 
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -31,20 +30,18 @@ from django.utils import simplejson
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 
-from wirecloud.catalogue.utils import add_widget_from_wgt, add_resource_from_template
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.views import iframe_error
-from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
-from wirecloud.commons.utils.template import TemplateParseException, TemplateParser
+from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.get_data import get_widget_data
 from wirecloud.platform.models import Widget, IWidget
 from wirecloud.platform.localcatalogue.utils import install_resource_to_user, get_or_add_resource_from_available_marketplaces
-from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue, create_widget_from_template, create_widget_from_wgt
+from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue
 
 
 class ResourceCollection(Resource):
