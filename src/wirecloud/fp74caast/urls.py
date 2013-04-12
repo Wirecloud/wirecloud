@@ -16,6 +16,14 @@ urlpatterns = patterns('wirecloud.fp74caast.views',
         'deploy_tenant_ac',
         name='wirecloud.4caast.deploy_tenant_ac'),
 
+    url(r'^api/4caast-enabling/start_tenant_ac$',
+        'start_tenant_ac',
+        name='wirecloud.4caast.start_tenant_ac'),
+
+    url(r'^api/4caast-enabling/stop_tenant_ac$',
+        'stop_tenant_ac',
+        name='wirecloud.4caast.stop_tenant_ac'),
+
     url(r'^api/4caast-enabling/undeploy_tenant_ac$',
         'undeploy_tenant_ac',
         name='wirecloud.4caast.undeploy_tenant_ac'),
