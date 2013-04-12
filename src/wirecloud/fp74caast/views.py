@@ -24,7 +24,11 @@ from wirecloud.fp74caast.models import Profile4CaaSt, TenantProfile
 
 def parse_username(tenant_id):
 
-    return tenant_id.split('.', 4)[3]
+    id_fields = tenant_id.split('.')
+    if id_fields[0] == 'org':
+        return id_fields[3]
+    else:
+        return id_fields[2]
 
 
 @require_GET
