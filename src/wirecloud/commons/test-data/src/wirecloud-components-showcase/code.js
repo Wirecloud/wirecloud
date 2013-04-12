@@ -572,7 +572,9 @@ var init = function init() {
         {field: 'id', label: '#', width: '3ex', type: 'number'},\n\
         {field: 'description', label: 'description'},\n\
         {field: 'odd', label: 'odd', width: '3ex', sortable: false}\n\
-    ]);\n\
+    ], {\n\
+        id: 'id'\n\
+    });\n\
     layout.getCenterContainer().appendChild(table);\n\
 \n\
     south_layout = new StyledElements.HorizontalLayout({'class': 'input input-prepend input-append'});\n\
@@ -605,7 +607,8 @@ var init = function init() {
         {id: 5, description: 'Fifth Entry', odd: true},\n\
         {id: 6, description: 'Sixth Entry. This entry comes with a more detailed description', odd: false},\n\
         {id: 7, description: 'Seventh Entry', odd: true}\n\
-    ])\n";
+    ])\n\
+    table.addEventListener('click', function (data) { table.select(data.id); });\n";
 
     insertExample("Tables", code);
 
