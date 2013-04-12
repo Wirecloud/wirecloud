@@ -563,7 +563,7 @@ var init = function init() {
      * Table example
      */
     code = "\n\
-    var layout, table, south_layout, text_input, search_icon, search_button;\n\
+    var layout, table, south_layout, text_input, search_addon, search_icon, search_button;\n\
 \n\
     layout = new StyledElements.BorderLayout();\n\
     container.appendChild(layout);\n\
@@ -578,13 +578,15 @@ var init = function init() {
     south_layout = new StyledElements.HorizontalLayout({'class': 'input input-prepend input-append'});\n\
     layout.getSouthContainer().appendChild(south_layout);\n\
 \n\
-    search_icon = new StyledElements.StyledButton({\n\
-        'class': 'icon-search'\n\
-    });\n\
-    south_layout.getWestContainer().appendChild(search_icon);\n\
+    search_addon = new StyledElements.Addon({title: 'Search'});\n\
+    search_icon = document.createElement('i');\n\
+    search_icon.className = 'icon-search';\n\
+    search_addon.appendChild(search_icon);\n\
+    south_layout.getWestContainer().appendChild(search_addon);\n\
 \n\
-    text_input = new StyledElements.StyledTextField();\n\
+    text_input = new StyledElements.StyledTextField({placeholder: 'Search keywords'});\n\
     south_layout.getCenterContainer().appendChild(text_input);\n\
+    search_addon.assignInput(text_input);\n\
 \n\
     search_button = new StyledElements.StyledButton({\n\
         text: 'Search'\n\
