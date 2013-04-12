@@ -311,6 +311,7 @@ class IWidgetTester(object):
     def rename(self, new_name):
 
         self.element.find_element_by_css_selector('.icon-cogs').click()
+        self.testcase.wait_element_visible_by_css_selector('.popup_menu')
         self.testcase.popup_menu_click('Rename')
         name_input = self['element'].find_element_by_css_selector('.widget_menu > span')
         # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
@@ -690,6 +691,7 @@ class WirecloudRemoteTestCase(object):
         self.change_main_view('workspace')
 
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
+        self.wait_element_visible_by_css_selector('.popup_menu')
         self.popup_menu_click('Publish')
 
         self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']")
@@ -746,6 +748,8 @@ class WirecloudRemoteTestCase(object):
             self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         except:
             self.driver.find_element_by_css_selector('#wirecloud_breadcrum .third_level > .icon-menu').click()
+
+        self.wait_element_visible_by_css_selector('.popup_menu')
         self.popup_menu_click(action)
 
     def perform_workspace_action(self, action):
@@ -754,6 +758,7 @@ class WirecloudRemoteTestCase(object):
 
         if 'open' not in popup_button.get_attribute('class'):
             popup_button.click()
+            self.wait_element_visible_by_css_selector('.popup_menu')
 
         self.popup_menu_click(action)
 
