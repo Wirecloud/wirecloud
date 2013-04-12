@@ -232,9 +232,11 @@
             }
         }
 
-        // Highlight selection
-        this._selected_entry_id = id;
-        highlight_selection.call(this);
+        if (id != null) {
+            // Highlight selection
+            this._selected_entry_id = id;
+            highlight_selection.call(this);
+        }
     };
 
     ModelTable.prototype.resizeColumns = function resizeColumns() {
