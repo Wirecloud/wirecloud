@@ -1,4 +1,5 @@
 @import url('/static/css/styled_elements_core.css');
+@import url('/static/css/styledelements/styled_addon.css');
 @import url('/static/css/styledelements/styled_button.css');
 @import url('/static/css/styledelements/styled_notebook.css');
 @import url('/static/css/styledelements/styled_text_field.css');

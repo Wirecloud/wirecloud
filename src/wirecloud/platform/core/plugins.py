@@ -48,6 +48,7 @@ WIRING_EDITOR_FILES = (
 )
 
 STYLED_ELEMENTS_FILES = (
+    'js/StyledElements/Addon.js',
     'js/StyledElements/Fragment.js',
     'js/StyledElements/Pagination.js',
     'js/StyledElements/Button.js',
@@ -89,6 +90,7 @@ WIRING_EDITOR_CSS = (
 
 STYLED_ELEMENTS_CSS = (
     'css/styled_elements_core.css',
+    'css/styledelements/styled_addon.css',
     'css/styledelements/styled_button.css',
     'css/styledelements/styled_notebook.css',
     'css/styledelements/styled_form.css',

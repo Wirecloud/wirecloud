@@ -25,6 +25,7 @@
 
     // StyledElements
     window.StyledElements = {
+        'Addon': window.parent.StyledElements.Addon,
         'Accordion': window.parent.StyledElements.Accordion,
         'Event': window.parent.StyledElements.Event,
         'Form': window.parent.Form,
