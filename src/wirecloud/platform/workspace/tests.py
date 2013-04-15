@@ -495,7 +495,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
         return contents
 
-    def testFillWorkspaceUsingTemplate(self):
+    def test_fill_workspace_using_template(self):
         fillWorkspaceUsingTemplate(self.workspace, self.template1)
         data = get_global_workspace_data(self.workspace, self.user).get_data()
         self.assertEqual(self.workspace.name, 'Testing')
@@ -512,7 +512,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(len(data['tabs']), 4)
         self.assertNotEqual(data['tabs'][2]['name'], data['tabs'][3]['name'])
 
-    def testBuildWorkspaceFromTemplate(self):
+    def test_build_workspace_from_template(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.template1, self.user)
         get_global_workspace_data(self.workspace, self.user)
 
@@ -520,7 +520,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(len(wiring_status['connections']), 1)
         self.assertEqual(wiring_status['connections'][0]['readonly'], False)
 
-    def testBuildWorkspaceFromRdfTemplate(self):
+    def test_build_workspace_from_rdf_template(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate1, self.user)
         get_global_workspace_data(self.workspace, self.user)
 
@@ -528,21 +528,21 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(len(wiring_status['connections']), 1)
         self.assertEqual(wiring_status['connections'][0]['readonly'], False)
 
-    def testBuildWorkspaceFromRdfTemplateUtf8Char(self):
+    def test_build_workspace_from_rdf_template_utf8_char(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate4, self.user)
         data = get_global_workspace_data(workspace, self.user).get_data()
 
         for t in data['tabs']:
             self.assertEqual(t['name'][0:7], u'Pestaña')
 
-    def testBlockedConnections(self):
+    def test_blocked_connections(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.template2, self.user)
 
         wiring_status = json.loads(workspace.wiringStatus)
         self.assertEqual(len(wiring_status['connections']), 1)
         self.assertEqual(wiring_status['connections'][0]['readonly'], True)
 
-    def testBloquedConnectionsRdf(self):
+    def test_bloqued_connections_rdf(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate2, self.user)
 
         wiring_status = json.loads(workspace.wiringStatus)
@@ -573,7 +573,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(wiring_status['connections'][0]['target']['type'], 'iwidget')
         self.assertEqual(wiring_status['connections'][0]['target']['endpoint'], 'slot')
 
-    def testComplexWorkspacesRdf(self):
+    def test_complex_workspaces_rdf(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate3, self.user)
 
         data = get_global_workspace_data(workspace, self.user).get_data()
