@@ -271,6 +271,59 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Workspace should be removed
         self.assertFalse(Workspace.objects.filter(name='ExistingWorkspace').exists())
 
+    def test_workspace_wiring_entry_put_requires_authentication(self):
+
+        url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 1})
+        workspace = Workspace.objects.get(id=1)
+        old_wiring_status = simplejson.loads(workspace.wiringStatus)
+
+        data = simplejson.dumps({
+            'operators': [{'name': 'Operator1'}],
+            'connections': [],
+        })
+        response = self.client.put(url, data, content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+        # Error response should be a dict
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
+        # Workspace wiring status should not have change
+        workspace = Workspace.objects.get(id=1)
+        wiring_status = simplejson.loads(workspace.wiringStatus)
+        self.assertEqual(wiring_status, old_wiring_status)
+
+        # Check using Accept: text/html
+        response = self.client.put(url, data, content_type='application/json', HTTP_ACCEPT='text/html')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+        # Content type of the response should be text/html
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'text/html')
+
+    def test_workspace_wiring_entry_put(self):
+
+        url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 1})
+        new_wiring_status = {
+            'operators': [{'name': 'Operator1'}],
+            'connections': [],
+        }
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = simplejson.dumps(new_wiring_status)
+        response = self.client.put(url, data, content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+
+        # Workspace wiring status should have change
+        workspace = Workspace.objects.get(id=1)
+        wiring_status = simplejson.loads(workspace.wiringStatus)
+        self.assertEqual(wiring_status, new_wiring_status)
+
     def test_tab_collection_post_requires_authentication(self):
 
         url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
