@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012 Universidad Politécnica de Madrid
+# Copyright 2012-2013 Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -38,7 +38,7 @@ __test__ = False
 
 class WiringTestCase(TransactionTestCase):
 
-    fixtures = ['test_data']
+    fixtures = ('test_data',)
 
     def setUp(self):
 
@@ -58,7 +58,7 @@ class WiringTestCase(TransactionTestCase):
 
         self.wiring_url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': self.workspace_id})
 
-    def test_basic_wiring_operations(self):
+    def test_save_basic_wiring_connection(self):
         client = Client()
         client.login(username='test', password='test')
 
@@ -82,7 +82,19 @@ class WiringTestCase(TransactionTestCase):
         response = client.put(self.wiring_url, data, content_type='application/json')
 
         self.assertEqual(response.status_code, 204)
-    test_basic_wiring_operations.tags = ('fiware-ut-6',)
+    test_save_basic_wiring_connection.tags = ('fiware-ut-6',)
+
+    def test_wiring_modification_fails_with_incorrect_user(self):
+        client = Client()
+        client.login(username='test2', password='test')
+
+        data = simplejson.dumps({
+            'operators': [],
+            'connections': [],
+        })
+        response = client.put(self.wiring_url, data, content_type='application/json')
+        self.assertEqual(response.status_code, 403)
+    test_wiring_modification_fails_with_incorrect_user.tags = ('fiware-ut-6',)
 
     def test_basic_wiring_operations_with_read_only_connections(self):
         workspace = Workspace.objects.get(id=1)
@@ -142,19 +154,6 @@ class WiringTestCase(TransactionTestCase):
         response = client.put(self.wiring_url, data, content_type='application/json')
 
         self.assertEqual(response.status_code, 204)
-    test_basic_wiring_operations_with_read_only_connections.tags = ('fiware-ut-6',)
-
-    def test_wiring_modification_fails_with_incorrect_user(self):
-        client = Client()
-        client.login(username='test2', password='test')
-
-        data = simplejson.dumps({
-            'operators': [],
-            'connections': [],
-        })
-        response = client.put(self.wiring_url, data, content_type='application/json')
-        self.assertEqual(response.status_code, 403)
-    test_wiring_modification_fails_with_incorrect_user.tags = ('fiware-ut-6',)
 
     def test_read_only_connections_cannot_be_deleted(self):
 
@@ -239,9 +238,7 @@ class WiringTestCase(TransactionTestCase):
 
 class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
-    tags = ('fiware-ut-6',)
-
-    def test_operators_are_usable_after_uploading(self):
+    def test_operators_are_usable_after_installing(self):
 
         self.login()
 
@@ -255,6 +252,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
         menubar.find_element_by_xpath("//*[contains(@class, 'container ioperator')]//*[text()='TestOperatorSelenium']")
+    test_operators_are_usable_after_installing.tags = ('fiware-ut-6',)
 
     def test_operators_are_not_usable_after_being_uninstalled(self):
 
@@ -270,6 +268,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
         self.assertRaises(NoSuchElementException, menubar.find_element_by_xpath, "//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
+    test_operators_are_not_usable_after_being_uninstalled.tags = ('fiware-ut-6',)
 
     def test_operators_are_not_usable_after_being_deleted(self):
 
@@ -286,7 +285,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
         self.assertRaises(NoSuchElementException, menubar.find_element_by_xpath, "//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
 
-    def test_basic_wiring_operations(self):
+    def test_basic_wiring_editor_operations(self):
         self.login()
 
         self.add_widget_to_mashup('Test', new_name='Test (1)')
@@ -339,3 +338,4 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         with iwidget_context(self.driver, iwidgets[0]['id']):
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, '')
+    test_basic_wiring_editor_operations.tags = ('fiware-ut-6',)
