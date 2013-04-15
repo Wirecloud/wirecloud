@@ -21,7 +21,6 @@
 import json
 from cStringIO import StringIO
 
-from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Q
 from django.http import HttpResponse
@@ -34,7 +33,7 @@ from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.views import iframe_error
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils import downloader
-from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
+from wirecloud.commons.utils.http import authentication_required, build_error_response, get_content_type, supported_request_mime_types
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
@@ -46,7 +45,7 @@ from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue
 
 class ResourceCollection(Resource):
 
-    @method_decorator(login_required)
+    @authentication_required
     @commit_on_http_success
     def read(self, request):
 
@@ -68,7 +67,7 @@ class ResourceCollection(Resource):
 
         return HttpResponse(json.dumps(resources), mimetype='application/json; chatset=UTF-8')
 
-    @method_decorator(login_required)
+    @authentication_required
     @iframe_error
     @supported_request_mime_types(('application/x-www-form-urlencoded', 'application/json', 'multipart/form-data', 'application/octet-stream'))
     @commit_on_http_success
@@ -162,7 +161,7 @@ class ResourceCollection(Resource):
 
 class ResourceEntry(Resource):
 
-    @method_decorator(login_required)
+    @authentication_required
     @commit_on_http_success
     def delete(self, request, vendor, name, version):
 
