@@ -229,7 +229,7 @@
         };
 
         // Send request to uninstall de widget
-        Wirecloud.io.makeRequest(url, {
+        Wirecloud.io.makeRequest(url + '?affected=true', {
             method: 'DELETE',
             onSuccess: uninstallOrDeleteSuccessCallback.bind(context),
             onFailure: uninstallErrorCallback.bind(context),

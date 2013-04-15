@@ -182,7 +182,7 @@ class ResourceEntry(Resource):
                     result['removedIWidgets'].append(iwidget.id)
                     iwidget.delete()
 
-            return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
+            if request.GET.get('affected', 'false').lower() == 'true':
+                return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
-        else:
-            return HttpResponse(status=204)
+        return HttpResponse(status=204)
