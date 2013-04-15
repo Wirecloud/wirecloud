@@ -19,7 +19,6 @@
 
 import json
 
-from django.db.models import Q
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
@@ -78,18 +77,6 @@ class WiringEntry(Resource):
         _invalidate_cached_variable_values(workspace)
 
         return HttpResponse(status=204)
-
-
-class OperatorCollection(Resource):
-
-    def read(self, request):
-
-        response = {}
-        for operator in CatalogueResource.objects.filter(Q(type=2) & (Q(public=True) | Q(users=request.user))):
-            options = json.loads(operator.json_description)
-            response[operator.id] = options
-
-        return HttpResponse(json.dumps(response), mimetype='application/json; chatset=UTF-8')
 
 
 class OperatorEntry(Resource):

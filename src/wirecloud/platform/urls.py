@@ -97,10 +97,6 @@ urlpatterns = patterns('wirecloud.platform.views',
         name='wirecloud.tab_preferences'
     ),
 
-    url(r'^api/operators',
-        wiring_views.OperatorCollection(permitted_methods=('GET',)),
-        name='wirecloud.operators'
-    ),
     url(r'^api/operator/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/html',
         wiring_views.OperatorEntry(permitted_methods=('GET',)),
         name='wirecloud.operator_code_entry'
