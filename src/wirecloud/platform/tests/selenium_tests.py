@@ -28,7 +28,6 @@ from wirecloud.commons.test import uses_extra_resources, iwidget_context, Wirecl
 class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
-    tags = ('fiware-ut-5',)
 
     def test_basic_workspace_operations(self):
 
@@ -74,6 +73,13 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Now we have only one workspace, so we cannot remove it
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.check_popup_menu(('Rename', 'Settings', 'New workspace'), ('Remove',))
+    test_basic_workspace_operations.tags = ('fiware-ut-5',)
+
+    def test_add_widget_from_catalogue(self):
+
+        self.login()
+        self.add_widget_to_mashup('Test')
+    test_add_widget_from_catalogue.tags = ('fiware-ut-5',)
 
     def test_remove_widget_from_workspace(self):
 
@@ -81,11 +87,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         iwidget = self.get_current_iwidgets()[0]
         iwidget.remove()
-
-    def test_add_widget_from_catalogue(self):
-
-        self.login()
-        self.add_widget_to_mashup('Test')
+    test_remove_widget_from_workspace.tags = ('fiware-ut-5',)
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_basic_widget_functionalities(self):
@@ -141,6 +143,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Use api test widget to test other API features
         with iwidget_context(self.driver, api_test_iwidget_id):
             self.assertEqual(self.driver.find_element_by_id('makerequest_test').text, 'Success!!')
+    test_basic_widget_functionalities.tags = ('fiware-ut-5',)
 
     def test_http_cache(self):
 
@@ -235,6 +238,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.assertEqual(self.count_workspace_tabs(), 1)
         self.assertEqual(self.count_iwidgets(), 0)
+    test_http_cache.tags = ('fiware-ut-5',)
 
     def test_create_workspace_from_catalogue(self):
 
@@ -271,13 +275,15 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'hello world!!')
+    test_create_workspace_from_catalogue.tags = ('fiware-ut-5',)
 
-    def test_duplicated_workspaces(self):
+    def test_create_workspace_from_catalogue_duplicated_workspaces(self):
 
         self.login()
         self.create_workspace('Test Mashup')
         self.create_workspace_from_catalogue('Test Mashup')
         self.assertNotEqual(self.get_current_workspace_name(), 'Test Mashup')
+    test_create_workspace_from_catalogue_duplicated_workspaces.tags = ('fiware-ut-5',)
 
     def test_merge_mashup(self):
 
@@ -293,6 +299,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertIsNotNone(tab)
 
         self.assertEqual(self.count_iwidgets(), 0)
+    test_merge_mashup.tags = ('fiware-ut-5',)
 
     def test_workspace_publish(self):
 
