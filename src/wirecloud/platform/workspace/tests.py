@@ -282,7 +282,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
         self.assertEqual(num, count)
 
-    def testBuildTemplateFromWorkspace(self):
+    def test_build_template_from_workspace(self):
 
         options = {
             'vendor': 'Wirecloud Test Suite',
@@ -329,7 +329,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]', 'name', 'tab')
         self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource', 2)
 
-    def testBuildRdfTemplateFromWorkspace(self):
+    def test_build_rdf_template_from_workspace(self):
 
         options = {
             'vendor': u'Wirecloud Test Suite',
@@ -390,7 +390,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertRDFElement(graph, tab, self.DCTERMS, 'title', u'tab')
         self.assertRDFCount(graph, tab, self.WIRE_M, 'hasiWidget', 2)
 
-    def testBuildRdfTemplateFromWorkspaceUtf8Char(self):
+    def test_build_rdf_template_from_workspace_utf8_char(self):
         options = {
             'vendor': u'Wirecloud Test Suite',
             'name': u'Test Mashup with ñ',
@@ -415,7 +415,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         author = graph.objects(mashup_uri, self.DCTERMS['creator']).next()
         self.assertRDFElement(graph, author, self.FOAF, 'name', u'author with é')
 
-    def testBuildUSDLFromWorkspace(self):
+    def test_build_usdl_from_workspace(self):
 
         options = {
             'vendor': u'Wirecloud Test Suite',
