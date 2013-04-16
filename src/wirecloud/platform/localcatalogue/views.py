@@ -120,6 +120,8 @@ class ResourceCollection(Resource):
             else:
                 file_contents = downloaded_file
 
+        # TODO for now, install dependencies if force_create is true
+        install_dep = force_create
         try:
             resource = install_resource_to_user(request.user, file_contents=file_contents, templateURL=templateURL, packaged=packaged, raise_conflicts=force_create)
 
@@ -135,9 +137,12 @@ class ResourceCollection(Resource):
 
             data = get_widget_data(resource.widget, request)
             data['type'] = 'widget'
-            return HttpResponse(simplejson.dumps((data,)), mimetype='application/json; charset=UTF-8')
+            if install_dep:
+                return HttpResponse(simplejson.dumps((data,)), status=201, mimetype='application/json; charset=UTF-8')
+            else:
+                return HttpResponse(simplejson.dumps(data), status=201, mimetype='application/json; charset=UTF-8')
 
-        elif resource.resource_type() == 'mashup':
+        elif install_dep and resource.resource_type() == 'mashup':
             resources = [json.loads(resource.json_description)]
             workspace_info = json.loads(resource.json_description)
             for tab_entry in workspace_info['tabs']:
@@ -153,10 +158,12 @@ class ResourceCollection(Resource):
                 operator = get_or_add_resource_from_available_marketplaces(*op_id_args)
                 resources.append(json.loads(operator.json_description))
 
-            return HttpResponse(simplejson.dumps(resources), mimetype='application/json; charset=UTF-8')
+            return HttpResponse(simplejson.dumps(resources), status=201, mimetype='application/json; charset=UTF-8')
 
-        else:  # Operators
-            return HttpResponse('[' + resource.json_description + ']', mimetype='application/json; charset=UTF-8')
+        elif install_dep:
+            return HttpResponse('[' + resource.json_description + ']', status=201, mimetype='application/json; charset=UTF-8')
+        else:
+            return HttpResponse(resource.json_description, status=201, mimetype='application/json; charset=UTF-8')
 
 
 class ResourceEntry(Resource):
