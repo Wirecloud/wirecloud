@@ -19,15 +19,21 @@
 
 
 import os
+from tempfile import mkdtemp
+import shutil
 
 from django.core.urlresolvers import reverse
 from django.test import Client
 from django.utils import simplejson
 
+from wirecloud.catalogue import utils as catalogue
+from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.commons.test
 from wirecloud.commons.test import LocalDownloader, WirecloudTestCase
 from wirecloud.commons.utils import downloader
+from wirecloud.commons.utils.wgt import WgtDeployer
 from wirecloud.platform.models import Tab, Workspace
+from wirecloud.platform.widget import utils as showcase
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
@@ -37,7 +43,7 @@ __test__ = False
 class ApplicationMashupAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data',)
-    tags = ('rest_api',)
+    tags = ('rest_api', 'fiware-ut-7')
 
     @classmethod
     def setUpClass(cls):
@@ -455,6 +461,148 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 200)
         response_data = simplejson.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
+
+
+class ResourceManagementAPI(WirecloudTestCase):
+
+    fixtures = ('selenium_test_data',)
+    tags = ('rest_api', 'fiware-ut-7')
+
+    @classmethod
+    def setUpClass(cls):
+        super(ResourceManagementAPI, cls).setUpClass()
+
+        cls.client = Client()
+        cls._original_download_function = staticmethod(downloader.download_http_content)
+        downloader.download_http_content = LocalDownloader({
+            'http': {
+                'localhost:8001': os.path.join(os.path.dirname(wirecloud.commons.test.__file__), 'test-data', 'src'),
+            },
+        })
+
+        # catalogue deployer
+        cls.old_catalogue_deployer = catalogue.wgt_deployer
+        cls.catalogue_tmp_dir = mkdtemp()
+        catalogue.wgt_deployer = WgtDeployer(cls.catalogue_tmp_dir)
+
+        # showcase deployer
+        cls.old_deployer = showcase.wgt_deployer
+        cls.showcase_tmp_dir = mkdtemp()
+        showcase.wgt_deployer = WgtDeployer(cls.showcase_tmp_dir)
+
+    @classmethod
+    def tearDownClass(cls):
+
+        downloader.download_http_content = cls._original_download_function
+
+        # deployers
+        catalogue.wgt_deployer = cls.old_catalogue_deployer
+        shutil.rmtree(cls.catalogue_tmp_dir, ignore_errors=True)
+        showcase.wgt_deployer = cls.old_deployer
+        shutil.rmtree(cls.showcase_tmp_dir, ignore_errors=True)
+
+        super(ResourceManagementAPI, cls).tearDownClass()
+
+    def test_resource_collection_read_requires_authentication(self):
+
+        url = reverse('wirecloud_showcase.resource_collection')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+
+    def test_resource_collection_read(self):
+
+        url = reverse('wirecloud_showcase.resource_collection')
+
+        self.client.login(username='admin', password='admin')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+        for resource_id in response_data:
+            resource = response_data[resource_id]
+            self.assertTrue(isinstance(resource, dict))
+            self.assertIn('type', resource)
+            self.assertIn(resource['type'], CatalogueResource.RESOURCE_TYPES)
+            self.assertIn('vendor', resource)
+            self.assertIn('name', resource)
+            self.assertIn('version', resource)
+
+    def test_resource_collection_post_requires_authentication(self):
+
+        url = reverse('wirecloud_showcase.resource_collection')
+
+        response = self.client.post(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+
+    def test_resource_collection_post(self):
+
+        url = reverse('wirecloud_showcase.resource_collection')
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Selenium_1.0.wgt'), 'rb') as f:
+            response = self.client.post(url, data={'file': f}, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertIn('type', response_data)
+        self.assertIn(response_data['type'], CatalogueResource.RESOURCE_TYPES)
+        self.assertIn('vendor', response_data)
+        self.assertIn('name', response_data)
+        self.assertIn('version', response_data)
+
+    def test_resource_entry_read_requires_authentication(self):
+
+        url = reverse('wirecloud_showcase.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+
+    def test_resource_entry_read(self):
+
+        resource_id = [
+            'Wirecloud',
+            'Test',
+            '1.0'
+        ]
+        url = reverse('wirecloud_showcase.resource_entry', args=resource_id)
+        file_name = '_'.join(resource_id) + '.wgt'
+        local_dir = catalogue.wgt_deployer.get_base_dir(*resource_id)
+        dst_file = os.path.join(local_dir, file_name)
+
+        if not os.path.exists(local_dir):
+            os.makedirs(local_dir)
+
+        src_file = os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Selenium_1.0.wgt')
+        shutil.copy(src_file, dst_file)
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_resource_entry_delete_requires_authentication(self):
+
+        url = reverse('wirecloud_showcase.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
+
+        response = self.client.delete(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+
+    def test_resource_entry_delete(self):
+
+        url = reverse('wirecloud_showcase.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
+
+        self.client.login(username='admin', password='admin')
+
+        response = self.client.delete(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
 
 
 class ExtraApplicationMashupAPI(WirecloudTestCase):
