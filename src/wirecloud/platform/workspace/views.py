@@ -394,23 +394,6 @@ class WorkspaceVariableCollection(Resource):
         return HttpResponse(simplejson.dumps(data), mimetype='application/json; charset=UTF-8')
 
 
-class WorkspaceMergerEntry(Resource):
-
-    @authentication_required
-    @commit_on_http_success
-    @no_cache
-    def read(self, request, from_ws_id, to_ws_id):
-        from_ws = get_object_or_404(Workspace, id=from_ws_id)
-        to_ws = get_object_or_404(Workspace, id=to_ws_id)
-
-        packageCloner = PackageCloner()
-
-        to_workspace = packageCloner.merge_workspaces(from_ws, to_ws, request.user)
-
-        result = {'result': 'ok', 'merged_workspace_id': to_workspace.id}
-        return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
-
-
 class WorkspaceSharerEntry(Resource):
 
     @authentication_required
