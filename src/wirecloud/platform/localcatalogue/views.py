@@ -20,16 +20,20 @@
 
 import json
 from cStringIO import StringIO
+import os
 
+from django.conf import settings
 from django.db import IntegrityError
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
-from django.utils.decorators import method_decorator
+from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
+from django.views.static import serve
 
 from wirecloud.catalogue.models import CatalogueResource
+import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.catalogue.views import iframe_error
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils import downloader
@@ -46,7 +50,6 @@ from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue
 class ResourceCollection(Resource):
 
     @authentication_required
-    @commit_on_http_success
     def read(self, request):
 
         resources = {}
@@ -167,6 +170,23 @@ class ResourceCollection(Resource):
 
 
 class ResourceEntry(Resource):
+
+    @authentication_required
+    def read(self, request, vendor, name, version):
+
+        file_name = '_'.join((vendor, name, version)) + '.wgt'
+        base_dir = catalogue_utils.wgt_deployer.get_base_dir(vendor, name, version)
+        local_path = os.path.normpath(os.path.join(base_dir, file_name))
+
+        if not os.path.isfile(local_path):
+            return HttpResponse(status=404)
+
+        if not getattr(settings, 'USE_XSENDFILE', False):
+            return serve(request, local_path, document_root='/')
+        else:
+            response = HttpResponse()
+            response['X-Sendfile'] = smart_str(local_path)
+            return response
 
     @authentication_required
     @commit_on_http_success
