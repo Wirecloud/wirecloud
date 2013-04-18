@@ -19,8 +19,8 @@
 
 
 from django.http import HttpResponse
-from pyoauth2.provider import AuthorizationProvider
 
+from wirecloud.oauth2provider.pyoauth2 import AuthorizationProvider
 from wirecloud.oauth2provider.models import Application, Code, Token
 
 
