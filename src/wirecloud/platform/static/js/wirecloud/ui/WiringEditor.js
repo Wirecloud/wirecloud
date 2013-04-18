@@ -189,6 +189,20 @@ if (!Wirecloud.ui) {
 
         this._keydownListener = keydownListener.bind(this);
         this._keyupListener = keyupListener.bind(this);
+
+        // info del navegador
+        var navegador = navigator.userAgent;
+        if (navegador.indexOf('MSIE') !=-1) {
+            this.navigator = "explorer";
+        } else if (navegador.indexOf('Firefox') !=-1) {
+            this.navigator = "firefox";
+        } else if (navegador.indexOf('Chrome') !=-1) {
+            this.navigator = "chrome";
+        } else if (navegador.indexOf('Opera') !=-1) {
+            this.navigator = "opera";
+        } else {
+            this.navigator = "nisu";
+        }
     };
     WiringEditor.prototype = new StyledElements.Alternative();
 
