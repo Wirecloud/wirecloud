@@ -18,12 +18,21 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from django.http import HttpResponse
 from pyoauth2.provider import AuthorizationProvider
 
 from wirecloud.oauth2provider.models import Application, Code, Token
 
 
 class WirecloudAuthorizationProvider(AuthorizationProvider):
+
+    def _make_response(self, body='', headers=None, status_code=200):
+
+        response = HttpResponse(body, status=status_code)
+        for k, v in headers.iteritems():
+            response[k] = v
+
+        return response
 
     def validate_client_id(self, client_id):
         return Application.objects.filter(client_id=client_id).exists()

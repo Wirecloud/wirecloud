@@ -36,6 +36,7 @@ class Code(models.Model):
     scope = models.CharField(_('Scope'), max_length=255, blank=True)
     code = models.CharField(_('Code'), max_length=255, blank=False)
 
+
 class Token(models.Model):
 
     token = models.CharField(_('Token'), max_length=40, blank=False, primary_key=True)

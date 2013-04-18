@@ -18,7 +18,8 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from django.http import HttpResponse, HttpResponseNotAllowed
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_GET, require_POST
 
 from wirecloud.oauth2provider.provider import WirecloudAuthorizationProvider
 
@@ -26,22 +27,16 @@ from wirecloud.oauth2provider.provider import WirecloudAuthorizationProvider
 provider = WirecloudAuthorizationProvider()
 
 
+@require_GET
+@login_required
 def provide_authorization_code(request):
 
-    pyoauth2_response = provider.get_authorization_code_from_uri(request.get_full_path())
-    response = HttpResponse(pyoauth2_response.content, status=pyoauth2_response.status_code)
-    for k, v in pyoauth2_response.headers.iteritems():
-        response[k] = v
+    params = request.GET.dict()
 
-    return response
+    return provider.get_authorization_code(**params)
 
+
+@require_POST
 def provide_authorization_token(request):
 
-    if request.method == 'POST':
-        pyoauth2_response = provider.get_token_from_post_data(request.POST.dict())
-
-    response = HttpResponse(pyoauth2_response.content, status=pyoauth2_response.status_code)
-    for k, v in pyoauth2_response.headers.iteritems():
-        response[k] = v
-
-    return response
+    return provider.get_token_from_post_data(request.POST.dict())
