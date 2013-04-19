@@ -1,4 +1,4 @@
-from wirecloud.commons.test import WirecloudSeleniumTestCase
+from wirecloud.commons.test import iwidget_context, WirecloudSeleniumTestCase
 
 
 __test__ = False
@@ -18,3 +18,15 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.add_marketplace('fiware', 'http://localhost:8080', 'fiware')
         self.delete_marketplace('fiware')
+
+    def test_ngsi_available_to_widgets(self):
+
+        self.login()
+
+        resource = self.add_packaged_resource_to_catalogue('Wirecloud_ngsi-test-widget_1.0.wgt', 'Wirecloud NGSI API test widget')
+        iwidget = self.instantiate(resource)
+
+        with iwidget_context(self.driver, iwidget['id']):
+            body = self.driver.find_element_by_tag_name('body')
+            self.assertEqual(body.text, 'Success')
+    test_ngsi_available_to_widgets.tags = ('fiware-ut-7',)
