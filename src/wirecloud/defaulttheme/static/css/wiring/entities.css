@@ -169,14 +169,16 @@
     padding: 4px 6px;
     display: inline-block;
     font-weight: normal;
+    margin-top: 1px;
+	margin-bottom: 1px;
 }
 
 .wiring_editor .sources .labelDiv {
-    margin-right: 3px;
+    margin-right: -6px;
 }
 
 .wiring_editor .targets .labelDiv {
-    margin-left: 3px;
+    margin-left: -6px;
 }
 
 /* anchorTree */
@@ -363,7 +365,7 @@
 /* clone mini widget for Drag&Drop from menubar to grid */
 .wiring_editor .border_layout .ioperator.clon, .wiring_editor .border_layout .iwidget.clon {
     position: absolute;
-    font-size: 0.7em;
+    font-size: 0.95em;
     z-index: 20;
     border-radius: 0.25ex 4.7ex 0.25ex 0.25ex;
     overflow: hidden;
@@ -416,13 +418,18 @@
 }
 
 .wiring_editor .highlight.subsumed {
-    background: blue;
+    background: green;
     color: white;
 }
 
 .wiring_editor .highlight.subsumes {
-    background: violet;
-    color: white;
+    background: orange;
+    color: black;
+}
+
+.wiring_editor .highlight.haspart {
+    background: orange;
+    color: black;
 }
 
 .wiring_editor .highlight.disjoint {

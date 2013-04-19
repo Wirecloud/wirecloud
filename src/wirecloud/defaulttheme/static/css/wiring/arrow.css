@@ -82,3 +82,11 @@
     fill:   none;
     stroke-width: 11;
 }
+
+.wiring_editor .canvas .arrow.hollow .arrowbody {
+	stroke: rgb(214, 214, 214);
+}
+
+.wiring_editor .canvas .arrow.hollow .arrowborder {
+	stroke: rgb(209, 122, 122);
+}

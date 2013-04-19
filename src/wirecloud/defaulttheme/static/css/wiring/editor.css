@@ -57,7 +57,7 @@
     padding: 1ex;
 }
 
-.wiring_editor .menubar .styled_expander .widgetsIcon{
+.wiring_editor .menubar .styled_expander .widgetsIcon {
     background: url('../../images/wiring/blue_arrow_right.png');
     position: absolute;
     left: 5px;
@@ -65,7 +65,7 @@
     width: 6px;
 }
 
-.wiring_editor .menubar .styled_expander .operatorsIcon{
+.wiring_editor .menubar .styled_expander .operatorsIcon {
     background: url('../../images/wiring/blue_arrow_right.png');
     position: absolute;
     left: 5px;
