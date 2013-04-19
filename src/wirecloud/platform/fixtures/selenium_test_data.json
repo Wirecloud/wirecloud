@@ -242,6 +242,15 @@
         }
     },
     {
+        "model": "platform.workspace",
+        "pk": 2,
+        "fields": {
+            "name": "Workspace",
+            "creator": 4,
+            "wiringStatus": "{\"operators\": {}, \"connections\": []}"
+        }
+    },
+    {
         "pk": 1,
         "model": "platform.tab",
         "fields": {
@@ -267,6 +276,15 @@
         "fields": {
             "user": 4,
             "workspace": 1,
+            "active": false
+        }
+    },
+    {
+        "model": "platform.userworkspace",
+        "pk": 2,
+        "fields": {
+            "user": 4,
+            "workspace": 2,
             "active": false
         }
     },

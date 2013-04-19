@@ -69,6 +69,24 @@
             'version': resource.getVersion().text,
             'author': resource.getCreator(),
             'description': resource.getDescription(),
+            'type': function () {
+                var label = document.createElement('div');
+                label.textContent = resource.getType();
+                label.className = 'label';
+                switch (resource.getType()) {
+                case 'widget':
+                    label.classList.add('label-success');
+                    break;
+                case 'operator':
+                    label.classList.add('label-warning');
+                    break;
+                case 'mashup':
+                    label.classList.add('label-important');
+                    break;
+                }
+
+                return label;
+            },
             'lastupdate': function () { return resource.date.strftime('%x'); },
             'doc': function () {
                 var button;

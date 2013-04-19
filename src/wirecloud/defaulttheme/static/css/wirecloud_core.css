@@ -223,6 +223,12 @@ h3 {
     z-index: 3;
 }
 
+#loading-window .window_top {
+    padding-bottom: 0px;
+    margin-bottom: 4px;
+    font-size: 120%;
+}
+
 #loading-window .window_title:before {
     content: none;
 }
@@ -245,10 +251,6 @@ h3 {
     z-index: 4;
     margin: 4ex;
     height: 8ex;
-}
-
-#loading-message .window_content {
-    margin-top: 1ex;
 }
 
 #loading-subtask-title {

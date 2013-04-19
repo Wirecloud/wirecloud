@@ -1,5 +1,5 @@
 from wirecloud.platform.tests.plugins import WirecloudPluginTestCase
-from wirecloud.platform.tests.rest_api import ApplicationMashupAPI
+from wirecloud.platform.tests.rest_api import ApplicationMashupAPI, ResourceManagementAPI, ExtraApplicationMashupAPI
 from wirecloud.platform.localcatalogue.tests import LocalCatalogueTestCase, PackagedResourcesTestCase
 from wirecloud.platform.wiring.tests import WiringTestCase
 from wirecloud.platform.widget.tests import CodeTransformationTestCase

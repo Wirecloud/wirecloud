@@ -12,6 +12,22 @@ urlpatterns = patterns('wirecloud.fp74caast.views',
         'remove_tenant',
         name='wirecloud.4caast.remove_tenant'),
 
+    url(r'^api/4caast-enabling/deploy_tenant_ac$',
+        'deploy_tenant_ac',
+        name='wirecloud.4caast.deploy_tenant_ac'),
+
+    url(r'^api/4caast-enabling/start_tenant_ac$',
+        'start_tenant_ac',
+        name='wirecloud.4caast.start_tenant_ac'),
+
+    url(r'^api/4caast-enabling/stop_tenant_ac$',
+        'stop_tenant_ac',
+        name='wirecloud.4caast.stop_tenant_ac'),
+
+    url(r'^api/4caast-enabling/undeploy_tenant_ac$',
+        'undeploy_tenant_ac',
+        name='wirecloud.4caast.undeploy_tenant_ac'),
+
     url(r'^(?P<creator>[^/]+)/(?P<workspace>[^/]+)/4caast-enabling/add_saas_tenant$',
         TenantCollection(permitted_methods=('GET',)),
         name='wirecloud.4caast.add_saas_tenant'),

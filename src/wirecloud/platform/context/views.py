@@ -20,12 +20,14 @@
 from django.http import HttpResponse
 from django.utils import simplejson
 from wirecloud.commons.utils.encoding import LazyEncoder
+from wirecloud.commons.utils.http import authentication_required
 from wirecloud.commons.baseviews import Resource
 from wirecloud.platform.context.utils import get_platform_context, get_workspace_context
 
 
 class PlatformContextCollection(Resource):
 
+    @authentication_required
     def read(self, request):
 
         context = get_platform_context(request.user)

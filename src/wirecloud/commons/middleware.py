@@ -1,5 +1,26 @@
+from django.contrib.auth.middleware import get_user
 from django.core.exceptions import MiddlewareNotUsed
+from django.utils.functional import SimpleLazyObject
 from django.utils.http import http_date, parse_http_date_safe
+
+
+def get_api_user(request):
+
+    from wirecloud.oauth2provider.models import Token
+
+    token = request.META['HTTP_AUTHORIZATION'].split(' ', 1)[1]
+    return Token.objects.get(token=token).user
+
+
+class AuthenticationMiddleware(object):
+
+    def process_request(self, request):
+
+        if 'HTTP_AUTHORIZATION' in request.META:
+            request.user = SimpleLazyObject(lambda: get_api_user(request))
+        else:
+            request.user = SimpleLazyObject(lambda: get_user(request))
+
 
 class ConditionalGetMiddleware(object):
     """

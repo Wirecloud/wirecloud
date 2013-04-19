@@ -39,7 +39,7 @@ from wirecloud.commons.models import TransModel
 
 class CatalogueResource(TransModel):
 
-    RESOURCE_TYPES = ['widget', 'mashup', 'operator']
+    RESOURCE_TYPES = ('widget', 'mashup', 'operator')
     TYPE_CHOICES = (
         (0, 'Widget'),
         (1, 'Mashup'),
@@ -78,7 +78,12 @@ class CatalogueResource(TransModel):
 
     @property
     def local_uri_part(self):
+
         return self.vendor + '/' + self.short_name + '/' + self.version
+
+    def is_available_for(self, user):
+
+        return self.public or self.users.filter(id=user.id).exists() or len(set(self.groups.all()) & set(user.groups.all())) > 0
 
     def delete(self, *args, **kwargs):
 
@@ -106,7 +111,7 @@ class CatalogueResource(TransModel):
         unique_together = ("short_name", "vendor", "version")
 
     def __unicode__(self):
-        return unicode(self.short_name)
+        return unicode(self.local_uri_part)
 
 
 class WidgetWiring(models.Model):

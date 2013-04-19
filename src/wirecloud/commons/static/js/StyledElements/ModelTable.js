@@ -36,6 +36,92 @@
         cell.style.width = (width - paddingLeft - paddingRight) + 'px';
     };
 
+    var highlight_selection = function highlight_selection() {
+        if (this._selected_entry_id in this._current_elements) {
+            this._current_elements[this._selected_entry_id].row.classList.add('highlight');
+        }
+    };
+
+    var paintTable = function paintTable(items) {
+        var i, j, item, row, cell, callback, today, cellContent,
+            column;
+
+        this.pClearTable();
+
+        for (i = 0; i < items.length; i += 1) {
+            item = items[i];
+
+            callback = EzWebExt.bind(this.pRowCallback, {control: this, item: item});
+
+            row = document.createElement('div');
+            row.className = 'row';
+            if ((i % 2) === 1) {
+                EzWebExt.appendClassName(row, 'odd');
+            }
+
+            for (j = 0; j < this.columns.length; j += 1) {
+                column = this.columns[j];
+
+                cell = document.createElement('div');
+                cell.className = 'cell';
+                this.columnsCells[j].push(cell);
+                if (typeof column.width === 'string') {
+                    cell.style.width = column.width;
+                }
+                if (typeof column['class'] === 'string') {
+                    EzWebExt.addClassName(cell, column['class']);
+                }
+
+                if (column.contentBuilder) {
+                    cellContent = column.contentBuilder(item);
+                } else if (column.type === 'date') {
+                    if (this.pGetFieldValue(item, column.field) === '') {
+                        cellContent = '';
+                    } else {
+                        if (!today) {
+                            today = new Date();
+                        }
+                        cellContent = this.pFormatDate(item, column.field, today, column.dateparser);
+                    }
+                } else {
+                    cellContent = this.pGetFieldValue(item, column.field);
+                }
+
+                if (!cellContent) {
+                    cellContent = '';
+                }
+
+                if (typeof cellContent === 'string') {
+                    EzWebExt.setTextContent(cell, cellContent);
+                } else if (typeof cellContent === 'number' || typeof cellContent === 'boolean') {
+                    EzWebExt.setTextContent(cell, "" + cellContent);
+                } else if (cellContent instanceof StyledElements.StyledElement) {
+                    cellContent.insertInto(cell);
+                    this.pComponents.push(cellContent);
+                } else {
+                    cell.appendChild(cellContent);
+                }
+
+                EzWebExt.addEventListener(cell, 'click', callback, false);
+                this.pListeners.push({element: cell, callback: callback});
+
+                row.appendChild(cell);
+                if (typeof this._extract_id === 'function') {
+                    this._current_elements[this._extract_id(item)] = {
+                        row: row,
+                        data: item
+                    };
+                }
+            }
+
+            this.tableBody.appendChild(row);
+        }
+
+        highlight_selection.call(this);
+        this.resizeColumns();
+        this.resizeColumns();
+    };
+
     var ModelTable = function ModelTable(columns, options) {
         var i, column, sort_info, sort_id, defaultOptions;
 
@@ -74,8 +160,10 @@
         this.statusBar.addClassName('statusrow');
 
         this.sortColumn = null;
-        if (options.pagination != null) {
-            this.pagination = options.pagination;
+        if (options.source != null) {
+            this.source = options.source;
+        } else if (options.pagination != null) {
+            this.source = options.pagination;
         } else {
             sort_info = {};
             for (i = 0; i < columns.length; i += 1) {
@@ -88,12 +176,13 @@
                 }
                 sort_info[sort_id] = column;
             }
-            this.pagination = new StyledElements.StaticPaginatedSource({pageSize: 5, sort_info: sort_info});
+            this.source = new StyledElements.StaticPaginatedSource({pageSize: 5, sort_info: sort_info});
         }
-        this.paginationInterface = new PaginationInterface(this.pagination);
+        Object.defineProperty(this, 'pagination', {get: function () { return this.source; }});
+        this.paginationInterface = new PaginationInterface(this.source);
 
         this.pRefreshBody = EzWebExt.bind(this.reload, this);
-        this.pagination.addEventListener('requestEnd', this.pRefreshBody);
+        this.source.addEventListener('requestEnd', this.pRefreshBody);
         this.statusBar.appendChild(this.paginationInterface);
 
         if (options.initialSortColumn === -1) {
@@ -118,12 +207,36 @@
             }
         }
         this.pSortByColumn(options.initialSortColumn, options.initialDescendingOrder);
+
+        this._current_elements = {};
+        if (typeof options.id === 'string') {
+            this._extract_id = function (data) {
+                return data[options.id];
+            };
+        } else if (typeof options.id === 'function') {
+            this._extract_id = options.id;
+        }
     };
     ModelTable.prototype = new StyledElements.StyledElement();
 
     ModelTable.prototype.repaint = function repaint() {
         this.layout.repaint();
         this.resizeColumns();
+    };
+
+    ModelTable.prototype.select = function select(id) {
+        // Unhighlihgt previous selection
+        if (this._selected_entry_id !== null) {
+            if (this._selected_entry_id in this._current_elements) {
+                this._current_elements[this._selected_entry_id].row.classList.remove('highlight');
+            }
+        }
+
+        if (id != null) {
+            // Highlight selection
+            this._selected_entry_id = id;
+            highlight_selection.call(this);
+        }
     };
 
     ModelTable.prototype.resizeColumns = function resizeColumns() {
@@ -188,7 +301,7 @@
         } else {
             order = null;
         }
-        this.pagination.changeOptions({order: order});
+        this.source.changeOptions({order: order});
     };
 
     ModelTable.prototype.pSortByColumnCallback = function pSortByColumnCallback() {
@@ -268,83 +381,11 @@
             this.columnsCells[i] = [];
         }
         this.tableBody.clear();
+        this._current_elements = {};
     };
 
     ModelTable.prototype.reload = function reload() {
-        this.pPaintTable(this.pagination.getCurrentPage());
-    };
-
-    ModelTable.prototype.pPaintTable = function pPaintTable(items) {
-        var i, j, item, row, cell, callback, today, cellContent,
-            column;
-
-        this.pClearTable();
-
-        for (i = 0; i < items.length; i += 1) {
-            item = items[i];
-
-            callback = EzWebExt.bind(this.pRowCallback, {control: this, item: item});
-
-            row = document.createElement('div');
-            row.className = 'row';
-            if ((i % 2) === 1) {
-                EzWebExt.appendClassName(row, 'odd');
-            }
-
-            for (j = 0; j < this.columns.length; j += 1) {
-                column = this.columns[j];
-
-                cell = document.createElement('div');
-                cell.className = 'cell';
-                this.columnsCells[j].push(cell);
-                if (typeof column.width === 'string') {
-                    cell.style.width = column.width;
-                }
-                if (typeof column['class'] === 'string') {
-                    EzWebExt.addClassName(cell, column['class']);
-                }
-
-                if (column.contentBuilder) {
-                    cellContent = column.contentBuilder(item);
-                } else if (column.type === 'date') {
-                    if (this.pGetFieldValue(item, column.field) === '') {
-                        cellContent = '';
-                    } else {
-                        if (!today) {
-                            today = new Date();
-                        }
-                        cellContent = this.pFormatDate(item, column.field, today, column.dateparser);
-                    }
-                } else {
-                    cellContent = this.pGetFieldValue(item, column.field);
-                }
-
-                if (!cellContent) {
-                    cellContent = '';
-                }
-
-                if (typeof cellContent === 'string') {
-                    EzWebExt.setTextContent(cell, cellContent);
-                } else if (typeof cellContent === 'number' || typeof cellContent === 'boolean') {
-                    EzWebExt.setTextContent(cell, "" + cellContent);
-                } else if (cellContent instanceof StyledElements.StyledElement) {
-                    cellContent.insertInto(cell);
-                    this.pComponents.push(cellContent);
-                } else {
-                    cell.appendChild(cellContent);
-                }
-
-                EzWebExt.addEventListener(cell, 'click', callback, false);
-                this.pListeners.push({element: cell, callback: callback});
-
-                row.appendChild(cell);
-            }
-
-            this.tableBody.appendChild(row);
-        }
-
-        this.resizeColumns();
-        this.resizeColumns();
+        paintTable.call(this, this.source.getCurrentPage());
     };
 
     ModelTable.prototype.insertInto = function insertInto() {
@@ -370,8 +411,8 @@
         this.paginationInterface.destroy();
         this.paginationInterface = null;
 
-        this.pagination.destroy();
-        this.pagination = null;
+        this.source.destroy();
+        this.source = null;
 
         this.pRefreshBody = null;
     };

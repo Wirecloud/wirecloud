@@ -292,6 +292,7 @@ var OpManagerFactory = function () {
                 method: 'GET',
                 onSuccess: function (transport) {
                     OpManagerFactory.getInstance().contextManager = new Wirecloud.ContextManager(this, JSON.parse(transport.responseText));
+                    LayoutManagerFactory.getInstance().header._initUserMenu();
                     OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CONTEXT);
                 }
             });

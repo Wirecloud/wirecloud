@@ -98,7 +98,7 @@ function Dragboard(tab, workspace, dragboardElement) {
         this.iWidgets = new Hash();
 
         // For controlling when the iwidgets are totally loaded!
-        this.iwidgets = tabInfo.iwidgetList;
+        this.iwidgets = tabInfo.iwidgets;
         for (i = 0; i < this.iwidgets.length; i += 1) {
             curIWidget = this.iwidgets[i];
 

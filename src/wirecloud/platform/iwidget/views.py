@@ -1,39 +1,25 @@
 # -*- coding: utf-8 -*-
 
-#...............................licence...........................................
-#
-#     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
-#     S.A.Unipersonal (Telefonica I+D)
-#
-#     This file is part of Morfeo EzWeb Platform.
-#
-#     Morfeo EzWeb Platform is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU Affero General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     (at your option) any later version.
-#
-#     Morfeo EzWeb Platform is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU Affero General Public License for more details.
-#
-#     You should have received a copy of the GNU Affero General Public License
-#     along with Morfeo EzWeb Platform.  If not, see <http://www.gnu.org/licenses/>.
-#
-#     Info about members and contributors of the MORFEO project
-#     is available at
-#
-#     http://morfeo-project.org
-#
-#...............................licence...........................................#
+# Copyright 2012-2013 Universidad Politécnica de Madrid
+
+# This file is part of Wirecluod.
+
+# Wirecloud is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Wirecloud is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#
-
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.utils import simplejson
-from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.shortcuts import get_object_or_404
 
@@ -41,41 +27,39 @@ from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.transaction import commit_on_http_success
-from wirecloud.commons.utils.http import build_error_response, supported_request_mime_types
-from wirecloud.platform.get_data import VariableValueCacheManager, get_iwidget_data, get_variable_data
+from wirecloud.commons.utils.http import authentication_required, build_error_response, supported_request_mime_types
+from wirecloud.platform.get_data import VariableValueCacheManager, get_iwidget_data
 from wirecloud.platform.iwidget.utils import SaveIWidget, UpdateIWidget, UpgradeIWidget, deleteIWidget
-from wirecloud.platform.models import Widget, IWidget, Tab, UserWorkspace, Variable, Workspace
+from wirecloud.platform.models import Widget, IWidget, Tab, UserWorkspace, Workspace
 from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue, get_and_add_widget
 
 
 class IWidgetCollection(Resource):
 
-    @method_decorator(login_required)
+    @authentication_required
     @no_cache
     def read(self, request, workspace_id, tab_id):
 
         workspace = get_object_or_404(Workspace, id=workspace_id)
 
-        data_list = {}
         cache_manager = VariableValueCacheManager(workspace, request.user)
         iwidgets = IWidget.objects.filter(tab__workspace__users=request.user, tab__workspace__pk=workspace_id, tab__pk=tab_id)
-        data_list['iWidgets'] = [get_iwidget_data(iwidget, request.user, workspace, cache_manager) for iwidget in iwidgets]
+        data = [get_iwidget_data(iwidget, request.user, workspace, cache_manager) for iwidget in iwidgets]
 
-        return HttpResponse(simplejson.dumps(data_list), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(data), mimetype='application/json; charset=UTF-8')
 
-    @method_decorator(login_required)
+    @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def create(self, request, workspace_id, tab_id):
 
         try:
-            data = simplejson.loads(request.raw_post_data)
+            iwidget = simplejson.loads(request.raw_post_data)
         except simplejson.JSONDecodeError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
-        iwidget = data['iwidget']
-        initial_variable_values = data.get('variable_values', None)
+        initial_variable_values = iwidget.get('variable_values', None)
 
         # iWidget creation
         tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
@@ -89,7 +73,7 @@ class IWidgetCollection(Resource):
 
             return build_error_response(request, 400, msg)
 
-    @method_decorator(login_required)
+    @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id):
@@ -109,7 +93,7 @@ class IWidgetCollection(Resource):
 
 class IWidgetEntry(Resource):
 
-    @method_decorator(login_required)
+    @authentication_required
     @no_cache
     def read(self, request, workspace_id, tab_id, iwidget_id):
 
@@ -120,7 +104,7 @@ class IWidgetEntry(Resource):
 
         return HttpResponse(simplejson.dumps(iwidget_data), mimetype='application/json; charset=UTF-8')
 
-    @method_decorator(login_required)
+    @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id, iwidget_id):
@@ -136,7 +120,7 @@ class IWidgetEntry(Resource):
 
         return HttpResponse(status=204)
 
-    @method_decorator(login_required)
+    @authentication_required
     @commit_on_http_success
     def delete(self, request, workspace_id, tab_id, iwidget_id):
 
@@ -150,7 +134,7 @@ class IWidgetEntry(Resource):
 
 class IWidgetVersion(Resource):
 
-    @method_decorator(login_required)
+    @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id, iwidget_id):
@@ -182,75 +166,5 @@ class IWidgetVersion(Resource):
             widget = get_and_add_widget(iwidget.widget.vendor, iwidget.widget.name, new_version, users)
 
         UpgradeIWidget(iwidget, request.user, widget)
-
-        return HttpResponse(status=204)
-
-
-class IWidgetVariableCollection(Resource):
-
-    @method_decorator(login_required)
-    @no_cache
-    def read(self, request, workspace_id, tab_id, iwidget_id):
-
-        tab = Tab.objects.get(workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
-        variables = Variable.objects.filter(iwidget__tab=tab, iwidget__id=iwidget_id)
-        vars_data = [get_variable_data(variable) for variable in variables]
-
-        return HttpResponse(simplejson.dumps(vars_data), mimetype='application/json; charset=UTF-8')
-
-    @method_decorator(login_required)
-    @supported_request_mime_types(('application/json',))
-    @commit_on_http_success
-    def update(self, request, workspace_id, tab_id, iwidget_id):
-
-        try:
-            received_variables = simplejson.loads(request.raw_post_data)
-        except simplejson.JSONDecodeError, e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
-
-        tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
-        server_variables = Variable.objects.filter(iwidget__tab=tab)
-
-        # Widget variables collection update
-        for varServer in server_variables:
-            for varJSON in received_variables:
-                if (varServer.vardef.pk == varJSON['pk'] and varServer.iwidget.pk == varJSON['iWidget']):
-                    varServer.value = varJSON['value']
-                    varServer.save()
-
-        return HttpResponse(status=204)
-
-
-class IWidgetVariable(Resource):
-
-    @method_decorator(login_required)
-    @no_cache
-    def read(self, request, workspace_id, tab_id, iwidget_id, var_id):
-
-        tab = Tab.objects.get(workspace__user=request.user, workspace__pk=workspace_id, pk=tab_id)
-        variable = get_object_or_404(Variable, iwidget__tab=tab, iwidget__pk=iwidget_id, vardef__pk=var_id)
-        var_data = get_variable_data(variable)
-
-        return HttpResponse(simplejson.dumps(var_data), mimetype='application/json; charset=UTF-8')
-
-    def create(self, request, workspace_id, tab_id, iwidget_id, var_id):
-        return self.update(request, workspace_id, tab_id, iwidget_id, var_id)
-
-    @method_decorator(login_required)
-    @supported_request_mime_types(('application/json',))
-    @commit_on_http_success
-    def update(self, request, workspace_id, tab_id, iwidget_id, var_id):
-
-        try:
-            new_value = simplejson.loads(request.raw_post_data)
-        except simplejson.JSONDecodeError, e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
-
-        tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
-        variable = get_object_or_404(Variable, iwidget__tab=tab, iwidget__pk=iwidget_id, vardef__pk=var_id)
-        variable.value = new_value
-        variable.save()
 
         return HttpResponse(status=204)

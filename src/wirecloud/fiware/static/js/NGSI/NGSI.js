@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2013 Universidad Politécnica de Madrid
+ *     (C) Copyright 2013 CoNWeT Lab - Universidad Politécnica de Madrid
  *
  *     This file is part of ngsijs.
  *
@@ -15,6 +15,23 @@
  *
  *     You should have received a copy of the GNU Affero General Public License
  *     along with ngsijs. If not, see <http://www.gnu.org/licenses/>.
+ *
+ *     Linking this library statically or dynamically with other modules is
+ *     making a combined work based on this library.  Thus, the terms and
+ *     conditions of the GNU Affero General Public License cover the whole
+ *     combination.
+ *
+ *     As a special exception, the copyright holders of this library give you
+ *     permission to link this library with independent modules to produce an
+ *     executable, regardless of the license terms of these independent
+ *     modules, and to copy and distribute the resulting executable under
+ *     terms of your choice, provided that you also meet, for each linked
+ *     independent module, the terms and conditions of the license of that
+ *     module.  An independent module is a module which is not derived from
+ *     or based on this library.  If you modify this library, you may extend
+ *     this exception to your version of the library, but you are not
+ *     obligated to do so.  If you do not wish to do so, delete this
+ *     exception statement from your version.
  *
  */
 
@@ -36,6 +53,10 @@
             SUBSCRIBE_CONTEXT: 'ngsi10/subscribeContext',
             UPDATE_CONTEXT_SUBSCRIPTION: 'ngsi10/updateContextSubscription',
             UNSUBSCRIBE_CONTEXT: 'ngsi10/unsubscribeContext'
+        },
+        proxy_endpoints: {
+            EVENTSOURCE_COLLECTION: 'eventsource',
+            CALLBACK_COLLECTION: 'callbacks'
         }
     };
 
@@ -212,12 +233,29 @@
         });
     };
 
+    var ngsi_build_entity_id_element = function ngsi_build_entity_id_element(doc, entity) {
+        var entityId, id;
+
+        entityId = doc.createElement('entityId');
+
+        if (entity.type != null) {
+            entityId.setAttribute('type', entity.type);
+        }
+        entityId.setAttribute('isPattern', 'false');
+
+        id = doc.createElement('id');
+        NGSI.XML.setTextContent(id, entity.id);
+        entityId.appendChild(id);
+
+        return entityId;
+    };
+
     /* Request builders */
 
     var ngsi_build_register_context_request = function ngsi_build_register_context_request(e, attr, duration, providingApplication, regId) {
-        var doc, list, registration, entityIdList, entity, entityId, i, id,
-            attributeList, attribute, attributeElement, name, type, isDomain,
-            durationElement, registrationIdElement;
+        var doc, list, registration, entityIdList, i, attributeList, attribute,
+            attributeElement, name, type, isDomain, durationElement,
+            registrationIdElement, providingApplicationElement;
 
         doc = NGSI.XML.createDocument(null, 'registerContextRequest');
 
@@ -231,17 +269,7 @@
         registration.appendChild(entityIdList);
 
         for (i = 0; i < e.length; i += 1) {
-            entity = e[i];
-
-            entityId = doc.createElement('entityId');
-            entityId.setAttribute('type', entity.type);
-            entityId.setAttribute('isPattern', 'false');
-
-            id = doc.createElement('id');
-            NGSI.XML.setTextContent(id, entity.id);
-            entityId.appendChild(id);
-
-            entityIdList.appendChild(entityId);
+            entityIdList.appendChild(ngsi_build_entity_id_element(doc, e[i]));
         }
 
         attributeList = doc.createElement('contextRegistrationAttributeList');
@@ -256,16 +284,22 @@
             NGSI.XML.setTextContent(name, attribute.name);
             attributeElement.appendChild(name);
 
-            type = doc.createElement('type');
-            NGSI.XML.setTextContent(type, attribute.type);
-            attributeElement.appendChild(type);
-
             isDomain = doc.createElement('isDomain');
             NGSI.XML.setTextContent(isDomain, 'false');
             attributeElement.appendChild(isDomain);
 
+            if (attribute.type != null) {
+                type = doc.createElement('type');
+                NGSI.XML.setTextContent(type, attribute.type);
+                attributeElement.appendChild(type);
+            }
+
             attributeList.appendChild(attributeElement);
         }
+
+        providingApplicationElement = doc.createElement('providingApplication');
+        NGSI.XML.setTextContent(providingApplicationElement, providingApplication);
+        registration.appendChild(providingApplicationElement);
 
         durationElement = doc.createElement('duration');
         NGSI.XML.setTextContent(durationElement, duration);
@@ -281,8 +315,8 @@
     };
 
     var ngsi_build_query_context_request = function ngsi_build_query_context_request(e, attrNames) {
-        var doc, entityIdList, entity, entityId, i, id,
-            attributeList, attribute, attributeElement;
+        var doc, entityIdList, i, id, attributeList, attribute,
+            attributeElement;
 
         doc = NGSI.XML.createDocument(null, 'queryContextRequest');
 
@@ -290,17 +324,7 @@
         doc.documentElement.appendChild(entityIdList);
 
         for (i = 0; i < e.length; i += 1) {
-            entity = e[i];
-
-            entityId = doc.createElement('entityId');
-            entityId.setAttribute('type', entity.type);
-            entityId.setAttribute('isPattern', 'false');
-
-            id = doc.createElement('id');
-            NGSI.XML.setTextContent(id, entity.id);
-            entityId.appendChild(id);
-
-            entityIdList.appendChild(entityId);
+            entityIdList.appendChild(ngsi_build_entity_id_element(doc, e[i]));
         }
 
         if (Array.isArray(attrNames)) {
@@ -320,9 +344,9 @@
     };
 
     var ngsi_build_update_context_request = function ngsi_build_update_context_request(updateAction, update) {
-        var doc, list, entityIdList, entity, entityId, i, j, id, contextElement,
-            attributeListElement, attributes, attribute, attributeElement,
-            name, type, contextValue, updateActionElement;
+        var doc, list, i, j, contextElement, attributeListElement, attributes,
+            attribute, attributeElement, name, type, contextValue,
+            updateActionElement;
 
         doc = NGSI.XML.createDocument(null, 'updateContextRequest');
 
@@ -334,17 +358,7 @@
             contextElement = doc.createElement('contextElement');
 
             // Entity id
-            entity = update[i].entity;
-
-            entityId = doc.createElement('entityId');
-            entityId.setAttribute('type', entity.type);
-            entityId.setAttribute('isPattern', 'false');
-
-            id = doc.createElement('id');
-            NGSI.XML.setTextContent(id, entity.id);
-            entityId.appendChild(id);
-
-            contextElement.appendChild(entityId);
+            contextElement.appendChild(ngsi_build_entity_id_element(doc, update[i].entity));
 
             // attribute list
             attributes = update[i].attributes;
@@ -357,9 +371,11 @@
                 NGSI.XML.setTextContent(name, attribute.name);
                 attributeElement.appendChild(name);
 
-                type = doc.createElement('type');
-                NGSI.XML.setTextContent(type, attribute.type);
-                attributeElement.appendChild(type);
+                if (attribute.type != null) {
+                    type = doc.createElement('type');
+                    NGSI.XML.setTextContent(type, attribute.type);
+                    attributeElement.appendChild(type);
+                }
 
                 contextValue = doc.createElement('contextValue');
                 NGSI.XML.setTextContent(contextValue, attribute.contextValue);
@@ -380,8 +396,7 @@
     };
 
     var ngsi_build_discover_context_availability_request = function ngsi_build_discover_context_availability_request(e, attr) {
-        var doc, entityIdList, entity, entityId, i, id,
-            attributeList, attribute, attributeElement;
+        var doc, entityIdList, i, attributeList, attribute, attributeElement;
 
         doc = NGSI.XML.createDocument(null, 'discoverContextAvailabilityRequest');
 
@@ -389,17 +404,7 @@
         doc.documentElement.appendChild(entityIdList);
 
         for (i = 0; i < e.length; i += 1) {
-            entity = e[i];
-
-            entityId = doc.createElement('entityId');
-            entityId.setAttribute('type', entity.type);
-            entityId.setAttribute('isPattern', 'false');
-
-            id = doc.createElement('id');
-            NGSI.XML.setTextContent(id, entity.id);
-            entityId.appendChild(id);
-
-            entityIdList.appendChild(entityId);
+            entityIdList.appendChild(ngsi_build_entity_id_element(doc, e[i]));
         }
 
         attributeList = doc.createElement('attributeList');
@@ -416,107 +421,140 @@
         return doc;
     };
 
+    var ngsi_build_subscribe_update_context_availability_request = function ngsi_build_subscribe_update_context_availability_request(rootElement, e, attr, duration, restriction, subscriptionId, callbacks) {
+        var doc, entityIdListElement, i, attributeListElement,
+            attributeElement, referenceElement, durationElement,
+            restrictionElement, attributeExpressionElement,
+            subscriptionIdElement;
 
-    var ngsi_build_subscribe_context_request = function ngsi_build_subscribe_context_request(e, attr, duration, throttling, cond, callbacks) {
-        var doc, entityIdListElement, i, entity, entityIdElement, idElement, attributeListElement, attributeElement, referenceElement, durationElement, notifyConditionsElement, condition, notifyConditionElement, typeElement, condValueListElement, condValueElement, throttlingElement;
-
-        doc = NGSI.XML.createDocument(null, 'subscribeContextRequest');
+        doc = NGSI.XML.createDocument(null, rootElement);
 
         entityIdListElement = doc.createElement('entityIdList');
         doc.documentElement.appendChild(entityIdListElement);
         for (i = 0; i < e.length; i += 1) {
-            entity = e[i];
-
-            entityIdElement = doc.createElement('entityId');
-            entityIdElement.setAttribute('type', entity.type);
-            entityIdElement.setAttribute('isPatter', 'true');
-            entityIdListElement.appendChild(entityIdElement);
-
-            idElement = doc.createElement('id');
-            NGSI.XML.setTextContent(idElement, entity.id);
-            entityIdElement.appendChild(idElement);
+            entityIdListElement.appendChild(ngsi_build_entity_id_element(doc, e[i]));
         }
 
-        attributeListElement = doc.createElement('attributeList');
-        doc.documentElement.appendChild(attributeListElement);
-        for (i = 0; i < attr.length; i += 1) {
-            attributeElement = doc.createElement('attribute');
-            NGSI.XML.setTextContent(attributeElement, attr[i]);
-            attributeListElement.appendChild(attributeElement);
+        if (Array.isArray(attr) && attr.length > 0) {
+            attributeListElement = doc.createElement('attributeList');
+            doc.documentElement.appendChild(attributeListElement);
+            for (i = 0; i < attr.length; i += 1) {
+                attributeElement = doc.createElement('attribute');
+                NGSI.XML.setTextContent(attributeElement, attr[i]);
+                attributeListElement.appendChild(attributeElement);
+            }
         }
 
         referenceElement = doc.createElement('reference');
         NGSI.XML.setTextContent(referenceElement, callbacks.onNotify);
         doc.documentElement.appendChild(referenceElement);
 
-        durationElement = doc.createElement('duration');
-        NGSI.XML.setTextContent(durationElement, duration);
-        doc.documentElement.appendChild(durationElement);
-
-        notifyConditionsElement = doc.createElement('notifyConditions');
-        doc.documentElement.appendChild(notifyConditionsElement);
-        for (i = 0; i < cond.length; i += 1) {
-            condition = cond[i];
-
-            notifyConditionElement = doc.createElement('notifyCondition');
-            notifyConditionsElement.appendChild(notifyConditionElement);
-
-            typeElement = doc.createElement('type');
-            NGSI.XML.setTextContent(typeElement, condition.type);
-            notifyConditionElement.appendChild(typeElement);
-
-            condValueListElement = doc.createElement('condValueList');
-            notifyConditionElement.appendChild(condValueListElement);
-
-            condValueElement = doc.createElement('condValue');
-            condValueListElement.appendChild(condValueElement);
+        if (duration != null) {
+            durationElement = doc.createElement('duration');
+            NGSI.XML.setTextContent(durationElement, duration);
+            doc.documentElement.appendChild(durationElement);
         }
 
-        throttlingElement = doc.createElement('throttling');
-        NGSI.XML.setTextContent(throttlingElement, throttling);
-        doc.documentElement.appendChild(throttlingElement);
+        if (typeof restriction === 'object') {
+            restrictionElement = doc.createElement('restriction');
+            doc.documentElement.appendChild(restrictionElement);
+
+            attributeExpressionElement = doc.createElement('attributeExpression');
+            NGSI.XML.setTextContent(attributeExpressionElement, restriction.attributeExpression);
+            restrictionElement.appendChild(attributeExpressionElement);
+
+            // TODO scope
+        }
+
+        if (subscriptionId != null) {
+            subscriptionIdElement = doc.createElement('subscriptionId');
+            NGSI.XML.setTextContent(subscriptionId, subscriptionId);
+            doc.documentElement.appendChild(subscriptionIdElement);
+        }
 
         return doc;
     };
 
-    var ngsi_build_update_context_subscription_request = function ngsi_build_update_context_subscription_request(subId, duration, throttling, cond) {
+    var ngsi_build_unsubscribe_context_availability_request = function ngsi_build_unsubscribe_context_availability_request(subId) {
+        var doc, subscriptionIdElement;
 
-        var doc, durationElement, subscriptionIdElement, notifyConditionsElement,
-            notifyConditionElement, condition, typeElement, condValueListElement,
-            condValueElement, throttlingElement, i;
-
-        doc = NGSI.XML.createDocument(null, 'updateContextSubscriptionRequest');
-
-        durationElement = doc.createElement('duration');
-        NGSI.XML.setTextContent(durationElement, duration);
-        doc.documentElement.appendChild(durationElement);
+        doc = NGSI.XML.createDocument(null, 'unsubscribeContextAvailabilityRequest');
 
         subscriptionIdElement = doc.createElement('subscriptionId');
         NGSI.XML.setTextContent(subscriptionIdElement, subId);
         doc.documentElement.appendChild(subscriptionIdElement);
 
-        notifyConditionsElement = doc.createElement('notifyConditions');
-        doc.documentElement.appendChild(notifyConditionsElement);
-        for (i = 0; i < cond.length; i += 1) {
-            condition = cond[i];
+        return doc;
+    };
 
-            notifyConditionElement = doc.createElement('notifyCondition');
-            notifyConditionsElement.appendChild(notifyConditionElement);
+    var ngsi_build_subscribe_update_context_request = function ngsi_build_subscribe_update_context_request(rootElement, e, attr, duration, throttling, conditions, onNotify) {
+        var doc, entityIdListElement, i, j, attributeListElement,
+            attributeElement, referenceElement, durationElement,
+            notifyConditionsElement, condition, notifyConditionElement,
+            typeElement, condValueListElement, condValueElement,
+            throttlingElement;
 
-            typeElement = doc.createElement('type');
-            NGSI.XML.setTextContent(typeElement, condition.type);
-            notifyConditionElement.appendChild(typeElement);
+        doc = NGSI.XML.createDocument(null, rootElement);
 
-            condValueListElement = doc.createElement('condValueList');
-            notifyConditionElement.appendChild(condValueListElement);
-
-            condValueElement = doc.createElement('condValue');
-            condValueListElement.appendChild(condValueElement);
+        entityIdListElement = doc.createElement('entityIdList');
+        doc.documentElement.appendChild(entityIdListElement);
+        for (i = 0; i < e.length; i += 1) {
+            entityIdListElement.appendChild(ngsi_build_entity_id_element(doc, e[i]));
         }
 
-        throttlingElement = doc.createElement('throttling');
-        NGSI.XML.setTextContent(throttlingElement, throttling);
-        doc.documentElement.appendChild(throttlingElement);
+        if (Array.isArray(attr)) {
+            attributeListElement = doc.createElement('attributeList');
+            doc.documentElement.appendChild(attributeListElement);
+            for (i = 0; i < attr.length; i += 1) {
+                attributeElement = doc.createElement('attribute');
+                NGSI.XML.setTextContent(attributeElement, attr[i]);
+                attributeListElement.appendChild(attributeElement);
+            }
+        }
+
+        if (rootElement === 'subscribeContextRequest') {
+            referenceElement = doc.createElement('reference');
+            NGSI.XML.setTextContent(referenceElement, onNotify);
+            doc.documentElement.appendChild(referenceElement);
+        }
+
+        if (duration != null) {
+            durationElement = doc.createElement('duration');
+            NGSI.XML.setTextContent(durationElement, duration);
+            doc.documentElement.appendChild(durationElement);
+        }
+
+        if (Array.isArray(conditions)) {
+            notifyConditionsElement = doc.createElement('notifyConditions');
+            doc.documentElement.appendChild(notifyConditionsElement);
+            for (i = 0; i < conditions.length; i += 1) {
+                condition = conditions[i];
+
+                notifyConditionElement = doc.createElement('notifyCondition');
+                notifyConditionsElement.appendChild(notifyConditionElement);
+
+                typeElement = doc.createElement('type');
+                NGSI.XML.setTextContent(typeElement, condition.type);
+                notifyConditionElement.appendChild(typeElement);
+
+                if (Array.isArray(condition.condValues)) {
+                    condValueListElement = doc.createElement('condValueList');
+                    notifyConditionElement.appendChild(condValueListElement);
+
+                    for (j = 0; j < condition.condValues; j += 1) {
+                        condValueElement = doc.createElement('condValue');
+                        NGSI.XML.setTextContent(condValueElement, condition.condValues[j]);
+                        condValueListElement.appendChild(condValueElement);
+                    }
+                }
+            }
+        }
+
+        if (throttling != null) {
+            throttlingElement = doc.createElement('throttling');
+            NGSI.XML.setTextContent(throttlingElement, throttling);
+            doc.documentElement.appendChild(throttlingElement);
+        }
 
         return doc;
     };
@@ -539,7 +577,6 @@
     /* Response parsers */
 
     var parse_register_context_response =  function parse_register_context_response(doc) {
-        var durationElement, data;
 
         if (doc.documentElement.tagName !== 'registerContextResponse') {
             throw new NGSI.InvalidResponseError('');
@@ -551,7 +588,7 @@
         };
     };
 
-    var parse_discover_availability_response = function parse_discover_availability_response(doc) {
+    var parse_discover_context_availability_response = function parse_discover_context_availability_response(doc) {
         var list, registrationResponses, registrationResponse, app,
             entityIdListElement, entityIdList, entityIdElement, nameElement,
             typeElement, entity, idElement, i, j,
@@ -604,6 +641,37 @@
         }
 
         return data;
+    };
+
+    var parse_subscribe_update_context_availability_response = function parse_subscribe_update_context_availability_response(doc) {
+        var data, durationElement, errorCodeElement;
+
+        data = {
+            subscriptionId: NGSI.XML.getTextContent(NGSI.XML.getChildElementByTagName(doc.documentElement, 'subscriptionId'))
+        };
+
+        durationElement = NGSI.XML.getChildElementByTagName(doc.documentElement, 'duration');
+        if (durationElement !== null) {
+            data.duration = NGSI.XML.getTextContent(durationElement);
+        }
+
+        errorCodeElement = NGSI.XML.getChildElementByTagName(doc.documentElement, 'errorCode');
+        if (errorCodeElement !== null) {
+            data.errorCode = NGSI.XML.getTextContent(errorCodeElement);
+        }
+
+        return data;
+    };
+
+    var parse_unsubscribe_context_availability_response = function parse_unsubscribe_context_availability_response(doc) {
+        if (doc.documentElement.tagName !== 'unsubscribeContextAvailabilityResponse') {
+            throw new NGSI.InvalidResponseError('');
+        }
+
+        return {
+            subscriptionId: NGSI.XML.getTextContent(NGSI.XML.getChildElementByTagName(doc.documentElement, 'subscriptionId')),
+            statusCode: NGSI.XML.getTextContent(NGSI.XML.getChildElementByTagName(doc.documentElement, 'statusCode'))
+        };
     };
 
     var parse_context_response_list = function parse_context_response_list(element, options) {
@@ -684,15 +752,24 @@
     };
 
     var parse_subscribe_response_element = function parse_subscribe_response_element(element) {
-        var subIdElement = NGSI.XML.getChildElementByTagName(element, 'subscriptionId');
-        var durationElement = NGSI.XML.getChildElementByTagName(element, 'duration');
-        var throttlingElement = NGSI.XML.getChildElementByTagName(element, 'throttling');
+        var data, durationElement, throttlingElement;
 
-        return {
-            subscriptionId: NGSI.XML.getTextContent(subIdElement),
-            duration: NGSI.XML.getTextContent(durationElement),
-            throttling: NGSI.XML.getTextContent(throttlingElement)
+        var subIdElement = NGSI.XML.getChildElementByTagName(element, 'subscriptionId');
+        data = {
+            subscriptionId: NGSI.XML.getTextContent(subIdElement)
         };
+
+        durationElement = NGSI.XML.getChildElementByTagName(element, 'duration');
+        if (durationElement != null) {
+            data.duration = NGSI.XML.getTextContent(durationElement);
+        }
+
+        throttlingElement = NGSI.XML.getChildElementByTagName(element, 'throttling');
+        if (throttlingElement != null) {
+            data.throttling = NGSI.XML.getTextContent(throttlingElement);
+        }
+
+        return data;
     };
 
     var parse_subscribe_context_response = function parse_subscribe_context_response(doc) {
@@ -728,6 +805,187 @@
             subscriptionId: NGSI.XML.getTextContent(subIdElement)
         };
     };
+
+    var parse_notify_context_request = function parse_notify_context_request(doc, options) {
+        var subscriptionIdElement, originatorElement, data;
+
+        if (doc.documentElement.tagName !== 'notifyContextRequest') {
+            throw new NGSI.InvalidResponseError();
+        }
+
+        data = parse_context_response_list(NGSI.XML.getChildElementByTagName(doc.documentElement, 'contextResponseList'), options);
+
+        if (!options.flat) {
+            data = {elements: data};
+            subscriptionIdElement = NGSI.XML.getChildElementByTagName(doc.documentElement, 'subscriptionId');
+            originatorElement = NGSI.XML.getChildElementByTagName(doc.documentElement, 'originator');
+            data.subscriptionId = NGSI.XML.getTextContent(subscriptionIdElement);
+            data.originator = NGSI.XML.getTextContent(originatorElement);
+        }
+
+        return data;
+    };
+
+    /* NGIS proxy interactions */
+
+    (function () {
+
+    var init = function init() {
+        this.connecting = true;
+
+        this.makeRequest(this.url + NGSI.proxy_endpoints.EVENTSOURCE_COLLECTION, {
+            method: 'POST',
+            context: this,
+            onSuccess: function (response) {
+                this.source_url = response.getHeader('Location');
+                connect_to_eventsource.call(this);
+            },
+            onFailure: function () {
+                this.connected = false;
+                this.connecting = false;
+            }
+        });
+    };
+
+    var connect_to_eventsource = function connect_to_eventsource() {
+        var source, closeTimeout;
+
+        source = new EventSource(this.source_url);
+        source.addEventListener('init', function wait_load(e) {
+            var data, i;
+
+            data = JSON.parse(e.data);
+
+            clearTimeout(closeTimeout);
+            source.removeEventListener('init', wait_load, true);
+            this.connected = true;
+            this.connecting = false;
+            this.connection_id = data.id;
+
+            for (i = 0; i < this.onload_callbacks.length; i += 1) {
+                try {
+                    this.onload_callbacks[i]();
+                } catch (e) {}
+            }
+            this.onload_callbacks = [];
+            this.onerror_callbacks = [];
+
+            source.addEventListener('close', function () {
+                this.connected = false;
+            }.bind(this), true);
+            source.addEventListener('notification', function (e) {
+                var data, callback_id;
+
+                data = JSON.parse(e.data);
+                if (typeof this.callbacks[data.callback_id] === 'function') {
+                    this.callbacks[data.callback_id](data.payload);
+                }
+            }.bind(this), true);
+        }.bind(this), true);
+
+        closeTimeout = setTimeout(function () {
+            var i;
+
+            for (i = 0; i < this.onerror_callbacks.length; i += 1) {
+                try {
+                    this.onerror_callbacks[i]();
+                } catch (e) {}
+            }
+            this.onload_callbacks = [];
+            this.onerror_callbacks = [];
+
+            source.close();
+        }, 30000);
+    };
+
+    var ProxyConnection = function ProxyConnection(url, /* TODO */ makeRequest) {
+        this.connected = false;
+        this.connecting = false;
+        this.url = url;
+        this.makeRequest = makeRequest;
+        this.callbacks = {};
+        this.onload_callbacks = [];
+        this.onerror_callbacks = [];
+    };
+
+    ProxyConnection.prototype.connect = function connect(options) {
+        if (options == null) {
+            options = {};
+        }
+
+        if (this.connected === false && this.connecting === false) {
+            if (typeof options.onSuccess === 'function') {
+                this.onload_callbacks.push(options.onSuccess);
+            }
+
+            if (typeof options.onFailure === 'function') {
+                this.onerror_callbacks.push(options.onFailure);
+            }
+
+            init.call(this);
+        } else {
+            if (typeof options.onSuccess === 'function') {
+                options.onSuccess();
+            }
+        }
+    };
+
+    ProxyConnection.prototype.request_callback = function request_callback(callback, onSuccess, onFailure) {
+        if (typeof callback === 'funtion') {
+            onSuccess(callback);
+            return;
+        }
+
+        var wrappedOnSuccess = function () {
+            this.makeRequest(this.url + NGSI.proxy_endpoints.CALLBACK_COLLECTION, {
+                contentType: 'application/json',
+                postBody: JSON.stringify({connection_id: this.connection_id}),
+                onSuccess: function (response) {
+                    var data = JSON.parse(response.responseText);
+                    this.callbacks[data.callback_id] = callback;
+                    onSuccess(data);
+                }.bind(this),
+                onFailure: function () {
+                    if (typeof onFailure === 'function') {
+                        onFailure();
+                    }
+                }
+            });
+        }.bind(this);
+
+        if (this.connected === false) {
+            this.connect({
+                onSuccess: wrappedOnSuccess,
+                onFailure: function () {
+                    if (typeof onFailure === 'function') {
+                        onFailure();
+                    }
+                }
+            });
+        } else {
+            wrappedOnSuccess();
+        }
+    };
+
+    ProxyConnection.prototype.close_callback = function close_callback(callback_id, onSuccess, onFailure) {
+        this.makeRequest(this.url + NGSI.proxy_endpoints.CALLBACK_COLLECTION + '/' + callback_id, {
+            method: 'DELETE',
+            onSuccess: function (response) {
+                if (typeof onSuccess === 'function') {
+                    onSuccess();
+                }
+            },
+            onFailure: function (response) {
+                if (typeof onFailure === 'function') {
+                    onFailure();
+                }
+            }
+        });
+    };
+
+    window.ProxyConnection = ProxyConnection;
+
+    })();
 
     /* NGSI Connection Error */
 
@@ -767,6 +1025,10 @@
 
         if (typeof options.requestFunction === 'function') {
             this.makeRequest = options.requestFunction;
+        }
+
+        if (typeof options.ngsi_proxy_url === 'string') {
+            this.ngsi_proxy = new ProxyConnection(options.ngsi_proxy_url, this.makeRequest);
         }
     };
 
@@ -840,19 +1102,70 @@
         var payload = ngsi_build_discover_context_availability_request(e, attr);
         var url = this.url + NGSI.endpoints.DISCOVER_CONTEXT_AVAILABILITY;
 
-        makeXMLRequest.call(this, url, payload, parse_discover_availability_response, callbacks);
+        makeXMLRequest.call(this, url, payload, parse_discover_context_availability_response, callbacks);
     };
 
-    NGSI.Connection.prototype.createAvailabilitySubscription = function discoverAvailabilitySubscription(e, attr, duration, callback) {
-        throw new Error('TBD');
+    NGSI.Connection.prototype.createAvailabilitySubscription = function discoverAvailabilitySubscription(e, attr, duration, restriction, callbacks) {
+
+        if (!Array.isArray(e) || e.length === 0) {
+            throw new TypeError();
+        }
+
+        if (attr != null && !Array.isArray(attr)) {
+            throw new TypeError();
+        }
+
+        if (callbacks == null) {
+            callbacks = {};
+        }
+        if (typeof callbacks !== 'object') {
+            throw new TypeError();
+        }
+
+        var payload = ngsi_build_subscribe_update_context_availability_request('subscribeContextAvailabilityRequest', e, attr, duration, restriction);
+        var url = this.url + NGSI.endpoints.SUBSCRIBE_CONTEXT_AVAILABILITY;
+
+        makeXMLRequest.call(this, url, payload, parse_subscribe_update_context_availability_response, callbacks);
     };
 
-    NGSI.Connection.prototype.updateAvailabilitySubscription = function updateAvailabilitySubscription(subId, e, attr, duration, callback) {
-        throw new Error('TBD');
+    NGSI.Connection.prototype.updateAvailabilitySubscription = function updateAvailabilitySubscription(subId, e, attr, duration, restriction, callbacks) {
+        if (!Array.isArray(e) || e.length === 0) {
+            throw new TypeError();
+        }
+
+        if (attr != null && !Array.isArray(attr)) {
+            throw new TypeError();
+        }
+
+        if (callbacks == null) {
+            callbacks = {};
+        }
+        if (typeof callbacks !== 'object') {
+            throw new TypeError();
+        }
+
+        var payload = ngsi_build_subscribe_update_context_availability_request('updateContextAvailabilitySubscriptionRequest', e, attr, duration, restriction, subId);
+        var url = this.url + NGSI.endpoints.UPDATE_CONTEXT_AVAILABILITY_SUBSCRIPTION;
+
+        makeXMLRequest.call(this, url, payload, parse_subscribe_update_context_availability_response, callbacks);
     };
 
-    NGSI.Connection.prototype.cancelAvailabilitySubscription = function cancelAvailabilitySubscription(subId) {
-        throw new Error('TBD');
+    NGSI.Connection.prototype.cancelAvailabilitySubscription = function cancelAvailabilitySubscription(subId, callbacks) {
+        if (subId == null) {
+            throw new TypeError();
+        }
+
+        if (callbacks == null) {
+            callbacks = {};
+        }
+        if (typeof callbacks !== 'object') {
+            throw new TypeError();
+        }
+
+        var payload = ngsi_build_unsubscribe_context_availability_request(subId);
+        var url = this.url + NGSI.endpoints.UNSUBSCRIBE_CONTEXT_AVAILABILITY;
+
+        makeXMLRequest.call(this, url, payload, parse_unsubscribe_context_availability_response, callbacks);
     };
 
     NGSI.Connection.prototype.query = function query(e, attrNames, callbacks) {
@@ -898,6 +1211,17 @@
     };
 
     NGSI.Connection.prototype.addAttributes = function addAttributes(toAdd, callbacks) {
+        if (!Array.isArray(toAdd) || toAdd.length === 0) {
+            throw new TypeError();
+        }
+
+        if (callbacks == null) {
+            callbacks = {};
+        }
+        if (typeof callbacks !== 'object') {
+            throw new TypeError();
+        }
+
         var payload = ngsi_build_update_context_request('APPEND', toAdd);
         var url = this.url + NGSI.endpoints.UPDATE_CONTEXT;
 
@@ -905,6 +1229,17 @@
     };
 
     NGSI.Connection.prototype.deleteAttributes = function deleteAttributes(toDelete, callbacks) {
+        if (!Array.isArray(toDelete) || toDelete.length === 0) {
+            throw new TypeError();
+        }
+
+        if (callbacks == null) {
+            callbacks = {};
+        }
+        if (typeof callbacks !== 'object') {
+            throw new TypeError();
+        }
+
         var payload = ngsi_build_update_context_request('DELETE', toDelete);
         var url = this.url + NGSI.endpoints.UPDATE_CONTEXT;
 
@@ -912,20 +1247,82 @@
     };
 
     NGSI.Connection.prototype.createSubscription = function createSubscription(e, attr, duration, throttling, cond, callbacks) {
-        var payload = ngsi_build_subscribe_context_request(e, attr, duration, throttling, cond, callbacks);
-        var url = this.url + NGSI.endpoints.SUBSCRIBE_CONTEXT;
+        if (!Array.isArray(e) || e.length === 0) {
+            throw new TypeError();
+        }
 
-        makeXMLRequest.call(this, url, payload, parse_subscribe_context_response, callbacks);
+        if (callbacks == null || typeof callbacks !== 'object') {
+            throw new TypeError();
+        }
+        if (typeof callbacks.onNotify != 'string' && typeof callbacks.onNotify != 'function') {
+            throw new TypeError('Invalid onNotify callback');
+        }
+        if (typeof callbacks.onNotify === 'function' && this.ngsi_proxy == null) {
+            throw new Error('A ngsi-proxy is needed for using local onNotify callbacks');
+        }
+
+        var url = this.url + NGSI.endpoints.SUBSCRIBE_CONTEXT;
+        if (typeof callbacks.onNotify === 'function' && this.ngsi_proxy != null) {
+
+            var onNotify = function onNotify(payload) {
+                var doc = NGSI.XML.parseFromString(payload, 'application/xml');
+                var data = parse_notify_context_request(doc, callbacks);
+                callbacks.onNotify(data);
+            };
+
+            this.ngsi_proxy.request_callback(onNotify, function (proxy_callback) {
+                var payload = ngsi_build_subscribe_update_context_request('subscribeContextRequest', e, attr, duration, throttling, cond, proxy_callback.url);
+
+                var oldOnFailure = callbacks.onFailure;
+                callbacks.onFailure = function () {
+                    this.ngsi_proxy.close_callback(proxy_callback.callback_id);
+                    if (typeof oldOnFailure === 'function') {
+                        oldOnFailure();
+                    }
+                }.bind(this);
+
+                makeXMLRequest.call(this, url, payload, parse_subscribe_context_response, callbacks);
+            }.bind(this), function () {
+                if (typeof callbacks.onFailure === 'function') {
+                    callbacks.onFailure();
+                }
+            });
+        } else {
+            var payload = ngsi_build_subscribe_update_context_request('subscribeContextRequest', e, attr, duration, throttling, cond, callbacks.onNotify);
+            makeXMLRequest.call(this, url, payload, parse_subscribe_context_response, callbacks);
+        }
     };
 
     NGSI.Connection.prototype.updateSubscription = function updateSubscription(subId, duration, throttling, cond, callbacks) {
-        var payload = ngsi_build_update_context_subscription_request(subId, duration, throttling, cond);
+        if (subId == null) {
+            throw new TypeError();
+        }
+
+        if (callbacks == null) {
+            callbacks = {};
+        }
+        if (typeof callbacks !== 'object') {
+            throw new TypeError();
+        }
+
+        var payload = ngsi_build_subscribe_update_context_request('updateContextSubscriptionRequest', subId, duration, throttling, cond);
         var url = this.url + NGSI.endpoints.UPDATE_CONTEXT_SUBSCRIPTION;
 
         makeXMLRequest.call(this, url, payload, parse_update_context_subscription_response, callbacks);
     };
 
     NGSI.Connection.prototype.cancelSubscription = function cancelSubscription(subId, callbacks) {
+        if (subId == null) {
+            throw new TypeError();
+        }
+
+        if (callbacks == null) {
+            callbacks = {};
+        }
+        if (typeof callbacks !== 'object') {
+            throw new TypeError();
+        }
+
         var payload = ngsi_build_unsubscribe_context_request(subId);
         var url = this.url + NGSI.endpoints.UNSUBSCRIBE_CONTEXT;
 

@@ -8,10 +8,6 @@ from wirecloud.commons.utils.db import save_alternative
 #########################################
 
 
-def get_fk_tuple(obj, fk_field):
-    return getattr(obj, fk_field)
-
-
 def get_tuple(app_label, module_name, tuple_id):
     model = get_model(app_label, module_name)
     return model.objects.get(id=tuple_id)
@@ -196,7 +192,7 @@ class PackageCloner:
         self.mapping = MappingCollection()
         self.fks = FKCollection()
         self.m2ms = Many2ManyCollection()
-        self.final_tables = ('User', 'VariableDef', 'Widget', 'PublishedWorkspace', 'Filter', 'UserWorkspace', 'RemoteChannel')
+        self.final_tables = ('User', 'VariableDef', 'Widget', 'PublishedWorkspace', 'UserWorkspace')
 
     def is_final_table(self, table_name):
         return table_name in self.final_tables

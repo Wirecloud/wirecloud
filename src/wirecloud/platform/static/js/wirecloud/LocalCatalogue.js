@@ -69,7 +69,9 @@
             layoutManager.logSubTask(gettext('Removing affected iWidgets'));
             opManager = OpManagerFactory.getInstance();
             for (i = 0; i < result.removedIWidgets.length; i += 1) {
-                opManager.removeInstance(result.removedIWidgets[i], true);
+                if (opManager.activeWorkspace.getIWidget(result.removedIWidgets[i]) != null) {
+                    opManager.removeInstance(result.removedIWidgets[i], true);
+                }
             }
 
             layoutManager.logSubTask(gettext('Purging widget info'));
@@ -227,7 +229,7 @@
         };
 
         // Send request to uninstall de widget
-        Wirecloud.io.makeRequest(url, {
+        Wirecloud.io.makeRequest(url + '?affected=true', {
             method: 'DELETE',
             onSuccess: uninstallOrDeleteSuccessCallback.bind(context),
             onFailure: uninstallErrorCallback.bind(context),

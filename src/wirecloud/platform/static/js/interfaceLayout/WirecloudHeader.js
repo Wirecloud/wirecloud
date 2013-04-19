@@ -41,7 +41,6 @@ var WirecloudHeader = function () {
     this.wrapperElement.insertBefore(menu_wrapper, this.wrapperElement.firstChild);
 
     this._initMenuBar();
-    this._initUserMenu();
 }
 
 WirecloudHeader.prototype._initMenuBar = function () {
@@ -82,12 +81,18 @@ WirecloudHeader.prototype._initUserMenu = function () {
 
     this.user_button = new StyledElements.PopupButton({
         'class': 'btn-success',
-        'text': ezweb_user_name
+        'text': OpManagerFactory.getInstance().contextManager.get('username')
     });
     this.user_button.insertInto(wrapper);
 
     user_menu = this.user_button.getPopupMenu();
     user_menu.append(new StyledElements.MenuItem(gettext('Settings'), OpManagerFactory.getInstance().showPlatformPreferences));
+
+    if (OpManagerFactory.getInstance().contextManager.get('isstaff') === true && 'DJANGO_ADMIN' in Wirecloud.URLs) {
+        user_menu.append(new StyledElements.MenuItem(gettext('DJango Admin panel'), function () {
+            window.open(Wirecloud.URLs.DJANGO_ADMIN, '_blank');
+        }));
+    }
     user_menu.append(new StyledElements.MenuItem(gettext('Sign out'), OpManagerFactory.getInstance().logout));
 };
 

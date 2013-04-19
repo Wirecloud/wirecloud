@@ -80,18 +80,8 @@ var URIs = {
   GET_SHARE_GROUPS: new Template('/workspace/#{workspace_id}/share/groups'),
   POST_CHECK_VERSIONS: '/user/{{ user.username }}/catalogue/versions',
   FILE_UPLOADER: '/uploader',
-  BASIC_THEME: '/ezweb/themes/default',
   ACTIVE_THEME: '{{ STATIC_URL }}'
 };
-
-var ezweb_user_name = '{{ user.username }}';
-
-var _SKINS = ["default"];
-//default skin for workspaces. Users may change the skin of a workspace afterwards
-var _DEFAULT_SKIN = 'default';
-
-{% block policies %}
-{% endblock %}
 ]]>
 </script>
 

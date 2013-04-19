@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012 Universidad Politécnica de Madrid
+# Copyright 2012-2013 Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -19,7 +19,6 @@
 
 import json
 
-from django.db.models import Q
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
@@ -27,7 +26,7 @@ from django.utils.translation import ugettext as _
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource
-from wirecloud.commons.utils.http import get_absolute_reverse_url
+from wirecloud.commons.utils.http import authentication_required, get_absolute_reverse_url
 from wirecloud.platform.get_data import _invalidate_cached_variable_values
 from wirecloud.platform.models import Workspace
 from wirecloud.platform.wiring.utils import generate_xhtml_operator_code
@@ -35,6 +34,7 @@ from wirecloud.platform.wiring.utils import generate_xhtml_operator_code
 
 class WiringEntry(Resource):
 
+    @authentication_required
     def update(self, request, workspace_id):
 
         content_type = request.META.get('CONTENT_TYPE', '')
@@ -78,18 +78,6 @@ class WiringEntry(Resource):
         _invalidate_cached_variable_values(workspace)
 
         return HttpResponse(status=204)
-
-
-class OperatorCollection(Resource):
-
-    def read(self, request):
-
-        response = {}
-        for operator in CatalogueResource.objects.filter(Q(type=2) & (Q(public=True) | Q(users=request.user))):
-            options = json.loads(operator.json_description)
-            response[operator.id] = options
-
-        return HttpResponse(json.dumps(response), mimetype='application/json; chatset=UTF-8')
 
 
 class OperatorEntry(Resource):

@@ -1,5 +1,25 @@
 # -*- coding: utf-8 -*-
 
+# Copyright 2012-2013 Universidad Politécnica de Madrid
+
+# This file is part of Wirecloud.
+
+# Wirecloud is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Wirecloud is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+
+
+# -*- coding: utf-8 -*-
+
 import codecs
 import os
 import rdflib
@@ -50,10 +70,10 @@ class WorkspaceTestCase(CacheTestCase):
 
         workspace = Workspace.objects.get(pk=1)
         data = get_global_workspace_data(workspace, self.user).get_data()
-        self.assertEqual(len(data['tabList']), 1)
+        self.assertEqual(len(data['tabs']), 1)
 
-        tab = data['tabList'][0]
-        variables = tab['iwidgetList'][0]['variables']
+        tab = data['tabs'][0]
+        variables = tab['iwidgets'][0]['variables']
         self.assertEqual(variables['password']['value'], '')
         self.assertEqual(variables['password']['secure'], True)
         self.assertEqual(variables['username']['value'], 'test_username')
@@ -126,7 +146,7 @@ class WorkspaceTestCase(CacheTestCase):
 
         # Check cache invalidation
         data = get_global_workspace_data(workspace, self.user).get_data()
-        tab_list = data['tabList']
+        tab_list = data['tabs']
 
         self.assertEqual(len(tab_list), 2)
 
@@ -147,7 +167,7 @@ class WorkspaceTestCase(CacheTestCase):
 
         # Check that other_user can access to the shared workspace
         data = get_global_workspace_data(workspace, other_user).get_data()
-        iwidget_list = data['tabList'][0]['iwidgetList']
+        iwidget_list = data['tabs'][0]['iwidgets']
         self.assertEqual(len(iwidget_list), 2)
 
         # Add a new iWidget to the workspace
@@ -167,7 +187,7 @@ class WorkspaceTestCase(CacheTestCase):
         SaveIWidget(iwidget_data, self.user, tab, {})
 
         data = get_global_workspace_data(workspace, other_user).get_data()
-        iwidget_list = data['tabList'][0]['iwidgetList']
+        iwidget_list = data['tabs'][0]['iwidgets']
         self.assertEqual(len(iwidget_list), 3)
 
 
@@ -200,7 +220,7 @@ class WorkspaceCacheTestCase(CacheTestCase):
         self.assertEqual(result.status_code, 200)
 
         data = get_global_workspace_data(self.workspace, self.user).get_data()
-        variables = data['tabList'][0]['iwidgetList'][0]['variables']
+        variables = data['tabs'][0]['iwidgets'][0]['variables']
         self.assertEqual(variables['password']['value'], '')
         self.assertEqual(variables['password']['secure'], True)
         self.assertEqual(variables['username']['value'], 'new_username')
@@ -225,14 +245,14 @@ class WorkspaceCacheTestCase(CacheTestCase):
 
         data = get_global_workspace_data(self.workspace, self.user).get_data()
 
-        iwidget_list = data['tabList'][0]['iwidgetList']
+        iwidget_list = data['tabs'][0]['iwidgets']
         self.assertEqual(len(iwidget_list), 3)
 
     def test_widget_deletion_invalidates_cache(self):
 
         deleteIWidget(IWidget.objects.get(pk=1), self.user)
         data = get_global_workspace_data(self.workspace, self.user).get_data()
-        iwidget_list = data['tabList'][0]['iwidgetList']
+        iwidget_list = data['tabs'][0]['iwidgets']
         self.assertEqual(len(iwidget_list), 1)
 
 
@@ -282,7 +302,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
         self.assertEqual(num, count)
 
-    def testBuildTemplateFromWorkspace(self):
+    def test_build_template_from_workspace(self):
 
         options = {
             'vendor': 'Wirecloud Test Suite',
@@ -329,7 +349,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]', 'name', 'tab')
         self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource', 2)
 
-    def testBuildRdfTemplateFromWorkspace(self):
+    def test_build_rdf_template_from_workspace(self):
 
         options = {
             'vendor': u'Wirecloud Test Suite',
@@ -390,7 +410,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertRDFElement(graph, tab, self.DCTERMS, 'title', u'tab')
         self.assertRDFCount(graph, tab, self.WIRE_M, 'hasiWidget', 2)
 
-    def testBuildRdfTemplateFromWorkspaceUtf8Char(self):
+    def test_build_rdf_template_from_workspace_utf8_char(self):
         options = {
             'vendor': u'Wirecloud Test Suite',
             'name': u'Test Mashup with ñ',
@@ -415,7 +435,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         author = graph.objects(mashup_uri, self.DCTERMS['creator']).next()
         self.assertRDFElement(graph, author, self.FOAF, 'name', u'author with é')
 
-    def testBuildUSDLFromWorkspace(self):
+    def test_build_usdl_from_workspace(self):
 
         options = {
             'vendor': u'Wirecloud Test Suite',
@@ -495,24 +515,24 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
         return contents
 
-    def testFillWorkspaceUsingTemplate(self):
+    def test_fill_workspace_using_template(self):
         fillWorkspaceUsingTemplate(self.workspace, self.template1)
         data = get_global_workspace_data(self.workspace, self.user).get_data()
         self.assertEqual(self.workspace.name, 'Testing')
-        self.assertEqual(len(data['tabList']), 2)
+        self.assertEqual(len(data['tabs']), 2)
 
         # Workspace template 2 adds a new Tab
         fillWorkspaceUsingTemplate(self.workspace, self.template2)
         data = get_global_workspace_data(self.workspace, self.user).get_data()
-        self.assertEqual(len(data['tabList']), 3)
+        self.assertEqual(len(data['tabs']), 3)
 
         # Check that we handle the case where there are 2 tabs with the same name
         fillWorkspaceUsingTemplate(self.workspace, self.template2)
         data = get_global_workspace_data(self.workspace, self.user).get_data()
-        self.assertEqual(len(data['tabList']), 4)
-        self.assertNotEqual(data['tabList'][2]['name'], data['tabList'][3]['name'])
+        self.assertEqual(len(data['tabs']), 4)
+        self.assertNotEqual(data['tabs'][2]['name'], data['tabs'][3]['name'])
 
-    def testBuildWorkspaceFromTemplate(self):
+    def test_build_workspace_from_template(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.template1, self.user)
         get_global_workspace_data(self.workspace, self.user)
 
@@ -520,7 +540,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(len(wiring_status['connections']), 1)
         self.assertEqual(wiring_status['connections'][0]['readonly'], False)
 
-    def testBuildWorkspaceFromRdfTemplate(self):
+    def test_build_workspace_from_rdf_template(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate1, self.user)
         get_global_workspace_data(self.workspace, self.user)
 
@@ -528,21 +548,21 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(len(wiring_status['connections']), 1)
         self.assertEqual(wiring_status['connections'][0]['readonly'], False)
 
-    def testBuildWorkspaceFromRdfTemplateUtf8Char(self):
+    def test_build_workspace_from_rdf_template_utf8_char(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate4, self.user)
         data = get_global_workspace_data(workspace, self.user).get_data()
 
-        for t in data['tabList']:
+        for t in data['tabs']:
             self.assertEqual(t['name'][0:7], u'Pestaña')
 
-    def testBlockedConnections(self):
+    def test_blocked_connections(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.template2, self.user)
 
         wiring_status = json.loads(workspace.wiringStatus)
         self.assertEqual(len(wiring_status['connections']), 1)
         self.assertEqual(wiring_status['connections'][0]['readonly'], True)
 
-    def testBloquedConnectionsRdf(self):
+    def test_bloqued_connections_rdf(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate2, self.user)
 
         wiring_status = json.loads(workspace.wiringStatus)
@@ -555,15 +575,15 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         workspace, _junk = buildWorkspaceFromTemplate(template3, self.user)
         data = get_global_workspace_data(workspace, self.user).get_data()
 
-        self.assertEqual(len(data['tabList']), 4)
-        self.assertEqual(data['tabList'][0]['name'], 'Tab')
-        self.assertEqual(len(data['tabList'][0]['iwidgetList']), 1)
-        self.assertEqual(data['tabList'][1]['name'], 'Tab 2')
-        self.assertEqual(len(data['tabList'][1]['iwidgetList']), 1)
-        self.assertEqual(data['tabList'][2]['name'], 'Tab 3')
-        self.assertEqual(len(data['tabList'][2]['iwidgetList']), 0)
-        self.assertEqual(data['tabList'][3]['name'], 'Tab 4')
-        self.assertEqual(len(data['tabList'][3]['iwidgetList']), 0)
+        self.assertEqual(len(data['tabs']), 4)
+        self.assertEqual(data['tabs'][0]['name'], 'Tab')
+        self.assertEqual(len(data['tabs'][0]['iwidgets']), 1)
+        self.assertEqual(data['tabs'][1]['name'], 'Tab 2')
+        self.assertEqual(len(data['tabs'][1]['iwidgets']), 1)
+        self.assertEqual(data['tabs'][2]['name'], 'Tab 3')
+        self.assertEqual(len(data['tabs'][2]['iwidgets']), 0)
+        self.assertEqual(data['tabs'][3]['name'], 'Tab 4')
+        self.assertEqual(len(data['tabs'][3]['iwidgets']), 0)
 
         wiring_status = data['wiring']
         self.assertEqual(len(wiring_status['operators']), 1)
@@ -573,20 +593,20 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(wiring_status['connections'][0]['target']['type'], 'iwidget')
         self.assertEqual(wiring_status['connections'][0]['target']['endpoint'], 'slot')
 
-    def testComplexWorkspacesRdf(self):
+    def test_complex_workspaces_rdf(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate3, self.user)
 
         data = get_global_workspace_data(workspace, self.user).get_data()
 
-        self.assertEqual(len(data['tabList']), 4)
-        self.assertEqual(data['tabList'][0]['name'], u'Tab')
-        self.assertEqual(len(data['tabList'][0]['iwidgetList']), 1)
-        self.assertEqual(data['tabList'][1]['name'], u'Tab 2')
-        self.assertEqual(len(data['tabList'][1]['iwidgetList']), 1)
-        self.assertEqual(data['tabList'][2]['name'], u'Tab 3')
-        self.assertEqual(len(data['tabList'][2]['iwidgetList']), 0)
-        self.assertEqual(data['tabList'][3]['name'], u'Tab 4')
-        self.assertEqual(len(data['tabList'][3]['iwidgetList']), 0)
+        self.assertEqual(len(data['tabs']), 4)
+        self.assertEqual(data['tabs'][0]['name'], u'Tab')
+        self.assertEqual(len(data['tabs'][0]['iwidgets']), 1)
+        self.assertEqual(data['tabs'][1]['name'], u'Tab 2')
+        self.assertEqual(len(data['tabs'][1]['iwidgets']), 1)
+        self.assertEqual(data['tabs'][2]['name'], u'Tab 3')
+        self.assertEqual(len(data['tabs'][2]['iwidgets']), 0)
+        self.assertEqual(data['tabs'][3]['name'], u'Tab 4')
+        self.assertEqual(len(data['tabs'][3]['iwidgets']), 0)
 
         wiring = data['wiring']
         self.assertEqual(len(wiring['connections']), 1)

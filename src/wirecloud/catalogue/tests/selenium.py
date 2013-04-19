@@ -31,6 +31,12 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         self.add_packaged_resource_to_catalogue('Wirecloud_Test_Selenium_1.0.wgt', 'Test_Selenium', shared=True)
 
+    def test_add_packaged_mashup(self):
+
+        self.login()
+
+        self.add_packaged_resource_to_catalogue('Wirecloud_PackagedTestMashup_1.0.zip', 'PackagedTestMashup', shared=True)
+
     def test_widgets_are_deletable_by_the_uploader(self):
 
         self.login('normuser', 'admin')

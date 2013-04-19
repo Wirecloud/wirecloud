@@ -783,12 +783,12 @@ IWidget.prototype._notifyWindowResizeEvent = function () {
 IWidget.prototype._notifyLoaded = function () {
     var msg, unloadElement, errorCount;
 
-    msg = gettext('iWidget loaded');
-    this.log(msg, Constants.Logging.INFO_MSG);
-
-    if (this.loaded) {
+    if (this.loaded || !this.content.hasAttribute('src') ) {
         return;
     }
+
+    msg = gettext('iWidget loaded');
+    this.log(msg, Constants.Logging.INFO_MSG);
 
     this.loaded = true;
 
@@ -829,13 +829,14 @@ IWidget.prototype._notifyLoaded = function () {
  * @private
  */
 IWidget.prototype._notifyUnloaded = function () {
-    var msg = gettext('iWidget unloaded');
-    this.log(msg, Constants.Logging.INFO_MSG);
-    this.internal_iwidget.logManager.newCycle();
 
     if (!this.loaded) {
         return;
     }
+
+    var msg = gettext('iWidget unloaded');
+    this.log(msg, Constants.Logging.INFO_MSG);
+    this.internal_iwidget.logManager.newCycle();
 
     this.errorButton.addClassName("disabled");
     this.errorButton.setTitle('');
@@ -1217,18 +1218,16 @@ IWidget.prototype.save = function (options) {
     });
 
     var data = Object.toJSON({
-        'iwidget': {
-            'widget': this.internal_iwidget.widget.getId(),
-            'left': this.position.x,
-            'top': this.position.y,
-            'icon_left': this.iconPosition.x,
-            'icon_top': this.iconPosition.y,
-            'zIndex': this.zPos,
-            'width': this.contentWidth,
-            'height': this.contentHeight,
-            'name': this.name,
-            'layout': this.onFreeLayout() ? 1 : 0
-        }
+        'widget': this.internal_iwidget.widget.getId(),
+        'left': this.position.x,
+        'top': this.position.y,
+        'icon_left': this.iconPosition.x,
+        'icon_top': this.iconPosition.y,
+        'zIndex': this.zPos,
+        'width': this.contentWidth,
+        'height': this.contentHeight,
+        'name': this.name,
+        'layout': this.onFreeLayout() ? 1 : 0
     });
     Wirecloud.io.makeRequest(url, {
         method: 'POST',

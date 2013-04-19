@@ -40,6 +40,8 @@ from django.utils.importlib import import_module
 from django.test import TransactionTestCase
 from django.test.client import Client
 from django.utils import translation
+from selenium.common.exceptions import StaleElementReferenceException
+from selenium.webdriver import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 
 from wirecloud.platform.localcatalogue.utils import install_resource_to_all_users
@@ -229,7 +231,7 @@ class LocalizedTestCase(TransactionTestCase):
         translation.activate(new_language)
 
 
-class widget_operation:
+class iwidget_context:
 
     def __init__(self, driver, widget):
         self.driver = driver
@@ -287,7 +289,70 @@ def marketplace_loaded(driver):
     return False
 
 
+class IWidgetTester(object):
+
+    def __init__(self, testcase, iwidget_id, element):
+
+        self.testcase = testcase
+        self.id = iwidget_id
+        self.element = element
+
+    def __getitem__(self, key):
+
+        if key == 'id':
+            return self.id
+        elif key == 'element':
+            return self.element
+
+    @property
+    def name(self):
+        return self.element.find_element_by_css_selector('.widget_menu > span').text
+
+    def rename(self, new_name):
+
+        self.element.find_element_by_css_selector('.icon-cogs').click()
+        self.testcase.wait_element_visible_by_css_selector('.popup_menu')
+        self.testcase.popup_menu_click('Rename')
+        name_input = self['element'].find_element_by_css_selector('.widget_menu > span')
+        # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
+        self.testcase.driver.execute_script('arguments[0].textContent = arguments[1]', name_input, new_name)
+        self.element.find_element_by_css_selector('.statusBar').click()
+
+    def remove(self, timeout=30):
+
+        old_iwidget_ids = self.testcase.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
+        old_iwidget_count = len(old_iwidget_ids)
+
+        self.element.find_element_by_css_selector('.icon-remove').click()
+
+        def iwidget_unloaded(driver):
+            iwidgets = self.testcase.get_current_iwidgets()
+            iwidget_count = len(iwidgets)
+            return iwidget_count == old_iwidget_count - 1
+
+        WebDriverWait(self.testcase.driver, timeout).until(iwidget_unloaded)
+
+
 class WirecloudRemoteTestCase(object):
+
+    @classmethod
+    def setUpClass(cls):
+
+        cls.shared_test_data_dir = os.path.join(os.path.dirname(__file__), 'test-data')
+        cls.test_data_dir = os.path.join(os.path.dirname(sys.modules[cls.__module__].__file__), 'test-data')
+
+        # Load webdriver
+        module_name, klass_name = getattr(cls, '_webdriver_class', 'selenium.webdriver.Firefox').rsplit('.', 1)
+        module = import_module(module_name)
+        webdriver_args = getattr(cls, '_webdriver_args', None)
+        if webdriver_args is None:
+            webdriver_args = {}
+        cls.driver = getattr(module, klass_name)(**webdriver_args)
+
+    @classmethod
+    def tearDownClass(cls):
+
+        cls.driver.quit()
 
     def fill_form_input(self, form_input, value):
         # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
@@ -295,13 +360,12 @@ class WirecloudRemoteTestCase(object):
 
     def scroll_and_click(self, element):
 
-        # Work around chromedriver bugs
-        if self.driver.capabilities['browserName'] == "chrome":
-            try:
-                self.driver.execute_script("arguments[0].scrollIntoView(false);", element);
-            except:
-                pass
-        element.click()
+        # Work around chrome and firefox driver bugs
+        try:
+            self.driver.execute_script("arguments[0].scrollIntoView(false);", element);
+        except:
+            pass
+        ActionChains(self.driver).click(element).perform()
 
     def wait_element_visible_by_css_selector(self, selector, timeout=30, element=None):
         if element is None:
@@ -389,6 +453,7 @@ class WirecloudRemoteTestCase(object):
             wgt_path = os.path.join(self.shared_test_data_dir, wgt_file)
         else:
             wgt_path = os.path.join(self.test_data_dir, wgt_file)
+        wgt_path = os.path.abspath(wgt_path)
 
         self.change_main_view('marketplace')
         catalogue_base_element = self.get_current_catalogue_base_element()
@@ -488,7 +553,7 @@ class WirecloudRemoteTestCase(object):
         iwidget_ids = self.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
         iwidget_elements = self.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.element;});')
 
-        return [{'id': iwidget_ids[i], 'element': iwidget_elements[i]} for i in range(len(iwidget_ids))]
+        return [IWidgetTester(self, iwidget_ids[i], iwidget_elements[i]) for i in range(len(iwidget_ids))]
 
     def instantiate(self, resource, timeout=30):
 
@@ -520,23 +585,17 @@ class WirecloudRemoteTestCase(object):
         time.sleep(0.1)
         return tmp['new_iwidget']
 
-    def add_widget_to_mashup(self, widget_name, market=None, new_name=None):
+    def add_widget_to_mashup(self, widget_name, new_name=None):
 
         self.change_main_view('marketplace')
-        if market is not None:
-            self.change_marketplace(market)
+        self.change_marketplace('local')
 
         self.search_resource(widget_name)
         resource = self.search_in_catalogue_results(widget_name)
         iwidget = self.instantiate(resource)
 
         if new_name is not None:
-            iwidget['element'].find_element_by_css_selector('.icon-cogs').click()
-            self.popup_menu_click('Rename')
-            name_input = iwidget['element'].find_element_by_css_selector('.widget_menu > span')
-            # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
-            self.driver.execute_script('arguments[0].textContent = arguments[1]', name_input, new_name)
-            iwidget['element'].find_element_by_css_selector('.statusBar').click()
+            iwidget.rename(new_name)
 
         return iwidget
 
@@ -549,7 +608,7 @@ class WirecloudRemoteTestCase(object):
         resource.find_element_by_css_selector('.instantiate_button div').click()
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='New Workspace']").click()
         self.wait_wirecloud_ready()
-        self.assertTrue(self.get_current_workspace_name().startswith('Test Mashup'), 'Invalid workspace name after creating workspace from catalogue')
+        self.assertTrue(self.get_current_workspace_name().startswith(mashup_name), 'Invalid workspace name after creating workspace from catalogue')
 
     def merge_mashup_from_catalogue(self, mashup_name):
 
@@ -632,6 +691,7 @@ class WirecloudRemoteTestCase(object):
         self.change_main_view('workspace')
 
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
+        self.wait_element_visible_by_css_selector('.popup_menu')
         self.popup_menu_click('Publish')
 
         self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']")
@@ -688,6 +748,8 @@ class WirecloudRemoteTestCase(object):
             self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         except:
             self.driver.find_element_by_css_selector('#wirecloud_breadcrum .third_level > .icon-menu').click()
+
+        self.wait_element_visible_by_css_selector('.popup_menu')
         self.popup_menu_click(action)
 
     def perform_workspace_action(self, action):
@@ -696,6 +758,7 @@ class WirecloudRemoteTestCase(object):
 
         if 'open' not in popup_button.get_attribute('class'):
             popup_button.click()
+            self.wait_element_visible_by_css_selector('.popup_menu')
 
         self.popup_menu_click(action)
 
@@ -736,12 +799,15 @@ class WirecloudRemoteTestCase(object):
 
             self.assertEqual(self.get_current_marketplace_name(), name)
 
-    def change_marketplace(self, market):
+    def change_marketplace(self, market, timeout=30):
 
         self.change_main_view('marketplace')
+        if self.get_current_marketplace_name() == market:
+            return
+
         self.perform_market_action(market)
-        time.sleep(2)
-        self.assertEqual(self.get_current_marketplace_name(), market)
+        WebDriverWait(self.driver, timeout, ignored_exceptions=(StaleElementReferenceException,)).until(lambda driver: self.get_current_marketplace_name() == market)
+        self.wait_catalogue_ready()
 
     def delete_marketplace(self, market, expect_error=False):
 
@@ -831,8 +897,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
     @classmethod
     def setUpClass(cls):
 
-        cls.shared_test_data_dir = os.path.join(os.path.dirname(__file__), 'test-data')
-        cls.test_data_dir = os.path.join(os.path.dirname(sys.modules[cls.__module__].__file__), 'test-data')
+        WirecloudRemoteTestCase.setUpClass.im_func(cls)
 
         cls.old_LANGUAGES = settings.LANGUAGES
         cls.old_LANGUAGE_CODE = settings.LANGUAGE_CODE
@@ -851,14 +916,6 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         cls._original_proxy_do_request_function = WIRECLOUD_PROXY._do_request
         WIRECLOUD_PROXY._do_request = ProxyFakeDownloader()
         WIRECLOUD_PROXY._do_request.set_response('http://example.com/success.html', 'remote makerequest succeded')
-
-        # Load webdriver
-        module_name, klass_name = getattr(cls, '_webdriver_class', 'selenium.webdriver.Firefox').rsplit('.', 1)
-        module = import_module(module_name)
-        webdriver_args = getattr(cls, '_webdriver_args', None)
-        if webdriver_args is None:
-            webdriver_args = {}
-        cls.driver = getattr(module, klass_name)(**webdriver_args)
 
         # catalogue deployer
         cls.old_catalogue_deployer = catalogue.wgt_deployer
@@ -893,7 +950,8 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.driver.quit()
+
+        WirecloudRemoteTestCase.tearDownClass.im_func(cls)
 
         # downloader
         downloader.download_http_content = cls._original_download_function

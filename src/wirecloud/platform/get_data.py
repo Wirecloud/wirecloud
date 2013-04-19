@@ -246,45 +246,6 @@ class VariableValueCacheManager():
         _invalidate_cached_variable_values(self.workspace, self.user)
 
 
-def get_wiring_variable_data(var, ig):
-    res_data = {}
-
-    res_data['id'] = var.vardef.pk
-    res_data['name'] = var.vardef.name
-    res_data['aspect'] = var.vardef.aspect
-    res_data['type'] = var.vardef.type
-    res_data['value'] = var.value
-    res_data['friend_code'] = var.vardef.friend_code
-    res_data['iwidget_id'] = ig.id
-
-    return res_data
-
-
-def get_wiring_data(iwidgets):
-    res_data = []
-
-    for ig in iwidgets:
-        variables = Variable.objects.filter(iwidget=ig)
-
-        igObject = {}
-        list = []
-
-        igObject['id'] = ig.pk
-
-        #Searching wiring variables
-        for var in variables:
-            varDef = var.vardef
-
-            if varDef.aspect == 'SLOT' or varDef.aspect == 'EVEN':
-                list.append(get_wiring_variable_data(var, ig))
-
-        igObject['list'] = list
-
-        res_data.append(igObject)
-
-    return res_data
-
-
 def get_widget_data(widget, request=None):
 
     base_url = widget.xhtml.url
@@ -484,7 +445,7 @@ def _get_global_workspace_data(workspaceDAO, user):
 
     tabs_data = [get_tab_data(tab) for tab in tabs]
 
-    data_ret['tabList'] = tabs_data
+    data_ret['tabs'] = tabs_data
 
     for tab in tabs_data:
         tab_pk = tab['id']
@@ -494,7 +455,7 @@ def _get_global_workspace_data(workspaceDAO, user):
         for iwidget in iwidgets:
             iwidget_data.append(get_iwidget_data(iwidget, user, workspaceDAO, cache_manager))
 
-        tab['iwidgetList'] = iwidget_data
+        tab['iwidgets'] = iwidget_data
 
     data_ret['wiring'] = simplejson.loads(workspaceDAO.wiringStatus)
 

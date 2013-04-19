@@ -32,8 +32,9 @@
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
+from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.exceptions import Http403
-from wirecloud.platform.models import Widget, IWidget, Position, Tab, Variable, VariableDef, VariableValue
+from wirecloud.platform.models import IWidget, Position, Tab, Variable, VariableDef, VariableValue
 
 
 def addIWidgetVariable(iwidget, varDef, initial_value=None):
@@ -89,16 +90,23 @@ def UpgradeIWidget(iwidget, user, new_widget):
 
 
 def SaveIWidget(iwidget, user, tab, initial_variable_values):
+
     widget_uri = iwidget.get('widget')
-    iwidget_name = iwidget.get('name')
-    width = iwidget.get('width')
-    height = iwidget.get('height')
-    top = iwidget.get('top')
-    left = iwidget.get('left')
-    icon_top = iwidget.get('icon_top')
-    icon_left = iwidget.get('icon_left')
-    zIndex = iwidget.get('zIndex')
-    layout = iwidget.get('layout')
+
+    (widget_vendor, widget_name, widget_version) = widget_uri.split('/')
+    resource = CatalogueResource.objects.select_related('widget').get(vendor=widget_vendor, short_name=widget_name, version=widget_version)
+    if not resource.is_available_for(user):
+        raise Http403
+
+    iwidget_name = iwidget.get('name', resource.display_name)
+    width = iwidget.get('width', 0)
+    height = iwidget.get('height', 0)
+    top = iwidget.get('top', 0)
+    left = iwidget.get('left', 0)
+    icon_top = iwidget.get('icon_top', 0)
+    icon_left = iwidget.get('icon_left', 0)
+    zIndex = iwidget.get('zIndex', 0)
+    layout = iwidget.get('layout', 0)
 
     # Creates IWidget position
     position = Position(posX=left, posY=top, posZ=zIndex, height=height, width=width, minimized=False, fulldragboard=False)
@@ -108,15 +116,10 @@ def SaveIWidget(iwidget, user, tab, initial_variable_values):
     icon_position = Position(posX=icon_left, posY=icon_top)
     icon_position.save()
 
-    (widget_vendor, widget_name, widget_version) = widget_uri.split('/')
-    widget = Widget.objects.get(resource__vendor=widget_vendor, resource__short_name=widget_name, resource__version=widget_version)
-    if not widget.is_available_for(user):
-        raise Http403
-
-    new_iwidget = IWidget(name=iwidget_name, widget=widget, tab=tab, layout=layout, position=position, icon_position=icon_position)
+    new_iwidget = IWidget(name=iwidget_name, widget=resource.widget, tab=tab, layout=layout, position=position, icon_position=icon_position)
     new_iwidget.save()
 
-    variableDefs = VariableDef.objects.filter(widget=widget)
+    variableDefs = VariableDef.objects.filter(widget=resource.widget)
     for varDef in variableDefs:
         if initial_variable_values and varDef.name in initial_variable_values:
             initial_value = initial_variable_values[varDef.name]

@@ -217,7 +217,7 @@ function Workspace(workspaceState) {
             step = window.innerWidth,
             i, tabs, tab, iwidgets;
 
-        tabs = this.workspaceGlobalInfo.tabList;
+        tabs = this.workspaceGlobalInfo.tabs;
 
         if (tabs.length > 0) {
             for (i = 0; i < tabs.length; i += 1) {

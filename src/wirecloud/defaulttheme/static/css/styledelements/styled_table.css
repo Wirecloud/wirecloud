@@ -50,13 +50,22 @@
     color: #333;
 }
 
+.model_table > .tbody > .row {
+    border-bottom: 1px solid #DDD;
+    white-space: nowrap;
+}
+
+.model_table > .tbody > .row.highlight {
+    background-color: #08C;
+    color: white;
+}
+
 .model_table > .tbody > .row:hover {
     background-color: #f5f5f5;
 }
 
-.model_table > .tbody > .row {
-    border-bottom: 1px solid #DDD;
-    white-space: nowrap;
+.model_table > .tbody > .row.highlight:hover {
+    background-color: #08C;
 }
 
 .model_table > .tbody > .row:last-child {

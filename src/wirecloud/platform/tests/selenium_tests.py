@@ -22,13 +22,12 @@ import time
 
 from selenium.webdriver.support.ui import WebDriverWait
 
-from wirecloud.commons.test import uses_extra_resources, widget_operation, WirecloudSeleniumTestCase
+from wirecloud.commons.test import uses_extra_resources, iwidget_context, WirecloudSeleniumTestCase
 
 
 class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
-    tags = ('fiware-ut-5',)
 
     def test_basic_workspace_operations(self):
 
@@ -74,11 +73,21 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Now we have only one workspace, so we cannot remove it
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.check_popup_menu(('Rename', 'Settings', 'New workspace'), ('Remove',))
+    test_basic_workspace_operations.tags = ('fiware-ut-5',)
 
     def test_add_widget_from_catalogue(self):
 
         self.login()
         self.add_widget_to_mashup('Test')
+    test_add_widget_from_catalogue.tags = ('fiware-ut-5',)
+
+    def test_remove_widget_from_workspace(self):
+
+        self.login(username='user_with_workspaces')
+
+        iwidget = self.get_current_iwidgets()[0]
+        iwidget.remove()
+    test_remove_widget_from_workspace.tags = ('fiware-ut-5',)
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_basic_widget_functionalities(self):
@@ -87,7 +96,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         iwidget_id = self.get_current_iwidgets()[0]['id']
         api_test_iwidget_id = self.add_widget_to_mashup('Wirecloud API test')['id']
 
-        with widget_operation(self.driver, iwidget_id):
+        with iwidget_context(self.driver, iwidget_id):
             self.assertEqual(self.driver.find_element_by_id('listPref').text, 'default')
             self.assertEqual(self.driver.find_element_by_id('textPref').text, 'initial text')
             self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'false')
@@ -108,7 +117,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 
-        with widget_operation(self.driver, iwidget_id):
+        with iwidget_context(self.driver, iwidget_id):
             self.assertEqual(self.driver.find_element_by_id('listPref').text, '1')
             self.assertEqual(self.driver.find_element_by_id('textPref').text, 'test')
             self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'true')
@@ -125,25 +134,30 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 
-        with widget_operation(self.driver, iwidget_id):
+        with iwidget_context(self.driver, iwidget_id):
             self.assertEqual(self.driver.find_element_by_id('listPref').text, '1')
             self.assertEqual(self.driver.find_element_by_id('textPref').text, '')
             self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'true')
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, '')
 
         # Use api test widget to test other API features
-        with widget_operation(self.driver, api_test_iwidget_id):
+        with iwidget_context(self.driver, api_test_iwidget_id):
             self.assertEqual(self.driver.find_element_by_id('makerequest_test').text, 'Success!!')
+    test_basic_widget_functionalities.tags = ('fiware-ut-5',)
 
     def test_http_cache(self):
 
         self.login()
+
+        # Create a new workspace
         self.create_workspace('Test')
 
         self.driver.refresh()
         self.wait_wirecloud_ready()
 
         self.assertEqual(self.get_current_workspace_name(), 'Test')
+
+        # Add a new tab
         self.add_tab()
 
         self.driver.refresh()
@@ -153,6 +167,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(tabs, 2)
 
         tab = self.get_workspace_tab_by_name('Tab')
+
+        # Rename the created tab
         tab_menu_button = tab.find_element_by_css_selector('.icon-tab-menu')
         tab_menu_button.click()
         self.popup_menu_click('Rename')
@@ -170,12 +186,39 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         tab = self.get_workspace_tab_by_name('Tab')
         self.assertIsNone(tab)
 
+        # Add two widgets to the mashup
+        self.add_widget_to_mashup('Test')
         self.add_widget_to_mashup('Test')
 
         self.driver.refresh()
         self.wait_wirecloud_ready()
 
+        self.assertEqual(self.count_iwidgets(), 2)
+
+        # Rename a widget
+
+        iwidget = self.get_current_iwidgets()[1]
+        iwidget.rename('Other Test')
+
+        self.driver.refresh()
+        self.wait_wirecloud_ready()
+
+        iwidget = self.get_current_iwidgets()[0]
+        self.assertEqual(iwidget.name, 'Test')
+
+        iwidget = self.get_current_iwidgets()[1]
+        self.assertEqual(iwidget.name, 'Other Test')
+
+        # Remove a widget
+
+        iwidget.remove()
+
+        self.driver.refresh()
+        self.wait_wirecloud_ready()
+
         self.assertEqual(self.count_iwidgets(), 1)
+
+        # Rename the workspace
         self.rename_workspace('test2')
 
         self.driver.refresh()
@@ -183,6 +226,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.assertEqual(self.get_current_workspace_name(), 'test2')
 
+        # Remove the tab with widgets
         tab = self.get_workspace_tab_by_name('Other Name')
         tab_menu_button = tab.find_element_by_css_selector('.icon-tab-menu')
         tab_menu_button.click()
@@ -194,6 +238,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.assertEqual(self.count_workspace_tabs(), 1)
         self.assertEqual(self.count_iwidgets(), 0)
+    test_http_cache.tags = ('fiware-ut-5',)
 
     def test_create_workspace_from_catalogue(self):
 
@@ -211,7 +256,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
 
         # Send wiring event
-        with widget_operation(self.driver, iwidgets[0]['id']):
+        with iwidget_context(self.driver, iwidgets[0]['id']):
             text_input = self.driver.find_element_by_tag_name('input')
             self.fill_form_input(text_input, 'hello world!!')
             # Work around hang when using Firefox Driver
@@ -222,7 +267,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Check event is received by the second test widget
         tab2.click()
-        with widget_operation(self.driver, iwidgets[1]['id']):
+        with iwidget_context(self.driver, iwidgets[1]['id']):
             try:
                 WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
             except:
@@ -230,13 +275,15 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'hello world!!')
+    test_create_workspace_from_catalogue.tags = ('fiware-ut-5',)
 
-    def test_duplicated_workspaces(self):
+    def test_create_workspace_from_catalogue_duplicated_workspaces(self):
 
         self.login()
         self.create_workspace('Test Mashup')
         self.create_workspace_from_catalogue('Test Mashup')
         self.assertNotEqual(self.get_current_workspace_name(), 'Test Mashup')
+    test_create_workspace_from_catalogue_duplicated_workspaces.tags = ('fiware-ut-5',)
 
     def test_merge_mashup(self):
 
@@ -252,6 +299,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertIsNotNone(tab)
 
         self.assertEqual(self.count_iwidgets(), 0)
+    test_merge_mashup.tags = ('fiware-ut-5',)
 
     def test_workspace_publish(self):
 

@@ -26,7 +26,8 @@
     StyledTextField = function StyledTextField(options) {
         var defaultOptions = {
             'initialValue': '',
-            'class': ''
+            'class': '',
+            'placeholder': null
         };
         options = EzWebExt.merge(defaultOptions, options);
 
@@ -43,6 +44,10 @@
 
         if (options.name) {
             this.inputElement.setAttribute("name", options.name);
+        }
+
+        if (options.placeholder != null) {
+            this.setPlaceholder(options.placeholder);
         }
 
         if (options.id != null) {
@@ -67,6 +72,10 @@
         this.inputElement.addEventListener('blur', this._onblur, true);
     };
     StyledTextField.prototype = new StyledElements.StyledInputElement();
+
+    StyledTextField.prototype.setPlaceholder = function setPlaceholder(placeholder) {
+        this.inputElement.setAttribute('placeholder', placeholder);
+    };
 
     StyledTextField.prototype.destroy = function destroy() {
 

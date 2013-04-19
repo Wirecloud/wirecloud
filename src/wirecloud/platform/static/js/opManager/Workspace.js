@@ -65,14 +65,14 @@ function Workspace (workspaceState) {
         var initialTab = {
             'id': 0,
             'readOnly': "true",
-            'iwidgetList': [],
+            'iwidgets': [],
             'name': gettext("Unusable Tab"),
             'visible': 1,
             'preferences': {}
         };
 
         this.workspaceGlobalInfo = {
-                                       'tabList': [
+                                       'tabs': [
                                          initialTab
                                        ]
                                    };
@@ -126,7 +126,7 @@ function Workspace (workspaceState) {
             }
 
             // Load workspace tabs
-            var tabs = this.workspaceGlobalInfo['tabList'];
+            var tabs = this.workspaceGlobalInfo['tabs'];
             var visibleTabId = null;
             var loading_tab = this.notebook.createTab({'closeable': false});
 
@@ -291,7 +291,7 @@ function Workspace (workspaceState) {
         var response = transport.responseText;
         var tabInfo = JSON.parse(response);
 
-        tabInfo.iwidgetList = [];
+        tabInfo.iwidgets = [];
         tabInfo.preferences = {};
 
         var newTab = this.notebook.createTab({'tab_constructor': Tab, 'tab_info': tabInfo, 'workspace': this});

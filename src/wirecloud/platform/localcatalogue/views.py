@@ -20,25 +20,25 @@
 
 import json
 from cStringIO import StringIO
-import os.path
+import os
 
-from django.contrib.auth.decorators import login_required
+from django.conf import settings
 from django.db import IntegrityError
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
-from django.utils.decorators import method_decorator
+from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
+from django.views.static import serve
 
-from wirecloud.catalogue.utils import add_widget_from_wgt, add_resource_from_template
 from wirecloud.catalogue.models import CatalogueResource
+import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.catalogue.views import iframe_error
-from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils import downloader
-from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
-from wirecloud.commons.utils.template import TemplateParseException, TemplateParser
+from wirecloud.commons.utils.http import authentication_required, build_error_response, get_content_type, supported_request_mime_types
+from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.get_data import get_widget_data
@@ -46,13 +46,12 @@ from wirecloud.platform.models import Widget, IWidget
 from wirecloud.platform.localcatalogue.semantics import add_widget_semantic_data
 from wirecloud.platform.localcatalogue.semantics import remove_widget_semantic_data
 from wirecloud.platform.localcatalogue.utils import install_resource_to_user, get_or_add_resource_from_available_marketplaces
-from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue, create_widget_from_template, create_widget_from_wgt
+from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue
 
 
 class ResourceCollection(Resource):
 
-    @method_decorator(login_required)
-    @commit_on_http_success
+    @authentication_required
     def read(self, request):
 
         resources = {}
@@ -73,7 +72,7 @@ class ResourceCollection(Resource):
 
         return HttpResponse(json.dumps(resources), mimetype='application/json; chatset=UTF-8')
 
-    @method_decorator(login_required)
+    @authentication_required
     @iframe_error
     @supported_request_mime_types(('application/x-www-form-urlencoded', 'application/json', 'multipart/form-data', 'application/octet-stream'))
     @commit_on_http_success
@@ -126,6 +125,8 @@ class ResourceCollection(Resource):
             else:
                 file_contents = downloaded_file
 
+        # TODO for now, install dependencies if force_create is true
+        install_dep = force_create
         try:
             resource = install_resource_to_user(request.user, file_contents=file_contents, templateURL=templateURL, packaged=packaged, raise_conflicts=force_create)
 
@@ -148,15 +149,18 @@ class ResourceCollection(Resource):
 
             data = get_widget_data(resource.widget, request)
             data['type'] = 'widget'
-            return HttpResponse(simplejson.dumps((data,)), mimetype='application/json; charset=UTF-8')
+            if install_dep:
+                return HttpResponse(simplejson.dumps((data,)), status=201, mimetype='application/json; charset=UTF-8')
+            else:
+                return HttpResponse(simplejson.dumps(data), status=201, mimetype='application/json; charset=UTF-8')
 
-        elif resource.resource_type() == 'mashup':
+        elif install_dep and resource.resource_type() == 'mashup':
             resources = [json.loads(resource.json_description)]
             workspace_info = json.loads(resource.json_description)
             for tab_entry in workspace_info['tabs']:
                 for resource in tab_entry['resources']:
                     widget = get_or_add_widget_from_catalogue(resource.get('vendor'), resource.get('name'), resource.get('version'), request.user)
-                    widget_data = get_widget_data(widget)
+                    widget_data = get_widget_data(widget, request)
                     widget_data['type'] = 'widget'
                     resources.append(widget_data)
 
@@ -166,15 +170,34 @@ class ResourceCollection(Resource):
                 operator = get_or_add_resource_from_available_marketplaces(*op_id_args)
                 resources.append(json.loads(operator.json_description))
 
-            return HttpResponse(simplejson.dumps(resources), mimetype='application/json; charset=UTF-8')
+            return HttpResponse(simplejson.dumps(resources), status=201, mimetype='application/json; charset=UTF-8')
 
-        else:  # Operators
-            return HttpResponse('[' + resource.json_description + ']', mimetype='application/json; charset=UTF-8')
+        elif install_dep:
+            return HttpResponse('[' + resource.json_description + ']', status=201, mimetype='application/json; charset=UTF-8')
+        else:
+            return HttpResponse(resource.json_description, status=201, mimetype='application/json; charset=UTF-8')
 
 
 class ResourceEntry(Resource):
 
-    @method_decorator(login_required)
+    @authentication_required
+    def read(self, request, vendor, name, version):
+
+        file_name = '_'.join((vendor, name, version)) + '.wgt'
+        base_dir = catalogue_utils.wgt_deployer.get_base_dir(vendor, name, version)
+        local_path = os.path.normpath(os.path.join(base_dir, file_name))
+
+        if not os.path.isfile(local_path):
+            return HttpResponse(status=404)
+
+        if not getattr(settings, 'USE_XSENDFILE', False):
+            return serve(request, local_path, document_root='/')
+        else:
+            response = HttpResponse()
+            response['X-Sendfile'] = smart_str(local_path)
+            return response
+
+    @authentication_required
     @commit_on_http_success
     def delete(self, request, vendor, name, version):
 
@@ -198,7 +221,7 @@ class ResourceEntry(Resource):
             # remove semantic relations
             remove_widget_semantic_data(request.user, resource)
 
-            return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
+            if request.GET.get('affected', 'false').lower() == 'true':
+                return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
-        else:
-            return HttpResponse(status=204)
+        return HttpResponse(status=204)

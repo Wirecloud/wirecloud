@@ -1,0 +1,10 @@
+[
+    {
+        "pk": "3faf0fb4c2fe76c1c3bb7d09c21b97c2",
+        "model": "oauth2provider.application",
+        "fields": {
+            "client_secret": "9643b7c3f59ef531931d39a3e19bcdd7",
+            "redirect_uri": "https://customapp.com/oauth/redirect"
+        }
+    }
+]

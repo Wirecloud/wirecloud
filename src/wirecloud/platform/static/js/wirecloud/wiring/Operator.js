@@ -19,12 +19,14 @@
  *
  */
 
+/*global OperatorSourceEndpoint, OperatorTargetEndpoint, StyledElements, Wirecloud*/
+
 (function () {
 
     "use strict";
 
-    var Operator = function Operator(operator_meta, id, /* TODO */ wiringEditor) {
-        var i, inputs, outputs, data_uri;
+    var Operator = function Operator(operator_meta, id, operator_status, /* TODO */ wiringEditor) {
+        var i, inputs, outputs, data_uri, preferences, key;
 
         StyledElements.ObjectWithEvents.call(this, ['load', 'unload']);
 
@@ -47,12 +49,32 @@
             this.outputs[outputs[i].name] = new OperatorSourceEndpoint(this, outputs[i]);
         }
 
+        this.pending_events = [];
+
+        preferences = {};
+        if (operator_status) {
+            for (key in operator_status.preferences) {
+                preferences[key] = operator_status.preferences[key];
+            }
+        }
+
+        for (key in this.meta.preferences) {
+            if (!(key in preferences)) {
+                preferences[key] = this.meta.preferences[key].default_value;
+            }
+        }
+        Object.defineProperty(this, 'preferences', {value: preferences});
+
         if (!wiringEditor) {
             this.element = document.createElement('object');
             data_uri = Wirecloud.URLs.OPERATOR_ENTRY.evaluate({vendor: operator_meta.vendor, name: operator_meta.name, version: operator_meta.version}) + '#id=' + id;
             this.element.addEventListener('load', function () {
                 this.loaded = true;
                 this.events.load.dispatch(this);
+                for (var i = 0; i < this.pending_events.length; i += 1) {
+                    this.inputs[this.pending_events[i].endpoint].propagate(this.pending_events[i].value);
+                }
+                this.pending_events = [];
             }.bind(this), true);
             this.element.addEventListener('unload', function () {
                 this.loaded = false;

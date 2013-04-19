@@ -48,6 +48,7 @@ WIRING_EDITOR_FILES = (
 )
 
 STYLED_ELEMENTS_FILES = (
+    'js/StyledElements/Addon.js',
     'js/StyledElements/Fragment.js',
     'js/StyledElements/Pagination.js',
     'js/StyledElements/Button.js',
@@ -89,6 +90,7 @@ WIRING_EDITOR_CSS = (
 
 STYLED_ELEMENTS_CSS = (
     'css/styled_elements_core.css',
+    'css/styledelements/styled_addon.css',
     'css/styledelements/styled_button.css',
     'css/styledelements/styled_notebook.css',
     'css/styledelements/styled_form.css',
@@ -123,6 +125,10 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'label': _('Username'),
                 'description': _('User name of the current logged user'),
             },
+            'isstaff': {
+                'label': _('Is Staff'),
+                'description': _('Boolean. Designates whether current user can access the admin site.'),
+            },
             'orientation': {
                 'label': _('Orientation'),
                 'description': _('Current screen orientation'),
@@ -140,6 +146,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'language': 'es',
             'orientation': 'landscape',
             'username': user.username,
+            'isstaff': user.is_staff,
             'theme': settings.THEME_ACTIVE
         }
 
@@ -160,6 +167,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
         common = (
             'js/wirecloud/io.js',
             'js/wirecloud/ContextManager.js',
+            'js/wirecloud/UserPref.js',
             'js/wirecloud/IWidget.js',
             'js/wirecloud/PolicyManager.js',
             'js/wirecloud/Wiring.js',
@@ -173,6 +181,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/log/LogManager.js',
             'js/wirecloud/LocalCatalogue.js',
             'js/wirecloud/wiring/OperatorFactory.js',
+            'js/wirecloud/wiring/OperatorUserPref.js',
             'js/wirecloud/wiring/Operator.js',
             'js/wirecloud/wiring/OperatorMeta.js',
             'js/wirecloud/wiring/OperatorSourceEndpoint.js',
@@ -197,6 +206,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/ui/NewWorkspaceWindowMenu.js',
                 'js/wirecloud/ui/ParametrizeWindowMenu.js',
                 'js/wirecloud/ui/PreferencesWindowMenu.js',
+                'js/wirecloud/ui/OperatorPreferencesWindowMenu.js',
                 'js/wirecloud/ui/PublishWorkspaceWindowMenu.js',
                 'js/wirecloud/ui/PublishResourceWindowMenu.js',
                 'js/wirecloud/ui/RenameWindowMenu.js',
@@ -226,7 +236,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             return {}
 
     def get_ajax_endpoints(self, view):
-        return (
+        endpoints = (
             {'id': 'LOCAL_REPOSITORY', 'url': build_url_template('wirecloud.root')},
             {'id': 'LOCAL_RESOURCE_COLLECTION', 'url': build_url_template('wirecloud_showcase.resource_collection')},
             {'id': 'LOCAL_RESOURCE_ENTRY', 'url': build_url_template('wirecloud_showcase.resource_entry', ['vendor', 'name', 'version'])},
@@ -245,7 +255,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
             {'id': 'GLOBAL_MARKET_ENTRY', 'url': build_url_template('wirecloud.market_entry', ['market'])},
             {'id': 'MARKET_ENTRY', 'url': build_url_template('wirecloud.market_entry', ['user', 'market'])},
             {'id': 'WIRING_ENTRY', 'url': build_url_template('wirecloud.workspace_wiring', ['workspace_id'])},
-            {'id': 'OPERATOR_COLLECTION', 'url': build_url_template('wirecloud.operators')},
             {'id': 'OPERATOR_ENTRY', 'url': build_url_template('wirecloud.operator_code_entry', ['vendor', 'name', 'version'])},
             {'id': 'VARIABLE_COLLECTION', 'url': build_url_template('wirecloud.variable_collection', ['workspace_id'])},
             {'id': 'WIDGET_CODE_ENTRY', 'url': build_url_template('wirecloud.widget_code_entry', ['vendor', 'name', 'version'])},
@@ -257,6 +266,12 @@ class WirecloudCorePlugin(WirecloudPlugin):
             {'id': 'WORKSPACE_MERGE_LOCAL', 'url': build_url_template('wirecloud.workspace_merge_local', ['from_ws_id', 'to_ws_id'])},
             {'id': 'WORKSPACE_SHARE', 'url': build_url_template('wirecloud.workspace_share', ['workspace_id', 'share_boolean'])},
         )
+
+        from django.conf import settings
+        if 'django.contrib.admin' in settings.INSTALLED_APPS:
+            endpoints += ({'id': 'DJANGO_ADMIN', 'url': build_url_template('admin:index')},)
+
+        return endpoints
 
     def get_platform_css(self, view):
         common = BASE_CSS + STYLED_ELEMENTS_CSS
