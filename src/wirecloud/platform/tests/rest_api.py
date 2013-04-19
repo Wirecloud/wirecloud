@@ -43,7 +43,7 @@ __test__ = False
 class ApplicationMashupAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data',)
-    tags = ('rest_api', 'fiware-ut-7')
+    tags = ('rest_api')
 
     @classmethod
     def setUpClass(cls):
@@ -466,7 +466,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 class ResourceManagementAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data',)
-    tags = ('rest_api', 'fiware-ut-7')
+    tags = ('rest_api')
 
     @classmethod
     def setUpClass(cls):
