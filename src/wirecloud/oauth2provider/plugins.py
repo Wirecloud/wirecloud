@@ -2,7 +2,7 @@
 
 # Copyright 2013 Universidad Politécnica de Madrid
 
-# This file is part of Wirecloud.
+# This file is part of Wirecluod.
 
 # Wirecloud is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,12 +18,16 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from django.conf.urls.defaults import include, patterns, url
+from wirecloud.platform.plugins import WirecloudPlugin
+
+from wirecloud.oauth2provider.urls import urlpatterns
 
 
-urlpatterns = patterns('wirecloud.oauth2provider.views',
+class OAuth2ProviderPlugin(WirecloudPlugin):
 
-    url('^oauth2/auth$', 'provide_authorization_code', name='oauth2provider.auth'),
-    url('^oauth2/token$', 'provide_authorization_token', name='oauth2provider.token'),
+    features = {
+        'OAuth2Provider': '0.5',
+    }
 
-)
+    def get_urls(self):
+        return urlpatterns
