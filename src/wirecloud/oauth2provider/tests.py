@@ -84,6 +84,7 @@ class Oauth2TestCase(TestCase):
         response_data = simplejson.loads(response.content)
         self.assertTrue(isinstance(response_data, list))
         self.assertTrue(isinstance(response_data[0], dict))
+    test_authorization_code_grant_flow.tags = ('fiware-ut-9',)
 
     @unittest.skip('wip test')
     def test_implicit_grant_flow(self):
