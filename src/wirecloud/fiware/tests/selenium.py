@@ -11,6 +11,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         self.login()
 
         self.add_marketplace('fiware', 'http://localhost:8080', 'fiware')
+    test_add_fiware_marketplace.tags = ('fiware-ut-8',)
 
     def test_delete_fiware_marketplace(self):
 
@@ -18,6 +19,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.add_marketplace('fiware', 'http://localhost:8080', 'fiware')
         self.delete_marketplace('fiware')
+    test_delete_fiware_marketplace.tags = ('fiware-ut-8',)
 
     def test_ngsi_available_to_widgets(self):
 
