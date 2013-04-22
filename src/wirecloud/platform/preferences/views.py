@@ -46,7 +46,7 @@ from django.utils import simplejson
 
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import no_cache
-from wirecloud.commons.utils.http import build_error_response, supported_request_mime_types
+from wirecloud.commons.utils.http import authentication_required, build_error_response, supported_request_mime_types
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.platform.models import PlatformPreference, WorkspacePreference, Tab, TabPreference, update_session_lang, Workspace
 
@@ -161,12 +161,14 @@ def update_workspace_preferences(workspace, preferences_json):
 
 class PlatformPreferencesCollection(Resource):
 
+    @authentication_required
     @no_cache
     def read(self, request):
         result = parseValues(PlatformPreference.objects.filter(user=request.user))
 
         return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
+    @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request):
@@ -186,6 +188,7 @@ class PlatformPreferencesCollection(Resource):
 
 class WorkspacePreferencesCollection(Resource):
 
+    @authentication_required
     @no_cache
     def read(self, request, workspace_id):
 
@@ -196,6 +199,7 @@ class WorkspacePreferencesCollection(Resource):
 
         return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
+    @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id):
@@ -215,6 +219,7 @@ class WorkspacePreferencesCollection(Resource):
 
 class TabPreferencesCollection(Resource):
 
+    @authentication_required
     @no_cache
     def read(self, request, workspace_id, tab_id):
 
@@ -225,6 +230,7 @@ class TabPreferencesCollection(Resource):
 
         return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
+    @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id):
