@@ -148,6 +148,7 @@ INSTALLED_APPS = (
     'wirecloud.commons',
     'wirecloud.catalogue',
     'wirecloud.platform',
+    'wirecloud.oauth2provider',
     'wirecloud.fiware',
     'south',
     'compressor',
@@ -221,6 +222,7 @@ WORKSPACE_MANAGERS = (
 )
 
 WIRECLOUD_PLUGINS = (
+    'wirecloud.oauth2provider.plugins.OAuth2Plugin',
     'wirecloud.fiware.plugins.FiWarePlugin',
 )
 

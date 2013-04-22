@@ -143,6 +143,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'wirecloud.commons',
     'wirecloud.catalogue',
+    'wirecloud.oauth2provider',
     'south',
     'compressor',
 )
