@@ -668,3 +668,144 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 200)
         response_data = simplejson.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
+
+    def test_platform_preference_collection_read_requires_authentication(self):
+
+        url = reverse('wirecloud.platform_preferences')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+    def test_platform_preference_collection_read(self):
+
+        url = reverse('wirecloud.platform_preferences')
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
+    def test_platform_preference_collection_post_requires_authentication(self):
+
+        url = reverse('wirecloud.platform_preferences')
+
+        data = {
+            'pref1': {'value': '5'},
+            'pref2': {'value': 'false'}
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+    def test_platform_preference_collection_post(self):
+
+        url = reverse('wirecloud.platform_preferences')
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {
+            'pref1': {'value': '5'},
+            'pref2': {'value': 'false'}
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.content, '')
+
+    def test_workspace_preference_collection_read_requires_authentication(self):
+
+        url = reverse('wirecloud.workspace_preferences', kwargs={'workspace_id': 2})
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+    def test_workspace_preference_collection_read(self):
+
+        url = reverse('wirecloud.workspace_preferences', kwargs={'workspace_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
+    def test_workspace_preference_collection_post_requires_authentication(self):
+
+        url = reverse('wirecloud.workspace_preferences', kwargs={'workspace_id': 2})
+
+        data = {
+            'pref1': {'inherit': 'false', 'value': '5'},
+            'pref2': {'inherit': 'true', 'value': 'false'}
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+    def test_workspace_preference_collection_post(self):
+
+        url = reverse('wirecloud.workspace_preferences', kwargs={'workspace_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {
+            'pref1': {'inherit': 'false', 'value': '5'},
+            'pref2': {'inherit': 'true', 'value': 'false'}
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.content, '')
+
+    def test_tab_preference_collection_read_requires_authentication(self):
+
+        url = reverse('wirecloud.tab_preferences', kwargs={'workspace_id': 2, 'tab_id': 101})
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+    def test_tab_preference_collection_read(self):
+
+        url = reverse('wirecloud.tab_preferences', kwargs={'workspace_id': 2, 'tab_id': 101})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
+    def test_tab_preference_collection_post_requires_authentication(self):
+
+        url = reverse('wirecloud.tab_preferences', kwargs={'workspace_id': 2, 'tab_id': 101})
+
+        data = {
+            'pref1': {'inherit': 'false', 'value': '5'},
+            'pref2': {'inherit': 'true', 'value': 'false'}
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+    def test_tab_preference_collection_post(self):
+
+        url = reverse('wirecloud.tab_preferences', kwargs={'workspace_id': 2, 'tab_id': 101})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {
+            'pref1': '5',
+            'pref2': 'true',
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.content, '')
