@@ -150,7 +150,7 @@ class PlatformPreferencesCollection(Resource):
     @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
-    def update(self, request):
+    def create(self, request):
         try:
             preferences_json = simplejson.loads(request.raw_post_data)
         except Exception, e:
@@ -181,7 +181,7 @@ class WorkspacePreferencesCollection(Resource):
     @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
-    def update(self, request, workspace_id):
+    def create(self, request, workspace_id):
 
         # Check Workspace existance and owned by this user
         workspace = get_object_or_404(Workspace, users=request.user, pk=workspace_id)
@@ -212,7 +212,7 @@ class TabPreferencesCollection(Resource):
     @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
-    def update(self, request, workspace_id, tab_id):
+    def create(self, request, workspace_id, tab_id):
 
         # Check Tab existance and owned by this user
         tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)

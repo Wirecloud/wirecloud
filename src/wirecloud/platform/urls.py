@@ -85,15 +85,15 @@ urlpatterns = patterns('wirecloud.platform.views',
 
     # Preferences
     url(r'^api/preferences/platform/?',
-        preferences_views.PlatformPreferencesCollection(permitted_methods=('GET', 'PUT')),
+        preferences_views.PlatformPreferencesCollection(permitted_methods=('GET', 'POST')),
         name='wirecloud.platform_preferences'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/preferences/?$',
-        preferences_views.WorkspacePreferencesCollection(permitted_methods=('GET', 'PUT')),
+        preferences_views.WorkspacePreferencesCollection(permitted_methods=('GET', 'POST')),
         name='wirecloud.workspace_preferences'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/preferences/?$',
-        preferences_views.TabPreferencesCollection(permitted_methods=('GET', 'PUT')),
+        preferences_views.TabPreferencesCollection(permitted_methods=('GET', 'POST')),
         name='wirecloud.tab_preferences'
     ),
 
