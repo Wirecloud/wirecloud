@@ -28,6 +28,12 @@
             </vCard:Work>
         </vCard:addr>
 
+        <wire:hasRequirement>
+            <wire:Feature>
+                <rdfs:label>Wirecloud</rdfs:label>
+            </wire:Feature>
+        </wire:hasRequirement>
+
         <wire:hasPlatformPreference>
             <wire:PlatformPreference rdf:ID="preference_1">
                                 <wire:index>0</wire:index>

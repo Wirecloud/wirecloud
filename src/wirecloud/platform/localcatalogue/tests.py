@@ -141,6 +141,11 @@ class LocalCatalogueTestCase(LocalizedTestCase):
         template_uri = "http://example.com/path/widget.rdf"
         template = self.read_template('template1.rdf')
 
+        parser = TemplateParser(template)
+        data = parser.get_resource_info()
+        self.assertIn('requirements', data)
+        self.assertItemsEqual(data['requirements'], ({'type': 'feature', 'name': 'Wirecloud'},))
+
         downloader.download_http_content.set_response(template_uri, template)
         downloader.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
         widget = install_resource(template, template_uri, self.user, False).widget
