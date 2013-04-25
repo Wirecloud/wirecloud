@@ -22,6 +22,34 @@
 
 /*global opManager, Variable, Wirecloud */
 
+var WidgetInputEndpoint = function (name, description, iwidget) {
+	this.iWidget = iwidget;
+	this.name = name;
+};
+
+WidgetInputEndpoint.prototype.serialize = function serialize() {
+    return {
+        'type': 'iwidget',
+        'id': this.iWidget.id,
+        'endpoint': this.name
+    };
+};
+
+var WidgetOutputEndpoint = function (name, description, iwidget) {
+	this.iWidget = iwidget;
+	this.name = name;
+	this.subdata = description.subdata;
+	this.variable = description;
+};
+
+WidgetOutputEndpoint.prototype.serialize = function serialize() {
+    return {
+        'type': 'iwidget',
+        'id': this.iWidget.id,
+        'endpoint': this.name
+    };
+};
+
 (function () {
 
     "use strict";
