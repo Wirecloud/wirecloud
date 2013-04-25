@@ -53,6 +53,9 @@
         this.draggableSources = [];
         this.draggableTargets = [];
         this.activatedTree = null;
+        this.hollowConnections = {};
+        this.fullConnections = {};
+        this.subdataConnections = {};
 
         if (manager instanceof Wirecloud.ui.WiringEditor.ArrowCreator) {
             this.isMiniInterface = false;
@@ -455,7 +458,7 @@
      * generate SubTree
      */
     GenericInterface.prototype.generateSubTree = function(anchorContext, subAnchors, anchor) {
-        var treeFrame, key, lab, checkbox, subdata, subTree, labelsFrame;
+        var treeFrame, key, lab, checkbox, subdata, subTree, labelsFrame, context, name;
 
         treeFrame = document.createElement("div");
         treeFrame.classList.add('subTree');
@@ -466,10 +469,15 @@
             for (key in subAnchors.subdata) {
                 lab = document.createElement("span");
                 lab.classList.add("labelTree");
-                lab.textContent = key;
-                checkbox = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, anchorContext.iObject.arrowCreator);
+                lab.textContent = subAnchors.subdata[key].label;
+                name  = anchorContext.data.name + "/" + key;
+				//TODO wirecloud Mode
+                context = {'data': new WidgetOutputEndpoint(name, anchorContext.data, anchorContext.data.iWidget), 'iObject': this};
+                checkbox = new Wirecloud.ui.WiringEditor.SourceAnchor(context, anchorContext.iObject.arrowCreator, subAnchors.subdata[key]);
                 checkbox.wrapperElement.classList.add("subAnchor");
                 checkbox.wrapperElement.classList.add("icon-circle");
+                this.sourceAnchorsByName[name] = checkbox;
+                this.sourceAnchors.push(checkbox);
                 subdata = document.createElement("div");
                 subdata.classList.add("dataTree");
                 // emphasize listeners
@@ -480,7 +488,7 @@
                 lab.addEventListener('mouseout', checkbox._mouseout_callback, false);
                 // Connect anchor whith mouseup on the label
                 lab.addEventListener('mouseup', checkbox._mouseup_callback, false);
-                subTree = this.generateSubTree(anchorContext, subAnchors.subdata[key], checkbox);
+                subTree = this.generateSubTree(context, subAnchors.subdata[key], checkbox);
                 if (subTree !== null) {
                     subdata.appendChild(subTree);
                     subdata.classList.add("branch");
@@ -502,7 +510,7 @@
      */
     GenericInterface.prototype.generateTree = function(anchorContext, subtree, anchor, label, closeHandler) {
         var subAnchors, treeFrame, lab, checkbox, subdata,
-            key, subTree, subTreeFrame, labelsFrame, labelMain, close_button;
+            key, subTree, subTreeFrame, labelsFrame, labelMain, close_button, context, name;
 
         treeFrame = document.createElement("div");
         treeFrame.classList.add('tree');
@@ -525,11 +533,15 @@
             for (key in subAnchors) {
                 lab = document.createElement("span");
                 lab.classList.add("labelTree");
-                lab.textContent = key;
-                //checkbox = subAnchors[key].wrapperElement;
-                checkbox = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, anchorContext.iObject.arrowCreator);
+                lab.textContent = subAnchors[key].label;
+                name = anchorContext.data.vardef.name + "/" + key;
+
+                context = {'data': new WidgetOutputEndpoint(name, anchorContext.data, anchorContext.data.iWidget), 'iObject': this};
+                checkbox = new Wirecloud.ui.WiringEditor.SourceAnchor(context, anchorContext.iObject.arrowCreator, subAnchors[key]);
                 checkbox.wrapperElement.classList.add("subAnchor");
                 checkbox.wrapperElement.classList.add("icon-circle");
+                this.sourceAnchorsByName[name] = checkbox;
+                this.sourceAnchors.push(checkbox);
                 subdata = document.createElement("div");
                 subdata.classList.add("dataTree");
                 // emphasize listeners
@@ -540,7 +552,7 @@
                 lab.addEventListener('mouseout', checkbox._mouseout_callback, false);
                 // Connect anchor whith mouseup on the label
                 lab.addEventListener('mouseup', checkbox._mouseup_callback, false);
-                subTree = this.generateSubTree(anchorContext, subAnchors[key], checkbox);
+                subTree = this.generateSubTree(context, subAnchors[key], checkbox);
                 if (subTree !== null) {
                     subdata.appendChild(subTree);
                     subdata.classList.add("branch");
@@ -558,9 +570,13 @@
         lab = document.createElement("span");
         lab.classList.add("labelTree");
         lab.textContent = label;
-        checkbox = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, anchorContext.iObject.arrowCreator);;
+        name = anchorContext.data.vardef.name + "/" + anchorContext.data.vardef.name;
+        context = {'data': new WidgetOutputEndpoint(name, anchorContext.data, anchorContext.data.iWidget), 'iObject': this};
+        checkbox = new Wirecloud.ui.WiringEditor.SourceAnchor(context, anchorContext.iObject.arrowCreator, subAnchors);
         checkbox.wrapperElement.classList.add("subAnchor");
         checkbox.wrapperElement.classList.add("icon-circle");
+        this.sourceAnchorsByName[name] = checkbox;
+        this.sourceAnchors.push(checkbox);
         subdata = document.createElement("div");
         subdata.classList.add("dataTree");
         // emphasize listeners
@@ -601,28 +617,187 @@
     /**
      *  handler for show/hide anchorTrees
      */
-    GenericInterface.prototype.subdataHandler = function subdataHandler(treeDiv) {
-        var initialHeiht, initialWidth;
+    GenericInterface.prototype.subdataHandler = function subdataHandler(treeDiv, name) {
+        var initialHeiht, initialWidth, key, enpoint, i, mainAnchor, externalRep, layer,
+            subDataArrow, firstIndex, mainEndpoint, mainSubEndPoint, theArrow, mainEndpointArrows;
 
         if (treeDiv == null) {
-            // elevate canvas
+            // descend canvas
             this.wiringEditor.canvas.canvasElement.classList.remove("elevated");
+
             // hide tree
             this.activatedTree.classList.remove('activated');
             this.activatedTree = null;
+
             // deactivate subdataMode
             this.wrapperElement.classList.remove('subdataMode');
+
+            // hide subdata connections, and show hollow and full connections
+            if (!isEmpty(this.subdataConnections[name])) {
+                for (key in this.subdataConnections[name]) {
+                    firstIndex = this.subdataConnections[name][key].length - 1;
+                    for (i = firstIndex; i >= 0 ; i -= 1) {
+                        externalRep = this.subdataConnections[name][key][i].externalRep;
+                        subDataArrow = this.subdataConnections[name][key][i].subDataArrow;
+                        externalRep.show();
+                        if (externalRep.hasClassName('hollow')) {
+                            subDataArrow.hide();
+                        } else {
+                            // Remove all subconnections that represent full connections
+                            subDataArrow.destroy();
+                            this.subdataConnections[name][key].splice(i, 1);
+                            this.fullConnections[name][key].splice(this.fullConnections[name][key].indexOf(externalRep), 1);
+                        }
+                    }
+                }
+            }
         } else {
-            // descend canvas
+            // elevate canvas
             this.wiringEditor.canvas.canvasElement.classList.add("elevated");
+
             // show tree
             initialHeiht = this.wrapperElement.getBoundingClientRect().height - this.header.getBoundingClientRect().height;
             initialWidth = this.wrapperElement.getBoundingClientRect().width;
             treeDiv.classList.add('activated');
             this.activatedTree = treeDiv;
             formatTree(treeDiv, initialHeiht, initialWidth);
+
             // activate subdataMode
             this.wrapperElement.classList.add('subdataMode');
+
+            // add a subconnection for each main connexion in the main endpoint
+            layer = this.wiringEditor.arrowCreator.layer;
+            mainEndpoint = this.sourceAnchorsByName[name];
+            mainSubEndPoint = this.sourceAnchorsByName[name + "/" + name];
+            mainEndpointArrows = mainEndpoint.getArrows();
+            for (i = 0; i < mainEndpointArrows.length ; i += 1) {
+                if (!mainEndpointArrows[i].hasClassName('hollow')) {
+                    // new full subConnection
+                    theArrow = this.wiringEditor.canvas.drawArrow(mainSubEndPoint.getCoordinates(layer), mainEndpointArrows[i].endAnchor.getCoordinates(layer), "arrow subdataConnection full");
+                    theArrow.setEndAnchor(mainEndpointArrows[i].endAnchor);
+                    theArrow.setStartAnchor(mainSubEndPoint);
+                    mainSubEndPoint.addArrow(theArrow);
+                    mainEndpointArrows[i].endAnchor.addArrow(theArrow);
+
+                    // add this connections to subdataConnections
+                    if (this.subdataConnections[name] == null) {
+                        this.subdataConnections[name] = {};
+                    }
+                    if (this.subdataConnections[name][name + "/" + name] == null) {
+                        this.subdataConnections[name][name + "/" + name] = [];
+                    }
+                    this.subdataConnections[name][name + "/" + name].push({'subDataArrow' : theArrow, 'externalRep': mainEndpointArrows[i]});
+
+                    // add this connections to fullConnections
+                    if (this.fullConnections[name] == null) {
+                        this.fullConnections[name] = {};
+                    }
+                    if (this.fullConnections[name][name + "/" + name] == null) {
+                        this.fullConnections[name][name + "/" + name] = [];
+                    }
+                    this.fullConnections[name][name + "/" + name].push(mainEndpointArrows[i]);
+                }
+            }
+
+            // show subdata connections, and hide hollow connections
+            for (key in this.subdataConnections[name]) {
+                for (i = 0; i < this.subdataConnections[name][key].length ; i += 1) {
+                    this.subdataConnections[name][key][i].externalRep.hide();
+                    this.subdataConnections[name][key][i].subDataArrow.show();
+                }
+            }
+        }
+        this.repaint();
+        this.wiringEditor.activatedTree = this.activatedTree;
+    };
+
+    /**
+     * add subdata connection.
+     */
+    GenericInterface.prototype.addSubdataConnection = function addSubdataConnection(endpoint, subdatakey, connection, sourceAnchor, targetAnchor, isLoadingWiring) {
+        var theArrow, mainEndpoint, layer;
+
+        if (this.subdataConnections[endpoint] == null) {
+            this.subdataConnections[endpoint] = {};
+        }
+        if (this.subdataConnections[endpoint][subdatakey] == null) {
+            this.subdataConnections[endpoint][subdatakey] = [];
+        }
+
+        layer = this.wiringEditor.arrowCreator.layer;
+        mainEndpoint = this.sourceAnchorsByName[endpoint];
+        if ((endpoint + "/" + endpoint) == subdatakey) {
+            // add full connection
+            if (this.fullConnections[endpoint] == null) {
+                this.fullConnections[endpoint] = {};
+            }
+            if (this.fullConnections[endpoint][subdatakey] == null) {
+                this.fullConnections[endpoint][subdatakey] = [];
+            }
+            connection.addClassName('full');
+            theArrow = this.wiringEditor.canvas.drawArrow(mainEndpoint.getCoordinates(layer), targetAnchor.getCoordinates(layer), "arrow");
+            this.fullConnections[endpoint][subdatakey].push(theArrow);
+        } else {
+            // add a hollow connection
+            if (this.hollowConnections[endpoint] == null) {
+                this.hollowConnections[endpoint] = {};
+            }
+            if (this.hollowConnections[endpoint][subdatakey] == null) {
+                this.hollowConnections[endpoint][subdatakey] = [];
+            }
+            theArrow = this.wiringEditor.canvas.drawArrow(mainEndpoint.getCoordinates(layer), targetAnchor.getCoordinates(layer), "arrow hollow");
+            this.hollowConnections[endpoint][subdatakey].push(theArrow);
+        }
+        theArrow.setEndAnchor(targetAnchor);
+        theArrow.setStartAnchor(mainEndpoint);
+        mainEndpoint.addArrow(theArrow);
+        targetAnchor.addArrow(theArrow);
+        if (isLoadingWiring) {
+            connection.hide();
+        } else {
+            theArrow.hide();
+        }
+        this.subdataConnections[endpoint][subdatakey].push({'subDataArrow' : connection, 'externalRep': theArrow});
+    };
+
+    /**
+     * remove subdata connection.
+     */
+    GenericInterface.prototype.removeSubdataConnection = function removeSubdataConnection(endpoint, subdatakey, connection) {
+        var i, externalRep;
+
+        if ((endpoint + "/" + endpoint) == subdatakey) {
+            // remove full connection
+            if (this.fullConnections[endpoint] != null && this.fullConnections[endpoint][subdatakey] != null) {
+                for (i = 0; i < this.subdataConnections[endpoint][subdatakey].length ; i += 1) {
+                    if (this.subdataConnections[endpoint][subdatakey][i].subDataArrow == connection) {
+                        externalRep = this.subdataConnections[endpoint][subdatakey][i].externalRep;
+                        this.fullConnections[endpoint][subdatakey].splice(this.fullConnections[endpoint][subdatakey].indexOf(externalRep), 1);
+                        externalRep.destroy();
+                        connection.destroy();
+                        this.subdataConnections[endpoint][subdatakey].splice(i, 1);
+                        break;
+                    }
+                }
+            } else {
+                //error
+            }
+        } else {
+            // remove a hollow connection
+            if (this.hollowConnections[endpoint] != null && this.hollowConnections[endpoint][subdatakey] != null) {
+                for (i = 0; i < this.subdataConnections[endpoint][subdatakey].length ; i += 1) {
+                    if (this.subdataConnections[endpoint][subdatakey][i].subDataArrow == connection) {
+                        externalRep = this.subdataConnections[endpoint][subdatakey][i].externalRep;
+                        this.hollowConnections[endpoint][subdatakey].splice(this.hollowConnections[endpoint][subdatakey].indexOf(externalRep), 1);
+                        externalRep.destroy();
+                        connection.destroy();
+                        this.subdataConnections[endpoint][subdatakey].splice(i, 1);
+                        break;
+                    }
+                }
+            } else {
+                //error
+            }
         }
     };
 
@@ -658,15 +833,17 @@
             labelDiv.appendChild(anchor.wrapperElement);
 
             anchor.menu.append(new StyledElements.MenuItem(gettext('Add multiconnector'), createMulticonnector.bind(this, name, anchor)));
-
             // tree test
-            if (label == "Image URL") {
+            if ((label == "Image URL") ||(label == "Point od interest") ) {
                 anchorContext.data.subdata = "{\"FN\": {\"label\": \"Full Name\", \"description\": \"Full name of the contact\", \"semanticType\": \"pedrooooo\", \"subdata\": {\"firstname\": {\"label\": \"First name\", \"description\": \"First name of the contact\", \"semanticType\": \"pedrooooo2\", \"subdata\": {}}, \"lastname\": {\"label\": \"Last name\", \"description\": \"Last name of the contact\", \"semanticType\": \"pedrooooo3\", \"subdata\": {}}}}, \"ADDR\": {\"label\": \"Address\", \"description\": \"Address of the contact\", \"semanticType\": \"pedrooooo4\", \"subdata\": {}}}";
                 subAnchors = anchorContext.data.subdata;
             } else {
                 subAnchors = null;
             }
-            if (subAnchors !== null) {
+            // tree test
+
+            subAnchors = anchorContext.data.subdata;
+            if (subAnchors != null) {
                 // generate tree
                 treeDiv = document.createElement("div");
                 treeDiv.classList.add('anchorTree');
@@ -676,17 +853,22 @@
                 treeDiv.addEventListener('mousedown', function (e) {
                     e.stopPropagation();
                 }.bind(this), false);
-                treeDiv.appendChild(this.generateTree(anchorContext, subAnchors, anchor, label, this.subdataHandler.bind(this)));
+                treeDiv.appendChild(this.generateTree(anchorContext, subAnchors, anchor, label, this.subdataHandler.bind(this, null, name)));
                 this.wrapperElement.appendChild(treeDiv);
-                // handler para activar/desactivar/cambiar de arbol
-                anchor.menu.append(new StyledElements.MenuItem(gettext("Unfold data structure"), this.subdataHandler.bind(this, treeDiv)));
+
+                // handler for subdata tree
+                anchor.menu.append(new StyledElements.MenuItem(gettext("Unfold data structure"), this.subdataHandler.bind(this, treeDiv, name)));
             }
 
             labelDiv.addEventListener('mouseover', function (e) {
-                this.wiringEditor.emphasize(anchor);
+                if (this.wiringEditor.recommendationsActivated == false) {
+                    this.wiringEditor.emphasize(anchor);
+                }
             }.bind(this));
             labelDiv.addEventListener('mouseout', function (e) {
-                this.wiringEditor.deemphasize(anchor);
+                if (this.wiringEditor.recommendationsActivated == false) {
+                    this.wiringEditor.deemphasize(anchor);
+                }
             }.bind(this));
 
             // Sticky effect
@@ -748,10 +930,14 @@
             anchor.menu.append(new StyledElements.MenuItem(gettext('Add multiconnector'), createMulticonnector.bind(this, name, anchor)));
 
             labelDiv.addEventListener('mouseover', function (e) {
-                this.wiringEditor.emphasize(anchor);
+                if (this.wiringEditor.recommendationsActivated == false) {
+                    this.wiringEditor.emphasize(anchor);
+                }
             }.bind(this));
             labelDiv.addEventListener('mouseout', function (e) {
-                this.wiringEditor.deemphasize(anchor);
+                if (this.wiringEditor.recommendationsActivated == false) {
+                    this.wiringEditor.deemphasize(anchor);
+                }
             }.bind(this));
 
             // Sticky effect
@@ -917,6 +1103,8 @@
         this.draggableSources = null;
         this.draggableTargets = null;
         this.wrapperElement = null;
+        this.hollowConnections = null;
+        this.subdataConnections = null;
     };
 
     /**

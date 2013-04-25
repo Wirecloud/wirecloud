@@ -33,10 +33,17 @@
     /**
      * SourceAnchor Class
      */
-    var SourceAnchor = function SourceAnchor(context, arrowCreator) {
+    var SourceAnchor = function SourceAnchor(context, arrowCreator, subAnchors) {
         this.context = context;
         Wirecloud.ui.WiringEditor.Anchor.call(this, false, arrowCreator);
         this.arrowCreator = arrowCreator;
+        if (subAnchors != null) {
+            this.isSubAnchor = true;
+            this.subAnchors = subAnchors;
+        } else {
+            this.isSubAnchor = false;
+            this.subAnchors = null;
+        }
     };
     SourceAnchor.prototype = new Wirecloud.ui.WiringEditor.Anchor(true);
 

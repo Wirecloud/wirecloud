@@ -133,9 +133,9 @@
             //emphasize
             if (!this.initAnchor.wrapperElement.parentNode.classList.contains('highlight')) {
                 if (this.initAnchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
-                    this.initAnchor.context.iObject.wiringEditor.emphasize(this.initAnchor.initAnchor);
+                    this.initAnchor.context.iObject.wiringEditor.emphasize(this.initAnchor.initAnchor, true);
                 } else {
-                    this.initAnchor.context.iObject.wiringEditor.emphasize(this.initAnchor);
+                    this.initAnchor.context.iObject.wiringEditor.emphasize(this.initAnchor, true);
                 }
             }
         }.bind(this);
@@ -172,7 +172,6 @@
                     }
                     theArrow.deemphasize();
                     if (isVal(currentSource, currentTarget)) {
-                        theArrow.calculateHighlight();
                         theArrow.calculateEmphasize();
                         theArrow.redraw();
                         // add the arrow to the arrow list of both anchors
@@ -183,6 +182,14 @@
                             fAnchor.initAnchor.addArrow(theArrow);
                         }
                         fAnchor.addArrow(theArrow);
+                        // subdata connections
+                        if (currentSource.isSubAnchor) {
+                            currentSource.context.iObject.addSubdataConnection(currentSource.context.data.name.split("/")[0], currentSource.context.data.name, theArrow, currentSource, currentTarget, false);
+                            theArrow.addClassName('subdataConnection');
+                        } else if (currentTarget.isSubAnchor) {
+                            currentTarget.context.iObject.addSubdataConnection(currentTarget.context.data.name.split("/")[0], currentTarget.context.data.name, theArrow, currentSource, currentTarget, false);
+                            theArrow.addClassName('subdataConnection');
+                        }
                     } else {
                         theArrow.destroy();
                     }
@@ -245,8 +252,12 @@
         if (target.context.iObject === source.context.iObject) {
             return false;
         }
+        if (source.isSubAnchor) {
+            arrows = source.context.iObject.sourceAnchorsByName[source.context.data.name.split('/')[0]].getArrows();
+        } else {
+            arrows = source.getArrows();
+        }
 
-        arrows = source.getArrows();
         for (i = 0; i < arrows.length; i++) {
             if (arrows[i].endAnchor === target) {
                 return false;
