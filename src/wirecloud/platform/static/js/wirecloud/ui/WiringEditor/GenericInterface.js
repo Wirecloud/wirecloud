@@ -20,7 +20,7 @@
  *
  */
 
-/*global Draggable, gettext, StyledElements, Wirecloud, EzWebExt, LayoutManagerFactory */
+/*global Draggable, gettext, StyledElements, Wirecloud, EzWebExt, WidgetOutputEndpoint */
 
 (function () {
 
@@ -32,12 +32,11 @@
     /**
      * GenericInterface Class
      */
-    var GenericInterface = function GenericInterface(extending, wiringEditor, title, manager, className, clone) {
+    var GenericInterface = function GenericInterface(extending, wiringEditor, title, manager, className) {
         if (extending === true) {
             return;
         }
-        var i, name, variables, variable, anchor, anchorDiv, anchorLabel, desc,
-            nameDiv, nameElement, del_button, item, copy;
+        var del_button, item;
 
         StyledElements.Container.call(this, {'class': className}, []);
 
@@ -215,8 +214,8 @@
      */
     var formatTree = function(treeDiv, entityHeiht, entityWidth) {
         var nLeafs, heightPerLeaf, branchList, i, nleafsAux, desp,
-            checkbox, label, height, firstFrame, firstTree, height,
-            width, diff, treeWidth;
+            checkbox, label, height, firstFrame, firstTree, width,
+            diff, treeWidth;
 
         firstFrame = treeDiv.getElementsByClassName("labelsFrame")[0];
         firstTree = treeDiv.getElementsByClassName("tree")[0];
@@ -257,7 +256,6 @@
     GenericInterface.prototype.makeDraggable = function makeDraggable() {
         this.draggable = new Draggable(this.wrapperElement, {iObject: this},
             function onStart(draggable, context) {
-                var position;
                 context.y = context.iObject.wrapperElement.style.top === "" ? 0 : parseInt(context.iObject.wrapperElement.style.top, 10);
                 context.x = context.iObject.wrapperElement.style.left === "" ? 0 : parseInt(context.iObject.wrapperElement.style.left, 10);
                 context.preselected = context.iObject.selected;
@@ -364,7 +362,7 @@
                         context.genInterface.down(context.iObject);
                     }
                 },
-                function onFinish(draggable, context, e) {
+                function onFinish(draggable, context) {
                     context.iObject.wrapperElement.classList.remove('moving');
                     if (context.iObjectClon.parentNode) {
                         context.iObjectClon.parentNode.removeChild(context.iObjectClon);
@@ -457,7 +455,7 @@
     /**
      * generate SubTree
      */
-    GenericInterface.prototype.generateSubTree = function(anchorContext, subAnchors, anchor) {
+    GenericInterface.prototype.generateSubTree = function(anchorContext, subAnchors) {
         var treeFrame, key, lab, checkbox, subdata, subTree, labelsFrame, context, name;
 
         treeFrame = document.createElement("div");
@@ -503,7 +501,7 @@
         } else {
             return null;
         }
-    }
+    };
 
     /**
      * generate Tree
@@ -580,10 +578,10 @@
         subdata = document.createElement("div");
         subdata.classList.add("dataTree");
         // emphasize listeners
-        lab.addEventListener('mouseover', function (e) {
+        lab.addEventListener('mouseover', function () {
             this.wiringEditor.emphasize(checkbox);
         }.bind(this));
-        lab.addEventListener('mouseout', function (e) {
+        lab.addEventListener('mouseout', function () {
             this.wiringEditor.deemphasize(checkbox);
         }.bind(this));
 
@@ -618,7 +616,7 @@
      *  handler for show/hide anchorTrees
      */
     GenericInterface.prototype.subdataHandler = function subdataHandler(treeDiv, name) {
-        var initialHeiht, initialWidth, key, enpoint, i, mainAnchor, externalRep, layer,
+        var initialHeiht, initialWidth, key, i, externalRep, layer,
             subDataArrow, firstIndex, mainEndpoint, mainSubEndPoint, theArrow, mainEndpointArrows;
 
         if (treeDiv == null) {
@@ -860,13 +858,13 @@
                 anchor.menu.append(new StyledElements.MenuItem(gettext("Unfold data structure"), this.subdataHandler.bind(this, treeDiv, name)));
             }
 
-            labelDiv.addEventListener('mouseover', function (e) {
-                if (this.wiringEditor.recommendationsActivated == false) {
+            labelDiv.addEventListener('mouseover', function () {
+                if (!this.wiringEditor.recommendationsActivated) {
                     this.wiringEditor.emphasize(anchor);
                 }
             }.bind(this));
-            labelDiv.addEventListener('mouseout', function (e) {
-                if (this.wiringEditor.recommendationsActivated == false) {
+            labelDiv.addEventListener('mouseout', function () {
+                if (!this.wiringEditor.recommendationsActivated) {
                     this.wiringEditor.deemphasize(anchor);
                 }
             }.bind(this));
@@ -900,7 +898,7 @@
      * add Target.
      */
     GenericInterface.prototype.addTarget = function addTarget(label, desc, name, anchorContext) {
-        var anchor, anchorDiv, labelDiv, anchorLabel, multiconnector, buttonsDiv;
+        var anchor, anchorDiv, labelDiv, anchorLabel, buttonsDiv;
 
         //anchorDiv
         anchorDiv = document.createElement("div");
@@ -929,13 +927,13 @@
 
             anchor.menu.append(new StyledElements.MenuItem(gettext('Add multiconnector'), createMulticonnector.bind(this, name, anchor)));
 
-            labelDiv.addEventListener('mouseover', function (e) {
-                if (this.wiringEditor.recommendationsActivated == false) {
+            labelDiv.addEventListener('mouseover', function () {
+                if (!this.wiringEditor.recommendationsActivated) {
                     this.wiringEditor.emphasize(anchor);
                 }
             }.bind(this));
-            labelDiv.addEventListener('mouseout', function (e) {
-                if (this.wiringEditor.recommendationsActivated == false) {
+            labelDiv.addEventListener('mouseout', function () {
+                if (!this.wiringEditor.recommendationsActivated) {
                     this.wiringEditor.deemphasize(anchor);
                 }
             }.bind(this));

@@ -20,7 +20,7 @@
  *
  */
 
-/*global Constants, EzWebExt, LayoutManagerFactory, opManager, StyledElements, Wirecloud, gettext, Draggable */
+/*global Constants, EzWebExt, LayoutManagerFactory, opManager, StyledElements, Wirecloud, gettext, WidgetOutputEndpoint */
 if (!Wirecloud.ui) {
 
     Wirecloud.ui = {};
@@ -188,7 +188,7 @@ if (!Wirecloud.ui) {
             for (mc in this.anchorsInvolved) {
                 for (entity in this.anchorsInvolved[mc]) {
                     for (endpoint in this.anchorsInvolved[mc][entity]) {
-                        if (this.anchorsInvolved[mc][entity][endpoint].length == 0) {
+                        if (this.anchorsInvolved[mc][entity][endpoint].length === 0) {
                             delete this.anchorsInvolved[mc][entity][endpoint];
                         }
                     }
@@ -293,9 +293,9 @@ if (!Wirecloud.ui) {
      */
     var loadWiring = function loadWiring(workspace, WiringStatus) {
         var iwidgets, iwidget, key, i, widget_interface, miniwidget_interface, ioperators, operator,
-            operator_interface, operator_instance, operatorKeys, connection, connectionView, startAnchor,
-            endAnchor, arrow, isMenubarRef, miniwidget_clon, pos, op_id, multiconnectors, multi, multiInstance,
-            multi_id, anchor, endpoint_order, operators, k, entitiesIds, currentSource, currentTarget;
+            operator_interface, operator_instance, connection, connectionView, startAnchor,
+            endAnchor, arrow, isMenubarRef, pos, op_id, multiconnectors, multi, multiInstance,
+            anchor, endpoint_order, operators, k, entitiesIds, currentSource, currentTarget;
 
         if (WiringStatus == null) {
             WiringStatus = {};
@@ -1204,7 +1204,7 @@ if (!Wirecloud.ui) {
         operator_interface.targetAnchors.map(this._remove_semantic_anchor_map_func);
 
         for (i = 0; i < operator_interface.sourceAnchors.length; i += 1) {
-            this.sourceAnchorList.splice(this.sourceAnchorList.indexOf(operator_interface.sourceAnchors[i]), 1)
+            this.sourceAnchorList.splice(this.sourceAnchorList.indexOf(operator_interface.sourceAnchors[i]), 1);
         }
         for (i = 0; i < operator_interface.targetAnchors.length; i += 1) {
             this.targetAnchorList.splice(this.targetAnchorList.indexOf(operator_interface.targetAnchors[i]), 1);
@@ -1286,7 +1286,7 @@ if (!Wirecloud.ui) {
     /**
      * deemphasize anchors.
      */
-    WiringEditor.prototype.deemphasize = function deemphasize(anchor, isCreatingArrow) {
+    WiringEditor.prototype.deemphasize = function deemphasize(anchor) {
         var rec, widgetId, achorId;
 
         if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.OperatorInterface) {
@@ -1412,7 +1412,7 @@ if (!Wirecloud.ui) {
      *  scrollHandler, using canvas for transformate the arrows layer
      */
     WiringEditor.prototype.scrollHandler = function scrollHandler() {
-        var top, left, oc, scrollX, scrollY, param;
+        var oc, scrollX, scrollY, param;
         oc = this.layout.getCenterContainer();
 
         scrollX = parseInt(oc.wrapperElement.scrollLeft, 10);

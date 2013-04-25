@@ -20,7 +20,7 @@
  *
  */
 
-/*global opManager, Variable, Wirecloud */
+/*global opManager, Wirecloud */
 
 var WidgetInputEndpoint = function (name, description, iwidget) {
 	this.iWidget = iwidget;
@@ -61,7 +61,7 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
      * WidgetInterface Class
      */
     var WidgetInterface = function WidgetInterface(wiringEditor, iwidget, manager, isMenubarRef, endPointsPos) {
-        var variables, variable, desc, label, name, anchorContext, i, wids;
+        var variables, variable, desc, label, anchorContext, i, wids;
         this.iwidget = iwidget;
         this.wiringEditor = wiringEditor;
 
@@ -103,7 +103,7 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
      * onFinish for draggable
      */
     WidgetInterface.prototype.onFinish = function onFinish(draggable, data, e) {
-        var position, initialPosition, movement, iwidget_interface, endPointPos, oc, scrollX, scrollY;
+        var position, iwidget_interface, endPointPos, oc, scrollX, scrollY;
 
         position = {posX: 0, posY: 0};
         position = data.iObjectClon.getPosition();

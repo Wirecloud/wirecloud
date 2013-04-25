@@ -38,11 +38,9 @@
      * ArrowCreator.
      */
     var ArrowCreator = function ArrowCreator(canvas, data, onStart, onDrag, onFinish, canBeDragged) {
-        var x, y;
         var theArrow;
-        var dragboardCover;
         var draggable = this;
-        var drag, currentSource, currentTarget;
+        var currentSource, currentTarget;
         var layer = canvas.getHTMLElement().parentNode; // TODO Trampa
         canBeDragged = canBeDragged ? canBeDragged : Draggable._canBeDragged;
         this.layer = layer;
@@ -119,10 +117,8 @@
         this.drag = function drag(e) {
 
             e = e || window.event; // needed for IE
-            var hasChanged;
             var x = parseInt(e.clientX, 10);
             var y = parseInt(e.clientY, 10);
-            var relatCoord, relatX;
             if (!this.invert) {
                 theArrow.setEnd(getRelativeScreenPosition(x, y, layer));
             } else {

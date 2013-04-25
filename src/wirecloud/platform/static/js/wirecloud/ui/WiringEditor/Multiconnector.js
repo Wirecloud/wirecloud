@@ -33,7 +33,7 @@
      * Multiconnector Class
      */
     var Multiconnector = function Multiconnector(id, objectId, sourceName, layer, wiringEditor, initAnchor, endPos, height) {
-        var coord, mainAnchor, anchorContext;
+        var coord, mainAnchor;
 
         this.id = id;
         this.objectId = objectId;
@@ -130,7 +130,6 @@
         //Draggable
         this.draggable = new Draggable(this.movZone, {iObject: this},
             function onStart(draggable, context) {
-                var position;
                 context.y = context.iObject.wrapperElement.style.top === "" ? 0 : parseInt(context.iObject.wrapperElement.style.top, 10);
                 context.x = context.iObject.wrapperElement.style.left === "" ? 0 : parseInt(context.iObject.wrapperElement.style.left, 10);
                 context.iObject.disable();
@@ -251,7 +250,7 @@
      * and sorted by posY destiny coordenate
      */
     Multiconnector.prototype.reorganizeArrows = function reorganizeArrows() {
-        var i, j, arrow, pos, arrowsAux, reorganizedList, totalPos, lastMax, highestArrow;
+        var i, j, arrow, pos, arrowsAux, totalPos, lastMax, highestArrow;
         pos = 0;
         totalPos = this.arrowPositions.length;
         arrowsAux = [];
@@ -291,7 +290,7 @@
      * return the highest coordinate Y Arrow
      */
     Multiconnector.prototype.searchMaxYArrow = function searchMaxArrow(lastMax, findedArrows) {
-        var maxY, i, j, y, highestArrow;
+        var maxY, i, y, highestArrow;
         maxY = -1000;
 
         for (i = 0; i < this.arrows.length; i += 1) {
@@ -344,7 +343,7 @@
      * get the coordinates to put an arrow in the multiconnector
      */
     Multiconnector.prototype.getCoordinates = function getCoordinates(layer, sticky) {
-        var coordinates, i;
+        var i;
 
         for (i = 0; i < this.arrowPositions.length; i += 1) {
             if (this.sticky != null) {
@@ -435,7 +434,7 @@
      * Repaint
      */
     Multiconnector.prototype.repaint = function repaint(special) {
-        var key, i, entity;
+        var i, entity;
 
         if (this.initAnchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
             this.mainArrow.setStart(this.mainAnchor.getCoordinates(this.layer));
@@ -530,7 +529,7 @@
      * select this Multiconnector
      */
     Multiconnector.prototype.select = function select(withCtrl) {
-        var i, arrows;
+        var i;
         if (this.hasClassName('selected')) {
             return;
         }
@@ -552,7 +551,7 @@
      * unselect this Multiconnector
      */
     Multiconnector.prototype.unselect = function unselect(withCtrl) {
-        var i, arrows;
+        var i;
         this.selected = false;
         this.removeClassName('selected');
         //arrows

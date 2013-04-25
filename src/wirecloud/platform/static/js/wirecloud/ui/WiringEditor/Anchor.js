@@ -20,7 +20,7 @@
  *
  */
 
-/*global Coordinates, CSSPrimitiveValue, StyledElements, Wirecloud */
+/*global CSSPrimitiveValue, StyledElements, Wirecloud */
 
 (function () {
 
@@ -50,7 +50,7 @@
         this.menu = new StyledElements.PopupMenu({'position': ['bottom-left', 'top-left', 'bottom-right', 'top-right']});
 
         this._mousedown_callback = function _mousedown_callback(e) {
-            var arrow, i, end, start;
+            var arrow, end, start;
 
             e.stopPropagation();
             // Only process left mouse button events
@@ -171,7 +171,6 @@
         this._mouseout_callback = function _mouseout_callback(e) {
             // Only process left mouse button events
             if (this.enabled && e.button === 0) {
-                var pos;
                 if (arrowCreator.initAnchor != null) {
                     e.stopPropagation();
                     this.removeClassName('pointed');

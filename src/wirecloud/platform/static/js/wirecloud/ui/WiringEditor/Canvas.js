@@ -129,7 +129,7 @@
     /**
      * Gets the current selected arrow in canvas.
      */
-    Canvas.prototype.getSelectedArrow = function getSelectedArrow(arrow) {
+    Canvas.prototype.getSelectedArrow = function getSelectedArrow() {
         return this.selectedArrow;
     };
 

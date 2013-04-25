@@ -21,7 +21,7 @@
  */
 
 
-/*global StyledElements, Wirecloud */
+/*global Wirecloud */
 
 (function () {
 
@@ -53,7 +53,7 @@
     /**
      * repaint the SourceAnchor
      */
-    SourceAnchor.prototype.repaint = function repaint(temporal) {
+    SourceAnchor.prototype.repaint = function repaint() {
         var i, coordinates;
 
         coordinates = this.getCoordinates(this.context.iObject.wiringEditor.getGridElement());

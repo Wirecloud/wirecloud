@@ -20,7 +20,7 @@
  *
  */
 
-/*global Draggable, EzWebExt, Wirecloud, Event, EzWebEffectBase, Element */
+/*global Draggable, EzWebExt, Wirecloud*/
 
 (function () {
 
@@ -292,7 +292,7 @@
      *  redraw the line.
      */
     Arrow.prototype.redraw = function redraw() {
-        var middleX, posCloser, startPuller, endPuller, from, to;
+        var posCloser, posSemAdv, startPuller, endPuller, from, to;
 
         from = this.start;
         to = this.end;
