@@ -250,13 +250,12 @@ var LayoutManagerFactory = function () {
          * Handler for changes in the hash to navigate to other areas
          */
         LayoutManager.prototype.onHashChange = function(state) {
-            var ws_id, tab_id, tab, nextWorkspace, opManager, dragboard;
+            var tab_id, tab, nextWorkspace, opManager, dragboard;
 
             opManager = OpManagerFactory.getInstance();
 
-            ws_id = parseInt(state.workspace, 10);
-            if (ws_id !== opManager.activeWorkspace.getId()) {
-                nextWorkspace = opManager.workspaceInstances[ws_id];
+            nextWorkspace = opManager.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
+            if (nextWorkspace.getId() !== opManager.activeWorkspace.getId()) {
                 opManager.changeActiveWorkspace(nextWorkspace, state.tab);
                 return;
             }
