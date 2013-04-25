@@ -97,7 +97,9 @@ if (!Wirecloud.ui) {
                 this.removeMulticonnector(this.multiconnectors[arrow.multiId]);
             }
             pos = this.arrows.indexOf(arrow);
-            this.arrows.splice(pos, 1);
+            if (pos != -1) {
+                this.arrows.splice(pos, 1);
+            }
         }.bind(this));
 
         this.canvas.addEventListener('unselectall', function () {
