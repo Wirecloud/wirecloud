@@ -70,6 +70,25 @@
             if (e.button !== 0) {
                 return;
             }
+            if (this.hasClassName('hollow')) {
+                // TODO open subdata tree
+                return;
+            }
+            if (this.hasClassName('subdataConnection')) {
+                // remove subconnection
+                if (this.hasClassName('full')) {
+                    // remove full connection from subdata view
+                    // borrar la conexion de toooodas partes, así como su conexion normal asociada
+                    this.startAnchor.context.iObject.removeSubdataConnection(this.startAnchor.context.data.name.split("/")[0], this.startAnchor.context.data.name, this);
+                } else {
+                    //remove subconnection from subdata view
+                    if (this.startAnchor.isSubAnchor) {
+                        // removeSubdataConnection
+                        this.startAnchor.context.iObject.removeSubdataConnection(this.startAnchor.context.data.name.split("/")[0], this.startAnchor.context.data.name, this);
+                    }
+                }
+                return;
+            }
             this.destroy();
             e.stopPropagation();
         }.bind(this));
