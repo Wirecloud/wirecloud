@@ -33,21 +33,37 @@
     findConnectable = function findConnectable(desc) {
         var entry;
 
+        // TODO subdata connections Carlos
+        var endpoint;
+        var mainName = desc.endpoint.split("/")[0];
+        if (mainName != desc.endpoint) {
+            endpoint = mainName;
+        } else {
+            endpoint = desc.endpoint;
+        }
+
         switch (desc.type) {
         case 'iwidget':
             entry = this.connectablesByWidget[desc.id];
-            if (desc.endpoint in entry.outputs) {
-                return entry.outputs[desc.endpoint];
+
+            //if (desc.endpoint in entry.outputs) {
+            if (endpoint in entry.outputs) {
+                //return entry.outputs[desc.endpoint];
+                return entry.outputs[endpoint];
             } else {
-                return entry.inputs[desc.endpoint];
+                //return entry.inputs[desc.endpoint];
+                return entry.inputs[endpoint];
             }
             break;
         case 'ioperator':
             entry = this.ioperators[desc.id];
-            if (desc.endpoint in entry.inputs) {
-                return entry.inputs[desc.endpoint];
+            //if (desc.endpoint in entry.inputs) {
+            if (endpoint in entry.inputs) {
+                //return entry.inputs[desc.endpoint];
+                return entry.inputs[endpoint];
             } else {
-                return entry.outputs[desc.endpoint];
+                //return entry.outputs[desc.endpoint];
+                return entry.outputs[endpoint];
             }
             break;
         }
