@@ -119,11 +119,15 @@ if (!Wirecloud.ui) {
         }.bind(this);
 
         this._semantic_anchor_map_func = function (anchor) {
-            var rec, anchors, anch, entityId, anchorId;
+            var rec, anchors, i, entityId, anchorId;
 
             if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
                 entityId = anchor.context.iObject.iwidget.widget.getId();
-                anchorId = anchor.context.data.vardef.name;
+                if (anchor.context.data.vardef) {
+                    anchorId = anchor.context.data.vardef.name;
+                } else {
+                    anchorId = anchor.context.data.name;
+                }
             } else {
                 entityId = anchor.context.iObject.ioperator.meta.uri;
                 anchorId = anchor.context.data.name;
@@ -131,19 +135,19 @@ if (!Wirecloud.ui) {
             //semantic recommendations
             for (rec in this.recommendations) {
                 for (anchors in this.recommendations[rec]) {
-                    for (anch in this.recommendations[rec][anchors]) {
-                        if ((this.recommendations[rec][anchors][anch].destination == entityId) &&
-                            (this.recommendations[rec][anchors][anch].destinationEndpoint == anchorId)) {
-                            if (this.anchorsInvolved[this.recommendations[rec][anchors][anch].matchCode] == null) {
-                                this.anchorsInvolved[this.recommendations[rec][anchors][anch].matchCode] = {};
+                    for (i = 0; i < this.recommendations[rec][anchors].length; i += 1) {
+                        if ((this.recommendations[rec][anchors][i].destination == entityId) &&
+                            (this.recommendations[rec][anchors][i].destinationEndpoint == anchorId)) {
+                            if (this.anchorsInvolved[this.recommendations[rec][anchors][i].matchCode] == null) {
+                                this.anchorsInvolved[this.recommendations[rec][anchors][i].matchCode] = {};
                             }
-                            if (this.anchorsInvolved[this.recommendations[rec][anchors][anch].matchCode][rec] == null) {
-                                this.anchorsInvolved[this.recommendations[rec][anchors][anch].matchCode][rec] = {};
+                            if (this.anchorsInvolved[this.recommendations[rec][anchors][i].matchCode][rec] == null) {
+                                this.anchorsInvolved[this.recommendations[rec][anchors][i].matchCode][rec] = {};
                             }
-                            if (this.anchorsInvolved[this.recommendations[rec][anchors][anch].matchCode][rec][anchors] == null) {
-                                this.anchorsInvolved[this.recommendations[rec][anchors][anch].matchCode][rec][anchors] = [];
+                            if (this.anchorsInvolved[this.recommendations[rec][anchors][i].matchCode][rec][anchors] == null) {
+                                this.anchorsInvolved[this.recommendations[rec][anchors][i].matchCode][rec][anchors] = [];
                             }
-                            this.anchorsInvolved[this.recommendations[rec][anchors][anch].matchCode][rec][anchors].push(anchor);
+                            this.anchorsInvolved[this.recommendations[rec][anchors][i].matchCode][rec][anchors].push(anchor);
                         }
                     }
                 }
@@ -151,23 +155,31 @@ if (!Wirecloud.ui) {
         }.bind(this);
 
         this._remove_semantic_anchor_map_func = function (anchor) {
-            var rec, anchors, anch, entityId, anchorId, mc, entity, endpoint, index;
+            var rec, anchors, i, entityId, anchorId, mc, entity, endpoint, index;
 
             if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
                 entityId = anchor.context.iObject.iwidget.widget.getId();
-                anchorId = anchor.context.data.vardef.name;
+                if (anchor.context.data.vardef) {
+                    anchorId = anchor.context.data.vardef.name;
+                } else {
+                    anchorId = anchor.context.data.name;
+                }
             } else {
                 entityId = anchor.context.iObject.ioperator.meta.uri;
-                anchorId = anchor.context.data.name;
+                if (anchor.context.data.vardef) {
+                    anchorId = anchor.context.data.vardef.name;
+                } else {
+                    anchorId = anchor.context.data.name;
+                }
             }
             //semantic recommendations
             for (rec in this.recommendations) {
                 for (anchors in this.recommendations[rec]) {
-                    for (anch in this.recommendations[rec][anchors]) {
-                        if ((this.recommendations[rec][anchors][anch].destination == entityId) &&
-                            (this.recommendations[rec][anchors][anch].destinationEndpoint == anchorId)) {
-                            index = this.anchorsInvolved[this.recommendations[rec][anchors][anch].matchCode][rec][anchors].indexOf(anchor);
-                            this.anchorsInvolved[this.recommendations[rec][anchors][anch].matchCode][rec][anchors].splice(index, 1);
+                    for (i = 0; i < this.recommendations[rec][anchors].length; i += 1) {
+                        if ((this.recommendations[rec][anchors][i].destination == entityId) &&
+                            (this.recommendations[rec][anchors][i].destinationEndpoint == anchorId)) {
+                            index = this.anchorsInvolved[this.recommendations[rec][anchors][i].matchCode][rec][anchors].indexOf(anchor);
+                            this.anchorsInvolved[this.recommendations[rec][anchors][i].matchCode][rec][anchors].splice(index, 1);
                             }
                     }
                 }
@@ -334,9 +346,11 @@ if (!Wirecloud.ui) {
         this.ctrlPushed = false;
         this.nextOperatorId = 0;
         this.nextMulticonnectorId = 0;
+        this.recommendationsActivated = false;
         this.anchorsInvolved = {'EQUIVALENT': {},
                                 'SUBSUMED': {},
                                 'SUBSUMES': {},
+                                'HASPART' : {},
                                 'DISJOINT': {},
                                 'OVERLAP': {},
                                 'NONE': {}};
@@ -660,12 +674,6 @@ if (!Wirecloud.ui) {
             }
             if (this.recommendations[destination][destinationEndpoint] == null) {
                 this.recommendations[destination][destinationEndpoint] = [];
-            }
-            //el matchCode no siempre es equivalente para la relacción en sentido contrario.
-            if (matchCode == "SUBSUMED") {
-                matchCode = "SUBSUMES";
-            } else if (matchCode == "SUBSUMES") {
-                matchCode = "SUBSUMED";
             }
             this.recommendations[destination][destinationEndpoint].push({'destination': origin,
                                                                       'destinationEndpoint': originEndpoint,
@@ -1237,160 +1245,114 @@ if (!Wirecloud.ui) {
 
     /**
      * emphasize anchors.
-     * colorCodes = {'EQUIVALENT': 'green', 'SUBSUMED':'green', 'SUBSUMES':'orange', 'DISJOINT':'red', 'OVERLAP':'grey', 'NONE':'grey'}
      */
-    WiringEditor.prototype.emphasize = function emphasize(anchor) {
-        var anchorsEQ, anchorsSD, anchorsSS, anchorsDJ, anchorsOP, anchorsNE, widgetId,
-            achorId, mainAnchorClass, i;
+    WiringEditor.prototype.emphasize = function emphasize(anchor, isCreatingArrow) {
+        var rec, widgetId, achorId;
 
         if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.OperatorInterface) {
             widgetId = anchor.context.iObject.ioperator.meta.uri;
             achorId = anchor.context.data.name;
         } else if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
             widgetId = anchor.context.iObject.iwidget.widget.getId();
-            achorId = anchor.context.data.vardef.name;
+            if (anchor.context.data instanceof WidgetOutputEndpoint) {
+                achorId = anchor.context.data.name;
+            } else {
+                achorId = anchor.context.data.vardef.name;
+            }
         }
 
-        mainAnchorClass = 'NONE';
-        //NONE anchors
-        anchorsNE = [];
-        if (this.anchorsInvolved['NONE'][widgetId] != null &&
-            this.anchorsInvolved['NONE'][widgetId][achorId] != null) {
-            anchorsNE = this.anchorsInvolved['NONE'][widgetId][achorId];
-        }
-        //OVERLAP anchors
-        anchorsOP = [];
-        if (this.anchorsInvolved['OVERLAP'][widgetId] != null &&
-            this.anchorsInvolved['OVERLAP'][widgetId][achorId] != null) {
-            anchorsOP = this.anchorsInvolved['OVERLAP'][widgetId][achorId];
-            mainAnchorClass = 'OVERLAP';
-        }
-        //SUBSUMES anchors
-        anchorsSS = [];
-        if (this.anchorsInvolved['SUBSUMES'][widgetId] != null &&
-            this.anchorsInvolved['SUBSUMES'][widgetId][achorId] != null) {
-            anchorsSS = this.anchorsInvolved['SUBSUMES'][widgetId][achorId];
-            mainAnchorClass = 'SUBSUMES';
-        }
-        //SUBSUMED anchors
-        anchorsSD = [];
-        if (this.anchorsInvolved['SUBSUMED'][widgetId] != null &&
-            this.anchorsInvolved['SUBSUMED'][widgetId][achorId] != null) {
-            anchorsSD = this.anchorsInvolved['SUBSUMED'][widgetId][achorId];
-            mainAnchorClass = 'SUBSUMED';
-        }
-        //DISJOINT anchors
-        anchorsDJ = [];
-        if (this.anchorsInvolved['DISJOINT'][widgetId] != null &&
-            this.anchorsInvolved['DISJOINT'][widgetId][achorId] != null) {
-            anchorsDJ = this.anchorsInvolved['DISJOINT'][widgetId][achorId];
-            mainAnchorClass = 'DISJOINT';
-        }
-        //EQUIVALENT anchors
-        anchorsEQ = [];
-        if (this.anchorsInvolved['EQUIVALENT'][widgetId] != null &&
-            this.anchorsInvolved['EQUIVALENT'][widgetId][achorId] != null) {
-            anchorsEQ = this.anchorsInvolved['EQUIVALENT'][widgetId][achorId];
-            mainAnchorClass = 'EQUIVALENT';
-        }
+        rec = this.getRecommendations(anchor, widgetId, achorId, false);
+        this.highlightRecommendations(rec);
 
-        for (i = 0; i < anchorsEQ.length; i += 1) {
-            this.highlightAnchorLabel(anchorsEQ[i], 'EQUIVALENT');
+        if (isCreatingArrow){
+            this.recommendationsActivated = true;
         }
-        for (i = 0; i < anchorsSD.length; i += 1) {
-            this.highlightAnchorLabel(anchorsSD[i], 'SUBSUMED');
-        }
-        for (i = 0; i < anchorsSS.length; i += 1) {
-            this.highlightAnchorLabel(anchorsSS[i], 'SUBSUMES');
-        }
-        for (i = 0; i < anchorsDJ.length; i += 1) {
-            this.highlightAnchorLabel(anchorsDJ[i], 'DISJOINT');
-        }
-        for (i = 0; i < anchorsOP.length; i += 1) {
-            this.highlightAnchorLabel(anchorsOP[i], 'OVERLAP');
-        }
-        for (i = 0; i < anchorsNE.length; i += 1) {
-            this.highlightAnchorLabel(anchorsNE[i], 'NONE');
-        }
-        this.highlightAnchorLabel(anchor, mainAnchorClass);
     };
 
     /**
      * deemphasize anchors.
      */
-    WiringEditor.prototype.deemphasize = function deemphasize(anchor) {
-        var anchorsEQ, anchorsSD, anchorsSS, anchorsDJ, anchorsOP, anchorsNE, widgetId,
-            achorId, mainAnchorClass, i;
+    WiringEditor.prototype.deemphasize = function deemphasize(anchor, isCreatingArrow) {
+        var rec, widgetId, achorId;
 
         if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.OperatorInterface) {
             widgetId = anchor.context.iObject.ioperator.meta.uri;
             achorId = anchor.context.data.name;
         } else if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
             widgetId = anchor.context.iObject.iwidget.widget.getId();
-            achorId = anchor.context.data.vardef.name;
-        }
-        mainAnchorClass = 'NONE';
-        //NONE anchors
-        anchorsNE = [];
-        if (this.anchorsInvolved['NONE'][widgetId] != null &&
-            this.anchorsInvolved['NONE'][widgetId][achorId] != null) {
-            anchorsNE = this.anchorsInvolved['NONE'][widgetId][achorId];
-        }
-        //OVERLAP anchors
-        anchorsOP = [];
-        if (this.anchorsInvolved['OVERLAP'][widgetId] != null &&
-            this.anchorsInvolved['OVERLAP'][widgetId][achorId] != null) {
-            anchorsOP = this.anchorsInvolved['OVERLAP'][widgetId][achorId];
-            mainAnchorClass = 'OVERLAP';
-        }
-        //SUBSUMES anchors
-        anchorsSS = [];
-        if (this.anchorsInvolved['SUBSUMES'][widgetId] != null &&
-            this.anchorsInvolved['SUBSUMES'][widgetId][achorId] != null) {
-            anchorsSS = this.anchorsInvolved['SUBSUMES'][widgetId][achorId];
-            mainAnchorClass = 'SUBSUMES';
-        }
-        //SUBSUMED anchors
-        anchorsSD = [];
-        if (this.anchorsInvolved['SUBSUMED'][widgetId] != null &&
-            this.anchorsInvolved['SUBSUMED'][widgetId][achorId] != null) {
-            anchorsSD = this.anchorsInvolved['SUBSUMED'][widgetId][achorId];
-            mainAnchorClass = 'SUBSUMED';
-        }
-        //DISJOINT anchors
-        anchorsDJ = [];
-        if (this.anchorsInvolved['DISJOINT'][widgetId] != null &&
-            this.anchorsInvolved['DISJOINT'][widgetId][achorId] != null) {
-            anchorsDJ = this.anchorsInvolved['DISJOINT'][widgetId][achorId];
-            mainAnchorClass = 'DISJOINT';
-        }
-        //EQUIVALENT anchors
-        anchorsEQ = [];
-        if (this.anchorsInvolved['EQUIVALENT'][widgetId] != null &&
-            this.anchorsInvolved['EQUIVALENT'][widgetId][achorId] != null) {
-            anchorsEQ = this.anchorsInvolved['EQUIVALENT'][widgetId][achorId];
-            mainAnchorClass = 'EQUIVALENT';
+            if (anchor.context.data instanceof WidgetOutputEndpoint) {
+                achorId = anchor.context.data.name;
+            } else {
+                achorId = anchor.context.data.vardef.name;
+            }
         }
 
-        for (i = 0; i < anchorsNE.length; i += 1) {
-            this.unhighlightAnchorLabel(anchorsNE[i], 'NONE');
+        rec = this.getRecommendations(anchor, widgetId, achorId, true);
+        this.unhighlightRecommendations(rec);
+
+        this.recommendationsActivated = false;
+    };
+
+    /**
+     * getRecommendations
+     */
+    WiringEditor.prototype.getRecommendations = function getRecommendations(anchor, widgetId, achorId, isEmphasized) {
+        var mainAnchorClass, mainAnchorRef, recommendations, recTag, keyValues, anchorList, anchorListFiltered, i;
+
+        keyValues = {'NONE': 0, 'OVERLAP': 1, 'SUBSUMES': 2, 'SUBSUMED': 3, 'HASPART': 4, 'DISJOINT': 5, 'EQUIVALENT': 6};
+        recommendations = {};
+        mainAnchorRef = 0;
+        mainAnchorClass = 'NONE';
+        for (recTag in this.anchorsInvolved) {
+            if (this.anchorsInvolved[recTag][widgetId] != null &&
+                    this.anchorsInvolved[recTag][widgetId][achorId] != null) {
+                anchorList = this.anchorsInvolved[recTag][widgetId][achorId];
+                anchorListFiltered = [];
+                for (i = 0; i< anchorList.length; i += 1) {
+                    if (anchorList[i].context.iObject != anchor.context.iObject){
+                        // only if the anchor and anchorList[i] are not part of the same widget
+                        anchorListFiltered[i] = anchorList[i];
+                    }
+                }
+                if (!isEmpty(anchorListFiltered) && (mainAnchorRef < keyValues[recTag])) {
+                    mainAnchorRef = keyValues[recTag];
+                    mainAnchorClass = recTag;
+                }
+                recommendations[recTag] = anchorListFiltered;
+            }
         }
-        for (i = 0; i < anchorsOP.length; i += 1) {
-            this.unhighlightAnchorLabel(anchorsOP[i], 'OVERLAP');
+        if (isEmphasized) {
+            this.unhighlightAnchorLabel(anchor, mainAnchorClass);
+        } else {
+            this.highlightAnchorLabel(anchor, mainAnchorClass);
         }
-        for (i = 0; i < anchorsDJ.length; i += 1) {
-            this.unhighlightAnchorLabel(anchorsDJ[i], 'DISJOINT');
+        return recommendations;
+    };
+
+    /**
+     * highlightRecommendations
+     */
+    WiringEditor.prototype.highlightRecommendations = function highlightRecommendations(recHash) {
+        var i, key;
+
+        for (key in recHash){
+            for (i = 0; i < recHash[key].length; i += 1) {
+                this.highlightAnchorLabel(recHash[key][i], key);
+            }
         }
-        for (i = 0; i < anchorsSS.length; i += 1) {
-            this.unhighlightAnchorLabel(anchorsSS[i], 'SUBSUMES');
+    };
+
+    /**
+     * unhighlightRecommendations
+     */
+    WiringEditor.prototype.unhighlightRecommendations = function unhighlightRecommendations(recHash) {
+        var i, key;
+
+        for (key in recHash){
+            for (i = 0; i < recHash[key].length; i += 1) {
+                this.unhighlightAnchorLabel(recHash[key][i], key);
+            }
         }
-        for (i = 0; i < anchorsSD.length; i += 1) {
-            this.unhighlightAnchorLabel(anchorsSD[i], 'SUBSUMED');
-        }
-        for (i = 0; i < anchorsEQ.length; i += 1) {
-            this.unhighlightAnchorLabel(anchorsEQ[i], 'EQUIVALENT');
-        }
-        this.unhighlightAnchorLabel(anchor, mainAnchorClass);
     };
 
     /**
