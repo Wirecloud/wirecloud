@@ -34,18 +34,18 @@
         this.emphasize_counter = 0;
 
         this.canvas = canvas;
-        this.wrapperElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:g");
+        this.wrapperElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg");
 
-        this.arrowBodyElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:g");
+        this.arrowBodyElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg");
         this.wrapperElement.appendChild(this.arrowBodyElement);
 
         // Create a path for the arrow's border
-        this.arrowElementBorder = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
+        this.arrowElementBorder = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "path");
         this.arrowElementBorder.setAttribute('class', 'arrowborder');
         this.arrowBodyElement.appendChild(this.arrowElementBorder);
 
         // And another for the arrow's body
-        this.arrowElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
+        this.arrowElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "path");
         this.arrowElement.setAttribute('class', 'arrowbody');
         this.arrowBodyElement.appendChild(this.arrowElement);
 
@@ -63,7 +63,7 @@
         }.bind(this), true);
 
         // closer
-        this.closerElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
+        this.closerElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "circle");
         this.closerElement.setAttribute('class', 'closer');
         this.closerElement.addEventListener('click', function (e) {
             // Only process left mouse button events
@@ -75,10 +75,10 @@
         }.bind(this));
 
         // pullers definition
-        this.pullerStartElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
+        this.pullerStartElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "circle");
         this.pullerStartElement.setAttribute("r", 5);
         this.pullerStartElement.addEventListener("click", EzWebExt.stopPropagationListener, false);
-        this.pullerEndElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
+        this.pullerEndElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "circle");
         this.pullerEndElement.setAttribute("r", 5);
         this.pullerEndElement.addEventListener("click", EzWebExt.stopPropagationListener, false);
 
@@ -86,9 +86,9 @@
         this.pullerEndElement.setAttribute('class', 'pullerBall');
 
         //pullerLines
-        this.pullerStartLine = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
+        this.pullerStartLine = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "path");
         this.pullerStartLine.setAttribute('class', 'pullerLine');
-        this.pullerEndLine = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
+        this.pullerEndLine = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "path");
         this.pullerEndLine.setAttribute('class', 'pullerLine');
 
         // draggable pullers
@@ -320,6 +320,14 @@
      *  with a bercier curves aproximation.
      */
     Arrow.prototype.calculateMid = function calculateMid() {
+        return this.calculatePosInArrow(0.5);
+    };
+
+    /**
+     *  calculate coordinates de la posicithe arrow path middle position
+     *  with a bercier curves aproximation.
+     */
+    Arrow.prototype.calculatePosInArrow = function calculatePosInArrow(PathPos) {
         var B1, B2, B3, B4, getBercier;
 
         B1 = function B1(t) { return t * t * t; };
@@ -333,40 +341,7 @@
             return {posX : X, posY : Y};
         };
 
-        return getBercier(0.5, this.start, this.getPullerStart(true), this.getPullerEnd(true), this.end);
-    };
-    /**
-     *  highlights the arrow
-     */
-    Arrow.prototype.highlight = function highlight() {
-        //this.addClassName('highlighted');
-        this.highlight_counter += 1;
-        this.removeClassName('disabled');
-    };
-
-    /**
-     *  unhighlights the arrow
-     */
-    Arrow.prototype.unhighlight = function unhighlight() {
-        //this.removeClassName('highlighted');
-        this.highlight_counter -= 1;
-        if (this.highlight_counter < 1) {
-            this.addClassName('disabled');
-        }
-    };
-
-    /**
-     *  recalculate if the arrow may be Highlighted or not
-     */
-    Arrow.prototype.calculateHighlight = function calculateHighlight() {
-        this.highlight_counter = 2;
-        if (!this.endAnchor.isHighlighted()) {
-            this.unhighlight();
-        }
-        if (!this.startAnchor.isHighlighted()) {
-            this.unhighlight();
-        }
-        this.redraw();
+        return getBercier(PathPos, this.start, this.getPullerStart(true), this.getPullerEnd(true), this.end);
     };
 
     /**
@@ -513,6 +488,19 @@
         }
     };
 
+    /**
+     * hide the arrow
+     */
+    Arrow.prototype.hide = function hide() {
+        this.addClassName('hidden');
+    };
+
+    /**
+     * show the arrow
+     */
+    Arrow.prototype.show = function show() {
+        this.removeClassName('hidden');
+    };
     /*************************************************************************
      * Make Arrow public
      *************************************************************************/
