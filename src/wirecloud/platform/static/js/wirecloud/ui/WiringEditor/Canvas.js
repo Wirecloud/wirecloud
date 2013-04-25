@@ -32,8 +32,10 @@
     var Canvas = function Canvas() {
         StyledElements.ObjectWithEvents.call(this, ['arrowadded', 'arrowremoved', 'unselectall']);
 
-        this.canvasElement = document.createElementNS(this.SVG_NAMESPACE, 'svg:svg');
-        this.canvasElement.generalLayer = document.createElementNS(this.SVG_NAMESPACE, 'svg:g');
+        this.canvasElement = document.createElementNS(this.SVG_NAMESPACE, 'svg');
+        this.canvasElement.setAttribute('xmlns', "http://www.w3.org/2000/svg");
+        this.canvasElement.setAttribute('xmlns:xlink', "http://www.w3.org/1999/xlink");
+        this.canvasElement.generalLayer = document.createElementNS(this.SVG_NAMESPACE, 'svg');
         this.canvasElement.appendChild(this.canvasElement.generalLayer);
         this.canvasElement.setAttribute('class', 'canvas');
         this.selectedArrow = null;
