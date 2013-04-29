@@ -590,7 +590,7 @@ class USDLTemplateParser(object):
         self.base = base
 
     def get_contents(self):
-        return self._graph.serialize()
+        return self._graph.serialize(format='pretty-xml')
 
     def get_resource_type(self):
         return self._info['type']
