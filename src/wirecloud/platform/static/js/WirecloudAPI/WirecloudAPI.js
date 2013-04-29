@@ -114,26 +114,26 @@
 
     Object.preventExtensions(window.MashupPlatform.widget);
 
-    // Pref Module
-    Object.defineProperty(window.MashupPlatform, 'pref', {value: {}});
-    Object.defineProperty(window.MashupPlatform.pref, 'get', {
+    // Prefs Module
+    Object.defineProperty(window.MashupPlatform, 'prefs', {value: {}});
+    Object.defineProperty(window.MashupPlatform.prefs, 'get', {
         value: function get(key) {
             var variable = platform.opManager.activeWorkspace.varManager.getVariableByName(id, key);
             return variable.get();
         }
     });
-    Object.defineProperty(window.MashupPlatform.pref, 'registerCallback', {
+    Object.defineProperty(window.MashupPlatform.prefs, 'registerCallback', {
         value: function registerCallback(callback) {
             platform.opManager.activeWorkspace.getIWidget(id).registerPrefCallback(callback);
         }
     });
-    Object.defineProperty(window.MashupPlatform.pref, 'set', {
+    Object.defineProperty(window.MashupPlatform.prefs, 'set', {
         value: function get(key, value) {
             var variable = platform.opManager.activeWorkspace.varManager.getVariableByName(id, key);
             variable.set(value, true);
         }
     });
-    Object.preventExtensions(window.MashupPlatform.pref);
+    Object.preventExtensions(window.MashupPlatform.prefs);
 
     // Wiring Module
     Object.defineProperty(window.MashupPlatform, 'wiring', {value: {}});

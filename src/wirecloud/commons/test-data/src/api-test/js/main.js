@@ -28,17 +28,17 @@ MashupPlatform.wiring.registerCallback('inputendpoint', function (data) {
 });
 MashupPlatform.wiring.pushEvent('outputendpoint', 'Success!!');
 
-MashupPlatform.pref.registerCallback(function (new_values) {
+MashupPlatform.prefs.registerCallback(function (new_values) {
     document.getElementById('pref_registercallback_test').innerHTML = new_values.text;
 });
 
 setTimeout(function () {
-    if (MashupPlatform.pref.get('text') === 'initial text') {
+    if (MashupPlatform.prefs.get('text') === 'initial text') {
         document.getElementById('pref_get_test').innerHTML = OK_HTML;
-        MashupPlatform.pref.set('text', 'success!!');
-        if (MashupPlatform.pref.get('text') === 'success!!') {
+        MashupPlatform.prefs.set('text', 'success!!');
+        if (MashupPlatform.prefs.get('text') === 'success!!') {
             document.getElementById('pref_set_test').innerHTML = OK_HTML;
-            MashupPlatform.pref.set('text', 'initial text');
+            MashupPlatform.prefs.set('text', 'initial text');
         }
     }
 }, 0);
