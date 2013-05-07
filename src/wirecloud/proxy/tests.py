@@ -2,7 +2,7 @@
 
 import errno
 import socket
-from httplib import HTTPMessage
+from httplib import BadStatusLine, HTTPMessage
 from StringIO import StringIO
 import urllib2
 
@@ -144,6 +144,16 @@ class ProxyTests(ProxyTestsBase):
         self.assertEqual(response.content, '')
 
         WIRECLOUD_PROXY._do_request.set_exception('http://example.com/path', urllib2.URLError(socket.timeout()))
+        response = client.get('/proxy/http/example.com/path', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        self.assertEqual(response.status_code, 504)
+        self.assertEqual(response.content, '')
+
+    def test_connection_badstatusline(self):
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        WIRECLOUD_PROXY._do_request.set_exception('http://example.com/path', BadStatusLine('HTTP/1.1 0 Unknown'))
         response = client.get('/proxy/http/example.com/path', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 504)
         self.assertEqual(response.content, '')
