@@ -32,6 +32,7 @@
 
 import Cookie
 import errno
+from httplib import BadStatusLine
 import re
 import socket
 import urllib2
@@ -189,6 +190,8 @@ class Proxy():
                     return HttpResponse(status=502)
                 else:
                     return HttpResponseNotFound(str(e.reason))
+            except BadStatusLine, e:
+                return HttpResponse(status=504)
 
             # Add content-type header to the response
             res_info = res.info()
