@@ -152,7 +152,7 @@ class Proxy():
             else:
                 hostName = socket.gethostname()
 
-            via_header = "%s %s (EzWeb-python-Proxy/1.1)" % (protocolVersion, hostName)
+            via_header = "%s %s (Wirecloud-python-Proxy/1.1)" % (protocolVersion, hostName)
             if 'via' in request_data['headers']:
                 request_data['headers']['via'] += ', ' + via_header
             else:
