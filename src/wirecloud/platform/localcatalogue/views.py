@@ -91,7 +91,11 @@ class ResourceCollection(Resource):
 
         elif content_type == 'application/octet-stream':
             packaged = True
-            downloaded_file = StringIO(request.raw_post_content)
+            if request._read_started:
+                downloaded_file = StringIO(request.raw_post_data)
+            else:
+                downloaded_file = request
+
             file_contents = WgtFile(downloaded_file)
         else:
             if content_type == 'application/json':
