@@ -213,8 +213,14 @@
             if (parentNode.classList.contains("geContainer")) {
                 coordinates.posY += parentNode.getElementsByClassName("container north_container header")[0].getBoundingClientRect().height;
             }
+            // firefox correction
+            if  (parentNode.classList.contains("anchorDiv") && this.context.iObject.wiringEditor.navigator == "firefox"){
+                coordinates.posY -= parentNode.getBoundingClientRect().height - 4;
+            }
+
             parentNode = parentNode.parentNode;
         }
+
         return {
             posX: Math.round(coordinates.posX + (this.wrapperElement.offsetWidth / 2)),
             posY: Math.round(coordinates.posY + (this.wrapperElement.offsetWidth / 2))
