@@ -233,9 +233,17 @@
 
         if (source instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
             source = currentSource.initAnchor;
+            if (source.isSubAnchor || target.isSubAnchor) {
+                // multiconnectors are not compatible with subconnections
+                return false;
+            }
         }
         if (target instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
             target = currentTarget.initAnchor;
+            if (source.isSubAnchor || target.isSubAnchor) {
+                // multiconnectors are not compatible with subconnections
+                return false;
+            }
         }
         if (source === target) {
             return false;
