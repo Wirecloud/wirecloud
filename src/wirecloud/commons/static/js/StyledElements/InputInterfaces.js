@@ -620,6 +620,10 @@ FileInputInterface.prototype._setError = function _setError(error) {
     // TODO
 };
 
+FileInputInterface.prototype.setDisabled = function setDisabled(disable) {
+    this.inputElement.disabled = !!disable;
+};
+
 /**
  *
  */
