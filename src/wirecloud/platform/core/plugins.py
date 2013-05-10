@@ -45,6 +45,7 @@ WIRING_EDITOR_FILES = (
     'js/wirecloud/ui/WiringEditor/SourceAnchor.js',
     'js/wirecloud/ui/WiringEditor/TargetAnchor.js',
     'js/wirecloud/ui/WiringEditor/Multiconnector.js',
+    'js/wirecloud/ui/WiringEditor/GenericInterfaceSettingsMenuItems.js',
 )
 
 STYLED_ELEMENTS_FILES = (
