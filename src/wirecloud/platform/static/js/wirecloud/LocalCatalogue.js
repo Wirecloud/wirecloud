@@ -140,6 +140,10 @@
     var process_upload_response = function process_upload_response(response_data) {
         var i, id, resource_data;
 
+        if (!Array.isArray(response_data)) {
+            response_data = [response_data];
+        }
+
         for (i = 0; i < response_data.length; i += 1) {
             resource_data = response_data[i];
             id = [resource_data.vendor, resource_data.name, resource_data.version].join('/');
