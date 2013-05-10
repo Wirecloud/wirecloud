@@ -32,7 +32,7 @@ var FiWareCataloguePublishView = function (id, options) {
     this.wrapperElement.getElementsByClassName('usdl_submit_form')[0].onsubmit = this._submit_usdl.bind(this);
 
     setTimeout(function () {
-        EzWebExt.addEventListener(this.wrapperElement.getElementsByClassName('back_to_resource_list')[0], 'click', this.catalogue.home.bind(this.catalogue));
+        this.wrapperElement.getElementsByClassName('back_to_resource_list')[0].addEventListener('click', this.catalogue.home.bind(this.catalogue));
     }.bind(this), 0);
 };
 FiWareCataloguePublishView.prototype = new StyledElements.Alternative();

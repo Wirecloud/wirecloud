@@ -525,17 +525,17 @@ StyledElements.StyledNumericField = function(options) {
     };
 
     /* Internal events */
-    EzWebExt.addEventListener(this.wrapperElement, 'mousedown', EzWebExt.stopPropagationListener, true);
-    EzWebExt.addEventListener(this.wrapperElement, 'click', EzWebExt.stopPropagationListener, true);
+    this.wrapperElement.addEventListener('mousedown', EzWebExt.stopPropagationListener, true);
+    this.wrapperElement.addEventListener('click', EzWebExt.stopPropagationListener, true);
 
-    EzWebExt.addEventListener(topButton, "click",
+    topButton.addEventListener("click",
         EzWebExt.bind(function(event) {
             if (this.enabled)
                 inc(this.inputElement, options.inc);
         }, this),
         true);
 
-    EzWebExt.addEventListener(bottomButton, "click",
+    bottomButton.addEventListener("click",
         EzWebExt.bind(function(event) {
             if (this.enabled)
                 inc(this.inputElement, -options.inc);
@@ -685,9 +685,9 @@ StyledElements.StyledCheckBox = function StyledCheckBox(options) {
     }
 
     /* Internal events */
-    EzWebExt.addEventListener(this.inputElement, 'mousedown', EzWebExt.stopPropagationListener, true);
-    EzWebExt.addEventListener(this.inputElement, 'click', EzWebExt.stopPropagationListener, true);
-    EzWebExt.addEventListener(this.inputElement, 'change',
+    this.inputElement.addEventListener('mousedown', EzWebExt.stopPropagationListener, true);
+    this.inputElement.addEventListener('click', EzWebExt.stopPropagationListener, true);
+    this.inputElement.addEventListener('change',
                                 EzWebExt.bind(function () {
                                     if (this.enabled)
                                         this.events['change'].dispatch(this);
@@ -750,9 +750,9 @@ StyledElements.StyledRadioButton = function(nameGroup_, value, options) {
     }
 
     /* Internal events */
-    EzWebExt.addEventListener(this.inputElement, 'mousedown', EzWebExt.stopPropagationListener, true);
-    EzWebExt.addEventListener(this.inputElement, 'click', EzWebExt.stopPropagationListener, true);
-    EzWebExt.addEventListener(this.inputElement, 'change',
+    this.inputElement.addEventListener('mousedown', EzWebExt.stopPropagationListener, true);
+    this.inputElement.addEventListener('click', EzWebExt.stopPropagationListener, true);
+    this.inputElement.addEventListener('change',
                                 EzWebExt.bind(function () {
                                     if (this.enabled)
                                         this.events['change'].dispatch(this);
@@ -849,12 +849,12 @@ StyledElements.StyledHPaned = function(options) {
         document.oncontextmenu = null; //reenable context menu
         document.onmousedown = null; //reenable text selection
 
-        EzWebExt.removeEventListener(document, "mouseup", endresize, true);
-        EzWebExt.removeEventListener(document, "mousemove", resize, true);
+        document.removeEventListener("mouseup", endresize, true);
+        document.removeEventListener("mousemove", resize, true);
 
         hpaned.repaint(false);
 
-        EzWebExt.addEventListener(hpaned.handler, "mousedown", startresize, true);
+        hpaned.handler.addEventListener("mousedown", startresize, true);
     }
 
     function resize(e) {
@@ -877,17 +877,17 @@ StyledElements.StyledHPaned = function(options) {
     function startresize(e) {
         document.oncontextmenu = function() { return false; }; //disable context menu
         document.onmousedown = function() { return false; }; //disable text selection
-        EzWebExt.removeEventListener(hpaned.handler, "mousedown", startresize, true);
+        hpaned.handler.removeEventListener("mousedown", startresize, true);
 
         xStart = parseInt(e.screenX);
         hpanedWidth = hpaned.wrapperElement.parentNode.offsetWidth - 5;
         handlerPosition = hpaned.handlerPosition;
 
-        EzWebExt.addEventListener(document, "mousemove", resize, true);
-        EzWebExt.addEventListener(document, "mouseup", endresize, true);
+        document.addEventListener("mousemove", resize, true);
+        document.addEventListener("mouseup", endresize, true);
     }
 
-    EzWebExt.addEventListener(hpaned.handler, "mousedown", startresize, true);
+    hpaned.handler.addEventListener("mousedown", startresize, true);
 }
 StyledElements.StyledHPaned.prototype = new StyledElements.StyledElement();
 
@@ -895,7 +895,7 @@ StyledElements.StyledHPaned.prototype.insertInto = function (element, refElement
     StyledElements.StyledElement.prototype.insertInto.call(this, element, refElement);
 
     this.repaint();
-    EzWebExt.addEventListener(window, "resize",
+    window.addEventListener("resize",
                             EzWebExt.bind(this.repaint, this),
                             true);
 }
@@ -990,7 +990,7 @@ StyledElements.Tab = function(id, notebook, options) {
 
     EzWebExt.prependClassName(this.wrapperElement, "tab hidden"); // TODO
 
-    EzWebExt.addEventListener(this.tabElement, "click",
+    this.tabElement.addEventListener("click",
                                 EzWebExt.bind(function () {
                                     this.notebook.goToTab(this.tabId);
                                 }, this),
@@ -1186,7 +1186,7 @@ StyledElements.StyledAlert = function(title, content, options) {
     /* Events code */
     if (this._closeButton !== null) {
         this._closeCallback = EzWebExt.bind(this.close, this);
-        EzWebExt.addEventListener(this._closeButton, "click", this._closeCallback, true);
+        this._closeButton.addEventListener("click", this._closeCallback, true);
     }
 }
 StyledElements.StyledAlert.prototype = new StyledElements.StyledElement();
@@ -1207,7 +1207,7 @@ StyledElements.StyledAlert.prototype.close = function() {
     this.wrapperElement = null;
 
     if (this._closeButton != null) {
-        EzWebExt.removeEventListener(this._closeButton, "click", this._closeCallback, true);
+        this._closeButton.removeEventListener("click", this._closeCallback, true);
     }
     StyledElements.StyledElement.prototype.destroy.call();
 };

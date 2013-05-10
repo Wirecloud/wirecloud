@@ -19,7 +19,7 @@
                 EzWebExt.addClassName(cell, 'sortable');
                 cell.setAttribute('title', 'Ordenar por ' + column.label);
                 cell.callback = EzWebExt.bind(this.pSortByColumnCallback, {widget: this, column: i});
-                EzWebExt.addEventListener(cell, 'click', cell.callback, true);
+                cell.addEventListener('click', cell.callback, true);
             }
             this.header.appendChild(cell);
             this.pHeaderCells.push(cell);
@@ -102,7 +102,7 @@
                     cell.appendChild(cellContent);
                 }
 
-                EzWebExt.addEventListener(cell, 'click', callback, false);
+                cell.addEventListener('click', callback, false);
                 this.pListeners.push({element: cell, callback: callback});
 
                 row.appendChild(cell);
@@ -372,7 +372,7 @@
 
         for (i = 0; i < this.pListeners.length; i += 1) {
             entry = this.pListeners[i];
-            EzWebExt.removeEventListener(entry.element, 'click', entry.callback, false);
+            entry.element.removeEventListener('click', entry.callback, false);
         }
         this.pComponents = [];
         this.pListeners = [];
@@ -399,7 +399,7 @@
         for (i = 0; i < this.pHeaderCells.length; i += 1) {
             cell = this.pHeaderCells[i];
             if (cell.callback) {
-                EzWebExt.removeEventListener(cell, 'click', cell.callback, true);
+                cell.removeEventListener('click', cell.callback, true);
                 cell.callback = null;
             }
         }

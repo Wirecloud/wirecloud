@@ -73,7 +73,7 @@
         }
         if (options.listenOnTitle) {
             this.titleContainer.wrapperElement.style.cursor = "pointer";
-            EzWebExt.addEventListener(this.titleContainer.wrapperElement, 'click', callback, false);
+            this.titleContainer.wrapperElement.addEventListener('click', callback, false);
         }
     };
     Expander.prototype = new StyledElements.StyledElement();

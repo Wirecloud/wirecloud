@@ -155,11 +155,11 @@
         this.transitionsQueue = new CommandQueue(context, initFunc, stepFunc);
 
         /* Code for handling internal events */
-        EzWebExt.addEventListener(this.moveLeftButton, "click",
+        this.moveLeftButton.addEventListener("click",
                                              EzWebExt.bind(this.shiftLeftTabs, this),
                                              true);
 
-        EzWebExt.addEventListener(this.moveRightButton, "click",
+        this.moveRightButton.addEventListener("click",
                                              EzWebExt.bind(this.shiftRightTabs, this),
                                              true);
     };

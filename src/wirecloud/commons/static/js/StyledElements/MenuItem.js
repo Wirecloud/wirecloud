@@ -27,14 +27,14 @@
                 this.events.mouseover.dispatch(this);
             }
         }, this);
-        EzWebExt.addEventListener(this.wrapperElement, "mouseover", this._mouseoverEventHandler, false);
+        this.wrapperElement.addEventListener("mouseover", this._mouseoverEventHandler, false);
         this._mouseoutEventHandler = EzWebExt.bind(function (event) {
             if (this.enabled) {
                 EzWebExt.removeClassName(this.wrapperElement, "hovered");
                 this.events.mouseout.dispatch(this);
             }
         }, this);
-        EzWebExt.addEventListener(this.wrapperElement, "mouseout", this._mouseoutEventHandler, false);
+        this.wrapperElement.addEventListener("mouseout", this._mouseoutEventHandler, false);
 
         this._clickHandler = EzWebExt.bind(function (event) {
             event.stopPropagation();
@@ -44,7 +44,7 @@
                 this.events.click.dispatch(this);
             }
         }, this);
-        EzWebExt.addEventListener(this.wrapperElement, "click", this._clickHandler, true);
+        this.wrapperElement.addEventListener("click", this._clickHandler, true);
     };
     MenuItem.prototype = new StyledElements.StyledElement();
 
@@ -52,9 +52,9 @@
         if (EzWebExt.XML.isElement(this.wrapperElement.parentNode)) {
             EzWebExt.removeFromParent(this.wrapperElement);
         }
-        EzWebExt.removeEventListener(this.wrapperElement, "mouseover", this._mouseoverEventHandler, false);
-        EzWebExt.removeEventListener(this.wrapperElement, "mouseout", this._mouseoutEventHandler, false);
-        EzWebExt.removeEventListener(this.wrapperElement, "click", this._clickHandler, true);
+        this.wrapperElement.removeEventListener("mouseover", this._mouseoverEventHandler, false);
+        this.wrapperElement.removeEventListener("mouseout", this._mouseoutEventHandler, false);
+        this.wrapperElement.removeEventListener("click", this._clickHandler, true);
 
         this._mouseoverEventHandler = null;
         this._mouseoutEventHandler = null;

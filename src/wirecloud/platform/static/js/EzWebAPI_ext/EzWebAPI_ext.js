@@ -149,106 +149,6 @@ EzWebExt.getResourceURL = function(path) {
     return this.URL + path;
 }
 
-if ('addEventListener' in document) {
-    EzWebExt.addEventListener = function(element, eventName, callback, capture) {
-        element.addEventListener(eventName, callback, capture);
-    }
-
-    EzWebExt.removeEventListener = function(element, eventName, callback, capture) {
-        element.removeEventListener(eventName, callback, capture);
-    }
-} else {
-    EzWebExt.addEventListener = function(element, eventName, callback, capture) {
-        var currentTarget = element;
-        var extraAdaptations = function() {};
-        switch (eventName) {
-            case 'mouseover':
-                extraAdaptations = function(e) {
-                    e.target = e.toElement;
-                    e.relatedTarget = e.fromElement;
-                }
-                break;
-            case 'mouseout':
-                extraAdaptations = function(e) {
-                    e.target = e.fromElement;
-                    e.relatedTarget = e.toElement;
-                }
-                break;
-
-            case 'change':
-                if ((element.tagName.toLowerCase() == 'input') && (element.type.toLowerCase() == 'radio' || element.type.toLowerCase() == 'checkbox'))
-                    eventName = 'click';
-            default:
-                extraAdaptations = function(e) {
-                    e.target = e.srcElement;
-                }
-        }
-
-        var wrapper = function(evt) {
-            var e = evt;
-            if (!e) {
-                e = window.event;
-            }
-            e.stopPropagation = function() {
-                this.cancelBubble = true;
-            }
-            e.preventDefault = function() {
-                this.returnValue = false;
-            }
-            e.currentTarget = currentTarget;
-            extraAdaptations(e);
-            callback(e);
-        }
-
-        if (!capture) {
-            wrapper.callback = callback;
-            element.attachEvent('on' + eventName, wrapper);
-        } else {
-            if (element['on' + eventName]) {
-                var tmp = wrapper;
-                var prevWrapper = element['on' + eventName];
-                wrapper = function() {
-                    prevWrapper();
-                    if (!window.event.cancelBubble)
-                        tmp();
-                }
-                wrapper.prevWrapper = prevWrapper;
-                prevWrapper.nextWrapper = wrapper;
-            }
-
-            element['on' + eventName] = wrapper;
-        }
-    }
-
-    EzWebExt.removeEventListener = function(element, eventName, callback, capture) {
-        if (!capture) {
-            element.detachEvent('on' + eventName, callback);
-        } else {
-            var curWrapper = element['on' + eventName],
-                prevWrapper;
-
-            if (curWrapper) {
-                if (curWrapper.callback == callback) {
-                    element['on' + eventName] = curWrapper.nextFunc;
-                } else {
-                    if (!curWrapper.nextFunc) {
-                        element['on' + eventName] = null;
-                    }
-
-                    while (curWrapper != null && curWrapper.callback != callback) {
-                        prevWrapper = curWrapper;
-                        curWrapper = curWrapper.nextWrapper;
-                    }
-
-                    if (curWrapper) {
-                        prevWrapper.nextFunc = curWrapper.nextFunc;
-                    }
-                }
-            }
-        }
-    }
-}
-
 /**
  * Importa la librería Javascript indicada por la URL pasada. Se ejecuta
  * de forma síncrona, con lo aseguramos que la librería importada estará disponible
@@ -1374,11 +1274,11 @@ EzWebGadget.prototype._waitingForDOMContentLoaded = function(handler) {
 
     } else if (this.browser.isFirefox() ||  this.browser.isOpera()) {
 
-        EzWebExt.addEventListener(document, "DOMContentLoaded", handler, true);
+        document.addEventListener("DOMContentLoaded", handler, true);
 
     } else if (this.browser.isIE()) {
 
-        EzWebExt.addEventListener(document, "readystatechange", function() {
+        document.addEventListener("readystatechange", function() {
             if (document.readyState == "loaded" || document.readyState == "complete") {
                 handler();
             }
@@ -1413,12 +1313,12 @@ EzWebGadget.prototype._registerIEEvent = function(element) {
                     if (!this.registerImports[i])
                         return;
                 }
-                EzWebExt.removeEventListener(element, "readystatechange", handler, true);
+                element.removeEventListener("readystatechange", handler, true);
                 document.body.innerHTML = ""; // TODO necesario por la doble llamada inicial pero hay que solucionarlo
                 this.init();
             }
         }, this);
-        EzWebExt.addEventListener(element, "readystatechange", handler, true);
+        element.addEventListener("readystatechange", handler, true);
     }
 }
 
@@ -2217,14 +2117,14 @@ StyledElements.StyledNumericField = function(options) {
         }
     };
 
-    EzWebExt.addEventListener(topButton, "click",
+    topButton.addEventListener("click",
         EzWebExt.bind(function(event) {
             if (this.enabled)
                 inc(this.inputElement, options.inc);
         }, this),
         true);
 
-    EzWebExt.addEventListener(bottomButton, "click",
+    bottomButton.addEventListener("click",
         EzWebExt.bind(function(event) {
             if (this.enabled)
                 inc(this.inputElement, -options.inc);
@@ -2371,7 +2271,7 @@ StyledElements.StyledCheckBox = function(nameGroup_, value, options) {
     }
 
     /* Internal events */
-    EzWebExt.addEventListener(this.inputElement, 'change',
+    this.inputElement.addEventListener('change',
                                 EzWebExt.bind(function () {
                                     if (this.enabled)
                                         this.events['change'].dispatch(this);
@@ -2434,7 +2334,7 @@ StyledElements.StyledRadioButton = function(nameGroup_, value, options) {
     }
 
     /* Internal events */
-    EzWebExt.addEventListener(this.inputElement, 'change',
+    this.inputElement.addEventListener('change',
                                 EzWebExt.bind(function () {
                                     if (this.enabled)
                                         this.events['change'].dispatch(this);
@@ -2531,12 +2431,12 @@ StyledElements.StyledHPaned = function(options) {
         document.oncontextmenu = null; //reenable context menu
         document.onmousedown = null; //reenable text selection
 
-        EzWebExt.removeEventListener(document, "mouseup", endresize, true);
-        EzWebExt.removeEventListener(document, "mousemove", resize, true);
+        document.removeEventListener("mouseup", endresize, true);
+        document.removeEventListener("mousemove", resize, true);
 
         hpaned.repaint(false);
 
-        EzWebExt.addEventListener(hpaned.handler, "mousedown", startresize, true);
+        hpaned.handler.addEventListener("mousedown", startresize, true);
     }
 
     function resize(e) {
@@ -2559,17 +2459,17 @@ StyledElements.StyledHPaned = function(options) {
     function startresize(e) {
         document.oncontextmenu = function() { return false; }; //disable context menu
         document.onmousedown = function() { return false; }; //disable text selection
-        EzWebExt.removeEventListener(hpaned.handler, "mousedown", startresize, true);
+        hpaned.handler.removeEventListener("mousedown", startresize, true);
 
         xStart = parseInt(e.screenX);
         hpanedWidth = hpaned.wrapperElement.parentNode.offsetWidth - 5;
         handlerPosition = hpaned.handlerPosition;
 
-        EzWebExt.addEventListener(document, "mousemove", resize, true);
-        EzWebExt.addEventListener(document, "mouseup", endresize, true);
+        document.addEventListener("mousemove", resize, true);
+        document.addEventListener("mouseup", endresize, true);
     }
 
-    EzWebExt.addEventListener(hpaned.handler, "mousedown", startresize, true);
+    hpaned.handler.addEventListener("mousedown", startresize, true);
 }
 StyledElements.StyledHPaned.prototype = new StyledElements.StyledElement();
 
@@ -2577,7 +2477,7 @@ StyledElements.StyledHPaned.prototype.insertInto = function (element, refElement
     StyledElements.StyledElement.prototype.insertInto.call(this, element, refElement);
 
     this.repaint();
-    EzWebExt.addEventListener(window, "resize",
+    window.addEventListener("resize",
                             EzWebExt.bind(this.repaint, this),
                             true);
 }
@@ -2722,7 +2622,7 @@ StyledElements.StyledAlert = function(title, content, options) {
     /* Events code */
     if (this._closeButton !== null) {
         this._closeCallback = EzWebExt.bind(this.close, this);
-        EzWebExt.addEventListener(this._closeButton, "click", this._closeCallback, true);
+        this._closeButton.addEventListener("click", this._closeCallback, true);
     }
 }
 StyledElements.StyledAlert.prototype = new StyledElements.StyledElement();
@@ -2743,7 +2643,7 @@ StyledElements.StyledAlert.prototype.close = function() {
     this.wrapperElement = null;
 
     if (this._closeButton != null) {
-        EzWebExt.removeEventListener(this._closeButton, "click", this._closeCallback, true);
+        this._closeButton.removeEventListener("click", this._closeCallback, true);
     }
     StyledElements.StyledElement.prototype.destroy.call();
 };
@@ -3427,14 +3327,14 @@ StyledElements.MenuItem = function(text, handler) {
             this.events['mouseover'].dispatch(this);
         }
     }, this);
-    EzWebExt.addEventListener(this.wrapperElement, "mouseover", this._mouseoverEventHandler, false);
+    this.wrapperElement.addEventListener("mouseover", this._mouseoverEventHandler, false);
     this._mouseoutEventHandler = EzWebExt.bind(function(event) {
         if (this.enabled) {
             EzWebExt.removeClassName(this.wrapperElement, "hovered");
             this.events['mouseout'].dispatch(this);
         }
     }, this)
-    EzWebExt.addEventListener(this.wrapperElement, "mouseout", this._mouseoutEventHandler, false);
+    this.wrapperElement.addEventListener("mouseout", this._mouseoutEventHandler, false);
 
     this._clickHandler = EzWebExt.bind(function(event) {
         event.stopPropagation();
@@ -3442,7 +3342,7 @@ StyledElements.MenuItem = function(text, handler) {
             this.events['click'].dispatch(this);
         }
     }, this);
-    EzWebExt.addEventListener(this.wrapperElement, "click", this._clickHandler, false);
+    this.wrapperElement.addEventListener("click", this._clickHandler, false);
 }
 StyledElements.MenuItem.prototype = new StyledElements.StyledElement();
 
@@ -3450,8 +3350,8 @@ StyledElements.MenuItem.prototype.destroy = function() {
     if (EzWebExt.XML.isElement(this.wrapperElement.parentNode)) {
         EzWebExt.removeFromParent(this.wrapperElement);
     }
-    EzWebExt.removeEventListener(this.wrapperElement, "mouseover", this._mouseoverEventHandler, false);
-    EzWebExt.removeEventListener(this.wrapperElement, "mouseout", this._mouseoutEventHandler, false);
+    this.wrapperElement.removeEventListener("mouseover", this._mouseoverEventHandler, false);
+    this.wrapperElement.removeEventListener("mouseout", this._mouseoutEventHandler, false);
     this._mouseoverEventHandler = null;
     this._mouseoutEventHandler = null;
 }
@@ -3637,8 +3537,8 @@ StyledElements.PopupMenu = function() {
 
     this._disableLayer = document.createElement('div');
     this._disableLayer.className = 'disable-layer';
-    EzWebExt.addEventListener(this._disableLayer, "click", this._disableCallback, false);
-    EzWebExt.addEventListener(this._disableLayer, "contextmenu", this._disableCallback, false);
+    this._disableLayer.addEventListener("click", this._disableCallback, false);
+    this._disableLayer.addEventListener("contextmenu", this._disableCallback, false);
 }
 StyledElements.PopupMenu.prototype = new StyledElements.PopupMenuBase({extending: true});
 
@@ -3675,8 +3575,8 @@ StyledElements.PopupMenu.prototype._menuItemCallback = function(menuItem) {
 StyledElements.PopupMenu.prototype.destroy = function() {
     StyledElements.PopupMenuBase.prototype.destroy.call(this);
 
-    EzWebExt.removeEventListener(this._disableLayer, "click", this._disableCallback, false);
-    EzWebExt.removeEventListener(this._disableLayer, "contextmenu", this._disableCallback, false);
+    this._disableLayer.removeEventListener("click", this._disableCallback, false);
+    this._disableLayer.removeEventListener("contextmenu", this._disableCallback, false);
     this._disableCallback = null;
 }
 

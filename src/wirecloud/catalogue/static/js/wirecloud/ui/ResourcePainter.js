@@ -290,7 +290,7 @@
         }
 
         for (i = 0; i < elements.length; i += 1) {
-            EzWebExt.addEventListener(elements[i], _event, handler);
+            elements[i].addEventListener(_event, handler);
         }
     };
 
