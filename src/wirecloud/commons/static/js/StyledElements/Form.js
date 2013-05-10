@@ -343,21 +343,23 @@
         return data;
     };
 
-    Form.prototype.setData = function (data) {
+    Form.prototype.setData = function setData(data) {
         var field, fieldId;
 
         if (typeof data !== 'object' && typeof data !== 'undefined') {
             throw new TypeError();
         }
 
-        if (data == null) {
-            data = {};
-        }
-
-        for (fieldId in this.fieldInterfaces) {
-            if (this.fieldInterfaces.hasOwnProperty(fieldId)) {
+        this.pSetMsgs([]);
+        if (data != null) {
+            for (fieldId in this.fieldInterfaces) {
                 field = this.fieldInterfaces[fieldId];
                 field._setValue(data[fieldId]);
+            }
+        } else {
+            for (fieldId in this.fields) {
+                field = this.fieldInterfaces[fieldId];
+                field.reset();
             }
         }
     };
@@ -404,15 +406,8 @@
         this.events.cancel.dispatch(this);
     };
 
-    Form.prototype.reset = function () {
-        var fieldId, field;
-        for (fieldId in this.fields) {
-            if (this.fields.hasOwnProperty(fieldId)) {
-                field = this.fieldInterfaces[fieldId];
-                field.reset();
-            }
-        }
-        this.pSetMsgs([]);
+    Form.prototype.reset = function reset() {
+        this.setData();
     };
 
     Form.prototype.normalSubmit = function (method, url, options) {
