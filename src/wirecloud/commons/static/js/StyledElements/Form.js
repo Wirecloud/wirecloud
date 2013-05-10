@@ -448,5 +448,42 @@
         this.pCancelHandler = null;
     };
 
+    /**
+     * Enables/disables this Form
+     */
+    Form.prototype.setDisabled = function setDisabled(disabled) {
+        var fieldId, inputInterface;
+
+        if (!this.enabled == disabled) {
+          // Nothing to do
+          return;
+        }
+
+        if (disabled) {
+            this.wrapperElement.classList.add('disabled');
+        } else {
+            this.wrapperElement.classList.remove('disabled');
+        }
+        for (fieldId in this.fieldInterfaces) {
+            inputInterface = this.fieldInterfaces[fieldId];
+            inputInterface.setDisabled(disabled || this.readOnly || inputInterface._readOnly);
+        }
+        if (this.acceptButton != null) {
+            this.acceptButton.setDisabled(disabled);
+        }
+        if (this.cancelButton != null) {
+            this.cancelButton.setDisabled(disabled);
+        }
+        this.enabled = !disabled;
+    };
+
+    Form.prototype.enable = function enable() {
+        this.setDisabled(false);
+    };
+
+    Form.prototype.disable = function disable() {
+        this.setDisabled(true);
+    }
+
     window.Form = Form;
 })();
