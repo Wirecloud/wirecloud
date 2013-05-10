@@ -104,18 +104,8 @@
                 'plain': true
             });
             this.menu_button.insertInto(this.header);
-            item = new StyledElements.MenuItem(gettext('Reorder endpoints'), function () {
-                    this.wiringEditor.ChangeObjectEditing(this);
-                }.bind(this));
-            this.menu_button.popup_menu.append(item);
-            item = new  StyledElements.MenuItem(gettext('Settings'), function () {
-                var window_menu;
-                if (this.ioperator) {
-                    window_menu = new Wirecloud.ui.OperatorPreferencesWindowMenu();
-                    window_menu.show(this.ioperator);
-                }
-            }.bind(this));
-            this.menu_button.popup_menu.append(item);
+            this.menu_button.popup_menu.append(new Wirecloud.ui.WiringEditor.GenericInterfaceSettingsMenuItems(this));
+
         } else { //miniInterface
             this.header = document.createElement("div");
             this.header.classList.add('header');
