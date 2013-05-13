@@ -112,10 +112,14 @@ StyledElements.StyledElement.prototype.insertInto = function (element, refElemen
  */
 StyledElements.StyledElement.prototype._getUsableHeight = function() {
     var parentElement = this.wrapperElement.parentNode;
-    if (!EzWebExt.XML.isElement(parentElement))
+    if (!EzWebExt.XML.isElement(parentElement)) {
         return null;
+    }
 
     var parentStyle = document.defaultView.getComputedStyle(parentElement, null);
+    if (parentStyle.getPropertyCSSValue('display') == null) {
+        return null;
+    }
     var containerStyle = document.defaultView.getComputedStyle(this.wrapperElement, null);
 
     var height = parentElement.offsetHeight -

@@ -37,7 +37,7 @@
 
             computedStyle = document.defaultView.getComputedStyle(document.documentElement, null);
             width = computedStyle.getPropertyCSSValue('width');
-            width = width.getFloatValue(CSSPrimitiveValue.CSS_PX);
+            width = width.getFloatValue(width.CSS_PX);
         } catch (e) {
             useInternalComputedStyle = true;
             cssProperties = computedStyle;

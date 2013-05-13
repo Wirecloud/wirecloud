@@ -474,6 +474,10 @@
         tabElement = this.tabs[0].getTabElement();
 
         computedStyle = document.defaultView.getComputedStyle(tabElement, null);
+        if (computedStyle.getPropertyCSSValue('display') == null) {
+            this.maxTabElementWidth = '';
+            return;
+        }
         padding = computedStyle.getPropertyCSSValue('padding-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
         padding += computedStyle.getPropertyCSSValue('padding-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
         padding += 2 * computedStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX);

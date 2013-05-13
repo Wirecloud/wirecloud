@@ -30,6 +30,10 @@
         var cellStyle, paddingLeft, paddingRight;
 
         cellStyle = document.defaultView.getComputedStyle(cell, null);
+        if (cellStyle.getPropertyCSSValue('display') == null) {
+            cell.style.widht = '0';
+            return;
+        }
         paddingLeft = cellStyle.getPropertyCSSValue('padding-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
         paddingRight = cellStyle.getPropertyCSSValue('padding-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
 
