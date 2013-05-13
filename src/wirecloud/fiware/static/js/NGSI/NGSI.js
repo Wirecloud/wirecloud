@@ -222,7 +222,7 @@
     var makeXMLRequest = function makeXMLRequest(url, payload, parse_func, callbacks) {
         this.makeRequest(url, {
             method: 'POST',
-            contentType: 'application/xml',
+            contentType: 'application/x-www-form-urlencoded',
             postBody: NGSI.XML.serialize(payload),
             onSuccess: function (transport) {
                 if (typeof callbacks.onSuccess === 'function') {
@@ -232,7 +232,14 @@
                     } else {
                         doc = transport.responseXML;
                     }
-                    data = parse_func(doc, callbacks);
+                    try {
+                        data = parse_func(doc, callbacks);
+                    } catch (e) {
+                        if (typeof callbacks.onFailure === 'function') {
+                            callbacks.onFailure(e);
+                        }
+                        return;
+                    }
 
                     callbacks.onSuccess(data);
                 }
@@ -606,16 +613,16 @@
     };
 
     var parse_context_registration_response_list = function parse_context_registration_response_list(list) {
-        var registrationResponses, registrationResponse, app,
+        var registrationResponses, registrationResponse, registration,
             contextRegistrationElement, entityIdListElement, entityIdList,
             entityIdElement, nameElement, typeElement, entity, idElement, i, j,
             contextRegistrationAttributeListElement, attributeList, attribute,
-            providingApplicationElement, data = {};
+            providingApplicationElement, data = [];
 
         registrationResponses = NGSI.XML.getChildElementsByTagName(list, 'contextRegistrationResponse');
         for (i = 0; i < registrationResponses.length; i += 1) {
             registrationResponse = registrationResponses[i];
-            app = {
+            registration = {
                 entities: [],
                 attributes: []
             };
@@ -633,7 +640,7 @@
                         id: NGSI.XML.getTextContent(idElement),
                         type: entityIdElement.getAttribute('type')
                     };
-                    app.entities.push(entity);
+                    registration.entities.push(entity);
                 }
             }
 
@@ -649,12 +656,14 @@
                         name: NGSI.XML.getTextContent(nameElement),
                         type: NGSI.XML.getTextContent(typeElement)
                     };
-                    app.attributes.push(attribute);
+                    registration.attributes.push(attribute);
                 }
             }
 
             providingApplicationElement = NGSI.XML.getChildElementByTagName(contextRegistrationElement, 'providingApplication');
-            data[NGSI.XML.getTextContent(providingApplicationElement)] = app;
+            registration.providingApplication = NGSI.XML.getTextContent(providingApplicationElement);
+
+            data.push(registration);
         }
 
         return data;
@@ -760,10 +769,31 @@
         return data;
     };
 
+    var process_error_code = function process_error_code(element) {
+        var errorCodeElement, codeElement, reasonPhraseElement;
+        
+        errorCodeElement = NGSI.XML.getChildElementByTagName(element, 'errorCode');
+        if (errorCodeElement != null) {
+            codeElement = NGSI.XML.getChildElementByTagName(errorCodeElement, 'code');
+            reasonPhraseElement = NGSI.XML.getChildElementByTagName(errorCodeElement, 'reasonPhrase');
+            throw new NGSI.InvalidRequestError(parseInt(codeElement.textContent, 10), reasonPhraseElement.textContent);
+        }
+    };
+
     var parse_query_context_response = function parse_query_context_response(doc, options) {
 
         if (doc.documentElement.tagName !== 'queryContextResponse') {
             throw new NGSI.InvalidResponseError('');
+        }
+
+        try {
+            process_error_code(doc.documentElement);
+        } catch (e) {
+            if (e.code === 404) {
+                return {};
+            } else {
+                throw e;
+            }
         }
 
         return parse_context_response_list(NGSI.XML.getChildElementByTagName(doc.documentElement, 'contextResponseList'), options);
@@ -946,7 +976,7 @@
             options = {};
         }
 
-        if (this.connected === false && this.connecting === false) {
+        if (this.connected === false) {
             if (typeof options.onSuccess === 'function') {
                 this.onload_callbacks.push(options.onSuccess);
             }
@@ -954,12 +984,12 @@
             if (typeof options.onFailure === 'function') {
                 this.onerror_callbacks.push(options.onFailure);
             }
+        }
 
+        if (this.connected === false && this.connecting === false) {
             init.call(this);
-        } else {
-            if (typeof options.onSuccess === 'function') {
-                options.onSuccess();
-            }
+        } else if (this.connected === true && typeof options.onSuccess === 'function') {
+            options.onSuccess();
         }
     };
 
@@ -1025,8 +1055,9 @@
     NGSI.ConnectionError.prototype = new Error();
     NGSI.ConnectionError.prototype.constructor = NGSI.ConnectionError;
 
-    NGSI.InvalidRequestError = function InvalidRequestError(message) {
+    NGSI.InvalidRequestError = function InvalidRequestError(code, message) {
         this.name = 'InvalidRequest';
+        this.code = code;
         this.message = message || '';
     };
     NGSI.InvalidRequestError.prototype = new Error();
@@ -1134,7 +1165,7 @@
         makeXMLRequest.call(this, url, payload, parse_discover_context_availability_response, callbacks);
     };
 
-    NGSI.Connection.prototype.createAvailabilitySubscription = function discoverAvailabilitySubscription(e, attr, duration, restriction, callbacks) {
+    NGSI.Connection.prototype.createAvailabilitySubscription = function createAvailabilitySubscription(e, attr, duration, restriction, callbacks) {
 
         if (!Array.isArray(e) || e.length === 0) {
             throw new TypeError();
