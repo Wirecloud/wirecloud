@@ -402,7 +402,11 @@
                 }
 
                 contextValue = doc.createElement('contextValue');
-                NGSI.XML.setTextContent(contextValue, attribute.contextValue);
+                if (attribute.contextValue.trim() === '') {
+                    NGSI.XML.setTextContent(contextValue, 'emptycontent');
+                } else {
+                    NGSI.XML.setTextContent(contextValue, attribute.contextValue);
+                }
                 attributeElement.appendChild(contextValue);
 
                 attributeListElement.appendChild(attributeElement);
@@ -511,35 +515,43 @@
         return doc;
     };
 
-    var ngsi_build_subscribe_update_context_request = function ngsi_build_subscribe_update_context_request(rootElement, e, attr, duration, throttling, conditions, onNotify) {
+    var ngsi_build_subscribe_update_context_request = function ngsi_build_subscribe_update_context_request(subscriptionId, e, attr, duration, throttling, conditions, onNotify) {
         var doc, entityIdListElement, i, j, attributeListElement,
             attributeElement, referenceElement, durationElement,
             notifyConditionsElement, condition, notifyConditionElement,
             typeElement, condValueListElement, condValueElement,
-            throttlingElement;
+            throttlingElement, subscriptionIdElement;
 
-        doc = NGSI.XML.createDocument(null, rootElement);
+        if (subscriptionId) {
+            doc = NGSI.XML.createDocument(null, 'updateContextSubscriptionRequest');
+        } else {
+            doc = NGSI.XML.createDocument(null, 'subscribeContextRequest');
 
-        entityIdListElement = doc.createElement('entityIdList');
-        doc.documentElement.appendChild(entityIdListElement);
-        for (i = 0; i < e.length; i += 1) {
-            entityIdListElement.appendChild(ngsi_build_entity_id_element(doc, e[i]));
-        }
+            entityIdListElement = doc.createElement('entityIdList');
+            doc.documentElement.appendChild(entityIdListElement);
+            for (i = 0; i < e.length; i += 1) {
+                entityIdListElement.appendChild(ngsi_build_entity_id_element(doc, e[i]));
+            }
 
-        if (Array.isArray(attr)) {
-            attributeListElement = doc.createElement('attributeList');
-            doc.documentElement.appendChild(attributeListElement);
-            for (i = 0; i < attr.length; i += 1) {
-                attributeElement = doc.createElement('attribute');
-                NGSI.XML.setTextContent(attributeElement, attr[i]);
-                attributeListElement.appendChild(attributeElement);
+            if (Array.isArray(attr)) {
+                attributeListElement = doc.createElement('attributeList');
+                doc.documentElement.appendChild(attributeListElement);
+                for (i = 0; i < attr.length; i += 1) {
+                    attributeElement = doc.createElement('attribute');
+                    NGSI.XML.setTextContent(attributeElement, attr[i]);
+                    attributeListElement.appendChild(attributeElement);
+                }
             }
         }
 
-        if (rootElement === 'subscribeContextRequest') {
+        if (subscriptionId == null) {
             referenceElement = doc.createElement('reference');
             NGSI.XML.setTextContent(referenceElement, onNotify);
             doc.documentElement.appendChild(referenceElement);
+        } else {
+            subscriptionIdElement = doc.createElement('subscriptionId');
+            NGSI.XML.setTextContent(subscriptionIdElement, subscriptionId);
+            doc.documentElement.appendChild(subscriptionIdElement);
         }
 
         if (duration != null) {
@@ -771,7 +783,7 @@
 
     var process_error_code = function process_error_code(element) {
         var errorCodeElement, codeElement, reasonPhraseElement;
-        
+
         errorCodeElement = NGSI.XML.getChildElementByTagName(element, 'errorCode');
         if (errorCodeElement != null) {
             codeElement = NGSI.XML.getChildElementByTagName(errorCodeElement, 'code');
@@ -1360,7 +1372,7 @@
             };
 
             this.ngsi_proxy.request_callback(onNotify, function (proxy_callback) {
-                var payload = ngsi_build_subscribe_update_context_request('subscribeContextRequest', e, attr, duration, throttling, cond, proxy_callback.url);
+                var payload = ngsi_build_subscribe_update_context_request(null, e, attr, duration, throttling, cond, proxy_callback.url);
 
                 var oldOnFailure = callbacks.onFailure;
                 callbacks.onFailure = function () {
@@ -1377,7 +1389,7 @@
                 }
             });
         } else {
-            var payload = ngsi_build_subscribe_update_context_request('subscribeContextRequest', e, attr, duration, throttling, cond, callbacks.onNotify);
+            var payload = ngsi_build_subscribe_update_context_request(null, e, attr, duration, throttling, cond, callbacks.onNotify);
             makeXMLRequest.call(this, url, payload, parse_subscribe_context_response, callbacks);
         }
     };
@@ -1394,7 +1406,7 @@
             throw new TypeError();
         }
 
-        var payload = ngsi_build_subscribe_update_context_request('updateContextSubscriptionRequest', subId, duration, throttling, cond);
+        var payload = ngsi_build_subscribe_update_context_request(subId, null, null, duration, throttling, cond);
         var url = this.url + NGSI.endpoints.UPDATE_CONTEXT_SUBSCRIPTION;
 
         makeXMLRequest.call(this, url, payload, parse_update_context_subscription_response, callbacks);
