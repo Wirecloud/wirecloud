@@ -369,8 +369,8 @@
 
     var ngsi_build_update_context_request = function ngsi_build_update_context_request(updateAction, update) {
         var doc, list, i, j, contextElement, attributeListElement, attributes,
-            attribute, attributeElement, name, type, contextValue,
-            updateActionElement;
+            attribute, attributeElement, name, type, contextValueElement,
+            contextValue, updateActionElement;
 
         doc = NGSI.XML.createDocument(null, 'updateContextRequest');
 
@@ -401,13 +401,17 @@
                     attributeElement.appendChild(type);
                 }
 
-                contextValue = doc.createElement('contextValue');
-                if (attribute.contextValue.trim() === '') {
-                    NGSI.XML.setTextContent(contextValue, 'emptycontent');
+                contextValueElement = doc.createElement('contextValue');
+                if (attribute.contextValue == null) {
+                    contextValue = 'emptycontent';
                 } else {
-                    NGSI.XML.setTextContent(contextValue, attribute.contextValue);
+                    contextValue = "" + attribute.contextValue;
+                    if (contextValue.trim() === '') {
+                        contextvalue = 'emptycontent';
+                    }
                 }
-                attributeElement.appendChild(contextValue);
+                NGSI.XML.setTextContent(contextValueElement, contextValue);
+                attributeElement.appendChild(contextValueElement);
 
                 attributeListElement.appendChild(attributeElement);
             }
