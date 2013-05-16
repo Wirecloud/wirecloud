@@ -71,7 +71,7 @@
 
     NGSI.XML = {};
 
-    if (document != null && typeof document === 'object' && typeof document.implementation == 'object' && document.implementation.createDocument) {
+    if (typeof document === 'object' && document != null && typeof document.implementation == 'object' && document.implementation.createDocument) {
 
         /**
          * creates a new DOMDocument
@@ -222,7 +222,7 @@
     var makeXMLRequest = function makeXMLRequest(url, payload, parse_func, callbacks) {
         this.makeRequest(url, {
             method: 'POST',
-            contentType: 'application/x-www-form-urlencoded',
+            contentType: 'application/xml',
             postBody: NGSI.XML.serialize(payload),
             onSuccess: function (transport) {
                 if (typeof callbacks.onSuccess === 'function') {
@@ -577,7 +577,7 @@
                     condValueListElement = doc.createElement('condValueList');
                     notifyConditionElement.appendChild(condValueListElement);
 
-                    for (j = 0; j < condition.condValues; j += 1) {
+                    for (j = 0; j < condition.condValues.length; j += 1) {
                         condValueElement = doc.createElement('condValue');
                         NGSI.XML.setTextContent(condValueElement, condition.condValues[j]);
                         condValueListElement.appendChild(condValueElement);
@@ -724,7 +724,7 @@
     var parse_context_response_list = function parse_context_response_list(element, options) {
         var contextResponses, contextResponse, entry, entityIdElement, nameElement, flat,
             typeElement, attributeName, contextValueElement, entity, entityId, idElement, i, j,
-            contextAttributeListElement, attributeList, attribute,
+            contextAttributeListElement, attributeList, attribute, contextValue,
             data = {};
 
         flat = !!options.flat;
@@ -757,21 +757,27 @@
 
             // Attributes
             contextAttributeListElement = NGSI.XML.getChildElementByTagName(contextResponse, 'contextAttributeList');
-            attributeList = NGSI.XML.getChildElementsByTagName(contextAttributeListElement, 'contextAttribute');
-            for (j = 0; j < attributeList.length; j += 1) {
-                nameElement = NGSI.XML.getChildElementByTagName(attributeList[j], 'name');
-                typeElement = NGSI.XML.getChildElementByTagName(attributeList[j], 'type');
-                contextValueElement = NGSI.XML.getChildElementByTagName(attributeList[j], 'contextValue');
+            if (contextAttributeListElement != null) {
+                attributeList = NGSI.XML.getChildElementsByTagName(contextAttributeListElement, 'contextAttribute');
+                for (j = 0; j < attributeList.length; j += 1) {
+                    nameElement = NGSI.XML.getChildElementByTagName(attributeList[j], 'name');
+                    typeElement = NGSI.XML.getChildElementByTagName(attributeList[j], 'type');
+                    contextValueElement = NGSI.XML.getChildElementByTagName(attributeList[j], 'contextValue');
+                    contextValue = NGSI.XML.getTextContent(contextValueElement);
+                    if (contextValue === 'emptycontent') {
+                        contextValue = '';
+                    }
 
-                attributeName = NGSI.XML.getTextContent(nameElement);
-                if (flat) {
-                    entry[attributeName] = NGSI.XML.getTextContent(contextValueElement);
-                } else {
-                    entry.attributes[attributeName] = {
-                        name: attributeName,
-                        type: NGSI.XML.getTextContent(typeElement),
-                        contextValue: NGSI.XML.getTextContent(contextValueElement)
-                    };
+                    attributeName = NGSI.XML.getTextContent(nameElement);
+                    if (flat) {
+                        entry[attributeName] = contextValue;
+                    } else {
+                        entry.attributes[attributeName] = {
+                            name: attributeName,
+                            type: NGSI.XML.getTextContent(typeElement),
+                            contextValue: contextValue
+                        };
+                    }
                 }
             }
 
