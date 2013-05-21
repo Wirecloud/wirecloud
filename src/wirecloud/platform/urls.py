@@ -75,7 +75,7 @@ urlpatterns = patterns('wirecloud.platform.views',
         name='wirecloud.iwidget_collection'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/?$',
-        iwidget_views.IWidgetEntry(permitted_methods=('GET', 'POST', 'PUT', 'DELETE',)),
+        iwidget_views.IWidgetEntry(permitted_methods=('GET', 'POST', 'DELETE',)),
         name='wirecloud.iwidget_entry'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/version/?$',

@@ -107,7 +107,7 @@ class IWidgetEntry(Resource):
     @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
-    def update(self, request, workspace_id, tab_id, iwidget_id):
+    def create(self, request, workspace_id, tab_id, iwidget_id):
 
         try:
             iwidget = simplejson.loads(request.raw_post_data)
@@ -116,6 +116,7 @@ class IWidgetEntry(Resource):
             return build_error_response(request, 400, msg)
 
         tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
+        iwidget['id'] = iwidget_id
         UpdateIWidget(iwidget, request.user, tab)
 
         return HttpResponse(status=204)

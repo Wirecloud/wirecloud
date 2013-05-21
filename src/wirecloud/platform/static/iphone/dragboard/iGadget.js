@@ -184,7 +184,7 @@ IWidget.prototype.save = function () {
         name: this.name
     };
 
-    url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+    url = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
         tab_id: this.dragboard.tabId,
         workspace_id: this.dragboard.workspaceId
     });

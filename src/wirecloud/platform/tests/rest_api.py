@@ -32,7 +32,7 @@ import wirecloud.commons.test
 from wirecloud.commons.test import LocalDownloader, WirecloudTestCase
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.wgt import WgtDeployer
-from wirecloud.platform.models import Tab, Workspace
+from wirecloud.platform.models import IWidget, Tab, Workspace
 from wirecloud.platform.widget import utils as showcase
 
 
@@ -42,7 +42,7 @@ __test__ = False
 
 class ApplicationMashupAPI(WirecloudTestCase):
 
-    fixtures = ('selenium_test_data',)
+    fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('rest_api')
 
     @classmethod
@@ -461,6 +461,41 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 200)
         response_data = simplejson.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
+
+    def test_iwidget_entry_post_requires_authentication(self):
+
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Make the request
+        data = {
+            'name': 'New Name',
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+        # IWidget should be not updated
+        iwidget = IWidget.objects.get(pk=2)
+        self.assertNotEqual(iwidget.name, 'New Name')
+
+    def test_iwidget_entry_post(self):
+
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'name': 'New Name',
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.content, '')
+
+        # Check that the iwidget name has been changed
+        iwidget = IWidget.objects.get(pk=2)
+        self.assertEqual(iwidget.name, 'New Name')
 
 
 class ResourceManagementAPI(WirecloudTestCase):

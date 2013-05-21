@@ -487,7 +487,7 @@ IWidget.prototype.isPainted = function () {
  *
  * @param {String} iwidgetName New name for this iWidget.
  */
-IWidget.prototype.setName = function (iwidgetName) {
+IWidget.prototype.setName = function setName(iwidgetName) {
     var oldName = this.name;
 
     function onSuccess() {
@@ -511,12 +511,9 @@ IWidget.prototype.setName = function (iwidgetName) {
             iwidget_id: this.id
         });
         Wirecloud.io.makeRequest(iwidgetUrl, {
-            method: 'PUT',
+            method: 'POST',
             contentType: 'application/json',
-            postBody: Object.toJSON({
-                name: iwidgetName,
-                id: this.id
-            }),
+            postBody: JSON.stringify({name: iwidgetName}),
             onSuccess: onSuccess.bind(this),
             onFailure: onError.bind(this)
         });
@@ -571,7 +568,7 @@ IWidget.prototype.setRefusedVersion = function (v) {
         iwidget_id: this.id
     });
     Wirecloud.io.makeRequest(iwidgetUrl, {
-        method: 'PUT',
+        method: 'POST',
         contentType: 'application/json',
         parameters: Object.toJSON({
             refused_version: this.refusedVersion.text,
