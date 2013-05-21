@@ -130,6 +130,22 @@ class VariableValue(models.Model):
         db_table = 'wirecloud_variablevalue'
         unique_together = ('variable', 'user')
 
+    def save(self, *args, **kwargs):
+
+        super(VariableValue, self).save(*args, **kwargs)
+
+        from wirecloud.platform.get_data import _invalidate_cached_variable_values
+        _invalidate_cached_variable_values(self.variable.iwidget.tab.workspace, self.user)
+
+    def set_variable_value(self, value):
+
+        new_value = unicode(value)
+        if self.variable.vardef.secure:
+            from wirecloud.platform.workspace.utils import encrypt_value
+            new_value = encrypt_value(new_value)
+
+        self.value = new_value
+
     def get_variable_value(self):
         value = self.value
 

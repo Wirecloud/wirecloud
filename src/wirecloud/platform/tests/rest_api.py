@@ -32,7 +32,7 @@ import wirecloud.commons.test
 from wirecloud.commons.test import LocalDownloader, WirecloudTestCase
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.wgt import WgtDeployer
-from wirecloud.platform.models import IWidget, Tab, Workspace
+from wirecloud.platform.models import IWidget, Tab, VariableValue, Workspace
 from wirecloud.platform.widget import utils as showcase
 
 
@@ -496,6 +496,49 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Check that the iwidget name has been changed
         iwidget = IWidget.objects.get(pk=2)
         self.assertEqual(iwidget.name, 'New Name')
+
+    def test_iwidget_preferences_entry_post_requires_authentication(self):
+
+        url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Make the request
+        data = {
+            'text': 'new value',
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+        # IWidget preferences should not be updated
+        variable_value = VariableValue.objects.get(
+            user__username='user_with_workspaces',
+            variable__vardef__name='text',
+            variable__iwidget__id=2
+        )
+        self.assertNotEqual(variable_value.value, 'new value')
+
+    def test_iwidget_preferences_entry_post(self):
+
+        url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'text': 'new value',
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.content, '')
+
+        # IWidget preferences should be updated
+        variable_value = VariableValue.objects.get(
+            user__username='user_with_workspaces',
+            variable__vardef__name='text',
+            variable__iwidget__id=2
+        )
+        self.assertEqual(variable_value.value, 'new value')
 
     def test_iwidget_entry_delete_requires_authentication(self):
 

@@ -136,16 +136,8 @@ def set_variable_value(var_id, user, value):
 
     variables_to_notify = []
     variable_value = VariableValue.objects.select_related('variable__vardef').get(user=user, variable__id=var_id)
-
-    new_value = unicode(value)
-    if variable_value.variable.vardef.secure:
-        new_value = encrypt_value(new_value)
-
-    variable_value.value = new_value
+    variable_value.set_variable_value(value)
     variable_value.save()
-
-    from wirecloud.platform.get_data import _invalidate_cached_variable_values
-    _invalidate_cached_variable_values(variable_value.variable.iwidget.tab.workspace, user)
 
     return variables_to_notify
 
