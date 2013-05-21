@@ -497,6 +497,33 @@ class ApplicationMashupAPI(WirecloudTestCase):
         iwidget = IWidget.objects.get(pk=2)
         self.assertEqual(iwidget.name, 'New Name')
 
+    def test_iwidget_entry_delete_requires_authentication(self):
+
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Make the request
+        response = self.client.delete(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+        # IWidget should not be deleted
+        IWidget.objects.get(pk=2)
+
+    def test_iwidget_entry_delete(self):
+
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        response = self.client.delete(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.content, '')
+
+        # IWidget should be deleted
+        self.assertRaises(IWidget.DoesNotExist, IWidget.objects.get, pk=2)
+
 
 class ResourceManagementAPI(WirecloudTestCase):
 
