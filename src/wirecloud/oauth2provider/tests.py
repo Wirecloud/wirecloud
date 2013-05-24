@@ -50,7 +50,13 @@ class Oauth2TestCase(TestCase):
             'redirect_uri': 'https://customapp.com/oauth/redirect',
         }
         auth_req_url = reverse('oauth2provider.auth') + '?' + urlencode(query)
-        response = self.user_client.get(auth_req_url)
+
+        response = self.user_client.get(auth_req_url, HTTP_ACCEPT='text/html, application/xhtml+xml')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(response['Content-Type'].split(';', 1)[0], ('text/html, application/xhtml+xml'))
+
+        # Client Authorization
+        response = self.user_client.post(auth_req_url, {}, HTTP_ACCEPT='text/html, application/xhtml+xml')
 
         # Parse returned code
         self.assertEqual(response.status_code, 302)
@@ -84,7 +90,7 @@ class Oauth2TestCase(TestCase):
         response_data = simplejson.loads(response.content)
         self.assertTrue(isinstance(response_data, list))
         self.assertTrue(isinstance(response_data[0], dict))
-    test_authorization_code_grant_flow.tags = ('fiware-ut-9',)
+    test_authorization_code_grant_flow.tags = ('oauth2', 'fiware-ut-9')
 
     @unittest.skip('wip test')
     def test_implicit_grant_flow(self):

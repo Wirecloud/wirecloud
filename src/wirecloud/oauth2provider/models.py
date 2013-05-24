@@ -27,6 +27,8 @@ class Application(models.Model):
 
     client_id = models.CharField(_('Client ID'), max_length=40, blank=False, primary_key=True)
     client_secret = models.CharField(_('Client secret'), max_length=40, blank=False)
+    name = models.CharField(_('Application Name'), max_length=40, blank=False)
+    home_url = models.CharField(_('URL'), max_length=255, blank=False)
     redirect_uri = models.CharField(_('Redirect URI'), max_length=255, blank=True)
 
     def __unicode__(self):

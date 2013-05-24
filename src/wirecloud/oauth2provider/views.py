@@ -19,7 +19,8 @@
 
 
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_GET, require_POST
+from django.views.decorators.http import require_http_methods, require_POST
+from django.shortcuts import render
 
 from wirecloud.oauth2provider.provider import WirecloudAuthorizationProvider
 
@@ -33,7 +34,19 @@ def provide_authorization_code(request):
 
     params = request.GET.dict()
 
-    return provider.get_authorization_code(request.user, **params)
+    if 'response_type' not in params:
+        return build_error_response(request, 400, 'Missing parameter response_type in URL query')
+
+    if 'client_id' not in params:
+        return build_error_response(request, 400, 'Missing parameter client_id in URL query')
+
+    if 'redirect_uri' not in params:
+        return build_error_response(request, 400, 'Missing parameter redirect_uri in URL query')
+
+    if request.method == 'GET':
+        return render(request, 'wirecloud/oauth2provider/auth.html', {'app': provider.get_client(params['client_id'])})
+    else:
+        return provider.get_authorization_code(request.user, **params)
 
 
 @require_POST
