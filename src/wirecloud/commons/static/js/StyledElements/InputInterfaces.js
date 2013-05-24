@@ -600,20 +600,12 @@ function FileInputInterface(fieldId, fieldDesc) {
 
     InputInterface.call(this, fieldId, fieldDesc);
 
-    this.inputElement = document.createElement('input');
-    this.inputElement.setAttribute('type', 'file');
-    this.inputElement.setAttribute('name', fieldId);
-
-    this.wrapperElement = this.inputElement;
+    this.inputElement = new StyledElements.StyledFileField(fieldDesc);
 }
 FileInputInterface.prototype = new InputInterface();
 
-FileInputInterface.prototype.insertInto = function insertInto(element) {
-    element.appendChild(this.wrapperElement);
-};
-
 FileInputInterface.prototype.getValue = function getValue() {
-    return this.inputElement.files[0];
+    return this.inputElement.getValue();
 };
 
 FileInputInterface.prototype._setValue = function _setValue(newValue) {
