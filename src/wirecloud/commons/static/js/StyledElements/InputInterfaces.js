@@ -112,6 +112,10 @@ var InputInterface = function InputInterface(fieldId, options) {
 };
 InputInterface.prototype = new StyledElements.StyledElement();
 
+InputInterface.prototype.repaint = function repaint() {
+    this.inputElement.repaint();
+};
+
 InputInterface.prototype.getValue = function getValue() {
     return this.inputElement.getValue();
 };

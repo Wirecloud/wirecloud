@@ -116,6 +116,10 @@
         for (i = 0; i < this.childComponents.length; i += 1) {
             this.childComponents[i].repaint(temporal);
         }
+
+        for (i in this.fieldInterfaces) {
+            this.fieldInterfaces[i].repaint();
+        }
     };
 
     Form.prototype.pSetMsgs = function (msgs) {
@@ -478,7 +482,12 @@
 
     Form.prototype.disable = function disable() {
         this.setDisabled(true);
-    }
+    };
+
+    Form.prototype.insertInto = function insertInto(element, refElement) {
+        StyledElements.StyledElement.prototype.insertInto.call(this, element, refElement);
+        this.repaint();
+    };
 
     window.Form = Form;
 })();
