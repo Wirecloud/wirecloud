@@ -90,7 +90,7 @@
             return implementation.createDocument(namespaceURL, rootTagName, null);
         };
 
-    } else if (window.ActiveXObject) {
+    } else if (typeof window === 'object' && window != null && window.ActiveXObject) {
 
         NGSI.XML.createDocument = function createDocument(namespaceURL, rootTagName, doctype) {
             var doc = new ActiveXObject("MSXML2.DOMDocument");
@@ -100,10 +100,7 @@
         };
 
     } else {
-
-        NGSI.XML.createDocument = function createDocument(namespaceURL, rootTagName, doctype) {
-            throw new Error('createDocument is not supported in this browser');
-        };
+        throw new Error('NGSI.js is not able to create DOM documents in this enviroment');
     }
 
     if (typeof DOMParser !== 'undefined') {
@@ -407,7 +404,7 @@
                 } else {
                     contextValue = "" + attribute.contextValue;
                     if (contextValue.trim() === '') {
-                        contextvalue = 'emptycontent';
+                        contextValue = 'emptycontent';
                     }
                 }
                 NGSI.XML.setTextContent(contextValueElement, contextValue);
@@ -895,7 +892,7 @@
         return parse_context_registration_response_list(list);
     };
 
-    var parse_notify_context_request = function parse_notify_context_request(doc, options) {
+    NGSI.parseNotifyContextRequest = function parseNotifyContextRequest(doc, options) {
         var subscriptionIdElement, originatorElement, data;
 
         if (doc.documentElement.tagName !== 'notifyContextRequest') {
@@ -904,13 +901,11 @@
 
         data = parse_context_response_list(NGSI.XML.getChildElementByTagName(doc.documentElement, 'contextResponseList'), options);
 
-        if (!options.flat) {
-            data = {elements: data};
-            subscriptionIdElement = NGSI.XML.getChildElementByTagName(doc.documentElement, 'subscriptionId');
-            originatorElement = NGSI.XML.getChildElementByTagName(doc.documentElement, 'originator');
-            data.subscriptionId = NGSI.XML.getTextContent(subscriptionIdElement);
-            data.originator = NGSI.XML.getTextContent(originatorElement);
-        }
+        data = {elements: data};
+        subscriptionIdElement = NGSI.XML.getChildElementByTagName(doc.documentElement, 'subscriptionId');
+        originatorElement = NGSI.XML.getChildElementByTagName(doc.documentElement, 'originator');
+        data.subscriptionId = NGSI.XML.getTextContent(subscriptionIdElement);
+        data.originator = NGSI.XML.getTextContent(originatorElement);
 
         return data;
     };
@@ -1377,7 +1372,7 @@
 
             var onNotify = function onNotify(payload) {
                 var doc = NGSI.XML.parseFromString(payload, 'application/xml');
-                var data = parse_notify_context_request(doc, callbacks);
+                var data = NGSI.parseNotifyContextRequest(doc, callbacks);
                 callbacks.onNotify(data);
             };
 
