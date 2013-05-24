@@ -34,8 +34,8 @@ class WirecloudAuthorizationProvider(AuthorizationProvider):
 
         return response
 
-    def validate_client_id(self, client_id):
-        return Application.objects.filter(client_id=client_id).exists()
+    def get_client(self, client_id):
+        return Application.objects.get(client_id=client_id)
 
     def validate_client_secret(self, client_id, client_secret):
         return Application.objects.filter(client_id=client_id, client_secret=client_secret).exists()
@@ -54,8 +54,8 @@ class WirecloudAuthorizationProvider(AuthorizationProvider):
     def validate_scope(self, client_id, scope):
         return True
 
-    def persist_authorization_code(self, client_id, code, scope):
-        Code.objects.create(client_id=client_id, user_id=1, scope=scope, code=code)
+    def persist_authorization_code(self, client, code, scope):
+        Code.objects.create(client=client, user_id=1, scope=scope, code=code)
 
     def persist_token_information(self, client_id, scope, access_token, token_type, expires_in, refresh_token, data):
         Token.objects.create(

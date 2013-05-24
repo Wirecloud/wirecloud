@@ -91,8 +91,8 @@ class AuthorizationProvider(Provider):
 
     These are the methods that must be implemented in a subclass:
 
-        validate_client_id(self, client_id)
-            # Return True or False
+        get_client(self, client_id)
+            # Return a Client instance. Exception if not found
 
         validate_client_secret(self, client_id, client_secret)
             # Return True or False
@@ -112,7 +112,7 @@ class AuthorizationProvider(Provider):
         from_refresh_token(self, client_id, refresh_token, scope)
             # Return mixed data or None on invalid
 
-        persist_authorization_code(self, client_id, code, scope)
+        persist_authorization_code(self, client, code, scope)
             # Return value ignored
 
         persist_token_information(self, client_id, scope, access_token,
@@ -218,15 +218,16 @@ class AuthorizationProvider(Provider):
             return self._invalid_redirect_uri_response()
 
         # Check conditions
-        is_valid_client_id = self.validate_client_id(client_id)
+        # Return proper error responses on invalid conditions
+        try:
+            client = self.get_client(client_id)
+        except:
+            err = 'unauthorized_client'
+            return self._make_redirect_error_response(redirect_uri, err)
+
         is_valid_access = self.validate_access()
         scope = params.get('scope', '')
         is_valid_scope = self.validate_scope(client_id, scope)
-
-        # Return proper error responses on invalid conditions
-        if not is_valid_client_id:
-            err = 'unauthorized_client'
-            return self._make_redirect_error_response(redirect_uri, err)
 
         if not is_valid_access:
             err = 'access_denied'
@@ -240,7 +241,7 @@ class AuthorizationProvider(Provider):
         code = self.generate_authorization_code()
 
         # Save information to be used to validate later requests
-        self.persist_authorization_code(client_id=client_id,
+        self.persist_authorization_code(client=client,
                                         code=code,
                                         scope=scope)
 
@@ -279,7 +280,12 @@ class AuthorizationProvider(Provider):
             return self._make_json_error_response('unsupported_grant_type')
 
         # Check conditions
-        is_valid_client_id = self.validate_client_id(client_id)
+        try:
+            client = self.get_client(client_id)
+        except:
+            err = 'invalid_client'
+            return self._make_redirect_error_response(redirect_uri, err)
+
         is_valid_client_secret = self.validate_client_secret(client_id,
                                                              client_secret)
         scope = params.get('scope', '')
@@ -288,9 +294,6 @@ class AuthorizationProvider(Provider):
         is_valid_refresh_token = data is not None
 
         # Return proper error responses on invalid conditions
-        if not (is_valid_client_id and is_valid_client_secret):
-            return self._make_json_error_response('invalid_client')
-
         if not is_valid_scope:
             return self._make_json_error_response('invalid_scope')
 
@@ -350,7 +353,12 @@ class AuthorizationProvider(Provider):
             return self._make_json_error_response('unsupported_grant_type')
 
         # Check conditions
-        is_valid_client_id = self.validate_client_id(client_id)
+        try:
+            client = self.get_client(client_id)
+        except:
+            err = 'invalid_client'
+            return self._make_redirect_error_response(redirect_uri, err)
+
         is_valid_client_secret = self.validate_client_secret(client_id,
                                                              client_secret)
         is_valid_redirect_uri = self.validate_redirect_uri(client_id,
@@ -362,9 +370,6 @@ class AuthorizationProvider(Provider):
         is_valid_grant = data is not None
 
         # Return proper error responses on invalid conditions
-        if not (is_valid_client_id and is_valid_client_secret):
-            return self._make_json_error_response('invalid_client')
-
         if not is_valid_grant or not is_valid_redirect_uri:
             return self._make_json_error_response('invalid_grant')
 
@@ -469,9 +474,9 @@ class AuthorizationProvider(Provider):
             # Catch all other server errors
             return self._make_json_error_response('server_error')
 
-    def validate_client_id(self, client_id):
+    def get_client(self, client_id):
         raise NotImplementedError('Subclasses must implement ' \
-                                  'validate_client_id.')
+                                  'get_client.')
 
     def validate_client_secret(self, client_id, client_secret):
         raise NotImplementedError('Subclasses must implement ' \
@@ -497,7 +502,7 @@ class AuthorizationProvider(Provider):
         raise NotImplementedError('Subclasses must implement ' \
                                   'from_refresh_token.')
 
-    def persist_authorization_code(self, client_id, code, scope):
+    def persist_authorization_code(self, client, code, scope):
         raise NotImplementedError('Subclasses must implement ' \
                                   'persist_authorization_code.')
 
