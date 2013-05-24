@@ -112,7 +112,7 @@ class AuthorizationProvider(Provider):
         from_refresh_token(self, client_id, refresh_token, scope)
             # Return mixed data or None on invalid
 
-        persist_authorization_code(self, client, code, scope)
+        persist_authorization_code(self, user, client, code, scope)
             # Return value ignored
 
         persist_token_information(self, client_id, scope, access_token,
@@ -191,6 +191,7 @@ class AuthorizationProvider(Provider):
         return utils.random_ascii_string(self.token_length)
 
     def get_authorization_code(self,
+                               user,
                                response_type,
                                client_id,
                                redirect_uri,
@@ -241,7 +242,8 @@ class AuthorizationProvider(Provider):
         code = self.generate_authorization_code()
 
         # Save information to be used to validate later requests
-        self.persist_authorization_code(client=client,
+        self.persist_authorization_code(user=user,
+                                        client=client,
                                         code=code,
                                         scope=scope)
 

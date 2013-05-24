@@ -54,8 +54,8 @@ class WirecloudAuthorizationProvider(AuthorizationProvider):
     def validate_scope(self, client_id, scope):
         return True
 
-    def persist_authorization_code(self, client, code, scope):
-        Code.objects.create(client=client, user_id=1, scope=scope, code=code)
+    def persist_authorization_code(self, user, client, code, scope):
+        Code.objects.create(client=client, user=user, scope=scope, code=code)
 
     def persist_token_information(self, client_id, scope, access_token, token_type, expires_in, refresh_token, data):
         Token.objects.create(

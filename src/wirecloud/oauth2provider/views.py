@@ -27,13 +27,13 @@ from wirecloud.oauth2provider.provider import WirecloudAuthorizationProvider
 provider = WirecloudAuthorizationProvider()
 
 
-@require_GET
+@require_http_methods(["GET", "POST"])
 @login_required
 def provide_authorization_code(request):
 
     params = request.GET.dict()
 
-    return provider.get_authorization_code(**params)
+    return provider.get_authorization_code(request.user, **params)
 
 
 @require_POST
