@@ -895,7 +895,7 @@ class WirecloudRemoteTestCase(object):
 
 class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
-    fixtures = ('selenium_test_data',)
+    fixtures = ('initial_data', 'selenium_test_data')
     __test__ = False
 
     @classmethod
