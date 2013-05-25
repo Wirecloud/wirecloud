@@ -19,6 +19,7 @@
     z-index: 101112;
     overflow: hidden;
     font-weight: normal;
+    width: 560px;
 }
 
 .window_menu > .window_top {
