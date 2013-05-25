@@ -354,6 +354,10 @@ class WirecloudRemoteTestCase(object):
 
         cls.driver.quit()
 
+    def tearDown(self):
+
+        self.driver.delete_all_cookies()
+
     def fill_form_input(self, form_input, value):
         # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
         self.driver.execute_script('arguments[0].value = arguments[1]', form_input, value)
