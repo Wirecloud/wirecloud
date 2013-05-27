@@ -87,16 +87,19 @@ class ResourceCollection(Resource):
                 return build_error_response(request, 400, _('Missing file to upload'))
 
             downloaded_file = request.FILES['file']
-            file_contents = WgtFile(downloaded_file)
+            try:
+                file_contents = WgtFile(downloaded_file)
+            except:
+                return build_error_response(request, 400, _('Bad resource file'))
 
         elif content_type == 'application/octet-stream':
-            packaged = True
-            if request._read_started:
-                downloaded_file = StringIO(request.raw_post_data)
-            else:
-                downloaded_file = request
 
-            file_contents = WgtFile(downloaded_file)
+            packaged = True
+            downloaded_file = StringIO(request.raw_post_data)
+            try:
+                file_contents = WgtFile(downloaded_file)
+            except:
+                return build_error_response(request, 400, _('Bad resource file'))
         else:
             if content_type == 'application/json':
                 try:
