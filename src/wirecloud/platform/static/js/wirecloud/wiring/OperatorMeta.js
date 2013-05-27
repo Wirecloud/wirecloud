@@ -90,10 +90,6 @@
             outputs = {};
         }
         Object.defineProperty(this, 'outputs', {value: outputs});
-
-        if (inputs.length === 0 && outputs.length === 0) {
-            throw new TypeError();
-        }
     };
 
     OperatorMeta.prototype.instantiate = function instantiate(id, operator_status /*TODO*/, wiringEditor) {
