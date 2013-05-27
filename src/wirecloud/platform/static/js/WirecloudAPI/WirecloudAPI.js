@@ -23,7 +23,7 @@
 
     "use strict";
 
-    var platform, id, idx, tmp, i, current;
+    var platform, id, idx, tmp, i, current, IWidgetVariable;
 
     platform = window.parent;
 
@@ -39,6 +39,17 @@
             break;
         }
     }
+
+    IWidgetVariable = function IWidgetVariable(variable) {
+        this.set = function set(value) {
+            variable.set(value);
+        };
+
+        this.get = function get() {
+            return variable.get();
+        };
+        Object.freeze(this);
+    };
 
     // API declaration
     Object.defineProperty(window, 'MashupPlatform', {value: {}});
@@ -93,6 +104,14 @@
     // Widget module
     Object.defineProperty(window.MashupPlatform, 'widget', {value: {}});
     Object.defineProperty(window.MashupPlatform.widget, 'id', {value: id});
+    Object.defineProperty(window.MashupPlatform.widget, 'getVariable', {
+        value: function getVariable(name) {
+            var variable = platform.opManager.activeWorkspace.getIWidget(id).internal_iwidget.getVariable(name);
+            if (variable != null) {
+                return new IWidgetVariable(variable);
+            }
+        }
+    });
 
     Object.defineProperty(window.MashupPlatform.widget, 'context', {value: {}});
     Object.defineProperty(window.MashupPlatform.widget.context, 'getAvailableContext', {

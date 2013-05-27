@@ -27,7 +27,7 @@ from wirecloud.commons.test import uses_extra_resources, iwidget_context, Wirecl
 
 class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
-    fixtures = ('selenium_test_data', 'user_with_workspaces')
+    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
 
     def test_basic_workspace_operations(self):
 
@@ -94,7 +94,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username='user_with_workspaces')
         iwidget_id = self.get_current_iwidgets()[0]['id']
-        api_test_iwidget_id = self.add_widget_to_mashup('Wirecloud API test')['id']
+        api_test_iwidget = self.add_widget_to_mashup('Wirecloud API test')['id']
 
         with iwidget_context(self.driver, iwidget_id):
             self.assertEqual(self.driver.find_element_by_id('listPref').text, 'default')
@@ -141,8 +141,20 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, '')
 
         # Use api test widget to test other API features
-        with iwidget_context(self.driver, api_test_iwidget_id):
+        with iwidget_context(self.driver, api_test_iwidget):
             self.assertEqual(self.driver.find_element_by_id('makerequest_test').text, 'Success!!')
+            prop_input = self.driver.find_element_by_css_selector('#update_prop_input')
+            self.fill_form_input(prop_input, 'new value')
+            self.driver.find_element_by_css_selector('#update_prop_button').click()
+
+        self.driver.refresh()
+        self.wait_wirecloud_ready()
+        time.sleep(1)
+
+        with iwidget_context(self.driver, api_test_iwidget):
+            prop_input = self.driver.find_element_by_css_selector('#update_prop_input')
+            self.assertEqual(prop_input.get_attribute('value'), 'new value')
+
     test_basic_widget_functionalities.tags = ('fiware-ut-5',)
 
     def test_http_cache(self):

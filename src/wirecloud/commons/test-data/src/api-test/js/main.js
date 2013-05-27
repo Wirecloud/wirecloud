@@ -33,6 +33,13 @@ MashupPlatform.prefs.registerCallback(function (new_values) {
 });
 
 setTimeout(function () {
+    var input = document.getElementById('update_prop_input');
+    var variable = MashupPlatform.widget.getVariable('prop');
+    input.value = variable.get();
+    document.getElementById('update_prop_button').addEventListener('click', function () {
+        variable.set(input.value);
+    });
+
     if (MashupPlatform.prefs.get('text') === 'initial text') {
         document.getElementById('pref_get_test').innerHTML = OK_HTML;
         MashupPlatform.prefs.set('text', 'success!!');

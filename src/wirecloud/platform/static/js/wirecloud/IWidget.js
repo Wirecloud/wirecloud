@@ -88,6 +88,17 @@
         }
     };
 
+    IWidget.prototype.getVariable = function getVariable(name) {
+        var variable;
+
+        variable = this.layout.dragboard.getWorkspace().varManager.findVariable(this.id, name);
+        if (variable.vardef.aspect === 'PROP') {
+            return variable;
+        } else {
+            return null;
+        }
+    };
+
     IWidget.prototype.registerPrefCallback = function registerPrefCallback(prefCallback) {
         this.prefCallback = prefCallback;
     };
