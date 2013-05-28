@@ -36,6 +36,10 @@
         switch (desc.type) {
         case 'iwidget':
             entry = this.connectablesByWidget[desc.id];
+            if (entry == null) {
+                return null;
+            }
+
             if (desc.endpoint in entry.outputs) {
                 return entry.outputs[desc.endpoint];
             } else {
@@ -44,6 +48,10 @@
             break;
         case 'ioperator':
             entry = this.ioperators[desc.id];
+            if (entry == null) {
+                return null;
+            }
+
             if (desc.endpoint in entry.inputs) {
                 return entry.inputs[desc.endpoint];
             } else {
@@ -186,7 +194,15 @@
                 this.ioperators[id] = old_operators[id];
                 delete old_operators[id];
             } else {
-                this.ioperators[id] = operators[operator_info.name].instantiate(id, operator_info);
+                if (operator_info.name in operators) {
+                    try {
+                        this.ioperators[id] = operators[operator_info.name].instantiate(id, operator_info);
+                    } catch (e) {
+                        // TODO set error in the wirecloud header
+                    }
+                } else {
+                    // TODO set error in the wirecloud header
+                }
             }
         }
         for (id in old_operators) {
@@ -197,7 +213,9 @@
             connection = status.connections[i];
             sourceConnectable = findConnectable.call(this, connection.source);
             targetConnectable = findConnectable.call(this, connection.target);
-            sourceConnectable.connect(targetConnectable);
+            if (sourceConnectable != null && targetConnectable != null) {
+                sourceConnectable.connect(targetConnectable);
+            }
         }
 
         this.status = status;
