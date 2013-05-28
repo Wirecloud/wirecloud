@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012-2013 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -148,8 +148,12 @@
      * Calculates a usable absolute position for the window
      */
     WindowMenu.prototype.calculatePosition = function calculatePosition() {
-        var coordenates = [];
 
+        if (!isElement(this.htmlElement.parentNode)) {
+            return;
+        }
+
+        var coordenates = [];
         var windowHeight = BrowserUtilsFactory.getInstance().getHeight();
         var windowWidth = BrowserUtilsFactory.getInstance().getWidth();
 
