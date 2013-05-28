@@ -152,7 +152,6 @@ urlpatterns = patterns('wirecloud.platform.views',
         name='wirecloud.variable_collection'
     ),
 
-    url(r'^api/workspace/(?P<workspace_id>\d+)/share/groups/?$', workspace_views.WorkspaceSharerEntry(permitted_methods=('GET', ))),
     url(r'^api/workspace/(?P<workspace_id>\d+)/share/(?P<share_boolean>\w+)/?$',
         workspace_views.WorkspaceSharerEntry(permitted_methods=('PUT',)),
         name='wirecloud.workspace_share'

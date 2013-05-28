@@ -440,25 +440,6 @@ class WorkspaceSharerEntry(Resource):
 
             return HttpResponse(status=204)
 
-    @no_cache
-    def read(self, request, workspace_id):
-
-        groups = []
-        #read the groups that can be related to a workspace
-        queryGroups = Group.objects.exclude(name__startswith="cert__").order_by('name')
-        for group in queryGroups:
-            data = {'name': group.name, 'id': group.id}
-            try:
-                group.workspace_set.get(id=workspace_id)
-                #boolean for js
-                data['sharing'] = 'true'
-            except Workspace.DoesNotExist:
-                data['sharing'] = 'false'
-
-            groups.append(data)
-
-        return HttpResponse(simplejson.dumps(groups), mimetype='application/json; charset=UTF-8')
-
 
 class WorkspaceLinkerEntry(Resource):
 
