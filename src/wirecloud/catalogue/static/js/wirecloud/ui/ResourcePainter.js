@@ -124,6 +124,16 @@
                 var button, local_catalogue_view;
 
                 local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
+
+                if (!this.catalogue_view.catalogue.is_purchased(this.resource) && ['widget', 'operator', 'mashup', 'pack'].indexOf(this.resource.getType()) !== -1) {
+                    button = new StyledElements.StyledButton({
+                        'class': 'mainbutton btn-success',
+                        'text': gettext('Buy')
+                    });
+                    button.addEventListener('click', this.catalogue_view.createUserCommand('buy', this.resource));
+                    return button;
+                }
+
                 if (this.resource.getType() === 'operator') {
 
                     if (Wirecloud.LocalCatalogue.resourceExists(this.resource)) {

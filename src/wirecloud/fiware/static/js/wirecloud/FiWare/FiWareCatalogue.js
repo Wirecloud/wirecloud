@@ -73,6 +73,10 @@
         });
     };
 
+    FiWareCatalogue.prototype.is_purchased = function is_purchased(resource) {
+        return resource.state === 'purchased';
+    };
+
     FiWareCatalogue.prototype.deleteResource = function deleteResource(options) {
         var url;
 

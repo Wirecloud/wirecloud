@@ -249,7 +249,7 @@ class MarketAdaptor(object):
                                 break
 
                     ser['type'] = offering_type
-                    ser['status'] = offering_info['state']
+                    ser['state'] = offering_info['state']
 
                 except:
                     pass

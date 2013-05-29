@@ -287,6 +287,16 @@
         }.bind(this);
     };
 
+    FiWareCatalogueView.prototype.ui_commands.buy = function (resource) {
+        return function () {
+            var dialog = new Wirecloud.ui.ExternalWebWindowMenu(
+                interpolate(gettext('Buying %(offering)s'), {offering: resource.getDisplayName()}, true),
+                'http://antares.ls.fi.upm.es:8000/login?next=/api/contracting/form%3FID%3D518394c48e05ac7c0dfa0f8c',
+                gettext(''));
+            dialog.show();
+        }.bind(this);
+    };
+
     FiWareCatalogueView.prototype.refresh_if_needed = function refresh_if_needed() {
         if (this.alternatives.getCurrentAlternative() === this.viewsByName.search) {
             this.viewsByName.search.refresh_if_needed();
