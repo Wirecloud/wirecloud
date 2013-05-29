@@ -62,59 +62,8 @@ FiWareStoreListItems.prototype.build = function build(store_info) {
     }.bind(this.view)));
 
     if (!this.view.loading && this.view.number_of_stores > 0 && this.view.currentStore !== 'All stores') {
-        // This is used to delete the current store
-        items.push(new StyledElements.MenuItem(gettext('Delete store'), function () {
-            //First ask if the user really wants to remove the store
-            var msg = gettext('Do you really want to remove the store ') + this.currentStore + '?';
-
-            var dialog = new Wirecloud.ui.AlertWindowMenu();
-            dialog.setMsg(msg);
-            dialog.setHandler(function () {
-                    this.fiWareCatalogue.delete_store(this.currentStore, this.refresh_store_info.bind(this));
-                    this.currentStore = 'All stores';
-                    this.number_of_stores -= 1;
-                }.bind(this));
-            dialog.show();
-        }.bind(this.view)));
-
         items.push(new StyledElements.MenuItem(gettext('Publish service'),
         this.view.createUserCommand('publish')));
-    }
-
-    if (!this.view.loading && !this.view.error) {
-        items.push(new StyledElements.Separator());
-
-        // To add a new store is necesary to have a form in order to take the information
-        items.push(new StyledElements.MenuItem(gettext('Add store'), function () {
-
-            var menu, fields = {
-                'label': {
-                    'type': 'text',
-                    'label': gettext('Name'),
-                    'required': true
-                },
-                'uri': {
-                    'type': 'text',
-                    'label': gettext('URI'),
-                    'required': true,
-                    'initialValue': 'http://'
-                }
-            };
-            menu = new Wirecloud.ui.FormWindowMenu(fields, gettext('Add Store'));
-
-            // Form data is sent to server
-            menu.executeOperation = function (data) {
-
-                if (this.number_of_stores === 0) {
-                    this.currentStore = 'All stores';
-                }
-
-                this.fiWareCatalogue.add_store(data.label, data.uri, this.refresh_store_info.bind(this));
-            }.bind(this);
-
-            menu.show();
-
-        }.bind(this.view)));
     }
 
     return items;

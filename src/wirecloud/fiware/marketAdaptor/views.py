@@ -138,39 +138,3 @@ class StoreCollection(Resource):
             return HttpResponse(status=502)
 
         return HttpResponse(simplejson.dumps(result), mimetype='application/json; chaset=UTF-8')
-
-    def create(self, request, marketplace):
-
-        m = get_object_or_404(Market, name=marketplace)
-        options = json.loads(m.options)
-        url = options['url']
-
-        adaptor = MarketAdaptor(url)
-
-        store_info = {}
-        store_info['store_name'] = request.POST['store']
-        store_info['store_uri'] = request.POST['uri']
-
-        try:
-            adaptor.add_store(store_info)
-        except:
-            return HttpResponse(status=502)
-
-        return HttpResponse(status=201)
-
-
-class StoreEntry(Resource):
-
-    def delete(self, request, marketplace, store):
-        m = get_object_or_404(Market, name=marketplace)
-        options = json.loads(m.options)
-        url = options['url']
-
-        adaptor = MarketAdaptor(url)
-
-        try:
-            adaptor.delete_store(store)
-        except:
-            return HttpResponse(status=502)
-
-        return HttpResponse(status=204)

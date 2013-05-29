@@ -153,65 +153,6 @@ class MarketAdaptor(object):
 
         return result
 
-    def add_store(self, store_info):
-
-        if self._session_id is None:
-            self.authenticate()
-
-        params = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><resource name="' + store_info['store_name'] + '" ><url>' + store_info['store_uri'] + '</url></resource>'
-        session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
-        headers = {'content-type': 'application/xml', 'Cookie': session_cookie}
-
-        opener = urllib2.build_opener()
-        request = MethodRequest("PUT", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/"), params, headers)
-        try:
-            response = opener.open(request)
-        except HTTPError, e:
-            # Marketplace redirects to a login page (sprint_security_login) if
-            # the session expires. In addition, python don't follow
-            # redirections when issuing DELETE requests, so we have to check for
-            # a 302 startus code
-            if e.code == 302:
-                self._session_id = None
-                self.add_store(store_info)
-                return
-            else:
-                raise HTTPError(e.url, e.code, e.msg, None, None)
-
-        if response.code != 201:
-            raise HTTPError(response.url, response.code, response.msg, None, None)
-
-    def update_store(self, store_info):
-        pass
-
-    def delete_store(self, store):
-
-        if self._session_id is None:
-            self.authenticate()
-
-        opener = urllib2.build_opener()
-        session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
-        headers = {'content-type': 'application/xml', 'Cookie': session_cookie}
-
-        request = MethodRequest("DELETE", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + urlquote(store)), '', headers)
-
-        try:
-            response = opener.open(request)
-        except HTTPError, e:
-            # Marketplace redirects to a login page (sprint_security_login) if
-            # the session expires. In addition, python don't follow
-            # redirections when issuing DELETE requests, so we have to check for
-            # a 302 startus code
-            if e.code == 302:
-                self._session_id = None
-                self.delete_store(store)
-                return
-            else:
-                raise HTTPError(e.url, e.code, e.msg, None, None)
-
-        if response.code != 200:
-            raise HTTPError(response.url, response.code, response.msg, None, None)
-
     def get_all_services_from_store(self, store):
 
         if self._session_id is None:

@@ -26,7 +26,6 @@ urlpatterns = patterns('wirecloud.fiware.marketAdaptor.views',
     url(r'^marketplace/(?P<marketplace>[\w -]+)/(?P<store>[\w -]+)/resources/?$', views.ServiceCollection(permitted_methods=('GET', 'POST'))),
     url(r'^marketplace/(?P<marketplace>[\w -]+)/search/(?P<keyword>[\w -]+)/?$', views.ServiceSearchCollection(permitted_methods=('GET',))),
     url(r'^marketplace/(?P<marketplace>[\w -]+)/search/(?P<store>[\w -]+)/(?P<keyword>[\w -]+)/?$', views.ServiceSearchCollection(permitted_methods=('GET',))),
-    url(r'^marketplace/(?P<marketplace>[\w -]+)/stores/?$', views.StoreCollection(permitted_methods=('GET', 'POST'))),
-    url(r'^marketplace/(?P<marketplace>[\w -]+)/stores/(?P<store>[\w -]+)/?$', views.StoreEntry(permitted_methods=('DELETE',))),
+    url(r'^marketplace/(?P<marketplace>[\w -]+)/stores/?$', views.StoreCollection(permitted_methods=('GET',))),
     url(r'^marketplace/(?P<marketplace>[\w -]+)/(?P<store>[\w -]+)/(?P<service_name>[\w -]+)/?$', views.ServiceEntry(permitted_methods=('DELETE',)))
 )
