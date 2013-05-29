@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012 Universidad Politécnica de Madrid
+# Copyright 2012-2013 Universidad Politécnica de Madrid
 
 # This file is part of Wirecluod.
 
@@ -27,6 +27,7 @@ from lxml import etree
 from django.utils.http import urlquote, urlquote_plus
 
 from wirecloud.fiware.marketAdaptor.usdlParser import USDLParser
+from wirecloud.fiware.storeclient import StoreClient
 from wirecloud.proxy.views import MethodRequest
 
 RESOURCE_XPATH = '/collection/resource'
@@ -41,6 +42,9 @@ class MarketAdaptor(object):
 
     _marketplace_uri = None
     _session_id = None
+    _stores = {
+        "CoNWeT": StoreClient('http://antares.ls.fi.upm.es:8000/')
+    }
 
     def __init__(self, marketplace_uri, user='demo1234', passwd='demo1234'):
         self._marketplace_uri = marketplace_uri
@@ -208,18 +212,49 @@ class MarketAdaptor(object):
             parsed_usdl = parser.parse()
 
             if isinstance(parsed_usdl, dict):
-                parsed_usdl['store'] = store
-                parsed_usdl['marketName'] = res.get('name')
+                parsed_usdl = [parsed_usdl]
 
-                if parsed_usdl['versions'][0]['uriTemplate'] == '':
-                    parsed_usdl['versions'][0]['uriTemplate'] = url
+            for ser in parsed_usdl:
 
-                result['resources'].append(parsed_usdl)
-            else:
-                for ser in parsed_usdl:
-                    ser['store'] = store
-                    ser['marketName'] = res.get('name')
-                    result['resources'].append(ser)
+                ser['store'] = store
+                ser['marketName'] = res.get('name')
+
+                if ser['versions'][0]['uriTemplate'] == '':
+                    ser['versions'][0]['uriTemplate'] = url
+
+                try:
+
+                    offering_parsed_url = urlparse(url)
+                    offering_id = offering_parsed_url.path.rsplit('/', 1)[1].replace('__', '/')
+
+                    store_client = self._stores[store]
+                    offering_info = store_client.get_offering_info(offering_id, 'wirecloud_enduser')
+                    offering_type = 'non instantiable service'
+                    if len(offering_info['resources']) == 1:
+
+                        offering_resource = offering_info['resources'][0]
+
+                        if offering_resource['content_type'] == 'application/x-widget+mashable-application-component':
+                            offering_type = 'widget'
+                        elif offering_resource['content_type'] == 'application/x-operator+mashable-application-component':
+                            offering_type = 'operator'
+                        elif offering_resource['content_type'] == 'application/x-mashup+mashable-application-component':
+                            offering_type = 'mashup'
+
+                    else:
+
+                        for offering_resource in offering_info['resources']:
+                            if offering_resource['content_type'] in ('application/x-widget+mashable-application-component', 'application/x-operator+mashable-application-component', 'application/x-mashup+mashable-application-component'):
+                                offering_type = 'pack'
+                                break
+
+                    ser['type'] = offering_type
+                    ser['status'] = offering_info['state']
+
+                except:
+                    pass
+
+                result['resources'].append(ser)
 
         return result
 

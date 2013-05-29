@@ -83,6 +83,9 @@
                 case 'mashup':
                     label.classList.add('label-important');
                     break;
+                case 'pack':
+                    label.classList.add('label-info');
+                    break;
                 }
 
                 return label;
@@ -158,12 +161,18 @@
                             'text': gettext('Uninstall')
                         });
                         button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', this.resource, this.catalogue_view));
-                    } else {
+                    } else if (['widget', 'operator', 'mashup'].indexOf(this.resource.getType()) != -1) {
                         button = new StyledElements.StyledButton({
                             'text': gettext('Install')
                         });
 
                         button.addEventListener('click', local_catalogue_view.createUserCommand('install', this.resource, this.catalogue_view));
+                    } else {
+                        button = new StyledElements.StyledButton({
+                            'text': gettext('Details')
+                        });
+
+                        button.addEventListener('click', this.catalogue_view.createUserCommand('showDetails', this.resource));
                     }
                 }
                 button.addClassName('mainbutton btn-primary');

@@ -247,8 +247,7 @@
     };
 
     FiWareCatalogueView.prototype.ui_commands.showDetails = function (resource) {
-        return function (e) {
-            Event.stop(e);
+        return function () {
             this.viewsByName.details.paint(resource);
             this.alternatives.showAlternative(this.viewsByName.details);
         }.bind(this);
