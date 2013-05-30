@@ -138,3 +138,17 @@ class StoreCollection(Resource):
             return HttpResponse(status=502)
 
         return HttpResponse(simplejson.dumps(result), mimetype='application/json; chaset=UTF-8')
+
+
+def start_purchase(request, marketplace, store):
+
+    adaptor = get_market_adaptor(None, marketplace)
+
+    data = simplejson.loads(request.raw_post_data)
+
+    try:
+        result = adaptor.start_purchase(store, data['offering_url'])
+    except:
+        return HttpResponse(status=502)
+
+    return HttpResponse(simplejson.dumps(result), mimetype='application/json; chaset=UTF-8')

@@ -195,6 +195,7 @@ class FiWarePlugin(WirecloudPlugin):
             {'id': 'FIWARE_RESOURCE_ENTRY', 'url': '/api/marketAdaptor/marketplace/#{market}/#{store}/#{entry}'},
             {'id': 'FIWARE_STORE_COLLECTION', 'url': '/api/marketAdaptor/marketplace/#{market}/stores'},
             {'id': 'FIWARE_STORE_ENTRY', 'url': '/api/marketAdaptor/marketplace/#{market}/stores/#{store}'},
+            {'id': 'FIWARE_STORE_START_PURCHASE', 'url': build_url_template('wirecloud.fiware.store_start_purchase', ['marketplace', 'store'])},
         )
 
     def get_widget_api_extensions(self, view):

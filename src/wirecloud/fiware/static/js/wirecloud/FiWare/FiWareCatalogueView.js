@@ -289,11 +289,19 @@
 
     FiWareCatalogueView.prototype.ui_commands.buy = function (resource) {
         return function () {
-            var dialog = new Wirecloud.ui.ExternalWebWindowMenu(
-                interpolate(gettext('Buying %(offering)s'), {offering: resource.getDisplayName()}, true),
-                'http://antares.ls.fi.upm.es:8000/login?next=/api/contracting/form%3FID%3D518394c48e05ac7c0dfa0f8c',
-                gettext(''));
-            dialog.show();
+            this.catalogue.start_purchase(resource, {
+                onSuccess: function (data) {
+                    var dialog = new Wirecloud.ui.ExternalProcessWindowMenu(
+                        interpolate(gettext('Buying %(offering)s'), {offering: resource.getDisplayName()}, true),
+                        data.url,
+                        gettext('The buying process will continue in a separate window. This window will be controled by the store where the offering is hosted. After finishing the buying process, the control will return to Wirecloud.'),
+                        {
+                            onSuccess: this.refresh_search_results.bind(this)
+                        }
+                    );
+                    dialog.show();
+                }.bind(this)
+            });
         }.bind(this);
     };
 

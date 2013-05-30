@@ -222,6 +222,7 @@ class MarketAdaptor(object):
                 if ser['versions'][0]['uriTemplate'] == '':
                     ser['versions'][0]['uriTemplate'] = url
 
+                ser['usdl_url'] = url
                 ser['rating'] = 5  # TODO
 
                 try:
@@ -260,6 +261,13 @@ class MarketAdaptor(object):
                 result['resources'].append(ser)
 
         return result
+
+    def get_store(self, name):
+        return self._stores[name]
+
+    def start_purchase(self, store, offering_url):
+        store_client = self._stores[store]
+        return store_client.start_purchase(offering_url, 'wirecloud_enduser')
 
     def get_service_info(self, store, service):
         pass

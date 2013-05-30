@@ -25,18 +25,61 @@
 
     "use strict";
 
+    var detect_close_finish, open_external_window;
+
+    detect_close_finish = function detect_close() {
+        if (this.external_window.closed) {
+            this.external_window = null;
+            clearInterval(this.interval);
+            this.interval = null;
+            this.start_button.enable();
+            this.start_button.focus();
+        } else if ('href' in this.external_window.location && this.is_return_uri(this.external_window.location.href)) {
+
+            if (typeof this.options.onSuccess === 'function') {
+                try {
+                    this.options.onSuccess();
+                } catch (e) {
+                }
+            }
+
+            clearInterval(this.interval);
+            this.interval = null;
+            this.hide();
+        }
+    };
+
+    open_external_window = function open_external_window(url) {
+        this.external_window = window.open(url, '_blank');
+        this.interval = setInterval(detect_close_finish.bind(this), 200);
+    };
+
     /**
-     * Specific class representing alert dialogs.
+     * This window menu eases the creation of modal windows that will wait for
+     * a external process to finish. This window will show a message warning
+     * that the process will continue on another browser window/tab.
+     *
+     * The external process should finish using the same domain of the current
+     * web page for being able to detect this event.
      */
-    var ExternalProcessWindowMenu = function ExternalProcessWindowMenu(title, url, msg) {
+    var ExternalProcessWindowMenu = function ExternalProcessWindowMenu(title, url, msg, options) {
         Wirecloud.ui.WindowMenu.call(this, title);
 
+        if (options != null) {
+            this.options = options;
+        } else {
+            this.options = {};
+        }
         this.url = url;
 
         this.msgElement = document.createElement('div');
         this.msgElement.className = "msg";
         this.msgElement.textContent = msg;
         this.windowContent.appendChild(this.msgElement);
+
+        this.is_return_uri = function () {
+            return true;
+        };
 
         // Start button
         this.start_button = new StyledElements.StyledButton({
@@ -46,8 +89,9 @@
         this.start_button.insertInto(this.windowBottom);
         this.start_button.addEventListener("click", function () {
             this.start_button.disable();
-            this.external_window = window.open(this.url, '_blank');
             this.cancel_button.focus();
+
+            open_external_window.call(this, this.url);
         }.bind(this));
 
         // Cancel button
@@ -62,6 +106,16 @@
 
     ExternalProcessWindowMenu.prototype.setFocus = function setFocus() {
         this.start_button.focus();
+    };
+
+    ExternalProcessWindowMenu.prototype._closeListener = function _closeListener() {
+        if (typeof this.options.onCancel === 'function') {
+            try {
+                this.options.onCancel();
+            } catch (e) {
+            }
+        }
+        Wirecloud.ui.WindowMenu.prototype._closeListener.call(this);
     };
 
     ExternalProcessWindowMenu.prototype.hide = function hide() {

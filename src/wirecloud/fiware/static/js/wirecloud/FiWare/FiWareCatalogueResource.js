@@ -166,7 +166,8 @@ function FiWareCatalogueResource(resourceJSON_) {
             get: function () { return currentVersion.modified; }
         },
         'rating': {value: resourceJSON_.rating},
-        'state': {value: resourceJSON_.state}
+        'state': {value: resourceJSON_.state},
+        'usdl_url': {value: resourceJSON_.usdl_url}
     });
 
     //////////////
