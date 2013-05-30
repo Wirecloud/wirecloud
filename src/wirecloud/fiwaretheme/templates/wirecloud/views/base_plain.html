@@ -1,0 +1,50 @@
+{% load compress i18n %}
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="{{ LANGUAGE_CODE }}"
+      lang="{{ LANGUAGE_CODE }}">
+<head>
+    <title>{% block title %}{% trans "Wirecloud Platform" %}{% endblock %}</title>
+
+    {% block meta %}
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}images/favicon.ico" />
+    {% endblock %}
+
+    {% block css %}
+        {% compress css %}
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/wirecloud_core.css" />
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/static_pages.css" />
+        {% endcompress %}
+    {% endblock %}
+
+    {% block js %}
+    {% endblock %}
+</head>
+
+<body>
+    <div id="wirecloud_header">
+        <div class="logo_wrapper">
+          <div>
+              <img src="{{ STATIC_URL }}images/wirecloud_logo.png" alt="Wirecloud" />
+              <div>
+                  <h2 class="fiware_title">fi-ware</h2>
+                  <h2 class="fiware_subtitle">Wirecloud Mashup Platform</h2>
+              </div>
+          </div>
+        </div>
+
+        <div class="breadcrum_wrapper"><div class="breadcrum">
+            /<span id="wirecloud_breadcrum">{% block path %}{% endblock %}</span>
+        </div></div>
+
+    </div>
+
+    <div>
+    {% block content %}
+    {% endblock %}
+    </div>
+</body>
+</html>
