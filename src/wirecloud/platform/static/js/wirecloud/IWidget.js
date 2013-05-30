@@ -28,7 +28,7 @@
     var old_context_api_adaptor_callback = function old_context_api_adaptor_callback(new_values) {
         var key, variables;
 
-        variables = this.layout.dragboard.getWorkspace().varManager.getIWidgetVariables(this.id);
+        variables = this.workspace.varManager.getIWidgetVariables(this.id);
         for (key in variables) {
             var variable = variables[key];
             if (variable.vardef.aspect === 'GCTX' && variable.vardef.concept in new_values) {
@@ -40,13 +40,19 @@
 
     /**
      */
-    var IWidget = function IWidget(widget, options) {
+    var IWidget = function IWidget(widget, tab, options) {
 
         if (typeof options !== 'object' || !(widget instanceof Widget)) {
             throw new TypeError();
         }
 
+        if (!(tab instanceof Tab)) {
+            throw new TypeError();
+        }
+
         Object.defineProperty(this, 'widget', {value: widget});
+        Object.defineProperty(this, 'tab', {value: tab});
+        Object.defineProperty(this, 'workspace', {value: tab.workspace});
         this.id = options.id;
         this.readOnly = options.readOnly;
 
@@ -75,13 +81,12 @@
     IWidget.prototype.isAllowed = function isAllowed(action) {
         switch (action) {
         case "close":
-            return !this.readOnly && this.layout.dragboard.getWorkspace().isAllowed('add_remove_iwidgets');
+            return !this.readOnly && this.workspace.isAllowed('add_remove_iwidgets');
         case "move":
         case "resize":
-            var dragboard = this.layout.dragboard;
-            return !dragboard.tab.readOnly && dragboard.getWorkspace().isAllowed('edit_layout');
+            return !this.tab.readOnly && this.workspace.isAllowed('edit_layout');
         case "minimize":
-            return this.layout.dragboard.getWorkspace().isAllowed('edit_layout');
+            return this.workspace.isAllowed('edit_layout');
         default:
             return false;
         }
@@ -90,7 +95,7 @@
     IWidget.prototype.getVariable = function getVariable(name) {
         var variable;
 
-        variable = this.layout.dragboard.getWorkspace().varManager.findVariable(this.id, name);
+        variable = this.workspace.varManager.findVariable(this.id, name);
         if (variable.vardef.aspect === 'PROP') {
             return variable;
         } else {
@@ -108,7 +113,7 @@
             this.contextManager.addCallback(callback);
             break;
         case 'mashup':
-            this.layout.dragboard.getWorkspace().contextManager.addCallback(callback);
+            this.workspace.contextManager.addCallback(callback);
             break;
         case 'platform':
             OpManagerFactory.getInstance().contextManager.addCallback(callback);
@@ -121,16 +126,15 @@
     };
 
     IWidget.prototype._unload = function _unload() {
-        var i, workspace, opManager;
+        var i, opManager;
 
         // Remove context callbacks
         for (i = 0; i < this.callbacks.iwidget.length; i += 1) {
             this.contextManager.removeCallback(this.callbacks.iwidget[i]);
         }
 
-        workspace = this.layout.dragboard.getWorkspace();
         for (i = 0; i < this.callbacks.mashup.length; i += 1) {
-            workspace.contextManager.removeCallback(this.callbacks.mashup[i]);
+            this.workspace.contextManager.removeCallback(this.callbacks.mashup[i]);
         }
 
         opManager = OpManagerFactory.getInstance();
@@ -161,9 +165,7 @@
             this.events.unload.dispatch(this);
         }
 
-        if (this.layout) {
-            this.layout.dragboard.getWorkspace().varManager.removeInstance(this.id);
-        }
+        this.workspace.varManager.removeInstance(this.id);
         this.contextManager.removeCallback(this._old_context_api_adaptor_callback);
         this.contextManager = null;
         this.logManager.close();

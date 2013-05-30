@@ -205,11 +205,11 @@ Object.defineProperty(DragboardLayout.prototype, "dragboardLeftMargin", {
  * @param {Boolean} affectsDragboard true if the associated dragboard must be notified
  */
 DragboardLayout.prototype.addIWidget = function (iWidget, affectsDragboard) {
-    if (iWidget.internal_iwidget.layout != null) {
+    if (iWidget.layout != null) {
         var msg = gettext("the iWidget could not be associated with this layout as it already has an associated layout.");
         throw new Error(msg);
     }
-    iWidget.internal_iwidget.layout = this;
+    iWidget.layout = this;
 
     if (affectsDragboard) {
         this.dragboard._registerIWidget(iWidget);
@@ -287,7 +287,7 @@ DragboardLayout.prototype.removeIWidget = function (iWidget, affectsDragboard) {
         }
     }
 
-    iWidget.internal_iwidget.layout = null;
+    iWidget.layout = null;
 };
 
 /**

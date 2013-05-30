@@ -630,7 +630,7 @@ function DragboardCursor(iWidget) {
     var positiontmp = iWidget.getPosition();
     this.position = positiontmp.clone();
 
-    this.layout = iWidget.internal_iwidget.layout;
+    this.layout = iWidget.layout;
     this.width = iWidget.getWidth();
     this.height = iWidget.getHeight();
     this.heightInPixels = iWidget.element.offsetHeight;
@@ -741,7 +741,7 @@ IWidgetDraggable.prototype.canBeDraggedFunc = function (draggable, context) {
 IWidgetDraggable.prototype.startFunc = function (draggable, context) {
     context.selectedTab = null;
     context.selectedTabElement = null;
-    context.layout = context.iWidget.internal_iwidget.layout;
+    context.layout = context.iWidget.layout;
     context.dragboard = context.layout.dragboard;
     context.currentTab = context.dragboard.tabId;
     context.dragboard.raiseToTop(context.iWidget);
