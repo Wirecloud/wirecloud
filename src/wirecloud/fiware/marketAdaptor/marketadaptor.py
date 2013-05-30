@@ -222,6 +222,8 @@ class MarketAdaptor(object):
                 if ser['versions'][0]['uriTemplate'] == '':
                     ser['versions'][0]['uriTemplate'] = url
 
+                ser['rating'] = 5  # TODO
+
                 try:
 
                     offering_parsed_url = urlparse(url)
@@ -250,6 +252,7 @@ class MarketAdaptor(object):
 
                     ser['type'] = offering_type
                     ser['state'] = offering_info['state']
+                    ser['rating'] = offering_info['rating']
 
                 except:
                     pass

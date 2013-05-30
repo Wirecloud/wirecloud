@@ -126,10 +126,6 @@ function CatalogueResource(resourceJSON_) {
         return currentVersion.votes.user_vote;
     };
 
-    this.getPopularity = function () {
-        return currentVersion.votes.popularity;
-    };
-
     this.getCapabilities = function () {
         return currentVersion.capabilities;
     };
@@ -162,6 +158,9 @@ function CatalogueResource(resourceJSON_) {
     Object.defineProperties(this, {
         'uploader': {
             get: function () { return currentVersion.uploader; }
+        },
+        'rating': {
+            get: function () { return currentVersion.votes.popularity; }
         },
         'date': {
             get: function () { return currentVersion.date; }

@@ -149,10 +149,6 @@ function FiWareCatalogueResource(resourceJSON_) {
         return [];
     };
 
-    this.getPopularity = function () {
-        return 5;
-    };
-
     this.getURI = function () {
         return [vendor, name, currentVersion.version.text].join('/');
     };
@@ -169,9 +165,8 @@ function FiWareCatalogueResource(resourceJSON_) {
         'date': {
             get: function () { return currentVersion.modified; }
         },
-        'state': {
-            value: resourceJSON_.state
-        }
+        'rating': {value: resourceJSON_.rating},
+        'state': {value: resourceJSON_.state}
     });
 
     //////////////
