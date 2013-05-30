@@ -323,9 +323,15 @@ StyledElements.Container.prototype.repaint = function(temporal) {
     temporal = temporal !== undefined ? temporal : false;
 
     if (this.useFullHeight) {
+        if (this.wrapperElement.classList.contains('hidden')) {
+            this.wrapperElement.style.height = "";
+            return;
+        }
+
         var height = this._getUsableHeight();
-        if (height == null)
+        if (height == null) {
             return; // nothing to do
+        }
 
         this.wrapperElement.style.height = (height + "px");
     }
@@ -1371,11 +1377,12 @@ StyledElements.Alternative.prototype = new StyledElements.Container({extending: 
 
 StyledElements.Alternative.prototype.setVisible = function (newStatus) {
     if (newStatus) {
-        EzWebExt.removeClassName(this.wrapperElement, "hidden");
+        this.wrapperElement.classList.remove("hidden");
         this.repaint(false);
         this.events['show'].dispatch(this);
     } else {
-        EzWebExt.appendClassName(this.wrapperElement, "hidden");
+        this.wrapperElement.classList.add("hidden");
+        this.repaint(false);
         this.events['hide'].dispatch(this);
     }
 }
