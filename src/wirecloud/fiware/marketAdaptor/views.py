@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012 Universidad Politécnica de Madrid
+# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecluod.
 
@@ -29,14 +29,31 @@ from wirecloud.fiware.marketAdaptor.marketadaptor import MarketAdaptor
 from wirecloud.platform.models import Market
 
 
+market_adaptors = {}
+
+
+def get_market_adaptor(user, market):
+
+    if user is None:
+        username = ''
+
+    if user not in market_adaptors:
+        market_adaptors[username] = {}
+
+    if market not in market_adaptors[username]:
+        m = get_object_or_404(Market, user=user, name=market)
+        options = json.loads(m.options)
+        market_adaptors[username][market] = MarketAdaptor(options['url'])
+
+    return market_adaptors[username][market]
+
+
 class ServiceCollection(Resource):
 
     def read(self, request, marketplace, store):
-        m = get_object_or_404(Market, name=marketplace)
-        options = json.loads(m.options)
-        url = options['url']
 
-        adaptor = MarketAdaptor(url)
+        adaptor = get_market_adaptor(None, marketplace)
+
         try:
             result = adaptor.get_all_services_from_store(store)
         except:
@@ -50,11 +67,7 @@ class ServiceCollection(Resource):
         service_info['name'] = request.POST['name']
         service_info['url'] = request.POST['url']
 
-        m = get_object_or_404(Market, name=marketplace)
-        options = json.loads(m.options)
-        url = options['url']
-
-        adaptor = MarketAdaptor(url)
+        adaptor = get_market_adaptor(None, marketplace)
 
         try:
             adaptor.add_service(store, service_info)
@@ -67,11 +80,8 @@ class ServiceCollection(Resource):
 class ServiceEntry(Resource):
 
     def delete(self, request, marketplace, store, service_name):
-        m = get_object_or_404(Market, name=marketplace)
-        options = json.loads(m.options)
-        url = options['url']
 
-        adaptor = MarketAdaptor(url)
+        adaptor = get_market_adaptor(None, marketplace)
 
         try:
             adaptor.delete_service(store, service_name)
@@ -84,11 +94,8 @@ class ServiceEntry(Resource):
 class ServiceSearchCollection(Resource):
 
     def read(self, request, marketplace, store='', keyword='widget'):
-        m = get_object_or_404(Market, name=marketplace)
-        options = json.loads(m.options)
-        url = options['url']
 
-        adaptor = MarketAdaptor(url)
+        adaptor = get_market_adaptor(None, marketplace)
 
         try:
             result = adaptor.full_text_search(store, keyword)
@@ -102,11 +109,8 @@ class AllStoresServiceCollection(Resource):
 
     def read(self, request, marketplace):
 
-        m = get_object_or_404(Market, name=marketplace)
-        options = json.loads(m.options)
-        url = options['url']
+        adaptor = get_market_adaptor(None, marketplace)
 
-        adaptor = MarketAdaptor(url)
         result = {'resources': []}
         try:
             stores = adaptor.get_all_stores()
@@ -126,11 +130,7 @@ class StoreCollection(Resource):
 
     def read(self, request, marketplace):
 
-        m = get_object_or_404(Market, name=marketplace)
-        options = json.loads(m.options)
-        url = options['url']
-
-        adaptor = MarketAdaptor(url)
+        adaptor = get_market_adaptor(None, marketplace)
 
         try:
             result = adaptor.get_all_stores()
