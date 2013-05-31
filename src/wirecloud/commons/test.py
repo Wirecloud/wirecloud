@@ -708,14 +708,6 @@ class WirecloudRemoteTestCase(object):
         email_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="email"]')
         self.fill_form_input(email_input, info['email'])
 
-        tabs = self.driver.find_elements_by_css_selector('.window_menu .notebook .tab_wrapper .tab')
-        for tab in tabs:
-            span = tab.find_element_by_css_selector('span')
-            if span.text == 'Publish place':
-                tab.click()
-
-        self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="local"]').click()
-
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
         self.wait_wirecloud_ready()
 
