@@ -57,9 +57,13 @@ class StoreClient(object):
             'Authorization': 'Bearer ' + token,
         }
         data = {
-            'name': name,
-            'version': version,
-            'description': description,
-            'content_type': content_type,
+            'json': json.dumps({
+                'name': name,
+                'version': version,
+                'description': description,
+                'content_type': content_type,
+            })
         }
-        requests.post(urljoin(self._url, 'api/offering/resources'), headers=headers, data=data, files={'file': (filename, f)})
+        response = requests.post(urljoin(self._url, 'api/offering/resources'), headers=headers, data=data, files={'file': (filename, f)})
+        if response.status_code not in (200, 201, 204):
+            raise Exception()

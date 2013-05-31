@@ -237,7 +237,7 @@
         });
         fragment.appendChild(button);
 
-        if (this.catalogue_view.catalogue === Wirecloud.LocalCatalogue && resource.getType() === 'mashup') {
+        if (this.catalogue_view.catalogue === Wirecloud.LocalCatalogue) {
             button = new StyledElements.StyledButton({
                 'text': gettext('Publish')
             });
