@@ -31,6 +31,85 @@ Wirecloud.location = {
 
     "use strict";
 
+    var setRequestHeaders = function setRequestHeaders() {
+        var headers, name;
+
+        headers = EzWebExt.merge({
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
+        }, this.options.requestHeaders);
+
+        if (!('Content-Type' in headers) && this.options.contentType != null) {
+            headers['Content-Type'] = this.options.contentType;
+            if (this.options.encoding != null) {
+                headers['Content-Type'] += '; charset=' + this.options.encoding;
+            }
+        }
+
+        for (name in headers) {
+            this.transport.setRequestHeader(name, headers[name]);
+        }
+    };
+
+    var onReadyStateChange = function onReadyStateChange() {
+        switch (this.transport.readyState) {
+        case 4:
+            var response = new Response(this);
+
+            try {
+                if (('on' + response.status) in this.options) {
+                    this.options['on' + response.status](response);
+                } else if (this.options.onSuccess && (response.status >= 200 && response.status < 300)) {
+                    this.options.onSuccess(response);
+                } else if (this.options.onFailure) {
+                    this.options.onFailure(response);
+                }
+            } catch (e) {
+            }
+
+            if (this.options.onComplete) {
+                try {
+                    this.options.onComplete();
+                } catch (e) {}
+            }
+        }
+    };
+
+    var Response = function Response(request) {
+        Object.defineProperties(this, {
+            'request': {value: request},
+            'transport': {value: request.transport},
+            'status': {value: request.transport.status},
+            'statusText': {value: request.transport.statusText},
+            'responseText': {value: request.transport.responseText},
+        });
+    };
+
+    var Request = function Request(url, options) {
+        this.url = url;
+        this.options = EzWebExt.merge({
+            method:       'POST',
+            asynchronous: true,
+            contentType:  null,
+            encoding:     null,
+            postBody:     null
+        }, options);
+
+        if (this.options.onSuccess != null && typeof this.options.onSuccess !== 'function') {
+            throw new TypeError('Invalid onSuccess callback');
+        }
+        if (this.options.onFailure != null && typeof this.options.onFailure !== 'function') {
+            throw new TypeError('Invalid onFailure callback');
+        }
+        this.method = this.options.method;
+
+        this.transport = new XMLHttpRequest();
+        this.transport.open(this.options.method, this.url, this.options.asynchronous);
+        this.transport.addEventListener('readystatechange', onReadyStateChange.bind(this), true);
+        setRequestHeaders.call(this);
+        this.transport.send(this.options.postBody);
+    };
+
     var io = {};
 
     io.buildProxyURL = function buildProxyURL(url, options) {
@@ -90,7 +169,7 @@ Wirecloud.location = {
             }
         }
 
-        return new Ajax.Request(Wirecloud.io.buildProxyURL(url, options), options);
+        return new Request(Wirecloud.io.buildProxyURL(url, options), options);
     };
 
     Wirecloud.io = io;
