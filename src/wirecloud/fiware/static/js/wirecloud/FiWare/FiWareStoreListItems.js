@@ -61,10 +61,5 @@ FiWareStoreListItems.prototype.build = function build(store_info) {
         this.refresh_store_info();
     }.bind(this.view)));
 
-    if (!this.view.loading && this.view.number_of_stores > 0 && this.view.currentStore !== 'All stores') {
-        items.push(new StyledElements.MenuItem(gettext('Publish service'),
-        this.view.createUserCommand('publish')));
-    }
-
     return items;
 };

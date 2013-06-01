@@ -19,7 +19,7 @@
  *
  */
 
-/*global Event, OpManagerFactory, StyledElements, gettext, interpolate, LayoutManagerFactory, CatalogueSearchView, FiWareResourceDetailsView, FiWareCataloguePublishView, FiWareCatalogue, Wirecloud, FiWareCatalogueResource, FiWareStoreListItems*/
+/*global Event, OpManagerFactory, StyledElements, gettext, interpolate, LayoutManagerFactory, CatalogueSearchView, FiWareResourceDetailsView, FiWareCatalogue, Wirecloud, FiWareCatalogueResource, FiWareStoreListItems*/
 
 (function () {
 
@@ -45,8 +45,7 @@
         this.viewsByName = {
             'initial': this.alternatives.createAlternative(),
             'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: {catalogue: this, resource_painter: Wirecloud.ui.ResourcePainter}}),
-            'details': this.alternatives.createAlternative({alternative_constructor: Wirecloud.FiWare.ui.ResourceDetailsView, containerOptions: {catalogue: this}}),
-            'publish': this.alternatives.createAlternative({alternative_constructor: FiWareCataloguePublishView, containerOptions: {catalogue: this}})
+            'details': this.alternatives.createAlternative({alternative_constructor: Wirecloud.FiWare.ui.ResourceDetailsView, containerOptions: {catalogue: this}})
         };
         this.viewsByName.search.init();
 
@@ -250,40 +249,6 @@
         return function () {
             this.viewsByName.details.paint(resource);
             this.alternatives.showAlternative(this.viewsByName.details);
-        }.bind(this);
-    };
-
-    FiWareCatalogueView.prototype.ui_commands.publish = function (resource) {
-        return function (e) {
-            this.alternatives.showAlternative(this.viewsByName.publish);
-        }.bind(this);
-    };
-
-    FiWareCatalogueView.prototype.ui_commands.delete = function (resource, options) {
-        // First ask the user
-        var context, doRequest, msg;
-
-        msg = gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") widget?');
-        context = {
-            name: resource.getName(),
-            vendor: resource.getVendor(),
-            version: resource.getVersion().text
-        };
-
-        options.onSuccess = this.refresh_search_results.bind(this);
-        options.onComplete = this.home.bind(this);
-
-        doRequest = function () {
-            this.catalogue.deleteResource(options);
-        };
-
-        msg = interpolate(msg, context, true);
-
-        return function () {
-            var dialog = new Wirecloud.ui.AlertWindowMenu();
-            dialog.setMsg(msg);
-            dialog.setHandler(doRequest.bind(this));
-            dialog.show();
         }.bind(this);
     };
 
