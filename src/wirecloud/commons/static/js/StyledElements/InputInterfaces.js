@@ -742,6 +742,10 @@ var FieldSetInterface = function FieldSetInterface(fieldId, fieldDesc) {
 };
 FieldSetInterface.prototype = new InputInterface();
 
+FieldSetInterface.prototype.repaint = function repaint() {
+    return this.form.repaint();
+};
+
 FieldSetInterface.prototype.insertInto = function insertInto(element) {
     this.form.insertInto(element);
 };
