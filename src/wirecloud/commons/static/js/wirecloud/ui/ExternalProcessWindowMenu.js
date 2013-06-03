@@ -43,8 +43,6 @@
                 }
             }
 
-            clearInterval(this.interval);
-            this.interval = null;
             this.hide();
         }
     };
@@ -123,6 +121,10 @@
         if (this.external_window) {
             this.external_window.close();
             this.external_window = null;
+        }
+        if (this.interval) {
+            clearInterval(this.interval);
+            this.interval = null;
         }
     };
 
