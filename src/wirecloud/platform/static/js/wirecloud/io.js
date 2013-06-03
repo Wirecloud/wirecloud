@@ -19,7 +19,7 @@
  *
  */
 
-/*global Ajax*/
+/*global EzWebExt, Wirecloud*/
 
 Wirecloud.location = {
     'domain': document.location.protocol + '//' + document.location.host,
@@ -35,8 +35,8 @@ Wirecloud.location = {
         var headers, name;
 
         headers = EzWebExt.merge({
-          'X-Requested-With': 'XMLHttpRequest',
-          'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
         }, this.options.requestHeaders);
 
         if (!('Content-Type' in headers) && this.options.contentType != null) {
@@ -52,8 +52,8 @@ Wirecloud.location = {
     };
 
     var onReadyStateChange = function onReadyStateChange() {
-        switch (this.transport.readyState) {
-        case 4:
+        if (this.transport.readyState == 4) {
+
             var response = new Response(this);
 
             try {
@@ -81,8 +81,33 @@ Wirecloud.location = {
             'transport': {value: request.transport},
             'status': {value: request.transport.status},
             'statusText': {value: request.transport.statusText},
-            'responseText': {value: request.transport.responseText},
+            'response': {value: request.transport.response},
+            'responseText': {value: request.transport.responseText}
         });
+    };
+
+    Response.prototype.getHeader = function getHeader(name) {
+        try {
+            return this.transport.getResponseHeader(name);
+        } catch (e) { return null; }
+    };
+
+    Response.prototype.getAllResponseHeaders = function getAllResponseHeaders() {
+        return this.transport.getAllResponseHeaders();
+    };
+
+    var toQueryString = function toQueryString(parameters) {
+        var key, query = '';
+
+        if (typeof parameters === 'string') {
+            return parameters;
+        }
+
+        for (key in parameters) {
+            query += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(parameters[key]);
+        }
+
+        return query.substr(1);
     };
 
     var Request = function Request(url, options) {
@@ -90,6 +115,7 @@ Wirecloud.location = {
         this.options = EzWebExt.merge({
             method:       'POST',
             asynchronous: true,
+            responseType: null,
             contentType:  null,
             encoding:     null,
             postBody:     null
@@ -101,10 +127,31 @@ Wirecloud.location = {
         if (this.options.onFailure != null && typeof this.options.onFailure !== 'function') {
             throw new TypeError('Invalid onFailure callback');
         }
-        this.method = this.options.method;
+        this.method = this.options.method.toUpperCase();
+
+        if (this.options.parameters != null && (typeof this.options.parameters === 'string' || typeof this.options.parameters === 'object')) {
+            if (['PUT', 'POST'].indexOf(this.method) !== -1 && this.options.postBody == null) {
+                this.postBody = toQueryString(this.options.parameters);
+                if (this.options.contentType == null) {
+                    this.options.contentType = 'application/x-www-form-urlencoded';
+                }
+                if (this.options.encoding == null) {
+                    this.options.encoding = 'UTF-8';
+                }
+            } else if (this.method === 'GET') {
+                if (this.url.indexOf('?') !== -1) {
+                    this.url += '&' + toQueryString(this.options.parameters);
+                }  else {
+                    this.url += '?' + toQueryString(this.options.parameters);
+                }
+            }
+        }
 
         this.transport = new XMLHttpRequest();
         this.transport.open(this.options.method, this.url, this.options.asynchronous);
+        if (this.options.responseType) {
+            this.transport.responseType = this.options.responseType;
+        }
         this.transport.addEventListener('readystatechange', onReadyStateChange.bind(this), true);
         setRequestHeaders.call(this);
         this.transport.send(this.options.postBody);
