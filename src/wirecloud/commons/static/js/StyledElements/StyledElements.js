@@ -1521,35 +1521,6 @@ StyledElements.DynamicMenuItems.prototype.build = function() {
     return [];
 }
 
-
-/**
- *
- */
-StyledElements.SendMenuItems = function(variable, getData) {
-    this.variable = variable;
-    this.getData = getData;
-}
-StyledElements.SendMenuItems.prototype = new StyledElements.DynamicMenuItems();
-
-StyledElements.SendMenuItems.prototype.build = function() {
-    var i, actions, action, items, item;
-
-    actions = EzWebExt.getEventActions(this.variable);
-    items = [];
-
-    for (i = 0; i < actions.length; i += 1) {
-        action = actions[i];
-
-        item = new StyledElements.MenuItem(action.label, EzWebExt.bind(function(context) {
-            this.control.variable.set(this.control.getData(context), {targetSlots: this.slots});
-        }, {control: this, slots: [action.value]}));
-
-        items.push(item);
-    }
-
-    return items;
-}
-
 /**
  * @experimental
  *
