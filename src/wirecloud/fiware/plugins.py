@@ -24,6 +24,7 @@ from wirecloud.platform.plugins import WirecloudPlugin, build_url_template
 
 import wirecloud.fiware
 from wirecloud.fiware.marketAdaptor.marketadaptor import MarketAdaptor
+from wirecloud.fiware.marketAdaptor.views import get_market_adaptor, get_market_user_data
 
 
 class FiWareMarketManager(MarketManager):
@@ -51,7 +52,8 @@ class FiWareMarketManager(MarketManager):
         }
 
         store = endpoint['store']
-        adaptor = MarketAdaptor(self._options['url'])
+        adaptor = get_market_adaptor(self._options.get('user', None), self._options['name'])
+        user_data = get_market_user_data(user, self._options['name'])
         storeclient = adaptor.get_store(store)
         storeclient.upload_resource(
             resource_info['display_name'],
@@ -60,7 +62,7 @@ class FiWareMarketManager(MarketManager):
             resource_info['description'],
             mimetypes[resource_info['type']],
             wgt_file.get_underlying_file(),
-            'wirecloud_enduser'
+            user_data[store + '/token']
         )
 
 

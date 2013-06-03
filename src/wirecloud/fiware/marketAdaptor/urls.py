@@ -29,4 +29,5 @@ urlpatterns = patterns('wirecloud.fiware.marketAdaptor.views',
     url(r'^marketplace/(?P<marketplace>[\w -]+)/stores/?$', views.StoreCollection(permitted_methods=('GET',))),
     url(r'^marketplace/(?P<marketplace>[\w -]+)/(?P<store>[\w -]+)/(?P<service_name>[\w -]+)/?$', views.ServiceEntry(permitted_methods=('DELETE',))),
     url(r'^marketplace/(?P<marketplace>[\w -]+)/store/(?P<store>[\w -]+)/start_purchase/?$', 'start_purchase', name='wirecloud.fiware.store_start_purchase'),
+    url(r'^fiware/redirect_uri$', 'start_purchase', name='wirecloud.fiware.store_redirect_uri'),
 )

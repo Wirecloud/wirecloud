@@ -25,6 +25,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 
 from wirecloud.commons.baseviews import Resource
+from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.fiware.marketAdaptor.marketadaptor import MarketAdaptor
 from wirecloud.platform.models import Market, MarketUserData
 
@@ -161,8 +162,9 @@ def start_purchase(request, marketplace, store):
 
     data = simplejson.loads(request.raw_post_data)
 
+    redirect_uri = get_absolute_reverse_url('wirecloud.fiware.store_redirect_uri', request)
     try:
-        result = adaptor.start_purchase(store, data['offering_url'], **user_data)
+        result = adaptor.start_purchase(store, data['offering_url'], redirect_uri, **user_data)
     except:
         return HttpResponse(status=502)
 

@@ -37,7 +37,7 @@ class StoreClient(object):
 
         return json.loads(response.text)
 
-    def start_purchase(self, offering_url, token):
+    def start_purchase(self, offering_url, redirect_uri, token):
 
         headers = {
             'Accept': 'application/json',
@@ -46,6 +46,7 @@ class StoreClient(object):
         }
         data = {
             'offering': offering_url,
+            'redirect_uri': redirect_uri
         }
         response = requests.post(urljoin(self._url, 'api/contracting/form'), data=json.dumps(data, ensure_ascii=False), headers=headers)
 
@@ -65,5 +66,8 @@ class StoreClient(object):
             })
         }
         response = requests.post(urljoin(self._url, 'api/offering/resources'), headers=headers, data=data, files={'file': (filename, f)})
+        if response.status_code == 400:
+            raise Exception('The resource already exists')
+
         if response.status_code not in (200, 201, 204):
             raise Exception()

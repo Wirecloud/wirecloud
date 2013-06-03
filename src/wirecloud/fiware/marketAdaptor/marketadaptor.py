@@ -156,8 +156,8 @@ class MarketAdaptor(object):
         result['url'] = parsed_body.xpath(URL_XPATH)[0].text
         result['registrationDate'] = parsed_body.xpath(DATE_XPATH)[0].text
 
-        if store['name'] not in self._stores:
-            self._stores[store['name']] = StoreClient(store['url'])
+        if result['name'] not in self._stores:
+            self._stores[result['name']] = StoreClient(result['url'])
 
         return result
 
@@ -234,7 +234,7 @@ class MarketAdaptor(object):
                     offering_parsed_url = urlparse(url)
                     offering_id = offering_parsed_url.path.rsplit('/', 1)[1].replace('__', '/')
 
-                    store_client = self.get_store(store)
+                    store_client = self._stores[store]
                     offering_info = store_client.get_offering_info(offering_id, options[store + '/token'])
                     offering_type = 'non instantiable service'
                     if len(offering_info['resources']) == 1:
@@ -267,11 +267,14 @@ class MarketAdaptor(object):
         return result
 
     def get_store(self, name):
+        if name not in self._stores:
+            self.get_store_info(name)
+
         return self._stores[name]
 
-    def start_purchase(self, store, offering_url, **options):
-        store_client = self.get_stores(store)
-        return store_client.start_purchase(offering_url, options[store + '/token'])
+    def start_purchase(self, store, offering_url, redirect_uri, **options):
+        store_client = self.get_store(store)
+        return store_client.start_purchase(offering_url, redirect_uri, options[store + '/token'])
 
     def get_service_info(self, store, service):
         pass
