@@ -129,7 +129,7 @@ class MarketAdaptor(object):
         session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
         headers = {'Cookie': session_cookie}
 
-        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/offering/store/" + urlquote(store)), '', headers)
+        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + urlquote(store)), '', headers)
         try:
             response = opener.open(request)
         except HTTPError, e:
