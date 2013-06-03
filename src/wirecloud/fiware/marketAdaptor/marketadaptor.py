@@ -42,9 +42,7 @@ class MarketAdaptor(object):
 
     _marketplace_uri = None
     _session_id = None
-    _stores = {
-        "CoNWeT": StoreClient('http://antares.ls.fi.upm.es:8000/')
-    }
+    _stores = {}
 
     def __init__(self, marketplace_uri, user='demo1234', passwd='demo1234'):
         self._marketplace_uri = marketplace_uri
@@ -117,6 +115,9 @@ class MarketAdaptor(object):
             store['url'] = url
             result.append(store)
 
+            if store['name'] not in self._stores:
+                self._stores[store['name']] = StoreClient(store['url'])
+
         return result
 
     def get_store_info(self, store):
@@ -154,6 +155,9 @@ class MarketAdaptor(object):
         result['name'] = store
         result['url'] = parsed_body.xpath(URL_XPATH)[0].text
         result['registrationDate'] = parsed_body.xpath(DATE_XPATH)[0].text
+
+        if store['name'] not in self._stores:
+            self._stores[store['name']] = StoreClient(store['url'])
 
         return result
 
@@ -230,7 +234,7 @@ class MarketAdaptor(object):
                     offering_parsed_url = urlparse(url)
                     offering_id = offering_parsed_url.path.rsplit('/', 1)[1].replace('__', '/')
 
-                    store_client = self._stores[store]
+                    store_client = self.get_store(store)
                     offering_info = store_client.get_offering_info(offering_id, 'wirecloud_enduser')
                     offering_type = 'non instantiable service'
                     if len(offering_info['resources']) == 1:
@@ -266,7 +270,7 @@ class MarketAdaptor(object):
         return self._stores[name]
 
     def start_purchase(self, store, offering_url):
-        store_client = self._stores[store]
+        store_client = self.get_stores(store)
         return store_client.start_purchase(offering_url, 'wirecloud_enduser')
 
     def get_service_info(self, store, service):
