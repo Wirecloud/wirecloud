@@ -26,7 +26,7 @@ from django.utils import simplejson
 
 from wirecloud.commons.baseviews import Resource
 from wirecloud.fiware.marketAdaptor.marketadaptor import MarketAdaptor
-from wirecloud.platform.models import Market
+from wirecloud.platform.models import Market, MarketUserData
 
 
 market_adaptors = {}
@@ -48,14 +48,27 @@ def get_market_adaptor(user, market):
     return market_adaptors[username][market]
 
 
+def get_market_user_data(user, market):
+
+    user_data = {}
+    for user_data_entry in MarketUserData.objects.filter(market__user=None, market__name=market, user=user):
+        try:
+            user_data[user_data_entry.name] = json.loads(user_data_entry.value)
+        except:
+            user_data[user_data_entry.name] = None
+
+    return user_data
+
+
 class ServiceCollection(Resource):
 
     def read(self, request, marketplace, store):
 
         adaptor = get_market_adaptor(None, marketplace)
+        user_data = get_market_user_data(request.user, marketplace)
 
         try:
-            result = adaptor.get_all_services_from_store(store)
+            result = adaptor.get_all_services_from_store(store, **user_data)
         except:
             return HttpResponse(status=502)
 
@@ -110,6 +123,7 @@ class AllStoresServiceCollection(Resource):
     def read(self, request, marketplace):
 
         adaptor = get_market_adaptor(None, marketplace)
+        user_data = get_market_user_data(request.user, marketplace)
 
         result = {'resources': []}
         try:
@@ -118,7 +132,7 @@ class AllStoresServiceCollection(Resource):
                 #This if is necesary in order to avoid an Http error
                 #caused by and store without name that cant be deleted
                 if store['name'] != '':
-                    store_services = adaptor.get_all_services_from_store(store['name'])
+                    store_services = adaptor.get_all_services_from_store(store['name'], **user_data)
                     result['resources'].extend(store_services['resources'])
         except:
             return HttpResponse(status=502)
@@ -143,11 +157,12 @@ class StoreCollection(Resource):
 def start_purchase(request, marketplace, store):
 
     adaptor = get_market_adaptor(None, marketplace)
+    user_data = get_market_user_data(request.user, marketplace)
 
     data = simplejson.loads(request.raw_post_data)
 
     try:
-        result = adaptor.start_purchase(store, data['offering_url'])
+        result = adaptor.start_purchase(store, data['offering_url'], **user_data)
     except:
         return HttpResponse(status=502)
 

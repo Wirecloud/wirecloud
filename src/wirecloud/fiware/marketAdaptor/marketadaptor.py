@@ -161,7 +161,7 @@ class MarketAdaptor(object):
 
         return result
 
-    def get_all_services_from_store(self, store):
+    def get_all_services_from_store(self, store, **options):
 
         if self._session_id is None:
             self.authenticate()
@@ -185,7 +185,7 @@ class MarketAdaptor(object):
         if len(path) > 2 and path[2] == 'spring_security_login':
             # Session has expired
             self._session_id = None
-            return self.get_all_services_from_store(store)
+            return self.get_all_services_from_store(store, **options)
 
         if response.code != 200:
             raise HTTPError(response.url, response.code, response.msg, None, None)
@@ -235,7 +235,7 @@ class MarketAdaptor(object):
                     offering_id = offering_parsed_url.path.rsplit('/', 1)[1].replace('__', '/')
 
                     store_client = self.get_store(store)
-                    offering_info = store_client.get_offering_info(offering_id, 'wirecloud_enduser')
+                    offering_info = store_client.get_offering_info(offering_id, options[store + '/token'])
                     offering_type = 'non instantiable service'
                     if len(offering_info['resources']) == 1:
 
@@ -269,9 +269,9 @@ class MarketAdaptor(object):
     def get_store(self, name):
         return self._stores[name]
 
-    def start_purchase(self, store, offering_url):
+    def start_purchase(self, store, offering_url, **options):
         store_client = self.get_stores(store)
-        return store_client.start_purchase(offering_url, 'wirecloud_enduser')
+        return store_client.start_purchase(offering_url, options[store + '/token'])
 
     def get_service_info(self, store, service):
         pass
