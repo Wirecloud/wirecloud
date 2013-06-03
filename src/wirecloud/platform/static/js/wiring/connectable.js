@@ -259,7 +259,7 @@ wSlot.prototype._is_target_slot = function(variable, list) {
 
     for (i = 0; i < list.length; i += 1) {
         slot = list[i];
-        if (slot.iWidget == variable.iWidget && slot.name == variable.vardef.name) {
+        if (slot.iWidget == variable.iWidget.id && slot.name == variable.vardef.name) {
             return true;
         }
     }
@@ -272,24 +272,24 @@ wSlot.prototype.getFinalSlots = function() {
         action_label = gettext('Use in %(slotName)s');
         action_label = interpolate(action_label, {slotName: this.variable.getLabel()}, true);
     }
-    iWidgetName = OpManagerFactory.getInstance().activeWorkspace.getIWidget(this.variable.iWidget).name;
+    iWidgetName = this.variable.iWidget.name;
 
     return [{
         action_label: action_label,
-        iWidget: this.variable.iWidget,
+        iWidget: this.variable.iWidget.id,
         name: this.variable.vardef.name,
         iWidgetName: iWidgetName
     }];
 }
 
 wSlot.prototype._annotate = function(value, source, options) {
-    if (!options || this._is_target_slot(this.variable, options.targetSlots)) {
+    if (!options || this._is_target_slot(this.variable, options.targetEndpoints)) {
         wOut.prototype._annotate.call(this, value, source, options);
     }
 }
 
 wSlot.prototype.propagate = function(newValue, options) {
-    if (!options || this._is_target_slot(this.variable, options.targetSlots)) {
+    if (!options || this._is_target_slot(this.variable, options.targetEndpoints)) {
         this.variable.set(newValue);
     }
 }

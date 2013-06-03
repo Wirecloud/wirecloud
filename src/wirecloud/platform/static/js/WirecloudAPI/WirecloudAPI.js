@@ -23,7 +23,7 @@
 
     "use strict";
 
-    var platform, id, idx, tmp, i, current, IWidgetVariable;
+    var platform, id, idx, tmp, i, iwidget, current, IWidgetVariable;
 
     platform = window.parent;
 
@@ -39,6 +39,8 @@
             break;
         }
     }
+
+    iwidget = platform.opManager.activeWorkspace.getIWidget(id).internal_iwidget;
 
     IWidgetVariable = function IWidgetVariable(variable) {
         this.set = function set(value) {
@@ -68,7 +70,7 @@
     });
     Object.defineProperty(window.MashupPlatform.context, 'registerCallback', {
         value: function registerCallback(callback) {
-            platform.opManager.activeWorkspace.getIWidget(id).internal_iwidget.registerContextAPICallback('platform', callback);
+            iwidget.registerContextAPICallback('platform', callback);
         }
     });
     Object.preventExtensions(window.MashupPlatform.context);
@@ -94,7 +96,7 @@
     });
     Object.defineProperty(window.MashupPlatform.mashup.context, 'registerCallback', {
         value: function registerCallback(callback) {
-            platform.opManager.activeWorkspace.getIWidget(id).internal_iwidget.registerContextAPICallback('mashup', callback);
+            platformiwidget.registerContextAPICallback('mashup', callback);
         }
     });
     Object.preventExtensions(window.MashupPlatform.mashup.context);
@@ -106,7 +108,7 @@
     Object.defineProperty(window.MashupPlatform.widget, 'id', {value: id});
     Object.defineProperty(window.MashupPlatform.widget, 'getVariable', {
         value: function getVariable(name) {
-            var variable = platform.opManager.activeWorkspace.getIWidget(id).internal_iwidget.getVariable(name);
+            var variable = iwidget.getVariable(name);
             if (variable != null) {
                 return new IWidgetVariable(variable);
             }
@@ -116,17 +118,17 @@
     Object.defineProperty(window.MashupPlatform.widget, 'context', {value: {}});
     Object.defineProperty(window.MashupPlatform.widget.context, 'getAvailableContext', {
         value: function getAvailableContext() {
-            return platform.opManager.activeWorkspace.getIWidget(id).internal_iwidget.contextManager.getAvailableContext();
+            return iwidget.contextManager.getAvailableContext();
         }
     });
     Object.defineProperty(window.MashupPlatform.widget.context, 'get', {
         value: function get(name) {
-            return platform.opManager.activeWorkspace.getIWidget(id).internal_iwidget.contextManager.get(name);
+            return iwidget.contextManager.get(name);
         }
     });
     Object.defineProperty(window.MashupPlatform.widget.context, 'registerCallback', {
         value: function registerCallback(callback) {
-            platform.opManager.activeWorkspace.getIWidget(id).internal_iwidget.registerContextAPICallback('iwidget', callback);
+            iwidget.registerContextAPICallback('iwidget', callback);
         }
     });
     Object.preventExtensions(window.MashupPlatform.widget.context);
@@ -162,8 +164,13 @@
         }
     });
     Object.defineProperty(window.MashupPlatform.wiring, 'pushEvent', {
-        value: function pushEvent(outputName, data) {
-            platform.opManager.activeWorkspace.wiring.pushEvent(id, outputName, data);
+        value: function pushEvent(outputName, data, options) {
+            platform.opManager.activeWorkspace.wiring.pushEvent(id, outputName, data, options);
+        }
+    });
+    Object.defineProperty(window.MashupPlatform.wiring, 'getReachableEndpoints', {
+        value: function getReachableEndpoints(outputName) {
+            return platform.opManager.activeWorkspace.wiring.getReachableEndpoints(id, outputName);
         }
     });
     Object.preventExtensions(window.MashupPlatform.wiring);

@@ -252,7 +252,7 @@
         this.workspace = null;
     };
 
-    Wiring.prototype.pushEvent = function pushEvent(iWidget, outputName, data) {
+    Wiring.prototype.getReachableEndpoints = function getReachableEndpoints(iWidget, outputName) {
         var entry;
 
         if (iWidget instanceof IWidget) {
@@ -260,7 +260,18 @@
         }
 
         entry = this.connectablesByWidget[iWidget].outputs[outputName];
-        entry.propagate(data);
+        return entry.getFinalSlots();
+    };
+
+    Wiring.prototype.pushEvent = function pushEvent(iWidget, outputName, data, options) {
+        var entry;
+
+        if (iWidget instanceof IWidget) {
+            iWidget = iWidget.getId();
+        }
+
+        entry = this.connectablesByWidget[iWidget].outputs[outputName];
+        entry.propagate(data, options);
     };
 
     Wiring.prototype.registerCallback = function registerCallback(iWidget, inputName, callback) {

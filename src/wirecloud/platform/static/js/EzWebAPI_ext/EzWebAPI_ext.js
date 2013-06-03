@@ -3387,7 +3387,7 @@ StyledElements.SendMenuItems.prototype.build = function() {
         action = actions[i];
 
         item = new StyledElements.MenuItem(action.label, EzWebExt.bind(function(context) {
-            this.control.variable.set(this.control.getData(context), {targetSlots: this.slots});
+            this.control.variable.set(this.control.getData(context), {targetEndpoints: this.slots});
         }, {control: this, slots: [action.value]}));
 
         items.push(item);

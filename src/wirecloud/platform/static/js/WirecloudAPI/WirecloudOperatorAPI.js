@@ -81,8 +81,8 @@
         }
     });
     Object.defineProperty(window.MashupPlatform.wiring, 'pushEvent', {
-        value: function pushEvent(outputName, data) {
-            platform.opManager.activeWorkspace.wiring.pushOperatorEvent(id, outputName, data);
+        value: function pushEvent(outputName, data, options) {
+            platform.opManager.activeWorkspace.wiring.pushOperatorEvent(id, outputName, data, options);
         }
     });
     Object.preventExtensions(window.MashupPlatform.wiring);
