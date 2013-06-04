@@ -46,9 +46,9 @@ class FiWareMarketManager(MarketManager):
         resource_info = template.get_resource_info()
 
         mimetypes = {
-            'widget': 'x-widget+mashable-application-component',
-            'operator': 'x-operator+mashable-application-component',
-            'mashup': 'x-operator+mashable-application-component',
+            'widget': 'application/x-widget+mashable-application-component',
+            'operator': 'application/x-operator+mashable-application-component',
+            'mashup': 'application/x-mashup+mashable-application-component',
         }
 
         store = endpoint['store']
