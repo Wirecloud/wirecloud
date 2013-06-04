@@ -86,7 +86,6 @@ class FiWarePlugin(WirecloudPlugin):
                 "js/wirecloud/FiWare/FiWareCatalogueView.js",
                 "js/wirecloud/FiWare/FiWareCatalogue.js",
                 "js/wirecloud/FiWare/FiWareCatalogueResource.js",
-                "js/wirecloud/FiWare/FiWareCataloguePublishView.js",
                 "js/wirecloud/FiWare/ui/ResourceDetailsView.js",
                 "js/wirecloud/FiWare/FiWareResourceDetailsExtraInfo.js",
                 "js/wirecloud/FiWare/FiWareStoreListItems.js",
