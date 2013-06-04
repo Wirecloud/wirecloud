@@ -163,7 +163,11 @@ Wirecloud.location = {
         var final_url, protocolEnd, link, forceProxy, hostStart, pathStart, protocol,
             host, rest;
 
-        forceProxy = options != null && !!options.forceProxy;
+        if (options == null) {
+            options = {};
+        }
+
+        forceProxy = !!options.forceProxy;
 
         if (url.length > 4 && url.indexOf('www.') === 0) {
             url = 'http://' + url;
