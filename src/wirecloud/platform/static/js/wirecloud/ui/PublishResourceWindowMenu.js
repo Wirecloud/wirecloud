@@ -12,8 +12,6 @@
         this.resource = resource;
 
         var fields = this._loadAvailableMarkets(origin_market);
-        fields.image = {name: 'image', label: gettext('URL of the image'), type: 'text'};
-        fields.usdl = {name: 'usdl', label: gettext('USDL'), type: 'text'};
         Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Publish Application'), 'publish_resource', {legend: false});
 
         // fill a warning message
@@ -60,7 +58,7 @@
         var url = Wirecloud.URLs.PUBLISH_ON_OTHER_MARKETPLACE;
 
         data.marketplaces = this._createMarketplaceData(data);
-        data.template_url = this.resource.getUriTemplate();
+        data.resource = this.resource.getURI();
 
         var layoutManager;
 

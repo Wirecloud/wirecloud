@@ -10,7 +10,6 @@
     var PublishWorkspaceWindowMenu = function PublishWorkspaceWindowMenu(workspace) {
 
         var fields, user_name, marketFields;
-        marketFields = this._loadAvailableMarkets();
 
         user_name = OpManagerFactory.getInstance().contextManager.get('username');
         fields = [
@@ -32,9 +31,9 @@
                 'shortTitle': gettext('Media'),
                 'fields': [
                     {
-                        name: 'imageURI',
+                        name: 'image',
                         label: gettext('Image shown in catalogue (170x80 px)'),
-                        type: 'text'
+                        type: 'file'
                     }
                 ]
             },
@@ -45,11 +44,6 @@
                     {name: 'readOnlyWidgets', label: gettext('Block widgets'), type: 'boolean'},
                     {name: 'readOnlyConnectables', label: gettext('Block connections'), type: 'boolean'}
                 ]
-            },
-            {
-                'type': 'group',
-                'shortTitle': gettext('Publish place'),
-                'fields': marketFields
             }
         ];
 
@@ -157,17 +151,6 @@
         return var1.variable.vardef.order - var2.variable.vardef.order;
     };
 
-    PublishWorkspaceWindowMenu.prototype._loadAvailableMarkets = function _loadAvailableMarkets() {
-        // Take available marketplaces from the instance of marketplace view
-        var views = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName;
-        var key, marketInfo = [];
-
-        for (key in views) {
-            marketInfo = marketInfo.concat(views[key].getPublishEndpoint());
-        }
-        return marketInfo;
-    };
-
     PublishWorkspaceWindowMenu.prototype.show = function show(parentWindow) {
         Wirecloud.ui.FormWindowMenu.prototype.show.call(this, parentWindow);
         this.setValue(this.workspace.workspaceGlobalInfo.params);
@@ -177,22 +160,10 @@
         this.form.fieldInterfaces.name.focus();
     };
 
-    PublishWorkspaceWindowMenu.prototype._createMarketplaceData = function _createMarketplaceData(data) {
-        var views = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName;
-        var key, marketplaces = [];
-        for (key in views) {
-            if (data[key] === true) {
-                marketplaces = marketplaces.concat(views[key].getPublishData(data));
-            }
-        }
-        return marketplaces;
-    };
-
     PublishWorkspaceWindowMenu.prototype.executeOperation = function executeOperation(data) {
         var key;
 
         data.parametrization = {};
-        data.marketplaces = this._createMarketplaceData(data);
 
         for (key in data) {
             if (key.startsWith('tab-')) {

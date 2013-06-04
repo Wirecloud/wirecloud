@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012 Universidad Politécnica de Madrid
+# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecluod.
 
@@ -25,20 +25,51 @@ from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 
 from wirecloud.commons.baseviews import Resource
+from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.fiware.marketAdaptor.marketadaptor import MarketAdaptor
-from wirecloud.platform.models import Market
+from wirecloud.platform.models import Market, MarketUserData
+
+
+market_adaptors = {}
+
+
+def get_market_adaptor(user, market):
+
+    if user is None:
+        username = ''
+
+    if user not in market_adaptors:
+        market_adaptors[username] = {}
+
+    if market not in market_adaptors[username]:
+        m = get_object_or_404(Market, user=user, name=market)
+        options = json.loads(m.options)
+        market_adaptors[username][market] = MarketAdaptor(options['url'])
+
+    return market_adaptors[username][market]
+
+
+def get_market_user_data(user, market):
+
+    user_data = {}
+    for user_data_entry in MarketUserData.objects.filter(market__user=None, market__name=market, user=user):
+        try:
+            user_data[user_data_entry.name] = json.loads(user_data_entry.value)
+        except:
+            user_data[user_data_entry.name] = None
+
+    return user_data
 
 
 class ServiceCollection(Resource):
 
     def read(self, request, marketplace, store):
-        m = get_object_or_404(Market, name=marketplace)
-        options = json.loads(m.options)
-        url = options['url']
 
-        adaptor = MarketAdaptor(url)
+        adaptor = get_market_adaptor(None, marketplace)
+        user_data = get_market_user_data(request.user, marketplace)
+
         try:
-            result = adaptor.get_all_services_from_store(store)
+            result = adaptor.get_all_services_from_store(store, **user_data)
         except:
             return HttpResponse(status=502)
 
@@ -50,11 +81,7 @@ class ServiceCollection(Resource):
         service_info['name'] = request.POST['name']
         service_info['url'] = request.POST['url']
 
-        m = get_object_or_404(Market, name=marketplace)
-        options = json.loads(m.options)
-        url = options['url']
-
-        adaptor = MarketAdaptor(url)
+        adaptor = get_market_adaptor(None, marketplace)
 
         try:
             adaptor.add_service(store, service_info)
@@ -67,11 +94,8 @@ class ServiceCollection(Resource):
 class ServiceEntry(Resource):
 
     def delete(self, request, marketplace, store, service_name):
-        m = get_object_or_404(Market, name=marketplace)
-        options = json.loads(m.options)
-        url = options['url']
 
-        adaptor = MarketAdaptor(url)
+        adaptor = get_market_adaptor(None, marketplace)
 
         try:
             adaptor.delete_service(store, service_name)
@@ -84,11 +108,8 @@ class ServiceEntry(Resource):
 class ServiceSearchCollection(Resource):
 
     def read(self, request, marketplace, store='', keyword='widget'):
-        m = get_object_or_404(Market, name=marketplace)
-        options = json.loads(m.options)
-        url = options['url']
 
-        adaptor = MarketAdaptor(url)
+        adaptor = get_market_adaptor(None, marketplace)
 
         try:
             result = adaptor.full_text_search(store, keyword)
@@ -102,11 +123,9 @@ class AllStoresServiceCollection(Resource):
 
     def read(self, request, marketplace):
 
-        m = get_object_or_404(Market, name=marketplace)
-        options = json.loads(m.options)
-        url = options['url']
+        adaptor = get_market_adaptor(None, marketplace)
+        user_data = get_market_user_data(request.user, marketplace)
 
-        adaptor = MarketAdaptor(url)
         result = {'resources': []}
         try:
             stores = adaptor.get_all_stores()
@@ -114,7 +133,7 @@ class AllStoresServiceCollection(Resource):
                 #This if is necesary in order to avoid an Http error
                 #caused by and store without name that cant be deleted
                 if store['name'] != '':
-                    store_services = adaptor.get_all_services_from_store(store['name'])
+                    store_services = adaptor.get_all_services_from_store(store['name'], **user_data)
                     result['resources'].extend(store_services['resources'])
         except:
             return HttpResponse(status=502)
@@ -126,11 +145,7 @@ class StoreCollection(Resource):
 
     def read(self, request, marketplace):
 
-        m = get_object_or_404(Market, name=marketplace)
-        options = json.loads(m.options)
-        url = options['url']
-
-        adaptor = MarketAdaptor(url)
+        adaptor = get_market_adaptor(None, marketplace)
 
         try:
             result = adaptor.get_all_stores()
@@ -138,3 +153,19 @@ class StoreCollection(Resource):
             return HttpResponse(status=502)
 
         return HttpResponse(simplejson.dumps(result), mimetype='application/json; chaset=UTF-8')
+
+
+def start_purchase(request, marketplace, store):
+
+    adaptor = get_market_adaptor(None, marketplace)
+    user_data = get_market_user_data(request.user, marketplace)
+
+    data = simplejson.loads(request.raw_post_data)
+
+    redirect_uri = get_absolute_reverse_url('wirecloud.fiware.store_redirect_uri', request)
+    try:
+        result = adaptor.start_purchase(store, data['offering_url'], redirect_uri, **user_data)
+    except:
+        return HttpResponse(status=502)
+
+    return HttpResponse(simplejson.dumps(result), mimetype='application/json; chaset=UTF-8')

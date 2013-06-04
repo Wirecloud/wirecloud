@@ -73,6 +73,33 @@
         });
     };
 
+    FiWareCatalogue.prototype.is_purchased = function is_purchased(resource) {
+        return resource.state === 'purchased';
+    };
+
+    FiWareCatalogue.prototype.start_purchase = function start_purchase(resource, options) {
+
+        if (options == null) {
+            options = {};
+        }
+
+        var url = Wirecloud.URLs.FIWARE_STORE_START_PURCHASE.evaluate({marketplace: this.market_name, store: resource.getStore()});
+        Wirecloud.io.makeRequest(
+            url,
+            {
+                contentType: 'application/json',
+                postBody: JSON.stringify({offering_url: resource.usdl_url}),
+                onSuccess: function (transport) {
+                    var data = JSON.parse(transport.responseText);
+
+                    if (typeof options.onSuccess === 'function') {
+                        options.onSuccess(data);
+                    }
+                }.bind(this),
+            }
+        );
+    };
+
     FiWareCatalogue.prototype.deleteResource = function deleteResource(options) {
         var url;
 

@@ -37,3 +37,16 @@ class Market(models.Model):
             return self.name
         else:
             return self.user.username + '/' + self.name
+
+
+class MarketUserData(models.Model):
+
+    market = models.ForeignKey(Market, verbose_name=_('Market'), blank=False, null=False)
+    user = models.ForeignKey(User, verbose_name=_('User'), blank=False, null=False)
+    name = models.CharField(_('Name'), max_length=50)
+    value = models.CharField(_('Value'), max_length=250)
+
+    class Meta:
+        unique_together = ('market', 'user', 'name')
+        app_label = 'platform'
+        db_table = 'wirecloud_marketuserdata'
