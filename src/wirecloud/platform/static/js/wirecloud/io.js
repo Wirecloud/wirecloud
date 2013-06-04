@@ -196,7 +196,7 @@ Wirecloud.location = {
             }
         }
 
-        if (forceProxy || protocol !== Wirecloud.location.protocol || host !== Wirecloud.location.host) {
+        if (forceProxy || (options.supportsAccessControl !== true && (protocol !== Wirecloud.location.protocol || host !== Wirecloud.location.host))) {
             final_url = Wirecloud.location.domain +
                 Wirecloud.URLs.PROXY.evaluate({protocol: protocol, domain: host, path: rest});
         }
