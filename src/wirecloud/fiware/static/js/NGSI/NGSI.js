@@ -978,7 +978,7 @@
         }, 30000);
     };
 
-    var ProxyConnection = function ProxyConnection(url, /* TODO */ makeRequest) {
+    NGSI.ProxyConnection = function ProxyConnection(url, /* TODO */ makeRequest) {
         this.connected = false;
         this.connecting = false;
         this.url = url;
@@ -988,7 +988,7 @@
         this.onerror_callbacks = [];
     };
 
-    ProxyConnection.prototype.connect = function connect(options) {
+    NGSI.ProxyConnection.prototype.connect = function connect(options) {
         if (options == null) {
             options = {};
         }
@@ -1010,7 +1010,7 @@
         }
     };
 
-    ProxyConnection.prototype.request_callback = function request_callback(callback, onSuccess, onFailure) {
+    NGSI.ProxyConnection.prototype.request_callback = function request_callback(callback, onSuccess, onFailure) {
         if (typeof callback === 'funtion') {
             onSuccess(callback);
             return;
@@ -1047,7 +1047,7 @@
         }
     };
 
-    ProxyConnection.prototype.close_callback = function close_callback(callback_id, onSuccess, onFailure) {
+    NGSI.ProxyConnection.prototype.close_callback = function close_callback(callback_id, onSuccess, onFailure) {
         this.makeRequest(this.url + NGSI.proxy_endpoints.CALLBACK_COLLECTION + '/' + callback_id, {
             method: 'DELETE',
             onSuccess: function (response) {
@@ -1104,8 +1104,10 @@
             this.makeRequest = options.requestFunction;
         }
 
-        if (typeof options.ngsi_proxy_url === 'string') {
-            this.ngsi_proxy = new ProxyConnection(options.ngsi_proxy_url, this.makeRequest);
+        if (options.ngsi_proxy_connection instanceof NGSI.ProxyConnection) {
+            this.ngsi_proxy = options.ngsi_proxy_connection;
+        } else if (typeof options.ngsi_proxy_url === 'string') {
+            this.ngsi_proxy = new NGSI.ProxyConnection(options.ngsi_proxy_url, this.makeRequest);
         }
     };
 

@@ -159,6 +159,9 @@ class FiWarePlugin(WirecloudPlugin):
                 "js/wirecloud/FiWare/ui/ResourceDetailsView.js",
                 "js/wirecloud/FiWare/FiWareResourceDetailsExtraInfo.js",
                 "js/wirecloud/FiWare/FiWareStoreListItems.js",
+                'js/NGSI/NGSI.js',
+                'js/NGSI/eventsource.js',
+                'js/NGSI/NGSIManager.js',
             )
         else:
             return ()
@@ -199,12 +202,10 @@ class FiWarePlugin(WirecloudPlugin):
 
     def get_widget_api_extensions(self, view):
         return (
-            'js/NGSI/NGSI.js',
-            'js/NGSI/eventsource.js',
+            'js/WirecloudAPI/NGSIAPI.js',
         )
 
     def get_operator_api_extensions(self, view):
         return (
-            'js/NGSI/NGSI.js',
-            'js/NGSI/eventsource.js',
+            'js/WirecloudAPI/NGSIAPI.js',
         )
