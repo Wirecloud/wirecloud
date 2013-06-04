@@ -421,8 +421,6 @@ IWidget.prototype.paint = function (onInit) {
     this.element.style.visibility = "hidden";
     this.layout.dragboard.dragboardElement.appendChild(this.element);
 
-    this.content.setAttribute("src", this.codeURL);
-
     // Position
     this.element.style.left = this.layout.getColumnOffset(this.position.x) + "px";
     this.element.style.top = this.layout.getRowOffset(this.position.y) + "px";
@@ -472,6 +470,8 @@ IWidget.prototype.paint = function (onInit) {
             this.layout.dragboard.raiseToTop(this);
         }.bind(this),
         true);
+
+    this.content.setAttribute("src", this.codeURL);
 };
 
 IWidget.prototype.load = function () {
