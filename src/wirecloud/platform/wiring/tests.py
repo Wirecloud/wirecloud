@@ -23,7 +23,6 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.test import TransactionTestCase, Client
-from django.utils import simplejson
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
@@ -49,7 +48,7 @@ class WiringTestCase(TransactionTestCase):
         workspace = Workspace.objects.get(id=1)
         self.workspace_id = workspace.pk
 
-        workspace.wiringStatus = simplejson.dumps({
+        workspace.wiringStatus = json.dumps({
             'operators': [],
             'connections': [],
         })
@@ -62,7 +61,7 @@ class WiringTestCase(TransactionTestCase):
         client = Client()
         client.login(username='test', password='test')
 
-        data = simplejson.dumps({
+        data = json.dumps({
             'operators': [],
             'connections': [
                 {
@@ -88,7 +87,7 @@ class WiringTestCase(TransactionTestCase):
         client = Client()
         client.login(username='test2', password='test')
 
-        data = simplejson.dumps({
+        data = json.dumps({
             'operators': [],
             'connections': [],
         })
@@ -98,7 +97,7 @@ class WiringTestCase(TransactionTestCase):
 
     def test_basic_wiring_operations_with_read_only_connections(self):
         workspace = Workspace.objects.get(id=1)
-        workspace.wiringStatus = simplejson.dumps({
+        workspace.wiringStatus = json.dumps({
             'operators': [],
             'connections': [
                 {
@@ -121,7 +120,7 @@ class WiringTestCase(TransactionTestCase):
         client = Client()
         client.login(username='test', password='test')
 
-        data = simplejson.dumps({
+        data = json.dumps({
             'operators': [],
             'connections': [
                 {
@@ -158,7 +157,7 @@ class WiringTestCase(TransactionTestCase):
     def test_read_only_connections_cannot_be_deleted(self):
 
         workspace = Workspace.objects.get(id=1)
-        workspace.wiringStatus = simplejson.dumps({
+        workspace.wiringStatus = json.dumps({
             'operators': [],
             'connections': [
                 {
@@ -181,7 +180,7 @@ class WiringTestCase(TransactionTestCase):
         client = Client()
         client.login(username='test', password='test')
 
-        data = simplejson.dumps({
+        data = json.dumps({
             'operators': [],
             'connections': [],
         })
@@ -191,7 +190,7 @@ class WiringTestCase(TransactionTestCase):
     def test_read_only_connections_cannot_be_modified(self):
 
         workspace = Workspace.objects.get(id=1)
-        workspace.wiringStatus = simplejson.dumps({
+        workspace.wiringStatus = json.dumps({
             'operators': [],
             'connections': [
                 {
@@ -214,7 +213,7 @@ class WiringTestCase(TransactionTestCase):
         client = Client()
         client.login(username='test', password='test')
 
-        data = simplejson.dumps({
+        data = json.dumps({
             'operators': [],
             'connections': [
                 {
