@@ -594,9 +594,6 @@ div.styled_numeric_field div.numeric_bottom_button {
 }
 
 /* Pagination Interface */
-.pagination .styled_button {
-  vertical-align: middle;
-}
 
 .styled_expander {
     margin: 3px;

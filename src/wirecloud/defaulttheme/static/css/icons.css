@@ -61,10 +61,6 @@ span.icon {
 }
 
 .icon-doc:before        { content: "\f02d"; }
-.icon-first-page:before { content: "\f048"; }
-.icon-last-page:before  { content: "\f051"; }
-.icon-prev-page:before  { content: "\f0d9"; }
-.icon-next-page:before  { content: "\f0da"; }
 .icon-menu:before       { content: "\f0d7"; }
 .icon-tab-menu:before   { content: "\f0d8"; }
 

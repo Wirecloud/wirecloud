@@ -4,7 +4,9 @@
 
     "use strict";
 
-    var onPaginationChanged, onPageChange, updateButtons, updateLayout, PaginationInterface;
+    var builder, onPaginationChanged, onPageChange, updateButtons, updateLayout, PaginationInterface;
+
+    builder = new StyledElements.GUIBuilder();
 
     onPaginationChanged = function onPaginationChanged(pagination) {
 
@@ -52,27 +54,13 @@
             'currentPage': this.currentPageLabel,
             'totalPages': this.totalPagesLabel
         };
-        var wrapper = this.wrapperContainer;
-        while (pattern) {
-            var result = pattern.match(/^%\((\w+)\)s/, 1);
-            if (result) {
-                if (elements[result[1]] != null) {
-                    wrapper.appendChild(elements[result[1]]);
-                } else {
-                    wrapper.appendChild(document.createTextNode(result[0]));
-                }
-                pattern = pattern.substr(result[0].length);
-            }
-            var text = EzWebExt.split(pattern, /%\(\w+\)s/, 1);
-            if (text && text.length > 0 && text[0] !== '') {
-                wrapper.appendChild(document.createTextNode(text[0]));
-                pattern = pattern.substr(text[0].length);
-            }
-        }
+        var contents = builder.parse(pattern, elements);
+        contents.insertInto(this.wrapperContainer);
     };
+
     PaginationInterface = function PaginationInterface(pagination, options) {
         var defaultOptions = {
-            'layout': '%(firstBtn)s%(prevBtn)s Page: %(currentPage)s/%(totalPages)s %(nextBtn)s%(lastBtn)s',
+            'layout': '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><t:firstBtn/><t:prevBtn/><div class="box">Page: <t:currentPage/>/<t:totalPages/></div><t:nextBtn/><t:lastBtn/></s:styledgui>',
             'autoHide': false
         };
         options = EzWebExt.merge(defaultOptions, options);
