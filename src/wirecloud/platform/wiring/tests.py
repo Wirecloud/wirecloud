@@ -239,8 +239,6 @@ class WiringTestCase(TransactionTestCase):
 
 class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
-    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
-
     def test_operators_are_usable_after_installing(self):
 
         self.login()
@@ -342,6 +340,11 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, '')
     test_basic_wiring_editor_operations.tags = ('fiware-ut-6',)
+
+
+class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
+
+    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
 
     @unittest.skip('wip tests')
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)

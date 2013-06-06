@@ -11,4 +11,5 @@ from wirecloud.commons.test import build_selenium_test_cases
 build_selenium_test_cases(('wirecloud.platform.tests.selenium_tests.BasicSeleniumTests',), locals())
 build_selenium_test_cases(('wirecloud.platform.localcatalogue.tests.LocalCatalogueSeleniumTests',), locals())
 build_selenium_test_cases(('wirecloud.platform.wiring.tests.WiringSeleniumTestCase',), locals())
+build_selenium_test_cases(('wirecloud.platform.wiring.tests.WiringRecoveringTestCase',), locals())
 build_selenium_test_cases(('wirecloud.platform.markets.tests.MarketManagementSeleniumTestCase',), locals())
