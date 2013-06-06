@@ -19,7 +19,7 @@
  *
  */
 
-/*global EzWebExt, gettext, PaginationInterface, StyledElements*/
+/*global EzWebExt, gettext, StyledElements*/
 (function () {
 
     "use strict";
@@ -67,7 +67,7 @@
         var contents = builder.parse(Wirecloud.currentTheme.templates['wirecloud_catalogue_search_interface'], {
             'resourcelist': this.resource_list,
             'pagination': function () {
-                return new PaginationInterface(this.pagination);
+                return new StyledElements.PaginationInterface(this.pagination);
             }.bind(this),
             'reset_button': function () {
                 var button = new StyledElements.StyledButton({text: gettext('View All')});

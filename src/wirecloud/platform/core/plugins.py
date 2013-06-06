@@ -52,7 +52,6 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/Addon.js',
     'js/StyledElements/Fragment.js',
     'js/StyledElements/Pagination.js',
-    'js/StyledElements/PaginationInterface.js',
     'js/StyledElements/Button.js',
     'js/StyledElements/PopupMenuBase.js',
     'js/StyledElements/PopupMenu.js',
@@ -76,6 +75,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/InputInterfaces.js',
     'js/StyledElements/Form.js',
     'js/StyledElements/GUIBuilder.js',
+    'js/StyledElements/PaginationInterface.js',
 )
 
 BASE_CSS = (
@@ -97,6 +97,7 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_button.css',
     'css/styledelements/styled_notebook.css',
     'css/styledelements/styled_form.css',
+    'css/styledelements/styled_pagination.css',
     'css/styledelements/styled_file_field.css',
     'css/styledelements/styled_text_field.css',
     'css/styledelements/styled_text_area.css',

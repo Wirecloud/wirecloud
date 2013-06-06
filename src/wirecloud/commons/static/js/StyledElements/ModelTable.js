@@ -19,7 +19,7 @@
  *
  */
 
-/*global CSSPrimitiveValue, EzWebExt, PaginationInterface, StyledElements */
+/*global CSSPrimitiveValue, EzWebExt, StyledElements */
 
 (function () {
 
@@ -204,7 +204,7 @@
             this.source = new StyledElements.StaticPaginatedSource({pageSize: 5, sort_info: sort_info});
         }
         Object.defineProperty(this, 'pagination', {get: function () { return this.source; }});
-        this.paginationInterface = new PaginationInterface(this.source);
+        this.paginationInterface = new StyledElements.PaginationInterface(this.source);
 
         this.pRefreshBody = EzWebExt.bind(this.reload, this);
         this.source.addEventListener('requestEnd', this.pRefreshBody);
