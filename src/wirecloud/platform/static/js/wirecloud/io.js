@@ -84,7 +84,7 @@ Wirecloud.location = {
             'response': {value: request.transport.response}
         });
 
-        if (request.options.responseType == null && request.options.responseType === '') {
+        if (request.options.responseType == null || request.options.responseType === '') {
             Object.defineProperty(this, 'responseText', {value: request.transport.responseText});
         }
     };
