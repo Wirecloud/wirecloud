@@ -52,6 +52,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/Addon.js',
     'js/StyledElements/Fragment.js',
     'js/StyledElements/Pagination.js',
+    'js/StyledElements/PaginationInterface.js',
     'js/StyledElements/Button.js',
     'js/StyledElements/PopupMenuBase.js',
     'js/StyledElements/PopupMenu.js',
