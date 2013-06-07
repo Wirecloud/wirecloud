@@ -80,8 +80,14 @@ class FiWarePlugin(WirecloudPlugin):
 
     def get_scripts(self, view):
 
+        common = (
+            'js/NGSI/NGSI.js',
+            'js/NGSI/eventsource.js',
+            'js/NGSI/NGSIManager.js',
+        )
+
         if view == 'index':
-            return (
+            return common + (
                 "js/wirecloud/FiWare.js",
                 "js/wirecloud/FiWare/FiWareCatalogueView.js",
                 "js/wirecloud/FiWare/FiWareCatalogue.js",
@@ -89,12 +95,9 @@ class FiWarePlugin(WirecloudPlugin):
                 "js/wirecloud/FiWare/ui/ResourceDetailsView.js",
                 "js/wirecloud/FiWare/FiWareResourceDetailsExtraInfo.js",
                 "js/wirecloud/FiWare/FiWareStoreListItems.js",
-                'js/NGSI/NGSI.js',
-                'js/NGSI/eventsource.js',
-                'js/NGSI/NGSIManager.js',
             )
         else:
-            return ()
+            return common
 
     def get_urls(self):
             return patterns('',
