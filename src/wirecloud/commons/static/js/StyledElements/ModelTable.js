@@ -151,7 +151,8 @@
         var i, column, sort_info, sort_id, defaultOptions;
 
         defaultOptions = {
-            'initialSortColumn': -1
+            'initialSortColumn': -1,
+            'pageSize': 3
         };
         options = EzWebExt.merge(defaultOptions, options);
 
@@ -201,7 +202,7 @@
                 }
                 sort_info[sort_id] = column;
             }
-            this.source = new StyledElements.StaticPaginatedSource({pageSize: 5, sort_info: sort_info});
+            this.source = new StyledElements.StaticPaginatedSource({pageSize: options.pageSize, sort_info: sort_info});
         }
         Object.defineProperty(this, 'pagination', {get: function () { return this.source; }});
         this.paginationInterface = new StyledElements.PaginationInterface(this.source);
