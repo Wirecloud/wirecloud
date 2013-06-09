@@ -167,7 +167,8 @@ function FiWareCatalogueResource(resourceJSON_) {
         },
         'rating': {value: resourceJSON_.rating},
         'state': {value: resourceJSON_.state},
-        'usdl_url': {value: resourceJSON_.usdl_url}
+        'usdl_url': {value: resourceJSON_.usdl_url},
+        'resources': {value: resourceJSON_.resources}
     });
 
     //////////////

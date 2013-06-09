@@ -38,6 +38,14 @@ class FiWareMarketManager(MarketManager):
     def search_resource(self, vendor, name, version, user):
         return None
 
+    def download_resource(self, user, url, endpoint):
+
+        store = endpoint['store']
+        adaptor = get_market_adaptor(None, self._options['name'])
+        user_data = get_market_user_data(user, self._options['name'])
+        storeclient = adaptor.get_store(store)
+        return storeclient.download_resource(url, user_data[store + '/token'])
+
     def publish(self, endpoint, wgt_file, user, request=None, template=None):
 
         if template is None:
@@ -93,6 +101,7 @@ class FiWarePlugin(WirecloudPlugin):
                 "js/wirecloud/FiWare/FiWareCatalogue.js",
                 "js/wirecloud/FiWare/FiWareCatalogueResource.js",
                 "js/wirecloud/FiWare/ui/ResourceDetailsView.js",
+                "js/wirecloud/FiWare/ui/OfferingResourcesPainter.js",
                 "js/wirecloud/FiWare/FiWareResourceDetailsExtraInfo.js",
                 "js/wirecloud/FiWare/FiWareStoreListItems.js",
             )

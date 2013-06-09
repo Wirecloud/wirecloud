@@ -52,6 +52,19 @@ class StoreClient(object):
 
         return json.loads(response.text)
 
+    def download_resource(self, url, token):
+
+        headers = {
+            'Authorization': 'Bearer ' + token,
+        }
+
+        response = requests.get(urljoin(self._url, url), headers=headers)
+
+        if response.status_code not in (200, 201, 204):
+            raise Exception()
+
+        return response.content
+
     def upload_resource(self, name, version, filename, description, content_type, f, token):
 
         headers = {

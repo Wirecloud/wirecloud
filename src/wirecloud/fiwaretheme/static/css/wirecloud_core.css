@@ -95,6 +95,26 @@ h6 {
     font-size: 11.9px;
 }
 
+ul, ol {
+    padding: 0;
+    margin: 0 0 9px 25px;
+}
+
+ul ul,
+ul ol,
+ol ol,
+ol ul {
+    margin-bottom: 0;
+}
+
+ul {
+    list-style: disc;
+}
+
+li {
+    line-height: 18px;
+}
+
 #wirecloud_header {
     font-family: "Courier New", courier;
     font-size: 14pt;

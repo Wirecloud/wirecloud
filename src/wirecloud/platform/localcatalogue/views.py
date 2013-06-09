@@ -42,6 +42,7 @@ from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.get_data import get_widget_data
+from wirecloud.platform.markets.utils import get_market_managers
 from wirecloud.platform.models import Widget, IWidget
 from wirecloud.platform.localcatalogue.utils import install_resource_to_user, get_or_add_resource_from_available_marketplaces
 from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue
@@ -101,6 +102,9 @@ class ResourceCollection(Resource):
             except:
                 return build_error_response(request, 400, _('Bad resource file'))
         else:
+
+            market_endpoint = None
+
             if content_type == 'application/json':
                 try:
                     data = simplejson.loads(request.raw_post_data)
@@ -111,6 +115,8 @@ class ResourceCollection(Resource):
                 force_create = data.get('force_create', False)
                 packaged = data.get('packaged', False)
                 templateURL = data.get('template_uri')
+                market_endpoint = data.get('market_endpoint', None)
+
             else:
                 force_create = request.POST.get('force_create', False) == 'true'
                 packaged = request.POST.get('packaged', False) == 'true'
@@ -119,10 +125,23 @@ class ResourceCollection(Resource):
                 elif 'template_uri' in request.POST:
                     templateURL = request.POST['template_uri']
 
-            try:
-                downloaded_file = downloader.download_http_content(templateURL)
-            except:
-                return build_error_response(request, 409, _('Content cannot be downloaded'))
+            if market_endpoint is not None:
+
+                if 'name' not in market_endpoint:
+                    msg = _('Missing market name')
+                    return build_error_response(request, 400, msg)
+
+                market_managers = get_market_managers(request.user)
+                market_manager = market_managers[market_endpoint['name']]
+                import ipdb; ipdb.set_trace()
+                downloaded_file = market_manager.download_resource(request.user, templateURL, market_endpoint)
+
+            else:
+
+                try:
+                    downloaded_file = downloader.download_http_content(templateURL)
+                except:
+                    return build_error_response(request, 409, _('Content cannot be downloaded'))
 
             if packaged:
                 downloaded_file = StringIO(downloaded_file)

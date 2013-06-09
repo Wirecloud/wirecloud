@@ -275,7 +275,12 @@
         Wirecloud.io.makeRequest(Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION, {
             method: 'POST',
             contentType: 'application/json',
-            postBody: Object.toJSON({'template_uri': url, packaged: !!options.packaged, force_create: !!options.forceCreate}),
+            postBody: JSON.stringify({
+                template_uri: url,
+                packaged: !!options.packaged,
+                force_create: !!options.forceCreate,
+                market_endpoint: options.market_info
+            }),
             onSuccess: function (transport) {
                 var i, id, response_data, resource_data;
 
