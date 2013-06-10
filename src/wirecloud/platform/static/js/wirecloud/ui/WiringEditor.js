@@ -575,7 +575,7 @@ if (!Wirecloud.ui) {
                         dialog.show();
                     }.bind(this), 0);
                 }
-            };
+            }.bind(this);
             var noHandler = function () {
                 layoutManager.changeCurrentView('workspace');
             };
