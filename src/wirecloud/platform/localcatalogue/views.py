@@ -133,7 +133,6 @@ class ResourceCollection(Resource):
 
                 market_managers = get_market_managers(request.user)
                 market_manager = market_managers[market_endpoint['name']]
-                import ipdb; ipdb.set_trace()
                 downloaded_file = market_manager.download_resource(request.user, templateURL, market_endpoint)
 
             else:
