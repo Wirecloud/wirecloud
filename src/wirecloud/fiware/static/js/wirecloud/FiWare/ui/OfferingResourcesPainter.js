@@ -23,6 +23,7 @@
 
         local_catalogue_view.catalogue.addResourceFromURL(url, {
             packaged: true,
+            forceCreate: true,
             market_info: {
                 name: catalogue.market_name,
                 store: store
@@ -30,6 +31,8 @@
             onSuccess: function () {
                 LayoutManagerFactory.getInstance().logSubTask(gettext('Resource installed successfully'));
                 LayoutManagerFactory.getInstance().logStep('');
+                button.addClassName('btn-success');
+                button.setLabel(gettext('Installed'));
 
                 local_catalogue_view.refresh_search_results();
             },
@@ -63,8 +66,13 @@
             if ('url' in resource) {
                 if (is_mac_mimetype(resource.content_type)) {
 
-                    button = new StyledElements.StyledButton({'class': 'btn-success', text: gettext('Install')});
-                    button.addEventListener('click', onClick.bind(null, resource.url, catalogue, offering.getStore()));
+                    if (Wirecloud.LocalCatalogue.resourceExistsId(resource.id)) {
+                        button = new StyledElements.StyledButton({'class': 'btn-success', text: gettext('Installed')});
+                        button.disable();
+                    } else {
+                        button = new StyledElements.StyledButton({text: gettext('Install')});
+                        button.addEventListener('click', onClick.bind(null, resource.url, catalogue, offering.getStore()));
+                    }
 
                 } else {
 
