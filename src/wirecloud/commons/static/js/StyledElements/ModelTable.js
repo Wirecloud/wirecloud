@@ -152,7 +152,7 @@
 
         defaultOptions = {
             'initialSortColumn': -1,
-            'pageSize': 3
+            'pageSize': 5
         };
         options = EzWebExt.merge(defaultOptions, options);
 
