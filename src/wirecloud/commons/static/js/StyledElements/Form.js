@@ -1,4 +1,4 @@
-/*global $, EzWebExt, gettext, StyledElements, Element, ValidationErrorManager, Wirecloud */
+/*global $, EzWebExt, gettext, StyledElements, Element, ValidationErrorManager */
 
 (function () {
 
@@ -18,7 +18,7 @@
             'useHtmlForm': true,
             'legend': 'auto',
             'edition': false,
-            'factory': Wirecloud.ui.InputInterfaceFactory
+            'factory': StyledElements.DefaultInputInterfaceFactory
         };
         if (options && options.readOnly) {
             defaultOptions.acceptButton = false;

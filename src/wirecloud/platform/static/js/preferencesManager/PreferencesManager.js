@@ -65,7 +65,7 @@ var PreferencesManagerFactory = function () {
 			var definitions = new Object();
 			for (var key in preferences) {
 				var preference_data = preferences[key];
-				var inputInterface = InterfaceFactory.createInterface(key, preference_data);
+				var inputInterface = StyledElements.DefaultInputInterfaceFactory.createInterface(key, preference_data);
 				var preferenceDef = new PreferenceDef(key, inputInterface, preference_data.inheritable, preference_data.inheritByDefault, preference_data.hidden);
 				definitions[key] = preferenceDef;
 			}

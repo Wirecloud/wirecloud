@@ -75,6 +75,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/InputInterfaces.js',
     'js/StyledElements/VersionInputInterface.js',
     'js/StyledElements/InputInterfaceFactory.js',
+    'js/StyledElements/DefaultInputInterfaceFactory.js',
     'js/StyledElements/Form.js',
     'js/StyledElements/GUIBuilder.js',
     'js/StyledElements/PaginationInterface.js',

@@ -40,7 +40,7 @@ function PreferenceDef(name, inputInterface, inheritable, inheritByDefault, hidd
 
 	// Interfaces
 	if (this.inheritable)
-		this.inheritInterface = InterfaceFactory.createInterface('inherit-' + this.name, {'type': 'boolean'});
+		this.inheritInterface = StyledElements.DefaultInputInterfaceFactory.createInterface('inherit-' + this.name, {'type': 'boolean'});
 
 	this.handlers = new Array();
 }
