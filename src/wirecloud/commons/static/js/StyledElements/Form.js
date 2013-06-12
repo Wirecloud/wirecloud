@@ -1,4 +1,4 @@
-/*global $, EzWebExt, gettext, InterfaceFactory, StyledElements, Element, ValidationErrorManager, Wirecloud */
+/*global $, EzWebExt, gettext, StyledElements, Element, ValidationErrorManager, Wirecloud */
 
 (function () {
 

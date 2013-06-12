@@ -25,7 +25,7 @@
 
     "use strict";
 
-    var InputInterfaceFactory = new InterfaceFactory();
+    var InputInterfaceFactory = new StyledElements.InputInterfaceFactory();
 
     InputInterfaceFactory.addFieldType('parametrizableValue', ParametrizableValueInputInterface);
     InputInterfaceFactory.addFieldType('parametrizedText', ParametrizedTextInputInterface);
