@@ -137,7 +137,11 @@
     border-radius: 0px;
 }
 
-.input-prepend > .west_container > .styled_button:first-child > div, .input-prepend > .west_container > .styled_button:first-child > button {
+.input-prepend > .west_container > .styled_button:first-child > div,
+.input-prepend > .west_container > .styled_button:first-child > button,
+.pagination > .styled_button:first-child > div,
+.pagination > .styled_button:first-child > button
+{
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
 }
@@ -150,7 +154,11 @@
     border-radius: 0px;
 }
 
-.input-append > .east_container > .styled_button:last-child > div, .input-append > .east_container > .styled_button:last-child > button {
+.input-append > .east_container > .styled_button:last-child > div,
+.input-append > .east_container > .styled_button:last-child > button,
+.pagination > .styled_button:last-child > div,
+.pagination > .styled_button:last-child > button
+{
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
 }

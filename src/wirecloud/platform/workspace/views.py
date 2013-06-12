@@ -17,14 +17,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-# This file is based on Morfeo EzWeb Platform
-
-#     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
-#     S.A.Unipersonal (Telefonica I+D)
-
-
+from cStringIO import StringIO
 import os
 import urlparse
+import zipfile
 
 from django.contrib.auth.models import Group, User
 from django.core.urlresolvers import reverse
@@ -41,7 +37,6 @@ from wirecloud.commons.baseviews import Resource, Service
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.http import authentication_required, build_error_response, get_content_type, supported_request_mime_types
-from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.get_data import get_workspace_data, get_global_workspace_data
@@ -49,9 +44,8 @@ from wirecloud.platform.iwidget.utils import deleteIWidget
 from wirecloud.platform.models import IWidget, PublishedWorkspace, Tab, UserWorkspace, VariableValue, Workspace
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
-from wirecloud.platform.workspace.packageCloner import PackageCloner
 from wirecloud.platform.workspace.packageLinker import PackageLinker
-from wirecloud.platform.workspace.utils import deleteTab, createTab, create_published_workspace_from_template, get_workspace_list, setVisibleTab, set_variable_value
+from wirecloud.platform.workspace.utils import deleteTab, createTab, get_workspace_list, setVisibleTab, set_variable_value
 from wirecloud.platform.markets.utils import get_market_managers
 
 
@@ -440,25 +434,6 @@ class WorkspaceSharerEntry(Resource):
 
             return HttpResponse(status=204)
 
-    @no_cache
-    def read(self, request, workspace_id):
-
-        groups = []
-        #read the groups that can be related to a workspace
-        queryGroups = Group.objects.exclude(name__startswith="cert__").order_by('name')
-        for group in queryGroups:
-            data = {'name': group.name, 'id': group.id}
-            try:
-                group.workspace_set.get(id=workspace_id)
-                #boolean for js
-                data['sharing'] = 'true'
-            except Workspace.DoesNotExist:
-                data['sharing'] = 'false'
-
-            groups.append(data)
-
-        return HttpResponse(simplejson.dumps(groups), mimetype='application/json; charset=UTF-8')
-
 
 class WorkspaceLinkerEntry(Resource):
 
@@ -520,43 +495,48 @@ def check_json_fields(json, fields):
 class WorkspacePublisherEntry(Resource):
 
     @authentication_required
-    @supported_request_mime_types(('application/json',))
+    @supported_request_mime_types(('application/json', 'multipart/form-data'))
     @commit_on_http_success
     def create(self, request, workspace_id):
 
-        received_json = request.raw_post_data
+        content_type = get_content_type(request)[0]
+        if content_type == 'application/json':
+            received_json = request.raw_post_data
+        else:
+            received_json = request.POST['json']
+            image_file = request.FILES.get('image', None)
+
         try:
-            mashup = simplejson.loads(received_json)
+            options = simplejson.loads(received_json)
         except Exception, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
-        missing_fields = check_json_fields(mashup, ['name', 'vendor', 'version', 'email'])
+        missing_fields = check_json_fields(options, ('name', 'vendor', 'version', 'email'))
         if len(missing_fields) > 0:
-            return build_error_response(request, 400, _('Malformed mashup JSON. The following field(s) are missing: %(fields)s.') % {'fields': missing_fields})
+            return build_error_response(request, 400, _('Malformed JSON. The following field(s) are missing: %(fields)s.') % {'fields': missing_fields})
 
         workspace = get_object_or_404(Workspace, id=workspace_id)
-        template = TemplateParser(build_rdf_template_from_workspace(mashup, workspace, request.user))
-        published_workspace = create_published_workspace_from_template(template, request.user)
-        published_workspace.workspace = workspace
-        published_workspace.params = received_json
-        published_workspace.save()
+        if image_file is not None:
+            image_filename = 'images/catalogue' + os.path.splitext(image_file.name)[1]
+            options['imageURI'] = image_filename
+        description = build_rdf_template_from_workspace(options, workspace, request.user)
+
+        f = StringIO()
+        zf = zipfile.ZipFile(f, 'w')
+        zf.writestr('config.xml', bytes(description.serialize()))
+        if image_file is not None:
+            zf.writestr(image_filename, image_file.read())
+        zf.close()
+        wgt_file = WgtFile(f)
 
         market_managers = get_market_managers(request.user)
-        errors = {}
-        for market_endpoint in mashup['marketplaces']:
+        try:
+            market_managers['local'].publish(None, wgt_file, request.user, options, request)
+        except Exception, e:
+            return build_error_response(request, 502, unicode(e))
 
-            try:
-                market_managers[market_endpoint['market']].publish_mashup(market_endpoint, published_workspace, request.user, mashup, request)
-            except Exception, e:
-                errors[market_endpoint['market']] = unicode(e)
-
-        if len(errors) == 0:
-            return HttpResponse(status=201)
-        elif len(errors) == len(mashup['marketplaces']):
-            return HttpResponse(simplejson.dumps(errors), status=502, mimetype='application/json; charset=UTF-8')
-        else:
-            return HttpResponse(simplejson.dumps(errors), status=200, mimetype='application/json; charset=UTF-8')
+        return HttpResponse(status=201)
 
 
 class WorkspaceExportService(Service):

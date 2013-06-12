@@ -12,7 +12,8 @@
     <WikiURI>doc/index.html</WikiURI>
 
     <Requirements>
-        <Feature name="inexistan-feature"/>
+        <Feature name="Wirecloud"/>
+        <Feature name="nonexistent-feature"/>
     </Requirements>
   </Catalog.ResourceDescription>
 

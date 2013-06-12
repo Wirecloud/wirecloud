@@ -18,6 +18,10 @@
         <Preference name="text" type="text" label="text" description="text preference" default="initial text"/>
     </Platform.Preferences>
 
+    <Platform.StateProperties>
+        <Property name="prop" type="text" label="prop"/>
+    </Platform.StateProperties>
+
     <Platform.Wiring>
         <InputEndpoint name="inputendpoint" type="text" label="Input" friendcode="test-data"/>
         <OutputEndpoint name="outputendpoint" type="text" label="Output" friendcode="test-data"/>

@@ -689,18 +689,32 @@ function Workspace (workspaceState) {
         }
     };
 
-    Workspace.prototype.publish = function(data) {
+    Workspace.prototype.publish = function(data, options) {
         var layoutManager = LayoutManagerFactory.getInstance();
         layoutManager._startComplexTask(gettext('Publishing current workspace'), 1);
 
+        if (options == null) {
+            options = {};
+        }
+
+        var payload = new FormData();
+        if (data.image != null) {
+            payload.append('image', data.image);
+        }
+        delete data.image;
+        payload.append('json', JSON.stringify(data));
         var workspaceUrl = Wirecloud.URLs.WORKSPACE_PUBLISH.evaluate({workspace_id: this.workspaceState.id});
         Wirecloud.io.makeRequest(workspaceUrl, {
             method: 'POST',
-            contentType: 'application/json',
-            postBody: Object.toJSON(data),
-            context: {workspace: this, params: data},
+            postBody: payload,
+            context: {workspace: this, params: data, options: options},
             onSuccess: publishSuccess,
-            onFailure: publishError
+            onFailure: publishError,
+            onComplete: function () {
+                if (typeof options.onComplete === 'function') {
+                    options.onComplete();
+                }
+            }
         });
     };
 

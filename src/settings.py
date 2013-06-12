@@ -1,36 +1,5 @@
 # -*- coding: utf-8 -*-
 
-#...............................licence...........................................
-#
-#     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
-#     S.A.Unipersonal (Telefonica I+D)
-#
-#     This file is part of Morfeo EzWeb Platform.
-#
-#     Morfeo EzWeb Platform is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU Affero General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     (at your option) any later version.
-#
-#     Morfeo EzWeb Platform is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU Affero General Public License for more details.
-#
-#     You should have received a copy of the GNU Affero General Public License
-#     along with Morfeo EzWeb Platform.  If not, see <http://www.gnu.org/licenses/>.
-#
-#     Info about members and contributors of the MORFEO project
-#     is available at
-#
-#     http://morfeo-project.org
-#
-#...............................licence...........................................#
-
-
-#
-
-# Django settings for mymem project.
 from os import path
 from wirecloud.commons.utils.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
@@ -108,15 +77,32 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.gzip.GZipMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'wirecloud.commons.middleware.ConditionalGetMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.doc.XViewMiddleware',
+    'wirecloud.commons.middleware.URLMiddleware',
 )
+
+URL_MIDDLEWARE_CLASSES = {
+    'default': (
+        'django.middleware.gzip.GZipMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.locale.LocaleMiddleware',
+        'wirecloud.commons.middleware.ConditionalGetMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+    ),
+    'api': (
+        'django.middleware.gzip.GZipMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.locale.LocaleMiddleware',
+        'wirecloud.commons.middleware.ConditionalGetMiddleware',
+        'wirecloud.commons.middleware.AuthenticationMiddleware',
+    ),
+    'proxy': (
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+    )
+}
 
 ROOT_URLCONF = 'urls'
 
@@ -130,6 +116,7 @@ INSTALLED_APPS = (
     'wirecloud.commons',
     'wirecloud.catalogue',
     'wirecloud.platform',
+    'wirecloud.oauth2provider',
     'wirecloud.fiware',
     'south',
     'compressor',
@@ -187,6 +174,7 @@ WORKSPACE_MANAGERS = (
 )
 
 WIRECLOUD_PLUGINS = (
+    'wirecloud.oauth2provider.plugins.OAuth2ProviderPlugin',
     'wirecloud.fiware.plugins.FiWarePlugin',
 )
 

@@ -122,6 +122,9 @@ RWWidgetVariable.prototype = new WidgetVariable;
 RWWidgetVariable.prototype.set = function (value, options) {
 	options = options ? options : {};
 	options.initial = false; // Widgets cannot use the "initial" option
+    if ('targetSlots' in options) {
+        options.targetEndpoints = targetSlots;
+    }
 
 	this.varManager.setVariable(this.iWidgetId, this.name, value, options);
 }

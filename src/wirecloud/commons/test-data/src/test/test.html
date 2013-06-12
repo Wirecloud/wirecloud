@@ -66,13 +66,13 @@
             }
 
             MashupPlatform.wiring.registerCallback('inputendpoint', _wiringOutHandler);
-            MashupPlatform.pref.registerCallback(_PrefHandler);
+            MashupPlatform.prefs.registerCallback(_PrefHandler);
 
             function init() {
-                document.getElementById("listPref").textContent = MashupPlatform.pref.get('list');
-                document.getElementById("textPref").textContent = MashupPlatform.pref.get('text');
-                document.getElementById("booleanPref").textContent = MashupPlatform.pref.get('boolean');
-                document.getElementById("passwordPref").textContent = MashupPlatform.pref.get('password');
+                document.getElementById("listPref").textContent = MashupPlatform.prefs.get('list');
+                document.getElementById("textPref").textContent = MashupPlatform.prefs.get('text');
+                document.getElementById("booleanPref").textContent = MashupPlatform.prefs.get('boolean');
+                document.getElementById("passwordPref").textContent = MashupPlatform.prefs.get('password');
             }
         </script>
     </head>

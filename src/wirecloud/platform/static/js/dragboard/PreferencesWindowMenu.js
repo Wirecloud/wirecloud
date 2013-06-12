@@ -35,7 +35,7 @@ Wirecloud.Widget = {};
     PreferencesWindowMenu.prototype._savePrefs = function _savePrefs(form, new_values) {
         var oldValue, newValue, varName, varManager, variable;
         
-        varManager = this._current_iwidget.layout.dragboard.workspace.varManager;
+        varManager = this._current_iwidget.workspace.varManager;
 
         // Start propagation of the new values of the user pref variables
         varManager.incNestingLevel();

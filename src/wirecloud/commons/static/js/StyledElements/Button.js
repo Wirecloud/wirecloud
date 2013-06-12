@@ -84,8 +84,8 @@
         this._clickCallback = clickCallback.bind(this);
         this._keydownCallback = keydownCallback.bind(this);
 
-        EzWebExt.addEventListener(button, 'mousedown', EzWebExt.stopPropagationListener, true);
-        EzWebExt.addEventListener(button, 'click', this._clickCallback, true);
+        button.addEventListener('mousedown', EzWebExt.stopPropagationListener, true);
+        button.addEventListener('click', this._clickCallback, true);
         button.addEventListener('keydown', this._keydownCallback, true);
 
         this.buttonElement = button;

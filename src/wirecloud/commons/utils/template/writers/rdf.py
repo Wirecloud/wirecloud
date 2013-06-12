@@ -86,6 +86,13 @@ def write_rdf_description(template_info, format='xml'):
     graph.add((widget_uri, VCARD['addr'], addr))
     graph.add((addr, VCARD['email'], rdflib.Literal(template_info.get('mail'))))
 
+    # Requirements
+    for requirement in template_info['requirements']:
+        requirement_node = rdflib.BNode()
+        graph.add((requirement_node, rdflib.RDF.type, WIRE['Feature']))
+        graph.add((requirement_node, RDFS['label'], rdflib.Literal(requirement['name'])))
+        graph.add((widget_uri, WIRE['hasRequirement'], requirement_node))
+
     # Create wiring
     wiring = rdflib.BNode()
     graph.add((wiring, rdflib.RDF.type, WIRE['PlatformWiring']))

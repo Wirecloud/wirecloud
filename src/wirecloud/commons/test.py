@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012-2013 Universidad Politécnica de Madrid
+# Copyright (c) 2008-2013 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
 # Wirecloud is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
+# it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
 # Wirecloud is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# GNU Affero General Public License for more details.
 
-# You should have received a copy of the GNU General Public License
+# You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
@@ -353,6 +353,10 @@ class WirecloudRemoteTestCase(object):
     def tearDownClass(cls):
 
         cls.driver.quit()
+
+    def tearDown(self):
+
+        self.driver.delete_all_cookies()
 
     def fill_form_input(self, form_input, value):
         # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
@@ -704,14 +708,6 @@ class WirecloudRemoteTestCase(object):
         email_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="email"]')
         self.fill_form_input(email_input, info['email'])
 
-        tabs = self.driver.find_elements_by_css_selector('.window_menu .notebook .tab_wrapper .tab')
-        for tab in tabs:
-            span = tab.find_element_by_css_selector('span')
-            if span.text == 'Publish place':
-                tab.click()
-
-        self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="local"]').click()
-
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
         self.wait_wirecloud_ready()
 
@@ -891,7 +887,7 @@ class WirecloudRemoteTestCase(object):
 
 class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
-    fixtures = ('selenium_test_data',)
+    fixtures = ('initial_data', 'selenium_test_data')
     __test__ = False
 
     @classmethod

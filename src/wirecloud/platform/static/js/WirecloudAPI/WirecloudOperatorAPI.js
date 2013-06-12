@@ -55,23 +55,23 @@
     Object.preventExtensions(window.MashupPlatform.operator);
 
     // Pref Module
-    Object.defineProperty(window.MashupPlatform, 'pref', {value: {}});
-    Object.defineProperty(window.MashupPlatform.pref, 'get', {
+    Object.defineProperty(window.MashupPlatform, 'prefs', {value: {}});
+    Object.defineProperty(window.MashupPlatform.prefs, 'get', {
         value: function get(key) {
             return platform.opManager.activeWorkspace.wiring.getOperatorPrefValue(id, key);
         }
     });
-    Object.defineProperty(window.MashupPlatform.pref, 'registerCallback', {
+    Object.defineProperty(window.MashupPlatform.prefs, 'registerCallback', {
         value: function registerCallback(callback) {
             platform.opManager.activeWorkspace.wiring.registerOperatorPrefCallback(id, callback);
         }
     });
-    Object.defineProperty(window.MashupPlatform.pref, 'set', {
+    Object.defineProperty(window.MashupPlatform.prefs, 'set', {
         value: function get(key, value) {
             platform.opManager.activeWorkspace.wiring.setOperatorPrefValue(id, key, value);
         }
     });
-    Object.preventExtensions(window.MashupPlatform.pref);
+    Object.preventExtensions(window.MashupPlatform.prefs);
 
     // Wiring Module
     Object.defineProperty(window.MashupPlatform, 'wiring', {value: {}});
@@ -81,8 +81,8 @@
         }
     });
     Object.defineProperty(window.MashupPlatform.wiring, 'pushEvent', {
-        value: function pushEvent(outputName, data) {
-            platform.opManager.activeWorkspace.wiring.pushOperatorEvent(id, outputName, data);
+        value: function pushEvent(outputName, data, options) {
+            platform.opManager.activeWorkspace.wiring.pushOperatorEvent(id, outputName, data, options);
         }
     });
     Object.preventExtensions(window.MashupPlatform.wiring);

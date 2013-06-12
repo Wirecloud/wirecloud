@@ -17,18 +17,19 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
 import time
 
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.test import TransactionTestCase, Client
-from django.utils import simplejson
+from django.utils import unittest
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 
-from wirecloud.commons.test import WirecloudSeleniumTestCase, iwidget_context
+from wirecloud.commons.test import uses_extra_resources, iwidget_context, WirecloudSeleniumTestCase
 from wirecloud.platform.workspace.models import Workspace
 
 
@@ -49,7 +50,7 @@ class WiringTestCase(TransactionTestCase):
         workspace = Workspace.objects.get(id=1)
         self.workspace_id = workspace.pk
 
-        workspace.wiringStatus = simplejson.dumps({
+        workspace.wiringStatus = json.dumps({
             'operators': [],
             'connections': [],
         })
@@ -62,7 +63,7 @@ class WiringTestCase(TransactionTestCase):
         client = Client()
         client.login(username='test', password='test')
 
-        data = simplejson.dumps({
+        data = json.dumps({
             'operators': [],
             'connections': [
                 {
@@ -88,7 +89,7 @@ class WiringTestCase(TransactionTestCase):
         client = Client()
         client.login(username='test2', password='test')
 
-        data = simplejson.dumps({
+        data = json.dumps({
             'operators': [],
             'connections': [],
         })
@@ -98,7 +99,7 @@ class WiringTestCase(TransactionTestCase):
 
     def test_basic_wiring_operations_with_read_only_connections(self):
         workspace = Workspace.objects.get(id=1)
-        workspace.wiringStatus = simplejson.dumps({
+        workspace.wiringStatus = json.dumps({
             'operators': [],
             'connections': [
                 {
@@ -121,7 +122,7 @@ class WiringTestCase(TransactionTestCase):
         client = Client()
         client.login(username='test', password='test')
 
-        data = simplejson.dumps({
+        data = json.dumps({
             'operators': [],
             'connections': [
                 {
@@ -158,7 +159,7 @@ class WiringTestCase(TransactionTestCase):
     def test_read_only_connections_cannot_be_deleted(self):
 
         workspace = Workspace.objects.get(id=1)
-        workspace.wiringStatus = simplejson.dumps({
+        workspace.wiringStatus = json.dumps({
             'operators': [],
             'connections': [
                 {
@@ -181,7 +182,7 @@ class WiringTestCase(TransactionTestCase):
         client = Client()
         client.login(username='test', password='test')
 
-        data = simplejson.dumps({
+        data = json.dumps({
             'operators': [],
             'connections': [],
         })
@@ -191,7 +192,7 @@ class WiringTestCase(TransactionTestCase):
     def test_read_only_connections_cannot_be_modified(self):
 
         workspace = Workspace.objects.get(id=1)
-        workspace.wiringStatus = simplejson.dumps({
+        workspace.wiringStatus = json.dumps({
             'operators': [],
             'connections': [
                 {
@@ -214,7 +215,7 @@ class WiringTestCase(TransactionTestCase):
         client = Client()
         client.login(username='test', password='test')
 
-        data = simplejson.dumps({
+        data = json.dumps({
             'operators': [],
             'connections': [
                 {
@@ -339,3 +340,86 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, '')
     test_basic_wiring_editor_operations.tags = ('fiware-ut-6',)
+
+
+class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
+
+    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+
+    @unittest.skip('wip tests')
+    @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
+    def test_wiring_recovers_from_invalid_views_data(self):
+
+        workspace = Workspace.objects.get(id=2)
+        workspace.wiringStatus = json.dumps({
+            "views":[
+               {
+                  "label":"default",
+                  "iwidgets":{
+                     "1": None
+                  },
+                  "operators":{
+                     "0": None
+                  },
+                  "connections":[]
+               }
+            ],
+            "operators":{
+               "0":{
+                  "name":"Wirecloud/TestOperator/1.0",
+                  "id":"0",
+                  "preferences":{
+
+                  }
+               }
+            },
+            "connections":[
+               {
+                  "source":{
+                     "type":"iwidget",
+                     "id":1,
+                     "endpoint":"outputendpoint"
+                  },
+                  "target":{
+                     "type":"iwidget",
+                     "id":2,
+                     "endpoint":"inputendpoint"
+                  }
+               },
+               {
+                  "source":{
+                     "type":"iwidget",
+                     "id":2,
+                     "endpoint":"outputendpoint"
+                  },
+                  "target":{
+                     "type":"ioperator",
+                     "id":0,
+                     "endpoint":"input"
+                  }
+               },
+               {
+                  "source":{
+                     "type":"ioperator",
+                     "id":0,
+                     "endpoint":"output"
+                  },
+                  "target":{
+                     "type":"iwidget",
+                     "id":1,
+                     "endpoint":"inputendpoint"
+                  }
+               }
+            ]
+        })
+        workspace.save()
+
+        self.login(username='user_with_workspaces')
+        iwidgets = self.get_current_iwidgets()
+        self.assertEqual(len(iwidgets), 2)
+        self.change_main_view('wiring')
+        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']")
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
+        time.sleep(2)
+        window_menus = len(self.driver.find_elements_by_css_selector('.window_menu'))
+        self.assertEqual(window_menus, 1)

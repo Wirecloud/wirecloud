@@ -59,8 +59,8 @@
         this._onfocus = onfocus.bind(this);
         this._onblur = onblur.bind(this);
 
-        EzWebExt.addEventListener(this.inputElement, 'mousedown', EzWebExt.stopPropagationListener, true);
-        EzWebExt.addEventListener(this.inputElement, 'click', EzWebExt.stopPropagationListener, true);
+        this.inputElement.addEventListener('mousedown', EzWebExt.stopPropagationListener, true);
+        this.inputElement.addEventListener('click', EzWebExt.stopPropagationListener, true);
         this.inputElement.addEventListener('input', this._oninput, true);
         this.inputElement.addEventListener('focus', this._onfocus, true);
         this.inputElement.addEventListener('blur', this._onblur, true);
@@ -69,8 +69,8 @@
 
     StyledTextArea.prototype.destroy = function destroy() {
 
-        EzWebExt.removeEventListener(this.inputElement, 'mousedown', EzWebExt.stopPropagationListener, true);
-        EzWebExt.removeEventListener(this.inputElement, 'click', EzWebExt.stopPropagationListener, true);
+        this.inputElement.removeEventListener('mousedown', EzWebExt.stopPropagationListener, true);
+        this.inputElement.removeEventListener('click', EzWebExt.stopPropagationListener, true);
         this.inputElement.removeEventListener('input', this._oninput, true);
         this.inputElement.removeEventListener('focus', this._onfocus, true);
         this.inputElement.removeEventListener('blur', this._onblur, true);

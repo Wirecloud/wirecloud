@@ -1,3 +1,8 @@
+div.styled_text_area {
+    height: 5em;
+    position: relative;
+}
+
 div.styled_text_area > div {
     display: block;
     padding: 4px 6px;
@@ -17,6 +22,7 @@ div.styled_text_area > div {
     right: 4px;
     bottom: 0px;
     left: 4px;
+    overflow: hidden;
 }
 
 div.styled_text_area > div > textarea {
@@ -26,6 +32,11 @@ div.styled_text_area > div > textarea {
     color: inherit;
     line-height: inherit;
     font-size: inherit;
+    overflow: auto;
+    resize: none;
+    padding: 0;
+    height: 100%;
+    width: 100%;
 }
 
 div.styled_text_area > div > textarea:focus {

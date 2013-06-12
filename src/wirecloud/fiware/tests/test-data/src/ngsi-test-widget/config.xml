@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Template xmlns="http://wirecloud.conwet.fi.upm.es/ns/template#">
+
+    <Catalog.ResourceDescription>
+        <Vendor>Wirecloud</Vendor>
+        <Name>ngsi-test-widget</Name>
+        <Version>1.0</Version>
+        <DisplayName>Wirecloud NGSI API test widget</DisplayName>
+        <Author>aarranz</Author>
+        <Mail>aarranz@conwet.com</Mail>
+        <Description>This widget is used to test if the NGSI API is usable by widgets</Description>
+        <ImageURI>images/catalogue.png</ImageURI>
+        <iPhoneImageURI>images/catalogue_iphone.png</iPhoneImageURI>
+        <WikiURI>doc/index.html</WikiURI>
+
+        <Requirements>
+            <Feature name="NGSI"/>
+        </Requirements>
+
+    </Catalog.ResourceDescription>
+
+    <Platform.Link>
+        <XHTML href="test.html"/>
+    </Platform.Link>
+
+    <Platform.Rendering width="6" height="24"/>
+
+</Template>

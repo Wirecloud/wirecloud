@@ -1,3 +1,24 @@
+/*
+ *     Copyright (c) 2008-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *     This file is part of Wirecloud Platform.
+ *
+ *     Wirecloud Platform is free software: you can redistribute it and/or
+ *     modify it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
+ *
+ *     Wirecloud is distributed in the hope that it will be useful, but WITHOUT
+ *     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+ *     License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with Wirecloud Platform.  If not, see
+ *     <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /*global CommandQueue, CSSPrimitiveValue, EzWebExt, StyledElements*/
 
 (function () {
@@ -155,11 +176,11 @@
         this.transitionsQueue = new CommandQueue(context, initFunc, stepFunc);
 
         /* Code for handling internal events */
-        EzWebExt.addEventListener(this.moveLeftButton, "click",
+        this.moveLeftButton.addEventListener("click",
                                              EzWebExt.bind(this.shiftLeftTabs, this),
                                              true);
 
-        EzWebExt.addEventListener(this.moveRightButton, "click",
+        this.moveRightButton.addEventListener("click",
                                              EzWebExt.bind(this.shiftRightTabs, this),
                                              true);
     };
@@ -474,6 +495,10 @@
         tabElement = this.tabs[0].getTabElement();
 
         computedStyle = document.defaultView.getComputedStyle(tabElement, null);
+        if (computedStyle.getPropertyCSSValue('display') == null) {
+            this.maxTabElementWidth = '';
+            return;
+        }
         padding = computedStyle.getPropertyCSSValue('padding-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
         padding += computedStyle.getPropertyCSSValue('padding-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
         padding += 2 * computedStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX);

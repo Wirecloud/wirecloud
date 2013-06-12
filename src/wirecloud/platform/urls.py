@@ -75,8 +75,12 @@ urlpatterns = patterns('wirecloud.platform.views',
         name='wirecloud.iwidget_collection'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/?$',
-        iwidget_views.IWidgetEntry(permitted_methods=('GET', 'POST', 'PUT', 'DELETE',)),
+        iwidget_views.IWidgetEntry(permitted_methods=('GET', 'POST', 'DELETE',)),
         name='wirecloud.iwidget_entry'
+    ),
+    url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/preferences/?$',
+        iwidget_views.IWidgetPreferences(permitted_methods=('POST',)),
+        name='wirecloud.iwidget_preferences'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/iwidget/(?P<iwidget_id>\d+)/version/?$',
         iwidget_views.IWidgetVersion(permitted_methods=('PUT',)),
@@ -85,15 +89,15 @@ urlpatterns = patterns('wirecloud.platform.views',
 
     # Preferences
     url(r'^api/preferences/platform/?',
-        preferences_views.PlatformPreferencesCollection(permitted_methods=('GET', 'PUT')),
+        preferences_views.PlatformPreferencesCollection(permitted_methods=('GET', 'POST')),
         name='wirecloud.platform_preferences'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/preferences/?$',
-        preferences_views.WorkspacePreferencesCollection(permitted_methods=('GET', 'PUT')),
+        preferences_views.WorkspacePreferencesCollection(permitted_methods=('GET', 'POST')),
         name='wirecloud.workspace_preferences'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\d+)/preferences/?$',
-        preferences_views.TabPreferencesCollection(permitted_methods=('GET', 'PUT')),
+        preferences_views.TabPreferencesCollection(permitted_methods=('GET', 'POST')),
         name='wirecloud.tab_preferences'
     ),
 
@@ -148,7 +152,6 @@ urlpatterns = patterns('wirecloud.platform.views',
         name='wirecloud.variable_collection'
     ),
 
-    url(r'^api/workspace/(?P<workspace_id>\d+)/share/groups/?$', workspace_views.WorkspaceSharerEntry(permitted_methods=('GET', ))),
     url(r'^api/workspace/(?P<workspace_id>\d+)/share/(?P<share_boolean>\w+)/?$',
         workspace_views.WorkspaceSharerEntry(permitted_methods=('PUT',)),
         name='wirecloud.workspace_share'
@@ -175,5 +178,7 @@ urlpatterns = patterns('wirecloud.platform.views',
 
     url(r'^api/workspaces/published/(?P<workspace_id>\d+)/template.xml$', workspace_views.MashupTemplate(permitted_methods=('GET', )), name='wirecloud_showcase.mashup_template'),
 
+) + get_plugin_urls() + patterns('wirecloud.platform.views',
+
     url(r'^(?P<creator_user>[^/]+)/(?P<workspace>[^/]+)/?$', 'render_workspace_view', name='wirecloud.workspace_view'),
-) + get_plugin_urls()
+)

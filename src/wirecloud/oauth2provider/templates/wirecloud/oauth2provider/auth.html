@@ -1,0 +1,13 @@
+{% extends 'wirecloud/views/base_plain.html' %}
+{% load i18n %}
+{% block content %}
+<form method="POST">
+    <div>
+        {% blocktrans with app_name=app.name username=request.user.username  %}The app {{ app_name }} will be able to do the following actions in your name ({{ username }}):{% endblocktrans %}
+        <ul>
+        </ul>
+        <button>{% trans "Authorize app" %}</button>
+        <button>{% trans "Deny" %}</button>
+    </div>
+</form>
+{% endblock %}

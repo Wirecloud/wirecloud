@@ -89,26 +89,6 @@ div.styled_list div.row.selected {
   background: #A1BDE1
 }
 
-/* Styled Text Area */
-
-div.styled_text_area {
-    overflow: hidden;
-    height: 5em;
-    position: relative;
-}
-
-div.styled_text_area > div {
-    overflow: hidden;
-    position: absolute;
-}
-
-div.styled_text_area > div > textarea {
-    overflow: auto;
-    resize: none;
-    height: 100%;
-    width: 100%;
-}
-
 /* Styled Password Field */
 
 div.styled_password_field {
@@ -614,9 +594,6 @@ div.styled_numeric_field div.numeric_bottom_button {
 }
 
 /* Pagination Interface */
-.pagination .styled_button {
-  vertical-align: middle;
-}
 
 .styled_expander {
     margin: 3px;

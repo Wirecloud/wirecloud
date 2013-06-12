@@ -140,6 +140,10 @@
     var process_upload_response = function process_upload_response(response_data) {
         var i, id, resource_data;
 
+        if (!Array.isArray(response_data)) {
+            response_data = [response_data];
+        }
+
         for (i = 0; i < response_data.length; i += 1) {
             resource_data = response_data[i];
             id = [resource_data.vendor, resource_data.name, resource_data.version].join('/');
@@ -271,7 +275,12 @@
         Wirecloud.io.makeRequest(Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION, {
             method: 'POST',
             contentType: 'application/json',
-            postBody: Object.toJSON({'template_uri': url, packaged: !!options.packaged, force_create: !!options.forceCreate}),
+            postBody: JSON.stringify({
+                template_uri: url,
+                packaged: !!options.packaged,
+                force_create: !!options.forceCreate,
+                market_endpoint: options.market_info
+            }),
             onSuccess: function (transport) {
                 var i, id, response_data, resource_data;
 

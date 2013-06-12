@@ -1,42 +1,21 @@
 # -*- coding: utf-8 -*-
 
-# MORFEO Project
-# http://morfeo-project.org
-#
-# Component: EzWeb
-#
-# (C) Copyright 2008 Telefónica Investigación y Desarrollo
-#     S.A.Unipersonal (Telefónica I+D)
-#
-# Info about members and contributors of the MORFEO project
-# is available at:
-#
-#   http://morfeo-project.org/
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-#
-# If you want to use this software an plan to distribute a
-# proprietary application in any way, and you are not licensing and
-# distributing your source code under GPL, you probably need to
-# purchase a commercial license of the product.  More info about
-# licensing options is available at:
-#
-#   http://morfeo-project.org/
-#
+# Copyright 2008-2013 Universidad Politécnica de Madrid
 
-# @author jmostazo-upm
+# This file is part of Wirecloud.
+
+# Wirecloud is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Wirecloud is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.core.cache import cache
 from django.http import HttpResponse
@@ -46,7 +25,7 @@ from django.utils import simplejson
 
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import no_cache
-from wirecloud.commons.utils.http import build_error_response, supported_request_mime_types
+from wirecloud.commons.utils.http import authentication_required, build_error_response, supported_request_mime_types
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.platform.models import PlatformPreference, WorkspacePreference, Tab, TabPreference, update_session_lang, Workspace
 
@@ -161,15 +140,17 @@ def update_workspace_preferences(workspace, preferences_json):
 
 class PlatformPreferencesCollection(Resource):
 
+    @authentication_required
     @no_cache
     def read(self, request):
         result = parseValues(PlatformPreference.objects.filter(user=request.user))
 
         return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
+    @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
-    def update(self, request):
+    def create(self, request):
         try:
             preferences_json = simplejson.loads(request.raw_post_data)
         except Exception, e:
@@ -186,6 +167,7 @@ class PlatformPreferencesCollection(Resource):
 
 class WorkspacePreferencesCollection(Resource):
 
+    @authentication_required
     @no_cache
     def read(self, request, workspace_id):
 
@@ -196,9 +178,10 @@ class WorkspacePreferencesCollection(Resource):
 
         return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
+    @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
-    def update(self, request, workspace_id):
+    def create(self, request, workspace_id):
 
         # Check Workspace existance and owned by this user
         workspace = get_object_or_404(Workspace, users=request.user, pk=workspace_id)
@@ -215,6 +198,7 @@ class WorkspacePreferencesCollection(Resource):
 
 class TabPreferencesCollection(Resource):
 
+    @authentication_required
     @no_cache
     def read(self, request, workspace_id, tab_id):
 
@@ -225,9 +209,10 @@ class TabPreferencesCollection(Resource):
 
         return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
+    @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
-    def update(self, request, workspace_id, tab_id):
+    def create(self, request, workspace_id, tab_id):
 
         # Check Tab existance and owned by this user
         tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)

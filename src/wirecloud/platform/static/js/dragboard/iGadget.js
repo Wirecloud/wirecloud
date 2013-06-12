@@ -92,11 +92,14 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
         this.height = layout.getMenubarSize().inLU;
     }
 
-    this.internal_iwidget = new Wirecloud.IWidget(widget, {
-        id: iWidgetId,
-        readOnly: readOnly,
-        layout: layout
-    });
+    this.internal_iwidget = new Wirecloud.IWidget(
+        widget,
+        layout.dragboard.tab,
+        {
+            id: iWidgetId,
+            readOnly: readOnly
+        }
+    );
     Object.defineProperty(this, 'id', {get: function () {return this.internal_iwidget.id;}});
     Object.defineProperty(this, 'widget', {get: function () {return this.internal_iwidget.widget;}});
     if (this.id) {
@@ -175,8 +178,8 @@ IWidget.prototype.setPosition = function (position) {
     this.position = position;
 
     if (this.element !== null) { // if visible
-        this.element.style.left = this.internal_iwidget.layout.getColumnOffset(position.x) + "px";
-        this.element.style.top = this.internal_iwidget.layout.getRowOffset(position.y) + "px";
+        this.element.style.left = this.layout.getColumnOffset(position.x) + "px";
+        this.element.style.top = this.layout.getRowOffset(position.y) + "px";
 
         this.internal_iwidget.contextManager.modify({
             'xPosition': this.position.x,
@@ -195,8 +198,8 @@ IWidget.prototype.setPosition = function (position) {
 IWidget.prototype.setIconPosition = function (position) {
     this.iconPosition = position.clone();
     if (this.iconElement) {
-        this.iconElement.style.left = this.internal_iwidget.layout.dragboard.freeLayout.getColumnOffset(this.iconPosition.x) + "px";
-        this.iconElement.style.top = this.internal_iwidget.layout.dragboard.freeLayout.getRowOffset(this.iconPosition.y) + "px";
+        this.iconElement.style.left = this.layout.dragboard.freeLayout.getColumnOffset(this.iconPosition.x) + "px";
+        this.iconElement.style.top = this.layout.dragboard.freeLayout.getRowOffset(this.iconPosition.y) + "px";
     }
 };
 
@@ -271,7 +274,7 @@ IWidget.prototype.getContentHeight = function () {
  * @returns {Tab} associated tab
  */
 IWidget.prototype.getTab = function () {
-    return this.internal_iwidget.layout.dragboard.tab;
+    return this.internal_iwidget.tab;
 };
 
 /**
@@ -332,7 +335,7 @@ IWidget.prototype.isVisible = function () {
  *                    associated dragboard; false otherwise.
  */
 IWidget.prototype.onFreeLayout = function () {
-    return this.internal_iwidget.layout.dragboard.freeLayout === this.internal_iwidget.layout;
+    return this.layout.dragboard.freeLayout === this.layout;
 };
 
 /**
@@ -379,7 +382,7 @@ IWidget.prototype.build = function () {
     this.iwidgetIconNameHTMLElement.observe("click",
         function () {
             this.toggleMinimizeStatus(false);
-            this.internal_iwidget.layout.dragboard.raiseToTop(this);
+            this.layout.dragboard.raiseToTop(this);
         }.bind(this),
         false);
 };
@@ -416,13 +419,11 @@ IWidget.prototype.paint = function (onInit) {
 
     // Insert it into the dragboard (initially hidden)
     this.element.style.visibility = "hidden";
-    this.internal_iwidget.layout.dragboard.dragboardElement.appendChild(this.element);
-
-    this.content.setAttribute("src", this.codeURL);
+    this.layout.dragboard.dragboardElement.appendChild(this.element);
 
     // Position
-    this.element.style.left = this.internal_iwidget.layout.getColumnOffset(this.position.x) + "px";
-    this.element.style.top = this.internal_iwidget.layout.getRowOffset(this.position.y) + "px";
+    this.element.style.left = this.layout.getColumnOffset(this.position.x) + "px";
+    this.element.style.top = this.layout.getRowOffset(this.position.y) + "px";
     this.setZPosition(this.zPos);
 
     // Select the correct representation for this iWidget (iconified, minimized or normal)
@@ -457,18 +458,20 @@ IWidget.prototype.paint = function (onInit) {
     this._updateButtons();
 
     // Icon
-    this.internal_iwidget.layout.dragboard.dragboardElement.appendChild(this.iconElement);
+    this.layout.dragboard.dragboardElement.appendChild(this.iconElement);
     this.iconDraggable = new IWidgetIconDraggable(this);
-    this.iconElement.style.left = this.internal_iwidget.layout.dragboard.freeLayout.getColumnOffset(this.iconPosition.x) + "px";
-    this.iconElement.style.top = this.internal_iwidget.layout.dragboard.freeLayout.getRowOffset(this.iconPosition.y) + "px";
+    this.iconElement.style.left = this.layout.dragboard.freeLayout.getColumnOffset(this.iconPosition.x) + "px";
+    this.iconElement.style.top = this.layout.dragboard.freeLayout.getRowOffset(this.iconPosition.y) + "px";
 
     Event.observe(this.iconImg,
         "click",
         function () {
             this.setMinimizeStatus(false);
-            this.internal_iwidget.layout.dragboard.raiseToTop(this);
+            this.layout.dragboard.raiseToTop(this);
         }.bind(this),
         true);
+
+    this.content.setAttribute("src", this.codeURL);
 };
 
 IWidget.prototype.load = function () {
@@ -487,7 +490,7 @@ IWidget.prototype.isPainted = function () {
  *
  * @param {String} iwidgetName New name for this iWidget.
  */
-IWidget.prototype.setName = function (iwidgetName) {
+IWidget.prototype.setName = function setName(iwidgetName) {
     var oldName = this.name;
 
     function onSuccess() {
@@ -506,17 +509,14 @@ IWidget.prototype.setName = function (iwidgetName) {
         this.widgetMenu.setAttribute("title", iwidgetName);
         this.iwidgetIconNameHTMLElement.update(this.name);
         var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-            workspace_id: this.internal_iwidget.layout.dragboard.workspaceId,
-            tab_id: this.internal_iwidget.layout.dragboard.tabId,
+            workspace_id: this.layout.dragboard.workspaceId,
+            tab_id: this.layout.dragboard.tabId,
             iwidget_id: this.id
         });
         Wirecloud.io.makeRequest(iwidgetUrl, {
-            method: 'PUT',
+            method: 'POST',
             contentType: 'application/json',
-            postBody: Object.toJSON({
-                name: iwidgetName,
-                id: this.id
-            }),
+            postBody: JSON.stringify({name: iwidgetName}),
             onSuccess: onSuccess.bind(this),
             onFailure: onError.bind(this)
         });
@@ -528,8 +528,8 @@ IWidget.prototype.setName = function (iwidgetName) {
  */
 IWidget.prototype.notifyEvent = function () {
     // if the iwidget is out of the grid it has to be raised to the top
-    if (this.internal_iwidget.layout instanceof FreeLayout) {
-        this.internal_iwidget.layout.dragboard.raiseToTop(this);
+    if (this.layout instanceof FreeLayout) {
+        this.layout.dragboard.raiseToTop(this);
         //Moreover, if the iwidget is iconified it has to be opened
         if (this.isIconified()) {
             //maximize iconified widget
@@ -539,7 +539,7 @@ IWidget.prototype.notifyEvent = function () {
 };
 
 IWidget.prototype.isIconified = function () {
-    return (this.internal_iwidget.layout instanceof FreeLayout && this.minimized);
+    return (this.layout instanceof FreeLayout && this.minimized);
 };
 
 IWidget.prototype.askForIconVersion = function () {
@@ -566,12 +566,12 @@ IWidget.prototype.setRefusedVersion = function (v) {
     $("version_button_" + this.id).hide();
 
     var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-        workspace_id: this.internal_iwidget.layout.dragboard.workspaceId,
-        tab_id: this.internal_iwidget.layout.dragboard.tabId,
+        workspace_id: this.layout.dragboard.workspaceId,
+        tab_id: this.layout.dragboard.tabId,
         iwidget_id: this.id
     });
     Wirecloud.io.makeRequest(iwidgetUrl, {
-        method: 'PUT',
+        method: 'POST',
         contentType: 'application/json',
         parameters: Object.toJSON({
             refused_version: this.refusedVersion.text,
@@ -616,8 +616,8 @@ IWidget.prototype.upgradeIWidget = function () {
         source: this.internal_iwidget.widget.getLastVersion().source
     };
     var url = Wirecloud.URLs.IWIDGET_VERSION_ENTRY.evaluate({
-        workspace_id: this.internal_iwidget.layout.dragboard.workspaceId,
-        tab_id: this.internal_iwidget.layout.dragboard.tabId,
+        workspace_id: this.layout.dragboard.workspaceId,
+        tab_id: this.layout.dragboard.tabId,
         iwidget_id: this.id
     });
 
@@ -680,15 +680,15 @@ IWidget.prototype.destroy = function destroy() {
 IWidget.prototype.remove = function (orderFromServer) {
     orderFromServer = orderFromServer !== null ? orderFromServer : false;
 
-    if (this.internal_iwidget.layout === null) {
+    if (this.layout === null) {
         return;
     }
 
     this.log(gettext('iWidget deleted'), Constants.Logging.INFO_MSG);
 
-    var dragboard = this.internal_iwidget.layout.dragboard;
+    var dragboard = this.layout.dragboard;
     if (isElement(this.element.parentNode)) {
-        this.internal_iwidget.layout.removeIWidget(this, true);
+        this.layout.removeIWidget(this, true);
     }
 
     this.element = null;
@@ -739,7 +739,7 @@ IWidget.prototype.setContentSize = function (newWidth, newHeight, persist) {
     this._recomputeSize(true);
 
     // Notify resize event
-    this.internal_iwidget.layout._notifyResizeEvent(this, oldWidth, oldHeight, this.getWidth(), this.getHeight(), false, persist);
+    this.layout._notifyResizeEvent(this, oldWidth, oldHeight, this.getWidth(), this.getHeight(), false, persist);
 };
 
 /**
@@ -758,8 +758,8 @@ IWidget.prototype._notifyWindowResizeEvent = function () {
     /* TODO end of temporally workaround */
 
     // Recompute position
-    this.element.style.left = this.internal_iwidget.layout.getColumnOffset(this.position.x) + "px";
-    this.element.style.top = this.internal_iwidget.layout.getRowOffset(this.position.y) + "px";
+    this.element.style.left = this.layout.getColumnOffset(this.position.x) + "px";
+    this.element.style.top = this.layout.getRowOffset(this.position.y) + "px";
 
     // Recompute size
     this._recomputeSize(true);
@@ -770,7 +770,7 @@ IWidget.prototype._notifyWindowResizeEvent = function () {
     var newWidth = this.getWidth();
 
     if ((oldHeight !== newHeight) || (oldWidth !== newWidth)) {
-        this.internal_iwidget.layout._notifyResizeEvent(this, oldWidth, oldHeight, newWidth, newHeight, false, false);
+        this.layout._notifyResizeEvent(this, oldWidth, oldHeight, newWidth, newHeight, false, false);
     }
     /* TODO end of temporally workaround */
 };
@@ -849,7 +849,7 @@ IWidget.prototype._notifyUnloaded = function () {
  * @private
  */
 IWidget.prototype._recomputeWidth = function () {
-    var width = this.internal_iwidget.layout.getWidthInPixels(this.contentWidth);
+    var width = this.layout.getWidthInPixels(this.contentWidth);
 
     width -= this._computeExtraWidthPixels();
 
@@ -932,19 +932,19 @@ IWidget.prototype._recomputeHeight = function (basedOnContent) {
         if (basedOnContent) {
             // Based on content height
 
-            contentHeight = this.internal_iwidget.layout.fromVCellsToPixels(this.contentHeight);
+            contentHeight = this.layout.fromVCellsToPixels(this.contentHeight);
             var fullSize = contentHeight;
             fullSize += this.widgetMenu.offsetHeight +
                         this.statusBar.offsetHeight;
             fullSize += this._computeExtraHeightPixels();
 
-            var processedSize = this.internal_iwidget.layout.adaptHeight(contentHeight, fullSize);
+            var processedSize = this.layout.adaptHeight(contentHeight, fullSize);
             contentHeight = processedSize.inPixels;
             this.height = processedSize.inLU;
             this.content.setStyle({height: contentHeight + "px"});
         } else {
             // Based on full widget height
-            contentHeight = this.internal_iwidget.layout.getHeightInPixels(this.height);
+            contentHeight = this.layout.getHeightInPixels(this.height);
             contentHeight -= this.widgetMenu.offsetHeight + this.statusBar.offsetHeight;
             contentHeight -= this._computeExtraHeightPixels();
 
@@ -953,7 +953,7 @@ IWidget.prototype._recomputeHeight = function (basedOnContent) {
             }
 
             this.content.setStyle({height: contentHeight + "px"});
-            this.contentHeight = Math.floor(this.internal_iwidget.layout.fromPixelsToVCells(contentHeight));
+            this.contentHeight = Math.floor(this.layout.fromPixelsToVCells(contentHeight));
         }
 
         this._recomputeWrapper(contentHeight);
@@ -967,7 +967,7 @@ IWidget.prototype._recomputeHeight = function (basedOnContent) {
         this._recomputeWrapper();
         contentHeight = this.element.offsetHeight;
         this.content.setStyle({height: "0px"});
-        this.height = Math.ceil(this.internal_iwidget.layout.fromPixelsToVCells(contentHeight));
+        this.height = Math.ceil(this.layout.fromPixelsToVCells(contentHeight));
     }
 
     if (oldHeight !== this.height) {
@@ -1034,7 +1034,7 @@ IWidget.prototype.setSize = function (newWidth, newHeight, resizeLeftSide, persi
     }
 
     // Notify resize event
-    this.internal_iwidget.layout._notifyResizeEvent(this, oldWidth, oldHeight, this.contentWidth, this.height, resizeLeftSide, persist);
+    this.layout._notifyResizeEvent(this, oldWidth, oldHeight, this.contentWidth, this.height, resizeLeftSide, persist);
 };
 
 /**
@@ -1097,12 +1097,12 @@ IWidget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
     reserveSpace = (typeof reserveSpace !== 'undefined' && reserveSpace !== null) ? reserveSpace : true;
     if (reserveSpace) {
         var persist = persistence !== null ? persistence : true;
-        this.internal_iwidget.layout._notifyResizeEvent(this, this.contentWidth, oldHeight, this.contentWidth, this.getHeight(), false, persist, reserveSpace);
+        this.layout._notifyResizeEvent(this, this.contentWidth, oldHeight, this.contentWidth, this.getHeight(), false, persist, reserveSpace);
     }
 };
 
 IWidget.prototype.isInFullDragboardMode = function () {
-    return this.internal_iwidget.layout instanceof FullDragboardLayout;
+    return this.layout instanceof FullDragboardLayout;
 };
 
 IWidget.prototype.setFullDragboardMode = function (enable) {
@@ -1110,12 +1110,12 @@ IWidget.prototype.setFullDragboardMode = function (enable) {
         return;
     }
 
-    var dragboard = this.internal_iwidget.layout.dragboard;
+    var dragboard = this.layout.dragboard;
 
     if (enable) {
         this.previousContentWidth = this.contentWidth;
         this.previousHeight = this.height;
-        this.previousLayout = this.internal_iwidget.layout;
+        this.previousLayout = this.layout;
         this.previousPosition = this.position.clone();
 
         this.moveToLayout(dragboard.fulldragboardLayout);
@@ -1177,9 +1177,9 @@ IWidget.prototype.highlight = function () {
  */
 IWidget.prototype.toggleLayout = function () {
     if (this.onFreeLayout()) {
-        this.moveToLayout(this.internal_iwidget.layout.dragboard.baseLayout);
+        this.moveToLayout(this.layout.dragboard.baseLayout);
     } else {
-        this.moveToLayout(this.internal_iwidget.layout.dragboard.freeLayout);
+        this.moveToLayout(this.layout.dragboard.freeLayout);
     }
 };
 
@@ -1187,7 +1187,7 @@ IWidget.prototype.toggleLayout = function () {
  * Check if the iwidget belongs to a shared workspace
  */
 IWidget.prototype.is_shared_workspace = function () {
-    return this.internal_iwidget.layout.dragboard.getWorkspace().isShared();
+    return this.layout.dragboard.getWorkspace().isShared();
 };
 
 /**
@@ -1199,7 +1199,7 @@ IWidget.prototype.save = function (options) {
         var iwidgetInfo = JSON.parse(transport.responseText);
         this.internal_iwidget.id = iwidgetInfo['id'];
         this.codeURL = this.internal_iwidget.widget.code_url + "#id=" + this.id;
-        this.internal_iwidget.layout.dragboard.addIWidget(this, iwidgetInfo, options);
+        this.layout.dragboard.addIWidget(this, iwidgetInfo, options);
     }
 
     function onError(transport, e) {
@@ -1213,8 +1213,8 @@ IWidget.prototype.save = function (options) {
     }
 
     var url = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
-        tab_id: this.internal_iwidget.layout.dragboard.tabId,
-        workspace_id: this.internal_iwidget.layout.dragboard.workspaceId
+        tab_id: this.layout.dragboard.tabId,
+        workspace_id: this.layout.dragboard.workspaceId
     });
 
     var data = Object.toJSON({
@@ -1246,7 +1246,7 @@ IWidget.prototype.save = function (options) {
  *                          to.
  */
 IWidget.prototype.moveToLayout = function (newLayout) {
-    if (this.internal_iwidget.layout === newLayout) {
+    if (this.layout === newLayout) {
         return;
     }
 
@@ -1271,8 +1271,8 @@ IWidget.prototype.moveToLayout = function (newLayout) {
     fullHeight += this._computeExtraHeightPixels();
     // ##### END TODO
 
-    var dragboardChange = this.internal_iwidget.layout.dragboard !== newLayout.dragboard;
-    var oldLayout = this.internal_iwidget.layout;
+    var dragboardChange = this.layout.dragboard !== newLayout.dragboard;
+    var oldLayout = this.layout;
 
     // Force an unload event
     if (dragboardChange) {
@@ -1332,7 +1332,7 @@ IWidget.prototype.moveToLayout = function (newLayout) {
     //the movement affects the rest of widgets
     if (!dragboardChange && (affectedWidgetsRemoving || affectedWidgetsAdding)) {
         //commit all the dragboard changes
-        this.internal_iwidget.layout.dragboard._commitChanges();
+        this.layout.dragboard._commitChanges();
     } else {
         //commit only the info about this iwidget. If it has changed dragboards, it won't
         //affect the positions of the widgets of the new tab because it's placed at the
@@ -1370,7 +1370,7 @@ IWidget.prototype.moveToLayout = function (newLayout) {
         iWidgetInfo['icon_top'] = this.iconPosition.y;
         iWidgetInfo['icon_left'] = this.iconPosition.x;
         iWidgetInfo['zIndex'] = this.zPos;
-        iWidgetInfo['tab'] = this.internal_iwidget.layout.dragboard.tabId;
+        iWidgetInfo['tab'] = this.layout.dragboard.tabId;
 
         data.push(iWidgetInfo);
 

@@ -32,8 +32,12 @@ admin.site.register(models.Variable)
 class MarketAdmin(admin.ModelAdmin):
     list_display = ('user', 'name')
     ordering = ('user', 'name')
-
 admin.site.register(models.Market, MarketAdmin)
+
+class MarketUserDataAdmin(admin.ModelAdmin):
+    list_display = ('market', 'user', 'name', 'value')
+    ordering = ('market', 'user', 'name')
+admin.site.register(models.MarketUserData, MarketUserDataAdmin)
 
 admin.site.register(models.Widget)
 admin.site.register(models.XHTML)

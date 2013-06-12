@@ -30,7 +30,7 @@ from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.http import authentication_required, build_error_response, supported_request_mime_types
 from wirecloud.platform.get_data import VariableValueCacheManager, get_iwidget_data
 from wirecloud.platform.iwidget.utils import SaveIWidget, UpdateIWidget, UpgradeIWidget, deleteIWidget
-from wirecloud.platform.models import Widget, IWidget, Tab, UserWorkspace, Workspace
+from wirecloud.platform.models import Widget, IWidget, Tab, UserWorkspace, VariableValue, Workspace
 from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue, get_and_add_widget
 
 
@@ -107,7 +107,7 @@ class IWidgetEntry(Resource):
     @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
-    def update(self, request, workspace_id, tab_id, iwidget_id):
+    def create(self, request, workspace_id, tab_id, iwidget_id):
 
         try:
             iwidget = simplejson.loads(request.raw_post_data)
@@ -116,6 +116,7 @@ class IWidgetEntry(Resource):
             return build_error_response(request, 400, msg)
 
         tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
+        iwidget['id'] = iwidget_id
         UpdateIWidget(iwidget, request.user, tab)
 
         return HttpResponse(status=204)
@@ -128,6 +129,32 @@ class IWidgetEntry(Resource):
         iwidget = get_object_or_404(IWidget, tab__workspace__users=request.user, tab__workspace__pk=workspace_id, tab__pk=tab_id, pk=iwidget_id)
 
         deleteIWidget(iwidget, request.user)
+
+        return HttpResponse(status=204)
+
+
+class IWidgetPreferences(Resource):
+
+    @authentication_required
+    @supported_request_mime_types(('application/json',))
+    @commit_on_http_success
+    def create(self, request, workspace_id, tab_id, iwidget_id):
+
+        try:
+            new_values = simplejson.loads(request.raw_post_data)
+        except simplejson.JSONDecodeError, e:
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
+
+        for var_name in new_values:
+            variable_value = VariableValue.objects.select_related('variable__vardef').get(
+                user=request.user,
+                variable__vardef__name=var_name,
+                variable__vardef__aspect='PREF',
+                variable__iwidget__id=iwidget_id
+            )
+            variable_value.set_variable_value(new_values[var_name])
+            variable_value.save()
 
         return HttpResponse(status=204)
 

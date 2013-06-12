@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -149,10 +149,6 @@ function FiWareCatalogueResource(resourceJSON_) {
         return [];
     };
 
-    this.getPopularity = function () {
-        return 5;
-    };
-
     this.getURI = function () {
         return [vendor, name, currentVersion.version.text].join('/');
     };
@@ -168,7 +164,11 @@ function FiWareCatalogueResource(resourceJSON_) {
     Object.defineProperties(this, {
         'date': {
             get: function () { return currentVersion.modified; }
-        }
+        },
+        'rating': {value: resourceJSON_.rating},
+        'state': {value: resourceJSON_.state},
+        'usdl_url': {value: resourceJSON_.usdl_url},
+        'resources': {value: resourceJSON_.resources}
     });
 
     //////////////

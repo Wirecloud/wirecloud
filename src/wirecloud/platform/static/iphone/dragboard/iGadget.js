@@ -45,13 +45,15 @@ function IWidget(widget, iWidgetId, iWidgetCode, iWidgetName, dragboard, alterna
         this.paint();
     }.bind(this));
 
-    this.internal_iwidget = new Wirecloud.IWidget(widget, {
-        id: iWidgetId,
-        readOnly: true, // TODO
-        layout: {
-            dragboard: dragboard
+    this.internal_iwidget = new Wirecloud.IWidget(
+        widget,
+        dragboard.tab,
+        {
+            id: iWidgetId,
+            readOnly: true, // TODO
+            tab: this.tab
         }
-    });
+    );
     Object.defineProperty(this, 'id', {get: function () {return this.internal_iwidget.id;}});
     Object.defineProperty(this, 'widget', {get: function () {return this.internal_iwidget.widget;}});
     this.loaded = false;
@@ -184,7 +186,7 @@ IWidget.prototype.save = function () {
         name: this.name
     };
 
-    url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+    url = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
         tab_id: this.dragboard.tabId,
         workspace_id: this.dragboard.workspaceId
     });

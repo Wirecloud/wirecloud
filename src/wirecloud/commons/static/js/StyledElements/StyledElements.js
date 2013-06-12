@@ -112,10 +112,14 @@ StyledElements.StyledElement.prototype.insertInto = function (element, refElemen
  */
 StyledElements.StyledElement.prototype._getUsableHeight = function() {
     var parentElement = this.wrapperElement.parentNode;
-    if (!EzWebExt.XML.isElement(parentElement))
+    if (!EzWebExt.XML.isElement(parentElement)) {
         return null;
+    }
 
     var parentStyle = document.defaultView.getComputedStyle(parentElement, null);
+    if (parentStyle.getPropertyCSSValue('display') == null) {
+        return null;
+    }
     var containerStyle = document.defaultView.getComputedStyle(this.wrapperElement, null);
 
     var height = parentElement.offsetHeight -
@@ -319,9 +323,15 @@ StyledElements.Container.prototype.repaint = function(temporal) {
     temporal = temporal !== undefined ? temporal : false;
 
     if (this.useFullHeight) {
+        if (this.wrapperElement.classList.contains('hidden')) {
+            this.wrapperElement.style.height = "";
+            return;
+        }
+
         var height = this._getUsableHeight();
-        if (height == null)
+        if (height == null) {
             return; // nothing to do
+        }
 
         this.wrapperElement.style.height = (height + "px");
     }
@@ -525,17 +535,17 @@ StyledElements.StyledNumericField = function(options) {
     };
 
     /* Internal events */
-    EzWebExt.addEventListener(this.wrapperElement, 'mousedown', EzWebExt.stopPropagationListener, true);
-    EzWebExt.addEventListener(this.wrapperElement, 'click', EzWebExt.stopPropagationListener, true);
+    this.wrapperElement.addEventListener('mousedown', EzWebExt.stopPropagationListener, true);
+    this.wrapperElement.addEventListener('click', EzWebExt.stopPropagationListener, true);
 
-    EzWebExt.addEventListener(topButton, "click",
+    topButton.addEventListener("click",
         EzWebExt.bind(function(event) {
             if (this.enabled)
                 inc(this.inputElement, options.inc);
         }, this),
         true);
 
-    EzWebExt.addEventListener(bottomButton, "click",
+    bottomButton.addEventListener("click",
         EzWebExt.bind(function(event) {
             if (this.enabled)
                 inc(this.inputElement, -options.inc);
@@ -685,9 +695,9 @@ StyledElements.StyledCheckBox = function StyledCheckBox(options) {
     }
 
     /* Internal events */
-    EzWebExt.addEventListener(this.inputElement, 'mousedown', EzWebExt.stopPropagationListener, true);
-    EzWebExt.addEventListener(this.inputElement, 'click', EzWebExt.stopPropagationListener, true);
-    EzWebExt.addEventListener(this.inputElement, 'change',
+    this.inputElement.addEventListener('mousedown', EzWebExt.stopPropagationListener, true);
+    this.inputElement.addEventListener('click', EzWebExt.stopPropagationListener, true);
+    this.inputElement.addEventListener('change',
                                 EzWebExt.bind(function () {
                                     if (this.enabled)
                                         this.events['change'].dispatch(this);
@@ -750,9 +760,9 @@ StyledElements.StyledRadioButton = function(nameGroup_, value, options) {
     }
 
     /* Internal events */
-    EzWebExt.addEventListener(this.inputElement, 'mousedown', EzWebExt.stopPropagationListener, true);
-    EzWebExt.addEventListener(this.inputElement, 'click', EzWebExt.stopPropagationListener, true);
-    EzWebExt.addEventListener(this.inputElement, 'change',
+    this.inputElement.addEventListener('mousedown', EzWebExt.stopPropagationListener, true);
+    this.inputElement.addEventListener('click', EzWebExt.stopPropagationListener, true);
+    this.inputElement.addEventListener('change',
                                 EzWebExt.bind(function () {
                                     if (this.enabled)
                                         this.events['change'].dispatch(this);
@@ -849,12 +859,12 @@ StyledElements.StyledHPaned = function(options) {
         document.oncontextmenu = null; //reenable context menu
         document.onmousedown = null; //reenable text selection
 
-        EzWebExt.removeEventListener(document, "mouseup", endresize, true);
-        EzWebExt.removeEventListener(document, "mousemove", resize, true);
+        document.removeEventListener("mouseup", endresize, true);
+        document.removeEventListener("mousemove", resize, true);
 
         hpaned.repaint(false);
 
-        EzWebExt.addEventListener(hpaned.handler, "mousedown", startresize, true);
+        hpaned.handler.addEventListener("mousedown", startresize, true);
     }
 
     function resize(e) {
@@ -877,17 +887,17 @@ StyledElements.StyledHPaned = function(options) {
     function startresize(e) {
         document.oncontextmenu = function() { return false; }; //disable context menu
         document.onmousedown = function() { return false; }; //disable text selection
-        EzWebExt.removeEventListener(hpaned.handler, "mousedown", startresize, true);
+        hpaned.handler.removeEventListener("mousedown", startresize, true);
 
         xStart = parseInt(e.screenX);
         hpanedWidth = hpaned.wrapperElement.parentNode.offsetWidth - 5;
         handlerPosition = hpaned.handlerPosition;
 
-        EzWebExt.addEventListener(document, "mousemove", resize, true);
-        EzWebExt.addEventListener(document, "mouseup", endresize, true);
+        document.addEventListener("mousemove", resize, true);
+        document.addEventListener("mouseup", endresize, true);
     }
 
-    EzWebExt.addEventListener(hpaned.handler, "mousedown", startresize, true);
+    hpaned.handler.addEventListener("mousedown", startresize, true);
 }
 StyledElements.StyledHPaned.prototype = new StyledElements.StyledElement();
 
@@ -895,7 +905,7 @@ StyledElements.StyledHPaned.prototype.insertInto = function (element, refElement
     StyledElements.StyledElement.prototype.insertInto.call(this, element, refElement);
 
     this.repaint();
-    EzWebExt.addEventListener(window, "resize",
+    window.addEventListener("resize",
                             EzWebExt.bind(this.repaint, this),
                             true);
 }
@@ -990,7 +1000,7 @@ StyledElements.Tab = function(id, notebook, options) {
 
     EzWebExt.prependClassName(this.wrapperElement, "tab hidden"); // TODO
 
-    EzWebExt.addEventListener(this.tabElement, "click",
+    this.tabElement.addEventListener("click",
                                 EzWebExt.bind(function () {
                                     this.notebook.goToTab(this.tabId);
                                 }, this),
@@ -1186,7 +1196,7 @@ StyledElements.StyledAlert = function(title, content, options) {
     /* Events code */
     if (this._closeButton !== null) {
         this._closeCallback = EzWebExt.bind(this.close, this);
-        EzWebExt.addEventListener(this._closeButton, "click", this._closeCallback, true);
+        this._closeButton.addEventListener("click", this._closeCallback, true);
     }
 }
 StyledElements.StyledAlert.prototype = new StyledElements.StyledElement();
@@ -1207,7 +1217,7 @@ StyledElements.StyledAlert.prototype.close = function() {
     this.wrapperElement = null;
 
     if (this._closeButton != null) {
-        EzWebExt.removeEventListener(this._closeButton, "click", this._closeCallback, true);
+        this._closeButton.removeEventListener("click", this._closeCallback, true);
     }
     StyledElements.StyledElement.prototype.destroy.call();
 };
@@ -1367,11 +1377,12 @@ StyledElements.Alternative.prototype = new StyledElements.Container({extending: 
 
 StyledElements.Alternative.prototype.setVisible = function (newStatus) {
     if (newStatus) {
-        EzWebExt.removeClassName(this.wrapperElement, "hidden");
+        this.wrapperElement.classList.remove("hidden");
         this.repaint(false);
         this.events['show'].dispatch(this);
     } else {
-        EzWebExt.appendClassName(this.wrapperElement, "hidden");
+        this.wrapperElement.classList.add("hidden");
+        this.repaint(false);
         this.events['hide'].dispatch(this);
     }
 }
@@ -1384,122 +1395,6 @@ StyledElements.Alternative.prototype.getId = function() {
     return this.altId;
 }
 
-var PaginationInterface = function(pagination, options) {
-    var defaultOptions = {
-        'layout': '%(firstBtn)s%(prevBtn)s Page: %(currentPage)s/%(totalPages)s %(nextBtn)s%(lastBtn)s',
-        'autoHide': false
-    };
-    options = EzWebExt.merge(defaultOptions, options);
-    this.autoHide = options.autoHide;
-
-    StyledElements.StyledElement.call(this, []);
-
-    this.pagination = pagination;
-
-    this.wrapperContainer = new StyledElements.Container();
-    this.wrapperContainer.addClassName('pagination');
-    this.wrapperElement = this.wrapperContainer.wrapperElement;
-
-    this.firstBtn = new StyledElements.StyledButton({'plain': true, 'class': 'icon-first-page'});
-    this.firstBtn.addEventListener('click', pagination.goToFirst.bind(pagination));
-
-    this.prevBtn = new StyledElements.StyledButton({'plain': true, 'class': 'icon-prev-page'});
-    this.prevBtn.addEventListener('click', pagination.goToPrevious.bind(pagination));
-
-    this.nextBtn = new StyledElements.StyledButton({'plain': true, 'class': 'icon-next-page'});
-    this.nextBtn.addEventListener('click', pagination.goToNext.bind(pagination));
-
-    this.lastBtn = new StyledElements.StyledButton({'plain': true, 'class': 'icon-last-page'});
-    this.lastBtn.addEventListener('click', pagination.goToLast.bind(pagination));
-
-    this.currentPageLabel = document.createElement('span');
-    EzWebExt.addClassName(this.currentPageLabel, 'current-page');
-
-    this.totalPagesLabel = document.createElement('span');
-    EzWebExt.addClassName(this.totalPagesLabel, 'total-pages');
-
-    this._updateLayout(options.layout);
-
-    EzWebExt.setTextContent(this.currentPageLabel, this.currentPage + 1);
-    EzWebExt.setTextContent(this.totalPagesLabel, this.totalPages);
-
-    this._updateButtons();
-
-    this.pagination.addEventListener('requestEnd', EzWebExt.bind(this.pPaginationChanged, this));
-}
-PaginationInterface.prototype = new StyledElements.StyledElement();
-
-
-PaginationInterface.prototype._updateLayout = function(pattern) {
-
-    var elements = {
-        'firstBtn': this.firstBtn,
-        'prevBtn': this.prevBtn,
-        'nextBtn': this.nextBtn,
-        'lastBtn': this.lastBtn,
-        'currentPage': this.currentPageLabel,
-        'totalPages': this.totalPagesLabel
-    }
-    var wrapper = this.wrapperContainer;
-    while (pattern) {
-        var result = pattern.match(/^%\((\w+)\)s/,1);
-        if (result) {
-            if (elements[result[1]] != undefined) {
-                wrapper.appendChild(elements[result[1]]);
-            } else {
-                wrapper.appendChild(document.createTextNode(result[0]));
-            }
-            pattern = pattern.substr(result[0].length);
-        }
-        var text = EzWebExt.split(pattern, /%\(\w+\)s/, 1);
-        if (text && text.length > 0 && text[0] != '') {
-            wrapper.appendChild(document.createTextNode(text[0]));
-            pattern = pattern.substr(text[0].length);
-        }
-    }
-}
-
-
-PaginationInterface.prototype.changeLayout = function(newLayout) {
-    this._updateLayout(newLayout);
-}
-
-PaginationInterface.prototype._updateButtons = function() {
-    if (this.pagination.currentPage <= 1) {
-        this.prevBtn.disable();
-        this.firstBtn.disable();
-    } else {
-        this.prevBtn.enable();
-        this.firstBtn.enable();
-    }
-
-    if (this.pagination.currentPage >= this.pagination.totalPages) {
-        this.nextBtn.disable();
-        this.lastBtn.disable();
-    } else {
-        this.nextBtn.enable();
-        this.lastBtn.enable();
-    }
-}
-
-PaginationInterface.prototype._pageChange = function() {
-    EzWebExt.setTextContent(this.currentPageLabel, this.currentPage + 1);
-    this._updateButtons();
-};
-
-PaginationInterface.prototype.pPaginationChanged = function pPaginationChanged(pagination) {
-
-    if (this.autoHide && this.pagination.totalPages === 1) {
-        this.wrapperElement.style.display = 'none';
-    } else {
-        this.wrapperElement.style.display = '';
-    }
-
-    EzWebExt.setTextContent(this.totalPagesLabel, this.pagination.totalPages);
-    EzWebExt.setTextContent(this.currentPageLabel, this.pagination.currentPage);
-    this._updateButtons();
-};
-
 /**
  *
  */
@@ -1508,35 +1403,6 @@ StyledElements.DynamicMenuItems = function() {
 
 StyledElements.DynamicMenuItems.prototype.build = function() {
     return [];
-}
-
-
-/**
- *
- */
-StyledElements.SendMenuItems = function(variable, getData) {
-    this.variable = variable;
-    this.getData = getData;
-}
-StyledElements.SendMenuItems.prototype = new StyledElements.DynamicMenuItems();
-
-StyledElements.SendMenuItems.prototype.build = function() {
-    var i, actions, action, items, item;
-
-    actions = EzWebExt.getEventActions(this.variable);
-    items = [];
-
-    for (i = 0; i < actions.length; i += 1) {
-        action = actions[i];
-
-        item = new StyledElements.MenuItem(action.label, EzWebExt.bind(function(context) {
-            this.control.variable.set(this.control.getData(context), {targetSlots: this.slots});
-        }, {control: this, slots: [action.value]}));
-
-        items.push(item);
-    }
-
-    return items;
 }
 
 /**

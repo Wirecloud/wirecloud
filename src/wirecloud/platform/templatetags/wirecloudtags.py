@@ -31,14 +31,14 @@ def extra_javascripts(context, view):
     files = get_extra_javascripts(view)
 
     return {'files': files, 'STATIC_URL': context['STATIC_URL']}
-register.inclusion_tag('js_includes.html', takes_context=True)(extra_javascripts)
+register.inclusion_tag('wirecloud/js_includes.html', takes_context=True)(extra_javascripts)
 
 
 def platform_css(context, view):
     files = get_platform_css(view)
 
     return {'files': files, 'STATIC_URL': context['STATIC_URL']}
-register.inclusion_tag('css_includes.html', takes_context=True)(platform_css)
+register.inclusion_tag('wirecloud/css_includes.html', takes_context=True)(platform_css)
 
 
 def wirecloud_ajax_endpoints(context, view):

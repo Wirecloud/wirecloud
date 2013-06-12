@@ -1,4 +1,25 @@
-/*global CSSPrimitiveValue, EzWebExt, PaginationInterface, StyledElements */
+/*
+ *     Copyright (c) 2008-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *     This file is part of Wirecloud Platform.
+ *
+ *     Wirecloud Platform is free software: you can redistribute it and/or
+ *     modify it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
+ *
+ *     Wirecloud is distributed in the hope that it will be useful, but WITHOUT
+ *     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+ *     License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with Wirecloud Platform.  If not, see
+ *     <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*global CSSPrimitiveValue, EzWebExt, StyledElements */
 
 (function () {
 
@@ -19,7 +40,7 @@
                 EzWebExt.addClassName(cell, 'sortable');
                 cell.setAttribute('title', 'Ordenar por ' + column.label);
                 cell.callback = EzWebExt.bind(this.pSortByColumnCallback, {widget: this, column: i});
-                EzWebExt.addEventListener(cell, 'click', cell.callback, true);
+                cell.addEventListener('click', cell.callback, true);
             }
             this.header.appendChild(cell);
             this.pHeaderCells.push(cell);
@@ -30,6 +51,10 @@
         var cellStyle, paddingLeft, paddingRight;
 
         cellStyle = document.defaultView.getComputedStyle(cell, null);
+        if (cellStyle.getPropertyCSSValue('display') == null) {
+            cell.style.widht = '0';
+            return;
+        }
         paddingLeft = cellStyle.getPropertyCSSValue('padding-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
         paddingRight = cellStyle.getPropertyCSSValue('padding-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
 
@@ -102,7 +127,7 @@
                     cell.appendChild(cellContent);
                 }
 
-                EzWebExt.addEventListener(cell, 'click', callback, false);
+                cell.addEventListener('click', callback, false);
                 this.pListeners.push({element: cell, callback: callback});
 
                 row.appendChild(cell);
@@ -126,7 +151,8 @@
         var i, column, sort_info, sort_id, defaultOptions;
 
         defaultOptions = {
-            'initialSortColumn': -1
+            'initialSortColumn': -1,
+            'pageSize': 5
         };
         options = EzWebExt.merge(defaultOptions, options);
 
@@ -176,10 +202,10 @@
                 }
                 sort_info[sort_id] = column;
             }
-            this.source = new StyledElements.StaticPaginatedSource({pageSize: 5, sort_info: sort_info});
+            this.source = new StyledElements.StaticPaginatedSource({pageSize: options.pageSize, sort_info: sort_info});
         }
         Object.defineProperty(this, 'pagination', {get: function () { return this.source; }});
-        this.paginationInterface = new PaginationInterface(this.source);
+        this.paginationInterface = new StyledElements.PaginationInterface(this.source);
 
         this.pRefreshBody = EzWebExt.bind(this.reload, this);
         this.source.addEventListener('requestEnd', this.pRefreshBody);
@@ -372,7 +398,7 @@
 
         for (i = 0; i < this.pListeners.length; i += 1) {
             entry = this.pListeners[i];
-            EzWebExt.removeEventListener(entry.element, 'click', entry.callback, false);
+            entry.element.removeEventListener('click', entry.callback, false);
         }
         this.pComponents = [];
         this.pListeners = [];
@@ -399,7 +425,7 @@
         for (i = 0; i < this.pHeaderCells.length; i += 1) {
             cell = this.pHeaderCells[i];
             if (cell.callback) {
-                EzWebExt.removeEventListener(cell, 'click', cell.callback, true);
+                cell.removeEventListener('click', cell.callback, true);
                 cell.callback = null;
             }
         }

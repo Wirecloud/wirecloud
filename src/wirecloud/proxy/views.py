@@ -32,6 +32,7 @@
 
 import Cookie
 import errno
+from httplib import BadStatusLine
 import re
 import socket
 import urllib2
@@ -151,7 +152,7 @@ class Proxy():
             else:
                 hostName = socket.gethostname()
 
-            via_header = "%s %s (EzWeb-python-Proxy/1.1)" % (protocolVersion, hostName)
+            via_header = "%s %s (Wirecloud-python-Proxy/1.1)" % (protocolVersion, hostName)
             if 'via' in request_data['headers']:
                 request_data['headers']['via'] += ', ' + via_header
             else:
@@ -189,6 +190,8 @@ class Proxy():
                     return HttpResponse(status=502)
                 else:
                     return HttpResponseNotFound(str(e.reason))
+            except BadStatusLine, e:
+                return HttpResponse(status=504)
 
             # Add content-type header to the response
             res_info = res.info()

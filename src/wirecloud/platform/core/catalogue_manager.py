@@ -26,11 +26,10 @@ from django.utils.encoding import iri_to_uri
 
 from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.catalogue.utils as catalogue_utils
-from wirecloud.catalogue.utils import add_resource_from_template
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.proxy.views import MethodRequest
-from wirecloud.platform.workspace.mashupTemplateGenerator import build_template_from_workspace
+from wirecloud.platform.localcatalogue.utils import install_resource_to_user
 from wirecloud.platform.markets.utils import MarketManager
 
 
@@ -81,9 +80,9 @@ class WirecloudCatalogueManager(MarketManager):
             else:
                 return None
 
-    def publish_mashup(self, endpoint, published_workspace, user, publish_options, request=None):
+    def publish(self, endpoint, wgt_file, user, request=None, template=None):
 
-        template = TemplateParser(build_template_from_workspace(publish_options, published_workspace.workspace, user))
-        resource = add_resource_from_template(published_workspace.get_template_url(request), template, user)
-        resource.public = True
-        resource.save()
+        if template is None:
+            template = TemplateParser(wgt_file.get_template())
+
+        install_resource_to_user(user, file_contents=wgt_file, packaged=True)

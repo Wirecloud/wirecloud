@@ -169,6 +169,10 @@
         });
     };
 
+    WirecloudCatalogue.prototype.is_purchased = function is_purchased(resource) {
+        return true;
+    };
+
     WirecloudCatalogue.prototype.addResourceFromURL = function addResourceFromURL(url, options) {
         if (typeof options != 'object') {
             options = {};

@@ -33,8 +33,8 @@
         /* Event handlers */
         this._clickCallback = clickCallback.bind(this);
 
-        EzWebExt.addEventListener(this.wrapperElement, 'mousedown', EzWebExt.stopPropagationListener, true);
-        EzWebExt.addEventListener(this.wrapperElement, 'click', this._clickCallback, true);
+        this.wrapperElement.addEventListener('mousedown', EzWebExt.stopPropagationListener, true);
+        this.wrapperElement.addEventListener('click', this._clickCallback, true);
     };
     Addon.prototype = new StyledElements.Container();
 

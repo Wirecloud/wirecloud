@@ -116,6 +116,10 @@
         for (i = 0; i < this.childComponents.length; i += 1) {
             this.childComponents[i].repaint(temporal);
         }
+
+        for (i in this.fieldInterfaces) {
+            this.fieldInterfaces[i].repaint();
+        }
     };
 
     Form.prototype.pSetMsgs = function (msgs) {
@@ -343,21 +347,23 @@
         return data;
     };
 
-    Form.prototype.setData = function (data) {
+    Form.prototype.setData = function setData(data) {
         var field, fieldId;
 
         if (typeof data !== 'object' && typeof data !== 'undefined') {
             throw new TypeError();
         }
 
-        if (data == null) {
-            data = {};
-        }
-
-        for (fieldId in this.fieldInterfaces) {
-            if (this.fieldInterfaces.hasOwnProperty(fieldId)) {
+        this.pSetMsgs([]);
+        if (data != null) {
+            for (fieldId in this.fieldInterfaces) {
                 field = this.fieldInterfaces[fieldId];
                 field._setValue(data[fieldId]);
+            }
+        } else {
+            for (fieldId in this.fields) {
+                field = this.fieldInterfaces[fieldId];
+                field.reset();
             }
         }
     };
@@ -404,15 +410,8 @@
         this.events.cancel.dispatch(this);
     };
 
-    Form.prototype.reset = function () {
-        var fieldId, field;
-        for (fieldId in this.fields) {
-            if (this.fields.hasOwnProperty(fieldId)) {
-                field = this.fieldInterfaces[fieldId];
-                field.reset();
-            }
-        }
-        this.pSetMsgs([]);
+    Form.prototype.reset = function reset() {
+        this.setData();
     };
 
     Form.prototype.normalSubmit = function (method, url, options) {
@@ -446,6 +445,48 @@
 
         this.pAcceptHandler = null;
         this.pCancelHandler = null;
+    };
+
+    /**
+     * Enables/disables this Form
+     */
+    Form.prototype.setDisabled = function setDisabled(disabled) {
+        var fieldId, inputInterface;
+
+        if (!this.enabled == disabled) {
+          // Nothing to do
+          return;
+        }
+
+        if (disabled) {
+            this.wrapperElement.classList.add('disabled');
+        } else {
+            this.wrapperElement.classList.remove('disabled');
+        }
+        for (fieldId in this.fieldInterfaces) {
+            inputInterface = this.fieldInterfaces[fieldId];
+            inputInterface.setDisabled(disabled || this.readOnly || inputInterface._readOnly);
+        }
+        if (this.acceptButton != null) {
+            this.acceptButton.setDisabled(disabled);
+        }
+        if (this.cancelButton != null) {
+            this.cancelButton.setDisabled(disabled);
+        }
+        this.enabled = !disabled;
+    };
+
+    Form.prototype.enable = function enable() {
+        this.setDisabled(false);
+    };
+
+    Form.prototype.disable = function disable() {
+        this.setDisabled(true);
+    };
+
+    Form.prototype.insertInto = function insertInto(element, refElement) {
+        StyledElements.StyledElement.prototype.insertInto.call(this, element, refElement);
+        this.repaint();
     };
 
     window.Form = Form;

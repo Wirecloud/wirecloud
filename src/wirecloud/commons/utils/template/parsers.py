@@ -245,7 +245,17 @@ class USDLTemplateParser(object):
 
         addr_element = self._get_field(VCARD, 'addr', self._rootURI, id_=True)
         self._info['mail'] = self._get_field(VCARD, 'email', addr_element)
+        self._parse_requirements()
+
+    def _parse_requirements(self):
         self._info['requirements'] = []
+
+        for wrequirement in self._graph.objects(self._rootURI, WIRE['hasRequirement']):
+            if self._graph.objects(wrequirement, RDF['type']).next() == WIRE['Feature']:
+                self._info['requirements'].append({
+                    'type': 'feature',
+                    'name': self._get_field(RDFS, 'label', wrequirement, required=True),
+                })
 
     def _parse_wiring_info(self, wiring_property='hasPlatformWiring', parse_connections=False):
 
@@ -580,7 +590,7 @@ class USDLTemplateParser(object):
         self.base = base
 
     def get_contents(self):
-        return self._graph.serialize()
+        return self._graph.serialize(format='pretty-xml')
 
     def get_resource_type(self):
         return self._info['type']

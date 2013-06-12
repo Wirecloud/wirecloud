@@ -21,7 +21,8 @@
     PopupMenu.prototype = new StyledElements.PopupMenuBase({extending: true});
 
     PopupMenu.prototype.show = function show(refPosition) {
-        EzWebExt.addEventListener(document, "click", this._disableCallback, true);
+        document.addEventListener("click", this._disableCallback, true);
+        document.addEventListener("contextmenu", this._disableCallback, true);
 
         StyledElements.PopupMenuBase.prototype.show.call(this, refPosition);
     };
@@ -29,7 +30,8 @@
     PopupMenu.prototype.hide = function hide() {
         StyledElements.PopupMenuBase.prototype.hide.call(this);
 
-        EzWebExt.removeEventListener(document, "click", this._disableCallback, true);
+        document.removeEventListener("click", this._disableCallback, true);
+        document.removeEventListener("contextmenu", this._disableCallback, true);
     };
 
     PopupMenu.prototype.destroy = function destroy() {

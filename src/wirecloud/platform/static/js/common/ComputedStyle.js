@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -37,7 +37,7 @@
 
             computedStyle = document.defaultView.getComputedStyle(document.documentElement, null);
             width = computedStyle.getPropertyCSSValue('width');
-            width = width.getFloatValue(CSSPrimitiveValue.CSS_PX);
+            width = width.getFloatValue(width.CSS_PX);
         } catch (e) {
             useInternalComputedStyle = true;
             cssProperties = computedStyle;

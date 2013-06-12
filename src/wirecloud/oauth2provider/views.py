@@ -18,7 +18,9 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from django.http import HttpResponse, HttpResponseNotAllowed
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods, require_POST
+from django.shortcuts import render
 
 from wirecloud.oauth2provider.provider import WirecloudAuthorizationProvider
 
@@ -26,22 +28,28 @@ from wirecloud.oauth2provider.provider import WirecloudAuthorizationProvider
 provider = WirecloudAuthorizationProvider()
 
 
+@require_http_methods(["GET", "POST"])
+@login_required
 def provide_authorization_code(request):
 
-    pyoauth2_response = provider.get_authorization_code_from_uri(request.get_full_path())
-    response = HttpResponse(pyoauth2_response.content, status=pyoauth2_response.status_code)
-    for k, v in pyoauth2_response.headers.iteritems():
-        response[k] = v
+    params = request.GET.dict()
 
-    return response
+    if 'response_type' not in params:
+        return build_error_response(request, 400, 'Missing parameter response_type in URL query')
 
+    if 'client_id' not in params:
+        return build_error_response(request, 400, 'Missing parameter client_id in URL query')
+
+    if 'redirect_uri' not in params:
+        return build_error_response(request, 400, 'Missing parameter redirect_uri in URL query')
+
+    if request.method == 'GET':
+        return render(request, 'wirecloud/oauth2provider/auth.html', {'app': provider.get_client(params['client_id'])})
+    else:
+        return provider.get_authorization_code(request.user, **params)
+
+
+@require_POST
 def provide_authorization_token(request):
 
-    if request.method == 'POST':
-        pyoauth2_response = provider.get_token_from_post_data(request.POST.dict())
-
-    response = HttpResponse(pyoauth2_response.content, status=pyoauth2_response.status_code)
-    for k, v in pyoauth2_response.headers.iteritems():
-        response[k] = v
-
-    return response
+    return provider.get_token_from_post_data(request.POST.dict())

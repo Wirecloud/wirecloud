@@ -19,6 +19,7 @@
 
 
 from django.conf.urls.defaults import patterns, url
+from django.views.generic.base import TemplateView
 from wirecloud.fiware.marketAdaptor import views
 
 urlpatterns = patterns('wirecloud.fiware.marketAdaptor.views',
@@ -26,7 +27,8 @@ urlpatterns = patterns('wirecloud.fiware.marketAdaptor.views',
     url(r'^marketplace/(?P<marketplace>[\w -]+)/(?P<store>[\w -]+)/resources/?$', views.ServiceCollection(permitted_methods=('GET', 'POST'))),
     url(r'^marketplace/(?P<marketplace>[\w -]+)/search/(?P<keyword>[\w -]+)/?$', views.ServiceSearchCollection(permitted_methods=('GET',))),
     url(r'^marketplace/(?P<marketplace>[\w -]+)/search/(?P<store>[\w -]+)/(?P<keyword>[\w -]+)/?$', views.ServiceSearchCollection(permitted_methods=('GET',))),
-    url(r'^marketplace/(?P<marketplace>[\w -]+)/stores/?$', views.StoreCollection(permitted_methods=('GET', 'POST'))),
-    url(r'^marketplace/(?P<marketplace>[\w -]+)/stores/(?P<store>[\w -]+)/?$', views.StoreEntry(permitted_methods=('DELETE',))),
-    url(r'^marketplace/(?P<marketplace>[\w -]+)/(?P<store>[\w -]+)/(?P<service_name>[\w -]+)/?$', views.ServiceEntry(permitted_methods=('DELETE',)))
+    url(r'^marketplace/(?P<marketplace>[\w -]+)/stores/?$', views.StoreCollection(permitted_methods=('GET',))),
+    url(r'^marketplace/(?P<marketplace>[\w -]+)/(?P<store>[\w -]+)/(?P<service_name>[\w -]+)/?$', views.ServiceEntry(permitted_methods=('DELETE',))),
+    url(r'^marketplace/(?P<marketplace>[\w -]+)/store/(?P<store>[\w -]+)/start_purchase/?$', 'start_purchase', name='wirecloud.fiware.store_start_purchase'),
+    url(r'^fiware/redirect_uri$', TemplateView.as_view(template_name='wirecloud/fiware/store/buy_success.html'), name='wirecloud.fiware.store_redirect_uri'),
 )

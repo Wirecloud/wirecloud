@@ -42,7 +42,7 @@
                 'details': function (options, context) {
                     var details, painter, button, main_description,
                         legal_description, pricing_description,
-                        sla_description;
+                        sla_description, offering_resource_description;
  
                     details = new StyledElements.StyledNotebook();
 
@@ -64,6 +64,12 @@
                     sla_description = details.createTab({'name': gettext('Service level agreement'), 'closable': false});
                     painter = new SlaPainter(Wirecloud.currentTheme.templates['service_level_template'], sla_description.wrapperElement);
                     painter.paint(resource);
+
+                    if (Array.isArray(resource.resources)) {
+                        offering_resource_description = details.createTab({'name': gettext('Resources'), 'closable': false});
+                        painter = new Wirecloud.FiWare.ui.OfferingResourcePainter();
+                        painter.paint(resource, offering_resource_description, this.mainview.catalogue);
+                    }
 
                     return details;
                 }.bind(this)

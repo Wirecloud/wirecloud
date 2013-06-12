@@ -99,14 +99,32 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.gzip.GZipMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'wirecloud.commons.middleware.ConditionalGetMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
+    'wirecloud.commons.middleware.URLMiddleware',
 )
+
+URL_MIDDLEWARE_CLASSES = {
+    'default': (
+        'django.middleware.gzip.GZipMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.locale.LocaleMiddleware',
+        'wirecloud.commons.middleware.ConditionalGetMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+    ),
+    'api': (
+        'django.middleware.gzip.GZipMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.locale.LocaleMiddleware',
+        'wirecloud.commons.middleware.ConditionalGetMiddleware',
+        'wirecloud.commons.middleware.AuthenticationMiddleware',
+    ),
+    'proxy': (
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+    )
+}
 
 ROOT_URLCONF = '{{ project_name }}.urls'
 
@@ -130,6 +148,7 @@ INSTALLED_APPS = (
     'wirecloud.commons',
     'wirecloud.catalogue',
     'wirecloud.platform',
+    'wirecloud.oauth2provider',
     'wirecloud.fiware',
     'south',
     'compressor',
@@ -203,6 +222,7 @@ WORKSPACE_MANAGERS = (
 )
 
 WIRECLOUD_PLUGINS = (
+    'wirecloud.oauth2provider.plugins.OAuth2Plugin',
     'wirecloud.fiware.plugins.FiWarePlugin',
 )
 

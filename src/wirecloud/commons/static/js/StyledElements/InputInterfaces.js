@@ -112,6 +112,10 @@ var InputInterface = function InputInterface(fieldId, options) {
 };
 InputInterface.prototype = new StyledElements.StyledElement();
 
+InputInterface.prototype.repaint = function repaint() {
+    this.inputElement.repaint();
+};
+
 InputInterface.prototype.getValue = function getValue() {
     return this.inputElement.getValue();
 };
@@ -596,20 +600,12 @@ function FileInputInterface(fieldId, fieldDesc) {
 
     InputInterface.call(this, fieldId, fieldDesc);
 
-    this.inputElement = document.createElement('input');
-    this.inputElement.setAttribute('type', 'file');
-    this.inputElement.setAttribute('name', fieldId);
-
-    this.wrapperElement = this.inputElement;
+    this.inputElement = new StyledElements.StyledFileField(fieldDesc);
 }
 FileInputInterface.prototype = new InputInterface();
 
-FileInputInterface.prototype.insertInto = function insertInto(element) {
-    element.appendChild(this.wrapperElement);
-};
-
 FileInputInterface.prototype.getValue = function getValue() {
-    return this.inputElement.files[0];
+    return this.inputElement.getValue();
 };
 
 FileInputInterface.prototype._setValue = function _setValue(newValue) {
@@ -618,6 +614,10 @@ FileInputInterface.prototype._setValue = function _setValue(newValue) {
 
 FileInputInterface.prototype._setError = function _setError(error) {
     // TODO
+};
+
+FileInputInterface.prototype.setDisabled = function setDisabled(disable) {
+    this.inputElement.disabled = !!disable;
 };
 
 /**
@@ -741,6 +741,10 @@ var FieldSetInterface = function FieldSetInterface(fieldId, fieldDesc) {
     });
 };
 FieldSetInterface.prototype = new InputInterface();
+
+FieldSetInterface.prototype.repaint = function repaint() {
+    return this.form.repaint();
+};
 
 FieldSetInterface.prototype.insertInto = function insertInto(element) {
     this.form.insertInto(element);

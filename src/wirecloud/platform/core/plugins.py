@@ -59,6 +59,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/SubMenuItem.js',
     'js/StyledElements/PopupButton.js',
     'js/StyledElements/StaticPaginatedSource.js',
+    'js/StyledElements/FileField.js',
     'js/StyledElements/TextField.js',
     'js/StyledElements/TextArea.js',
     'js/StyledElements/StyledList.js',
@@ -74,6 +75,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/InputInterfaces.js',
     'js/StyledElements/Form.js',
     'js/StyledElements/GUIBuilder.js',
+    'js/StyledElements/PaginationInterface.js',
 )
 
 BASE_CSS = (
@@ -95,6 +97,8 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_button.css',
     'css/styledelements/styled_notebook.css',
     'css/styledelements/styled_form.css',
+    'css/styledelements/styled_pagination.css',
+    'css/styledelements/styled_file_field.css',
     'css/styledelements/styled_text_field.css',
     'css/styledelements/styled_text_area.css',
     'css/styledelements/styled_password_field.css',
@@ -200,6 +204,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/ui/WirecloudCatalogue/PublishView.js',
                 'js/wirecloud/ui/WindowMenu.js',
                 'js/wirecloud/ui/AlertWindowMenu.js',
+                'js/wirecloud/ui/ExternalProcessWindowMenu.js',
                 'js/dragboard/PreferencesWindowMenu.js',
                 'js/wirecloud/ui/InstantiateMashupWindowMenu.js',
                 'js/wirecloud/ui/FormWindowMenu.js',

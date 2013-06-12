@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012 Universidad Politécnica de Madrid
+# Copyright 2012-2013 Universidad Politécnica de Madrid
 
 # This file is part of Wirecluod.
 
@@ -27,6 +27,7 @@ from lxml import etree
 from django.utils.http import urlquote, urlquote_plus
 
 from wirecloud.fiware.marketAdaptor.usdlParser import USDLParser
+from wirecloud.fiware.storeclient import StoreClient
 from wirecloud.proxy.views import MethodRequest
 
 RESOURCE_XPATH = '/collection/resource'
@@ -41,6 +42,7 @@ class MarketAdaptor(object):
 
     _marketplace_uri = None
     _session_id = None
+    _stores = {}
 
     def __init__(self, marketplace_uri, user='demo1234', passwd='demo1234'):
         self._marketplace_uri = marketplace_uri
@@ -113,6 +115,9 @@ class MarketAdaptor(object):
             store['url'] = url
             result.append(store)
 
+            if store['name'] not in self._stores:
+                self._stores[store['name']] = StoreClient(store['url'])
+
         return result
 
     def get_store_info(self, store):
@@ -124,7 +129,7 @@ class MarketAdaptor(object):
         session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
         headers = {'Cookie': session_cookie}
 
-        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/offering/store/" + urlquote(store)), '', headers)
+        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + urlquote(store)), '', headers)
         try:
             response = opener.open(request)
         except HTTPError, e:
@@ -151,68 +156,12 @@ class MarketAdaptor(object):
         result['url'] = parsed_body.xpath(URL_XPATH)[0].text
         result['registrationDate'] = parsed_body.xpath(DATE_XPATH)[0].text
 
+        if result['name'] not in self._stores:
+            self._stores[result['name']] = StoreClient(result['url'])
+
         return result
 
-    def add_store(self, store_info):
-
-        if self._session_id is None:
-            self.authenticate()
-
-        params = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><resource name="' + store_info['store_name'] + '" ><url>' + store_info['store_uri'] + '</url></resource>'
-        session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
-        headers = {'content-type': 'application/xml', 'Cookie': session_cookie}
-
-        opener = urllib2.build_opener()
-        request = MethodRequest("PUT", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/"), params, headers)
-        try:
-            response = opener.open(request)
-        except HTTPError, e:
-            # Marketplace redirects to a login page (sprint_security_login) if
-            # the session expires. In addition, python don't follow
-            # redirections when issuing DELETE requests, so we have to check for
-            # a 302 startus code
-            if e.code == 302:
-                self._session_id = None
-                self.add_store(store_info)
-                return
-            else:
-                raise HTTPError(e.url, e.code, e.msg, None, None)
-
-        if response.code != 201:
-            raise HTTPError(response.url, response.code, response.msg, None, None)
-
-    def update_store(self, store_info):
-        pass
-
-    def delete_store(self, store):
-
-        if self._session_id is None:
-            self.authenticate()
-
-        opener = urllib2.build_opener()
-        session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
-        headers = {'content-type': 'application/xml', 'Cookie': session_cookie}
-
-        request = MethodRequest("DELETE", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + urlquote(store)), '', headers)
-
-        try:
-            response = opener.open(request)
-        except HTTPError, e:
-            # Marketplace redirects to a login page (sprint_security_login) if
-            # the session expires. In addition, python don't follow
-            # redirections when issuing DELETE requests, so we have to check for
-            # a 302 startus code
-            if e.code == 302:
-                self._session_id = None
-                self.delete_store(store)
-                return
-            else:
-                raise HTTPError(e.url, e.code, e.msg, None, None)
-
-        if response.code != 200:
-            raise HTTPError(response.url, response.code, response.msg, None, None)
-
-    def get_all_services_from_store(self, store):
+    def get_all_services_from_store(self, store, **options):
 
         if self._session_id is None:
             self.authenticate()
@@ -236,7 +185,7 @@ class MarketAdaptor(object):
         if len(path) > 2 and path[2] == 'spring_security_login':
             # Session has expired
             self._session_id = None
-            return self.get_all_services_from_store(store)
+            return self.get_all_services_from_store(store, **options)
 
         if response.code != 200:
             raise HTTPError(response.url, response.code, response.msg, None, None)
@@ -267,20 +216,79 @@ class MarketAdaptor(object):
             parsed_usdl = parser.parse()
 
             if isinstance(parsed_usdl, dict):
-                parsed_usdl['store'] = store
-                parsed_usdl['marketName'] = res.get('name')
+                parsed_usdl = [parsed_usdl]
 
-                if parsed_usdl['versions'][0]['uriTemplate'] == '':
-                    parsed_usdl['versions'][0]['uriTemplate'] = url
+            for ser in parsed_usdl:
 
-                result['resources'].append(parsed_usdl)
-            else:
-                for ser in parsed_usdl:
-                    ser['store'] = store
-                    ser['marketName'] = res.get('name')
-                    result['resources'].append(ser)
+                ser['store'] = store
+                ser['marketName'] = res.get('name')
+
+                if ser['versions'][0]['uriTemplate'] == '':
+                    ser['versions'][0]['uriTemplate'] = url
+
+                ser['usdl_url'] = url
+                ser['rating'] = 5  # TODO
+
+                try:
+
+                    offering_parsed_url = urlparse(url)
+                    offering_id = offering_parsed_url.path.rsplit('/', 1)[1].replace('__', '/')
+
+                    store_client = self._stores[store]
+                    offering_info = store_client.get_offering_info(offering_id, options[store + '/token'])
+                    offering_type = 'non instantiable service'
+                    if len(offering_info['resources']) == 1:
+
+                        offering_resource = offering_info['resources'][0]
+
+                        if offering_resource['content_type'] == 'application/x-widget+mashable-application-component':
+                            offering_type = 'widget'
+                        elif offering_resource['content_type'] == 'application/x-operator+mashable-application-component':
+                            offering_type = 'operator'
+                        elif offering_resource['content_type'] == 'application/x-mashup+mashable-application-component':
+                            offering_type = 'mashup'
+
+                    else:
+
+                        info_offering_resources = []
+                        for offering_resource in offering_info['resources']:
+                            resource_info = {
+                                'content_type': offering_resource['content_type'],
+                                'name': offering_resource['name'],
+                                'description': offering_resource['description'],
+                            }
+                            if 'link' in offering_resource:
+                                resource_info['url'] = offering_resource['link']
+
+                            if offering_resource['content_type'] in ('application/x-widget+mashable-application-component', 'application/x-operator+mashable-application-component', 'application/x-mashup+mashable-application-component'):
+                                if 'link' in offering_resource:
+                                    resource_info['id'] = offering_resource['link'].rsplit('__', 1)[1].rsplit('.', 1)[0].replace('_', '/')
+                                offering_type = 'pack'
+
+                            info_offering_resources.append(resource_info)
+
+                        ser['resources'] = info_offering_resources
+
+                    ser['type'] = offering_type
+                    ser['state'] = offering_info['state']
+                    ser['rating'] = offering_info['rating']
+
+                except:
+                    pass
+
+                result['resources'].append(ser)
 
         return result
+
+    def get_store(self, name):
+        if name not in self._stores:
+            self.get_store_info(name)
+
+        return self._stores[name]
+
+    def start_purchase(self, store, offering_url, redirect_uri, **options):
+        store_client = self.get_store(store)
+        return store_client.start_purchase(offering_url, redirect_uri, options[store + '/token'])
 
     def get_service_info(self, store, service):
         pass

@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -83,6 +83,9 @@
                 case 'mashup':
                     label.classList.add('label-important');
                     break;
+                case 'pack':
+                    label.classList.add('label-info');
+                    break;
                 }
 
                 return label;
@@ -116,15 +119,26 @@
 
                 return button;
             },
-            'rating': this.get_popularity_html.bind(this, resource.getPopularity()),
+            'rating': this.get_popularity_html.bind(this, resource.rating),
             'mainbutton': function () {
                 var button, local_catalogue_view;
 
                 local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
+
+                if (!this.catalogue_view.catalogue.is_purchased(this.resource) && ['widget', 'operator', 'mashup', 'pack'].indexOf(this.resource.getType()) !== -1) {
+                    button = new StyledElements.StyledButton({
+                        'class': 'mainbutton btn-success',
+                        'text': gettext('Buy')
+                    });
+                    button.addEventListener('click', this.catalogue_view.createUserCommand('buy', this.resource));
+                    return button;
+                }
+
                 if (this.resource.getType() === 'operator') {
 
                     if (Wirecloud.LocalCatalogue.resourceExists(this.resource)) {
                         button = new StyledElements.StyledButton({
+                            'class': 'btn-danger',
                             'text': gettext('Uninstall')
                         });
                         button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', this.resource, this.catalogue_view));
@@ -155,15 +169,22 @@
                 } else {
                     if (Wirecloud.LocalCatalogue.resourceExists(this.resource)) {
                         button = new StyledElements.StyledButton({
+                            'class': 'btn-danger',
                             'text': gettext('Uninstall')
                         });
                         button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', this.resource, this.catalogue_view));
-                    } else {
+                    } else if (['widget', 'operator', 'mashup'].indexOf(this.resource.getType()) != -1) {
                         button = new StyledElements.StyledButton({
                             'text': gettext('Install')
                         });
 
                         button.addEventListener('click', local_catalogue_view.createUserCommand('install', this.resource, this.catalogue_view));
+                    } else {
+                        button = new StyledElements.StyledButton({
+                            'text': gettext('Details')
+                        });
+
+                        button.addEventListener('click', this.catalogue_view.createUserCommand('showDetails', this.resource));
                     }
                 }
                 button.addClassName('mainbutton btn-primary');
@@ -218,7 +239,7 @@
         });
         fragment.appendChild(button);
 
-        if (this.catalogue_view.catalogue === Wirecloud.LocalCatalogue && resource.getType() === 'mashup') {
+        if (this.catalogue_view.catalogue === Wirecloud.LocalCatalogue) {
             button = new StyledElements.StyledButton({
                 'text': gettext('Publish')
             });
@@ -229,6 +250,7 @@
         if (Wirecloud.LocalCatalogue.resourceExists(resource)) {
             var local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
             button = new StyledElements.StyledButton({
+                'class': 'btn-danger',
                 'text': gettext('Uninstall')
             });
             button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', resource, this.catalogue_view));
@@ -290,7 +312,7 @@
         }
 
         for (i = 0; i < elements.length; i += 1) {
-            EzWebExt.addEventListener(elements[i], _event, handler);
+            elements[i].addEventListener(_event, handler);
         }
     };
 

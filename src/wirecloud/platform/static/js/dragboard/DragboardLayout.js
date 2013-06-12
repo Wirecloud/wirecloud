@@ -205,7 +205,7 @@ Object.defineProperty(DragboardLayout.prototype, "dragboardLeftMargin", {
  * @param {Boolean} affectsDragboard true if the associated dragboard must be notified
  */
 DragboardLayout.prototype.addIWidget = function (iWidget, affectsDragboard) {
-    if (iWidget.layout !== null && iWidget.layout !== undefined) {
+    if (iWidget.layout != null) {
         var msg = gettext("the iWidget could not be associated with this layout as it already has an associated layout.");
         throw new Error(msg);
     }

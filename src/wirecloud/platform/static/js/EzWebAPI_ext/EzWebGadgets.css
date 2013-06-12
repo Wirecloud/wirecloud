@@ -2,6 +2,9 @@
 @import url('/static/css/styledelements/styled_addon.css');
 @import url('/static/css/styledelements/styled_button.css');
 @import url('/static/css/styledelements/styled_notebook.css');
+@import url('/static/css/styledelements/styled_pagination.css');
+@import url('/static/css/styledelements/styled_form.css');
+@import url('/static/css/styledelements/styled_file_field.css');
 @import url('/static/css/styledelements/styled_text_field.css');
 @import url('/static/css/styledelements/styled_text_area.css');
 @import url('/static/css/styledelements/styled_password_field.css');
@@ -545,42 +548,6 @@ div.styled_numeric_field div.numeric_bottom_button {
 	right:0px;
 	bottom:0px;
 	overflow:auto;
-}
-
-/* Pagination Interface */
-.pagination .styled_button {
-  vertical-align: middle;
-}
-
-.pagination .styled_button div {
-  -moz-border-radius: 0px;
-  -webkit-border-radius: 0px;
-  border-radius: 0px;
-  border: none;
-}
-
-.pagination .go-first-button div {
-  width: 16px;
-  height: 16px;
-  background: transparent url("images/styledElements/go-first.png") no-repeat center center;
-}
-
-.pagination .go-prev-button div {
-  width: 16px;
-  height: 16px;
-  background: transparent url("images/styledElements/go-previous.png") no-repeat center center;
-}
-
-.pagination .go-next-button div {
-  width: 16px;
-  height: 16px;
-  background: transparent url("images/styledElements/go-next.png") no-repeat center center;
-}
-
-.pagination .go-last-button div {
-  width: 16px;
-  height: 16px;
-  background: transparent url("images/styledElements/go-last.png") no-repeat center center;
 }
 
 /* Popup menu */

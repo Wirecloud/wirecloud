@@ -1,0 +1,121 @@
+<?xml version="1.0" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:usdl-core="http://www.linked-usdl.org/ns/usdl-core#"
+     xmlns:foaf="http://xmlns.com/foaf/0.1/"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:dcterms="http://purl.org/dc/terms/"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:wire="http://wirecloud.conwet.fi.upm.es/ns/widget#"
+     xmlns:vCard = "http://www.w3.org/2006/vcard/ns#"
+     xmlns:gr="http://purl.org/goodrelations/v1#">
+
+    <wire:Widget rdf:about="http://wirecloud.com/test">
+        <dcterms:title>test</dcterms:title>
+        <dcterms:description xml:lang="en">Test Widget description</dcterms:description>
+        <dcterms:description xml:lang="es">Descripción del Widget de pruebas</dcterms:description>
+        <dcterms:creator rdf:resource="http://creatoruri/"/>
+        <usdl-core:versionInfo>0.1</usdl-core:versionInfo>
+        <wire:hasImageUri rdf:resource="images/catalogue.png"/>
+        <wire:hasiPhoneImageUri rdf:resource="images/catalogue_iphone.png"/>
+
+        <usdl-core:utilizedResource rdf:resource="test.html"/>
+        <foaf:page rdf:resource="doc/index.html"/>
+        <usdl-core:hasProvider rdf:resource="http://vendoruri/"/>
+
+        <vCard:addr>
+            <vCard:Work>
+                <vCard:email>test@example.com</vCard:email>
+            </vCard:Work>
+        </vCard:addr>
+
+        <wire:hasRequirement>
+            <wire:Feature>
+                <rdfs:label>Wirecloud</rdfs:label>
+            </wire:Feature>
+        </wire:hasRequirement>
+        <wire:hasRequirement>
+            <wire:Feature>
+                <rdfs:label>nonexistent-feature</rdfs:label>
+            </wire:Feature>
+        </wire:hasRequirement>
+
+        <wire:hasPlatformPreference>
+            <wire:PlatformPreference rdf:ID="preference_1">
+                                <wire:index>0</wire:index>
+                <dcterms:title>pref</dcterms:title>
+                <wire:type>list</wire:type>
+                <dcterms:description xml:lang="en">Preference description</dcterms:description>
+                <dcterms:description xml:lang="es">Descripción de la preferencia</dcterms:description>
+                <rdfs:label xml:lang="en">Preference label</rdfs:label>
+                <rdfs:label xml:lang="es">Etiqueta de la preferencia</rdfs:label>
+                <wire:default>value</wire:default>
+                    <wire:hasOption>
+                    <wire:Option rdf:ID="option_1">
+                        <dcterms:title xml:lang="en">Option name</dcterms:title>
+                        <dcterms:title xml:lang="es">Nombre de la opción</dcterms:title>
+                        <wire:value>1</wire:value>
+                    </wire:Option>
+                </wire:hasOption>
+            </wire:PlatformPreference>
+        </wire:hasPlatformPreference>
+
+        <wire:hasPlatformStateProperty>
+            <wire:PlatformStateProperty rdf:ID="property_1">
+                <dcterms:title>prop</dcterms:title>
+                <wire:type>text</wire:type>
+                <rdfs:label xml:lang="en">Property label</rdfs:label>
+                <rdfs:label xml:lang="es">Etiqueta de la propiedad</rdfs:label>
+            </wire:PlatformStateProperty>
+        </wire:hasPlatformStateProperty>
+
+        <wire:hasPlatformWiring>
+            <wire:PlatformWiring rdf:ID="wiring">
+                <wire:hasInputEndpoint>
+                    <wire:InputEndpoint rdf:ID="slot_1">
+                        <dcterms:title>slot</dcterms:title>
+                        <wire:type>text</wire:type>
+                        <rdfs:label xml:lang="en">Slot label</rdfs:label>
+                        <rdfs:label xml:lang="es">Etiqueta de la ranura</rdfs:label>
+                        <wire:slotFriendcode>test_friend_code</wire:slotFriendcode>
+                    </wire:InputEndpoint>
+                </wire:hasInputEndpoint>
+                <wire:hasOutputEndpoint>
+                    <wire:OutputEndpoint rdf:ID="event_1">
+                        <dcterms:title>event</dcterms:title>
+                        <wire:type>text</wire:type>
+                        <rdfs:label xml:lang="en">Event label</rdfs:label>
+                        <rdfs:label xml:lang="es">Etiqueta del evento</rdfs:label>
+                        <wire:eventFriendcode>test_friend_code</wire:eventFriendcode>
+                    </wire:OutputEndpoint>
+                </wire:hasOutputEndpoint>
+            </wire:PlatformWiring>
+        </wire:hasPlatformWiring>
+
+        <wire:hasPlatformRendering>
+            <wire:PlatformRendering>
+                <wire:renderingWidth>24</wire:renderingWidth>
+                <wire:renderingHeight>10</wire:renderingHeight>
+            </wire:PlatformRendering>
+        </wire:hasPlatformRendering>
+
+    </wire:Widget>
+    <foaf:Person rdf:about="http://creatoruri/">
+        <foaf:name>admin</foaf:name>
+    </foaf:Person>
+
+    <gr:BusinessEntity rdf:about="http://vendoruri/">
+        <foaf:name>Wirecloud</foaf:name>
+    </gr:BusinessEntity>
+
+    <usdl-core:Resource rdf:about="test.html">
+        <dcterms:title>code</dcterms:title>
+    </usdl-core:Resource>
+
+    <foaf:Image rdf:about="images/catalogue.png">
+        <dcterms:title>ImageURI</dcterms:title>
+    </foaf:Image>
+
+    <foaf:Image rdf:about="images/catalogue_iphone.png">
+        <dcterms:title>iPhoneImageURI</dcterms:title>
+    </foaf:Image>
+</rdf:RDF>

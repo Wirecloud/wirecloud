@@ -27,7 +27,10 @@
     width: 160px;
 }
 
-.styled_form td > .styled_text_field {
+.styled_form td > .styled_text_field,
+.styled_form td > .styled_text_area,
+.styled_form td > .horizontal_layout.styled_file_field
+{
     width: auto;
 }
 
@@ -35,4 +38,11 @@
 .styled_form td > .styled_text_area
 {
     margin: 0;
+}
+
+.styled_form td > .styled_file_field,
+.styled_form td > .horizontal_layout.styled_file_field
+{
+    margin-top: 0;
+    margin-bottom: 0;
 }

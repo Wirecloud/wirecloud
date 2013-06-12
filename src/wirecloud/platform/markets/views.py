@@ -18,7 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
-import urlparse
+import os
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -28,13 +28,14 @@ from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
+from wirecloud.catalogue.models import CatalogueResource
+from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.baseviews import Resource, Service
-from wirecloud.commons.utils import downloader
-from wirecloud.commons.utils.http import supported_request_mime_types
+from wirecloud.commons.utils.http import build_error_response, supported_request_mime_types
 from wirecloud.commons.utils.transaction import commit_on_http_success
+from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.markets.utils import get_market_managers
-from wirecloud.platform.models import Market, PublishedWorkspace
-from wirecloud.platform.workspace.mashupTemplateGenerator import build_usdl_from_workspace
+from wirecloud.platform.models import Market
 
 
 class MarketCollection(Resource):
@@ -108,37 +109,29 @@ class PublishService(Service):
     @method_decorator(login_required)
     @supported_request_mime_types(('application/json'))
     def process(self, request):
-        data = json.loads(request.raw_post_data)
-        template_url = data['template_url']
 
-        path = request.build_absolute_uri()
-        login_scheme, login_netloc = urlparse.urlparse(template_url)[:2]
-        current_scheme, current_netloc = urlparse.urlparse(path)[:2]
-        if ((not login_scheme or login_scheme == current_scheme) and
-            (not login_netloc or login_netloc == current_netloc)):
-            pworkspace_id = template_url.split('/')[-2]
-            published_workspace = PublishedWorkspace.objects.get(id=pworkspace_id)
-            description = published_workspace.template
-        else:
-            description = downloader.download_http_content(template_url, user=request.user)
+        try:
+            data = json.loads(request.raw_post_data)
+        except Exception, e:
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
 
-        usdl_info = None
-        if data.get('usdl', None) is not None:
-            usdl_info = {
-                'data': downloader.download_http_content(data['usdl'], user=request.user),
-                'content_type': 'application/rdf+xml'
-            }
+        (resource_vendor, resource_name, resource_version) = data['resource'].split('/')
+        resource = get_object_or_404(CatalogueResource, vendor=resource_vendor, short_name=resource_name, version=resource_version)
+
+        if not resource.fromWGT:
+            msg = _('Only packaged resources can be published')
+            return build_error_response(request, 400, msg)
+
+        base_dir = catalogue.wgt_deployer.get_base_dir(resource_vendor, resource_name, resource_version)
+        wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
 
         market_managers = get_market_managers(request.user)
         errors = {}
-        publish_options = json.loads(published_workspace.params)
         for market_endpoint in data['marketplaces']:
 
             try:
-                name = publish_options.get('name').replace(' ', '')
-                template_location = market_managers[market_endpoint['market']].build_repository_url(market_endpoint, name + 'Mdl')
-                usdl = build_usdl_from_workspace(publish_options, published_workspace.workspace, request.user, template_location, usdl_info=usdl_info)
-                market_managers[market_endpoint['market']].publish(market_endpoint, description, name, request.user, usdl=usdl, request=request)
+                market_managers[market_endpoint['market']].publish(market_endpoint, wgt_file, request.user, request=request)
             except Exception, e:
                 errors[market_endpoint['market']] = unicode(e)
 

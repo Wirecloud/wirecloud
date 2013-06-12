@@ -153,7 +153,7 @@ class USDLParser(object):
         version = self._get_field(USDL, service_uri, 'versionInfo')[0]
         # if the document does no have a uri_template is not a widget or operator
         if uri_template == '':
-            self._info['type'] = 'non-instantiable service'
+            self._info['type'] = 'other'
         else:
             # To know if is a widget an operator or another kind of service using an artefact
             # is necesary to download the technical description
@@ -164,7 +164,7 @@ class USDLParser(object):
             try:
                 response = opener.open(request)
                 if response.code != 200:
-                    self._info['type'] = 'non-instantiable service'
+                    self._info['type'] = 'other'
                 else:
                     content = response.read()
                     parser = TemplateParser(content)
@@ -184,9 +184,9 @@ class USDLParser(object):
                             part_info['uri'] = unicode(part)
                             self._info['parts'].append(part_info)
             except HTTPError:
-                self._info['type'] = 'non-instantiable service'
+                self._info['type'] = 'other'
 
-        if self._info['type'] == 'non-instantiable service':
+        if self._info['type'] == 'other':
             display_name = self._info['name']
 
         self._info['versions'].append({

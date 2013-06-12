@@ -11,7 +11,6 @@
     <iPhoneImageURI>images/catalogue_iphone.png</iPhoneImageURI>
     <WikiURI>doc/index.html</WikiURI>
 
-    <Require feature="Wirecloud" version="0.3.0"/>
   </Catalog.ResourceDescription>
 
   <Platform.Preferences>

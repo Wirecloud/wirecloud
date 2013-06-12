@@ -141,12 +141,19 @@ class LocalCatalogueTestCase(LocalizedTestCase):
         template_uri = "http://example.com/path/widget.rdf"
         template = self.read_template('template1.rdf')
 
+        parser = TemplateParser(template)
+        data = parser.get_resource_info()
+        self.assertIn('requirements', data)
+        self.assertItemsEqual(data['requirements'], ({'type': 'feature', 'name': 'Wirecloud'},))
+
         downloader.download_http_content.set_response(template_uri, template)
         downloader.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
         widget = install_resource(template, template_uri, self.user, False).widget
 
         self.changeLanguage('en')
         data = get_widget_data(widget)
+        self.assertEqual(data['uri'], 'Wirecloud/test/0.1')
+        self.assertEqual(data['vendor'], 'Wirecloud')
         self.assertEqual(data['name'], 'test')
         self.assertEqual(data['version'], '0.1')
 
@@ -309,6 +316,25 @@ class LocalCatalogueTestCase(LocalizedTestCase):
 
         template_uri = "http://example.com/path/widget.xml"
         template = self.read_template('template8.xml')
+
+        parser = TemplateParser(template)
+        data = parser.get_resource_info()
+        self.assertIn('requirements', data)
+        self.assertItemsEqual(data['requirements'], ({'type': 'feature', 'name': 'nonexistent-feature'}, {'type': 'feature', 'name': 'Wirecloud'},))
+
+        downloader.download_http_content.set_response(template_uri, template)
+        self.assertRaises(Exception, install_resource, template, template_uri, self.user, False)
+        self.assertRaises(Widget.DoesNotExist, Widget.objects.get, resource__vendor='Example', resource__short_name='test', resource__version='0.1')
+
+    def test_widget_with_unmet_requirements_rdf(self):
+
+        template_uri = "http://example.com/path/widget.xml"
+        template = self.read_template('template8.rdf')
+
+        parser = TemplateParser(template)
+        data = parser.get_resource_info()
+        self.assertIn('requirements', data)
+        self.assertItemsEqual(data['requirements'], ({'type': 'feature', 'name': 'nonexistent-feature'}, {'type': 'feature', 'name': 'Wirecloud'},))
 
         downloader.download_http_content.set_response(template_uri, template)
         self.assertRaises(Exception, install_resource, template, template_uri, self.user, False)

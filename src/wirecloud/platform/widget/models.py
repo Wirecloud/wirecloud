@@ -32,7 +32,6 @@
 import os
 import random
 
-from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.db import models
 from django.db.models.signals import post_save
@@ -236,8 +235,8 @@ def create_widget_on_resource_creation(sender, instance, created, raw, **kwargs)
             if resource.fromWGT:
                 base_dir = catalogue.wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
                 wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
-                create_widget_from_wgt(wgt_file, resource.creator)
+                resource.widget = create_widget_from_wgt(wgt_file, resource.creator)
             else:
-                create_widget_from_template(resource.template_uri, resource.creator)
+                resource.widget = create_widget_from_template(resource.template_uri, resource.creator)
 
 post_save.connect(create_widget_on_resource_creation, sender=CatalogueResource)

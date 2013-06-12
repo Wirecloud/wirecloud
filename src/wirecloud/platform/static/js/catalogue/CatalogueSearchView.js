@@ -19,7 +19,7 @@
  *
  */
 
-/*global EzWebExt, gettext, PaginationInterface, StyledElements*/
+/*global EzWebExt, gettext, StyledElements*/
 (function () {
 
     "use strict";
@@ -62,12 +62,12 @@
         this.resource_list = new StyledElements.Container({'class': 'resource_list'});
         this.simple_search_input = new StyledElements.StyledTextField();
         this.simple_search_input.inputElement.className = 'simple_search_text';
-        EzWebExt.addEventListener(this.simple_search_input.inputElement, 'keypress', this._onSearchInputKeyPress.bind(this));
+        this.simple_search_input.inputElement.addEventListener('keypress', this._onSearchInputKeyPress.bind(this));
         this.simple_search_input.addEventListener('change', this._onSearchInput.bind(this));
         var contents = builder.parse(Wirecloud.currentTheme.templates['wirecloud_catalogue_search_interface'], {
             'resourcelist': this.resource_list,
             'pagination': function () {
-                return new PaginationInterface(this.pagination);
+                return new StyledElements.PaginationInterface(this.pagination);
             }.bind(this),
             'reset_button': function () {
                 var button = new StyledElements.StyledButton({text: gettext('View All')});
