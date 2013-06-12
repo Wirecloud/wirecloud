@@ -73,6 +73,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/ModelTable.js',
     'js/StyledElements/EditableElement.js',
     'js/StyledElements/InputInterfaces.js',
+    'js/StyledElements/VersionInputInterface.js',
     'js/StyledElements/InputInterfaceFactory.js',
     'js/StyledElements/Form.js',
     'js/StyledElements/GUIBuilder.js',

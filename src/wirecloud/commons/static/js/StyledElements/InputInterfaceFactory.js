@@ -28,6 +28,7 @@
     var default_mapping = {
         'boolean': BooleanInputInterface,
         'text': TextInputInterface,
+        'version': StyledElements.VersionInputInterface,
         'password': PasswordInputInterface,
         'hidden': HiddenInputInterface,
         'list': ListInputInterface,
