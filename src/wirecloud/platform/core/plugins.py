@@ -178,6 +178,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/Wiring.js',
             'js/gadgetModel/Gadget.js',
         ) + STYLED_ELEMENTS_FILES + (
+            'js/wirecloud/ui/InputInterfaceFactory.js',
             'js/wirecloud/ui/IWidgetResizeHandle.js',
             'js/wirecloud/ui/IWidgetView.js',
             'js/wirecloud/ui/Draggable.js',

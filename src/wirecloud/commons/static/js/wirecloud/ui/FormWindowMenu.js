@@ -45,7 +45,7 @@
         this.msgElement = null;
 
         this.form = new Form(fields, EzWebExt.merge(options, {
-            factory: Wirecloud.form.WirecloudInterfaceFactory,
+            factory: Wirecloud.ui.InputInterfaceFactory,
             buttonArea: this.windowBottom
         }));
         this.form.insertInto(this.windowContent);

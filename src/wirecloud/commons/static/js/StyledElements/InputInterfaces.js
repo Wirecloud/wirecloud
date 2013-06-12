@@ -1143,10 +1143,4 @@ var InterfaceFactory = function InterfaceFactory() {
     };
 };
 
-
-Wirecloud.form = {};
-
-Wirecloud.form.WirecloudInterfaceFactory = new InterfaceFactory();
-Wirecloud.form.WirecloudInterfaceFactory.addFieldType('parametrizableValue', ParametrizableValueInputInterface);
-Wirecloud.form.WirecloudInterfaceFactory.addFieldType('parametrizedText', ParametrizedTextInputInterface);
 InterfaceFactory = new InterfaceFactory();

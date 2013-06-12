@@ -18,7 +18,7 @@
             'useHtmlForm': true,
             'legend': 'auto',
             'edition': false,
-            'factory': Wirecloud.form.WirecloudInterfaceFactory
+            'factory': Wirecloud.ui.InputInterfaceFactory
         };
         if (options && options.readOnly) {
             defaultOptions.acceptButton = false;
