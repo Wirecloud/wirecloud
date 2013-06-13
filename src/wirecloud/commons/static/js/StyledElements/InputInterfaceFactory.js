@@ -52,7 +52,7 @@
             if (Class_ == null) {
                 throw new Error(fieldDesc.type);
             }
-            return new Class_(fieldId, fieldDesc);
+            return new Class_(fieldId, fieldDesc, this);
         };
 
         this.addFieldType = function addFieldType(type, class_) {

@@ -732,8 +732,9 @@ MultivaluedInputInterface.prototype._setError = function _setError(error) {
 /**
  *
  */
-var FieldSetInterface = function FieldSetInterface(fieldId, fieldDesc) {
+var FieldSetInterface = function FieldSetInterface(fieldId, fieldDesc, factory) {
     this.form = new Form(fieldDesc.fields, {
+        factory: factory,
         useHtmlForm: false,
         acceptButton: false,
         cancelButton: false,
