@@ -772,6 +772,9 @@ if (!Wirecloud.ui) {
         }
 
         for (key in this.ioperators) {
+            if (this.ioperators[key].isMinimized) {
+                this.ioperators[key].restore();
+            }
             operator_interface = this.ioperators[key];
             pos = operator_interface.getStylePosition();
             inOutPos = operator_interface.getInOutPositions();
