@@ -55,6 +55,12 @@
         this.hollowConnections = {};
         this.fullConnections = {};
         this.subdataConnections = {};
+        this.isMinimized = false;
+        this.minWidth = '';
+        this.initialPos = null;
+        this.movement = false;
+        this.numberOfSources = 0;
+        this.numberOfTargets = 0;
 
         if (manager instanceof Wirecloud.ui.WiringEditor.ArrowCreator) {
             this.isMiniInterface = false;
@@ -68,14 +74,13 @@
         if (!this.isMiniInterface) {
 
             // header, sources and targets for the widget
-            this.resourcesDiv = new StyledElements.BorderLayout();
-            this.resourcesDiv.wrapperElement.classList.add("geContainer");
+            this.resourcesDiv = new StyledElements.BorderLayout({'class': "geContainer"});
             this.sourceDiv = this.resourcesDiv.getEastContainer();
-            this.sourceDiv.wrapperElement.classList.add("sources");
+            this.sourceDiv.addClassName("sources");
             this.targetDiv = this.resourcesDiv.getWestContainer();
-            this.targetDiv.wrapperElement.classList.add("targets");
+            this.targetDiv.addClassName("targets");
             this.header = this.resourcesDiv.getNorthContainer();
-            this.header.wrapperElement.classList.add('header');
+            this.header.addClassName('header');
 
             this.wrapperElement.appendChild(this.resourcesDiv.wrapperElement);
             // widget name
@@ -94,6 +99,19 @@
                     this.wiringEditor.removeIWidget(this);
                 } else {
                     this.wiringEditor.removeIOperator(this);
+                }
+            }.bind(this));
+
+            // special icon for minimized interface
+            this.iconAux = document.createElement("div");
+            this.iconAux.classList.add("specialIcon");
+            this.iconAux.classList.add("icon-cogs");
+            this.iconAux.setAttribute('title', title);
+            this.resourcesDiv.wrapperElement.appendChild(this.iconAux);
+            this.iconAux.addEventListener('click', function () {
+                if (!this.movement) {
+                    this.restore();
+                    this.repaint();
                 }
             }.bind(this));
 
@@ -245,7 +263,7 @@
      */
     GenericInterface.prototype.makeDraggable = function makeDraggable() {
         this.draggable = new Draggable(this.wrapperElement, {iObject: this},
-            function onStart(draggable, context) {
+            function onStart(draggable, context, e) {
                 context.y = context.iObject.wrapperElement.style.top === "" ? 0 : parseInt(context.iObject.wrapperElement.style.top, 10);
                 context.x = context.iObject.wrapperElement.style.left === "" ? 0 : parseInt(context.iObject.wrapperElement.style.left, 10);
                 context.preselected = context.iObject.selected;
@@ -257,7 +275,7 @@
                 context.iObject.repaint();
                 context.iObject.wiringEditor.onDragSelectedObjects(xDelta, yDelta);
             },
-            function onFinish(draggable, context) {
+            function onFinish(draggable, context, e) {
                 context.iObject.wiringEditor.onFinishSelectedObjects();
                 var position = context.iObject.getStylePosition();
                 if (position.posX < 0) {
@@ -273,10 +291,12 @@
                     if (context.preselected) {
                         context.iObject.unselect(true);
                     }
+                    context.iObject.movement = false;
                 } else {
                     if (!context.preselected) {
                         context.iObject.unselect(true);
                     }
+                    context.iObject.movement = true;
                 }
             },
             function () {return true; }
@@ -793,7 +813,10 @@
      * add Source.
      */
     GenericInterface.prototype.addSource = function addSource(label, desc, name, anchorContext) {
-        var anchor, anchorDiv, labelDiv, anchorLabel, treeDiv, buttonsDiv, subAnchors;
+        var anchor, anchorDiv, labelDiv, anchorLabel, treeDiv, subAnchors;
+
+        // sources counter
+        this.numberOfSources += 1;
 
         // anchorDiv
         anchorDiv = document.createElement("div");
@@ -812,9 +835,6 @@
         labelDiv.setAttribute('class', 'labelDiv');
         labelDiv.appendChild(anchorLabel);
 
-        buttonsDiv = document.createElement("div");
-        buttonsDiv.setAttribute('class', 'buttonsDiv');
-        anchorDiv.appendChild(buttonsDiv);
 
         if (!this.isMiniInterface) {
             anchor = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, this.arrowCreator);
@@ -888,7 +908,10 @@
      * add Target.
      */
     GenericInterface.prototype.addTarget = function addTarget(label, desc, name, anchorContext) {
-        var anchor, anchorDiv, labelDiv, anchorLabel, buttonsDiv;
+        var anchor, anchorDiv, labelDiv, anchorLabel;
+
+        // targets counter
+        this.numberOfTargets += 1;
 
         //anchorDiv
         anchorDiv = document.createElement("div");
@@ -905,10 +928,6 @@
         labelDiv = document.createElement("div");
         labelDiv.setAttribute('class', 'labelDiv');
         labelDiv.appendChild(anchorLabel);
-
-        buttonsDiv = document.createElement("div");
-        buttonsDiv.setAttribute('class', 'buttonsDiv');
-        anchorDiv.appendChild(buttonsDiv);
         anchorDiv.appendChild(labelDiv);
 
         if (!this.isMiniInterface) {
@@ -1210,7 +1229,52 @@
         }
     };
 
+    /**
+     * change to minimized view for operators
+     */
+    GenericInterface.prototype.minimize = function minimize() {
 
+        this.initialPos = this.wrapperElement.getBoundingClientRect();
+        this.minWidth = this.wrapperElement.style.minWidth;
+
+        this.wrapperElement.classList.add('reducedInt');
+        this.wrapperElement.style.minWidth = '55px';
+
+        //this.wrapperElement.style.top = this.initialPos.top - (this.initialPos.height / 2) - 19 + 'px';
+        //this.wrapperElement.style.left = this.initialPos.left - (this.initialPos.width / 2) + 'px';
+
+        this.isMinimized = true;
+        // TODO
+        /*interval = setInterval(this.repaint.bind(this), 100);
+        setTimeout(function () {
+            clearInterval(interval);
+        }, 1200);*/
+        this.repaint();
+    };
+
+    /**
+     * change to normal view for operators
+     */
+    GenericInterface.prototype.restore = function restore() {
+
+        //var currentPos = this.wrapperElement.getBoundingClientRect();
+
+        this.wrapperElement.style.minWidth = this.minWidth;
+        this.wrapperElement.classList.remove('reducedInt');
+
+        //var menubarWidth = document.getElementsByClassName('menubar')[0].getBoundingClientRect().width + 5;
+        //var headerHeight = document.getElementById('wirecloud_header').getBoundingClientRect().height;
+
+        //this.wrapperElement.style.top = currentPos.top - headerHeight - (this.initialPos.height / 2) + 'px';
+        //this.wrapperElement.style.left = currentPos.left - menubarWidth - (this.initialPos.width / 2) + 'px';
+
+        this.isMinimized = false;
+        /*interval = setInterval(this.repaint.bind(this), 100);
+        setTimeout(function () {
+            clearInterval(interval);
+        }, 1200);*/
+        this.repaint();
+    };
     /*************************************************************************
      * Make GenericInterface public
      *************************************************************************/

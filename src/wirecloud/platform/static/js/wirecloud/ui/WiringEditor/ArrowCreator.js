@@ -65,7 +65,13 @@
             } else {
                 initAnchor.context.iObject.wiringEditor.emphasize(initAnchor);
             }
-
+            // minimized operators
+            if (initAnchor.context.iObject.isMinimized) {
+                initAnchor.context.iObject.restore();
+                this.initWasMinimized = true;
+            } else {
+                this.initWasMinimized = false;
+            }
             document.oncontextmenu = _cancel; // disable context menu
             document.onmousedown = _cancel; // disable text selection in Firefox
             document.onselectstart = _cancel; // disable text selection in IE
@@ -178,6 +184,7 @@
                             fAnchor.initAnchor.addArrow(theArrow);
                         }
                         fAnchor.addArrow(theArrow);
+
                         // subdata connections
                         if (currentSource.isSubAnchor) {
                             currentSource.context.iObject.addSubdataConnection(currentSource.context.data.name.split("/")[0], currentSource.context.data.name, theArrow, currentSource, currentTarget, false);
@@ -186,12 +193,20 @@
                             currentTarget.context.iObject.addSubdataConnection(currentTarget.context.data.name.split("/")[0], currentTarget.context.data.name, theArrow, currentSource, currentTarget, false);
                             theArrow.addClassName('subdataConnection');
                         }
+
+                        // minimized operators acctions
+                        if (this.initWasMinimized) {
+                            this.initAnchor.context.iObject.minimize();
+                        }
                     } else {
                         theArrow.destroy();
                     }
                 // mouseup out of an anchor
                 } else {
                     theArrow.destroy();
+                    if (this.initWasMinimized) {
+                        this.initAnchor.context.iObject.minimize();
+                    }
                 }
             } else {
                 theArrow.destroy();

@@ -72,3 +72,22 @@
     height: 12px;
     width: 6px;
 }
+
+/* Control panel */
+.wiring_editor .grid .controlPanel {
+    float: right;
+    font-size: 3ex;
+    width: 50px;
+    background: rgb(223, 122, 98);
+    border: 1px rgb(0, 0, 0) solid;
+    border-radius: 8px;
+    box-shadow: 2px 2px 3px grey;
+    margin-right: 10px;
+    position: relative;
+}
+
+.wiring_editor .grid .controlPanel .ResizeAllOperatorsButton {
+    z-index: 1;
+    cursor: pointer;
+    margin: 8px;
+}

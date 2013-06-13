@@ -8,9 +8,14 @@
 }
 
 .wiring_editor .ioperator, .wiring_editor .iwidget {
-    -webkit-transition: background 500ms ease-in 250ms;
-    -moz-transition: background 500ms ease-in 250ms;
-    -o-transition: background 500ms ease-in 250ms;
+    -webkit-transition: background 600ms;
+    -moz-transition: background 600ms;
+    -o-transition: background 600ms;
+    transition: background 600ms;
+    -webkit-transition: box-shadow 600ms;
+    -moz-transition: box-shadow 600ms;
+    -o-transition: box-shadow 600ms;
+    transition: box-shadow 600ms;
     padding-bottom: 2px;
     border: 1px solid #B4B4B4;
     padding-bottom: 8px;
@@ -18,6 +23,18 @@
     pointer-events: auto;
     position: absolute;
 }
+
+.wiring_editor .ioperator.flex, .wiring_editor .iwidget.flex {
+    /*-webkit-transition: top 600ms, left 600ms, width 600ms, height 600ms;
+    -moz-transition: top 600ms, left 600ms, width 600ms, height 600ms;
+    -o-transition: top 600ms, left 600ms, width 600ms, height 600ms;
+    transition: top 600ms, left 600ms, width 600ms, height 600ms;*/
+    -webkit-transition: all 600ms;
+    -moz-transition: all 600ms;
+    -o-transition: all 600ms;
+    transition: all 600ms;
+ }
+
  /* subdataMode */
 .wiring_editor .ioperator.subdataMode {
     pointer-events: none;
@@ -30,16 +47,10 @@
 }
 
 .wiring_editor .grid .subdataMode .geContainer {
-    -webkit-transition: opacity 500ms ease-in 250ms;
-    -moz-transition: opacity 500ms ease-in 250ms;
-    -o-transition: opacity 500ms ease-in 250ms;
     opacity: 0.3;
 }
 
 .wiring_editor .grid .subdataMode .header {
-    -webkit-transition: opacity 500ms ease-in 250ms;
-    -moz-transition: opacity 500ms ease-in 250ms;
-    -o-transition: opacity 500ms ease-in 250ms;
     opacity: 0.3;
 }
 
@@ -161,9 +172,9 @@
 
 .wiring_editor .sources .labelDiv, .wiring_editor .targets .labelDiv {
     border-radius: 15px;
-    -webkit-transition: background-color 500ms ease-in 250ms, color 750ms ease-out, box-shadow 500ms ease-in 250ms;
-    -moz-transition: background-color 500ms ease-in 250ms, color 750ms ease-out, box-shadow 500ms ease-in 250ms;
-    -o-transition: background-color 500ms ease-in 250ms, color 750ms ease-out, box-shadow 500ms ease-in 250ms;
+    -webkit-transition: background-color 400ms ease-in 150ms, color 550ms ease-out, box-shadow 400ms ease-in 150ms;
+    -moz-transition: background-color 400ms ease-in 150ms, color 550ms ease-out, box-shadow 400ms ease-in 150ms;
+    -o-transition: background-color 400ms ease-in 150ms, color 550ms ease-out, box-shadow 400ms ease-in 150ms;
 }
 .wiring_editor .labelDiv {
     padding: 4px 6px;
@@ -179,6 +190,66 @@
 
 .wiring_editor .targets .labelDiv {
     margin-left: -6px;
+}
+
+/* reduced Interface Operators */
+.wiring_editor .grid .reducedInt.ioperator {
+    padding-bottom: 2px;
+    background: rgba(158, 221, 218, 0.8);
+    border-radius: 3px;
+}
+.wiring_editor .grid .specialIcon{
+    display: none;
+}
+
+.wiring_editor .grid .reducedInt.ioperator .specialIcon{
+    display: inline;
+    font-size:3ex;
+    color: rgb(93, 93, 172);;
+    position: absolute;
+    left: -9px;
+    top: 1px;
+    -webkit-transition: color 1s ease;
+    -moz-transition: color 1s ease;
+    -o-transition: color 1s ease;
+    transition: color 1s ease;
+    border-radius: 20px;
+}
+
+.wiring_editor .grid .reducedInt.ioperator .specialIcon:hover{
+    color: rgb(202, 44, 44);
+}
+
+.wiring_editor .grid .reducedInt.ioperator .geContainer .header {
+    display: none;
+}
+
+.wiring_editor .grid .reducedInt.ioperator .geContainer .labelDiv{
+    width: 10px;
+    height: 19px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding: 1px 5px;
+}
+
+.wiring_editor .grid .reducedInt.ioperator .geContainer .labelDiv span{
+    display: none;
+}
+
+.wiring_editor .grid .reducedInt.ioperator .geContainer .targets {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-right: 0;
+}
+
+.wiring_editor .grid .reducedInt.ioperator .geContainer .sources {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 0;
+}
+
+.wiring_editor .grid .reducedInt.ioperator .geContainer .anchorDiv {
+    height: 20px;
 }
 
 /* anchorTree */
@@ -386,9 +457,6 @@
     z-index: 15;
     box-shadow: 0 0 20px #000000;
     background: rgb(206, 220, 180);
-    -webkit-transition: none;
-    -moz-transition: none;
-    -o-transition: none;
 }
 
  .wiring_editor .grid .iwidget.selected {
@@ -396,13 +464,9 @@
     z-index: 15;
     box-shadow: 0 0 20px #000000;
     background: rgb(206, 220, 231);
-    -webkit-transition: none;
-    -moz-transition: none;
-    -o-transition: none;
 }
 
 /* highlight events and slots by semantic */
-/*colorCodes = {'EQUIVALENT': 'green', 'SUBSUMED':'green', 'SUBSUMES':'orange', 'DISJOINT':'red', 'OVERLAP':'grey', 'NONE':'grey'}*/
 
  .wiring_editor .sources .highlight span, .wiring_editor .targets .highlight_main span {
     pointer-events: none;

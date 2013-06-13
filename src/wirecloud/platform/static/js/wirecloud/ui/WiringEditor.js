@@ -70,6 +70,39 @@ if (!Wirecloud.ui) {
         pTitle.textContent = gettext("Welcome to the Wiring Editor view!");
         this.emptyBox.appendChild(pTitle);
 
+        // Control panel
+        this.controlPanel = document.createElement('div');
+        this.controlPanel.classList.add('controlPanel');
+        this.MinimizeAllOperatorsButton = new StyledElements.StyledButton({
+                'title': gettext("Maximize all operators"),
+                'class': 'ResizeAllOperatorsButton icon-resize-full',
+                'plain': true
+            });
+        this.MinimizeAllOperatorsButton.insertInto(this.controlPanel);
+        this.MinimizeAllOperatorsButton.addEventListener('click', function () {
+            var key;
+            if (this.MinimizeAllOperatorsButton.hasClassName('icon-resize-full')) {
+                // Maximize all operators
+                for (key in this.ioperators) {
+                    if (this.ioperators[key].isMinimized) {
+                        this.ioperators[key].restore();
+                    }
+                }
+                this.MinimizeAllOperatorsButton.removeClassName('icon-resize-full');
+                this.MinimizeAllOperatorsButton.addClassName('icon-resize-small');
+            } else {
+                // Minimize all operators
+                for (key in this.ioperators) {
+                    if (!this.ioperators[key].isMinimized) {
+                        this.ioperators[key].minimize();
+                    }
+                }
+                this.MinimizeAllOperatorsButton.removeClassName('icon-resize-small');
+                this.MinimizeAllOperatorsButton.addClassName('icon-resize-full');
+            }
+        }.bind(this));
+        this.layout.getCenterContainer().wrapperElement.appendChild(this.controlPanel);
+
         // Message
         var message = document.createElement('p');
         message.innerHTML = gettext("Please drag some widgets and operators from the stencil on the left, and drop them into this area. <br/>Then, link outputs with inputs to wire the resources.");
@@ -325,7 +358,7 @@ if (!Wirecloud.ui) {
 
         /* semantic recommendations */
         /* colorCodes = {'EQUIVALENT': 'green', 'SUBSUMED':'green', 'SUBSUMES':'orange', 'DISJOINT':'red', 'OVERLAP':'grey', 'NONE':'grey'} */
-        this.semanticStatus = JSON.parse('{"matchings":[{"origin":"Morfeo/Flickr/2.53/urlImage","destination":"Morfeo/Web Browser/0.5/url","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Search/1.24/keyword","destination":"Morfeo/Flickr/2.53/keyword","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Flickr/2.53/urlImage","destination":"Morfeo/Multimedia Viewer/0.5/uriSlot","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Multimedia Viewer/0.5/uriEvent","destination":"Morfeo/Web Browser/0.5/url","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Multimedia Viewer/0.5/urlEvent","destination":"Morfeo/Web Browser/0.5/url","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Flickr/2.53/keyword_event","destination":"EzWeb/Wikipedia/2.31/keyword","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Search/1.24/keyword","destination":"EzWeb/Wikipedia/2.31/keyword","matchCode":"EQUIVALENT"},{"origin":"EzWeb/Wikipedia/2.31/url","destination":"Morfeo/Web Browser/0.5/url","matchCode":"EQUIVALENT"},{"origin":"EzWeb/Wikipedia/2.31/url","destination":"Morfeo/Multimedia Viewer/0.5/uriSlot","matchCode":"EQUIVALENT"}],"timestamp":"2013-02-15 14:02:55.273","id":"1"}');
+        this.semanticStatus = JSON.parse('{"matchings":[{"origin":"Morfeo/Flickr/2.53/urlImage","destination":"Morfeo/Web Browser/0.5/url","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Search/1.24/keyword","destination":"Morfeo/Flickr/2.53/keyword","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Flickr/2.53/urlImage","destination":"Morfeo/Multimedia Viewer/0.5/uriSlot","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Multimedia Viewer/0.5/uriEvent","destination":"Morfeo/Web Browser/0.5/url","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Multimedia Viewer/0.5/urlEvent","destination":"Morfeo/Web Browser/0.5/url","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Flickr/2.53/keyword_event","destination":"EzWeb/Wikipedia/2.31/keyword","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Search/1.24/keyword","destination":"EzWeb/Wikipedia/2.31/keyword","matchCode":"EQUIVALENT"},{"origin":"EzWeb/Wikipedia/2.31/url","destination":"Morfeo/Web Browser/0.5/url","matchCode":"EQUIVALENT"},{"origin":"EzWeb/Wikipedia/2.31/url","destination":"Morfeo/Multimedia Viewer/0.5/uriSlot","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Search/1.24/keyword","destination":"CoNWeT/sendsms/0.1/message","matchCode":"EQUIVALENT"}],"timestamp":"2013-02-15 14:02:55.273","id":"1"}');
         //this.semanticStatus = JSON.parse('{"matchings":[{"origin":"Morfeo/Flickr/2.53/urlImage","destination":"Morfeo/Web Browser/0.5/url","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Flickr/2.53/Keyword_event","destination":"Morfeo/Flickr/2.53/Keyword","matchCode":"DISJOINT"},{"origin":"Morfeo/Search/1.24/keyword","destination":"Morfeo/Flickr/2.53/keyword","matchCode":"SUBSUMED"},{"origin":"Morfeo/Flickr/2.53/urlImage","destination":"Morfeo/Multimedia Viewer/0.5/uriSlot","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Multimedia Viewer/0.5/uriEvent","destination":"Morfeo/Web Browser/0.5/url","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Multimedia Viewer/0.5/urlEvent","destination":"Morfeo/Web Browser/0.5/url","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Flickr/2.53/keyword_event","destination":"EzWeb/Wikipedia/2.31/keyword","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Search/1.24/keyword","destination":"EzWeb/Wikipedia/2.31/keyword","matchCode":"SUBSUMES"},{"origin":"EzWeb/Wikipedia/2.31/url","destination":"Morfeo/Web Browser/0.5/url","matchCode":"OVERLAP"},{"origin":"EzWeb/Wikipedia/2.31/url","destination":"Morfeo/Multimedia Viewer/0.5/uriSlot","matchCode":"EQUIVALENT"}],"timestamp":"2013-02-15 14:02:55.273","id":"1"}');
         this.recommendations = {};
 
@@ -505,6 +538,14 @@ if (!Wirecloud.ui) {
                 arrow.redraw();
             }
         }
+
+        // Minimize all operators
+        for (key in this.ioperators) {
+            if (!this.ioperators[key].isMinimized) {
+                this.ioperators[key].minimize();
+            }
+        }
+
         this.activateCtrlMultiSelect();
         this.valid = true;
         if (this.entitiesNumber === 0) {
@@ -1423,6 +1464,8 @@ if (!Wirecloud.ui) {
         this.canvas.canvasElement.generalLayer.setAttribute('transform', param);
         this.canvas.canvasElement.style.top = scrollY + 'px';
         this.canvas.canvasElement.style.left = scrollX + 'px';
+        this.controlPanel.style.top = scrollY + 'px';
+        this.controlPanel.style.left = scrollX + 'px';
     };
 
     /*************************************************************************
