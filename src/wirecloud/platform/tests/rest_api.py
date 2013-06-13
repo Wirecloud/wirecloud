@@ -743,7 +743,7 @@ class ResourceManagementAPI(WirecloudTestCase):
 
 class ExtraApplicationMashupAPI(WirecloudTestCase):
 
-    fixtures = ('selenium_test_data', 'user_with_workspaces')
+    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
     tags = ('extra_rest_api',)
 
     @classmethod
@@ -758,10 +758,26 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             },
         })
 
+        # catalogue deployer
+        cls.old_catalogue_deployer = catalogue.wgt_deployer
+        cls.catalogue_tmp_dir = mkdtemp()
+        catalogue.wgt_deployer = WgtDeployer(cls.catalogue_tmp_dir)
+
+        # showcase deployer
+        cls.old_deployer = showcase.wgt_deployer
+        cls.showcase_tmp_dir = mkdtemp()
+        showcase.wgt_deployer = WgtDeployer(cls.showcase_tmp_dir)
+
     @classmethod
     def tearDownClass(cls):
 
         downloader.download_http_content = cls._original_download_function
+
+        # deployers
+        catalogue.wgt_deployer = cls.old_catalogue_deployer
+        shutil.rmtree(cls.catalogue_tmp_dir, ignore_errors=True)
+        showcase.wgt_deployer = cls.old_deployer
+        shutil.rmtree(cls.showcase_tmp_dir, ignore_errors=True)
 
         super(ExtraApplicationMashupAPI, cls).tearDownClass()
 
@@ -945,3 +961,61 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
         self.assertEqual(response.content, '')
+
+    def test_workspace_publish_requires_authentication(self):
+
+        url = reverse('wirecloud.workspace_publish', kwargs={'workspace_id': 2})
+
+        data = {
+            'vendor': 'Wirecloud',
+            'name': 'test-published-mashup',
+            'version': '1.0.5',
+            'email': 'test@example.com'
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+    def test_workspace_publish(self):
+
+        url = reverse('wirecloud.workspace_publish', kwargs={'workspace_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {
+            'vendor': 'Wirecloud',
+            'name': 'test-published-mashup',
+            'version': '1.0.5',
+            'email': 'test@example.com'
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+
+    def test_workspace_publish_bad_provided_data(self):
+
+        url = reverse('wirecloud.workspace_publish', kwargs={'workspace_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Test missing parameters
+        data = {
+            'name': ''
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 400)
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
+        # Test invalid version
+        data = {
+            'vendor': 'Wirecloud',
+            'name': 'test-published-mashup',
+            'version': '1.0.05',
+            'email': 'test@example.com'
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 400)
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
