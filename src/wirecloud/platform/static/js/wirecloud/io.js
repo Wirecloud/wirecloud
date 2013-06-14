@@ -81,7 +81,8 @@ Wirecloud.location = {
             'transport': {value: request.transport},
             'status': {value: request.transport.status},
             'statusText': {value: request.transport.statusText},
-            'response': {value: request.transport.response}
+            'response': {value: request.transport.response},
+            'responseXML': {value: request.transport.responseXML}
         });
 
         if (request.options.responseType == null || request.options.responseType === '') {
