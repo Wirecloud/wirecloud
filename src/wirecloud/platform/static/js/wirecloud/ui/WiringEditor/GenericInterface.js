@@ -60,6 +60,9 @@
         this.movement = false;
         this.numberOfSources = 0;
         this.numberOfTargets = 0;
+        this.potentialArrow = null;
+        // only for minimize maximize operators.
+        this.initialPos = null;
 
         if (manager instanceof Wirecloud.ui.WiringEditor.ArrowCreator) {
             this.isMiniInterface = false;
@@ -106,11 +109,14 @@
             this.iconAux.classList.add("specialIcon");
             this.iconAux.classList.add("icon-cogs");
             this.iconAux.setAttribute('title', title);
+            // TODO firefox differences with absolute elements position
+            if  (this.wiringEditor.navigator == "firefox") {
+                this.iconAux.classList.add("firefoxCorrection");
+            }
             this.resourcesDiv.wrapperElement.appendChild(this.iconAux);
             this.iconAux.addEventListener('click', function () {
                 if (!this.movement) {
                     this.restore();
-                    this.repaint();
                 }
             }.bind(this));
 
@@ -1231,56 +1237,105 @@
     /**
      * change to minimized view for operators
      */
-    GenericInterface.prototype.minimize = function minimize() {
-        var initialPos, menubarWidth, headerHeight;
+    GenericInterface.prototype.minimize = function minimize(omitEffects) {
 
-        initialPos = this.wrapperElement.getBoundingClientRect();
+        if (!omitEffects) {
+            this.resizeTransitStart();
+        }
+
+        this.initialPos = this.wrapperElement.getBoundingClientRect();
         this.minWidth = this.wrapperElement.style.minWidth;
 
         this.wrapperElement.classList.add('reducedInt');
         this.wrapperElement.style.minWidth = '55px';
 
-        menubarWidth = document.getElementsByClassName('menubar')[0].getWidth();
-        headerHeight = document.getElementById('wirecloud_header').getHeight() - 5;
-
-        this.wrapperElement.style.top = (initialPos.top - headerHeight) + ((initialPos.height - 8) / 2) - 12 + 'px';
-        this.wrapperElement.style.left = (initialPos.left - menubarWidth) + (initialPos.width / 2) - 32 + 'px';
+        this.wrapperElement.style.top = (this.initialPos.top - this.wiringEditor.headerHeight) + ((this.initialPos.height - 8) / 2) - 12 + 'px';
+        this.wrapperElement.style.left = (this.initialPos.left - this.wiringEditor.menubarWidth) + (this.initialPos.width / 2) - 32 + 'px';
 
         this.isMinimized = true;
-        // TODO
-        /*interval = setInterval(this.repaint.bind(this), 100);
-        setTimeout(function () {
-            clearInterval(interval);
-        }, 1200);*/
-        this.repaint();
     };
 
     /**
      * change to normal view for operators
      */
-    GenericInterface.prototype.restore = function restore() {
-        var transitPos, currentPos, menubarWidth, headerHeight;
+    GenericInterface.prototype.restore = function restore(omitEffects) {
+        var currentPos;
+
+        if (!omitEffects) {
+            this.resizeTransitStart();
+        }
 
         currentPos = this.wrapperElement.getBoundingClientRect();
+        this.wrapperElement.style.top = (currentPos.top - this.wiringEditor.headerHeight) - ((this.initialPos.height + 8) / 2) + 'px';
+        this.wrapperElement.style.left = (currentPos.left - this.wiringEditor.menubarWidth) - (this.initialPos.width / 2) + 32 + 'px';
 
         this.wrapperElement.style.minWidth = this.minWidth;
+
         this.wrapperElement.classList.remove('reducedInt');
 
-        transitPos = this.wrapperElement.getBoundingClientRect();
-
-        menubarWidth = document.getElementsByClassName('menubar')[0].getWidth();
-        headerHeight = document.getElementById('wirecloud_header').getHeight() - 5;
-
-        this.wrapperElement.style.top = (currentPos.top - headerHeight) - ((transitPos.height + 8) / 2) + 'px';
-        this.wrapperElement.style.left = (currentPos.left - menubarWidth) - (transitPos.width / 2) + 32 + 'px';
-
         this.isMinimized = false;
-        /*interval = setInterval(this.repaint.bind(this), 100);
+    };
+
+    /**
+     * Resize Transit Start
+     */
+    GenericInterface.prototype.resizeTransitStart = function resizeTransitStart() {
+        var interval;
+
+        // transition events
+        this.wrapperElement.classList.add('flex');
+        /*this.wrapperElement.addEventListener('webkitTransitionEnd', this.resizeTransitEnd.bind(this), false);
+        this.wrapperElement.addEventListener('transitionend', this.resizeTransitEnd.bind(this), false);
+        this.wrapperElement.addEventListener('oTransitionEnd', this.resizeTransitEnd.bind(this), false);*/
+        interval = setInterval(this.animateArrows.bind(this), 20);
         setTimeout(function () {
             clearInterval(interval);
-        }, 1200);*/
+        }, 400);
+
+        setTimeout(function () {
+            this.resizeTransitEnd();
+        }.bind(this), 450);
+
+    };
+
+    /**
+     * Resize Transit End
+     */
+    GenericInterface.prototype.resizeTransitEnd = function resizeTransitEnd() {
+        // transition events
+        this.wrapperElement.classList.remove('flex');
+        /*this.wrapperElement.removeEventListener('webkitTransitionEnd', this.resizeTransitEnd.bind(this), false);
+        this.wrapperElement.removeEventListener('transitionend', this.resizeTransitEnd.bind(this), false);
+        this.wrapperElement.removeEventListener('oTransitionEnd', this.resizeTransitEnd.bind(this), false);*/
         this.repaint();
     };
+
+    /**
+     * Animated arrows for the transitions betwen minimized an normal shape
+     */
+    GenericInterface.prototype.animateArrows = function animateArrows() {
+        var key, layer;
+
+        for (key in this.sourceAnchorsByName) {
+            this.sourceAnchorsByName[key].repaint();
+        }
+
+        for (key in this.targetAnchorsByName) {
+            this.targetAnchorsByName[key].repaint();
+        }
+
+        if (this.potentialArrow != null) {
+            layer = this.wiringEditor.canvas.getHTMLElement().parentNode;
+            if (this.potentialArrow.startAnchor != null) {
+                // from source to target
+                this.potentialArrow.setStart(this.potentialArrow.startAnchor.getCoordinates(layer));
+            } else {
+                // from target to source
+                this.potentialArrow.setEnd(this.potentialArrow.endAnchor.getCoordinates(layer));
+            }
+        }
+    };
+
     /*************************************************************************
      * Make GenericInterface public
      *************************************************************************/

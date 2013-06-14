@@ -25,14 +25,10 @@
 }
 
 .wiring_editor .ioperator.flex, .wiring_editor .iwidget.flex {
-    /*-webkit-transition: top 600ms, left 600ms, width 600ms, height 600ms;
-    -moz-transition: top 600ms, left 600ms, width 600ms, height 600ms;
-    -o-transition: top 600ms, left 600ms, width 600ms, height 600ms;
-    transition: top 600ms, left 600ms, width 600ms, height 600ms;*/
-    -webkit-transition: all 600ms;
-    -moz-transition: all 600ms;
-    -o-transition: all 600ms;
-    transition: all 600ms;
+    -webkit-transition: all 400ms;
+    -moz-transition: all 400ms;
+    -o-transition: all 400ms;
+    transition: all 400ms;
  }
 
  /* subdataMode */
@@ -200,20 +196,19 @@
 }
 .wiring_editor .grid .specialIcon{
     display: none;
+    position: absolute;
 }
 
 .wiring_editor .grid .reducedInt.ioperator .specialIcon{
     display: inline;
     font-size:3ex;
     color: rgb(93, 93, 172);;
-    position: absolute;
     left: -9px;
     top: 1px;
-    -webkit-transition: color 1s ease;
-    -moz-transition: color 1s ease;
-    -o-transition: color 1s ease;
-    transition: color 1s ease;
-    border-radius: 20px;
+}
+
+.wiring_editor .grid .reducedInt.ioperator .specialIcon.firefoxCorrection{
+    top: 12px;
 }
 
 .wiring_editor .grid .reducedInt.ioperator .specialIcon:hover{

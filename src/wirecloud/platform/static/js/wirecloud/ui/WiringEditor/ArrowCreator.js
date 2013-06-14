@@ -65,13 +65,7 @@
             } else {
                 initAnchor.context.iObject.wiringEditor.emphasize(initAnchor);
             }
-            // minimized operators
-            if (initAnchor.context.iObject.isMinimized) {
-                initAnchor.context.iObject.restore();
-                this.initWasMinimized = true;
-            } else {
-                this.initWasMinimized = false;
-            }
+
             document.oncontextmenu = _cancel; // disable context menu
             document.onmousedown = _cancel; // disable text selection in Firefox
             document.onselectstart = _cancel; // disable text selection in IE
@@ -84,6 +78,16 @@
             tmpPos = initAnchor.getCoordinates(layer);
             // arrow pointer
             theArrow = canvas.drawArrow(tmpPos, tmpPos, "arrow");
+
+            // minimized operators
+            this.initAnchor.context.iObject.potentialArrow = theArrow;
+            if (initAnchor.context.iObject.isMinimized) {
+                initAnchor.context.iObject.restore();
+                this.initWasMinimized = true;
+            } else {
+                this.initWasMinimized = false;
+            }
+
             this.theArrow = theArrow;
             theArrow.emphasize();
             // we can draw invert arrows from the end to the start
@@ -151,6 +155,7 @@
             if (e.button !== 0) {
                 return;
             }
+            this.initAnchor.context.iObject.wiringEditor.potentialArrow = null;
             if (fAnchor !== this.initAnchor) {
                 if (fAnchor != null) {
                     if (fAnchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {

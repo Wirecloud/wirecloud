@@ -214,10 +214,13 @@
                 coordinates.posY += parentNode.getElementsByClassName("container north_container header")[0].getBoundingClientRect().height;
             }
             // firefox correction
-            if  (parentNode.classList.contains("anchorDiv") && this.context.iObject.wiringEditor.navigator == "firefox"){
+            if  (parentNode.classList.contains("anchorDiv") && this.context.iObject.wiringEditor.navigator == "firefox") {
                 coordinates.posY -= parentNode.getBoundingClientRect().height - 4;
             }
-
+            if  (parentNode.classList.contains("reducedInt") && this.context.iObject.wiringEditor.navigator == "firefox") {
+                coordinates.posX -= 26;
+                coordinates.posY += 30;
+            }
             parentNode = parentNode.parentNode;
         }
 
