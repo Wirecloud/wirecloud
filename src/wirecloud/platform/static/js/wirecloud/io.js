@@ -81,12 +81,14 @@ Wirecloud.location = {
             'transport': {value: request.transport},
             'status': {value: request.transport.status},
             'statusText': {value: request.transport.statusText},
-            'response': {value: request.transport.response},
-            'responseXML': {value: request.transport.responseXML}
+            'response': {value: request.transport.response}
         });
 
         if (request.options.responseType == null || request.options.responseType === '') {
-            Object.defineProperty(this, 'responseText', {value: request.transport.responseText});
+            Object.defineProperties(this, {
+                'responseText': {value: request.transport.responseText},
+                'responseXML': {value: request.transport.responseXML}
+            });
         }
     };
 
