@@ -421,3 +421,43 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
         time.sleep(2)
         window_menus = len(self.driver.find_elements_by_css_selector('.window_menu'))
         self.assertEqual(window_menus, 1)
+
+    @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
+    def test_wiring_allows_wiring_status_reset_on_unrecoverable_errors(self):
+
+        workspace = Workspace.objects.get(id=2)
+        workspace.wiringStatus = json.dumps({
+            "views": [],
+            "operators": {
+               "0": {
+                  "name": "Wirecloud/TestOperator/1.0",
+                  "id": "0"
+               }
+            },
+            "connections": [
+               {
+                  "source": {},
+                  "target": {
+                     "type": "iwidget",
+                     "id": 2,
+                     "endpoint": "inputendpoint"
+                  }
+               }
+            ]
+        })
+        workspace.save()
+
+        self.login(username='user_with_workspaces')
+        iwidgets = self.get_current_iwidgets()
+        self.assertEqual(len(iwidgets), 2)
+        self.change_main_view('wiring')
+        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']")
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
+        time.sleep(2)
+        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']")
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
+        time.sleep(2)
+        window_menus = len(self.driver.find_elements_by_css_selector('.window_menu'))
+        self.assertEqual(window_menus, 1)
+        wiring_entities = self.driver.find_elements_by_css_selector('.grid > .ioperator, .grid > .iwidget')
+        self.assertEqual(len(wiring_entities), 0)
