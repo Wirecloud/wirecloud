@@ -20,7 +20,7 @@
  *
  */
 
-/*global Draggable, gettext, StyledElements, Wirecloud, EzWebExt, LayoutManagerFactory */
+/*global Draggable, gettext, interpolate, StyledElements, Wirecloud, EzWebExt, LayoutManagerFactory */
 
 (function () {
 
@@ -32,12 +32,13 @@
     /*
      * GenericInterface Class
      */
-    var GenericInterface = function GenericInterface(extending, wiringEditor, title, manager, className, clone) {
+    var GenericInterface = function GenericInterface(extending, wiringEditor, title, manager, className, isGhost) {
         if (extending === true) {
             return;
         }
         var i, name, variables, variable, anchor, anchorDiv, anchorLabel, desc,
-            nameDiv, nameElement, del_button, item, copy;
+            nameDiv, nameElement, del_button, item, copy, type, msg,
+            ghostNotification;
 
         StyledElements.Container.call(this, {'class': className}, []);
 
@@ -52,6 +53,7 @@
         this.initPos = {'x': 0, 'y': 0};
         this.draggableSources = [];
         this.draggableTargets = [];
+        this.isGhost = isGhost;
 
         if (manager instanceof Wirecloud.ui.WiringEditor.ArrowCreator) {
             this.isMiniInterface = false;
@@ -71,6 +73,23 @@
 
         // close button, not for miniInterface
         if (!this.isMiniInterface) {
+            if (className == 'iwidget') {
+                type = 'widget';
+            } else {
+                type = 'operator';
+            }
+
+            // ghost interface
+            if (isGhost) {
+                this.wrapperElement.classList.add('ghost');
+                ghostNotification = document.createElement("span");
+                ghostNotification.classList.add('ghostNotification');
+                msg = gettext('Warning: %(type)s not found!');
+                msg = interpolate(msg, {type: type}, true);
+                ghostNotification.textContent = msg;
+                this.header.appendChild(ghostNotification);
+            }
+
             del_button = new StyledElements.StyledButton({
                 'title': gettext("Remove"),
                 'class': 'closebutton',

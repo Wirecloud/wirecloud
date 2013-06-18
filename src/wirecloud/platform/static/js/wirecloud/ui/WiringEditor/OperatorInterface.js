@@ -32,13 +32,39 @@
     /**
      * OperatorInterface Class
      */
-    var OperatorInterface = function OperatorInterface(wiringEditor, ioperator, manager, isMenubarRef) {
-        var outputs, inputs, desc, label, key, anchorContext;
+    var OperatorInterface = function OperatorInterface(wiringEditor, ioperator, manager, isMenubarRef, endPointPos) {
+        var outputs, inputs, desc, label, key, anchorContext, i, isGhost;
 
         this.ioperator = ioperator;
         this.wiringEditor = wiringEditor;
 
-        Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.ioperator.display_name, manager, 'ioperator');
+        if ('ghost' in ioperator) {
+            // Ghost Operator
+            isGhost = true;
+            this.ioperator.display_name = ioperator.name;
+            this.ioperator.meta = {};
+            this.ioperator.meta.uri = ioperator.name;
+            ioperator.outputs = {};
+            ioperator.inputs = {};
+            for (i = 0; i < endPointPos.sources.length; i += 1) {
+                ioperator.outputs[endPointPos.sources[i]] = {
+                    'description': '',
+                    'label': endPointPos.sources[i],
+                    'name': endPointPos.sources[i]
+                };
+            }
+            for (i = 0; i < endPointPos.targets.length; i += 1) {
+                ioperator.inputs[endPointPos.targets[i]] = {
+                    'description': '',
+                    'label': endPointPos.targets[i],
+                    'name': endPointPos.targets[i]
+                };
+            }
+        } else {
+            isGhost = false;
+        }
+
+        Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.ioperator.display_name, manager, 'ioperator', isGhost);
         if (!isMenubarRef) {
             inputs = ioperator.inputs;
             outputs = ioperator.outputs;

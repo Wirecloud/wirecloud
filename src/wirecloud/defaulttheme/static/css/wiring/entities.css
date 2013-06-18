@@ -22,6 +22,17 @@
     pointer-events: auto;
 }
 
+/* ghost mode */
+.wiring_editor .ioperator.ghost, .wiring_editor .iwidget.ghost {
+    opacity: 0.5;
+}
+
+.wiring_editor .ioperator.ghost .ghostNotification, .wiring_editor .iwidget.ghost .ghostNotification {
+    color: #F00;
+    font-size: 0.9ex;
+    display: block;
+}
+
 .wiring_editor .ioperator .header, .wiring_editor .iwidget .header {
     text-align: center;
     font-size: 1.3em;
