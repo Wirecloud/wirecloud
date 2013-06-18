@@ -25,7 +25,9 @@
 
     "use strict";
 
-    var Wiring, findConnectable, unload, addIWidget, removeIWidget;
+    var Wiring, findConnectable, unload, addIWidget, removeIWidget,
+        iwidget_added_listener, iwidget_removed_listener,
+        iwidget_unload_listener;
 
     /*****************
      * Private methods
@@ -64,6 +66,10 @@
     unload = function unload() {
         var widgets, key, i, j, connectables;
 
+        if (this.status == null) {
+            return;
+        }
+
         this.events.unload.dispatch();
 
         widgets = this.workspace.getIWidgets();
@@ -79,6 +85,8 @@
         }
 
         this.events.unloaded.dispatch();
+
+        this.status = null;
     };
 
     addIWidget = function addIWidget(iwidget) {
@@ -156,18 +164,35 @@
         delete this.connectablesByWidget[iwidget.getId()];
     };
 
+    iwidget_added_listener = function iwidget_added_listener(workspace, iwidget) {
+        addIWidget.call(this, iwidget);
+    };
+
+    iwidget_removed_listener = function iwidget_removed_listener(workspace, iwidget) {
+        removeIWidget.call(this, iwidget);
+    };
+
+    iwidget_unload_listener = function iwidget_unload_listener(iWidget) {
+        var key, entry = this.connectablesByWidget[iWidget.getId()];
+
+        for (key in entry.inputs) {
+            entry.inputs[key].variable.setHandler(null);
+        }
+    };
+
     /*************
      * Constructor
      *************/
 
     Wiring = function Wiring(workspace) {
+        this.status = null;
         this.workspace = workspace;
         this.connectablesByWidget = {};
         this.ioperators = {};
 
-        this._iwidget_unload_listener = this._iwidget_unload_listener.bind(this);
-        this._iwidget_added_listener = this._iwidget_added_listener.bind(this);
-        this._iwidget_removed_listener = this._iwidget_removed_listener.bind(this);
+        this._iwidget_unload_listener = iwidget_unload_listener.bind(this);
+        this._iwidget_added_listener = iwidget_added_listener.bind(this);
+        this._iwidget_removed_listener = iwidget_removed_listener.bind(this);
 
         this.workspace.addEventListener('iwidgetadded', this._iwidget_added_listener);
         this.workspace.addEventListener('iwidgetremoved', this._iwidget_removed_listener);
@@ -181,7 +206,6 @@
             operator_info, i, old_operators;
 
         if (status == null || status === '') {
-            this.status = null;
             unload.call(this);
             return;
         }
@@ -347,26 +371,6 @@
         }
 
         this.ioperators[iOperator].prefCallback = callback;
-    };
-
-    /*****************
-     * private methods
-     *****************/
-
-    Wiring.prototype._iwidget_added_listener = function _iwidget_added_listener(workspace, iwidget) {
-        addIWidget.call(this, iwidget);
-    };
-
-    Wiring.prototype._iwidget_removed_listener = function _iwidget_removed_listener(workspace, iwidget) {
-        removeIWidget.call(this, iwidget);
-    };
-
-    Wiring.prototype._iwidget_unload_listener = function _iwidget_unload_listener(iWidget) {
-        var key, entry = this.connectablesByWidget[iWidget.getId()];
-
-        for (key in entry.inputs) {
-            entry.inputs[key].variable.setHandler(null);
-        }
     };
 
     Wirecloud.Wiring = Wiring;
