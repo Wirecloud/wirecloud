@@ -155,7 +155,7 @@
             if (e.button !== 0) {
                 return;
             }
-            this.initAnchor.context.iObject.wiringEditor.potentialArrow = null;
+            this.initAnchor.context.iObject.potentialArrow = null;
             if (fAnchor !== this.initAnchor) {
                 if (fAnchor != null) {
                     if (fAnchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
