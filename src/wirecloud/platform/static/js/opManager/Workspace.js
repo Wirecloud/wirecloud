@@ -155,7 +155,8 @@ function Workspace (workspaceState) {
 
             // FIXME
             LayoutManagerFactory.getInstance().mainLayout.repaint();
-            LayoutManagerFactory.getInstance().header._paintBreadcrum(LayoutManagerFactory.getInstance().viewsByName['workspace']);
+            LayoutManagerFactory.getInstance().header._notifyWorkspaceLoaded(this);
+            // END FIXME
 
             this.restricted = !this.isOwned() && this.isShared();
             this.removable = !this.restricted && this.workspaceGlobalInfo.removable;

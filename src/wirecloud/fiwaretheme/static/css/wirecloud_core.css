@@ -249,6 +249,18 @@ li {
     font-size: 14px;
 }
 
+#wirecloud_header > .menu_wrapper > .menu > span.wiring.error:before {
+    content: "\f071";
+    vertical-align: baseline;
+    font-family: FontAwesome;
+    font-weight: normal;
+    font-style: normal;
+    text-decoration: inherit;
+    -webkit-font-smoothing: antialiased;
+    color: #f89406;
+    margin-right: 3px;
+}
+
 #wirecloud_header > .menu_wrapper > .menu > span:hover {
     text-decorator: none;
     background-color: #EEE;

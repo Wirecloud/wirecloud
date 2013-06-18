@@ -181,6 +181,22 @@
         this.refresh();
     };
 
+    WirecloudHeader.prototype._notifyWorkspaceLoaded = function _notifyWorkspaceLoaded(workspace) {
+        this._paintBreadcrum(LayoutManagerFactory.getInstance().viewsByName['workspace']);
+
+        workspace.wiring.addEventListener('load', function () {
+            this.menues.wiring.html_element.classList.remove('error');
+        }.bind(this));
+
+        workspace.wiring.addEventListener('unloaded', function () {
+            this.menues.wiring.html_element.classList.remove('error');
+        }.bind(this));
+
+        workspace.wiring.addEventListener('error', function () {
+            this.menues.wiring.html_element.classList.add('error');
+        }.bind(this));
+    };
+
     WirecloudHeader.prototype.refresh = function refresh() {
         this._paintBreadcrum(this.currentView);
     };
