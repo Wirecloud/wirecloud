@@ -64,6 +64,8 @@
     unload = function unload() {
         var widgets, key, i, j, connectables;
 
+        this.events.unload.dispatch();
+
         widgets = this.workspace.getIWidgets();
         for (i = 0; i < widgets.length; i++) {
             connectables = this.connectablesByWidget[widgets[i].getId()].connectables;
@@ -75,6 +77,8 @@
         for (key in this.ioperators) {
             this.ioperators[key].fullDisconnect();
         }
+
+        this.events.unloaded.dispatch();
     };
 
     addIWidget = function addIWidget(iwidget) {
@@ -167,7 +171,10 @@
 
         this.workspace.addEventListener('iwidgetadded', this._iwidget_added_listener);
         this.workspace.addEventListener('iwidgetremoved', this._iwidget_removed_listener);
+
+        StyledElements.ObjectWithEvents.call(this, ['error', 'load', 'loaded', 'unload', 'unloaded']);
     };
+    Wiring.prototype = new StyledElements.ObjectWithEvents();
 
     Wiring.prototype.load = function load(status) {
         var connection, sourceConnectable, targetConnectable, operators, id,
@@ -185,6 +192,8 @@
 
         unload.call(this);
 
+        this.events.load.dispatch();
+
         operators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
         old_operators = this.ioperators;
         this.ioperators = {};
@@ -198,10 +207,10 @@
                     try {
                         this.ioperators[id] = operators[operator_info.name].instantiate(id, operator_info);
                     } catch (e) {
-                        // TODO set error in the wirecloud header
+                        this.events.error.dispatch(gettext('Error instantiating the %(operator)s operator'));
                     }
                 } else {
-                    // TODO set error in the wirecloud header
+                    this.events.error.dispatch(gettext('%(operator)s operator is not available in for this account'));
                 }
             }
         }
@@ -219,6 +228,8 @@
         }
 
         this.status = status;
+
+        this.events.loaded.dispatch();
     };
 
     Wiring.prototype.save = function save() {
