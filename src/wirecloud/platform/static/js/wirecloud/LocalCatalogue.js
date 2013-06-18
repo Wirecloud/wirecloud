@@ -328,7 +328,11 @@
     };
 
     LocalCatalogue.getAvailableResourcesByType = function getAvailableResourcesByType(type) {
-        return this.resourcesByType[type];
+        if (type in this.resourcesByType) {
+            return this.resourcesByType[type];
+        } else {
+            return {};
+        }
     };
 
     LocalCatalogue.getResourceId = function getResourceId(id) {
