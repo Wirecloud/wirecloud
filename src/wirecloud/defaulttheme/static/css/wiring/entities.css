@@ -24,6 +24,17 @@
     position: absolute;
 }
 
+/* ghost mode */
+.wiring_editor .ioperator.ghost, .wiring_editor .iwidget.ghost {
+    opacity: 0.5;
+}
+
+.wiring_editor .ioperator.ghost .ghostNotification, .wiring_editor .iwidget.ghost .ghostNotification {
+    color: #F00;
+    font-size: 0.9ex;
+    display: block;
+}
+
 .wiring_editor .ioperator.flex, .wiring_editor .iwidget.flex {
     -webkit-transition: all 400ms;
     -moz-transition: all 400ms;

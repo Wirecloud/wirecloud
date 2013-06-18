@@ -83,18 +83,18 @@ if (!Wirecloud.ui) {
             var key;
             if (this.MinimizeAllOperatorsButton.hasClassName('icon-resize-full')) {
                 // Maximize all operators
-                for (key in this.ioperators) {
-                    if (this.ioperators[key].isMinimized) {
-                        this.ioperators[key].restore();
+                for (key in this.currentlyInUseOperators) {
+                    if (this.currentlyInUseOperators[key].isMinimized) {
+                        this.currentlyInUseOperators[key].restore();
                     }
                 }
                 this.MinimizeAllOperatorsButton.removeClassName('icon-resize-full');
                 this.MinimizeAllOperatorsButton.addClassName('icon-resize-small');
             } else {
                 // Minimize all operators
-                for (key in this.ioperators) {
-                    if (!this.ioperators[key].isMinimized) {
-                        this.ioperators[key].minimize();
+                for (key in this.currentlyInUseOperators) {
+                    if (!this.currentlyInUseOperators[key].isMinimized) {
+                        this.currentlyInUseOperators[key].minimize();
                     }
                 }
                 this.MinimizeAllOperatorsButton.removeClassName('icon-resize-small');
@@ -316,8 +316,8 @@ if (!Wirecloud.ui) {
             }
             break;
         case 'ioperator':
-            if (this.ioperators[desc.id] != null) {
-                return this.ioperators[desc.id].getAnchor(desc.endpoint);
+            if (this.currentlyInUseOperators[desc.id] != null) {
+                return this.currentlyInUseOperators[desc.id].getAnchor(desc.endpoint);
             }
         }
     };
@@ -327,10 +327,11 @@ if (!Wirecloud.ui) {
      * load wiring from status and workspace info
      */
     var loadWiring = function loadWiring(workspace, WiringStatus) {
-        var iwidgets, iwidget, key, i, widget_interface, miniwidget_interface, ioperators, operator,
-            operator_interface, operator_instance, connection, connectionView, startAnchor,
-            endAnchor, arrow, isMenubarRef, pos, op_id, multiconnectors, multi, multiInstance,
-            anchor, endpoint_order, operators, k, entitiesIds, currentSource, currentTarget;
+        var iwidgets, iwidget, widget_interface, miniwidget_interface, reallyInUseOperators,
+            operator, operator_interface, operator_instance, connection, connectionView, startAnchor,
+            endAnchor, arrow, isMenubarRef, pos, op_id, multiconnectors, multi, multiInstance, key,
+            anchor, endpoint_order, operators, k, entitiesIds, currentSource, currentTarget, i,
+            availableOperators;
 
         if (WiringStatus == null) {
             WiringStatus = {};
@@ -370,7 +371,7 @@ if (!Wirecloud.ui) {
         this.iwidgets = {};
         this.multiconnectors = {};
         this.mini_widgets = {};
-        this.ioperators = {};
+        this.currentlyInUseOperators = {};
         this.selectedOps = {};
         this.selectedOps.length = 0;
         this.selectedWids = {};
@@ -395,7 +396,7 @@ if (!Wirecloud.ui) {
         this.entitiesNumber = 0;
 
         iwidgets = workspace.getIWidgets();
-        ioperators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
+        availableOperators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
 
         //Semantic Status by entity ID
         entitiesIds = [];
@@ -406,8 +407,8 @@ if (!Wirecloud.ui) {
                 entitiesIds.push(iwidget.widget.getId());
             }
         }
-        for (key in ioperators) {
-            entitiesIds.push(ioperators[key].uri);
+        for (key in availableOperators) {
+            entitiesIds.push(availableOperators[key].uri);
         }
         this.refactorSemanticInfo(entitiesIds);
 
@@ -431,18 +432,23 @@ if (!Wirecloud.ui) {
         }
 
         // mini operators
-        for (key in ioperators) {
+        for (key in availableOperators) {
             isMenubarRef = true;
-            operator = ioperators[key];
+            operator = availableOperators[key];
             operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, operator, this, isMenubarRef);
             this.mini_operator_section.appendChild(operator_interface);
         }
 
         // operators
-        ioperators = workspace.wiring.ioperators;
+        reallyInUseOperators = workspace.wiring.ioperators;
         operators = WiringStatus.operators;
         for (key in operators) {
-            operator_instance = ioperators[key];
+            if (!reallyInUseOperators.hasOwnProperty(key)) {
+                // Ghost Operator
+                operator_instance = {'id': operators[key].id, 'name': operators[key].name, 'ghost': true};
+            } else {
+                operator_instance = reallyInUseOperators[key];
+            }
             op_id = operator_instance.id;
             if (this.NextOperatorId < op_id) {
                 this.NextOperatorId = op_id;
@@ -475,7 +481,7 @@ if (!Wirecloud.ui) {
                 this.nextMulticonnectorId = parseInt(multi.id, 10) + 1;
             }
             if (multi.objectType == 'ioperator') {
-                anchor = this.ioperators[multi.objectId].getAnchor(multi.sourceName);
+                anchor = this.currentlyInUseOperators[multi.objectId].getAnchor(multi.sourceName);
             } else {
                 anchor = this.iwidgets[multi.objectId].getAnchor(multi.sourceName);
             }
@@ -542,9 +548,9 @@ if (!Wirecloud.ui) {
         }
 
         // Minimize all operators
-        for (key in this.ioperators) {
-            if (!this.ioperators[key].isMinimized) {
-                this.ioperators[key].minimize();
+        for (key in this.currentlyInUseOperators) {
+            if (!this.currentlyInUseOperators[key].isMinimized) {
+                this.currentlyInUseOperators[key].minimize();
             }
         }
 
@@ -646,9 +652,9 @@ if (!Wirecloud.ui) {
             this.layout.getCenterContainer().removeChild(this.iwidgets[key]);
             this.iwidgets[key].destroy();
         }
-        for (key in this.ioperators) {
-            this.layout.getCenterContainer().removeChild(this.ioperators[key]);
-            this.ioperators[key].destroy();
+        for (key in this.currentlyInUseOperators) {
+            this.layout.getCenterContainer().removeChild(this.currentlyInUseOperators[key]);
+            this.currentlyInUseOperators[key].destroy();
         }
         for (key in this.multiconnectors) {
             this.layout.getCenterContainer().removeChild(this.multiconnectors[key]);
@@ -662,7 +668,7 @@ if (!Wirecloud.ui) {
         this.arrows = [];
         this.mini_widgets = {};
         this.iwidgets = {};
-        this.ioperators = {};
+        this.currentlyInUseOperators = {};
         this.multiconnectors = {};
         this.anchorsInvolved = {};
     };
@@ -773,11 +779,11 @@ if (!Wirecloud.ui) {
             WiringStatus.views[0].iwidgets[key] = positions;
         }
 
-        for (key in this.ioperators) {
-            if (this.ioperators[key].isMinimized) {
-                this.ioperators[key].restore();
+        for (key in this.currentlyInUseOperators) {
+            if (this.currentlyInUseOperators[key].isMinimized) {
+                this.currentlyInUseOperators[key].restore(true);
             }
-            operator_interface = this.ioperators[key];
+            operator_interface = this.currentlyInUseOperators[key];
             pos = operator_interface.getStylePosition();
             inOutPos = operator_interface.getInOutPositions();
             positions = {'widget' : pos, 'endPointsInOuts' : inOutPos};
@@ -973,7 +979,7 @@ if (!Wirecloud.ui) {
         this.targetAnchorList = this.targetAnchorList.concat(operator_interface.targetAnchors);
         this.sourceAnchorList = this.sourceAnchorList.concat(operator_interface.sourceAnchors);
 
-        this.ioperators[operator_interface.getId()] = operator_interface;
+        this.currentlyInUseOperators[operator_interface.getId()] = operator_interface;
 
         this.entitiesNumber += 1;
         this.emptyBox.classList.add('hidden');
@@ -1244,7 +1250,7 @@ if (!Wirecloud.ui) {
     WiringEditor.prototype.removeIOperator = function removeIOperator(operator_interface) {
         var i;
         operator_interface.unselect(false);
-        delete this.ioperators[operator_interface.getIOperator().id];
+        delete this.currentlyInUseOperators[operator_interface.getIOperator().id];
         this.layout.getCenterContainer().removeChild(operator_interface);
 
         //semantic recommendations

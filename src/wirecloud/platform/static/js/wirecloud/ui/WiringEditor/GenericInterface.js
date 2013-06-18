@@ -32,11 +32,11 @@
     /**
      * GenericInterface Class
      */
-    var GenericInterface = function GenericInterface(extending, wiringEditor, title, manager, className) {
+    var GenericInterface = function GenericInterface(extending, wiringEditor, title, manager, className, isGhost) {
         if (extending === true) {
             return;
         }
-        var del_button, item;
+        var del_button, item, ghostNotification;
 
         StyledElements.Container.call(this, {'class': className}, []);
 
@@ -63,6 +63,8 @@
         this.potentialArrow = null;
         // only for minimize maximize operators.
         this.initialPos = null;
+        this.isGhost = isGhost;
+        this.stringType = null;
 
         if (manager instanceof Wirecloud.ui.WiringEditor.ArrowCreator) {
             this.isMiniInterface = false;
@@ -74,6 +76,11 @@
 
         // Interface buttons
         if (!this.isMiniInterface) {
+            if (className == 'iwidget') {
+                this.stringType = 'widget';
+            } else {
+                this.stringType = 'operator';
+            }
 
             // header, sources and targets for the widget
             this.resourcesDiv = new StyledElements.BorderLayout({'class': "geContainer"});
@@ -85,10 +92,21 @@
             this.header.addClassName('header');
 
             this.wrapperElement.appendChild(this.resourcesDiv.wrapperElement);
+
+            // ghost interface
+            if (isGhost) {
+                this.wrapperElement.classList.add('ghost');
+                ghostNotification = document.createElement("span");
+                ghostNotification.classList.add('ghostNotification');
+                ghostNotification.textContent = 'Warning: ' + this.stringType + ' not found!';
+                this.header.appendChild(ghostNotification);
+            }
+
             // widget name
             this.nameElement = document.createElement("span");
             this.nameElement.textContent = title;
             this.header.appendChild(this.nameElement);
+
             // close button
             del_button = new StyledElements.StyledButton({
                 'title': gettext("Remove"),

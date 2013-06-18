@@ -288,7 +288,15 @@
      * @serialize an Anchor
      */
     Anchor.prototype.serialize = function serialize() {
-        return this.context.data.serialize();
+        if (!this.context.iObject.isGhost) {
+            return this.context.data.serialize();
+        } else {
+            return {
+                'type': 'ioperator',
+                'id': this.context.iObject.ioperator.id,
+                'endpoint': this.context.data.name
+            };
+        }
     };
 
     /**
