@@ -199,6 +199,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
         if view == 'index':
             return common + (
+                'js/wirecloud/ui/WirecloudHeader.js',
                 'js/dragboard/dragboard.js',
                 'js/wirecloud/utils/CookieManager.js',
                 'js/wirecloud/MarketManager.js',
