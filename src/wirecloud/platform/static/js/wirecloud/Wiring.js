@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, IWidget, LogManagerFactory, wEvent, wSlot, Wirecloud*/
+/*global gettext, interpolate, IWidget, LogManagerFactory, wEvent, wSlot, Wirecloud*/
 
 (function () {
 
@@ -203,7 +203,7 @@
 
     Wiring.prototype.load = function load(status) {
         var connection, sourceConnectable, targetConnectable, operators, id,
-            operator_info, i, old_operators;
+            operator_info, i, old_operators, msg;
 
         if (status == null || status === '') {
             unload.call(this);
@@ -231,10 +231,14 @@
                     try {
                         this.ioperators[id] = operators[operator_info.name].instantiate(id, operator_info);
                     } catch (e) {
-                        this.events.error.dispatch(gettext('Error instantiating the %(operator)s operator'));
+                        msg = gettext('Error instantiating the %(operator)s operator');
+                        msg = interpolate(msg, {operator: operator_info.name}, true);
+                        this.events.error.dispatch(msg);
                     }
                 } else {
-                    this.events.error.dispatch(gettext('%(operator)s operator is not available in for this account'));
+                    msg = gettext('%(operator)s operator is not available in for this account');
+                    msg = interpolate(msg, {operator: operator_info.name}, true);
+                    this.events.error.dispatch(msg);
                 }
             }
         }
@@ -371,6 +375,24 @@
         }
 
         this.ioperators[iOperator].prefCallback = callback;
+    };
+
+    Wiring.prototype._notifyOperatorUninstall = function _notifyOperatorUninstall(operator) {
+        var id, msg, affected = false;
+
+        for (id in this.ioperators) {
+            if (this.ioperators[id].meta.uri === operator.getURI()) {
+                affected = true;
+                this.ioperators[id].destroy();
+                delete this.ioperators[id];
+            }
+        }
+
+        if (affected) {
+            msg = gettext('%(operator)s operator was removed while in use');
+            msg = interpolate(msg, {operator: operator.getURI()}, true);
+            this.events.error.dispatch(msg);
+        }
     };
 
     Wirecloud.Wiring = Wiring;

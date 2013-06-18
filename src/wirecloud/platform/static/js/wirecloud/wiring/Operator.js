@@ -105,6 +105,8 @@
     };
 
     Operator.prototype.destroy = function destroy() {
+        this.fullDisconnect();
+
         if (this.loaded) {
             this.events.unload.dispatch(this);
         }
