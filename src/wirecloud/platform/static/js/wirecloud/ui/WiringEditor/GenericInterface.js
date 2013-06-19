@@ -20,7 +20,7 @@
  *
  */
 
-/*global Draggable, gettext, StyledElements, Wirecloud, EzWebExt, WidgetOutputEndpoint */
+/*global Draggable, gettext, interpolate, StyledElements, Wirecloud, EzWebExt, WidgetOutputEndpoint ,LayoutManagerFactory */
 
 (function () {
 
@@ -36,7 +36,7 @@
         if (extending === true) {
             return;
         }
-        var del_button, item, ghostNotification;
+        var del_button, item, type, msg, ghostNotification;
 
         StyledElements.Container.call(this, {'class': className}, []);
 
@@ -64,7 +64,6 @@
         // only for minimize maximize operators.
         this.initialPos = null;
         this.isGhost = isGhost;
-        this.stringType = null;
 
         if (manager instanceof Wirecloud.ui.WiringEditor.ArrowCreator) {
             this.isMiniInterface = false;
@@ -77,9 +76,9 @@
         // Interface buttons
         if (!this.isMiniInterface) {
             if (className == 'iwidget') {
-                this.stringType = 'widget';
+                type = 'widget';
             } else {
-                this.stringType = 'operator';
+                type = 'operator';
             }
 
             // header, sources and targets for the widget
@@ -98,7 +97,9 @@
                 this.wrapperElement.classList.add('ghost');
                 ghostNotification = document.createElement("span");
                 ghostNotification.classList.add('ghostNotification');
-                ghostNotification.textContent = 'Warning: ' + this.stringType + ' not found!';
+                msg = gettext('Warning: %(type)s not found!');
+                msg = interpolate(msg, {type: type}, true);
+                ghostNotification.textContent = msg;
                 this.header.appendChild(ghostNotification);
             }
 

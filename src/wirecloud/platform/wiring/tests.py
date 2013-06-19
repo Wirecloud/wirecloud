@@ -422,6 +422,25 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
         window_menus = len(self.driver.find_elements_by_css_selector('.window_menu'))
         self.assertEqual(window_menus, 1)
 
+        self.change_main_view('workspace')
+        with iwidget_context(self.driver, iwidgets[0]['id']):
+            text_input = self.driver.find_element_by_tag_name('input')
+            self.fill_form_input(text_input, 'hello world!!')
+            # Work around hang when using Firefox Driver
+            self.driver.execute_script('sendEvent();')
+            #self.driver.find_element_by_id('b1').click()
+
+        time.sleep(0.2)
+
+        with iwidget_context(self.driver, iwidgets[1]['id']):
+            try:
+                WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
+            except:
+                pass
+
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, 'hello world!!')
+
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_wiring_allows_wiring_status_reset_on_unrecoverable_errors(self):
 

@@ -331,7 +331,7 @@ if (!Wirecloud.ui) {
             operator, operator_interface, operator_instance, connection, connectionView, startAnchor,
             endAnchor, arrow, isMenubarRef, pos, op_id, multiconnectors, multi, multiInstance, key,
             anchor, endpoint_order, operators, k, entitiesIds, currentSource, currentTarget, i,
-            availableOperators;
+            availableOperators, position;
 
         if (WiringStatus == null) {
             WiringStatus = {};
@@ -443,7 +443,7 @@ if (!Wirecloud.ui) {
         reallyInUseOperators = workspace.wiring.ioperators;
         operators = WiringStatus.operators;
         for (key in operators) {
-            if (!reallyInUseOperators.hasOwnProperty(key)) {
+            if (!(key in reallyInUseOperators)) {
                 // Ghost Operator
                 operator_instance = {'id': operators[key].id, 'name': operators[key].name, 'ghost': true};
             } else {
