@@ -34,18 +34,18 @@
         this.emphasize_counter = 0;
 
         this.canvas = canvas;
-        this.wrapperElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg");
+        this.wrapperElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:g");
 
-        this.arrowBodyElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg");
+        this.arrowBodyElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:g");
         this.wrapperElement.appendChild(this.arrowBodyElement);
 
         // Create a path for the arrow's border
-        this.arrowElementBorder = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "path");
+        this.arrowElementBorder = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
         this.arrowElementBorder.setAttribute('class', 'arrowborder');
         this.arrowBodyElement.appendChild(this.arrowElementBorder);
 
         // And another for the arrow's body
-        this.arrowElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "path");
+        this.arrowElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
         this.arrowElement.setAttribute('class', 'arrowbody');
         this.arrowBodyElement.appendChild(this.arrowElement);
 
@@ -63,7 +63,7 @@
         }.bind(this), true);
 
         // closer
-        this.closerElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "circle");
+        this.closerElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
         this.closerElement.setAttribute('class', 'closer');
         this.closerElement.addEventListener('click', function (e) {
             // Only process left mouse button events
@@ -93,11 +93,60 @@
             e.stopPropagation();
         }.bind(this));
 
+        // semantic Info
+        /*  raro raro.. y sin el switch tampoco va
+        this.semanticAdvertiserFO = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "foreign-object");
+        this.semanticAdvertiser = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "switch");
+        this.semanticAdvertiserFO.setAttribute('width', '100');
+        this.semanticAdvertiserFO.setAttribute('height', '100');
+        this.semanticAdvertiserBody = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "body");
+        this.semanticAdvertiserDiv = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "div");
+        this.semanticAdvertiserBody.appendChild(this.semanticAdvertiserDiv);
+        this.semanticAdvertiserFO.appendChild(this.semanticAdvertiserBody);
+        this.semanticAdvertiser.appendChild(this.semanticAdvertiserFO);
+        this.semanticAdvertiserDiv.setAttribute('class', 'semanticAdvertiser icon-warning-sign');
+        */
+        /* no se muestra la imagen de ninguna forma dentro del svg, si lo sacodel svg, si.
+        this.semanticAdvertiser = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "image");
+        //this.semanticAdvertiser.setAttribute('xlink:href', "/static/images/wiring/warning.png");
+        this.semanticAdvertiser.setAttribute('xlink:href', "http://www.google.co.uk/images/srpr/logo3w.png");
+        this.semanticAdvertiser.setAttribute('xmlns', "http://www.w3.org/2000/svg");
+        this.semanticAdvertiser.setAttribute('xmlns:xlink', "http://www.w3.org/1999/xlink");
+        this.semanticAdvertiser.setAttribute('width', "400");
+        this.semanticAdvertiser.setAttribute('height', "400");
+        this.semanticAdvertiser.addEventListener('click', function (e) {
+            // TODO Open subdata structure
+            e.stopPropagation();
+        }.bind(this));
+        */
+
+        /* tampoco va como object ni dentro ni fuera
+        this.semanticAdvertiser = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "object");
+        this.semanticAdvertiser.setAttribute('data', "image-svg.svg");
+        this.semanticAdvertiser.setAttribute('type', "image/svg+xml");
+        this.semanticAdvertiser.setAttribute('width', '100');
+        this.semanticAdvertiser.setAttribute('height', '100');
+        this.semanticAdvertiserImage = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "img");
+        this.semanticAdvertiserImage.setAttribute('width', '100');
+        this.semanticAdvertiserImage.setAttribute('height', '100');
+        this.semanticAdvertiserImage.setAttribute('src', "/static/images/wiring/warning.png");
+        this.semanticAdvertiserImage.setAttribute('alt', "this is a PNG");
+        this.semanticAdvertiser.appendChild(this.semanticAdvertiserImage);
+        */
+
+        /*
+        this.semanticAdvertiser = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "polygon");
+        this.semanticAdvertiser.setAttribute('class', 'semanticAdvertiser');
+        */
+        this.semanticAdvertiser = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "text");
+        this.semanticAdvertiser.textContent = "";
+        this.semanticAdvertiser.setAttribute('class', 'semanticAdvertiser');
+
         // pullers definition
-        this.pullerStartElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "circle");
+        this.pullerStartElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
         this.pullerStartElement.setAttribute("r", 5);
         this.pullerStartElement.addEventListener("click", EzWebExt.stopPropagationListener, false);
-        this.pullerEndElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "circle");
+        this.pullerEndElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
         this.pullerEndElement.setAttribute("r", 5);
         this.pullerEndElement.addEventListener("click", EzWebExt.stopPropagationListener, false);
 
@@ -105,9 +154,9 @@
         this.pullerEndElement.setAttribute('class', 'pullerBall');
 
         //pullerLines
-        this.pullerStartLine = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "path");
+        this.pullerStartLine = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
         this.pullerStartLine.setAttribute('class', 'pullerLine');
-        this.pullerEndLine = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "path");
+        this.pullerEndLine = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
         this.pullerEndLine.setAttribute('class', 'pullerLine');
 
         // draggable pullers
@@ -140,7 +189,8 @@
 
         // closer
         this.wrapperElement.appendChild(this.closerElement);
-
+        // semanticAdvertiser
+        this.wrapperElement.appendChild(this.semanticAdvertiser);
         // add pullerLines
         this.wrapperElement.appendChild(this.pullerStartLine);
         this.wrapperElement.appendChild(this.pullerEndLine);
@@ -323,11 +373,26 @@
         );
 
         try {
+            // closer
             posCloser = this.calculateMid();
 
             this.closerElement.setAttribute("cx", posCloser.posX);
             this.closerElement.setAttribute("cy", posCloser.posY);
             this.closerElement.setAttribute("r", 8);
+
+            // semanticAdvertiser
+            /*posSemAdv = this.calculatePosInArrow(0.7);
+            this.semanticAdvertiser.setAttribute("cx", posSemAdv.posX);
+            this.semanticAdvertiser.setAttribute("cy", posSemAdv.posY);
+            this.semanticAdvertiser.setAttribute("r", 6);*/
+            posSemAdv = this.calculatePosInArrow(0.6);
+            this.semanticAdvertiser.setAttribute('x', posSemAdv.posX);
+            this.semanticAdvertiser.setAttribute('y', posSemAdv.posY);
+            /*posSemAdv.posY -= 6;
+            var points = posSemAdv.posX + "," + posSemAdv.posY + " " +
+                         (posSemAdv.posX - 6) + "," + (posSemAdv.posY + 12) + " " +
+                         (posSemAdv.posX + 6) + "," + (posSemAdv.posY + 12);
+            this.semanticAdvertiser.setAttribute("points", points);*/
         }
         catch (err) {
             //TODO: error msg

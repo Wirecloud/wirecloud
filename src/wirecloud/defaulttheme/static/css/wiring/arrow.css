@@ -90,3 +90,28 @@
 .wiring_editor .canvas .arrow.hollow .arrowborder {
 	stroke: rgb(209, 122, 122);
 }
+
+/* hover effects */
+
+.wiring_editor .canvas .arrow:hover .arrowbody {
+    stroke: rgb(214, 214, 214);
+    stroke-width: 7;
+}
+
+.wiring_editor .canvas .arrow:hover .arrowborder {
+    stroke: rgb(0, 0, 0);
+    stroke-width: 10;
+}
+
+.wiring_editor .canvas .semanticAdvertiser {
+    stroke: black;
+    fill:   red;
+    fill-opacity:1;
+    stroke-width: 1;
+    display: none;
+}
+
+.wiring_editor .canvas .arrow:hover .semanticAdvertiser {
+    display: block;
+    font-family: FontAwesome;
+}
