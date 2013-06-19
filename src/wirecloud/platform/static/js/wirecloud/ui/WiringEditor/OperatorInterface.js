@@ -50,14 +50,20 @@
                 ioperator.outputs[endPointPos.sources[i]] = {
                     'description': '',
                     'label': endPointPos.sources[i],
-                    'name': endPointPos.sources[i]
+                    'name': endPointPos.sources[i],
+                    'connectable': {
+                        _friendCode: 'ghost'
+                    }
                 };
             }
             for (i = 0; i < endPointPos.targets.length; i += 1) {
                 ioperator.inputs[endPointPos.targets[i]] = {
                     'description': '',
                     'label': endPointPos.targets[i],
-                    'name': endPointPos.targets[i]
+                    'name': endPointPos.targets[i],
+                    'connectable': {
+                        _friendCode: 'ghost'
+                    }
                 };
             }
         } else {
