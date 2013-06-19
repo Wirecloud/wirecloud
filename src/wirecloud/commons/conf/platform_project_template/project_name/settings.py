@@ -222,7 +222,7 @@ WORKSPACE_MANAGERS = (
 )
 
 WIRECLOUD_PLUGINS = (
-    'wirecloud.oauth2provider.plugins.OAuth2Plugin',
+    'wirecloud.oauth2provider.plugins.OAuth2ProviderPlugin',
     'wirecloud.fiware.plugins.FiWarePlugin',
 )
 
