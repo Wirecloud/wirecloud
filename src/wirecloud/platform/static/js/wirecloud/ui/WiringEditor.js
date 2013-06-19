@@ -450,26 +450,24 @@ if (!Wirecloud.ui) {
                 operator_instance = reallyInUseOperators[key];
             }
             op_id = operator_instance.id;
-            if (this.NextOperatorId < op_id) {
-                this.NextOperatorId = op_id;
+            if (this.nextOperatorId < op_id) {
+                this.nextOperatorId = op_id + 1;
             }
+
+            endpoint_order = {'sources': [], 'targets': []};
+            position = null;
             for (i = 0; i < WiringStatus.views.length; i ++) {
                 if (key in WiringStatus.views[i].operators) {
                     if ('endPointsInOuts' in WiringStatus.views[i].operators[key]) {
                         endpoint_order = WiringStatus.views[i].operators[key].endPointsInOuts;
-                    } else {
-                        endpoint_order = {'sources': [], 'targets': []};
                     }
-                    operator_interface = this.addIOperator(operator_instance, endpoint_order);
-                    if (key in WiringStatus.views[i].operators) {
-                        operator_interface.setPosition(WiringStatus.views[i].operators[key].widget);
-                    }
-                    if (key >= this.nextOperatorId) {
-                        this.nextOperatorId = parseInt(key, 10) + 1;
-                    }
+                    position = WiringStatus.views[i].operators[key].widget;
                     break;
                 }
-
+            }
+            operator_interface = this.addIOperator(operator_instance, endpoint_order);
+            if (position != null) {
+                operator_interface.setPosition(position);
             }
         }
 

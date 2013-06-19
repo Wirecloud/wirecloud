@@ -19,7 +19,7 @@
                 'fields': [
                     {name: 'name', label: gettext('Mashup Name'), type: 'text', required: true, initialValue: workspace.getName(), defaultValue: workspace.getName()},
                     {name: 'vendor', label: gettext('Vendor'), type: 'text',  required: true},
-                    {name: 'version', label: gettext('Version'), type: 'text',  required: true},
+                    {name: 'version', label: gettext('Version'), type: 'version',  required: true},
                     {name: 'email', label: gettext('Email'), type: 'text',  required: true},
                     {name: 'description', label: gettext('Description'), type: 'longtext'},
                     {name: 'wikiURI', label: gettext('Homepage'), type: 'text'},

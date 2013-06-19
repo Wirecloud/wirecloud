@@ -85,7 +85,10 @@ Wirecloud.location = {
         });
 
         if (request.options.responseType == null || request.options.responseType === '') {
-            Object.defineProperty(this, 'responseText', {value: request.transport.responseText});
+            Object.defineProperties(this, {
+                'responseText': {value: request.transport.responseText},
+                'responseXML': {value: request.transport.responseXML}
+            });
         }
     };
 

@@ -48,7 +48,7 @@ var LayoutManagerFactory = function () {
         this.mainLayout.insertInto(document.body);
 
         /* TODO| FIXME */
-        this.header = new WirecloudHeader(this);
+        this.header = new Wirecloud.ui.WirecloudHeader(this);
         this.alternatives.addEventListener('postTransition', function (alternatives, old_alternative, new_alternative) {
             this._notifyViewChange(new_alternative);
         }.bind(this.header));

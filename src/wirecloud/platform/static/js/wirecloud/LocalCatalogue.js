@@ -62,7 +62,8 @@
     var uninstallOrDeleteSuccessCallback = function uninstallOrDeleteSuccessCallback(transport) {
         var layoutManager, result, opManager, i, widgetId;
 
-        if (this.resource.getType() === 'widget') {
+        switch (this.resource.getType()) {
+        case 'widget':
             layoutManager = LayoutManagerFactory.getInstance();
             result = JSON.parse(transport.responseText);
 
@@ -75,6 +76,14 @@
             }
 
             layoutManager.logSubTask(gettext('Purging widget info'));
+            break;
+        case 'operator':
+            layoutManager = LayoutManagerFactory.getInstance();
+            layoutManager.logSubTask(gettext('Uninstantiating affected operators'));
+            opManager = OpManagerFactory.getInstance();
+            opManager.activeWorkspace.wiring._notifyOperatorUninstall(this.resource);
+            layoutManager.logSubTask(gettext('Purging operator info'));
+            break;
         }
 
         try {
@@ -328,7 +337,11 @@
     };
 
     LocalCatalogue.getAvailableResourcesByType = function getAvailableResourcesByType(type) {
-        return this.resourcesByType[type];
+        if (type in this.resourcesByType) {
+            return this.resourcesByType[type];
+        } else {
+            return {};
+        }
     };
 
     LocalCatalogue.getResourceId = function getResourceId(id) {

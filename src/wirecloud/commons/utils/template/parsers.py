@@ -17,21 +17,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-import re
 import urlparse
 import rdflib
 
 from django.utils.translation import ugettext as _
 from lxml import etree
 
+from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version
 from wirecloud.commons.utils.translation import get_trans_index
 
 
 __all__ = ('TemplateParseException', 'TemplateParser')
-
-NAME_RE = re.compile(r'^[^/]+$')
-VENDOR_RE = re.compile(r'^[^/]+$')
-VERSION_RE = re.compile(r'^(?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0)$')
 
 EZWEB_TEMPLATE_NS = 'http://morfeo-project.org/2007/Template'
 WIRECLOUD_TEMPLATE_NS = 'http://wirecloud.conwet.fi.upm.es/ns/template#'
@@ -215,21 +211,20 @@ class USDLTemplateParser(object):
         elif self._info['type'] == 'operator':
             self._rootURI = self._graph.subjects(RDF['type'], WIRE['Operator']).next()
 
-        self._info['version'] = self._get_field(USDL, 'versionInfo', self._rootURI)
-        if not re.match(VERSION_RE, self._info['version']):
-            raise TemplateParseException(_('ERROR: the format of the version number is invalid. Format: X.X.X where X is an integer. Ex. "0.1", "1.11" NOTE: "1.01" should be changed to "1.0.1" or "1.1"'))
+        vendor = self._get_field(USDL, 'hasProvider', self._rootURI, id_=True)
+        self._info['vendor'] = self._get_field(FOAF, 'name', vendor)
+        if not is_valid_vendor(self._info['vendor']):
+            raise TemplateParseException(_('ERROR: the format of the vendor is invalid.'))
 
         self._info['name'] = self._get_field(DCTERMS, 'title', self._rootURI)
-        if not re.match(NAME_RE, self._info['name']):
+        if not is_valid_name(self._info['name']):
             raise TemplateParseException(_('ERROR: the format of the name is invalid.'))
 
+        self._info['version'] = self._get_field(USDL, 'versionInfo', self._rootURI)
+        if not is_valid_version(self._info['version']):
+            raise TemplateParseException(_('ERROR: the format of the version number is invalid. Format: X.X.X where X is an integer. Ex. "0.1", "1.11" NOTE: "1.01" should be changed to "1.0.1" or "1.1"'))
+
         self._info['description'] = self._get_translation_field(DCTERMS, 'description', self._rootURI, 'description', type='resource', field='description')
-
-        vendor = self._get_field(USDL, 'hasProvider', self._rootURI, id_=True)
-
-        self._info['vendor'] = self._get_field(FOAF, 'name', vendor)
-        if not re.match(NAME_RE, self._info['vendor']):
-            raise TemplateParseException(_('ERROR: the format of the vendor is invalid.'))
 
         author = self._get_field(DCTERMS, 'creator', self._rootURI, id_=True)
         self._info['author'] = self._get_field(FOAF, 'name', author)
@@ -714,16 +709,16 @@ class WirecloudTemplateParser(object):
 
     def _parse_basic_info(self):
 
-        self._info['name'] = self._get_field(NAME_XPATH, self._resource_description).strip()
-        if not re.match(NAME_RE, self._info['name']):
-            raise TemplateParseException(_('ERROR: the format of the name is invalid.'))
-
         self._info['vendor'] = self._get_field(VENDOR_XPATH, self._resource_description).strip()
-        if not re.match(NAME_RE, self._info['vendor']):
+        if not is_valid_vendor(self._info['vendor']):
             raise TemplateParseException(_('ERROR: the format of the vendor is invalid.'))
 
+        self._info['name'] = self._get_field(NAME_XPATH, self._resource_description).strip()
+        if not is_valid_name(self._info['name']):
+            raise TemplateParseException(_('ERROR: the format of the name is invalid.'))
+
         self._info['version'] = self._get_field(VERSION_XPATH, self._resource_description).strip()
-        if not re.match(VERSION_RE, self._info['version']):
+        if not is_valid_version(self._info['version']):
             raise TemplateParseException(_('ERROR: the format of the version number is invalid. Format: X.X.X where X is an integer. Ex. "0.1", "1.11" NOTE: "1.01" should be changed to "1.0.1" or "1.1"'))
 
         self._info['display_name'] = self._get_field(DISPLAY_NAME_XPATH, self._resource_description, required=False)

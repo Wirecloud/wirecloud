@@ -37,6 +37,7 @@ from wirecloud.commons.baseviews import Resource, Service
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.http import authentication_required, build_error_response, get_content_type, supported_request_mime_types
+from wirecloud.commons.utils.template import is_valid_name, is_valid_vendor, is_valid_version
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.get_data import get_workspace_data, get_global_workspace_data
@@ -500,6 +501,7 @@ class WorkspacePublisherEntry(Resource):
     def create(self, request, workspace_id):
 
         content_type = get_content_type(request)[0]
+        image_file = None
         if content_type == 'application/json':
             received_json = request.raw_post_data
         else:
@@ -515,6 +517,15 @@ class WorkspacePublisherEntry(Resource):
         missing_fields = check_json_fields(options, ('name', 'vendor', 'version', 'email'))
         if len(missing_fields) > 0:
             return build_error_response(request, 400, _('Malformed JSON. The following field(s) are missing: %(fields)s.') % {'fields': missing_fields})
+
+        if not is_valid_vendor(options['vendor']):
+            return build_error_response(request, 400, _('Invalid vendor'))
+
+        if not is_valid_name(options['name']):
+            return build_error_response(request, 400, _('Invalid name'))
+
+        if not is_valid_version(options['version']):
+            return build_error_response(request, 400, _('Invalid version number'))
 
         workspace = get_object_or_404(Workspace, id=workspace_id)
         if image_file is not None:

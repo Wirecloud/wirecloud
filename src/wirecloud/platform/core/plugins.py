@@ -73,6 +73,9 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/ModelTable.js',
     'js/StyledElements/EditableElement.js',
     'js/StyledElements/InputInterfaces.js',
+    'js/StyledElements/VersionInputInterface.js',
+    'js/StyledElements/InputInterfaceFactory.js',
+    'js/StyledElements/DefaultInputInterfaceFactory.js',
     'js/StyledElements/Form.js',
     'js/StyledElements/GUIBuilder.js',
     'js/StyledElements/PaginationInterface.js',
@@ -178,6 +181,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/Wiring.js',
             'js/gadgetModel/Gadget.js',
         ) + STYLED_ELEMENTS_FILES + (
+            'js/wirecloud/ui/InputInterfaceFactory.js',
             'js/wirecloud/ui/IWidgetResizeHandle.js',
             'js/wirecloud/ui/IWidgetView.js',
             'js/wirecloud/ui/Draggable.js',
@@ -195,6 +199,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
         if view == 'index':
             return common + (
+                'js/wirecloud/ui/WirecloudHeader.js',
                 'js/dragboard/dragboard.js',
                 'js/wirecloud/utils/CookieManager.js',
                 'js/wirecloud/MarketManager.js',

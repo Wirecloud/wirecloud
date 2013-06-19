@@ -732,8 +732,9 @@ MultivaluedInputInterface.prototype._setError = function _setError(error) {
 /**
  *
  */
-var FieldSetInterface = function FieldSetInterface(fieldId, fieldDesc) {
+var FieldSetInterface = function FieldSetInterface(fieldId, fieldDesc, factory) {
     this.form = new Form(fieldDesc.fields, {
+        factory: factory,
         useHtmlForm: false,
         acceptButton: false,
         cancelButton: false,
@@ -1101,52 +1102,3 @@ ParametrizedTextInputInterface.prototype.setDisabled = function setDisabled(disa
 ParametrizedTextInputInterface.prototype.insertInto = function insertInto(element) {
     this.wrapperElement.insertInto(element);
 };
-
-/**
- *
- */
-var InterfaceFactory = function InterfaceFactory() {
-    var mapping = {
-        'boolean': BooleanInputInterface,
-        'text': TextInputInterface,
-        'password': PasswordInputInterface,
-        'hidden': HiddenInputInterface,
-        'list': ListInputInterface,
-        'integer': IntegerInputInterface,
-        'longtext': LongTextInputInterface,
-        'url': URLInputInterface,
-        'email': EMailInputInterface,
-        'select': SelectInputInterface,
-        'buttons': ButtonGroupInputInterface,
-        'file': FileInputInterface,
-        'fieldset': FieldSetInterface,
-        'multivalued': MultivaluedInputInterface
-    };
-
-    this.createInterface = function createInterface(fieldId, fieldDesc) {
-        var Class_ = mapping[fieldDesc.type];
-        if (Class_ == null) {
-            throw new Error(fieldDesc.type);
-        }
-        return new Class_(fieldId, fieldDesc);
-    };
-
-    this.addFieldType = function addFieldType(type, class_) {
-        if (!class_ instanceof InputInterface) {
-            throw new TypeError();
-        }
-        if (mapping[type] !== undefined) {
-            throw new Error();
-        }
-
-        mapping[type] = class_;
-    };
-};
-
-
-Wirecloud.form = {};
-
-Wirecloud.form.WirecloudInterfaceFactory = new InterfaceFactory();
-Wirecloud.form.WirecloudInterfaceFactory.addFieldType('parametrizableValue', ParametrizableValueInputInterface);
-Wirecloud.form.WirecloudInterfaceFactory.addFieldType('parametrizedText', ParametrizedTextInputInterface);
-InterfaceFactory = new InterfaceFactory();
