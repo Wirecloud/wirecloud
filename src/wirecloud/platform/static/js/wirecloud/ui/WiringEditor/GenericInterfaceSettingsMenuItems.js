@@ -34,19 +34,31 @@
 
     GenericInterfaceSettingsMenuItems.prototype.build = function build(context) {
         var label;
-        var items = [];
+        var item, items = [];
 
-        items.push(new StyledElements.MenuItem(gettext('Reorder endpoints'), function () {
+        item = new StyledElements.MenuItem(gettext('Reorder endpoints'), function () {
                 this.wiringEditor.ChangeObjectEditing(this);
-        }.bind(this.geinterface)));
+        }.bind(this.geinterface));
+        item.setDisabled(this.geinterface.sourceAnchors.length <= 1 && this.geinterface.targetAnchors.length <= 1);
+        items.push(item);
 
-        items.push(new  StyledElements.MenuItem(gettext('Settings'), function () {
+
+        item = new StyledElements.MenuItem(gettext('Settings'), function () {
             var window_menu;
             if (this.ioperator) {
                 window_menu = new Wirecloud.ui.OperatorPreferencesWindowMenu();
                 window_menu.show(this.ioperator);
+            } else {
+                window_menu = new Wirecloud.Widget.PreferencesWindowMenu();
+                window_menu.show(this.iwidget);
             }
-        }.bind(this.geinterface)));
+        }.bind(this.geinterface));
+        if ('ioperator' in this.geinterface) {
+            item.setDisabled(this.geinterface.ioperator.meta.preferenceList.length == 0);
+        } else {
+            item.setDisabled(this.geinterface.iwidget.widget.getTemplate().getUserPrefs().length == 0);
+        }
+        items.push(item);
 
         return items;
     };
