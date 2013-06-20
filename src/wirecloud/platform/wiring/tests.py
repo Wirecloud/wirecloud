@@ -480,3 +480,229 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
         self.assertEqual(window_menus, 1)
         wiring_entities = self.driver.find_elements_by_css_selector('.grid > .ioperator, .grid > .iwidget')
         self.assertEqual(len(wiring_entities), 0)
+
+class WiringGhostTestCase(WirecloudSeleniumTestCase):
+
+    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+
+    @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
+    def test_wiring_show_invisible_widget(self):
+        workspace = Workspace.objects.get(id=2)
+        workspace.wiringStatus = json.dumps({
+            "views":[
+               {
+                  "label":"default",
+                  "iwidgets":{
+                     "1":{
+                        "widget":{
+                            "posX": 84,
+                            "posY": 44
+                        },
+                         "endPointsInOuts":{
+                            "sources": ["outputendpoint"],
+                            "targets": ["inputendpoint"]
+                         },
+                         "name": "Wirecloud/Test/1.0",
+                     },
+                     "2": {
+                        "widget":{
+                            "posX": 84,
+                            "posY": 153
+                         },
+                         "endPointsInOuts":{
+                            "sources": ["outputendpoint"],
+                            "targets": ["inputendpoint"]
+                         },
+                         "name": "Wirecloud/Test/1.0",
+                     },
+                     "3": {
+                        "widget":{
+                            "posX": 200,
+                            "posY": 100
+                         },
+                         "endPointsInOuts":{
+                            "sources": ["outputendpoint"],
+                            "targets": ["inputendpoint"]
+                         },
+                         "name": "Wirecloud/Test/1.0",
+                     }
+                  },
+                  "operators":{
+                     "0": {
+                        "widget": {
+                            "posX": 84,
+                            "posY": 256
+                        }
+                     }
+                  },
+                  "connections":[]
+               }
+            ],
+            "operators":{
+               "0":{
+                  "name":"Wirecloud/TestOperator/1.0",
+                  "id":"0",
+                  "preferences":{
+                  }
+               }
+            },
+            "connections":[
+            ]
+        })
+        workspace.save()
+        self.login(username='user_with_workspaces')
+        iwidgets = self.get_current_iwidgets()
+        self.assertEqual(len(iwidgets), 2)
+        self.change_main_view('wiring')
+        time.sleep(2)
+        ghostWidget = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost')
+        ghostEndpointsLabelsFirst1 = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost .labelDiv')[0].text
+        ghostEndpointsLabelsFirst2 = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost .labelDiv')[1].text
+        # Ghost
+        self.assertEqual(len(ghostWidget), 1, "The ghost Widget has not been painted in the first access to Wiring Editor")
+        self.change_main_view('workspace')
+        time.sleep(2)
+        self.change_main_view('wiring')
+        time.sleep(2)
+        ghostWidget = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost')
+        self.assertEqual(len(ghostWidget), 1, "The ghost Widget has not been painted in the second access to Wiring Editor")
+        ghostEndpointsLabelsSecond = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost .labelDiv')
+        # compare labels
+        self.assertEqual(ghostEndpointsLabelsFirst1, ghostEndpointsLabelsSecond[0].text, "The ghost Widget has change the endpoints label in the second access to Wiring Editor")
+        self.assertEqual(ghostEndpointsLabelsFirst2, ghostEndpointsLabelsSecond[1].text, "The ghost Widget has change the endpoints label in the second access to Wiring Editor")
+
+    @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
+    def test_wiring_show_invisible_widget_with_connections(self):
+        workspace = Workspace.objects.get(id=2)
+        workspace.wiringStatus = json.dumps({
+            "views":[
+               {
+                  "label":"default",
+                  "iwidgets":{
+                     "1":{
+                        "widget":{
+                            "posX": 84,
+                            "posY": 44
+                        },
+                         "endPointsInOuts":{
+                            "sources": ["outputendpoint"],
+                            "targets": ["inputendpoint"]
+                         },
+                         "name": "Wirecloud/Test/1.0",
+                     },
+                     "2": {
+                        "widget":{
+                            "posX": 84,
+                            "posY": 153
+                         },
+                         "endPointsInOuts":{
+                            "sources": ["outputendpoint"],
+                            "targets": ["inputendpoint"]
+                         },
+                         "name": "Wirecloud/Test/1.0",
+                     },
+                     "3": {
+                        "widget":{
+                            "posX": 200,
+                            "posY": 100
+                         },
+                         "endPointsInOuts":{
+                            "sources": ["outputendpoint"],
+                            "targets": ["inputendpoint"]
+                         },
+                         "name": "Wirecloud/Test/1.0",
+                     }
+                  },
+                  "operators":{
+                     "0": {
+                        "widget": {
+                            "posX": 84,
+                            "posY": 256
+                        }
+                     }
+                  },
+                  "connections":[]
+               }
+            ],
+            "operators":{
+               "0":{
+                  "name":"Wirecloud/TestOperator/1.0",
+                  "id":"0",
+                  "preferences":{
+                  }
+               }
+            },
+            "connections":[
+               {
+                  "source":{
+                     "type":"iwidget",
+                     "id":1,
+                     "endpoint":"outputendpoint"
+                  },
+                  "target":{
+                     "type":"iwidget",
+                     "id":2,
+                     "endpoint":"inputendpoint"
+                  }
+               },
+               {
+                  "source":{
+                     "type":"iwidget",
+                     "id":2,
+                     "endpoint":"outputendpoint"
+                  },
+                  "target":{
+                     "type":"ioperator",
+                     "id":0,
+                     "endpoint":"input"
+                  }
+               },
+               {
+                  "source":{
+                     "type":"ioperator",
+                     "id":0,
+                     "endpoint":"output"
+                  },
+                  "target":{
+                     "type":"iwidget",
+                     "id":1,
+                     "endpoint":"inputendpoint"
+                  }
+               },
+               {
+                  "source":{
+                     "type":"ioperator",
+                     "id":0,
+                     "endpoint":"output"
+                  },
+                  "target":{
+                     "type":"iwidget",
+                     "id":3,
+                     "endpoint":"inputendpoint"
+                  }
+               },
+               {
+                  "source":{
+                     "type":"iwidget",
+                     "id":1,
+                     "endpoint":"outputendpoint"
+                  },
+                  "target":{
+                     "type":"iwidget",
+                     "id":3,
+                     "endpoint":"inputendpoint"
+                  }
+               }
+            ]
+        })
+        workspace.save()
+        self.login(username='user_with_workspaces')
+        iwidgets = self.get_current_iwidgets()
+        self.assertEqual(len(iwidgets), 2)
+        self.change_main_view('wiring')
+        time.sleep(2)
+        ghostWidget = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost')
+        self.assertEqual(len(ghostWidget), 1)
+        # 5 connections
+        connections = self.driver.find_elements_by_css_selector('.arrow')
+        self.assertEqual(len(connections), 5,"Fail in ghost Widget connections")
