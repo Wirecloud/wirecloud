@@ -71,6 +71,14 @@ MEDIA_URL = ''
 # Example: "/var/www/example.com/static/"
 STATIC_ROOT = path.join(BASEDIR, '../static')
 
+# Controls the absolute file path that linked static will be read from and
+# compressed static will be written to when using the default COMPRESS_STORAGE.
+COMPRESS_ROOT = STATIC_ROOT
+
+# Controls the directory inside COMPRESS_ROOT that compressed files will be
+# written to.
+COMPRESS_OUTPUT_DIR = 'cache'
+
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
 STATIC_URL = '/static/'
