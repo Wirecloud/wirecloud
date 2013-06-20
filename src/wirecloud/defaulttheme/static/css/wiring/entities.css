@@ -35,6 +35,18 @@
     display: block;
 }
 
+.wiring_editor .ioperator.ghost .header span, .wiring_editor .iwidget.ghost .header span {
+    font-style: italic;
+}
+
+.wiring_editor .ioperator.ghost .header .editPos_button, .wiring_editor .iwidget.ghost .header .editPos_button {
+    top: -16px;
+}
+
+.wiring_editor .ioperator.ghost .header .closebutton, .wiring_editor .iwidget.ghost .header .closebutton {
+    top: -16px;
+}
+
 .wiring_editor .ioperator.flex, .wiring_editor .iwidget.flex {
     -webkit-transition: all 400ms;
     -moz-transition: all 400ms;
