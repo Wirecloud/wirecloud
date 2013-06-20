@@ -1234,7 +1234,11 @@
             for (i = 0; this.draggableSources.length; i ++) {
                 if (this.draggableSources[i].wrapperElement === node) {
                     if (this.className === 'iwidget') {
-                        return this.draggableSources[i].context.data.vardef.name;
+                        if (!this.isGhost) {
+                            return this.draggableSources[i].context.data.vardef.name;
+                        } else {
+                            return this.draggableSources[i].context.data.label;
+                        }
                     } else {
                         return this.draggableSources[i].context.data.name;
                     }
@@ -1244,7 +1248,11 @@
             for (i = 0; this.draggableTargets.length; i ++) {
                 if (this.draggableTargets[i].wrapperElement === node) {
                     if (this.className === 'iwidget') {
-                        return this.draggableTargets[i].context.data.vardef.name;
+                        if (!this.isGhost) {
+                            return this.draggableTargets[i].context.data.vardef.name;
+                        } else {
+                            return this.draggableTargets[i].context.data.label;
+                        }
                     } else {
                         return this.draggableTargets[i].context.data.name;
                     }

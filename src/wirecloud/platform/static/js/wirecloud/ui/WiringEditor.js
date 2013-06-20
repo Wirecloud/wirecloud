@@ -412,6 +412,7 @@ if (!Wirecloud.ui) {
         }
         this.refactorSemanticInfo(entitiesIds);
 
+        // Widgets
         for (i = 0; i < iwidgets.length; i++) {
             iwidget = iwidgets[i];
             // mini widgets
@@ -427,6 +428,33 @@ if (!Wirecloud.ui) {
                     widget_interface = this.addIWidget(this, iwidget, WiringStatus.views[k].iwidgets[iwidget.getId()].endPointsInOuts);
                     widget_interface.setPosition(WiringStatus.views[k].iwidgets[iwidget.getId()].widget);
                     break;
+                }
+            }
+        }
+
+        // Ghost Widgets!
+        var ghostName;
+        for (k = 0; k < WiringStatus.views.length; k ++) {
+            for (key in WiringStatus.views[k].iwidgets) {
+                if (!this.iwidgets[key]) {
+                    // Widget Name if is known
+                    if (WiringStatus.views[k].iwidgets[key].completeName != null) {
+                        ghostName = WiringStatus.views[k].iwidgets[key].completeName;
+                    } else {
+                        ghostName = "unknown name";
+                    }
+                    iwidget = {};
+                    iwidget = {
+                        'id': key,
+                        'name': ghostName,
+                        'ghost': true,
+                        'getId': function() {
+                            return key;
+                        }.bind(this, key)
+                    };
+                    iwidget['widget'] = iwidget;
+                    widget_interface = this.addIWidget(this, iwidget, WiringStatus.views[k].iwidgets[key].endPointsInOuts);
+                    widget_interface.setPosition(WiringStatus.views[k].iwidgets[key].widget);
                 }
             }
         }
@@ -746,7 +774,8 @@ if (!Wirecloud.ui) {
      * Saves the wiring state.
      */
     WiringEditor.prototype.serialize = function serialize() {
-        var pos, i, key, widget, arrow, operator_interface, ioperator, WiringStatus, multiconnector, height, inOutPos, positions;
+        var pos, i, key, widget, arrow, operator_interface, ioperator,
+        WiringStatus, multiconnector, height, inOutPos, positions, name;
 
         // positions
         WiringStatus = {
@@ -773,7 +802,12 @@ if (!Wirecloud.ui) {
             widget = this.iwidgets[key];
             pos = widget.getStylePosition();
             inOutPos = widget.getInOutPositions();
-            positions = {'widget' : pos, 'endPointsInOuts' : inOutPos};
+            if (!widget.isGhost) {
+                name = widget.iwidget.widget.getId();
+            } else {
+                name = widget.iwidget.widget.display_name
+            }
+            positions = {'widget' : pos, 'endPointsInOuts' : inOutPos, 'completeName': name};
             WiringStatus.views[0].iwidgets[key] = positions;
         }
 
@@ -1323,7 +1357,11 @@ if (!Wirecloud.ui) {
             if (anchor.context.data instanceof WidgetOutputEndpoint) {
                 achorId = anchor.context.data.name;
             } else {
-                achorId = anchor.context.data.vardef.name;
+                if (!anchor.context.iObject.iwidget.ghost) {
+                    achorId = anchor.context.data.vardef.name;
+                } else {
+                    achorId = anchor.context.data;
+                }
             }
         }
 
@@ -1349,7 +1387,11 @@ if (!Wirecloud.ui) {
             if (anchor.context.data instanceof WidgetOutputEndpoint) {
                 achorId = anchor.context.data.name;
             } else {
-                achorId = anchor.context.data.vardef.name;
+                if (!anchor.context.iObject.iwidget.ghost) {
+                    achorId = anchor.context.data.vardef.name;
+                } else {
+                    achorId = anchor.context.data;
+                }
             }
         }
 
