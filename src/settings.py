@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Django settings used as base for developing wirecloud.
 
 from os import path
 from wirecloud.commons.utils.urlresolvers import reverse_lazy
@@ -31,6 +32,11 @@ DATABASES = {
         'PORT': '',                                  # Set to empty string for default. Not used with sqlite3.
     },
 }
+
+# This setting has only effect in DJango 1.5+
+# Hosts/domain names that are valid for this site; required if DEBUG is False
+# See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
+ALLOWED_HOSTS = ['*']
 
 THEME_ACTIVE = "wirecloud.defaulttheme"
 
