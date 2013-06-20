@@ -272,8 +272,8 @@
             return this.context.data.serialize();
         } else {
             return {
-                'type': 'ioperator',
-                'id': this.context.iObject.ioperator.id,
+                'type': this.context.iObject.className,
+                'id': this.context.iObject[this.context.iObject.className].id,
                 'endpoint': this.context.data.name
             };
         }

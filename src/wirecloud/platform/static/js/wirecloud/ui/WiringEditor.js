@@ -240,6 +240,7 @@ if (!Wirecloud.ui) {
         iwidgets = workspace.getIWidgets();
         availableOperators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
 
+        // Widgets
         for (i = 0; i < iwidgets.length; i++) {
             iwidget = iwidgets[i];
             // mini widgets
@@ -255,6 +256,29 @@ if (!Wirecloud.ui) {
                     widget_interface = this.addIWidget(this, iwidget, WiringStatus.views[k].iwidgets[iwidget.getId()].endPointsInOuts);
                     widget_interface.setPosition(WiringStatus.views[k].iwidgets[iwidget.getId()].widget);
                     break;
+                }
+            }
+        }
+
+        // Ghost Widgets!
+        var ghostName;
+        for (k = 0; k < WiringStatus.views.length; k ++) {
+            for (key in WiringStatus.views[k].iwidgets) {
+                if (!this.iwidgets[key]) {
+                    // Widget Name if is known
+                    if (WiringStatus.views[k].iwidgets[key].name != null) {
+                        ghostName = WiringStatus.views[k].iwidgets[key].name;
+                    } else {
+                        ghostName = gettext("unknown name");
+                    }
+                    iwidget = {
+                        'id': key,
+                        'display_name': ghostName,
+                        'ghost': true
+                    };
+                    iwidget['widget'] = iwidget;
+                    widget_interface = this.addIWidget(this, iwidget, WiringStatus.views[k].iwidgets[key].endPointsInOuts);
+                    widget_interface.setPosition(WiringStatus.views[k].iwidgets[key].widget);
                 }
             }
         }
@@ -513,7 +537,8 @@ if (!Wirecloud.ui) {
      * Saves the wiring state.
      */
     WiringEditor.prototype.serialize = function serialize() {
-        var pos, i, key, widget, arrow, operator_interface, ioperator, WiringStatus, multiconnector, height, inOutPos, positions;
+        var pos, i, key, widget, arrow, operator_interface, ioperator,
+        WiringStatus, multiconnector, height, inOutPos, positions, name;
 
         // positions
         WiringStatus = {
@@ -540,7 +565,7 @@ if (!Wirecloud.ui) {
             widget = this.iwidgets[key];
             pos = widget.getStylePosition();
             inOutPos = widget.getInOutPositions();
-            positions = {'widget' : pos, 'endPointsInOuts' : inOutPos};
+            positions = {'widget' : pos, 'endPointsInOuts' : inOutPos, 'name': widget.iwidget.widget.id};
             WiringStatus.views[0].iwidgets[key] = positions;
         }
 
