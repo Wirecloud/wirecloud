@@ -50,8 +50,20 @@ class CommandLineUtility(object):
                 usage.append("    %s" % name)
         return '\n'.join(usage)
 
+    def unknown_command_text(self, command):
+        """
+        Returns the unknown command help text, as a string.
+        """
+        return "'%(command)s' is not a %(prog_name)s command. See '%(prog_name)s --commands'." % {
+            "command": command,
+            "prog_name": self.prog_name,
+        }
+
     def fetch_command(self, command):
-        return self.commands[command]
+        if command in self.commands:
+            return self.commands[command]
+        else:
+            return None
 
     def execute(self):
 
@@ -76,7 +88,12 @@ class CommandLineUtility(object):
             elif args[2] == '--commands':
                 sys.stdout.write(self.main_help_text(commands_only=True) + '\n')
             else:
-                self.fetch_command(args[2]).print_help(self.prog_name, args[2])
+                command = self.fetch_command(args[2])
+                if command is not None:
+                    command.print_help(self.prog_name, args[2])
+                else:
+                    sys.stdout.write(self.unknown_command_text(args[2]) + '\n')
+
         elif subcommand == 'version':
             sys.stdout.write(parser.get_version() + '\n')
         elif '--version' in self.argv[1:]:
@@ -86,7 +103,11 @@ class CommandLineUtility(object):
             parser.print_lax_help()
             sys.stdout.write(self.main_help_text() + '\n')
         else:
-            self.fetch_command(subcommand).run_from_argv(self.argv)
+            command = self.fetch_command(subcommand)
+            if command is not None:
+                command.run_from_argv(self.argv)
+            else:
+                sys.stdout.write(self.unknown_command_text(subcommand) + '\n')
 
 
 def execute_from_command_line():
