@@ -54,7 +54,7 @@ class CommandLineUtility(object):
         """
         Returns the unknown command help text, as a string.
         """
-        return "'%(command)s' is not a %(prog_name)s command. See '%(prog_name)s --commands'." % {
+        return "'%(command)s' is not a %(prog_name)s command. See '%(prog_name)s help'." % {
             "command": command,
             "prog_name": self.prog_name,
         }
