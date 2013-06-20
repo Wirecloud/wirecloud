@@ -76,7 +76,7 @@ function Workspace(workspaceState) {
 
         loginButton = document.createElement('a');
         loginButton.setAttribute('class', 'logout');
-        loginButton.setAttribute('href', '/logout')
+        loginButton.setAttribute('href', Wirecloud.URLs.LOGOUT_VIEW)
         loginButton.textContent = gettext('Sign out');
 
         this.toolbar = new StyledElements.NavigationHeader({
