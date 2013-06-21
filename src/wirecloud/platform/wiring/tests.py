@@ -411,6 +411,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
         workspace.save()
 
         self.login(username='user_with_workspaces')
+
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
         self.change_main_view('wiring')
@@ -465,6 +466,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
         workspace.save()
 
         self.login(username='user_with_workspaces')
+
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
         self.change_main_view('wiring')
@@ -547,7 +549,9 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
             "connections": []
         })
         workspace.save()
+
         self.login(username='user_with_workspaces')
+
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
         self.change_main_view('wiring')
@@ -693,7 +697,9 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
             ]
         })
         workspace.save()
+
         self.login(username='user_with_workspaces')
+
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
         self.change_main_view('wiring')
@@ -771,7 +777,9 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
             "connections": []
         })
         workspace.save()
+
         self.login(username='user_with_workspaces')
+
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
         self.change_main_view('wiring')
@@ -920,7 +928,9 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
             ]
         })
         workspace.save()
+
         self.login(username='user_with_workspaces')
+
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
         self.change_main_view('wiring')
@@ -930,3 +940,103 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
         # 5 connections
         connections = self.driver.find_elements_by_css_selector('.arrow')
         self.assertEqual(len(connections), 5, "Fail in ghost Operator connections")
+
+    def test_read_only_connections_cannot_be_deleted_in_WiringEditor(self):
+
+        workspace = Workspace.objects.get(id=2)
+        parsedStatus = json.loads(workspace.wiringStatus)
+        parsedStatus['connections'] = [
+            {
+                "readOnly": True,
+                "source":{
+                    "type":"iwidget",
+                    "id":1,
+                    "endpoint":"outputendpoint"
+                },
+                "target":{
+                    "type":"iwidget",
+                    "id":2,
+                    "endpoint":"inputendpoint"
+                }
+            },
+            {
+                "readOnly": False,
+                "source":{
+                    "type":"iwidget",
+                    "id":1,
+                    "endpoint":"outputendpoint"
+                },
+                "target":{
+                    "type":"ioperator",
+                    "id":0,
+                    "endpoint":"input"
+                }
+            }
+        ]
+        workspace.wiringStatus = json.dumps(parsedStatus)
+        workspace.save()
+
+        self.login(username='user_with_workspaces')
+
+        iwidgets = self.get_current_iwidgets()
+        self.assertEqual(len(iwidgets), 2)
+        self.change_main_view('wiring')
+        time.sleep(2)
+        arrows = self.driver.find_elements_by_css_selector('.arrow')
+        self.assertEqual(len(arrows), 2)
+        arrows[0].click()
+        arrows[0].find_elements_by_css_selector('.closer')[0].click()
+        arrows = self.driver.find_elements_by_css_selector('.arrow')
+        self.assertEqual(len(arrows), 2)
+
+    def test_widget_and_operator_with_read_only_connections_cannot_be_deleted_in_WiringEditor(self):
+
+        workspace = Workspace.objects.get(id=2)
+        parsedStatus = json.loads(workspace.wiringStatus)
+        parsedStatus['connections'] = [
+            {
+                "readOnly": False,
+                "source": {
+                    "type": "iwidget",
+                    "id": 1,
+                    "endpoint": "outputendpoint"
+                },
+                "target": {
+                    "type": "iwidget",
+                    "id": 2,
+                    "endpoint": "inputendpoint"
+                }
+            },
+            {
+                "readOnly": True,
+                "source": {
+                    "type": "iwidget",
+                    "id": 1,
+                    "endpoint": "outputendpoint"
+                },
+                "target":{
+                    "type": "ioperator",
+                    "id": 0,
+                    "endpoint": "input"
+                }
+            }
+        ]
+        workspace.wiringStatus = json.dumps(parsedStatus)
+        workspace.save()
+
+        self.login(username='user_with_workspaces')
+
+        iwidgets = self.get_current_iwidgets()
+        self.assertEqual(len(iwidgets), 2)
+        self.change_main_view('wiring')
+        time.sleep(2)
+        widget = self.driver.find_elements_by_css_selector('.grid > .iwidget')[0]
+        operator = self.driver.find_elements_by_css_selector('.grid > .ioperator')[0]
+        widget.click()
+        widget.find_elements_by_css_selector('.closebutton')[0].click()
+        operator.click()
+        operator.find_elements_by_css_selector('.closebutton')[0].click()
+        widgets = self.driver.find_elements_by_css_selector('.grid > .iwidget')
+        operators = self.driver.find_elements_by_css_selector('.grid > .ioperator')
+        self.assertEqual(len(widgets), 2)
+        self.assertEqual(len(operators), 1)
