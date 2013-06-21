@@ -81,20 +81,6 @@ def get_mashup_widgets(mashup_id):
     return [i.widget for i in IWidget.objects.filter(tab__workspace=published_workspace.workspace)]
 
 
-def create_published_workspace_from_template(template, user):
-
-    if not isinstance(template, TemplateParser):
-        template = TemplateParser(template)
-
-    workspace_info = template.get_resource_basic_info()
-    return PublishedWorkspace.objects.create(name=workspace_info['name'],
-        vendor=workspace_info['vendor'], version=workspace_info['version'],
-        author=workspace_info['author'], mail=workspace_info['mail'],
-        description=workspace_info['description'], imageURI=workspace_info['image_uri'],
-        wikiURI=workspace_info['doc_uri'], params='',
-        creator=user, template=template.get_contents())
-
-
 def encrypt_value(value):
     if not HAS_AES:
         return value
