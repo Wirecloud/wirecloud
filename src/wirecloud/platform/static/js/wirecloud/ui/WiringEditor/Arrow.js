@@ -70,6 +70,13 @@
             if (e.button !== 0) {
                 return;
             }
+
+            // readOnly control
+            if (this.readOnly) {
+                e.stopPropagation();
+                return;
+            }
+
             this.destroy();
             e.stopPropagation();
         }.bind(this));
@@ -138,6 +145,7 @@
         this.endMulti = null;
         this.startMulti = null;
         this.multiId = null;
+        this.readOnly = false;
     };
 
     /*************************************************************************

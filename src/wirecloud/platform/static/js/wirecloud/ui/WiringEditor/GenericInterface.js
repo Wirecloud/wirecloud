@@ -54,6 +54,8 @@
         this.draggableSources = [];
         this.draggableTargets = [];
         this.isGhost = isGhost;
+        this.readOnlyEndpoints = 0;
+        this.readOnly = false;
 
         if (manager instanceof Wirecloud.ui.WiringEditor.ArrowCreator) {
             this.isMiniInterface = false;
@@ -97,6 +99,9 @@
             });
             del_button.insertInto(this.header);
             del_button.addEventListener('click', function () {
+                if (this.readOnly == true) {
+                    return;
+                }
                 if (className == 'iwidget') {
                     this.wiringEditor.removeIWidget(this);
                 } else {
@@ -370,6 +375,24 @@
         return this.menubarPosition;
     };
 
+    /**
+     * Increasing the number of read only connections
+     */
+
+    GenericInterface.prototype.incReadOnlyConnectionsCount = function incReadOnlyConnectionsCount() {
+        this.readOnlyEndpoints += 1;
+        this.readOnly = true;
+    };
+
+    /**
+     * Reduce the number of read only connections
+     */
+    GenericInterface.prototype.reduceReadOnlyConnectionsCount = function reduceReadOnlyConnectionsCount() {
+        this.readOnlyEndpoints -= 1;
+        if (this.readOnlyEndpoints == 0) {
+            this.readOnly = false;
+        }
+    };
     /**
      * generic repaint
      */

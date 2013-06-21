@@ -187,7 +187,7 @@ if (!Wirecloud.ui) {
             operator, operator_interface, operator_instance, connection, connectionView, startAnchor,
             endAnchor, arrow, isMenubarRef, pos, op_id, multiconnectors, multi, multiInstance, key,
             anchor, endpoint_order, operators, k, entitiesIds, currentSource, currentTarget, i,
-            availableOperators, position;
+            availableOperators, position, extraclass, readOnly;
 
         if (WiringStatus == null) {
             WiringStatus = {};
@@ -358,8 +358,17 @@ if (!Wirecloud.ui) {
             endAnchor = findAnchor.call(this, connection.target, workspace);
 
             if (startAnchor !== null && endAnchor !== null) {
+                if (connection.readOnly) {
+                    readOnly = true;
+                    extraclass = 'readOnly';
+                    startAnchor.context.iObject.incReadOnlyConnectionsCount();
+                    endAnchor.context.iObject.incReadOnlyConnectionsCount();
+                } else {
+                    readOnly = false;
+                    extraclass = null;
+                }
                 arrow = this.canvas.drawArrow(startAnchor.getCoordinates(this.layout.getCenterContainer().wrapperElement),
-                endAnchor.getCoordinates(this.layout.getCenterContainer().wrapperElement));
+                                              endAnchor.getCoordinates(this.layout.getCenterContainer().wrapperElement), extraclass, readOnly);
                 arrow.startAnchor = startAnchor;
                 startAnchor.addArrow(arrow);
                 arrow.endAnchor = endAnchor;
@@ -599,6 +608,7 @@ if (!Wirecloud.ui) {
         for (i = 0; i < this.arrows.length; i++) {
             arrow = this.arrows[i];
             WiringStatus.connections.push({
+                'readOnly': arrow.hasClassName('readOnly'),
                 'source': arrow.startAnchor.serialize(),
                 'target': arrow.endAnchor.serialize()
             });

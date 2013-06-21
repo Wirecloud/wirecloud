@@ -82,3 +82,18 @@
     fill:   none;
     stroke-width: 11;
 }
+
+/* Read Only */
+
+.wiring_editor .canvas .readOnly .closer {
+    fill: #30F;
+}
+
+.wiring_editor .canvas .readOnly .closer:hover {
+    display: inline;
+    fill: red;
+}
+
+.wiring_editor .canvas .readOnly .arrowborder {
+    stroke: #30F;
+}
