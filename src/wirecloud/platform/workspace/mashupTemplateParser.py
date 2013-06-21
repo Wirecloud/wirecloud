@@ -273,6 +273,3 @@ def fillWorkspaceUsingTemplate(workspace, template):
     workspace.wiringStatus = simplejson.dumps(wiring_status)
 
     workspace.save()
-
-    from wirecloud.platform.get_data import _invalidate_cached_variable_values
-    _invalidate_cached_variable_values(workspace)

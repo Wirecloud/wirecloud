@@ -55,6 +55,13 @@ class Workspace(models.Model):
     def __unicode__(self):
         return unicode(self.pk) + " " + unicode(self.name)
 
+    def save(self, *args, **kwargs):
+
+        super(Workspace, self).save(*args, **kwargs)
+
+        from wirecloud.platform.get_data import _invalidate_cached_variable_values
+        _invalidate_cached_variable_values(self)
+
     def is_shared(self):
         return len(self.users.all()) > 1
 
