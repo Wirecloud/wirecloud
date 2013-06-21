@@ -291,9 +291,6 @@ class TabCollection(Resource):
             tab.position = order.index(tab.id)
             tab.save()
 
-        from wirecloud.platform.get_data import _invalidate_cached_variable_values
-        _invalidate_cached_variable_values(workspace)
-
         return HttpResponse(status=204)
 
 
@@ -333,9 +330,6 @@ class TabEntry(Resource):
             tab.name = data['name']
 
         tab.save()
-
-        from wirecloud.platform.get_data import _invalidate_cached_variable_values
-        _invalidate_cached_variable_values(workspace)
 
         return HttpResponse(status=204)
 
