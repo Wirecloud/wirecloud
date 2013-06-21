@@ -183,10 +183,10 @@ function VarManager (_workspace) {
     }
 
     VarManager.prototype.addPendingVariable = function (iWidget, variableName, value) {
-        var variables = this.pendingVariables[iWidget.getId()];
+        var variables = this.pendingVariables[iWidget.id];
         if (!variables) {
             variables = [];
-            this.pendingVariables[iWidget.getId()] = variables;
+            this.pendingVariables[iWidget.id] = variables;
         }
         variables.push({
             "name": variableName,

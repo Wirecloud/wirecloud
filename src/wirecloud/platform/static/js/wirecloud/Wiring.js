@@ -74,7 +74,7 @@
 
         widgets = this.workspace.getIWidgets();
         for (i = 0; i < widgets.length; i++) {
-            connectables = this.connectablesByWidget[widgets[i].getId()].connectables;
+            connectables = this.connectablesByWidget[widgets[i].id].connectables;
             for (j = 0; j < connectables.length; j++) {
                 connectables[j].fullDisconnect();
             }
@@ -93,7 +93,7 @@
         var varManager, iWidgetId, widgetEntry, i, variableDef,
             connectables, variable, connectable;
 
-        iWidgetId = iwidget.getId();
+        iWidgetId = iwidget.id;
         if (iWidgetId in this.connectablesByWidget) {
             var msg = gettext("Error adding iWidget into the wiring module of the workspace: Widget instance already exists.");
             LogManagerFactory.getInstance().log(msg);
@@ -133,35 +133,35 @@
     removeIWidget = function removeIWidget(iwidget) {
         var widgetEntry, i, connection;
 
-        if (!(iwidget.getId() in this.connectablesByWidget)) {
+        if (!(iwidget.id in this.connectablesByWidget)) {
             var msg = gettext("Error: trying to remove an inexistant iWidget from the wiring module.");
             LogManagerFactory.getInstance().log(msg);
             return;
         }
 
-        widgetEntry = this.connectablesByWidget[iwidget.getId()];
+        widgetEntry = this.connectablesByWidget[iwidget.id];
         for (i = 0; i < widgetEntry.connectables.length; i += 1) {
             widgetEntry.connectables[i].destroy();
         }
 
-        if (this.status.views != null && this.status.views[0].iwidgets[iwidget.getId()]) {
-            delete this.status.views[0].iwidgets[iwidget.getId()];
+        if (this.status.views != null && this.status.views[0].iwidgets[iwidget.id]) {
+            delete this.status.views[0].iwidgets[iwidget.id];
         }
 
         for (i = this.status.connections.length - 1; i >= 0 ; i -= 1) {
             connection = this.status.connections[i];
 
-            if (connection.source.type === 'iwidget' && connection.source.id === iwidget.getId()) {
+            if (connection.source.type === 'iwidget' && connection.source.id === iwidget.id) {
                 this.status.connections.splice(i, 1);
                 this.status.views[0].connections.splice(i, 1);
-            } else if (connection.target.type === 'iwidget' && connection.target.id === iwidget.getId()) {
+            } else if (connection.target.type === 'iwidget' && connection.target.id === iwidget.id) {
                 this.status.connections.splice(i, 1);
                 this.status.views[0].connections.splice(i, 1);
             }
         }
 
         iwidget.removeEventListener('unload', this._iwidget_unload_listener);
-        delete this.connectablesByWidget[iwidget.getId()];
+        delete this.connectablesByWidget[iwidget.id];
     };
 
     iwidget_added_listener = function iwidget_added_listener(workspace, iwidget) {
@@ -173,7 +173,7 @@
     };
 
     iwidget_unload_listener = function iwidget_unload_listener(iWidget) {
-        var key, entry = this.connectablesByWidget[iWidget.getId()];
+        var key, entry = this.connectablesByWidget[iWidget.id];
 
         for (key in entry.inputs) {
             entry.inputs[key].variable.setHandler(null);
@@ -295,7 +295,7 @@
         var entry;
 
         if (iWidget instanceof IWidget) {
-            iWidget = iWidget.getId();
+            iWidget = iWidget.id;
         }
 
         entry = this.connectablesByWidget[iWidget].outputs[outputName];
@@ -306,7 +306,7 @@
         var entry;
 
         if (iWidget instanceof IWidget) {
-            iWidget = iWidget.getId();
+            iWidget = iWidget.id;
         }
 
         entry = this.connectablesByWidget[iWidget].outputs[outputName];
@@ -317,7 +317,7 @@
         var entry;
 
         if (iWidget instanceof IWidget) {
-            iWidget = iWidget.getId();
+            iWidget = iWidget.id;
         }
 
         entry = this.connectablesByWidget[iWidget].inputs[inputName];

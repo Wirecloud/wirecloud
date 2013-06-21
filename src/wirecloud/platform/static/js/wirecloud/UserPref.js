@@ -52,7 +52,7 @@
         var varManager, variable;
 
         varManager = iWidget.layout.dragboard.workspace.varManager;
-        variable = varManager.getVariableByName(iWidget.getId(), this.varName);
+        variable = varManager.getVariableByName(iWidget.id, this.varName);
 
         return variable.hidden;
     };
@@ -63,7 +63,7 @@
 
         var variable, desc;
 
-        variable = varManager.getVariableByName(iWidget.getId(), this.varName);
+        variable = varManager.getVariableByName(iWidget.id, this.varName);
 
         desc = EzWebExt.merge(this.options, {
             'type': this.type,

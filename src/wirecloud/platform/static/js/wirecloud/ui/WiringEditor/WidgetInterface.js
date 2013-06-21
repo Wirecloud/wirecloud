@@ -54,7 +54,7 @@
                         endPointsPos.targets[i] = endPointsPos.targets[i].name;
                     }
                 }
-                variables = opManager.activeWorkspace.varManager.getIWidgetVariables(iwidget.getId());
+                variables = opManager.activeWorkspace.varManager.getIWidgetVariables(iwidget.id);
                 for (i = 0; i < endPointsPos.sources.length; i ++) {
                     variable = variables[endPointsPos.sources[i]];
                     desc = variable.vardef.description;
@@ -157,6 +157,13 @@
      */
     WidgetInterface.prototype.getIWidget = function getIWidget() {
         return this.iwidget;
+    };
+
+    /**
+     * get id
+     */
+    WidgetInterface.prototype.getId = function getId() {
+        return this.iwidget.id;
     };
 
     /*************************************************************************

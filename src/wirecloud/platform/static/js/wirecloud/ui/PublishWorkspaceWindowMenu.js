@@ -84,7 +84,7 @@
 
         for (i = 0; i < iwidgets.length; i++) {
             iwidget = iwidgets[i];
-            variables = varManager.getIWidgetVariables(iwidget.getId());
+            variables = varManager.getIWidgetVariables(iwidget.id);
             pref_params = [];
             prop_params = [];
 

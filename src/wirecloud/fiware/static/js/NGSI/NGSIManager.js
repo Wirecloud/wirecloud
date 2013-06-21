@@ -50,12 +50,12 @@
     unload_widget = function unload_widget(iWidget) {
         var i, subscriptions;
 
-        subscriptions = subscriptionsByWidget[iWidget.getId()];
+        subscriptions = subscriptionsByWidget[iWidget.id];
         for (i = 0; i < subscriptions.length; i += 1) {
             subscriptions[i].close();
         }
 
-        delete subscriptionsByWidget[iWidget.getId()];
+        delete subscriptionsByWidget[iWidget.id];
     };
 
     register_operator_subscription = function register_operator_subscription(iOperatorId, subscription) {

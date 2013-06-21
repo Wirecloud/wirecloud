@@ -167,7 +167,7 @@ if (!Wirecloud.ui) {
                     endPointPos = {'sources': [], 'targets': []};
                     iwidget_interface = this.addIWidget(this, iwidget, endPointPos);
                     iwidget_interface.setPosition({posX: 0, posY: 0});
-                    this.mini_widgets[iwidget.getId()].disable();
+                    this.mini_widgets[iwidget.id].disable();
                 } else {
                     throw new Error('Widget not found');
                 }
@@ -246,15 +246,15 @@ if (!Wirecloud.ui) {
             // mini widgets
             isMenubarRef = true;
             miniwidget_interface = new Wirecloud.ui.WiringEditor.WidgetInterface(this, iwidget, this, isMenubarRef);
-            this.mini_widgets[iwidget.getId()] = miniwidget_interface;
+            this.mini_widgets[iwidget.id] = miniwidget_interface;
             this.mini_widget_section.appendChild(miniwidget_interface);
 
             // widget
             for (k = 0; k < WiringStatus.views.length; k ++) {
-                if (iwidget.getId() in WiringStatus.views[k].iwidgets) {
+                if (iwidget.id in WiringStatus.views[k].iwidgets) {
                     miniwidget_interface.disable();
-                    widget_interface = this.addIWidget(this, iwidget, WiringStatus.views[k].iwidgets[iwidget.getId()].endPointsInOuts);
-                    widget_interface.setPosition(WiringStatus.views[k].iwidgets[iwidget.getId()].widget);
+                    widget_interface = this.addIWidget(this, iwidget, WiringStatus.views[k].iwidgets[iwidget.id].endPointsInOuts);
+                    widget_interface.setPosition(WiringStatus.views[k].iwidgets[iwidget.id].widget);
                     break;
                 }
             }
@@ -618,7 +618,7 @@ if (!Wirecloud.ui) {
      */
     WiringEditor.prototype.addSelectedObject = function addSelectedObject(object) {
         if (object instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
-            this.selectedWids[object.iwidget.getId()] = object;
+            this.selectedWids[object.getId()] = object;
             this.selectedWids.length += 1;
         } else if (object instanceof Wirecloud.ui.WiringEditor.OperatorInterface) {
             this.selectedOps[object.getId()] = object;
@@ -635,7 +635,7 @@ if (!Wirecloud.ui) {
      */
     WiringEditor.prototype.removeSelectedObject = function removeSelectedObject(object) {
         if (object instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
-            delete this.selectedWids[object.iwidget.getId()];
+            delete this.selectedWids[object.getId()];
             this.selectedWids.length -= 1;
         } else if (object instanceof Wirecloud.ui.WiringEditor.OperatorInterface) {
             delete this.selectedOps[object.getId()];
@@ -693,7 +693,7 @@ if (!Wirecloud.ui) {
         var widget_interface, auxDiv;
 
         widget_interface = new Wirecloud.ui.WiringEditor.WidgetInterface(wiringEditor, iwidget, this.arrowCreator, false, enpPointPos);
-        this.iwidgets[iwidget.getId()] = widget_interface;
+        this.iwidgets[iwidget.id] = widget_interface;
 
         auxDiv = document.createElement('div');
         auxDiv.style.width = '2000px';
@@ -994,7 +994,7 @@ if (!Wirecloud.ui) {
     WiringEditor.prototype.removeIWidget = function removeIWidget(widget_interface) {
         var i, anchor, anchorList;
         widget_interface.unselect(false);
-        delete this.iwidgets[widget_interface.getIWidget().getId()];
+        delete this.iwidgets[widget_interface.getIWidget().id];
         this.layout.getCenterContainer().removeChild(widget_interface);
         for (i = 0; i < widget_interface.sourceAnchors.length; i += 1) {
             anchor = widget_interface.sourceAnchors[i];
@@ -1009,7 +1009,7 @@ if (!Wirecloud.ui) {
             anchorList.splice(anchorList.indexOf(anchor), 1);
         }
         widget_interface.destroy();
-        this.mini_widgets[widget_interface.getIWidget().getId()].enable();
+        this.mini_widgets[widget_interface.getIWidget().id].enable();
 
         this.entitiesNumber -= 1;
         if (this.entitiesNumber === 0) {

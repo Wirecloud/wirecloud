@@ -304,17 +304,6 @@ IWidget.prototype.getHeight = function () {
     return this.height;
 };
 
-/**
- * Returns the identifier of this iWidget. This identifier is unique for the
- * current Wirecloud Platform. This identifier can be null if this iWidget is not
- * currently presisted.
- *
- * @returns {Number} the identifier for this iWidget.
- */
-IWidget.prototype.getId = function () {
-    return this.id;
-};
-
 IWidget.prototype.getElement = function () {
     return this.element;
 };

@@ -391,7 +391,7 @@
      * add Source.
      */
     GenericInterface.prototype.addSource = function addSource(label, desc, name, anchorContext) {
-        var anchor, anchorDiv, labelDiv, anchorLabel, multiconnector, id, objectId, friendCode;
+        var anchor, anchorDiv, labelDiv, anchorLabel, multiconnector, id, friendCode;
         //anchorDiv
         anchorDiv = document.createElement("div");
         //if the output have not description, take the label
@@ -425,12 +425,7 @@
                 'plain': true
             });
             this.multiButton.addEventListener('click', function (e) {
-                if (this instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
-                    objectId = (this.iwidget.getId());
-                } else {
-                    objectId = (this.getId());
-                }
-                multiconnector = new Wirecloud.ui.WiringEditor.Multiconnector(this.wiringEditor.nextMulticonnectorId, objectId, name,
+                multiconnector = new Wirecloud.ui.WiringEditor.Multiconnector(this.wiringEditor.nextMulticonnectorId, this.getId(), name,
                                             this.wiringEditor.layout.getCenterContainer().wrapperElement,
                                             this.wiringEditor, anchor, null, null);
                 this.wiringEditor.nextMulticonnectorId = parseInt(this.wiringEditor.nextMulticonnectorId, 10) + 1;
@@ -475,7 +470,7 @@
      * add Target.
      */
     GenericInterface.prototype.addTarget = function addTarget(label, desc, name, anchorContext) {
-        var anchor, anchorDiv, labelDiv, anchorLabel, multiconnector, id, objectId, friendCode;
+        var anchor, anchorDiv, labelDiv, anchorLabel, multiconnector, id, friendCode;
         //anchorDiv
         anchorDiv = document.createElement("div");
         //if the input have not description, take the label
@@ -508,12 +503,7 @@
                 'plain': true
             });
             this.multiButton.addEventListener('click', function (e) {
-                if (this instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
-                    objectId = this.iwidget.getId();
-                } else {
-                    objectId = this.getId();
-                }
-                multiconnector = new Wirecloud.ui.WiringEditor.Multiconnector(this.wiringEditor.nextMulticonnectorId, objectId, name,
+                multiconnector = new Wirecloud.ui.WiringEditor.Multiconnector(this.wiringEditor.nextMulticonnectorId, this.getId(), name,
                                             this.wiringEditor.layout.getCenterContainer().wrapperElement,
                                             this.wiringEditor, anchor, null, null);
                 this.wiringEditor.nextMulticonnectorId = parseInt(this.wiringEditor.nextMulticonnectorId, 10) + 1;
