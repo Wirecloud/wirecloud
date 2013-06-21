@@ -708,70 +708,67 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
     def test_wiring_show_invisible_operator(self):
         workspace = Workspace.objects.get(id=2)
         workspace.wiringStatus = json.dumps({
-            "views":[
-               {
-                  "label":"default",
-                  "iwidgets":{
-                     "1":{
-                        "widget":{
-                            "posX": 84,
-                            "posY": 44
+            "views": [
+                {
+                    "label": "default",
+                    "iwidgets": {
+                        "1": {
+                            "widget": {
+                                "posX": 84,
+                                "posY": 44
+                            },
+                            "endPointsInOuts": {
+                                "sources": ["outputendpoint"],
+                                "targets": ["inputendpoint"]
+                            },
+                            "name": "Wirecloud/Test/1.0",
                         },
-                         "endPointsInOuts":{
-                            "sources": ["outputendpoint"],
-                            "targets": ["inputendpoint"]
-                         },
-                         "name": "Wirecloud/Test/1.0",
-                     },
-                     "2": {
-                        "widget":{
-                            "posX": 84,
-                            "posY": 153
-                         },
-                         "endPointsInOuts":{
-                            "sources": ["outputendpoint"],
-                            "targets": ["inputendpoint"]
-                         },
-                         "name": "Wirecloud/Test/1.0",
-                     }
-                  },
-                  "operators":{
-                     "0": {
-                        "widget": {
-                            "posX": 84,
-                            "posY": 256
+                        "2": {
+                            "widget": {
+                                "posX": 84,
+                                "posY": 153
+                            },
+                            "endPointsInOuts": {
+                                "sources": ["outputendpoint"],
+                                "targets": ["inputendpoint"]
+                            },
+                            "name": "Wirecloud/Test/1.0",
                         }
-                     },
-                     "1": {
-                        "widget": {
-                            "posX": 84,
-                            "posY": 400
+                    },
+                    "operators": {
+                        "0": {
+                            "widget": {
+                                "posX": 84,
+                                "posY": 256
+                            }
                         },
-                         "endPointsInOuts":{
-                            "sources": ["in"],
-                            "targets": ["out"]
-                         }
-                     }
-                  },
-                  "connections":[]
-               }
+                        "1": {
+                            "widget": {
+                                "posX": 84,
+                                "posY": 400
+                            },
+                            "endPointsInOuts": {
+                                "sources": ["in"],
+                                "targets": ["out"]
+                            }
+                        }
+                    },
+                    "connections": []
+                }
             ],
-            "operators":{
-               "0":{
-                  "name":"Wirecloud/TestOperator/1.0",
-                  "id":"0",
-                  "preferences":{
-                  }
-               },
-               "1":{
-                  "name":"Wirecloud/TestOperatorDePalo/1.0",
-                  "id":"1",
-                  "preferences":{
-                  }
-               }
+            "operators": {
+                "0": {
+                    "name": "Wirecloud/TestOperator/1.0",
+                    "id": "0",
+                    "preferences": {}
+                },
+                "1": {
+                    "name": "Wirecloud/TestOperatorDePalo/1.0",
+                    "id": "1",
+                    "preferences": {}
+                }
             },
-            "connections":[
-            ]
+            "connections": []
         })
         workspace.save()
         self.login(username='user_with_workspaces')
@@ -799,129 +796,127 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
     def test_wiring_show_invisible_operatort_with_connections(self):
         workspace = Workspace.objects.get(id=2)
         workspace.wiringStatus = json.dumps({
-            "views":[
-               {
-                  "label":"default",
-                  "iwidgets":{
-                     "1":{
-                        "widget":{
-                            "posX": 84,
-                            "posY": 44
+            "views": [
+                {
+                    "label": "default",
+                    "iwidgets": {
+                        "1": {
+                            "widget": {
+                                "posX": 84,
+                                "posY": 44
+                            },
+                            "endPointsInOuts": {
+                                "sources": ["outputendpoint"],
+                                "targets": ["inputendpoint"]
+                            },
+                            "name": "Wirecloud/Test/1.0",
                         },
-                         "endPointsInOuts":{
-                            "sources": ["outputendpoint"],
-                            "targets": ["inputendpoint"]
-                         },
-                         "name": "Wirecloud/Test/1.0",
-                     },
-                     "2": {
-                        "widget":{
-                            "posX": 84,
-                            "posY": 153
-                         },
-                         "endPointsInOuts":{
-                            "sources": ["outputendpoint"],
-                            "targets": ["inputendpoint"]
-                         },
-                         "name": "Wirecloud/Test/1.0",
-                     }
-                  },
-                  "operators":{
-                     "0": {
-                        "widget": {
-                            "posX": 84,
-                            "posY": 256
+                        "2": {
+                            "widget": {
+                                "posX": 84,
+                                "posY": 153
+                            },
+                            "endPointsInOuts": {
+                                "sources": ["outputendpoint"],
+                                "targets": ["inputendpoint"]
+                            },
+                            "name": "Wirecloud/Test/1.0",
                         }
-                     },
-                     "1": {
-                        "widget": {
-                            "posX": 84,
-                            "posY": 400
+                    },
+                    "operators": {
+                        "0": {
+                            "widget": {
+                                "posX": 84,
+                                "posY": 256
+                            }
                         },
-                         "endPointsInOuts":{
-                            "sources": ["in"],
-                            "targets": ["out"]
+                        "1": {
+                            "widget": {
+                                "posX": 84,
+                                "posY": 400
+                            },
+                            "endPointsInOuts": {
+                                "sources": ["in"],
+                                "targets": ["out"]
+                            }
                         }
-                     }
-                  },
-                  "connections":[]
-               }
+                    },
+                    "connections": []
+                }
             ],
-            "operators":{
-               "0":{
-                  "name":"Wirecloud/TestOperator/1.0",
-                  "id":"0",
-                  "preferences":{
-                  }
-               },
-               "1":{
-                  "name":"Wirecloud/TestOperatorDePalo/1.0",
-                  "id":"1",
-                  "preferences":{
-                  }
-               }
+            "operators": {
+                "0": {
+                    "name": "Wirecloud/TestOperator/1.0",
+                    "id": "0",
+                    "preferences": {}
+                },
+                "1": {
+                    "name": "Wirecloud/TestOperatorDePalo/1.0",
+                    "id": "1",
+                    "preferences": {}
+                }
             },
-            "connections":[
-               {
-                  "source":{
-                     "type":"iwidget",
-                     "id":1,
-                     "endpoint":"outputendpoint"
-                  },
-                  "target":{
-                     "type":"iwidget",
-                     "id":2,
-                     "endpoint":"inputendpoint"
-                  }
-               },
-               {
-                  "source":{
-                     "type":"iwidget",
-                     "id":2,
-                     "endpoint":"outputendpoint"
-                  },
-                  "target":{
-                     "type":"ioperator",
-                     "id":0,
-                     "endpoint":"input"
-                  }
-               },
-               {
-                  "source":{
-                     "type":"ioperator",
-                     "id":1,
-                     "endpoint":"out"
-                  },
-                  "target":{
-                     "type":"iwidget",
-                     "id":1,
-                     "endpoint":"inputendpoint"
-                  }
-               },
-               {
-                  "source":{
-                     "type":"ioperator",
-                     "id":0,
-                     "endpoint":"output"
-                  },
-                  "target":{
-                     "type":"ioperator",
-                     "id":1,
-                     "endpoint":"in"
-                  }
-               },
-               {
-                  "source":{
-                     "type":"iwidget",
-                     "id":1,
-                     "endpoint":"outputendpoint"
-                  },
-                  "target":{
-                     "type":"ioperator",
-                     "id":1,
-                     "endpoint":"in"
-                  }
-               }
+            "connections": [
+                {
+                    "source": {
+                        "type": "iwidget",
+                        "id": 1,
+                        "endpoint": "outputendpoint"
+                    },
+                    "target": {
+                        "type": "iwidget",
+                        "id": 2,
+                        "endpoint": "inputendpoint"
+                    }
+                },
+                {
+                    "source": {
+                        "type": "iwidget",
+                        "id": 2,
+                        "endpoint": "outputendpoint"
+                    },
+                    "target": {
+                        "type": "ioperator",
+                        "id": 0,
+                        "endpoint": "input"
+                    }
+                },
+                {
+                    "source": {
+                        "type": "ioperator",
+                        "id": 1,
+                        "endpoint": "out"
+                    },
+                    "target": {
+                        "type": "iwidget",
+                        "id": 1,
+                        "endpoint": "inputendpoint"
+                    }
+                },
+                {
+                    "source": {
+                        "type": "ioperator",
+                        "id": 0,
+                        "endpoint": "output"
+                    },
+                    "target": {
+                        "type": "ioperator",
+                        "id": 1,
+                        "endpoint": "in"
+                    }
+                },
+                {
+                    "source": {
+                        "type": "iwidget",
+                        "id": 1,
+                        "endpoint": "outputendpoint"
+                    },
+                    "target": {
+                        "type": "ioperator",
+                        "id": 1,
+                        "endpoint": "in"
+                    }
+                }
             ]
         })
         workspace.save()
