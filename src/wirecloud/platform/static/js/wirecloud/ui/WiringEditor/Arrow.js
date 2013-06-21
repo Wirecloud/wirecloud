@@ -70,6 +70,11 @@
             if (e.button !== 0) {
                 return;
             }
+            // readOnly control
+            if (this.readOnly) {
+                e.stopPropagation();
+                return;
+            }
             if (this.hasClassName('hollow')) {
                 // TODO open subdata tree
                 return;
@@ -207,6 +212,7 @@
         this.endMulti = null;
         this.startMulti = null;
         this.multiId = null;
+        this.readOnly = false;
     };
 
     /*************************************************************************
@@ -216,6 +222,21 @@
     /*************************************************************************
      * Public methods
      *************************************************************************/
+    /**
+     *  insert into.
+     */
+    Arrow.prototype.setReadOnly = function setReadOnly(isReadOnly) {
+
+        if (isReadOnly) {
+            // Set readOnly true
+            this.readOnly = true;
+            // Forbidden remove the arrow with class name
+            this.addClassName('readOnly');
+        } else {
+            // Set readOnly false
+            this.readOnly = false;
+        }
+    };
 
     /**
      *  insert into.

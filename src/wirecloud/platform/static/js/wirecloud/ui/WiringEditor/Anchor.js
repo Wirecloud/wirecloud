@@ -57,6 +57,10 @@
             if (this.enabled && e.button === 0) {
                 arrow = this.hasSelectedArrow();
                 if (arrow != null) {
+                    // ReadOnly control
+                    if (arrow.readOnly) {
+                        return;
+                    }
                     if (arrow.hasClassName('multiconnector_arrow')) {
                         arrow.canvas.unselectArrow();
                     } else {
