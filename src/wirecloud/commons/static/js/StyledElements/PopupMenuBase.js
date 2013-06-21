@@ -35,7 +35,7 @@
      */
     var PopupMenuBase = function PopupMenuBase(options) {
         var defaultOptions = {
-            'position': 'bottom-left'
+            'position': ['bottom-left', 'bottom-right', 'top-left', 'top-right']
         };
         options = EzWebExt.merge(defaultOptions, options);
 
