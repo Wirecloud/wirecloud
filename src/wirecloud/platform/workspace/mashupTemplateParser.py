@@ -237,7 +237,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
             target_id = operators[target_id]
 
         wiring_status['connections'].append({
-            'readonly': connection['readonly'],
+            'readOnly': connection['readonly'],
             'source': {
                 'id': source_id,
                 'type': connection['source']['type'],
