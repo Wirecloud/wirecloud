@@ -799,7 +799,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
         self.assertEqual(ghostEndpointsLabelsFirst2, ghostEndpointsLabelsSecond[1].text, "The ghost Operator has change the endpoints label in the second access to Wiring Editor")
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
-    def test_wiring_show_invisible_operatort_with_connections(self):
+    def test_wiring_show_invisible_operator_with_connections(self):
         workspace = Workspace.objects.get(id=2)
         workspace.wiringStatus = json.dumps({
             "views":[
