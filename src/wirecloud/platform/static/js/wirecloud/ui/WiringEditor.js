@@ -239,15 +239,15 @@ if (!Wirecloud.ui) {
         // info del navegador
         var navegador = navigator.userAgent;
         if (navegador.indexOf('MSIE') != -1) {
-            this.navigator = "explorer";
+            this.browser = "explorer";
         } else if (navegador.indexOf('Firefox') != -1) {
-            this.navigator = "firefox";
+            this.browser = "firefox";
         } else if (navegador.indexOf('Chrome') != -1) {
-            this.navigator = "chrome";
+            this.browser = "chrome";
         } else if (navegador.indexOf('Opera') != -1) {
-            this.navigator = "opera";
+            this.browser = "opera";
         } else {
-            this.navigator = "nisu";
+            this.browser = "nisu";
         }
     };
     WiringEditor.prototype = new StyledElements.Alternative();
