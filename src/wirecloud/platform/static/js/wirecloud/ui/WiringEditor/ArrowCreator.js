@@ -78,6 +78,16 @@
             tmpPos = initAnchor.getCoordinates(layer);
             // Arrow pointer
             theArrow = canvas.drawArrow(tmpPos, tmpPos, "arrow");
+
+            // Minimized operators
+            this.initAnchor.context.iObject.potentialArrow = theArrow;
+            if (initAnchor.context.iObject.isMinimized) {
+                initAnchor.context.iObject.restore();
+                this.initWasMinimized = true;
+            } else {
+                this.initWasMinimized = false;
+            }
+
             this.theArrow = theArrow;
             theArrow.emphasize();
             // we can draw invert arrows from the end to the start
@@ -136,6 +146,7 @@
             if (e.button !== 0) {
                 return;
             }
+            this.initAnchor.context.iObject.potentialArrow = null;
             if (fAnchor !== this.initAnchor) {
                 if (fAnchor != null) {
                     if (fAnchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
@@ -170,12 +181,20 @@
                             fAnchor.initAnchor.addArrow(theArrow);
                         }
                         fAnchor.addArrow(theArrow);
+
+                        // minimized operators acctions
+                        if (this.initWasMinimized) {
+                            this.initAnchor.context.iObject.minimize();
+                        }
                     } else {
                         theArrow.destroy();
                     }
                 // mouseup out of an anchor
                 } else {
                     theArrow.destroy();
+                    if (this.initWasMinimized) {
+                        this.initAnchor.context.iObject.minimize();
+                    }
                 }
             } else {
                 theArrow.destroy();

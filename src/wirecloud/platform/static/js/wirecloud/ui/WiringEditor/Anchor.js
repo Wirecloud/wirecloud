@@ -209,6 +209,18 @@
                 coordinates.posY += parentNode.offsetTop + cssStyle.getPropertyCSSValue('border-top-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
                 coordinates.posX += parentNode.offsetLeft + cssStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
             }
+            // add the height of the widget/operator header
+            if (parentNode.classList.contains("geContainer")) {
+                coordinates.posY += parentNode.getElementsByClassName("container north_container header")[0].getBoundingClientRect().height;
+            }
+            // firefox correction
+            if  (parentNode.classList.contains("anchorDiv") && this.context.iObject.wiringEditor.browser == "firefox") {
+                coordinates.posY -= parentNode.getBoundingClientRect().height - 4;
+            }
+            if  (parentNode.classList.contains("reducedInt") && this.context.iObject.wiringEditor.browser == "firefox") {
+                coordinates.posX -= 26;
+                coordinates.posY += 30;
+            }
             parentNode = parentNode.parentNode;
         }
 

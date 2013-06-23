@@ -234,6 +234,8 @@ if (!Wirecloud.ui) {
         this.selectedMulti = {};
         this.selectedMulti.length = 0;
         this.selectedCount = 0;
+        this.menubarWidth = document.getElementsByClassName('menubar')[0].getWidth();
+        this.headerHeight = document.getElementById('wirecloud_header').getHeight() - 5;
         this.ctrlPushed = false;
         this.nextOperatorId = 0;
         this.nextMulticonnectorId = 0;
@@ -399,6 +401,13 @@ if (!Wirecloud.ui) {
             }
         }
 
+        // Minimize all operators
+        for (key in this.currentlyInUseOperators) {
+            if (!this.currentlyInUseOperators[key].isMinimized) {
+                this.currentlyInUseOperators[key].minimize();
+            }
+        }
+
         this.activateCtrlMultiSelect();
         this.valid = true;
         if (this.entitiesNumber === 0) {
@@ -515,6 +524,7 @@ if (!Wirecloud.ui) {
         this.iwidgets = {};
         this.currentlyInUseOperators = {};
         this.multiconnectors = {};
+        this.anchorsInvolved = {};
     };
 
     /*************************************************************************
@@ -583,6 +593,9 @@ if (!Wirecloud.ui) {
         }
 
         for (key in this.currentlyInUseOperators) {
+            if (this.currentlyInUseOperators[key].isMinimized) {
+                this.currentlyInUseOperators[key].restore(true);
+            }
             operator_interface = this.currentlyInUseOperators[key];
             pos = operator_interface.getStylePosition();
             inOutPos = operator_interface.getInOutPositions();
