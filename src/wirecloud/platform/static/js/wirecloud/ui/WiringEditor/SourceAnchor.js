@@ -30,7 +30,7 @@
     /*************************************************************************
      * Constructor SourceAnchor
      *************************************************************************/
-    /*
+    /**
      * SourceAnchor Class
      */
     var SourceAnchor = function SourceAnchor(context, arrowCreator) {
@@ -43,7 +43,10 @@
     /*************************************************************************
      * Public methods
      *************************************************************************/
-    SourceAnchor.prototype.repaint = function repaint(temporal) {
+    /**
+     * Repaint the SourceAnchor
+     */
+    SourceAnchor.prototype.repaint = function repaint() {
         var i, coordinates;
 
         coordinates = this.getCoordinates(this.context.iObject.wiringEditor.getGridElement());

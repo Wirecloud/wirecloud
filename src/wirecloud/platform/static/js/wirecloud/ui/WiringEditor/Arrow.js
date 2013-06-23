@@ -62,7 +62,7 @@
             }
         }.bind(this), true);
 
-        // closer
+        // Closer
         this.closerElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
         this.closerElement.setAttribute('class', 'closer');
         this.closerElement.addEventListener('click', function (e) {
@@ -71,7 +71,7 @@
                 return;
             }
 
-            // readOnly control
+            // ReadOnly control
             if (this.readOnly) {
                 e.stopPropagation();
                 return;
@@ -81,7 +81,7 @@
             e.stopPropagation();
         }.bind(this));
 
-        // pullers definition
+        // Pullers definition
         this.pullerStartElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
         this.pullerStartElement.setAttribute("r", 5);
         this.pullerStartElement.addEventListener("click", EzWebExt.stopPropagationListener, false);
@@ -92,13 +92,13 @@
         this.pullerStartElement.setAttribute('class', 'pullerBall');
         this.pullerEndElement.setAttribute('class', 'pullerBall');
 
-        //pullerLines
+        // PullerLines
         this.pullerStartLine = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
         this.pullerStartLine.setAttribute('class', 'pullerLine');
         this.pullerEndLine = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
         this.pullerEndLine.setAttribute('class', 'pullerLine');
 
-        // draggable pullers
+        // Draggable pullers
         this.pullerStartDraggable = new Draggable(this.pullerStartElement, {arrow: this},
             function onStart(draggable, data) {
                 data.refPos = data.arrow.getPullerStart();
@@ -126,7 +126,7 @@
             function () {return true; }
         );
 
-        // closer
+        // Closer
         this.wrapperElement.appendChild(this.closerElement);
 
         // add pullerLines
@@ -157,7 +157,7 @@
      *************************************************************************/
 
     /**
-     *  insert into.
+     *  Insert into.
      */
     Arrow.prototype.insertInto = function insertInto(element) {
         element.appendChild(this.wrapperElement);
@@ -180,7 +180,7 @@
         }
     };
 
-    /*
+    /**
      *  Set the Arrow end point.
      */
     Arrow.prototype.setEnd = function setEnd(end, anchor) {
@@ -197,7 +197,7 @@
         }
     };
 
-    /*
+    /**
      *  Get the Arrow pullerStart point.
      */
     Arrow.prototype.getPullerStart = function getPullerStart(absolute) {
@@ -206,7 +206,7 @@
         from = this.start;
         to = this.end;
         if (from == null || to == null) {
-            //error: getPullerStart in a inconsistent arrow;
+            // Error: getPullerStart in a inconsistent arrow;
             return;
         }
         if (this.pullerStart == null) {
@@ -230,7 +230,7 @@
         }
     };
 
-    /*
+    /**
      *  Get the Arrow pullerEnd point.
      */
     Arrow.prototype.getPullerEnd = function getPullerEnd(absolute) {
@@ -263,7 +263,7 @@
         }
     };
 
-    /*
+    /**
      *  Set the Arrow pullerStart point.
      */
     Arrow.prototype.setPullerStart = function setPullerStart(pStart) {
@@ -278,10 +278,10 @@
     };
 
     /**
-     *  redraw the line.
+     *  Redraw the line.
      */
     Arrow.prototype.redraw = function redraw() {
-        var middleX, posCloser, startPuller, endPuller, from, to;
+        var posCloser, startPuller, endPuller, from, to;
 
         from = this.start;
         to = this.end;
@@ -312,6 +312,7 @@
         );
 
         try {
+            // Closer
             posCloser = this.calculateMid();
 
             this.closerElement.setAttribute("cx", posCloser.posX);
@@ -324,7 +325,7 @@
     };
 
     /**
-     *  calculate the arrow path middle position
+     *  Calculate the arrow path middle position
      *  with a bercier curves aproximation.
      */
     Arrow.prototype.calculateMid = function calculateMid() {
@@ -343,8 +344,9 @@
 
         return getBercier(0.5, this.start, this.getPullerStart(true), this.getPullerEnd(true), this.end);
     };
+
     /**
-     *  highlights the arrow
+     *  Highlights the arrow
      */
     Arrow.prototype.highlight = function highlight() {
         //this.addClassName('highlighted');
@@ -353,7 +355,7 @@
     };
 
     /**
-     *  unhighlights the arrow
+     *  Unhighlights the arrow
      */
     Arrow.prototype.unhighlight = function unhighlight() {
         //this.removeClassName('highlighted');
@@ -364,7 +366,7 @@
     };
 
     /**
-     *  recalculate if the arrow may be Highlighted or not
+     *  Recalculate if the arrow may be Highlighted or not
      */
     Arrow.prototype.calculateHighlight = function calculateHighlight() {
         this.highlight_counter = 2;
@@ -378,21 +380,21 @@
     };
 
     /**
-     *  select the arrow
+     *  Select the arrow
      */
     Arrow.prototype.select = function select() {
         this.addClassName('selected');
     };
 
     /**
-     *  unselect the arrow
+     *  Unselect the arrow
      */
     Arrow.prototype.unselect = function unselect() {
         this.removeClassName('selected');
     };
 
     /**
-     *  emphasize the arrow
+     *  Emphasize the arrow
      */
     Arrow.prototype.emphasize = function emphasize() {
         if (this.emphasize_counter < 2) {
@@ -404,7 +406,7 @@
     };
 
     /**
-     *  deemphasize the arrow
+     *  Deemphasize the arrow
      */
     Arrow.prototype.deemphasize = function deemphasize() {
         this.emphasize_counter -= 1;
@@ -417,7 +419,7 @@
     };
 
     /**
-     *  recalculate if the arrow may be emphasize or not
+     *  Recalculate if the arrow may be emphasize or not
      */
     Arrow.prototype.calculateEmphasize = function calculateEmphasize() {
         this.emphasize_counter = 0;
@@ -431,7 +433,7 @@
     };
 
     /**
-     *  add new class in to the arrow
+     *  Add new class in to the arrow
      */
     Arrow.prototype.addClassName = function addClassName(className) {
         var atr;
@@ -448,7 +450,7 @@
     };
 
     /**
-     * removeClassName
+     * RemoveClassName
      */
     Arrow.prototype.removeClassName = function removeClassName(className) {
         var atr;
@@ -465,7 +467,7 @@
     };
 
     /**
-     * hasClassName
+     * HasClassName
      */
     Arrow.prototype.hasClassName = function hasClassName(className) {
         var atr, exp;
@@ -483,7 +485,7 @@
     };
 
     /**
-     * destroy the arrow.
+     * Destroy the arrow.
      */
     Arrow.prototype.destroy = function destroy() {
         this.disconnect();
@@ -506,8 +508,8 @@
         this.end = null;
     };
 
-    /*
-     * disconnet the arrow
+    /**
+     * Disconnet the arrow
      */
     Arrow.prototype.disconnect = function disconnect() {
         if (this.startAnchor !== null) {

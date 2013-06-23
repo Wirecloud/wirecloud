@@ -181,7 +181,10 @@ if (!Wirecloud.ui) {
         }
     };
 
-
+    /**
+     * @Private
+     * load wiring from status and workspace info
+     */
     var loadWiring = function loadWiring(workspace, WiringStatus) {
         var iwidgets, iwidget, widget_interface, miniwidget_interface, reallyInUseOperators,
             operator, operator_interface, operator_instance, connection, connectionView, startAnchor,
@@ -381,7 +384,6 @@ if (!Wirecloud.ui) {
                     arrow.startMulti = connectionView.startMulti;
                     pos = multi.getCoordinates(this.layout);
                     arrow.setStart(pos);
-                    arrow.redraw();
                     multi.addArrow(arrow);
                 }
                 if (connectionView.endMulti != null) {
@@ -389,9 +391,9 @@ if (!Wirecloud.ui) {
                     multi = this.multiconnectors[connectionView.endMulti];
                     pos = multi.getCoordinates(this.layout);
                     arrow.setEnd(pos);
-                    arrow.redraw();
                     multi.addArrow(arrow);
                 }
+                arrow.redraw();
             }
         }
 
@@ -706,6 +708,7 @@ if (!Wirecloud.ui) {
         this.iwidgets[iwidget.id] = widget_interface;
 
         auxDiv = document.createElement('div');
+        //width and height to avoid scroll problems
         auxDiv.style.width = '2000px';
         auxDiv.style.height = '1000px';
         this.layout.getCenterContainer().appendChild(auxDiv);
@@ -745,7 +748,9 @@ if (!Wirecloud.ui) {
         }
 
         operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, instantiated_operator, this.arrowCreator, false, enpPointPos);
+
         auxDiv = document.createElement('div');
+        //width and height to avoid scroll problems
         auxDiv.style.width = '2000px';
         auxDiv.style.height = '1000px';
         this.layout.getCenterContainer().appendChild(auxDiv);
@@ -1018,6 +1023,7 @@ if (!Wirecloud.ui) {
             anchorList = this.targetAnchorsByFriendCode[anchor.context.data.connectable._friendCode];
             anchorList.splice(anchorList.indexOf(anchor), 1);
         }
+
         widget_interface.destroy();
         this.mini_widgets[widget_interface.getIWidget().id].enable();
 
@@ -1169,7 +1175,7 @@ if (!Wirecloud.ui) {
      *  scrollHandler, using canvas for transformate the arrows layer
      */
     WiringEditor.prototype.scrollHandler = function scrollHandler() {
-        var top, left, oc, scrollX, scrollY, param;
+        var oc, scrollX, scrollY, param;
         oc = this.layout.getCenterContainer();
 
         scrollX = parseInt(oc.wrapperElement.scrollLeft, 10);

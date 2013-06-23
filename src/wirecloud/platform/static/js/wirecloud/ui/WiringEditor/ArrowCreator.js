@@ -34,15 +34,13 @@
     /*************************************************************************
      * Constructor
      *************************************************************************/
-    /*
+    /**
      * ArrowCreator.
      */
     var ArrowCreator = function ArrowCreator(canvas, data, onStart, onDrag, onFinish, canBeDragged) {
-        var x, y;
         var theArrow;
-        var dragboardCover;
         var draggable = this;
-        var drag, currentSource, currentTarget;
+        var currentSource, currentTarget;
         var layer = canvas.getHTMLElement().parentNode; // TODO Trampa
         canBeDragged = canBeDragged ? canBeDragged : Draggable._canBeDragged;
         this.layer = layer;
@@ -78,7 +76,7 @@
             yStart = parseInt(e.clientY, 10);
 
             tmpPos = initAnchor.getCoordinates(layer);
-            // arrow pointer
+            // Arrow pointer
             theArrow = canvas.drawArrow(tmpPos, tmpPos, "arrow");
             this.theArrow = theArrow;
             theArrow.emphasize();
@@ -119,10 +117,8 @@
         this.drag = function drag(e) {
 
             e = e || window.event; // needed for IE
-            var hasChanged;
             var x = parseInt(e.clientX, 10);
             var y = parseInt(e.clientY, 10);
-            var relatCoord, relatX;
             if (!this.invert) {
                 theArrow.setEnd(getRelativeScreenPosition(x, y, layer));
             } else {
@@ -166,7 +162,7 @@
                         theArrow.calculateHighlight();
                         theArrow.calculateEmphasize();
                         theArrow.redraw();
-                        // add the arrow to the arrow list of both anchors
+                        // Add the arrow to the arrow list of both anchors
                         this.initAnchor.addArrow(theArrow);
                         if (this.initAnchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
                             this.initAnchor.initAnchor.addArrow(theArrow);
@@ -248,7 +244,7 @@
     };
 
     /**
-     * get Relative Screen Position, about from (x,y) to another element
+     * Get Relative Screen Position, about from (x,y) to another element
      */
     var getRelativeScreenPosition = function getRelativeScreenPosition(x, y, element) {
         var bounding_box = element.getBoundingClientRect();

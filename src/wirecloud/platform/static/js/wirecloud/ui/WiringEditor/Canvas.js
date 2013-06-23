@@ -101,8 +101,8 @@
         this.events.arrowremoved.dispatch(this, arrow);
     };
 
-    /*
-     * clean the svg canvas.
+    /**
+     * Clean the svg canvas.
      */
     Canvas.prototype.clear = function clear() {
         while (this.canvasElement.generalLayer.childNodes.length > 0) {
@@ -110,8 +110,8 @@
         }
     };
 
-    /*
-     * get the htmlElement of Canvas.
+    /**
+     * Get the htmlElement of Canvas.
      */
     Canvas.prototype.getHTMLElement = function getHTMLElement() {
         return this.canvasElement;
@@ -129,7 +129,7 @@
     /**
      * Gets the current selected arrow in canvas.
      */
-    Canvas.prototype.getSelectedArrow = function getSelectedArrow(arrow) {
+    Canvas.prototype.getSelectedArrow = function getSelectedArrow() {
         return this.selectedArrow;
     };
 

@@ -50,7 +50,7 @@
         this.wrapperElement.className = 'anchor';
 
         this._mousedown_callback = function _mousedown_callback(e) {
-            var arrow, i, end, start;
+            var arrow, end, start;
 
             e.stopPropagation();
             // Only process left mouse button events
@@ -170,7 +170,6 @@
         this._mouseout_callback = function _mouseout_callback(e) {
             // Only process left mouse button events
             if (this.enabled && e.button === 0) {
-                var pos;
                 if (arrowCreator.initAnchor != null) {
                     e.stopPropagation();
                     this.removeClassName('pointed');
@@ -220,33 +219,29 @@
     };
 
     /**
-     * @addArrow
-     */
-    Anchor.prototype.addArrow = function addArrow(theArrow) {
-        this.arrows.push(theArrow);
-    };
-
-    /**
-     * get the arrow list
+     * Get the arrow list
      */
     Anchor.prototype.getArrows = function getArrows() {
         return this.arrows;
     };
 
     /**
-     * @return {Boolean}
+     * Return true when the Anchor has connected arrows
      */
     Anchor.prototype.isConnected = function isConnected() {
         return this.connectionArrows.length > 0;
     };
 
     /**
-     * @addArrow
+     * Add new Arrow in the Anchor
      */
     Anchor.prototype.addArrow = function addArrow(theArrow) {
         this.arrows.push(theArrow);
     };
 
+    /**
+     * Remove an Arrow from Anchor
+     */
     Anchor.prototype.removeArrow = function removeArrow(theArrow) {
         var index = this.arrows.indexOf(theArrow);
 
@@ -255,6 +250,9 @@
         }
     };
 
+    /**
+     * Highlight all Arrows from Anchor
+     */
     Anchor.prototype.highlightArrows = function highlightArrows() {
         var i;
 
@@ -263,6 +261,9 @@
         }
     };
 
+    /**
+     * Unhighlight all Arrows from Anchor
+     */
     Anchor.prototype.unhighlightArrows = function unhighlightArrows() {
         var i;
 
@@ -271,6 +272,9 @@
         }
     };
 
+    /**
+     * Serialize an Anchor
+     */
     Anchor.prototype.serialize = function serialize() {
         if (!this.context.iObject.isGhost) {
             return this.context.data.serialize();
@@ -283,6 +287,9 @@
         }
     };
 
+    /**
+     * Find selected arrow in Anchor
+     */
     Anchor.prototype.hasSelectedArrow = function hasSelectedArrow() {
         var arrow, i;
 
@@ -295,14 +302,23 @@
         return null;
     };
 
+    /**
+     * Return if the widget/operator is Highlighted
+     */
     Anchor.prototype.isHighlighted = function isHighlighted() {
         return this.context.iObject.highlighted;
     };
 
+    /**
+     * Return if the widget/operator is Emphasized
+     */
     Anchor.prototype.isEmphasize = function isEmphasize() {
         return this.context.iObject.selected;
     };
 
+    /**
+     * Destroy the anchor
+     */
     Anchor.prototype.destroy = function destroy() {
         StyledElements.StyledElement.prototype.destroy.call(this);
 

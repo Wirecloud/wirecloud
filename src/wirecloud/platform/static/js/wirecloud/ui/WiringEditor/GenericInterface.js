@@ -29,16 +29,14 @@
     /*************************************************************************
      * Constructor
      *************************************************************************/
-    /*
+    /**
      * GenericInterface Class
      */
     var GenericInterface = function GenericInterface(extending, wiringEditor, title, manager, className, isGhost) {
         if (extending === true) {
             return;
         }
-        var i, name, variables, variable, anchor, anchorDiv, anchorLabel, desc,
-            nameDiv, nameElement, del_button, item, copy, type, msg,
-            ghostNotification;
+        var del_button, item, type, msg, ghostNotification;
 
         StyledElements.Container.call(this, {'class': className}, []);
 
@@ -68,12 +66,12 @@
         this.header.classList.add('header');
         this.wrapperElement.appendChild(this.header);
 
-        //widget name
+        // Widget name
         this.nameElement = document.createElement("span");
         this.nameElement.textContent = title;
         this.header.appendChild(this.nameElement);
 
-        // close button, not for miniInterface
+        // Interface buttons, not for miniInterface
         if (!this.isMiniInterface) {
             if (className == 'iwidget') {
                 type = 'widget';
@@ -81,7 +79,7 @@
                 type = 'operator';
             }
 
-            // ghost interface
+            // Ghost interface
             if (isGhost) {
                 this.wrapperElement.classList.add('ghost');
                 ghostNotification = document.createElement("span");
@@ -109,7 +107,7 @@
                 }
             }.bind(this));
 
-            // add a menu button except on mini interfaces
+            // Add a menu button except on mini interfaces
             this.menu_button = new StyledElements.PopupButton({
                 'title': gettext("Menu"),
                 'class': 'editPos_button',
@@ -130,7 +128,7 @@
         this.resourcesDiv.appendChild(this.sourceDiv);
         this.wrapperElement.appendChild(this.resourcesDiv);
 
-        //draggable
+        // Draggable
         if (!this.isMiniInterface) {
             this.makeDraggable();
         } else { //miniInterface
@@ -195,7 +193,6 @@
     GenericInterface.prototype.makeDraggable = function makeDraggable() {
         this.draggable = new Draggable(this.wrapperElement, {iObject: this},
             function onStart(draggable, context) {
-                var position;
                 context.y = context.iObject.wrapperElement.style.top === "" ? 0 : parseInt(context.iObject.wrapperElement.style.top, 10);
                 context.x = context.iObject.wrapperElement.style.left === "" ? 0 : parseInt(context.iObject.wrapperElement.style.left, 10);
                 context.preselected = context.iObject.selected;
@@ -302,7 +299,7 @@
                         context.genInterface.down(context.iObject);
                     }
                 },
-                function onFinish(draggable, context, e) {
+                function onFinish(draggable, context) {
                     context.iObject.wrapperElement.classList.remove('moving');
                     if (context.iObjectClon.parentNode) {
                         context.iObjectClon.parentNode.removeChild(context.iObjectClon);
@@ -314,7 +311,7 @@
     };
 
     /**
-     * get the GenericInterface position.
+     * Get the GenericInterface position.
      */
     GenericInterface.prototype.getPosition = function getPosition() {
         var coordinates = {posX: this.wrapperElement.offsetLeft,
@@ -323,7 +320,7 @@
     };
 
     /**
-     * get the GenericInterface style position.
+     * Get the GenericInterface style position.
      */
     GenericInterface.prototype.getStylePosition = function getStylePosition() {
         var coordinates;
@@ -333,7 +330,7 @@
     };
 
     /**
-     *  gets an anchor given a name
+     * Gets an anchor given a name
      */
     GenericInterface.prototype.getAnchor = function getAnchor(name) {
         if (name in this.sourceAnchorsByName) {
@@ -344,7 +341,7 @@
     };
 
     /**
-     * set the GenericInterface position.
+     * Set the GenericInterface position.
      */
     GenericInterface.prototype.setPosition = function setPosition(coordinates) {
         this.wrapperElement.style.left = coordinates.posX + 'px';
@@ -352,7 +349,7 @@
     };
 
     /**
-     * set the BoundingClientRect parameters
+     * Set the BoundingClientRect parameters
      */
     GenericInterface.prototype.setBoundingClientRect = function setBoundingClientRect(BoundingClientRect, move) {
         this.wrapperElement.style.height = (BoundingClientRect.height + move.height) + 'px';
@@ -362,14 +359,14 @@
     };
 
     /**
-     * set the initial position in the menubar, miniobjects.
+     * Set the initial position in the menubar, miniobjects.
      */
     GenericInterface.prototype.setMenubarPosition = function setMenubarPosition(menubarPosition) {
         this.menubarPosition = menubarPosition;
     };
 
     /**
-     * set the initial position in the menubar, miniobjects.
+     * Set the initial position in the menubar, miniobjects.
      */
     GenericInterface.prototype.getMenubarPosition = function getMenubarPosition() {
         return this.menubarPosition;
@@ -378,7 +375,6 @@
     /**
      * Increasing the number of read only connections
      */
-
     GenericInterface.prototype.incReadOnlyConnectionsCount = function incReadOnlyConnectionsCount() {
         this.readOnlyEndpoints += 1;
         this.readOnly = true;
@@ -394,7 +390,7 @@
         }
     };
     /**
-     * generic repaint
+     * Generic repaint
      */
     GenericInterface.prototype.repaint = function repaint(temporal) {
         var key;
@@ -411,18 +407,18 @@
     };
 
     /**
-     * add Source.
+     * Add Source.
      */
     GenericInterface.prototype.addSource = function addSource(label, desc, name, anchorContext) {
         var anchor, anchorDiv, labelDiv, anchorLabel, multiconnector, id, friendCode;
         //anchorDiv
         anchorDiv = document.createElement("div");
-        //if the output have not description, take the label
+        // If the output have not description, take the label
         if (desc === '') {
             desc = label;
         }
         anchorDiv.setAttribute('title', desc);
-        //anchor visible label
+        // Anchor visible label
         anchorLabel = document.createElement("span");
         anchorLabel.textContent = label;
 
@@ -463,8 +459,8 @@
             labelDiv.addEventListener('mouseout', function (e) {
                 this.wiringEditor.deemphasize(anchor);
             }.bind(this));
-            // Sticky effect
 
+            // Sticky effect
             anchorDiv.addEventListener('mouseover', function (e) {
                 anchor._mouseover_callback(e);
             }.bind(this));
@@ -490,18 +486,18 @@
     };
 
     /**
-     * add Target.
+     * Add Target.
      */
     GenericInterface.prototype.addTarget = function addTarget(label, desc, name, anchorContext) {
         var anchor, anchorDiv, labelDiv, anchorLabel, multiconnector, id, friendCode;
-        //anchorDiv
+        // AnchorDiv
         anchorDiv = document.createElement("div");
         //if the input have not description, take the label
         if (desc === '') {
             desc = label;
         }
         anchorDiv.setAttribute('title', desc);
-        //anchor visible label
+        // Anchor visible label
         anchorLabel = document.createElement("span");
         anchorLabel.textContent = label;
 
@@ -568,7 +564,7 @@
     };
 
     /**
-     *  add new class in to the genericInterface
+     *  Add new class in to the genericInterface
      */
     GenericInterface.prototype.addClassName = function addClassName(className) {
         var atr;
@@ -585,7 +581,7 @@
     };
 
     /**
-     * remove a genericInterface Class name
+     * Remove a genericInterface Class name
      */
     GenericInterface.prototype.removeClassName = function removeClassName(className) {
         var atr;
@@ -601,6 +597,9 @@
         this.wrapperElement.setAttribute('class', EzWebExt.removeWord(atr, className));
     };
 
+    /**
+     * Select this genericInterface
+     */
     GenericInterface.prototype.select = function select(withCtrl) {
         var i, j, arrows;
         if (this.hasClassName('disabled')) {
@@ -614,7 +613,7 @@
         }
         this.selected = true;
         this.addClassName('selected');
-        //arrows
+        // Arrows
         for (i = 0; i < this.targetAnchors.length; i += 1) {
             arrows = this.targetAnchors[i].arrows;
             for (j = 0; j < arrows.length; j += 1) {
@@ -630,6 +629,9 @@
         this.wiringEditor.addSelectedObject(this);
     };
 
+    /**
+     * Unselect this genericInterface
+     */
     GenericInterface.prototype.unselect = function unselect(withCtrl) {
         var i, j, arrows;
         this.selected = false;
@@ -702,7 +704,7 @@
     };
 
     /**
-     * edit source and targets positions
+     * Edit source and targets positions
      */
     GenericInterface.prototype.editPos = function editPos() {
         var obj;
@@ -722,7 +724,7 @@
     };
 
     /**
-     * enable poditions editor
+     * Enable poditions editor
      */
     GenericInterface.prototype.enableEdit = function enableEdit() {
         this.draggable.destroy();
@@ -734,7 +736,7 @@
     };
 
     /**
-     * disable poditions editor
+     * Disable poditions editor
      */
     GenericInterface.prototype.disableEdit = function disableEdit() {
         var i;
@@ -771,7 +773,7 @@
     };
 
     /**
-     * get sources and targets titles lists in order to save positions
+     * Get sources and targets titles lists in order to save positions
      */
     GenericInterface.prototype.getInOutPositions = function getInOutPositions() {
         var i, sources, targets;
@@ -788,7 +790,7 @@
     };
 
     /**
-     * get the source or target name for the especific node
+     * Get the source or target name for the especific node
      */
     GenericInterface.prototype.getNameForSort = function getNameForSort(node, type) {
         var i;
@@ -826,7 +828,7 @@
 
 
     /*************************************************************************
-     * Make WidgetInterface public
+     * Make GenericInterface public
      *************************************************************************/
     Wirecloud.ui.WiringEditor.GenericInterface = GenericInterface;
 })();

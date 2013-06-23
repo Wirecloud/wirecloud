@@ -29,11 +29,12 @@
     /*************************************************************************
      * Constructor
      *************************************************************************/
-    /*
+    /**
      * WidgetInterface Class
      */
     var WidgetInterface = function WidgetInterface(wiringEditor, iwidget, manager, isMenubarRef, endPointsPos) {
-        var variables, variable, desc, label, name, anchorContext, i, wids, isGhost;
+        var variables, variable, desc, label, anchorContext, i, wids, isGhost;
+
         this.iwidget = iwidget;
         this.wiringEditor = wiringEditor;
 
@@ -111,7 +112,7 @@
      * onFinish for draggable
      */
     WidgetInterface.prototype.onFinish = function onFinish(draggable, data, e) {
-        var position, initialPosition, movement, iwidget_interface, endPointPos, oc, scrollX, scrollY;
+        var position, iwidget_interface, endPointPos, oc, scrollX, scrollY;
 
         position = {posX: 0, posY: 0};
         position = data.iObjectClon.getPosition();

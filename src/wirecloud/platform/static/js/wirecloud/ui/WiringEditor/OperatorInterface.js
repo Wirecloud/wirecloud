@@ -96,7 +96,7 @@
      * onFinish for draggable
      */
     OperatorInterface.prototype.onFinish = function onFinish(draggable, data, e) {
-        var operator_interface, position, initialPosition, movement, endPointPos, oc, scrollX, scrollY;
+        var operator_interface, position, endPointPos, oc, scrollX, scrollY;
         
         position = {posX: 0, posY: 0};
         position = data.iObjectClon.getPosition();

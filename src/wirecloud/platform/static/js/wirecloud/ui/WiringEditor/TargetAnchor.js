@@ -30,7 +30,7 @@
     /*************************************************************************
      * Constructor TargetAnchor
      *************************************************************************/
-    /*
+    /**
      * TargetAnchor Class
      */
     var TargetAnchor = function TargetAnchor(context, arrowCreator) {
@@ -43,11 +43,13 @@
     /*************************************************************************
      * Public methods
      *************************************************************************/
-    TargetAnchor.prototype.repaint = function repaint(temporal) {
+    /**
+     * repaint the TargetAnchor
+     */
+    TargetAnchor.prototype.repaint = function repaint() {
         var i, coordinates;
 
         coordinates = this.getCoordinates(this.context.iObject.wiringEditor.getGridElement());
-        /* Multiple Connector */
         for (i = 0; i < this.arrows.length; i += 1) {
             if (this.arrows[i].endMulti == null) {
                 this.arrows[i].setEnd(coordinates);
