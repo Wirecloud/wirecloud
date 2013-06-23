@@ -47,14 +47,15 @@
     top: -16px;
 }
 
+/* flex */
 .wiring_editor .ioperator.flex, .wiring_editor .iwidget.flex {
     -webkit-transition: all 400ms;
     -moz-transition: all 400ms;
     -o-transition: all 400ms;
     transition: all 400ms;
- }
+}
 
- /* subdataMode */
+/* subdataMode */
 .wiring_editor .ioperator.subdataMode {
     pointer-events: none;
     background: rgba(220, 240, 220, 0.3);

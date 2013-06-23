@@ -93,7 +93,6 @@
 }
 
 /* hover effects */
-
 .wiring_editor .canvas .arrow:hover .arrowbody {
     stroke: rgb(214, 214, 214);
     stroke-width: 7;
