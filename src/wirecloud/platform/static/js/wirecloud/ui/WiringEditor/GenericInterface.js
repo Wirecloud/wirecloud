@@ -893,7 +893,7 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
         // Sources counter
         this.numberOfSources += 1;
 
-        // anchorDiv
+        // AnchorDiv
         anchorDiv = document.createElement("div");
         // If the output have not description, take the label
         if (desc === '') {
