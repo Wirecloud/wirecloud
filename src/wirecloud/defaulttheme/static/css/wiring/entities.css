@@ -141,53 +141,11 @@
     white-space: nowrap;
 }
 
-/* buttonsDiv */
-.wiring_editor .grid .buttonsDiv {
-    position: relative;
-    display: inline-block;
-    vertical-align: middle;
-    font-size: 0.8em;
-}
-
-.wiring_editor .grid .sources .buttonsDiv {
-    width: 0px;
-    right: 2px;
-}
-
-.wiring_editor .grid .targets .buttonsDiv {
-    width: 0px;
-    left: -7px;
-}
-
-/* multiconnector button */
-.wiring_editor .grid .multiconnector_icon {
-    display: block;
-    cursor: pointer;
-    margin: 0;
-    color: rgb(83, 83, 134);
-}
-
-.wiring_editor .grid .sources .multiconnector_icon {
-	font-family: fontAwesome;
-}
-
-.wiring_editor .grid .targets .multiconnector_icon {
-    font-family: fontAwesome;
-}
-
 /* Tree button */
 .wiring_editor .grid .sources .treeButton_icon {
 	font-family: fontAwesome;
 	margin: 0;
 	color: rgb(83, 83, 134);
-}
-
-.wiring_editor .grid .sources .treeButton_icon {
-	font-family: fontAwesome;
-}
-
-.wiring_editor .grid .sources .treeButton_icon.activated {
-	font-family: fontAwesome;
 }
 
 .wiring_editor .sources .labelDiv, .wiring_editor .targets .labelDiv {
@@ -448,9 +406,6 @@
     white-space: nowrap;
 }
 
-.wiring_editor .border_layout .target_clon .buttonsDiv, .wiring_editor .border_layout .source_clon .buttonsDiv, .wiring_editor .border_layout .target_clon .anchor, .wiring_editor .border_layout .source_clon .anchor {
-    display: none;
-}
 
 /* clone mini widget for Drag&Drop from menubar to grid */
 .wiring_editor .border_layout .ioperator.clon, .wiring_editor .border_layout .iwidget.clon {
