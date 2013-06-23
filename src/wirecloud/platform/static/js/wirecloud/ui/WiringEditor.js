@@ -236,15 +236,15 @@ if (!Wirecloud.ui) {
         this._keydownListener = keydownListener.bind(this);
         this._keyupListener = keyupListener.bind(this);
 
-        // info del navegador
-        var navegador = navigator.userAgent;
-        if (navegador.indexOf('MSIE') != -1) {
+        // Browser info
+        var browser = navigator.userAgent;
+        if (browser.indexOf('MSIE') != -1) {
             this.browser = "explorer";
-        } else if (navegador.indexOf('Firefox') != -1) {
+        } else if (browser.indexOf('Firefox') != -1) {
             this.browser = "firefox";
-        } else if (navegador.indexOf('Chrome') != -1) {
+        } else if (browser.indexOf('Chrome') != -1) {
             this.browser = "chrome";
-        } else if (navegador.indexOf('Opera') != -1) {
+        } else if (browser.indexOf('Opera') != -1) {
             this.browser = "opera";
         } else {
             this.browser = "nisu";
