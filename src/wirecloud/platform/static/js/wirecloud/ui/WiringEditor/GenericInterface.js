@@ -90,9 +90,10 @@
                 this.header.appendChild(ghostNotification);
             }
 
+            // Close button
             del_button = new StyledElements.StyledButton({
                 'title': gettext("Remove"),
-                'class': 'closebutton',
+                'class': 'closebutton icon-remove',
                 'plain': true
             });
             del_button.insertInto(this.header);
@@ -110,7 +111,7 @@
             // Add a menu button except on mini interfaces
             this.menu_button = new StyledElements.PopupButton({
                 'title': gettext("Menu"),
-                'class': 'editPos_button',
+                'class': 'editPos_button icon-cog',
                 'plain': true
             });
             this.menu_button.insertInto(this.header);
