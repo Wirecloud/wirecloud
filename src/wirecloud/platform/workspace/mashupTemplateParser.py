@@ -237,7 +237,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
             target_id = operators[target_id]
 
         wiring_status['connections'].append({
-            'readonly': connection['readonly'],
+            'readOnly': connection['readonly'],
             'source': {
                 'id': source_id,
                 'type': connection['source']['type'],
@@ -273,6 +273,3 @@ def fillWorkspaceUsingTemplate(workspace, template):
     workspace.wiringStatus = simplejson.dumps(wiring_status)
 
     workspace.save()
-
-    from wirecloud.platform.get_data import _invalidate_cached_variable_values
-    _invalidate_cached_variable_values(workspace)

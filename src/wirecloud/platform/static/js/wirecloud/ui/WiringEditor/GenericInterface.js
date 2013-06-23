@@ -477,8 +477,7 @@
     /**
      * Increasing the number of read only connections
      */
-
-    GenericInterface.prototype.incReadOnlyConnectionsCount = function IncReadOnlyConnectionsCount() {
+    GenericInterface.prototype.incReadOnlyConnectionsCount = function incReadOnlyConnectionsCount() {
         this.readOnlyEndpoints += 1;
         this.readOnly = true;
     };
@@ -486,7 +485,7 @@
     /**
      * Reduce the number of read only connections
      */
-    GenericInterface.prototype.reduceReadOnlyConnectionsCount = function ReduceReadOnlyConnectionsCount() {
+    GenericInterface.prototype.reduceReadOnlyConnectionsCount = function reduceReadOnlyConnectionsCount() {
         this.readOnlyEndpoints -= 1;
         if (this.readOnlyEndpoints == 0) {
             this.readOnly = false;
@@ -860,7 +859,7 @@
      * add Source.
      */
     GenericInterface.prototype.addSource = function addSource(label, desc, name, anchorContext) {
-        var anchor, anchorDiv, labelDiv, anchorLabel, treeDiv, subAnchors;
+        var anchor, anchorDiv, labelDiv, anchorLabel, treeDiv, subAnchors, friendCode;
 
         // sources counter
         this.numberOfSources += 1;
@@ -955,7 +954,7 @@
      * add Target.
      */
     GenericInterface.prototype.addTarget = function addTarget(label, desc, name, anchorContext) {
-        var anchor, anchorDiv, labelDiv, anchorLabel;
+        var anchor, anchorDiv, labelDiv, anchorLabel, friendCode;
 
         // targets counter
         this.numberOfTargets += 1;

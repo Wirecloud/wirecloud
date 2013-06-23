@@ -79,10 +79,6 @@ IWidget.prototype.getTab = function () {
     return this.tab;
 };
 
-IWidget.prototype.getId = function () {
-    return this.id;
-};
-
 /**
 * Paints the widget instance
 * @param where HTML Element where the iwidget will be painted

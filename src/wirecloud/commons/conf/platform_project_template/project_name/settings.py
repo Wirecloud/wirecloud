@@ -4,7 +4,7 @@
 from os import path
 from wirecloud.commons.utils.urlresolvers import reverse_lazy
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 COMPRESS = not DEBUG
 COMPRESS_OFFLINE = not DEBUG
@@ -20,8 +20,8 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '',                      # Or path to database file if using sqlite3.
+        'ENGINE': {{ db_engine }},       # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': {{ db_name }},           # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
         'USER': '',
         'PASSWORD': '',
@@ -29,6 +29,11 @@ DATABASES = {
         'PORT': '',                      # Set to empty string for default.
     }
 }
+
+# This setting has only effect in DJango 1.5+
+# Hosts/domain names that are valid for this site; required if DEBUG is False
+# See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
+ALLOWED_HOSTS = ['*']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -65,6 +70,14 @@ MEDIA_URL = ''
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
 STATIC_ROOT = path.join(BASEDIR, '../static')
+
+# Controls the absolute file path that linked static will be read from and
+# compressed static will be written to when using the default COMPRESS_STORAGE.
+COMPRESS_ROOT = STATIC_ROOT
+
+# Controls the directory inside COMPRESS_ROOT that compressed files will be
+# written to.
+COMPRESS_OUTPUT_DIR = 'cache'
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
@@ -222,7 +235,7 @@ WORKSPACE_MANAGERS = (
 )
 
 WIRECLOUD_PLUGINS = (
-    'wirecloud.oauth2provider.plugins.OAuth2Plugin',
+    'wirecloud.oauth2provider.plugins.OAuth2ProviderPlugin',
     'wirecloud.fiware.plugins.FiWarePlugin',
 )
 

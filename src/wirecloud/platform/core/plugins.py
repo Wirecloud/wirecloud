@@ -248,6 +248,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
     def get_ajax_endpoints(self, view):
         endpoints = (
+            {'id': 'LOGOUT_VIEW', 'url': build_url_template('logout')},
             {'id': 'LOCAL_REPOSITORY', 'url': build_url_template('wirecloud.root')},
             {'id': 'LOCAL_RESOURCE_COLLECTION', 'url': build_url_template('wirecloud_showcase.resource_collection')},
             {'id': 'LOCAL_RESOURCE_ENTRY', 'url': build_url_template('wirecloud_showcase.resource_entry', ['vendor', 'name', 'version'])},

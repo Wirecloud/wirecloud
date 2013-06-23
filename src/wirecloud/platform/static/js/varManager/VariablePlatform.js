@@ -98,7 +98,7 @@ Variable.prototype.getWorkspace = function () {
 Variable.prototype.serialize = function serialize() {
     return {
         'type': 'iwidget',
-        'id': this.iWidget.getId(),
+        'id': this.iWidget.id,
         'endpoint': this.vardef.name
     };
 };
@@ -207,16 +207,16 @@ RVariable.prototype.set = function (newValue, from_widget) {
                     try {
                         this.handler(newValue);
                     } catch (e) {
-                        var transObj = {iWidgetId: this.iWidget.getId(), varName: this.vardef.name, exceptionMsg: e};
+                        var transObj = {iWidgetId: this.iWidget.id, varName: this.vardef.name, exceptionMsg: e};
                         var msg = interpolate(gettext("Error in the handler of the \"%(varName)s\" RVariable in iWidget %(iWidgetId)s: %(exceptionMsg)s."), transObj, true);
-                        OpManagerFactory.getInstance().logIWidgetError(this.iWidget.getId(), msg, Constants.Logging.ERROR_MSG);
+                        OpManagerFactory.getInstance().logIWidgetError(this.iWidget.id, msg, Constants.Logging.ERROR_MSG);
                     }
                 } else {
                     if (this.iWidget.loaded) {
                         var opManager = OpManagerFactory.getInstance();
-                        var transObj = {iWidgetId: this.iWidget.getId(), varName: this.vardef.name};
+                        var transObj = {iWidgetId: this.iWidget.id, varName: this.vardef.name};
                         var msg = interpolate(gettext("IWidget %(iWidgetId)s does not provide a handler for the \"%(varName)s\" RVariable."), transObj, true);
-                        opManager.logIWidgetError(this.iWidget.getId(), msg, Constants.Logging.WARN_MSG);
+                        opManager.logIWidgetError(this.iWidget.id, msg, Constants.Logging.WARN_MSG);
                     }
                 }
 

@@ -19,12 +19,20 @@
 
 from optparse import make_option
 import os
+import subprocess
 
 from django.core.management.base import CommandError
 from django.core.management.commands.startproject import Command
 
 import wirecloud.commons
 from wirecloud.commons.utils.commands import BaseCommand
+
+
+def exec_external_cmd(cmd):
+    result = subprocess.call(cmd, shell=True)
+    if result:
+        raise CommandError('Error executing external command')
+
 
 class StartprojectCommand(BaseCommand):
 
@@ -34,6 +42,9 @@ class StartprojectCommand(BaseCommand):
             action='store',
             dest='type',
             default='platform'),
+        make_option('-q', '--quick-start',
+            action='store_true',
+            dest='quick_start'),
     )
 
     def handle(self, project_name=None, target=None, *args, **options):
@@ -49,6 +60,21 @@ class StartprojectCommand(BaseCommand):
             'extensions': ('py',),
             'files': [],
             'verbosity': options.get('verbosity'),
+            'db_engine': "'django.db.backends.'",
+            'db_name': "''",
         }
+
+        if options['quick_start']:
+            internal_options['db_engine'] = "'django.db.backends.sqlite3'"
+            internal_options['db_name'] = "path.join(BASEDIR, '%s.db')" % project_name
+
         command = Command()
-        return command.handle(project_name, target, *(), **internal_options)
+        command.handle(project_name, target, *(), **internal_options)
+
+        if options['quick_start']:
+
+            os.chdir(project_name)
+            exec_external_cmd('python manage.py syncdb --migrate --noinput')
+            exec_external_cmd('python manage.py loaddata wirecloud_quick_start')
+            exec_external_cmd('python manage.py collectstatic --noinput')
+            exec_external_cmd('python manage.py compress --force')

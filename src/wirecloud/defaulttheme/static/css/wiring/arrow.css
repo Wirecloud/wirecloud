@@ -83,6 +83,7 @@
     stroke-width: 11;
 }
 
+<<<<<<< HEAD
 .wiring_editor .canvas .arrow.hollow .arrowbody {
 	stroke: rgb(214, 214, 214);
 }
@@ -116,6 +117,8 @@
     font-family: FontAwesome;
 }
 
+=======
+>>>>>>> upstream/develop
 /* Read Only */
 
 .wiring_editor .canvas .readOnly .closer {

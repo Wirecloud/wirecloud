@@ -1,28 +1,22 @@
 /*
-*     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
-*     S.A.Unipersonal (Telefonica I+D)
-*
-*     (C) Copyright 2011-2012 Universidad Politécnica de Madrid
-*
-*     This file is part of Morfeo EzWeb Platform.
-*
-*     Morfeo EzWeb Platform is free software: you can redistribute it and/or modify
-*     it under the terms of the GNU Affero General Public License as published by
-*     the Free Software Foundation, either version 3 of the License, or
-*     (at your option) any later version.
-*
-*     Morfeo EzWeb Platform is distributed in the hope that it will be useful,
-*     but WITHOUT ANY WARRANTY; without even the implied warranty of
-*     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*     GNU Affero General Public License for more details.
-*
-*     You should have received a copy of the GNU Affero General Public License
-*     along with Morfeo EzWeb Platform.  If not, see <http://www.gnu.org/licenses/>.
-*
-*     Info about members and contributors of the MORFEO project
-*     is available at
-*
-*     http://morfeo-project.org
+ *     Copyright (c) 2008-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *     This file is part of Wirecloud Platform.
+ *
+ *     Wirecloud Platform is free software: you can redistribute it and/or
+ *     modify it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
+ *
+ *     Wirecloud is distributed in the hope that it will be useful, but WITHOUT
+ *     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+ *     License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with Wirecloud Platform.  If not, see
+ *     <http://www.gnu.org/licenses/>.
+ *
  */
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
@@ -302,17 +296,6 @@ IWidget.prototype.getWidth = function () {
  */
 IWidget.prototype.getHeight = function () {
     return this.height;
-};
-
-/**
- * Returns the identifier of this iWidget. This identifier is unique for the
- * current Wirecloud Platform. This identifier can be null if this iWidget is not
- * currently presisted.
- *
- * @returns {Number} the identifier for this iWidget.
- */
-IWidget.prototype.getId = function () {
-    return this.id;
 };
 
 IWidget.prototype.getElement = function () {

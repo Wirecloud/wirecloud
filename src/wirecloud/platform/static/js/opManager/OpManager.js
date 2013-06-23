@@ -236,14 +236,8 @@ var OpManagerFactory = function () {
             this.activeWorkspace.downloadWorkspaceInfo(initial_tab);
         }
 
-
-        /**
-         * Method called when the user clicks the logout link. As this action
-         * changes the document URL, an unload event will be launched (so
-         * unloadEnvironment will be called).
-         */
-        OpManager.prototype.logout = function () {
-            window.location = "/logout";
+        OpManager.prototype.logout = function logout() {
+            window.location = Wirecloud.URLs.LOGOUT_VIEW;
         }
 
         OpManager.prototype.addInstance = function (widget, options) {

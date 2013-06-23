@@ -157,7 +157,7 @@ if (!Wirecloud.ui) {
             var rec, anchors, i, entityId, anchorId;
 
             if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
-                entityId = anchor.context.iObject.iwidget.widget.getId();
+                entityId = anchor.context.iObject.iwidget.widget.id;
                 if (anchor.context.data.vardef) {
                     anchorId = anchor.context.data.vardef.name;
                 } else {
@@ -193,7 +193,7 @@ if (!Wirecloud.ui) {
             var rec, anchors, i, entityId, anchorId, mc, entity, endpoint, index;
 
             if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
-                entityId = anchor.context.iObject.iwidget.widget.getId();
+                entityId = anchor.context.iObject.iwidget.widget.id;
                 if (anchor.context.data.vardef) {
                     anchorId = anchor.context.data.vardef.name;
                 } else {
@@ -308,7 +308,7 @@ if (!Wirecloud.ui) {
                     endPointPos = {'sources': [], 'targets': []};
                     iwidget_interface = this.addIWidget(this, iwidget, endPointPos);
                     iwidget_interface.setPosition({posX: 0, posY: 0});
-                    this.mini_widgets[iwidget.getId()].disable();
+                    this.mini_widgets[iwidget.id].disable();
                 } else {
                     throw new Error('Widget not found');
                 }
@@ -418,15 +418,15 @@ if (!Wirecloud.ui) {
             // mini widgets
             isMenubarRef = true;
             miniwidget_interface = new Wirecloud.ui.WiringEditor.WidgetInterface(this, iwidget, this, isMenubarRef);
-            this.mini_widgets[iwidget.getId()] = miniwidget_interface;
+            this.mini_widgets[iwidget.id] = miniwidget_interface;
             this.mini_widget_section.appendChild(miniwidget_interface);
 
             // widget
             for (k = 0; k < WiringStatus.views.length; k ++) {
-                if (iwidget.getId() in WiringStatus.views[k].iwidgets) {
+                if (iwidget.id in WiringStatus.views[k].iwidgets) {
                     miniwidget_interface.disable();
-                    widget_interface = this.addIWidget(this, iwidget, WiringStatus.views[k].iwidgets[iwidget.getId()].endPointsInOuts);
-                    widget_interface.setPosition(WiringStatus.views[k].iwidgets[iwidget.getId()].widget);
+                    widget_interface = this.addIWidget(this, iwidget, WiringStatus.views[k].iwidgets[iwidget.id].endPointsInOuts);
+                    widget_interface.setPosition(WiringStatus.views[k].iwidgets[iwidget.id].widget);
                     break;
                 }
             }
@@ -438,19 +438,15 @@ if (!Wirecloud.ui) {
             for (key in WiringStatus.views[k].iwidgets) {
                 if (!this.iwidgets[key]) {
                     // Widget Name if is known
-                    if (WiringStatus.views[k].iwidgets[key].completeName != null) {
-                        ghostName = WiringStatus.views[k].iwidgets[key].completeName;
+                    if (WiringStatus.views[k].iwidgets[key].name != null) {
+                        ghostName = WiringStatus.views[k].iwidgets[key].name;
                     } else {
-                        ghostName = "unknown name";
+                        ghostName = gettext("unknown name");
                     }
-                    iwidget = {};
                     iwidget = {
                         'id': key,
-                        'name': ghostName,
-                        'ghost': true,
-                        'getId': function() {
-                            return key;
-                        }.bind(this, key)
+                        'display_name': ghostName,
+                        'ghost': true
                     };
                     iwidget['widget'] = iwidget;
                     widget_interface = this.addIWidget(this, iwidget, WiringStatus.views[k].iwidgets[key].endPointsInOuts);
@@ -811,12 +807,7 @@ if (!Wirecloud.ui) {
             widget = this.iwidgets[key];
             pos = widget.getStylePosition();
             inOutPos = widget.getInOutPositions();
-            if (!widget.isGhost) {
-                name = widget.iwidget.widget.getId();
-            } else {
-                name = widget.iwidget.widget.display_name
-            }
-            positions = {'widget' : pos, 'endPointsInOuts' : inOutPos, 'completeName': name};
+            positions = {'widget' : pos, 'endPointsInOuts' : inOutPos, 'name': widget.iwidget.widget.id};
             WiringStatus.views[0].iwidgets[key] = positions;
         }
 
@@ -882,7 +873,7 @@ if (!Wirecloud.ui) {
      */
     WiringEditor.prototype.addSelectedObject = function addSelectedObject(object) {
         if (object instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
-            this.selectedWids[object.iwidget.getId()] = object;
+            this.selectedWids[object.getId()] = object;
             this.selectedWids.length += 1;
         } else if (object instanceof Wirecloud.ui.WiringEditor.OperatorInterface) {
             this.selectedOps[object.getId()] = object;
@@ -899,7 +890,7 @@ if (!Wirecloud.ui) {
      */
     WiringEditor.prototype.removeSelectedObject = function removeSelectedObject(object) {
         if (object instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
-            delete this.selectedWids[object.iwidget.getId()];
+            delete this.selectedWids[object.getId()];
             this.selectedWids.length -= 1;
         } else if (object instanceof Wirecloud.ui.WiringEditor.OperatorInterface) {
             delete this.selectedOps[object.getId()];
@@ -957,7 +948,7 @@ if (!Wirecloud.ui) {
         var widget_interface, auxDiv;
 
         widget_interface = new Wirecloud.ui.WiringEditor.WidgetInterface(wiringEditor, iwidget, this.arrowCreator, false, enpPointPos);
-        this.iwidgets[iwidget.getId()] = widget_interface;
+        this.iwidgets[iwidget.id] = widget_interface;
 
         auxDiv = document.createElement('div');
         //width and height to avoid scroll problems
@@ -1269,7 +1260,7 @@ if (!Wirecloud.ui) {
     WiringEditor.prototype.removeIWidget = function removeIWidget(widget_interface) {
         var i;
         widget_interface.unselect(false);
-        delete this.iwidgets[widget_interface.getIWidget().getId()];
+        delete this.iwidgets[widget_interface.getIWidget().id];
         this.layout.getCenterContainer().removeChild(widget_interface);
 
         //semantic recommendations
@@ -1284,8 +1275,7 @@ if (!Wirecloud.ui) {
         }
 
         widget_interface.destroy();
-
-        this.mini_widgets[widget_interface.getIWidget().getId()].enable();
+        this.mini_widgets[widget_interface.getIWidget().id].enable();
 
         this.entitiesNumber -= 1;
         if (this.entitiesNumber === 0) {
@@ -1370,7 +1360,7 @@ if (!Wirecloud.ui) {
             widgetId = anchor.context.iObject.ioperator.meta.uri;
             achorId = anchor.context.data.name;
         } else if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
-            widgetId = anchor.context.iObject.iwidget.widget.getId();
+            widgetId = anchor.context.iObject.iwidget.widget.id;
             if (anchor.context.data instanceof WidgetOutputEndpoint) {
                 achorId = anchor.context.data.name;
             } else {
@@ -1400,7 +1390,7 @@ if (!Wirecloud.ui) {
             widgetId = anchor.context.iObject.ioperator.meta.uri;
             achorId = anchor.context.data.name;
         } else if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
-            widgetId = anchor.context.iObject.iwidget.widget.getId();
+            widgetId = anchor.context.iObject.iwidget.widget.id;
             if (anchor.context.data instanceof WidgetOutputEndpoint) {
                 achorId = anchor.context.data.name;
             } else {

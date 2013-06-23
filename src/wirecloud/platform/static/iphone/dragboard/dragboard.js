@@ -134,16 +134,6 @@ function Dragboard(tab, workspace, dragboardElement) {
         this.iWidgets = null;
     };
 
-    Dragboard.prototype.saveConfig = function (iWidgetId) {
-        var iwidget = this.iWidgets.get(iWidgetId);
-        try {
-            iwidget.saveConfig();
-
-            this.setConfigurationVisible(iwidget.getId(), false);
-        } catch (e) {
-        }
-    };
-
     Dragboard.prototype.showInstance = function (iwidget) {
         iwidget.paint();
     };

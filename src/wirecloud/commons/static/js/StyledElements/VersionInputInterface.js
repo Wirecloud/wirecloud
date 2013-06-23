@@ -28,7 +28,7 @@
     var VERSION_RE = /^([1-9]\d*|0)(?:\.([1-9]\d*|0))*$/;
 
     var VersionInputInterface = function VersionInputInterface(fieldId, options) {
-        if (options != null) {
+        if (options == null) {
             options = {};
         }
 

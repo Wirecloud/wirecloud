@@ -1,34 +1,22 @@
 # -*- coding: utf-8 -*-
 
-#...............................licence...........................................
-#
-#     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
-#     S.A.Unipersonal (Telefonica I+D)
-#
-#     This file is part of Morfeo EzWeb Platform.
-#
-#     Morfeo EzWeb Platform is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU Affero General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     (at your option) any later version.
-#
-#     Morfeo EzWeb Platform is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU Affero General Public License for more details.
-#
-#     You should have received a copy of the GNU Affero General Public License
-#     along with Morfeo EzWeb Platform.  If not, see <http://www.gnu.org/licenses/>.
-#
-#     Info about members and contributors of the MORFEO project
-#     is available at
-#
-#     http://morfeo-project.org
-#
-#...............................licence...........................................#
+# Copyright (c) 2008-2013 CoNWeT Lab., Universidad Politécnica de Madrid
 
+# This file is part of Wirecloud.
 
-#
+# Wirecloud is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Wirecloud is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+
 try:
     from Crypto.Cipher import AES
     HAS_AES = True
@@ -75,9 +63,6 @@ def createTab(tab_name, user, workspace, allow_renaming=False):
     else:
         tab.save()
 
-    from wirecloud.platform.get_data import _invalidate_cached_variable_values
-    _invalidate_cached_variable_values(workspace)
-
     return tab
 
 
@@ -94,20 +79,6 @@ def get_mashup_widgets(mashup_id):
     published_workspace = get_object_or_404(PublishedWorkspace, id=mashup_id)
 
     return [i.widget for i in IWidget.objects.filter(tab__workspace=published_workspace.workspace)]
-
-
-def create_published_workspace_from_template(template, user):
-
-    if not isinstance(template, TemplateParser):
-        template = TemplateParser(template)
-
-    workspace_info = template.get_resource_basic_info()
-    return PublishedWorkspace.objects.create(name=workspace_info['name'],
-        vendor=workspace_info['vendor'], version=workspace_info['version'],
-        author=workspace_info['author'], mail=workspace_info['mail'],
-        description=workspace_info['description'], imageURI=workspace_info['image_uri'],
-        wikiURI=workspace_info['doc_uri'], params='',
-        creator=user, template=template.get_contents())
 
 
 def encrypt_value(value):

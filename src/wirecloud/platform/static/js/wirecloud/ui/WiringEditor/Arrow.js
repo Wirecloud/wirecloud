@@ -70,11 +70,13 @@
             if (e.button !== 0) {
                 return;
             }
+
             // readOnly control
             if (this.readOnly) {
                 e.stopPropagation();
                 return;
             }
+            // Subdata tree control
             if (this.hasClassName('hollow')) {
                 // TODO open subdata tree
                 return;
@@ -94,6 +96,7 @@
                 }
                 return;
             }
+
             this.destroy();
             e.stopPropagation();
         }.bind(this));

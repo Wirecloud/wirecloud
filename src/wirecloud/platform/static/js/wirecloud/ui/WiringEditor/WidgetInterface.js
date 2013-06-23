@@ -62,18 +62,21 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
      */
     var WidgetInterface = function WidgetInterface(wiringEditor, iwidget, manager, isMenubarRef, endPointsPos) {
         var variables, variable, desc, label, anchorContext, i, wids, isGhost;
+
         this.iwidget = iwidget;
         this.wiringEditor = wiringEditor;
 
-        if (iwidget.hasOwnProperty('ghost')) {
+        isGhost = 'ghost' in iwidget;
+        if (isGhost) {
             // Ghost Widget
-            isGhost = true;
             this.iwidget.display_name = iwidget.name;
             this.iwidget.meta = {};
             this.iwidget.meta.uri = iwidget.name;
-        } else {
-            isGhost = false;
         }
+
+        var variables, variable, desc, label, name, anchorContext, i, wids, isGhost;
+        this.iwidget = iwidget;
+        this.wiringEditor = wiringEditor;
 
         Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.iwidget.name, manager, 'iwidget', isGhost);
 
@@ -90,7 +93,7 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
                         endPointsPos.targets[i] = endPointsPos.targets[i].name;
                     }
                 }
-                variables = opManager.activeWorkspace.varManager.getIWidgetVariables(iwidget.getId());
+                variables = opManager.activeWorkspace.varManager.getIWidgetVariables(iwidget.id);
                 for (i = 0; i < endPointsPos.sources.length; i ++) {
                     variable = variables[endPointsPos.sources[i]];
                     desc = variable.vardef.description;
@@ -192,6 +195,13 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
      */
     WidgetInterface.prototype.getIWidget = function getIWidget() {
         return this.iwidget;
+    };
+
+    /**
+     * get id
+     */
+    WidgetInterface.prototype.getId = function getId() {
+        return this.iwidget.id;
     };
 
     /*************************************************************************

@@ -538,7 +538,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
         wiring_status = json.loads(workspace.wiringStatus)
         self.assertEqual(len(wiring_status['connections']), 1)
-        self.assertEqual(wiring_status['connections'][0]['readonly'], False)
+        self.assertEqual(wiring_status['connections'][0]['readOnly'], False)
 
     def test_build_workspace_from_rdf_template(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate1, self.user)
@@ -546,7 +546,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
         wiring_status = json.loads(workspace.wiringStatus)
         self.assertEqual(len(wiring_status['connections']), 1)
-        self.assertEqual(wiring_status['connections'][0]['readonly'], False)
+        self.assertEqual(wiring_status['connections'][0]['readOnly'], False)
 
     def test_build_workspace_from_rdf_template_utf8_char(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate4, self.user)
@@ -560,14 +560,14 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
         wiring_status = json.loads(workspace.wiringStatus)
         self.assertEqual(len(wiring_status['connections']), 1)
-        self.assertEqual(wiring_status['connections'][0]['readonly'], True)
+        self.assertEqual(wiring_status['connections'][0]['readOnly'], True)
 
     def test_bloqued_connections_rdf(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate2, self.user)
 
         wiring_status = json.loads(workspace.wiringStatus)
         self.assertEqual(len(wiring_status['connections']), 1)
-        self.assertEqual(wiring_status['connections'][0]['readonly'], True)
+        self.assertEqual(wiring_status['connections'][0]['readOnly'], True)
 
     def test_complex_workspaces(self):
         template3 = self.read_template('wt3.xml')

@@ -39,7 +39,6 @@ from wirecloud.platform.get_data import get_widget_data
 from wirecloud.platform.localcatalogue.utils import install_resource, install_resource_to_user
 import wirecloud.platform.widget.utils
 from wirecloud.platform.models import Widget, XHTML
-from wirecloud.platform.workspace.utils import create_published_workspace_from_template
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
@@ -353,22 +352,28 @@ class LocalCatalogueTestCase(LocalizedTestCase):
         self.assertRaises(TemplateParseException, install_resource, template, template_uri, self.user, False)
 
     def test_basic_mashup(self):
-        template = self.read_template('..', '..', 'workspace', 'test-data', 'wt1.xml')
-        workspace = create_published_workspace_from_template(template, self.user)
 
-        self.assertEqual(workspace.vendor, 'Wirecloud Test Suite')
-        self.assertEqual(workspace.name, 'Test Mashup')
-        self.assertEqual(workspace.version, '1')
-        self.assertEqual(workspace.creator, self.user)
+        template_uri = "http://example.com/path/mashup.xml"
+        template = self.read_template('..', '..', 'workspace', 'test-data', 'wt1.xml')
+        downloader.download_http_content.set_response(template_uri, template)
+        resource = install_resource_to_user(self.user, file_contents=template, templateURL=template_uri)
+
+        self.assertEqual(resource.vendor, 'Wirecloud Test Suite')
+        self.assertEqual(resource.short_name, 'Test Mashup')
+        self.assertEqual(resource.version, '1')
+        self.assertTrue(resource.is_available_for(self.user))
 
     def test_basic_mashup_rdf(self):
-        template = self.read_template('..', '..', 'workspace', 'test-data', 'wt1.rdf')
-        workspace = create_published_workspace_from_template(template, self.user)
 
-        self.assertEqual(workspace.vendor, 'Wirecloud Test Suite')
-        self.assertEqual(workspace.name, 'Test Workspace')
-        self.assertEqual(workspace.version, '1')
-        self.assertEqual(workspace.creator, self.user)
+        template_uri = "http://example.com/path/mashup.rdf"
+        template = self.read_template('..', '..', 'workspace', 'test-data', 'wt1.rdf')
+        downloader.download_http_content.set_response(template_uri, template)
+        resource = install_resource_to_user(self.user, file_contents=template, templateURL=template_uri)
+
+        self.assertEqual(resource.vendor, 'Wirecloud Test Suite')
+        self.assertEqual(resource.short_name, 'Test Workspace')
+        self.assertEqual(resource.version, '1')
+        self.assertTrue(resource.is_available_for(self.user))
 
 
 class PackagedResourcesTestCase(TransactionTestCase):
