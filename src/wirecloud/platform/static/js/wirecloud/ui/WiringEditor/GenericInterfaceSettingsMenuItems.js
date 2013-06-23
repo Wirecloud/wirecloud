@@ -60,6 +60,27 @@
         }
         items.push(item);
 
+        if (this.geinterface.ioperator) {
+            if (this.geinterface.isMinimized) {
+                label = 'Maximize';
+            } else {
+                label = 'Minimize';
+            }
+            items.push(new StyledElements.MenuItem(gettext(label), function () {
+                var interval;
+
+                if (this.isMinimized) {
+                    this.restore();
+                } else {
+                    this.minimize();
+                }
+            }.bind(this.geinterface)));
+        }
+        if (this.geinterface.numberOfSources > 1 || this.geinterface.numberOfTargets > 1) {
+            items.push(new StyledElements.MenuItem(gettext('Reorder endpoints'), function () {
+                    this.wiringEditor.ChangeObjectEditing(this);
+            }.bind(this.geinterface)));
+        }
         return items;
     };
 
