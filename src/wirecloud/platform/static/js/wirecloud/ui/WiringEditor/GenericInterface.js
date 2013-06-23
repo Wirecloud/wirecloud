@@ -753,7 +753,7 @@
     GenericInterface.prototype.editPos = function editPos() {
         var obj;
         obj = null;
-        if (this.targetAnchors.length === this.sourceAnchors.length === 1) {
+        if ((this.targetAnchors.length <= 1) && (this.sourceAnchors.length <= 1)) {
             return;
         }
 
