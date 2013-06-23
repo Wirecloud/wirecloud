@@ -242,7 +242,7 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
         var i;
 
         for (i = 0; i < elemList.length; i++) {
-            if (elem == elemList[i]) {
+            if (elem === elemList[i]) {
                 return i;
             }
         }
