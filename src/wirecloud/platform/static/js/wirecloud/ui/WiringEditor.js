@@ -22,7 +22,7 @@
 
 /*global Constants, EzWebExt, LayoutManagerFactory, opManager, StyledElements, Wirecloud, gettext, WidgetOutputEndpoint */
 if (!Wirecloud.ui) {
-
+    // TODO this line should live in another file
     Wirecloud.ui = {};
 }
 
@@ -148,7 +148,6 @@ if (!Wirecloud.ui) {
             this.enableAnchors,
             function () {}
         );
-
         this._startdrag_map_func = function (anchor) {
             anchor.addEventListener('startdrag', this.disableAnchors);
         }.bind(this);
@@ -762,7 +761,7 @@ if (!Wirecloud.ui) {
                                                             'destinationEndpoint': destinationEndpoint,
                                                             'matchCode': matchCode});
 
-            //las relacciones son relaccion bidireccionales.
+            // Bidirectional relationships
             if (!this.recommendations.hasOwnProperty(destination)) {
                 this.recommendations[destination] = {};
             }

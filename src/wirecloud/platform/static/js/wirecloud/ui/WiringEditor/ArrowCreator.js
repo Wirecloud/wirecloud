@@ -76,10 +76,10 @@
             yStart = parseInt(e.clientY, 10);
 
             tmpPos = initAnchor.getCoordinates(layer);
-            // arrow pointer
+            // Arrow pointer
             theArrow = canvas.drawArrow(tmpPos, tmpPos, "arrow");
 
-            // minimized operators
+            // Minimized operators
             this.initAnchor.context.iObject.potentialArrow = theArrow;
             if (initAnchor.context.iObject.isMinimized) {
                 initAnchor.context.iObject.restore();
@@ -150,7 +150,6 @@
          * enddrag, last step to draw a dragable arrow.
          */
         this.enddrag = function enddrag(e, fAnchor) {
-
             // Only process left mouse button events
             if (e.button !== 0) {
                 return;
@@ -181,7 +180,7 @@
                     if (isVal(currentSource, currentTarget)) {
                         theArrow.calculateEmphasize();
                         theArrow.redraw();
-                        // add the arrow to the arrow list of both anchors
+                        // Add the arrow to the arrow list of both anchors
                         this.initAnchor.addArrow(theArrow);
                         if (this.initAnchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
                             this.initAnchor.initAnchor.addArrow(theArrow);
@@ -292,7 +291,7 @@
     };
 
     /**
-     * get Relative Screen Position, about from (x,y) to another element
+     * Get Relative Screen Position, about from (x,y) to another element
      */
     var getRelativeScreenPosition = function getRelativeScreenPosition(x, y, element) {
         var bounding_box = element.getBoundingClientRect();

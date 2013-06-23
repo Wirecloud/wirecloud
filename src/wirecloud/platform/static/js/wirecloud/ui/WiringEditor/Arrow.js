@@ -20,7 +20,7 @@
  *
  */
 
-/*global Draggable, EzWebExt, Wirecloud*/
+/*global Draggable, EzWebExt, Wirecloud, Event, EzWebEffectBase, Element */
 
 (function () {
 
@@ -62,7 +62,7 @@
             }
         }.bind(this), true);
 
-        // closer
+        // Closer
         this.closerElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
         this.closerElement.setAttribute('class', 'closer');
         this.closerElement.addEventListener('click', function (e) {
@@ -71,7 +71,7 @@
                 return;
             }
 
-            // readOnly control
+            // ReadOnly control
             if (this.readOnly) {
                 e.stopPropagation();
                 return;
@@ -101,56 +101,11 @@
             e.stopPropagation();
         }.bind(this));
 
-        // semantic Info
-        /*  raro raro.. y sin el switch tampoco va
-        this.semanticAdvertiserFO = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "foreign-object");
-        this.semanticAdvertiser = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "switch");
-        this.semanticAdvertiserFO.setAttribute('width', '100');
-        this.semanticAdvertiserFO.setAttribute('height', '100');
-        this.semanticAdvertiserBody = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "body");
-        this.semanticAdvertiserDiv = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "div");
-        this.semanticAdvertiserBody.appendChild(this.semanticAdvertiserDiv);
-        this.semanticAdvertiserFO.appendChild(this.semanticAdvertiserBody);
-        this.semanticAdvertiser.appendChild(this.semanticAdvertiserFO);
-        this.semanticAdvertiserDiv.setAttribute('class', 'semanticAdvertiser icon-warning-sign');
-        */
-        /* no se muestra la imagen de ninguna forma dentro del svg, si lo sacodel svg, si.
-        this.semanticAdvertiser = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "image");
-        //this.semanticAdvertiser.setAttribute('xlink:href', "/static/images/wiring/warning.png");
-        this.semanticAdvertiser.setAttribute('xlink:href', "http://www.google.co.uk/images/srpr/logo3w.png");
-        this.semanticAdvertiser.setAttribute('xmlns', "http://www.w3.org/2000/svg");
-        this.semanticAdvertiser.setAttribute('xmlns:xlink', "http://www.w3.org/1999/xlink");
-        this.semanticAdvertiser.setAttribute('width', "400");
-        this.semanticAdvertiser.setAttribute('height', "400");
-        this.semanticAdvertiser.addEventListener('click', function (e) {
-            // TODO Open subdata structure
-            e.stopPropagation();
-        }.bind(this));
-        */
-
-        /* tampoco va como object ni dentro ni fuera
-        this.semanticAdvertiser = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "object");
-        this.semanticAdvertiser.setAttribute('data', "image-svg.svg");
-        this.semanticAdvertiser.setAttribute('type', "image/svg+xml");
-        this.semanticAdvertiser.setAttribute('width', '100');
-        this.semanticAdvertiser.setAttribute('height', '100');
-        this.semanticAdvertiserImage = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "img");
-        this.semanticAdvertiserImage.setAttribute('width', '100');
-        this.semanticAdvertiserImage.setAttribute('height', '100');
-        this.semanticAdvertiserImage.setAttribute('src', "/static/images/wiring/warning.png");
-        this.semanticAdvertiserImage.setAttribute('alt', "this is a PNG");
-        this.semanticAdvertiser.appendChild(this.semanticAdvertiserImage);
-        */
-
-        /*
-        this.semanticAdvertiser = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "polygon");
-        this.semanticAdvertiser.setAttribute('class', 'semanticAdvertiser');
-        */
         this.semanticAdvertiser = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "text");
         this.semanticAdvertiser.textContent = "";
         this.semanticAdvertiser.setAttribute('class', 'semanticAdvertiser');
 
-        // pullers definition
+        // Pullers definition
         this.pullerStartElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
         this.pullerStartElement.setAttribute("r", 5);
         this.pullerStartElement.addEventListener("click", EzWebExt.stopPropagationListener, false);
@@ -161,13 +116,13 @@
         this.pullerStartElement.setAttribute('class', 'pullerBall');
         this.pullerEndElement.setAttribute('class', 'pullerBall');
 
-        //pullerLines
+        // PullerLines
         this.pullerStartLine = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
         this.pullerStartLine.setAttribute('class', 'pullerLine');
         this.pullerEndLine = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:path");
         this.pullerEndLine.setAttribute('class', 'pullerLine');
 
-        // draggable pullers
+        // Draggable pullers
         this.pullerStartDraggable = new Draggable(this.pullerStartElement, {arrow: this},
             function onStart(draggable, data) {
                 data.refPos = data.arrow.getPullerStart();
@@ -195,7 +150,7 @@
             function () {return true; }
         );
 
-        // closer
+        // Closer
         this.wrapperElement.appendChild(this.closerElement);
         // semanticAdvertiser
         this.wrapperElement.appendChild(this.semanticAdvertiser);
@@ -225,24 +180,9 @@
     /*************************************************************************
      * Public methods
      *************************************************************************/
-    /**
-     *  insert into.
-     */
-    Arrow.prototype.setReadOnly = function setReadOnly(isReadOnly) {
-
-        if (isReadOnly) {
-            // Set readOnly true
-            this.readOnly = true;
-            // Forbidden remove the arrow with class name
-            this.addClassName('readOnly');
-        } else {
-            // Set readOnly false
-            this.readOnly = false;
-        }
-    };
 
     /**
-     *  insert into.
+     *  Insert into.
      */
     Arrow.prototype.insertInto = function insertInto(element) {
         element.appendChild(this.wrapperElement);
@@ -291,7 +231,7 @@
         from = this.start;
         to = this.end;
         if (from == null || to == null) {
-            //error: getPullerStart in a inconsistent arrow;
+            // Error: getPullerStart in a inconsistent arrow;
             return;
         }
         if (this.pullerStart == null) {
@@ -363,7 +303,7 @@
     };
 
     /**
-     *  redraw the line.
+     *  Redraw the line.
      */
     Arrow.prototype.redraw = function redraw() {
         var posCloser, posSemAdv, startPuller, endPuller, from, to;
@@ -397,26 +337,17 @@
         );
 
         try {
-            // closer
+            // Closer
             posCloser = this.calculateMid();
 
             this.closerElement.setAttribute("cx", posCloser.posX);
             this.closerElement.setAttribute("cy", posCloser.posY);
             this.closerElement.setAttribute("r", 8);
 
-            // semanticAdvertiser
-            /*posSemAdv = this.calculatePosInArrow(0.7);
-            this.semanticAdvertiser.setAttribute("cx", posSemAdv.posX);
-            this.semanticAdvertiser.setAttribute("cy", posSemAdv.posY);
-            this.semanticAdvertiser.setAttribute("r", 6);*/
+            // SemanticAdvertiser
             posSemAdv = this.calculatePosInArrow(0.6);
             this.semanticAdvertiser.setAttribute('x', posSemAdv.posX);
             this.semanticAdvertiser.setAttribute('y', posSemAdv.posY);
-            /*posSemAdv.posY -= 6;
-            var points = posSemAdv.posX + "," + posSemAdv.posY + " " +
-                         (posSemAdv.posX - 6) + "," + (posSemAdv.posY + 12) + " " +
-                         (posSemAdv.posX + 6) + "," + (posSemAdv.posY + 12);
-            this.semanticAdvertiser.setAttribute("points", points);*/
         }
         catch (err) {
             //TODO: error msg
@@ -424,7 +355,7 @@
     };
 
     /**
-     *  calculate the arrow path middle position
+     *  Calculate the arrow path middle position
      *  with a bercier curves aproximation.
      */
     Arrow.prototype.calculateMid = function calculateMid() {
@@ -432,7 +363,7 @@
     };
 
     /**
-     *  calculate coordinates de la posicithe arrow path middle position
+     *  Calculate coordinates de la posicithe arrow path middle position
      *  with a bercier curves aproximation.
      */
     Arrow.prototype.calculatePosInArrow = function calculatePosInArrow(PathPos) {
@@ -453,21 +384,21 @@
     };
 
     /**
-     *  select the arrow
+     *  Select the arrow
      */
     Arrow.prototype.select = function select() {
         this.addClassName('selected');
     };
 
     /**
-     *  unselect the arrow
+     *  Unselect the arrow
      */
     Arrow.prototype.unselect = function unselect() {
         this.removeClassName('selected');
     };
 
     /**
-     *  emphasize the arrow
+     *  Emphasize the arrow
      */
     Arrow.prototype.emphasize = function emphasize() {
         if (this.emphasize_counter < 2) {
@@ -479,7 +410,7 @@
     };
 
     /**
-     *  deemphasize the arrow
+     *  Deemphasize the arrow
      */
     Arrow.prototype.deemphasize = function deemphasize() {
         this.emphasize_counter -= 1;
@@ -492,7 +423,7 @@
     };
 
     /**
-     *  recalculate if the arrow may be emphasize or not
+     *  Recalculate if the arrow may be emphasize or not
      */
     Arrow.prototype.calculateEmphasize = function calculateEmphasize() {
         this.emphasize_counter = 0;
@@ -506,7 +437,7 @@
     };
 
     /**
-     *  add new class in to the arrow
+     *  Add new class in to the arrow
      */
     Arrow.prototype.addClassName = function addClassName(className) {
         var atr;
@@ -523,7 +454,7 @@
     };
 
     /**
-     * removeClassName
+     * RemoveClassName
      */
     Arrow.prototype.removeClassName = function removeClassName(className) {
         var atr;
@@ -540,7 +471,7 @@
     };
 
     /**
-     * hasClassName
+     * HasClassName
      */
     Arrow.prototype.hasClassName = function hasClassName(className) {
         var atr, exp;
@@ -558,7 +489,7 @@
     };
 
     /**
-     * destroy the arrow.
+     * Destroy the arrow.
      */
     Arrow.prototype.destroy = function destroy() {
         this.disconnect();
@@ -582,7 +513,7 @@
     };
 
     /**
-     * disconnet the arrow
+     * Disconnet the arrow
      */
     Arrow.prototype.disconnect = function disconnect() {
         if (this.startAnchor !== null) {
@@ -597,14 +528,14 @@
     };
 
     /**
-     * hide the arrow
+     * Hide the arrow
      */
     Arrow.prototype.hide = function hide() {
         this.addClassName('hidden');
     };
 
     /**
-     * show the arrow
+     * Show the arrow
      */
     Arrow.prototype.show = function show() {
         this.removeClassName('hidden');

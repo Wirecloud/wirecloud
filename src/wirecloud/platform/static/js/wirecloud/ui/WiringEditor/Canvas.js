@@ -102,7 +102,7 @@
     };
 
     /**
-     * clean the svg canvas.
+     * Clean the svg canvas.
      */
     Canvas.prototype.clear = function clear() {
         this.canvasElement.classList.remove("elevated");
@@ -112,7 +112,7 @@
     };
 
     /**
-     * get the htmlElement of Canvas.
+     * Get the htmlElement of Canvas.
      */
     Canvas.prototype.getHTMLElement = function getHTMLElement() {
         return this.canvasElement;

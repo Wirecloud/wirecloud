@@ -20,35 +20,7 @@
  *
  */
 
-/*global opManager, Wirecloud */
-
-var WidgetInputEndpoint = function (name, description, iwidget) {
-	this.iWidget = iwidget;
-	this.name = name;
-};
-
-WidgetInputEndpoint.prototype.serialize = function serialize() {
-    return {
-        'type': 'iwidget',
-        'id': this.iWidget.id,
-        'endpoint': this.name
-    };
-};
-
-var WidgetOutputEndpoint = function (name, description, iwidget) {
-	this.iWidget = iwidget;
-	this.name = name;
-	this.subdata = description.subdata;
-	this.variable = description;
-};
-
-WidgetOutputEndpoint.prototype.serialize = function serialize() {
-    return {
-        'type': 'iwidget',
-        'id': this.iWidget.id,
-        'endpoint': this.name
-    };
-};
+/*global opManager, Variable, Wirecloud */
 
 (function () {
 
@@ -67,16 +39,6 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
         this.wiringEditor = wiringEditor;
 
         isGhost = 'ghost' in iwidget;
-        if (isGhost) {
-            // Ghost Widget
-            this.iwidget.display_name = iwidget.name;
-            this.iwidget.meta = {};
-            this.iwidget.meta.uri = iwidget.name;
-        }
-
-        var variables, variable, desc, label, name, anchorContext, i, wids, isGhost;
-        this.iwidget = iwidget;
-        this.wiringEditor = wiringEditor;
 
         Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.iwidget.name, manager, 'iwidget', isGhost);
 
@@ -190,6 +152,7 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
      /*************************************************************************
      * Public methods
      *************************************************************************/
+
     /**
      * get the iwidget.
      */

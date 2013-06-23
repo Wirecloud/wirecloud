@@ -20,7 +20,36 @@
  *
  */
 
-/*global Draggable, gettext, interpolate, StyledElements, Wirecloud, EzWebExt, WidgetOutputEndpoint ,LayoutManagerFactory */
+/*global Draggable, gettext, interpolate, StyledElements, Wirecloud, EzWebExt, LayoutManagerFactory */
+
+/* Extra vars and functions for the subdata trees construction */
+var WidgetInputEndpoint = function (name, description, iwidget) {
+	this.iWidget = iwidget;
+	this.name = name;
+};
+
+WidgetInputEndpoint.prototype.serialize = function serialize() {
+    return {
+        'type': 'iwidget',
+        'id': this.iWidget.id,
+        'endpoint': this.name
+    };
+};
+
+var WidgetOutputEndpoint = function (name, description, iwidget) {
+	this.iWidget = iwidget;
+	this.name = name;
+	this.subdata = description.subdata;
+	this.variable = description;
+};
+
+WidgetOutputEndpoint.prototype.serialize = function serialize() {
+    return {
+        'type': 'iwidget',
+        'id': this.iWidget.id,
+        'endpoint': this.name
+    };
+};
 
 (function () {
 
@@ -61,7 +90,7 @@
         this.numberOfSources = 0;
         this.numberOfTargets = 0;
         this.potentialArrow = null;
-        // only for minimize maximize operators.
+        // Only for minimize maximize operators.
         this.initialPos = null;
         this.isGhost = isGhost;
         this.readOnlyEndpoints = 0;
@@ -75,7 +104,7 @@
             this.arrowCreator = null;
         }
 
-        // Interface buttons
+        // Interface buttons, not for miniInterface
         if (!this.isMiniInterface) {
             if (className == 'iwidget') {
                 type = 'widget';
@@ -94,7 +123,7 @@
 
             this.wrapperElement.appendChild(this.resourcesDiv.wrapperElement);
 
-            // ghost interface
+            // Ghost interface
             if (isGhost) {
                 this.wrapperElement.classList.add('ghost');
                 ghostNotification = document.createElement("span");
@@ -105,12 +134,12 @@
                 this.header.appendChild(ghostNotification);
             }
 
-            // widget name
+            // Widget name
             this.nameElement = document.createElement("span");
             this.nameElement.textContent = title;
             this.header.appendChild(this.nameElement);
 
-            // close button
+            // Close button
             del_button = new StyledElements.StyledButton({
                 'title': gettext("Remove"),
                 'class': 'closebutton icon-remove',
@@ -144,7 +173,7 @@
                 }
             }.bind(this));
 
-            // add a menu button except on mini interfaces
+            // Add a menu button except on mini interfaces
             this.menu_button = new StyledElements.PopupButton({
                 'title': gettext("Menu"),
                 'class': 'editPos_button icon-cog',
@@ -153,17 +182,17 @@
             this.menu_button.insertInto(this.header);
             this.menu_button.popup_menu.append(new Wirecloud.ui.WiringEditor.GenericInterfaceSettingsMenuItems(this));
 
-        } else { //miniInterface
+        } else { // MiniInterface
             this.header = document.createElement("div");
             this.header.classList.add('header');
             this.wrapperElement.appendChild(this.header);
-            //widget name
+            // Widget name
             this.nameElement = document.createElement("span");
             this.nameElement.textContent = title;
             this.header.appendChild(this.nameElement);
         }
 
-        //draggable
+        // Draggable
         if (!this.isMiniInterface) {
             this.makeDraggable();
         } else { //miniInterface
@@ -292,7 +321,7 @@
      */
     GenericInterface.prototype.makeDraggable = function makeDraggable() {
         this.draggable = new Draggable(this.wrapperElement, {iObject: this},
-            function onStart(draggable, context, e) {
+            function onStart(draggable, context) {
                 context.y = context.iObject.wrapperElement.style.top === "" ? 0 : parseInt(context.iObject.wrapperElement.style.top, 10);
                 context.x = context.iObject.wrapperElement.style.left === "" ? 0 : parseInt(context.iObject.wrapperElement.style.left, 10);
                 context.preselected = context.iObject.selected;
@@ -304,7 +333,7 @@
                 context.iObject.repaint();
                 context.iObject.wiringEditor.onDragSelectedObjects(xDelta, yDelta);
             },
-            function onFinish(draggable, context, e) {
+            function onFinish(draggable, context) {
                 context.iObject.wiringEditor.onFinishSelectedObjects();
                 var position = context.iObject.getStylePosition();
                 if (position.posX < 0) {
@@ -413,7 +442,7 @@
     };
 
     /**
-     * get the GenericInterface position.
+     * Get the GenericInterface position.
      */
     GenericInterface.prototype.getPosition = function getPosition() {
         var coordinates = {posX: this.wrapperElement.offsetLeft,
@@ -422,7 +451,7 @@
     };
 
     /**
-     * get the GenericInterface style position.
+     * Get the GenericInterface style position.
      */
     GenericInterface.prototype.getStylePosition = function getStylePosition() {
         var coordinates;
@@ -432,7 +461,7 @@
     };
 
     /**
-     *  gets an anchor given a name
+     * Gets an anchor given a name
      */
     GenericInterface.prototype.getAnchor = function getAnchor(name) {
         if (name in this.sourceAnchorsByName) {
@@ -443,7 +472,7 @@
     };
 
     /**
-     * set the GenericInterface position.
+     * Set the GenericInterface position.
      */
     GenericInterface.prototype.setPosition = function setPosition(coordinates) {
         this.wrapperElement.style.left = coordinates.posX + 'px';
@@ -451,7 +480,7 @@
     };
 
     /**
-     * set the BoundingClientRect parameters
+     * Set the BoundingClientRect parameters
      */
     GenericInterface.prototype.setBoundingClientRect = function setBoundingClientRect(BoundingClientRect, move) {
         this.wrapperElement.style.height = (BoundingClientRect.height + move.height) + 'px';
@@ -461,14 +490,14 @@
     };
 
     /**
-     * set the initial position in the menubar, miniobjects.
+     * Set the initial position in the menubar, miniobjects.
      */
     GenericInterface.prototype.setMenubarPosition = function setMenubarPosition(menubarPosition) {
         this.menubarPosition = menubarPosition;
     };
 
     /**
-     * set the initial position in the menubar, miniobjects.
+     * Set the initial position in the menubar, miniobjects.
      */
     GenericInterface.prototype.getMenubarPosition = function getMenubarPosition() {
         return this.menubarPosition;
@@ -492,7 +521,7 @@
         }
     };
     /**
-     * generic repaint
+     * Generic repaint
      */
     GenericInterface.prototype.repaint = function repaint(temporal) {
         var key;
@@ -856,23 +885,23 @@
     };
 
     /**
-     * add Source.
+     * Add Source.
      */
     GenericInterface.prototype.addSource = function addSource(label, desc, name, anchorContext) {
         var anchor, anchorDiv, labelDiv, anchorLabel, treeDiv, subAnchors, friendCode;
 
-        // sources counter
+        // Sources counter
         this.numberOfSources += 1;
 
         // anchorDiv
         anchorDiv = document.createElement("div");
-        // if the output have not description, take the label
+        // If the output have not description, take the label
         if (desc === '') {
             desc = label;
         }
         anchorDiv.setAttribute('title', desc);
         anchorDiv.setAttribute('class', 'anchorDiv');
-        // anchor visible label
+        // Anchor visible label
         anchorLabel = document.createElement("span");
         anchorLabel.textContent = label;
 
@@ -880,7 +909,6 @@
         anchorDiv.appendChild(labelDiv);
         labelDiv.setAttribute('class', 'labelDiv');
         labelDiv.appendChild(anchorLabel);
-
 
         if (!this.isMiniInterface) {
             anchor = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, this.arrowCreator);
@@ -894,7 +922,7 @@
             } else {
                 subAnchors = null;
             }
-            // tree test
+            // Tree test
 
             subAnchors = anchorContext.data.subdata;
             if (subAnchors != null) {
@@ -910,7 +938,7 @@
                 treeDiv.appendChild(this.generateTree(anchorContext, subAnchors, anchor, label, this.subdataHandler.bind(this, null, name)));
                 this.wrapperElement.appendChild(treeDiv);
 
-                // handler for subdata tree
+                // Handler for subdata tree
                 anchor.menu.append(new StyledElements.MenuItem(gettext("Unfold data structure"), this.subdataHandler.bind(this, treeDiv, name)));
             }
 
@@ -951,15 +979,15 @@
     };
 
     /**
-     * add Target.
+     * Add Target.
      */
     GenericInterface.prototype.addTarget = function addTarget(label, desc, name, anchorContext) {
         var anchor, anchorDiv, labelDiv, anchorLabel, friendCode;
 
-        // targets counter
+        // Targets counter
         this.numberOfTargets += 1;
 
-        //anchorDiv
+        // AnchorDiv
         anchorDiv = document.createElement("div");
         //if the input have not description, take the label
         if (desc === '') {
@@ -967,7 +995,7 @@
         }
         anchorDiv.setAttribute('title', desc);
         anchorDiv.setAttribute('class', 'anchorDiv');
-        //anchor visible label
+        // Anchor visible label
         anchorLabel = document.createElement("span");
         anchorLabel.textContent = label;
 
@@ -1019,7 +1047,7 @@
     };
 
     /**
-     *  add new class in to the genericInterface
+     *  Add new class in to the genericInterface
      */
     GenericInterface.prototype.addClassName = function addClassName(className) {
         var atr;
@@ -1036,7 +1064,7 @@
     };
 
     /**
-     * remove a genericInterface Class name
+     * Remove a genericInterface Class name
      */
     GenericInterface.prototype.removeClassName = function removeClassName(className) {
         var atr;
@@ -1053,7 +1081,7 @@
     };
 
     /**
-     * select this genericInterface
+     * Select this genericInterface
      */
     GenericInterface.prototype.select = function select(withCtrl) {
         var i, j, arrows;
@@ -1068,7 +1096,7 @@
         }
         this.selected = true;
         this.addClassName('selected');
-        //arrows
+        // Arrows
         for (i = 0; i < this.targetAnchors.length; i += 1) {
             arrows = this.targetAnchors[i].arrows;
             for (j = 0; j < arrows.length; j += 1) {
@@ -1085,7 +1113,7 @@
     };
 
     /**
-     * unselect this genericInterface
+     * Unselect this genericInterface
      */
     GenericInterface.prototype.unselect = function unselect(withCtrl) {
         var i, j, arrows;
@@ -1161,7 +1189,7 @@
     };
 
     /**
-     * edit source and targets positions
+     * Edit source and targets positions
      */
     GenericInterface.prototype.editPos = function editPos() {
         var obj;
@@ -1181,7 +1209,7 @@
     };
 
     /**
-     * enable poditions editor
+     * Enable poditions editor
      */
     GenericInterface.prototype.enableEdit = function enableEdit() {
         this.draggable.destroy();
@@ -1193,7 +1221,7 @@
     };
 
     /**
-     * disable poditions editor
+     * Disable poditions editor
      */
     GenericInterface.prototype.disableEdit = function disableEdit() {
         var i;
@@ -1230,7 +1258,7 @@
     };
 
     /**
-     * get sources and targets titles lists in order to save positions
+     * Get sources and targets titles lists in order to save positions
      */
     GenericInterface.prototype.getInOutPositions = function getInOutPositions() {
         var i, sources, targets;
@@ -1247,7 +1275,7 @@
     };
 
     /**
-     * get the source or target name for the especific node
+     * Get the source or target name for the especific node
      */
     GenericInterface.prototype.getNameForSort = function getNameForSort(node, type) {
         var i;
@@ -1284,7 +1312,7 @@
     };
 
     /**
-     * change to minimized view for operators
+     * Change to minimized view for operators
      */
     GenericInterface.prototype.minimize = function minimize(omitEffects) {
 
@@ -1305,7 +1333,7 @@
     };
 
     /**
-     * change to normal view for operators
+     * Change to normal view for operators
      */
     GenericInterface.prototype.restore = function restore(omitEffects) {
         var currentPos;

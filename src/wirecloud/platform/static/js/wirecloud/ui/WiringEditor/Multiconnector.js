@@ -55,7 +55,7 @@
         this.sticky = null;
 
         if (height == null) {
-            //default 50 px height for multiconnector
+            // Default 50 px height for multiconnector
             height = 30;
             this.height = height;
         }
@@ -76,7 +76,7 @@
         this.wrapperElement.appendChild(this.statusBar);
         this.addClassName('multiconnector');
 
-        //initial Position
+        // Initial Position
         if (endPos == null) {
             coord = this.initAnchor.getCoordinates(this.wiringEditor.layout.getCenterContainer().wrapperElement);
         } else {
@@ -85,14 +85,14 @@
 
         if (this.initAnchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
             if (endPos == null) {
-                //60 px initial distane between widget and multionnector + 30 px for the multiconnector width
+                // 60 px initial distane between widget and multionnector + 30 px for the multiconnector width
                 coord.posX -= (60 + 30);
             }
             this.wrapperElement.classList.add('target');
             mainAnchor = new Wirecloud.ui.WiringEditor.TargetAnchor(initAnchor.context, initAnchor.context.iObject.arrowCreator);
         } else {
             if (endPos == null) {
-                //60 px initial distane between widget and multionnector
+                // 60 px initial distane between widget and multionnector
                 coord.posX += 60;
             }
             this.wrapperElement.classList.add('source');
@@ -100,14 +100,14 @@
         }
         mainAnchor.wrapperElement.classList.add('main');
 
-        //put this main anchor in the middle
+        // Put this main anchor in the middle
         mainAnchor.wrapperElement.style.top = ((height - 20) / 2) + 'px';
         this.mainElement.appendChild(mainAnchor.wrapperElement);
 
         this.mainAnchor = mainAnchor;
         this.mainAnchor.disable();
 
-        //drag zone
+        // Drag zone
         this.movZone = new StyledElements.StyledButton({
             'title': gettext("Drag & Drop"),
             'class': 'dragButton',
@@ -119,7 +119,7 @@
         this.movZone.style.top = (((height - 20) / 2) + 2) + 'px';
         this.mainElement.appendChild(this.movZone);
 
-        //general position
+        // General position
         if (endPos == null) {
             coord.posY -= (height / 2);
         }
@@ -127,7 +127,7 @@
         this.wrapperElement.style.width = '30px';
         this.setPosition(coord);
 
-        //Draggable
+        // Draggable
         this.draggable = new Draggable(this.movZone, {iObject: this},
             function onStart(draggable, context) {
                 context.y = context.iObject.wrapperElement.style.top === "" ? 0 : parseInt(context.iObject.wrapperElement.style.top, 10);
@@ -153,7 +153,7 @@
                 }
                 context.iObject.setPosition(position);
                 context.iObject.repaint();
-                //pseudoClick
+                // PseudoClick
                 if ((Math.abs(context.x - position.posX) < 2) && (Math.abs(context.y - position.posY) < 2)) {
                     if (context.preselected) {
                         context.iObject.unselect(true);
@@ -172,7 +172,7 @@
     Multiconnector.prototype = new Wirecloud.ui.WiringEditor.Anchor(true);
 
     /**
-     * add the main arrow betwen the widget/operator and this multiconnector
+     * Add the main arrow betwen the widget/operator and this multiconnector
      */
     Multiconnector.prototype.addMainArrow = function addMainArrow(pullerStart, pullerEnd) {
         var arrow;
@@ -202,13 +202,13 @@
         }
         this.mainArrow = arrow;
         this.mainArrow.redraw();
-        //recalculate positions for arrows
+        // Recalculate positions for arrows
         this.calculatePosibleAnchors();
     };
 
 
     /**
-     * @add an Arrow in Multiconnector
+     * Add an Arrow in Multiconnector
      */
     Multiconnector.prototype.addArrow = function addArrow(theArrow) {
         this.arrows.push(theArrow);
@@ -216,14 +216,14 @@
     };
 
     /**
-     * @get the Multiconnector Id
+     * Get the Multiconnector Id
      */
     Multiconnector.prototype.getId = function getId() {
         return this.id;
     };
 
     /**
-     * calclate the posible arrow coordinates in this multiconnector
+     * Calculate the posible arrow coordinates in this multiconnector
      */
     var coord;
     Multiconnector.prototype.calculatePosibleAnchors = function calculatePosibleAnchors() {
@@ -246,7 +246,7 @@
     };
 
     /**
-     * reorganize the arrows in the positions specified by arrowPositions
+     * Reorganize the arrows in the positions specified by arrowPositions
      * and sorted by posY destiny coordenate
      */
     Multiconnector.prototype.reorganizeArrows = function reorganizeArrows() {
@@ -259,7 +259,7 @@
             return;
         }
 
-        //sort by posY coordinate
+        // Sort by posY coordinate
         lastMax = 99999;
         highestArrow = -1;
         for (i = 0; i < this.arrows.length; i += 1) {
@@ -287,7 +287,7 @@
     };
 
     /**
-     * return the highest coordinate Y Arrow
+     * Return the highest coordinate Y Arrow
      */
     Multiconnector.prototype.searchMaxYArrow = function searchMaxArrow(lastMax, findedArrows) {
         var maxY, i, y, highestArrow;
@@ -320,14 +320,14 @@
     };
 
     /**
-     * stick arrow
+     * Stick arrow
      */
     Multiconnector.prototype.stick = function stick() {
         return this.getCoordinates(null, true);
     };
 
     /**
-     * unstick arrow
+     * Unstick arrow
      */
     Multiconnector.prototype.unstick = function unstick() {
         if (this.sticky != null) {
@@ -335,12 +335,12 @@
             this.sticky = null;
             this.resize(-15);
         } else {
-            //changing endpoints positions or bug
+            // Changing endpoints positions or bug
         }
     };
 
     /**
-     * get the coordinates to put an arrow in the multiconnector
+     * Get the coordinates to put an arrow in the multiconnector
      */
     Multiconnector.prototype.getCoordinates = function getCoordinates(layer, sticky) {
         var i;
@@ -360,13 +360,13 @@
                 return this.arrowPositions[i].coord;
             }
         }
-        //no free anchors
+        // No free anchors
         this.resize(15);
         return this.getCoordinates(layer, sticky);
     };
 
     /**
-     * resize the multiconnector
+     * Resize the multiconnector
      */
     Multiconnector.prototype.resize = function resize(dif) {
         if (this.wrapperElement == null || (this.height + dif) < 30) {
@@ -381,7 +381,7 @@
     };
 
      /**
-     * remove an arrow in the multiconnector
+     * Remove an arrow in the multiconnector
      */
     Multiconnector.prototype.removeArrow = function removeArrow(theArrow) {
         var index = this.arrows.indexOf(theArrow);
@@ -395,7 +395,7 @@
 
 
      /**
-     * get the coordinates to put an arrow in the multiconnector
+     * Get the coordinates to put an arrow in the multiconnector
      */
     Multiconnector.prototype.freeAnchor = function freeAnchor(theArrow) {
         var pos, i;
@@ -404,7 +404,7 @@
         } else if (theArrow.endMulti == this.id) {
             pos = theArrow.end;
         } else {
-            //error: 1.trying liberate anchor. Arrow don't connected with this multiconnector;
+            // Error: 1.trying liberate anchor. Arrow don't connected with this multiconnector;
             return;
         }
         for (i = 0; i < this.arrowPositions.length; i += 1) {
@@ -416,12 +416,12 @@
                 return;
             }
         }
-        //error:trying liberate anchor in multiconnector. Arrow don't find in multiconnector (inconsistent);
+        // Error:trying liberate anchor in multiconnector. Arrow don't find in multiconnector (inconsistent);
         return;
     };
 
     /**
-     * get the Multiconnector style position.
+     * Get the Multiconnector style position.
      */
     Multiconnector.prototype.getStylePosition = function getStylePosition() {
         var coordinates;
@@ -444,12 +444,12 @@
 
         this.mainArrow.redraw();
 
-        //connections
+        // Connections
         this.calculatePosibleAnchors();
         this.reorganizeArrows();
-        //'special' indicate if this repaint is invoked from another multiconnector
+        // 'special' indicate if this repaint is invoked from another multiconnector
         if (!special) {
-            //making repaints if this multiconnector is connected with others multiconnectors
+            // Making repaints if this multiconnector is connected with others multiconnectors
             for (i = 0; i < this.arrows.length; i += 1) {
                 if (this.initAnchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
                     entity = this.arrows[i].startMulti;
@@ -457,7 +457,7 @@
                     entity = this.arrows[i].endMulti;
                 }
                 if (entity != null) {
-                    //special = true;
+                    // special = true;
                     this.wiringEditor.multiconnectors[entity].repaint(true);
                 }
             }
@@ -465,7 +465,7 @@
     };
 
     /**
-     * get the Multiconnector position.
+     * Get the Multiconnector position.
      */
     Multiconnector.prototype.getPosition = function getPosition() {
         var coordinates = {posX: this.wrapperElement.offsetLeft,
@@ -526,7 +526,7 @@
     };
 
     /**
-     * select this Multiconnector
+     * Select this Multiconnector
      */
     Multiconnector.prototype.select = function select(withCtrl) {
         var i;
@@ -539,7 +539,7 @@
         this.selected = true;
         this.addClassName('selected');
 
-        //arrows
+        // Arrows
         this.mainArrow.emphasize();
         for (i = 0; i < this.arrows.length; i += 1) {
             this.arrows[i].emphasize();
@@ -548,7 +548,7 @@
     };
 
     /**
-     * unselect this Multiconnector
+     * Unselect this Multiconnector
      */
     Multiconnector.prototype.unselect = function unselect(withCtrl) {
         var i;

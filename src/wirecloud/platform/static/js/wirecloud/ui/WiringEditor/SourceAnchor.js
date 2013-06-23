@@ -21,7 +21,7 @@
  */
 
 
-/*global Wirecloud */
+/*global StyledElements, Wirecloud */
 
 (function () {
 
@@ -51,7 +51,7 @@
      * Public methods
      *************************************************************************/
     /**
-     * repaint the SourceAnchor
+     * Repaint the SourceAnchor
      */
     SourceAnchor.prototype.repaint = function repaint() {
         var i, coordinates;

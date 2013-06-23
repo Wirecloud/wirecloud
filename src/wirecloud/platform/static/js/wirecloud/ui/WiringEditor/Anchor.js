@@ -20,7 +20,8 @@
  *
  */
 
-/*global CSSPrimitiveValue, StyledElements, Wirecloud */
+/*global Coordinates, CSSPrimitiveValue, StyledElements, Wirecloud */
+
 
 (function () {
 
@@ -35,7 +36,7 @@
      * represented by a checkbox and used as target or source of arrows.
      *
      * @abstract
-    */
+     */
     var Anchor = function Anchor(extending, arrowCreator) {
 
         if (extending === true) {
@@ -136,7 +137,6 @@
         this.wrapperElement.addEventListener('contextmenu', function (e) { e.preventDefault(); }, true);
 
         this._mouseup_callback = function _mouseup_callback(e) {
-
             // Only process left mouse button events
             if (this.enabled && e.button === 0) {
                 if (arrowCreator.initAnchor != null) {
@@ -197,6 +197,7 @@
     /*************************************************************************
      * Public methods
      *************************************************************************/
+
     /**
      * Retrieves the coordinates of this anchor relative to another HTML Element.
      *
@@ -235,28 +236,28 @@
     };
 
     /**
-     * get the arrow list
+     * Get the arrow list
      */
     Anchor.prototype.getArrows = function getArrows() {
         return this.arrows;
     };
 
     /**
-     * @return {Boolean}
+     * Return true when the Anchor has connected arrows
      */
     Anchor.prototype.isConnected = function isConnected() {
         return this.connectionArrows.length > 0;
     };
 
     /**
-     * @add new Arrow in the Anchor
+     * Add new Arrow in the Anchor
      */
     Anchor.prototype.addArrow = function addArrow(theArrow) {
         this.arrows.push(theArrow);
     };
 
     /**
-     * @remove an Arrow from Anchor
+     * Remove an Arrow from Anchor
      */
     Anchor.prototype.removeArrow = function removeArrow(theArrow) {
         var index = this.arrows.indexOf(theArrow);
@@ -267,7 +268,7 @@
     };
 
     /**
-     * @highlight all Arrows from Anchor
+     * Highlight all Arrows from Anchor
      */
     Anchor.prototype.highlightArrows = function highlightArrows() {
         var i;
@@ -278,7 +279,7 @@
     };
 
     /**
-     * @unhighlight all Arrows from Anchor
+     * Unhighlight all Arrows from Anchor
      */
     Anchor.prototype.unhighlightArrows = function unhighlightArrows() {
         var i;
@@ -289,7 +290,7 @@
     };
 
     /**
-     * @serialize an Anchor
+     * Serialize an Anchor
      */
     Anchor.prototype.serialize = function serialize() {
         if (!this.context.iObject.isGhost) {
@@ -304,7 +305,7 @@
     };
 
     /**
-     * @find selected arrow in Anchor
+     * Find selected arrow in Anchor
      */
     Anchor.prototype.hasSelectedArrow = function hasSelectedArrow() {
         var arrow, i;
@@ -319,14 +320,14 @@
     };
 
     /**
-     * @return if the widget/operator is Highlighted
+     * Return if the widget/operator is Highlighted
      */
     Anchor.prototype.isHighlighted = function isHighlighted() {
         return this.context.iObject.highlighted;
     };
 
     /**
-     * @return if the widget/operator is Emphasized
+     * Return if the widget/operator is Emphasized
      */
     Anchor.prototype.isEmphasize = function isEmphasize() {
         return this.context.iObject.selected;
@@ -347,7 +348,7 @@
     };
 
     /**
-     * @destroy the anchor
+     * Destroy the anchor
      */
     Anchor.prototype.destroy = function destroy() {
         StyledElements.StyledElement.prototype.destroy.call(this);
