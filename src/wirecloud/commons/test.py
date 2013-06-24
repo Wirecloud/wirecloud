@@ -617,7 +617,7 @@ class WirecloudRemoteTestCase(object):
                 pass
 
             if not install_dependencies:
-                cancel_button = self.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Cancel']")
+                cancel_button = self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Cancel']")
                 cancel_button.click()
                 return
 
