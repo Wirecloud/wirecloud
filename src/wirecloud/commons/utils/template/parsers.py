@@ -489,7 +489,6 @@ class USDLTemplateParser(object):
 
     def _parse_workspace_info(self):
 
-        self._info['readonly'] = self._get_field(WIRE_M, 'readonly', self._rootURI, required=False).lower() == 'true'
         preferences = {}
 
         for preference in self._graph.objects(self._rootURI, WIRE_M['hasWorkspacePreference']):
@@ -922,7 +921,6 @@ class WirecloudTemplateParser(object):
     def _parse_workspace_info(self):
 
         workspace_structure = self._xpath(INCLUDED_RESOURCES_XPATH, self._resource_description)[0]
-        self._info['readonly'] = workspace_structure.get('readonly', 'false').lower() == 'true'
 
         preferences = {}
         for preference in self._xpath(PREFERENCE_XPATH, workspace_structure):

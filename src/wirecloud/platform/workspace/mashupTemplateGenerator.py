@@ -288,9 +288,6 @@ def build_rdf_template_from_workspace(options, workspace, user):
     graph.add((mashup_uri, VCARD['addr'], addr))
     graph.add((addr, VCARD['email'], rdflib.Literal(options.get('email'))))
 
-    read_only = options.get('readOnlyWidgets', False)
-    graph.add((mashup_uri, WIRE_M['readonly'], rdflib.Literal(str(read_only))))
-
     # add preferences and tabs
     preferences = WorkspacePreference.objects.filter(workspace=workspace)
     workspace_tabs = Tab.objects.filter(workspace=workspace).order_by('position')
