@@ -529,7 +529,7 @@ class WorkspacePublisherEntry(Resource):
 
         f = StringIO()
         zf = zipfile.ZipFile(f, 'w')
-        zf.writestr('config.xml', bytes(description.serialize()))
+        zf.writestr('config.xml', bytes(description.serialize(format='pretty-xml')))
         if image_file is not None:
             zf.writestr(image_filename, image_file.read())
         zf.close()
