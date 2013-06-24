@@ -13,7 +13,6 @@
     <ns4:versionInfo>1.0</ns4:versionInfo>
     <ns6:addr rdf:nodeID="_752da499-0e78-481a-af9f-53beb318398e"/>
     <ns3:title>Test Mashup</ns3:title>
-    <ns1:readonly>False</ns1:readonly>
     <rdf:type rdf:resource="http://wirecloud.conwet.fi.upm.es/ns/mashup#Mashup"/>
     <ns2:hasImageUri rdf:resource="None"/>
     <ns3:description>Wirecloud Mashup composed of: Test, Test</ns3:description>
