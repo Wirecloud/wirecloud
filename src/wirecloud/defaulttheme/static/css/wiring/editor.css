@@ -78,16 +78,17 @@
     float: right;
     font-size: 3ex;
     width: 50px;
-    background: rgb(223, 122, 98);
+    background: #41768D;
     border: 1px rgb(0, 0, 0) solid;
-    border-radius: 8px;
+    border-radius: 16px 5px;
     box-shadow: 2px 2px 3px grey;
     margin-right: 10px;
     position: relative;
+    opacity: 0.8;
+    z-index: 1;
 }
 
 .wiring_editor .grid .controlPanel .ResizeAllOperatorsButton {
-    z-index: 1;
     cursor: pointer;
     margin: 8px;
 }
