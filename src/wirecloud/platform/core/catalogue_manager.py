@@ -82,7 +82,11 @@ class WirecloudCatalogueManager(MarketManager):
 
     def publish(self, endpoint, wgt_file, user, request=None, template=None):
 
-        if template is None:
-            template = TemplateParser(wgt_file.get_template())
+        if self._options['name'] == 'local':
 
-        install_resource_to_user(user, file_contents=wgt_file, packaged=True)
+            if template is None:
+                template = TemplateParser(wgt_file.get_template())
+
+            install_resource_to_user(user, file_contents=wgt_file, packaged=True, raise_conflicts=True)
+        else:
+            raise Exception('TODO')

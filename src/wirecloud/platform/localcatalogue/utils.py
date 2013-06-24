@@ -22,6 +22,7 @@ from cStringIO import StringIO
 
 from django.db import IntegrityError
 from django.db.models import Q
+from django.utils.translation import ugettext as _
 
 from wirecloud.catalogue.utils import add_widget_from_wgt, add_resource_from_template
 from wirecloud.catalogue.models import CatalogueResource
@@ -71,7 +72,7 @@ def install_resource_to_user(user, **kwargs):
 
     resource = install_resource(downloaded_file, templateURL, executor_user, packaged)
     if raise_conflicts and resource.users.filter(pk=user.pk).exists():
-        raise IntegrityError
+        raise IntegrityError(_('Resource already exists %(resource_id)s') % {'resource_id': resource.local_uri_part})
 
     resource.users.add(user)
 
