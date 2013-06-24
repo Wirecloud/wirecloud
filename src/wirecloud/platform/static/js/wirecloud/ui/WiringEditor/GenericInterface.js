@@ -915,14 +915,14 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
             labelDiv.appendChild(anchor.wrapperElement);
 
             anchor.menu.append(new StyledElements.MenuItem(gettext('Add multiconnector'), createMulticonnector.bind(this, name, anchor)));
+
             // tree test
             if ((label == "Image URL") ||(label == "Point od interest") ) {
                 anchorContext.data.subdata = "{\"FN\": {\"label\": \"Full Name\", \"description\": \"Full name of the contact\", \"semanticType\": \"pedrooooo\", \"subdata\": {\"firstname\": {\"label\": \"First name\", \"description\": \"First name of the contact\", \"semanticType\": \"pedrooooo2\", \"subdata\": {}}, \"lastname\": {\"label\": \"Last name\", \"description\": \"Last name of the contact\", \"semanticType\": \"pedrooooo3\", \"subdata\": {}}}}, \"ADDR\": {\"label\": \"Address\", \"description\": \"Address of the contact\", \"semanticType\": \"pedrooooo4\", \"subdata\": {}}}";
                 subAnchors = anchorContext.data.subdata;
             } else {
                 subAnchors = null;
-            }
-            // Tree test
+            }// Tree test
 
             subAnchors = anchorContext.data.subdata;
             if (subAnchors != null) {
