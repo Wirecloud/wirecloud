@@ -141,13 +141,6 @@
     white-space: nowrap;
 }
 
-/* Tree button */
-.wiring_editor .grid .sources .treeButton_icon {
-	font-family: fontAwesome;
-	margin: 0;
-	color: rgb(83, 83, 134);
-}
-
 .wiring_editor .sources .labelDiv, .wiring_editor .targets .labelDiv {
     border-radius: 15px;
     -webkit-transition: background-color 400ms ease-in 150ms, color 550ms ease-out, box-shadow 400ms ease-in 150ms;

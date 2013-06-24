@@ -128,13 +128,14 @@
                 // No selected arrows in this anchor
                 arrowCreator.startdrag(e, this);
                 this.events.startdrag.dispatch(this);
-            } else if (e.button == 2) {
-                e.preventDefault();
-                this.menu.show(this.wrapperElement.getBoundingClientRect());
             }
         }.bind(this);
         this.wrapperElement.addEventListener('mousedown', this._mousedown_callback, false);
-        this.wrapperElement.addEventListener('contextmenu', function (e) { e.preventDefault(); }, true);
+        this.wrapperElement.addEventListener('contextmenu',
+            function (e) {
+                e.preventDefault();
+                this.menu.show(this.wrapperElement.getBoundingClientRect());
+            }.bind(this), true);
 
         this._mouseup_callback = function _mouseup_callback(e) {
             // Only process left mouse button events
