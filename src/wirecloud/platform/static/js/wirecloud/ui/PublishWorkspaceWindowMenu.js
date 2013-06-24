@@ -176,6 +176,9 @@
                 // TODO
                 this.form.pSetMsgs([msg]);
             }.bind(this),
+            onSuccess: function () {
+                this.hide();
+            }.bind(this),
             onComplete: function () {
                 this.form.acceptButton.enable();
                 this.form.cancelButton.enable();
