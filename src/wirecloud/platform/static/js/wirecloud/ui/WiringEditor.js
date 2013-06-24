@@ -1353,25 +1353,25 @@ if (!Wirecloud.ui) {
      * emphasize anchors.
      */
     WiringEditor.prototype.emphasize = function emphasize(anchor, isCreatingArrow) {
-        var rec, widgetId, achorId;
+        var rec, widgetId, anchorId;
 
         if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.OperatorInterface) {
             widgetId = anchor.context.iObject.ioperator.meta.uri;
-            achorId = anchor.context.data.name;
+            anchorId = anchor.context.data.name;
         } else if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
             widgetId = anchor.context.iObject.iwidget.widget.id;
             if (anchor.context.data instanceof WidgetOutputEndpoint) {
-                achorId = anchor.context.data.name;
+                anchorId = anchor.context.data.name;
             } else {
                 if (!anchor.context.iObject.iwidget.ghost) {
-                    achorId = anchor.context.data.vardef.name;
+                    anchorId = anchor.context.data.vardef.name;
                 } else {
-                    achorId = anchor.context.data;
+                    anchorId = anchor.context.data;
                 }
             }
         }
 
-        rec = this.getRecommendations(anchor, widgetId, achorId, false);
+        rec = this.getRecommendations(anchor, widgetId, anchorId, false);
         this.highlightRecommendations(rec);
 
         if (isCreatingArrow){
@@ -1383,25 +1383,25 @@ if (!Wirecloud.ui) {
      * deemphasize anchors.
      */
     WiringEditor.prototype.deemphasize = function deemphasize(anchor) {
-        var rec, widgetId, achorId;
+        var rec, widgetId, anchorId;
 
         if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.OperatorInterface) {
             widgetId = anchor.context.iObject.ioperator.meta.uri;
-            achorId = anchor.context.data.name;
+            anchorId = anchor.context.data.name;
         } else if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
             widgetId = anchor.context.iObject.iwidget.widget.id;
             if (anchor.context.data instanceof WidgetOutputEndpoint) {
-                achorId = anchor.context.data.name;
+                anchorId = anchor.context.data.name;
             } else {
                 if (!anchor.context.iObject.iwidget.ghost) {
-                    achorId = anchor.context.data.vardef.name;
+                    anchorId = anchor.context.data.vardef.name;
                 } else {
-                    achorId = anchor.context.data;
+                    anchorId = anchor.context.data;
                 }
             }
         }
 
-        rec = this.getRecommendations(anchor, widgetId, achorId, true);
+        rec = this.getRecommendations(anchor, widgetId, anchorId, true);
         this.unhighlightRecommendations(rec);
 
         this.recommendationsActivated = false;
@@ -1410,7 +1410,7 @@ if (!Wirecloud.ui) {
     /**
      * getRecommendations
      */
-    WiringEditor.prototype.getRecommendations = function getRecommendations(anchor, widgetId, achorId, isEmphasized) {
+    WiringEditor.prototype.getRecommendations = function getRecommendations(anchor, widgetId, anchorId, isEmphasized) {
         var mainAnchorClass, mainAnchorRef, recommendations, recTag, keyValues, anchorList, anchorListFiltered, i;
 
         keyValues = {'NONE': 0, 'OVERLAP': 1, 'SUBSUMES': 2, 'SUBSUMED': 3, 'HASPART': 4, 'DISJOINT': 5, 'EQUIVALENT': 6};
@@ -1419,8 +1419,8 @@ if (!Wirecloud.ui) {
         mainAnchorClass = 'NONE';
         for (recTag in this.anchorsInvolved) {
             if (this.anchorsInvolved[recTag][widgetId] != null &&
-                    this.anchorsInvolved[recTag][widgetId][achorId] != null) {
-                anchorList = this.anchorsInvolved[recTag][widgetId][achorId];
+                    this.anchorsInvolved[recTag][widgetId][anchorId] != null) {
+                anchorList = this.anchorsInvolved[recTag][widgetId][anchorId];
                 anchorListFiltered = [];
                 for (i = 0; i< anchorList.length; i += 1) {
                     if (anchorList[i].context.iObject != anchor.context.iObject){
