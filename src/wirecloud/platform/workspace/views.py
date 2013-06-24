@@ -44,7 +44,7 @@ from wirecloud.platform.get_data import get_workspace_data, get_global_workspace
 from wirecloud.platform.iwidget.utils import deleteIWidget
 from wirecloud.platform.models import IWidget, PublishedWorkspace, Tab, UserWorkspace, VariableValue, Workspace
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_template_from_workspace
-from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
+from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate, MissingDependencies
 from wirecloud.platform.workspace.packageLinker import PackageLinker
 from wirecloud.platform.workspace.utils import deleteTab, createTab, get_workspace_list, setVisibleTab, set_variable_value
 from wirecloud.platform.markets.utils import get_market_managers
@@ -154,7 +154,13 @@ class WorkspaceCollection(Resource):
             else:
                 template = downloader.download_http_content(resource.template_uri, user=request.user)
 
-            workspace, _junk = buildWorkspaceFromTemplate(template, request.user, True)
+            try:
+                workspace, _junk = buildWorkspaceFromTemplate(template, request.user, True)
+            except MissingDependencies, e:
+                details = {
+                    'missingDependencies': e.missing_dependencies,
+                }
+                return build_error_response(request, 403, unicode(e), details=details)
 
 
         workspace_data = get_global_workspace_data(workspace, request.user)

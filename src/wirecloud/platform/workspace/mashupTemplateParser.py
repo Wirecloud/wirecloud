@@ -1,36 +1,26 @@
 # -*- coding: utf-8 -*-
 
-#...............................licence...........................................
-#
-#     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
-#     S.A.Unipersonal (Telefonica I+D)
-#
-#     This file is part of Morfeo EzWeb Platform.
-#
-#     Morfeo EzWeb Platform is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU Affero General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     (at your option) any later version.
-#
-#     Morfeo EzWeb Platform is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU Affero General Public License for more details.
-#
-#     You should have received a copy of the GNU Affero General Public License
-#     along with Morfeo EzWeb Platform.  If not, see <http://www.gnu.org/licenses/>.
-#
-#     Info about members and contributors of the MORFEO project
-#     is available at
-#
-#     http://morfeo-project.org
-#
-#...............................licence...........................................#
+# Copyright (c) 2011-2013 CoNWeT Lab., Universidad Politécnica de Madrid
 
+# This file is part of Wirecloud.
 
-#
+# Wirecloud is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Wirecloud is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+
 from django.utils import simplejson
+from django.utils.translation import ugettext as _
 
+from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.db import save_alternative
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.platform.context.utils import get_context_values
@@ -67,6 +57,39 @@ def buildWorkspaceFromTemplate(template, user, allow_renaming=False):
 
     return (workspace, user_workspace)
 
+class MissingDependencies(Exception):
+
+    def __init__(self, missing_dependencies):
+        self.missing_dependencies = missing_dependencies
+
+    def __unicode__(self):
+        return _('Missing dependencies')
+
+def check_mashup_dependencies(template, user):
+
+    missing_dependencies = []
+    workspace_info = template.get_resource_info()
+
+    for tab_entry in workspace_info['tabs']:
+        for resource in tab_entry['resources']:
+            try:
+                resource = CatalogueResource.objects.get(vendor=resource.get('vendor'), short_name=resource.get('name'), version=resource.get('version'))
+                if not resource.is_available_for(user):
+                    raise CatalogueResource.DoesNotExist
+            except CatalogueResource.DoesNotExist:
+                missing_dependencies.append('/'.join((resource.get('vendor'), resource.get('name'), resource.get('version'))))
+
+    for id_, op in workspace_info['wiring']['operators'].iteritems():
+        (vendor, name, version) = op['name'].split('/')
+        try:
+            resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
+            if not resource.is_available_for(user):
+                raise CatalogueResource.DoesNotExist
+        except CatalogueResource.DoesNotExist:
+            missing_dependencies.append('/'.join((vendor, name, version)))
+
+    if len(missing_dependencies) > 0:
+        raise MissingDependencies(missing_dependencies)
 
 def fillWorkspaceUsingTemplate(workspace, template):
 
@@ -79,6 +102,9 @@ def fillWorkspaceUsingTemplate(workspace, template):
         raise Exception()
 
     user = workspace.creator
+
+    check_mashup_dependencies(template, user)
+
     user_workspace = UserWorkspace.objects.get(user=workspace.creator, workspace=workspace)
     context_values = get_context_values(user_workspace)
     processor = TemplateValueProcessor({'user': user, 'context': context_values})
