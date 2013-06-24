@@ -48,7 +48,7 @@
         ];
 
         this._addVariableParametrization(workspace, fields);
-        Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Publish Workspace'), 'publish_workspace');
+        Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Publish Workspace'), 'publish_workspace', {autoHide: false});
 
         //fill a warning message
         var warning = document.createElement('div');
@@ -171,7 +171,16 @@
                 delete data[key];
             }
         }
-        OpManagerFactory.getInstance().activeWorkspace.publish(data);
+        OpManagerFactory.getInstance().activeWorkspace.publish(data, {
+            onFailure: function (msg) {
+                // TODO
+                this.form.pSetMsgs([msg]);
+            }.bind(this),
+            onComplete: function () {
+                this.form.acceptButton.enable();
+                this.form.cancelButton.enable();
+            }.bind(this)
+        });
     };
 
     Wirecloud.ui.PublishWorkspaceWindowMenu = PublishWorkspaceWindowMenu;
