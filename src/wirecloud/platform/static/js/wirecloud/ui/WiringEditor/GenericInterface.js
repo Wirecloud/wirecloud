@@ -627,12 +627,15 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
                 this.sourceAnchors.push(checkbox);
                 subdata = document.createElement("div");
                 subdata.classList.add("dataTree");
+
                 // emphasize listeners
                 lab.addEventListener('mouseover', checkbox.emphasize.bind(checkbox), false);
                 lab.addEventListener('mouseout', checkbox.deemphasize.bind(checkbox), false);
+
                 // Sticky effect
                 lab.addEventListener('mouseover', checkbox._mouseover_callback, false);
                 lab.addEventListener('mouseout', checkbox._mouseout_callback, false);
+
                 // Connect anchor whith mouseup on the label
                 lab.addEventListener('mouseup', checkbox._mouseup_callback, false);
                 subTree = this.generateSubTree(context, subAnchors[key], checkbox);
@@ -662,6 +665,7 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
         this.sourceAnchors.push(checkbox);
         subdata = document.createElement("div");
         subdata.classList.add("dataTree");
+
         // emphasize listeners
         lab.addEventListener('mouseover', function () {
             this.wiringEditor.emphasize(checkbox);
