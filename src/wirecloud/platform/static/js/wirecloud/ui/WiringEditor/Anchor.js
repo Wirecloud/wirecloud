@@ -237,7 +237,7 @@
     };
 
     /**
-     * Add new Arrow in the Anchor
+     * Add new Arrow to the Anchor
      */
     Anchor.prototype.addArrow = function addArrow(theArrow) {
         this.arrows.push(theArrow);
