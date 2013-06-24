@@ -61,7 +61,7 @@ Wirecloud.location = {
                     this.options['on' + response.status](response);
                 } else if (this.options.onSuccess && (response.status >= 200 && response.status < 300)) {
                     this.options.onSuccess(response);
-                } else if (this.options.onFailure) {
+                } else if (this.options.onFailure && (response.status < 200 || response.status >= 300)) {
                     this.options.onFailure(response);
                 }
             } catch (e) {
