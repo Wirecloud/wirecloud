@@ -129,10 +129,6 @@
             this.iconAux.classList.add("specialIcon");
             this.iconAux.classList.add("icon-cogs");
             this.iconAux.setAttribute('title', title);
-            // TODO firefox differences with absolute elements position
-            if  (this.wiringEditor.browser == "firefox") {
-                this.iconAux.classList.add("firefoxCorrection");
-            }
             this.resourcesDiv.wrapperElement.appendChild(this.iconAux);
             this.iconAux.addEventListener('click', function () {
                 if (!this.movement) {

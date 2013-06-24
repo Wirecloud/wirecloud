@@ -57,7 +57,8 @@
 
 .wiring_editor .grid .geContainer {
     position: relative;
-    display: inline;
+    display: block;
+    overflow: visible;
 }
 
 .wiring_editor .grid .geContainer .header {
@@ -157,18 +158,15 @@
 
 .wiring_editor .grid .reducedInt.ioperator .specialIcon{
     display: inline;
-    font-size:3ex;
-    color: rgb(93, 93, 172);;
-    left: -9px;
+    font-size: 3ex;
+    color: rgb(93, 93, 172);
+    left: 15px;
     top: 1px;
 }
 
-.wiring_editor .grid .reducedInt.ioperator .specialIcon.firefoxCorrection{
-    top: 12px;
-}
-
-.wiring_editor .grid .reducedInt.ioperator .specialIcon:hover{
+.wiring_editor .grid .reducedInt.ioperator .specialIcon:hover {
     color: rgb(202, 44, 44);
+    cursor: pointer;
 }
 
 .wiring_editor .grid .reducedInt.ioperator .geContainer .header {
