@@ -78,4 +78,27 @@
         <field type="DecimalField" name="popularity">0.0</field>
         <field type="BooleanField" name="fromWGT">True</field>
     </object>
+    <object pk="17" model="catalogue.catalogueresource">
+        <field type="CharField" name="short_name">test-mashup-dependencies</field>
+        <field type="CharField" name="display_name">Test Mashup</field>
+        <field type="CharField" name="vendor">Wirecloud</field>
+        <field type="CharField" name="version">1.0</field>
+        <field type="IntegerField" name="type">1</field>
+        <field type="BooleanField" name="ie_compatible">False</field>
+        <field type="BooleanField" name="public">True</field>
+        <field to="auth.user" name="users" rel="ManyToOneRel"><object pk="2"></object></field>
+        <field type="CharField" name="author">aarranz</field>
+        <field type="CharField" name="mail">aarranz@conwet.com</field>
+        <field to="auth.user" name="creator" rel="ManyToOneRel">1</field>
+        <field type="TextField" name="description">This mashup is used to test some of the features of the Wirecloud platform</field>
+        <field type="CharField" name="license"><None></None></field>
+        <field type="DateTimeField" name="creation_date">2011-05-13 12:24:03</field>
+        <field type="CharField" name="image_uri">images/catalogue.png</field>
+        <field type="CharField" name="iphone_image_uri">images/catalogue_iphone.png</field>
+        <field type="CharField" name="wiki_page_uri">http://forge.morfeo-project.org/wiki/index.php/Gadgets_EzWeb</field>
+        <field type="CharField" name="template_uri">http://localhost:8001/test-mashup-dependencies.rdf</field>
+        <field type="TextField" name="json_description">{"default_lang": "en", "vendor": "Wirecloud", "description": "Wirecloud Mashup composed of: Test, Test", "tabs": [{"name": "Tab", "resources": [{"preferences": {}, "version": "1.0", "vendor": "Wirecloud", "name": "Test", "title": "Test", "position": {"y": "0", "x": "0", "z": "0"}, "rendering": {"width": "6", "layout": "0", "minimized": false, "fulldragboard": false, "height": "34"}, "id": "_e3bf0b06-cf82-4b48-8f62-e3be72872698", "properties": {}}], "preferences": {}}, {"name": "Tab 2", "resources": [{"preferences": {}, "version": "1.0", "vendor": "Wirecloud", "name": "Test", "title": "Test", "position": {"y": "0", "x": "0", "z": "0"}, "rendering": {"width": "6", "layout": "0", "minimized": false, "fulldragboard": false, "height": "34"}, "id": "_64bfd24c-5ae8-4232-b78d-c7e5f0efbc6b", "properties": {}}], "preferences": {}}], "translations": {}, "translation_index_usage": {}, "display_name": "Test Mashup", "name": "Test Mashup", "requirements": [], "preferences": {}, "author": "admin", "wiring": {"connections": [{"source": {"endpoint": "outputendpoint", "type": "iwidget", "id": "_64bfd24c-5ae8-4232-b78d-c7e5f0efbc6b"}, "readonly": false, "target": {"endpoint": "inputendpoint", "type": "iwidget", "id": "_e3bf0b06-cf82-4b48-8f62-e3be72872698"}}, {"source": {"endpoint": "outputendpoint", "type": "iwidget", "id": "_e3bf0b06-cf82-4b48-8f62-e3be72872698"}, "readonly": false, "target": {"endpoint": "inputendpoint", "type": "iwidget", "id": "_64bfd24c-5ae8-4232-b78d-c7e5f0efbc6b"}}], "inputs": [{"friendcode": "", "actionlabel": "", "name": "inputendpoint", "label": "Input", "type": "text", "description": ""}, {"friendcode": "", "actionlabel": "", "name": "inputendpoint", "label": "Input", "type": "text", "description": ""}], "operators": {}, "outputs": [{"friendcode": "", "description": "", "type": "text", "name": "outputendpoint", "label": "Output"}, {"friendcode": "", "description": "", "type": "text", "name": "outputendpoint", "label": "Output"}], "views": []}, "image_uri": "None", "readonly": false, "version": "1.0", "params": {}, "mail": "wirecloud@conwet.com", "type": "mashup", "doc_uri": ""}</field>
+        <field type="DecimalField" name="popularity">0.0</field>
+        <field type="BooleanField" name="fromWGT">False</field>
+    </object>
 </django-objects>

@@ -195,6 +195,34 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Workspace should be created
         self.assertTrue(Workspace.objects.filter(creator=2, name='Test Mashup').exists())
 
+    def test_workspace_collection_post_creation_from_mashup_missing_dependencies(self):
+
+        url = reverse('wirecloud.workspace_collection')
+
+        # Authenticate
+        self.client.login(username='normuser', password='admin')
+
+        # Make the request
+        data = {
+            'mashup': 'Wirecloud/test-mashup-dependencies/1.0',
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 403)
+
+        # Check basic response structure
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertTrue('description' in response_data)
+        self.assertTrue('details' in response_data)
+        self.assertTrue('missingDependencies' in response_data['details'])
+        self.assertEqual(set(response_data['details']['missingDependencies']), set((
+            'Wirecloud/nonavailable-operator/1.0',
+            'Wirecloud/nonavailable-widget/1.0',
+        )))
+
+        # Workspace should not be created
+        self.assertFalse(Workspace.objects.filter(creator=2, name='Test Mashup').exists())
+
     def test_workspace_entry_read_requires_authentication(self):
 
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 1})

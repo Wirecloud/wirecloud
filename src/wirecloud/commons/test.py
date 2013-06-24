@@ -603,14 +603,27 @@ class WirecloudRemoteTestCase(object):
 
         return iwidget
 
-    def create_workspace_from_catalogue(self, mashup_name):
+    def create_workspace_from_catalogue(self, mashup_name, expect_missing_dependencies=None, install_dependencies=False):
 
         self.change_main_view('marketplace')
         self.search_resource(mashup_name)
         resource = self.search_in_catalogue_results(mashup_name)
 
         resource.find_element_by_css_selector('.instantiate_button div').click()
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='New Workspace']").click()
+
+        if expect_missing_dependencies is not None:
+            continue_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Continue']")
+            for dependency in expect_missing_dependencies:
+                pass
+
+            if not install_dependencies:
+                cancel_button = self.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Cancel']")
+                cancel_button.click()
+                return
+
+            continue_button.click()
+
+        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='New Workspace']").click()
         self.wait_wirecloud_ready()
         self.assertTrue(self.get_current_workspace_name().startswith(mashup_name), 'Invalid workspace name after creating workspace from catalogue')
 
