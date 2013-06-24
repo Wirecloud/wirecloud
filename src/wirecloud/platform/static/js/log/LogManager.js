@@ -155,12 +155,10 @@ LogManager.prototype.formatError = function(format, transport, e) {
         msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
                   context,
                   true);
-    } else if (transport.responseXML && transport.responseXML.documentElement != null) {
-        msg = transport.responseXML.documentElement.textContent;
     } else {
         try {
             var errorInfo = JSON.parse(transport.responseText);
-            msg = errorInfo.message;
+            msg = errorInfo.description;
         } catch (e) {
             msg = gettext("HTTP Error %(errorCode)s - %(errorDesc)s");
             if (transport.status != 0 && transport.statusText !== '') {
