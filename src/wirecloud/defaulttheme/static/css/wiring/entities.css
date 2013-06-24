@@ -151,6 +151,7 @@
     background: rgba(158, 221, 218, 0.8);
     border-radius: 3px;
 }
+
 .wiring_editor .grid .specialIcon{
     display: none;
     position: absolute;
