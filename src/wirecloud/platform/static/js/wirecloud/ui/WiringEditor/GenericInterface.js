@@ -215,6 +215,22 @@
         }
     };
 
+    var createMulticonnector = function createMulticonnector(name, anchor) {
+        var objectId, multiconnector;
+
+        if (this instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
+            objectId = (this.iwidget.getId());
+        } else {
+            objectId = (this.getId());
+        }
+        multiconnector = new Wirecloud.ui.WiringEditor.Multiconnector(this.wiringEditor.nextMulticonnectorId, objectId, name,
+                                    this.wiringEditor.layout.getCenterContainer().wrapperElement,
+                                    this.wiringEditor, anchor, null, null);
+        this.wiringEditor.nextMulticonnectorId = parseInt(this.wiringEditor.nextMulticonnectorId, 10) + 1;
+        this.wiringEditor.addMulticonnector(multiconnector);
+        multiconnector.addMainArrow();
+    };
+
     /*************************************************************************
      * Public methods
      *************************************************************************/
@@ -443,7 +459,7 @@
      * Add Source.
      */
     GenericInterface.prototype.addSource = function addSource(label, desc, name, anchorContext) {
-        var anchor, anchorDiv, labelDiv, anchorLabel, multiconnector, id, friendCode;
+        var anchor, anchorDiv, labelDiv, anchorLabel, friendCode;
 
         // Sources counter
         this.numberOfSources += 1;
@@ -469,28 +485,15 @@
             anchor = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, this.arrowCreator);
             labelDiv.appendChild(anchor.wrapperElement);
 
+            anchor.menu.append(new StyledElements.MenuItem(gettext('Add multiconnector'), createMulticonnector.bind(this, name, anchor)));
+
             friendCode = anchor.context.data.connectable._friendCode;
             if (this.wiringEditor.sourceAnchorsByFriendCode[friendCode] == null) {
                 this.wiringEditor.sourceAnchorsByFriendCode[friendCode] = [];
             }
             this.wiringEditor.sourceAnchorsByFriendCode[friendCode].push(anchor);
 
-            //multiconnector button
-            this.multiButton = new StyledElements.StyledButton({
-                'title': gettext("highlight"),
-                'class': 'multiconnector_icon',
-                'plain': true
-            });
-            this.multiButton.addEventListener('click', function (e) {
-                multiconnector = new Wirecloud.ui.WiringEditor.Multiconnector(this.wiringEditor.nextMulticonnectorId, this.getId(), name,
-                                            this.wiringEditor.layout.getCenterContainer().wrapperElement,
-                                            this.wiringEditor, anchor, null, null);
-                this.wiringEditor.nextMulticonnectorId = parseInt(this.wiringEditor.nextMulticonnectorId, 10) + 1;
-                this.wiringEditor.addMulticonnector(multiconnector);
-                multiconnector.addMainArrow();
-            }.bind(this));
 
-            anchorDiv.appendChild(this.multiButton.wrapperElement);
             labelDiv.addEventListener('mouseover', function (e) {
                 this.wiringEditor.emphasize(anchor);
             }.bind(this));
@@ -527,7 +530,7 @@
      * Add Target.
      */
     GenericInterface.prototype.addTarget = function addTarget(label, desc, name, anchorContext) {
-        var anchor, anchorDiv, labelDiv, anchorLabel, multiconnector, id, friendCode;
+        var anchor, anchorDiv, labelDiv, anchorLabel, friendCode;
 
         // Targets counter
         this.numberOfTargets += 1;
@@ -553,27 +556,15 @@
             anchor = new Wirecloud.ui.WiringEditor.TargetAnchor(anchorContext, this.arrowCreator);
             labelDiv.appendChild(anchor.wrapperElement);
 
+            anchor.menu.append(new StyledElements.MenuItem(gettext('Add multiconnector'), createMulticonnector.bind(this, name, anchor)));
+
             friendCode = anchor.context.data.connectable._friendCode;
             if (this.wiringEditor.targetAnchorsByFriendCode[friendCode] == null) {
                 this.wiringEditor.targetAnchorsByFriendCode[friendCode] = [];
             }
             this.wiringEditor.targetAnchorsByFriendCode[friendCode].push(anchor);
 
-            //multiconnector button
-            this.multiButton = new StyledElements.StyledButton({
-                'title': gettext("highlight"),
-                'class': 'multiconnector_icon',
-                'plain': true
-            });
-            this.multiButton.addEventListener('click', function (e) {
-                multiconnector = new Wirecloud.ui.WiringEditor.Multiconnector(this.wiringEditor.nextMulticonnectorId, this.getId(), name,
-                                            this.wiringEditor.layout.getCenterContainer().wrapperElement,
-                                            this.wiringEditor, anchor, null, null);
-                this.wiringEditor.nextMulticonnectorId = parseInt(this.wiringEditor.nextMulticonnectorId, 10) + 1;
-                this.wiringEditor.addMulticonnector(multiconnector);
-                multiconnector.addMainArrow();
-            }.bind(this));
-            anchorDiv.appendChild(this.multiButton.wrapperElement);
+
             anchorDiv.appendChild(anchor.wrapperElement);
             labelDiv.addEventListener('mouseover', function (e) {
                 this.wiringEditor.emphasize(anchor);

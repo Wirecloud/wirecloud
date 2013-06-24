@@ -378,32 +378,3 @@
 .wiring_editor .targets .highlight span, .wiring_editor .sources .highlight_main span {
     pointer-events: none;
 }
-
-/* multiconnector button */
-.wiring_editor .grid .multiconnector_icon {
-    background: rgb(122, 152, 192);
-    position: absolute;
-    display: inline;
-    width: 9px;
-    height: 9px;
-    margin: 2px;
-}
-
-.wiring_editor .grid .multiconnector_icon{
-    cursor: pointer;
-}
-.wiring_editor .grid .sources .multiconnector_icon {
-    background: url('../../images/wiring/multiconnector_button.png');
-    float: right;
-    right: -6px;
-    top: 5px;
-    position: relative;
-}
-
-.wiring_editor .grid .targets .multiconnector_icon {
-    background: url('../../images/wiring/multiconnector_button.png');
-    float: left;
-    left: -7px;
-    top: 5px;
-    position: relative;
-}
