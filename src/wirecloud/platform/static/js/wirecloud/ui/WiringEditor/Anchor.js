@@ -48,6 +48,7 @@
 
         this.wrapperElement = document.createElement("div");
         this.wrapperElement.className = 'anchor';
+        this.menu = new StyledElements.PopupMenu({'position': ['bottom-left', 'top-left', 'bottom-right', 'top-right']});
 
         this._mousedown_callback = function _mousedown_callback(e) {
             var arrow, end, start;
@@ -130,6 +131,11 @@
             }
         }.bind(this);
         this.wrapperElement.addEventListener('mousedown', this._mousedown_callback, false);
+        this.wrapperElement.addEventListener('contextmenu',
+            function (e) {
+                e.preventDefault();
+                this.menu.show(this.wrapperElement.getBoundingClientRect());
+            }.bind(this), true);
 
         this._mouseup_callback = function _mouseup_callback(e) {
             // Only process left mouse button events
