@@ -35,12 +35,13 @@ from wirecloud.platform.workspace.utils import createTab
 
 def buildWorkspaceFromTemplate(template, user, allow_renaming=False):
 
-    parser = TemplateParser(template)
+    if not isinstance(template, TemplateParser):
+        template = TemplateParser(template)
 
-    if parser.get_resource_type() != 'mashup':
+    if template.get_resource_type() != 'mashup':
         raise Exception()
 
-    name = parser.get_resource_name()
+    name = template.get_resource_name()
 
     # Workspace creation
     workspace = Workspace(name=name, creator=user)
@@ -53,7 +54,7 @@ def buildWorkspaceFromTemplate(template, user, allow_renaming=False):
     user_workspace = UserWorkspace(user=user, workspace=workspace, active=False)
     user_workspace.save()
 
-    fillWorkspaceUsingTemplate(workspace, parser)
+    fillWorkspaceUsingTemplate(workspace, template)
 
     return (workspace, user_workspace)
 
@@ -66,6 +67,9 @@ class MissingDependencies(Exception):
         return _('Missing dependencies')
 
 def check_mashup_dependencies(template, user):
+
+    if not isinstance(template, TemplateParser):
+        template = TemplateParser(template)
 
     missing_dependencies = []
     workspace_info = template.get_resource_info()
@@ -93,24 +97,19 @@ def check_mashup_dependencies(template, user):
 
 def fillWorkspaceUsingTemplate(workspace, template):
 
-    if isinstance(template, TemplateParser):
-        parser = template
-    else:
-        parser = TemplateParser(template)
+    if not isinstance(template, TemplateParser):
+        template = TemplateParser(template)
 
-    if parser.get_resource_type() != 'mashup':
+    if template.get_resource_type() != 'mashup':
         raise Exception()
 
     user = workspace.creator
-
-    check_mashup_dependencies(template, user)
 
     user_workspace = UserWorkspace.objects.get(user=workspace.creator, workspace=workspace)
     context_values = get_context_values(user_workspace)
     processor = TemplateValueProcessor({'user': user, 'context': context_values})
 
-    workspace_info = parser.get_resource_info()
-    read_only_workspace = workspace_info['readonly']
+    workspace_info = template.get_resource_info()
 
     new_values = {}
     iwidget_id_mapping = {}
@@ -187,7 +186,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
             }
 
             iwidget = SaveIWidget(iwidget_data, user, tab, initial_variable_values)
-            if read_only_workspace or resource.get('readonly'):
+            if resource.get('readonly'):
                 iwidget.readOnly = True
                 iwidget.save()
 

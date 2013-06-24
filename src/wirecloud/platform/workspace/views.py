@@ -37,14 +37,14 @@ from wirecloud.commons.baseviews import Resource, Service
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.http import authentication_required, build_error_response, get_content_type, supported_request_mime_types
-from wirecloud.commons.utils.template import is_valid_name, is_valid_vendor, is_valid_version
+from wirecloud.commons.utils.template import is_valid_name, is_valid_vendor, is_valid_version, TemplateParser
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.get_data import get_workspace_data, get_global_workspace_data
 from wirecloud.platform.iwidget.utils import deleteIWidget
 from wirecloud.platform.models import IWidget, PublishedWorkspace, Tab, UserWorkspace, VariableValue, Workspace
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_template_from_workspace
-from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate, MissingDependencies
+from wirecloud.platform.workspace.mashupTemplateParser import check_mashup_dependencies, buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate, MissingDependencies
 from wirecloud.platform.workspace.packageLinker import PackageLinker
 from wirecloud.platform.workspace.utils import deleteTab, createTab, get_workspace_list, setVisibleTab, set_variable_value
 from wirecloud.platform.markets.utils import get_market_managers
@@ -121,14 +121,20 @@ class WorkspaceCollection(Resource):
 
             workspace_name = data.get('name', '').strip()
             mashup_id = data.get('mashup', '')
+            dry_run = data.get('', 'false').lower() == 'true'
         else:
             workspace_name = request.POST.get('name', '').strip()
             mashup_id = request.POST.get('mashup', '')
+            dry_run = request.POST.get('', 'false').lower() == 'true'
 
         if mashup_id == '' and workspace_name == '':
             return build_error_response(request, 400, _('missing workspace name'))
 
         if mashup_id == '':
+
+            if dry_run:
+                return HttpResponse(status_code=204)
+
             try:
                 workspace = createEmptyWorkspace(workspace_name, request.user)
             except IntegrityError:
@@ -150,18 +156,26 @@ class WorkspaceCollection(Resource):
             if resource.fromWGT:
                 base_dir = catalogue.wgt_deployer.get_base_dir(mashup_vendor, mashup_name, mashup_version)
                 wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
-                template = wgt_file.get_template()
+                template = TemplateParser(wgt_file.get_template())
             else:
                 template = downloader.download_http_content(resource.template_uri, user=request.user)
+                try:
+                    template = TemplateParser(template)
+                except:
+                    build_error_response(request, 424, _('Downloaded invalid resource description from: %(url)s') % {'url': resource.template_uri})
 
             try:
-                workspace, _junk = buildWorkspaceFromTemplate(template, request.user, True)
+                check_mashup_dependencies(template, request.user)
             except MissingDependencies, e:
                 details = {
                     'missingDependencies': e.missing_dependencies,
                 }
-                return build_error_response(request, 403, unicode(e), details=details)
+                return build_error_response(request, 422, unicode(e), details=details)
 
+            if dry_run:
+                return HttpResponse(status_code=204)
+
+            workspace, _junk = buildWorkspaceFromTemplate(template, request.user, True)
 
         workspace_data = get_global_workspace_data(workspace, request.user)
 

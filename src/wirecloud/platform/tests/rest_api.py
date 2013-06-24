@@ -207,7 +207,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
             'mashup': 'Wirecloud/test-mashup-dependencies/1.0',
         }
         response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 422)
 
         # Check basic response structure
         response_data = simplejson.loads(response.content)
