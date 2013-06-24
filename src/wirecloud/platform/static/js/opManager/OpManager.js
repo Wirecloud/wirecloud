@@ -259,10 +259,6 @@ var OpManagerFactory = function () {
             return this.activeWorkspace.getId();
         }
 
-        OpManager.prototype.sendEvent = function (widget, event, value) {
-            this.activeWorkspace.getWiring().sendEvent(widget, event, value);
-        }
-
         /**
          * Loads the Wirecloud Platform.
          */

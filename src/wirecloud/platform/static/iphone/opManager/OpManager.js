@@ -107,10 +107,6 @@ var OpManagerFactory = (function () {
             this.showWidgetsMenuFromWorskspaceMenu();
         };
 
-        OpManager.prototype.sendEvent = function (widget, event, value) {
-            this.activeWorkspace.getWiring().sendEvent(widget, event, value);
-        };
-
         OpManager.prototype.loadEnviroment = function () {
             LayoutManagerFactory.getInstance().resizeWrapper();
             // First, global modules must be loades (Showcase, Catalogue)

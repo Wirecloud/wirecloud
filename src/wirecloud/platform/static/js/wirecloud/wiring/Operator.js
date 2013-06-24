@@ -86,10 +86,6 @@
     };
     Operator.prototype = new StyledElements.ObjectWithEvents();
 
-    Operator.prototype.sendEvent = function sendEvent(endpoint_name, data) {
-        this.outputs[endpoint_name].propagate(data);
-    };
-
     Operator.prototype.fullDisconnect = function fullDisconnect() {
         var i, connectables;
 
