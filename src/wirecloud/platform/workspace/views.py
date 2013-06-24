@@ -140,7 +140,13 @@ class WorkspaceCollection(Resource):
                 return build_error_response(request, 400, _('invalid mashup id'))
 
             (mashup_vendor, mashup_name, mashup_version) = values
-            resource = CatalogueResource.objects.get(vendor=mashup_vendor, short_name=mashup_name, version=mashup_version)
+            try:
+                resource = CatalogueResource.objects.get(vendor=mashup_vendor, short_name=mashup_name, version=mashup_version)
+                if not resource.is_available_for(request.user) or resource.resource_type() != 'mashup':
+                    raise CatalogueResource.DoesNotExist
+            except CatalogueResource.DoesNotExist:
+                return build_error_response(request, 422, _('Mashup not found: %(mashup_id)s') % {'mashup_id': mashup_id})
+
             if resource.fromWGT:
                 base_dir = catalogue.wgt_deployer.get_base_dir(mashup_vendor, mashup_name, mashup_version)
                 wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))

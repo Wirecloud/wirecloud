@@ -157,6 +157,20 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 409)
 
+    def test_workspace_collection_post_creation_from_nonexistent_mashup(self):
+
+        url = reverse('wirecloud.workspace_collection')
+
+        # Authenticate
+        self.client.login(username='normuser', password='admin')
+
+        # Make the request
+        data = {
+            'mashup': 'Wirecloud/nonexistent-mashup/1.0',
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 422)
+
     def test_workspace_collection_post_creation_from_mashup(self):
 
         url = reverse('wirecloud.workspace_collection')
