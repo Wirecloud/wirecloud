@@ -212,14 +212,9 @@
     };
 
     var createMulticonnector = function createMulticonnector(name, anchor) {
-        var objectId, multiconnector;
+        var multiconnector;
 
-        if (this instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
-            objectId = (this.iwidget.getId());
-        } else {
-            objectId = (this.getId());
-        }
-        multiconnector = new Wirecloud.ui.WiringEditor.Multiconnector(this.wiringEditor.nextMulticonnectorId, objectId, name,
+        multiconnector = new Wirecloud.ui.WiringEditor.Multiconnector(this.wiringEditor.nextMulticonnectorId, this.getId(), name,
                                     this.wiringEditor.layout.getCenterContainer().wrapperElement,
                                     this.wiringEditor, anchor, null, null);
         this.wiringEditor.nextMulticonnectorId = parseInt(this.wiringEditor.nextMulticonnectorId, 10) + 1;
