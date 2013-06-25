@@ -945,6 +945,45 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
 
         workspace = Workspace.objects.get(id=2)
         parsedStatus = json.loads(workspace.wiringStatus)
+
+        parsedStatus['views'] = [
+            {
+                "label": "default",
+                "iwidgets": {
+                    "1": {
+                        "widget": {
+                            "posX": 84,
+                            "posY": 44
+                        },
+                        "endPointsInOuts": {
+                            "sources": ["outputendpoint"],
+                            "targets": ["inputendpoint"]
+                        },
+                        "name": "Wirecloud/Test/1.0",
+                    },
+                    "2": {
+                        "widget": {
+                            "posX": 350,
+                            "posY": 64
+                        },
+                        "endPointsInOuts": {
+                            "sources": ["outputendpoint"],
+                            "targets": ["inputendpoint"]
+                        },
+                        "name": "Wirecloud/Test/1.0",
+                    }
+                },
+                "operators": {
+                    "0": {
+                        "widget": {
+                            "posX": 84,
+                            "posY": 256
+                        }
+                    }
+                },
+                "connections": []
+            }
+        ]
         parsedStatus['connections'] = [
             {
                 "readOnly": True,
@@ -993,6 +1032,44 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
 
         workspace = Workspace.objects.get(id=2)
         parsedStatus = json.loads(workspace.wiringStatus)
+        parsedStatus['views'] = [
+            {
+                "label": "default",
+                "iwidgets": {
+                    "1": {
+                        "widget": {
+                            "posX": 84,
+                            "posY": 44
+                        },
+                        "endPointsInOuts": {
+                            "sources": ["outputendpoint"],
+                            "targets": ["inputendpoint"]
+                        },
+                        "name": "Wirecloud/Test/1.0",
+                    },
+                    "2": {
+                        "widget": {
+                            "posX": 350,
+                            "posY": 64
+                        },
+                        "endPointsInOuts": {
+                            "sources": ["outputendpoint"],
+                            "targets": ["inputendpoint"]
+                        },
+                        "name": "Wirecloud/Test/1.0",
+                    }
+                },
+                "operators": {
+                    "0": {
+                        "widget": {
+                            "posX": 84,
+                            "posY": 256
+                        }
+                    }
+                },
+                "connections": []
+            }
+        ]
         parsedStatus['connections'] = [
             {
                 "readOnly": False,
