@@ -167,8 +167,12 @@
             requestHeaders: requestHeaders,
             postBody: data,
             onSuccess: function (transport) {
+                var response_data = JSON.parse(transport.responseText);
+
                 if (typeof options.onSuccess === 'function') {
-                    options.onSuccess();
+                    try {
+                        options.onSuccess(response_data);
+                    } catch (e) {}
                 }
             }.bind(this),
             onFailure: function (transport) {
@@ -176,12 +180,16 @@
                 LogManagerFactory.getInstance().log(msg);
 
                 if (typeof options.onFailure === 'function') {
-                    options.onFailure(msg);
+                    try {
+                        options.onFailure(msg);
+                    } catch (e) {}
                 }
             },
             onComplete: function () {
                 if (typeof options.onComplete === 'function') {
-                    options.onComplete();
+                    try {
+                        options.onComplete();
+                    } catch (e) {}
                 }
             }
         });

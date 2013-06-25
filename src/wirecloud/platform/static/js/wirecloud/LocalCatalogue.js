@@ -164,6 +164,16 @@
         }
     };
 
+    var process_packaged_upload_response = function process_packaged_upload_response(next, response_data) {
+        process_upload_response.call(this, response_data);
+
+        if (typeof next === 'function') {
+            try {
+                next();
+            } catch (e) {}
+        }
+    };
+
     /*************************************************************************
      * Public methods
      *************************************************************************/
@@ -237,6 +247,16 @@
             onFailure: deleteErrorCallback.bind(context),
             onException: deleteErrorCallback.bind(context)
         });
+    };
+
+    LocalCatalogue.addPackagedResource = function addPackagedResource(data, options) {
+        if (options == null) {
+            options = {};
+        }
+
+        options.onSuccess = process_packaged_upload_response.bind(this, options.onSuccess);
+
+        Wirecloud.WirecloudCatalogue.prototype.addPackagedResource.call(this, data, options);
     };
 
     LocalCatalogue.addResourceFromURL = function addResourceFromURL(url, options) {
