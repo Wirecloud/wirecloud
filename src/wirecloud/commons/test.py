@@ -473,7 +473,7 @@ class WirecloudRemoteTestCase(object):
             if window_menus == 1:
                 self.fail('Error: resource shouldn\'t be added')
 
-            xpath = "//*[contains(@class, 'window_menu')]//*[text()='The resource could not be added to the catalogue: " + expect_error + "']"
+            xpath = "//*[contains(@class, 'window_menu')]//*[text()='Error adding packaged resource: " + expect_error + "']"
             self.driver.find_element_by_xpath(xpath)
             self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
 
