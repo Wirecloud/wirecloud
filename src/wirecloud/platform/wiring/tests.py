@@ -985,7 +985,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
         arrows = self.driver.find_elements_by_css_selector('.arrow')
         self.assertEqual(len(arrows), 2)
         arrows[0].click()
-        arrows[0].find_elements_by_css_selector('.closer')[0].click()
+        self.wait_element_visible_by_css_selector('.closer', element=arrows[0]).click()
         arrows = self.driver.find_elements_by_css_selector('.arrow')
         self.assertEqual(len(arrows), 2)
 
@@ -1033,9 +1033,9 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
         widget = self.driver.find_elements_by_css_selector('.grid > .iwidget')[0]
         operator = self.driver.find_elements_by_css_selector('.grid > .ioperator')[0]
         widget.click()
-        widget.find_elements_by_css_selector('.closebutton')[0].click()
+        widget.find_element_by_css_selector('.closebutton').click()
         operator.click()
-        operator.find_elements_by_css_selector('.closebutton')[0].click()
+        self.wait_element_visible_by_css_selector('.closebutton', element=operator).click()
         widgets = self.driver.find_elements_by_css_selector('.grid > .iwidget')
         operators = self.driver.find_elements_by_css_selector('.grid > .ioperator')
         self.assertEqual(len(widgets), 2)

@@ -634,7 +634,7 @@ class WirecloudRemoteTestCase(object):
         resource = self.search_in_catalogue_results(mashup_name)
 
         resource.find_element_by_css_selector('.instantiate_button div').click()
-        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Current Workspace']").click()
+        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Current Workspace']").click()
         self.wait_wirecloud_ready()
 
     def count_iwidgets(self):
