@@ -5,7 +5,7 @@ from os import path
 from wirecloud.commons.utils.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 COMPRESS = not DEBUG
 COMPRESS_OFFLINE = not DEBUG
@@ -68,7 +68,7 @@ STATIC_ROOT = path.join(BASEDIR, 'static')
 COMPRESS_ROOT = STATIC_ROOT
 COMPRESS_OUTPUT_DIR = 'cache'
 COMPRESS_JS_FILTERS = (
-    'compressor.filters.jsmin.JSMinFilter',
+    #'compressor.filters.jsmin.JSMinFilter',
     'wirecloud.platform.compressor_filters.JSUseStrictFilter',
 )
 
@@ -126,7 +126,10 @@ INSTALLED_APPS = (
     'wirecloud.fiware',
     'south',
     'compressor',
+    'django_nose',
 )
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',

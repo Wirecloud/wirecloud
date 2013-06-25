@@ -28,7 +28,25 @@
     var newWorkspace, mergeWorkspace, InstantiateMashupWindowMenu;
 
     newWorkspace = function (mashup) {
-        OpManagerFactory.getInstance().addMashupResource(mashup);
+        LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding the mashup"), 1);
+        LayoutManagerFactory.getInstance().logSubTask(gettext("Creating a new workspace"));
+
+        OpManagerFactory.getInstance().addWorkspaceFromMashup(mashup, {
+            onSuccess: function (workspace) {
+
+                LayoutManagerFactory.getInstance().logStep('');
+
+                // create the new workspace and go to it
+                OpManagerFactory.getInstance().changeActiveWorkspace(workspace);
+            },
+            onFailure: function (msg) {
+                var layoutManager = LayoutManagerFactory.getInstance();
+                layoutManager.logStep('');
+                layoutManager._notifyPlatformReady();
+
+                layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+            }
+        });
         this.destroy();
     };
 

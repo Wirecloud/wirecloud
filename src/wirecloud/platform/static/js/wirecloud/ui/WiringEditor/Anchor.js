@@ -205,31 +205,16 @@
      * @param {HTMLElement} baseElement element of reference.
      */
     Anchor.prototype.getCoordinates = function getCoordinates(baseElement) {
-        var coordinates = {posX: this.wrapperElement.offsetLeft,
-                           posY: this.wrapperElement.offsetTop};
-        var parentNode = this.wrapperElement.parentNode;
-        while (parentNode !== baseElement) {
-            var cssStyle = document.defaultView.getComputedStyle(parentNode, null);
-            var p = cssStyle.getPropertyValue('position');
-            if (p !== 'static') {
-                coordinates.posY += parentNode.offsetTop + cssStyle.getPropertyCSSValue('border-top-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
-                coordinates.posX += parentNode.offsetLeft + cssStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
-            }
-            // add the height of the widget/operator header
-            if (parentNode.classList.contains("geContainer")) {
-                coordinates.posY += parentNode.getElementsByClassName("container north_container header")[0].getBoundingClientRect().height;
-            }
-            // firefox correction
-            if  (parentNode.classList.contains("anchorDiv") && this.context.iObject.wiringEditor.browser == "firefox") {
-                coordinates.posY -= parentNode.getBoundingClientRect().height - 4;
-            }
-            if  (parentNode.classList.contains("reducedInt") && this.context.iObject.wiringEditor.browser == "firefox") {
-                coordinates.posX -= 26;
-                coordinates.posY += 30;
-            }
-            parentNode = parentNode.parentNode;
-        }
 
+        var anchor_bcr, base_bcr, coordinates;
+
+        anchor_bcr = this.wrapperElement.getBoundingClientRect();
+        base_bcr = baseElement.getBoundingClientRect();
+
+        coordinates = {
+            posX: anchor_bcr.left - base_bcr.left + baseElement.scrollLeft,
+            posY: anchor_bcr.top - base_bcr.top + baseElement.scrollTop
+        };
         return {
             posX: Math.round(coordinates.posX + (this.wrapperElement.offsetWidth / 2)),
             posY: Math.round(coordinates.posY + (this.wrapperElement.offsetWidth / 2))
@@ -251,7 +236,7 @@
     };
 
     /**
-     * Add new Arrow in the Anchor
+     * Add new Arrow to the Anchor
      */
     Anchor.prototype.addArrow = function addArrow(theArrow) {
         this.arrows.push(theArrow);

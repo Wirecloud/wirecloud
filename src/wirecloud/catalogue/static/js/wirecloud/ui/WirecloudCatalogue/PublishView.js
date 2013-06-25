@@ -33,7 +33,10 @@
 
     upload_wgt_file = function upload_wgt_file() {
         LayoutManagerFactory.getInstance()._startComplexTask(gettext("Uploading packaged widget"), 1);
-        this.wrapperElement.getElementsByClassName("wgt_upload_form")[0].submit();
+        this.catalogue.addPackagedResource(new FormData(this.wrapperElement.getElementsByClassName("wgt_upload_form")[0]), {
+            onSuccess: this._onUploadSuccess.bind(this),
+            onFailure: this._onUploadFailure.bind(this)
+        });
     };
 
     submit_template = function submit_template() {
@@ -94,17 +97,6 @@
         this.appendChild(contents);
 
         this.wrapperElement.getElementsByClassName('template_submit_form')[0].onsubmit = function () {return false;};
-
-        this.wrapperElement.getElementsByClassName("wgt_upload_form")[0].target = 'upload_' + this.mainview.altId;
-        if (this.catalogue.name === 'local') {
-            this.wrapperElement.getElementsByClassName("wgt_upload_form")[0].action = Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION;
-        } else {
-            this.wrapperElement.getElementsByClassName("wgt_upload_form")[0].action = Wirecloud.io.buildProxyURL(this.catalogue.RESOURCE_COLLECTION);
-        }
-        this._iframe = this.catalogue.buildUploadIframe('upload_' + this.mainview.altId,
-            this._onUploadSuccess.bind(this),
-            this._onUploadFailure.bind(this));
-        this.appendChild(this._iframe);
     };
     PublishView.prototype = new StyledElements.Alternative();
 

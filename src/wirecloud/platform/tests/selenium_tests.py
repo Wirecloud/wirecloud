@@ -297,6 +297,13 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertNotEqual(self.get_current_workspace_name(), 'Test Mashup')
     test_create_workspace_from_catalogue_duplicated_workspaces.tags = ('fiware-ut-5',)
 
+    @uses_extra_resources(('Wirecloud_TestMashup2_1.0.zip',), shared=True)
+    def test_create_workspace_from_catalogue_missing_dependencies(self):
+
+        self.login()
+        self.create_workspace_from_catalogue('TestMashup2', expect_missing_dependencies=('Wirecloud/test-masup2/1.0',))
+    test_create_workspace_from_catalogue_missing_dependencies.tags = ('fiware-ut-5')
+
     def test_merge_mashup(self):
 
         self.login()

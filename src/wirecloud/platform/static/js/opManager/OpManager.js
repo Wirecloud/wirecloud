@@ -167,46 +167,54 @@ var OpManagerFactory = function () {
             });
         };
 
-        OpManager.prototype.addMashupResource = function(resource) {
+        OpManager.prototype.addWorkspaceFromMashup = function addWorkspaceFromMashup(resource, options) {
+
+            options = EzWebExt.merge({
+                dry_run: false
+            }, options);
+
             var cloneOk = function(transport) {
-                var response = transport.responseText;
-                var wsInfo = JSON.parse(response);
+                var response, wsInfo, opManager, workspace = null;
 
-                LayoutManagerFactory.getInstance().logStep('');
+                if (transport.status === 201) {
+                    response = transport.responseText;
+                    wsInfo = JSON.parse(response);
+                    opManager = OpManagerFactory.getInstance();
+                    workspace = new Workspace(wsInfo);
+                    opManager.workspaceInstances.set(wsInfo.id, workspace);
+                }
 
-                //create the new workspace and go to it
-                var opManager = OpManagerFactory.getInstance();
-                var workspace = new Workspace(wsInfo);
-                opManager.workspaceInstances.set(wsInfo.id, workspace);
-                opManager.changeActiveWorkspace(workspace);
+                if (typeof options.onSuccess === 'function') {
+                    try {
+                        options.onSuccess(workspace);
+                    } catch (e) {}
+                }
             };
 
             var cloneError = function(transport, e) {
-                var logManager, layoutManager, msg;
+                var logManager, msg;
 
                 logManager = LogManagerFactory.getInstance();
-                                layoutManager = LayoutManagerFactory.getInstance();
 
                 msg = logManager.formatError(gettext("Error adding the workspace: %(errorMsg)s."), transport, e);
                 logManager.log(msg);
-                layoutManager.logStep('');
-                layoutManager._notifyPlatformReady();
 
-                layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                if (typeof options.onFailure === 'function') {
+                    try {
+                        options.onFailure(msg);
+                    } catch (e) {}
+                }
             };
-
-            LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding the mashup"), 1);
-            LayoutManagerFactory.getInstance().logSubTask(gettext("Creating a new workspace"));
 
             Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_COLLECTION, {
                 method: 'POST',
                 contentType: 'application/json',
                 postBody: Object.toJSON({
                     'mashup': resource.getURI(),
+                    'dry_run': options.dry_run
                 }),
                 onSuccess: cloneOk.bind(this),
-                onFailure: cloneError.bind(this),
-                onException: cloneError.bind(this)
+                onFailure: cloneError.bind(this)
             });
         };
 
@@ -257,10 +265,6 @@ var OpManagerFactory = function () {
 
         OpManager.prototype.getActiveWorkspaceId = function () {
             return this.activeWorkspace.getId();
-        }
-
-        OpManager.prototype.sendEvent = function (widget, event, value) {
-            this.activeWorkspace.getWiring().sendEvent(widget, event, value);
         }
 
         /**

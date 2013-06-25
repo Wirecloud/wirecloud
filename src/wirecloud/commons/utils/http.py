@@ -19,7 +19,6 @@
 
 import socket
 from urlparse import urljoin
-from xml.dom.minidom import getDOMImplementation
 
 from django.conf import settings
 from django.contrib.sites.models import get_current_site
@@ -28,35 +27,52 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
+from lxml import etree
 
 from wirecloud.commons.utils import mimeparser
 
 
-def get_html_basic_error_response(request, mimetype, status_code, message):
+def get_html_basic_error_response(request, mimetype, status_code, message, details):
     return render(request, '%s.html' % status_code, {'request_path': request.path}, status=status_code, content_type=mimetype)
 
 
-def get_xml_error_response(request, mimetype, status_code, value):
-    dom = getDOMImplementation()
+def get_xml_error_response(request, mimetype, status_code, message, details):
 
-    doc = dom.createDocument(None, "error", None)
-    rootelement = doc.documentElement
-    text = doc.createTextNode(value)
-    rootelement.appendChild(text)
-    errormsg = doc.toxml("utf-8")
-    doc.unlink()
+    doc = etree.Element('error')
 
-    return errormsg
+    description = etree.Element('description')
+    description.text = message
+
+    doc.append(description)
+
+    if details is not None:
+        details_element = etree.Element('details')
+        for key in details:
+            element = etree.Element(key)
+            if isinstance(details[key], basestring):
+                element.text = details[key]
+            else:
+                for key2 in details[key]:
+                    list_element = etree.Element('element')
+                    list_element.text = details[key][key2]
+                    element.append(list_element)
+
+            details_element.append(element)
+
+    return etree.tostring(doc, pretty_print=False, method='xml')
 
 
-def get_json_error_response(request, mimetype, status_code, message):
-    return simplejson.dumps({
-        'result': 'error',
-        'message': message
-    })
+def get_json_error_response(request, mimetype, status_code, message, details):
+    body = {
+        'description': message
+    }
+    if details is not None:
+        body['details'] = details
+
+    return simplejson.dumps(body)
 
 
-def get_plain_text_error_response(request, mimetype, status_code, message):
+def get_plain_text_error_response(request, mimetype, status_code, message, details):
     return unicode(message)
 
 
@@ -67,7 +83,7 @@ ERROR_FORMATTERS = {
 }
 
 
-def build_error_response(request, status_code, error_msg, extra_formats=None, headers=None):
+def build_error_response(request, status_code, error_msg, extra_formats=None, headers=None, details=None):
 
     if extra_formats is not None:
         formatters = extra_formats.copy()
@@ -80,7 +96,8 @@ def build_error_response(request, status_code, error_msg, extra_formats=None, he
     else:
         mimetype = mimeparser.best_match(formatters.keys(), request.META.get('HTTP_ACCEPT', 'text/plain'))
 
-    response = HttpResponse(formatters[mimetype](request, mimetype, status_code, error_msg), mimetype=mimetype, status=status_code)
+    body = formatters[mimetype](request, mimetype, status_code, error_msg, details)
+    response = HttpResponse(body, mimetype=mimetype, status=status_code)
     if headers is None:
         headers = {}
 

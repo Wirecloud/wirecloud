@@ -162,10 +162,6 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
             this.iconAux.classList.add("specialIcon");
             this.iconAux.classList.add("icon-cogs");
             this.iconAux.setAttribute('title', title);
-            // TODO firefox differences with absolute elements position
-            if  (this.wiringEditor.browser == "firefox") {
-                this.iconAux.classList.add("firefoxCorrection");
-            }
             this.resourcesDiv.wrapperElement.appendChild(this.iconAux);
             this.iconAux.addEventListener('click', function () {
                 if (!this.movement) {
@@ -260,14 +256,9 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
     };
 
     var createMulticonnector = function createMulticonnector(name, anchor) {
-        var objectId, multiconnector;
+        var multiconnector;
 
-        if (this instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
-            objectId = (this.iwidget.getId());
-        } else {
-            objectId = (this.getId());
-        }
-        multiconnector = new Wirecloud.ui.WiringEditor.Multiconnector(this.wiringEditor.nextMulticonnectorId, objectId, name,
+        multiconnector = new Wirecloud.ui.WiringEditor.Multiconnector(this.wiringEditor.nextMulticonnectorId, this.getId(), name,
                                     this.wiringEditor.layout.getCenterContainer().wrapperElement,
                                     this.wiringEditor, anchor, null, null);
         this.wiringEditor.nextMulticonnectorId = parseInt(this.wiringEditor.nextMulticonnectorId, 10) + 1;
@@ -313,6 +304,7 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
             checkbox.style.top = desp;
         }
     };
+
     /*************************************************************************
      * Public methods
      *************************************************************************/

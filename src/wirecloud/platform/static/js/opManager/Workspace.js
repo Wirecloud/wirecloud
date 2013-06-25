@@ -233,23 +233,25 @@ function Workspace (workspaceState) {
         LayoutManagerFactory.getInstance()._notifyPlatformReady();
     };
 
-    var publishSuccess = function (transport) {
-        var layoutManager, i, marketplaceView, market;
+    var publishSuccess = function publishSuccess(options, transport) {
+        var layoutManager, marketplaceView;
 
         layoutManager = LayoutManagerFactory.getInstance();
         layoutManager.logSubTask(gettext('Workspace published successfully'));
         layoutManager.logStep('');
         layoutManager._notifyPlatformReady();
-        this.workspace.workspaceGlobalInfo.params = this.params;
 
         marketplaceView = layoutManager.viewsByName.marketplace;
-        for (i = 0; i < this.params.marketplaces.length; i += 1) {
-            market = this.params.marketplaces[i].market;
-            marketplaceView.viewsByName[market].viewsByName.search.mark_outdated();
+        marketplaceView.viewsByName.local.viewsByName.search.mark_outdated();
+
+        if (typeof options.onSuccess === 'function') {
+            try {
+                options.onSuccess();
+            } catch (e) {}
         }
     };
 
-    var publishError = function(transport, e) {
+    var publishFailure = function publishFailure(options, transport, e) {
         var logManager, layoutManager, msg;
 
         logManager = LogManagerFactory.getInstance();
@@ -258,8 +260,13 @@ function Workspace (workspaceState) {
         msg = logManager.formatError(gettext("Error publishing workspace: %(errorMsg)s."), transport, e);
         layoutManager._notifyPlatformReady();
         logManager.log(msg);
-        layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-    }
+
+        if (typeof options.onFailure === 'function') {
+            try {
+                options.onFailure(msg);
+            } catch (e) {}
+        }
+    };
 
     var mergeSuccess = function(transport) {
         // JSON-coded new published workspace id and mashup url mapping
@@ -419,14 +426,6 @@ function Workspace (workspaceState) {
 
     Workspace.prototype.getId = function () {
         return this.workspaceState.id;
-    }
-
-    Workspace.prototype.getWiring = function () {
-        return this.wiring;
-    }
-
-    Workspace.prototype.getWiringInterface = function () {
-        return this.wiringInterface;
     }
 
     Workspace.prototype.getVarManager = function () {
@@ -709,8 +708,8 @@ function Workspace (workspaceState) {
             method: 'POST',
             postBody: payload,
             context: {workspace: this, params: data, options: options},
-            onSuccess: publishSuccess,
-            onFailure: publishError,
+            onSuccess: publishSuccess.bind(null, options),
+            onFailure: publishFailure.bind(null, options),
             onComplete: function () {
                 if (typeof options.onComplete === 'function') {
                     options.onComplete();

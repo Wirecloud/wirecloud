@@ -164,40 +164,13 @@
         }
     };
 
-    var check_upload_iframe_result = function check_upload_iframe_result() {
-        var doc, logManager, response_content, msg, response_data;
+    var process_packaged_upload_response = function process_packaged_upload_response(next, response_data) {
+        process_upload_response.call(this, response_data);
 
-        if (this.iframe.contentDocument) {
-            doc = this.iframe.contentDocument;
-        } else if (this.iframe.contentWindow) {
-            doc = this.iframe.contentWindow.document;
-        } else {
-            doc = window.frames[this.iframe.id].document;
-        }
-
-        if (doc.location.href === 'about:blank') {
-            return;
-        }
-
-        response_content = doc.body.textContent;
-
-        if (doc.location.href.search("error") >= 0) {
-            logManager = LogManagerFactory.getInstance();
-            msg = gettext("The resource could not be added to the catalogue: %(errorMsg)s.");
-            msg = interpolate(msg, {errorMsg: response_content}, true);
-            logManager.log(msg);
-
-            if (typeof this.onFailure === 'function') {
-                this.onFailure(msg);
-            }
-        } else if (typeof this.onSuccess === 'function') {
-
-            response_data = JSON.parse(response_content);
-            process_upload_response.call(this.catalogue, response_data);
-
-            if (typeof this.onSuccess === 'function') {
-                this.onSuccess();
-            }
+        if (typeof next === 'function') {
+            try {
+                next();
+            } catch (e) {}
         }
     };
 
@@ -276,6 +249,16 @@
         });
     };
 
+    LocalCatalogue.addPackagedResource = function addPackagedResource(data, options) {
+        if (options == null) {
+            options = {};
+        }
+
+        options.onSuccess = process_packaged_upload_response.bind(this, options.onSuccess);
+
+        Wirecloud.WirecloudCatalogue.prototype.addPackagedResource.call(this, data, options);
+    };
+
     LocalCatalogue.addResourceFromURL = function addResourceFromURL(url, options) {
         if (typeof options != 'object') {
             options = {};
@@ -314,26 +297,6 @@
                 }
             }
         });
-    };
-
-    LocalCatalogue.buildUploadIframe = function buildUploadIframe(iframe_id, onSuccess, onFailure) {
-        var context, iframe;
-
-        iframe = document.createElement('iframe');
-        iframe.frameborder = 0;
-        iframe.style.cssText = 'display:none;';
-        iframe.id = iframe.name = iframe_id;
-
-        context = {
-            catalogue: this,
-            iframe: iframe,
-            onSuccess: onSuccess,
-            onFailure: onFailure
-        };
-
-        iframe.onload = check_upload_iframe_result.bind(context);
-
-        return iframe;
     };
 
     LocalCatalogue.getAvailableResourcesByType = function getAvailableResourcesByType(type) {

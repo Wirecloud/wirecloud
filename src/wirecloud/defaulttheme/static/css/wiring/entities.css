@@ -76,7 +76,8 @@
 
 .wiring_editor .grid .geContainer {
     position: relative;
-    display: inline;
+    display: block;
+    overflow: visible;
 }
 
 .wiring_editor .grid .geContainer .header {
@@ -169,6 +170,7 @@
     background: rgba(158, 221, 218, 0.8);
     border-radius: 3px;
 }
+
 .wiring_editor .grid .specialIcon{
     display: none;
     position: absolute;
@@ -176,18 +178,15 @@
 
 .wiring_editor .grid .reducedInt.ioperator .specialIcon{
     display: inline;
-    font-size:3ex;
-    color: rgb(93, 93, 172);;
-    left: -9px;
+    font-size: 3ex;
+    color: rgb(93, 93, 172);
+    left: 15px;
     top: 1px;
 }
 
-.wiring_editor .grid .reducedInt.ioperator .specialIcon.firefoxCorrection{
-    top: 12px;
-}
-
-.wiring_editor .grid .reducedInt.ioperator .specialIcon:hover{
+.wiring_editor .grid .reducedInt.ioperator .specialIcon:hover {
     color: rgb(202, 44, 44);
+    cursor: pointer;
 }
 
 .wiring_editor .grid .reducedInt.ioperator .geContainer .header {
@@ -433,7 +432,18 @@
     background: rgb(206, 220, 231);
 }
 
-/* highlight events and slots by semantic */
+/* highlight events and slots by friendcode */
+.wiring_editor .sources .highlight, .wiring_editor .targets .highlight_main {
+    background: #FF9854;
+    color: white;
+    border-radius: 15px;
+}
+
+.wiring_editor .targets .highlight, .wiring_editor .sources .highlight_main {
+    background: #0A9;
+    color: white;
+    border-radius: 15px;
+}
 
  .wiring_editor .sources .highlight span, .wiring_editor .targets .highlight_main span {
     pointer-events: none;
@@ -441,39 +451,4 @@
 
 .wiring_editor .targets .highlight span, .wiring_editor .sources .highlight_main span {
     pointer-events: none;
-}
-
-.wiring_editor .highlight.equivalent {
-    background: green;
-    color: white;
-}
-
-.wiring_editor .highlight.subsumed {
-    background: green;
-    color: white;
-}
-
-.wiring_editor .highlight.subsumes {
-    background: orange;
-    color: black;
-}
-
-.wiring_editor .highlight.haspart {
-    background: orange;
-    color: black;
-}
-
-.wiring_editor .highlight.disjoint {
-    background: red;
-    color: white;
-}
-
-.wiring_editor .highlight.overlap {
-    background: grey;
-    color: white;
-}
-
-.wiring_editor .highlight.none {
-    background: grey;
-    color: white;
 }

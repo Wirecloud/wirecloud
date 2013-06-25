@@ -35,25 +35,28 @@
             return;
         }
 
-        if (typeof options !== 'object') {
-            options = {};
-        }
+        options = EzWebExt.merge({
+            factory: Wirecloud.ui.InputInterfaceFactory,
+            autoHide: true
+        }, options);
+        options.buttonArea = this.windowBottom;
 
         Wirecloud.ui.WindowMenu.call(this, title, extra_class);
         // TODO
         this.iconElement = null;
         this.msgElement = null;
 
-        this.form = new Form(fields, EzWebExt.merge(options, {
-            factory: Wirecloud.ui.InputInterfaceFactory,
-            buttonArea: this.windowBottom
-        }));
+        this.form = new Form(fields, options);
         this.form.insertInto(this.windowContent);
         this.form.addEventListener('submit', function (form, data) {
+            this.form.acceptButton.disable();
+            this.form.cancelButton.disable();
             try {
                 this.executeOperation(data);
             } catch (e) {}
-            this.hide();
+            if (options.autoHide === true) {
+                this.hide();
+            }
         }.bind(this));
         this.form.addEventListener('cancel', this._closeListener);
     };
@@ -65,6 +68,8 @@
 
     FormWindowMenu.prototype.show = function show(parentWindow) {
         this.form.reset();
+        this.form.acceptButton.enable();
+        this.form.cancelButton.enable();
         Wirecloud.ui.WindowMenu.prototype.show.call(this, parentWindow);
         this.form.repaint();
     };

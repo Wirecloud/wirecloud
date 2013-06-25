@@ -25,7 +25,7 @@
 
     "use strict";
 
-    var WirecloudCatalogue, _onSearchSuccess, _onSearchError, deleteSuccessCallback, deleteErrorCallback, check_upload_iframe_result;
+    var WirecloudCatalogue, _onSearchSuccess, _onSearchError, deleteSuccessCallback, deleteErrorCallback;
 
     _onSearchSuccess = function _onSearchSuccess(transport) {
         var preferred_versions, i, data, key, raw_data, resources, resource;
@@ -76,37 +76,6 @@
         logManager.log(msg);
 
         this.onError(msg);
-    };
-
-    check_upload_iframe_result = function check_upload_iframe_result() {
-        var doc, logManager, msg;
-
-        if (this.iframe.contentDocument) {
-            doc = this.iframe.contentDocument;
-        } else if (this.iframe.contentWindow) {
-            doc = this.iframe.contentWindow.document;
-        } else {
-            doc = window.frames[this.iframe.id].document;
-        }
-
-        if (doc.location.href === 'about:blank') {
-            return;
-        }
-
-        if (doc.location.href.search("error") >= 0) {
-            logManager = LogManagerFactory.getInstance();
-            msg = gettext("The resource could not be added to the catalogue: %(errorMsg)s.");
-            msg = interpolate(msg, {errorMsg: doc.body.textContent}, true);
-            logManager.log(msg);
-
-            if (typeof this.onFailure === 'function') {
-                this.onFailure(msg);
-            }
-        } else if (typeof this.onSuccess === 'function') {
-            if (typeof this.onSuccess === 'function') {
-                this.onSuccess();
-            }
-        }
     };
 
     /*************************************************************************/
@@ -173,6 +142,59 @@
         return true;
     };
 
+    WirecloudCatalogue.prototype.addPackagedResource = function addPackagedResource(data, options) {
+        var url, requestHeaders;
+
+        if (typeof options != 'object') {
+            options = {};
+        }
+
+        if (this.name === 'local') {
+            url = Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION;
+        } else {
+            url = this.RESOURCE_COLLECTION;
+
+
+            if (this.accesstoken != null) {
+                requestHeaders = {
+                    'Authorization': 'Bearer ' + self.accesstoken
+                };
+            }
+        }
+
+        Wirecloud.io.makeRequest(url, {
+            method: 'POST',
+            requestHeaders: requestHeaders,
+            postBody: data,
+            onSuccess: function (transport) {
+                var response_data = JSON.parse(transport.responseText);
+
+                if (typeof options.onSuccess === 'function') {
+                    try {
+                        options.onSuccess(response_data);
+                    } catch (e) {}
+                }
+            }.bind(this),
+            onFailure: function (transport) {
+                var msg = LogManagerFactory.getInstance().formatError(gettext("Error adding packaged resource: %(errorMsg)s."), transport);
+                LogManagerFactory.getInstance().log(msg);
+
+                if (typeof options.onFailure === 'function') {
+                    try {
+                        options.onFailure(msg);
+                    } catch (e) {}
+                }
+            },
+            onComplete: function () {
+                if (typeof options.onComplete === 'function') {
+                    try {
+                        options.onComplete();
+                    } catch (e) {}
+                }
+            }
+        });
+    };
+
     WirecloudCatalogue.prototype.addResourceFromURL = function addResourceFromURL(url, options) {
         if (typeof options != 'object') {
             options = {};
@@ -225,26 +247,6 @@
             onFailure: deleteErrorCallback.bind(context),
             onException: deleteErrorCallback.bind(context)
         });
-    };
-
-    WirecloudCatalogue.prototype.buildUploadIframe = function buildUploadIframe(iframe_id, onSuccess, onFailure) {
-        var context, iframe;
-
-        iframe = document.createElement('iframe');
-        iframe.frameborder = 0;
-        iframe.style.cssText = 'display:none;';
-        iframe.id = iframe.name = iframe_id;
-
-        context = {
-            catalogue: this,
-            iframe: iframe,
-            onSuccess: onSuccess,
-            onFailure: onFailure
-        };
-
-        iframe.onload = check_upload_iframe_result.bind(context);
-
-        return iframe;
     };
 
     Wirecloud.WirecloudCatalogue = WirecloudCatalogue;

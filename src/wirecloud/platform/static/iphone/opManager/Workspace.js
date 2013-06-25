@@ -163,10 +163,6 @@ function Workspace(workspaceState) {
         return this.workspaceState.id;
     };
 
-    Workspace.prototype.getWiring = function () {
-        return this.wiring;
-    };
-
     Workspace.prototype.getVarManager = function () {
         return this.varManager;
     };
