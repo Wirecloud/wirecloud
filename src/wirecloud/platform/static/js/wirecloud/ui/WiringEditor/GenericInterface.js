@@ -871,6 +871,7 @@
         this.wrapperElement.style.left = (this.initialPos.left - this.wiringEditor.menubarWidth) + (this.initialPos.width / 2) - 32 + 'px';
 
         this.isMinimized = true;
+        this.repaint();
     };
 
     /**
@@ -892,6 +893,7 @@
         this.wrapperElement.classList.remove('reducedInt');
 
         this.isMinimized = false;
+        this.repaint();
     };
 
     /**
