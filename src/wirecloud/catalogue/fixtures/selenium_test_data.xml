@@ -80,7 +80,7 @@
     </object>
     <object pk="17" model="catalogue.catalogueresource">
         <field type="CharField" name="short_name">test-mashup-dependencies</field>
-        <field type="CharField" name="display_name">Test Mashup</field>
+        <field type="CharField" name="display_name">TestMashupDependencies</field>
         <field type="CharField" name="vendor">Wirecloud</field>
         <field type="CharField" name="version">1.0</field>
         <field type="IntegerField" name="type">1</field>
