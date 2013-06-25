@@ -580,7 +580,7 @@ if (!Wirecloud.ui) {
         // Minimize all operators
         for (key in this.currentlyInUseOperators) {
             if (!this.currentlyInUseOperators[key].isMinimized) {
-                this.currentlyInUseOperators[key].minimize();
+                this.currentlyInUseOperators[key].minimize(true);
             }
         }
 
