@@ -614,10 +614,6 @@ IWidget.prototype.upgradeIWidget = function () {
     });
 };
 
-IWidget.prototype.registerPrefCallback = function registerPrefCallback(prefCallback) {
-    this.internal_iwidget.prefCallback = prefCallback;
-};
-
 /**
  * This method must be called to avoid memory leaks caused by circular references.
  */
