@@ -130,7 +130,7 @@
     };
 
     WindowMenu.prototype.setTitle = function setTitle(title) {
-        this.titleElement.setTextContent(title);
+        this.titleElement.textContent = title;
     };
 
     /**

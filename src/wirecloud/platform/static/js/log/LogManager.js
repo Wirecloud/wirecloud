@@ -59,7 +59,7 @@ LogManager.prototype._printEntry = function(entry) {
     }
 
     dateElement = document.createElement('b');
-    dateElement.setTextContent(entry.date.strftime('%x %X'));//_('short_date')));
+    dateElement.textContent = entry.date.strftime('%x %X');//_('short_date')));
     wrapper.appendChild(dateElement);
 
     logentry = document.createElement("p");
@@ -334,8 +334,8 @@ var LogManagerFactory = function () {
         }
         this.logConsole.innerHTML = '';
 
-        this.title.setTextContent(logManager.buildTitle());
-        this.sectionIdentifier.setTextContent(logManager.buildSubTitle());
+        this.title.textContent = logManager.buildTitle();
+        this.sectionIdentifier.textContent = logManager.buildSubTitle();
 
         this.logConsole.appendChild(logManager.wrapperElement);
         LayoutManagerFactory.getInstance().showLogs();

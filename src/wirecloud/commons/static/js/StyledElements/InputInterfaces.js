@@ -1075,7 +1075,7 @@ ParametrizedTextInputInterface.prototype._updateDescription = function _updateDe
 
     fields = this.parameters[this.mainSelect.selectedIndex].fields;
     field = fields[this.secondSelect.selectedIndex];
-    this.descriptionDiv.setTextContent(field.description);
+    this.descriptionDiv.textContent = field.description;
 };
 
 ParametrizedTextInputInterface.prototype._setError = function _setError() {

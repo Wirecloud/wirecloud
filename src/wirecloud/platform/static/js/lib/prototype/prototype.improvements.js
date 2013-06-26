@@ -47,32 +47,6 @@ Object.extend(Event, {
 	}
 });
 
-if ('textContent' in document.documentElement) {
-	/**
-	 * Changes the inner content of an Element treating it as pure text. If
-	 * the provided text contains HTML special characters they will be encoded.
-	 */
-	Element.prototype.setTextContent = function(text) {
-		this.textContent = text;
-	}
-
-	/**
-	 * Return the inner content of an Element treating it as pure text. All
-	 * encoded characters will be decoded.
-	 */
-	Element.prototype.getTextContent = function() {
-		return this.textContent;
-	}
-} else if ('innerText' in document.documentElement) {
-	Element.Methods.setTextContent = function(element, text) {
-		element.innerText = text;
-	}
-
-	Element.Methods.getTextContent = function(element) {
-		return element.innerText;
-	}
-}
-
 if (Prototype.BrowserFeatures.ElementExtensions) {
 	var isElement = function(el) {
 		return el instanceof Element;
