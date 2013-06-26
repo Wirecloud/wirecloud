@@ -777,12 +777,10 @@ function ParametrizableValueInputInterface(fieldId, options) {
     this.wrapperElement.className = "parametrizable_input";
 
     this.readOnlyIcon = document.createElement('div');
-    Element.extend(this.readOnlyIcon);
     this.readOnlyIcon.addClassName('readOnlyIcon');
     this.wrapperElement.appendChild(this.readOnlyIcon);
 
     this.visibilityIcon = document.createElement('div');
-    Element.extend(this.visibilityIcon);
     this.visibilityIcon.addClassName('visibilityIcon');
     this.wrapperElement.appendChild(this.visibilityIcon);
     if (!this.canBeHidden) {

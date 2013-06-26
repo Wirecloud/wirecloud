@@ -1,4 +1,4 @@
-/*global $, EzWebExt, gettext, StyledElements, Element, ValidationErrorManager */
+/*global $, EzWebExt, gettext, StyledElements, ValidationErrorManager */
 
 (function () {
 
@@ -275,7 +275,6 @@
 
         if (field.type === 'label') {
             labelRow = row.insertCell(-1);
-            Element.extend(labelRow);
             labelRow.setAttribute('colspan', '2');
             labelRow.addClassName('label-row');
             if (field.url) {

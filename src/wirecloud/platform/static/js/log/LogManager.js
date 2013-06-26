@@ -59,7 +59,6 @@ LogManager.prototype._printEntry = function(entry) {
     }
 
     dateElement = document.createElement('b');
-    Element.extend(dateElement);
     dateElement.setTextContent(entry.date.strftime('%x %X'));//_('short_date')));
     wrapper.appendChild(dateElement);
 
@@ -68,7 +67,6 @@ LogManager.prototype._printEntry = function(entry) {
     wrapper.appendChild(logentry);
 
     clearer = document.createElement('div');
-    Element.extend(clearer);
     clearer.addClassName('floatclearer');
     wrapper.appendChild(clearer);
 
@@ -238,7 +236,6 @@ IWidgetLogManager.prototype.buildExtraInfo = function () {
     var extraInfo = document.createElement('div'),
         extraInfoIcon = document.createElement('div'),
         extraInfoText = document.createElement('span');
-    Element.extend(extraInfo);
     extraInfo.className += " iwidget_info_container";
     extraInfo.appendChild(extraInfoIcon);
     extraInfo.appendChild(extraInfoText);

@@ -20,7 +20,7 @@
  */
 
 /*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global alert, Constants, Element, document, gettext, interpolate, LayoutManagerFactory, Template */
+/*global alert, Constants, document, gettext, interpolate, LayoutManagerFactory, Template */
 "use strict";
 
 var PartsPainter = function(part_structure_element, dom_element){
@@ -42,7 +42,6 @@ var PartsPainter = function(part_structure_element, dom_element){
                 "uri":parts_element.uri
             };
             resource_element = document.createElement('div');
-            Element.extend(resource_element);
             resource_element.className="part_resource";
             resource_element.update(this.part_template.evaluate(resource_html));
             this.dom_element.appendChild(resource_element)
@@ -70,7 +69,6 @@ var LegalPainter = function(legal_structure_element, dom_element){
                     "description":legal_element.description
                 };
                 resource_element = document.createElement('div');
-                Element.extend(resource_element);
                 resource_element.className="legal_resource";
                 resource_element.update(this.legal_template.evaluate(resource_html));
                 clause_painter = new ClausePainter(Wirecloud.currentTheme.templates['legal_clause_template'], resource_element.getElementsByClassName('clause_list')[0]);
@@ -80,7 +78,6 @@ var LegalPainter = function(legal_structure_element, dom_element){
            }
         } else {
             resource_element = document.createElement('div'); 
-            Element.extend(resource_element);
             resource_element.className="legal_resource";
             resource_element.innerHTML ='<div><h3>Legal Conditions</h3><div class="tab_info">No legal conditions has been defined</div></div>'
             this.dom_element.appendChild(resource_element);
@@ -107,7 +104,6 @@ var ClausePainter = function(clause_structure_element, dom_element){
                 "text":clause_element.text
             }
             resource_element = document.createElement('div');
-            Element.extend(resource_element);
             resource_element.className="clause_resource";
             resource_element.update(this.clause_template.evaluate(resource_html));
 
@@ -138,7 +134,6 @@ var SlaPainter = function(sla_structure_element, dom_element){
                     "obligated":sla_element.obligatedParty
                 };
                 resource_element = document.createElement('div');
-                Element.extend(resource_element);
                 resource_element.className="sla_resource";
                 resource_element.update(this.sla_template.evaluate(resource_html));
                 expresion_painter = new ExpresionPainter(Wirecloud.currentTheme.templates['sla_expresion_template'], resource_element.getElementsByClassName('expresions_list')[0]);
@@ -148,7 +143,6 @@ var SlaPainter = function(sla_structure_element, dom_element){
             }
         } else {
             resource_element = document.createElement('div'); 
-            Element.extend(resource_element);
             resource_element.className="sla_resource";
             resource_element.innerHTML ='<div><h3>Service level agreement</h3><div class="tab_info">No service level agreement has been defined</div></div>'
             this.dom_element.appendChild(resource_element);
@@ -176,7 +170,6 @@ var ExpresionPainter = function(expresion_structure_element, dom_element){
                 "description":slaExpresion_element.description
             };
             resource_element = document.createElement('div');
-            Element.extend(resource_element);
             resource_element.className="slaExpresion_resource";
             resource_element.update(this.expresion_template.evaluate(resource_html));
             variable_painter = new VariablePainter(Wirecloud.currentTheme.templates['sla_variable_template'], resource_element.getElementsByClassName('variable_list')[0]);
@@ -218,7 +211,6 @@ var VariablePainter = function(variable_structure_element, dom_element){
 	        "unit":variable_element.unit,
             }
             resource_element = document.createElement('div');
-            Element.extend(resource_element);
             resource_element.className="slaVariable_resource";
             resource_element.update(this.variable_template.evaluate(resource_html));
 
@@ -248,7 +240,6 @@ var PricingPainter = function(pricing_structure_element, dom_element){
                 "description": pricing_element.description
 	    }
             resource_element = document.createElement('div');
-            Element.extend(resource_element);
             resource_element.className="pricing_resource";
             resource_element.update(this.pricing_template.evaluate(resource_html));
 
@@ -266,7 +257,6 @@ var PricingPainter = function(pricing_structure_element, dom_element){
 	    }
         }else{
             resource_element = document.createElement('div'); 
-            Element.extend(resource_element);
             resource_element.className="pricing_resource";
             resource_element.innerHTML ='<div><h3>Price plan</h3><div class="tab_info">No price plan has been defined, the widget is for free</div></div>'
             this.dom_element.appendChild(resource_element);
@@ -295,7 +285,6 @@ var PriceElementPainter = function(price_structure_element, dom_element){
                 "unit":price_element.unit,
             }
             resource_element = document.createElement('div');
-            Element.extend(resource_element);
             resource_element.className="price_element_resource";
             resource_element.update(this.price_template.evaluate(resource_html));
 

@@ -20,7 +20,7 @@
  */
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
-/*global $, CSSPrimitiveValue, Element, Event, Insertion, document, gettext, ngettext, interpolate, window */
+/*global $, CSSPrimitiveValue, Event, Insertion, document, gettext, ngettext, interpolate, window */
 /*global Constants, DropDownMenu, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud*/
 /*global isElement, IWidgetLogManager, WidgetVersion, DragboardPosition*/
 /*global IWidgetDraggable, IWidgetIconDraggable, FreeLayout, FullDragboardLayout*/
@@ -326,11 +326,9 @@ IWidget.prototype.build = function () {
 
     // Icon Element
     this.iconElement = document.createElement("div");
-    Element.extend(this.iconElement);
     this.iconElement.addClassName("floating_widget_icon");
 
     this.iconImg = document.createElement("img");
-    Element.extend(this.iconImg);
     this.iconImg.addClassName("floating_widget_img");
     this.iconImg.setAttribute("src", this.internal_iwidget.widget.getIcon());
     this.iconElement.appendChild(this.iconImg);
@@ -341,7 +339,6 @@ IWidget.prototype.build = function () {
     };
 
     this.iwidgetIconNameHTMLElement = document.createElement("a");
-    Element.extend(this.iwidgetIconNameHTMLElement);
     this.iwidgetIconNameHTMLElement.update(this.name);
     this.iwidgetIconNameHTMLElement.addClassName("floating_widget_title");
     this.iconElement.appendChild(this.iwidgetIconNameHTMLElement);

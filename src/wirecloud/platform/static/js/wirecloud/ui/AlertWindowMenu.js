@@ -1,4 +1,4 @@
-/*global gettext, Element, isElement, StyledElements, Wirecloud*/
+/*global gettext, isElement, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -12,12 +12,10 @@
 
         // Warning icon
         this.iconElement = document.createElement('div');
-        Element.extend(this.iconElement);
         this.iconElement.className = "window-icon icon-size icon-warning";
         this.windowContent.insertBefore(this.iconElement, this.windowContent.childNodes[0]);
 
         this.msgElement = document.createElement('div');
-        Element.extend(this.msgElement);
         this.msgElement.className = "msg";
         this.windowContent.appendChild(this.msgElement);
 
