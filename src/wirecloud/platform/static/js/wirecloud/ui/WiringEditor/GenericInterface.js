@@ -1311,6 +1311,7 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
      * Change to minimized view for operators
      */
     GenericInterface.prototype.minimize = function minimize(omitEffects) {
+        var position;
 
         if (!omitEffects) {
             this.resizeTransitStart();
@@ -1325,6 +1326,16 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
         this.wrapperElement.style.top = (this.initialPos.top - this.wiringEditor.headerHeight) + ((this.initialPos.height - 8) / 2) - 12 + 'px';
         this.wrapperElement.style.left = (this.initialPos.left - this.wiringEditor.menubarWidth) + (this.initialPos.width / 2) - 32 + 'px';
 
+        // correct it pos if is out of grid
+        position = this.getStylePosition();
+        if (position.posX < 0) {
+            position.posX = 8;
+        }
+        if (position.posY < 0) {
+            position.posY = 8;
+        }
+        this.setPosition(position);
+
         this.isMinimized = true;
         this.repaint();
     };
@@ -1333,7 +1344,7 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
      * Change to normal view for operators
      */
     GenericInterface.prototype.restore = function restore(omitEffects) {
-        var currentPos;
+        var currentPos, position;
 
         if (!omitEffects) {
             this.resizeTransitStart();
@@ -1342,6 +1353,16 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
         currentPos = this.wrapperElement.getBoundingClientRect();
         this.wrapperElement.style.top = (currentPos.top - this.wiringEditor.headerHeight) - ((this.initialPos.height + 8) / 2) + 'px';
         this.wrapperElement.style.left = (currentPos.left - this.wiringEditor.menubarWidth) - (this.initialPos.width / 2) + 32 + 'px';
+
+        // correct it position if is out of grid
+        position = this.getStylePosition();
+        if (position.posX < 0) {
+            position.posX = 8;
+        }
+        if (position.posY < 0) {
+            position.posY = 8;
+        }
+        this.setPosition(position);
 
         this.wrapperElement.style.minWidth = this.minWidth;
 
