@@ -42,7 +42,6 @@
         item.setDisabled(this.geinterface.sourceAnchors.length <= 1 && this.geinterface.targetAnchors.length <= 1);
         items.push(item);
 
-
         item = new StyledElements.MenuItem(gettext('Settings'), function () {
             var window_menu;
             if (this.ioperator) {
@@ -53,19 +52,10 @@
                 window_menu.show(this.iwidget);
             }
         }.bind(this.geinterface));
-        if ('ioperator' in this.geinterface) {
-            item.setDisabled(this.geinterface.ioperator.meta.preferenceList.length == 0);
-        } else {
-            item.setDisabled(this.geinterface.iwidget.widget.getTemplate().getUserPrefs().length == 0);
-        }
         items.push(item);
 
         if (this.geinterface.ioperator) {
-            if (this.geinterface.isMinimized) {
-                label = 'Maximize';
-            } else {
-                label = 'Minimize';
-            }
+            label = 'Minimize';
             items.push(new StyledElements.MenuItem(gettext(label), function () {
                 var interval;
 
@@ -76,11 +66,7 @@
                 }
             }.bind(this.geinterface)));
         }
-        if (this.geinterface.numberOfSources > 1 || this.geinterface.numberOfTargets > 1) {
-            items.push(new StyledElements.MenuItem(gettext('Reorder endpoints'), function () {
-                    this.wiringEditor.ChangeObjectEditing(this);
-            }.bind(this.geinterface)));
-        }
+
         return items;
     };
 
