@@ -94,8 +94,10 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
             readOnly: readOnly
         }
     );
-    Object.defineProperty(this, 'id', {get: function () {return this.internal_iwidget.id;}});
-    Object.defineProperty(this, 'widget', {get: function () {return this.internal_iwidget.widget;}});
+    Object.defineProperties(this, {
+        'id': {get: function () {return this.internal_iwidget.id;}},
+        'widget': {get: function () {return this.internal_iwidget.widget;}}
+    });
     if (this.id) {
         this.codeURL = this.internal_iwidget.widget.code_url + "#id=" + this.id;
     }
@@ -251,15 +253,6 @@ IWidget.prototype.getContentWidth = function () {
  */
 IWidget.prototype.getContentHeight = function () {
     return this.contentHeight;
-};
-
-/**
- * Returns the Tab where this iWidget is displayed.
- *
- * @returns {Tab} associated tab
- */
-IWidget.prototype.getTab = function () {
-    return this.internal_iwidget.tab;
 };
 
 /**
@@ -449,7 +442,7 @@ IWidget.prototype.paint = function (onInit) {
 };
 
 IWidget.prototype.load = function () {
-    this.getTab().paint();
+    this.layout.dragboard.tab.paint();
 };
 
 IWidget.prototype.isPainted = function () {

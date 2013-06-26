@@ -58,7 +58,7 @@ function Dragboard(tab, workspace, dragboardElement) {
         iWidget = this.getIWidget(iWidgetId);
 
         opManager.alternatives.showAlternative(opManager.iwidgetViewAlternative);
-        opManager.globalDragboard.show(iWidget.getTab());
+        opManager.globalDragboard.show(iWidget.alternative);
         opManager.visibleLayer = "dragboard";
         updateLayout();
     };
