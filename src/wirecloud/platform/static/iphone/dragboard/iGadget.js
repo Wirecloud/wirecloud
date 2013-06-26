@@ -146,16 +146,16 @@ IWidget.prototype.notifyEvent = function () {
  * This method must be called to avoid memory leaks caused by circular references.
  */
 IWidget.prototype.destroy = function () {
-    if (this.internal_iwidget != null) {
-        this.internal_iwidget.destroy();
-        this.internal_iwidget = null;
-    }
-
     if (this.element) {
         this.element.remove();
         this.element = null;
         this.content = null;
         this._notifyLoaded = null;
         this._notifyUnloaded = null;
+    }
+
+    if (this.internal_iwidget != null) {
+        this.internal_iwidget.destroy();
+        this.internal_iwidget = null;
     }
 };
