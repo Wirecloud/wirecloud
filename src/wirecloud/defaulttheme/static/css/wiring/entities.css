@@ -398,6 +398,13 @@
     white-space: nowrap;
 }
 
+.wiring_editor .border_layout .source_clon .labelDiv .anchor {
+    visibility: hidden;
+}
+
+.wiring_editor .border_layout .target_clon .labelDiv .anchor {
+    visibility: hidden;
+}
 
 /* clone mini widget for Drag&Drop from menubar to grid */
 .wiring_editor .border_layout .ioperator.clon, .wiring_editor .border_layout .iwidget.clon {
