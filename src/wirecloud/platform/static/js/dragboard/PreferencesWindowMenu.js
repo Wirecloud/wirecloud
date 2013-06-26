@@ -79,7 +79,7 @@ Wirecloud.Widget = {};
         var i, prefs, pref, fields;
 
         fields = {};
-        prefs = iwidget.getWidget().getTemplate().getUserPrefs();
+        prefs = iwidget.widget.getTemplate().getUserPrefs();
 
         for (i = 0; i < prefs.length; i++) {
             pref = prefs[i];

@@ -141,15 +141,6 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
 }
 IWidget.prototype = new StyledElements.ObjectWithEvents();
 
-/**
- * Returns the associated Widget.
- *
- * @returns {Widget} the associated Widget.
- */
-IWidget.prototype.getWidget = function () {
-    return this.internal_iwidget.widget;
-};
-
 IWidget.prototype.invalidIconPosition = function () {
     return this.iconPosition.x === -1 && this.iconPosition.y === -1;
 };

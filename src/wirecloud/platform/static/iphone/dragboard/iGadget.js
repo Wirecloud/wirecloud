@@ -66,13 +66,6 @@ function IWidget(widget, iWidgetId, iWidgetCode, iWidgetName, dragboard, alterna
 IWidget.prototype = new StyledElements.ObjectWithEvents();
 
 /**
-* Returns the associated Widget class.
-*/
-IWidget.prototype.getWidget = function () {
-    return this.widget;
-};
-
-/**
 * Return the Tab of the IWidget
 */
 IWidget.prototype.getTab = function () {
