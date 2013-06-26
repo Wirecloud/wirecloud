@@ -9,7 +9,7 @@
     onchange = function onchange(event) {
         if (this.enabled) {
             var optionList = event.target;
-            EzWebExt.setTextContent(this.textDiv, optionList[optionList.selectedIndex].text);
+            this.textDiv.textContent = optionList[optionList.selectedIndex].text;
             this.events.change.dispatch(this);
         }
     };
@@ -97,7 +97,7 @@
         // initialize the textDiv with the initial selection
         var selectedIndex = this.inputElement.options.selectedIndex;
         if (selectedIndex !== -1) {
-            EzWebExt.setTextContent(this.textDiv, this.inputElement.options[selectedIndex].text);
+            this.textDiv.textContent = this.inputElement.options[selectedIndex].text;
         }
     };
     StyledSelect.prototype = new StyledElements.StyledInputElement();
@@ -127,13 +127,13 @@
                 newValue = this.inputElement.options[0].value;
             } else {
                 StyledElements.StyledInputElement.prototype.setValue.call(this, '');
-                EzWebExt.setTextContent(this.textDiv, '');
+                this.textDiv.textContent = '';
                 return;
             }
         }
 
         StyledElements.StyledInputElement.prototype.setValue.call(this, newValue);
-        EzWebExt.setTextContent(this.textDiv, this.optionsByValue[newValue]);
+        this.textDiv.textContent = this.optionsByValue[newValue];
     };
 
     /**
@@ -179,16 +179,16 @@
         // initialize the textDiv with the initial selection
         var selectedIndex = this.inputElement.options.selectedIndex;
         if (oldSelectedIndex !== selectedIndex) {
-            EzWebExt.setTextContent(this.textDiv, this.inputElement.options[selectedIndex].text);
+            this.textDiv.textContent = this.inputElement.options[selectedIndex].text;
         }
     };
 
     StyledSelect.prototype.clear = function clear() {
         // Clear textDiv
-        EzWebExt.setTextContent(this.textDiv, "");
+        this.textDiv.textContent = "";
 
         // Clear select element options
-        EzWebExt.setTextContent(this.inputElement, "");
+        this.inputElement.textContent = "";
 
         this.optionsByValue = {};
         this.optionsValues = {};

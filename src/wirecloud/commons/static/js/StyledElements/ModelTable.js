@@ -35,7 +35,7 @@
             cell = document.createElement('div');
             cell.className = 'cell';
             cell.style.width = column.width;
-            EzWebExt.setTextContent(cell, column.label);
+            cell.textContent = column.label;
             if (column.sortable !== false) {
                 EzWebExt.addClassName(cell, 'sortable');
                 cell.setAttribute('title', 'Ordenar por ' + column.label);
@@ -117,9 +117,9 @@
                 }
 
                 if (typeof cellContent === 'string') {
-                    EzWebExt.setTextContent(cell, cellContent);
+                    cell.textContent = cellContent;
                 } else if (typeof cellContent === 'number' || typeof cellContent === 'boolean') {
-                    EzWebExt.setTextContent(cell, "" + cellContent);
+                    cell.textContent = "" + cellContent;
                 } else if (cellContent instanceof StyledElements.StyledElement) {
                     cellContent.insertInto(cell);
                     this.pComponents.push(cellContent);
@@ -383,7 +383,7 @@
         fullVersion = formatedDate.strftime('%c');
 
         element = document.createElement('span');
-        EzWebExt.setTextContent(element, shortVersion);
+        element.textContent = shortVersion;
         element.setAttribute('title', fullVersion);
 
         return element;

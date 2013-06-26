@@ -41,12 +41,12 @@ StyledElements.NavigationHeader = function (options) {
     }.bind(this));
     buttonSpan = document.createElement('span');
     buttonSpan.className = 'menu_text';
-    EzWebExt.setTextContent(buttonSpan, options.backButton);
+    buttonSpan.textContent = options.backButton;
     this.backButton.appendChild(buttonSpan);
     this.wrapperElement.appendChild(this.backButton);
 
     this.titleElement = document.createElement('h1');
-    EzWebExt.setTextContent(this.titleElement, options.title);
+    this.titleElement.textContent = options.title;
     this.wrapperElement.appendChild(this.titleElement);
 
     if (options.extraButton) {
@@ -56,5 +56,5 @@ StyledElements.NavigationHeader = function (options) {
 StyledElements.NavigationHeader.prototype = new StyledElements.StyledElement();
 
 StyledElements.NavigationHeader.prototype.setTitle = function (title) {
-    EzWebExt.setTextContent(this.titleElement, title);
+    this.titleElement.textContent = title;
 };

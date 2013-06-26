@@ -130,7 +130,7 @@
         if (msgs.length > 0) {
             for (i = 0; i < msgs.length; i += 1) {
                 wrapper = document.createElement('p');
-                EzWebExt.setTextContent(wrapper, msgs[i]);
+                wrapper.textContent = msgs[i];
                 this.msgElement.appendChild(wrapper);
             }
             this.msgElement.style.display = '';
@@ -294,7 +294,7 @@
         EzWebExt.addClassName(labelCell, 'label-cell');
 
         label = document.createElement('label');
-        EzWebExt.setTextContent(label, field.label);
+        label.textContent = field.label;
         labelCell.appendChild(label);
         if (field.description != null) {
             label.setAttribute('title', field.description);

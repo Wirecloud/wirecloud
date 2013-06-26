@@ -1041,7 +1041,7 @@ StyledElements.Tab.prototype.close = function() {
  */
 StyledElements.Tab.prototype.rename = function(newName) {
     this.nameText = newName;
-    EzWebExt.setTextContent(this.name, this.nameText);
+    this.name.textContent = this.nameText;
 
     this._updateTitle();
 }
