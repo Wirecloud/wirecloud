@@ -182,7 +182,7 @@ StyledElements.StyledElement.prototype.hasClassName = function(className) {
  *
  */
 StyledElements.StyledElement.prototype.addClassName = function(className) {
-    EzWebExt.addClassName(this.wrapperElement, className);
+    this.wrapperElement.classList.add(className);
 }
 
 /**
@@ -372,7 +372,7 @@ StyledElements.Container.prototype.setDisabled = function(disabled) {
 
     if (disabled) {
         this.disabledLayer = document.createElement('div');
-        EzWebExt.addClassName(this.disabledLayer, 'disable-layer');
+        this.disabledLayer.classList.add('disable-layer');
         this.wrapperElement.appendChild(this.disabledLayer);
         this.wrapperElement.addClassName('disabled');
         this.disabledLayer.style.height = this.wrapperElement.scrollHeight + 'px';

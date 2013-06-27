@@ -37,7 +37,7 @@
             cell.style.width = column.width;
             cell.textContent = column.label;
             if (column.sortable !== false) {
-                EzWebExt.addClassName(cell, 'sortable');
+                cell.classList.add('sortable');
                 cell.setAttribute('title', 'Ordenar por ' + column.label);
                 cell.callback = this.pSortByColumnCallback.bind({widget: this, column: i});
                 cell.addEventListener('click', cell.callback, true);
@@ -94,7 +94,7 @@
                     cell.style.width = column.width;
                 }
                 if (typeof column['class'] === 'string') {
-                    EzWebExt.addClassName(cell, column['class']);
+                    cell.classList.add(column['class']);
                 }
 
                 if (column.contentBuilder) {
@@ -308,10 +308,10 @@
             sortHeaderCell = this.pHeaderCells[this.sortColumn];
             if (this.sortInverseOrder) {
                 EzWebExt.removeClassName(sortHeaderCell, 'ascending');
-                EzWebExt.addClassName(sortHeaderCell, 'descending');
+                sortHeaderCell.classList.add('descending');
             } else {
                 EzWebExt.removeClassName(sortHeaderCell, 'descending');
-                EzWebExt.addClassName(sortHeaderCell, 'ascending');
+                sortHeaderCell.classList.add('ascending');
             }
 
             column = this.columns[this.sortColumn];

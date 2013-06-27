@@ -53,7 +53,7 @@
     };
 
     onfocus = function onfocus() {
-        EzWebExt.addClassName(this.wrapperElement, 'focus');
+        this.wrapperElement.classList.add('focus');
         this.events.focus.dispatch(this);
     };
 

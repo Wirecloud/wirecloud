@@ -342,10 +342,6 @@ EzWebExt.hasClassName = function(element, className) {
  * @deprecated
  * Use EzWebExt.appendClassName/EzWebExt.prependClassName
  */
-EzWebExt.addClassName = function(element, className) {
-    element.className = EzWebExt.appendWord(element.className, className);
-}
-
 EzWebExt.appendClassName = function(element, className) {
     element.className = EzWebExt.appendWord(element.className, className);
 }
@@ -362,7 +358,7 @@ EzWebExt.toggleClassName = function(element, className) {
     if (EzWebExt.hasClassName(element, className))
         EzWebExt.removeClassName(element, className);
     else
-        EzWebExt.addClassName(element, className);
+        element.classList.add(className);
 }
 
 /**

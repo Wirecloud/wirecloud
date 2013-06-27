@@ -11,7 +11,7 @@
         StyledElements.StyledElement.call(this, ['click', 'mouseover', 'mouseout']);
 
         this.wrapperElement = document.createElement("div");
-        EzWebExt.addClassName(this.wrapperElement, "menu_item");
+        this.wrapperElement.classList.add("menu_item");
 
         var span = document.createElement("span");
         span.appendChild(document.createTextNode(text));
@@ -23,7 +23,7 @@
         // Internal events
         this._mouseoverEventHandler = function (event) {
             if (this.enabled) {
-                EzWebExt.addClassName(this.wrapperElement, "hovered");
+                this.wrapperElement.classList.add("hovered");
                 this.events.mouseover.dispatch(this);
             }
         }.bind(this);

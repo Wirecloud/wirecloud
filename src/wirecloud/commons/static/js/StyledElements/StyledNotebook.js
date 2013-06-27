@@ -558,7 +558,7 @@
 
         if (disabled) {
             this.disabledLayer = document.createElement('div');
-            EzWebExt.addClassName(this.disabledLayer, 'disable-layer');
+            this.disabledLayer.classList.add('disable-layer');
             this.wrapperElement.appendChild(this.disabledLayer);
         } else {
             EzWebExt.removeFromParent(this.disabledLayer);

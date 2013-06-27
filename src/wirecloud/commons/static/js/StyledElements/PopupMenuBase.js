@@ -152,7 +152,7 @@
             return; // This Popup Menu is already hidden => nothing to do
         }
 
-        EzWebExt.addClassName(this.wrapperElement, 'hidden');
+        this.wrapperElement.classList.add('hidden');
 
         for (i = 0; i < this._submenus.length; i += 1) {
             this._submenus[i].hide();

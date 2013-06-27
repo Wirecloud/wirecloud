@@ -246,7 +246,7 @@ InputInterface.prototype._setValue = function _setValue(newValue) {
  */
 InputInterface.prototype._setError = function _setError(error) {
     if (error) {
-        EzWebExt.addClassName(this.inputElement.wrapperElement, 'error');
+        this.inputElement.wrapperElement.classList.add('error');
     } else {
         EzWebExt.removeClassName(this.inputElement.wrapperElement, 'error');
     }
