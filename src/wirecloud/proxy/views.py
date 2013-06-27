@@ -119,7 +119,7 @@ class Proxy():
                     if hasattr(settings, 'CSRF_COOKIE_NAME') and settings.CSRF_COOKIE_NAME in cookie_parser:
                         del cookie_parser[settings.CSRF_COOKIE_NAME]
 
-                    request_data['cookies'] = cookie_parser
+                    request_data['cookies'].update(cookie_parser)
 
                 elif self.http_headerRE.match(header_name) and not header_name in self.blacklisted_http_headers:
 
