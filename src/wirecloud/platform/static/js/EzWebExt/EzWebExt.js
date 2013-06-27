@@ -338,13 +338,6 @@ EzWebExt.hasClassName = function(element, className) {
     return element.className.match(RegExp("(^\\s*|\\s+)" + className + "(\\s+|\\s*$)", "g")) != null;
 }
 
-EzWebExt.toggleClassName = function(element, className) {
-    if (EzWebExt.hasClassName(element, className))
-        element.classList.remove(className);
-    else
-        element.classList.add(className);
-}
-
 /**
  * Return the inner content of an Element treating it as pure text. All
  * encoded characters will be decoded.
