@@ -80,6 +80,7 @@ class FakeDownloader(object):
 class ProxyTestsBase(TransactionTestCase):
 
     fixtures = ('test_data.json',)
+    tags = ('proxy',)
 
     def setUp(self):
         self.user = User.objects.get(username='test')
