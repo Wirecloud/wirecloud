@@ -979,7 +979,8 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                             "posX": 84,
                             "posY": 256
                         }
-                    }
+                    },
+                        "minimized": False
                 },
                 "connections": []
             }
@@ -1064,7 +1065,8 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                         "widget": {
                             "posX": 84,
                             "posY": 256
-                        }
+                        },
+                        "minimized": False
                     }
                 },
                 "connections": []
