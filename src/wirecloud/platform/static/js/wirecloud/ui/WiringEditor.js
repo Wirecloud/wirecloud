@@ -192,7 +192,7 @@ if (!Wirecloud.ui) {
             operator, operator_interface, operator_instance, connection, connectionView, startAnchor,
             endAnchor, arrow, isMenubarRef, pos, op_id, multiconnectors, multi, multiInstance, key,
             anchor, endpoint_order, operators, k, entitiesIds, currentSource, currentTarget, i,
-            availableOperators, position, extraclass, readOnly;
+            availableOperators, position, extraclass, readOnly, is_minimized;
 
         if (WiringStatus == null) {
             WiringStatus = {};
@@ -321,7 +321,7 @@ if (!Wirecloud.ui) {
                     if ('endPointsInOuts' in WiringStatus.views[i].operators[key]) {
                         endpoint_order = WiringStatus.views[i].operators[key].endPointsInOuts;
                     }
-                    var is_minimized = true;
+                    is_minimized = true;
                     if ('minimized' in WiringStatus.views[i].operators[key]) {
                         is_minimized = WiringStatus.views[i].operators[key].minimized;
                     }
@@ -562,7 +562,8 @@ if (!Wirecloud.ui) {
      */
     WiringEditor.prototype.serialize = function serialize() {
         var pos, i, key, widget, arrow, operator_interface, ioperator,
-        WiringStatus, multiconnector, height, inOutPos, positions, name;
+        WiringStatus, multiconnector, height, inOutPos, positions, name,
+        is_minimized;
 
         // positions
         WiringStatus = {
@@ -589,20 +590,25 @@ if (!Wirecloud.ui) {
             widget = this.iwidgets[key];
             pos = widget.getStylePosition();
             inOutPos = widget.getInOutPositions();
-            positions = {'position' : pos, 'endPointsInOuts' : inOutPos, 'name': widget.iwidget.widget.id};
+            positions = {'position': pos, 'endPointsInOuts': inOutPos, 'name': widget.iwidget.widget.id};
             WiringStatus.views[0].iwidgets[key] = positions;
         }
 
         for (key in this.currentlyInUseOperators) {
-            if (this.currentlyInUseOperators[key].isMinimized) {
+            is_minimized = this.currentlyInUseOperators[key].isMinimized;
+            if (is_minimized) {
                 this.currentlyInUseOperators[key].restore(true);
             }
             operator_interface = this.currentlyInUseOperators[key];
             pos = operator_interface.getStylePosition();
             inOutPos = operator_interface.getInOutPositions();
-            positions = {'position' : pos, 'endPointsInOuts' : inOutPos};
+            positions = {
+                'minimized': is_minimized,
+                'position': pos,
+                'endPointsInOuts': inOutPos
+            };
             ioperator = operator_interface.getIOperator();
-            WiringStatus.operators[key] = {"name" : ioperator.meta.uri, 'id' : key, 'preferences': ioperator.preferences};
+            WiringStatus.operators[key] = {"name": ioperator.meta.uri, 'id': key, 'preferences': ioperator.preferences};
             WiringStatus.views[0].operators[key] = positions;
         }
 
