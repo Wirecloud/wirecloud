@@ -847,7 +847,7 @@ StyledElements.StyledHPaned = function(options) {
         this.wrapperElement.setAttribute("id", options['id']);
 
     if (options['full'])
-        EzWebExt.appendClassName(this.wrapperElement, 'full');
+        this.wrapperElement.classList.add('full');
 
     /*
      * Code for handling internal hpaned events
@@ -1087,13 +1087,13 @@ StyledElements.Tab.prototype.setIcon = function(iconURL) {
 
 StyledElements.Tab.prototype.setVisible = function (newStatus) {
     if (newStatus) {
-        EzWebExt.appendClassName(this.tabElement, "selected");
+        this.tabElement.classList.add("selected");
         EzWebExt.removeClassName(this.wrapperElement, "hidden");
         this.repaint(false);
         this.events['show'].dispatch(this);
     } else {
         EzWebExt.removeClassName(this.tabElement, "selected");
-        EzWebExt.appendClassName(this.wrapperElement, "hidden");
+        this.wrapperElement.classList.add("hidden");
         this.events['hide'].dispatch(this);
     }
 }
@@ -1371,7 +1371,7 @@ StyledElements.Alternative = function(id, options) {
     /* call to the parent constructor */
     StyledElements.Container.call(this, options, ['show', 'hide']);
 
-    EzWebExt.appendClassName(this.wrapperElement, "hidden"); // TODO
+    this.wrapperElement.classList.add("hidden"); // TODO
 }
 StyledElements.Alternative.prototype = new StyledElements.Container({extending: true});
 

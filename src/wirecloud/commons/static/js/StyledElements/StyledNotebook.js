@@ -91,7 +91,7 @@
         }
 
         if (options.full) {
-            EzWebExt.appendClassName(this.wrapperElement, 'full');
+            this.wrapperElement.classList.add('full');
         }
 
         this.focusOnSetVisible = options.focusOnSetVisible;
@@ -233,13 +233,13 @@
         if (this._isTabVisible(0)) {
             EzWebExt.removeClassName(this.moveLeftButton, "enabled");
         } else {
-            EzWebExt.appendClassName(this.moveLeftButton, "enabled");
+            this.moveLeftButton.classList.add("enabled");
         }
 
         if (this._isLastTabVisible()) {
             EzWebExt.removeClassName(this.moveRightButton, "enabled");
         } else {
-            EzWebExt.appendClassName(this.moveRightButton, "enabled");
+            this.moveRightButton.classList.add("enabled");
         }
     };
 

@@ -51,7 +51,7 @@
 
         /* Process options */
         if (options.full) {
-            EzWebExt.appendClassName(this.wrapperElement, "full");
+            this.wrapperElement.classList.add("full");
         }
 
         this.multivalued = options.multivalued;
@@ -185,7 +185,7 @@
         for (i = 0; i < selection.length; i++) {
             entry = selection[i];
             if (this.currentSelection.indexOf(entry) === -1) {
-                EzWebExt.appendClassName(this.entriesByValue[entry].element, "selected");
+                this.entriesByValue[entry].element.classList.add("selected");
                 this.currentSelection.push(entry);
                 addedValues.push(entry);
             }

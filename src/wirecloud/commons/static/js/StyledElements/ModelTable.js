@@ -81,7 +81,7 @@
             row = document.createElement('div');
             row.className = 'row';
             if ((i % 2) === 1) {
-                EzWebExt.appendClassName(row, 'odd');
+                row.classList.add('odd');
             }
 
             for (j = 0; j < this.columns.length; j += 1) {
