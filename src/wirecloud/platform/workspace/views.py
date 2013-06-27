@@ -128,7 +128,7 @@ class WorkspaceCollection(Resource):
             dry_run = request.POST.get('', 'false').lower() == 'true'
 
         if mashup_id == '' and workspace_name == '':
-            return build_error_response(request, 400, _('missing workspace name'))
+            return build_error_response(request, 422, _('missing workspace name'))
 
         if mashup_id == '':
 
@@ -143,7 +143,7 @@ class WorkspaceCollection(Resource):
         else:
             values = mashup_id.split('/', 3)
             if len(values) != 3:
-                return build_error_response(request, 400, _('invalid mashup id'))
+                return build_error_response(request, 422, _('invalid mashup id'))
 
             (mashup_vendor, mashup_name, mashup_version) = values
             try:
