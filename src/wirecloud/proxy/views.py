@@ -110,7 +110,7 @@ class Proxy():
 
                 elif header_name == 'cookie' or header_name == 'http_cookie':
 
-                    cookie_parser = Cookie.SimpleCookie(header[1])
+                    cookie_parser = Cookie.SimpleCookie(str(header[1]))
 
                     # Remove Wirecloud cookies
                     if hasattr(settings, 'SESSION_COOKIE_NAME'):
