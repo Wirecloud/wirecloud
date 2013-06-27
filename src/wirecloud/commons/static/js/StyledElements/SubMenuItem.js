@@ -35,7 +35,7 @@
     SubMenuItem.prototype._setParentPopupMenu = function _setParentPopupMenu(popupMenu) {
         this.parentMenu = popupMenu;
 
-        this.parentMenu.addEventListener('itemOver', EzWebExt.bind(function (popupMenu, item) {
+        this.parentMenu.addEventListener('itemOver', function (popupMenu, item) {
             var position;
 
             if (item === this.menuItem) {
@@ -45,7 +45,7 @@
             } else {
                 this.hide();
             }
-        }, this));
+        }.bind(this));
     };
 
     SubMenuItem.prototype._getMenuItem = function _getMenuItem() {

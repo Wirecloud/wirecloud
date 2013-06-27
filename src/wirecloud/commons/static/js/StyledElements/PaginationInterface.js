@@ -99,7 +99,7 @@
 
         updateButtons.call(this);
 
-        this.pagination.addEventListener('requestEnd', EzWebExt.bind(onPaginationChanged, this));
+        this.pagination.addEventListener('requestEnd', onPaginationChanged.bind(this));
     };
     PaginationInterface.prototype = new StyledElements.StyledElement();
 

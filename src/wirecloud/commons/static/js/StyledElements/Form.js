@@ -76,7 +76,7 @@
         }
 
         // Accept button
-        this.pAcceptHandler = EzWebExt.bind(this.pAcceptHandler, this);
+        this.pAcceptHandler = this.pAcceptHandler.bind(this);
         this.acceptButton = null;
         if (options.acceptButton instanceof StyledElements.StyledButton) {
             this.acceptButton = options.acceptButton;
@@ -93,7 +93,7 @@
         }
 
         // Cancel button
-        this.pCancelHandler = EzWebExt.bind(this.pCancelHandler, this);
+        this.pCancelHandler = this.pCancelHandler.bind(this);
         this.cancelButton = null;
         if (options.cancelButton instanceof StyledElements.StyledButton) {
             this.cancelButton = options.cancelButton;

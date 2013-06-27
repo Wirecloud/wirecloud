@@ -49,7 +49,7 @@
         expander.insertInto(this.wrapperElement);
 
         if (this.exclusive) {
-            expander.addEventListener('expandChange', EzWebExt.bind(function (expander, expanded) {
+            expander.addEventListener('expandChange', function (expander, expanded) {
                 var old_expander;
 
                 if (expanded) {
@@ -65,11 +65,11 @@
                     this.currentContainer = null;
                 }
                 this.repaint();
-            }, this));
+            }.bind(this));
         } else if (this.full) {
-            expander.addEventListener('expandChange', EzWebExt.bind(function (expanded) {
+            expander.addEventListener('expandChange', function (expanded) {
                 this.repaint();
-            }, this));
+            }.bind(this));
         }
 
         this.children.push(expander);

@@ -39,7 +39,7 @@
             if (column.sortable !== false) {
                 EzWebExt.addClassName(cell, 'sortable');
                 cell.setAttribute('title', 'Ordenar por ' + column.label);
-                cell.callback = EzWebExt.bind(this.pSortByColumnCallback, {widget: this, column: i});
+                cell.callback = this.pSortByColumnCallback.bind({widget: this, column: i});
                 cell.addEventListener('click', cell.callback, true);
             }
             this.header.appendChild(cell);
@@ -76,7 +76,7 @@
         for (i = 0; i < items.length; i += 1) {
             item = items[i];
 
-            callback = EzWebExt.bind(this.pRowCallback, {control: this, item: item});
+            callback = this.pRowCallback.bind({control: this, item: item});
 
             row = document.createElement('div');
             row.className = 'row';
@@ -207,7 +207,7 @@
         Object.defineProperty(this, 'pagination', {get: function () { return this.source; }});
         this.paginationInterface = new StyledElements.PaginationInterface(this.source);
 
-        this.pRefreshBody = EzWebExt.bind(this.reload, this);
+        this.pRefreshBody = this.reload.bind(this);
         this.source.addEventListener('requestEnd', this.pRefreshBody);
         this.statusBar.appendChild(this.paginationInterface);
 

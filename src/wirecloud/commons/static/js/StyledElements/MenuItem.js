@@ -21,29 +21,29 @@
         this.context = context;
 
         // Internal events
-        this._mouseoverEventHandler = EzWebExt.bind(function (event) {
+        this._mouseoverEventHandler = function (event) {
             if (this.enabled) {
                 EzWebExt.addClassName(this.wrapperElement, "hovered");
                 this.events.mouseover.dispatch(this);
             }
-        }, this);
+        }.bind(this);
         this.wrapperElement.addEventListener("mouseover", this._mouseoverEventHandler, false);
-        this._mouseoutEventHandler = EzWebExt.bind(function (event) {
+        this._mouseoutEventHandler = function (event) {
             if (this.enabled) {
                 EzWebExt.removeClassName(this.wrapperElement, "hovered");
                 this.events.mouseout.dispatch(this);
             }
-        }, this);
+        }.bind(this);
         this.wrapperElement.addEventListener("mouseout", this._mouseoutEventHandler, false);
 
-        this._clickHandler = EzWebExt.bind(function (event) {
+        this._clickHandler = function (event) {
             event.stopPropagation();
             if (this.enabled) {
                 EzWebExt.removeClassName(this.wrapperElement, "hovered");
                 this.events.mouseout.dispatch(this);
                 this.events.click.dispatch(this);
             }
-        }, this);
+        }.bind(this);
         this.wrapperElement.addEventListener("click", this._clickHandler, true);
     };
     MenuItem.prototype = new StyledElements.StyledElement();

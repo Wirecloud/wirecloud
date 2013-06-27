@@ -64,9 +64,9 @@
         this.contentContainer.insertInto(this.wrapperElement);
 
         // Internal event handlers
-        var callback = EzWebExt.bind(function () {
+        var callback = function () {
             this.setExpanded(!this.isExpanded());
-        }, this);
+        }.bind(this);
 
         if (this.toggleButton) {
             this.toggleButton.addEventListener('click', callback);

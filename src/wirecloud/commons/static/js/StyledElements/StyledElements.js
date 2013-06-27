@@ -539,17 +539,17 @@ StyledElements.StyledNumericField = function(options) {
     this.wrapperElement.addEventListener('click', EzWebExt.stopPropagationListener, true);
 
     topButton.addEventListener("click",
-        EzWebExt.bind(function(event) {
+        function(event) {
             if (this.enabled)
                 inc(this.inputElement, options.inc);
-        }, this),
+        }.bind(this),
         true);
 
     bottomButton.addEventListener("click",
-        EzWebExt.bind(function(event) {
+        function(event) {
             if (this.enabled)
                 inc(this.inputElement, -options.inc);
-        }, this),
+        }.bind(this),
         true);
 
     var div = document.createElement("div");
@@ -586,9 +586,9 @@ StyledElements.ButtonsGroup.prototype.getName = function() {
 StyledElements.ButtonsGroup.prototype.insertButton = function(button) {
     this.buttons[this.buttons.length] = button;
     button.addEventListener('change',
-                            EzWebExt.bind(function () {
+                            function () {
                                 var changeHandlers = this.events['change'].dispatch(this);
-                            }, this));
+                            }.bind(this));
 }
 
 StyledElements.ButtonsGroup.prototype.getValue = function() {
@@ -698,10 +698,10 @@ StyledElements.StyledCheckBox = function StyledCheckBox(options) {
     this.inputElement.addEventListener('mousedown', EzWebExt.stopPropagationListener, true);
     this.inputElement.addEventListener('click', EzWebExt.stopPropagationListener, true);
     this.inputElement.addEventListener('change',
-                                EzWebExt.bind(function () {
+                                function () {
                                     if (this.enabled)
                                         this.events['change'].dispatch(this);
-                                }, this),
+                                }.bind(this),
                                 true);
 }
 
@@ -763,10 +763,10 @@ StyledElements.StyledRadioButton = function(nameGroup_, value, options) {
     this.inputElement.addEventListener('mousedown', EzWebExt.stopPropagationListener, true);
     this.inputElement.addEventListener('click', EzWebExt.stopPropagationListener, true);
     this.inputElement.addEventListener('change',
-                                EzWebExt.bind(function () {
+                                function () {
                                     if (this.enabled)
                                         this.events['change'].dispatch(this);
-                                }, this),
+                                }.bind(this),
                                 true);
 }
 StyledElements.StyledRadioButton.prototype = new StyledElements.StyledInputElement();
@@ -906,7 +906,7 @@ StyledElements.StyledHPaned.prototype.insertInto = function (element, refElement
 
     this.repaint();
     window.addEventListener("resize",
-                            EzWebExt.bind(this.repaint, this),
+                            this.repaint.bind(this),
                             true);
 }
 
@@ -1001,9 +1001,9 @@ StyledElements.Tab = function(id, notebook, options) {
     EzWebExt.prependClassName(this.wrapperElement, "tab hidden"); // TODO
 
     this.tabElement.addEventListener("click",
-                                EzWebExt.bind(function () {
+                                function () {
                                     this.notebook.goToTab(this.tabId);
-                                }, this),
+                                }.bind(this),
                                 false);
 
 
@@ -1018,7 +1018,7 @@ StyledElements.Tab = function(id, notebook, options) {
         closeButton.insertInto(this.tabElement);
 
         closeButton.addEventListener("click",
-                                     EzWebExt.bind(this.close, this),
+                                     this.close.bind(this),
                                      false);
     }
 
@@ -1195,7 +1195,7 @@ StyledElements.StyledAlert = function(title, content, options) {
 
     /* Events code */
     if (this._closeButton !== null) {
-        this._closeCallback = EzWebExt.bind(this.close, this);
+        this._closeCallback = this.close.bind(this);
         this._closeButton.addEventListener("click", this._closeCallback, true);
     }
 }

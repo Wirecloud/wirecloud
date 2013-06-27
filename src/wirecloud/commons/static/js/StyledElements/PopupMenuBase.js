@@ -52,8 +52,8 @@
         this._items = [];
         this._dynamicItems = [];
         this._submenus = [];
-        this._menuItemCallback = EzWebExt.bind(this._menuItemCallback, this);
-        this._menuItemEnterCallback = EzWebExt.bind(this._menuItemEnterCallback, this);
+        this._menuItemCallback = this._menuItemCallback.bind(this);
+        this._menuItemEnterCallback = this._menuItemEnterCallback.bind(this);
     };
     PopupMenuBase.prototype = new StyledElements.ObjectWithEvents();
 

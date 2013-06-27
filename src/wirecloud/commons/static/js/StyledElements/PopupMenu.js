@@ -10,13 +10,13 @@
     var PopupMenu = function PopupMenu(options) {
         StyledElements.PopupMenuBase.call(this, options);
 
-        this._disableCallback = EzWebExt.bind(function (e) {
+        this._disableCallback = function (e) {
             var boundingBox = this.wrapperElement.getBoundingClientRect();
 
             if (e.clientX < boundingBox.left || e.clientX > boundingBox.right || e.clientY < boundingBox.top || e.clientY > boundingBox.bottom) {
                 setTimeout(this.hide.bind(this), 0);
             }
-        }, this);
+        }.bind(this);
     };
     PopupMenu.prototype = new StyledElements.PopupMenuBase({extending: true});
 

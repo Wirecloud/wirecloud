@@ -177,11 +177,11 @@
 
         /* Code for handling internal events */
         this.moveLeftButton.addEventListener("click",
-                                             EzWebExt.bind(this.shiftLeftTabs, this),
+                                             this.shiftLeftTabs.bind(this),
                                              true);
 
         this.moveRightButton.addEventListener("click",
-                                             EzWebExt.bind(this.shiftRightTabs, this),
+                                             this.shiftRightTabs.bind(this),
                                              true);
     };
     StyledNotebook.prototype = new StyledElements.StyledElement();
