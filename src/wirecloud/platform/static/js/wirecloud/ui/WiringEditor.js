@@ -281,10 +281,11 @@ if (!Wirecloud.ui) {
                     iwidget = {
                         'id': key,
                         'display_name': ghostName,
-                        'ghost': true
+                        'ghost': true,
+                        'widget': {
+                            'id': WiringStatus.views[k].iwidgets[key].name
+                        }
                     };
-                    // :S
-                    //iwidget['widget'] = iwidget;
                     widget_interface = this.addIWidget(this, iwidget, WiringStatus.views[k].iwidgets[key].endPointsInOuts);
                     widget_interface.setPosition(WiringStatus.views[k].iwidgets[key].position);
                 }
