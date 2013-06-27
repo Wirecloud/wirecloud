@@ -392,12 +392,12 @@ class USDLTemplateParser(object):
 
                 if type_ == 'widget':
                     element_view['iwidgets'][id_] = {
-                        'widget': pos,
+                        'position': pos,
                         'endPointsInOuts': endPointOut
                     }
                 elif type_ == 'operator':
                     element_view['operators'][id_] = {
-                        'widget': pos,
+                        'position': pos,
                         'endPointsInOuts': endPointOut
                     }
 

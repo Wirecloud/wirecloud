@@ -520,8 +520,8 @@ def build_rdf_template_from_workspace(options, workspace, user):
             position = rdflib.BNode()
             graph.add((position, rdflib.RDF.type, WIRE_M['Position']))
             graph.add((widget_view, WIRE_M['hasPosition'], position))
-            graph.add((position, WIRE_M['x'], rdflib.Literal(str(widget['widget']['posX']))))
-            graph.add((position, WIRE_M['y'], rdflib.Literal(str(widget['widget']['posY']))))
+            graph.add((position, WIRE_M['x'], rdflib.Literal(str(widget['position']['posX']))))
+            graph.add((position, WIRE_M['y'], rdflib.Literal(str(widget['position']['posY']))))
             i = 0
             for sourc in widget['endPointsInOuts']['sources']:
                 source = rdflib.BNode()
@@ -549,8 +549,8 @@ def build_rdf_template_from_workspace(options, workspace, user):
             position = rdflib.BNode()
             graph.add((position, rdflib.RDF.type, WIRE_M['Position']))
             graph.add((operator_view, WIRE_M['hasPosition'], position))
-            graph.add((position, WIRE_M['x'], rdflib.Literal(str(operator['widget']['posX']))))
-            graph.add((position, WIRE_M['y'], rdflib.Literal(str(operator['widget']['posY']))))
+            graph.add((position, WIRE_M['x'], rdflib.Literal(str(operator['position']['posX']))))
+            graph.add((position, WIRE_M['y'], rdflib.Literal(str(operator['position']['posY']))))
             i = 0
             for sourc in operator['endPointsInOuts']['sources']:
                 source = rdflib.BNode()
