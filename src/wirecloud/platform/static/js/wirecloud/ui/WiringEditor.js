@@ -261,7 +261,7 @@ if (!Wirecloud.ui) {
                 if (iwidget.id in WiringStatus.views[k].iwidgets) {
                     miniwidget_interface.disable();
                     widget_interface = this.addIWidget(this, iwidget, WiringStatus.views[k].iwidgets[iwidget.id].endPointsInOuts);
-                    widget_interface.setPosition(WiringStatus.views[k].iwidgets[iwidget.id].widget);
+                    widget_interface.setPosition(WiringStatus.views[k].iwidgets[iwidget.id].position);
                     break;
                 }
             }
@@ -283,9 +283,10 @@ if (!Wirecloud.ui) {
                         'display_name': ghostName,
                         'ghost': true
                     };
-                    iwidget['widget'] = iwidget;
+                    // :S
+                    //iwidget['widget'] = iwidget;
                     widget_interface = this.addIWidget(this, iwidget, WiringStatus.views[k].iwidgets[key].endPointsInOuts);
-                    widget_interface.setPosition(WiringStatus.views[k].iwidgets[key].widget);
+                    widget_interface.setPosition(WiringStatus.views[k].iwidgets[key].position);
                 }
             }
         }
@@ -324,7 +325,7 @@ if (!Wirecloud.ui) {
                     if ('minimized' in WiringStatus.views[i].operators[key]) {
                         is_minimized = WiringStatus.views[i].operators[key].minimized;
                     }
-                    position = WiringStatus.views[i].operators[key].widget;
+                    position = WiringStatus.views[i].operators[key].position;
                     break;
                 }
             }
@@ -588,7 +589,7 @@ if (!Wirecloud.ui) {
             widget = this.iwidgets[key];
             pos = widget.getStylePosition();
             inOutPos = widget.getInOutPositions();
-            positions = {'widget' : pos, 'endPointsInOuts' : inOutPos, 'name': widget.iwidget.widget.id};
+            positions = {'position' : pos, 'endPointsInOuts' : inOutPos, 'name': widget.iwidget.widget.id};
             WiringStatus.views[0].iwidgets[key] = positions;
         }
 
@@ -599,7 +600,7 @@ if (!Wirecloud.ui) {
             operator_interface = this.currentlyInUseOperators[key];
             pos = operator_interface.getStylePosition();
             inOutPos = operator_interface.getInOutPositions();
-            positions = {'widget' : pos, 'endPointsInOuts' : inOutPos};
+            positions = {'position' : pos, 'endPointsInOuts' : inOutPos};
             ioperator = operator_interface.getIOperator();
             WiringStatus.operators[key] = {"name" : ioperator.meta.uri, 'id' : key, 'preferences': ioperator.preferences};
             WiringStatus.views[0].operators[key] = positions;
