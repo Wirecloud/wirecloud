@@ -22,7 +22,7 @@
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
 /*global $, CSSPrimitiveValue, Event, Insertion, document, gettext, ngettext, interpolate, window */
 /*global Constants, DropDownMenu, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud*/
-/*global isElement, IWidgetLogManager, WidgetVersion, DragboardPosition*/
+/*global isElement, IWidgetLogManager, DragboardPosition*/
 /*global IWidgetDraggable, IWidgetIconDraggable, FreeLayout, FullDragboardLayout*/
 /*global ColorDropDownMenu, BrowserUtilsFactory*/
 
@@ -102,7 +102,7 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
         this.codeURL = this.internal_iwidget.widget.code_url + "#id=" + this.id;
     }
 
-    this.refusedVersion = refusedVersion !== null ? new WidgetVersion(refusedVersion) : null;
+    this.refusedVersion = refusedVersion !== null ? new Wirecloud.Version(refusedVersion) : null;
     this.freeLayoutAfterLoading = freeLayoutAfterLoading; //only used the first time the widget is used to change its layout after loading to FreeLayout
 
     // Elements

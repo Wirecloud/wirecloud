@@ -30,37 +30,6 @@
 //////////////////////////////////////////////
 
 
-function WidgetVersion(version, source) {
-    if (typeof version == 'string') {
-        this.text = version;
-        this.array = version.split('.').map(function(x) { return parseInt(x); });
-    } else if (version instanceof Array) {
-        this.array = version;
-        this.text = version.join('.');
-    } else {
-        throw new TypeError();
-    }
-    this.source = source;
-};
-
-WidgetVersion.prototype.compareTo = function(version) {
-    var len, value1, value2;
-
-    len = Math.max(this.array.length, version.array.length);
-
-    for (i = 0; i < len; i += 1) {
-        value1 = this.array[i] != undefined ? this.array[i] : 0;
-        value2 = version.array[i] != undefined ? version.array[i] : 0;
-
-        if (value1 !== value2) {
-            return value1 - value2;
-        }
-    }
-
-    return 0;
-};
-
-
 function Widget(widget_) {
 
     // ******************
@@ -110,7 +79,7 @@ function WidgetState(widget_) {
     // Constructing the structure
     var vendor = widget_.vendor;
     var name = widget_.name;
-    var version = new WidgetVersion(widget_.version, 'showcase');
+    var version = new Wirecloud.Version(widget_.version, 'showcase');
     var displayName = widget_.displayName
     var template = new WidgetTemplate(widget_.variables, widget_.size);
     var image = widget_.imageURI;
