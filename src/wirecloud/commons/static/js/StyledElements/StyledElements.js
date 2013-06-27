@@ -175,7 +175,7 @@ StyledElements.StyledElement.prototype.repaint = function (temporal) {
  *
  */
 StyledElements.StyledElement.prototype.hasClassName = function(className) {
-    return EzWebExt.hasClassName(this.wrapperElement, className);
+    return this.wrapperElement.classList.contains(className);
 }
 
 /**
@@ -1389,7 +1389,7 @@ StyledElements.Alternative.prototype.setVisible = function (newStatus) {
 }
 
 StyledElements.Alternative.prototype.isVisible = function (newStatus) {
-    return !EzWebExt.hasClassName(this.wrapperElement, "hidden");
+    return !this.wrapperElement.classList.contains("hidden");
 };
 
 StyledElements.Alternative.prototype.getId = function() {

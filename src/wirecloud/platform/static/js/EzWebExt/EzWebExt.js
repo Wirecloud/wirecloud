@@ -334,10 +334,6 @@ EzWebExt.prependWord = function(text, word) {
     return word + " " + EzWebExt.removeWord(text, word);
 }
 
-EzWebExt.hasClassName = function(element, className) {
-    return element.className.match(RegExp("(^\\s*|\\s+)" + className + "(\\s+|\\s*$)", "g")) != null;
-}
-
 /**
  * Return the inner content of an Element treating it as pure text. All
  * encoded characters will be decoded.

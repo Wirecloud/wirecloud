@@ -225,7 +225,7 @@
      * elemento se eliminiaria de la selección y viceversa.
      */
     StyledList.prototype.toggleElementSelection = function toggleElementSelection(element) {
-        if (!EzWebExt.hasClassName(this.entriesByValue[element].element, "selected")) {
+        if (!this.entriesByValue[element].element.classList.contains("selected")) {
             this.addSelection([element]);
         } else if (this.allowEmpty) {
             this.removeSelection([element]);
