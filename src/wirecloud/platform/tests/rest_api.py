@@ -223,6 +223,36 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Workspace should not be created
         self.assertFalse(Workspace.objects.filter(creator=2, name='Test Mashup').exists())
 
+    def test_workspace_collection_post_empty_required_fields(self):
+
+        url = reverse('wirecloud.workspace_collection')
+
+        # Authenticate
+        self.client.login(username='normuser', password='admin')
+
+        # Make the request
+        data = {}
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 422)
+
+        # Check basic response structure
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertTrue('description' in response_data)
+
+    def test_workspace_collection_post_bad_request_syntax(self):
+
+        url = reverse('wirecloud.workspace_collection')
+
+        # Authenticate
+        self.client.login(username='normuser', password='admin')
+
+        # Test bad json syntax
+        response = self.client.post(url, 'bad syntax', content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 400)
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
     def test_workspace_entry_read_requires_authentication(self):
 
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 1})
