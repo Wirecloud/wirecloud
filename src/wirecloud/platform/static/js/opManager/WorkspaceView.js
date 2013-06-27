@@ -40,7 +40,7 @@
             this.createWorkspaceWindow.show();
         }.bind(this)));
 
-        this.wsMenu.append(new StyledElements.MenuItem(gettext('Publish'), function () {
+        this.wsMenu.append(new StyledElements.MenuItem(gettext('Save'), function () {
             LayoutManagerFactory.getInstance().viewsByName.marketplace.waitMarketListReady(function () {
                 var window = new Wirecloud.ui.PublishWorkspaceWindowMenu(OpManagerFactory.getInstance().activeWorkspace);
                 window.show();
