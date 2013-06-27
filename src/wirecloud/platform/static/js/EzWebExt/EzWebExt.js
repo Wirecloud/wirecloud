@@ -334,27 +334,6 @@ EzWebExt.prependWord = function(text, word) {
     return word + " " + EzWebExt.removeWord(text, word);
 }
 
-/**
- * Return the inner content of an Element treating it as pure text. All
- * encoded characters will be decoded.
- *
- * @param {Element}
- *
- * @return {String}
- */
-EzWebExt.getTextContent = function(element) {
-    if ("textContent" in element) {
-        return element.textContent;
-    }
-    else if ("innerText" in element) {
-        return element.innerText;
-    }
-    else if ("nodeValue" in element) {
-        return element.nodeValue;
-    }
-    return "";
-}
-
 /* getElementsByClassName function */
 if ("getElementsByClassName" in document) {
     EzWebExt.getElementsByClassName = function(rootElement, className) {

@@ -103,7 +103,7 @@
     StyledSelect.prototype = new StyledElements.StyledInputElement();
 
     StyledSelect.prototype.getLabel = function getLabel() {
-        return EzWebExt.getTextContent(this.textDiv);
+        return this.textDiv.textContent;
     };
 
     StyledSelect.prototype.getValue = function getValue() {
