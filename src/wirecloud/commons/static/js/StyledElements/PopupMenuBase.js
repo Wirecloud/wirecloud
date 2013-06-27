@@ -122,7 +122,7 @@
             }
         }
 
-        EzWebExt.removeClassName(this.wrapperElement, 'hidden');
+        this.wrapperElement.classList.remove('hidden');
         window.parent.document.body.appendChild(this.wrapperElement);
         this.events.visibilityChange.dispatch(this);
 

@@ -13,7 +13,7 @@
     var _cleanSelection = function _cleanSelection() {
         for (var i = 0; i < this.currentSelection.length; i++) {
             var value = this.currentSelection[i];
-            EzWebExt.removeClassName(this.entriesByValue[value].element, "selected");
+            this.entriesByValue[value].element.classList.remove("selected");
         }
         this.currentSelection = [];
     };
@@ -205,11 +205,11 @@
 
         for (i = 0; i < selection.length; i++) {
             entry = selection[i];
-            EzWebExt.removeClassName(this.entriesByValue[entry].element, "selected");
+            this.entriesByValue[entry].element.classList.remove("selected");
             index = this.currentSelection.indexOf(entry);
             if (index !== -1) {
                 this.currentSelection.splice(index, 1);
-                EzWebExt.removeClassName(this.entriesByValue[entry].element, "selected");
+                this.entriesByValue[entry].element.classList.remove("selected");
                 removedValues.push(entry);
             }
         }

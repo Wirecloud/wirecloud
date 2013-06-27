@@ -225,19 +225,19 @@
      */
     StyledNotebook.prototype._enableDisableButtons = function _enableDisableButtons() {
         if (this.tabs.length === 0) {
-            EzWebExt.removeClassName(this.moveLeftButton, "enabled");
-            EzWebExt.removeClassName(this.moveRightButton, "enabled");
+            this.moveLeftButton.classList.remove("enabled");
+            this.moveRightButton.classList.remove("enabled");
             return;
         }
 
         if (this._isTabVisible(0)) {
-            EzWebExt.removeClassName(this.moveLeftButton, "enabled");
+            this.moveLeftButton.classList.remove("enabled");
         } else {
             this.moveLeftButton.classList.add("enabled");
         }
 
         if (this._isLastTabVisible()) {
-            EzWebExt.removeClassName(this.moveRightButton, "enabled");
+            this.moveRightButton.classList.remove("enabled");
         } else {
             this.moveRightButton.classList.add("enabled");
         }

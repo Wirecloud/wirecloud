@@ -58,7 +58,7 @@
     };
 
     onblur = function onblur() {
-        EzWebExt.removeClassName(this.wrapperElement, 'focus');
+        this.wrapperElement.classList.remove('focus');
         this.events.blur.dispatch(this);
     };
 

@@ -338,13 +338,9 @@ EzWebExt.hasClassName = function(element, className) {
     return element.className.match(RegExp("(^\\s*|\\s+)" + className + "(\\s+|\\s*$)", "g")) != null;
 }
 
-EzWebExt.removeClassName = function(element, className) {
-    element.className = element.className.replace(RegExp("(^\\s*|\\s+)" + className + "(\\s+|\\s*$)", "g"), " ").replace(RegExp("^\\s+|\\s+$", "g"), "");
-}
-
 EzWebExt.toggleClassName = function(element, className) {
     if (EzWebExt.hasClassName(element, className))
-        EzWebExt.removeClassName(element, className);
+        element.classList.remove(className);
     else
         element.classList.add(className);
 }

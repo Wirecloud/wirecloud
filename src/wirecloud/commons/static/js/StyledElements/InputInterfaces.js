@@ -248,7 +248,7 @@ InputInterface.prototype._setError = function _setError(error) {
     if (error) {
         this.inputElement.wrapperElement.classList.add('error');
     } else {
-        EzWebExt.removeClassName(this.inputElement.wrapperElement, 'error');
+        this.inputElement.wrapperElement.classList.remove('error');
     }
 };
 

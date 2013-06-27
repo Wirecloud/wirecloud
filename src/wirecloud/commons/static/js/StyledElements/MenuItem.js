@@ -30,7 +30,7 @@
         this.wrapperElement.addEventListener("mouseover", this._mouseoverEventHandler, false);
         this._mouseoutEventHandler = function (event) {
             if (this.enabled) {
-                EzWebExt.removeClassName(this.wrapperElement, "hovered");
+                this.wrapperElement.classList.remove("hovered");
                 this.events.mouseout.dispatch(this);
             }
         }.bind(this);
@@ -39,7 +39,7 @@
         this._clickHandler = function (event) {
             event.stopPropagation();
             if (this.enabled) {
-                EzWebExt.removeClassName(this.wrapperElement, "hovered");
+                this.wrapperElement.classList.remove("hovered");
                 this.events.mouseout.dispatch(this);
                 this.events.click.dispatch(this);
             }

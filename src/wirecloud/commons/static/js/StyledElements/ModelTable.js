@@ -298,8 +298,8 @@
 
         if (this.sortColumn != null) {
             oldSortHeaderCell = this.pHeaderCells[this.sortColumn];
-            EzWebExt.removeClassName(oldSortHeaderCell, 'ascending');
-            EzWebExt.removeClassName(oldSortHeaderCell, 'descending');
+            oldSortHeaderCell.classList.remove('ascending');
+            oldSortHeaderCell.classList.remove('descending');
         }
         this.sortInverseOrder = descending;
         this.sortColumn = column;
@@ -307,10 +307,10 @@
         if (this.sortColumn != null) {
             sortHeaderCell = this.pHeaderCells[this.sortColumn];
             if (this.sortInverseOrder) {
-                EzWebExt.removeClassName(sortHeaderCell, 'ascending');
+                sortHeaderCell.classList.remove('ascending');
                 sortHeaderCell.classList.add('descending');
             } else {
-                EzWebExt.removeClassName(sortHeaderCell, 'descending');
+                sortHeaderCell.classList.remove('descending');
                 sortHeaderCell.classList.add('ascending');
             }
 

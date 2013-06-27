@@ -189,7 +189,7 @@ StyledElements.StyledElement.prototype.addClassName = function(className) {
  *
  */
 StyledElements.StyledElement.prototype.removeClassName = function(className) {
-    EzWebExt.removeClassName(this.wrapperElement, className);
+    this.wrapperElement.classList.remove(className);
 }
 
 StyledElements.StyledElement.prototype.setDisabled = function(disable) {
@@ -1089,11 +1089,11 @@ StyledElements.Tab.prototype.setIcon = function(iconURL) {
 StyledElements.Tab.prototype.setVisible = function (newStatus) {
     if (newStatus) {
         this.tabElement.classList.add("selected");
-        EzWebExt.removeClassName(this.wrapperElement, "hidden");
+        this.wrapperElement.classList.remove("hidden");
         this.repaint(false);
         this.events['show'].dispatch(this);
     } else {
-        EzWebExt.removeClassName(this.tabElement, "selected");
+        this.tabElement.classList.remove("selected");
         this.wrapperElement.classList.add("hidden");
         this.events['hide'].dispatch(this);
     }
