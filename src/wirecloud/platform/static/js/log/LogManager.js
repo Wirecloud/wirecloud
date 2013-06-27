@@ -320,11 +320,6 @@ var LogManagerFactory = function () {
 
         logManager = logManager != null ? logManager : this;
 
-        if (BrowserUtilsFactory.getInstance().isIE()) {
-            // Hack for IE, it needs to repaint the entries
-            logManager.repaint();
-        }
-
         if (logManager === this) {
             $('logs_iwidget_toolbar').removeClassName('selected_section');
             $('logs_all_toolbar').addClassName('selected_section');

@@ -20,7 +20,7 @@
  */
 
 /*global document, window, Error, gettext, interpolate, $, Hash, Event, isElement*/
-/*global BrowserUtilsFactory, Constants, ColumnLayout, DragboardPosition, FreeLayout, FullDragboardLayout, IWidget, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud, SmartColumnLayout*/
+/*global Constants, ColumnLayout, DragboardPosition, FreeLayout, FullDragboardLayout, IWidget, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud, SmartColumnLayout*/
 
 /**
  * @author aarranz
@@ -548,15 +548,10 @@ Dragboard.prototype._recomputeSize = function () {
         return; // Do nothing
     }
 
-    if (BrowserUtilsFactory.getInstance().isIE()) {
-        this.dragboardWidth = parseInt(this.dragboardElement.offsetWidth, 10);
-    } else {
-        this.dragboardWidth = parseInt(this.dragboardElement.clientWidth, 10);
-    }
-
     /* Pre reserve scroll bar space */
 
     var dragboardElement = this.dragboardElement;
+    this.dragboardWidth = parseInt(dragboardElement.clientWidth, 10);
 
     this.topMargin = cssStyle.getPropertyCSSValue("padding-top").getFloatValue(CSSPrimitiveValue.CSS_PX);
     this.bottomMargin = cssStyle.getPropertyCSSValue("padding-bottom").getFloatValue(CSSPrimitiveValue.CSS_PX);
@@ -945,8 +940,8 @@ function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, 
         e = e || window.event; // needed for IE
 
         // Only attend to left button (or right button for left-handed persons) events
-        if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
-            return false;
+        if (e.button !== 0) {
+            return;
         }
 
         Event.stopObserving(document, "mouseup", endresize);
@@ -1006,8 +1001,8 @@ function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, 
         }
 
         // Only attend to left button (or right button for left-handed persons) events
-        if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
-            return false;
+        if (e.button !== 0) {
+            return;
         }
 
         document.oncontextmenu = ResizeHandle._cancel; // disable context menu
