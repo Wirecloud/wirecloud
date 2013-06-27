@@ -182,15 +182,35 @@ StyledElements.StyledElement.prototype.hasClassName = function(className) {
  *
  */
 StyledElements.StyledElement.prototype.addClassName = function(className) {
-    this.wrapperElement.classList.add(className);
-}
+    var i, tokens;
+
+    className = className.trim();
+    if (className === '') {
+        return;
+    }
+
+    tokens = className.split(/\s+/);
+    for (i = 0; i < tokens.length; i++) {
+        this.wrapperElement.classList.add(tokens[i]);
+    }
+};
 
 /**
  *
  */
 StyledElements.StyledElement.prototype.removeClassName = function(className) {
-    this.wrapperElement.classList.remove(className);
-}
+    var i, tokens;
+
+    className = className.trim();
+    if (className === '') {
+        return;
+    }
+
+    tokens = className.split(/\s+/);
+    for (i = 0; i < tokens.length; i++) {
+        this.wrapperElement.classList.remove(tokens[i]);
+    }
+};
 
 StyledElements.StyledElement.prototype.setDisabled = function(disable) {
     if (disable) {
