@@ -49,7 +49,7 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.change_marketplace('origin')
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
-        self.check_popup_menu((), ('Delete marketplace',))
+        self.check_popup_menu((), (), ('Delete marketplace',))
 
         self.login('admin', 'admin')
 
