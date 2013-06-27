@@ -180,7 +180,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/PolicyManager.js',
             'js/wirecloud/Wiring.js',
             'js/wirecloud/Version.js',
-            'js/gadgetModel/Gadget.js',
+            'js/wirecloud/Widget.js',
         ) + STYLED_ELEMENTS_FILES + (
             'js/wirecloud/ui/InputInterfaceFactory.js',
             'js/wirecloud/ui/IWidgetResizeHandle.js',

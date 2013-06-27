@@ -20,7 +20,7 @@
  */
 
 /*global document, window, Error, gettext, interpolate, $, Hash, Event, isElement*/
-/*global BrowserUtilsFactory, Constants, ColumnLayout, DragboardPosition, FreeLayout, FullDragboardLayout, Widget, IWidget, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud, SmartColumnLayout*/
+/*global BrowserUtilsFactory, Constants, ColumnLayout, DragboardPosition, FreeLayout, FullDragboardLayout, IWidget, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud, SmartColumnLayout*/
 
 /**
  * @author aarranz
@@ -266,13 +266,13 @@ function Dragboard(tab, workspace, dragboardElement) {
      */
     Dragboard.prototype.addInstance = function (widget, options_) {
         var options = {
-            "iwidgetName": widget.getDisplayName(),
+            "iwidgetName": widget.displayName,
             "setDefaultValues" : function () {}
         };
 
         Object.extend(options, options_);
 
-        if (!(widget instanceof Widget)) {
+        if (!(widget instanceof Wirecloud.Widget)) {
             throw new TypeError();
         }
 

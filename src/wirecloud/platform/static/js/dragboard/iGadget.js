@@ -1178,7 +1178,7 @@ IWidget.prototype.save = function (options) {
     });
 
     var data = Object.toJSON({
-        'widget': this.internal_iwidget.widget.getId(),
+        'widget': this.internal_iwidget.widget.id,
         'left': this.position.x,
         'top': this.position.y,
         'icon_left': this.iconPosition.x,
