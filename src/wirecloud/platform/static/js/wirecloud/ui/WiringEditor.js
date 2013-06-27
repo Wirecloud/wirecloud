@@ -484,6 +484,10 @@ if (!Wirecloud.ui) {
                     if ('endPointsInOuts' in WiringStatus.views[i].operators[key]) {
                         endpoint_order = WiringStatus.views[i].operators[key].endPointsInOuts;
                     }
+                    var is_minimized = true;
+                    if ('minimized' in WiringStatus.views[i].operators[key]) {
+                        is_minimized = WiringStatus.views[i].operators[key].minimized;
+                    }
                     position = WiringStatus.views[i].operators[key].widget;
                     break;
                 }
@@ -491,6 +495,9 @@ if (!Wirecloud.ui) {
             operator_interface = this.addIOperator(operator_instance, endpoint_order);
             if (position != null) {
                 operator_interface.setPosition(position);
+            }
+            if (is_minimized) {
+                operator_interface.minimize(true);
             }
         }
 
@@ -574,13 +581,6 @@ if (!Wirecloud.ui) {
                     multi.addArrow(arrow);
                 }
                 arrow.redraw();
-            }
-        }
-
-        // Minimize all operators
-        for (key in this.currentlyInUseOperators) {
-            if (!this.currentlyInUseOperators[key].isMinimized) {
-                this.currentlyInUseOperators[key].minimize(true);
             }
         }
 
