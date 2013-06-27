@@ -998,7 +998,8 @@ StyledElements.Tab = function(id, notebook, options) {
     /* call to the parent constructor */
     StyledElements.Container.call(this, options['containerOptions'], ['show', 'hide', 'close']);
 
-    EzWebExt.prependClassName(this.wrapperElement, "tab hidden"); // TODO
+    this.wrapperElement.classList.add("tab");
+    this.wrapperElement.classList.add("hidden");
 
     this.tabElement.addEventListener("click",
                                 function () {
