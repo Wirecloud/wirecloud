@@ -366,26 +366,6 @@ EzWebExt.toggleClassName = function(element, className) {
 }
 
 /**
- * Changes the inner content of an Element treating it as pure text. If
- * the provided text contains HTML special characters they will be encoded.
- *
- * @param {Element} element
- * @param {String} text
- */
-EzWebExt.setTextContent = function(element, text) {
-    if ("textContent" in element) {
-        element.textContent = text;
-    } else if ("innerText" in element) {
-        element.innerText = text;
-    } else if ("text" in element) {
-        // IE XML Elements
-        element.text = text;
-    } else if ("nodeValue" in element) {
-        element.nodeValue = text;
-    }
-}
-
-/**
  * Return the inner content of an Element treating it as pure text. All
  * encoded characters will be decoded.
  *
