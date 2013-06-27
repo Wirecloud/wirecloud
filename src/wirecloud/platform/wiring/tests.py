@@ -495,7 +495,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                     "label": "default",
                     "iwidgets": {
                         "1": {
-                            "widget": {
+                            "position": {
                                 "posX": 84,
                                 "posY": 44
                             },
@@ -506,7 +506,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                             "name": "Wirecloud/Test/1.0",
                         },
                         "2": {
-                            "widget": {
+                            "position": {
                                 "posX": 84,
                                 "posY": 153
                             },
@@ -517,7 +517,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                             "name": "Wirecloud/Test/1.0",
                         },
                         "3": {
-                            "widget": {
+                            "position": {
                                 "posX": 200,
                                 "posY": 100
                             },
@@ -530,7 +530,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                     },
                     "operators": {
                         "0": {
-                            "widget": {
+                            "position": {
                                 "posX": 84,
                                 "posY": 256
                             }
@@ -581,7 +581,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                     "label": "default",
                     "iwidgets": {
                         "1": {
-                            "widget": {
+                            "position": {
                                 "posX": 84,
                                 "posY": 44
                             },
@@ -592,7 +592,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                             "name": "Wirecloud/Test/1.0",
                         },
                         "2": {
-                            "widget": {
+                            "position": {
                                 "posX": 84,
                                 "posY": 153
                             },
@@ -603,7 +603,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                             "name": "Wirecloud/Test/1.0",
                         },
                         "3": {
-                            "widget": {
+                            "position": {
                                 "posX": 200,
                                 "posY": 100
                             },
@@ -616,7 +616,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                     },
                     "operators": {
                         "0": {
-                            "widget": {
+                            "position": {
                                 "posX": 84,
                                 "posY": 256
                             }
@@ -719,7 +719,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                     "label": "default",
                     "iwidgets": {
                         "1": {
-                            "widget": {
+                            "position": {
                                 "posX": 84,
                                 "posY": 44
                             },
@@ -730,7 +730,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                             "name": "Wirecloud/Test/1.0",
                         },
                         "2": {
-                            "widget": {
+                            "position": {
                                 "posX": 84,
                                 "posY": 153
                             },
@@ -743,13 +743,13 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                     },
                     "operators": {
                         "0": {
-                            "widget": {
+                            "position": {
                                 "posX": 84,
                                 "posY": 256
                             }
                         },
                         "1": {
-                            "widget": {
+                            "position": {
                                 "posX": 84,
                                 "posY": 400
                             },
@@ -809,7 +809,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                     "label": "default",
                     "iwidgets": {
                         "1": {
-                            "widget": {
+                            "position": {
                                 "posX": 84,
                                 "posY": 44
                             },
@@ -820,7 +820,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                             "name": "Wirecloud/Test/1.0",
                         },
                         "2": {
-                            "widget": {
+                            "position": {
                                 "posX": 84,
                                 "posY": 153
                             },
@@ -833,13 +833,13 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                     },
                     "operators": {
                         "0": {
-                            "widget": {
+                            "position": {
                                 "posX": 84,
                                 "posY": 256
                             }
                         },
                         "1": {
-                            "widget": {
+                            "position": {
                                 "posX": 84,
                                 "posY": 400
                             },
@@ -951,7 +951,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                 "label": "default",
                 "iwidgets": {
                     "1": {
-                        "widget": {
+                        "position": {
                             "posX": 84,
                             "posY": 44
                         },
@@ -962,7 +962,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                         "name": "Wirecloud/Test/1.0",
                     },
                     "2": {
-                        "widget": {
+                        "position": {
                             "posX": 350,
                             "posY": 64
                         },
@@ -975,7 +975,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                 },
                 "operators": {
                     "0": {
-                        "widget": {
+                        "position": {
                             "posX": 84,
                             "posY": 256
                         },
@@ -1038,7 +1038,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                 "label": "default",
                 "iwidgets": {
                     "1": {
-                        "widget": {
+                        "position": {
                             "posX": 84,
                             "posY": 44
                         },
@@ -1049,7 +1049,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                         "name": "Wirecloud/Test/1.0",
                     },
                     "2": {
-                        "widget": {
+                        "position": {
                             "posX": 350,
                             "posY": 64
                         },
@@ -1062,7 +1062,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
                 },
                 "operators": {
                     "0": {
-                        "widget": {
+                        "position": {
                             "posX": 84,
                             "posY": 256
                         },
