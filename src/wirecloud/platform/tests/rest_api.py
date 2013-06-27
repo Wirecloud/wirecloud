@@ -402,6 +402,19 @@ class ApplicationMashupAPI(WirecloudTestCase):
         wiring_status = simplejson.loads(workspace.wiringStatus)
         self.assertEqual(wiring_status, new_wiring_status)
 
+    def test_workspace_wiring_entry_put_bad_request_syntax(self):
+
+        url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 1})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Test bad json syntax
+        response = self.client.put(url, 'bad syntax', content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 400)
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
     def test_tab_collection_post_requires_authentication(self):
 
         url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
@@ -464,6 +477,19 @@ class ApplicationMashupAPI(WirecloudTestCase):
         }
         response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 409)
+
+    def test_tab_collection_post_bad_request_syntax(self):
+
+        url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Test bad json syntax
+        response = self.client.post(url, 'bad syntax', content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 400)
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
 
     def test_tab_entry_delete_requires_authentication(self):
 
