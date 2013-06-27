@@ -714,7 +714,7 @@ class WirecloudRemoteTestCase(object):
 
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.wait_element_visible_by_css_selector('.popup_menu')
-        self.popup_menu_click('Publish')
+        self.popup_menu_click('Upload to local catalogue')
 
         self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']")
         name_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="name"]')

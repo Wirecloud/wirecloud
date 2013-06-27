@@ -35,13 +35,13 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # We need atleast one Workspace, so we cannot delete current workspace
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
-        self.check_popup_menu(('Rename', 'Settings', 'New workspace', 'Publish'), ('Remove',))
+        self.check_popup_menu(('Rename', 'Settings', 'New workspace', 'Upload to local catalogue'), ('Remove',))
 
         self.create_workspace('Test')
 
         # Now we have two workspaces so we can remove any of them
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
-        self.check_popup_menu(('Rename', 'Settings', 'New workspace', 'Publish', 'Remove'), ())
+        self.check_popup_menu(('Rename', 'Settings', 'New workspace', 'Upload to local catalogue', 'Remove'), ())
 
         self.rename_workspace('test2')
         tab = self.get_workspace_tab_by_name('Tab')
