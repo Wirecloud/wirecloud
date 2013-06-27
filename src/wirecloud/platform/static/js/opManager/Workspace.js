@@ -190,7 +190,7 @@ function Workspace (workspaceState) {
         subBox.addClassName('alert alert-info alert-block');
         // Title
         var pTitle = document.createElement('h4');
-        pTitle.setTextContent(gettext("Hey! Welcome to Wirecloud! This is an empty workspace"));
+        pTitle.textContent = gettext("Hey! Welcome to Wirecloud! This is an empty workspace");
         subBox.appendChild(pTitle);
         // Message
         var message = document.createElement('p');

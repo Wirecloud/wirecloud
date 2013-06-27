@@ -66,7 +66,7 @@
                 this.icon.src = this._checkedIcon;
             }
             if (this.label) {
-                EzWebExt.setTextContent(this.label, this._checkedText);
+                this.label.textContent = this._checkedText;
             }
         } else {
             EzWebExt.removeClassName(this.wrapperElement, 'checked');
@@ -74,7 +74,7 @@
                 this.icon.src = this._icon;
             }
             if (this.label) {
-                EzWebExt.setTextContent(this.label, this._text);
+                this.label.textContent = this._text;
             }
         }
         this._checked = checked;

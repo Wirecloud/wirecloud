@@ -1561,7 +1561,7 @@ EzWebGadget.prototype.translate = function() {
     for (id in this._currentLanguage.labels) {
         var element = document.getElementById(id);
         if (element)
-            EzWebExt.setTextContent(element, this._currentLanguage.labels[id]);
+            element.textContent = this._currentLanguage.labels[id];
     }
 
     for (id in this._currentLanguage.titles) {
@@ -3171,8 +3171,8 @@ var PaginationInterface = function(pagination, options) {
     this.totalPages = this.pagination.getTotalPages();
     this.pageSize = this.pagination.getPageSize();
 
-    EzWebExt.setTextContent(this.currentPageLabel, this.currentPage + 1);
-    EzWebExt.setTextContent(this.totalPagesLabel, this.totalPages);
+    this.currentPageLabel.textContent = this.currentPage + 1;
+    this.totalPagesLabel.textContent = this.totalPages;
 
     this._updateButtons();
 
@@ -3234,7 +3234,7 @@ PaginationInterface.prototype._updateButtons = function() {
 }
 
 PaginationInterface.prototype._pageChange = function() {
-    EzWebExt.setTextContent(this.currentPageLabel, this.currentPage + 1);
+    this.currentPageLabel.textContent = this.currentPage + 1;
     this._updateButtons();
     this.events['pageChange'].dispatch(this.currentPage);
 }
@@ -3244,7 +3244,7 @@ PaginationInterface.prototype.pPaginationChanged = function(newPageSize, forceRe
 
     this.totalPages = this.pagination.getTotalPages();
 
-    EzWebExt.setTextContent(this.totalPagesLabel, this.totalPages);
+    this.totalPagesLabel.textContent = this.totalPages;
 
     if (this.autoHide && this.totalPages === 1) {
         this.wrapperElement.style.display = 'none';

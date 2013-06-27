@@ -112,7 +112,7 @@
         }
 
         varManager = this.workspace.getVarManager();
-        connectables  = iwidget.getWidget().getTemplate().getConnectables();
+        connectables  = iwidget.widget.getTemplate().getConnectables();
 
         widgetEntry = {
             outputs: {},

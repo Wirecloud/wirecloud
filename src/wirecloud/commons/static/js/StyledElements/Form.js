@@ -1,4 +1,4 @@
-/*global $, EzWebExt, gettext, StyledElements, Element, ValidationErrorManager */
+/*global $, EzWebExt, gettext, StyledElements, ValidationErrorManager */
 
 (function () {
 
@@ -76,7 +76,7 @@
         }
 
         // Accept button
-        this.pAcceptHandler = EzWebExt.bind(this.pAcceptHandler, this);
+        this.pAcceptHandler = this.pAcceptHandler.bind(this);
         this.acceptButton = null;
         if (options.acceptButton instanceof StyledElements.StyledButton) {
             this.acceptButton = options.acceptButton;
@@ -93,7 +93,7 @@
         }
 
         // Cancel button
-        this.pCancelHandler = EzWebExt.bind(this.pCancelHandler, this);
+        this.pCancelHandler = this.pCancelHandler.bind(this);
         this.cancelButton = null;
         if (options.cancelButton instanceof StyledElements.StyledButton) {
             this.cancelButton = options.cancelButton;
@@ -130,7 +130,7 @@
         if (msgs.length > 0) {
             for (i = 0; i < msgs.length; i += 1) {
                 wrapper = document.createElement('p');
-                EzWebExt.setTextContent(wrapper, msgs[i]);
+                wrapper.textContent = msgs[i];
                 this.msgElement.appendChild(wrapper);
             }
             this.msgElement.style.display = '';
@@ -275,7 +275,6 @@
 
         if (field.type === 'label') {
             labelRow = row.insertCell(-1);
-            Element.extend(labelRow);
             labelRow.setAttribute('colspan', '2');
             labelRow.addClassName('label-row');
             if (field.url) {
@@ -295,7 +294,7 @@
         EzWebExt.addClassName(labelCell, 'label-cell');
 
         label = document.createElement('label');
-        EzWebExt.setTextContent(label, field.label);
+        label.textContent = field.label;
         labelCell.appendChild(label);
         if (field.description != null) {
             label.setAttribute('title', field.description);

@@ -115,7 +115,7 @@ var LayoutManagerFactory = function () {
             }
 
             msg = interpolate(msg, {subTask: this.subTask, percentage: subtaskpercentage}, true);
-            $("loading-subtask-title").setTextContent(msg);
+            $("loading-subtask-title").textContent = msg;
         }
 
         LayoutManager.prototype._startComplexTask = function(task, subtasks) {
@@ -147,7 +147,7 @@ var LayoutManagerFactory = function () {
         }
 
         LayoutManager.prototype.logStep = function(msg, totalSteps) {
-            //$("loading-step-title").setTextContent(msg ? msg : "");
+            //$("loading-step-title").textContent = msg ? msg : "";
             this.currentStep++;
             if (this.currentStep > this.totalSteps)
                 this.totalSteps = this.currentStep + 1;

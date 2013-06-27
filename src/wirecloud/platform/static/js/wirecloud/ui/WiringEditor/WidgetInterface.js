@@ -46,8 +46,8 @@
             if (!isGhost) {
                 if ((endPointsPos.sources.length === 0) && (endPointsPos.targets.length === 0) && !isGhost) {
                     wids = opManager.activeWorkspace.getIWidgets();
-                    endPointsPos.sources = wids[wids.indexOf(iwidget)].getWidget().getTemplate().getConnectables().outputs.slice();
-                    endPointsPos.targets = wids[wids.indexOf(iwidget)].getWidget().getTemplate().getConnectables().inputs.slice();
+                    endPointsPos.sources = wids[wids.indexOf(iwidget)].widget.getTemplate().getConnectables().outputs.slice();
+                    endPointsPos.targets = wids[wids.indexOf(iwidget)].widget.getTemplate().getConnectables().inputs.slice();
                     for (i = 0; i < endPointsPos.sources.length; i ++) {
                         endPointsPos.sources[i] = endPointsPos.sources[i].name;
                     }

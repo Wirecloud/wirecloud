@@ -68,7 +68,7 @@
             view_name = menu_order[i];
 
             menu_element = document.createElement('span');
-            menu_element.setTextContent(menu.label);
+            menu_element.textContent = menu.label;
             menu_element.className = view_name;
             menu_element.addEventListener('click', onMenuClick.bind(null, view_name), true);
 
@@ -133,7 +133,7 @@
         }
         breadcrum_entry = breadcrum[0];
         breadcrum_part = document.createElement('span');
-        breadcrum_part.setTextContent(breadcrum_entry.label);
+        breadcrum_part.textContent = breadcrum_entry.label;
         breadcrum_part.className = breadcrum_levels[0];
         if ('class' in breadcrum_entry) {
             breadcrum_part.addClassName(breadcrum_entry['class']);
@@ -147,7 +147,7 @@
             breadcrum_entry = breadcrum[i];
 
             breadcrum_part = document.createElement('span');
-            breadcrum_part.setTextContent(breadcrum_entry.label);
+            breadcrum_part.textContent = breadcrum_entry.label;
             breadcrum_part.className = breadcrum_levels[i];
             if ('class' in breadcrum_entry) {
                 breadcrum_part.addClassName(breadcrum_entry['class']);

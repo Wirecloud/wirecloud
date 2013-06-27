@@ -35,11 +35,11 @@
             cell = document.createElement('div');
             cell.className = 'cell';
             cell.style.width = column.width;
-            EzWebExt.setTextContent(cell, column.label);
+            cell.textContent = column.label;
             if (column.sortable !== false) {
                 EzWebExt.addClassName(cell, 'sortable');
                 cell.setAttribute('title', 'Ordenar por ' + column.label);
-                cell.callback = EzWebExt.bind(this.pSortByColumnCallback, {widget: this, column: i});
+                cell.callback = this.pSortByColumnCallback.bind({widget: this, column: i});
                 cell.addEventListener('click', cell.callback, true);
             }
             this.header.appendChild(cell);
@@ -76,7 +76,7 @@
         for (i = 0; i < items.length; i += 1) {
             item = items[i];
 
-            callback = EzWebExt.bind(this.pRowCallback, {control: this, item: item});
+            callback = this.pRowCallback.bind({control: this, item: item});
 
             row = document.createElement('div');
             row.className = 'row';
@@ -117,9 +117,9 @@
                 }
 
                 if (typeof cellContent === 'string') {
-                    EzWebExt.setTextContent(cell, cellContent);
+                    cell.textContent = cellContent;
                 } else if (typeof cellContent === 'number' || typeof cellContent === 'boolean') {
-                    EzWebExt.setTextContent(cell, "" + cellContent);
+                    cell.textContent = "" + cellContent;
                 } else if (cellContent instanceof StyledElements.StyledElement) {
                     cellContent.insertInto(cell);
                     this.pComponents.push(cellContent);
@@ -207,7 +207,7 @@
         Object.defineProperty(this, 'pagination', {get: function () { return this.source; }});
         this.paginationInterface = new StyledElements.PaginationInterface(this.source);
 
-        this.pRefreshBody = EzWebExt.bind(this.reload, this);
+        this.pRefreshBody = this.reload.bind(this);
         this.source.addEventListener('requestEnd', this.pRefreshBody);
         this.statusBar.appendChild(this.paginationInterface);
 
@@ -383,7 +383,7 @@
         fullVersion = formatedDate.strftime('%c');
 
         element = document.createElement('span');
-        EzWebExt.setTextContent(element, shortVersion);
+        element.textContent = shortVersion;
         element.setAttribute('title', fullVersion);
 
         return element;

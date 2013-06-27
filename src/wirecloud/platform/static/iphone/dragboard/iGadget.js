@@ -39,24 +39,25 @@ function IWidget(widget, iWidgetId, iWidgetCode, iWidgetName, dragboard, alterna
     this.element = null;
     this.content = null;
 
-    this.tab = alternative;
-    this.tab.addEventListener('show', function () {
-        this.dragboard._updateIWidgetInfo(this);
-        this.paint();
-    }.bind(this));
-
     this.internal_iwidget = new Wirecloud.IWidget(
         widget,
         dragboard.tab,
         {
             id: iWidgetId,
-            readOnly: true, // TODO
-            tab: this.tab
+            readOnly: true // TODO
         }
     );
-    Object.defineProperty(this, 'id', {get: function () {return this.internal_iwidget.id;}});
-    Object.defineProperty(this, 'widget', {get: function () {return this.internal_iwidget.widget;}});
+    Object.defineProperties(this, {
+        'id': {get: function () {return this.internal_iwidget.id;}},
+        'widget': {get: function () {return this.internal_iwidget.widget;}},
+        'alternative': {value: alternative}
+    });
     this.loaded = false;
+    this.alternative.addEventListener('show', function () {
+        this.dragboard._updateIWidgetInfo(this);
+        this.paint();
+    }.bind(this));
+
 
     StyledElements.ObjectWithEvents.call(this, ['load', 'unload']);
 
@@ -64,20 +65,6 @@ function IWidget(widget, iWidgetId, iWidgetCode, iWidgetName, dragboard, alterna
     this._notifyUnloaded = this._notifyUnloaded.bind(this);
 }
 IWidget.prototype = new StyledElements.ObjectWithEvents();
-
-/**
-* Returns the associated Widget class.
-*/
-IWidget.prototype.getWidget = function () {
-    return this.widget;
-};
-
-/**
-* Return the Tab of the IWidget
-*/
-IWidget.prototype.getTab = function () {
-    return this.tab;
-};
 
 /**
 * Paints the widget instance
@@ -100,7 +87,7 @@ IWidget.prototype.paint = function () {
     this.content.setAttribute('data', this.widget.code_url + '#id=' + this.id);
     this.element.appendChild(this.content);
 
-    this.tab.appendChild(this.element);
+    this.alternative.appendChild(this.element);
 };
 
 IWidget.prototype.load = IWidget.prototype.paint;
@@ -146,16 +133,16 @@ IWidget.prototype.notifyEvent = function () {
  * This method must be called to avoid memory leaks caused by circular references.
  */
 IWidget.prototype.destroy = function () {
-    if (this.internal_iwidget != null) {
-        this.internal_iwidget.destroy();
-        this.internal_iwidget = null;
-    }
-
     if (this.element) {
         this.element.remove();
         this.element = null;
         this.content = null;
         this._notifyLoaded = null;
         this._notifyUnloaded = null;
+    }
+
+    if (this.internal_iwidget != null) {
+        this.internal_iwidget.destroy();
+        this.internal_iwidget = null;
     }
 };

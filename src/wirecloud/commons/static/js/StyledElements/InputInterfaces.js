@@ -656,15 +656,15 @@ MultivaluedInputInterface.prototype._addEntry = function _addEntry() {
     entry.form.insertInto(entry.wrapper);
 
     entry.addRowButton = new StyledElements.StyledButton({text: '+'});
-    entry.addRowButton.addEventListener('click', EzWebExt.bind(function () {
+    entry.addRowButton.addEventListener('click', function () {
         this._addEntry();
-    }, this));
+    }.bind(this));
     entry.addRowButton.insertInto(entry.wrapper);
 
     entry.removeRowButton = new StyledElements.StyledButton({text: '-'});
-    entry.removeRowButton.addEventListener('click', EzWebExt.bind(function () {
+    entry.removeRowButton.addEventListener('click', function () {
         this.control._removeEntry(entry);
-    }, {control: this, entry: entry}));
+    }.bind({control: this, entry: entry}));
     entry.removeRowButton.insertInto(entry.wrapper);
 
     this.entries.push(entry);
@@ -777,12 +777,10 @@ function ParametrizableValueInputInterface(fieldId, options) {
     this.wrapperElement.className = "parametrizable_input";
 
     this.readOnlyIcon = document.createElement('div');
-    Element.extend(this.readOnlyIcon);
     this.readOnlyIcon.addClassName('readOnlyIcon');
     this.wrapperElement.appendChild(this.readOnlyIcon);
 
     this.visibilityIcon = document.createElement('div');
-    Element.extend(this.visibilityIcon);
     this.visibilityIcon.addClassName('visibilityIcon');
     this.wrapperElement.appendChild(this.visibilityIcon);
     if (!this.canBeHidden) {
@@ -1077,7 +1075,7 @@ ParametrizedTextInputInterface.prototype._updateDescription = function _updateDe
 
     fields = this.parameters[this.mainSelect.selectedIndex].fields;
     field = fields[this.secondSelect.selectedIndex];
-    this.descriptionDiv.setTextContent(field.description);
+    this.descriptionDiv.textContent = field.description;
 };
 
 ParametrizedTextInputInterface.prototype._setError = function _setError() {

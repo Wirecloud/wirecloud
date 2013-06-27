@@ -106,7 +106,7 @@
                         return new Date(string);
                     };
                 }
-                sortFunc = EzWebExt.bind(function (value1, value2) {
+                sortFunc = function (value1, value2) {
                     value1 = getFieldValue(value1, this.field);
                     try {
                         value1 = parseDate(value1);
@@ -122,10 +122,10 @@
                     }
 
                     return value1 - value2;
-                }, {field: column.field});
+                }.bind({field: column.field});
                 break;
             case "number":
-                sortFunc = EzWebExt.bind(function (value1, value2) {
+                sortFunc = function (value1, value2) {
                     value1 = getFieldValue(value1, this.field);
                     value1 = value1 !== null ? Number(value1) : 0;
 
@@ -133,11 +133,11 @@
                     value2 = value2 !== null ? Number(value2) : 0;
 
                     return value1 - value2;
-                }, {field: column.field});
+                }.bind({field: column.field});
                 break;
             //case "text":
             default:
-                sortFunc = EzWebExt.bind(function (value1, value2) {
+                sortFunc = function (value1, value2) {
                     value1 = getFieldValue(value1, this.field);
                     value1 = value1 !== null ? value1 : '';
 
@@ -145,14 +145,14 @@
                     value2 = value2 !== null ? value2 : '';
 
                     return value1.localeCompare(value2);
-                }, {field: column.field});
+                }.bind({field: column.field});
             }
         }
 
         if (inverse) {
-            sortFunc = EzWebExt.bind(function (value1, value2) {
+            sortFunc = function (value1, value2) {
                 return -this(value1, value2);
-            }, sortFunc);
+            }.bind(sortFunc);
         }
         this.sortedElements = this.filteredElements.sort(sortFunc);
     };

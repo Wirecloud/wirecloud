@@ -19,7 +19,7 @@
  *
  */
 
-/*global document, window, Error, gettext, interpolate, $, Hash, Element, Event, isElement*/
+/*global document, window, Error, gettext, interpolate, $, Hash, Event, isElement*/
 /*global BrowserUtilsFactory, Constants, ColumnLayout, DragboardPosition, FreeLayout, FullDragboardLayout, Widget, IWidget, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud, SmartColumnLayout*/
 
 /**
@@ -756,7 +756,7 @@ IWidgetDraggable.prototype._findTabElement = function (curNode, maxRecursion) {
     }
 
     // Only check elements, skip other dom nodes.
-    if (isElement(curNode) && Element.extend(curNode).hasClassName('tab')) {
+    if (isElement(curNode) && curNode.hasClassName('tab')) {
         return curNode;
     } else {
         var parentNode = curNode.parentNode;
@@ -1024,7 +1024,6 @@ function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, 
 
         var dragboard = EzWebEffectBase.findDragboardElement(resizableElement);
         dragboardCover = document.createElement("div");
-        Element.extend(dragboardCover);
         dragboardCover.addClassName("cover");
         dragboardCover.observe("mouseup", endresize, true);
         dragboardCover.observe("mousemove", resize, true);

@@ -63,7 +63,7 @@ function Tab(tabInfo, workspace, index) {
             iWidgetElement.setAttribute('class', 'iwidget_item');
             icon = document.createElement('img');
             icon.setAttribute('class', "iwidget_icon");
-            icon.setAttribute('src', iWidgets[i].getWidget().getIPhoneImageURI());
+            icon.setAttribute('src', iWidgets[i].widget.getIPhoneImageURI());
             iWidgetElement.appendChild(icon);
 
             iWidgetElement.appendChild(document.createTextNode(iWidgets[i].name));

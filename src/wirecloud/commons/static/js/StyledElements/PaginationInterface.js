@@ -16,13 +16,13 @@
             this.wrapperElement.style.display = '';
         }
 
-        EzWebExt.setTextContent(this.totalPagesLabel, this.pagination.totalPages);
-        EzWebExt.setTextContent(this.currentPageLabel, this.pagination.currentPage);
+        this.totalPagesLabel.textContent = this.pagination.totalPages;
+        this.currentPageLabel.textContent = this.pagination.currentPage;
         updateButtons.call(this);
     };
 
     onPageChange = function onPageChange() {
-        EzWebExt.setTextContent(this.currentPageLabel, this.currentPage + 1);
+        this.currentPageLabel.textContent = this.currentPage + 1;
         updateButtons.call(this);
     };
 
@@ -94,12 +94,12 @@
 
         updateLayout.call(this, options.layout);
 
-        EzWebExt.setTextContent(this.currentPageLabel, this.currentPage + 1);
-        EzWebExt.setTextContent(this.totalPagesLabel, this.totalPages);
+        this.currentPageLabel.textContent = this.currentPage + 1;
+        this.totalPagesLabel.textContent = this.totalPages;
 
         updateButtons.call(this);
 
-        this.pagination.addEventListener('requestEnd', EzWebExt.bind(onPaginationChanged, this));
+        this.pagination.addEventListener('requestEnd', onPaginationChanged.bind(this));
     };
     PaginationInterface.prototype = new StyledElements.StyledElement();
 

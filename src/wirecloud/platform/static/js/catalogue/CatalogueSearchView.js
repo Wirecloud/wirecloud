@@ -158,7 +158,7 @@
 
         // Title
         var pTitle = document.createElement('h4');
-        pTitle.setTextContent(gettext("Empty Marketplace!"));
+        pTitle.textContent = gettext("Empty Marketplace!");
         wrapper.appendChild(pTitle);
 
         // Message

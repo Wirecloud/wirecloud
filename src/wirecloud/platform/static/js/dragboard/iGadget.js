@@ -20,7 +20,7 @@
  */
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
-/*global $, CSSPrimitiveValue, Element, Event, Insertion, document, gettext, ngettext, interpolate, window */
+/*global $, CSSPrimitiveValue, Event, Insertion, document, gettext, ngettext, interpolate, window */
 /*global Constants, DropDownMenu, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud*/
 /*global isElement, IWidgetLogManager, WidgetVersion, DragboardPosition*/
 /*global IWidgetDraggable, IWidgetIconDraggable, FreeLayout, FullDragboardLayout*/
@@ -94,8 +94,10 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
             readOnly: readOnly
         }
     );
-    Object.defineProperty(this, 'id', {get: function () {return this.internal_iwidget.id;}});
-    Object.defineProperty(this, 'widget', {get: function () {return this.internal_iwidget.widget;}});
+    Object.defineProperties(this, {
+        'id': {get: function () {return this.internal_iwidget.id;}},
+        'widget': {get: function () {return this.internal_iwidget.widget;}}
+    });
     if (this.id) {
         this.codeURL = this.internal_iwidget.widget.code_url + "#id=" + this.id;
     }
@@ -140,15 +142,6 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
     StyledElements.ObjectWithEvents.call(this, ['load', 'unload']);
 }
 IWidget.prototype = new StyledElements.ObjectWithEvents();
-
-/**
- * Returns the associated Widget.
- *
- * @returns {Widget} the associated Widget.
- */
-IWidget.prototype.getWidget = function () {
-    return this.internal_iwidget.widget;
-};
 
 IWidget.prototype.invalidIconPosition = function () {
     return this.iconPosition.x === -1 && this.iconPosition.y === -1;
@@ -263,15 +256,6 @@ IWidget.prototype.getContentHeight = function () {
 };
 
 /**
- * Returns the Tab where this iWidget is displayed.
- *
- * @returns {Tab} associated tab
- */
-IWidget.prototype.getTab = function () {
-    return this.internal_iwidget.tab;
-};
-
-/**
  * Returns the current width of the widget in LU. This is not the same to the
  * content with as it depends in the current status of the iWidget (minimized,
  * with the configuration dialog, etc...)
@@ -342,11 +326,9 @@ IWidget.prototype.build = function () {
 
     // Icon Element
     this.iconElement = document.createElement("div");
-    Element.extend(this.iconElement);
     this.iconElement.addClassName("floating_widget_icon");
 
     this.iconImg = document.createElement("img");
-    Element.extend(this.iconImg);
     this.iconImg.addClassName("floating_widget_img");
     this.iconImg.setAttribute("src", this.internal_iwidget.widget.getIcon());
     this.iconElement.appendChild(this.iconImg);
@@ -357,7 +339,6 @@ IWidget.prototype.build = function () {
     };
 
     this.iwidgetIconNameHTMLElement = document.createElement("a");
-    Element.extend(this.iwidgetIconNameHTMLElement);
     this.iwidgetIconNameHTMLElement.update(this.name);
     this.iwidgetIconNameHTMLElement.addClassName("floating_widget_title");
     this.iconElement.appendChild(this.iwidgetIconNameHTMLElement);
@@ -458,7 +439,7 @@ IWidget.prototype.paint = function (onInit) {
 };
 
 IWidget.prototype.load = function () {
-    this.getTab().paint();
+    this.layout.dragboard.tab.paint();
 };
 
 IWidget.prototype.isPainted = function () {
@@ -612,10 +593,6 @@ IWidget.prototype.upgradeIWidget = function () {
         postBody: Object.toJSON(data),
         contentType: 'application/json'
     });
-};
-
-IWidget.prototype.registerPrefCallback = function registerPrefCallback(prefCallback) {
-    this.internal_iwidget.prefCallback = prefCallback;
 };
 
 /**
