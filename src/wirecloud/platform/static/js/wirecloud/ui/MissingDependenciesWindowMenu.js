@@ -34,7 +34,7 @@
     var MissingDependenciesWindowMenu = function MissingDependenciesWindowMenu(next, details) {
         var list, i, item;
 
-        Wirecloud.ui.WindowMenu.call(this, gettext('Missing dependencies'));
+        Wirecloud.ui.WindowMenu.call(this, gettext('Missing dependencies'), 'missing_dependencies');
 
         this.msg1Element = document.createElement('p');
         this.windowContent.appendChild(this.msg1Element);

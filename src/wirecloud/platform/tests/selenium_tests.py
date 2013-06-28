@@ -301,7 +301,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     def test_create_workspace_from_catalogue_missing_dependencies(self):
 
         self.login()
-        self.create_workspace_from_catalogue('TestMashup2', expect_missing_dependencies=('Wirecloud/test-masup2/1.0',))
+        self.create_workspace_from_catalogue('TestMashup2', expect_missing_dependencies=('Wirecloud/nonavailable-widget/1.0', 'Wirecloud/nonavailable-operator/1.0'))
     test_create_workspace_from_catalogue_missing_dependencies.tags = ('fiware-ut-5')
 
     def test_merge_mashup(self):
