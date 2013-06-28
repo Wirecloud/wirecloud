@@ -83,9 +83,13 @@
                 dry_run: true,
                 onSuccess: next,
                 onFailure: function (msg, details) {
-                    // Show missing dependencies
-                    var dialog = new Wirecloud.ui.MissingDependenciesWindowMenu(next, details);
-                    dialog.show();
+                    if (details != null && 'missingDependencies' in details) {
+                        // Show missing dependencies
+                        var dialog = new Wirecloud.ui.MissingDependenciesWindowMenu(next, details);
+                        dialog.show();
+                    } else {
+                        LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                    }
                 }
             })
         } else {
