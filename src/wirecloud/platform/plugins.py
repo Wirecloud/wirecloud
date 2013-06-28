@@ -82,8 +82,8 @@ def get_plugins():
 
         for entry in modules:
             if isinstance(entry, basestring):
-                i = path.rfind('.')
-                module, attr = path[:i], path[i + 1:]
+                i = entry.rfind('.')
+                module, attr = entry[:i], entry[i + 1:]
                 try:
                     mod = import_module(module)
                 except ImportError, e:
