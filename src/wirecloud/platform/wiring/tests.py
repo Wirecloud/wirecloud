@@ -1024,7 +1024,8 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
         time.sleep(2)
         arrows = self.driver.find_elements_by_css_selector('.arrow')
         self.assertEqual(len(arrows), 2)
-        arrows[0].click()
+        # The find_element_by_css_selector is needed to work around a bug in the firefox driver
+        arrows[0].find_element_by_css_selector('g').click()
         self.wait_element_visible_by_css_selector('.closer', element=arrows[0]).click()
         arrows = self.driver.find_elements_by_css_selector('.arrow')
         self.assertEqual(len(arrows), 2)
