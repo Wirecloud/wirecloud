@@ -42,7 +42,7 @@ class FiWareMarketManager(MarketManager):
 
         store = endpoint['store']
         adaptor = get_market_adaptor(None, self._options['name'])
-        user_data = get_market_user_data(user, self._options['name'])
+        user_data = get_market_user_data(user, self._options['user'], self._options['name'])
         storeclient = adaptor.get_store(store)
         return storeclient.download_resource(url, user_data[store + '/token'])
 
@@ -61,7 +61,7 @@ class FiWareMarketManager(MarketManager):
 
         store = endpoint['store']
         adaptor = get_market_adaptor(self._options.get('user', None), self._options['name'])
-        user_data = get_market_user_data(user, self._options['name'])
+        user_data = get_market_user_data(user, self._options['user'], self._options['name'])
         storeclient = adaptor.get_store(store)
         storeclient.upload_resource(
             resource_info['display_name'],
@@ -133,14 +133,12 @@ class FiWarePlugin(WirecloudPlugin):
 
     def get_ajax_endpoints(self, views):
         return (
-            {'id': 'FIWARE_RESOURCES_COLLECTION', 'url': '/api/marketAdaptor/marketplace/#{market}/resources'},
-            {'id': 'FIWARE_FULL_SEARCH', 'url': '/api/marketAdaptor/marketplace/#{market}/search/#{search_string}'},
-            {'id': 'FIWARE_STORE_RESOURCES_COLLECTION', 'url': '/api/marketAdaptor/marketplace/#{market}/#{store}/resources'},
-            {'id': 'FIWARE_STORE_SEARCH', 'url': '/api/marketAdaptor/marketplace/#{market}/search/#{store}/#{search_string}'},
-            {'id': 'FIWARE_RESOURCE_ENTRY', 'url': '/api/marketAdaptor/marketplace/#{market}/#{store}/#{entry}'},
-            {'id': 'FIWARE_STORE_COLLECTION', 'url': '/api/marketAdaptor/marketplace/#{market}/stores'},
-            {'id': 'FIWARE_STORE_ENTRY', 'url': '/api/marketAdaptor/marketplace/#{market}/stores/#{store}'},
-            {'id': 'FIWARE_STORE_START_PURCHASE', 'url': build_url_template('wirecloud.fiware.store_start_purchase', ['marketplace', 'store'])},
+            {'id': 'FIWARE_RESOURCES_COLLECTION', 'url': build_url_template('wirecloud.fiware.market_resource_collection', ['market_user', 'market_name'])},
+            {'id': 'FIWARE_FULL_SEARCH', 'url': build_url_template('wirecloud.fiware.market_full_search', ['market_user', 'market_name', 'search_string'])},
+            {'id': 'FIWARE_STORE_RESOURCES_COLLECTION', 'url': build_url_template('wirecloud.fiware.store_resource_collection', ['market_user', 'market_name', 'store'])},
+            {'id': 'FIWARE_STORE_SEARCH', 'url': build_url_template('wirecloud.fiware.store_search', ['market_user', 'market_name', 'store', 'search_string'])},
+            {'id': 'FIWARE_STORE_COLLECTION', 'url': build_url_template('wirecloud.fiware.store_collection', ['market_user', 'market_name'])},
+            {'id': 'FIWARE_STORE_START_PURCHASE', 'url': build_url_template('wirecloud.fiware.store_start_purchase', ['market_user', 'market_name', 'store'])},
         )
 
     def get_widget_api_extensions(self, view):

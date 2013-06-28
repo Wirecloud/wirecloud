@@ -33,26 +33,29 @@ from wirecloud.platform.models import Market, MarketUserData
 market_adaptors = {}
 
 
-def get_market_adaptor(user, market):
+def get_market_adaptor(market_user, market):
 
-    if user is None:
+    if market_user is None or market_user == 'public':
+        market_user = None
         username = ''
+    else:
+        username = market_user
 
-    if user not in market_adaptors:
+    if market_user not in market_adaptors:
         market_adaptors[username] = {}
 
     if market not in market_adaptors[username]:
-        m = get_object_or_404(Market, user=user, name=market)
+        m = get_object_or_404(Market, user__username=market_user, name=market)
         options = json.loads(m.options)
         market_adaptors[username][market] = MarketAdaptor(options['url'])
 
     return market_adaptors[username][market]
 
 
-def get_market_user_data(user, market):
+def get_market_user_data(user, market_user, market_name):
 
     user_data = {}
-    for user_data_entry in MarketUserData.objects.filter(market__user=None, market__name=market, user=user):
+    for user_data_entry in MarketUserData.objects.filter(market__user__username=market_user, market__name=market_name, user=user):
         try:
             user_data[user_data_entry.name] = json.loads(user_data_entry.value)
         except:
@@ -63,10 +66,10 @@ def get_market_user_data(user, market):
 
 class ServiceCollection(Resource):
 
-    def read(self, request, marketplace, store):
+    def read(self, request, market_user, market_name, store):
 
-        adaptor = get_market_adaptor(None, marketplace)
-        user_data = get_market_user_data(request.user, marketplace)
+        adaptor = get_market_adaptor(market_user, market_name)
+        user_data = get_market_user_data(request.user, market_user, market_name)
 
         try:
             result = adaptor.get_all_services_from_store(store, **user_data)
@@ -75,13 +78,13 @@ class ServiceCollection(Resource):
 
         return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
 
-    def create(self, request, marketplace, store):
+    def create(self, request, market_user, market_name, store):
 
         service_info = {}
         service_info['name'] = request.POST['name']
         service_info['url'] = request.POST['url']
 
-        adaptor = get_market_adaptor(None, marketplace)
+        adaptor = get_market_adaptor(market_user, market_name)
 
         try:
             adaptor.add_service(store, service_info)
@@ -91,28 +94,14 @@ class ServiceCollection(Resource):
         return HttpResponse(status=201)
 
 
-class ServiceEntry(Resource):
-
-    def delete(self, request, marketplace, store, service_name):
-
-        adaptor = get_market_adaptor(None, marketplace)
-
-        try:
-            adaptor.delete_service(store, service_name)
-        except:
-            return HttpResponse(status=502)
-
-        return HttpResponse(status=204)
-
-
 class ServiceSearchCollection(Resource):
 
-    def read(self, request, marketplace, store='', keyword='widget'):
+    def read(self, request, market_user, market_name, store='', search_string='widget'):
 
-        adaptor = get_market_adaptor(None, marketplace)
+        adaptor = get_market_adaptor(market_user, market_name)
 
         try:
-            result = adaptor.full_text_search(store, keyword)
+            result = adaptor.full_text_search(store, search_string)
         except:
             return HttpResponse(status=502)
 
@@ -121,10 +110,10 @@ class ServiceSearchCollection(Resource):
 
 class AllStoresServiceCollection(Resource):
 
-    def read(self, request, marketplace):
+    def read(self, request, market_user, market_name):
 
-        adaptor = get_market_adaptor(None, marketplace)
-        user_data = get_market_user_data(request.user, marketplace)
+        adaptor = get_market_adaptor(market_user, market_name)
+        user_data = get_market_user_data(request.user, market_user, market_name)
 
         result = {'resources': []}
         try:
@@ -143,9 +132,9 @@ class AllStoresServiceCollection(Resource):
 
 class StoreCollection(Resource):
 
-    def read(self, request, marketplace):
+    def read(self, request, market_user, market_name):
 
-        adaptor = get_market_adaptor(None, marketplace)
+        adaptor = get_market_adaptor(market_user, market_name)
 
         try:
             result = adaptor.get_all_stores()
@@ -155,10 +144,10 @@ class StoreCollection(Resource):
         return HttpResponse(simplejson.dumps(result), mimetype='application/json; chaset=UTF-8')
 
 
-def start_purchase(request, marketplace, store):
+def start_purchase(request, market_user, market_name, store):
 
-    adaptor = get_market_adaptor(None, marketplace)
-    user_data = get_market_user_data(request.user, marketplace)
+    adaptor = get_market_adaptor(market_user, market_name)
+    user_data = get_market_user_data(request.user, market_user, market_name)
 
     data = simplejson.loads(request.raw_post_data)
 
