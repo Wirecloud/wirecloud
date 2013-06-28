@@ -82,9 +82,9 @@
             OpManagerFactory.getInstance().addWorkspaceFromMashup(resource, {
                 dry_run: true,
                 onSuccess: next,
-                onFailure: function () {
+                onFailure: function (msg, details) {
                     // Show missing dependencies
-                    var dialog = new Wirecloud.ui.MissingDependenciesWindowMenu(next);
+                    var dialog = new Wirecloud.ui.MissingDependenciesWindowMenu(next, details);
                     dialog.show();
                 }
             })

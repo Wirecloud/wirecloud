@@ -192,16 +192,20 @@ var OpManagerFactory = function () {
             };
 
             var cloneError = function(transport, e) {
-                var logManager, msg;
+                var logManager, msg, response_data;
 
                 logManager = LogManagerFactory.getInstance();
 
                 msg = logManager.formatError(gettext("Error adding the workspace: %(errorMsg)s."), transport, e);
                 logManager.log(msg);
 
+                if (transport.status === 422) {
+                    response_data = JSON.parse(transport.responseText);
+                }
+
                 if (typeof options.onFailure === 'function') {
                     try {
-                        options.onFailure(msg);
+                        options.onFailure(msg, response_data.details);
                     } catch (e) {}
                 }
             };
