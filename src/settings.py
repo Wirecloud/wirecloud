@@ -179,10 +179,10 @@ WORKSPACE_MANAGERS = (
     'wirecloud.platform.workspace.workspace_managers.OrganizationWorkspaceManager',
 )
 
-WIRECLOUD_PLUGINS = (
-    'wirecloud.oauth2provider.plugins.OAuth2ProviderPlugin',
-    'wirecloud.fiware.plugins.FiWarePlugin',
-)
+#WIRECLOUD_PLUGINS = (
+#    'wirecloud.oauth2provider.plugins.OAuth2ProviderPlugin',
+#    'wirecloud.fiware.plugins.FiWarePlugin',
+#)
 
 FORCE_SCRIPT_NAME = ""
 
