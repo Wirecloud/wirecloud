@@ -45,7 +45,7 @@ class CodeTransformationTestCase(TestCase):
 
         settings.FORCE_DOMAIN = 'example.com'
         settings.FORCE_PROTO = 'http'
-        cls.OLD_WIRECLOUD_PLUGINS = getattr(settings, 'WIRECLOUD_PLUGINS', ())
+        cls.OLD_WIRECLOUD_PLUGINS = getattr(settings, 'WIRECLOUD_PLUGINS', None)
 
         settings.WIRECLOUD_PLUGINS = ()
         plugins.clear_cache()
