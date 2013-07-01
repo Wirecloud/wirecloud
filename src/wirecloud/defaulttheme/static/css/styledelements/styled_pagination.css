@@ -1,7 +1,7 @@
 .pagination {
     display: inline-block;
     font-size: 13px;
-    margin: 20px 0;
+    margin: 5px 3px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
@@ -45,4 +45,41 @@
     opacity: 1;
     color: rgb(153, 153, 153);
     background-color: rgb(245, 245, 245);
+}
+
+/* pagination-large, pagination-small and mini */
+
+.pagination.pagination-large > .styled_button, .pagination.pagination-large > .box {
+    padding: 11px 19px;
+    font-size: 17.5px;
+}
+
+.pagination.pagination-large > .styled_button:first-child {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+
+.pagination.pagination-large > .styled_button:last-child {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+.pagination.pagination-small > .styled_button, .pagination.pagination-small > .box {
+    padding: 2px 10px;
+    font-size: 11.9px;
+}
+
+.pagination.pagination-mini > .styled_button, .pagination.pagination-mini > .box {
+    padding: 0 6px;
+    font-size: 10.5px;
+}
+
+.pagination.pagination-small > .styled_button:first-child, .pagination.pagination-mini > .styled_button:first-child {
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+
+.pagination.pagination-small > .styled_button:last-child, .pagination.pagination-mini > .styled_button:last-child {
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
 }
