@@ -268,7 +268,7 @@
     ModelTable.prototype.resizeColumns = function resizeColumns() {
         var i, j, autocells = [], extra_width, autowidth, columnCells;
 
-        extra_width = this.header.wrapperElement.offsetWidth;
+        extra_width = this.tableBody.wrapperElement.clientWidth;
         for (i = 0; i < this.columns.length; i += 1) {
             if (typeof this.columns[i].width !== 'string') {
                 autocells.push(i);
