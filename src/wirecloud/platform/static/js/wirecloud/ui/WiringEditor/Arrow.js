@@ -363,7 +363,7 @@
     };
 
     /**
-     *  Calculate coordinates de la posicithe arrow path middle position
+     *  Calculate the arrow path PathPos position
      *  with a bercier curves aproximation.
      */
     Arrow.prototype.calculatePosInArrow = function calculatePosInArrow(PathPos) {

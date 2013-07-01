@@ -215,6 +215,7 @@
             posX: anchor_bcr.left - base_bcr.left + baseElement.scrollLeft,
             posY: anchor_bcr.top - base_bcr.top + baseElement.scrollTop
         };
+
         return {
             posX: Math.round(coordinates.posX + (this.wrapperElement.offsetWidth / 2)),
             posY: Math.round(coordinates.posY + (this.wrapperElement.offsetWidth / 2))
@@ -317,20 +318,6 @@
      */
     Anchor.prototype.isEmphasize = function isEmphasize() {
         return this.context.iObject.selected;
-    };
-
-    /**
-     * emphasize compatible anchors
-     */
-    Anchor.prototype.emphasize = function emphasize() {
-        return this.context.iObject.wiringEditor.emphasize(this);
-    };
-
-    /**
-     * deemphasize compatible anchors
-     */
-    Anchor.prototype.deemphasize = function deemphasize() {
-        return this.context.iObject.wiringEditor.deemphasize(this);
     };
 
     /**
