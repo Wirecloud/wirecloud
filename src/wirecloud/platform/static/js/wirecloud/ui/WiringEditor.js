@@ -389,8 +389,8 @@ if (!Wirecloud.ui) {
         for (i = 0; i < iwidgets.length; i++) {
             iwidget = iwidgets[i];
             //dont repeat any iwidget.
-            if (entitiesIds.indexOf(iwidget.widget.getId()) == -1) {
-                entitiesIds.push(iwidget.widget.getId());
+            if (entitiesIds.indexOf(iwidget.widget.id) == -1) {
+                entitiesIds.push(iwidget.widget.id);
             }
         }
         for (key in availableOperators) {
