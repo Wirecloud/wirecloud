@@ -82,10 +82,14 @@
             OpManagerFactory.getInstance().addWorkspaceFromMashup(resource, {
                 dry_run: true,
                 onSuccess: next,
-                onFailure: function () {
-                    // Show missing dependencies
-                    var dialog = new Wirecloud.ui.MissingDependenciesWindowMenu(next);
-                    dialog.show();
+                onFailure: function (msg, details) {
+                    if (details != null && 'missingDependencies' in details) {
+                        // Show missing dependencies
+                        var dialog = new Wirecloud.ui.MissingDependenciesWindowMenu(next, details);
+                        dialog.show();
+                    } else {
+                        LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                    }
                 }
             })
         } else {

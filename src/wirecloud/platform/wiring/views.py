@@ -19,14 +19,14 @@
 
 import json
 
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource
-from wirecloud.commons.utils.http import authentication_required, get_absolute_reverse_url
+from wirecloud.commons.utils.http import authentication_required, build_error_response, get_absolute_reverse_url, supported_request_mime_types
 from wirecloud.platform.get_data import _invalidate_cached_variable_values
 from wirecloud.platform.models import Workspace
 from wirecloud.platform.wiring.utils import generate_xhtml_operator_code
@@ -35,20 +35,15 @@ from wirecloud.platform.wiring.utils import generate_xhtml_operator_code
 class WiringEntry(Resource):
 
     @authentication_required
+    @supported_request_mime_types(('application/json',))
     def update(self, request, workspace_id):
-
-        content_type = request.META.get('CONTENT_TYPE', '')
-        if content_type is None:
-            content_type = ''
-
-        if not content_type.startswith('application/json'):
-            return HttpResponseBadRequest(_("Invalid content type"), mimetype='text/plain; charset=UTF-8')
 
         wiring_status_string = request.raw_post_data
         try:
             wiring_status = json.loads(wiring_status_string)
-        except:
-            return HttpResponseBadRequest(_("Request body is not valid JSON data"), mimetype='text/plain; charset=UTF-8')
+        except Exception, e:
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
 
         workspace = get_object_or_404(Workspace, id=workspace_id)
         if not request.user.is_superuser and workspace.creator != request.user:

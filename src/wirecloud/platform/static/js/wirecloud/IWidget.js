@@ -19,7 +19,7 @@
  *
  */
 
-/*global IWidgetLogManager, StyledElements, Widget, Wirecloud*/
+/*global IWidgetLogManager, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -42,7 +42,7 @@
      */
     var IWidget = function IWidget(widget, tab, options) {
 
-        if (typeof options !== 'object' || !(widget instanceof Widget)) {
+        if (typeof options !== 'object' || !(widget instanceof Wirecloud.Widget)) {
             throw new TypeError();
         }
 

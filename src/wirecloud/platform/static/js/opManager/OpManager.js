@@ -192,7 +192,7 @@ var OpManagerFactory = function () {
             };
 
             var cloneError = function(transport, e) {
-                var logManager, msg;
+                var logManager, msg, details;
 
                 logManager = LogManagerFactory.getInstance();
 
@@ -201,7 +201,13 @@ var OpManagerFactory = function () {
 
                 if (typeof options.onFailure === 'function') {
                     try {
-                        options.onFailure(msg);
+                        if (transport.status === 422) {
+                            details = JSON.parse(transport.responseText).details;
+                        }
+                    } catch (e) {}
+
+                    try {
+                        options.onFailure(msg, details);
                     } catch (e) {}
                 }
             };

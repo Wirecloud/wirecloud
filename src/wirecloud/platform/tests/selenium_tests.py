@@ -35,13 +35,13 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # We need atleast one Workspace, so we cannot delete current workspace
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
-        self.check_popup_menu(('Rename', 'Settings', 'New workspace', 'Publish'), ('Remove',))
+        self.check_popup_menu(('Rename', 'Settings', 'New workspace', 'Upload to local catalogue'), ('Remove',))
 
         self.create_workspace('Test')
 
         # Now we have two workspaces so we can remove any of them
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
-        self.check_popup_menu(('Rename', 'Settings', 'New workspace', 'Publish', 'Remove'), ())
+        self.check_popup_menu(('Rename', 'Settings', 'New workspace', 'Upload to local catalogue', 'Remove'), ())
 
         self.rename_workspace('test2')
         tab = self.get_workspace_tab_by_name('Tab')
@@ -301,7 +301,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     def test_create_workspace_from_catalogue_missing_dependencies(self):
 
         self.login()
-        self.create_workspace_from_catalogue('TestMashup2', expect_missing_dependencies=('Wirecloud/test-masup2/1.0',))
+        self.create_workspace_from_catalogue('TestMashup2', expect_missing_dependencies=('Wirecloud/nonavailable-widget/1.0', 'Wirecloud/nonavailable-operator/1.0'))
     test_create_workspace_from_catalogue_missing_dependencies.tags = ('fiware-ut-5')
 
     def test_merge_mashup(self):

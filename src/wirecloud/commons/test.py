@@ -439,7 +439,7 @@ class WirecloudRemoteTestCase(object):
             if view_name == 'marketplace':
                 WebDriverWait(self.driver, 30).until(marketplace_loaded)
 
-    def check_popup_menu(self, must_be, must_be_absent):
+    def check_popup_menu(self, must_be, must_be_absent=(), must_be_disabled=()):
 
         time.sleep(0.1)
 
@@ -450,6 +450,11 @@ class WirecloudRemoteTestCase(object):
         for item in must_be_absent:
             menu_item = self.get_popup_menu_item(item)
             self.assertIsNone(menu_item)
+
+        for item in must_be_disabled:
+            menu_item = self.get_popup_menu_item(item)
+            self.assertIsNotNone(menu_item)
+            self.assertTrue('disabled' in menu_item.get_attribute('class'))
 
     def add_packaged_resource_to_catalogue(self, wgt_file, widget_name, shared=False, expect_error=False):
 
@@ -612,12 +617,17 @@ class WirecloudRemoteTestCase(object):
         resource.find_element_by_css_selector('.instantiate_button div').click()
 
         if expect_missing_dependencies is not None:
+
             continue_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Continue']")
-            for dependency in expect_missing_dependencies:
-                pass
+            window_menu = self.driver.find_element_by_css_selector('.window_menu.missing_dependencies')
+
+            missing_dependency_elements = window_menu.find_elements_by_tag_name('li')
+            missing_dependencies = [missing_dependency_element.text for missing_dependency_element in missing_dependency_elements]
+
+            self.assertEqual(set(missing_dependencies), set(expect_missing_dependencies))
 
             if not install_dependencies:
-                cancel_button = self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Cancel']")
+                cancel_button = window_menu.find_element_by_xpath("//*[text()='Cancel']")
                 cancel_button.click()
                 return
 
@@ -709,7 +719,7 @@ class WirecloudRemoteTestCase(object):
 
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.wait_element_visible_by_css_selector('.popup_menu')
-        self.popup_menu_click('Publish')
+        self.popup_menu_click('Upload to local catalogue')
 
         self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']")
         name_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="name"]')

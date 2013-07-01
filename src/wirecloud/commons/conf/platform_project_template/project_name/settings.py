@@ -234,10 +234,13 @@ WORKSPACE_MANAGERS = (
     'wirecloud.platform.workspace.workspace_managers.OrganizationWorkspaceManager',
 )
 
-WIRECLOUD_PLUGINS = (
-    'wirecloud.oauth2provider.plugins.OAuth2ProviderPlugin',
-    'wirecloud.fiware.plugins.FiWarePlugin',
-)
+# Wirecloud autodiscover Wirecloud plugins by default. Uncomment this for settings
+# the list of plugins manually.
+#
+#WIRECLOUD_PLUGINS = (
+#    'wirecloud.oauth2provider.plugins.OAuth2ProviderPlugin',
+#    'wirecloud.fiware.plugins.FiWarePlugin',
+#)
 
 NOT_PROXY_FOR = ['localhost', '127.0.0.1']
 

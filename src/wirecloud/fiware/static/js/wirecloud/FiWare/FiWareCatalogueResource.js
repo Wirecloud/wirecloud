@@ -20,7 +20,7 @@
  */
 
 /*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global $, WidgetVersion */
+/*global $ */
 "use strict";
 
 function FiWareCatalogueResource(resourceJSON_) {
@@ -183,7 +183,7 @@ function FiWareCatalogueResource(resourceJSON_) {
     // CONVENIENCE FUNCTIONS
     /////////////////////////////
     this.changeVersion = function (version) {
-        if (version instanceof WidgetVersion) {
+        if (version instanceof Wirecloud.Version) {
             version = version.text;
         }
 
@@ -206,7 +206,7 @@ function FiWareCatalogueResource(resourceJSON_) {
     for (i = 0; i < versions.length; i += 1) {
         version_data = versions[i];
 
-        version_data.version = new WidgetVersion(version_data.version, 'catalogue');
+        version_data.version = new Wirecloud.Version(version_data.version, 'catalogue');
         version_data.modified = new Date(version_data.modified);
 
         allVersions.push(version_data.version);

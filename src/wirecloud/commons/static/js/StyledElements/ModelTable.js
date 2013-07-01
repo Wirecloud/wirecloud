@@ -37,7 +37,7 @@
             cell.style.width = column.width;
             cell.textContent = column.label;
             if (column.sortable !== false) {
-                EzWebExt.addClassName(cell, 'sortable');
+                cell.classList.add('sortable');
                 cell.setAttribute('title', 'Ordenar por ' + column.label);
                 cell.callback = this.pSortByColumnCallback.bind({widget: this, column: i});
                 cell.addEventListener('click', cell.callback, true);
@@ -81,7 +81,7 @@
             row = document.createElement('div');
             row.className = 'row';
             if ((i % 2) === 1) {
-                EzWebExt.appendClassName(row, 'odd');
+                row.classList.add('odd');
             }
 
             for (j = 0; j < this.columns.length; j += 1) {
@@ -94,7 +94,7 @@
                     cell.style.width = column.width;
                 }
                 if (typeof column['class'] === 'string') {
-                    EzWebExt.addClassName(cell, column['class']);
+                    cell.classList.add(column['class']);
                 }
 
                 if (column.contentBuilder) {
@@ -268,7 +268,7 @@
     ModelTable.prototype.resizeColumns = function resizeColumns() {
         var i, j, autocells = [], extra_width, autowidth, columnCells;
 
-        extra_width = this.header.wrapperElement.offsetWidth;
+        extra_width = this.tableBody.wrapperElement.clientWidth;
         for (i = 0; i < this.columns.length; i += 1) {
             if (typeof this.columns[i].width !== 'string') {
                 autocells.push(i);
@@ -298,8 +298,8 @@
 
         if (this.sortColumn != null) {
             oldSortHeaderCell = this.pHeaderCells[this.sortColumn];
-            EzWebExt.removeClassName(oldSortHeaderCell, 'ascending');
-            EzWebExt.removeClassName(oldSortHeaderCell, 'descending');
+            oldSortHeaderCell.classList.remove('ascending');
+            oldSortHeaderCell.classList.remove('descending');
         }
         this.sortInverseOrder = descending;
         this.sortColumn = column;
@@ -307,11 +307,11 @@
         if (this.sortColumn != null) {
             sortHeaderCell = this.pHeaderCells[this.sortColumn];
             if (this.sortInverseOrder) {
-                EzWebExt.removeClassName(sortHeaderCell, 'ascending');
-                EzWebExt.addClassName(sortHeaderCell, 'descending');
+                sortHeaderCell.classList.remove('ascending');
+                sortHeaderCell.classList.add('descending');
             } else {
-                EzWebExt.removeClassName(sortHeaderCell, 'descending');
-                EzWebExt.addClassName(sortHeaderCell, 'ascending');
+                sortHeaderCell.classList.remove('descending');
+                sortHeaderCell.classList.add('ascending');
             }
 
             column = this.columns[this.sortColumn];

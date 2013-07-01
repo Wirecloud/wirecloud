@@ -61,7 +61,7 @@
         }
 
         if (checked) {
-            EzWebExt.addClassName(this.wrapperElement, 'checked');
+            this.wrapperElement.classList.add('checked');
             if (this.icon) {
                 this.icon.src = this._checkedIcon;
             }
@@ -69,7 +69,7 @@
                 this.label.textContent = this._checkedText;
             }
         } else {
-            EzWebExt.removeClassName(this.wrapperElement, 'checked');
+            this.wrapperElement.classList.remove('checked');
             if (this.icon) {
                 this.icon.src = this._icon;
             }

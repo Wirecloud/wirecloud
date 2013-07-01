@@ -334,58 +334,6 @@ EzWebExt.prependWord = function(text, word) {
     return word + " " + EzWebExt.removeWord(text, word);
 }
 
-EzWebExt.hasClassName = function(element, className) {
-    return element.className.match(RegExp("(^\\s*|\\s+)" + className + "(\\s+|\\s*$)", "g")) != null;
-}
-
-/**
- * @deprecated
- * Use EzWebExt.appendClassName/EzWebExt.prependClassName
- */
-EzWebExt.addClassName = function(element, className) {
-    element.className = EzWebExt.appendWord(element.className, className);
-}
-
-EzWebExt.appendClassName = function(element, className) {
-    element.className = EzWebExt.appendWord(element.className, className);
-}
-
-EzWebExt.prependClassName = function(element, className) {
-    element.className = EzWebExt.prependWord(element.className, className);
-}
-
-EzWebExt.removeClassName = function(element, className) {
-    element.className = element.className.replace(RegExp("(^\\s*|\\s+)" + className + "(\\s+|\\s*$)", "g"), " ").replace(RegExp("^\\s+|\\s+$", "g"), "");
-}
-
-EzWebExt.toggleClassName = function(element, className) {
-    if (EzWebExt.hasClassName(element, className))
-        EzWebExt.removeClassName(element, className);
-    else
-        EzWebExt.addClassName(element, className);
-}
-
-/**
- * Return the inner content of an Element treating it as pure text. All
- * encoded characters will be decoded.
- *
- * @param {Element}
- *
- * @return {String}
- */
-EzWebExt.getTextContent = function(element) {
-    if ("textContent" in element) {
-        return element.textContent;
-    }
-    else if ("innerText" in element) {
-        return element.innerText;
-    }
-    else if ("nodeValue" in element) {
-        return element.nodeValue;
-    }
-    return "";
-}
-
 /* getElementsByClassName function */
 if ("getElementsByClassName" in document) {
     EzWebExt.getElementsByClassName = function(rootElement, className) {

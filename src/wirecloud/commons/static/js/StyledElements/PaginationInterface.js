@@ -87,10 +87,10 @@
         this.lastBtn.addEventListener('click', pagination.goToLast.bind(pagination));
 
         this.currentPageLabel = document.createElement('span');
-        EzWebExt.addClassName(this.currentPageLabel, 'current-page');
+        this.currentPageLabel.classList.add('current-page');
 
         this.totalPagesLabel = document.createElement('span');
-        EzWebExt.addClassName(this.totalPagesLabel, 'total-pages');
+        this.totalPagesLabel.classList.add('total-pages');
 
         updateLayout.call(this, options.layout);
 

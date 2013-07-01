@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     (C) Copyright 2013 Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -31,12 +31,22 @@
     /*
      * Constructor
      */
-    var MissingDependenciesWindowMenu = function MissingDependenciesWindowMenu(next) {
-        Wirecloud.ui.WindowMenu.call(this, gettext('Add Mashup'));
+    var MissingDependenciesWindowMenu = function MissingDependenciesWindowMenu(next, details) {
+        var list, i, item;
+
+        Wirecloud.ui.WindowMenu.call(this, gettext('Missing dependencies'), 'missing_dependencies');
 
         this.msg1Element = document.createElement('p');
         this.windowContent.appendChild(this.msg1Element);
         this.msg1Element.textContent = gettext('The following dependencies are missing:');
+
+        list = document.createElement('ul');
+        for (i = 0; i < details.missingDependencies.length; i++) {
+            item = document.createElement('li');
+            item.textContent = details.missingDependencies[i];
+            list.appendChild(item);
+        }
+        this.windowContent.appendChild(list);
 
         this.msg2Element = document.createElement('p');
         this.windowContent.appendChild(this.msg2Element);

@@ -91,7 +91,7 @@
         }
 
         if (options.full) {
-            EzWebExt.appendClassName(this.wrapperElement, 'full');
+            this.wrapperElement.classList.add('full');
         }
 
         this.focusOnSetVisible = options.focusOnSetVisible;
@@ -225,21 +225,21 @@
      */
     StyledNotebook.prototype._enableDisableButtons = function _enableDisableButtons() {
         if (this.tabs.length === 0) {
-            EzWebExt.removeClassName(this.moveLeftButton, "enabled");
-            EzWebExt.removeClassName(this.moveRightButton, "enabled");
+            this.moveLeftButton.classList.remove("enabled");
+            this.moveRightButton.classList.remove("enabled");
             return;
         }
 
         if (this._isTabVisible(0)) {
-            EzWebExt.removeClassName(this.moveLeftButton, "enabled");
+            this.moveLeftButton.classList.remove("enabled");
         } else {
-            EzWebExt.appendClassName(this.moveLeftButton, "enabled");
+            this.moveLeftButton.classList.add("enabled");
         }
 
         if (this._isLastTabVisible()) {
-            EzWebExt.removeClassName(this.moveRightButton, "enabled");
+            this.moveRightButton.classList.remove("enabled");
         } else {
-            EzWebExt.appendClassName(this.moveRightButton, "enabled");
+            this.moveRightButton.classList.add("enabled");
         }
     };
 
@@ -558,7 +558,7 @@
 
         if (disabled) {
             this.disabledLayer = document.createElement('div');
-            EzWebExt.addClassName(this.disabledLayer, 'disable-layer');
+            this.disabledLayer.classList.add('disable-layer');
             this.wrapperElement.appendChild(this.disabledLayer);
         } else {
             EzWebExt.removeFromParent(this.disabledLayer);

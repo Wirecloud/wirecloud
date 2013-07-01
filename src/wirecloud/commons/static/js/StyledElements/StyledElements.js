@@ -175,22 +175,42 @@ StyledElements.StyledElement.prototype.repaint = function (temporal) {
  *
  */
 StyledElements.StyledElement.prototype.hasClassName = function(className) {
-    return EzWebExt.hasClassName(this.wrapperElement, className);
+    return this.wrapperElement.classList.contains(className);
 }
 
 /**
  *
  */
 StyledElements.StyledElement.prototype.addClassName = function(className) {
-    EzWebExt.addClassName(this.wrapperElement, className);
-}
+    var i, tokens;
+
+    className = className.trim();
+    if (className === '') {
+        return;
+    }
+
+    tokens = className.split(/\s+/);
+    for (i = 0; i < tokens.length; i++) {
+        this.wrapperElement.classList.add(tokens[i]);
+    }
+};
 
 /**
  *
  */
 StyledElements.StyledElement.prototype.removeClassName = function(className) {
-    EzWebExt.removeClassName(this.wrapperElement, className);
-}
+    var i, tokens;
+
+    className = className.trim();
+    if (className === '') {
+        return;
+    }
+
+    tokens = className.split(/\s+/);
+    for (i = 0; i < tokens.length; i++) {
+        this.wrapperElement.classList.remove(tokens[i]);
+    }
+};
 
 StyledElements.StyledElement.prototype.setDisabled = function(disable) {
     if (disable) {
@@ -372,7 +392,7 @@ StyledElements.Container.prototype.setDisabled = function(disabled) {
 
     if (disabled) {
         this.disabledLayer = document.createElement('div');
-        EzWebExt.addClassName(this.disabledLayer, 'disable-layer');
+        this.disabledLayer.classList.add('disable-layer');
         this.wrapperElement.appendChild(this.disabledLayer);
         this.wrapperElement.addClassName('disabled');
         this.disabledLayer.style.height = this.wrapperElement.scrollHeight + 'px';
@@ -847,7 +867,7 @@ StyledElements.StyledHPaned = function(options) {
         this.wrapperElement.setAttribute("id", options['id']);
 
     if (options['full'])
-        EzWebExt.appendClassName(this.wrapperElement, 'full');
+        this.wrapperElement.classList.add('full');
 
     /*
      * Code for handling internal hpaned events
@@ -998,7 +1018,8 @@ StyledElements.Tab = function(id, notebook, options) {
     /* call to the parent constructor */
     StyledElements.Container.call(this, options['containerOptions'], ['show', 'hide', 'close']);
 
-    EzWebExt.prependClassName(this.wrapperElement, "tab hidden"); // TODO
+    this.wrapperElement.classList.add("tab");
+    this.wrapperElement.classList.add("hidden");
 
     this.tabElement.addEventListener("click",
                                 function () {
@@ -1087,13 +1108,13 @@ StyledElements.Tab.prototype.setIcon = function(iconURL) {
 
 StyledElements.Tab.prototype.setVisible = function (newStatus) {
     if (newStatus) {
-        EzWebExt.appendClassName(this.tabElement, "selected");
-        EzWebExt.removeClassName(this.wrapperElement, "hidden");
+        this.tabElement.classList.add("selected");
+        this.wrapperElement.classList.remove("hidden");
         this.repaint(false);
         this.events['show'].dispatch(this);
     } else {
-        EzWebExt.removeClassName(this.tabElement, "selected");
-        EzWebExt.appendClassName(this.wrapperElement, "hidden");
+        this.tabElement.classList.remove("selected");
+        this.wrapperElement.classList.add("hidden");
         this.events['hide'].dispatch(this);
     }
 }
@@ -1371,7 +1392,7 @@ StyledElements.Alternative = function(id, options) {
     /* call to the parent constructor */
     StyledElements.Container.call(this, options, ['show', 'hide']);
 
-    EzWebExt.appendClassName(this.wrapperElement, "hidden"); // TODO
+    this.wrapperElement.classList.add("hidden"); // TODO
 }
 StyledElements.Alternative.prototype = new StyledElements.Container({extending: true});
 
@@ -1388,7 +1409,7 @@ StyledElements.Alternative.prototype.setVisible = function (newStatus) {
 }
 
 StyledElements.Alternative.prototype.isVisible = function (newStatus) {
-    return !EzWebExt.hasClassName(this.wrapperElement, "hidden");
+    return !this.wrapperElement.classList.contains("hidden");
 };
 
 StyledElements.Alternative.prototype.getId = function() {

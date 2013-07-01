@@ -11,7 +11,7 @@
         StyledElements.StyledElement.call(this, ['click', 'mouseover', 'mouseout']);
 
         this.wrapperElement = document.createElement("div");
-        EzWebExt.addClassName(this.wrapperElement, "menu_item");
+        this.wrapperElement.classList.add("menu_item");
 
         var span = document.createElement("span");
         span.appendChild(document.createTextNode(text));
@@ -23,14 +23,14 @@
         // Internal events
         this._mouseoverEventHandler = function (event) {
             if (this.enabled) {
-                EzWebExt.addClassName(this.wrapperElement, "hovered");
+                this.wrapperElement.classList.add("hovered");
                 this.events.mouseover.dispatch(this);
             }
         }.bind(this);
         this.wrapperElement.addEventListener("mouseover", this._mouseoverEventHandler, false);
         this._mouseoutEventHandler = function (event) {
             if (this.enabled) {
-                EzWebExt.removeClassName(this.wrapperElement, "hovered");
+                this.wrapperElement.classList.remove("hovered");
                 this.events.mouseout.dispatch(this);
             }
         }.bind(this);
@@ -39,7 +39,7 @@
         this._clickHandler = function (event) {
             event.stopPropagation();
             if (this.enabled) {
-                EzWebExt.removeClassName(this.wrapperElement, "hovered");
+                this.wrapperElement.classList.remove("hovered");
                 this.events.mouseout.dispatch(this);
                 this.events.click.dispatch(this);
             }

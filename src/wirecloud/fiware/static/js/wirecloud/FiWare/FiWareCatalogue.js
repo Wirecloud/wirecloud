@@ -36,6 +36,11 @@
     };
 
     FiWareCatalogue = function FiWareCatalogue(options) {
+        if (options.user != null) {
+            this.market_user = options.user;
+        } else {
+            this.market_user = 'public';
+        }
         this.market_name = options.name;
         Object.defineProperty(this, 'permissions', {'value': options.permissions});
     };
@@ -52,13 +57,13 @@
         var url, context;
 
         if (options.search_criteria === '' && options.store === 'All stores') {
-            url = Wirecloud.URLs.FIWARE_RESOURCES_COLLECTION.evaluate({market: this.market_name});
+            url = Wirecloud.URLs.FIWARE_RESOURCES_COLLECTION.evaluate({market_user: this.market_user, market_name: this.market_name});
         } else if (options.search_criteria !== '' && options.store === 'All stores') {
-            url = Wirecloud.URLs.FIWARE_FULL_SEARCH.evaluate({market: this.market_name, search_string: options.search_criteria});
+            url = Wirecloud.URLs.FIWARE_FULL_SEARCH.evaluate({market_user: this.market_user, market_name: this.market_name, search_string: options.search_criteria});
         } else if (options.search_criteria === '' && options.store !== 'All stores') {
-            url = Wirecloud.URLs.FIWARE_STORE_RESOURCES_COLLECTION.evaluate({market: this.market_name, store: options.store});
+            url = Wirecloud.URLs.FIWARE_STORE_RESOURCES_COLLECTION.evaluate({market_user: this.market_user, market_name: this.market_name, store: options.store});
         } else {
-            url = Wirecloud.URLs.FIWARE_STORE_SEARCH.evaluate({market: this.market_name, store: options.store, search_string: options.search_criteria});
+            url = Wirecloud.URLs.FIWARE_STORE_SEARCH.evaluate({market_user: this.market_user, market_name: this.market_name, store: options.store, search_string: options.search_criteria});
         }
 
         context = {
@@ -83,7 +88,7 @@
             options = {};
         }
 
-        var url = Wirecloud.URLs.FIWARE_STORE_START_PURCHASE.evaluate({marketplace: this.market_name, store: resource.getStore()});
+        var url = Wirecloud.URLs.FIWARE_STORE_START_PURCHASE.evaluate({market_user: this.market_user, market_name: this.market_name, store: resource.getStore()});
         Wirecloud.io.makeRequest(
             url,
             {
@@ -100,40 +105,8 @@
         );
     };
 
-    FiWareCatalogue.prototype.deleteResource = function deleteResource(options) {
-        var url;
-
-        url = Wirecloud.URLs.FIWARE_RESOURCE_ENTRY.evaluate({market: this.market_name, store: options.store, entry: options.name});
-
-        LayoutManagerFactory.getInstance()._startComplexTask(gettext("Deleting resource from marketplace"), 1);
-        LayoutManagerFactory.getInstance().logSubTask(gettext('Deleting resource from marketplace'));
-
-        Wirecloud.io.makeRequest(url, {
-            method: 'DELETE',
-            onSuccess: function (transport) {
-                LayoutManagerFactory.getInstance().logSubTask(gettext('Resource deleted successfully'));
-                LayoutManagerFactory.getInstance().logStep('');
-                if (typeof options.onSuccess === 'function') {
-                    options.onSuccess();
-                }
-            }.bind(this),
-            onFailure: function (transport) {
-                var msg = LogManagerFactory.getInstance().formatError(gettext("Error deleting resource: %(errorMsg)s."), transport);
-                LogManagerFactory.getInstance().log(msg);
-                LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-                LayoutManagerFactory.getInstance().log(msg);
-            },
-            onComplete: function () {
-                LayoutManagerFactory.getInstance()._notifyPlatformReady();
-                if (typeof options.onComplete === 'function') {
-                    options.onComplete();
-                }
-            }.bind(this)
-        });
-    };
-
     FiWareCatalogue.prototype.getStores = function getStores(onSuccess, onError) {
-        var context, url = Wirecloud.URLs.FIWARE_STORE_COLLECTION.evaluate({market: this.market_name});
+        var context, url = Wirecloud.URLs.FIWARE_STORE_COLLECTION.evaluate({market_user: this.market_user, market_name: this.market_name});
 
         context = {
             onSuccess: onSuccess,

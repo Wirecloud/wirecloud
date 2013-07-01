@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, interpolate, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Widget, Wirecloud*/
+/*global gettext, interpolate, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud*/
 
 (function () {
 
@@ -37,7 +37,7 @@
 
         switch (resource_data.type) {
         case 'widget':
-            resource = new Widget(resource_data);
+            resource = new Wirecloud.Widget(resource_data);
             break;
         case 'operator':
             resource = new Wirecloud.wiring.OperatorMeta(resource_data);

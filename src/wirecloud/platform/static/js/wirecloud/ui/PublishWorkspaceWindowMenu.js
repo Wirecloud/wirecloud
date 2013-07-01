@@ -48,7 +48,7 @@
         ];
 
         this._addVariableParametrization(workspace, fields);
-        Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Publish Workspace'), 'publish_workspace', {autoHide: false});
+        Wirecloud.ui.FormWindowMenu.call(this, fields, gettext('Upload workspace to local catalogue'), 'publish_workspace', {autoHide: false});
 
         //fill a warning message
         var warning = document.createElement('div');

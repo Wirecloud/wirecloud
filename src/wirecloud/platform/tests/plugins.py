@@ -68,7 +68,7 @@ class WirecloudPluginTestCase(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.OLD_WIRECLOUD_PLUGINS = getattr(settings, 'WIRECLOUD_PLUGINS', ())
+        cls.OLD_WIRECLOUD_PLUGINS = getattr(settings, 'WIRECLOUD_PLUGINS', None)
         super(WirecloudPluginTestCase, cls).setUpClass()
 
     @classmethod

@@ -15,12 +15,12 @@
     };
 
     onfocus = function onfocus() {
-        EzWebExt.addClassName(this.wrapperElement, 'focus');
+        this.wrapperElement.classList.add('focus');
         this.events.focus.dispatch(this);
     };
 
     onblur = function onblur() {
-        EzWebExt.removeClassName(this.wrapperElement, 'focus');
+        this.wrapperElement.classList.remove('focus');
         this.events.blur.dispatch(this);
     };
 
@@ -103,7 +103,7 @@
     StyledSelect.prototype = new StyledElements.StyledInputElement();
 
     StyledSelect.prototype.getLabel = function getLabel() {
-        return EzWebExt.getTextContent(this.textDiv);
+        return this.textDiv.textContent;
     };
 
     StyledSelect.prototype.getValue = function getValue() {

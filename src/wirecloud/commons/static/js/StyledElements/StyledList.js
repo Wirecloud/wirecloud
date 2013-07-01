@@ -13,7 +13,7 @@
     var _cleanSelection = function _cleanSelection() {
         for (var i = 0; i < this.currentSelection.length; i++) {
             var value = this.currentSelection[i];
-            EzWebExt.removeClassName(this.entriesByValue[value].element, "selected");
+            this.entriesByValue[value].element.classList.remove("selected");
         }
         this.currentSelection = [];
     };
@@ -51,7 +51,7 @@
 
         /* Process options */
         if (options.full) {
-            EzWebExt.appendClassName(this.wrapperElement, "full");
+            this.wrapperElement.classList.add("full");
         }
 
         this.multivalued = options.multivalued;
@@ -185,7 +185,7 @@
         for (i = 0; i < selection.length; i++) {
             entry = selection[i];
             if (this.currentSelection.indexOf(entry) === -1) {
-                EzWebExt.appendClassName(this.entriesByValue[entry].element, "selected");
+                this.entriesByValue[entry].element.classList.add("selected");
                 this.currentSelection.push(entry);
                 addedValues.push(entry);
             }
@@ -205,11 +205,11 @@
 
         for (i = 0; i < selection.length; i++) {
             entry = selection[i];
-            EzWebExt.removeClassName(this.entriesByValue[entry].element, "selected");
+            this.entriesByValue[entry].element.classList.remove("selected");
             index = this.currentSelection.indexOf(entry);
             if (index !== -1) {
                 this.currentSelection.splice(index, 1);
-                EzWebExt.removeClassName(this.entriesByValue[entry].element, "selected");
+                this.entriesByValue[entry].element.classList.remove("selected");
                 removedValues.push(entry);
             }
         }
@@ -225,7 +225,7 @@
      * elemento se eliminiaria de la selección y viceversa.
      */
     StyledList.prototype.toggleElementSelection = function toggleElementSelection(element) {
-        if (!EzWebExt.hasClassName(this.entriesByValue[element].element, "selected")) {
+        if (!this.entriesByValue[element].element.classList.contains("selected")) {
             this.addSelection([element]);
         } else if (this.allowEmpty) {
             this.removeSelection([element]);

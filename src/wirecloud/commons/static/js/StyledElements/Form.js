@@ -291,7 +291,7 @@
 
         // Label Cell
         labelCell = row.insertCell(-1);
-        EzWebExt.addClassName(labelCell, 'label-cell');
+        labelCell.classList.add('label-cell');
 
         label = document.createElement('label');
         label.textContent = field.label;

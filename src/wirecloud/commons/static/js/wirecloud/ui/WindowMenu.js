@@ -19,7 +19,7 @@
  *
  */
 
-/*global BrowserUtilsFactory, CSSPrimitiveValue, Draggable, Element, isElement, LayoutManagerFactory, Wirecloud*/
+/*global CSSPrimitiveValue, Draggable, Element, isElement, LayoutManagerFactory, Wirecloud*/
 
 (function () {
 
@@ -154,8 +154,8 @@
         }
 
         var coordenates = [];
-        var windowHeight = BrowserUtilsFactory.getInstance().getHeight();
-        var windowWidth = BrowserUtilsFactory.getInstance().getWidth();
+        var windowHeight = window.innerHeight;
+        var windowWidth = window.innerWidth;
 
         this.htmlElement.setStyle({'max-height' : ''});
         this.htmlElement.setStyle({'max-width' : ''});

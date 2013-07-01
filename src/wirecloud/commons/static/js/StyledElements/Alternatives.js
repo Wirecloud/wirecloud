@@ -37,7 +37,7 @@
         }
 
         if (options.full) {
-            EzWebExt.appendClassName(this.wrapperElement, "full");
+            this.wrapperElement.classList.add("full");
         }
 
         this.defaultEffect = options.defaultEffect;

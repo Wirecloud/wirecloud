@@ -21,8 +21,6 @@
 
 /*global Form, gettext, Wirecloud*/
 
-Wirecloud.Widget = {};
-
 (function () {
 
     "use strict";

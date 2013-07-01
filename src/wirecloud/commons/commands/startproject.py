@@ -23,6 +23,7 @@ import subprocess
 
 from django.core.management.base import CommandError
 from django.core.management.commands.startproject import Command
+from django.utils.safestring import mark_safe
 
 import wirecloud.commons
 from wirecloud.commons.utils.commands import BaseCommand
@@ -60,13 +61,13 @@ class StartprojectCommand(BaseCommand):
             'extensions': ('py',),
             'files': [],
             'verbosity': options.get('verbosity'),
-            'db_engine': "'django.db.backends.'",
-            'db_name': "''",
+            'db_engine': mark_safe("'django.db.backends.'"),
+            'db_name': mark_safe("''"),
         }
 
         if options['quick_start']:
-            internal_options['db_engine'] = "'django.db.backends.sqlite3'"
-            internal_options['db_name'] = "path.join(BASEDIR, '%s.db')" % project_name
+            internal_options['db_engine'] = mark_safe("'django.db.backends.sqlite3'")
+            internal_options['db_name'] = mark_safe("path.join(BASEDIR, '%s.db')" % project_name)
 
         command = Command()
         command.handle(project_name, target, *(), **internal_options)

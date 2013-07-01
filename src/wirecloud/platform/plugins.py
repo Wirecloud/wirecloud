@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import inspect
 
 from django.utils.importlib import import_module
 from django.conf.urls.defaults import patterns
@@ -28,6 +29,26 @@ from django.utils.regex_helper import normalize
 _wirecloud_plugins = None
 _wirecloud_features = None
 
+def find_wirecloud_plugins():
+
+    from django.conf import settings
+
+    modules = []
+
+    for app in settings.INSTALLED_APPS:
+
+        if app == 'wirecloud.platform':
+            continue
+
+        try:
+            mod = import_module('%s.plugins' % app)
+        except:
+            continue
+
+        mod_plugins = [cls for name, cls in mod.__dict__.items() if inspect.isclass(cls) and cls != WirecloudPlugin and issubclass(cls, WirecloudPlugin)]
+        modules += mod_plugins
+
+    return modules
 
 def get_plugins():
     from django.conf import settings
@@ -37,7 +58,7 @@ def get_plugins():
     if _wirecloud_plugins is None:
         modules = getattr(settings, 'WIRECLOUD_PLUGINS', None)
         if modules is None:
-            modules = ()
+            modules = find_wirecloud_plugins()
 
         plugins = []
         features = {}
@@ -59,20 +80,25 @@ def get_plugins():
         from wirecloud.platform.core.plugins import WirecloudCorePlugin
         add_plugin('wirecloud.platform.WirecloudCorePlugin', WirecloudCorePlugin())
 
-        for path in modules:
-            i = path.rfind('.')
-            module, attr = path[:i], path[i + 1:]
-            try:
-                mod = import_module(module)
-            except ImportError, e:
-                raise ImproperlyConfigured('Error importing wirecloud plugin module %s: "%s"' % (module, e))
+        for entry in modules:
+            if isinstance(entry, basestring):
+                i = entry.rfind('.')
+                module, attr = entry[:i], entry[i + 1:]
+                try:
+                    mod = import_module(module)
+                except ImportError, e:
+                    raise ImproperlyConfigured('Error importing wirecloud plugin module %s: "%s"' % (module, e))
 
-            try:
-                plugin = getattr(mod, attr)()
-            except AttributeError:
-                raise ImproperlyConfigured('Module "%s" does not define a "%s" instanciable Wirecloud plugin' % (module, attr))
+                try:
+                    plugin = getattr(mod, attr)()
+                except AttributeError:
+                    raise ImproperlyConfigured('Module "%s" does not define a "%s" instanciable Wirecloud plugin' % (module, attr))
+            elif inspect.isclass(entry):
+                plugin = entry()
+            else:
+                raise ImproperlyConfigured('Error importing wirecloud plugin %s: "%s"' % entry)
 
-            add_plugin(module, plugin)
+            add_plugin(plugin.__module__, plugin)
 
         _wirecloud_plugins = tuple(plugins)
         _wirecloud_features = features

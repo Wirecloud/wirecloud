@@ -52,7 +52,7 @@
             this.wrapperElement.appendChild(button);
         } else if (options.plain) {
             button = this.wrapperElement;
-            EzWebExt.addClassName(this.wrapperElement, 'plain');
+            this.wrapperElement.classList.add('plain');
         } else {
             button = document.createElement("div");
             this.wrapperElement.appendChild(button);

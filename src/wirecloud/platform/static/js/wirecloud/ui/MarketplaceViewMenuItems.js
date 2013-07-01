@@ -39,7 +39,7 @@
     MarketplaceViewMenuItems.prototype = new StyledElements.DynamicMenuItems();
 
     MarketplaceViewMenuItems.prototype.build = function build(context) {
-        var current_catalogue, key, items = [];
+        var current_catalogue, key, items = [], item;
 
         current_catalogue = this.market.alternatives.getCurrentAlternative();
 
@@ -109,36 +109,36 @@
                 menu.show();
             }.bind(this)));
 
-            if (current_catalogue != null && current_catalogue.catalogue.isAllow('delete')) {
-                items.push(new StyledElements.MenuItem(gettext('Delete marketplace'), function () {
-                    //First ask if the user really wants to remove the marketplace
-                    var msg = gettext('Do you really want to remove the marketplace ') + this.market.alternatives.getCurrentAlternative().getLabel() + '?';
-                    var dialog = new Wirecloud.ui.AlertWindowMenu();
-                    dialog.setMsg(msg);
-                    dialog.setHandler(function () {
-                            LayoutManagerFactory.getInstance()._startComplexTask(gettext("Deleting marketplace"), 1);
-                            LayoutManagerFactory.getInstance().logSubTask(gettext('Deleting marketplace'));
+            item = new StyledElements.MenuItem(gettext('Delete marketplace'), function () {
+                //First ask if the user really wants to remove the marketplace
+                var msg = gettext('Do you really want to remove the marketplace ') + this.market.alternatives.getCurrentAlternative().getLabel() + '?';
+                var dialog = new Wirecloud.ui.AlertWindowMenu();
+                dialog.setMsg(msg);
+                dialog.setHandler(function () {
+                        LayoutManagerFactory.getInstance()._startComplexTask(gettext("Deleting marketplace"), 1);
+                        LayoutManagerFactory.getInstance().logSubTask(gettext('Deleting marketplace'));
 
-                            Wirecloud.MarketManager.deleteMarket(this.market.alternatives.getCurrentAlternative().desc, {
-                                onSuccess: function () {
-                                    LayoutManagerFactory.getInstance().logSubTask(gettext('Marketplace deleted successfully'));
-                                    LayoutManagerFactory.getInstance().logStep('');
-                                    this.market.refreshViewInfo({
-                                        onComplete: function () {
-                                            LayoutManagerFactory.getInstance()._notifyPlatformReady();
-                                        }
-                                    });
-                                }.bind(this),
-                                onFailure: function (msg) {
-                                    LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-                                    LogManagerFactory.getInstance().log(msg);
-                                    LayoutManagerFactory.getInstance()._notifyPlatformReady();
-                                }
-                            });
-                        }.bind(this));
-                    dialog.show();
-                }.bind(this)));
-            }
+                        Wirecloud.MarketManager.deleteMarket(this.market.alternatives.getCurrentAlternative().desc, {
+                            onSuccess: function () {
+                                LayoutManagerFactory.getInstance().logSubTask(gettext('Marketplace deleted successfully'));
+                                LayoutManagerFactory.getInstance().logStep('');
+                                this.market.refreshViewInfo({
+                                    onComplete: function () {
+                                        LayoutManagerFactory.getInstance()._notifyPlatformReady();
+                                    }
+                                });
+                            }.bind(this),
+                            onFailure: function (msg) {
+                                LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                                LogManagerFactory.getInstance().log(msg);
+                                LayoutManagerFactory.getInstance()._notifyPlatformReady();
+                            }
+                        });
+                    }.bind(this));
+                dialog.show();
+            }.bind(this));
+            item.setDisabled(current_catalogue == null || !current_catalogue.catalogue.isAllow('delete'));
+            items.push(item);
         }
 
         return items;
