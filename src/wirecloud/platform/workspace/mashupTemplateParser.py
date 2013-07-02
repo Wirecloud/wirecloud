@@ -77,8 +77,8 @@ def check_mashup_dependencies(template, user):
     for tab_entry in workspace_info['tabs']:
         for resource in tab_entry['resources']:
             try:
-                resource = CatalogueResource.objects.get(vendor=resource.get('vendor'), short_name=resource.get('name'), version=resource.get('version'))
-                if not resource.is_available_for(user):
+                catalogue_resource = CatalogueResource.objects.get(vendor=resource.get('vendor'), short_name=resource.get('name'), version=resource.get('version'))
+                if not catalogue_resource.is_available_for(user):
                     raise CatalogueResource.DoesNotExist
             except CatalogueResource.DoesNotExist:
                 missing_dependencies.append('/'.join((resource.get('vendor'), resource.get('name'), resource.get('version'))))
