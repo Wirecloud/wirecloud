@@ -199,6 +199,17 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         url = reverse('wirecloud.workspace_collection')
 
+        # Make Test and TestOperator unavailable to normuser
+        test_widget = CatalogueResource.objects.get(short_name='Test')
+        test_widget.public = False
+        test_widget.users.clear()
+        test_widget.save()
+
+        test_operator = CatalogueResource.objects.get(short_name='TestOperator')
+        test_operator.public = False
+        test_operator.users.clear()
+        test_operator.save()
+
         # Authenticate
         self.client.login(username='normuser', password='admin')
 
@@ -218,6 +229,8 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(set(response_data['details']['missingDependencies']), set((
             'Wirecloud/nonavailable-operator/1.0',
             'Wirecloud/nonavailable-widget/1.0',
+            'Wirecloud/TestOperator/1.0',
+            'Wirecloud/Test/1.0',
         )))
 
         # Workspace should not be created
