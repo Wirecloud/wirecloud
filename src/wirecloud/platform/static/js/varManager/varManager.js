@@ -88,7 +88,7 @@ function VarManager (_workspace) {
             var uri = Wirecloud.URLs.VARIABLE_COLLECTION.evaluate({workspace_id: this.workspace.getId()});
 
             var options = {
-                method: 'PUT',
+                method: 'POST',
                 asynchronous: async,
                 contentType: 'application/json',
                 postBody: Object.toJSON(this.iwidgetModifiedVars),

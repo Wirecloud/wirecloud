@@ -148,7 +148,7 @@ urlpatterns = patterns('wirecloud.platform.views',
     ),
 
     url(r'^api/workspace/(?P<workspace_id>\d+)/variables/?$',
-        workspace_views.WorkspaceVariableCollection(permitted_methods=('PUT',)),
+        workspace_views.WorkspaceVariableCollection(permitted_methods=('POST',)),
         name='wirecloud.variable_collection'
     ),
 

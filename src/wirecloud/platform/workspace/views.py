@@ -391,7 +391,7 @@ class WorkspaceVariableCollection(Resource):
     @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
-    def update(self, request, workspace_id):
+    def create(self, request, workspace_id):
 
         try:
             iwidgetVariables = simplejson.loads(request.raw_post_data)
