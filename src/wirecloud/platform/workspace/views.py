@@ -119,7 +119,14 @@ class WorkspaceCollection(Resource):
 
         workspace_name = data.get('name', '').strip()
         mashup_id = data.get('mashup', '')
-        dry_run = data.get('', 'false').lower() == 'true'
+        dry_run = data.get('dry_run', False)
+        if isinstance(dry_run, basestring):
+            dry_run = dry_run.strip().lower()
+            if dry_run not in ('true', 'false'):
+                return build_error_response(request, 422, _('Invalid dry_run value'))
+            dry_run = dry_run == 'true'
+        elif not isinstance(dry_run, bool):
+            return build_error_response(request, 422, _('Invalid dry_run value'))
 
         if mashup_id == '' and workspace_name == '':
             return build_error_response(request, 422, _('missing workspace name'))
@@ -127,7 +134,7 @@ class WorkspaceCollection(Resource):
         if mashup_id == '':
 
             if dry_run:
-                return HttpResponse(status_code=204)
+                return HttpResponse(status=204)
 
             try:
                 workspace = createEmptyWorkspace(workspace_name, request.user)
@@ -167,7 +174,7 @@ class WorkspaceCollection(Resource):
                 return build_error_response(request, 422, unicode(e), details=details)
 
             if dry_run:
-                return HttpResponse(status_code=204)
+                return HttpResponse(status=204)
 
             workspace, _junk = buildWorkspaceFromTemplate(template, request.user, True)
 
