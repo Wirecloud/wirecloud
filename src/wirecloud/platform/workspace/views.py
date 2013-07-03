@@ -50,14 +50,6 @@ from wirecloud.platform.workspace.utils import deleteTab, createTab, get_workspa
 from wirecloud.platform.markets.utils import get_market_managers
 
 
-def clone_original_variable_value(variable, creator, new_user):
-    original_var_value = VariableValue.objects.get(variable=variable, user=creator)
-
-    value = original_var_value.get_variable_value()
-
-    return VariableValue.objects.create(variable=variable, user=new_user, value=value)
-
-
 def createEmptyWorkspace(workspaceName, user):
     active = False
     workspaces = UserWorkspace.objects.filter(user__id=user.id, active=True)
