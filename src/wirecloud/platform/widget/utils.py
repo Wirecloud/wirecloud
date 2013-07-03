@@ -243,45 +243,6 @@ def get_or_add_widget_from_catalogue(vendor, name, version, user, request=None, 
     return resource.widget
 
 
-def get_or_create_widget(templateURL, user, workspaceId, request, fromWGT=False):
-
-    # Check permissions
-    workspace = Workspace.objects.get(id=workspaceId)
-    if workspace.creator != user:
-        raise Http403()
-
-    if fromWGT:
-        wgt_file = WgtFile(StringIO(downloader.download_http_content(templateURL)))
-        template_content = wgt_file.get_template()
-    else:
-        template_content = downloader.download_http_content(templateURL, user=user)
-
-    templateParser = TemplateParser(template_content, templateURL)
-
-    # Widget is created only once
-    try:
-        widget = Widget.objects.get(vendor=templateParser.get_resource_vendor(), name=templateParser.get_resource_name(), version=templateParser.get_resource_version())
-    except Widget.DoesNotExist:
-        if fromWGT:
-            widget = create_widget_from_wgt(wgt_file, user)
-        else:
-            widget = create_widget_from_template(templateParser, user, request)
-
-    # A new user has added the widget in his showcase
-    # check if the workspace in which the iwidget is being added is shared
-    # all the user sharing the workspace should have the widget in their
-    # showcases
-    if workspace.is_shared():
-        # add the widget to the showcase of every user sharing the workspace
-        # there is no problem is the widget is already in their showcase
-        [widget.users.add(user_ws.user) for user_ws in UserWorkspace.objects.filter(workspace=workspace)]
-    else:
-        # add the widget to the showcase of the user
-        widget.users.add(user)
-
-    return widget
-
-
 def get_and_add_widget(vendor, name, version, users):
 
     widget = Widget.objects.get(vendor=vendor, name=name, version=version)
