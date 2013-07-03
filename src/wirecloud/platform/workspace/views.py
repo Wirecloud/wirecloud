@@ -593,10 +593,3 @@ class WorkspaceExportService(Service):
 
         template = build_template_from_workspace(mashup, workspace, request.user)
         return HttpResponse(template, mimetype='application/xml; charset=UTF-8')
-
-
-class MashupTemplate(Resource):
-
-    def read(self, request, workspace_id):
-        published_workspace = get_object_or_404(PublishedWorkspace, id=workspace_id)
-        return HttpResponse(published_workspace.template, mimetype='application/xml; charset=UTF-8')
