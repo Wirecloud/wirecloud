@@ -107,25 +107,19 @@ class WorkspaceCollection(Resource):
         return HttpResponse(simplejson.dumps(data_list), mimetype='application/json; charset=UTF-8')
 
     @authentication_required
-    @supported_request_mime_types(('application/x-www-form-urlencoded', 'application/json'))
+    @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def create(self, request):
 
-        content_type = get_content_type(request)[0]
-        if content_type == 'application/json':
-            try:
-                data = simplejson.loads(request.raw_post_data)
-            except Exception, e:
-                msg = _("malformed json data: %s") % unicode(e)
-                return build_error_response(request, 400, msg)
+        try:
+            data = simplejson.loads(request.raw_post_data)
+        except Exception, e:
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
 
-            workspace_name = data.get('name', '').strip()
-            mashup_id = data.get('mashup', '')
-            dry_run = data.get('', 'false').lower() == 'true'
-        else:
-            workspace_name = request.POST.get('name', '').strip()
-            mashup_id = request.POST.get('mashup', '')
-            dry_run = request.POST.get('', 'false').lower() == 'true'
+        workspace_name = data.get('name', '').strip()
+        mashup_id = data.get('mashup', '')
+        dry_run = data.get('', 'false').lower() == 'true'
 
         if mashup_id == '' and workspace_name == '':
             return build_error_response(request, 422, _('missing workspace name'))
