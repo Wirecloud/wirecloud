@@ -454,18 +454,6 @@ class WorkspaceSharerEntry(Resource):
             return HttpResponse(status=204)
 
 
-class WorkspaceLinkerEntry(Resource):
-
-    @authentication_required
-    @commit_on_http_success
-    @no_cache
-    def read(self, request, workspace_id):
-
-        linkWorkspace(request.user, workspace_id)
-
-        return HttpResponse(status=204)
-
-
 class MashupMergeService(Service):
 
     @authentication_required
