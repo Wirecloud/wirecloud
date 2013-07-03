@@ -373,9 +373,9 @@ function Workspace (workspaceState) {
 
         workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({workspace_id: this.workspaceState.id});
         Wirecloud.io.makeRequest(workspaceUrl, {
-            method: 'PUT',
+            method: 'POST',
             contentType: 'application/json',
-            postBody: Object.toJSON({name: name}),
+            postBody: JSON.stringify({name: name}),
             onSuccess: function () {
                 var state, layoutManager = LayoutManagerFactory.getInstance();
 
@@ -802,9 +802,9 @@ function Workspace (workspaceState) {
     this.markAsActive = function () {
         var workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': this.workspaceState.id});
         Wirecloud.io.makeRequest(workspaceUrl, {
-            method: 'PUT',
+            method: 'POST',
             contentType: 'application/json',
-            postBody: Object.toJSON({active: "true"}),
+            postBody: JSON.stringify({active: true}),
             onSuccess: this.markAsActiveSuccess.bind(this),
             onFailure: this.markAsActiveError.bind(this)
         });

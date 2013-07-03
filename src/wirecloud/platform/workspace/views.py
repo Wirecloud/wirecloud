@@ -196,7 +196,7 @@ class WorkspaceEntry(Resource):
     @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
-    def update(self, request, workspace_id):
+    def create(self, request, workspace_id):
 
         try:
             ts = simplejson.loads(request.raw_post_data)
@@ -207,12 +207,17 @@ class WorkspaceEntry(Resource):
         workspace = Workspace.objects.get(users__id=request.user.id, pk=workspace_id)
 
         if 'active' in ts:
-            if ts['active'] == 'true':
-                #Only one active workspace
+
+            active = ts.get('active', False)
+            if isinstance(active, basestring):
+                active = ts['active'].lower() == 'true'
+
+            if active:
+                # Only one active workspace
                 setActiveWorkspace(request.user, workspace)
             else:
                 currentUserWorkspace = UserWorkspace.objects.get(workspace=workspace, user=request.user)
-                currentUserWorkspace.active = True
+                currentUserWorkspace.active = False
                 currentUserWorkspace.save()
 
         if 'name' in ts:

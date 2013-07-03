@@ -135,7 +135,7 @@ urlpatterns = patterns('wirecloud.platform.views',
         name='wirecloud.workspace_collection'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/?$',
-        workspace_views.WorkspaceEntry(permitted_methods=('GET', 'POST', 'PUT', 'DELETE',)),
+        workspace_views.WorkspaceEntry(permitted_methods=('GET', 'POST', 'DELETE',)),
         name='wirecloud.workspace_entry'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tabs/?$',
