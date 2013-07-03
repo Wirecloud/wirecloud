@@ -75,12 +75,6 @@ def setVisibleTab(user, workspace_id, tab):
     tab.save()
 
 
-def get_mashup_widgets(mashup_id):
-    published_workspace = get_object_or_404(PublishedWorkspace, id=mashup_id)
-
-    return [i.widget for i in IWidget.objects.filter(tab__workspace=published_workspace.workspace)]
-
-
 def encrypt_value(value):
     if not HAS_AES:
         return value
