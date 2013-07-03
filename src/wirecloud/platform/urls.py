@@ -170,10 +170,6 @@ urlpatterns = patterns('wirecloud.platform.views',
         workspace_views.WorkspacePublisherEntry(permitted_methods=('POST',)),
         name='wirecloud.workspace_publish'
     ),
-    url(r'^api/workspace/(?P<workspace_id>\d+)/export/?$',
-        workspace_views.WorkspaceExportService(),
-        name='wirecloud.workspace_export'
-    ),
 
 ) + get_plugin_urls() + patterns('wirecloud.platform.views',
 

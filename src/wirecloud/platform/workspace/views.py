@@ -554,28 +554,3 @@ class WorkspacePublisherEntry(Resource):
             return build_error_response(request, 502, unicode(e))
 
         return HttpResponse(status=201)
-
-
-class WorkspaceExportService(Service):
-
-    @authentication_required
-    @supported_request_mime_types(('application/json',))
-    def process(self, request, workspace_id):
-
-        workspace = get_object_or_404(Workspace, id=workspace_id)
-
-        if not request.user.is_superuser and workspace.creator != request.user:
-            return HttpResponseForbidden()
-
-        try:
-            mashup = simplejson.loads(request.raw_post_data)
-        except Exception, e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
-
-        missing_fields = check_json_fields(mashup, ['name', 'vendor', 'version', 'email'])
-        if len(missing_fields) > 0:
-            raise build_error_response(request, 400, _('Malformed mashup JSON. The following field(s) are missing: %(fields)s.') % {'fields': missing_fields})
-
-        template = build_template_from_workspace(mashup, workspace, request.user)
-        return HttpResponse(template, mimetype='application/xml; charset=UTF-8')
