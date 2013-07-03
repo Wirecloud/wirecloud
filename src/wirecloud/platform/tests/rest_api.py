@@ -1083,6 +1083,17 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(user_workspace.workspace.name, data['name'])
         self.assertEqual(user_workspace.active, False)
 
+        data = {
+            'name': 'Workspace',
+            'active': 'True',
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+
+        user_workspace = UserWorkspace.objects.get(pk=2)
+        self.assertEqual(user_workspace.workspace.name, data['name'])
+        self.assertEqual(user_workspace.active, True)
+
     def test_workspace_entry_post_bad_request_syntax(self):
 
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 2})
