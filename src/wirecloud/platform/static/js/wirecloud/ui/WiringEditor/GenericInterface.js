@@ -484,7 +484,6 @@
             }
             this.wiringEditor.sourceAnchorsByFriendCode[friendCode].push(anchor);
 
-
             labelDiv.addEventListener('mouseover', function (e) {
                 this.wiringEditor.emphasize(anchor);
             }.bind(this));
@@ -528,7 +527,7 @@
 
         // AnchorDiv
         anchorDiv = document.createElement("div");
-        //if the input have not description, take the label
+        // If the output have not description, take the label
         if (desc === '') {
             desc = label;
         }
@@ -539,9 +538,9 @@
         anchorLabel.textContent = label;
 
         labelDiv = document.createElement("div");
+        anchorDiv.appendChild(labelDiv);
         labelDiv.setAttribute('class', 'labelDiv');
         labelDiv.appendChild(anchorLabel);
-        anchorDiv.appendChild(labelDiv);
 
         if (!this.isMiniInterface) {
             anchor = new Wirecloud.ui.WiringEditor.TargetAnchor(anchorContext, this.arrowCreator);
@@ -555,8 +554,6 @@
             }
             this.wiringEditor.targetAnchorsByFriendCode[friendCode].push(anchor);
 
-
-            anchorDiv.appendChild(anchor.wrapperElement);
             labelDiv.addEventListener('mouseover', function (e) {
                 this.wiringEditor.emphasize(anchor);
             }.bind(this));
