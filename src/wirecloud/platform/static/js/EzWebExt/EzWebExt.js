@@ -434,7 +434,7 @@ if (document.documentElement.getAttributeNS != undefined) {
 
 /* EzWebExt.XML.hasAttribute */
 
-if (document.documentElement.hasAttribute != undefined && !EzWebExt.Browser.isIE()) {
+if (document.documentElement.hasAttribute != undefined) {
 
     EzWebExt.XML.hasAttribute = function(element, name) {
         return element.hasAttribute(name);
