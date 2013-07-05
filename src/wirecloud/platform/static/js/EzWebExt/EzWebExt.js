@@ -5,13 +5,6 @@
  */
 var EzWebExt = new Object();
 
-/**
- * Guarda la URL donde se encuentra alojada la librería JavaScript.
- * @type String
- * FIXME
- */
-EzWebExt.URL = "/";
-
 /*---------------------------------------------------------------------------*/
 /*                                EzWebExt.Browser                           */
 /*---------------------------------------------------------------------------*/
@@ -98,17 +91,6 @@ EzWebExt.Browser.prototype.isFirefox = function() {
 }
 
 EzWebExt.Browser = new EzWebExt.Browser();
-
-/**
- * Permite obtener la URL absoluta de un recurso proporcionado por la librería.
- *
- * @param {String} path Path relativo al recurso deseado
- * @return {String} URL del recurso
- */
-EzWebExt.getResourceURL = function(path) {
-    // TODO check if resourcesURL end with a tailing slash ("/")
-    return this.URL + path;
-}
 
 /**
  * Importa la librería Javascript indicada por la URL pasada. Se ejecuta
