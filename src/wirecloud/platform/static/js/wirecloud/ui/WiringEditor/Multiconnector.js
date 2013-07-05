@@ -110,14 +110,11 @@
         // Drag zone
         this.movZone = new StyledElements.StyledButton({
             'title': gettext("Drag & Drop"),
-            'class': 'dragButton',
+            'class': 'dragZone icon-move',
             'plain': true
         });
-
-        this.movZone = document.createElement("div");
-        this.movZone.classList.add('dragZone');
-        this.movZone.style.top = (((height - 20) / 2) + 2) + 'px';
-        this.mainElement.appendChild(this.movZone);
+        this.movZone.wrapperElement.style.top = (((height - 20) / 2) + 2) + 'px';
+        this.mainElement.appendChild(this.movZone.wrapperElement);
 
         // General position
         if (endPos == null) {
@@ -128,7 +125,7 @@
         this.setPosition(coord);
 
         // Draggable
-        this.draggable = new Draggable(this.movZone, {iObject: this},
+        this.draggable = new Draggable(this.movZone.wrapperElement, {iObject: this},
             function onStart(draggable, context) {
                 context.y = context.iObject.wrapperElement.style.top === "" ? 0 : parseInt(context.iObject.wrapperElement.style.top, 10);
                 context.x = context.iObject.wrapperElement.style.left === "" ? 0 : parseInt(context.iObject.wrapperElement.style.left, 10);
@@ -375,7 +372,7 @@
         this.height += dif;
         this.wrapperElement.style.height = this.height + 'px';
         this.wrapperElement.style.top = (parseInt(this.wrapperElement.style.top, 10) - dif) + 'px';
-        this.movZone.style.top = ((this.height - 20) / 2) + 'px';
+        this.movZone.wrapperElement.style.top = ((this.height - 20) / 2) + 'px';
         this.mainAnchor.wrapperElement.style.top = ((this.height - 20) / 2) + 'px';
         this.repaint();
     };
