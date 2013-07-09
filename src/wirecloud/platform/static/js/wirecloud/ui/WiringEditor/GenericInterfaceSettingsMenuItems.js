@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
- *
+ *     Copyright (c) 2013 Center for Open Middleware
  *     This file is part of Wirecloud Platform.
  *
  *     Wirecloud Platform is free software: you can redistribute it and/or

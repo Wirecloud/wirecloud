@@ -1,6 +1,6 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
- *     (C) Copyright 2012 Center for Open Middleware
+ *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2013 Center for Open Middleware
  *
  *     This file is part of Wirecloud Platform.
  *
