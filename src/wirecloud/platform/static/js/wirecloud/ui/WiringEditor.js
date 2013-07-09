@@ -239,13 +239,15 @@ if (!Wirecloud.ui) {
         this.ctrlPushed = false;
         this.nextOperatorId = 0;
         this.nextMulticonnectorId = 0;
-        this.sourceAnchorsByFriendCode = {};
-        this.targetAnchorsByFriendCode = {};
         this.EditingObject = null;
         this.entitiesNumber = 0;
+        this.recommendationsActivated = false;
 
         iwidgets = workspace.getIWidgets();
         availableOperators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
+
+        /* TODO this.recommendation = semanticStatus parameter */
+        this.recommendations = new Wirecloud.ui.BasicRecommendations(this);
 
         // Widgets
         for (i = 0; i < iwidgets.length; i++) {
@@ -526,7 +528,7 @@ if (!Wirecloud.ui) {
         this.iwidgets = {};
         this.currentlyInUseOperators = {};
         this.multiconnectors = {};
-        this.anchorsInvolved = {};
+        this.recommendations.destroy();
     };
 
     /*************************************************************************
@@ -725,7 +727,7 @@ if (!Wirecloud.ui) {
      * add IWidget.
      */
     WiringEditor.prototype.addIWidget = function addIWidget(wiringEditor, iwidget, enpPointPos) {
-        var widget_interface, auxDiv;
+        var widget_interface, auxDiv, i, anchor;
 
         widget_interface = new Wirecloud.ui.WiringEditor.WidgetInterface(wiringEditor, iwidget, this.arrowCreator, false, enpPointPos);
         this.iwidgets[iwidget.id] = widget_interface;
@@ -742,6 +744,15 @@ if (!Wirecloud.ui) {
         this.layout.getCenterContainer().removeChild(auxDiv);
 
         this.layout.getCenterContainer().appendChild(widget_interface);
+
+        for (i = 0; i < widget_interface.sourceAnchors.length; i += 1) {
+            anchor = widget_interface.sourceAnchors[i];
+            this.recommendations.add_anchor_to_recommendations(anchor);
+        }
+        for (i = 0; i < widget_interface.targetAnchors.length; i += 1) {
+            anchor = widget_interface.targetAnchors[i];
+            this.recommendations.add_anchor_to_recommendations(anchor);
+        }
 
         widget_interface.sourceAnchors.map(this._startdrag_map_func);
         widget_interface.targetAnchors.map(this._startdrag_map_func);
@@ -761,7 +772,7 @@ if (!Wirecloud.ui) {
      * add IOperator.
      */
     WiringEditor.prototype.addIOperator = function addIOperator(ioperator, enpPointPos) {
-        var instantiated_operator, operator_interface, auxDiv;
+        var instantiated_operator, operator_interface, auxDiv, i, anchor;
 
         if (ioperator instanceof Wirecloud.wiring.OperatorMeta) {
             instantiated_operator = ioperator.instantiate(this.nextOperatorId, true, this);
@@ -784,6 +795,15 @@ if (!Wirecloud.ui) {
         this.layout.getCenterContainer().removeChild(auxDiv);
 
         this.layout.getCenterContainer().appendChild(operator_interface);
+
+        for (i = 0; i < operator_interface.sourceAnchors.length; i += 1) {
+            anchor = operator_interface.sourceAnchors[i];
+            this.recommendations.add_anchor_to_recommendations(anchor);
+        }
+        for (i = 0; i < operator_interface.targetAnchors.length; i += 1) {
+            anchor = operator_interface.targetAnchors[i];
+            this.recommendations.add_anchor_to_recommendations(anchor);
+        }
 
         operator_interface.sourceAnchors.map(this._startdrag_map_func);
         operator_interface.targetAnchors.map(this._startdrag_map_func);
@@ -1030,21 +1050,20 @@ if (!Wirecloud.ui) {
      * remove a iWidget.
      */
     WiringEditor.prototype.removeIWidget = function removeIWidget(widget_interface) {
-        var i, anchor, anchorList;
+        var i, anchor;
         widget_interface.unselect(false);
         delete this.iwidgets[widget_interface.getIWidget().id];
         this.layout.getCenterContainer().removeChild(widget_interface);
+
         for (i = 0; i < widget_interface.sourceAnchors.length; i += 1) {
             anchor = widget_interface.sourceAnchors[i];
             this.sourceAnchorList.splice(this.sourceAnchorList.indexOf(anchor), 1);
-            anchorList = this.sourceAnchorsByFriendCode[anchor.context.data.connectable._friendCode];
-            anchorList.splice(anchorList.indexOf(anchor), 1);
+            this.recommendations.remove_anchor_to_recommendations(anchor);
         }
         for (i = 0; i < widget_interface.targetAnchors.length; i += 1) {
             anchor = widget_interface.targetAnchors[i];
             this.targetAnchorList.splice(this.targetAnchorList.indexOf(anchor), 1);
-            anchorList = this.targetAnchorsByFriendCode[anchor.context.data.connectable._friendCode];
-            anchorList.splice(anchorList.indexOf(anchor), 1);
+            this.recommendations.remove_anchor_to_recommendations(anchor);
         }
 
         widget_interface.destroy();
@@ -1060,22 +1079,22 @@ if (!Wirecloud.ui) {
      * remove a iOperator.
      */
     WiringEditor.prototype.removeIOperator = function removeIOperator(operator_interface) {
-        var i, anchor, anchorList;
+        var i, anchor;
         operator_interface.unselect(false);
         delete this.currentlyInUseOperators[operator_interface.getIOperator().id];
         this.layout.getCenterContainer().removeChild(operator_interface);
+
         for (i = 0; i < operator_interface.sourceAnchors.length; i += 1) {
             anchor = operator_interface.sourceAnchors[i];
             this.sourceAnchorList.splice(this.sourceAnchorList.indexOf(anchor), 1);
-            anchorList = this.sourceAnchorsByFriendCode[anchor.context.data.connectable._friendCode];
-            anchorList.splice(anchorList.indexOf(anchor), 1);
+            this.recommendations.remove_anchor_to_recommendations(anchor);
         }
         for (i = 0; i < operator_interface.targetAnchors.length; i += 1) {
             anchor = operator_interface.targetAnchors[i];
             this.targetAnchorList.splice(this.targetAnchorList.indexOf(anchor), 1);
-            anchorList = this.targetAnchorsByFriendCode[anchor.context.data.connectable._friendCode];
-            anchorList.splice(anchorList.indexOf(anchor), 1);
+            this.recommendations.remove_anchor_to_recommendations(anchor);
         }
+
         operator_interface.destroy();
 
         this.entitiesNumber -= 1;
@@ -1121,60 +1140,6 @@ if (!Wirecloud.ui) {
         }
         multiConnector.destroy(true);
         delete this.multiconnectors[multiConnector.id];
-    };
-
-    /**
-     * emphasize anchors.
-     */
-    WiringEditor.prototype.emphasize = function emphasize(anchor) {
-        var friendCode, anchors, i;
-
-        anchor.wrapperElement.parentNode.classList.add('highlight_main');
-        friendCode = anchor.context.data.connectable._friendCode;
-        if (anchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
-            anchors = this.sourceAnchorsByFriendCode[friendCode];
-        } else {
-            anchors = this.targetAnchorsByFriendCode[friendCode];
-        }
-        if (anchors != null) {
-            for (i = 0; i < anchors.length; i += 1) {
-                this.highlightAnchorLabel(anchors[i]);
-            }
-        }
-    };
-
-    /**
-     * deemphasize anchors.
-     */
-    WiringEditor.prototype.deemphasize = function deemphasize(anchor) {
-        var friendCode, anchors, i;
-
-        anchor.wrapperElement.parentNode.classList.remove('highlight_main');
-        friendCode = anchor.context.data.connectable._friendCode;
-        if (anchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
-            anchors = this.sourceAnchorsByFriendCode[friendCode];
-        } else {
-            anchors = this.targetAnchorsByFriendCode[friendCode];
-        }
-        if (anchors != null) {
-            for (i = 0; i < anchors.length; i += 1) {
-                this.unhighlightAnchorLabel(anchors[i]);
-            }
-        }
-    };
-
-    /**
-     * highlight anchor.
-     */
-    WiringEditor.prototype.highlightAnchorLabel = function highlightAnchorLabel(anchor) {
-        anchor.wrapperElement.parentNode.classList.add('highlight');
-    };
-
-    /**
-     * unhighlight anchor.
-     */
-    WiringEditor.prototype.unhighlightAnchorLabel = function unhighlightAnchorLabel(anchor) {
-        anchor.wrapperElement.parentNode.classList.remove('highlight');
     };
 
     /**

@@ -61,9 +61,9 @@
             this.initAnchor = initAnchor;
 
             if (initAnchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
-                initAnchor.context.iObject.wiringEditor.emphasize(initAnchor.initAnchor);
+                initAnchor.context.iObject.wiringEditor.recommendations.emphasize(initAnchor.initAnchor, true);
             } else {
-                initAnchor.context.iObject.wiringEditor.emphasize(initAnchor);
+                initAnchor.context.iObject.wiringEditor.recommendations.emphasize(initAnchor, true);
             }
 
             document.oncontextmenu = _cancel; // disable context menu
@@ -170,7 +170,6 @@
                     }
                     theArrow.deemphasize();
                     if (isVal(currentSource, currentTarget)) {
-                        theArrow.calculateHighlight();
                         theArrow.calculateEmphasize();
                         theArrow.redraw();
                         // Add the arrow to the arrow list of both anchors
@@ -201,9 +200,9 @@
             }
 
             if (this.initAnchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
-                this.initAnchor.context.iObject.wiringEditor.deemphasize(this.initAnchor.initAnchor);
+                this.initAnchor.context.iObject.wiringEditor.recommendations.deemphasize(this.initAnchor.initAnchor);
             } else {
-                this.initAnchor.context.iObject.wiringEditor.deemphasize(this.initAnchor);
+                this.initAnchor.context.iObject.wiringEditor.recommendations.deemphasize(this.initAnchor);
             }
 
             document.removeEventListener("mouseup", this.enddrag, false);

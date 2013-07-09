@@ -478,17 +478,15 @@
 
             anchor.menu.append(new StyledElements.MenuItem(gettext('Add multiconnector'), createMulticonnector.bind(this, name, anchor)));
 
-            friendCode = anchor.context.data.connectable._friendCode;
-            if (this.wiringEditor.sourceAnchorsByFriendCode[friendCode] == null) {
-                this.wiringEditor.sourceAnchorsByFriendCode[friendCode] = [];
-            }
-            this.wiringEditor.sourceAnchorsByFriendCode[friendCode].push(anchor);
-
-            labelDiv.addEventListener('mouseover', function (e) {
-                this.wiringEditor.emphasize(anchor);
+            labelDiv.addEventListener('mouseover', function () {
+                if (!this.wiringEditor.recommendationsActivated) {
+                    this.wiringEditor.recommendations.emphasize(anchor);
+                }
             }.bind(this));
-            labelDiv.addEventListener('mouseout', function (e) {
-                this.wiringEditor.deemphasize(anchor);
+            labelDiv.addEventListener('mouseout', function () {
+                if (!this.wiringEditor.recommendationsActivated) {
+                    this.wiringEditor.recommendations.deemphasize(anchor);
+                }
             }.bind(this));
 
             // Sticky effect
@@ -548,17 +546,15 @@
 
             anchor.menu.append(new StyledElements.MenuItem(gettext('Add multiconnector'), createMulticonnector.bind(this, name, anchor)));
 
-            friendCode = anchor.context.data.connectable._friendCode;
-            if (this.wiringEditor.targetAnchorsByFriendCode[friendCode] == null) {
-                this.wiringEditor.targetAnchorsByFriendCode[friendCode] = [];
-            }
-            this.wiringEditor.targetAnchorsByFriendCode[friendCode].push(anchor);
-
-            labelDiv.addEventListener('mouseover', function (e) {
-                this.wiringEditor.emphasize(anchor);
+            labelDiv.addEventListener('mouseover', function () {
+                if (!this.wiringEditor.recommendationsActivated) {
+                    this.wiringEditor.recommendations.emphasize(anchor);
+                }
             }.bind(this));
-            labelDiv.addEventListener('mouseout', function (e) {
-                this.wiringEditor.deemphasize(anchor);
+            labelDiv.addEventListener('mouseout', function () {
+                if (!this.wiringEditor.recommendationsActivated) {
+                    this.wiringEditor.recommendations.deemphasize(anchor);
+                }
             }.bind(this));
 
             // Sticky effect

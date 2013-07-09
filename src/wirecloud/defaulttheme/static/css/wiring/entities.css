@@ -349,22 +349,49 @@
 }
 
 /* highlight events and slots by friendcode */
-.wiring_editor .sources .highlight, .wiring_editor .targets .highlight_main {
-    background: #FF9854;
+.wiring_editor .sources .highlight, .wiring_editor .targets .highlight, .wiring_editor .sources .highlight_main, .wiring_editor .targets .highlight_main {
+    background: green;
     color: white;
     border-radius: 15px;
 }
 
-.wiring_editor .targets .highlight, .wiring_editor .sources .highlight_main {
-    background: #0A9;
+.wiring_editor .sources .highlight span, .wiring_editor .targets .highlight span, .wiring_editor .targets .highlight_main span, .wiring_editor .sources .highlight_main span {
+    pointer-events: none;
+}
+
+/* Highlight events and slots by semantic */
+/* ColorCodes = {'EQUIVALENT': 'green', 'SUBSUMED':'green', 'SUBSUMES':'orange', 'DISJOINT':'red', 'OVERLAP':'grey', 'NONE':'grey'} */
+.wiring_editor .highlight.equivalent {
+    background: green;
     color: white;
-    border-radius: 15px;
 }
 
-.wiring_editor .sources .highlight span, .wiring_editor .targets .highlight_main span {
-    pointer-events: none;
+.wiring_editor .highlight.subsumed {
+    background: green;
+    color: white;
 }
 
-.wiring_editor .targets .highlight span, .wiring_editor .sources .highlight_main span {
-    pointer-events: none;
+.wiring_editor .highlight.subsumes {
+    background: orange;
+    color: black;
+}
+
+.wiring_editor .highlight.haspart {
+    background: orange;
+    color: black;
+}
+
+.wiring_editor .highlight.disjoint {
+    background: red;
+    color: white;
+}
+
+.wiring_editor .highlight.overlap {
+    background: grey;
+    color: white;
+}
+
+.wiring_editor .highlight.none {
+    background: grey;
+    color: white;
 }
