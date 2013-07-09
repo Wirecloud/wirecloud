@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012-2013 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global wIn*/
+/*global wIn, Wirecloud */
 
 (function () {
 
@@ -47,6 +47,6 @@
         };
     };
 
-    window.OperatorSourceEndpoint = OperatorSourceEndpoint;
+    Wirecloud.wiring.OperatorSourceEndpoint = OperatorSourceEndpoint;
 
 })();

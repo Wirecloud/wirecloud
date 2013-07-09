@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global OperatorSourceEndpoint, OperatorTargetEndpoint, StyledElements, Wirecloud*/
+/*global StyledElements, Wirecloud*/
 
 (function () {
 
@@ -40,13 +40,13 @@
         inputs = this.meta.inputs;
         this.inputs = {};
         for (i = 0; i < inputs.length; i++) {
-            this.inputs[inputs[i].name] = new OperatorTargetEndpoint(this, inputs[i]);
+            this.inputs[inputs[i].name] = new Wirecloud.wiring.OperatorTargetEndpoint(this, inputs[i]);
         }
 
         outputs = this.meta.outputs;
         this.outputs = {};
         for (i = 0; i < outputs.length; i++) {
-            this.outputs[outputs[i].name] = new OperatorSourceEndpoint(this, outputs[i]);
+            this.outputs[outputs[i].name] = new Wirecloud.wiring.OperatorSourceEndpoint(this, outputs[i]);
         }
 
         this.pending_events = [];
