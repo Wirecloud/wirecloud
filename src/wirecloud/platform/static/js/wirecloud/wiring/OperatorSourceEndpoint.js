@@ -29,13 +29,12 @@
         Object.defineProperty(this, 'meta', {value: meta});
         Object.defineProperty(this, 'name', {value: meta.name});
         Object.defineProperty(this, 'friendcode', {value: meta.friendcode});
-        Object.defineProperty(this, 'operator', {value: operator});
         Object.defineProperty(this, 'label', {value: meta.label});
         Object.defineProperty(this, 'description', {value: meta.description});
         Object.defineProperty(this, 'operator', {value: operator});
 
         this.connectable = this; // TODO
-        wIn.call(this, this.meta.name, this.meta.type, this.friendcode, this.operator.id + '_' + this.meta.name);
+        wIn.call(this, this.meta.name, this.meta.type, this.friendcode, 'ioperator_' + this.operator.id + '_' + this.meta.name);
     };
     OperatorSourceEndpoint.prototype = new wIn();
 

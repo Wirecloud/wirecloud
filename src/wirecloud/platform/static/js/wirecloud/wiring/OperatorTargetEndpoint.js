@@ -34,7 +34,7 @@
         Object.defineProperty(this, 'operator', {value: operator});
 
         this.connectable = this;
-        wOut.call(this, this.meta.name, this.meta.type, this.meta.friendcode, this.operator.id + '_' + this.meta.name);
+        wOut.call(this, this.meta.name, this.meta.type, this.meta.friendcode, 'ioperator_' + this.operator.id + '_' + this.meta.name);
     };
     OperatorTargetEndpoint.prototype = new wOut();
 
