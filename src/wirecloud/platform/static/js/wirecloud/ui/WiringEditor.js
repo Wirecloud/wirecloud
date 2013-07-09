@@ -123,6 +123,7 @@ if (!Wirecloud.ui) {
         this._keydownListener = keydownListener.bind(this);
         this._keyupListener = keyupListener.bind(this);
     };
+
     WiringEditor.prototype = new StyledElements.Alternative();
 
     WiringEditor.prototype.view_name = 'wiring';
@@ -130,6 +131,7 @@ if (!Wirecloud.ui) {
     /*************************************************************************
      * Private methods
      *************************************************************************/
+
     /**
      * @Private
      * keydown handler for ctrl Multiselection

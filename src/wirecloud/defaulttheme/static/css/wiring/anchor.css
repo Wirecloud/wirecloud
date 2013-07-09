@@ -42,12 +42,10 @@
 
 .wiring_editor .sources .anchor.disabled {
     opacity: 0.7;
-    cursor: no-drop;
 }
 
 .wiring_editor .targets .anchor.disabled {
     opacity: 0.7;
-    cursor: no-drop;
 }
 
 .wiring_editor .targets .anchor:hover {

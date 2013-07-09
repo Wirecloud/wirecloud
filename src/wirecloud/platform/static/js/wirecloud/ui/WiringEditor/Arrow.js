@@ -346,40 +346,6 @@
     };
 
     /**
-     *  Highlights the arrow
-     */
-    Arrow.prototype.highlight = function highlight() {
-        //this.addClassName('highlighted');
-        this.highlight_counter += 1;
-        this.removeClassName('disabled');
-    };
-
-    /**
-     *  Unhighlights the arrow
-     */
-    Arrow.prototype.unhighlight = function unhighlight() {
-        //this.removeClassName('highlighted');
-        this.highlight_counter -= 1;
-        if (this.highlight_counter < 1) {
-            this.addClassName('disabled');
-        }
-    };
-
-    /**
-     *  Recalculate if the arrow may be Highlighted or not
-     */
-    Arrow.prototype.calculateHighlight = function calculateHighlight() {
-        this.highlight_counter = 2;
-        if (!this.endAnchor.isHighlighted()) {
-            this.unhighlight();
-        }
-        if (!this.startAnchor.isHighlighted()) {
-            this.unhighlight();
-        }
-        this.redraw();
-    };
-
-    /**
      *  Select the arrow
      */
     Arrow.prototype.select = function select() {

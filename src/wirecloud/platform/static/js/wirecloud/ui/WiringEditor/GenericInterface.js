@@ -504,12 +504,8 @@
 
             this.sourceAnchorsByName[name] = anchor;
             this.sourceAnchors.push(anchor);
-        } else {
-            //PseudoAnchors for mini interfaces
-            anchor = document.createElement('div');
-            anchor.className = 'anchor';
-            anchorDiv.appendChild(anchor);
         }
+
         this.sourceDiv.appendChild(anchorDiv);
         this.draggableSources.push({'wrapperElement': anchorDiv, 'context': anchorContext});
     };
@@ -572,12 +568,8 @@
 
             this.targetAnchorsByName[name] = anchor;
             this.targetAnchors.push(anchor);
-        } else {
-            //PseudoAnchors for mini interfaces
-            anchor = document.createElement('div');
-            anchor.className = 'anchor';
-            anchorDiv.appendChild(anchor);
         }
+
         this.targetDiv.appendChild(anchorDiv);
         this.draggableTargets.push({'wrapperElement': anchorDiv, 'context': anchorContext});
     };
