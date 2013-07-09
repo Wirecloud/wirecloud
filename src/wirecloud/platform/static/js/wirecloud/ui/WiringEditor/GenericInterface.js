@@ -970,6 +970,7 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
             anchor.className = 'anchor';
             anchorDiv.appendChild(anchor);
         }
+
         this.sourceDiv.appendChild(anchorDiv);
         this.draggableSources.push({'wrapperElement': anchorDiv, 'context': anchorContext});
     };
