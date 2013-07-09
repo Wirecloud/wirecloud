@@ -283,11 +283,10 @@ function Dragboard(tab, workspace, dragboardElement) {
             return;
         }
 
-        var template = widget.getTemplate();
-        //var width = layout.unitConvert(template.getWidth() + "cm", CSSPrimitiveValue.CSS_PX)[0];
+        //var width = layout.unitConvert(widget.width + "cm", CSSPrimitiveValue.CSS_PX)[0];
         //width = layout.adaptWidth(width, width).inLU;
-        var width = template.getWidth();
-        var height = template.getHeight();
+        var width = widget.default_width;
+        var height = widget.default_height;
         var minimized = false;
         var freeLayoutAfterLoading = false;
         var layout = this.baseLayout;

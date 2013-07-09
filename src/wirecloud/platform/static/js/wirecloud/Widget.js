@@ -11,7 +11,7 @@
         this.version = new Wirecloud.Version(data.version, 'showcase');
         this.id = this.vendor + '/' + this.name + '/' + this.version.text;
 
-        this.displayName = data.displayName;
+        this.displayName = data.display_name;
         this.code_url = Wirecloud.URLs.WIDGET_CODE_ENTRY.evaluate({
             vendor: this.vendor,
             name: this.name,
@@ -19,8 +19,11 @@
         });
         this.code_content_type = data.code_content_typ;
 
+        this.default_width = data.widget_width;
+        this.default_height = data.widget_height;
+
         /* FIXME */
-        var template = new WidgetTemplate(data.variables, data.size);
+        var template = new WidgetTemplate(data);
         this.getTemplate = function getTemplate() { return template };
         this.getUriWiki = function getUriWiki() { return data.uriWiki; };
         this.getImage = function getImage() { return data.imageURI; };
