@@ -309,7 +309,7 @@ IWidget.prototype.onFreeLayout = function () {
  * Builds the structure of the widget
  */
 IWidget.prototype.build = function () {
-    var contents = this.internal_iwidget.buildInterface(Wirecloud.currentTheme.templates['iwidget'], view);
+    var contents = this.internal_iwidget.buildInterface(Wirecloud.currentTheme.templates['iwidget'], this);
 
     this.element = contents.element;
 

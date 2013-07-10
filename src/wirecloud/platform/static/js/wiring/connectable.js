@@ -37,9 +37,6 @@
  */
 function wConnectable (name, type, friendCode, id) {
     this.id = id;
-    this._name = name;
-    this._type = type;
-    this._friendCode = friendCode;
 }
 
 /**
@@ -56,10 +53,6 @@ wConnectable.prototype._annotate = function(value, source, options) {
     return;
 }
 
-wConnectable.prototype.getType = function() {
-    return this.type;
-}
-
 wConnectable.prototype.getValue = function() {
     var funcName = 'getValue';
     var msg = gettext("Unimplemented function: %(funcName)s");
@@ -68,16 +61,8 @@ wConnectable.prototype.getValue = function() {
     return;
 }
 
-wConnectable.prototype.getName = function() {
-    return this._name;
-}
-
 wConnectable.prototype.getId = function() {
     return this.id;
-}
-
-wConnectable.prototype.getFriendCode = function() {
-    return this._friendCode;
 }
 
 wConnectable.prototype.getFinalSlots = function() {
