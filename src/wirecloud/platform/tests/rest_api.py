@@ -28,9 +28,9 @@ from django.utils import simplejson
 
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
-import wirecloud.commons.test
-from wirecloud.commons.test import LocalDownloader, WirecloudTestCase
+import wirecloud.commons
 from wirecloud.commons.utils import downloader
+from wirecloud.commons.utils.testcases import LocalDownloader, WirecloudTestCase
 from wirecloud.commons.utils.wgt import WgtDeployer
 from wirecloud.platform.models import IWidget, Tab, VariableValue, Workspace, UserWorkspace
 from wirecloud.platform.widget import utils as showcase
@@ -53,7 +53,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         cls._original_download_function = staticmethod(downloader.download_http_content)
         downloader.download_http_content = LocalDownloader({
             'http': {
-                'localhost:8001': os.path.join(os.path.dirname(wirecloud.commons.test.__file__), 'test-data', 'src'),
+                'localhost:8001': os.path.join(os.path.dirname(wirecloud.commons.__file__), 'test-data', 'src'),
             },
         })
 
@@ -757,7 +757,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         cls._original_download_function = staticmethod(downloader.download_http_content)
         downloader.download_http_content = LocalDownloader({
             'http': {
-                'localhost:8001': os.path.join(os.path.dirname(wirecloud.commons.test.__file__), 'test-data', 'src'),
+                'localhost:8001': os.path.join(os.path.dirname(wirecloud.commons.__file__), 'test-data', 'src'),
             },
         })
 
@@ -930,7 +930,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         cls._original_download_function = staticmethod(downloader.download_http_content)
         downloader.download_http_content = LocalDownloader({
             'http': {
-                'localhost:8001': os.path.join(os.path.dirname(wirecloud.commons.test.__file__), 'test-data', 'src'),
+                'localhost:8001': os.path.abspath(os.path.join(os.path.dirname(wirecloud.commons.__file__), '..', 'test-data', 'src')),
             },
         })
 

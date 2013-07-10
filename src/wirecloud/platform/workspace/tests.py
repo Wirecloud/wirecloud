@@ -34,7 +34,7 @@ from django.test import Client
 from django.utils import simplejson
 
 from wirecloud.catalogue import utils as catalogue
-from wirecloud.commons.test import WirecloudTestCase
+from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 from wirecloud.platform.get_data import get_global_workspace_data
 from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Variable, VariableValue, Workspace

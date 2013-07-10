@@ -23,7 +23,7 @@ import time
 from selenium.webdriver.support.ui import WebDriverWait
 
 from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.commons.test import uses_extra_resources, iwidget_context, WirecloudSeleniumTestCase
+from wirecloud.commons.utils.testcases import uses_extra_resources, iwidget_context, WirecloudSeleniumTestCase
 
 
 class BasicSeleniumTests(WirecloudSeleniumTestCase):
