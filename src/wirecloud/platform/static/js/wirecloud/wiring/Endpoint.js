@@ -38,14 +38,6 @@
         return;
     };
 
-    Endpoint.prototype.getValue = function getValue() {
-        var funcName = 'getValue';
-        var msg = gettext("Unimplemented function: %(funcName)s");
-        msg = interpolate(msg, {funcName: funcName}, yes);
-        LogManagerFactory.getInstance().log(msg);
-        return;
-    };
-
     Endpoint.prototype.getId = function getId() {
         return this.id;
     };
