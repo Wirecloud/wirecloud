@@ -138,10 +138,7 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
     // Add the iWidget to the layout
     this.build();
     layout.addIWidget(this, true);
-
-    StyledElements.ObjectWithEvents.call(this, ['load', 'unload']);
 }
-IWidget.prototype = new StyledElements.ObjectWithEvents();
 
 IWidget.prototype.invalidIconPosition = function () {
     return this.iconPosition.x === -1 && this.iconPosition.y === -1;
@@ -692,28 +689,6 @@ IWidget.prototype._notifyWindowResizeEvent = function () {
         this.layout._notifyResizeEvent(this, oldWidth, oldHeight, newWidth, newHeight, false, false);
     }
     /* TODO end of temporally workaround */
-};
-
-/**
- * This function is called when the content of the iwidget is going to be unloaded.
- *
- * @private
- */
-IWidget.prototype._notifyUnloaded = function () {
-
-    if (!this.loaded) {
-        return;
-    }
-
-    var msg = gettext('iWidget unloaded');
-    this.log(msg, Constants.Logging.INFO_MSG);
-    this.internal_iwidget.logManager.newCycle();
-
-    this.errorButton.addClassName("disabled");
-    this.errorButton.setTitle('');
-    this.internal_iwidget._unload();
-    this.loaded = false;
-    this.events['unload'].dispatch(this);
 };
 
 /**

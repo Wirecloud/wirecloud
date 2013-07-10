@@ -150,7 +150,7 @@ function Workspace (workspaceState) {
             this.wiring = new Wirecloud.Wiring(this);
             iwidgets = this.getIWidgets();
             for (i = 0; i < iwidgets.length; i += 1) {
-                this.events.iwidgetadded.dispatch(this, iwidgets[i]);
+                this.events.iwidgetadded.dispatch(this, iwidgets[i].internal_iwidget);
             }
 
             // FIXME
@@ -644,7 +644,7 @@ function Workspace (workspaceState) {
         this.emptyWorkspaceInfoBox.addClassName('hidden');
 
         this.varManager.addInstance(iwidget, iwidgetJSON, tab);
-        this.events.iwidgetadded.dispatch(this, iwidget);
+        this.events.iwidgetadded.dispatch(this, iwidget.internal_iwidget);
 
         options.setDefaultValues.call(this, iwidget.id);
 
@@ -660,7 +660,7 @@ function Workspace (workspaceState) {
 
         var dragboard = iwidget.layout.dragboard;
         dragboard.removeInstance(iWidgetId, orderFromServer); // TODO split into hideInstance and removeInstance
-        this.events.iwidgetremoved.dispatch(this, iwidget);
+        this.events.iwidgetremoved.dispatch(this, iwidget.internal_iwidget);
 
         iwidget.destroy();
 

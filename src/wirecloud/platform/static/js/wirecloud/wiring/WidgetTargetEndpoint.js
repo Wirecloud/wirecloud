@@ -89,6 +89,8 @@
                 this.callback.call(this.iwidget, newValue);
             } else {
                 this.iwidget.pending_events.push({'endpoint': this.meta.name, 'value': newValue});
+                // TODO
+                opManager.activeWorkspace.getIWidget(this.iwidget.id).load();
             }
         }
     };

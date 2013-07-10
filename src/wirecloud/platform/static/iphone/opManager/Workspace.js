@@ -234,7 +234,7 @@ function Workspace(workspaceState) {
         this.wiring = new Wirecloud.Wiring(this);
         iwidgets = this.getIWidgets();
         for (i = 0; i < iwidgets.length; i += 1) {
-            this.events.iwidgetadded.dispatch(this, iwidgets[i]);
+            this.events.iwidgetadded.dispatch(this, iwidgets[i].internal_iwidget);
         }
         this.wiring.load(this.workspaceGlobalInfo.wiring);
         this._buildInterface();

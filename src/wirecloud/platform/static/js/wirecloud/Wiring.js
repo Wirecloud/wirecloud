@@ -95,7 +95,7 @@
         }
 
         iwidget.addEventListener('unload', this._iwidget_unload_listener);
-        this.connectablesByWidget[iwidget.id] = iwidget.internal_iwidget;
+        this.connectablesByWidget[iwidget.id] = iwidget;
     };
 
     removeIWidget = function removeIWidget(iwidget) {
@@ -107,7 +107,7 @@
             return;
         }
 
-        iwidget.internal_iwidget.fullDisconnect();
+        iwidget.fullDisconnect();
 
         if (this.status.views != null && this.status.views[0].iwidgets[iwidget.id]) {
             delete this.status.views[0].iwidgets[iwidget.id];
