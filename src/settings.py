@@ -5,7 +5,7 @@ from os import path
 from wirecloud.commons.utils.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 COMPRESS = not DEBUG
 COMPRESS_OFFLINE = not DEBUG
