@@ -17,7 +17,7 @@
             name: this.name,
             version: this.version.text
         });
-        this.code_content_type = data.code_content_typ;
+        this.code_content_type = data.code_content_type;
 
         this.inputs = data.wiring.inputs;
         if (this.inputs == null) {
