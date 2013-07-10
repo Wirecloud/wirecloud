@@ -20,12 +20,15 @@
 }
 
 .wiring_editor .grid .multiconnector .dragZone {
-    background: url('../../images/wiring/flechasMov.png');
+    font-family: FontAwesome;
     position: absolute;
-    border-radius: 10px;
-    width: 16px;
-    height: 16px;
-    left: 7px;
+    left: 4px;
+    font-size: 16px;
+    color: #535386;
+}
+
+.wiring_editor .grid .multiconnector .dragZone:hover {
+    color: rgb(170, 27, 0);
 }
 
 .wiring_editor .grid .multiconnector.target .anchor.main {

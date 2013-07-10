@@ -50,7 +50,7 @@
 
         this.msg2Element = document.createElement('p');
         this.windowContent.appendChild(this.msg2Element);
-        this.msg2Element.textContent = gettext('You will be able to contine after installing all the required.');
+        this.msg2Element.textContent = gettext('You will be able to continue after installing all the required dependencies.');
 
         // New Workspace button
         this.continueButton = new StyledElements.StyledButton({

@@ -19,7 +19,7 @@
  *
  */
 
-/*global EzWebExt, Wirecloud*/
+/*global EzWebExt, interpolate, Wirecloud*/
 
 Wirecloud.location = {
     'domain': document.location.protocol + '//' + document.location.host,
@@ -30,6 +30,8 @@ Wirecloud.location = {
 (function () {
 
     "use strict";
+
+    var HANDLER_RE = new RegExp(/^on(?:Create|Complete|Exception|Failure|Interactive|Loaded|Loading|Success|Uninitialized|\d{3})$/);
 
     var setRequestHeaders = function setRequestHeaders() {
         var headers, name;
@@ -65,12 +67,23 @@ Wirecloud.location = {
                     this.options.onFailure(response);
                 }
             } catch (e) {
+                if (this.options.onException) {
+                    try {
+                        this.options.onException(response, e);
+                    } catch (e2) {}
+                }
             }
 
             if (this.options.onComplete) {
                 try {
                     this.options.onComplete();
-                } catch (e) {}
+                } catch (e) {
+                    if (this.options.onException) {
+                        try {
+                            this.options.onException(response, e);
+                        } catch (e2) {}
+                    }
+                }
             }
         }
     };
@@ -117,6 +130,8 @@ Wirecloud.location = {
     };
 
     var Request = function Request(url, options) {
+        var key;
+
         this.url = url;
         this.options = EzWebExt.merge({
             method:       'POST',
@@ -127,11 +142,10 @@ Wirecloud.location = {
             postBody:     null
         }, options);
 
-        if (this.options.onSuccess != null && typeof this.options.onSuccess !== 'function') {
-            throw new TypeError('Invalid onSuccess callback');
-        }
-        if (this.options.onFailure != null && typeof this.options.onFailure !== 'function') {
-            throw new TypeError('Invalid onFailure callback');
+        for (key in this.options) {
+            if (HANDLER_RE.test(key) && this.options[key] != null && typeof this.options[key] !== 'function') {
+                throw new TypeError(interpolate('Invalid %(callback)s callback', {callback: key}, true));
+            }
         }
         this.method = this.options.method.toUpperCase();
 
@@ -215,12 +229,11 @@ Wirecloud.location = {
     };
 
     io.makeRequest = function makeRequest(url, options) {
-        var handlerRegExp, key;
+        var key;
 
         if (options != null && options.context != null) {
-            handlerRegExp = new RegExp(/^on(?:Create|Complete|Exception|Failure|Interactive|Loaded|Loading|Success|Uninitialized|\d{3})$/);
             for (key in options) {
-                if (handlerRegExp.test(key) && typeof options[key] === 'function') {
+                if (HANDLER_RE.test(key) && typeof options[key] === 'function') {
                     options[key] = options[key].bind(options.context);
                 }
             }

@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012 Universidad Politécnica de Madrid
+# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
 # Wirecloud is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
+# it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
 # Wirecloud is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# GNU Affero General Public License for more details.
 
-# You should have received a copy of the GNU General Public License
+# You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
@@ -135,7 +135,7 @@ urlpatterns = patterns('wirecloud.platform.views',
         name='wirecloud.workspace_collection'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/?$',
-        workspace_views.WorkspaceEntry(permitted_methods=('GET', 'POST', 'PUT', 'DELETE',)),
+        workspace_views.WorkspaceEntry(permitted_methods=('GET', 'POST', 'DELETE',)),
         name='wirecloud.workspace_entry'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tabs/?$',
@@ -148,7 +148,7 @@ urlpatterns = patterns('wirecloud.platform.views',
     ),
 
     url(r'^api/workspace/(?P<workspace_id>\d+)/variables/?$',
-        workspace_views.WorkspaceVariableCollection(permitted_methods=('PUT',)),
+        workspace_views.WorkspaceVariableCollection(permitted_methods=('POST',)),
         name='wirecloud.variable_collection'
     ),
 
@@ -157,7 +157,6 @@ urlpatterns = patterns('wirecloud.platform.views',
         name='wirecloud.workspace_share'
     ),
 
-    url(r'^api/workspace/(?P<workspace_id>\d+)/link/?$', workspace_views.WorkspaceLinkerEntry(permitted_methods=('GET', ))),
     url(r'^api/workspace/(?P<to_ws_id>\d+)/merge/?$',
         workspace_views.MashupMergeService(),
         name='wirecloud.workspace_merge'
@@ -171,12 +170,6 @@ urlpatterns = patterns('wirecloud.platform.views',
         workspace_views.WorkspacePublisherEntry(permitted_methods=('POST',)),
         name='wirecloud.workspace_publish'
     ),
-    url(r'^api/workspace/(?P<workspace_id>\d+)/export/?$',
-        workspace_views.WorkspaceExportService(),
-        name='wirecloud.workspace_export'
-    ),
-
-    url(r'^api/workspaces/published/(?P<workspace_id>\d+)/template.xml$', workspace_views.MashupTemplate(permitted_methods=('GET', )), name='wirecloud_showcase.mashup_template'),
 
 ) + get_plugin_urls() + patterns('wirecloud.platform.views',
 

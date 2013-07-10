@@ -22,6 +22,7 @@ import time
 
 from selenium.webdriver.support.ui import WebDriverWait
 
+from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.test import uses_extra_resources, iwidget_context, WirecloudSeleniumTestCase
 
 
@@ -300,8 +301,26 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     @uses_extra_resources(('Wirecloud_TestMashup2_1.0.zip',), shared=True)
     def test_create_workspace_from_catalogue_missing_dependencies(self):
 
-        self.login()
-        self.create_workspace_from_catalogue('TestMashup2', expect_missing_dependencies=('Wirecloud/nonavailable-widget/1.0', 'Wirecloud/nonavailable-operator/1.0'))
+        # Make Test and TestOperator unavailable to normuser
+        test_widget = CatalogueResource.objects.get(short_name='Test')
+        test_widget.public = False
+        test_widget.users.clear()
+        test_widget.save()
+
+        test_operator = CatalogueResource.objects.get(short_name='TestOperator')
+        test_operator.public = False
+        test_operator.users.clear()
+        test_operator.save()
+
+        self.login(username='normuser')
+
+        dependencies = (
+            'Wirecloud/nonavailable-widget/1.0',
+            'Wirecloud/nonavailable-operator/1.0',
+            'Wirecloud/TestOperator/1.0',
+            'Wirecloud/Test/1.0',
+        )
+        self.create_workspace_from_catalogue('TestMashup2', expect_missing_dependencies=dependencies)
     test_create_workspace_from_catalogue_missing_dependencies.tags = ('fiware-ut-5')
 
     def test_merge_mashup(self):

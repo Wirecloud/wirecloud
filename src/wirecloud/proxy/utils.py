@@ -35,9 +35,6 @@ import re
 from django.http import HttpResponse
 from django.utils.translation import ugettext as _
 
-
-LOCALHOST_RE = re.compile('^((localhost)|(127\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)))(:\d*)?$')
-
 # content_length + hop-by-hop headers(http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html#sec13.5.1)
 BLACKLISTED_HEADERS = {
     'connection': 1, 'content-length': 1, 'keep-alive': 1, 'proxy-authenticate': 1,
@@ -77,12 +74,6 @@ def check_invalid_refs(**kargs):
     if len(invalid_params) > 0:
         msg = _('X-EzWeb-Secure-Data: The following required parameters are invalid: %(params)s')
         raise ValidationError(msg % {'params': ', '.join(invalid_params)})
-
-
-def is_localhost(host):
-    if LOCALHOST_RE.match(host) == None:
-        return False
-    return True
 
 
 def is_valid_header(header):

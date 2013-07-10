@@ -379,7 +379,6 @@
             var Y = C1.posY * B1(percent) + C2.posY * B2(percent) + C3.posY * B3(percent) + C4.posY * B4(percent);
             return {posX : X, posY : Y};
         };
-
         return getBercier(PathPos, this.start, this.getPullerStart(true), this.getPullerEnd(true), this.end);
     };
 

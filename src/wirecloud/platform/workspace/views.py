@@ -50,14 +50,6 @@ from wirecloud.platform.workspace.utils import deleteTab, createTab, get_workspa
 from wirecloud.platform.markets.utils import get_market_managers
 
 
-def clone_original_variable_value(variable, creator, new_user):
-    original_var_value = VariableValue.objects.get(variable=variable, user=creator)
-
-    value = original_var_value.get_variable_value()
-
-    return VariableValue.objects.create(variable=variable, user=new_user, value=value)
-
-
 def createEmptyWorkspace(workspaceName, user):
     active = False
     workspaces = UserWorkspace.objects.filter(user__id=user.id, active=True)
@@ -107,25 +99,26 @@ class WorkspaceCollection(Resource):
         return HttpResponse(simplejson.dumps(data_list), mimetype='application/json; charset=UTF-8')
 
     @authentication_required
-    @supported_request_mime_types(('application/x-www-form-urlencoded', 'application/json'))
+    @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def create(self, request):
 
-        content_type = get_content_type(request)[0]
-        if content_type == 'application/json':
-            try:
-                data = simplejson.loads(request.raw_post_data)
-            except Exception, e:
-                msg = _("malformed json data: %s") % unicode(e)
-                return build_error_response(request, 400, msg)
+        try:
+            data = simplejson.loads(request.raw_post_data)
+        except Exception, e:
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
 
-            workspace_name = data.get('name', '').strip()
-            mashup_id = data.get('mashup', '')
-            dry_run = data.get('', 'false').lower() == 'true'
-        else:
-            workspace_name = request.POST.get('name', '').strip()
-            mashup_id = request.POST.get('mashup', '')
-            dry_run = request.POST.get('', 'false').lower() == 'true'
+        workspace_name = data.get('name', '').strip()
+        mashup_id = data.get('mashup', '')
+        dry_run = data.get('dry_run', False)
+        if isinstance(dry_run, basestring):
+            dry_run = dry_run.strip().lower()
+            if dry_run not in ('true', 'false'):
+                return build_error_response(request, 422, _('Invalid dry_run value'))
+            dry_run = dry_run == 'true'
+        elif not isinstance(dry_run, bool):
+            return build_error_response(request, 422, _('Invalid dry_run value'))
 
         if mashup_id == '' and workspace_name == '':
             return build_error_response(request, 422, _('missing workspace name'))
@@ -133,7 +126,7 @@ class WorkspaceCollection(Resource):
         if mashup_id == '':
 
             if dry_run:
-                return HttpResponse(status_code=204)
+                return HttpResponse(status=204)
 
             try:
                 workspace = createEmptyWorkspace(workspace_name, request.user)
@@ -173,7 +166,7 @@ class WorkspaceCollection(Resource):
                 return build_error_response(request, 422, unicode(e), details=details)
 
             if dry_run:
-                return HttpResponse(status_code=204)
+                return HttpResponse(status=204)
 
             workspace, _junk = buildWorkspaceFromTemplate(template, request.user, True)
 
@@ -195,7 +188,7 @@ class WorkspaceEntry(Resource):
     @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
-    def update(self, request, workspace_id):
+    def create(self, request, workspace_id):
 
         try:
             ts = simplejson.loads(request.raw_post_data)
@@ -206,12 +199,17 @@ class WorkspaceEntry(Resource):
         workspace = Workspace.objects.get(users__id=request.user.id, pk=workspace_id)
 
         if 'active' in ts:
-            if ts['active'] == 'true':
-                #Only one active workspace
+
+            active = ts.get('active', False)
+            if isinstance(active, basestring):
+                active = ts['active'].lower() == 'true'
+
+            if active:
+                # Only one active workspace
                 setActiveWorkspace(request.user, workspace)
             else:
                 currentUserWorkspace = UserWorkspace.objects.get(workspace=workspace, user=request.user)
-                currentUserWorkspace.active = True
+                currentUserWorkspace.active = False
                 currentUserWorkspace.save()
 
         if 'name' in ts:
@@ -393,7 +391,7 @@ class WorkspaceVariableCollection(Resource):
     @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
-    def update(self, request, workspace_id):
+    def create(self, request, workspace_id):
 
         try:
             iwidgetVariables = simplejson.loads(request.raw_post_data)
@@ -454,18 +452,6 @@ class WorkspaceSharerEntry(Resource):
                 linkWorkspaceObject(user, workspace, owner, link_variable_values=True)
 
             return HttpResponse(status=204)
-
-
-class WorkspaceLinkerEntry(Resource):
-
-    @authentication_required
-    @commit_on_http_success
-    @no_cache
-    def read(self, request, workspace_id):
-
-        linkWorkspace(request.user, workspace_id)
-
-        return HttpResponse(status=204)
 
 
 class MashupMergeService(Service):
@@ -568,35 +554,3 @@ class WorkspacePublisherEntry(Resource):
             return build_error_response(request, 502, unicode(e))
 
         return HttpResponse(status=201)
-
-
-class WorkspaceExportService(Service):
-
-    @authentication_required
-    @supported_request_mime_types(('application/json',))
-    def process(self, request, workspace_id):
-
-        workspace = get_object_or_404(Workspace, id=workspace_id)
-
-        if not request.user.is_superuser and workspace.creator != request.user:
-            return HttpResponseForbidden()
-
-        try:
-            mashup = simplejson.loads(request.raw_post_data)
-        except Exception, e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
-
-        missing_fields = check_json_fields(mashup, ['name', 'vendor', 'version', 'email'])
-        if len(missing_fields) > 0:
-            raise build_error_response(request, 400, _('Malformed mashup JSON. The following field(s) are missing: %(fields)s.') % {'fields': missing_fields})
-
-        template = build_template_from_workspace(mashup, workspace, request.user)
-        return HttpResponse(template, mimetype='application/xml; charset=UTF-8')
-
-
-class MashupTemplate(Resource):
-
-    def read(self, request, workspace_id):
-        published_workspace = get_object_or_404(PublishedWorkspace, id=workspace_id)
-        return HttpResponse(published_workspace.template, mimetype='application/xml; charset=UTF-8')

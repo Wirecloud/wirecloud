@@ -940,12 +940,12 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
 
             labelDiv.addEventListener('mouseover', function () {
                 if (!this.wiringEditor.recommendationsActivated) {
-                    this.wiringEditor.emphasize(anchor);
+                    this.wiringEditor.recommendations.emphasize(anchor);
                 }
             }.bind(this));
             labelDiv.addEventListener('mouseout', function () {
                 if (!this.wiringEditor.recommendationsActivated) {
-                    this.wiringEditor.deemphasize(anchor);
+                    this.wiringEditor.recommendations.deemphasize(anchor);
                 }
             }.bind(this));
 
@@ -964,11 +964,6 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
 
             this.sourceAnchorsByName[name] = anchor;
             this.sourceAnchors.push(anchor);
-        } else {
-            //PseudoAnchors for mini interfaces
-            anchor = document.createElement('div');
-            anchor.className = 'anchor';
-            anchorDiv.appendChild(anchor);
         }
 
         this.sourceDiv.appendChild(anchorDiv);
@@ -986,7 +981,7 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
 
         // AnchorDiv
         anchorDiv = document.createElement("div");
-        //if the input have not description, take the label
+        // If the output have not description, take the label
         if (desc === '') {
             desc = label;
         }
@@ -997,9 +992,9 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
         anchorLabel.textContent = label;
 
         labelDiv = document.createElement("div");
+        anchorDiv.appendChild(labelDiv);
         labelDiv.setAttribute('class', 'labelDiv');
         labelDiv.appendChild(anchorLabel);
-        anchorDiv.appendChild(labelDiv);
 
         if (!this.isMiniInterface) {
             anchor = new Wirecloud.ui.WiringEditor.TargetAnchor(anchorContext, this.arrowCreator);
@@ -1009,12 +1004,12 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
 
             labelDiv.addEventListener('mouseover', function () {
                 if (!this.wiringEditor.recommendationsActivated) {
-                    this.wiringEditor.emphasize(anchor);
+                    this.wiringEditor.recommendations.emphasize(anchor);
                 }
             }.bind(this));
             labelDiv.addEventListener('mouseout', function () {
                 if (!this.wiringEditor.recommendationsActivated) {
-                    this.wiringEditor.deemphasize(anchor);
+                    this.wiringEditor.recommendations.deemphasize(anchor);
                 }
             }.bind(this));
 
@@ -1033,12 +1028,8 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
 
             this.targetAnchorsByName[name] = anchor;
             this.targetAnchors.push(anchor);
-        } else {
-            //PseudoAnchors for mini interfaces
-            anchor = document.createElement('div');
-            anchor.className = 'anchor';
-            anchorDiv.appendChild(anchor);
         }
+
         this.targetDiv.appendChild(anchorDiv);
         this.draggableTargets.push({'wrapperElement': anchorDiv, 'context': anchorContext});
     };

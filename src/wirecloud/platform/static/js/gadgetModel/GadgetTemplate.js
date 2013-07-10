@@ -101,72 +101,6 @@ function WidgetTemplate(variables_, size_) {
         return prefs;
     };
 
-    this.getExternalContextVars = function (iwidget_) {
-
-        // JSON-coded Template-Variables mapping
-        // Constructing the structure
-
-        var objVars = [];
-        var rawVars = variableList;
-        var rawVar = null;
-        var currentContextVar = null;
-        for (var i in rawVars) {
-            rawVar = rawVars[i];
-            switch (rawVar.aspect) {
-                case Variable.prototype.EXTERNAL_CONTEXT:
-                    currentContextVar = new ContextVar(iwidget_, rawVar.name, rawVar.concept)
-                    objVars.push(currentContextVar);
-                    break;
-                default:
-                    break;
-            }
-        }
-        return objVars;
-    }
-
-    this.getWidgetContextVars = function (iwidget_) {
-
-        // JSON-coded Template-Variables mapping
-        // Constructing the structure
-
-        var objVars = [];
-        var rawVars = variableList;
-        var rawVar = null;
-        var currentContextVar = null;
-        for (var i in rawVars) {
-            rawVar = rawVars[i];
-            switch (rawVar.aspect) {
-                case Variable.prototype.GADGET_CONTEXT:
-                    currentContextVar = new ContextVar(iwidget_, rawVar.name, rawVar.concept);
-                    objVars.push(currentContextVar);
-                    break;
-                default:
-                    break;
-            }
-        }
-        return objVars;
-    }
-
-    this.getUserPrefsId = function () {
-
-        // JSON-coded Template-UserPrefs mapping
-        // Constructing the structure
-
-        var objVars = [];
-        var rawVars = variableList;
-        var rawVar = null;
-        for (var i in rawVars) {
-            rawVar = rawVars[i];
-            if (rawVar.aspect == Variable.prototype.USER_PREF)
-            {
-                    objVars.push(rawVar.name);
-            }
-        }
-        return objVars;
-    }
-
-    
-
     this.getConnectables = function () {
 
         var var_name, rawVar;
@@ -195,25 +129,6 @@ function WidgetTemplate(variables_, size_) {
         }
 
         return connectables;
-    }
-
-
-    this.getPropertiesId = function () {
-
-        // JSON-coded Template-UserPrefs mapping
-        // Constructing the structure
-
-        var objVars = [];
-        var rawVars = variableList;
-        var rawVar = null;
-        for (var i in rawVars) {
-            rawVar = rawVars[i];
-            if (rawVar.aspect == Variable.prototype.PROPERTY)
-            {
-                    objVars.push(rawVar.name);
-            }
-        }
-        return objVars;
     }
 
     /*

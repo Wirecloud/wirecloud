@@ -245,6 +245,7 @@ if (!Wirecloud.ui) {
     /*************************************************************************
      * Private methods
      *************************************************************************/
+
     /**
      * @Private
      * is empty object?
@@ -365,39 +366,15 @@ if (!Wirecloud.ui) {
         this.ctrlPushed = false;
         this.nextOperatorId = 0;
         this.nextMulticonnectorId = 0;
-        this.recommendationsActivated = false;
-        this.anchorsInvolved = {'EQUIVALENT': {},
-                                'SUBSUMED': {},
-                                'SUBSUMES': {},
-                                'HASPART' : {},
-                                'DISJOINT': {},
-                                'OVERLAP': {},
-                                'NONE': {}};
         this.EditingObject = null;
         this.entitiesNumber = 0;
+        this.recommendationsActivated = false;
 
         iwidgets = workspace.getIWidgets();
         availableOperators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
 
-        /* semantic recommendations */
-        /* colorCodes = {'EQUIVALENT': 'green', 'SUBSUMED':'green', 'SUBSUMES':'orange', 'DISJOINT':'red', 'OVERLAP':'grey', 'NONE':'grey'} */
-        this.semanticStatus = JSON.parse('{"matchings":[{"origin":"Morfeo/Flickr/2.53/urlImage","destination":"Morfeo/Web Browser/0.5/url","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Search/1.24/keyword","destination":"Morfeo/Flickr/2.53/keyword","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Flickr/2.53/urlImage","destination":"Morfeo/Multimedia Viewer/0.5/uriSlot","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Multimedia Viewer/0.5/uriEvent","destination":"Morfeo/Web Browser/0.5/url","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Multimedia Viewer/0.5/urlEvent","destination":"Morfeo/Web Browser/0.5/url","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Flickr/2.53/keyword_event","destination":"EzWeb/Wikipedia/2.31/keyword","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Search/1.24/keyword","destination":"EzWeb/Wikipedia/2.31/keyword","matchCode":"EQUIVALENT"},{"origin":"EzWeb/Wikipedia/2.31/url","destination":"Morfeo/Web Browser/0.5/url","matchCode":"EQUIVALENT"},{"origin":"EzWeb/Wikipedia/2.31/url","destination":"Morfeo/Multimedia Viewer/0.5/uriSlot","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Search/1.24/keyword","destination":"CoNWeT/sendsms/0.1/message","matchCode":"EQUIVALENT"}],"timestamp":"2013-02-15 14:02:55.273","id":"1"}');
-        //this.semanticStatus = JSON.parse('{"matchings":[{"origin":"Morfeo/Flickr/2.53/urlImage","destination":"Morfeo/Web Browser/0.5/url","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Flickr/2.53/Keyword_event","destination":"Morfeo/Flickr/2.53/Keyword","matchCode":"DISJOINT"},{"origin":"Morfeo/Search/1.24/keyword","destination":"Morfeo/Flickr/2.53/keyword","matchCode":"SUBSUMED"},{"origin":"Morfeo/Flickr/2.53/urlImage","destination":"Morfeo/Multimedia Viewer/0.5/uriSlot","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Multimedia Viewer/0.5/uriEvent","destination":"Morfeo/Web Browser/0.5/url","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Multimedia Viewer/0.5/urlEvent","destination":"Morfeo/Web Browser/0.5/url","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Flickr/2.53/keyword_event","destination":"EzWeb/Wikipedia/2.31/keyword","matchCode":"EQUIVALENT"},{"origin":"Morfeo/Search/1.24/keyword","destination":"EzWeb/Wikipedia/2.31/keyword","matchCode":"SUBSUMES"},{"origin":"EzWeb/Wikipedia/2.31/url","destination":"Morfeo/Web Browser/0.5/url","matchCode":"OVERLAP"},{"origin":"EzWeb/Wikipedia/2.31/url","destination":"Morfeo/Multimedia Viewer/0.5/uriSlot","matchCode":"EQUIVALENT"}],"timestamp":"2013-02-15 14:02:55.273","id":"1"}');
-        this.recommendations = {};
-
-        //Semantic Status by entity ID
-        entitiesIds = [];
-        for (i = 0; i < iwidgets.length; i++) {
-            iwidget = iwidgets[i];
-            //dont repeat any iwidget.
-            if (entitiesIds.indexOf(iwidget.widget.id) == -1) {
-                entitiesIds.push(iwidget.widget.id);
-            }
-        }
-        for (key in availableOperators) {
-            entitiesIds.push(availableOperators[key].uri);
-        }
-        this.refactorSemanticInfo(entitiesIds);
+        /* TODO this.recommendation = semanticStatus parameter */
+        this.recommendations = new Wirecloud.ui.BasicRecommendations(this);
 
         // Widgets
         for (i = 0; i < iwidgets.length; i++) {
@@ -690,7 +667,7 @@ if (!Wirecloud.ui) {
         this.iwidgets = {};
         this.currentlyInUseOperators = {};
         this.multiconnectors = {};
-        this.anchorsInvolved = {};
+        this.recommendations.destroy();
     };
 
     /*************************************************************************
@@ -940,7 +917,7 @@ if (!Wirecloud.ui) {
      * add IWidget.
      */
     WiringEditor.prototype.addIWidget = function addIWidget(wiringEditor, iwidget, enpPointPos) {
-        var widget_interface, auxDiv;
+        var widget_interface, auxDiv, i, anchor;
 
         widget_interface = new Wirecloud.ui.WiringEditor.WidgetInterface(wiringEditor, iwidget, this.arrowCreator, false, enpPointPos);
         this.iwidgets[iwidget.id] = widget_interface;
@@ -958,9 +935,14 @@ if (!Wirecloud.ui) {
 
         this.layout.getCenterContainer().appendChild(widget_interface);
 
-        //semantic recommendations
-        widget_interface.sourceAnchors.map(this._semantic_anchor_map_func);
-        widget_interface.targetAnchors.map(this._semantic_anchor_map_func);
+        for (i = 0; i < widget_interface.sourceAnchors.length; i += 1) {
+            anchor = widget_interface.sourceAnchors[i];
+            this.recommendations.add_anchor_to_recommendations(anchor);
+        }
+        for (i = 0; i < widget_interface.targetAnchors.length; i += 1) {
+            anchor = widget_interface.targetAnchors[i];
+            this.recommendations.add_anchor_to_recommendations(anchor);
+        }
 
         widget_interface.sourceAnchors.map(this._startdrag_map_func);
         widget_interface.targetAnchors.map(this._startdrag_map_func);
@@ -980,7 +962,7 @@ if (!Wirecloud.ui) {
      * add IOperator.
      */
     WiringEditor.prototype.addIOperator = function addIOperator(ioperator, enpPointPos) {
-        var instantiated_operator, operator_interface, auxDiv;
+        var instantiated_operator, operator_interface, auxDiv, i, anchor;
 
         if (ioperator instanceof Wirecloud.wiring.OperatorMeta) {
             instantiated_operator = ioperator.instantiate(this.nextOperatorId, true, this);
@@ -1004,9 +986,14 @@ if (!Wirecloud.ui) {
 
         this.layout.getCenterContainer().appendChild(operator_interface);
 
-        //semantic recommendations
-        operator_interface.sourceAnchors.map(this._semantic_anchor_map_func);
-        operator_interface.targetAnchors.map(this._semantic_anchor_map_func);
+        for (i = 0; i < operator_interface.sourceAnchors.length; i += 1) {
+            anchor = operator_interface.sourceAnchors[i];
+            this.recommendations.add_anchor_to_recommendations(anchor);
+        }
+        for (i = 0; i < operator_interface.targetAnchors.length; i += 1) {
+            anchor = operator_interface.targetAnchors[i];
+            this.recommendations.add_anchor_to_recommendations(anchor);
+        }
 
         operator_interface.sourceAnchors.map(this._startdrag_map_func);
         operator_interface.targetAnchors.map(this._startdrag_map_func);
@@ -1253,20 +1240,21 @@ if (!Wirecloud.ui) {
      * remove a iWidget.
      */
     WiringEditor.prototype.removeIWidget = function removeIWidget(widget_interface) {
-        var i;
+        var i, anchor;
+
         widget_interface.unselect(false);
         delete this.iwidgets[widget_interface.getIWidget().id];
         this.layout.getCenterContainer().removeChild(widget_interface);
 
-        //semantic recommendations
-        widget_interface.sourceAnchors.map(this._remove_semantic_anchor_map_func);
-        widget_interface.targetAnchors.map(this._remove_semantic_anchor_map_func);
-
         for (i = 0; i < widget_interface.sourceAnchors.length; i += 1) {
-            this.sourceAnchorList.splice(this.sourceAnchorList.indexOf(widget_interface.sourceAnchors[i]), 1);
+            anchor = widget_interface.sourceAnchors[i];
+            this.sourceAnchorList.splice(this.sourceAnchorList.indexOf(anchor), 1);
+            this.recommendations.remove_anchor_to_recommendations(anchor);
         }
         for (i = 0; i < widget_interface.targetAnchors.length; i += 1) {
-            this.targetAnchorList.splice(this.targetAnchorList.indexOf(widget_interface.targetAnchors[i]), 1);
+            anchor = widget_interface.targetAnchors[i];
+            this.targetAnchorList.splice(this.targetAnchorList.indexOf(anchor), 1);
+            this.recommendations.remove_anchor_to_recommendations(anchor);
         }
 
         widget_interface.destroy();
@@ -1282,20 +1270,21 @@ if (!Wirecloud.ui) {
      * remove a iOperator.
      */
     WiringEditor.prototype.removeIOperator = function removeIOperator(operator_interface) {
-        var i;
+        var i, anchor;
+
         operator_interface.unselect(false);
         delete this.currentlyInUseOperators[operator_interface.getIOperator().id];
         this.layout.getCenterContainer().removeChild(operator_interface);
 
-        //semantic recommendations
-        operator_interface.sourceAnchors.map(this._remove_semantic_anchor_map_func);
-        operator_interface.targetAnchors.map(this._remove_semantic_anchor_map_func);
-
         for (i = 0; i < operator_interface.sourceAnchors.length; i += 1) {
-            this.sourceAnchorList.splice(this.sourceAnchorList.indexOf(operator_interface.sourceAnchors[i]), 1);
+            anchor = operator_interface.sourceAnchors[i];
+            this.sourceAnchorList.splice(this.sourceAnchorList.indexOf(anchor), 1);
+            this.recommendations.remove_anchor_to_recommendations(anchor);
         }
         for (i = 0; i < operator_interface.targetAnchors.length; i += 1) {
-            this.targetAnchorList.splice(this.targetAnchorList.indexOf(operator_interface.targetAnchors[i]), 1);
+            anchor = operator_interface.targetAnchors[i];
+            this.targetAnchorList.splice(this.targetAnchorList.indexOf(anchor), 1);
+            this.recommendations.remove_anchor_to_recommendations(anchor);
         }
 
         operator_interface.destroy();
@@ -1343,148 +1332,6 @@ if (!Wirecloud.ui) {
         }
         multiConnector.destroy(true);
         delete this.multiconnectors[multiConnector.id];
-    };
-
-    /**
-     * emphasize anchors.
-     */
-    WiringEditor.prototype.emphasize = function emphasize(anchor, isCreatingArrow) {
-        var rec, widgetId, anchorId;
-
-        if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.OperatorInterface) {
-            widgetId = anchor.context.iObject.ioperator.meta.uri;
-            anchorId = anchor.context.data.name;
-        } else if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
-            widgetId = anchor.context.iObject.iwidget.widget.id;
-            if (anchor.context.data instanceof WidgetOutputEndpoint) {
-                anchorId = anchor.context.data.name;
-            } else {
-                if (!anchor.context.iObject.iwidget.ghost) {
-                    anchorId = anchor.context.data.vardef.name;
-                } else {
-                    anchorId = anchor.context.data;
-                }
-            }
-        }
-
-        rec = this.getRecommendations(anchor, widgetId, anchorId, false);
-        this.highlightRecommendations(rec);
-
-        if (isCreatingArrow){
-            this.recommendationsActivated = true;
-        }
-    };
-
-    /**
-     * deemphasize anchors.
-     */
-    WiringEditor.prototype.deemphasize = function deemphasize(anchor) {
-        var rec, widgetId, anchorId;
-
-        if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.OperatorInterface) {
-            widgetId = anchor.context.iObject.ioperator.meta.uri;
-            anchorId = anchor.context.data.name;
-        } else if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
-            widgetId = anchor.context.iObject.iwidget.widget.id;
-            if (anchor.context.data instanceof WidgetOutputEndpoint) {
-                anchorId = anchor.context.data.name;
-            } else {
-                if (!anchor.context.iObject.iwidget.ghost) {
-                    anchorId = anchor.context.data.vardef.name;
-                } else {
-                    anchorId = anchor.context.data;
-                }
-            }
-        }
-
-        rec = this.getRecommendations(anchor, widgetId, anchorId, true);
-        this.unhighlightRecommendations(rec);
-
-        this.recommendationsActivated = false;
-    };
-
-    /**
-     * getRecommendations
-     */
-    WiringEditor.prototype.getRecommendations = function getRecommendations(anchor, widgetId, anchorId, isEmphasized) {
-        var mainAnchorClass, mainAnchorRef, recommendations, recTag, keyValues, anchorList, anchorListFiltered, i;
-
-        keyValues = {'NONE': 0, 'OVERLAP': 1, 'SUBSUMES': 2, 'SUBSUMED': 3, 'HASPART': 4, 'DISJOINT': 5, 'EQUIVALENT': 6};
-        recommendations = {};
-        mainAnchorRef = 0;
-        mainAnchorClass = 'NONE';
-        for (recTag in this.anchorsInvolved) {
-            if (this.anchorsInvolved[recTag][widgetId] != null &&
-                    this.anchorsInvolved[recTag][widgetId][anchorId] != null) {
-                anchorList = this.anchorsInvolved[recTag][widgetId][anchorId];
-                anchorListFiltered = [];
-                for (i = 0; i< anchorList.length; i += 1) {
-                    if (anchorList[i].context.iObject != anchor.context.iObject){
-                        // only if the anchor and anchorList[i] are not part of the same widget
-                        anchorListFiltered[i] = anchorList[i];
-                    }
-                }
-                if (!isEmpty(anchorListFiltered) && (mainAnchorRef < keyValues[recTag])) {
-                    mainAnchorRef = keyValues[recTag];
-                    mainAnchorClass = recTag;
-                }
-                recommendations[recTag] = anchorListFiltered;
-            }
-        }
-        if (isEmphasized) {
-            this.unhighlightAnchorLabel(anchor, mainAnchorClass);
-        } else {
-            this.highlightAnchorLabel(anchor, mainAnchorClass);
-        }
-        return recommendations;
-    };
-
-    /**
-     * highlightRecommendations
-     */
-    WiringEditor.prototype.highlightRecommendations = function highlightRecommendations(recHash) {
-        var i, key;
-
-        for (key in recHash){
-            for (i = 0; i < recHash[key].length; i += 1) {
-                this.highlightAnchorLabel(recHash[key][i], key);
-            }
-        }
-    };
-
-    /**
-     * unhighlightRecommendations
-     */
-    WiringEditor.prototype.unhighlightRecommendations = function unhighlightRecommendations(recHash) {
-        var i, key;
-
-        for (key in recHash){
-            for (i = 0; i < recHash[key].length; i += 1) {
-                this.unhighlightAnchorLabel(recHash[key][i], key);
-            }
-        }
-    };
-
-    /**
-     * highlight anchor.
-     */
-    WiringEditor.prototype.highlightAnchorLabel = function highlightAnchorLabel(anchor, matchCode) {
-        var code;
-
-        code = matchCode.toLowerCase();
-        anchor.wrapperElement.parentNode.classList.add('highlight');
-        anchor.wrapperElement.parentNode.classList.add(code);
-    };
-
-    /**
-     * unhighlight anchor.
-     */
-    WiringEditor.prototype.unhighlightAnchorLabel = function unhighlightAnchorLabel(anchor, matchCode) {
-        var code;
-
-        code = matchCode.toLowerCase();
-        anchor.wrapperElement.parentNode.classList.remove('highlight');
-        anchor.wrapperElement.parentNode.classList.remove(code);
     };
 
     /**
