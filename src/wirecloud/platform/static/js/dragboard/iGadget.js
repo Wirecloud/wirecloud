@@ -309,7 +309,7 @@ IWidget.prototype.onFreeLayout = function () {
  * Builds the structure of the widget
  */
 IWidget.prototype.build = function () {
-    var contents = this.internal_iwidget.buildInterface(this);
+    var contents = this.internal_iwidget.buildInterface(Wirecloud.currentTheme.templates['iwidget'], view);
 
     this.element = contents.element;
 
@@ -692,50 +692,6 @@ IWidget.prototype._notifyWindowResizeEvent = function () {
         this.layout._notifyResizeEvent(this, oldWidth, oldHeight, newWidth, newHeight, false, false);
     }
     /* TODO end of temporally workaround */
-};
-
-/**
- * This function is called when the content of the iwidget has been loaded completly.
- *
- * @private
- */
-IWidget.prototype._notifyLoaded = function () {
-    var msg, unloadElement, errorCount;
-
-    if (this.loaded || !this.content.hasAttribute('src') ) {
-        return;
-    }
-
-    msg = gettext('iWidget loaded');
-    this.log(msg, Constants.Logging.INFO_MSG);
-
-    this.loaded = true;
-
-    errorCount = this.internal_iwidget.logManager.getErrorCount();
-    if (errorCount > 0) {
-        msg = ngettext("%(errorCount)s error for the iWidget \"%(name)s\" was notified before it was loaded",
-                           "%(errorCount)s errors for the iWidget \"%(name)s\" were notified before it was loaded",
-                           errorCount);
-        msg = interpolate(msg, {errorCount: errorCount, name: this.name}, true);
-        this.log(msg, Constants.Logging.WARN_MSG);
-    }
-
-    unloadElement = this.content.contentDocument.defaultView;
-
-    Event.observe(unloadElement,
-        'unload',
-        function () {
-            OpManagerFactory.getInstance().iwidgetUnloaded(this.id);
-        }.bind(this),
-        true);
-
-    // Check if the widget has its correct layout
-    if (this.freeLayoutAfterLoading) {
-        //Change the layout to extract the iwidget from the grid
-        this.toggleLayout();
-    }
-
-    this.events['load'].dispatch(this);
 };
 
 /**

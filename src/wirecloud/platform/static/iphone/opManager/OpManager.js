@@ -118,7 +118,7 @@ var OpManagerFactory = (function () {
                 method: 'GET',
                 onSuccess: function (transport) {
                     OpManagerFactory.getInstance().contextManager = new Wirecloud.ContextManager(this, JSON.parse(transport.responseText));
-                    OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
+                    OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CONTEXT);
                 }
             });
         };
@@ -141,6 +141,18 @@ var OpManagerFactory = (function () {
             // Asynchronous load of modules
             // Each singleton module notifies OpManager it has finished loading!
             switch (module) {
+
+            case Modules.prototype.CONTEXT:
+
+                Wirecloud.io.makeRequest(Wirecloud.URLs.THEME_ENTRY.evaluate({name: this.contextManager.get('theme')}), {
+                    method: 'GET',
+                    onSuccess: function (transport) {
+                        Wirecloud.currentTheme = new Wirecloud.ui.Theme(JSON.parse(transport.responseText));
+                        this.continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
+                    }.bind(this)
+                });
+                break;
+
             case Modules.prototype.THEME_MANAGER:
 
                 Wirecloud.LocalCatalogue.reload({

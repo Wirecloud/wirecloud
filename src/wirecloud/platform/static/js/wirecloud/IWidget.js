@@ -172,6 +172,39 @@
         this.callbacks[scope].push(callback);
     };
 
+    /**
+     * This function is called when the content of the iwidget has been loaded completly.
+     *
+     * @private
+     */
+    IWidget.prototype._notifyLoaded = function _notifyLoaded(element) {
+        var msg, errorCount;
+
+        if (this.loaded || !element.hasAttribute('src') ) {
+            return;
+        }
+
+        msg = gettext('iWidget loaded');
+        this.logManager.log(msg, Constants.Logging.INFO_MSG);
+
+        this.loaded = true;
+
+        errorCount = this.logManager.getErrorCount();
+        if (errorCount > 0) {
+            msg = ngettext("%(errorCount)s error for the iWidget \"%(name)s\" was notified before it was loaded",
+                               "%(errorCount)s errors for the iWidget \"%(name)s\" were notified before it was loaded",
+                               errorCount);
+            msg = interpolate(msg, {errorCount: errorCount, name: this.name}, true);
+            this.logManager.log(msg, Constants.Logging.WARN_MSG);
+        }
+
+        element.contentDocument.defaultView.addEventListener('unload',
+            this._notifyUnloaded,
+            true);
+
+        this.events['load'].dispatch(this);
+    };
+
     IWidget.prototype._unload = function _unload() {
         var i, opManager;
 
@@ -199,8 +232,8 @@
         this.prefCallback = null;
     };
 
-    IWidget.prototype.buildInterface = function buildInterface(view) {
-        return new Wirecloud.ui.IWidgetView(this, view);
+    IWidget.prototype.buildInterface = function buildInterface(template, view) {
+        return new Wirecloud.ui.IWidgetView(this, template, view);
     };
 
     IWidget.prototype.fullDisconnect = function fullDisconnect() {

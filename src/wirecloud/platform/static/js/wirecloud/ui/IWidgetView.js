@@ -23,11 +23,11 @@
 
     var builder = new StyledElements.GUIBuilder();
 
-    var IWidgetView = function IWidgetView(iwidget, /* TODO */ view) {
+    var IWidgetView = function IWidgetView(iwidget, template, /* TODO */ view) {
 
         var tmp = {};
 
-        var ui_fragment = builder.parse(Wirecloud.currentTheme.templates['iwidget'], {
+        var ui_fragment = builder.parse(template, {
             'closebutton': function () {
                 var button = new StyledElements.StyledButton({
                     'plain': true,
@@ -103,14 +103,18 @@
                 content.addClassName("widget_object");
                 content.setAttribute("type", this.widget.code_content_type);
                 content.setAttribute("frameBorder", "0");
-                content.addEventListener("load", view._notifyLoaded.bind(view), true);
+                content.addEventListener("load", iwidget._notifyLoaded.bind(iwidget, content), true);
 
                 return content;
             }.bind(iwidget)
         });
 
-        tmp.leftresizehandle.setResizableElement(ui_fragment.elements[1]);
-        tmp.rightresizehandle.setResizableElement(ui_fragment.elements[1]);
+        if ('leftresizehandle' in tmp) {
+            tmp.leftresizehandle.setResizableElement(ui_fragment.elements[1]);
+        }
+        if ('rightresizehandle' in tmp) {
+            tmp.rightresizehandle.setResizableElement(ui_fragment.elements[1]);
+        }
 
         this.element = ui_fragment.elements[1];
         this.element.classList.add('iwidget');
