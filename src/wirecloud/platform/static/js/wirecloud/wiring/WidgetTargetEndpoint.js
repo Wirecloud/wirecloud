@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, interpolate, wOut, Wirecloud*/
+/*global gettext, interpolate, Wirecloud*/
 
 (function () {
 
@@ -33,9 +33,9 @@
         Object.defineProperty(this, 'description', {value: meta.description});
         Object.defineProperty(this, 'iwidget', {value: iwidget});
 
-        wOut.call(this, this.meta.name, this.meta.type, this.meta.friendcode, 'iwidget_' + iwidget.id + '_' + this.meta.name);
+        Wirecloud.wiring.TargetEndpoint.call(this, this.meta.name, this.meta.type, this.meta.friendcode, 'iwidget_' + iwidget.id + '_' + this.meta.name);
     };
-    WidgetTargetEndpoint.prototype = new wOut();
+    WidgetTargetEndpoint.prototype = new Wirecloud.wiring.TargetEndpoint();
 
     WidgetTargetEndpoint.prototype.serialize = function serialize() {
         return {

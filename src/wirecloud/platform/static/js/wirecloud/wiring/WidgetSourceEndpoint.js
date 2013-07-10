@@ -19,7 +19,7 @@
  *
  */
 
-/*global wIn, Wirecloud */
+/*global Wirecloud */
 
 (function () {
 
@@ -34,9 +34,9 @@
         Object.defineProperty(this, 'iwidget', {value: iwidget});
 
         this.connectable = this; // TODO
-        wIn.call(this, this.meta.name, this.meta.type, this.friendcode, 'iwidget_' + iwidget.id + '_' + this.meta.name);
+        Wirecloud.wiring.SourceEndpoint.call(this, this.meta.name, this.meta.type, this.friendcode, 'iwidget_' + iwidget.id + '_' + this.meta.name);
     };
-    WidgetSourceEndpoint.prototype = new wIn();
+    WidgetSourceEndpoint.prototype = new Wirecloud.wiring.SourceEndpoint();
 
     WidgetSourceEndpoint.prototype.serialize = function serialize() {
         return {

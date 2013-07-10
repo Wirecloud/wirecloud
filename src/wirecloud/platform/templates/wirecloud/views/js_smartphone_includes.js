@@ -19,4 +19,3 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/varManager/varManager.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/dragboard/iGadget.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/dragboard/dragboard.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wiring/connectable.js"></script>

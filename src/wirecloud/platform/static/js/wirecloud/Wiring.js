@@ -357,4 +357,6 @@
     };
 
     Wirecloud.Wiring = Wiring;
+    Wirecloud.wiring = {}; // TODO
+
 })();

@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, interpolate, wOut, Wirecloud*/
+/*global gettext, interpolate, Wirecloud*/
 
 (function () {
 
@@ -34,9 +34,9 @@
         Object.defineProperty(this, 'operator', {value: operator});
 
         this.connectable = this;
-        wOut.call(this, this.meta.name, this.meta.type, this.meta.friendcode, 'ioperator_' + this.operator.id + '_' + this.meta.name);
+        Wirecloud.wiring.TargetEndpoint.call(this, this.meta.name, this.meta.type, this.meta.friendcode, 'ioperator_' + this.operator.id + '_' + this.meta.name);
     };
-    OperatorTargetEndpoint.prototype = new wOut();
+    OperatorTargetEndpoint.prototype = new Wirecloud.wiring.TargetEndpoint();
 
     OperatorTargetEndpoint.prototype.serialize = function serialize() {
         return {

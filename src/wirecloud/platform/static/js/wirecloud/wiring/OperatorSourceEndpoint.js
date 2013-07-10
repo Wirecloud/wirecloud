@@ -19,7 +19,7 @@
  *
  */
 
-/*global wIn, Wirecloud */
+/*global Wirecloud */
 
 (function () {
 
@@ -34,9 +34,9 @@
         Object.defineProperty(this, 'operator', {value: operator});
 
         this.connectable = this; // TODO
-        wIn.call(this, this.meta.name, this.meta.type, this.friendcode, 'ioperator_' + this.operator.id + '_' + this.meta.name);
+        Wirecloud.wiring.SourceEndpoint.call(this, this.meta.name, this.meta.type, this.friendcode, 'ioperator_' + this.operator.id + '_' + this.meta.name);
     };
-    OperatorSourceEndpoint.prototype = new wIn();
+    OperatorSourceEndpoint.prototype = new Wirecloud.wiring.SourceEndpoint();
 
     OperatorSourceEndpoint.prototype.serialize = function serialize() {
         return {
