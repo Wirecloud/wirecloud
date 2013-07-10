@@ -29,6 +29,10 @@
      * @author aarranz
      */
     var UserPref = function UserPref(varName, type, options) {
+        if (type === 'list') {
+            type = 'select';
+        }
+
         Object.defineProperty(this, 'varName', {value: varName});
         Object.defineProperty(this, 'type', {value: type});
         Object.defineProperty(this, 'label', {value: options.label});
@@ -73,7 +77,7 @@
         });
 
         if (this.type === 'select') {
-            desc.initialEntries = this.options.value_options;
+            desc.initialEntries = this.options.options;
             desc.required = true;
         }
 
