@@ -38,9 +38,39 @@
         }
     };
 
+    var renameSuccess = function renameSuccess(options, old_name, new_name, response) {
+        this.name = new_name;
+
+        var msg = gettext("Name changed from \"%(oldName)s\" to \"%(newName)s\" succesfully");
+        msg = interpolate(msg, {oldName: old_name, newName: new_name}, true);
+        this.logManager.log(msg, Constants.Logging.INFO_MSG);
+
+        this.events.name_changed.dispatch(new_name);
+
+        if (options.onSuccess === 'function') {
+            try {
+                options.onSuccess();
+            } catch (e) {}
+        }
+    };
+
+    var renameFailure = function renameFailure(options, response) {
+        var msg = gettext("Error renaming iwidget from persistence: %(errorMsg)s.");
+        msg = this.internal_iwidget.logManager.formatError(msg, transport, e);
+        this.log(msg);
+
+        if (options.onFailure === 'function') {
+            try {
+                options.onFailure(msg);
+            } catch (e) {}
+        }
+    };
+
     /**
      */
     var IWidget = function IWidget(widget, tab, options) {
+
+        var i, inputs, outputs;
 
         if (typeof options !== 'object' || !(widget instanceof Wirecloud.Widget)) {
             throw new TypeError();
@@ -51,10 +81,27 @@
         }
 
         Object.defineProperty(this, 'widget', {value: widget});
+        Object.defineProperty(this, 'meta', {value: widget});
         Object.defineProperty(this, 'tab', {value: tab});
         Object.defineProperty(this, 'workspace', {value: tab.workspace});
         this.id = options.id;
+        this.loaded = false;
+        this.name = options.name;
         this.readOnly = options.readOnly;
+        this.pending_events = [];
+
+        inputs = this.meta.inputs;
+        this.inputs = {};
+        for (i = 0; i < inputs.length; i++) {
+            this.inputs[inputs[i].name] = new Wirecloud.wiring.WidgetTargetEndpoint(this, inputs[i]);
+        }
+
+        outputs = this.meta.outputs;
+        this.outputs = {};
+
+        for (i = 0; i < outputs.length; i++) {
+            this.outputs[outputs[i].name] = new Wirecloud.wiring.WidgetSourceEndpoint(this, outputs[i]);
+        }
 
         this.callbacks = {
             'iwidget': [],
@@ -74,7 +121,7 @@
         this.logManager = new IWidgetLogManager(this);
         this.prefCallback = null;
 
-        StyledElements.ObjectWithEvents.call(this, ['load', 'unload']);
+        StyledElements.ObjectWithEvents.call(this, ['load', 'unload', 'name_changed']);
     };
     IWidget.prototype = new StyledElements.ObjectWithEvents();
 
@@ -125,6 +172,39 @@
         this.callbacks[scope].push(callback);
     };
 
+    /**
+     * This function is called when the content of the iwidget has been loaded completly.
+     *
+     * @private
+     */
+    IWidget.prototype._notifyLoaded = function _notifyLoaded(element) {
+        var msg, errorCount;
+
+        if (this.loaded || !element.hasAttribute('src') ) {
+            return;
+        }
+
+        msg = gettext('iWidget loaded');
+        this.logManager.log(msg, Constants.Logging.INFO_MSG);
+
+        this.loaded = true;
+
+        errorCount = this.logManager.getErrorCount();
+        if (errorCount > 0) {
+            msg = ngettext("%(errorCount)s error for the iWidget \"%(name)s\" was notified before it was loaded",
+                               "%(errorCount)s errors for the iWidget \"%(name)s\" were notified before it was loaded",
+                               errorCount);
+            msg = interpolate(msg, {errorCount: errorCount, name: this.name}, true);
+            this.logManager.log(msg, Constants.Logging.WARN_MSG);
+        }
+
+        element.contentDocument.defaultView.addEventListener('unload',
+            this._notifyUnloaded,
+            true);
+
+        this.events['load'].dispatch(this);
+    };
+
     IWidget.prototype._unload = function _unload() {
         var i, opManager;
 
@@ -152,8 +232,50 @@
         this.prefCallback = null;
     };
 
-    IWidget.prototype.buildInterface = function buildInterface(view) {
-        return new Wirecloud.ui.IWidgetView(this, view);
+    IWidget.prototype.buildInterface = function buildInterface(template, view) {
+        return new Wirecloud.ui.IWidgetView(this, template, view);
+    };
+
+    IWidget.prototype.fullDisconnect = function fullDisconnect() {
+        var i, connectables;
+
+        connectables = this.inputs;
+        for (i = 0; i < connectables.length; i++) {
+            connectables[i].fullDisconnect();
+        }
+
+        connectables = this.outputs;
+        for (i = 0; i < connectables.length; i++) {
+            connectables[i].fullDisconnect();
+        }
+    };
+
+    /**
+     * Renames this iWidget.
+     *
+     * @param {String} iwidgetName New name for this iWidget.
+     */
+    IWidget.prototype.setName = function setName(new_name, options) {
+        var old_name = this.name;
+
+        if (options == null) {
+            options = {};
+        }
+
+        if (new_name !== null && new_name.length > 0) {
+            var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+                workspace_id: this.workspace.getId(),
+                tab_id: this.tab.getId(),
+                iwidget_id: this.id
+            });
+            Wirecloud.io.makeRequest(iwidgetUrl, {
+                method: 'POST',
+                contentType: 'application/json',
+                postBody: JSON.stringify({name: new_name}),
+                onSuccess: renameSuccess.bind(this, options, old_name, new_name),
+                onFailure: renameFailure.bind(this, options)
+            });
+        }
     };
 
     /**

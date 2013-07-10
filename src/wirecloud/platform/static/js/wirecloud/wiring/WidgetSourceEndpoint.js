@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -25,27 +25,27 @@
 
     "use strict";
 
-    var OperatorSourceEndpoint = function OperatorSourceEndpoint(operator, meta) {
+    var WidgetSourceEndpoint = function WidgetSourceEndpoint(iwidget, meta) {
         Object.defineProperty(this, 'meta', {value: meta});
         Object.defineProperty(this, 'name', {value: meta.name});
         Object.defineProperty(this, 'friendcode', {value: meta.friendcode});
         Object.defineProperty(this, 'label', {value: meta.label});
         Object.defineProperty(this, 'description', {value: meta.description});
-        Object.defineProperty(this, 'operator', {value: operator});
+        Object.defineProperty(this, 'iwidget', {value: iwidget});
 
         this.connectable = this; // TODO
-        Wirecloud.wiring.SourceEndpoint.call(this, this.meta.name, this.meta.type, this.friendcode, 'ioperator_' + this.operator.id + '_' + this.meta.name);
+        Wirecloud.wiring.SourceEndpoint.call(this, this.meta.name, this.meta.type, this.friendcode, 'iwidget_' + iwidget.id + '_' + this.meta.name);
     };
-    OperatorSourceEndpoint.prototype = new Wirecloud.wiring.SourceEndpoint();
+    WidgetSourceEndpoint.prototype = new Wirecloud.wiring.SourceEndpoint();
 
-    OperatorSourceEndpoint.prototype.serialize = function serialize() {
+    WidgetSourceEndpoint.prototype.serialize = function serialize() {
         return {
-            'type': 'ioperator',
-            'id': this.operator.id,
+            'type': 'iwidget',
+            'id': this.iwidget.id,
             'endpoint': this.meta.name
         };
     };
 
-    Wirecloud.wiring.OperatorSourceEndpoint = OperatorSourceEndpoint;
+    Wirecloud.wiring.WidgetSourceEndpoint = WidgetSourceEndpoint;
 
 })();

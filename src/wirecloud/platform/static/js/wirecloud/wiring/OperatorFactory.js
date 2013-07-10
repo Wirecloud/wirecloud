@@ -21,9 +21,6 @@
 
 /*global Wirecloud */
 
-// TODO
-Wirecloud.wiring = {};
-
 (function () {
 
     "use strict";

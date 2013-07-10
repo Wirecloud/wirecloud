@@ -1266,35 +1266,17 @@ WidgetOutputEndpoint.prototype.serialize = function serialize() {
      * Get the source or target name for the especific node
      */
     GenericInterface.prototype.getNameForSort = function getNameForSort(node, type) {
-        var i;
+        var i, collection;
 
         if (type === 'source') {
-            for (i = 0; this.draggableSources.length; i ++) {
-                if (this.draggableSources[i].wrapperElement === node) {
-                    if (this.className === 'iwidget') {
-                        if (!this.isGhost) {
-                            return this.draggableSources[i].context.data.vardef.name;
-                        } else {
-                            return this.draggableSources[i].context.data.label;
-                        }
-                    } else {
-                        return this.draggableSources[i].context.data.name;
-                    }
-                }
-            }
+            collection = this.draggableSources;
         } else {
-            for (i = 0; this.draggableTargets.length; i ++) {
-                if (this.draggableTargets[i].wrapperElement === node) {
-                    if (this.className === 'iwidget') {
-                        if (!this.isGhost) {
-                            return this.draggableTargets[i].context.data.vardef.name;
-                        } else {
-                            return this.draggableTargets[i].context.data.label;
-                        }
-                    } else {
-                        return this.draggableTargets[i].context.data.name;
-                    }
-                }
+            collection = this.draggableTargets;
+        }
+
+        for (i = 0; collection.length; i++) {
+            if (collection[i].wrapperElement === node) {
+                return collection[i].context.data.name;
             }
         }
     };

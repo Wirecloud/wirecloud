@@ -33,7 +33,6 @@
 */
 function IWidget(widget, iWidgetId, iWidgetCode, iWidgetName, dragboard, alternative) {
     this.code = iWidgetCode;
-    this.name = iWidgetName;
 
     this.dragboard = dragboard;
     this.element = null;
@@ -44,14 +43,17 @@ function IWidget(widget, iWidgetId, iWidgetCode, iWidgetName, dragboard, alterna
         dragboard.tab,
         {
             id: iWidgetId,
+            name: iWidgetName,
             readOnly: true // TODO
         }
     );
     Object.defineProperties(this, {
         'id': {get: function () {return this.internal_iwidget.id;}},
         'widget': {get: function () {return this.internal_iwidget.widget;}},
+        'name': {get: function () {return this.internal_iwidget.name;}},
         'alternative': {value: alternative}
     });
+    this.codeURL = this.internal_iwidget.widget.code_url + "#id=" + this.id;
     this.loaded = false;
     this.alternative.addEventListener('show', function () {
         this.dragboard._updateIWidgetInfo(this);
@@ -60,9 +62,6 @@ function IWidget(widget, iWidgetId, iWidgetCode, iWidgetName, dragboard, alterna
 
 
     StyledElements.ObjectWithEvents.call(this, ['load', 'unload']);
-
-    this._notifyLoaded = this._notifyLoaded.bind(this);
-    this._notifyUnloaded = this._notifyUnloaded.bind(this);
 }
 IWidget.prototype = new StyledElements.ObjectWithEvents();
 
@@ -71,46 +70,29 @@ IWidget.prototype = new StyledElements.ObjectWithEvents();
 * @param where HTML Element where the iwidget will be painted
 */
 IWidget.prototype.paint = function () {
-    var i, html, tab, opManager;
 
     if (this.element !== null) {
         return;
     }
 
-    opManager = OpManagerFactory.getInstance();
-    this.element = document.createElement('div');
-    this.element.setAttribute('class', 'widget_content');
-    this.content = document.createElement('object');
-    this.content.addEventListener('load', this._notifyLoaded, true);
-    this.content.setAttribute('class', 'widget_object');
-    this.content.setAttribute('type', this.widget.code_content_type);
-    this.content.setAttribute('data', this.widget.code_url + '#id=' + this.id);
-    this.element.appendChild(this.content);
+    var contents = this.internal_iwidget.buildInterface(Wirecloud.currentTheme.templates['iwidget_smartphone'], this);
+
+    this.element = contents.element;
+    this.content = this.element.getElementsByTagName('iframe')[0];
 
     this.alternative.appendChild(this.element);
+
+    this.internal_iwidget.addEventListener('load', function () {
+        new MobileScrollManager(this.content.contentDocument, {
+            'capture': true,
+            'propagate': true
+        });
+    }.bind(this));
+
+    this.content.setAttribute("src", this.codeURL);
 };
 
 IWidget.prototype.load = IWidget.prototype.paint;
-
-IWidget.prototype._notifyLoaded = function () {
-    if (this.loaded) {
-        return;
-    }
-
-    this.loaded = true;
-
-    var opManager = OpManagerFactory.getInstance(),
-        unloadElement = this.content.contentDocument.defaultView;
-
-    unloadElement.addEventListener('unload', this._notifyUnloaded, true);
-    // FIXME
-    new MobileScrollManager(this.content.contentDocument, {
-        'capture': true,
-        'propagate': true
-    });
-
-    this.events['load'].dispatch(this);
-};
 
 IWidget.prototype._notifyUnloaded = function () {
     if (!this.loaded) {
@@ -137,8 +119,6 @@ IWidget.prototype.destroy = function () {
         this.element.remove();
         this.element = null;
         this.content = null;
-        this._notifyLoaded = null;
-        this._notifyUnloaded = null;
     }
 
     if (this.internal_iwidget != null) {

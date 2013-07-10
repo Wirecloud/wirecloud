@@ -41,7 +41,6 @@ from wirecloud.commons.utils.http import authentication_required, build_error_re
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
-from wirecloud.platform.get_data import get_widget_data
 from wirecloud.platform.markets.utils import get_market_managers
 from wirecloud.platform.models import Widget, IWidget
 from wirecloud.platform.localcatalogue.semantics import add_widget_semantic_data
@@ -57,19 +56,8 @@ class ResourceCollection(Resource):
 
         resources = {}
         for resource in CatalogueResource.objects.filter(Q(public=True) | Q(users=request.user) | Q(groups=request.user.groups.all())):
-            if resource.resource_type() == 'widget':
-                try:
-                    widget = resource.widget
-
-                    resources[resource.local_uri_part] = get_widget_data(widget, request)
-                    resources[resource.local_uri_part]['type'] = 'widget'
-
-                except Widget.DoesNotExist:
-                    pass
-
-            else:
-                options = json.loads(resource.json_description)
-                resources[resource.local_uri_part] = options
+            options = json.loads(resource.json_description)
+            resources[resource.local_uri_part] = options
 
         return HttpResponse(json.dumps(resources), mimetype='application/json; chatset=UTF-8')
 
@@ -163,31 +151,13 @@ class ResourceCollection(Resource):
 
             return build_error_response(request, 409, _('Resource already exists'))
 
-        if resource.resource_type() == 'widget':
-
-            # add semantic relations
-            try:
-				add_widget_semantic_data(request.user, resource)
-            except Exception, e:
-                #return build_error_response(request, 502, _('Error connecting with the semantic server: %s') + str(e))
-                pass
-
-            data = get_widget_data(resource.widget, request)
-            data['type'] = 'widget'
-            if install_dep:
-                return HttpResponse(simplejson.dumps((data,)), status=201, mimetype='application/json; charset=UTF-8')
-            else:
-                return HttpResponse(simplejson.dumps(data), status=201, mimetype='application/json; charset=UTF-8')
-
-        elif install_dep and resource.resource_type() == 'mashup':
+        if install_dep and resource.resource_type() == 'mashup':
             resources = [json.loads(resource.json_description)]
             workspace_info = json.loads(resource.json_description)
             for tab_entry in workspace_info['tabs']:
                 for resource in tab_entry['resources']:
                     widget = get_or_add_widget_from_catalogue(resource.get('vendor'), resource.get('name'), resource.get('version'), request.user)
-                    widget_data = get_widget_data(widget, request)
-                    widget_data['type'] = 'widget'
-                    resources.append(widget_data)
+                    resources.append(json.loads(widget.resource.json_description))
 
             for id_, op in workspace_info['wiring']['operators'].iteritems():
                 op_id_args = op['name'].split('/')

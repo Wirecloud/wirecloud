@@ -29,15 +29,13 @@
 //                 TEMPLATE                 //
 //////////////////////////////////////////////
 
-function WidgetTemplate(variables_, size_) {
+function WidgetTemplate(data) {
 
     // *******************
     //  PRIVATE VARIABLES
     // *******************
 
-    var variableList = variables_;
-    var width = size_.width;
-    var height = size_.height;
+    var variableList = {};
 
     //preferences section
     var prefs =  null;
@@ -47,29 +45,8 @@ function WidgetTemplate(variables_, size_) {
     //  PUBLIC FUNCTIONS
     // ******************
 
-    this.getWidth = function () {
-        return width;
-    }
-
-    this.getHeight = function () {
-        return height;
-    }
-
     this.getVariables = function (iWidget) {
         return variableList;
-    }
-
-    this._newUserPref = function(rawVar) {
-        var mapping = {
-            "S": "text",
-            "N": "integer",
-            "D": "date",
-            "L": "select",
-            "B": "boolean",
-            "P": "password"
-        };
-
-        return new UserPref(rawVar.name, mapping[rawVar.type], rawVar);
     }
 
     this._generateUserPrefs = function () {
@@ -88,7 +65,7 @@ function WidgetTemplate(variables_, size_) {
         prefs = prefs.sort(this._sortVariables);
 
         for (i = 0; i < prefs.length; i += 1) {
-            prefs[i] = this._newUserPref(prefs[i]);
+            prefs[i] = new UserPref(prefs[i].name, prefs[i].type, prefs[i]);
         }
 
         return prefs;
@@ -134,7 +111,31 @@ function WidgetTemplate(variables_, size_) {
     /*
      * CONSTRUCTOR
      */
-    var varname, variable;
+    var i, varname, variable;
+
+    for (i = 0; i < data.wiring.inputs.length; i += 1) {
+        variableList[data.wiring.inputs[i].name] = data.wiring.inputs[i];
+        variableList[data.wiring.inputs[i].name].aspect = 'SLOT';
+    }
+
+    for (i = 0; i < data.wiring.outputs.length; i += 1) {
+        variableList[data.wiring.outputs[i].name] = data.wiring.outputs[i];
+        variableList[data.wiring.outputs[i].name].aspect = 'EVEN';
+    }
+
+    for (i = 0; i < data.preferences.length; i += 1) {
+        variableList[data.preferences[i].name] = data.preferences[i];
+        variableList[data.preferences[i].name].aspect = 'PREF';
+    }
+
+    for (i = 0; i < data.properties.length; i += 1) {
+        variableList[data.properties[i].name] = data.properties[i];
+        variableList[data.properties[i].name].aspect = 'PROP';
+    }
+
+    for (i = 0; i < data.context.length; i += 1) {
+        variableList[data.context[i].name] = data.context[i];
+    }
 
     for (varname in variableList) {
         variable = variableList[varname];

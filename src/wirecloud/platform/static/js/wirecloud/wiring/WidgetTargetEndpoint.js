@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -25,28 +25,27 @@
 
     "use strict";
 
-    var OperatorTargetEndpoint = function OperatorTargetEndpoint(operator, meta) {
+    var WidgetTargetEndpoint = function WidgetTargetEndpoint(iwidget, meta) {
         Object.defineProperty(this, 'meta', {value: meta});
         Object.defineProperty(this, 'name', {value: meta.name});
         Object.defineProperty(this, 'friendcode', {value: meta.friendcode});
         Object.defineProperty(this, 'label', {value: meta.label});
         Object.defineProperty(this, 'description', {value: meta.description});
-        Object.defineProperty(this, 'operator', {value: operator});
+        Object.defineProperty(this, 'iwidget', {value: iwidget});
 
-        this.connectable = this;
-        Wirecloud.wiring.TargetEndpoint.call(this, this.meta.name, this.meta.type, this.meta.friendcode, 'ioperator_' + this.operator.id + '_' + this.meta.name);
+        Wirecloud.wiring.TargetEndpoint.call(this, this.meta.name, this.meta.type, this.meta.friendcode, 'iwidget_' + iwidget.id + '_' + this.meta.name);
     };
-    OperatorTargetEndpoint.prototype = new Wirecloud.wiring.TargetEndpoint();
+    WidgetTargetEndpoint.prototype = new Wirecloud.wiring.TargetEndpoint();
 
-    OperatorTargetEndpoint.prototype.serialize = function serialize() {
+    WidgetTargetEndpoint.prototype.serialize = function serialize() {
         return {
-            'type': 'ioperator',
-            'id': this.operator.id,
+            'type': 'iwidget',
+            'id': this.iwidget.id,
             'endpoint': this.meta.name
         };
     };
 
-    OperatorTargetEndpoint.prototype._is_target_slot = function _is_target_slot(list) {
+    WidgetTargetEndpoint.prototype._is_target_slot = function _is_target_slot(list) {
         var i, target;
 
         if (list == null) {
@@ -55,15 +54,17 @@
 
         for (i = 0; i < list.length; i += 1) {
             target = list[i];
-            if ((target.type === 'ioperator') && (target.id == this.operator.id) && (target.endpoint == this.meta.name)) {
+            if (target.type === 'iwidget' && (target.id == this.widget.id) && (target.endpoint == this.meta.name)) {
                 return true;
             }
         }
         return false;
     };
 
-    OperatorTargetEndpoint.prototype.getFinalSlots = function getFinalSlots() {
-        var action_label = this.meta.action_label, result;
+    WidgetTargetEndpoint.prototype.getFinalSlots = function getFinalSlots() {
+
+        var result, action_label = this.meta.action_label;
+
         if (!action_label || action_label === '') {
             action_label = gettext('Use in %(slotName)s');
             action_label = interpolate(action_label, {slotName: this.meta.label}, true);
@@ -71,26 +72,27 @@
 
         result = this.serialize();
         result.action_label = action_label;
+        result.iWidgetName = this.iwidget.name;
 
         return [result];
     };
 
-    OperatorTargetEndpoint.prototype._annotate = function _anotate(value, source, options) {
+    WidgetTargetEndpoint.prototype._annotate = function(value, source, options) {
+        if (!options || this._is_target_slot(options.targetEndpoints)) {
+            opManager.activeWorkspace.varManager.findVariable(this.iwidget.id, this.meta.name).annotate(value);
+        }
     };
 
-    OperatorTargetEndpoint.prototype.propagate = function propagate(newValue, options) {
+    WidgetTargetEndpoint.prototype.propagate = function(newValue, options) {
         if (!options || this._is_target_slot(options.targetEndpoints)) {
-            if (this.operator.loaded) {
-                try {
-                    this.callback.call(this.operator, newValue);
-                } catch (e) {
-                }
+            if (this.iwidget.loaded) {
+                this.callback.call(this.iwidget, newValue);
             } else {
-                this.operator.pending_events.push({'endpoint': this.meta.name, 'value': newValue});
+                this.iwidget.pending_events.push({'endpoint': this.meta.name, 'value': newValue});
             }
         }
     };
 
-    Wirecloud.wiring.OperatorTargetEndpoint = OperatorTargetEndpoint;
+    Wirecloud.wiring.WidgetTargetEndpoint = WidgetTargetEndpoint;
 
 })();

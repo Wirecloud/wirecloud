@@ -52,9 +52,7 @@
                     'description': '',
                     'label': endPointPos.sources[i],
                     'name': endPointPos.sources[i],
-                    'connectable': {
-                        _friendCode: 'ghost'
-                    }
+                    'friendcode': 'ghost'
                 };
             }
             for (i = 0; i < endPointPos.targets.length; i += 1) {
@@ -62,9 +60,7 @@
                     'description': '',
                     'label': endPointPos.targets[i],
                     'name': endPointPos.targets[i],
-                    'connectable': {
-                        _friendCode: 'ghost'
-                    }
+                    'friendcode': 'ghost'
                 };
             }
         } else {
@@ -84,7 +80,7 @@
                         inputs[endPointPos.targets[i]] = ioperator.inputs[endPointPos.targets[i]];
                     }
                 } else {
-                    // New operator
+                    // No enpoint order info available
                     inputs = ioperator.inputs;
                     outputs = ioperator.outputs;
                 }

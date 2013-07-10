@@ -191,12 +191,17 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/WirecloudCatalogue.js',
             'js/log/LogManager.js',
             'js/wirecloud/LocalCatalogue.js',
+            'js/wirecloud/wiring/Endpoint.js',
+            'js/wirecloud/wiring/SourceEndpoint.js',
+            'js/wirecloud/wiring/TargetEndpoint.js',
             'js/wirecloud/wiring/OperatorFactory.js',
             'js/wirecloud/wiring/OperatorUserPref.js',
             'js/wirecloud/wiring/Operator.js',
             'js/wirecloud/wiring/OperatorMeta.js',
             'js/wirecloud/wiring/OperatorSourceEndpoint.js',
             'js/wirecloud/wiring/OperatorTargetEndpoint.js',
+            'js/wirecloud/wiring/WidgetSourceEndpoint.js',
+            'js/wirecloud/wiring/WidgetTargetEndpoint.js',
         )
 
         if view == 'index':
@@ -237,6 +242,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
         if view == 'index':
             return {
                 "iwidget": "wirecloud/ui/iwidget.html",
+                "iwidget_smartphone": "wirecloud/ui/iwidget_smartphone.html",
                 "window_menu": "wirecloud/ui/window_menu.html",
                 "wirecloud_catalogue_search_interface": "wirecloud/catalogue/search_interface.html",
                 "wirecloud_wiring_template": "wirecloud/wiring.html",

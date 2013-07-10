@@ -57,11 +57,9 @@
 function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, refusedVersion, freeLayoutAfterLoading, readOnly) {
 
     this.code = null;
-    this.name = iWidgetName;
     this.position = position;
     this.contentWidth = Number(width);
     this.contentHeight = Number(height);
-    this.loaded = false;
     this.zPos = zPos;
     this.draggable = null;
     this.visible = false;
@@ -91,12 +89,14 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
         layout.dragboard.tab,
         {
             id: iWidgetId,
+            name: iWidgetName,
             readOnly: readOnly
         }
     );
     Object.defineProperties(this, {
         'id': {get: function () {return this.internal_iwidget.id;}},
-        'widget': {get: function () {return this.internal_iwidget.widget;}}
+        'widget': {get: function () {return this.internal_iwidget.widget;}},
+        'name': {get: function () {return this.internal_iwidget.name;}}
     });
     if (this.id) {
         this.codeURL = this.internal_iwidget.widget.code_url + "#id=" + this.id;
@@ -309,7 +309,7 @@ IWidget.prototype.onFreeLayout = function () {
  * Builds the structure of the widget
  */
 IWidget.prototype.build = function () {
-    var contents = this.internal_iwidget.buildInterface(this);
+    var contents = this.internal_iwidget.buildInterface(Wirecloud.currentTheme.templates['iwidget'], this);
 
     this.element = contents.element;
 
@@ -444,47 +444,6 @@ IWidget.prototype.load = function () {
 
 IWidget.prototype.isPainted = function () {
     return this.menu !== null;
-};
-
-/**
- * Sets the name of this iWidget. The name of the iWidget is shown at the
- * iWidget's menu bar. Also, this name will be used to refere to this widget in
- * other parts of the Wirecloud Platform, for example it is used in the wiring
- * interface.
- *
- * @param {String} iwidgetName New name for this iWidget.
- */
-IWidget.prototype.setName = function setName(iwidgetName) {
-    var oldName = this.name;
-
-    function onSuccess() {
-        var msg = gettext("Name changed from \"%(oldName)s\" to \"%(newName)s\" succesfully");
-        msg = interpolate(msg, {oldName: oldName, newName: iwidgetName}, true);
-        this.log(msg, Constants.Logging.INFO_MSG);
-    }
-    function onError(transport, e) {
-        var msg = gettext("Error renaming iwidget from persistence: %(errorMsg)s.");
-        msg = this.internal_iwidget.logManager.formatError(msg, transport, e);
-        this.log(msg);
-    }
-
-    if (iwidgetName !== null && iwidgetName.length > 0) {
-        this.name = iwidgetName;
-        this.widgetMenu.setAttribute("title", iwidgetName);
-        this.iwidgetIconNameHTMLElement.update(this.name);
-        var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-            workspace_id: this.layout.dragboard.workspaceId,
-            tab_id: this.layout.dragboard.tabId,
-            iwidget_id: this.id
-        });
-        Wirecloud.io.makeRequest(iwidgetUrl, {
-            method: 'POST',
-            contentType: 'application/json',
-            postBody: JSON.stringify({name: iwidgetName}),
-            onSuccess: onSuccess.bind(this),
-            onFailure: onError.bind(this)
-        });
-    }
 };
 
 /*
@@ -733,50 +692,6 @@ IWidget.prototype._notifyWindowResizeEvent = function () {
         this.layout._notifyResizeEvent(this, oldWidth, oldHeight, newWidth, newHeight, false, false);
     }
     /* TODO end of temporally workaround */
-};
-
-/**
- * This function is called when the content of the iwidget has been loaded completly.
- *
- * @private
- */
-IWidget.prototype._notifyLoaded = function () {
-    var msg, unloadElement, errorCount;
-
-    if (this.loaded || !this.content.hasAttribute('src') ) {
-        return;
-    }
-
-    msg = gettext('iWidget loaded');
-    this.log(msg, Constants.Logging.INFO_MSG);
-
-    this.loaded = true;
-
-    errorCount = this.internal_iwidget.logManager.getErrorCount();
-    if (errorCount > 0) {
-        msg = ngettext("%(errorCount)s error for the iWidget \"%(name)s\" was notified before it was loaded",
-                           "%(errorCount)s errors for the iWidget \"%(name)s\" were notified before it was loaded",
-                           errorCount);
-        msg = interpolate(msg, {errorCount: errorCount, name: this.name}, true);
-        this.log(msg, Constants.Logging.WARN_MSG);
-    }
-
-    unloadElement = this.content.contentDocument.defaultView;
-
-    Event.observe(unloadElement,
-        'unload',
-        function () {
-            OpManagerFactory.getInstance().iwidgetUnloaded(this.id);
-        }.bind(this),
-        true);
-
-    // Check if the widget has its correct layout
-    if (this.freeLayoutAfterLoading) {
-        //Change the layout to extract the iwidget from the grid
-        this.toggleLayout();
-    }
-
-    this.events['load'].dispatch(this);
 };
 
 /**
