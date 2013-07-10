@@ -32,76 +32,77 @@
     /**
      * WidgetInterface Class
      */
-    var WidgetInterface = function WidgetInterface(wiringEditor, iwidget, manager, isMenubarRef, endPointsPos) {
-        var variables, variable, desc, label, anchorContext, i, wids, isGhost;
+    var WidgetInterface = function WidgetInterface(wiringEditor, iwidget, manager, isMenubarRef, endPointPos) {
+        var outputs, inputs, desc, label, key, anchorContext, i, isGhost;
 
+        outputs = {};
+        inputs = {};
+        // TODO remove after finishing the new IWidget class
+        if ('internal_iwidget' in iwidget) {
+            iwidget = iwidget.internal_iwidget;
+        }
+        // End TODO
         this.iwidget = iwidget;
         this.wiringEditor = wiringEditor;
 
-        isGhost = 'ghost' in iwidget;
+        if ('ghost' in iwidget) {
+            // Ghost Operator
+            isGhost = true;
+            this.iwidget.display_name = iwidget.name;
+            this.iwidget.meta = {};
+            this.iwidget.meta.uri = iwidget.name;
+
+            for (i = 0; i < endPointPos.sources.length; i += 1) {
+                outputs[endPointPos.sources[i]] = {
+                    'description': '',
+                    'label': endPointPos.sources[i],
+                    'name': endPointPos.sources[i],
+                    'friendcode': 'ghost'
+                };
+            }
+            for (i = 0; i < endPointPos.targets.length; i += 1) {
+                inputs[endPointPos.targets[i]] = {
+                    'description': '',
+                    'label': endPointPos.targets[i],
+                    'name': endPointPos.targets[i],
+                    'friendcode': 'ghost'
+                };
+            }
+        } else {
+            isGhost = false;
+        }
 
         Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.iwidget.name, manager, 'iwidget', isGhost);
-
         if (!isMenubarRef) {
+
+            // Sort
             if (!isGhost) {
-                if ((endPointsPos.sources.length === 0) && (endPointsPos.targets.length === 0) && !isGhost) {
-                    wids = opManager.activeWorkspace.getIWidgets();
-                    endPointsPos.sources = wids[wids.indexOf(iwidget)].widget.getTemplate().getConnectables().outputs.slice();
-                    endPointsPos.targets = wids[wids.indexOf(iwidget)].widget.getTemplate().getConnectables().inputs.slice();
-                    for (i = 0; i < endPointsPos.sources.length; i ++) {
-                        endPointsPos.sources[i] = endPointsPos.sources[i].name;
+                if ((endPointPos.sources.length > 0) || (endPointPos.targets.length > 0)) {
+                    for (i = 0; i < endPointPos.sources.length; i += 1) {
+                        outputs[endPointPos.sources[i]] = iwidget.outputs[endPointPos.sources[i]];
                     }
-                    for (i = 0; i < endPointsPos.targets.length; i ++) {
-                        endPointsPos.targets[i] = endPointsPos.targets[i].name;
+                    for (i = 0; i < endPointPos.targets.length; i += 1) {
+                        inputs[endPointPos.targets[i]] = iwidget.inputs[endPointPos.targets[i]];
                     }
+                } else {
+                    // No enpoint order info available
+                    inputs = iwidget.inputs;
+                    outputs = iwidget.outputs;
                 }
-                variables = opManager.activeWorkspace.varManager.getIWidgetVariables(iwidget.id);
-                for (i = 0; i < endPointsPos.sources.length; i ++) {
-                    variable = variables[endPointsPos.sources[i]];
-                    desc = variable.vardef.description;
-                    label = variable.vardef.label;
-                    anchorContext = {'data': variable, 'iObject': this};
-                    this.addSource(label, desc, variable.vardef.name, anchorContext);
-                }
-                for (i = 0; i < endPointsPos.targets.length; i ++) {
-                    variable = variables[endPointsPos.targets[i]];
-                    desc = variable.vardef.description;
-                    label = variable.vardef.label;
-                    anchorContext = {'data': variable, 'iObject': this};
-                    this.addTarget(label, desc, variable.vardef.name, anchorContext);
-                }
-            } else {
-                // Ghost widget
-                for (i = 0; i < endPointsPos.sources.length; i ++) {
-                    desc = '';
-                    label = endPointsPos.sources[i];
-                    anchorContext = {'data':{
-                                        'description': '',
-                                        'label': endPointsPos.sources[i],
-                                        'name': endPointsPos.sources[i],
-                                        'connectable': {
-                                            _friendCode: 'ghost'
-                                        }
-                                     },
-                                     'iObject': this
-                    };
-                    this.addSource(label, desc, endPointsPos.sources[i] , anchorContext);
-                }
-                for (i = 0; i < endPointsPos.targets.length; i ++) {
-                    desc = '';
-                    label = endPointsPos.targets[i];
-                    anchorContext = {'data':{
-                                        'description': '',
-                                        'label': endPointsPos.targets[i],
-                                        'name': endPointsPos.targets[i],
-                                        'connectable': {
-                                            _friendCode: 'ghost'
-                                        }
-                                    },
-                                    'iObject': this
-                    };
-                    this.addTarget(label, desc, endPointsPos.targets[i], anchorContext);
-                }
+            }
+
+            // Sources & targets anchors (sourceAnchor and targetAnchor)
+            for (key in outputs) {
+                desc = outputs[key].description;
+                label = outputs[key].label;
+                anchorContext = {'data': outputs[key], 'iObject': this};
+                this.addSource(label, desc, outputs[key].name, anchorContext);
+            }
+            for (key in inputs) {
+                desc = inputs[key].description;
+                label = inputs[key].label;
+                anchorContext = {'data': inputs[key], 'iObject': this};
+                this.addTarget(label, desc, inputs[key].name, anchorContext);
             }
         }
     };

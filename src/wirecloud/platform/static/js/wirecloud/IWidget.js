@@ -42,6 +42,8 @@
      */
     var IWidget = function IWidget(widget, tab, options) {
 
+        var i, inputs, outputs;
+
         if (typeof options !== 'object' || !(widget instanceof Wirecloud.Widget)) {
             throw new TypeError();
         }
@@ -51,10 +53,26 @@
         }
 
         Object.defineProperty(this, 'widget', {value: widget});
+        Object.defineProperty(this, 'meta', {value: widget});
         Object.defineProperty(this, 'tab', {value: tab});
         Object.defineProperty(this, 'workspace', {value: tab.workspace});
         this.id = options.id;
+        this.loaded = false;
         this.readOnly = options.readOnly;
+        this.pending_events = [];
+
+        inputs = this.meta.inputs;
+        this.inputs = {};
+        for (i = 0; i < inputs.length; i++) {
+            this.inputs[inputs[i].name] = new Wirecloud.wiring.WidgetTargetEndpoint(this, inputs[i]);
+        }
+
+        outputs = this.meta.outputs;
+        this.outputs = {};
+
+        for (i = 0; i < outputs.length; i++) {
+            this.outputs[outputs[i].name] = new Wirecloud.wiring.WidgetSourceEndpoint(this, outputs[i]);
+        }
 
         this.callbacks = {
             'iwidget': [],
@@ -154,6 +172,20 @@
 
     IWidget.prototype.buildInterface = function buildInterface(view) {
         return new Wirecloud.ui.IWidgetView(this, view);
+    };
+
+    IWidget.prototype.fullDisconnect = function fullDisconnect() {
+        var i, connectables;
+
+        connectables = this.inputs;
+        for (i = 0; i < connectables.length; i++) {
+            connectables[i].fullDisconnect();
+        }
+
+        connectables = this.outputs;
+        for (i = 0; i < connectables.length; i++) {
+            connectables[i].fullDisconnect();
+        }
     };
 
     /**

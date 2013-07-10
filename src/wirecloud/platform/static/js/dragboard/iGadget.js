@@ -61,7 +61,6 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
     this.position = position;
     this.contentWidth = Number(width);
     this.contentHeight = Number(height);
-    this.loaded = false;
     this.zPos = zPos;
     this.draggable = null;
     this.visible = false;

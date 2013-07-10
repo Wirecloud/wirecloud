@@ -64,7 +64,7 @@
     };
 
     unload = function unload() {
-        var widgets, key, i, j, connectables;
+        var widgets, key, i;
 
         if (this.status == null) {
             return;
@@ -74,10 +74,7 @@
 
         widgets = this.workspace.getIWidgets();
         for (i = 0; i < widgets.length; i++) {
-            connectables = this.connectablesByWidget[widgets[i].id].connectables;
-            for (j = 0; j < connectables.length; j++) {
-                connectables[j].fullDisconnect();
-            }
+            this.connectablesByWidget[widgets[i].id].fullDisconnect();
         }
 
         for (key in this.ioperators) {
@@ -90,44 +87,15 @@
     };
 
     addIWidget = function addIWidget(iwidget) {
-        var varManager, iWidgetId, widgetEntry, i, variableDef,
-            connectables, variable, connectable;
 
-        iWidgetId = iwidget.id;
-        if (iWidgetId in this.connectablesByWidget) {
+        if (iwidget.id in this.connectablesByWidget) {
             var msg = gettext("Error adding iWidget into the wiring module of the workspace: Widget instance already exists.");
             LogManagerFactory.getInstance().log(msg);
             return;
         }
 
-        varManager = this.workspace.getVarManager();
-        connectables  = iwidget.widget.getTemplate().getConnectables();
-
-        widgetEntry = {
-            outputs: {},
-            inputs: {},
-            connectables: []
-        };
-
-        // IWidget variables
-        for (i = 0; i < connectables.outputs.length; i += 1) {
-            variableDef = connectables.outputs[i];
-            variable = varManager.getVariableByName(iWidgetId, variableDef.name);
-            connectable = new wEvent(variable, variableDef.type, variableDef.friend_code, variableDef.connectable_id);
-            widgetEntry.outputs[connectable._name] = connectable;
-            widgetEntry.connectables.push(connectable);
-        }
-
-        for (i = 0; i < connectables.inputs.length; i += 1) {
-            variableDef = connectables.inputs[i];
-            variable = varManager.getVariableByName(iWidgetId, variableDef.name);
-            connectable = new wSlot(variable, variableDef.type, variableDef.friend_code, variableDef.connectable_id);
-            widgetEntry.inputs[connectable._name] = connectable;
-            widgetEntry.connectables.push(connectable);
-        }
-
         iwidget.addEventListener('unload', this._iwidget_unload_listener);
-        this.connectablesByWidget[iWidgetId] = widgetEntry;
+        this.connectablesByWidget[iwidget.id] = iwidget.internal_iwidget;
     };
 
     removeIWidget = function removeIWidget(iwidget) {
@@ -139,10 +107,7 @@
             return;
         }
 
-        widgetEntry = this.connectablesByWidget[iwidget.id];
-        for (i = 0; i < widgetEntry.connectables.length; i += 1) {
-            widgetEntry.connectables[i].destroy();
-        }
+        iwidget.internal_iwidget.fullDisconnect();
 
         if (this.status.views != null && this.status.views[0].iwidgets[iwidget.id]) {
             delete this.status.views[0].iwidgets[iwidget.id];
@@ -176,7 +141,7 @@
         var key, entry = this.connectablesByWidget[iWidget.id];
 
         for (key in entry.inputs) {
-            entry.inputs[key].variable.setHandler(null);
+            entry.inputs[key].callback = null;
         }
     };
 
@@ -269,13 +234,10 @@
     };
 
     Wiring.prototype.destroy = function destroy() {
-        var key, i, entry;
+        var key, i;
 
         for (key in this.connectablesByWidget) {
-            entry = this.connectablesByWidget[key];
-            for (i = 0; i < entry.connectables.length; i += 1) {
-                entry.connectables[i].destroy();
-            }
+            this.connectablesByWidget[key].fullDisconnect();
         }
         this.connectablesByWidget = null;
 
@@ -321,8 +283,7 @@
         }
 
         entry = this.connectablesByWidget[iWidget].inputs[inputName];
-
-        entry.variable.setHandler(callback);
+        entry.callback = callback;
     };
 
     Wiring.prototype.pushOperatorEvent = function pushOperatorEvent(iOperator, outputName, data) {

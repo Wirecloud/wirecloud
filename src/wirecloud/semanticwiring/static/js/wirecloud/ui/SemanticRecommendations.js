@@ -207,11 +207,7 @@
         // Semantic recomendations avaible
         if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
             entityId = anchor.context.iObject.iwidget.widget.id;
-            if (anchor.context.data.vardef) {
-                anchorId = anchor.context.data.vardef.name;
-            } else {
-                anchorId = anchor.context.data.name;
-            }
+            anchorId = anchor.context.data.name;
         } else {
             entityId = anchor.context.iObject.ioperator.meta.uri;
             anchorId = anchor.context.data.name;

@@ -19,6 +19,16 @@
         });
         this.code_content_type = data.code_content_typ;
 
+        this.inputs = data.wiring.inputs;
+        if (this.inputs == null) {
+            this.inputs = {};
+        }
+
+        this.outputs = data.wiring.outputs;
+        if (this.outputs == null) {
+            this.outputs = {};
+        }
+
         this.default_width = data.widget_width;
         this.default_height = data.widget_height;
 

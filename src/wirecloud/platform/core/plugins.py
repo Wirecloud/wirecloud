@@ -197,6 +197,8 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/wiring/OperatorMeta.js',
             'js/wirecloud/wiring/OperatorSourceEndpoint.js',
             'js/wirecloud/wiring/OperatorTargetEndpoint.js',
+            'js/wirecloud/wiring/WidgetSourceEndpoint.js',
+            'js/wirecloud/wiring/WidgetTargetEndpoint.js',
         )
 
         if view == 'index':

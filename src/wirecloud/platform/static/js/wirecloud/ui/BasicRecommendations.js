@@ -66,14 +66,13 @@
     BasicRecommendations.prototype.add_anchor_to_recommendations = function(anchor) {
         var friendCode;
 
+        friendCode = anchor.context.data.friendcode;
         if (anchor instanceof Wirecloud.ui.WiringEditor.SourceAnchor) {
-            friendCode = anchor.context.data.connectable._friendCode;
             if (this.sourceAnchorsByFriendCode[friendCode] == null) {
                 this.sourceAnchorsByFriendCode[friendCode] = [];
             }
             this.sourceAnchorsByFriendCode[friendCode].push(anchor);
         } else {
-            friendCode = anchor.context.data.connectable._friendCode;
             if (this.targetAnchorsByFriendCode[friendCode] == null) {
                 this.targetAnchorsByFriendCode[friendCode] = [];
             }
@@ -88,10 +87,10 @@
         var anchorList;
 
         if (anchor instanceof Wirecloud.ui.WiringEditor.SourceAnchor) {
-            anchorList = this.sourceAnchorsByFriendCode[anchor.context.data.connectable._friendCode];
+            anchorList = this.sourceAnchorsByFriendCode[anchor.context.data.friendcode];
             anchorList.splice(anchorList.indexOf(anchor), 1);
         } else {
-            anchorList = this.targetAnchorsByFriendCode[anchor.context.data.connectable._friendCode];
+            anchorList = this.targetAnchorsByFriendCode[anchor.context.data.friendcode];
             anchorList.splice(anchorList.indexOf(anchor), 1);
         }
     };
@@ -103,7 +102,7 @@
         var friendCode, anchors, i;
 
         anchor.wrapperElement.parentNode.classList.add('highlight_main');
-        friendCode = anchor.context.data.connectable._friendCode;
+        friendCode = anchor.context.data.friendcode;
         if (anchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
             anchors = this.sourceAnchorsByFriendCode[friendCode];
         } else {
@@ -128,7 +127,7 @@
         var friendCode, anchors, i;
 
         anchor.wrapperElement.parentNode.classList.remove('highlight_main');
-        friendCode = anchor.context.data.connectable._friendCode;
+        friendCode = anchor.context.data.friendcode;
         if (anchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
             anchors = this.sourceAnchorsByFriendCode[friendCode];
         } else {
