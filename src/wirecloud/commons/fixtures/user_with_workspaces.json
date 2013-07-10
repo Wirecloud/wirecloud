@@ -52,6 +52,58 @@
         }
     },
     {
+        "pk": 5,
+        "model": "platform.position",
+        "fields": {
+            "minimized": false,
+            "height": 24,
+            "width": 6,
+            "posZ": 0,
+            "posX": 0,
+            "posY": 0,
+            "fulldragboard": false
+        }
+    },
+    {
+        "pk": 6,
+        "model": "platform.position",
+        "fields": {
+            "minimized": false,
+            "height": null,
+            "width": null,
+            "posZ": 0,
+            "posX": -1,
+            "posY": -1,
+            "fulldragboard": false
+        }
+    },
+    {
+        "pk": 7,
+        "model": "platform.position",
+        "fields": {
+            "minimized": false,
+            "height": 24,
+            "width": 6,
+            "posZ": 1,
+            "posX": 6,
+            "posY": 0,
+            "fulldragboard": false
+        }
+    },
+    {
+        "pk": 8,
+        "model": "platform.position",
+        "fields": {
+            "minimized": false,
+            "height": null,
+            "width": null,
+            "posZ": 0,
+            "posX": -1,
+            "posY": -1,
+            "fulldragboard": false
+        }
+    },
+    {
         "pk": 1,
         "model": "platform.iwidget",
         "fields": {
@@ -77,6 +129,34 @@
             "readOnly": false,
             "position": 3,
             "icon_position": 4
+        }
+    },
+    {
+        "pk": 3,
+        "model": "platform.iwidget",
+        "fields": {
+            "widget": 1,
+            "layout": 0,
+            "name": "Test 1",
+            "tab": 102,
+            "refused_version": null,
+            "readOnly": false,
+            "position": 5,
+            "icon_position": 6
+        }
+    },
+    {
+        "pk": 4,
+        "model": "platform.iwidget",
+        "fields": {
+            "widget": 1,
+            "layout": 0,
+            "name": "Test 2",
+            "tab": 103,
+            "refused_version": null,
+            "readOnly": false,
+            "position": 7,
+            "icon_position": 8
         }
     },
     {
@@ -172,6 +252,102 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 2,
+            "vardef": 6
+        }
+    },
+    {
+        "pk": 13,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 3,
+            "vardef": 1
+        }
+    },
+    {
+        "pk": 14,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 3,
+            "vardef": 2
+        }
+    },
+    {
+        "pk": 15,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 3,
+            "vardef": 3
+        }
+    },
+    {
+        "pk": 16,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 3,
+            "vardef": 4
+        }
+    },
+    {
+        "pk": 17,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 3,
+            "vardef": 5
+        }
+    },
+    {
+        "pk": 18,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 3,
+            "vardef": 6
+        }
+    },
+    {
+        "pk": 19,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 4,
+            "vardef": 1
+        }
+    },
+    {
+        "pk": 20,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 4,
+            "vardef": 2
+        }
+    },
+    {
+        "pk": 21,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 4,
+            "vardef": 3
+        }
+    },
+    {
+        "pk": 22,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 4,
+            "vardef": 4
+        }
+    },
+    {
+        "pk": 23,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 4,
+            "vardef": 5
+        }
+    },
+    {
+        "pk": 24,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 4,
             "vardef": 6
         }
     },
@@ -338,12 +514,43 @@
         }
     },
     {
+        "pk": 102,
+        "model": "platform.tab",
+        "fields": {
+            "visible": true,
+            "name": "Tab 1",
+            "workspace": 3,
+            "position": 0
+        }
+    },
+    {
+        "pk": 103,
+        "model": "platform.tab",
+        "fields": {
+            "visible": false,
+            "name": "Tab 2",
+            "workspace": 3,
+            "position": 0
+        }
+    },
+    {
         "pk": 2,
         "model": "platform.workspace",
         "fields": {
             "forcedValues": "",
             "wiringStatus": "{\"views\":[{\"label\":\"default\",\"iwidgets\":{\"1\":{\"position\":{\"posX\":84,\"posY\":44},\"endPointsInOuts\":{\"sources\":[\"outputendpoint\"],\"targets\":[\"inputendpoint\"]}},\"2\":{\"position\":{\"posX\":84,\"posY\":153},\"endPointsInOuts\":{\"sources\":[\"outputendpoint\"],\"targets\":[\"inputendpoint\"]}}},\"operators\":{\"0\":{\"position\":{\"posX\":84,\"posY\":256},\"endPointsInOuts\":{\"sources\":[\"output\"],\"targets\":[\"input\"]}}},\"multiconnectors\":{},\"connections\":[{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null},{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null},{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null}]}],\"operators\":{\"0\":{\"name\":\"Wirecloud/TestOperator/1.0\",\"id\":\"0\",\"preferences\":{}}},\"connections\":[{\"source\":{\"type\":\"iwidget\",\"id\":1,\"endpoint\":\"outputendpoint\"},\"target\":{\"type\":\"iwidget\",\"id\":2,\"endpoint\":\"inputendpoint\"}},{\"source\":{\"type\":\"iwidget\",\"id\":2,\"endpoint\":\"outputendpoint\"},\"target\":{\"type\":\"ioperator\",\"id\":0,\"endpoint\":\"input\"}},{\"source\":{\"type\":\"ioperator\",\"id\":0,\"endpoint\":\"output\"},\"target\":{\"type\":\"iwidget\",\"id\":1,\"endpoint\":\"inputendpoint\"}}]}",
             "name": "Workspace",
+            "targetOrganizations": [],
+            "creator": 4
+        }
+    },
+    {
+        "pk": 3,
+        "model": "platform.workspace",
+        "fields": {
+            "forcedValues": "",
+            "wiringStatus": "{\"views\":[{\"label\":\"default\",\"iwidgets\":{\"3\":{\"position\":{\"posX\":84,\"posY\":44},\"endPointsInOuts\":{\"sources\":[\"outputendpoint\"],\"targets\":[\"inputendpoint\"]}},\"4\":{\"position\":{\"posX\":84,\"posY\":153},\"endPointsInOuts\":{\"sources\":[\"outputendpoint\"],\"targets\":[\"inputendpoint\"]}}},\"operators\":{\"0\":{\"position\":{\"posX\":84,\"posY\":256},\"endPointsInOuts\":{\"sources\":[\"output\"],\"targets\":[\"input\"]}}},\"multiconnectors\":{},\"connections\":[{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null},{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null},{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null}]}],\"operators\":{\"0\":{\"name\":\"Wirecloud/TestOperator/1.0\",\"id\":\"0\",\"preferences\":{}}},\"connections\":[{\"source\":{\"type\":\"iwidget\",\"id\":3,\"endpoint\":\"outputendpoint\"},\"target\":{\"type\":\"iwidget\",\"id\":4,\"endpoint\":\"inputendpoint\"}},{\"source\":{\"type\":\"iwidget\",\"id\":4,\"endpoint\":\"outputendpoint\"},\"target\":{\"type\":\"ioperator\",\"id\":0,\"endpoint\":\"input\"}},{\"source\":{\"type\":\"ioperator\",\"id\":0,\"endpoint\":\"output\"},\"target\":{\"type\":\"iwidget\",\"id\":3,\"endpoint\":\"inputendpoint\"}}]}",
+            "name": "Pending Events",
             "targetOrganizations": [],
             "creator": 4
         }
@@ -357,6 +564,17 @@
             "manager": "",
             "user": 4,
             "workspace": 2
+        }
+    },
+    {
+        "pk": 3,
+        "model": "platform.userworkspace",
+        "fields": {
+            "active": false,
+            "reason_ref": "",
+            "manager": "",
+            "user": 4,
+            "workspace": 3
         }
     },
     {
@@ -427,6 +645,78 @@
         "model": "platform.variablevalue",
         "fields": {
             "variable": 10,
+            "user": 4,
+            "value": "default"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 13,
+            "user": 4,
+            "value": "default"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 14,
+            "user": 4,
+            "value": "initial text"
+        }
+    },
+    {
+        "pk": 11,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 15,
+            "user": 4,
+            "value": "false"
+        }
+    },
+    {
+        "pk": 12,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 16,
+            "user": 4,
+            "value": "default"
+        }
+    },
+    {
+        "pk": 13,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 19,
+            "user": 4,
+            "value": "default"
+        }
+    },
+    {
+        "pk": 14,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 20,
+            "user": 4,
+            "value": "initial text"
+        }
+    },
+    {
+        "pk": 15,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 21,
+            "user": 4,
+            "value": "false"
+        }
+    },
+    {
+        "pk": 16,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 22,
             "user": 4,
             "value": "default"
         }

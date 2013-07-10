@@ -308,7 +308,7 @@ class WirecloudRemoteTestCase(object):
 
     def get_current_iwidgets(self):
         iwidget_ids = self.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
-        iwidget_elements = self.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.element;});')
+        iwidget_elements = self.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.internal_iwidget.loaded ? iwidget.element : null;});')
 
         return [IWidgetTester(self, iwidget_ids[i], iwidget_elements[i]) for i in range(len(iwidget_ids))]
 
@@ -450,6 +450,16 @@ class WirecloudRemoteTestCase(object):
 
         self.wait_wirecloud_ready()
         time.sleep(0.5)  # work around race condition
+        self.assertEqual(self.get_current_workspace_name(), workspace_name)
+
+    def change_current_workspace(self, workspace_name):
+        self.change_main_view('workspace')
+
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
+        self.wait_element_visible_by_css_selector('.popup_menu')
+        self.popup_menu_click(workspace_name)
+
+        self.wait_wirecloud_ready()
         self.assertEqual(self.get_current_workspace_name(), workspace_name)
 
     def remove_workspace(self):
