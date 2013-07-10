@@ -57,7 +57,6 @@
 function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, refusedVersion, freeLayoutAfterLoading, readOnly) {
 
     this.code = null;
-    this.name = iWidgetName;
     this.position = position;
     this.contentWidth = Number(width);
     this.contentHeight = Number(height);
@@ -90,12 +89,14 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
         layout.dragboard.tab,
         {
             id: iWidgetId,
+            name: iWidgetName,
             readOnly: readOnly
         }
     );
     Object.defineProperties(this, {
         'id': {get: function () {return this.internal_iwidget.id;}},
-        'widget': {get: function () {return this.internal_iwidget.widget;}}
+        'widget': {get: function () {return this.internal_iwidget.widget;}},
+        'name': {get: function () {return this.internal_iwidget.name;}}
     });
     if (this.id) {
         this.codeURL = this.internal_iwidget.widget.code_url + "#id=" + this.id;
@@ -443,47 +444,6 @@ IWidget.prototype.load = function () {
 
 IWidget.prototype.isPainted = function () {
     return this.menu !== null;
-};
-
-/**
- * Sets the name of this iWidget. The name of the iWidget is shown at the
- * iWidget's menu bar. Also, this name will be used to refere to this widget in
- * other parts of the Wirecloud Platform, for example it is used in the wiring
- * interface.
- *
- * @param {String} iwidgetName New name for this iWidget.
- */
-IWidget.prototype.setName = function setName(iwidgetName) {
-    var oldName = this.name;
-
-    function onSuccess() {
-        var msg = gettext("Name changed from \"%(oldName)s\" to \"%(newName)s\" succesfully");
-        msg = interpolate(msg, {oldName: oldName, newName: iwidgetName}, true);
-        this.log(msg, Constants.Logging.INFO_MSG);
-    }
-    function onError(transport, e) {
-        var msg = gettext("Error renaming iwidget from persistence: %(errorMsg)s.");
-        msg = this.internal_iwidget.logManager.formatError(msg, transport, e);
-        this.log(msg);
-    }
-
-    if (iwidgetName !== null && iwidgetName.length > 0) {
-        this.name = iwidgetName;
-        this.widgetMenu.setAttribute("title", iwidgetName);
-        this.iwidgetIconNameHTMLElement.update(this.name);
-        var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-            workspace_id: this.layout.dragboard.workspaceId,
-            tab_id: this.layout.dragboard.tabId,
-            iwidget_id: this.id
-        });
-        Wirecloud.io.makeRequest(iwidgetUrl, {
-            method: 'POST',
-            contentType: 'application/json',
-            postBody: JSON.stringify({name: iwidgetName}),
-            onSuccess: onSuccess.bind(this),
-            onFailure: onError.bind(this)
-        });
-    }
 };
 
 /*

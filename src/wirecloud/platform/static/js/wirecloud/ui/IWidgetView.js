@@ -82,7 +82,7 @@
             },
             'title': function () {
                 var element = new StyledElements.EditableElement({initialContent: view.name});
-                element.addEventListener('change', function (element, new_name) { view.setName(new_name); });
+                element.addEventListener('change', function (element, new_name) { iwidget.setName(new_name); });
                 tmp.titleelement = element;
                 return element;
             },

@@ -38,6 +38,34 @@
         }
     };
 
+    var renameSuccess = function renameSuccess(options, old_name, new_name, response) {
+        this.name = new_name;
+
+        var msg = gettext("Name changed from \"%(oldName)s\" to \"%(newName)s\" succesfully");
+        msg = interpolate(msg, {oldName: old_name, newName: new_name}, true);
+        this.logManager.log(msg, Constants.Logging.INFO_MSG);
+
+        this.events.name_changed.dispatch(new_name);
+
+        if (options.onSuccess === 'function') {
+            try {
+                options.onSuccess();
+            } catch (e) {}
+        }
+    };
+
+    var renameFailure = function renameFailure(options, response) {
+        var msg = gettext("Error renaming iwidget from persistence: %(errorMsg)s.");
+        msg = this.internal_iwidget.logManager.formatError(msg, transport, e);
+        this.log(msg);
+
+        if (options.onFailure === 'function') {
+            try {
+                options.onFailure(msg);
+            } catch (e) {}
+        }
+    };
+
     /**
      */
     var IWidget = function IWidget(widget, tab, options) {
@@ -58,6 +86,7 @@
         Object.defineProperty(this, 'workspace', {value: tab.workspace});
         this.id = options.id;
         this.loaded = false;
+        this.name = options.name;
         this.readOnly = options.readOnly;
         this.pending_events = [];
 
@@ -92,7 +121,7 @@
         this.logManager = new IWidgetLogManager(this);
         this.prefCallback = null;
 
-        StyledElements.ObjectWithEvents.call(this, ['load', 'unload']);
+        StyledElements.ObjectWithEvents.call(this, ['load', 'unload', 'name_changed']);
     };
     IWidget.prototype = new StyledElements.ObjectWithEvents();
 
@@ -185,6 +214,34 @@
         connectables = this.outputs;
         for (i = 0; i < connectables.length; i++) {
             connectables[i].fullDisconnect();
+        }
+    };
+
+    /**
+     * Renames this iWidget.
+     *
+     * @param {String} iwidgetName New name for this iWidget.
+     */
+    IWidget.prototype.setName = function setName(new_name, options) {
+        var old_name = this.name;
+
+        if (options == null) {
+            options = {};
+        }
+
+        if (new_name !== null && new_name.length > 0) {
+            var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+                workspace_id: this.workspace.getId(),
+                tab_id: this.tab.getId(),
+                iwidget_id: this.id
+            });
+            Wirecloud.io.makeRequest(iwidgetUrl, {
+                method: 'POST',
+                contentType: 'application/json',
+                postBody: JSON.stringify({name: new_name}),
+                onSuccess: renameSuccess.bind(this, options, old_name, new_name),
+                onFailure: renameFailure.bind(this, options)
+            });
         }
     };
 

@@ -33,7 +33,6 @@
 */
 function IWidget(widget, iWidgetId, iWidgetCode, iWidgetName, dragboard, alternative) {
     this.code = iWidgetCode;
-    this.name = iWidgetName;
 
     this.dragboard = dragboard;
     this.element = null;
@@ -44,12 +43,14 @@ function IWidget(widget, iWidgetId, iWidgetCode, iWidgetName, dragboard, alterna
         dragboard.tab,
         {
             id: iWidgetId,
+            name: iWidgetName,
             readOnly: true // TODO
         }
     );
     Object.defineProperties(this, {
         'id': {get: function () {return this.internal_iwidget.id;}},
         'widget': {get: function () {return this.internal_iwidget.widget;}},
+        'name': {get: function () {return this.internal_iwidget.name;}},
         'alternative': {value: alternative}
     });
     this.loaded = false;
