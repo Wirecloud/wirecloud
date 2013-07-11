@@ -254,16 +254,16 @@
     };
 
     IWidget.prototype.fullDisconnect = function fullDisconnect() {
-        var i, connectables;
+        var key, connectables;
 
         connectables = this.inputs;
-        for (i = 0; i < connectables.length; i++) {
-            connectables[i].fullDisconnect();
+        for (key in connectables) {
+            connectables[key].fullDisconnect();
         }
 
         connectables = this.outputs;
-        for (i = 0; i < connectables.length; i++) {
-            connectables[i].fullDisconnect();
+        for (key in connectables) {
+            connectables[key].fullDisconnect();
         }
     };
 
