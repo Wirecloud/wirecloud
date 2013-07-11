@@ -79,6 +79,7 @@ class FiWarePlugin(WirecloudPlugin):
     features = {
         'FiWare': wirecloud.fiware.__version__,
         'NGSI': '1.0',
+        'ObjectStorage': '0.5',
     }
 
     def get_market_classes(self):
@@ -144,9 +145,11 @@ class FiWarePlugin(WirecloudPlugin):
     def get_widget_api_extensions(self, view):
         return (
             'js/WirecloudAPI/NGSIAPI.js',
+            'js/ObjectStorage/ObjectStorageAPI.js',
         )
 
     def get_operator_api_extensions(self, view):
         return (
             'js/WirecloudAPI/NGSIAPI.js',
+            'js/ObjectStorage/ObjectStorageAPI.js',
         )
