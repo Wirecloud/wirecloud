@@ -35,9 +35,9 @@
         /* FIXME */
         var template = new WidgetTemplate(data);
         this.getTemplate = function getTemplate() { return template };
-        this.getUriWiki = function getUriWiki() { return data.uriWiki; };
-        this.getImage = function getImage() { return data.imageURI; };
-        this.getIcon = function getIcon() { return data.iPhoneImageURI !== '' ? data.iPhoneImageURI : data.imageURI; };
+        this.getUriWiki = function getUriWiki() { return data.doc_uri; };
+        this.getImage = function getImage() { return data.image_uri; };
+        this.getIcon = function getIcon() { return data.iphone_image_uri !== '' ? data.iphone_image_uri : data.image_uri; };
         this.getIPhoneImageURI = this.getIcon;
 
         var lastVersion = this.version;
