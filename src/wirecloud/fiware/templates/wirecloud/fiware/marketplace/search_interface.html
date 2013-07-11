@@ -1,0 +1,37 @@
+{% load i18n %}
+<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml">
+<s:borderlayout>
+
+    <s:westcontainer>
+        <s:options>{"class": "search_bar"}</s:options>
+
+        <div>
+            <label>{% trans 'Order by:' %}</label>
+            <t:orderby />
+        </div>
+
+        <div>
+            <label>{% trans 'Widgets per page:' %}</label>
+            <t:widgetsperpage/>
+        </div>
+
+        <h2>Filtering</h2>
+        <t:reset_button/>
+        <div>
+            <label>{% trans 'Keywords:' %}</label>
+            <t:searchinput/>
+        </div>
+
+        <div>
+            <label>{% trans 'Store:' %}</label>
+            <t:store_select/>
+        </div>
+
+    </s:westcontainer>
+
+    <s:centercontainer>
+        <t:resourcelist />
+    </s:centercontainer>
+
+</s:borderlayout>
+</s:styledgui>

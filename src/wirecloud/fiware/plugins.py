@@ -103,7 +103,6 @@ class FiWarePlugin(WirecloudPlugin):
                 "js/wirecloud/FiWare/ui/ResourceDetailsView.js",
                 "js/wirecloud/FiWare/ui/OfferingResourcesPainter.js",
                 "js/wirecloud/FiWare/FiWareResourceDetailsExtraInfo.js",
-                "js/wirecloud/FiWare/FiWareStoreListItems.js",
             )
         else:
             return common
@@ -116,6 +115,7 @@ class FiWarePlugin(WirecloudPlugin):
     def get_templates(self, view):
         if view == 'index':
             return {
+                "fiware_marketplace_search_interface": "wirecloud/fiware/marketplace/search_interface.html",
                 "fiware_catalogue_resource_details_template": "wirecloud/fiware/marketplace/resource_details.html",
                 "fiware_resource_parts": "wirecloud/fiware/marketplace/resource_parts.html",
                 "fiware_main_details_template": "wirecloud/fiware/marketplace/main_resource_details.html",
