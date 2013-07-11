@@ -323,7 +323,7 @@ class WirecloudRemoteTestCase(object):
             'new_iwidget': None,
         }
         def iwidget_loaded(driver):
-            if tmp['new_iwidget'] is not None:
+            if tmp['new_iwidget'] is not None and tmp['new_iwidget']['element'] is not None:
                 return tmp['new_iwidget']['element'].is_displayed()
 
             iwidgets = self.get_current_iwidgets()
@@ -335,7 +335,7 @@ class WirecloudRemoteTestCase(object):
                 if iwidget['id'] not in old_iwidget_ids:
                     tmp['new_iwidget'] = iwidget
 
-            return tmp['new_iwidget']['element'].is_displayed()
+            return tmp['new_iwidget']['element'] is not None and tmp['new_iwidget']['element'].is_displayed()
 
         WebDriverWait(self.driver, timeout).until(iwidget_loaded)
         # TODO firefox
