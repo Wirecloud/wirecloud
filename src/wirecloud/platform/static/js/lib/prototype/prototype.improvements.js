@@ -89,20 +89,6 @@ if (document.documentElement.getBoundingClientRect != undefined) {
  * ARRAY EXTENSIONS
  */
 
-Array.prototype.getElementById = function (id) {
-	for (var i = 0; i < this.length; i++) {
-		if (this[i].getId() == id)
-			return this[i];
-	}
-	return null;
-};
-
-Array.prototype.remove = function(element) {
-	var index = this.indexOf(element);
-	if (index != -1)
-		this.splice(index, 1);
-};
-
 Array.prototype.removeById = function (id) {
 	var element;
 	var elementId;
