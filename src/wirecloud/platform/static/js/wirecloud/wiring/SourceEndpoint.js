@@ -19,13 +19,15 @@
  *
  */
 
+/*global Wirecloud*/
+
 (function () {
 
     "use strict";
 
     var SourceEndpoint = function SourceEndpoint(name, type, friendCode, id) {
         Wirecloud.wiring.Endpoint.call(this, name, type, friendCode, id);
-        this.outputs = new Array();
+        this.outputs = [];
     };
     SourceEndpoint.prototype = new Wirecloud.wiring.Endpoint();
 
@@ -36,16 +38,20 @@
     };
 
     SourceEndpoint.prototype.disconnect = function disconnect(out) {
-        if (this.outputs.getElementById(out.getId()) == out) {
-            this.outputs.remove(out);
+        var index = this.outputs.indexOf(out);
+
+        if (index != -1) {
+            this.outputs.splice(index, 1);
+            out._removeInput(this);
         }
     };
 
     SourceEndpoint.prototype.fullDisconnect = function fullDisconnect() {
         // Outputs
         var outputs = this.outputs.clone();
-        for (var i = 0; i < outputs.length; ++i)
+        for (var i = 0; i < outputs.length; ++i) {
             this.disconnect(outputs[i]);
+        }
     };
 
     /**
@@ -53,23 +59,29 @@
      * new value to the output connectables.
      */
     SourceEndpoint.prototype.propagate = function propagate(value, options) {
+        var i;
+
         options = Object.extend({
             initial: false
         }, options);
 
-        for (var i = 0; i < this.outputs.length; ++i)
+        for (i = 0; i < this.outputs.length; ++i) {
             this.outputs[i]._annotate(value, this, options);
+        }
 
-        for (var i = 0; i < this.outputs.length; ++i)
+        for (i = 0; i < this.outputs.length; ++i) {
             this.outputs[i].propagate(value, options);
+        }
     };
 
     SourceEndpoint.prototype.getFinalSlots = function getFinalSlots() {
         var slots = [];
+
         for (var i = 0; i < this.outputs.length; ++i) {
             var currentSlots = this.outputs[i].getFinalSlots();
-            if (currentSlots && currentSlots.length > 0)
+            if (currentSlots && currentSlots.length > 0) {
                 slots = slots.concat(currentSlots);
+            }
         }
 
         return slots;
