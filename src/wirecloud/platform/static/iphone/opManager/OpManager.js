@@ -231,14 +231,6 @@ var OpManagerFactory = (function () {
             this.visibleLayer = "tabs_container";
         };
 
-        OpManager.prototype.showRelatedIwidget = function (iWidgetId, tabId) {
-            this.activeWorkspace.showRelatedIwidget(iWidgetId, tabId);
-        };
-
-        OpManager.prototype.markRelatedIwidget = function (iWidgetId) {
-            this.activeWorkspace.getActiveDragboard().markRelatedIwidget(iWidgetId);
-        };
-
         OpManager.prototype.showWorkspaceMenu = function () {
             //generate the workspace list
             var wkeys = this.workspaceInstances.keys(),

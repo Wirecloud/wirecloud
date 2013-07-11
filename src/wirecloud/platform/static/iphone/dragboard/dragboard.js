@@ -63,33 +63,6 @@ function Dragboard(tab, workspace, dragboardElement) {
         updateLayout();
     };
 
-    Dragboard.prototype.paintRelatedIWidget = function (iWidgetId) {
-        var tabId = this.getIWidget(iWidgetId).getTabId(),
-            tabIndex = this.workspace.tabView.getTabIndexById(tabId);
-
-        if (tabIndex !== null && tabIndex !== undefined) { // the widget-tab is already visible
-            this.setVisibleIWidget(iWidgetId);
-            this.workspace.tabView.set('activeTab', this.workspace.tabView.getTab(tabIndex));
-        } else {
-            this.paint(iWidgetId);
-        }
-    };
-
-    Dragboard.prototype.markRelatedIwidget = function (iWidgetId) {
-        $("related_" + iWidgetId).addClassName("active");
-
-        // highlight related tabs
-        var iwidget = this.getIWidget(iWidgetId),
-            tabId, tabIndex;
-        if (iwidget) {
-            tabId = iwidget.getTabId();
-            tabIndex = this.workspace.tabView.getTabIndexById(tabId);
-            if (tabIndex !== null && tabIndex !== undefined) { // the tab is already visible
-                this.workspace.tabView.getTab(tabIndex).set('highlight', true);
-            }
-        }
-    };
-
     Dragboard.prototype.parseTab = function (tabInfo) {
         var curIWidget, position, width, height, iwidget, widget, minimized, i,
             container, opManager = OpManagerFactory.getInstance();

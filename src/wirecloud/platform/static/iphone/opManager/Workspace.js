@@ -341,12 +341,6 @@ function Workspace(workspaceState) {
         return false;
     };
 
-    Workspace.prototype.showRelatedIwidget = function (iWidgetId, tabId) {
-        this.visibleTab = this.getTab(tabId);
-        this.visibleTabIndex = this.tabInstances.indexOf(this.visibleTab);
-        this.visibleTab.getDragboard().paintRelatedIWidget(iWidgetId);
-    };
-
     // *****************
     //  CONSTRUCTOR
     // *****************
