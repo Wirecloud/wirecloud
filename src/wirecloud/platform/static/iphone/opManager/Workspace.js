@@ -145,16 +145,6 @@ function Workspace(workspaceState) {
         this.varManager.sendBufferedVars();
     };
 
-    Workspace.prototype.getTabInstance = function (tabId) {
-        var i;
-        for (i = 0; i < this.tabInstances.length; i += 1) {
-            if (this.tabInstances[i].getId() === tabId) {
-                return this.tabInstances[i];
-            }
-        }
-        return null;
-    };
-
     Workspace.prototype.getName = function () {
         return this.workspaceState.name;
     };
@@ -257,7 +247,14 @@ function Workspace(workspaceState) {
     };
 
     Workspace.prototype.getTab = function (tabId) {
-        return this.tabInstances.getElementById(tabId);
+        var i;
+
+        for (i = 0; i < this.tabInstances.length; i += 1) {
+            if (this.tabInstances[i].getId() === tabId) {
+                return this.tabInstances[i];
+            }
+        }
+        return null;
     };
 
     Workspace.prototype.setTab = function (tab) {

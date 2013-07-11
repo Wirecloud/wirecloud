@@ -41,7 +41,7 @@ function VarManager (_workspace) {
             var iwidgets = tabs[i]['iwidgets'];
 
             for (var j=0; j<iwidgets.length; j++) {
-                this.parseIWidgetVariables(iwidgets[j], this.workspace.getTabInstance(tabs[i].id));
+                this.parseIWidgetVariables(iwidgets[j], this.workspace.getTab(tabs[i].id));
             }
         }
     }

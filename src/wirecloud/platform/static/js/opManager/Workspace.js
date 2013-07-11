@@ -329,10 +329,6 @@ function Workspace (workspaceState) {
         }
     };
 
-    Workspace.prototype.getTabInstance = function(tabId) {
-        return this.tabInstances.get(tabId);
-    }
-
     Workspace.prototype.iwidgetUnloaded = function(iwidgetId) {
         var iwidget = this.getIWidget(iwidgetId);
         if (iwidget == null)
