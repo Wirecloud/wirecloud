@@ -380,21 +380,26 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         cache.clear()
         super(WirecloudSeleniumTestCase, self).setUp()
 
+DEFAULT_BROWSER_CONF = {
+    'Firefox': {
+        'CLASS': 'selenium.webdriver.Firefox',
+    },
+    'GoogleChrome': {
+        'CLASS': 'selenium.webdriver.Chrome',
+    },
+}
+
 def get_configured_browsers():
 
     from django.conf import settings
 
-    return getattr(settings, 'WIRECLOUD_SELENIUM_BROWSER_COMMANDS', {
-        'Firefox': {
-            'CLASS': 'selenium.webdriver.Firefox',
-        },
-        'GoogleChrome': {
-            'CLASS': 'selenium.webdriver.Chrome',
-        },
-    })
+    return getattr(settings, 'WIRECLOUD_SELENIUM_BROWSER_COMMANDS', DEFAULT_BROWSER_CONF)
 
-def build_selenium_test_cases(classes, namespace):
-    browsers = get_configured_browsers()
+def build_selenium_test_cases(classes, namespace, browsers=None):
+
+    if browsers is None:
+        browsers = get_configured_browsers()
+
     for class_name in classes:
         for browser_name in browsers:
             browser = browsers[browser_name]

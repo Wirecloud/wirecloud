@@ -113,9 +113,11 @@ class CommandLineUtility(object):
 def execute_from_command_line():
     from wirecloud.commons.commands.convert import ConvertCommand
     from wirecloud.commons.commands.startproject import StartprojectCommand
+    from wirecloud.fiware.commands.passintegrationtests import IntegrationTestsCommand
     utility = CommandLineUtility({
         "convert": ConvertCommand(),
         "startproject": StartprojectCommand(),
+        "passintegrationtests": IntegrationTestsCommand(),
     })
     utility.execute()
 
