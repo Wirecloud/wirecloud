@@ -54,6 +54,9 @@ def get_market_adaptor(market_user, market):
 
 def get_market_user_data(user, market_user, market_name):
 
+    if market_user == 'public':
+        market_user = None
+
     user_data = {}
     for user_data_entry in MarketUserData.objects.filter(market__user__username=market_user, market__name=market_name, user=user):
         try:
