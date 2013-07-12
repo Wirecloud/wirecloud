@@ -289,6 +289,19 @@ def marketplace_loaded(driver):
     return False
 
 
+class IWidgetWiringEndpointTester(object):
+
+    def __init__(self, testcase, endpoint_name, element):
+
+        self.testcase = testcase
+        self.endpoint_name = endpoint_name
+        self.element = element
+
+    @property
+    def label(self):
+        return self.element.parentNode
+
+
 class IWidgetTester(object):
 
     def __init__(self, testcase, iwidget_id, element):
@@ -331,6 +344,14 @@ class IWidgetTester(object):
             return iwidget_count == old_iwidget_count - 1
 
         WebDriverWait(self.testcase.driver, timeout).until(iwidget_unloaded)
+
+    def get_wiring_endpoint(self, endpoint_name):
+
+        return IWidgetWiringEndpointTester(self.testcase, endpoint_name, self.driver.execute_script('''
+             var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
+             return LayoutManagerFactory.getInstance().viewsByName["wiring"].iwidgets[%(iwidget)d].getAnchor("%(endpoint)s").wrapperElement;
+        ''' % {"iwidget": self.id, "endpoint": endpoint_name}
+        ))
 
 
 class WirecloudRemoteTestCase(object):
@@ -907,6 +928,33 @@ class WirecloudRemoteTestCase(object):
         ''' % {"iwidget": iwidget, "endpoint": endpoint}
         )
 
+    def get_iwidget_label(self, iwidget, endpoint):
+        return self.driver.execute_script('''
+            return LayoutManagerFactory.getInstance().viewsByName["wiring"].iwidgets[%(iwidget)d].getAnchor("%(endpoint)s").wrapperElement.parentElement.parentElement;
+        ''' % {"iwidget": iwidget, "endpoint": endpoint}
+        )
+
+    def is_iwidget_anchor_in_pos(self, iwidget, endpoint, pos):
+        return self.driver.execute_script('''
+            endpoint = LayoutManagerFactory.getInstance().viewsByName["wiring"].iwidgets[%(iwidget)d].getAnchor("%(endpoint)s").wrapperElement.parentElement.parentElement;
+            endpointslist = LayoutManagerFactory.getInstance().viewsByName["wiring"].iwidgets[%(iwidget)d].getAnchor("%(endpoint)s").wrapperElement.parentElement.parentElement.parentElement.children;
+            return endpoint == endpointslist[%(pos)d]
+        ''' % {"iwidget": iwidget, "endpoint": endpoint, "pos": pos}
+        )
+
+    def get_ioperator_label(self, ioperator, endpoint):
+        return self.driver.execute_script('''
+            return LayoutManagerFactory.getInstance().viewsByName["wiring"].currentlyInUseOperators[%(ioperator)d].getAnchor("%(endpoint)s").wrapperElement.parentElement.parentElement;
+        ''' % {"ioperator": ioperator, "endpoint": endpoint}
+        )
+
+    def is_ioperator_anchor_in_pos(self, ioperator, endpoint, pos):
+        return self.driver.execute_script('''
+            endpoint = LayoutManagerFactory.getInstance().viewsByName["wiring"].currentlyInUseOperators[%(ioperator)d].getAnchor("%(endpoint)s").wrapperElement.parentElement.parentElement;
+            endpointslist = LayoutManagerFactory.getInstance().viewsByName["wiring"].currentlyInUseOperators[%(ioperator)d].getAnchor("%(endpoint)s").wrapperElement.parentElement.parentElement.parentElement.children;
+            return endpoint == endpointslist[%(pos)d]
+        ''' % {"ioperator": ioperator, "endpoint": endpoint, "pos": pos}
+        )
 
 class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
