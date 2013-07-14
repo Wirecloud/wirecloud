@@ -99,12 +99,9 @@ def decrypt_value(value):
 
 def set_variable_value(var_id, user, value):
 
-    variables_to_notify = []
     variable_value = VariableValue.objects.select_related('variable__vardef').get(user=user, variable__id=var_id)
     variable_value.set_variable_value(value)
     variable_value.save()
-
-    return variables_to_notify
 
 
 def sync_base_workspaces(user):

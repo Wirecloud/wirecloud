@@ -398,12 +398,10 @@ class WorkspaceVariableCollection(Resource):
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
-        variables_to_notify = []
         for igVar in iwidgetVariables:
-            variables_to_notify += set_variable_value(igVar['id'], request.user, igVar['value'])
+            set_variable_value(igVar['id'], request.user, igVar['value'])
 
-        data = {'iwidgetVars': variables_to_notify}
-        return HttpResponse(simplejson.dumps(data), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(status=204)
 
 
 class WorkspaceSharerEntry(Resource):
