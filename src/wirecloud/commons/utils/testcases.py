@@ -195,7 +195,15 @@ class WirecloudTestCase(TransactionTestCase):
         settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
         settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
 
+        from django.core.cache import cache
+        cache.clear()
+
         super(WirecloudTestCase, cls).tearDownClass()
+
+    def setUp(self):
+
+        from django.core.cache import cache
+        cache.clear()
 
 
 class LocalizedTestCase(TransactionTestCase):

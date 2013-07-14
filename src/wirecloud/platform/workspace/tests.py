@@ -52,8 +52,13 @@ __test__ = False
 
 class CacheTestCase(WirecloudTestCase):
 
-    def setUp(self):
-        super(CacheTestCase, self).setUp()
+    @classmethod
+    def setUpClass(cls):
+        super(CacheTestCase, cls).setUpClass()
+        cache.clear()
+
+    def tearDown(self):
+        super(CacheTestCase, self).tearDown()
         cache.clear()
 
 
