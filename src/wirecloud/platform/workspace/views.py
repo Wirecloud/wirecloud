@@ -44,6 +44,7 @@ from wirecloud.platform.iwidget.utils import deleteIWidget
 from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import check_mashup_dependencies, buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate, MissingDependencies
+from wirecloud.platform.workspace.packageCloner import PackageCloner
 from wirecloud.platform.workspace.packageLinker import PackageLinker
 from wirecloud.platform.workspace.utils import deleteTab, createTab, get_workspace_list, setVisibleTab, set_variable_value
 from wirecloud.platform.markets.utils import get_market_managers
@@ -464,11 +465,11 @@ class MashupMergeService(Service):
             return build_error_response(request, 400, msg)
 
         mashup_id = data.get('mashup', '')
-        workspace_name = data.get('workspace', '')
+        workspace_id = data.get('workspace', '')
 
-        if mashup_id == '' and workspace_name == '':
+        if mashup_id == '' and workspace_id == '':
             return build_error_response(request, 422, _('missing workspace name or mashup id'))
-        elif  mashup_id != '' and workspace_name != '':
+        elif  mashup_id != '' and workspace_id != '':
             return build_error_response(request, 422, _('missing workspace name or mashup id'))
 
         to_ws = get_object_or_404(Workspace, id=to_ws_id)
@@ -508,6 +509,15 @@ class MashupMergeService(Service):
                 return build_error_response(request, 422, unicode(e), details=details)
 
             fillWorkspaceUsingTemplate(to_ws, template)
+
+        else:
+
+            from_ws = get_object_or_404(Workspace, id=workspace_id)
+            if not request.user.is_superuser and from_ws.creator != request.user:
+                return HttpResponseForbidden()
+
+            packageCloner = PackageCloner()
+            packageCloner.merge_workspaces(from_ws, to_ws, to_ws.creator)
 
         return HttpResponse(status=204)
 

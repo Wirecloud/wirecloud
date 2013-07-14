@@ -1139,7 +1139,6 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
 
-        # Response should be a dict
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
         response_data = simplejson.loads(response.content)
         self.assertEqual(response_data['tabs'][0]['iwidgets'][0]['variables']['text']['value'], 'new_value')
@@ -1181,6 +1180,44 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         }
         response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
+
+        # Check new workspace status
+        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 2})
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = simplejson.loads(response.content)
+        self.assertEqual(len(response_data['tabs']), 3)
+        self.assertEqual(len(response_data['tabs'][0]['iwidgets']), 2)
+        self.assertEqual(len(response_data['tabs'][1]['iwidgets']), 1)
+        self.assertEqual(len(response_data['tabs'][2]['iwidgets']), 1)
+
+    def test_workspace_merge_service_post_from_workspace(self):
+
+        url = reverse('wirecloud.workspace_merge', kwargs={'to_ws_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'workspace': '3',
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+
+        # Check new workspace status
+        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 2})
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = simplejson.loads(response.content)
+        self.assertEqual(len(response_data['tabs']), 3)
+        self.assertEqual(len(response_data['tabs'][0]['iwidgets']), 2)
+        self.assertEqual(len(response_data['tabs'][1]['iwidgets']), 1)
+        self.assertEqual(len(response_data['tabs'][2]['iwidgets']), 1)
 
     def test_workspace_merge_service_post_from_nonexistent_mashup(self):
 
