@@ -930,7 +930,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         cls._original_download_function = staticmethod(downloader.download_http_content)
         downloader.download_http_content = LocalDownloader({
             'http': {
-                'localhost:8001': os.path.abspath(os.path.join(os.path.dirname(wirecloud.commons.__file__), '..', 'test-data', 'src')),
+                'localhost:8001': os.path.join(os.path.dirname(wirecloud.commons.__file__), 'test-data', 'src'),
             },
         })
 
@@ -1147,6 +1147,58 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
     def test_workspace_variable_collection_post_bad_request_syntax(self):
 
         url = reverse('wirecloud.variable_collection', kwargs={'workspace_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Test bad json syntax
+        response = self.client.post(url, 'bad syntax', content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 400)
+        response_data = simplejson.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
+    def test_workspace_merge_service_post_requires_authentication(self):
+
+        url = reverse('wirecloud.workspace_merge', kwargs={'to_ws_id': 2})
+
+        data = [
+            {'id': 2, 'value': 'new_value'}
+        ]
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue('WWW-Authenticate' in response)
+
+    def test_workspace_merge_service_post(self):
+
+        url = reverse('wirecloud.workspace_merge', kwargs={'to_ws_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'mashup': 'Wirecloud/test-mashup/1.0',
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+
+    def test_workspace_merge_service_post_from_nonexistent_mashup(self):
+
+        url = reverse('wirecloud.workspace_merge', kwargs={'to_ws_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'mashup': 'Wirecloud/nonexistent-mashup/1.0',
+        }
+        response = self.client.post(url, simplejson.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 422)
+
+    def test_workspace_merge_service_post_bad_request_syntax(self):
+
+        url = reverse('wirecloud.workspace_merge', kwargs={'to_ws_id': 2})
 
         # Authenticate
         self.client.login(username='user_with_workspaces', password='admin')
