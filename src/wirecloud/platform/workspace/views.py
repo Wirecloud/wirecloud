@@ -242,7 +242,6 @@ class WorkspaceEntry(Resource):
             return build_error_response(request, 403, msg)
 
         # Remove the workspace
-        PublishedWorkspace.objects.filter(workspace=workspace).update(workspace=None)
         iwidgets = IWidget.objects.filter(tab__workspace=workspace)
         for iwidget in iwidgets:
             deleteIWidget(iwidget, request.user)
