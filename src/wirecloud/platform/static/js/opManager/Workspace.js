@@ -723,9 +723,11 @@ function Workspace (workspaceState) {
         msg = interpolate(msg, {srcworkspace: workspace.name, dstworkspace: this.getName()}, true);
         layoutManager.logSubTask(msg);
 
-        workspaceUrl = Wirecloud.URLs.WORKSPACE_MERGE_LOCAL.evaluate({from_ws_id: workspace.id, to_ws_id: this.workspaceState.id});
+        workspaceUrl = Wirecloud.URLs.WORKSPACE_MERGE.evaluate({to_ws_id: this.workspaceState.id});
         Wirecloud.io.markeRequest(workspaceUrl, {
-            method: 'GET',
+            method: 'POST',
+            contentType: 'application/json',
+            postBody: JSON.stringify({'workspace': from_ws_id}),
             onSuccess: mergeSuccess,
             onFailure: mergeError
         });

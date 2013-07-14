@@ -19,7 +19,6 @@
 
 from cStringIO import StringIO
 import os
-import urlparse
 import zipfile
 
 from django.contrib.auth.models import Group, User
@@ -42,8 +41,8 @@ from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.get_data import get_workspace_data, get_global_workspace_data
 from wirecloud.platform.iwidget.utils import deleteIWidget
-from wirecloud.platform.models import IWidget, PublishedWorkspace, Tab, UserWorkspace, VariableValue, Workspace
-from wirecloud.platform.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_template_from_workspace
+from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
+from wirecloud.platform.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import check_mashup_dependencies, buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate, MissingDependencies
 from wirecloud.platform.workspace.packageLinker import PackageLinker
 from wirecloud.platform.workspace.utils import deleteTab, createTab, get_workspace_list, setVisibleTab, set_variable_value
@@ -464,26 +463,53 @@ class MashupMergeService(Service):
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
-        template_url = data['workspace']
+        mashup_id = data.get('mashup', '')
+        workspace_name = data.get('workspace', '')
+
+        if mashup_id == '' and workspace_name == '':
+            return build_error_response(request, 422, _('missing workspace name or mashup id'))
+        elif  mashup_id != '' and workspace_name != '':
+            return build_error_response(request, 422, _('missing workspace name or mashup id'))
 
         to_ws = get_object_or_404(Workspace, id=to_ws_id)
         if not request.user.is_superuser and to_ws.creator != request.user:
             return HttpResponseForbidden()
 
-        path = request.build_absolute_uri()
-        login_scheme, login_netloc = urlparse.urlparse(template_url)[:2]
-        current_scheme, current_netloc = urlparse.urlparse(path)[:2]
-        if ((not login_scheme or login_scheme == current_scheme) and
-            (not login_netloc or login_netloc == current_netloc)):
-            pworkspace_id = template_url.split('/')[-2]
-            template = PublishedWorkspace.objects.get(id=pworkspace_id).template
-        else:
-            template = downloader.download_http_content(template_url, user=request.user)
+        if mashup_id != '':
+            values = mashup_id.split('/', 3)
+            if len(values) != 3:
+                return build_error_response(request, 422, _('invalid mashup id'))
 
-        fillWorkspaceUsingTemplate(to_ws, template)
+            (mashup_vendor, mashup_name, mashup_version) = values
+            try:
+                resource = CatalogueResource.objects.get(vendor=mashup_vendor, short_name=mashup_name, version=mashup_version)
+                if not resource.is_available_for(request.user) or resource.resource_type() != 'mashup':
+                    raise CatalogueResource.DoesNotExist
+            except CatalogueResource.DoesNotExist:
+                return build_error_response(request, 422, _('Mashup not found: %(mashup_id)s') % {'mashup_id': mashup_id})
 
-        result = {'result': 'ok', 'workspace_id': to_ws_id}
-        return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
+            if resource.fromWGT:
+                base_dir = catalogue.wgt_deployer.get_base_dir(mashup_vendor, mashup_name, mashup_version)
+                wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
+                template = TemplateParser(wgt_file.get_template())
+            else:
+                template = downloader.download_http_content(resource.template_uri, user=request.user)
+                try:
+                    template = TemplateParser(template)
+                except:
+                    build_error_response(request, 424, _('Downloaded invalid resource description from: %(url)s') % {'url': resource.template_uri})
+
+            try:
+                check_mashup_dependencies(template, request.user)
+            except MissingDependencies, e:
+                details = {
+                    'missingDependencies': e.missing_dependencies,
+                }
+                return build_error_response(request, 422, unicode(e), details=details)
+
+            fillWorkspaceUsingTemplate(to_ws, template)
+
+        return HttpResponse(status=204)
 
 
 def check_json_fields(json, fields):

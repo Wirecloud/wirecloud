@@ -126,14 +126,10 @@ var OpManagerFactory = function () {
         }
 
         OpManager.prototype.mergeMashupResource = function(resource) {
-            var mergeOk = function(transport) {
-                var response = transport.responseText;
-                response = JSON.parse(response);
 
+            var mergeOk = function(transport) {
                 LayoutManagerFactory.getInstance().logStep('');
-                // Reload current workspace
-                var workspace = this.workspaceInstances.get(response['workspace_id']);
-                this.changeActiveWorkspace(workspace);
+                this.changeActiveWorkspace(this.activeWorkspace);
             }
             var mergeError = function(transport, e) {
                 var logManager, layoutManager, msg;
@@ -158,9 +154,7 @@ var OpManagerFactory = function () {
             Wirecloud.io.makeRequest(mergeURL, {
                 method: 'POST',
                 contentType: 'application/json',
-                postBody: Object.toJSON({
-                    'workspace': resource.getUriTemplate()
-                }),
+                postBody: JSON.stringify({'mashup': resource.getURI()}),
                 onSuccess: mergeOk.bind(this),
                 onFailure: mergeError.bind(this),
                 onException: mergeError.bind(this)

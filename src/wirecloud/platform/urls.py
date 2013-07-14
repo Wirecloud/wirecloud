@@ -161,10 +161,6 @@ urlpatterns = patterns('wirecloud.platform.views',
         workspace_views.MashupMergeService(),
         name='wirecloud.workspace_merge'
     ),
-    url(r'^api/workspace/(?P<to_ws_id>\d+)/merge/(?P<from_ws_id>\d+)/?$',
-        workspace_views.MashupMergeService(),
-        name='wirecloud.workspace_merge_local'
-    ),
 
     url(r'^api/workspace/(?P<workspace_id>\d+)/publish/?$',
         workspace_views.WorkspacePublisherEntry(permitted_methods=('POST',)),

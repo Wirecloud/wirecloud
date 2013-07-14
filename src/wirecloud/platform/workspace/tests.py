@@ -217,7 +217,7 @@ class WorkspaceCacheTestCase(CacheTestCase):
         put_data = simplejson.dumps(put_data, ensure_ascii=False).encode('utf-8')
         client.login(username='test', password='test')
         result = client.post(reverse('wirecloud.variable_collection', kwargs={'workspace_id': 1}), put_data, content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
-        self.assertEqual(result.status_code, 200)
+        self.assertEqual(result.status_code, 204)
 
         data = get_global_workspace_data(self.workspace, self.user).get_data()
         variables = data['tabs'][0]['iwidgets'][0]['variables']
