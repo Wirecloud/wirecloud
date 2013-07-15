@@ -127,6 +127,14 @@ class WirecloudRemoteTestCase(object):
         time.sleep(0.1)
         return element.find_element_by_css_selector(selector)
 
+    def wait_element_visible_by_id(self, selector, timeout=30, element=None):
+        if element is None:
+            element = self.driver
+
+        WebDriverWait(self.driver, timeout).until(lambda driver: element.find_element_by_id(selector).is_displayed())
+        time.sleep(0.1)
+        return element.find_element_by_id(selector)
+
     def wait_element_visible_by_xpath(self, selector, timeout=30, element=None):
         if element is None:
             element = self.driver

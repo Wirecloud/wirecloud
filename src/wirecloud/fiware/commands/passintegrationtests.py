@@ -18,6 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import requests
+import time
 from urlparse import urljoin
 
 from django.utils import unittest
@@ -83,27 +84,69 @@ class IntegrationTestCase(WirecloudRemoteTestCase, unittest.TestCase):
         resource = self.search_in_catalogue_results('Orion Context Broker')
         self.assertIsNotNone(resource, "FI-WARE Marketplace searches doesn't work")
 
-    def test_store_integration(self):
+    def test_store_integration_buy(self):
 
         self.change_marketplace('FI-WARE')
         self.search_resource('Map Viewer')
         resource = self.search_in_catalogue_results('Map Viewer')
-        resource.find_element_by_css_selector('.mainbutton')
+        resource.find_element_by_css_selector('.mainbutton > div').click()
+
+        wirecloud_window = self.driver.window_handles[0]
+        self.wait_element_visible_by_css_selector('.window_menu .btn-primary > div').click()
+
+        wstore_window = self.driver.window_handles[1]
+        self.driver.switch_to_window(wstore_window)
+
+        username_input = self.wait_element_visible_by_id('id_username')
+        self.fill_form_input(username_input, 'wcitester')
+        password_input = self.driver.find_element_by_id('id_password')
+        self.fill_form_input(password_input, 'pass')
+        password_input.submit()
+
+        self.wait_element_visible_by_id('tax_addr').click()
+        self.driver.find_element_by_css_selector('.modal-footer > .btn-basic').click()
+
+        payment_input = self.wait_element_visible_by_id('pay-method')
+        payment_input.send_keys('credit_card')
+        self.wait_element_visible_by_id('curr-card').click()
+        self.driver.find_element_by_css_selector('.modal-footer > .btn-basic').click()
+
+        self.wait_element_visible_by_id('back')
+        time.sleep(0.5)
+        self.driver.find_element_by_id('back').click()
+        self.driver.switch_to_window(wirecloud_window)
+
+        time.sleep(0.2)
+        self.wait_catalogue_ready()
+        resource = self.search_in_catalogue_results('Map Viewer')
+        self.assertEqual(resource.find_element_by_css_selector('.mainbutton > div').text, 'Install')
+
+    def test_store_integration_install_bought_widget(self):
+        pass
 
     def test_pubsub_context_broker_integration(self):
-        pass
+        iwidget = self.add_widget_to_mashup('Wirecloud NGSI API test widget')
+        iwidget.remove()
 
     def test_object_storage_integration(self):
-        pass
+        iwidget = self.add_widget_to_mashup('Wirecloud Object Storage API test widget')
+        iwidget.remove()
 
 build_selenium_test_cases((IntegrationTestCase,), locals())
 
 class IntegrationTestsCommand(BaseCommand):
-    args = '<url>'
+    args = '<url> [test_name]'
     help = 'Passes the integration tests to a Wirecloud instance'
 
     def handle(self, *args, **options):
 
         suite = unittest.TestSuite()
-        suite.addTests(unittest.TestLoader().loadTestsFromTestCase(FirefoxIntegrationTestCase))
+
+        if len(args) == 0:
+            suite.addTests(unittest.TestLoader().loadTestsFromTestCase(GoogleChromeIntegrationTestCase))
+        else:
+
+            for test in args:
+                suite.addTest(GoogleChromeIntegrationTestCase(test))
+
         unittest.TextTestRunner(verbosity=2).run(suite)
