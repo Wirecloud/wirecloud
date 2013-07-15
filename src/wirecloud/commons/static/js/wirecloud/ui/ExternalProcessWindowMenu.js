@@ -34,11 +34,11 @@
             this.interval = null;
             this.start_button.enable();
             this.start_button.focus();
-        } else if ('href' in this.external_window.location && this.is_return_uri(this.external_window.location.href)) {
+        } else if ('href' in this.external_window.location && this.options.return_uri(this.external_window.location.href)) {
 
             if (typeof this.options.onSuccess === 'function') {
                 try {
-                    this.options.onSuccess();
+                    this.options.onSuccess(this.external_window.location.href);
                 } catch (e) {
                 }
             }
@@ -75,9 +75,16 @@
         this.msgElement.textContent = msg;
         this.windowContent.appendChild(this.msgElement);
 
-        this.is_return_uri = function () {
-            return true;
-        };
+        if (this.options.return_uri == null) {
+            this.options.return_uri = function return_uri(uri) {
+                return uri !== 'about:blank';
+            };
+        } else if (typeof this.options.return_uri !== 'function') {
+            var base_uri = this.options.return_uri;
+            this.options.return_uri = function return_uri(uri) {
+                return uri.startsWith(base_uri);
+            };
+        }
 
         // Start button
         this.start_button = new StyledElements.StyledButton({
