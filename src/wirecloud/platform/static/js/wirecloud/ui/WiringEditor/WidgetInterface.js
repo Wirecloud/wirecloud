@@ -48,9 +48,6 @@
         if ('ghost' in iwidget) {
             // Ghost Operator
             isGhost = true;
-            this.iwidget.display_name = iwidget.name;
-            this.iwidget.meta = {};
-            this.iwidget.meta.uri = iwidget.name;
 
             for (i = 0; i < endPointPos.sources.length; i += 1) {
                 outputs[endPointPos.sources[i]] = {

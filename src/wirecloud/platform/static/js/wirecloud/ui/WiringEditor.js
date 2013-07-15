@@ -284,12 +284,14 @@ if (!Wirecloud.ui) {
                     }
                     iwidget = {
                         'id': key,
-                        'display_name': ghostName,
+                        'name': ghostName,
                         'ghost': true,
                         'widget': {
-                            'id': WiringStatus.views[k].iwidgets[key].name
+                            'id': WiringStatus.views[k].iwidgets[key].name,
+                            'uri': WiringStatus.views[k].iwidgets[key].name
                         }
                     };
+                    iwidget.meta = iwidget.widget;
                     widget_interface = this.addIWidget(this, iwidget, WiringStatus.views[k].iwidgets[key].endPointsInOuts);
                     widget_interface.setPosition(WiringStatus.views[k].iwidgets[key].position);
                 }
@@ -310,7 +312,15 @@ if (!Wirecloud.ui) {
         for (key in operators) {
             if (!(key in reallyInUseOperators)) {
                 // Ghost Operator
-                operator_instance = {'id': operators[key].id, 'name': operators[key].name, 'ghost': true};
+                operator_instance = {
+                    'id': operators[key].id,
+                    'display_name': operators[key].name,
+                    'name': operators[key].name,
+                    'ghost': true,
+                    'meta': {
+                        'uri': operators[key].name
+                    }
+                };
             } else {
                 operator_instance = reallyInUseOperators[key];
             }
@@ -1069,7 +1079,9 @@ if (!Wirecloud.ui) {
         }
 
         widget_interface.destroy();
-        this.mini_widgets[widget_interface.getIWidget().id].enable();
+        if (widget_interface.getIWidget().id in this.mini_widgets) {
+            this.mini_widgets[widget_interface.getIWidget().id].enable();
+        } // else ghost widget
 
         this.entitiesNumber -= 1;
         if (this.entitiesNumber === 0) {
