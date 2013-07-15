@@ -9,7 +9,8 @@
         this.vendor = data.vendor;
         this.name = data.name;
         this.version = new Wirecloud.Version(data.version, 'showcase');
-        this.id = this.vendor + '/' + this.name + '/' + this.version.text;
+        this.uri = this.vendor + '/' + this.name + '/' + this.version.text;
+        this.id = this.uri;
 
         this.display_name = data.display_name;
         this.code_url = Wirecloud.URLs.WIDGET_CODE_ENTRY.evaluate({
