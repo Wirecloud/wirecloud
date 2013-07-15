@@ -25,7 +25,6 @@ from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
-from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
 from wirecloud.catalogue.models import CatalogueResource
@@ -46,7 +45,7 @@ class MarketCollection(Resource):
 
         for market in Market.objects.filter(Q(user=None) | Q(user=request.user)):
             market_key = unicode(market)
-            market_data = simplejson.loads(market.options)
+            market_data = json.loads(market.options)
 
             market_data['name'] = market.name
 
@@ -61,7 +60,7 @@ class MarketCollection(Resource):
 
             result[market_key] = market_data
 
-        return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(result), mimetype='application/json; charset=UTF-8')
 
     @method_decorator(login_required)
     @supported_request_mime_types(('application/json'))
@@ -112,7 +111,7 @@ class PublishService(Service):
 
         try:
             data = json.loads(request.raw_post_data)
-        except Exception, e:
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -138,6 +137,6 @@ class PublishService(Service):
         if len(errors) == 0:
             return HttpResponse(status=204)
         elif len(errors) == len(data['marketplaces']):
-            return HttpResponse(simplejson.dumps(errors), status=502, mimetype='application/json; charset=UTF-8')
+            return HttpResponse(json.dumps(errors), status=502, mimetype='application/json; charset=UTF-8')
         else:
-            return HttpResponse(simplejson.dumps(errors), status=200, mimetype='application/json; charset=UTF-8')
+            return HttpResponse(json.dumps(errors), status=200, mimetype='application/json; charset=UTF-8')

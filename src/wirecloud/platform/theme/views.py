@@ -18,10 +18,11 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import json
+
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.template.loader import get_template
-from django.utils import simplejson
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 
@@ -58,4 +59,4 @@ class ThemeEntry(Resource):
             template = get_template(template_descriptions[template_id])
             templates[template_id] = template.render(context)
 
-        return HttpResponse(simplejson.dumps(templates), 'application/json')
+        return HttpResponse(json.dumps(templates), 'application/json')

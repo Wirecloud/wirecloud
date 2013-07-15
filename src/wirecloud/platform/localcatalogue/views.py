@@ -27,7 +27,6 @@ from django.db import IntegrityError
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.utils import simplejson
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.views.static import serve
@@ -95,8 +94,8 @@ class ResourceCollection(Resource):
 
             if content_type == 'application/json':
                 try:
-                    data = simplejson.loads(request.raw_post_data)
-                except Exception, e:
+                    data = json.loads(request.raw_post_data)
+                except ValueError, e:
                     msg = _("malformed json data: %s") % unicode(e)
                     return build_error_response(request, 400, msg)
 
@@ -163,7 +162,7 @@ class ResourceCollection(Resource):
                 operator = get_or_add_resource_from_available_marketplaces(*op_id_args)
                 resources.append(json.loads(operator.json_description))
 
-            return HttpResponse(simplejson.dumps(resources), status=201, mimetype='application/json; charset=UTF-8')
+            return HttpResponse(json.dumps(resources), status=201, mimetype='application/json; charset=UTF-8')
 
         elif install_dep:
             return HttpResponse('[' + resource.json_description + ']', status=201, mimetype='application/json; charset=UTF-8')
@@ -212,6 +211,6 @@ class ResourceEntry(Resource):
                     iwidget.delete()
 
             if request.GET.get('affected', 'false').lower() == 'true':
-                return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
+                return HttpResponse(json.dumps(result), mimetype='application/json; charset=UTF-8')
 
         return HttpResponse(status=204)

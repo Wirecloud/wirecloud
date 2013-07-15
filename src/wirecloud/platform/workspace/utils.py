@@ -22,10 +22,10 @@ try:
     HAS_AES = True
 except ImportError:
     HAS_AES = False
+import json
 
 from django.conf import settings
 from django.shortcuts import get_object_or_404
-from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
 from wirecloud.commons.utils.db import save_alternative
@@ -80,7 +80,7 @@ def encrypt_value(value):
         return value
 
     cipher = AES.new(settings.SECRET_KEY[:32])
-    json_value = simplejson.dumps(value, ensure_ascii=False)
+    json_value = json.dumps(value, ensure_ascii=False)
     padded_value = json_value + (cipher.block_size - len(json_value) % cipher.block_size) * ' '
     return cipher.encrypt(padded_value).encode('base64')
 
@@ -92,7 +92,7 @@ def decrypt_value(value):
     cipher = AES.new(settings.SECRET_KEY[:32])
     try:
         value = cipher.decrypt(value.decode('base64'))
-        return simplejson.loads(value)
+        return json.loads(value)
     except:
         return ''
 

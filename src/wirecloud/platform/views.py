@@ -17,11 +17,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
+
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
-from django.utils import simplejson
 from django.utils.http import urlencode
 
 from wirecloud.commons.baseviews import Resource
@@ -38,7 +39,7 @@ class FeatureCollection(Resource):
         for feature_name in info:
             features[feature_name] = info[feature_name]['version']
 
-        return HttpResponse(simplejson.dumps(features), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(features), mimetype='application/json; charset=UTF-8')
 
 
 def render_root_page(request):

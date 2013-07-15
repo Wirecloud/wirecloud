@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
 from cStringIO import StringIO
 import os
 import zipfile
@@ -26,7 +27,6 @@ from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseForbidden, Http404
 from django.shortcuts import get_object_or_404
-from django.utils import simplejson
 from django.utils.translation import ugettext as _
 from django.utils.http import urlencode
 
@@ -96,7 +96,7 @@ class WorkspaceCollection(Resource):
         workspaces, _junk, reload_showcase = get_workspace_list(request.user)
         data_list = [get_workspace_data(workspace, request.user) for workspace in workspaces]
 
-        return HttpResponse(simplejson.dumps(data_list), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(data_list), mimetype='application/json; charset=UTF-8')
 
     @authentication_required
     @supported_request_mime_types(('application/json',))
@@ -104,8 +104,8 @@ class WorkspaceCollection(Resource):
     def create(self, request):
 
         try:
-            data = simplejson.loads(request.raw_post_data)
-        except Exception, e:
+            data = json.loads(request.raw_post_data)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -191,8 +191,8 @@ class WorkspaceEntry(Resource):
     def create(self, request, workspace_id):
 
         try:
-            ts = simplejson.loads(request.raw_post_data)
-        except Exception, e:
+            ts = json.loads(request.raw_post_data)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -265,8 +265,8 @@ class TabCollection(Resource):
     def create(self, request, workspace_id):
 
         try:
-            data = simplejson.loads(request.raw_post_data)
-        except Exception, e:
+            data = json.loads(request.raw_post_data)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -285,7 +285,7 @@ class TabCollection(Resource):
         # Returning created Ids
         ids = {'id': tab.id, 'name': tab.name}
 
-        return HttpResponse(simplejson.dumps(ids), status=201, mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(ids), status=201, mimetype='application/json; charset=UTF-8')
 
     @authentication_required
     @supported_request_mime_types(('application/json',))
@@ -303,8 +303,8 @@ class TabCollection(Resource):
             return HttpResponseForbidden()
 
         try:
-            order = simplejson.loads(request.raw_post_data)
-        except Exception, e:
+            order = json.loads(request.raw_post_data)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -336,8 +336,8 @@ class TabEntry(Resource):
             return HttpResponseForbidden()
 
         try:
-            data = simplejson.loads(request.raw_post_data)
-        except Exception, e:
+            data = json.loads(request.raw_post_data)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -393,8 +393,8 @@ class WorkspaceVariableCollection(Resource):
     def create(self, request, workspace_id):
 
         try:
-            iwidgetVariables = simplejson.loads(request.raw_post_data)
-        except Exception, e:
+            iwidgetVariables = json.loads(request.raw_post_data)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -416,7 +416,7 @@ class WorkspaceSharerEntry(Resource):
         if owner != request.user:
             msg = 'You are not the owner of the workspace, so you can not share it!'
             result = {'result': 'error', 'description': msg}
-            return HttpResponseForbidden(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
+            return HttpResponseForbidden(json.dumps(result), mimetype='application/json; charset=UTF-8')
 
         #Everything right!
         if request.raw_post_data == '':
@@ -430,12 +430,12 @@ class WorkspaceSharerEntry(Resource):
             url = request.build_absolute_uri(workspace_path + '?' + urlencode({u'view': 'viewer'}))
 
             result = {"result": "ok", "url": url}
-            return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
+            return HttpResponse(json.dumps(result), mimetype='application/json; charset=UTF-8')
         else:
             #Share only with the scpecified groups
             try:
-                groups = simplejson.loads(request.raw_post_data)
-            except Exception, e:
+                groups = json.loads(request.raw_post_data)
+            except ValueError, e:
                 msg = _("malformed json data: %s") % unicode(e)
                 return build_error_response(request, 400, msg)
 
@@ -459,8 +459,8 @@ class MashupMergeService(Service):
     def process(self, request, to_ws_id):
 
         try:
-            data = simplejson.loads(request.raw_post_data)
-        except Exception, e:
+            data = json.loads(request.raw_post_data)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -548,8 +548,8 @@ class WorkspacePublisherEntry(Resource):
             image_file = request.FILES.get('image', None)
 
         try:
-            options = simplejson.loads(received_json)
-        except Exception, e:
+            options = json.loads(received_json)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 

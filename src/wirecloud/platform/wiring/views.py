@@ -21,7 +21,6 @@ import json
 
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
-from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
 from wirecloud.catalogue.models import CatalogueResource
@@ -41,7 +40,7 @@ class WiringEntry(Resource):
         wiring_status_string = request.raw_post_data
         try:
             wiring_status = json.loads(wiring_status_string)
-        except Exception, e:
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -49,7 +48,7 @@ class WiringEntry(Resource):
         if not request.user.is_superuser and workspace.creator != request.user:
             return HttpResponseForbidden()
 
-        old_wiring_status = simplejson.loads(workspace.wiringStatus)
+        old_wiring_status = json.loads(workspace.wiringStatus)
         old_read_only_connections = []
         for connection in old_wiring_status['connections']:
             if connection.get('readOnly', False):

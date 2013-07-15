@@ -31,7 +31,6 @@ from django.contrib.auth.models import User, Group
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.test import Client
-from django.utils import simplejson
 
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.utils.testcases import WirecloudTestCase
@@ -219,7 +218,7 @@ class WorkspaceCacheTestCase(CacheTestCase):
             {'id': 4, 'value': 'new_data'},
         ]
 
-        put_data = simplejson.dumps(put_data, ensure_ascii=False).encode('utf-8')
+        put_data = json.dumps(put_data, ensure_ascii=False).encode('utf-8')
         client.login(username='test', password='test')
         result = client.post(reverse('wirecloud.variable_collection', kwargs={'workspace_id': 1}), put_data, content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(result.status_code, 204)

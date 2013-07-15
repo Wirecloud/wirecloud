@@ -29,12 +29,12 @@
 
 
 #
+import json
 import random
 import re
 from urlparse import urljoin
 
 from django.core.cache import cache
-from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
 from wirecloud.commons.utils.cache import CacheableData
@@ -371,7 +371,7 @@ class TemplateValueProcessor:
 
 def process_forced_values(workspace, user, concept_values, preferences):
     try:
-        forced_values = simplejson.loads(workspace.forcedValues)
+        forced_values = json.loads(workspace.forcedValues)
     except:
         forced_values = {
             'iwidget': {},
@@ -457,12 +457,12 @@ def _get_global_workspace_data(workspaceDAO, user):
 
         tab['iwidgets'] = iwidget_data
 
-    data_ret['wiring'] = simplejson.loads(workspaceDAO.wiringStatus)
+    data_ret['wiring'] = json.loads(workspaceDAO.wiringStatus)
 
     # Params
     last_published_workspace = PublishedWorkspace.objects.filter(workspace=workspaceDAO).order_by('-pk')
     if len(last_published_workspace) > 0:
-        data_ret["params"] = simplejson.loads(last_published_workspace[0].params)
+        data_ret["params"] = json.loads(last_published_workspace[0].params)
 
     return data_ret
 
