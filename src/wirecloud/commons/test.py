@@ -923,7 +923,6 @@ class WirecloudRemoteTestCase(object):
 
     def get_iwidget_anchor(self, iwidget, endpoint):
         return self.driver.execute_script('''
-            var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
             return LayoutManagerFactory.getInstance().viewsByName["wiring"].iwidgets[%(iwidget)d].getAnchor("%(endpoint)s").wrapperElement;
         ''' % {"iwidget": iwidget, "endpoint": endpoint}
         )
