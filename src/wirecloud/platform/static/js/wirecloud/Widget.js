@@ -11,7 +11,7 @@
         this.version = new Wirecloud.Version(data.version, 'showcase');
         this.id = this.vendor + '/' + this.name + '/' + this.version.text;
 
-        this.displayName = data.display_name;
+        this.display_name = data.display_name;
         this.code_url = Wirecloud.URLs.WIDGET_CODE_ENTRY.evaluate({
             vendor: this.vendor,
             name: this.name,
