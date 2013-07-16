@@ -1,5 +1,5 @@
 /*jshint globalstrict:true */
-/*global MashupPlatform*/
+/*global MashupPlatform, ObjectStorageAPI, StyledElements*/
 
 (function () {
 
@@ -32,8 +32,9 @@
             onSuccess: onListContainterSuccess,
             onFailure: function () {
                 document.getElementById('file_count').textContent = 'Fail';
+                fail();
             }
-        })
+        });
     };
 
     var onListContainterSuccess = function onListContainterSuccess(file_list) {
@@ -46,7 +47,7 @@
         document.getElementById('file_count').textContent = file_list.length;
         do {
             found = false;
-            for (i = 0; i < file_list.length; i+=1) {
+            for (i = 0; i < file_list.length; i += 1) {
                 if (file_list[i].name === file_name) {
                     found = true;
                     break;
@@ -61,6 +62,7 @@
             onSuccess: onUploadFileSuccess.bind(null, file_name),
             onFailure: function () {
                 document.getElementById('file_upload').textContent = 'Fail';
+                fail();
             }
         });
     };
@@ -71,6 +73,7 @@
             onSuccess: onDeleteFileSuccess,
             onFailure: function () {
                 document.getElementById('file_deletion').textContent = 'Fail';
+                fail();
             }
         });
     };
@@ -79,6 +82,16 @@
         document.getElementById('file_deletion').textContent = 'OK';
         document.getElementById('api_token').textContent = token;
 
+        msg = document.createElement('div');
+        msg.className = 'alert alert-block alert-success';
+        msg.textContent = 'Success!';
+        document.body.appendChild(msg);
+
+        msg.scrollIntoView();
+        button.enable();
+    };
+
+    var fail = function fail() {
         msg = document.createElement('div');
         msg.className = 'alert alert-block alert-success';
         msg.textContent = 'Success!';
@@ -112,6 +125,7 @@
                 onSuccess: onGetAuthTokenSuccess,
                 onFailure: function () {
                     document.getElementById('api_token').textContent = 'Fail';
+                    fail();
                 }
             });
         });
