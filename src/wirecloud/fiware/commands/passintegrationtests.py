@@ -117,10 +117,10 @@ class IntegrationTestCase(WirecloudRemoteTestCase, unittest.TestCase):
         self.driver.find_element_by_id('back').click()
         self.driver.switch_to_window(wirecloud_window)
 
-        time.sleep(0.2)
+        time.sleep(0.5)
         self.wait_catalogue_ready()
         resource = self.search_in_catalogue_results('Map Viewer')
-        self.assertEqual(resource.find_element_by_css_selector('.mainbutton > div').text, 'Install')
+        self.assertIn(resource.find_element_by_css_selector('.mainbutton > div').text, ('Install', 'Uninstall'))
 
     def test_store_integration_install_bought_widget(self):
 
@@ -164,20 +164,22 @@ class IntegrationTestCase(WirecloudRemoteTestCase, unittest.TestCase):
 
         iwidget = self.add_widget_to_mashup('Wirecloud NGSI API test widget')
 
-        with iwidget:
-            self.driver.find_element_by_css_selector('.styled_button > div').click()
-            self.assertEqual(self.wait_element_visible_by_css_selector('.alert').text, 'Success')
-
-        iwidget.remove()
+        try:
+            with iwidget:
+                self.driver.find_element_by_css_selector('.styled_button > div').click()
+                self.assertEqual(self.wait_element_visible_by_css_selector('.alert').text, 'Success!')
+        finally:
+            iwidget.remove()
 
     def test_object_storage_integration(self):
         iwidget = self.add_widget_to_mashup('Wirecloud Object Storage API test widget')
 
-        with iwidget:
-            self.driver.find_element_by_css_selector('.styled_button > div').click()
-            self.assertEqual(self.wait_element_visible_by_css_selector('.alert').text, 'Success')
-
-        iwidget.remove()
+        try:
+            with iwidget:
+                self.driver.find_element_by_css_selector('.styled_button > div').click()
+                self.assertEqual(self.wait_element_visible_by_css_selector('.alert').text, 'Success!')
+        finally:
+            iwidget.remove()
 
 build_selenium_test_cases((IntegrationTestCase,), locals())
 
