@@ -1206,3 +1206,190 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
         self.assertEqual(isinpos, True)
         isinpos = self.is_ioperator_anchor_in_pos(1, 'input3', 0)
         self.assertEqual(isinpos, True)
+
+class MulticonnectorTestCase(WirecloudSeleniumTestCase):
+
+    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+
+    def test_wiring_basic_multiconnector_visualization(self):
+        self.login()
+
+        self.add_widget_to_mashup('Test', new_name='Test (1)')
+        time.sleep(2)
+
+        self.change_main_view('wiring')
+        time.sleep(2)
+        grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+
+        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
+        # TODO there are several bugs in the firefox, for now, this line of code "works"
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-100, -100).click().perform()
+
+        time.sleep(2)
+        source = self.get_iwidget_anchor(3, 'outputendpoint')
+        target = self.get_iwidget_anchor(3, 'inputendpoint')
+
+        ActionChains(self.driver).context_click(source).perform()
+        self.driver.find_element_by_xpath("//*[contains(@class, 'menu_item')]//*[text()='Add multiconnector']").click()
+        sourcesmulti = self.driver.find_elements_by_css_selector('.source.multiconnector.anchor')
+        self.assertEqual(len(sourcesmulti), 1)
+
+        ActionChains(self.driver).context_click(target).perform()
+        self.driver.find_element_by_xpath("//*[contains(@class, 'menu_item')]//*[text()='Add multiconnector']").click()
+        targetsmulti = self.driver.find_elements_by_css_selector('.target.multiconnector.anchor')
+        self.assertEqual(len(targetsmulti), 1)
+
+        self.change_main_view('workspace')
+        time.sleep(0.2)
+        self.change_main_view('wiring')
+        time.sleep(2)
+
+        sourcesmulti = self.driver.find_elements_by_css_selector('.source.multiconnector.anchor')
+        self.assertEqual(len(sourcesmulti), 1)
+        targetsmulti = self.driver.find_elements_by_css_selector('.target.multiconnector.anchor')
+        self.assertEqual(len(targetsmulti), 1)
+
+    test_wiring_basic_multiconnector_visualization.tags = ('current',)
+
+    def test_wiring_source_multiconnector_connection(self):
+        self.login()
+
+        self.add_widget_to_mashup('Test', new_name='Test (1)')
+        self.add_widget_to_mashup('Test', new_name='Test (2)')
+        self.add_widget_to_mashup('Test', new_name='Test (3)')
+
+        iwidgets = self.get_current_iwidgets()
+
+        self.change_main_view('wiring')
+        time.sleep(2)
+        grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+
+        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
+        # TODO there are several bugs in the firefox, for now, this line of code "works"
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -50).click().perform()
+
+        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
+        # TODO there are several bugs in the firefox, for now, this line of code "works"
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -120).click().perform()
+
+        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
+        # TODO there are several bugs in the firefox, for now, this line of code "works"
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, 40).click().perform()
+
+
+        source = self.get_iwidget_anchor(3, 'outputendpoint')
+        target1 = self.get_iwidget_anchor(4, 'inputendpoint')
+        target2 = self.get_iwidget_anchor(5, 'inputendpoint')
+
+        ActionChains(self.driver).context_click(source).perform()
+        self.driver.find_element_by_xpath("//*[contains(@class, 'menu_item')]//*[text()='Add multiconnector']").click()
+        multi = self.driver.find_element_by_css_selector('.anchor.multiconnector.anchor')
+        ActionChains(self.driver).drag_and_drop(target1, multi).perform()
+        ActionChains(self.driver).drag_and_drop(target2, multi).perform()
+
+        self.change_main_view('workspace')
+        time.sleep(0.2)
+
+        with iwidget_context(self.driver, iwidgets[0]['id']):
+            text_input = self.driver.find_element_by_tag_name('input')
+            self.fill_form_input(text_input, 'first hello world!!')
+            # Work around hang when using Firefox Driver
+            self.driver.execute_script('sendEvent();')
+            #self.driver.find_element_by_id('b1').click()
+
+        time.sleep(0.2)
+
+        with iwidget_context(self.driver, iwidgets[1]['id']):
+            try:
+                WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'first hello world!!')
+            except:
+                pass
+
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, 'first hello world!!')
+
+        with iwidget_context(self.driver, iwidgets[2]['id']):
+            try:
+                WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'first hello world!!')
+            except:
+                pass
+
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, 'first hello world!!')
+
+    test_wiring_source_multiconnector_connection.tags = ('current2',)
+
+    def test_wiring_target_multiconnector_connection(self):
+        self.login()
+
+        self.add_widget_to_mashup('Test', new_name='Test (1)')
+        self.add_widget_to_mashup('Test', new_name='Test (2)')
+        self.add_widget_to_mashup('Test', new_name='Test (3)')
+
+        iwidgets = self.get_current_iwidgets()
+        self.change_main_view('wiring')
+        time.sleep(2)
+        grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+
+        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
+        # TODO there are several bugs in the firefox, for now, this line of code "works"
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -50).click().perform()
+
+        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
+        # TODO there are several bugs in the firefox, for now, this line of code "works"
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -120).click().perform()
+
+        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
+        # TODO there are several bugs in the firefox, for now, this line of code "works"
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, 40).click().perform()
+
+        target = self.get_iwidget_anchor(3, 'inputendpoint')
+        source1 = self.get_iwidget_anchor(4, 'outputendpoint')
+        source2 = self.get_iwidget_anchor(5, 'outputendpoint')
+
+        ActionChains(self.driver).context_click(target).perform()
+        self.driver.find_element_by_xpath("//*[contains(@class, 'menu_item')]//*[text()='Add multiconnector']").click()
+        multi = self.driver.find_element_by_css_selector('.anchor.multiconnector.anchor')
+        ActionChains(self.driver).drag_and_drop(source1, multi).perform()
+        ActionChains(self.driver).drag_and_drop(source2, multi).perform()
+
+        self.change_main_view('workspace')
+        time.sleep(0.2)
+
+        with iwidget_context(self.driver, iwidgets[1]['id']):
+            text_input = self.driver.find_element_by_tag_name('input')
+            self.fill_form_input(text_input, 'first hello world!!')
+            # Work around hang when using Firefox Driver
+            self.driver.execute_script('sendEvent();')
+            #self.driver.find_element_by_id('b1').click()
+
+        time.sleep(0.2)
+
+        with iwidget_context(self.driver, iwidgets[0]['id']):
+            try:
+                WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'first hello world!!')
+            except:
+                pass
+
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, 'first hello world!!')
+
+        with iwidget_context(self.driver, iwidgets[2]['id']):
+            text_input = self.driver.find_element_by_tag_name('input')
+            self.fill_form_input(text_input, 'second hello world!!')
+            # Work around hang when using Firefox Driver
+            self.driver.execute_script('sendEvent();')
+            #self.driver.find_element_by_id('b1').click()
+
+        time.sleep(0.2)
+
+        with iwidget_context(self.driver, iwidgets[0]['id']):
+            try:
+                WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'second hello world!!')
+            except:
+                pass
+
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, 'second hello world!!')
+
+    test_wiring_target_multiconnector_connection.tags = ('current3',)
