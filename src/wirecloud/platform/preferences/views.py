@@ -17,11 +17,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
+
 from django.core.cache import cache
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
-from django.utils import simplejson
 
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import no_cache
@@ -145,15 +146,15 @@ class PlatformPreferencesCollection(Resource):
     def read(self, request):
         result = parseValues(PlatformPreference.objects.filter(user=request.user))
 
-        return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(result), mimetype='application/json; charset=UTF-8')
 
     @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def create(self, request):
         try:
-            preferences_json = simplejson.loads(request.raw_post_data)
-        except Exception, e:
+            preferences_json = json.loads(request.raw_post_data)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -176,7 +177,7 @@ class WorkspacePreferencesCollection(Resource):
 
         result = get_workspace_preference_values(workspace.id)
 
-        return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(result), mimetype='application/json; charset=UTF-8')
 
     @authentication_required
     @supported_request_mime_types(('application/json',))
@@ -187,8 +188,8 @@ class WorkspacePreferencesCollection(Resource):
         workspace = get_object_or_404(Workspace, users=request.user, pk=workspace_id)
 
         try:
-            preferences_json = simplejson.loads(request.raw_post_data)
-        except Exception, e:
+            preferences_json = json.loads(request.raw_post_data)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -207,7 +208,7 @@ class TabPreferencesCollection(Resource):
 
         result = get_tab_preference_values(tab)
 
-        return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(result), mimetype='application/json; charset=UTF-8')
 
     @authentication_required
     @supported_request_mime_types(('application/json',))
@@ -218,8 +219,8 @@ class TabPreferencesCollection(Resource):
         tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
 
         try:
-            preferences_json = simplejson.loads(request.raw_post_data)
-        except Exception, e:
+            preferences_json = json.loads(request.raw_post_data)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 

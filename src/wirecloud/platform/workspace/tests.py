@@ -31,10 +31,9 @@ from django.contrib.auth.models import User, Group
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.test import Client
-from django.utils import simplejson
 
 from wirecloud.catalogue import utils as catalogue
-from wirecloud.commons.test import WirecloudTestCase
+from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 from wirecloud.platform.get_data import get_global_workspace_data
 from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Variable, VariableValue, Workspace
@@ -52,8 +51,13 @@ __test__ = False
 
 class CacheTestCase(WirecloudTestCase):
 
-    def setUp(self):
-        super(CacheTestCase, self).setUp()
+    @classmethod
+    def setUpClass(cls):
+        super(CacheTestCase, cls).setUpClass()
+        cache.clear()
+
+    def tearDown(self):
+        super(CacheTestCase, self).tearDown()
         cache.clear()
 
 
@@ -214,10 +218,10 @@ class WorkspaceCacheTestCase(CacheTestCase):
             {'id': 4, 'value': 'new_data'},
         ]
 
-        put_data = simplejson.dumps(put_data, ensure_ascii=False).encode('utf-8')
+        put_data = json.dumps(put_data, ensure_ascii=False).encode('utf-8')
         client.login(username='test', password='test')
         result = client.post(reverse('wirecloud.variable_collection', kwargs={'workspace_id': 1}), put_data, content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
-        self.assertEqual(result.status_code, 200)
+        self.assertEqual(result.status_code, 204)
 
         data = get_global_workspace_data(self.workspace, self.user).get_data()
         variables = data['tabs'][0]['iwidgets'][0]['variables']

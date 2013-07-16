@@ -37,6 +37,7 @@ SEARCH_RESULT_XPATH = '/searchresults/searchresult'
 SEARCH_SERVICE_XPATH = 'service'
 SEARCH_STORE_XPATH = 'store'
 
+opener = urllib2.build_opener()
 
 class MarketAdaptor(object):
 
@@ -48,6 +49,75 @@ class MarketAdaptor(object):
         self._marketplace_uri = marketplace_uri
         self._user = user
         self._passwd = passwd
+
+    def _parse_offering(self, name, url, parsed_usdl, store, options):
+
+        offerings = []
+
+        if isinstance(parsed_usdl, dict):
+            parsed_usdl = [parsed_usdl]
+
+        for ser in parsed_usdl:
+
+            ser['store'] = store
+            ser['marketName'] = name
+
+            if ser['versions'][0]['uriTemplate'] == '':
+                ser['versions'][0]['uriTemplate'] = url
+
+            ser['usdl_url'] = url
+            ser['rating'] = 5  # TODO
+
+            try:
+
+                offering_parsed_url = urlparse(url)
+                offering_id = offering_parsed_url.path.rsplit('/', 1)[1].replace('__', '/')
+
+                store_client = self._stores[store]
+                offering_info = store_client.get_offering_info(offering_id, options[store + '/token'])
+                offering_type = 'other'
+                if len(offering_info['resources']) == 1:
+
+                    offering_resource = offering_info['resources'][0]
+
+                    if offering_resource['content_type'] == 'application/x-widget+mashable-application-component':
+                        offering_type = 'widget'
+                    elif offering_resource['content_type'] == 'application/x-operator+mashable-application-component':
+                        offering_type = 'operator'
+                    elif offering_resource['content_type'] == 'application/x-mashup+mashable-application-component':
+                        offering_type = 'mashup'
+
+                else:
+
+                    info_offering_resources = []
+                    for offering_resource in offering_info['resources']:
+                        resource_info = {
+                            'content_type': offering_resource['content_type'],
+                            'name': offering_resource['name'],
+                            'description': offering_resource['description'],
+                        }
+                        if 'link' in offering_resource:
+                            resource_info['url'] = offering_resource['link']
+
+                        if offering_resource['content_type'] in ('application/x-widget+mashable-application-component', 'application/x-operator+mashable-application-component', 'application/x-mashup+mashable-application-component'):
+                            if 'link' in offering_resource:
+                                resource_info['id'] = offering_resource['link'].rsplit('__', 1)[1].rsplit('.', 1)[0].replace('_', '/')
+                            offering_type = 'pack'
+
+                        info_offering_resources.append(resource_info)
+
+                    ser['resources'] = info_offering_resources
+
+                ser['type'] = offering_type
+                ser['state'] = offering_info['state']
+                ser['rating'] = offering_info['rating']
+
+            except:
+                pass
+
+            offerings.append(ser)
+
+        return offerings
 
     def authenticate(self):
 
@@ -196,7 +266,9 @@ class MarketAdaptor(object):
         result = {'resources': []}
 
         for res in parsed_body.xpath(RESOURCE_XPATH):
+
             url = res.xpath(URL_XPATH)[0].text
+
             try:
                 headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"}
                 request = MethodRequest("GET", url, '', headers)
@@ -214,69 +286,7 @@ class MarketAdaptor(object):
                 continue
 
             parsed_usdl = parser.parse()
-
-            if isinstance(parsed_usdl, dict):
-                parsed_usdl = [parsed_usdl]
-
-            for ser in parsed_usdl:
-
-                ser['store'] = store
-                ser['marketName'] = res.get('name')
-
-                if ser['versions'][0]['uriTemplate'] == '':
-                    ser['versions'][0]['uriTemplate'] = url
-
-                ser['usdl_url'] = url
-                ser['rating'] = 5  # TODO
-
-                try:
-
-                    offering_parsed_url = urlparse(url)
-                    offering_id = offering_parsed_url.path.rsplit('/', 1)[1].replace('__', '/')
-
-                    store_client = self._stores[store]
-                    offering_info = store_client.get_offering_info(offering_id, options[store + '/token'])
-                    offering_type = 'non instantiable service'
-                    if len(offering_info['resources']) == 1:
-
-                        offering_resource = offering_info['resources'][0]
-
-                        if offering_resource['content_type'] == 'application/x-widget+mashable-application-component':
-                            offering_type = 'widget'
-                        elif offering_resource['content_type'] == 'application/x-operator+mashable-application-component':
-                            offering_type = 'operator'
-                        elif offering_resource['content_type'] == 'application/x-mashup+mashable-application-component':
-                            offering_type = 'mashup'
-
-                    else:
-
-                        info_offering_resources = []
-                        for offering_resource in offering_info['resources']:
-                            resource_info = {
-                                'content_type': offering_resource['content_type'],
-                                'name': offering_resource['name'],
-                                'description': offering_resource['description'],
-                            }
-                            if 'link' in offering_resource:
-                                resource_info['url'] = offering_resource['link']
-
-                            if offering_resource['content_type'] in ('application/x-widget+mashable-application-component', 'application/x-operator+mashable-application-component', 'application/x-mashup+mashable-application-component'):
-                                if 'link' in offering_resource:
-                                    resource_info['id'] = offering_resource['link'].rsplit('__', 1)[1].rsplit('.', 1)[0].replace('_', '/')
-                                offering_type = 'pack'
-
-                            info_offering_resources.append(resource_info)
-
-                        ser['resources'] = info_offering_resources
-
-                    ser['type'] = offering_type
-                    ser['state'] = offering_info['state']
-                    ser['rating'] = offering_info['rating']
-
-                except:
-                    pass
-
-                result['resources'].append(ser)
+            result['resources'] += self._parse_offering(res.get('name'), url, parsed_usdl, store, options)
 
         return result
 
@@ -356,7 +366,7 @@ class MarketAdaptor(object):
         if response.code != 200:
             raise HTTPError(response.url, response.code, response.msg, None, None)
 
-    def full_text_search(self, store, search_string):
+    def full_text_search(self, store, search_string, options):
 
         if self._session_id is None:
             self.authenticate()
@@ -393,49 +403,27 @@ class MarketAdaptor(object):
             service = res.xpath(SEARCH_SERVICE_XPATH)[0]
             url = service.xpath(URL_XPATH)[0].text
             service_store = res.xpath(SEARCH_STORE_XPATH)[0].get('name')
+
+            if store != '' and store != service_store:
+                continue
+
             try:
-                if store != '':
-                    if store == service_store:
-                        headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"}
-                        request = MethodRequest("GET", url, '', headers)
-                        response = opener.open(request)
-                        content_type = response.headers.get('content-type')
+                headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"}
+                request = MethodRequest("GET", url, '', headers)
+                response = opener.open(request)
+                content_type = response.headers.get('content-type')
 
-                        # Remove the charset
-                        pos = content_type.find(';')
-                        if pos > -1:
-                            content_type = content_type[:pos]
+                # Remove the charset
+                pos = content_type.find(';')
+                if pos > -1:
+                    content_type = content_type[:pos]
 
-                        usdl_document = response.read()
-                        parser = USDLParser(usdl_document, content_type)
-                    else:
-                        continue
-                else:
-                    headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"}
-                    request = MethodRequest("GET", url, '', headers)
-                    response = opener.open(request)
-                    content_type = response.headers.get('content-type')
-
-                    # Remove the charset
-                    pos = content_type.find(';')
-                    if pos > -1:
-                        content_type = content_type[:pos]
-
-                    usdl_document = response.read()
-                    parser = USDLParser(usdl_document, content_type)
+                usdl_document = response.read()
+                parser = USDLParser(usdl_document, content_type)
+                parsed_usdl = parser.parse()
             except:
                 continue
 
-            parsed_usdl = parser.parse()
-
-            if isinstance(parsed_usdl, dict):
-                parsed_usdl['store'] = service_store
-                parsed_usdl['marketName'] = service.get('name')
-                result['resources'].append(parsed_usdl)
-            else:
-                for ser in parsed_usdl:
-                    ser['store'] = service_store
-                    ser['marketName'] = service.get('name')
-                    result['resources'].append(ser)
+            result['resources'] += self._parse_offering(res.get('name'), url, parsed_usdl, service_store, options)
 
         return result

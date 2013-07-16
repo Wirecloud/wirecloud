@@ -17,266 +17,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-
 import os
-import codecs
-import shutil
-import stat
 import sys
-from tempfile import mkdtemp
 import time
-from urllib2 import URLError, HTTPError
-from urlparse import urlparse
 
-from django.conf import settings
-from django.core.cache import cache
-from django.core.urlresolvers import reverse
-try:
-    from django.test import LiveServerTestCase
-except:
-    class LiveServerTestCase(object):
-        pass
 from django.utils.importlib import import_module
-from django.test import TransactionTestCase
-from django.test.client import Client
-from django.utils import translation
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
-
-from wirecloud.platform.localcatalogue.utils import install_resource_to_all_users
-from wirecloud.platform.widget import utils as showcase
-from wirecloud.proxy.tests import FakeDownloader as ProxyFakeDownloader
-from wirecloud.proxy.views import WIRECLOUD_PROXY
-from wirecloud.catalogue import utils as catalogue
-from wirecloud.commons.utils import downloader
-from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
-
-
-def cleartree(path):
-
-    if os.path.islink(path):
-        # symlinks to directories are forbidden, see bug #1669
-        raise OSError("Cannot call cleartree on a symbolic link")
-
-    names = []
-    try:
-        names = os.listdir(path)
-    except os.error:
-        pass
-
-    for name in names:
-        fullname = os.path.join(path, name)
-        try:
-            mode = os.lstat(fullname).st_mode
-        except os.error:
-            mode = 0
-        if stat.S_ISDIR(mode):
-            shutil.rmtree(fullname, ignore_errors=True)
-        else:
-            try:
-                os.remove(fullname)
-            except os.error:
-                pass
-
-
-def restoretree(backup_path, dest_path):
-    cleartree(dest_path)
-
-    names = []
-    try:
-        names = os.listdir(backup_path)
-    except os.error:
-        pass
-
-    for name in names:
-        srcname = os.path.join(backup_path, name)
-        dstname = os.path.join(dest_path, name)
-
-        try:
-            mode = os.lstat(srcname).st_mode
-        except os.error:
-            mode = 0
-
-        if stat.S_ISDIR(mode):
-            shutil.copytree(srcname, dstname)
-        else:
-            shutil.copy2(srcname, dstname)
-
-
-class FakeDownloader(object):
-
-    def __init__(self):
-        self.reset()
-
-    def reset(self):
-        self._responses = {}
-        self._exceptions = {}
-
-    def set_response(self, url, response):
-        self._responses[url] = response
-
-    def set_exception(self, url, exception):
-        self._exceptions[url] = exception
-
-    def set_http_error(self, url):
-        self.set_exception(url, HTTPError('url', '404', 'Not Found', None, None))
-
-    def set_url_error(self, url):
-        self.set_exception(url, URLError('not valid'))
-
-    def __call__(self, *args, **kwargs):
-        url = args[0]
-
-        if url in self._exceptions:
-            raise self._exceptions[url]
-
-        if url in self._responses:
-            return self._responses[url]
-        else:
-            raise HTTPError('url', '404', 'Not Found', None, None)
-
-
-class LocalDownloader(object):
-
-    def __init__(self, servers):
-        self._servers = servers
-        self._client = Client()
-        self._live_netloc = None
-
-    def set_live_server(self, host, port):
-        self._live_netloc = host + ':' + str(port)
-
-    def __call__(self, url, *args, **kwargs):
-        parsed_url = urlparse(url)
-
-        if parsed_url.scheme == 'file':
-            f = codecs.open(parsed_url.path, 'rb')
-            contents = f.read()
-            f.close()
-            return contents
-
-        if self._live_netloc is not None and parsed_url.netloc == self._live_netloc:
-            return self._client.get(url).content
-
-        if parsed_url.scheme not in self._servers or parsed_url.netloc not in self._servers[parsed_url.scheme]:
-            raise URLError('not valid')
-
-        base_path = self._servers[parsed_url.scheme][parsed_url.netloc]
-        final_path = os.path.normpath(os.path.join(base_path, parsed_url.path[1:]))
-
-        if final_path.startswith(base_path) and os.path.isfile(final_path):
-            f = codecs.open(final_path, 'rb')
-            contents = f.read()
-            f.close()
-
-            return contents
-        else:
-            raise HTTPError('url', '404', 'Not Found', None, None)
-
-
-class WirecloudTestCase(TransactionTestCase):
-
-    @classmethod
-    def setUpClass(cls):
-
-        cls.old_LANGUAGES = settings.LANGUAGES
-        cls.old_LANGUAGE_CODE = settings.LANGUAGE_CODE
-        cls.old_DEFAULT_LANGUAGE = settings.DEFAULT_LANGUAGE
-        settings.LANGUAGES = (('en', 'English'),)
-        settings.LANGUAGE_CODE = 'en'
-        settings.DEFAULT_LANGUAGE = 'en'
-
-        cls.shared_test_data_dir = os.path.join(os.path.dirname(__file__), 'test-data')
-
-        super(WirecloudTestCase, cls).setUpClass()
-
-    @classmethod
-    def tearDownClass(cls):
-        settings.LANGUAGES = cls.old_LANGUAGES
-        settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
-        settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
-
-        super(WirecloudTestCase, cls).tearDownClass()
-
-
-class LocalizedTestCase(TransactionTestCase):
-
-    @classmethod
-    def setUpClass(cls):
-
-        cls.old_LANGUAGES = settings.LANGUAGES
-        cls.old_LANGUAGE_CODE = settings.LANGUAGE_CODE
-        cls.old_DEFAULT_LANGUAGE = settings.DEFAULT_LANGUAGE
-        settings.LANGUAGES = (('en', 'English'), ('es', 'Spanish'))
-
-        super(LocalizedTestCase, cls).setUpClass()
-
-    @classmethod
-    def tearDownClass(cls):
-        settings.LANGUAGES = cls.old_LANGUAGES
-        settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
-        settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
-
-        super(LocalizedTestCase, cls).tearDownClass()
-
-    def setUp(self):
-        super(LocalizedTestCase, self).setUp()
-
-        self.changeLanguage('en')
-
-    def changeLanguage(self, new_language):
-        settings.LANGUAGE_CODE = new_language
-        settings.DEFAULT_LANGUAGE = new_language
-        translation.activate(new_language)
-
-
-class iwidget_context:
-
-    def __init__(self, driver, widget):
-        self.driver = driver
-        self.widget = widget
-
-    def __enter__(self):
-        self.driver.execute_script('return opManager.activeWorkspace.getIWidget(%d).content.setAttribute("id", "targetframe");' % self.widget)
-
-        # TODO work around webdriver bugs
-        self.driver.switch_to_default_content()
-
-        self.driver.switch_to_frame(self.driver.find_element_by_id('targetframe'))
-        return None
-
-    def __exit__(self, type, value, traceback):
-        self.driver.switch_to_frame(None)
-        self.driver.execute_script('return opManager.activeWorkspace.getIWidget(%d).content.removeAttribute("id");' % self.widget)
-
-        # TODO work around webdriver bugs
-        self.driver.switch_to_default_content()
-
-
-def uses_extra_resources(resources, shared=False):
-
-    def wrap(test_func):
-
-        def wrapper(self, *args, **kwargs):
-
-            if shared:
-                base = self.shared_test_data_dir
-            else:
-                base = self.test_data_dir
-
-            for resource in resources:
-                wgt_file = open(os.path.join(base, resource), 'rb')
-                wgt = WgtFile(wgt_file)
-                resource = install_resource_to_all_users(file_contents=wgt, packaged=True)
-                wgt_file.close()
-
-            return test_func(self, *args, **kwargs)
-
-        wrapper.func_name = test_func.func_name
-        return wrapper
-
-    return wrap
 
 
 def marketplace_loaded(driver):
@@ -287,19 +35,6 @@ def marketplace_loaded(driver):
         pass
 
     return False
-
-
-class IWidgetWiringEndpointTester(object):
-
-    def __init__(self, testcase, endpoint_name, element):
-
-        self.testcase = testcase
-        self.endpoint_name = endpoint_name
-        self.element = element
-
-    @property
-    def label(self):
-        return self.element.parentNode
 
 
 class IWidgetTester(object):
@@ -345,21 +80,13 @@ class IWidgetTester(object):
 
         WebDriverWait(self.testcase.driver, timeout).until(iwidget_unloaded)
 
-    def get_wiring_endpoint(self, endpoint_name):
-
-        return IWidgetWiringEndpointTester(self.testcase, endpoint_name, self.driver.execute_script('''
-             var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
-             return LayoutManagerFactory.getInstance().viewsByName["wiring"].iwidgets[%(iwidget)d].getAnchor("%(endpoint)s").wrapperElement;
-        ''' % {"iwidget": self.id, "endpoint": endpoint_name}
-        ))
-
 
 class WirecloudRemoteTestCase(object):
 
     @classmethod
     def setUpClass(cls):
 
-        cls.shared_test_data_dir = os.path.join(os.path.dirname(__file__), 'test-data')
+        cls.shared_test_data_dir = os.path.join(os.path.dirname(__file__), '../test-data')
         cls.test_data_dir = os.path.join(os.path.dirname(sys.modules[cls.__module__].__file__), 'test-data')
 
         # Load webdriver
@@ -400,6 +127,14 @@ class WirecloudRemoteTestCase(object):
         time.sleep(0.1)
         return element.find_element_by_css_selector(selector)
 
+    def wait_element_visible_by_id(self, selector, timeout=30, element=None):
+        if element is None:
+            element = self.driver
+
+        WebDriverWait(self.driver, timeout).until(lambda driver: element.find_element_by_id(selector).is_displayed())
+        time.sleep(0.1)
+        return element.find_element_by_id(selector)
+
     def wait_element_visible_by_xpath(self, selector, timeout=30, element=None):
         if element is None:
             element = self.driver
@@ -436,7 +171,7 @@ class WirecloudRemoteTestCase(object):
 
     def login(self, username='admin', password='admin'):
 
-        self.driver.get(self.live_server_url + reverse('login'))
+        self.driver.get(self.live_server_url + '/login')
         self.wait_element_visible_by_css_selector('#id_username')
 
         username_input = self.driver.find_element_by_id('id_username')
@@ -581,7 +316,7 @@ class WirecloudRemoteTestCase(object):
 
     def get_current_iwidgets(self):
         iwidget_ids = self.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
-        iwidget_elements = self.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.element;});')
+        iwidget_elements = self.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.internal_iwidget.loaded ? iwidget.element : null;});')
 
         return [IWidgetTester(self, iwidget_ids[i], iwidget_elements[i]) for i in range(len(iwidget_ids))]
 
@@ -596,7 +331,7 @@ class WirecloudRemoteTestCase(object):
             'new_iwidget': None,
         }
         def iwidget_loaded(driver):
-            if tmp['new_iwidget'] is not None:
+            if tmp['new_iwidget'] is not None and tmp['new_iwidget']['element'] is not None:
                 return tmp['new_iwidget']['element'].is_displayed()
 
             iwidgets = self.get_current_iwidgets()
@@ -608,7 +343,7 @@ class WirecloudRemoteTestCase(object):
                 if iwidget['id'] not in old_iwidget_ids:
                     tmp['new_iwidget'] = iwidget
 
-            return tmp['new_iwidget']['element'].is_displayed()
+            return tmp['new_iwidget']['element'] is not None and tmp['new_iwidget']['element'].is_displayed()
 
         WebDriverWait(self.driver, timeout).until(iwidget_loaded)
         # TODO firefox
@@ -723,6 +458,16 @@ class WirecloudRemoteTestCase(object):
 
         self.wait_wirecloud_ready()
         time.sleep(0.5)  # work around race condition
+        self.assertEqual(self.get_current_workspace_name(), workspace_name)
+
+    def change_current_workspace(self, workspace_name):
+        self.change_main_view('workspace')
+
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
+        self.wait_element_visible_by_css_selector('.popup_menu')
+        self.popup_menu_click(workspace_name)
+
+        self.wait_wirecloud_ready()
         self.assertEqual(self.get_current_workspace_name(), workspace_name)
 
     def remove_workspace(self):
@@ -923,158 +668,7 @@ class WirecloudRemoteTestCase(object):
 
     def get_iwidget_anchor(self, iwidget, endpoint):
         return self.driver.execute_script('''
+            var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
             return LayoutManagerFactory.getInstance().viewsByName["wiring"].iwidgets[%(iwidget)d].getAnchor("%(endpoint)s").wrapperElement;
         ''' % {"iwidget": iwidget, "endpoint": endpoint}
         )
-
-    def get_iwidget_label(self, iwidget, endpoint):
-        return self.driver.execute_script('''
-            return LayoutManagerFactory.getInstance().viewsByName["wiring"].iwidgets[%(iwidget)d].getAnchor("%(endpoint)s").wrapperElement.parentElement.parentElement;
-        ''' % {"iwidget": iwidget, "endpoint": endpoint}
-        )
-
-    def is_iwidget_anchor_in_pos(self, iwidget, endpoint, pos):
-        return self.driver.execute_script('''
-            endpoint = LayoutManagerFactory.getInstance().viewsByName["wiring"].iwidgets[%(iwidget)d].getAnchor("%(endpoint)s").wrapperElement.parentElement.parentElement;
-            endpointslist = LayoutManagerFactory.getInstance().viewsByName["wiring"].iwidgets[%(iwidget)d].getAnchor("%(endpoint)s").wrapperElement.parentElement.parentElement.parentElement.children;
-            return endpoint == endpointslist[%(pos)d]
-        ''' % {"iwidget": iwidget, "endpoint": endpoint, "pos": pos}
-        )
-
-    def get_ioperator_label(self, ioperator, endpoint):
-        return self.driver.execute_script('''
-            return LayoutManagerFactory.getInstance().viewsByName["wiring"].currentlyInUseOperators[%(ioperator)d].getAnchor("%(endpoint)s").wrapperElement.parentElement.parentElement;
-        ''' % {"ioperator": ioperator, "endpoint": endpoint}
-        )
-
-    def is_ioperator_anchor_in_pos(self, ioperator, endpoint, pos):
-        return self.driver.execute_script('''
-            endpoint = LayoutManagerFactory.getInstance().viewsByName["wiring"].currentlyInUseOperators[%(ioperator)d].getAnchor("%(endpoint)s").wrapperElement.parentElement.parentElement;
-            endpointslist = LayoutManagerFactory.getInstance().viewsByName["wiring"].currentlyInUseOperators[%(ioperator)d].getAnchor("%(endpoint)s").wrapperElement.parentElement.parentElement.parentElement.children;
-            return endpoint == endpointslist[%(pos)d]
-        ''' % {"ioperator": ioperator, "endpoint": endpoint, "pos": pos}
-        )
-
-class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
-
-    fixtures = ('initial_data', 'selenium_test_data')
-    __test__ = False
-
-    @classmethod
-    def setUpClass(cls):
-
-        WirecloudRemoteTestCase.setUpClass.im_func(cls)
-
-        cls.old_LANGUAGES = settings.LANGUAGES
-        cls.old_LANGUAGE_CODE = settings.LANGUAGE_CODE
-        cls.old_DEFAULT_LANGUAGE = settings.DEFAULT_LANGUAGE
-        settings.LANGUAGES = (('en', 'English'),)
-        settings.LANGUAGE_CODE = 'en'
-        settings.DEFAULT_LANGUAGE = 'en'
-
-        # downloader
-        cls._original_download_function = staticmethod(downloader.download_http_content)
-        downloader.download_http_content = LocalDownloader(getattr(cls, 'servers', {
-            'http': {
-                'localhost:8001': os.path.join(os.path.dirname(__file__), 'test-data', 'src'),
-            },
-        }))
-        cls._original_proxy_do_request_function = WIRECLOUD_PROXY._do_request
-        WIRECLOUD_PROXY._do_request = ProxyFakeDownloader()
-        WIRECLOUD_PROXY._do_request.set_response('http://example.com/success.html', 'remote makerequest succeded')
-
-        # catalogue deployer
-        cls.old_catalogue_deployer = catalogue.wgt_deployer
-        cls.catalogue_tmp_dir_backup = mkdtemp()
-        cls.catalogue_tmp_dir = mkdtemp()
-        catalogue.wgt_deployer = WgtDeployer(cls.catalogue_tmp_dir)
-
-        # showcase deployer
-        cls.old_deployer = showcase.wgt_deployer
-        cls.localcatalogue_tmp_dir_backup = mkdtemp()
-        cls.tmp_dir = mkdtemp()
-        showcase.wgt_deployer = WgtDeployer(cls.tmp_dir)
-
-        # deploy resource files
-        operator_wgt_file = open(os.path.join(cls.shared_test_data_dir, 'Wirecloud_TestOperator_1.0.zip'), 'rb')
-        operator_wgt = WgtFile(operator_wgt_file)
-        catalogue.add_widget_from_wgt(operator_wgt_file, None, wgt_file=operator_wgt, deploy_only=True)
-        operator_wgt_file.close()
-
-        widget_wgt_file = open(os.path.join(cls.shared_test_data_dir, 'Wirecloud_Test_1.0.wgt'))
-        widget_wgt = WgtFile(widget_wgt_file)
-        catalogue.add_widget_from_wgt(widget_wgt_file, None, wgt_file=widget_wgt, deploy_only=True)
-        showcase.wgt_deployer.deploy(widget_wgt)
-        widget_wgt_file.close()
-
-        restoretree(cls.tmp_dir, cls.localcatalogue_tmp_dir_backup)
-        restoretree(cls.catalogue_tmp_dir, cls.catalogue_tmp_dir_backup)
-
-        super(WirecloudSeleniumTestCase, cls).setUpClass()
-
-        downloader.download_http_content.set_live_server(cls.server_thread.host, cls.server_thread.port)
-
-    @classmethod
-    def tearDownClass(cls):
-
-        WirecloudRemoteTestCase.tearDownClass.im_func(cls)
-
-        # downloader
-        downloader.download_http_content = cls._original_download_function
-        WIRECLOUD_PROXY._do_request = cls._original_proxy_do_request_function
-
-        # deployers
-        catalogue.wgt_deployer = cls.old_catalogue_deployer
-        shutil.rmtree(cls.catalogue_tmp_dir_backup, ignore_errors=True)
-        shutil.rmtree(cls.catalogue_tmp_dir, ignore_errors=True)
-        showcase.wgt_deployer = cls.old_deployer
-        shutil.rmtree(cls.localcatalogue_tmp_dir_backup, ignore_errors=True)
-        shutil.rmtree(cls.tmp_dir, ignore_errors=True)
-
-        settings.LANGUAGES = cls.old_LANGUAGES
-        settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
-        settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
-
-        super(WirecloudSeleniumTestCase, cls).tearDownClass()
-
-    def setUp(self):
-        restoretree(self.localcatalogue_tmp_dir_backup, self.tmp_dir)
-        restoretree(self.catalogue_tmp_dir_backup, self.catalogue_tmp_dir)
-        cache.clear()
-        super(WirecloudSeleniumTestCase, self).setUp()
-
-
-browsers = getattr(settings, 'WIRECLOUD_SELENIUM_BROWSER_COMMANDS', {
-    'Firefox': {
-        'CLASS': 'selenium.webdriver.Firefox',
-    },
-    'GoogleChrome': {
-        'CLASS': 'selenium.webdriver.Chrome',
-    },
-})
-
-
-def build_selenium_test_cases(classes, namespace):
-    for class_name in classes:
-        for browser_name in browsers:
-            browser = browsers[browser_name]
-
-            if isinstance(class_name, basestring):
-                module_name, klass_name = class_name.rsplit('.', 1)
-                tests_class_name = browser_name + klass_name
-                module = import_module(module_name)
-                klass_instance = getattr(module, klass_name)
-            else:
-                tests_class_name = browser_name + class_name.__name__
-                klass_instance = class_name
-
-            namespace[tests_class_name] = type(
-                tests_class_name,
-                (klass_instance,),
-                {
-                    '__test__': True,
-                    '_webdriver_class': browser['CLASS'],
-                    '_webdriver_args': browser.get('ARGS', None),
-                }
-            )
-build_selenium_test_cases.__test__ = False

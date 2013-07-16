@@ -164,12 +164,6 @@
             'menu': this.marketMenu
         });
 
-        // If no alternatives exist, it is no posible to have an extra breadcrum
-        if (this.loading !== true && !this.error && this.number_of_alternatives > 0) {
-            if (typeof this.alternatives.getCurrentAlternative().getExtraBreadcrum === 'function') {
-                breadcrum = breadcrum.concat(this.alternatives.getCurrentAlternative().getExtraBreadcrum());
-            }
-        }
         return breadcrum;
     };
 

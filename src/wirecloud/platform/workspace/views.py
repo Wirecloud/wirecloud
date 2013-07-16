@@ -17,9 +17,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
 from cStringIO import StringIO
 import os
-import urlparse
 import zipfile
 
 from django.contrib.auth.models import Group, User
@@ -27,7 +27,6 @@ from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseForbidden, Http404
 from django.shortcuts import get_object_or_404
-from django.utils import simplejson
 from django.utils.translation import ugettext as _
 from django.utils.http import urlencode
 
@@ -42,9 +41,10 @@ from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.get_data import get_workspace_data, get_global_workspace_data
 from wirecloud.platform.iwidget.utils import deleteIWidget
-from wirecloud.platform.models import IWidget, PublishedWorkspace, Tab, UserWorkspace, VariableValue, Workspace
-from wirecloud.platform.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_template_from_workspace
+from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
+from wirecloud.platform.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import check_mashup_dependencies, buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate, MissingDependencies
+from wirecloud.platform.workspace.packageCloner import PackageCloner
 from wirecloud.platform.workspace.packageLinker import PackageLinker
 from wirecloud.platform.workspace.utils import deleteTab, createTab, get_workspace_list, setVisibleTab, set_variable_value
 from wirecloud.platform.markets.utils import get_market_managers
@@ -96,7 +96,7 @@ class WorkspaceCollection(Resource):
         workspaces, _junk, reload_showcase = get_workspace_list(request.user)
         data_list = [get_workspace_data(workspace, request.user) for workspace in workspaces]
 
-        return HttpResponse(simplejson.dumps(data_list), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(data_list), mimetype='application/json; charset=UTF-8')
 
     @authentication_required
     @supported_request_mime_types(('application/json',))
@@ -104,8 +104,8 @@ class WorkspaceCollection(Resource):
     def create(self, request):
 
         try:
-            data = simplejson.loads(request.raw_post_data)
-        except Exception, e:
+            data = json.loads(request.raw_post_data)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -191,8 +191,8 @@ class WorkspaceEntry(Resource):
     def create(self, request, workspace_id):
 
         try:
-            ts = simplejson.loads(request.raw_post_data)
-        except Exception, e:
+            ts = json.loads(request.raw_post_data)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -242,7 +242,6 @@ class WorkspaceEntry(Resource):
             return build_error_response(request, 403, msg)
 
         # Remove the workspace
-        PublishedWorkspace.objects.filter(workspace=workspace).update(workspace=None)
         iwidgets = IWidget.objects.filter(tab__workspace=workspace)
         for iwidget in iwidgets:
             deleteIWidget(iwidget, request.user)
@@ -266,8 +265,8 @@ class TabCollection(Resource):
     def create(self, request, workspace_id):
 
         try:
-            data = simplejson.loads(request.raw_post_data)
-        except Exception, e:
+            data = json.loads(request.raw_post_data)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -286,7 +285,7 @@ class TabCollection(Resource):
         # Returning created Ids
         ids = {'id': tab.id, 'name': tab.name}
 
-        return HttpResponse(simplejson.dumps(ids), status=201, mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(ids), status=201, mimetype='application/json; charset=UTF-8')
 
     @authentication_required
     @supported_request_mime_types(('application/json',))
@@ -304,8 +303,8 @@ class TabCollection(Resource):
             return HttpResponseForbidden()
 
         try:
-            order = simplejson.loads(request.raw_post_data)
-        except Exception, e:
+            order = json.loads(request.raw_post_data)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -337,8 +336,8 @@ class TabEntry(Resource):
             return HttpResponseForbidden()
 
         try:
-            data = simplejson.loads(request.raw_post_data)
-        except Exception, e:
+            data = json.loads(request.raw_post_data)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -394,17 +393,15 @@ class WorkspaceVariableCollection(Resource):
     def create(self, request, workspace_id):
 
         try:
-            iwidgetVariables = simplejson.loads(request.raw_post_data)
-        except Exception, e:
+            iwidgetVariables = json.loads(request.raw_post_data)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
-        variables_to_notify = []
         for igVar in iwidgetVariables:
-            variables_to_notify += set_variable_value(igVar['id'], request.user, igVar['value'])
+            set_variable_value(igVar['id'], request.user, igVar['value'])
 
-        data = {'iwidgetVars': variables_to_notify}
-        return HttpResponse(simplejson.dumps(data), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(status=204)
 
 
 class WorkspaceSharerEntry(Resource):
@@ -419,7 +416,7 @@ class WorkspaceSharerEntry(Resource):
         if owner != request.user:
             msg = 'You are not the owner of the workspace, so you can not share it!'
             result = {'result': 'error', 'description': msg}
-            return HttpResponseForbidden(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
+            return HttpResponseForbidden(json.dumps(result), mimetype='application/json; charset=UTF-8')
 
         #Everything right!
         if request.raw_post_data == '':
@@ -433,12 +430,12 @@ class WorkspaceSharerEntry(Resource):
             url = request.build_absolute_uri(workspace_path + '?' + urlencode({u'view': 'viewer'}))
 
             result = {"result": "ok", "url": url}
-            return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
+            return HttpResponse(json.dumps(result), mimetype='application/json; charset=UTF-8')
         else:
             #Share only with the scpecified groups
             try:
-                groups = simplejson.loads(request.raw_post_data)
-            except Exception, e:
+                groups = json.loads(request.raw_post_data)
+            except ValueError, e:
                 msg = _("malformed json data: %s") % unicode(e)
                 return build_error_response(request, 400, msg)
 
@@ -462,31 +459,67 @@ class MashupMergeService(Service):
     def process(self, request, to_ws_id):
 
         try:
-            data = simplejson.loads(request.raw_post_data)
-        except Exception, e:
+            data = json.loads(request.raw_post_data)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
-        template_url = data['workspace']
+        mashup_id = data.get('mashup', '')
+        workspace_id = data.get('workspace', '')
+
+        if mashup_id == '' and workspace_id == '':
+            return build_error_response(request, 422, _('missing workspace name or mashup id'))
+        elif  mashup_id != '' and workspace_id != '':
+            return build_error_response(request, 422, _('missing workspace name or mashup id'))
 
         to_ws = get_object_or_404(Workspace, id=to_ws_id)
         if not request.user.is_superuser and to_ws.creator != request.user:
             return HttpResponseForbidden()
 
-        path = request.build_absolute_uri()
-        login_scheme, login_netloc = urlparse.urlparse(template_url)[:2]
-        current_scheme, current_netloc = urlparse.urlparse(path)[:2]
-        if ((not login_scheme or login_scheme == current_scheme) and
-            (not login_netloc or login_netloc == current_netloc)):
-            pworkspace_id = template_url.split('/')[-2]
-            template = PublishedWorkspace.objects.get(id=pworkspace_id).template
+        if mashup_id != '':
+            values = mashup_id.split('/', 3)
+            if len(values) != 3:
+                return build_error_response(request, 422, _('invalid mashup id'))
+
+            (mashup_vendor, mashup_name, mashup_version) = values
+            try:
+                resource = CatalogueResource.objects.get(vendor=mashup_vendor, short_name=mashup_name, version=mashup_version)
+                if not resource.is_available_for(request.user) or resource.resource_type() != 'mashup':
+                    raise CatalogueResource.DoesNotExist
+            except CatalogueResource.DoesNotExist:
+                return build_error_response(request, 422, _('Mashup not found: %(mashup_id)s') % {'mashup_id': mashup_id})
+
+            if resource.fromWGT:
+                base_dir = catalogue.wgt_deployer.get_base_dir(mashup_vendor, mashup_name, mashup_version)
+                wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
+                template = TemplateParser(wgt_file.get_template())
+            else:
+                template = downloader.download_http_content(resource.template_uri, user=request.user)
+                try:
+                    template = TemplateParser(template)
+                except:
+                    build_error_response(request, 424, _('Downloaded invalid resource description from: %(url)s') % {'url': resource.template_uri})
+
+            try:
+                check_mashup_dependencies(template, request.user)
+            except MissingDependencies, e:
+                details = {
+                    'missingDependencies': e.missing_dependencies,
+                }
+                return build_error_response(request, 422, unicode(e), details=details)
+
+            fillWorkspaceUsingTemplate(to_ws, template)
+
         else:
-            template = downloader.download_http_content(template_url, user=request.user)
 
-        fillWorkspaceUsingTemplate(to_ws, template)
+            from_ws = get_object_or_404(Workspace, id=workspace_id)
+            if not request.user.is_superuser and from_ws.creator != request.user:
+                return HttpResponseForbidden()
 
-        result = {'result': 'ok', 'workspace_id': to_ws_id}
-        return HttpResponse(simplejson.dumps(result), mimetype='application/json; charset=UTF-8')
+            packageCloner = PackageCloner()
+            packageCloner.merge_workspaces(from_ws, to_ws, to_ws.creator)
+
+        return HttpResponse(status=204)
 
 
 def check_json_fields(json, fields):
@@ -515,8 +548,8 @@ class WorkspacePublisherEntry(Resource):
             image_file = request.FILES.get('image', None)
 
         try:
-            options = simplejson.loads(received_json)
-        except Exception, e:
+            options = json.loads(received_json)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 

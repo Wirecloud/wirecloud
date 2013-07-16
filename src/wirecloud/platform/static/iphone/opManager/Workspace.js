@@ -145,16 +145,6 @@ function Workspace(workspaceState) {
         this.varManager.sendBufferedVars();
     };
 
-    Workspace.prototype.getTabInstance = function (tabId) {
-        var i;
-        for (i = 0; i < this.tabInstances.length; i += 1) {
-            if (this.tabInstances[i].getId() === tabId) {
-                return this.tabInstances[i];
-            }
-        }
-        return null;
-    };
-
     Workspace.prototype.getName = function () {
         return this.workspaceState.name;
     };
@@ -234,7 +224,7 @@ function Workspace(workspaceState) {
         this.wiring = new Wirecloud.Wiring(this);
         iwidgets = this.getIWidgets();
         for (i = 0; i < iwidgets.length; i += 1) {
-            this.events.iwidgetadded.dispatch(this, iwidgets[i]);
+            this.events.iwidgetadded.dispatch(this, iwidgets[i].internal_iwidget);
         }
         this.wiring.load(this.workspaceGlobalInfo.wiring);
         this._buildInterface();
@@ -257,7 +247,14 @@ function Workspace(workspaceState) {
     };
 
     Workspace.prototype.getTab = function (tabId) {
-        return this.tabInstances.getElementById(tabId);
+        var i;
+
+        for (i = 0; i < this.tabInstances.length; i += 1) {
+            if (this.tabInstances[i].getId() === tabId) {
+                return this.tabInstances[i];
+            }
+        }
+        return null;
     };
 
     Workspace.prototype.setTab = function (tab) {
@@ -339,12 +336,6 @@ function Workspace(workspaceState) {
             }
         }
         return false;
-    };
-
-    Workspace.prototype.showRelatedIwidget = function (iWidgetId, tabId) {
-        this.visibleTab = this.getTab(tabId);
-        this.visibleTabIndex = this.tabInstances.indexOf(this.visibleTab);
-        this.visibleTab.getDragboard().paintRelatedIWidget(iWidgetId);
     };
 
     // *****************

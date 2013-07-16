@@ -19,11 +19,15 @@
  *
  */
 
+/*global Wirecloud*/
+
 (function () {
+
+    "use strict";
 
     var TargetEndpoint = function TargetEndpoint(name, type, friendCode, id) {
         Wirecloud.wiring.Endpoint.call(this, name, type, friendCode, id);
-        this.inputs = new Array();
+        this.inputs = [];
     };
 
     TargetEndpoint.prototype = new Wirecloud.wiring.Endpoint();
@@ -34,13 +38,24 @@
     /**
      * @private
      */
-    TargetEndpoint.prototype._addInput = function _addInput(inout) {
-        this.inputs.push(inout);
+    TargetEndpoint.prototype._addInput = function _addInput(input) {
+        this.inputs.push(input);
+    };
+
+    /**
+     * @private
+     */
+    TargetEndpoint.prototype._removeInput = function _removeInput(input) {
+        var index = this.inputs.indexOf(input);
+
+        if (index != -1) {
+            this.inputs.splice(index, input);
+        }
     };
 
     TargetEndpoint.prototype.fullDisconnect = function fullDisconnect() {
         // Disconnecting inputs
-        var inputs = this.inputs.clone();
+        var inputs = this.inputs.slice(0);
         for (var i = 0; i < inputs.length; ++i) {
             inputs[i].disconnect(this);
         }

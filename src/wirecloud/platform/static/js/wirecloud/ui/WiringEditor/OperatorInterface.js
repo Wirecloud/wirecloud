@@ -43,9 +43,6 @@
         if ('ghost' in ioperator) {
             // Ghost Operator
             isGhost = true;
-            this.ioperator.display_name = ioperator.name;
-            this.ioperator.meta = {};
-            this.ioperator.meta.uri = ioperator.name;
 
             for (i = 0; i < endPointPos.sources.length; i += 1) {
                 outputs[endPointPos.sources[i]] = {

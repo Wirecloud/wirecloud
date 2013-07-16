@@ -18,7 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from wirecloud.commons.test import WirecloudSeleniumTestCase
+from wirecloud.commons.utils.testcases import WirecloudSeleniumTestCase
 
 __test__ = False
 

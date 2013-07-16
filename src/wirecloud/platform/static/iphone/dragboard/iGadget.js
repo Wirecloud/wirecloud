@@ -60,10 +60,7 @@ function IWidget(widget, iWidgetId, iWidgetCode, iWidgetName, dragboard, alterna
         this.paint();
     }.bind(this));
 
-
-    StyledElements.ObjectWithEvents.call(this, ['load', 'unload']);
 }
-IWidget.prototype = new StyledElements.ObjectWithEvents();
 
 /**
 * Paints the widget instance
@@ -93,16 +90,6 @@ IWidget.prototype.paint = function () {
 };
 
 IWidget.prototype.load = IWidget.prototype.paint;
-
-IWidget.prototype._notifyUnloaded = function () {
-    if (!this.loaded) {
-        return;
-    }
-
-    this.loaded = false;
-    this.internal_iwidget._unload();
-    this.events['unload'].dispatch(this);
-};
 
 /*
 * Perform the properly actions to show to the user that the widget has received and event

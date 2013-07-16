@@ -199,14 +199,28 @@
         }
 
         element.contentDocument.defaultView.addEventListener('unload',
-            this._notifyUnloaded,
+            this._notifyUnloaded.bind(this),
             true);
+
+        /* Propagate pending events */
+        for (var i = 0; i < this.pending_events.length; i += 1) {
+            this.inputs[this.pending_events[i].endpoint].propagate(this.pending_events[i].value);
+        }
+        this.pending_events = [];
 
         this.events['load'].dispatch(this);
     };
 
-    IWidget.prototype._unload = function _unload() {
+    IWidget.prototype._notifyUnloaded = function _notifyUnloaded() {
         var i, opManager;
+
+        if (!this.loaded) {
+            return;
+        }
+
+        var msg = gettext('iWidget unloaded');
+        this.logManager.log(msg, Constants.Logging.INFO_MSG);
+        this.logManager.newCycle();
 
         // Remove context callbacks
         for (i = 0; i < this.callbacks.iwidget.length; i += 1) {
@@ -230,6 +244,9 @@
 
         // Remove preferences callback
         this.prefCallback = null;
+
+        this.loaded = false;
+        this.events['unload'].dispatch(this);
     };
 
     IWidget.prototype.buildInterface = function buildInterface(template, view) {
@@ -237,16 +254,16 @@
     };
 
     IWidget.prototype.fullDisconnect = function fullDisconnect() {
-        var i, connectables;
+        var key, connectables;
 
         connectables = this.inputs;
-        for (i = 0; i < connectables.length; i++) {
-            connectables[i].fullDisconnect();
+        for (key in connectables) {
+            connectables[key].fullDisconnect();
         }
 
         connectables = this.outputs;
-        for (i = 0; i < connectables.length; i++) {
-            connectables[i].fullDisconnect();
+        for (key in connectables) {
+            connectables[key].fullDisconnect();
         }
     };
 

@@ -150,7 +150,7 @@ function Workspace (workspaceState) {
             this.wiring = new Wirecloud.Wiring(this);
             iwidgets = this.getIWidgets();
             for (i = 0; i < iwidgets.length; i += 1) {
-                this.events.iwidgetadded.dispatch(this, iwidgets[i]);
+                this.events.iwidgetadded.dispatch(this, iwidgets[i].internal_iwidget);
             }
 
             // FIXME
@@ -328,10 +328,6 @@ function Workspace (workspaceState) {
             iwidgets[i]._updateVersionButton();
         }
     };
-
-    Workspace.prototype.getTabInstance = function(tabId) {
-        return this.tabInstances.get(tabId);
-    }
 
     Workspace.prototype.iwidgetUnloaded = function(iwidgetId) {
         var iwidget = this.getIWidget(iwidgetId);
@@ -644,7 +640,7 @@ function Workspace (workspaceState) {
         this.emptyWorkspaceInfoBox.addClassName('hidden');
 
         this.varManager.addInstance(iwidget, iwidgetJSON, tab);
-        this.events.iwidgetadded.dispatch(this, iwidget);
+        this.events.iwidgetadded.dispatch(this, iwidget.internal_iwidget);
 
         options.setDefaultValues.call(this, iwidget.id);
 
@@ -660,7 +656,7 @@ function Workspace (workspaceState) {
 
         var dragboard = iwidget.layout.dragboard;
         dragboard.removeInstance(iWidgetId, orderFromServer); // TODO split into hideInstance and removeInstance
-        this.events.iwidgetremoved.dispatch(this, iwidget);
+        this.events.iwidgetremoved.dispatch(this, iwidget.internal_iwidget);
 
         iwidget.destroy();
 
@@ -727,9 +723,11 @@ function Workspace (workspaceState) {
         msg = interpolate(msg, {srcworkspace: workspace.name, dstworkspace: this.getName()}, true);
         layoutManager.logSubTask(msg);
 
-        workspaceUrl = Wirecloud.URLs.WORKSPACE_MERGE_LOCAL.evaluate({from_ws_id: workspace.id, to_ws_id: this.workspaceState.id});
+        workspaceUrl = Wirecloud.URLs.WORKSPACE_MERGE.evaluate({to_ws_id: this.workspaceState.id});
         Wirecloud.io.markeRequest(workspaceUrl, {
-            method: 'GET',
+            method: 'POST',
+            contentType: 'application/json',
+            postBody: JSON.stringify({'workspace': from_ws_id}),
             onSuccess: mergeSuccess,
             onFailure: mergeError
         });

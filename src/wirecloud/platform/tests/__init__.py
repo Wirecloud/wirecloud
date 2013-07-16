@@ -6,7 +6,7 @@ from wirecloud.platform.widget.tests import CodeTransformationTestCase
 from wirecloud.platform.workspace.tests import WorkspaceTestCase, WorkspaceCacheTestCase, ParameterizedWorkspaceParseTestCase, ParameterizedWorkspaceGenerationTestCase
 from wirecloud.proxy.tests import ProxyTests, ProxySecureDataTests
 
-from wirecloud.commons.test import build_selenium_test_cases
+from wirecloud.commons.utils.testcases import build_selenium_test_cases
 
 build_selenium_test_cases(('wirecloud.platform.tests.selenium_tests.BasicSeleniumTests',), locals())
 build_selenium_test_cases(('wirecloud.platform.localcatalogue.tests.LocalCatalogueSeleniumTests',), locals())

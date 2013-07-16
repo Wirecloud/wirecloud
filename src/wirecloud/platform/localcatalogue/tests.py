@@ -30,10 +30,10 @@ from django.test import TransactionTestCase, Client
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.utils import delete_resource
-import wirecloud.commons.test
-from wirecloud.commons.test import cleartree, FakeDownloader, LocalizedTestCase, WirecloudSeleniumTestCase
+import wirecloud.commons
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
+from wirecloud.commons.utils.testcases import cleartree, FakeDownloader, LocalizedTestCase, WirecloudSeleniumTestCase
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 from wirecloud.platform.get_data import get_widget_data
 from wirecloud.platform.localcatalogue.utils import install_resource, install_resource_to_user
@@ -441,7 +441,7 @@ class PackagedResourcesTestCase(TransactionTestCase):
 
     def test_basic_packaged_mashup_deployment(self):
 
-        wgt_file = WgtFile(os.path.join(os.path.dirname(wirecloud.commons.test.__file__), 'test-data', 'Wirecloud_PackagedTestMashup_1.0.zip'))
+        wgt_file = WgtFile(os.path.join(os.path.dirname(wirecloud.commons.__file__), 'test-data', 'Wirecloud_PackagedTestMashup_1.0.zip'))
         deployment_path = catalogue.wgt_deployer.get_base_dir('Wirecloud', 'PackagedTestMashup', '1.0')
 
         install_resource_to_user(self.user, file_contents=wgt_file, packaged=True)
@@ -454,7 +454,7 @@ class PackagedResourcesTestCase(TransactionTestCase):
 
     def test_basic_packaged_operator_deployment(self):
 
-        wgt_file = WgtFile(os.path.join(os.path.dirname(wirecloud.commons.test.__file__), 'test-data', 'Wirecloud_TestOperator_1.0.zip'))
+        wgt_file = WgtFile(os.path.join(os.path.dirname(wirecloud.commons.__file__), 'test-data', 'Wirecloud_TestOperator_1.0.zip'))
         deployment_path = catalogue.wgt_deployer.get_base_dir('Wirecloud', 'TestOperator', '1.0')
 
         install_resource_to_user(self.user, file_contents=wgt_file, packaged=True)

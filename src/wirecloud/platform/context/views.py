@@ -17,8 +17,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
+
 from django.http import HttpResponse
-from django.utils import simplejson
 from wirecloud.commons.utils.encoding import LazyEncoder
 from wirecloud.commons.utils.http import authentication_required
 from wirecloud.commons.baseviews import Resource
@@ -31,4 +32,4 @@ class PlatformContextCollection(Resource):
     def read(self, request):
 
         context = get_platform_context(request.user)
-        return HttpResponse(simplejson.dumps(context, cls=LazyEncoder), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(context, cls=LazyEncoder), mimetype='application/json; charset=UTF-8')

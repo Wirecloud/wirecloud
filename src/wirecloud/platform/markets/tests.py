@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from wirecloud.commons.test import WirecloudSeleniumTestCase, WirecloudTestCase
+from wirecloud.commons.utils.testcases import WirecloudSeleniumTestCase, WirecloudTestCase
 
 
 __test__ = False

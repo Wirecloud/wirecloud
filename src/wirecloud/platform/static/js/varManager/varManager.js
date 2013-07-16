@@ -41,7 +41,7 @@ function VarManager (_workspace) {
             var iwidgets = tabs[i]['iwidgets'];
 
             for (var j=0; j<iwidgets.length; j++) {
-                this.parseIWidgetVariables(iwidgets[j], this.workspace.getTabInstance(tabs[i].id));
+                this.parseIWidgetVariables(iwidgets[j], this.workspace.getTab(tabs[i].id));
             }
         }
     }
@@ -59,22 +59,6 @@ function VarManager (_workspace) {
 
         // Asynchronous handlers
         function onSuccess(transport) {
-            var response = transport.responseText;
-            var modifiedVariables = JSON.parse(response);
-            var iwidgetVars = modifiedVariables['iwidgetVars']
-
-            this.modificationsEnabled = false; //lock the adding of modified variables to the buffer
-            for (var i = 0; i < iwidgetVars.length; i++) {
-                var id = iwidgetVars[i].id;
-                var variable = this.getVariableById(id);
-                variable.annotate(iwidgetVars[i].value)
-            }
-            for (var i = 0; i < iwidgetVars.length; i++) {
-                var id = iwidgetVars[i].id;
-                var variable = this.getVariableById(id);
-                variable.set(iwidgetVars[i].value) //set will not add the variable to the modified variables to be sent due to the 'disableModifications'
-            }
-            this.modificationsEnabled = true; //unlock the adding of modified variables to the buffer
         }
 
         function onError(transport, e) {
@@ -91,7 +75,7 @@ function VarManager (_workspace) {
                 method: 'POST',
                 asynchronous: async,
                 contentType: 'application/json',
-                postBody: Object.toJSON(this.iwidgetModifiedVars),
+                postBody: JSON.stringify(this.iwidgetModifiedVars),
                 onSuccess: onSuccess.bind(this),
                 onFailure: onError.bind(this),
                 onException: onError.bind(this)

@@ -33,9 +33,9 @@ import wirecloud.catalogue.utils
 from wirecloud.catalogue.utils import add_resource_from_template
 from wirecloud.catalogue.get_json_catalogue_data import get_resource_data
 from wirecloud.catalogue.models import CatalogueResource, WidgetWiring
-from wirecloud.commons.test import FakeDownloader, LocalDownloader, LocalizedTestCase
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.template import TemplateParseException
+from wirecloud.commons.utils.testcases import FakeDownloader, LocalDownloader, LocalizedTestCase
 from wirecloud.commons.utils.wgt import WgtDeployer
 
 

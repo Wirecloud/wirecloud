@@ -23,7 +23,7 @@ import time
 from selenium.webdriver.support.ui import WebDriverWait
 
 from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.commons.test import uses_extra_resources, iwidget_context, WirecloudSeleniumTestCase
+from wirecloud.commons.utils.testcases import uses_extra_resources, iwidget_context, WirecloudSeleniumTestCase
 
 
 class BasicSeleniumTests(WirecloudSeleniumTestCase):
@@ -157,6 +157,44 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(prop_input.get_attribute('value'), 'new value')
 
     test_basic_widget_functionalities.tags = ('fiware-ut-5',)
+
+    def test_pending_wiring_events(self):
+
+        self.login(username='user_with_workspaces')
+
+        self.change_current_workspace('Pending Events')
+
+        iwidgets = self.get_current_iwidgets()
+        source_iwidget = iwidgets[0]
+        target_iwidget = iwidgets[1]
+        self.assertIsNotNone(source_iwidget.element)
+        self.assertIsNone(target_iwidget.element)
+        with iwidget_context(self.driver, source_iwidget['id']):
+            text_input = self.driver.find_element_by_tag_name('input')
+            self.fill_form_input(text_input, 'hello world!!')
+            # Work around hang when using Firefox Driver
+            self.driver.execute_script('sendEvent();')
+            #self.driver.find_element_by_id('b1').click()
+
+        time.sleep(0.5)
+
+        iwidgets = self.get_current_iwidgets()
+        source_iwidget = iwidgets[0]
+        target_iwidget = iwidgets[1]
+        self.assertIsNotNone(source_iwidget.element)
+        self.assertIsNotNone(target_iwidget.element)
+
+        tab = self.get_workspace_tab_by_name('Tab 2')
+        tab.click();
+
+        with iwidget_context(self.driver, target_iwidget['id']):
+            try:
+                WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
+            except:
+                pass
+
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, 'hello world!!')
 
     def test_http_cache(self):
 

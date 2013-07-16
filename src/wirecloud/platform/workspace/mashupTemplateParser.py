@@ -17,7 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils import simplejson
+import json
+
 from django.utils.translation import ugettext as _
 
 from wirecloud.catalogue.models import CatalogueResource
@@ -194,7 +195,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
             iwidget_id_mapping[resource.get('id')] = iwidget
 
     if workspace.forcedValues is not None and workspace.forcedValues != '':
-        old_forced_values = simplejson.loads(workspace.forcedValues)
+        old_forced_values = json.loads(workspace.forcedValues)
     else:
         old_forced_values = {
             'extra_preferences': {},
@@ -202,7 +203,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
         }
 
     forced_values['iwidget'].update(old_forced_values['iwidget'])
-    workspace.forcedValues = simplejson.dumps(forced_values, ensure_ascii=False)
+    workspace.forcedValues = json.dumps(forced_values, ensure_ascii=False)
 
     # wiring
     wiring_status = {
@@ -211,7 +212,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
     }
 
     if workspace.wiringStatus != '':
-        workspace_wiring_status = simplejson.loads(workspace.wiringStatus)
+        workspace_wiring_status = json.loads(workspace.wiringStatus)
     else:
         workspace_wiring_status = {
             'operators': {},
@@ -295,6 +296,6 @@ def fillWorkspaceUsingTemplate(workspace, template):
                 'connections': []
             })
 
-    workspace.wiringStatus = simplejson.dumps(wiring_status)
+    workspace.wiringStatus = json.dumps(wiring_status)
 
     workspace.save()

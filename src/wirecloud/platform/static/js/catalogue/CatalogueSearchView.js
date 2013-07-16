@@ -25,11 +25,17 @@
     "use strict";
 
     var CatalogueSearchView = function CatalogueSearchView(id, options) {
+        var builder, context, extra_context;
+
         options['class'] = 'search_interface';
         this.catalogue = options.catalogue;
         StyledElements.Alternative.call(this, id, options);
 
-        var builder = new StyledElements.GUIBuilder();
+        if (options.gui_template == null) {
+            options.gui_template = 'wirecloud_catalogue_search_interface';
+        }
+
+        builder = new StyledElements.GUIBuilder();
         this.pagination = new StyledElements.Pagination({
             'pageSize': 30,
             'order_by': '-popularity',
@@ -64,7 +70,13 @@
         this.simple_search_input.inputElement.className = 'simple_search_text';
         this.simple_search_input.inputElement.addEventListener('keypress', this._onSearchInputKeyPress.bind(this));
         this.simple_search_input.addEventListener('change', this._onSearchInput.bind(this));
-        var contents = builder.parse(Wirecloud.currentTheme.templates['wirecloud_catalogue_search_interface'], {
+
+        if ('extra_context' in options) {
+            extra_context = options.extra_context;
+        } else {
+            extra_context = {};
+        }
+        context = EzWebExt.merge(extra_context, {
             'resourcelist': this.resource_list,
             'pagination': function () {
                 return new StyledElements.PaginationInterface(this.pagination);
@@ -128,6 +140,8 @@
             }.bind(this),
             'searchinput': this.simple_search_input
         });
+
+        var contents = builder.parse(Wirecloud.currentTheme.templates[options.gui_template], context);
         this.appendChild(contents);
         this.timeout = null;
         this._keywordTimeoutHandler = this._keywordTimeoutHandler.bind(this);

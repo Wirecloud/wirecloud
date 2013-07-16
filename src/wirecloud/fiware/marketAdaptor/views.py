@@ -54,6 +54,9 @@ def get_market_adaptor(market_user, market):
 
 def get_market_user_data(user, market_user, market_name):
 
+    if market_user == 'public':
+        market_user = None
+
     user_data = {}
     for user_data_entry in MarketUserData.objects.filter(market__user__username=market_user, market__name=market_name, user=user):
         try:
@@ -99,9 +102,10 @@ class ServiceSearchCollection(Resource):
     def read(self, request, market_user, market_name, store='', search_string='widget'):
 
         adaptor = get_market_adaptor(market_user, market_name)
+        user_data = get_market_user_data(request.user, market_user, market_name)
 
         try:
-            result = adaptor.full_text_search(store, search_string)
+            result = adaptor.full_text_search(store, search_string, user_data)
         except:
             return HttpResponse(status=502)
 

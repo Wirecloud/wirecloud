@@ -18,8 +18,9 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import json
+
 from django.http import HttpResponse
-from django.utils import simplejson
 from django.utils.translation import ugettext as _
 from django.shortcuts import get_object_or_404
 
@@ -46,7 +47,7 @@ class IWidgetCollection(Resource):
         iwidgets = IWidget.objects.filter(tab__workspace__users=request.user, tab__workspace__pk=workspace_id, tab__pk=tab_id)
         data = [get_iwidget_data(iwidget, request.user, workspace, cache_manager) for iwidget in iwidgets]
 
-        return HttpResponse(simplejson.dumps(data), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(data), mimetype='application/json; charset=UTF-8')
 
     @authentication_required
     @supported_request_mime_types(('application/json',))
@@ -54,8 +55,8 @@ class IWidgetCollection(Resource):
     def create(self, request, workspace_id, tab_id):
 
         try:
-            iwidget = simplejson.loads(request.raw_post_data)
-        except simplejson.JSONDecodeError, e:
+            iwidget = json.loads(request.raw_post_data)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -67,7 +68,7 @@ class IWidgetCollection(Resource):
             iwidget = SaveIWidget(iwidget, request.user, tab, initial_variable_values)
             iwidget_data = get_iwidget_data(iwidget, request.user, tab.workspace)
 
-            return HttpResponse(simplejson.dumps(iwidget_data), mimetype='application/json; charset=UTF-8')
+            return HttpResponse(json.dumps(iwidget_data), mimetype='application/json; charset=UTF-8')
         except Widget.DoesNotExist, e:
             msg = _('referred widget %(widget_uri)s does not exist.') % {'widget_uri': iwidget['widget']}
 
@@ -79,8 +80,8 @@ class IWidgetCollection(Resource):
     def update(self, request, workspace_id, tab_id):
 
         try:
-            iwidgets = simplejson.loads(request.raw_post_data)
-        except simplejson.JSONDecodeError, e:
+            iwidgets = json.loads(request.raw_post_data)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -102,7 +103,7 @@ class IWidgetEntry(Resource):
         iwidget = get_object_or_404(IWidget, tab__workspace__users=request.user, tab__workspace=workspace, tab__pk=tab_id, pk=iwidget_id)
         iwidget_data = get_iwidget_data(iwidget, request.user, workspace)
 
-        return HttpResponse(simplejson.dumps(iwidget_data), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(iwidget_data), mimetype='application/json; charset=UTF-8')
 
     @authentication_required
     @supported_request_mime_types(('application/json',))
@@ -110,8 +111,8 @@ class IWidgetEntry(Resource):
     def create(self, request, workspace_id, tab_id, iwidget_id):
 
         try:
-            iwidget = simplejson.loads(request.raw_post_data)
-        except simplejson.JSONDecodeError, e:
+            iwidget = json.loads(request.raw_post_data)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -141,8 +142,8 @@ class IWidgetPreferences(Resource):
     def create(self, request, workspace_id, tab_id, iwidget_id):
 
         try:
-            new_values = simplejson.loads(request.raw_post_data)
-        except simplejson.JSONDecodeError, e:
+            new_values = json.loads(request.raw_post_data)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -171,8 +172,8 @@ class IWidgetVersion(Resource):
             raise Http403()
 
         try:
-            data = simplejson.loads(request.raw_post_data)
-        except simplejson.JSONDecodeError, e:
+            data = json.loads(request.raw_post_data)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
