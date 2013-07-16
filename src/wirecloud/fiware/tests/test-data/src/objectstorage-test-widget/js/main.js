@@ -69,6 +69,7 @@
 
     var onUploadFileSuccess = function onUploadFileSuccess(file_name) {
         document.getElementById('file_upload').textContent = 'OK';
+
         api.deleteFile('integrationTests', file_name, token, {
             onSuccess: onDeleteFileSuccess,
             onFailure: function () {
@@ -80,7 +81,6 @@
 
     var onDeleteFileSuccess = function onDeleteFileSuccess() {
         document.getElementById('file_deletion').textContent = 'OK';
-        document.getElementById('api_token').textContent = token;
 
         msg = document.createElement('div');
         msg.className = 'alert alert-block alert-success';
@@ -93,8 +93,8 @@
 
     var fail = function fail() {
         msg = document.createElement('div');
-        msg.className = 'alert alert-block alert-success';
-        msg.textContent = 'Success!';
+        msg.className = 'alert alert-block alert-error';
+        msg.textContent = 'Failure!';
         document.body.appendChild(msg);
 
         msg.scrollIntoView();
@@ -102,12 +102,6 @@
     };
 
     setTimeout(function () {
-        if (objectstorage_available) {
-            document.getElementById('api_available').textContent = 'Yes';
-        } else {
-            document.getElementById('api_available').textContent = 'No';
-        }
-
         button = new StyledElements.StyledButton({
             'text': 'Pass integration tests',
             'class': 'btn-primary'
@@ -129,6 +123,14 @@
                 }
             });
         });
+
+        if (objectstorage_available) {
+            document.getElementById('api_available').textContent = 'Yes';
+        } else {
+            document.getElementById('api_available').textContent = 'No';
+            fail();
+            button.disable();
+        }
     }, 0);
 
 })();

@@ -52,6 +52,21 @@ class IWidgetTester(object):
         elif key == 'element':
             return self.element
 
+    def __enter__(self):
+        self.content_element = self.testcase.driver.execute_script('return opManager.activeWorkspace.getIWidget(%d).content;' % self.id)
+
+        # TODO work around webdriver bugs
+        self.testcase.driver.switch_to_default_content()
+
+        self.testcase.driver.switch_to_frame(self.content_element)
+        return None
+
+    def __exit__(self, type, value, traceback):
+        self.testcase.driver.switch_to_frame(None)
+
+        # TODO work around webdriver bugs
+        self.testcase.driver.switch_to_default_content()
+
     @property
     def name(self):
         return self.element.find_element_by_css_selector('.widget_menu > span').text

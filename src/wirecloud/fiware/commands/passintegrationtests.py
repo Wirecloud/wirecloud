@@ -142,6 +142,12 @@ class IntegrationTestCase(WirecloudRemoteTestCase, unittest.TestCase):
         response = requests.post(urljoin(STORE_INSTANCE, 'api/contracting'), data=json.dumps(data), headers=headers)
         self.assertEqual(response.status_code, 201, 'Unable to reset WStore status')
 
+        # And uninstall Map Viewer just in case it was installed
+        self.search_resource('Map Viewer')
+        resource = self.search_in_catalogue_results('Map Viewer')
+        if resource is not None:
+            self.uninstall_resource('Map Viewer')
+
         # Run the test
         self.change_marketplace('FI-WARE')
         self.search_resource('Map Viewer')
@@ -149,16 +155,28 @@ class IntegrationTestCase(WirecloudRemoteTestCase, unittest.TestCase):
         install_button = resource.find_element_by_css_selector('.mainbutton > div')
         self.assertEqual(install_button.text, 'Install')
         install_button.click()
+        time.sleep(0.1)
+        self.wait_catalogue_ready()
 
-        self.change_marketplace('local')
         self.add_widget_to_mashup('Map Viewer')
 
     def test_pubsub_context_broker_integration(self):
+
         iwidget = self.add_widget_to_mashup('Wirecloud NGSI API test widget')
+
+        with iwidget:
+            self.driver.find_element_by_css_selector('.styled_button > div').click()
+            self.assertEqual(self.wait_element_visible_by_css_selector('.alert').text, 'Success')
+
         iwidget.remove()
 
     def test_object_storage_integration(self):
         iwidget = self.add_widget_to_mashup('Wirecloud Object Storage API test widget')
+
+        with iwidget:
+            self.driver.find_element_by_css_selector('.styled_button > div').click()
+            self.assertEqual(self.wait_element_visible_by_css_selector('.alert').text, 'Success')
+
         iwidget.remove()
 
 build_selenium_test_cases((IntegrationTestCase,), locals())
