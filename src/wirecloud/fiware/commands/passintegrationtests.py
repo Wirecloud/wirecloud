@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
 import requests
 import time
 from urlparse import urljoin
@@ -122,7 +123,35 @@ class IntegrationTestCase(WirecloudRemoteTestCase, unittest.TestCase):
         self.assertEqual(resource.find_element_by_css_selector('.mainbutton > div').text, 'Install')
 
     def test_store_integration_install_bought_widget(self):
-        pass
+
+        # Pre buy the Map Viewer offering
+        data = {
+            "offering": {
+                "organization": "CoNWeT",
+                "name": "MapViewer",
+                "version": "1.0"
+            },
+            "payment": {
+                "method": "credit_card"
+            }
+        }
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer wcitester_token',
+        }
+        response = requests.post(urljoin(STORE_INSTANCE, 'api/contracting'), data=json.dumps(data), headers=headers)
+        self.assertEqual(response.status_code, 201, 'Unable to reset WStore status')
+
+        # Run the test
+        self.change_marketplace('FI-WARE')
+        self.search_resource('Map Viewer')
+        resource = self.search_in_catalogue_results('Map Viewer')
+        install_button = resource.find_element_by_css_selector('.mainbutton > div')
+        self.assertEqual(install_button.text, 'Install')
+        install_button.click()
+
+        self.change_marketplace('local')
+        self.add_widget_to_mashup('Map Viewer')
 
     def test_pubsub_context_broker_integration(self):
         iwidget = self.add_widget_to_mashup('Wirecloud NGSI API test widget')
