@@ -826,18 +826,11 @@ if (!Wirecloud.ui) {
         for (i = 0; i < this.arrows.length; i++) {
             arrow = this.arrows[i];
             if (!arrow.hasClassName('full') && !arrow.hasClassName('hollow')) {
-                if (arrow.hasClassName('readOnly')) {
-                    WiringStatus.connections.push({
-                        'readOnly': true,
-                        'source': arrow.startAnchor.serialize(),
-                        'target': arrow.endAnchor.serialize()
-                    });
-                } else {
-                    WiringStatus.connections.push({
-                        'source': arrow.startAnchor.serialize(),
-                        'target': arrow.endAnchor.serialize()
-                    });
-                }
+                WiringStatus.connections.push({
+                    'readOnly': arrow.hasClassName('readOnly'),
+                    'source': arrow.startAnchor.serialize(),
+                    'target': arrow.endAnchor.serialize()
+                });
                 WiringStatus.views[0].connections.push({
                     'pullerStart': arrow.getPullerStart(),
                     'pullerEnd': arrow.getPullerEnd(),
