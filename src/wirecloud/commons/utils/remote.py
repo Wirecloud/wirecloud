@@ -57,6 +57,10 @@ class WiringEndpointTester(object):
             return endpointlist.indexOf(endpoint_element);
         ''', self.element);
 
+    def perform_action(self, action):
+        ActionChains(self.testcase.driver).context_click(self.element).perform()
+        self.testcase.popup_menu_click(action)
+
 class IWidgetTester(object):
 
     def __init__(self, testcase, iwidget_id, element):
