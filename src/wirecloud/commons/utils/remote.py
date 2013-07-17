@@ -37,6 +37,26 @@ def marketplace_loaded(driver):
     return False
 
 
+class WiringEndpointTester(object):
+
+    def __init__(self, testcase, endpoint_name, element):
+
+        self.testcase = testcase
+        self.endpoint_name = endpoint_name
+        self.element = element
+
+    @property
+    def label(self):
+        return self.testcase.driver.execute_script('return arguments[0].parentElement;', self.element);
+
+    @property
+    def pos(self):
+        return self.testcase.driver.execute_script('''
+            var endpoint_element = arguments[0].parentElement.parentElement;
+            var endpointlist = Array.prototype.slice.call(arguments[0].parentElement.parentElement.parentElement.children);
+            return endpointlist.indexOf(endpoint_element);
+        ''', self.element);
+
 class IWidgetTester(object):
 
     def __init__(self, testcase, iwidget_id, element):
@@ -95,6 +115,30 @@ class IWidgetTester(object):
 
         WebDriverWait(self.testcase.driver, timeout).until(iwidget_unloaded)
 
+    def get_wiring_endpoint(self, endpoint_name):
+
+        return WiringEndpointTester(self.testcase, endpoint_name, self.testcase.driver.execute_script('''
+             var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
+             return wiringEditor.iwidgets[%(iwidget)d].getAnchor("%(endpoint)s").wrapperElement;
+        ''' % {"iwidget": self.id, "endpoint": endpoint_name}
+        ))
+
+
+class IOperatorTester(object):
+
+    def __init__(self, testcase, ioperator_id, element):
+
+        self.testcase = testcase
+        self.id = ioperator_id
+        self.element = element
+
+    def get_wiring_endpoint(self, endpoint_name):
+
+        return WiringEndpointTester(self.testcase, endpoint_name, self.testcase.driver.execute_script('''
+             var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
+             return wiringEditor.currentlyInUseOperators['%(ioperator)s'].getAnchor("%(endpoint)s").wrapperElement;
+        ''' % {"ioperator": self.id, "endpoint": endpoint_name}
+        ))
 
 class WirecloudRemoteTestCase(object):
 
@@ -334,6 +378,25 @@ class WirecloudRemoteTestCase(object):
         iwidget_elements = self.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.internal_iwidget.loaded ? iwidget.element : null;});')
 
         return [IWidgetTester(self, iwidget_ids[i], iwidget_elements[i]) for i in range(len(iwidget_ids))]
+
+    def get_current_wiring_editor_ioperators(self):
+
+        ioperators = self.driver.execute_script('''
+            var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
+            var ioperator_ids = [];
+            var ioperator_elements = [];
+
+            for (var key in wiringEditor.currentlyInUseOperators) {
+                ioperator_ids.push(key);
+                ioperator_elements.push(wiringEditor.currentlyInUseOperators[key].wrapperElement);
+            }
+            return [ioperator_ids, ioperator_elements];
+        ''');
+
+        return [
+            IOperatorTester(self, ioperators[0][i], ioperators[1][i])
+            for i in range(len(ioperators[0]))
+        ]
 
     def instantiate(self, resource, timeout=30):
 

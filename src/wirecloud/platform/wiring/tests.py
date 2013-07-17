@@ -1120,3 +1120,91 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
         operators = self.driver.find_elements_by_css_selector('.grid > .ioperator')
         self.assertEqual(len(widgets), 2)
         self.assertEqual(len(operators), 1)
+
+
+class EndpointOrderTestCase(WirecloudSeleniumTestCase):
+
+    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+
+    @uses_extra_resources(('Wirecloud_TestMultiendpoint_1.0.wgt',), shared=True)
+    def test_wiring_widget_reorder_endpoints(self):
+
+        self.login()
+
+        iwidget = self.add_widget_to_mashup('Test_Multiendpoint', new_name='Test (1)')
+        self.change_main_view('wiring')
+        time.sleep(2)
+
+        grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+        miniwidget = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
+
+        # TODO there are several bugs in the firefox, for now, this line of code "works"
+        ActionChains(self.driver).click_and_hold(miniwidget).move_to_element(grid).move_by_offset(10, 10).click().perform()
+        widget = self.driver.find_element_by_css_selector('.grid > .iwidget')
+        widget.find_element_by_css_selector('.editPos_button').click()
+        self.popup_menu_click('Reorder endpoints')
+
+        output1 = iwidget.get_wiring_endpoint('output1')
+        self.assertEqual(output1.pos, 0)
+
+        input3 = iwidget.get_wiring_endpoint('input3')
+        self.assertEqual(input3.pos, 2)
+
+        ActionChains(self.driver).click_and_hold(output1.label).move_by_offset(0, 30).move_by_offset(0, 30).click().perform()
+        ActionChains(self.driver).click_and_hold(input3.label).move_by_offset(0, -30).move_by_offset(0, -30).click().perform()
+
+        self.assertEqual(output1.pos, 2)
+        self.assertEqual(input3.pos, 0)
+
+        # Reload the wiring view
+        self.change_main_view('workspace')
+        time.sleep(0.3) # We need to wait for the wiring status been saved
+        self.change_main_view('wiring')
+        time.sleep(2)
+
+        output1 = iwidget.get_wiring_endpoint('output1')
+        self.assertEqual(output1.pos, 2)
+
+        input3 = iwidget.get_wiring_endpoint('input3')
+        self.assertEqual(input3.pos, 0)
+
+    @uses_extra_resources(('Wirecloud_TestOperatorMultiendpoint_1.0.wgt',), shared=True)
+    def test_wiring_operator_reorder_endpoints(self):
+
+        self.login()
+
+        self.change_main_view('wiring')
+        time.sleep(2)
+
+        grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+
+        self.driver.find_element_by_xpath("//*[text()='Operators']").click()
+        time.sleep(0.2)
+        minioperator = self.driver.find_element_by_xpath("//*[contains(@class, 'container ioperator')]//*[text()='TestOp. Multiendpoint']")
+
+        # TODO there are several bugs in the firefox, for now, this line of code "works"
+        ActionChains(self.driver).click_and_hold(minioperator).move_to_element(grid).move_by_offset(10, 10).click().perform()
+
+        ioperator = self.get_current_wiring_editor_ioperators()[0]
+        output1 = ioperator.get_wiring_endpoint('output1')
+        input3 = ioperator.get_wiring_endpoint('input3')
+
+        # TODO there are several bugs in the firefox, for now, this line of code "works"
+        ActionChains(self.driver).click_and_hold(minioperator).move_to_element(grid).move_by_offset(10, 10).click().perform()
+        ioperator.element.find_element_by_css_selector('.editPos_button').click()
+        self.popup_menu_click('Reorder endpoints')
+
+        ActionChains(self.driver).click_and_hold(output1.label).move_by_offset(0, 30).move_by_offset(0, 30).click().perform()
+        ActionChains(self.driver).click_and_hold(input3.label).move_by_offset(0, -30).move_by_offset(0, -30).click().perform()
+
+        self.assertEqual(output1.pos, 2)
+        self.assertEqual(input3.pos, 0)
+
+        # Reload the wiring view
+        self.change_main_view('workspace')
+        time.sleep(0.3) # We need to wait for the wiring status been saved
+        self.change_main_view('wiring')
+        time.sleep(2)
+
+        self.assertEqual(ioperator.get_wiring_endpoint('output1').pos, 2)
+        self.assertEqual(ioperator.get_wiring_endpoint('input3').pos, 0)
