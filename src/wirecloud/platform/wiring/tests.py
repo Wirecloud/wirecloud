@@ -1132,7 +1132,7 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
     @classmethod
     def setUpClass(cls):
 
-        super(MulticonnectorTestCase, cls).setUpClass()
+        super(EndpointOrderTestCase, cls).setUpClass()
 
         if cls.driver.capabilities['browserName'] == 'firefox' and not cls.driver.profile.native_events_enabled:
             raise unittest.skipTest('Endpoint reordering tests need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
