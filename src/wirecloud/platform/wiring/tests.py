@@ -289,7 +289,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
     def test_basic_wiring_editor_operations(self):
 
         if self.driver.capabilities['browserName'] == 'firefox' and not self.driver.profile.native_events_enabled:
-            raise unittest.skipTest('This test need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
+            raise unittest.SkipTest('This test need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
 
         self.login()
 
@@ -1135,7 +1135,8 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
         super(EndpointOrderTestCase, cls).setUpClass()
 
         if cls.driver.capabilities['browserName'] == 'firefox' and not cls.driver.profile.native_events_enabled:
-            raise unittest.skipTest('Endpoint reordering tests need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
+            cls.tearDownClass()
+            raise unittest.SkipTest('Endpoint reordering tests need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
 
     @uses_extra_resources(('Wirecloud_TestMultiendpoint_1.0.wgt',), shared=True)
     def test_wiring_widget_reorder_endpoints(self):
@@ -1230,7 +1231,8 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
         super(MulticonnectorTestCase, cls).setUpClass()
 
         if cls.driver.capabilities['browserName'] == 'firefox' and not cls.driver.profile.native_events_enabled:
-            raise unittest.skipTest('Multiconnector tests need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
+            cls.tearDownClass()
+            raise unittest.SkipTest('Multiconnector tests need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
 
     def test_wiring_basic_multiconnector_visualization(self):
 
