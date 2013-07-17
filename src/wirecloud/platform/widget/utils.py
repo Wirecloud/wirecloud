@@ -271,44 +271,23 @@ def fix_widget_code(widget_code, base_url, content_type, request, encoding, use_
         head_element.insert(0, etree.Element('base', href=base_url))
 
     # Fix scripts
-    uses_old_api = False
     scripts = xpath(xmltree, '/xhtml:html//xhtml:script', xmlns)
     for script in scripts:
 
         if 'src' in script.attrib:
             script.text = ''
 
-        if script.get('src', '') == '/ezweb/js/WirecloudAPI/WirecloudAPI.js':
+    head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url('js/WirecloudAPI/WirecloudAPIClosure.js', request=request)))
+    files = get_widget_api_extensions('index')
+    files.reverse()
+    for file in files:
+        head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url(file, request=request)))
+    head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url('js/WirecloudAPI/WirecloudAPICommon.js', request=request)))
+    head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url('js/WirecloudAPI/WirecloudAPI.js', request=request)))
 
-            script.getparent().remove(script)
-
-        elif script.get('src', '') == '/ezweb/js/EzWebAPI/EzWebAPI.js':
-            uses_old_api = True
-            script.set('src', get_absolute_static_url('js/EzWebAPI/EzWebAPI.js', request=request))
-
-            files = get_old_widget_api_extensions('index')
-            files.reverse()
-            for file in files:
-                script.addnext(etree.Element('script', type="text/javascript", src=get_absolute_static_url(file, request=request)))
-
-    if not uses_old_api:
-        head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url('js/WirecloudAPI/WirecloudAPIClosure.js', request=request)))
-        files = get_widget_api_extensions('index')
-        files.reverse()
-        for file in files:
-            head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url(file, request=request)))
-        head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url('js/WirecloudAPI/WirecloudAPICommon.js', request=request)))
-        head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url('js/WirecloudAPI/WirecloudAPI.js', request=request)))
-
-        if use_platform_style:
-            head_element.insert(0, etree.Element('link', rel="stylesheet", type="text/css", href=get_absolute_static_url('js/EzWebAPI_ext/EzWebGadgets.css', request=request)))
-            head_element.insert(0, etree.Element('link', rel="stylesheet", type="text/css", href=get_absolute_static_url('css/gadget.css', request=request)))
-    else:
-        # Redirect all script starting with /ezweb/ to the platform only when using the old api version
-        for script in scripts:
-            if script.get('src', '').startswith('/ezweb/'):
-                script.set('src', get_absolute_static_url(script.get('src')[7:], request=request))
-
+    if use_platform_style:
+        head_element.insert(0, etree.Element('link', rel="stylesheet", type="text/css", href=get_absolute_static_url('js/EzWebAPI_ext/EzWebGadgets.css', request=request)))
+        head_element.insert(0, etree.Element('link', rel="stylesheet", type="text/css", href=get_absolute_static_url('css/gadget.css', request=request)))
 
     # return modified code
     return etree.tostring(xmltree, pretty_print=False, encoding=encoding, **serialization_options)
