@@ -66,14 +66,6 @@ Variable.prototype.setHandler = function () { }
 
 Variable.prototype.set = function (value) { }
 
-Variable.prototype.getActionLabel = function () {
-    if (this.vardef.aspect === this.SLOT) {
-        return this.vardef.action_label;
-    } else {
-        return null;
-    }
-};
-
 Variable.prototype.getLabel = function () {
     return this.vardef.label;
 };
@@ -107,8 +99,6 @@ Variable.prototype.serialize = function serialize() {
 // PUBLIC CONSTANTS
 //////////////////////////////////////////////
 
-Variable.prototype.EVENT = "EVEN"
-Variable.prototype.SLOT = "SLOT"
 Variable.prototype.USER_PREF = "PREF"
 Variable.prototype.PROPERTY = "PROP"
 Variable.prototype.EXTERNAL_CONTEXT = "ECTX"
@@ -184,18 +174,6 @@ RVariable.prototype.set = function (newValue, from_widget) {
         // If annotated, the value must be managed!
 
         switch (this.vardef.aspect) {
-            case Variable.prototype.SLOT:
-
-                var opManager = OpManagerFactory.getInstance();
-                if (!this.iWidget.loaded) {
-                    this.varManager.addPendingVariable(this.iWidget, this.vardef.name, newValue);
-                    if (!this.iWidget.content) {
-                        this.iWidget.load();
-                    }
-                    return;
-                }
-                this.iWidget.notifyEvent();
-
             case Variable.prototype.USER_PREF:
             case Variable.prototype.EXTERNAL_CONTEXT:
             case Variable.prototype.GADGET_CONTEXT:
@@ -271,19 +249,6 @@ RWVariable.prototype.set = function (value_, options_) {
         }
     }
 
-    // Propagate changes to wiring module
-    // Only when variable is an Event, the connectable must start propagating
-    // When variable is INOUT, is the connectable who propagates
-    switch (this.vardef.aspect) {
-        case Variable.prototype.EVENT:
-            if (this.vardef.name in this.iWidget.internal_iwidget.outputs) {
-                this.iWidget.internal_iwidget.outputs[this.vardef.name].propagate(this.value, options_);
-                break;
-            }
-        default:
-            break;
-    }
-
     if (this.vardef.secure === true) {
         this.value = '';
     }
@@ -291,20 +256,3 @@ RWVariable.prototype.set = function (value_, options_) {
     // This will save all modified vars if we are the root event
     this.varManager.decNestingLevel();
 }
-
-RWVariable.prototype.getFinalSlots = function () {
-    if (this.connectable == null) {
-        return;
-    }
-
-    switch (this.vardef.aspect) {
-        case Variable.prototype.EVENT:
-            return this.connectable.getFinalSlots();
-        default:
-            return [];
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-

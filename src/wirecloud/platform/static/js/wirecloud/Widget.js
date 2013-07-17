@@ -113,16 +113,6 @@
 
         var varname, variable;
 
-        for (i = 0; i < data.wiring.inputs.length; i += 1) {
-            this.variables[data.wiring.inputs[i].name] = data.wiring.inputs[i];
-            this.variables[data.wiring.inputs[i].name].aspect = 'SLOT';
-        }
-
-        for (i = 0; i < data.wiring.outputs.length; i += 1) {
-            this.variables[data.wiring.outputs[i].name] = data.wiring.outputs[i];
-            this.variables[data.wiring.outputs[i].name].aspect = 'EVEN';
-        }
-
         for (i = 0; i < data.preferences.length; i += 1) {
             this.variables[data.preferences[i].name] = data.preferences[i];
             this.variables[data.preferences[i].name].aspect = 'PREF';

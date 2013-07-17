@@ -102,13 +102,11 @@ function VarManager (_workspace) {
 
             switch (aspect) {
                 case Variable.prototype.PROPERTY:
-                case Variable.prototype.EVENT:
                     objVars[name] = new RWVariable(id, iwidget, variable, this, value, tab);
                     this.variables[id] = objVars[name];
                     break;
                 case Variable.prototype.EXTERNAL_CONTEXT:
                 case Variable.prototype.GADGET_CONTEXT:
-                case Variable.prototype.SLOT:
                     objVars[name] = new RVariable(id, iwidget, variable, this, value, tab);
                     this.variables[id] = objVars[name];
                     break;
@@ -136,11 +134,6 @@ function VarManager (_workspace) {
         }
     }
 
-    VarManager.prototype.assignEventConnectable = function (iWidgetId, variableName, wEvent) {
-        var variable = this.findVariable(iWidgetId, variableName);
-        variable.assignEvent(wEvent);
-    }
-
     VarManager.prototype.getVariable = function (iWidgetId, variableName) {
         var variable = this.findVariable(iWidgetId, variableName);
 
@@ -151,14 +144,6 @@ function VarManager (_workspace) {
 
     VarManager.prototype.setVariable = function (iWidgetId, variableName, value, options) {
         var variable = this.findVariable(iWidgetId, variableName);
-
-        if (variable.vardef.aspect !== Variable.prototype.EVENT && typeof(value) !== 'string') {
-            var transObj = {iWidgetId: iWidgetId, varName: variableName};
-            var msg = interpolate(gettext("IWidget %(iWidgetId)s attempted to establish a non-string value for the variable \"%(varName)s\"."), transObj, true);
-            OpManagerFactory.getInstance().logIWidgetError(iWidgetId, msg, Constants.Logging.ERROR_MSG);
-
-            throw new Error();
-        }
 
         variable.annotate(value);
         variable.set(value, options);
