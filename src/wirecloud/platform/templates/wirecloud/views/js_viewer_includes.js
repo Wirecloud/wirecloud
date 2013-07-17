@@ -9,7 +9,6 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}js/opManager/Tab.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/opManager/InitialScriptExecuter.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/opManager/OpManager.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/varManager/VariableGadget.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/varManager/VariablePlatform.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/varManager/varManager.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/DragboardLayout.js"></script>
