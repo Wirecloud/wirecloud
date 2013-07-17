@@ -32,7 +32,7 @@ from wirecloud.commons.utils.http import authentication_required, build_error_re
 from wirecloud.platform.get_data import VariableValueCacheManager, get_iwidget_data
 from wirecloud.platform.iwidget.utils import SaveIWidget, UpdateIWidget, UpgradeIWidget, deleteIWidget
 from wirecloud.platform.models import Widget, IWidget, Tab, UserWorkspace, VariableValue, Workspace
-from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue, get_and_add_widget
+from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue
 
 
 class IWidgetCollection(Resource):
@@ -190,8 +190,6 @@ class IWidgetVersion(Resource):
 
         if not 'source' in data or data.get('source') == 'catalogue':
             widget = get_or_add_widget_from_catalogue(iwidget.widget.vendor, iwidget.widget.name, new_version, request.user, request, assign_to_users=users)
-        elif data.get('source') == 'showcase':
-            widget = get_and_add_widget(iwidget.widget.vendor, iwidget.widget.name, new_version, users)
 
         UpgradeIWidget(iwidget, request.user, widget)
 
