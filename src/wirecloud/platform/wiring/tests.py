@@ -287,6 +287,10 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         self.assertRaises(NoSuchElementException, menubar.find_element_by_xpath, "//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
 
     def test_basic_wiring_editor_operations(self):
+
+        if self.driver.capabilities['browserName'] == 'firefox' and not self.driver.profile.native_events_enabled:
+            raise unittest.skipTest('This test need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
+
         self.login()
 
         self.add_widget_to_mashup('Test', new_name='Test (1)')
@@ -299,12 +303,10 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-        # TODO there are several bugs in the firefox, for now, this line of code "works"
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-40, -40).click().perform()
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-40, -40).release().perform()
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
-        # TODO there are several bugs in the firefox, for now, this line of code "works"
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(40, 40).click().perform()
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(40, 40).release().perform()
         time.sleep(0.2)
 
         source = self.get_iwidget_anchor(1, 'outputendpoint')
@@ -1127,6 +1129,14 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
 
+    @classmethod
+    def setUpClass(cls):
+
+        super(MulticonnectorTestCase, cls).setUpClass()
+
+        if cls.driver.capabilities['browserName'] == 'firefox' and not cls.driver.profile.native_events_enabled:
+            raise unittest.skipTest('Endpoint reordering tests need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
+
     @uses_extra_resources(('Wirecloud_TestMultiendpoint_1.0.wgt',), shared=True)
     def test_wiring_widget_reorder_endpoints(self):
 
@@ -1139,8 +1149,7 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
         miniwidget = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
 
-        # TODO there are several bugs in the firefox, for now, this line of code "works"
-        ActionChains(self.driver).click_and_hold(miniwidget).move_to_element(grid).move_by_offset(10, 10).click().perform()
+        ActionChains(self.driver).click_and_hold(miniwidget).move_to_element(grid).move_by_offset(10, 10).release().perform()
         widget = self.driver.find_element_by_css_selector('.grid > .iwidget')
         widget.find_element_by_css_selector('.editPos_button').click()
         self.popup_menu_click('Reorder endpoints')
@@ -1151,8 +1160,8 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
         input3 = iwidget.get_wiring_endpoint('input3')
         self.assertEqual(input3.pos, 2)
 
-        ActionChains(self.driver).click_and_hold(output1.label).move_by_offset(0, 30).move_by_offset(0, 30).click().perform()
-        ActionChains(self.driver).click_and_hold(input3.label).move_by_offset(0, -30).move_by_offset(0, -30).click().perform()
+        ActionChains(self.driver).click_and_hold(output1.label).move_by_offset(0, 30).move_by_offset(0, 30).release().perform()
+        ActionChains(self.driver).click_and_hold(input3.label).move_by_offset(0, -30).move_by_offset(0, -30).release().perform()
         time.sleep(0.2)
 
         self.assertEqual(output1.pos, 2)
@@ -1184,20 +1193,18 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
         time.sleep(0.2)
         minioperator = self.driver.find_element_by_xpath("//*[contains(@class, 'container ioperator')]//*[text()='TestOp. Multiendpoint']")
 
-        # TODO there are several bugs in the firefox, for now, this line of code "works"
-        ActionChains(self.driver).click_and_hold(minioperator).move_to_element(grid).move_by_offset(10, 10).click().perform()
+        ActionChains(self.driver).click_and_hold(minioperator).move_to_element(grid).move_by_offset(10, 10).release().perform()
 
         ioperator = self.get_current_wiring_editor_ioperators()[0]
         output1 = ioperator.get_wiring_endpoint('output1')
         input3 = ioperator.get_wiring_endpoint('input3')
 
-        # TODO there are several bugs in the firefox, for now, this line of code "works"
-        ActionChains(self.driver).click_and_hold(minioperator).move_to_element(grid).move_by_offset(10, 10).click().perform()
+        ActionChains(self.driver).click_and_hold(minioperator).move_to_element(grid).move_by_offset(10, 10).release().perform()
         ioperator.element.find_element_by_css_selector('.editPos_button').click()
         self.popup_menu_click('Reorder endpoints')
 
-        ActionChains(self.driver).click_and_hold(output1.label).move_by_offset(0, 30).move_by_offset(0, 30).click().perform()
-        ActionChains(self.driver).click_and_hold(input3.label).move_by_offset(0, -30).move_by_offset(0, -30).click().perform()
+        ActionChains(self.driver).click_and_hold(output1.label).move_by_offset(0, 30).move_by_offset(0, 30).release().perform()
+        ActionChains(self.driver).click_and_hold(input3.label).move_by_offset(0, -30).move_by_offset(0, -30).release().perform()
         time.sleep(0.2)
 
         self.assertEqual(output1.pos, 2)
@@ -1223,7 +1230,7 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
         super(MulticonnectorTestCase, cls).setUpClass()
 
         if cls.driver.capabilities['browserName'] == 'firefox' and not cls.driver.profile.native_events_enabled:
-            raise unittest.skipTest('Multiconnector tests need the Firefox native events support enabled (not available on Mac OS)')
+            raise unittest.skipTest('Multiconnector tests need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
 
     def test_wiring_basic_multiconnector_visualization(self):
 
@@ -1236,8 +1243,7 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-        # TODO there are several bugs in the firefox, for now, this line of code "works"
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(10, 10).click().perform()
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(10, 10).release().perform()
 
         source = iwidget.get_wiring_endpoint('outputendpoint')
         target = iwidget.get_wiring_endpoint('inputendpoint')
@@ -1277,16 +1283,14 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-        # TODO there are several bugs in the firefox, for now, this line of code "works"
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -50).click().perform()
+
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -50).release().perform()
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
-        # TODO there are several bugs in the firefox, for now, this line of code "works"
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -120).click().perform()
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -120).release().perform()
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
-        # TODO there are several bugs in the firefox, for now, this line of code "works"
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, 40).click().perform()
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, 40).release().perform()
 
         source = iwidgets[0].get_wiring_endpoint('outputendpoint')
         target1 = iwidgets[1].get_wiring_endpoint('inputendpoint')
@@ -1341,16 +1345,13 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-        # TODO there are several bugs in the firefox, for now, this line of code "works"
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -50).click().perform()
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -50).release().perform()
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
-        # TODO there are several bugs in the firefox, for now, this line of code "works"
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -120).click().perform()
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -120).release().perform()
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
-        # TODO there are several bugs in the firefox, for now, this line of code "works"
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, 40).click().perform()
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, 40).release().perform()
 
         target = iwidgets[0].get_wiring_endpoint('inputendpoint')
         source1 = iwidgets[1].get_wiring_endpoint('outputendpoint')
