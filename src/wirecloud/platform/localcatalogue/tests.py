@@ -104,16 +104,6 @@ class LocalCatalogueTestCase(WirecloudTestCase):
 
         self.check_basic_widget_info(resource)
 
-    def test_basic_ezweb_widget_creation(self):
-        template_uri = "http://example.com/path/widget.xml"
-        template = self.read_template('old-template.xml')
-
-        self.network._servers['http']['example.com'].add_response('GET', '/path/widget.xml', {'content': template})
-        self.network._servers['http']['example.com'].add_response('GET', '/path/test.html', {'content': BASIC_HTML_GADGET_CODE})
-        resource = install_resource(template, template_uri, self.user, False)
-
-        self.check_basic_widget_info(resource)
-
     def test_basic_widget_creation_from_rdf(self):
         template_uri = "http://example.com/path/widget.rdf"
         template = self.read_template('template1.rdf')
