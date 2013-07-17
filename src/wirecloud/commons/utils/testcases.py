@@ -245,29 +245,6 @@ class LocalizedTestCase(TransactionTestCase):
         translation.activate(new_language)
 
 
-class iwidget_context:
-
-    def __init__(self, driver, widget):
-        self.driver = driver
-        self.widget = widget
-
-    def __enter__(self):
-        self.driver.execute_script('return opManager.activeWorkspace.getIWidget(%d).content.setAttribute("id", "targetframe");' % self.widget)
-
-        # TODO work around webdriver bugs
-        self.driver.switch_to_default_content()
-
-        self.driver.switch_to_frame(self.driver.find_element_by_id('targetframe'))
-        return None
-
-    def __exit__(self, type, value, traceback):
-        self.driver.switch_to_frame(None)
-        self.driver.execute_script('return opManager.activeWorkspace.getIWidget(%d).content.removeAttribute("id");' % self.widget)
-
-        # TODO work around webdriver bugs
-        self.driver.switch_to_default_content()
-
-
 def uses_extra_resources(resources, shared=False):
 
     def wrap(test_func):

@@ -1,4 +1,4 @@
-from wirecloud.commons.utils.testcases import iwidget_context, WirecloudSeleniumTestCase
+from wirecloud.commons.utils.testcases import WirecloudSeleniumTestCase
 
 
 __test__ = False

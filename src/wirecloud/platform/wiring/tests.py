@@ -29,7 +29,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 
-from wirecloud.commons.utils.testcases import uses_extra_resources, iwidget_context, WirecloudSeleniumTestCase
+from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudSeleniumTestCase
 from wirecloud.platform.workspace.models import Workspace
 
 
@@ -316,7 +316,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         self.change_main_view('workspace')
         time.sleep(0.2)
 
-        with iwidget_context(self.driver, iwidgets[0]['id']):
+        with iwidgets[0]:
             text_input = self.driver.find_element_by_tag_name('input')
             self.fill_form_input(text_input, 'hello world!!')
             # Work around hang when using Firefox Driver
@@ -325,7 +325,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         time.sleep(0.2)
 
-        with iwidget_context(self.driver, iwidgets[1]['id']):
+        with iwidgets[1]:
             try:
                 WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
             except:
@@ -334,11 +334,11 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'hello world!!')
 
-        with iwidget_context(self.driver, iwidgets[2]['id']):
+        with iwidgets[2]:
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, '')
 
-        with iwidget_context(self.driver, iwidgets[0]['id']):
+        with iwidgets[0]:
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, '')
     test_basic_wiring_editor_operations.tags = ('fiware-ut-6',)
@@ -425,7 +425,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
         self.assertEqual(window_menus, 1)
 
         self.change_main_view('workspace')
-        with iwidget_context(self.driver, iwidgets[0]['id']):
+        with iwidgets[0]:
             text_input = self.driver.find_element_by_tag_name('input')
             self.fill_form_input(text_input, 'hello world!!')
             # Work around hang when using Firefox Driver
@@ -434,7 +434,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 
         time.sleep(0.2)
 
-        with iwidget_context(self.driver, iwidgets[1]['id']):
+        with iwidgets[1]:
             try:
                 WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
             except:
