@@ -747,10 +747,3 @@ class WirecloudRemoteTestCase(object):
         self.search_resource(resource_name)
         resource = self.search_in_catalogue_results(resource_name)
         self.assertIsNone(resource)
-
-    def get_iwidget_anchor(self, iwidget, endpoint):
-        return self.driver.execute_script('''
-            var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
-            return LayoutManagerFactory.getInstance().viewsByName["wiring"].iwidgets[%(iwidget)d].getAnchor("%(endpoint)s").wrapperElement;
-        ''' % {"iwidget": iwidget, "endpoint": endpoint}
-        )
