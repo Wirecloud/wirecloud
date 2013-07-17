@@ -32,9 +32,6 @@
 
     TargetEndpoint.prototype = new Wirecloud.wiring.Endpoint();
 
-    TargetEndpoint.prototype._annotate = function _annotate(value, source, options) {
-    };
-
     /**
      * @private
      */

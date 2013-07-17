@@ -27,17 +27,6 @@
         this.id = id;
     };
 
-    /**
-     * @private
-     */
-    Endpoint.prototype._annotate = function _annotate(value, source, options) {
-        var funcName = '_annotate';
-        var msg = gettext("Unimplemented function: %(funcName)s");
-        msg = interpolate(msg, {funcName: funcName}, yes);
-        Wirecloud.GlobalLogManager.log(msg);
-        return;
-    };
-
     Endpoint.prototype.getId = function getId() {
         return this.id;
     };
