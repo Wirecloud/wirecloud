@@ -1220,7 +1220,8 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
 
         super(MulticonnectorTestCase, cls).setUpClass()
 
-        unittest.skipIf(not cls.driver.profile.native_events_enabled, 'Multiconnector tests need native events support (not available on Mac OS)')
+        if cls.driver.capabilities['browserName'] == 'firefox' and not cls.driver.profile.native_events_enabled:
+            raise unittest.skipTest('Multiconnector tests need the Firefox native events support enabled (not available on Mac OS)')
 
     def test_wiring_basic_multiconnector_visualization(self):
 
