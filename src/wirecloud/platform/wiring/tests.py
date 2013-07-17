@@ -1153,6 +1153,7 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
 
         ActionChains(self.driver).click_and_hold(output1.label).move_by_offset(0, 30).move_by_offset(0, 30).click().perform()
         ActionChains(self.driver).click_and_hold(input3.label).move_by_offset(0, -30).move_by_offset(0, -30).click().perform()
+        time.sleep(0.2)
 
         self.assertEqual(output1.pos, 2)
         self.assertEqual(input3.pos, 0)
@@ -1197,6 +1198,7 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
 
         ActionChains(self.driver).click_and_hold(output1.label).move_by_offset(0, 30).move_by_offset(0, 30).click().perform()
         ActionChains(self.driver).click_and_hold(input3.label).move_by_offset(0, -30).move_by_offset(0, -30).click().perform()
+        time.sleep(0.2)
 
         self.assertEqual(output1.pos, 2)
         self.assertEqual(input3.pos, 0)
