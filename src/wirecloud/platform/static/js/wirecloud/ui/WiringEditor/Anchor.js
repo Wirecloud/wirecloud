@@ -134,7 +134,12 @@
         this.wrapperElement.addEventListener('contextmenu',
             function (e) {
                 e.preventDefault();
-                this.menu.show(this.wrapperElement.getBoundingClientRect());
+
+                if (this.menu.isVisible()) {
+                    this.menu.hide();
+                } else {
+                    this.menu.show(this.wrapperElement.getBoundingClientRect());
+                }
             }.bind(this), true);
 
         this._mouseup_callback = function _mouseup_callback(e) {
