@@ -20,7 +20,7 @@
     </Catalog.ResourceDescription>
 
     <Platform.Link>
-        <XHTML href="test.html"/>
+        <XHTML href="test.html" use-platform-style="true" />
     </Platform.Link>
 
     <Platform.Rendering width="6" height="24"/>

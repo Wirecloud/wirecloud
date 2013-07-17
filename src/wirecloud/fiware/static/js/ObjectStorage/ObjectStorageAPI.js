@@ -113,19 +113,27 @@
     };
 
     ObjectStorageAPI.prototype.uploadFile = function uploadFile(container, file, token, options) {
+        var file_name, url;
 
-        if (!(file instanceof File)) {
-            throw new TypeError('file must be an instance of File');
+        if (!(file instanceof Blob)) {
+            throw new TypeError('file must be an instance of Blob');
         }
 
         if (options == null) {
             options = {};
         }
-        var file_name = file.name;
-        var url = this.url + encodeURIComponent(container) + '/' + encodeURIComponent(file_name);
+
+        if ('name' in file) {
+            file_name = file.name;
+        } else if ('file_name' in options) {
+            file_name = options.file_name;
+        } else {
+            throw new TypeError('Missing file name');
+        }
+        url = this.url + encodeURIComponent(container) + '/' + encodeURIComponent(file_name);
 
         MashupPlatform.http.makeRequest(url, {
-            method: "GET",
+            method: "PUT",
             requestHeaders: {"X-Auth-Token": token},
             contentType: file.type,
             postBody: file,

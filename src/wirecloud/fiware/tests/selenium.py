@@ -28,7 +28,18 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         resource = self.add_packaged_resource_to_catalogue('Wirecloud_ngsi-test-widget_1.0.wgt', 'Wirecloud NGSI API test widget')
         iwidget = self.instantiate(resource)
 
-        with iwidget_context(self.driver, iwidget['id']):
-            body = self.driver.find_element_by_tag_name('body')
-            self.assertEqual(body.text, 'Success')
+        with iwidget:
+            api_element = self.driver.find_element_by_id('api_available')
+            self.assertEqual(api_element.text, 'Yes')
     test_ngsi_available_to_widgets.tags = ('fiware-ut-7',)
+
+    def test_objectstorage_available_to_widgets(self):
+
+        self.login()
+
+        resource = self.add_packaged_resource_to_catalogue('Wirecloud_objectstorage-test-widget_1.0.wgt', 'Wirecloud Object Storage API test widget')
+        iwidget = self.instantiate(resource)
+
+        with iwidget:
+            api_element = self.driver.find_element_by_id('api_available')
+            self.assertEqual(api_element.text, 'Yes')

@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
 import requests
 import time
 from urlparse import urljoin
@@ -116,21 +117,69 @@ class IntegrationTestCase(WirecloudRemoteTestCase, unittest.TestCase):
         self.driver.find_element_by_id('back').click()
         self.driver.switch_to_window(wirecloud_window)
 
-        time.sleep(0.2)
+        time.sleep(0.5)
         self.wait_catalogue_ready()
         resource = self.search_in_catalogue_results('Map Viewer')
-        self.assertEqual(resource.find_element_by_css_selector('.mainbutton > div').text, 'Install')
+        self.assertIn(resource.find_element_by_css_selector('.mainbutton > div').text, ('Install', 'Uninstall'))
 
     def test_store_integration_install_bought_widget(self):
-        pass
+
+        # Pre buy the Map Viewer offering
+        data = {
+            "offering": {
+                "organization": "CoNWeT",
+                "name": "MapViewer",
+                "version": "1.0"
+            },
+            "payment": {
+                "method": "credit_card"
+            }
+        }
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer wcitester_token',
+        }
+        response = requests.post(urljoin(STORE_INSTANCE, 'api/contracting'), data=json.dumps(data), headers=headers)
+        self.assertEqual(response.status_code, 201, 'Unable to reset WStore status')
+
+        # And uninstall Map Viewer just in case it was installed
+        self.search_resource('Map Viewer')
+        resource = self.search_in_catalogue_results('Map Viewer')
+        if resource is not None:
+            self.uninstall_resource('Map Viewer')
+
+        # Run the test
+        self.change_marketplace('FI-WARE')
+        self.search_resource('Map Viewer')
+        resource = self.search_in_catalogue_results('Map Viewer')
+        install_button = resource.find_element_by_css_selector('.mainbutton > div')
+        self.assertEqual(install_button.text, 'Install')
+        install_button.click()
+        time.sleep(0.1)
+        self.wait_catalogue_ready()
+
+        self.add_widget_to_mashup('Map Viewer')
 
     def test_pubsub_context_broker_integration(self):
+
         iwidget = self.add_widget_to_mashup('Wirecloud NGSI API test widget')
-        iwidget.remove()
+
+        try:
+            with iwidget:
+                self.driver.find_element_by_css_selector('.styled_button > div').click()
+                self.assertEqual(self.wait_element_visible_by_css_selector('.alert').text, 'Success!')
+        finally:
+            iwidget.remove()
 
     def test_object_storage_integration(self):
         iwidget = self.add_widget_to_mashup('Wirecloud Object Storage API test widget')
-        iwidget.remove()
+
+        try:
+            with iwidget:
+                self.driver.find_element_by_css_selector('.styled_button > div').click()
+                self.assertEqual(self.wait_element_visible_by_css_selector('.alert').text, 'Success!')
+        finally:
+            iwidget.remove()
 
 build_selenium_test_cases((IntegrationTestCase,), locals())
 
