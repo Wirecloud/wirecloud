@@ -105,10 +105,6 @@ function VarManager (_workspace) {
                     objVars[name] = new RWVariable(id, iwidget, variable, this, value, tab);
                     this.variables[id] = objVars[name];
                     break;
-                case Variable.prototype.EXTERNAL_CONTEXT:
-                case Variable.prototype.GADGET_CONTEXT:
-                    objVars[name] = new RVariable(id, iwidget, variable, this, value, tab);
-                    this.variables[id] = objVars[name];
                     break;
                 case Variable.prototype.USER_PREF:
                     objVars[name] = new RVariable(id, iwidget, variable, this, value, tab);

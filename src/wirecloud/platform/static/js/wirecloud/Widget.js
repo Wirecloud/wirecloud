@@ -123,10 +123,6 @@
             this.variables[data.properties[i].name].aspect = 'PROP';
         }
 
-        for (i = 0; i < data.context.length; i += 1) {
-            this.variables[data.context[i].name] = data.context[i];
-        }
-
         for (varname in this.variables) {
             variable = this.variables[varname];
             if (typeof variable.label === 'undefined' || variable.label === null || variable.label === '') {

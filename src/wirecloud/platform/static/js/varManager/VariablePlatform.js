@@ -101,8 +101,6 @@ Variable.prototype.serialize = function serialize() {
 
 Variable.prototype.USER_PREF = "PREF"
 Variable.prototype.PROPERTY = "PROP"
-Variable.prototype.EXTERNAL_CONTEXT = "ECTX"
-Variable.prototype.GADGET_CONTEXT = "GCTX"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RVARIABLE (Derivated class) <<PLATFORM>>
@@ -141,19 +139,6 @@ RVariable.prototype.get = function () {
     var concept, value;
 
     switch (this.vardef.aspect) {
-    case this.EXTERNAL_CONTEXT:
-        if (this.vardef.concept !== 'user_name') {
-            concept = this.vardef.concept;
-        } else {
-            concept = 'username';
-        }
-        value = OpManagerFactory.getInstance().contextManager.get(concept);
-        if (value === undefined) {
-            value = OpManagerFactory.getInstance().activeWorkspace.contextManager.get(concept);
-        }
-        return value;
-    case this.GADGET_CONTEXT:
-        return this.iWidget.internal_iwidget.contextManager.get(this.vardef.concept);
     default:
         return this.value;
     }
@@ -175,8 +160,6 @@ RVariable.prototype.set = function (newValue, from_widget) {
 
         switch (this.vardef.aspect) {
             case Variable.prototype.USER_PREF:
-            case Variable.prototype.EXTERNAL_CONTEXT:
-            case Variable.prototype.GADGET_CONTEXT:
                 if (this.vardef.aspect === this.USER_PREF) {
                     // Only widget preferences are persisted
                     this.varManager.markVariablesAsModified(varInfo);

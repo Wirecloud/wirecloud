@@ -25,19 +25,6 @@
 
     "use strict";
 
-    var old_context_api_adaptor_callback = function old_context_api_adaptor_callback(new_values) {
-        var key, variables;
-
-        variables = this.workspace.varManager.getIWidgetVariables(this.id);
-        for (key in variables) {
-            var variable = variables[key];
-            if (variable.vardef.aspect === 'GCTX' && variable.vardef.concept in new_values) {
-                variable.annotate(new_values[variable.vardef.concept]);
-                variable.set(new_values[variable.vardef.concept]);
-            }
-        }
-    };
-
     var renameSuccess = function renameSuccess(options, old_name, new_name, response) {
         this.name = new_name;
 
@@ -112,8 +99,6 @@
             'heightInPixels': 0,
             'widthInPixels': 0
         });
-        this._old_context_api_adaptor_callback = old_context_api_adaptor_callback.bind(this);
-        this.contextManager.addCallback(this._old_context_api_adaptor_callback);
         this.logManager = new Wirecloud.Widget.LogManager(this);
         this.prefCallback = null;
 
@@ -292,7 +277,6 @@
         }
 
         this.workspace.varManager.removeInstance(this.id);
-        this.contextManager.removeCallback(this._old_context_api_adaptor_callback);
         this.contextManager = null;
         this.logManager.close();
         this.logManager = null;

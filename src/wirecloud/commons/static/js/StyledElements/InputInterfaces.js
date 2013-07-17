@@ -1009,22 +1009,20 @@ ParametrizedTextInputInterface.prototype.getAvailableParameters = function getAv
         };
         for (conceptName in concepts) {
             concept = concepts[conceptName];
-            if (concept._type !== 'GCTX') {
-                dashIndex = conceptName.indexOf('-');
-                provider = conceptName.substring(0, dashIndex);
-                if (!(provider in contextFields)) {
-                    contextFields[provider] = [];
-                }
-                label = interpolate('%(label)s (%(concept)s)', {
-                    label: concept._label,
-                    concept: conceptName
-                }, true);
-                contextFields[provider].push({
-                    label: label,
-                    description: concept._description,
-                    value: conceptName
-                });
+            dashIndex = conceptName.indexOf('-');
+            provider = conceptName.substring(0, dashIndex);
+            if (!(provider in contextFields)) {
+                contextFields[provider] = [];
             }
+            label = interpolate('%(label)s (%(concept)s)', {
+                label: concept._label,
+                concept: conceptName
+            }, true);
+            contextFields[provider].push({
+                label: label,
+                description: concept._description,
+                value: conceptName
+            });
         }
 
         parameters = [
