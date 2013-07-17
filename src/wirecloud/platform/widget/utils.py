@@ -31,7 +31,7 @@ from wirecloud.commons.utils.http import get_absolute_static_url
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 from wirecloud.platform.models import ContextOption, Widget, UserPrefOption, UserWorkspace, VariableDef, Workspace, XHTML
-from wirecloud.platform.plugins import get_active_features, get_old_widget_api_extensions, get_widget_api_extensions
+from wirecloud.platform.plugins import get_active_features, get_widget_api_extensions
 
 
 wgt_deployer = WgtDeployer(settings.GADGETS_DEPLOYMENT_DIR)
