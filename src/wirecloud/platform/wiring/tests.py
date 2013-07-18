@@ -307,7 +307,6 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
         ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(40, 40).release().perform()
-        time.sleep(0.2)
 
         source = iwidgets[0].get_wiring_endpoint('outputendpoint')
         target = iwidgets[1].get_wiring_endpoint('inputendpoint')
@@ -1151,9 +1150,8 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
         miniwidget = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
 
         ActionChains(self.driver).click_and_hold(miniwidget).move_to_element(grid).move_by_offset(10, 10).release().perform()
-        time.sleep(0.2)
 
-        widget = self.driver.find_element_by_css_selector('.grid > .iwidget')
+        widget = self.wait_element_visible_by_css_selector('.grid > .iwidget')
         widget.find_element_by_css_selector('.editPos_button').click()
         self.popup_menu_click('Reorder endpoints')
 
@@ -1197,7 +1195,7 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
         minioperator = self.driver.find_element_by_xpath("//*[contains(@class, 'container ioperator')]//*[text()='TestOp. Multiendpoint']")
 
         ActionChains(self.driver).click_and_hold(minioperator).move_to_element(grid).move_by_offset(10, 10).release().perform()
-        time.sleep(0.2)
+        self.wait_element_visible_by_css_selector('.grid > .ioperator')
 
         ioperator = self.get_current_wiring_editor_ioperators()[0]
         output1 = ioperator.get_wiring_endpoint('output1')
@@ -1249,7 +1247,6 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
         ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(10, 10).release().perform()
-        time.sleep(0.2)
 
         source = iwidget.get_wiring_endpoint('outputendpoint')
         target = iwidget.get_wiring_endpoint('inputendpoint')
@@ -1289,7 +1286,6 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-
         ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -50).release().perform()
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
@@ -1297,7 +1293,6 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
         ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, 40).release().perform()
-        time.sleep(0.2)
 
         source = iwidgets[0].get_wiring_endpoint('outputendpoint')
         target1 = iwidgets[1].get_wiring_endpoint('inputendpoint')
@@ -1359,7 +1354,6 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
         ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, 40).release().perform()
-        time.sleep(0.2)
 
         target = iwidgets[0].get_wiring_endpoint('inputendpoint')
         source1 = iwidgets[1].get_wiring_endpoint('outputendpoint')
