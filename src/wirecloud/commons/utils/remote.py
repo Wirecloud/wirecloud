@@ -153,7 +153,7 @@ class IOperatorTester(object):
         def operator_in_wiring_editor(driver):
             return driver.execute_script('''
                  var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
-                 return wiringEditor.currentlyInUseOperators[%(operator)s] != null;
+                 return wiringEditor.currentlyInUseOperators[%(ioperator)s] != null;
             ''' % {"ioperator": self.id, "endpoint": endpoint_name})
 
         WebDriverWait(self.testcase.driver, timeout).until(operator_in_wiring_editor)
