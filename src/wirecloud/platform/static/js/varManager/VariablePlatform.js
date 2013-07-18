@@ -99,7 +99,6 @@ Variable.prototype.serialize = function serialize() {
 // PUBLIC CONSTANTS
 //////////////////////////////////////////////
 
-Variable.prototype.USER_PREF = "PREF"
 Variable.prototype.PROPERTY = "PROP"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -145,56 +144,6 @@ RVariable.prototype.get = function () {
 };
 
 RVariable.prototype.set = function (newValue, from_widget) {
-
-    var varInfo = [{id: this.id, value: newValue, aspect: this.vardef.aspect}];
-
-    if (this.vardef.aspect === this.USER_PREF && from_widget === true) {
-        this.value = newValue;
-        this.varManager.markVariablesAsModified(varInfo);
-        this.annotated = false;
-        return;
-    }
-
-    if (this.annotated) {
-        // If annotated, the value must be managed!
-
-        switch (this.vardef.aspect) {
-            case Variable.prototype.USER_PREF:
-                if (this.vardef.aspect === this.USER_PREF) {
-                    // Only widget preferences are persisted
-                    this.varManager.markVariablesAsModified(varInfo);
-                }
-
-                this.value = newValue;
-
-                if (this.handler) {
-                    try {
-                        this.handler(newValue);
-                    } catch (e) {
-                        var transObj = {iWidgetId: this.iWidget.id, varName: this.vardef.name, exceptionMsg: e};
-                        var msg = interpolate(gettext("Error in the handler of the \"%(varName)s\" RVariable in iWidget %(iWidgetId)s: %(exceptionMsg)s."), transObj, true);
-                        OpManagerFactory.getInstance().logIWidgetError(this.iWidget.id, msg, Constants.Logging.ERROR_MSG);
-                    }
-                } else {
-                    if (this.iWidget.loaded) {
-                        var opManager = OpManagerFactory.getInstance();
-                        var transObj = {iWidgetId: this.iWidget.id, varName: this.vardef.name};
-                        var msg = interpolate(gettext("IWidget %(iWidgetId)s does not provide a handler for the \"%(varName)s\" RVariable."), transObj, true);
-                        opManager.logIWidgetError(this.iWidget.id, msg, Constants.Logging.WARN_MSG);
-                    }
-                }
-
-                if (this.vardef.secure === true) {
-                    this.value = '';
-                }
-
-                break;
-            default:
-                break;
-        }
-        // And it must be changed to NOT annotated!
-        this.annotated = false;
-    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -206,6 +206,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
         common = (
             'js/wirecloud/io.js',
             'js/wirecloud/ContextManager.js',
+            'js/wirecloud/UserPrefDef.js',
             'js/wirecloud/UserPref.js',
             'js/wirecloud/IWidget.js',
             'js/wirecloud/PolicyManager.js',
@@ -298,6 +299,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             {'id': 'LOCAL_RESOURCE_ENTRY', 'url': build_url_template('wirecloud_showcase.resource_entry', ['vendor', 'name', 'version'])},
             {'id': 'IWIDGET_COLLECTION', 'url': build_url_template('wirecloud.iwidget_collection', ['workspace_id', 'tab_id'])},
             {'id': 'IWIDGET_ENTRY', 'url': build_url_template('wirecloud.iwidget_entry', ['workspace_id', 'tab_id', 'iwidget_id'])},
+            {'id': 'IWIDGET_PREFERENCES', 'url': build_url_template('wirecloud.iwidget_preferences', ['workspace_id', 'tab_id', 'iwidget_id'])},
             {'id': 'IWIDGET_VERSION_ENTRY', 'url': build_url_template('wirecloud.iwidget_version_entry', ['workspace_id', 'tab_id', 'iwidget_id'])},
             {'id': 'PLATFORM_CONTEXT_COLLECTION', 'url': build_url_template('wirecloud.platform_context_collection')},
             {'id': 'PLATFORM_PREFERENCES', 'url': build_url_template('wirecloud.platform_preferences')},

@@ -74,7 +74,7 @@
 
     PublishWorkspaceWindowMenu.prototype._parseTab = function _parseTab(tab) {
 
-        var i, name, iwidget, iwidgets, iwidget_params, pref_params,
+        var i, j, name, iwidget, iwidgets, iwidget_params, pref_params,
             prop_params, variable, variables, varManager, var_elements,
             fields;
 
@@ -86,19 +86,20 @@
             iwidget = iwidgets[i];
             variables = varManager.getIWidgetVariables(iwidget.id);
             pref_params = [];
-            prop_params = [];
+            for (j = 0; iwidget.preferenceList.length; i += 1) {
+                pref_params.push({
+                    label: iwidget.preferenceList[i].getLabel(),
+                    type: 'parametrizableValue',
+                    variable: iwidget.preferenceList[i],
+                    canBeHidden: true,
+                    parentWindow: this
+                });
+            }
 
+            prop_params = [];
             for (name in variables) {
                 variable = variables[name];
-                if (variable.vardef.aspect === Variable.prototype.USER_PREF) {
-                    pref_params.push({
-                        label: variable.getLabel(),
-                        type: 'parametrizableValue',
-                        variable: variable,
-                        canBeHidden: true,
-                        parentWindow: this
-                    });
-                } else if (variable.vardef.aspect === Variable.prototype.PROPERTY) {
+                if (variable.vardef.aspect === Variable.prototype.PROPERTY) {
                     prop_params.push({
                         label: variable.getLabel(),
                         type: 'parametrizableValue',
@@ -113,7 +114,7 @@
                 var_elements.pref = {
                     label: gettext('Preferences'),
                     type: 'fieldset',
-                    fields: pref_params.sort(this._sortVariables)
+                    fields: pref_params
                 };
             }
             if (prop_params.length !== 0) {

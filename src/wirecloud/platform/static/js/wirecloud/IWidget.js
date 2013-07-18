@@ -19,7 +19,7 @@
  *
  */
 
-/*global StyledElements, Wirecloud*/
+/*global IWidgetLogManager, StyledElements, UserPref, Wirecloud*/
 
 (function () {
 
@@ -57,7 +57,7 @@
      */
     var IWidget = function IWidget(widget, tab, options) {
 
-        var key;
+        var key, i, preferences, iwidget_pref_info;
 
         if (typeof options !== 'object' || !(widget instanceof Wirecloud.Widget)) {
             throw new TypeError();
@@ -84,6 +84,17 @@
         this.outputs = {};
         for (key in this.meta.outputs) {
             this.outputs[key] = new Wirecloud.wiring.WidgetSourceEndpoint(this, this.meta.outputs[key]);
+        }
+
+        preferences = this.meta.preferenceList;
+        this.preferenceList = [];
+        this.preferences = {};
+        if (options.variables != null) {
+            for (i = 0; i < preferences.length; i++) {
+                iwidget_pref_info = options.variables[preferences[i].name];
+                this.preferenceList[i] = new Wirecloud.UserPref(preferences[i], iwidget_pref_info.readonly, iwidget_pref_info.hidden, iwidget_pref_info.value);
+                this.preferences[preferences[i].name] = this.preferenceList[i];
+            }
         }
 
         this.callbacks = {

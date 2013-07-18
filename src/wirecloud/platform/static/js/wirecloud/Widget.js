@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, interpolate, UserPref, Wirecloud*/
+/*global gettext, interpolate, Wirecloud*/
 
 (function () {
 
@@ -47,10 +47,12 @@
         this.preferences = {};
         this.preferenceList = [];
         for (i = 0; i < data.preferences.length; i++) {
-            preference = new UserPref(data.preferences[i].name, data.preferences[i].type, data.preferences[i]);
-            this.preferences[preference.varName] = preference;
+            preference = new Wirecloud.UserPrefDef(data.preferences[i].name, data.preferences[i].type, data.preferences[i]);
+            this.preferences[preference.name] = preference;
             this.preferenceList.push(preference);
         }
+        Object.freeze(this.preferences);
+        Object.freeze(this.preferenceList);
 
         // Inputs
         this.inputList = data.wiring.inputs;
@@ -112,11 +114,6 @@
         this.variables = {};
 
         var varname, variable;
-
-        for (i = 0; i < data.preferences.length; i += 1) {
-            this.variables[data.preferences[i].name] = data.preferences[i];
-            this.variables[data.preferences[i].name].aspect = 'PREF';
-        }
 
         for (i = 0; i < data.properties.length; i += 1) {
             this.variables[data.properties[i].name] = data.properties[i];

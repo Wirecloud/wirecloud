@@ -108,19 +108,17 @@
     Object.defineProperty(window.MashupPlatform, 'prefs', {value: {}});
     Object.defineProperty(window.MashupPlatform.prefs, 'get', {
         value: function get(key) {
-            var variable = platform.opManager.activeWorkspace.varManager.getVariableByName(id, key);
-            return variable.get();
+            return iwidget.preferences[key].value;
         }
     });
     Object.defineProperty(window.MashupPlatform.prefs, 'registerCallback', {
         value: function registerCallback(callback) {
-            platform.opManager.activeWorkspace.getIWidget(id).internal_iwidget.registerPrefCallback(callback);
+            iwidget.registerPrefCallback(callback);
         }
     });
     Object.defineProperty(window.MashupPlatform.prefs, 'set', {
         value: function get(key, value) {
-            var variable = platform.opManager.activeWorkspace.varManager.getVariableByName(id, key);
-            variable.set(value, true);
+            iwidget.preferences[key].value = value;
         }
     });
     Object.preventExtensions(window.MashupPlatform.prefs);

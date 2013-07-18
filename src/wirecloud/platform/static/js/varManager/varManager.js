@@ -105,13 +105,6 @@ function VarManager (_workspace) {
                     objVars[name] = new RWVariable(id, iwidget, variable, this, value, tab);
                     this.variables[id] = objVars[name];
                     break;
-                    break;
-                case Variable.prototype.USER_PREF:
-                    objVars[name] = new RVariable(id, iwidget, variable, this, value, tab);
-                    objVars[name].readOnly = 'readonly' in varInfo ? varInfo.readonly : false;
-                    objVars[name].hidden = 'hidden' in varInfo ? varInfo.hidden : false;
-                    this.variables[id] = objVars[name];
-                    break;
             }
         }
 

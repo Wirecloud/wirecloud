@@ -54,7 +54,7 @@
  * @param {String}            menu_color    background color for the menu.
  *                                          (6 chars with a hexadecimal color)
  */
-function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, refusedVersion, freeLayoutAfterLoading, readOnly) {
+function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, refusedVersion, freeLayoutAfterLoading, readOnly, variables) {
 
     this.code = null;
     this.position = position;
@@ -90,11 +90,12 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
         {
             id: iWidgetId,
             name: iWidgetName,
-            readOnly: readOnly
+            readOnly: readOnly,
+            variables: variables
         }
     );
-    this._updateErrorInfo.bind(this);
-    this.internal_iwidget.logManager.addEventListener('newentry', this._updateErrorInfo.bind(this));
+    this._updateErrorInfo = this._updateErrorInfo.bind(this);
+    this.internal_iwidget.logManager.addEventListener('newentry', this._updateErrorInfo);
     Object.defineProperties(this, {
         'id': {get: function () {return this.internal_iwidget.id;}},
         'widget': {get: function () {return this.internal_iwidget.widget;}},

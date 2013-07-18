@@ -78,7 +78,8 @@
                                   curIWidget.minimized,
                                   curIWidget.refused_version,
                                   false,
-                                  readOnly);
+                                  readOnly,
+                                  curIWidget.variables);
         }
     };
 

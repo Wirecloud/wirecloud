@@ -19,7 +19,7 @@
  *
  */
 
-/*global EzWebExt, Wirecloud*/
+/*global EzWebExt*/
 
 (function () {
 
@@ -28,36 +28,29 @@
     /**
      * @author aarranz
      */
-    var UserPref = function UserPref(pref_def, readOnly, hidden, currentValue) {
-        Object.defineProperty(this, 'meta', {value: pref_def});
-        Object.defineProperty(this, 'readOnly', {value: readOnly});
-        Object.defineProperty(this, 'hidden', {value: hidden});
-        this.value = currentValue;
-    };
-
-    UserPref.prototype.getInterfaceDescription = function getInterfaceDescription() {
-        var desc, type;
-
-        type = this.meta.type;
+    var UserPrefDef = function UserPrefDef(name, type, options) {
         if (type === 'list') {
             type = 'select';
         }
 
-        desc = EzWebExt.merge(this.meta.options, {
-            'type': type,
-            'initiallyDisabled': this.readOnly,
-            'initialValue': this.value,
-            'required': false
-        });
-
-        if (type === 'select') {
-            desc.initialEntries = this.meta.options.options;
-            desc.required = true;
+        // the value option is only used on the server side
+        if ('value' in options) {
+            delete options.value;
         }
 
-        return desc;
+        Object.defineProperty(this, 'name', {value: name});
+        Object.defineProperty(this, 'type', {value: type});
+        Object.defineProperty(this, 'label', {value: options.label});
+        Object.defineProperty(this, 'description', {value: options.description});
+        Object.defineProperty(this, 'options', {value: options});
+
+        if (options.default_value == null) {
+            Object.defineProperty(this, 'defaultValue', {value: ''});
+        } else {
+            Object.defineProperty(this, 'defaultValue', {value: options.default_value});
+        }
     };
 
-    Wirecloud.UserPref = UserPref;
+    Wirecloud.UserPrefDef = UserPrefDef;
 
 })();
