@@ -681,14 +681,7 @@
         for (i = 0; i < this.sourceAnchors.length; i += 1) {
             arrows = this.sourceAnchors[i].arrows.slice(0);
             for (j = 0; j < arrows.length; j += 1) {
-                cList = arrows[j].wrapperElement.classList;
-                if (!cList.contains('multiconnector_arrow')) {
-                    arrows[j].destroy();
-                } else {
-                    this.wiringEditor.removeMulticonnector(this.wiringEditor.multiconnectors[arrows[j].multiId]);
-                    arrows = this.sourceAnchors[i].arrows.slice(0);
-                    j = 0;
-                }
+                arrows[j].destroy();
             }
             this.sourceAnchors[i].destroy();
         }
@@ -696,14 +689,7 @@
         for (i = 0; i < this.targetAnchors.length; i += 1) {
             arrows = this.targetAnchors[i].arrows.slice(0);
             for (j = 0; j < arrows.length; j += 1) {
-                cList = arrows[j].wrapperElement.classList;
-                if (!cList.contains('multiconnector_arrow')) {
-                    arrows[j].destroy();
-                } else {
-                    this.wiringEditor.removeMulticonnector(this.wiringEditor.multiconnectors[arrows[j].multiId]);
-                    arrows = this.targetAnchors[i].arrows.slice(0);
-                    j = 0;
-                }
+                arrows[j].destroy();
             }
             this.targetAnchors[i].destroy();
         }
