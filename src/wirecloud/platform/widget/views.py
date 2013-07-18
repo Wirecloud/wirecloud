@@ -31,6 +31,7 @@
 #
 import time
 import os
+from urllib import url2pathname
 from urlparse import urljoin
 
 from django.conf import settings
@@ -112,7 +113,7 @@ class WidgetCodeEntry(Resource):
                 if xhtml.url.startswith(('http://', 'https://')):
                     code = downloader.download_http_content(urljoin(base_url, xhtml.url), user=request.user)
                 else:
-                    code = downloader.download_http_content('file://' + os.path.join(showcase_utils.wgt_deployer.root_dir, xhtml.url), user=request.user)
+                    code = downloader.download_http_content('file://' + os.path.join(showcase_utils.wgt_deployer.root_dir, url2pathname(xhtml.url)), user=request.user)
 
             except Exception, e:
                 # FIXME: Send the error or use the cached original code?

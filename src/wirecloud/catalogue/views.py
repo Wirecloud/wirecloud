@@ -31,6 +31,7 @@
 
 import os
 from cStringIO import StringIO
+from urllib import url2pathname
 from xml.sax import make_parser
 from xml.sax.xmlreader import InputSource
 
@@ -77,7 +78,7 @@ def serve_catalogue_media(request, vendor, name, version, file_path):
         return HttpResponseNotAllowed(('GET',))
 
     base_dir = catalogue_utils.wgt_deployer.get_base_dir(vendor, name, version)
-    local_path = os.path.normpath(os.path.join(base_dir, file_path))
+    local_path = os.path.normpath(os.path.join(base_dir, url2pathname(file_path)))
 
     if not os.path.isfile(local_path):
         return HttpResponse(status=404)
