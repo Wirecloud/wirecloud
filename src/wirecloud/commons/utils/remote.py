@@ -95,7 +95,7 @@ class IWidgetTester(object):
     def name(self):
         return self.element.find_element_by_css_selector('.widget_menu > span').text
 
-    def rename(self, new_name):
+    def rename(self, new_name, timeout=30):
 
         self.element.find_element_by_css_selector('.icon-cogs').click()
         self.testcase.popup_menu_click('Rename')
@@ -103,6 +103,11 @@ class IWidgetTester(object):
         # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
         self.testcase.driver.execute_script('arguments[0].textContent = arguments[1]', name_input, new_name)
         self.element.find_element_by_css_selector('.statusBar').click()
+
+        def name_changed(driver):
+            return driver.execute_script('return opManager.activeWorkspace.getIWidget(%s).name === "%s"' % (self.id, new_name))
+
+        WebDriverWait(self.testcase.driver, timeout).until(name_changed)
 
     def remove(self, timeout=30):
 
