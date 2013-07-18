@@ -123,7 +123,15 @@ class IWidgetTester(object):
 
         WebDriverWait(self.testcase.driver, timeout).until(iwidget_unloaded)
 
-    def get_wiring_endpoint(self, endpoint_name):
+    def get_wiring_endpoint(self, endpoint_name, timeout=5):
+
+        def widget_in_wiring_editor(driver):
+            return driver.execute_script('''
+                 var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
+                 return wiringEditor.iwidgets[%(iwidget)d] != null;
+            ''' % {"iwidget": self.id, "endpoint": endpoint_name})
+
+        WebDriverWait(self.testcase.driver, timeout).until(widget_in_wiring_editor)
 
         return WiringEndpointTester(self.testcase, endpoint_name, self.testcase.driver.execute_script('''
              var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
@@ -140,7 +148,15 @@ class IOperatorTester(object):
         self.id = ioperator_id
         self.element = element
 
-    def get_wiring_endpoint(self, endpoint_name):
+    def get_wiring_endpoint(self, endpoint_name, timeout=5):
+
+        def operator_in_wiring_editor(driver):
+            return driver.execute_script('''
+                 var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
+                 return wiringEditor.currentlyInUseOperators[%(operator)s] != null;
+            ''' % {"ioperator": self.id, "endpoint": endpoint_name})
+
+        WebDriverWait(self.testcase.driver, timeout).until(operator_in_wiring_editor)
 
         return WiringEndpointTester(self.testcase, endpoint_name, self.testcase.driver.execute_script('''
              var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
