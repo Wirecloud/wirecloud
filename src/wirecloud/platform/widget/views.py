@@ -153,13 +153,13 @@ def serve_showcase_media(request, vendor, name, version, file_path):
         return HttpResponseNotAllowed(('GET',))
 
     base_dir = showcase_utils.wgt_deployer.get_base_dir(vendor, name, version)
-    local_path = os.path.join(base_dir, file_path)
+    local_path = os.path.join(base_dir, url2pathname(file_path))
 
     if not os.path.isfile(local_path):
         return HttpResponse(status=404)
 
     if not getattr(settings, 'USE_XSENDFILE', False):
-        return serve(request, local_path, document_root='/')
+        return serve(request, file_path, document_root=base_dir)
     else:
         response = HttpResponse()
         response['X-Sendfile'] = smart_str(local_path)

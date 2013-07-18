@@ -84,7 +84,7 @@ def serve_catalogue_media(request, vendor, name, version, file_path):
         return HttpResponse(status=404)
 
     if not getattr(settings, 'USE_XSENDFILE', False):
-        return serve(request, local_path, document_root='/')
+        return serve(request, file_path, document_root=base_dir)
     else:
         response = HttpResponse()
         response['X-Sendfile'] = smart_str(local_path)
