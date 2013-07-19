@@ -1201,7 +1201,6 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
         output1 = ioperator.get_wiring_endpoint('output1')
         input3 = ioperator.get_wiring_endpoint('input3')
 
-        ActionChains(self.driver).click_and_hold(minioperator).move_to_element(grid).move_by_offset(10, 10).release().perform()
         ioperator.element.find_element_by_css_selector('.editPos_button').click()
         self.popup_menu_click('Reorder endpoints')
 
