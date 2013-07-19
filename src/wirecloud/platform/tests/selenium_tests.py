@@ -146,7 +146,9 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('makerequest_test').text, 'Success!!')
             prop_input = self.driver.find_element_by_css_selector('#update_prop_input')
             self.fill_form_input(prop_input, 'new value')
-            self.driver.find_element_by_css_selector('#update_prop_button').click()
+            # Work around Firefox driver bugs
+            self.driver.execute_script('arguments[0].click()',
+                self.driver.find_element_by_css_selector('#update_prop_button'))
 
         self.driver.refresh()
         self.wait_wirecloud_ready()
