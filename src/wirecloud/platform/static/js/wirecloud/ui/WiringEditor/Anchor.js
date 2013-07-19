@@ -53,6 +53,16 @@
         this._mousedown_callback = function _mousedown_callback(e) {
             var arrow, end, start;
 
+            // Anchor Context Menu
+            if (e.button == 2) {
+                if (this.menu.isVisible()) {
+                    this.menu.hide();
+                } else {
+                    this.menu.show(this.wrapperElement.getBoundingClientRect());
+                }
+                return;
+            }
+
             e.stopPropagation();
             // Only process left mouse button events
             if (this.enabled && e.button === 0) {
@@ -131,16 +141,10 @@
             }
         }.bind(this);
         this.wrapperElement.addEventListener('mousedown', this._mousedown_callback, false);
-        this.wrapperElement.addEventListener('contextmenu',
-            function (e) {
-                e.preventDefault();
-
-                if (this.menu.isVisible()) {
-                    this.menu.hide();
-                } else {
-                    this.menu.show(this.wrapperElement.getBoundingClientRect());
-                }
-            }.bind(this), true);
+        this.wrapperElement.addEventListener('contextmenu', function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+        });
 
         this._mouseup_callback = function _mouseup_callback(e) {
             // Only process left mouse button events
