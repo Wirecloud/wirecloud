@@ -1161,8 +1161,8 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
         input3 = iwidget.get_wiring_endpoint('input3')
         self.assertEqual(input3.pos, 2)
 
-        ActionChains(self.driver).click_and_hold(output1.label).move_by_offset(0, 30).move_by_offset(0, 30).release().perform()
-        ActionChains(self.driver).click_and_hold(input3.label).move_by_offset(0, -30).move_by_offset(0, -30).release().perform()
+        ActionChains(self.driver).click_and_hold(output1.label).move_by_offset(0, 50).move_by_offset(0, 50).release().perform()
+        ActionChains(self.driver).click_and_hold(input3.label).move_by_offset(0, -50).move_by_offset(0, -50).release().perform()
         time.sleep(0.2)
 
         self.assertEqual(output1.pos, 2)
@@ -1204,8 +1204,8 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
         ioperator.element.find_element_by_css_selector('.editPos_button').click()
         self.popup_menu_click('Reorder endpoints')
 
-        ActionChains(self.driver).click_and_hold(output1.label).move_by_offset(0, 30).move_by_offset(0, 30).release().perform()
-        ActionChains(self.driver).click_and_hold(input3.label).move_by_offset(0, -30).move_by_offset(0, -30).release().perform()
+        ActionChains(self.driver).click_and_hold(output1.label).move_by_offset(0, 50).move_by_offset(0, 50).release().perform()
+        ActionChains(self.driver).click_and_hold(input3.label).move_by_offset(0, -50).move_by_offset(0, -50).release().perform()
         time.sleep(0.2)
 
         self.assertEqual(output1.pos, 2)
