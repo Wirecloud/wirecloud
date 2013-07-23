@@ -1,0 +1,78 @@
+/* WiringPreview */
+.wiringPreview {
+    display: none;
+    position: absolute;
+    width: 99%;
+    height: 99%;
+    z-index: 1000;
+    border-radius: 28px;
+}
+
+.wiringPreview.on {
+    display: block;
+}
+
+.wiringPreview .shapeLayer {
+
+}
+
+/* Close Button */
+.wiringPreview .closeButton {
+    font-family: FontAwesome;
+    font-size: 21px;
+    color: rgb(83, 83, 134);
+    cursor: pointer;
+    top: -7px;
+    right: -11px;
+    position: absolute;
+}
+
+/* widgetShapes */
+.wiringPreview .shapeLayer .widgetShape {
+    border-width: 4px;
+    border-style: dashed;
+    display: inline-block;
+    border-color: rgba(0, 0, 0, 0.68);
+    position: absolute;
+    background: rgba(16, 16, 102, 0.26);
+}
+
+/* endpoints */
+.wiringPreview .shapeLayer .widgetShape .endpoint {
+    position: absolute;
+}
+
+.wiringPreview .shapeLayer .widgetShape .endpoint {
+    position: absolute;
+}
+
+.wiringPreview .shapeLayer .widgetShape .source.endpoint {
+    right: -5px;
+}
+
+.wiringPreview .shapeLayer .widgetShape .target.endpoint {
+    left: -5px;
+}
+
+.wiringPreview .shapeLayer .widgetShape .endpoint .label {
+    background-color: rgba(0, 0, 0, 0);
+    font-family: Comfortaa;
+    color: rgb(243, 245, 217);
+    font-size: 22px;
+    vertical-align: middle;
+}
+
+.wiringPreview .shapeLayer .widgetShape .endpoint .anchor {
+    font-size: 22px;
+    rgb(209, 209, 0);
+}
+
+/* Emphasized elements */
+.wiringPreview .shapeLayer .widgetShape .endpoint.emphasized .label {
+    color: #F78000;
+}
+
+/* blurred widgets */
+.iwidget > .widget_wrapper.blurred {
+    -webkit-filter: blur(2px);
+}
