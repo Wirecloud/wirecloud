@@ -35,13 +35,14 @@
             return;
         }
 
+        Wirecloud.ui.WindowMenu.call(this, title, extra_class);
+
         options = EzWebExt.merge({
             factory: Wirecloud.ui.InputInterfaceFactory,
             autoHide: true
         }, options);
         options.buttonArea = this.windowBottom;
 
-        Wirecloud.ui.WindowMenu.call(this, title, extra_class);
         // TODO
         this.iconElement = null;
         this.msgElement = null;

@@ -243,16 +243,6 @@ def get_or_add_widget_from_catalogue(vendor, name, version, user, request=None, 
     return resource.widget
 
 
-def get_and_add_widget(vendor, name, version, users):
-
-    widget = Widget.objects.get(vendor=vendor, name=name, version=version)
-    for user in users:
-        widget.users.add(user)
-
-    widget.save()
-    return widget
-
-
 def xpath(tree, query, xmlns):
     if xmlns is None:
         query = query.replace('xhtml:', '')

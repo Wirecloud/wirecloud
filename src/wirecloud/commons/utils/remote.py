@@ -37,6 +37,30 @@ def marketplace_loaded(driver):
     return False
 
 
+class WiringEndpointTester(object):
+
+    def __init__(self, testcase, endpoint_name, element):
+
+        self.testcase = testcase
+        self.endpoint_name = endpoint_name
+        self.element = element
+
+    @property
+    def label(self):
+        return self.testcase.driver.execute_script('return arguments[0].parentElement;', self.element);
+
+    @property
+    def pos(self):
+        return self.testcase.driver.execute_script('''
+            var endpoint_element = arguments[0].parentElement.parentElement;
+            var endpointlist = Array.prototype.slice.call(arguments[0].parentElement.parentElement.parentElement.children);
+            return endpointlist.indexOf(endpoint_element);
+        ''', self.element);
+
+    def perform_action(self, action):
+        ActionChains(self.testcase.driver).context_click(self.element).perform()
+        self.testcase.popup_menu_click(action)
+
 class IWidgetTester(object):
 
     def __init__(self, testcase, iwidget_id, element):
@@ -71,15 +95,19 @@ class IWidgetTester(object):
     def name(self):
         return self.element.find_element_by_css_selector('.widget_menu > span').text
 
-    def rename(self, new_name):
+    def rename(self, new_name, timeout=30):
 
         self.element.find_element_by_css_selector('.icon-cogs').click()
-        self.testcase.wait_element_visible_by_css_selector('.popup_menu')
         self.testcase.popup_menu_click('Rename')
         name_input = self['element'].find_element_by_css_selector('.widget_menu > span')
         # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
         self.testcase.driver.execute_script('arguments[0].textContent = arguments[1]', name_input, new_name)
         self.element.find_element_by_css_selector('.statusBar').click()
+
+        def name_changed(driver):
+            return driver.execute_script('return opManager.activeWorkspace.getIWidget(%s).name === "%s"' % (self.id, new_name))
+
+        WebDriverWait(self.testcase.driver, timeout).until(name_changed)
 
     def remove(self, timeout=30):
 
@@ -95,6 +123,46 @@ class IWidgetTester(object):
 
         WebDriverWait(self.testcase.driver, timeout).until(iwidget_unloaded)
 
+    def get_wiring_endpoint(self, endpoint_name, timeout=5):
+
+        def widget_in_wiring_editor(driver):
+            return driver.execute_script('''
+                 var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
+                 return wiringEditor.iwidgets[%(iwidget)d] != null;
+            ''' % {"iwidget": self.id, "endpoint": endpoint_name})
+
+        WebDriverWait(self.testcase.driver, timeout).until(widget_in_wiring_editor)
+
+        return WiringEndpointTester(self.testcase, endpoint_name, self.testcase.driver.execute_script('''
+             var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
+             return wiringEditor.iwidgets[%(iwidget)d].getAnchor("%(endpoint)s").wrapperElement;
+        ''' % {"iwidget": self.id, "endpoint": endpoint_name}
+        ))
+
+
+class IOperatorTester(object):
+
+    def __init__(self, testcase, ioperator_id, element):
+
+        self.testcase = testcase
+        self.id = ioperator_id
+        self.element = element
+
+    def get_wiring_endpoint(self, endpoint_name, timeout=5):
+
+        def operator_in_wiring_editor(driver):
+            return driver.execute_script('''
+                 var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
+                 return wiringEditor.currentlyInUseOperators[%(ioperator)s] != null;
+            ''' % {"ioperator": self.id, "endpoint": endpoint_name})
+
+        WebDriverWait(self.testcase.driver, timeout).until(operator_in_wiring_editor)
+
+        return WiringEndpointTester(self.testcase, endpoint_name, self.testcase.driver.execute_script('''
+             var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
+             return wiringEditor.currentlyInUseOperators['%(ioperator)s'].getAnchor("%(endpoint)s").wrapperElement;
+        ''' % {"ioperator": self.id, "endpoint": endpoint_name}
+        ))
 
 class WirecloudRemoteTestCase(object):
 
@@ -335,6 +403,25 @@ class WirecloudRemoteTestCase(object):
 
         return [IWidgetTester(self, iwidget_ids[i], iwidget_elements[i]) for i in range(len(iwidget_ids))]
 
+    def get_current_wiring_editor_ioperators(self):
+
+        ioperators = self.driver.execute_script('''
+            var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
+            var ioperator_ids = [];
+            var ioperator_elements = [];
+
+            for (var key in wiringEditor.currentlyInUseOperators) {
+                ioperator_ids.push(key);
+                ioperator_elements.push(wiringEditor.currentlyInUseOperators[key].wrapperElement);
+            }
+            return [ioperator_ids, ioperator_elements];
+        ''');
+
+        return [
+            IOperatorTester(self, ioperators[0][i], ioperators[1][i])
+            for i in range(len(ioperators[0]))
+        ]
+
     def instantiate(self, resource, timeout=30):
 
         old_iwidget_ids = self.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
@@ -433,6 +520,7 @@ class WirecloudRemoteTestCase(object):
 
     def popup_menu_click(self, item_name):
 
+        self.wait_element_visible_by_css_selector('.popup_menu')
         item = self.get_popup_menu_item(item_name)
         item.click()
 
@@ -479,7 +567,6 @@ class WirecloudRemoteTestCase(object):
         self.change_main_view('workspace')
 
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
-        self.wait_element_visible_by_css_selector('.popup_menu')
         self.popup_menu_click(workspace_name)
 
         self.wait_wirecloud_ready()
@@ -499,7 +586,6 @@ class WirecloudRemoteTestCase(object):
         self.change_main_view('workspace')
 
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
-        self.wait_element_visible_by_css_selector('.popup_menu')
         self.popup_menu_click('Upload to local catalogue')
 
         self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']")
@@ -549,7 +635,6 @@ class WirecloudRemoteTestCase(object):
         except:
             self.driver.find_element_by_css_selector('#wirecloud_breadcrum .third_level > .icon-menu').click()
 
-        self.wait_element_visible_by_css_selector('.popup_menu')
         self.popup_menu_click(action)
 
     def perform_workspace_action(self, action):
@@ -558,7 +643,6 @@ class WirecloudRemoteTestCase(object):
 
         if 'open' not in popup_button.get_attribute('class'):
             popup_button.click()
-            self.wait_element_visible_by_css_selector('.popup_menu')
 
         self.popup_menu_click(action)
 
@@ -680,10 +764,3 @@ class WirecloudRemoteTestCase(object):
         self.search_resource(resource_name)
         resource = self.search_in_catalogue_results(resource_name)
         self.assertIsNone(resource)
-
-    def get_iwidget_anchor(self, iwidget, endpoint):
-        return self.driver.execute_script('''
-            var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
-            return LayoutManagerFactory.getInstance().viewsByName["wiring"].iwidgets[%(iwidget)d].getAnchor("%(endpoint)s").wrapperElement;
-        ''' % {"iwidget": iwidget, "endpoint": endpoint}
-        )

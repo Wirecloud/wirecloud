@@ -11,6 +11,11 @@
         StyledElements.PopupMenuBase.call(this, options);
 
         this._disableCallback = function (e) {
+
+            if (e.button !== 0) {
+                return;
+            }
+
             var boundingBox = this.wrapperElement.getBoundingClientRect();
 
             if (e.clientX < boundingBox.left || e.clientX > boundingBox.right || e.clientY < boundingBox.top || e.clientY > boundingBox.bottom) {
@@ -22,7 +27,6 @@
 
     PopupMenu.prototype.show = function show(refPosition) {
         document.addEventListener("click", this._disableCallback, true);
-        document.addEventListener("contextmenu", this._disableCallback, true);
 
         StyledElements.PopupMenuBase.prototype.show.call(this, refPosition);
     };

@@ -24,11 +24,12 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.test import TransactionTestCase, Client
+from django.utils import unittest
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 
-from wirecloud.commons.utils.testcases import uses_extra_resources, iwidget_context, WirecloudSeleniumTestCase
+from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudSeleniumTestCase
 from wirecloud.platform.workspace.models import Workspace
 
 
@@ -286,6 +287,10 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         self.assertRaises(NoSuchElementException, menubar.find_element_by_xpath, "//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
 
     def test_basic_wiring_editor_operations(self):
+
+        if self.driver.capabilities['browserName'] == 'firefox' and not self.driver.profile.native_events_enabled:
+            raise unittest.SkipTest('This test need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
+
         self.login()
 
         self.add_widget_to_mashup('Test', new_name='Test (1)')
@@ -298,22 +303,19 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-        # TODO there are several bugs in the firefox, for now, this line of code "works"
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-40, -40).click().perform()
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-40, -40).release().perform()
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
-        # TODO there are several bugs in the firefox, for now, this line of code "works"
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(40, 40).click().perform()
-        time.sleep(0.2)
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(40, 40).release().perform()
 
-        source = self.get_iwidget_anchor(1, 'outputendpoint')
-        target = self.get_iwidget_anchor(2, 'inputendpoint')
-        ActionChains(self.driver).drag_and_drop(source, target).perform()
+        source = iwidgets[0].get_wiring_endpoint('outputendpoint')
+        target = iwidgets[1].get_wiring_endpoint('inputendpoint')
+        ActionChains(self.driver).drag_and_drop(source.element, target.element).perform()
 
         self.change_main_view('workspace')
         time.sleep(0.2)
 
-        with iwidget_context(self.driver, iwidgets[0]['id']):
+        with iwidgets[0]:
             text_input = self.driver.find_element_by_tag_name('input')
             self.fill_form_input(text_input, 'hello world!!')
             # Work around hang when using Firefox Driver
@@ -322,7 +324,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         time.sleep(0.2)
 
-        with iwidget_context(self.driver, iwidgets[1]['id']):
+        with iwidgets[1]:
             try:
                 WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
             except:
@@ -331,11 +333,11 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'hello world!!')
 
-        with iwidget_context(self.driver, iwidgets[2]['id']):
+        with iwidgets[2]:
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, '')
 
-        with iwidget_context(self.driver, iwidgets[0]['id']):
+        with iwidgets[0]:
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, '')
     test_basic_wiring_editor_operations.tags = ('fiware-ut-6',)
@@ -422,7 +424,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
         self.assertEqual(window_menus, 1)
 
         self.change_main_view('workspace')
-        with iwidget_context(self.driver, iwidgets[0]['id']):
+        with iwidgets[0]:
             text_input = self.driver.find_element_by_tag_name('input')
             self.fill_form_input(text_input, 'hello world!!')
             # Work around hang when using Firefox Driver
@@ -431,7 +433,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 
         time.sleep(0.2)
 
-        with iwidget_context(self.driver, iwidgets[1]['id']):
+        with iwidgets[1]:
             try:
                 WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
             except:
@@ -1121,126 +1123,145 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
         self.assertEqual(len(widgets), 2)
         self.assertEqual(len(operators), 1)
 
+
 class EndpointOrderTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
 
-    @uses_extra_resources(('Wirecloud_Test_Multiendpoint.wgt',), shared=True)
+    @classmethod
+    def setUpClass(cls):
+
+        super(EndpointOrderTestCase, cls).setUpClass()
+
+        if cls.driver.capabilities['browserName'] == 'firefox' and not cls.driver.profile.native_events_enabled:
+            cls.tearDownClass()
+            raise unittest.SkipTest('Endpoint reordering tests need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
+
+    @uses_extra_resources(('Wirecloud_TestMultiendpoint_1.0.wgt',), shared=True)
     def test_wiring_widget_reorder_endpoints(self):
+
         self.login()
+
         iwidget = self.add_widget_to_mashup('Test_Multiendpoint', new_name='Test (1)')
-        time.sleep(2)
         self.change_main_view('wiring')
         time.sleep(2)
+
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
         miniwidget = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-        # TODO there are several bugs in the firefox, for now, this line of code "works"
-        ActionChains(self.driver).click_and_hold(miniwidget).move_to_element(grid).move_by_offset(10, 10).click().perform()
-        time.sleep(2)
-        widget = self.driver.find_elements_by_css_selector('.grid > .iwidget')[1]
-        widget.find_element_by_css_selector('.editPos_button').click()
-        time.sleep(2)
-        self.driver.find_element_by_xpath("//*[contains(@class, 'menu_item')]//*[text()='Reorder endpoints']").click()
-        time.sleep(2)
-        event1 = self.get_iwidget_label(3, 'event1')
-        isinpos = self.is_iwidget_anchor_in_pos(3, 'event1', 0)
-        self.assertEqual(isinpos, True)
-        slot3 = self.get_iwidget_label(3, 'slot3')
-        isinpos = self.is_iwidget_anchor_in_pos(3, 'slot3', 2)
-        self.assertEqual(isinpos, True)
-        # todo. dont run in google chrome.............. sometimes
-        time.sleep(5)
-        ActionChains(self.driver).click_and_hold(event1).move_by_offset(0, 90).click().perform()
-        time.sleep(5)
-        ActionChains(self.driver).click_and_hold(slot3).move_by_offset(0, -90).click().perform()
-        time.sleep(5)
-        isinpos = self.is_iwidget_anchor_in_pos(3, 'event1', 2)
-        self.assertEqual(isinpos, True)
-        isinpos = self.is_iwidget_anchor_in_pos(3, 'slot3', 0)
-        self.assertEqual(isinpos, True)
-        self.change_main_view('workspace')
-        time.sleep(2)
-        self.change_main_view('wiring')
-        time.sleep(2)
-        isinpos = self.is_iwidget_anchor_in_pos(3, 'event1', 2)
-        self.assertEqual(isinpos, True)
-        isinpos = self.is_iwidget_anchor_in_pos(3, 'slot3', 0)
-        self.assertEqual(isinpos, True)
 
-    @uses_extra_resources(('Wirecloud_Test_Operator_Multiendpoint.wgt',), shared=True)
-    def test_wiring_operator_reorder_endpoints(self):
-        self.login()
-        time.sleep(2)
-        self.change_main_view('wiring')
-        time.sleep(2)
-        grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
-        self.driver.find_element_by_xpath("//*[text()='Operators']").click()
-        miniwidget = self.driver.find_element_by_xpath("//*[contains(@class, 'container ioperator')]//*[text()='TestOp. Multiendpoint']")
-        # TODO there are several bugs in the firefox, for now, this line of code "works"
-        ActionChains(self.driver).click_and_hold(miniwidget).move_to_element(grid).move_by_offset(10, 10).click().perform()
-        time.sleep(2)
-        operator = self.driver.find_elements_by_css_selector('.grid > .ioperator')[1]
-        operator.find_element_by_css_selector('.editPos_button').click()
-        self.driver.find_element_by_xpath("//*[contains(@class, 'menu_item')]//*[text()='Reorder endpoints']").click()
-        time.sleep(2)
-        event1 = self.get_ioperator_label(1, 'output1')
-        event3 = self.get_ioperator_label(1, 'output3')
-        slot1 = self.get_ioperator_label(1, 'input1')
-        slot3 = self.get_ioperator_label(1, 'input3')
-        ActionChains(self.driver).click_and_hold(event1).move_by_offset(0, 90).click().perform()
-        time.sleep(2)
-        ActionChains(self.driver).click_and_hold(event3).move_by_offset(0, -90).click().perform()
-        time.sleep(2)
-        ActionChains(self.driver).click_and_hold(slot1).move_by_offset(0, 90).click().perform()
-        time.sleep(2)
-        ActionChains(self.driver).click_and_hold(slot3).move_by_offset(0, -90).click().perform()
-        isinpos = self.is_ioperator_anchor_in_pos(1, 'output1', 2)
-        self.assertEqual(isinpos, True)
-        isinpos = self.is_ioperator_anchor_in_pos(1, 'input3', 0)
-        self.assertEqual(isinpos, True)
+        ActionChains(self.driver).click_and_hold(miniwidget).move_to_element(grid).move_by_offset(10, 10).release().perform()
+
+        widget = self.wait_element_visible_by_css_selector('.grid > .iwidget')
+        widget.find_element_by_css_selector('.editPos_button').click()
+        self.popup_menu_click('Reorder endpoints')
+
+        output1 = iwidget.get_wiring_endpoint('output1')
+        self.assertEqual(output1.pos, 0)
+
+        input3 = iwidget.get_wiring_endpoint('input3')
+        self.assertEqual(input3.pos, 2)
+
+        ActionChains(self.driver).click_and_hold(output1.label).move_by_offset(0, 50).move_by_offset(0, 50).release().perform()
+        ActionChains(self.driver).click_and_hold(input3.label).move_by_offset(0, -50).move_by_offset(0, -50).release().perform()
+        time.sleep(0.2)
+
+        self.assertEqual(output1.pos, 2)
+        self.assertEqual(input3.pos, 0)
+
+        # Reload the wiring view
         self.change_main_view('workspace')
-        time.sleep(2)
+        time.sleep(0.3) # We need to wait for the wiring status been saved
         self.change_main_view('wiring')
         time.sleep(2)
-        isinpos = self.is_ioperator_anchor_in_pos(1, 'output1', 2)
-        self.assertEqual(isinpos, True)
-        isinpos = self.is_ioperator_anchor_in_pos(1, 'input3', 0)
-        self.assertEqual(isinpos, True)
+
+        output1 = iwidget.get_wiring_endpoint('output1')
+        self.assertEqual(output1.pos, 2)
+
+        input3 = iwidget.get_wiring_endpoint('input3')
+        self.assertEqual(input3.pos, 0)
+
+    @uses_extra_resources(('Wirecloud_TestOperatorMultiendpoint_1.0.wgt',), shared=True)
+    def test_wiring_operator_reorder_endpoints(self):
+
+        self.login()
+
+        self.change_main_view('wiring')
+        time.sleep(2)
+
+        grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+
+        self.driver.find_element_by_xpath("//*[text()='Operators']").click()
+        time.sleep(0.2)
+        minioperator = self.driver.find_element_by_xpath("//*[contains(@class, 'container ioperator')]//*[text()='TestOp. Multiendpoint']")
+
+        ActionChains(self.driver).click_and_hold(minioperator).move_to_element(grid).move_by_offset(10, 10).release().perform()
+        self.wait_element_visible_by_css_selector('.grid > .ioperator')
+
+        ioperator = self.get_current_wiring_editor_ioperators()[0]
+        output1 = ioperator.get_wiring_endpoint('output1')
+        input3 = ioperator.get_wiring_endpoint('input3')
+
+        ioperator.element.find_element_by_css_selector('.editPos_button').click()
+        self.popup_menu_click('Reorder endpoints')
+
+        ActionChains(self.driver).click_and_hold(output1.label).move_by_offset(0, 50).move_by_offset(0, 50).release().perform()
+        ActionChains(self.driver).click_and_hold(input3.label).move_by_offset(0, -50).move_by_offset(0, -50).release().perform()
+        time.sleep(0.2)
+
+        self.assertEqual(output1.pos, 2)
+        self.assertEqual(input3.pos, 0)
+
+        # Reload the wiring view
+        self.change_main_view('workspace')
+        time.sleep(0.3) # We need to wait for the wiring status been saved
+        self.change_main_view('wiring')
+        time.sleep(2)
+
+        self.assertEqual(ioperator.get_wiring_endpoint('output1').pos, 2)
+        self.assertEqual(ioperator.get_wiring_endpoint('input3').pos, 0)
+
 
 class MulticonnectorTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
 
+    @classmethod
+    def setUpClass(cls):
+
+        super(MulticonnectorTestCase, cls).setUpClass()
+
+        if cls.driver.capabilities['browserName'] == 'firefox' and not cls.driver.profile.native_events_enabled:
+            cls.tearDownClass()
+            raise unittest.SkipTest('Multiconnector tests need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
+
     def test_wiring_basic_multiconnector_visualization(self):
+
         self.login()
 
-        self.add_widget_to_mashup('Test', new_name='Test (1)')
-        time.sleep(2)
+        iwidget = self.add_widget_to_mashup('Test', new_name='Test (1)')
 
         self.change_main_view('wiring')
         time.sleep(2)
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-        # TODO there are several bugs in the firefox, for now, this line of code "works"
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-100, -100).click().perform()
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(10, 10).release().perform()
 
-        time.sleep(2)
-        source = self.get_iwidget_anchor(3, 'outputendpoint')
-        target = self.get_iwidget_anchor(3, 'inputendpoint')
+        source = iwidget.get_wiring_endpoint('outputendpoint')
+        target = iwidget.get_wiring_endpoint('inputendpoint')
 
-        ActionChains(self.driver).context_click(source).perform()
-        self.driver.find_element_by_xpath("//*[contains(@class, 'menu_item')]//*[text()='Add multiconnector']").click()
+        source.perform_action('Add multiconnector')
+
         sourcesmulti = self.driver.find_elements_by_css_selector('.source.multiconnector.anchor')
         self.assertEqual(len(sourcesmulti), 1)
 
-        ActionChains(self.driver).context_click(target).perform()
-        self.driver.find_element_by_xpath("//*[contains(@class, 'menu_item')]//*[text()='Add multiconnector']").click()
+        target.perform_action('Add multiconnector')
+
         targetsmulti = self.driver.find_elements_by_css_selector('.target.multiconnector.anchor')
         self.assertEqual(len(targetsmulti), 1)
 
         self.change_main_view('workspace')
-        time.sleep(0.2)
+        time.sleep(0.3) # We need to wait for the wiring status been saved
         self.change_main_view('wiring')
         time.sleep(2)
 
@@ -1249,9 +1270,8 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
         targetsmulti = self.driver.find_elements_by_css_selector('.target.multiconnector.anchor')
         self.assertEqual(len(targetsmulti), 1)
 
-    test_wiring_basic_multiconnector_visualization.tags = ('current',)
-
     def test_wiring_source_multiconnector_connection(self):
+
         self.login()
 
         self.add_widget_to_mashup('Test', new_name='Test (1)')
@@ -1265,32 +1285,28 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-        # TODO there are several bugs in the firefox, for now, this line of code "works"
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -50).click().perform()
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -50).release().perform()
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
-        # TODO there are several bugs in the firefox, for now, this line of code "works"
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -120).click().perform()
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -120).release().perform()
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
-        # TODO there are several bugs in the firefox, for now, this line of code "works"
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, 40).click().perform()
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, 40).release().perform()
 
+        source = iwidgets[0].get_wiring_endpoint('outputendpoint')
+        target1 = iwidgets[1].get_wiring_endpoint('inputendpoint')
+        target2 = iwidgets[2].get_wiring_endpoint('inputendpoint')
 
-        source = self.get_iwidget_anchor(3, 'outputendpoint')
-        target1 = self.get_iwidget_anchor(4, 'inputendpoint')
-        target2 = self.get_iwidget_anchor(5, 'inputendpoint')
-
-        ActionChains(self.driver).context_click(source).perform()
-        self.driver.find_element_by_xpath("//*[contains(@class, 'menu_item')]//*[text()='Add multiconnector']").click()
+        source.perform_action('Add multiconnector')
         multi = self.driver.find_element_by_css_selector('.anchor.multiconnector.anchor')
-        ActionChains(self.driver).drag_and_drop(target1, multi).perform()
-        ActionChains(self.driver).drag_and_drop(target2, multi).perform()
+
+        ActionChains(self.driver).drag_and_drop(target1.element, multi).perform()
+        ActionChains(self.driver).drag_and_drop(target2.element, multi).perform()
 
         self.change_main_view('workspace')
         time.sleep(0.2)
 
-        with iwidget_context(self.driver, iwidgets[0]['id']):
+        with iwidgets[0]:
             text_input = self.driver.find_element_by_tag_name('input')
             self.fill_form_input(text_input, 'first hello world!!')
             # Work around hang when using Firefox Driver
@@ -1299,7 +1315,7 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
 
         time.sleep(0.2)
 
-        with iwidget_context(self.driver, iwidgets[1]['id']):
+        with iwidgets[1]:
             try:
                 WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'first hello world!!')
             except:
@@ -1308,7 +1324,7 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'first hello world!!')
 
-        with iwidget_context(self.driver, iwidgets[2]['id']):
+        with iwidgets[2]:
             try:
                 WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'first hello world!!')
             except:
@@ -1317,7 +1333,6 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'first hello world!!')
 
-    test_wiring_source_multiconnector_connection.tags = ('current2',)
 
     def test_wiring_target_multiconnector_connection(self):
         self.login()
@@ -1332,31 +1347,28 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-        # TODO there are several bugs in the firefox, for now, this line of code "works"
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -50).click().perform()
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -50).release().perform()
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
-        # TODO there are several bugs in the firefox, for now, this line of code "works"
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -120).click().perform()
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -120).release().perform()
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
-        # TODO there are several bugs in the firefox, for now, this line of code "works"
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, 40).click().perform()
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, 40).release().perform()
 
-        target = self.get_iwidget_anchor(3, 'inputendpoint')
-        source1 = self.get_iwidget_anchor(4, 'outputendpoint')
-        source2 = self.get_iwidget_anchor(5, 'outputendpoint')
+        target = iwidgets[0].get_wiring_endpoint('inputendpoint')
+        source1 = iwidgets[1].get_wiring_endpoint('outputendpoint')
+        source2 = iwidgets[2].get_wiring_endpoint('outputendpoint')
 
-        ActionChains(self.driver).context_click(target).perform()
-        self.driver.find_element_by_xpath("//*[contains(@class, 'menu_item')]//*[text()='Add multiconnector']").click()
+        target.perform_action('Add multiconnector')
         multi = self.driver.find_element_by_css_selector('.anchor.multiconnector.anchor')
-        ActionChains(self.driver).drag_and_drop(source1, multi).perform()
-        ActionChains(self.driver).drag_and_drop(source2, multi).perform()
+
+        ActionChains(self.driver).drag_and_drop(source1.element, multi).perform()
+        ActionChains(self.driver).drag_and_drop(source2.element, multi).perform()
 
         self.change_main_view('workspace')
         time.sleep(0.2)
 
-        with iwidget_context(self.driver, iwidgets[1]['id']):
+        with iwidgets[1]:
             text_input = self.driver.find_element_by_tag_name('input')
             self.fill_form_input(text_input, 'first hello world!!')
             # Work around hang when using Firefox Driver
@@ -1365,7 +1377,7 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
 
         time.sleep(0.2)
 
-        with iwidget_context(self.driver, iwidgets[0]['id']):
+        with iwidgets[0]:
             try:
                 WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'first hello world!!')
             except:
@@ -1374,7 +1386,7 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'first hello world!!')
 
-        with iwidget_context(self.driver, iwidgets[2]['id']):
+        with iwidgets[2]:
             text_input = self.driver.find_element_by_tag_name('input')
             self.fill_form_input(text_input, 'second hello world!!')
             # Work around hang when using Firefox Driver
@@ -1383,7 +1395,7 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
 
         time.sleep(0.2)
 
-        with iwidget_context(self.driver, iwidgets[0]['id']):
+        with iwidgets[0]:
             try:
                 WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'second hello world!!')
             except:
@@ -1392,4 +1404,3 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'second hello world!!')
 
-    test_wiring_target_multiconnector_connection.tags = ('current3',)

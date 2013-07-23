@@ -1,26 +1,27 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012 Universidad Politécnica de Madrid
+# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
 # Wirecloud is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
+# it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
 # Wirecloud is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# GNU Affero General Public License for more details.
 
-# You should have received a copy of the GNU General Public License
+# You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
 import zipfile
 from lxml import etree
 from shutil import rmtree
+from urllib import pathname2url
 
 from wirecloud.commons.utils.template import TemplateParser
 
@@ -124,7 +125,7 @@ class WgtDeployer(object):
             template_parser.get_resource_version(),
         )
         widget_dir = os.path.join(self._root_dir, widget_rel_dir)
-        template_parser.set_base(widget_rel_dir + os.sep)
+        template_parser.set_base(pathname2url(widget_rel_dir) + '/')
 
         self._create_folders(widget_dir)
         wgt_file.extract(widget_dir)

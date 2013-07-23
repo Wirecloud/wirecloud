@@ -31,6 +31,7 @@
 #
 import time
 import os
+from urllib import url2pathname
 from urlparse import urljoin
 
 from django.conf import settings
@@ -112,7 +113,7 @@ class WidgetCodeEntry(Resource):
                 if xhtml.url.startswith(('http://', 'https://')):
                     code = downloader.download_http_content(urljoin(base_url, xhtml.url), user=request.user)
                 else:
-                    code = downloader.download_http_content('file://' + os.path.join(showcase_utils.wgt_deployer.root_dir, xhtml.url), user=request.user)
+                    code = downloader.download_http_content('file://' + os.path.join(showcase_utils.wgt_deployer.root_dir, url2pathname(xhtml.url)), user=request.user)
 
             except Exception, e:
                 # FIXME: Send the error or use the cached original code?
@@ -152,13 +153,13 @@ def serve_showcase_media(request, vendor, name, version, file_path):
         return HttpResponseNotAllowed(('GET',))
 
     base_dir = showcase_utils.wgt_deployer.get_base_dir(vendor, name, version)
-    local_path = os.path.join(base_dir, file_path)
+    local_path = os.path.join(base_dir, url2pathname(file_path))
 
     if not os.path.isfile(local_path):
         return HttpResponse(status=404)
 
     if not getattr(settings, 'USE_XSENDFILE', False):
-        return serve(request, local_path, document_root='/')
+        return serve(request, file_path, document_root=base_dir)
     else:
         response = HttpResponse()
         response['X-Sendfile'] = smart_str(local_path)
