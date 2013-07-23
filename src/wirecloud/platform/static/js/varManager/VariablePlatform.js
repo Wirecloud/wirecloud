@@ -141,6 +141,9 @@ RVariable.prototype = new Variable;
 //////////////////////////////////////////////
 
 RVariable.prototype.setHandler = function (handler_) {
+    if (this.vardef.aspect == this.SLOT && this.vardef.name in this.iWidget.internal_iwidget.inputs) {
+        this.iWidget.internal_iwidget.inputs[this.vardef.name].handler = handler_;
+    }
     this.handler = handler_;
 }
 
@@ -273,8 +276,8 @@ RWVariable.prototype.set = function (value_, options_) {
     // When variable is INOUT, is the connectable who propagates
     switch (this.vardef.aspect) {
         case Variable.prototype.EVENT:
-            if (this.connectable != null) {
-                this.connectable.propagate(this.value, options_);
+            if (this.vardef.name in this.iWidget.internal_iwidget.outputs) {
+                this.iWidget.internal_iwidget.outputs[this.vardef.name].propagate(this.value, options_);
                 break;
             }
         default:
