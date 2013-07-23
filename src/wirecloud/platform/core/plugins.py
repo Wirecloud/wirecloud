@@ -46,6 +46,7 @@ WIRING_EDITOR_FILES = (
     'js/wirecloud/ui/WiringEditor/TargetAnchor.js',
     'js/wirecloud/ui/WiringEditor/Multiconnector.js',
     'js/wirecloud/ui/WiringEditor/GenericInterfaceSettingsMenuItems.js',
+    'js/wirecloud/ui/WiringEditor/WiringPreview.js',
     'js/wirecloud/ui/BasicRecommendations.js',
 )
 
@@ -93,6 +94,7 @@ WIRING_EDITOR_CSS = (
     'css/wiring/entities.css',
     'css/wiring/multiconnector.css',
     'css/wiring/emptyWiringBox.css',
+    'css/wiring/wiringPreview.css',
 )
 
 STYLED_ELEMENTS_CSS = (
