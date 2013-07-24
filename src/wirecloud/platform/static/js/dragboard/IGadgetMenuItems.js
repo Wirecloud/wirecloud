@@ -58,12 +58,9 @@
         items.push(new StyledElements.MenuItem(
             gettext("Reload"),
             function () {
-                if ('data' in this.content) {
-                    this.contentWrapper.removeChild(this.content);
-                    this.contentWrapper.appendChild(this.content);
-                } else {
-                    this.content.src = this.codeURL;
-                }
+                try {
+                    this.content.contentDocument.location.reload();
+                } catch (e) {}
             }.bind(this.iWidget)
         ));
 
