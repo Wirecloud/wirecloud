@@ -29,13 +29,8 @@
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/icons.css" />
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/font-awesome.css" />
     {% endcompress %}
-    <!--[if IE]>
-      <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/ie.css" />
-    <![endif]-->
     {% endblock %}
 
-    {% block js %}
-    {% endblock %}
 </head>
 
 <body>
@@ -68,22 +63,9 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/lib/strftime-locales.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/lib/prototype/prototype-1.7.js"></script>
 {% endcompress %}
-<script type="text/javascript">
-<![CDATA[
-var URIs = {
-  DELETE_TAG: '/user/{{ user.username }}/catalogue/tag',
-  POST_RESOURCE_TAGS: '/user/{{ user.username }}/catalogue/tag',
-  POST_RESOURCE_VOTES: '/user/{{ user.username }}/catalogue/voting',
-  GET_SHARE_GROUPS: new Template('/workspace/#{workspace_id}/share/groups'),
-  POST_CHECK_VERSIONS: '/user/{{ user.username }}/catalogue/versions',
-  FILE_UPLOADER: '/uploader',
-  ACTIVE_THEME: '{{ STATIC_URL }}'
-};
-]]>
-</script>
-
 
 <script type="text/javascript" src="{% url "wirecloud.javascript_translation_catalogue" %}?language={{ LANGUAGE_CODE }}"></script>
+
 {% compress js %}
 {% wirecloud_ajax_endpoints "index" %}
 {% include "wirecloud/views/js_includes.js" %}
