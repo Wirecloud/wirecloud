@@ -376,7 +376,7 @@ IWidget.prototype.paint = function (onInit) {
 
     // Initialize widget menu
     this.menu = new StyledElements.PopupMenu();
-    this.menu.append(new IWidgetMenuItems(this));
+    this.menu.append(new Wirecloud.ui.IWidgetMenuItems(this));
 
     // Insert it into the dragboard (initially hidden)
     this.element.style.visibility = "hidden";

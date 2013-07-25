@@ -98,6 +98,6 @@
         return items;
     };
 
-    window.IWidgetMenuItems = IWidgetMenuItems;
+    Wirecloud.ui.IWidgetMenuItems = IWidgetMenuItems;
 
 })();
