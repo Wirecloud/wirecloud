@@ -90,6 +90,23 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         iwidget.remove()
     test_remove_widget_from_workspace.tags = ('fiware-ut-5',)
 
+    def test_widget_reload(self):
+
+        self.login(username='user_with_workspaces')
+
+        iwidget = self.get_current_iwidgets()[0]
+
+        with iwidget:
+
+            last_received_event_field = self.driver.find_element_by_id('wiringOut')
+            self.driver.execute_script('arguments[0].textContent = "hello world!!";', last_received_event_field);
+
+        iwidget.perform_action('Reload')
+
+        with iwidget:
+            last_received_event_field = self.wait_element_visible_by_id('wiringOut')
+            self.assertEqual(last_received_event_field.text, '')
+
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_basic_widget_functionalities(self):
 
