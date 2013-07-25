@@ -104,8 +104,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'default')
 
         # Change widget settings
-        self.driver.find_element_by_css_selector('.iwidget .icon-cogs').click()
-        self.popup_menu_click('Settings')
+        iwidget.perform_action('Settings')
 
         list_input = self.driver.find_element_by_css_selector('.window_menu [name="list"]')
         self.fill_form_input(list_input, '1')  # value1
@@ -125,8 +124,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'password')
 
         # Change widget settings again
-        self.driver.find_element_by_css_selector('.iwidget .icon-cogs').click()
-        self.popup_menu_click('Settings')
+        iwidget.perform_action('Settings')
 
         text_input = self.driver.find_element_by_css_selector('.window_menu [name="text"]')
         self.fill_form_input(text_input, '')
