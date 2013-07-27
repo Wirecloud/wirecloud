@@ -52,16 +52,20 @@ class FiwareBackend(OAuthBackend):
     """FI-WARE IdM OAuth authentication backend"""
     name = 'fiware'
     # Default extra data to store
-    EXTRA_DATA = [
-        ('id', 'id'),
-        ('expires', 'expires')
-    ]
+    EXTRA_DATA = (
+        ('nickName', 'username'),
+    )
+
+    def get_user_id(self, details, response):
+        """Return the user id, FI-WARE IdM only provides username as a unique
+        identifier"""
+        return response['nickName']
 
     def get_user_details(self, response):
         """Return user details from FI-WARE account"""
-        return {'username': response.get('login'),
+        return {'username': response.get('nickName'),
                 'email': response.get('email') or '',
-                'first_name': response.get('name') or ''}
+                'fullname': response.get('displayName') or ''}
 
 
 class FiwareAuth(BaseOAuth2):
@@ -69,6 +73,8 @@ class FiwareAuth(BaseOAuth2):
     AUTHORIZATION_URL = FIWARE_AUTHORIZATION_URL
     ACCESS_TOKEN_URL = FIWARE_ACCESS_TOKEN_URL
     AUTH_BACKEND = FiwareBackend
+    REDIRECT_STATE = False
+    STATE_PARAMETER = False
     SETTINGS_KEY_NAME = 'FIWARE_APP_ID'
     SETTINGS_SECRET_NAME = 'FIWARE_API_SECRET'
     SCOPE_SEPARATOR = ','
