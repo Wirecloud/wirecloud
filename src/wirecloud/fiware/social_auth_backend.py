@@ -52,9 +52,9 @@ class FiwareBackend(OAuthBackend):
     """FI-WARE IdM OAuth authentication backend"""
     name = 'fiware'
     # Default extra data to store
-    EXTRA_DATA = (
+    EXTRA_DATA = [
         ('nickName', 'username'),
-    )
+    ]
 
     def get_user_id(self, details, response):
         """Return the user id, FI-WARE IdM only provides username as a unique
