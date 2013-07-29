@@ -53,7 +53,6 @@
 
         // Scroll handler
         this.tab.wrapperElement.addEventListener("scroll", scrollHandler.bind(this), false);
-
     };
 
     /*************************************************************************
@@ -95,6 +94,9 @@
         // Header top
         headerTop = this.tab.getBoundingClientRect().top;
 
+        // blur in widget
+        iwidget.contentWrapper.classList.add('blurred');
+
         // Widget shape structure
         shape = document.createElement('div');
         shape.classList.add('widgetShape');
@@ -106,49 +108,61 @@
 
         this.widgetShapes[id] = {
             'wrapperElement': shape,
-            'iwidget': iwidget.widget
+            'iwidget': iwidget.widget,
         };
     };
 
     /**
-     * Add anchors and connection for preview
+     * Add anchors for preview
      */
     var addConnection = function addConnection(connectionId, connection) {
         var source, target, sourceEndpoint, targetEndpoint;
 
         targetEndpoint = connection.target.endpoint;
         // Target Anchor
-        if (this.activeAnchors[connection.target] && this.activeAnchors[connection.target][targetEndpoint]) {
-            target = this.activeAnchors[connection.target][targetEndpoint];
+        if (this.activeAnchors[connection.target.id] && this.activeAnchors[connection.target.id][targetEndpoint]) {
+            target = this.activeAnchors[connection.target.id][targetEndpoint];
         } else {
-            if (!this.activeAnchors[connection.target]) {
-                this.activeAnchors[connection.target] = {};
+            if (!this.activeAnchors[connection.target.id]) {
+                this.activeAnchors[connection.target.id] = {};
             }
-            if (!this.activeAnchors[connection.target][targetEndpoint]) {
+            if (!this.activeAnchors[connection.target.id][targetEndpoint]) {
                 target = addEndpoint.call(this, connectionId, connection.target.id, targetEndpoint, 'target');
-                this.activeAnchors[connection.target][targetEndpoint] = target;
+                this.activeAnchors[connection.target.id][targetEndpoint] = target;
             }
         }
 
         sourceEndpoint = connection.source.endpoint;
         // Source Anchor
-        if (this.activeAnchors[connection.source] && this.activeAnchors[connection.source][sourceEndpoint]) {
-            source = this.activeAnchors[connection.source][sourceEndpoint];
+        if (this.activeAnchors[connection.source.id] && this.activeAnchors[connection.source.id][sourceEndpoint]) {
+            source = this.activeAnchors[connection.source.id][sourceEndpoint];
         } else {
-            if (!this.activeAnchors[connection.source]) {
-                this.activeAnchors[connection.source] = {};
+            if (!this.activeAnchors[connection.source.id]) {
+                this.activeAnchors[connection.source.id] = {};
             }
-            if (!this.activeAnchors[connection.source][sourceEndpoint]) {
+            if (!this.activeAnchors[connection.source.id][sourceEndpoint]) {
                 source = addEndpoint.call(this, connectionId, connection.source.id, sourceEndpoint, 'source');
-                this.activeAnchors[connection.source][sourceEndpoint] = source;
+                this.activeAnchors[connection.source.id][sourceEndpoint] = source;
             }
         }
+
+        // Add connectionId in each endpoint information
+        source['connectionIds'].push(connectionId);
+        target['connectionIds'].push(connectionId);
+
+        // Inicialize subBoxesByConnectionId
+        this.subBoxesByConnectionId[connectionId] = [];
+
+        // Inicialize labelsByConnectionId
+        this.labelsByConnectionId[connectionId] = [];
 
         // Add arrow in to the arrowsToDraw list.
         this.arrowsToDraw[connectionId] = {
             'source': source,
             'target': target
         };
+
+        this.connectionsCounter += 1;
     };
 
     /**
@@ -165,9 +179,7 @@
         label.classList.add('label');
 
         // Anchor Ball
-        ball = document.createElement('span');
-        ball.classList.add('anchor');
-        ball.classList.add('icon-circle');
+        ball = document.createElement('div');
 
         // Endpoint
         theElement = document.createElement('div');
@@ -192,22 +204,54 @@
             'label': labelText,
             'anchor': ball,
             'type': type,
+            'widgetId': widgetId,
             'connectionIds': []
         };
+
+        // Label Handlers
+        label.addEventListener('mouseover', function (newEndpoint) {
+            var i, typeSearched;
+
+            if (newEndpoint.type == 'source') {
+                typeSearched = 'target';
+            } else {
+                typeSearched = 'source';
+            }
+
+            for (i = 0; i < newEndpoint.connectionIds.length; i += 1) {
+                 emphasize.call(this, this.arrowsToDraw[newEndpoint.connectionIds[i]][typeSearched]);
+            }
+        }.bind(this, newEndpoint), false);
+
+        label.addEventListener('mouseout', function (newEndpoint) {
+            var i, typeSearched;
+
+            if (newEndpoint.type == 'source') {
+                typeSearched = 'target';
+            } else {
+                typeSearched = 'source';
+            }
+
+            for (i = 0; i < newEndpoint.connectionIds.length; i += 1) {
+                 deemphasize.call(this, this.arrowsToDraw[newEndpoint.connectionIds[i]][typeSearched]);
+            }
+        }.bind(this, newEndpoint), false);
 
         return newEndpoint;
     };
 
     /**
-     * Add Arrow between source and target
+     * Emphasize Complete Endpoint
      */
-    var addArrow = function addArrow(connectionId, source, target) {
+    var emphasize = function emphasize(endpoint) {
+        endpoint.wrapperElement.classList.add('emphasized');
+    };
 
-        // Add connectionId in each endpoint information
-        source['connectionIds'].push(connectionId);
-        target['connectionIds'].push(connectionId);
-
-        // TODO create arrow
+    /**
+     * Deemphasize Complete Endpoint
+     */
+    var deemphasize = function deemphasize(endpoint) {
+        endpoint.wrapperElement.classList.remove('emphasized');
     };
 
     /**
@@ -221,22 +265,153 @@
                 return endpoints[i].label;
             }
         }
-
         // Fail
         return null;
     };
 
     /**
+     * Calculate Anchor colors
+     */
+    var calculateAnchorColors = function calculateAnchorColors(connectionsCounter) {
+        var endpoints, key, endpoint, connectionIds, i;
+
+        // Generate each Anchor Smart Box
+        for (key in this.activeAnchors) {
+            endpoints = this.activeAnchors[key];
+            for (key in endpoints) {
+                endpoint = endpoints[key];
+                connectionIds = endpoint.connectionIds;
+                generateColorSmartBox.call(this, connectionIds, endpoint);
+            }
+        }
+    };
+
+    /**
+     * Generate a Box with colors
+     */
+    var generateColorSmartBox = function generateColorSmartBox(connectionIds, endpoint) {
+        var anchorDiv, type, subBoxesListById, subBox, i;
+
+        type = endpoint.type;
+        anchorDiv = endpoint.anchor;
+
+        // Generate the box
+        subBoxesListById = new Wirecloud.ui.ColorSmartBox(connectionIds, anchorDiv, type);
+
+        for (i = 0; i < connectionIds.length; i += 1) {
+            subBox = subBoxesListById[connectionIds[i]];
+
+            // SubBox mouseover handler
+            subBox.addEventListener('mouseover', subBoxOverHandler.bind(this, connectionIds[i]), false);
+
+            // SubBox mouseout handler
+            subBox.addEventListener('mouseout', subBoxOutHandler.bind(this, connectionIds[i]), false);
+
+            // Fill subBoxesByConnectionId
+            this.subBoxesByConnectionId[connectionIds[i]].push(subBox);
+
+            // Fill labelsByConnectionId
+            this.labelsByConnectionId[connectionIds[i]].push(endpoint);
+        }
+    };
+
+    /**
+     * SubBox click handler
+     */
+    var subBoxClickHandler = function subBoxClickHandler(connectionId) {
+
+    };
+
+    /**
+     * SubBox mouseover handler
+     */
+    var subBoxOverHandler = function subBoxOverHandler(connectionId) {
+        var theBoxes, theLabels, i;
+
+        theBoxes = this.subBoxesByConnectionId[connectionId];
+
+        for (i = 0; i < theBoxes.length; i += 1) {
+            theBoxes[i].classList.add('highlighted');
+        }
+
+        theLabels = this.labelsByConnectionId[connectionId];
+
+        for (i = 0; i < theLabels.length; i += 1) {
+            emphasize(theLabels[i])
+        }
+    };
+
+    /**
+     * SubBox mouseout handler
+     */
+    var subBoxOutHandler = function subBoxOutHandler(connectionId) {
+        var theBoxes, theLabels, i;
+
+        theBoxes = this.subBoxesByConnectionId[connectionId];
+
+        for (i = 0; i < theBoxes.length; i += 1) {
+            theBoxes[i].classList.remove('highlighted');
+        }
+
+        theLabels = this.labelsByConnectionId[connectionId];
+
+        for (i = 0; i < theLabels.length; i += 1) {
+            deemphasize(theLabels[i])
+        }
+    };
+
+    /**
      * Reorder Anchors
      */
-    var reorderAnchors = function reorderAnchors() {
-        var key, subkey, anchors, anchor;
+    var placeAnchors = function placeAnchors() {
+        var key, subkey, anchors, anchor, sourceList, targetList;
 
         for (key in this.activeAnchors) {
             anchors = this.activeAnchors[key];
+            sourceList = [];
+            targetList = [];
             for (subkey in this.activeAnchors[key]) {
                 anchor = this.activeAnchors[key][subkey];
+                if (anchor.type == 'source') {
+                    sourceList.push(anchor);
+                } else {
+                    targetList.push(anchor);
+                }
             }
+            moveEndpoints.call(this, key, sourceList, targetList);
+        }
+    };
+
+    /**
+     * Move endpoints in the shape for better visualization
+     */
+    var moveEndpoints = function moveEndpoints(shapeId, sourceList, targetList) {
+        var i, theShape, height, heightForEachSourceEndpoint,
+            heightForEachTargetEndpoint, halfEndpointHeight;
+
+        theShape = this.widgetShapes[shapeId];
+        height = theShape.wrapperElement.getBoundingClientRect().height;
+        heightForEachSourceEndpoint = height;
+        heightForEachTargetEndpoint = height;
+        if (sourceList.length > 0) {
+            heightForEachSourceEndpoint = height / sourceList.length;
+            halfEndpointHeight = sourceList[0].wrapperElement.getBoundingClientRect().height / 2;
+        }
+        if (targetList.length > 0) {
+            heightForEachTargetEndpoint = height / targetList.length;
+            halfEndpointHeight = targetList[0].wrapperElement.getBoundingClientRect().height / 2;
+        }
+
+        for (i = 0; i < sourceList.length; i += 1) {
+            sourceList[i].wrapperElement.style.top = ((i) * heightForEachSourceEndpoint) +
+                                                    (heightForEachSourceEndpoint / 2) -
+                                                    halfEndpointHeight + 'px';
+        }
+
+        for (i = 0; i < targetList.length; i += 1) {
+            targetList[i].wrapperElement.style.top = ((i) * heightForEachTargetEndpoint) +
+                                                    (heightForEachTargetEndpoint / 2) -
+                                                    halfEndpointHeight + 'px';
         }
     };
 
@@ -268,6 +443,9 @@
         this.wiringConnections = {};
         this.activeAnchors = {};
         this.arrowsToDraw = {};
+        this.subBoxesByConnectionId = {};
+        this.labelsByConnectionId = {};
+        this.connectionsCounter = 0;
 
         // Get iwidgets
         this.iwidgets = this.tab.dragboard.iWidgets.toJSON();
@@ -288,12 +466,10 @@
         for (key in this.wiringConnections) {
             addConnection.call(this, key, this.wiringConnections[key]);
         }
-        reorderAnchors.call(this);
+        placeAnchors.call(this);
 
-        // Draw connections
-        for (key in this.arrowsToDraw) {
-            addArrow.call(this, key, this.arrowsToDraw[key].source, this.arrowsToDraw[key].target);
-        }
+        // Calculate Anchor Colors
+        calculateAnchorColors.call(this, this.connectionsCounter);
 
         // Show Preview
         //this.wrapperElement.classList.add('on');
@@ -308,6 +484,7 @@
         this.wrapperElement.classList.remove('on');
         for (key in this.widgetShapes) {
             this.shapeLayer.removeChild(this.widgetShapes[key].wrapperElement);
+            this.iwidgets[key].contentWrapper.classList.remove('blurred');
         }
     };
 

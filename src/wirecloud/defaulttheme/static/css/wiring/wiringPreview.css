@@ -5,7 +5,6 @@
     width: 99%;
     height: 99%;
     z-index: 1000;
-    background: rgba(211, 211, 211, 0.4);
     border-radius: 28px;
 }
 
@@ -30,35 +29,58 @@
 
 /* widgetShapes */
 .wiringPreview .shapeLayer .widgetShape {
-    border-width: 4px;	
+    border-width: 4px;
     border-style: dashed;
     display: inline-block;
     border-color: rgba(0, 0, 0, 0.68);
     position: absolute;
-    background: rgba(82, 68, 248, 0.24);
+    background: rgba(16, 16, 102, 0.5);
 }
 
 /* endpoints */
-
-.wiringPreview .shapeLayer .widgetShape .endpoint{
+.wiringPreview .shapeLayer .widgetShape .endpoint {
     position: absolute;
 }
 
-.wiringPreview .shapeLayer .widgetShape .source.endpoint{
-    right: 8px;
+.wiringPreview .shapeLayer .widgetShape .endpoint {
+    position: absolute;
 }
 
-.wiringPreview .shapeLayer .widgetShape .target.endpoint{
-    left: 8px;
+.wiringPreview .shapeLayer .widgetShape .source.endpoint {
+    right: -5px;
 }
 
-.wiringPreview .shapeLayer .widgetShape .endpoint .label{
+.wiringPreview .shapeLayer .widgetShape .target.endpoint {
+    left: -5px;
+}
+
+.wiringPreview .shapeLayer .widgetShape .endpoint .label {
     background-color: rgba(0, 0, 0, 0);
     font-family: Comfortaa;
     color: rgb(243, 245, 217);
     font-size: 22px;
+    vertical-align: middle;
 }
 
-.wiringPreview .shapeLayer .widgetShape .endpoint .anchor{
+.wiringPreview .shapeLayer .widgetShape .endpoint .anchor {
     font-size: 22px;
+    rgb(209, 209, 0);
+}
+
+/* Emphasized elements */
+.wiringPreview .shapeLayer .widgetShape .endpoint.emphasized .label {
+    color: #F78000;
+}
+
+.wiringPreview .shapeLayer .widgetShape .endpoint:hover span {
+    color: #F78000;
+}
+
+/* blurred widgets */
+.iwidget > .widget_wrapper.blurred {
+    -webkit-filter: blur(2.3px);
+}
+
+.iwidget .widget_wrapper.blurred {
+    -webkit-filter: blur(2.3px);
 }
