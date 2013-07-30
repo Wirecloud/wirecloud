@@ -42,6 +42,7 @@ from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.markets.utils import get_market_managers
 from wirecloud.platform.models import Widget, IWidget
+from wirecloud.platform.localcatalogue.signals import resource_uninstalled
 from wirecloud.platform.localcatalogue.utils import install_resource_to_user, get_or_add_resource_from_available_marketplaces
 from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue
 
@@ -195,6 +196,8 @@ class ResourceEntry(Resource):
 
         resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
         resource.users.remove(request.user)
+
+        resource_uninstalled.send(sender=resource, user=request.user)
 
         if resource.resource_type() == 'widget':
             result = {'removedIWidgets': []}

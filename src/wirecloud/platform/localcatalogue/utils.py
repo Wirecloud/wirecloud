@@ -26,6 +26,7 @@ from django.utils.translation import ugettext as _
 
 from wirecloud.catalogue.utils import add_widget_from_wgt, add_resource_from_template
 from wirecloud.catalogue.models import CatalogueResource
+from wirecloud.platform.localcatalogue.signals import resource_installed
 from wirecloud.platform.markets.utils import get_market_managers
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtFile
@@ -76,6 +77,8 @@ def install_resource_to_user(user, **kwargs):
 
     resource.users.add(user)
 
+    resource_installed.send(sender=resource, user=user)
+
     return resource
 
 
@@ -88,6 +91,8 @@ def install_resource_to_group(group, **kwargs):
 
     resource = install_resource(downloaded_file, templateURL, executor_user, packaged)
     resource.groups.add(group)
+
+    resource_installed.send(sender=resource, group=group)
 
     return resource
 
@@ -102,6 +107,8 @@ def install_resource_to_all_users(**kwargs):
     resource = install_resource(downloaded_file, templateURL, executor_user, packaged)
     resource.public = True
     resource.save()
+
+    resource_installed.send(sender=resource)
 
     return resource
 
