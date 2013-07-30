@@ -18,7 +18,6 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf.urls.defaults import patterns, url
-from wirecloud.fp74caast.views import TenantCollection
 
 
 urlpatterns = patterns('wirecloud.fp74caast.views',
@@ -48,7 +47,7 @@ urlpatterns = patterns('wirecloud.fp74caast.views',
         name='wirecloud.4caast.undeploy_tenant_ac'),
 
     url(r'^(?P<creator>[^/]+)/(?P<workspace>[^/]+)/4caast-enabling/add_saas_tenant$',
-        TenantCollection(permitted_methods=('GET',)),
+        'add_saas_tenant',
         name='wirecloud.4caast.add_saas_tenant'),
 
     url(r'^(?P<creator>[^/]+)/(?P<workspace>[^/]+)/4caast-enabling/remove_saas_tenant$',

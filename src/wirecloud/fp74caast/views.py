@@ -240,40 +240,40 @@ def undeploy_tenant_ac(request):
     return HttpResponse(status=204)
 
 
-class TenantCollection(Resource):
+@require_GET
+def add_saas_tenant(request, creator, workspace):
 
-    def read(self, request, creator, workspace):
+    # Sync workspace list before searching it
+    creator_user = get_object_or_404(User, username=creator)
+    get_workspace_list(creator_user)
 
-        # Sync workspace list before searching it
-        creator_user = get_object_or_404(User, username=creator)
-        get_workspace_list(creator_user)
+    workspace = get_object_or_404(Workspace, creator=creator_user, name=workspace)
 
-        workspace = get_object_or_404(Workspace, creator=creator_user, name=workspace)
+    status = 201
 
-        status = 201
+    id_4CaaSt = request.GET['message']
+    username = parse_username(id_4CaaSt)
+    try:
+        user = User.objects.create_user(username, 'test@example.com', username)
+    except:
+        user = User.objects.get(username=username)
 
-        id_4CaaSt = request.GET['message']
-        username = parse_username(id_4CaaSt)
-        try:
-            user = User.objects.create_user(username, 'test@example.com', username)
-        except:
-            user = User.objects.get(username=username)
+    try:
+        user_workspace = UserWorkspace.objects.get(user=user, workspace=workspace)
+    except:
+        packageLinker = PackageLinker()
+        user_workspace = packageLinker.link_workspace(workspace, user, creator_user)
 
-        try:
-            user_workspace = UserWorkspace.objects.get(user=user, workspace=workspace)
-        except:
-            packageLinker = PackageLinker()
-            user_workspace = packageLinker.link_workspace(workspace, user, creator_user)
+    setActiveWorkspace(user, user_workspace.workspace)
 
-        setActiveWorkspace(user, user_workspace.workspace)
+    try:
+        user_workspace.profile4caast.id_4CaaSt = id_4CaaSt
+        user_workspace.profile4caast.save()
+    except:
+        Profile4CaaSt.objects.create(user_workspace=user_workspace, id_4CaaSt=id_4CaaSt)
 
-        try:
-            user_workspace.profile4caast.id_4CaaSt = id_4CaaSt
-            user_workspace.profile4caast.save()
-        except:
-            Profile4CaaSt.objects.create(user_workspace=user_workspace, id_4CaaSt=id_4CaaSt)
+    return HttpResponse(status=status)
 
-        return HttpResponse(status=status)
 
 @require_GET
 def remove_saas_tenant(request, creator, workspace):
