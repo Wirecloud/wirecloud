@@ -1333,6 +1333,7 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'first hello world!!')
 
+
     def test_wiring_target_multiconnector_connection(self):
         self.login()
 
@@ -1402,3 +1403,4 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
 
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'second hello world!!')
+

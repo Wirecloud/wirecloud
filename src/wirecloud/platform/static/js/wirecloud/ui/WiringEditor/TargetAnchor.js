@@ -20,7 +20,6 @@
  *
  */
 
-
 /*global StyledElements, Wirecloud */
 
 (function () {

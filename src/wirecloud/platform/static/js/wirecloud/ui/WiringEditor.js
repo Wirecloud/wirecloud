@@ -20,7 +20,7 @@
  *
  */
 
-/*global Constants, EzWebExt, LayoutManagerFactory, opManager, StyledElements, Wirecloud, gettext, Draggable */
+/*global Constants, EzWebExt, LayoutManagerFactory, opManager, StyledElements, Wirecloud, gettext, WidgetOutputEndpoint */
 if (!Wirecloud.ui) {
     // TODO this line should live in another file
     Wirecloud.ui = {};
@@ -69,6 +69,39 @@ if (!Wirecloud.ui) {
         var pTitle = document.createElement('h4');
         pTitle.textContent = gettext("Welcome to the Wiring Editor view!");
         this.emptyBox.appendChild(pTitle);
+
+        // Control panel
+        this.controlPanel = document.createElement('div');
+        this.controlPanel.classList.add('controlPanel');
+        this.MinimizeAllOperatorsButton = new StyledElements.StyledButton({
+                'title': gettext("Maximize all operators"),
+                'class': 'ResizeAllOperatorsButton icon-resize-full',
+                'plain': true
+            });
+        this.MinimizeAllOperatorsButton.insertInto(this.controlPanel);
+        this.MinimizeAllOperatorsButton.addEventListener('click', function () {
+            var key;
+            if (this.MinimizeAllOperatorsButton.hasClassName('icon-resize-full')) {
+                // Maximize all operators
+                for (key in this.currentlyInUseOperators) {
+                    if (this.currentlyInUseOperators[key].isMinimized) {
+                        this.currentlyInUseOperators[key].restore();
+                    }
+                }
+                this.MinimizeAllOperatorsButton.removeClassName('icon-resize-full');
+                this.MinimizeAllOperatorsButton.addClassName('icon-resize-small');
+            } else {
+                // Minimize all operators
+                for (key in this.currentlyInUseOperators) {
+                    if (!this.currentlyInUseOperators[key].isMinimized) {
+                        this.currentlyInUseOperators[key].minimize();
+                    }
+                }
+                this.MinimizeAllOperatorsButton.removeClassName('icon-resize-small');
+                this.MinimizeAllOperatorsButton.addClassName('icon-resize-full');
+            }
+        }.bind(this));
+        this.layout.getCenterContainer().wrapperElement.appendChild(this.controlPanel);
 
         // Message
         var message = document.createElement('p');
@@ -119,6 +152,87 @@ if (!Wirecloud.ui) {
             anchor.addEventListener('startdrag', this.disableAnchors);
         }.bind(this);
 
+        this._semantic_anchor_map_func = function (anchor) {
+            var rec, anchors, i, entityId, anchorId;
+
+            if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
+                entityId = anchor.context.iObject.iwidget.widget.id;
+                if (anchor.context.data.vardef) {
+                    anchorId = anchor.context.data.vardef.name;
+                } else {
+                    anchorId = anchor.context.data.name;
+                }
+            } else {
+                entityId = anchor.context.iObject.ioperator.meta.uri;
+                anchorId = anchor.context.data.name;
+            }
+            //semantic recommendations
+            for (rec in this.recommendations) {
+                for (anchors in this.recommendations[rec]) {
+                    for (i = 0; i < this.recommendations[rec][anchors].length; i += 1) {
+                        if ((this.recommendations[rec][anchors][i].destination == entityId) &&
+                            (this.recommendations[rec][anchors][i].destinationEndpoint == anchorId)) {
+                            if (this.anchorsInvolved[this.recommendations[rec][anchors][i].matchCode] == null) {
+                                this.anchorsInvolved[this.recommendations[rec][anchors][i].matchCode] = {};
+                            }
+                            if (this.anchorsInvolved[this.recommendations[rec][anchors][i].matchCode][rec] == null) {
+                                this.anchorsInvolved[this.recommendations[rec][anchors][i].matchCode][rec] = {};
+                            }
+                            if (this.anchorsInvolved[this.recommendations[rec][anchors][i].matchCode][rec][anchors] == null) {
+                                this.anchorsInvolved[this.recommendations[rec][anchors][i].matchCode][rec][anchors] = [];
+                            }
+                            this.anchorsInvolved[this.recommendations[rec][anchors][i].matchCode][rec][anchors].push(anchor);
+                        }
+                    }
+                }
+            }
+        }.bind(this);
+
+        this._remove_semantic_anchor_map_func = function (anchor) {
+            var rec, anchors, i, entityId, anchorId, mc, entity, endpoint, index;
+
+            if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
+                entityId = anchor.context.iObject.iwidget.widget.id;
+                if (anchor.context.data.vardef) {
+                    anchorId = anchor.context.data.vardef.name;
+                } else {
+                    anchorId = anchor.context.data.name;
+                }
+            } else {
+                entityId = anchor.context.iObject.ioperator.meta.uri;
+                if (anchor.context.data.vardef) {
+                    anchorId = anchor.context.data.vardef.name;
+                } else {
+                    anchorId = anchor.context.data.name;
+                }
+            }
+            //semantic recommendations
+            for (rec in this.recommendations) {
+                for (anchors in this.recommendations[rec]) {
+                    for (i = 0; i < this.recommendations[rec][anchors].length; i += 1) {
+                        if ((this.recommendations[rec][anchors][i].destination == entityId) &&
+                            (this.recommendations[rec][anchors][i].destinationEndpoint == anchorId)) {
+                            index = this.anchorsInvolved[this.recommendations[rec][anchors][i].matchCode][rec][anchors].indexOf(anchor);
+                            this.anchorsInvolved[this.recommendations[rec][anchors][i].matchCode][rec][anchors].splice(index, 1);
+                            }
+                    }
+                }
+            }
+            //cleaning
+            for (mc in this.anchorsInvolved) {
+                for (entity in this.anchorsInvolved[mc]) {
+                    for (endpoint in this.anchorsInvolved[mc][entity]) {
+                        if (this.anchorsInvolved[mc][entity][endpoint].length === 0) {
+                            delete this.anchorsInvolved[mc][entity][endpoint];
+                        }
+                    }
+                    if (isEmpty(this.anchorsInvolved[mc][entity])) {
+                        delete this.anchorsInvolved[mc][entity];
+                    }
+                }
+            }
+        }.bind(this);
+
         // Initialize key listener
         this._keydownListener = keydownListener.bind(this);
         this._keyupListener = keyupListener.bind(this);
@@ -131,6 +245,17 @@ if (!Wirecloud.ui) {
     /*************************************************************************
      * Private methods
      *************************************************************************/
+
+    /**
+     * @Private
+     * is empty object?
+     */
+    var isEmpty = function isEmpty(obj) {
+        for(var key in obj) {
+            return false;
+        }
+        return true;
+    };
 
     /**
      * @Private
@@ -403,7 +528,19 @@ if (!Wirecloud.ui) {
                 startAnchor.addArrow(arrow);
                 arrow.endAnchor = endAnchor;
                 endAnchor.addArrow(arrow);
-                arrow.addClassName('arrow');
+                if ((startAnchor.isSubAnchor) || (endAnchor.isSubAnchor)) {
+                    arrow.addClassName('arrow subdataConnection');
+                    if (startAnchor.isSubAnchor) {
+                        currentSource = startAnchor;
+                        currentTarget = endAnchor;
+                    } else {
+                        currentSource = endAnchor;
+                        currentTarget = startAnchor;
+                    }
+                    currentSource.context.iObject.addSubdataConnection(currentSource.context.data.name.split("/")[0], currentSource.context.data.name, arrow, currentSource, currentTarget, true);
+                } else {
+                    arrow.addClassName('arrow');
+                }
                 arrow.setPullerStart(connectionView.pullerStart);
                 arrow.setPullerEnd(connectionView.pullerEnd);
                 if (connectionView.startMulti != null) {
@@ -573,6 +710,48 @@ if (!Wirecloud.ui) {
     };
 
     /**
+     * add new entity to this.recommendations
+     */
+    WiringEditor.prototype.refactorSemanticInfo = function refactorSemanticInfo(entitiesIds) {
+        var matchings, i, origin, destination, matchCode, originEndpoint, destinationEndpoint, match;
+
+        matchings = this.semanticStatus.matchings;
+
+        for (i = 0; i < matchings.length; i += 1) {
+            match = matchings[i].origin.split('/');
+            origin = match.slice(0,3).join('/');
+            originEndpoint = match.slice(3, match.length).join('/');
+            match = matchings[i].destination.split('/');
+            destination = match.slice(0,3).join('/');
+            destinationEndpoint = match.slice(3, match.length).join('/');
+            matchCode = matchings[i].matchCode;
+            if ((entitiesIds.indexOf(origin) == -1) || (entitiesIds.indexOf(destination) == -1)) {
+                continue;
+            }
+            if (!this.recommendations.hasOwnProperty(origin)) {
+                this.recommendations[origin] = {};
+            }
+            if (this.recommendations[origin][originEndpoint] == null) {
+                this.recommendations[origin][originEndpoint] = [];
+            }
+            this.recommendations[origin][originEndpoint].push({'destination': destination,
+                                                            'destinationEndpoint': destinationEndpoint,
+                                                            'matchCode': matchCode});
+
+            // Bidirectional relationships
+            if (!this.recommendations.hasOwnProperty(destination)) {
+                this.recommendations[destination] = {};
+            }
+            if (this.recommendations[destination][destinationEndpoint] == null) {
+                this.recommendations[destination][destinationEndpoint] = [];
+            }
+            this.recommendations[destination][destinationEndpoint].push({'destination': origin,
+                                                                      'destinationEndpoint': originEndpoint,
+                                                                      'matchCode': matchCode});
+        }
+    };
+
+    /**
      * Saves the wiring state.
      */
     WiringEditor.prototype.serialize = function serialize() {
@@ -646,17 +825,19 @@ if (!Wirecloud.ui) {
 
         for (i = 0; i < this.arrows.length; i++) {
             arrow = this.arrows[i];
-            WiringStatus.connections.push({
-                'readOnly': arrow.hasClassName('readOnly'),
-                'source': arrow.startAnchor.serialize(),
-                'target': arrow.endAnchor.serialize()
-            });
-            WiringStatus.views[0].connections.push({
-                'pullerStart': arrow.getPullerStart(),
-                'pullerEnd': arrow.getPullerEnd(),
-                'startMulti': arrow.startMulti,
-                'endMulti': arrow.endMulti
-            });
+            if (!arrow.hasClassName('full') && !arrow.hasClassName('hollow')) {
+                WiringStatus.connections.push({
+                    'readOnly': arrow.hasClassName('readOnly'),
+                    'source': arrow.startAnchor.serialize(),
+                    'target': arrow.endAnchor.serialize()
+                });
+                WiringStatus.views[0].connections.push({
+                    'pullerStart': arrow.getPullerStart(),
+                    'pullerEnd': arrow.getPullerEnd(),
+                    'startMulti': arrow.startMulti,
+                    'endMulti': arrow.endMulti
+                });
+            }
         }
 
         return WiringStatus;
@@ -1063,6 +1244,7 @@ if (!Wirecloud.ui) {
      */
     WiringEditor.prototype.removeIWidget = function removeIWidget(widget_interface) {
         var i, anchor;
+
         widget_interface.unselect(false);
         delete this.iwidgets[widget_interface.getIWidget().id];
         this.layout.getCenterContainer().removeChild(widget_interface);
@@ -1094,6 +1276,7 @@ if (!Wirecloud.ui) {
      */
     WiringEditor.prototype.removeIOperator = function removeIOperator(operator_interface) {
         var i, anchor;
+
         operator_interface.unselect(false);
         delete this.currentlyInUseOperators[operator_interface.getIOperator().id];
         this.layout.getCenterContainer().removeChild(operator_interface);
@@ -1186,6 +1369,8 @@ if (!Wirecloud.ui) {
         this.canvas.canvasElement.generalLayer.setAttribute('transform', param);
         this.canvas.canvasElement.style.top = scrollY + 'px';
         this.canvas.canvasElement.style.left = scrollX + 'px';
+        this.controlPanel.style.top = scrollY + 'px';
+        this.controlPanel.style.left = scrollX + 'px';
     };
 
     /*************************************************************************

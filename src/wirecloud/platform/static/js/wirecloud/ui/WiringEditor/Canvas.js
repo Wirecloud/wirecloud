@@ -82,7 +82,7 @@
         arrow.redraw();
         arrow.insertInto(this.canvasElement.generalLayer);
 
-        if (extraClass != 'multiconnector_arrow') {
+        if ((extraClass != 'multiconnector_arrow') && extraClass != 'arrow hollow') {
             this.events.arrowadded.dispatch(this, arrow);
         }
         return arrow;
@@ -105,6 +105,7 @@
      * Clean the svg canvas.
      */
     Canvas.prototype.clear = function clear() {
+        this.canvasElement.classList.remove("elevated");
         while (this.canvasElement.generalLayer.childNodes.length > 0) {
             this.canvasElement.generalLayer.removeChild(this.canvasElement.generalLayer.childNodes[0]);
         }

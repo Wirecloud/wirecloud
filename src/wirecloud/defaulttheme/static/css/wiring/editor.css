@@ -14,6 +14,10 @@
     height: 100%;
 }
 
+.wiring_editor .canvas.elevated {
+    z-index: 2;
+}
+
 .wiring_editor .menubar {
     vertical-align: middle;
     overflow-x: visible;
@@ -67,4 +71,24 @@
     left: 5px;
     height: 12px;
     width: 6px;
+}
+
+/* Control panel */
+.wiring_editor .grid .controlPanel {
+    float: right;
+    font-size: 3ex;
+    width: 50px;
+    background: #41768D;
+    border: 1px rgb(0, 0, 0) solid;
+    border-radius: 16px 5px;
+    box-shadow: 2px 2px 3px grey;
+    margin-right: 10px;
+    position: relative;
+    opacity: 0.8;
+    z-index: 1;
+}
+
+.wiring_editor .grid .controlPanel .ResizeAllOperatorsButton {
+    cursor: pointer;
+    margin: 8px;
 }

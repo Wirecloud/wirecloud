@@ -76,10 +76,34 @@
                 e.stopPropagation();
                 return;
             }
+            // Subdata tree control
+            if (this.hasClassName('hollow')) {
+                // TODO open subdata tree
+                return;
+            }
+            if (this.hasClassName('subdataConnection')) {
+                // remove subconnection
+                if (this.hasClassName('full')) {
+                    // remove full connection from subdata view
+                    // borrar la conexion de toooodas partes, así como su conexion normal asociada
+                    this.startAnchor.context.iObject.removeSubdataConnection(this.startAnchor.context.data.name.split("/")[0], this.startAnchor.context.data.name, this);
+                } else {
+                    //remove subconnection from subdata view
+                    if (this.startAnchor.isSubAnchor) {
+                        // removeSubdataConnection
+                        this.startAnchor.context.iObject.removeSubdataConnection(this.startAnchor.context.data.name.split("/")[0], this.startAnchor.context.data.name, this);
+                    }
+                }
+                return;
+            }
 
             this.destroy();
             e.stopPropagation();
         }.bind(this));
+
+        this.semanticAdvertiser = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "text");
+        this.semanticAdvertiser.textContent = "";
+        this.semanticAdvertiser.setAttribute('class', 'semanticAdvertiser');
 
         // Pullers definition
         this.pullerStartElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
@@ -128,7 +152,8 @@
 
         // Closer
         this.wrapperElement.appendChild(this.closerElement);
-
+        // semanticAdvertiser
+        this.wrapperElement.appendChild(this.semanticAdvertiser);
         // add pullerLines
         this.wrapperElement.appendChild(this.pullerStartLine);
         this.wrapperElement.appendChild(this.pullerEndLine);
@@ -281,7 +306,7 @@
      *  Redraw the line.
      */
     Arrow.prototype.redraw = function redraw() {
-        var posCloser, startPuller, endPuller, from, to;
+        var posCloser, posSemAdv, startPuller, endPuller, from, to;
 
         from = this.start;
         to = this.end;
@@ -318,6 +343,11 @@
             this.closerElement.setAttribute("cx", posCloser.posX);
             this.closerElement.setAttribute("cy", posCloser.posY);
             this.closerElement.setAttribute("r", 8);
+
+            // SemanticAdvertiser
+            posSemAdv = this.calculatePosInArrow(0.6);
+            this.semanticAdvertiser.setAttribute('x', posSemAdv.posX);
+            this.semanticAdvertiser.setAttribute('y', posSemAdv.posY);
         }
         catch (err) {
             //TODO: error msg
@@ -329,6 +359,14 @@
      *  with a bercier curves aproximation.
      */
     Arrow.prototype.calculateMid = function calculateMid() {
+        return this.calculatePosInArrow(0.5);
+    };
+
+    /**
+     *  Calculate the arrow path PathPos position
+     *  with a bercier curves aproximation.
+     */
+    Arrow.prototype.calculatePosInArrow = function calculatePosInArrow(PathPos) {
         var B1, B2, B3, B4, getBercier;
 
         B1 = function B1(t) { return t * t * t; };
@@ -341,8 +379,7 @@
             var Y = C1.posY * B1(percent) + C2.posY * B2(percent) + C3.posY * B3(percent) + C4.posY * B4(percent);
             return {posX : X, posY : Y};
         };
-
-        return getBercier(0.5, this.start, this.getPullerStart(true), this.getPullerEnd(true), this.end);
+        return getBercier(PathPos, this.start, this.getPullerStart(true), this.getPullerEnd(true), this.end);
     };
 
     /**
@@ -489,6 +526,19 @@
         }
     };
 
+    /**
+     * Hide the arrow
+     */
+    Arrow.prototype.hide = function hide() {
+        this.addClassName('hidden');
+    };
+
+    /**
+     * Show the arrow
+     */
+    Arrow.prototype.show = function show() {
+        this.removeClassName('hidden');
+    };
     /*************************************************************************
      * Make Arrow public
      *************************************************************************/

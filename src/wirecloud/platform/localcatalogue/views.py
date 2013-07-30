@@ -42,6 +42,8 @@ from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.markets.utils import get_market_managers
 from wirecloud.platform.models import Widget, IWidget
+from wirecloud.platform.localcatalogue.semantics import add_widget_semantic_data
+from wirecloud.platform.localcatalogue.semantics import remove_widget_semantic_data
 from wirecloud.platform.localcatalogue.utils import install_resource_to_user, get_or_add_resource_from_available_marketplaces
 from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue
 
@@ -209,6 +211,9 @@ class ResourceEntry(Resource):
                 for iwidget in iwidgets:
                     result['removedIWidgets'].append(iwidget.id)
                     iwidget.delete()
+
+            # remove semantic relations
+            remove_widget_semantic_data(request.user, resource)
 
             if request.GET.get('affected', 'false').lower() == 'true':
                 return HttpResponse(json.dumps(result), mimetype='application/json; charset=UTF-8')
