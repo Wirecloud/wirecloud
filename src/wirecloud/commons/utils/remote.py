@@ -61,6 +61,7 @@ class WiringEndpointTester(object):
         ActionChains(self.testcase.driver).context_click(self.element).perform()
         self.testcase.popup_menu_click(action)
 
+
 class IWidgetTester(object):
 
     def __init__(self, testcase, iwidget_id, element):
@@ -95,10 +96,14 @@ class IWidgetTester(object):
     def name(self):
         return self.element.find_element_by_css_selector('.widget_menu > span').text
 
-    def rename(self, new_name, timeout=30):
+    def perform_action(self, action):
 
         self.element.find_element_by_css_selector('.icon-cogs').click()
-        self.testcase.popup_menu_click('Rename')
+        self.testcase.popup_menu_click(action)
+
+    def rename(self, new_name, timeout=30):
+
+        self.perform_action('Rename')
         name_input = self['element'].find_element_by_css_selector('.widget_menu > span')
         # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
         self.testcase.driver.execute_script('arguments[0].textContent = arguments[1]', name_input, new_name)

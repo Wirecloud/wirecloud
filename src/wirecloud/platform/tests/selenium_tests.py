@@ -90,6 +90,23 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         iwidget.remove()
     test_remove_widget_from_workspace.tags = ('fiware-ut-5',)
 
+    def test_widget_reload(self):
+
+        self.login(username='user_with_workspaces')
+
+        iwidget = self.get_current_iwidgets()[0]
+
+        with iwidget:
+
+            last_received_event_field = self.driver.find_element_by_id('wiringOut')
+            self.driver.execute_script('arguments[0].textContent = "hello world!!";', last_received_event_field);
+
+        iwidget.perform_action('Reload')
+
+        with iwidget:
+            last_received_event_field = self.wait_element_visible_by_id('wiringOut')
+            self.assertEqual(last_received_event_field.text, '')
+
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_basic_widget_functionalities(self):
 
@@ -104,8 +121,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'default')
 
         # Change widget settings
-        self.driver.find_element_by_css_selector('.iwidget .icon-cogs').click()
-        self.popup_menu_click('Settings')
+        iwidget.perform_action('Settings')
 
         list_input = self.driver.find_element_by_css_selector('.window_menu [name="list"]')
         self.fill_form_input(list_input, '1')  # value1
@@ -125,8 +141,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'password')
 
         # Change widget settings again
-        self.driver.find_element_by_css_selector('.iwidget .icon-cogs').click()
-        self.popup_menu_click('Settings')
+        iwidget.perform_action('Settings')
 
         text_input = self.driver.find_element_by_css_selector('.window_menu [name="text"]')
         self.fill_form_input(text_input, '')
