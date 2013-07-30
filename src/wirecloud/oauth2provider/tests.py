@@ -17,13 +17,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-
+import json
 from urlparse import parse_qs, urlparse
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
-from django.utils import simplejson, unittest
+from django.utils import unittest
 from django.utils.http import urlencode
 
 
@@ -76,7 +76,7 @@ class Oauth2TestCase(TestCase):
         response = self.client.post(url, data)
 
         self.assertEqual(response.status_code, 200)
-        response_data = simplejson.loads(response.content)
+        response_data = json.loads(response.content)
         token = response_data['access_token']
         token_type = response_data['token_type']
         self.assertEqual(token_type, 'Bearer')
@@ -87,7 +87,7 @@ class Oauth2TestCase(TestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/json', HTTP_AUTHORIZATION='Bearer ' + token)
         self.assertEqual(response.status_code, 200)
 
-        response_data = simplejson.loads(response.content)
+        response_data = json.loads(response.content)
         self.assertTrue(isinstance(response_data, list))
         self.assertTrue(isinstance(response_data[0], dict))
     test_authorization_code_grant_flow.tags = ('oauth2', 'fiware-ut-9')
@@ -118,6 +118,6 @@ class Oauth2TestCase(TestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/json', HTTP_AUTHORIZATION='Bearer ' + token)
         self.assertEqual(response.status_code, 200)
 
-        response_data = simplejson.loads(response.content)
+        response_data = json.loads(response.content)
         self.assertTrue(isinstance(response_data, list))
         self.assertTrue(isinstance(response_data[0], dict))

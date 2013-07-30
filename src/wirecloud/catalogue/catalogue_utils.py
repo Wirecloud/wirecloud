@@ -30,9 +30,10 @@
 
 #
 
+import json
+
 from django.http import HttpResponse
 from django.db.models import Q
-from django.utils import simplejson
 
 from wirecloud.catalogue.get_json_catalogue_data import get_resource_group_data, get_tag_data, get_vote_data
 from wirecloud.catalogue.models import CatalogueResource, UserVote
@@ -170,20 +171,20 @@ def get_resource_response(resources, format, items, user, request=None):
         'resources': [get_resource_group_data(group, user, request) for group in resources],
         'items': items,
     }
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json; charset=UTF-8')
+    return HttpResponse(json.dumps(data), mimetype='application/json; charset=UTF-8')
 
 def get_tag_response(resource, user, format):
     tag = {}
     tag_data_list = get_tag_data(resource, user.id)
     tag['tagList'] = tag_data_list
-    return HttpResponse(simplejson.dumps(tag), mimetype='application/json; charset=UTF-8')
+    return HttpResponse(json.dumps(tag), mimetype='application/json; charset=UTF-8')
 
 
 def get_vote_response(resource, user, format):
     vote = {}
     vote_data = get_vote_data(resource, user)
     vote['voteData'] = vote_data
-    return HttpResponse(simplejson.dumps(vote), mimetype='application/json; charset=UTF-8')
+    return HttpResponse(json.dumps(vote), mimetype='application/json; charset=UTF-8')
 
 
 def get_all_resource_versions(vendor, name):

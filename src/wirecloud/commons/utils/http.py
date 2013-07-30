@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
 import socket
 from urlparse import urljoin
 
@@ -25,7 +26,6 @@ from django.contrib.sites.models import get_current_site
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.utils import simplejson
 from django.utils.translation import ugettext as _
 from lxml import etree
 
@@ -69,7 +69,7 @@ def get_json_error_response(request, mimetype, status_code, message, details):
     if details is not None:
         body['details'] = details
 
-    return simplejson.dumps(body)
+    return json.dumps(body)
 
 
 def get_plain_text_error_response(request, mimetype, status_code, message, details):

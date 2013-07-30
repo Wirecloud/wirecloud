@@ -22,7 +22,7 @@ try:
     from django.utils.encoding import force_unicode
 except:
     from django.utils.encoding import force_text as force_unicode
-from django.utils.simplejson import JSONEncoder
+from json import JSONEncoder
 
 class LazyEncoder(JSONEncoder):
     def default(self, o):

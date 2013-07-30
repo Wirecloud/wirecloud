@@ -18,11 +18,11 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from cStringIO import StringIO
+import json
 
 from django.contrib.auth.models import User
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
-from django.utils import simplejson
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_GET, require_POST
 
@@ -118,7 +118,7 @@ def _parse_ac_request(request):
         if content_type == 'application/json':
 
             try:
-                data = simplejson.loads(request.raw_post_data)
+                data = json.loads(request.raw_post_data)
             except Exception, e:
                 msg = _("malformed json data: %s") % unicode(e)
                 return build_error_response(request, 400, msg)

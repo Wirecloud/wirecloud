@@ -31,6 +31,7 @@
 
 import os
 from cStringIO import StringIO
+import json
 from urllib import url2pathname
 from xml.sax import make_parser
 from xml.sax.xmlreader import InputSource
@@ -43,7 +44,6 @@ from django.db.models import Q
 from django.http import HttpResponse, HttpResponseNotAllowed
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, get_list_or_404
-from django.utils import simplejson
 from django.utils.decorators import method_decorator
 from django.utils.encoding import smart_str
 from django.utils.http import urlquote_plus
@@ -186,7 +186,7 @@ class ResourceEntry(Resource):
     #@method_decorator(login_required)
     def read(self, request, vendor, name, version):
         resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
-        return HttpResponse(simplejson.dumps(get_resource_data(resource, request.user, request)), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(get_resource_data(resource, request.user, request)), mimetype='application/json; charset=UTF-8')
 
     @method_decorator(login_required)
     @commit_on_http_success
@@ -206,7 +206,7 @@ class ResourceEntry(Resource):
                 result = delete_resource(resource, request.user)
                 response_json['removedIWidgets'] += result['removedIWidgets']
 
-        return HttpResponse(simplejson.dumps(response_json),
+        return HttpResponse(json.dumps(response_json),
                             mimetype='application/json; charset=UTF-8')
 
 
@@ -386,8 +386,8 @@ class ResourceVoteCollection(Resource):
         content_type = get_content_type(request)[0]
         if content_type == 'application/json':
             try:
-                vote = simplejson.loads(request.raw_post_data)['vote']
-            except Exception, e:
+                vote = json.loads(request.raw_post_data)['vote']
+            except ValueError, e:
                 msg = _("malformed json data: %s") % unicode(e)
                 return build_error_response(request, 400, msg)
         else:
@@ -432,8 +432,8 @@ class ResourceVoteCollection(Resource):
         content_type = get_content_type(request)[0]
         if content_type == 'application/json':
             try:
-                vote = simplejson.loads(request.raw_post_data)['vote']
-            except Exception, e:
+                vote = json.loads(request.raw_post_data)['vote']
+            except ValueError, e:
                 msg = _("malformed json data: %s") % unicode(e)
                 return build_error_response(request, 400, msg)
         else:
@@ -458,8 +458,8 @@ class ResourceVersionCollection(Resource):
     def create(self, request):
 
         try:
-            resources = simplejson.loads(request.raw_post_data)
-        except simplejson.JSONDecodeError, e:
+            resources = json.loads(request.raw_post_data)
+        except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -472,5 +472,5 @@ class ResourceVersionCollection(Resource):
                 g["lastVersionURL"] = latest_resource_version.template_uri
                 result.append(g)
 
-        return HttpResponse(simplejson.dumps({'resources': result}),
+        return HttpResponse(json.dumps({'resources': result}),
                             mimetype='application/json; charset=UTF-8')

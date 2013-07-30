@@ -17,8 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-
-from django.utils import simplejson
+from __future__ import absolute_import
+import json
 
 def write_json_description(template_info):
-    return simplejson.dumps(template_info)
+    return json.dumps(template_info)

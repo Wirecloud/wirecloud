@@ -30,10 +30,11 @@ setting, it must be a list of values to request.
 By default account id and token expiration time are stored in extra_data
 field, check OAuthBackend class for details on how to extend it.
 """
+
+import json
 from urllib import urlencode
 from urllib2 import HTTPError
 
-from django.utils import simplejson
 from django.conf import settings
 
 from social_auth.utils import dsa_urlopen
@@ -90,7 +91,7 @@ class FiwareAuth(BaseOAuth2):
         })
 
         try:
-            data = simplejson.load(dsa_urlopen(url))
+            data = json.load(dsa_urlopen(url))
         except ValueError:
             data = None
 
