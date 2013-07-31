@@ -244,12 +244,10 @@ if (!Wirecloud.ui) {
         this.EditingObject = null;
         this.entitiesNumber = 0;
         this.recommendationsActivated = false;
+        this.recommendations = new Wirecloud.ui.RecommendationManager(this);
 
         iwidgets = workspace.getIWidgets();
         availableOperators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
-
-        /* TODO this.recommendation = semanticStatus parameter */
-        this.recommendations = new Wirecloud.ui.BasicRecommendations(this);
 
         // Widgets
         for (i = 0; i < iwidgets.length; i++) {
@@ -429,6 +427,7 @@ if (!Wirecloud.ui) {
         if (this.entitiesNumber === 0) {
             this.emptyBox.classList.remove('hidden');
         }
+        this.recommendations.init(iwidgets, availableOperators);
     };
 
     /**

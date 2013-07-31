@@ -32,15 +32,14 @@
     /**
      * SemanticRecommendations Class
      */
-    var SemanticRecommendations = function SemanticRecommendations(wiringEditor, iwidgets, availableOperators, semanticStatus) {
+    var SemanticRecommendations = function SemanticRecommendations(semanticStatus, iwidgets, availableOperators) {
         var entitiesIds, iwidget;
 
-        this.wiringEditor = wiringEditor;
         this.recommendations = {};
         this.anchorsInvolved = {};
         this.semanticStatus = semanticStatus;
 
-        // Semantic Status by entity ID
+        // Get all entities ID
         entitiesIds = [];
         for (var i = 0; i < iwidgets.length; i++) {
             iwidget = iwidgets[i];
@@ -198,6 +197,7 @@
     /*************************************************************************
      * Public methods
      *************************************************************************/
+
     /**
      * Add anchor in recomendations.
      */
@@ -285,28 +285,18 @@
     /**
      * Emphasize anchors.
      */
-    SemanticRecommendations.prototype.emphasize = function emphasize(anchor, isCreatingArrow) {
+    SemanticRecommendations.prototype.emphasize = function emphasize(anchor) {
         var rec, widgetId, anchorId;
 
         // Semantic Recommendations Mode
         if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.OperatorInterface) {
             widgetId = anchor.context.iObject.ioperator.meta.uri;
-            anchorId = anchor.context.data.name;
         } else if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
             widgetId = anchor.context.iObject.iwidget.widget.id;
-            if (!anchor.context.iObject.iwidget.ghost) {
-                anchorId = anchor.context.data.vardef.name;
-            } else {
-                anchorId = anchor.context.data;
-            }
         }
-
+        anchorId = anchor.context.data.name;
         rec = getRecommendations.call(this, anchor, widgetId, anchorId, false);
         highlightRecommendations(rec);
-
-        if (isCreatingArrow){
-            this.wiringEditor.recommendationsActivated = true;
-        }
     };
 
     /**
@@ -318,20 +308,12 @@
         // Semantic Recommendations Mode
         if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.OperatorInterface) {
             widgetId = anchor.context.iObject.ioperator.meta.uri;
-            anchorId = anchor.context.data.name;
         } else if (anchor.context.iObject instanceof Wirecloud.ui.WiringEditor.WidgetInterface) {
             widgetId = anchor.context.iObject.iwidget.widget.id;
-            if (!anchor.context.iObject.iwidget.ghost) {
-                anchorId = anchor.context.data.vardef.name;
-            } else {
-                anchorId = anchor.context.data;
-            }
         }
-
+        anchorId = anchor.context.data.name;
         rec = getRecommendations.call(this, anchor, widgetId, anchorId, true);
         unhighlightRecommendations(rec);
-
-        this.wiringEditor.recommendationsActivated = false;
     };
 
     /**

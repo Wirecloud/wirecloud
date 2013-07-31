@@ -47,6 +47,7 @@ WIRING_EDITOR_FILES = (
     'js/wirecloud/ui/WiringEditor/Multiconnector.js',
     'js/wirecloud/ui/WiringEditor/GenericInterfaceSettingsMenuItems.js',
     'js/wirecloud/ui/BasicRecommendations.js',
+    'js/wirecloud/ui/RecommendationManager.js',
 )
 
 STYLED_ELEMENTS_FILES = (

@@ -32,10 +32,9 @@
     /**
      * BasicRecommendations Class
      */
-    var BasicRecommendations = function BasicRecommendations(wiringEditor) {
+    var BasicRecommendations = function BasicRecommendations() {
         this.sourceAnchorsByFriendCode = {};
         this.targetAnchorsByFriendCode = {};
-        this.wiringEditor = wiringEditor;
     };
 
     /*************************************************************************
@@ -98,7 +97,7 @@
     /**
      * Emphasize anchors.
      */
-    BasicRecommendations.prototype.emphasize = function emphasize(anchor, isCreatingArrow) {
+    BasicRecommendations.prototype.emphasize = function emphasize(anchor) {
         var friendCode, anchors, i;
 
         anchor.wrapperElement.parentNode.classList.add('highlight_main');
@@ -114,9 +113,6 @@
                     highlightAnchorLabel(anchors[i]);
                 }
             }
-        }
-        if (isCreatingArrow){
-            this.wiringEditor.recommendationsActivated = true;
         }
     };
 
@@ -140,7 +136,6 @@
                 }
             }
         }
-        this.wiringEditor.recommendationsActivated = false;
     };
 
     /**
