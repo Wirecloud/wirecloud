@@ -24,6 +24,7 @@ from django.utils.translation import ugettext as _
 from lxml import etree
 
 from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version
+from wirecloud.commons.utils.template.parsers.json import JSONTemplateParser
 from wirecloud.commons.utils.translation import get_trans_index
 
 
@@ -106,14 +107,24 @@ class USDLTemplateParser(object):
     _parsed = False
     _rootURI = None
 
-    def __init__(self, graph, base=None):
+    def __init__(self, template, base=None):
+
+        if isinstance(template, rdflib.Graph):
+            self._graph = template
+        else:
+            try:
+                self._graph = rdflib.Graph()
+                self._graph.parse(data=template, format='n3')
+            except:
+                self._graph = rdflib.Graph()
+                self._graph.parse(data=template, format='xml')
+
         self.base = base
         self._info = {}
         self._translation_indexes = {}
         self._translations = {}
         self._url_fields = []
 
-        self._graph = graph
         # check if is a mashup, a widget or an operator
         for type_ in self._graph.subjects(RDF['type'], WIRE['Widget']):
             self._info['type'] = 'widget'
@@ -640,7 +651,15 @@ class WirecloudTemplateParser(object):
         self._info = {}
         self._translation_indexes = {}
         self._url_fields = []
-        self._doc = template
+
+        if isinstance(template, str):
+            self._doc = etree.fromstring(template)
+        elif isinstance(template, unicode):
+            # Work around: ValueError: Unicode strings with encoding
+            # declaration are not supported.
+            self._doc = etree.fromstring(template.encode('utf-8'))
+        else:
+            self._doc = template
 
         prefix = self._doc.prefix
         xmlns = None
@@ -1104,63 +1123,19 @@ class TemplateParser(object):
     # This could be an instance of WirecloudTemplateParser
     # or USDLTemplateParser depending on the type of the document
     _parser = None
+    parsers = (WirecloudTemplateParser, JSONTemplateParser, USDLTemplateParser)
 
     def __init__(self, template, base=None):
 
-        if isinstance(template, rdflib.Graph):
-            self._parser = USDLTemplateParser(template, base)
-
-        elif isinstance(template, etree._Element):
-            self._doc = template
-            prefix = self._doc.prefix
-            xmlns = None
-
-            if prefix in self._doc.nsmap:
-                xmlns = self._doc.nsmap[prefix]
-
-            if xmlns is not None and xmlns not in (EZWEB_TEMPLATE_NS, WIRECLOUD_TEMPLATE_NS):
-                raise TemplateParseException(_('The document is not valid'))
-
-            self._parser = WirecloudTemplateParser(self._doc, base)
-
-        elif isinstance(template, str) or isinstance(template, unicode):
-            xml_document = False
-            graph = rdflib.Graph()
-            # It is necesary to check if template is a n3/turtle document before
-            # any other format because it is not a xml based document so etree
-            # function would raise an exeption
+        for parser in self.parsers:
             try:
-                graph.parse(data=template, format='n3')
+                self._parser = parser(template, base)
+                break
             except:
-                graph = rdflib.Graph()
-                xml_document = True
+                pass
 
-            if xml_document:
-                if isinstance(template, str):
-                    self._doc = etree.fromstring(template)
-                else:
-                    # Work around: ValueError: Unicode strings with encoding
-                    # declaration are not supported.
-                    self._doc = etree.fromstring(template.encode('utf-8'))
-
-                prefix = self._doc.prefix
-                xmlns = None
-
-                if prefix in self._doc.nsmap:
-                    xmlns = self._doc.nsmap[prefix]
-
-                if xmlns is not None and xmlns not in (EZWEB_TEMPLATE_NS, WIRECLOUD_TEMPLATE_NS):
-                    try:
-                        graph.parse(data=template)
-                    except:
-                        raise TemplateParseException(_('The document is not valid'))
-                    self._parser = USDLTemplateParser(graph, base)
-
-                else:
-                    # The document is a Wirecloud Template so WirecloudTemplateParser is Used
-                    self._parser = WirecloudTemplateParser(self._doc, base)
-            else:
-                self._parser = USDLTemplateParser(graph, base)
+        if self._parser is None:
+            raise ValueError('')
 
     def typeText2typeCode(self, typeText):
         return self._parser.typeText2typeCode(typeText)

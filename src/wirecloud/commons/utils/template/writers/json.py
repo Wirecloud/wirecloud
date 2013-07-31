@@ -21,4 +21,4 @@ from __future__ import absolute_import
 import json
 
 def write_json_description(template_info):
-    return json.dumps(template_info)
+    return json.dumps(template_info, sort_keys=True, indent=4)
