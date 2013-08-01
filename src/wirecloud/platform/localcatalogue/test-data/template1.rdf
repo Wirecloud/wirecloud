@@ -71,7 +71,7 @@
                         <wire:type>text</wire:type>
                         <rdfs:label xml:lang="en">Slot label</rdfs:label>
                         <rdfs:label xml:lang="es">Etiqueta de la ranura</rdfs:label>
-                        <wire:slotFriendcode>test_friend_code</wire:slotFriendcode>
+                        <wire:friendcode>test_friend_code</wire:slotFriendcode>
                     </wire:InputEndpoint>
                 </wire:hasInputEndpoint>
                 <wire:hasOutputEndpoint>
@@ -80,7 +80,7 @@
                         <wire:type>text</wire:type>
                         <rdfs:label xml:lang="en">Event label</rdfs:label>
                         <rdfs:label xml:lang="es">Etiqueta del evento</rdfs:label>
-                        <wire:eventFriendcode>test_friend_code</wire:eventFriendcode>
+                        <wire:friendcode>test_friend_code</wire:eventFriendcode>
                     </wire:OutputEndpoint>
                 </wire:hasOutputEndpoint>
             </wire:PlatformWiring>
