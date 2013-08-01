@@ -28,6 +28,18 @@ VENDOR_RE = re.compile(r'^[^/]+$')
 VERSION_RE = re.compile(r'^(?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0)$')
 
 
+class TemplateParseException(Exception):
+
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return str(self.msg)
+
+    def __unicode__(self):
+        return unicode(self.msg)
+
+
 def is_valid_name(name):
 
     return re.match(NAME_RE, name)

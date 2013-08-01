@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012 Universidad Politécnica de Madrid
+# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
 # Wirecloud is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
+# it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
 # Wirecloud is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# GNU Affero General Public License for more details.
 
-# You should have received a copy of the GNU General Public License
+# You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import urlparse
@@ -23,7 +23,7 @@ import rdflib
 from django.utils.translation import ugettext as _
 from lxml import etree
 
-from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version
+from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version, TemplateParseException
 from wirecloud.commons.utils.template.parsers.json import JSONTemplateParser
 from wirecloud.commons.utils.translation import get_trans_index
 
@@ -89,25 +89,13 @@ VCARD = rdflib.Namespace("http://www.w3.org/2006/vcard/ns#")
 BLUEPRINT = rdflib.Namespace("http://bizweb.sap.com/TR/blueprint#")
 
 
-class TemplateParseException(Exception):
-
-    def __init__(self, msg):
-        self.msg = msg
-
-    def __str__(self):
-        return str(self.msg)
-
-    def __unicode__(self):
-        return unicode(self.msg)
-
-
 class USDLTemplateParser(object):
 
     _graph = None
     _parsed = False
     _rootURI = None
 
-    def __init__(self, template, base=None):
+    def __init__(self, template):
 
         if isinstance(template, rdflib.Graph):
             self._graph = template
@@ -119,7 +107,8 @@ class USDLTemplateParser(object):
                 self._graph = rdflib.Graph()
                 self._graph.parse(data=template, format='xml')
 
-        self.base = base
+    def _init(self):
+
         self._info = {}
         self._translation_indexes = {}
         self._translations = {}
@@ -591,9 +580,6 @@ class USDLTemplateParser(object):
         else:
             raise TemplateParseException(_(u"ERROR: unkown TEXT TYPE ") + typeText)
 
-    def set_base(self, base):
-        self.base = base
-
     def get_contents(self):
         return self._graph.serialize(format='pretty-xml')
 
@@ -618,25 +604,6 @@ class USDLTemplateParser(object):
 
         return dict(self._info)
 
-    def get_absolute_url(self, url, base=None):
-        if base is None:
-            base = self.base
-
-        return urlparse.urljoin(base, url)
-
-    def get_resource_processed_info(self, base=None):
-        info = self.get_resource_info()
-
-        if base is None:
-            base = self.base
-
-        # process url fields
-        for field in self._url_fields:
-            value = info[field]
-            if value.strip() != '':
-                info[field] = urlparse.urljoin(base, value)
-
-        return info
 
 
 class WirecloudTemplateParser(object):
@@ -645,9 +612,8 @@ class WirecloudTemplateParser(object):
     _resource_description = None
     _parsed = False
 
-    def __init__(self, template, base=None):
+    def __init__(self, template):
 
-        self.base = base
         self._info = {}
         self._translation_indexes = {}
         self._url_fields = []
@@ -670,6 +636,8 @@ class WirecloudTemplateParser(object):
             raise TemplateParseException("Invalid namespace: " + xmlns)
 
         self._namespace = xmlns
+
+    def _init(self):
 
         self._resource_description = self._xpath(RESOURCE_DESCRIPTION_XPATH, self._doc)[0]
         self._parse_basic_info()
@@ -1067,9 +1035,6 @@ class WirecloudTemplateParser(object):
         else:
             raise TemplateParseException(_(u"ERROR: unkown TEXT TYPE ") + typeText)
 
-    def set_base(self, base):
-        self.base = base
-
     def get_contents(self):
         return etree.tostring(self._doc, method='xml', xml_declaration=True, encoding="UTF-8", pretty_print=True)
 
@@ -1094,28 +1059,6 @@ class WirecloudTemplateParser(object):
 
         return dict(self._info)
 
-    def get_absolute_url(self, url, base=None):
-        if base is None:
-            base = self.base
-
-        return urlparse.urljoin(base, url)
-
-    def get_resource_processed_info(self, base=None):
-        info = self.get_resource_info()
-
-        if base is None:
-            base = self.base
-
-        # TODO translate fields
-
-        # process url fields
-        for field in self._url_fields:
-            value = info[field]
-            if value.strip() != '':
-                info[field] = urlparse.urljoin(base, value)
-
-        return info
-
 
 class TemplateParser(object):
 
@@ -1127,21 +1070,25 @@ class TemplateParser(object):
 
     def __init__(self, template, base=None):
 
+        self.base = base
+
         for parser in self.parsers:
             try:
-                self._parser = parser(template, base)
+                self._parser = parser(template)
                 break
             except:
                 pass
 
         if self._parser is None:
-            raise ValueError('')
+            raise TemplateParseException('No valid parser found')
+
+        self._parser._init()
 
     def typeText2typeCode(self, typeText):
         return self._parser.typeText2typeCode(typeText)
 
     def set_base(self, base):
-        self._parser.set_base(base)
+        self.base = base
 
     def get_contents(self):
         return self._parser.get_contents()
@@ -1165,10 +1112,66 @@ class TemplateParser(object):
         return self._parser.get_resource_basic_info()
 
     def get_resource_info(self):
+
         return self._parser.get_resource_info()
 
     def get_absolute_url(self, url, base=None):
-        return self._parser.get_absolute_url(url, base)
 
-    def get_resource_processed_info(self, base=None):
-        return self._parser.get_resource_processed_info(base)
+        if base is None:
+            base = self.base
+
+        return urlparse.urljoin(base, url)
+
+    def get_resource_processed_info(self, base=None, lang=None):
+        info = self.get_resource_info()
+
+        if base is None:
+            base = self.base
+
+        if lang is None:
+            from django.utils import translation
+            lang = translation.get_language()
+
+        variables = {}
+        if info['type'] in ('widget', 'operator'):
+            for pref in info['preferences']:
+                variables[pref['name']] = pref
+            for prop in info['properties']:
+                variables[prop['name']] = prop
+            for inputendpoint in info['wiring']['inputs']:
+                variables[inputendpoint['name']] = inputendpoint
+            for outputendpoint in info['wiring']['outputs']:
+                variables[outputendpoint['name']] = outputendpoint
+
+        # process translations
+        if len(info['translations']) > 0:
+
+            translation = info['translations'][info['default_lang']]
+            if lang in info['translations']:
+                translation.update(info['translations'][lang])
+
+            for index in translation:
+                value = translation[index]
+                usages = info['translation_index_usage'][index]
+                for use in usages:
+                    if use['type'] == 'resource':
+                        info[use['field']] = info[use['field']].replace('__MSG_' + index + '__', value)
+                    elif use['type'] == 'vdef':
+                        variable = variables[use['variable']]
+                        for field in variable:
+                            if isinstance(variable[field], basestring):
+                                variable[field] = variable[field].replace('__MSG_' + index + '__', value)
+                    elif use['type'] == 'upo':
+                        variable = variables[use['variable']]
+                        for option in variable['options']:
+                            for field in option:
+                                if isinstance(option[field], basestring):
+                                    option[field] = option[field].replace('__MSG_' + index + '__', value)
+
+        # process url fields
+        for field in self._parser._url_fields:
+            value = info[field]
+            if value.strip() != '':
+                info[field] = urlparse.urljoin(base, value)
+
+        return info
