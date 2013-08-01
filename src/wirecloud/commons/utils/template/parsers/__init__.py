@@ -141,9 +141,9 @@ class USDLTemplateParser(object):
         for field_element in self._graph.objects(subject, namespace[element]):
             element_num = element_num + 1
             if field_element.language:
-                translations[unicode(field_element.language)] = field_element.title()
+                translations[unicode(field_element.language)] = unicode(field_element)
                 #This field is necesary in order to prevent a problem in case only existed 1 field but it had a language tag
-                translations['no_translation'] = field_element.title()
+                translations['no_translation'] = unicode(field_element)
             else:
                 translations['no_translation'] = unicode(field_element)
 
