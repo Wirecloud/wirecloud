@@ -1,0 +1,65 @@
+.resource {
+    position: relative;
+    border: 1px solid #CDCED1;
+    padding: 0 1ex 1ex 1ex;
+    border-radius: 6px;
+    display: inline-block;
+    width: 360px;
+    margin: 0.9ex;
+    vertical-align: middle;
+    height: 320px;
+    text-align: left;
+    overflow: hidden;
+    -webkit-transition: border linear 0.2s, box-shadow linear 0.2s, background linear 0.2s;
+    -moz-transition: border linear 0.2s, box-shadow linear 0.2s, background linear 0.2s;
+    -ms-transition: border linear 0.2s, box-shadow linear 0.2s, background linear 0.2s;
+    -o-transition: border linear 0.2s, box-shadow linear 0.2s, background linear 0.2s;
+    transition: border linear 0.2s, box-shadow linear 0.2s, background linear 0.2s;
+}
+
+.resource:hover {
+    background: rgb(237, 237, 237);
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+    border-color: rgba(82, 168, 236, 0.8);
+}
+
+.resource .click_for_details {
+    cursor: pointer;
+}
+
+.resource img {
+    width: 170px;
+    height: 80px;
+    background: white;
+    border-radius: 4px;
+    display: inline;
+}
+
+.resource > .header > .label {
+    margin-left: 0px;
+}
+
+.resource h2 {
+    margin: 0px;
+    font-size: 24px;
+}
+
+.resource h4 {
+    margin: 0.25ex 0;
+}
+
+.resource .mainbutton {
+    clear: both;
+    float: right;
+}
+
+.resource_details .panel {
+    background-color: rgb(246, 246, 244);
+    border: 1px solid rgb(205, 206, 209);
+    border-radius: 6px 6px 6px 6px;
+    text-align: center;
+    margin: 0 3ex;
+    padding: 1ex;
+}

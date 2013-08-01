@@ -1,0 +1,97 @@
+@font-face {
+  font-family: 'Comfortaa';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Comfortaa'), local('Comfortaa-Regular'),
+       url("../fonts/comfortaa_regular-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/comfortaa_regular-webfont.woff") format("woff"),
+       url("../fonts/comfortaa_regular-webfont.ttf") format("truetype"),
+       url("../fonts/comfortaa_regular-webfont.svg#ComfortaaRegular") format("svg");
+}
+
+@font-face {
+  font-family: 'Comfortaa';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Comfortaa Bold'), local('Comfortaa-Bold'),
+       url("../fonts/comfortaa_bold-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/comfortaa_bold-webfont.woff") format("woff"),
+       url("../fonts/comfortaa_bold-webfont.ttf") format("truetype"),
+       url("../fonts/comfortaa_bold-webfont.svg#ComfortaaBold") format("svg");
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans'), local('OpenSans'),
+       url("../fonts/opensans-regular-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/opensans-regular-webfont.woff") format("woff"),
+       url("../fonts/opensans-regular-webfont.ttf") format("truetype"),
+       url("../fonts/opensans-regular-webfont.svg#OpenSansRegular") format("svg");
+}
+
+@font-face {
+  font-family: "FontAwesome";
+  src: url('../fonts/fontawesome-webfont.eot');
+  src: url('../fonts/fontawesome-webfont.eot?#iefix') format('eot'), url('../fonts/fontawesome-webfont.woff') format('woff'), url('../fonts/fontawesome-webfont.ttf') format('truetype'), url('../fonts/fontawesome-webfont.svg#FontAwesome') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+    font-family: "Open Sans";
+    color: #333333;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    background: #fcfcfc;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: inherit;
+    margin: 10px 0;
+    font-family: Comfortaa;
+    font-weight: bold;
+    line-height: 20px;
+    text-rendering: optimizelegibility;
+}
+
+h1,
+h2,
+h3 {
+    line-height: 40px;
+}
+
+h1 {
+    font-size: 38.5px;
+}
+
+h2 {
+    font-size: 31.5px;
+}
+
+h3 {
+    font-size: 24.5px;
+}
+
+h4 {
+    font-size: 17.5px;
+}
+
+h5 {
+    font-size: 14px;
+}
+
+h6 {
+    font-size: 11.9px;
+}
+
+.warning  table {
+    background: transparent;
+}
+
+.warning  table td {
+    border: none;
+}

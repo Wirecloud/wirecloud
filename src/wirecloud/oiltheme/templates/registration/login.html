@@ -1,0 +1,48 @@
+{% load i18n %}{% load url from future %}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="{{ LANGUAGE_CODE }}"
+      lang="{{ LANGUAGE_CODE }}">
+
+<head>
+    <title>Wirecloud Platform - Sign in</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}images/favicon.ico" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/formee-structure.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/formee-style.css" type="text/css" media="screen" />
+</head>
+
+<body>
+<div style="text-align:center;">
+
+    <img style="vertical-align: middle; heigth: 250px; width: 416px;" src="{{ STATIC_URL }}images/logos/wc{{ "123456"|make_list|random }}.png" />
+
+    <div style="display: inline-block; vertical-align:middle; margin: 4ex 10ex;">
+    <form class="formee" style="text-align: left;width: 400px" method="post">
+    <fieldset style="background: #E7EDF2;">
+
+    {% if form.errors %}
+    <p class="formee-req" style="margin: 0 3ex 2ex 3ex; line-height:120%;">{% trans "Your username and password didn't match.<br /> Please try again." %}</p>
+    {% endif %}
+
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}" />
+        <div class="grid-12-12">
+            <input type="text" name="username" id="id_username" autocapitalize="off" autofocus="autofocus" placeholder="{% trans "Username" %}"/>
+        </div>
+        <div class="grid-9-12">
+            <input type="password" name="password" id="id_password" placeholder="{% trans "Password" %}"/>
+        </div>
+        <div class="grid-3-12">
+            <input class="right" type="submit" id="submit" value="{% trans 'Log in' %}" />
+        </div>
+    </fieldset>
+    </form>
+
+    <a href="{% url 'socialauth_begin' 'fiware' %}?{{ redirect_querystring }}">...</a>
+    <a href="{% url 'socialauth_begin' 'github' %}?{{ redirect_querystring }}">+++</a>
+    </div>
+
+</div>
+</body>
+</html>

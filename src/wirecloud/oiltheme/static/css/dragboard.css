@@ -1,0 +1,139 @@
+.notebook.workspace .wrapper {
+    border: 0px none;
+    border-radius: 0px;
+}
+
+/********************************************/
+
+div.dragboard.fixed {
+  background: transparent;
+}
+
+div.iwidget div.widget_menu > .errorbutton {
+  background-image: url(../images/icons-sprite.png);
+  background-position: -24px -528px;
+  background-color: transparent;
+}
+
+div.iwidget div.widget_menu > .versionbutton {
+    background-image: url(../images/icons-sprite.png);
+    background-position: -24px -216px;
+    background-color: transparent;
+}
+
+div.iwidget div.snapButton {
+  /* This icon represents that the iGadget is outside the grid */
+  background: url(../images/icons-sprite.png);
+  background-position: -48px -72px;
+}
+
+div.iwidget .dragboardwiki {
+  background: url(../images/icons-sprite.png);
+  background-position: -24px -360px;
+}
+
+div.iwidget .dragboardwiki:hover {
+  background-position: 0px -360px;
+}
+
+div.iwidget div.extractButton {
+  background: url(../images/icons-sprite.png);
+  background-position: -48px -360px;
+}
+
+div.widget_window_locked {
+    border-color: transparent;
+}
+
+/***
+ *
+ */
+
+#dragboardcursor {
+  border-color: #97A0A8;
+  background: #F2F9FF;
+  -moz-border-radius-topleft:  6px;
+  -moz-border-radius-topright: 6px;
+  -webkit-border-top-left-radius: 6px;
+  -webkit-border-top-right-radius: 6px;
+}
+
+div.iwidget.highlighted {
+    box-shadow: 0px 0px 3px 3px rgba(250, 0, 0, 0.7);
+}
+
+.notebook.full.workspace > div {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.notebook.workspace .tab_wrapper {
+    top: auto;
+    bottom: 0;
+    border-top: 1px solid rgb(221, 221, 221);
+    border-bottom: 0px none;
+    height: 35px;
+    line-height: 35px;
+    z-index: 2;
+}
+
+.notebook.workspace .tab_wrapper .move_left {
+    margin: 0px 5px;
+}
+
+.notebook.workspace .tab_wrapper .move_right {
+    margin: 0px 5px;
+}
+
+.notebook.workspace .tab_wrapper .icon-add-tab {
+    margin: 0px 4px;
+    color: rgb(85, 85, 85);
+}
+
+.notebook.workspace .tab_wrapper .icon-add-tab:hover {
+    color: black;
+}
+
+.notebook.workspace .tab_wrapper .icon-add-tab:before {
+    content: "\f055";
+}
+
+.notebook.workspace .wrapper {
+    top: 0;
+    bottom: 36px;
+}
+
+.notebook.workspace .tab_area {
+    height: 35px;
+    top: -1px;
+}
+
+.notebook.workspace .tab_area .tab {
+    background: transparent;
+    color: rgb(0, 136, 204);
+    height: 15px;
+    line-height: 16px;
+    border: 1px solid transparent;
+    vertical-align: top;
+    padding: 8px 19px 8px 1ex;
+    border-radius: 0 0 4px 4px;
+    font-family: "Open Sans", sans-serif;
+    font-size: 13px;
+}
+
+.notebook.workspace .tab_area .tab:hover {
+    border-color: transparent rgb(238, 238, 238) rgb(238, 238, 238) rgb(221, 221, 221);
+    color: rgb(0, 85, 128);
+}
+
+.notebook.workspace .tab_area .tab > span {
+    vertical-align: middle;
+}
+
+.notebook.workspace .tab_area .tab.selected {
+    background: #fcfcfc;
+    color: rgb(85, 85, 85);
+    border-color: transparent rgb(221, 221, 221) rgb(221, 221, 221) rgb(221, 221, 221);
+}

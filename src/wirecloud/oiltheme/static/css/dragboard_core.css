@@ -1,0 +1,206 @@
+div.dragboard {
+  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+div.iwidget {
+  position: absolute;
+}
+
+div.fulldragboard {
+  position: fixed;
+}
+
+div.widget_window_locked {
+}
+
+div.widget_window_transparent {
+  background: transparent;
+}
+
+/*div.dragboard.fixed -> LOCK OR SHARED STATUS*/
+div.fixed div.widget_menu {
+  cursor: default;
+}
+
+/*div.dragboard.fixed -> LOCK OR SHARED STATUS*/
+div.fixed div.iwidget div.widget_menu .closebutton, div.fixed div.iwidget div.widget_menu .versionbutton {
+  display: none;
+}
+
+/*div.widget_window_readonly -> READONLY STATUS*/
+div.iwidget.widget_window_readonly div.widget_menu .closebutton {
+  display: none;
+}
+
+div.iwidget div.widget_wrapper {
+}
+
+div.widget_window_locked div.widget_wrapper {
+  border: none;
+}
+
+div.iwidget div.widget_wrapper iframe {
+    width: 100%;
+    border: none;
+}
+
+div.row {
+  white-space: nowrap;
+}
+
+div.iwidget .button {
+  display: none;
+  margin: 2px 2px 0px 2px;
+  float: right;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+div.iwidget .snapButton, div.iwidget .extractButton, div.iwidget .dragboardwiki{
+	display: block;
+}
+
+div.iwidget div.leftResizeHandle {
+    position: absolute;
+    width: 40px;
+    height: 5px;
+    bottom: -1px;
+    left: -1px;
+    cursor: sw-resize;
+}
+
+div.iwidget div.rightResizeHandle {
+    position: absolute;
+    width: 40px;
+    height: 5px;
+    bottom: -1px;
+    right: -1px;
+    cursor: se-resize;
+}
+
+div.iwidget div.inUse {
+  width: 100%;
+  height: 100%;
+}
+
+div.iwidget div.leftResizeHandle.inUse {
+  right: 0px;
+  top: 0px;
+  width: auto;
+  height: auto;
+}
+
+div.iwidget div.resizeHandle.inUse {
+  left: 0px;
+  top: 0px;
+  width: auto;
+  height: auto;
+}
+
+/*div.dragboard.fixed*/
+div.fixed div.iwidget div.leftResizeHandle,
+  div.fixed div.iwidget div.rightResizeHandle,
+  div.fixed div.iwidget div.extractButton,
+  div.fixed div.iwidget div.snapButton
+{
+  display: none;
+}
+
+div.fixed .widget_menu span {
+	cursor: default;
+}
+
+div.iwidget div.statusBar {
+    overflow: hidden;
+    height: 1px;
+    padding: 0 32px;
+    border: 1px solid #DDD;
+    border-radius: 0px 0px 4px 4px;
+    background: #DDD;
+}
+
+div.iwidget div.statusBar .button {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.widget_menu_locked .hide_on_lock, .widget_menu_fulldragboard .hide_on_fulldragboard, .widget_menu_minimized .hide_on_minimize {
+  display: none;
+}
+
+/********************************************/
+div.fulldragboard div.statusBar {
+  display: none;
+}
+
+div.fulldragboard {
+  border: 0px none;
+}
+
+div.fulldragboard div.widget_menu input[type="button"].minimizebutton {
+  display: none;
+}
+
+div.fulldragboard div.widget_menu {
+  cursor: default;
+}
+
+/******************************
+ * Locked Dragboard
+ ******************************/
+
+div.widget_window_locked {
+    border: 1px solid;
+}
+
+div.widget_window_locked div.widget_menu, div.widget_window_locked div.statusBar {
+    display: none;
+}
+
+/***
+ *
+ */
+.floatleft {
+  float: left;
+}
+
+.floatright {
+  float: right;
+}
+
+#dragboardcursor {
+  position: absolute;
+  z-index: 1;
+  border: 2px dashed;
+}
+
+.dragboardwikilink {
+	color: transparent;
+}
+.dragboardwikilink:hover {
+	color: transparent;
+}
+
+.floating_widget_icon{
+	position: absolute;
+	width: 75px;
+	text-align: center;
+	display: none;
+}
+
+.floating_widget_icon img{
+	width: 60px;
+	height: 60px;
+	display: block;
+	padding: 0 5px 2px 5px;
+}
+
+.floating_widget_icon .floating_widget_title{
+	display: block;
+	cursor: default;
+	font-size:85%;
+}
+

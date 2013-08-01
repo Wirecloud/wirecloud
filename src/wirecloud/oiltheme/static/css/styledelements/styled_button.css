@@ -1,0 +1,216 @@
+.styled_button {
+    border: 0px;
+    padding: 0px;
+    background: transparent;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    line-height: 20px;
+    font-weight: normal;
+    display: inline-block;
+    margin: 3px;
+    position: relative;
+    vertical-align: middle;
+}
+
+.styled_button.open {
+    z-index: 111113;
+}
+
+.styled_button.plain {
+    font-size: inherit;
+    line-height: inherit;
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+
+.styled_button > div, .styled_button > button, .styled_button.plain {
+    cursor: pointer;
+}
+
+.styled_button.disabled > div, .styled_button.disabled > button, .styled_button.plain.disabled {
+    cursor: default;
+}
+
+.styled_button > span {
+    display: inline-block;
+}
+
+.styled_button > button {
+    border: 0px;
+    padding: 0px;
+    background: transparent;
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+.styled_button > div, .styled_button > button {
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(230, 230, 230) rgb(230, 230, 230) rgb(191, 191, 191);
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    color: rgb(137, 137, 137);
+    background-color: white;
+    border-radius: 5px;
+    padding: 3px 20px 2px;
+}
+
+.styled_button > div > span {
+    margin: 0px 3px 1px 3px;
+}
+
+.styled_button > div:hover, .styled_button > button:hover,
+.styled_button.disabled > div, .styled_button.disabled > button {
+    border-color: rgb(204, 204, 204);
+    background-color: rgb(252, 253, 252);
+}
+
+.styled_button img.icon {
+    margin: 3px;
+    vertical-align: middle;
+}
+
+.styled_button.disabled {
+    opacity: 0.65;
+    filter: alpha(opacity=65);
+}
+
+.styled_button.disabled > div, .styled_button.disabled > button {
+    background-image: none;
+    text-decoration: none;
+}
+
+.styled_button.btn-large {
+    font-size: 15px;
+    line-height: normal;
+}
+
+.styled_button.btn-large > div, .styled_button.btn-large > button {
+    padding: 9px 14px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.styled_button.btn-small {
+    font-size: 10px;
+    line-height: 11px;
+}
+
+.styled_button.btn-small > div, .styled_button.btn-small > button {
+    padding: 5px 9px;
+}
+
+.styled_button.btn-mini {
+    font-size: 10px;
+    line-height: 11px;
+}
+
+.styled_button.btn-mini > div, .styled_button.btn-mini > button {
+    padding: 2px 6px;
+}
+
+/* Grouped buttons */
+
+.input-prepend > .west_container > .styled_button {
+    margin: 0 -1px 0 0;
+}
+
+.input-prepend > .west_container > .styled_button > div, .input-prepend > .west_container > .styled_button > button {
+    border-radius: 0px;
+}
+
+.input-prepend > .west_container > .styled_button:first-child > div, .input-prepend > .west_container > .styled_button:first-child > button {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+
+.input-append > .east_container > .styled_button {
+    margin: 0 0 0 -1px;
+}
+
+.input-append > .east_container > .styled_button > div, .input-append > .east_container > .styled_button > button {
+    border-radius: 0px;
+}
+
+.input-append > .east_container > .styled_button:last-child > div, .input-append > .east_container > .styled_button:last-child > button {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+/* Primary button */
+
+.styled_button.btn-primary > div, .styled_button.btn-primary > button {
+    color: #FFF;
+    text-shadow: 0 1px 1px rgba(0, 134, 181, 0.1);
+    border: 1px solid #50BCBC;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    border-color: #56CCCC #56CCCC #50BCBC;
+    border-bottom-color: #4BB2B2;
+    background-color:#0093C6;
+}
+
+.styled_button.btn-primary > div:hover, .styled_button.btn-primary > button:hover,
+.styled_button.btn-primary > div:active, .styled_button.btn-primary > button:active
+{
+    border-color: rgb(0, 204, 219);
+    background-color: rgb(4, 137, 183);
+}
+
+.styled_button.btn-primary.disabled > div, .styled_button.btn-primary.disabled > button {
+    background-color: #3E80AD;
+    border: 1px solid #50BCBC;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    border-color: #56CCCC #56CCCC #50BCBC;
+    border-bottom-color: #4BB2B2;
+    background-color:#0093C6;
+    color: #fff;
+}
+
+/* Success button */
+
+.styled_button.btn-success > div, .styled_button.btn-success > button {
+    color: #FFF;
+    background-color: rgb(91, 183, 91);
+    border-color: rgb(91, 183, 91);
+}
+
+.styled_button.btn-success > div:hover, .styled_button.btn-success > button:hover,
+.styled_button.btn-success > div:active, .styled_button.btn-success > button:active,
+.styled_button.btn-success.disabled > div, .styled_button.btn-success.disabled > button
+{
+    background-color: rgb(81, 163, 81);
+    border-color: rgb(81, 163, 81);
+}
+
+/* Warning button */
+
+.styled_button.btn-warning > div, .styled_button.btn-warning > button {
+    color: #FFF;
+    background-color: rgb(250, 167, 50);
+    border-color: rgb(250, 167, 50);
+}
+
+.styled_button.btn-warning > div:hover, .styled_button.btn-warning > button:hover,
+.styled_button.btn-warning > div:active, .styled_button.btn-warning > button:active,
+.styled_button.btn-warning.disabled > div, .styled_button.btn-warning.disabled > button
+{
+    background-color: rgb(248, 148, 6);
+    border-color: rgb(248, 148, 6);
+}
+
+/* Danger button */
+
+.styled_button.btn-danger > div, .styled_button.btn-danger > button {
+    color: #FFF;
+    background-color: rgb(218, 79, 73);
+    border-color: rgb(218, 79, 73);
+}
+
+.styled_button.btn-danger > div:hover, .styled_button.btn-danger > button:hover,
+.styled_button.btn-danger > div:active, .styled_button.btn-danger > button:active,
+.styled_button.btn-danger.disabled > div, .styled_button.btn-danger.disabled > button
+{
+    background-color: rgb(189, 54, 47);
+    border-color: rgb(189, 54, 47);
+}
+

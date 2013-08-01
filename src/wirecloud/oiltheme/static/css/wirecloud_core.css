@@ -1,0 +1,549 @@
+@font-face {
+  font-family: 'Comfortaa';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Comfortaa'), local('Comfortaa-Regular'),
+       url("../fonts/comfortaa_regular-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/comfortaa_regular-webfont.woff") format("woff"),
+       url("../fonts/comfortaa_regular-webfont.ttf") format("truetype"),
+       url("../fonts/comfortaa_regular-webfont.svg#ComfortaaRegular") format("svg");
+}
+
+@font-face {
+  font-family: 'Comfortaa';
+  font-style: normal;
+  font-weight: bold;
+  src: local('Comfortaa Bold'), local('Comfortaa-Bold'),
+       url("../fonts/comfortaa_bold-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/comfortaa_bold-webfont.woff") format("woff"),
+       url("../fonts/comfortaa_bold-webfont.ttf") format("truetype"),
+       url("../fonts/comfortaa_bold-webfont.svg#ComfortaaBold") format("svg");
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Open Sans'), local('OpenSans'),
+       url("../fonts/opensans-regular-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/opensans-regular-webfont.woff") format("woff"),
+       url("../fonts/opensans-regular-webfont.ttf") format("truetype"),
+       url("../fonts/opensans-regular-webfont.svg#OpenSansRegular") format("svg");
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: bold;
+  src: local('Open Sans Bold'), local('OpenSansBold'),
+       url("../fonts/opensans-bold-webfont.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/opensans-bold-webfont.woff") format("woff"),
+       url("../fonts/opensans-bold-webfont.ttf") format("truetype"),
+       url("../fonts/opensans-bold-webfont.svg#OpenSansRegular") format("svg");
+}
+
+@font-face {
+  font-family: "DsignesRegular";
+  font-style: normal;
+  font-weight: normal;
+  src: url("../fonts/DsignesRegular.ttf") format("truetype"),
+       url("../fonts/DsignesRegular.otf");
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-width: 800px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    font-family: "Open Sans";
+    color: #333333;
+    background: #fcfcfc;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #3E80AD;
+    margin: 10px 0;
+    font-family: Comfortaa;
+    font-weight: bold;
+    line-height: 20px;
+    text-rendering: optimizelegibility;
+}
+
+h1,
+h2,
+h3 {
+    line-height: 40px;
+}
+
+h1 {
+    font-size: 38.5px;
+}
+
+h2 {
+    font-size: 31.5px;
+}
+
+h3 {
+    font-size: 24.5px;
+}
+
+h4 {
+    font-size: 17.5px;
+}
+
+h5 {
+    font-size: 14px;
+}
+
+h6 {
+    font-size: 11.9px;
+}
+
+ul, ol {
+    padding: 0;
+    margin: 0 0 9px 25px;
+}
+
+ul ul,
+ul ol,
+ol ol,
+ol ul {
+    margin-bottom: 0;
+}
+
+ul {
+    list-style: disc;
+}
+
+li {
+    line-height: 18px;
+}
+
+a {
+    text-decoration: none;
+}
+
+/* OIL Header */
+
+header.navbar {
+    background-color: #f4f4f4;
+    padding: 1px 10px 1px;
+    border-bottom: 1px solid #f2f2f2;
+    -webkit-box-shadow: 0px 1px 8px rgba(50,51,51,0.15);
+    -moz-box-shadow: 0px 1px 8px rgba(50,51,51,0.15);
+    box-shadow: 0px 1px 8px rgba(50,51,51,0.15);
+    margin-bottom: 20px;
+}
+
+header.navbar {
+    height: 35px;
+    padding: 1px 2% 1px;
+}
+
+header.navbar > .navbar-inner {
+    min-height: 40px;
+    padding: 0px;
+}
+
+header.navbar > .navbar-inner > .logo-header {
+    display: inline-block;
+}
+
+header.navbar .logo-header > .logo {
+    width: 60px;
+    padding-top: 0;
+}
+
+header.navbar .logo-header > .brand {
+    display: inline-block;
+    padding: 0;
+    margin: 12px 0 0 -1px;
+    font-size: 23px;
+    font-weight: 200;
+    color: #555;
+    text-shadow: 0 1px 0 #fff;
+    vertical-align: top;
+    line-height: 20px;
+    font-family: "DsignesRegular";
+}
+
+header.navbar ul.oil-portal {
+    height: 36px;
+    padding: 0px 14px;
+    margin-bottom: 0px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+header.navbar ul.oil-portal > li {
+    display: inline-block;
+    padding: 13px 18px 10px;
+    list-style-type: none;
+    line-height: 20px;
+    vertical-align: top;
+    font-size: 14px;
+}
+
+header.navbar ul.oil-portal > li:hover {
+    background-color: rgba(152, 152, 152, 0.1);
+    height: 18px;
+    color: #049cdb;
+}
+
+header.navbar ul.oil-portal > li.active {
+    background: white;
+    height: 18px;
+    box-shadow: 0px 9px 0px -1px #FCFCFC;
+}
+
+header.navbar ul.oil-portal > li > a {
+    color: #555;
+}
+
+header.navbar ul.oil-portal > li > a:hover, header.navbar ul.oil-portal > li.active > a {
+    color: #049cdb;
+}
+
+header.navbar ul.nav span.name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    width: 70px;
+}
+
+header.navbar .nav {
+    position: relative;
+    left: 0;
+    display: block;
+    float: left;
+    margin: 0 10px 0 0;
+    list-style: none;
+}
+
+header.navbar > .nav.pull-right {
+    float: right;
+    margin-right: 0;
+}
+
+header.navbar .nav > li {
+    float: left;
+    line-height: 20px;
+}
+
+header.navbar .nav > li > a {
+    float: none;
+    display: block;
+    padding: 10px 0 10px 1px;
+    color: rgb(119, 119, 119);
+    text-decoration: none;
+    text-shadow: 0 1px 0 #FFF;
+}
+
+header.navbar .nav > li > a:hover {
+    color: rgb(51, 51, 51);
+    text-decoration: none;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+header.navbar .nav > li > a > img {
+    width: 24px;
+    height: auto;
+    vertical-align: middle;
+    border: 0;
+    -ms-interpolation-mode: bicubic;
+}
+
+header.navbar .nav > li > a > .name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    width: 70px;
+    font-size: 14px;
+}
+
+header.navbar .nav > .arrow-down-settings {
+    vertical-align: middle;
+    width: 25px;
+    height: 25px;
+    background-image: url("../images/arrow-down.png");
+    display: inline-block;
+    vertical-align: text-top;
+    background-repeat: no-repeat;
+    background-position: -1px -35px;
+    margin: 10px 0px 10px 1px;
+}
+
+header.navbar .nav > .arrow-down-settings:hover {
+    background-position: -1px -5px;
+}
+
+/* END OIL Header */
+
+#wirecloud_header > .breadcrum_wrapper {
+    font-family: "Courier New", courier;
+    font-size: 14pt;
+    font-weight: bold;
+    margin-bottom: 0.5ex;
+    text-align: right;
+}
+
+.breadcrum {
+    font-family: "Open Sans";
+    background: -moz-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(237, 237, 237, 0.85) 50%, rgba(237, 237, 237, 1) 100%);
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255, 255, 255, 0)), color-stop(50%,rgba(237, 237, 237, 0.85)), color-stop(100%,rgba(237, 237, 237, 1)));
+    background: -webkit-linear-gradient(left, rgba(255, 255, 255, 0) 0%,rgba(237, 237, 237, 0.85) 50%,rgba(237, 237, 237, 1) 100%);
+    background: -o-linear-gradient(left, rgba(255, 255, 255, 0) 0%,rgba(237, 237, 237, 0.85) 50%,rgba(237, 237, 237, 1) 100%);
+    background: -ms-linear-gradient(left, rgba(255, 255, 255, 0) 0%,rgba(237, 237, 237, 0.85) 50%,rgba(237, 237, 237, 1) 100%);
+    background: linear-gradient(left, rgba(255, 255, 255, 0) 0%,rgba(237, 237, 237, 0.85) 50%,rgba(237, 237, 237, 1) 100%);
+    font-size: 30px;
+    width: 75%;
+    text-align: left;
+    font-weight: normal;
+    color: #666;
+    padding: 11px;
+    display: inline-block;
+}
+
+#wrapper {
+    position: relative;
+    left: 0px;
+    right: 0px;
+    min-width: 600px;
+}
+
+.container_content {
+    position: relative;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#wirecloud_header .menu_wrapper {
+    right: 0px;
+    text-align: right;
+    font-family: "Arial";
+    font-size: 12px;
+    font-weight: normal;
+    color: #990000;
+}
+
+#wirecloud_header .menu_wrapper > .menu {
+    display: inline-block;
+    padding: 0 0 0 1ex;
+    vertical-align: top;
+}
+
+#wirecloud_header .styled_button > div:before {
+    font-family: FontAwesome;
+    font-weight: normal;
+    font-style: normal;
+    display: inline-block;
+    text-decoration: inherit;
+    content: "\f007";
+    margin-right: 1ex;
+}
+
+#wirecloud_header .styled_button > div:after {
+    font-family: FontAwesome;
+    font-weight: normal;
+    font-style: normal;
+    display: inline-block;
+    text-decoration: inherit;
+    content: "\f0d7";
+    margin-left: 1ex;
+}
+
+#wirecloud_header .styled_button.open > span {
+    background: rgb(81, 163, 81);
+    -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+#wirecloud_header > .menu_wrapper > .menu > span {
+    padding: 0.5ex 0.75ex;
+    cursor: pointer;
+    color: #08C;
+    text-decoration: none;
+    display: inline-block;
+    position: relative;
+    padding: 8px 12px;
+    margin: 2px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+#wirecloud_header > .menu_wrapper > .menu > span.wiring.error:before {
+    content: "\f071";
+    vertical-align: baseline;
+    font-family: FontAwesome;
+    font-weight: normal;
+    font-style: normal;
+    text-decoration: inherit;
+    -webkit-font-smoothing: antialiased;
+    color: #f89406;
+    margin-right: 3px;
+}
+
+#wirecloud_header > .menu_wrapper > .menu > span:hover {
+    text-decorator: none;
+    background-color: #EEE;
+}
+
+#wirecloud_header > .menu_wrapper > .menu > .user_menu_wrapper {
+    display: inline-block;
+    width: 30ex;
+    margin: 0 1ex;
+}
+
+#wirecloud_header > .menu_wrapper > .menu > span.selected {
+    cursor: default;
+    background-color: #08C;
+    color: white;
+}
+
+#wirecloud_header > .menu_wrapper > .menu .mark {
+    display: none;
+}
+
+#wirecloud_header > .menu_wrapper > .menu > .selected > .mark {
+    height: 2ex;
+}
+
+#wirecloud_header > .submenu {
+    display: none;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+}
+
+#wirecloud_breadcrum > span {
+    padding: 0px 1ex;
+}
+
+/* Loading window */
+
+#loading-background {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    bottom: 0;
+    left: 0;
+    z-index: 3;
+}
+
+#loading-window.fadding #loading-background {
+    display: none;
+}
+
+#loading-window.disabled {
+    display: none;
+}
+
+#loading-message {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    width: 70%;
+    max-width: 100%;
+    height: 10ex;
+    z-index: 4;
+    margin: 4ex;
+    height: 8ex;
+}
+
+#loading-message .window_content {
+    margin-top: 1ex;
+}
+
+#loading-subtask-title {
+    margin: 0;
+}
+
+.closebutton {
+    border: 0px none;
+    cursor: pointer;
+    padding: 0px;
+    width: 16px;
+    height: 16px;
+    background: url(../images/icons-sprite.png);
+    background-position: -48px -312px;
+}
+
+.help_button {
+    margin-left: 0px;
+    margin-bottom: 2px;
+    vertical-align: middle;
+    cursor: pointer;
+    border: none;
+    width: 16px;
+    height: 16px;
+    display: block;
+}
+
+.window_menu .styled_form .notebook {
+    height: 400px;
+}
+
+.parametrizable_input > * {
+    display: inline-block;
+}
+
+.parametrizable_input > .readOnlyIcon, .parametrizable_input > .visibilityIcon {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    margin: 3px;
+    vertical-align: bottom;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+}
+
+.parametrizable_input > .readOnlyIcon {
+    background-image: url(../images/icons-sprite.png);
+    background-position: -48px -552px;
+}
+
+.parametrizable_input > .readOnlyIcon.readOnly {
+    background-image: url(../images/icons-sprite.png);
+    background-position: -24px -552px;
+}
+
+.parametrizable_input > .visibilityIcon {
+    background-image: none;
+}
+
+.parametrizable_input > .visibilityIcon.visible {
+    background-image: url(../images/icons-sprite.png);
+    background-position: -48px -384px;
+}
+
+.clearfloats {
+    clear: both;
+}
+
+.powered-by-wirecloud {
+    vertical-align: top;
+}
+
+.powered-by-wirecloud > div:before {
+    content: 'Powered by ';
+    vertical-align: middle;
+}
+
+.powered-by-wirecloud > div:after {
+    content: '';
+    display: inline-block;
+    vertical-align: middle;
+    width: 33px;
+    height: 20px;
+    background: url("../images/logos/wc1-mini.png");
+}
