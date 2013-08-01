@@ -30,11 +30,15 @@
 
 #
 
+from urlparse import urlparse
+
 from django.db import models
 from django.contrib.auth.models import User, Group
 from django.utils.translation import ugettext_lazy as _
 
 from wirecloud.commons.models import TransModel
+from wirecloud.commons.utils.http import get_absolute_reverse_url
+from wirecloud.commons.utils.template.parsers import TemplateParser
 
 
 class CatalogueResource(TransModel):
@@ -84,6 +88,21 @@ class CatalogueResource(TransModel):
     def is_available_for(self, user):
 
         return self.public or self.users.filter(id=user.id).exists() or len(set(self.groups.all()) & set(user.groups.all())) > 0
+
+    def get_processed_info(self, request=None):
+
+        if urlparse(self.template_uri).scheme == '':
+            template_uri = get_absolute_reverse_url('wirecloud_catalogue.media', kwargs={
+                'vendor': self.vendor,
+                'name': self.short_name,
+                'version': self.version,
+                'file_path': self.template_uri
+            }, request=request)
+        else:
+            template_uri = self.template_uri
+
+        parser = TemplateParser(self.json_description, base=template_uri)
+        return parser.get_resource_processed_info()
 
     def delete(self, *args, **kwargs):
 
