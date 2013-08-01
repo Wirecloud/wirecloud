@@ -168,7 +168,7 @@ class ResourceCollection(Resource):
         elif install_dep:
             return HttpResponse(json.dumps((resource.get_processed_info(request),)), status=201, mimetype='application/json; charset=UTF-8')
         else:
-            return HttpResponse(resource.get_processed_info(request), status=201, mimetype='application/json; charset=UTF-8')
+            return HttpResponse(json.dumps(resource.get_processed_info(request)), status=201, mimetype='application/json; charset=UTF-8')
 
 
 class ResourceEntry(Resource):
