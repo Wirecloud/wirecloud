@@ -5,6 +5,7 @@
     <Name>test</Name>
     <Version>0.1</Version>
     <Author>admin</Author>
+    <DisplayName>__MSG_displayName__</DisplayName>
     <Mail>test@example.com</Mail>
     <Description>__MSG_description__</Description>
     <ImageURI>images/catalogue.png</ImageURI>
@@ -39,6 +40,7 @@
 
   <Translations default="en">
     <Translation lang="en">
+      <msg name="displayName">Test Widget</msg>
       <msg name="description">Test Widget description</msg>
       <msg name="prefDescription">Preference description</msg>
       <msg name="prefLabel">Preference label</msg>
@@ -48,13 +50,14 @@
       <msg name="slotLabel">Slot label</msg>
     </Translation>
     <Translation lang="es">
+      <msg name="displayName">Widget de prueba</msg>
       <msg name="description">Descripción del Widget de pruebas</msg>
       <msg name="prefDescription">Descripción de la preferencia</msg>
       <msg name="prefLabel">Etiqueta de la preferencia</msg>
       <msg name="optionName">Nombre de la opción</msg>
       <msg name="propLabel">Etiqueta de la propiedad</msg>
-      <msg name="eventLabel">Etiqueta del evento</msg>
-      <msg name="slotLabel">Etiqueta de la ranura</msg>
+      <msg name="eventLabel">Etiqueta del endpoint de salida</msg>
+      <msg name="slotLabel">Etiqueta del endpoint de entrada</msg>
     </Translation>
   </Translations>
 </Template>

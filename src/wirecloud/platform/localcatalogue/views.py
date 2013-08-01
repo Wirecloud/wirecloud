@@ -54,7 +54,7 @@ class ResourceCollection(Resource):
 
         resources = {}
         for resource in CatalogueResource.objects.filter(Q(public=True) | Q(users=request.user) | Q(groups=request.user.groups.all())):
-            options = json.loads(resource.json_description)
+            options = resource.get_processed_info()
             resources[resource.local_uri_part] = options
 
         return HttpResponse(json.dumps(resources), mimetype='application/json; chatset=UTF-8')
@@ -150,25 +150,25 @@ class ResourceCollection(Resource):
             return build_error_response(request, 409, _('Resource already exists'))
 
         if install_dep and resource.resource_type() == 'mashup':
-            resources = [json.loads(resource.json_description)]
+            resources = [resource.get_processed_info()]
             workspace_info = json.loads(resource.json_description)
             for tab_entry in workspace_info['tabs']:
                 for resource in tab_entry['resources']:
                     widget = get_or_add_widget_from_catalogue(resource.get('vendor'), resource.get('name'), resource.get('version'), request.user)
-                    resources.append(json.loads(widget.resource.json_description))
+                    resources.append(widget.resource.get_processed_info())
 
             for id_, op in workspace_info['wiring']['operators'].iteritems():
                 op_id_args = op['name'].split('/')
                 op_id_args.append(request.user)
                 operator = get_or_add_resource_from_available_marketplaces(*op_id_args)
-                resources.append(json.loads(operator.json_description))
+                resources.append(operator.get_processed_info())
 
             return HttpResponse(json.dumps(resources), status=201, mimetype='application/json; charset=UTF-8')
 
         elif install_dep:
-            return HttpResponse('[' + resource.json_description + ']', status=201, mimetype='application/json; charset=UTF-8')
+            return HttpResponse(json.dumps((resource.get_processed_info(request),)), status=201, mimetype='application/json; charset=UTF-8')
         else:
-            return HttpResponse(resource.json_description, status=201, mimetype='application/json; charset=UTF-8')
+            return HttpResponse(resource.get_processed_info(request), status=201, mimetype='application/json; charset=UTF-8')
 
 
 class ResourceEntry(Resource):

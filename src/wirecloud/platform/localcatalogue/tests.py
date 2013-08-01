@@ -35,7 +35,6 @@ from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
 from wirecloud.commons.utils.testcases import cleartree, FakeDownloader, LocalizedTestCase, WirecloudSeleniumTestCase
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
-from wirecloud.platform.get_data import get_widget_data
 from wirecloud.platform.localcatalogue.utils import install_resource, install_resource_to_user
 import wirecloud.platform.widget.utils
 from wirecloud.platform.models import Widget, XHTML
@@ -70,6 +69,29 @@ class LocalCatalogueTestCase(LocalizedTestCase):
 
         return contents
 
+    def check_basic_widget_info(self, resource):
+
+        data = resource.get_processed_info()
+        self.assertEqual(data['vendor'], 'Wirecloud')
+        self.assertEqual(data['name'], 'test')
+        self.assertEqual(data['version'], '0.1')
+        self.assertEqual(data['description'], 'Test Widget description')
+        self.assertEqual(data['image_uri'], 'http://example.com/path/images/catalogue.png')
+        self.assertEqual(data['iphone_image_uri'], 'http://example.com/path/images/catalogue_iphone.png')
+        self.assertEqual(data['doc_uri'], 'http://example.com/path/doc/index.html')
+
+        self.assertEqual(len(data['properties']), 1)
+        self.assertEqual(data['properties'], [{u'default_value': u'', u'secure': False, u'name': u'prop', u'label': u'Property label', u'type': u'text', u'description': u''}])
+
+        self.assertEqual(len(data['preferences']), 1)
+        self.assertEqual(data['preferences'], [{u'default_value': u'value', u'secure': False, u'name': u'pref', u'label': u'Preference label', u'type': u'list', u'options': [{u'value': u'1', u'label': u'Option name'}], u'description': u'Preference description'}])
+
+        self.assertEqual(len(data['wiring']['inputs']), 1)
+        self.assertEqual(data['wiring']['inputs'], [{u'name': u'slot', u'label': u'Slot label', u'type': u'text', u'description': u'',u'friendcode': u'test_friend_code', u'actionlabel': u''}])
+
+        self.assertEqual(len(data['wiring']['outputs']), 1)
+        self.assertEqual(data['wiring']['outputs'], [{u'name': u'event', u'label': u'Event label', u'type': u'text', u'description': u'', u'friendcode': u'test_friend_code'}])
+
     def test_basic_widget_creation(self):
         template_uri = "http://example.com/path/widget.xml"
         template = self.read_template('template1.xml')
@@ -85,24 +107,7 @@ class LocalCatalogueTestCase(LocalizedTestCase):
         self.assertEqual(tuple(resource.users.values_list('username', flat=True)), (u'test',))
         self.assertEqual(tuple(resource.groups.values_list('name', flat=True)), ())
 
-        widget = resource.widget
-
-        self.changeLanguage('en')
-        data = get_widget_data(widget)
-        self.assertEqual(data['uri'], 'Wirecloud/test/0.1')
-        self.assertEqual(data['vendor'], 'Wirecloud')
-        self.assertEqual(data['name'], 'test')
-        self.assertEqual(data['version'], '0.1')
-
-        self.assertEqual(data['variables']['prop']['label'], 'Property label')
-        self.assertEqual(data['variables']['prop']['aspect'], 'PROP')
-        self.assertEqual(data['variables']['pref']['label'], 'Preference label')
-        self.assertEqual(data['variables']['pref']['value_options'], [['1', 'Option name']])
-        self.assertEqual(data['variables']['pref']['aspect'], 'PREF')
-        self.assertEqual(data['variables']['event']['label'], 'Event label')
-        self.assertEqual(data['variables']['event']['aspect'], 'EVEN')
-        self.assertEqual(data['variables']['slot']['label'], 'Slot label')
-        self.assertEqual(data['variables']['slot']['aspect'], 'SLOT')
+        self.check_basic_widget_info(resource)
 
     def test_basic_ezweb_widget_creation(self):
         template_uri = "http://example.com/path/widget.xml"
@@ -110,31 +115,9 @@ class LocalCatalogueTestCase(LocalizedTestCase):
 
         downloader.download_http_content.set_response(template_uri, template)
         downloader.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
-        widget = install_resource(template, template_uri, self.user, False).widget
+        resource = install_resource(template, template_uri, self.user, False)
 
-        self.changeLanguage('en')
-        data = get_widget_data(widget)
-        self.assertEqual(data['uri'], 'Wirecloud/test/0.1')
-        self.assertEqual(data['vendor'], 'Wirecloud')
-        self.assertEqual(data['name'], 'test')
-        self.assertEqual(data['version'], '0.1')
-
-        self.assertEqual(data['variables']['prop']['label'], 'Property label')
-        self.assertEqual(data['variables']['prop']['aspect'], 'PROP')
-        self.assertEqual(data['variables']['pref']['label'], 'Preference label')
-        self.assertEqual(data['variables']['pref']['value_options'], [['1', 'Option name']])
-        self.assertEqual(data['variables']['pref']['aspect'], 'PREF')
-        self.assertEqual(data['variables']['event']['label'], 'Event label')
-        self.assertEqual(data['variables']['event']['aspect'], 'EVEN')
-        self.assertEqual(data['variables']['slot']['label'], 'Slot label')
-        self.assertEqual(data['variables']['slot']['aspect'], 'SLOT')
-
-        self.assertEqual(data['variables']['language']['aspect'], 'ECTX')
-        self.assertEqual(data['variables']['language']['concept'], 'language')
-        self.assertEqual(data['variables']['user']['aspect'], 'ECTX')
-        self.assertEqual(data['variables']['user']['concept'], 'username')
-        self.assertEqual(data['variables']['width']['aspect'], 'GCTX')
-        self.assertEqual(data['variables']['width']['concept'], 'widthInPixels')
+        self.check_basic_widget_info(resource)
 
     def test_basic_widget_creation_from_rdf(self):
         template_uri = "http://example.com/path/widget.rdf"
@@ -147,24 +130,9 @@ class LocalCatalogueTestCase(LocalizedTestCase):
 
         downloader.download_http_content.set_response(template_uri, template)
         downloader.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
-        widget = install_resource(template, template_uri, self.user, False).widget
+        resource = install_resource(template, template_uri, self.user, False)
 
-        self.changeLanguage('en')
-        data = get_widget_data(widget)
-        self.assertEqual(data['uri'], 'Wirecloud/test/0.1')
-        self.assertEqual(data['vendor'], 'Wirecloud')
-        self.assertEqual(data['name'], 'test')
-        self.assertEqual(data['version'], '0.1')
-
-        self.assertEqual(data['variables']['prop']['label'], u'Property Label')
-        self.assertEqual(data['variables']['prop']['aspect'], 'PROP')
-        self.assertEqual(data['variables']['pref']['label'], u'Preference Label')
-        self.assertEqual(data['variables']['pref']['value_options'], [[u'1', u'Option Name']])
-        self.assertEqual(data['variables']['pref']['aspect'], 'PREF')
-        self.assertEqual(data['variables']['event']['label'], u'Event Label')
-        self.assertEqual(data['variables']['event']['aspect'], 'EVEN')
-        self.assertEqual(data['variables']['slot']['label'], u'Slot Label')
-        self.assertEqual(data['variables']['slot']['aspect'], 'SLOT')
+        self.check_basic_widget_info(resource)
 
     def test_basic_operator_creation_from_rdf(self):
         template = self.read_template('operatorTemplate1.rdf')
@@ -259,20 +227,37 @@ class LocalCatalogueTestCase(LocalizedTestCase):
         self.assertRaises(TemplateParseException, install_resource, template, template_uri, self.user, False)
         self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Wirecloud', short_name='test', version='0.1')
 
-    def testTranslations(self):
-        widget = Widget.objects.get(pk=1)
+    def test_template_translations(self):
 
-        self.changeLanguage('en')
-        data = get_widget_data(widget)
-        self.assertEqual(data['displayName'], 'Test Widget')
-        self.assertEqual(data['variables']['password']['label'], 'Password Pref')
-        self.assertEqual(data['variables']['slot']['action_label'], 'Slot Action Label')
+        template_uri = "http://example.com/path/widget.xml"
+        template = self.read_template('template1.xml')
+
+        downloader.download_http_content.set_response(template_uri, template)
+        downloader.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        resource = install_resource_to_user(self.user, file_contents=template, templateURL=template_uri)
 
         self.changeLanguage('es')
-        data = get_widget_data(widget)
-        self.assertEqual(data['displayName'], 'Widget de prueba')
-        self.assertEqual(data['variables']['password']['label'], u'Contraseña')
-        self.assertEqual(data['variables']['slot']['action_label'], u'Etiqueta de acción del slot')
+        data = resource.get_processed_info()
+        self.assertEqual(data['vendor'], 'Wirecloud')
+        self.assertEqual(data['name'], 'test')
+        self.assertEqual(data['version'], '0.1')
+        self.assertEqual(data['display_name'], 'Widget de prueba')
+        self.assertEqual(data['description'], u'Descripción del Widget de pruebas')
+        self.assertEqual(data['image_uri'], 'http://example.com/path/images/catalogue.png')
+        self.assertEqual(data['iphone_image_uri'], 'http://example.com/path/images/catalogue_iphone.png')
+        self.assertEqual(data['doc_uri'], 'http://example.com/path/doc/index.html')
+
+        self.assertEqual(len(data['properties']), 1)
+        self.assertEqual(data['properties'], [{u'default_value': u'', u'secure': False, u'name': u'prop', u'label': u'Etiqueta de la propiedad', u'type': u'text', u'description': u''}])
+
+        self.assertEqual(len(data['preferences']), 1)
+        self.assertEqual(data['preferences'], [{u'default_value': u'value', u'secure': False, u'name': u'pref', u'label': u'Etiqueta de la preferencia', u'type': u'list', u'options': [{u'value': u'1', u'label': u'Nombre de la opción'}], u'description': u'Descripción de la preferencia'}])
+
+        self.assertEqual(len(data['wiring']['inputs']), 1)
+        self.assertEqual(data['wiring']['inputs'], [{u'name': u'slot', u'label': u'Etiqueta del endpoint de entrada', u'type': u'text', u'description': u'',u'friendcode': u'test_friend_code', u'actionlabel': u''}])
+
+        self.assertEqual(len(data['wiring']['outputs']), 1)
+        self.assertEqual(data['wiring']['outputs'], [{u'name': u'event', u'label': u'Etiqueta del endpoint de salida', u'type': u'text', u'description': u'', u'friendcode': u'test_friend_code'}])
 
     def test_repeated_translation_indexes(self):
         template_uri = "http://example.com/path/widget.xml"
@@ -280,17 +265,23 @@ class LocalCatalogueTestCase(LocalizedTestCase):
 
         downloader.download_http_content.set_response(template_uri, template)
         downloader.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
-        widget = install_resource(template, template_uri, self.user, False).widget
+        resource = install_resource(template, template_uri, self.user, False)
 
-        self.changeLanguage('en')
-        data = get_widget_data(widget)
-        self.assertEqual(data['displayName'], 'Test Widget')
+        data = resource.get_processed_info()
+        self.assertEqual(data['display_name'], 'Test Widget')
         self.assertEqual(data['version'], '0.2')
 
-        self.assertEqual(data['variables']['prop']['label'], 'Label')
-        self.assertEqual(data['variables']['pref']['label'], 'Label')
-        self.assertEqual(data['variables']['event']['label'], 'Label')
-        self.assertEqual(data['variables']['slot']['label'], 'Label')
+        self.assertEqual(len(data['properties']), 1)
+        self.assertEqual(data['properties'], [{u'default_value': u'', u'secure': False, u'name': u'prop', u'label': u'Label', u'type': u'text', u'description': u''}])
+
+        self.assertEqual(len(data['preferences']), 1)
+        self.assertEqual(data['preferences'], [{u'default_value': u'value', u'secure': False, u'name': u'pref', u'label': u'Label', u'type': u'text', u'description': u'Preference description'}])
+
+        self.assertEqual(len(data['wiring']['inputs']), 1)
+        self.assertEqual(data['wiring']['inputs'], [{u'name': u'slot', u'label': u'Label', u'type': u'text', u'description': u'',u'friendcode': u'test_friend_code', u'actionlabel': u''}])
+
+        self.assertEqual(len(data['wiring']['outputs']), 1)
+        self.assertEqual(data['wiring']['outputs'], [{u'name': u'event', u'label': u'Label', u'type': u'text', u'description': u'', u'friendcode': u'test_friend_code'}])
 
     def test_widgets_with_invalid_format(self):
         template_uri = "http://example.com/path/widget.xml"
