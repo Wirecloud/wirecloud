@@ -192,14 +192,17 @@ LOGGING = {
             '()': 'django.utils.log.RequireDebugFalse'
         },
         'require_debug_true': {
-            '()': 'django.utils.log.RequireDebugTrue'
+            '()': 'wirecloud.commons.utils.log.RequireDebugTrue'
         }
     },
     'handlers': {
         'console':{
-            'level': 'DEBUG',
+            'level': 'INFO',
             'filters': ['require_debug_true'],
             'class': 'logging.StreamHandler',
+        },
+        'null': {
+            'class': 'django.utils.log.NullHandler',
         },
         'mail_admins': {
             'level': 'ERROR',
@@ -210,12 +213,14 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'filters': ['require_debug_true'],
         },
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
-            'propagate': True,
+            'propagate': False,
+        },
+        'py.warnings': {
+            'handlers': ['console'],
         },
     }
 }
