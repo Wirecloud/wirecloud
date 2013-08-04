@@ -119,10 +119,6 @@ function Dragboard(tab, workspace, dragboardElement) {
         return this.iWidgets.get(iWidgetId);
     };
 
-    Dragboard.prototype.getWorkspace = function () {
-        return this.workspace;
-    };
-
     Dragboard.prototype._updateIWidgetInfo = function (iWidget) {
         OpManagerFactory.getInstance().globalDragboard._updateIWidgetInfo(iWidget);
         this.workspace.updateVisibleTab(this.tab.index);

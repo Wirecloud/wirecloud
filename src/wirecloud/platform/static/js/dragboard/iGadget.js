@@ -1033,7 +1033,7 @@ IWidget.prototype.toggleLayout = function () {
  * Check if the iwidget belongs to a shared workspace
  */
 IWidget.prototype.is_shared_workspace = function () {
-    return this.layout.dragboard.getWorkspace().isShared();
+    return this.internal_iwidget.workspace.isShared();
 };
 
 /**

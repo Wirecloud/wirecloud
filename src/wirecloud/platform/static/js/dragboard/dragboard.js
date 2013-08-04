@@ -361,10 +361,6 @@
             return false;
         };
 
-        Dragboard.prototype.getWorkspace = function getWorkspace() {
-            return this.workspace;
-        };
-
         /**
          * Registers an iWidget into this dragboard.
          *
