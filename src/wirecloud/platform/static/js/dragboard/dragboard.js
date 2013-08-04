@@ -26,6 +26,62 @@
 
     "use strict";
 
+    var parseTab = function parseTab(tabInfo) {
+        var curIWidget, position, icon_position, zPos, width, height, iwidget,
+            widget, widgetid, minimized, layout, refusedVersion,
+            opManager, i, readOnly;
+
+        opManager = OpManagerFactory.getInstance();
+
+        this.currentCode = 1;
+        this.iWidgets = new Hash();
+        this.iWidgetsByCode = new Hash();
+
+        if (this.tab.readOnly || !this.workspace.isOwned()) {
+            this.readOnly = true;
+            this.dragboardElement.addClassName("fixed");
+        }
+
+        // For controlling when the iwidgets are totally loaded!
+        for (i = 0; i < tabInfo.iwidgets.length; i++) {
+            curIWidget = tabInfo.iwidgets[i];
+
+            // Get widget model
+            widget = Wirecloud.LocalCatalogue.getResourceId(curIWidget.widget);
+
+            // Parse width, height and the position of the iwidget
+            width = parseInt(curIWidget.width, 10);
+            height = parseInt(curIWidget.height, 10);
+            position = new DragboardPosition(parseInt(curIWidget.left, 10), parseInt(curIWidget.top, 10));
+            icon_position = new DragboardPosition(parseInt(curIWidget.icon_left, 10), parseInt(curIWidget.icon_top, 10));
+            zPos = parseInt(curIWidget.zIndex, 10);
+            readOnly = curIWidget.readOnly;
+
+            // Parse layout field
+            if (curIWidget.layout === 0) {
+                layout = this.baseLayout;
+            } else {
+                layout = this.freeLayout;
+            }
+
+            // Create instance model
+            iwidget = new IWidget(widget,
+                                  curIWidget.id,
+                                  curIWidget.name,
+                                  layout,
+                                  position,
+                                  icon_position,
+                                  zPos,
+                                  width,
+                                  height,
+                                  curIWidget.fulldragboard,
+                                  curIWidget.minimized,
+                                  curIWidget.refused_version,
+                                  false,
+                                  readOnly);
+        }
+    };
+
     var Dragboard = function Dragboard(tab, workspace, dragboardElement) {
 
         // *********************************
@@ -177,62 +233,6 @@
             this.iWidgets = null;
             this.iWidgetsByCode = null;
             this.dragboardElement = null;
-        };
-
-        Dragboard.prototype.parseTab = function parseTab(tabInfo) {
-            var curIWidget, position, icon_position, zPos, width, height, iwidget,
-                widget, widgetid, minimized, layout, refusedVersion,
-                opManager, i, readOnly;
-
-            opManager = OpManagerFactory.getInstance();
-
-            this.currentCode = 1;
-            this.iWidgets = new Hash();
-            this.iWidgetsByCode = new Hash();
-
-            if (this.tab.readOnly || !this.workspace.isOwned()) {
-                this.readOnly = true;
-                this.dragboardElement.addClassName("fixed");
-            }
-
-            // For controlling when the iwidgets are totally loaded!
-            for (i = 0; i < tabInfo.iwidgets.length; i++) {
-                curIWidget = tabInfo.iwidgets[i];
-
-                // Get widget model
-                widget = Wirecloud.LocalCatalogue.getResourceId(curIWidget.widget);
-
-                // Parse width, height and the position of the iwidget
-                width = parseInt(curIWidget.width, 10);
-                height = parseInt(curIWidget.height, 10);
-                position = new DragboardPosition(parseInt(curIWidget.left, 10), parseInt(curIWidget.top, 10));
-                icon_position = new DragboardPosition(parseInt(curIWidget.icon_left, 10), parseInt(curIWidget.icon_top, 10));
-                zPos = parseInt(curIWidget.zIndex, 10);
-                readOnly = curIWidget.readOnly;
-
-                // Parse layout field
-                if (curIWidget.layout === 0) {
-                    layout = this.baseLayout;
-                } else {
-                    layout = this.freeLayout;
-                }
-
-                // Create instance model
-                iwidget = new IWidget(widget,
-                                      curIWidget.id,
-                                      curIWidget.name,
-                                      layout,
-                                      position,
-                                      icon_position,
-                                      zPos,
-                                      width,
-                                      height,
-                                      curIWidget.fulldragboard,
-                                      curIWidget.minimized,
-                                      curIWidget.refused_version,
-                                      false,
-                                      readOnly);
-            }
         };
 
         /**
@@ -502,7 +502,7 @@
         this.freeLayout = new FreeLayout(this);
         this.fulldragboardLayout = new FullDragboardLayout(this);
 
-        this.parseTab(tab.tabInfo);
+        parseTab.call(this, tab.tabInfo);
     };
 
     Dragboard.prototype.paint = function paint() {
