@@ -313,10 +313,6 @@
             iWidget.save(options);
         };
 
-        Dragboard.prototype.getNumberOfIWidgets = function getNumberOfIWidgets() {
-            return this.iWidgets.keys().length;
-        };
-
         Dragboard.prototype.removeInstance = function removeInstance(iWidgetId, orderFromServer) {
             var iwidget = this.iWidgets.get(iWidgetId);
 
