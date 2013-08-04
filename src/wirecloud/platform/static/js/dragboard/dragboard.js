@@ -20,572 +20,578 @@
  */
 
 /*global document, window, Error, gettext, interpolate, $, Hash, Event, isElement*/
-/*global Constants, ColumnLayout, DragboardPosition, FreeLayout, FullDragboardLayout, IWidget, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud, SmartColumnLayout*/
+/*global Constants, ColumnLayout, CSSPrimitiveValue, DragboardPosition, FreeLayout, FullDragboardLayout, IWidget, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud, SmartColumnLayout*/
 
-/**
- * @author aarranz
- */
-function Dragboard(tab, workspace, dragboardElement) {
-    // *********************************
-    // PRIVATE VARIABLES
-    // *********************************
-    this.loaded = false;
-    this.currentCode = 1;
-    this.scrollbarSpace = 17; // TODO make this configurable?
-    // TODO or initialized with the scroll bar's real with?
-    this.dragboardElement = null;
-    this.dragboardWidth = 800;
-    this.dragboardHeight = 600;
-    this.baseLayout = null;
-    this.freeLayout = null;
-    this.widgetToMove = null;
-    this.iWidgets = new Hash();
-    this.iWidgetsByCode = new Hash();
-    this.tab = tab;
-    this.tabId = tab.tabInfo.id;
-    this.workspace = workspace;
-    this.workspaceId = workspace.workspaceState.id;
-    this.readOnly = false;
+(function () {
 
-    // ***********************
-    // PRIVATE FUNCTIONS
-    // ***********************
-    Dragboard.prototype.paint = function () {
-        var oldLength, i;
+    "use strict";
 
-        this.dragboardElement.innerHTML = "";
+    var Dragboard = function Dragboard(tab, workspace, dragboardElement) {
 
-        this._recomputeSize();
-
-        this.baseLayout.initialize();
-        this.freeLayout.initialize();
-        this.fulldragboardLayout.initialize();
-
-        // Check if we have to readjust the z positions
-        oldLength = this.orderList.length;
-        this.orderList = this.orderList.compact();
-        if (oldLength !== this.orderList.length) {
-            for (i = 0; i < this.orderList.length; i += 1) {
-                this.orderList[i].setZPosition(i);
-            }
-        }
-
-        this.tab.mark_as_painted();
-    };
-
-    /**
-     * Update iwidget status in persistence
-     */
-    this._commitChanges = function (keys) {
-        var onSuccess, onError;
-        keys = keys || this.iWidgetsByCode.keys();
-
-        onSuccess = function (transport) { };
-
-        onError = function (transport, e) {
-            var logManager = LogManagerFactory.getInstance();
-            var msg = logManager.formatError(gettext("Error committing dragboard changes to persistence: %(errorMsg)s."), transport, e);
-            logManager.log(msg);
-        };
-
-        // TODO only send real changes
-        var iWidget, iWidgetInfo, uri, position, data, icon_position;
-        data = [];
-
-        for (var i = 0; i < keys.length; i++) {
-            iWidget = this.iWidgetsByCode.get(keys[i]);
-            iWidgetInfo = {};
-            position = iWidget.getPosition();
-            iWidgetInfo.id = iWidget.id;
-            iWidgetInfo.tab = this.tabId;
-            if (this.workspace.isOwned()) {
-                iWidgetInfo.minimized = iWidget.isMinimized();
-            }
-            if (!iWidget.isInFullDragboardMode()) {
-                iWidgetInfo.top = iWidget.position.y;
-                iWidgetInfo.left = iWidget.position.x;
-                iWidgetInfo.zIndex = iWidget.zPos;
-                iWidgetInfo.width = iWidget.contentWidth;
-                iWidgetInfo.height = iWidget.height;
-                iWidgetInfo.fulldragboard = false;
-            } else {
-                iWidgetInfo.fulldragboard = true;
-            }
-
-            iWidgetInfo.layout = iWidget.onFreeLayout() ? 1 : 0;
-
-            icon_position = iWidget.getIconPosition();
-            iWidgetInfo.icon_top = icon_position.y;
-            iWidgetInfo.icon_left = icon_position.x;
-
-            data.push(iWidgetInfo);
-        }
-
-        uri = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
-            workspace_id: this.workspaceId,
-            tab_id: this.tabId
-        });
-        Wirecloud.io.makeRequest(uri, {
-            method: 'PUT',
-            contentType: 'application/json',
-            postBody: Object.toJSON(data),
-            onSuccess: onSuccess,
-            onFailure: onError
-        });
-    };
-
-    /**
-     *
-     */
-    Dragboard.prototype._buildLayoutFromPreferences = function (description) {
-        var columns = this.tab.preferences.get('columns');
-        var cell_height = this.tab.preferences.get('cell-height');
-        var vertical_margin = this.tab.preferences.get('vertical-margin');
-        var horizontal_margin = this.tab.preferences.get('horizontal-margin');
-
-        if (this.tab.preferences.get('smart')) {
-            return new SmartColumnLayout(this, columns, cell_height, vertical_margin, horizontal_margin);
-        } else {
-            return new ColumnLayout(this, columns, cell_height, vertical_margin, horizontal_margin);
-        }
-    };
-
-    /**
-     *
-     */
-    Dragboard.prototype._updateBaseLayout = function () {
-        // Create the new Layout
-        var newBaseLayout = this._buildLayoutFromPreferences();
-        newBaseLayout.initialize();
-
-        // Change our base layout
-        this.baseLayout.moveTo(newBaseLayout);
-        this.baseLayout.destroy();
-        this.baseLayout = newBaseLayout;
-    };
-
-    // ****************
-    // PUBLIC METHODS
-    // ****************
-
-    /**
-     * Gets the width of the usable dragboard area.
-     *
-     * @returns The width of the usable dragboard area
-     */
-    Dragboard.prototype.getWidth = function () {
-        return this.dragboardWidth;
-    };
-
-    /**
-     * Gets the height of the usable dragboard area.
-     *
-     * @returns The height of the usable dragboard area
-     */
-    Dragboard.prototype.getHeight = function () {
-        return this.dragboardHeight;
-    };
-
-    /**
-     * This method must be called to avoid memory leaks caused by circular references.
-     */
-    Dragboard.prototype.destroy = function () {
-        this.baseLayout.destroy();
-        this.freeLayout.destroy();
+        // *********************************
+        // PRIVATE VARIABLES
+        // *********************************
+        this.loaded = false;
+        this.currentCode = 1;
+        this.scrollbarSpace = 17; // TODO make this configurable?
+        // TODO or initialized with the scroll bar's real with?
+        this.dragboardElement = null;
+        this.dragboardWidth = 800;
+        this.dragboardHeight = 600;
         this.baseLayout = null;
         this.freeLayout = null;
-
-        this.iWidgets = null;
-        this.iWidgetsByCode = null;
-        this.dragboardElement = null;
-    };
-
-    Dragboard.prototype.parseTab = function (tabInfo) {
-        var curIWidget, position, icon_position, zPos, width, height, iwidget,
-            widget, widgetid, minimized, layout, refusedVersion,
-            opManager, i, readOnly;
-
-        opManager = OpManagerFactory.getInstance();
-
-        this.currentCode = 1;
+        this.widgetToMove = null;
         this.iWidgets = new Hash();
         this.iWidgetsByCode = new Hash();
+        this.tab = tab;
+        this.tabId = tab.tabInfo.id;
+        this.workspace = workspace;
+        this.workspaceId = workspace.workspaceState.id;
+        this.readOnly = false;
 
-        if (this.tab.readOnly || !this.workspace.isOwned()) {
-            this.readOnly = true;
-            this.dragboardElement.addClassName("fixed");
-        }
+        // ***********************
+        // PRIVATE FUNCTIONS
+        // ***********************
+        Dragboard.prototype.paint = function paint() {
+            var oldLength, i;
 
-        // For controlling when the iwidgets are totally loaded!
-        for (i = 0; i < tabInfo.iwidgets.length; i++) {
-            curIWidget = tabInfo.iwidgets[i];
+            this.dragboardElement.innerHTML = "";
 
-            // Get widget model
-            widget = Wirecloud.LocalCatalogue.getResourceId(curIWidget.widget);
+            this._recomputeSize();
 
-            // Parse width, height and the position of the iwidget
-            width = parseInt(curIWidget.width, 10);
-            height = parseInt(curIWidget.height, 10);
-            position = new DragboardPosition(parseInt(curIWidget.left, 10), parseInt(curIWidget.top, 10));
-            icon_position = new DragboardPosition(parseInt(curIWidget.icon_left, 10), parseInt(curIWidget.icon_top, 10));
-            zPos = parseInt(curIWidget.zIndex, 10);
-            readOnly = curIWidget.readOnly;
+            this.baseLayout.initialize();
+            this.freeLayout.initialize();
+            this.fulldragboardLayout.initialize();
 
-            // Parse layout field
-            if (curIWidget.layout === 0) {
-                layout = this.baseLayout;
-            } else {
-                layout = this.freeLayout;
+            // Check if we have to readjust the z positions
+            oldLength = this.orderList.length;
+            this.orderList = this.orderList.compact();
+            if (oldLength !== this.orderList.length) {
+                for (i = 0; i < this.orderList.length; i += 1) {
+                    this.orderList[i].setZPosition(i);
+                }
             }
 
-            // Create instance model
-            iwidget = new IWidget(widget,
-                                  curIWidget.id,
-                                  curIWidget.name,
-                                  layout,
-                                  position,
-                                  icon_position,
-                                  zPos,
-                                  width,
-                                  height,
-                                  curIWidget.fulldragboard,
-                                  curIWidget.minimized,
-                                  curIWidget.refused_version,
-                                  false,
-                                  readOnly);
-        }
-
-        this.loaded = true;
-    };
-
-    /**
-     * Creates a new instance of the given widget and inserts it into this
-     * dragboard.
-     *
-     * @param widget the widget to use for creating the instance
-     */
-    Dragboard.prototype.addInstance = function (widget, options_) {
-        var options = {
-            "iwidgetName": widget.display_name,
-            "setDefaultValues" : function () {}
+            this.tab.mark_as_painted();
         };
 
-        Object.extend(options, options_);
+        /**
+         * Update iwidget status in persistence
+         */
+        this._commitChanges = function _commitChanges(keys) {
+            var onSuccess, onError;
+            keys = keys || this.iWidgetsByCode.keys();
 
-        if (!(widget instanceof Wirecloud.Widget)) {
-            throw new TypeError();
-        }
+            onSuccess = function (transport) { };
 
-        if (this.readOnly) {
-            var msg = gettext("The destination tab (%(tabName)s) is read only.");
-            msg = interpolate(msg, {tabName: this.tab.tabInfo.name}, true);
-            LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.WARN_MSG);
-            return;
-        }
+            onError = function (transport, e) {
+                var logManager = LogManagerFactory.getInstance();
+                var msg = logManager.formatError(gettext("Error committing dragboard changes to persistence: %(errorMsg)s."), transport, e);
+                logManager.log(msg);
+            };
 
-        //var width = layout.unitConvert(widget.width + "cm", CSSPrimitiveValue.CSS_PX)[0];
-        //width = layout.adaptWidth(width, width).inLU;
-        var width = widget.default_width;
-        var height = widget.default_height;
-        var minimized = false;
-        var freeLayoutAfterLoading = false;
-        var layout = this.baseLayout;
+            // TODO only send real changes
+            var iWidget, iWidgetInfo, uri, position, data, icon_position;
+            data = [];
 
-        if (this.tab.preferences.get('layout') === "Free") {
-            minimized = false; //NOTE: this variable is useless, it could be used in the future to add widgets as icons directly
-            freeLayoutAfterLoading = true; //To change the layout to FreeLayout after loading the widget
-        }
+            for (var i = 0; i < keys.length; i++) {
+                iWidget = this.iWidgetsByCode.get(keys[i]);
+                iWidgetInfo = {};
+                position = iWidget.getPosition();
+                iWidgetInfo.id = iWidget.id;
+                iWidgetInfo.tab = this.tabId;
+                if (this.workspace.isOwned()) {
+                    iWidgetInfo.minimized = iWidget.isMinimized();
+                }
+                if (!iWidget.isInFullDragboardMode()) {
+                    iWidgetInfo.top = iWidget.position.y;
+                    iWidgetInfo.left = iWidget.position.x;
+                    iWidgetInfo.zIndex = iWidget.zPos;
+                    iWidgetInfo.width = iWidget.contentWidth;
+                    iWidgetInfo.height = iWidget.height;
+                    iWidgetInfo.fulldragboard = false;
+                } else {
+                    iWidgetInfo.fulldragboard = true;
+                }
 
-        // Check if the widget doesn't fit in the dragboard
-        if (layout instanceof ColumnLayout) {
-            var maxColumns = layout.getColumns();
-            if (width > maxColumns) {
-                // TODO warning
-                width = maxColumns;
+                iWidgetInfo.layout = iWidget.onFreeLayout() ? 1 : 0;
+
+                icon_position = iWidget.getIconPosition();
+                iWidgetInfo.icon_top = icon_position.y;
+                iWidgetInfo.icon_left = icon_position.x;
+
+                data.push(iWidgetInfo);
             }
-        }
 
-        // Create the instance
-        var iWidget = new IWidget(widget, null, options.iwidgetName, layout, null, null, null, width, height, false, minimized, null, freeLayoutAfterLoading, false);
+            uri = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
+                workspace_id: this.workspaceId,
+                tab_id: this.tabId
+            });
+            Wirecloud.io.makeRequest(uri, {
+                method: 'PUT',
+                contentType: 'application/json',
+                postBody: Object.toJSON(data),
+                onSuccess: onSuccess,
+                onFailure: onError
+            });
+        };
 
-        iWidget.save(options);
-    };
+        /**
+         *
+         */
+        Dragboard.prototype._buildLayoutFromPreferences = function _buildLayoutFromPreferences(description) {
+            var columns = this.tab.preferences.get('columns');
+            var cell_height = this.tab.preferences.get('cell-height');
+            var vertical_margin = this.tab.preferences.get('vertical-margin');
+            var horizontal_margin = this.tab.preferences.get('horizontal-margin');
 
-    Dragboard.prototype.getNumberOfIWidgets = function () {
-        return this.iWidgets.keys().length;
-    };
-
-    Dragboard.prototype.removeInstance = function (iWidgetId, orderFromServer) {
-        var iwidget = this.iWidgets.get(iWidgetId);
-
-        iwidget.remove(orderFromServer);
-    };
-
-    Dragboard.prototype.saveConfig = function (iWidgetId) {
-        var iwidget = this.iWidgets.get(iWidgetId);
-        try {
-            iwidget.saveConfig();
-
-            iwidget.setConfigurationVisible(false);
-        } catch (e) {
-        }
-    };
-
-    Dragboard.prototype.setDefaultPrefs = function (iWidgetId) {
-        var iwidget = this.iWidgets.get(iWidgetId);
-        iwidget.setDefaultPrefs();
-    };
-
-    Dragboard.prototype.notifyErrorOnIWidget = function (iWidgetId) {
-        var iwidget = this.iWidgets.get(iWidgetId);
-        iwidget.notifyError();
-    };
-
-    Dragboard.prototype.getIWidgets = function () {
-        return this.iWidgets.values();
-    };
-
-    Dragboard.prototype.getIWidget = function (iWidgetId) {
-        return this.iWidgets.get(iWidgetId);
-    };
-
-    Dragboard.prototype.hasReadOnlyIWidgets = function () {
-        var iwidgetKeys = this.iWidgets.keys();
-        for (var i = 0; i < iwidgetKeys.length; i++) {
-            if (this.iWidgets.get(iwidgetKeys[i]).readOnly) {
-                return true;
+            if (this.tab.preferences.get('smart')) {
+                return new SmartColumnLayout(this, columns, cell_height, vertical_margin, horizontal_margin);
+            } else {
+                return new ColumnLayout(this, columns, cell_height, vertical_margin, horizontal_margin);
             }
-        }
-        return false;
-    };
+        };
 
-    Dragboard.prototype.getWorkspace = function () {
-        return this.workspace;
-    };
+        /**
+         *
+         */
+        Dragboard.prototype._updateBaseLayout = function _updateBaseLayout() {
+            // Create the new Layout
+            var newBaseLayout = this._buildLayoutFromPreferences();
+            newBaseLayout.initialize();
 
-    /**
-     * Registers an iWidget into this dragboard.
-     *
-     * @private
-     * @param iWidget the iWidget to register
-     */
-    Dragboard.prototype._registerIWidget = function (iWidget) {
-        if (iWidget.id) {
-            this.iWidgets.set(iWidget.id, iWidget);
-        }
+            // Change our base layout
+            this.baseLayout.moveTo(newBaseLayout);
+            this.baseLayout.destroy();
+            this.baseLayout = newBaseLayout;
+        };
 
-        iWidget.code = this.currentCode++;
+        // ****************
+        // PUBLIC METHODS
+        // ****************
 
-        this.iWidgetsByCode.set(iWidget.code, iWidget);
-        var zpos = iWidget.getZPosition();
-        if (zpos !== null) {
-            if (this.orderList[zpos] !== undefined) {
-                this.orderList.splice(zpos, 1, this.orderList[zpos], iWidget);
+        /**
+         * Gets the width of the usable dragboard area.
+         *
+         * @returns The width of the usable dragboard area
+         */
+        Dragboard.prototype.getWidth = function getWidth() {
+            return this.dragboardWidth;
+        };
 
-                // Update following iWidgets
-                for (var i = zpos + 1; i < this.orderList.length; i++) {
-                    if (this.orderList[i] !== undefined) {
-                        this.orderList[i].setZPosition(i);
+        /**
+         * Gets the height of the usable dragboard area.
+         *
+         * @returns The height of the usable dragboard area
+         */
+        Dragboard.prototype.getHeight = function getHeight() {
+            return this.dragboardHeight;
+        };
+
+        /**
+         * This method must be called to avoid memory leaks caused by circular references.
+         */
+        Dragboard.prototype.destroy = function destroy() {
+            this.baseLayout.destroy();
+            this.freeLayout.destroy();
+            this.baseLayout = null;
+            this.freeLayout = null;
+
+            this.iWidgets = null;
+            this.iWidgetsByCode = null;
+            this.dragboardElement = null;
+        };
+
+        Dragboard.prototype.parseTab = function parseTab(tabInfo) {
+            var curIWidget, position, icon_position, zPos, width, height, iwidget,
+                widget, widgetid, minimized, layout, refusedVersion,
+                opManager, i, readOnly;
+
+            opManager = OpManagerFactory.getInstance();
+
+            this.currentCode = 1;
+            this.iWidgets = new Hash();
+            this.iWidgetsByCode = new Hash();
+
+            if (this.tab.readOnly || !this.workspace.isOwned()) {
+                this.readOnly = true;
+                this.dragboardElement.addClassName("fixed");
+            }
+
+            // For controlling when the iwidgets are totally loaded!
+            for (i = 0; i < tabInfo.iwidgets.length; i++) {
+                curIWidget = tabInfo.iwidgets[i];
+
+                // Get widget model
+                widget = Wirecloud.LocalCatalogue.getResourceId(curIWidget.widget);
+
+                // Parse width, height and the position of the iwidget
+                width = parseInt(curIWidget.width, 10);
+                height = parseInt(curIWidget.height, 10);
+                position = new DragboardPosition(parseInt(curIWidget.left, 10), parseInt(curIWidget.top, 10));
+                icon_position = new DragboardPosition(parseInt(curIWidget.icon_left, 10), parseInt(curIWidget.icon_top, 10));
+                zPos = parseInt(curIWidget.zIndex, 10);
+                readOnly = curIWidget.readOnly;
+
+                // Parse layout field
+                if (curIWidget.layout === 0) {
+                    layout = this.baseLayout;
+                } else {
+                    layout = this.freeLayout;
+                }
+
+                // Create instance model
+                iwidget = new IWidget(widget,
+                                      curIWidget.id,
+                                      curIWidget.name,
+                                      layout,
+                                      position,
+                                      icon_position,
+                                      zPos,
+                                      width,
+                                      height,
+                                      curIWidget.fulldragboard,
+                                      curIWidget.minimized,
+                                      curIWidget.refused_version,
+                                      false,
+                                      readOnly);
+            }
+
+            this.loaded = true;
+        };
+
+        /**
+         * Creates a new instance of the given widget and inserts it into this
+         * dragboard.
+         *
+         * @param widget the widget to use for creating the instance
+         */
+        Dragboard.prototype.addInstance = function addInstance(widget, options_) {
+            var options = {
+                "iwidgetName": widget.display_name,
+                "setDefaultValues" : function () {}
+            };
+
+            Object.extend(options, options_);
+
+            if (!(widget instanceof Wirecloud.Widget)) {
+                throw new TypeError();
+            }
+
+            if (this.readOnly) {
+                var msg = gettext("The destination tab (%(tabName)s) is read only.");
+                msg = interpolate(msg, {tabName: this.tab.tabInfo.name}, true);
+                LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.WARN_MSG);
+                return;
+            }
+
+            //var width = layout.unitConvert(widget.width + "cm", CSSPrimitiveValue.CSS_PX)[0];
+            //width = layout.adaptWidth(width, width).inLU;
+            var width = widget.default_width;
+            var height = widget.default_height;
+            var minimized = false;
+            var freeLayoutAfterLoading = false;
+            var layout = this.baseLayout;
+
+            if (this.tab.preferences.get('layout') === "Free") {
+                minimized = false; //NOTE: this variable is useless, it could be used in the future to add widgets as icons directly
+                freeLayoutAfterLoading = true; //To change the layout to FreeLayout after loading the widget
+            }
+
+            // Check if the widget doesn't fit in the dragboard
+            if (layout instanceof ColumnLayout) {
+                var maxColumns = layout.getColumns();
+                if (width > maxColumns) {
+                    // TODO warning
+                    width = maxColumns;
+                }
+            }
+
+            // Create the instance
+            var iWidget = new IWidget(widget, null, options.iwidgetName, layout, null, null, null, width, height, false, minimized, null, freeLayoutAfterLoading, false);
+
+            iWidget.save(options);
+        };
+
+        Dragboard.prototype.getNumberOfIWidgets = function getNumberOfIWidgets() {
+            return this.iWidgets.keys().length;
+        };
+
+        Dragboard.prototype.removeInstance = function removeInstance(iWidgetId, orderFromServer) {
+            var iwidget = this.iWidgets.get(iWidgetId);
+
+            iwidget.remove(orderFromServer);
+        };
+
+        Dragboard.prototype.saveConfig = function saveConfig(iWidgetId) {
+            var iwidget = this.iWidgets.get(iWidgetId);
+            try {
+                iwidget.saveConfig();
+
+                iwidget.setConfigurationVisible(false);
+            } catch (e) {
+            }
+        };
+
+        Dragboard.prototype.setDefaultPrefs = function setDefaultPrefs(iWidgetId) {
+            var iwidget = this.iWidgets.get(iWidgetId);
+            iwidget.setDefaultPrefs();
+        };
+
+        Dragboard.prototype.notifyErrorOnIWidget = function notifyErrorOnIWidget(iWidgetId) {
+            var iwidget = this.iWidgets.get(iWidgetId);
+            iwidget.notifyError();
+        };
+
+        Dragboard.prototype.getIWidgets = function getIWidgets() {
+            return this.iWidgets.values();
+        };
+
+        Dragboard.prototype.getIWidget = function getIWidget(iWidgetId) {
+            return this.iWidgets.get(iWidgetId);
+        };
+
+        Dragboard.prototype.hasReadOnlyIWidgets = function hasReadOnlyIWidgets() {
+            var iwidgetKeys = this.iWidgets.keys();
+            for (var i = 0; i < iwidgetKeys.length; i++) {
+                if (this.iWidgets.get(iwidgetKeys[i]).readOnly) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        Dragboard.prototype.getWorkspace = function getWorkspace() {
+            return this.workspace;
+        };
+
+        /**
+         * Registers an iWidget into this dragboard.
+         *
+         * @private
+         * @param iWidget the iWidget to register
+         */
+        Dragboard.prototype._registerIWidget = function _registerIWidget(iWidget) {
+            if (iWidget.id) {
+                this.iWidgets.set(iWidget.id, iWidget);
+            }
+
+            iWidget.code = this.currentCode++;
+
+            this.iWidgetsByCode.set(iWidget.code, iWidget);
+            var zpos = iWidget.getZPosition();
+            if (zpos !== null) {
+                if (this.orderList[zpos] !== undefined) {
+                    this.orderList.splice(zpos, 1, this.orderList[zpos], iWidget);
+
+                    // Update following iWidgets
+                    for (var i = zpos + 1; i < this.orderList.length; i++) {
+                        if (this.orderList[i] !== undefined) {
+                            this.orderList[i].setZPosition(i);
+                        }
                     }
+                } else {
+                    this.orderList[zpos] = iWidget;
                 }
             } else {
+                zpos = this.orderList.length;
+                iWidget.setZPosition(zpos);
                 this.orderList[zpos] = iWidget;
             }
-        } else {
-            zpos = this.orderList.length;
-            iWidget.setZPosition(zpos);
-            this.orderList[zpos] = iWidget;
-        }
+        };
+
+        /**
+         * Deregisters an iWidget from this dragboard.
+         *
+         * @private
+         * @param iWidget the iWidget to register
+         */
+        Dragboard.prototype._deregisterIWidget = function _deregisterIWidget(iWidget) {
+            this.iWidgets.unset(iWidget.id);
+            this.iWidgetsByCode.unset(iWidget.code);
+
+            // Update z order List
+            var zpos = iWidget.getZPosition();
+            this.orderList.splice(zpos, 1);
+            iWidget.setZPosition(null);
+
+            for (var i = zpos; i < this.orderList.length; i++) {
+                this.orderList[i].setZPosition(i);
+            }
+
+            iWidget.code = null;
+        };
+
+        Dragboard.prototype.addIWidget = function addIWidget(iWidget, iwidgetInfo, options) {
+            if (!this.iWidgetsByCode.get(iWidget.code)) {
+                throw new Error();
+            }
+
+            var oldHeight = iWidget.getHeight();
+            var oldWidth = iWidget.getWidth();
+
+            this.workspace.addIWidget(this.tab, iWidget, iwidgetInfo, options);
+
+            // Notify resize event
+            iWidget.layout._notifyResizeEvent(iWidget, oldWidth, oldHeight, iWidget.getWidth(), iWidget.getHeight(), false, true);
+
+            this.iWidgets.set(iWidget.id, iWidget);
+        };
+
+        Dragboard.prototype.fillFloatingWidgetsMenu = function fillFloatingWidgetsMenu(menu) {
+            this.freeLayout.fillFloatingWidgetsMenu(menu);
+        };
+
+        Dragboard.prototype.lowerToBottom = function lowerToBottom(iWidget) {
+            var zPos = iWidget.getZPosition();
+            delete this.orderList[zPos];
+            this.orderList = [iWidget].concat(this.orderList).compact();
+
+            for (var i = 0; i < this.orderList.length; i++) {
+                this.orderList[i].setZPosition(i);
+            }
+
+            this._commitChanges();
+        };
+
+        Dragboard.prototype.lower = function lower(iWidget) {
+            var zPos = iWidget.getZPosition();
+            if (zPos === 0) {
+                // Nothing to do if we are already in the bottom
+                return;
+            }
+
+            var prevIWidget = this.orderList[zPos - 1];
+            this.orderList[zPos - 1] = iWidget;
+            this.orderList[zPos] = prevIWidget;
+
+            iWidget.setZPosition(zPos - 1);
+            prevIWidget.setZPosition(zPos);
+
+            this._commitChanges([iWidget.code, prevIWidget.code]);
+        };
+
+        Dragboard.prototype.raiseToTop = function raiseToTop(iWidget) {
+            var oldZPos = iWidget.getZPosition();
+            var newZPos = this.orderList.length - 1;
+
+            if (oldZPos === newZPos) {
+                return; // Nothing to do
+            }
+
+            delete this.orderList[oldZPos];
+            this.orderList.push(iWidget);
+            this.orderList = this.orderList.compact();
+
+            var i = 0;
+            for (; i < this.orderList.length; i++) {
+                this.orderList[i].setZPosition(i);
+            }
+
+            this._commitChanges();
+        };
+
+        Dragboard.prototype.raise = function raise(iWidget) {
+            var zPos = iWidget.getZPosition();
+            if (zPos === (this.orderList.length - 1)) {
+                // Nothing to do if we are already in the top
+                return;
+            }
+
+            var nextIWidget = this.orderList[zPos + 1];
+            this.orderList[zPos + 1] = iWidget;
+            this.orderList[zPos] = nextIWidget;
+
+            iWidget.setZPosition(zPos + 1);
+            nextIWidget.setZPosition(zPos);
+
+            this._commitChanges([iWidget.code, nextIWidget.code]);
+        };
+
+        // *******************
+        // INITIALIZING CODE
+        // *******************
+        this.dragboardElement = dragboardElement;
+        this.orderList = [];
+
+        // Window Resize event dispacher function
+        this._notifyWindowResizeEvent = function _notifyWindowResizeEvent() {
+            var oldWidth = this.dragboardWidth;
+            var oldHeight = this.dragboardHeight;
+            this._recomputeSize();
+            var newWidth = this.dragboardWidth;
+            var newHeight = this.dragboardHeight;
+
+            var widthChanged = oldWidth !== newWidth;
+            var heightChanged = oldHeight !== newHeight;
+            if (widthChanged || heightChanged) {
+                this._updateIWidgetSizes(widthChanged, heightChanged);
+            }
+        }.bind(this);
+
+        this.baseLayout = this._buildLayoutFromPreferences();
+        this.freeLayout = new FreeLayout(this);
+        this.fulldragboardLayout = new FullDragboardLayout(this);
+
+        this.parseTab(tab.tabInfo);
     };
 
     /**
-     * Deregisters an iWidget from this dragboard.
-     *
      * @private
-     * @param iWidget the iWidget to register
+     *
+     * This function is slow. Please, only call it when really necessary.
+     *
+     * Updates the width and height info for this dragboard.
      */
-    Dragboard.prototype._deregisterIWidget = function (iWidget) {
-        this.iWidgets.unset(iWidget.id);
-        this.iWidgetsByCode.unset(iWidget.code);
-
-        // Update z order List
-        var zpos = iWidget.getZPosition();
-        this.orderList.splice(zpos, 1);
-        iWidget.setZPosition(null);
-
-        for (var i = zpos; i < this.orderList.length; i++) {
-            this.orderList[i].setZPosition(i);
+    Dragboard.prototype._recomputeSize = function _recomputeSize() {
+        var cssStyle = document.defaultView.getComputedStyle(this.dragboardElement, null);
+        if (cssStyle.getPropertyValue("display") === "none") {
+            return; // Do nothing
         }
 
-        iWidget.code = null;
+        /* Pre reserve scroll bar space */
+
+        var dragboardElement = this.dragboardElement;
+        this.dragboardWidth = parseInt(dragboardElement.clientWidth, 10);
+
+        this.topMargin = cssStyle.getPropertyCSSValue("padding-top").getFloatValue(CSSPrimitiveValue.CSS_PX);
+        this.bottomMargin = cssStyle.getPropertyCSSValue("padding-bottom").getFloatValue(CSSPrimitiveValue.CSS_PX);
+        this.leftMargin = cssStyle.getPropertyCSSValue("padding-left").getFloatValue(CSSPrimitiveValue.CSS_PX);
+        this.rightMargin = cssStyle.getPropertyCSSValue("padding-right").getFloatValue(CSSPrimitiveValue.CSS_PX);
+
+        this.dragboardWidth = parseInt(dragboardElement.offsetWidth, 10);
+        this.dragboardWidth -= this.leftMargin + this.rightMargin;
+
+        var tmp = this.dragboardWidth;
+        tmp -= parseInt(dragboardElement.clientWidth, 10);
+
+        if (tmp > this.scrollbarSpace) {
+            this.dragboardWidth -= tmp;
+        } else {
+            this.dragboardWidth -= this.scrollbarSpace;
+        }
+
+        // TODO
+        this.dragboardHeight = parseInt(dragboardElement.clientHeight, 10);
     };
 
-    Dragboard.prototype.addIWidget = function (iWidget, iwidgetInfo, options) {
-        if (!this.iWidgetsByCode.get(iWidget.code)) {
-            throw new Error();
-        }
-
-        var oldHeight = iWidget.getHeight();
-        var oldWidth = iWidget.getWidth();
-
-        this.workspace.addIWidget(this.tab, iWidget, iwidgetInfo, options);
-
-        // Notify resize event
-        iWidget.layout._notifyResizeEvent(iWidget, oldWidth, oldHeight, iWidget.getWidth(), iWidget.getHeight(), false, true);
-
-        this.iWidgets.set(iWidget.id, iWidget);
+    /**
+     * @private
+     *
+     * This method forces recomputing of the iWidgets' sizes.
+     *
+     * @param {boolean} widthChanged
+     * @param {boolean} heightChanged
+     */
+    Dragboard.prototype._updateIWidgetSizes = function _updateIWidgetSizes(widthChanged, heightChanged) {
+        this.baseLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
+        this.freeLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
+        this.fulldragboardLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
     };
 
-    Dragboard.prototype.fillFloatingWidgetsMenu = function (menu) {
-        this.freeLayout.fillFloatingWidgetsMenu(menu);
-    };
+    window.Dragboard = Dragboard;
 
-    Dragboard.prototype.lowerToBottom = function (iWidget) {
-        var zPos = iWidget.getZPosition();
-        delete this.orderList[zPos];
-        this.orderList = [iWidget].concat(this.orderList).compact();
-
-        for (var i = 0; i < this.orderList.length; i++) {
-            this.orderList[i].setZPosition(i);
-        }
-
-        this._commitChanges();
-    };
-
-    Dragboard.prototype.lower = function (iWidget) {
-        var zPos = iWidget.getZPosition();
-        if (zPos === 0) {
-            // Nothing to do if we are already in the bottom
-            return;
-        }
-
-        var prevIWidget = this.orderList[zPos - 1];
-        this.orderList[zPos - 1] = iWidget;
-        this.orderList[zPos] = prevIWidget;
-
-        iWidget.setZPosition(zPos - 1);
-        prevIWidget.setZPosition(zPos);
-
-        this._commitChanges([iWidget.code, prevIWidget.code]);
-    };
-
-    Dragboard.prototype.raiseToTop = function (iWidget) {
-        var oldZPos = iWidget.getZPosition();
-        var newZPos = this.orderList.length - 1;
-
-        if (oldZPos === newZPos) {
-            return; // Nothing to do
-        }
-
-        delete this.orderList[oldZPos];
-        this.orderList.push(iWidget);
-        this.orderList = this.orderList.compact();
-
-        var i = 0;
-        for (; i < this.orderList.length; i++) {
-            this.orderList[i].setZPosition(i);
-        }
-
-        this._commitChanges();
-    };
-
-    Dragboard.prototype.raise = function (iWidget) {
-        var zPos = iWidget.getZPosition();
-        if (zPos === (this.orderList.length - 1)) {
-            // Nothing to do if we are already in the top
-            return;
-        }
-
-        var nextIWidget = this.orderList[zPos + 1];
-        this.orderList[zPos + 1] = iWidget;
-        this.orderList[zPos] = nextIWidget;
-
-        iWidget.setZPosition(zPos + 1);
-        nextIWidget.setZPosition(zPos);
-
-        this._commitChanges([iWidget.code, nextIWidget.code]);
-    };
-
-    // *******************
-    // INITIALIZING CODE
-    // *******************
-    this.dragboardElement = dragboardElement;
-    this.orderList = [];
-
-    // Window Resize event dispacher function
-    this._notifyWindowResizeEvent = function () {
-        var oldWidth = this.dragboardWidth;
-        var oldHeight = this.dragboardHeight;
-        this._recomputeSize();
-        var newWidth = this.dragboardWidth;
-        var newHeight = this.dragboardHeight;
-
-        var widthChanged = oldWidth !== newWidth;
-        var heightChanged = oldHeight !== newHeight;
-        if (widthChanged || heightChanged) {
-            this._updateIWidgetSizes(widthChanged, heightChanged);
-        }
-    }.bind(this);
-
-    this.baseLayout = this._buildLayoutFromPreferences();
-    this.freeLayout = new FreeLayout(this);
-    this.fulldragboardLayout = new FullDragboardLayout(this);
-
-    this.parseTab(tab.tabInfo);
-}
-
-/**
- * @private
- *
- * This function is slow. Please, only call it when really necessary.
- *
- * Updates the width and height info for this dragboard.
- */
-Dragboard.prototype._recomputeSize = function () {
-    var cssStyle = document.defaultView.getComputedStyle(this.dragboardElement, null);
-    if (cssStyle.getPropertyValue("display") === "none") {
-        return; // Do nothing
-    }
-
-    /* Pre reserve scroll bar space */
-
-    var dragboardElement = this.dragboardElement;
-    this.dragboardWidth = parseInt(dragboardElement.clientWidth, 10);
-
-    this.topMargin = cssStyle.getPropertyCSSValue("padding-top").getFloatValue(CSSPrimitiveValue.CSS_PX);
-    this.bottomMargin = cssStyle.getPropertyCSSValue("padding-bottom").getFloatValue(CSSPrimitiveValue.CSS_PX);
-    this.leftMargin = cssStyle.getPropertyCSSValue("padding-left").getFloatValue(CSSPrimitiveValue.CSS_PX);
-    this.rightMargin = cssStyle.getPropertyCSSValue("padding-right").getFloatValue(CSSPrimitiveValue.CSS_PX);
-
-    this.dragboardWidth = parseInt(dragboardElement.offsetWidth, 10);
-    this.dragboardWidth -= this.leftMargin + this.rightMargin;
-
-    var tmp = this.dragboardWidth;
-    tmp -= parseInt(dragboardElement.clientWidth, 10);
-
-    if (tmp > this.scrollbarSpace)
-        this.dragboardWidth -= tmp;
-    else
-        this.dragboardWidth -= this.scrollbarSpace;
-
-    // TODO
-    this.dragboardHeight = parseInt(dragboardElement.clientHeight, 10);
-};
-
-/**
- * @private
- *
- * This method forces recomputing of the iWidgets' sizes.
- *
- * @param {boolean} widthChanged
- * @param {boolean} heightChanged
- */
-Dragboard.prototype._updateIWidgetSizes = function (widthChanged, heightChanged) {
-    this.baseLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
-    this.freeLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
-    this.fulldragboardLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
-};
-
+})();
 
 /////////////////////////////////////
 // DragboardPosition
