@@ -33,7 +33,6 @@ function Dragboard(tab, workspace, dragboardElement) {
     // *********************************
     // PRIVATE VARIABLES
     // *********************************
-    this.loaded = false;
     this.currentCode = 1;
 
     // HTML Elements
@@ -87,7 +86,6 @@ function Dragboard(tab, workspace, dragboardElement) {
                 this.currentCode =  curIWidget.code + 1;
             }
         }
-        this.loaded = true;
     };
 
     Dragboard.prototype.iwidgetLoaded = function (iWidgetId) {

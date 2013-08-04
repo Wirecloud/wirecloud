@@ -91,10 +91,6 @@ function Tab(tabInfo, workspace, index) {
         return this.tabInfo.id;
     };
 
-    Tab.prototype.is_painted = function () {
-        return true;
-    };
-
     // *****************
     //  PRIVATE METHODS
     // *****************

@@ -31,7 +31,6 @@
         // *********************************
         // PRIVATE VARIABLES
         // *********************************
-        this.loaded = false;
         this.currentCode = 1;
         this.scrollbarSpace = 17; // TODO make this configurable?
         // TODO or initialized with the scroll bar's real with?
@@ -52,28 +51,6 @@
         // ***********************
         // PRIVATE FUNCTIONS
         // ***********************
-        Dragboard.prototype.paint = function paint() {
-            var oldLength, i;
-
-            this.dragboardElement.innerHTML = "";
-
-            this._recomputeSize();
-
-            this.baseLayout.initialize();
-            this.freeLayout.initialize();
-            this.fulldragboardLayout.initialize();
-
-            // Check if we have to readjust the z positions
-            oldLength = this.orderList.length;
-            this.orderList = this.orderList.compact();
-            if (oldLength !== this.orderList.length) {
-                for (i = 0; i < this.orderList.length; i += 1) {
-                    this.orderList[i].setZPosition(i);
-                }
-            }
-
-            this.tab.mark_as_painted();
-        };
 
         /**
          * Update iwidget status in persistence
@@ -256,8 +233,6 @@
                                       false,
                                       readOnly);
             }
-
-            this.loaded = true;
         };
 
         /**
@@ -505,6 +480,8 @@
         // *******************
         this.dragboardElement = dragboardElement;
         this.orderList = [];
+        this.painted = false;
+        this.painting = false;
 
         // Window Resize event dispacher function
         this._notifyWindowResizeEvent = function _notifyWindowResizeEvent() {
@@ -526,6 +503,34 @@
         this.fulldragboardLayout = new FullDragboardLayout(this);
 
         this.parseTab(tab.tabInfo);
+    };
+
+    Dragboard.prototype.paint = function paint() {
+        var oldLength, i;
+
+        if (this.painted || this.painting) {
+            return;
+        }
+        this.painting = true;
+
+        this.dragboardElement.innerHTML = "";
+
+        this._recomputeSize();
+
+        this.baseLayout.initialize();
+        this.freeLayout.initialize();
+        this.fulldragboardLayout.initialize();
+
+        // Check if we have to readjust the z positions
+        oldLength = this.orderList.length;
+        this.orderList = this.orderList.compact();
+        if (oldLength !== this.orderList.length) {
+            for (i = 0; i < this.orderList.length; i += 1) {
+                this.orderList[i].setZPosition(i);
+            }
+        }
+
+        this.painted = true;
     };
 
     /**
@@ -827,9 +832,7 @@ IWidgetDraggable.prototype.finishFunc = function (draggable, context) {
         tab = workspace.getTab(context.selectedTab);
 
         // On-demand loading of tabs!
-        if (!tab.is_painted()) {
-            tab.paint();
-        }
+        tab.paint();
         destDragboard = tab.getDragboard();
 
         if (context.iWidget.onFreeLayout()) {

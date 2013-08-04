@@ -117,9 +117,7 @@
         StyledElements.Tab.call(this, id, notebook, options);
 
         this.addEventListener('show', function (tab) {
-            if (!tab.is_painted()) {
-                tab.paint();
-            }
+            tab.paint();
         });
 
         this.menu_button = new StyledElements.PopupButton({
@@ -143,7 +141,6 @@
         this.preferences = PreferencesManagerFactory.getInstance().buildPreferences('tab', this.tabInfo.preferences, this);
         this.preferences.addCommitHandler(preferencesChanged.bind(this));
 
-        this.painted = false;
         this.readOnly = false;
 
         this.dragboard = new Dragboard(this, this.workspace, this.wrapperElement);
@@ -249,10 +246,6 @@
         });
     };
 
-    Tab.prototype.is_painted = function is_painted() {
-        return this.painted;
-    };
-
     Tab.prototype.paint = function paint() {
         this.getDragboard().paint();
     };
@@ -266,10 +259,6 @@
     */
     Tab.prototype.getHeader = function getHeader() {
         return this.workspace.getHeader();
-    };
-
-    Tab.prototype.mark_as_painted = function mark_as_painted() {
-        this.painted = true;
     };
 
     Tab.prototype.hasIWidget = function hasIWidget(iWidgetIds) {
