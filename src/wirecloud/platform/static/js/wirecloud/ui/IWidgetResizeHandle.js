@@ -30,7 +30,7 @@
 
         this.wrapperElement = document.createElement('div');
 
-        ResizeHandle.call(this, iWidget.element, this.wrapperElement,
+        Wirecloud.ui.ResizeHandle.call(this, iWidget.element, this.wrapperElement,
                                 {iWidget: iWidget, resizeLeftSide: resizeLeftSide},
                                 IWidgetResizeHandle.prototype.startFunc,
                                 IWidgetResizeHandle.prototype.updateFunc,
