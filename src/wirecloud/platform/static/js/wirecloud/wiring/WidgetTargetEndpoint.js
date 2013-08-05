@@ -19,11 +19,27 @@
  *
  */
 
-/*global gettext, interpolate, Wirecloud*/
+/*global gettext, interpolate, opManager, Wirecloud*/
 
 (function () {
 
     "use strict";
+
+    var is_target_endpoint = function is_target_endpoint(list) {
+        var i, target;
+
+        if (list == null) {
+            return true;
+        }
+
+        for (i = 0; i < list.length; i += 1) {
+            target = list[i];
+            if (target.type === 'iwidget' && (target.id == this.widget.id) && (target.endpoint == this.meta.name)) {
+                return true;
+            }
+        }
+        return false;
+    };
 
     var WidgetTargetEndpoint = function WidgetTargetEndpoint(iwidget, meta) {
         Object.defineProperty(this, 'meta', {value: meta});
@@ -45,22 +61,6 @@
         };
     };
 
-    WidgetTargetEndpoint.prototype._is_target_slot = function _is_target_slot(list) {
-        var i, target;
-
-        if (list == null) {
-            return true;
-        }
-
-        for (i = 0; i < list.length; i += 1) {
-            target = list[i];
-            if (target.type === 'iwidget' && (target.id == this.widget.id) && (target.endpoint == this.meta.name)) {
-                return true;
-            }
-        }
-        return false;
-    };
-
     WidgetTargetEndpoint.prototype.getFinalSlots = function getFinalSlots() {
 
         var result, action_label = this.meta.action_label;
@@ -77,14 +77,14 @@
         return [result];
     };
 
-    WidgetTargetEndpoint.prototype._annotate = function(value, source, options) {
-        if (!options || this._is_target_slot(options.targetEndpoints)) {
+    WidgetTargetEndpoint.prototype._annotate = function _annotate(value, source, options) {
+        if (!options || is_target_endpoint.call(this, options.targetEndpoints)) {
             opManager.activeWorkspace.varManager.findVariable(this.iwidget.id, this.meta.name).annotate(value);
         }
     };
 
-    WidgetTargetEndpoint.prototype.propagate = function(newValue, options) {
-        if (!options || this._is_target_slot(options.targetEndpoints)) {
+    WidgetTargetEndpoint.prototype.propagate = function propagate(newValue, options) {
+        if (!options || is_target_endpoint.call(this, options.targetEndpoints)) {
             if (this.iwidget.loaded) {
                 this.callback.call(this.iwidget, newValue);
             } else {
