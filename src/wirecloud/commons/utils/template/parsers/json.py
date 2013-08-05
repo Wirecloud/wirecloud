@@ -53,10 +53,3 @@ class JSONTemplateParser(object):
             raise TemplateParseException(_('ERROR: the format of the version number is invalid. Format: X.X.X where X is an integer. Ex. "0.1", "1.11" NOTE: "1.01" should be changed to "1.0.1" or "1.1"'))
 
         return dict(self._info)
-
-    def get_absolute_url(self, url, base=None):
-
-        if base is None:
-            base = self.base
-
-        return urlparse.urljoin(base, url)
