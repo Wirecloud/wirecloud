@@ -43,3 +43,4 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         with iwidget:
             api_element = self.driver.find_element_by_id('api_available')
             self.assertEqual(api_element.text, 'Yes')
+    test_objectstorage_available_to_widgets.tags = ('fiware-ut-12',)
