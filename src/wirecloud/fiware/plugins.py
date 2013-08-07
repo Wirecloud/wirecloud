@@ -17,7 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls.defaults import patterns, include
+try:
+    from django.conf.urls import patterns, include, url
+except ImportError:
+    # for Django version less then 1.4
+    from django.conf.urls.defaults import patterns, url
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.platform.markets.utils import MarketManager
 from wirecloud.platform.plugins import WirecloudPlugin, build_url_template

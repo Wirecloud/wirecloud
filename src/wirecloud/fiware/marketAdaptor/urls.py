@@ -18,7 +18,11 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from django.conf.urls.defaults import patterns, url
+try:
+    from django.conf.urls import patterns, url
+except ImportError:
+    # for Django version less then 1.4
+    from django.conf.urls.defaults import patterns, url
 from django.views.generic.base import TemplateView
 from wirecloud.fiware.marketAdaptor import views
 
