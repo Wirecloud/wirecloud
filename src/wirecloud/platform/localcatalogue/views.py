@@ -54,7 +54,7 @@ class ResourceCollection(Resource):
 
         resources = {}
         for resource in CatalogueResource.objects.filter(Q(public=True) | Q(users=request.user) | Q(groups=request.user.groups.all())):
-            options = resource.get_processed_info()
+            options = resource.get_processed_info(request)
             resources[resource.local_uri_part] = options
 
         return HttpResponse(json.dumps(resources), mimetype='application/json; chatset=UTF-8')
@@ -150,18 +150,18 @@ class ResourceCollection(Resource):
             return build_error_response(request, 409, _('Resource already exists'))
 
         if install_dep and resource.resource_type() == 'mashup':
-            resources = [resource.get_processed_info()]
+            resources = [resource.get_processed_info(request)]
             workspace_info = json.loads(resource.json_description)
             for tab_entry in workspace_info['tabs']:
                 for resource in tab_entry['resources']:
                     widget = get_or_add_widget_from_catalogue(resource.get('vendor'), resource.get('name'), resource.get('version'), request.user)
-                    resources.append(widget.resource.get_processed_info())
+                    resources.append(widget.resource.get_processed_info(request))
 
             for id_, op in workspace_info['wiring']['operators'].iteritems():
                 op_id_args = op['name'].split('/')
                 op_id_args.append(request.user)
                 operator = get_or_add_resource_from_available_marketplaces(*op_id_args)
-                resources.append(operator.get_processed_info())
+                resources.append(operator.get_processed_info(request))
 
             return HttpResponse(json.dumps(resources), status=201, mimetype='application/json; charset=UTF-8')
 
