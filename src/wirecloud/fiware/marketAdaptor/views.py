@@ -80,21 +80,6 @@ class ServiceCollection(Resource):
 
         return HttpResponse(json.dumps(result), mimetype='application/json; charset=UTF-8')
 
-    def create(self, request, market_user, market_name, store):
-
-        service_info = {}
-        service_info['name'] = request.POST['name']
-        service_info['url'] = request.POST['url']
-
-        adaptor = get_market_adaptor(market_user, market_name)
-
-        try:
-            adaptor.add_service(store, service_info)
-        except:
-            return HttpResponse(status=502)
-
-        return HttpResponse(status=201)
-
 
 class ServiceSearchCollection(Resource):
 
