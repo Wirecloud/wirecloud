@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,9 +17,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import codecs
 import json
-import requests
+import mimetypes
 import os
+import requests
 from cStringIO import StringIO
 from urllib2 import URLError, HTTPError
 from urlparse import urlparse
@@ -56,25 +58,34 @@ class LocalFileSystemServer(object):
     def __init__(self, base_path):
 
         self.base_path = base_path
-        
+
     def request(self, method, url, *args, **kwargs):
 
         if method != 'GET':
             raise HTTPError('url', '405', 'Method not allowed', None, None)
 
         parsed_url = urlparse(url)
-        final_path = os.path.normpath(os.path.join(base_path, parsed_url.path[1:]))
-        if final_path.startswith(base_path) and os.path.isfile(final_path):
+        final_path = os.path.normpath(os.path.join(self.base_path, parsed_url.path[1:]))
+        if final_path.startswith(self.base_path) and os.path.isfile(final_path):
             f = codecs.open(final_path, 'rb')
             contents = f.read()
             f.close()
 
-            return contents
+            return {
+                'headers': {
+                    'Content-Type': mimetypes.guess_type(final_path, strict=False)[0],
+                    'Content-Length': len(contents),
+                },
+                'content': contents,
+            }
         else:
             raise HTTPError('url', '404', 'Not Found', None, None)
 
 
 class FakeNetwork(object):
+
+    old_requests_get = None
+    old_requests_post = None
 
     def __init__(self, servers={}):
         self._servers = servers
@@ -88,20 +99,43 @@ class FakeNetwork(object):
         server = self._servers[parsed_url.scheme][parsed_url.netloc]
         return server.request(method, url, *args, **kwargs)
 
-    def get_requests_get(self):
+    def mock_requests(self):
 
-        def wrapper(*args, **kwargs):
+        if self.old_requests_get is not None:
+            return
+
+        def get_mock(url, *args, **kwargs):
+            res_info = self('GET', url, *args, **kwargs)
+
             res = requests.Response()
-            res.status_code = 200
-            res.headers.update({
-                'Content-Type': 'application/json;charset=UTF-8',
-                'Cache-Control': 'no-store',
-                'Pragma': 'no-cache',
-            })
-            res._content = self('GET', *args, **kwargs)
+            res.url = res_info.get('url', url)
+            res.status_code = res_info.get('status_code', 200)
+            if 'headers' in res_info:
+                res.headers.update(res_info['headers'])
+            res._content = res_info.get('content', '')
             return res
 
-        return wrapper
+        def post_mock(url, *args, **kwargs):
+            res_info = self('POST', url, *args, **kwargs)
+
+            res = requests.Response()
+            res.url = res_info.get('url', url)
+            res.status_code = res_info.get('status_code', 200)
+            if 'headers' in res_info:
+                res.headers.update(res_info['headers'])
+            res._content = res_info.get('content', '')
+            return res
+
+        self.old_requests_get = requests.get
+        requests.get = get_mock
+        self.old_requests_post = requests.post
+        requests.post = post_mock
+
+    def unmock_requests(self):
+        requests.get = self.old_requests_get
+        requests.post = self.old_requests_post
+        self.old_requests_get = None
+        self.old_requests_post = None
 
 
 class StoreTestCase(WirecloudTestCase):
@@ -118,15 +152,14 @@ class StoreTestCase(WirecloudTestCase):
                 'example.com': DynamicWebServer()
             },
         })
-        cls.old_requests_get = requests.get
-        requests.get = cls.network.get_requests_get()
+        cls.network.mock_requests()
 
     @classmethod
     def tearDownClass(cls):
 
         super(StoreTestCase, cls).tearDownClass()
 
-        requests.get = cls.old_requests_get
+        cls.network.unmock_requests()
 
     def setUp(self):
 
@@ -146,7 +179,7 @@ class StoreTestCase(WirecloudTestCase):
 
         response_text = self.read_response_file('offering_info.json')
         response = json.loads(response_text)
-        self.network._servers['http']['example.com'].add_response('GET', '/api/offering/offerings/17', response_text)
+        self.network._servers['http']['example.com'].add_response('GET', '/api/offering/offerings/17', {'content': response_text})
         info = self.store_client.get_offering_info('17', 'wirecloud_token')
 
         self.assertEqual(info, response)
