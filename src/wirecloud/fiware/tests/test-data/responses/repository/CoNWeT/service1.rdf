@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:msm="http://cms-wg.sti2.org/ns/minimal-service-model#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:usdl="http://www.linked-usdl.org/ns/usdl-core#"
+    xmlns:legal="http://www.linked-usdl.org/ns/usdl-legal#"
+    xmlns:price="http://www.linked-usdl.org/ns/usdl-pricing#"
+    xmlns:sla="http://www.linked-usdl.org/ns/usdl-sla#"
+    xmlns:sec="http://www.linked-usdl.org/ns/usdl-sec#"
+    xmlns:blueprint="http://bizweb.sap.com/TR/blueprint#"
+    xmlns:vcard="http://www.w3.org/2006/vcard/ns#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:ctag="http://commontag.org/ns#"
+    xmlns:org="http://www.w3.org/ns/org#"
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+    xmlns:time="http://www.w3.org/2006/time#"
+    xmlns:gr="http://purl.org/goodrelations/v1#"
+    xmlns:doap="http://usefulinc.com/ns/doap#">
+
+    <usdl:ServiceDescription xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="http://repository.example.com/CoNWeT/offering1">
+        <dcterms:description xml:lang="en"/>
+        <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#datetime"/>
+        <dcterms:creator rdf:nodeID="b9f"/>
+        <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#datetime">2013-06-04T00:00</dcterms:created>
+        <dcterms:title xml:lang="en">Santander City Lights offering</dcterms:title>
+    </usdl:ServiceDescription>
+
+    <foaf:Person xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:nodeID="b9f">
+        <foaf:name>fdelavega</foaf:name>
+    </foaf:Person>
+
+    <skos:Concept xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:nodeID="ba0">
+        <skos:inScheme rdf:resource="http://bizweb.sap.com/TR/blueprint#SolutionType"/>
+        <rdfs:label>Business Solution</rdfs:label>
+    </skos:Concept>
+
+    <usdl:Service xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="http://wstore.lab.fi-ware.eu/offering/UPM__SantanderCityLights__1.0#bUvq9oTgNStSwDnuT">
+        <dcterms:subject rdf:nodeID="ba0"/>
+        <dcterms:subject rdf:nodeID="ba1"/>
+        <dcterms:subject rdf:nodeID="ba2"/>
+        <dcterms:subject rdf:nodeID="ba3"/>
+        <foaf:depiction rdf:resource="http://130.206.82.145/media/images/smart_lights_icon.png"/>
+        <dcterms:title xml:lang="en">Smart City Lights application</dcterms:title>
+        <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#datetime">2013-06-04T00:00</dcterms:created>
+        <dcterms:abstract xml:lang="en">Smart City Lights is an application that allows the management and analysis of Smart City entities status.</dcterms:abstract>
+        <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#datetime">2012-11-19T00:00</dcterms:modified>
+        <foaf:page rdf:resource=""/>
+        <dcterms:description xml:lang="en">Smart City Lights application is a valuable utility for incidents management and control of Smart City entities. The user has two different mashups that serve as a UI for the back-end application and leverage on a number of FI-WARE generic enablers. One of the mashups facilitates the real-time management of incidents, while the other allows for the analysis of historical information gathered from each of Smart City entities.</dcterms:description>
+        <usdl:hasLegalCondition rdf:resource="http://wstore.lab.fi-ware.eu/offering/UPM__SantanderCityLights__1.0#EcCfJjMlQ5p0wQWs9"/>
+        <usdl:hasProvider rdf:resource="http://wstore.lab.fi-ware.eu/offering/UPM__SantanderCityLights__1.0#gXQmZp2KsDRJj3VFg"/>
+        <usdl:utilizedResource rdf:resource=""/>
+        <foaf:thumbnail rdf:resource="http://130.206.82.145/media/images/smart_lights_icon.png"/>
+        <usdl:versionInfo>1.0</usdl:versionInfo>
+        <dcterms:creator>
+            <foaf:person>
+                <foaf:name>sblanco</foaf:name>
+            </foaf:person>
+        </dcterms:creator>
+    </usdl:Service>
+
+    <skos:Concept xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:nodeID="ba1">
+        <skos:inScheme rdf:resource="http://bizweb.sap.com/TR/blueprint#PlatformType"/>
+        <rdfs:label>Android</rdfs:label>
+    </skos:Concept>
+
+    <skos:Concept xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:nodeID="ba2">
+        <skos:inScheme rdf:resource="http://bizweb.sap.com/TR/blueprint#BusinessArea"/>
+        <rdfs:label>Services</rdfs:label>
+    </skos:Concept>
+
+    <skos:Concept xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:nodeID="ba3">
+        <skos:inScheme rdf:resource="http://bizweb.sap.com/TR/blueprint#Industry"/>
+        <rdfs:label>Other services</rdfs:label>
+    </skos:Concept>
+
+    <legal:TermsAndConditions xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="http://wstore.lab.fi-ware.eu/offering/UPM__SantanderCityLights__1.0#EcCfJjMlQ5p0wQWs9">
+        <dcterms:title xml:lang="en">Terms and conditions</dcterms:title>
+        <dcterms:description xml:lang="en"></dcterms:description>
+        <legal:hasClause rdf:resource="http://wstore.lab.fi-ware.eu/offering/UPM__SantanderCityLights__1.0#u67RUEHYQVBOK10VT"/>
+        <legal:hasClause rdf:resource="http://wstore.lab.fi-ware.eu/offering/UPM__SantanderCityLights__1.0#PdKSOalkbZsVtwGa1"/>
+    </legal:TermsAndConditions>
+
+    <legal:Clause xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="http://wstore.lab.fi-ware.eu/offering/UPM__SantanderCityLights__1.0#u67RUEHYQVBOK10VT">
+        <legal:name>Mashups Licence</legal:name>
+        <legal:text xml:lang="en">The mashups included in this application are free software you can redistribute and/or modify them under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</legal:text>
+    </legal:Clause>
+
+    <legal:Clause xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="http://wstore.lab.fi-ware.eu/offering/UPM__SantanderCityLights__1.0#PdKSOalkbZsVtwGa1">
+        <legal:name>History Mod Licence</legal:name>
+        <legal:text xml:lang="en">The History Mod included in this application is free software you can redistribute and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</legal:text>
+    </legal:Clause>
+
+    <gr:BusinessEntity xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="http://wstore.lab.fi-ware.eu/offering/UPM__SantanderCityLights__1.0#gXQmZp2KsDRJj3VFg">
+        <vcard:adr rdf:nodeID="ba4"/>
+        <foaf:homepage rdf:resource="http://conwet.fi.upm.es/"/>
+        <usdl:legalForm/>
+        <dcterms:description xml:lang="en"/>
+        <foaf:logo rdf:resource="http://conwet.fi.upm.es/templates/rt_mediamogul_essentials_j15/images/style2/logo.png"/>
+        <foaf:name>CoNWeT</foaf:name>
+    </gr:BusinessEntity>
+
+    <vcard:Work xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:nodeID="ba4">
+        <dcterms:description xml:lang="en"/>
+        <vcard:street-address>Campus de Montegancedo s/n</vcard:street-address>
+        <vcard:locality>Boadilla del Monte, Madrid</vcard:locality>
+        <vcard:tel>+34913367394</vcard:tel>
+        <vcard:email>conwet@conwet.com</vcard:email>
+        <vcard:postal-code>28660</vcard:postal-code>
+        <vcard:country-name>Spain</vcard:country-name>
+    </vcard:Work>
+
+    <usdl:ServiceOffering rdf:about="http://wstore.lab.fi-ware.eu/offering/UPM__SantanderCityLights__1.0#kj9O8bUtl7PWJQayz">
+        <dcterms:title xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">SmartCityLights</dcterms:title>
+        <dcterms:description xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">This offering includes the Santander City Lights application</dcterms:description>
+        <usdl:validFrom rdf:datatype="http://www.w3.org/2001/XMLSchema#datetime">2011-12-01</usdl:validFrom>
+        <usdl:validThrough rdf:datatype="http://www.w3.org/2001/XMLSchema#datetime">2011-12-31</usdl:validThrough>
+        <usdl:includes rdf:resource="http://wstore.lab.fi-ware.eu/offering/UPM__SantanderCityLights__1.0#bUvq9oTgNStSwDnuT" />
+        <usdl:hasPricePlan rdf:resource="http://wstore.lab.fi-ware.eu/offering/UPM__SantanderCityLights__1.0#NnWat7KYLZThzTrXU" />
+    </usdl:ServiceOffering>
+
+    <price:PricePlan rdf:about="http://wstore.lab.fi-ware.eu/offering/UPM__SantanderCityLights__1.0#NnWat7KYLZThzTrXU">
+        <dcterms:title xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">Initial payment + pay per issue price plan</dcterms:title>
+        <price:hasPriceComponent rdf:resource="http://wstore.lab.fi-ware.eu/offering/UPM__SantanderCityLights__1.0#7jnovpSvDceyPlJxE" />
+        <price:hasPriceComponent rdf:resource="http://wstore.lab.fi-ware.eu/offering/UPM__SantanderCityLights__1.0#AvB4yYUs6Rc5gYeEp" />
+        <dcterms:description xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">This price plan defines an initial payment and a pay-per-use model based on issues created</dcterms:description>
+    </price:PricePlan>
+
+    <price:PriceComponent rdf:about="http://wstore.lab.fi-ware.eu/offering/UPM__SantanderCityLights__1.0#7jnovpSvDceyPlJxE">
+        <dcterms:title xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">Pay per issue</dcterms:title>
+        <gr:hasCurrency>EUR</gr:hasCurrency>
+        <gr:hasCurrencyValue rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.10</gr:hasCurrencyValue>
+        <gr:hasUnitOfMeasurement>issue</gr:hasUnitOfMeasurement>
+        <dcterms:decription xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">This component defines a pay per every issue created</dcterms:decription>
+    </price:PriceComponent>
+
+    <price:PriceComponent rdf:about="http://wstore.lab.fi-ware.eu/offering/UPM__SantanderCityLights__1.0#AvB4yYUs6Rc5gYeEp">
+        <dcterms:title xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">Initial payment</dcterms:title>
+        <gr:hasCurrency>EUR</gr:hasCurrency>
+        <gr:hasCurrencyValue rdf:datatype="http://www.w3.org/2001/XMLSchema#float">1000</gr:hasCurrencyValue>
+        <gr:hasUnitOfMeasurement>single payment</gr:hasUnitOfMeasurement>
+        <dcterms:decription xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace"></dcterms:decription>
+    </price:PriceComponent>
+</rdf:RDF>
+
+
+
+
+
+

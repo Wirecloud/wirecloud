@@ -1,0 +1,10 @@
+<searchresults>
+    <searchresult>
+        <service>
+            <url>http://repository.example.com/CoNWeT/service1.rdf</url>
+        </service>
+        <store>
+            <name>CoNWeT</name>
+        </store>
+    </searchresult>
+</searchresults>
