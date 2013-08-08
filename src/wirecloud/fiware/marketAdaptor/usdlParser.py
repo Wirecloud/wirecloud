@@ -224,6 +224,7 @@ class USDLParser(object):
                 clause['text'] = self._get_field(LEGAL, c, 'text')[0]
                 legal_condition['clauses'].append(clause)
 
+            legal_condition['clauses'] = sorted(legal_condition['clauses'], key=lambda clause: clause['name'].lower())
             self._info['versions'][0]['legal'].append(legal_condition)
 
     def _parse_sla_info(self, service_uri):
@@ -345,6 +346,8 @@ class USDLParser(object):
                         price_component['unit'] = self._get_field(GR, pc, 'hasUnitOfMeasurement')[0]
                         price_plan['priceComponents'].append(price_component)
 
+                    price_plan['priceComponents'] = sorted(price_plan['priceComponents'], key=lambda component: component['title'].lower())
+
                 taxes = self._get_field(PRICE, price, 'hasTax', id_=True)
 
                 if len(taxes) > 1 or taxes[0] != '':
@@ -365,6 +368,8 @@ class USDLParser(object):
 
                         tax['unit'] = self._get_field(GR, pc, 'hasUnitOfMeasurement')[0]
                         price_plan['taxes'].append(tax)
+
+                    price_plan['taxes'] = sorted(price_plan['taxes'], key=lambda tax: tax['title'].lower())
 
                 self._info['versions'][0]['pricing'].append(price_plan)
 
