@@ -18,6 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import requests
 import urllib2
 from urllib2 import HTTPError
 from urllib import urlencode
@@ -28,7 +29,6 @@ from django.utils.http import urlquote, urlquote_plus
 
 from wirecloud.fiware.marketAdaptor.usdlParser import USDLParser
 from wirecloud.fiware.storeclient import StoreClient
-from wirecloud.proxy.views import MethodRequest
 
 RESOURCE_XPATH = '/collection/resource'
 URL_XPATH = 'url'
@@ -126,11 +126,11 @@ class MarketAdaptor(object):
         # submit field is required
         credentials = urlencode({'j_username': self._user, 'j_password': self._passwd, 'submit': 'Submit'})
         headers = {'content-type': 'application/x-www-form-urlencoded'}
-        request = MethodRequest("POST", urljoin(self._marketplace_uri, "/FiwareMarketplace/j_spring_security_check"), credentials, headers)
+        url = urljoin(self._marketplace_uri, "/FiwareMarketplace/j_spring_security_check")
 
         parsed_url = None
         try:
-            response = opener.open(request)
+            response = requests.post(url, data=credentials, headers=headers)
             parsed_url = urlparse(response.url)
 
         except HTTPError, e:
@@ -152,9 +152,9 @@ class MarketAdaptor(object):
         session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
         headers = {'Cookie': session_cookie}
 
-        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/stores/"), '', headers)
+        url = urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/stores/")
         try:
-            response = opener.open(request)
+            response = requests.get(opener.open(request), headers=headers)
         except HTTPError, e:
             if (e.code == 404):
                 return []
@@ -169,12 +169,10 @@ class MarketAdaptor(object):
             self._session_id = None
             return self.get_all_stores()
 
-        if response.code != 200:
-            raise HTTPError(response.url, response.code, response.msg, None, None)
+        if response.status_code != 200:
+            raise HTTPError(response.url, response.status_code, response.reason, None, None)
 
-        body = response.read()
-
-        parsed_body = etree.fromstring(body)
+        parsed_body = etree.fromstring(response.content)
 
         result = []
 
@@ -199,14 +197,14 @@ class MarketAdaptor(object):
         session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
         headers = {'Cookie': session_cookie}
 
-        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + urlquote(store)), '', headers)
+        url = urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + urlquote(store))
         try:
-            response = opener.open(request)
+            response = requests.get(url, headers=headers)
         except HTTPError, e:
             raise HTTPError(e.url, e.code, e.msg, None, None)
 
-        if response.code != 200:
-            raise HTTPError(response.url, response.code, response.msg, None, None)
+        if response.status_code != 200:
+            raise HTTPError(response.url, response.status_code, response.reason, None, None)
 
         # Marketplace redirects to a login page (sprint_security_login) if
         # the session expires
@@ -218,8 +216,7 @@ class MarketAdaptor(object):
             self._session_id = None
             return self.get_store_info()
 
-        body = response.read()
-        parsed_body = etree.fromstring(body)
+        parsed_body = etree.fromstring(response.content)
 
         result = {}
         result['name'] = store
@@ -240,10 +237,9 @@ class MarketAdaptor(object):
         session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
         headers = {'Cookie': session_cookie}
 
-        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/offering/store/" + urlquote(store) + "/offerings"), '', headers)
-
+        url = urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/offering/store/" + urlquote(store) + "/offerings")
         try:
-            response = opener.open(request)
+            response = requests.get(url, headers=headers)
         except HTTPError, e:
             raise HTTPError(e.url, e.code, e.msg, None, None)
 
@@ -257,11 +253,10 @@ class MarketAdaptor(object):
             self._session_id = None
             return self.get_all_services_from_store(store, **options)
 
-        if response.code != 200:
-            raise HTTPError(response.url, response.code, response.msg, None, None)
+        if response.status_code != 200:
+            raise HTTPError(response.url, response.status_code, response.reason, None, None)
 
-        body = response.read()
-        parsed_body = etree.fromstring(body)
+        parsed_body = etree.fromstring(response.content)
 
         result = {'resources': []}
 
@@ -271,8 +266,7 @@ class MarketAdaptor(object):
 
             try:
                 headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"}
-                request = MethodRequest("GET", url, '', headers)
-                response = opener.open(request)
+                response = requests.get(url, headers=headers)
                 usdl_document = response.read()
                 content_type = response.headers.get('content-type')
 
@@ -309,10 +303,9 @@ class MarketAdaptor(object):
         session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
         headers = {'Cookie': session_cookie}
 
-        request = MethodRequest("GET", urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/search/offerings/fulltext/" + urlquote_plus(search_string)), '', headers)
-
+        url = urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/search/offerings/fulltext/" + urlquote_plus(search_string))
         try:
-            response = opener.open(request)
+            response = requests.get(url, headers=headers)
         except HTTPError, e:
             raise HTTPError(e.url, e.code, e.msg, None, None)
 
@@ -326,11 +319,10 @@ class MarketAdaptor(object):
             self._session_id = None
             return self.full_text_search(store, search_string)
 
-        if response.code != 200:
-            raise HTTPError(response.url, response.code, response.msg, None, None)
+        if response.status_code != 200:
+            raise HTTPError(response.url, response.status_code, response.reason, None, None)
 
-        body = response.read()
-        parsed_body = etree.fromstring(body)
+        parsed_body = etree.fromstring(response.content)
 
         result = {'resources': []}
         for res in parsed_body.xpath(SEARCH_RESULT_XPATH):
@@ -343,8 +335,7 @@ class MarketAdaptor(object):
 
             try:
                 headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"}
-                request = MethodRequest("GET", url, '', headers)
-                response = opener.open(request)
+                response = requests.get(url, headers=headers)
                 content_type = response.headers.get('content-type')
 
                 # Remove the charset
@@ -352,8 +343,7 @@ class MarketAdaptor(object):
                 if pos > -1:
                     content_type = content_type[:pos]
 
-                usdl_document = response.read()
-                parser = USDLParser(usdl_document, content_type)
+                parser = USDLParser(response.content, content_type)
                 parsed_usdl = parser.parse()
             except:
                 continue
