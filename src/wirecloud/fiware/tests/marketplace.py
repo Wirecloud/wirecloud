@@ -28,7 +28,7 @@ from wirecloud.fiware.tests.store import DynamicWebServer, FakeNetwork, LocalFil
 
 class MarketplaceTestCase(WirecloudTestCase):
 
-    tags = ('fiware-ut-8', 'current')
+    tags = ('fiware-ut-8',)
 
     @classmethod
     def setUpClass(cls):
