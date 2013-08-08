@@ -19,6 +19,8 @@
 
 import rdflib
 
+from django.utils.translation import ugettext as _
+
 from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version, TemplateParseException
 
 # Namespaces used by rdflib
