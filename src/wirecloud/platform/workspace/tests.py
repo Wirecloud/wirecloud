@@ -262,6 +262,7 @@ class WorkspaceCacheTestCase(CacheTestCase):
 
 class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
+    WIRE = rdflib.Namespace('http://wirecloud.conwet.fi.upm.es/ns/widget#')
     WIRE_M = rdflib.Namespace('http://wirecloud.conwet.fi.upm.es/ns/mashup#')
     FOAF = rdflib.Namespace('http://xmlns.com/foaf/0.1/')
     RDF = rdflib.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#')
@@ -285,19 +286,36 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertEqual(len(elements), 1)
         self.assertEqual(elements[0].text, content)
 
-    def assertXPathAttr(self, root_element, xpath, attr, content):
+    def assertXPathAttr(self, root_element, xpath, attr, content, optional=False):
         elements = root_element.xpath(xpath)
         self.assertEqual(len(elements), 1)
+
+        if optional and elements[0].get(attr) is None:
+            return
+
         self.assertEqual(elements[0].get(attr), content)
 
     def assertXPathCount(self, root_element, xpath, count):
         elements = root_element.xpath(xpath)
         self.assertEqual(len(elements), count)
 
-    def assertRDFElement(self, graph, element, ns, predicate, content):
-        elements = graph.objects(element, ns[predicate])
-        for e in elements:
-            self.assertEqual(unicode(e), content)
+    def get_rdf_element(self, graph, base, ns, predicate):
+        element = None
+
+        for e in graph.objects(base, ns[predicate]):
+
+            if element is not None:
+                raise Exception()
+
+            element = e
+
+        return element
+
+    def assertRDFElement(self, graph, element, ns, predicate, content, optional=False):
+        element = self.get_rdf_element(graph, element, ns, predicate)
+        if optional and element is None:
+            return
+        self.assertEqual(unicode(element), content)
 
     def assertRDFCount(self, graph, element, ns, predicate, count):
         num = 0
@@ -352,6 +370,39 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab', 1)
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]', 'name', 'tab')
         self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource', 2)
+
+    def test_build_template_from_workspace_forced_values(self):
+
+        # Workspace with iwidgets
+        options = {
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Mashup',
+            'version': '1',
+            'author': 'test',
+            'email': 'a@b.com',
+            'readOnlyWidgets': True,
+            'parametrization': {
+                '1': {
+                    'username': {'source': 'current', 'status': 'readonly', 'value': 'default'},
+                    'password': {'source': 'current', 'status': 'hidden', 'value': 'initial text'},
+                }
+            },
+        }
+        template = build_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
+
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[1]/Preference[@name="username"]', 'readonly', 'true')
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[1]/Preference[@name="username"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[1]/Preference[@name="username"]', 'value', 'default')
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[1]/Preference[@name="password"]', 'readonly', 'true')
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[1]/Preference[@name="password"]', 'hidden', 'true')
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[1]/Preference[@name="password"]', 'value', 'initial text')
+
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[2]/Preference[@name="username"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[2]/Preference[@name="username"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[2]/Preference[@name="username"]', 'value', 'test_username')
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[2]/Preference[@name="password"]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[2]/Preference[@name="password"]', 'hidden', 'false', optional=True)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[2]/Preference[@name="password"]', 'value', '')
 
     def test_build_rdf_template_from_workspace(self):
 
@@ -413,6 +464,67 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         tab = graph.objects(mashup_uri, self.WIRE_M['hasTab']).next()
         self.assertRDFElement(graph, tab, self.DCTERMS, 'title', u'tab')
         self.assertRDFCount(graph, tab, self.WIRE_M, 'hasiWidget', 2)
+
+    def test_build_rdf_template_from_workspace_forced_values(self):
+
+        # Workspace with iwidgets
+        options = {
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Mashup',
+            'version': '1',
+            'author': 'test',
+            'email': 'a@b.com',
+            'readOnlyWidgets': True,
+            'parametrization': {
+                '1': {
+                    'username': {'source': 'current', 'status': 'readonly', 'value': 'default'},
+                    'password': {'source': 'current', 'status': 'hidden', 'value': 'initial text'},
+                }
+            },
+        }
+        graph = build_rdf_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
+        mashup_uri = graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']).next()
+        tab = graph.objects(mashup_uri, self.WIRE_M['hasTab']).next()
+        for iwidget in graph.objects(tab, self.WIRE_M['hasiWidget']):
+
+            name = self.get_rdf_element(graph, iwidget, self.DCTERMS, 'title')
+
+            preferences = graph.objects(iwidget, self.WIRE_M['hasiWidgetPreference'])
+
+            username_found = False
+            password_found = False
+
+            if name == 'Test Widget':
+
+                for preference in preferences:
+                    self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', u'true')
+                    name = self.get_rdf_element(graph, preference, self.DCTERMS, 'title')
+                    if unicode(name) == u'username':
+                        username_found = True
+                        self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', u'false', optional=True)
+                        self.assertRDFElement(graph, preference, self.WIRE, 'value', u'default')
+                    elif unicode(name) == u'password':
+                        password_found = True
+                        self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', u'true')
+                        self.assertRDFElement(graph, preference, self.WIRE, 'value', u'initial text')
+                    else:
+                        self.fail()
+
+
+            elif name == 'Test Widget 2':
+
+                for preference in preferences:
+                    name = self.get_rdf_element(graph, preference, self.DCTERMS, 'title')
+                    if unicode(name) == u'username':
+                        username_found = True
+                        self.assertRDFElement(graph, preference, self.WIRE, 'value', u'test_username')
+                    elif unicode(name) == u'password':
+                        password_found = True
+                        self.assertRDFElement(graph, preference, self.WIRE, 'value', u'')
+                    else:
+                        self.fail()
+
+            self.assertTrue(username_found and password_found)
 
     def test_build_rdf_template_from_workspace_utf8_char(self):
         options = {
