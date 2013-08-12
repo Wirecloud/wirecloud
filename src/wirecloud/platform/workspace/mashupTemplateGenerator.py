@@ -400,7 +400,7 @@ def build_rdf_template_from_workspace(options, workspace, user):
             if status != 'normal':
                 graph.add((element, WIRE_M['readonly'], rdflib.Literal('true')))
                 if status != 'readonly':
-                    graph.add((element, WIRE_M['hiden'], rdflib.Literal('true')))
+                    graph.add((element, WIRE_M['hidden'], rdflib.Literal('true')))
 
         # iWidget properties
         widget_properties = widget.get_related_properties()

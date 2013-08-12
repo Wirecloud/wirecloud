@@ -116,7 +116,7 @@ function VarManager (_workspace) {
                     break;
                 case Variable.prototype.USER_PREF:
                     objVars[name] = new RVariable(id, iwidget, variable, this, value, tab);
-                    objVars[name].readOnly = 'readOnly' in varInfo ? varInfo.readOnly : false;
+                    objVars[name].readOnly = 'readonly' in varInfo ? varInfo.readonly : false;
                     objVars[name].hidden = 'hidden' in varInfo ? varInfo.hidden : false;
                     this.variables[id] = objVars[name];
                     break;
