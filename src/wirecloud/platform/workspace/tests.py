@@ -519,6 +519,27 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
         return contents
 
+    def check_basic_workspace_structure(self, workspace):
+
+        wiring_status = json.loads(workspace.wiringStatus)
+
+        self.assertEqual(len(wiring_status['connections']), 1)
+        self.assertEqual(wiring_status['connections'][0]['readOnly'], False)
+
+        workspace_data = get_global_workspace_data(workspace, self.user).get_data()
+        self.assertEqual(workspace.name, 'Test Mashup')
+        self.assertEqual(len(workspace_data['tabs']), 1)
+
+        iwidget1_vars = workspace_data['tabs'][0]['iwidgets'][0]['variables']
+
+        self.assertEqual(iwidget1_vars['list']['value'], 'default')
+        self.assertEqual(iwidget1_vars['list']['hidden'], True)
+        self.assertEqual(iwidget1_vars['list']['readonly'], True)
+
+        self.assertEqual(iwidget1_vars['text']['value'], 'initial text')
+        self.assertEqual(iwidget1_vars['text']['hidden'], False)
+        self.assertEqual(iwidget1_vars['text']['readonly'], True)
+
     def test_fill_workspace_using_template(self):
         fillWorkspaceUsingTemplate(self.workspace, self.template1)
         data = get_global_workspace_data(self.workspace, self.user).get_data()
@@ -538,19 +559,13 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
     def test_build_workspace_from_template(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.template1, self.user)
-        get_global_workspace_data(self.workspace, self.user)
 
-        wiring_status = json.loads(workspace.wiringStatus)
-        self.assertEqual(len(wiring_status['connections']), 1)
-        self.assertEqual(wiring_status['connections'][0]['readOnly'], False)
+        self.check_basic_workspace_structure(workspace)
 
     def test_build_workspace_from_rdf_template(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate1, self.user)
-        get_global_workspace_data(self.workspace, self.user)
 
-        wiring_status = json.loads(workspace.wiringStatus)
-        self.assertEqual(len(wiring_status['connections']), 1)
-        self.assertEqual(wiring_status['connections'][0]['readOnly'], False)
+        self.check_basic_workspace_structure(workspace)
 
     def test_build_workspace_from_rdf_template_utf8_char(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate4, self.user)
