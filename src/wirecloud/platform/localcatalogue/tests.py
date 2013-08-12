@@ -361,7 +361,7 @@ class LocalCatalogueTestCase(LocalizedTestCase):
         resource = install_resource_to_user(self.user, file_contents=template, templateURL=template_uri)
 
         self.assertEqual(resource.vendor, 'Wirecloud Test Suite')
-        self.assertEqual(resource.short_name, 'Test Workspace')
+        self.assertEqual(resource.short_name, 'Test Mashup')
         self.assertEqual(resource.version, '1')
         self.assertTrue(resource.is_available_for(self.user))
 
