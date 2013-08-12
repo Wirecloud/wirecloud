@@ -123,13 +123,13 @@ def fillWorkspaceUsingTemplate(workspace, template):
     if len(new_values) > 0:
         update_workspace_preferences(workspace, new_values)
 
-    forced_values = {
+    new_forced_values = {
         'extra_prefs': {},
         'iwidget': {},
     }
     for param_name in workspace_info['params']:
         param = workspace_info['params'][param_name]
-        forced_values['extra_prefs'][param_name] = {
+        new_forced_values['extra_prefs'][param_name] = {
             'inheritable': False,
             'label': param.get('label'),
             'type': param.get('type'),
@@ -159,17 +159,17 @@ def fillWorkspaceUsingTemplate(workspace, template):
                 prop = resource['properties'][prop_name]
                 read_only = prop.get('readonly')
                 if read_only:
-                    iwidget_forced_values[prop.get('name')] = {'value': prop.get('value')}
+                    iwidget_forced_values[prop_name] = {'value': prop.get('value')}
                 else:
-                    initial_variable_values[prop.get('name')] = processor.process(prop.get('value'))
+                    initial_variable_values[prop_name] = processor.process(prop.get('value'))
 
             for pref_name in resource['preferences']:
                 pref = resource['preferences'][pref_name]
                 read_only = pref.get('readonly')
                 if read_only:
-                    iwidget_forced_values[pref.get('name')] = {'value': pref.get('value'), 'hidden': pref.get('hidden')}
+                    iwidget_forced_values[pref_name] = {'value': pref.get('value'), 'hidden': pref.get('hidden', False)}
                 else:
-                    initial_variable_values[pref.get('name')] = processor.process(pref.get('value'))
+                    initial_variable_values[pref_name] = processor.process(pref.get('value'))
 
             widget = get_or_add_widget_from_catalogue(resource.get('vendor'), resource.get('name'), resource.get('version'), user, None)
 
@@ -191,18 +191,19 @@ def fillWorkspaceUsingTemplate(workspace, template):
                 iwidget.readOnly = True
                 iwidget.save()
 
-            forced_values['iwidget'][str(iwidget.id)] = iwidget_forced_values
+            new_forced_values['iwidget'][str(iwidget.id)] = iwidget_forced_values
             iwidget_id_mapping[resource.get('id')] = iwidget
 
     if workspace.forcedValues is not None and workspace.forcedValues != '':
-        old_forced_values = json.loads(workspace.forcedValues)
+        forced_values = json.loads(workspace.forcedValues)
     else:
-        old_forced_values = {
-            'extra_preferences': {},
+        forced_values = {
+            'extra_prefs': {},
             'iwidget': {},
         }
 
-    forced_values['iwidget'].update(old_forced_values['iwidget'])
+    forced_values['extra_prefs'].update(new_forced_values['extra_prefs'])
+    forced_values['iwidget'].update(new_forced_values['iwidget'])
     workspace.forcedValues = json.dumps(forced_values, ensure_ascii=False)
 
     # wiring

@@ -96,15 +96,17 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
             if var_value.variable.vardef.secure:
                 entry['value'] = encrypt_value(entry['value'])
 
-            if 'hidden' in fv_entry:
-                entry['hidden'] = fv_entry['hidden']
+            entry['readonly'] = True
+            entry['hidden'] = fv_entry.get('hidden', False)
 
-            entry['forced'] = True
         else:
             if not var_value.variable.vardef.secure:
                 entry['value'] = var_value.get_variable_value()
             else:
                 entry['value'] = var_value.value
+
+            entry['readonly'] = False
+            entry['hidden'] = False
 
         entry['secure'] = var_value.variable.vardef.secure
 
@@ -235,10 +237,8 @@ class VariableValueCacheManager():
         else:
             data_ret['value'] = entry['value']
 
-        if 'forced' in entry and entry['forced'] == True:
-            data_ret['readOnly'] = True
-            if 'hidden' in entry:
-                data_ret['hidden'] = entry['hidden']
+        data_ret['readonly'] = entry['readonly']
+        data_ret['hidden'] = entry['hidden']
 
         return data_ret
 
