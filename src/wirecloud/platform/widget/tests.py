@@ -22,6 +22,7 @@
 
 import codecs
 import os.path
+import re
 
 from django.conf import settings
 from django.utils.unittest import TestCase
@@ -35,6 +36,9 @@ __test__ = False
 
 
 class CodeTransformationTestCase(TestCase):
+
+    XML_NORMALIZATION_RE = re.compile(r'>\s+<')
+    tags = ('current',)
 
     @classmethod
     def setUpClass(cls):
@@ -78,18 +82,18 @@ class CodeTransformationTestCase(TestCase):
 
     def test_basic_html(self):
         initial_code = self.read_file('test-data/xhtml1-initial.html')
-        final_code = fix_widget_code(initial_code, 'http://server.com/widget', 'text/html', None, False) + '\n'
+        final_code = self.XML_NORMALIZATION_RE.sub('><', fix_widget_code(initial_code, 'http://server.com/widget', 'text/html', None, False)) + '\n'
         expected_code = self.read_file('test-data/xhtml1-expected.html')
         self.assertEqual(final_code, expected_code)
 
     def test_basic_xhtml(self):
         initial_code = self.read_file('test-data/xhtml2-initial.html')
-        final_code = fix_widget_code(initial_code, 'http://server.com/widget', 'application/xhtml+xml', None, False) + '\n'
+        final_code = self.XML_NORMALIZATION_RE.sub('><', fix_widget_code(initial_code, 'http://server.com/widget', 'application/xhtml+xml', None, False)) + '\n'
         expected_code = self.read_file('test-data/xhtml2-expected.html')
         self.assertEqual(final_code, expected_code)
 
     def test_xhtml_without_head_element(self):
         initial_code = self.read_file('test-data/xhtml3-initial.html')
-        final_code = fix_widget_code(initial_code, 'http://server.com/widget', 'application/xhtml+xml', None, False) + '\n'
+        final_code = self.XML_NORMALIZATION_RE.sub('><', fix_widget_code(initial_code, 'http://server.com/widget', 'application/xhtml+xml', None, False)) + '\n'
         expected_code = self.read_file('test-data/xhtml3-expected.html')
         self.assertEqual(final_code, expected_code)
