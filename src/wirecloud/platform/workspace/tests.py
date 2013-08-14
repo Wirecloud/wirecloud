@@ -403,6 +403,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[2]/Preference[@name="password"]', 'readonly', 'false', optional=True)
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[2]/Preference[@name="password"]', 'hidden', 'false', optional=True)
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[2]/Preference[@name="password"]', 'value', '')
+    test_build_template_from_workspace_forced_values.tags = ('next',)
 
     def test_build_rdf_template_from_workspace(self):
 
@@ -525,6 +526,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
                         self.fail()
 
             self.assertTrue(username_found and password_found)
+    test_build_rdf_template_from_workspace_forced_values.tags = ('next',)
 
     def test_build_rdf_template_from_workspace_utf8_char(self):
         options = {
