@@ -56,7 +56,6 @@ class MarketplaceTestCase(WirecloudTestCase):
 
         self.market_adaptor = MarketAdaptor('http://marketplace.example.com')
         self.network._servers['http']['marketplace.example.com'].clear()
-        self.network._servers['http']['marketplace.example.com'].add_response('POST', '/FiwareMarketplace/j_spring_security_check', {'url': 'http://marketplace.example.com/v1/FiwareMarketplace;jsessionid=1111', 'content': ''})
 
     def read_response_file(self, *response):
         f = open(os.path.join(os.path.dirname(__file__), 'test-data', *response))
@@ -68,7 +67,7 @@ class MarketplaceTestCase(WirecloudTestCase):
     def test_marketplace_keyword_search(self):
 
         response_text = self.read_response_file('responses', 'marketplace', 'keyword_search.xml')
-        self.network._servers['http']['marketplace.example.com'].add_response('GET', '/FiwareMarketplace/v1/search/offerings/fulltext/test', {'content': response_text})
+        self.network._servers['http']['marketplace.example.com'].add_response('GET', '/search/offerings/fulltext/test', {'content': response_text})
         result = self.market_adaptor.full_text_search('', 'test', {})
         expected_result = json.loads(self.read_response_file('results', 'test_marketplace_keyword_search.json'))
 
