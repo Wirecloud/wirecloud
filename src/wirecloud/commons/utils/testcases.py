@@ -22,6 +22,7 @@ import os
 import codecs
 import shutil
 import stat
+import sys
 from tempfile import mkdtemp
 from urllib2 import URLError, HTTPError
 from urlparse import urlparse
@@ -380,10 +381,15 @@ def get_configured_browsers():
 
     return getattr(settings, 'WIRECLOUD_SELENIUM_BROWSER_COMMANDS', DEFAULT_BROWSER_CONF)
 
-def build_selenium_test_cases(classes, namespace, browsers=None):
+def wirecloud_selenium_test_case(classes, namespace=None, browsers=None):
 
     if browsers is None:
         browsers = get_configured_browsers()
+
+    try:
+        iter(classes)
+    except TypeError:
+        classes = (classes,)
 
     for class_name in classes:
         for browser_name in browsers:
@@ -398,7 +404,7 @@ def build_selenium_test_cases(classes, namespace, browsers=None):
                 tests_class_name = browser_name + class_name.__name__
                 klass_instance = class_name
 
-            namespace[tests_class_name] = type(
+            new_klass = type(
                 tests_class_name,
                 (klass_instance,),
                 {
@@ -407,4 +413,15 @@ def build_selenium_test_cases(classes, namespace, browsers=None):
                     '_webdriver_args': browser.get('ARGS', None),
                 }
             )
-build_selenium_test_cases.__test__ = False
+
+            if namespace is not None:
+                klass_namespace = namespace
+            else:
+                klass_namespace = sys.modules[klass_instance.__module__]
+
+            try:
+                setattr(klass_namespace, tests_class_name, new_klass)
+            except AttributeError:
+                klass_namespace[tests_class_name] = new_klass
+wirecloud_selenium_test_case.__test__ = False
+build_selenium_test_cases = wirecloud_selenium_test_case
