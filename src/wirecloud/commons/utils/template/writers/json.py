@@ -18,7 +18,11 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import absolute_import
+import copy
 import json
 
+
 def write_json_description(template_info):
+    template_info = copy.copy(template_info)
+    del template_info['translation_index_usage']
     return json.dumps(template_info, sort_keys=True, indent=4)
