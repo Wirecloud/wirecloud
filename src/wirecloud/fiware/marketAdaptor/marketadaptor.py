@@ -19,7 +19,7 @@
 
 
 import requests
-import urllib2
+from requests.auth import HTTPBasicAuth
 from urllib2 import HTTPError
 from urllib import urlencode
 from urlparse import urljoin, urlparse
@@ -37,7 +37,6 @@ SEARCH_RESULT_XPATH = '/searchresults/searchresult'
 SEARCH_SERVICE_XPATH = 'service'
 SEARCH_STORE_XPATH = 'store'
 
-opener = urllib2.build_opener()
 
 class MarketAdaptor(object):
 
@@ -119,42 +118,11 @@ class MarketAdaptor(object):
 
         return offerings
 
-    def authenticate(self):
-
-        opener = urllib2.build_opener()
-
-        # submit field is required
-        credentials = urlencode({'j_username': self._user, 'j_password': self._passwd, 'submit': 'Submit'})
-        headers = {'content-type': 'application/x-www-form-urlencoded'}
-        url = urljoin(self._marketplace_uri, "/FiwareMarketplace/j_spring_security_check")
-
-        parsed_url = None
-        try:
-            response = requests.post(url, data=credentials, headers=headers)
-            parsed_url = urlparse(response.url)
-
-        except HTTPError, e:
-            # Marketplace can return an error code but authenticate
-            parsed_url = urlparse(e.url)
-
-        if parsed_url[4] != 'login_error' and parsed_url[3][:10] == 'jsessionid':
-            # parsed_url[3] params field, contains jsessionid
-            self._session_id = parsed_url[3][11:]
-        else:
-            raise Exception('Marketplace login error')
-
     def get_all_stores(self):
 
-        if self._session_id is None:
-            self.authenticate()
-
-        opener = urllib2.build_opener()
-        session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
-        headers = {'Cookie': session_cookie}
-
-        url = urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/stores/")
+        url = urljoin(self._marketplace_uri, "registration/stores/")
         try:
-            response = requests.get(opener.open(request), headers=headers)
+            response = requests.get(url, auth=HTTPBasicAuth(self._user, self._passwd))
         except HTTPError, e:
             if (e.code == 404):
                 return []
@@ -190,16 +158,9 @@ class MarketAdaptor(object):
 
     def get_store_info(self, store):
 
-        if self._session_id is None:
-            self.authenticate()
-
-        opener = urllib2.build_opener()
-        session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
-        headers = {'Cookie': session_cookie}
-
-        url = urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/registration/store/" + urlquote(store))
+        url = urljoin(self._marketplace_uri, "registration/store/" + urlquote(store))
         try:
-            response = requests.get(url, headers=headers)
+            response = requests.get(url, auth=HTTPBasicAuth(self._user, self._passwd))
         except HTTPError, e:
             raise HTTPError(e.url, e.code, e.msg, None, None)
 
@@ -230,16 +191,9 @@ class MarketAdaptor(object):
 
     def get_all_services_from_store(self, store, **options):
 
-        if self._session_id is None:
-            self.authenticate()
-
-        opener = urllib2.build_opener()
-        session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
-        headers = {'Cookie': session_cookie}
-
-        url = urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/offering/store/" + urlquote(store) + "/offerings")
+        url = urljoin(self._marketplace_uri, "offering/store/" + urlquote(store) + "/offerings")
         try:
-            response = requests.get(url, headers=headers)
+            response = requests.get(url, auth=HTTPBasicAuth(self._user, self._passwd))
         except HTTPError, e:
             raise HTTPError(e.url, e.code, e.msg, None, None)
 
@@ -267,7 +221,6 @@ class MarketAdaptor(object):
             try:
                 headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"}
                 response = requests.get(url, headers=headers)
-                usdl_document = response.read()
                 content_type = response.headers.get('content-type')
 
                 # Remove the charset
@@ -275,7 +228,7 @@ class MarketAdaptor(object):
                 if pos > -1:
                     content_type = content_type[:pos]
 
-                parser = USDLParser(usdl_document, content_type)
+                parser = USDLParser(response.content, content_type)
             except:
                 continue
 
@@ -296,16 +249,9 @@ class MarketAdaptor(object):
 
     def full_text_search(self, store, search_string, options):
 
-        if self._session_id is None:
-            self.authenticate()
-
-        opener = urllib2.build_opener()
-        session_cookie = 'JSESSIONID=' + self._session_id + ';' + ' Path=/FiwareMarketplace'
-        headers = {'Cookie': session_cookie}
-
-        url = urljoin(self._marketplace_uri, "/FiwareMarketplace/v1/search/offerings/fulltext/" + urlquote_plus(search_string))
+        url = urljoin(self._marketplace_uri, "search/offerings/fulltext/" + urlquote_plus(search_string))
         try:
-            response = requests.get(url, headers=headers)
+            response = requests.get(url, auth=HTTPBasicAuth(self._user, self._passwd))
         except HTTPError, e:
             raise HTTPError(e.url, e.code, e.msg, None, None)
 
