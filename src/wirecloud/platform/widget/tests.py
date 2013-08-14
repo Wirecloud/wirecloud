@@ -38,7 +38,6 @@ __test__ = False
 class CodeTransformationTestCase(TestCase):
 
     XML_NORMALIZATION_RE = re.compile(r'>\s+<')
-    tags = ('current',)
 
     @classmethod
     def setUpClass(cls):
