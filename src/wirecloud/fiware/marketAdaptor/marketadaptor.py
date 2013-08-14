@@ -41,7 +41,6 @@ SEARCH_STORE_XPATH = 'store'
 class MarketAdaptor(object):
 
     _marketplace_uri = None
-    _session_id = None
     _stores = {}
 
     def __init__(self, marketplace_uri, user='demo1234', passwd='demo1234'):
@@ -124,18 +123,8 @@ class MarketAdaptor(object):
         try:
             response = requests.get(url, auth=HTTPBasicAuth(self._user, self._passwd))
         except HTTPError, e:
-            if (e.code == 404):
+            if e.code == 404:
                 return []
-
-        # Marketplace redirects to a login page (sprint_security_login) if
-        # the session expires
-        parsed_url = urlparse(response.url)
-        path = parsed_url[2].split('/')
-
-        if len(path) > 2 and path[2] == 'spring_security_login':
-            # Session has expired
-            self._session_id = None
-            return self.get_all_stores()
 
         if response.status_code != 200:
             raise HTTPError(response.url, response.status_code, response.reason, None, None)
@@ -167,16 +156,6 @@ class MarketAdaptor(object):
         if response.status_code != 200:
             raise HTTPError(response.url, response.status_code, response.reason, None, None)
 
-        # Marketplace redirects to a login page (sprint_security_login) if
-        # the session expires
-        parsed_url = urlparse(response.url)
-        path = parsed_url[2].split('/')
-
-        if len(path) > 2 and path[2] == 'spring_security_login':
-            # Session has expired
-            self._session_id = None
-            return self.get_store_info()
-
         parsed_body = etree.fromstring(response.content)
 
         result = {}
@@ -196,16 +175,6 @@ class MarketAdaptor(object):
             response = requests.get(url, auth=HTTPBasicAuth(self._user, self._passwd))
         except HTTPError, e:
             raise HTTPError(e.url, e.code, e.msg, None, None)
-
-        # Marketplace redirects to a login page (sprint_security_login) if
-        # the session expires
-        parsed_url = urlparse(response.url)
-        path = parsed_url[2].split('/')
-
-        if len(path) > 2 and path[2] == 'spring_security_login':
-            # Session has expired
-            self._session_id = None
-            return self.get_all_services_from_store(store, **options)
 
         if response.status_code != 200:
             raise HTTPError(response.url, response.status_code, response.reason, None, None)
@@ -254,16 +223,6 @@ class MarketAdaptor(object):
             response = requests.get(url, auth=HTTPBasicAuth(self._user, self._passwd))
         except HTTPError, e:
             raise HTTPError(e.url, e.code, e.msg, None, None)
-
-        # Marketplace redirects to a login page (sprint_security_login) if
-        # the session expires
-        parsed_url = urlparse(response.url)
-        path = parsed_url[2].split('/')
-
-        if len(path) > 2 and path[2] == 'spring_security_login':
-            # Session has expired
-            self._session_id = None
-            return self.full_text_search(store, search_string)
 
         if response.status_code != 200:
             raise HTTPError(response.url, response.status_code, response.reason, None, None)
