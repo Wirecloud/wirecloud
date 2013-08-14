@@ -110,6 +110,22 @@
                                 <wire-m:fullDragboard>False</wire-m:fullDragboard>
                             </wire-m:iWidgetRendering>
                         </wire-m:hasiWidgetRendering>
+
+                        <wire-m:hasiWidgetPreference>
+                            <wire-m:iWidgetPreference>
+                                    <dcterms:title>list</dcterms:title>
+                                    <wire:value>value1</wire:value>
+                            </wire-m:iWidgetPreference>
+                        </wire-m:hasiWidgetPreference>
+
+                        <wire-m:hasiWidgetPreference>
+                            <wire-m:iWidgetPreference>
+                                    <dcterms:title>text</dcterms:title>
+                                    <wire-m:readonly>False</wire-m:readonly>
+                                    <wire-m:hidden>False</wire-m:hidden>
+                                    <wire:value>value2</wire:value>
+                            </wire-m:iWidgetPreference>
+                        </wire-m:hasiWidgetPreference>
                     </wire-m:iWidget>
                 </wire-m:hasiWidget>
             </wire-m:Tab>

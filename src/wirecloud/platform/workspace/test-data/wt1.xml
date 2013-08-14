@@ -22,8 +22,8 @@
             <Resource title="Test (2)" version="1.0" vendor="Wirecloud" id="2" name="Test">
                <Position y="0" x="0" z="0"/>
                <Rendering width="6" layout="0" minimized="False" fulldragboard="False" height="24"/>
-               <Preference name="list" value="default"/>
-               <Preference name="text" value="initial text" readonly="true" hidden="true"/>
+               <Preference name="list" value="value1"/>
+               <Preference name="text" value="value2" readonly="false" hidden="false"/>
             </Resource>
         </Tab>
     </IncludedResources>

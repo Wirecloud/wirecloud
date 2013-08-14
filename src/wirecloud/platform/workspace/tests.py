@@ -644,7 +644,18 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(workspace.name, 'Test Mashup')
         self.assertEqual(len(workspace_data['tabs']), 1)
 
-        iwidget1_vars = workspace_data['tabs'][0]['iwidgets'][0]['variables']
+        if workspace_data['tabs'][0]['iwidgets'][0]['name'] == 'Test (1)':
+
+            iwidget1 = workspace_data['tabs'][0]['iwidgets'][0]
+            iwidget2 = workspace_data['tabs'][0]['iwidgets'][1]
+
+        else:
+
+            iwidget1 = workspace_data['tabs'][0]['iwidgets'][1]
+            iwidget2 = workspace_data['tabs'][0]['iwidgets'][0]
+
+        # Check iwidget 1 data
+        iwidget1_vars = iwidget1['variables']
 
         self.assertEqual(iwidget1_vars['list']['value'], 'default')
         self.assertEqual(iwidget1_vars['list']['hidden'], True)
@@ -653,6 +664,17 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(iwidget1_vars['text']['value'], 'initial text')
         self.assertEqual(iwidget1_vars['text']['hidden'], False)
         self.assertEqual(iwidget1_vars['text']['readonly'], True)
+
+        # Check iwidget 2 data
+        iwidget2_vars = iwidget2['variables']
+
+        self.assertEqual(iwidget2_vars['list']['value'], 'value1')
+        self.assertEqual(iwidget2_vars['list'].get('hidden', False), False)
+        self.assertEqual(iwidget2_vars['list'].get('readonly', False), False)
+
+        self.assertEqual(iwidget2_vars['text']['value'], 'value2')
+        self.assertEqual(iwidget2_vars['text'].get('hidden', False), False)
+        self.assertEqual(iwidget2_vars['text'].get('readonly', False), False)
 
     def test_fill_workspace_using_template(self):
         fillWorkspaceUsingTemplate(self.workspace, self.template1)
