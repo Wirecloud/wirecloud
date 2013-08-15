@@ -39,7 +39,7 @@ from wirecloud.platform.get_data import get_global_workspace_data
 from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Variable, VariableValue, Workspace
 from wirecloud.platform.iwidget.utils import SaveIWidget, deleteIWidget
 from wirecloud.platform.workspace.packageCloner import PackageCloner
-from wirecloud.platform.workspace.mashupTemplateGenerator import build_template_from_workspace, build_rdf_template_from_workspace, build_usdl_from_workspace
+from wirecloud.platform.workspace.mashupTemplateGenerator import build_template_from_workspace, build_rdf_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from wirecloud.platform.workspace.utils import sync_base_workspaces
 from wirecloud.platform.workspace.views import createEmptyWorkspace, linkWorkspace
@@ -552,31 +552,6 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
         author = graph.objects(mashup_uri, self.DCTERMS['creator']).next()
         self.assertRDFElement(graph, author, self.FOAF, 'name', u'author with é')
-
-    def test_build_usdl_from_workspace(self):
-
-        options = {
-            'vendor': u'Wirecloud Test Suite',
-            'name': u'Test Workspace',
-            'version': u'1',
-            'author': u'test',
-            'email': u'a@b.com',
-            'readOnlyWidgets': True,
-        }
-        graph = build_usdl_from_workspace(options, self.workspace, self.user, 'http://wirecloud.conwet.fi.upm.es/ns/mashup#/Wirecloud%20Test%20Suite/Test%20Workspace/1')
-        services = graph.subjects(self.RDF['type'], self.USDL['Service'])
-
-        for service in services:
-            if str(service) == str(self.WIRE_M[options['vendor'] + '/' + options['name'] + '/' + options['version']]):
-                service_uri = service
-                break
-        else:
-            raise Exception
-
-        self.assertRDFElement(graph, service_uri, self.DCTERMS, 'title', u'Test Workspace')
-        self.assertRDFElement(graph, service_uri, self.USDL, 'versionInfo', u'1')
-        vendor = graph.objects(service_uri, self.USDL['hasProvider']).next()
-        self.assertRDFElement(graph, vendor, self.FOAF, 'name', u'Wirecloud Test Suite')
 
 
 class ParameterizedWorkspaceParseTestCase(CacheTestCase):

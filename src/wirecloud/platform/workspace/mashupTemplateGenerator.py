@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from datetime import datetime
 import json
 import rdflib
 from lxml import etree
@@ -34,22 +33,10 @@ WIRE_M = rdflib.Namespace("http://wirecloud.conwet.fi.upm.es/ns/mashup#")
 FOAF = rdflib.Namespace('http://xmlns.com/foaf/0.1/')
 RDF = rdflib.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#')
 RDFS = rdflib.Namespace('http://www.w3.org/2000/01/rdf-schema#')
-MSM = rdflib.Namespace('http://cms-wg.sti2.org/ns/minimal-service-model#')
-OWL = rdflib.Namespace('http://www.w3.org/2002/07/owl#')
 DCTERMS = rdflib.Namespace('http://purl.org/dc/terms/')
 USDL = rdflib.Namespace('http://www.linked-usdl.org/ns/usdl-core#')
-LEGAL = rdflib.Namespace('http://www.linked-usdl.org/ns/usdl-legal#')
-PRICE = rdflib.Namespace('http://www.linked-usdl.org/ns/usdl-pricing#')
-SLA = rdflib.Namespace('http://www.linked-usdl.org/ns/usdl-sla#')
-BLUEPRINT = rdflib.Namespace('http://bizweb.sap.com/TR/blueprint#')
 VCARD = rdflib.Namespace('http://www.w3.org/2006/vcard/ns#')
-XSD = rdflib.Namespace('http://www.w3.org/2001/XMLSchema#')
-CTAG = rdflib.Namespace('http://commontag.org/ns#')
-ORG = rdflib.Namespace('http://www.w3.org/ns/org#')
-SKOS = rdflib.Namespace('http://www.w3.org/2004/02/skos/core#')
-TIME = rdflib.Namespace('http://www.w3.org/2006/time#')
 GR = rdflib.Namespace('http://purl.org/goodrelations/v1#')
-DOAP = rdflib.Namespace('http://usefulinc.com/ns/doap#')
 
 
 def typeCode2typeText(typeCode):
@@ -568,94 +555,5 @@ def build_rdf_template_from_workspace(options, workspace, user):
                 graph.add((target, RDFS['label'], rdflib.Literal(targ)))
                 graph.add((target, WIRE['index'], rdflib.Literal(str(i))))
                 i += 1
-
-    return graph
-
-
-def build_usdl_from_workspace(options, workspace, user, template_url, usdl_info=None):
-
-    graph = rdflib.Graph()
-
-    usdl_uri = WIRE_M[options.get('vendor') + '/' + options.get('name') + '/' + options.get('version')]
-    vendor = None
-
-    if usdl_info is not None:
-        graph.parse(data=usdl_info['data'], format=usdl_info['content_type'])
-        for service in graph.subjects(rdflib.RDF.type, USDL['Service']):
-            usdl_uri = service
-
-        # remove triples that are going to be replaced
-        for title in graph.objects(usdl_uri, DCTERMS['title']):
-            graph.remove((usdl_uri, DCTERMS['title'], title))
-
-        for version in graph.objects(usdl_uri, USDL['versionInfo']):
-            graph.remove((usdl_uri, USDL['versionInfo'], version))
-
-        for abstract in graph.objects(usdl_uri, DCTERMS['abstract']):
-            graph.remove((usdl_uri, DCTERMS['abstract'], abstract))
-
-        for description in graph.objects(usdl_uri, DCTERMS['description']):
-                graph.remove((usdl_uri, DCTERMS['description'], description))
-
-        for page in graph.objects(usdl_uri, FOAF['page']):
-            graph.remove((usdl_uri, FOAF['page'], page))
-
-        for depiction in graph.objects(usdl_uri, FOAF['depiction']):
-            graph.remove((usdl_uri, FOAF['depiction'], depiction))
-
-        for created in graph.objects(usdl_uri, DCTERMS['created']):
-            graph.remove((usdl_uri, DCTERMS['created'], created))
-
-        for modified in graph.objects(usdl_uri, DCTERMS['modified']):
-            graph.remove((usdl_uri, DCTERMS['modified'], page))
-
-        for provider in graph.objects(usdl_uri, USDL['hasProvider']):
-
-            for name in graph.objects(provider, FOAF['name']):
-                graph.remove((provider, FOAF['name'], name))
-
-            vendor = provider
-
-    else:
-        graph.add((usdl_uri, rdflib.RDF.type, USDL['Service']))
-
-    graph.add((usdl_uri, DCTERMS['title'], rdflib.Literal(options.get('name'))))
-    graph.add((usdl_uri, USDL['versionInfo'], rdflib.Literal(options.get('version'))))
-
-    if vendor is None:
-        vendor = rdflib.BNode()
-        graph.add((vendor, rdflib.RDF.type, GR['BussisnessEntity']))
-        graph.add((usdl_uri, USDL['hasProvider'], vendor))
-
-    graph.add((vendor, FOAF['name'], rdflib.Literal(options.get('vendor'))))
-
-    description = get_workspace_description(workspace)
-
-    if options.get('description'):
-        graph.add((usdl_uri, DCTERMS['abstract'], rdflib.Literal(options.get('description'))))
-        description = options.get('description') + '\n' + description
-
-    graph.add((usdl_uri, DCTERMS['description'], rdflib.Literal(description)))
-
-    graph.add((usdl_uri, FOAF['page'], rdflib.URIRef(options.get('wikiURI'))))
-    graph.add((usdl_uri, FOAF['depiction'], rdflib.URIRef(options.get('imageURI'))))
-
-    date = datetime.today()
-    graph.add((usdl_uri, DCTERMS['created'], rdflib.Literal(str(date))))
-    graph.add((usdl_uri, DCTERMS['modified'], rdflib.Literal(str(date))))
-
-    abstract = rdflib.URIRef(template_url)
-    graph.add((abstract, rdflib.RDF.type, BLUEPRINT['Artefact']))
-    graph.add((usdl_uri, USDL['utilizedResource'], abstract))
-    graph.add((abstract, BLUEPRINT['location'], abstract))
-
-    #Mashup parts
-    included_iwidgets = IWidget.objects.filter(tab__workspace=workspace)
-    for iwidget in included_iwidgets:
-        widget = iwidget.widget
-        part = WIRE_M[widget.resource.vendor + '/' + widget.resource.short_name + '/' + widget.resource.version]
-        graph.add((part, rdflib.RDF.type, USDL['Service']))
-        graph.add((usdl_uri, USDL['hasPartMandatory'], part))
-        graph.add((part, DCTERMS['title'], rdflib.Literal(iwidget.name)))
 
     return graph
