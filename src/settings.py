@@ -2,24 +2,22 @@
 # Django settings used as base for developing wirecloud.
 
 from os import path
+from wirecloud.commons.utils.conf import load_default_wirecloud_conf
 from wirecloud.commons.utils.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
-COMPRESS = not DEBUG
-COMPRESS_OFFLINE = not DEBUG
+load_default_wirecloud_conf(locals())
+
 USE_XSENDFILE = False
 
 BASEDIR = path.dirname(path.abspath(__file__))
-APPEND_SLASH = False
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
 )
 
 MANAGERS = ADMINS
-
 
 DATABASES = {
     'default': {
@@ -74,74 +72,11 @@ COMPRESS_JS_FILTERS = (
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '15=7f)g=)&spodi3bg8%&4fqt%f3rpg%b$-aer5*#a*(rqm79e'
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'wirecloud.platform.themes.load_template_source',
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-)
-
-MIDDLEWARE_CLASSES = (
-    'wirecloud.commons.middleware.URLMiddleware',
-)
-
-URL_MIDDLEWARE_CLASSES = {
-    'default': (
-        'django.middleware.gzip.GZipMiddleware',
-        'django.middleware.common.CommonMiddleware',
-        'django.contrib.sessions.middleware.SessionMiddleware',
-        'django.middleware.locale.LocaleMiddleware',
-        'wirecloud.commons.middleware.ConditionalGetMiddleware',
-        'django.contrib.auth.middleware.AuthenticationMiddleware',
-        'django.contrib.messages.middleware.MessageMiddleware',
-    ),
-    'api': (
-        'django.middleware.gzip.GZipMiddleware',
-        'django.middleware.common.CommonMiddleware',
-        'django.contrib.sessions.middleware.SessionMiddleware',
-        'django.middleware.locale.LocaleMiddleware',
-        'wirecloud.commons.middleware.ConditionalGetMiddleware',
-        'wirecloud.commons.middleware.AuthenticationMiddleware',
-    ),
-    'proxy': (
-        'django.contrib.sessions.middleware.SessionMiddleware',
-        'django.contrib.auth.middleware.AuthenticationMiddleware',
-    )
-}
-
 ROOT_URLCONF = 'urls'
 
-INSTALLED_APPS = (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.admin',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'wirecloud.commons',
-    'wirecloud.catalogue',
-    'wirecloud.platform',
+INSTALLED_APPS += (
     'wirecloud.oauth2provider',
     'wirecloud.fiware',
-    'south',
-    'compressor',
-)
-
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.auth.context_processors.auth',
-    'django.core.context_processors.debug',
-    'django.core.context_processors.i18n',
-    'django.core.context_processors.media',
-    'django.core.context_processors.request',
-    'django.core.context_processors.static',
-    'wirecloud.platform.themes.active_theme_context_processor',
-)
-
-STATICFILES_FINDERS = (
-    'wirecloud.platform.themes.ActiveThemeFinder',
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'compressor.finders.CompressorFinder',
 )
 
 SESSION_COOKIE_AGE = 5184000  # 2 months
@@ -178,11 +113,6 @@ WORKSPACE_MANAGERS = (
     'wirecloud.platform.workspace.workspace_managers.OrganizationWorkspaceManager',
 )
 
-#WIRECLOUD_PLUGINS = (
-#    'wirecloud.oauth2provider.plugins.OAuth2ProviderPlugin',
-#    'wirecloud.fiware.plugins.FiWarePlugin',
-#)
-
 FORCE_SCRIPT_NAME = ""
 
 NOT_PROXY_FOR = ['localhost', '127.0.0.1']
@@ -191,9 +121,3 @@ PROXY_PROCESSORS = (
 #    'wirecloud.proxy.processors.FixServletBugsProcessor',
     'wirecloud.proxy.processors.SecureDataProcessor',
 )
-
-# External settings configuration
-try:
-    from local_settings import *  # pyflakes:ignore
-except ImportError:
-    pass

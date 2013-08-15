@@ -2,15 +2,14 @@
 # Django settings for {{ project_name }} project.
 
 from os import path
+from wirecloud.commons.utils.conf import load_default_wirecloud_conf
 from wirecloud.commons.utils.urlresolvers import reverse_lazy
 
 DEBUG = False
-TEMPLATE_DEBUG = DEBUG
-COMPRESS = not DEBUG
-COMPRESS_OFFLINE = not DEBUG
-USE_XSENDFILE = False
-APPEND_SLASH = False
 BASEDIR = path.dirname(path.abspath(__file__))
+load_default_wirecloud_conf(locals())
+
+USE_XSENDFILE = False
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -75,90 +74,35 @@ STATIC_ROOT = path.join(BASEDIR, '../static')
 # compressed static will be written to when using the default COMPRESS_STORAGE.
 COMPRESS_ROOT = STATIC_ROOT
 
-# Controls the directory inside COMPRESS_ROOT that compressed files will be
-# written to.
-COMPRESS_OUTPUT_DIR = 'cache'
-
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
 STATIC_URL = '/static/'
 
 # Additional locations of static files
-STATICFILES_DIRS = (
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-)
+# STATICFILES_DIRS = (
+#     # Put strings here, like "/home/html/static" or "C:/www/django/static".
+#     # Always use forward slashes, even on Windows.
+#     # Don't forget to use absolute paths, not relative paths.
+# )
 
 # List of finder classes that know how to find static files in
 # various locations.
-STATICFILES_FINDERS = (
-    'wirecloud.platform.themes.ActiveThemeFinder',
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'compressor.finders.CompressorFinder',
-    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
-)
+# STATICFILES_FINDERS += (
+#     'django.contrib.staticfiles.finders.FileSystemFinder',
+#     'django.contrib.staticfiles.finders.DefaultStorageFinder',
+# )
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '{{ secret_key }}'
-
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'wirecloud.platform.themes.load_template_source',
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-    # 'django.template.loaders.eggs.Loader',
-)
-
-MIDDLEWARE_CLASSES = (
-    'wirecloud.commons.middleware.URLMiddleware',
-)
-
-URL_MIDDLEWARE_CLASSES = {
-    'default': (
-        'django.middleware.gzip.GZipMiddleware',
-        'django.middleware.common.CommonMiddleware',
-        'django.contrib.sessions.middleware.SessionMiddleware',
-        'django.middleware.locale.LocaleMiddleware',
-        'wirecloud.commons.middleware.ConditionalGetMiddleware',
-        'django.contrib.auth.middleware.AuthenticationMiddleware',
-        'django.contrib.messages.middleware.MessageMiddleware',
-    ),
-    'api': (
-        'django.middleware.gzip.GZipMiddleware',
-        'django.middleware.common.CommonMiddleware',
-        'django.contrib.sessions.middleware.SessionMiddleware',
-        'django.middleware.locale.LocaleMiddleware',
-        'wirecloud.commons.middleware.ConditionalGetMiddleware',
-        'wirecloud.commons.middleware.AuthenticationMiddleware',
-    )
-}
 
 ROOT_URLCONF = '{{ project_name }}.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = '{{ project_name }}.wsgi.application'
 
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-)
-
-INSTALLED_APPS = (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
+INSTALLED_APPS += (
     #'django.contrib.sites',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.admin',
-    'wirecloud.commons',
-    'wirecloud.catalogue',
     'wirecloud.oauth2provider',
-    'south',
-    'compressor',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -186,7 +130,7 @@ LOGIN_REDIRECT_URL = reverse_lazy('wirecloud.root')
 # more details on how to customize your logging configuration.
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,
+    'disable_existing_loggers': True,
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
