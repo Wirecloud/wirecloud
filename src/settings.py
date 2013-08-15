@@ -121,3 +121,9 @@ PROXY_PROCESSORS = (
 #    'wirecloud.proxy.processors.FixServletBugsProcessor',
     'wirecloud.proxy.processors.SecureDataProcessor',
 )
+
+# External settings configuration
+try:
+    from local_settings import *  # pyflakes:ignore
+except ImportError:
+    pass
