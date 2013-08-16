@@ -20,10 +20,6 @@
 import os
 import sys
 
-import wirecloud.catalogue
-import wirecloud.platform
-from wirecloud.platform.plugins import get_plugins
-
 
 class NoseArgs(object):
 
@@ -31,6 +27,10 @@ class NoseArgs(object):
         self._instance_type = instance_type
 
     def __iter__(self):
+        import wirecloud.catalogue
+        import wirecloud.platform
+        from wirecloud.platform.plugins import get_plugins
+
         NOSE_ARGS = ['--where=' + os.getcwd()]
         if self._instance_type == 'platform':
             NOSE_ARGS.append('--where=' + os.path.dirname(wirecloud.catalogue.__file__))
