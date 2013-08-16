@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -55,6 +55,8 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
     settings['COMPRESS_OFFLINE'] = True
     settings['APPEND_SLASH'] = False
     settings['COMPRESS_OUTPUT_DIR'] = 'cache'
+
+    settings['USE_TZ'] = True
 
     settings['INSTALLED_APPS'] = (
         'django.contrib.auth',

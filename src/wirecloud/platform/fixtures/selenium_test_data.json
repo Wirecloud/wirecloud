@@ -196,8 +196,8 @@
             "is_active": true,
             "is_superuser": false,
             "groups": [1],
-            "last_login": "2011-10-10 11:27:12",
-            "date_joined": "2011-10-10 11:27:12"
+            "last_login": "2011-10-10T11:27:12+01:00",
+            "date_joined": "2011-10-10T11:27:12+01:00"
         }
     },
     {
@@ -212,8 +212,8 @@
             "is_staff": false,
             "is_active": true,
             "is_superuser": false,
-            "last_login": "2011-10-10 11:27:12",
-            "date_joined": "2011-10-10 11:27:12"
+            "last_login": "2011-10-10T11:27:12+01:00",
+            "date_joined": "2011-10-10T11:27:12+01:00"
         }
     },
     {
@@ -228,8 +228,8 @@
             "is_staff": false,
             "is_active": true,
             "is_superuser": false,
-            "last_login": "2011-10-10 11:27:12",
-            "date_joined": "2011-10-10 11:27:12"
+            "last_login": "2011-10-10T11:27:12+01:00",
+            "date_joined": "2011-10-10T11:27:12+01:00"
         }
     },
     {

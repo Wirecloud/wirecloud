@@ -10,7 +10,7 @@
             "mail": "test@example.com",
             "type": 0,
             "public": true,
-            "creation_date": "2009-01-01 00:00",
+            "creation_date": "2009-01-01T00:00:00+01:00",
             "template_uri": "http://example.com/path/widget.xml"
         }
     },
@@ -25,7 +25,7 @@
             "mail": "test@example.com",
             "type": 0,
             "public": true,
-            "creation_date": "2009-01-01 00:00",
+            "creation_date": "2009-01-01T00:00:00+01:00",
             "template_uri": "http://example.com/path/widget.xml"
         }
     },
@@ -40,7 +40,7 @@
             "mail": "test@example.com",
             "type": 0,
             "public": true,
-            "creation_date": "2009-01-01 00:00",
+            "creation_date": "2009-01-01T00:00:00+01:00",
             "template_uri": "http://example.com/path/widget.xml"
         }
     },
@@ -55,7 +55,7 @@
             "mail": "test@example.com",
             "type": 0,
             "public": true,
-            "creation_date": "2009-01-01 00:00",
+            "creation_date": "2009-01-01T00:00:00+01:00",
             "template_uri": "http://example.com/path/widget.xml"
         }
     },
@@ -70,7 +70,7 @@
             "mail": "test@example.com",
             "type": 0,
             "public": true,
-            "creation_date": "2009-01-01 00:00",
+            "creation_date": "2009-01-01T00:00:00+01:00",
             "template_uri": "http://example.com/path/widget.xml"
         }
     },
@@ -85,7 +85,7 @@
             "mail": "test@example.com",
             "type": 0,
             "public": true,
-            "creation_date": "2009-01-01 00:00",
+            "creation_date": "2009-01-01T00:00:00+01:00",
             "template_uri": "http://example.com/path/widget.xml"
         }
     },

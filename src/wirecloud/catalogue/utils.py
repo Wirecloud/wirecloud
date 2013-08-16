@@ -32,7 +32,6 @@
 
 import json
 import os
-from datetime import datetime
 from urlparse import urljoin
 
 from django.conf import settings
@@ -43,6 +42,7 @@ from wirecloud.catalogue.get_json_catalogue_data import get_resource_data
 from wirecloud.catalogue.models import WidgetWiring, CatalogueResource, Tag, UserTag
 from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.models import Translation
+from wirecloud.commons.utils.timezone import now
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 
@@ -136,7 +136,7 @@ def add_resource_from_template(template_uri, template, user, fromWGT=False, over
         iphone_image_uri=resource_info.get('iphone_image_uri', ''),
         wiki_page_uri=resource_info['doc_uri'],
         template_uri=template_uri,
-        creation_date=datetime.today(),
+        creation_date=now(),
         popularity='0.0',
         json_description=json.dumps(resource_info)
     )
