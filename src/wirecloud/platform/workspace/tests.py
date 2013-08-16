@@ -31,6 +31,7 @@ from django.contrib.auth.models import User, Group
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.test import Client
+from django.utils import unittest
 
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.utils.testcases import WirecloudTestCase
@@ -156,6 +157,10 @@ class WorkspaceTestCase(CacheTestCase):
         self.assertEqual(len(tab_list), 2)
 
     def test_shared_workspace(self):
+
+        from django.conf import settings
+        if not hasattr(settings, 'WORKSPACE_MANAGERS') or 'wirecloud.platform.workspace.workspace_managers.OrganizationWorkspaceManager' not in settings.WORKSPACE_MANAGERS:
+            raise unittest.SkipTest('OrganizationWorkspaceManager not enabled')
 
         workspace = Workspace.objects.get(pk=1)
 
