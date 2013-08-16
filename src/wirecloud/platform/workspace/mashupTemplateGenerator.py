@@ -77,14 +77,6 @@ def build_template_from_workspace(options, workspace, user):
     if not author:
         author = user.username
 
-    imageURI = options.get('imageURI')
-    if not imageURI:
-        imageURI = settings.MEDIA_URL + 'images/headshot_mashup.jpg'
-
-    wikiURI = options.get('wikiURI')
-    if not wikiURI:
-        wikiURI = 'http://trac.morfeo-project.org/trac/ezwebplatform/wiki/options'
-
     readOnlyWidgets = options.get('readOnlyWidgets', False)
     readOnlyConnectables = options.get('readOnlyConnectables', False)
 
@@ -105,8 +97,8 @@ def build_template_from_workspace(options, workspace, user):
     etree.SubElement(desc, 'Author').text = author
     etree.SubElement(desc, 'Mail').text = email
     etree.SubElement(desc, 'Description').text = description
-    etree.SubElement(desc, 'ImageURI').text = imageURI
-    etree.SubElement(desc, 'WikiURI').text = wikiURI
+    etree.SubElement(desc, 'ImageURI').text = options.get('imageURI', '')
+    etree.SubElement(desc, 'WikiURI').text = options.get('doc_uri', '')
 
     resources = etree.SubElement(desc, 'IncludedResources')
 

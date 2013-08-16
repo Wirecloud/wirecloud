@@ -22,7 +22,7 @@
                     {name: 'version', label: gettext('Version'), type: 'version',  required: true},
                     {name: 'email', label: gettext('Email'), type: 'text',  required: true},
                     {name: 'description', label: gettext('Description'), type: 'longtext'},
-                    {name: 'wikiURI', label: gettext('Homepage'), type: 'text'},
+                    {name: 'doc_uri', label: gettext('Homepage'), type: 'text'},
                     {name: 'author', label: gettext('Author'), type: 'text',  initialValue: user_name, defaultValue: user_name}
                 ]
             },
