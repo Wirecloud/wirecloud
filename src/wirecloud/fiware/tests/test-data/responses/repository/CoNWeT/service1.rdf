@@ -131,7 +131,7 @@
     <price:PriceComponent rdf:about="http://wstore.lab.fi-ware.eu/offering/UPM__SantanderCityLights__1.0#7jnovpSvDceyPlJxE">
         <dcterms:title xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">Pay per issue</dcterms:title>
         <gr:hasCurrency>EUR</gr:hasCurrency>
-        <gr:hasCurrencyValue rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.10</gr:hasCurrencyValue>
+        <gr:hasCurrencyValue>0.10</gr:hasCurrencyValue>
         <gr:hasUnitOfMeasurement>issue</gr:hasUnitOfMeasurement>
         <dcterms:decription xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">This component defines a pay per every issue created</dcterms:decription>
     </price:PriceComponent>
@@ -139,7 +139,7 @@
     <price:PriceComponent rdf:about="http://wstore.lab.fi-ware.eu/offering/UPM__SantanderCityLights__1.0#AvB4yYUs6Rc5gYeEp">
         <dcterms:title xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">Initial payment</dcterms:title>
         <gr:hasCurrency>EUR</gr:hasCurrency>
-        <gr:hasCurrencyValue rdf:datatype="http://www.w3.org/2001/XMLSchema#float">1000</gr:hasCurrencyValue>
+        <gr:hasCurrencyValue>1000</gr:hasCurrencyValue>
         <gr:hasUnitOfMeasurement>single payment</gr:hasUnitOfMeasurement>
         <dcterms:decription xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace"></dcterms:decription>
     </price:PriceComponent>
