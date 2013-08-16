@@ -131,4 +131,48 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
         'wirecloud.platform.themes.active_theme_context_processor',
     )
 
+    settings['LOGGING'] = {
+        'version': 1,
+        'disable_existing_loggers': True,
+        'filters': {
+            'require_debug_false': {
+                '()': 'django.utils.log.RequireDebugFalse'
+            },
+            'require_debug_true': {
+                '()': 'wirecloud.commons.utils.log.RequireDebugTrue'
+            }
+        },
+        'handlers': {
+            'console':{
+                'level': 'INFO',
+                'filters': ['require_debug_true'],
+                'class': 'logging.StreamHandler',
+            },
+            'null': {
+                'class': 'django.utils.log.NullHandler',
+            },
+            'mail_admins': {
+                'level': 'ERROR',
+                'filters': ['require_debug_false'],
+                'class': 'django.utils.log.AdminEmailHandler'
+            }
+        },
+        'loggers': {
+            'django': {
+                'handlers': ['console'],
+            },
+            'django.request': {
+                'handlers': ['mail_admins'],
+                'level': 'ERROR',
+                'propagate': False,
+            },
+            'py.warnings': {
+                'handlers': ['console'],
+            },
+            'rdflib': {
+                'handlers': ['console'],
+            },
+        }
+    }
+
     settings['NOSE_ARGS'] = NoseArgs(instance_type)

@@ -7,7 +7,7 @@ from wirecloud.commons.utils.urlresolvers import reverse_lazy
 
 DEBUG = False
 BASEDIR = path.dirname(path.abspath(__file__))
-load_default_wirecloud_conf(locals())
+load_default_wirecloud_conf(locals(), instance_type='catalogue')
 
 USE_XSENDFILE = False
 
@@ -118,53 +118,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 LOGIN_URL = reverse_lazy('login')
 LOGOUT_URL = reverse_lazy('wirecloud.root')
 LOGIN_REDIRECT_URL = reverse_lazy('wirecloud.root')
-
-# A sample logging configuration. The only tangible logging
-# performed by this configuration is to send an email to
-# the site admins on every HTTP 500 error when DEBUG=False and
-# to send log records to the console when DEBUG=True.
-# See http://docs.djangoproject.com/en/dev/topics/logging for
-# more details on how to customize your logging configuration.
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': True,
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
-        },
-        'require_debug_true': {
-            '()': 'wirecloud.commons.utils.log.RequireDebugTrue'
-        }
-    },
-    'handlers': {
-        'console':{
-            'level': 'INFO',
-            'filters': ['require_debug_true'],
-            'class': 'logging.StreamHandler',
-        },
-        'null': {
-            'class': 'django.utils.log.NullHandler',
-        },
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
-        }
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-        },
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'py.warnings': {
-            'handlers': ['console'],
-        },
-    }
-}
 
 THEME_ACTIVE = "wirecloud.defaulttheme"
 DEFAULT_LANGUAGE = 'browser'
