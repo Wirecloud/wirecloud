@@ -27,20 +27,21 @@ class NoseArgs(object):
         self._instance_type = instance_type
 
     def __iter__(self):
+
         import wirecloud.catalogue
         import wirecloud.platform
         from wirecloud.platform.plugins import get_plugins
 
-        NOSE_ARGS = ['--where=' + os.getcwd()]
+        NOSE_ARGS = [os.getcwd()]
         if self._instance_type == 'platform':
-            NOSE_ARGS.append('--where=' + os.path.dirname(wirecloud.catalogue.__file__))
-            NOSE_ARGS.append('--where=' + os.path.dirname(wirecloud.platform.__file__))
+            NOSE_ARGS.append(os.path.dirname(wirecloud.catalogue.__file__))
+            NOSE_ARGS.append(os.path.dirname(wirecloud.platform.__file__))
         elif self._instance_type == 'catalogue':
-            NOSE_ARGS.append('--where=' + os.path.dirname(wirecloud.catalogue.__file__))
+            NOSE_ARGS.append(os.path.dirname(wirecloud.catalogue.__file__))
 
         for plugin in get_plugins():
             plugin_path = os.path.dirname(sys.modules[plugin.__module__].__file__)
-            NOSE_ARGS.append('--where=' + plugin_path)
+            NOSE_ARGS.append(plugin_path)
 
         return NOSE_ARGS.__iter__()
 
