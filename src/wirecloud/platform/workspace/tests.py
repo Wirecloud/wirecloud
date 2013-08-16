@@ -41,6 +41,7 @@ from wirecloud.platform.iwidget.utils import SaveIWidget, deleteIWidget
 from wirecloud.platform.workspace.packageCloner import PackageCloner
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_template_from_workspace, build_rdf_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
+import wirecloud.platform.workspace.utils
 from wirecloud.platform.workspace.utils import sync_base_workspaces
 from wirecloud.platform.workspace.views import createEmptyWorkspace, linkWorkspace
 
@@ -273,6 +274,19 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
     fixtures = ('test_data',)
     tags = ('fiware-ut-1',)
 
+    @classmethod
+    def setUpClass(cls):
+
+        super(ParameterizedWorkspaceGenerationTestCase, cls).setUpClass()
+        cls.old_HAS_AES = wirecloud.platform.workspace.utils.HAS_AES
+        wirecloud.platform.workspace.utils.HAS_AES = False
+
+    @classmethod
+    def tearDownClass(cls):
+
+        super(ParameterizedWorkspaceGenerationTestCase, cls).tearDownClass()
+        wirecloud.platform.workspace.utils.HAS_AES = cls.old_HAS_AES
+
     def setUp(self):
 
         super(ParameterizedWorkspaceGenerationTestCase, self).setUp()
@@ -402,7 +416,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[2]/Preference[@name="username"]', 'value', 'test_username')
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[2]/Preference[@name="password"]', 'readonly', 'false', optional=True)
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[2]/Preference[@name="password"]', 'hidden', 'false', optional=True)
-        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[2]/Preference[@name="password"]', 'value', '')
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[2]/Preference[@name="password"]', 'value', 'test_password')
     test_build_template_from_workspace_forced_values.tags = ('next',)
 
     def test_build_rdf_template_from_workspace(self):
@@ -465,6 +479,29 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         tab = graph.objects(mashup_uri, self.WIRE_M['hasTab']).next()
         self.assertRDFElement(graph, tab, self.DCTERMS, 'title', u'tab')
         self.assertRDFCount(graph, tab, self.WIRE_M, 'hasiWidget', 2)
+        for iwidget in graph.objects(tab, self.WIRE_M['hasiWidget']):
+            self.assertRDFElement(graph, iwidget, self.WIRE, 'readonly', 'true')
+            self.assertRDFCount(graph, iwidget, self.WIRE_M, 'hasiWidgetPreference', 2)
+            username_found = password_found = False
+            for preference in graph.objects(iwidget, self.WIRE_M['hasiWidgetPreference']):
+                self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', u'false', optional=True)
+                self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', u'false', optional=True)
+                name = self.get_rdf_element(graph, preference, self.DCTERMS, 'title')
+                if unicode(name) == u'username':
+                    username_found = True
+                    self.assertRDFElement(graph, preference, self.WIRE, 'value', u'test_username')
+                elif unicode(name) == u'password':
+                    password_found = True
+                    self.assertRDFElement(graph, preference, self.WIRE, 'value', u'test_password')
+                else:
+                    self.fail()
+
+            self.assertTrue(username_found and password_found)
+
+        wiring = graph.objects(mashup_uri, self.WIRE_M['hasMashupWiring']).next()
+        self.assertRDFCount(graph, wiring, self.WIRE_M, 'hasConnection', 0)
+        self.assertRDFCount(graph, wiring, self.WIRE_M, 'hasiOperator', 0)
+        self.assertRDFCount(graph, wiring, self.WIRE_M, 'hasWiringView', 0)
 
     def test_build_rdf_template_from_workspace_forced_values(self):
 
@@ -486,14 +523,15 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         graph = build_rdf_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
         mashup_uri = graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']).next()
         tab = graph.objects(mashup_uri, self.WIRE_M['hasTab']).next()
+        self.assertRDFCount(graph, tab, self.WIRE_M, 'hasiWidget', 2)
         for iwidget in graph.objects(tab, self.WIRE_M['hasiWidget']):
 
-            name = self.get_rdf_element(graph, iwidget, self.DCTERMS, 'title')
+            name = unicode(self.get_rdf_element(graph, iwidget, self.DCTERMS, 'title'))
 
+            self.assertRDFCount(graph, iwidget, self.WIRE_M, 'hasiWidgetPreference', 2)
             preferences = graph.objects(iwidget, self.WIRE_M['hasiWidgetPreference'])
 
-            username_found = False
-            password_found = False
+            username_found = password_found = False
 
             if name == 'Test Widget':
 
@@ -511,7 +549,6 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
                     else:
                         self.fail()
 
-
             elif name == 'Test Widget 2':
 
                 for preference in preferences:
@@ -521,7 +558,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
                         self.assertRDFElement(graph, preference, self.WIRE, 'value', u'test_username')
                     elif unicode(name) == u'password':
                         password_found = True
-                        self.assertRDFElement(graph, preference, self.WIRE, 'value', u'')
+                        self.assertRDFElement(graph, preference, self.WIRE, 'value', u'test_password')
                     else:
                         self.fail()
 
