@@ -20,8 +20,8 @@
 
 try:
     from django.conf.urls import patterns, include, url
-except ImportError:
-    # for Django version less then 1.4
+except ImportError:  # pragma: no cover
+    # for Django version less than 1.4
     from django.conf.urls.defaults import patterns, include, url
 from django.views.decorators.cache import cache_page
 from django.views.i18n import javascript_catalog
