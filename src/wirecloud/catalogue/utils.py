@@ -37,8 +37,6 @@ from urlparse import urljoin
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from wirecloud.catalogue.catalogue_utils import get_latest_resource_version
-from wirecloud.catalogue.get_json_catalogue_data import get_resource_data
 from wirecloud.catalogue.models import WidgetWiring, CatalogueResource, Tag, UserTag
 from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.models import Translation
@@ -178,22 +176,6 @@ def add_resource_from_template(template_uri, template, user, fromWGT=False, over
                 break
 
     return resource
-
-
-def get_added_resource_info(resource, user, request=None):
-
-    info = {
-        'vendor': resource.vendor,
-        'name': resource.short_name,
-        'type': resource.resource_type(),
-        'versions': [get_resource_data(resource, user, request)],
-    }
-
-    latest_version = get_latest_resource_version(resource.short_name, resource.vendor)
-    if latest_version != resource:
-        info['versions'].append(get_resource_data(latest_version, user, request))
-
-    return info
 
 
 def delete_resource(resource, user):
