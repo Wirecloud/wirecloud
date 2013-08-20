@@ -106,8 +106,11 @@
 }
 
 .notebook > div > .wrapper > div {
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  border-radius: 2px;
-  padding: 3px;
+    border-radius: 0px;
+    z-index: 1;
+    padding: 3px;
+}
+
+.notebook > div > .wrapper > div.hidden {
+    z-index: 0;
 }
