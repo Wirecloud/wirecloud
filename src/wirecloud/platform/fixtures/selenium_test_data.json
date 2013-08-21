@@ -233,6 +233,23 @@
         }
     },
     {
+        "pk": 5,
+        "model": "auth.user",
+        "fields": {
+            "username": "emptyuser",
+            "first_name": "",
+            "last_name": "",
+            "email": "admin@c.com",
+            "password": "sha1$5AphFrMHRX5o$bd3394cfeb25266a67d88683d24ae0c7b0647bd8",
+            "is_staff": false,
+            "is_active": true,
+            "is_superuser": false,
+            "groups": [1],
+            "last_login": "2011-10-10T11:27:12+01:00",
+            "date_joined": "2011-10-10T11:27:12+01:00"
+        }
+    },
+    {
         "model": "platform.workspace",
         "pk": 1,
         "fields": {

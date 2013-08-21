@@ -355,6 +355,17 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Content type of the response should be text/html
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'text/html')
 
+    def test_workspace_entry_read_requires_permission(self):
+
+        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 1})
+
+        # Authenticate
+        self.client.login(username='emptyuser', password='admin')
+
+        # Make the request
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 403)
+
     def test_workspace_entry_read(self):
 
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 1})
@@ -413,6 +424,17 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Content type of the response should be text/html
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'text/html')
 
+    def test_workspace_entry_delete_requires_permission(self):
+
+        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 1})
+
+        # Authenticate
+        self.client.login(username='emptyuser', password='admin')
+
+        # Make the request
+        response = self.client.delete(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 403)
+
     def test_workspace_entry_delete(self):
 
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 1})
@@ -458,6 +480,21 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         # Content type of the response should be text/html
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'text/html')
+
+    def test_workspace_wiring_entry_put_requires_permission(self):
+
+        url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 1})
+
+        # Authenticate
+        self.client.login(username='emptyuser', password='admin')
+
+        # Make the request
+        data = json.dumps({
+            'operators': [{'name': 'Operator1'}],
+            'connections': [],
+        })
+        response = self.client.put(url, data, content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 403)
 
     def test_workspace_wiring_entry_put(self):
 
@@ -519,6 +556,20 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         # Content type of the response should be text/html
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'text/html')
+
+    def test_tab_collection_post_requires_permission(self):
+
+        url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
+
+        # Authenticate
+        self.client.login(username='emptyuser', password='admin')
+
+        # Make the request
+        data = {
+            'name': 'rest_api_test',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 403)
 
     def test_tab_collection_post(self):
 
@@ -593,6 +644,17 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Content type of the response should be text/html
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'text/html')
 
+    def test_tab_entry_delete_requires_permission(self):
+
+        url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 1, 'tab_id': 1})
+
+        # Authenticate
+        self.client.login(username='emptyuser', password='admin')
+
+        # Make the request
+        response = self.client.delete(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 403)
+
     def test_tab_entry_delete(self):
 
         url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 1, 'tab_id': 1})
@@ -621,6 +683,20 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         # IWidget should be not created
         # TODO
+
+    def test_iwidget_collection_post_requires_permission(self):
+
+        url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 1})
+
+        # Authenticate
+        self.client.login(username='emptyuser', password='admin')
+
+        # Make the request
+        data = {
+            'widget': 'Wirecloud/Test/1.0',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 403)
 
     def test_iwidget_collection_post(self):
 
@@ -653,6 +729,20 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # IWidget should be not updated
         iwidget = IWidget.objects.get(pk=2)
         self.assertNotEqual(iwidget.name, 'New Name')
+
+    def test_iwidget_entry_post_requires_permission(self):
+
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='emptyuser', password='admin')
+
+        # Make the request
+        data = {
+            'name': 'New Name',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 403)
 
     def test_iwidget_entry_post(self):
 
@@ -693,6 +783,20 @@ class ApplicationMashupAPI(WirecloudTestCase):
         )
         self.assertNotEqual(variable_value.value, 'new value')
 
+    def test_iwidget_preferences_entry_post_requires_permission(self):
+
+        url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='emptyuser', password='admin')
+
+        # Make the request
+        data = {
+            'text': 'new value',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 403)
+
     def test_iwidget_preferences_entry_post(self):
 
         url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
@@ -727,6 +831,17 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         # IWidget should not be deleted
         IWidget.objects.get(pk=2)
+
+    def test_iwidget_entry_delete_requires_permission(self):
+
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
+        # Authenticate
+        self.client.login(username='emptyuser', password='admin')
+
+        # Make the request
+        response = self.client.delete(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 403)
 
     def test_iwidget_entry_delete(self):
 
@@ -900,6 +1015,22 @@ class ResourceManagementAPI(WirecloudTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/x-widget+mashable-application-component')
+
+    def test_resource_entry_read_requires_permission(self):
+
+        resource_id = (
+            'Wirecloud',
+            'TestOperator',
+            '1.0',
+        )
+        url = reverse('wirecloud_showcase.resource_entry', args=resource_id)
+
+        # Authenticate
+        self.client.login(username='emptyuser', password='admin')
+
+        # Make the request
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 403)
 
     def test_resource_entry_delete_requires_authentication(self):
 
