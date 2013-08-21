@@ -44,6 +44,7 @@ from wirecloud.commons.utils.template.parsers import TemplateParser
 class CatalogueResource(TransModel):
 
     RESOURCE_TYPES = ('widget', 'mashup', 'operator')
+    RESOURCE_MIMETYPES = ('application/x-widget+mashable-application-component', 'application/x-mashup+mashable-application-component', 'application/x-operator+mashable-application-component')
     TYPE_CHOICES = (
         (0, 'Widget'),
         (1, 'Mashup'),
@@ -125,6 +126,10 @@ class CatalogueResource(TransModel):
 
     def resource_type(self):
         return self.RESOURCE_TYPES[self.type]
+
+    @property
+    def mimetype(self):
+        return self.RESOURCE_MIMETYPES[self.type]
 
     class Meta:
         unique_together = ("short_name", "vendor", "version")

@@ -184,11 +184,13 @@ class ResourceEntry(Resource):
             return HttpResponse(status=404)
 
         if not getattr(settings, 'USE_XSENDFILE', False):
-            return serve(request, local_path, document_root='/')
+            response = serve(request, local_path, document_root='/')
         else:
             response = HttpResponse()
             response['X-Sendfile'] = smart_str(local_path)
-            return response
+
+        response['Content-Type'] = resource.mimetype
+        return response
 
     @authentication_required
     @commit_on_http_success
