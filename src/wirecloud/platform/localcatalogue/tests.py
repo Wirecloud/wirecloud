@@ -142,7 +142,7 @@ class LocalCatalogueTestCase(LocalizedTestCase):
         self.assertEqual(data['name'], 'test operator')
         self.assertEqual(data['type'], 'operator')
         self.assertEqual(data['version'], '0.1')
-        self.assertEqual(data['mail'], 'test@example.com')
+        self.assertEqual(data['email'], 'test@example.com')
         self.assertEqual(data['wiring']['inputs'][0]['label'], 'slot')
         self.assertEqual(data['wiring']['inputs'][0]['type'], 'text')
         self.assertEqual(data['wiring']['inputs'][0]['friendcode'], 'test_friend_code')

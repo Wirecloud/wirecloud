@@ -185,7 +185,7 @@ class RDFTemplateParser(object):
             self._info['display_name'] = self._info['name']
 
         addr_element = self._get_field(VCARD, 'addr', self._rootURI, id_=True)
-        self._info['mail'] = self._get_field(VCARD, 'email', addr_element)
+        self._info['email'] = self._get_field(VCARD, 'email', addr_element)
         self._parse_requirements()
 
     def _parse_requirements(self):

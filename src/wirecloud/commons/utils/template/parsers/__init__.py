@@ -189,7 +189,7 @@ class WirecloudTemplateParser(object):
         self._add_translation_index(self._info['description'], type='resource', field='description')
 
         self._info['author'] = self._get_field(AUTHOR_XPATH, self._resource_description)
-        self._info['mail'] = self._get_field(MAIL_XPATH, self._resource_description)
+        self._info['email'] = self._get_field(MAIL_XPATH, self._resource_description)
         self._get_url_field('image_uri', IMAGE_URI_XPATH, self._resource_description)
         self._get_url_field('doc_uri', DOC_URI_XPATH, self._resource_description, required=False)
         self._parse_requirements()
