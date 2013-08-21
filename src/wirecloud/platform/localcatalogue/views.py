@@ -43,8 +43,7 @@ from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.markets.utils import get_market_managers
 from wirecloud.platform.models import Widget, IWidget
 from wirecloud.platform.localcatalogue.signals import resource_uninstalled
-from wirecloud.platform.localcatalogue.utils import install_resource_to_user, get_or_add_resource_from_available_marketplaces
-from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue
+from wirecloud.platform.localcatalogue.utils import install_resource_to_user
 
 
 class ResourceCollection(Resource):
@@ -136,8 +135,6 @@ class ResourceCollection(Resource):
             else:
                 file_contents = downloaded_file
 
-        # TODO for now, install dependencies if force_create is true
-        install_dep = force_create
         try:
             resource = install_resource_to_user(request.user, file_contents=file_contents, templateURL=templateURL, packaged=packaged, raise_conflicts=force_create)
 
@@ -149,26 +146,7 @@ class ResourceCollection(Resource):
 
             return build_error_response(request, 409, _('Resource already exists'))
 
-        if install_dep and resource.resource_type() == 'mashup':
-            resources = [resource.get_processed_info(request)]
-            workspace_info = json.loads(resource.json_description)
-            for tab_entry in workspace_info['tabs']:
-                for resource in tab_entry['resources']:
-                    widget = get_or_add_widget_from_catalogue(resource.get('vendor'), resource.get('name'), resource.get('version'), request.user)
-                    resources.append(widget.resource.get_processed_info(request))
-
-            for id_, op in workspace_info['wiring']['operators'].iteritems():
-                op_id_args = op['name'].split('/')
-                op_id_args.append(request.user)
-                operator = get_or_add_resource_from_available_marketplaces(*op_id_args)
-                resources.append(operator.get_processed_info(request))
-
-            return HttpResponse(json.dumps(resources), status=201, mimetype='application/json; charset=UTF-8')
-
-        elif install_dep:
-            return HttpResponse(json.dumps((resource.get_processed_info(request),)), status=201, mimetype='application/json; charset=UTF-8')
-        else:
-            return HttpResponse(json.dumps(resource.get_processed_info(request)), status=201, mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(resource.get_processed_info(request)), status=201, mimetype='application/json; charset=UTF-8')
 
 
 class ResourceEntry(Resource):
