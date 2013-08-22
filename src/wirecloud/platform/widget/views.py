@@ -35,9 +35,11 @@ from urllib import url2pathname
 from urlparse import urljoin
 
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
 from django.http import HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.views.static import serve
@@ -78,6 +80,7 @@ def deleteWidget(user, name, vendor, version):
 
 class WidgetCodeEntry(Resource):
 
+    @method_decorator(login_required)
     def read(self, request, vendor, name, version):
 
         widget = get_object_or_404(Widget, resource__vendor=vendor, resource__short_name=name, resource__version=version)

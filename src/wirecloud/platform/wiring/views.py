@@ -19,8 +19,10 @@
 
 import json
 
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 
 from wirecloud.catalogue.models import CatalogueResource
@@ -76,6 +78,7 @@ class WiringEntry(Resource):
 
 class OperatorEntry(Resource):
 
+    @method_decorator(login_required)
     def read(self, request, vendor, name, version):
 
         operator = get_object_or_404(CatalogueResource, type=2, vendor=vendor, short_name=name, version=version)
