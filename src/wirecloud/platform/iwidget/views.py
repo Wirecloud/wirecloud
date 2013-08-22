@@ -30,7 +30,7 @@ from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.http import authentication_required, build_error_response, supported_request_mime_types
 from wirecloud.platform.get_data import VariableValueCacheManager, get_iwidget_data
-from wirecloud.platform.iwidget.utils import SaveIWidget, UpdateIWidget, UpgradeIWidget, deleteIWidget
+from wirecloud.platform.iwidget.utils import SaveIWidget, UpdateIWidget, UpgradeIWidget
 from wirecloud.platform.models import Widget, IWidget, Tab, UserWorkspace, VariableValue, Workspace
 from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue
 
@@ -63,7 +63,10 @@ class IWidgetCollection(Resource):
         initial_variable_values = iwidget.get('variable_values', None)
 
         # iWidget creation
-        tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
+        tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
+        if not request.user.is_superuser and not tab.workspace.users.filter(id=request.user.id).exists():
+            raise Http403
+
         try:
             iwidget = SaveIWidget(iwidget, request.user, tab, initial_variable_values)
             iwidget_data = get_iwidget_data(iwidget, request.user, tab.workspace)
@@ -116,7 +119,10 @@ class IWidgetEntry(Resource):
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
-        tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
+        tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
+        if not request.user.is_superuser and not tab.workspace.users.filter(id=request.user.id).exists():
+            raise Http403
+
         iwidget['id'] = iwidget_id
         UpdateIWidget(iwidget, request.user, tab)
 
@@ -127,9 +133,11 @@ class IWidgetEntry(Resource):
     def delete(self, request, workspace_id, tab_id, iwidget_id):
 
         # Gets Iwidget, if it does not exist, a http 404 error is returned
-        iwidget = get_object_or_404(IWidget, tab__workspace__users=request.user, tab__workspace__pk=workspace_id, tab__pk=tab_id, pk=iwidget_id)
+        iwidget = get_object_or_404(IWidget.objects.select_related('tab__workspace'), tab__workspace__pk=workspace_id, tab__pk=tab_id, pk=iwidget_id)
+        if not request.user.is_superuser and not iwidget.tab.workspace.users.filter(id=request.user.id).exists():
+            raise Http403
 
-        deleteIWidget(iwidget, request.user)
+        iwidget.delete()
 
         return HttpResponse(status=204)
 
@@ -140,6 +148,10 @@ class IWidgetPreferences(Resource):
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def create(self, request, workspace_id, tab_id, iwidget_id):
+
+        workspace = Workspace.objects.get(id=workspace_id)
+        if not request.user.is_superuser and not workspace.users.filter(id=request.user.id).exists():
+            raise Http403()
 
         try:
             new_values = json.loads(request.raw_post_data)
@@ -168,7 +180,7 @@ class IWidgetVersion(Resource):
     def update(self, request, workspace_id, tab_id, iwidget_id):
 
         workspace = Workspace.objects.get(id=workspace_id)
-        if workspace.creator != request.user:
+        if not request.user.is_superuser and workspace.creator != request.user:
             raise Http403()
 
         try:

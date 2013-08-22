@@ -180,7 +180,11 @@ class WorkspaceEntry(Resource):
     @authentication_required
     def read(self, request, workspace_id):
 
-        workspace = get_object_or_404(Workspace, users__id=request.user.id, pk=workspace_id)
+        workspace = get_object_or_404(Workspace, pk=workspace_id)
+
+        if not workspace.users.filter(pk=request.user.pk).exists():
+            return HttpResponseForbidden()
+
         workspace_data = get_global_workspace_data(workspace, request.user)
 
         return workspace_data.get_response()
@@ -223,36 +227,28 @@ class WorkspaceEntry(Resource):
     @commit_on_http_success
     def delete(self, request, workspace_id):
 
-        user_workspaces = UserWorkspace.objects.select_related('workspace')
-        try:
-            user_workspace = user_workspaces.get(user__id=request.user.id, workspace__id=workspace_id)
-        except UserWorkspace.DoesNotExist:
-            raise Http404
-
-        workspace = user_workspace.workspace
-        if workspace.creator != request.user or user_workspace.manager != '':
+        workspace = get_object_or_404(Workspace, pk=workspace_id)
+        if not workspace.users.filter(pk=request.user.pk).exists():
             return HttpResponseForbidden()
 
+        user_workspace = UserWorkspace.objects.get(user=request.user, workspace=workspace)
         # Check if the user does not have any other workspace
-        workspaces = Workspace.objects.filter(users__id=request.user.id).exclude(pk=workspace_id)
-
-        if workspaces.count() == 0:
+        if user_workspace.manager != '' or UserWorkspace.objects.filter(user=request.user).count() == 0:
             msg = _("workspace cannot be deleted")
 
             return build_error_response(request, 403, msg)
 
-        # Remove the workspace
-        iwidgets = IWidget.objects.filter(tab__workspace=workspace)
-        for iwidget in iwidgets:
-            deleteIWidget(iwidget, request.user)
-        workspace.delete()
+        user_workspace.delete()
+        if workspace.users.count() == 0:
 
-        from wirecloud.platform.get_data import _invalidate_cached_variable_values
-        _invalidate_cached_variable_values(workspace)
+            # Remove the workspace
+            iwidgets = IWidget.objects.filter(tab__workspace=workspace)
+            for iwidget in iwidgets:
+                deleteIWidget(iwidget, request.user)
+            workspace.delete()
 
-        # Set a new active workspace (first workspace by default)
-        activeWorkspace = workspaces[0]
-        setActiveWorkspace(request.user, activeWorkspace)
+            from wirecloud.platform.get_data import _invalidate_cached_variable_values
+            _invalidate_cached_variable_values(workspace)
 
         return HttpResponse(status=204)
 
@@ -361,9 +357,11 @@ class TabEntry(Resource):
     def delete(self, request, workspace_id, tab_id):
 
         # Get tab, if it does not exist, an http 404 error is returned
-        tab = get_object_or_404(Tab, workspace__pk=workspace_id, pk=tab_id)
-        tabs = Tab.objects.filter(workspace__pk=workspace_id).order_by('position')[::1]
+        tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
+        if not request.user.is_superuser and not tab.workspace.users.filter(id=request.user.id).exists():
+            return HttpResponseForbidden()
 
+        tabs = Tab.objects.filter(workspace__pk=workspace_id).order_by('position')[::1]
         if len(tabs) == 1:
             msg = _("tab cannot be deleted")
             return HttpResponseForbidden(msg)
