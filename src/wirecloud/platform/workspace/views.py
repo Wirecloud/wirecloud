@@ -270,7 +270,9 @@ class TabCollection(Resource):
             return build_error_response(request, 400, _('Malformed tab JSON: expecting tab name.'))
 
         tab_name = data['name']
-        workspace = Workspace.objects.get(users__id=request.user.id, pk=workspace_id)
+        workspace = Workspace.objects.get(pk=workspace_id)
+        if not (request.user.is_superuser or workspace.creator == request.user):
+            return HttpResponseForbidden()
 
         try:
             tab = createTab(tab_name, request.user, workspace)
