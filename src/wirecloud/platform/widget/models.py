@@ -107,8 +107,10 @@ class Widget(models.Model):
         return self.resource.is_available_for(user)
 
     def delete(self, *args, **kwargs):
-        if self.xhtml is not None:
+        try:
             self.xhtml.delete()
+        except XHTML.DoesNotExist:
+            pass
 
         import wirecloud.platform.widget.utils as showcase_utils
         showcase_utils.wgt_deployer.undeploy(self.resource.vendor, self.resource.short_name, self.resource.version)
