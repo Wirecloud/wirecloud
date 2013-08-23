@@ -118,6 +118,13 @@ class CatalogueResource(TransModel):
         # Delete the related votes for that resource
         UserVote.objects.filter(idResource=self.id).delete()
 
+        if hasattr(self, 'widget'):
+            from wirecloud.platform.models import Widget
+            try:
+                self.widget.delete()
+            except Widget.DoesNotExist:
+                pass
+
         # Delete media resources if needed
         if not self.template_uri.startswith(('http', 'https')):
             wgt_deployer.undeploy(self.vendor, self.short_name, self.version)
