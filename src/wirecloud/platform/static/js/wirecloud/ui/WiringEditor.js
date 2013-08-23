@@ -185,16 +185,9 @@ if (!Wirecloud.ui) {
         }
     };
 
-    /**
-     * @Private
-     * load wiring from status and workspace info
-     */
-    var loadWiring = function loadWiring(workspace, WiringStatus) {
-        var iwidgets, iwidget, widget_interface, miniwidget_interface, reallyInUseOperators,
-            operator, operator_interface, operator_instance, connection, connectionView, startAnchor,
-            endAnchor, arrow, isMenubarRef, pos, op_id, multiconnectors, multi, multiInstance, key,
-            anchor, endpoint_order, operators, k, entitiesIds, currentSource, currentTarget, i,
-            availableOperators, position, extraclass, readOnly, is_minimized;
+    var normalizeWiringStatus = function normalizeWiringStatus(WiringStatus) {
+
+        var i;
 
         if (WiringStatus == null) {
             WiringStatus = {};
@@ -219,6 +212,45 @@ if (!Wirecloud.ui) {
                 }
             ];
         }
+
+        for (i = 0; i < WiringStatus.views.length; i+=1) {
+            // widgets
+            if (WiringStatus.views[i].widgets == null) {
+                WiringStatus.views[i].widgets = {};
+            }
+
+            // operators
+            if (WiringStatus.views[i].operators == null) {
+                WiringStatus.views[i].operators = {};
+            }
+
+            // multiconnectors
+            if (WiringStatus.views[i].multiconnectors == null) {
+                WiringStatus.views[i].multiconnectors = {};
+            }
+
+            // connections
+            if (!Array.isArray(WiringStatus.views[i].connections)) {
+                WiringStatus.views[i].connections = [];
+            }
+        }
+
+        return WiringStatus;
+
+    };
+
+    /**
+     * @Private
+     * load wiring from status and workspace info
+     */
+    var loadWiring = function loadWiring(workspace, WiringStatus) {
+        var iwidgets, iwidget, widget_interface, miniwidget_interface, reallyInUseOperators,
+            operator, operator_interface, operator_instance, connection, connectionView, startAnchor,
+            endAnchor, arrow, isMenubarRef, pos, op_id, multiconnectors, multi, multiInstance, key,
+            anchor, endpoint_order, operators, k, entitiesIds, currentSource, currentTarget, i,
+            availableOperators, position, extraclass, readOnly, is_minimized;
+
+        WiringStatus = normalizeWiringStatus(WiringStatus);
 
         this.targetsOn = true;
         this.sourcesOn = true;
@@ -263,7 +295,9 @@ if (!Wirecloud.ui) {
                 if (iwidget.id in WiringStatus.views[k].iwidgets) {
                     miniwidget_interface.disable();
                     widget_interface = this.addIWidget(this, iwidget, WiringStatus.views[k].iwidgets[iwidget.id].endPointsInOuts);
-                    widget_interface.setPosition(WiringStatus.views[k].iwidgets[iwidget.id].position);
+                    if ('position' in WiringStatus.views[k].iwidgets[iwidget.id]) {
+                        widget_interface.setPosition(WiringStatus.views[k].iwidgets[iwidget.id].position);
+                    }
                     break;
                 }
             }
@@ -291,7 +325,9 @@ if (!Wirecloud.ui) {
                     };
                     iwidget.meta = iwidget.widget;
                     widget_interface = this.addIWidget(this, iwidget, WiringStatus.views[k].iwidgets[key].endPointsInOuts);
-                    widget_interface.setPosition(WiringStatus.views[k].iwidgets[key].position);
+                    if ('position' in WiringStatus.views[k].iwidgets[key]) {
+                        widget_interface.setPosition(WiringStatus.views[k].iwidgets[key].position);
+                    }
                 }
             }
         }
@@ -368,11 +404,6 @@ if (!Wirecloud.ui) {
                                             this, anchor, multi.pos, multi.height);
             multiInstance = this.addMulticonnector(multiInstance);
             multiInstance.addMainArrow(multi.pullerStart, multi.pullerEnd);
-        }
-
-        // connections
-        if (!('connections' in WiringStatus.views[0])) {
-            WiringStatus.views[0].connections = [];
         }
 
         for (i = 0; i < WiringStatus.connections.length; i += 1) {
