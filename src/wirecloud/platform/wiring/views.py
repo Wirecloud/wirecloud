@@ -20,6 +20,7 @@
 import json
 
 from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
@@ -27,6 +28,7 @@ from django.utils.translation import ugettext as _
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource
+from wirecloud.commons.utils.cache import CacheableData
 from wirecloud.commons.utils.http import authentication_required, build_error_response, get_absolute_reverse_url, supported_request_mime_types
 from wirecloud.platform.get_data import _invalidate_cached_variable_values
 from wirecloud.platform.models import Workspace
@@ -82,18 +84,28 @@ class OperatorEntry(Resource):
     def read(self, request, vendor, name, version):
 
         operator = get_object_or_404(CatalogueResource, type=2, vendor=vendor, short_name=name, version=version)
-        options = json.loads(operator.json_description)
-        js_files = options['js_files']
+        if not operator.is_available_for(request.user):
+            return HttpResponseForbidden()
 
-        base_url = operator.template_uri
-        if not base_url.startswith(('http://', 'https://')):
-            base_url = get_absolute_reverse_url('wirecloud_catalogue.media', kwargs={
-                'vendor': operator.vendor,
-                'name': operator.short_name,
-                'version': operator.version,
-                'file_path': operator.template_uri
-            }, request=request)
+        key = '_operator/' + operator.local_uri_part
+        cached_response = cache.get(key)
+        if cached_response is None:
+            options = json.loads(operator.json_description)
+            js_files = options['js_files']
 
-        xhtml = generate_xhtml_operator_code(js_files, base_url, request)
+            base_url = operator.template_uri
+            if not base_url.startswith(('http://', 'https://')):
+                base_url = get_absolute_reverse_url('wirecloud_catalogue.media', kwargs={
+                    'vendor': operator.vendor,
+                    'name': operator.short_name,
+                    'version': operator.version,
+                    'file_path': operator.template_uri
+                }, request=request)
 
-        return HttpResponse(xhtml, mimetype='application/xhtml+xml; charset=UTF-8')
+            xhtml = generate_xhtml_operator_code(js_files, base_url, request)
+            cache_timeout = 31536000  # 1 year
+            cached_response = CacheableData(xhtml, timeout=cache_timeout, mimetype='application/xhtml+xml; charset=UTF-8')
+
+            cache.set(key, cached_response, cache_timeout)
+
+        return cached_response.get_response()
