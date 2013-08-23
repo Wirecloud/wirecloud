@@ -183,6 +183,9 @@ class ResourceEntry(Resource):
 
         resource_uninstalled.send(sender=resource, user=request.user)
 
+        if resource.public == False and resource.users.count() == 0 and resource.groups.count() == 0:
+            resource.delete()
+
         if resource.resource_type() == 'widget':
             result = {'removedIWidgets': []}
 
@@ -199,8 +202,5 @@ class ResourceEntry(Resource):
 
             if request.GET.get('affected', 'false').lower() == 'true':
                 return HttpResponse(json.dumps(result), mimetype='application/json; charset=UTF-8')
-
-        if resource.public == False and resource.users.count() == 0 and resource.groups.count() == 0:
-            resource.delete()
 
         return HttpResponse(status=204)
