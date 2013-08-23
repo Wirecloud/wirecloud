@@ -38,6 +38,7 @@ from django.core.cache import cache
 from django.utils.translation import ugettext as _
 
 from wirecloud.commons.utils.cache import CacheableData
+from wirecloud.commons.utils.encoding import LazyEncoder
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.platform.models import IWidget, PublishedWorkspace, Tab, UserPrefOption, UserWorkspace, Variable, VariableDef, VariableValue
 from wirecloud.platform.context.utils import get_workspace_context, get_context_values
@@ -390,7 +391,7 @@ def _get_global_workspace_data(workspaceDAO, user):
     if len(last_published_workspace) > 0:
         data_ret["params"] = json.loads(last_published_workspace[0].params)
 
-    return data_ret
+    return json.dumps(data_ret, cls=LazyEncoder)
 
 
 def get_global_workspace_data(workspace, user):
