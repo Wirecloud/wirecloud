@@ -75,7 +75,7 @@ class WorkspaceTestCase(CacheTestCase):
     def test_get_global_workspace_data(self):
 
         workspace = Workspace.objects.get(pk=1)
-        data = get_global_workspace_data(workspace, self.user).get_data()
+        data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
         self.assertEqual(len(data['tabs']), 1)
 
         tab = data['tabs'][0]
@@ -97,7 +97,7 @@ class WorkspaceTestCase(CacheTestCase):
         workspace_tabs = Tab.objects.filter(workspace=workspace)
         self.assertEqual(workspace_tabs.count(), 1)
 
-        data = get_global_workspace_data(workspace, self.user).get_data()
+        data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
         self.assertEqual(data['owned'], True)
         self.assertEqual(data['shared'], False)
     test_create_empty_workspace.tags = ('fiware-ut-3',)
@@ -151,7 +151,7 @@ class WorkspaceTestCase(CacheTestCase):
         packageCloner.merge_workspaces(cloned_workspace, workspace, self.user)
 
         # Check cache invalidation
-        data = get_global_workspace_data(workspace, self.user).get_data()
+        data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
         tab_list = data['tabs']
 
         self.assertEqual(len(tab_list), 2)
@@ -176,7 +176,7 @@ class WorkspaceTestCase(CacheTestCase):
         sync_base_workspaces(other_user)
 
         # Check that other_user can access to the shared workspace
-        data = get_global_workspace_data(workspace, other_user).get_data()
+        data = json.loads(get_global_workspace_data(workspace, other_user).get_data())
         iwidget_list = data['tabs'][0]['iwidgets']
         self.assertEqual(len(iwidget_list), 2)
 
@@ -196,7 +196,7 @@ class WorkspaceTestCase(CacheTestCase):
         }
         SaveIWidget(iwidget_data, self.user, tab, {})
 
-        data = get_global_workspace_data(workspace, other_user).get_data()
+        data = json.loads(get_global_workspace_data(workspace, other_user).get_data())
         iwidget_list = data['tabs'][0]['iwidgets']
         self.assertEqual(len(iwidget_list), 3)
 
@@ -229,7 +229,7 @@ class WorkspaceCacheTestCase(CacheTestCase):
         result = client.post(reverse('wirecloud.variable_collection', kwargs={'workspace_id': 1}), put_data, content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(result.status_code, 204)
 
-        data = get_global_workspace_data(self.workspace, self.user).get_data()
+        data = json.loads(get_global_workspace_data(self.workspace, self.user).get_data())
         variables = data['tabs'][0]['iwidgets'][0]['variables']
         self.assertEqual(variables['password']['value'], '')
         self.assertEqual(variables['password']['secure'], True)
@@ -253,7 +253,7 @@ class WorkspaceCacheTestCase(CacheTestCase):
         }
         SaveIWidget(iwidget_data, self.user, tab, {})
 
-        data = get_global_workspace_data(self.workspace, self.user).get_data()
+        data = json.loads(get_global_workspace_data(self.workspace, self.user).get_data())
 
         iwidget_list = data['tabs'][0]['iwidgets']
         self.assertEqual(len(iwidget_list), 3)
@@ -261,7 +261,7 @@ class WorkspaceCacheTestCase(CacheTestCase):
     def test_widget_deletion_invalidates_cache(self):
 
         deleteIWidget(IWidget.objects.get(pk=1), self.user)
-        data = get_global_workspace_data(self.workspace, self.user).get_data()
+        data = json.loads(get_global_workspace_data(self.workspace, self.user).get_data())
         iwidget_list = data['tabs'][0]['iwidgets']
         self.assertEqual(len(iwidget_list), 1)
 
@@ -657,7 +657,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(len(wiring_status['connections']), 1)
         self.assertEqual(wiring_status['connections'][0]['readOnly'], False)
 
-        workspace_data = get_global_workspace_data(workspace, self.user).get_data()
+        workspace_data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
         self.assertEqual(workspace.name, 'Test Mashup')
         self.assertEqual(len(workspace_data['tabs']), 1)
 
@@ -695,18 +695,18 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
     def test_fill_workspace_using_template(self):
         fillWorkspaceUsingTemplate(self.workspace, self.template1)
-        data = get_global_workspace_data(self.workspace, self.user).get_data()
+        data = json.loads(get_global_workspace_data(self.workspace, self.user).get_data())
         self.assertEqual(self.workspace.name, 'Testing')
         self.assertEqual(len(data['tabs']), 2)
 
         # Workspace template 2 adds a new Tab
         fillWorkspaceUsingTemplate(self.workspace, self.template2)
-        data = get_global_workspace_data(self.workspace, self.user).get_data()
+        data = json.loads(get_global_workspace_data(self.workspace, self.user).get_data())
         self.assertEqual(len(data['tabs']), 3)
 
         # Check that we handle the case where there are 2 tabs with the same name
         fillWorkspaceUsingTemplate(self.workspace, self.template2)
-        data = get_global_workspace_data(self.workspace, self.user).get_data()
+        data = json.loads(get_global_workspace_data(self.workspace, self.user).get_data())
         self.assertEqual(len(data['tabs']), 4)
         self.assertNotEqual(data['tabs'][2]['name'], data['tabs'][3]['name'])
 
@@ -722,7 +722,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
     def test_build_workspace_from_rdf_template_utf8_char(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate4, self.user)
-        data = get_global_workspace_data(workspace, self.user).get_data()
+        data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
 
         for t in data['tabs']:
             self.assertEqual(t['name'][0:7], u'Pestaña')
@@ -745,7 +745,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         template3 = self.read_template('wt3.xml')
 
         workspace, _junk = buildWorkspaceFromTemplate(template3, self.user)
-        data = get_global_workspace_data(workspace, self.user).get_data()
+        data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
 
         self.assertEqual(len(data['tabs']), 4)
         self.assertEqual(data['tabs'][0]['name'], 'Tab')
@@ -768,7 +768,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
     def test_complex_workspaces_rdf(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate3, self.user)
 
-        data = get_global_workspace_data(workspace, self.user).get_data()
+        data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
 
         self.assertEqual(len(data['tabs']), 4)
         self.assertEqual(data['tabs'][0]['name'], u'Tab')
