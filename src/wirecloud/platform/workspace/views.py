@@ -63,7 +63,7 @@ def createEmptyWorkspace(workspaceName, user):
     UserWorkspace.objects.create(user=user, workspace=workspace, active=active)
 
     # Tab creation
-    createTab(_('Tab'), user, workspace)
+    createTab(_('Tab'), workspace)
 
     return workspace
 
@@ -275,7 +275,7 @@ class TabCollection(Resource):
             return HttpResponseForbidden()
 
         try:
-            tab = createTab(tab_name, request.user, workspace)
+            tab = createTab(tab_name, workspace)
         except IntegrityError:
             msg = _('A tab with the given name already exists for the workspace')
             return build_error_response(request, 409, msg)

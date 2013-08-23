@@ -136,7 +136,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
         }
 
     for tab_entry in workspace_info['tabs']:
-        tab = createTab(tab_entry.get('name'), user, workspace, allow_renaming=True)
+        tab = createTab(tab_entry.get('name'), workspace, allow_renaming=True)
 
         new_values = {}
         for preference_name in tab_entry['preferences']:

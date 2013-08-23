@@ -46,7 +46,7 @@ def deleteTab(tab, user):
     tab.delete()
 
 
-def createTab(tab_name, user, workspace, allow_renaming=False):
+def createTab(tab_name, workspace, allow_renaming=False):
 
     visible = False
     tabs = Tab.objects.filter(workspace=workspace, visible=True)
