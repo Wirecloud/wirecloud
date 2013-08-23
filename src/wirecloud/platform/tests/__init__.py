@@ -1,7 +1,7 @@
 from wirecloud.platform.tests.plugins import WirecloudPluginTestCase
 from wirecloud.platform.tests.rest_api import ApplicationMashupAPI, ResourceManagementAPI, ExtraApplicationMashupAPI
 from wirecloud.platform.localcatalogue.tests import LocalCatalogueTestCase, PackagedResourcesTestCase
-from wirecloud.platform.wiring.tests import WiringTestCase
+from wirecloud.platform.wiring.tests import WiringTestCase, OperatorCodeEntryTestCase
 from wirecloud.platform.widget.tests import CodeTransformationTestCase
 from wirecloud.platform.workspace.tests import WorkspaceTestCase, WorkspaceCacheTestCase, ParameterizedWorkspaceParseTestCase, ParameterizedWorkspaceGenerationTestCase
 from wirecloud.proxy.tests import ProxyTests, ProxySecureDataTests

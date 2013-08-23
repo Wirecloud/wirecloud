@@ -17,9 +17,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import codecs
 import json
+import os
+import re
 import time
 
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.db import transaction
@@ -29,7 +33,8 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 
-from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudSeleniumTestCase
+from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudTestCase, WirecloudSeleniumTestCase
+from wirecloud.platform import plugins
 from wirecloud.platform.workspace.models import Workspace
 
 
@@ -235,6 +240,75 @@ class WiringTestCase(TransactionTestCase):
         })
         response = client.put(self.wiring_url, data, content_type='application/json')
         self.assertEqual(response.status_code, 403)
+
+
+class OperatorCodeEntryTestCase(WirecloudTestCase):
+
+    XML_NORMALIZATION_RE = re.compile(r'>\s+<')
+    fixtures = ('selenium_test_data',)
+    tags = ('current1',)
+
+    @classmethod
+    def setUpClass(cls):
+        if hasattr(settings, 'FORCE_DOMAIN'):
+            cls.old_FORCE_DOMAIN = settings.FORCE_DOMAIN
+        if hasattr(settings, 'FORCE_PROTO'):
+            cls.old_FORCE_PROTO = settings.FORCE_PROTO
+
+        settings.FORCE_DOMAIN = 'example.com'
+        settings.FORCE_PROTO = 'http'
+        cls.OLD_WIRECLOUD_PLUGINS = getattr(settings, 'WIRECLOUD_PLUGINS', None)
+
+        settings.WIRECLOUD_PLUGINS = ()
+        plugins.clear_cache()
+
+        super(OperatorCodeEntryTestCase, cls).setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+        if hasattr(cls, 'old_FORCE_DOMAIN'):
+            settings.FORCE_DOMAIN = cls.old_FORCE_DOMAIN
+        else:
+            del settings.FORCE_DOMAIN
+
+        if hasattr(cls, 'old_FORCE_PROTO'):
+            settings.FORCE_PROTO = cls.old_FORCE_PROTO
+        else:
+            del settings.FORCE_PROTO
+
+        settings.WIRECLOUD_PLUGINS = cls.OLD_WIRECLOUD_PLUGINS
+        plugins.clear_cache()
+
+        super(OperatorCodeEntryTestCase, cls).tearDownClass()
+
+    def read_file(self, *filename):
+        f = codecs.open(os.path.join(os.path.dirname(__file__), *filename), 'rb')
+        contents = f.read()
+        f.close()
+
+        return contents
+
+    def test_operator_code_entry_get(self):
+
+        client = Client()
+
+        # Authenticate
+        client.login(username='normuser', password='admin')
+
+        # Make the request
+        resource_id = (
+            'Wirecloud',
+            'TestOperator',
+            '1.0',
+        )
+        url = reverse('wirecloud.operator_code_entry', args=resource_id)
+        response = client.get(url, HTTP_ACCEPT='application/xhtml+xml')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/xhtml+xml')
+        final_code = self.XML_NORMALIZATION_RE.sub('><', response.content)
+
+        expected_code = self.read_file('test-data/xhtml1-expected.xhtml')
+        self.assertEqual(final_code, expected_code)
 
 
 class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
