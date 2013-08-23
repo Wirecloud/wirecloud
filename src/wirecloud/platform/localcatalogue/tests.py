@@ -28,7 +28,6 @@ from django.test import TransactionTestCase, Client
 
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.catalogue.utils import delete_resource
 import wirecloud.commons
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
@@ -165,7 +164,7 @@ class LocalCatalogueTestCase(LocalizedTestCase):
         resource_pk = resource.pk
         xhtml_pk = resource.widget.pk
 
-        delete_resource(resource, self.user)
+        resource.delete()
         self.assertRaises(XHTML.DoesNotExist, XHTML.objects.get, pk=xhtml_pk)
         self.assertRaises(Widget.DoesNotExist, Widget.objects.get, resource__pk=resource_pk)
         self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, pk=resource_pk)
@@ -193,7 +192,7 @@ class LocalCatalogueTestCase(LocalizedTestCase):
         self.assertEqual(response.status_code, 200)
         old_code = response.content
 
-        delete_resource(resource, self.user)
+        resource.delete()
         self.assertRaises(XHTML.DoesNotExist, XHTML.objects.get, pk=xhtml_pk)
         self.assertRaises(Widget.DoesNotExist, Widget.objects.get, resource__pk=resource_pk)
         self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, pk=resource_pk)
@@ -413,7 +412,7 @@ class PackagedResourcesTestCase(TransactionTestCase):
         self.assertTrue(os.path.isdir(deployment_path))
         self.assertTrue(os.path.isdir(catalogue_deployment_path))
 
-        delete_resource(resource, self.user)
+        resource.delete()
         self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Morfeo', short_name='Test', version='0.1')
         self.assertFalse(os.path.exists(deployment_path))
         self.assertFalse(os.path.exists(catalogue_deployment_path))
@@ -438,7 +437,7 @@ class PackagedResourcesTestCase(TransactionTestCase):
         resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='PackagedTestMashup', version='1.0')
         self.assertTrue(os.path.isdir(deployment_path))
 
-        delete_resource(resource, self.user)
+        resource.delete()
         self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Wirecloud', short_name='PackagedTestMashup', version='1.0')
         self.assertFalse(os.path.exists(deployment_path))
 
@@ -451,7 +450,7 @@ class PackagedResourcesTestCase(TransactionTestCase):
         resource = CatalogueResource.objects.get(vendor='Wirecloud', short_name='TestOperator', version='1.0')
         self.assertTrue(os.path.isdir(deployment_path))
 
-        delete_resource(resource, self.user)
+        resource.delete()
         self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Wirecloud', short_name='TestOperator', version='1.0')
         self.assertFalse(os.path.exists(deployment_path))
 
