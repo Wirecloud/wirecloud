@@ -27,15 +27,11 @@ from tempfile import mkdtemp
 from urllib2 import URLError, HTTPError
 from urlparse import urlparse
 
-try:
-    from django.test import LiveServerTestCase
-except:
-    class LiveServerTestCase(object):
-        pass
-from django.utils.importlib import import_module
+from django.test import LiveServerTestCase
 from django.test import TransactionTestCase
 from django.test.client import Client
 from django.utils import translation
+from django.utils.importlib import import_module
 
 from wirecloud.platform.localcatalogue.utils import install_resource_to_all_users
 from wirecloud.platform.widget import utils as showcase
