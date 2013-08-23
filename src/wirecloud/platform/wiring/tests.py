@@ -246,7 +246,7 @@ class OperatorCodeEntryTestCase(WirecloudTestCase):
 
     XML_NORMALIZATION_RE = re.compile(r'>\s+<')
     fixtures = ('selenium_test_data',)
-    tags = ('current1',)
+    tags = ('wiring',)
 
     @classmethod
     def setUpClass(cls):
