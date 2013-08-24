@@ -5,8 +5,6 @@ from django.http import HttpResponse
 from django.utils.cache import patch_cache_control
 from django.utils.http import http_date
 
-from wirecloud.commons.utils.encoding import LazyEncoder
-
 
 def no_cache(func):
 

@@ -32,15 +32,13 @@
 import json
 import random
 import re
-from urlparse import urljoin
 
 from django.core.cache import cache
 from django.utils.translation import ugettext as _
 
 from wirecloud.commons.utils.cache import CacheableData
 from wirecloud.commons.utils.encoding import LazyEncoder
-from wirecloud.commons.utils.http import get_absolute_reverse_url
-from wirecloud.platform.models import IWidget, PublishedWorkspace, Tab, UserPrefOption, UserWorkspace, Variable, VariableDef, VariableValue
+from wirecloud.platform.models import IWidget, PublishedWorkspace, Tab, UserWorkspace, Variable, VariableValue
 from wirecloud.platform.context.utils import get_workspace_context, get_context_values
 from wirecloud.platform.preferences.views import get_workspace_preference_values, get_tab_preference_values
 from wirecloud.platform.workspace.utils import createTab, decrypt_value, encrypt_value
