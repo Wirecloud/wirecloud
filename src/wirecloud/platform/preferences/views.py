@@ -93,6 +93,8 @@ def update_tab_preferences(tab, preferences_json):
 
         preference.save()
 
+    from wirecloud.platform.get_data import _invalidate_cached_variable_values
+    _invalidate_cached_variable_values(tab.workspace)
 
 def make_workspace_preferences_cache_key(workspace_id):
     return '_workspace_preferences_cache/' + str(workspace_id)
@@ -137,6 +139,9 @@ def update_workspace_preferences(workspace, preferences_json):
 
     cache_key = make_workspace_preferences_cache_key(workspace.id)
     cache.delete(cache_key)
+
+    from wirecloud.platform.get_data import _invalidate_cached_variable_values
+    _invalidate_cached_variable_values(workspace)
 
 
 class PlatformPreferencesCollection(Resource):
@@ -216,7 +221,7 @@ class TabPreferencesCollection(Resource):
     def create(self, request, workspace_id, tab_id):
 
         # Check Tab existance and owned by this user
-        tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
+        tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
 
         try:
             preferences_json = json.loads(request.raw_post_data)
