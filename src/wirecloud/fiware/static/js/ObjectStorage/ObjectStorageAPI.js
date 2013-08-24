@@ -147,7 +147,9 @@
     ObjectStorageAPI.prototype.uploadFile = function uploadFile(container, file, token, options) {
         var file_name, url;
 
-        if (!(file instanceof Blob)) {
+        // This line doesn't work as widgets/operators run in a separated enviroment (so their Blob/File classes are different that the ones available in the environment where Wirecloud is running)
+        //if (!(file instanceof Blob)) {
+        if (file == null || !('type' in file)) {
             throw new TypeError('file must be an instance of Blob');
         }
 
