@@ -20,7 +20,7 @@
 import json
 
 from django.core.cache import cache
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
@@ -178,7 +178,9 @@ class WorkspacePreferencesCollection(Resource):
     def read(self, request, workspace_id):
 
         # Check Workspace existance and owned by this user
-        workspace = get_object_or_404(Workspace, users=request.user, pk=workspace_id)
+        workspace = get_object_or_404(Workspace, pk=workspace_id)
+        if not (request.user.is_superuser or workspace.users.filter(pk=request.user.pk).exists()):
+            return HttpResponseForbidden()
 
         result = get_workspace_preference_values(workspace.id)
 
@@ -190,7 +192,9 @@ class WorkspacePreferencesCollection(Resource):
     def create(self, request, workspace_id):
 
         # Check Workspace existance and owned by this user
-        workspace = get_object_or_404(Workspace, users=request.user, pk=workspace_id)
+        workspace = get_object_or_404(Workspace, pk=workspace_id)
+        if not (request.user.is_superuser or workspace.users.filter(pk=request.user.pk).exists()):
+            return HttpResponseForbidden()
 
         try:
             preferences_json = json.loads(request.raw_post_data)
@@ -209,7 +213,9 @@ class TabPreferencesCollection(Resource):
     def read(self, request, workspace_id, tab_id):
 
         # Check Tab existance and owned by this user
-        tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
+        tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
+        if not (request.user.is_superuser or tab.workspace.users.filter(pk=request.user.pk).exists()):
+            return HttpResponseForbidden()
 
         result = get_tab_preference_values(tab)
 
@@ -221,7 +227,9 @@ class TabPreferencesCollection(Resource):
     def create(self, request, workspace_id, tab_id):
 
         # Check Tab existance and owned by this user
-        tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
+        tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
+        if not (request.user.is_superuser or tab.workspace.users.filter(pk=request.user.pk).exists()):
+            return HttpResponseForbidden()
 
         try:
             preferences_json = json.loads(request.raw_post_data)
