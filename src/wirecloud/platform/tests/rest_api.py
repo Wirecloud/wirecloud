@@ -40,6 +40,15 @@ from wirecloud.platform.widget import utils as showcase
 __test__ = False
 
 
+def check_get_requires_permission(self, url):
+
+    # Authenticate
+    self.client.login(username='emptyuser', password='admin')
+
+    response = self.client.get(url, HTTP_ACCEPT='application/json')
+    self.assertEqual(response.status_code, 403)
+
+
 class ApplicationMashupAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
@@ -358,13 +367,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
     def test_workspace_entry_read_requires_permission(self):
 
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 1})
-
-        # Authenticate
-        self.client.login(username='emptyuser', password='admin')
-
-        # Make the request
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 403)
+        check_get_requires_permission(self, url)
 
     def test_workspace_entry_read(self):
 
@@ -1024,13 +1027,7 @@ class ResourceManagementAPI(WirecloudTestCase):
             '1.0',
         )
         url = reverse('wirecloud_showcase.resource_entry', args=resource_id)
-
-        # Authenticate
-        self.client.login(username='emptyuser', password='admin')
-
-        # Make the request
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 403)
+        check_get_requires_permission(self, url)
 
     def test_resource_entry_delete_requires_authentication(self):
 
