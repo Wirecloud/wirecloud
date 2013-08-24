@@ -730,7 +730,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(iwidget3_vars['text'].get('readonly', False), False)
 
     def test_fill_workspace_using_template(self):
-        template = cls.read_template('wt1.xml')
+        template = self.read_template('wt1.xml')
         fillWorkspaceUsingTemplate(self.workspace, template)
         data = json.loads(get_global_workspace_data(self.workspace, self.user).get_data())
         self.assertEqual(self.workspace.name, 'Testing')
@@ -762,7 +762,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
     def test_build_workspace_from_rdf_template_utf8_char(self):
         template = self.read_template('wt4.rdf')
-        workspace, _junk = buildWorkspaceFromTemplate(self.template, self.user)
+        workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
         data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
 
         for t in data['tabs']:
