@@ -48,6 +48,38 @@
         });
     };
 
+    ObjectStorageAPI.prototype.createContainer = function listContainer(container, token, options) {
+        var url = this.url + encodeURIComponent(container);
+
+        if (options == null) {
+            options = {};
+        }
+
+        MashupPlatform.http.makeRequest(url, {
+            method: "PUT",
+            requestHeaders: {
+                "Accept": "application/json",
+                "X-Auth-Token": token
+            },
+            onSuccess: function (transport) {
+                var created = transport.status_code === 204;
+                if (typeof options.onSuccess === 'function') {
+                    options.onSuccess(created);
+                }
+            },
+            onFailure: function (transport) {
+                if (typeof options.onFailure === 'function') {
+                    options.onFailure();
+                }
+            },
+            onComplete: function (transport) {
+                if (typeof options.onComplete === 'function') {
+                    options.onComplete();
+                }
+            }
+        });
+    };
+
     ObjectStorageAPI.prototype.listContainer = function listContainer(container, token, options) {
 
         var url = this.url + encodeURIComponent(container);
