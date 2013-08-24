@@ -48,6 +48,14 @@ def check_get_requires_permission(self, url):
     response = self.client.get(url, HTTP_ACCEPT='application/json')
     self.assertEqual(response.status_code, 403)
 
+def check_post_requires_permission(self, url, data):
+
+    # Authenticate
+    self.client.login(username='emptyuser', password='admin')
+
+    response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+    self.assertEqual(response.status_code, 403)
+
 
 class ApplicationMashupAPI(WirecloudTestCase):
 
@@ -564,15 +572,10 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
 
-        # Authenticate
-        self.client.login(username='emptyuser', password='admin')
-
-        # Make the request
         data = {
             'name': 'rest_api_test',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 403)
+        check_post_requires_permission(self, url, data)
 
     def test_tab_collection_post(self):
 
@@ -690,16 +693,10 @@ class ApplicationMashupAPI(WirecloudTestCase):
     def test_iwidget_collection_post_requires_permission(self):
 
         url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 1})
-
-        # Authenticate
-        self.client.login(username='emptyuser', password='admin')
-
-        # Make the request
         data = {
             'widget': 'Wirecloud/Test/1.0',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 403)
+        check_post_requires_permission(self, url, data)
 
     def test_iwidget_collection_post(self):
 
@@ -736,16 +733,10 @@ class ApplicationMashupAPI(WirecloudTestCase):
     def test_iwidget_entry_post_requires_permission(self):
 
         url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
-
-        # Authenticate
-        self.client.login(username='emptyuser', password='admin')
-
-        # Make the request
         data = {
             'name': 'New Name',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 403)
+        check_post_requires_permission(self, url, data)
 
     def test_iwidget_entry_post(self):
 
@@ -789,16 +780,10 @@ class ApplicationMashupAPI(WirecloudTestCase):
     def test_iwidget_preferences_entry_post_requires_permission(self):
 
         url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
-
-        # Authenticate
-        self.client.login(username='emptyuser', password='admin')
-
-        # Make the request
         data = {
             'text': 'new value',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 403)
+        check_post_requires_permission(self, url, data)
 
     def test_iwidget_preferences_entry_post(self):
 
