@@ -37,8 +37,9 @@ from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 from wirecloud.platform.get_data import get_global_workspace_data
-from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Variable, VariableValue, Workspace
 from wirecloud.platform.iwidget.utils import SaveIWidget, deleteIWidget
+from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Variable, VariableValue, Workspace
+from wirecloud.platform.preferences.views import update_workspace_preferences
 from wirecloud.platform.workspace.packageCloner import PackageCloner
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_template_from_workspace, build_rdf_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
@@ -636,12 +637,6 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
         self.user = User.objects.create_user('test', 'test@example.com', 'test')
         self.workspace = createEmptyWorkspace('Testing', self.user)
-        self.template1 = self.read_template('wt1.xml')
-        self.template2 = self.read_template('wt2.xml')
-        self.rdfTemplate1 = self.read_template('wt1.rdf')
-        self.rdfTemplate2 = self.read_template('wt2.rdf')
-        self.rdfTemplate3 = self.read_template('wt3.rdf')
-        self.rdfTemplate4 = self.read_template('wt4.rdf')
 
     def read_template(self, filename):
         f = codecs.open(os.path.join(os.path.dirname(__file__), 'test-data', filename), 'rb')
@@ -693,49 +688,97 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(iwidget2_vars['text'].get('hidden', False), False)
         self.assertEqual(iwidget2_vars['text'].get('readonly', False), False)
 
+    def check_workspace_with_params(self, workspace):
+
+        workspace_data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
+        self.assertEqual(workspace_data['extra_prefs'], {'param': {'type': 'text', 'inheritable': False, 'label': u'Parameter'}})
+
+        update_workspace_preferences(workspace, {'param': {'value': 'world'}});
+        workspace_data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
+
+        iwidget1 = None
+        iwidget2 = None
+        iwidget3 = None
+        for iwidget in workspace_data['tabs'][0]['iwidgets']:
+
+            if iwidget['name'] == 'Test (1)':
+                iwidget1 = iwidget
+            elif iwidget['name'] == 'Test (2)':
+                iwidget2 = iwidget
+            else:
+                iwidget3 = iwidget
+
+        # Check iwidget 1 data
+        iwidget1_vars = iwidget1['variables']
+
+        self.assertEqual(iwidget1_vars['text']['value'], 'initial world')
+        self.assertEqual(iwidget1_vars['text'].get('hidden', False), False)
+        self.assertEqual(iwidget1_vars['text']['readonly'], True)
+
+        # Check iwidget 2 data
+        iwidget2_vars = iwidget2['variables']
+
+        self.assertEqual(iwidget2_vars['text']['value'], 'initial world')
+        self.assertEqual(iwidget2_vars['text']['hidden'], True)
+        self.assertEqual(iwidget2_vars['text']['readonly'], True)
+
+        # Check iwidget 3 data
+        iwidget3_vars = iwidget3['variables']
+
+        self.assertEqual(iwidget3_vars['text']['value'], 'initial %(params.param)')
+        self.assertEqual(iwidget3_vars['text'].get('hidden', False), False)
+        self.assertEqual(iwidget3_vars['text'].get('readonly', False), False)
+
     def test_fill_workspace_using_template(self):
-        fillWorkspaceUsingTemplate(self.workspace, self.template1)
+        template = cls.read_template('wt1.xml')
+        fillWorkspaceUsingTemplate(self.workspace, template)
         data = json.loads(get_global_workspace_data(self.workspace, self.user).get_data())
         self.assertEqual(self.workspace.name, 'Testing')
         self.assertEqual(len(data['tabs']), 2)
 
+        template = self.read_template('wt2.xml')
         # Workspace template 2 adds a new Tab
-        fillWorkspaceUsingTemplate(self.workspace, self.template2)
+        fillWorkspaceUsingTemplate(self.workspace, template)
         data = json.loads(get_global_workspace_data(self.workspace, self.user).get_data())
         self.assertEqual(len(data['tabs']), 3)
 
         # Check that we handle the case where there are 2 tabs with the same name
-        fillWorkspaceUsingTemplate(self.workspace, self.template2)
+        fillWorkspaceUsingTemplate(self.workspace, template)
         data = json.loads(get_global_workspace_data(self.workspace, self.user).get_data())
         self.assertEqual(len(data['tabs']), 4)
         self.assertNotEqual(data['tabs'][2]['name'], data['tabs'][3]['name'])
 
     def test_build_workspace_from_template(self):
-        workspace, _junk = buildWorkspaceFromTemplate(self.template1, self.user)
+        template = self.read_template('wt1.xml')
+        workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
 
         self.check_basic_workspace_structure(workspace)
 
     def test_build_workspace_from_rdf_template(self):
-        workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate1, self.user)
+        template = self.read_template('wt1.rdf')
+        workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
 
         self.check_basic_workspace_structure(workspace)
 
     def test_build_workspace_from_rdf_template_utf8_char(self):
-        workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate4, self.user)
+        template = self.read_template('wt4.rdf')
+        workspace, _junk = buildWorkspaceFromTemplate(self.template, self.user)
         data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
 
         for t in data['tabs']:
             self.assertEqual(t['name'][0:7], u'Pestaña')
 
     def test_blocked_connections(self):
-        workspace, _junk = buildWorkspaceFromTemplate(self.template2, self.user)
+        template = self.read_template('wt2.xml')
+        workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
 
         wiring_status = json.loads(workspace.wiringStatus)
         self.assertEqual(len(wiring_status['connections']), 1)
         self.assertEqual(wiring_status['connections'][0]['readOnly'], True)
 
     def test_bloqued_connections_rdf(self):
-        workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate2, self.user)
+        template = self.read_template('wt2.rdf')
+        workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
 
         wiring_status = json.loads(workspace.wiringStatus)
         self.assertEqual(len(wiring_status['connections']), 1)
@@ -766,7 +809,8 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(wiring_status['connections'][0]['target']['endpoint'], 'slot')
 
     def test_complex_workspaces_rdf(self):
-        workspace, _junk = buildWorkspaceFromTemplate(self.rdfTemplate3, self.user)
+        template = self.read_template('wt3.rdf')
+        workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
 
         data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
 
@@ -786,3 +830,15 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(wiring['connections'][0]['source']['endpoint'], 'event')
         self.assertEqual(wiring['connections'][0]['target']['type'], 'iwidget')
         self.assertEqual(wiring['connections'][0]['target']['endpoint'], 'slot')
+
+    def test_workspace_with_params(self):
+        template = self.read_template('wt5.xml')
+
+        workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
+        self.check_workspace_with_params(workspace)
+
+    def test_workspace_with_params_rdf(self):
+        template = self.read_template('wt5.rdf')
+
+        workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
+        self.check_workspace_with_params(workspace)

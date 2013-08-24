@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Template xmlns="http://morfeo-project.org/2007/Template">
+    <Catalog.ResourceDescription>
+        <Vendor>Wirecloud Test Suite</Vendor>
+        <Name>Test Mashup</Name>
+        <Version>1</Version>
+        <Author>test</Author>
+        <Mail>a@b.com</Mail>
+        <Description>Mashup for testing</Description>
+        <ImageURI>images/mashup.png</ImageURI>
+        <WikiURI>docs/index.html</WikiURI>
+
+        <IncludedResources>
+            <Param name="param" type="text" label="Parameter" />
+            <Tab id="1" name="Tab">
+                <Preference name="smart" value="False"/>
+                <Resource title="Test (1)" version="1.0" vendor="Wirecloud" id="1" name="Test">
+                    <Position y="0" x="0" z="0"/>
+                    <Rendering width="6" layout="0" minimized="False" fulldragboard="False" height="24"/>
+                    <Preference name="list" value="default" readonly="true" hidden="true"/>
+                    <Preference name="text" value="initial %(params.param)" readonly="true" hidden="false"/>
+                </Resource>
+                <Resource title="Test (2)" version="1.0" vendor="Wirecloud" id="2" name="Test">
+                    <Position y="0" x="0" z="0"/>
+                    <Rendering width="6" layout="0" minimized="False" fulldragboard="False" height="24"/>
+                    <Preference name="list" value="default"/>
+                    <Preference name="text" value="initial %(params.param)" readonly="true" hidden="true"/>
+                </Resource>
+                <Resource title="Test (3)" version="1.0" vendor="Wirecloud" id="3" name="Test">
+                    <Position y="0" x="0" z="0"/>
+                    <Rendering width="6" layout="0" minimized="False" fulldragboard="False" height="24"/>
+                    <Preference name="list" value="default"/>
+                    <Preference name="text" value="initial %(params.param)" readonly="false" hidden="false"/>
+                </Resource>
+            </Tab>
+        </IncludedResources>
+    </Catalog.ResourceDescription>
+
+    <Platform.Wiring>
+        <Connection id="1">
+            <Source id="1" type="iwidget" endpoint="test" />
+            <Target id="2" type="iwidget" endpoint="test" />
+        </Connection>
+    </Platform.Wiring>
+</Template>
