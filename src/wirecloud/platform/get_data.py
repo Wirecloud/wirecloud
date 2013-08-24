@@ -352,7 +352,7 @@ def _get_global_workspace_data(workspaceDAO, user):
     data_ret['empty_params'] = forced_values['empty_params']
     data_ret['extra_prefs'] = forced_values['extra_prefs']
     if len(forced_values['empty_params']) > 0:
-        return data_ret
+        return json.dumps(data_ret, cls=LazyEncoder)
 
     cache_manager = VariableValueCacheManager(workspaceDAO, user, forced_values)
 
