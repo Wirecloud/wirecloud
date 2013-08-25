@@ -169,6 +169,32 @@ def check_put_requires_permission(self, url, data):
     self.assertEqual(response.status_code, 403)
 
 
+def check_delete_requires_authentication(self, url, test_after_request=None):
+
+    response = self.client.delete(url, HTTP_ACCEPT='application/json')
+    self.assertEqual(response.status_code, 401)
+    self.assertTrue('WWW-Authenticate' in response)
+
+    # Error response should be a dict
+    self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+    response_data = json.loads(response.content)
+    self.assertTrue(isinstance(response_data, dict))
+
+    if test_after_request is not None:
+        test_after_request(self)
+
+    # Check using Accept: text/html
+    response = self.client.delete(url, HTTP_ACCEPT='text/html')
+    self.assertEqual(response.status_code, 401)
+    self.assertTrue('WWW-Authenticate' in response)
+
+    # Content type of the response should be text/html
+    self.assertEqual(response['Content-Type'].split(';', 1)[0], 'text/html')
+
+    if test_after_request is not None:
+        test_after_request(self)
+
+
 class ApplicationMashupAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
@@ -483,26 +509,11 @@ class ApplicationMashupAPI(WirecloudTestCase):
     def test_workspace_entry_delete_requires_authentication(self):
 
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 1})
+        def workspace_not_deleted(self):
+            # Workspace should be not deleted
+            self.assertTrue(Workspace.objects.filter(name='ExistingWorkspace').exists())
 
-        response = self.client.delete(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
-
-        # Error response should be a dict
-        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        response_data = json.loads(response.content)
-        self.assertTrue(isinstance(response_data, dict))
-
-        # Workspace should be not deleted
-        self.assertTrue(Workspace.objects.filter(name='ExistingWorkspace').exists())
-
-        # Check using Accept: text/html
-        response = self.client.delete(url, HTTP_ACCEPT='text/html')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
-
-        # Content type of the response should be text/html
-        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'text/html')
+        check_delete_requires_authentication(self, url, workspace_not_deleted)
 
     def test_workspace_entry_delete_requires_permission(self):
 
@@ -730,26 +741,11 @@ class ApplicationMashupAPI(WirecloudTestCase):
     def test_tab_entry_delete_requires_authentication(self):
 
         url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 1, 'tab_id': 1})
+        def tab_not_deleted(self):
+            # Tab should be not deleted
+            self.assertTrue(Tab.objects.filter(name='ExistingTab').exists())
 
-        response = self.client.delete(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
-
-        # Error response should be a dict
-        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        response_data = json.loads(response.content)
-        self.assertTrue(isinstance(response_data, dict))
-
-        # Tab should be not deleted
-        self.assertTrue(Tab.objects.filter(name='ExistingTab').exists())
-
-        # Check using Accept: text/html
-        response = self.client.delete(url, HTTP_ACCEPT='text/html')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
-
-        # Content type of the response should be text/html
-        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'text/html')
+        check_delete_requires_authentication(self, url, tab_not_deleted)
 
     def test_tab_entry_delete_requires_permission(self):
 
@@ -907,14 +903,11 @@ class ApplicationMashupAPI(WirecloudTestCase):
     def test_iwidget_entry_delete_requires_authentication(self):
 
         url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+        def iwidget_not_deleted(self):
+            # IWidget should not be deleted
+            IWidget.objects.get(pk=2)
 
-        # Make the request
-        response = self.client.delete(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
-
-        # IWidget should not be deleted
-        IWidget.objects.get(pk=2)
+        check_delete_requires_authentication(self, url, iwidget_not_deleted)
 
     def test_iwidget_entry_delete_requires_permission(self):
 
@@ -1108,9 +1101,7 @@ class ResourceManagementAPI(WirecloudTestCase):
     def test_resource_entry_delete_requires_authentication(self):
 
         url = reverse('wirecloud_showcase.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
-
-        response = self.client.delete(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
+        check_delete_requires_authentication(self, url)
 
     def test_resource_entry_delete(self):
 
