@@ -654,6 +654,74 @@ class ApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
         check_post_bad_request_syntax(self, url)
 
+    def test_tab_entry_put_requires_authentication(self):
+
+        url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 1, 'tab_id': 1})
+        data = {
+            'name': 'new tab name'
+        }
+        check_put_requires_authentication(self, url, data)
+
+    def test_tab_entry_put_requires_permission(self):
+
+        url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 1, 'tab_id': 1})
+        data = {
+            'name': 'new tab name'
+        }
+        check_put_requires_permission(self, url, json.dumps(data))
+
+    def test_tab_entry_put(self):
+
+        url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 3, 'tab_id': 103})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request (rename tab)
+        data = {
+            'name': 'new tab name'
+        }
+        response = self.client.put(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+
+        # Tab should be renamed
+        tab2 = Tab.objects.get(pk=103)
+        self.assertEqual(tab2.name, 'new tab name')
+        self.assertFalse(tab2.visible)
+
+        # Mark second tab as the default tab
+        data = {
+            'visible': True
+        }
+        response = self.client.put(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+
+        # Tab should be marked as the default one
+        tab2 = Tab.objects.get(pk=103)
+        self.assertEqual(tab2.name, 'new tab name')
+        self.assertTrue(tab2.visible)
+        tab1 = Tab.objects.get(pk=102)
+        self.assertFalse(tab1.visible)
+
+        # Mark first tab as the default tab
+        url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 3, 'tab_id': 102})
+        data = {
+            'visible': 'true'
+        }
+        response = self.client.put(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+
+        # Tab should be marked as the default one
+        tab2 = Tab.objects.get(pk=103)
+        self.assertFalse(tab2.visible)
+        tab1 = Tab.objects.get(pk=102)
+        self.assertTrue(tab1.visible)
+
+    def test_tab_entry_put_bad_request_syntax(self):
+
+        url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 1, 'tab_id': 1})
+        check_put_bad_request_syntax(self, url)
+
     def test_tab_entry_delete_requires_authentication(self):
 
         url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 1, 'tab_id': 1})
