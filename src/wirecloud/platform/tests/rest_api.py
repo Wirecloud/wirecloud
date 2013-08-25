@@ -96,6 +96,53 @@ def check_post_bad_request_syntax(self, url):
     self.assertTrue(isinstance(response_data, dict))
 
 
+def check_put_bad_request_syntax(self, url):
+
+    # Authenticate
+    self.client.login(username='user_with_workspaces', password='admin')
+
+    # Test bad json syntax
+    response = self.client.put(url, 'bad syntax', content_type='application/json', HTTP_ACCEPT='application/json')
+    self.assertEqual(response.status_code, 400)
+    response_data = json.loads(response.content)
+    self.assertTrue(isinstance(response_data, dict))
+
+
+def check_put_requires_authentication(self, url, data, test_after_request=None):
+
+    response = self.client.put(url, data, HTTP_ACCEPT='application/json')
+    self.assertEqual(response.status_code, 401)
+    self.assertTrue('WWW-Authenticate' in response)
+
+    # Error response should be a dict
+    self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+    response_data = json.loads(response.content)
+    self.assertTrue(isinstance(response_data, dict))
+
+    if test_after_request is not None:
+        test_after_request(self)
+
+    # Check using Accept: text/html
+    response = self.client.put(url, data, HTTP_ACCEPT='text/html')
+    self.assertEqual(response.status_code, 401)
+    self.assertTrue('WWW-Authenticate' in response)
+
+    # Content type of the response should be text/html
+    self.assertEqual(response['Content-Type'].split(';', 1)[0], 'text/html')
+
+    if test_after_request is not None:
+        test_after_request(self)
+
+
+def check_put_requires_permission(self, url, data):
+
+    # Authenticate
+    self.client.login(username='emptyuser', password='admin')
+
+    response = self.client.put(url, data, content_type='application/json', HTTP_ACCEPT='application/json')
+    self.assertEqual(response.status_code, 403)
+
+
 class ApplicationMashupAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
@@ -512,17 +559,11 @@ class ApplicationMashupAPI(WirecloudTestCase):
     def test_workspace_wiring_entry_put_requires_permission(self):
 
         url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 1})
-
-        # Authenticate
-        self.client.login(username='emptyuser', password='admin')
-
-        # Make the request
-        data = json.dumps({
+        data = {
             'operators': [{'name': 'Operator1'}],
             'connections': [],
-        })
-        response = self.client.put(url, data, content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 403)
+        }
+        check_put_requires_permission(self, url, json.dumps(data))
 
     def test_workspace_wiring_entry_put(self):
 
@@ -548,7 +589,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
     def test_workspace_wiring_entry_put_bad_request_syntax(self):
 
         url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 1})
-        check_post_bad_request_syntax(self, url)
+        check_put_bad_request_syntax(self, url)
 
     def test_tab_collection_post_requires_authentication(self):
 
