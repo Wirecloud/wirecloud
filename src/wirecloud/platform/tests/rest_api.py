@@ -49,6 +49,32 @@ def check_get_requires_permission(self, url):
     self.assertEqual(response.status_code, 403)
 
 
+def check_post_requires_authentication(self, url, data, test_after_request=None):
+
+    response = self.client.post(url, data, content_type='application/json', HTTP_ACCEPT='application/json')
+    self.assertEqual(response.status_code, 401)
+    self.assertTrue('WWW-Authenticate' in response)
+
+    # Error response should be a dict
+    self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+    response_data = json.loads(response.content)
+    self.assertTrue(isinstance(response_data, dict))
+
+    if test_after_request is not None:
+        test_after_request(self)
+
+    # Check using Accept: text/html
+    response = self.client.post(url, data, content_type='application/json', HTTP_ACCEPT='text/html')
+    self.assertEqual(response.status_code, 401)
+    self.assertTrue('WWW-Authenticate' in response)
+
+    # Content type of the response should be text/html
+    self.assertEqual(response['Content-Type'].split(';', 1)[0], 'text/html')
+
+    if test_after_request is not None:
+        test_after_request(self)
+
+
 def check_post_requires_permission(self, url, data):
 
     # Authenticate
@@ -129,25 +155,11 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'name': 'test',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
+        def test_workspace_not_created(self):
+            # Workspace should be not created
+            self.assertFalse(Workspace.objects.filter(name='test').exists())
 
-        # Error response should be a dict
-        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        response_data = json.loads(response.content)
-        self.assertTrue(isinstance(response_data, dict))
-
-        # Workspace should be not created
-        self.assertFalse(Workspace.objects.filter(name='test').exists())
-
-        # Check using Accept: text/html
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='text/html')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
-
-        # Content type of the response should be text/html
-        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'text/html')
+        check_post_requires_authentication(self, url, json.dumps(data), test_workspace_not_created)
 
     def test_workspace_collection_post(self):
 
@@ -545,25 +557,11 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'name': 'rest_api_test',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
+        def test_tab_not_created(self):
+            # Tab should be not created
+            self.assertFalse(Tab.objects.filter(name='rest_api_test').exists())
 
-        # Error response should be a dict
-        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        response_data = json.loads(response.content)
-        self.assertTrue(isinstance(response_data, dict))
-
-        # Tab should be not created
-        self.assertFalse(Tab.objects.filter(name='rest_api_test').exists())
-
-        # Check using Accept: text/html
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='text/html')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
-
-        # Content type of the response should be text/html
-        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'text/html')
+        check_post_requires_authentication(self, url, json.dumps(data), test_tab_not_created)
 
     def test_tab_collection_post_requires_permission(self):
 
@@ -672,12 +670,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'widget': 'Wirecloud/Test/1.0',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
-
-        # IWidget should be not created
-        # TODO
+        check_post_requires_authentication(self, url, json.dumps(data))
 
     def test_iwidget_collection_post_requires_permission(self):
 
@@ -711,13 +704,13 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'name': 'New Name',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
 
-        # IWidget should be not updated
-        iwidget = IWidget.objects.get(pk=2)
-        self.assertNotEqual(iwidget.name, 'New Name')
+        def iwidget_not_created(self):
+            # IWidget should be not updated
+            iwidget = IWidget.objects.get(pk=2)
+            self.assertNotEqual(iwidget.name, 'New Name')
+
+        check_post_requires_authentication(self, url, json.dumps(data), iwidget_not_created)
 
     def test_iwidget_entry_post_requires_permission(self):
 
@@ -754,17 +747,17 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'text': 'new value',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
 
-        # IWidget preferences should not be updated
-        variable_value = VariableValue.objects.get(
-            user__username='user_with_workspaces',
-            variable__vardef__name='text',
-            variable__iwidget__id=2
-        )
-        self.assertNotEqual(variable_value.value, 'new value')
+        def iwidget_preference_not_created(self):
+            # IWidget preferences should not be updated
+            variable_value = VariableValue.objects.get(
+                user__username='user_with_workspaces',
+                variable__vardef__name='text',
+                variable__iwidget__id=2
+            )
+            self.assertNotEqual(variable_value.value, 'new value')
+
+        check_post_requires_authentication(self, url, json.dumps(data), iwidget_preference_not_created)
 
     def test_iwidget_preferences_entry_post_requires_permission(self):
 
@@ -906,9 +899,7 @@ class ResourceManagementAPI(WirecloudTestCase):
     def test_resource_collection_post_requires_authentication(self):
 
         url = reverse('wirecloud_showcase.resource_collection')
-
-        response = self.client.post(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
+        check_post_requires_authentication(self, url, '{}')
 
     def test_resource_collection_post(self):
 
@@ -1128,9 +1119,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'pref1': {'value': '5'},
             'pref2': {'value': 'false'}
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
+        check_post_requires_authentication(self, url, json.dumps(data))
 
     def test_platform_preference_collection_post(self):
 
@@ -1160,18 +1149,13 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'name': 'RenamedWorkspace',
             'active': True,
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
 
-        # Error response should be a dict
-        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        response_data = json.loads(response.content)
-        self.assertTrue(isinstance(response_data, dict))
+        def workspace_not_changed(self):
+            user_workspace = UserWorkspace.objects.get(pk=2)
+            self.assertEqual(user_workspace.workspace.name, 'Workspace')
+            self.assertEqual(user_workspace.active, True)
 
-        user_workspace = UserWorkspace.objects.get(pk=2)
-        self.assertEqual(user_workspace.workspace.name, 'Workspace')
-        self.assertEqual(user_workspace.active, True)
+        check_post_requires_authentication(self, url, json.dumps(data), workspace_not_changed)
 
     def test_workspace_entry_post(self):
 
@@ -1214,9 +1198,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         data = [
             {'id': 2, 'value': 'new_value'}
         ]
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
+        check_post_requires_authentication(self, url, json.dumps(data))
 
     def test_workspace_variable_collection_post(self):
 
@@ -1255,9 +1237,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         data = [
             {'id': 2, 'value': 'new_value'}
         ]
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
+        check_post_requires_authentication(self, url, json.dumps(data))
 
     def test_workspace_merge_service_post(self):
 
@@ -1363,9 +1343,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'pref1': {'inherit': 'false', 'value': '5'},
             'pref2': {'inherit': 'true', 'value': 'false'}
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
+        check_post_requires_authentication(self, url, json.dumps(data))
 
     def test_workspace_preference_collection_post_requires_permission(self):
 
@@ -1429,9 +1407,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'pref1': {'inherit': 'false', 'value': '5'},
             'pref2': {'inherit': 'true', 'value': 'false'}
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
+        check_post_requires_authentication(self, url, json.dumps(data))
 
     def test_tab_preference_collection_post_requires_permission(self):
 
