@@ -48,6 +48,7 @@ def check_get_requires_permission(self, url):
     response = self.client.get(url, HTTP_ACCEPT='application/json')
     self.assertEqual(response.status_code, 403)
 
+
 def check_post_requires_permission(self, url, data):
 
     # Authenticate
@@ -55,6 +56,18 @@ def check_post_requires_permission(self, url, data):
 
     response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
     self.assertEqual(response.status_code, 403)
+
+
+def check_post_bad_request_syntax(self, url):
+
+    # Authenticate
+    self.client.login(username='user_with_workspaces', password='admin')
+
+    # Test bad json syntax
+    response = self.client.post(url, 'bad syntax', content_type='application/json', HTTP_ACCEPT='application/json')
+    self.assertEqual(response.status_code, 400)
+    response_data = json.loads(response.content)
+    self.assertTrue(isinstance(response_data, dict))
 
 
 class ApplicationMashupAPI(WirecloudTestCase):
@@ -338,15 +351,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
     def test_workspace_collection_post_bad_request_syntax(self):
 
         url = reverse('wirecloud.workspace_collection')
-
-        # Authenticate
-        self.client.login(username='normuser', password='admin')
-
-        # Test bad json syntax
-        response = self.client.post(url, 'bad syntax', content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 400)
-        response_data = json.loads(response.content)
-        self.assertTrue(isinstance(response_data, dict))
+        check_post_bad_request_syntax(self, url)
 
     def test_workspace_entry_read_requires_authentication(self):
 
@@ -531,15 +536,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
     def test_workspace_wiring_entry_put_bad_request_syntax(self):
 
         url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 1})
-
-        # Authenticate
-        self.client.login(username='user_with_workspaces', password='admin')
-
-        # Test bad json syntax
-        response = self.client.put(url, 'bad syntax', content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 400)
-        response_data = json.loads(response.content)
-        self.assertTrue(isinstance(response_data, dict))
+        check_post_bad_request_syntax(self, url)
 
     def test_tab_collection_post_requires_authentication(self):
 
@@ -616,15 +613,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
     def test_tab_collection_post_bad_request_syntax(self):
 
         url = reverse('wirecloud.tab_collection', kwargs={'workspace_id': 1})
-
-        # Authenticate
-        self.client.login(username='user_with_workspaces', password='admin')
-
-        # Test bad json syntax
-        response = self.client.post(url, 'bad syntax', content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 400)
-        response_data = json.loads(response.content)
-        self.assertTrue(isinstance(response_data, dict))
+        check_post_bad_request_syntax(self, url)
 
     def test_tab_entry_delete_requires_authentication(self):
 
@@ -1211,15 +1200,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
     def test_workspace_entry_post_bad_request_syntax(self):
 
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 2})
-
-        # Authenticate
-        self.client.login(username='user_with_workspaces', password='admin')
-
-        # Test bad json syntax
-        response = self.client.post(url, 'bad syntax', content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 400)
-        response_data = json.loads(response.content)
-        self.assertTrue(isinstance(response_data, dict))
+        check_post_bad_request_syntax(self, url)
 
     def test_workspace_variable_collection_post_requires_authentication(self):
 
@@ -1260,15 +1241,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
     def test_workspace_variable_collection_post_bad_request_syntax(self):
 
         url = reverse('wirecloud.variable_collection', kwargs={'workspace_id': 2})
-
-        # Authenticate
-        self.client.login(username='user_with_workspaces', password='admin')
-
-        # Test bad json syntax
-        response = self.client.post(url, 'bad syntax', content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 400)
-        response_data = json.loads(response.content)
-        self.assertTrue(isinstance(response_data, dict))
+        check_post_bad_request_syntax(self, url)
 
     def test_workspace_merge_service_post_requires_authentication(self):
 
@@ -1350,15 +1323,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
     def test_workspace_merge_service_post_bad_request_syntax(self):
 
         url = reverse('wirecloud.workspace_merge', kwargs={'to_ws_id': 2})
-
-        # Authenticate
-        self.client.login(username='user_with_workspaces', password='admin')
-
-        # Test bad json syntax
-        response = self.client.post(url, 'bad syntax', content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 400)
-        response_data = json.loads(response.content)
-        self.assertTrue(isinstance(response_data, dict))
+        check_post_bad_request_syntax(self, url)
 
     def test_workspace_preference_collection_read_requires_authentication(self):
 
@@ -1543,12 +1508,4 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
     def test_workspace_publish_bad_request_syntax(self):
 
         url = reverse('wirecloud.workspace_publish', kwargs={'workspace_id': 2})
-
-        # Authenticate
-        self.client.login(username='user_with_workspaces', password='admin')
-
-        # Test bad json syntax
-        response = self.client.post(url, 'bad syntax', content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 400)
-        response_data = json.loads(response.content)
-        self.assertTrue(isinstance(response_data, dict))
+        check_post_bad_request_syntax(self, url)
