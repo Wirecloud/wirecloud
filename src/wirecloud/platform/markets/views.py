@@ -20,9 +20,7 @@
 import json
 import os
 
-from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.utils.decorators import method_decorator
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
@@ -30,7 +28,7 @@ from django.utils.translation import ugettext as _
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.baseviews import Resource, Service
-from wirecloud.commons.utils.http import build_error_response, supported_request_mime_types
+from wirecloud.commons.utils.http import authentication_required, build_error_response, supported_request_mime_types
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.markets.utils import get_market_managers
@@ -39,7 +37,7 @@ from wirecloud.platform.models import Market
 
 class MarketCollection(Resource):
 
-    @method_decorator(login_required)
+    @authentication_required
     def read(self, request):
         result = {}
 
@@ -62,7 +60,7 @@ class MarketCollection(Resource):
 
         return HttpResponse(json.dumps(result), mimetype='application/json; charset=UTF-8')
 
-    @method_decorator(login_required)
+    @authentication_required
     @supported_request_mime_types(('application/json'))
     @commit_on_http_success
     def create(self, request):
@@ -86,7 +84,7 @@ class MarketCollection(Resource):
 
 class MarketEntry(Resource):
 
-    @method_decorator(login_required)
+    @authentication_required
     def delete(self, request, market, user=None):
 
         if (user is None and not request.user.is_superuser) or (user is None and market == 'local'):
@@ -105,7 +103,7 @@ class MarketEntry(Resource):
 
 class PublishService(Service):
 
-    @method_decorator(login_required)
+    @authentication_required
     @supported_request_mime_types(('application/json'))
     def process(self, request):
 
