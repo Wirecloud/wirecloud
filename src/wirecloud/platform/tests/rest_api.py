@@ -49,6 +49,32 @@ def check_get_requires_permission(self, url):
     self.assertEqual(response.status_code, 403)
 
 
+def check_get_requires_authentication(self, url, test_after_request=None):
+
+    response = self.client.get(url, HTTP_ACCEPT='application/json')
+    self.assertEqual(response.status_code, 401)
+    self.assertTrue('WWW-Authenticate' in response)
+
+    # Error response should be a dict
+    self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+    response_data = json.loads(response.content)
+    self.assertTrue(isinstance(response_data, dict))
+
+    if test_after_request is not None:
+        test_after_request(self)
+
+    # Check using Accept: text/html
+    response = self.client.get(url, HTTP_ACCEPT='text/html')
+    self.assertEqual(response.status_code, 401)
+    self.assertTrue('WWW-Authenticate' in response)
+
+    # Content type of the response should be text/html
+    self.assertEqual(response['Content-Type'].split(';', 1)[0], 'text/html')
+
+    if test_after_request is not None:
+        test_after_request(self)
+
+
 def check_post_requires_authentication(self, url, data, test_after_request=None):
 
     response = self.client.post(url, data, content_type='application/json', HTTP_ACCEPT='application/json')
@@ -175,12 +201,10 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response_data = json.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
 
-    def test_workspace_collection_read_requires_authentication(self):
+    def test_workspace_collection_get_requires_authentication(self):
 
         url = reverse('wirecloud.workspace_collection')
-
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
+        check_get_requires_authentication(self, url)
 
     def test_workspace_collection_read(self):
 
@@ -412,29 +436,10 @@ class ApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.workspace_collection')
         check_post_bad_request_syntax(self, url)
 
-    def test_workspace_entry_read_requires_authentication(self):
+    def test_workspace_entry_get_requires_authentication(self):
 
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 1})
-
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
-
-        # Error response should be a dict
-        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
-        response_data = json.loads(response.content)
-        self.assertTrue(isinstance(response_data, dict))
-
-        # Workspace should be not deleted
-        self.assertTrue(Workspace.objects.filter(name='ExistingWorkspace').exists())
-
-        # Check using Accept: text/html
-        response = self.client.delete(url, HTTP_ACCEPT='text/html')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
-
-        # Content type of the response should be text/html
-        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'text/html')
+        check_get_requires_authentication(self, url)
 
     def test_workspace_entry_read_requires_permission(self):
 
@@ -978,12 +983,10 @@ class ResourceManagementAPI(WirecloudTestCase):
 
         super(ResourceManagementAPI, cls).tearDownClass()
 
-    def test_resource_collection_read_requires_authentication(self):
+    def test_resource_collection_get_requires_authentication(self):
 
         url = reverse('wirecloud_showcase.resource_collection')
-
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
+        check_get_requires_authentication(self, url)
 
     def test_resource_collection_read(self):
 
@@ -1061,11 +1064,10 @@ class ResourceManagementAPI(WirecloudTestCase):
         response = self.client.post(url, 'invalid content', content_type="application/octet-stream", HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 400)
 
-    def test_resource_entry_read_requires_authentication(self):
+    def test_resource_entry_get_requires_authentication(self):
 
         url = reverse('wirecloud_showcase.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
+        check_get_requires_authentication(self, url)
 
     def test_resource_entry_read(self):
 
@@ -1160,13 +1162,10 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
         super(ExtraApplicationMashupAPI, cls).tearDownClass()
 
-    def test_iwidget_collection_read_requires_authentication(self):
+    def test_iwidget_collection_get_requires_authentication(self):
 
         url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 2, 'tab_id': 101})
-
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
+        check_get_requires_authentication(self, url)
 
     def test_iwidget_collection_read(self):
 
@@ -1180,13 +1179,10 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response_data = json.loads(response.content)
         self.assertTrue(isinstance(response_data, list))
 
-    def test_iwidget_entry_read_requires_authentication(self):
+    def test_iwidget_entry_get_requires_authentication(self):
 
         url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
-
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
+        check_get_requires_authentication(self, url)
 
     def test_iwidget_entry_read(self):
 
@@ -1200,13 +1196,10 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response_data = json.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
 
-    def test_platform_preference_collection_read_requires_authentication(self):
+    def test_market_collection_get_requires_authentication(self):
 
-        url = reverse('wirecloud.platform_preferences')
-
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
+        url = reverse('wirecloud.market_collection')
+        check_get_requires_authentication(self, url)
 
     def test_platform_preference_collection_read(self):
 
@@ -1419,13 +1412,10 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.workspace_merge', kwargs={'to_ws_id': 2})
         check_post_bad_request_syntax(self, url)
 
-    def test_workspace_preference_collection_read_requires_authentication(self):
+    def test_workspace_preference_collection_get_requires_authentication(self):
 
         url = reverse('wirecloud.workspace_preferences', kwargs={'workspace_id': 2})
-
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
+        check_get_requires_authentication(self, url)
 
     def test_workspace_preference_collection_read_requires_permission(self):
 
@@ -1483,13 +1473,10 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.workspace_preferences', kwargs={'workspace_id': 2})
         check_post_bad_request_syntax(self, url)
 
-    def test_tab_preference_collection_read_requires_authentication(self):
+    def test_tab_preference_collection_get_requires_authentication(self):
 
         url = reverse('wirecloud.tab_preferences', kwargs={'workspace_id': 2, 'tab_id': 101})
-
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 401)
-        self.assertTrue('WWW-Authenticate' in response)
+        check_get_requires_authentication(self, url)
 
     def test_tab_preference_collection_read_requires_permission(self):
 
