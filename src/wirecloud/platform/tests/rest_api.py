@@ -1147,6 +1147,11 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 204)
         self.assertEqual(response.content, '')
 
+    def test_platform_preference_collection_post_bad_request_syntax(self):
+
+        url = reverse('wirecloud.platform_preferences')
+        check_post_bad_request_syntax(self, url)
+
     def test_workspace_entry_post_requires_authentication(self):
 
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 2})
@@ -1386,6 +1391,11 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 204)
         self.assertEqual(response.content, '')
 
+    def test_workspace_preference_collection_post_bad_request_syntax(self):
+
+        url = reverse('wirecloud.workspace_preferences', kwargs={'workspace_id': 2})
+        check_post_bad_request_syntax(self, url)
+
     def test_tab_preference_collection_read_requires_authentication(self):
 
         url = reverse('wirecloud.tab_preferences', kwargs={'workspace_id': 2, 'tab_id': 101})
@@ -1446,6 +1456,11 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
         self.assertEqual(response.content, '')
+
+    def test_workspace_preference_collection_post_bad_request_syntax(self):
+
+        url = reverse('wirecloud.tab_preferences', kwargs={'workspace_id': 2, 'tab_id': 101})
+        check_post_bad_request_syntax(self, url)
 
     def test_workspace_publish_requires_authentication(self):
 
