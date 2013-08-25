@@ -322,15 +322,12 @@ class TabEntry(Resource):
     @commit_on_http_success
     def update(self, request, workspace_id, tab_id):
 
-        tabs = Tab.objects.select_related('workspace')
-        try:
-            tab = tabs.get(workspace__users__id=request.user.id, workspace__pk=workspace_id, pk=tab_id)
-        except Tab.DoesNotExist:
-            raise Http404
+        tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
+        if tab.workspace.creator != request.user:
+            return HttpResponseForbidden()
 
-        workspace = tab.workspace
         user_workspace = UserWorkspace.objects.get(user__id=request.user.id, workspace__id=workspace_id)
-        if workspace.creator != request.user or user_workspace.manager != '':
+        if user_workspace.manager != '':
             return HttpResponseForbidden()
 
         try:
@@ -341,7 +338,15 @@ class TabEntry(Resource):
 
         if 'visible' in data:
             visible = data['visible']
-            if (visible == 'true'):
+            if isinstance(visible, basestring):
+                visible = visible.strip().lower()
+                if visible not in ('true', 'false'):
+                    return build_error_response(request, 422, _('Invalid visible value'))
+                visible = visible == 'true'
+            elif not isinstance(visible, bool):
+                return build_error_response(request, 422, _('Invalid visible value'))
+
+            if visible:
                 #Only one visible tab
                 setVisibleTab(request.user, workspace_id, tab)
             else:
