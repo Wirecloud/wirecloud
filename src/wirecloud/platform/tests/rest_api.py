@@ -1542,11 +1542,6 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 204)
         self.assertEqual(response.content, '')
 
-    def test_workspace_preference_collection_post_bad_request_syntax(self):
-
-        url = reverse('wirecloud.tab_preferences', kwargs={'workspace_id': 2, 'tab_id': 101})
-        check_post_bad_request_syntax(self, url)
-
     def test_workspace_publish_requires_authentication(self):
 
         url = reverse('wirecloud.workspace_publish', kwargs={'workspace_id': 2})
