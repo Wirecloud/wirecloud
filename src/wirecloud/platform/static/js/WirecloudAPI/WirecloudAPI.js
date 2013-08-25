@@ -116,6 +116,11 @@
     });
 
     Object.defineProperty(window.MashupPlatform.widget, 'context', {value: {}});
+    Object.defineProperty(window.MashupPlatform.widget, 'log', {
+        value: function log(msg, level) {
+	        platform.OpManagerFactory.getInstance().logIWidgetError(id, msg, level);
+        }
+    });
     Object.defineProperty(window.MashupPlatform.widget.context, 'getAvailableContext', {
         value: function getAvailableContext() {
             return iwidget.contextManager.getAvailableContext();
