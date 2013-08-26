@@ -21,7 +21,7 @@ import json
 import os
 
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
@@ -67,8 +67,9 @@ class MarketCollection(Resource):
 
         try:
             received_data = json.loads(request.raw_post_data)
-        except:
-            return HttpResponseBadRequest(_("Request body is not valid JSON data"), mimetype='text/plain; charset=UTF-8')
+        except ValueError, e:
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
 
         user_entry = request.user
         if received_data['options'].get('share', '') is True:
