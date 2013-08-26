@@ -1008,7 +1008,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         url = reverse('wirecloud_showcase.resource_collection')
         check_post_requires_authentication(self, url, '{}')
 
-    def test_resource_collection_post(self):
+    def test_resource_collection_post_widget(self):
 
         url = reverse('wirecloud_showcase.resource_collection')
 
@@ -1023,10 +1023,80 @@ class ResourceManagementAPI(WirecloudTestCase):
         response_data = json.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
         self.assertIn('type', response_data)
-        self.assertIn(response_data['type'], CatalogueResource.RESOURCE_TYPES)
+        self.assertEqual(response_data['type'], 'widget')
         self.assertIn('vendor', response_data)
+        self.assertEqual(response_data['vendor'], 'Wirecloud')
         self.assertIn('name', response_data)
+        self.assertEqual(response_data['name'], 'Test_Selenium')
         self.assertIn('version', response_data)
+        self.assertEqual(response_data['version'], '1.0')
+
+    def test_resource_collection_post_operator(self):
+
+        url = reverse('wirecloud_showcase.resource_collection')
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_TestOperatorSelenium_1.0.zip'), 'rb') as f:
+            response = self.client.post(url, data={'file': f}, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+
+        response_data = json.loads(response.content)
+        self.assertIn('type', response_data)
+        self.assertEqual(response_data['type'], 'operator')
+        self.assertIn('vendor', response_data)
+        self.assertEqual(response_data['vendor'], 'Wirecloud')
+        self.assertIn('name', response_data)
+        self.assertEqual(response_data['name'], 'TestOperatorSelenium')
+        self.assertIn('version', response_data)
+        self.assertEqual(response_data['version'], '1.0')
+
+    def test_resource_collection_post_mashup(self):
+
+        url = reverse('wirecloud_showcase.resource_collection')
+
+        # Authenticate
+        self.client.login(username='normuser', password='admin')
+
+        # Make the request
+        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_TestMashup2_1.0.zip'), 'rb') as f:
+            response = self.client.post(url, data={'file': f}, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+
+        response_data = json.loads(response.content)
+        self.assertIn('type', response_data)
+        self.assertEqual(response_data['type'], 'mashup')
+        self.assertIn('vendor', response_data)
+        self.assertEqual(response_data['vendor'], 'Wirecloud')
+        self.assertIn('name', response_data)
+        self.assertEqual(response_data['name'], 'TestMashup2')
+        self.assertIn('version', response_data)
+        self.assertEqual(response_data['version'], '1.0')
+
+    def test_resource_collection_post_missing_dependencies(self):
+
+        # Make Test and TestOperator unavailable to normuser
+        test_widget = CatalogueResource.objects.get(short_name='Test')
+        test_widget.public = False
+        test_widget.users.clear()
+        test_widget.save()
+
+        test_operator = CatalogueResource.objects.get(short_name='TestOperator')
+        test_operator.public = False
+        test_operator.users.clear()
+        test_operator.save()
+
+        url = reverse('wirecloud_showcase.resource_collection')
+
+        # Authenticate
+        self.client.login(username='normuser', password='admin')
+
+        # Make the request
+        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_TestMashup2_1.0.zip'), 'rb') as f:
+            response = self.client.post(url, data={'file': f}, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
 
     def test_resource_collection_post_using_octet_stream(self):
 
