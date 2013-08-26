@@ -198,6 +198,18 @@ def check_delete_requires_authentication(self, url, test_after_request=None):
         test_after_request(self)
 
 
+def check_delete_requires_permission(self, url, test_after_request=None):
+
+    # Authenticate
+    self.client.login(username='emptyuser', password='admin')
+
+    response = self.client.delete(url, HTTP_ACCEPT='application/json')
+    self.assertEqual(response.status_code, 403)
+
+    if test_after_request is not None:
+        test_after_request(self)
+
+
 class ApplicationMashupAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
@@ -523,13 +535,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
     def test_workspace_entry_delete_requires_permission(self):
 
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 1})
-
-        # Authenticate
-        self.client.login(username='emptyuser', password='admin')
-
-        # Make the request
-        response = self.client.delete(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 403)
+        check_delete_requires_permission(self, url)
 
     def test_workspace_entry_delete(self):
 
@@ -757,13 +763,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
     def test_tab_entry_delete_requires_permission(self):
 
         url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 1, 'tab_id': 1})
-
-        # Authenticate
-        self.client.login(username='emptyuser', password='admin')
-
-        # Make the request
-        response = self.client.delete(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 403)
+        check_delete_requires_permission(self, url)
 
     def test_tab_entry_delete(self):
 
@@ -920,13 +920,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
     def test_iwidget_entry_delete_requires_permission(self):
 
         url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
-
-        # Authenticate
-        self.client.login(username='emptyuser', password='admin')
-
-        # Make the request
-        response = self.client.delete(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 403)
+        check_delete_requires_permission(self, url)
 
     def test_iwidget_entry_delete(self):
 
