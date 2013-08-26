@@ -1192,6 +1192,74 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.market_collection')
         check_get_requires_authentication(self, url)
 
+    def test_market_collection_get(self):
+
+        url = reverse('wirecloud.market_collection')
+
+        # Authenticate
+        self.client.login(username='user_with_markets', password='admin')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
+    def test_market_collection_post_requires_authentication(self):
+
+        url = reverse('wirecloud.market_collection')
+        data = {
+            'name': 'new_market',
+            'options': {
+                'type': 'wirecloud',
+                'url': 'http://example.com'
+            }
+        }
+        check_post_requires_authentication(self, url, json.dumps(data))
+
+    def test_market_collection_post(self):
+
+        url = reverse('wirecloud.market_collection')
+
+        # Authenticate
+        self.client.login(username='user_with_markets', password='admin')
+
+        # Make request
+        data = {
+            'name': 'new_market',
+            'options': {
+                'type': 'wirecloud',
+                'url': 'http://example.com'
+            }
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+
+    def test_market_entry_delete_requires_authentication(self):
+
+        url = reverse('wirecloud.market_entry', kwargs={'user': 'user_with_markets', 'market': 'deleteme'})
+        check_delete_requires_authentication(self, url)
+
+    def test_market_entry_delete(self):
+
+        url = reverse('wirecloud.market_entry', kwargs={'user': 'user_with_markets', 'market': 'deleteme'})
+
+        # Authenticate
+        self.client.login(username='user_with_markets', password='admin')
+
+        # Make the request
+        response = self.client.delete(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+
+    def test_market_collection_post_bad_request_syntax(self):
+
+        url = reverse('wirecloud.market_collection')
+        check_post_bad_request_syntax(self, url)
+
+    def test_platform_preference_collection_get_requires_authentication(self):
+
+        url = reverse('wirecloud.platform_preferences')
+        check_get_requires_authentication(self, url)
+
     def test_platform_preference_collection_read(self):
 
         url = reverse('wirecloud.platform_preferences')
