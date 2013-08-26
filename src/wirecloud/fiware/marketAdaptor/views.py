@@ -63,6 +63,11 @@ def get_market_user_data(user, market_user, market_name):
         except:
             user_data[user_data_entry.name] = None
 
+    try:
+        user_data['idm_token'] = user.social_auth.filter(provider='fiware').select_related('tokens').get().tokens['access_token']
+    except:
+        pass
+
     return user_data
 
 

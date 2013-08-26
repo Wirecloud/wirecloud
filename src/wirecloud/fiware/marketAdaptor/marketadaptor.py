@@ -72,7 +72,13 @@ class MarketAdaptor(object):
                 offering_id = offering_parsed_url.path.rsplit('/', 1)[1].replace('__', '/')
 
                 store_client = self._stores[store]
-                offering_info = store_client.get_offering_info(offering_id, options[store + '/token'])
+                store_token_key = store + '/token'
+                if store_token_key in options:
+                    token = options[store_token_key]
+                else:
+                    token = options['idm_token']
+
+                offering_info = store_client.get_offering_info(offering_id, token)
                 offering_type = 'other'
                 if len(offering_info['resources']) == 1:
 
