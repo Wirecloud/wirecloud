@@ -809,7 +809,7 @@
      * Change to minimized view for operators
      */
     GenericInterface.prototype.minimize = function minimize(omitEffects) {
-        var position;
+        var position, oc, scrollX, scrollY;
 
         if (!omitEffects) {
             this.resizeTransitStart();
@@ -821,8 +821,14 @@
         this.wrapperElement.classList.add('reducedInt');
         this.wrapperElement.style.minWidth = '55px';
 
-        this.wrapperElement.style.top = (this.initialPos.top - this.wiringEditor.headerHeight) + ((this.initialPos.height - 8) / 2) - 12 + 'px';
-        this.wrapperElement.style.left = (this.initialPos.left - this.wiringEditor.menubarWidth) + (this.initialPos.width / 2) - 32 + 'px';
+        // Scroll correction
+        oc = this.wiringEditor.layout.getCenterContainer();
+
+        scrollX = parseInt(oc.wrapperElement.scrollLeft, 10);
+        scrollY = parseInt(oc.wrapperElement.scrollTop, 10);
+
+        this.wrapperElement.style.top = (this.initialPos.top + scrollY - this.wiringEditor.headerHeight) + ((this.initialPos.height - 8) / 2) - 12 + 'px';
+        this.wrapperElement.style.left = (this.initialPos.left + scrollX - this.wiringEditor.menubarWidth) + (this.initialPos.width / 2) - 32 + 'px';
 
         // correct it pos if is out of grid
         position = this.getStylePosition();
@@ -842,15 +848,21 @@
      * Change to normal view for operators
      */
     GenericInterface.prototype.restore = function restore(omitEffects) {
-        var currentPos, position;
+        var currentPos, position, oc, scrollX, scrollY;
 
         if (!omitEffects) {
             this.resizeTransitStart();
         }
 
+        // Scroll correction
+        oc = this.wiringEditor.layout.getCenterContainer();
+
+        scrollX = parseInt(oc.wrapperElement.scrollLeft, 10) + 1;
+        scrollY = parseInt(oc.wrapperElement.scrollTop, 10);
+
         currentPos = this.wrapperElement.getBoundingClientRect();
-        this.wrapperElement.style.top = (currentPos.top - this.wiringEditor.headerHeight) - ((this.initialPos.height + 8) / 2) + 'px';
-        this.wrapperElement.style.left = (currentPos.left - this.wiringEditor.menubarWidth) - (this.initialPos.width / 2) + 32 + 'px';
+        this.wrapperElement.style.top = (currentPos.top + scrollY - this.wiringEditor.headerHeight) - ((this.initialPos.height + 8) / 2) + 'px';
+        this.wrapperElement.style.left = (currentPos.left + scrollX - this.wiringEditor.menubarWidth) - (this.initialPos.width / 2) + 32 + 'px';
 
         // correct it position if is out of grid
         position = this.getStylePosition();
