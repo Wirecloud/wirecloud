@@ -200,7 +200,9 @@ class WorkspaceEntry(Resource):
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
-        workspace = Workspace.objects.get(users__id=request.user.id, pk=workspace_id)
+        workspace = Workspace.objects.get(pk=workspace_id)
+        if not (request.user.is_superuser or workspace.users.filter(pk=request.user.pk).exists()):
+            return HttpResponseForbidden()
 
         if 'active' in ts:
 
