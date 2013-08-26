@@ -27,7 +27,6 @@ from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_GET, require_POST
 
 from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.commons.baseviews.resource import Resource
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.http import build_error_response, get_content_type
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
@@ -50,10 +49,16 @@ def parse_username(tenant_id):
         return id_fields[2]
 
 
-@require_GET
+@require_POST
 def add_tenant(request):
 
-    id_4CaaSt = request.GET['message']
+    try:
+        data = json.loads(request.raw_post_data)
+    except ValueError, e:
+        msg = _("malformed json data: %s") % unicode(e)
+        return build_error_response(request, 400, msg)
+
+    id_4CaaSt = data['id_4caast']
     username = parse_username(id_4CaaSt)
 
     status = 201
@@ -76,10 +81,16 @@ def add_tenant(request):
     return HttpResponse(status)
 
 
-@require_GET
+@require_POST
 def remove_tenant(request):
 
-    id_4CaaSt = request.GET['message']
+    try:
+        data = json.loads(request.raw_post_data)
+    except ValueError, e:
+        msg = _("malformed json data: %s") % unicode(e)
+        return build_error_response(request, 400, msg)
+
+    id_4CaaSt = data['id_4caast']
     username = parse_username(id_4CaaSt)
 
     user = get_object_or_404(User, username=username)
