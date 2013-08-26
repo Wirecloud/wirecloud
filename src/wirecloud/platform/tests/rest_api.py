@@ -101,13 +101,16 @@ def check_post_requires_authentication(self, url, data, test_after_request=None)
         test_after_request(self)
 
 
-def check_post_requires_permission(self, url, data):
+def check_post_requires_permission(self, url, data, test_after_request=None):
 
     # Authenticate
     self.client.login(username='emptyuser', password='admin')
 
-    response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+    response = self.client.post(url, data, content_type='application/json', HTTP_ACCEPT='application/json')
     self.assertEqual(response.status_code, 403)
+
+    if test_after_request is not None:
+        test_after_request(self)
 
 
 def check_post_bad_request_syntax(self, url):
@@ -252,6 +255,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'name': 'test',
         }
+
         def test_workspace_not_created(self):
             # Workspace should be not created
             self.assertFalse(Workspace.objects.filter(name='test').exists())
@@ -509,6 +513,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
     def test_workspace_entry_delete_requires_authentication(self):
 
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 1})
+
         def workspace_not_deleted(self):
             # Workspace should be not deleted
             self.assertTrue(Workspace.objects.filter(name='ExistingWorkspace').exists())
@@ -614,6 +619,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'name': 'rest_api_test',
         }
+
         def test_tab_not_created(self):
             # Tab should be not created
             self.assertFalse(Tab.objects.filter(name='rest_api_test').exists())
@@ -627,7 +633,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'name': 'rest_api_test',
         }
-        check_post_requires_permission(self, url, data)
+        check_post_requires_permission(self, url, json.dumps(data))
 
     def test_tab_collection_post(self):
 
@@ -741,6 +747,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
     def test_tab_entry_delete_requires_authentication(self):
 
         url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 1, 'tab_id': 1})
+
         def tab_not_deleted(self):
             # Tab should be not deleted
             self.assertTrue(Tab.objects.filter(name='ExistingTab').exists())
@@ -788,7 +795,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'widget': 'Wirecloud/Test/1.0',
         }
-        check_post_requires_permission(self, url, data)
+        check_post_requires_permission(self, url, json.dumps(data))
 
     def test_iwidget_collection_post(self):
 
@@ -828,7 +835,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'name': 'New Name',
         }
-        check_post_requires_permission(self, url, data)
+        check_post_requires_permission(self, url, json.dumps(data))
 
     def test_iwidget_entry_post(self):
 
@@ -875,7 +882,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'text': 'new value',
         }
-        check_post_requires_permission(self, url, data)
+        check_post_requires_permission(self, url, json.dumps(data))
 
     def test_iwidget_preferences_entry_post(self):
 
@@ -903,6 +910,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
     def test_iwidget_entry_delete_requires_authentication(self):
 
         url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+
         def iwidget_not_deleted(self):
             # IWidget should not be deleted
             IWidget.objects.get(pk=2)
@@ -1318,6 +1326,22 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
         check_post_requires_authentication(self, url, json.dumps(data), workspace_not_changed)
 
+    def test_workspace_entry_post_requires_permission(self):
+
+        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 2})
+
+        data = {
+            'name': 'RenamedWorkspace',
+            'active': True,
+        }
+
+        def workspace_not_changed(self):
+            user_workspace = UserWorkspace.objects.get(pk=2)
+            self.assertEqual(user_workspace.workspace.name, 'Workspace')
+            self.assertEqual(user_workspace.active, True)
+
+        check_post_requires_permission(self, url, json.dumps(data), workspace_not_changed)
+
     def test_workspace_entry_post(self):
 
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 2})
@@ -1510,7 +1534,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'pref1': {'inherit': 'false', 'value': '5'},
             'pref2': {'inherit': 'true', 'value': 'false'}
         }
-        check_post_requires_permission(self, url, data)
+        check_post_requires_permission(self, url, json.dumps(data))
 
     def test_workspace_preference_collection_post(self):
 
@@ -1571,7 +1595,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'pref1': '5',
             'pref2': 'true',
         }
-        check_post_requires_permission(self, url, data)
+        check_post_requires_permission(self, url, json.dumps(data))
 
     def test_tab_preference_collection_post(self):
 
