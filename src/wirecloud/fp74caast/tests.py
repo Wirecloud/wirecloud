@@ -75,7 +75,7 @@ class FP74CaastTests(TestCase):
     def test_add_tenant(self):
 
         url = reverse('wirecloud.4caast.add_tenant')
-        response = self.client.post(url, json.dumps({'id_4caast': '4caast.customers.developer2.services.app2'}), content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        response = self.client.post(url, json.dumps({'4CaaStID': '4caast.customers.developer2.services.app2'}), content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 200)
 
         # Check user exists
@@ -85,14 +85,14 @@ class FP74CaastTests(TestCase):
     def test_add_existing_tenant(self):
 
         url = reverse('wirecloud.4caast.add_tenant')
-        response = self.client.post(url, json.dumps({'id_4caast': '4caast.customers.4caast_developer.services.app1'}), content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        response = self.client.post(url, json.dumps({'4CaaStID': '4caast.customers.4caast_developer.services.app1'}), content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.get(username='4caast_developer').tenantprofile_4CaaSt.id_4CaaSt, '4caast.customers.4caast_developer.services.app1')
 
     def test_remove_tenant(self):
 
         url = reverse('wirecloud.4caast.remove_tenant')
-        response = self.client.post(url, json.dumps({'id_4caast': '4caast.customers.4caast_developer.services.app1'}), content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        response = self.client.post(url, json.dumps({'4CaaStID': '4caast.customers.4caast_developer.services.app1'}), content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 204)
 
         # Check user does not exist

@@ -58,7 +58,7 @@ def add_tenant(request):
         msg = _("malformed json data: %s") % unicode(e)
         return build_error_response(request, 400, msg)
 
-    id_4CaaSt = data['id_4caast']
+    id_4CaaSt = data['4CaaStID']
     username = parse_username(id_4CaaSt)
 
     status = 201
@@ -90,7 +90,7 @@ def remove_tenant(request):
         msg = _("malformed json data: %s") % unicode(e)
         return build_error_response(request, 400, msg)
 
-    id_4CaaSt = data['id_4caast']
+    id_4CaaSt = data['4CaaStID']
     username = parse_username(id_4CaaSt)
 
     user = get_object_or_404(User, username=username)
@@ -138,8 +138,8 @@ def _parse_ac_request(request):
                 return build_error_response(request, 400, _('Missing widget URL'))
 
             fileURL = data.get('url')
-            if 'id_4caast' in data:
-                id_4CaaSt = data.get('id_4caast')
+            if '4CaaStID' in data:
+                id_4CaaSt = data.get('4CaaStID')
 
         elif content_type == 'application/x-www-form-urlencoded':
 
