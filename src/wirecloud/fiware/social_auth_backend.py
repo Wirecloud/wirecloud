@@ -43,9 +43,9 @@ from social_auth.exceptions import AuthFailed
 
 
 # GitHub configuration
-FIWARE_AUTHORIZATION_URL = 'https://idm.lab.fi-ware.eu/authorize'
-FIWARE_ACCESS_TOKEN_URL = 'https://idm.lab.fi-ware.eu/token'
-FIWARE_USER_DATA_URL = 'https://idm.lab.fi-ware.eu/user'
+FIWARE_AUTHORIZATION_URL = 'https://account.lab.fi-ware.eu/authorize'
+FIWARE_ACCESS_TOKEN_URL = 'https://account.lab.fi-ware.eu/token'
+FIWARE_USER_DATA_URL = 'https://account.lab.fi-ware.eu/user'
 
 
 
