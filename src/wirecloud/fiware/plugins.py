@@ -48,7 +48,14 @@ class FiWareMarketManager(MarketManager):
         adaptor = get_market_adaptor(None, self._options['name'])
         user_data = get_market_user_data(user, self._options['user'], self._options['name'])
         storeclient = adaptor.get_store(store)
-        return storeclient.download_resource(url, user_data[store + '/token'])
+
+        store_token_key = store + '/token'
+        if store_token_key in user_data:
+            token = user_data[store_token_key]
+        else:
+            token = user_data['idm_token']
+
+        return storeclient.download_resource(url, token)
 
     def publish(self, endpoint, wgt_file, user, request=None, template=None):
 
@@ -67,6 +74,13 @@ class FiWareMarketManager(MarketManager):
         adaptor = get_market_adaptor(self._options.get('user', None), self._options['name'])
         user_data = get_market_user_data(user, self._options['user'], self._options['name'])
         storeclient = adaptor.get_store(store)
+
+        store_token_key = store + '/token'
+        if store_token_key in user_data:
+            token = user_data[store_token_key]
+        else:
+            token = user_data['idm_token']
+
         storeclient.upload_resource(
             resource_info['display_name'],
             resource_info['version'],
@@ -74,7 +88,7 @@ class FiWareMarketManager(MarketManager):
             resource_info['description'],
             mimetypes[resource_info['type']],
             wgt_file.get_underlying_file(),
-            user_data[store + '/token']
+            token
         )
 
 
