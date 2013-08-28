@@ -19,6 +19,7 @@
 
 from cStringIO import StringIO
 import json
+import zipfile
 
 from django.contrib.auth.models import User
 from django.http import HttpResponse, Http404
@@ -30,6 +31,7 @@ from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.http import build_error_response, get_content_type
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
+from wirecloud.commons.utils.template.writers.rdf import write_rdf_description
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.localcatalogue.utils import install_resource_to_user
 from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate
@@ -106,62 +108,59 @@ def remove_tenant(request):
 
 def _parse_ac_request(request):
 
-    id_4CaaSt = request.GET.get('message', None)
     fileURL = None
     file_contents = None
     content_type = get_content_type(request)[0]
 
-    if content_type == 'multipart/form-data':
+    try:
+        data = json.loads(request.raw_post_data)
+    except Exception, e:
+        msg = _("malformed json data: %s") % unicode(e)
+        return build_error_response(request, 400, msg)
 
-        if not 'file' in request.FILES:
-            return build_error_response(request, 400, _('Missing widget file'))
+    if 'url' not in data:
+        return build_error_response(request, 400, _('Missing widget URL'))
 
-        downloaded_file = request.FILES['file']
-        file_contents = WgtFile(downloaded_file)
+    fileURL = data.get('url')
+    id_4CaaSt = data.get('4CaaStID')
 
-    elif content_type == 'application/octet-stream':
+    try:
+        downloaded_file = downloader.download_http_content(fileURL)
+    except:
+        return build_error_response(request, 409, _('Widget content could not be downloaded'))
 
-        downloaded_file = StringIO(request.raw_post_content)
-        file_contents = WgtFile(downloaded_file)
+    downloaded_file = StringIO(downloaded_file)
+    file_contents = WgtFile(downloaded_file)
 
-    else:
+    # Create a custom version of the resource
+    template = TemplateParser(file_contents.get_template())
+    template_info = template.get_resource_info()
+    template_info['name'] += '@' + id_4CaaSt
 
-        if content_type == 'application/json':
+    # Write a new Wgt file
+    new_file = StringIO()
+    zin = zipfile.ZipFile(downloaded_file, 'r')
+    zout = zipfile.ZipFile(new_file, 'w')
+    zout.writestr('config.xml', write_rdf_description(template_info))
+    for item in zin.infolist():
+        if item.filename == 'config.xml':
+            continue
+        zout.writestr(item, zin.read(item.filename))
+    zin.close()
+    zout.close()
 
-            try:
-                data = json.loads(request.raw_post_data)
-            except Exception, e:
-                msg = _("malformed json data: %s") % unicode(e)
-                return build_error_response(request, 400, msg)
-
-            if 'url' not in data:
-                return build_error_response(request, 400, _('Missing widget URL'))
-
-            fileURL = data.get('url')
-            if '4CaaStID' in data:
-                id_4CaaSt = data.get('4CaaStID')
-
-        elif content_type == 'application/x-www-form-urlencoded':
-
-            if 'url' not in request.POST:
-                return build_error_response(request, 400, _('Missing widget URL'))
-
-            fileURL = request.POST['url']
-
-        try:
-            downloaded_file = downloader.download_http_content(fileURL)
-        except:
-            return build_error_response(request, 409, _('Widget content could not be downloaded'))
-
-        downloaded_file = StringIO(downloaded_file)
-        file_contents = WgtFile(downloaded_file)
+    file_contents = WgtFile(new_file)
 
     return id_4CaaSt, file_contents, fileURL
 
 @require_POST
 def deploy_tenant_ac(request):
 
-    id_4CaaSt, wgt_file, fileURL = _parse_ac_request(request)
+    result = _parse_ac_request(request)
+    if isinstance(result, HttpResponse):
+        return result
+
+    id_4CaaSt, wgt_file, fileURL = result
 
     # Process 4CaaSt Id
     username = parse_username(id_4CaaSt)
@@ -176,15 +175,14 @@ def deploy_tenant_ac(request):
     # Install uploaded MAC resource
     try:
 
-        install_resource_to_user(user, file_contents=wgt_file, templateURL=fileURL, packaged=True)
+        resource = install_resource_to_user(user, file_contents=wgt_file, templateURL=fileURL, packaged=True)
 
     except TemplateParseException, e:
 
         return build_error_response(request, 400, unicode(e.msg))
 
     # Create a workspace if the resource is a mashup
-    template = TemplateParser(wgt_file.get_template())
-    if template.get_resource_type() == 'mashup' and not Workspace.objects.filter(creator=user, name=template.get_resource_info()['display_name']).exists():
+    if resource.resource_type() == 'mashup' and not Workspace.objects.filter(creator=user, name=resource.display_name).exists():
         buildWorkspaceFromTemplate(template, user, True)
 
     return HttpResponse(status=204)
@@ -209,6 +207,7 @@ def undeploy_tenant_ac(request):
     if template.get_resource_type() == 'mashup':
         Workspace.objects.filter(creator=user, name=template.get_resource_info()['display_name']).delete()
 
+    # Uninstall de resource
     template = TemplateParser(wgt_file.get_template())
     resource = CatalogueResource.objects.get(vendor=template.get_resource_vendor(), short_name=template.get_resource_name(), version=template.get_resource_version())
     resource.users.remove(user)
