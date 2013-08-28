@@ -158,7 +158,9 @@ class VariableDef(TransModel):
     action_label = models.CharField(_('Action label'), max_length=50, null=True)
     description = models.CharField(_('Description'), max_length=250, null=True)
     friend_code = models.CharField(_('Friend code'), max_length=30, null=True)
+    readonly = models.BooleanField(_('Read only'), default=False)
     default_value = models.TextField(_('Default value'), blank=True, null=True)
+    value = models.TextField(_('Value'), blank=True, null=True)
     widget = models.ForeignKey(Widget)
     order = models.IntegerField(default=0, blank=True)
 

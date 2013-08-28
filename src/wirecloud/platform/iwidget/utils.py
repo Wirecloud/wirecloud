@@ -40,8 +40,10 @@ from wirecloud.platform.models import IWidget, Position, Tab, Variable, Variable
 def addIWidgetVariable(iwidget, varDef, initial_value=None):
 
     # Sets the default value of variable
-    if initial_value:
+    if varDef.readonly == False and initial_value:
         var_value = initial_value
+    elif varDef.value:
+        var_value = varDef.value
     elif varDef.default_value:
         var_value = varDef.default_value
     else:

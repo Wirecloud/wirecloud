@@ -110,8 +110,10 @@ def create_widget_from_template(template, user, request=None, base=None):
             type=parser.typeText2typeCode(preference['type']),
             aspect='PREF',
             friend_code=None,
+            readonly=preference['readonly'],
             label=preference['label'],
             default_value=preference['default_value'],
+            value=preference['value'],
             widget=widget,
             secure=preference['secure']
         )

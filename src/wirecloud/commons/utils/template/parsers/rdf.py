@@ -346,7 +346,9 @@ class RDFTemplateParser(object):
                 'type': self._get_field(WIRE, 'type', preference, required=False),
                 'label': self._get_translation_field(RDFS, 'label', preference, 'prefLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', preference, required=False)),
                 'description': self._get_translation_field(DCTERMS, 'description', preference, 'prefDescription', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', preference, required=False)),
+                'readonly': self._get_field(WIRE, 'readonly', preference, required=False).lower() == 'true',
                 'default_value': self._get_field(WIRE, 'default', preference, required=False),
+                'value': self._get_field(WIRE, 'value', preference, required=False),
                 'secure': self._get_field(WIRE, 'secure', preference, required=False).lower() == 'true',
             }
             if preference_info['type'] == 'list':
