@@ -260,7 +260,7 @@ def build_rdf_graph(template_info):
     graph.add((addr, VCARD['email'], rdflib.Literal(template_info.get('email'))))
 
     # Requirements
-    for requirement in template_info.get('requirements', ()):
+    for requirement in template_info['requirements']:
         requirement_node = rdflib.BNode()
         graph.add((requirement_node, rdflib.RDF.type, WIRE['Feature']))
         graph.add((requirement_node, RDFS['label'], rdflib.Literal(requirement['name'])))

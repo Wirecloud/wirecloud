@@ -147,6 +147,8 @@ def build_json_template_from_workspace(options, workspace, user):
     if options.get('author', '').strip() == '':
         options['author'] = unicode(user)
 
+    options['requirements'] = []
+
     readOnlyWidgets = options.get('readOnlyWidgets', False)
     parametrization = options.get('parametrization')
     if not parametrization:
