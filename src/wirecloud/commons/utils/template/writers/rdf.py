@@ -102,12 +102,83 @@ def write_wiring_views_graph(graph, wiring, template_info):
                 graph.add((target_element, WIRE['index'], rdflib.Literal(str(index))))
 
 
+def write_mashup_resources_graph(graph, resource_uri, template_info):
+
+    # Tabs & resources
+    for tab_index, tab in enumerate(template_info.get('tabs')):
+        tab_element = rdflib.BNode()
+        graph.add((tab_element, rdflib.RDF.type, WIRE_M['Tab']))
+        graph.add((resource_uri, WIRE_M['hasTab'], tab_element))
+        graph.add((tab_element, DCTERMS['title'], rdflib.Literal(tab['name'])))
+        graph.add((tab_element, WIRE['index'], rdflib.Literal(str(tab_index))))
+
+        for preference in tab['preferences']:
+            pref = rdflib.BNode()
+            graph.add((pref, rdflib.RDF.type, WIRE_M['TabPreference']))
+            graph.add((tab_element, WIRE_M['hasTabPreference'], pref))
+            graph.add((pref, DCTERMS['title'], rdflib.Literal(preference.name)))
+            graph.add((pref, WIRE['value'], rdflib.Literal(preference.value)))
+
+        for iwidget in tab['resources']:
+            resource = rdflib.BNode()
+            graph.add((resource, WIRE_M['iWidgetId'], rdflib.Literal(str(iwidget['id']))))
+            graph.add((resource, rdflib.RDF.type, WIRE_M['iWidget']))
+            graph.add((tab_element, WIRE_M['hasiWidget'], resource))
+            provider = rdflib.BNode()
+            graph.add((provider, rdflib.RDF.type, GR['BussisnessEntity']))
+            graph.add((provider, FOAF['name'], rdflib.Literal(iwidget['vendor'])))
+            graph.add((resource, USDL['hasProvider'], provider))
+            graph.add((resource, RDFS['label'], rdflib.Literal(iwidget['name'])))
+            graph.add((resource, USDL['versionInfo'], rdflib.Literal(iwidget['version'])))
+            graph.add((resource, DCTERMS['title'], rdflib.Literal(iwidget['title'])))
+
+            if iwidget.get('readonly', False):
+                graph.add((resource, WIRE['readonly'], rdflib.Literal('true')))
+
+            # iWidget position
+            pos = rdflib.BNode()
+            graph.add((pos, rdflib.RDF.type, WIRE_M['Position']))
+            graph.add((resource, WIRE_M['hasPosition'], pos))
+            graph.add((pos, WIRE_M['x'], rdflib.Literal(iwidget['position']['x'])))
+            graph.add((pos, WIRE_M['y'], rdflib.Literal(iwidget['position']['y'])))
+            graph.add((pos, WIRE_M['z'], rdflib.Literal(iwidget['position']['z'])))
+
+            # iWidget rendering
+            rend = rdflib.BNode()
+            graph.add((rend, rdflib.RDF.type, WIRE_M['iWidgetRendering']))
+            graph.add((resource, WIRE_M['hasiWidgetRendering'], rend))
+            graph.add((rend, WIRE['renderingWidth'], rdflib.Literal(str(iwidget['rendering']['width']))))
+            graph.add((rend, WIRE['renderingHeight'], rdflib.Literal(str(iwidget['rendering']['height']))))
+            graph.add((rend, WIRE_M['layout'], rdflib.Literal(str(iwidget['rendering']['layout']))))
+            graph.add((rend, WIRE_M['fullDragboard'], rdflib.Literal(str(iwidget['rendering']['fulldragboard']))))
+            graph.add((rend, WIRE_M['minimized'], rdflib.Literal(str(iwidget['rendering']['minimized']))))
+
+            # iWidget preferences
+            for pref_name, pref in iwidget.get('preferences', {}).iteritems():
+                element = rdflib.BNode()
+                graph.add((element, rdflib.RDF.type, WIRE_M['iWidgetPreference']))
+                graph.add((resource, WIRE_M['hasiWidgetPreference'], element))
+                graph.add((element, DCTERMS['title'], rdflib.Literal(pref_name)))
+                graph.add((element, WIRE['value'], rdflib.Literal(pref['value'])))
+                if pref.get('readonly', False):
+                    graph.add((element, WIRE_M['readonly'], rdflib.Literal('true')))
+                if pref.get('hidden', False):
+                    graph.add((element, WIRE_M['hidden'], rdflib.Literal('true')))
+
+            for prop_name, prop in iwidget.get('properties', ()).iteritems():
+                element = rdflib.BNode()
+                graph.add((element, rdflib.RDF.type, WIRE_M['iWidgetProperty']))
+                graph.add((resource, WIRE_M['hasiWidgetProperty'], element))
+                graph.add((element, DCTERMS['title'], rdflib.Literal(prop_name)))
+                graph.add((element, WIRE['value'], rdflib.Literal(prop['value'])))
+                if prop.get('readonly', False):
+                    graph.add((element, WIRE_M['readonly'], rdflib.Literal('true')))
+
+
 def write_mashup_wiring_graph(graph, wiring, template_info):
 
-    operators = {}
     for id_, operator in template_info['wiring']['operators'].iteritems():
         op = rdflib.BNode()
-        operators[id_] = op
         graph.add((op, rdflib.RDF.type, WIRE_M['iOperator']))
         graph.add((wiring, WIRE_M['hasiOperator'], op))
         graph.add((op, DCTERMS['title'], rdflib.Literal(operator['name'])))
@@ -193,75 +264,8 @@ def build_rdf_graph(template_info):
         graph.add((requirement_node, RDFS['label'], rdflib.Literal(requirement['name'])))
         graph.add((resource_uri, WIRE['hasRequirement'], requirement_node))
 
-    # Tabs & resources
-    for tab_index, tab in enumerate(template_info.get('tabs')):
-        tab_element = rdflib.BNode()
-        graph.add((tab_element, rdflib.RDF.type, WIRE_M['Tab']))
-        graph.add((resource_uri, WIRE_M['hasTab'], tab_element))
-        graph.add((tab_element, DCTERMS['title'], rdflib.Literal(tab['name'])))
-        graph.add((tab_element, WIRE['index'], rdflib.Literal(str(tab_index))))
-
-        for preference in tab['preferences']:
-            pref = rdflib.BNode()
-            graph.add((pref, rdflib.RDF.type, WIRE_M['TabPreference']))
-            graph.add((tab_element, WIRE_M['hasTabPreference'], pref))
-            graph.add((pref, DCTERMS['title'], rdflib.Literal(preference.name)))
-            graph.add((pref, WIRE['value'], rdflib.Literal(preference.value)))
-
-        for iwidget in tab['resources']:
-            resource = rdflib.BNode()
-            graph.add((resource, WIRE_M['iWidgetId'], rdflib.Literal(str(iwidget['id']))))
-            graph.add((resource, rdflib.RDF.type, WIRE_M['iWidget']))
-            graph.add((tab_element, WIRE_M['hasiWidget'], resource))
-            provider = rdflib.BNode()
-            graph.add((provider, rdflib.RDF.type, GR['BussisnessEntity']))
-            graph.add((provider, FOAF['name'], rdflib.Literal(iwidget['vendor'])))
-            graph.add((resource, USDL['hasProvider'], provider))
-            graph.add((resource, RDFS['label'], rdflib.Literal(iwidget['name'])))
-            graph.add((resource, USDL['versionInfo'], rdflib.Literal(iwidget['version'])))
-            graph.add((resource, DCTERMS['title'], rdflib.Literal(iwidget['title'])))
-
-            if iwidget.get('readonly', False):
-                graph.add((resource, WIRE['readonly'], rdflib.Literal('true')))
-
-            # iWidget position
-            pos = rdflib.BNode()
-            graph.add((pos, rdflib.RDF.type, WIRE_M['Position']))
-            graph.add((resource, WIRE_M['hasPosition'], pos))
-            graph.add((pos, WIRE_M['x'], rdflib.Literal(iwidget['position']['x'])))
-            graph.add((pos, WIRE_M['y'], rdflib.Literal(iwidget['position']['y'])))
-            graph.add((pos, WIRE_M['z'], rdflib.Literal(iwidget['position']['z'])))
-
-            # iWidget rendering
-            rend = rdflib.BNode()
-            graph.add((rend, rdflib.RDF.type, WIRE_M['iWidgetRendering']))
-            graph.add((resource, WIRE_M['hasiWidgetRendering'], rend))
-            graph.add((rend, WIRE['renderingWidth'], rdflib.Literal(str(iwidget['rendering']['width']))))
-            graph.add((rend, WIRE['renderingHeight'], rdflib.Literal(str(iwidget['rendering']['height']))))
-            graph.add((rend, WIRE_M['layout'], rdflib.Literal(str(iwidget['rendering']['layout']))))
-            graph.add((rend, WIRE_M['fullDragboard'], rdflib.Literal(str(iwidget['rendering']['fulldragboard']))))
-            graph.add((rend, WIRE_M['minimized'], rdflib.Literal(str(iwidget['rendering']['minimized']))))
-
-            # iWidget preferences
-            for pref_name, pref in iwidget.get('preferences', ()).iteritems():
-                element = rdflib.BNode()
-                graph.add((element, rdflib.RDF.type, WIRE_M['iWidgetPreference']))
-                graph.add((resource, WIRE_M['hasiWidgetPreference'], element))
-                graph.add((element, DCTERMS['title'], rdflib.Literal(pref_name)))
-                graph.add((element, WIRE['value'], rdflib.Literal(pref['value'])))
-                if pref.get('readonly', False):
-                    graph.add((element, WIRE_M['readonly'], rdflib.Literal('true')))
-                if pref.get('hidden', False):
-                    graph.add((element, WIRE_M['hidden'], rdflib.Literal('true')))
-
-            for prop_name, prop in iwidget.get('properties', ()).iteritems():
-                element = rdflib.BNode()
-                graph.add((element, rdflib.RDF.type, WIRE_M['iWidgetProperty']))
-                graph.add((resource, WIRE_M['hasiWidgetProperty'], element))
-                graph.add((element, DCTERMS['title'], rdflib.Literal(prop_name)))
-                graph.add((element, WIRE['value'], rdflib.Literal(prop['value'])))
-                if prop.get('readonly', False):
-                    graph.add((element, WIRE_M['readonly'], rdflib.Literal('true')))
+    if template_info['type'] == 'mashup':
+        write_mashup_resources_graph(graph, resource_uri, template_info)
 
     # Create wiring
     wiring = rdflib.BNode()
@@ -306,8 +310,8 @@ def build_rdf_graph(template_info):
             pref = rdflib.BNode()
             graph.add((pref, rdflib.RDF.type, WIRE_M['MashupPreference']))
             graph.add((resource_uri, WIRE_M['hasMashupPreference'], pref))
-            graph.add((pref, DCTERMS['title'], rdflib.Literal(preference.name)))
-            graph.add((pref, WIRE['value'], rdflib.Literal(preference.value)))
+            graph.add((pref, DCTERMS['title'], rdflib.Literal(pref['name'])))
+            graph.add((pref, WIRE['value'], rdflib.Literal(pref['value'])))
     else:
         # Platform preferences
         for pref_index, pref in enumerate(template_info['preferences']):
