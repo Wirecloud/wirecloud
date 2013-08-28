@@ -29,10 +29,12 @@ class NoseArgs(object):
     def __iter__(self):
 
         import wirecloud.catalogue
+        import wirecloud.commons
         import wirecloud.platform
         from wirecloud.platform.plugins import get_plugins
 
         NOSE_ARGS = [os.getcwd()]
+        NOSE_ARGS.append(os.path.dirname(wirecloud.commons.__file__))
         if self._instance_type == 'platform':
             NOSE_ARGS.append(os.path.dirname(wirecloud.catalogue.__file__))
             NOSE_ARGS.append(os.path.dirname(wirecloud.platform.__file__))
