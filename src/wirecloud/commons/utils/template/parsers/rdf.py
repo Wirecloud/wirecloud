@@ -111,7 +111,7 @@ class RDFTemplateParser(object):
         else:
             return ''
 
-    def _get_field(self, namespace, element, subject, required=True, id_=False):
+    def _get_field(self, namespace, element, subject, required=True, id_=False, null=False):
 
         fields = self._graph.objects(subject, namespace[element])
         for field_element in fields:
@@ -125,6 +125,8 @@ class RDFTemplateParser(object):
             if required:
                 msg = _('missing required field: %(field)s')
                 raise TemplateParseException(msg % {'field': element})
+            elif null:
+                result = None
             else:
                 result = ''
         return result
@@ -348,7 +350,7 @@ class RDFTemplateParser(object):
                 'description': self._get_translation_field(DCTERMS, 'description', preference, 'prefDescription', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', preference, required=False)),
                 'readonly': self._get_field(WIRE, 'readonly', preference, required=False).lower() == 'true',
                 'default_value': self._get_field(WIRE, 'default', preference, required=False),
-                'value': self._get_field(WIRE, 'value', preference, required=False),
+                'value': self._get_field(WIRE, 'value', preference, required=False, null=True),
                 'secure': self._get_field(WIRE, 'secure', preference, required=False).lower() == 'true',
             }
             if preference_info['type'] == 'list':
