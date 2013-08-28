@@ -182,52 +182,12 @@ def deploy_tenant_ac(request):
 
         return build_error_response(request, 400, unicode(e.msg))
 
-    return HttpResponse(status=204)
-
-@require_POST
-def start_tenant_ac(request):
-
-    id_4CaaSt, wgt_file, fileURL = _parse_ac_request(request)
-
-    # Process 4CaaSt Id
-    username = parse_username(id_4CaaSt)
-
-    user = get_object_or_404(User, username=username)
-    try:
-        if user.tenantprofile_4CaaSt.id_4CaaSt != id_4CaaSt:
-            raise Http404
-    except TenantProfile.DoesNotExist:
-        raise Http404
-
     # Create a workspace if the resource is a mashup
     template = TemplateParser(wgt_file.get_template())
     if template.get_resource_type() == 'mashup' and not Workspace.objects.filter(creator=user, name=template.get_resource_info()['display_name']).exists():
         buildWorkspaceFromTemplate(template, user, True)
 
     return HttpResponse(status=204)
-
-@require_POST
-def stop_tenant_ac(request):
-
-    id_4CaaSt, wgt_file, fileURL = _parse_ac_request(request)
-
-    # Process 4CaaSt Id
-    username = parse_username(id_4CaaSt)
-
-    user = get_object_or_404(User, username=username)
-    try:
-        if user.tenantprofile_4CaaSt.id_4CaaSt != id_4CaaSt:
-            raise Http404
-    except TenantProfile.DoesNotExist:
-        raise Http404
-
-    # Remove assigned workspace if the resource is a mashup
-    template = TemplateParser(wgt_file.get_template())
-    if template.get_resource_type() == 'mashup':
-        Workspace.objects.filter(creator=user, name=template.get_resource_info()['display_name']).delete()
-
-    return HttpResponse(status=204)
-
 
 @require_POST
 def undeploy_tenant_ac(request):
@@ -243,6 +203,11 @@ def undeploy_tenant_ac(request):
             raise Http404
     except TenantProfile.DoesNotExist:
         raise Http404
+
+    # If the resource is a mashup, remove the assigned workspace
+    template = TemplateParser(wgt_file.get_template())
+    if template.get_resource_type() == 'mashup':
+        Workspace.objects.filter(creator=user, name=template.get_resource_info()['display_name']).delete()
 
     template = TemplateParser(wgt_file.get_template())
     resource = CatalogueResource.objects.get(vendor=template.get_resource_vendor(), short_name=template.get_resource_name(), version=template.get_resource_version())
