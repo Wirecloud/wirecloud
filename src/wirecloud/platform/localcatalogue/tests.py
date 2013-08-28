@@ -82,7 +82,7 @@ class LocalCatalogueTestCase(LocalizedTestCase):
         self.assertEqual(data['properties'], [{u'default_value': u'', u'secure': False, u'name': u'prop', u'label': u'Property label', u'type': u'text', u'description': u''}])
 
         self.assertEqual(len(data['preferences']), 1)
-        self.assertEqual(data['preferences'], [{u'default_value': u'value', u'secure': False, u'name': u'pref', u'label': u'Preference label', u'type': u'list', u'options': [{u'value': u'1', u'label': u'Option name'}], u'description': u'Preference description'}])
+        self.assertEqual(data['preferences'], [{u'default_value': u'value', u'secure': False, u'name': u'pref', u'label': u'Preference label', u'type': u'list', u'options': [{u'value': u'1', u'label': u'Option name'}], u'readonly': False, u'description': u'Preference description', u'value': None}])
 
         self.assertEqual(len(data['wiring']['inputs']), 1)
         self.assertEqual(data['wiring']['inputs'], [{u'name': u'slot', u'label': u'Slot label', u'type': u'text', u'description': u'',u'friendcode': u'test_friend_code', u'actionlabel': u''}])
@@ -249,7 +249,7 @@ class LocalCatalogueTestCase(LocalizedTestCase):
         self.assertEqual(data['properties'], [{u'default_value': u'', u'secure': False, u'name': u'prop', u'label': u'Etiqueta de la propiedad', u'type': u'text', u'description': u''}])
 
         self.assertEqual(len(data['preferences']), 1)
-        self.assertEqual(data['preferences'], [{u'default_value': u'value', u'secure': False, u'name': u'pref', u'label': u'Etiqueta de la preferencia', u'type': u'list', u'options': [{u'value': u'1', u'label': u'Nombre de la opción'}], u'description': u'Descripción de la preferencia'}])
+        self.assertEqual(data['preferences'], [{u'default_value': u'value', u'secure': False, u'name': u'pref', u'label': u'Etiqueta de la preferencia', u'type': u'list', u'options': [{u'value': u'1', u'label': u'Nombre de la opción'}], u'readonly': False, u'description': u'Descripción de la preferencia', u'value': None}])
 
         self.assertEqual(len(data['wiring']['inputs']), 1)
         self.assertEqual(data['wiring']['inputs'], [{u'name': u'slot', u'label': u'Etiqueta del endpoint de entrada', u'type': u'text', u'description': u'',u'friendcode': u'test_friend_code', u'actionlabel': u''}])
@@ -273,7 +273,7 @@ class LocalCatalogueTestCase(LocalizedTestCase):
         self.assertEqual(data['properties'], [{u'default_value': u'', u'secure': False, u'name': u'prop', u'label': u'Label', u'type': u'text', u'description': u''}])
 
         self.assertEqual(len(data['preferences']), 1)
-        self.assertEqual(data['preferences'], [{u'default_value': u'value', u'secure': False, u'name': u'pref', u'label': u'Label', u'type': u'text', u'description': u'Preference description'}])
+        self.assertEqual(data['preferences'], [{u'default_value': u'value', u'secure': False, u'name': u'pref', u'label': u'Label', u'readonly': False, u'type': u'text', u'description': u'Preference description', u'value': None}])
 
         self.assertEqual(len(data['wiring']['inputs']), 1)
         self.assertEqual(data['wiring']['inputs'], [{u'name': u'slot', u'label': u'Label', u'type': u'text', u'description': u'',u'friendcode': u'test_friend_code', u'actionlabel': u''}])
