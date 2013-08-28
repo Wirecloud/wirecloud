@@ -137,6 +137,13 @@ def _parse_ac_request(request):
     template_info = template.get_resource_info()
     template_info['name'] += '@' + id_4CaaSt
 
+    for pref_name, pref_value in data.get('preferences', {}).iteritems():
+        for widget_pref_index, widget_pref in enumerate(template_info['preferences']):
+            if widget_pref['name'] == pref_name:
+                template_info['preferences'][widget_pref_index]['readonly'] = True
+                template_info['preferences'][widget_pref_index]['value'] = pref_value
+                break
+
     # Write a new Wgt file
     new_file = StringIO()
     zin = zipfile.ZipFile(downloaded_file, 'r')
@@ -166,11 +173,6 @@ def deploy_tenant_ac(request):
     username = parse_username(id_4CaaSt)
 
     user = get_object_or_404(User, username=username)
-    try:
-        if user.tenantprofile_4CaaSt.id_4CaaSt != id_4CaaSt:
-            raise Http404
-    except TenantProfile.DoesNotExist:
-        raise Http404
 
     # Install uploaded MAC resource
     try:
