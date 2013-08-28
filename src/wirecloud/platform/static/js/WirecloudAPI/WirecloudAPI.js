@@ -96,7 +96,7 @@
     });
     Object.defineProperty(window.MashupPlatform.mashup.context, 'registerCallback', {
         value: function registerCallback(callback) {
-            platformiwidget.registerContextAPICallback('mashup', callback);
+            iwidget.registerContextAPICallback('mashup', callback);
         }
     });
     Object.preventExtensions(window.MashupPlatform.mashup.context);
