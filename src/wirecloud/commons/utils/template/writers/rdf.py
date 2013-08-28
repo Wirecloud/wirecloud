@@ -217,6 +217,8 @@ def build_rdf_graph(template_info):
     graph.bind('usdl', USDL)
     graph.bind('vcard', VCARD)
     graph.bind('wire', WIRE)
+    graph.bind('wire-m', WIRE_M)
+    graph.bind('gr', GR)
 
     uri = template_info.get('vendor') + '/' + template_info.get('name') + '/' + template_info.get('version')
     if template_info['type'] == 'widget':
