@@ -231,7 +231,7 @@ def build_rdf_graph(template_info):
         resource_uri = rdflib.URIRef(WIRE_M[uri])
         graph.add((resource_uri, rdflib.RDF.type, WIRE_M['Mashup']))
     else:
-        raise Exception('Unsopported resource type: %s' % template_info['type'])
+        raise Exception('Unsupported resource type: %s' % template_info['type'])
 
     # Create basic info
     provider = rdflib.BNode()
@@ -371,7 +371,11 @@ def build_rdf_graph(template_info):
         if template_info['code_content_type'] != 'text/html':
             graph.add((xhtml_element, DCTERMS['format'], rdflib.Literal(template_info.get('code_content_type'))))
 
-        graph.add((xhtml_element, WIRE['codeCacheable'], rdflib.Literal(str(template_info.get('code_cacheable')))))
+        if template_info['code_cacheable'] == False:
+            graph.add((xhtml_element, WIRE['codeCacheable'], rdflib.Literal('false')))
+
+        if template_info['code_uses_platform_style']:
+            graph.add((xhtml_element, WIRE['usePlatformStyle'], rdflib.Literal('true')))
 
     elif template_info['type'] == 'operator':
         for index, js_file in enumerate(template_info['js_files']):

@@ -111,7 +111,7 @@ class RDFTemplateParser(object):
         else:
             return ''
 
-    def _get_field(self, namespace, element, subject, required=True, id_=False, null=False):
+    def _get_field(self, namespace, element, subject, required=True, id_=False, default=''):
 
         fields = self._graph.objects(subject, namespace[element])
         for field_element in fields:
@@ -125,10 +125,8 @@ class RDFTemplateParser(object):
             if required:
                 msg = _('missing required field: %(field)s')
                 raise TemplateParseException(msg % {'field': element})
-            elif null:
-                result = None
             else:
-                result = ''
+                result = default
         return result
 
     def _get_url_field(self, field, *args, **kwargs):
@@ -350,7 +348,7 @@ class RDFTemplateParser(object):
                 'description': self._get_translation_field(DCTERMS, 'description', preference, 'prefDescription', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', preference, required=False)),
                 'readonly': self._get_field(WIRE, 'readonly', preference, required=False).lower() == 'true',
                 'default_value': self._get_field(WIRE, 'default', preference, required=False),
-                'value': self._get_field(WIRE, 'value', preference, required=False, null=True),
+                'value': self._get_field(WIRE, 'value', preference, required=False, default=None),
                 'secure': self._get_field(WIRE, 'secure', preference, required=False).lower() == 'true',
             }
             if preference_info['type'] == 'list':
@@ -390,8 +388,8 @@ class RDFTemplateParser(object):
             if self._info['code_content_type'] == '':
                 self._info['code_content_type'] = 'text/html'
 
-            self._info['code_uses_platform_style'] = self._get_field(DCTERMS, 'usePlatformStyle', xhtml_element, required=False).lower() == 'true'
-            self._info['code_cacheable'] = self._get_field(WIRE, 'codeCacheable', xhtml_element, required=False).lower() == 'true'
+            self._info['code_uses_platform_style'] = self._get_field(WIRE, 'usePlatformStyle', xhtml_element, required=False).lower() == 'true'
+            self._info['code_cacheable'] = self._get_field(WIRE, 'codeCacheable', xhtml_element, required=False, default='true').lower() == 'true'
 
         elif self._info['type'] == 'operator':
             # The tamplate has 1-n javascript elements

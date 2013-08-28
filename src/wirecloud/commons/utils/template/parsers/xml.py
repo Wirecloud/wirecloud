@@ -122,6 +122,14 @@ class WirecloudTemplateParser(object):
             query = query.replace('t:', '')
             return element.xpath(query)
 
+    def get_xpath(self, query, element):
+        elements = self._xpath(query, element)
+
+        if len(elements) == 0:
+            raise TemplateParseException('Missing %s element' % query.replace('t:', ''))
+        else:
+            return elements[0]
+
     def _add_translation_index(self, value, **kwargs):
         index = get_trans_index(value)
         if not index:
@@ -180,12 +188,12 @@ class WirecloudTemplateParser(object):
         if not self._info['display_name']:
             self._info['display_name'] = self._info['name']
 
-        self._info['description'] = self._get_field(DESCRIPTION_XPATH, self._resource_description)
+        self._info['description'] = self._get_field(DESCRIPTION_XPATH, self._resource_description, required=False)
         self._add_translation_index(self._info['description'], type='resource', field='description')
 
-        self._info['author'] = self._get_field(AUTHOR_XPATH, self._resource_description)
+        self._info['author'] = self._get_field(AUTHOR_XPATH, self._resource_description, required=False)
         self._info['email'] = self._get_field(MAIL_XPATH, self._resource_description)
-        self._get_url_field('image_uri', IMAGE_URI_XPATH, self._resource_description)
+        self._get_url_field('image_uri', IMAGE_URI_XPATH, self._resource_description, required=False)
         self._get_url_field('doc_uri', DOC_URI_XPATH, self._resource_description, required=False)
         self._parse_requirements()
 
@@ -370,7 +378,7 @@ class WirecloudTemplateParser(object):
         self._info['code_uses_platform_style'] = xhtml_element.get('use-platform-style', 'false').lower() == 'true'
         self._info['code_cacheable'] = xhtml_element.get('cacheable', 'true').lower() == 'true'
 
-        rendering_element = self._xpath(PLATFORM_RENDERING_XPATH, self._doc)[0]
+        rendering_element = self.get_xpath(PLATFORM_RENDERING_XPATH, self._doc)
         self._info['widget_width'] = rendering_element.get('width')
         self._info['widget_height'] = rendering_element.get('height')
 
@@ -403,8 +411,8 @@ class WirecloudTemplateParser(object):
                 tab_info['preferences'][preference.get('name')] = preference.get('value')
 
             for resource in self._xpath(RESOURCE_XPATH, tab):
-                position = self._xpath(POSITION_XPATH, resource)[0]
-                rendering = self._xpath(RENDERING_XPATH, resource)[0]
+                position = self.get_xpath(POSITION_XPATH, resource)
+                rendering = self.get_xpath(RENDERING_XPATH, resource)
 
                 resource_info = {
                     'id': resource.get('id'),
@@ -449,6 +457,8 @@ class WirecloudTemplateParser(object):
     def _parse_translation_catalogue(self):
 
         self._info['translations'] = {}
+        self._info['default_lang'] = 'en'
+        self._info['translation_index_usage'] = {}
 
         translations_elements = self._xpath(TRANSLATIONS_XPATH, self._doc)
 

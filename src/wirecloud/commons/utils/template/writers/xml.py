@@ -20,25 +20,7 @@
 from lxml import etree
 
 
-def build_xml_document(options):
-
-    template = etree.Element('Template', xmlns="http://morfeo-project.org/2007/Template")
-    desc = etree.Element('Catalog.ResourceDescription')
-    template.append(desc)
-    etree.SubElement(desc, 'Vendor').text = options.get('vendor')
-    etree.SubElement(desc, 'Name').text = options.get('name')
-    etree.SubElement(desc, 'Version').text = options.get('version')
-    etree.SubElement(desc, 'Author').text = options.get('author')
-    etree.SubElement(desc, 'Mail').text = options.get('email')
-    etree.SubElement(desc, 'Description').text = options.get('description')
-    etree.SubElement(desc, 'ImageURI').text = options.get('imageURI', '')
-    etree.SubElement(desc, 'WikiURI').text = options.get('doc_uri', '')
-
-    resources = etree.SubElement(desc, 'IncludedResources')
-
-    if options['type'] == 'mashup':
-        for pref in options['preferences']:
-            etree.SubElement(resources, 'Preference', name=pref['name'], value=pref['value'])
+def write_mashup_tree(resources, options):
 
     # Tabs & resources
     for tab_index, tab in enumerate(options['tabs']):
@@ -76,15 +58,8 @@ def build_xml_document(options):
                 if prop.get('hidden', False):
                     element.set('hidden', 'true')
 
-    # Wiring info
-    wiring = etree.SubElement(template, 'Platform.Wiring')
 
-    for output_endpoint in options['wiring']['outputs']:
-        etree.SubElement(wiring, 'OutputEndpoint', name=output_endpoint['name'], type=output_endpoint['type'], label=output_endpoint['label'], friendcode=output_endpoint['friendcode'])
-
-    for input_endpoint in options['wiring']['inputs']:
-        etree.SubElement(wiring, 'OutputEndpoint', name=input_endpoint['name'], type=input_endpoint['type'], label=input_endpoint['label'], friendcode=input_endpoint['friendcode'])
-
+def write_mashup_wiring_tree(wiring, options):
 
     for op_id, operator in enumerate(options['wiring']['operators']):
         etree.SubElement(wiring, 'Operator', id=op_id, name=operator['name'])
@@ -97,4 +72,75 @@ def build_xml_document(options):
         etree.SubElement(element, 'Source', type=connection['source']['type'], id=str(connection['source']['id']), endpoint=connection['source']['endpoint'])
         etree.SubElement(element, 'Target', type=connection['target']['type'], id=str(connection['target']['id']), endpoint=connection['target']['endpoint'])
 
+
+def build_xml_document(options):
+
+    template = etree.Element('Template', xmlns="http://wirecloud.conwet.fi.upm.es/ns/template#")
+    desc = etree.Element('Catalog.ResourceDescription')
+    template.append(desc)
+    etree.SubElement(desc, 'Vendor').text = options.get('vendor')
+    etree.SubElement(desc, 'Name').text = options.get('name')
+    etree.SubElement(desc, 'Version').text = options.get('version')
+    etree.SubElement(desc, 'DisplayName').text = options.get('display_name')
+    etree.SubElement(desc, 'Author').text = options.get('author')
+    etree.SubElement(desc, 'Mail').text = options.get('email')
+    etree.SubElement(desc, 'Description').text = options.get('description')
+    etree.SubElement(desc, 'ImageURI').text = options.get('image_uri', '')
+    etree.SubElement(desc, 'iPhoneImageURI').text = options.get('iphone_image_uri', '')
+    etree.SubElement(desc, 'WikiURI').text = options.get('doc_uri', '')
+
+    if len(options['requirements']) > 0:
+        requirements = etree.SubElement(desc, 'Requirements')
+        for requirement in options['requirements']:
+            etree.SubElement(requirements, 'Feature', name=requirement['name'])
+
+    if options['type'] == 'mashup':
+        resources = etree.SubElement(desc, 'IncludedResources')
+        for pref in options['preferences']:
+            etree.SubElement(resources, 'Preference', name=pref['name'], value=pref['value'])
+    else:
+        for pref in options['preferences']:
+            etree.SubElement(desc, 'Preference',
+                    name=pref['name'],
+                    type=pref['type'],
+                    label=pref['label'],
+                    description=pref['description'],
+                    readonly=pref['readonly'],
+                    default_value=pref['default_value'],
+                    value=pref['value'],
+                    secure=pref['secure'])
+
+    if options['type'] == 'mashup':
+        write_mashup_tree(resources, options)
+
+    # Wiring info
+    wiring = etree.SubElement(template, 'Platform.Wiring')
+
+    for output_endpoint in options['wiring']['outputs']:
+        etree.SubElement(wiring, 'OutputEndpoint', name=output_endpoint['name'], type=output_endpoint['type'], label=output_endpoint['label'], friendcode=output_endpoint['friendcode'])
+
+    for input_endpoint in options['wiring']['inputs']:
+        etree.SubElement(wiring, 'OutputEndpoint', name=input_endpoint['name'], type=input_endpoint['type'], label=input_endpoint['label'], friendcode=input_endpoint['friendcode'])
+
+    if options['type'] == 'mashup':
+        write_mashup_wiring_tree(wiring, options)
+    else:
+        # Widget code
+        link = etree.SubElement(template, 'Platform.Link')
+        xhtml = etree.SubElement(link, 'XHTML', href=options['code_url'])
+        xhtml.set('content-type', options['code_content_type'])
+        if options['code_cacheable'] == False:
+            xhtml.set('cacheable', 'false')
+        if options['code_uses_platform_style']:
+            xhtml.set('use-platform-style', 'true')
+
+        # Widget rendering
+        etree.SubElement(template, 'Platform.Rendering', width=options['widget_width'], height=options['widget_height'])
+
     return template
+
+
+def write_xml_description(options):
+
+    doc = build_xml_document(options)
+    return etree.tostring(doc, method='xml', xml_declaration=True, encoding="UTF-8", pretty_print=True)
