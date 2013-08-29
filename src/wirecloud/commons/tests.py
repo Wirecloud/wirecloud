@@ -81,8 +81,48 @@ class TemplateUtilsTestCase(TestCase):
                 {'type': 'feature', 'name': 'Wirecloud'},
             ],
             'preferences': [
+                {
+                    'name': 'pref1',
+                    'type': 'list',
+                    'options': [
+                        {'label': 'Option 1', 'value': '1'},
+                        {'label': 'Option 2', 'value': '2'}
+                    ],
+                    'secure': False,
+                    'readonly': False,
+                    'label': 'Preference label',
+                    'description': 'Preference description',
+                    'default_value': 'value',
+                    'value': None
+                },
+                {
+                    'name': 'pref2',
+                    'type': 'text',
+                    'secure': False,
+                    'readonly': True,
+                    'label': 'Preference label',
+                    'description': 'Preference description',
+                    'default_value': 'value',
+                    'value': '5'
+                }
             ],
             'properties': [
+                {
+                    'name': 'prop1',
+                    'type': 'text',
+                    'secure': False,
+                    'label': 'Prop1',
+                    'description': 'description 1',
+                    'default_value': 'value1',
+                },
+                {
+                    'name': 'prop2',
+                    'type': 'text',
+                    'secure': True,
+                    'label': 'Prop2',
+                    'description': 'description 2',
+                    'default_value': 'value2',
+                }
             ],
             'context': [],
             'wiring': {
