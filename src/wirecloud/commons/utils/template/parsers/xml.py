@@ -321,7 +321,7 @@ class WirecloudTemplateParser(object):
                 'label': preference.get('label'),
                 'description': preference.get('description', ''),
                 'readonly': preference.get('readonly', 'false').lower() == 'true',
-                'default_value': preference.get('default'),
+                'default_value': preference.get('default', ''),
                 'value': preference.get('value'),
                 'secure': preference.get('secure', 'false').lower() == 'true',
             }

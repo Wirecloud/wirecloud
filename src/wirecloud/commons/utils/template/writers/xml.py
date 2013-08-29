@@ -40,7 +40,7 @@ def write_mashup_tree(resources, options):
                 width=str(iwidget['rendering']['height']), minimized=str(iwidget['rendering']['minimized']),
                 fulldragboard=str(iwidget['rendering']['fulldragboard']), layout=str(iwidget['rendering']['layout']))
 
-            for pref_name, pref in iwidget.get('preferences', {}).iteritems():
+            for pref_name, pref in iwidget['preferences'].iteritems():
                 element = etree.SubElement(resource, 'Preference', name=pref_name, value=pref['value'])
 
                 if pref.get('readonly', False):
@@ -108,16 +108,38 @@ def build_xml_document(options):
         for pref in options['preferences']:
             etree.SubElement(resources, 'Preference', name=pref['name'], value=pref['value'])
     else:
-        for pref in options['preferences']:
-            etree.SubElement(desc, 'Preference',
+
+        if len(options['preferences']) > 0:
+
+            preferences_element = etree.SubElement(template, 'Platform.Preferences')
+            for pref in options['preferences']:
+                pref_element = etree.SubElement(preferences_element, 'Preference',
                     name=pref['name'],
                     type=pref['type'],
                     label=pref['label'],
                     description=pref['description'],
-                    readonly=pref['readonly'],
-                    default_value=pref['default_value'],
-                    value=pref['value'],
-                    secure=pref['secure'])
+                    readonly=str(pref['readonly']).lower(),
+                    default=pref['default_value'],
+                    secure=str(pref['secure']).lower())
+
+                if pref['type'] == 'list':
+                    for option in pref['options']:
+                        etree.SubElement(pref_element, 'Option', label=option['label'], value=option['value'])
+
+                if pref['value'] is not None:
+                    pref_element.set('value', pref['value'])
+
+        if len(options['properties']) > 0:
+
+            properties_element = etree.SubElement(template, 'Platform.StateProperties')
+            for prop in options['properties']:
+                prop_element = etree.SubElement(properties_element, 'Property',
+                    name=prop['name'],
+                    type=prop['type'],
+                    label=prop['label'],
+                    description=prop['description'],
+                    default=prop['default_value'],
+                    secure=str(prop['secure']).lower())
 
     if options['type'] == 'mashup':
         write_mashup_tree(resources, options)

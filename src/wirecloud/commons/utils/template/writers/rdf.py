@@ -350,22 +350,24 @@ def build_rdf_graph(template_info):
                 graph.add((pref_node, WIRE['secure'], rdflib.Literal(pref.get('secure'))))
 
             if pref.get('options'):
-                for option in pref['options']:
+                for option_index, option in enumerate(pref['options']):
                     option_node = rdflib.BNode()
                     graph.add((option_node, rdflib.RDF.type, WIRE['Option']))
                     graph.add((pref_node, WIRE['hasOption'], option_node))
+                    graph.add((option_node, WIRE['index'], rdflib.Literal(str(option_index))))
                     graph.add((option_node, DCTERMS['title'], rdflib.Literal(option.get('label'))))
                     graph.add((option_node, WIRE['value'], rdflib.Literal(option.get('value'))))
 
     # Platform state properties
-    for prop in template_info.get('properties', ()):
+    for prop_index, prop in enumerate(template_info['properties']):
         prop_node = rdflib.BNode()
         graph.add((prop_node, rdflib.RDF.type, WIRE['PlatformStateProperty']))
         graph.add((resource_uri, WIRE['hasPlatformStateProperty'], prop_node))
+        graph.add((prop_node, WIRE['index'], rdflib.Literal(str(prop_index))))
         graph.add((prop_node, DCTERMS['title'], rdflib.Literal(prop.get('name'))))
         graph.add((prop_node, WIRE['type'], rdflib.Literal(prop.get('type'))))
         graph.add((prop_node, RDFS['label'], rdflib.Literal(prop.get('label'))))
-        graph.add((prop_node, WIRE['description'], rdflib.Literal(prop.get('description'))))
+        graph.add((prop_node, DCTERMS['description'], rdflib.Literal(prop.get('description'))))
 
         if prop.get('default_value'):
             graph.add((prop_node, WIRE['default'], rdflib.Literal(prop.get('default_value'))))
