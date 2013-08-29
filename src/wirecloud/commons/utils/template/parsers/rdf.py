@@ -319,14 +319,14 @@ class RDFTemplateParser(object):
                     'posY': self._get_field(WIRE_M, 'y', position)
                 }
                 endPointOut = {}
-                sorted_sources = sorted(self._graph.objects(entity_view, WIRE_M['hasSource']), key=lambda source: possible_int(self._get_field(WIRE, 'index', source)))
+                sorted_sources = sorted(self._graph.objects(entity_view, WIRE_M['hasSource']), key=lambda source: possible_int(self._get_field(WIRE, 'index', source, required=False)))
                 source = []
                 for sourc in sorted_sources:
                     source.append(self._get_field(RDFS, 'label', sourc))
 
                 endPointOut['sources'] = source
 
-                sorted_targets = sorted(self._graph.objects(entity_view, WIRE_M['hasTarget']), key=lambda target: possible_int(self._get_field(WIRE, 'index', target)))
+                sorted_targets = sorted(self._graph.objects(entity_view, WIRE_M['hasTarget']), key=lambda target: possible_int(self._get_field(WIRE, 'index', target, required=False)))
                 target = []
                 for targ in sorted_targets:
                     target.append(self._get_field(RDFS, 'label', targ))
@@ -354,7 +354,7 @@ class RDFTemplateParser(object):
         self._info['preferences'] = []
 
         # Platform preferences must be sorted
-        sorted_preferences = sorted(self._graph.objects(self._rootURI, WIRE['hasPlatformPreference']), key=lambda pref: possible_int(self._get_field(WIRE, 'index', pref)))
+        sorted_preferences = sorted(self._graph.objects(self._rootURI, WIRE['hasPlatformPreference']), key=lambda pref: possible_int(self._get_field(WIRE, 'index', pref, required=False)))
 
         for preference in sorted_preferences:
             preference_info = {
@@ -370,7 +370,7 @@ class RDFTemplateParser(object):
             if preference_info['type'] == 'list':
                 preference_info['options'] = []
 
-                sorted_options = sorted(self._graph.objects(preference, WIRE['hasOption']), key=lambda option: possible_int(self._get_field(WIRE, 'index', option)))
+                sorted_options = sorted(self._graph.objects(preference, WIRE['hasOption']), key=lambda option: possible_int(self._get_field(WIRE, 'index', option, required=False)))
                 for option in sorted_options:
                     preference_info['options'].append({
                         'label': self._get_translation_field(DCTERMS, 'title', option, 'optionName', required=False, type='upo', variable=preference_info['name'], option='__MSG_optionName__'),
@@ -382,7 +382,7 @@ class RDFTemplateParser(object):
         # State properties info
         self._info['properties'] = []
 
-        sorted_properties = sorted(self._graph.objects(self._rootURI, WIRE['hasPlatformStateProperty']), key=lambda prop: possible_int(self._get_field(WIRE, 'index', prop)))
+        sorted_properties = sorted(self._graph.objects(self._rootURI, WIRE['hasPlatformStateProperty']), key=lambda prop: possible_int(self._get_field(WIRE, 'index', prop, required=False)))
         for prop in sorted_properties:
             self._info['properties'].append({
                 'name': self._get_field(DCTERMS, 'title', prop, required=False),
@@ -413,7 +413,7 @@ class RDFTemplateParser(object):
             # The tamplate has 1-n javascript elements
 
             # Javascript files must be sorted
-            sorted_js_files = sorted(self._graph.objects(self._rootURI, USDL['utilizedResource']), key=lambda js_file: possible_int(self._get_field(WIRE, 'index', js_file)))
+            sorted_js_files = sorted(self._graph.objects(self._rootURI, USDL['utilizedResource']), key=lambda js_file: possible_int(self._get_field(WIRE, 'index', js_file, required=True)))
 
             self._info['js_files'] = []
             for js_element in sorted_js_files:
@@ -451,7 +451,7 @@ class RDFTemplateParser(object):
             }
         self._info['params'] = params
 
-        ordered_tabs = sorted(self._graph.objects(self._rootURI, WIRE_M['hasTab']), key=lambda raw_tab: int(self._get_field(WIRE, 'index', raw_tab)))
+        ordered_tabs = sorted(self._graph.objects(self._rootURI, WIRE_M['hasTab']), key=lambda raw_tab: int(self._get_field(WIRE, 'index', raw_tab, required=False)))
 
         tabs = []
         for tab in ordered_tabs:
