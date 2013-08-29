@@ -64,9 +64,18 @@ class FiwareBackend(OAuthBackend):
 
     def get_user_details(self, response):
         """Return user details from FI-WARE account"""
+        name = response.get('displayName') or ''
+        first_name = ''
+        last_name = ''
+        if ' ' in name:
+            first_name, last_name = name.split(' ', 1)
+        else:
+            first_name = name
         return {'username': response.get('nickName'),
                 'email': response.get('email') or '',
-                'fullname': response.get('displayName') or ''}
+                'fullname': name,
+                'first_name': first_name,
+                'last_name': last_name}
 
 
 class FiwareAuth(BaseOAuth2):
