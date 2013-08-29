@@ -21,6 +21,7 @@ import json
 
 from django.conf import settings
 
+from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.template.writers import rdf
 from wirecloud.commons.utils.template.writers import xml
 from wirecloud.platform.get_data import get_variable_value_from_varname
@@ -196,9 +197,37 @@ def build_json_template_from_workspace(options, workspace, user):
 
     options['wiring']['operators'] = {}
     for id_, operator in wiring_status['operators'].iteritems():
-        options['wiring']['operators'][id_] = {
+        operator_data = {
             'name': operator['name'],
+            'preferences': {},
         }
+
+        vendor, name, version = operator['name'].split('/')
+        resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
+        operator_info = json.loads(resource.json_description)
+        operator_params = {}  # TODO for now, operator preferences cannot be parameterized
+        for pref_index, preference in enumerate(operator_info['preferences']):
+
+            status = 'normal'
+            if preference['name'] in operator_params:
+                ioperator_param_desc = iwidget_params[pref.name]
+                if ioperator_param_desc['source'] == 'default':
+                    # Do not issue a Preference element for this preference
+                    continue
+                value = ioperator_param_desc['value']
+                status = ioperator_param_desc['status']
+            elif preference['name'] in operator['preferences']:
+                value = operator['preferences'][preference['name']]
+            else:
+                value = preference['default_value']
+
+            operator_data['preferences'][preference['name']] = {
+                'readonly': status != 'normal',
+                'hidden': status == 'hidden',
+                'value': value,
+            }
+
+        options['wiring']['operators'][id_] = operator_data
 
     options['wiring']['connections'] = []
     for connection in wiring_status['connections']:
