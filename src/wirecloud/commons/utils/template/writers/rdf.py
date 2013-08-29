@@ -358,22 +358,22 @@ def build_rdf_graph(template_info):
                     graph.add((option_node, DCTERMS['title'], rdflib.Literal(option.get('label'))))
                     graph.add((option_node, WIRE['value'], rdflib.Literal(option.get('value'))))
 
-    # Platform state properties
-    for prop_index, prop in enumerate(template_info['properties']):
-        prop_node = rdflib.BNode()
-        graph.add((prop_node, rdflib.RDF.type, WIRE['PlatformStateProperty']))
-        graph.add((resource_uri, WIRE['hasPlatformStateProperty'], prop_node))
-        graph.add((prop_node, WIRE['index'], rdflib.Literal(str(prop_index))))
-        graph.add((prop_node, DCTERMS['title'], rdflib.Literal(prop.get('name'))))
-        graph.add((prop_node, WIRE['type'], rdflib.Literal(prop.get('type'))))
-        graph.add((prop_node, RDFS['label'], rdflib.Literal(prop.get('label'))))
-        graph.add((prop_node, DCTERMS['description'], rdflib.Literal(prop.get('description'))))
+        # Platform state properties
+        for prop_index, prop in enumerate(template_info['properties']):
+            prop_node = rdflib.BNode()
+            graph.add((prop_node, rdflib.RDF.type, WIRE['PlatformStateProperty']))
+            graph.add((resource_uri, WIRE['hasPlatformStateProperty'], prop_node))
+            graph.add((prop_node, WIRE['index'], rdflib.Literal(str(prop_index))))
+            graph.add((prop_node, DCTERMS['title'], rdflib.Literal(prop.get('name'))))
+            graph.add((prop_node, WIRE['type'], rdflib.Literal(prop.get('type'))))
+            graph.add((prop_node, RDFS['label'], rdflib.Literal(prop.get('label'))))
+            graph.add((prop_node, DCTERMS['description'], rdflib.Literal(prop.get('description'))))
 
-        if prop.get('default_value'):
-            graph.add((prop_node, WIRE['default'], rdflib.Literal(prop.get('default_value'))))
+            if prop.get('default_value'):
+                graph.add((prop_node, WIRE['default'], rdflib.Literal(prop.get('default_value'))))
 
-        if prop.get('secure'):
-            graph.add((prop_node, WIRE['secure'], rdflib.Literal(prop.get('secure'))))
+            if prop.get('secure'):
+                graph.add((prop_node, WIRE['secure'], rdflib.Literal(prop.get('secure'))))
 
     # Code
     if template_info['type'] == 'widget':
