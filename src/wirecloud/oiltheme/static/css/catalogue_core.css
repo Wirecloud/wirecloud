@@ -1,0 +1,197 @@
+.catalogue .link {
+  cursor: pointer;
+  color: darkBlue;
+}
+
+.catalogue .developer_image {
+    width: 200px;
+    height: 120px;
+    margin: 1ex 2ex 2ex 0;
+    float: left;
+}
+
+.catalogue .developer_block {
+    clear: both;
+    margin-bottom: 25px;
+    padding-left: 15px;
+}
+
+.catalogue .developer_description {
+  padding-left: 15px;
+  padding-top: 8px;
+  max-width: 700px;
+}
+
+.catalogue .developer_block button, .catalogue #template_uri, .catalogue #widget_uri {
+  margin-left:15px;
+  margin-top:10px;
+}
+
+.catalogue .float_left {
+  float: left;
+}
+
+.catalogue .search_interface .search_bar {
+    background: #fcfcfc;
+    padding: 0 2ex;
+    z-index: 2;
+}
+
+.catalogue .search_interface .search_bar h2 {
+    font-size: 24px;
+}
+
+.catalogue .search_interface .north_container.search_bar > div {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.catalogue .search_interface .west_container > div > label {
+    display: block;
+}
+
+.catalogue .search_interface .search_bar > div .styled_select {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.catalogue .resource_list > .alert {
+    margin: 2ex;
+}
+
+.catalogue.fiware div.second_level {
+    padding-left: 25px;
+}
+
+.catalogue.fiware .pricing_resource div.tab_info {
+    padding-left: 75px;
+}
+
+.catalogue.fiware .part_resource div.tab_info {
+    padding-left: 75px;
+}
+
+.catalogue.fiware .resource .image {
+    width: 170px;
+    height: 80px;
+    border: 1px solid;
+    border-color: #BBBBBB;
+    background: white;
+    display: block;
+}
+
+.catalogue .resource_list .resource_details .voting_label {
+  float: left;
+  margin: 5px;
+}
+
+.rating {
+    display: inline-block;
+    font-size: 14pt;
+    font-family: FontAwesome;
+    font-weight: normal;
+    font-style: normal;
+}
+
+.resource .rating {
+    float: right;
+}
+
+.catalogue .padding_left {
+  padding-left: 5px;
+}
+
+.catalogue .padding_right {
+  padding-right: 5px;
+}
+
+.catalogue .section_title {
+  clear:both;
+  font-size:13pt;
+  padding-bottom:5px;
+  padding-top:10px;
+}
+
+.catalogue .resource_list .resource .desc, .catalogue .resource_list .resource_details .desc {
+  clear: both;
+  max-width: 650px;
+}
+
+.catalogue .resource_list .resource .tags, .catalogue .resource_list .resource_details .tags {
+  float: left;
+  padding-top: 10px;
+}
+
+.catalogue .resource_list .resource .tags .tags_label, .catalogue .resource_list .resource_details .tags {
+  float: left;
+  margin-right:10px;
+}
+
+.catalogue .resource_list .resource .footer_resource {
+  height: 10px;
+  clear: both;
+  bottom: 0px;
+  float: left;
+}
+
+.catalogue.fiware .section_title {
+  clear:both;
+  font-size:13pt;
+  padding-bottom:5px;
+  padding-top:10px;
+}
+
+.catalogue.fiware .resource_list .resource .desc, .catalogue .resource_list .resource_details .desc {
+  clear: both;
+  max-width: 650px;
+}
+
+.catalogue.fiware .resource_list .resource .tags, .catalogue .resource_list .resource_details .tags {
+  float: left;
+  padding-top: 10px;
+}
+
+.catalogue.fiware .resource_list .resource .tags .tags_label, .catalogue .resource_list .resource_details .tags {
+  float: left;
+  margin-right:10px;
+}
+
+.catalogue.fiware .resource_list .resource .footer_resource {
+  height: 10px;
+  clear: both;
+  bottom: 0px;
+  float: left;
+}
+
+.catalogue.fiware .resource .left_column_resource {
+  float: left;
+  width: 25%;
+  text-align: center;
+}
+
+.catalogue.fiware .resource > .left_column_resource > img {
+    display: inline;
+}
+
+.catalogue.fiware .resource_list .header_resource, .catalogue .resource_list .header_resource {
+  height: 10px;
+  clear: both;
+  top: 0px;
+}
+/* /////////////// */
+
+.tags .tag_links {
+  float:left;
+  overflow:hidden;
+  width:500px;
+}
+
+.clearing_both {
+	clear: both;
+	font-weight: bold;
+}
+
+#colorpicker301{
+	position: fixed;
+}
+

@@ -3,7 +3,7 @@
     -moz-transition: box-shadow 0.7s ease-in;
     -webkit-transition: box-shadow 0.7s ease-in;
     transition: box-shadow 0.7s ease-in;
-    background: white;
+    background: #fcfcfc;
 	border-color: #C2CBD2;
     overflow: visible;
 }
