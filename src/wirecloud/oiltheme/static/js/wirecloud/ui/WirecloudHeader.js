@@ -80,6 +80,9 @@
     WirecloudHeader.prototype._initUserMenu = function _initUserMenu() {
         var user_menu, wrapper;
 
+        var username = OpManagerFactory.getInstance().contextManager.get('username');
+        var full_name = OpManagerFactory.getInstance().contextManager.get('fullname').trim();
+
         wrapper = document.createElement('div');
         wrapper.className = 'nav pull-right';
         this.oil_header.insertBefore(wrapper, this.oil_header.firstChild);
@@ -87,16 +90,20 @@
         var li = document.createElement('li');
         wrapper.appendChild(li);
         var anchor = document.createElement('a');
-        anchor.setAttribute('href', '#');
+        anchor.setAttribute('href', 'https://account.lab.fi-ware.eu/users/' + username);
+        anchor.setAttribute('target', '_blank');
         li.appendChild(anchor);
         var img = document.createElement('img');
         img.setAttribute('src', '/static/images/user.png');
         anchor.appendChild(img);
         anchor.appendChild(document.createTextNode(' '));
-        var username = document.createElement('span');
-        username.className = 'name';
-        username.textContent = OpManagerFactory.getInstance().contextManager.get('username');
-        anchor.appendChild(username);
+        var username_element = document.createElement('span');
+        username_element.className = 'name';
+        if (full_name === '') {
+            full_name = username;
+        }
+        username_element.textContent = full_name;
+        anchor.appendChild(username_element);
 
         this.user_button = new StyledElements.PopupButton({
             'class': 'arrow-down-settings',

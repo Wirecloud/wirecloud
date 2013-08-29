@@ -139,6 +139,10 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'label': _('Username'),
                 'description': _('User name of the current logged user'),
             },
+            'fullname': {
+                'label': _('Full name'),
+                'description': _('Full name of the logged user'),
+            },
             'isstaff': {
                 'label': _('Is Staff'),
                 'description': _('Boolean. Designates whether current user can access the admin site.'),
@@ -160,6 +164,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'language': 'es',
             'orientation': 'landscape',
             'username': user.username,
+            'fullname': user.get_full_name(),
             'isstaff': user.is_staff,
             'theme': settings.THEME_ACTIVE
         }
