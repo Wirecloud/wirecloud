@@ -576,7 +576,7 @@ class WorkspacePublisherEntry(Resource):
         workspace = get_object_or_404(Workspace, id=workspace_id)
         if image_file is not None:
             image_filename = 'images/catalogue' + os.path.splitext(image_file.name)[1]
-            options['imageURI'] = image_filename
+            options['image_uri'] = image_filename
         description = build_rdf_template_from_workspace(options, workspace, request.user)
 
         f = StringIO()
