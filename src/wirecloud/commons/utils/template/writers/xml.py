@@ -64,6 +64,15 @@ def write_mashup_wiring_tree(wiring, options):
     for op_id, operator in enumerate(options['wiring']['operators']):
         etree.SubElement(wiring, 'Operator', id=op_id, name=operator['name'])
 
+        for pref_name, pref in operator['preferences'].iteritems():
+            element = etree.SubElement(operator, 'Preference', name=pref_name, value=pref['value'])
+
+            if pref.get('readonly', False):
+                element.set('readonly', 'true')
+
+            if pref.get('hidden', False):
+                element.set('hidden', 'true')
+
     for connection in options['wiring']['connections']:
         element = etree.SubElement(wiring, 'Connection')
         if connection.get('readonly', False):

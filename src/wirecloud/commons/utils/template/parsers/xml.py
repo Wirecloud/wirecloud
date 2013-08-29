@@ -295,7 +295,16 @@ class WirecloudTemplateParser(object):
             operator_info = {
                 'id': operator.get('id'),
                 'name': operator.get('name'),
+                'preferences': {},
             }
+
+            for pref in self._xpath(PREFERENCE_XPATH, operator):
+                operator_info['preferences'][pref.get('name')] = {
+                    'readonly': pref.get('readonly', 'false').lower() == 'true',
+                    'hidden': pref.get('hidden', 'false').lower() == 'true',
+                    'value': pref.get('value'),
+                }
+
             self._info['wiring']['operators'][operator_info['id']] = operator_info
 
     def _parse_widget_info(self):

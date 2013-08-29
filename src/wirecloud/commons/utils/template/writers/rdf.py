@@ -184,6 +184,17 @@ def write_mashup_wiring_graph(graph, wiring, template_info):
         graph.add((op, DCTERMS['title'], rdflib.Literal(operator['name'])))
         graph.add((op, WIRE_M['iOperatorId'], rdflib.Literal(str(id_))))
 
+        for pref_name, pref in operator['preferences'].iteritems():
+            element = rdflib.BNode()
+            graph.add((element, rdflib.RDF.type, WIRE_M['iOperatorPreference']))
+            graph.add((op, WIRE_M['hasiOperatorPreference'], element))
+            graph.add((element, DCTERMS['title'], rdflib.Literal(pref_name)))
+            graph.add((element, WIRE['value'], rdflib.Literal(pref['value'])))
+            if pref.get('readonly', False):
+                graph.add((element, WIRE_M['readonly'], rdflib.Literal('true')))
+            if pref.get('hidden', False):
+                graph.add((element, WIRE_M['hidden'], rdflib.Literal('true')))
+
     for connection in template_info['wiring']['connections']:
         element = rdflib.BNode()
         graph.add((element, rdflib.RDF.type, WIRE_M['Connection']))

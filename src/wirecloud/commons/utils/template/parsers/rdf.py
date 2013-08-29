@@ -280,7 +280,16 @@ class RDFTemplateParser(object):
             operator_info = {
                 'id': self._get_field(WIRE_M, 'iOperatorId', operator),
                 'name': self._get_field(DCTERMS, 'title', operator),
+                'preferences': {},
             }
+
+            for pref in self._graph.objects(operator, WIRE_M['hasiOperatorPreference']):
+                operator_info['preferences'][self._get_field(DCTERMS, 'title', pref)] = {
+                    'readonly': self._get_field(WIRE_M, 'readonly', pref, required=False).lower() == 'true',
+                    'hidden': self._get_field(WIRE_M, 'hidden', pref, required=False).lower() == 'true',
+                    'value': self._get_field(WIRE, 'value', pref, required=False),
+                }
+
             self._info['wiring']['operators'][operator_info['id']] = operator_info
 
     def _parse_wiring_views(self, wiring_element):
