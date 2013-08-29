@@ -408,6 +408,6 @@ def build_rdf_graph(template_info):
     return graph
 
 
-def write_rdf_description(template_info, format='xml'):
+def write_rdf_description(template_info, format='pretty-xml'):
     graph = build_rdf_graph(template_info)
     return graph.serialize(format=format)
