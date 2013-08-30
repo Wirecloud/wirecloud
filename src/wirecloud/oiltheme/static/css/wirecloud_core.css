@@ -264,7 +264,6 @@ header.navbar .nav > li > a > .name {
     overflow: hidden;
     text-overflow: ellipsis;
     display: inline-block;
-    width: 70px;
     font-size: 14px;
 }
 
