@@ -60,7 +60,7 @@ body {
     bottom: 0;
     left: 0;
     overflow: hidden;
-    font-family: "Open Sans";
+    font-family: OpenSans, Arial, sans-serif;
     color: #333333;
     background: #fcfcfc;
 }
@@ -165,28 +165,33 @@ header.navbar .logo-header > .brand {
     margin: 12px 0 0 -1px;
     font-size: 23px;
     font-weight: 200;
-    color: #555;
+    color: #60c1cf;
     text-shadow: 0 1px 0 #fff;
     vertical-align: top;
-    line-height: 20px;
-    font-family: "DsignesRegular";
+    line-height: 21px;
+}
+
+header.navbar .logo-header > .brand > span {
+    color: #002d67;
 }
 
 header.navbar ul.oil-portal {
     height: 36px;
-    padding: 0px 14px;
+    padding: 0px;
     margin-bottom: 0px;
+    margin-left: 2px;
+    margin-top: 1px;
     display: inline-block;
     vertical-align: top;
 }
 
 header.navbar ul.oil-portal > li {
     display: inline-block;
-    padding: 13px 18px 10px;
+    padding: 14px 18px 10px;
     list-style-type: none;
     line-height: 20px;
     vertical-align: top;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 header.navbar ul.oil-portal > li:hover {
@@ -196,7 +201,7 @@ header.navbar ul.oil-portal > li:hover {
 }
 
 header.navbar ul.oil-portal > li.active {
-    background: white;
+    background: #fcfcfc;
     height: 18px;
     box-shadow: 0px 9px 0px -1px #FCFCFC;
 }
@@ -206,7 +211,7 @@ header.navbar ul.oil-portal > li > a {
 }
 
 header.navbar ul.oil-portal > li > a:hover, header.navbar ul.oil-portal > li.active > a {
-    color: #049cdb;
+    color: #60c1cf;
 }
 
 header.navbar ul.nav span.name {
