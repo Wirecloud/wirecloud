@@ -42,14 +42,6 @@
        url("../fonts/opensans-bold-webfont.svg#OpenSansRegular") format("svg");
 }
 
-@font-face {
-  font-family: "DsignesRegular";
-  font-style: normal;
-  font-weight: normal;
-  src: url("../fonts/DsignesRegular.ttf") format("truetype"),
-       url("../fonts/DsignesRegular.otf");
-}
-
 body {
     margin: 0;
     padding: 0;
@@ -66,7 +58,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    color: #3E80AD;
+    color: #002B67;
     margin: 10px 0;
     font-family: Comfortaa;
     font-weight: bold;
@@ -374,7 +366,7 @@ header.navbar .nav > .arrow-down-settings:hover {
 #wirecloud_header > .menu_wrapper > .menu > span {
     padding: 0.5ex 0.75ex;
     cursor: pointer;
-    color: #08C;
+    color: #002B67;
     text-decoration: none;
     display: inline-block;
     position: relative;
@@ -397,8 +389,9 @@ header.navbar .nav > .arrow-down-settings:hover {
 }
 
 #wirecloud_header > .menu_wrapper > .menu > span:hover {
-    text-decorator: none;
-    background-color: #EEE;
+    text-decoration: none;
+    background-color: #FDFFFF;
+    color: #60C1CF;
 }
 
 #wirecloud_header > .menu_wrapper > .menu > .user_menu_wrapper {
@@ -409,7 +402,7 @@ header.navbar .nav > .arrow-down-settings:hover {
 
 #wirecloud_header > .menu_wrapper > .menu > span.selected {
     cursor: default;
-    background-color: #08C;
+    background-color: #002B67;
     color: white;
 }
 
@@ -457,14 +450,9 @@ header.navbar .nav > .arrow-down-settings:hover {
     bottom: 0px;
     width: 70%;
     max-width: 100%;
-    height: 10ex;
     z-index: 4;
-    margin: 4ex;
-    height: 8ex;
-}
-
-#loading-message .window_content {
-    margin-top: 1ex;
+    margin-bottom: 4ex;
+    margin-right: 4ex;
 }
 
 #loading-subtask-title {

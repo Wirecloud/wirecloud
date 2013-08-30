@@ -93,7 +93,7 @@ div.iwidget.highlighted {
 }
 
 .notebook.workspace .tab_wrapper .icon-add-tab:hover {
-    color: black;
+    color: #60C1CF;
 }
 
 .notebook.workspace .tab_wrapper .icon-add-tab:before {

@@ -23,7 +23,7 @@
 
 .popup_menu > .menu_item {
     cursor: pointer;
-    padding: 3px 15px;
+    padding: 8px 20px;
     clear: both;
     font-weight: normal;
     line-height: 18px;
@@ -34,7 +34,7 @@
 .popup_menu > .menu_item.hovered {
     color: white;
     text-decoration: none;
-    background-color: rgb(0, 136, 204);
+    background-color: #002D67;
 }
 
 .popup_menu > hr {

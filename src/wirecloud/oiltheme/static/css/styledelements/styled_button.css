@@ -143,17 +143,15 @@
     color: #FFF;
     text-shadow: 0 1px 1px rgba(0, 134, 181, 0.1);
     border: 1px solid #50BCBC;
-    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-    border-color: #56CCCC #56CCCC #50BCBC;
     border-bottom-color: #4BB2B2;
-    background-color:#0093C6;
+    border-color: #002B67;
+    background-color: #002B67;
 }
 
 .styled_button.btn-primary > div:hover, .styled_button.btn-primary > button:hover,
 .styled_button.btn-primary > div:active, .styled_button.btn-primary > button:active
 {
-    border-color: rgb(0, 204, 219);
-    background-color: rgb(4, 137, 183);
+    border-color: #00CCDB;
 }
 
 .styled_button.btn-primary.disabled > div, .styled_button.btn-primary.disabled > button {

@@ -10,14 +10,13 @@
 
 .iwidget > .widget_menu {
     background: transparent;
-  	color: #4C5054;
-    font-size: 24px;
+  	color: #888;
+    font-size: 20px;
     cursor: move;
     line-height: 30px;
 }
 
 .iwidget > .widget_menu > span {
-    font-family: Comfortaa;
     text-overflow: ellipsis;
     overflow: hidden;
     max-width: 100%;
