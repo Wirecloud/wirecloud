@@ -74,7 +74,7 @@
         this.storeSelect.addEventListener('change', change_store_filter.bind(this));
         search_view_options = {
             catalogue: this,
-            resource_painter: Wirecloud.ui.ResourcePainter,
+            resource_painter: Wirecloud.FiWare.ui.OfferingPainter,
             resource_template: 'fiware_resource',
             gui_template: 'fiware_marketplace_search_interface',
             extra_context: {

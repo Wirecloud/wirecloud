@@ -71,7 +71,7 @@
                         button.disable();
                     } else {
                         button = new StyledElements.StyledButton({text: gettext('Install')});
-                        button.addEventListener('click', onClick.bind(null, resource.url, catalogue, offering.getStore()));
+                        button.addEventListener('click', onClick.bind(null, resource.url, catalogue, offering.store));
                     }
 
                 } else {

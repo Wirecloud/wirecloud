@@ -33,7 +33,6 @@
 
         extra_context = function (resource) {
             return {
-                'store': resource.getStore(),
                 'back_button': function () {
                     var button = new StyledElements.StyledButton({text: gettext('Close details')});
                     button.addEventListener('click', this.mainview.home.bind(this.mainview));
@@ -76,8 +75,8 @@
             };
         }.bind(this);
 
-        this.main_details_painter = new Wirecloud.ui.ResourcePainter(this.mainview, Wirecloud.currentTheme.templates['fiware_main_details_template'], this);
-        this.resource_details_painter = new Wirecloud.ui.ResourcePainter(this.mainview, Wirecloud.currentTheme.templates['fiware_catalogue_resource_details_template'], this, extra_context);
+        this.main_details_painter = new Wirecloud.FiWare.ui.OfferingPainter(this.mainview, Wirecloud.currentTheme.templates['fiware_main_details_template'], this);
+        this.resource_details_painter = new Wirecloud.FiWare.ui.OfferingPainter(this.mainview, Wirecloud.currentTheme.templates['fiware_catalogue_resource_details_template'], this, extra_context);
     };
     ResourceDetailsView.prototype = new StyledElements.Alternative();
 

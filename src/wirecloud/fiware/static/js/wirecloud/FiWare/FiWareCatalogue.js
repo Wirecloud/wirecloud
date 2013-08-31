@@ -88,7 +88,7 @@
             options = {};
         }
 
-        var url = Wirecloud.URLs.FIWARE_STORE_START_PURCHASE.evaluate({market_user: this.market_user, market_name: this.market_name, store: resource.getStore()});
+        var url = Wirecloud.URLs.FIWARE_STORE_START_PURCHASE.evaluate({market_user: this.market_user, market_name: this.market_name, store: resource.store});
         Wirecloud.io.makeRequest(
             url,
             {

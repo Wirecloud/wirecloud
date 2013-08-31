@@ -34,16 +34,11 @@ function FiWareCatalogueResource(resourceJSON_) {
 		market_name = resourceJSON_.marketName,
 		parts = resourceJSON_.parts,
 		type = resourceJSON_.type,
-        currentVersion = null,
-        allVersions = [],
-        data_by_version = {},
         extra_data = null,
     ///////////////////////////
     // CONSTRUCTOR VARIABLES
     ///////////////////////////
-        i = 0,
-        versions,
-        version_data;
+        i = 0;
 
     //////////////////////////
     // GETTERS
@@ -77,64 +72,44 @@ function FiWareCatalogueResource(resourceJSON_) {
 		return parts;
 	};
 
-    this.getVersion = function () {
-        return currentVersion.version;
-    };
-
     this.getLastVersion = function () {
         return allVersions[0];
     };
 
     this.getId = function () {
-        return currentVersion.id;
-    };
-
-    this.getAllVersions = function () {
-        return allVersions;
+        return resourceJSON_.id;
     };
 
     this.getDisplayName = function getDisplayName() {
-        return currentVersion.displayName;
-    };
-
-    this.getDescription = function () {
-        return currentVersion.shortDescription;
-    };
-
-	this.getLongDescription = function () {
-        return currentVersion.longDescription;
+        return resourceJSON_.displayName;
     };
 
     this.getUriImage = function () {
-        return currentVersion.uriImage;
+        return resourceJSON_.uriImage;
     };
 
     this.getUriTemplate = function () {
-        return currentVersion.uriTemplate;
+        return resourceJSON_.uriTemplate;
     };
 
 	this.getPage = function () {
-        return currentVersion.page;
+        return resourceJSON_.page;
     };
 
 	this.getCreated = function () {
-        return currentVersion.created;
+        return resourceJSON_.created;
     };
 
 	this.getPricing = function() {
-		return currentVersion.pricing;
+		return resourceJSON_.pricing;
 	};
 
 	this.getSla = function() {
-		return currentVersion.sla;
+		return resourceJSON_.sla;
 	};
 	
 	this.getLegal = function() {
-		return currentVersion.legal;
-	};
-
-	this.getStore = function() {
-		return store;
+		return resourceJSON_.legal;
 	};
 
 	this.getMarketName = function() {
@@ -150,25 +125,27 @@ function FiWareCatalogueResource(resourceJSON_) {
     };
 
     this.getURI = function () {
-        return [vendor, name, currentVersion.version.text].join('/');
-    };
-
-    this.isPackaged = function isPackaged() {
-        return currentVersion.uriTemplate.endsWith('.wgt') || currentVersion.uriTemplate.endsWith('.zip');
+        return [vendor, name, version.text].join('/');
     };
 
     this.isAllow = function isAllow(action) {
         return false;
     };
 
+    this.getVersion = function getVersion() {
+        return this.version;
+    };
+
     Object.defineProperties(this, {
-        'date': {
-            get: function () { return currentVersion.modified; }
-        },
+        'abstract': {value: resourceJSON_.shortDescription},
+        'description': {value: resourceJSON_.longDescription},
         'rating': {value: resourceJSON_.rating},
         'state': {value: resourceJSON_.state},
+        'store': {value: store},
         'usdl_url': {value: resourceJSON_.usdl_url},
-        'resources': {value: resourceJSON_.resources}
+        'resources': {value: resourceJSON_.resources},
+        'version': {value: new Wirecloud.Version(resourceJSON_.version, 'catalogue')},
+        'publicationdate': {value: new Date(resourceJSON_.publicationdate)}
     });
 
     //////////////
@@ -178,42 +155,4 @@ function FiWareCatalogueResource(resourceJSON_) {
     this.setExtraData = function (extra_data_) {
         extra_data = extra_data_;
     };
-
-    /////////////////////////////
-    // CONVENIENCE FUNCTIONS
-    /////////////////////////////
-    this.changeVersion = function (version) {
-        if (version instanceof Wirecloud.Version) {
-            version = version.text;
-        }
-
-        if (version in data_by_version) {
-            currentVersion = data_by_version[version];
-        } else {
-            currentVersion = data_by_version[allVersions[0].text];
-        }
-    };
-
-    ////////////////////////
-    // CONSTRUCTOR
-    ////////////////////////
-    versions = resourceJSON_.versions;
-
-    /*function flat_friendcode(x) {
-        return x.friendcode;
-    }*/
-
-    for (i = 0; i < versions.length; i += 1) {
-        version_data = versions[i];
-
-        version_data.version = new Wirecloud.Version(version_data.version, 'catalogue');
-        version_data.modified = new Date(version_data.modified);
-
-        allVersions.push(version_data.version);
-        data_by_version[version_data.version.text] = version_data;
-    }
-    allVersions = allVersions.sort(function (version1, version2) {
-        return -version1.compareTo(version2);
-    });
-    this.changeVersion(allVersions[0]);
 }

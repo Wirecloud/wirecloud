@@ -21,7 +21,6 @@
 import requests
 from requests.auth import HTTPBasicAuth
 from urllib2 import HTTPError
-from urllib import urlencode
 from urlparse import urljoin, urlparse
 from lxml import etree
 
@@ -60,8 +59,8 @@ class MarketAdaptor(object):
             ser['store'] = store
             ser['marketName'] = name
 
-            if ser['versions'][0]['uriTemplate'] == '':
-                ser['versions'][0]['uriTemplate'] = url
+            if ser['uriTemplate'] == '':
+                ser['uriTemplate'] = url
 
             ser['usdl_url'] = url
             ser['rating'] = 5  # TODO
@@ -113,7 +112,8 @@ class MarketAdaptor(object):
                     ser['resources'] = info_offering_resources
 
                 ser['type'] = offering_type
-                ser['versions'][0]['uriImage'] = urljoin(store_client._url, offering_info['image_url'])
+                ser['uriImage'] = urljoin(store_client._url, offering_info['image_url'])
+                ser['publicationdate'] = offering_info['publication_date']
                 ser['state'] = offering_info['state']
                 ser['rating'] = offering_info['rating']
 

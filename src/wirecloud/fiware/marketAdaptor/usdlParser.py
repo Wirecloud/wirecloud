@@ -146,7 +146,6 @@ class USDLParser(object):
 
         self._info['name'] = self._get_field(DCTERMS, service_uri, 'title')[0]
 
-        self._info['versions'] = []
         display_name = None
         artefact = self._get_field(USDL, service_uri, 'utilizedResource', id_=True)[0]
         uri_template = self._get_field(BLUEPRINT, artefact, 'location')[0]
@@ -189,11 +188,9 @@ class USDLParser(object):
         if self._info['type'] == 'other':
             display_name = self._info['name']
 
-        self._info['versions'].append({
+        self._info.update({
             'shortDescription': self._get_field(DCTERMS, service_uri, 'abstract')[0],
             'longDescription': self._get_field(DCTERMS, service_uri, 'description')[0],
-            'created': self._get_field(DCTERMS, service_uri, 'created')[0],
-            'modified': self._get_field(DCTERMS, service_uri, 'modified')[0],
             'uriImage': self._get_field(FOAF, service_uri, 'depiction')[0],
             'version': version,
             'uriTemplate': uri_template,
@@ -202,7 +199,7 @@ class USDLParser(object):
         })
 
     def _parse_legal_info(self, service_uri):
-        self._info['versions'][0]['legal'] = []
+        self._info['legal'] = []
         legal_conditions = self._get_field(USDL, service_uri, 'hasLegalCondition', id_=True)
 
         # If legal doest not exist the method does nothing
@@ -225,10 +222,10 @@ class USDLParser(object):
                 legal_condition['clauses'].append(clause)
 
             legal_condition['clauses'] = sorted(legal_condition['clauses'], key=lambda clause: clause['name'].lower())
-            self._info['versions'][0]['legal'].append(legal_condition)
+            self._info['legal'].append(legal_condition)
 
     def _parse_sla_info(self, service_uri):
-        self._info['versions'][0]['sla'] = []
+        self._info['sla'] = []
         service_level_profile = self._get_field(USDL, service_uri, 'hasServiceLevelProfile', id_=True)[0]
 
         #If sla does not exist the mothod does nothing
@@ -296,10 +293,10 @@ class USDLParser(object):
 
                     service_level['slaExpresions'].append(expresion)
 
-                self._info['versions'][0]['sla'].append(service_level)
+                self._info['sla'].append(service_level)
 
     def _parse_pricing_info(self, service_uri):
-        self._info['versions'][0]['pricing'] = []
+        self._info['pricing'] = []
         current_pricing = None
 
         for ofering in self._graph.subjects(RDF['type'], USDL['ServiceOffering']):
@@ -371,7 +368,7 @@ class USDLParser(object):
 
                     price_plan['taxes'] = sorted(price_plan['taxes'], key=lambda tax: tax['title'].lower())
 
-                self._info['versions'][0]['pricing'].append(price_plan)
+                self._info['pricing'].append(price_plan)
 
     def parse(self):
 
