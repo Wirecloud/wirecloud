@@ -136,6 +136,7 @@ class FiWarePlugin(WirecloudPlugin):
             return {
                 "fiware_marketplace_search_interface": "wirecloud/fiware/marketplace/search_interface.html",
                 "fiware_catalogue_resource_details_template": "wirecloud/fiware/marketplace/resource_details.html",
+                "fiware_resource": "wirecloud/fiware/marketplace/resource.html",
                 "fiware_resource_parts": "wirecloud/fiware/marketplace/resource_parts.html",
                 "fiware_main_details_template": "wirecloud/fiware/marketplace/main_resource_details.html",
                 "legal_template": "wirecloud/fiware/marketplace/legal/legal_template.html",

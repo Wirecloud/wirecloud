@@ -25,7 +25,7 @@
     "use strict";
 
     var CatalogueSearchView = function CatalogueSearchView(id, options) {
-        var builder, context, extra_context;
+        var builder, context, extra_context, resource_template;
 
         options['class'] = 'search_interface';
         this.catalogue = options.catalogue;
@@ -148,8 +148,13 @@
         this.initialized = false;
         this._last_search = false;
 
+        if ('resource_template' in options) {
+            resource_template = options.resource_template;
+        } else {
+            resource_template = 'catalogue_resource_template';
+        }
         this.resource_painter = new options.resource_painter(this.catalogue,
-            Wirecloud.currentTheme.templates['catalogue_resource_template'],
+            Wirecloud.currentTheme.templates[resource_template],
             this.resource_list
         );
 
