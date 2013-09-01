@@ -44,22 +44,23 @@
 
 .notebook .tab_area .tab {
     background: transparent;
-    color: rgb(0, 136, 204);
+    color: #8C8C8C;
     height: 15px;
     line-height: 16px;
     border: 1px solid transparent;
     vertical-align: top;
     padding: 8px 12px;
     border-radius: 4px 4px 0 0;
-    font-size: 13px;
+    font-size: 16px;
     font-weight: normal;
     min-width: 1ex;
     margin: 0 3px;
 }
 
 .notebook .tab_area .tab:hover {
-    border-color: rgb(238, 238, 238) rgb(238, 238, 238) transparent rgb(221, 221, 221);
-    color: rgb(0, 85, 128);
+    border-color: #E2E2E2 #E2E2E2 #DDD;
+    color: #FFF;
+    background-color: #E2E2E2;
 }
 
 .notebook .tab_area .tab img {
@@ -82,8 +83,8 @@
 }
 
 .notebook .tab_area .tab.selected {
-    background: #FCFCFC;
-    color: rgb(85, 85, 85);
+    background: rgba(255, 255, 255, 0.72);
+    color: #002D67;
     border-color: rgb(221, 221, 221) rgb(221, 221, 221) transparent rgb(221, 221, 221);
 }
 

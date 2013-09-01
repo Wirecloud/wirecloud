@@ -58,7 +58,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    color: #002B67;
+    color: #60C1CF;
     margin: 10px 0;
     font-family: Comfortaa;
     font-weight: bold;
@@ -117,7 +117,12 @@ li {
 }
 
 a {
+    color: #002B67;
     text-decoration: none;
+}
+
+a:hover {
+    color: #60C1CF;
 }
 
 /* OIL Header */

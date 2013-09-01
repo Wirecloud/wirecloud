@@ -111,21 +111,13 @@ div.iwidget.highlighted {
 }
 
 .notebook.workspace .tab_area .tab {
-    background: transparent;
-    color: rgb(0, 136, 204);
-    height: 15px;
-    line-height: 16px;
-    border: 1px solid transparent;
     vertical-align: top;
     padding: 8px 19px 8px 1ex;
     border-radius: 0 0 4px 4px;
-    font-family: "Open Sans", sans-serif;
-    font-size: 13px;
 }
 
 .notebook.workspace .tab_area .tab:hover {
-    border-color: transparent rgb(238, 238, 238) rgb(238, 238, 238) rgb(221, 221, 221);
-    color: rgb(0, 85, 128);
+    border-color: #DDD #E2E2E2 #E2E2E2;
 }
 
 .notebook.workspace .tab_area .tab > span {
@@ -133,7 +125,5 @@ div.iwidget.highlighted {
 }
 
 .notebook.workspace .tab_area .tab.selected {
-    background: #fcfcfc;
-    color: rgb(85, 85, 85);
-    border-color: transparent rgb(221, 221, 221) rgb(221, 221, 221) rgb(221, 221, 221);
+    border-color: rgba(0,0,0,0) #DDD #DDD;
 }
