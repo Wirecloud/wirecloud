@@ -76,6 +76,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/BorderLayout.js',
     'js/StyledElements/ModelTable.js',
     'js/StyledElements/EditableElement.js',
+    'js/StyledElements/CheckBox.js',
     'js/StyledElements/InputInterfaces.js',
     'js/StyledElements/VersionInputInterface.js',
     'js/StyledElements/InputInterfaceFactory.js',

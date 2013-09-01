@@ -574,7 +574,7 @@ function ButtonGroupInputInterface(fieldId, fieldDesc) {
         buttonDesc = fieldDesc.buttons[i];
 
         label = document.createElement('label');
-        button = new ButtonClass(this.inputElement, buttonDesc.value);
+        button = new ButtonClass({group: this.inputElement, value: buttonDesc.value});
         button.insertInto(label);
         label.appendChild(document.createTextNode(buttonDesc.label));
         this.wrapperElement.appendChild(label);
