@@ -136,6 +136,11 @@ function FiWareCatalogueResource(resourceJSON_) {
         return this.version;
     };
 
+    var publicationdate = null;
+    if (resourceJSON_.publicationdate != null && resourceJSON_.publicationdate != '') {
+        publicationdate = new Date(resourceJSON_.publicationdate);
+    }
+
     Object.defineProperties(this, {
         'abstract': {value: resourceJSON_.shortDescription},
         'description': {value: resourceJSON_.longDescription},
@@ -145,7 +150,7 @@ function FiWareCatalogueResource(resourceJSON_) {
         'usdl_url': {value: resourceJSON_.usdl_url},
         'resources': {value: resourceJSON_.resources},
         'version': {value: new Wirecloud.Version(resourceJSON_.version, 'catalogue')},
-        'publicationdate': {value: new Date(resourceJSON_.publicationdate)}
+        'publicationdate': {value: publicationdate}
     });
 
     //////////////

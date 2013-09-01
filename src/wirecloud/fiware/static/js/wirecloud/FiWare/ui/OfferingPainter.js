@@ -90,7 +90,13 @@
 
                 return label;
             },
-            'publicationdate': function () { return resource.publicationdate.strftime('%x'); },
+            'publicationdate': function () {
+                if (resource.publicationdate != null) {
+                    return resource.publicationdate.strftime('%x');
+                } else {
+                    return gettext('N/A');
+                }
+            },
             'doc': function () {
                 var button;
 
