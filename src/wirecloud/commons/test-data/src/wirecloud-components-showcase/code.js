@@ -141,7 +141,7 @@ var init = function init() {
     passField.insertInto(row);\n\
     container.appendChild(row);\n\
 \n\
-    /* Numeric Field */\n\
+    /* Numeric Field \n\
     var row = document.createElement('div');\n\
     var numericField = new StyledElements.StyledNumericField({initialValue: 10});\n\
     container.appendChild(numericField);\n\
@@ -154,7 +154,7 @@ var init = function init() {
     button.insertInto(row);\n\
     numericField.insertInto(row);\n\
     container.appendChild(row);\n\
-\n\
+*/\n\
     /* Check boxes */\n\
     var group1 = new StyledElements.ButtonsGroup('input5');\n\
     var radiobutton;\n\
@@ -164,24 +164,24 @@ var init = function init() {
     button.addEventListener('click', group1.reset.bind(group1));\n\
     button.insertInto(row);\n\
 \n\
-    radiobutton = new StyledElements.StyledCheckBox(group1, 'uno');\n\
+    radiobutton = new StyledElements.StyledCheckBox({group: group1, value: 'one'});\n\
     radiobutton.insertInto(row);\n\
-    radiobutton = new StyledElements.StyledCheckBox(group1, 'dos', {initiallyChecked: true});\n\
+    radiobutton = new StyledElements.StyledCheckBox({group: group1, value: 'two', initiallyChecked: true});\n\
     radiobutton.insertInto(row);\n\
-    radiobutton = new StyledElements.StyledCheckBox(group1, 'tres');\n\
+    radiobutton = new StyledElements.StyledCheckBox({group: group1, value: 'three'});\n\
     radiobutton.insertInto(row);\n\
-    radiobutton = new StyledElements.StyledCheckBox(group1, 'cuatro', {initiallyChecked: true});\n\
+    radiobutton = new StyledElements.StyledCheckBox({group: group1, value: 'four', initiallyChecked: true});\n\
     radiobutton.insertInto(row);\n\
     container.appendChild(row);\n\
 \n\
     /* Radio buttons */\n\
     var group2 = new StyledElements.ButtonsGroup('input6');\n\
 \n\
-    radiobutton = new StyledElements.StyledRadioButton(group2, 'uno');\n\
+    radiobutton = new StyledElements.StyledRadioButton({group: group2, value: 'one'});\n\
     container.appendChild(radiobutton);\n\
-    radiobutton = new StyledElements.StyledRadioButton(group2, 'dos', {initiallyChecked: true});\n\
+    radiobutton = new StyledElements.StyledRadioButton({group: group2, value: 'two', initiallyChecked: true});\n\
     container.appendChild(radiobutton);\n\
-    radiobutton = new StyledElements.StyledRadioButton(group2, 'tres');\n\
+    radiobutton = new StyledElements.StyledRadioButton({group: group2, value: 'three'});\n\
     container.appendChild(radiobutton);\n\
 \n\
     var tmp = document.createElement('br');\n\
