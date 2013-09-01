@@ -183,3 +183,8 @@ class StoreTestCase(WirecloudTestCase):
         info = self.store_client.get_offering_info('17', 'wirecloud_token')
 
         self.assertEqual(info, response)
+
+    def test_resource_upload(self):
+
+        self.network._servers['http']['example.com'].add_response('POST', '/api/offering/resources', {'content': '', 'status_code': 200})
+        self.store_client.upload_resource('Resource Name', '1.0', 'resource.zip', 'Resource file, probably a widget, an operator or a mashup', 'application/octet-stream', 'file contents', 'test_token')
