@@ -48,7 +48,7 @@
         });
     };
 
-    ObjectStorageAPI.prototype.createContainer = function listContainer(container, token, options) {
+    ObjectStorageAPI.prototype.createContainer = function createContainer(container, token, options) {
         var url = this.url + encodeURIComponent(container);
 
         if (options == null) {
