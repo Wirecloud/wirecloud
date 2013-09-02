@@ -618,7 +618,7 @@ StyledElements.ButtonsGroup.prototype.getValue = function getValue() {
 
         for (i = 0; i < this.buttons.length; i++) {
             if (this.buttons[i].inputElement.checked) {
-                result.push(this.buttons[i].inputElement.value);
+                result.push(this.buttons[i].getValue());
             }
         }
 
@@ -626,7 +626,7 @@ StyledElements.ButtonsGroup.prototype.getValue = function getValue() {
 
         for (i = 0; i < this.buttons.length; i++) {
             if (this.buttons[i].inputElement.checked) {
-                return [this.buttons[i].inputElement.value];
+                return [this.buttons[i].getValue()];
             }
         }
     }

@@ -98,18 +98,8 @@
         }
     };
 
-    CatalogueView.prototype.getPublishEndpoint = function getPublishEndpoint() {
-        return [{
-            'name': this.market_id,
-            'label': this.market_id,
-            'type': 'boolean'
-        }];
-    };
-
-    CatalogueView.prototype.getPublishData = function getPublishData(data) {
-        return [{
-            'market': this.market_id
-        }];
+    CatalogueView.prototype.getPublishEndpoints = function getPublishEndpoints() {
+        return null;
     };
 
     CatalogueView.prototype.changeCurrentView = function changeCurrentView(view_name) {

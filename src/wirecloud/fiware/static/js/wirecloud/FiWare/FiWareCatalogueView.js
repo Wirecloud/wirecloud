@@ -168,14 +168,8 @@
         }
     };
 
-    FiWareCatalogueView.prototype.getPublishEndpoint = function getPublishEndpoint() {
-        var i, form, stores = [];
-
-        form = [{
-            'name': this.marketplace,
-            'label': this.marketplace,
-            'type': 'boolean'
-        }];
+    FiWareCatalogueView.prototype.getPublishEndpoints = function getPublishEndpoints() {
+        var i, stores = [];
 
         for (i = 0; i < this.store_info.length; i += 1) {
             stores[i] = {
@@ -184,25 +178,7 @@
             };
         }
 
-        form[1] = {
-            'name': this.marketplace + 'Store',
-            'label': this.marketplace + ' store',
-            'type': 'select',
-            'initialEntries': stores
-        };
-        return form;
-    };
-
-    FiWareCatalogueView.prototype.getPublishData = function getPublishData(data) {
-        var publishData = [];
-
-        if (data[this.marketplace]) {
-            publishData = [{
-                'market': this.marketplace,
-                'store': data[this.marketplace + 'Store']
-            }];
-        }
-        return publishData;
+        return stores;
     };
 
     FiWareCatalogueView.prototype.refresh_store_info = function refresh_store_info() {

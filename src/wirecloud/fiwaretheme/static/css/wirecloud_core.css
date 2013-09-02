@@ -115,6 +115,11 @@ li {
     line-height: 18px;
 }
 
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
 #wirecloud_header {
     font-family: "Courier New", courier;
     font-size: 14pt;

@@ -30,16 +30,22 @@
     var CheckBox = function StyledCheckBox(options) {
 
         var defaultOptions = {
-            'initiallyChecked': false,
+            'initialValue': false,
             'class': '',
             'group': null,
-            'value': null
+            'secondInput': null,
+            'value': true
         };
         options = EzWebExt.merge(defaultOptions, options);
 
-        StyledElements.StyledInputElement.call(this, options.initiallyChecked, ['change']);
+        // This is needed for backward compatibility
+        if ('initiallyChecked' in options) {
+            options.initialValue = options.initiallyChecked;
+        }
+        StyledElements.StyledInputElement.call(this, options.initialValue, ['change']);
 
         this.wrapperElement = document.createElement("input");
+        this.wrapperElement.className = 'checkbox';
 
         this.wrapperElement.setAttribute("type", "checkbox");
         this.inputElement = this.wrapperElement;
@@ -52,13 +58,10 @@
             this.wrapperElement.setAttribute("id", options.id);
         }
 
-        if (options.initiallyChecked === true) {
-            this.inputElement.setAttribute("checked", true);
-        }
-
-        if (options.value != null) {
-            this.inputElement.setAttribute("value", options.value);
-        }
+        this.value = options.value;
+        this.inputElement.setAttribute("value", options.value);
+        this.secondInput = options.secondInput;
+        this.setValue(options.initialValue);
 
         if (options.group instanceof StyledElements.ButtonsGroup) {
             this.wrapperElement.setAttribute("name", options.group.getName());
@@ -73,6 +76,9 @@
         this.inputElement.addEventListener('change',
                                     function () {
                                         if (this.enabled) {
+                                            if (this.secondInput != null) {
+                                                this.secondInput.setDisabled(!this.inputElement.checked);
+                                            }
                                             this.events.change.dispatch(this);
                                         }
                                     }.bind(this),
@@ -82,15 +88,27 @@
     CheckBox.prototype = new StyledElements.StyledInputElement();
 
     CheckBox.prototype.reset = function reset() {
-        this.inputElement.checked = this.defaultValue;
+        this.setValue(this.defaultValue);
     };
 
     CheckBox.prototype.getValue = function getValue() {
-        return this.inputElement.checked;
+        if (this.value === true && this.secondInput == null) {
+            return this.inputElement.checked;
+        } else if (this.secondInput == null) {
+            return this.inputElement.checked ? this.value : null;
+        } else {
+            return this.secondInput.getValue();
+        }
     };
 
     CheckBox.prototype.setValue = function setValue(newValue) {
-        this.inputElement.checked = newValue;
+        this.inputElement.checked = newValue != null && newValue != false;
+        if (this.secondInput != null) {
+            this.secondInput.setDisabled(!this.inputElement.checked);
+            if (this.inputElement.checked) {
+                this.secondInput.setValue(newValue);
+            }
+        }
     };
 
     StyledElements.StyledCheckBox = CheckBox;
