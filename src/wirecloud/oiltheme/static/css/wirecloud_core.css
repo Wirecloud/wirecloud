@@ -42,6 +42,14 @@
        url("../fonts/opensans-bold-webfont.svg#OpenSansRegular") format("svg");
 }
 
+@font-face {
+  font-family: 'NeoTech';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Neo Tech'), local('NeoTech'),
+       url("../fonts/neotech-regular-webfont.otf") format("truetype");
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -171,6 +179,7 @@ header.navbar .logo-header > .brand {
     text-shadow: 0 1px 0 #fff;
     vertical-align: top;
     line-height: 21px;
+    font-family: "NeoTech";
 }
 
 header.navbar .logo-header > .brand > span {
