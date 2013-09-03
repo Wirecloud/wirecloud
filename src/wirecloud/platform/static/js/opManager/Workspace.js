@@ -444,7 +444,7 @@ function Workspace (workspaceState) {
         this.notebook.addButton(this.addTabButton);
         this.addTabButton.addEventListener('click', this.addTab.bind(this));
         this.notebook.addButton(this.poweredByWirecloudButton);
-        this.poweredByWirecloudButton.addEventListener('click', function () {window.open('http://github.com/Wirecloud/wirecloud', '_blank')});
+        this.poweredByWirecloudButton.addEventListener('click', function () {window.open('http://conwet.fi.upm.es/wirecloud/', '_blank')});
         LayoutManagerFactory.getInstance().viewsByName['workspace'].clear();
         LayoutManagerFactory.getInstance().viewsByName['workspace'].appendChild(this.notebook);
 
