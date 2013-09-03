@@ -200,6 +200,13 @@
     };
 
     WirecloudHeader.prototype._notifyWorkspaceLoaded = function _notifyWorkspaceLoaded(workspace) {
+        if (this.footer == null) {
+            this.footer = document.createElement('footer');
+            this.footer.innerHTML = '<div>2013 © <a href="http://fi-ware.eu/">FI-WARE</a>. Usage of FI-LAB services subject to acceptance of <a href="http://wiki.fi-ware.eu/FI-LAB_Terms_and_Conditions">Terms and Conditions</a> and <a href="http://wiki.fi-ware.eu/FI-LAB_Terms_and_Conditions">Terms and Conditions</a></div>';
+            LayoutManagerFactory.getInstance().mainLayout.getSouthContainer().appendChild(this.footer);
+            LayoutManagerFactory.getInstance().mainLayout.repaint();
+        }
+
         this._paintBreadcrum(LayoutManagerFactory.getInstance().viewsByName['workspace']);
 
         workspace.wiring.addEventListener('load', function () {

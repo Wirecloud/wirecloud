@@ -299,6 +299,10 @@ header.navbar .nav > .arrow-down-settings:hover {
     background-position: -1px -5px;
 }
 
+footer {
+    padding: 1ex 1ex 1ex 20px;
+}
+
 /* END OIL Header */
 
 #wirecloud_header > .breadcrum_wrapper {
