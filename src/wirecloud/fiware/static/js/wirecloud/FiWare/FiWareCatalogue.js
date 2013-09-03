@@ -79,7 +79,7 @@
     };
 
     FiWareCatalogue.prototype.is_purchased = function is_purchased(resource) {
-        return resource.state === 'purchased';
+        return resource.state === 'purchased' || resource.state === 'rated';
     };
 
     FiWareCatalogue.prototype.start_purchase = function start_purchase(resource, options) {
