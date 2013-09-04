@@ -200,8 +200,8 @@
                         msg = interpolate(msg, {operator: operator_info.name}, true);
                         this.events.error.dispatch(msg);
                     }
-                } else {
-                    msg = gettext('%(operator)s operator is not available in for this account');
+                } else {
+                    msg = gettext('%(operator)s operator is not available for this account');
                     msg = interpolate(msg, {operator: operator_info.name}, true);
                     this.events.error.dispatch(msg);
                 }
