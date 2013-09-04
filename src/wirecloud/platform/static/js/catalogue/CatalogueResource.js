@@ -32,9 +32,7 @@ function CatalogueResource(resourceJSON_) {
     ///////////////////////
     // PRIVATE VARIABLES
     ///////////////////////
-    var vendor = resourceJSON_.vendor,
-        name = resourceJSON_.name,
-        type = resourceJSON_.type,
+    var type = resourceJSON_.type,
         currentVersion = null,
         allVersions = [],
         data_by_version = {},
@@ -54,20 +52,8 @@ function CatalogueResource(resourceJSON_) {
         return currentVersion.author;
     };
 
-    this.getVendor = function () {
-        return vendor;
-    };
-
-    this.getName = function () {
-        return name;
-    };
-
     this.getDisplayName = function () {
         return currentVersion.displayName;
-    };
-
-    this.getVersion = function () {
-        return currentVersion.version;
     };
 
     this.getLastVersion = function () {
@@ -152,10 +138,17 @@ function CatalogueResource(resourceJSON_) {
     };
 
     this.getURI = function () {
-        return [vendor, name, currentVersion.version.text].join('/');
+        return [this.vendor, name, currentVersion.version.text].join('/');
     };
 
     Object.defineProperties(this, {
+        'vendor': {value: resourceJSON_.vendor},
+        'name': {value: resourceJSON_.name},
+        'version': {
+            get: function () {
+                return currentVersion.version;
+            }
+        },
         'uploader': {
             get: function () { return currentVersion.uploader; }
         },

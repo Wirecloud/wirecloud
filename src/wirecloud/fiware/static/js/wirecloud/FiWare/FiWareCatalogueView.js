@@ -126,7 +126,7 @@
     };
 
     FiWareCatalogueView.prototype._onSearch = function (callback, raw_data) {
-        var preferred_versions, i, data, key, resources, resource;
+        var preferred_versions, i, data, resources, resource;
 
         if (raw_data.resources) {
             preferred_versions = Wirecloud.utils.CookieManager.readCookie('preferred_versions', true);
@@ -140,10 +140,6 @@
             for (i = 0; i < raw_data.resources.length; i += 1) {
                 resource = new FiWareCatalogueResource(raw_data.resources[i]);
                 resources.push(resource);
-                key = resource.getVendor() + '/' + resource.getName();
-                if (key in preferred_versions) {
-                    resource.changeVersion(preferred_versions[key]);
-                }
             }
 
             data = {

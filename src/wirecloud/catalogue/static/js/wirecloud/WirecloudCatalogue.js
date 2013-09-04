@@ -42,7 +42,7 @@
             for (i = 0; i < raw_data.resources.length; i += 1) {
                 resource = new CatalogueResource(raw_data.resources[i]);
                 resources.push(resource);
-                key = resource.getVendor() + '/' + resource.getName();
+                key = resource.vendor + '/' + resource.name;
                 if (key in preferred_versions) {
                     resource.changeVersion(preferred_versions[key]);
                 }
@@ -228,9 +228,9 @@
         var url, context;
 
         url = this.RESOURCE_ENTRY.evaluate({
-            vendor: resource.getVendor(),
-            name: resource.getName(),
-            version: resource.getVersion().text
+            vendor: resource.vendor,
+            name: resource.name,
+            version: resource.version.text
         });
 
         context = {

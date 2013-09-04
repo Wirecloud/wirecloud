@@ -52,14 +52,6 @@ function FiWareCatalogueResource(resourceJSON_) {
 		}
 		return result;
 	};
-    this.getVendor = function () {
-        return vendor;
-    };
-
-    this.getName = function () {
-        return name;
-    };
-
 	this.getType = function() {
 		return type;
 	};
@@ -142,6 +134,9 @@ function FiWareCatalogueResource(resourceJSON_) {
     }
 
     Object.defineProperties(this, {
+        'owner': {value: resourceJSON_.vendor},
+        'name': {value: resourceJSON_.name},
+        'version': {value: new Wirecloud.Version(resourceJSON_.version, 'catalogue')},
         'abstract': {value: resourceJSON_.shortDescription},
         'description': {value: resourceJSON_.longDescription},
         'rating': {value: resourceJSON_.rating},
@@ -149,7 +144,6 @@ function FiWareCatalogueResource(resourceJSON_) {
         'store': {value: store},
         'usdl_url': {value: resourceJSON_.usdl_url},
         'resources': {value: resourceJSON_.resources},
-        'version': {value: new Wirecloud.Version(resourceJSON_.version, 'catalogue')},
         'publicationdate': {value: publicationdate}
     });
 

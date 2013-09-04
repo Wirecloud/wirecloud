@@ -202,9 +202,9 @@
         var url, context;
 
         url = Wirecloud.URLs.LOCAL_RESOURCE_ENTRY.evaluate({
-            vendor: resource.getVendor(),
-            name: resource.getName(),
-            version: resource.getVersion().text
+            vendor: resource.vendor,
+            name: resource.name,
+            version: resource.version.text
         });
 
         context = {
@@ -228,9 +228,9 @@
         var url, context;
 
         url = this.RESOURCE_ENTRY.evaluate({
-            vendor: resource.getVendor(),
-            name: resource.getName(),
-            version: resource.getVersion().text
+            vendor: resource.vendor,
+            name: resource.name,
+            version: resource.version.text
         });
 
         context = {
@@ -321,7 +321,7 @@
     };
 
     LocalCatalogue.resourceExists = function resourceExists(resource) {
-        var id = [resource.getVendor(), resource.getName(), resource.getVersion().text].join('/');
+        var id = [resource.vendor, resource.name, resource.version.text].join('/');
         return this.resourceExistsId(id);
     };
 

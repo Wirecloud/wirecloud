@@ -99,8 +99,8 @@
 
         context = EzWebExt.merge(extra_context, {
             'displayname': offering.getDisplayName(),
-            'name': offering.getName(),
-            'owner': offering.getVendor(),
+            'name': offering.name,
+            'owner': offering.owner,
             'store': offering.store,
             'version': offering.version.text,
             'abstract': offering['abstract'],

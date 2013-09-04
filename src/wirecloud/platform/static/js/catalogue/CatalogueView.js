@@ -237,9 +237,9 @@
         // First ask the user
         msg = gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") widget?');
         context = {
-            name: resource.getName(),
-            vendor: resource.getVendor(),
-            version: resource.getVersion().text
+            vendor: resource.vendor,
+            name: resource.name,
+            version: resource.version.text
         };
 
         msg = interpolate(msg, context, true);
