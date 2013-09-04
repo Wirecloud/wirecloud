@@ -32,8 +32,7 @@ function CatalogueResource(resourceJSON_) {
     ///////////////////////
     // PRIVATE VARIABLES
     ///////////////////////
-    var type = resourceJSON_.type,
-        currentVersion = null,
+    var currentVersion = null,
         allVersions = [],
         data_by_version = {},
         extra_data = null,
@@ -84,16 +83,12 @@ function CatalogueResource(resourceJSON_) {
         return currentVersion.uriWiki;
     };
 
-    this.getType = function () {
-        return type;
-    };
-
     this.isMashup = function () {
-        return type === 'mashup';
+        return this.type === 'mashup';
     };
 
     this.isWidget = function () {
-        return type === 'widget';
+        return this.type === 'widget';
     };
 
     this.getAddedBy = function () {
@@ -149,6 +144,7 @@ function CatalogueResource(resourceJSON_) {
                 return currentVersion.version;
             }
         },
+        'type': {value: resourceJSON_.type},
         'uploader': {
             get: function () { return currentVersion.uploader; }
         },

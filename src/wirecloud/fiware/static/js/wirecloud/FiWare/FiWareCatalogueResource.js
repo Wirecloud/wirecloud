@@ -21,137 +21,161 @@
 
 /*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
 /*global $ */
-"use strict";
 
-function FiWareCatalogueResource(resourceJSON_) {
+(function () {
 
-    ///////////////////////
-    // PRIVATE VARIABLES
-    ///////////////////////
-    var vendor = resourceJSON_.vendor,
-        name = resourceJSON_.name,
-		store = resourceJSON_.store,
-		market_name = resourceJSON_.marketName,
-		parts = resourceJSON_.parts,
-		type = resourceJSON_.type,
-        extra_data = null,
-    ///////////////////////////
-    // CONSTRUCTOR VARIABLES
-    ///////////////////////////
-        i = 0;
+    "use strict";
 
-    //////////////////////////
-    // GETTERS
-    /////////////////////////
+    var MAC_MIMETYPES = ['application/x-widget+mashable-application-component', 'application/x-operator+mashable-application-component', 'application/x-mashup+mashable-application-component'];
+    var MAC_TYPES = ['widget', 'operator', 'mashup'];
 
-	this.isMashup = function(){
-		var result = false;
-
-		if (type === 'mashup'){
-			result = true;
-		}
-		return result;
-	};
-	this.getType = function() {
-		return type;
-	};
-
-	this.getCreator = function() {
-		return "";
-	};
-
-	this.getParts = function() {
-		return parts;
-	};
-
-    this.getLastVersion = function () {
-        return allVersions[0];
+    var is_mac_mimetype = function is_mac_mimetype(mimetype) {
+        return MAC_MIMETYPES.indexOf(mimetype) !== -1;
     };
 
-    this.getId = function () {
-        return resourceJSON_.id;
-    };
+    function FiWareCatalogueResource(resourceJSON_) {
 
-    this.getDisplayName = function getDisplayName() {
-        return resourceJSON_.displayName;
-    };
+        ///////////////////////
+        // PRIVATE VARIABLES
+        ///////////////////////
+        var vendor = resourceJSON_.vendor,
+            name = resourceJSON_.name,
+            store = resourceJSON_.store,
+            market_name = resourceJSON_.marketName,
+            parts = resourceJSON_.parts,
+            extra_data = null,
+        ///////////////////////////
+        // CONSTRUCTOR VARIABLES
+        ///////////////////////////
+            i = 0;
 
-    this.getUriImage = function () {
-        return resourceJSON_.uriImage;
-    };
+        //////////////////////////
+        // GETTERS
+        /////////////////////////
 
-    this.getUriTemplate = function () {
-        return resourceJSON_.uriTemplate;
-    };
+        this.isMashup = function(){
+            var result = false;
 
-	this.getPage = function () {
-        return resourceJSON_.page;
-    };
+            if (this.type === 'mashup'){
+                result = true;
+            }
+            return result;
+        };
 
-	this.getCreated = function () {
-        return resourceJSON_.created;
-    };
+        this.getCreator = function() {
+            return "";
+        };
 
-	this.getPricing = function() {
-		return resourceJSON_.pricing;
-	};
+        this.getParts = function() {
+            return parts;
+        };
 
-	this.getSla = function() {
-		return resourceJSON_.sla;
-	};
-	
-	this.getLegal = function() {
-		return resourceJSON_.legal;
-	};
+        this.getLastVersion = function () {
+            return allVersions[0];
+        };
 
-	this.getMarketName = function() {
-		return market_name;
-	};
+        this.getId = function () {
+            return resourceJSON_.id;
+        };
 
-    this.getExtraData = function () {
-        return extra_data;
-    };
+        this.getDisplayName = function getDisplayName() {
+            return resourceJSON_.displayName;
+        };
 
-    this.getTags = function () {
-        return [];
-    };
+        this.getUriImage = function () {
+            return resourceJSON_.uriImage;
+        };
 
-    this.getURI = function () {
-        return [vendor, name, version.text].join('/');
-    };
+        this.getUriTemplate = function () {
+            return resourceJSON_.uriTemplate;
+        };
 
-    this.isAllow = function isAllow(action) {
-        return false;
-    };
+        this.getPage = function () {
+            return resourceJSON_.page;
+        };
 
-    this.getVersion = function getVersion() {
-        return this.version;
-    };
+        this.getCreated = function () {
+            return resourceJSON_.created;
+        };
 
-    var publicationdate = null;
-    if (resourceJSON_.publicationdate != null && resourceJSON_.publicationdate != '') {
-        publicationdate = new Date(resourceJSON_.publicationdate);
+        this.getPricing = function() {
+            return resourceJSON_.pricing;
+        };
+
+        this.getSla = function() {
+            return resourceJSON_.sla;
+        };
+        
+        this.getLegal = function() {
+            return resourceJSON_.legal;
+        };
+
+        this.getMarketName = function() {
+            return market_name;
+        };
+
+        this.getExtraData = function () {
+            return extra_data;
+        };
+
+        this.getTags = function () {
+            return [];
+        };
+
+        this.getURI = function () {
+            return [vendor, name, version.text].join('/');
+        };
+
+        this.isAllow = function isAllow(action) {
+            return false;
+        };
+
+        this.getVersion = function getVersion() {
+            return this.version;
+        };
+
+        var publicationdate = null;
+        if (resourceJSON_.publicationdate != null && resourceJSON_.publicationdate != '') {
+            publicationdate = new Date(resourceJSON_.publicationdate);
+        }
+
+        Object.defineProperties(this, {
+            'owner': {value: resourceJSON_.vendor},
+            'name': {value: resourceJSON_.name},
+            'version': {value: new Wirecloud.Version(resourceJSON_.version, 'catalogue')},
+            'type': {value: resourceJSON_.type},
+            'abstract': {value: resourceJSON_.shortDescription},
+            'description': {value: resourceJSON_.longDescription},
+            'rating': {value: resourceJSON_.rating},
+            'state': {value: resourceJSON_.state},
+            'store': {value: store},
+            'usdl_url': {value: resourceJSON_.usdl_url},
+            'resources': {value: resourceJSON_.resources},
+            'publicationdate': {value: publicationdate}
+        });
+
+        if (['purchased', 'rated'].indexOf(this.state) != -1) {
+            for (var i = 0; i < this.resources.length; i += 1) {
+                var resource = this.resources[i];
+                if (is_mac_mimetype(resource.content_type)) {
+                    var parts = resource.id.split('/');
+                    resource.vendor = parts[0];
+                    resource.name = parts[1];
+                    resource.version = new Wirecloud.Version(parts[2], 'catalogue');
+                    resource.type = MAC_TYPES[MAC_MIMETYPES.indexOf(resource.content_type)];
+                }
+            }
+        }
+
+        //////////////
+        // SETTERS
+        //////////////
+
+        this.setExtraData = function (extra_data_) {
+            extra_data = extra_data_;
+        };
     }
 
-    Object.defineProperties(this, {
-        'owner': {value: resourceJSON_.vendor},
-        'name': {value: resourceJSON_.name},
-        'version': {value: new Wirecloud.Version(resourceJSON_.version, 'catalogue')},
-        'abstract': {value: resourceJSON_.shortDescription},
-        'description': {value: resourceJSON_.longDescription},
-        'rating': {value: resourceJSON_.rating},
-        'state': {value: resourceJSON_.state},
-        'store': {value: store},
-        'usdl_url': {value: resourceJSON_.usdl_url},
-        'resources': {value: resourceJSON_.resources},
-        'publicationdate': {value: publicationdate}
-    });
+    window.FiWareCatalogueResource = FiWareCatalogueResource;
 
-    //////////////
-    // SETTERS
-    //////////////
-
-    this.setExtraData = function (extra_data_) {
-        extra_data = extra_data_;
-    };
-}
+})();

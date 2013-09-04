@@ -71,9 +71,9 @@
             'description': resource.getDescription(),
             'type': function () {
                 var label = document.createElement('div');
-                label.textContent = resource.getType();
+                label.textContent = resource.type;
                 label.className = 'label';
-                switch (resource.getType()) {
+                switch (resource.type) {
                 case 'widget':
                     label.classList.add('label-success');
                     break;
@@ -125,7 +125,7 @@
 
                 local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
 
-                if (!this.catalogue_view.catalogue.is_purchased(this.resource) && ['widget', 'operator', 'mashup', 'pack'].indexOf(this.resource.getType()) !== -1) {
+                if (!this.catalogue_view.catalogue.is_purchased(this.resource) && ['widget', 'operator', 'mashup', 'pack'].indexOf(this.resource.type) !== -1) {
                     button = new StyledElements.StyledButton({
                         'class': 'mainbutton btn-success',
                         'text': gettext('Buy')
@@ -134,7 +134,7 @@
                     return button;
                 }
 
-                if (this.resource.getType() === 'operator') {
+                if (this.resource.type === 'operator') {
 
                     if (Wirecloud.LocalCatalogue.resourceExists(this.resource)) {
                         button = new StyledElements.StyledButton({
@@ -151,7 +151,7 @@
                         button.addEventListener('click', local_catalogue_view.createUserCommand('install', this.resource, this.catalogue_view));
                     }
                 } else if (this.catalogue_view.catalogue === Wirecloud.LocalCatalogue) {
-                    switch (this.resource.getType()) {
+                    switch (this.resource.type) {
                     case 'mashup':
                     case 'widget':
                         button = new StyledElements.StyledButton({
@@ -173,7 +173,7 @@
                             'text': gettext('Uninstall')
                         });
                         button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', this.resource, this.catalogue_view));
-                    } else if (['widget', 'operator', 'mashup'].indexOf(this.resource.getType()) != -1) {
+                    } else if (['widget', 'operator', 'mashup'].indexOf(this.resource.type) != -1) {
                         button = new StyledElements.StyledButton({
                             'text': gettext('Install')
                         });

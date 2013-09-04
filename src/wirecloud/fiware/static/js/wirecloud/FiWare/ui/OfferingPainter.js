@@ -25,6 +25,12 @@
 
     "use strict";
 
+    var MAC_MIMETYPES = ['application/x-widget+mashable-application-component', 'application/x-operator+mashable-application-component', 'application/x-mashup+mashable-application-component'];
+
+    var is_mac_mimetype = function is_mac_mimetype(mimetype) {
+        return MAC_MIMETYPES.indexOf(mimetype) !== -1;
+    };
+
     var install = function install(url, catalogue_view, store) {
         var layoutManager, local_catalogue_view;
 
@@ -107,9 +113,9 @@
             'description': offering.description,
             'type': function () {
                 var label = document.createElement('div');
-                label.textContent = offering.getType();
+                label.textContent = offering.type;
                 label.className = 'label';
-                switch (offering.getType()) {
+                switch (offering.type) {
                 case 'widget':
                     label.classList.add('label-success');
                     break;
@@ -167,7 +173,7 @@
 
                 local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
 
-                if (!this.catalogue_view.catalogue.is_purchased(this.offering) && ['widget', 'operator', 'mashup', 'pack'].indexOf(this.offering.getType()) !== -1) {
+                if (!this.catalogue_view.catalogue.is_purchased(this.offering) && ['widget', 'operator', 'mashup', 'pack'].indexOf(this.offering.type) !== -1) {
                     button = new StyledElements.StyledButton({
                         'class': 'mainbutton btn-success',
                         'text': gettext('Buy')
@@ -176,7 +182,7 @@
                     return button;
                 }
 
-                if (['widget', 'operator', 'mashup'].indexOf(this.offering.getType()) !== -1) {
+                if (['widget', 'operator', 'mashup'].indexOf(this.offering.type) !== -1) {
 
                     if (Wirecloud.LocalCatalogue.resourceExistsId(this.offering.resources[0].id)) {
                         button = new StyledElements.StyledButton({

@@ -62,7 +62,7 @@
     var uninstallOrDeleteSuccessCallback = function uninstallOrDeleteSuccessCallback(transport) {
         var layoutManager, result, opManager, i, widgetId;
 
-        switch (this.resource.getType()) {
+        switch (this.resource.type) {
         case 'widget':
             layoutManager = LayoutManagerFactory.getInstance();
             result = JSON.parse(transport.responseText);
@@ -88,7 +88,7 @@
 
         try {
             delete this.catalogue.resources[this.resource.getURI()];
-            delete this.catalogue.resourcesByType[this.resource.getType()][this.resource.getURI()];
+            delete this.catalogue.resourcesByType[this.resource.type][this.resource.getURI()];
         } catch (e) {}
 
         if (typeof this.onSuccess === 'function') {
