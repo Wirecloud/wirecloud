@@ -23,192 +23,194 @@
 *     http://morfeo-project.org
 */
 
-/*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global $ */
-"use strict";
+/*global Wirecloud*/
 
-function CatalogueResource(resourceJSON_) {
+(function () {
 
-    ///////////////////////
-    // PRIVATE VARIABLES
-    ///////////////////////
-    var currentVersion = null,
-        allVersions = [],
-        data_by_version = {},
-        extra_data = null,
-        deleteable = true,
-    ///////////////////////////
-    // CONSTRUCTOR VARIABLES
-    ///////////////////////////
-        i = 0,
-        versions,
-        version_data;
+    "use strict";
 
-    //////////////////////////
-    // GETTERS
-    /////////////////////////
-    this.getCreator = function () {
-        return currentVersion.author;
-    };
+    var CatalogueResource = function CatalogueResource(resourceJSON_) {
 
-    this.getDisplayName = function () {
-        return currentVersion.displayName;
-    };
+        ///////////////////////
+        // PRIVATE VARIABLES
+        ///////////////////////
+        var currentVersion = null,
+            allVersions = [],
+            data_by_version = {},
+            extra_data = null,
+            deleteable = true,
+        ///////////////////////////
+        // CONSTRUCTOR VARIABLES
+        ///////////////////////////
+            i = 0,
+            versions,
+            version_data;
 
-    this.getLastVersion = function () {
-        return allVersions[0];
-    };
+        //////////////////////////
+        // GETTERS
+        /////////////////////////
+        this.getCreator = function () {
+            return currentVersion.author;
+        };
 
-    this.getId = function () {
-        return currentVersion.id;
-    };
+        this.getDisplayName = function () {
+            return currentVersion.displayName;
+        };
 
-    this.getAllVersions = function () {
-        return allVersions;
-    };
+        this.getLastVersion = function () {
+            return allVersions[0];
+        };
 
-    this.getDescription = function () {
-        return currentVersion.description;
-    };
+        this.getId = function () {
+            return currentVersion.id;
+        };
 
-    this.getUriImage = function () {
-        return currentVersion.uriImage;
-    };
+        this.getAllVersions = function () {
+            return allVersions;
+        };
 
-    this.getUriTemplate = function () {
-        return currentVersion.uriTemplate;
-    };
+        this.getDescription = function () {
+            return currentVersion.description;
+        };
 
-    this.getUriWiki = function () {
-        return currentVersion.uriWiki;
-    };
+        this.getUriImage = function () {
+            return currentVersion.uriImage;
+        };
 
-    this.isMashup = function () {
-        return this.type === 'mashup';
-    };
+        this.getUriTemplate = function () {
+            return currentVersion.uriTemplate;
+        };
 
-    this.isWidget = function () {
-        return this.type === 'widget';
-    };
+        this.getUriWiki = function () {
+            return currentVersion.uriWiki;
+        };
 
-    this.getAddedBy = function () {
-        return currentVersion.addedBy;
-    };
+        this.isMashup = function () {
+            return this.type === 'mashup';
+        };
 
-    this.getTags = function () {
-        return currentVersion.tags;
-    };
+        this.isWidget = function () {
+            return this.type === 'widget';
+        };
 
-    this.getVotes = function () {
-        return currentVersion.votes.votes_number;
-    };
+        this.getAddedBy = function () {
+            return currentVersion.addedBy;
+        };
 
-    this.getUserVote = function () {
-        return currentVersion.votes.user_vote;
-    };
+        this.getTags = function () {
+            return currentVersion.tags;
+        };
 
-    this.getCapabilities = function () {
-        return currentVersion.capabilities;
-    };
+        this.getVotes = function () {
+            return currentVersion.votes.votes_number;
+        };
 
-    this.getExtraData = function () {
-        return extra_data;
-    };
+        this.getUserVote = function () {
+            return currentVersion.votes.user_vote;
+        };
 
-    this.getIeCompatible = function () {
-        return currentVersion.ieCompatible;
-    };
+        this.getCapabilities = function () {
+            return currentVersion.capabilities;
+        };
 
-    this.isAllow = function isAllow(action) {
-        switch (action) {
-        case 'delete':
-            return currentVersion.added_by_user;
-        case 'delete-all':
-            return deleteable;
-        }
-    };
+        this.getExtraData = function () {
+            return extra_data;
+        };
 
-    this.isPackaged = function () {
-        return !!currentVersion.packaged;
-    };
+        this.getIeCompatible = function () {
+            return currentVersion.ieCompatible;
+        };
 
-    this.getURI = function () {
-        return [this.vendor, this.name, currentVersion.version.text].join('/');
-    };
-
-    Object.defineProperties(this, {
-        'vendor': {value: resourceJSON_.vendor},
-        'name': {value: resourceJSON_.name},
-        'version': {
-            get: function () {
-                return currentVersion.version;
+        this.isAllow = function isAllow(action) {
+            switch (action) {
+            case 'delete':
+                return currentVersion.added_by_user;
+            case 'delete-all':
+                return deleteable;
             }
-        },
-        'type': {value: resourceJSON_.type},
-        'uploader': {
-            get: function () { return currentVersion.uploader; }
-        },
-        'rating': {
-            get: function () { return currentVersion.votes.popularity; }
-        },
-        'date': {
-            get: function () { return currentVersion.date; }
+        };
+
+        this.isPackaged = function () {
+            return !!currentVersion.packaged;
+        };
+
+        this.getURI = function () {
+            return [this.vendor, this.name, currentVersion.version.text].join('/');
+        };
+
+        Object.defineProperties(this, {
+            'vendor': {value: resourceJSON_.vendor},
+            'name': {value: resourceJSON_.name},
+            'version': {
+                get: function () {
+                    return currentVersion.version;
+                }
+            },
+            'type': {value: resourceJSON_.type},
+            'uploader': {
+                get: function () { return currentVersion.uploader; }
+            },
+            'rating': {
+                get: function () { return currentVersion.votes.popularity; }
+            },
+            'date': {
+                get: function () { return currentVersion.date; }
+            }
+        });
+
+        //////////////
+        // SETTERS
+        //////////////
+
+        this.setExtraData = function (extra_data_) {
+            extra_data = extra_data_;
+        };
+
+        this.setTags = function (tagsJSON_) {
+            currentVersion.tags = tagsJSON_;
+        };
+
+        this.setVotes = function (voteDataJSON_) {
+            currentVersion.votes = voteDataJSON_;
+        };
+
+        /////////////////////////////
+        // CONVENIENCE FUNCTIONS
+        /////////////////////////////
+        this.changeVersion = function (version) {
+            if (version instanceof Wirecloud.Version) {
+                version = version.text;
+            }
+
+            if (version in data_by_version) {
+                currentVersion = data_by_version[version];
+            } else {
+                currentVersion = data_by_version[allVersions[0].text];
+            }
+        };
+
+        ////////////////////////
+        // CONSTRUCTOR
+        ////////////////////////
+        versions = resourceJSON_.versions;
+
+        for (i = 0; i < versions.length; i += 1) {
+            version_data = versions[i];
+
+            version_data.version = new Wirecloud.Version(version_data.version, 'catalogue');
+            version_data.date = new Date(version_data.date);
+
+            deleteable = deleteable && version_data.added_by_user;
+
+            allVersions.push(version_data.version);
+            data_by_version[version_data.version.text] = version_data;
         }
-    });
-
-    //////////////
-    // SETTERS
-    //////////////
-
-    this.setExtraData = function (extra_data_) {
-        extra_data = extra_data_;
+        allVersions = allVersions.sort(function (version1, version2) {
+            return -version1.compareTo(version2);
+        });
+        this.changeVersion(allVersions[0]);
     };
 
-    this.setTags = function (tagsJSON_) {
-        currentVersion.tags = tagsJSON_;
-    };
+    window.CatalogueResource = CatalogueResource;
 
-    this.setVotes = function (voteDataJSON_) {
-        currentVersion.votes = voteDataJSON_;
-    };
-
-    /////////////////////////////
-    // CONVENIENCE FUNCTIONS
-    /////////////////////////////
-    this.changeVersion = function (version) {
-        if (version instanceof Wirecloud.Version) {
-            version = version.text;
-        }
-
-        if (version in data_by_version) {
-            currentVersion = data_by_version[version];
-        } else {
-            currentVersion = data_by_version[allVersions[0].text];
-        }
-    };
-
-    ////////////////////////
-    // CONSTRUCTOR
-    ////////////////////////
-    versions = resourceJSON_.versions;
-
-    function flat_friendcode(x) {
-        return x.friendcode;
-    }
-
-    for (i = 0; i < versions.length; i += 1) {
-        version_data = versions[i];
-
-        version_data.version = new Wirecloud.Version(version_data.version, 'catalogue');
-        version_data.date = new Date(version_data.date);
-
-        deleteable = deleteable && version_data.added_by_user;
-
-        allVersions.push(version_data.version);
-        data_by_version[version_data.version.text] = version_data;
-    }
-    allVersions = allVersions.sort(function (version1, version2) {
-        return -version1.compareTo(version2);
-    });
-    this.changeVersion(allVersions[0]);
-}
+})();
