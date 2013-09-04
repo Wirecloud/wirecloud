@@ -25,14 +25,14 @@
 
     "use strict";
 
-    var OfferingPainter = function OfferingPainter(catalogue_view, resource_template, container, extra_context) {
+    var OfferingPainter = function OfferingPainter(catalogue_view, offering_template, container, extra_context) {
         if (arguments.length === 0) {
             return;
         }
 
         this.builder = new StyledElements.GUIBuilder();
         this.catalogue_view = catalogue_view;
-        this.structure_template = resource_template;
+        this.structure_template = offering_template;
         this.error_template = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div class="alert alert-block alert-error"><t:message/></div></s:styledgui>';
         this.container = container;
         if (typeof extra_context === 'object' || typeof extra_context === 'function') {
@@ -52,28 +52,28 @@
         this.container.appendChild(contents);
     };
 
-    OfferingPainter.prototype.paint = function paint(resource) {
-        var extra_context, i, context, resource_element;
+    OfferingPainter.prototype.paint = function paint(offering) {
+        var extra_context, i, context, offering_element;
 
         if (typeof this.extra_context === 'function') {
-            extra_context = this.extra_context(resource);
+            extra_context = this.extra_context(offering);
         } else {
             extra_context = EzWebExt.clone(this.extra_context);
         }
 
         context = EzWebExt.merge(extra_context, {
-            'displayname': resource.getDisplayName(),
-            'name': resource.getName(),
-            'owner': resource.getVendor(),
-            'store': resource.store,
-            'version': resource.version.text,
-            'abstract': resource['abstract'],
-            'description': resource.description,
+            'displayname': offering.getDisplayName(),
+            'name': offering.getName(),
+            'owner': offering.getVendor(),
+            'store': offering.store,
+            'version': offering.version.text,
+            'abstract': offering['abstract'],
+            'description': offering.description,
             'type': function () {
                 var label = document.createElement('div');
-                label.textContent = resource.getType();
+                label.textContent = offering.getType();
                 label.className = 'label';
-                switch (resource.getType()) {
+                switch (offering.getType()) {
                 case 'widget':
                     label.classList.add('label-success');
                     break;
@@ -91,8 +91,8 @@
                 return label;
             },
             'publicationdate': function () {
-                if (resource.publicationdate != null) {
-                    return resource.publicationdate.strftime('%x');
+                if (offering.publicationdate != null) {
+                    return offering.publicationdate.strftime('%x');
                 } else {
                     return gettext('N/A');
                 }
@@ -106,7 +106,7 @@
                     'title': gettext('Documentation')
                 });
                 button.addEventListener('click', function () {
-                    window.open(resource.getUriWiki(), '_blank');
+                    window.open(offering.getUriWiki(), '_blank');
                 });
 
                 return button;
@@ -120,94 +120,90 @@
                     'title': gettext('Home page')
                 });
                 button.addEventListener('click', function () {
-                    window.open(resource.getUriWiki(), '_blank');
+                    window.open(offering.getUriWiki(), '_blank');
                 });
 
                 return button;
             },
-            'rating': this.get_popularity_html.bind(this, resource.rating),
+            'rating': this.get_popularity_html.bind(this, offering.rating),
             'mainbutton': function () {
                 var button, local_catalogue_view;
 
                 local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
 
-                if (!this.catalogue_view.catalogue.is_purchased(this.resource) && ['widget', 'operator', 'mashup', 'pack'].indexOf(this.resource.getType()) !== -1) {
+                if (!this.catalogue_view.catalogue.is_purchased(this.offering) && ['widget', 'operator', 'mashup', 'pack'].indexOf(this.offering.getType()) !== -1) {
                     button = new StyledElements.StyledButton({
                         'class': 'mainbutton btn-success',
                         'text': gettext('Buy')
                     });
-                    button.addEventListener('click', this.catalogue_view.createUserCommand('buy', this.resource));
+                    button.addEventListener('click', this.catalogue_view.createUserCommand('buy', this.offering));
                     return button;
                 }
 
-                if (this.resource.getType() === 'operator') {
+                if (this.offering.getType() === 'operator') {
 
-                    if (Wirecloud.LocalCatalogue.resourceExists(this.resource)) {
+                    if (Wirecloud.LocalCatalogue.resourceExists(this.offering)) {
                         button = new StyledElements.StyledButton({
                             'class': 'btn-danger',
                             'text': gettext('Uninstall')
                         });
-                        button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', this.resource, this.catalogue_view));
+                        button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', this.offering, this.catalogue_view));
                     } else {
 
                         button = new StyledElements.StyledButton({
                             'text': gettext('Install')
                         });
 
-                        button.addEventListener('click', local_catalogue_view.createUserCommand('install', this.resource, this.catalogue_view));
+                        button.addEventListener('click', local_catalogue_view.createUserCommand('install', this.offering, this.catalogue_view));
                     }
                 } else {
-                    if (Wirecloud.LocalCatalogue.resourceExists(this.resource)) {
+                    if (Wirecloud.LocalCatalogue.resourceExists(this.offering)) {
                         button = new StyledElements.StyledButton({
                             'class': 'btn-danger',
                             'text': gettext('Uninstall')
                         });
-                        button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', this.resource, this.catalogue_view));
-                    } else if (['widget', 'operator', 'mashup'].indexOf(this.resource.getType()) != -1) {
+                        button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', this.offering, this.catalogue_view));
+                    } else if (['widget', 'operator', 'mashup'].indexOf(this.offering.getType()) != -1) {
                         button = new StyledElements.StyledButton({
                             'text': gettext('Install')
                         });
 
-                        button.addEventListener('click', local_catalogue_view.createUserCommand('install', this.resource, this.catalogue_view));
+                        button.addEventListener('click', local_catalogue_view.createUserCommand('install', this.offering, this.catalogue_view));
                     } else {
                         button = new StyledElements.StyledButton({
                             'text': gettext('Details')
                         });
 
-                        button.addEventListener('click', this.catalogue_view.createUserCommand('showDetails', this.resource));
+                        button.addEventListener('click', this.catalogue_view.createUserCommand('showDetails', this.offering));
                     }
                 }
                 button.addClassName('mainbutton btn-primary');
                 return button;
-            }.bind({catalogue_view: this.catalogue_view, resource: resource}),
+            }.bind({catalogue_view: this.catalogue_view, offering: offering}),
             'image': function () {
                 var image = document.createElement('img');
                 image.onerror = function (event) {
                     event.target.src = '/static/images/noimage.png';
                 };
-                image.src = resource.getUriImage();
+                image.src = offering.getUriImage();
                 return image;
             },
             'tags': function (options) {
-                return this.painter.renderTagList(this.resource, options.max);
-            }.bind({painter: this, resource: resource}),
-            'versions': function () {
-                var versions = resource.getAllVersions().map(function (version) { return 'v' + version.text; });
-                return versions.join(', ');
-            }
+                return this.painter.renderTagList(this.offering, options.max);
+            }.bind({painter: this, offering: offering})
         });
 
-        resource_element = this.builder.parse(this.structure_template, context);
+        offering_element = this.builder.parse(this.structure_template, context);
 
         // TODO "Show details"
-        for (i = 0; i < resource_element.elements.length; i += 1) {
-            if (!EzWebExt.XML.isElement(resource_element.elements[i])) {
+        for (i = 0; i < offering_element.elements.length; i += 1) {
+            if (!EzWebExt.XML.isElement(offering_element.elements[i])) {
                 continue;
             }
-            this.create_simple_command(resource_element.elements[i], '.click_for_details', 'click', this.catalogue_view.createUserCommand('showDetails', resource));
+            this.create_simple_command(offering_element.elements[i], '.click_for_details', 'click', this.catalogue_view.createUserCommand('showDetails', offering));
         }
 
-        return resource_element;
+        return offering_element;
     };
 
     OfferingPainter.prototype.create_simple_command = function (element, selector, _event, handler, required) {
