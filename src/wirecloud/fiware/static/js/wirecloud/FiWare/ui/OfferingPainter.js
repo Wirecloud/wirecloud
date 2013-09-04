@@ -25,6 +25,42 @@
 
     "use strict";
 
+    var install = function install(url, catalogue_view, store) {
+        var layoutManager, local_catalogue_view;
+
+        local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
+        layoutManager = LayoutManagerFactory.getInstance();
+        layoutManager._startComplexTask(gettext("Importing resource into local repository"), 3);
+        layoutManager.logSubTask(gettext('Uploading resource'));
+
+        local_catalogue_view.catalogue.addResourceFromURL(url, {
+            packaged: true,
+            forceCreate: true,
+            market_info: {
+                name: catalogue_view.catalogue.market_name,
+                store: store
+            },
+            onSuccess: function () {
+                LayoutManagerFactory.getInstance().logSubTask(gettext('Resource installed successfully'));
+                LayoutManagerFactory.getInstance().logStep('');
+
+                local_catalogue_view.refresh_search_results();
+                catalogue_view.refresh_search_results();
+            },
+            onFailure: function (msg) {
+                LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                LogManagerFactory.getInstance().log(msg);
+            },
+            onComplete: function () {
+                LayoutManagerFactory.getInstance()._notifyPlatformReady();
+            }
+        });
+    };
+
+    var onClick = function onClick(url, catalogue_view, store) {
+        install(url, catalogue_view, store);
+    };
+
     var OfferingPainter = function OfferingPainter(catalogue_view, offering_template, container, extra_context) {
         if (arguments.length === 0) {
             return;
@@ -140,42 +176,28 @@
                     return button;
                 }
 
-                if (this.offering.getType() === 'operator') {
+                if (['widget', 'operator', 'mashup'].indexOf(this.offering.getType()) !== -1) {
 
-                    if (Wirecloud.LocalCatalogue.resourceExists(this.offering)) {
+                    if (Wirecloud.LocalCatalogue.resourceExistsId(this.offering.resources[0].id)) {
                         button = new StyledElements.StyledButton({
                             'class': 'btn-danger',
                             'text': gettext('Uninstall')
                         });
-                        button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', this.offering, this.catalogue_view));
+                        button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', this.offering.resources[0], this.catalogue_view));
                     } else {
 
                         button = new StyledElements.StyledButton({
                             'text': gettext('Install')
                         });
 
-                        button.addEventListener('click', local_catalogue_view.createUserCommand('install', this.offering, this.catalogue_view));
+                        button.addEventListener('click', onClick.bind(null, this.offering.resources[0].url, this.catalogue_view, this.offering.store));
                     }
                 } else {
-                    if (Wirecloud.LocalCatalogue.resourceExists(this.offering)) {
-                        button = new StyledElements.StyledButton({
-                            'class': 'btn-danger',
-                            'text': gettext('Uninstall')
-                        });
-                        button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', this.offering, this.catalogue_view));
-                    } else if (['widget', 'operator', 'mashup'].indexOf(this.offering.getType()) != -1) {
-                        button = new StyledElements.StyledButton({
-                            'text': gettext('Install')
-                        });
+                    button = new StyledElements.StyledButton({
+                        'text': gettext('Details')
+                    });
 
-                        button.addEventListener('click', local_catalogue_view.createUserCommand('install', this.offering, this.catalogue_view));
-                    } else {
-                        button = new StyledElements.StyledButton({
-                            'text': gettext('Details')
-                        });
-
-                        button.addEventListener('click', this.catalogue_view.createUserCommand('showDetails', this.offering));
-                    }
+                    button.addEventListener('click', this.catalogue_view.createUserCommand('showDetails', this.offering));
                 }
                 button.addClassName('mainbutton btn-primary');
                 return button;
