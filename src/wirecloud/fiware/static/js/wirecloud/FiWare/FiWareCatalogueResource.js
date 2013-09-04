@@ -33,6 +33,10 @@
         return MAC_MIMETYPES.indexOf(mimetype) !== -1;
     };
 
+    var getURI = function getURI() {
+        return this.id;
+    };
+
     function FiWareCatalogueResource(resourceJSON_) {
 
         ///////////////////////
@@ -163,6 +167,7 @@
                     resource.name = parts[1];
                     resource.version = new Wirecloud.Version(parts[2], 'catalogue');
                     resource.type = MAC_TYPES[MAC_MIMETYPES.indexOf(resource.content_type)];
+                    resource.getURI = getURI;
                 }
             }
         }
