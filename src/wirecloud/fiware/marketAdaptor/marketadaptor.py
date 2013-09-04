@@ -37,6 +37,22 @@ SEARCH_SERVICE_XPATH = 'service'
 SEARCH_STORE_XPATH = 'store'
 
 
+def parse_resource_info(offering_resource):
+    resource_info = {
+        'content_type': offering_resource['content_type'],
+        'name': offering_resource['name'],
+        'description': offering_resource['description'],
+    }
+    if 'link' in offering_resource:
+        resource_info['url'] = offering_resource['link']
+
+    if offering_resource['content_type'] in ('application/x-widget+mashable-application-component', 'application/x-operator+mashable-application-component', 'application/x-mashup+mashable-application-component'):
+        if 'link' in offering_resource:
+            resource_info['id'] = offering_resource['link'].rsplit('__', 1)[1].rsplit('.', 1)[0].replace('_', '/')
+
+    return resource_info
+
+
 class MarketAdaptor(object):
 
     _marketplace_uri = None
@@ -90,21 +106,14 @@ class MarketAdaptor(object):
                     elif offering_resource['content_type'] == 'application/x-mashup+mashable-application-component':
                         offering_type = 'mashup'
 
+                    ser['resources'] = [parse_resource_info(offering_resource)]
                 else:
 
                     info_offering_resources = []
                     for offering_resource in offering_info['resources']:
-                        resource_info = {
-                            'content_type': offering_resource['content_type'],
-                            'name': offering_resource['name'],
-                            'description': offering_resource['description'],
-                        }
-                        if 'link' in offering_resource:
-                            resource_info['url'] = offering_resource['link']
+                        resource_info = parse_resource_info(offering_resource)
 
-                        if offering_resource['content_type'] in ('application/x-widget+mashable-application-component', 'application/x-operator+mashable-application-component', 'application/x-mashup+mashable-application-component'):
-                            if 'link' in offering_resource:
-                                resource_info['id'] = offering_resource['link'].rsplit('__', 1)[1].rsplit('.', 1)[0].replace('_', '/')
+                        if resource_info['content_type'] in ('application/x-widget+mashable-application-component', 'application/x-operator+mashable-application-component', 'application/x-mashup+mashable-application-component'):
                             offering_type = 'pack'
 
                         info_offering_resources.append(resource_info)
