@@ -4,6 +4,7 @@
             "rating": 5,
             "vendor": "CoNWeT",
             "name": "Smart City Lights application",
+            "resources": [],
             "pricing": [
                 {
                     "priceComponents": [
