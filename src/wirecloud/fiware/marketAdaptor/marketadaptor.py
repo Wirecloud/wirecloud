@@ -80,6 +80,7 @@ class MarketAdaptor(object):
 
             ser['usdl_url'] = url
             ser['rating'] = 5  # TODO
+            ser['resources'] = []
 
             try:
 
