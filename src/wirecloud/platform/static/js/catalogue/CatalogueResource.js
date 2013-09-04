@@ -133,7 +133,7 @@ function CatalogueResource(resourceJSON_) {
     };
 
     this.getURI = function () {
-        return [this.vendor, name, currentVersion.version.text].join('/');
+        return [this.vendor, this.name, currentVersion.version.text].join('/');
     };
 
     Object.defineProperties(this, {
