@@ -78,6 +78,8 @@ class StoreClient(object):
                 'content_type': content_type,
             })
         }
+        # Rest file to ensure the full file is uploaded
+        f.seek(0);
         response = requests.post(urljoin(self._url, 'api/offering/resources'), headers=headers, data=data, files={'file': (filename, f)})
         if response.status_code == 400:
             raise Exception('The resource already exists')
