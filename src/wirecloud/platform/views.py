@@ -84,4 +84,4 @@ def render_wirecloud(request, view_type=None):
             else:
                 view_type = 'classic'
 
-    return render(request, 'wirecloud/views/%s.html' % view_type, content_type="application/xhtml+xml")
+    return render(request, 'wirecloud/views/%s.html' % view_type, content_type="application/xhtml+xml; charset=UTF-8")
