@@ -231,7 +231,12 @@ class MarketAdaptor(object):
 
     def start_purchase(self, store, offering_url, redirect_uri, **options):
         store_client = self.get_store(store)
-        return store_client.start_purchase(offering_url, redirect_uri, options[store + '/token'])
+        store_token_key = store + '/token'
+        if store_token_key in options:
+            token = options[store_token_key]
+        else:
+            token = options['idm_token']
+        return store_client.start_purchase(offering_url, redirect_uri, token)
 
     def full_text_search(self, store, search_string, options):
 
