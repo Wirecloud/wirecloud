@@ -1118,6 +1118,21 @@ class ResourceManagementAPI(WirecloudTestCase):
         self.assertIn('name', response_data)
         self.assertIn('version', response_data)
 
+    def test_resource_collection_post_using_bad_packaged_resouce_from_uri(self):
+
+        url = reverse('wirecloud_showcase.resource_collection')
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        data = {
+            'packaged': True,
+            'template_uri': 'http://localhost:8001/test-mashup.rdf'
+        }
+        response = self.client.post(url, json.dumps(data), content_type="application/json", HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 400)
+
     def test_resource_collection_post_using_octet_stream_error(self):
 
         url = reverse('wirecloud_showcase.resource_collection')
