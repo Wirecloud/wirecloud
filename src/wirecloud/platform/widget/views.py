@@ -37,11 +37,12 @@ from urlparse import urljoin
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
-from django.http import HttpResponse, HttpResponseNotAllowed
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
+from django.views.decorators.http import require_GET
 from django.views.static import serve
 
 from wirecloud.commons.baseviews import Resource
@@ -150,10 +151,8 @@ class WidgetCodeEntry(Resource):
         return response
 
 
+@require_GET
 def serve_showcase_media(request, vendor, name, version, file_path):
-
-    if request.method != 'GET':
-        return HttpResponseNotAllowed(('GET',))
 
     base_dir = showcase_utils.wgt_deployer.get_base_dir(vendor, name, version)
     local_path = os.path.join(base_dir, url2pathname(file_path))
