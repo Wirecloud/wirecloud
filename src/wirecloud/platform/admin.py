@@ -38,9 +38,17 @@ class MarketUserDataAdmin(admin.ModelAdmin):
     ordering = ('market', 'user', 'name')
 admin.site.register(models.MarketUserData, MarketUserDataAdmin)
 
-admin.site.register(models.Widget)
+class VariableDefInline(admin.StackedInline):
+
+    model = models.VariableDef
+    extra = 0
+
+class WidgetAdmin(admin.ModelAdmin):
+
+    inlines = (VariableDefInline,)
+admin.site.register(models.Widget, WidgetAdmin)
 admin.site.register(models.XHTML)
-admin.site.register(models.VariableDef)
+
 admin.site.register(models.UserPrefOption)
 admin.site.register(models.VariableDefAttr)
 admin.site.register(models.ContextOption)
