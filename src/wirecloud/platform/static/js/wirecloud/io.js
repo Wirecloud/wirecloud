@@ -151,7 +151,7 @@ Wirecloud.location = {
 
         if (this.options.parameters != null && (typeof this.options.parameters === 'string' || typeof this.options.parameters === 'object')) {
             if (['PUT', 'POST'].indexOf(this.method) !== -1 && this.options.postBody == null) {
-                this.postBody = toQueryString(this.options.parameters);
+                this.options.postBody = toQueryString(this.options.parameters);
                 if (this.options.contentType == null) {
                     this.options.contentType = 'application/x-www-form-urlencoded';
                 }
