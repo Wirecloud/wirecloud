@@ -21,6 +21,7 @@
 import json
 from cStringIO import StringIO
 import os
+import zipfile
 
 from django.conf import settings
 from django.db import IntegrityError
@@ -130,12 +131,20 @@ class ResourceCollection(Resource):
                     return build_error_response(request, 409, _('Content cannot be downloaded'))
 
             if packaged:
-                downloaded_file = StringIO(downloaded_file)
-                file_contents = WgtFile(downloaded_file)
+
+                try:
+                    downloaded_file = StringIO(downloaded_file)
+                    file_contents = WgtFile(downloaded_file)
+
+                except zipfile.BadZipfile, e:
+
+                    return build_error_response(request, 400, unicode(e))
+
             else:
                 file_contents = downloaded_file
 
         try:
+
             resource = install_resource_to_user(request.user, file_contents=file_contents, templateURL=templateURL, packaged=packaged, raise_conflicts=force_create)
 
         except TemplateParseException, e:
