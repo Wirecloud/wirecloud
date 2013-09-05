@@ -154,6 +154,10 @@ class WidgetCodeEntry(Resource):
 @require_GET
 def serve_showcase_media(request, vendor, name, version, file_path):
 
+    resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
+    if not resource.is_available_for(request.user):
+        return HttpResponseForbidden()
+
     base_dir = showcase_utils.wgt_deployer.get_base_dir(vendor, name, version)
     local_path = os.path.join(base_dir, url2pathname(file_path))
 
