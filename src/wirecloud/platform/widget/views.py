@@ -37,7 +37,7 @@ from urlparse import urljoin
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.encoding import smart_str
@@ -45,6 +45,7 @@ from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_GET
 from django.views.static import serve
 
+from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.utils import downloader
