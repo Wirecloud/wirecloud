@@ -127,9 +127,54 @@ class TemplateUtilsTestCase(TestCase):
             'context': [],
             'wiring': {
                 'inputs': [
+                    {
+                        'name': u'input1',
+                        'type': 'text',
+                        'label': u'Input label 1',
+                        'description': u'Input description 1',
+                        'actionlabel': u'a',
+                        'friendcode': u'friendcode 1'
+                    },
+                    {
+                        'name': u'input2',
+                        'type': 'text',
+                        'label': u'Input label 2',
+                        'description': u'Input description 2',
+                        'actionlabel': '',
+                        'friendcode': u'friendcode 2'
+                    },
+                    {
+                        'name': u'input3',
+                        'type': 'text',
+                        'label': u'Input label 3',
+                        'description': u'Input description 3',
+                        'actionlabel': 'action label 3',
+                        'friendcode': u'friendcode 3'
+                    }
                 ],
                 'outputs': [
-                ],
+                    {
+                        'name': u'output1',
+                        'type': 'text',
+                        'label': u'Output label 1',
+                        'description': u'Output description 1',
+                        'friendcode': u'friendcode 1'
+                    },
+                    {
+                        'name': u'output2',
+                        'type': 'text',
+                        'label': u'Output label 2',
+                        'description': u'Output description 2',
+                        'friendcode': u'friendcode 2'
+                    },
+                    {
+                        'name': u'output3',
+                        'type': 'text',
+                        'label': u'Output label 3',
+                        'description': u'Output description 3',
+                        'friendcode': u'friendcode 3'
+                    }
+                ]
             },
             'code_url': 'http://example.com/code.html',
             'code_content_type': 'application/xhtml+xml',
