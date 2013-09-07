@@ -413,6 +413,11 @@ class RDFTemplateParser(object):
             self._info['code_uses_platform_style'] = self._get_field(WIRE, 'usePlatformStyle', xhtml_element, required=False).lower() == 'true'
             self._info['code_cacheable'] = self._get_field(WIRE, 'codeCacheable', xhtml_element, required=False, default='true').lower() == 'true'
 
+            rendering_element = self._get_field(WIRE, 'hasPlatformRendering', self._rootURI, id_=True, required=False)
+
+            self._info['widget_width'] = self._get_field(WIRE, 'renderingWidth', rendering_element, required=False)
+            self._info['widget_height'] = self._get_field(WIRE, 'renderingHeight', rendering_element, required=False)
+
         elif self._info['type'] == 'operator':
             # The tamplate has 1-n javascript elements
 
@@ -425,13 +430,6 @@ class RDFTemplateParser(object):
 
             if not len(self._info['js_files']) > 0:
                 raise TemplateParseException(_('Missing required field: Javascript files'))
-
-            self._info['code_content_type'] = 'text/javascript'
-
-        rendering_element = self._get_field(WIRE, 'hasPlatformRendering', self._rootURI, id_=True, required=False)
-
-        self._info['widget_width'] = self._get_field(WIRE, 'renderingWidth', rendering_element, required=False)
-        self._info['widget_height'] = self._get_field(WIRE, 'renderingHeight', rendering_element, required=False)
 
     def _parse_translation_catalogue(self):
         self._info['default_lang'] = 'en'
