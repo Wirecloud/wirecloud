@@ -148,10 +148,21 @@ def build_xml_document(options):
     wiring = etree.SubElement(template, 'Platform.Wiring')
 
     for output_endpoint in options['wiring']['outputs']:
-        etree.SubElement(wiring, 'OutputEndpoint', name=output_endpoint['name'], type=output_endpoint['type'], label=output_endpoint['label'], friendcode=output_endpoint['friendcode'])
+        etree.SubElement(wiring, 'OutputEndpoint',
+                name=output_endpoint['name'],
+                type=output_endpoint['type'],
+                label=output_endpoint['label'],
+                description=output_endpoint['description'],
+                friendcode=output_endpoint['friendcode'])
 
     for input_endpoint in options['wiring']['inputs']:
-        etree.SubElement(wiring, 'OutputEndpoint', name=input_endpoint['name'], type=input_endpoint['type'], label=input_endpoint['label'], friendcode=input_endpoint['friendcode'])
+        etree.SubElement(wiring, 'InputEndpoint',
+                name=input_endpoint['name'],
+                type=input_endpoint['type'],
+                label=input_endpoint['label'],
+                description=input_endpoint['description'],
+                actionlabel=input_endpoint['actionlabel'],
+                friendcode=input_endpoint['friendcode'])
 
     if options['type'] == 'mashup':
         write_mashup_wiring_tree(wiring, options)

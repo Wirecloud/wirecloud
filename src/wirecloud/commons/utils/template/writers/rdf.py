@@ -289,10 +289,11 @@ def build_rdf_graph(template_info):
         graph.add((resource_uri, WIRE['hasPlatformWiring'], wiring))
 
     # Output endpoints
-    for output_endpoint in template_info['wiring']['outputs']:
+    for output_index, output_endpoint in enumerate(template_info['wiring']['outputs']):
         output_node = rdflib.BNode()
         graph.add((output_node, rdflib.RDF.type, WIRE['OutputEndpoint']))
         graph.add((wiring, WIRE['hasOutputEndpoint'], output_node))
+        graph.add((output_node, WIRE['index'], rdflib.Literal(str(output_index))))
         graph.add((output_node, DCTERMS['title'], rdflib.Literal(output_endpoint.get('name'))))
         graph.add((output_node, RDFS['label'], rdflib.Literal(output_endpoint.get('label'))))
         graph.add((output_node, WIRE['type'], rdflib.Literal(output_endpoint.get('type'))))
@@ -300,16 +301,17 @@ def build_rdf_graph(template_info):
         graph.add((output_node, DCTERMS['description'], rdflib.Literal(output_endpoint.get('description'))))
 
     # Input endpoints
-    for input_endpoint in template_info['wiring']['inputs']:
+    for input_index, input_endpoint in enumerate(template_info['wiring']['inputs']):
         input_node = rdflib.BNode()
         graph.add((input_node, rdflib.RDF.type, WIRE['InputEndpoint']))
         graph.add((wiring, WIRE['hasInputEndpoint'], input_node))
+        graph.add((input_node, WIRE['index'], rdflib.Literal(str(input_index))))
         graph.add((input_node, DCTERMS['title'], rdflib.Literal(input_endpoint.get('name'))))
         graph.add((input_node, RDFS['label'], rdflib.Literal(input_endpoint.get('label'))))
         graph.add((input_node, WIRE['type'], rdflib.Literal(input_endpoint.get('type'))))
         graph.add((input_node, WIRE['friendcode'], rdflib.Literal(input_endpoint.get('friendcode'))))
         graph.add((input_node, DCTERMS['description'], rdflib.Literal(input_endpoint.get('description'))))
-        graph.add((input_node, WIRE['inputActionLabel'], rdflib.Literal(input_endpoint.get('action_label'))))
+        graph.add((input_node, WIRE['inputActionLabel'], rdflib.Literal(input_endpoint.get('actionlabel'))))
 
     if template_info['type'] == 'mashup':
         write_mashup_wiring_graph(graph, wiring, template_info)

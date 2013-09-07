@@ -221,17 +221,21 @@ class RDFTemplateParser(object):
 
         wiring_element = self._get_field(wiring_type, wiring_property, self._rootURI, id_=True, required=False)
 
-        for input_endpoint in self._graph.objects(wiring_element, WIRE['hasInputEndpoint']):
+        sorted_inputs = sorted(self._graph.objects(wiring_element, WIRE['hasInputEndpoint']), key=lambda source: possible_int(self._get_field(WIRE, 'index', source, required=False)))
+
+        for input_endpoint in sorted_inputs:
             self._info['wiring']['inputs'].append({
                 'name': self._get_field(DCTERMS, 'title', input_endpoint, required=False),
                 'type': self._get_field(WIRE, 'type', input_endpoint, required=False),
                 'label': self._get_translation_field(RDFS, 'label', input_endpoint, 'inputLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', input_endpoint, required=False)),
                 'description': self._get_translation_field(DCTERMS, 'description', input_endpoint, 'inputDescription', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', input_endpoint, required=False)),
-                'actionlabel': self._get_translation_field(WIRE, 'actionLabel', input_endpoint, 'inputActionLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', input_endpoint, required=False)),
+                'actionlabel': self._get_translation_field(WIRE, 'inputActionLabel', input_endpoint, 'actionLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', input_endpoint, required=False)),
                 'friendcode': self._get_field(WIRE, 'friendcode', input_endpoint, required=False),
             })
 
-        for output_endpoint in self._graph.objects(wiring_element, WIRE['hasOutputEndpoint']):
+        sorted_outputs = sorted(self._graph.objects(wiring_element, WIRE['hasOutputEndpoint']), key=lambda output: possible_int(self._get_field(WIRE, 'index', output, required=False)))
+
+        for output_endpoint in sorted_outputs:
             self._info['wiring']['outputs'].append({
                 'name': self._get_field(DCTERMS, 'title', output_endpoint, required=False),
                 'type': self._get_field(WIRE, 'type', output_endpoint, required=False),
