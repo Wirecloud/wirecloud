@@ -85,7 +85,7 @@
                 } else {
                     // No enpoint order info available, use default order
                     inputs = iwidget.widget.inputList.map(function (input) {return iwidget.inputs[input.name]});
-                    outputs = iwidget.widget.outputList.map(function (output) {return iwidget.inputs[output.name]});
+                    outputs = iwidget.widget.outputList.map(function (output) {return iwidget.outputs[output.name]});
                 }
             }
 
