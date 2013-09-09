@@ -375,6 +375,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             'version': '1',
             'author': 'test',
             'email': 'a@b.com',
+            'doc_uri': 'http://example.com/test-mashup/docs/index.html',
             'readOnlyWidgets': True,
         }
         template = build_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
@@ -385,6 +386,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Version', '1')
         self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Author', 'test')
         self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Mail', 'a@b.com')
+        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/WikiURI', 'http://example.com/test-mashup/docs/index.html')
 
         # IWidgets
         self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab', 1)
