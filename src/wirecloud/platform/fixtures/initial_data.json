@@ -1,0 +1,10 @@
+[
+    {
+        "pk": "1",
+        "model": "platform.market",
+        "fields": {
+            "name": "local",
+            "options": "{\"url\": null, \"type\": \"wirecloud\", \"name\": \"local\"}"
+        }
+    }
+]

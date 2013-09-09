@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<django-objects version="1.0">
-    <object pk="1" model="platform.market">
-        <field type="CharField" name="name">local</field>
-        <field type="TextField" name="options">{"url": null, "type":"wirecloud", "name":"local"}</field>
-    </object>
-</django-objects>
