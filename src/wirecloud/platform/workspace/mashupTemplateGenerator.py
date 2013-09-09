@@ -19,13 +19,11 @@
 
 import json
 
-from django.conf import settings
-
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.template.writers import rdf
 from wirecloud.commons.utils.template.writers import xml
 from wirecloud.platform.get_data import get_variable_value_from_varname
-from wirecloud.platform.models import IWidget, Tab, TabPreference, WorkspacePreference
+from wirecloud.platform.models import IWidget
 
 
 def get_iwidgets_description(included_iwidgets):
@@ -72,7 +70,7 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
             'label': input_endpoint.label,
             'description': input_endpoint.description,
             'friendcode': input_endpoint.friend_code,
-            'action_label': input_endpoint.action_label,
+            'actionlabel': input_endpoint.action_label,
         })
 
     # preferences
@@ -158,20 +156,18 @@ def build_json_template_from_workspace(options, workspace, user):
         parametrization = {}
 
     # Workspace preferences
-    preferences = WorkspacePreference.objects.filter(workspace=workspace)
     options['preferences'] = {}
-    for preference in preferences:
+    for preference in workspace.workspacepreference_set.all():
         if not preference.inherit:
             options['preferences'][preference.name] = preference.value
 
     # Tabs and their preferences
-    workspace_tabs = Tab.objects.filter(workspace=workspace).order_by('position')
     options['tabs'] = []
     options['wiring'] = {
         'inputs': [],
         'outputs': [],
     }
-    for tab in workspace_tabs:
+    for tab in workspace.tab_set.order_by('position'):
         preferences = {}
         for preference in tab.tabpreference_set.all():
             if not preference.inherit:
@@ -212,7 +208,7 @@ def build_json_template_from_workspace(options, workspace, user):
 
             status = 'normal'
             if preference['name'] in operator_params:
-                ioperator_param_desc = iwidget_params[pref.name]
+                ioperator_param_desc = operator_params[preference['name']]
                 if ioperator_param_desc['source'] == 'default':
                     # Do not issue a Preference element for this preference
                     continue
@@ -246,7 +242,6 @@ def build_template_from_workspace(options, workspace, user):
 
     build_json_template_from_workspace(options, workspace, user)
 
-    # TODO wikiURI => doc_uri
     return xml.build_xml_document(options)
 
 
@@ -254,5 +249,4 @@ def build_rdf_template_from_workspace(options, workspace, user):
 
     build_json_template_from_workspace(options, workspace, user)
 
-    # TODO wikiURI => doc_uri
     return rdf.build_rdf_graph(options)
