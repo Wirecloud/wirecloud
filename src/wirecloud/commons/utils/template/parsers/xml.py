@@ -437,6 +437,8 @@ class WirecloudTemplateParser(object):
                         'z': position.get('z'),
                     },
                     'rendering': {
+                        'fulldragboard': rendering.get('fulldragboard', 'false').lower() == 'true',
+                        'minimized': rendering.get('minimized', 'false').lower() == 'true',
                         'width': rendering.get('width'),
                         'height': rendering.get('height'),
                         'layout': rendering.get('layout'),

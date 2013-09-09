@@ -440,7 +440,7 @@ class RDFTemplateParser(object):
 
         preferences = {}
 
-        for preference in self._graph.objects(self._rootURI, WIRE_M['hasWorkspacePreference']):
+        for preference in self._graph.objects(self._rootURI, WIRE_M['hasMashupPreference']):
             preferences[self._get_field(DCTERMS, 'title', preference)] = self._get_field(WIRE, 'value', preference)
 
         self._info['preferences'] = preferences

@@ -105,8 +105,8 @@ def build_xml_document(options):
 
     if options['type'] == 'mashup':
         resources = etree.SubElement(desc, 'IncludedResources')
-        for pref in options['preferences']:
-            etree.SubElement(resources, 'Preference', name=pref['name'], value=pref['value'])
+        for pref_name, pref_value in options['preferences'].iteritems():
+            etree.SubElement(resources, 'Preference', name=pref_name, value=pref_value)
     else:
 
         if len(options['preferences']) > 0:
@@ -119,8 +119,10 @@ def build_xml_document(options):
                     label=pref['label'],
                     description=pref['description'],
                     readonly=str(pref['readonly']).lower(),
-                    default=pref['default_value'],
-                    secure=str(pref['secure']).lower())
+                    default=pref['default_value'])
+
+                if pref['secure']:
+                    pref_element.set('secure', 'true')
 
                 if pref['type'] == 'list':
                     for option in pref['options']:

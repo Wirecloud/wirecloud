@@ -321,12 +321,12 @@ def build_rdf_graph(template_info):
 
     if template_info['type'] == 'mashup':
         # Mashup preferences
-        for pref_index, pref in enumerate(template_info['preferences']):
+        for pref_name, pref_value in template_info['preferences'].iteritems():
             pref = rdflib.BNode()
             graph.add((pref, rdflib.RDF.type, WIRE_M['MashupPreference']))
             graph.add((resource_uri, WIRE_M['hasMashupPreference'], pref))
-            graph.add((pref, DCTERMS['title'], rdflib.Literal(pref['name'])))
-            graph.add((pref, WIRE['value'], rdflib.Literal(pref['value'])))
+            graph.add((pref, DCTERMS['title'], rdflib.Literal(pref_name)))
+            graph.add((pref, WIRE['value'], rdflib.Literal(pref_value)))
     else:
         # Platform preferences
         for pref_index, pref in enumerate(template_info['preferences']):
