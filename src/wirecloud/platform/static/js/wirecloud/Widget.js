@@ -1,4 +1,4 @@
-/*global gettext, interpolate, WidgetTemplate, Wirecloud*/
+/*global gettext, interpolate, UserPref, Wirecloud*/
 
 (function () {
 
@@ -25,7 +25,7 @@
         // Preferences
         this.preferences = {};
         this.preferenceList = [];
-        for (i = 0; i < data.preferences; i++) {
+        for (i = 0; i < data.preferences.length; i++) {
             preference = new UserPref(data.preferences[i].name, data.preferences[i].type, data.preferences[i]);
             this.preferences[preference.varName] = preference;
             this.preferenceList.push(preference);
