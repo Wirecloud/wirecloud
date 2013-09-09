@@ -379,13 +379,11 @@
         "model": "platform.variabledef",
         "fields": {
             "default_value": "default",
-            "action_label": null,
             "widget": 1,
             "name": "list",
             "description": "list preference",
             "label": "list",
             "aspect": "PREF",
-            "friend_code": null,
             "type": "L",
             "order": 0,
             "secure": false
@@ -396,13 +394,11 @@
         "model": "platform.variabledef",
         "fields": {
             "default_value": "initial text",
-            "action_label": null,
             "widget": 1,
             "name": "text",
             "description": "text preference",
             "label": "text",
             "aspect": "PREF",
-            "friend_code": null,
             "type": "S",
             "order": 1,
             "secure": false
@@ -413,13 +409,11 @@
         "model": "platform.variabledef",
         "fields": {
             "default_value": "false",
-            "action_label": null,
             "widget": 1,
             "name": "boolean",
             "description": "boolean preference",
             "label": "boolean",
             "aspect": "PREF",
-            "friend_code": null,
             "type": "B",
             "order": 2,
             "secure": false
@@ -430,13 +424,11 @@
         "model": "platform.variabledef",
         "fields": {
             "default_value": "default",
-            "action_label": null,
             "widget": 1,
             "name": "password",
             "description": "password preference",
             "label": "password",
             "aspect": "PREF",
-            "friend_code": null,
             "type": "P",
             "order": 3,
             "secure": false
@@ -464,7 +456,6 @@
         "model": "platform.variabledef",
         "fields": {
             "default_value": null,
-            "action_label": null,
             "widget": 1,
             "name": "outputendpoint",
             "description": "",
