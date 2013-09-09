@@ -5,7 +5,6 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}js/common/modules.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/preferencesManager/PreferencesManager.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/preferencesManager/PlatformPref.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/gadgetModel/GadgetTemplate.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/opManager/Workspace.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/opManager/Tab.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/opManager/InitialScriptExecuter.js"></script>

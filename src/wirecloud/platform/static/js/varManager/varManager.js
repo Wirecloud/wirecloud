@@ -92,7 +92,7 @@ function VarManager (_workspace) {
         if (iwidget == null) {
             iwidget = this.workspace.getIWidget(iwidget_info['id']);
         }
-        variables = iwidget.widget.getTemplate().getVariables();
+        variables = iwidget.widget.variables;
 
         for (name in variables) {
             variable = variables[name];

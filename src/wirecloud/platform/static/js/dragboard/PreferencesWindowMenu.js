@@ -77,7 +77,7 @@
         var i, prefs, pref, fields;
 
         fields = {};
-        prefs = iwidget.widget.getTemplate().getUserPrefs();
+        prefs = iwidget.widget.preferences;
 
         for (i = 0; i < prefs.length; i++) {
             pref = prefs[i];

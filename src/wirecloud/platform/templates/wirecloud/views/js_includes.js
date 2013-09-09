@@ -9,7 +9,6 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/common/modules.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/preferencesManager/PreferencesManager.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/preferencesManager/PlatformPref.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/gadgetModel/GadgetTemplate.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/opManager/Workspace.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/opManager/WorkspaceListItems.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/opManager/WorkspaceItems.js"></script>

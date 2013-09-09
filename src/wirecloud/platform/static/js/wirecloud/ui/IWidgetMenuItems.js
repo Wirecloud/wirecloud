@@ -29,7 +29,7 @@
         StyledElements.DynamicMenuItems.call(this);
 
         this.iWidget = iWidget;
-        this.has_prefs = iWidget.widget.getTemplate().getUserPrefs().length > 0;
+        this.has_prefs = iWidget.widget.preferenceList.length > 0;
     };
     IWidgetMenuItems.prototype = new StyledElements.DynamicMenuItems();
 

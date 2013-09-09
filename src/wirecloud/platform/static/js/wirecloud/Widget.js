@@ -6,6 +6,8 @@
 
     var Widget = function Widget(data) {
 
+        var i, preference;
+
         this.vendor = data.vendor;
         this.name = data.name;
         this.version = new Wirecloud.Version(data.version, 'showcase');
@@ -20,22 +22,33 @@
         });
         this.code_content_type = data.code_content_type;
 
-        this.inputs = data.wiring.inputs;
-        if (this.inputs == null) {
-            this.inputs = {};
+        // Preferences
+        this.preferences = {};
+        this.preferenceList = [];
+        for (i = 0; i < data.preferences; i++) {
+            preference = new UserPref(data.preferences[i].name, data.preferences[i].type, data.preferences[i]);
+            this.preferences[preference.varName] = preference;
+            this.preferenceList.push(preference);
         }
 
-        this.outputs = data.wiring.outputs;
-        if (this.outputs == null) {
-            this.outputs = {};
+        // Inputs
+        this.inputList = data.wiring.inputs;
+        this.inputs = {};
+        for (i = 0; i < this.inputList.length; i++) {
+            this.inputs[this.inputList[i].name] = this.inputList[i];
+        }
+
+        // Outputs
+        this.outputList = data.wiring.outputs;
+        this.outputs = {};
+        for (i = 0; i < this.outputList.length; i++) {
+            this.outputs[this.outputList[i].name] = this.outputList[i];
         }
 
         this.default_width = data.widget_width;
         this.default_height = data.widget_height;
 
         /* FIXME */
-        var template = new WidgetTemplate(data);
-        this.getTemplate = function getTemplate() { return template; };
         this.getUriWiki = function getUriWiki() { return data.doc_uri; };
         this.getImage = function getImage() { return data.image_uri; };
         this.getIcon = function getIcon() { return data.iphone_image_uri !== '' ? data.iphone_image_uri : data.image_uri; };
@@ -74,6 +87,41 @@
         };
 
         this.isUpToDate = function isUpToDate() { return upToDate; };
+
+        this.variables = {};
+
+        var varname, variable;
+
+        for (i = 0; i < data.wiring.inputs.length; i += 1) {
+            this.variables[data.wiring.inputs[i].name] = data.wiring.inputs[i];
+            this.variables[data.wiring.inputs[i].name].aspect = 'SLOT';
+        }
+
+        for (i = 0; i < data.wiring.outputs.length; i += 1) {
+            this.variables[data.wiring.outputs[i].name] = data.wiring.outputs[i];
+            this.variables[data.wiring.outputs[i].name].aspect = 'EVEN';
+        }
+
+        for (i = 0; i < data.preferences.length; i += 1) {
+            this.variables[data.preferences[i].name] = data.preferences[i];
+            this.variables[data.preferences[i].name].aspect = 'PREF';
+        }
+
+        for (i = 0; i < data.properties.length; i += 1) {
+            this.variables[data.properties[i].name] = data.properties[i];
+            this.variables[data.properties[i].name].aspect = 'PROP';
+        }
+
+        for (i = 0; i < data.context.length; i += 1) {
+            this.variables[data.context[i].name] = data.context[i];
+        }
+
+        for (varname in this.variables) {
+            variable = this.variables[varname];
+            if (typeof variable.label === 'undefined' || variable.label === null || variable.label === '') {
+                variable.label = variable.name;
+            }
+        }
         /* END FIXME */
 
         Object.freeze(this);

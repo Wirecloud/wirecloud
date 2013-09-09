@@ -9,7 +9,6 @@
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/common/utils.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/common/MobileScrollManager.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/common/modules.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/gadgetModel/GadgetTemplate.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/opManager/Workspace.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/opManager/Tab.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/opManager/OpManager.js"></script>

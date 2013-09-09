@@ -70,7 +70,7 @@
      */
     var IWidget = function IWidget(widget, tab, options) {
 
-        var i, inputs, outputs;
+        var key;
 
         if (typeof options !== 'object' || !(widget instanceof Wirecloud.Widget)) {
             throw new TypeError();
@@ -90,17 +90,13 @@
         this.readOnly = options.readOnly;
         this.pending_events = [];
 
-        inputs = this.meta.inputs;
         this.inputs = {};
-        for (i = 0; i < inputs.length; i++) {
-            this.inputs[inputs[i].name] = new Wirecloud.wiring.WidgetTargetEndpoint(this, inputs[i]);
+        for (key in this.meta.inputs) {
+            this.inputs[key] = new Wirecloud.wiring.WidgetTargetEndpoint(this, this.meta.inputs[key]);
         }
-
-        outputs = this.meta.outputs;
         this.outputs = {};
-
-        for (i = 0; i < outputs.length; i++) {
-            this.outputs[outputs[i].name] = new Wirecloud.wiring.WidgetSourceEndpoint(this, outputs[i]);
+        for (key in this.meta.outputs) {
+            this.outputs[key] = new Wirecloud.wiring.WidgetSourceEndpoint(this, this.meta.outputs[key]);
         }
 
         this.callbacks = {

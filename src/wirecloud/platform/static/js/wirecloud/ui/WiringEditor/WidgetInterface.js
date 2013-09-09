@@ -35,8 +35,9 @@
     var WidgetInterface = function WidgetInterface(wiringEditor, iwidget, manager, isMenubarRef, endPointPos) {
         var outputs, inputs, desc, label, key, anchorContext, i, isGhost;
 
-        outputs = {};
-        inputs = {};
+        outputs = [];
+        inputs = [];
+
         // TODO remove after finishing the new IWidget class
         if ('internal_iwidget' in iwidget) {
             iwidget = iwidget.internal_iwidget;
@@ -50,7 +51,7 @@
             isGhost = true;
 
             for (i = 0; i < endPointPos.sources.length; i += 1) {
-                outputs[endPointPos.sources[i]] = {
+                outputs[i] = {
                     'description': '',
                     'label': endPointPos.sources[i],
                     'name': endPointPos.sources[i],
@@ -58,7 +59,7 @@
                 };
             }
             for (i = 0; i < endPointPos.targets.length; i += 1) {
-                inputs[endPointPos.targets[i]] = {
+                inputs[i] = {
                     'description': '',
                     'label': endPointPos.targets[i],
                     'name': endPointPos.targets[i],
@@ -76,30 +77,30 @@
             if (!isGhost) {
                 if ((endPointPos.sources.length > 0) || (endPointPos.targets.length > 0)) {
                     for (i = 0; i < endPointPos.sources.length; i += 1) {
-                        outputs[endPointPos.sources[i]] = iwidget.outputs[endPointPos.sources[i]];
+                        outputs[i] = iwidget.outputs[endPointPos.sources[i]];
                     }
                     for (i = 0; i < endPointPos.targets.length; i += 1) {
-                        inputs[endPointPos.targets[i]] = iwidget.inputs[endPointPos.targets[i]];
+                        inputs[i] = iwidget.inputs[endPointPos.targets[i]];
                     }
                 } else {
-                    // No enpoint order info available
-                    inputs = iwidget.inputs;
-                    outputs = iwidget.outputs;
+                    // No enpoint order info available, use default order
+                    inputs = iwidget.widget.inputList.map(function (input) {return iwidget.inputs[input.name]});
+                    outputs = iwidget.widget.outputList.map(function (output) {return iwidget.inputs[output.name]});
                 }
             }
 
             // Sources & targets anchors (sourceAnchor and targetAnchor)
-            for (key in outputs) {
-                desc = outputs[key].description;
-                label = outputs[key].label;
-                anchorContext = {'data': outputs[key], 'iObject': this};
-                this.addSource(label, desc, outputs[key].name, anchorContext);
+            for (i = 0; i < outputs.length; i++) {
+                desc = outputs[i].description;
+                label = outputs[i].label;
+                anchorContext = {'data': outputs[i], 'iObject': this};
+                this.addSource(label, desc, outputs[i].name, anchorContext);
             }
-            for (key in inputs) {
-                desc = inputs[key].description;
-                label = inputs[key].label;
-                anchorContext = {'data': inputs[key], 'iObject': this};
-                this.addTarget(label, desc, inputs[key].name, anchorContext);
+            for (i = 0; i < inputs.length; i++) {
+                desc = inputs[i].description;
+                label = inputs[i].label;
+                anchorContext = {'data': inputs[i], 'iObject': this};
+                this.addTarget(label, desc, inputs[i].name, anchorContext);
             }
         }
     };
