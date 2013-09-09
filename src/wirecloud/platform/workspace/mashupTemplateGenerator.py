@@ -59,6 +59,7 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
             'name': output_endpoint.name,
             'type': output_endpoint.type,
             'label': output_endpoint.label,
+            'description': output_endpoint.description,
             'friendcode': output_endpoint.friend_code,
         })
 
@@ -69,6 +70,7 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
             'name': input_endpoint.name,
             'type': input_endpoint.type,
             'label': input_endpoint.label,
+            'description': input_endpoint.description,
             'friendcode': input_endpoint.friend_code,
             'action_label': input_endpoint.action_label,
         })
