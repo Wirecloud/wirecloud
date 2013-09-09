@@ -26,8 +26,8 @@ def write_mashup_tree(resources, options):
     for tab_index, tab in enumerate(options['tabs']):
         tabElement = etree.SubElement(resources, 'Tab', name=tab['name'], id=str(tab_index))
 
-        for preference in tab['preferences']:
-            etree.SubElement(tabElement, 'Preference', name=preference['name'], value=preference['value'])
+        for preference_name, preference_value in tab['preferences'].iteritems():
+            etree.SubElement(tabElement, 'Preference', name=preference_name, value=preference_value)
 
         for iwidget in tab['resources']:
             resource = etree.SubElement(tabElement, 'Resource', id=iwidget['id'], vendor=iwidget['vendor'], name=iwidget['name'], version=iwidget['version'], title=iwidget['title'])
@@ -61,11 +61,11 @@ def write_mashup_tree(resources, options):
 
 def write_mashup_wiring_tree(wiring, options):
 
-    for op_id, operator in enumerate(options['wiring']['operators']):
-        etree.SubElement(wiring, 'Operator', id=op_id, name=operator['name'])
+    for op_id, operator in options['wiring']['operators'].iteritems():
+        operator_element = etree.SubElement(wiring, 'Operator', id=op_id, name=operator['name'])
 
         for pref_name, pref in operator['preferences'].iteritems():
-            element = etree.SubElement(operator, 'Preference', name=pref_name, value=pref['value'])
+            element = etree.SubElement(operator_element, 'Preference', name=pref_name, value=pref['value'])
 
             if pref.get('readonly', False):
                 element.set('readonly', 'true')

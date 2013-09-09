@@ -194,6 +194,7 @@ class WirecloudTemplateParser(object):
         self._info['author'] = self._get_field(AUTHOR_XPATH, self._resource_description, required=False)
         self._info['email'] = self._get_field(MAIL_XPATH, self._resource_description)
         self._get_url_field('image_uri', IMAGE_URI_XPATH, self._resource_description, required=False)
+        self._get_url_field('iphone_image_uri', IPHONE_IMAGE_URI_XPATH, self._resource_description, required=False)
         self._get_url_field('doc_uri', DOC_URI_XPATH, self._resource_description, required=False)
         self._parse_requirements()
 
@@ -252,6 +253,7 @@ class WirecloudTemplateParser(object):
         if parse_connections:
             self._parse_wiring_connection_info(wiring_element)
             self._parse_wiring_operator_info(wiring_element)
+            self._info['wiring']['views'] = []
 
     def _parse_wiring_connection_info(self, wiring_element):
 
@@ -308,8 +310,6 @@ class WirecloudTemplateParser(object):
             self._info['wiring']['operators'][operator_info['id']] = operator_info
 
     def _parse_widget_info(self):
-
-        self._get_url_field('iphone_image_uri', IPHONE_IMAGE_URI_XPATH, self._resource_description, required=False)
 
         self._info['preferences'] = []
         for preference in self._xpath(PREFERENCES_XPATH, self._doc):

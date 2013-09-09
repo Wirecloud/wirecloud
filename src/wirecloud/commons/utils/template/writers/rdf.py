@@ -112,12 +112,12 @@ def write_mashup_resources_graph(graph, resource_uri, template_info):
         graph.add((tab_element, DCTERMS['title'], rdflib.Literal(tab['name'])))
         graph.add((tab_element, WIRE['index'], rdflib.Literal(str(tab_index))))
 
-        for preference in tab['preferences']:
+        for preference_name in tab['preferences']:
             pref = rdflib.BNode()
             graph.add((pref, rdflib.RDF.type, WIRE_M['TabPreference']))
             graph.add((tab_element, WIRE_M['hasTabPreference'], pref))
-            graph.add((pref, DCTERMS['title'], rdflib.Literal(preference.name)))
-            graph.add((pref, WIRE['value'], rdflib.Literal(preference.value)))
+            graph.add((pref, DCTERMS['title'], rdflib.Literal(preference_name)))
+            graph.add((pref, WIRE['value'], rdflib.Literal(tab['preferences'][preference_name])))
 
         for iwidget in tab['resources']:
             resource = rdflib.BNode()
