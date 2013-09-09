@@ -97,11 +97,11 @@ class TemplateUtilsTestCase(TestCase):
                 {
                     'name': 'pref2',
                     'type': 'text',
-                    'secure': False,
+                    'secure': True,
                     'readonly': True,
                     'label': 'Preference label',
                     'description': 'Preference description',
-                    'default_value': 'value',
+                    'default_value': '',
                     'value': '5'
                 }
             ],
@@ -230,12 +230,70 @@ class TemplateUtilsTestCase(TestCase):
                 {'type': 'feature', 'name': u'PubSub'}
             ],
             'params': {},
-            'preferences': {},
+            'preferences': {
+                'columns': '8'
+            },
             'tabs': [
                 {
                     'name': u'Tab 1',
-                    'preferences': {},
-                    'resources': []
+                    'preferences': {
+                        'columns': '9',
+                        'smart': 'false'
+                    },
+                    'resources': [
+                        {
+                            'id': u'1',
+                            'vendor': u'Wirecloud',
+                            'name': u'TestWidget',
+                            'version': u'1.0',
+                            'title': u'Widget title',
+                            'properties': {
+                                'prop1': {'value': 'value1', 'readonly': False},
+                                'prop2': {'value': 'value 2', 'readonly': True}
+                            },
+                            'preferences': {
+                                'list': {'value': 'default', 'readonly': True, 'hidden': False},
+                                'text': {'value': 'other value', 'readonly': True, 'hidden': True}
+                            },
+                            'position': {
+                                'x': u'0',
+                                'y': u'1',
+                                'z': u'2',
+                            },
+                            'rendering': {
+                                'width': u'10',
+                                'height': u'10',
+                                'layout': u'0',
+                                'fulldragboard': False,
+                                'minimized': False
+                            }
+                        },
+                        {
+                            'id': u'2',
+                            'vendor': u'Wirecloud',
+                            'name': u'TestWidget',
+                            'version': u'2.0',
+                            'title': u'Widget title',
+                            'properties': {
+                                'prop1': {'value': 'value1', 'readonly': False}
+                            },
+                            'preferences': {
+                                'text': {'value': 'other value', 'readonly': True, 'hidden': True}
+                            },
+                            'position': {
+                                'x': u'10',
+                                'y': u'1',
+                                'z': u'2',
+                            },
+                            'rendering': {
+                                'width': u'10',
+                                'height': u'10',
+                                'layout': u'0',
+                                'fulldragboard': True,
+                                'minimized': True
+                            }
+                        }
+                    ]
                 },
                 {
                     'name': u'Tab 2',
@@ -394,13 +452,13 @@ class TemplateUtilsTestCase(TestCase):
                     'readonly': False,
                     'label': 'Preference label',
                     'description': 'Preference description',
-                    'default_value': 'value',
+                    'default_value': '',
                     'value': None
                 },
                 {
                     'name': 'pref2',
                     'type': 'text',
-                    'secure': False,
+                    'secure': True,
                     'readonly': True,
                     'label': 'Preference label',
                     'description': 'Preference description',
