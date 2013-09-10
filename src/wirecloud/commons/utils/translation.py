@@ -8,3 +8,8 @@ def get_trans_index(value):
         if index:
             return index.group("value")
     return None
+
+
+def replace_trans_index(index, value, text):
+
+    return text.replace('__MSG_' + index + '__', value)

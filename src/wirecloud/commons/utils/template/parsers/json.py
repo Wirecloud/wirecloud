@@ -25,6 +25,7 @@ import urlparse
 from django.utils.translation import ugettext as _
 
 from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version, TemplateParseException
+from wirecloud.commons.utils.translation import get_trans_index
 
 
 class JSONTemplateParser(object):
@@ -33,6 +34,16 @@ class JSONTemplateParser(object):
 
         self.base = base
         self._info = json.loads(template)
+
+    def _add_translation_index(self, value, **kwargs):
+        index = get_trans_index(value)
+        if not index:
+            return
+
+        if index not in self._info['translation_index_usage']:
+            self._info['translation_index_usage'][index] = []
+
+        self._info['translation_index_usage'][index].append(kwargs)
 
     def _init(self):
 
@@ -44,6 +55,22 @@ class JSONTemplateParser(object):
         self._info['translation_index_usage'] = {}
         if 'translations' not in self._info:
             self._info['translations'] = {}
+
+        self._add_translation_index(self._info['display_name'], type='resource', field='display_name')
+        self._add_translation_index(self._info['description'], type='resource', field='description')
+
+        if self._info['type'] != 'mashup':
+            for preference in self._info['preferences']:
+                self._add_translation_index(preference['label'], type='vdef', variable=preference['name'], field='label')
+                self._add_translation_index(preference['description'], type='vdef', variable=preference['name'], field='description')
+
+                if preference['type'] == 'list':
+                    for option_index, option in enumerate(preference['options']):
+                        self._add_translation_index(option['label'], type='upo', variable=preference['name'], option=option_index)
+
+            for prop in self._info['properties']:
+                self._add_translation_index(prop['label'], type='vdef', variable=prop['name'], field='label')
+                self._add_translation_index(prop['description'], type='vdef', variable=prop['name'], field='description')
 
     def get_resource_info(self):
 

@@ -118,13 +118,13 @@ def create_widget_from_template(template, user, request=None, base=None):
         )
         variable_definitions[vDef.name] = vDef
         user_options[vDef.name] = {}
-        for option in preference.get('options', ()):
+        for option_index, option in enumerate(preference.get('options', ())):
             upo = UserPrefOption.objects.create(
                 value=option['value'],
                 name=option['label'],
                 variableDef=vDef
             )
-            user_options[vDef.name][upo.name] = upo
+            user_options[vDef.name][option_index] = upo
 
         order += 1
 

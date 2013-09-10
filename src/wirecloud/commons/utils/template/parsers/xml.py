@@ -313,8 +313,8 @@ class WirecloudTemplateParser(object):
 
         self._info['preferences'] = []
         for preference in self._xpath(PREFERENCES_XPATH, self._doc):
-            self._add_translation_index(preference.get('label'), type='vdef', variable=preference.get('name'))
-            self._add_translation_index(preference.get('description', ''), type='vdef', variable=preference.get('name'))
+            self._add_translation_index(preference.get('label'), type='vdef', variable=preference.get('name'), field='label')
+            self._add_translation_index(preference.get('description', ''), type='vdef', variable=preference.get('name'), field='description')
             preference_info = {
                 'name': preference.get('name'),
                 'type': preference.get('type'),
@@ -328,9 +328,9 @@ class WirecloudTemplateParser(object):
 
             if preference_info['type'] == 'list':
                 preference_info['options'] = []
-                for option in self._xpath(OPTION_XPATH, preference):
+                for option_index, option in enumerate(self._xpath(OPTION_XPATH, preference)):
                     option_label = option.get('label', option.get('name'))
-                    self._add_translation_index(option_label, type='upo', variable=preference.get('name'), option=option_label)
+                    self._add_translation_index(option_label, type='upo', variable=preference.get('name'), option=option_index)
                     preference_info['options'].append({
                         'label': option_label,
                         'value': option.get('value'),

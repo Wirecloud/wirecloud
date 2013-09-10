@@ -178,6 +178,18 @@ def build_xml_document(options):
         # Widget rendering
         etree.SubElement(template, 'Platform.Rendering', width=options['widget_width'], height=options['widget_height'])
 
+    # Translations
+    if len(options['translations']) > 0:
+
+        translations_element = etree.SubElement(template, 'Translations', default=options['default_lang'])
+
+        for lang, catalogue in options['translations'].iteritems():
+            catalogue_element = etree.SubElement(translations_element, 'Translation', lang=lang)
+
+            for msg_name, msg in catalogue.iteritems():
+                msg_element = etree.SubElement(catalogue_element, 'msg', name=msg_name)
+                msg_element.text = msg
+
     return template
 
 

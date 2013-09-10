@@ -88,34 +88,41 @@ class RDFTemplateParser(object):
 
     def _get_translation_field(self, namespace, element, subject, translation_name, required=True, **kwargs):
 
-        element_num = 0
-        translations = {}
+        translated = False
+        base_value = None
 
         for field_element in self._graph.objects(subject, namespace[element]):
-            element_num = element_num + 1
             if field_element.language:
-                translations[unicode(field_element.language)] = unicode(field_element)
-                #This field is necesary in order to prevent a problem in case only existed 1 field but it had a language tag
-                translations['no_translation'] = unicode(field_element)
+                translated = True
+
+                if field_element.language not in self._translations:
+                    self._translations[unicode(field_element.language)] = {}
+
+                self._translations[unicode(field_element.language)][translation_name] = unicode(field_element)
             else:
-                translations['no_translation'] = unicode(field_element)
+                base_value = unicode(field_element)
 
-        if element_num == 1:
-            return translations['no_translation']
+        if base_value is not None and translated is True:
+            if 'en' not in self._translations:
+                self._translations['en'] = {}
 
-        elif element_num > 1:
+            self._translations['en'][translation_name] = base_value
+
+        if translated is True:
             self._add_translation_index(translation_name, **kwargs)
-            for k, v in translations.iteritems():
-                if k not in self._translations:
-                    self._translations[k] = {}
-                self._translations[k][translation_name] = v
             return '__MSG_' + translation_name + '__'
 
-        elif element_num == 0 and required:
+        elif base_value is None and required:
+
             msg = _('missing required field: %(field)s')
             raise TemplateParseException(msg % {'field': element})
 
+        elif base_value is not None:
+
+            return base_value
+
         else:
+
             return ''
 
     def _get_field(self, namespace, element, subject, required=True, id_=False, default=''):
@@ -225,23 +232,25 @@ class RDFTemplateParser(object):
         sorted_inputs = sorted(self._graph.objects(wiring_element, WIRE['hasInputEndpoint']), key=lambda source: possible_int(self._get_field(WIRE, 'index', source, required=False)))
 
         for input_endpoint in sorted_inputs:
+            var_name = self._get_field(DCTERMS, 'title', input_endpoint, required=True)
             self._info['wiring']['inputs'].append({
-                'name': self._get_field(DCTERMS, 'title', input_endpoint, required=False),
+                'name': var_name,
                 'type': self._get_field(WIRE, 'type', input_endpoint, required=False),
-                'label': self._get_translation_field(RDFS, 'label', input_endpoint, 'inputLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', input_endpoint, required=False)),
-                'description': self._get_translation_field(DCTERMS, 'description', input_endpoint, 'inputDescription', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', input_endpoint, required=False)),
-                'actionlabel': self._get_translation_field(WIRE, 'inputActionLabel', input_endpoint, 'actionLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', input_endpoint, required=False)),
+                'label': self._get_translation_field(RDFS, 'label', input_endpoint, 'inputLabel', required=False, type='vdef', variable=var_name, field='label'),
+                'description': self._get_translation_field(DCTERMS, 'description', input_endpoint, 'inputDescription', required=False, type='vdef', variable=var_name, field='description'),
+                'actionlabel': self._get_translation_field(WIRE, 'inputActionLabel', input_endpoint, 'actionLabel', required=False, type='vdef', variable=var_name, field='actionlabel'),
                 'friendcode': self._get_field(WIRE, 'friendcode', input_endpoint, required=False),
             })
 
         sorted_outputs = sorted(self._graph.objects(wiring_element, WIRE['hasOutputEndpoint']), key=lambda output: possible_int(self._get_field(WIRE, 'index', output, required=False)))
 
         for output_endpoint in sorted_outputs:
+            var_name = self._get_field(DCTERMS, 'title', output_endpoint, required=True)
             self._info['wiring']['outputs'].append({
-                'name': self._get_field(DCTERMS, 'title', output_endpoint, required=False),
+                'name': var_name,
                 'type': self._get_field(WIRE, 'type', output_endpoint, required=False),
-                'label': self._get_translation_field(RDFS, 'label', output_endpoint, 'outputLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', output_endpoint, required=False)),
-                'description': self._get_translation_field(DCTERMS, 'description', output_endpoint, 'outputDescription', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', output_endpoint, required=False)),
+                'label': self._get_translation_field(RDFS, 'label', output_endpoint, 'outputLabel', required=False, type='vdef', variable=var_name, field='label'),
+                'description': self._get_translation_field(DCTERMS, 'description', output_endpoint, 'outputDescription', required=False, type='vdef', variable=var_name, field='description'),
                 'friendcode': self._get_field(WIRE, 'friendcode', output_endpoint, required=False),
             })
 
@@ -361,11 +370,12 @@ class RDFTemplateParser(object):
         sorted_preferences = sorted(self._graph.objects(self._rootURI, WIRE['hasPlatformPreference']), key=lambda pref: possible_int(self._get_field(WIRE, 'index', pref, required=False)))
 
         for preference in sorted_preferences:
+            var_name = self._get_field(DCTERMS, 'title', preference, required=True)
             preference_info = {
-                'name': self._get_field(DCTERMS, 'title', preference, required=False),
+                'name': var_name,
                 'type': self._get_field(WIRE, 'type', preference, required=False),
-                'label': self._get_translation_field(RDFS, 'label', preference, 'prefLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', preference, required=False)),
-                'description': self._get_translation_field(DCTERMS, 'description', preference, 'prefDescription', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', preference, required=False)),
+                'label': self._get_translation_field(RDFS, 'label', preference, var_name + '_label', required=False, type='vdef', variable=var_name, field='label'),
+                'description': self._get_translation_field(DCTERMS, 'description', preference, var_name + '_description', required=False, type='vdef', variable=var_name, field='description'),
                 'readonly': self._get_field(WIRE, 'readonly', preference, required=False).lower() == 'true',
                 'default_value': self._get_field(WIRE, 'default', preference, required=False),
                 'value': self._get_field(WIRE, 'value', preference, required=False, default=None),
@@ -375,9 +385,9 @@ class RDFTemplateParser(object):
                 preference_info['options'] = []
 
                 sorted_options = sorted(self._graph.objects(preference, WIRE['hasOption']), key=lambda option: possible_int(self._get_field(WIRE, 'index', option, required=False)))
-                for option in sorted_options:
+                for option_index, option in enumerate(sorted_options):
                     preference_info['options'].append({
-                        'label': self._get_translation_field(DCTERMS, 'title', option, 'optionName', required=False, type='upo', variable=preference_info['name'], option='__MSG_optionName__'),
+                        'label': self._get_translation_field(DCTERMS, 'title', option, var_name + '_option' + str(option_index) + '_label', required=False, type='upo', variable=preference_info['name'], option=option_index),
                         'value': self._get_field(WIRE, 'value', option, required=False),
                     })
 
@@ -388,11 +398,12 @@ class RDFTemplateParser(object):
 
         sorted_properties = sorted(self._graph.objects(self._rootURI, WIRE['hasPlatformStateProperty']), key=lambda prop: possible_int(self._get_field(WIRE, 'index', prop, required=False)))
         for prop in sorted_properties:
+            var_name = self._get_field(DCTERMS, 'title', prop, required=True)
             self._info['properties'].append({
-                'name': self._get_field(DCTERMS, 'title', prop, required=False),
+                'name': var_name,
                 'type': self._get_field(WIRE, 'type', prop, required=False),
-                'label': self._get_translation_field(RDFS, 'label', prop, 'propLabel', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', prop, required=False)),
-                'description': self._get_translation_field(DCTERMS, 'description', prop, 'propDescription', required=False, type='vdef', variable=self._get_field(DCTERMS, 'title', prop, required=False)),
+                'label': self._get_translation_field(RDFS, 'label', prop, var_name + '_label', required=False, type='vdef', variable=var_name, field='label'),
+                'description': self._get_translation_field(DCTERMS, 'description', prop, var_name + '_description', required=False, type='vdef', variable=var_name, field='description'),
                 'default_value': self._get_field(WIRE, 'default', prop, required=False),
                 'secure': self._get_field(WIRE, 'secure', prop, required=False).lower() == 'true',
             })

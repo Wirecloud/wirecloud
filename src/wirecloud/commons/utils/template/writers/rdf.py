@@ -19,6 +19,9 @@
 
 import rdflib
 
+from wirecloud.commons.utils.translation import replace_trans_index
+
+
 WIRE = rdflib.Namespace("http://wirecloud.conwet.fi.upm.es/ns/widget#")
 WIRE_M = rdflib.Namespace("http://wirecloud.conwet.fi.upm.es/ns/mashup#")
 FOAF = rdflib.Namespace('http://xmlns.com/foaf/0.1/')
@@ -40,6 +43,24 @@ SKOS = rdflib.Namespace('http://www.w3.org/2004/02/skos/core#')
 TIME = rdflib.Namespace('http://www.w3.org/2006/time#')
 GR = rdflib.Namespace('http://purl.org/goodrelations/v1#')
 DOAP = rdflib.Namespace('http://usefulinc.com/ns/doap#')
+
+
+def add_translated_nodes(graph, parent_node, namespace, element_name, value, usage, template_info):
+
+    used_translation_vars = []
+    for translation_var_name, translation_var_usage in template_info['translation_index_usage'].iteritems():
+        if usage in translation_var_usage:
+            used_translation_vars.append(translation_var_name)
+
+    if len(used_translation_vars) > 0:
+        for lang, catalogue in template_info['translations'].iteritems():
+            msg = value
+            for translation_var_name in used_translation_vars:
+                msg = replace_trans_index(translation_var_name, catalogue[translation_var_name], msg)
+
+            graph.add((parent_node, namespace[element_name], rdflib.Literal(msg, lang=lang)))
+    else:
+        graph.add((parent_node, namespace[element_name], rdflib.Literal(value)))
 
 
 def write_wiring_views_graph(graph, wiring, template_info):
@@ -251,7 +272,7 @@ def build_rdf_graph(template_info):
     graph.add((provider, FOAF['name'], rdflib.Literal(template_info.get('vendor'))))
     graph.add((resource_uri, USDL['versionInfo'], rdflib.Literal(template_info.get('version'))))
     graph.add((resource_uri, DCTERMS['title'], rdflib.Literal(template_info.get('name'))))
-    graph.add((resource_uri, DCTERMS['description'], rdflib.Literal(template_info.get('description'))))
+    add_translated_nodes(graph, resource_uri, DCTERMS, 'description', template_info.get('description'), {'type': 'resource', 'field': 'description'}, template_info)
 
     author = rdflib.BNode()
     graph.add((author, rdflib.RDF.type, FOAF['Person']))
@@ -263,7 +284,7 @@ def build_rdf_graph(template_info):
     if template_info.get('doc_uri'):
         graph.add((resource_uri, FOAF['page'], rdflib.URIRef(template_info.get('doc_uri'))))
 
-    graph.add((resource_uri, WIRE['displayName'], rdflib.Literal(template_info.get('display_name', template_info.get('name')))))
+    add_translated_nodes(graph, resource_uri, WIRE, 'displayName', template_info.get('display_name', ''), {'type': 'resource', 'field': 'display_name'}, template_info)
 
     addr = rdflib.BNode()
     graph.add((addr, rdflib.RDF.type, VCARD['Work']))
@@ -336,8 +357,8 @@ def build_rdf_graph(template_info):
             graph.add((pref_node, WIRE['index'], rdflib.Literal(str(pref_index))))
             graph.add((pref_node, DCTERMS['title'], rdflib.Literal(pref.get('name'))))
             graph.add((pref_node, WIRE['type'], rdflib.Literal(pref.get('type'))))
-            graph.add((pref_node, RDFS['label'], rdflib.Literal(pref.get('label'))))
-            graph.add((pref_node, DCTERMS['description'], rdflib.Literal(pref.get('description'))))
+            add_translated_nodes(graph, pref_node, RDFS, 'label', pref.get('label'), {'type': 'vdef', 'variable': pref.get('name'), 'field': 'label'}, template_info)
+            add_translated_nodes(graph, pref_node, DCTERMS, 'description', pref.get('description'), {'type': 'vdef', 'variable': pref.get('name'), 'field': 'description'}, template_info)
 
             if pref.get('readonly', False) is True:
                 graph.add((pref_node, WIRE['readonly'], rdflib.Literal('true')))
@@ -357,7 +378,7 @@ def build_rdf_graph(template_info):
                     graph.add((option_node, rdflib.RDF.type, WIRE['Option']))
                     graph.add((pref_node, WIRE['hasOption'], option_node))
                     graph.add((option_node, WIRE['index'], rdflib.Literal(str(option_index))))
-                    graph.add((option_node, DCTERMS['title'], rdflib.Literal(option.get('label'))))
+                    add_translated_nodes(graph, option_node, DCTERMS, 'title', option.get('label'), {'type': 'upo', 'variable': pref.get('name'), 'option': option_index}, template_info)
                     graph.add((option_node, WIRE['value'], rdflib.Literal(option.get('value'))))
 
         # Platform state properties
@@ -368,8 +389,8 @@ def build_rdf_graph(template_info):
             graph.add((prop_node, WIRE['index'], rdflib.Literal(str(prop_index))))
             graph.add((prop_node, DCTERMS['title'], rdflib.Literal(prop.get('name'))))
             graph.add((prop_node, WIRE['type'], rdflib.Literal(prop.get('type'))))
-            graph.add((prop_node, RDFS['label'], rdflib.Literal(prop.get('label'))))
-            graph.add((prop_node, DCTERMS['description'], rdflib.Literal(prop.get('description'))))
+            add_translated_nodes(graph, prop_node, RDFS, 'label', prop.get('label'), {'type': 'vdef', 'variable': prop.get('name'), 'field': 'label'}, template_info)
+            add_translated_nodes(graph, prop_node, DCTERMS, 'description', prop.get('description'), {'type': 'vdef', 'variable': prop.get('name'), 'field': 'description'}, template_info)
 
             if prop.get('default_value') not in (None, ''):
                 graph.add((prop_node, WIRE['default'], rdflib.Literal(prop.get('default_value'))))
