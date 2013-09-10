@@ -316,10 +316,10 @@ def build_rdf_graph(template_info):
         graph.add((wiring, WIRE['hasOutputEndpoint'], output_node))
         graph.add((output_node, WIRE['index'], rdflib.Literal(str(output_index))))
         graph.add((output_node, DCTERMS['title'], rdflib.Literal(output_endpoint.get('name'))))
-        graph.add((output_node, RDFS['label'], rdflib.Literal(output_endpoint.get('label'))))
+        add_translated_nodes(graph, output_node, RDFS, 'label', output_endpoint.get('label'), {'type': 'vdef', 'variable': output_endpoint.get('name'), 'field': 'label'}, template_info)
+        add_translated_nodes(graph, output_node, DCTERMS, 'description', output_endpoint.get('description'), {'type': 'vdef', 'variable': output_endpoint.get('name'), 'field': 'description'}, template_info)
         graph.add((output_node, WIRE['type'], rdflib.Literal(output_endpoint.get('type'))))
         graph.add((output_node, WIRE['friendcode'], rdflib.Literal(output_endpoint.get('friendcode'))))
-        graph.add((output_node, DCTERMS['description'], rdflib.Literal(output_endpoint.get('description'))))
 
     # Input endpoints
     for input_index, input_endpoint in enumerate(template_info['wiring']['inputs']):
@@ -328,11 +328,11 @@ def build_rdf_graph(template_info):
         graph.add((wiring, WIRE['hasInputEndpoint'], input_node))
         graph.add((input_node, WIRE['index'], rdflib.Literal(str(input_index))))
         graph.add((input_node, DCTERMS['title'], rdflib.Literal(input_endpoint.get('name'))))
-        graph.add((input_node, RDFS['label'], rdflib.Literal(input_endpoint.get('label'))))
+        add_translated_nodes(graph, input_node, RDFS, 'label', input_endpoint.get('label'), {'type': 'vdef', 'variable': input_endpoint.get('name'), 'field': 'label'}, template_info)
+        add_translated_nodes(graph, input_node, DCTERMS, 'description', input_endpoint.get('description'), {'type': 'vdef', 'variable': input_endpoint.get('name'), 'field': 'description'}, template_info)
         graph.add((input_node, WIRE['type'], rdflib.Literal(input_endpoint.get('type'))))
         graph.add((input_node, WIRE['friendcode'], rdflib.Literal(input_endpoint.get('friendcode'))))
-        graph.add((input_node, DCTERMS['description'], rdflib.Literal(input_endpoint.get('description'))))
-        graph.add((input_node, WIRE['inputActionLabel'], rdflib.Literal(input_endpoint.get('actionlabel'))))
+        add_translated_nodes(graph, input_node, WIRE, 'inputActionLabel', input_endpoint.get('actionlabel'), {'type': 'vdef', 'variable': input_endpoint.get('name'), 'field': 'actionlabel'}, template_info)
 
     if template_info['type'] == 'mashup':
         write_mashup_wiring_graph(graph, wiring, template_info)

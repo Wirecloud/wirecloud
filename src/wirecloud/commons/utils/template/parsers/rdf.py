@@ -236,9 +236,9 @@ class RDFTemplateParser(object):
             self._info['wiring']['inputs'].append({
                 'name': var_name,
                 'type': self._get_field(WIRE, 'type', input_endpoint, required=False),
-                'label': self._get_translation_field(RDFS, 'label', input_endpoint, 'inputLabel', required=False, type='vdef', variable=var_name, field='label'),
-                'description': self._get_translation_field(DCTERMS, 'description', input_endpoint, 'inputDescription', required=False, type='vdef', variable=var_name, field='description'),
-                'actionlabel': self._get_translation_field(WIRE, 'inputActionLabel', input_endpoint, 'actionLabel', required=False, type='vdef', variable=var_name, field='actionlabel'),
+                'label': self._get_translation_field(RDFS, 'label', input_endpoint, var_name + '_label', required=False, type='vdef', variable=var_name, field='label'),
+                'description': self._get_translation_field(DCTERMS, 'description', input_endpoint, var_name + '_description', required=False, type='vdef', variable=var_name, field='description'),
+                'actionlabel': self._get_translation_field(WIRE, 'inputActionLabel', input_endpoint, var_name + '_actionlabel', required=False, type='vdef', variable=var_name, field='actionlabel'),
                 'friendcode': self._get_field(WIRE, 'friendcode', input_endpoint, required=False),
             })
 
@@ -249,8 +249,8 @@ class RDFTemplateParser(object):
             self._info['wiring']['outputs'].append({
                 'name': var_name,
                 'type': self._get_field(WIRE, 'type', output_endpoint, required=False),
-                'label': self._get_translation_field(RDFS, 'label', output_endpoint, 'outputLabel', required=False, type='vdef', variable=var_name, field='label'),
-                'description': self._get_translation_field(DCTERMS, 'description', output_endpoint, 'outputDescription', required=False, type='vdef', variable=var_name, field='description'),
+                'label': self._get_translation_field(RDFS, 'label', output_endpoint, var_name + '_label', required=False, type='vdef', variable=var_name, field='label'),
+                'description': self._get_translation_field(DCTERMS, 'description', output_endpoint, var_name + '_description', required=False, type='vdef', variable=var_name, field='description'),
                 'friendcode': self._get_field(WIRE, 'friendcode', output_endpoint, required=False),
             })
 
