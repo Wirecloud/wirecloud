@@ -251,25 +251,25 @@ class TemplateUtilsTestCase(TestCase):
                     {
                         'name': u'input1',
                         'type': 'text',
-                        'label': u'Input label 1',
-                        'description': u'Input description 1',
-                        'actionlabel': u'a',
+                        'label': u'__MSG_input1_label__',
+                        'description': u'__MSG_input1_description__',
+                        'actionlabel': u'__MSG_input1_actionlabel__',
                         'friendcode': u'friendcode 1'
                     },
                     {
                         'name': u'input2',
                         'type': 'text',
-                        'label': u'Input label 2',
-                        'description': u'Input description 2',
-                        'actionlabel': '',
+                        'label': u'__MSG_input2_label__',
+                        'description': u'__MSG_input2_description__',
+                        'actionlabel': u'__MSG_input2_actionlabel__',
                         'friendcode': u'friendcode 2'
                     },
                     {
                         'name': u'input3',
                         'type': 'text',
-                        'label': u'Input label 3',
-                        'description': u'Input description 3',
-                        'actionlabel': 'action label 3',
+                        'label': u'__MSG_input3_label__',
+                        'description': u'__MSG_input3_description__',
+                        'actionlabel': u'__MSG_input3_actionlabel__',
                         'friendcode': u'friendcode 3'
                     }
                 ],
@@ -277,22 +277,22 @@ class TemplateUtilsTestCase(TestCase):
                     {
                         'name': u'output1',
                         'type': 'text',
-                        'label': u'Output label 1',
-                        'description': u'Output description 1',
+                        'label': u'__MSG_output1_label__',
+                        'description': u'__MSG_output1_description__',
                         'friendcode': u'friendcode 1'
                     },
                     {
                         'name': u'output2',
                         'type': 'text',
-                        'label': u'Output label 2',
-                        'description': u'Output description 2',
+                        'label': u'__MSG_output2_label__',
+                        'description': u'__MSG_output2_description__',
                         'friendcode': u'friendcode 2'
                     },
                     {
                         'name': u'output3',
                         'type': 'text',
-                        'label': u'Output label 3',
-                        'description': u'Output description 3',
+                        'label': u'__MSG_output3_label__',
+                        'description': u'__MSG_output3_description__',
                         'friendcode': u'friendcode 3'
                     }
                 ]
@@ -317,6 +317,21 @@ class TemplateUtilsTestCase(TestCase):
                     'prop1_description': u'Prop1 description',
                     'prop2_label': 'Prop2 label',
                     'prop2_description': u'Prop2 description',
+                    'input1_label': 'Input1 label',
+                    'input1_description': 'Input1 description',
+                    'input1_actionlabel': 'Input1 action label',
+                    'input2_label': 'Input2 label',
+                    'input2_description': 'Input2 description',
+                    'input2_actionlabel': 'Input2 action label',
+                    'input3_label': 'Input3 label',
+                    'input3_description': 'Input3 description',
+                    'input3_actionlabel': 'Input3 action label',
+                    'output1_label': 'Output1 label',
+                    'output1_description': 'Output1 description',
+                    'output2_label': 'Output2 label',
+                    'output2_description': 'Output2 description',
+                    'output3_label': 'Output3 label',
+                    'output3_description': 'Output3 description',
                 },
                 'es': {
                     'display_name': 'Operador de prueba',
@@ -331,6 +346,21 @@ class TemplateUtilsTestCase(TestCase):
                     'prop1_description': u'Descripción de la propiedad 1',
                     'prop2_label': 'Etiqueta de la propiedad 2',
                     'prop2_description': u'Descripción de la propiedad 2',
+                    'input1_label': 'Etiqueta del input 1',
+                    'input1_description': u'Descripción del input 1',
+                    'input1_actionlabel': u'Etiqueta de acción del input 1',
+                    'input2_label': 'Etiqueta del input 2',
+                    'input2_description': u'Descripción del input 2',
+                    'input2_actionlabel': u'Etiqueta de acción del input 2',
+                    'input3_label': 'Etiqueta del input 3',
+                    'input3_description': u'Descripción del input 3',
+                    'input3_actionlabel': u'Etiqueta de acción del input 3',
+                    'output1_label': 'Etiqueta del output 1',
+                    'output1_description': u'Descripción del output 1',
+                    'output2_label': 'Etiqueta del output 2',
+                    'output2_description': u'Descripción del output 2',
+                    'output3_label': 'Etiqueta del output 3',
+                    'output3_description': u'Descripción del output 3',
                 }
             },
             'translation_index_usage': {
@@ -345,7 +375,22 @@ class TemplateUtilsTestCase(TestCase):
                 'prop1_label': [{'type': 'vdef', 'variable': 'prop1', 'field': 'label'}],
                 'prop1_description': [{'type': 'vdef', 'variable': 'prop1', 'field': 'description'}],
                 'prop2_label': [{'type': 'vdef', 'variable': 'prop2', 'field': 'label'}],
-                'prop2_description': [{'type': 'vdef', 'variable': 'prop2', 'field': 'description'}]
+                'prop2_description': [{'type': 'vdef', 'variable': 'prop2', 'field': 'description'}],
+                'input1_label': [{'type': 'vdef', 'variable': 'input1', 'field': 'label'}],
+                'input1_description': [{'type': 'vdef', 'variable': 'input1', 'field': 'description'}],
+                'input1_actionlabel': [{'type': 'vdef', 'variable': 'input1', 'field': 'actionlabel'}],
+                'input2_label': [{'type': 'vdef', 'variable': 'input2', 'field': 'label'}],
+                'input2_actionlabel': [{'type': 'vdef', 'variable': 'input2', 'field': 'actionlabel'}],
+                'input2_description': [{'type': 'vdef', 'variable': 'input2', 'field': 'description'}],
+                'input3_label': [{'type': 'vdef', 'variable': 'input3', 'field': 'label'}],
+                'input3_actionlabel': [{'type': 'vdef', 'variable': 'input3', 'field': 'actionlabel'}],
+                'input3_description': [{'type': 'vdef', 'variable': 'input3', 'field': 'description'}],
+                'output1_label': [{'type': 'vdef', 'variable': 'output1', 'field': 'label'}],
+                'output1_description': [{'type': 'vdef', 'variable': 'output1', 'field': 'description'}],
+                'output2_label': [{'type': 'vdef', 'variable': 'output2', 'field': 'label'}],
+                'output2_description': [{'type': 'vdef', 'variable': 'output2', 'field': 'description'}],
+                'output3_label': [{'type': 'vdef', 'variable': 'output3', 'field': 'label'}],
+                'output3_description': [{'type': 'vdef', 'variable': 'output3', 'field': 'description'}]
             }
         }
 
