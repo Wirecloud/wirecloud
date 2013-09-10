@@ -22,6 +22,7 @@ import copy
 from django.utils.unittest import TestCase
 
 from wirecloud.commons.utils.template.parsers import TemplateParser
+from wirecloud.commons.utils.template.writers.json import write_json_description
 from wirecloud.commons.utils.template.writers.rdf import write_rdf_description
 from wirecloud.commons.utils.template.writers.xml import write_xml_description
 
@@ -546,6 +547,69 @@ class TemplateUtilsTestCase(TestCase):
             'translations': {},
             'translation_index_usage': {},
         }
+
+
+    def test_json_parser_writer_basic_operator(self):
+
+        json_description = write_json_description(self.basic_operator_info)
+        template = TemplateParser(json_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.basic_operator_info)
+
+    def test_json_parser_writer_operator(self):
+
+        json_description = write_json_description(self.operator_info)
+        template = TemplateParser(json_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.operator_info)
+
+    def test_json_parser_writer_basic_mashup(self):
+
+        json_description = write_json_description(self.basic_mashup_info)
+        template = TemplateParser(json_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.basic_mashup_info)
+
+    def test_json_parser_writer_mashup(self):
+
+        json_description = write_json_description(self.mashup_info)
+        template = TemplateParser(json_description)
+        processed_info = template.get_resource_info()
+
+        mashup_info = copy.deepcopy(self.mashup_info)
+
+        self.assertItemsEqual(processed_info['tabs'][0]['resources'], mashup_info['tabs'][0]['resources'])
+        del processed_info['tabs'][0]['resources']
+        del mashup_info['tabs'][0]['resources']
+
+        self.assertItemsEqual(processed_info['wiring']['connections'], mashup_info['wiring']['connections'])
+        del processed_info['wiring']['connections']
+        del mashup_info['wiring']['connections']
+
+        self.assertItemsEqual(processed_info['requirements'], mashup_info['requirements'])
+        del processed_info['requirements']
+        del mashup_info['requirements']
+
+        self.assertEqual(processed_info, mashup_info)
+
+    def test_json_parser_writer_basic_widget(self):
+
+        json_description = write_json_description(self.basic_widget_info)
+        template = TemplateParser(json_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.basic_widget_info)
+
+    def test_json_parser_writer_widget(self):
+
+        json_description = write_json_description(self.widget_info)
+        template = TemplateParser(json_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.widget_info)
 
     def test_rdf_parser_writer_basic_operator(self):
 
