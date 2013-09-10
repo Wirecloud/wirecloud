@@ -813,6 +813,11 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response_data = json.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
 
+    def test_iwidget_collection_post_bad_request_syntax(self):
+
+        url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 1})
+        check_post_bad_request_syntax(self, url)
+
     def test_iwidget_entry_post_requires_authentication(self):
 
         url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
@@ -855,6 +860,11 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Check that the iwidget name has been changed
         iwidget = IWidget.objects.get(pk=2)
         self.assertEqual(iwidget.name, 'New Name')
+
+    def test_iwidget_entry_post_bad_request_syntax(self):
+
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+        check_post_bad_request_syntax(self, url)
 
     def test_iwidget_preferences_entry_post_requires_authentication(self):
 
@@ -906,6 +916,11 @@ class ApplicationMashupAPI(WirecloudTestCase):
             variable__iwidget__id=2
         )
         self.assertEqual(variable_value.value, 'new value')
+
+    def test_iwidget_preferences_entry_post_bad_request_syntax(self):
+
+        url = reverse('wirecloud.iwidget_preferences', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
+        check_post_bad_request_syntax(self, url)
 
     def test_iwidget_entry_delete_requires_authentication(self):
 
