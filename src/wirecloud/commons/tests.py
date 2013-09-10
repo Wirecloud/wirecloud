@@ -579,6 +579,10 @@ class TemplateUtilsTestCase(TestCase):
 
         mashup_info = copy.deepcopy(self.mashup_info)
 
+        self.assertItemsEqual(processed_info['tabs'][0]['resources'], mashup_info['tabs'][0]['resources'])
+        del processed_info['tabs'][0]['resources']
+        del mashup_info['tabs'][0]['resources']
+
         self.assertItemsEqual(processed_info['wiring']['connections'], mashup_info['wiring']['connections'])
         del processed_info['wiring']['connections']
         del mashup_info['wiring']['connections']
@@ -620,6 +624,10 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         mashup_info = copy.deepcopy(self.mashup_info)
+
+        self.assertItemsEqual(processed_info['tabs'][0]['resources'], mashup_info['tabs'][0]['resources'])
+        del processed_info['tabs'][0]['resources']
+        del mashup_info['tabs'][0]['resources']
 
         self.assertItemsEqual(processed_info['wiring']['connections'], mashup_info['wiring']['connections'])
         del processed_info['wiring']['connections']
