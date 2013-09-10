@@ -41,6 +41,10 @@ class JSONTemplateParser(object):
             if field not in self._info:
                 self._info[field] = ''
 
+        self._info['translation_index_usage'] = {}
+        if 'translations' not in self._info:
+            self._info['translations'] = {}
+
     def get_resource_info(self):
 
         if not is_valid_vendor(self._info['vendor']):
