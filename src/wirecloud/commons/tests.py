@@ -186,6 +186,169 @@ class TemplateUtilsTestCase(TestCase):
             'translation_index_usage': {},
         }
 
+        cls.operator_with_translation_info = {
+            'type': 'operator',
+            'vendor': 'Wirecloud',
+            'name': 'TemplateTestOperator',
+            'version': '2.0',
+            'display_name': '__MSG_display_name__',
+            'description': '__MSG_description__',
+            'author': 'author_test',
+            'email': 'test@example.com',
+            'image_uri': 'images/catalogue.png',
+            'iphone_image_uri': 'images/smartphone.png',
+            'doc_uri': 'docs/index.html',
+            'requirements': [
+                {'type': 'feature', 'name': 'Wirecloud'},
+            ],
+            'preferences': [
+                {
+                    'name': 'pref1',
+                    'type': 'list',
+                    'options': [
+                        {'label': '__MSG_pref1_option0_label__', 'value': '1'},
+                        {'label': '__MSG_pref1_option1_label__', 'value': '2'}
+                    ],
+                    'secure': False,
+                    'readonly': False,
+                    'label': '__MSG_pref1_label__',
+                    'description': '__MSG_pref1_description__',
+                    'default_value': 'value',
+                    'value': None
+                },
+                {
+                    'name': 'pref2',
+                    'type': 'text',
+                    'secure': True,
+                    'readonly': True,
+                    'label': '__MSG_pref2_label__',
+                    'description': '__MSG_pref2_description__',
+                    'default_value': '',
+                    'value': '5'
+                }
+            ],
+            'properties': [
+                {
+                    'name': 'prop1',
+                    'type': 'text',
+                    'secure': False,
+                    'label': '__MSG_prop1_label__',
+                    'description': '__MSG_prop1_description__',
+                    'default_value': 'value1',
+                },
+                {
+                    'name': 'prop2',
+                    'type': 'text',
+                    'secure': True,
+                    'label': '__MSG_prop2_label__',
+                    'description': '__MSG_prop2_description__',
+                    'default_value': 'value2',
+                }
+            ],
+            'context': [],
+            'wiring': {
+                'inputs': [
+                    {
+                        'name': u'input1',
+                        'type': 'text',
+                        'label': u'Input label 1',
+                        'description': u'Input description 1',
+                        'actionlabel': u'a',
+                        'friendcode': u'friendcode 1'
+                    },
+                    {
+                        'name': u'input2',
+                        'type': 'text',
+                        'label': u'Input label 2',
+                        'description': u'Input description 2',
+                        'actionlabel': '',
+                        'friendcode': u'friendcode 2'
+                    },
+                    {
+                        'name': u'input3',
+                        'type': 'text',
+                        'label': u'Input label 3',
+                        'description': u'Input description 3',
+                        'actionlabel': 'action label 3',
+                        'friendcode': u'friendcode 3'
+                    }
+                ],
+                'outputs': [
+                    {
+                        'name': u'output1',
+                        'type': 'text',
+                        'label': u'Output label 1',
+                        'description': u'Output description 1',
+                        'friendcode': u'friendcode 1'
+                    },
+                    {
+                        'name': u'output2',
+                        'type': 'text',
+                        'label': u'Output label 2',
+                        'description': u'Output description 2',
+                        'friendcode': u'friendcode 2'
+                    },
+                    {
+                        'name': u'output3',
+                        'type': 'text',
+                        'label': u'Output label 3',
+                        'description': u'Output description 3',
+                        'friendcode': u'friendcode 3'
+                    }
+                ]
+            },
+            'js_files': [
+                'js/lib1.js',
+                'js/lib2.js',
+                'js/example.js',
+            ],
+            'default_lang': 'en',
+            'translations': {
+                'en': {
+                    'display_name': 'Template Test Operator',
+                    'description': 'description',
+                    'pref1_option0_label': 'Option1 label',
+                    'pref1_option1_label': 'Option2 label',
+                    'pref1_label': 'Pref1 label',
+                    'pref1_description': 'Pref1 description',
+                    'pref2_label': 'Pref2 label',
+                    'pref2_description': 'Pref2 description',
+                    'prop1_label': 'Prop1 label',
+                    'prop1_description': u'Prop1 description',
+                    'prop2_label': 'Prop2 label',
+                    'prop2_description': u'Prop2 description',
+                },
+                'es': {
+                    'display_name': 'Operador de prueba',
+                    'description': u'descripción',
+                    'pref1_option0_label': u'Etiqueta de la opción 1',
+                    'pref1_option1_label': u'Etiqueta de la opción 2',
+                    'pref1_label': 'Etiqueta de la pref1',
+                    'pref1_description': u'Descripción de la pref1',
+                    'pref2_label': 'Etiqueta de la pref2',
+                    'pref2_description': u'Descripción de la pref2',
+                    'prop1_label': 'Etiqueta de la propiedad 1',
+                    'prop1_description': u'Descripción de la propiedad 1',
+                    'prop2_label': 'Etiqueta de la propiedad 2',
+                    'prop2_description': u'Descripción de la propiedad 2',
+                }
+            },
+            'translation_index_usage': {
+                'display_name': [{'type': 'resource', 'field': 'display_name'}],
+                'description': [{'type': 'resource', 'field': 'description'}],
+                'pref1_option0_label': [{'type': 'upo', 'variable': 'pref1', 'option': 0}],
+                'pref1_option1_label': [{'type': 'upo', 'variable': 'pref1', 'option': 1}],
+                'pref1_label': [{'type': 'vdef', 'variable': 'pref1', 'field': 'label'}],
+                'pref1_description': [{'type': 'vdef', 'variable': 'pref1', 'field': 'description'}],
+                'pref2_label': [{'type': 'vdef', 'variable': 'pref2', 'field': 'label'}],
+                'pref2_description': [{'type': 'vdef', 'variable': 'pref2', 'field': 'description'}],
+                'prop1_label': [{'type': 'vdef', 'variable': 'prop1', 'field': 'label'}],
+                'prop1_description': [{'type': 'vdef', 'variable': 'prop1', 'field': 'description'}],
+                'prop2_label': [{'type': 'vdef', 'variable': 'prop2', 'field': 'label'}],
+                'prop2_description': [{'type': 'vdef', 'variable': 'prop2', 'field': 'description'}]
+            }
+        }
+
         cls.basic_mashup_info = {
             'type': 'mashup',
             'vendor': u'Wirecloud',
@@ -565,6 +728,14 @@ class TemplateUtilsTestCase(TestCase):
 
         self.assertEqual(processed_info, self.operator_info)
 
+    def test_json_parser_writer_operator_with_translations(self):
+
+        json_description = write_json_description(self.operator_with_translation_info)
+        template = TemplateParser(json_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.operator_with_translation_info)
+
     def test_json_parser_writer_basic_mashup(self):
 
         json_description = write_json_description(self.basic_mashup_info)
@@ -626,6 +797,14 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.operator_info)
+
+    def test_rdf_parser_writer_operator_with_translations(self):
+
+        rdf_description = write_rdf_description(self.operator_with_translation_info)
+        template = TemplateParser(rdf_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.operator_with_translation_info)
 
     def test_rdf_parser_writer_basic_mashup(self):
 
