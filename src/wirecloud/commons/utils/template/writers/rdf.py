@@ -339,10 +339,10 @@ def build_rdf_graph(template_info):
             graph.add((pref_node, RDFS['label'], rdflib.Literal(pref.get('label'))))
             graph.add((pref_node, DCTERMS['description'], rdflib.Literal(pref.get('description'))))
 
-            if pref.get('readonly', False) == True:
+            if pref.get('readonly', False) is True:
                 graph.add((pref_node, WIRE['readonly'], rdflib.Literal('true')))
 
-            if pref.get('default_value'):
+            if pref.get('default_value') not in (None, ''):
                 graph.add((pref_node, WIRE['default'], rdflib.Literal(pref.get('default_value'))))
 
             if pref.get('value'):
@@ -371,7 +371,7 @@ def build_rdf_graph(template_info):
             graph.add((prop_node, RDFS['label'], rdflib.Literal(prop.get('label'))))
             graph.add((prop_node, DCTERMS['description'], rdflib.Literal(prop.get('description'))))
 
-            if prop.get('default_value'):
+            if prop.get('default_value') not in (None, ''):
                 graph.add((prop_node, WIRE['default'], rdflib.Literal(prop.get('default_value'))))
 
             if prop.get('secure'):
@@ -386,7 +386,7 @@ def build_rdf_graph(template_info):
         if template_info['code_content_type'] != 'text/html':
             graph.add((xhtml_element, DCTERMS['format'], rdflib.Literal(template_info.get('code_content_type'))))
 
-        if template_info['code_cacheable'] == False:
+        if template_info['code_cacheable'] is False:
             graph.add((xhtml_element, WIRE['codeCacheable'], rdflib.Literal('false')))
 
         if template_info['code_uses_platform_style']:

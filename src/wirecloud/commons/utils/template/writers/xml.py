@@ -55,9 +55,6 @@ def write_mashup_tree(resources, options):
                 if prop.get('readonly', False):
                     element.set('readonly', 'true')
 
-                if prop.get('hidden', False):
-                    element.set('hidden', 'true')
-
 
 def write_mashup_wiring_tree(wiring, options):
 
@@ -135,7 +132,7 @@ def build_xml_document(options):
 
             properties_element = etree.SubElement(template, 'Platform.StateProperties')
             for prop in options['properties']:
-                prop_element = etree.SubElement(properties_element, 'Property',
+                etree.SubElement(properties_element, 'Property',
                     name=prop['name'],
                     type=prop['type'],
                     label=prop['label'],
@@ -173,7 +170,7 @@ def build_xml_document(options):
         link = etree.SubElement(template, 'Platform.Link')
         xhtml = etree.SubElement(link, 'XHTML', href=options['code_url'])
         xhtml.set('content-type', options['code_content_type'])
-        if options['code_cacheable'] == False:
+        if options['code_cacheable'] is False:
             xhtml.set('cacheable', 'false')
         if options['code_uses_platform_style']:
             xhtml.set('use-platform-style', 'true')

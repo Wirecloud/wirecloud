@@ -415,7 +415,7 @@ class TemplateUtilsTestCase(TestCase):
                 'outputs': [],
             },
             'code_url': 'http://example.com/code.html',
-            'code_content_type': 'application/xhtml+xml',
+            'code_content_type': 'text/html',
             'code_cacheable': True,
             'code_uses_platform_style': False,
             'default_lang': 'en',
