@@ -6,6 +6,14 @@
 
     var setPosition = function setPosition(refPosition, position) {
         switch (position) {
+        case 'left-bottom':
+            this.wrapperElement.style.left = (refPosition.left - this.wrapperElement.offsetWidth + 1) + "px";
+            this.wrapperElement.style.top = (refPosition.top - 1) + "px";
+            break;
+        case 'right-bottom':
+            this.wrapperElement.style.left = (refPosition.right - 1) + "px";
+            this.wrapperElement.style.top = (refPosition.top - 1) + "px";
+            break;
         case 'top-left':
             this.wrapperElement.style.top = (refPosition.top - this.wrapperElement.offsetHeight + 1) + "px";
             this.wrapperElement.style.left = (refPosition.right - this.wrapperElement.offsetWidth) + "px";
@@ -26,8 +34,10 @@
         }
     };
 
-    var standsOut = function () {
-        return this.wrapperElement.offsetTop < 0 || this.wrapperElement.offsetLeft < 0;
+    var standsOut = function standsOut() {
+        var parent_box = this.wrapperElement.parentElement.getBoundingClientRect();
+        var element_box = this.wrapperElement.getBoundingClientRect();
+        return element_box.left < parent_box.left || element_box.top < parent_box.top || element_box.right > parent_box.right || element_box.bottom > parent_box.bottom;
     };
 
     /**

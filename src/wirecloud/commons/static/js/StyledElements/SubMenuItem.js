@@ -8,6 +8,10 @@
      *
      */
     var SubMenuItem = function SubMenuItem(text, handler, options) {
+        options = EzWebExt.merge({
+            'position': ['right-bottom', 'left-bottom']
+        }, options);
+
         StyledElements.PopupMenuBase.call(this, options);
 
         this.menuItem = new StyledElements.MenuItem(text, handler);
@@ -36,12 +40,8 @@
         this.parentMenu = popupMenu;
 
         this.parentMenu.addEventListener('itemOver', function (popupMenu, item) {
-            var position;
-
             if (item === this.menuItem) {
-                position = EzWebExt.getRelativePosition(this.menuItem.wrapperElement, this.menuItem.wrapperElement.ownerDocument.body);
-                position.x += this.menuItem.wrapperElement.offsetWidth;
-                this.show(position);
+                this.show(this.menuItem.wrapperElement.getBoundingClientRect());
             } else {
                 this.hide();
             }
