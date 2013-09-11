@@ -28,9 +28,8 @@
     /*************************************************************************
      * Constructor
      *************************************************************************/
-    var Tutorial = function Tutorial(instructions) {
-        var i, key;
-
+    var Tutorial = function Tutorial(label, instructions) {
+        this.label = label;
         this.stepActive = null;
         this.steps = [];
 
@@ -49,6 +48,21 @@
         this.controlLayer.appendChild(this.controlLayerLeft);
         this.controlLayer.appendChild(this.controlLayerRight);
 
+        this.instructions = instructions;
+    };
+
+    Tutorial.prototype.start = function start() {
+
+        var i;
+
+        var mapping = {
+            'simpleDescription': Wirecloud.ui.Tutorial.SimpleDescription,
+            'userAction': Wirecloud.ui.Tutorial.UserAction,
+            'formAction': Wirecloud.ui.Tutorial.FormAction,
+            'autoAction': Wirecloud.ui.Tutorial.AutoAction
+        };
+
+        // creating simpleDescriptions
         document.body.appendChild(this.controlLayer);
         this.resetControlLayer();
 
@@ -56,16 +70,6 @@
         this.msgLayer.addClassName("msgLayer");
         document.body.appendChild(this.msgLayer);
 
-        this.instructions = instructions;
-
-        var mapping = {
-            'simpleDescription': Wirecloud.ui.Tutorial.SimpleDescription,
-            'userAction': Wirecloud.ui.Tutorial.UserAction,
-            'formAction': Wirecloud.ui.Tutorial.FormAction,
-            'autoAction': Wirecloud.ui.Tutorial.AutoAction,
-        };
-
-        // creating simpleDescriptions
         for (i = 0; i < this.instructions.length; i ++) {
             var constructor = mapping[this.instructions[i].type];
             this.steps[i] = new constructor(this, this.instructions[i]);

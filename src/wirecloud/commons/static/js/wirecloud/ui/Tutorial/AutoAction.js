@@ -104,55 +104,54 @@
         //transparent Control Layer
         this.tutorial.resetControlLayer(true);
 
-        pos = this.element.getBoundingClientRect();
-        switch (this.position) {
-        case 'downRight':
-            this.wrapperElement.style.top = (pos.top + pos.height + 20) + 'px'
-            this.wrapperElement.style.left = (pos.left + pos.width + 20) + 'px';
-            this.arrow.style.background = "url('../static/images/tutorial/arrow-up-left3.png')";
-            this.arrow.style.top = '-20px';
-            this.arrow.style.left = '-20px';
-            break;
-        case 'downLeft':
-            this.wrapperElement.style.top = (pos.top + pos.height + 20) + 'px';
-            this.wrapperElement.style.left = (pos.left - this.wrapperElement.getWidth() - 20) + 'px';
-            this.arrow.style.background = "url('../static/images/tutorial/arrow-up-right3.png')";
-            this.arrow.style.top = '-20px';
-            this.arrow.style.left = (this.wrapperElement.getWidth() - 10) + 'px';
-            if (parseFloat(this.wrapperElement.style.left) < 0) {
-                this.wrapperElement.style.left = 0;
-                this.wrapperElement.style.width = pos.left + 'px';
+        if (element != null) {
+            pos = this.element.getBoundingClientRect();
+            switch (this.position) {
+            case 'downRight':
+                this.wrapperElement.style.top = (pos.top + pos.height + 20) + 'px'
+                this.wrapperElement.style.left = (pos.left + pos.width + 20) + 'px';
+                this.arrow.style.background = "url('../static/images/tutorial/arrow-up-left3.png')";
+                this.arrow.style.top = '-20px';
+                this.arrow.style.left = '-20px';
+                break;
+            case 'downLeft':
+                this.wrapperElement.style.top = (pos.top + pos.height + 20) + 'px';
+                this.wrapperElement.style.left = (pos.left - this.wrapperElement.getWidth() - 20) + 'px';
+                this.arrow.style.background = "url('../static/images/tutorial/arrow-up-right3.png')";
+                this.arrow.style.top = '-20px';
+                this.arrow.style.left = (this.wrapperElement.getWidth() - 10) + 'px';
+                if (parseFloat(this.wrapperElement.style.left) < 0) {
+                    this.wrapperElement.style.left = 0;
+                    this.wrapperElement.style.width = pos.left + 'px';
+                }
+                break;
+            case 'topRight':
+                this.wrapperElement.style.top = (pos.top - this.wrapperElement.getHeight() - pos.height - 10) + 'px';
+                this.wrapperElement.style.left = (pos.left + pos.width) + 'px';
+                this.arrow.style.background = "url('../static/images/tutorial/arrow-down-left3.png')";
+                this.arrow.style.top = (this.wrapperElement.getHeight()) + 'px';
+                this.arrow.style.left = '-10px';
+                break;
+            case 'topLeft':
+                this.wrapperElement.style.top = (pos.top - this.wrapperElement.getHeight() - pos.height - 10) + 'px';
+                this.wrapperElement.style.left = (pos.left - this.wrapperElement.getWidth() - 20) + 'px';
+                this.arrow.style.background = "url('../static/images/tutorial/arrow-down-right3.png')";
+                this.arrow.style.top = (this.wrapperElement.getHeight()) + 'px';
+                this.arrow.style.left = (this.wrapperElement.getWidth()) + 'px';
+                if (parseFloat(this.wrapperElement.style.left) < 0) {
+                    this.wrapperElement.style.left = 0;
+                    this.wrapperElement.style.width = pos.left + 'px';
+                }
+                break;
+            default:
+                //downRight
+                this.wrapperElement.style.top = (pos.top + pos.height + 20) + 'px'
+                this.wrapperElement.style.left = (pos.left + pos.width + 20) + 'px';
+                this.arrow.style.background = "url('../static/images/tutorial/arrow-up-left3.png')";
+                this.arrow.style.top = '-20px';
+                this.arrow.style.left = '-20px';
+                break;
             }
-            break;
-        case 'topRight':
-            this.wrapperElement.style.top = (pos.top - this.wrapperElement.getHeight() - pos.height - 10) + 'px';
-            this.wrapperElement.style.left = (pos.left + pos.width) + 'px';
-            this.arrow.style.background = "url('../static/images/tutorial/arrow-down-left3.png')";
-            this.arrow.style.top = (this.wrapperElement.getHeight()) + 'px';
-            this.arrow.style.left = '-10px';
-            break;
-        case 'topLeft':
-            this.wrapperElement.style.top = (pos.top - this.wrapperElement.getHeight() - pos.height - 10) + 'px';
-            this.wrapperElement.style.left = (pos.left - this.wrapperElement.getWidth() - 20) + 'px';
-            this.arrow.style.background = "url('../static/images/tutorial/arrow-down-right3.png')";
-            this.arrow.style.top = (this.wrapperElement.getHeight()) + 'px';
-            this.arrow.style.left = (this.wrapperElement.getWidth()) + 'px';
-            if (parseFloat(this.wrapperElement.style.left) < 0) {
-                this.wrapperElement.style.left = 0;
-                this.wrapperElement.style.width = pos.left + 'px';
-            }
-            break;
-        default:
-            //downRight
-            this.wrapperElement.style.top = (pos.top + pos.height + 20) + 'px'
-            this.wrapperElement.style.left = (pos.left + pos.width + 20) + 'px';
-            this.arrow.style.background = "url('../static/images/tutorial/arrow-up-left3.png')";
-            this.arrow.style.top = '-20px';
-            this.arrow.style.left = '-20px';
-            break;
-        }
-        if (this.event != null) {
-            //¿For what?
         }
 
         this.wrapperElement.addClassName("activeStep");
@@ -166,7 +165,9 @@
      * activate this step
      */
     AutoAction.prototype.activate = function activate(withoutCloseButton) {
-        if (this.options.asynchronous) {
+        if (this.element == null) {
+            _activate.call(this, null, withoutCloseButton);
+        } else if (this.options.asynchronous) {
             this.element(_activate.bind(this));
         } else {
             _activate.call(this, this.element(), withoutCloseButton);
@@ -179,7 +180,7 @@
     AutoAction.prototype.destroy = function destroy() {
         if (typeof this.element === 'function') {
             this.element = null;
-        } else {
+        } else if (this.element != null) {
             this.element.removeEventListener('click', this.nextHandler, true);
         }
         this.layer.removeChild(this.wrapperElement);
