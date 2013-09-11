@@ -1,0 +1,92 @@
+.controlLayerUp, .controlLayerDown, .controlLayerLeft, .controlLayerRight {
+    top: 0;
+	left: 0;
+    width: 100%;
+	height: 100%;
+	position: absolute;
+	z-index: 200000;
+	opacity: 0.4;
+    background: #808080;
+}
+
+.controlLayer {
+    top: 0;
+	left: 0;
+}
+
+.msgLayer {
+
+}
+
+.empty {
+    display: none;
+}
+
+.simpleDescription {
+    display: none;
+}
+
+.userAction {
+    display: none;
+    max-width: 500px;
+}
+
+.simpleDescription.activeStep{
+    display: inherit;
+    z-index: 200100;
+    min-width: 180px;
+}
+
+/* UserAction */
+.userAction.activeStep {
+    position: absolute;
+    border-radius: 1.25ex 1.25ex 1.25ex 1.25ex;
+    background-color: rgba(91, 127, 173, 0.8);
+    box-shadow: 3px 3px 3px rgba(0,0,0,0.3);
+    padding: 4px;
+    z-index: 200100;
+    display: inherit;
+}
+
+.userAction .cancelButton {
+    float: right;
+    width: 16px;
+    height: 16px;
+    background: url(../images/icons-sprite.png);
+    background-position: -48px -312px;
+}
+
+.userAction .popUpArrowDiv {
+    position: absolute;
+    opacity: 0.9;
+    z-index: 200101;
+    width: 30px;
+    height: 30px;
+    pointer-events: none;
+}
+
+.userAction.subFormAction {
+    display: none;
+}
+
+.userAction.subFormAction.activate {
+    display: inherit;
+}
+
+.disableLayer {
+    z-index: 300000;
+    position: absolute;
+}
+
+.tuto_highlight {
+/*    z-index: 200105;*/
+}
+
+/* menu de pruebas */
+.tutorialMenu {
+    z-index: 10000;
+    width: 300px;
+    height: 300px;
+    background:blue;
+}
+

@@ -52,6 +52,15 @@ WIRING_EDITOR_FILES = (
     'js/wirecloud/ui/RecommendationManager.js',
 )
 
+TUTORIAL_FILES = (
+    'js/wirecloud/ui/Tutorial.js',
+    'js/wirecloud/ui/Tutorial/PopUp.js',
+    'js/wirecloud/ui/Tutorial/SimpleDescription.js',
+    'js/wirecloud/ui/Tutorial/UserAction.js',
+    'js/wirecloud/ui/Tutorial/FormAction.js',
+    'js/wirecloud/ui/Tutorial/AutoAction.js',
+)
+
 STYLED_ELEMENTS_FILES = (
     'js/StyledElements/Addon.js',
     'js/StyledElements/Fragment.js',
@@ -100,6 +109,11 @@ WIRING_EDITOR_CSS = (
     'css/wiring/wiringPreview.css',
     'css/wiring/colorSmartBox.css',
 )
+
+TUTORIAL_CSS = (
+    'css/tutorial.css',
+)
+
 
 STYLED_ELEMENTS_CSS = (
     'css/styled_elements_core.css',
@@ -243,7 +257,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/ui/PublishWorkspaceWindowMenu.js',
                 'js/wirecloud/ui/PublishResourceWindowMenu.js',
                 'js/wirecloud/ui/RenameWindowMenu.js',
-            ) + WIRING_EDITOR_FILES
+            ) + WIRING_EDITOR_FILES + TUTORIAL_FILES
         else:
             return common
 
@@ -311,7 +325,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
         common = BASE_CSS + STYLED_ELEMENTS_CSS
 
         if view == 'index':
-            return common + WORKSPACE_CSS + WIRING_EDITOR_CSS + CATALOGUE_CSS
+            return common + WORKSPACE_CSS + WIRING_EDITOR_CSS + CATALOGUE_CSS + TUTORIAL_CSS
         else:
             return common
 

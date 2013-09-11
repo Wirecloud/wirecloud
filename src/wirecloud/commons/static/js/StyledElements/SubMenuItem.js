@@ -7,8 +7,8 @@
     /**
      *
      */
-    var SubMenuItem = function SubMenuItem(text, handler) {
-        StyledElements.PopupMenuBase.call(this);
+    var SubMenuItem = function SubMenuItem(text, handler, options) {
+        StyledElements.PopupMenuBase.call(this, options);
 
         this.menuItem = new StyledElements.MenuItem(text, handler);
         this.menuItem.addClassName('submenu');
