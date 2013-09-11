@@ -119,6 +119,7 @@
                 window.open(Wirecloud.URLs.DJANGO_ADMIN, '_blank');
             }));
         }
+        user_menu.append(new Wirecloud.ui.TutorialSubMenu());
         user_menu.append(new StyledElements.Separator());
         user_menu.append(new StyledElements.MenuItem(gettext('Sign out'), OpManagerFactory.getInstance().logout));
     };

@@ -8,6 +8,11 @@
      *
      */
     var SubMenuItem = function SubMenuItem(text, handler, options) {
+
+        if (arguments.length === 0) {
+            return true;
+        }
+
         options = EzWebExt.merge({
             'position': ['right-bottom', 'left-bottom']
         }, options);

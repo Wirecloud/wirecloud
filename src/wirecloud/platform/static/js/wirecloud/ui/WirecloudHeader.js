@@ -102,20 +102,7 @@
                 window.open(Wirecloud.URLs.DJANGO_ADMIN, '_blank');
             }));
         }
-
-	var tutorials = new StyledElements.SubMenuItem(gettext('Tutorials'), null, {'position': 'bottom-left'});
-	//TODO loop with tutorials taked by a tutorialFactory or somethig similar
-	var addcatalogTut = function () {new Wirecloud.ui.Tutorial('addCatalog');}.bind(this);
-	tutorials.append(new StyledElements.MenuItem(gettext('Add new Catalog'), addcatalogTut));
-	var addWidgetTut = function () {new Wirecloud.ui.Tutorial('addWidget');}.bind(this);
-	tutorials.append(new StyledElements.MenuItem(gettext('Add new Widget'), addWidgetTut));
-	var addWorkspaceTut = function () {new Wirecloud.ui.Tutorial('addWorkspace');}.bind(this);
-	tutorials.append(new StyledElements.MenuItem(gettext('Add new Workspace'), addWorkspaceTut));
-	var changeWorkspaceTut = function () {new Wirecloud.ui.Tutorial('changeWorkspace');}.bind(this);
-	tutorials.append(new StyledElements.MenuItem(gettext('Change Workspace'), changeWorkspaceTut));
-	var connectWidgetsTut = function () {new Wirecloud.ui.Tutorial('connectWidgets');}.bind(this);
-	tutorials.append(new StyledElements.MenuItem(gettext('Connect your widgets'), connectWidgetsTut));
-	user_menu.append(tutorials);
+        user_menu.append(new Wirecloud.ui.TutorialSubMenu());
 
         user_menu.append(new StyledElements.MenuItem(gettext('Sign out'), OpManagerFactory.getInstance().logout));
     };
