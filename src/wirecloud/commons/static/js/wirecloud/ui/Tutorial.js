@@ -20,10 +20,6 @@
  */
 
 /*global Wirecloud*/
-if (!Wirecloud.help) {
-    // TODO this line should live in another file
-    Wirecloud.help = {};
-}
 
 (function () {
 
@@ -32,12 +28,9 @@ if (!Wirecloud.help) {
     /*************************************************************************
      * Constructor
      *************************************************************************/
-    var Tutorial = function Tutorial(tut_id) {
+    var Tutorial = function Tutorial(instructions) {
         var i, key;
 
-        if (!isVal(tut_id)){
-            return null;
-        }
         this.stepActive = null;
         this.steps = [];
 
@@ -63,7 +56,7 @@ if (!Wirecloud.help) {
         this.msgLayer.addClassName("msgLayer");
         document.body.appendChild(this.msgLayer);
 
-        this.instructions = getTutorial(tut_id);
+        this.instructions = instructions;
 
         var mapping = {
             'simpleDescription': Wirecloud.ui.Tutorial.SimpleDescription,
