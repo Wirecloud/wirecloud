@@ -425,7 +425,7 @@ class RDFTemplateParser(object):
             if content_type != '':
                 self._info['code_content_type'] = content_type
                 if 'charset' in parameters:
-                    self._info['code_charset'] = parameters['charset']
+                    self._info['code_charset'] = parameters['charset'].lower()
 
             elif len(parameters) > 1:
                 raise Exception('Invalid code content type')
