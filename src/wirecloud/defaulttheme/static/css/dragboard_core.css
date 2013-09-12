@@ -83,22 +83,22 @@ div.iwidget div.rightResizeHandle {
 }
 
 div.iwidget div.inUse {
-  width: 100%;
-  height: 100%;
+    width: 200%;
+    height: 200%;
 }
 
 div.iwidget div.leftResizeHandle.inUse {
-  right: 0px;
-  top: 0px;
-  width: auto;
-  height: auto;
+    right: 0px;
+    top: 0px;
+    bottom: auto;
+    left: auto;
 }
 
-div.iwidget div.resizeHandle.inUse {
-  left: 0px;
-  top: 0px;
-  width: auto;
-  height: auto;
+div.iwidget div.rightResizeHandle.inUse {
+    left: 0px;
+    top: 0px;
+    bottom: auto;
+    right: auto;
 }
 
 /*div.dragboard.fixed*/
