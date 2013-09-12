@@ -107,12 +107,24 @@ def build_error_response(request, status_code, error_msg, extra_formats=None, he
     return response
 
 
+def parse_mime_type(mime_type):
+    parts = mime_type.split(';')
+    params = dict([tuple([s.strip() for s in param.split('=', 1)])
+            for param in parts[1:]
+                  ])
+    full_type = parts[0].strip()
+    if full_type == '*':
+        full_type = '*/*'
+
+    return (full_type, params)
+
+
 def get_content_type(request):
     content_type_header = request.META.get('CONTENT_TYPE')
     if content_type_header is None:
         return '', ''
     else:
-        return content_type_header.split(';', 1)
+        return parse_mime_type(content_type_header)
 
 
 def authentication_required(func):

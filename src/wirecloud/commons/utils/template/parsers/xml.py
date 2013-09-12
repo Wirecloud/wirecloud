@@ -384,6 +384,7 @@ class WirecloudTemplateParser(object):
             raise TemplateParseException(msg)
 
         self._info['code_content_type'] = xhtml_element.get('content-type', 'text/html')
+        self._info['code_charset'] = xhtml_element.get('charset', 'utf-8')
         self._info['code_uses_platform_style'] = xhtml_element.get('use-platform-style', 'false').lower() == 'true'
         self._info['code_cacheable'] = xhtml_element.get('cacheable', 'true').lower() == 'true'
 

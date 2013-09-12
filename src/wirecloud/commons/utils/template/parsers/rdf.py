@@ -22,6 +22,7 @@ import rdflib
 from django.utils.translation import ugettext as _
 
 from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version, TemplateParseException
+from wirecloud.commons.utils.http import parse_mime_type
 
 # Namespaces used by rdflib
 WIRE = rdflib.Namespace("http://wirecloud.conwet.fi.upm.es/ns/widget#")
@@ -417,9 +418,17 @@ class RDFTemplateParser(object):
             xhtml_element = self._get_field(USDL, 'utilizedResource', self._rootURI, id_=True)
 
             self._info['code_url'] = unicode(xhtml_element)
-            self._info['code_content_type'] = self._get_field(DCTERMS, 'format', xhtml_element, required=False)
-            if self._info['code_content_type'] == '':
-                self._info['code_content_type'] = 'text/html'
+            content_type, parameters = parse_mime_type(self._get_field(DCTERMS, 'format', xhtml_element, required=False))
+
+            self._info['code_content_type'] = 'text/html'
+            self._info['code_charset'] = 'utf-8'
+            if content_type != '':
+                self._info['code_content_type'] = content_type
+                if 'charset' in parameters:
+                    self._info['code_charset'] = parameters['charset']
+
+            elif len(parameters) > 1:
+                raise Exception('Invalid code content type')
 
             self._info['code_uses_platform_style'] = self._get_field(WIRE, 'usePlatformStyle', xhtml_element, required=False).lower() == 'true'
             self._info['code_cacheable'] = self._get_field(WIRE, 'codeCacheable', xhtml_element, required=False, default='true').lower() == 'true'

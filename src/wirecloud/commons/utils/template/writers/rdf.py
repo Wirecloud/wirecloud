@@ -404,8 +404,9 @@ def build_rdf_graph(template_info):
         graph.add((xhtml_element, rdflib.RDF.type, USDL['Resource']))
         graph.add((resource_uri, USDL['utilizedResource'], xhtml_element))
 
-        if template_info['code_content_type'] != 'text/html':
-            graph.add((xhtml_element, DCTERMS['format'], rdflib.Literal(template_info.get('code_content_type'))))
+        if template_info['code_content_type'] != 'text/html' or template_info['code_charset'] != 'utf-8':
+            content_type = template_info.get('code_content_type', 'text/html') + '; charset=' + template_info.get('code_charset', 'utf-8').upper()
+            graph.add((xhtml_element, DCTERMS['format'], rdflib.Literal(content_type)))
 
         if template_info['code_cacheable'] is False:
             graph.add((xhtml_element, WIRE['codeCacheable'], rdflib.Literal('false')))

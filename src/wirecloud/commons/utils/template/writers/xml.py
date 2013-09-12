@@ -170,6 +170,7 @@ def build_xml_document(options):
         link = etree.SubElement(template, 'Platform.Link')
         xhtml = etree.SubElement(link, 'XHTML', href=options['code_url'])
         xhtml.set('content-type', options['code_content_type'])
+        xhtml.set('charset', options['code_charset'])
         if options['code_cacheable'] is False:
             xhtml.set('cacheable', 'false')
         if options['code_uses_platform_style']:

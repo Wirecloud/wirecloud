@@ -52,6 +52,15 @@ class JSONTemplateParser(object):
             if field not in self._info:
                 self._info[field] = ''
 
+        if self._info['type'] == 'widget':
+
+            if self._info.get('code_content_type') is None:
+                self._info['code_content_type'] = 'text/html'
+
+            if self._info.get('code_charset') is None:
+                self._info['code_charset'] = 'utf-8'
+
+        # Translations
         self._info['translation_index_usage'] = {}
         if 'translations' not in self._info:
             self._info['translations'] = {}

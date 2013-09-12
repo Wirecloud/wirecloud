@@ -624,6 +624,7 @@ class TemplateUtilsTestCase(TestCase):
                 'outputs': [],
             },
             'code_url': 'http://example.com/code.html',
+            'code_charset': 'utf-8',
             'code_content_type': 'text/html',
             'code_cacheable': True,
             'code_uses_platform_style': False,
@@ -746,6 +747,7 @@ class TemplateUtilsTestCase(TestCase):
                 ]
             },
             'code_url': 'http://example.com/code.html',
+            'code_charset': 'utf-8',
             'code_content_type': 'application/xhtml+xml',
             'code_cacheable': False,
             'code_uses_platform_style': True,
