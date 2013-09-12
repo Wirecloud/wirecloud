@@ -74,6 +74,7 @@
         this.textElement.textContent = options.msg;
         this.arrow = document.createElement("div");
         this.arrow.addClassName("popUpArrowDiv");
+        this.arrow.addClassName("icon-hand-up");
         this.wrapperElement.appendChild(this.textElement);
         this.wrapperElement.appendChild(this.arrow);
     };
@@ -151,14 +152,12 @@
         case 'downRight':
             this.wrapperElement.style.top = (pos.top + pos.height + 22) + 'px'
             this.wrapperElement.style.left = (pos.left + pos.width + 22) + 'px';
-            this.arrow.style.background = "url('../static/images/tutorial/arrow-up-left3.png')";
             this.arrow.style.top = '-25px';
             this.arrow.style.left = '-25px';
             break;
         case 'downLeft':
             this.wrapperElement.style.top = (pos.top + pos.height + 23) + 'px';
             this.wrapperElement.style.left = (pos.left - this.wrapperElement.getWidth() - 28) + 'px';
-            this.arrow.style.background = "url('../static/images/tutorial/arrow-up-right3.png')";
             this.arrow.style.top = '-26px';
             this.arrow.style.left = (this.wrapperElement.getWidth()) + 'px';
             if (parseFloat(this.wrapperElement.style.left) < 0) {
@@ -169,14 +168,12 @@
         case 'topRight':
             this.wrapperElement.style.top = (pos.top - pos.height - 31) + 'px'
             this.wrapperElement.style.left = (pos.left + pos.width + 20) + 'px';
-            this.arrow.style.background = "url('../static/images/tutorial/arrow-down-left3.png')";
             this.arrow.style.top = (this.wrapperElement.getHeight() + 1) + 'px';
             this.arrow.style.left = '-24px';
             break;
         case 'topLeft':
             this.wrapperElement.style.top = (pos.top - pos.height - 32) + 'px'
             this.wrapperElement.style.left = (pos.left - this.wrapperElement.getWidth() - 31) + 'px';
-            this.arrow.style.background = "url('../static/images/tutorial/arrow-down-right3.png')";
             this.arrow.style.top = (this.wrapperElement.getHeight() + 2) + 'px';
             this.arrow.style.left = (this.wrapperElement.getWidth() + 2) + 'px';
             if (parseFloat(this.wrapperElement.style.left) < 0) {
@@ -188,11 +185,13 @@
             //downRight
             this.wrapperElement.style.top = (pos.top + pos.height + 20) + 'px'
             this.wrapperElement.style.left = (pos.left + pos.width + 20) + 'px';
-            this.arrow.style.background = "url('../static/images/tutorial/arrow-up-left3.png')";
             this.arrow.style.top = '-20px';
             this.arrow.style.left = '-20px';
             break;
         }
+
+        this.arrow.addClassName(this.position);
+
         if (this.event == null) {
             this.elemToApplyNextStepEvent.addEventListener('click', this.nextHandler, true);
         } else {

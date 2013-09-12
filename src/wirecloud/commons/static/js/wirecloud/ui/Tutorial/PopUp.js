@@ -41,6 +41,7 @@
         this.textElement.textContent = text;
         this.arrow = document.createElement("div");
         this.arrow.addClassName("popUpArrowDiv");
+        this.arrow.addClassName("icon-hand-up");
         this.wrapperElement.appendChild(this.textElement);
         this.wrapperElement.appendChild(this.arrow);
         pos = element.getBoundingClientRect();
@@ -48,14 +49,12 @@
         case 'downRight':
             this.wrapperElement.style.top = (pos.top + pos.height + 10) + 'px';
             this.wrapperElement.style.left = (pos.left + pos.width + 10) + 'px';
-            this.arrow.style.background = "url('../static/images/wiring/arrow-up-left3.png')";
             this.arrow.style.top = '-20px';
             this.arrow.style.left = '-20px';
             break;
         case 'downLeft':
             this.wrapperElement.style.top = (pos.top + pos.height + 10) + 'px';
             this.wrapperElement.style.left = (pos.left - this.wrapperElement.getBoundingClientRect().width - 10) + 'px';
-            this.arrow.style.background = "url('../static/images/wiring/arrow-up-right3.png')";
             this.arrow.style.top = '-20px';
             this.arrow.style.left = (this.wrapperElement.getBoundingClientRect().width - 20) + 'px';
             if (parseFloat(this.wrapperElement.style.left) < 0) {
@@ -66,14 +65,12 @@
         case 'topRight':
             this.wrapperElement.style.top = (pos.top - this.wrapperElement.getBoundingClientRect().height - 10) + 'px';
             this.wrapperElement.style.left = (pos.left + pos.width + 10) + 'px';
-            this.arrow.style.background = "url('../static/images/wiring/arrow-down-left3.png')";
             this.arrow.style.top = (this.wrapperElement.getBoundingClientRect().height - 10) + 'px';
             this.arrow.style.left = '-20px';
             break;
         case 'topLeft':
             this.wrapperElement.style.top = (pos.top - this.wrapperElement.getBoundingClientRect().height - 10) + 'px';
             this.wrapperElement.style.left = (pos.left - this.wrapperElement.getBoundingClientRect().width - 10) + 'px';
-            this.arrow.style.background = "url('../static/images/wiring/arrow-down-right3.png')";
             this.arrow.style.top = (this.wrapperElement.getBoundingClientRect().height - 10) + 'px';
             this.arrow.style.left = (this.wrapperElement.getBoundingClientRect().width - 10) + 'px';
             if (parseFloat(this.wrapperElement.style.left) < 0) {
@@ -85,6 +82,8 @@
             this.wrapperElement.style.top = pos.top + 'px';
             this.wrapperElement.style.left = pos.left + 'px';
         }
+
+        this.arrow.addClassName(this.position);
     };
 
     /**

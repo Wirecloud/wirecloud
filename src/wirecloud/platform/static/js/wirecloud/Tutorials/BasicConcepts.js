@@ -157,18 +157,11 @@
         return document.getElementById("wirecloud_header").getElementsByClassName('wiring')[0];
     };
 
-    var getAcordeonMenu = function() {
-        return document.getElementsByClassName('styled_accordion')[0];
+    var getMenuBar = function() {
+        return document.getElementsByClassName('menubar')[0];
     };
 
     Wirecloud.TutorialCatalogue.add(new Wirecloud.ui.Tutorial(gettext('Basic concepts'), [
-            // test
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>GGRRRR</p>"), 'elem': null},
-            {'type': 'userAction', 'msg': "Click to open Marketplace", 'elem': wiringEditorButton, 'pos': 'downLeft'},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>Welcome to wiringEditor!</p><p>Here you can connect your widgets to complete your first litle mashup application</p>"), 'elem': null},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>In left menu you can find all widgets added into your workspace and all operators installed in your account</p>"), 'elem': getAcordeonMenu},
-            // end test
-
             // Editor
             {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>Welcome to Wirecloud!!</p><p>This tutorial will show you the basic concepts behind Wirecloud.</p>"), 'elem': null},
             {'type': 'autoAction', 'action': create_workspace},
@@ -202,7 +195,9 @@
             // WiringEditor
             {'type': 'userAction', 'msg': "Click to open Marketplace", 'elem': wiringEditorButton, 'pos': 'downLeft'},
             {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>Welcome to wiringEditor!</p><p>Here you can connect your widgets to complete your first litle mashup application</p>"), 'elem': null},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>In left menu you can find all widgets added into your workspace and all operators installed in your account</p>"), 'elem': getAcordeonMenu}
+            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>In left menu you can find all widgets added into your workspace and all operators installed in your account</p>"), 'elem': getMenuBar},
+            
+            
 
     ]));
 

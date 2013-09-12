@@ -66,6 +66,7 @@
         this.textElement.textContent = options.msg;
         this.arrow = document.createElement("div");
         this.arrow.addClassName("popUpArrowDiv");
+        this.arrow.addClassName("icon-hand-up");
         this.wrapperElement.appendChild(this.textElement);
         this.wrapperElement.appendChild(this.arrow);
     };
@@ -110,14 +111,12 @@
             case 'downRight':
                 this.wrapperElement.style.top = (pos.top + pos.height + 20) + 'px'
                 this.wrapperElement.style.left = (pos.left + pos.width + 20) + 'px';
-                this.arrow.style.background = "url('../static/images/tutorial/arrow-up-left3.png')";
                 this.arrow.style.top = '-20px';
                 this.arrow.style.left = '-20px';
                 break;
             case 'downLeft':
                 this.wrapperElement.style.top = (pos.top + pos.height + 20) + 'px';
                 this.wrapperElement.style.left = (pos.left - this.wrapperElement.getWidth() - 20) + 'px';
-                this.arrow.style.background = "url('../static/images/tutorial/arrow-up-right3.png')";
                 this.arrow.style.top = '-20px';
                 this.arrow.style.left = (this.wrapperElement.getWidth() - 10) + 'px';
                 if (parseFloat(this.wrapperElement.style.left) < 0) {
@@ -128,14 +127,12 @@
             case 'topRight':
                 this.wrapperElement.style.top = (pos.top - this.wrapperElement.getHeight() - pos.height - 10) + 'px';
                 this.wrapperElement.style.left = (pos.left + pos.width) + 'px';
-                this.arrow.style.background = "url('../static/images/tutorial/arrow-down-left3.png')";
                 this.arrow.style.top = (this.wrapperElement.getHeight()) + 'px';
                 this.arrow.style.left = '-10px';
                 break;
             case 'topLeft':
                 this.wrapperElement.style.top = (pos.top - this.wrapperElement.getHeight() - pos.height - 10) + 'px';
                 this.wrapperElement.style.left = (pos.left - this.wrapperElement.getWidth() - 20) + 'px';
-                this.arrow.style.background = "url('../static/images/tutorial/arrow-down-right3.png')";
                 this.arrow.style.top = (this.wrapperElement.getHeight()) + 'px';
                 this.arrow.style.left = (this.wrapperElement.getWidth()) + 'px';
                 if (parseFloat(this.wrapperElement.style.left) < 0) {
@@ -147,12 +144,13 @@
                 //downRight
                 this.wrapperElement.style.top = (pos.top + pos.height + 20) + 'px'
                 this.wrapperElement.style.left = (pos.left + pos.width + 20) + 'px';
-                this.arrow.style.background = "url('../static/images/tutorial/arrow-up-left3.png')";
                 this.arrow.style.top = '-20px';
                 this.arrow.style.left = '-20px';
                 break;
             }
         }
+
+        this.arrow.addClassName(this.position);
 
         this.wrapperElement.addClassName("activeStep");
         if (this.element != null) {

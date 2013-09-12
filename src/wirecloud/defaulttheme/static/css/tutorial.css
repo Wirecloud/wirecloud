@@ -56,15 +56,48 @@
     background-position: -48px -312px;
 }
 
-.userAction .popUpArrowDiv {
+.userAction .popUpArrowDiv.icon-hand-up {
     position: absolute;
     opacity: 0.9;
     z-index: 200101;
-    width: 30px;
-    height: 30px;
     pointer-events: none;
+    font-size: 2.4em;
+    color: #47A06B;
 }
 
+.userAction .popUpArrowDiv.icon-hand-up:before {
+    pointer-events: none;
+    text-shadow: 0px 0px 5px rgba(255, 255, 255, 0.9);
+}
+
+/* Arrows */
+.userAction .popUpArrowDiv.downLeft {
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.userAction .popUpArrowDiv.downRight {
+    -webkit-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.userAction .popUpArrowDiv.topLeft {
+    -webkit-transform: rotate(135deg);
+    -ms-transform: rotate(135deg);
+    -o-transform: rotate(135deg);
+    transform: rotate(135deg);
+}
+
+.userAction .popUpArrowDiv.topRight {
+    -webkit-transform: rotate(-135deg);
+    -ms-transform: rotate(-135deg);
+    -o-transform: rotate(-135deg);
+    transform: rotate(-135deg);
+}
 .userAction.subFormAction {
     display: none;
 }
