@@ -21,11 +21,8 @@ import json
 import socket
 from urlparse import urljoin
 
-from django.conf import settings
-from django.contrib.sites.models import get_current_site
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
-from django.shortcuts import render
 from django.utils.translation import ugettext as _
 from lxml import etree
 
@@ -33,6 +30,7 @@ from wirecloud.commons.utils import mimeparser
 
 
 def get_html_basic_error_response(request, mimetype, status_code, message, details):
+    from django.shortcuts import render
     return render(request, '%s.html' % status_code, {'request_path': request.path}, status=status_code, content_type=mimetype)
 
 
@@ -160,6 +158,9 @@ def supported_request_mime_types(mime_types):
 
 
 def get_current_domain(request=None):
+    from django.conf import settings
+    from django.contrib.sites.models import get_current_site
+
     if hasattr(settings, 'FORCE_DOMAIN'):
         return settings.FORCE_DOMAIN
     else:
@@ -170,6 +171,8 @@ def get_current_domain(request=None):
 
 
 def get_current_scheme(request=None):
+    from django.conf import settings
+
     if hasattr(settings, 'FORCE_PROTO'):
         return settings.FORCE_PROTO
     elif (request is not None) and request.is_secure():
@@ -185,6 +188,8 @@ def get_absolute_reverse_url(viewname, request=None, **kwargs):
 
 
 def get_absolute_static_url(url, request=None):
+    from django.conf import settings
+
     scheme = get_current_scheme()
     base = urljoin(scheme + '://' + get_current_domain(request), settings.STATIC_URL)
     return urljoin(base, url)
