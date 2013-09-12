@@ -39,15 +39,20 @@
         this.layer = tutorial.msgLayer;
         this.last = false;
         this.pos = options.pos;
+        this.title = options.title;
+        this.nextButtonText = 'next';
+        if (options.nextButtonText) {
+            this.nextButtonText = options.nextButtonText;
+        }
 
-        Wirecloud.ui.WindowMenu.call(this, gettext('Tutorial'), 'simpleDescription');
+        Wirecloud.ui.WindowMenu.call(this, this.title, 'simpleDescription');
 
-        this.windowContent.textContent = options.msg;
+        this.windowContent.innerHTML = options.msg;
 
         this.nextButton = new StyledElements.StyledButton({
             'title': gettext("next"),
             'class': 'nextButton btn-primary',
-            'text': gettext("next"),
+            'text': gettext(this.nextButtonText),
         });
 
         this.nextButton.insertInto(this.windowBottom);

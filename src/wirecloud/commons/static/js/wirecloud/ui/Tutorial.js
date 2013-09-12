@@ -107,6 +107,7 @@
      * reset controlLayers positions
      */
     Tutorial.prototype.resetControlLayer = function resetControlLayer(isTransparent) {
+        this.controlLayer.removeClassName("hidden");
         this.controlLayerUp.style.opacity = 0.4;
         //up
         this.controlLayerUp.style.height = '100%';
@@ -141,6 +142,7 @@
         if (typeof element !== 'object') {
             return;
         }
+        this.controlLayer.removeClassName("hidden");
         this.controlLayerUp.style.opacity = 0.4;
         pos = element.getBoundingClientRect();
         //up
@@ -159,6 +161,13 @@
         this.controlLayerLeft.style.width = pos.left + 'px';
         this.controlLayerLeft.style.height = pos.height + 'px';
         this.controlLayerLeft.style.top = pos.top + 'px';
+    };
+
+    /**
+     * set controlLayers positions
+     */
+    Tutorial.prototype.deactivateLayer = function deactivateLayer() {
+        this.controlLayer.addClassName("hidden");
     };
 
     /**
@@ -186,9 +195,8 @@
         }
         document.body.removeChild(this.controlLayer);
         document.body.removeChild(this.msgLayer);
-        this.controlLayer = null;
         this.msgLayer = null;
-        this.steps = null;
+        this.steps = [];
     };
 
     /*************************************************************************

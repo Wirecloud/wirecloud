@@ -40,6 +40,14 @@
         this.element = options.elem;
         this.position = options.pos;
         this.event = options.event;
+        this.activeLayer = true;
+        this.elemToApplyNextStepEvent = options.elemToApplyNextStepEvent;
+        if (this.elemToApplyNextStepEvent == null) {
+            this.elemToApplyNextStepEvent == this.element;
+        }
+
+        this.eventToDeactivateLayer = options.eventToDeactivateLayer;
+        this.elemToApplyDeactivateLayerEvent = options.elemToApplyDeactivateLayerEvent;
 
         this.wrapperElement = document.createElement("div");
         if (options.msg != null){
@@ -87,10 +95,30 @@
     /**
      * set next handler
      */
-    var nextHandler = function nextHandler() {
+    UserAction.prototype.deactivateLayer = function deactivateLayer() {
+        this.tutorial.deactivateLayer();
+    };
+
+    /**
+     * set next handler
+     */
+    var nextHandler = function nextHandler(e) {
+        //e.stopPropagation();
+        //e.cancelBubble = true;
         if (this.element != null) {
             this.element.removeClassName('tuto_highlight');
         }
+
+        if (this.event == null) {
+            this.elemToApplyNextStepEvent.removeEventListener('click', this.nextHandler, true);
+        } else {
+            this.elemToApplyNextStepEvent.removeEventListener(this.event, this.nextHandler);
+        }
+
+        if (this.eventToDeactivateLayer != null) {
+            this.elemToApplyDeactivateLayerEvent.removeEventListener(this.eventToDeactivateLayer, this.deactivateLayer.bind(this), false);
+        }
+
         this.tutorial.nextStep();
     };
 
@@ -103,6 +131,19 @@
             this.wrapperElement.removeChild(this.cancelButton.wrapperElement);
         }
         this.element = element;
+
+        if (this.elemToApplyDeactivateLayerEvent) {
+            this.elemToApplyDeactivateLayerEvent = this.elemToApplyDeactivateLayerEvent();
+        } else {
+            this.elemToApplyDeactivateLayerEvent = this.element;
+        }
+
+        if (this.elemToApplyNextStepEvent) {
+            this.elemToApplyNextStepEvent = this.elemToApplyNextStepEvent();
+        } else {
+            this.elemToApplyNextStepEvent = this.element;
+        }
+
         this.tutorial.setControlLayer(this.element);
 
         pos = this.element.getBoundingClientRect();
@@ -153,11 +194,15 @@
             break;
         }
         if (this.event == null) {
-            this.element.addEventListener('click', this.nextHandler, true);
+            this.elemToApplyNextStepEvent.addEventListener('click', this.nextHandler, true);
         } else {
-            this.element.addEventListener(this.event, this.nextHandler);
+            this.elemToApplyNextStepEvent.addEventListener(this.event, this.nextHandler);
         }
-        
+
+        if (this.eventToDeactivateLayer != null) {
+            this.elemToApplyDeactivateLayerEvent.addEventListener(this.eventToDeactivateLayer, this.deactivateLayer.bind(this), false);
+        }
+
         this.wrapperElement.addClassName("activeStep");
         if (this.element != null) {
             this.element.addClassName('tuto_highlight');
