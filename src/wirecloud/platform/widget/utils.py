@@ -251,17 +251,18 @@ def xpath(tree, query, xmlns):
         return tree.xpath(query, namespaces={'xhtml': xmlns})
 
 
-def fix_widget_code(widget_code, base_url, content_type, request, use_platform_style, force_base=False):
+def fix_widget_code(widget_code, base_url, content_type, request, encoding, use_platform_style, force_base=False):
 
     if content_type == 'text/html':
-        parser = etree.HTMLParser()
-        xmltree = etree.parse(StringIO(str(widget_code)), parser)
-        serialization_method = 'html'
+        parser = etree.HTMLParser(encoding=encoding)
+        serialization_options = {'method': 'html'}
     elif content_type == 'application/xhtml+xml':
-        xmltree = etree.fromstring(widget_code).getroottree()
-        serialization_method = 'xml'
+        parser = etree.XMLParser(encoding=encoding)
+        serialization_options = {'method': 'xml', 'xml_declaration': False}
     else:
         return widget_code
+
+    xmltree = etree.parse(StringIO(str(widget_code)), parser)
 
     prefix = xmltree.getroot().prefix
     xmlns = None
@@ -326,4 +327,4 @@ def fix_widget_code(widget_code, base_url, content_type, request, use_platform_s
 
 
     # return modified code
-    return etree.tostring(xmltree, pretty_print=False, method=serialization_method)
+    return etree.tostring(xmltree, pretty_print=False, encoding=encoding, **serialization_options)

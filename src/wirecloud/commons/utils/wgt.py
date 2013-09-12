@@ -26,6 +26,10 @@ from urllib import pathname2url
 from wirecloud.commons.utils.template import TemplateParser
 
 
+class InvalidContents(Exception):
+    pass
+
+
 class WgtFile(object):
 
     _template_filename = 'config.xml'

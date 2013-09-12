@@ -40,7 +40,7 @@ from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.http import authentication_required, build_error_response, get_content_type, supported_request_mime_types
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
-from wirecloud.commons.utils.wgt import WgtFile
+from wirecloud.commons.utils.wgt import InvalidContents, WgtFile
 from wirecloud.platform.markets.utils import get_market_managers
 from wirecloud.platform.models import Widget, IWidget
 from wirecloud.platform.localcatalogue.signals import resource_uninstalled
@@ -147,9 +147,9 @@ class ResourceCollection(Resource):
 
             resource = install_resource_to_user(request.user, file_contents=file_contents, templateURL=templateURL, packaged=packaged, raise_conflicts=force_create)
 
-        except TemplateParseException, e:
+        except (TemplateParseException, InvalidContents), e:
 
-            return build_error_response(request, 400, unicode(e.msg))
+            return build_error_response(request, 400, unicode(e))
 
         except IntegrityError:
 

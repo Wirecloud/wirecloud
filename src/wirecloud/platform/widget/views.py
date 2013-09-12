@@ -29,6 +29,7 @@
 
 
 #
+import json
 import time
 import os
 from urllib import url2pathname
@@ -37,7 +38,7 @@ from urlparse import urljoin
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden, Http404
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.encoding import smart_str
@@ -85,26 +86,29 @@ class WidgetCodeEntry(Resource):
     @method_decorator(login_required)
     def read(self, request, vendor, name, version):
 
-        widget = get_object_or_404(Widget, resource__vendor=vendor, resource__short_name=name, resource__version=version)
-        if not widget.is_available_for(request.user):
+        resource = get_object_or_404(CatalogueResource.objects.select_related('widget__xhtml'), vendor=vendor, short_name=name, version=version)
+        if not resource.is_available_for(request.user):
             raise Http403()
 
-        # check if the xhtml code has been cached
-        if widget.xhtml.cacheable:
+        if resource.resource_type() != 'widget':
+            raise Http404()
 
-            cache_key = widget.xhtml.get_cache_key(get_current_domain(request))
+        widget_info = json.loads(resource.json_description)
+
+        # check if the xhtml code has been cached
+        if widget_info['code_cacheable'] is True:
+
+            cache_key = resource.widget.xhtml.get_cache_key(get_current_domain(request))
             cache_entry = cache.get(cache_key)
             if cache_entry is not None:
-                response = HttpResponse(cache_entry['code'], mimetype='%s; charset=UTF-8' % cache_entry['content_type'])
+                response = HttpResponse(cache_entry['code'], mimetype=cache_entry['mimetype'])
                 patch_cache_headers(response, cache_entry['timestamp'], cache_entry['timeout'])
                 return response
 
         # process xhtml
-        xhtml = widget.xhtml
-
-        content_type = xhtml.content_type
-        if not content_type:
-            content_type = 'text/html'
+        xhtml = resource.widget.xhtml
+        content_type = widget_info.get('code_content_type', 'text/html')
+        charset = widget_info.get('code_charset', 'utf-8')
 
         force_base = False
         base_url = xhtml.url
@@ -126,7 +130,7 @@ class WidgetCodeEntry(Resource):
                 return HttpResponse(get_xml_error_response(msg), mimetype='application/xml; charset=UTF-8')
 
         if xhtml.cacheable and (xhtml.code == '' or xhtml.code_timestamp is None):
-            xhtml.code = code
+            xhtml.code = code.decode(charset)
             xhtml.code_timestamp = time.time() * 1000
             xhtml.save()
         elif not xhtml.cacheable and xhtml.code != '':
@@ -134,12 +138,12 @@ class WidgetCodeEntry(Resource):
             xhtml.code_timestamp = None
             xhtml.save()
 
-        code = fix_widget_code(code, base_url, content_type, request, xhtml.use_platform_style, force_base=force_base)
+        code = fix_widget_code(code, base_url, content_type, request, 'utf-8', xhtml.use_platform_style, force_base=force_base)
         if xhtml.cacheable:
             cache_timeout = 31536000  # 1 year
             cache_entry = {
                 'code': code,
-                'content_type': content_type,
+                'mimetype': '%s; charset=%s' % (content_type, charset),
                 'timestamp': xhtml.code_timestamp,
                 'timeout': cache_timeout,
             }
@@ -147,7 +151,7 @@ class WidgetCodeEntry(Resource):
         else:
             cache_timeout = 0
 
-        response = HttpResponse(code, mimetype='%s; charset=UTF-8' % content_type)
+        response = HttpResponse(code, mimetype='%s; charset=%s' % (content_type, charset))
         patch_cache_headers(response, xhtml.code_timestamp, cache_timeout)
         return response
 

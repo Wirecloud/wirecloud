@@ -20,7 +20,6 @@
 
 # -*- coding: utf-8 -*-
 
-import codecs
 import os.path
 import re
 
@@ -36,6 +35,8 @@ __test__ = False
 
 
 class CodeTransformationTestCase(TestCase):
+
+    tags = ('widget_code_transformation')
 
     XML_NORMALIZATION_RE = re.compile(r'>\s+<')
 
@@ -73,7 +74,7 @@ class CodeTransformationTestCase(TestCase):
         super(CodeTransformationTestCase, cls).tearDownClass()
 
     def read_file(self, *filename):
-        f = codecs.open(os.path.join(os.path.dirname(__file__), *filename), 'rb')
+        f = open(os.path.join(os.path.dirname(__file__), *filename), 'rb')
         contents = f.read()
         f.close()
 
@@ -81,18 +82,30 @@ class CodeTransformationTestCase(TestCase):
 
     def test_basic_html(self):
         initial_code = self.read_file('test-data/xhtml1-initial.html')
-        final_code = self.XML_NORMALIZATION_RE.sub('><', fix_widget_code(initial_code, 'http://server.com/widget', 'text/html', None, False)) + '\n'
+        final_code = self.XML_NORMALIZATION_RE.sub('><', fix_widget_code(initial_code, 'http://server.com/widget', 'text/html', None, 'utf-8', False)) + '\n'
         expected_code = self.read_file('test-data/xhtml1-expected.html')
+        self.assertEqual(final_code, expected_code)
+
+    def test_basic_html_iso8859_15(self):
+        initial_code = self.read_file('test-data/xhtml1-iso8859-15-initial.html')
+        final_code = self.XML_NORMALIZATION_RE.sub('><', fix_widget_code(initial_code, 'http://server.com/widget', 'text/html', None, 'iso-8859-15', False)) + '\n'
+        expected_code = self.read_file('test-data/xhtml1-iso8859-15-expected.html')
         self.assertEqual(final_code, expected_code)
 
     def test_basic_xhtml(self):
         initial_code = self.read_file('test-data/xhtml2-initial.html')
-        final_code = self.XML_NORMALIZATION_RE.sub('><', fix_widget_code(initial_code, 'http://server.com/widget', 'application/xhtml+xml', None, False)) + '\n'
+        final_code = self.XML_NORMALIZATION_RE.sub('><', fix_widget_code(initial_code, 'http://server.com/widget', 'application/xhtml+xml', None, 'utf-8', False)) + '\n'
         expected_code = self.read_file('test-data/xhtml2-expected.html')
+        self.assertEqual(final_code, expected_code)
+
+    def test_basic_xhtml_iso8859_15(self):
+        initial_code = self.read_file('test-data/xhtml2-iso8859-15-initial.html')
+        final_code = self.XML_NORMALIZATION_RE.sub('><', fix_widget_code(initial_code, 'http://server.com/widget', 'application/xhtml+xml', None, 'iso-8859-15', False)) + '\n'
+        expected_code = self.read_file('test-data/xhtml2-iso8859-15-expected.html')
         self.assertEqual(final_code, expected_code)
 
     def test_xhtml_without_head_element(self):
         initial_code = self.read_file('test-data/xhtml3-initial.html')
-        final_code = self.XML_NORMALIZATION_RE.sub('><', fix_widget_code(initial_code, 'http://server.com/widget', 'application/xhtml+xml', None, False)) + '\n'
+        final_code = self.XML_NORMALIZATION_RE.sub('><', fix_widget_code(initial_code, 'http://server.com/widget', 'application/xhtml+xml', None, 'utf-8', False)) + '\n'
         expected_code = self.read_file('test-data/xhtml3-expected.html')
         self.assertEqual(final_code, expected_code)

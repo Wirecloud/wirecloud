@@ -42,7 +42,7 @@ from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.models import Translation
 from wirecloud.commons.utils.timezone import now
 from wirecloud.commons.utils.template import TemplateParser
-from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
+from wirecloud.commons.utils.wgt import InvalidContents, WgtDeployer, WgtFile
 
 
 wgt_deployer = WgtDeployer(settings.CATALOGUE_MEDIA_ROOT)
@@ -82,6 +82,17 @@ def add_widget_from_wgt(file, user, wgt_file=None, template=None, deploy_only=Fa
     if template is None:
         template_contents = wgt_file.get_template()
         template = TemplateParser(template_contents)
+
+    if template.get_resource_type() == 'widget':
+        resource_info = template.get_resource_info()
+        code_url = resource_info['code_url']
+        if not code_url.startswith(('http://', 'https://')):
+            code = wgt_file.read(code_url)
+            try:
+                unicode(code, resource_info['code_charset'])
+            except UnicodeDecodeError:
+                msg = _('%(file_name)s is not encoded using the specified charset (%(charset)s according to the widget descriptor file).')
+                raise InvalidContents(msg % {'file_name': code_url, 'charset': resource_info['code_charset']})
 
     resource_id = (
         template.get_resource_vendor(),
