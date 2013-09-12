@@ -4,6 +4,14 @@
 
     "use strict";
 
+    var anchor_element = document.createElement('a');
+    anchor_element.href = Wirecloud.URLs.LOCAL_REPOSITORY;
+    var base_url = anchor_element.href;
+    if (base_url[base_url.length - 1] !== '/') {
+        base_url += '/';
+    }
+    base_url += 'static/';
+
     var create_workspace = function create_workspace(autoAction) {
         LayoutManagerFactory.getInstance().changeCurrentView('workspace');
         opManager.addWorkspace('Basic concepts tutorial', {
@@ -13,9 +21,13 @@
         });
     };
 
+    var build_static_url = function build_static_url(path) {
+        return base_url + path;
+    };
+
     var install_flickr = function install_flickr(autoAction) {
         if (!Wirecloud.LocalCatalogue.resourceExistsId('CoNWeT/flickr/2.7')) {
-            Wirecloud.LocalCatalogue.addResourceFromURL('http://192.168.1.125:8000/loswidgetdeltutorial/Flickr.wgt', {
+            Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/CoNWeT_flickr_2.7.wgt'), {
                 packaged: true,
                 onSuccess: autoAction.nextHandler.bind(autoAction)
             });
@@ -26,7 +38,7 @@
 
     var install_multimediaViewer = function install_multimediaViewer(autoAction) {
         if (!Wirecloud.LocalCatalogue.resourceExistsId('CoNWeT/multimedia-viewer/1.0.1')) {
-            Wirecloud.LocalCatalogue.addResourceFromURL('http://192.168.1.125:8000/loswidgetdeltutorial/MultimediaViewer.wgt', {
+            Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/CoNWeT_multimedia-viewer_1.0.1.wgt'), {
                 packaged: true,
                 onSuccess: autoAction.nextHandler.bind(autoAction)
             });
@@ -37,7 +49,7 @@
 
     var install_search = function install_search(autoAction) {
         if (!Wirecloud.LocalCatalogue.resourceExistsId('CoNWeT/search/1.3.1')) {
-            Wirecloud.LocalCatalogue.addResourceFromURL('http://192.168.1.125:8000/loswidgetdeltutorial/Search.wgt', {
+            Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/CoNWeT_search_1.3.1.wgt'), {
                 packaged: true,
                 onSuccess: autoAction.nextHandler.bind(autoAction)
             });
@@ -47,8 +59,8 @@
     };
 
     var install_youtubeSearch = function install_youtubeSearch(autoAction) {
-        if (!Wirecloud.LocalCatalogue.resourceExistsId('CoNWeT/youTube-video-search/2.45.0')) {
-            Wirecloud.LocalCatalogue.addResourceFromURL('http://192.168.1.125:8000/loswidgetdeltutorial/YoutubeSearch.wgt', {
+        if (!Wirecloud.LocalCatalogue.resourceExistsId('CoNWeT/youtube-video-search/2.45.0')) {
+            Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/CoNWeT_youtube-video-search/2.45.0.wgt'), {
                 packaged: true,
                 onSuccess: autoAction.nextHandler.bind(autoAction)
             });
@@ -58,7 +70,7 @@
     };
 
     var marketplaceButton = function() {
-        return document.getElementById("wirecloud_header").childNodes[0].childNodes[0].childNodes[2];
+        return document.getElementById("wirecloud_header").getElementsByClassName('marketplace')[0];
     };
 
     var ResizeButton = function() {
