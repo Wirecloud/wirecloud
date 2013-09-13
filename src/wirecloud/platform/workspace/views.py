@@ -35,6 +35,7 @@ from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource, Service
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.cache import no_cache
+from wirecloud.commons.utils.db import save_alternative
 from wirecloud.commons.utils.http import authentication_required, build_error_response, get_content_type, supported_request_mime_types
 from wirecloud.commons.utils.template import is_valid_name, is_valid_vendor, is_valid_version, TemplateParser
 from wirecloud.commons.utils.transaction import commit_on_http_success
@@ -50,7 +51,7 @@ from wirecloud.platform.workspace.utils import deleteTab, createTab, get_workspa
 from wirecloud.platform.markets.utils import get_market_managers
 
 
-def createEmptyWorkspace(workspaceName, user):
+def createEmptyWorkspace(workspaceName, user, allow_renaming=False):
     active = False
     workspaces = UserWorkspace.objects.filter(user__id=user.id, active=True)
     if workspaces.count() == 0:
@@ -59,7 +60,11 @@ def createEmptyWorkspace(workspaceName, user):
 
     empty_wiring = '{"operators": {}, "connections": []}'
 
-    workspace = Workspace.objects.create(name=workspaceName, creator=user, wiringStatus=empty_wiring)
+    workspace = Workspace(name=workspaceName, creator=user, wiringStatus=empty_wiring)
+    if allow_renaming is True:
+        save_alternative(Workspace, 'name', workspace)
+    else:
+        workspace.save()
     UserWorkspace.objects.create(user=user, workspace=workspace, active=active)
 
     # Tab creation
@@ -84,6 +89,19 @@ def linkWorkspace(user, workspace_id, creator, link_variable_values=True):
     workspace = get_object_or_404(Workspace, id=workspace_id)
 
     return linkWorkspaceObject(user, workspace, creator, link_variable_values)
+
+
+def normalize_boolean_param(name, value):
+
+    if isinstance(value, basestring):
+        value = value.strip().lower()
+        if value not in ('true', 'false'):
+            raise ValueError(_('Invalid %(parameter)s value') % name)
+        return value == 'true'
+    elif not isinstance(value, bool):
+        return TypeError(_('Invalid %(parameter) type') % name)
+
+    return value
 
 
 class WorkspaceCollection(Resource):
@@ -111,14 +129,11 @@ class WorkspaceCollection(Resource):
 
         workspace_name = data.get('name', '').strip()
         mashup_id = data.get('mashup', '')
-        dry_run = data.get('dry_run', False)
-        if isinstance(dry_run, basestring):
-            dry_run = dry_run.strip().lower()
-            if dry_run not in ('true', 'false'):
-                return build_error_response(request, 422, _('Invalid dry_run value'))
-            dry_run = dry_run == 'true'
-        elif not isinstance(dry_run, bool):
-            return build_error_response(request, 422, _('Invalid dry_run value'))
+        try:
+            allow_renaming = normalize_boolean_param('allow_renaming', data.get('allow_renaming', False))
+            dry_run = normalize_boolean_param('allow_renaming', data.get('dry_run', False))
+        except (TypeError, ValueError), e:
+            return build_error_response(request, 422, unicode(e))
 
         if mashup_id == '' and workspace_name == '':
             return build_error_response(request, 422, _('missing workspace name'))
@@ -129,7 +144,7 @@ class WorkspaceCollection(Resource):
                 return HttpResponse(status=204)
 
             try:
-                workspace = createEmptyWorkspace(workspace_name, request.user)
+                workspace = createEmptyWorkspace(workspace_name, request.user, allow_renaming=allow_renaming)
             except IntegrityError:
                 msg = _('A workspace with the given name already exists')
                 return build_error_response(request, 409, msg)
@@ -168,7 +183,7 @@ class WorkspaceCollection(Resource):
             if dry_run:
                 return HttpResponse(status=204)
 
-            workspace, _junk = buildWorkspaceFromTemplate(template, request.user, True)
+            workspace, _junk = buildWorkspaceFromTemplate(template, request.user, allow_renaming=allow_renaming)
 
         workspace_data = get_global_workspace_data(workspace, request.user)
 

@@ -448,7 +448,10 @@ var OpManagerFactory = function () {
             Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_COLLECTION, {
                 method: 'POST',
                 contentType: 'application/json',
-                postBody: JSON.stringify({name: newName}),
+                postBody: JSON.stringify({
+                    allow_renaming: !!options.allow_renaming,
+                    name: newName
+                }),
                 onSuccess: createWSSuccess.bind(this, options.onSuccess),
                 onFailure: createWSError.bind(this, options.onFailure)
             });

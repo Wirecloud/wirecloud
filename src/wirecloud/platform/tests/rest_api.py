@@ -312,6 +312,29 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 409)
 
+    def test_workspace_collection_post_allow_renaming(self):
+
+        url = reverse('wirecloud.workspace_collection')
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'allow_renaming': True,
+            'name': 'ExistingWorkspace'
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertTrue('id' in response_data)
+        self.assertNotEqual(response_data['name'], 'ExistingWorkspace')
+        self.assertTrue(isinstance(response_data['wiring'], dict))
+
+        # Workspace should be created
+        self.assertTrue(Workspace.objects.filter(creator=4, name=response_data['name']).exists())
+
     def test_workspace_collection_post_creation_from_nonexistent_mashup(self):
 
         url = reverse('wirecloud.workspace_collection')
