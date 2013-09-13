@@ -41,12 +41,19 @@
         this.position = options.pos;
         this.event = options.event;
         this.activeLayer = true;
+        this.deactivateLayer = this.deactivateLayer.bind(this);
+        this.disableElems = options.disableElems;
+        if (this.disableElems == null) {
+            this.disableElems = [];
+        }
+        this.disableLayer = [];
         this.elemToApplyNextStepEvent = options.elemToApplyNextStepEvent;
         if (this.elemToApplyNextStepEvent == null) {
             this.elemToApplyNextStepEvent == this.element;
         }
 
         this.eventToDeactivateLayer = options.eventToDeactivateLayer;
+        this.isWaitingForDeactivateLayerEvent = false;
         this.elemToApplyDeactivateLayerEvent = options.elemToApplyDeactivateLayerEvent;
 
         this.wrapperElement = document.createElement("div");
@@ -98,14 +105,37 @@
      */
     UserAction.prototype.deactivateLayer = function deactivateLayer() {
         this.tutorial.deactivateLayer();
+        this.isWaitingForDeactivateLayerEvent = false;
+        if (this.eventToDeactivateLayer != null) {
+            this.elemToApplyDeactivateLayerEvent.removeEventListener(this.eventToDeactivateLayer, this.deactivateLayer, false);
+        }
+    };
+
+    /**
+     * disable html element
+     */
+    UserAction.prototype.disable = function disable(elem) {
+        var pos, disableLayer;
+
+        pos = elem.getBoundingClientRect();
+        disableLayer = document.createElement("div");
+        disableLayer.addClassName('disableLayer');
+        disableLayer.style.top = pos.top + 'px';
+        disableLayer.style.left = pos.left + 'px';
+        disableLayer.style.width = pos.width + 'px';
+        disableLayer.style.height = pos.height + 'px';
+        this.layer.appendChild(disableLayer);
+        return disableLayer;
     };
 
     /**
      * set next handler
      */
     var nextHandler = function nextHandler(e) {
-        //e.stopPropagation();
-        //e.cancelBubble = true;
+        if (this.isWaitingForDeactivateLayerEvent) {
+            return;
+        }
+
         if (this.element != null) {
             this.element.removeClassName('tuto_highlight');
         }
@@ -116,15 +146,11 @@
             this.elemToApplyNextStepEvent.removeEventListener(this.event, this.nextHandler);
         }
 
-        if (this.eventToDeactivateLayer != null) {
-            this.elemToApplyDeactivateLayerEvent.removeEventListener(this.eventToDeactivateLayer, this.deactivateLayer.bind(this), false);
-        }
-
         this.tutorial.nextStep();
     };
 
     var _activate = function _activate(element, withoutCloseButton) {
-        var pos, descSize;
+        var pos, descSize, i;
         if (element == null){
             return null;
         }
@@ -198,8 +224,13 @@
             this.elemToApplyNextStepEvent.addEventListener(this.event, this.nextHandler);
         }
 
+        for (i = 0; i < this.disableElems.length; i ++) {
+            this.disableLayer[i] = this.disable(this.disableElems[i]());
+        }
+
         if (this.eventToDeactivateLayer != null) {
-            this.elemToApplyDeactivateLayerEvent.addEventListener(this.eventToDeactivateLayer, this.deactivateLayer.bind(this), false);
+            this.elemToApplyDeactivateLayerEvent.addEventListener(this.eventToDeactivateLayer, this.deactivateLayer, false);
+            this.isWaitingForDeactivateLayerEvent = true;
         }
 
         this.wrapperElement.addClassName("activeStep");
@@ -223,10 +254,14 @@
      * Destroy
      */
     UserAction.prototype.destroy = function destroy() {
+        var i;
         if (typeof this.element === 'function') {
             this.element = null;
         } else {
             this.element.removeEventListener('click', this.nextHandler, true);
+        }
+        for (i = 0; i < this.disableLayer.length; i ++) {
+            this.layer.removeChild(this.disableLayer[i]);
         }
         this.layer.removeChild(this.wrapperElement);
         this.wrapperElement = null;

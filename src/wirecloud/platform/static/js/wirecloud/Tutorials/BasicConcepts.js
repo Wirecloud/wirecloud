@@ -161,6 +161,19 @@
         return document.getElementsByClassName('menubar')[0];
     };
 
+    var getMenuWorkspaceButton = function() {
+        return document.getElementById('wirecloud_breadcrum').getElementsByClassName('icon-menu')[0];
+    };
+
+    var getAdminButton = function() {
+        var header = document.getElementById('wirecloud_header');
+        var elements = header.getElementsByClassName('user_menu_wrapper');
+        if (elements.length == 0) {
+            elements = header.getElementsByClassName('nav pull-right');
+        }
+        return elements[0];
+    };
+
     Wirecloud.TutorialCatalogue.add(new Wirecloud.ui.Tutorial(gettext('Basic concepts'), [
             // Editor
             {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>Welcome to Wirecloud!!</p><p>This tutorial will show you the basic concepts behind Wirecloud.</p>"), 'elem': null},
