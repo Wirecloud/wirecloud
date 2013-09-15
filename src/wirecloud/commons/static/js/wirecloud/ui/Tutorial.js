@@ -38,15 +38,18 @@
         this.controlLayerDown = document.createElement("div");
         this.controlLayerLeft = document.createElement("div");
         this.controlLayerRight = document.createElement("div");
+        this.controlLayerCenter = document.createElement("div");
         this.controlLayer.addClassName("controlLayer");
         this.controlLayerUp.addClassName("controlLayerUp");
         this.controlLayerDown.addClassName("controlLayerDown");
         this.controlLayerLeft.addClassName("controlLayerLeft");
         this.controlLayerRight.addClassName("controlLayerRight");
+        this.controlLayerCenter.addClassName("controlLayerCenter");
         this.controlLayer.appendChild(this.controlLayerUp);
         this.controlLayer.appendChild(this.controlLayerDown);
         this.controlLayer.appendChild(this.controlLayerLeft);
         this.controlLayer.appendChild(this.controlLayerRight);
+        this.controlLayer.appendChild(this.controlLayerCenter);
 
         this.instructions = instructions;
     };
@@ -109,58 +112,83 @@
     Tutorial.prototype.resetControlLayer = function resetControlLayer(isTransparent) {
         this.controlLayer.removeClassName("hidden");
         this.controlLayerUp.style.opacity = 0.4;
-        //up
+
+        // Up
         this.controlLayerUp.style.height = '100%';
         this.controlLayerUp.style.width = '100%';
         this.controlLayerUp.style.top = 0;
         this.controlLayerUp.style.left = 0;
-        //down
+
+        // Down
         this.controlLayerDown.style.height = 0;
         this.controlLayerDown.style.width = 0;
         this.controlLayerDown.style.top = 0;
         this.controlLayerDown.style.left = 0;
-        //right
+
+        // Right
         this.controlLayerRight.style.height = 0;
         this.controlLayerRight.style.width = 0;
         this.controlLayerRight.style.top = 0;
         this.controlLayerRight.style.left = 0;
-        //left
+
+        // Left
         this.controlLayerLeft.style.height = 0;
         this.controlLayerLeft.style.width = 0;
         this.controlLayerLeft.style.top = 0;
         this.controlLayerLeft.style.left = 0;
+
+        // Center
+        this.controlLayerCenter.style.height = 0;
+        this.controlLayerCenter.style.width = 0;
+        this.controlLayerCenter.style.top = 0;
+        this.controlLayerCenter.style.left = 0;
+
         if (isTransparent) {
             this.controlLayerUp.style.opacity = 0;
         }
-    }
+    };
 
     /**
      * set controlLayers positions
      */
-    Tutorial.prototype.setControlLayer = function setControlLayer(element) {
+    Tutorial.prototype.setControlLayer = function setControlLayer(element, disable_center) {
         var pos;
+
         if (typeof element !== 'object') {
             return;
         }
+
         this.controlLayer.removeClassName("hidden");
         this.controlLayerUp.style.opacity = 0.4;
         pos = element.getBoundingClientRect();
-        //up
+
+        // Up
         this.controlLayerUp.style.height = pos.top + 'px';
         this.controlLayerUp.style.width = '100%';
-        //down
+
+        // Down
         this.controlLayerDown.style.top = (pos.top + pos.height) + 'px';
         this.controlLayerDown.style.width = '100%';
         this.controlLayerDown.style.height = '100%';
-        //right
+
+        // Right
         this.controlLayerRight.style.left = (pos.left + pos.width) + 'px';
         this.controlLayerRight.style.top = pos.top + 'px';
         this.controlLayerRight.style.height = pos.height + 'px';
         this.controlLayerRight.style.width = '100%';
-        //left
+
+        // Left
         this.controlLayerLeft.style.width = pos.left + 'px';
         this.controlLayerLeft.style.height = pos.height + 'px';
         this.controlLayerLeft.style.top = pos.top + 'px';
+
+        // Center
+        if (disable_center === true) {
+            this.controlLayerCenter.style.left = pos.left + 'px';
+            this.controlLayerCenter.style.top = pos.top + 'px';
+            this.controlLayerCenter.style.height = pos.height + 'px';
+            this.controlLayerCenter.style.width = pos.width + 'px';
+        }
     };
 
     /**

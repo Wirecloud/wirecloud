@@ -1,12 +1,18 @@
 .controlLayerUp, .controlLayerDown, .controlLayerLeft, .controlLayerRight {
     top: 0;
-	left: 0;
+    left: 0;
     width: 100%;
-	height: 100%;
-	position: absolute;
-	z-index: 200000;
-	opacity: 0.4;
+    height: 100%;
+    position: absolute;
+    z-index: 200000;
+    opacity: 0.4;
     background: #808080;
+}
+
+.controlLayerCenter {
+    position: absolute;
+    z-index: 200000;
+    background: transparent;
 }
 
 .controlLayer {
