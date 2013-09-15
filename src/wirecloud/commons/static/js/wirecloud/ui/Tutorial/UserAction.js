@@ -57,6 +57,7 @@
         this.elemToApplyDeactivateLayerEvent = options.elemToApplyDeactivateLayerEvent;
 
         this.wrapperElement = document.createElement("div");
+        this.wrapperElement.className = 'alert alert-info';
         if (options.msg != null){
             this.wrapperElement.addClassName("userAction");
         } else {
@@ -66,7 +67,7 @@
 
         this.cancelButton = new StyledElements.StyledButton({
             'title': gettext("Cancel"),
-            'class': 'button cancelButton',
+            'class': 'button icon-remove',
             'plain': true
         });
 
@@ -78,7 +79,7 @@
 
         this.cancelButton.insertInto(this.wrapperElement);
         this.textElement = document.createElement("span");
-        this.textElement.textContent = options.msg;
+        this.textElement.innerHTML = options.msg;
         this.arrow = document.createElement("div");
         this.arrow.addClassName("popUpArrowDiv");
         this.arrow.addClassName("icon-hand-up");

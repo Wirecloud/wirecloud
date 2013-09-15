@@ -46,20 +46,9 @@
 /* UserAction */
 .userAction.activeStep {
     position: absolute;
-    border-radius: 1.25ex 1.25ex 1.25ex 1.25ex;
-    background-color: rgba(91, 127, 173, 0.8);
     box-shadow: 3px 3px 3px rgba(0,0,0,0.3);
-    padding: 4px;
     z-index: 200100;
     display: inherit;
-}
-
-.userAction .cancelButton {
-    float: right;
-    width: 16px;
-    height: 16px;
-    background: url(../images/icons-sprite.png);
-    background-position: -48px -312px;
 }
 
 .userAction .popUpArrowDiv.icon-hand-up {

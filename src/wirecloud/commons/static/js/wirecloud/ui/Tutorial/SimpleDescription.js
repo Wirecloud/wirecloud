@@ -47,7 +47,11 @@
 
         Wirecloud.ui.WindowMenu.call(this, this.title, 'simpleDescription');
 
-        this.windowContent.innerHTML = options.msg;
+        try {
+            this.windowContent.innerHTML = options.msg;
+        } catch (e) {
+            var msg = 'The provided message is not well formed';
+        }
 
         this.nextButton = new StyledElements.StyledButton({
             'title': gettext("next"),
@@ -90,8 +94,10 @@
      */
     SimpleDescription.prototype.getStylePosition = function getStylePosition() {
         var coordinates;
-        coordinates = {posX: parseInt(this.htmlElement.style.left, 10),
-                       posY: parseInt(this.htmlElement.style.top, 10)};
+        coordinates = {
+            posX: parseInt(this.htmlElement.style.left, 10),
+            posY: parseInt(this.htmlElement.style.top, 10)
+        };
         return coordinates;
     };
 
@@ -159,7 +165,7 @@
             this.cancelButton.wrapperElement.style.left = ((this.htmlElement.getWidth()/2) - (this.cancelButton.wrapperElement.getWidth()/2) - 4) + 'px';
         }*/
         if (this.element != null) {
-        pos = this.element.getBoundingClientRect();
+            pos = this.element.getBoundingClientRect();
             switch(this.pos) {
                 case('up'):
                     this.htmlElement.style.top = (pos.top - this.htmlElement.getHeight() - 20) + 'px';

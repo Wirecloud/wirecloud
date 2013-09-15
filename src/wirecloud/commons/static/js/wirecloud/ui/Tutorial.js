@@ -93,13 +93,12 @@
      * Next Step
      */
     Tutorial.prototype.nextStep = function nextStep() {
-        var order;
 
-        order = this.steps.indexOf(this.stepActive );
-        if (order < this.steps.length) {
+        var current_step_index = this.steps.indexOf(this.stepActive);
+        if (current_step_index < (this.steps.length - 1)) {
             this.stepActive.destroy();
             this.resetControlLayer(false);
-            this.stepActive = this.steps[this.steps.indexOf(this.stepActive) + 1];
+            this.stepActive = this.steps[current_step_index + 1];
             this.stepActive.activate();
         } else {
             this.destroy;

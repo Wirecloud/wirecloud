@@ -15,6 +15,7 @@
     var create_workspace = function create_workspace(autoAction) {
         LayoutManagerFactory.getInstance().changeCurrentView('workspace');
         opManager.addWorkspace('Basic concepts tutorial', {
+            allow_renaming: true,
             onSuccess: function () {
                 autoAction.nextHandler();
             }
@@ -23,6 +24,15 @@
 
     var build_static_url = function build_static_url(path) {
         return base_url + path;
+    };
+
+    var reset_marketplace_view = function reset_marketplace_view(autoAction) {
+        if (LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local != null) {
+            LayoutManagerFactory.getInstance().viewsByName.marketplace.changeCurrentMarket('local');
+            LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local.home();
+        }
+
+        autoAction.nextHandler();
     };
 
     var install_flickr = function install_flickr(autoAction) {
@@ -60,7 +70,7 @@
 
     var install_youtubeSearch = function install_youtubeSearch(autoAction) {
         if (!Wirecloud.LocalCatalogue.resourceExistsId('CoNWeT/youtube-video-search/2.45.0')) {
-            Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/CoNWeT_youtube-video-search/2.45.0.wgt'), {
+            Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/CoNWeT_youtube-video-search_2.45.0.wgt'), {
                 packaged: true,
                 onSuccess: autoAction.nextHandler.bind(autoAction)
             });
@@ -88,35 +98,38 @@
 
     var searchAction = function(autoAction, elem) {
         elem.value = "";
-        setTimeout(function() {elem.value = 'y'}, 100);
-        setTimeout(function() {elem.value += 'o'}, 130);
-        setTimeout(function() {elem.value += 'u'}, 160);
-        setTimeout(function() {elem.value += 't'}, 190);
-        setTimeout(function() {elem.value += 'u'}, 220);
-        setTimeout(function() {elem.value += 'b'}, 250);
-        setTimeout(function() {elem.value += 'e'}, 280);
-        setTimeout(function() {elem.value += ' '}, 310);
-        setTimeout(function() {elem.value += 's'}, 340);
-        setTimeout(function() {elem.value += 'e'}, 370);
-        setTimeout(function() {elem.value += 'a'}, 400);
-        setTimeout(function() {elem.value += 'r'}, 430);
-        setTimeout(function() {elem.value += 'c'}, 460);
-        setTimeout(function() {elem.value += 'h'}, 490);
-        setTimeout(function() {LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local.viewsByName.search._onSearchInput()}, 520);
-        setTimeout(function() {autoAction.nextHandler();}, 550);
+        setTimeout(function() {elem.value = 'y'}, 1000);
+        setTimeout(function() {elem.value += 'o'}, 1300);
+        setTimeout(function() {elem.value += 'u'}, 1600);
+        setTimeout(function() {elem.value += 't'}, 1900);
+        setTimeout(function() {elem.value += 'u'}, 2200);
+        setTimeout(function() {elem.value += 'b'}, 2500);
+        setTimeout(function() {elem.value += 'e'}, 2800);
+        setTimeout(function() {elem.value += ' '}, 3100);
+        setTimeout(function() {elem.value += 's'}, 3400);
+        setTimeout(function() {elem.value += 'e'}, 3700);
+        setTimeout(function() {elem.value += 'a'}, 4000);
+        setTimeout(function() {elem.value += 'r'}, 4300);
+        setTimeout(function() {elem.value += 'c'}, 4600);
+        setTimeout(function() {
+            elem.value += 'h';
+            LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local.viewsByName.search._onSearchInput();
+        }, 4900);
+        setTimeout(function() {autoAction.nextHandler();}, 6500);
     };
 
     var searchAction2 = function(autoAction, elem) {
         elem.value = "";
-        setTimeout(function() {elem.value = 's'}, 100);
-        setTimeout(function() {elem.value += 'e'}, 130);
-        setTimeout(function() {elem.value += 'a'}, 160);
-        setTimeout(function() {elem.value += 'r'}, 190);
-        setTimeout(function() {elem.value += 'c'}, 220);
-        setTimeout(function() {elem.value += 'h'}, 250);
-
-        setTimeout(function() {LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local.viewsByName.search._onSearchInput()}, 280);
-        setTimeout(function() {autoAction.nextHandler();}, 310);
+        setTimeout(function() {elem.value = 's'}, 1000);
+        setTimeout(function() {elem.value += 'e'}, 1300);
+        setTimeout(function() {elem.value += 'a'}, 1600);
+        setTimeout(function() {elem.value += 'r'}, 1900);
+        setTimeout(function() {elem.value += 'c'}, 2200);
+        setTimeout(function() {
+            elem.value += 'h';
+            LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local.viewsByName.search._onSearchInput();
+        }, 2500);
+        setTimeout(function() {autoAction.nextHandler();}, 4100);
     };
 
     var searchInputMarketplace = function() {
@@ -137,7 +150,7 @@
         var resources, widget;
 
         resources = LayoutManagerFactory.getInstance().viewsByName.marketplace.alternatives.getCurrentAlternative().viewsByName.search.wrapperElement.getElementsByClassName('resource_name');
-        widget = findElementByTextContent(resources, "search");
+        widget = findElementByTextContent(resources, "Search");
         return widget.parentNode.getElementsByClassName("mainbutton")[0];
     };
 
@@ -157,10 +170,12 @@
         return document.getElementById("wirecloud_header").getElementsByClassName('wiring')[0];
     };
 
-    var getMenuBar = function() {
-        return document.getElementsByClassName('menubar')[0];
+    var get_menubar = function get_menubar() {
+        var wiring_editor = document.getElementsByClassName('wiring_editor')[0];
+        return wiring_editor.getElementsByClassName('menubar')[0];
     };
 
+    /*
     var getMenuWorkspaceButton = function() {
         return document.getElementById('wirecloud_breadcrum').getElementsByClassName('icon-menu')[0];
     };
@@ -172,46 +187,65 @@
             elements = header.getElementsByClassName('nav pull-right');
         }
         return elements[0];
+    };*/
+
+    var get_yvs_mini_widget = function get_yvs_mini_widget() {
+        var yvs_id = opManager.activeWorkspace.getIWidgets()[0].id;
+        return LayoutManagerFactory.getInstance().viewsByName.wiring.mini_widgets[yvs_id].wrapperElement;
+    };
+
+    var deploy_tutorial_menu = function deploy_tutorial_menu(autoAction) {
+        var header = document.getElementById('wirecloud_header');
+        var button = header.getElementsByClassName('arrow-down-settings')[0];
+        button.click();
+        autoAction.nextHandler();
+    };
+
+    var get_tutorial_menu_item = function get_tutorial_menu_item() {
+        var popup_menu = document.getElementsByClassName('popup_menu')[0];
+        return findElementByTextContent(popup_menu.getElementsByClassName('menu_item'), 'Tutorials');
     };
 
     Wirecloud.TutorialCatalogue.add(new Wirecloud.ui.Tutorial(gettext('Basic concepts'), [
             // Editor
             {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>Welcome to Wirecloud!!</p><p>This tutorial will show you the basic concepts behind Wirecloud.</p>"), 'elem': null},
             {'type': 'autoAction', 'action': create_workspace},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>This is the Editor view. In this view, you can see your current workspace. Currently you are in the 'Basic concepts tutorial' workspace and it's empty.</p><p>To add new widgets to this workspace need to visit the Wirecloud marketplace.</p>"), 'elem': null},
+            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>This is the <em>Editor</em> view. In this view, you can use and modify your workspaces. Currently you are in a newly created workspace: <em>Basic concepts tutorial</em>. This workspace is empty, so the first step is to add widgets from the Wirecloud marketplace.</p>"), 'elem': null},
             // MarketPlace
-            {'type': 'userAction', 'msg': "Click to open Marketplace", 'elem': marketplaceButton, 'pos': 'downLeft'},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>To continue with this tutorial you need to have installed some widgets. For this time, we help you installing it automatically.</p><p>To learn to upload your own widgets active the 'upload widget tutorial'</p>"), 'elem': null},
+            {'type': 'autoAction', 'action': reset_marketplace_view},
+            {'type': 'userAction', 'msg': gettext("Click <em>Marketplace</em>"), 'elem': marketplaceButton, 'pos': 'downLeft'},
+            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext('<p>This is the <em>Marketplace</em> view. In this view you can browse the <em>Mashable Application Components</em> (<em>Widgets, operators</em> and <em>Mashups</em>) that are currently available to you. Also, you can browse external catalogues too.</p><div class="alert alert-info"><p>In next steps we need some widgets, so we are going to install them for you in the catalogue. You can safetly uninstall these widgets after finishing the tutorial.</p></div>'), 'elem': null},
             {'type': 'autoAction', 'action': install_flickr},
             {'type': 'autoAction', 'action': install_multimediaViewer},
             {'type': 'autoAction', 'action': install_search},
             {'type': 'autoAction', 'action': install_youtubeSearch},
             {'type': 'autoAction', 'action': refreshMarketplace},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>Now you can find in your local catalog installed a collection of widgets to continue with this tutorial.</p><p>We will start adding to your workspace a Youtube video search widget</p>"), 'elem': null},
-            {'type': 'autoAction', 'msg': 'Typing "youtube search" we can filter widgets that contains in their name or description this words', 'elem': searchInputMarketplace, 'pos': 'downRight', 'action': searchAction},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': "Now, you can see the search results", 'elem': null, 'pos': 'up'},
-            {'type': 'userAction', 'msg': "Click here to add this widget in your workspace", 'elem': addbuttonYoutubeSearch, 'pos': 'downRight'},
-            // Editor after add Youtube Search widget
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>Once you have added your widget, you can use it in the workspace.</p>"), 'elem': null},
-            {'type': 'userAction', 'msg': "Drag and drop to resize the widget", 'elem': ResizeButton, 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown'},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>You can move widgets too.</p>"), 'elem': null},
-            {'type': 'userAction', 'msg': "Drag and drop to move the widget", 'elem': widgetHeader, 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown', 'elemToApplyNextStepEvent': getDocument},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>In order to design a useful mashup, we need to add more widgets from marketplace.</p>"), 'elem': null},
-            // Marketplace
-            {'type': 'userAction', 'msg': "Click to open Marketplace", 'elem': marketplaceButton, 'pos': 'downLeft'},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>Now we are going to add the search widget in the workspace</p>"), 'elem': null},
-            {'type': 'autoAction', 'msg': 'Typing "search" we can filter widgets that contains in their name or description this words', 'elem': searchInputMarketplace, 'pos': 'downRight', 'action': searchAction2},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': "This is the same process we followed previously", 'elem': null, 'pos': 'up'},
-            {'type': 'userAction', 'msg': "Click here to add this widget in your workspace", 'elem': addbuttonSearch, 'pos': 'downRight'},
-            // Editor after add search widget
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>You can move your widgets as you want.</p>"), 'elem': null},
-            // WiringEditor
-            {'type': 'userAction', 'msg': "Click to open Marketplace", 'elem': wiringEditorButton, 'pos': 'downLeft'},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>Welcome to wiringEditor!</p><p>Here you can connect your widgets to complete your first litle mashup application</p>"), 'elem': null},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>In left menu you can find all widgets added into your workspace and all operators installed in your account</p>"), 'elem': getMenuBar},
-            
-            
+            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>Ok, widgets have been installed successfuly and you can find them in your local catalogue.</p><p>Next step is to add the <em>YouTube Video Search</em> widget to the workspace. You can directly select the widget or, alternatively, you can reduce the list using the keyword search feature.</p>"), 'elem': null},
+            {'type': 'autoAction', 'msg': gettext('Typing "youtube search" we can filter widgets that contains in their name or description these words'), 'elem': searchInputMarketplace, 'pos': 'downRight', 'action': searchAction},
+            {'type': 'userAction', 'msg': gettext("Once you have the results, you can add the widget. So click <em>Add to workspace</em>"), 'elem': addbuttonYoutubeSearch, 'pos': 'downRight'},
+            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p><span class=\"label label-success\">Great!</span> That was easy, wasn't it?.</p><p>Let's continue adding the <em>Search</em> widget.</p>"), 'elem': null},
+            {'type': 'userAction', 'msg': gettext("Click <em>Marketplace</em>"), 'elem': marketplaceButton, 'pos': 'downLeft'},
+            {'type': 'autoAction', 'msg': gettext('Typing <em>search</em>...'), 'elem': searchInputMarketplace, 'pos': 'downRight', 'action': searchAction2},
+            {'type': 'userAction', 'msg': gettext("Click <em>Add to workspace</em>"), 'elem': addbuttonSearch, 'pos': 'downRight'},
 
+            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>One of the main features of Wirecloud is that you can edit your workspaces' layout not only by adding and removing widgets, but also moving and resizing them.</p>"), 'elem': null},
+            {'type': 'userAction', 'msg': gettext("Drag &amp; drop to resize the widget"), 'elem': ResizeButton, 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown'},
+            {'type': 'userAction', 'msg': gettext("Drag &amp; drop to move the widget"), 'elem': widgetHeader, 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown', 'elemToApplyNextStepEvent': getDocument},
+
+            //{'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>Play with the widgets of the wokspace moving, resizing, ... widgets as you like before going into the <em>Wiring</em> view.</p>"), 'elem': null},
+            //{'type': 'userAction', 'msg': gettext("Click <em>Wiring</em> to continue"), 'elem': wiringEditorButton, 'pos': 'downLeft', 'eventToDeactivateLayer': 'mousemove', 'elemToApplyDeactivateLayerEvent': getDocument, 'disableElems': [getMenuWorkspaceButton, getAdminButton]},
+            {'type': 'userAction', 'msg': gettext("Click <em>Wiring</em>"), 'elem': wiringEditorButton, 'pos': 'downLeft'},
+
+
+            // WiringEditor
+            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>This is the <em>Wiring</em> view.</p><p>Here you can wire widgets and operators toghether turning your workspace into and <em>application mashup</em>.</p>"), 'elem': null},
+            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>In left menu you can find all widgets added into your workspace.</p>"), 'elem': get_menubar},
+
+            {'type': 'userAction', 'msg': gettext("Drag &amp; drop Youtube Video Search"), 'elem': get_yvs_mini_widget, 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown', 'elemToApplyNextStepEvent': getDocument},
+
+
+            {'type': 'autoAction', 'action': deploy_tutorial_menu},
+            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>This is the end of this tutorial. Remember that you can allways go to the Tutorial menu for others.</p>"), 'elem': get_tutorial_menu_item},
     ]));
 
 })();
