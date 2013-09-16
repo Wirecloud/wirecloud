@@ -52,3 +52,18 @@
 .alert-block p + p {
     margin-top: 5px;
 }
+
+.alert > .icon-remove {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    font-size: 20px;
+    opacity: 0.2;
+    line-height: 20px;
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+}
+
+.alert > .icon-remove:hover, .alert > .icon-remove:focus {
+    opacity: 0.4;
+}

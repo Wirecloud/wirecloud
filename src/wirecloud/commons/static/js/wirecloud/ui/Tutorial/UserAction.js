@@ -76,36 +76,6 @@
         this.eventToDeactivateLayer = options.eventToDeactivateLayer;
         this.isWaitingForDeactivateLayerEvent = false;
         this.elemToApplyDeactivateLayerEvent = options.elemToApplyDeactivateLayerEvent;
-
-        this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = 'alert alert-info';
-        if (options.msg != null){
-            this.wrapperElement.addClassName("userAction");
-        } else {
-            this.wrapperElement.addClassName("empty");
-        }
-        this.layer.appendChild(this.wrapperElement);
-
-        this.cancelButton = new StyledElements.StyledButton({
-            'title': gettext("Cancel"),
-            'class': 'button icon-remove',
-            'plain': true
-        });
-
-        // Handler
-        this.cancelButton.addEventListener('click', function () {
-            this.element.removeClassName('tuto_highlight');
-            this.tutorial.destroy(true);
-        }.bind(this));
-
-        this.cancelButton.insertInto(this.wrapperElement);
-        this.textElement = document.createElement("span");
-        this.textElement.innerHTML = options.msg;
-        this.arrow = document.createElement("div");
-        this.arrow.addClassName("popUpArrowDiv");
-        this.arrow.addClassName("icon-hand-up");
-        this.wrapperElement.appendChild(this.textElement);
-        this.wrapperElement.appendChild(this.arrow);
     };
 
     /**
@@ -176,9 +146,6 @@
         if (element == null){
             return null;
         }
-        if (withoutCloseButton) {
-            this.wrapperElement.removeChild(this.cancelButton.wrapperElement);
-        }
         this.element = element;
 
         if (this.elemToApplyDeactivateLayerEvent) {
@@ -194,51 +161,14 @@
         }
 
         this.tutorial.setControlLayer(this.element);
-
-        pos = this.element.getBoundingClientRect();
-        switch (this.position) {
-        case 'downRight':
-            this.wrapperElement.style.top = (pos.top + pos.height + 22) + 'px'
-            this.wrapperElement.style.left = (pos.left + pos.width + 22) + 'px';
-            this.arrow.style.top = '-25px';
-            this.arrow.style.left = '-25px';
-            break;
-        case 'downLeft':
-            this.wrapperElement.style.top = (pos.top + pos.height + 23) + 'px';
-            this.wrapperElement.style.left = (pos.left - this.wrapperElement.getWidth() - 28) + 'px';
-            this.arrow.style.top = '-26px';
-            this.arrow.style.left = (this.wrapperElement.getWidth()) + 'px';
-            if (parseFloat(this.wrapperElement.style.left) < 0) {
-                this.wrapperElement.style.left = 0;
-                this.wrapperElement.style.width = pos.left + 'px';
-            }
-            break;
-        case 'topRight':
-            this.wrapperElement.style.top = (pos.top - pos.height - 31) + 'px'
-            this.wrapperElement.style.left = (pos.left + pos.width + 20) + 'px';
-            this.arrow.style.top = (this.wrapperElement.getHeight() + 1) + 'px';
-            this.arrow.style.left = '-24px';
-            break;
-        case 'topLeft':
-            this.wrapperElement.style.top = (pos.top - pos.height - 32) + 'px'
-            this.wrapperElement.style.left = (pos.left - this.wrapperElement.getWidth() - 31) + 'px';
-            this.arrow.style.top = (this.wrapperElement.getHeight() + 2) + 'px';
-            this.arrow.style.left = (this.wrapperElement.getWidth() + 2) + 'px';
-            if (parseFloat(this.wrapperElement.style.left) < 0) {
-                this.wrapperElement.style.left = 0;
-                this.wrapperElement.style.width = pos.left + 'px';
-            }
-            break;
-        default:
-            //downRight
-            this.wrapperElement.style.top = (pos.top + pos.height + 20) + 'px'
-            this.wrapperElement.style.left = (pos.left + pos.width + 20) + 'px';
-            this.arrow.style.top = '-20px';
-            this.arrow.style.left = '-20px';
-            break;
-        }
-
-        this.arrow.addClassName(this.position);
+        this.popup = new Wirecloud.ui.Tutorial.PopUp(element, {
+            highlight: true,
+            msg: this.options.msg,
+            position: this.position,
+            closable: !withoutCloseButton
+        });
+        this.layer.appendChild(this.popup.wrapperElement);
+        this.popup.addEventListener('close', this.tutorial.destroy.bind(this.tutorial, true));
 
         if (this.event == null) {
             this.elemToApplyNextStepEvent.addEventListener('click', this.nextHandler, true);
@@ -254,11 +184,6 @@
         if (this.eventToDeactivateLayer != null) {
             this.elemToApplyDeactivateLayerEvent.addEventListener(this.eventToDeactivateLayer, this.deactivateLayer, false);
             this.isWaitingForDeactivateLayerEvent = true;
-        }
-
-        this.wrapperElement.addClassName("activeStep");
-        if (this.element != null) {
-            this.element.addClassName('tuto_highlight');
         }
     };
 
@@ -286,8 +211,9 @@
         for (i = 0; i < this.disableLayer.length; i ++) {
             this.layer.removeChild(this.disableLayer[i]);
         }
-        this.layer.removeChild(this.wrapperElement);
-        this.wrapperElement = null;
+        if (this.popup != null) {
+            this.popup.destroy();
+        }
         this.textElement = null;
         this.arrow = null;
     };
