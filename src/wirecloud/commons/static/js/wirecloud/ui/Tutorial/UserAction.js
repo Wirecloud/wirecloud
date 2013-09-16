@@ -98,8 +98,20 @@
     UserAction.prototype.deactivateLayer = function deactivateLayer() {
         this.tutorial.deactivateLayer();
         this.isWaitingForDeactivateLayerEvent = false;
-        if (this.eventToDeactivateLayer != null) {
-            this.elemToApplyDeactivateLayerEvent.removeEventListener(this.eventToDeactivateLayer, this.deactivateLayer, false);
+        this.elemToApplyDeactivateLayerEvent.removeEventListener(this.eventToDeactivateLayer, this.deactivateLayer, false);
+
+        if (this.options.nextStepMsg) {
+            if (this.popup) {
+                this.popup.destroy();
+            }
+            this.popup = new Wirecloud.ui.Tutorial.PopUp(this.elemToApplyNextStepEvent, {
+                highlight: true,
+                msg: this.options.nextStepMsg,
+                position: this.position,
+                closable: false
+            });
+            this.layer.appendChild(this.popup.wrapperElement);
+            this.popup.addEventListener('close', this.tutorial.destroy.bind(this.tutorial, true));
         }
     };
 
