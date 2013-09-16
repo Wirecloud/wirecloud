@@ -107,6 +107,22 @@
     display: inherit;
 }
 
+.userAction.subFormAction.invalid {
+    color: #7E1111;
+    display: inherit;
+}
+
+/* WarningIco */
+.userAction.subFormAction .warningIco{
+    display: none;
+    color: #7E1111;
+}
+
+.userAction.subFormAction.invalid .warningIco{
+    display: inline-block;
+    margin: 2px;
+}
+
 .disableLayer {
     z-index: 300000;
     position: absolute;

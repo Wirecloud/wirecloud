@@ -37,10 +37,12 @@
         this.layer = tutorial.msgLayer;
         this.last = false;
         this.tutorial = tutorial;
+        this.mainTitle = options.mainTitle;
         this.mainMsg = options.mainMsg;
         this.mainPos = options.mainPos;
         this.actionElements = options.actionElements;
         this.actionElementsPos = options.actionElementsPos;
+        this.actionElementsValidators = options.actionElementsValidators;
         this.actionMsgs = options.actionMsgs;
         this.disableElems = options.disableElems;
         this.endElement = options.endElement;
@@ -50,8 +52,10 @@
         this.mainPos = options.mainPos;
         this.subSteps = [];
         this.disableLayer = [];
+        this.invalidcounter = 0;
 
-        this.mainStep = new Wirecloud.ui.Tutorial.SimpleDescription(tutorial,{'type': 'simpleDescription', 'msg': this.mainMsg, 'elem': null});
+        this.mainStep = new Wirecloud.ui.Tutorial.SimpleDescription(tutorial,{'type': 'simpleDescription', 'title': gettext(this.mainTitle), 'msg': gettext(this.mainMsg), 'elem': null});
+
         this.mainStep.setLast();
 
         
@@ -72,14 +76,14 @@
     };
 
     /**
-     * set next handler TODO
+     * Next handler
      */
     var nextHandler = function nextHandler() {
         this.tutorial.nextStep();
     };
 
     var _activate = function _activate(form) {
-        var pos, i, tempElem;
+        var pos, i, tempElem, warningIco;
         
         this.element = form;
 
@@ -113,32 +117,69 @@
         // substeps in this form action
         var activateSubFormAction = function (index, e) {
             this.subSteps[index].wrapperElement.addClassName('activate');
+            validateInput.call(this, index);
         };
         var deActivateSubFormAction = function (index, e) {
             this.subSteps[index].wrapperElement.removeClassName('activate');
         };
 
+        // validate function
+        var validateInput = function(index, e) {
+            if (!this.actionElementsValidators[index](this.actionElements[index]()) && !this.subSteps[index].wrapperElement.hasClassName('invalid')) {
+                this.subSteps[index].wrapperElement.addClassName('invalid');
+                this.activateEndActionLayer();
+                this.invalidcounter ++;
+            } else if (this.actionElementsValidators[index](this.actionElements[index]()) && this.subSteps[index].wrapperElement.hasClassName('invalid')) {
+                this.subSteps[index].wrapperElement.removeClassName('invalid');
+                this.invalidcounter --;
+                if (this.invalidcounter == 0) {
+                    this.deactivateEndActionLayer();
+                }
+            }
+        }
+
         for (i = 0; i < this.actionElements.length; i ++) {
             this.subSteps[i] = new Wirecloud.ui.Tutorial.UserAction(this.tutorial, {'type': 'userAction', 'msg': this.actionMsgs[i], 'elem': this.actionElements[i], 'pos': this.actionElementsPos[i]});
+            warningIco = document.createElement("span");
+            warningIco.addClassName('warningIco');
+            warningIco.addClassName('icon-warning-sign');
+            this.subSteps[i].wrapperElement.appendChild(warningIco);
             this.subSteps[i].activate(withoutCloseButton);
             this.subSteps[i].wrapperElement.addClassName('subFormAction');
             tempElem = this.actionElements[i]();
+            tempElem.addEventListener('keyup', validateInput.bind(this, i), true);
             tempElem.addEventListener('focus', activateSubFormAction.bind(this, i), true);
             tempElem.addEventListener('blur', deActivateSubFormAction.bind(this, i), true);
         }
         if (this.actionElements != null) {
-            this.actionElements[0]().focus();
+            // Activate first step
+            activateSubFormAction.call(this,0);
         }
         for (i = 0; i < this.disableElems.length; i ++) {
             this.disableLayer[i] = this.disable(this.disableElems[i]());
         }
         this.tutorial.setControlLayer(form);
-        try {
-            LayoutManagerFactory.getInstance().currentMenu.draggable.destroy();
-        } catch (e) {
-            //error destroying draggable
-            throw new Error('Error destroying draggable in Tutorial FormAction');
-        }
+    };
+
+    /**
+     * Deactivate End Action Element Layer
+     */
+    FormAction.prototype.deactivateEndActionLayer = function deactivateEndActionLayer() {
+        this.layer.removeChild(this.endElementLayer);
+    };
+
+    /**
+     * Activate End Action Element Layer
+     */
+    FormAction.prototype.activateEndActionLayer = function activateEndActionLayer() {
+        var elementPos = this.endElement().getBoundingClientRect();
+        this.endElementLayer = document.createElement("div");
+        this.endElementLayer.addClassName('disableLayer');
+        this.endElementLayer.style.top = elementPos.top + 'px';
+        this.endElementLayer.style.left = elementPos.left + 'px';
+        this.endElementLayer.style.width = elementPos.width + 'px';
+        this.endElementLayer.style.height = elementPos.height + 'px';
+        this.layer.appendChild(this.endElementLayer);
     };
 
     /**
