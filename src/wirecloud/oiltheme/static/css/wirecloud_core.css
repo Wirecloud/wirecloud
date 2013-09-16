@@ -300,7 +300,10 @@ header.navbar .nav > .arrow-down-settings:hover {
 }
 
 footer {
-    padding: 1ex 1ex 1ex 20px;
+    font-size: 14px;
+    line-height: 21px;
+    color: rgb(140, 140, 140);
+    padding: 1ex 1ex 11px 20px;
 }
 
 /* END OIL Header */
