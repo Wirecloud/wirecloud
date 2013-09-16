@@ -183,7 +183,11 @@ class WorkspaceCollection(Resource):
             if dry_run:
                 return HttpResponse(status=204)
 
-            workspace, _junk = buildWorkspaceFromTemplate(template, request.user, allow_renaming=allow_renaming)
+            try:
+                workspace, _junk = buildWorkspaceFromTemplate(template, request.user, allow_renaming=allow_renaming)
+            except IntegrityError:
+                msg = _('A workspace with the given name already exists')
+                return build_error_response(request, 409, msg)
 
         workspace_data = get_global_workspace_data(workspace, request.user)
 
