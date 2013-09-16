@@ -219,7 +219,8 @@ var OpManagerFactory = function () {
             Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_COLLECTION, {
                 method: 'POST',
                 contentType: 'application/json',
-                postBody: Object.toJSON({
+                postBody: JSON.stringify({
+                    'allow_renaming': options.allow_renaming,
                     'mashup': resource.getURI(),
                     'dry_run': options.dry_run
                 }),
