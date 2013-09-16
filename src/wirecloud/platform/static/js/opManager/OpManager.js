@@ -173,6 +173,7 @@ var OpManagerFactory = function () {
         OpManager.prototype.addWorkspaceFromMashup = function addWorkspaceFromMashup(resource, options) {
 
             options = EzWebExt.merge({
+                allow_renaming: true,
                 dry_run: false
             }, options);
 
