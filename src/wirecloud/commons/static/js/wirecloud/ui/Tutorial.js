@@ -67,26 +67,25 @@
 
         // creating simpleDescriptions
         document.body.appendChild(this.controlLayer);
-        this.resetControlLayer();
+        this.resetControlLayer(true);
 
         this.msgLayer = document.createElement("div");
         this.msgLayer.addClassName("msgLayer");
         document.body.appendChild(this.msgLayer);
 
         for (i = 0; i < this.instructions.length; i ++) {
-            var constructor = mapping[this.instructions[i].type];
-            this.steps[i] = new constructor(this, this.instructions[i]);
+            var Constructor = mapping[this.instructions[i].type];
+            this.steps[i] = new Constructor(this, this.instructions[i]);
 
-            if (i == 0) {
-                this.steps[i].wrapperElement.addClassName("activeStep");
-                this.stepActive = this.steps[i];
-            }
-            if (i == this.instructions.length-1) {
+            if (i == (this.instructions.length - 1)) {
                 this.steps[i].setLast();
             } else {
                 this.steps[i].setNext();
             }
         }
+
+        this.stepActive = this.steps[0];
+        this.steps[0].activate();
     };
 
     /**
@@ -97,11 +96,10 @@
         var current_step_index = this.steps.indexOf(this.stepActive);
         if (current_step_index < (this.steps.length - 1)) {
             this.stepActive.destroy();
-            this.resetControlLayer(false);
             this.stepActive = this.steps[current_step_index + 1];
-            this.stepActive.activate();
+            setTimeout(this.stepActive.activate.bind(this.stepActive), 200);
         } else {
-            this.destroy;
+            this.destroy();
         }
     };
 
@@ -110,41 +108,41 @@
      */
     Tutorial.prototype.resetControlLayer = function resetControlLayer(isTransparent) {
         this.controlLayer.removeClassName("hidden");
-        this.controlLayerUp.style.opacity = 0.4;
+        if (isTransparent === true) {
+            this.controlLayer.classList.add('transparent');
+        } else if (isTransparent === false) {
+            this.controlLayer.classList.remove('transparent');
+        }
 
         // Up
-        this.controlLayerUp.style.height = '100%';
-        this.controlLayerUp.style.width = '100%';
-        this.controlLayerUp.style.top = 0;
-        this.controlLayerUp.style.left = 0;
+        this.controlLayerUp.style.height =     '50%';
+        this.controlLayerUp.style.width =      '100%';
+        this.controlLayerUp.style.top =        '0';
+        this.controlLayerUp.style.left =       '0';
 
         // Down
-        this.controlLayerDown.style.height = 0;
-        this.controlLayerDown.style.width = 0;
-        this.controlLayerDown.style.top = 0;
-        this.controlLayerDown.style.left = 0;
+        this.controlLayerDown.style.height =   '50%';
+        this.controlLayerDown.style.width =    '100%';
+        this.controlLayerDown.style.top =      '50%';
+        this.controlLayerDown.style.left =     '0';
 
         // Right
-        this.controlLayerRight.style.height = 0;
-        this.controlLayerRight.style.width = 0;
-        this.controlLayerRight.style.top = 0;
-        this.controlLayerRight.style.left = 0;
+        this.controlLayerRight.style.height =  '0';
+        this.controlLayerRight.style.width =   '50%';
+        this.controlLayerRight.style.top =     '50%';
+        this.controlLayerRight.style.left =    '50%';
 
         // Left
-        this.controlLayerLeft.style.height = 0;
-        this.controlLayerLeft.style.width = 0;
-        this.controlLayerLeft.style.top = 0;
-        this.controlLayerLeft.style.left = 0;
+        this.controlLayerLeft.style.height =   '0';
+        this.controlLayerLeft.style.width =    '50%';
+        this.controlLayerLeft.style.top =      '50%';
+        this.controlLayerLeft.style.left =     '0';
 
         // Center
-        this.controlLayerCenter.style.height = 0;
-        this.controlLayerCenter.style.width = 0;
-        this.controlLayerCenter.style.top = 0;
-        this.controlLayerCenter.style.left = 0;
-
-        if (isTransparent) {
-            this.controlLayerUp.style.opacity = 0;
-        }
+        this.controlLayerCenter.style.height = '0';
+        this.controlLayerCenter.style.width =  '0';
+        this.controlLayerCenter.style.top =    '50%';
+        this.controlLayerCenter.style.left =   '50%';
     };
 
     /**
@@ -157,8 +155,8 @@
             return;
         }
 
-        this.controlLayer.removeClassName("hidden");
-        this.controlLayerUp.style.opacity = 0.4;
+        this.controlLayer.classList.remove("hidden");
+        this.controlLayer.classList.remove('transparent');
         pos = element.getBoundingClientRect();
 
         // Up
@@ -187,6 +185,9 @@
             this.controlLayerCenter.style.top = pos.top + 'px';
             this.controlLayerCenter.style.height = pos.height + 'px';
             this.controlLayerCenter.style.width = pos.width + 'px';
+            this.controlLayerCenter.style.display = 'block';
+        } else {
+            this.controlLayerCenter.style.display = 'none';
         }
     };
 
@@ -208,7 +209,7 @@
             }
         }
         return null;
-    }
+    };
 
     /**
      * Destroy

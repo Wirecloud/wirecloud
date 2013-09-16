@@ -7,12 +7,18 @@
     z-index: 200000;
     opacity: 0.4;
     background: #808080;
+    transition: left 0.5s ease-in, top 0.5s ease-in, height 0.5s ease-in, width 0.5s ease-in, opacity 0.5s ease-in;
 }
 
 .controlLayerCenter {
     position: absolute;
     z-index: 200000;
     background: transparent;
+    transition: left 0.5s ease-in, top 0.5s ease-in, height 0.5s ease-in, width 0.5s ease-in, opacity 0.5s ease-in;
+}
+
+.controlLayer.transparent > div {
+    opacity: 0;
 }
 
 .controlLayer {

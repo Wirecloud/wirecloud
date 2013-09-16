@@ -159,6 +159,8 @@
             this.element = this.element();
             this.tutorial.setControlLayer(this.element, true);
             this.element.addClassName('tuto_highlight');
+        } else {
+            this.tutorial.resetControlLayer(false);
         }
         // I put this here because .getWidth() return different value when this.htmlElement haven't 'activeStep' className
         /*if (this.last) {

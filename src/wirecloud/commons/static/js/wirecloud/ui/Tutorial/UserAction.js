@@ -25,6 +25,27 @@
 
     "use strict";
 
+    var build_disable_elements_list = function build_disable_elements_list(list) {
+        var i, elements, result = [];
+
+        for (i = 0; i < list.length; i++) {
+            if (typeof list[i] === 'object') {
+                result.push(list[i]);
+            } else if (typeof list[i] === 'function') {
+                elements = list[i]();
+                if (elements instanceof NodeList) {
+                    result = result.concat([].slice.call(elements));
+                } else if (Array.isArray(elements)) {
+                    result = result.concat(elements);
+                } else {
+                    result.push(elements);
+                }
+            }
+        }
+
+        return result;
+    };
+
     /*************************************************************************
      * Constructor
      *************************************************************************/
@@ -225,8 +246,9 @@
             this.elemToApplyNextStepEvent.addEventListener(this.event, this.nextHandler);
         }
 
-        for (i = 0; i < this.disableElems.length; i ++) {
-            this.disableLayer[i] = this.disable(this.disableElems[i]());
+        var disableElems = build_disable_elements_list(this.disableElems);
+        for (i = 0; i < disableElems.length; i ++) {
+            this.disableLayer[i] = this.disable(disableElems[i]);
         }
 
         if (this.eventToDeactivateLayer != null) {

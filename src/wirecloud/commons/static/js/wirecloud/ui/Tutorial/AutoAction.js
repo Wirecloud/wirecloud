@@ -103,8 +103,12 @@
             this.wrapperElement.removeChild(this.cancelButton.wrapperElement);
         }
         this.element = element;
-        //transparent Control Layer
-        this.tutorial.resetControlLayer(true);
+        if (element != null) {
+            this.tutorial.setControlLayer(element, true);
+        } else {
+            //transparent Control Layer
+            this.tutorial.resetControlLayer();
+        }
 
         if (element != null) {
             pos = this.element.getBoundingClientRect();
