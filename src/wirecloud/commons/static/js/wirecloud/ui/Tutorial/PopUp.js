@@ -137,4 +137,44 @@
      * Make Anchor public
      *************************************************************************/
     Wirecloud.ui.Tutorial.PopUp = PopUp;
+
+
+    var WidgetElement = function WidgetElement(widget, element) {
+        this.widget = widget;
+        this.element = element;
+        this.classList = {
+            'add': function () {
+                this.add.apply(this, arguments);
+            }.bind(this.element.classList),
+            'remove': function () {
+                this.remove.apply(this, arguments);
+            }.bind(this.element.classList)
+        };
+
+        Object.freeze(this.classList);
+        Object.freeze(this);
+    };
+
+    WidgetElement.prototype.getBoundingClientRect = function getBoundingClientRect() {
+        var widget_box = this.widget.content.getBoundingClientRect();
+        var element_box = this.element.getBoundingClientRect();
+
+        return {
+            'left': widget_box.left + element_box.left,
+            'top': widget_box.top + element_box.top,
+            'width': element_box.width,
+            'height': element_box.height
+        }
+    };
+
+    WidgetElement.prototype.addEventListener = function () {
+        this.element.addEventListener.apply(this.element, arguments);
+    };
+
+    WidgetElement.prototype.removeEventListener = function () {
+        this.element.removeEventListener.apply(this.element, arguments);
+    };
+
+    Wirecloud.ui.Tutorial.WidgetElement = WidgetElement;
+
 })();
