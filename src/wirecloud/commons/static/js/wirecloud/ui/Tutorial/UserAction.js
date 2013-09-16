@@ -128,10 +128,6 @@
             return;
         }
 
-        if (this.element != null) {
-            this.element.removeClassName('tuto_highlight');
-        }
-
         if (this.event == null) {
             this.elemToApplyNextStepEvent.removeEventListener('click', this.nextHandler, true);
         } else {

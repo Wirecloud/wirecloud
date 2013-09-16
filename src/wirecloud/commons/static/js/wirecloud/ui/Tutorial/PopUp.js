@@ -37,7 +37,7 @@
         this.options = options;
 
         if (options.highlight === true) {
-            element.addClassName('tuto_highlight');
+            element.classList.add('tuto_highlight');
         }
 
         this.wrapperElement = document.createElement("div");
@@ -69,8 +69,7 @@
 
         // Arrow
         this.arrow = document.createElement("div");
-        this.arrow.addClassName("popUpArrowDiv");
-        this.arrow.addClassName("icon-hand-up");
+        this.arrow.className = "popUpArrowDiv icon-hand-up";
         this.wrapperElement.appendChild(this.arrow);
 
         // Position
@@ -111,7 +110,7 @@
             break;
         }
 
-        this.arrow.addClassName(options.position);
+        this.arrow.classList.add(options.position);
     };
     PopUp.prototype = new StyledElements.ObjectWithEvents();
 
