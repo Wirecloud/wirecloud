@@ -58,15 +58,15 @@ urlpatterns = patterns('wirecloud.platform.views',
         name='wirecloud.workspace_wiring'),
 
     # Context
-    url(r'^api/context/?',
+    url(r'^api/context/?$',
         context_views.PlatformContextCollection(permitted_methods=('GET',)),
         name='wirecloud.platform_context_collection'),
 
     # Widgets
-    url(r'^api/resources/?',
+    url(r'^api/resources/?$',
         localcatalogue_views.ResourceCollection(permitted_methods=('GET', 'POST',)),
         name='wirecloud_showcase.resource_collection'),
-    url(r'^api/resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/?',
+    url(r'^api/resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/?$',
         localcatalogue_views.ResourceEntry(permitted_methods=('DELETE', 'GET')),
         name='wirecloud_showcase.resource_entry'),
     url(r'^api/resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/description/?$',
@@ -95,7 +95,7 @@ urlpatterns = patterns('wirecloud.platform.views',
     ),
 
     # Preferences
-    url(r'^api/preferences/platform/?',
+    url(r'^api/preferences/platform/?$',
         preferences_views.PlatformPreferencesCollection(permitted_methods=('GET', 'POST')),
         name='wirecloud.platform_preferences'
     ),
@@ -108,7 +108,7 @@ urlpatterns = patterns('wirecloud.platform.views',
         name='wirecloud.tab_preferences'
     ),
 
-    url(r'^api/operator/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/html',
+    url(r'^api/operator/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/html$',
         wiring_views.OperatorEntry(permitted_methods=('GET',)),
         name='wirecloud.operator_code_entry'
     ),
