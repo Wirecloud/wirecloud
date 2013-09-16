@@ -1326,6 +1326,38 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response_data = json.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
 
+    def test_resource_description_entry_get_requires_authentication(self):
+
+        url = reverse('wirecloud_showcase.resource_description_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
+        check_get_requires_authentication(self, url)
+
+    def test_resource_description_entry_read(self):
+
+        resource_id = [
+            'Wirecloud',
+            'Test',
+            '1.0'
+        ]
+        url = reverse('wirecloud_showcase.resource_description_entry', args=resource_id)
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+
+    def test_resource_description_entry_read_requires_permission(self):
+
+        resource_id = (
+            'Wirecloud',
+            'TestOperator',
+            '1.0',
+        )
+        url = reverse('wirecloud_showcase.resource_description_entry', args=resource_id)
+        check_get_requires_permission(self, url)
+
     def test_market_collection_get_requires_authentication(self):
 
         url = reverse('wirecloud.market_collection')

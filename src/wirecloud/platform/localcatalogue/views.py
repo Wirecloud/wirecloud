@@ -213,3 +213,16 @@ class ResourceEntry(Resource):
                 return HttpResponse(json.dumps(result), mimetype='application/json; charset=UTF-8')
 
         return HttpResponse(status=204)
+
+
+class ResourceDescriptionEntry(Resource):
+
+    @authentication_required
+    def read(self, request, vendor, name, version):
+
+        resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
+        if not request.user.is_superuser and not resource.is_available_for(request.user):
+            return HttpResponse(status=403)
+
+        resource_info = resource.get_processed_info(request)
+        return HttpResponse(json.dumps(resource_info), mimetype='application/json; charset=UTF-8')
