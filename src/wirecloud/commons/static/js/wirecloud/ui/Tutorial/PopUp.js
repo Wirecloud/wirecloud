@@ -30,7 +30,6 @@
      * Constructor
      *************************************************************************/
     var PopUp = function PopUp(element, options) {
-        var pos;
 
         StyledElements.ObjectWithEvents.call(this, ['close']);
         this.element = element;
@@ -72,48 +71,42 @@
         this.arrow.className = "popUpArrowDiv icon-hand-up";
         this.wrapperElement.appendChild(this.arrow);
 
-        // Position
-        pos = element.getBoundingClientRect();
-        switch (options.position) {
-        default:
-        case 'downRight':
-            this.wrapperElement.style.top = (pos.top + pos.height + 22) + 'px'
-            this.wrapperElement.style.left = (pos.left + pos.width + 22) + 'px';
-            this.arrow.style.top = '-25px';
-            this.arrow.style.left = '-25px';
-            break;
-        case 'downLeft':
-            this.wrapperElement.style.top = (pos.top + pos.height + 23) + 'px';
-            this.wrapperElement.style.left = (pos.left - this.wrapperElement.getWidth() - 28) + 'px';
-            this.arrow.style.top = '-26px';
-            this.arrow.style.left = (this.wrapperElement.getWidth()) + 'px';
-            if (parseFloat(this.wrapperElement.style.left) < 0) {
-                this.wrapperElement.style.left = 0;
-                this.wrapperElement.style.width = pos.left + 'px';
-            }
-            break;
-        case 'topRight':
-            this.wrapperElement.style.top = (pos.top - pos.height - 31) + 'px'
-            this.wrapperElement.style.left = (pos.left + pos.width + 20) + 'px';
-            this.arrow.style.top = (this.wrapperElement.getHeight() + 1) + 'px';
-            this.arrow.style.left = '-24px';
-            break;
-        case 'topLeft':
-            this.wrapperElement.style.top = (pos.top - pos.height - 32) + 'px'
-            this.wrapperElement.style.left = (pos.left - this.wrapperElement.getWidth() - 31) + 'px';
-            this.arrow.style.top = (this.wrapperElement.getHeight() + 2) + 'px';
-            this.arrow.style.left = (this.wrapperElement.getWidth() + 2) + 'px';
-            if (parseFloat(this.wrapperElement.style.left) < 0) {
-                this.wrapperElement.style.left = 0;
-                this.wrapperElement.style.width = pos.left + 'px';
-            }
-            break;
-        }
-
         this.arrow.classList.add(options.position);
     };
     PopUp.prototype = new StyledElements.ObjectWithEvents();
 
+    PopUp.prototype.repaint = function repaint() {
+        // Position
+        var pos = this.element.getBoundingClientRect();
+        var wrapperPos = this.wrapperElement.getBoundingClientRect();
+        switch (this.options.position) {
+        default:
+        case 'downRight':
+            this.wrapperElement.style.top = (pos.top + pos.height + 22) + 'px';
+            this.wrapperElement.style.left = (pos.left + pos.width + 22) + 'px';
+            this.arrow.style.top = '-28px';
+            this.arrow.style.left = '-19px';
+            break;
+        case 'downLeft':
+            this.wrapperElement.style.top = (pos.top + pos.height + 22) + 'px';
+            this.wrapperElement.style.left = (pos.left - wrapperPos.width - 22) + 'px';
+            this.arrow.style.top = '-24px';
+            this.arrow.style.right = '-24px';
+            break;
+        case 'topRight':
+            this.wrapperElement.style.top = (pos.top - wrapperPos.height - 22) + 'px';
+            this.wrapperElement.style.left = (pos.left + pos.width + 20) + 'px';
+            this.arrow.style.top = (wrapperPos.height - 16) + 'px';
+            this.arrow.style.left = '-23px';
+            break;
+        case 'topLeft':
+            this.wrapperElement.style.top = (pos.top - wrapperPos.height - 22) + 'px';
+            this.wrapperElement.style.left = (pos.left - wrapperPos.width - 31) + 'px';
+            this.arrow.style.top = (wrapperPos.height - 12) + 'px';
+            this.arrow.style.right = '-27px';
+            break;
+        }
+    }
     /**
      * Destroy
      */

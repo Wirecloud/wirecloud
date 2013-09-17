@@ -88,6 +88,7 @@
                 closable: !this.withoutCloseButton
             });
             this.layer.appendChild(this.popup.wrapperElement);
+            this.popup.repaint();
             this.popup.addEventListener('close', this.tutorial.destroy.bind(this.tutorial));
         }
     };
@@ -109,6 +110,7 @@
             closable: !this.withoutCloseButton
         });
         this.layer.appendChild(this.popup.wrapperElement);
+        this.popup.repaint();
         this.popup.addEventListener('close', this.tutorial.destroy.bind(this.tutorial));
     };
 

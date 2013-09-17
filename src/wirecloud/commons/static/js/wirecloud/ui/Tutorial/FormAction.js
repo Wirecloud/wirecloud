@@ -58,7 +58,6 @@
 
         this.mainStep.setLast();
 
-        
     };
 
     /**
@@ -110,6 +109,7 @@
         }
         //main action for next step
         this.endAction = new Wirecloud.ui.Tutorial.UserAction(this.tutorial, {'type': 'userAction', 'msg': this.endElementMsg, 'elem': this.endElement, 'pos': this.endElementPos});
+
         this.endAction.setNext();
         var withoutCloseButton = true;
         this.endAction.activate(withoutCloseButton);
