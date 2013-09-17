@@ -41,35 +41,6 @@
         this.position = options.pos;
         this.event = options.event;
         this.action = options.action;
-
-        this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = 'alert alert-info';
-        if (options.msg != null){
-            this.wrapperElement.addClassName("userAction");
-        } else {
-            this.wrapperElement.addClassName("empty");
-        }
-        this.layer.appendChild(this.wrapperElement);
-
-        this.cancelButton = new StyledElements.StyledButton({
-            'title': gettext("Cancel"),
-            'class': 'button icon-remove',
-            'plain': true
-        });
-
-        // Handler
-        this.cancelButton.addEventListener('click', function () {
-            this.tutorial.destroy(true);
-        }.bind(this));
-
-        this.cancelButton.insertInto(this.wrapperElement);
-        this.textElement = document.createElement("span");
-        this.textElement.innerHTML = options.msg;
-        this.arrow = document.createElement("div");
-        this.arrow.addClassName("popUpArrowDiv");
-        this.arrow.addClassName("icon-hand-up");
-        this.wrapperElement.appendChild(this.textElement);
-        this.wrapperElement.appendChild(this.arrow);
     };
 
     /**
@@ -99,68 +70,26 @@
     var _activate = function _activate(element, withoutCloseButton) {
         var pos, descSize;
 
-        if (withoutCloseButton) {
-            this.wrapperElement.removeChild(this.cancelButton.wrapperElement);
-        }
-        this.element = element;
         if (element != null) {
+            this.element = element;
+        }
+
+        if (element != null) {
+            this.popup = new Wirecloud.ui.Tutorial.PopUp(this.element, {
+                highlight: true,
+                msg: this.options.msg,
+                position: this.position,
+                closable: !withoutCloseButton
+            });
+            this.layer.appendChild(this.popup.wrapperElement);
+            this.popup.addEventListener('close', this.tutorial.destroy.bind(this.tutorial, true));
+
             this.tutorial.setControlLayer(element, true);
         } else {
             //transparent Control Layer
             this.tutorial.resetControlLayer();
         }
 
-        if (element != null) {
-            pos = this.element.getBoundingClientRect();
-            switch (this.position) {
-            case 'downRight':
-                this.wrapperElement.style.top = (pos.top + pos.height + 20) + 'px'
-                this.wrapperElement.style.left = (pos.left + pos.width + 20) + 'px';
-                this.arrow.style.top = '-20px';
-                this.arrow.style.left = '-20px';
-                break;
-            case 'downLeft':
-                this.wrapperElement.style.top = (pos.top + pos.height + 20) + 'px';
-                this.wrapperElement.style.left = (pos.left - this.wrapperElement.getWidth() - 20) + 'px';
-                this.arrow.style.top = '-20px';
-                this.arrow.style.left = (this.wrapperElement.getWidth() - 10) + 'px';
-                if (parseFloat(this.wrapperElement.style.left) < 0) {
-                    this.wrapperElement.style.left = 0;
-                    this.wrapperElement.style.width = pos.left + 'px';
-                }
-                break;
-            case 'topRight':
-                this.wrapperElement.style.top = (pos.top - this.wrapperElement.getHeight() - pos.height - 10) + 'px';
-                this.wrapperElement.style.left = (pos.left + pos.width) + 'px';
-                this.arrow.style.top = (this.wrapperElement.getHeight()) + 'px';
-                this.arrow.style.left = '-10px';
-                break;
-            case 'topLeft':
-                this.wrapperElement.style.top = (pos.top - this.wrapperElement.getHeight() - pos.height - 10) + 'px';
-                this.wrapperElement.style.left = (pos.left - this.wrapperElement.getWidth() - 20) + 'px';
-                this.arrow.style.top = (this.wrapperElement.getHeight()) + 'px';
-                this.arrow.style.left = (this.wrapperElement.getWidth()) + 'px';
-                if (parseFloat(this.wrapperElement.style.left) < 0) {
-                    this.wrapperElement.style.left = 0;
-                    this.wrapperElement.style.width = pos.left + 'px';
-                }
-                break;
-            default:
-                //downRight
-                this.wrapperElement.style.top = (pos.top + pos.height + 20) + 'px'
-                this.wrapperElement.style.left = (pos.left + pos.width + 20) + 'px';
-                this.arrow.style.top = '-20px';
-                this.arrow.style.left = '-20px';
-                break;
-            }
-        }
-
-        this.arrow.addClassName(this.position);
-
-        this.wrapperElement.addClassName("activeStep");
-        if (this.element != null) {
-            this.element.addClassName('tuto_highlight');
-        }
         this.action(this, this.element);
     };
 
@@ -186,8 +115,9 @@
         } else if (this.element != null) {
             this.element.removeEventListener('click', this.nextHandler, true);
         }
-        this.layer.removeChild(this.wrapperElement);
-        this.wrapperElement = null;
+        if (this.popup) {
+            this.popup.destroy();
+        }
         this.textElement = null;
         this.arrow = null;
     };
