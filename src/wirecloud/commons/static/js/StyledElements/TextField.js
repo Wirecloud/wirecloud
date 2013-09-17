@@ -4,7 +4,7 @@
 
     "use strict";
 
-    var StyledTextField, oninput, onfocus, onblur;
+    var StyledTextField, oninput, onfocus, onblur, onkeypress;
 
     oninput = function oninput() {
         this.events.change.dispatch(this);
@@ -20,6 +20,12 @@
         this.events.blur.dispatch(this);
     };
 
+    onkeypress = function onkeypress(event) {
+        if (event.keyCode === 13) { // enter
+            this.events.submit.dispatch(this);
+        }
+    };
+
     /**
      * Añade un campo de texto.
      */
@@ -31,7 +37,7 @@
         };
         options = EzWebExt.merge(defaultOptions, options);
 
-        StyledElements.StyledInputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
+        StyledElements.StyledInputElement.call(this, options.initialValue, ['change', 'focus', 'blur', 'submit']);
 
         this.wrapperElement = document.createElement("div");
         this.wrapperElement.className = "styled_text_field";
@@ -64,12 +70,14 @@
         this._oninput = oninput.bind(this);
         this._onfocus = onfocus.bind(this);
         this._onblur = onblur.bind(this);
+        this._onkeypress = onkeypress.bind(this);
 
         this.inputElement.addEventListener('mousedown', EzWebExt.stopPropagationListener, true);
         this.inputElement.addEventListener('click', EzWebExt.stopPropagationListener, true);
         this.inputElement.addEventListener('input', this._oninput, true);
         this.inputElement.addEventListener('focus', this._onfocus, true);
         this.inputElement.addEventListener('blur', this._onblur, true);
+        this.inputElement.addEventListener('keypress', this._onkeypress, true);
     };
     StyledTextField.prototype = new StyledElements.StyledInputElement();
 
@@ -84,10 +92,12 @@
         this.inputElement.removeEventListener('input', this._oninput, true);
         this.inputElement.removeEventListener('focus', this._onfocus, true);
         this.inputElement.removeEventListener('blur', this._onblur, true);
+        this.inputElement.removeEventListener('keypress', this._onkeypress, true);
 
         delete this._oninput;
         delete this._onfocus;
         delete this._onblur;
+        delete this._onkeypress;
 
         StyledElements.StyledInputElement.prototype.destroy.call(this);
     };
