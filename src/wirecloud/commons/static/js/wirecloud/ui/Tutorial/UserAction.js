@@ -46,12 +46,100 @@
         return result;
     };
 
+    var get_simple_element = function get_simple_element(element, fallback) {
+        if (element == null) {
+            element = fallback;
+        }
+
+        if (typeof element === 'function') {
+            return element();
+        } else {
+            return element;
+        }
+    };
+
+    var configure_next_step_phase = function configure_next_step_phase() {
+        var msg;
+
+        if (this.popup) {
+            this.popup.destroy();
+        }
+
+        this.next_element = get_simple_element(this.options.elemToApplyNextStepEvent, this.element);
+        this.next_element.addEventListener(this.event, this.nextHandler, this.options.eventCapture);
+
+        if (this.start_element != null) {
+            this.tutorial.deactivateLayer();
+        } else {
+            this.tutorial.setControlLayer(this.next_element);
+        }
+
+        if (this.start_element != null && this.options.nextStepMsg) {
+            msg = this.options.nextStepMsg;
+        } else if (this.start_element == null && this.options.msg) {
+            msg = this.options.msg;
+        }
+
+        if (msg) {
+            this.popup = new Wirecloud.ui.Tutorial.PopUp(this.next_element, {
+                highlight: true,
+                msg: msg,
+                position: this.position,
+                closable: !this.withoutCloseButton
+            });
+            this.layer.appendChild(this.popup.wrapperElement);
+            this.popup.addEventListener('close', this.tutorial.destroy.bind(this.tutorial, true));
+        }
+    };
+
+    var configure_start_phase = function configure_start_phase() {
+        if (this.popup) {
+            this.popup.destroy();
+        }
+
+        this.start_element = get_simple_element(this.options.elemToApplyDeactivateLayerEvent, this.element);
+        this.start_element.addEventListener(this.eventToDeactivateLayer, this.deactivateLayer, true);
+        this.isWaitingForDeactivateLayerEvent = true;
+
+        this.tutorial.setControlLayer(this.start_element);
+        this.popup = new Wirecloud.ui.Tutorial.PopUp(this.start_element, {
+            highlight: true,
+            msg: this.options.msg,
+            position: this.position,
+            closable: !this.withoutCloseButton
+        });
+        this.layer.appendChild(this.popup.wrapperElement);
+        this.popup.addEventListener('close', this.tutorial.destroy.bind(this.tutorial, true));
+    };
+
+    var clear_restart_handlers = function clear_restart_handlers() {
+        var i, restart_handler;
+
+        for (i = 0; i < this.restart_handlers.length; i++) {
+            restart_handler = this.restart_handlers[i];
+            restart_handler.element.removeEventListener(restart_handler.event, restart_handler.func, true);
+        }
+        this.restart_handlers = [];
+    };
+
+    var restartStep = function restartStep() {
+        var i;
+
+        this.next_element.removeEventListener(this.event, this.nextHandler, this.options.eventCapture);
+        this.next_element = null;
+
+        for (i = 0; i < this.disableLayer.length; i ++) {
+            this.layer.removeChild(this.disableLayer[i]);
+        }
+
+        clear_restart_handlers.call(this);
+        configure_start_phase.call(this);
+    };
+
     /*************************************************************************
      * Constructor
      *************************************************************************/
     var UserAction = function UserAction(tutorial, options) {
-        var pos;
-
         this.options = options;
         // Normalize asynchronous option
         this.options.asynchronous = !!this.options.asynchronous;
@@ -60,22 +148,30 @@
         this.tutorial = tutorial;
         this.element = options.elem;
         this.position = options.pos;
-        this.event = options.event;
+        if (options.event) {
+            this.event = options.event;
+        } else {
+            this.event = 'click';
+        }
         this.activeLayer = true;
         this.deactivateLayer = this.deactivateLayer.bind(this);
+        this.restartStep = restartStep.bind(this);
         this.disableElems = options.disableElems;
         if (this.disableElems == null) {
             this.disableElems = [];
         }
+        this.restart_handlers = [];
         this.disableLayer = [];
-        this.elemToApplyNextStepEvent = options.elemToApplyNextStepEvent;
-        if (this.elemToApplyNextStepEvent == null) {
-            this.elemToApplyNextStepEvent == this.element;
+        if (options.eventCapture != null) {
+            options.eventCapture = !! options.eventCapture;
+        } else {
+            options.eventCapture = true;
         }
-
+        if (!Array.isArray(options.restartHandlers)) {
+            options.restartHandlers = [];
+        }
         this.eventToDeactivateLayer = options.eventToDeactivateLayer;
         this.isWaitingForDeactivateLayerEvent = false;
-        this.elemToApplyDeactivateLayerEvent = options.elemToApplyDeactivateLayerEvent;
     };
 
     /**
@@ -96,23 +192,25 @@
      * set next handler
      */
     UserAction.prototype.deactivateLayer = function deactivateLayer() {
-        this.tutorial.deactivateLayer();
-        this.isWaitingForDeactivateLayerEvent = false;
-        this.elemToApplyDeactivateLayerEvent.removeEventListener(this.eventToDeactivateLayer, this.deactivateLayer, false);
+        var i, restart_handler, element;
 
-        if (this.options.nextStepMsg) {
-            if (this.popup) {
-                this.popup.destroy();
-            }
-            this.popup = new Wirecloud.ui.Tutorial.PopUp(this.elemToApplyNextStepEvent, {
-                highlight: true,
-                msg: this.options.nextStepMsg,
-                position: this.position,
-                closable: false
-            });
-            this.layer.appendChild(this.popup.wrapperElement);
-            this.popup.addEventListener('close', this.tutorial.destroy.bind(this.tutorial, true));
+        this.isWaitingForDeactivateLayerEvent = false;
+        this.start_element.removeEventListener(this.eventToDeactivateLayer, this.deactivateLayer, true);
+
+        for (i = 0; i < this.options.restartHandlers.length; i++) {
+            restart_handler = this.options.restartHandlers[i];
+
+            element = get_simple_element(restart_handler.element);
+            element.addEventListener(restart_handler.event, this.restartStep, true);
+            this.restart_handlers.push({'element': element, 'event': restart_handler.event, 'func': this.restartStep});
         }
+
+        var disableElems = build_disable_elements_list(this.disableElems);
+        for (i = 0; i < disableElems.length; i ++) {
+            this.disableLayer[i] = this.disable(disableElems[i]);
+        }
+
+        configure_next_step_phase.call(this);
     };
 
     /**
@@ -135,63 +233,26 @@
     /**
      * set next handler
      */
-    var nextHandler = function nextHandler(e) {
+    var nextHandler = function nextHandler() {
         if (this.isWaitingForDeactivateLayerEvent) {
             return;
         }
 
-        if (this.event == null) {
-            this.elemToApplyNextStepEvent.removeEventListener('click', this.nextHandler, true);
-        } else {
-            this.elemToApplyNextStepEvent.removeEventListener(this.event, this.nextHandler);
-        }
-
+        this.next_element.removeEventListener(this.event, this.nextHandler, this.options.eventCapture);
+        this.next_element = null;
         this.tutorial.nextStep();
     };
 
     var _activate = function _activate(element, withoutCloseButton) {
-        var pos, descSize, i;
-        if (element == null){
-            return null;
+        if (element != null) {
+            this.start_element = element;
         }
-        this.element = element;
+        this.withoutCloseButton = withoutCloseButton;
 
-        if (this.elemToApplyDeactivateLayerEvent) {
-            this.elemToApplyDeactivateLayerEvent = this.elemToApplyDeactivateLayerEvent();
+        if (this.options.eventToDeactivateLayer != null) {
+            configure_start_phase.call(this);
         } else {
-            this.elemToApplyDeactivateLayerEvent = this.element;
-        }
-
-        if (this.elemToApplyNextStepEvent) {
-            this.elemToApplyNextStepEvent = this.elemToApplyNextStepEvent();
-        } else {
-            this.elemToApplyNextStepEvent = this.element;
-        }
-
-        this.tutorial.setControlLayer(this.element);
-        this.popup = new Wirecloud.ui.Tutorial.PopUp(element, {
-            highlight: true,
-            msg: this.options.msg,
-            position: this.position,
-            closable: !withoutCloseButton
-        });
-        this.layer.appendChild(this.popup.wrapperElement);
-        this.popup.addEventListener('close', this.tutorial.destroy.bind(this.tutorial, true));
-
-        if (this.event == null) {
-            this.elemToApplyNextStepEvent.addEventListener('click', this.nextHandler, true);
-        } else {
-            this.elemToApplyNextStepEvent.addEventListener(this.event, this.nextHandler);
-        }
-
-        var disableElems = build_disable_elements_list(this.disableElems);
-        for (i = 0; i < disableElems.length; i ++) {
-            this.disableLayer[i] = this.disable(disableElems[i]);
-        }
-
-        if (this.eventToDeactivateLayer != null) {
-            this.elemToApplyDeactivateLayerEvent.addEventListener(this.eventToDeactivateLayer, this.deactivateLayer, false);
-            this.isWaitingForDeactivateLayerEvent = true;
+            configure_next_step_phase.call(this);
         }
     };
 
@@ -202,7 +263,7 @@
         if (this.options.asynchronous) {
             this.element(_activate.bind(this));
         } else {
-            _activate.call(this, this.element(), withoutCloseButton);
+            _activate.call(this, null, withoutCloseButton);
         }
     };
 
@@ -211,14 +272,21 @@
      */
     UserAction.prototype.destroy = function destroy() {
         var i;
-        if (typeof this.element === 'function') {
-            this.element = null;
-        } else {
-            this.element.removeEventListener('click', this.nextHandler, true);
+
+        if (this.start_element) {
         }
+
+        if (this.next_element) {
+            this.next_element.removeEventListener(this.event, this.nextHandler, this.options.eventCapture);
+            this.next_element = null;
+        }
+
         for (i = 0; i < this.disableLayer.length; i ++) {
             this.layer.removeChild(this.disableLayer[i]);
         }
+
+        clear_restart_handlers.call(this);
+
         if (this.popup != null) {
             this.popup.destroy();
         }
