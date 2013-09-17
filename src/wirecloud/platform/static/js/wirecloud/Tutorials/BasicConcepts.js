@@ -253,7 +253,7 @@
             {'type': 'userAction', 'msg': gettext("Drag &amp; drop to move the widget"), 'elem': widgetHeader, 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown', 'elemToApplyNextStepEvent': getDocument},
 
             {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>Play with the widgets of the wokspace moving, resizing, ... widgets as you like before going into the <em>Wiring</em> view.</p>"), 'elem': null},
-            {'type': 'userAction', 'msg': gettext("Click <em>Wiring</em> to continue"), 'elem': main_view_button.bind(null, 'wiring'), 'pos': 'downLeft', 'eventToDeactivateLayer': 'mousemove', 'elemToApplyDeactivateLayerEvent': getDocument, 'disableElems': [getMenuWorkspaceButton, getAdminButton, get_close_buttons, main_view_button.bind(null, 'marketplace')]},
+            {'type': 'userAction', 'nextStepMsg': gettext("Click <em>Wiring</em> to continue"), 'elem': main_view_button.bind(null, 'wiring'), 'pos': 'downLeft', 'eventToDeactivateLayer': 'mousemove', 'elemToApplyDeactivateLayerEvent': getDocument, 'disableElems': [getMenuWorkspaceButton, getAdminButton, get_close_buttons, main_view_button.bind(null, 'marketplace')]},
 
 
             // WiringEditor
@@ -263,9 +263,14 @@
             {'type': 'userAction', 'msg': gettext("Drag &amp; drop Input Box"), 'elem': get_mini_widget.bind(null, 1), 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown', 'elemToApplyNextStepEvent': getDocument},
             {'type': 'userAction', 'msg': gettext("Drag &amp; drop Youtube Video Search"), 'elem': get_mini_widget.bind(null, 0), 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown', 'elemToApplyNextStepEvent': getDocument},
 
-            {'type': 'userAction', 'msg': gettext("Drag &amp; drop a new connection from <em>Input Box</em>'s <em>keyword</em> endpoint ..."),
-                'elem': get_endpoint.bind(null, 1, 'keyword'), 'pos': 'downLeft',
-                'eventToDeactivateLayer': 'arrowadded', 'elemToApplyDeactivateLayerEvent': get_wiring_canvas,
+            {
+                'type': 'userAction',
+                'msg': gettext("Drag &amp; drop a new connection from <em>Input Box</em>'s <em>keyword</em> endpoint ..."),
+                'elem': get_endpoint.bind(null, 1, 'keyword'), 'eventToDeactivateLayer': 'mousedown', 'pos': 'downLeft',
+                'restartHandlers': [
+                    {'element': get_wiring_canvas, 'event': 'arrowremoved'},
+                    {'element': get_wiring_canvas, 'event': 'arrowadded'}
+                ],
                 'disableElems': [wirecloud_header, get_menubar],
                 'nextStepMsg': gettext("... to <em>YouTube Video Search</em>'s <em>keyword</em> endpoint"),
                 'elemToApplyNextStepEvent': get_endpoint.bind(null, 0, 'keyword'), 'event': 'mouseup', 'second_pos': 'downLeft',
