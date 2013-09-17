@@ -44,7 +44,7 @@
     min-width: 180px;
 }
 
-/* UserAction */
+/* popup */
 .popup {
     max-width: 500px;
     position: absolute;
@@ -97,27 +97,35 @@
     transform: rotate(-135deg);
 }
 .popup.subFormAction {
-    display: none;
+    visibility: hidden;
 }
 
 .popup.subFormAction.activate {
-    display: inherit;
+    visibility: visible;
+    display: inline;
 }
 
-.userAction.subFormAction.invalid {
+.popup.subFormAction.invalid {
     color: #7E1111;
-    display: inherit;
+    visibility: visible;
+}
+
+.popup.subFormAction.invalid div{
+    display: inline;
 }
 
 /* WarningIco */
-.userAction.subFormAction .warningIco{
-    display: none;
+.popup .warningIco {
+    visibility: hidden;
     color: #7E1111;
+    margin-right: 8px;
+    position: absolute;
 }
 
-.userAction.subFormAction.invalid .warningIco{
-    display: inline-block;
-    margin: 2px;
+.popup.subFormAction.invalid .warningIco {
+    visibility: visible;
+    display: inline;
+    position: relative;
 }
 
 .disableLayer {

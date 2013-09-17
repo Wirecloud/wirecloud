@@ -139,13 +139,18 @@
         }
 
         for (i = 0; i < this.actionElements.length; i ++) {
-            this.subSteps[i] = new Wirecloud.ui.Tutorial.UserAction(this.tutorial, {'type': 'userAction', 'msg': this.actionMsgs[i], 'elem': this.actionElements[i], 'pos': this.actionElementsPos[i]});
-            warningIco = document.createElement("span");
-            warningIco.addClassName('warningIco');
-            warningIco.addClassName('icon-warning-sign');
-            this.subSteps[i].wrapperElement.appendChild(warningIco);
-            this.subSteps[i].activate(withoutCloseButton);
+            this.subSteps[i] = new Wirecloud.ui.Tutorial.PopUp(this.actionElements[i](), {
+                highlight: false,
+                msg: this.actionMsgs[i],
+                position: this.actionElementsPos[i],
+                closable: false
+            });
+
+            this.layer.appendChild(this.subSteps[i].wrapperElement);
             this.subSteps[i].wrapperElement.addClassName('subFormAction');
+            this.subSteps[i].repaint();
+
+            // Handlers
             tempElem = this.actionElements[i]();
             tempElem.addEventListener('keyup', validateInput.bind(this, i), true);
             tempElem.addEventListener('focus', activateSubFormAction.bind(this, i), true);

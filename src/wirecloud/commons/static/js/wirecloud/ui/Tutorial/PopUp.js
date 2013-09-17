@@ -64,6 +64,13 @@
         } else {
             this.textElement.innerHTML = options.msg;
         }
+
+        //warning
+        this.warningIco = document.createElement("span");
+        this.warningIco.addClassName('warningIco');
+        this.warningIco.addClassName('icon-warning-sign');
+        this.wrapperElement.appendChild(this.warningIco);
+
         this.wrapperElement.appendChild(this.textElement);
 
         // Arrow
