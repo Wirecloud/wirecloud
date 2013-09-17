@@ -30,6 +30,10 @@
             this.setTitle(options.title);
         }
 
+        if (options.text) {
+            this.setLabel(options.text);
+        }
+
         /* Event handlers */
         this._clickCallback = clickCallback.bind(this);
 
@@ -37,6 +41,11 @@
         this.wrapperElement.addEventListener('click', this._clickCallback, true);
     };
     Addon.prototype = new StyledElements.Container();
+
+    Addon.prototype.setLabel = function setLabel(label) {
+        this.clear();
+        this.wrapperElement.textContent = label;
+    };
 
     Addon.prototype.setTitle = function setTitle(title) {
         this.wrapperElement.setAttribute('title', title);
