@@ -276,7 +276,7 @@ if (!Wirecloud.ui) {
         this.EditingObject = null;
         this.entitiesNumber = 0;
         this.recommendationsActivated = false;
-        this.recommendations = new Wirecloud.ui.RecommendationManager(this);
+        this.recommendations = new Wirecloud.ui.RecommendationManager();
 
         iwidgets = workspace.getIWidgets();
         availableOperators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
