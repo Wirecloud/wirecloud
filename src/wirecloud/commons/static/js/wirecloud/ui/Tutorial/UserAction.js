@@ -88,7 +88,7 @@
                 closable: !this.withoutCloseButton
             });
             this.layer.appendChild(this.popup.wrapperElement);
-            this.popup.addEventListener('close', this.tutorial.destroy.bind(this.tutorial, true));
+            this.popup.addEventListener('close', this.tutorial.destroy.bind(this.tutorial));
         }
     };
 
@@ -109,7 +109,7 @@
             closable: !this.withoutCloseButton
         });
         this.layer.appendChild(this.popup.wrapperElement);
-        this.popup.addEventListener('close', this.tutorial.destroy.bind(this.tutorial, true));
+        this.popup.addEventListener('close', this.tutorial.destroy.bind(this.tutorial));
     };
 
     var clear_restart_handlers = function clear_restart_handlers() {
@@ -131,6 +131,7 @@
         for (i = 0; i < this.disableLayer.length; i ++) {
             this.layer.removeChild(this.disableLayer[i]);
         }
+        this.disableLayer = [];
 
         clear_restart_handlers.call(this);
         configure_start_phase.call(this);
@@ -172,6 +173,16 @@
         }
         this.eventToDeactivateLayer = options.eventToDeactivateLayer;
         this.isWaitingForDeactivateLayerEvent = false;
+
+        if (typeof this.options.eventFilterFunction !== 'function') {
+            this.options.eventFilterFunction = function () { return true; };
+        }
+
+        this.nextHandler = function () {
+            if (this.options.eventFilterFunction.apply(null, arguments)) {
+                this.tutorial.destroy();
+            }
+        }.bind(this);
     };
 
     /**
@@ -185,7 +196,11 @@
      * set next handler
      */
     UserAction.prototype.setNext = function setNext() {
-        this.nextHandler = nextHandler.bind(this);
+        this.nextHandler = function (e) {
+            if (this.options.eventFilterFunction.apply(null, arguments)) {
+                nextHandler.call(this);
+            }
+        }.bind(this);
     };
 
     /**
@@ -274,6 +289,8 @@
         var i;
 
         if (this.start_element) {
+            this.start_element.removeEventListener(this.eventToDeactivateLayer, this.deactivateLayer, true);
+            this.start_element = null;
         }
 
         if (this.next_element) {
@@ -284,6 +301,7 @@
         for (i = 0; i < this.disableLayer.length; i ++) {
             this.layer.removeChild(this.disableLayer[i]);
         }
+        this.disableLayer = null;
 
         clear_restart_handlers.call(this);
 
