@@ -91,7 +91,7 @@
         }
 
         this.view_all_template = new Template(options.url + 'catalogue/resources/#{starting_page}/#{resources_per_page}');
-        this.simple_search_template = new Template(options.url + 'catalogue/search/simple_or/#{starting_page}/#{resources_per_page}');
+        this.simple_search_template = new Template(options.url + 'catalogue/search/and/#{starting_page}/#{resources_per_page}');
 
         Object.defineProperty(this, 'RESOURCE_ENTRY', {
             value: new Template(options.url + 'catalogue/resource/#{vendor}/#{name}/#{version}')
