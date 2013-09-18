@@ -250,6 +250,29 @@
         return e.keyCode === 13;
     };
 
+    var windowForm = function(callback) {
+        var layoutManager, element, interval;
+
+        layoutManager = LayoutManagerFactory.getInstance();
+        interval = setInterval(function () {
+            if ('_current_form' in layoutManager.currentMenu) {
+                clearInterval(interval);
+                callback(layoutManager.currentMenu._current_form);
+            }
+        }, 200);
+    };
+
+    function getField(inputName) {
+        var layoutManager;
+
+        layoutManager = LayoutManagerFactory.getInstance();
+         return layoutManager.currentMenu._current_form.fieldInterfaces[inputName].inputElement.inputElement;
+    };
+
+    var isNotEmpty = function(input) {
+        return input.value != '';
+    };
+
     Wirecloud.TutorialCatalogue.add(new Wirecloud.ui.Tutorial(gettext('Basic concepts'), [
             // Editor
             {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>Welcome to Wirecloud!!</p><p>This tutorial will show you the basic concepts behind Wirecloud.</p>"), 'elem': null},
@@ -281,7 +304,19 @@
             {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>Also, some widgets can be parameterized through settings giving you the chance to use them for very general purporses.</p>"), 'elem': null},
             {'type': 'userAction', 'msg': gettext("Open <em>Input Box</em> menu"), 'elem': widget_menu.bind(null, 1), 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown', 'elemToApplyNextStepEvent': getDocument},
             {'type': 'userAction', 'msg': gettext("Click <em>Settings</em>"), 'elem': get_menu_item.bind(null, gettext('Settings')), 'pos': 'downRight', 'event': 'click'},
-            {'type': 'userAction', 'msg': gettext("Click <em>Wiring</em> to continue"), 'elem': main_view_button.bind(null, 'wiring'), 'pos': 'downRight'},
+            {
+                'type': 'formAction',
+                'form': windowForm,
+                'actionElements': [getField.bind(null, 'input_label_pref'), getField.bind(null,'input_placeholder_pref'), getField.bind(null,'button_label_pref')],
+                'actionElementsValidators': [isNotEmpty, isNotEmpty, isNotEmpty],
+                'actionMsgs': [gettext("Write a label for the input, e.g. <em>Multimedia</em>."), gettext("Write a better placeholder text for the input, e.g. <em>Keywords</em>"), gettext("Write a better label for the button, e.g <em>Search</em>.")],
+                'actionElementsPos': ['topRight', 'topRight', 'topRight'],
+                'endElementMsg': gettext("Click here to submit"),
+                'endElementPos': 'topLeft',
+                'asynchronous': true
+            },
+
+            {'type': 'userAction', 'msg': gettext("Click <em>Wiring</em> to continue"), 'elem': main_view_button.bind(null, 'wiring'), 'pos': 'downLeft'},
 
 
             // WiringEditor

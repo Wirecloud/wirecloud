@@ -54,10 +54,14 @@
         this.disableLayer = [];
         this.invalidcounter = 0;
 
-        this.mainStep = new Wirecloud.ui.Tutorial.SimpleDescription(tutorial,{'type': 'simpleDescription', 'title': gettext(this.mainTitle), 'msg': gettext(this.mainMsg), 'elem': null});
+        if (!Array.isArray(this.disableElems)) {
+            this.disableElems = [];
+        }
 
-        this.mainStep.setLast();
-
+        if (this.mainMsg) {
+            this.mainStep = new Wirecloud.ui.Tutorial.SimpleDescription(tutorial, {'type': 'simpleDescription', 'title': gettext(this.mainTitle), 'msg': gettext(this.mainMsg), 'elem': null});
+            this.mainStep.setLast();
+        }
     };
 
     /**
@@ -86,29 +90,31 @@
         
         this.element = form;
 
-        //main description
-        this.mainStep.wrapperElement.addClassName("activeStep");
+        if (this.mainStep) {
+            //main description
+            this.mainStep.wrapperElement.addClassName("activeStep");
 
-        // Positions
-        pos = form.getBoundingClientRect();
-        switch(this.mainPos) {
-            case('up'):
-                this.mainStep.wrapperElement.style.top = (pos.top - this.mainStep.wrapperElement.getHeight() - 20) + 'px';
-                break;
-            case('right'):
-                this.mainStep.wrapperElement.style.left = (pos.right + 20) + 'px';
-                break;
-            case('left'):
-                this.mainStep.wrapperElement.style.left = (pos.left - this.mainStep.wrapperElement.getWidth() - 20) + 'px';
-                break;
-            case('down'):
-                this.mainStep.wrapperElement.style.top = (pos.bottom + 20) + 'px';
-                break;
-            default:
-                break;
+            // Positions
+            pos = form.getBoundingClientRect();
+            switch(this.mainPos) {
+                case('up'):
+                    this.mainStep.wrapperElement.style.top = (pos.top - this.mainStep.wrapperElement.getHeight() - 20) + 'px';
+                    break;
+                case('right'):
+                    this.mainStep.wrapperElement.style.left = (pos.right + 20) + 'px';
+                    break;
+                case('left'):
+                    this.mainStep.wrapperElement.style.left = (pos.left - this.mainStep.wrapperElement.getWidth() - 20) + 'px';
+                    break;
+                case('down'):
+                    this.mainStep.wrapperElement.style.top = (pos.bottom + 20) + 'px';
+                    break;
+                default:
+                    break;
+            }
         }
         //main action for next step
-        this.endAction = new Wirecloud.ui.Tutorial.UserAction(this.tutorial, {'type': 'userAction', 'msg': this.endElementMsg, 'elem': this.endElement, 'pos': this.endElementPos});
+        this.endAction = new Wirecloud.ui.Tutorial.UserAction(this.tutorial, {'type': 'userAction', 'msg': this.endElementMsg, 'elem': form.acceptButton.wrapperElement, 'pos': this.endElementPos});
 
         this.endAction.setNext();
         var withoutCloseButton = true;
@@ -127,13 +133,13 @@
         var validateInput = function(index, e) {
             if (!this.actionElementsValidators[index](this.actionElements[index]()) && !this.subSteps[index].wrapperElement.hasClassName('invalid')) {
                 this.subSteps[index].wrapperElement.addClassName('invalid');
-                this.activateEndActionLayer();
+                this.form.acceptButton.disable();
                 this.invalidcounter ++;
             } else if (this.actionElementsValidators[index](this.actionElements[index]()) && this.subSteps[index].wrapperElement.hasClassName('invalid')) {
                 this.subSteps[index].wrapperElement.removeClassName('invalid');
                 this.invalidcounter --;
                 if (this.invalidcounter == 0) {
-                    this.deactivateEndActionLayer();
+                    this.form.acceptButton.enable();
                 }
             }
         }
@@ -163,28 +169,9 @@
         for (i = 0; i < this.disableElems.length; i ++) {
             this.disableLayer[i] = this.disable(this.disableElems[i]());
         }
-        this.tutorial.setControlLayer(form);
-    };
-
-    /**
-     * Deactivate End Action Element Layer
-     */
-    FormAction.prototype.deactivateEndActionLayer = function deactivateEndActionLayer() {
-        this.layer.removeChild(this.endElementLayer);
-    };
-
-    /**
-     * Activate End Action Element Layer
-     */
-    FormAction.prototype.activateEndActionLayer = function activateEndActionLayer() {
-        var elementPos = this.endElement().getBoundingClientRect();
-        this.endElementLayer = document.createElement("div");
-        this.endElementLayer.addClassName('disableLayer');
-        this.endElementLayer.style.top = elementPos.top + 'px';
-        this.endElementLayer.style.left = elementPos.left + 'px';
-        this.endElementLayer.style.width = elementPos.width + 'px';
-        this.endElementLayer.style.height = elementPos.height + 'px';
-        this.layer.appendChild(this.endElementLayer);
+        form.cancelButton.disable();
+        this.tutorial.resetControlLayer();
+        this.tutorial.deactivateLayer();
     };
 
     /**
@@ -224,9 +211,17 @@
         for (i = 0; i < this.disableLayer.length; i ++) {
             this.layer.removeChild(this.disableLayer[i]);
         }
-        this.mainStep.destroy();
+        for (i = 0; i < this.subSteps.length; i++) {
+            this.subSteps[i].destroy();
+        }
+
+        if (this.mainStep != null) {
+            this.mainStep.destroy();
+            this.mainStep = null;
+        }
         if (this.endAction != null) {
         	this.endAction.destroy();
+            this.endAction = null;
         }
     };
 
