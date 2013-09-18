@@ -191,7 +191,7 @@
                     context.iObjectClon.repaint();
                 },
                 this.onFinish.bind(this),
-                function () {return true; }
+                function () { return this.enabled && !this.wrapperElement.classList.contains('clon'); }.bind(this)
             );
 
         }//else miniInterface

@@ -21,7 +21,9 @@
     width: 180px;
 }
 
-.wiring_editor .menubar .disabled {
+.wiring_editor .menubar .ioperator.disabled,
+.wiring_editor .menubar .iwidget.disabled,
+.wiring_editor .clon {
     pointer-events: none;
 }
 
