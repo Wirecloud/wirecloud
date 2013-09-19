@@ -200,9 +200,9 @@
             }
 
             if (this.initAnchor instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
-                this.initAnchor.context.iObject.wiringEditor.recommendations.deemphasize(this.initAnchor.initAnchor);
+                this.initAnchor.context.iObject.wiringEditor.recommendations.deemphasize(this.initAnchor.initAnchor,true);
             } else {
-                this.initAnchor.context.iObject.wiringEditor.recommendations.deemphasize(this.initAnchor);
+                this.initAnchor.context.iObject.wiringEditor.recommendations.deemphasize(this.initAnchor,true);
             }
 
             document.removeEventListener("mouseup", this.enddrag, false);

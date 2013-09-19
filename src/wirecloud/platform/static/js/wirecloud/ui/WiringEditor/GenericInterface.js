@@ -479,14 +479,10 @@
             anchor.menu.append(new StyledElements.MenuItem(gettext('Add multiconnector'), createMulticonnector.bind(this, name, anchor)));
 
             labelDiv.addEventListener('mouseover', function () {
-                if (!this.wiringEditor.recommendationsActivated) {
-                    this.wiringEditor.recommendations.emphasize(anchor);
-                }
+                this.wiringEditor.recommendations.emphasize(anchor);
             }.bind(this));
             labelDiv.addEventListener('mouseout', function () {
-                if (!this.wiringEditor.recommendationsActivated) {
-                    this.wiringEditor.recommendations.deemphasize(anchor);
-                }
+                this.wiringEditor.recommendations.deemphasize(anchor);
             }.bind(this));
 
             // Sticky effect

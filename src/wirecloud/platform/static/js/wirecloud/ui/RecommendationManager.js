@@ -140,21 +140,27 @@
      * Emphasize anchors.
      */
     RecommendationManager.prototype.emphasize = function emphasize(anchor, isCreatingArrow) {
-        // Activate recommendations for the anchor
-        this.recommendations.emphasize(anchor);
-
-        if (isCreatingArrow) {
-            this.recommendationsActivated = true;
+        if (!this.recommendationsActivated) {
+            // Activate recommendations for the anchor
+            this.recommendations.emphasize(anchor);
+            if (isCreatingArrow) {
+                this.recommendationsActivated = true;
+            }
         }
     };
 
     /**
      * Deemphasize anchors.
      */
-    RecommendationManager.prototype.deemphasize = function deemphasize(anchor) {
-        // Deactivate recommendations for the anchor
-        this.recommendations.deemphasize(anchor);
-        this.recommendationsActivated = false;
+    RecommendationManager.prototype.deemphasize = function deemphasize(anchor, createArrowEnded) {
+        if (createArrowEnded) {
+            this.recommendationsActivated = false;
+        }
+        if (!this.recommendationsActivated) {
+            // Deactivate recommendations for the anchor
+            this.recommendations.deemphasize(anchor);
+
+        }
     };
 
     /**
