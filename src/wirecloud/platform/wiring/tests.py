@@ -1231,9 +1231,11 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
 
         output1 = iwidget.get_wiring_endpoint('output1')
         self.assertEqual(output1.pos, 0)
+        self.assertEqual(iwidget.get_wiring_endpoint('output2').pos, 1)
 
         input3 = iwidget.get_wiring_endpoint('input3')
         self.assertEqual(input3.pos, 2)
+        self.assertEqual(iwidget.get_wiring_endpoint('output1').pos, 0)
 
         ActionChains(self.driver).click_and_hold(output1.label).move_by_offset(0, 50).move_by_offset(0, 50).release().perform()
         ActionChains(self.driver).click_and_hold(input3.label).move_by_offset(0, -50).move_by_offset(0, -50).release().perform()
@@ -1248,11 +1250,10 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
         self.change_main_view('wiring')
         time.sleep(2)
 
-        output1 = iwidget.get_wiring_endpoint('output1')
-        self.assertEqual(output1.pos, 2)
-
-        input3 = iwidget.get_wiring_endpoint('input3')
-        self.assertEqual(input3.pos, 0)
+        self.assertEqual(iwidget.get_wiring_endpoint('output1').pos, 2)
+        self.assertEqual(iwidget.get_wiring_endpoint('output2').pos, 0)
+        self.assertEqual(iwidget.get_wiring_endpoint('input3').pos, 0)
+        self.assertEqual(iwidget.get_wiring_endpoint('input1').pos, 1)
 
     @uses_extra_resources(('Wirecloud_TestOperatorMultiendpoint_1.0.wgt',), shared=True)
     def test_wiring_operator_reorder_endpoints(self):
@@ -1273,7 +1274,11 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
 
         ioperator = self.get_current_wiring_editor_ioperators()[0]
         output1 = ioperator.get_wiring_endpoint('output1')
+        self.assertEqual(output1.pos, 0)
+        self.assertEqual(ioperator.get_wiring_endpoint('output3').pos, 2)
         input3 = ioperator.get_wiring_endpoint('input3')
+        self.assertEqual(input3.pos, 2)
+        self.assertEqual(ioperator.get_wiring_endpoint('input1').pos, 0)
 
         ioperator.element.find_element_by_css_selector('.editPos_button').click()
         self.popup_menu_click('Reorder endpoints')
@@ -1292,7 +1297,9 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
         time.sleep(2)
 
         self.assertEqual(ioperator.get_wiring_endpoint('output1').pos, 2)
+        self.assertEqual(ioperator.get_wiring_endpoint('output2').pos, 0)
         self.assertEqual(ioperator.get_wiring_endpoint('input3').pos, 0)
+        self.assertEqual(ioperator.get_wiring_endpoint('input1').pos, 1)
 
 
 class MulticonnectorTestCase(WirecloudSeleniumTestCase):
