@@ -155,6 +155,23 @@ def authentication_required(func):
     return wrapper
 
 
+def supported_response_mime_types(mime_types):
+
+    def wrap(func):
+        def wrapper(self, request, *args, **kwargs):
+            accept_header = request.META.get('HTTP_ACCEPT', '*/*')
+            request.best_response_mimetype = mimeparser.best_match(mime_types, accept_header)
+            if request.best_response_mimetype == '':
+                msg = _("The requested resource is only capable of generating content not acceptable according to the Accept headers sent in the request")
+                details = {'supported_mime_types': mime_types}
+                return build_error_response(request, 406, msg, details=details)
+
+            return func(self, request, *args, **kwargs)
+        return wrapper
+
+    return wrap
+
+
 def supported_request_mime_types(mime_types):
 
     def wrap(func):
