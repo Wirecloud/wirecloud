@@ -91,7 +91,7 @@ def add_widget_from_wgt(file, user, wgt_file=None, template=None, deploy_only=Fa
             try:
                 unicode(code, resource_info['code_charset'])
             except UnicodeDecodeError:
-                msg = _('%(file_name)s is not encoded using the specified charset (%(charset)s according to the widget descriptor file).')
+                msg = _('%(file_name)s was not encoded using the specified charset (%(charset)s according to the widget descriptor file).')
                 raise InvalidContents(msg % {'file_name': code_url, 'charset': resource_info['code_charset']})
 
     resource_id = (

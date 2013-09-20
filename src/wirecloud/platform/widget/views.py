@@ -51,7 +51,7 @@ from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.cache import patch_cache_headers
-from wirecloud.commons.utils.http import get_absolute_reverse_url, get_current_domain, get_xml_error_response
+from wirecloud.commons.utils.http import build_error_response, get_absolute_reverse_url, get_current_domain, get_xml_error_response
 from wirecloud.platform.iwidget.utils import deleteIWidget
 from wirecloud.platform.models import Widget, IWidget
 import wirecloud.platform.widget.utils as showcase_utils
@@ -125,9 +125,8 @@ class WidgetCodeEntry(Resource):
                     code = downloader.download_http_content('file://' + os.path.join(showcase_utils.wgt_deployer.root_dir, url2pathname(xhtml.url)), user=request.user)
 
             except Exception, e:
-                # FIXME: Send the error or use the cached original code?
                 msg = _("XHTML code is not accessible: %(errorMsg)s") % {'errorMsg': e.message}
-                return HttpResponse(get_xml_error_response(msg), mimetype='application/xml; charset=UTF-8')
+                return build_error_response(request, 502, msg)
 
         if xhtml.cacheable and (xhtml.code == '' or xhtml.code_timestamp is None):
             xhtml.code = code.decode(charset)
@@ -138,7 +137,12 @@ class WidgetCodeEntry(Resource):
             xhtml.code_timestamp = None
             xhtml.save()
 
-        code = fix_widget_code(code, base_url, content_type, request, charset, xhtml.use_platform_style, force_base=force_base)
+        try:
+            code = fix_widget_code(code, base_url, content_type, request, charset, xhtml.use_platform_style, force_base=force_base)
+        except UnicodeEncodeError:
+            msg = _('Widget code was not encoded using the specified charset (%(charset)s according to the widget descriptor file).')
+            return build_error_response(request, 502, msg % {'charset': charset})
+
         if xhtml.cacheable:
             cache_timeout = 31536000  # 1 year
             cache_entry = {
