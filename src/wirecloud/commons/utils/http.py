@@ -172,7 +172,11 @@ def get_current_domain(request=None):
         try:
             return get_current_site(request).domain
         except:
-            return socket.gethostbyaddr(socket.gethostname())[0] + ':' + str(getattr(settings, 'FORCE_PORT', 8000))
+            domain = socket.getfqdn()
+            port = getattr(settings, 'FORCE_PORT', 8000)
+            if port != 80:
+                domain += ':' + str(port)
+            return domain
 
 
 def get_current_scheme(request=None):
