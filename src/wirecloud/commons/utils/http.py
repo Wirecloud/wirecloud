@@ -78,17 +78,24 @@ ERROR_FORMATTERS = {
     'application/json; charset=utf-8': get_json_error_response,
     'application/xml; charset=utf-8': get_xml_error_response,
     'text/plain; charset=utf-8': get_plain_text_error_response,
+    '': get_plain_text_error_response,   # Fallback
 }
-
 
 def build_response(request, status_code, context, formatters, headers):
 
     if request.META.get('HTTP_X_REQUESTED_WITH', '') == 'XMLHttpRequest':
         mimetype = 'application/json; charset=utf-8'
     else:
-        mimetype = mimeparser.best_match(formatters.keys(), request.META.get('HTTP_ACCEPT', 'text/plain'))
+        formatter_keys = formatters.keys()
+        formatter_keys.remove('')
+        mimetype = mimeparser.best_match(formatter_keys, request.META.get('HTTP_ACCEPT', '*/*'))
 
-    body = formatters[mimetype](request, mimetype, status_code, context)
+    if mimetype in formatters:
+        formatter = formatters[mimetype]
+    else:
+        raise Exception('No suitable formatter found')
+
+    body = formatter(request, mimetype, status_code, context)
     response = HttpResponse(body, mimetype=mimetype, status=status_code)
     if headers is None:
         headers = {}
