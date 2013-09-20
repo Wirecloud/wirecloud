@@ -253,6 +253,9 @@ def xpath(tree, query, xmlns):
 
 def fix_widget_code(widget_code, base_url, content_type, request, encoding, use_platform_style, force_base=False):
 
+    # This line is here for raising UnicodeDecodeError in case the widget_code is not encoded using the expecified encoding
+    widget_code.decode(encoding)
+
     if content_type == 'text/html':
         parser = etree.HTMLParser(encoding=encoding)
         serialization_options = {'method': 'html'}
@@ -262,7 +265,7 @@ def fix_widget_code(widget_code, base_url, content_type, request, encoding, use_
     else:
         return widget_code
 
-    xmltree = etree.parse(StringIO(str(widget_code)), parser)
+    xmltree = etree.parse(StringIO(widget_code), parser)
 
     prefix = xmltree.getroot().prefix
     xmlns = None

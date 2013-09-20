@@ -29,30 +29,30 @@ from lxml import etree
 from wirecloud.commons.utils import mimeparser
 
 
-def get_html_basic_error_response(request, mimetype, status_code, message, details):
+def get_html_basic_error_response(request, mimetype, status_code, context):
     from django.shortcuts import render
-    return render(request, '%s.html' % status_code, {'request_path': request.path}, status=status_code, content_type=mimetype)
+    return render(request, '%s.html' % status_code, context, status=status_code, content_type=mimetype)
 
 
-def get_xml_error_response(request, mimetype, status_code, message, details):
+def get_xml_error_response(request, mimetype, status_code, context):
 
     doc = etree.Element('error')
 
     description = etree.Element('description')
-    description.text = message
+    description.text = context['error_msg']
 
     doc.append(description)
 
-    if details is not None:
+    if context.get('details') is not None:
         details_element = etree.Element('details')
-        for key in details:
+        for key in context['details']:
             element = etree.Element(key)
-            if isinstance(details[key], basestring):
-                element.text = details[key]
+            if isinstance(context['details'][key], basestring):
+                element.text = context['details'][key]
             else:
-                for key2 in details[key]:
+                for key2 in context['details'][key]:
                     list_element = etree.Element('element')
-                    list_element.text = details[key][key2]
+                    list_element.text = context['details'][key][key2]
                     element.append(list_element)
 
             details_element.append(element)
@@ -60,18 +60,18 @@ def get_xml_error_response(request, mimetype, status_code, message, details):
     return etree.tostring(doc, pretty_print=False, method='xml')
 
 
-def get_json_error_response(request, mimetype, status_code, message, details):
+def get_json_error_response(request, mimetype, status_code, context):
     body = {
-        'description': message
+        'description': context['error_msg']
     }
-    if details is not None:
-        body['details'] = details
+    if context.get('details') is not None:
+        body['details'] = context['details']
 
     return json.dumps(body)
 
 
-def get_plain_text_error_response(request, mimetype, status_code, message, details):
-    return unicode(message)
+def get_plain_text_error_response(request, mimetype, status_code, context):
+    return unicode(context['error_msg'])
 
 
 ERROR_FORMATTERS = {
@@ -79,6 +79,24 @@ ERROR_FORMATTERS = {
     'application/xml; charset=utf-8': get_xml_error_response,
     'text/plain; charset=utf-8': get_plain_text_error_response,
 }
+
+
+def build_response(request, status_code, context, formatters, headers):
+
+    if request.META.get('HTTP_X_REQUESTED_WITH', '') == 'XMLHttpRequest':
+        mimetype = 'application/json; charset=utf-8'
+    else:
+        mimetype = mimeparser.best_match(formatters.keys(), request.META.get('HTTP_ACCEPT', 'text/plain'))
+
+    body = formatters[mimetype](request, mimetype, status_code, context)
+    response = HttpResponse(body, mimetype=mimetype, status=status_code)
+    if headers is None:
+        headers = {}
+
+    for header_name in headers:
+        response[header_name] = headers[header_name]
+
+    return response
 
 
 def build_error_response(request, status_code, error_msg, extra_formats=None, headers=None, details=None):
@@ -89,20 +107,7 @@ def build_error_response(request, status_code, error_msg, extra_formats=None, he
     else:
         formatters = ERROR_FORMATTERS
 
-    if request.META.get('HTTP_X_REQUESTED_WITH', '') == 'XMLHttpRequest':
-        mimetype = 'application/json; charset=utf-8'
-    else:
-        mimetype = mimeparser.best_match(formatters.keys(), request.META.get('HTTP_ACCEPT', 'text/plain'))
-
-    body = formatters[mimetype](request, mimetype, status_code, error_msg, details)
-    response = HttpResponse(body, mimetype=mimetype, status=status_code)
-    if headers is None:
-        headers = {}
-
-    for header_name in headers:
-        response[header_name] = headers[header_name]
-
-    return response
+    return build_response(request, status_code, {'error_msg': error_msg, 'details': details}, formatters, headers)
 
 
 def parse_mime_type(mime_type):
