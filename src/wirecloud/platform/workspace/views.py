@@ -36,7 +36,7 @@ from wirecloud.commons.baseviews import Resource, Service
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.db import save_alternative
-from wirecloud.commons.utils.http import authentication_required, build_error_response, get_content_type, supported_request_mime_types
+from wirecloud.commons.utils.http import authentication_required, build_error_response, get_content_type, supported_request_mime_types, supported_response_mime_types
 from wirecloud.commons.utils.template import is_valid_name, is_valid_vendor, is_valid_version, TemplateParser
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
@@ -107,6 +107,7 @@ def normalize_boolean_param(name, value):
 class WorkspaceCollection(Resource):
 
     @authentication_required
+    @supported_response_mime_types(('application/json',))
     @commit_on_http_success
     @no_cache
     def read(self, request):
@@ -118,6 +119,7 @@ class WorkspaceCollection(Resource):
 
     @authentication_required
     @supported_request_mime_types(('application/json',))
+    @supported_response_mime_types(('application/json',))
     @commit_on_http_success
     def create(self, request):
 
@@ -197,6 +199,7 @@ class WorkspaceCollection(Resource):
 class WorkspaceEntry(Resource):
 
     @authentication_required
+    @supported_response_mime_types(('application/json',))
     def read(self, request, workspace_id):
 
         workspace = get_object_or_404(Workspace, pk=workspace_id)
@@ -278,6 +281,7 @@ class TabCollection(Resource):
 
     @authentication_required
     @supported_request_mime_types(('application/json',))
+    @supported_response_mime_types(('application/json',))
     @commit_on_http_success
     def create(self, request, workspace_id):
 
