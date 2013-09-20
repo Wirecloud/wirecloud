@@ -47,7 +47,6 @@ class JSONTemplateParser(object):
 
     def _init(self):
 
-        self._url_fields = ['doc_uri', 'image_uri', 'iphone_image_uri']
         for field in ['doc_uri', 'image_uri', 'iphone_image_uri']:
             if field not in self._info:
                 self._info[field] = ''

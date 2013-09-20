@@ -66,7 +66,6 @@ class RDFTemplateParser(object):
         self._info = {}
         self._translation_indexes = {}
         self._translations = {}
-        self._url_fields = []
 
         # check if is a mashup, a widget or an operator
         for type_ in self._graph.subjects(RDF['type'], WIRE['Widget']):
@@ -144,11 +143,6 @@ class RDFTemplateParser(object):
                 result = default
         return result
 
-    def _get_url_field(self, field, *args, **kwargs):
-
-        self._url_fields.append(field)
-        return self._get_field(*args, **kwargs)
-
     def _parse_extra_info(self):
 
         if self._info['type'] == 'widget' or self._info['type'] == 'operator':
@@ -190,8 +184,8 @@ class RDFTemplateParser(object):
         author = self._get_field(DCTERMS, 'creator', self._rootURI, id_=True)
         self._info['author'] = self._get_field(FOAF, 'name', author)
 
-        self._info['image_uri'] = self._get_url_field('image_uri', WIRE, 'hasImageUri', self._rootURI)
-        self._info['iphone_image_uri'] = self._get_url_field('iphone_image_uri', WIRE, 'hasiPhoneImageUri', self._rootURI, required=False)
+        self._info['image_uri'] = self._get_field(WIRE, 'hasImageUri', self._rootURI)
+        self._info['iphone_image_uri'] = self._get_field(WIRE, 'hasiPhoneImageUri', self._rootURI, required=False)
 
         self._info['doc_uri'] = self._get_field(FOAF, 'page', self._rootURI, required=False)
 

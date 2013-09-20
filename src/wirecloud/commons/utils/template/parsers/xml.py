@@ -83,7 +83,6 @@ class WirecloudTemplateParser(object):
 
         self._info = {}
         self._translation_indexes = {}
-        self._url_fields = []
 
         if isinstance(template, str):
             self._doc = etree.fromstring(template)
@@ -162,12 +161,6 @@ class WirecloudTemplateParser(object):
             msg = _('missing required field: %(field)s')
             raise TemplateParseException(msg % {'field': xpath})
 
-    def _get_url_field(self, field, *args, **kwargs):
-
-        value = self._get_field(*args, **kwargs)
-        self._url_fields.append(field)
-        self._info[field] = value
-
     def _parse_basic_info(self):
 
         self._info['vendor'] = self._get_field(VENDOR_XPATH, self._resource_description).strip()
@@ -193,9 +186,9 @@ class WirecloudTemplateParser(object):
 
         self._info['author'] = self._get_field(AUTHOR_XPATH, self._resource_description, required=False)
         self._info['email'] = self._get_field(MAIL_XPATH, self._resource_description)
-        self._get_url_field('image_uri', IMAGE_URI_XPATH, self._resource_description, required=False)
-        self._get_url_field('iphone_image_uri', IPHONE_IMAGE_URI_XPATH, self._resource_description, required=False)
-        self._get_url_field('doc_uri', DOC_URI_XPATH, self._resource_description, required=False)
+        self._info['image_uri'] = self._get_field(IMAGE_URI_XPATH, self._resource_description, required=False)
+        self._info['iphone_image_uri'] = self._get_field(IPHONE_IMAGE_URI_XPATH, self._resource_description, required=False)
+        self._info['doc_uri'] = self._get_field(DOC_URI_XPATH, self._resource_description, required=False)
         self._parse_requirements()
 
     def _parse_requirements(self):

@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from copy import deepcopy
 import urlparse
 
 from wirecloud.commons.utils.template.base import TemplateParseException
@@ -26,6 +27,17 @@ from wirecloud.commons.utils.template.parsers.rdf import RDFTemplateParser
 
 
 __all__ = ('TemplateParseException', 'TemplateParser')
+
+
+BASIC_URL_FIELDS = ['doc_uri', 'image_uri', 'iphone_image_uri']
+
+
+def absolutize_url_field(value, base_url):
+    value = value.strip()
+    if value != '':
+        value = urlparse.urljoin(base_url, value)
+
+    return value
 
 
 class TemplateParser(object):
@@ -89,7 +101,7 @@ class TemplateParser(object):
         return urlparse.urljoin(base, url)
 
     def get_resource_processed_info(self, base=None, lang=None):
-        info = self.get_resource_info()
+        info = deepcopy(self.get_resource_info())
 
         if base is None:
             base = self.base
@@ -133,11 +145,16 @@ class TemplateParser(object):
                             for field in option:
                                 if isinstance(option[field], basestring):
                                     option[field] = option[field].replace('__MSG_' + index + '__', value)
+        del info['translations']
+        del info['translation_index_usage']
 
         # process url fields
-        for field in self._parser._url_fields:
-            value = info[field]
-            if value.strip() != '':
-                info[field] = urlparse.urljoin(base, value)
+        for field in BASIC_URL_FIELDS:
+            info[field] = absolutize_url_field(info[field], base)
+
+        if info['type'] == 'widget':
+            info['code_url'] = absolutize_url_field(info['code_url'], base)
+        elif info['type'] == 'operator':
+            info['js_files'] = [absolutize_url_field(js_file, base) for js_file in info['js_files']]
 
         return info
