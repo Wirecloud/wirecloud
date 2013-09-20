@@ -19,7 +19,7 @@
 
 import os
 
-from django.db.models.signals import post_save
+from django.db.models.signals import post_delete, post_save
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.wgt import WgtFile
@@ -40,3 +40,16 @@ def deploy_operators_on_resource_creation(sender, instance, created, raw, **kwar
     showcase_utils.wgt_deployer.deploy(wgt_file)
 
 post_save.connect(deploy_operators_on_resource_creation, sender=CatalogueResource)
+
+
+def undeploy_operators_on_resource_deletion(sender, instance, **kwargs):
+
+    import wirecloud.platform.widget.utils as showcase_utils
+
+    resource = instance
+    if not resource.fromWGT or resource.resource_type() != 'operator':
+        return
+
+    showcase_utils.wgt_deployer.undeploy(resource.vendor, resource.short_name, resource.version)
+
+post_delete.connect(undeploy_operators_on_resource_deletion, sender=CatalogueResource)
