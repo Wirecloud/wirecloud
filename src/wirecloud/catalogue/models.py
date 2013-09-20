@@ -93,7 +93,7 @@ class CatalogueResource(TransModel):
     def get_processed_info(self, request=None):
 
         if urlparse(self.template_uri).scheme == '':
-            template_uri = get_absolute_reverse_url('wirecloud_catalogue.media', kwargs={
+            template_uri = get_absolute_reverse_url('wirecloud_showcase.media', kwargs={
                 'vendor': self.vendor,
                 'name': self.short_name,
                 'version': self.version,

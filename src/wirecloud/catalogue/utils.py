@@ -53,10 +53,6 @@ def extract_resource_media_from_package(template, package, base_path):
     overrides = {}
     resource_info = template.get_resource_info()
 
-    # TODO
-    if template.get_resource_type() == 'operator':
-        wgt_deployer.deploy(package)
-
     if not resource_info['image_uri'].startswith(('http://', 'https://', '//', '/')):
         image_path = os.path.normpath(resource_info['image_uri'])
         try:
