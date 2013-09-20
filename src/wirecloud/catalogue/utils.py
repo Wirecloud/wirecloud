@@ -53,17 +53,25 @@ def extract_resource_media_from_package(template, package, base_path):
     overrides = {}
     resource_info = template.get_resource_info()
 
-    if not resource_info['image_uri'].startswith(('http://', 'https://', '//', '/')):
-        image_path = os.path.normpath(resource_info['image_uri'])
-        try:
-            package.extract_file(resource_info['image_uri'], os.path.join(base_path, image_path), True)
-        except KeyError:
-            overrides['image_uri'] = urljoin(settings.STATIC_URL, '/images/catalogue/widget_image.png')
+    if resource_info['image_uri'] != '':
+        if not resource_info['image_uri'].startswith(('http://', 'https://', '//', '/')):
+            image_path = os.path.normpath(resource_info['image_uri'])
+            try:
+                package.extract_file(resource_info['image_uri'], os.path.join(base_path, image_path), True)
+            except KeyError:
+                overrides['image_uri'] = urljoin(settings.STATIC_URL, '/images/catalogue/widget_image.png')
+        elif resource_info['image_uri'].startswith(('//', '/')):
+            overrides['image_uri'] = template.get_absolute_url(resource_info['image_uri'])
 
-        else:
-            overrides['image_uri'] = image_path
-    elif resource_info['image_uri'].startswith(('//', '/')):
-        overrides['image_uri'] = template.get_absolute_url(resource_info['image_uri'])
+    if resource_info['iphone_image_uri'] != '':
+        if not resource_info['iphone_image_uri'].startswith(('http://', 'https://', '//', '/')):
+            image_path = os.path.normpath(resource_info['iphone_image_uri'])
+            try:
+                package.extract_file(resource_info['iphone_image_uri'], os.path.join(base_path, image_path), True)
+            except KeyError:
+                overrides['iphone_image_uri'] = urljoin(settings.STATIC_URL, '/images/catalogue/widget_image.png')
+        elif resource_info['iphone_image_uri'].startswith(('//', '/')):
+            overrides['iphone_image_uri'] = template.get_absolute_url(resource_info['iphone_image_uri'])
 
     return overrides
 
