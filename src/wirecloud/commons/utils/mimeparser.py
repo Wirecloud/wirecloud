@@ -160,14 +160,13 @@ def best_match(supported, header):
     split_header = _filter_blank(header.split(','))
     parsed_header = [parse_media_range(r) for r in split_header]
     weighted_matches = []
-    pos = 0
     for mime_type in supported:
-        weighted_matches.append((fitness_and_quality_parsed(mime_type,
-                                 parsed_header), pos, mime_type))
-        pos += 1
+        (score, quality) = fitness_and_quality_parsed(mime_type, parsed_header)
+        if quality > 0:
+            weighted_matches.append((quality, score, mime_type))
     weighted_matches.sort()
 
-    return weighted_matches[-1][0][1] and weighted_matches[-1][2] or ''
+    return weighted_matches and weighted_matches[-1][2] or ''
 
 
 def _filter_blank(i):
