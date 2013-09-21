@@ -55,7 +55,7 @@
     UserPref.prototype.isHidden = function isHidden(iWidget) {
         var varManager, variable;
 
-        varManager = iWidget.layout.dragboard.workspace.varManager;
+        varManager = iWidget.workspace.varManager;
         variable = varManager.getVariableByName(iWidget.id, this.varName);
 
         return variable.hidden;
@@ -63,7 +63,7 @@
 
     UserPref.prototype.getInterfaceDescription = function getInterfaceDescription(iWidget) {
         // TODO
-        var varManager = iWidget.layout.dragboard.workspace.varManager;
+        var varManager = iWidget.workspace.varManager;
 
         var variable, desc;
 

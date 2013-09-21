@@ -86,7 +86,7 @@
                 fields[pref.varName] = pref.getInterfaceDescription(iwidget);
             }
         }
-        this._current_iwidget = iwidget.internal_iwidget; // TODO
+        this._current_iwidget = iwidget;
         this._current_form = new Form(fields, {
             buttonArea: this.windowBottom
         });

@@ -30,6 +30,11 @@
 
     GenericInterfaceSettingsMenuItems = function GenericInterfaceSettingsMenuItems(geinterface) {
         this.geinterface = geinterface;
+        if (this.geinterface.ioperator) {
+            this.instance = this.geinterface.ioperator;
+        } else {
+            this.instance = this.geinterface.iwidget;
+        }
     };
     GenericInterfaceSettingsMenuItems.prototype = new StyledElements.DynamicMenuItems();
 
@@ -53,6 +58,7 @@
                 window_menu.show(this.iwidget);
             }
         }.bind(this.geinterface));
+        item.setDisabled(this.instance.meta.preferenceList.length === 0);
         items.push(item);
 
         if (this.geinterface.ioperator) {

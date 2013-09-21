@@ -34,7 +34,7 @@
     IWidgetMenuItems.prototype = new StyledElements.DynamicMenuItems();
 
     IWidgetMenuItems.prototype.build = function () {
-        var items, fulldragboard_label, layout_label;
+        var items, item, fulldragboard_label, layout_label;
 
         items = [];
 
@@ -45,15 +45,15 @@
             }.bind(this.iWidget)
         ));
 
-        if (this.has_prefs) {
-            items.push(new StyledElements.MenuItem(
-                gettext("Settings"),
-                function () {
-                    var prueba = new Wirecloud.Widget.PreferencesWindowMenu();
-                    prueba.show(this);
-                }.bind(this.iWidget)
-            ));
-        }
+        item = new StyledElements.MenuItem(
+            gettext("Settings"),
+            function () {
+                var prueba = new Wirecloud.Widget.PreferencesWindowMenu();
+                prueba.show(this);
+            }.bind(this.iWidget.internal_iwidget)
+        );
+        item.setDisabled(!this.has_prefs);
+        items.push(item);
 
         items.push(new StyledElements.MenuItem(
             gettext("Reload"),
