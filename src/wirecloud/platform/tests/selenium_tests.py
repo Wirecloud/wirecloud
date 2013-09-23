@@ -173,6 +173,13 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             prop_input = self.driver.find_element_by_css_selector('#update_prop_input')
             self.assertEqual(prop_input.get_attribute('value'), 'new value')
 
+            self.assertEqual(api_test_iwidget.error_count, 0)
+            old_log_entries = len(api_test_iwidget.log_entries)
+            self.driver.find_element_by_css_selector('#check_logs_button').click()
+            WebDriverWait(self.driver, timeout=2).until(lambda driver: driver.find_element_by_id('widget_log_test').text == 'Success!!')
+            self.assertEqual(api_test_iwidget.error_count, 2)
+            self.assertEqual(len(api_test_iwidget.log_entries), old_log_entries + 4)
+
     test_basic_widget_functionalities.tags = ('fiware-ut-5',)
 
     def test_pending_wiring_events(self):

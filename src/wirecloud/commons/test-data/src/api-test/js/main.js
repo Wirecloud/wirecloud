@@ -33,6 +33,15 @@ MashupPlatform.prefs.registerCallback(function (new_values) {
 });
 
 setTimeout(function () {
+
+    document.getElementById('check_logs_button').onclick = function () {
+        MashupPlatform.widget.log('error message');
+        MashupPlatform.widget.log('error message2', MashupPlatform.log.ERROR);
+        MashupPlatform.widget.log('warn message', MashupPlatform.log.WARN);
+        MashupPlatform.widget.log('info message', MashupPlatform.log.INFO);
+        document.getElementById('widget_log_test').innerHTML = OK_HTML;
+    };
+
     var input = document.getElementById('update_prop_input');
     var variable = MashupPlatform.widget.getVariable('prop');
     input.value = variable.get();

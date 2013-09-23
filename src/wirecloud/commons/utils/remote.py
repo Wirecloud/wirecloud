@@ -96,6 +96,31 @@ class IWidgetTester(object):
     def name(self):
         return self.element.find_element_by_css_selector('.widget_menu > span').text
 
+    @property
+    def error_count(self):
+        driver = self.testcase.driver
+
+        old_frame = driver.execute_script("return window.frameElement")
+        driver.switch_to_default_content()
+        error_count = driver.execute_script('return opManager.activeWorkspace.getIWidget(%s).internal_iwidget.logManager.errorCount' % self.id)
+        driver.switch_to_frame(old_frame)
+
+        return error_count
+
+    @property
+    def log_entries(self):
+        driver = self.testcase.driver
+
+        old_frame = driver.execute_script("return window.frameElement")
+        driver.switch_to_default_content()
+        log_entries = driver.execute_script('''
+            var iwidget = opManager.activeWorkspace.getIWidget(%s).internal_iwidget;
+            return iwidget.logManager.entries.map(function (entry) { return {date: entry.date.getTime(), level: entry.level, msg: entry.msg}; });
+        ''' % self.id)
+        driver.switch_to_frame(old_frame)
+
+        return log_entries
+
     def perform_action(self, action):
 
         self.element.find_element_by_css_selector('.icon-cogs').click()

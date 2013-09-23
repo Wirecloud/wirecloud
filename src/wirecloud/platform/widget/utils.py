@@ -317,6 +317,7 @@ def fix_widget_code(widget_code, base_url, content_type, request, encoding, use_
         files.reverse()
         for file in files:
             head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url(file, request=request)))
+        head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url('js/WirecloudAPI/WirecloudAPICommon.js', request=request)))
         head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url('js/WirecloudAPI/WirecloudAPI.js', request=request)))
 
         if use_platform_style:

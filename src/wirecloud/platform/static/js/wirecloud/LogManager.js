@@ -101,7 +101,7 @@
         default:
             level = Constants.Logging.ERROR_MSG;
         case Constants.Logging.ERROR_MSG:
-            if ('console' in window && typeof console.errro === 'function') {
+            if ('console' in window && typeof console.error === 'function') {
                 console.error(msg);
             }
             break;
