@@ -19,7 +19,7 @@
  *
  */
 
-/*global IWidgetLogManager, StyledElements, Wirecloud*/
+/*global StyledElements, Wirecloud*/
 
 (function () {
 
@@ -114,7 +114,7 @@
         });
         this._old_context_api_adaptor_callback = old_context_api_adaptor_callback.bind(this);
         this.contextManager.addCallback(this._old_context_api_adaptor_callback);
-        this.logManager = new IWidgetLogManager(this);
+        this.logManager = new Wirecloud.Widget.LogManager(this);
         this.prefCallback = null;
 
         StyledElements.ObjectWithEvents.call(this, ['load', 'unload', 'name_changed']);

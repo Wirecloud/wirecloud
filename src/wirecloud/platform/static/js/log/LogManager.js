@@ -222,65 +222,6 @@ LogManager.prototype.isClosed = function() {
 /**
  *
  */
-function IWidgetLogManager (iWidget) {
-    var globalManager = LogManagerFactory.getInstance();
-    LogManager.call(this, globalManager);
-
-    globalManager.childManagers.push(this);
-    this.iWidget = iWidget;
-}
-
-IWidgetLogManager.prototype = new LogManager();
-
-IWidgetLogManager.prototype.buildExtraInfo = function () {
-    var extraInfo = document.createElement('div'),
-        extraInfoIcon = document.createElement('div'),
-        extraInfoText = document.createElement('span');
-    extraInfo.className += " iwidget_info_container";
-    extraInfo.appendChild(extraInfoIcon);
-    extraInfo.appendChild(extraInfoText);
-    extraInfoIcon.className = "iwidget_info";
-    extraInfoText.innerHTML = this.iWidget.id;
-    extraInfoText.setAttribute('title', this.iWidget.name + "\n " + this.iWidget.widget.getInfoString());
-    extraInfo.style.cursor = "pointer";
-    extraInfo.observe('click', function() {
-        OpManagerFactory.getInstance().showLogs(this);
-    }.bind(this));
-
-    return extraInfo;
-}
-
-IWidgetLogManager.prototype.buildTitle = function() {
-    var title;
-
-    if (this.iWidget) {
-        title = gettext('iWidget #%(iWidgetId)s Logs');
-        title = interpolate(title, {iWidgetId: this.iWidget.id}, true);
-        return title;
-    } else {
-        return this.title;
-    }
-}
-
-IWidgetLogManager.prototype.buildSubTitle = function() {
-    var subtitle;
-
-    if (this.iWidget) {
-        return this.iWidget.name;
-    } else {
-        return this.subtitle;
-    }
-}
-
-IWidgetLogManager.prototype.close = function() {
-    this.title = this.buildTitle();
-    this.subtitle = this.buildSubTitle();
-    this.iWidget = null;
-}
-
-/**
- *
- */
 var LogManagerFactory = function () {
 
     /**
