@@ -1483,3 +1483,176 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
 
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'second hello world!!')
+
+
+class StickyEffectTestCase(WirecloudSeleniumTestCase):
+
+    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    tags = ('wiring', 'wiring_editor')
+
+    @classmethod
+    def setUpClass(cls):
+
+        super(StickyEffectTestCase, cls).setUpClass()
+
+        if cls.driver.capabilities['browserName'] == 'firefox' and not cls.driver.profile.native_events_enabled:
+            cls.tearDownClass()
+            raise unittest.SkipTest('Multiconnector tests need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
+
+    def test_wiring_stycky_effect_in_endpoint_label(self):
+        self.login()
+
+        self.add_widget_to_mashup('Test', new_name='Test (1)')
+        iwidgets = self.get_current_iwidgets()
+        self.change_main_view('wiring')
+        time.sleep(2)
+        grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+
+        widget = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
+        ActionChains(self.driver).click_and_hold(widget).move_to_element(grid).move_by_offset(90, -50).release().perform()
+
+        wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
+        menubar = wiring_base_element.find_element_by_css_selector('.menubar')
+        menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
+
+        operator = self.driver.find_element_by_xpath("//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
+        ActionChains(self.driver).click_and_hold(operator).move_to_element(grid).move_by_offset(-220, -120).release().perform()
+
+        ioperator = self.get_current_wiring_editor_ioperators()[0]
+
+        widgetInput = iwidgets[0].get_wiring_endpoint('inputendpoint')
+        widgetOutput = iwidgets[0].get_wiring_endpoint('outputendpoint')
+        operatorInput = ioperator.get_wiring_endpoint('input')
+        operatorOutput = ioperator.get_wiring_endpoint('output')
+
+        # Try to connect using stycky effect in label endpoints
+        ActionChains(self.driver).drag_and_drop(widgetOutput.element, operatorInput.label).perform()
+        ActionChains(self.driver).drag_and_drop(operatorOutput.element, widgetInput.label).perform()
+
+        self.change_main_view('workspace')
+        time.sleep(0.2)
+
+        with iwidgets[0]:
+            text_input = self.driver.find_element_by_tag_name('input')
+            self.fill_form_input(text_input, 'hello world!!')
+            # Work around hang when using Firefox Driver
+            self.driver.execute_script('sendEvent();')
+            #self.driver.find_element_by_id('b1').click()
+            WebDriverWait(self.driver, timeout=2).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, 'hello world!!')
+
+
+class SimpleRecommendationsTestCase(WirecloudSeleniumTestCase):
+
+    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    tags = ('wiring', 'wiring_editor')
+
+    @classmethod
+    def setUpClass(cls):
+
+        super(SimpleRecommendationsTestCase, cls).setUpClass()
+
+        if cls.driver.capabilities['browserName'] == 'firefox' and not cls.driver.profile.native_events_enabled:
+            cls.tearDownClass()
+            raise unittest.SkipTest('Multiconnector tests need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
+
+    def test_wiring_recommendations_basic_mouseon(self):
+        self.login()
+
+        self.add_widget_to_mashup('Test', new_name='Test (1)')
+        self.add_widget_to_mashup('Test', new_name='Test (2)')
+        self.add_widget_to_mashup('Test', new_name='Test (3)')
+
+        iwidgets = self.get_current_iwidgets()
+        self.change_main_view('wiring')
+        time.sleep(2)
+        grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+
+        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -50).release().perform()
+
+        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -120).release().perform()
+
+        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, 40).release().perform()
+
+        target = iwidgets[0].get_wiring_endpoint('inputendpoint')
+        source1 = iwidgets[1].get_wiring_endpoint('outputendpoint')
+        source2 = iwidgets[2].get_wiring_endpoint('outputendpoint')
+        source2b = iwidgets[2].get_wiring_endpoint('inputendpoint')
+
+        # Activate Recommendations mouseon anchors
+        ActionChains(self.driver).move_to_element(source1.element).perform();
+        time.sleep(2)
+        self.assertTrue('highlight' in target.label.get_attribute('class'))
+        self.assertTrue('highlight' in source1.label.get_attribute('class'))
+        self.assertTrue('highlight' in source2b.label.get_attribute('class'))
+        self.assertFalse('highlight' in source2.label.get_attribute('class'))
+
+        # Activate Invert Recommendations mouseon anchors
+        ActionChains(self.driver).move_to_element(target.element).perform();
+        time.sleep(2)
+        self.assertTrue('highlight' in target.label.get_attribute('class'))
+        self.assertTrue('highlight' in source1.label.get_attribute('class'))
+        self.assertTrue('highlight' in source2.label.get_attribute('class'))
+        self.assertFalse('highlight' in source2b.label.get_attribute('class'))
+
+        # Activate Recommendations mouseon labels
+        ActionChains(self.driver).move_to_element(source1.label).perform();
+        time.sleep(2)
+        self.assertTrue('highlight' in target.label.get_attribute('class'))
+        self.assertTrue('highlight' in source1.label.get_attribute('class'))
+        self.assertTrue('highlight' in source2b.label.get_attribute('class'))
+        self.assertFalse('highlight' in source2.label.get_attribute('class'))
+
+        # Activate Invert Recommendations mouseon labels
+        ActionChains(self.driver).move_to_element(target.label).perform();
+        time.sleep(2)
+        self.assertTrue('highlight' in target.label.get_attribute('class'))
+        self.assertTrue('highlight' in source1.label.get_attribute('class'))
+        self.assertTrue('highlight' in source2.label.get_attribute('class'))
+        self.assertFalse('highlight' in source2b.label.get_attribute('class'))
+
+
+    def test_wiring_recommendations_creating_arrows(self):
+        self.login()
+
+        self.add_widget_to_mashup('Test', new_name='Test (1)')
+        self.add_widget_to_mashup('Test', new_name='Test (2)')
+        self.add_widget_to_mashup('Test', new_name='Test (3)')
+
+        iwidgets = self.get_current_iwidgets()
+        self.change_main_view('wiring')
+        time.sleep(2)
+        grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+
+        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(90, -50).release().perform()
+
+        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, -120).release().perform()
+
+        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-220, 40).release().perform()
+
+        target = iwidgets[0].get_wiring_endpoint('inputendpoint')
+        source1 = iwidgets[1].get_wiring_endpoint('outputendpoint')
+        source2 = iwidgets[2].get_wiring_endpoint('outputendpoint')
+        source2b = iwidgets[2].get_wiring_endpoint('inputendpoint')
+
+        # Activate Recommendations while arrow is being created
+        ActionChains(self.driver).click_and_hold(source1.element).move_by_offset(80, 80).perform()
+        self.assertTrue('highlight' in target.label.get_attribute('class'))
+        self.assertTrue('highlight' in source1.label.get_attribute('class'))
+        self.assertTrue('highlight' in source2b.label.get_attribute('class'))
+        self.assertFalse('highlight' in source2.label.get_attribute('class'))
+        ActionChains(self.driver).release().perform()
+
+        # Activate Invert Recommendations while arrow is being created
+        ActionChains(self.driver).click_and_hold(target.element).move_by_offset(80, 80).perform()
+        self.assertTrue('highlight' in target.label.get_attribute('class'))
+        self.assertTrue('highlight' in source1.label.get_attribute('class'))
+        self.assertTrue('highlight' in source2.label.get_attribute('class'))
+        self.assertFalse('highlight' in source2b.label.get_attribute('class'))

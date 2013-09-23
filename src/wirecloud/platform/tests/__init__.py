@@ -16,3 +16,5 @@ build_selenium_test_cases(('wirecloud.platform.wiring.tests.WiringGhostTestCase'
 build_selenium_test_cases(('wirecloud.platform.wiring.tests.EndpointOrderTestCase',), locals())
 build_selenium_test_cases(('wirecloud.platform.wiring.tests.MulticonnectorTestCase',), locals())
 build_selenium_test_cases(('wirecloud.platform.markets.tests.MarketManagementSeleniumTestCase',), locals())
+build_selenium_test_cases(('wirecloud.platform.wiring.tests.SimpleRecommendationsTestCase',), locals())
+build_selenium_test_cases(('wirecloud.platform.wiring.tests.StickyEffectTestCase',), locals())
