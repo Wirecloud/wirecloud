@@ -30,12 +30,12 @@
      */
     var LogManager = function LogManager(iWidget) {
         var globalManager = LogManagerFactory.getInstance();
-        LogManager.call(this, globalManager);
+        Wirecloud.LogManager.call(this, globalManager);
 
         globalManager.childManagers.push(this);
         this.iWidget = iWidget;
     };
-    LogManager.prototype = new LogManager();
+    LogManager.prototype = new Wirecloud.LogManager();
 
     LogManager.prototype.buildExtraInfo = function buildExtraInfo() {
         var extraInfo = document.createElement('div'),

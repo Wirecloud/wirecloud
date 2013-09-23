@@ -212,6 +212,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/Version.js',
             'js/wirecloud/Widget.js',
         ) + STYLED_ELEMENTS_FILES + (
+            'js/wirecloud/LogManager.js',
             'js/wirecloud/Widget/LogManager.js',
             'js/wirecloud/ui/InputInterfaceFactory.js',
             'js/wirecloud/ui/IWidgetMenuItems.js',
