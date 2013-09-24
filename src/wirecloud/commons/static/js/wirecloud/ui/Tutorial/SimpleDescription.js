@@ -31,7 +31,7 @@
      *
      */
     var SimpleDescription = function SimpleDescription(tutorial, options) {
-        var nextLabel, pos, descSize, destroy;
+        var nextLabel, pos, descSize;
 
         this.options = options;
         this.element = options.elem;
@@ -68,15 +68,9 @@
             'text': gettext("cancel"),
         });
         this.cancelButton.insertInto(this.windowBottom);
+        this.cancelButton.addEventListener('click', this._closeListener);
 
         this.layer.appendChild(this.htmlElement);
-
-        destroy = function () {
-            this.tutorial.destroy();
-        }
-
-        // default Handler
-        this.cancelButton.addEventListener('click', destroy.bind(this));
 
         // Position
         pos = document.body.getBoundingClientRect();
@@ -88,6 +82,11 @@
     };
 
     SimpleDescription.prototype = new Wirecloud.ui.WindowMenu();
+
+    SimpleDescription.prototype._closeListener = function _closeListener(e) {
+        Wirecloud.ui.WindowMenu.prototype._closeListener.call(this, e);
+        this.tutorial.destroy();
+    };
 
     /**
      * get style position.
@@ -131,7 +130,7 @@
         }
         this.cancelButton.setLabel(gettext(buttonLabel));
         if (optionalHandler != null) {
-            this.cancelButton.removeEventListener('click', destroy.bind(this));
+            this.cancelButton.removeEventListener('click', this._closeListener);
             this.cancelButton.addEventListener('click', optionalHandler.bind(this));
         }
     };
@@ -196,14 +195,6 @@
         } else {
             _activate.call(this);
         }
-    }
-    /**
-     * Destroy
-     */
-    SimpleDescription.prototype.destroy = function destroy() {
-        this.nextButton.destroy();
-        this.cancelButton.destroy();
-        this.hide();
     };
 
     /*************************************************************************
