@@ -97,7 +97,7 @@
         return layoutManager.currentMenu.htmlElement.getElementsByClassName('btn-primary styled_button')[0];
     };
 
-    Wirecloud.TutorialCatalogue.add(new Wirecloud.ui.Tutorial(gettext('Save & share your mashups'), [
+    Wirecloud.TutorialCatalogue.add('save-mashups', new Wirecloud.ui.Tutorial(gettext('Save & share your mashups'), [
             {'type': 'simpleDescription', 'title': gettext('Upload your Workspace'), 'msg': gettext("<p>You can upload your workspace in your local catalogue</p>"), 'elem': null},
             {'type': 'userAction', 'msg': gettext("Please click here to display the Workspaces menu management."), 'elem': workspaceButton, 'pos': 'downRight'},
             {'type': 'userAction', 'msg': gettext("Click <em>Upload to local catalogue</em>"), 'elem': publishWorkspace_in_popUp, 'pos': 'downRight'},

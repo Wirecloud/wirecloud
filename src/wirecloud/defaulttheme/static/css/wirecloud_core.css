@@ -71,6 +71,10 @@ h3 {
     color: #063;
 }
 
+a {
+    cursor: pointer;
+}
+
 label {
     display: block;
     margin-bottom: 5px;

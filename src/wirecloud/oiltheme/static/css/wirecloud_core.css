@@ -127,6 +127,7 @@ li {
 a {
     color: #002B67;
     text-decoration: none;
+    cursor: pointer;
 }
 
 a:hover {

@@ -188,16 +188,21 @@ function Workspace (workspaceState) {
         this.emptyWorkspaceInfoBox.addClassName('emptyWorkspaceInfoBox');
         var subBox = document.createElement('div');
         subBox.addClassName('alert alert-info alert-block');
+
         // Title
         var pTitle = document.createElement('h4');
         pTitle.textContent = gettext("Hey! Welcome to Wirecloud! This is an empty workspace");
         subBox.appendChild(pTitle);
+
         // Message
         var message = document.createElement('p');
         message.innerHTML = gettext("To create really impressive mashup applications, the first step to take is always to add widgets in this area. To do so, please surf the <strong>Marketplace</strong> the place where resources are all in there, by clicking on the proper button up in the right corner!");
-        this.emptyWorkspaceInfoBox.appendChild(subBox);
         subBox.appendChild(message);
-        this.notebook.wrapperElement.appendChild(this.emptyWorkspaceInfoBox);
+
+        subBox.appendChild(Wirecloud.TutorialCatalogue.buildTutorialReferences(['basic-concepts']));
+
+        this.emptyWorkspaceInfoBox.appendChild(subBox);
+        this.notebook.getTabByIndex(0).wrapperElement.appendChild(this.emptyWorkspaceInfoBox);
         if (this.getIWidgets().length !== 0) {
             this.emptyWorkspaceInfoBox.addClassName('hidden');
         }
