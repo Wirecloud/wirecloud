@@ -100,6 +100,7 @@ STYLED_ELEMENTS_FILES = (
 
 BASE_CSS = (
     'css/base/fade.css',
+    'css/windowmenues/logwindowmenu.css',
 )
 
 WIRING_EDITOR_CSS = (
@@ -254,6 +255,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/ui/MissingDependenciesWindowMenu.js',
                 'js/wirecloud/ui/InstantiateMashupWindowMenu.js',
                 'js/wirecloud/ui/FormWindowMenu.js',
+                'js/wirecloud/ui/LogWindowMenu.js',
                 'js/wirecloud/ui/MessageWindowMenu.js',
                 'js/wirecloud/ui/NewWorkspaceWindowMenu.js',
                 'js/wirecloud/ui/ParametrizeWindowMenu.js',

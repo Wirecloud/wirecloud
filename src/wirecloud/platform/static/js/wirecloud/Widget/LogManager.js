@@ -59,8 +59,8 @@
         var title;
 
         if (this.iWidget) {
-            title = gettext('iWidget #%(iWidgetId)s Logs');
-            title = interpolate(title, {iWidgetId: this.iWidget.id}, true);
+            title = gettext('%(iwidget_name)s\'s logs');
+            title = interpolate(title, {iwidget_name: this.iWidget.name}, true);
             return title;
         } else {
             return this.title;

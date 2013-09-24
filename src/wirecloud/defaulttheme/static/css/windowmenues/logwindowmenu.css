@@ -1,0 +1,12 @@
+.window_menu.logwindowmenu > .window_content {
+    height: 400px;
+}
+
+.window_menu.logwindowmenu > .window_content > .alert > strong {
+    font-size: 85%;
+    margin-right: 2ex;
+}
+
+.window_menu.logwindowmenu > .window_content > .alert {
+    margin-bottom: 10px;
+}

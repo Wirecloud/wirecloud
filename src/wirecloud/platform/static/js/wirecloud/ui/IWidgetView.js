@@ -46,12 +46,14 @@
             'errorbutton': function () {
                 var button = new StyledElements.StyledButton({
                     'plain': true,
-                    'class': 'errorbutton'
+                    'class': 'errorbutton icon-warning-sign'
                 });
                 button.addEventListener("click",
                     function (button) {
-                        OpManagerFactory.getInstance().showLogs(iwidget.logManager);
+                        var dialog = new Wirecloud.ui.LogWindowMenu(this.logManager);
+                        dialog.show();
                     }.bind(this));
+                button.disable();
 
                 tmp.errorbutton = button;
                 return button;

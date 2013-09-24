@@ -9,6 +9,10 @@
     background-color: #000;
 }
 
+.disabled_background.in {
+    opacity: 0.8;
+}
+
 .window_menu {
     background: #E4E6E2;
     border-radius: 16px;

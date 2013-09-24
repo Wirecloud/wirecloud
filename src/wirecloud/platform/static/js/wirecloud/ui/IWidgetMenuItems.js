@@ -56,6 +56,14 @@
         items.push(item);
 
         items.push(new StyledElements.MenuItem(
+            gettext("Logs"),
+            function () {
+                var dialog = new Wirecloud.ui.LogWindowMenu(this.logManager);
+                dialog.show();
+            }.bind(this.iWidget.internal_iwidget)
+        ));
+
+        items.push(new StyledElements.MenuItem(
             gettext("Reload"),
             function () {
                 try {

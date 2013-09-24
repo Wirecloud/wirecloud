@@ -22,7 +22,7 @@
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
 /*global $, CSSPrimitiveValue, Event, Insertion, document, gettext, ngettext, interpolate, window */
 /*global Constants, DropDownMenu, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud*/
-/*global isElement, IWidgetLogManager, DragboardPosition*/
+/*global isElement, DragboardPosition*/
 /*global IWidgetDraggable, IWidgetIconDraggable, FreeLayout, FullDragboardLayout*/
 /*global ColorDropDownMenu*/
 
@@ -93,6 +93,8 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
             readOnly: readOnly
         }
     );
+    this._updateErrorInfo.bind(this);
+    this.internal_iwidget.logManager.addEventListener('newentry', this._updateErrorInfo.bind(this));
     Object.defineProperties(this, {
         'id': {get: function () {return this.internal_iwidget.id;}},
         'widget': {get: function () {return this.internal_iwidget.widget;}},
@@ -981,9 +983,9 @@ IWidget.prototype.toggleMinimizeStatus = function (persistence) {
 /**
  * @private
  */
-IWidget.prototype._updateErrorInfo = function () {
+IWidget.prototype._updateErrorInfo = function _updateErrorInfo() {
     var label, errorCount = this.internal_iwidget.logManager.getErrorCount();
-    this.errorButton.setDisabled(errorCount == 0);
+    this.errorButton.setDisabled(errorCount === 0);
 
     label = ngettext("%(errorCount)s error", "%(errorCount)s errors", errorCount);
     label = interpolate(label, {errorCount: errorCount}, true);
@@ -997,9 +999,6 @@ IWidget.prototype.log = function (msg, level) {
     level = level != null ? level : Constants.Logging.ERROR_MSG;
 
     this.internal_iwidget.logManager.log(msg, level);
-    if (this.isVisible()) {
-        this._updateErrorInfo();
-    }
 };
 
 IWidget.prototype.highlight = function () {

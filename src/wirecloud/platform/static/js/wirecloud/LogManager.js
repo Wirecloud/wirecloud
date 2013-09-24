@@ -33,51 +33,16 @@
         this.entries = [];
         this.childManagers = [];
         this.closed = false;
+
+        StyledElements.ObjectWithEvents.call(this, ['newentry']);
     };
-
-    LogManager.prototype._printEntry = function _printEntry(entry) {
-        var dateElement, icon, wrapper, clearer, logentry;
-
-        wrapper = document.createElement("div");
-        wrapper.className = "entry";
-        icon = document.createElement("div");
-        wrapper.appendChild(icon);
-
-        switch (entry.level) {
-        case Constants.Logging.ERROR_MSG:
-            icon.className += " icon icon-error";
-            break;
-        case Constants.Logging.WARN_MSG:
-            icon.className += " icon icon-warning";
-            break;
-        case Constants.Logging.INFO_MSG:
-            icon.className += " icon icon-info";
-            break;
-        }
-
-        if (entry.logManager !== this) {
-            wrapper.appendChild(entry.logManager.buildExtraInfo());
-        }
-
-        dateElement = document.createElement('b');
-        dateElement.textContent = entry.date.strftime('%x %X');//_('short_date')));
-        wrapper.appendChild(dateElement);
-
-        logentry = document.createElement("p");
-        logentry.innerHTML = entry.msg;
-        wrapper.appendChild(logentry);
-
-        clearer = document.createElement('div');
-        clearer.addClassName('floatclearer');
-        wrapper.appendChild(clearer);
-
-        this.wrapperElement.insertBefore(wrapper, this.wrapperElement.firstChild);
-    };
+    LogManager.prototype = new StyledElements.ObjectWithEvents();
 
     LogManager.prototype._addEntry = function _addEntry(entry) {
 
+        Object.freeze(entry);
+
         this.entries.push(entry);
-        this._printEntry(entry);
         if (entry.level === Constants.Logging.ERROR_MSG) {
             this.errorCount += 1;
         }
@@ -86,6 +51,8 @@
         if (this.parentLogger) {
             this.parentLogger._addEntry(entry);
         }
+
+        this.events.newentry.dispatch(this, entry);
     };
 
     LogManager.prototype.newCycle = function newCycle() {
@@ -190,16 +157,6 @@
             } else {
                 this.childManagers[i].reset();
             }
-        }
-    };
-
-    LogManager.prototype.repaint = function repaint() {
-        var i;
-
-        this.wrapperElement.innerHTML = "";
-
-        for (i = 0; i < this.entries.length; i += 1) {
-            this._printEntry(this.entries[i]);
         }
     };
 
