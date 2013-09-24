@@ -226,6 +226,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/log/LogManager.js',
             'js/wirecloud/LocalCatalogue.js',
             'js/wirecloud/wiring/Endpoint.js',
+            'js/wirecloud/wiring/EndpointException.js',
             'js/wirecloud/wiring/SourceEndpoint.js',
             'js/wirecloud/wiring/TargetEndpoint.js',
             'js/wirecloud/wiring/OperatorFactory.js',

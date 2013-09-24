@@ -42,6 +42,37 @@ setTimeout(function () {
         document.getElementById('widget_log_test').innerHTML = OK_HTML;
     };
 
+    document.getElementById('check_endpoint_exceptions_button').onclick = function () {
+        var success_count = 0;
+        try {
+            MashupPlatform.wiring.pushEvent('nonexistent', '');
+        } catch (error) {
+            if (error instanceof MashupPlatform.wiring.EndpointException) {
+                success_count += 1;
+            }
+        }
+
+        try {
+            MashupPlatform.wiring.getReachableEndpoints('nonexistent');
+        } catch (error) {
+            if (error instanceof MashupPlatform.wiring.EndpointException) {
+                success_count += 1;
+            }
+        }
+
+        try {
+            MashupPlatform.wiring.registerCallback('nonexistent', function () {});
+        } catch (error) {
+            if (error instanceof MashupPlatform.wiring.EndpointException) {
+                success_count += 1;
+            }
+        }
+
+        if (success_count === 3) {
+            document.getElementById('endpoint_exceptions_test').innerHTML = OK_HTML;
+        }
+    };
+
     var input = document.getElementById('update_prop_input');
     var variable = MashupPlatform.widget.getVariable('prop');
     input.value = variable.get();

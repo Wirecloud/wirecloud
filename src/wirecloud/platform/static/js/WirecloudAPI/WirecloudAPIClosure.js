@@ -19,11 +19,16 @@
  *
  */
 
+/*global MashupPlatform*/
+
 (function () {
 
     "use strict";
 
-    Object.preventExtensions(window.MashupPlatform);
+    // Remove reference to the internal wirecloud resource
+    delete MashupPlatform.resource;
+
+    Object.preventExtensions(MashupPlatform);
 
     // Remove link to wirecloud
     window.parent = window;

@@ -19,6 +19,8 @@
  *
  */
 
+/*global MashupPlatform*/
+
 (function () {
 
     "use strict";
@@ -56,52 +58,14 @@
     // API declaration
     Object.defineProperty(window, 'MashupPlatform', {value: {}});
 
-    // Platform context module
-    Object.defineProperty(window.MashupPlatform, 'context', {value: {}});
-    Object.defineProperty(window.MashupPlatform.context, 'getAvailableContext', {
-        value: function getAvailableContext(callback) {
-            return platform.opManager.contextManager.getAvailableContext();
-        }
-    });
-    Object.defineProperty(window.MashupPlatform.context, 'get', {
-        value: function get(name) {
-            return platform.opManager.contextManager.get(name);
-        }
-    });
-    Object.defineProperty(window.MashupPlatform.context, 'registerCallback', {
-        value: function registerCallback(callback) {
-            iwidget.registerContextAPICallback('platform', callback);
-        }
-    });
-    Object.preventExtensions(window.MashupPlatform.context);
+    // Temporal reference to the resource (in this case a widget) so other API files can make use of it. This attribute is removed in WirecloudAPIClosure.js
+    MashupPlatform.resource = iwidget;
 
     // HTTP module
     Object.defineProperty(window.MashupPlatform, 'http', {value: {}});
     Object.defineProperty(window.MashupPlatform.http, 'buildProxyURL', {value: platform.Wirecloud.io.buildProxyURL});
     Object.defineProperty(window.MashupPlatform.http, 'makeRequest', {value: platform.Wirecloud.io.makeRequest});
     Object.preventExtensions(window.MashupPlatform.http);
-
-    // Mashup module
-    Object.defineProperty(window.MashupPlatform, 'mashup', {value: {}});
-    Object.defineProperty(window.MashupPlatform.mashup, 'context', {value: {}});
-    Object.defineProperty(window.MashupPlatform.mashup.context, 'getAvailableContext', {
-        value: function getAvailableContext(callback) {
-            return platform.opManager.activeWorkspace.contextManager.getAvailableContext();
-        }
-    });
-    Object.defineProperty(window.MashupPlatform.mashup.context, 'get', {
-        value: function get(name) {
-            return platform.opManager.activeWorkspace.contextManager.get(name);
-        }
-    });
-    Object.defineProperty(window.MashupPlatform.mashup.context, 'registerCallback', {
-        value: function registerCallback(callback) {
-            iwidget.registerContextAPICallback('mashup', callback);
-        }
-    });
-    Object.preventExtensions(window.MashupPlatform.mashup.context);
-
-    Object.preventExtensions(window.MashupPlatform.mashup);
 
     // Widget module
     Object.defineProperty(window.MashupPlatform, 'widget', {value: {}});
@@ -118,7 +82,7 @@
     Object.defineProperty(window.MashupPlatform.widget, 'context', {value: {}});
     Object.defineProperty(window.MashupPlatform.widget, 'log', {
         value: function log(msg, level) {
-	        platform.OpManagerFactory.getInstance().logIWidgetError(id, msg, level);
+            iwidget.logManager.log(msg, level);
         }
     });
     Object.defineProperty(window.MashupPlatform.widget.context, 'getAvailableContext', {
@@ -160,24 +124,5 @@
         }
     });
     Object.preventExtensions(window.MashupPlatform.prefs);
-
-    // Wiring Module
-    Object.defineProperty(window.MashupPlatform, 'wiring', {value: {}});
-    Object.defineProperty(window.MashupPlatform.wiring, 'registerCallback', {
-        value: function registerCallback(inputName, callback) {
-            platform.opManager.activeWorkspace.wiring.registerCallback(id, inputName, callback);
-        }
-    });
-    Object.defineProperty(window.MashupPlatform.wiring, 'pushEvent', {
-        value: function pushEvent(outputName, data, options) {
-            platform.opManager.activeWorkspace.wiring.pushEvent(id, outputName, data, options);
-        }
-    });
-    Object.defineProperty(window.MashupPlatform.wiring, 'getReachableEndpoints', {
-        value: function getReachableEndpoints(outputName) {
-            return platform.opManager.activeWorkspace.wiring.getReachableEndpoints(id, outputName);
-        }
-    });
-    Object.preventExtensions(window.MashupPlatform.wiring);
 
 })();
