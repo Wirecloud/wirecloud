@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, interpolate, LogManagerFactory, OpManagerFactory, Wirecloud*/
+/*global gettext, interpolate, Wirecloud*/
 
 (function () {
 
@@ -61,17 +61,8 @@
         }
     };
 
-    LogManager.prototype.buildSubTitle = function buildSubTitle() {
-        if (this.iWidget) {
-            return this.iWidget.name;
-        } else {
-            return this.subtitle;
-        }
-    };
-
     LogManager.prototype.close = function close() {
         this.title = this.buildTitle();
-        this.subtitle = this.buildSubTitle();
         this.iWidget = null;
     };
 

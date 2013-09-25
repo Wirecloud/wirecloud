@@ -70,7 +70,7 @@
             isGhost = false;
         }
 
-        Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, this.iwidget.name, manager, 'iwidget', isGhost);
+        Wirecloud.ui.WiringEditor.GenericInterface.call(this, false, wiringEditor, iwidget, this.iwidget.name, manager, 'iwidget', isGhost);
         if (!isMenubarRef) {
 
             // Sort

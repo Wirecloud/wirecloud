@@ -27,19 +27,33 @@
     "use strict";
 
     /*************************************************************************
+     * Private functions
+     *************************************************************************/
+
+    var updateErrorInfo = function updateErrorInfo() {
+        var label, errorCount = this.entity.logManager.getErrorCount();
+        this.log_button.setDisabled(errorCount === 0);
+
+        label = ngettext("%(errorCount)s error", "%(errorCount)s errors", errorCount);
+        label = interpolate(label, {errorCount: errorCount}, true);
+        this.log_button.setTitle(label);
+    };
+
+    /*************************************************************************
      * Constructor
      *************************************************************************/
     /**
      * GenericInterface Class
      */
-    var GenericInterface = function GenericInterface(extending, wiringEditor, title, manager, className, isGhost) {
+    var GenericInterface = function GenericInterface(extending, wiringEditor, entity, title, manager, className, isGhost) {
         if (extending === true) {
             return;
         }
-        var del_button, item, type, msg, ghostNotification;
+        var del_button, log_button, item, type, msg, ghostNotification;
 
         StyledElements.Container.call(this, {'class': className}, []);
 
+        Object.defineProperty(this, 'entity', {value: entity});
         this.editingPos = false;
         this.targetAnchorsByName = {};
         this.sourceAnchorsByName = {};
@@ -123,6 +137,20 @@
                     this.wiringEditor.removeIOperator(this);
                 }
             }.bind(this));
+
+            // Log button
+            this.log_button = new StyledElements.StyledButton({
+                'plain': true,
+                'class': 'logbutton icon-warning-sign'
+            });
+            this.log_button.addEventListener("click",
+                function () {
+                    var dialog = new Wirecloud.ui.LogWindowMenu(this.entity.logManager);
+                    dialog.show();
+                }.bind(this));
+            updateErrorInfo.call(this);
+            this.entity.logManager.addEventListener('newentry', updateErrorInfo.bind(this));
+            this.log_button.insertInto(this.header);
 
             // special icon for minimized interface
             this.iconAux = document.createElement("div");

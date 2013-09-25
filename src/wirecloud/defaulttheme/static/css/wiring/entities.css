@@ -118,6 +118,18 @@
     color: rgb(83, 83, 134);
 }
 
+/* log button */
+.wiring_editor .grid .header > .logbutton {
+    font-family: FontAwesome;
+    float: right;
+    font-size: 15px;
+    color: rgb(83, 83, 134);
+}
+
+.wiring_editor .grid .header > .logbutton.disabled {
+    visibility: hidden;
+}
+
 /* anchorDivs */
 .wiring_editor .grid .geContainer .anchorDiv {
     white-space: nowrap;
