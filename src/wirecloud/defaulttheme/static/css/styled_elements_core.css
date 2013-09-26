@@ -318,6 +318,8 @@ div.styled_numeric_field div.numeric_bottom_button {
 .notebook > div > .wrapper > div.hidden {
   visibility: hidden;
   height: 0px;
+  padding: 0px;
+  overflow: hidden;
 }
 
 .notebook .disable-layer {
@@ -373,8 +375,10 @@ div.styled_numeric_field div.numeric_bottom_button {
 
 .hidden > .alternatives > .wrapper > div,
 .alternatives > .wrapper > div.hidden {
-  visibility: hidden;
-  height: 0;
+    visibility: hidden;
+    height: 0;
+    padding: 0;
+    overflow: hidden;
 }
 
 /* Styled alert */
