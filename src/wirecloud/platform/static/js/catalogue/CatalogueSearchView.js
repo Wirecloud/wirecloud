@@ -27,7 +27,7 @@
     var CatalogueSearchView = function CatalogueSearchView(id, options) {
         var builder, context, extra_context, resource_template;
 
-        options['class'] = 'search_interface';
+        options['class'] = 'search_interface loading';
         this.catalogue = options.catalogue;
         StyledElements.Alternative.call(this, id, options);
 
