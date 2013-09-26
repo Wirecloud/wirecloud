@@ -401,12 +401,12 @@ StyledElements.Container.prototype.setDisabled = function(disabled) {
         this.disabledLayer.appendChild(this.disabled_icon);
 
         this.wrapperElement.appendChild(this.disabledLayer);
-        this.wrapperElement.addClassName('disabled');
+        this.wrapperElement.classList.add('disabled');
         this.disabledLayer.style.height = this.wrapperElement.scrollHeight + 'px';
         this.disabledLayer.style.lineHeight = this.wrapperElement.clientHeight + 'px';
     } else {
-        this.wrapperElement.removeClassName('disabled');
-        EzWebExt.removeFromParent(this.disabledLayer);
+        this.wrapperElement.classList.remove('disabled');
+        this.disabledLayer.parentNode.removeChild(this.disabledLayer);
         this.disabledLayer = null;
         this.disable_icon = null;
     }
