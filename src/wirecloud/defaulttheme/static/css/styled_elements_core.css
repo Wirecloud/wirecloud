@@ -29,6 +29,8 @@ div.container > .disable-layer {
     right: 0;
     width: 100%;
     height: 100%;
+    padding: 0px;
+    margin: 0px;
     z-index: 111111;
     background: transparent;
 }
