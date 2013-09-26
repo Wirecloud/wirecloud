@@ -35,28 +35,6 @@
         autoAction.nextHandler();
     };
 
-    var install_flickr = function install_flickr(autoAction) {
-        if (!Wirecloud.LocalCatalogue.resourceExistsId('CoNWeT/flickr/2.7')) {
-            Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/CoNWeT_flickr_2.7.wgt'), {
-                packaged: true,
-                onSuccess: autoAction.nextHandler.bind(autoAction)
-            });
-        } else {
-            autoAction.nextHandler();
-        }
-    };
-
-    var install_multimediaViewer = function install_multimediaViewer(autoAction) {
-        if (!Wirecloud.LocalCatalogue.resourceExistsId('CoNWeT/multimedia-viewer/1.0.1')) {
-            Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/CoNWeT_multimedia-viewer_1.0.1.wgt'), {
-                packaged: true,
-                onSuccess: autoAction.nextHandler.bind(autoAction)
-            });
-        } else {
-            autoAction.nextHandler();
-        }
-    };
-
     var install_input_box = function install_input_box(autoAction) {
         if (!Wirecloud.LocalCatalogue.resourceExistsId('CoNWeT/input-box/1.0')) {
             Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/CoNWeT_input-box_1.0.wgt'), {
@@ -282,8 +260,6 @@
             {'type': 'autoAction', 'action': reset_marketplace_view},
             {'type': 'userAction', 'msg': gettext("Click <em>Marketplace</em>"), 'elem': main_view_button.bind(null, 'marketplace'), 'pos': 'downLeft'},
             {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext('<p>This is the <em>Marketplace</em> view. In this view you can browse the <em>Mashable Application Components</em> (<em>Widgets, operators</em> and <em>mashups</em>) that are currently available to you. Also, you can browse external catalogues too.</p><div class="alert alert-info"><p>In next steps we need some widgets, so we are going to install them for you in the catalogue. You can safetly uninstall these widgets after finishing the tutorial.</p></div>'), 'elem': null},
-            {'type': 'autoAction', 'action': install_flickr},
-            {'type': 'autoAction', 'action': install_multimediaViewer},
             {'type': 'autoAction', 'action': install_input_box},
             {'type': 'autoAction', 'action': install_youtubeSearch},
             {'type': 'autoAction', 'action': refreshMarketplace},
