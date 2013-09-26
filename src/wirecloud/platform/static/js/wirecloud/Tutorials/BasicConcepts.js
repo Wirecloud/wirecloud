@@ -46,9 +46,9 @@
         }
     };
 
-    var install_youtubeSearch = function install_youtubeSearch(autoAction) {
-        if (!Wirecloud.LocalCatalogue.resourceExistsId('CoNWeT/youtube-video-search/2.45.0')) {
-            Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/CoNWeT_youtube-video-search_2.45.0.wgt'), {
+    var install_youtubebrowser = function install_youtubebrowser(autoAction) {
+        if (!Wirecloud.LocalCatalogue.resourceExistsId('CoNWeT/youtube-browser/2.99.0')) {
+            Wirecloud.LocalCatalogue.addResourceFromURL(build_static_url('tutorial-data/CoNWeT_youtube-browser_2.99.0.wgt'), {
                 packaged: true,
                 onSuccess: autoAction.nextHandler.bind(autoAction)
             });
@@ -86,13 +86,14 @@
         setTimeout(function() {elem.value += 'b'}, 2500);
         setTimeout(function() {elem.value += 'e'}, 2800);
         setTimeout(function() {elem.value += ' '}, 3100);
-        setTimeout(function() {elem.value += 's'}, 3400);
-        setTimeout(function() {elem.value += 'e'}, 3700);
-        setTimeout(function() {elem.value += 'a'}, 4000);
-        setTimeout(function() {elem.value += 'r'}, 4300);
-        setTimeout(function() {elem.value += 'c'}, 4600);
+        setTimeout(function() {elem.value += 'b'}, 3400);
+        setTimeout(function() {elem.value += 'r'}, 3700);
+        setTimeout(function() {elem.value += 'o'}, 4000);
+        setTimeout(function() {elem.value += 'w'}, 4300);
+        setTimeout(function() {elem.value += 's'}, 4500);
+        setTimeout(function() {elem.value += 'e'}, 4700);
         setTimeout(function() {
-            elem.value += 'h';
+            elem.value += 'r';
             LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local.viewsByName.search._onSearchInput();
         }, 4900);
         setTimeout(function() {autoAction.nextHandler();}, 6500);
@@ -144,7 +145,7 @@
         var resources, widget, element;
 
         resources = LayoutManagerFactory.getInstance().viewsByName.marketplace.alternatives.getCurrentAlternative().viewsByName.search.wrapperElement.getElementsByClassName('resource_name');
-        widget = findElementByTextContent(resources, "YouTube Video Search");
+        widget = findElementByTextContent(resources, "YouTube Browser");
         element = widget.parentNode.getElementsByClassName("mainbutton")[0];
         //element.scrollIntoView();
 
@@ -261,9 +262,9 @@
             {'type': 'userAction', 'msg': gettext("Click <em>Marketplace</em>"), 'elem': main_view_button.bind(null, 'marketplace'), 'pos': 'downLeft'},
             {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext('<p>This is the <em>Marketplace</em> view. In this view you can browse the <em>Mashable Application Components</em> (<em>Widgets, operators</em> and <em>mashups</em>) that are currently available to you. Also, you can browse external catalogues too.</p><div class="alert alert-info"><p>In next steps we need some widgets, so we are going to install them for you in the catalogue. You can safetly uninstall these widgets after finishing the tutorial.</p></div>'), 'elem': null},
             {'type': 'autoAction', 'action': install_input_box},
-            {'type': 'autoAction', 'action': install_youtubeSearch},
+            {'type': 'autoAction', 'action': install_youtubebrowser},
             {'type': 'autoAction', 'action': refreshMarketplace},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>Ok, widgets have been installed successfuly and you can find them in your local catalogue.</p><p>Next step is to add the <em>YouTube Video Search</em> widget to the workspace. You can directly select the widget or, alternatively, you can reduce the list using the keyword search feature.</p>"), 'elem': null},
+            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>Ok, widgets have been installed successfuly and you can find them in your local catalogue.</p><p>Next step is to add the <em>YouTube Browser</em> widget to the workspace. You can directly select the widget or, alternatively, you can reduce the list using the keyword search feature.</p>"), 'elem': null},
             {'type': 'autoAction', 'msg': gettext('Typing "youtube search" we can filter widgets that contains in their name or description these words'), 'elem': searchInputMarketplace, 'pos': 'downRight', 'action': searchAction},
             {'type': 'userAction', 'msg': gettext("Once you have the results, you can add the widget. So click <em>Add to workspace</em>"), 'elem': addbuttonYoutubeSearch, 'pos': 'downRight'},
             {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p><span class=\"label label-success\">Great!</span> That was easy, wasn't it?.</p><p>Let's continue adding the <em>Input Box</em> widget.</p>"), 'elem': null},
@@ -297,8 +298,8 @@
 
             // WiringEditor
             {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>This is the <em>Wiring</em> view.</p><p>Here you can wire widgets and operators together turning your workspace into and <em>application mashup</em>.</p>"), 'elem': null},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>In left menu you can find all the widgets that have been added into your workspace. In our example these widgets will be the <em>YouTube Video Search</em> and the <em>Input Box</em> (It will be listed using the new name given in previous step).</p><p>You can also find <em>operators</em>. These components can act as source, transformators or data targets and a combination of these behaviours.</p>"), 'elem': get_menubar},
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>In the next steps, we are going to connect the <em>Input Box</em> and <em>YouTube Video Search</em> widgets together. This will allow you to perform searches in the <em>YouTube Video Search</em> through the <em>Input Box</em> widget.</p>"), 'elem': get_menubar},
+            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>In left menu you can find all the widgets that have been added into your workspace. In our example these widgets will be the <em>YouTube Browser</em> and the <em>Input Box</em> (It will be listed using the new name given in previous step).</p><p>You can also find <em>operators</em>. These components can act as source, transformators or data targets and a combination of these behaviours.</p>"), 'elem': get_menubar},
+            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>In the next steps, we are going to connect the <em>Input Box</em> and <em>YouTube Browser</em> widgets together. This will allow you to perform searches in the <em>YouTube Browser</em> through the <em>Input Box</em> widget.</p>"), 'elem': get_menubar},
 
             {'type': 'userAction', 'msg': gettext("Drag &amp; drop <em>Search Box</em>"), 'elem': get_mini_widget.bind(null, 1), 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown', 'elemToApplyNextStepEvent': getDocument},
             {'type': 'userAction', 'msg': gettext("Drag &amp; drop <em>Youtube Video Search</em>"), 'elem': get_mini_widget.bind(null, 0), 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown', 'elemToApplyNextStepEvent': getDocument},
@@ -312,14 +313,14 @@
                     {'element': get_wiring_canvas, 'event': 'arrowadded'}
                 ],
                 'disableElems': [wirecloud_header, get_menubar],
-                'nextStepMsg': gettext("... to <em>YouTube Video Search</em>'s <em>keyword</em> endpoint"),
+                'nextStepMsg': gettext("... to <em>YouTube Browser</em>'s <em>keyword</em> endpoint"),
                 'elemToApplyNextStepEvent': get_endpoint.bind(null, 0, 'keyword'), 'event': 'mouseup', 'second_pos': 'downLeft',
             },
             {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("Now it's time to test our creation.")},
             {'type': 'userAction', 'msg': gettext("Click <em>Editor</em>"), 'elem': main_view_button.bind(null, 'workspace'), 'pos': 'downLeft'},
             {'type': 'userAction', 'msg': gettext("Enter a search keyword and press Enter"), 'elem': input_box_input, 'pos': 'downLeft', 'event': 'keypress', 'eventFilterFunction': enter_keypress},
 
-            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext('<p><span class="label label-success">Congratulations!</span> you have finished your first <em>application mashup</em>.</p><p>As you can see, the <em>YouTube Video Search</em> widget has been updated successfuly.</p>'), 'elem': widget.bind(null, 0)},
+            {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext('<p><span class="label label-success">Congratulations!</span> you have finished your first <em>application mashup</em>.</p><p>As you can see, the <em>YouTube Browser</em> widget has been updated successfuly.</p>'), 'elem': widget.bind(null, 0)},
             {'type': 'autoAction', 'action': deploy_tutorial_menu},
             {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext('<p>This is the end of this tutorial. Remember that you can always go to the Tutorial menu for others.</p>'), 'elem': get_menu_item.bind(null, 'Tutorials')},
     ]));
