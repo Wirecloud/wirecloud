@@ -8,16 +8,16 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
 
         # Changing field 'VariableDef.action_label'
-        db.alter_column('wirecloud_variabledef', 'action_label', self.gf('django.db.models.fields.CharField')(max_length=50))
+        db.alter_column('wirecloud_variabledef', 'action_label', self.gf('django.db.models.fields.CharField')(max_length=50, default=''))
 
         # Changing field 'VariableDef.label'
-        db.alter_column('wirecloud_variabledef', 'label', self.gf('django.db.models.fields.CharField')(max_length=150))
+        db.alter_column('wirecloud_variabledef', 'label', self.gf('django.db.models.fields.CharField')(max_length=150, default=''))
 
         # Changing field 'VariableDef.friend_code'
-        db.alter_column('wirecloud_variabledef', 'friend_code', self.gf('django.db.models.fields.CharField')(max_length=30))
+        db.alter_column('wirecloud_variabledef', 'friend_code', self.gf('django.db.models.fields.CharField')(max_length=30, default=''))
 
         # Changing field 'VariableDef.description'
-        db.alter_column('wirecloud_variabledef', 'description', self.gf('django.db.models.fields.CharField')(max_length=250))
+        db.alter_column('wirecloud_variabledef', 'description', self.gf('django.db.models.fields.CharField')(max_length=250, default=''))
 
     def backwards(self, orm):
 
