@@ -175,12 +175,14 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
             self.assertEqual(api_test_iwidget.error_count, 0)
             old_log_entries = len(api_test_iwidget.log_entries)
-            self.driver.find_element_by_css_selector('#check_logs_button').click()
+            # Work around some firefox driver bugs
+            self.driver.execute_script('arguments[0].click()', self.driver.find_element_by_css_selector('#check_logs_button'))
             WebDriverWait(self.driver, timeout=2).until(lambda driver: driver.find_element_by_id('widget_log_test').text == 'Success!!')
             self.assertEqual(api_test_iwidget.error_count, 2)
             self.assertEqual(len(api_test_iwidget.log_entries), old_log_entries + 4)
 
-            self.driver.find_element_by_css_selector('#check_endpoint_exceptions_button').click()
+            # Work around some firefox driver bugs
+            self.driver.execute_script('arguments[0].click()', self.driver.find_element_by_css_selector('#check_endpoint_exceptions_button'))
             WebDriverWait(self.driver, timeout=2).until(lambda driver: driver.find_element_by_id('endpoint_exceptions_test').text == 'Success!!')
             self.assertEqual(api_test_iwidget.error_count, 5)
             self.assertEqual(len(api_test_iwidget.log_entries), old_log_entries + 7)
