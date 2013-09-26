@@ -14,19 +14,36 @@
 /* Styled container */
 
 div.container {
-  background: transparent;
+    background: transparent;
 }
 
-div.container .disable-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  bottom: 0;
-  right: 0;
-  opacity: 0.4;
-  z-index: 1111111;
+div.container.loading.disabled {
+    opacity: 1;
+}
+
+div.container > .disable-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 111111;
+    background: transparent;
+}
+
+div.container.loading > .disable-layer {
+    background: rgba(255, 255, 255, 0.40);
+}
+
+div.container > .disable-layer > i {
+    display: none;
+    font-size: 40pt;
+}
+
+div.container.loading > .disable-layer > i {
+    display: inline-block;
 }
 
 /* Styled Select */
@@ -407,17 +424,6 @@ div.styled_numeric_field div.numeric_bottom_button {
 }
 
 /* Popup menu */
-
-.disable-layer {
-  position: absolute;
-  z-index: 111111;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
 
 .model_table .headrow .cell, .model_table .tbody .cell {
     white-space: nowrap;

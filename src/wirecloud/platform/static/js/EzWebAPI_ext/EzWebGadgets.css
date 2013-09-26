@@ -21,16 +21,6 @@ html {
   height: 100%;
 }
 
-div.loading {
-  background: white url(images/loading.gif) no-repeat center center;
-  position:   absolute;
-  top:        0px;
-  left:       0px;
-  right:      0px;
-  bottom:     0px;
-  z-index:    100000;
-}
-
 div {
   margin: 0;
   padding: 0;
@@ -50,37 +40,12 @@ div.buttons {
     visibility: hidden;
 }
 
-.disabled {
-    opacity: 0.4;
-    filter: alpha(opacity=40);
-}
-
 p {
   margin: 0.5em 3px;
 }
 /*****************************************************************************/
 /*                              StyledElements                               */
 /*****************************************************************************/
-
-/* Styled container */
-
-div.container {
-  background: transparent;
-}
-
-div.container .disable-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  bottom: 0;
-  right: 0;
-  background: #E0E0E0;
-  opacity: 0.4;
-  filter: alpha(opacity=40);
-  z-index: 1111111;
-}
 
 /* Styled List */
 
@@ -345,17 +310,6 @@ div.styled_numeric_field div.numeric_bottom_button {
 
 .popup_menu .menu_item {
   cursor:hand; cursor: pointer;
-}
-
-.disable-layer {
-  position: absolute;
-  z-index: 111111;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
 }
 
 .model_table .headrow .cell, .model_table .tbody .cell {

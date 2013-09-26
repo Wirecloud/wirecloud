@@ -361,6 +361,7 @@ StyledElements.Container.prototype.repaint = function(temporal) {
 
     if (this.disabledLayer != null) {
         this.disabledLayer.style.height = this.wrapperElement.scrollHeight + 'px';
+        this.disabledLayer.style.lineHeight = this.wrapperElement.clientHeight + 'px';
     }
 }
 
@@ -370,8 +371,9 @@ StyledElements.Container.prototype.repaint = function(temporal) {
 StyledElements.Container.prototype.clear = function() {
     this.childs = new Array();
     this.wrapperElement.innerHTML = "";
-    if (this.disabledLayer != null)
+    if (this.disabledLayer != null) {
         this.wrapperElement.appendChild(this.disabledLayer);
+    }
 }
 
 /**
@@ -392,14 +394,21 @@ StyledElements.Container.prototype.setDisabled = function(disabled) {
 
     if (disabled) {
         this.disabledLayer = document.createElement('div');
-        this.disabledLayer.classList.add('disable-layer');
+        this.disabledLayer.className = 'disable-layer';
+
+        this.disabled_icon = document.createElement('i');
+        this.disabled_icon.className = 'disable-icon icon-spin icon-spinner';
+        this.disabledLayer.appendChild(this.disabled_icon);
+
         this.wrapperElement.appendChild(this.disabledLayer);
         this.wrapperElement.addClassName('disabled');
         this.disabledLayer.style.height = this.wrapperElement.scrollHeight + 'px';
+        this.disabledLayer.style.lineHeight = this.wrapperElement.clientHeight + 'px';
     } else {
         this.wrapperElement.removeClassName('disabled');
         EzWebExt.removeFromParent(this.disabledLayer);
         this.disabledLayer = null;
+        this.disable_icon = null;
     }
     this.enabled = !disabled;
 }
