@@ -67,7 +67,7 @@ TUTORIAL_FILES = (
 STYLED_ELEMENTS_FILES = (
     'js/StyledElements/Addon.js',
     'js/StyledElements/Fragment.js',
-    'js/StyledElements/Pagination.js',
+    'js/StyledElements/PaginatedSource.js',
     'js/StyledElements/Button.js',
     'js/StyledElements/PopupMenuBase.js',
     'js/StyledElements/PopupMenu.js',

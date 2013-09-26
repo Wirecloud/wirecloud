@@ -49,6 +49,8 @@
         'StyledRadioButton': window.parent.StyledElements.StyledRadioButton,
         'StyledSelect': window.parent.StyledElements.StyledSelect,
         'StyledTextArea': window.parent.StyledElements.StyledTextArea,
+        'PaginatedSource': window.parent.StyledElements.PaginatedSource,
+        'PaginationInterface': window.parent.StyledElements.PaginationInterface,
         'StaticPaginatedSource': window.parent.StyledElements.StaticPaginatedSource,
         'MenuItem': window.parent.StyledElements.MenuItem,
         'ModelTable': window.parent.StyledElements.ModelTable,

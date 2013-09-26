@@ -178,7 +178,7 @@
         }
         options.requestFunc = requestFunc.bind(this);
 
-        StyledElements.Pagination.call(this, options);
+        StyledElements.PaginatedSource.call(this, options);
 
         this.sort_info = options.sort_info;
         if (typeof this.sort_info !== 'object') {
@@ -193,7 +193,7 @@
             this.sortedElements = [];
         }
     };
-    StaticPaginatedSource.prototype = new StyledElements.Pagination();
+    StaticPaginatedSource.prototype = new StyledElements.PaginatedSource();
 
     StaticPaginatedSource.prototype.changeOptions = function changeOptions(newOptions) {
         var column, sort_id, inverse, force_sort = false;
@@ -208,7 +208,7 @@
         } else if (force_sort) {
             sortElements.call(this, this.pOptions.order);
         }
-        StyledElements.Pagination.prototype.changeOptions.call(this, newOptions);
+        StyledElements.PaginatedSource.prototype.changeOptions.call(this, newOptions);
     };
 
     StaticPaginatedSource.prototype.changeElements = function changeElements(newElements) {

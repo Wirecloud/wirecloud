@@ -25,7 +25,7 @@
 
     "use strict";
 
-    var Pagination, onSuccessCallback, onErrorCallback;
+    var PaginatedSource, onSuccessCallback, onErrorCallback;
 
     onSuccessCallback = function onSuccessCallback(elements, options) {
         if (typeof this.pOptions.processFunc === 'function') {
@@ -61,7 +61,7 @@
      *      - requestStart:
      *      - requestEnd:
      */
-    Pagination = function Pagination(options) {
+    PaginatedSource = function PaginatedSource(options) {
         var defaultOptions = {
             'pageSize': 25,
             'requestFunc': null,
@@ -75,13 +75,13 @@
         this.currentElements = [];
         this.totalPages = 1;
     };
-    Pagination.prototype = new StyledElements.ObjectWithEvents();
+    PaginatedSource.prototype = new StyledElements.ObjectWithEvents();
 
-    Pagination.prototype.getCurrentPage = function getCurrentPage() {
+    PaginatedSource.prototype.getCurrentPage = function getCurrentPage() {
         return this.currentElements;
     };
 
-    Pagination.prototype.changeOptions = function changeOptions(options) {
+    PaginatedSource.prototype.changeOptions = function changeOptions(options) {
         var new_page_size, old_offset, key, changed = false;
 
         if (typeof options !== 'object') {
@@ -111,35 +111,35 @@
         }
     };
 
-    Pagination.prototype.goToFirst = function goToFirst() {
+    PaginatedSource.prototype.goToFirst = function goToFirst() {
         this.changePage(0);
     };
 
-    Pagination.prototype.goToPrevious = function goToPrevious() {
+    PaginatedSource.prototype.goToPrevious = function goToPrevious() {
         this.changePage(this.currentPage - 1);
     };
 
-    Pagination.prototype.goToNext = function goToNext() {
+    PaginatedSource.prototype.goToNext = function goToNext() {
         this.changePage(this.currentPage + 1);
     };
 
-    Pagination.prototype.goToLast = function goToLast() {
+    PaginatedSource.prototype.goToLast = function goToLast() {
         this.changePage(this.totalPages);
     };
 
-    Pagination.prototype._calculatePages = function _calculatePages() {
+    PaginatedSource.prototype._calculatePages = function _calculatePages() {
         this.totalPages = Math.ceil(this.pCachedTotalCount / this.pOptions.pageSize);
         if (this.totalPages <= 0) {
             this.totalPages = 1;
         }
     };
 
-    Pagination.prototype.refresh = function refresh() {
+    PaginatedSource.prototype.refresh = function refresh() {
         this.events.requestStart.dispatch(this);
         this.pOptions.requestFunc(this.currentPage, this.pOptions, onSuccessCallback.bind(this), onErrorCallback.bind(this));
     };
 
-    Pagination.prototype.changePage = function changePage(idx) {
+    PaginatedSource.prototype.changePage = function changePage(idx) {
         if (idx < 1) {
             idx = 1;
         } else if (idx > this.totalPages) {
@@ -150,5 +150,5 @@
         this.pOptions.requestFunc(idx, this.pOptions, onSuccessCallback.bind(this), onErrorCallback.bind(this));
     };
 
-    StyledElements.Pagination = Pagination;
+    StyledElements.PaginatedSource = PaginatedSource;
 })();
