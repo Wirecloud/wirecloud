@@ -1497,7 +1497,7 @@ class StickyEffectTestCase(WirecloudSeleniumTestCase):
 
         if cls.driver.capabilities['browserName'] == 'firefox' and not cls.driver.profile.native_events_enabled:
             cls.tearDownClass()
-            raise unittest.SkipTest('Multiconnector tests need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
+            raise unittest.SkipTest('Sticky effect tests need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
 
     def test_wiring_stycky_effect_in_endpoint_label(self):
         self.login()
@@ -1555,7 +1555,7 @@ class SimpleRecommendationsTestCase(WirecloudSeleniumTestCase):
 
         if cls.driver.capabilities['browserName'] == 'firefox' and not cls.driver.profile.native_events_enabled:
             cls.tearDownClass()
-            raise unittest.SkipTest('Multiconnector tests need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
+            raise unittest.SkipTest('Simple recommendation tests need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
 
     def test_wiring_recommendations_basic_mouseon(self):
         self.login()
