@@ -142,7 +142,7 @@ RVariable.prototype = new Variable;
 
 RVariable.prototype.setHandler = function (handler_) {
     if (this.vardef.aspect == this.SLOT && this.vardef.name in this.iWidget.internal_iwidget.inputs) {
-        this.iWidget.internal_iwidget.inputs[this.vardef.name].handler = handler_;
+        this.iWidget.internal_iwidget.inputs[this.vardef.name].callback = handler_;
     }
     this.handler = handler_;
 }
