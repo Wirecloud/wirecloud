@@ -29,7 +29,7 @@ class Migration(DataMigration):
         from wirecloud.catalogue import utils as catalogue_utils
         from wirecloud.platform.widget import utils as showcase_utils
 
-        for resource in orm['catalogue.CatalogueResource'].objects.filter(type=2):
+        for resource in orm['catalogue.CatalogueResource'].objects.filter(type=2, fromWGT=True):
             base_dir = catalogue_utils.wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
             wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
 
@@ -38,7 +38,7 @@ class Migration(DataMigration):
     def backwards(self, orm):
         from wirecloud.catalogue import utils as catalogue_utils
 
-        for resource in orm['catalogue.CatalogueResource'].objects.filter(type=2):
+        for resource in orm['catalogue.CatalogueResource'].objects.filter(type=2, fromWGT=True):
             base_dir = catalogue_utils.wgt_deployer.get_base_dir(resource.vendor, resource.short_name, resource.version)
             wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
 

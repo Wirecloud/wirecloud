@@ -7,6 +7,16 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
 
+        if not db.dry_run:
+
+            orm.VariableDef.objects.filter(action_label=None).update(action_label='')
+            orm.VariableDef.objects.filter(label=None).update(label='')
+            orm.VariableDef.objects.filter(friend_code=None).update(friend_code='')
+            orm.VariableDef.objects.filter(description=None).update(description='')
+
+            db.commit_transaction()
+            db.start_transaction()
+
         # Changing field 'VariableDef.action_label'
         db.alter_column('wirecloud_variabledef', 'action_label', self.gf('django.db.models.fields.CharField')(max_length=50, default=''))
 
