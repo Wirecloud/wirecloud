@@ -120,9 +120,16 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'false')
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'default')
 
-        # Change widget settings
+        # Open widget settings
         iwidget.perform_action('Settings')
 
+        # Check dialog shows correct values
+        self.assertEqual(self.driver.find_element_by_css_selector('.window_menu [name="list"]').get_attribute('value'), 'default')
+        self.assertEqual(self.driver.find_element_by_css_selector('.window_menu [name="text"]').get_attribute('value'), 'initial text')
+        self.assertFalse(self.driver.find_element_by_css_selector('.window_menu [name="boolean"]').is_selected())
+        self.assertEqual(self.driver.find_element_by_css_selector('.window_menu [name="password"]').get_attribute('value'), 'default')
+
+        # Change widget settings
         list_input = self.driver.find_element_by_css_selector('.window_menu [name="list"]')
         self.fill_form_input(list_input, '1')  # value1
         text_input = self.driver.find_element_by_css_selector('.window_menu [name="text"]')
@@ -140,9 +147,16 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'true')
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'password')
 
-        # Change widget settings again
+        # Open widget settings again
         iwidget.perform_action('Settings')
 
+        # Check dialog shows correct values
+        self.assertEqual(self.driver.find_element_by_css_selector('.window_menu [name="list"]').get_attribute('value'), '1')
+        self.assertEqual(self.driver.find_element_by_css_selector('.window_menu [name="text"]').get_attribute('value'), 'test')
+        self.assertTrue(self.driver.find_element_by_css_selector('.window_menu [name="boolean"]').is_selected())
+        self.assertEqual(self.driver.find_element_by_css_selector('.window_menu [name="password"]').get_attribute('value'), 'password')
+
+        # Change widget settings
         text_input = self.driver.find_element_by_css_selector('.window_menu [name="text"]')
         self.fill_form_input(text_input, '')
         password_input = self.driver.find_element_by_css_selector('.window_menu [name="password"]')
