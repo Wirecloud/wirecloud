@@ -313,6 +313,8 @@ class OperatorCodeEntryTestCase(WirecloudTestCase):
 
 class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
+    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+
     def test_operators_are_usable_after_installing(self):
 
         self.login()
@@ -415,6 +417,83 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, '')
     test_basic_wiring_editor_operations.tags = ('fiware-ut-6',)
+
+    def test_widget_preferences_in_wiring_editor(self):
+
+        self.login(username='user_with_workspaces')
+        iwidget = self.get_current_iwidgets()[0]
+
+        with iwidget:
+            self.assertEqual(self.driver.find_element_by_id('listPref').text, 'default')
+            self.assertEqual(self.driver.find_element_by_id('textPref').text, 'initial text')
+            self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'false')
+            self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'default')
+
+        self.change_main_view('wiring')
+        time.sleep(2)
+
+        # Change widget settings
+        widget = self.wait_element_visible_by_css_selector('.grid > .iwidget')
+        widget.find_element_by_css_selector('.editPos_button').click()
+        self.popup_menu_click('Settings')
+
+        list_input = self.driver.find_element_by_css_selector('.window_menu [name="list"]')
+        self.fill_form_input(list_input, '1')  # value1
+        text_input = self.driver.find_element_by_css_selector('.window_menu [name="text"]')
+        self.fill_form_input(text_input, 'test')
+        boolean_input = self.driver.find_element_by_css_selector('.window_menu [name="boolean"]')
+        boolean_input.click()
+        password_input = self.driver.find_element_by_css_selector('.window_menu [name="password"]')
+        self.fill_form_input(password_input, 'password')
+
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+
+        self.change_main_view('workspace')
+
+        with iwidget:
+            self.assertEqual(self.driver.find_element_by_id('listPref').text, '1')
+            self.assertEqual(self.driver.find_element_by_id('textPref').text, 'test')
+            self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'true')
+            self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'password')
+
+    def test_operator_preferences_in_wiring_editor(self):
+
+        self.login(username='user_with_workspaces')
+        iwidgets = self.get_current_iwidgets()
+
+        self.change_main_view('wiring')
+        time.sleep(2)
+
+        # Change widget settings
+        ioperator = self.get_current_wiring_editor_ioperators()[0]
+        ioperator.element.find_element_by_css_selector('.specialIcon').click()
+        self.wait_element_visible_by_css_selector('.editPos_button', element=ioperator.element).click()
+        self.popup_menu_click('Settings')
+
+        prefix_input = self.driver.find_element_by_css_selector('.window_menu [name="prefix"]')
+        self.fill_form_input(prefix_input, 'prefix: ')
+
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+
+        self.change_main_view('workspace')
+
+        with iwidgets[1]:
+            text_input = self.driver.find_element_by_tag_name('input')
+            self.fill_form_input(text_input, 'hello world!!')
+            # Work around hang when using Firefox Driver
+            self.driver.execute_script('sendEvent();')
+            #self.driver.find_element_by_id('b1').click()
+
+        time.sleep(0.2)
+
+        with iwidgets[0]:
+            try:
+                WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text != '')
+            except:
+                pass
+
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, 'prefix: hello world!!')
 
 
 class WiringRecoveringTestCase(WirecloudSeleniumTestCase):

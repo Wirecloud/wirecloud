@@ -27,6 +27,16 @@
             </vCard:Work>
         </vCard:addr>
 
+        <wire:hasPlatformPreference>
+            <wire:PlatformPreference rdf:ID="preference_1">
+                <dcterms:title>prefix</dcterms:title>
+                <wire:type>text</wire:type>
+                <dcterms:description>Prefix to concatenate</dcterms:description>
+                <rdfs:label>Prefix</rdfs:label>
+                <wire:default></wire:default>
+            </wire:PlatformPreference>
+        </wire:hasPlatformPreference>
+
        <wire:hasPlatformWiring>
             <wire:PlatformWiring rdf:ID="wiring">
                 <wire:hasInputEndpoint>
