@@ -147,6 +147,9 @@ class VariableValue(models.Model):
             from wirecloud.platform.workspace.utils import decrypt_value
             value = decrypt_value(value)
 
+        if self.variable.vardef.type == 'B':
+            value = value.lower() == 'true'
+
         return value
 
     def __unicode__(self):

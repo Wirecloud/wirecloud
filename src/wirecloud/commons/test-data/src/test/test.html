@@ -49,7 +49,11 @@
                     document.getElementById("textPref").textContent = new_values.text;
                 }
                 if ('boolean' in new_values) {
-                    document.getElementById("booleanPref").textContent = new_values['boolean'];
+                    if (typeof new_values['boolean'] === 'boolean') {
+                        document.getElementById("booleanPref").textContent = new_values['boolean'];
+                    } else {
+                        document.getElementById("booleanPref").textContent = 'bad value';
+                    }
                 }
                 if ('password' in new_values) {
                     document.getElementById("passwordPref").textContent = new_values.password;
@@ -71,7 +75,11 @@
             function init() {
                 document.getElementById("listPref").textContent = MashupPlatform.prefs.get('list');
                 document.getElementById("textPref").textContent = MashupPlatform.prefs.get('text');
-                document.getElementById("booleanPref").textContent = MashupPlatform.prefs.get('boolean');
+                if (typeof MashupPlatform.prefs.get('boolean') === 'boolean') {
+                    document.getElementById("booleanPref").textContent = MashupPlatform.prefs.get('boolean');
+                } else {
+                    document.getElementById("booleanPref").textContent = 'bad value';
+                }
                 document.getElementById("passwordPref").textContent = MashupPlatform.prefs.get('password');
             }
         </script>

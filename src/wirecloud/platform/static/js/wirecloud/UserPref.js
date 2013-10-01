@@ -33,6 +33,11 @@
             type = 'select';
         }
 
+        // the value option is only used on the server side
+        if ('value' in options) {
+            delete options.value;
+        }
+
         Object.defineProperty(this, 'varName', {value: varName});
         Object.defineProperty(this, 'type', {value: type});
         Object.defineProperty(this, 'label', {value: options.label});
