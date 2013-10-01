@@ -4,6 +4,7 @@
 "use strict";
 
 var OK_HTML = '<b>Success!!</b>';
+var FAILURE_HTML = '<b>Failure!!</b>';
 
 MashupPlatform.http.makeRequest('data/success.html', {
     method: 'GET',
@@ -29,7 +30,11 @@ MashupPlatform.wiring.registerCallback('inputendpoint', function (data) {
 MashupPlatform.wiring.pushEvent('outputendpoint', 'Success!!');
 
 MashupPlatform.prefs.registerCallback(function (new_values) {
-    document.getElementById('pref_registercallback_test').innerHTML = new_values.text;
+    if (Object.keys(new_values).length == 1 && 'text' in new_values) {
+        document.getElementById('pref_registercallback_test').innerHTML = new_values.text;
+    } else {
+        document.getElementById('pref_registercallback_test').innerHTML = FAILURE_HTML;
+    }
 });
 
 setTimeout(function () {

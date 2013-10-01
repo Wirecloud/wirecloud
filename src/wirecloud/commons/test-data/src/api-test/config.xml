@@ -16,6 +16,12 @@
 
     <Platform.Preferences>
         <Preference name="text" type="text" label="text" description="text preference" default="initial text"/>
+        <Preference name="unused_list" type="list" label="unused list pref" description="unused preference" default="1">
+            <Option value="1" name="value1"/>
+        </Preference>
+        <Preference name="unused_text" type="text" label="unused text pref" description="unused preference" default="unused value"/>
+        <Preference name="unused_boolean" type="boolean" label="unused boolean pref" description="unused preference" default="unused value"/>
+        <Preference name="unused_password" type="password" label="unused password pref" description="unused preference" default="unused value"/>
     </Platform.Preferences>
 
     <Platform.StateProperties>

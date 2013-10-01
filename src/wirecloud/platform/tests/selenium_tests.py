@@ -171,7 +171,17 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, '')
 
         # Use api test widget to test other API features
+
+        # Open widget settings again
+        api_test_iwidget.perform_action('Settings')
+
+        text_input = self.driver.find_element_by_css_selector('.window_menu [name="text"]')
+        self.fill_form_input(text_input, 'Success!!')
+
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+
         with api_test_iwidget:
+            self.assertEqual(self.driver.find_element_by_id('pref_registercallback_test').text, 'Success!!')
             self.assertEqual(self.driver.find_element_by_id('makerequest_test').text, 'Success!!')
             prop_input = self.driver.find_element_by_css_selector('#update_prop_input')
             self.fill_form_input(prop_input, 'new value')
