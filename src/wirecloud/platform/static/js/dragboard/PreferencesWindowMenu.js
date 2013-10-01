@@ -53,6 +53,8 @@
 
             if (newValue !== oldValue) {
                 variable.annotate(newValue);
+            } else {
+                delete new_values[varName];
             }
         }
 

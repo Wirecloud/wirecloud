@@ -34,7 +34,11 @@
         var key;
 
         for (key in new_values) {
-            this._current_ioperator.preferences[key] = new_values[key];
+            if (this._current_ioperator.preferences[key] !== new_values[key]) {
+                this._current_ioperator.preferences[key] = new_values[key];
+            } else {
+                delete new_values[key];
+            }
         }
 
         if (typeof this._current_ioperator.prefCallback === 'function') {
