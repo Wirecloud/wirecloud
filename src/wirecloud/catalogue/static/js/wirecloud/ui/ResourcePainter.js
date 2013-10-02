@@ -223,6 +223,9 @@
                 continue;
             }
             this.create_simple_command(resource_element.elements[i], '.click_for_details', 'click', this.catalogue_view.createUserCommand('showDetails', resource));
+            if (resource_element.elements[i].classList.contains('click_for_details')) {
+                resource_element.elements[i].addEventListener('click', this.catalogue_view.createUserCommand('showDetails', resource));
+            }
         }
 
         return resource_element;

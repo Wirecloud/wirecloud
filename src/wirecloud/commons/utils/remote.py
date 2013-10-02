@@ -749,7 +749,7 @@ class WirecloudRemoteTestCase(object):
 
         self.search_resource(resource_name)
         resource = self.search_in_catalogue_results(resource_name)
-        self.scroll_and_click(resource.find_element_by_css_selector('.click_for_details'))
+        self.scroll_and_click(resource)
 
         WebDriverWait(self.driver, timeout).until(lambda driver: catalogue_base_element.find_element_by_css_selector('.advanced_operations').is_displayed())
         time.sleep(0.1)
@@ -776,7 +776,7 @@ class WirecloudRemoteTestCase(object):
 
         self.search_resource(resource_name)
         resource = self.search_in_catalogue_results(resource_name)
-        self.scroll_and_click(resource.find_element_by_css_selector('.click_for_details'))
+        self.scroll_and_click(resource)
 
         WebDriverWait(self.driver, timeout).until(lambda driver: catalogue_base_element.find_element_by_css_selector('.advanced_operations').is_displayed())
         time.sleep(0.1)

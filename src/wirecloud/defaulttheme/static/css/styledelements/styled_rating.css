@@ -1,6 +1,7 @@
 .rating > .star {
     margin: 2px;
     display: inline-block;
+    vertical-align: middle;
 }
 
 .rating > .star.off:before {

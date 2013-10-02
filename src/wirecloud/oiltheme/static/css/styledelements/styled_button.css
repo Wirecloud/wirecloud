@@ -12,6 +12,11 @@
     vertical-align: middle;
 }
 
+.styled_button:focus {
+    position: relative;
+    z-index: 2;
+}
+
 .styled_button.open {
     z-index: 111113;
 }
