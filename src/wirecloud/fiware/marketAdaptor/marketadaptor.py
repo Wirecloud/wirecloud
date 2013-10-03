@@ -20,13 +20,15 @@
 
 import requests
 from requests.auth import HTTPBasicAuth
-from urllib2 import HTTPError
+from urllib2 import URLError, HTTPError
 from urlparse import urljoin, urlparse
 from lxml import etree
 
+from django.core.cache import cache
 from django.utils.http import urlquote, urlquote_plus
 
-from wirecloud.fiware.marketAdaptor.usdlParser import USDLParser
+from wirecloud.commons.utils.http import parse_mime_type
+from wirecloud.fiware.marketAdaptor.usdlParser import USDLParseException, USDLParser
 from wirecloud.fiware.storeclient import StoreClient
 
 RESOURCE_XPATH = '/collection/resource'
@@ -35,6 +37,36 @@ DATE_XPATH = 'registrationDate'
 SEARCH_RESULT_XPATH = '/searchresults/searchresult'
 SEARCH_SERVICE_XPATH = 'service'
 SEARCH_STORE_XPATH = 'store'
+
+
+def parse_usdl_from_url(url):
+
+    cache_key = '_usdl_info/' + url
+    usdl_info = cache.get(cache_key)
+    if usdl_info is not None:
+        if isinstance(usdl_info, Exception):
+            raise usdl_info
+        else:
+            return usdl_info
+
+    headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"}
+
+    try:
+
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            raise HTTPError(response.url, response.status_code, response.reason, None, None)
+
+        content_type = parse_mime_type(response.headers.get('content-type'))[0]
+        parser = USDLParser(response.content, content_type)
+        usdl_info = parser.parse()
+    except (requests.ConnectionError, URLError, USDLParseException), e:
+        cache.set(cache_key, e, 2 * 60 * 60)
+        raise
+
+    cache.set(cache_key, usdl_info)
+
+    return usdl_info
 
 
 def parse_resource_info(offering_resource):
@@ -205,20 +237,10 @@ class MarketAdaptor(object):
             url = res.xpath(URL_XPATH)[0].text
 
             try:
-                headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"}
-                response = requests.get(url, headers=headers)
-                content_type = response.headers.get('content-type')
-
-                # Remove the charset
-                pos = content_type.find(';')
-                if pos > -1:
-                    content_type = content_type[:pos]
-
-                parser = USDLParser(response.content, content_type)
+                parsed_usdl = parse_usdl_from_url(url)
             except:
                 continue
 
-            parsed_usdl = parser.parse()
             result['resources'] += self._parse_offering(res.get('name'), url, parsed_usdl, store, options)
 
         return result
@@ -261,17 +283,7 @@ class MarketAdaptor(object):
                 continue
 
             try:
-                headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"}
-                response = requests.get(url, headers=headers)
-                content_type = response.headers.get('content-type')
-
-                # Remove the charset
-                pos = content_type.find(';')
-                if pos > -1:
-                    content_type = content_type[:pos]
-
-                parser = USDLParser(response.content, content_type)
-                parsed_usdl = parser.parse()
+                parsed_usdl = parse_usdl_from_url(url)
             except:
                 continue
 

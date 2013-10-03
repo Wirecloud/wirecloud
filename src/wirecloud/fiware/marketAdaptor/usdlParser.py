@@ -49,6 +49,18 @@ DOAP = rdflib.Namespace('http://usefulinc.com/ns/doap#')
 GEO = rdflib.Namespace('http://www.w3.org/2003/01/geo/wgs84_pos#')
 
 
+class USDLParseException(Exception):
+
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return str(self.msg)
+
+    def __unicode__(self):
+        return unicode(self.msg)
+
+
 class USDLParser(object):
 
     _usdl_document = None
@@ -71,7 +83,7 @@ class USDLParser(object):
             self._graph.parse(data=usdl_document, format='n3')
         else:
             msg = _('Error the document has not a valid rdf format')
-            raise Exception(msg)
+            raise USDLParseException(msg)
 
         # take all the services in the document
         for ser in self._graph.subjects(RDF['type'], USDL['Service']):
@@ -80,7 +92,7 @@ class USDLParser(object):
 
         if self._service_number == 0:
             msg = _('Error the document is not a valid usdl document')
-            raise Exception(msg)
+            raise USDLParseException(msg)
 
     def _get_field(self, namespace, element, predicate, id_=False):
 
