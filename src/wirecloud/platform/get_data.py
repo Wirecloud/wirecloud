@@ -99,11 +99,12 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
             entry['hidden'] = fv_entry.get('hidden', False)
 
         else:
-            entry['value'] = var_value.get_variable_value()
+            entry['value'] = var_value.value
 
             entry['readonly'] = False
             entry['hidden'] = False
 
+        entry['type'] = var_value.variable.vardef.type
         entry['secure'] = var_value.variable.vardef.secure
 
         values_by_varname[variwidget][varname] = entry
@@ -155,9 +156,14 @@ def get_variable_value_from_varname(user, iwidget, var_name):
 
     entry = values['by_varname'][iwidget_id][var_name]
     if entry['secure'] == True:
-        return decrypt_value(entry['value'])
+        value = decrypt_value(entry['value'])
     else:
-        return entry['value']
+        value = entry['value']
+
+    if entry['type'] == 'B':
+        value = value.lower() == 'true'
+
+    return value
 
 
 def _invalidate_cached_variable_values(workspace, user=None):
