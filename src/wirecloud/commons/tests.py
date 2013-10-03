@@ -603,6 +603,199 @@ class TemplateUtilsTestCase(TestCase):
             'translation_index_usage': {},
         }
 
+        cls.mashup_with_translations_info = {
+            'type': 'mashup',
+            'vendor': u'Wirecloud',
+            'name': u'TemplateTestMashup',
+            'version': u'1.0',
+            'display_name': u'__MSG_display_name__',
+            'description': u'__MSG_description__',
+            'author': u'author_test',
+            'email': u'test@example.com',
+            'image_uri': u'images/catalogue.png',
+            'iphone_image_uri': u'images/smartphone.png',
+            'doc_uri': u'docs/index.html',
+            'requirements': [
+                {'type': 'feature', 'name': u'Wirecloud'},
+                {'type': 'feature', 'name': u'PubSub'}
+            ],
+            'params': {},
+            'preferences': {
+                'columns': '8'
+            },
+            'tabs': [
+                {
+                    'name': u'Tab 1',
+                    'preferences': {
+                        'columns': '9',
+                        'smart': 'false'
+                    },
+                    'resources': [
+                        {
+                            'id': u'1',
+                            'vendor': u'Wirecloud',
+                            'name': u'TestWidget',
+                            'version': u'1.0',
+                            'title': u'Widget title',
+                            'properties': {
+                                'prop1': {'value': 'value1', 'readonly': False},
+                                'prop2': {'value': 'value 2', 'readonly': True}
+                            },
+                            'preferences': {
+                                'list': {'value': 'default', 'readonly': True, 'hidden': False},
+                                'text': {'value': 'other value', 'readonly': True, 'hidden': True}
+                            },
+                            'position': {
+                                'x': u'0',
+                                'y': u'1',
+                                'z': u'2',
+                            },
+                            'rendering': {
+                                'width': u'10',
+                                'height': u'10',
+                                'layout': u'0',
+                                'fulldragboard': False,
+                                'minimized': False
+                            }
+                        },
+                        {
+                            'id': u'2',
+                            'vendor': u'Wirecloud',
+                            'name': u'TestWidget',
+                            'version': u'2.0',
+                            'title': u'Widget title',
+                            'properties': {
+                                'prop1': {'value': 'value1', 'readonly': False}
+                            },
+                            'preferences': {
+                                'text': {'value': 'other value', 'readonly': True, 'hidden': True}
+                            },
+                            'position': {
+                                'x': u'10',
+                                'y': u'1',
+                                'z': u'2',
+                            },
+                            'rendering': {
+                                'width': u'10',
+                                'height': u'10',
+                                'layout': u'0',
+                                'fulldragboard': True,
+                                'minimized': True
+                            }
+                        }
+                    ]
+                },
+                {
+                    'name': u'Tab 2',
+                    'preferences': {
+                        u'pref1': u'pref value',
+                    },
+                    'resources': []
+                },
+            ],
+            'wiring': {
+                'inputs': [
+                    {
+                        'name': u'input1',
+                        'type': 'text',
+                        'label': u'Input label 1',
+                        'description': u'Input description 1',
+                        'actionlabel': u'a',
+                        'friendcode': u'friendcode 1'
+                    },
+                    {
+                        'name': u'input2',
+                        'type': 'text',
+                        'label': u'Input label 2',
+                        'description': u'Input description 2',
+                        'actionlabel': '',
+                        'friendcode': u'friendcode 2'
+                    },
+                    {
+                        'name': u'input3',
+                        'type': 'text',
+                        'label': u'Input label 3',
+                        'description': u'Input description 3',
+                        'actionlabel': 'action label 3',
+                        'friendcode': u'friendcode 3'
+                    }
+                ],
+                'outputs': [
+                    {
+                        'name': u'output1',
+                        'type': 'text',
+                        'label': u'Output label 1',
+                        'description': u'Output description 1',
+                        'friendcode': u'friendcode 1'
+                    },
+                    {
+                        'name': u'output2',
+                        'type': 'text',
+                        'label': u'Output label 2',
+                        'description': u'Output description 2',
+                        'friendcode': u'friendcode 2'
+                    },
+                    {
+                        'name': u'output3',
+                        'type': 'text',
+                        'label': u'Output label 3',
+                        'description': u'Output description 3',
+                        'friendcode': u'friendcode 3'
+                    }
+                ],
+                'operators': {
+                    u'1': {
+                        "id": u'1',
+                        "name": u"Wirecloud/TestOperator/1.0",
+                        "preferences": {}
+                    },
+                    u'2': {
+                        "id": u'2',
+                        "name": u"Wirecloud/TestOperator/2.0",
+                        "preferences": {
+                            u'pref1': {'value': u'op2 pref1 value', 'hidden': False, 'readonly': False},
+                            u'pref2': {'value': u'op2 pref2 value', 'hidden': False, 'readonly': True}
+                        },
+                    },
+                    u'3': {
+                        "id": u'3',
+                        "name": u"Wirecloud/TestOperator/2.0",
+                        "preferences": {
+                            u'pref1': {'value': u'op3 pref1 value', 'hidden': True, 'readonly': True}
+                        },
+                    }
+                },
+                'connections': [
+                    {
+                        "source": {"type": u"operator", 'id': u'1', 'endpoint': u'output1'},
+                        "target": {"type": u"operator", 'id': u'2', 'endpoint': u'input1'},
+                        "readonly": True
+                    },
+                    {
+                        "source": {"type": u"iwidget", 'id': u'1', 'endpoint': u'output1'},
+                        "target": {"type": u"operator", 'id': u'1', 'endpoint': u'input1'},
+                        "readonly": False
+                    }
+                ],
+                'views': []
+            },
+            'default_lang': 'en',
+            'translations': {
+                'en': {
+                    'display_name': 'Template Test Operator',
+                    'description': 'description'
+                },
+                'es': {
+                    'display_name': 'Operador de prueba',
+                    'description': u'descripción'
+                }
+            },
+            'translation_index_usage': {
+                'display_name': [{'type': 'resource', 'field': 'display_name'}],
+                'description': [{'type': 'resource', 'field': 'description'}]
+            },
+        }
+
         cls.basic_widget_info = {
             'type': 'widget',
             'vendor': 'Wirecloud',
@@ -758,6 +951,25 @@ class TemplateUtilsTestCase(TestCase):
             'translation_index_usage': {},
         }
 
+    def check_full_mashup(self, processed_info, expected_result):
+
+        mashup_info = copy.deepcopy(expected_result)
+
+        self.assertEqual(len(processed_info['tabs']), len(mashup_info['tabs']))
+        for tab_index, tab in enumerate(processed_info['tabs']):
+            self.assertItemsEqual(tab['resources'], mashup_info['tabs'][tab_index]['resources'])
+            del tab['resources']
+            del mashup_info['tabs'][tab_index]['resources']
+
+        self.assertItemsEqual(processed_info['wiring']['connections'], mashup_info['wiring']['connections'])
+        del processed_info['wiring']['connections']
+        del mashup_info['wiring']['connections']
+
+        self.assertItemsEqual(processed_info['requirements'], mashup_info['requirements'])
+        del processed_info['requirements']
+        del mashup_info['requirements']
+
+        self.assertEqual(processed_info, mashup_info)
 
     def test_json_parser_writer_basic_operator(self):
 
@@ -797,21 +1009,15 @@ class TemplateUtilsTestCase(TestCase):
         template = TemplateParser(json_description)
         processed_info = template.get_resource_info()
 
-        mashup_info = copy.deepcopy(self.mashup_info)
+        self.check_full_mashup(processed_info, self.mashup_info)
 
-        self.assertItemsEqual(processed_info['tabs'][0]['resources'], mashup_info['tabs'][0]['resources'])
-        del processed_info['tabs'][0]['resources']
-        del mashup_info['tabs'][0]['resources']
+    def test_json_parser_writer_mashup_with_translations(self):
 
-        self.assertItemsEqual(processed_info['wiring']['connections'], mashup_info['wiring']['connections'])
-        del processed_info['wiring']['connections']
-        del mashup_info['wiring']['connections']
+        json_description = write_json_description(self.mashup_with_translations_info)
+        template = TemplateParser(json_description)
+        processed_info = template.get_resource_info()
 
-        self.assertItemsEqual(processed_info['requirements'], mashup_info['requirements'])
-        del processed_info['requirements']
-        del mashup_info['requirements']
-
-        self.assertEqual(processed_info, mashup_info)
+        self.check_full_mashup(processed_info, self.mashup_with_translations_info)
 
     def test_json_parser_writer_basic_widget(self):
 
@@ -867,21 +1073,15 @@ class TemplateUtilsTestCase(TestCase):
         template = TemplateParser(rdf_description)
         processed_info = template.get_resource_info()
 
-        mashup_info = copy.deepcopy(self.mashup_info)
+        self.check_full_mashup(processed_info, self.mashup_info)
 
-        self.assertItemsEqual(processed_info['tabs'][0]['resources'], mashup_info['tabs'][0]['resources'])
-        del processed_info['tabs'][0]['resources']
-        del mashup_info['tabs'][0]['resources']
+    def test_rdf_parser_writer_mashup_with_translations(self):
 
-        self.assertItemsEqual(processed_info['wiring']['connections'], mashup_info['wiring']['connections'])
-        del processed_info['wiring']['connections']
-        del mashup_info['wiring']['connections']
+        rdf_description = write_rdf_description(self.mashup_with_translations_info)
+        template = TemplateParser(rdf_description)
+        processed_info = template.get_resource_info()
 
-        self.assertItemsEqual(processed_info['requirements'], mashup_info['requirements'])
-        del processed_info['requirements']
-        del mashup_info['requirements']
-
-        self.assertEqual(processed_info, mashup_info)
+        self.check_full_mashup(processed_info, self.mashup_with_translations_info)
 
     def test_rdf_parser_writer_basic_widget(self):
 
@@ -913,21 +1113,15 @@ class TemplateUtilsTestCase(TestCase):
         template = TemplateParser(xml_description)
         processed_info = template.get_resource_info()
 
-        mashup_info = copy.deepcopy(self.mashup_info)
+        self.check_full_mashup(processed_info, self.mashup_info)
 
-        self.assertItemsEqual(processed_info['tabs'][0]['resources'], mashup_info['tabs'][0]['resources'])
-        del processed_info['tabs'][0]['resources']
-        del mashup_info['tabs'][0]['resources']
+    def test_xml_parser_writer_mashup_with_translations(self):
 
-        self.assertItemsEqual(processed_info['wiring']['connections'], mashup_info['wiring']['connections'])
-        del processed_info['wiring']['connections']
-        del mashup_info['wiring']['connections']
+        xml_description = write_xml_description(self.mashup_with_translations_info)
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
 
-        self.assertItemsEqual(processed_info['requirements'], mashup_info['requirements'])
-        del processed_info['requirements']
-        del mashup_info['requirements']
-
-        self.assertEqual(processed_info, mashup_info)
+        self.check_full_mashup(processed_info, self.mashup_with_translations_info)
 
     def test_xml_parser_writer_basic_widget(self):
 
