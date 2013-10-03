@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,59 +19,66 @@
  *
  */
 
-/*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50 */
 /*global gettext, LayoutManagerFactory, StyledElements*/
 
-var TabMenuItems = function (tab) {
-    StyledElements.DynamicMenuItems.call(this);
+(function () {
 
-    this.tab = tab;
-};
-TabMenuItems.prototype = new StyledElements.DynamicMenuItems();
+    "use strict";
 
-TabMenuItems.prototype.build = function () {
-    var items, fulldragboard_label;
+    var TabMenuItems = function (tab) {
+        StyledElements.DynamicMenuItems.call(this);
 
-    items = [];
+        this.tab = tab;
+    };
+    TabMenuItems.prototype = new StyledElements.DynamicMenuItems();
 
-    items.push(new StyledElements.MenuItem(
-        gettext("Rename"),
-        function () {
-            (new Wirecloud.ui.RenameWindowMenu(this, 'updateInfo')).show();
-        }.bind(this.tab)
-    ));
+    TabMenuItems.prototype.build = function () {
+        var items, fulldragboard_label;
 
-    if (!this.tab.tabInfo.visible) {
+        items = [];
+
         items.push(new StyledElements.MenuItem(
-            gettext("Mark as Visible"),
-            this.tab.markAsVisible.bind(this.tab)
+            gettext("Rename"),
+            function () {
+                (new Wirecloud.ui.RenameWindowMenu(this, 'updateInfo')).show();
+            }.bind(this.tab)
         ));
-    }
 
-    if (this.tab.isAllowed('remove')) {
+        if (!this.tab.tabInfo.visible) {
+            items.push(new StyledElements.MenuItem(
+                gettext("Mark as Visible"),
+                this.tab.markAsVisible.bind(this.tab)
+            ));
+        }
+
+        if (this.tab.isAllowed('remove')) {
+            items.push(new StyledElements.MenuItem(
+                gettext("Remove"),
+                this.tab.workspace.removeTab.bind(this.tab.workspace, this.tab)
+            ));
+        }
+
+        /*
+        this.menu.addOption('icon-show-floating',
+            gettext("Show Floating Widget"),
+            function(e) {
+                this.FloatingWidgetsMenu.clearOptions();
+                this.getDragboard().fillFloatingWidgetsMenu(this.FloatingWidgetsMenu);
+                LayoutManagerFactory.getInstance().showDropDownMenu('TabOpsSubMenu',this.FloatingWidgetsMenu, Event.pointerX(e), Event.pointerY(e));
+            }.bind(this),
+            4);
+        */
+
         items.push(new StyledElements.MenuItem(
-            gettext("Remove"),
-            this.tab.workspace.removeTab.bind(this.tab.workspace, this.tab)
+            gettext("Settings"),
+            function () {
+                this.getPreferencesWindow().show();
+            }.bind(this.tab)
         ));
-    }
 
-    /*
-    this.menu.addOption('icon-show-floating',
-        gettext("Show Floating Widget"),
-        function(e) {
-            this.FloatingWidgetsMenu.clearOptions();
-            this.getDragboard().fillFloatingWidgetsMenu(this.FloatingWidgetsMenu);
-            LayoutManagerFactory.getInstance().showDropDownMenu('TabOpsSubMenu',this.FloatingWidgetsMenu, Event.pointerX(e), Event.pointerY(e));
-        }.bind(this),
-        4);
-    */
+        return items;
+    };
 
-    items.push(new StyledElements.MenuItem(
-        gettext("Settings"),
-        function () {
-            this.getPreferencesWindow().show();
-        }.bind(this.tab)
-    ));
+    window.TabMenuItems = TabMenuItems;
 
-    return items;
-};
+})();
