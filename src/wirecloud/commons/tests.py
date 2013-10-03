@@ -796,6 +796,132 @@ class TemplateUtilsTestCase(TestCase):
             },
         }
 
+        cls.mashup_with_params = {
+            'type': 'mashup',
+            'vendor': u'Wirecloud',
+            'name': u'TemplateTestMashup',
+            'version': u'1.0',
+            'display_name': u'Template Test Mashup',
+            'description': u'test',
+            'author': u'author_test',
+            'email': u'test@example.com',
+            'image_uri': u'images/catalogue.png',
+            'iphone_image_uri': u'images/smartphone.png',
+            'doc_uri': u'docs/index.html',
+            'requirements': [
+                {'type': 'feature', 'name': u'Wirecloud'},
+                {'type': 'feature', 'name': u'PubSub'}
+            ],
+            'params': {
+                'param1': {'label': 'Param 1', 'type': 'text'},
+                'param2': {'label': 'Param 2', 'type': 'password'}
+            },
+            'preferences': {
+                'columns': '8'
+            },
+            'tabs': [
+                {
+                    'name': u'Tab 1',
+                    'preferences': {
+                        'columns': '9',
+                        'smart': 'false'
+                    },
+                    'resources': [
+                        {
+                            'id': u'1',
+                            'vendor': u'Wirecloud',
+                            'name': u'TestWidget',
+                            'version': u'1.0',
+                            'title': u'Widget title',
+                            'properties': {
+                                'prop1': {'value': 'value1', 'readonly': False},
+                                'prop2': {'value': '%(param.param1)', 'readonly': True}
+                            },
+                            'preferences': {
+                                'list': {'value': '%(param.param1)', 'readonly': True, 'hidden': False},
+                                'text': {'value': '%(param.param2)', 'readonly': True, 'hidden': True}
+                            },
+                            'position': {
+                                'x': u'0',
+                                'y': u'1',
+                                'z': u'2',
+                            },
+                            'rendering': {
+                                'width': u'10',
+                                'height': u'10',
+                                'layout': u'0',
+                                'fulldragboard': False,
+                                'minimized': False
+                            }
+                        },
+                        {
+                            'id': u'2',
+                            'vendor': u'Wirecloud',
+                            'name': u'TestWidget',
+                            'version': u'2.0',
+                            'title': u'Widget title',
+                            'properties': {
+                                'prop1': {'value': 'value1', 'readonly': False}
+                            },
+                            'preferences': {
+                                'text': {'value': 'other value', 'readonly': True, 'hidden': True}
+                            },
+                            'position': {
+                                'x': u'10',
+                                'y': u'1',
+                                'z': u'2',
+                            },
+                            'rendering': {
+                                'width': u'10',
+                                'height': u'10',
+                                'layout': u'0',
+                                'fulldragboard': True,
+                                'minimized': True
+                            }
+                        }
+                    ]
+                },
+                {
+                    'name': u'Tab 2',
+                    'preferences': {
+                        u'pref1': u'pref value',
+                    },
+                    'resources': []
+                },
+            ],
+            'wiring': {
+                'inputs': [],
+                'outputs': [],
+                'operators': {
+                    u'1': {
+                        "id": u'1',
+                        "name": u"Wirecloud/TestOperator/1.0",
+                        "preferences": {}
+                    },
+                    u'2': {
+                        "id": u'2',
+                        "name": u"Wirecloud/TestOperator/2.0",
+                        "preferences": {
+                            u'pref1': {'value': u'op2 pref1 value', 'hidden': False, 'readonly': False},
+                            u'pref2': {'value': u'%(param.param1)', 'hidden': False, 'readonly': True}
+                        },
+                    },
+                    u'3': {
+                        "id": u'3',
+                        "name": u"Wirecloud/TestOperator/2.0",
+                        "preferences": {
+                            u'pref1': {'value': u'%(param.param2)', 'hidden': True, 'readonly': True}
+                        },
+                    }
+                },
+                'connections': [],
+                'views': []
+            },
+            'default_lang': 'en',
+            'translations': {},
+            'translation_index_usage': {},
+        }
+
         cls.basic_widget_info = {
             'type': 'widget',
             'vendor': 'Wirecloud',
@@ -1019,6 +1145,14 @@ class TemplateUtilsTestCase(TestCase):
 
         self.check_full_mashup(processed_info, self.mashup_with_translations_info)
 
+    def test_json_parser_writer_mashup_with_params(self):
+
+        json_description = write_json_description(self.mashup_with_params)
+        template = TemplateParser(json_description)
+        processed_info = template.get_resource_info()
+
+        self.check_full_mashup(processed_info, self.mashup_with_params)
+
     def test_json_parser_writer_basic_widget(self):
 
         json_description = write_json_description(self.basic_widget_info)
@@ -1083,6 +1217,14 @@ class TemplateUtilsTestCase(TestCase):
 
         self.check_full_mashup(processed_info, self.mashup_with_translations_info)
 
+    def test_rdf_parser_writer_mashup_with_params(self):
+
+        rdf_description = write_rdf_description(self.mashup_with_params)
+        template = TemplateParser(rdf_description)
+        processed_info = template.get_resource_info()
+
+        self.check_full_mashup(processed_info, self.mashup_with_params)
+
     def test_rdf_parser_writer_basic_widget(self):
 
         rdf_description = write_rdf_description(self.basic_widget_info)
@@ -1122,6 +1264,14 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_with_translations_info)
+
+    def test_xml_parser_writer_mashup_with_params(self):
+
+        xml_description = write_xml_description(self.mashup_with_params)
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.check_full_mashup(processed_info, self.mashup_with_params)
 
     def test_xml_parser_writer_basic_widget(self):
 
