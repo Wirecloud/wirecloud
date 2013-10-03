@@ -325,7 +325,7 @@
         Dragboard.prototype.hasReadOnlyIWidgets = function hasReadOnlyIWidgets() {
             var iwidgetKeys = this.iWidgets.keys();
             for (var i = 0; i < iwidgetKeys.length; i++) {
-                if (this.iWidgets.get(iwidgetKeys[i]).readOnly) {
+                if (this.iWidgets.get(iwidgetKeys[i]).internal_iwidget.readOnly) {
                     return true;
                 }
             }
