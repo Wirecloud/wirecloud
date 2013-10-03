@@ -33,7 +33,7 @@
     TabMenuItems.prototype = new StyledElements.DynamicMenuItems();
 
     TabMenuItems.prototype.build = function () {
-        var items, fulldragboard_label;
+        var items, item, fulldragboard_label;
 
         items = [];
 
@@ -51,12 +51,12 @@
             ));
         }
 
-        if (this.tab.isAllowed('remove')) {
-            items.push(new StyledElements.MenuItem(
-                gettext("Remove"),
-                this.tab.workspace.removeTab.bind(this.tab.workspace, this.tab)
-            ));
-        }
+        item = new StyledElements.MenuItem(
+            gettext("Remove"),
+            this.tab.workspace.removeTab.bind(this.tab.workspace, this.tab)
+        );
+        items.push(item);
+        item.setDisabled(!this.tab.isAllowed('remove'))
 
         /*
         this.menu.addOption('icon-show-floating',
