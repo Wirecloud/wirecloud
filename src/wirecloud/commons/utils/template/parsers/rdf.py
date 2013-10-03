@@ -76,7 +76,11 @@ class RDFTemplateParser(object):
                 self._info['type'] = 'operator'
                 break
             else:
-                self._info['type'] = 'mashup'
+                for t in self._graph.subjects(RDF['type'], WIRE_M['Mashup']):
+                    self._info['type'] = 'mashup'
+                    break
+                else:
+                    raise TemplateParseException('RDF document does not describe a widget, operator or mashup resource')
 
         self._parse_basic_info()
 

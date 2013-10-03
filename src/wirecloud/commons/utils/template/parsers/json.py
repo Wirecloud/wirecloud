@@ -35,6 +35,12 @@ class JSONTemplateParser(object):
         self.base = base
         self._info = json.loads(template)
 
+        if 'type' not in self._info:
+            raise TemplateParseException(_('Missing resource type.'))
+
+        if self._info['type'] not in ('widget', 'operator', 'mashup'):
+            raise TemplateParseException(_('Invalid resource type: %s') % self._info['type'])
+
     def _add_translation_index(self, value, **kwargs):
         index = get_trans_index(value)
         if not index:
