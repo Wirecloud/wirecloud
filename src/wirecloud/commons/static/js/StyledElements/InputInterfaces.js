@@ -584,6 +584,10 @@ function ButtonGroupInputInterface(fieldId, fieldDesc) {
         }
         this.wrapperElement.appendChild(label);
     }
+
+    if ('initialValue' in fieldDesc) {
+        this.inputElement.setValue(fieldDesc.initialValue);
+    }
 }
 ButtonGroupInputInterface.prototype = new InputInterface();
 ButtonGroupInputInterface.prototype.insertInto = function insertInto(element) {
