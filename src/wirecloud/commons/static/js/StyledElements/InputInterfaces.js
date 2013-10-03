@@ -1052,6 +1052,17 @@ ParametrizedTextInputInterface.prototype.getAvailableParameters = function getAv
 };
 
 ParametrizedTextInputInterface.prototype.escapeValue = function escapeValue(value) {
+    switch (typeof value) {
+    case "number":
+    case "boolean":
+        value = value.toString();
+        break;
+    default:
+        if (value == null) {
+            value = "";
+        }
+    }
+
     return value.replace(ParametrizedTextInputInterface.prototype._ESCAPE_RE,
         ParametrizedTextInputInterface.prototype._ESCAPE_FUNC);
 };
