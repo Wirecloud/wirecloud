@@ -123,6 +123,16 @@ def write_wiring_views_graph(graph, wiring, template_info):
                 graph.add((target_element, WIRE['index'], rdflib.Literal(str(index))))
 
 
+def write_mashup_params(graph, resource_uri, template_info):
+
+    if len(template_info['params']) > 0:
+        for param_name, param in template_info['params'].iteritems():
+            param_node = rdflib.BNode()
+            graph.add((param_node, DCTERMS['title'], rdflib.Literal(param_name)))
+            graph.add((param_node, RDFS['label'], rdflib.Literal(param['label'])))
+            graph.add((param_node, WIRE['type'], rdflib.Literal(param['type'])))
+            graph.add((resource_uri, WIRE_M['hasMashupParam'], param_node))
+
 def write_mashup_resources_graph(graph, resource_uri, template_info):
 
     # Tabs & resources
@@ -300,6 +310,10 @@ def build_rdf_graph(template_info):
 
     if template_info['type'] == 'mashup':
         write_mashup_resources_graph(graph, resource_uri, template_info)
+
+    # Params
+    if template_info['type'] == 'mashup':
+        write_mashup_params(graph, resource_uri, template_info)
 
     # Create wiring
     wiring = rdflib.BNode()

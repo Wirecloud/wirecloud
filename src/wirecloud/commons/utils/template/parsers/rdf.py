@@ -464,7 +464,7 @@ class RDFTemplateParser(object):
         self._info['preferences'] = preferences
 
         params = {}
-        for param in self._graph.objects(self._rootURI, WIRE_M['hasWorkspaceParam']):
+        for param in self._graph.objects(self._rootURI, WIRE_M['hasMashupParam']):
             params[self._get_field(DCTERMS, 'title', param)] = {
                 'label': self._get_field(RDFS, 'label', param),
                 'type': self._get_field(WIRE, 'type', param),
