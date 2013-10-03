@@ -336,7 +336,7 @@
     };
 
     var ngsi_build_query_context_request = function ngsi_build_query_context_request(e, attrNames) {
-        var doc, entityIdList, i, id, attributeList, attribute,
+        var doc, entityIdList, i, attributeList, attribute,
             attributeElement;
 
         doc = NGSI.XML.createDocument(null, 'queryContextRequest');
@@ -597,16 +597,13 @@
     };
 
     var ngsi_build_unsubscribe_context_request = function ngsi_build_unsubscribe_context_request(subId) {
-        var doc, unsubscribeContextElement, subscriptionIdElement;
+        var doc, subscriptionIdElement;
 
         doc = NGSI.XML.createDocument(null, 'unsubscribeContextRequest');
 
-        unsubscribeContextElement = doc.createElement('unsubscribeContext');
-        doc.documentElement.appendChild(unsubscribeContextElement);
-
         subscriptionIdElement = doc.createElement('subscriptionId');
         NGSI.XML.setTextContent(subscriptionIdElement, subId);
-        unsubscribeContextElement.appendChild(subscriptionIdElement);
+        doc.documentElement.appendChild(subscriptionIdElement);
 
         return doc;
     };
@@ -724,9 +721,8 @@
 
     var parse_context_response_list = function parse_context_response_list(element, options) {
         var contextResponses, contextResponse, entry, entityIdElement, nameElement, flat,
-            typeElement, attributeName, contextValueElement, entity, entityId, idElement, i, j,
-            contextAttributeListElement, attributeList, attribute, contextValue,
-            data = {};
+            typeElement, attributeName, contextValueElement, entityId, idElement, i, j,
+            contextAttributeListElement, attributeList, contextValue, data = {};
 
         flat = !!options.flat;
         contextResponses = NGSI.XML.getChildElementsByTagName(element, 'contextElementResponse');
@@ -747,7 +743,7 @@
             idElement = NGSI.XML.getChildElementByTagName(entityIdElement, 'id');
             entityId = NGSI.XML.getTextContent(idElement);
             if (flat) {
-                entry.id = entityId,
+                entry.id = entityId;
                 entry.type = entityIdElement.getAttribute('type');
             } else {
                 entry.entity = {
@@ -882,7 +878,6 @@
     };
 
     var parse_notify_context_availability_request = function parse_notify_context_availability_request(doc, options) {
-        var subscriptionIdElement, originatorElement, data;
 
         if (doc.documentElement.tagName !== 'notifyContextAvailabilityRequest') {
             throw new NGSI.InvalidResponseError();
@@ -954,7 +949,7 @@
                 this.connected = false;
             }.bind(this), true);
             source.addEventListener('notification', function (e) {
-                var data, callback_id;
+                var data;
 
                 data = JSON.parse(e.data);
                 if (typeof this.callbacks[data.callback_id] === 'function') {
@@ -975,10 +970,10 @@
             this.onerror_callbacks = [];
 
             source.close();
-        }, 30000);
+        }.bind(this), 30000);
     };
 
-    NGSI.ProxyConnection = function ProxyConnection(url, /* TODO */ makeRequest) {
+    var ProxyConnection = function ProxyConnection(url, /* TODO */ makeRequest) {
         this.connected = false;
         this.connecting = false;
         this.url = url;
@@ -988,7 +983,7 @@
         this.onerror_callbacks = [];
     };
 
-    NGSI.ProxyConnection.prototype.connect = function connect(options) {
+    ProxyConnection.prototype.connect = function connect(options) {
         if (options == null) {
             options = {};
         }
@@ -1010,7 +1005,7 @@
         }
     };
 
-    NGSI.ProxyConnection.prototype.request_callback = function request_callback(callback, onSuccess, onFailure) {
+    ProxyConnection.prototype.request_callback = function request_callback(callback, onSuccess, onFailure) {
         if (typeof callback === 'funtion') {
             onSuccess(callback);
             return;
@@ -1047,7 +1042,7 @@
         }
     };
 
-    NGSI.ProxyConnection.prototype.close_callback = function close_callback(callback_id, onSuccess, onFailure) {
+    ProxyConnection.prototype.close_callback = function close_callback(callback_id, onSuccess, onFailure) {
         this.makeRequest(this.url + NGSI.proxy_endpoints.CALLBACK_COLLECTION + '/' + callback_id, {
             method: 'DELETE',
             onSuccess: function (response) {
@@ -1104,10 +1099,8 @@
             this.makeRequest = options.requestFunction;
         }
 
-        if (options.ngsi_proxy_connection instanceof NGSI.ProxyConnection) {
-            this.ngsi_proxy = options.ngsi_proxy_connection;
-        } else if (typeof options.ngsi_proxy_url === 'string') {
-            this.ngsi_proxy = new NGSI.ProxyConnection(options.ngsi_proxy_url, this.makeRequest);
+        if (typeof options.ngsi_proxy_url === 'string') {
+            this.ngsi_proxy = new ProxyConnection(options.ngsi_proxy_url, this.makeRequest);
         }
     };
 
@@ -1156,7 +1149,7 @@
     };
 
     NGSI.Connection.prototype.cancelRegistration = function cancelRegistration(regId, callbacks) {
-        this.updateRegistration(regId, [], [], 0, '', callbacks);
+        this.updateRegistration(regId, [{id: 'canceled registration'}], [], 'PT0H', 'http://canceled.registration.com', callbacks);
     };
 
     NGSI.Connection.prototype.discoverAvailability = function discoverAvailability(e, attr, callbacks) {
