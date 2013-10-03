@@ -6,11 +6,11 @@
     "use strict";
 
     var ngsi_available = false;
-    var connection, msg, button;
+    var connection, msg, button, context_id;
 
     if (typeof NGSI !== 'undefined' && NGSI.Connection != null) {
         try {
-            connection = new NGSI.Connection('http://wirecloud-demo.testbed.fi-ware.eu:1026');
+            connection = new NGSI.Connection(MashupPlatform.prefs.get('ngsi_server'));
 
             ngsi_available = true;
         } catch (err) {}
@@ -26,8 +26,10 @@
         button.enable();
     };
 
-    var onRegisterContextSuccess = function onRegisterContextSuccess() {
-        document.getElementById('register_context').textContent = 'OK';
+    var onRegisterContextSuccess = function onRegisterContextSuccess(registration_info) {
+
+        context_id = registration_info.registrationId;
+        document.getElementById('register_context').textContent = 'OK (' + context_id + ')';
 
         connection.addAttributes([
                 {
@@ -73,6 +75,19 @@
     var onUpdateAttributesSuccess = function onUpdateAttributesSuccess() {
         document.getElementById('update_context_update').textContent = 'OK';
 
+        connection.cancelRegistration(context_id, {
+                onSuccess: onCancelRegistrationSuccess,
+                onFailure: function (e) {
+                    document.getElementById('cancel_registration').textContent = 'Fail';
+                    fail();
+                }
+            }
+        );
+    };
+
+    var onCancelRegistrationSuccess = function onCancelRegistrationSuccess() {
+        document.getElementById('cancel_registration').textContent = 'OK';
+
         msg = document.createElement('div');
         msg.className = 'alert alert-block alert-success';
         msg.textContent = 'Success!';
@@ -96,6 +111,7 @@
                 msg = null;
             }
 
+            connection = new NGSI.Connection(MashupPlatform.prefs.get('ngsi_server'));
             connection.createRegistration([
                     {type: 'TestEntity', id: 'test1'}
                 ],

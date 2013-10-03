@@ -4,7 +4,7 @@
     <Catalog.ResourceDescription>
         <Vendor>Wirecloud</Vendor>
         <Name>ngsi-test-widget</Name>
-        <Version>1.0</Version>
+        <Version>1.0.1</Version>
         <DisplayName>Wirecloud NGSI API test widget</DisplayName>
         <Author>aarranz</Author>
         <Mail>aarranz@conwet.com</Mail>
@@ -18,6 +18,10 @@
         </Requirements>
 
     </Catalog.ResourceDescription>
+
+    <Platform.Preferences>
+        <Preference name="ngsi_server" type="text" description="NGSI Server to use for testing the integration between Wirecloud and the Context Broker GE" label="NGSI Server" default="http://orion.lab.fi-ware.eu:10026/" />
+    </Platform.Preferences>
 
     <Platform.Link>
         <XHTML href="test.html" use-platform-style="true" />
