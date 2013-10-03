@@ -237,7 +237,12 @@ class VariableValueCacheManager():
             data_ret['value'] = ''
             data_ret['secure'] = True
         else:
-            data_ret['value'] = entry['value']
+            value = entry['value']
+
+            if entry['type'] == 'B':
+                value = value.lower() == 'true'
+
+            data_ret['value'] = value
 
         data_ret['readonly'] = entry['readonly']
         data_ret['hidden'] = entry['hidden']
