@@ -319,6 +319,19 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         elements = root_element.xpath(xpath)
         self.assertEqual(len(elements), count)
 
+    def check_basic_xml_workspace_template_info(self, template):
+
+        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Vendor', 'Wirecloud Test Suite')
+        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Name', 'Test Mashup')
+        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Version', '1')
+        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Author', 'test')
+        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Mail', 'a@b.com')
+
+    def check_empty_xml_wiring_info(self, template):
+
+        self.assertXPathCount(template, '/Template/Platform.Wiring/Connection', 0)
+        self.assertXPathCount(template, '/Template/Platform.Wiring/Operator', 0)
+
     def get_rdf_element(self, graph, base, ns, predicate):
         element = None
 
@@ -344,6 +357,27 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
         self.assertEqual(num, count)
 
+    def check_basic_rdf_workspace_template_info(self, graph, mashup_uri):
+
+        self.assertRDFElement(graph, mashup_uri, self.DCTERMS, 'title', u'Test Mashup')
+        self.assertRDFElement(graph, mashup_uri, self.USDL, 'versionInfo', u'1')
+
+        vendor = graph.objects(mashup_uri, self.USDL['hasProvider']).next()
+        self.assertRDFElement(graph, vendor, self.FOAF, 'name', u'Wirecloud Test Suite')
+
+        addr = graph.objects(mashup_uri, self.VCARD['addr']).next()
+        self.assertRDFElement(graph, addr, self.VCARD, 'email', u'a@b.com')
+
+        author = graph.objects(mashup_uri, self.DCTERMS['creator']).next()
+        self.assertRDFElement(graph, author, self.FOAF, 'name', u'test')
+
+    def check_empty_rdf_wiring_info(self, graph, mashup_uri):
+
+        wiring = graph.objects(mashup_uri, self.WIRE_M['hasMashupWiring']).next()
+        self.assertRDFCount(graph, wiring, self.WIRE_M, 'hasConnection', 0)
+        self.assertRDFCount(graph, wiring, self.WIRE_M, 'hasiOperator', 0)
+        self.assertRDFCount(graph, wiring, self.WIRE_M, 'hasWiringView', 0)
+
     def test_build_template_from_workspace(self):
 
         options = {
@@ -352,16 +386,11 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             'version': '1',
             'author': 'test',
             'email': 'a@b.com',
-            'readOnlyWidgets': True,
         }
         template = build_template_from_workspace(options, self.workspace, self.user)
 
-        # Basic info
-        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Vendor', 'Wirecloud Test Suite')
-        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Name', 'Test Mashup')
-        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Version', '1')
-        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Author', 'test')
-        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Mail', 'a@b.com')
+        self.check_basic_xml_workspace_template_info(template)
+        self.check_empty_xml_wiring_info(template)
 
         # IWidgets
         self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab', 1)
@@ -376,22 +405,47 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             'author': 'test',
             'email': 'a@b.com',
             'doc_uri': 'http://example.com/test-mashup/docs/index.html',
-            'readOnlyWidgets': True,
+            'readOnlyWidgets': False,
         }
         template = build_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
 
-        # Basic info
-        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Vendor', 'Wirecloud Test Suite')
-        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Name', 'Test Mashup')
-        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Version', '1')
-        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Author', 'test')
-        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Mail', 'a@b.com')
-        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/WikiURI', 'http://example.com/test-mashup/docs/index.html')
+        self.check_basic_xml_workspace_template_info(template)
 
         # IWidgets
         self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab', 1)
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]', 'name', 'tab')
         self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource', 2)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[1]', 'readonly', 'false', optional=True)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[2]', 'readonly', 'false', optional=True)
+
+        self.check_empty_xml_wiring_info(template)
+
+    def test_build_template_from_workspace_read_only_widgets(self):
+
+        # Workspace with iwidgets
+        options = {
+            'vendor': 'Wirecloud Test Suite',
+            'name': 'Test Mashup',
+            'version': '1',
+            'author': 'test',
+            'email': 'a@b.com',
+            'doc_uri': 'http://example.com/test-mashup/docs/index.html',
+            'readOnlyWidgets': True,
+        }
+        template = build_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
+
+        self.check_basic_xml_workspace_template_info(template)
+
+        # IWidgets
+        self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab', 1)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]', 'name', 'tab')
+        self.assertXPathCount(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource', 2)
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[1]', 'readonly', 'true')
+        self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[2]', 'readonly', 'true')
+
+        self.check_empty_xml_wiring_info(template)
+
+    test_build_template_from_workspace_read_only_widgets.tags = ('next',)
 
     def test_build_template_from_workspace_forced_values(self):
 
@@ -411,6 +465,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             },
         }
         template = build_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
+        self.check_basic_xml_workspace_template_info(template)
 
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[1]/Preference[@name="username"]', 'readonly', 'true')
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[1]/Preference[@name="username"]', 'hidden', 'false', optional=True)
@@ -425,6 +480,9 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[2]/Preference[@name="password"]', 'readonly', 'false', optional=True)
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[2]/Preference[@name="password"]', 'hidden', 'false', optional=True)
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[2]/Preference[@name="password"]', 'value', 'test_password')
+
+        self.check_empty_xml_wiring_info(template)
+
     test_build_template_from_workspace_forced_values.tags = ('next',)
 
     def test_build_rdf_template_from_workspace(self):
@@ -435,28 +493,59 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             'version': u'1',
             'author': u'test',
             'email': u'a@b.com',
-            'readOnlyWidgets': True,
         }
         # Basic info
         graph = build_rdf_template_from_workspace(options, self.workspace, self.user)
         mashup_uri = graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']).next()
-
-        self.assertRDFElement(graph, mashup_uri, self.DCTERMS, 'title', u'Test Mashup')
-        self.assertRDFElement(graph, mashup_uri, self.USDL, 'versionInfo', u'1')
-
-        vendor = graph.objects(mashup_uri, self.USDL['hasProvider']).next()
-        self.assertRDFElement(graph, vendor, self.FOAF, 'name', u'Wirecloud Test Suite')
-
-        addr = graph.objects(mashup_uri, self.VCARD['addr']).next()
-        self.assertRDFElement(graph, addr, self.VCARD, 'email', u'a@b.com')
-
-        author = graph.objects(mashup_uri, self.DCTERMS['creator']).next()
-        self.assertRDFElement(graph, author, self.FOAF, 'name', u'test')
+        self.check_basic_rdf_workspace_template_info(graph, mashup_uri)
 
         self.assertRDFCount(graph, mashup_uri, self.WIRE_M, 'hasTab', 1)
 
         tab = graph.objects(mashup_uri, self.WIRE_M['hasTab']).next()
         self.assertRDFElement(graph, tab, self.DCTERMS, 'title', u'Tab')
+
+        self.check_empty_rdf_wiring_info(graph, mashup_uri)
+
+        # Workspace with iwidgets
+        options = {
+            'vendor': u'Wirecloud Test Suite',
+            'name': u'Test Mashup',
+            'version': u'1',
+            'author': u'test',
+            'email': u'a@b.com',
+            'readOnlyWidgets': False,
+        }
+        graph = build_rdf_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
+        mashup_uri = graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']).next()
+        self.check_basic_rdf_workspace_template_info(graph, mashup_uri)
+
+        self.assertRDFCount(graph, mashup_uri, self.WIRE_M, 'hasTab', 1)
+
+        tab = graph.objects(mashup_uri, self.WIRE_M['hasTab']).next()
+        self.assertRDFElement(graph, tab, self.DCTERMS, 'title', u'tab')
+        self.assertRDFCount(graph, tab, self.WIRE_M, 'hasiWidget', 2)
+        for iwidget in graph.objects(tab, self.WIRE_M['hasiWidget']):
+            self.assertRDFElement(graph, iwidget, self.WIRE, 'readonly', 'false', optional=True)
+            self.assertRDFCount(graph, iwidget, self.WIRE_M, 'hasiWidgetPreference', 2)
+            username_found = password_found = False
+            for preference in graph.objects(iwidget, self.WIRE_M['hasiWidgetPreference']):
+                self.assertRDFElement(graph, preference, self.WIRE_M, 'readonly', u'false', optional=True)
+                self.assertRDFElement(graph, preference, self.WIRE_M, 'hidden', u'false', optional=True)
+                name = self.get_rdf_element(graph, preference, self.DCTERMS, 'title')
+                if unicode(name) == u'username':
+                    username_found = True
+                    self.assertRDFElement(graph, preference, self.WIRE, 'value', u'test_username')
+                elif unicode(name) == u'password':
+                    password_found = True
+                    self.assertRDFElement(graph, preference, self.WIRE, 'value', u'test_password')
+                else:
+                    self.fail()
+
+            self.assertTrue(username_found and password_found)
+
+        self.check_empty_rdf_wiring_info(graph, mashup_uri)
+
+    def test_build_rdf_template_from_workspace_read_only_widgets(self):
 
         # Workspace with iwidgets
         options = {
@@ -469,18 +558,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         }
         graph = build_rdf_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
         mashup_uri = graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']).next()
-
-        self.assertRDFElement(graph, mashup_uri, self.DCTERMS, 'title', u'Test Mashup')
-        self.assertRDFElement(graph, mashup_uri, self.USDL, 'versionInfo', u'1')
-
-        vendor = graph.objects(mashup_uri, self.USDL['hasProvider']).next()
-        self.assertRDFElement(graph, vendor, self.FOAF, 'name', u'Wirecloud Test Suite')
-
-        addr = graph.objects(mashup_uri, self.VCARD['addr']).next()
-        self.assertRDFElement(graph, addr, self.VCARD, 'email', u'a@b.com')
-
-        author = graph.objects(mashup_uri, self.DCTERMS['creator']).next()
-        self.assertRDFElement(graph, author, self.FOAF, 'name', u'test')
+        self.check_basic_rdf_workspace_template_info(graph, mashup_uri)
 
         self.assertRDFCount(graph, mashup_uri, self.WIRE_M, 'hasTab', 1)
 
@@ -506,10 +584,8 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
             self.assertTrue(username_found and password_found)
 
-        wiring = graph.objects(mashup_uri, self.WIRE_M['hasMashupWiring']).next()
-        self.assertRDFCount(graph, wiring, self.WIRE_M, 'hasConnection', 0)
-        self.assertRDFCount(graph, wiring, self.WIRE_M, 'hasiOperator', 0)
-        self.assertRDFCount(graph, wiring, self.WIRE_M, 'hasWiringView', 0)
+        self.check_empty_rdf_wiring_info(graph, mashup_uri)
+    test_build_rdf_template_from_workspace_read_only_widgets.tags = ('next',)
 
     def test_build_rdf_template_from_workspace_forced_values(self):
 
@@ -530,6 +606,8 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         }
         graph = build_rdf_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
         mashup_uri = graph.subjects(self.RDF['type'], self.WIRE_M['Mashup']).next()
+        self.check_basic_rdf_workspace_template_info(graph, mashup_uri)
+
         tab = graph.objects(mashup_uri, self.WIRE_M['hasTab']).next()
         self.assertRDFCount(graph, tab, self.WIRE_M, 'hasiWidget', 2)
         for iwidget in graph.objects(tab, self.WIRE_M['hasiWidget']):
