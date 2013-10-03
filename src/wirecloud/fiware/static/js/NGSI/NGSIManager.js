@@ -92,7 +92,7 @@
             options.requestFunction = Wirecloud.io.makeRequest;
         }
 
-        if (typeof options.ngsi_proxy_url != null) {
+        if (options.ngsi_proxy_url != null) {
             if (!(options.ngsi_proxy_url in proxy_connections)) {
                 proxy_connections[options.ngsi_proxy_url] = new NGSI.ProxyConnection(options.ngsi_proxy_url, options.requestFunction);
             }
