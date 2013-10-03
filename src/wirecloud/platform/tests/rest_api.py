@@ -802,6 +802,22 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Tab should be removed
         self.assertFalse(Tab.objects.filter(name='ExistingTab').exists())
 
+    def test_tab_entry_delete_read_only_widgets(self):
+
+        url = reverse('wirecloud.tab_entry', kwargs={'workspace_id': 3, 'tab_id': 103})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        response = self.client.delete(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 403)
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
+        # Tab should not be removed
+        self.assertTrue(Tab.objects.filter(pk=103).exists())
+
     def test_iwidget_collection_post_requires_authentication(self):
 
         url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 1})
@@ -975,6 +991,21 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # IWidget should be deleted
         self.assertRaises(IWidget.DoesNotExist, IWidget.objects.get, pk=2)
 
+    def test_iwidget_entry_delete_read_only(self):
+
+        url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 3, 'tab_id': 103, 'iwidget_id': 4})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        response = self.client.delete(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 403)
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
+        # IWidget should not be deleted
+        IWidget.objects.get(pk=4)
 
 class ResourceManagementAPI(WirecloudTestCase):
 

@@ -137,6 +137,10 @@ class IWidgetEntry(Resource):
         if not request.user.is_superuser and not iwidget.tab.workspace.users.filter(id=request.user.id).exists():
             raise Http403
 
+        if iwidget.readOnly:
+            msg = _('IWidget cannot be deleted')
+            return build_error_response(request, 403, msg)
+
         iwidget.delete()
 
         return HttpResponse(status=204)

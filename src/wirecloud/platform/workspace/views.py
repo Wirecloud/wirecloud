@@ -395,8 +395,12 @@ class TabEntry(Resource):
 
         tabs = Tab.objects.filter(workspace__pk=workspace_id).order_by('position')[::1]
         if len(tabs) == 1:
-            msg = _("tab cannot be deleted")
-            return HttpResponseForbidden(msg)
+            msg = _("Tab cannot be deleted as workspaces need at least one tab")
+            return build_error_response(request, 403, msg)
+
+        if tab.iwidget_set.filter(readOnly=True).exists():
+            msg = _("Tab cannot be deleted as it contains widgets that cannot be deleted")
+            return build_error_response(request, 403, msg)
 
         # decrease the position of the following tabs
         for t in range(tab.position + 1, len(tabs)):
