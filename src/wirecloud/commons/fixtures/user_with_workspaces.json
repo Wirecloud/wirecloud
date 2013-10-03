@@ -154,7 +154,7 @@
             "name": "Test 2",
             "tab": 103,
             "refused_version": null,
-            "readOnly": false,
+            "readOnly": true,
             "position": 7,
             "icon_position": 8
         }

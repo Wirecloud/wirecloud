@@ -50,19 +50,19 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Only one tab => we cannot remove it
         tab_menu_button = tab.find_element_by_css_selector('.icon-tab-menu')
         tab_menu_button.click()
-        self.check_popup_menu(('Rename',), ('Remove',))
+        self.check_popup_menu(('Rename',), must_be_disabled=('Remove',))
 
         new_tab = self.add_tab()
 
         # Now we have two tabs so we can remove any of them
         tab_menu_button = tab.find_element_by_css_selector('.icon-tab-menu')
         tab_menu_button.click()
-        self.check_popup_menu(('Rename', 'Remove'), ())
+        self.check_popup_menu(must_be=('Rename', 'Remove'))
 
         new_tab.click()
         tab_menu_button = new_tab.find_element_by_css_selector('.icon-tab-menu')
         tab_menu_button.click()
-        self.check_popup_menu(('Rename', 'Remove'), ())
+        self.check_popup_menu(must_be=('Rename', 'Remove'))
 
         # Remove the recently created one
         self.popup_menu_click('Remove')
@@ -89,6 +89,32 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         iwidget = self.get_current_iwidgets()[0]
         iwidget.remove()
     test_remove_widget_from_workspace.tags = ('fiware-ut-5',)
+
+    def test_read_only_widgets_cannot_be_removed(self):
+
+        self.login(username='user_with_workspaces')
+
+        self.change_current_workspace('Pending Events')
+
+        tab = self.get_workspace_tab_by_name('Tab 2')
+        tab.click()
+
+        iwidget = self.get_current_iwidgets()[1]
+        iwidget.wait_loaded()
+        close_button = iwidget.element.find_element_by_css_selector('.icon-remove')
+        self.assertTrue('disabled' in close_button.get_attribute('class'))
+
+    def test_tabs_with_read_only_widgets_cannot_be_removed(self):
+
+        self.login(username='user_with_workspaces')
+
+        self.change_current_workspace('Pending Events')
+
+        tab = self.get_workspace_tab_by_name('Tab 2')
+        tab.click()
+        tab_menu_button = self.wait_element_visible_by_css_selector('.icon-tab-menu', element=tab)
+        tab_menu_button.click()
+        self.check_popup_menu(must_be_disabled=('Remove',))
 
     def test_widget_reload(self):
 
@@ -240,7 +266,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertIsNotNone(target_iwidget.element)
 
         tab = self.get_workspace_tab_by_name('Tab 2')
-        tab.click();
+        tab.click()
 
         with target_iwidget:
             try:

@@ -139,6 +139,22 @@ class IWidgetTester(object):
 
         WebDriverWait(self.testcase.driver, timeout).until(name_changed)
 
+    def wait_loaded(self, timeout=10):
+
+        def iwidget_loaded(driver):
+            iwidget_element = driver.execute_script('''
+                var iwidget = opManager.activeWorkspace.getIWidget(%s);
+                return iwidget.internal_iwidget.loaded ? iwidget.element : null;
+            ''' % self.id)
+
+            if iwidget_element is not None:
+                self.element = iwidget_element
+                return True
+
+            return False
+
+        WebDriverWait(self.testcase.driver, timeout).until(iwidget_loaded)
+
     def remove(self, timeout=30):
 
         old_iwidget_ids = self.testcase.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
@@ -308,7 +324,7 @@ class WirecloudRemoteTestCase(object):
             if view_name == 'marketplace':
                 WebDriverWait(self.driver, 30).until(marketplace_loaded)
 
-    def check_popup_menu(self, must_be, must_be_absent=(), must_be_disabled=()):
+    def check_popup_menu(self, must_be=(), must_be_absent=(), must_be_disabled=()):
 
         time.sleep(0.1)
 
