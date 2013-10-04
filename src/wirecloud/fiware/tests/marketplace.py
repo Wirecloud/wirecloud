@@ -28,7 +28,7 @@ from wirecloud.fiware.tests.store import DynamicWebServer, FakeNetwork, LocalFil
 
 class MarketplaceTestCase(WirecloudTestCase):
 
-    tags = ('fiware-ut-8',)
+    tags = ('fiware', 'fiware-plugin', 'fiware-ut-8',)
     maxDiff = None
 
     @classmethod

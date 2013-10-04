@@ -140,7 +140,7 @@ class FakeNetwork(object):
 
 class StoreTestCase(WirecloudTestCase):
 
-    tags = ('fiware-ut-13',)
+    tags = ('fiware', 'fiware-plugin', 'fiware-ut-13',)
 
     @classmethod
     def setUpClass(cls):

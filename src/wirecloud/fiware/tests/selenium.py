@@ -37,7 +37,7 @@ def read_response_file(*response):
 class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'fiware_test_data')
-    tags = ('pure-fiware',)
+    tags = ('fiware', 'fiware-plugin')
 
     @classmethod
     def setUpClass(cls):
@@ -80,14 +80,14 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         self.add_marketplace('fiware', 'http://marketplace.example.com/', 'fiware')
         widget_offering = self.search_in_catalogue_results('Smart City Lights application')
         self.assertIsNotNone(widget_offering)
-    test_add_fiware_marketplace.tags = ('pure-fiware', 'fiware-ut-8')
+    test_add_fiware_marketplace.tags = ('fiware', 'fiware-plugin', 'fiware-ut-8')
 
     def test_delete_fiware_marketplace(self):
 
         self.login(username='user_with_markets')
 
         self.delete_marketplace('fiware')
-    test_delete_fiware_marketplace.tags = ('pure-fiware', 'fiware-ut-8')
+    test_delete_fiware_marketplace.tags = ('fiware', 'fiware-plugin', 'fiware-ut-8')
 
     def test_ngsi_available_to_widgets(self):
 
@@ -99,7 +99,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         with iwidget:
             api_element = self.driver.find_element_by_id('api_available')
             self.assertEqual(api_element.text, 'Yes')
-    test_ngsi_available_to_widgets.tags = ('pure-fiware', 'fiware-ut-7')
+    test_ngsi_available_to_widgets.tags = ('fiware', 'fiware-plugin', 'fiware-ut-7')
 
     def test_objectstorage_available_to_widgets(self):
 
@@ -111,7 +111,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         with iwidget:
             api_element = self.driver.find_element_by_id('api_available')
             self.assertEqual(api_element.text, 'Yes')
-    test_objectstorage_available_to_widgets.tags = ('pure-fiware', 'fiware-ut-12')
+    test_objectstorage_available_to_widgets.tags = ('fiware', 'fiware-plugin', 'fiware-ut-12')
 
     def test_marketplace_keyword_search(self):
 
