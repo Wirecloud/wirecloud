@@ -30,7 +30,7 @@
             "longDescription": "Smart City Lights application is a valuable utility for incidents management and control of Smart City entities. The user has two different mashups that serve as a UI for the back-end application and leverage on a number of FI-WARE generic enablers. One of the mashups facilitates the real-time management of incidents, while the other allows for the analysis of historical information gathered from each of Smart City entities.",
             "shortDescription": "Smart City Lights is an application that allows the management and analysis of Smart City entities status.",
             "displayName": "Smart City Lights application",
-            "uriImage": "http://130.206.82.145/media/images/smart_lights_icon.png",
+            "uriImage": "http://static.example.com/smart_lights_icon.png",
             "legal": [
                 {
                     "clauses": [
