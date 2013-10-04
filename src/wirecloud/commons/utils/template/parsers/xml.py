@@ -394,13 +394,13 @@ class WirecloudTemplateParser(object):
             preferences[preference.get('name')] = preference.get('value')
         self._info['preferences'] = preferences
 
-        params = {}
+        self._info['params'] = []
         for param in self._xpath(PARAM_XPATH, workspace_structure):
-            params[param.get('name')] = {
+            self._info['params'].append({
+                'name': param.get('name'),
                 'label': param.get('label'),
                 'type': param.get('type'),
-            }
-        self._info['params'] = params
+            })
 
         tabs = []
         for tab in self._xpath(TAB_XPATH, workspace_structure):

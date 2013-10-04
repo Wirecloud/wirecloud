@@ -23,8 +23,8 @@ from lxml import etree
 def write_mashup_tree(resources, options):
 
     # Params
-    for param_name, param in options['params'].iteritems():
-        etree.SubElement(resources, 'Param', name=param_name, label=param['label'], type=param['type'])
+    for param in options['params']:
+        etree.SubElement(resources, 'Param', name=param['name'], label=param['label'], type=param['type'])
 
     # Tabs & resources
     for tab_index, tab in enumerate(options['tabs']):

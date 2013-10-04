@@ -127,9 +127,8 @@ def fillWorkspaceUsingTemplate(workspace, template):
         'extra_prefs': {},
         'iwidget': {},
     }
-    for param_name in workspace_info['params']:
-        param = workspace_info['params'][param_name]
-        new_forced_values['extra_prefs'][param_name] = {
+    for param in workspace_info['params']:
+        new_forced_values['extra_prefs'][param['name']] = {
             'inheritable': False,
             'label': param.get('label'),
             'type': param.get('type'),

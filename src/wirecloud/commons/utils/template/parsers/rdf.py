@@ -463,15 +463,16 @@ class RDFTemplateParser(object):
 
         self._info['preferences'] = preferences
 
-        params = {}
-        for param in self._graph.objects(self._rootURI, WIRE_M['hasMashupParam']):
-            params[self._get_field(DCTERMS, 'title', param)] = {
+        ordered_params = sorted(self._graph.objects(self._rootURI, WIRE_M['hasMashupParam']), key=lambda raw_param: possible_int(self._get_field(WIRE, 'index', raw_param, required=False)))
+        self._info['params'] = []
+        for param in ordered_params:
+            self._info['params'].append({
+                'name': self._get_field(DCTERMS, 'title', param),
                 'label': self._get_field(RDFS, 'label', param),
                 'type': self._get_field(WIRE, 'type', param),
-            }
-        self._info['params'] = params
+            })
 
-        ordered_tabs = sorted(self._graph.objects(self._rootURI, WIRE_M['hasTab']), key=lambda raw_tab: int(self._get_field(WIRE, 'index', raw_tab, required=False)))
+        ordered_tabs = sorted(self._graph.objects(self._rootURI, WIRE_M['hasTab']), key=lambda raw_tab: possible_int(self._get_field(WIRE, 'index', raw_tab, required=False)))
 
         tabs = []
         for tab in ordered_tabs:

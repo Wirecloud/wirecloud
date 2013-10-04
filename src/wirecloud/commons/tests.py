@@ -407,7 +407,7 @@ class TemplateUtilsTestCase(TestCase):
             'iphone_image_uri': u'',
             'doc_uri': '',
             'requirements': [],
-            'params': {},
+            'params': [],
             'preferences': {},
             'tabs': [],
             'wiring': {
@@ -438,7 +438,7 @@ class TemplateUtilsTestCase(TestCase):
                 {'type': 'feature', 'name': u'Wirecloud'},
                 {'type': 'feature', 'name': u'PubSub'}
             ],
-            'params': {},
+            'params': [],
             'preferences': {
                 'columns': '8'
             },
@@ -619,7 +619,7 @@ class TemplateUtilsTestCase(TestCase):
                 {'type': 'feature', 'name': u'Wirecloud'},
                 {'type': 'feature', 'name': u'PubSub'}
             ],
-            'params': {},
+            'params': [],
             'preferences': {
                 'columns': '8'
             },
@@ -812,10 +812,10 @@ class TemplateUtilsTestCase(TestCase):
                 {'type': 'feature', 'name': u'Wirecloud'},
                 {'type': 'feature', 'name': u'PubSub'}
             ],
-            'params': {
-                'param1': {'label': 'Param 1', 'type': 'text'},
-                'param2': {'label': 'Param 2', 'type': 'password'}
-            },
+            'params': [
+                {'name': 'param1', 'label': 'Param 1', 'type': 'text'},
+                {'name': 'param2', 'label': 'Param 2', 'type': 'password'}
+            ],
             'preferences': {
                 'columns': '8'
             },
