@@ -325,7 +325,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         restoretree(cls.tmp_dir, cls.localcatalogue_tmp_dir_backup)
         restoretree(cls.catalogue_tmp_dir, cls.catalogue_tmp_dir_backup)
 
-        super(WirecloudSeleniumTestCase, cls).setUpClass()
+        LiveServerTestCase.setUpClass.im_func(cls)
 
         downloader.download_http_content.set_live_server(cls.server_thread.host, cls.server_thread.port)
 
