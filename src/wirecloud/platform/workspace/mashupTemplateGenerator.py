@@ -139,6 +139,7 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
 
 def build_json_template_from_workspace(options, workspace, user):
     options['type'] = 'mashup'
+    options['params'] = []
     options['translations'] = {}
     options['translation_index_usage'] = {}
 
