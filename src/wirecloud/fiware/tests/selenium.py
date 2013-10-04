@@ -15,9 +15,8 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
     def test_delete_fiware_marketplace(self):
 
-        self.login()
+        self.login(username='user_with_markets')
 
-        self.add_marketplace('fiware', 'http://localhost:8080', 'fiware')
         self.delete_marketplace('fiware')
     test_delete_fiware_marketplace.tags = ('fiware-ut-8',)
 

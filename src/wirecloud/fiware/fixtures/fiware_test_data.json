@@ -1,0 +1,11 @@
+[
+    {
+        "pk": 101,
+        "model": "platform.market",
+        "fields": {
+            "name": "fiware",
+            "options": "{\"url\": \"http://marketplace.example.com/\", \"type\":\"fiware\", \"label\":\"fiware\"}",
+            "user": 3
+        }
+    }
+]
