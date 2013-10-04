@@ -127,6 +127,9 @@ class WidgetCodeEntry(Resource):
             except Exception, e:
                 msg = _("XHTML code is not accessible: %(errorMsg)s") % {'errorMsg': e.message}
                 return build_error_response(request, 502, msg)
+        else:
+            # Code contents comes as unicode from persistence, we need bytes
+            code = code.encode(charset)
 
         if xhtml.cacheable and (xhtml.code == '' or xhtml.code_timestamp is None):
             xhtml.code = code.decode(charset)
