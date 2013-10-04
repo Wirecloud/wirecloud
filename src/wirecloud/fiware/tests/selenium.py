@@ -112,3 +112,17 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             api_element = self.driver.find_element_by_id('api_available')
             self.assertEqual(api_element.text, 'Yes')
     test_objectstorage_available_to_widgets.tags = ('pure-fiware', 'fiware-ut-12')
+
+    def test_marketplace_keyword_search(self):
+
+        response_text = read_response_file('responses', 'marketplace', 'keyword_search.xml')
+        self.network._servers['http']['marketplace.example.com'].add_response('GET', '/search/offerings/fulltext/test', {'content': response_text})
+
+        self.login(username='user_with_markets')
+
+        self.change_main_view('marketplace')
+        self.change_marketplace('fiware')
+
+        self.search_resource('test')
+        widget_offering = self.search_in_catalogue_results('Smart City Lights application')
+        self.assertIsNotNone(widget_offering)
