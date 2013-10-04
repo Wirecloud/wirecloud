@@ -269,7 +269,7 @@
     };
 
     FiWareCatalogueView.prototype.refresh_search_results = function () {
-        this.viewsByName.search.pagination.refresh();
+        this.viewsByName.search.source.refresh();
     };
 
 
