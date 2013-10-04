@@ -42,7 +42,7 @@
         <dcterms:subject rdf:nodeID="ba1"/>
         <dcterms:subject rdf:nodeID="ba2"/>
         <dcterms:subject rdf:nodeID="ba3"/>
-        <foaf:depiction rdf:resource="http://130.206.82.145/media/images/smart_lights_icon.png"/>
+        <foaf:depiction rdf:resource="http://static.example.com/smart_lights_icon.png"/>
         <dcterms:title xml:lang="en">Smart City Lights application</dcterms:title>
         <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#datetime">2013-06-04T00:00</dcterms:created>
         <dcterms:abstract xml:lang="en">Smart City Lights is an application that allows the management and analysis of Smart City entities status.</dcterms:abstract>
@@ -52,7 +52,7 @@
         <usdl:hasLegalCondition rdf:resource="http://wstore.lab.fi-ware.eu/offering/UPM__SantanderCityLights__1.0#EcCfJjMlQ5p0wQWs9"/>
         <usdl:hasProvider rdf:resource="http://wstore.lab.fi-ware.eu/offering/UPM__SantanderCityLights__1.0#gXQmZp2KsDRJj3VFg"/>
         <usdl:utilizedResource rdf:resource=""/>
-        <foaf:thumbnail rdf:resource="http://130.206.82.145/media/images/smart_lights_icon.png"/>
+        <foaf:thumbnail rdf:resource="http://static.example.com/smart_lights_icon.png"/>
         <usdl:versionInfo>1.0</usdl:versionInfo>
         <dcterms:creator>
             <foaf:person>
@@ -98,7 +98,7 @@
         <foaf:homepage rdf:resource="http://conwet.fi.upm.es/"/>
         <usdl:legalForm/>
         <dcterms:description xml:lang="en"/>
-        <foaf:logo rdf:resource="http://conwet.fi.upm.es/templates/rt_mediamogul_essentials_j15/images/style2/logo.png"/>
+        <foaf:logo rdf:resource="http://static.example.com/company_logo.png"/>
         <foaf:name>CoNWeT</foaf:name>
     </gr:BusinessEntity>
 

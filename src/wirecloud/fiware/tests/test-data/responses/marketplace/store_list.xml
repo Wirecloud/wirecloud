@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<collection>
+    <resource name="Store 1">
+        <creator username="User 1">
+            <company>Company 1</company>
+            <email>user1@company1.example.com</email>
+            <registrationDate>2012-08-10T12:24:38+02:00</registrationDate>
+        </creator>
+        <description>Integration Store Description</description>
+        <lasteditor username="User 1">
+            <company>Company 1</company>
+            <email>user1@company1.example.com</email>
+            <registrationDate>2012-08-10T12:24:38+02:00</registrationDate>
+        </lasteditor>
+        <registrationDate>2012-08-10T12:25:57+02:00</registrationDate>
+        <url>http://store.example.com</url>
+    </resource>
+    <resource name="Store 2">
+        <creator username="User 2">
+            <company>Company 2</company>
+            <email>user2@company2.example.com</email>
+            <registrationDate>2012-08-10T12:24:38+02:00</registrationDate>
+        </creator>
+        <description>Integration Store Description</description>
+        <lasteditor username="User 2">
+            <company>Company 2</company>
+            <email>user2@company2.example.com</email>
+            <registrationDate>2012-08-10T12:24:38+02:00</registrationDate>
+        </lasteditor>
+        <registrationDate>2012-08-10T12:25:57+02:00</registrationDate>
+        <url>http://store2.example.com/mystore</url>
+    </resource>
+</collection>
