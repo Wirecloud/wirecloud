@@ -26,13 +26,13 @@
             </vCard:Work>
         </vCard:addr>
 
-        <wire-m:hasWorkspaceParam>
-            <wire-m:WorkspaceParam>
+        <wire-m:hasMashupParam>
+            <wire-m:MashupParam>
                 <dcterms:title>param</dcterms:title>
                 <wire:type>text</wire:type>
                 <rdfs:label>Parameter</rdfs:label>
-            </wire-m:WorkspaceParam>
-        </wire-m:hasWorkspaceParam>
+            </wire-m:MashupParam>
+        </wire-m:hasMashupParam>
 
         <wire-m:hasTab>
             <wire-m:Tab rdf:ID="tab-1">
