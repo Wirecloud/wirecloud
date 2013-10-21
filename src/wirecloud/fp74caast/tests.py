@@ -22,9 +22,10 @@ import json
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.test import TestCase, Client
+from django.test import Client
 from django.utils import unittest
 
+from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.platform.context.utils import get_platform_context_current_values, get_workspace_context_current_values
 
 if 'wirecloud.fp74caast' in settings.INSTALLED_APPS:
@@ -33,7 +34,7 @@ if 'wirecloud.fp74caast' in settings.INSTALLED_APPS:
 
 
 @unittest.skipIf(not 'wirecloud.fp74caast' in settings.INSTALLED_APPS, '4CaaSt support not enabled')
-class FP74CaastTests(TestCase):
+class FP74CaastTests(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', '4caast_test_data')
     tags = ('fp74CaaSt',)
@@ -98,12 +99,29 @@ class FP74CaastTests(TestCase):
         # Check user does not exist
         self.assertFalse(User.objects.filter(username='developer1').exists())
 
-    @unittest.skip('wip tests')
     def test_ac_deployment(self):
 
-        # Mashups/Widgets/Operators ...
-        response = self.client.get('/4caast-enabling/remove_tenant?4caastID=', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
-        self.assertEqual(response.status_code, 200)
+        url = reverse('wirecloud.4caast.deploy_tenant_ac')
+
+        # Add a wirget without overwritting preferences
+        data = {
+            '4CaaStID': '4caast.customers.4caast_developer.services.app1',
+            'url': 'http://macs.example.com/Wirecloud_Test_1.0.wgt',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        self.assertEqual(response.status_code, 204)
+
+    def test_ac_deployment_missing_parameter(self):
+
+        url = reverse('wirecloud.4caast.deploy_tenant_ac')
+
+        # Missing url parameter
+        response = self.client.post(url, json.dumps({'4CaaStID': '4caast.customers.4caast_developer.services.app1'}), content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        self.assertEqual(response.status_code, 400)
+
+        # Missing url parameter
+        response = self.client.post(url, json.dumps({'url': 'http://macs.example.com'}), content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        self.assertEqual(response.status_code, 400)
 
     # moritoring probe
     # accounting probe (proxy
