@@ -90,8 +90,8 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         template_uri = "http://example.com/path/widget.xml"
         template = self.read_template('template1.xml')
 
-        self.network._servers['http']['example.com'].add_response('GET', 'path/widget.xml', {'content': template})
-        self.network._servers['http']['example.com'].add_response('GET', 'path/test.html', {'content': BASIC_HTML_GADGET_CODE})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/widget.xml', {'content': template})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/test.html', {'content': BASIC_HTML_GADGET_CODE})
         resource = install_resource_to_user(self.user, file_contents=template, templateURL=template_uri)
 
         self.assertEqual(resource.vendor, 'Wirecloud')
@@ -107,8 +107,8 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         template_uri = "http://example.com/path/widget.xml"
         template = self.read_template('old-template.xml')
 
-        self.network._servers['http']['example.com'].add_response('GET', 'path/widget.xml', {'content': template})
-        self.network._servers['http']['example.com'].add_response('GET', 'path/test.html', {'content': BASIC_HTML_GADGET_CODE})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/widget.xml', {'content': template})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/test.html', {'content': BASIC_HTML_GADGET_CODE})
         resource = install_resource(template, template_uri, self.user, False)
 
         self.check_basic_widget_info(resource)
@@ -122,8 +122,8 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.assertIn('requirements', data)
         self.assertItemsEqual(data['requirements'], ({'type': 'feature', 'name': 'Wirecloud'},))
 
-        self.network._servers['http']['example.com'].add_response('GET', 'path/widget.rdf', {'content': template})
-        self.network._servers['http']['example.com'].add_response('GET', 'path/test.html', {'content': BASIC_HTML_GADGET_CODE})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/widget.rdf', {'content': template})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/test.html', {'content': BASIC_HTML_GADGET_CODE})
         resource = install_resource(template, template_uri, self.user, False)
 
         self.check_basic_widget_info(resource)
@@ -177,8 +177,8 @@ class LocalCatalogueTestCase(WirecloudTestCase):
             'version': '0.1',
         }
 
-        self.network._servers['http']['example.com'].add_response('GET', 'path/widget.xml', {'content': template})
-        self.network._servers['http']['example.com'].add_response('GET', 'path/test.html', {'content': BASIC_HTML_GADGET_CODE})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/widget.xml', {'content': template})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/test.html', {'content': BASIC_HTML_GADGET_CODE})
         resource = install_resource_to_user(self.user, file_contents=template, templateURL=template_uri)
         resource_pk = resource.pk
         xhtml_pk = resource.widget.pk
@@ -194,7 +194,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, pk=resource_pk)
 
         # Use a different xhtml code
-        self.network._servers['http']['example.com'].add_response('GET', 'path/test.html', 'cache')
+        self.network._servers['http']['example.com'].add_response('GET', '/path/test.html', {'content': 'cache'})
         install_resource_to_user(self.user, file_contents=template, templateURL=template_uri)
 
         response = client.get(reverse('wirecloud.widget_code_entry', kwargs=widget_id))
@@ -207,8 +207,8 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         template_uri = "http://example.com/path/widget.xml"
         template = self.read_template('template3.xml')
 
-        self.network._servers['http']['example.com'].add_response('GET', 'path/widget.xml', {'content': template})
-        self.network._servers['http']['example.com'].add_response('GET', 'path/test.html', {'content': BASIC_HTML_GADGET_CODE})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/widget.xml', {'content': template})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/test.html', {'content': BASIC_HTML_GADGET_CODE})
         self.assertRaises(TemplateParseException, install_resource, template, template_uri, self.user, False)
         self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Wirecloud', short_name='test', version='0.1')
 
@@ -216,8 +216,8 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         template_uri = "http://example.com/path/widget.xml"
         template = self.read_template('template4.xml')
 
-        self.network._servers['http']['example.com'].add_response('GET', 'path/widget.xml', {'content': template})
-        self.network._servers['http']['example.com'].add_response('GET', 'path/test.html', {'content': BASIC_HTML_GADGET_CODE})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/widget.xml', {'content': template})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/test.html', {'content': BASIC_HTML_GADGET_CODE})
         self.assertRaises(TemplateParseException, install_resource, template, template_uri, self.user, False)
         self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Wirecloud', short_name='test', version='0.1')
 
@@ -226,8 +226,8 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         template_uri = "http://example.com/path/widget.xml"
         template = self.read_template('template1.xml')
 
-        self.network._servers['http']['example.com'].add_response('GET', 'path/widget.xml', {'content': template})
-        self.network._servers['http']['example.com'].add_response('GET', 'path/test.html', {'content': BASIC_HTML_GADGET_CODE})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/widget.xml', {'content': template})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/test.html', {'content': BASIC_HTML_GADGET_CODE})
         resource = install_resource_to_user(self.user, file_contents=template, templateURL=template_uri)
 
         self.changeLanguage('es')
@@ -257,8 +257,8 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         template_uri = "http://example.com/path/widget.xml"
         template = self.read_template('template2.xml')
 
-        self.network._servers['http']['example.com'].add_response('GET', 'path/widget.xml', {'content': template})
-        self.network._servers['http']['example.com'].add_response('GET', 'path/test.html', {'content': BASIC_HTML_GADGET_CODE})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/widget.xml', {'content': template})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/test.html', {'content': BASIC_HTML_GADGET_CODE})
         resource = install_resource(template, template_uri, self.user, False)
 
         data = resource.get_processed_info()
@@ -279,20 +279,20 @@ class LocalCatalogueTestCase(WirecloudTestCase):
 
     def test_widgets_with_invalid_format(self):
         template_uri = "http://example.com/path/widget.xml"
-        self.network._servers['http']['example.com'].add_response('GET', 'path/test.html', {'content': BASIC_HTML_GADGET_CODE})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/test.html', {'content': BASIC_HTML_GADGET_CODE})
 
         template = self.read_template('template5.xml')
-        self.network._servers['http']['example.com'].add_response('GET', 'path/widget.xml', {'content': template})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/widget.xml', {'content': template})
         self.assertRaises(TemplateParseException, install_resource, template, template_uri, self.user, False)
         self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Wirecloud', short_name='test', version='0.1')
 
         template = self.read_template('template6.xml')
-        self.network._servers['http']['example.com'].add_response('GET', 'path/widget.xml', {'content': template})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/widget.xml', {'content': template})
         self.assertRaises(TemplateParseException, install_resource, template, template_uri, self.user, False)
         self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Wirecloud', short_name='test', version='0.1')
 
         template = self.read_template('template7.xml')
-        self.network._servers['http']['example.com'].add_response('GET', 'path/widget.xml', {'content': template})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/widget.xml', {'content': template})
         self.assertRaises(TemplateParseException, install_resource, template, template_uri, self.user, False)
         self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor='Wirecloud', short_name='test', version='0.1')
 
@@ -306,7 +306,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.assertIn('requirements', data)
         self.assertItemsEqual(data['requirements'], ({'type': 'feature', 'name': 'nonexistent-feature'}, {'type': 'feature', 'name': 'Wirecloud'},))
 
-        self.network._servers['http']['example.com'].add_response('GET', 'path/widget.xml', {'content': template})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/widget.xml', {'content': template})
         self.assertRaises(Exception, install_resource, template, template_uri, self.user, False)
         self.assertRaises(Widget.DoesNotExist, Widget.objects.get, resource__vendor='Example', resource__short_name='test', resource__version='0.1')
 
@@ -320,27 +320,27 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.assertIn('requirements', data)
         self.assertItemsEqual(data['requirements'], ({'type': 'feature', 'name': 'nonexistent-feature'}, {'type': 'feature', 'name': 'Wirecloud'},))
 
-        self.network._servers['http']['example.com'].add_response('GET', 'path/widget.xml', {'content': template})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/widget.xml', {'content': template})
         self.assertRaises(Exception, install_resource, template, template_uri, self.user, False)
         self.assertRaises(Widget.DoesNotExist, Widget.objects.get, resource__vendor='Example', resource__short_name='test', resource__version='0.1')
 
     def test_widgets_with_invalid_format_rdf(self):
         template_uri = "http://example.com/path/widget.rdf"
-        self.network._servers['http']['example.com'].add_response('GET', 'path/test.html', {'content': BASIC_HTML_GADGET_CODE})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/test.html', {'content': BASIC_HTML_GADGET_CODE})
 
         template = self.read_template('template5.rdf')
-        self.network._servers['http']['example.com'].add_response('GET', 'path/widget.rdf', {'content': template})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/widget.rdf', {'content': template})
         self.assertRaises(TemplateParseException, install_resource, template, template_uri, self.user, False)
 
         template = self.read_template('template6.rdf')
-        self.network._servers['http']['example.com'].add_response('GET', 'path/widget.rdf', {'content': template})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/widget.rdf', {'content': template})
         self.assertRaises(TemplateParseException, install_resource, template, template_uri, self.user, False)
 
     def test_basic_mashup(self):
 
         template_uri = "http://example.com/path/mashup.xml"
         template = self.read_template('..', '..', 'workspace', 'test-data', 'wt1.xml')
-        self.network._servers['http']['example.com'].add_response('GET', 'path/mashup.xml', {'content': template})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/mashup.xml', {'content': template})
         resource = install_resource_to_user(self.user, file_contents=template, templateURL=template_uri)
 
         self.assertEqual(resource.vendor, 'Wirecloud Test Suite')
@@ -352,7 +352,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
 
         template_uri = "http://example.com/path/mashup.rdf"
         template = self.read_template('..', '..', 'workspace', 'test-data', 'wt1.rdf')
-        self.network._servers['http']['example.com'].add_response('GET', 'path/mashup.rdf', {'content': template})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/mashup.rdf', {'content': template})
         resource = install_resource_to_user(self.user, file_contents=template, templateURL=template_uri)
 
         self.assertEqual(resource.vendor, 'Wirecloud Test Suite')
