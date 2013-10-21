@@ -90,7 +90,7 @@ class CatalogueResource(TransModel):
 
         return self.public or self.users.filter(id=user.id).exists() or len(set(self.groups.all()) & set(user.groups.all())) > 0
 
-    def get_processed_info(self, request=None):
+    def get_template(self, request=None):
 
         if urlparse(self.template_uri).scheme == '':
             template_uri = get_absolute_reverse_url('wirecloud_showcase.media', kwargs={
@@ -103,6 +103,12 @@ class CatalogueResource(TransModel):
             template_uri = self.template_uri
 
         parser = TemplateParser(self.json_description, base=template_uri)
+        return parser
+
+    def get_processed_info(self, request=None):
+
+        parser = self.get_template(request)
+
         return parser.get_resource_processed_info()
 
     def delete(self, *args, **kwargs):

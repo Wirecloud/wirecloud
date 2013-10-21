@@ -103,7 +103,7 @@ class FP74CaastTests(WirecloudTestCase):
 
         url = reverse('wirecloud.4caast.deploy_tenant_ac')
 
-        # Add a wirget without overwritting preferences
+        # Add a widget without overwritting preferences
         data = {
             '4CaaStID': '4caast.customers.4caast_developer.services.app1',
             'url': 'http://macs.example.com/Wirecloud_Test_1.0.wgt',
@@ -119,7 +119,7 @@ class FP74CaastTests(WirecloudTestCase):
         response = self.client.post(url, json.dumps({'4CaaStID': '4caast.customers.4caast_developer.services.app1'}), content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 400)
 
-        # Missing url parameter
+        # Missing 4CaaStID parameter
         response = self.client.post(url, json.dumps({'url': 'http://macs.example.com'}), content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 400)
 

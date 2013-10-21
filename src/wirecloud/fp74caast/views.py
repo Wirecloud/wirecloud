@@ -32,6 +32,7 @@ from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.http import build_error_response, get_content_type
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
 from wirecloud.commons.utils.template.writers.rdf import write_rdf_description
+from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.localcatalogue.utils import install_resource_to_user
 from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate
@@ -52,6 +53,7 @@ def parse_username(tenant_id):
 
 
 @require_POST
+@commit_on_http_success
 def add_tenant(request):
 
     try:
@@ -91,6 +93,7 @@ def add_tenant(request):
 
 
 @require_POST
+@commit_on_http_success
 def remove_tenant(request):
 
     try:
@@ -181,6 +184,7 @@ def _parse_ac_request(request):
     return id_4CaaSt, file_contents, fileURL
 
 @require_POST
+@commit_on_http_success
 def deploy_tenant_ac(request):
 
     result = _parse_ac_request(request)
@@ -205,11 +209,12 @@ def deploy_tenant_ac(request):
 
     # Create a workspace if the resource is a mashup
     if resource.resource_type() == 'mashup' and not Workspace.objects.filter(creator=user, name=resource.display_name).exists():
-        buildWorkspaceFromTemplate(template, user, True)
+        buildWorkspaceFromTemplate(resource.get_template(), user, True)
 
     return HttpResponse(status=204)
 
 @require_POST
+@commit_on_http_success
 def undeploy_tenant_ac(request):
 
     result = _parse_ac_request(request)
@@ -242,6 +247,7 @@ def undeploy_tenant_ac(request):
 
 
 @require_GET
+@commit_on_http_success
 def add_saas_tenant(request, creator, workspace):
 
     # Sync workspace list before searching it
@@ -284,6 +290,7 @@ def add_saas_tenant(request, creator, workspace):
 
 
 @require_GET
+@commit_on_http_success
 def remove_saas_tenant(request, creator, workspace):
 
     id_4CaaSt = request.GET.get('message')
