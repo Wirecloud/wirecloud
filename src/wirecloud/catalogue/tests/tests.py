@@ -33,9 +33,8 @@ import wirecloud.catalogue.utils
 from wirecloud.catalogue.utils import add_resource_from_template
 from wirecloud.catalogue.get_json_catalogue_data import get_resource_data
 from wirecloud.catalogue.models import CatalogueResource, WidgetWiring
-from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.template import TemplateParseException
-from wirecloud.commons.utils.testcases import FakeDownloader, LocalDownloader, LocalizedTestCase
+from wirecloud.commons.utils.testcases import LocalFileSystemServer, WirecloudTestCase
 from wirecloud.commons.utils.wgt import WgtDeployer
 
 
@@ -43,8 +42,13 @@ from wirecloud.commons.utils.wgt import WgtDeployer
 __test__ = False
 
 
-class AddWidgetTestCase(LocalizedTestCase):
+class AddWidgetTestCase(WirecloudTestCase):
 
+    servers = {
+        'http': {
+            'example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data')),
+        },
+    }
     @classmethod
     def setUpClass(cls):
 
@@ -54,20 +58,6 @@ class AddWidgetTestCase(LocalizedTestCase):
         f = open(os.path.join(os.path.dirname(__file__), 'test-data/template1.xml'), 'rb')
         cls.template = f.read()
         f.close()
-
-        cls._original_download_function = staticmethod(downloader.download_http_content)
-        downloader.download_http_content = LocalDownloader({
-            'http': {
-                'example.com': os.path.join(os.path.dirname(__file__), 'test-data'),
-            },
-        })
-
-    @classmethod
-    def tearDownClass(cls):
-
-        downloader.download_http_content = cls._original_download_function
-
-        super(AddWidgetTestCase, cls).tearDownClass()
 
     def setUp(self):
         super(AddWidgetTestCase, self).setUp()
@@ -249,19 +239,13 @@ class CatalogueAPITestCase(TestCase):
         self.assertEqual(result_json['voteData']['user_vote'], 4)
 
 
-class PublishTestCase(TransactionTestCase):
+class PublishTestCase(WirecloudTestCase):
 
     tags = ('fiware-ut-4',)
 
     def setUp(self):
         super(PublishTestCase, self).setUp()
-        self._original_function = downloader.download_http_content
-        downloader.download_http_content = FakeDownloader()
         self.user = User.objects.create_user('test', 'test@example.com', 'test')
-
-    def tearDown(self):
-        super(PublishTestCase, self).tearDown()
-        downloader.download_http_content = self._original_function
 
     def read_template(self, *filename):
         f = codecs.open(os.path.join(os.path.dirname(__file__), *filename), 'rb')

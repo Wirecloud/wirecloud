@@ -28,9 +28,7 @@ from django.test import Client
 
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
-import wirecloud.commons
-from wirecloud.commons.utils import downloader
-from wirecloud.commons.utils.testcases import LocalDownloader, WirecloudTestCase
+from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.commons.utils.wgt import WgtDeployer
 from wirecloud.platform.models import IWidget, Tab, VariableValue, Workspace, UserWorkspace
 from wirecloud.platform.widget import utils as showcase
@@ -215,22 +213,10 @@ class ApplicationMashupAPI(WirecloudTestCase):
     fixtures = ('selenium_test_data', 'user_with_workspaces')
     tags = ('rest_api', 'fiware-ut-11')
 
-    @classmethod
-    def setUpClass(cls):
-        super(ApplicationMashupAPI, cls).setUpClass()
+    def setUp(self):
+        super(ApplicationMashupAPI, self).setUp()
 
-        cls.client = Client()
-        cls._original_download_function = staticmethod(downloader.download_http_content)
-        downloader.download_http_content = LocalDownloader({
-            'http': {
-                'localhost:8001': os.path.join(os.path.dirname(wirecloud.commons.__file__), 'test-data', 'src'),
-            },
-        })
-
-    @classmethod
-    def tearDownClass(cls):
-
-        downloader.download_http_content = cls._original_download_function
+        self.client = Client()
 
     def test_features(self):
 
@@ -1017,12 +1003,6 @@ class ResourceManagementAPI(WirecloudTestCase):
         super(ResourceManagementAPI, cls).setUpClass()
 
         cls.client = Client()
-        cls._original_download_function = staticmethod(downloader.download_http_content)
-        downloader.download_http_content = LocalDownloader({
-            'http': {
-                'localhost:8001': os.path.join(os.path.dirname(wirecloud.commons.__file__), 'test-data', 'src'),
-            },
-        })
 
         # catalogue deployer
         cls.old_catalogue_deployer = catalogue.wgt_deployer
@@ -1036,8 +1016,6 @@ class ResourceManagementAPI(WirecloudTestCase):
 
     @classmethod
     def tearDownClass(cls):
-
-        downloader.download_http_content = cls._original_download_function
 
         # deployers
         catalogue.wgt_deployer = cls.old_catalogue_deployer
@@ -1293,12 +1271,6 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         super(ExtraApplicationMashupAPI, cls).setUpClass()
 
         cls.client = Client()
-        cls._original_download_function = staticmethod(downloader.download_http_content)
-        downloader.download_http_content = LocalDownloader({
-            'http': {
-                'localhost:8001': os.path.join(os.path.dirname(wirecloud.commons.__file__), 'test-data', 'src'),
-            },
-        })
 
         # catalogue deployer
         cls.old_catalogue_deployer = catalogue.wgt_deployer
@@ -1312,8 +1284,6 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
     @classmethod
     def tearDownClass(cls):
-
-        downloader.download_http_content = cls._original_download_function
 
         # deployers
         catalogue.wgt_deployer = cls.old_catalogue_deployer

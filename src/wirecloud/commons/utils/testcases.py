@@ -18,8 +18,10 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import os
 import codecs
+import mimetypes
+import os
+import requests
 import shutil
 import stat
 import sys
@@ -94,75 +96,150 @@ def restoretree(backup_path, dest_path):
             shutil.copy2(srcname, dstname)
 
 
-class FakeDownloader(object):
+class DynamicWebServer(object):
 
-    def __init__(self):
-        self.reset()
+    responses = {}
 
-    def reset(self):
-        self._responses = {}
-        self._exceptions = {}
+    def add_response(self, method, path, response_body):
 
-    def set_response(self, url, response):
-        self._responses[url] = response
+        if path not in self.responses:
+            self.responses[path] = {}
 
-    def set_exception(self, url, exception):
-        self._exceptions[url] = exception
+        self.responses[path][method] = response_body
 
-    def set_http_error(self, url):
-        self.set_exception(url, HTTPError('url', '404', 'Not Found', None, None))
+    def clear(self):
+        self.responses = {}
 
-    def set_url_error(self, url):
-        self.set_exception(url, URLError('not valid'))
+    def request(self, method, url, *args, **kwargs):
 
-    def __call__(self, *args, **kwargs):
-        url = args[0]
-
-        if url in self._exceptions:
-            raise self._exceptions[url]
-
-        if url in self._responses:
-            return self._responses[url]
-        else:
+        parsed_url = urlparse(url)
+        if parsed_url.path not in self.responses or method not in self.responses[parsed_url.path]:
             raise HTTPError('url', '404', 'Not Found', None, None)
 
+        return self.responses[parsed_url.path][method]
 
-class LocalDownloader(object):
 
-    def __init__(self, servers):
-        self._servers = servers
+class LiveServer(object):
+
+    def __init__(self):
         self._client = Client()
-        self._live_netloc = None
 
-    def set_live_server(self, host, port):
-        self._live_netloc = host + ':' + str(port)
+    def request(self, method, url, *args, **kwargs):
 
-    def __call__(self, url, *args, **kwargs):
+        return getattr(self._client, method.lower())(url)
+
+
+class LocalFileSystemServer(object):
+
+    def __init__(self, base_path):
+
+        self.base_path = os.path.abspath(base_path)
+
+    def request(self, method, url, *args, **kwargs):
+
+        if method != 'GET':
+            raise HTTPError('url', '405', 'Method not allowed', None, None)
+
         parsed_url = urlparse(url)
-
-        if parsed_url.scheme == 'file':
-            f = codecs.open(parsed_url.path, 'rb')
-            contents = f.read()
-            f.close()
-            return contents
-
-        if self._live_netloc is not None and parsed_url.netloc == self._live_netloc:
-            return self._client.get(url).content
-
-        if parsed_url.scheme not in self._servers or parsed_url.netloc not in self._servers[parsed_url.scheme]:
-            raise URLError('not valid')
-
-        base_path = self._servers[parsed_url.scheme][parsed_url.netloc]
-        final_path = os.path.normpath(os.path.join(base_path, parsed_url.path[1:]))
-
-        if final_path.startswith(base_path) and os.path.isfile(final_path):
+        final_path = os.path.normpath(os.path.join(self.base_path, parsed_url.path[1:]))
+        if final_path.startswith(self.base_path) and os.path.isfile(final_path):
             f = codecs.open(final_path, 'rb')
             contents = f.read()
             f.close()
 
-            return contents
+            return {
+                'headers': {
+                    'Content-Type': mimetypes.guess_type(final_path, strict=False)[0],
+                    'Content-Length': len(contents),
+                },
+                'content': contents,
+            }
         else:
             raise HTTPError('url', '404', 'Not Found', None, None)
+
+
+class FakeNetwork(object):
+
+    old_download_function = None
+    old_requests_get = None
+    old_requests_post = None
+
+    def __init__(self, servers={}):
+        self._servers = servers
+
+    def __call__(self, method, url, *args, **kwargs):
+        parsed_url = urlparse(url)
+
+        if parsed_url.scheme not in self._servers or parsed_url.netloc not in self._servers[parsed_url.scheme]:
+            raise URLError('not valid')
+
+        server = self._servers[parsed_url.scheme][parsed_url.netloc]
+        return server.request(method, url, *args, **kwargs)
+
+    def mock_requests(self):
+
+        if self.old_requests_get is not None:
+            return
+
+        def get_mock(url, *args, **kwargs):
+            res_info = self('GET', url, *args, **kwargs)
+
+            res = requests.Response()
+            res.url = res_info.get('url', url)
+            res.status_code = res_info.get('status_code', 200)
+            if 'headers' in res_info:
+                res.headers.update(res_info['headers'])
+            res._content = res_info.get('content', '')
+            return res
+
+        def post_mock(url, *args, **kwargs):
+            res_info = self('POST', url, *args, **kwargs)
+
+            res = requests.Response()
+            res.url = res_info.get('url', url)
+            res.status_code = res_info.get('status_code', 200)
+            if 'headers' in res_info:
+                res.headers.update(res_info['headers'])
+            res._content = res_info.get('content', '')
+            return res
+
+        self.old_requests_get = requests.get
+        requests.get = get_mock
+        self.old_requests_post = requests.post
+        requests.post = post_mock
+
+    def unmock_requests(self):
+        requests.get = self.old_requests_get
+        requests.post = self.old_requests_post
+        self.old_requests_get = None
+        self.old_requests_post = None
+
+    def mock_downloader(self):
+
+        if self.old_download_function is not None:
+            return
+
+        self.old_download_function = staticmethod(downloader.download_http_content)
+
+        def downloader_mock(url, *args, **kwargs):
+
+            parsed_url = urlparse(url)
+            if parsed_url.scheme == 'file':
+                f = codecs.open(parsed_url.path, 'rb')
+                contents = f.read()
+                f.close()
+                return contents
+
+            res_info = self('GET', url)
+
+            return res_info.get('content', '')
+
+        downloader.download_http_content = downloader_mock
+
+    def unmock_downloader(self):
+
+        downloader.download_http_content = self.old_download_function
+        self.old_download_function = None
 
 
 class WirecloudTestCase(TransactionTestCase):
@@ -170,30 +247,47 @@ class WirecloudTestCase(TransactionTestCase):
     @classmethod
     def setUpClass(cls):
 
+        # Setup languages
         from django.conf import settings
 
         cls.old_LANGUAGES = settings.LANGUAGES
         cls.old_LANGUAGE_CODE = settings.LANGUAGE_CODE
         cls.old_DEFAULT_LANGUAGE = settings.DEFAULT_LANGUAGE
-        settings.LANGUAGES = (('en', 'English'),)
+        settings.LANGUAGES = (('en', 'English'), ('es', 'Spanish'))
         settings.LANGUAGE_CODE = 'en'
         settings.DEFAULT_LANGUAGE = 'en'
 
         cls.shared_test_data_dir = os.path.join(os.path.dirname(__file__), '../test-data')
+
+        # Mock network requests
+        cls.network = FakeNetwork(getattr(cls, 'servers', {
+            'http': {
+                'localhost:8001': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), '..', 'test-data', 'src')),
+                'macs.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), '..', 'test-data')),
+            },
+        }))
+        cls.network.mock_requests()
+        cls.network.mock_downloader()
 
         super(WirecloudTestCase, cls).setUpClass()
 
     @classmethod
     def tearDownClass(cls):
 
+        # Restore previous language configuration
         from django.conf import settings
 
         settings.LANGUAGES = cls.old_LANGUAGES
         settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
         settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
 
+        # Clear cache
         from django.core.cache import cache
         cache.clear()
+
+        # Unmock network requests
+        cls.network.unmock_requests()
+        cls.network.unmock_downloader()
 
         super(WirecloudTestCase, cls).tearDownClass()
 
@@ -202,35 +296,7 @@ class WirecloudTestCase(TransactionTestCase):
         from django.core.cache import cache
         cache.clear()
 
-
-class LocalizedTestCase(TransactionTestCase):
-
-    @classmethod
-    def setUpClass(cls):
-
-        from django.conf import settings
-
-        cls.old_LANGUAGES = settings.LANGUAGES
-        cls.old_LANGUAGE_CODE = settings.LANGUAGE_CODE
-        cls.old_DEFAULT_LANGUAGE = settings.DEFAULT_LANGUAGE
-        settings.LANGUAGES = (('en', 'English'), ('es', 'Spanish'))
-
-        super(LocalizedTestCase, cls).setUpClass()
-
-    @classmethod
-    def tearDownClass(cls):
-
-        from django.conf import settings
-
-        settings.LANGUAGES = cls.old_LANGUAGES
-        settings.LANGUAGE_CODE = cls.old_LANGUAGE_CODE
-        settings.DEFAULT_LANGUAGE = cls.old_DEFAULT_LANGUAGE
-
-        super(LocalizedTestCase, cls).tearDownClass()
-
-    def setUp(self):
-        super(LocalizedTestCase, self).setUp()
-
+        # Restore English as the default language
         self.changeLanguage('en')
 
     def changeLanguage(self, new_language):
@@ -286,13 +352,15 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         settings.LANGUAGE_CODE = 'en'
         settings.DEFAULT_LANGUAGE = 'en'
 
-        # downloader
-        cls._original_download_function = staticmethod(downloader.download_http_content)
-        downloader.download_http_content = LocalDownloader(getattr(cls, 'servers', {
+        # Mock network requests
+        cls.network = FakeNetwork(getattr(cls, 'servers', {
             'http': {
-                'localhost:8001': os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'test-data', 'src')),
+                'localhost:8001': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), '..', 'test-data', 'src')),
+                'macs.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), '..', 'test-data')),
             },
         }))
+        cls.network.mock_requests()
+        cls.network.mock_downloader()
         cls._original_proxy_do_request_function = WIRECLOUD_PROXY._do_request
         WIRECLOUD_PROXY._do_request = ProxyFakeDownloader()
         WIRECLOUD_PROXY._do_request.set_response('http://example.com/success.html', 'remote makerequest succeded')
@@ -327,7 +395,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
         LiveServerTestCase.setUpClass.im_func(cls)
 
-        downloader.download_http_content.set_live_server(cls.server_thread.host, cls.server_thread.port)
+        cls.network._servers['http'][cls.server_thread.host + ':' + str(cls.server_thread.port)] = LiveServer()
 
     @classmethod
     def tearDownClass(cls):
@@ -336,8 +404,9 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
         WirecloudRemoteTestCase.tearDownClass.im_func(cls)
 
-        # downloader
-        downloader.download_http_content = cls._original_download_function
+        # Unmock network requests
+        cls.network.unmock_requests()
+        cls.network.unmock_downloader()
         WIRECLOUD_PROXY._do_request = cls._original_proxy_do_request_function
 
         # deployers

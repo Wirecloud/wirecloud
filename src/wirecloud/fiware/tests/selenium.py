@@ -19,8 +19,7 @@
 
 import os
 
-from wirecloud.commons.utils.testcases import WirecloudSeleniumTestCase
-from wirecloud.fiware.tests.store import DynamicWebServer, FakeNetwork, LocalFileSystemServer
+from wirecloud.commons.utils.testcases import DynamicWebServer, LocalFileSystemServer, WirecloudSeleniumTestCase
 
 
 __test__ = False
@@ -37,6 +36,13 @@ def read_response_file(*response):
 class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'fiware_test_data')
+    servers = {
+        'http': {
+            'marketplace.example.com': DynamicWebServer(),
+            'repository.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'repository')),
+            'static.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'static')),
+        },
+    }
     tags = ('fiware', 'fiware-plugin')
 
     @classmethod
@@ -44,25 +50,9 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
         WirecloudSeleniumTestCase.setUpClass.im_func(cls)
 
-        cls.network = FakeNetwork({
-            'http': {
-                'marketplace.example.com': DynamicWebServer(),
-                'repository.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'repository')),
-                'static.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'static')),
-            },
-        })
-        cls.network.mock_requests()
-
         cls.store_list_response = read_response_file('responses', 'marketplace', 'store_list.xml')
         cls.store1_offerings = read_response_file('responses', 'marketplace', 'store1_offerings.xml')
         cls.store2_offerings = read_response_file('responses', 'marketplace', 'store2_offerings.xml')
-
-    @classmethod
-    def tearDownClass(cls):
-
-        WirecloudSeleniumTestCase.tearDownClass.im_func(cls)
-
-        cls.network.unmock_requests()
 
     def setUp(self):
 

@@ -19,37 +19,21 @@
 
 import json
 import os
-import requests
 
-from wirecloud.commons.utils.testcases import WirecloudTestCase
+from wirecloud.commons.utils.testcases import DynamicWebServer, LocalFileSystemServer, WirecloudTestCase
 from wirecloud.fiware.marketAdaptor.marketadaptor import MarketAdaptor
-from wirecloud.fiware.tests.store import DynamicWebServer, FakeNetwork, LocalFileSystemServer
 
 
 class MarketplaceTestCase(WirecloudTestCase):
 
     tags = ('fiware', 'fiware-plugin', 'fiware-ut-8',)
+    servers = {
+        'http': {
+            'marketplace.example.com': DynamicWebServer(),
+            'repository.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'repository')),
+        },
+    }
     maxDiff = None
-
-    @classmethod
-    def setUpClass(cls):
-
-        super(MarketplaceTestCase, cls).setUpClass()
-
-        cls.network = FakeNetwork({
-            'http': {
-                'marketplace.example.com': DynamicWebServer(),
-                'repository.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'repository')),
-            },
-        })
-        cls.network.mock_requests()
-
-    @classmethod
-    def tearDownClass(cls):
-
-        super(MarketplaceTestCase, cls).tearDownClass()
-
-        cls.network.unmock_requests()
 
     def setUp(self):
 
