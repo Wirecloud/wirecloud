@@ -61,6 +61,13 @@ def add_tenant(request):
         return build_error_response(request, 400, msg)
 
     id_4CaaSt = data['4CaaStID']
+
+    if id_4CaaSt is None:
+        return build_error_response(request, 400, _('Missing 4CaaStID'))
+
+    if not isinstance(id_4CaaSt, basestring) or id_4CaaSt.strip() == '':
+        return build_error_response(request, 400, _('Invalid 4CaaStID'))
+
     username = parse_username(id_4CaaSt)
 
     status = 201
@@ -92,7 +99,14 @@ def remove_tenant(request):
         msg = _("malformed json data: %s") % unicode(e)
         return build_error_response(request, 400, msg)
 
-    id_4CaaSt = data['4CaaStID']
+    id_4CaaSt = data.get('4CaaStID')
+
+    if id_4CaaSt is None:
+        return build_error_response(request, 400, _('Missing 4CaaStID'))
+
+    if not isinstance(id_4CaaSt, basestring) or id_4CaaSt.strip() == '':
+        return build_error_response(request, 400, _('Invalid 4CaaStID'))
+
     username = parse_username(id_4CaaSt)
 
     user = get_object_or_404(User, username=username)
@@ -124,10 +138,16 @@ def _parse_ac_request(request):
     fileURL = data.get('url')
     id_4CaaSt = data.get('4CaaStID')
 
+    if id_4CaaSt is None:
+        return build_error_response(request, 400, _('Missing 4CaaStID'))
+
+    if not isinstance(id_4CaaSt, basestring) or id_4CaaSt.strip() == '':
+        return build_error_response(request, 400, _('Invalid 4CaaStID'))
+
     try:
         downloaded_file = downloader.download_http_content(fileURL)
     except:
-        return build_error_response(request, 409, _('Widget content could not be downloaded'))
+        return build_error_response(request, 409, _('Mashable application component could not be downloaded'))
 
     downloaded_file = StringIO(downloaded_file)
     file_contents = WgtFile(downloaded_file)
@@ -192,7 +212,11 @@ def deploy_tenant_ac(request):
 @require_POST
 def undeploy_tenant_ac(request):
 
-    id_4CaaSt, wgt_file, fileURL = _parse_ac_request(request)
+    result = _parse_ac_request(request)
+    if isinstance(result, HttpResponse):
+        return result
+
+    id_4CaaSt, wgt_file, fileURL = result
 
     # Process 4CaaSt Id
     username = parse_username(id_4CaaSt)
@@ -228,7 +252,14 @@ def add_saas_tenant(request, creator, workspace):
 
     status = 201
 
-    id_4CaaSt = request.GET['message']
+    id_4CaaSt = request.GET.get('message')
+
+    if id_4CaaSt is None:
+        return build_error_response(request, 400, _('Missing 4CaaStID'))
+
+    if not isinstance(id_4CaaSt, basestring) or id_4CaaSt.strip() == '':
+        return build_error_response(request, 400, _('Invalid 4CaaStID'))
+
     username = parse_username(id_4CaaSt)
     try:
         user = User.objects.create_user(username, 'test@example.com', username)
@@ -255,7 +286,14 @@ def add_saas_tenant(request, creator, workspace):
 @require_GET
 def remove_saas_tenant(request, creator, workspace):
 
-    id_4CaaSt = request.GET['message']
+    id_4CaaSt = request.GET.get('message')
+
+    if id_4CaaSt is None:
+        return build_error_response(request, 400, _('Missing 4CaaStID'))
+
+    if not isinstance(id_4CaaSt, basestring) or id_4CaaSt.strip() == '':
+        return build_error_response(request, 400, _('Invalid 4CaaStID'))
+
     username = parse_username(id_4CaaSt)
 
     db_filter = {
