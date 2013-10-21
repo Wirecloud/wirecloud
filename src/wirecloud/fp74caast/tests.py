@@ -111,6 +111,26 @@ class FP74CaastTests(WirecloudTestCase):
         response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 204)
 
+    def test_mashup_deployment_using_previously_deployed_resources(self):
+
+        url = reverse('wirecloud.4caast.deploy_tenant_ac')
+
+        # Add a widget
+        data = {
+            '4CaaStID': '4caast.customers.4caast_developer.services.app1',
+            'url': 'http://macs.example.com/Wirecloud_Test_Selenium_1.0.wgt',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        self.assertEqual(response.status_code, 204)
+
+        # Deploy a mashup that uses a previously deployed widget
+        data = {
+            '4CaaStID': '4caast.customers.4caast_developer.services.app1',
+            'url': 'http://macs.example.com/Wirecloud_4CaaStMashup_1.0.wgt',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        self.assertEqual(response.status_code, 204)
+
     def test_ac_deployment_missing_parameter(self):
 
         url = reverse('wirecloud.4caast.deploy_tenant_ac')
