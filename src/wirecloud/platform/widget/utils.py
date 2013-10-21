@@ -226,21 +226,13 @@ def create_widget_from_wgt(wgt, user, deploy_only=False):
 
 
 def get_or_add_widget_from_catalogue(vendor, name, version, user, request=None, assign_to_users=None):
-    resource_exists = CatalogueResource.objects.filter(vendor=vendor, short_name=name, version=version).filter(Q(public=True) | Q(users=user)).exists()
-    widget_exists = resource_exists and Widget.objects.filter(resource__vendor=vendor, resource__short_name=name, resource__version=version).exists()
-    if resource_exists and widget_exists:
-        resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
-    else:
-        from wirecloud.platform.localcatalogue.utils import install_resource_from_available_marketplaces
-        resource = install_resource_from_available_marketplaces(vendor, name, version, user)
+    resource_list = CatalogueResource.objects.filter(Q(vendor=vendor, version=version) & (Q(short_name=name) | Q(short_name__startswith=(name + '@'))))
 
-    if assign_to_users is None:
-        assign_to_users = (user,)
+    for resource in resource_list:
+        if resource.is_available_for(user):
+            return resource.widget
 
-    for user in assign_to_users:
-        resource.users.add(user)
-
-    return resource.widget
+    return None
 
 
 def xpath(tree, query, xmlns):

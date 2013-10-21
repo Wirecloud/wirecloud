@@ -95,6 +95,18 @@ class JSONTemplateParser(object):
                 self._add_translation_index(output_endpoint['label'], type='vdef', variable=output_endpoint['name'], field='label')
                 self._add_translation_index(output_endpoint['description'], type='vdef', variable=output_endpoint['name'], field='description')
 
+    def get_resource_type(self):
+        return self._info['type']
+
+    def get_resource_name(self):
+        return self._info['name']
+
+    def get_resource_vendor(self):
+        return self._info['vendor']
+
+    def get_resource_version(self):
+        return self._info['version']
+
     def get_resource_info(self):
 
         if not is_valid_vendor(self._info['vendor']):
