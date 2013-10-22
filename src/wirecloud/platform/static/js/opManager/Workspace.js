@@ -832,7 +832,7 @@ Workspace.prototype = new StyledElements.ObjectWithEvents();
 
 Workspace.prototype.getPreferencesWindow = function getPreferencesWindow() {
     if (this.pref_window_menu == null) {
-        this.pref_window_menu = new Wirecloud.ui.PreferencesWindowMenu('tab', this.preferences);
+        this.pref_window_menu = new Wirecloud.ui.PreferencesWindowMenu('workspace', this.preferences);
     }
     return this.pref_window_menu;
 };

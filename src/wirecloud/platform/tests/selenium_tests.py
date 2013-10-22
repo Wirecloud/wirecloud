@@ -409,6 +409,17 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(text_div.text, 'hello world!!')
     test_create_workspace_from_catalogue.tags = ('fiware-ut-5',)
 
+    @uses_extra_resources(('Wirecloud_ParameterizedMashup_1.0.zip',), shared=True)
+    def test_create_workspace_from_catalogue_using_parameters(self):
+
+        self.login()
+        self.create_workspace_from_catalogue('ParameterizedMashup', parameters={'param': 'parameterized value'})
+
+        iwidgets = self.get_current_iwidgets()
+
+        with iwidgets[0]:
+            self.assertEqual(self.driver.find_element_by_id('textPref').text, 'parameterized value')
+
     def test_create_workspace_from_catalogue_duplicated_workspaces(self):
 
         self.login()

@@ -32,7 +32,7 @@
      *
      */
     var PreferencesWindowMenu = function PreferencesWindowMenu(scope, manager) {
-        Wirecloud.ui.WindowMenu.call(this, '');
+        Wirecloud.ui.WindowMenu.call(this, '', scope + '_preferences');
 
         this.manager = manager;
 

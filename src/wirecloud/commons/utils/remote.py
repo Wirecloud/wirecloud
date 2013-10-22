@@ -512,7 +512,7 @@ class WirecloudRemoteTestCase(object):
 
         return iwidget
 
-    def create_workspace_from_catalogue(self, mashup_name, expect_missing_dependencies=None, install_dependencies=False):
+    def create_workspace_from_catalogue(self, mashup_name, expect_missing_dependencies=None, install_dependencies=False, parameters=None):
 
         self.change_main_view('marketplace')
         self.search_resource(mashup_name)
@@ -538,6 +538,18 @@ class WirecloudRemoteTestCase(object):
             continue_button.click()
 
         self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='New Workspace']").click()
+
+        if parameters is not None:
+
+            save_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Save']")
+            window_menu = self.driver.find_element_by_css_selector('.window_menu.workspace_preferences')
+
+            for parameter_name, parameter_value in parameters.iteritems():
+                param_input = window_menu.find_element_by_css_selector('input[name="' + parameter_name + '"]')
+                self.fill_form_input(param_input, parameter_value)
+
+            save_button.click()
+
         self.wait_wirecloud_ready()
         self.assertTrue(self.get_current_workspace_name().startswith(mashup_name), 'Invalid workspace name after creating workspace from catalogue')
 
