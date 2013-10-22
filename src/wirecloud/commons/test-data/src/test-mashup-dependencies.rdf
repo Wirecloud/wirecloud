@@ -171,15 +171,21 @@
           </wire_m:Connection>
         </wire_m:hasConnection>
         <wire_m:hasiOperator>
+          <wire_m:iOperator rdf:nodeID="Ac73a57b0b99641fc9cbdf74087c9acdc">
+            <dcterms:title>Wirecloud/nonavailable-operator/1.0</dcterms:title>
+            <wire_m:iOperatorId>Ac73a57b0b99641fc9cbdf74087c9acdc</wire_m:iOperatorId>
+          </wire_m:iOperator>
+        </wire_m:hasiOperator>
+        <wire_m:hasiOperator>
           <wire_m:iOperator rdf:nodeID="Nd73a57b0b99640ac9cbdf74087c9acdc">
             <dcterms:title>Wirecloud/nonavailable-operator/1.0</dcterms:title>
             <wire_m:iOperatorId>Nd73a57b0b99640ac9cbdf74087c9acdc</wire_m:iOperatorId>
           </wire_m:iOperator>
         </wire_m:hasiOperator>
         <wire_m:hasiOperator>
-          <wire_m:iOperator rdf:nodeID="Nd73a57b0b99640ac0cbdf74087c9acdc">
+          <wire_m:iOperator rdf:nodeID="Bd73a57b0b99640ac0cbdf74087c9acdc">
             <dcterms:title>Wirecloud/TestOperator/1.0</dcterms:title>
-            <wire_m:iOperatorId>Nd73a57b0b99640ac0cbdf74087c9acdc</wire_m:iOperatorId>
+            <wire_m:iOperatorId>Bd73a57b0b99640ac0cbdf74087c9acdc</wire_m:iOperatorId>
           </wire_m:iOperator>
         </wire_m:hasiOperator>
         <wire:hasOutputEndpoint>

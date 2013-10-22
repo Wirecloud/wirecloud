@@ -427,7 +427,9 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertTrue('description' in response_data)
         self.assertTrue('details' in response_data)
         self.assertTrue('missingDependencies' in response_data['details'])
-        self.assertEqual(set(response_data['details']['missingDependencies']), set((
+        missingDependencies = set(response_data['details']['missingDependencies'])
+        self.assertEqual(len(response_data['details']['missingDependencies']), len(missingDependencies))
+        self.assertEqual(missingDependencies, set((
             'Wirecloud/nonavailable-operator/1.0',
             'Wirecloud/nonavailable-widget/1.0',
             'Wirecloud/TestOperator/1.0',

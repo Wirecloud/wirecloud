@@ -72,7 +72,7 @@ def check_mashup_dependencies(template, user):
     if not isinstance(template, TemplateParser):
         template = TemplateParser(template)
 
-    missing_dependencies = []
+    missing_dependencies = set()
     workspace_info = template.get_resource_info()
 
     for tab_entry in workspace_info['tabs']:
@@ -82,7 +82,7 @@ def check_mashup_dependencies(template, user):
                 if not catalogue_resource.is_available_for(user):
                     raise CatalogueResource.DoesNotExist
             except CatalogueResource.DoesNotExist:
-                missing_dependencies.append('/'.join((resource.get('vendor'), resource.get('name'), resource.get('version'))))
+                missing_dependencies.add('/'.join((resource.get('vendor'), resource.get('name'), resource.get('version'))))
 
     for id_, op in workspace_info['wiring']['operators'].iteritems():
         (vendor, name, version) = op['name'].split('/')
@@ -91,10 +91,10 @@ def check_mashup_dependencies(template, user):
             if not resource.is_available_for(user):
                 raise CatalogueResource.DoesNotExist
         except CatalogueResource.DoesNotExist:
-            missing_dependencies.append('/'.join((vendor, name, version)))
+            missing_dependencies.add('/'.join((vendor, name, version)))
 
     if len(missing_dependencies) > 0:
-        raise MissingDependencies(missing_dependencies)
+        raise MissingDependencies(list(missing_dependencies))
 
 def fillWorkspaceUsingTemplate(workspace, template):
 
