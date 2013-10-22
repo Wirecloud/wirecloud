@@ -37,7 +37,7 @@ class ConvertCommand(BaseCommand):
         make_option('', '--rdf-format',
             action='store',
             dest='rdf_format',
-            default='xml'),
+            default='pretty-xml'),
     )
 
     def handle(self, *args, **options):
