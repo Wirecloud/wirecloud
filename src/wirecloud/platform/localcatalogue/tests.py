@@ -51,6 +51,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
             'example.com': DynamicWebServer(),
         }
     }
+    tags = ('localcatalogue',)
 
     def setUp(self):
         super(LocalCatalogueTestCase, self).setUp()
@@ -363,6 +364,8 @@ class LocalCatalogueTestCase(WirecloudTestCase):
 
 class PackagedResourcesTestCase(WirecloudTestCase):
 
+    tags = ('localcatalogue',)
+
     @classmethod
     def setUpClass(cls):
 
@@ -452,6 +455,8 @@ class PackagedResourcesTestCase(WirecloudTestCase):
 
 
 class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
+
+    tags = ('localcatalogue',)
 
     def test_public_resources(self):
 
