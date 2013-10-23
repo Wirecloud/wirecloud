@@ -31,7 +31,7 @@
 
 .resource .txt-gradient {
     background: -webkit-linear-gradient(left, rgba(255, 255, 255, 0), rgb(255, 255, 255));
-    background: linear-gradient(left, rgba(255, 255, 255, 0), rgb(255, 255, 255));
+    background: linear-gradient(to right, rgba(255, 255, 255, 0), rgb(255, 255, 255));
     position: absolute;
     bottom: 0px;
     width: 38px;
