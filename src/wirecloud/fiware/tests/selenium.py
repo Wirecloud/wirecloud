@@ -41,6 +41,8 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             'marketplace.example.com': DynamicWebServer(),
             'repository.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'repository')),
             'static.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'static')),
+            'store.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'store')),
+            'store2.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'store2')),
         },
     }
     tags = ('fiware', 'fiware-plugin')
@@ -116,3 +118,26 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         self.search_resource('test')
         widget_offering = self.search_in_catalogue_results('Smart City Lights application')
         self.assertIsNotNone(widget_offering)
+
+    def test_marketplace_offering_buttons(self):
+
+        response_text = read_response_file('responses', 'marketplace', 'keyword_search.xml')
+        self.network._servers['http']['marketplace.example.com'].add_response('GET', '/search/offerings/fulltext/test', {'content': response_text})
+
+        self.login(username='user_with_markets')
+
+        self.change_main_view('marketplace')
+        self.change_marketplace('fiware')
+
+        free_offering = self.search_in_catalogue_results('Weather widget')
+        button = free_offering.find_element_by_css_selector('.mainbutton')
+        self.assertEqual(button.text, 'Free')
+
+        simple_price_offering = self.search_in_catalogue_results('Test Operator')
+        button = simple_price_offering.find_element_by_css_selector('.mainbutton')
+        self.assertEqual(button.text, u'10 €')
+
+        complex_price_offering = self.search_in_catalogue_results('Smart City Lights application')
+        button = complex_price_offering.find_element_by_css_selector('.mainbutton')
+        self.assertEqual(button.text, 'Purchase')
+

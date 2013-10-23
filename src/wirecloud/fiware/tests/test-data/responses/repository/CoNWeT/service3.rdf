@@ -20,12 +20,12 @@
     xmlns:gr="http://purl.org/goodrelations/v1#"
     xmlns:doap="http://usefulinc.com/ns/doap#">
 
-    <usdl:ServiceDescription xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="http://repository.example.com/CoNWeT/service1.rdf">
+    <usdl:ServiceDescription xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="http://repository.example.com/CoNWeT/offering3">
         <dcterms:description xml:lang="en"/>
         <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#datetime"/>
         <dcterms:creator rdf:nodeID="b9f"/>
         <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#datetime">2013-06-04T00:00</dcterms:created>
-        <dcterms:title xml:lang="en">Santander City Lights offering</dcterms:title>
+        <dcterms:title xml:lang="en">TestOperator</dcterms:title>
     </usdl:ServiceDescription>
 
     <foaf:Person xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:nodeID="b9f">
@@ -43,12 +43,11 @@
         <dcterms:subject rdf:nodeID="ba2"/>
         <dcterms:subject rdf:nodeID="ba3"/>
         <foaf:depiction rdf:resource="http://static.example.com/smart_lights_icon.png"/>
-        <dcterms:title xml:lang="en">Smart City Lights application</dcterms:title>
+        <dcterms:title xml:lang="en">Test Operator</dcterms:title>
         <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#datetime">2013-06-04T00:00</dcterms:created>
-        <dcterms:abstract xml:lang="en">Smart City Lights is an application that allows the management and analysis of Smart City entities status.</dcterms:abstract>
         <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#datetime">2012-11-19T00:00</dcterms:modified>
         <foaf:page rdf:resource=""/>
-        <dcterms:description xml:lang="en">Smart City Lights application is a valuable utility for incidents management and control of Smart City entities. The user has two different mashups that serve as a UI for the back-end application and leverage on a number of FI-WARE generic enablers. One of the mashups facilitates the real-time management of incidents, while the other allows for the analysis of historical information gathered from each of Smart City entities.</dcterms:description>
+        <dcterms:description xml:lang="en">This widget gives users the ability to handle different map layers coming from several sources, showing all of them on the same map. It has a bunch of both events and slots that enables the user to have different instances of this widget wired, so she can compare with different cartographies at a glance.</dcterms:description>
         <usdl:hasLegalCondition rdf:resource="http://store.example.com/offering/UPM__SantanderCityLights__1.0#EcCfJjMlQ5p0wQWs9"/>
         <usdl:hasProvider rdf:resource="http://store.example.com/offering/UPM__SantanderCityLights__1.0#gXQmZp2KsDRJj3VFg"/>
         <usdl:utilizedResource rdf:resource=""/>
@@ -113,7 +112,7 @@
     </vcard:Work>
 
     <usdl:ServiceOffering rdf:about="http://store.example.com/offering/UPM__SantanderCityLights__1.0#kj9O8bUtl7PWJQayz">
-        <dcterms:title xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">SmartCityLights</dcterms:title>
+        <dcterms:title xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">WeatherWidget</dcterms:title>
         <dcterms:description xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">This offering includes the Santander City Lights application</dcterms:description>
         <usdl:validFrom rdf:datatype="http://www.w3.org/2001/XMLSchema#datetime">2011-12-01</usdl:validFrom>
         <usdl:validThrough rdf:datatype="http://www.w3.org/2001/XMLSchema#datetime">2011-12-31</usdl:validThrough>
@@ -122,27 +121,19 @@
     </usdl:ServiceOffering>
 
     <price:PricePlan rdf:about="http://store.example.com/offering/UPM__SantanderCityLights__1.0#NnWat7KYLZThzTrXU">
-        <dcterms:title xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">Initial payment + pay per issue price plan</dcterms:title>
+        <dcterms:title xml:lang="en">Single payment</dcterms:title>
+        <dcterms:description xml:lang="en">This price plan defines a single payment</dcterms:description>
         <price:hasPriceComponent rdf:resource="http://store.example.com/offering/UPM__SantanderCityLights__1.0#7jnovpSvDceyPlJxE" />
-        <price:hasPriceComponent rdf:resource="http://store.example.com/offering/UPM__SantanderCityLights__1.0#AvB4yYUs6Rc5gYeEp" />
-        <dcterms:description xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">This price plan defines an initial payment and a pay-per-use model based on issues created</dcterms:description>
     </price:PricePlan>
 
     <price:PriceComponent rdf:about="http://store.example.com/offering/UPM__SantanderCityLights__1.0#7jnovpSvDceyPlJxE">
-        <dcterms:title xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">Pay per issue</dcterms:title>
+        <dcterms:title xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">Single payment</dcterms:title>
         <gr:hasCurrency>EUR</gr:hasCurrency>
-        <gr:hasCurrencyValue>0.10</gr:hasCurrencyValue>
-        <gr:hasUnitOfMeasurement>issue</gr:hasUnitOfMeasurement>
-        <dcterms:decription xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">This component defines a pay per every issue created</dcterms:decription>
+        <gr:hasCurrencyValue>10</gr:hasCurrencyValue>
+        <gr:hasUnitOfMeasurement>single payment</gr:hasUnitOfMeasurement>
+        <dcterms:description xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">This component defines a single payment</dcterms:description>
     </price:PriceComponent>
 
-    <price:PriceComponent rdf:about="http://store.example.com/offering/UPM__SantanderCityLights__1.0#AvB4yYUs6Rc5gYeEp">
-        <dcterms:title xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">Initial payment</dcterms:title>
-        <gr:hasCurrency>EUR</gr:hasCurrency>
-        <gr:hasCurrencyValue>1000</gr:hasCurrencyValue>
-        <gr:hasUnitOfMeasurement>single payment</gr:hasUnitOfMeasurement>
-        <dcterms:decription xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace"></dcterms:decription>
-    </price:PriceComponent>
 </rdf:RDF>
 
 

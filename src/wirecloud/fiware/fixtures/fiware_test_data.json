@@ -7,5 +7,15 @@
             "options": "{\"url\": \"http://marketplace.example.com/\", \"type\":\"fiware\", \"label\":\"fiware\"}",
             "user": 3
         }
+    },
+    {
+        "pk": 101,
+        "model": "platform.marketuserdata",
+        "fields": {
+            "market": 101,
+            "user": 3,
+            "name": "idm_token",
+            "value": "\"idm_token\""
+        }
     }
 ]
