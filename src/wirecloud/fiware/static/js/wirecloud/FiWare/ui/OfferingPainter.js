@@ -27,6 +27,12 @@
 
     var MAC_MIMETYPES = ['application/x-widget+mashable-application-component', 'application/x-operator+mashable-application-component', 'application/x-mashup+mashable-application-component'];
 
+    var CURRENCY_SYMBOL = {
+        'EUR': '€',
+        'GBP': '£',
+        'USD': '$'
+    };
+
     var is_mac_mimetype = function is_mac_mimetype(mimetype) {
         return MAC_MIMETYPES.indexOf(mimetype) !== -1;
     };
@@ -65,6 +71,11 @@
 
     var onClick = function onClick(url, catalogue_view, store) {
         install(url, catalogue_view, store);
+    };
+
+    var is_single_payment = function is_single_payment(offering) {
+        var pricing = offering.pricing[0];
+        return pricing.priceComponents.length === 1 && pricing.priceComponents[0].unit.toLowerCase() === 'single payment';
     };
 
     var OfferingPainter = function OfferingPainter(catalogue_view, offering_template, container, extra_context) {
@@ -174,10 +185,22 @@
                 local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
 
                 if (!this.catalogue_view.catalogue.is_purchased(this.offering) && ['widget', 'operator', 'mashup', 'pack'].indexOf(this.offering.type) !== -1) {
-                    button = new StyledElements.StyledButton({
-                        'class': 'mainbutton btn-success',
-                        'text': gettext('Buy')
-                    });
+                    if (offering.pricing.length == 0 || !('priceComponents' in offering.pricing[0])) {
+                        button = new StyledElements.StyledButton({
+                            'class': 'mainbutton btn-success',
+                            'text': gettext('Free')
+                        });
+                    } else if (is_single_payment(offering)) {
+                        button = new StyledElements.StyledButton({
+                            'class': 'mainbutton btn-success',
+                            'text': offering.pricing[0].priceComponents[0].value + ' ' + CURRENCY_SYMBOL[offering.pricing[0].priceComponents[0].currency]
+                        });
+                    } else {
+                        button = new StyledElements.StyledButton({
+                            'class': 'mainbutton btn-success',
+                            'text': gettext('Purchase')
+                        });
+                    }
                     button.addEventListener('click', this.catalogue_view.createUserCommand('buy', this.offering));
                     return button;
                 }

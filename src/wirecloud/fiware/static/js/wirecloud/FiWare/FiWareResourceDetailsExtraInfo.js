@@ -121,7 +121,7 @@ var SlaPainter = function(sla_structure_element, dom_element){
         var resource_html,sla,i,sla_element,resource_element, expresion_painter;
 		
         this.dom_element.innerHTML = '';
-        sla=resource.getSla();
+        sla = resource.sla;
 
         if (sla.length > 0) {
             for(i = 0 ; i<sla.length ; i += 1 ){
@@ -229,7 +229,7 @@ var PricingPainter = function(pricing_structure_element, dom_element){
         pricing_component_painter,tax_painter;
 
         this.dom_element.innerHTML = '';
-        pricing=resource.getPricing();
+        pricing = resource.pricing;
         
         if(pricing.length > 0) {
             for(i=0; i<pricing.length; i += 1){

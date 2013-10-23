@@ -45,7 +45,6 @@
         var vendor = resourceJSON_.vendor,
             name = resourceJSON_.name,
             store = resourceJSON_.store,
-            market_name = resourceJSON_.marketName,
             parts = resourceJSON_.parts,
             extra_data = null,
         ///////////////////////////
@@ -102,20 +101,8 @@
             return resourceJSON_.created;
         };
 
-        this.getPricing = function() {
-            return resourceJSON_.pricing;
-        };
-
-        this.getSla = function() {
-            return resourceJSON_.sla;
-        };
-        
         this.getLegal = function() {
             return resourceJSON_.legal;
-        };
-
-        this.getMarketName = function() {
-            return market_name;
         };
 
         this.getExtraData = function () {
@@ -150,7 +137,9 @@
             'type': {value: resourceJSON_.type},
             'abstract': {value: resourceJSON_.shortDescription},
             'description': {value: resourceJSON_.longDescription},
+            'pricing': {value: resourceJSON_.pricing},
             'rating': {value: resourceJSON_.rating},
+            'sla': {value: resourceJSON_.sla},
             'state': {value: resourceJSON_.state},
             'store': {value: store},
             'usdl_url': {value: resourceJSON_.usdl_url},
