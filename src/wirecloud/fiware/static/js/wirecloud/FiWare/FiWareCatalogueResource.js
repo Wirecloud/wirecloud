@@ -151,12 +151,14 @@
             for (var i = 0; i < this.resources.length; i += 1) {
                 var resource = this.resources[i];
                 if (is_mac_mimetype(resource.content_type)) {
-                    var parts = resource.id.split('/');
-                    resource.vendor = parts[0];
-                    resource.name = parts[1];
-                    resource.version = new Wirecloud.Version(parts[2], 'catalogue');
-                    resource.type = MAC_TYPES[MAC_MIMETYPES.indexOf(resource.content_type)];
-                    resource.getURI = getURI;
+                    try {
+                        var parts = resource.id.split('/');
+                        resource.version = new Wirecloud.Version(parts[2], 'catalogue');
+                        resource.vendor = parts[0];
+                        resource.name = parts[1];
+                        resource.type = MAC_TYPES[MAC_MIMETYPES.indexOf(resource.content_type)];
+                        resource.getURI = getURI;
+                    } catch (error) {}
                 }
             }
         }
