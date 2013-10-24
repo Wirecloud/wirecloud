@@ -19,7 +19,7 @@
  *
  */
 
-/*global CatalogueResource, CatalogueSearchView, Constants, Event, gettext, interpolate, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud, StyledElements*/
+/*global CatalogueResource, CatalogueSearchView, Constants, Event, gettext, interpolate, LayoutManagerFactory, OpManagerFactory, Wirecloud, StyledElements*/
 
 (function () {
 
@@ -155,7 +155,7 @@
                 }.bind(this),
                 onFailure: function (msg) {
                     LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-                    LogManagerFactory.getInstance().log(msg);
+                    Wirecloud.GlobalLogManager.log(msg);
                 },
                 onComplete: function () {
                     LayoutManagerFactory.getInstance()._notifyPlatformReady();
@@ -186,7 +186,7 @@
                 }.bind(this),
                 onFailure: function (msg) {
                     LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-                    LogManagerFactory.getInstance().log(msg);
+                    Wirecloud.GlobalLogManager.log(msg);
                 },
                 onComplete: function () {
                     LayoutManagerFactory.getInstance()._notifyPlatformReady();

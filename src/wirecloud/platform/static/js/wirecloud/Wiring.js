@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, interpolate, IWidget, LogManagerFactory, wEvent, wSlot, Wirecloud*/
+/*global gettext, interpolate, Wirecloud*/
 
 (function () {
 
@@ -90,7 +90,7 @@
 
         if (iwidget.id in this.connectablesByWidget) {
             var msg = gettext("Error adding iWidget into the wiring module of the workspace: Widget instance already exists.");
-            LogManagerFactory.getInstance().log(msg);
+            Wirecloud.GlobalLogManager.log(msg);
             return;
         }
 
@@ -103,7 +103,7 @@
 
         if (!(iwidget.id in this.connectablesByWidget)) {
             var msg = gettext("Error: trying to remove an inexistant iWidget from the wiring module.");
-            LogManagerFactory.getInstance().log(msg);
+            Wirecloud.GlobalLogManager.log(msg);
             return;
         }
 

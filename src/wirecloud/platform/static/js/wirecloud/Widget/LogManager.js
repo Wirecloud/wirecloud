@@ -29,10 +29,7 @@
      *
      */
     var LogManager = function LogManager(iWidget) {
-        var globalManager = LogManagerFactory.getInstance();
-        Wirecloud.LogManager.call(this, globalManager);
-
-        globalManager.childManagers.push(this);
+        Wirecloud.LogManager.call(this, Wirecloud.GlobalLogManager);
         this.iWidget = iWidget;
     };
     LogManager.prototype = new Wirecloud.LogManager();
@@ -48,9 +45,6 @@
         extraInfoText.innerHTML = this.iWidget.id;
         extraInfoText.setAttribute('title', this.iWidget.name + "\n " + this.iWidget.widget.getInfoString());
         extraInfo.style.cursor = "pointer";
-        extraInfo.addEventListener('click', function () {
-            OpManagerFactory.getInstance().showLogs(this);
-        }.bind(this), true);
 
         return extraInfo;
     };

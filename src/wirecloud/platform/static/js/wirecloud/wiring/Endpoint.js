@@ -34,7 +34,7 @@
         var funcName = '_annotate';
         var msg = gettext("Unimplemented function: %(funcName)s");
         msg = interpolate(msg, {funcName: funcName}, yes);
-        LogManagerFactory.getInstance().log(msg);
+        Wirecloud.GlobalLogManager.log(msg);
         return;
     };
 
@@ -54,7 +54,7 @@
         var funcName = 'fullDisconnect';
         var msg = gettext("Unimplemented function: %(funcName)s");
         msg = interpolate(msg, {funcName: funcName}, yes);
-        LogManagerFactory.getInstance().log(msg);
+        Wirecloud.GlobalLogManager.log(msg);
         return;
     };
 

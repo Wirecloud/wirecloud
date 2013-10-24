@@ -20,7 +20,7 @@
  */
 
 /*global document, window, Error, gettext, interpolate, $, Hash, Event, isElement*/
-/*global Constants, ColumnLayout, CSSPrimitiveValue, DragboardPosition, FreeLayout, FullDragboardLayout, IWidget, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud, SmartColumnLayout*/
+/*global Constants, ColumnLayout, CSSPrimitiveValue, DragboardPosition, FreeLayout, FullDragboardLayout, IWidget, LayoutManagerFactory, OpManagerFactory, Wirecloud, SmartColumnLayout*/
 
 (function () {
 
@@ -118,9 +118,7 @@
             onSuccess = function (transport) { };
 
             onError = function (transport, e) {
-                var logManager = LogManagerFactory.getInstance();
-                var msg = logManager.formatError(gettext("Error committing dragboard changes to persistence: %(errorMsg)s."), transport, e);
-                logManager.log(msg);
+                Wirecloud.GlobalLogManager.formatAndLog(gettext("Error committing dragboard changes to persistence: %(errorMsg)s."), transport, e);
             };
 
             // TODO only send real changes

@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global Workspace, alert, Hash, $, console, LayoutManagerFactory, LogManagerFactory, Modules, setTimeout, Wirecloud */
+/*global Workspace, alert, Hash, $, console, LayoutManagerFactory, Modules, setTimeout, Wirecloud */
 "use strict";
 
 /* 
@@ -112,7 +112,6 @@ var OpManagerFactory = (function () {
             // First, global modules must be loades (Showcase, Catalogue)
             // Showcase is the first!
             // When it finish, it will invoke continueLoadingGlobalModules method!
-            this.logs = LogManagerFactory.getInstance();
 
             Wirecloud.io.makeRequest(Wirecloud.URLs.PLATFORM_CONTEXT_COLLECTION, {
                 method: 'GET',
@@ -160,9 +159,7 @@ var OpManagerFactory = (function () {
                         this.continueLoadingGlobalModules(Modules.prototype.SHOWCASE);
                     }.bind(this),
                     onFailure: function () {
-                        var msg, logManager = LogManagerFactory.getInstance();
-                        msg = logManager.formatError(gettext("Error retrieving available resources: %(errorMsg)s."), transport, e);
-                        logManager.log(msg);
+                        var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error retrieving available resources: %(errorMsg)s."), transport, e);
                         LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
                     }
                 });

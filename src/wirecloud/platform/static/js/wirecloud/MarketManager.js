@@ -19,7 +19,7 @@
  *
  */
 
-/*global CatalogueView, Constants, gettext, LayoutManagerFactory, LogManagerFactory, StyledElements, Wirecloud*/
+/*global CatalogueView, Constants, gettext, LayoutManagerFactory, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -43,8 +43,7 @@
                 callback(raw_data);
             },
             onFailure: function onFailure(transport) {
-                var msg = LogManagerFactory.getInstance().formatError(gettext("Error retrieving market list from the server: %(errorMsg)s."), transport);
-                LogManagerFactory.getInstance().log(msg);
+                var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error retrieving market list from the server: %(errorMsg)s."), transport);
 
                 if (typeof onFailureCallback === 'function') {
                     onFailureCallback(msg);
@@ -76,8 +75,7 @@
             method: 'DELETE',
             onSuccess: options.onSuccess,
             onFailure: function (transport) {
-                var msg = LogManagerFactory.getInstance().formatError(gettext("Error deleting marketplace: %(errorMsg)s."), transport);
-                LogManagerFactory.getInstance().log(msg);
+                var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error deleting marketplace: %(errorMsg)s."), transport);
                 if (typeof options.onFailure === 'function') {
                     options.onFailure(msg);
                 }
@@ -102,10 +100,8 @@
                 callback();
             },
             onFailure: function (transport) {
-                var msg = LogManagerFactory.getInstance().formatError(gettext("Error adding marketplace: %(errorMsg)s."), transport);
-                LogManagerFactory.getInstance().log(msg);
+                var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error adding marketplace: %(errorMsg)s."), transport);
                 LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-                LayoutManagerFactory.getInstance().log(msg);
             },
             onComplete: function () {
                 LayoutManagerFactory.getInstance()._notifyPlatformReady();

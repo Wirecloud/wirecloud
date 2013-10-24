@@ -43,9 +43,7 @@ function Workspace (workspaceState) {
         this.valid = false;
 
         // Log it on the log console
-        var logManager = LogManagerFactory.getInstance();
-        msg = logManager.formatError(gettext("Error loading workspace: %(errorMsg)s"), transport, e);
-        logManager.log(msg);
+        Wirecloud.GlobalLogManager.formatAndLog(gettext("Error loading workspace: %(errorMsg)s"), transport, e);
 
         // Show a user friend alert
         var layoutManager = LayoutManagerFactory.getInstance();
@@ -181,7 +179,7 @@ function Workspace (workspaceState) {
 
         layoutManager.logStep('');
         OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.ACTIVE_WORKSPACE);
-        LogManagerFactory.getInstance().log(gettext('workspace loaded'), Constants.Logging.INFO_MSG);
+        Wirecloud.GlobalLogManager.log(gettext('workspace loaded'), Constants.Logging.INFO_MSG);
 
         // tutorial layer for empty workspaces
         this.emptyWorkspaceInfoBox = document.createElement('div');
@@ -213,13 +211,11 @@ function Workspace (workspaceState) {
     }
 
     var renameError = function(transport, e) {
-        var layoutManager, logManager, msg;
+        var layoutManager, msg;
 
         layoutManager = LayoutManagerFactory.getInstance();
-        logManager = LogManagerFactory.getInstance();
 
-        msg = logManager.formatError(gettext("Error renaming workspace: %(errorMsg)s."), transport, e);
-        logManager.log(msg);
+        msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error renaming workspace: %(errorMsg)s."), transport, e);
         layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
     };
 
@@ -230,9 +226,7 @@ function Workspace (workspaceState) {
     };
 
     var deleteError = function(transport, e) {
-        var logManager = LogManagerFactory.getInstance();
-        var msg = logManager.formatError(gettext("Error removing workspace, changes will not be saved: %(errorMsg)s."), transport, e);
-        logManager.log(msg);
+        var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error removing workspace, changes will not be saved: %(errorMsg)s."), transport, e);
         LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
 
         LayoutManagerFactory.getInstance()._notifyPlatformReady();
@@ -257,14 +251,12 @@ function Workspace (workspaceState) {
     };
 
     var publishFailure = function publishFailure(options, transport, e) {
-        var logManager, layoutManager, msg;
+        var layoutManager, msg;
 
-        logManager = LogManagerFactory.getInstance();
         layoutManager = LayoutManagerFactory.getInstance();
 
-        msg = logManager.formatError(gettext("Error publishing workspace: %(errorMsg)s."), transport, e);
+        msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error publishing workspace: %(errorMsg)s."), transport, e);
         layoutManager._notifyPlatformReady();
-        logManager.log(msg);
 
         if (typeof options.onFailure === 'function') {
             try {
@@ -284,11 +276,9 @@ function Workspace (workspaceState) {
     }
 
     var mergeError = function(transport, e) {
-        var logManager, layoutManager, msg;
+        var layoutManager, msg;
 
-        logManager = LogManagerFactory.getInstance();
-        msg = logManager.formatError(gettext("Error merging workspaces: %(errorMsg)s."), transport, e);
-        logManager.log(msg);
+        msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error merging workspaces: %(errorMsg)s."), transport, e);
 
         layoutManager = LayoutManagerFactory.getInstance();
         layoutManager.logStep('');
@@ -315,9 +305,7 @@ function Workspace (workspaceState) {
     };
 
     var createTabError = function(transport, e) {
-        var logManager = LogManagerFactory.getInstance();
-        var msg = logManager.formatError(gettext("Error creating a tab: %(errorMsg)s."), transport, e);
-        logManager.log(msg);
+        Wirecloud.GlobalLogManager.formatAndLog(gettext("Error creating a tab: %(errorMsg)s."), transport, e);
     };
 
     // ****************
@@ -362,7 +350,7 @@ function Workspace (workspaceState) {
         }
 
         if (msg !== null) {
-            LogManagerFactory.getInstance().log(msg);
+            Wirecloud.GlobalLogManager.log(msg);
             return;
         }
 
@@ -572,7 +560,7 @@ function Workspace (workspaceState) {
         }
 
         if (msg) { //It cannot be deleted
-            LogManagerFactory.getInstance().log(msg);
+            Wirecloud.GlobalLogManager.log(msg);
             //LayoutManagerFactory.getInstance().hideCover();
             LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
             return false;
@@ -636,8 +624,8 @@ function Workspace (workspaceState) {
         this.contextManager = null;
 
         layoutManager.logStep('');
-        LogManagerFactory.getInstance().log(gettext('workspace unloaded'), Constants.Logging.INFO_MSG);
-        LogManagerFactory.getInstance().newCycle();
+        Wirecloud.GlobalLogManager.log(gettext('workspace unloaded'), Constants.Logging.INFO_MSG);
+        Wirecloud.GlobalLogManager.newCycle();
     }
 
     Workspace.prototype.addIWidget = function(tab, iwidget, iwidgetJSON, options) {
@@ -823,9 +811,7 @@ function Workspace (workspaceState) {
     }.bind(this);
 
     this.markAsActiveError = function(transport, e) {
-        var logManager = LogManagerFactory.getInstance();
-        var msg = logManager.formatError(gettext("Error marking as first active workspace, changes will not be saved: %(errorMsg)s."), transport, e);
-        logManager.log(msg);
+        Wirecloud.GlobalLogManager.formatAndLog(gettext("Error marking as first active workspace, changes will not be saved: %(errorMsg)s."), transport, e);
     }.bind(this);
 };
 Workspace.prototype = new StyledElements.ObjectWithEvents();

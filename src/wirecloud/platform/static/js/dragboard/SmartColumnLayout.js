@@ -20,7 +20,7 @@
  */
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
-/*global gettext, Constants, DragboardLayout, DragboardPosition, DragboardCursor, IWidget, LogManagerFactory, MultiValuedSize */
+/*global gettext, Constants, DragboardLayout, DragboardPosition, DragboardCursor, IWidget, MultiValuedSize */
 
 /////////////////////////////////////
 // ColumnLayout
@@ -651,7 +651,7 @@ ColumnLayout.prototype.initializeMove = function (iwidget, draggable) {
     // Check for pendings moves
     if (this.iwidgetToMove !== null) {
         msg = gettext("There was a pending move that was cancelled because initializedMove function was called before it was finished.");
-        LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
+        Wirecloud.GlobalLogManager.log(msg, Constants.WARN_MSG);
         this.cancelMove();
     }
 
@@ -735,7 +735,7 @@ ColumnLayout.prototype._restorePositions = function () {
 ColumnLayout.prototype.moveTemporally = function (x, y) {
     if (!(this.iwidgetToMove instanceof IWidget)) {
         var msg = gettext("Dragboard: You must call initializeMove function before calling to this function (moveTemporally).");
-        LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
+        Wirecloud.GlobalLogManager.log(msg, Constants.WARN_MSG);
         return;
     }
 
@@ -764,7 +764,7 @@ ColumnLayout.prototype.moveTemporally = function (x, y) {
 ColumnLayout.prototype.cancelMove = function () {
     if (!(this.iwidgetToMove instanceof IWidget)) {
         var msg = gettext("Trying to cancel an inexistant temporal move.");
-        LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
+        Wirecloud.GlobalLogManager.log(msg, Constants.WARN_MSG);
         return;
     }
 
@@ -779,7 +779,7 @@ ColumnLayout.prototype.cancelMove = function () {
 ColumnLayout.prototype.acceptMove = function () {
     if (!(this.iwidgetToMove instanceof IWidget)) {
         var msg = gettext("Function acceptMove called when there is not an started iwidget move.");
-        LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
+        Wirecloud.GlobalLogManager.log(msg, Constants.WARN_MSG);
         return;
     }
 
@@ -909,7 +909,7 @@ SmartColumnLayout.prototype._searchInsertPoint = function (_matrix, x, y, width,
 SmartColumnLayout.prototype.moveTemporally = function (x, y) {
     if (this.iwidgetToMove == null) {
         var msg = gettext("Dragboard: You must call initializeMove function before calling to this function (moveTemporally).");
-        LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
+        Wirecloud.GlobalLogManager.log(msg, Constants.WARN_MSG);
         return;
     }
 

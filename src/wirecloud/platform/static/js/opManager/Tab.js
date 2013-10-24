@@ -24,7 +24,7 @@
  */
 
 
-/*global Constants, Dragboard, gettext, interpolate, LayoutManagerFactory, LogManagerFactory, PreferencesManagerFactory, TabMenuItems, StyledElements, Wirecloud*/
+/*global Constants, Dragboard, gettext, interpolate, LayoutManagerFactory, PreferencesManagerFactory, TabMenuItems, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -42,13 +42,11 @@
     };
 
     var renameError = function renameError(transport, e) {
-        var layoutManager, logManager, msg;
+        var layoutManager, msg;
 
         layoutManager = LayoutManagerFactory.getInstance();
-        logManager = LogManagerFactory.getInstance();
 
-        msg = logManager.formatError(gettext("Error renaming tab: %(errorMsg)s."), transport, e);
-        logManager.log(msg);
+        msg = Wirecloud.GlobaLogManager.formatError(gettext("Error renaming tab: %(errorMsg)s."), transport, e);
         layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
     };
 
@@ -62,13 +60,11 @@
     };
 
     var deleteError = function deleteError(transport, e) {
-        var layoutManager, logManager, msg;
+        var layoutManager, msg;
 
         layoutManager = LayoutManagerFactory.getInstance();
-        logManager = LogManagerFactory.getInstance();
 
-        msg = logManager.formatError(gettext("Error removing tab: %(errorMsg)s."), transport, e);
-        logManager.log(msg);
+        msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error removing tab: %(errorMsg)s."), transport, e);
         layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
     };
 
@@ -167,9 +163,7 @@
         }.bind(this);
 
         this.markAsVisibleError = function markAsVisibleError(transport, e) {
-            var logManager = LogManagerFactory.getInstance();
-            var msg = logManager.formatError(gettext("Error marking as first visible tab, changes will not be saved: %(errorMsg)s."), transport, e);
-            logManager.log(msg);
+            Wirecloud.GlobalLogManager.formatAndLog(gettext("Error marking as first visible tab, changes will not be saved: %(errorMsg)s."), transport, e);
         }.bind(this);
     };
     Tab.prototype = new StyledElements.Tab();
@@ -201,7 +195,7 @@
         }
 
         if (msg !== null) {
-            LogManagerFactory.getInstance().log(msg);
+            Wirecloud.GlobalLogManager.log(msg);
             return;
         }
 

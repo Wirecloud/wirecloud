@@ -56,16 +56,12 @@ var LayoutManagerFactory = function () {
         this.viewsByName = {
             'workspace': this.alternatives.createAlternative({'alternative_constructor': WorkspaceView}),
             'wiring': this.alternatives.createAlternative({'alternative_constructor': Wirecloud.ui.WiringEditor}),
-            'marketplace': this.alternatives.createAlternative({'alternative_constructor': MarketplaceView}),
-            'logs': this.alternatives.createAlternative()
+            'marketplace': this.alternatives.createAlternative({'alternative_constructor': MarketplaceView})
         };
         this.header._notifyViewChange(this.viewsByName['workspace']);
 
         // Container managed by LayOutManager: {showcase_tab}
         // Remaining containers managed by Workspaces!!
-        this.logs = LogManagerFactory.getInstance();
-        this.logsLink = $('logs_link');
-
         this._clickCallback = this._clickCallback.bind(this);
         this.timeout = null;
         $("loading-window").observe('click', this._clickCallback);
@@ -131,7 +127,7 @@ var LayoutManagerFactory = function () {
             this.subTask = msg ? msg : "";
 
             if (msg) {
-                LogManagerFactory.getInstance().log(msg, Constants.Logging.INFO_MSG);
+                Wirecloud.GlobalLogManager.log(msg, Constants.Logging.INFO_MSG);
             }
 
             this.currentSubTask++;
@@ -229,16 +225,6 @@ var LayoutManagerFactory = function () {
 
 
         /****VIEW OPERATIONS****/
-        LayoutManager.prototype.notifyError = function (labelContent) {
-            // TODO
-        };
-
-        LayoutManager.prototype.clearErrors = function (labelContent) {
-            /*this.logsLink.innerHTML = '';
-            this.logsLink.style.display = 'none';*/
-            this.logsLink.removeClassName('highlighted');
-        }
-
         LayoutManager.prototype.changeCurrentView = function(newView) {
             this.alternatives.showAlternative(this.viewsByName[newView]);
         };

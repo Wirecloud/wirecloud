@@ -35,6 +35,10 @@
         this.closed = false;
 
         StyledElements.ObjectWithEvents.call(this, ['newentry']);
+
+        if (parentLogger) {
+            parentLogger.childManagers.push(this);
+        }
     };
     LogManager.prototype = new StyledElements.ObjectWithEvents();
 
@@ -145,6 +149,13 @@
         return msg;
     };
 
+    LogManager.prototype.formatAndLog = function formatAndLog(format, transport, e, level) {
+        var msg = this.formatError(format, transport, e);
+        this.log(msg, level);
+
+        return msg;
+    };
+
     LogManager.prototype.reset = function reset() {
         var i;
 
@@ -178,5 +189,6 @@
     };
 
     Wirecloud.LogManager = LogManager;
+    Wirecloud.GlobalLogManager = new LogManager();
 
 })();

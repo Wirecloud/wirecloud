@@ -21,7 +21,7 @@
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
 /*global $, CSSPrimitiveValue, Event, Insertion, document, gettext, ngettext, interpolate, window */
-/*global Constants, DropDownMenu, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud*/
+/*global Constants, DropDownMenu, LayoutManagerFactory, OpManagerFactory, Wirecloud*/
 /*global isElement, DragboardPosition*/
 /*global IWidgetDraggable, IWidgetIconDraggable, FreeLayout, FullDragboardLayout*/
 /*global ColorDropDownMenu*/
@@ -480,8 +480,7 @@ IWidget.prototype.setRefusedVersion = function (v) {
     function onSuccess() {}
     function onError(transport, e) {
         var msg = gettext("Error setting the refused version of the iwidget to persistence: %(errorMsg)s.");
-        msg = this.internal_iwidget.logManager.formatError(msg, transport, e);
-        this.log(msg);
+        this.internal_iwidget.logManager.formatAndLog(msg, transport, e);
     }
 
     this.refusedVersion = v;
@@ -613,11 +612,7 @@ IWidget.prototype.remove = function (orderFromServer) {
 
     if (!orderFromServer) {
         var onError = function (transport, e) {
-            var msg, logManager;
-
-            logManager = LogManagerFactory.getInstance();
-            msg = logManager.formatError(gettext("Error removing iwidget from persistence: %(errorMsg)s."), transport, e);
-            logManager.log(msg);
+            Wirecloud.GlobalLogManager.formatAndLog(gettext("Error removing iwidget from persistence: %(errorMsg)s."), transport, e);
         };
 
         var uri = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
@@ -1048,12 +1043,7 @@ IWidget.prototype.save = function (options) {
     }
 
     function onError(transport, e) {
-        var logManager, msg;
-
-        logManager = LogManagerFactory.getInstance();
-        msg = logManager.formatError(gettext("Error adding iwidget to persistence: %(errorMsg)s."), transport, e);
-        logManager.log(msg);
-
+        Wirecloud.GlobalLogManager.formatAndLog(gettext("Error adding iwidget to persistence: %(errorMsg)s."), transport, e);
         this.destroy();
     }
 
@@ -1185,11 +1175,7 @@ IWidget.prototype.moveToLayout = function (newLayout) {
         };
 
         var onError = function (transport, e) {
-            var logManager, msg;
-
-            logManager = LogManagerFactory.getInstance();
-            msg = logManager.formatError(gettext("Error saving changes to persistence: %(errorMsg)s."), transport, e);
-            logManager.log(msg);
+            Wirecloud.GlobalLogManager.formatAndLog(gettext("Error saving changes to persistence: %(errorMsg)s."), transport, e);
         };
 
         var data = [];

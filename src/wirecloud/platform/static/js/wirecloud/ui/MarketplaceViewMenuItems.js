@@ -19,7 +19,7 @@
  *
  */
 
-/*global Constants, gettext, LogManagerFactory, StyledElements, Wirecloud, LayoutManagerFactory*/
+/*global Constants, gettext, StyledElements, Wirecloud, LayoutManagerFactory*/
 
 (function () {
 
@@ -130,7 +130,7 @@
                             }.bind(this),
                             onFailure: function (msg) {
                                 LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-                                LogManagerFactory.getInstance().log(msg);
+                                Wirecloud.GlobalLogManager.log(msg);
                                 LayoutManagerFactory.getInstance()._notifyPlatformReady();
                             }
                         });

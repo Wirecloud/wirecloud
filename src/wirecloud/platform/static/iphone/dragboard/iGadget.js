@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global $, Event, OpManagerFactory, MYMW, window, interpolate, gettext, LogManagerFactory, LayoutManagerFactory, Wirecloud */
+/*global $, Event, OpManagerFactory, MYMW, window, interpolate, gettext, LayoutManagerFactory, Wirecloud */
 "use strict";
 
 /* 

@@ -1,4 +1,4 @@
-/*global Constants, EzWebExt, gettext, LayoutManagerFactory, LogManagerFactory, Wirecloud*/
+/*global Constants, EzWebExt, gettext, LayoutManagerFactory, Wirecloud*/
 
 (function () {
 
@@ -90,9 +90,8 @@
                 layoutManager.getInstance().logStep('');
             },
             onFailure: function (transport) {
-                var msg = LogManagerFactory.getInstance().formatError(gettext("Error publishing resource: %(errorMsg)s."), transport, null);
+                var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error publishing resource: %(errorMsg)s."), transport, null);
                 layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-                LogManagerFactory.getInstance().log(msg);
             },
             onComplete: function () {
                 LayoutManagerFactory.getInstance()._notifyPlatformReady();

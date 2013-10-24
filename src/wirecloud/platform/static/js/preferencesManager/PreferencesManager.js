@@ -50,9 +50,7 @@ var PreferencesManagerFactory = function () {
 		}
 
 		var _onErrorInitPreferences = function(transport, e) {
-			var logManager = LogManagerFactory.getInstance();
-			var msg = logManager.formatError(gettext("Error retrieving platform preferences data: %(errorMsg)s"), transport, e);
-			logManager.log(msg);
+			Wirecloud.GlobalLogManager.formatAndLog(gettext("Error retrieving platform preferences data: %(errorMsg)s"), transport, e);
 
 			// Continue using the defaults preferences
 			this.preferences = this.preferencesDef['platform'].buildPreferences({});

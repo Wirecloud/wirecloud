@@ -63,15 +63,14 @@ var OpManagerFactory = function () {
         var onError = function (transport, e) {
             var msg;
             try {
-                var logManager = LogManagerFactory.getInstance();
-                msg = logManager.formatError(gettext("Error loading Wirecloud Platform: %(errorMsg)s."), transport, e);
+                msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error loading Wirecloud Platform: %(errorMsg)s."), transport, e);
                 LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-                logManager.log(msg);
             } catch (e) {
-                if (msg != null)
+                if (msg != null) {
                     alert(msg);
-                else
+                } else {
                     alert (gettext("Error loading Wirecloud Platform"));
+                }
             }
         }
 
@@ -90,9 +89,7 @@ var OpManagerFactory = function () {
         };
 
         var createWSError = function(onFailure, response) {
-            var logManager = LogManagerFactory.getInstance();
-            var msg = logManager.formatError(gettext("Error creating a workspace: %(errorMsg)s."), response);
-            logManager.log(msg);
+            var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error creating a workspace: %(errorMsg)s."), response);
 
             if (typeof onFailure === 'function') {
                 try {
@@ -124,16 +121,6 @@ var OpManagerFactory = function () {
         // PUBLIC METHODS
         // ****************
 
-        OpManager.prototype.showLogs = function (logManager) {
-            logManager = arguments.length > 0 ? logManager : LogManagerFactory.getInstance();
-
-            if (this.activeWorkspace && this.activeWorkspace.getVisibleTab()) {
-                this.activeWorkspace.getVisibleTab().unmark();
-                        }
-
-            LogManagerFactory.getInstance().show(logManager);
-        }
-
         OpManager.prototype.mergeMashupResource = function(resource) {
 
             var mergeOk = function(transport) {
@@ -141,11 +128,9 @@ var OpManagerFactory = function () {
                 this.changeActiveWorkspace(this.activeWorkspace);
             }
             var mergeError = function(transport, e) {
-                var logManager, layoutManager, msg;
+                var layoutManager, msg;
 
-                logManager = LogManagerFactory.getInstance();
-                msg = logManager.formatError(gettext("Error merging workspace: %(errorMsg)s."), transport, e);
-                logManager.log(msg);
+                msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error merging workspace: %(errorMsg)s."), transport, e);
 
                 layoutManager = LayoutManagerFactory.getInstance();
                 layoutManager.logStep('');
@@ -196,12 +181,9 @@ var OpManagerFactory = function () {
             };
 
             var cloneError = function(transport, e) {
-                var logManager, msg, details;
+                var msg, details;
 
-                logManager = LogManagerFactory.getInstance();
-
-                msg = logManager.formatError(gettext("Error adding the workspace: %(errorMsg)s."), transport, e);
-                logManager.log(msg);
+                msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error adding the workspace: %(errorMsg)s."), transport, e);
 
                 if (typeof options.onFailure === 'function') {
                     try {
@@ -289,9 +271,6 @@ var OpManagerFactory = function () {
             layoutManager.logSubTask(gettext('Retrieving Wirecloud code'));
             layoutManager.logStep('');
 
-            // Init log manager
-            this.logs = LogManagerFactory.getInstance();
-
             Event.observe(window,
                           "beforeunload",
                           this.unloadEnvironment.bind(this),
@@ -374,9 +353,7 @@ var OpManagerFactory = function () {
                         this.continueLoadingGlobalModules(Modules.prototype.SHOWCASE);
                     }.bind(this),
                     onFailure: function () {
-                        var msg, logManager = LogManagerFactory.getInstance();
-                        msg = logManager.formatError(gettext("Error retrieving available resources: %(errorMsg)s."), transport, e);
-                        logManager.log(msg);
+                        var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error retrieving available resources: %(errorMsg)s."), transport, e);
                         LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
                     }
                 });
@@ -417,7 +394,7 @@ var OpManagerFactory = function () {
             if (iWidget == null) {
                 var msg2 = gettext("Some pice of code tried to notify an error in the iWidget %(iWidgetId)s when it did not exist or it was not loaded yet. This is an error in Wirecloud Platform, please notify it.\nError Message: %(errorMsg)s");
                 msg2 = interpolate(msg2, {iWidgetId: iWidgetId, errorMsg: msg}, true);
-                this.logs.log(msg2);
+                Wirecloud.GlobalLogManager.log(msg2);
                 return;
             }
 

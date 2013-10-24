@@ -61,7 +61,7 @@
             },
             onFailure: function (msg) {
                 LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-                LogManagerFactory.getInstance().log(msg);
+                Wirecloud.GlobalLogManager.log(msg);
             },
             onComplete: function () {
                 LayoutManagerFactory.getInstance()._notifyPlatformReady();

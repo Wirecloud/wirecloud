@@ -20,7 +20,7 @@
  *
  */
 
-/*global Constants, gettext, LogManagerFactory, StyledElements, Wirecloud, LayoutManagerFactory*/
+/*global Constants, gettext, StyledElements, Wirecloud, LayoutManagerFactory*/
 
 (function () {
 

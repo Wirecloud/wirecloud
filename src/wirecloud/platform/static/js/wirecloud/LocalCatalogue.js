@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, interpolate, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud*/
+/*global gettext, interpolate, LayoutManagerFactory, OpManagerFactory, Wirecloud*/
 
 (function () {
 
@@ -97,12 +97,7 @@
     };
 
     var uninstallErrorCallback = function uninstallErrorCallback(transport, e) {
-        var msg, logManager;
-
-        logManager = LogManagerFactory.getInstance();
-        msg = logManager.formatError(gettext("Error uninstalling resource: %(errorMsg)s."), transport, e);
-
-        logManager.log(msg);
+        var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error uninstalling resource: %(errorMsg)s."), transport, e);
 
         if (typeof this.onError === 'function') {
             this.onError(msg);
@@ -110,12 +105,7 @@
     };
 
     var deleteErrorCallback = function deleteErrorCallback(transport, e) {
-        var msg, logManager;
-
-        logManager = LogManagerFactory.getInstance();
-        msg = logManager.formatError(gettext("Error deleting resource: %(errorMsg)s."), transport, e);
-
-        logManager.log(msg);
+        var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error deleting resource: %(errorMsg)s."), transport, e);
 
         if (typeof this.onError === 'function') {
             this.onError(msg);
@@ -284,8 +274,7 @@
                 }
             }.bind(this),
             onFailure: function (transport) {
-                var msg = LogManagerFactory.getInstance().formatError(gettext("Error adding resource from URL: %(errorMsg)s."), transport);
-                LogManagerFactory.getInstance().log(msg);
+                var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error adding resource from URL: %(errorMsg)s."), transport);
 
                 if (typeof options.onFailure === 'function') {
                     options.onFailure(msg);

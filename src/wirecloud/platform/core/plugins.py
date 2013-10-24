@@ -223,7 +223,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/ui/Draggable.js',
             'js/wirecloud/ui/Theme.js',
             'js/wirecloud/WirecloudCatalogue.js',
-            'js/log/LogManager.js',
             'js/wirecloud/LocalCatalogue.js',
             'js/wirecloud/wiring/Endpoint.js',
             'js/wirecloud/wiring/EndpointException.js',
@@ -286,7 +285,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 "catalogue_main_resource_details_template": "wirecloud/catalogue/main_resource_details.html",
                 "catalogue_resource_details_template": "wirecloud/catalogue/resource_details.html",
                 "wirecloud_catalogue_publish_interface": "wirecloud/catalogue/developers.html",
-                "wirecloud_logs_template": "wirecloud/logs.html",
             }
         else:
             return {}

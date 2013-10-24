@@ -19,7 +19,7 @@
  *
  */
 
-/*global Constants, Element, EzWebExt, gettext, interpolate, LayoutManagerFactory, LogManagerFactory, StyledElements, Wirecloud*/
+/*global Constants, Element, EzWebExt, gettext, interpolate, LayoutManagerFactory, StyledElements, Wirecloud*/
 
 (function () {
 

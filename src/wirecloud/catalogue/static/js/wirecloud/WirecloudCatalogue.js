@@ -19,7 +19,7 @@
  *
  */
 
-/*global CatalogueResource, gettext, interpolate, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud, Template*/
+/*global CatalogueResource, gettext, interpolate, LayoutManagerFactory, OpManagerFactory, Wirecloud, Template*/
 
 (function () {
 
@@ -68,12 +68,7 @@
     };
 
     deleteErrorCallback = function deleteErrorCallback(transport, e) {
-        var msg, logManager;
-
-        logManager = LogManagerFactory.getInstance();
-        msg = logManager.formatError(gettext("Error deleting resource: %(errorMsg)s."), transport, e);
-
-        logManager.log(msg);
+        var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error deleting resource: %(errorMsg)s."), transport, e);
 
         this.onError(msg);
     };
@@ -176,8 +171,7 @@
                 }
             }.bind(this),
             onFailure: function (transport) {
-                var msg = LogManagerFactory.getInstance().formatError(gettext("Error adding packaged resource: %(errorMsg)s."), transport);
-                LogManagerFactory.getInstance().log(msg);
+                var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error adding packaged resource: %(errorMsg)s."), transport);
 
                 if (typeof options.onFailure === 'function') {
                     try {
@@ -209,8 +203,7 @@
                 }
             }.bind(this),
             onFailure: function (transport) {
-                var msg = LogManagerFactory.getInstance().formatError(gettext("Error adding resource from URL: %(errorMsg)s."), transport);
-                LogManagerFactory.getInstance().log(msg);
+                var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error adding resource from URL: %(errorMsg)s."), transport);
 
                 if (typeof options.onFailure === 'function') {
                     options.onFailure(msg);

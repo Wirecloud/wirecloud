@@ -62,9 +62,7 @@ function VarManager (_workspace) {
         }
 
         function onError(transport, e) {
-            var logManager = LogManagerFactory.getInstance();
-            var msg = logManager.formatError(gettext("Error saving variables to persistence: %(errorMsg)s."), transport, e);
-            logManager.log(msg);
+            Wirecloud.GlobalLogManager.formatAndLog(gettext("Error saving variables to persistence: %(errorMsg)s."), transport, e);
         }
 
         // Max lenght of buffered requests have been reached. Uploading to server!
