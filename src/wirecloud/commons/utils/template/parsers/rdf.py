@@ -409,8 +409,6 @@ class RDFTemplateParser(object):
 
         self._parse_wiring_info()
 
-        self._info['context'] = []
-
         if self._info['type'] == 'widget':
             # It contains the widget code
             xhtml_element = self._get_field(USDL, 'utilizedResource', self._rootURI, id_=True)
