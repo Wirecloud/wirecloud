@@ -51,6 +51,12 @@
 
     WorkspaceView.prototype.view_name = 'workspace';
 
+    WorkspaceView.prototype.buildStateData = function buildStateData() {
+        return EzWebExt.merge(HistoryManager.getCurrentState(), {
+            view: 'workspace'
+        });
+    };
+
     WorkspaceView.prototype.getBreadcrum = function getBreadcrum() {
         var workspace, workspace_name, entries;
 

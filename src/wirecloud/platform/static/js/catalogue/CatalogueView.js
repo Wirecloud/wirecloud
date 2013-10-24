@@ -51,6 +51,16 @@
         };
         this.viewsByName.search.init();
 
+        this.alternatives.addEventListener('postTransition', function (alternatives, out_alternative) {
+            var new_status = options.catalogue.buildStateData();
+
+            if (out_alternative === this.viewsByName.initial) {
+                HistoryManager.replaceState(new_status);
+            } else {
+                HistoryManager.pushState(new_status);
+            }
+        }.bind(this));
+
         this.addEventListener('show', function () {
             if (this.alternatives.getCurrentAlternative() === this.viewsByName.initial) {
                 this.changeCurrentView('search');

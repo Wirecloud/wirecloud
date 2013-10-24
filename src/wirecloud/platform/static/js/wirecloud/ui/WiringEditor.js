@@ -128,6 +128,14 @@ if (!Wirecloud.ui) {
 
     WiringEditor.prototype.view_name = 'wiring';
 
+    WiringEditor.prototype.buildStateData = function buildStateData() {
+        var data = EzWebExt.merge(HistoryManager.getCurrentState(), {
+            view: 'wiring'
+        });
+
+        return data;
+    };
+
     /*************************************************************************
      * Private methods
      *************************************************************************/

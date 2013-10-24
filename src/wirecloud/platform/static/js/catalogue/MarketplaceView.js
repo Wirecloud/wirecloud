@@ -106,9 +106,17 @@
         this.viewsByName = {};
         this.alternatives = new StyledElements.StyledAlternatives();
         this.emptyAlternative = this.alternatives.createAlternative();
-        this.alternatives.addEventListener('postTransition', function () {
+        this.alternatives.addEventListener('postTransition', function (alternatives, out_alternative, in_alternative) {
+            var new_status = this.buildStateData();
+
+            if (out_alternative === this.emptyAlternative) {
+                HistoryManager.replaceState(new_status);
+            } else {
+                HistoryManager.pushState(new_status);
+            }
+
             LayoutManagerFactory.getInstance().header.refresh();
-        });
+        }.bind(this));
         this.appendChild(this.alternatives);
 
         this.marketMenu = new StyledElements.PopupMenu();
@@ -138,6 +146,21 @@
     MarketplaceView.prototype = new StyledElements.Alternative();
 
     MarketplaceView.prototype.view_name = 'marketplace';
+
+    MarketplaceView.prototype.buildStateData = function buildStateData() {
+        var data = EzWebExt.merge(HistoryManager.getCurrentState(), {
+            view: 'marketplace'
+        });
+
+        if (this.loading === false && this.error === false && this.alternatives.getCurrentAlternative() !== this.emptyAlternative) {
+            if (this.alternatives.getCurrentAlternative().alternatives.getCurrentAlternative().view_name != null) {
+                data.subview = this.alternatives.getCurrentAlternative().alternatives.getCurrentAlternative().view_name;
+            }
+            data.market = this.alternatives.getCurrentAlternative().market_id;
+        }
+
+        return data;
+    };
 
     MarketplaceView.prototype.getBreadcrum = function () {
         var label, breadcrum, user;
@@ -205,6 +228,10 @@
 
         this.number_of_alternatives += 1;
         this.alternatives.showAlternative(this.viewsByName[market_info.name]);
+    };
+
+    MarketplaceView.prototype.changeCurrentMarket = function changeCurrentMarket(market) {
+        this.alternatives.showAlternative(this.viewsByName[market]);
     };
 
     window.MarketplaceView = MarketplaceView;

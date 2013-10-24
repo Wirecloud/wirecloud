@@ -167,6 +167,8 @@
         this.initialized = true;
     };
 
+    CatalogueSearchView.prototype.view_name = 'search';
+
     CatalogueSearchView.prototype.initEmptyInfoBox = function () {
         // Tutorial layer for empty catalogues
         this.emptyBox = document.createElement('div');

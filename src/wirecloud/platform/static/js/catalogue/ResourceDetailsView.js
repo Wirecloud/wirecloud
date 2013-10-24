@@ -60,6 +60,8 @@
     };
     ResourceDetailsView.prototype = new StyledElements.Alternative();
 
+    ResourceDetailsView.prototype.view_name = 'details';
+
     ResourceDetailsView.prototype.paint = function paint(resource) {
         this.clear();
         this.appendChild(this.resource_details_painter.paint(resource));

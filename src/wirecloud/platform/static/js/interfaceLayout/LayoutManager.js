@@ -50,8 +50,9 @@ var LayoutManagerFactory = function () {
         /* TODO| FIXME */
         this.header = new Wirecloud.ui.WirecloudHeader(this);
         this.alternatives.addEventListener('postTransition', function (alternatives, old_alternative, new_alternative) {
-            this._notifyViewChange(new_alternative);
-        }.bind(this.header));
+            HistoryManager.pushState(new_alternative.buildStateData());
+            this.header._notifyViewChange(new_alternative);
+        }.bind(this));
         this.viewsByName = {
             'workspace': this.alternatives.createAlternative({'alternative_constructor': WorkspaceView}),
             'wiring': this.alternatives.createAlternative({'alternative_constructor': Wirecloud.ui.WiringEditor}),
@@ -207,10 +208,6 @@ var LayoutManagerFactory = function () {
             layoutManager.timeout = setTimeout(fadder, 50);
         }
 
-        LayoutManager.prototype.getCurrentViewType = function () {
-            return this.currentViewType;
-        }
-
         LayoutManager.prototype.resizeContainer = function (container) {
         }
 
@@ -260,7 +257,7 @@ var LayoutManagerFactory = function () {
                 return;
             }
 
-            if (state.view !== this.currentViewType) {
+            if (state.view !== this.alternatives.getCurrentAlternative().view_name) {
                 this.alternatives.showAlternative(this.viewsByName[state.view]);
             }
         };
