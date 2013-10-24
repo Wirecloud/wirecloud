@@ -275,12 +275,20 @@
     OfferingPainter.prototype.get_popularity_html = function (popularity) {
         var on_stars, md_star, off_stars, stars, star, i;
 
+        if (popularity == null || popularity < 1) {
+            popularity = 0;
+        }
+
         on_stars = Math.floor(popularity);
         md_star = popularity - on_stars;
         off_stars = 5 - popularity;
 
         stars = document.createElement('div');
         stars.className = 'rating';
+
+        if (popularity === 0) {
+            stars.classList.add('disabled');
+        }
 
         // "On" stars
         for (i = 0; i < on_stars; i += 1) {
@@ -291,7 +299,7 @@
 
         if (md_star) {
             star = document.createElement('span');
-            star.className = 'md star';
+            star.className = 'middle star';
             stars.appendChild(star);
         }
 

@@ -161,8 +161,6 @@ class USDLParser(object):
         artefact = self._get_field(USDL, service_uri, 'utilizedResource', id_=True)[0]
         uri_template = self._get_field(BLUEPRINT, artefact, 'location')[0]
         version = self._get_field(USDL, service_uri, 'versionInfo')[0]
-        # if the document does no have a uri_template is not a widget or operator
-        self._info['type'] = 'unknown'
 
         self._info.update({
             'shortDescription': self._get_field(DCTERMS, service_uri, 'abstract')[0],

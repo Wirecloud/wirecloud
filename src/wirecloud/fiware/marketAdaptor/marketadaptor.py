@@ -111,7 +111,7 @@ class MarketAdaptor(object):
                 ser['uriTemplate'] = url
 
             ser['usdl_url'] = url
-            ser['rating'] = 5  # TODO
+            ser['type'] = 'unknown'
             ser['resources'] = []
 
             try:
