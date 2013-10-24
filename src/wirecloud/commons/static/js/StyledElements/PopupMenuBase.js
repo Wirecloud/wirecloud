@@ -55,7 +55,7 @@
 
         StyledElements.ObjectWithEvents.call(this, ['itemOver', 'visibilityChange']);
 
-        this.wrapperElement = window.parent.document.createElement('div');
+        this.wrapperElement = document.createElement('div');
         this.wrapperElement.className = 'popup_menu hidden';
         this._context = null;
         this._position = options.position;
@@ -133,7 +133,11 @@
         }
 
         this.wrapperElement.classList.remove('hidden');
-        window.parent.document.body.appendChild(this.wrapperElement);
+        try {
+            window.parent.document.body.appendChild(this.wrapperElement);
+        } catch (e) {
+            document.body.appendChild(this.wrapperElement);
+        }
         this.events.visibilityChange.dispatch(this);
 
         // TODO Hay que ajustar refPosition.y y refPosition.x para que el menú no
