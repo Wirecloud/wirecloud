@@ -634,11 +634,11 @@ div.styled_numeric_field div.numeric_bottom_button {
     display: inline-block;
 }
 
-.icon-expand.checked:before {
+.styled_expander > div > .icon-expand.checked:before {
     content: "\f0d7";
 }
 
-.icon-expand:before {
+.styled_expander > div > .icon-expand:before {
     content: "\f0da";
 }
 
