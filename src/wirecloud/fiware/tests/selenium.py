@@ -141,3 +141,32 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         button = complex_price_offering.find_element_by_css_selector('.mainbutton')
         self.assertEqual(button.text, 'Purchase')
 
+    def test_marketplace_offering_list_when_store_down(self):
+
+        response_text = read_response_file('responses', 'marketplace', 'keyword_search.xml')
+        self.network._servers['http']['marketplace.example.com'].add_response('GET', '/search/offerings/fulltext/test', {'content': response_text})
+        old_store = self.network._servers['http']['store.example.com']
+        del self.network._servers['http']['store.example.com']
+
+        try:
+            self.login(username='user_with_markets')
+
+            self.change_main_view('marketplace')
+            self.change_marketplace('fiware')
+
+            # Weather widget comes for an accesible store (store2 is online)
+            free_offering = self.search_in_catalogue_results('Weather widget')
+            button = free_offering.find_element_by_css_selector('.mainbutton')
+            self.assertEqual(button.text, 'Free')
+
+            # Test Operator comes for store1 that is currently down
+            simple_price_offering = self.search_in_catalogue_results('Test Operator')
+            button = simple_price_offering.find_element_by_css_selector('.mainbutton')
+            self.assertEqual(button.text, 'Details')
+
+            # Smart City Lights application comes for store1 that is currently down
+            complex_price_offering = self.search_in_catalogue_results('Smart City Lights application')
+            button = complex_price_offering.find_element_by_css_selector('.mainbutton')
+            self.assertEqual(button.text, 'Details')
+        finally:
+            self.network._servers['http']['store.example.com'] = old_store

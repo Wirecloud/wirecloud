@@ -158,47 +158,11 @@ class USDLParser(object):
 
         self._info['name'] = self._get_field(DCTERMS, service_uri, 'title')[0]
 
-        display_name = None
         artefact = self._get_field(USDL, service_uri, 'utilizedResource', id_=True)[0]
         uri_template = self._get_field(BLUEPRINT, artefact, 'location')[0]
         version = self._get_field(USDL, service_uri, 'versionInfo')[0]
         # if the document does no have a uri_template is not a widget or operator
-        if uri_template == '':
-            self._info['type'] = 'other'
-        else:
-            # To know if is a widget an operator or another kind of service using an artefact
-            # is necesary to download the technical description
-
-            opener = urllib2.build_opener()
-            headers = {"Accept": "text/plain; application/rdf+xml; text/turtle; text/n3"}
-            request = MethodRequest('GET', uri_template.encode('utf-8'), '', headers)
-            try:
-                response = opener.open(request)
-                if response.code != 200:
-                    self._info['type'] = 'other'
-                else:
-                    content = response.read()
-                    parser = TemplateParser(content)
-                    technical_info = parser.get_resource_basic_info()
-                    self._info['type'] = technical_info['type']
-                    display_name = technical_info['display_name']
-                    version = technical_info['version']
-                    self._info['name'] = technical_info['name']
-                    # if the service is a mashup it may has parts
-                    if self._info['type'] == 'mashup':
-                        service_parts = self._get_field(USDL, service_uri, 'hasPartMandatory', id_=True)
-
-                        self._info['parts'] = []
-                        for part in service_parts:
-                            part_info = {}
-                            part_info['name'] = self._get_field(DCTERMS, part, 'title')[0]
-                            part_info['uri'] = unicode(part)
-                            self._info['parts'].append(part_info)
-            except HTTPError:
-                self._info['type'] = 'other'
-
-        if self._info['type'] == 'other':
-            display_name = self._info['name']
+        self._info['type'] = 'unknown'
 
         self._info.update({
             'shortDescription': self._get_field(DCTERMS, service_uri, 'abstract')[0],
@@ -207,7 +171,7 @@ class USDLParser(object):
             'version': version,
             'uriTemplate': uri_template,
             'page': self._get_field(FOAF, service_uri, 'page')[0],
-            'displayName': display_name,
+            'displayName': self._info['name'],
         })
 
     def _parse_legal_info(self, service_uri):
