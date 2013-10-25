@@ -1,7 +1,6 @@
 {
     "resources": [
         {
-            "rating": 5,
             "vendor": "CoNWeT",
             "name": "Smart City Lights application",
             "resources": [],
@@ -92,8 +91,8 @@
             },
             "marketName": null,
             "usdl_url": "http://repository.example.com/CoNWeT/service1.rdf",
-            "type": "other",
-            "store": null
+            "type": "unknown",
+            "store": "Store 1"
         }
     ]
 }
