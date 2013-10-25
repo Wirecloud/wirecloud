@@ -482,3 +482,20 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.search_resource('Published Workspace')
         mashup = self.search_in_catalogue_results('Published Workspace')
         self.assertIsNotNone(mashup, 'The published workspace is not available on the local catalogue')
+
+    def test_browser_navigation_history_management(self):
+
+        self.login(username='user_with_workspaces')
+
+        self.change_main_view('wiring')
+        self.change_main_view('marketplace')
+        self.change_main_view('wiring')
+
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'marketplace')
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'wiring')
+        self.driver.back()
+        WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'workspace')
+        self.driver.back()
+        self.assertEqual(self.driver.current_url, self.live_server_url + '/login')
