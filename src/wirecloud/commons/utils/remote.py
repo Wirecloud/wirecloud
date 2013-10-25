@@ -318,11 +318,15 @@ class WirecloudRemoteTestCase(object):
 
     def change_main_view(self, view_name):
 
-        if self.get_current_view() != view_name:
-            self.driver.find_element_by_css_selector("#wirecloud_header .menu ." + view_name).click()
+        if self.get_current_view() == view_name:
+            return
 
-            if view_name == 'marketplace':
-                WebDriverWait(self.driver, 30).until(marketplace_loaded)
+        self.driver.find_element_by_css_selector("#wirecloud_header .menu ." + view_name).click()
+
+        WebDriverWait(self.driver, 30).until(lambda driver: self.get_current_view() == view_name)
+
+        if view_name == 'marketplace':
+            WebDriverWait(self.driver, 30).until(marketplace_loaded)
 
     def check_popup_menu(self, must_be=(), must_be_absent=(), must_be_disabled=()):
 
