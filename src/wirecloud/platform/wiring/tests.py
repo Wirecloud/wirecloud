@@ -29,6 +29,7 @@ from django.contrib.auth.models import User
 from django.db import transaction
 from django.test import TransactionTestCase, Client
 from django.utils import unittest
+import selenium
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
@@ -40,6 +41,12 @@ from wirecloud.platform.workspace.models import Workspace
 
 # Avoid nose to repeat these tests (they are run through wirecloud/tests.py)
 __test__ = False
+
+SELENIUM_VERSION = tuple(selenium.__version__.split('.'))
+
+
+def selenium_supports_draganddrop(driver):
+    return driver.capabilities['browserName'] != 'firefox' or SELENIUM_VERSION >= (2, 37, 2) or driver.profile.native_events_enabled
 
 
 class WiringTestCase(TransactionTestCase):
@@ -363,8 +370,8 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
     def test_basic_wiring_editor_operations(self):
 
-        if self.driver.capabilities['browserName'] == 'firefox' and not self.driver.profile.native_events_enabled:
-            raise unittest.SkipTest('This test need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
+        if not selenium_supports_draganddrop(self.driver):
+            raise unittest.SkipTest('This test need make use of the native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
         self.login()
 
@@ -1274,9 +1281,9 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
 
         super(EndpointOrderTestCase, cls).setUpClass()
 
-        if cls.driver.capabilities['browserName'] == 'firefox' and not cls.driver.profile.native_events_enabled:
+        if not selenium_supports_draganddrop(cls.driver):
             cls.tearDownClass()
-            raise unittest.SkipTest('Endpoint reordering tests need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
+            raise unittest.SkipTest('Endpoint reordering tests need make use of the native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
     @uses_extra_resources(('Wirecloud_TestMultiendpoint_1.0.wgt',), shared=True)
     def test_wiring_widget_reorder_endpoints(self):
@@ -1376,9 +1383,9 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
 
         super(MulticonnectorTestCase, cls).setUpClass()
 
-        if cls.driver.capabilities['browserName'] == 'firefox' and not cls.driver.profile.native_events_enabled:
+        if not selenium_supports_draganddrop(cls.driver):
             cls.tearDownClass()
-            raise unittest.SkipTest('Multiconnector tests need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
+            raise unittest.SkipTest('Multiconnector tests need make use of the native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
     def test_wiring_basic_multiconnector_visualization(self):
 
@@ -1555,9 +1562,9 @@ class StickyEffectTestCase(WirecloudSeleniumTestCase):
 
         super(StickyEffectTestCase, cls).setUpClass()
 
-        if cls.driver.capabilities['browserName'] == 'firefox' and not cls.driver.profile.native_events_enabled:
+        if not selenium_supports_draganddrop(cls.driver):
             cls.tearDownClass()
-            raise unittest.SkipTest('Sticky effect tests need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
+            raise unittest.SkipTest('Sticky effect tests need make use of the native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
     def test_wiring_stycky_effect_in_endpoint_label(self):
         self.login()
@@ -1611,9 +1618,9 @@ class SimpleRecommendationsTestCase(WirecloudSeleniumTestCase):
 
         super(SimpleRecommendationsTestCase, cls).setUpClass()
 
-        if cls.driver.capabilities['browserName'] == 'firefox' and not cls.driver.profile.native_events_enabled:
+        if not selenium_supports_draganddrop(cls.driver):
             cls.tearDownClass()
-            raise unittest.SkipTest('Simple recommendation tests need make use of the native events support when using FirefoxDriver (not available on Mac OS)')
+            raise unittest.SkipTest('Simple recommendation tests need make use of the native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
     def test_wiring_recommendations_basic_mouseon(self):
         self.login()
