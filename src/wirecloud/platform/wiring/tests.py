@@ -322,7 +322,6 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         self.add_packaged_resource_to_catalogue('Wirecloud_TestOperatorSelenium_1.0.zip', 'TestOperatorSelenium', shared=True)
 
         self.change_main_view('wiring')
-        time.sleep(2)
 
         wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
         menubar = wiring_base_element.find_element_by_css_selector('.menubar')
@@ -354,7 +353,6 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         self.delete_resource('TestOperator')
 
         self.change_main_view('wiring')
-        time.sleep(2)
 
         wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
         menubar = wiring_base_element.find_element_by_css_selector('.menubar')
@@ -375,7 +373,6 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
 
         self.change_main_view('wiring')
-        time.sleep(2)
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
@@ -389,7 +386,6 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         ActionChains(self.driver).drag_and_drop(source.element, target.element).perform()
 
         self.change_main_view('workspace')
-        time.sleep(0.2)
 
         with iwidgets[0]:
             text_input = self.driver.find_element_by_tag_name('input')
@@ -430,7 +426,6 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'default')
 
         self.change_main_view('wiring')
-        time.sleep(2)
 
         # Change widget settings
         widget = self.wait_element_visible_by_css_selector('.grid > .iwidget')
@@ -462,7 +457,6 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
 
         self.change_main_view('wiring')
-        time.sleep(2)
 
         # Change widget settings
         ioperator = self.get_current_wiring_editor_ioperators()[0]
@@ -710,16 +704,13 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
         self.change_main_view('wiring')
-        time.sleep(2)
         ghostWidget = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost')
         ghostEndpointsLabelsFirst1 = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost .labelDiv')[0].text
         ghostEndpointsLabelsFirst2 = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost .labelDiv')[1].text
         # Ghost
         self.assertEqual(len(ghostWidget), 1, "The ghost Widget has not been painted in the first access to Wiring Editor")
         self.change_main_view('workspace')
-        time.sleep(2)
         self.change_main_view('wiring')
-        time.sleep(2)
         ghostWidget = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost')
         self.assertEqual(len(ghostWidget), 1, "The ghost Widget has not been painted in the second access to Wiring Editor")
         ghostEndpointsLabelsSecond = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost .labelDiv')
@@ -858,7 +849,6 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
         self.change_main_view('wiring')
-        time.sleep(2)
         ghostWidget = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost')
         self.assertEqual(len(ghostWidget), 1)
         # 5 connections
@@ -938,16 +928,13 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
         self.change_main_view('wiring')
-        time.sleep(2)
         ghostWidget = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost')
         ghostEndpointsLabelsFirst1 = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost .labelDiv')[0].text
         ghostEndpointsLabelsFirst2 = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost .labelDiv')[1].text
         # Ghost
         self.assertEqual(len(ghostWidget), 1, "The ghost Operator has not been painted in the first access to Wiring Editor")
         self.change_main_view('workspace')
-        time.sleep(2)
         self.change_main_view('wiring')
-        time.sleep(2)
         ghostOperator = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost')
         self.assertEqual(len(ghostOperator), 1, "The ghost Operator has not been painted in the second access to Wiring Editor")
         ghostEndpointsLabelsSecond = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost .labelDiv')
@@ -1089,7 +1076,6 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
         self.change_main_view('wiring')
-        time.sleep(2)
         ghostOperator = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost')
         self.assertEqual(len(ghostOperator), 1)
         # 5 connections
@@ -1176,7 +1162,6 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
         self.change_main_view('wiring')
-        time.sleep(2)
         arrows = self.driver.find_elements_by_css_selector('.arrow')
         self.assertEqual(len(arrows), 2)
         # The find_element_by_css_selector is needed to work around a bug in the firefox driver
@@ -1264,7 +1249,6 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
         self.change_main_view('wiring')
-        time.sleep(2)
         widget = self.driver.find_elements_by_css_selector('.grid > .iwidget')[0]
         operator = self.driver.find_elements_by_css_selector('.grid > .ioperator')[0]
         widget.click()
@@ -1297,7 +1281,6 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
 
         iwidget = self.add_widget_to_mashup('Test_Multiendpoint', new_name='Test (1)')
         self.change_main_view('wiring')
-        time.sleep(2)
 
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
         miniwidget = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
@@ -1340,7 +1323,6 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
         self.login()
 
         self.change_main_view('wiring')
-        time.sleep(2)
 
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
@@ -1373,7 +1355,6 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
         self.change_main_view('workspace')
         time.sleep(0.3) # We need to wait for the wiring status been saved
         self.change_main_view('wiring')
-        time.sleep(2)
 
         self.assertEqual(ioperator.get_wiring_endpoint('output1').pos, 2)
         self.assertEqual(ioperator.get_wiring_endpoint('output2').pos, 0)
@@ -1401,7 +1382,6 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
         iwidget = self.add_widget_to_mashup('Test', new_name='Test (1)')
 
         self.change_main_view('wiring')
-        time.sleep(2)
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
@@ -1441,7 +1421,6 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
         iwidgets = self.get_current_iwidgets()
 
         self.change_main_view('wiring')
-        time.sleep(2)
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
@@ -1464,7 +1443,6 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
         ActionChains(self.driver).drag_and_drop(target2.element, multi).perform()
 
         self.change_main_view('workspace')
-        time.sleep(0.2)
 
         with iwidgets[0]:
             text_input = self.driver.find_element_by_tag_name('input')
@@ -1502,7 +1480,6 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
 
         iwidgets = self.get_current_iwidgets()
         self.change_main_view('wiring')
-        time.sleep(2)
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
@@ -1525,7 +1502,6 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
         ActionChains(self.driver).drag_and_drop(source2.element, multi).perform()
 
         self.change_main_view('workspace')
-        time.sleep(0.2)
 
         with iwidgets[1]:
             text_input = self.driver.find_element_by_tag_name('input')
@@ -1584,7 +1560,6 @@ class StickyEffectTestCase(WirecloudSeleniumTestCase):
         self.add_widget_to_mashup('Test', new_name='Test (1)')
         iwidgets = self.get_current_iwidgets()
         self.change_main_view('wiring')
-        time.sleep(2)
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
         widget = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
@@ -1609,7 +1584,6 @@ class StickyEffectTestCase(WirecloudSeleniumTestCase):
         ActionChains(self.driver).drag_and_drop(operatorOutput.element, widgetInput.label).perform()
 
         self.change_main_view('workspace')
-        time.sleep(0.2)
 
         with iwidgets[0]:
             text_input = self.driver.find_element_by_tag_name('input')
@@ -1645,7 +1619,6 @@ class SimpleRecommendationsTestCase(WirecloudSeleniumTestCase):
 
         iwidgets = self.get_current_iwidgets()
         self.change_main_view('wiring')
-        time.sleep(2)
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
@@ -1704,7 +1677,6 @@ class SimpleRecommendationsTestCase(WirecloudSeleniumTestCase):
 
         iwidgets = self.get_current_iwidgets()
         self.change_main_view('wiring')
-        time.sleep(2)
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
