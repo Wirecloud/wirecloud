@@ -45,6 +45,7 @@ __test__ = False
 class WiringTestCase(TransactionTestCase):
 
     fixtures = ('test_data',)
+    tags = ('wiring',)
 
     def setUp(self):
 
@@ -88,7 +89,7 @@ class WiringTestCase(TransactionTestCase):
         response = client.put(self.wiring_url, data, content_type='application/json')
 
         self.assertEqual(response.status_code, 204)
-    test_save_basic_wiring_connection.tags = ('fiware-ut-6',)
+    test_save_basic_wiring_connection.tags = ('wiring', 'fiware-ut-6')
 
     def test_wiring_modification_fails_with_incorrect_user(self):
         client = Client()
@@ -100,7 +101,7 @@ class WiringTestCase(TransactionTestCase):
         })
         response = client.put(self.wiring_url, data, content_type='application/json')
         self.assertEqual(response.status_code, 403)
-    test_wiring_modification_fails_with_incorrect_user.tags = ('fiware-ut-6',)
+    test_wiring_modification_fails_with_incorrect_user.tags = ('wiring', 'fiware-ut-6')
 
     def test_basic_wiring_operations_with_read_only_connections(self):
         workspace = Workspace.objects.get(id=1)
@@ -314,6 +315,7 @@ class OperatorCodeEntryTestCase(WirecloudTestCase):
 class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    tags = ('wiring', 'wiring_editor')
 
     def test_operators_are_usable_after_installing(self):
 
@@ -328,7 +330,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
         menubar.find_element_by_xpath("//*[contains(@class, 'container ioperator')]//*[text()='TestOperatorSelenium']")
-    test_operators_are_usable_after_installing.tags = ('fiware-ut-6',)
+    test_operators_are_usable_after_installing.tags = ('wiring', 'wiring_editor', 'fiware-ut-6')
 
     def test_operators_are_not_usable_after_being_uninstalled(self):
 
@@ -337,14 +339,13 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         self.uninstall_resource('TestOperator')
 
         self.change_main_view('wiring')
-        time.sleep(2)
 
         wiring_base_element = self.driver.find_element_by_css_selector('.wiring_editor')
         menubar = wiring_base_element.find_element_by_css_selector('.menubar')
 
         menubar.find_element_by_xpath("//*[contains(@class, 'styled_expander')]//*[contains(@class, 'title') and text()='Operators']").click()
         self.assertRaises(NoSuchElementException, menubar.find_element_by_xpath, "//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
-    test_operators_are_not_usable_after_being_uninstalled.tags = ('fiware-ut-6',)
+    test_operators_are_not_usable_after_being_uninstalled.tags = ('wiring', 'wiring_editor', 'fiware-ut-6')
 
     def test_operators_are_not_usable_after_being_deleted(self):
 
@@ -412,7 +413,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         with iwidgets[0]:
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, '')
-    test_basic_wiring_editor_operations.tags = ('fiware-ut-6',)
+    test_basic_wiring_editor_operations.tags = ('wiring', 'fiware-ut-6')
 
     def test_widget_preferences_in_wiring_editor(self):
 
@@ -493,6 +494,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    tags = ('wiring', 'wiring_editor')
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_wiring_recovers_from_invalid_views_data(self):
@@ -634,6 +636,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 class WiringGhostTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    tags = ('wiring', 'wiring_editor')
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
     def test_wiring_show_invisible_widget(self):
@@ -1264,6 +1267,7 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
 class EndpointOrderTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    tags = ('wiring', 'wiring_editor')
 
     @classmethod
     def setUpClass(cls):
@@ -1365,6 +1369,7 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
 class MulticonnectorTestCase(WirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    tags = ('wiring', 'wiring_editor')
 
     @classmethod
     def setUpClass(cls):
