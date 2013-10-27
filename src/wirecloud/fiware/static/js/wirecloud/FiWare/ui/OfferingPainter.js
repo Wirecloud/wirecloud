@@ -192,12 +192,12 @@
                         });
                     } else if (is_single_payment(offering)) {
                         button = new StyledElements.StyledButton({
-                            'class': 'mainbutton btn-success',
+                            'class': 'mainbutton btn-warning',
                             'text': offering.pricing[0].priceComponents[0].value + ' ' + CURRENCY_SYMBOL[offering.pricing[0].priceComponents[0].currency]
                         });
                     } else {
                         button = new StyledElements.StyledButton({
-                            'class': 'mainbutton btn-success',
+                            'class': 'mainbutton btn-warning',
                             'text': gettext('Purchase')
                         });
                     }
