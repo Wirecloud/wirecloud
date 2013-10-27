@@ -38,6 +38,10 @@
     right: 0px;
 }
 
+.resource > .header {
+    margin-top: 2px;
+}
+
 .resource > .header > h2 > .txt-gradient {
     height: 26px;
 }
@@ -60,7 +64,7 @@
 
 .resource > .header > .rating {
     position: absolute;
-    top: 0px;
+    top: 2px;
     right: 8px;
     line-height: 26px;
 }

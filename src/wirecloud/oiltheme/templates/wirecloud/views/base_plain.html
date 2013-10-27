@@ -1,7 +1,5 @@
 {% load compress i18n %}
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xml:lang="{{ LANGUAGE_CODE }}"
       lang="{{ LANGUAGE_CODE }}">
@@ -26,18 +24,11 @@
 
 <body>
     <div id="wirecloud_header">
-        <div class="logo_wrapper">
-          <div>
-              <img src="{{ STATIC_URL }}images/wirecloud_logo.png" alt="Wirecloud" />
-              <div>
-                  <h2 class="fiware_title">fi-ware</h2>
-                  <h2 class="fiware_subtitle">Wirecloud Mashup Platform</h2>
-              </div>
-          </div>
-        </div>
+
+        {% include "wirecloud/views/header_common.html" %}
 
         <div class="breadcrum_wrapper"><div class="breadcrum">
-            /<span id="wirecloud_breadcrum">{% block path %}{% endblock %}</span>
+            {% block path %}{% endblock %}
         </div></div>
 
     </div>

@@ -161,11 +161,12 @@ header.navbar > .navbar-inner {
     padding: 0px;
 }
 
-header.navbar > .navbar-inner > .logo-header {
+header.navbar > .navbar-inner > .logo-header, header.navbar > .navbar-inner > .logo-header > a {
     display: inline-block;
 }
 
 header.navbar .logo-header > .logo {
+    display: block;
     width: 60px;
     padding-top: 0;
 }
@@ -199,11 +200,11 @@ header.navbar ul.oil-portal {
 
 header.navbar ul.oil-portal > li {
     display: inline-block;
-    padding: 14px 18px 10px;
+    padding: 13px 18px 10px;
     list-style-type: none;
     line-height: 20px;
     vertical-align: top;
-    font-size: 16px;
+    font-size: 14px;
 }
 
 header.navbar ul.oil-portal > li:hover {
@@ -222,8 +223,12 @@ header.navbar ul.oil-portal > li > a {
     color: #555;
 }
 
-header.navbar ul.oil-portal > li > a:hover, header.navbar ul.oil-portal > li.active > a {
+header.navbar ul.oil-portal > li:hover > a {
     color: #60c1cf;
+}
+
+header.navbar ul.oil-portal > li.active:hover > a, header.navbar ul.oil-portal > li.active > a{
+    color: #002d67;
 }
 
 header.navbar ul.nav span.name {
