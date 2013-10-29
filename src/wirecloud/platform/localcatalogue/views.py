@@ -18,6 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import errno
 import json
 from cStringIO import StringIO
 import os
@@ -146,6 +147,13 @@ class ResourceCollection(Resource):
         try:
 
             resource = install_resource_to_user(request.user, file_contents=file_contents, templateURL=templateURL, packaged=packaged, raise_conflicts=force_create)
+
+        except OSError, e:
+
+            if e.errno == errno.EACCES:
+                return build_error_response(request, 500, _('Error writing the resource into the filesystem. Please, contact the server administrator.'))
+            else:
+                raise
 
         except (TemplateParseException, InvalidContents), e:
 

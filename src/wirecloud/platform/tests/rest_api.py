@@ -1080,6 +1080,30 @@ class ResourceManagementAPI(WirecloudTestCase):
         self.assertIn('version', response_data)
         self.assertEqual(response_data['version'], '1.0')
 
+    def test_resource_collection_post_widget_without_enough_filesystem_permissions(self):
+
+        url = reverse('wirecloud_showcase.resource_collection')
+
+        resource_id = [
+            'Wirecloud',
+            'Test_Selenium',
+            '1.0'
+        ]
+        local_dir = catalogue.wgt_deployer.get_base_dir(*resource_id)
+        os.makedirs(local_dir)
+        os.chmod(local_dir, 0)
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        # Make the request
+        with open(os.path.join(self.shared_test_data_dir, 'Wirecloud_Test_Selenium_1.0.wgt'), 'rb') as f:
+            response = self.client.post(url, data={'file': f}, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
     def test_resource_collection_post_widget_invalid_html_encoding(self):
 
         url = reverse('wirecloud_showcase.resource_collection')
