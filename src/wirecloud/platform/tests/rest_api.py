@@ -20,7 +20,6 @@
 
 import json
 import os
-from tempfile import mkdtemp
 import shutil
 
 from django.core.urlresolvers import reverse
@@ -29,9 +28,7 @@ from django.test import Client
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.testcases import WirecloudTestCase
-from wirecloud.commons.utils.wgt import WgtDeployer
 from wirecloud.platform.models import IWidget, Tab, VariableValue, Workspace, UserWorkspace
-from wirecloud.platform.widget import utils as showcase
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
@@ -1000,33 +997,6 @@ class ResourceManagementAPI(WirecloudTestCase):
     fixtures = ('selenium_test_data',)
     tags = ('rest_api', 'fiware-ut-11')
 
-    @classmethod
-    def setUpClass(cls):
-        super(ResourceManagementAPI, cls).setUpClass()
-
-        cls.client = Client()
-
-        # catalogue deployer
-        cls.old_catalogue_deployer = catalogue.wgt_deployer
-        cls.catalogue_tmp_dir = mkdtemp()
-        catalogue.wgt_deployer = WgtDeployer(cls.catalogue_tmp_dir)
-
-        # showcase deployer
-        cls.old_deployer = showcase.wgt_deployer
-        cls.showcase_tmp_dir = mkdtemp()
-        showcase.wgt_deployer = WgtDeployer(cls.showcase_tmp_dir)
-
-    @classmethod
-    def tearDownClass(cls):
-
-        # deployers
-        catalogue.wgt_deployer = cls.old_catalogue_deployer
-        shutil.rmtree(cls.catalogue_tmp_dir, ignore_errors=True)
-        showcase.wgt_deployer = cls.old_deployer
-        shutil.rmtree(cls.showcase_tmp_dir, ignore_errors=True)
-
-        super(ResourceManagementAPI, cls).tearDownClass()
-
     def test_resource_collection_get_requires_authentication(self):
 
         url = reverse('wirecloud_showcase.resource_collection')
@@ -1291,33 +1261,6 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
     tags = ('extra_rest_api',)
-
-    @classmethod
-    def setUpClass(cls):
-        super(ExtraApplicationMashupAPI, cls).setUpClass()
-
-        cls.client = Client()
-
-        # catalogue deployer
-        cls.old_catalogue_deployer = catalogue.wgt_deployer
-        cls.catalogue_tmp_dir = mkdtemp()
-        catalogue.wgt_deployer = WgtDeployer(cls.catalogue_tmp_dir)
-
-        # showcase deployer
-        cls.old_deployer = showcase.wgt_deployer
-        cls.showcase_tmp_dir = mkdtemp()
-        showcase.wgt_deployer = WgtDeployer(cls.showcase_tmp_dir)
-
-    @classmethod
-    def tearDownClass(cls):
-
-        # deployers
-        catalogue.wgt_deployer = cls.old_catalogue_deployer
-        shutil.rmtree(cls.catalogue_tmp_dir, ignore_errors=True)
-        showcase.wgt_deployer = cls.old_deployer
-        shutil.rmtree(cls.showcase_tmp_dir, ignore_errors=True)
-
-        super(ExtraApplicationMashupAPI, cls).tearDownClass()
 
     def test_iwidget_collection_get_requires_authentication(self):
 

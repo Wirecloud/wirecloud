@@ -269,10 +269,33 @@ class WirecloudTestCase(TransactionTestCase):
         cls.network.mock_requests()
         cls.network.mock_downloader()
 
+        # catalogue deployer
+        cls.old_catalogue_deployer = catalogue.wgt_deployer
+        cls.catalogue_tmp_dir_backup = mkdtemp()
+        cls.catalogue_tmp_dir = mkdtemp()
+        catalogue.wgt_deployer = WgtDeployer(cls.catalogue_tmp_dir)
+
+        # showcase deployer
+        cls.old_deployer = showcase.wgt_deployer
+        cls.localcatalogue_tmp_dir_backup = mkdtemp()
+        cls.tmp_dir = mkdtemp()
+        showcase.wgt_deployer = WgtDeployer(cls.tmp_dir)
+
+        restoretree(cls.tmp_dir, cls.localcatalogue_tmp_dir_backup)
+        restoretree(cls.catalogue_tmp_dir, cls.catalogue_tmp_dir_backup)
+
         super(WirecloudTestCase, cls).setUpClass()
 
     @classmethod
     def tearDownClass(cls):
+
+        # deployers
+        catalogue.wgt_deployer = cls.old_catalogue_deployer
+        shutil.rmtree(cls.catalogue_tmp_dir_backup, ignore_errors=True)
+        shutil.rmtree(cls.catalogue_tmp_dir, ignore_errors=True)
+        showcase.wgt_deployer = cls.old_deployer
+        shutil.rmtree(cls.localcatalogue_tmp_dir_backup, ignore_errors=True)
+        shutil.rmtree(cls.tmp_dir, ignore_errors=True)
 
         # Restore previous language configuration
         from django.conf import settings
@@ -293,6 +316,11 @@ class WirecloudTestCase(TransactionTestCase):
 
     def setUp(self):
 
+        # deployers
+        restoretree(self.localcatalogue_tmp_dir_backup, self.tmp_dir)
+        restoretree(self.catalogue_tmp_dir_backup, self.catalogue_tmp_dir)
+
+        # cache
         from django.core.cache import cache
         cache.clear()
 
