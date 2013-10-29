@@ -1,0 +1,6 @@
+{% extends 'wirecloud/views/base_plain.html' %}
+{% load i18n %}
+{% block path %}{% block title %}{% trans "Error 403 - Forbidden" %}{% endblock %}{% endblock %}
+{% block content %}
+    <p>{% blocktrans with request_path=request.get_full_path %}You don't have permission to access the requested URL "{{ request_path }}".{% endblocktrans %}</p>
+{% endblock %}

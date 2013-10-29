@@ -26,6 +26,7 @@ from django.shortcuts import get_object_or_404, render
 from django.utils.http import urlencode
 
 from wirecloud.commons.baseviews import Resource
+from wirecloud.commons.utils.http import build_error_response
 from wirecloud.platform.plugins import get_active_features
 from wirecloud.platform.models import Workspace
 from wirecloud.platform.workspace.utils import get_workspace_list
@@ -67,7 +68,7 @@ def render_workspace_view(request, creator_user, workspace):
 
     workspace = get_object_or_404(Workspace, creator__username=creator_user, name=workspace)
     if request.user not in workspace.users.all():
-        return HttpResponseForbidden()
+        return build_error_response(request, 403, 'forbidden')
 
     return render_wirecloud(request)
 

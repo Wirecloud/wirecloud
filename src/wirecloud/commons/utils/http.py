@@ -77,6 +77,8 @@ def get_plain_text_error_response(request, mimetype, status_code, context):
 ERROR_FORMATTERS = {
     'application/json; charset=utf-8': get_json_error_response,
     'application/xml; charset=utf-8': get_xml_error_response,
+    'text/html; charset=utf-8': get_html_basic_error_response,
+    'application/xhtml+xml; charset=utf-8': get_html_basic_error_response,
     'text/plain; charset=utf-8': get_plain_text_error_response,
     '': get_plain_text_error_response,   # Fallback
 }
@@ -143,10 +145,7 @@ def authentication_required(func):
         if request.user.is_anonymous():
             from django.conf import settings
 
-            return build_error_response(request, 401, 'Authentication required', extra_formats={
-                'text/html; charset=utf-8': get_html_basic_error_response,
-                'application/xhtml+xml; charset=utf-8': get_html_basic_error_response,
-            }, headers={
+            return build_error_response(request, 401, 'Authentication required', headers={
                 'WWW-Authenticate': 'Cookie realm="Acme" form-action="%s" cookie-name="%s"' % (settings.LOGIN_URL, settings.SESSION_COOKIE_NAME)
             })
 
