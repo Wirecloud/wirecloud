@@ -19,6 +19,7 @@
 
 
 from django import template
+from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 
 from wirecloud.platform.plugins import get_extra_javascripts, get_platform_css, get_wirecloud_ajax_endpoints
@@ -54,3 +55,10 @@ def wirecloud_ajax_endpoints(context, view):
     script += '};'
     return {'script': mark_safe(script)}
 register.inclusion_tag('wirecloud/inline_javascript.html', takes_context=True)(wirecloud_ajax_endpoints)
+
+
+@register.filter
+def wirecloud_breadcrum(value):
+    components = value[1:].split('/')
+    result = ' / '.join(['<span>%s</span>' % conditional_escape(component) for component in components])
+    return mark_safe(result)
