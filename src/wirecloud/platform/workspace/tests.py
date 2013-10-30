@@ -715,7 +715,7 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
         super(ParameterizedWorkspaceParseTestCase, self).setUp()
 
-        self.user = User.objects.create_user('test', 'test@example.com', 'test')
+        self.user = User.objects.get(username='normuser')
         self.workspace = createEmptyWorkspace('Testing', self.user)
 
     def read_template(self, filename):
