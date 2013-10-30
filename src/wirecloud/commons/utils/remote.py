@@ -552,6 +552,7 @@ class WirecloudRemoteTestCase(object):
                 param_input = window_menu.find_element_by_css_selector('input[name="' + parameter_name + '"]')
                 self.fill_form_input(param_input, parameter_value)
 
+            time.sleep(0.2) # Work around saving form data problems
             save_button.click()
 
         self.wait_wirecloud_ready()
