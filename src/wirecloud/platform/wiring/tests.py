@@ -713,18 +713,23 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
 
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
+
         self.change_main_view('wiring')
+
+        # Check ghost widget
         ghostWidget = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost')
         ghostEndpointsLabelsFirst1 = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost .labelDiv')[0].text
         ghostEndpointsLabelsFirst2 = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost .labelDiv')[1].text
-        # Ghost
         self.assertEqual(len(ghostWidget), 1, "The ghost Widget has not been painted in the first access to Wiring Editor")
+
+        # Reload wiring Editor
         self.change_main_view('workspace')
         self.change_main_view('wiring')
+
+        # Check ghost widget
         ghostWidget = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost')
         self.assertEqual(len(ghostWidget), 1, "The ghost Widget has not been painted in the second access to Wiring Editor")
         ghostEndpointsLabelsSecond = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost .labelDiv')
-        # compare labels
         self.assertEqual(ghostEndpointsLabelsFirst1, ghostEndpointsLabelsSecond[0].text, "The ghost Widget has change the endpoints label in the second access to Wiring Editor")
         self.assertEqual(ghostEndpointsLabelsFirst2, ghostEndpointsLabelsSecond[1].text, "The ghost Widget has change the endpoints label in the second access to Wiring Editor")
 
@@ -858,7 +863,10 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
 
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
+
+        self.assertTrue('error' in self.driver.find_element_by_css_selector("#wirecloud_header .menu .wiring").get_attribute('class'))
         self.change_main_view('wiring')
+
         ghostWidget = self.driver.find_elements_by_css_selector('.grid > .iwidget.ghost')
         self.assertEqual(len(ghostWidget), 1)
         # 5 connections
@@ -1085,7 +1093,10 @@ class WiringGhostTestCase(WirecloudSeleniumTestCase):
 
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
+
+        self.assertTrue('error' in self.driver.find_element_by_css_selector("#wirecloud_header .menu .wiring").get_attribute('class'))
         self.change_main_view('wiring')
+
         ghostOperator = self.driver.find_elements_by_css_selector('.grid > .ioperator.ghost')
         self.assertEqual(len(ghostOperator), 1)
         # 5 connections
