@@ -143,13 +143,17 @@
                 'plain': true,
                 'class': 'logbutton icon-warning-sign'
             });
-            this.log_button.addEventListener("click",
-                function () {
-                    var dialog = new Wirecloud.ui.LogWindowMenu(this.entity.logManager);
-                    dialog.show();
-                }.bind(this));
-            updateErrorInfo.call(this);
-            this.entity.logManager.addEventListener('newentry', updateErrorInfo.bind(this));
+            if (!isGhost) {
+                this.log_button.addEventListener("click",
+                    function () {
+                        var dialog = new Wirecloud.ui.LogWindowMenu(this.entity.logManager);
+                        dialog.show();
+                    }.bind(this));
+                updateErrorInfo.call(this);
+                this.entity.logManager.addEventListener('newentry', updateErrorInfo.bind(this));
+            } else {
+                this.log_button.disable();
+            }
             this.log_button.insertInto(this.header);
 
             // special icon for minimized interface
