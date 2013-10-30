@@ -174,7 +174,7 @@
      * @private
      */
     IWidget.prototype._notifyLoaded = function _notifyLoaded(element) {
-        var msg, errorCount;
+        var msg;
 
         if (this.loaded || !element.hasAttribute('src') ) {
             return;
@@ -184,15 +184,6 @@
         this.logManager.log(msg, Constants.Logging.INFO_MSG);
 
         this.loaded = true;
-
-        errorCount = this.logManager.getErrorCount();
-        if (errorCount > 0) {
-            msg = ngettext("%(errorCount)s error for the iWidget \"%(name)s\" was notified before it was loaded",
-                               "%(errorCount)s errors for the iWidget \"%(name)s\" were notified before it was loaded",
-                               errorCount);
-            msg = interpolate(msg, {errorCount: errorCount, name: this.name}, true);
-            this.logManager.log(msg, Constants.Logging.WARN_MSG);
-        }
 
         element.contentDocument.defaultView.addEventListener('unload',
             this._notifyUnloaded.bind(this),
