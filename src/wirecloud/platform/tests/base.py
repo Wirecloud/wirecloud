@@ -30,7 +30,6 @@ from wirecloud.commons.utils.testcases import WirecloudTestCase
 class BasicViewsAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
-    tags = ('current',)
 
     def setUp(self):
         super(BasicViewsAPI, self).setUp()
