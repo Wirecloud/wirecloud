@@ -217,6 +217,13 @@
             targetConnectable = findConnectable.call(this, connection.target);
             if (sourceConnectable != null && targetConnectable != null) {
                 sourceConnectable.connect(targetConnectable);
+            } else {
+                msg = gettext('The connection between %(source)s and %(target)s could be established');
+                msg = interpolate(msg, {
+                    source: JSON.stringify(connection.source),
+                    target: JSON.stringify(connection.target)
+                }, true);
+                this.events.error.dispatch(msg);
             }
         }
 
