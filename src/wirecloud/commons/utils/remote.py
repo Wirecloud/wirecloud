@@ -652,6 +652,7 @@ class WirecloudRemoteTestCase(object):
         self.popup_menu_click('Upload to local catalogue')
 
         self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']")
+
         name_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="name"]')
         self.fill_form_input(name_input, info['name'])
         vendor_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="vendor"]')
@@ -660,6 +661,21 @@ class WirecloudRemoteTestCase(object):
         self.fill_form_input(version_input, info['version'])
         email_input = self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="email"]')
         self.fill_form_input(email_input, info['email'])
+
+        if info.get('readOnlyWidgets', False) is True or info.get('readOnlyConnectables', False) is True:
+            tabs = self.driver.find_elements_by_css_selector('.styled_form .notebook .tab_wrapper .tab')
+            for tab in tabs:
+                span = tab.find_element_by_css_selector('span')
+                if span.text == 'Advanced':
+                    tab.click()
+
+        if info.get('readOnlyWidgets', False) is True:
+            boolean_input = self.driver.find_element_by_css_selector('.window_menu [name="readOnlyWidgets"]')
+            boolean_input.click()
+
+        if info.get('readOnlyConnectables', False) is True:
+            boolean_input = self.driver.find_element_by_css_selector('.window_menu [name="readOnlyConnectables"]')
+            boolean_input.click()
 
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
         self.wait_wirecloud_ready()

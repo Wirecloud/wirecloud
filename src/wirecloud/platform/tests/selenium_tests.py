@@ -483,6 +483,43 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         mashup = self.search_in_catalogue_results('Published Workspace')
         self.assertIsNotNone(mashup, 'The published workspace is not available on the local catalogue')
 
+    def test_workspace_publish_readonly_widgets_and_connections(self):
+
+        self.login(username='user_with_workspaces')
+
+        self.publish_workspace({
+            'vendor': 'Wirecloud',
+            'name': 'Published Workspace',
+            'version': '1.0',
+            'email': 'a@b.com',
+            'readOnlyWidgets': True,
+            'readOnlyConnectables': True,
+        })
+        self.create_workspace_from_catalogue('Published Workspace')
+        iwidget = self.get_current_iwidgets()[0]
+        close_button = iwidget.element.find_element_by_css_selector('.icon-remove')
+        self.assertTrue('disabled' in close_button.get_attribute('class'))
+        close_button.click()
+
+        self.change_main_view('wiring')
+
+        wiring_canvas = self.driver.find_element_by_css_selector('.grid .canvas')
+        arrows = wiring_canvas.find_elements_by_css_selector('.arrow')
+        self.assertEqual(len(arrows), 3)
+        for arrow in arrows:
+            try:
+                # The find_element_by_css_selector is needed to work around a bug in the firefox driver
+                arrow.find_element_by_css_selector('g').click()
+                self.wait_element_visible_by_css_selector('.closer', element=arrow).click()
+            except:
+                pass
+        arrows = wiring_canvas.find_elements_by_css_selector('.arrow')
+        self.assertEqual(len(arrows), 3)
+
+        self.change_main_view('workspace')
+
+        self.assertEqual(len(self.get_current_iwidgets()), 2)
+
     def test_browser_navigation_history_management(self):
 
         self.login(username='user_with_workspaces')

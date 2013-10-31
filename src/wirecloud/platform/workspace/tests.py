@@ -525,7 +525,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertRDFElement(graph, tab, self.DCTERMS, 'title', u'tab')
         self.assertRDFCount(graph, tab, self.WIRE_M, 'hasiWidget', 2)
         for iwidget in graph.objects(tab, self.WIRE_M['hasiWidget']):
-            self.assertRDFElement(graph, iwidget, self.WIRE, 'readonly', 'false', optional=True)
+            self.assertRDFElement(graph, iwidget, self.WIRE_M, 'readonly', 'false', optional=True)
             self.assertRDFCount(graph, iwidget, self.WIRE_M, 'hasiWidgetPreference', 2)
             username_found = password_found = False
             for preference in graph.objects(iwidget, self.WIRE_M['hasiWidgetPreference']):
@@ -566,7 +566,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertRDFElement(graph, tab, self.DCTERMS, 'title', u'tab')
         self.assertRDFCount(graph, tab, self.WIRE_M, 'hasiWidget', 2)
         for iwidget in graph.objects(tab, self.WIRE_M['hasiWidget']):
-            self.assertRDFElement(graph, iwidget, self.WIRE, 'readonly', 'true')
+            self.assertRDFElement(graph, iwidget, self.WIRE_M, 'readonly', 'true')
             self.assertRDFCount(graph, iwidget, self.WIRE_M, 'hasiWidgetPreference', 2)
             username_found = password_found = False
             for preference in graph.objects(iwidget, self.WIRE_M['hasiWidgetPreference']):
@@ -747,6 +747,8 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
             iwidget2 = workspace_data['tabs'][0]['iwidgets'][0]
 
         # Check iwidget 1 data
+        self.assertEqual(iwidget1.get('readonly', False), False)
+
         iwidget1_vars = iwidget1['variables']
 
         self.assertEqual(iwidget1_vars['list']['value'], 'default')
@@ -758,6 +760,8 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
         self.assertEqual(iwidget1_vars['text']['readonly'], True)
 
         # Check iwidget 2 data
+        self.assertEqual(iwidget1.get('readonly', False), False)
+
         iwidget2_vars = iwidget2['variables']
 
         self.assertEqual(iwidget2_vars['list']['value'], 'value1')
@@ -847,6 +851,15 @@ class ParameterizedWorkspaceParseTestCase(CacheTestCase):
 
         for t in data['tabs']:
             self.assertEqual(t['name'][0:7], u'Pestaña')
+
+    def test_read_only_widgets(self):
+        template = self.read_template('wt6.xml')
+
+        workspace, _junk = buildWorkspaceFromTemplate(template, self.user)
+        data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
+
+        self.assertEqual(len(data['tabs'][0]['iwidgets']), 3)
+        self.assertEqual(data['tabs'][0]['iwidgets'][0]['readOnly'], True)
 
     def test_blocked_connections(self):
         template = self.read_template('wt2.xml')
