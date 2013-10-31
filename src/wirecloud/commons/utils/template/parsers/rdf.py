@@ -496,6 +496,7 @@ class RDFTemplateParser(object):
                     'vendor': self._get_field(FOAF, 'name', vendor),
                     'version': self._get_field(USDL, 'versionInfo', resource),
                     'title': self._get_field(DCTERMS, 'title', resource),
+                    'readonly': self._get_field(WIRE_M, 'readonly', resource, required=False).lower() == 'true',
                     'properties': {},
                     'preferences': {},
                     'position': {

@@ -423,6 +423,7 @@ class WirecloudTemplateParser(object):
                     'vendor': resource.get('vendor'),
                     'version': resource.get('version'),
                     'title': resource.get('title'),
+                    'readonly': resource.get('readonly', '').lower() == 'true',
                     'properties': {},
                     'preferences': {},
                     'position': {

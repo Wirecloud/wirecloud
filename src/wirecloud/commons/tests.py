@@ -456,6 +456,7 @@ class TemplateUtilsTestCase(TestCase):
                             'name': u'TestWidget',
                             'version': u'1.0',
                             'title': u'Widget title',
+                            'readonly': False,
                             'properties': {
                                 'prop1': {'value': 'value1', 'readonly': False},
                                 'prop2': {'value': 'value 2', 'readonly': True}
@@ -482,6 +483,7 @@ class TemplateUtilsTestCase(TestCase):
                             'vendor': u'Wirecloud',
                             'name': u'TestWidget',
                             'version': u'2.0',
+                            'readonly': True,
                             'title': u'Widget title',
                             'properties': {
                                 'prop1': {'value': 'value1', 'readonly': False}
@@ -637,6 +639,7 @@ class TemplateUtilsTestCase(TestCase):
                             'name': u'TestWidget',
                             'version': u'1.0',
                             'title': u'Widget title',
+                            'readonly': False,
                             'properties': {
                                 'prop1': {'value': 'value1', 'readonly': False},
                                 'prop2': {'value': 'value 2', 'readonly': True}
@@ -664,6 +667,7 @@ class TemplateUtilsTestCase(TestCase):
                             'name': u'TestWidget',
                             'version': u'2.0',
                             'title': u'Widget title',
+                            'readonly': True,
                             'properties': {
                                 'prop1': {'value': 'value1', 'readonly': False}
                             },
@@ -833,6 +837,7 @@ class TemplateUtilsTestCase(TestCase):
                             'name': u'TestWidget',
                             'version': u'1.0',
                             'title': u'Widget title',
+                            'readonly': False,
                             'properties': {
                                 'prop1': {'value': 'value1', 'readonly': False},
                                 'prop2': {'value': '%(param.param1)', 'readonly': True}
@@ -860,6 +865,7 @@ class TemplateUtilsTestCase(TestCase):
                             'name': u'TestWidget',
                             'version': u'2.0',
                             'title': u'Widget title',
+                            'readonly': True,
                             'properties': {
                                 'prop1': {'value': 'value1', 'readonly': False}
                             },

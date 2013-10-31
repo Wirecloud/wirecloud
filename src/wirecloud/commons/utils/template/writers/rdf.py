@@ -165,7 +165,7 @@ def write_mashup_resources_graph(graph, resource_uri, template_info):
             graph.add((resource, DCTERMS['title'], rdflib.Literal(iwidget['title'])))
 
             if iwidget.get('readonly', False):
-                graph.add((resource, WIRE['readonly'], rdflib.Literal('true')))
+                graph.add((resource, WIRE_M['readonly'], rdflib.Literal('true')))
 
             # iWidget position
             pos = rdflib.BNode()
