@@ -76,7 +76,7 @@
 
         desc = EzWebExt.merge(this.options, {
             'type': this.type,
-            'disabled': variable.readOnly,
+            'initiallyDisabled': variable.readOnly,
             'initialValue': variable.get(),
             'required': false
         });

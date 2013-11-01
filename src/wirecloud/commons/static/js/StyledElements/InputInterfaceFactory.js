@@ -52,7 +52,11 @@
             if (Class_ == null) {
                 throw new Error(fieldDesc.type);
             }
-            return new Class_(fieldId, fieldDesc, this);
+            var instance = new Class_(fieldId, fieldDesc, this);
+            if (fieldDesc.initiallyDisabled) {
+                instance.disable();
+            }
+            return instance;
         };
 
         this.addFieldType = function addFieldType(type, class_) {

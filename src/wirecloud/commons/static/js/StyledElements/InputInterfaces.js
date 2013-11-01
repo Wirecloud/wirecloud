@@ -284,6 +284,20 @@ InputInterface.prototype.setDisabled = function setDisabled(disable) {
 };
 
 /**
+ * Enables this input interface.
+ */
+InputInterface.prototype.enable = function enable() {
+    this.setDisabled(false);
+};
+
+/**
+ * Disables this input interface.
+ */
+InputInterface.prototype.disable = function disable() {
+    this.setDisabled(true);
+};
+
+/**
  * Inserts this InputInterface into the given DOM Element.
  *
  * @param {Element} element

@@ -413,12 +413,29 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
     def test_create_workspace_from_catalogue_using_parameters(self):
 
         self.login()
-        self.create_workspace_from_catalogue('ParameterizedMashup', parameters={'param': 'parameterized value'})
+        self.create_workspace_from_catalogue('ParameterizedMashup', parameters={
+            'text_param': 'parameterized value',
+            'password_param': 'parameterized password',
+        })
 
-        iwidgets = self.get_current_iwidgets()
+        iwidget = self.get_current_iwidgets()[0]
 
-        with iwidgets[0]:
+        iwidget.perform_action('Settings')
+
+        self.assertEqual(self.driver.find_element_by_css_selector('.window_menu [name="list"]').get_attribute('value'), 'default')
+        text_pref = self.driver.find_element_by_css_selector('.window_menu [name="text"]')
+        self.assertEqual(text_pref.get_attribute('disabled'), 'true')
+        self.assertEqual(text_pref.get_attribute('value'), 'parameterized value')
+
+        self.assertFalse(self.driver.find_element_by_css_selector('.window_menu [name="boolean"]').is_selected())
+        password_prefs = self.driver.find_elements_by_css_selector('.window_menu [name="password"]')
+        self.assertEqual(len(password_prefs), 0)
+
+        with iwidget:
+            self.assertEqual(self.driver.find_element_by_id('listPref').text, 'default')
             self.assertEqual(self.driver.find_element_by_id('textPref').text, 'parameterized value')
+            self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'false')
+            self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'parameterized password')
 
     def test_create_workspace_from_catalogue_duplicated_workspaces(self):
 
