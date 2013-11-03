@@ -308,15 +308,19 @@ def process_forced_values(workspace, user, concept_values, preferences):
     except:
         forced_values = {
             'iwidget': {},
+            'ioperator': {},
         }
 
     if not 'extra_prefs' in forced_values:
         forced_values['extra_prefs'] = {}
 
+    if not 'ioperator' in forced_values:
+        forced_values['ioperator'] = {}
+
     if not 'iwidget' in forced_values:
         forced_values['iwidget'] = {}
 
-    if len(forced_values['iwidget']) == 0:
+    if len(forced_values['iwidget']) == 0 and len(forced_values['ioperator']) == 0:
         forced_values['empty_params'] = []
         return forced_values
 
@@ -333,6 +337,12 @@ def process_forced_values(workspace, user, concept_values, preferences):
     processor = TemplateValueProcessor({'user': user, 'context': concept_values, 'params': param_values})
 
     collection = forced_values['iwidget']
+    for key in collection:
+        values = collection[key]
+        for var_name in values:
+            collection[key][var_name]['value'] = processor.process(values[var_name]['value'])
+
+    collection = forced_values['ioperator']
     for key in collection:
         values = collection[key]
         for var_name in values:
@@ -391,6 +401,9 @@ def _get_global_workspace_data(workspaceDAO, user):
         tab['iwidgets'] = iwidget_data
 
     data_ret['wiring'] = json.loads(workspaceDAO.wiringStatus)
+    for forced_operator_id, forced_preferences in forced_values['ioperator'].iteritems():
+        for forced_pref_name, forced_preference in forced_preferences.iteritems():
+            data_ret['wiring']['operators'][forced_operator_id]['preferences'][forced_pref_name]['value'] = forced_preference['value']
 
     # Params
     last_published_workspace = PublishedWorkspace.objects.filter(workspace=workspaceDAO).order_by('-pk')

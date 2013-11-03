@@ -25,7 +25,7 @@
 
     "use strict";
 
-    var OperatorUserPref = function UserPref(options) {
+    var OperatorUserPref = function OperatorUserPref(options) {
         Object.defineProperty(this, 'name', {value: options.name});
         Object.defineProperty(this, 'type', {value: options.type});
         Object.defineProperty(this, 'label', {value: options.label});
@@ -40,7 +40,7 @@
     };
 
     OperatorUserPref.prototype.getInterfaceDescription = function getInterfaceDescription(ioperator) {
-        var preference = ioperator.meta.preferences[this.name];
+        var preference = ioperator.preferences[this.name];
 
         var desc = EzWebExt.merge(this.options, {
             'initiallyDisabled': preference.readonly,

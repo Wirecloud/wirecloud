@@ -431,11 +431,26 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         password_prefs = self.driver.find_elements_by_css_selector('.window_menu [name="password"]')
         self.assertEqual(len(password_prefs), 0)
 
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Cancel']").click()
+
         with iwidget:
             self.assertEqual(self.driver.find_element_by_id('listPref').text, 'default')
             self.assertEqual(self.driver.find_element_by_id('textPref').text, 'parameterized value')
             self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'false')
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'parameterized password')
+
+        self.change_main_view('wiring')
+
+        ioperator = self.get_current_wiring_editor_ioperators()[0]
+        ioperator.element.find_element_by_css_selector('.specialIcon').click()
+        self.wait_element_visible_by_css_selector('.editPos_button', element=ioperator.element).click()
+        self.popup_menu_click('Settings')
+
+        prefix_pref = self.driver.find_element_by_css_selector('.window_menu [name="prefix"]')
+        self.assertEqual(prefix_pref.get_attribute('disabled'), 'true')
+        self.assertEqual(prefix_pref.get_attribute('value'), 'parameterized value: ')
+
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Cancel']").click()
 
     def test_create_workspace_from_catalogue_duplicated_workspaces(self):
 

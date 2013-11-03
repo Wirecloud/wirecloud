@@ -28,7 +28,6 @@ from wirecloud.platform.context.utils import get_context_values
 from wirecloud.platform.get_data import TemplateValueProcessor
 from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue
 from wirecloud.platform.iwidget.utils import SaveIWidget
-from wirecloud.platform.localcatalogue.utils import get_or_add_resource_from_available_marketplaces
 from wirecloud.platform.preferences.views import update_tab_preferences, update_workspace_preferences
 from wirecloud.platform.models import Workspace, UserWorkspace
 from wirecloud.platform.workspace.utils import createTab
@@ -126,6 +125,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
     new_forced_values = {
         'extra_prefs': {},
         'iwidget': {},
+        'ioperator': {},
     }
     for param in workspace_info['params']:
         new_forced_values['extra_prefs'][param['name']] = {
@@ -190,27 +190,12 @@ def fillWorkspaceUsingTemplate(workspace, template):
                 iwidget.readOnly = True
                 iwidget.save()
 
-            new_forced_values['iwidget'][str(iwidget.id)] = iwidget_forced_values
+            if len(iwidget_forced_values) > 0:
+                new_forced_values['iwidget'][str(iwidget.id)] = iwidget_forced_values
+
             iwidget_id_mapping[resource.get('id')] = iwidget
 
-    if workspace.forcedValues is not None and workspace.forcedValues != '':
-        forced_values = json.loads(workspace.forcedValues)
-    else:
-        forced_values = {
-            'extra_prefs': {},
-            'iwidget': {},
-        }
-
-    forced_values['extra_prefs'].update(new_forced_values['extra_prefs'])
-    forced_values['iwidget'].update(new_forced_values['iwidget'])
-    workspace.forcedValues = json.dumps(forced_values, ensure_ascii=False)
-
     # wiring
-    wiring_status = {
-        'operators': {},
-        'connections': [],
-    }
-
     if workspace.wiringStatus != '':
         workspace_wiring_status = json.loads(workspace.wiringStatus)
     else:
@@ -230,23 +215,28 @@ def fillWorkspaceUsingTemplate(workspace, template):
         if int(id_) > max_id:
             max_id = int(id_)
 
-    # Change string ids by integer ids and install unavailable operators
-    for id_, op in workspace_info['wiring']['operators'].iteritems():
-        max_id += 1
-        #mapping between string ids and integer id
-        ioperator_id_mapping[id_] = max_id
-        wiring_status['operators'][max_id] = {
-            'id': max_id,
-            'name': op['name']
+    wiring_status = {
+        'operators': workspace_wiring_status['operators'],
+        'connections': workspace_wiring_status['connections'],
+    }
+
+    # Process operators info
+    for operator_id, operator in workspace_info['wiring']['operators'].iteritems():
+        new_id = unicode(++max_id)
+        ioperator_id_mapping[operator_id] = new_id
+        wiring_status['operators'][new_id] = {
+            'id': new_id,
+            'name': operator['name'],
+            'preferences': operator['preferences'],
         }
-        op_id_args = op['name'].split('/')
-        op_id_args.append(user)
-        get_or_add_resource_from_available_marketplaces(*op_id_args)
 
-    wiring_status['operators'].update(workspace_wiring_status['operators'])
+        ioperator_forced_values = {}
+        for pref_id, pref in operator['preferences'].iteritems():
+            if pref.get('readonly', False):
+                ioperator_forced_values[pref_id] = {'value': pref.get('value'), 'hidden': pref.get('hidden', False)}
 
-    if workspace_wiring_status['connections']:
-        wiring_status['connections'] = workspace_wiring_status['connections']
+        if len(ioperator_forced_values) > 0:
+            new_forced_values['ioperator'][new_id] = ioperator_forced_values
 
     for connection in workspace_info['wiring']['connections']:
         source_id = connection['source']['id']
@@ -297,5 +287,26 @@ def fillWorkspaceUsingTemplate(workspace, template):
             })
 
     workspace.wiringStatus = json.dumps(wiring_status)
+
+    # Forced values
+    if workspace.forcedValues is not None and workspace.forcedValues != '':
+        forced_values = json.loads(workspace.forcedValues)
+    else:
+        forced_values = {
+            'extra_prefs': {},
+            'iwidget': {},
+            'ioperator': {},
+        }
+
+    if 'ioperator' not in forced_values:
+        forced_values['ioperator'] = {}
+
+    if 'iwidget' not in forced_values:
+        forced_values['iwidget'] = {}
+
+    forced_values['extra_prefs'].update(new_forced_values['extra_prefs'])
+    forced_values['iwidget'].update(new_forced_values['iwidget'])
+    forced_values['ioperator'].update(new_forced_values['ioperator'])
+    workspace.forcedValues = json.dumps(forced_values, ensure_ascii=False)
 
     workspace.save()
