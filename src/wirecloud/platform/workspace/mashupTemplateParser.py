@@ -224,7 +224,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
         workspace_wiring_status['views'] = []
 
     max_id = 0
-    operators = {}
+    ioperator_id_mapping = {}
 
     for id_ in workspace_wiring_status['operators'].keys():
         if int(id_) > max_id:
@@ -234,7 +234,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
     for id_, op in workspace_info['wiring']['operators'].iteritems():
         max_id += 1
         #mapping between string ids and integer id
-        operators[id_] = max_id
+        ioperator_id_mapping[id_] = max_id
         wiring_status['operators'][max_id] = {
             'id': max_id,
             'name': op['name']
@@ -255,12 +255,12 @@ def fillWorkspaceUsingTemplate(workspace, template):
         if connection['source']['type'] == 'iwidget':
             source_id = iwidget_id_mapping[source_id].id
         elif connection['source']['type'] == 'ioperator':
-            source_id = operators[source_id]
+            source_id = ioperator_id_mapping[source_id]
 
         if connection['target']['type'] == 'iwidget':
             target_id = iwidget_id_mapping[target_id].id
         elif connection['target']['type'] == 'ioperator':
-            target_id = operators[target_id]
+            target_id = ioperator_id_mapping[target_id]
 
         wiring_status['connections'].append({
             'readOnly': connection['readonly'],
@@ -286,7 +286,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
 
             operators_views = {}
             for key, operator in wiring_view['operators'].iteritems():
-                operators_views[operators[key]] = operator
+                operators_views[ioperator_id_mapping[key]] = operator
 
             wiring_status['views'].append({
                 'iwidgets': iwidgets_views,
