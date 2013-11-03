@@ -48,8 +48,8 @@
         item = new StyledElements.MenuItem(
             gettext("Settings"),
             function () {
-                var prueba = new Wirecloud.Widget.PreferencesWindowMenu();
-                prueba.show(this);
+                var dialog = new Wirecloud.Widget.PreferencesWindowMenu();
+                dialog.show(this);
             }.bind(this.iWidget.internal_iwidget)
         );
         item.setDisabled(!this.has_prefs);
