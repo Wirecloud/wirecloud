@@ -366,8 +366,8 @@ if (!Wirecloud.ui) {
             } else {
                 operator_instance = reallyInUseOperators[key];
             }
-            op_id = operator_instance.id;
-            if (this.nextOperatorId < op_id) {
+            op_id = parseInt(operator_instance.id, 10);
+            if (this.nextOperatorId <= op_id) {
                 this.nextOperatorId = op_id + 1;
             }
 

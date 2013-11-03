@@ -33,7 +33,7 @@
         Object.defineProperty(this, 'meta', {value: operator_meta});
         Object.defineProperty(this, 'name', {value: operator_meta.name});
         Object.defineProperty(this, 'display_name', {value: operator_meta.display_name});
-        Object.defineProperty(this, 'id', {value: id});
+        Object.defineProperty(this, 'id', {value: "" + id});
         Object.defineProperty(this, 'logManager', {value: new Wirecloud.wiring.OperatorLogManager(this)});
 
         this.loaded = false;
