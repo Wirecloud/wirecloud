@@ -179,6 +179,15 @@
                         }
                         fAnchor.addArrow(theArrow);
 
+                        // subdata connections
+                        if (currentSource.isSubAnchor) {
+                            currentSource.context.iObject.addSubdataConnection(currentSource.context.data.name.split("/")[0], currentSource.context.data.name, theArrow, currentSource, currentTarget, false);
+                            theArrow.addClassName('subdataConnection');
+                        } else if (currentTarget.isSubAnchor) {
+                            currentTarget.context.iObject.addSubdataConnection(currentTarget.context.data.name.split("/")[0], currentTarget.context.data.name, theArrow, currentSource, currentTarget, false);
+                            theArrow.addClassName('subdataConnection');
+                        }
+
                         // minimized operators acctions
                         if (this.initWasMinimized) {
                             this.initAnchor.context.iObject.minimize();
@@ -233,9 +242,17 @@
 
         if (source instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
             source = currentSource.initAnchor;
+            if (source.isSubAnchor || target.isSubAnchor) {
+                // multiconnectors are not compatible with subconnections
+                return false;
+            }
         }
         if (target instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
             target = currentTarget.initAnchor;
+            if (source.isSubAnchor || target.isSubAnchor) {
+                // multiconnectors are not compatible with subconnections
+                return false;
+            }
         }
         if (source === target) {
             return false;
@@ -248,8 +265,12 @@
         if (target.context.iObject === source.context.iObject) {
             return false;
         }
+        if (source.isSubAnchor) {
+            arrows = source.context.iObject.sourceAnchorsByName[source.context.data.name.split('/')[0]].getArrows();
+        } else {
+            arrows = source.getArrows();
+        }
 
-        arrows = source.getArrows();
         for (i = 0; i < arrows.length; i++) {
             if (arrows[i].endAnchor === target) {
                 return false;

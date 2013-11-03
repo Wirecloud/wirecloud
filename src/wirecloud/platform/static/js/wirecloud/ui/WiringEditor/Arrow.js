@@ -74,8 +74,9 @@
                 e.stopPropagation();
                 return;
             }
-
-            this.destroy();
+            if (!this.controlledDestruction()) {
+                this.destroy();
+            }
             e.stopPropagation();
         }.bind(this));
 
@@ -449,9 +450,38 @@
     };
 
     /**
+     * Controlled arrow destruction.
+     */
+    Arrow.prototype.controlledDestruction = function controlledDestruction() {
+        // Subdata tree control
+        if (this.hasClassName('hollow')) {
+            // TODO open subdata tree
+            return true;
+        }
+        if (this.hasClassName('subdataConnection')) {
+            // Remove subconnection
+            if (this.hasClassName('full')) {
+                // Remove full connection from subdata view
+                // Remove connection real and hollow
+                this.startAnchor.context.iObject.removeSubdataConnection(this.startAnchor.context.data.name.split("/")[0], this.startAnchor.context.data.name, this);
+                return true;
+            } else {
+                // Remove subconnection from subdata view
+                if (this.startAnchor.isSubAnchor) {
+                    // RemoveSubdataConnection
+                    this.startAnchor.context.iObject.removeSubdataConnection(this.startAnchor.context.data.name.split("/")[0], this.startAnchor.context.data.name, this);
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+
+    /**
      * Destroy the arrow.
      */
     Arrow.prototype.destroy = function destroy() {
+
         this.disconnect();
         if (this.canvas !== null) {
             this.canvas.removeArrow(this);
@@ -487,6 +517,19 @@
         }
     };
 
+    /**
+     * Hide the arrow
+     */
+    Arrow.prototype.hide = function hide() {
+        this.addClassName('hidden');
+    };
+
+    /**
+     * Show the arrow
+     */
+    Arrow.prototype.show = function show() {
+        this.removeClassName('hidden');
+    };
     /*************************************************************************
      * Make Arrow public
      *************************************************************************/

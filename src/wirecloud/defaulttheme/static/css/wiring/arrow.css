@@ -83,6 +83,15 @@
     stroke-width: 11;
 }
 
+/* Hollow arrows */
+.wiring_editor .canvas .arrow.hollow .arrowbody {
+	stroke: rgb(214, 214, 214);
+}
+
+.wiring_editor .canvas .arrow.hollow .arrowborder {
+	stroke: rgb(209, 122, 122);
+}
+
 /* Read Only */
 .wiring_editor .canvas .readOnly .closer {
     fill: #30F;

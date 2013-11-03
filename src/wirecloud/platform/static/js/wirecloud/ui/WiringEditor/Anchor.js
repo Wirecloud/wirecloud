@@ -66,8 +66,8 @@
             if (this.enabled && e.button === 0) {
                 arrow = this.hasSelectedArrow();
                 if (arrow != null) {
-                    // ReadOnly control
-                    if (arrow.readOnly) {
+                    // ReadOnly & subdata control
+                    if (arrow.readOnly || arrow.hasClassName('hollow') || arrow.startAnchor.isSubAnchor) {
                         return;
                     }
                     if (arrow.hasClassName('multiconnector_arrow')) {

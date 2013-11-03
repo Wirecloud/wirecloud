@@ -438,7 +438,19 @@ if (!Wirecloud.ui) {
                 startAnchor.addArrow(arrow);
                 arrow.endAnchor = endAnchor;
                 endAnchor.addArrow(arrow);
-                arrow.addClassName('arrow');
+                if ((startAnchor.isSubAnchor) || (endAnchor.isSubAnchor)) {
+                    arrow.addClassName('arrow subdataConnection');
+                    if (startAnchor.isSubAnchor) {
+                        currentSource = startAnchor;
+                        currentTarget = endAnchor;
+                    } else {
+                        currentSource = endAnchor;
+                        currentTarget = startAnchor;
+                    }
+                    currentSource.context.iObject.addSubdataConnection(currentSource.context.data.name.split("/")[0], currentSource.context.data.name, arrow, currentSource, currentTarget, true);
+                } else {
+                    arrow.addClassName('arrow');
+                }
                 arrow.setPullerStart(connectionView.pullerStart);
                 arrow.setPullerEnd(connectionView.pullerEnd);
                 if (connectionView.startMulti != null) {
@@ -682,17 +694,19 @@ if (!Wirecloud.ui) {
 
         for (i = 0; i < this.arrows.length; i++) {
             arrow = this.arrows[i];
-            WiringStatus.connections.push({
-                'readOnly': arrow.hasClassName('readOnly'),
-                'source': arrow.startAnchor.serialize(),
-                'target': arrow.endAnchor.serialize()
-            });
-            WiringStatus.views[0].connections.push({
-                'pullerStart': arrow.getPullerStart(),
-                'pullerEnd': arrow.getPullerEnd(),
-                'startMulti': arrow.startMulti,
-                'endMulti': arrow.endMulti
-            });
+            if (!arrow.hasClassName('full') && !arrow.hasClassName('hollow')) {
+                WiringStatus.connections.push({
+                    'readOnly': arrow.hasClassName('readOnly'),
+                    'source': arrow.startAnchor.serialize(),
+                    'target': arrow.endAnchor.serialize()
+                });
+                WiringStatus.views[0].connections.push({
+                    'pullerStart': arrow.getPullerStart(),
+                    'pullerEnd': arrow.getPullerEnd(),
+                    'startMulti': arrow.startMulti,
+                    'endMulti': arrow.endMulti
+                });
+            }
         }
 
         return WiringStatus;
