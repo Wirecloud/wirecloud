@@ -40,8 +40,11 @@
     };
 
     OperatorUserPref.prototype.getInterfaceDescription = function getInterfaceDescription(ioperator) {
+        var preference = ioperator.meta.preferences[this.name];
+
         var desc = EzWebExt.merge(this.options, {
-            'initialValue': ioperator.preferences[this.name],
+            'initiallyDisabled': preference.readonly,
+            'initialValue': preference.value,
             'required': false
         });
 

@@ -61,9 +61,14 @@
 
         for (key in this.meta.preferences) {
             if (!(key in preferences)) {
-                preferences[key] = this.meta.preferences[key].default_value;
+                preferences[key] = {
+                    'readonly': false,
+                    'hidden': false,
+                    'value': this.meta.preferences[key].default_value
+                };
             }
         }
+        Object.freeze(preferences);
         Object.defineProperty(this, 'preferences', {value: preferences});
 
         if (!wiringEditor) {

@@ -34,8 +34,8 @@
         var key;
 
         for (key in new_values) {
-            if (this._current_ioperator.preferences[key] !== new_values[key]) {
-                this._current_ioperator.preferences[key] = new_values[key];
+            if (this._current_ioperator.preferences[key].value !== new_values[key]) {
+                this._current_ioperator.preferences[key].value = new_values[key];
             } else {
                 delete new_values[key];
             }
@@ -57,7 +57,9 @@
         for (i = 0; i < prefs.length; i++) {
             pref = prefs[i];
 
-            fields[pref.name] = pref.getInterfaceDescription(ioperator);
+            if (!pref.hidden) {
+                fields[pref.name] = pref.getInterfaceDescription(ioperator);
+            }
         }
         this._current_ioperator = ioperator;
         this._current_form = new Form(fields, {
