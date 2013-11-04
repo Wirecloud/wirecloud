@@ -49,7 +49,9 @@ Wirecloud.location = {
         }
 
         for (name in headers) {
-            this.transport.setRequestHeader(name, headers[name]);
+            if (headers[name] != null) {
+                this.transport.setRequestHeader(name, headers[name]);
+            }
         }
     };
 
@@ -168,6 +170,9 @@ Wirecloud.location = {
         }
 
         this.transport = new XMLHttpRequest();
+        if (this.options.withCredentials === true && this.options.supportsAccessControl) {
+            this.transport.withCredentials = true;
+        }
         this.transport.open(this.options.method, this.url, this.options.asynchronous);
         if (this.options.responseType) {
             this.transport.responseType = this.options.responseType;

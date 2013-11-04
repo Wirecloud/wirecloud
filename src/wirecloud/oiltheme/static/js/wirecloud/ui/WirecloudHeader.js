@@ -121,7 +121,30 @@
         }
         user_menu.append(new Wirecloud.ui.TutorialSubMenu());
         user_menu.append(new StyledElements.Separator());
-        user_menu.append(new StyledElements.MenuItem(gettext('Sign out'), OpManagerFactory.getInstance().logout));
+        user_menu.append(new StyledElements.MenuItem(gettext('Sign out'), function () {
+            var portal_logout_urls = [
+                'http://cloud.lab.fi-ware.eu/logout',
+                'https://store.lab.fi-ware.eu/logout',
+                'https://mashup.lab.fi-ware.eu/logout',
+                'https://account.lab.fi-ware.eu/users/sign_out'
+            ];
+            var counter = portal_logout_urls.length;
+            for (var i = 0; i < portal_logout_urls.length; i += 1) {
+                Wirecloud.io.makeRequest(portal_logout_urls[i], {
+                    method: 'GET',
+                    supportsAccessControl: true,
+                    withCredentials: true,
+                    requestHeaders: {
+                        'X-Requested-With': null
+                    },
+                    onComplete: function () {
+                        if (--counter === 0) {
+                            window.location = 'http://lab.fi-ware.eu';
+                        }
+                    }
+                });
+            }
+        }));
     };
 
     WirecloudHeader.prototype._clearOldBreadcrum = function _clearOldBreadcrum() {
