@@ -33,20 +33,19 @@ field, check OAuthBackend class for details on how to extend it.
 
 import json
 from urllib import urlencode
-from urllib2 import HTTPError
+from urlparse import urljoin
 
 from django.conf import settings
 
 from social_auth.utils import dsa_urlopen
 from social_auth.backends import BaseOAuth2, OAuthBackend
-from social_auth.exceptions import AuthFailed
 
 
-# GitHub configuration
-FIWARE_AUTHORIZATION_URL = 'https://account.lab.fi-ware.eu/authorize'
-FIWARE_ACCESS_TOKEN_URL = 'https://account.lab.fi-ware.eu/token'
-FIWARE_USER_DATA_URL = 'https://account.lab.fi-ware.eu/user'
+FILAB_IDM_SERVER = 'https://account.lab.fi-ware.eu'
 
+FIWARE_AUTHORIZATION_ENDPOINT = 'authorize'
+FIWARE_ACCESS_TOKEN_ENDPOINT = 'token'
+FIWARE_USER_DATA_ENDPOINT = 'user'
 
 
 class FiwareBackend(OAuthBackend):
@@ -80,22 +79,22 @@ class FiwareBackend(OAuthBackend):
 
 class FiwareAuth(BaseOAuth2):
     """FI-WARE OAuth2 mechanism"""
-    AUTHORIZATION_URL = FIWARE_AUTHORIZATION_URL
-    ACCESS_TOKEN_URL = FIWARE_ACCESS_TOKEN_URL
+    AUTHORIZATION_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FILAB_IDM_SERVER), FIWARE_AUTHORIZATION_ENDPOINT)
+    ACCESS_TOKEN_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FILAB_IDM_SERVER), FIWARE_ACCESS_TOKEN_ENDPOINT)
+    USER_DATA_URL = urljoin(getattr(settings, 'FIWARE_IDM_SERVER', FILAB_IDM_SERVER), FIWARE_USER_DATA_ENDPOINT)
     AUTH_BACKEND = FiwareBackend
     REDIRECT_STATE = False
     STATE_PARAMETER = False
     SETTINGS_KEY_NAME = 'FIWARE_APP_ID'
     SETTINGS_SECRET_NAME = 'FIWARE_API_SECRET'
     SCOPE_SEPARATOR = ','
-    # Look at http://developer.github.com/v3/oauth/
     SCOPE_VAR_NAME = 'FIWARE_EXTENDED_PERMISSIONS'
 
     FIWARE_ORGANIZATION = getattr(settings, 'FIWARE_ORGANIZATION', None)
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
-        url = FIWARE_USER_DATA_URL + '?' + urlencode({
+        url = self.USER_DATA_URL + '?' + urlencode({
             'access_token': access_token
         })
 
