@@ -25,7 +25,7 @@
 
     "use strict";
 
-    var platform, id, idx, tmp, i, current;
+    var platform, id, idx, tmp, i, current, ioperator;
 
     platform = window.parent;
 
@@ -46,7 +46,8 @@
     Object.defineProperty(window, 'MashupPlatform', {value: {}});
 
     // Temporal reference to the resource (in this case a widget) so other API files can make use of it. This attribute is removed in WirecloudAPIClosure.js
-    MashupPlatform.resource = platform.opManager.activeWorkspace.wiring.ioperators[id];
+    ioperator = platform.opManager.activeWorkspace.wiring.ioperators[id];
+    MashupPlatform.resource = ioperator;
 
     // HTTP module
     Object.defineProperty(window.MashupPlatform, 'http', {value: {}});
@@ -63,17 +64,17 @@
     Object.defineProperty(window.MashupPlatform, 'prefs', {value: {}});
     Object.defineProperty(window.MashupPlatform.prefs, 'get', {
         value: function get(key) {
-            return platform.opManager.activeWorkspace.wiring.getOperatorPrefValue(id, key);
+            return ioperator.preferences[key].value;
         }
     });
     Object.defineProperty(window.MashupPlatform.prefs, 'registerCallback', {
         value: function registerCallback(callback) {
-            platform.opManager.activeWorkspace.wiring.registerOperatorPrefCallback(id, callback);
+            ioperator.preferences[key].prefCallback = callback;
         }
     });
     Object.defineProperty(window.MashupPlatform.prefs, 'set', {
         value: function get(key, value) {
-            platform.opManager.activeWorkspace.wiring.setOperatorPrefValue(id, key, value);
+            ioperator.preferences[key].value = value;
         }
     });
     Object.preventExtensions(window.MashupPlatform.prefs);

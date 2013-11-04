@@ -260,36 +260,6 @@
         this.workspace = null;
     };
 
-    Wiring.prototype.getOperatorPrefValue = function getOperatorPrefValue(iOperator, key) {
-        var entry;
-
-        if (iOperator instanceof Wirecloud.Operator) {
-            iOperator = iOperator.id;
-        }
-
-        return this.ioperators[iOperator].preferences[key];
-    };
-
-    Wiring.prototype.setOperatorPrefValue = function setOperatorPrefValue(iOperator, key, value) {
-        var entry;
-
-        if (iOperator instanceof Wirecloud.Operator) {
-            iOperator = iOperator.id;
-        }
-
-        this.ioperators[iOperator].preferences[key] = value;
-    };
-
-    Wiring.prototype.registerOperatorPrefCallback = function registerOperatorPrefCallback(iOperator, callback) {
-        var entry;
-
-        if (iOperator instanceof Wirecloud.Operator) {
-            iOperator = iOperator.id;
-        }
-
-        this.ioperators[iOperator].prefCallback = callback;
-    };
-
     Wiring.prototype._notifyOperatorUninstall = function _notifyOperatorUninstall(operator) {
         var id, msg, affected = false;
 
