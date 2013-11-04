@@ -17,10 +17,18 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.contrib.auth import REDIRECT_FIELD_NAME, logout as django_logout
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 
+from wirecloud.commons.utils.http import build_error_response
+
+
+ALLOWED_ORIGINS = (
+    'https://account.lab.fi-ware.eu',
+    'https://cloud.lab.fi-ware.eu',
+    'https://store.lab.fi-ware.eu',
+)
 
 def login(request):
 
@@ -30,3 +38,23 @@ def login(request):
         url = reverse('socialauth_begin', kwargs={'backend': 'fiware'}) + '?' + request.GET.urlencode() 
 
     return HttpResponseRedirect(url)
+
+
+def logout(request):
+
+    response = HttpResponse(status=204)
+
+    # Check if the logout request is originated in a different domain
+    if 'HTTP_ORIGIN' in request.META:
+        origin = request.META['HTTP_ORIGIN']
+
+        if origin in ALLOWED_ORIGINS:
+            response['Access-Control-Allow-Origin'] = origin
+            response['Access-Control-Allow-Credentials'] =  'true'
+        else:
+            response = build_error_response(request, 403, '')
+
+    if request.method == 'GET' and response.status_code == 204:
+        django_logout(request)
+
+    return response
