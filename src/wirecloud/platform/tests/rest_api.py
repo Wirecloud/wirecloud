@@ -595,7 +595,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 1})
         data = {
-            'operators': [{'name': 'Operator1'}],
+            'operators': {'0': {'name': 'Operator1'}},
             'connections': [],
         }
         check_put_requires_permission(self, url, json.dumps(data))
@@ -604,7 +604,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         url = reverse('wirecloud.workspace_wiring', kwargs={'workspace_id': 1})
         new_wiring_status = {
-            'operators': [{'name': 'Operator1'}],
+            'operators': {'0': {'name': 'Operator1'}},
             'connections': [],
         }
 
