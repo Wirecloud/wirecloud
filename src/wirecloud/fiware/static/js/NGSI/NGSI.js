@@ -869,8 +869,7 @@
             throw new NGSI.InvalidResponseError();
         }
 
-        var unsubscribeResponse = NGSI.XML.getChildElementByTagName(doc.documentElement, 'unsubscribeResponse');
-        var subIdElement = NGSI.XML.getChildElementByTagName(unsubscribeResponse, 'subscriptionId');
+        var subIdElement = NGSI.XML.getChildElementByTagName(doc.documentElement, 'subscriptionId');
 
         return {
             subscriptionId: NGSI.XML.getTextContent(subIdElement)
@@ -952,9 +951,7 @@
                 var data;
 
                 data = JSON.parse(e.data);
-                if (typeof this.callbacks[data.callback_id] === 'function') {
-                    this.callbacks[data.callback_id](data.payload);
-                }
+                this.callbacks[data.callback_id].method(data.payload);
             }.bind(this), true);
         }.bind(this), true);
 
@@ -979,6 +976,7 @@
         this.url = url;
         this.makeRequest = makeRequest;
         this.callbacks = {};
+        this.callbacks_by_subscriptionId = {};
         this.onload_callbacks = [];
         this.onerror_callbacks = [];
     };
@@ -1017,7 +1015,11 @@
                 postBody: JSON.stringify({connection_id: this.connection_id}),
                 onSuccess: function (response) {
                     var data = JSON.parse(response.responseText);
-                    this.callbacks[data.callback_id] = callback;
+                    this.callbacks[data.callback_id] = {
+                        callback_id: data.callback_id,
+                        method: callback,
+                        subscription_id: null
+                    };
                     onSuccess(data);
                 }.bind(this),
                 onFailure: function () {
@@ -1046,16 +1048,42 @@
         this.makeRequest(this.url + NGSI.proxy_endpoints.CALLBACK_COLLECTION + '/' + callback_id, {
             method: 'DELETE',
             onSuccess: function (response) {
+                this.purge_callback(callback_id);
+
                 if (typeof onSuccess === 'function') {
                     onSuccess();
                 }
-            },
+            }.bind(this),
             onFailure: function (response) {
                 if (typeof onFailure === 'function') {
                     onFailure();
                 }
             }
         });
+    };
+
+    NGSI.ProxyConnection.prototype.associate_subscription_id_to_callback = function associate_subscription_id_to_callback(callback_id, subscription_id) {
+        if (callback_id in this.callbacks && this.callbacks[callback_id].subscription_id === null) {
+            this.callbacks_by_subscriptionId[subscription_id] = this.callbacks[callback_id];
+            this.callbacks[callback_id].subscription_id = subscription_id;
+        }
+    };
+
+    NGSI.ProxyConnection.prototype.close_callback_by_subscriptionId = function close_callback_by_subscriptionId(subscription_id, onSuccess, onFailure) {
+        if (subscription_id in this.callbacks_by_subscriptionId) {
+            this.close_callback(this.callbacks_by_subscriptionId[subscription_id].callback_id, onSuccess, onFailure);
+        } else {
+            if (typeof onSuccess === 'function') {
+                onSuccess();
+            }
+        }
+    };
+
+    NGSI.ProxyConnection.prototype.purge_callback = function purge_callback(callback_id) {
+        if (this.callbacks[callback_id].subscription_id != null) {
+            delete this.callbacks_by_subscriptionId[this.callbacks[callback_id].subscription_id];
+        }
+        delete this.callbacks[callback_id];
     };
 
     /* NGSI Connection Error */
@@ -1216,6 +1244,14 @@
                     this.ngsi_proxy.close_callback(proxy_callback.callback_id);
                     if (typeof oldOnFailure === 'function') {
                         oldOnFailure();
+                    }
+                }.bind(this);
+
+                var oldOnSuccess = callbacks.onSuccess;
+                callbacks.onSuccess = function (data) {
+                    this.ngsi_proxy.associate_subscription_id_to_callback(proxy_callback.callback_id, data.subscriptionId);
+                    if (typeof oldOnSuccess === 'function') {
+                        oldOnSuccess(data);
                     }
                 }.bind(this);
 
@@ -1384,6 +1420,14 @@
                     }
                 }.bind(this);
 
+                var oldOnSuccess = callbacks.onSuccess;
+                callbacks.onSuccess = function (data) {
+                    this.ngsi_proxy.associate_subscription_id_to_callback(proxy_callback.callback_id, data.subscriptionId);
+                    if (typeof oldOnSuccess === 'function') {
+                        oldOnSuccess(data);
+                    }
+                }.bind(this);
+
                 makeXMLRequest.call(this, url, payload, parse_subscribe_context_response, callbacks);
             }.bind(this), function () {
                 if (typeof callbacks.onFailure === 'function') {
@@ -1426,6 +1470,16 @@
             throw new TypeError();
         }
 
+        if (this.ngsi_proxy) {
+            var old_success_callback = callbacks.onSuccess;
+            callbacks.onSuccess = function (data) {
+                var onSuccess = old_success_callback;
+                if (onSuccess != null) {
+                    onSuccess = onSuccess.bind(null, data);
+                }
+                this.ngsi_proxy.close_callback_by_subscriptionId(data.subscriptionId, onSuccess, callbacks.onFailure);
+            }.bind(this);
+        }
         var payload = ngsi_build_unsubscribe_context_request(subId);
         var url = this.url + NGSI.endpoints.UNSUBSCRIBE_CONTEXT;
 
