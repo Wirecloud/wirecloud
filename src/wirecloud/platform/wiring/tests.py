@@ -479,6 +479,15 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.change_main_view('workspace')
 
+        with iwidgets[0]:
+            try:
+                WebDriverWait(self.driver, timeout=10).until(lambda driver: driver.find_element_by_id('wiringOut').text != '')
+            except:
+                pass
+
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, 'preferences changed: prefix')
+
         with iwidgets[1]:
             text_input = self.driver.find_element_by_tag_name('input')
             self.fill_form_input(text_input, 'hello world!!')
@@ -490,7 +499,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         with iwidgets[0]:
             try:
-                WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text != '')
+                WebDriverWait(self.driver, timeout=10).until(lambda driver: driver.find_element_by_id('wiringOut').text != 'preferences changed: prefix')
             except:
                 pass
 

@@ -69,7 +69,7 @@
     });
     Object.defineProperty(window.MashupPlatform.prefs, 'registerCallback', {
         value: function registerCallback(callback) {
-            ioperator.preferences[key].prefCallback = callback;
+            ioperator.prefCallback = callback;
         }
     });
     Object.defineProperty(window.MashupPlatform.prefs, 'set', {
