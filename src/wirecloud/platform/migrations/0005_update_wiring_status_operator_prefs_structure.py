@@ -46,9 +46,27 @@ class Migration(DataMigration):
                     wiring_status['preferences'] = {}
 
             workspace.wiringStatus = json.dumps(wiring_status, ensure_ascii=False)
+            workspace.save()
 
     def backwards(self, orm):
-        pass
+
+        for workspace in orm.Workspace.objects.all():
+
+            try:
+                wiring_status = json.loads(workspace.wiringStatus)
+            except:
+                continue
+
+            for operator_id, operator in wiring_status['operators'].iteritems():
+                if 'preferences' in operator:
+                    for preference_name, preference in operator['preferences'].iteritems():
+                        if isinstance(preference, dict):
+                            operator['preferences'][preference_name] = operator['preferences'][preference_name]['value']
+                else:
+                    wiring_status['preferences'] = {}
+
+            workspace.wiringStatus = json.dumps(wiring_status, ensure_ascii=False)
+            workspace.save()
 
     models = {
         u'auth.group': {
