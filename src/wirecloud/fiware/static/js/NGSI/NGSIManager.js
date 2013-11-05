@@ -19,71 +19,79 @@
  *
  */
 
-/*global opManager, Wirecloud*/
+/*global NGSI, opManager, Wirecloud*/
 
 (function (NGSI) {
 
     "use strict";
 
-    var register_widget_subscription, register_operator_subscription, unload_widget, unload_operator,
-        subscriptionsByWidget, subscriptionsByOperator, proxy_connections, Manager, ProxyConnection,
-        original_connection;
+    var register_widget_proxy, register_operator_proxy, unload_widget, unload_operator,
+        proxiesByWidget, proxiesByOperator, proxy_connections, Manager;
 
-    subscriptionsByWidget = {};
-    subscriptionsByOperator = {};
+    proxiesByWidget = {};
+    proxiesByOperator = {};
     proxy_connections = {};
     Manager = {};
 
-    register_widget_subscription = function register_widget_subscription(iWidgetId, subscription) {
+    register_widget_proxy = function register_widget_proxy(id, proxy) {
+        var iwidget;
 
-        var iWidget;
-
-        if (!(iWidgetId in subscriptionsByWidget)) {
-            iWidget = opManager.activeWorkspace.getIWidget(iWidgetId);
-            subscriptionsByWidget[iWidgetId] = [];
-            iWidget.addEventListener('unload', unload_widget);
+        if (!(id in proxiesByWidget)) {
+            iwidget = opManager.activeWorkspace.getIWidget(id).internal_iwidget;
+            proxiesByWidget[id] = [];
+            iwidget.addEventListener('unload', unload_widget);
         }
 
-        subscriptionsByWidget[iWidgetId].push(subscription);
+        proxiesByWidget[id].push(proxy);
     };
 
-    unload_widget = function unload_widget(iWidget) {
-        var i, subscriptions;
+    unload_widget = function unload_widget(iwidget) {
+        var i, proxies;
 
-        subscriptions = subscriptionsByWidget[iWidget.id];
-        for (i = 0; i < subscriptions.length; i += 1) {
-            subscriptions[i].close();
+        proxies = proxiesByWidget[iwidget.id];
+        for (i = 0; i < proxies.length; i += 1) {
+            try {
+                proxies[i].close();
+            } catch (e) {}
         }
+        proxies.clear();
 
-        delete subscriptionsByWidget[iWidget.id];
+        iwidget.removeEventListener('unload', unload_widget);
+        delete proxiesByWidget[iwidget.id];
     };
 
-    register_operator_subscription = function register_operator_subscription(iOperatorId, subscription) {
+    register_operator_proxy = function register_operator_proxy(id, proxy) {
 
-        var iOperator;
+        var ioperator;
 
-        if (!(iOperatorId in subscriptionsByOperator)) {
-            iOperator = opManager.activeWorkspace.wiring.ioperators[iOperatorId];
-            subscriptionsByOperator[iOperatorId] = [];
-            iOperator.addEventListener('unload', unload_operator);
+        if (!(id in proxiesByOperator)) {
+            ioperator = opManager.activeWorkspace.wiring.ioperators[id];
+            proxiesByOperator[id] = [];
+            ioperator.addEventListener('unload', unload_operator);
         }
 
-        subscriptionsByOperator[iOperatorId].push(subscription);
+        proxiesByOperator[id].push(proxy);
     };
 
-    unload_operator = function unload_operator(iOperator) {
-        var i, subscriptions;
+    unload_operator = function unload_operator(ioperator) {
+        var i, proxies;
 
-        subscriptions = subscriptionsByOperator[iOperator.id];
-        for (i = 0; i < subscriptions.length; i += 1) {
-            subscriptions[i].close();
+        proxies = proxiesByOperator[ioperator.id];
+        for (i = 0; i < proxies.length; i += 1) {
+            try {
+                proxies[i].close();
+            } catch (e) {}
         }
+        proxies.clear();
 
-        delete subscriptionsByOperator[iOperator.id];
+        ioperator.removeEventListener('unload', unload_operator);
+        delete proxiesByOperator[ioperator.id];
     };
 
     // Overload NGSI connection constructor
     Manager.Connection = function Connection(type, id, url, options) {
+        var wrapped_proxy;
+
         if (options == null) {
             options = {};
         }
@@ -96,13 +104,104 @@
             if (!(options.ngsi_proxy_url in proxy_connections)) {
                 proxy_connections[options.ngsi_proxy_url] = new NGSI.ProxyConnection(options.ngsi_proxy_url, options.requestFunction);
             }
-            options.ngsi_proxy_connection = proxy_connections[options.ngsi_proxy_url];
+
+            wrapped_proxy = new WirecloudResourceProxy(proxy_connections[options.ngsi_proxy_url], this);
+            options.ngsi_proxy_connection = wrapped_proxy;
+            switch (type) {
+            case "operator":
+                register_operator_proxy(id, wrapped_proxy);
+                break;
+            case "widget":
+                register_widget_proxy(id, wrapped_proxy);
+                break;
+            }
             delete options.ngsi_proxy_url;
         }
 
         NGSI.Connection.call(this, url, options);
     };
     Manager.Connection.prototype = NGSI.Connection.prototype;
+
+    var WirecloudResourceProxy = function WirecloudResourceProxy(real_proxy, connection) {
+        Object.defineProperty(this, 'real_proxy', {value: real_proxy});
+        Object.defineProperty(this, 'connection', {value: connection});
+        Object.defineProperty(this, 'connected', {get: function () { return this.real_proxy.connected; }});
+        Object.defineProperty(this, 'connecting', {get: function () { return this.real_proxy.connecting; }});
+        Object.defineProperty(this, 'url', {get: function () { return this.real_proxy.url; }});
+        this.callbacks = [];
+    };
+    WirecloudResourceProxy.prototype = new NGSI.ProxyConnection();
+
+    WirecloudResourceProxy.prototype.connect = function connect(options) {
+        this.real_proxy.connect(options);
+    };
+
+    WirecloudResourceProxy.prototype.request_callback = function request_callback(onNotify, onSuccess, onFailure) {
+        var old_on_success = onSuccess;
+        onSuccess = function (data) {
+            this.callbacks.push(data.callback_id);
+            if (typeof old_on_success === 'function') {
+                old_on_success(data);
+            }
+        }.bind(this);
+        this.real_proxy.request_callback(onNotify, onSuccess, onFailure);
+    };
+
+    WirecloudResourceProxy.prototype.close_callback = function close_callback(callback_id, onSuccess, onFailure) {
+        if (this.callbacks.indexOf(callback_id) === -1) {
+            throw new TypeError('unhandled callback: ' + callback_id);
+        }
+        var old_on_success = onSuccess;
+        onSuccess = function (data) {
+            var index = this.callbacks.indexOf(callback_id);
+            if (index != -1) {
+                this.callbacks.splice(index, 1);
+            }
+            if (typeof old_on_success === 'function') {
+                old_on_success(data);
+            }
+        }.bind(this);
+        this.real_proxy.close_callback(callback_id, onSuccess, onFailure);
+    };
+
+    WirecloudResourceProxy.prototype.associate_subscription_id_to_callback = function associate_subscription_id_to_callback(callback_id, subscription_id) {
+        this.real_proxy.associate_subscription_id_to_callback(callback_id, subscription_id);
+    };
+
+    WirecloudResourceProxy.prototype.close_callback_by_subscriptionId = function close_callback_by_subscriptionId(subscription_id, onSuccess, onFailure) {
+        var callback_id;
+
+        if (subscription_id in this.real_proxy.callbacks_by_subscriptionId) {
+            callback_id = this.real_proxy.callbacks_by_subscriptionId[subscription_id].callback_id;
+            if (this.callbacks.indexOf(callback_id) !== -1) {
+                var old_on_success = onSuccess;
+                onSuccess = function (data) {
+                    var index = this.callbacks.indexOf(callback_id);
+                    if (index != -1) {
+                        this.callbacks.splice(index, 1);
+                    }
+                    if (typeof old_on_success === 'function') {
+                        old_on_success(data);
+                    }
+                }.bind(this);
+                this.real_proxy.close_callback_by_subscriptionId(subscription_id, onSuccess, onFailure);
+                return;
+            }
+        }
+        if (typeof onSuccess === 'function') {
+            onSuccess();
+        }
+    };
+
+    WirecloudResourceProxy.prototype.close = function close() {
+        var i;
+
+        for (i = 0; i < this.callbacks.length; i++) {
+            if (this.real_proxy.callbacks[this.callbacks[i]].subscription_id != null) {
+                this.connection.cancelSubscription(this.real_proxy.callbacks[this.callbacks[i]].subscription_id);
+            }
+        }
+    };
 
     Manager.NGSI = NGSI;
     window.NGSIManager = Manager;
