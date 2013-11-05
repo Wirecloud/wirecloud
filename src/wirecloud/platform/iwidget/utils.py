@@ -98,7 +98,7 @@ def SaveIWidget(iwidget, user, tab, initial_variable_values):
     (widget_vendor, widget_name, widget_version) = widget_uri.split('/')
     resource = CatalogueResource.objects.select_related('widget').get(vendor=widget_vendor, short_name=widget_name, version=widget_version)
     if not resource.is_available_for(user):
-        raise Http403
+        raise CatalogueResource.DoesNotExist
 
     iwidget_name = iwidget.get('name', resource.display_name)
     width = iwidget.get('width', 0)

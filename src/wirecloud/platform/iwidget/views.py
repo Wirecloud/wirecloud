@@ -1,22 +1,21 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012-2013 Universidad Politécnica de Madrid
+# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
 
-# This file is part of Wirecluod.
+# This file is part of Wirecloud.
 
 # Wirecloud is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
+# it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
 # Wirecloud is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# GNU Affero General Public License for more details.
 
-# You should have received a copy of the GNU General Public License
+# You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
-
 
 import json
 
@@ -24,6 +23,7 @@ from django.http import HttpResponse
 from django.utils.translation import ugettext as _
 from django.shortcuts import get_object_or_404
 
+from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.utils.cache import no_cache
@@ -64,18 +64,18 @@ class IWidgetCollection(Resource):
 
         # iWidget creation
         tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
-        if not request.user.is_superuser and not tab.workspace.users.filter(id=request.user.id).exists():
-            raise Http403
+        if not request.user.is_superuser and tab.workspace.creator != request.user:
+            msg = _('You have not enough permission for adding iwidgets to the workspace')
+            return build_error_response(request, 403, msg)
 
         try:
             iwidget = SaveIWidget(iwidget, request.user, tab, initial_variable_values)
             iwidget_data = get_iwidget_data(iwidget, request.user, tab.workspace)
 
             return HttpResponse(json.dumps(iwidget_data), mimetype='application/json; charset=UTF-8')
-        except Widget.DoesNotExist, e:
+        except (CatalogueResource.DoesNotExist, Widget.DoesNotExist), e:
             msg = _('referred widget %(widget_uri)s does not exist.') % {'widget_uri': iwidget['widget']}
-
-            return build_error_response(request, 400, msg)
+            return build_error_response(request, 422, msg)
 
     @authentication_required
     @supported_request_mime_types(('application/json',))
@@ -89,6 +89,10 @@ class IWidgetCollection(Resource):
             return build_error_response(request, 400, msg)
 
         tab = get_object_or_404(Tab, workspace__users=request.user, workspace__pk=workspace_id, pk=tab_id)
+        if not request.user.is_superuser and tab.workspace.creator != request.user:
+            msg = _('You have not enough permission for updating the iwidgets of this workspace')
+            return build_error_response(request, 403, msg)
+
         for iwidget in iwidgets:
             UpdateIWidget(iwidget, request.user, tab)
 
@@ -120,8 +124,9 @@ class IWidgetEntry(Resource):
             return build_error_response(request, 400, msg)
 
         tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
-        if not request.user.is_superuser and not tab.workspace.users.filter(id=request.user.id).exists():
-            raise Http403
+        if not request.user.is_superuser and tab.workspace.creator != request.user:
+            msg = _('You have not enough permission for updating the iwidget')
+            return build_error_response(request, 403, msg)
 
         iwidget['id'] = iwidget_id
         UpdateIWidget(iwidget, request.user, tab)
@@ -134,8 +139,9 @@ class IWidgetEntry(Resource):
 
         # Gets Iwidget, if it does not exist, a http 404 error is returned
         iwidget = get_object_or_404(IWidget.objects.select_related('tab__workspace'), tab__workspace__pk=workspace_id, tab__pk=tab_id, pk=iwidget_id)
-        if not request.user.is_superuser and not iwidget.tab.workspace.users.filter(id=request.user.id).exists():
-            raise Http403
+        if not request.user.is_superuser and iwidget.tab.workspace.creator != request.user:
+            msg = _('You have not enough permission for removing iwidgets from the workspace')
+            return build_error_response(request, 403, msg)
 
         if iwidget.readOnly:
             msg = _('IWidget cannot be deleted')
@@ -154,8 +160,9 @@ class IWidgetPreferences(Resource):
     def create(self, request, workspace_id, tab_id, iwidget_id):
 
         workspace = Workspace.objects.get(id=workspace_id)
-        if not request.user.is_superuser and not workspace.users.filter(id=request.user.id).exists():
-            raise Http403()
+        if not request.user.is_superuser and workspace.creator != request.user:
+            msg = _('You have not enough permission for updating the preferences of the iwidget')
+            return build_error_response(request, 403, msg)
 
         try:
             new_values = json.loads(request.raw_post_data)

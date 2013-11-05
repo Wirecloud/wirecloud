@@ -837,6 +837,44 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response_data = json.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
 
+    def test_iwidget_collection_post_creation_from_nonexistent_widget(self):
+
+        url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 1})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'widget': 'Wirecloud/nonexistent-widget/1.0',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 422)
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
+    def test_iwidget_collection_post_creation_from_nonavailable_widget(self):
+
+        url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 1})
+
+        # Make Wirecloud/Test/1.0 not available to user_with_workspaces
+        test_widget = CatalogueResource.objects.get(vendor='Wirecloud', short_name='Test', version='1.0')
+        test_widget.public = False
+        test_widget.users.clear()
+        test_widget.save()
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'widget': 'Wirecloud/Test/1.0',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 422)
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
     def test_iwidget_collection_post_bad_request_syntax(self):
 
         url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 1})
