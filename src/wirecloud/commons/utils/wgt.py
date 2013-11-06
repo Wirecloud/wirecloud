@@ -36,22 +36,6 @@ class WgtFile(object):
 
     def __init__(self, _file):
         self._zip = zipfile.ZipFile(_file)
-        self._parse_config_file()
-
-    def _parse_config_file(self):
-
-        config = self._zip.read('config.xml')
-        try:
-            doc = etree.fromstring(config)
-            prefix = doc.prefix
-            xmlns = None
-            if prefix in doc.nsmap:
-                xmlns = doc.nsmap[prefix]
-
-            if xmlns == 'http://www.w3.org/ns/widgets/':
-                self._template_filename = doc.get('id')
-        except:
-            pass
 
     def get_underlying_file(self):
         return self._zip.fp
