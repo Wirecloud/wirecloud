@@ -216,14 +216,6 @@ var LayoutManagerFactory = function () {
             }
         }
 
-        LayoutManager.prototype.unloadCurrentView = function () {
-            if (this.currentView) {
-                this.currentView.hide();
-                this.currentView = null;
-            }
-        }
-
-
         /****VIEW OPERATIONS****/
         LayoutManager.prototype.changeCurrentView = function(newView) {
             this.alternatives.showAlternative(this.viewsByName[newView]);
@@ -271,20 +263,6 @@ var LayoutManagerFactory = function () {
             this.showUnclickableCover();
             this.currentMenu = window_menu;
         };
-
-        // Shows a generic alert dialog
-        LayoutManager.prototype.showAlertMessage = function(msg) {
-            // the disabling layer is displayed as long as a menu is shown. If there is not a menu, there is not a layer.
-            if (this.currentMenu != null) {//only if the layer is displayed.
-                this.hideCover();
-            }
-
-            this.showUnclickableCover();
-
-            this.currentMenu = new AlertWindowMenu();
-            this.currentMenu.setMsg(msg);
-            this.currentMenu.show();
-        }
 
         /**
          * Shows the message window menu using the specified text. By default,

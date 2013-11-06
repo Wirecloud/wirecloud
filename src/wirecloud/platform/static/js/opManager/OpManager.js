@@ -142,7 +142,7 @@ var OpManagerFactory = function () {
             LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding the mashup"), 1);
             LayoutManagerFactory.getInstance().logSubTask(gettext("Merging with current workspace"));
 
-            var active_ws_id = OpManagerFactory.getInstance().getActiveWorkspaceId();
+            var active_ws_id = this.activeWorkspace.getId();
             var mergeURL = Wirecloud.URLs.WORKSPACE_MERGE.evaluate({to_ws_id: active_ws_id});
 
             Wirecloud.io.makeRequest(mergeURL, {
@@ -254,10 +254,6 @@ var OpManagerFactory = function () {
                 return;
 
             this.activeWorkspace.removeIWidget(iWidgetId, orderFromServer);
-        }
-
-        OpManager.prototype.getActiveWorkspaceId = function () {
-            return this.activeWorkspace.getId();
         }
 
         /**

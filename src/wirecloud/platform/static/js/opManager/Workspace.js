@@ -595,8 +595,6 @@ function Workspace (workspaceState) {
             this.wiringInterface.saveWiring();
         }
 
-        //layoutManager.unloadCurrentView();
-
         this.sendBufferedVars(false);
 
         // After that, tab info is managed
