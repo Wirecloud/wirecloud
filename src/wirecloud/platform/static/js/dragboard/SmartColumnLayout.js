@@ -20,7 +20,7 @@
  */
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
-/*global gettext, Constants, DragboardLayout, DragboardPosition, DragboardCursor, IWidget, MultiValuedSize */
+/*global gettext, Constants, DragboardLayout, DragboardPosition, IWidget, MultiValuedSize */
 
 /////////////////////////////////////
 // ColumnLayout
@@ -691,7 +691,7 @@ ColumnLayout.prototype.initializeMove = function (iwidget, draggable) {
     this.searchInsertPointYLimit = lastY + 1;
 
     // Create dragboard cursor
-    this.dragboardCursor = new DragboardCursor(iwidget);
+    this.dragboardCursor = new Wirecloud.ui.DragboardCursor(iwidget);
     this.dragboardCursor.paint(this.dragboard.dragboardElement);
     this._reserveSpace(this.matrix, this.dragboardCursor);
 
@@ -744,7 +744,7 @@ ColumnLayout.prototype.moveTemporally = function (x, y) {
         x = maxX;
     }
 
-    if (this.dragboardCursor !== null) {
+    if (this.dragboardCursor != null) {
         var cursorpos = this.dragboardCursor.getPosition();
 
         if ((cursorpos.y !== y) || (cursorpos.x !== x)) {
@@ -755,7 +755,7 @@ ColumnLayout.prototype.moveTemporally = function (x, y) {
             this._insertAt(this.dragboardCursor, x, y);
         }
     } else {
-        this.dragboardCursor = new DragboardCursor(this.iwidgetToMove);
+        this.dragboardCursor = new Wirecloud.ui.DragboardCursor(this.iwidgetToMove);
         this.dragboardCursor.paint(this.dragboard.dragboardElement);
         this._insertAt(this.dragboardCursor, x, y);
     }
@@ -930,7 +930,7 @@ SmartColumnLayout.prototype.moveTemporally = function (x, y) {
             this._insertAt(this.dragboardCursor, x, y);
         }
     } else {
-        this.dragboardCursor = new DragboardCursor(this.iwidgetToMove);
+        this.dragboardCursor = new Wirecloud.ui.DragboardCursor(this.iwidgetToMove);
         this.dragboardCursor.paint(this.dragboard.dragboardElement);
         this._insertAt(this.dragboardCursor, x, y);
     }
