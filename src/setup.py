@@ -60,10 +60,10 @@ setup(
     },
     include_package_data=True,
     data_files=data_files,
-    install_requires=('Django>=1.4', 'south>=0.7.4,<2.0', 'lxml', 'BeautifulSoup', 'django_compressor>=1.2', 'rdflib>=3.2.0', 'requests', 'selenium', 'pytz'),
+    install_requires=('Django>=1.4,<1.6', 'south>=0.7.4,<2.0', 'lxml', 'BeautifulSoup', 'django_compressor>=1.2', 'rdflib>=3.2.0', 'requests', 'selenium', 'pytz'),
     tests_require=('django-nose'),
     classifiers=(
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
         'Framework :: Django',
         'Intended Audience :: Developers',
