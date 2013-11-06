@@ -456,12 +456,15 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             'version': '1',
             'author': 'test',
             'email': 'a@b.com',
-            'readOnlyWidgets': True,
+            'readOnlyWidgets': False,
             'parametrization': {
-                '1': {
-                    'username': {'source': 'current', 'status': 'readonly', 'value': 'default'},
-                    'password': {'source': 'current', 'status': 'hidden', 'value': 'initial text'},
-                }
+                'iwidgets': {
+                    '1': {
+                        'username': {'source': 'current', 'status': 'readonly', 'value': 'default'},
+                        'password': {'source': 'current', 'status': 'hidden', 'value': 'initial text'},
+                    }
+                },
+                'ioperators': {}
             },
         }
         template = build_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
@@ -596,12 +599,15 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             'version': '1',
             'author': 'test',
             'email': 'a@b.com',
-            'readOnlyWidgets': True,
+            'readOnlyWidgets': False,
             'parametrization': {
-                '1': {
-                    'username': {'source': 'current', 'status': 'readonly', 'value': 'default'},
-                    'password': {'source': 'current', 'status': 'hidden', 'value': 'initial text'},
-                }
+                'iwidgets': {
+                    '1': {
+                        'username': {'source': 'current', 'status': 'readonly', 'value': 'default'},
+                        'password': {'source': 'current', 'status': 'hidden', 'value': 'initial text'},
+                    }
+                },
+                'ioperators': {}
             },
         }
         graph = build_rdf_template_from_workspace(options, self.workspace_with_iwidgets, self.user)

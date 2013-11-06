@@ -158,6 +158,10 @@ def build_json_template_from_workspace(options, workspace, user):
     parametrization = options.get('parametrization')
     if not parametrization:
         parametrization = {}
+    if 'iwidgets' not in parametrization:
+        parametrization['iwidgets'] = {}
+    if 'ioperators' not in parametrization:
+        parametrization['ioperators'] = {}
 
     # Workspace preferences
     options['preferences'] = {}
@@ -179,7 +183,7 @@ def build_json_template_from_workspace(options, workspace, user):
 
         resources = []
         for iwidget in tab.iwidget_set.select_related('widget__resource', 'position').all():
-            resources.append(process_iwidget(workspace, iwidget, options['wiring'], parametrization, readOnlyWidgets))
+            resources.append(process_iwidget(workspace, iwidget, options['wiring'], parametrization['iwidgets'], readOnlyWidgets))
 
         options['tabs'].append({
             'name': tab.name,
@@ -207,7 +211,7 @@ def build_json_template_from_workspace(options, workspace, user):
         vendor, name, version = operator['name'].split('/')
         resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
         operator_info = json.loads(resource.json_description)
-        operator_params = {}  # TODO for now, operator preferences cannot be parameterized
+        operator_params = parametrization['ioperators'].get(id_, {})
         for pref_index, preference in enumerate(operator_info['preferences']):
 
             status = 'normal'
@@ -219,7 +223,7 @@ def build_json_template_from_workspace(options, workspace, user):
                 value = ioperator_param_desc['value']
                 status = ioperator_param_desc['status']
             elif preference['name'] in operator['preferences']:
-                value = operator['preferences'][preference['name']]
+                value = operator['preferences'][preference['name']]['value']
             else:
                 value = preference['default_value']
 

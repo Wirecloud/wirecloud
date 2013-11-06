@@ -163,14 +163,18 @@
     PublishWorkspaceWindowMenu.prototype.executeOperation = function executeOperation(data) {
         var key;
 
-        data.parametrization = {};
+        data.parametrization = {
+            iwidgets: {},
+            ioperators: {}
+        };
 
         for (key in data) {
             if (key.startsWith('tab-')) {
-                EzWebExt.merge(data.parametrization, data[key]);
+                EzWebExt.merge(data.parametrization.iwidgets, data[key]);
                 delete data[key];
             }
         }
+
         OpManagerFactory.getInstance().activeWorkspace.publish(data, {
             onFailure: function (msg) {
                 // TODO
