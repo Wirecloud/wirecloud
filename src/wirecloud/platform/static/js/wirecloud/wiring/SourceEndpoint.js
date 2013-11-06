@@ -66,10 +66,6 @@
         }, options);
 
         for (i = 0; i < this.outputs.length; ++i) {
-            this.outputs[i]._annotate(value, this, options);
-        }
-
-        for (i = 0; i < this.outputs.length; ++i) {
             this.outputs[i].propagate(value, options);
         }
     };

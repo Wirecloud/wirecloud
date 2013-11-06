@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-20123 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -31,45 +31,31 @@
     PreferencesWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
 
     PreferencesWindowMenu.prototype._savePrefs = function _savePrefs(form, new_values) {
-        var oldValue, newValue, varName, varManager, variable;
-        
-        varManager = this._current_iwidget.workspace.varManager;
+        var oldValue, newValue, varName;
 
-        // Start propagation of the new values of the user pref variables
-        varManager.incNestingLevel();
-
-        /*
-         * The new value is commited with 2 phases (first setting the value and then
-         * propagating changes). This avoids the case where iwidgets read old values.
-         */
-
-        // Phase 1
-        // Annotate new value of the variable without invoking callback function!
         for (varName in new_values) {
-            variable = varManager.getVariableByName(this._current_iwidget.id, varName);
-
-            oldValue = variable.get();
+            oldValue = this._current_iwidget.preferences[varName].value;
             newValue = new_values[varName];
 
             if (newValue !== oldValue) {
-                variable.annotate(newValue);
+                this._current_iwidget.preferences[varName].value = newValue;
             } else {
                 delete new_values[varName];
             }
         }
 
-        // Phase 2
-        // Commit new value of the variable
-        for (varName in new_values) {
-            variable = varManager.getVariableByName(this._current_iwidget.id, varName);
-            variable.set(new_values[varName]);
-        }
-
-        // Commit
-        varManager.decNestingLevel();
-        varManager.sendBufferedVars();
         this.hide();
 
+        Wirecloud.io.makeRequest(Wirecloud.URLs.IWIDGET_PREFERENCES.evaluate({
+                workspace_id: this._current_iwidget.workspace.getId(),
+                tab_id: this._current_iwidget.tab.getId(),
+                iwidget_id: this._current_iwidget.id
+            }), {
+                method: 'POST',
+                contentType: 'application/json',
+                postBody: JSON.stringify(new_values)
+            }
+        );
         if (typeof this._current_iwidget.prefCallback === 'function') {
             this._current_iwidget.prefCallback(new_values);
         }
@@ -79,13 +65,13 @@
         var i, prefs, pref, fields;
 
         fields = {};
-        prefs = iwidget.widget.preferenceList;
+        prefs = iwidget.preferenceList;
 
         for (i = 0; i < prefs.length; i++) {
             pref = prefs[i];
 
-            if (!pref.isHidden(iwidget)) {
-                fields[pref.varName] = pref.getInterfaceDescription(iwidget);
+            if (!pref.hidden) {
+                fields[pref.meta.name] = pref.getInterfaceDescription();
             }
         }
         this._current_iwidget = iwidget;

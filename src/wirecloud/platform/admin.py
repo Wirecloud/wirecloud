@@ -51,7 +51,6 @@ admin.site.register(models.XHTML)
 
 admin.site.register(models.UserPrefOption)
 admin.site.register(models.VariableDefAttr)
-admin.site.register(models.ContextOption)
 
 admin.site.register(models.PlatformPreference)
 admin.site.register(models.WorkspacePreference)

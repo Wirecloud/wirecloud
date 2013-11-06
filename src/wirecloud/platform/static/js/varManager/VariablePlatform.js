@@ -66,14 +66,6 @@ Variable.prototype.setHandler = function () { }
 
 Variable.prototype.set = function (value) { }
 
-Variable.prototype.getActionLabel = function () {
-    if (this.vardef.aspect === this.SLOT) {
-        return this.vardef.action_label;
-    } else {
-        return null;
-    }
-};
-
 Variable.prototype.getLabel = function () {
     return this.vardef.label;
 };
@@ -107,12 +99,7 @@ Variable.prototype.serialize = function serialize() {
 // PUBLIC CONSTANTS
 //////////////////////////////////////////////
 
-Variable.prototype.EVENT = "EVEN"
-Variable.prototype.SLOT = "SLOT"
-Variable.prototype.USER_PREF = "PREF"
 Variable.prototype.PROPERTY = "PROP"
-Variable.prototype.EXTERNAL_CONTEXT = "ECTX"
-Variable.prototype.GADGET_CONTEXT = "GCTX"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RVARIABLE (Derivated class) <<PLATFORM>>
@@ -151,89 +138,12 @@ RVariable.prototype.get = function () {
     var concept, value;
 
     switch (this.vardef.aspect) {
-    case this.EXTERNAL_CONTEXT:
-        if (this.vardef.concept !== 'user_name') {
-            concept = this.vardef.concept;
-        } else {
-            concept = 'username';
-        }
-        value = OpManagerFactory.getInstance().contextManager.get(concept);
-        if (value === undefined) {
-            value = OpManagerFactory.getInstance().activeWorkspace.contextManager.get(concept);
-        }
-        return value;
-    case this.GADGET_CONTEXT:
-        return this.iWidget.internal_iwidget.contextManager.get(this.vardef.concept);
     default:
         return this.value;
     }
 };
 
 RVariable.prototype.set = function (newValue, from_widget) {
-
-    var varInfo = [{id: this.id, value: newValue, aspect: this.vardef.aspect}];
-
-    if (this.vardef.aspect === this.USER_PREF && from_widget === true) {
-        this.value = newValue;
-        this.varManager.markVariablesAsModified(varInfo);
-        this.annotated = false;
-        return;
-    }
-
-    if (this.annotated) {
-        // If annotated, the value must be managed!
-
-        switch (this.vardef.aspect) {
-            case Variable.prototype.SLOT:
-
-                var opManager = OpManagerFactory.getInstance();
-                if (!this.iWidget.loaded) {
-                    this.varManager.addPendingVariable(this.iWidget, this.vardef.name, newValue);
-                    if (!this.iWidget.content) {
-                        this.iWidget.load();
-                    }
-                    return;
-                }
-                this.iWidget.notifyEvent();
-
-            case Variable.prototype.USER_PREF:
-            case Variable.prototype.EXTERNAL_CONTEXT:
-            case Variable.prototype.GADGET_CONTEXT:
-                if (this.vardef.aspect === this.USER_PREF) {
-                    // Only widget preferences are persisted
-                    this.varManager.markVariablesAsModified(varInfo);
-                }
-
-                this.value = newValue;
-
-                if (this.handler) {
-                    try {
-                        this.handler(newValue);
-                    } catch (e) {
-                        var transObj = {iWidgetId: this.iWidget.id, varName: this.vardef.name, exceptionMsg: e};
-                        var msg = interpolate(gettext("Error in the handler of the \"%(varName)s\" RVariable in iWidget %(iWidgetId)s: %(exceptionMsg)s."), transObj, true);
-                        OpManagerFactory.getInstance().logIWidgetError(this.iWidget.id, msg, Constants.Logging.ERROR_MSG);
-                    }
-                } else {
-                    if (this.iWidget.loaded) {
-                        var opManager = OpManagerFactory.getInstance();
-                        var transObj = {iWidgetId: this.iWidget.id, varName: this.vardef.name};
-                        var msg = interpolate(gettext("IWidget %(iWidgetId)s does not provide a handler for the \"%(varName)s\" RVariable."), transObj, true);
-                        opManager.logIWidgetError(this.iWidget.id, msg, Constants.Logging.WARN_MSG);
-                    }
-                }
-
-                if (this.vardef.secure === true) {
-                    this.value = '';
-                }
-
-                break;
-            default:
-                break;
-        }
-        // And it must be changed to NOT annotated!
-        this.annotated = false;
-    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -271,19 +181,6 @@ RWVariable.prototype.set = function (value_, options_) {
         }
     }
 
-    // Propagate changes to wiring module
-    // Only when variable is an Event, the connectable must start propagating
-    // When variable is INOUT, is the connectable who propagates
-    switch (this.vardef.aspect) {
-        case Variable.prototype.EVENT:
-            if (this.vardef.name in this.iWidget.internal_iwidget.outputs) {
-                this.iWidget.internal_iwidget.outputs[this.vardef.name].propagate(this.value, options_);
-                break;
-            }
-        default:
-            break;
-    }
-
     if (this.vardef.secure === true) {
         this.value = '';
     }
@@ -291,20 +188,3 @@ RWVariable.prototype.set = function (value_, options_) {
     // This will save all modified vars if we are the root event
     this.varManager.decNestingLevel();
 }
-
-RWVariable.prototype.getFinalSlots = function () {
-    if (this.connectable == null) {
-        return;
-    }
-
-    switch (this.vardef.aspect) {
-        case Variable.prototype.EVENT:
-            return this.connectable.getFinalSlots();
-        default:
-            return [];
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-

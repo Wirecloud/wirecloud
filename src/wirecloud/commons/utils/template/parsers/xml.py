@@ -25,7 +25,6 @@ from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor
 from wirecloud.commons.utils.translation import get_trans_index
 
 
-EZWEB_TEMPLATE_NS = 'http://morfeo-project.org/2007/Template'
 WIRECLOUD_TEMPLATE_NS = 'http://wirecloud.conwet.fi.upm.es/ns/template#'
 
 RESOURCE_DESCRIPTION_XPATH = '/t:Template/t:Catalog.ResourceDescription'
@@ -49,11 +48,8 @@ PREFERENCES_XPATH = '/t:Template/t:Platform.Preferences[1]/t:Preference'
 OPTION_XPATH = 't:Option'
 PROPERTY_XPATH = '/t:Template/t:Platform.StateProperties[1]/t:Property'
 WIRING_XPATH = '/t:Template/t:Platform.Wiring'
-SLOT_XPATH = 't:Slot | t:InputEndpoint'
-EVENT_XPATH = 't:Event | t:OutputEndpoint'
-CONTEXT_XPATH = '/t:Template/t:Platform.Context'
-WIDGET_CONTEXT_XPATH = 't:GadgetContext | t:WidgetContext'
-PLATFORM_CONTEXT_XPATH = 't:Context'
+INPUT_ENDPOINT_XPATH = 't:InputEndpoint'
+OUTPUT_ENDPOINT_XPATH = 't:OutputEndpoint'
 PLATFORM_RENDERING_XPATH = '/t:Template/t:Platform.Rendering'
 
 INCLUDED_RESOURCES_XPATH = 't:IncludedResources'
@@ -98,7 +94,7 @@ class WirecloudTemplateParser(object):
         if prefix in self._doc.nsmap:
             xmlns = self._doc.nsmap[prefix]
 
-        if xmlns is not None and xmlns not in (EZWEB_TEMPLATE_NS, WIRECLOUD_TEMPLATE_NS):
+        if xmlns is not None and xmlns != WIRECLOUD_TEMPLATE_NS:
             raise TemplateParseException("Invalid namespace: " + xmlns)
 
         self._namespace = xmlns
@@ -219,7 +215,7 @@ class WirecloudTemplateParser(object):
             return
         wiring_element = wiring_elements[0]
 
-        for slot in self._xpath(SLOT_XPATH, wiring_element):
+        for slot in self._xpath(INPUT_ENDPOINT_XPATH, wiring_element):
             self._add_translation_index(slot.get('label'), type='vdef', variable=slot.get('name'))
             self._add_translation_index(slot.get('actionlabel', ''), type='vdef', variable=slot.get('name'))
             self._add_translation_index(slot.get('description', ''), type='vdef', variable=slot.get('name'))
@@ -232,7 +228,7 @@ class WirecloudTemplateParser(object):
                 'friendcode': slot.get('friendcode'),
             })
 
-        for event in self._xpath(EVENT_XPATH, wiring_element):
+        for event in self._xpath(OUTPUT_ENDPOINT_XPATH, wiring_element):
             self._add_translation_index(event.get('label'), type='vdef', variable=event.get('name'))
             self._add_translation_index(event.get('description', ''), type='vdef', variable=event.get('name'))
             self._info['wiring']['outputs'].append({
@@ -345,28 +341,6 @@ class WirecloudTemplateParser(object):
             })
 
         self._parse_wiring_info()
-
-        self._info['context'] = []
-
-        context_elements = self._xpath(CONTEXT_XPATH, self._doc)
-        if len(context_elements) == 1:
-
-            context_element = context_elements[0]
-
-            for wcontext in self._xpath(WIDGET_CONTEXT_XPATH, context_element):
-                self._info['context'].append({
-                    'name': wcontext.get('name'),
-                    'type': wcontext.get('type'),
-                    'concept': wcontext.get('concept'),
-                    'aspect': 'GCTX',
-                })
-            for pcontext in self._xpath(PLATFORM_CONTEXT_XPATH, context_element):
-                self._info['context'].append({
-                    'name': pcontext.get('name'),
-                    'type': pcontext.get('type'),
-                    'concept': pcontext.get('concept'),
-                    'aspect': 'ECTX',
-                })
 
         xhtml_elements = self._xpath(CODE_XPATH, self._doc)
         if len(xhtml_elements) == 1 and xhtml_elements[0].get('href', '') != '':

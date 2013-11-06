@@ -52,7 +52,6 @@ class TemplateUtilsTestCase(TestCase):
             'requirements': [],
             'preferences': [],
             'properties': [],
-            'context': [],
             'wiring': {
                 'inputs': [],
                 'outputs': [],
@@ -124,7 +123,6 @@ class TemplateUtilsTestCase(TestCase):
                     'default_value': 'value2',
                 }
             ],
-            'context': [],
             'wiring': {
                 'inputs': [
                     {
@@ -245,7 +243,6 @@ class TemplateUtilsTestCase(TestCase):
                     'default_value': 'value2',
                 }
             ],
-            'context': [],
             'wiring': {
                 'inputs': [
                     {
@@ -943,7 +940,6 @@ class TemplateUtilsTestCase(TestCase):
             'requirements': [],
             'preferences': [],
             'properties': [],
-            'context': [],
             'wiring': {
                 'inputs': [],
                 'outputs': [],
@@ -1019,7 +1015,6 @@ class TemplateUtilsTestCase(TestCase):
                     'default_value': 'value2',
                 }
             ],
-            'context': [],
             'wiring': {
                 'inputs': [
                     {

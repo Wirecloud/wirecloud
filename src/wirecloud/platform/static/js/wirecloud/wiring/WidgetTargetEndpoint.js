@@ -77,12 +77,6 @@
         return [result];
     };
 
-    WidgetTargetEndpoint.prototype._annotate = function _annotate(value, source, options) {
-        if (!options || is_target_endpoint.call(this, options.targetEndpoints)) {
-            opManager.activeWorkspace.varManager.findVariable(this.iwidget.id, this.meta.name).annotate(value);
-        }
-    };
-
     WidgetTargetEndpoint.prototype.propagate = function propagate(newValue, options) {
         if (!options || is_target_endpoint.call(this, options.targetEndpoints)) {
             if (this.iwidget.loaded) {

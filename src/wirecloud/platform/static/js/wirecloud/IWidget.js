@@ -19,24 +19,11 @@
  *
  */
 
-/*global StyledElements, Wirecloud*/
+/*global IWidgetLogManager, StyledElements, UserPref, Wirecloud*/
 
 (function () {
 
     "use strict";
-
-    var old_context_api_adaptor_callback = function old_context_api_adaptor_callback(new_values) {
-        var key, variables;
-
-        variables = this.workspace.varManager.getIWidgetVariables(this.id);
-        for (key in variables) {
-            var variable = variables[key];
-            if (variable.vardef.aspect === 'GCTX' && variable.vardef.concept in new_values) {
-                variable.annotate(new_values[variable.vardef.concept]);
-                variable.set(new_values[variable.vardef.concept]);
-            }
-        }
-    };
 
     var renameSuccess = function renameSuccess(options, old_name, new_name, response) {
         this.name = new_name;
@@ -70,7 +57,7 @@
      */
     var IWidget = function IWidget(widget, tab, options) {
 
-        var key;
+        var key, i, preferences, iwidget_pref_info;
 
         if (typeof options !== 'object' || !(widget instanceof Wirecloud.Widget)) {
             throw new TypeError();
@@ -99,6 +86,17 @@
             this.outputs[key] = new Wirecloud.wiring.WidgetSourceEndpoint(this, this.meta.outputs[key]);
         }
 
+        preferences = this.meta.preferenceList;
+        this.preferenceList = [];
+        this.preferences = {};
+        if (options.variables != null) {
+            for (i = 0; i < preferences.length; i++) {
+                iwidget_pref_info = options.variables[preferences[i].name];
+                this.preferenceList[i] = new Wirecloud.UserPref(preferences[i], iwidget_pref_info.readonly, iwidget_pref_info.hidden, iwidget_pref_info.value);
+                this.preferences[preferences[i].name] = this.preferenceList[i];
+            }
+        }
+
         this.callbacks = {
             'iwidget': [],
             'mashup': [],
@@ -112,8 +110,6 @@
             'heightInPixels': 0,
             'widthInPixels': 0
         });
-        this._old_context_api_adaptor_callback = old_context_api_adaptor_callback.bind(this);
-        this.contextManager.addCallback(this._old_context_api_adaptor_callback);
         this.logManager = new Wirecloud.Widget.LogManager(this);
         this.prefCallback = null;
 
@@ -292,7 +288,6 @@
         }
 
         this.workspace.varManager.removeInstance(this.id);
-        this.contextManager.removeCallback(this._old_context_api_adaptor_callback);
         this.contextManager = null;
         this.logManager.close();
         this.logManager = null;
