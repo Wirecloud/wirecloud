@@ -149,8 +149,6 @@ class VariableDef(TransModel):
         ('EVEN', _('Event')),
         ('PREF', _('Preference')),
         ('PROP', _('Property')),
-        ('GCTX', _('WidgetContext')),
-        ('ECTX', _('ExternalContext')),
     )
     secure = models.BooleanField(_('Secure'), default=False)
     aspect = models.CharField(_('Aspect'), max_length=4, choices=ASPECTS)
@@ -208,19 +206,6 @@ class VariableDefAttr(models.Model):
     class Meta:
         app_label = 'platform'
         db_table = 'wirecloud_variabledefattr'
-
-
-class ContextOption(models.Model):
-
-    concept = models.CharField(_('Concept'), max_length=256)
-    varDef = models.ForeignKey(VariableDef, verbose_name=_('Variable'))
-
-    def __unicode__(self):
-        return self.concept
-
-    class Meta:
-        app_label = 'platform'
-        db_table = 'wirecloud_contextoption'
 
 
 def create_widget_on_resource_creation(sender, instance, created, raw, **kwargs):

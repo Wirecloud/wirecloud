@@ -30,7 +30,7 @@ from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.http import get_absolute_static_url
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
-from wirecloud.platform.models import ContextOption, Widget, UserPrefOption, UserWorkspace, VariableDef, Workspace, XHTML
+from wirecloud.platform.models import Widget, UserPrefOption, UserWorkspace, VariableDef, Workspace, XHTML
 from wirecloud.platform.plugins import get_active_features, get_widget_api_extensions
 
 
@@ -162,15 +162,6 @@ def create_widget_from_template(template, user, request=None, base=None):
         )
         variable_definitions[vDef.name] = vDef
         order += 1
-
-    for context in widget_info['context']:
-        vDef = VariableDef.objects.create(
-            name=context['name'],
-            type=parser.typeText2typeCode(context['type']),
-            aspect=context['aspect'],
-            widget=widget,
-        )
-        ContextOption.objects.create(concept=context['concept'], varDef=vDef)
 
     for lang in widget_info['translations']:
         translation = widget_info['translations'][lang]
