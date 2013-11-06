@@ -222,7 +222,8 @@ def fillWorkspaceUsingTemplate(workspace, template):
 
     # Process operators info
     for operator_id, operator in workspace_info['wiring']['operators'].iteritems():
-        new_id = unicode(++max_id)
+        max_id += 1
+        new_id = unicode(max_id)
         ioperator_id_mapping[operator_id] = new_id
         wiring_status['operators'][new_id] = {
             'id': new_id,
