@@ -78,7 +78,7 @@ var OpManagerFactory = function () {
         var createWSSuccess = function(onSuccess, response) {
             var workspace_data = JSON.parse(response.responseText);
             var workspace = new Workspace(workspace_data);
-            this.workspaceInstances.set(workspace.getId(), workspace);
+            this.workspaceInstances.set(workspace.id, workspace);
             this.changeActiveWorkspace(workspace);
 
             if (typeof onSuccess === 'function') {
@@ -142,7 +142,7 @@ var OpManagerFactory = function () {
             LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding the mashup"), 1);
             LayoutManagerFactory.getInstance().logSubTask(gettext("Merging with current workspace"));
 
-            var active_ws_id = this.activeWorkspace.getId();
+            var active_ws_id = this.activeWorkspace.id;
             var mergeURL = Wirecloud.URLs.WORKSPACE_MERGE.evaluate({to_ws_id: active_ws_id});
 
             Wirecloud.io.makeRequest(mergeURL, {

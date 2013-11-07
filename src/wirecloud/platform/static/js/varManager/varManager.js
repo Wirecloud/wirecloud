@@ -67,7 +67,7 @@ function VarManager (_workspace) {
 
         // Max lenght of buffered requests have been reached. Uploading to server!
         if (this.iwidgetModifiedVars.length > 0) {
-            var uri = Wirecloud.URLs.VARIABLE_COLLECTION.evaluate({workspace_id: this.workspace.getId()});
+            var uri = Wirecloud.URLs.VARIABLE_COLLECTION.evaluate({workspace_id: this.workspace.id});
 
             var options = {
                 method: 'POST',

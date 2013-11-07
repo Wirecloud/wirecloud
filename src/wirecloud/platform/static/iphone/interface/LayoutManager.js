@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -36,7 +36,7 @@ var LayoutManagerFactory = function () {
         opManager = OpManagerFactory.getInstance();
 
         ws_id = parseInt(state.workspace, 10);
-        if (ws_id !== opManager.activeWorkspace.getId()) {
+        if (ws_id !== opManager.activeWorkspace.id) {
             nextWorkspace = opManager.workspaceInstances.get(ws_id);
             opManager.changeActiveWorkspace(nextWorkspace, state.tab);
             return;

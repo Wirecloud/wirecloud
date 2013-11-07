@@ -220,7 +220,7 @@ function Workspace (workspaceState) {
     };
 
     var deleteSuccess = function (transport) {
-        OpManagerFactory.getInstance().removeWorkspace(this.workspaceState.id);
+        OpManagerFactory.getInstance().removeWorkspace(this.id);
         LayoutManagerFactory.getInstance().logSubTask(gettext('Workspace renamed successfully'));
         LayoutManagerFactory.getInstance().logStep('');
     };
@@ -360,7 +360,7 @@ function Workspace (workspaceState) {
         msg = interpolate(msg, {workspacename: this.workspaceState.name, newname: name}, true);
         layoutManager.logSubTask(msg);
 
-        workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({workspace_id: this.workspaceState.id});
+        workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({workspace_id: this.id});
         Wirecloud.io.makeRequest(workspaceUrl, {
             method: 'POST',
             contentType: 'application/json',
@@ -399,7 +399,7 @@ function Workspace (workspaceState) {
         msg = interpolate(msg, {workspacename: this.workspaceState.name}, true);
         layoutManager.logSubTask(msg);
 
-        workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({workspace_id: this.workspaceState.id});
+        workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({workspace_id: this.id});
         Wirecloud.io.makeRequest(workspaceUrl, {
             method: 'DELETE',
             onSuccess: deleteSuccess.bind(this),
@@ -410,11 +410,6 @@ function Workspace (workspaceState) {
 
     Workspace.prototype.getName = function () {
         return this.workspaceState.name;
-    }
-
-
-    Workspace.prototype.getId = function () {
-        return this.workspaceState.id;
     }
 
     Workspace.prototype.getVarManager = function () {
@@ -443,7 +438,7 @@ function Workspace (workspaceState) {
 
         LayoutManagerFactory.getInstance().logSubTask(gettext("Downloading workspace data"), 1);
         this.initial_tab_id = initial_tab;
-        var workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': this.workspaceState.id});
+        var workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': this.id});
         Wirecloud.io.makeRequest(workspaceUrl, {
             method: 'GET',
             onSuccess: loadWorkspace.bind(this),
@@ -530,7 +525,7 @@ function Workspace (workspaceState) {
         while (this.tabExists(tabName)) {
             tabName = prefixName + " " + (counter++).toString();
         }
-        url = Wirecloud.URLs.TAB_COLLECTION.evaluate({workspace_id: this.workspaceState.id});
+        url = Wirecloud.URLs.TAB_COLLECTION.evaluate({workspace_id: this.id});
         Wirecloud.io.makeRequest(url, {
             method: 'POST',
             contentType: 'application/json',
@@ -690,7 +685,7 @@ function Workspace (workspaceState) {
         }
         delete data.image;
         payload.append('json', JSON.stringify(data));
-        var workspaceUrl = Wirecloud.URLs.WORKSPACE_PUBLISH.evaluate({workspace_id: this.workspaceState.id});
+        var workspaceUrl = Wirecloud.URLs.WORKSPACE_PUBLISH.evaluate({workspace_id: this.id});
         Wirecloud.io.makeRequest(workspaceUrl, {
             method: 'POST',
             postBody: payload,
@@ -714,7 +709,7 @@ function Workspace (workspaceState) {
         msg = interpolate(msg, {srcworkspace: workspace.name, dstworkspace: this.getName()}, true);
         layoutManager.logSubTask(msg);
 
-        workspaceUrl = Wirecloud.URLs.WORKSPACE_MERGE.evaluate({to_ws_id: this.workspaceState.id});
+        workspaceUrl = Wirecloud.URLs.WORKSPACE_MERGE.evaluate({to_ws_id: this.id});
         Wirecloud.io.markeRequest(workspaceUrl, {
             method: 'POST',
             contentType: 'application/json',
@@ -770,6 +765,7 @@ function Workspace (workspaceState) {
     //  CONSTRUCTOR
     // *****************
 
+    Object.defineProperty(this, 'id', {value: workspaceState.id});
     this.workspaceState = workspaceState;
     this.workspaceGlobal = null;
     this.wiringInterface = null;
@@ -789,7 +785,7 @@ function Workspace (workspaceState) {
      * OPERATIONS
      */
     this.markAsActive = function () {
-        var workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': this.workspaceState.id});
+        var workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': this.id});
         Wirecloud.io.makeRequest(workspaceUrl, {
             method: 'POST',
             contentType: 'application/json',

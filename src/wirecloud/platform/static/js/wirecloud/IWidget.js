@@ -264,7 +264,7 @@
 
         if (new_name !== null && new_name.length > 0) {
             var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-                workspace_id: this.workspace.getId(),
+                workspace_id: this.workspace.id,
                 tab_id: this.tab.getId(),
                 iwidget_id: this.id
             });

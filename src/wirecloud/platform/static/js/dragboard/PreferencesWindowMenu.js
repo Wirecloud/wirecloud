@@ -47,7 +47,7 @@
         this.hide();
 
         Wirecloud.io.makeRequest(Wirecloud.URLs.IWIDGET_PREFERENCES.evaluate({
-                workspace_id: this._current_iwidget.workspace.getId(),
+                workspace_id: this._current_iwidget.workspace.id,
                 tab_id: this._current_iwidget.tab.getId(),
                 iwidget_id: this._current_iwidget.id
             }), {

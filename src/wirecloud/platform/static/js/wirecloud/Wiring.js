@@ -233,7 +233,7 @@
     };
 
     Wiring.prototype.save = function save() {
-        Wirecloud.io.makeRequest(Wirecloud.URLs.WIRING_ENTRY.evaluate({workspace_id: this.workspace.getId()}), {
+        Wirecloud.io.makeRequest(Wirecloud.URLs.WIRING_ENTRY.evaluate({workspace_id: this.workspace.id}), {
             method: 'PUT',
             contentType: 'application/json',
             postBody: Object.toJSON(this.status)

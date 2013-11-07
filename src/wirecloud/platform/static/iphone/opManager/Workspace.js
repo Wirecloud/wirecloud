@@ -149,10 +149,6 @@ function Workspace(workspaceState) {
         return this.workspaceState.name;
     };
 
-    Workspace.prototype.getId = function () {
-        return this.workspaceState.id;
-    };
-
     Workspace.prototype.getVarManager = function () {
         return this.varManager;
     };
@@ -162,7 +158,7 @@ function Workspace(workspaceState) {
     };
 
     Workspace.prototype.downloadWorkspaceInfo = function () {
-        var workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': this.workspaceState.id});
+        var workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': this.id});
         Wirecloud.io.makeRequest(workspaceUrl, {
             method: 'GET',
             onSuccess: loadWorkspace.bind(this),
@@ -342,6 +338,7 @@ function Workspace(workspaceState) {
     //  CONSTRUCTOR
     // *****************
 
+    Object.defineProperty(this, 'id', {value: workspaceState.id});
     this.workspaceState = workspaceState;
     this.workspaceGlobal = null;
     this.varManager = null;
