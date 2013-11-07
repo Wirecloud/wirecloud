@@ -47,6 +47,14 @@
     opacity: 0.6;
 }
 
+.iwidget > .widget_menu > .errorbutton {
+    opacity: 0.4;
+}
+
+.iwidget > .widget_menu > .errorbutton.disabled {
+    opacity: 0;
+}
+
 .iwidget > .widget_wrapper {
     clear: both;
     overflow: hidden;

@@ -9,14 +9,6 @@ div.dragboard.fixed {
   background: transparent;
 }
 
-div.iwidget div.widget_menu > .errorbutton {
-    opacity: 0.4;
-}
-
-div.iwidget div.widget_menu > .errorbutton.disabled {
-    opacity: 0;
-}
-
 div.iwidget div.widget_menu > .versionbutton {
     background-image: url(../images/icons-sprite.png);
     background-position: -24px -216px;

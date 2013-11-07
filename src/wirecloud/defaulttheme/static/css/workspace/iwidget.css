@@ -40,12 +40,21 @@
     padding: 0px;
     border: 0px none;
 }
+
 .iwidget > .widget_menu:hover > .styled_button {
     opacity: 0.3;
 }
 
 .iwidget > .widget_menu > .styled_button:focus, .iwidget > .widget_menu > .styled_button:hover {
     opacity: 0.6;
+}
+
+.iwidget > .widget_menu > .errorbutton {
+    opacity: 0.4;
+}
+
+.iwidget > .widget_menu > .errorbutton.disabled {
+    opacity: 0;
 }
 
 .iwidget > .widget_wrapper {
