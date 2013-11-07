@@ -126,12 +126,10 @@
         this.menu_button.getPopupMenu().append(new TabMenuItems(this));
         this.menu_button.insertInto(this.tabElement);
 
-        // The name of the dragboard HTML elements correspond to the Tab name
         Object.defineProperty(this, 'id', {value: tabInfo.id});
         this.workspace = options.workspace;
         this.tabInfo = tabInfo;
         this.dragboardLayerName = "dragboard_" + this.workspace.workspaceState.id + "_" + this.id;
-        this.tabName = "tab_" + this.workspace.workspaceState.id + "_" + this.id;
 
         this.FloatingWidgetsMenu = null;
 

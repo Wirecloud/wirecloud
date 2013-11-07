@@ -48,7 +48,6 @@ function Tab(tabInfo, workspace, index) {
 
         this.tabElement = document.createElement('div');
         this.tabElement.setAttribute('class', "ezweb_tab");
-        this.tabElement.setAttribute('id', this.tabName);
         this.tabElement.style.left = scrollLeft + 'px';
 
         /*
@@ -95,7 +94,6 @@ function Tab(tabInfo, workspace, index) {
     this.workspace = workspace;
     this.tabInfo = tabInfo;
     this.index = index;
-    this.tabName = "tab_" + this.workspace.workspaceState.id + "_" + this.id;
 
     this.dragboard = new Dragboard(this, this.workspace, this.dragboardElement);
     this.tabElement = null;
