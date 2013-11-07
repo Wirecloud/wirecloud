@@ -145,7 +145,7 @@
             Wirecloud.io.makeRequest(tabUrl, {
                 method: 'POST',
                 contentType: 'application/json',
-                postBody: Object.toJSON({visible: "true"}),
+                postBody: JSON.stringify({visible: "true"}),
                 onSuccess: this.markAsVisibleSuccess,
                 onFailure: this.markAsVisibleError,
                 onException: this.markAsVisibleError
@@ -204,7 +204,7 @@
         Wirecloud.io.makeRequest(tabUrl, {
             method: 'PUT',
             contentType: 'application/json',
-            postBody: Object.toJSON({'name': tabName}),
+            postBody: JSON.stringify({'name': tabName}),
             onSuccess: renameSuccess.bind({tab: this, newName: tabName}),
             onFailure: renameError,
             onException: renameError,

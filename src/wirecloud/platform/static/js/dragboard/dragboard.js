@@ -162,7 +162,7 @@
             Wirecloud.io.makeRequest(uri, {
                 method: 'PUT',
                 contentType: 'application/json',
-                postBody: Object.toJSON(data),
+                postBody: JSON.stringify(data),
                 onSuccess: onSuccess,
                 onFailure: onError
             });

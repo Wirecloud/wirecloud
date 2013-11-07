@@ -236,7 +236,7 @@
         Wirecloud.io.makeRequest(Wirecloud.URLs.WIRING_ENTRY.evaluate({workspace_id: this.workspace.id}), {
             method: 'PUT',
             contentType: 'application/json',
-            postBody: Object.toJSON(this.status)
+            postBody: JSON.stringify(this.status)
         });
     };
 

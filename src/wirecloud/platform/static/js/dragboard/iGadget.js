@@ -495,7 +495,7 @@ IWidget.prototype.setRefusedVersion = function (v) {
     Wirecloud.io.makeRequest(iwidgetUrl, {
         method: 'POST',
         contentType: 'application/json',
-        postBody: Object.toJSON({
+        postBody: JSON.stringify({
             refused_version: this.refusedVersion.text,
             id: this.id
         }),
@@ -548,7 +548,7 @@ IWidget.prototype.upgradeIWidget = function () {
         onSuccess: onUpgradeOk.bind(this),
         onFailure: onUpgradeError.bind(this),
         onException: onUpgradeError.bind(this),
-        postBody: Object.toJSON(data),
+        postBody: JSON.stringify(data),
         contentType: 'application/json'
     });
 };
@@ -1053,7 +1053,7 @@ IWidget.prototype.save = function (options) {
         workspace_id: this.layout.dragboard.workspaceId
     });
 
-    var data = Object.toJSON({
+    var data = JSON.stringify({
         'widget': this.internal_iwidget.widget.id,
         'left': this.position.x,
         'top': this.position.y,
@@ -1208,7 +1208,7 @@ IWidget.prototype.moveToLayout = function (newLayout) {
         Wirecloud.io.makeRequest(url, {
             method: 'PUT',
             contentType: 'application/json',
-            postBody: Object.toJSON(data),
+            postBody: JSON.stringify(data),
             onSuccess: onSuccess.bind(this),
             onFailure: onError.bind(this),
             contentType: 'application/json'

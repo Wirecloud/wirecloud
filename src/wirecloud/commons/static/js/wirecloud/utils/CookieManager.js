@@ -23,7 +23,7 @@
         }
 
         if (typeof value === 'object') {
-            value = Object.toJSON(value);
+            value = JSON.stringify(value);
         }
 
         document.cookie = name + "=" + value + expires + "; path=/";
