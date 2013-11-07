@@ -19,7 +19,7 @@
  *
  */
 
-/*global Event, OpManagerFactory, StyledElements, gettext, interpolate, LayoutManagerFactory, CatalogueSearchView, FiWareResourceDetailsView, FiWareCatalogue, Wirecloud, FiWareCatalogueResource, FiWareStoreListItems*/
+/*global OpManagerFactory, StyledElements, gettext, interpolate, LayoutManagerFactory, CatalogueSearchView, Wirecloud, FiWareCatalogueResource*/
 
 (function () {
 
@@ -126,14 +126,9 @@
     };
 
     FiWareCatalogueView.prototype._onSearch = function (callback, raw_data) {
-        var preferred_versions, i, data, resources, resource;
+        var i, data, resources, resource;
 
         if (raw_data.resources) {
-            preferred_versions = Wirecloud.utils.CookieManager.readCookie('preferred_versions', true);
-
-            if (preferred_versions === null) {
-                preferred_versions = {};
-            }
 
             resources = [];
 
@@ -144,7 +139,6 @@
 
             data = {
                 'resources': resources,
-                'preferred_versions': preferred_versions,
                 'query_results_number': resources.length,
                 'resources_per_page': 10,
                 'current_page': 1
@@ -231,7 +225,7 @@
     FiWareCatalogueView.prototype.ui_commands = {};
 
     FiWareCatalogueView.prototype.ui_commands.instantiate = function (resource) {
-        return function (e) {
+        return function () {
             this.instantiate(resource);
             LayoutManagerFactory.getInstance().changeCurrentView('workspace');
         }.bind(this);

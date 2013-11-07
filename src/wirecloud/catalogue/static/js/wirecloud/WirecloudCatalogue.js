@@ -19,7 +19,7 @@
  *
  */
 
-/*global CatalogueResource, gettext, interpolate, LayoutManagerFactory, OpManagerFactory, Wirecloud, Template*/
+/*global CatalogueResource, gettext, Wirecloud, Template*/
 
 (function () {
 
@@ -28,29 +28,19 @@
     var WirecloudCatalogue, _onSearchSuccess, _onSearchError, deleteSuccessCallback, deleteErrorCallback;
 
     _onSearchSuccess = function _onSearchSuccess(transport) {
-        var preferred_versions, i, data, key, raw_data, resources, resource;
+        var i, data, raw_data, resources, resource;
 
         raw_data = JSON.parse(transport.responseText);
         if (raw_data.resources) {
-            preferred_versions = Wirecloud.utils.CookieManager.readCookie('preferred_versions', true);
-            if (preferred_versions === null) {
-                preferred_versions = {};
-            }
-
             resources = [];
 
             for (i = 0; i < raw_data.resources.length; i += 1) {
                 resource = new CatalogueResource(raw_data.resources[i]);
                 resources.push(resource);
-                key = resource.vendor + '/' + resource.name;
-                if (key in preferred_versions) {
-                    resource.changeVersion(preferred_versions[key]);
-                }
             }
 
             data = {
                 'resources': resources,
-                'preferred_versions': preferred_versions,
                 'current_page': this.options.starting_page,
                 'total_count': parseInt(raw_data.items, 10)
             };
@@ -59,11 +49,11 @@
         }
     };
 
-    _onSearchError = function _onSearchError(transport) {
+    _onSearchError = function _onSearchError() {
         this.onError();
     };
 
-    deleteSuccessCallback = function deleteSuccessCallback(transport) {
+    deleteSuccessCallback = function deleteSuccessCallback() {
         this.onSuccess();
     };
 
@@ -133,7 +123,7 @@
         });
     };
 
-    WirecloudCatalogue.prototype.is_purchased = function is_purchased(resource) {
+    WirecloudCatalogue.prototype.is_purchased = function is_purchased() {
         return true;
     };
 
@@ -152,7 +142,7 @@
 
             if (this.accesstoken != null) {
                 requestHeaders = {
-                    'Authorization': 'Bearer ' + self.accesstoken
+                    'Authorization': 'Bearer ' + this.accesstoken
                 };
             }
         }
@@ -197,7 +187,7 @@
         Wirecloud.io.makeRequest(this.RESOURCE_COLLECTION, {
             method: 'POST',
             parameters: {'template_uri': url, packaged: !!options.packaged, force_create: !!options.forceCreate},
-            onSuccess: function (transport) {
+            onSuccess: function () {
                 if (typeof options.onSuccess === 'function') {
                     options.onSuccess();
                 }
