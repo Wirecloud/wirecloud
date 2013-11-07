@@ -87,19 +87,15 @@ function Tab(tabInfo, workspace, index) {
         return this.dragboard;
     };
 
-    Tab.prototype.getId = function () {
-        return this.tabInfo.id;
-    };
-
     // *****************
     //  PRIVATE METHODS
     // *****************
 
-    // The name of the dragboard HTML elements correspond to the Tab name
+    Object.defineProperty(this, 'id', {value: tabInfo.id});
     this.workspace = workspace;
     this.tabInfo = tabInfo;
     this.index = index;
-    this.tabName = "tab_" + this.workspace.workspaceState.id + "_" + this.tabInfo.id;
+    this.tabName = "tab_" + this.workspace.workspaceState.id + "_" + this.id;
 
     this.dragboard = new Dragboard(this, this.workspace, this.dragboardElement);
     this.tabElement = null;

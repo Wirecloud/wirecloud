@@ -246,7 +246,7 @@ function Workspace(workspaceState) {
         var i;
 
         for (i = 0; i < this.tabInstances.length; i += 1) {
-            if (this.tabInstances[i].getId() === tabId) {
+            if (this.tabInstances[i].id === tabId) {
                 return this.tabInstances[i];
             }
         }

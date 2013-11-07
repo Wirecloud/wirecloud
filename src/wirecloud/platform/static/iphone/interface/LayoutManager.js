@@ -47,7 +47,7 @@ var LayoutManagerFactory = function () {
             case "dragboard":
                 dragboard = null;
                 tab_id = parseInt(state.tab, 10);
-                if (state.tab !== opManager.activeWorkspace.visibleTab.getId()) {
+                if (state.tab !== opManager.activeWorkspace.visibleTab.id) {
                     tab = opManager.activeWorkspace.getTab(state.tab);
                     if (typeof tab !== "undefined") {
                         dragboard = tab.getDragboard();

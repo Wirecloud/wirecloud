@@ -53,7 +53,7 @@
     var deleteSuccess = function deleteSuccess(transport) {
         var layoutManager = LayoutManagerFactory.getInstance();
 
-        this.workspace.unloadTab(this.getId());
+        this.workspace.unloadTab(this.id);
 
         layoutManager.logSubTask(gettext('Tab deleted successfully'));
         layoutManager.logStep('');
@@ -127,10 +127,11 @@
         this.menu_button.insertInto(this.tabElement);
 
         // The name of the dragboard HTML elements correspond to the Tab name
+        Object.defineProperty(this, 'id', {value: tabInfo.id});
         this.workspace = options.workspace;
         this.tabInfo = tabInfo;
-        this.dragboardLayerName = "dragboard_" + this.workspace.workspaceState.id + "_" + this.tabInfo.id;
-        this.tabName = "tab_" + this.workspace.workspaceState.id + "_" + this.tabInfo.id;
+        this.dragboardLayerName = "dragboard_" + this.workspace.workspaceState.id + "_" + this.id;
+        this.tabName = "tab_" + this.workspace.workspaceState.id + "_" + this.id;
 
         this.FloatingWidgetsMenu = null;
 
@@ -142,7 +143,7 @@
         this.dragboard = new Dragboard(this, this.workspace, this.wrapperElement);
 
         this.markAsVisible = function markAsVisible() {
-            var tabUrl = Wirecloud.URLs.TAB_ENTRY.evaluate({'workspace_id': this.workspace.workspaceState.id, 'tab_id': this.tabInfo.id});
+            var tabUrl = Wirecloud.URLs.TAB_ENTRY.evaluate({'workspace_id': this.workspace.workspaceState.id, 'tab_id': this.id});
             Wirecloud.io.makeRequest(tabUrl, {
                 method: 'POST',
                 contentType: 'application/json',
@@ -171,10 +172,6 @@
     // ****************
     // PUBLIC METHODS
     // ****************
-
-    Tab.prototype.getId = function getId() {
-        return this.tabInfo.id;
-    };
 
     Tab.prototype.getName = function getName() {
         return this.tabInfo.name;
@@ -205,7 +202,7 @@
         msg = interpolate(msg, {tabname: this.tabInfo.name, newname: tabName}, true);
         layoutManager.logSubTask(msg);
 
-        tabUrl = Wirecloud.URLs.TAB_ENTRY.evaluate({'workspace_id': this.workspace.workspaceState.id, 'tab_id': this.tabInfo.id});
+        tabUrl = Wirecloud.URLs.TAB_ENTRY.evaluate({'workspace_id': this.workspace.workspaceState.id, 'tab_id': this.id});
         Wirecloud.io.makeRequest(tabUrl, {
             method: 'PUT',
             contentType: 'application/json',
@@ -228,7 +225,7 @@
         msg = interpolate(msg, {tabname: this.tabInfo.name}, true);
         layoutManager.logSubTask(msg);
 
-        tabUrl = Wirecloud.URLs.TAB_ENTRY.evaluate({'workspace_id': this.workspace.workspaceState.id, 'tab_id': this.tabInfo.id});
+        tabUrl = Wirecloud.URLs.TAB_ENTRY.evaluate({'workspace_id': this.workspace.workspaceState.id, 'tab_id': this.id});
         Wirecloud.io.makeRequest(tabUrl, {
             method: 'DELETE',
             onSuccess: deleteSuccess.bind(this),
