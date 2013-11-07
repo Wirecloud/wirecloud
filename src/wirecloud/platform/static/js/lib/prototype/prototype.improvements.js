@@ -31,21 +31,6 @@
  */
 
 Prototype.BrowserFeatures.OnHashChangeEvent = 'onhashchange' in window;
-if (window.navigator.vendor) {
-    Prototype.Browser.Safari = window.navigator.vendor.indexOf('Apple') !== -1;
-} else {
-    Prototype.Browser.Safari = false;
-}
-
-Object.extend(Event, {
-	KEY_SHIFT:    16,
-	KEY_CONTROL:  17,
-	KEY_CAPSLOCK: 20,
-	KEY_SPACE: 32,
-	keyPressed: function(event) {
-		return Prototype.Browser.IE ? window.event.keyCode : event.which;
-	}
-});
 
 if (Prototype.BrowserFeatures.ElementExtensions) {
 	var isElement = function(el) {
