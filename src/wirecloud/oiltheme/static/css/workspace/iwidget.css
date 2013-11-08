@@ -14,17 +14,23 @@
     font-size: 20px;
     cursor: move;
     line-height: 30px;
+    position: relative;
 }
 
 .iwidget > .widget_menu > span {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    max-width: 100%;
-    display: inline-block;
+    display: inline;
 }
 
-.iwidget > .widget_menu > .styled_button {
+.iwidget > .widget_menu > .buttons {
+    display: block;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    background: linear-gradient(to right, rgba(252, 252, 252, 0), rgb(252, 252, 252) 38px, rgb(252, 252, 252));
+    border-radius: 4px;
+    padding: 0px 3px 0px 38px;
     opacity: 0;
+    white-space: nowrap;
     -moz-transition-property: opacity;
     -moz-transition-duration: 1s;
     -webkit-transition-property: opacity;
@@ -33,26 +39,45 @@
     -o-transition-duration: 1s;
     transition-property: opacity;
     transition-duration: 1s;
-    float: right;
+    line-height: 28px;
+}
+
+.iwidget > .widget_menu:hover > .buttons {
+    opacity: 1;
+}
+
+.iwidget > .widget_menu .styled_button {
     font-size: 75%;
-    margin: 0 0 0 5px;
+    margin: 0 3px;
     padding: 0px;
     border: 0px none;
-}
-.iwidget > .widget_menu:hover > .styled_button {
-    opacity: 0.3;
-}
-
-.iwidget > .widget_menu > .styled_button:focus, .iwidget > .widget_menu > .styled_button:hover {
-    opacity: 0.6;
-}
-
-.iwidget > .widget_menu > .errorbutton {
-    opacity: 0.4;
+    color: rgba(136, 136, 136, 0.6);
+    -moz-transition-property: color;
+    -moz-transition-duration: 1s;
+    -webkit-transition-property: color;
+    -webkit-transition-duration: 1s;
+    -o-transition-property: color;
+    -o-transition-duration: 1s;
+    transition-property: color;
+    transition-duration: 1s;
 }
 
-.iwidget > .widget_menu > .errorbutton.disabled {
-    opacity: 0;
+.iwidget > .widget_menu .styled_button:focus, .iwidget > .widget_menu .styled_button:hover {
+    color: rgba(136, 136, 136, 1);
+}
+
+.iwidget > .widget_menu > .infobuttons {
+    padding: 0px 38px 0px 3px;
+    background: linear-gradient(to left, rgba(252, 252, 252, 0), rgb(252, 252, 252) 38px, rgb(252, 252, 252));
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    margin: 0px;
+    line-height: 28px;
+}
+
+.iwidget > .widget_menu .errorbutton.disabled {
+    display: none;
 }
 
 .iwidget > .widget_wrapper {
