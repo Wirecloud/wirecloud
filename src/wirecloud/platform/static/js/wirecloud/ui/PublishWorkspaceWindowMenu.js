@@ -83,14 +83,14 @@
         fields = [];
 
         for (i = 0; i < iwidgets.length; i++) {
-            iwidget = iwidgets[i];
+            iwidget = iwidgets[i].internal_iwidget;
             variables = varManager.getIWidgetVariables(iwidget.id);
             pref_params = [];
-            for (j = 0; iwidget.preferenceList.length; i += 1) {
+            for (j = 0; j < iwidget.preferenceList.length; j += 1) {
                 pref_params.push({
-                    label: iwidget.preferenceList[i].getLabel(),
+                    label: iwidget.preferenceList[j].label,
                     type: 'parametrizableValue',
-                    variable: iwidget.preferenceList[i],
+                    variable: iwidget.preferenceList[j],
                     canBeHidden: true,
                     parentWindow: this
                 });
