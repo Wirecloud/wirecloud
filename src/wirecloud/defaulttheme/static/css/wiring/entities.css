@@ -306,6 +306,12 @@
     z-index: 3;
 }
 
+.wiring_editor .grid .anchorTree .labelActionLayer {
+    background: rgba(69, 184, 78, 0.52);
+    z-index: 4;
+    position: absolute;
+}
+
 /* menubar entities */
 .wiring_editor .menubar .ioperator .header, .wiring_editor .menubar .iwidget .header {
     text-align: center;

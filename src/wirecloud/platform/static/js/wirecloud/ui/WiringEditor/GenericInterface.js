@@ -287,9 +287,11 @@ OutputSubendpoint.prototype.serialize = function serialize() {
      * format Tree
      */
     var formatTree = function(treeDiv, entityHeiht, entityWidth) {
-        var nLeafs, heightPerLeaf, branchList, i, nleafsAux, desp,
+        var heightPerLeaf, branchList, i, j, nleafsAux, desp,
             checkbox, label, height, firstFrame, firstTree, width,
-            diff, treeWidth;
+            diff, treeWidth, actionLayer, bounding, treeBounding,
+            leafs, leafDataTreeList, leafsAux, actionLayerListAux,
+            lastTop, subtrees;
 
         firstFrame = treeDiv.getElementsByClassName("labelsFrame")[0];
         firstTree = treeDiv.getElementsByClassName("tree")[0];
@@ -308,19 +310,67 @@ OutputSubendpoint.prototype.serialize = function serialize() {
         }
         treeDiv.style.height = height + 'px';
         // Vertical Alignment
-        nLeafs = treeDiv.getElementsByClassName('leaf').length;
-        heightPerLeaf = height/nLeafs;
+        leafs = treeDiv.getElementsByClassName('leaf');
+        heightPerLeaf = height/leafs.length;
 
         branchList = treeDiv.getElementsByClassName("dataTree branch");
-        for (i = 0; i < branchList.length; i += 1) {
+        for (i = 0; i < branchList.length; i ++) {
+
+            // Set Label position
             nleafsAux = branchList[i].getElementsByClassName('leaf').length;
-            desp = -(((nleafsAux/2) * heightPerLeaf) - (heightPerLeaf/2)) +"px";
+            desp = -(((nleafsAux/2) * heightPerLeaf) - (heightPerLeaf/2));
             label = branchList[i].getElementsByClassName('labelTree')[branchList[i].getElementsByClassName('labelTree').length - 1];
+
+            // Set label and anchor position
             checkbox = branchList[i].getElementsByClassName('subAnchor')[branchList[i].getElementsByClassName('subAnchor').length - 1];
-            label.style.top = desp;
-            checkbox.style.top = desp;
+            label.style.top = desp + 'px';
+            checkbox.style.top = desp + 'px';
+
+            // Set action layer bounding for the label
+            treeBounding = branchList[i].getBoundingClientRect();
+            if (i == 0) {
+                lastTop = treeBounding.top;
+            }
+
+            actionLayer = branchList[i].nextElementSibling;
+            bounding = label.getBoundingClientRect();
+            actionLayer.style.height = bounding.height + 'px';
+            actionLayer.style.width = bounding.width + 'px';
+            actionLayer.style.left = (bounding.left - treeBounding.left) + 'px';
+            actionLayer.style.top = Math.abs(lastTop - bounding.top) + 'px';
+            lastTop = treeBounding.top + 1;
+
+            // Set leaf action layers
+            setLeafActionLayers(branchList[i].parentNode.children);
+
+            // Set leaf action layers in only-leafs subtree
+            if (branchList[i].getElementsByClassName("dataTree branch").length == 0) {
+                subtrees = branchList[i].getElementsByClassName('subTree');
+                for (j = 0; j < subtrees.length; j++) {
+                    // All leafs subtree found
+                    setLeafActionLayers(subtrees[j].getElementsByClassName('labelsFrame')[0].children);
+                }
+            }
         }
     };
+
+    var setLeafActionLayers = function setLeafActionLayers (brothers) {
+        var acumulatedTop, j, treeBounding, bounding, actionLayer;
+
+        acumulatedTop = 5;
+        for (j = 0; j < brothers.length; j += 2) {
+            treeBounding = brothers[j].getBoundingClientRect();
+            if (brothers[j].hasClassName('dataTree leaf')) {
+                bounding = brothers[j].getElementsByClassName('labelTree')[0].getBoundingClientRect();
+                actionLayer = brothers[j].nextElementSibling;
+                actionLayer.style.height = bounding.height + 'px';
+                actionLayer.style.width = bounding.width + 'px';
+                actionLayer.style.left = (bounding.left - treeBounding.left) + 'px';
+                actionLayer.style.top = acumulatedTop + 'px';
+            }
+            acumulatedTop +=  treeBounding.height;
+        }
+    }
 
     /*************************************************************************
      * Public methods
@@ -550,7 +600,7 @@ OutputSubendpoint.prototype.serialize = function serialize() {
      * generate SubTree
      */
     GenericInterface.prototype.generateSubTree = function(anchorContext, subAnchors) {
-        var treeFrame, key, lab, checkbox, subdata, subTree, labelsFrame, context, name;
+        var treeFrame, key, lab, checkbox, subdata, subTree, labelsFrame, context, name, labelActionLayer;
 
         treeFrame = document.createElement("div");
         treeFrame.classList.add('subTree');
@@ -563,6 +613,7 @@ OutputSubendpoint.prototype.serialize = function serialize() {
                 lab.classList.add("labelTree");
                 lab.textContent = subAnchors.subdata[key].label;
                 name  = anchorContext.data.name + "/" + key;
+
 				//TODO wirecloud Mode
                 context = {'data': new OutputSubendpoint(name, anchorContext.data, anchorContext.data.iwidget), 'iObject': this};
                 checkbox = new Wirecloud.ui.WiringEditor.SourceAnchor(context, anchorContext.iObject.arrowCreator, subAnchors.subdata[key]);
@@ -572,18 +623,23 @@ OutputSubendpoint.prototype.serialize = function serialize() {
                 this.sourceAnchors.push(checkbox);
                 subdata = document.createElement("div");
                 subdata.classList.add("dataTree");
+                labelActionLayer = document.createElement("div");
+                labelActionLayer.classList.add("labelActionLayer");
+
                 // emphasize listeners
-                lab.addEventListener('mouseover',function (thecheckbox) {
+                labelActionLayer.addEventListener('mouseover',function (thecheckbox) {
                     this.wiringEditor.recommendations.emphasize(thecheckbox);
                 }.bind(this, checkbox), false);
-                lab.addEventListener('mouseout',function (thecheckbox) {
+                labelActionLayer.addEventListener('mouseout',function (thecheckbox) {
                     this.wiringEditor.recommendations.deemphasize(thecheckbox);
                 }.bind(this, checkbox), false);
+
                 // Sticky effect
-                lab.addEventListener('mouseover', checkbox._mouseover_callback, false);
-                lab.addEventListener('mouseout', checkbox._mouseout_callback, false);
+                labelActionLayer.addEventListener('mouseover', checkbox._mouseover_callback, false);
+                labelActionLayer.addEventListener('mouseout', checkbox._mouseout_callback, false);
+
                 // Connect anchor whith mouseup on the label
-                lab.addEventListener('mouseup', checkbox._mouseup_callback, false);
+                labelActionLayer.addEventListener('mouseup', checkbox._mouseup_callback, false);
                 subTree = this.generateSubTree(context, subAnchors.subdata[key], checkbox);
                 if (subTree !== null) {
                     subdata.appendChild(subTree);
@@ -591,9 +647,11 @@ OutputSubendpoint.prototype.serialize = function serialize() {
                 } else{
                     subdata.classList.add("leaf");
                 }
+
                 subdata.appendChild(lab);
                 subdata.appendChild(checkbox.wrapperElement);
                 labelsFrame.appendChild(subdata);
+                labelsFrame.appendChild(labelActionLayer);
             }
             return treeFrame;
         } else {
@@ -606,7 +664,7 @@ OutputSubendpoint.prototype.serialize = function serialize() {
      */
     GenericInterface.prototype.generateTree = function(anchorContext, subtree, anchor, label, closeHandler) {
         var subAnchors, treeFrame, lab, checkbox, subdata,
-            key, subTree, subTreeFrame, labelsFrame, labelMain, close_button, context, name;
+            key, subTree, subTreeFrame, labelsFrame, labelMain, close_button, context, name, labelActionLayer;
 
         treeFrame = document.createElement("div");
         treeFrame.classList.add('tree');
@@ -641,21 +699,23 @@ OutputSubendpoint.prototype.serialize = function serialize() {
                 this.sourceAnchors.push(checkbox);
                 subdata = document.createElement("div");
                 subdata.classList.add("dataTree");
+                labelActionLayer = document.createElement("div");
+                labelActionLayer.classList.add("labelActionLayer");
 
                 // emphasize listeners
-                lab.addEventListener('mouseover',function (thecheckbox) {
+                labelActionLayer.addEventListener('mouseover',function (thecheckbox) {
                     this.wiringEditor.recommendations.emphasize(thecheckbox);
                 }.bind(this, checkbox), false);
-                lab.addEventListener('mouseout',function (thecheckbox) {
+                labelActionLayer.addEventListener('mouseout',function (thecheckbox) {
                     this.wiringEditor.recommendations.deemphasize(thecheckbox);
                 }.bind(this, checkbox), false);
 
                 // Sticky effect
-                lab.addEventListener('mouseover', checkbox._mouseover_callback, false);
-                lab.addEventListener('mouseout', checkbox._mouseout_callback, false);
+                labelActionLayer.addEventListener('mouseover', checkbox._mouseover_callback, false);
+                labelActionLayer.addEventListener('mouseout', checkbox._mouseout_callback, false);
 
                 // Connect anchor whith mouseup on the label
-                lab.addEventListener('mouseup', checkbox._mouseup_callback, false);
+                labelActionLayer.addEventListener('mouseup', checkbox._mouseup_callback, false);
                 subTree = this.generateSubTree(context, subAnchors[key], checkbox);
                 if (subTree !== null) {
                     subdata.appendChild(subTree);
@@ -667,6 +727,7 @@ OutputSubendpoint.prototype.serialize = function serialize() {
                 subdata.appendChild(lab);
                 subdata.appendChild(checkbox.wrapperElement);
                 labelsFrame.appendChild(subdata);
+                labelsFrame.appendChild(labelActionLayer);
                 subTreeFrame.appendChild(labelsFrame);
             }
         }
@@ -683,25 +744,27 @@ OutputSubendpoint.prototype.serialize = function serialize() {
         this.sourceAnchors.push(checkbox);
         subdata = document.createElement("div");
         subdata.classList.add("dataTree");
+        labelActionLayer = document.createElement("div");
+        labelActionLayer.classList.add("labelActionLayer");
 
         // emphasize listeners
-        lab.addEventListener('mouseover', function (thecheckbox) {
+        labelActionLayer.addEventListener('mouseover', function (thecheckbox) {
             this.wiringEditor.recommendations.emphasize(thecheckbox);
         }.bind(this, checkbox));
-        lab.addEventListener('mouseout', function (thecheckbox) {
+        labelActionLayer.addEventListener('mouseout', function (thecheckbox) {
             this.wiringEditor.recommendations.deemphasize(thecheckbox);
         }.bind(this, checkbox));
 
         // Sticky effect
-        lab.addEventListener('mouseover', function (e) {
+        labelActionLayer.addEventListener('mouseover', function (e) {
             checkbox._mouseover_callback(e);
         }.bind(this));
-        lab.addEventListener('mouseout', function (e) {
+        labelActionLayer.addEventListener('mouseout', function (e) {
             checkbox._mouseout_callback(e);
         }.bind(this));
 
         // Connect anchor whith mouseup on the label
-        lab.addEventListener('mouseup', function (e) {
+        labelActionLayer.addEventListener('mouseup', function (e) {
             checkbox._mouseup_callback(e);
         }.bind(this));
         if (subTreeFrame !== null) {
@@ -710,11 +773,13 @@ OutputSubendpoint.prototype.serialize = function serialize() {
         } else {
             subdata.classList.add("leaf");
         }
+
         subdata.appendChild(lab);
         subdata.appendChild(checkbox.wrapperElement);
         labelMain = document.createElement("div");
         labelMain.classList.add('labelsFrame');
         labelMain.appendChild(subdata);
+        labelMain.appendChild(labelActionLayer);
         treeFrame.appendChild(labelMain);
         return treeFrame;
     };
