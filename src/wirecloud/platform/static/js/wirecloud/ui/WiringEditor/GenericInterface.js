@@ -22,11 +22,25 @@
 
 /* Extra functions for the subdata trees construction */
 var OutputSubendpoint = function (name, description, iwidget, type) {
-	this.iwidget = iwidget;
+    var nameList, subdata;
+
+    this.iwidget = iwidget;
 	this.name = name;
 	this.subdata = description.subdata;
 	this.variable = description;
     this.type = type;
+
+    this.friendcode = description.friendcode;
+    nameList = name.split('/');
+    subdata = JSON.parse(description.subdata);
+    for (i = 1; i < nameList.length; i ++) {
+        if (nameList[0] == nameList[1]) {
+            break;
+        }
+        subdata = subdata[nameList[i]];
+        this.friendcode = subdata.semanticType;
+        subdata = subdata.subdata;
+    }
 };
 
 OutputSubendpoint.prototype.serialize = function serialize() {
