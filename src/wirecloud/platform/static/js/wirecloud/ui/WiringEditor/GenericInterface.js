@@ -21,16 +21,17 @@
 /*global Draggable, gettext, interpolate, StyledElements, Wirecloud, EzWebExt, LayoutManagerFactory */
 
 /* Extra functions for the subdata trees construction */
-var OutputSubendpoint = function (name, description, iwidget) {
+var OutputSubendpoint = function (name, description, iwidget, type) {
 	this.iwidget = iwidget;
 	this.name = name;
 	this.subdata = description.subdata;
 	this.variable = description;
+    this.type = type;
 };
 
 OutputSubendpoint.prototype.serialize = function serialize() {
     return {
-        'type': 'iwidget',
+        'type': this.type,
         'id': this.iwidget.id,
         'endpoint': this.name
     };
@@ -600,7 +601,8 @@ OutputSubendpoint.prototype.serialize = function serialize() {
      * generate SubTree
      */
     GenericInterface.prototype.generateSubTree = function(anchorContext, subAnchors) {
-        var treeFrame, key, lab, checkbox, subdata, subTree, labelsFrame, context, name, labelActionLayer;
+        var treeFrame, key, lab, checkbox, subdata, subTree, labelsFrame, context, name,
+            labelActionLayer, entity, type;
 
         treeFrame = document.createElement("div");
         treeFrame.classList.add('subTree');
@@ -614,8 +616,14 @@ OutputSubendpoint.prototype.serialize = function serialize() {
                 lab.textContent = subAnchors.subdata[key].label;
                 name  = anchorContext.data.name + "/" + key;
 
-				//TODO wirecloud Mode
-                context = {'data': new OutputSubendpoint(name, anchorContext.data, anchorContext.data.iwidget), 'iObject': this};
+                if (anchorContext.data.iwidget != null) {
+                    entity = anchorContext.data.iwidget;
+                    type = 'iwidget';
+                } else {
+                    entity = anchorContext.data.operator;
+                    type = 'ioperator';
+                }
+                context = {'data': new OutputSubendpoint(name, anchorContext.data, entity, type), 'iObject': this};
                 checkbox = new Wirecloud.ui.WiringEditor.SourceAnchor(context, anchorContext.iObject.arrowCreator, subAnchors.subdata[key]);
                 checkbox.wrapperElement.classList.add("subAnchor");
                 checkbox.wrapperElement.classList.add("icon-circle");
@@ -663,8 +671,8 @@ OutputSubendpoint.prototype.serialize = function serialize() {
      * generate Tree
      */
     GenericInterface.prototype.generateTree = function(anchorContext, subtree, anchor, label, closeHandler) {
-        var subAnchors, treeFrame, lab, checkbox, subdata,
-            key, subTree, subTreeFrame, labelsFrame, labelMain, close_button, context, name, labelActionLayer;
+        var subAnchors, treeFrame, lab, checkbox, subdata, key, subTree, subTreeFrame, type,
+            labelsFrame, labelMain, close_button, context, name, labelActionLayer, entity;
 
         treeFrame = document.createElement("div");
         treeFrame.classList.add('tree');
@@ -691,7 +699,14 @@ OutputSubendpoint.prototype.serialize = function serialize() {
                 lab.textContent = subAnchors[key].label;
                 name = anchorContext.data.name + "/" + key;
 
-                context = {'data': new OutputSubendpoint(name, anchorContext.data, anchorContext.data.iwidget), 'iObject': this};
+                if (anchorContext.data.iwidget != null) {
+                    entity = anchorContext.data.iwidget;
+                    type = 'iwidget';
+                } else {
+                    entity = anchorContext.data.operator;
+                    type = 'ioperator';
+                }
+                context = {'data': new OutputSubendpoint(name, anchorContext.data, entity, type), 'iObject': this};
                 checkbox = new Wirecloud.ui.WiringEditor.SourceAnchor(context, anchorContext.iObject.arrowCreator, subAnchors[key]);
                 checkbox.wrapperElement.classList.add("subAnchor");
                 checkbox.wrapperElement.classList.add("icon-circle");
@@ -736,7 +751,15 @@ OutputSubendpoint.prototype.serialize = function serialize() {
         lab.classList.add("labelTree");
         lab.textContent = label;
         name = anchorContext.data.name + "/" + anchorContext.data.name;
-        context = {'data': new OutputSubendpoint(name, anchorContext.data, anchorContext.data.iwidget), 'iObject': this};
+
+        if (anchorContext.data.iwidget != null) {
+            entity = anchorContext.data.iwidget;
+            type = 'iwidget';
+        } else {
+            entity = anchorContext.data.operator;
+            type = 'ioperator';
+        }
+        context = {'data': new OutputSubendpoint(name, anchorContext.data, entity, type), 'iObject': this};
         checkbox = new Wirecloud.ui.WiringEditor.SourceAnchor(context, anchorContext.iObject.arrowCreator, subAnchors);
         checkbox.wrapperElement.classList.add("subAnchor");
         checkbox.wrapperElement.classList.add("icon-circle");
