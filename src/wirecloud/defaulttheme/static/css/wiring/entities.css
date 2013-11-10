@@ -57,21 +57,23 @@
 
 /* subdataMode */
 .wiring_editor .ioperator.subdataMode {
+    background: rgba(220, 240, 220, 0);
     pointer-events: none;
-    background: rgba(220, 240, 220, 0.3);
+    box-shadow: 0px 0px 25px 5px rgba(113, 172, 113, 0.4);
 }
 
 .wiring_editor .iwidget.subdataMode {
+    background: rgba(230, 228, 231, 0);
     pointer-events: none;
-    background: rgba(230, 228, 231, 0.3);
+    box-shadow: 0px 0px 25px 5px rgba(70, 70, 70, 0.4);
 }
 
 .wiring_editor .grid .subdataMode .geContainer {
-    opacity: 0.3;
+    opacity: 1;
 }
 
-.wiring_editor .grid .subdataMode .header {
-    opacity: 0.3;
+.wiring_editor .grid .subdataMode .geContainer .targets, .wiring_editor .grid .subdataMode .geContainer .sources {
+    opacity: 0;
 }
 
 .wiring_editor .grid .geContainer {
@@ -235,12 +237,19 @@
 
 /* anchorTree */
 .wiring_editor .grid .anchorTree {
-	/*margin: auto;*/
-	background: rgb(197, 197, 197);
+	background: transparent;
     display: none;
     opacity: 0.9;
     border-radius: 25px 4px 25px 25px;
-    box-shadow: 0px 0px 50px 5px black;
+    margin: 0px 2px;
+}
+
+.wiring_editor .grid .iwidget .anchorTree {
+    box-shadow: inset 0 0 9em rgba(112, 113, 133, 0.26);
+}
+
+.wiring_editor .grid .ioperator .anchorTree {
+    box-shadow: inset 0 0 9em rgba(96, 211, 96, 0.26);
 }
 
 .wiring_editor .grid .tree {
@@ -300,15 +309,14 @@
 .wiring_editor .grid .anchorTree .hideTreeButton {
     color: rgb(22, 85, 248);
     position: absolute;
-    right: -2px;
-    top: -1px;
+    right: -1px;
+    top: 1px;
     font-size: 1.3em;
     z-index: 3;
 }
 
 .wiring_editor .grid .anchorTree .labelActionLayer {
-    background: rgba(69, 184, 78, 0.52);
-    z-index: 4;
+    z-index: 3;
     position: absolute;
 }
 
@@ -458,7 +466,7 @@
     background: rgb(206, 220, 231);
 }
 
-/* highlight events and slots by friendcode */
+/* highlight normal events and slots by friendcode */
 .wiring_editor .sources .highlight, .wiring_editor .targets .highlight, .wiring_editor .sources .highlight_main, .wiring_editor .targets .highlight_main {
     background: green;
     color: white;
@@ -467,6 +475,13 @@
 
 .wiring_editor .sources .highlight span, .wiring_editor .targets .highlight span, .wiring_editor .targets .highlight_main span, .wiring_editor .sources .highlight_main span {
     pointer-events: none;
+}
+
+/* highlight subdata events and slots by friendcode */
+.wiring_editor .sources .dataTree.highlight, .wiring_editor .sources .dataTree.highlight_main {
+    background: rgba(0, 138, 0, 0.73);
+    color: white;
+    border-radius: 15px;
 }
 
 /* Highlight events and slots by semantic */

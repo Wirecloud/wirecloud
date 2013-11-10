@@ -672,7 +672,7 @@ OutputSubendpoint.prototype.serialize = function serialize() {
         // close button
         close_button = new StyledElements.StyledButton({
             'title': gettext("Hide"),
-            'class': 'hideTreeButton icon-remove',
+            'class': 'hideTreeButton icon-off',
             'plain': true
         });
         close_button.insertInto(treeFrame);
