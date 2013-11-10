@@ -641,6 +641,12 @@ OutputSubendpoint.prototype.serialize = function serialize() {
                 labelActionLayer.addEventListener('mouseout',function (thecheckbox) {
                     this.wiringEditor.recommendations.deemphasize(thecheckbox);
                 }.bind(this, checkbox), false);
+                checkbox.wrapperElement.addEventListener('mouseover',function (thecheckbox) {
+                    this.wiringEditor.recommendations.emphasize(thecheckbox);
+                }.bind(this, checkbox), false);
+                checkbox.wrapperElement.addEventListener('mouseout',function (thecheckbox) {
+                    this.wiringEditor.recommendations.deemphasize(thecheckbox);
+                }.bind(this, checkbox), false);
 
                 // Sticky effect
                 labelActionLayer.addEventListener('mouseover', checkbox._mouseover_callback, false);
@@ -724,6 +730,12 @@ OutputSubendpoint.prototype.serialize = function serialize() {
                 labelActionLayer.addEventListener('mouseout',function (thecheckbox) {
                     this.wiringEditor.recommendations.deemphasize(thecheckbox);
                 }.bind(this, checkbox), false);
+                checkbox.wrapperElement.addEventListener('mouseover',function (thecheckbox) {
+                    this.wiringEditor.recommendations.emphasize(thecheckbox);
+                }.bind(this, checkbox), false);
+                checkbox.wrapperElement.addEventListener('mouseout',function (thecheckbox) {
+                    this.wiringEditor.recommendations.deemphasize(thecheckbox);
+                }.bind(this, checkbox), false);
 
                 // Sticky effect
                 labelActionLayer.addEventListener('mouseover', checkbox._mouseover_callback, false);
@@ -777,6 +789,12 @@ OutputSubendpoint.prototype.serialize = function serialize() {
         labelActionLayer.addEventListener('mouseout', function (thecheckbox) {
             this.wiringEditor.recommendations.deemphasize(thecheckbox);
         }.bind(this, checkbox));
+        checkbox.wrapperElement.addEventListener('mouseover',function (thecheckbox) {
+            this.wiringEditor.recommendations.emphasize(thecheckbox);
+        }.bind(this, checkbox), false);
+        checkbox.wrapperElement.addEventListener('mouseout',function (thecheckbox) {
+            this.wiringEditor.recommendations.deemphasize(thecheckbox);
+        }.bind(this, checkbox), false);
 
         // Sticky effect
         labelActionLayer.addEventListener('mouseover', function (e) {
