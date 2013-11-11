@@ -61,8 +61,11 @@
             }
 
             function _wiringOutHandler(value) {
+                if (MashupPlatform.prefs.get('boolean')) {
+                    throw new Error();
+                }
                 document.getElementById("wiringOut").textContent = value;
-            }
+            };
 
             function sendEvent() {
                 MashupPlatform.wiring.pushEvent('outputendpoint', document.getElementById("textWiringIn").value);

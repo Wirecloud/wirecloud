@@ -210,6 +210,11 @@ class IOperatorTester(object):
         ''' % {"ioperator": self.id, "endpoint": endpoint_name}
         ))
 
+    @property
+    def error_count(self):
+        return self.testcase.driver.execute_script('return opManager.activeWorkspace.wiring.ioperators[%s].logManager.errorCount' % self.id)
+
+
 class WirecloudRemoteTestCase(object):
 
     @classmethod

@@ -80,7 +80,13 @@
     WidgetTargetEndpoint.prototype.propagate = function propagate(newValue, options) {
         if (!options || is_target_endpoint.call(this, options.targetEndpoints)) {
             if (this.iwidget.loaded) {
-                this.callback.call(this.iwidget, newValue);
+                try {
+                    this.callback.call(this.iwidget, newValue);
+                } catch (error) {
+                    var msg = gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint');
+                    msg = interpolate(msg, {inputendpoint: this.meta.name}, true);
+                    this.iwidget.logManager.log(msg);
+                }
             } else {
                 this.iwidget.pending_events.push({'endpoint': this.meta.name, 'value': newValue});
                 // TODO

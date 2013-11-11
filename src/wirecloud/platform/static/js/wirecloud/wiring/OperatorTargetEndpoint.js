@@ -80,7 +80,10 @@
             if (this.operator.loaded) {
                 try {
                     this.callback.call(this.operator, newValue);
-                } catch (e) {
+                } catch (error) {
+                    var msg = gettext('Exception catched while processing an event that reached the "%(inputendpoint)s" input endpoint');
+                    msg = interpolate(msg, {inputendpoint: this.meta.name}, true);
+                    this.operator.logManager.log(msg);
                 }
             } else {
                 this.operator.pending_events.push({'endpoint': this.meta.name, 'value': newValue});

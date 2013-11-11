@@ -30,6 +30,7 @@
         <wire:hasPlatformPreference>
             <wire:PlatformPreference rdf:ID="preference_1">
                 <dcterms:title>prefix</dcterms:title>
+                <wire:index>0</wire:index>
                 <wire:type>text</wire:type>
                 <dcterms:description>Prefix to concatenate</dcterms:description>
                 <rdfs:label>Prefix</rdfs:label>
@@ -37,7 +38,18 @@
             </wire:PlatformPreference>
         </wire:hasPlatformPreference>
 
-       <wire:hasPlatformWiring>
+        <wire:hasPlatformPreference>
+            <wire:PlatformPreference rdf:ID="preference_2">
+                <dcterms:title>exception_on_event</dcterms:title>
+                <wire:index>1</wire:index>
+                <wire:type>boolean</wire:type>
+                <dcterms:description>Raise exception on event arrival</dcterms:description>
+                <rdfs:label>Throw exceptions</rdfs:label>
+                <wire:default>false</wire:default>
+            </wire:PlatformPreference>
+        </wire:hasPlatformPreference>
+
+        <wire:hasPlatformWiring>
             <wire:PlatformWiring rdf:ID="wiring">
                 <wire:hasInputEndpoint>
                     <wire:InputEndpoint rdf:ID="input_1">

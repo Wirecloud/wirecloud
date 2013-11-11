@@ -506,6 +506,68 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'prefix: hello world!!')
 
+    def test_input_endpoint_exceptions(self):
+
+        self.login(username='user_with_workspaces')
+
+        iwidgets = self.get_current_iwidgets()
+        source_iwidget = iwidgets[0]
+        target_iwidget = iwidgets[1]
+        self.assertIsNotNone(source_iwidget.element)
+        self.assertIsNotNone(target_iwidget.element)
+
+        target_iwidget.perform_action('Settings')
+
+        boolean_input = self.driver.find_element_by_css_selector('.window_menu [name="boolean"]')
+        boolean_input.click()
+
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+
+        self.assertEqual(source_iwidget.error_count, 0)
+        self.assertEqual(target_iwidget.error_count, 0)
+        with source_iwidget:
+            text_input = self.driver.find_element_by_tag_name('input')
+            self.fill_form_input(text_input, 'hello world!!')
+            # Work around hang when using Firefox Driver
+            self.driver.execute_script('sendEvent();')
+            #self.driver.find_element_by_id('b1').click()
+
+        WebDriverWait(self.driver, timeout=10).until(lambda driver: target_iwidget.error_count == 1)
+        self.assertEqual(source_iwidget.error_count, 0)
+
+        with target_iwidget:
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, '')
+
+        # Test exception on the operator input endpoint
+        source_iwidget = iwidgets[1]
+        target_iwidget = iwidgets[0]
+
+        self.change_main_view('wiring')
+
+        # Change operator settings
+        ioperator = self.get_current_wiring_editor_ioperators()[0]
+        ioperator.element.find_element_by_css_selector('.specialIcon').click()
+        self.wait_element_visible_by_css_selector('.editPos_button', element=ioperator.element).click()
+        self.popup_menu_click('Settings')
+
+        self.driver.find_element_by_css_selector('.window_menu [name="exception_on_event"]').click()
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+
+        self.change_main_view('workspace')
+
+        with source_iwidget:
+            text_input = self.driver.find_element_by_tag_name('input')
+            self.fill_form_input(text_input, 'hello world!!')
+            # Work around hang when using Firefox Driver
+            self.driver.execute_script('sendEvent();')
+            #self.driver.find_element_by_id('b1').click()
+
+        self.change_main_view('wiring')
+        ioperator = self.get_current_wiring_editor_ioperators()[0]
+        self.assertEqual(ioperator.error_count, 1)
+        self.assertEqual(target_iwidget.error_count, 0)
+
 
 class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 
