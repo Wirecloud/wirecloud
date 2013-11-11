@@ -420,7 +420,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         with iwidgets[0]:
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, '')
-    test_basic_wiring_editor_operations.tags = ('wiring', 'fiware-ut-6')
+    test_basic_wiring_editor_operations.tags = ('wiring', 'wiring_editor', 'fiware-ut-6')
 
     def test_widget_preferences_in_wiring_editor(self):
 
@@ -466,7 +466,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
         self.change_main_view('wiring')
 
-        # Change widget settings
+        # Change operator settings
         ioperator = self.get_current_wiring_editor_ioperators()[0]
         ioperator.element.find_element_by_css_selector('.specialIcon').click()
         self.wait_element_visible_by_css_selector('.editPos_button', element=ioperator.element).click()
