@@ -80,7 +80,12 @@
     display: none;
 }
 
-.iwidget > .widget_wrapper {
+.iwidget > .widget_shadow {
+    box-shadow: 0 0 8px rgba(50, 50, 50, 0.1);
+    border-radius: 4px;
+}
+
+.iwidget > .widget_shadow > .widget_wrapper {
     clear: both;
     overflow: hidden;
     width: auto;
@@ -90,6 +95,12 @@
     border-color: #DDD;
 }
 
-.iwidget > .statusBar {
+.iwidget > .widget_shadow > .widget_wrapper > iframe {
+    border-radius: 3px 3px 0px 0px;
+    width: 100%;
+    border: none;
+}
+
+.iwidget > .widget_shadow > .statusBar {
     background: #DDD;
 }

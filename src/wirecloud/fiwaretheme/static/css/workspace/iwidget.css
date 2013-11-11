@@ -91,6 +91,11 @@
     border-color: #DDD;
 }
 
+.iwidget > .widget_wrapper > iframe {
+    width: 100%;
+    border: none;
+}
+
 .iwidget > .statusBar {
     background: #DDD;
 }

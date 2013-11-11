@@ -42,11 +42,6 @@ div.widget_window_locked div.widget_wrapper {
   border: none;
 }
 
-div.iwidget div.widget_wrapper iframe {
-    width: 100%;
-    border: none;
-}
-
 div.row {
   white-space: nowrap;
 }
