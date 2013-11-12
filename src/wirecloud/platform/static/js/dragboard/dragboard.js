@@ -20,16 +20,14 @@
  */
 
 /*global document, window, Error, gettext, interpolate, $, Hash, Event, isElement*/
-/*global Constants, ColumnLayout, CSSPrimitiveValue, FreeLayout, FullDragboardLayout, IWidget, LayoutManagerFactory, OpManagerFactory, Wirecloud, SmartColumnLayout*/
+/*global Constants, CSSPrimitiveValue, FreeLayout, FullDragboardLayout, IWidget, LayoutManagerFactory, OpManagerFactory, Wirecloud*/
 
 (function () {
 
     "use strict";
 
     var parseTab = function parseTab(tabInfo) {
-        var curIWidget, position, icon_position, zPos, width, height, iwidget,
-            widget, widgetid, minimized, layout, refusedVersion,
-            opManager, i, readOnly;
+        var curIWidget, widget, layout, opManager, i;
 
         opManager = OpManagerFactory.getInstance();
 
@@ -42,20 +40,11 @@
             this.dragboardElement.addClassName("fixed");
         }
 
-        // For controlling when the iwidgets are totally loaded!
         for (i = 0; i < tabInfo.iwidgets.length; i++) {
             curIWidget = tabInfo.iwidgets[i];
 
             // Get widget model
             widget = Wirecloud.LocalCatalogue.getResourceId(curIWidget.widget);
-
-            // Parse width, height and the position of the iwidget
-            width = parseInt(curIWidget.width, 10);
-            height = parseInt(curIWidget.height, 10);
-            position = new Wirecloud.DragboardPosition(parseInt(curIWidget.left, 10), parseInt(curIWidget.top, 10));
-            icon_position = new Wirecloud.DragboardPosition(parseInt(curIWidget.icon_left, 10), parseInt(curIWidget.icon_top, 10));
-            zPos = parseInt(curIWidget.zIndex, 10);
-            readOnly = curIWidget.readOnly;
 
             // Parse layout field
             if (curIWidget.layout === 0) {
@@ -65,21 +54,21 @@
             }
 
             // Create instance model
-            iwidget = new IWidget(widget,
-                                  curIWidget.id,
-                                  curIWidget.name,
-                                  layout,
-                                  position,
-                                  icon_position,
-                                  zPos,
-                                  width,
-                                  height,
-                                  curIWidget.fulldragboard,
-                                  curIWidget.minimized,
-                                  curIWidget.refused_version,
-                                  false,
-                                  readOnly,
-                                  curIWidget.variables);
+            new IWidget(widget,
+                curIWidget.id,
+                curIWidget.name,
+                layout,
+                new Wirecloud.DragboardPosition(curIWidget.left, curIWidget.top),
+                new Wirecloud.DragboardPosition(curIWidget.icon_left, curIWidget.icon_top),
+                curIWidget.zPos,
+                curIWidget.width,
+                curIWidget.height,
+                curIWidget.fulldragboard,
+                curIWidget.minimized,
+                curIWidget.refused_version,
+                curIWidget.readOnly,
+                curIWidget.variables
+            );
         }
     };
 
@@ -178,9 +167,9 @@
             var horizontal_margin = this.tab.preferences.get('horizontal-margin');
 
             if (this.tab.preferences.get('smart')) {
-                return new SmartColumnLayout(this, columns, cell_height, vertical_margin, horizontal_margin);
+                return new Wirecloud.ui.SmartColumnLayout(this, columns, cell_height, vertical_margin, horizontal_margin);
             } else {
-                return new ColumnLayout(this, columns, cell_height, vertical_margin, horizontal_margin);
+                return new Wirecloud.ui.ColumnLayout(this, columns, cell_height, vertical_margin, horizontal_margin);
             }
         };
 
@@ -263,17 +252,10 @@
             //width = layout.adaptWidth(width, width).inLU;
             var width = widget.default_width;
             var height = widget.default_height;
-            var minimized = false;
-            var freeLayoutAfterLoading = false;
-            var layout = this.baseLayout;
-
-            if (this.tab.preferences.get('layout') === "Free") {
-                minimized = false; //NOTE: this variable is useless, it could be used in the future to add widgets as icons directly
-                freeLayoutAfterLoading = true; //To change the layout to FreeLayout after loading the widget
-            }
+            var layout = this.tab.preferences.get('layout') === "Free" ? 1 : 0;
 
             // Check if the widget doesn't fit in the dragboard
-            if (layout instanceof ColumnLayout) {
+            if (layout instanceof Wirecloud.ui.ColumnLayout) {
                 var maxColumns = layout.getColumns();
                 if (width > maxColumns) {
                     // TODO warning
@@ -281,10 +263,60 @@
                 }
             }
 
-            // Create the instance
-            var iWidget = new IWidget(widget, null, options.iwidgetName, layout, null, null, null, width, height, false, minimized, null, freeLayoutAfterLoading, false);
+            var url = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
+                tab_id: this.tab.id,
+                workspace_id: this.workspace.id
+            });
 
-            iWidget.save(options);
+            var data = JSON.stringify({
+                'widget': widget.id,
+                'width': width,
+                'height': height,
+                'name': options.iwidgetName,
+                'layout': layout
+            });
+
+            Wirecloud.io.makeRequest(url, {
+                method: 'POST',
+                contentType: 'application/json',
+                postBody: data,
+                onSuccess: function onSuccess(response) {
+                    var iwidgetinfo, widget, layout, iwidget;
+
+                    iwidgetinfo = JSON.parse(response.responseText);
+
+                    // Get widget model
+                    widget = Wirecloud.LocalCatalogue.getResourceId(iwidgetinfo.widget);
+
+                    // Parse layout field
+                    if (iwidgetinfo.layout === 0) {
+                        layout = this.baseLayout;
+                    } else {
+                        layout = this.freeLayout;
+                    }
+
+                    iwidget = new IWidget(widget,
+                        iwidgetinfo.id,
+                        iwidgetinfo.name,
+                        layout,
+                        new Wirecloud.DragboardPosition(iwidgetinfo.left, iwidgetinfo.top),
+                        new Wirecloud.DragboardPosition(iwidgetinfo.icon_left, iwidgetinfo.icon_top),
+                        iwidgetinfo.zPos,
+                        iwidgetinfo.width,
+                        iwidgetinfo.height,
+                        iwidgetinfo.fulldragboard,
+                        iwidgetinfo.minimized,
+                        iwidgetinfo.refused_version,
+                        iwidgetinfo.readOnly,
+                        iwidgetinfo.variables
+                    );
+                    this.addIWidget(iwidget, iwidgetinfo, options);
+                    iwidget.paint();
+                }.bind(this),
+                onFailure: function (response) {
+                    Wirecloud.GlobalLogManager.formatAndLog(gettext("Error adding iwidget to persistence: %(errorMsg)s."), response);
+                }
+            });
         };
 
         Dragboard.prototype.removeInstance = function removeInstance(iWidgetId, orderFromServer) {

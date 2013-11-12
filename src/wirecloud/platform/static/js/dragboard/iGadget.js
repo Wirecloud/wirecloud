@@ -54,7 +54,7 @@
  * @param {String}            menu_color    background color for the menu.
  *                                          (6 chars with a hexadecimal color)
  */
-function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, refusedVersion, freeLayoutAfterLoading, readOnly, variables) {
+function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, refusedVersion, readOnly, variables) {
 
     this.code = null;
     this.position = position;
@@ -106,7 +106,6 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
     }
 
     this.refusedVersion = refusedVersion !== null ? new Wirecloud.Version(refusedVersion) : null;
-    this.freeLayoutAfterLoading = freeLayoutAfterLoading; //only used the first time the widget is used to change its layout after loading to FreeLayout
 
     // Elements
     this.element = null;
@@ -1029,50 +1028,6 @@ IWidget.prototype.toggleLayout = function () {
  */
 IWidget.prototype.is_shared_workspace = function () {
     return this.internal_iwidget.workspace.isShared();
-};
-
-/**
- * Saves the iwidget into persistence. Used only for the first time, that is,
- * for creating iwidgets.
- */
-IWidget.prototype.save = function (options) {
-    function onSuccess(transport) {
-        var iwidgetInfo = JSON.parse(transport.responseText);
-        this.internal_iwidget.id = iwidgetInfo['id'];
-        this.codeURL = this.internal_iwidget.widget.code_url + "#id=" + this.id;
-        this.layout.dragboard.addIWidget(this, iwidgetInfo, options);
-    }
-
-    function onError(transport, e) {
-        Wirecloud.GlobalLogManager.formatAndLog(gettext("Error adding iwidget to persistence: %(errorMsg)s."), transport, e);
-        this.destroy();
-    }
-
-    var url = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
-        tab_id: this.layout.dragboard.tabId,
-        workspace_id: this.layout.dragboard.workspaceId
-    });
-
-    var data = JSON.stringify({
-        'widget': this.internal_iwidget.widget.id,
-        'left': this.position.x,
-        'top': this.position.y,
-        'icon_left': this.iconPosition.x,
-        'icon_top': this.iconPosition.y,
-        'zIndex': this.zPos,
-        'width': this.contentWidth,
-        'height': this.contentHeight,
-        'name': this.name,
-        'layout': this.onFreeLayout() ? 1 : 0
-    });
-    Wirecloud.io.makeRequest(url, {
-        method: 'POST',
-        contentType: 'application/json',
-        postBody: data,
-        onSuccess: onSuccess.bind(this),
-        onFailure: onError.bind(this),
-        onException: onError.bind(this)
-    });
 };
 
 /**
