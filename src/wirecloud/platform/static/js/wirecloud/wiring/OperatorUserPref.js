@@ -26,17 +26,24 @@
     "use strict";
 
     var OperatorUserPref = function OperatorUserPref(options) {
+
+        if (options.default_value != null && typeof options.default_value !== "string") {
+            throw new TypeError('Invalid default_value option');
+        }
+
         Object.defineProperty(this, 'name', {value: options.name});
         Object.defineProperty(this, 'type', {value: options.type});
         Object.defineProperty(this, 'label', {value: options.label});
         Object.defineProperty(this, 'description', {value: options.description});
         Object.defineProperty(this, 'options', {value: options});
 
-        if (options.default_value == null) {
-            Object.defineProperty(this, 'default_value', {value: ''});
-        } else {
-            Object.defineProperty(this, 'default_value', {value: options.default_value});
+        var default_value = '';
+        if (options.type !== 'boolean' && options.default_value != null) {
+            default_value = options.default_value;
+        } else if (options.type === 'boolean') {
+            default_value = options.default_value.trim().toLowerCase() === 'true';
         }
+        Object.defineProperty(this, 'default_value', {value: default_value});
     };
 
     OperatorUserPref.prototype.getInterfaceDescription = function getInterfaceDescription(ioperator) {
