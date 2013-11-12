@@ -20,7 +20,7 @@
  */
 
 /*global document, window, Error, gettext, interpolate, $, Hash, Event, isElement*/
-/*global Constants, ColumnLayout, CSSPrimitiveValue, DragboardPosition, FreeLayout, FullDragboardLayout, IWidget, LayoutManagerFactory, OpManagerFactory, Wirecloud, SmartColumnLayout*/
+/*global Constants, ColumnLayout, CSSPrimitiveValue, FreeLayout, FullDragboardLayout, IWidget, LayoutManagerFactory, OpManagerFactory, Wirecloud, SmartColumnLayout*/
 
 (function () {
 
@@ -52,8 +52,8 @@
             // Parse width, height and the position of the iwidget
             width = parseInt(curIWidget.width, 10);
             height = parseInt(curIWidget.height, 10);
-            position = new DragboardPosition(parseInt(curIWidget.left, 10), parseInt(curIWidget.top, 10));
-            icon_position = new DragboardPosition(parseInt(curIWidget.icon_left, 10), parseInt(curIWidget.icon_top, 10));
+            position = new Wirecloud.DragboardPosition(parseInt(curIWidget.left, 10), parseInt(curIWidget.top, 10));
+            icon_position = new Wirecloud.DragboardPosition(parseInt(curIWidget.icon_left, 10), parseInt(curIWidget.icon_top, 10));
             zPos = parseInt(curIWidget.zIndex, 10);
             readOnly = curIWidget.readOnly;
 
@@ -588,18 +588,6 @@
     window.Dragboard = Dragboard;
 
 })();
-
-/////////////////////////////////////
-// DragboardPosition
-/////////////////////////////////////
-function DragboardPosition(x, y) {
-    this.x = x;
-    this.y = y;
-}
-
-DragboardPosition.prototype.clone = function () {
-    return new DragboardPosition(this.x, this.y);
-};
 
 /////////////////////////////////////
 // Drag and drop support

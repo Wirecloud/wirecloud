@@ -20,7 +20,7 @@
  */
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
-/*global gettext, Constants, DragboardLayout, DragboardPosition, IWidget, MultiValuedSize */
+/*global gettext, Constants, DragboardLayout, IWidget, MultiValuedSize */
 
 /////////////////////////////////////
 // ColumnLayout
@@ -461,7 +461,7 @@ ColumnLayout.prototype._notifyResizeEvent = function (iWidget, oldWidth, oldHeig
 };
 
 ColumnLayout.prototype._insertAt = function (iWidget, x, y) {
-    var newPosition = new DragboardPosition(x > 0 ? x : 0, y > 0 ? y : 0);
+    var newPosition = new Wirecloud.DragboardPosition(x > 0 ? x : 0, y > 0 ? y : 0);
 
     // Move other instances
     var affectedwidget, offset, affectedY;
@@ -501,7 +501,7 @@ ColumnLayout.prototype._searchFreeSpace = function (width, height) {
     for (positionY = 0; true ; positionY++) {
         for (positionX = 0; positionX < columns; positionX++) {
             if (this._hasSpaceFor(this.matrix, positionX, positionY, width, height)) {
-                return new DragboardPosition(positionX, positionY);
+                return new Wirecloud.DragboardPosition(positionX, positionY);
             }
         }
     }
@@ -555,8 +555,8 @@ ColumnLayout.prototype.initialize = function () {
 ColumnLayout.prototype.getCellAt = function (x, y) {
     var columnWidth = this.getWidth() / this.getColumns();
 
-    return new DragboardPosition(Math.floor(x / columnWidth),
-                                 Math.floor(y / this.getCellHeight()));
+    return new Wirecloud.DragboardPosition(Math.floor(x / columnWidth),
+        Math.floor(y / this.getCellHeight()));
 };
 
 /**

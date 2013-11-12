@@ -20,7 +20,7 @@
  */
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
-/*global gettext, Constants, DragboardLayout, DragboardPosition, IWidget, MultiValuedSize*/
+/*global gettext, Constants, DragboardLayout, IWidget, MultiValuedSize*/
 
 /////////////////////////////////////
 // FullDragboard
@@ -113,7 +113,7 @@ FullDragboardLayout.prototype.initialize = function () {
  * Calculate what cell is at a given position in pixels
  */
 FullDragboardLayout.prototype.getCellAt = function (x, y) {
-    return new DragboardPosition(0, 0);
+    return new Wirecloud.DragboardPosition(0, 0);
 };
 
 FullDragboardLayout.prototype.addIWidget = function (iWidget, affectsDragboard) {
@@ -125,7 +125,7 @@ FullDragboardLayout.prototype.addIWidget = function (iWidget, affectsDragboard) 
         return;
     }
 
-    iWidget.setPosition(new DragboardPosition(0, 0));
+    iWidget.setPosition(new Wirecloud.DragboardPosition(0, 0));
 };
 
 FullDragboardLayout.prototype.removeIWidget = function (iWidget, affectsDragboard) {

@@ -22,7 +22,7 @@
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
 /*global $, CSSPrimitiveValue, Event, Insertion, document, gettext, ngettext, interpolate, window */
 /*global Constants, DropDownMenu, LayoutManagerFactory, OpManagerFactory, Wirecloud*/
-/*global isElement, DragboardPosition*/
+/*global isElement*/
 /*global IWidgetDraggable, IWidgetIconDraggable, FreeLayout, FullDragboardLayout*/
 /*global ColorDropDownMenu*/
 
@@ -156,7 +156,7 @@ IWidget.prototype.invalidIconPosition = function () {
 IWidget.prototype.setPosition = function (position) {
     // Set a initial icon position (first time) or it still follows the widget (both positions are a reference to the same object)
     if (!this.iconPosition) {
-        this.setIconPosition(new DragboardPosition(-1, -1));
+        this.setIconPosition(new Wirecloud.DragboardPosition(-1, -1));
     }
     if (this.onFreeLayout() && this.invalidIconPosition()) {
         this.setIconPosition(position);

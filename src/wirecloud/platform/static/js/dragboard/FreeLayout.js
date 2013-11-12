@@ -20,7 +20,7 @@
  */
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
-/*global gettext, Constants, DragboardLayout, DragboardPosition, IWidget, LayoutManagerFactory, MultiValuedSize*/
+/*global gettext, Constants, DragboardLayout, IWidget, LayoutManagerFactory, MultiValuedSize*/
 
 /////////////////////////////////////
 // FreeLayout
@@ -142,7 +142,7 @@ FreeLayout.prototype.initialize = function () {
  * Calculate what cell is at a given position in pixels
  */
 FreeLayout.prototype.getCellAt = function (x, y) {
-    return new DragboardPosition((x * this.MAX_HLU) / this.getWidth(), y);
+    return new Wirecloud.DragboardPosition((x * this.MAX_HLU) / this.getWidth(), y);
 };
 
 FreeLayout.prototype.addIWidget = function (iWidget, affectsDragboard) {
@@ -153,8 +153,8 @@ FreeLayout.prototype.addIWidget = function (iWidget, affectsDragboard) {
     }
 
     var position = iWidget.getPosition();
-    if (!(position instanceof DragboardPosition)) {
-        position = new DragboardPosition(0, 0);
+    if (!(position instanceof Wirecloud.DragboardPosition)) {
+        position = new Wirecloud.DragboardPosition(0, 0);
     }
 
     iWidget.setPosition(position);
