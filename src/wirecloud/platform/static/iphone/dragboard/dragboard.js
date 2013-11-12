@@ -105,10 +105,6 @@ function Dragboard(tab, workspace, dragboardElement) {
         this.iWidgets = null;
     };
 
-    Dragboard.prototype.showInstance = function (iwidget) {
-        iwidget.paint();
-    };
-
     Dragboard.prototype.getIWidgets = function () {
         return this.iWidgets.values();
     };

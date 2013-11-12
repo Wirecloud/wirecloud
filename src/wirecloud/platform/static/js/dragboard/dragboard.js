@@ -293,26 +293,6 @@
             iwidget.remove(orderFromServer);
         };
 
-        Dragboard.prototype.saveConfig = function saveConfig(iWidgetId) {
-            var iwidget = this.iWidgets.get(iWidgetId);
-            try {
-                iwidget.saveConfig();
-
-                iwidget.setConfigurationVisible(false);
-            } catch (e) {
-            }
-        };
-
-        Dragboard.prototype.setDefaultPrefs = function setDefaultPrefs(iWidgetId) {
-            var iwidget = this.iWidgets.get(iWidgetId);
-            iwidget.setDefaultPrefs();
-        };
-
-        Dragboard.prototype.notifyErrorOnIWidget = function notifyErrorOnIWidget(iWidgetId) {
-            var iwidget = this.iWidgets.get(iWidgetId);
-            iwidget.notifyError();
-        };
-
         Dragboard.prototype.getIWidgets = function getIWidgets() {
             return this.iWidgets.values();
         };
