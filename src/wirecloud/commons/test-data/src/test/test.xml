@@ -33,6 +33,4 @@
         <XHTML href="test.html"/>
     </Platform.Link>
     <Platform.Rendering width="6" height="24"/>
-    <Platform.Context>
-    </Platform.Context>
 </Template>
