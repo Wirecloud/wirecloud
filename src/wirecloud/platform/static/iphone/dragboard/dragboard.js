@@ -42,9 +42,7 @@ function Dragboard(tab, workspace, dragboardElement) {
     //Atributes
     this.iWidgets = new Hash();
     this.tab = tab;
-    this.tabId = tab.tabInfo.id;
     this.workspace = workspace;
-    this.workspaceId = workspace.workspaceState.id;
 
     // ****************
     // PUBLIC METHODS

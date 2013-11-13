@@ -89,9 +89,7 @@
         this.iWidgets = new Hash();
         this.iWidgetsByCode = new Hash();
         this.tab = tab;
-        this.tabId = tab.tabInfo.id;
         this.workspace = workspace;
-        this.workspaceId = workspace.workspaceState.id;
         this.readOnly = false;
 
         // ***********************
@@ -120,7 +118,7 @@
                 iWidgetInfo = {};
                 position = iWidget.getPosition();
                 iWidgetInfo.id = iWidget.id;
-                iWidgetInfo.tab = this.tabId;
+                iWidgetInfo.tab = this.tab.id;
                 if (this.workspace.isOwned()) {
                     iWidgetInfo.minimized = iWidget.isMinimized();
                 }
@@ -145,8 +143,8 @@
             }
 
             uri = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
-                workspace_id: this.workspaceId,
-                tab_id: this.tabId
+                workspace_id: this.workspace.id,
+                tab_id: this.tab.id
             });
             Wirecloud.io.makeRequest(uri, {
                 method: 'PUT',
@@ -654,7 +652,7 @@ IWidgetDraggable.prototype.startFunc = function (draggable, context) {
     context.selectedTabElement = null;
     context.layout = context.iWidget.layout;
     context.dragboard = context.layout.dragboard;
-    context.currentTab = context.dragboard.tabId;
+    context.currentTab = context.dragboard.tab.id;
     context.dragboard.raiseToTop(context.iWidget);
     context.layout.initializeMove(context.iWidget, draggable);
 

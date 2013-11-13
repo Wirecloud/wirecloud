@@ -487,8 +487,8 @@ IWidget.prototype.setRefusedVersion = function (v) {
     $("version_button_" + this.id).hide();
 
     var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-        workspace_id: this.layout.dragboard.workspaceId,
-        tab_id: this.layout.dragboard.tabId,
+        workspace_id: this.layout.dragboard.workspace.id,
+        tab_id: this.layout.dragboard.tab.id,
         iwidget_id: this.id
     });
     Wirecloud.io.makeRequest(iwidgetUrl, {
@@ -537,8 +537,8 @@ IWidget.prototype.upgradeIWidget = function () {
         source: this.internal_iwidget.widget.getLastVersion().source
     };
     var url = Wirecloud.URLs.IWIDGET_VERSION_ENTRY.evaluate({
-        workspace_id: this.layout.dragboard.workspaceId,
-        tab_id: this.layout.dragboard.tabId,
+        workspace_id: this.layout.dragboard.workspace.id,
+        tab_id: this.layout.dragboard.tab.id,
         iwidget_id: this.id
     });
 
@@ -616,8 +616,8 @@ IWidget.prototype.remove = function (orderFromServer) {
         };
 
         var uri = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-            workspace_id: dragboard.workspaceId,
-            tab_id: dragboard.tabId,
+            workspace_id: dragboard.workspace.id,
+            tab_id: dragboard.tab.id,
             iwidget_id: this.id
         });
         Wirecloud.io.makeRequest(uri, {
@@ -1152,13 +1152,13 @@ IWidget.prototype.moveToLayout = function (newLayout) {
         iWidgetInfo['icon_top'] = this.iconPosition.y;
         iWidgetInfo['icon_left'] = this.iconPosition.x;
         iWidgetInfo['zIndex'] = this.zPos;
-        iWidgetInfo['tab'] = this.layout.dragboard.tabId;
+        iWidgetInfo['tab'] = this.layout.dragboard.tab.id;
 
         data.push(iWidgetInfo);
 
         var url = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
-            workspace_id: oldLayout.dragboard.workspaceId,
-            tab_id: oldLayout.dragboard.tabId
+            workspace_id: oldLayout.dragboard.workspace.id,
+            tab_id: oldLayout.dragboard.tab.id
         });
         Wirecloud.io.makeRequest(url, {
             method: 'PUT',
