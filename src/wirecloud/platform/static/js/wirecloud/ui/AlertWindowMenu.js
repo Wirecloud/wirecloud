@@ -52,6 +52,17 @@
         }
     };
 
+    /**
+     * Updates the message displayed by this <code>WindowMenu</code>
+     */
+    AlertWindowMenu.prototype.setHTMLMsg = function setHTMLMsg(msg) {
+        this.msgElement.innerHTML = msg;
+
+        if (isElement(this.htmlElement.parentNode)) {
+            this.calculatePosition();
+        }
+    };
+
     AlertWindowMenu.prototype._acceptListener = function _acceptListener(e) {
         this.acceptHandler();
         this.hide();
