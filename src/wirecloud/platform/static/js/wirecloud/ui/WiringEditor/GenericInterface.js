@@ -18,38 +18,7 @@
  *     under the License.
  */
 
-/*global Draggable, gettext, interpolate, StyledElements, Wirecloud, EzWebExt, LayoutManagerFactory */
-
-/* Extra functions for the subdata trees construction */
-var OutputSubendpoint = function (name, description, iwidget, type) {
-    var nameList, subdata;
-
-    this.iwidget = iwidget;
-	this.name = name;
-	this.subdata = description.subdata;
-	this.variable = description;
-    this.type = type;
-
-    this.friendcode = description.friendcode;
-    nameList = name.split('/');
-    subdata = JSON.parse(description.subdata);
-    for (i = 1; i < nameList.length; i ++) {
-        if (nameList[0] == nameList[1]) {
-            break;
-        }
-        subdata = subdata[nameList[i]];
-        this.friendcode = subdata.semanticType;
-        subdata = subdata.subdata;
-    }
-};
-
-OutputSubendpoint.prototype.serialize = function serialize() {
-    return {
-        'type': this.type,
-        'id': this.iwidget.id,
-        'endpoint': this.name
-    };
-};
+/*global Draggable, gettext, ngettext, interpolate, StyledElements, Wirecloud, EzWebExt */
 
 (function () {
 
@@ -78,7 +47,7 @@ OutputSubendpoint.prototype.serialize = function serialize() {
         if (extending === true) {
             return;
         }
-        var del_button, log_button, item, type, msg, ghostNotification;
+        var del_button, log_button, type, msg, ghostNotification;
 
         StyledElements.Container.call(this, {'class': className}, []);
 
@@ -299,14 +268,49 @@ OutputSubendpoint.prototype.serialize = function serialize() {
     };
 
     /**
+     * OutputSubendpoint
+     */
+    var OutputSubendpoint = function OutputSubendpoint(name, description, iwidget, type) {
+        var nameList, subdata, i;
+
+        this.iwidget = iwidget;
+        this.name = name;
+        this.subdata = description.subdata;
+        this.variable = description;
+        this.type = type;
+
+        this.friendcode = description.friendcode;
+        nameList = name.split('/');
+        subdata = JSON.parse(description.subdata);
+        for (i = 1; i < nameList.length; i++) {
+            if (nameList[0] == nameList[1]) {
+                break;
+            }
+            subdata = subdata[nameList[i]];
+            this.friendcode = subdata.semanticType;
+            subdata = subdata.subdata;
+        }
+    };
+
+    /**
+     * Serialize OutputSubendpoint
+     */
+    OutputSubendpoint.prototype.serialize = function serialize() {
+        return {
+            'type': this.type,
+            'id': this.iwidget.id,
+            'endpoint': this.name
+        };
+    };
+
+    /**
      * format Tree
      */
-    var formatTree = function(treeDiv, entityHeiht, entityWidth) {
+    var formatTree = function(treeDiv, entityWidth) {
         var heightPerLeaf, branchList, i, j, nleafsAux, desp,
             checkbox, label, height, firstFrame, firstTree, width,
             diff, treeWidth, actionLayer, bounding, treeBounding,
-            leafs, leafDataTreeList, leafsAux, actionLayerListAux,
-            lastTop, subtrees;
+            leafs, lastTop, subtrees;
 
         firstFrame = treeDiv.getElementsByClassName("labelsFrame")[0];
         firstTree = treeDiv.getElementsByClassName("tree")[0];
@@ -319,7 +323,7 @@ OutputSubendpoint.prototype.serialize = function serialize() {
         width = firstFrame.getBoundingClientRect().width;
         firstTree.style.height = height + 10 + 'px';
         treeWidth = treeDiv.getBoundingClientRect().width;
-        if (treeWidth < entityWidth- 14) {
+        if (treeWidth < entityWidth - 14) {
             treeDiv.style.width = entityWidth - 14 + 'px';
             treeDiv.style.left = 7 + 'px';
         }
@@ -329,11 +333,11 @@ OutputSubendpoint.prototype.serialize = function serialize() {
         heightPerLeaf = height/leafs.length;
 
         branchList = treeDiv.getElementsByClassName("dataTree branch");
-        for (i = 0; i < branchList.length; i ++) {
+        for (i = 0; i < branchList.length; i++) {
 
             // Set Label position
             nleafsAux = branchList[i].getElementsByClassName('leaf').length;
-            desp = -(((nleafsAux/2) * heightPerLeaf) - (heightPerLeaf/2));
+            desp = -(((nleafsAux / 2) * heightPerLeaf) - (heightPerLeaf / 2));
             label = branchList[i].getElementsByClassName('labelTree')[branchList[i].getElementsByClassName('labelTree').length - 1];
 
             // Set label and anchor position
@@ -385,7 +389,7 @@ OutputSubendpoint.prototype.serialize = function serialize() {
             }
             acumulatedTop +=  treeBounding.height;
         }
-    }
+    };
 
     /*************************************************************************
      * Public methods
@@ -440,10 +444,10 @@ OutputSubendpoint.prototype.serialize = function serialize() {
      */
     GenericInterface.prototype.makeSlotsDraggable = function makeSlotsDraggable() {
         var i;
-        for (i = 0; i < this.draggableSources.length; i ++) {
+        for (i = 0; i < this.draggableSources.length; i++) {
             this.makeSlotDraggable(this.draggableSources[i], this.wiringEditor.layout.center, 'source_clon');
         }
-        for (i = 0; i < this.draggableTargets.length; i ++) {
+        for (i = 0; i < this.draggableTargets.length; i++) {
             this.makeSlotDraggable(this.draggableTargets[i], this.wiringEditor.layout.center, 'target_clon');
         }
     };
@@ -612,7 +616,7 @@ OutputSubendpoint.prototype.serialize = function serialize() {
     };
 
     /**
-     * generate SubTree
+     * Generate SubTree
      */
     GenericInterface.prototype.generateSubTree = function(anchorContext, subAnchors) {
         var treeFrame, key, lab, checkbox, subdata, subTree, labelsFrame, context, name,
@@ -688,16 +692,16 @@ OutputSubendpoint.prototype.serialize = function serialize() {
     };
 
     /**
-     * generate Tree
+     * Generate Tree
      */
-    GenericInterface.prototype.generateTree = function(anchorContext, subtree, anchor, label, closeHandler) {
+    GenericInterface.prototype.generateTree = function(anchorContext, subtree, label, closeHandler) {
         var subAnchors, treeFrame, lab, checkbox, subdata, key, subTree, subTreeFrame, type,
             labelsFrame, labelMain, close_button, context, name, labelActionLayer, entity;
 
         treeFrame = document.createElement("div");
         treeFrame.classList.add('tree');
         treeFrame.classList.add('sources');
-        // close button
+        // Close button
         close_button = new StyledElements.StyledButton({
             'title': gettext("Hide"),
             'class': 'hideTreeButton icon-off',
@@ -847,17 +851,17 @@ OutputSubendpoint.prototype.serialize = function serialize() {
             subDataArrow, firstIndex, mainEndpoint, mainSubEndPoint, theArrow, mainEndpointArrows;
 
         if (treeDiv == null) {
-            // descend canvas
+            // Descend canvas
             this.wiringEditor.canvas.canvasElement.classList.remove("elevated");
 
-            // hide tree
+            // Hide tree
             this.activatedTree.classList.remove('activated');
             this.activatedTree = null;
 
-            // deactivate subdataMode
+            // Deactivate subdataMode
             this.wrapperElement.classList.remove('subdataMode');
 
-            // hide subdata connections, and show hollow and full connections
+            // Hide subdata connections, and show hollow and full connections
             if (!isEmpty(this.subdataConnections[name])) {
                 for (key in this.subdataConnections[name]) {
                     firstIndex = this.subdataConnections[name][key].length - 1;
@@ -877,34 +881,33 @@ OutputSubendpoint.prototype.serialize = function serialize() {
                 }
             }
         } else {
-            // elevate canvas
+            // Elevate canvas
             this.wiringEditor.canvas.canvasElement.classList.add("elevated");
 
-            // show tree
-            initialHeiht = this.wrapperElement.getBoundingClientRect().height - this.header.getBoundingClientRect().height;
+            // Show tree
             initialWidth = this.wrapperElement.getBoundingClientRect().width;
             treeDiv.classList.add('activated');
             this.activatedTree = treeDiv;
-            formatTree(treeDiv, initialHeiht, initialWidth);
+            formatTree(treeDiv, initialWidth);
 
-            // activate subdataMode
+            // Activate subdataMode
             this.wrapperElement.classList.add('subdataMode');
 
-            // add a subconnection for each main connexion in the main endpoint
+            // Add a subconnection for each main connexion in the main endpoint
             layer = this.wiringEditor.arrowCreator.layer;
             mainEndpoint = this.sourceAnchorsByName[name];
             mainSubEndPoint = this.sourceAnchorsByName[name + "/" + name];
             mainEndpointArrows = mainEndpoint.getArrows();
             for (i = 0; i < mainEndpointArrows.length ; i += 1) {
                 if (!mainEndpointArrows[i].hasClassName('hollow')) {
-                    // new full subConnection
+                    // New full subConnection
                     theArrow = this.wiringEditor.canvas.drawArrow(mainSubEndPoint.getCoordinates(layer), mainEndpointArrows[i].endAnchor.getCoordinates(layer), "arrow subdataConnection full");
                     theArrow.setEndAnchor(mainEndpointArrows[i].endAnchor);
                     theArrow.setStartAnchor(mainSubEndPoint);
                     mainSubEndPoint.addArrow(theArrow);
                     mainEndpointArrows[i].endAnchor.addArrow(theArrow);
 
-                    // add this connections to subdataConnections
+                    // Add this connections to subdataConnections
                     if (this.subdataConnections[name] == null) {
                         this.subdataConnections[name] = {};
                     }
@@ -913,7 +916,7 @@ OutputSubendpoint.prototype.serialize = function serialize() {
                     }
                     this.subdataConnections[name][name + "/" + name].push({'subDataArrow' : theArrow, 'externalRep': mainEndpointArrows[i]});
 
-                    // add this connections to fullConnections
+                    // Add this connections to fullConnections
                     if (this.fullConnections[name] == null) {
                         this.fullConnections[name] = {};
                     }
@@ -924,7 +927,7 @@ OutputSubendpoint.prototype.serialize = function serialize() {
                 }
             }
 
-            // show subdata connections, and hide hollow connections
+            // Show subdata connections, and hide hollow connections
             for (key in this.subdataConnections[name]) {
                 for (i = 0; i < this.subdataConnections[name][key].length ; i += 1) {
                     this.subdataConnections[name][key][i].externalRep.hide();
@@ -937,7 +940,7 @@ OutputSubendpoint.prototype.serialize = function serialize() {
     };
 
     /**
-     * add subdata connection.
+     * Add subdata connection.
      */
     GenericInterface.prototype.addSubdataConnection = function addSubdataConnection(endpoint, subdatakey, connection, sourceAnchor, targetAnchor, isLoadingWiring) {
         var theArrow, mainEndpoint, layer;
@@ -952,7 +955,7 @@ OutputSubendpoint.prototype.serialize = function serialize() {
         layer = this.wiringEditor.arrowCreator.layer;
         mainEndpoint = this.sourceAnchorsByName[endpoint];
         if ((endpoint + "/" + endpoint) == subdatakey) {
-            // add full connection
+            // Add full connection
             if (this.fullConnections[endpoint] == null) {
                 this.fullConnections[endpoint] = {};
             }
@@ -963,7 +966,7 @@ OutputSubendpoint.prototype.serialize = function serialize() {
             theArrow = this.wiringEditor.canvas.drawArrow(mainEndpoint.getCoordinates(layer), targetAnchor.getCoordinates(layer), "arrow");
             this.fullConnections[endpoint][subdatakey].push(theArrow);
         } else {
-            // add a hollow connection
+            // Add a hollow connection
             if (this.hollowConnections[endpoint] == null) {
                 this.hollowConnections[endpoint] = {};
             }
@@ -986,13 +989,13 @@ OutputSubendpoint.prototype.serialize = function serialize() {
     };
 
     /**
-     * remove subdata connection.
+     * Remove subdata connection.
      */
     GenericInterface.prototype.removeSubdataConnection = function removeSubdataConnection(endpoint, subdatakey, connection) {
         var i, externalRep;
 
         if ((endpoint + "/" + endpoint) == subdatakey) {
-            // remove full connection
+            // Remove full connection
             if (this.fullConnections[endpoint] != null && this.fullConnections[endpoint][subdatakey] != null) {
                 for (i = 0; i < this.subdataConnections[endpoint][subdatakey].length ; i += 1) {
                     if (this.subdataConnections[endpoint][subdatakey][i].subDataArrow == connection) {
@@ -1005,10 +1008,10 @@ OutputSubendpoint.prototype.serialize = function serialize() {
                     }
                 }
             } else {
-                //error
+                // Error
             }
         } else {
-            // remove a hollow connection
+            // Remove a hollow connection
             if (this.hollowConnections[endpoint] != null && this.hollowConnections[endpoint][subdatakey] != null) {
                 for (i = 0; i < this.subdataConnections[endpoint][subdatakey].length ; i += 1) {
                     if (this.subdataConnections[endpoint][subdatakey][i].subDataArrow == connection) {
@@ -1021,7 +1024,7 @@ OutputSubendpoint.prototype.serialize = function serialize() {
                     }
                 }
             } else {
-                //error
+                // Error
             }
         }
     };
@@ -1030,7 +1033,7 @@ OutputSubendpoint.prototype.serialize = function serialize() {
      * Add Source.
      */
     GenericInterface.prototype.addSource = function addSource(label, desc, name, anchorContext) {
-        var anchor, anchorDiv, labelDiv, anchorLabel, treeDiv, subAnchors, friendCode;
+        var anchor, anchorDiv, labelDiv, anchorLabel, treeDiv, subAnchors;
 
         // Sources counter
         this.numberOfSources += 1;
@@ -1060,7 +1063,7 @@ OutputSubendpoint.prototype.serialize = function serialize() {
 
             subAnchors = anchorContext.data.subdata;
             if (subAnchors != null) {
-                // generate tree
+                // Generate tree
                 treeDiv = document.createElement("div");
                 treeDiv.classList.add('anchorTree');
                 treeDiv.addEventListener('click', function (e) {
@@ -1069,7 +1072,7 @@ OutputSubendpoint.prototype.serialize = function serialize() {
                 treeDiv.addEventListener('mousedown', function (e) {
                     e.stopPropagation();
                 }.bind(this), false);
-                treeDiv.appendChild(this.generateTree(anchorContext, subAnchors, anchor, label, this.subdataHandler.bind(this, null, name)));
+                treeDiv.appendChild(this.generateTree(anchorContext, subAnchors, label, this.subdataHandler.bind(this, null, name)));
                 this.wrapperElement.appendChild(treeDiv);
 
                 // Handler for subdata tree
@@ -1108,7 +1111,7 @@ OutputSubendpoint.prototype.serialize = function serialize() {
      * Add Target.
      */
     GenericInterface.prototype.addTarget = function addTarget(label, desc, name, anchorContext) {
-        var anchor, anchorDiv, labelDiv, anchorLabel, friendCode;
+        var anchor, anchorDiv, labelDiv, anchorLabel;
 
         // Targets counter
         this.numberOfTargets += 1;
@@ -1264,7 +1267,7 @@ OutputSubendpoint.prototype.serialize = function serialize() {
      * Destroy
      */
     GenericInterface.prototype.destroy = function destroy() {
-        var i, j, arrows, cList;
+        var i, j, arrows;
 
         this.unselect();
         if (this.editingPos === true) {
@@ -1343,10 +1346,10 @@ OutputSubendpoint.prototype.serialize = function serialize() {
         this.sourceDiv.wrapperElement.classList.remove("editing");
         this.targetDiv.wrapperElement.classList.remove("editing");
         this.removeClassName("editing");
-        for (i = 0; i < this.draggableSources.length; i ++) {
+        for (i = 0; i < this.draggableSources.length; i++) {
             this.draggableSources[i].draggable.destroy();
         }
-        for (i = 0; i < this.draggableTargets.length; i ++) {
+        for (i = 0; i < this.draggableTargets.length; i++) {
             this.draggableTargets[i].draggable.destroy();
         }
     };
@@ -1377,10 +1380,10 @@ OutputSubendpoint.prototype.serialize = function serialize() {
 
         sources = [];
         targets = [];
-        for (i = 0; i < this.sourceDiv.wrapperElement.childNodes.length; i ++) {
+        for (i = 0; i < this.sourceDiv.wrapperElement.childNodes.length; i++) {
             sources[i] = this.getNameForSort(this.sourceDiv.wrapperElement.childNodes[i], 'source');
         }
-        for (i = 0; i < this.targetDiv.wrapperElement.childNodes.length; i ++) {
+        for (i = 0; i < this.targetDiv.wrapperElement.childNodes.length; i++) {
             targets[i] = this.getNameForSort(this.targetDiv.wrapperElement.childNodes[i], 'target');
         }
         return {'sources': sources, 'targets': targets};
