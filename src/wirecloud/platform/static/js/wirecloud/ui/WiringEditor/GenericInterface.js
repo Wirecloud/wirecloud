@@ -304,6 +304,32 @@
     };
 
     /**
+     * Set ActionLabel listeners in a endpoint
+     */
+    var setlabelActionListeners =  function setlabelActionListeners(labelActionLayer, checkbox)  {
+        // Emphasize listeners
+        labelActionLayer.addEventListener('mouseover',function (thecheckbox) {
+            this.wiringEditor.recommendations.emphasize(thecheckbox);
+        }.bind(this, checkbox), false);
+        labelActionLayer.addEventListener('mouseout',function (thecheckbox) {
+            this.wiringEditor.recommendations.deemphasize(thecheckbox);
+        }.bind(this, checkbox), false);
+        checkbox.wrapperElement.addEventListener('mouseover',function (thecheckbox) {
+            this.wiringEditor.recommendations.emphasize(thecheckbox);
+        }.bind(this, checkbox), false);
+        checkbox.wrapperElement.addEventListener('mouseout',function (thecheckbox) {
+            this.wiringEditor.recommendations.deemphasize(thecheckbox);
+        }.bind(this, checkbox), false);
+
+        // Sticky effect
+        labelActionLayer.addEventListener('mouseover', checkbox._mouseover_callback, false);
+        labelActionLayer.addEventListener('mouseout', checkbox._mouseout_callback, false);
+
+        // Connect anchor whith mouseup on the label
+        labelActionLayer.addEventListener('mouseup', checkbox._mouseup_callback, false);
+    };
+
+    /**
      * format Tree
      */
     var formatTree = function(treeDiv, entityWidth) {
@@ -652,26 +678,8 @@
                 labelActionLayer = document.createElement("div");
                 labelActionLayer.classList.add("labelActionLayer");
 
-                // emphasize listeners
-                labelActionLayer.addEventListener('mouseover',function (thecheckbox) {
-                    this.wiringEditor.recommendations.emphasize(thecheckbox);
-                }.bind(this, checkbox), false);
-                labelActionLayer.addEventListener('mouseout',function (thecheckbox) {
-                    this.wiringEditor.recommendations.deemphasize(thecheckbox);
-                }.bind(this, checkbox), false);
-                checkbox.wrapperElement.addEventListener('mouseover',function (thecheckbox) {
-                    this.wiringEditor.recommendations.emphasize(thecheckbox);
-                }.bind(this, checkbox), false);
-                checkbox.wrapperElement.addEventListener('mouseout',function (thecheckbox) {
-                    this.wiringEditor.recommendations.deemphasize(thecheckbox);
-                }.bind(this, checkbox), false);
+                setlabelActionListeners.call(this, labelActionLayer, checkbox);
 
-                // Sticky effect
-                labelActionLayer.addEventListener('mouseover', checkbox._mouseover_callback, false);
-                labelActionLayer.addEventListener('mouseout', checkbox._mouseout_callback, false);
-
-                // Connect anchor whith mouseup on the label
-                labelActionLayer.addEventListener('mouseup', checkbox._mouseup_callback, false);
                 subTree = this.generateSubTree(context, subAnchors.subdata[key], checkbox);
                 if (subTree !== null) {
                     subdata.appendChild(subTree);
@@ -741,26 +749,8 @@
                 labelActionLayer = document.createElement("div");
                 labelActionLayer.classList.add("labelActionLayer");
 
-                // emphasize listeners
-                labelActionLayer.addEventListener('mouseover',function (thecheckbox) {
-                    this.wiringEditor.recommendations.emphasize(thecheckbox);
-                }.bind(this, checkbox), false);
-                labelActionLayer.addEventListener('mouseout',function (thecheckbox) {
-                    this.wiringEditor.recommendations.deemphasize(thecheckbox);
-                }.bind(this, checkbox), false);
-                checkbox.wrapperElement.addEventListener('mouseover',function (thecheckbox) {
-                    this.wiringEditor.recommendations.emphasize(thecheckbox);
-                }.bind(this, checkbox), false);
-                checkbox.wrapperElement.addEventListener('mouseout',function (thecheckbox) {
-                    this.wiringEditor.recommendations.deemphasize(thecheckbox);
-                }.bind(this, checkbox), false);
+                setlabelActionListeners.call(this, labelActionLayer, checkbox);
 
-                // Sticky effect
-                labelActionLayer.addEventListener('mouseover', checkbox._mouseover_callback, false);
-                labelActionLayer.addEventListener('mouseout', checkbox._mouseout_callback, false);
-
-                // Connect anchor whith mouseup on the label
-                labelActionLayer.addEventListener('mouseup', checkbox._mouseup_callback, false);
                 subTree = this.generateSubTree(context, subAnchors[key], checkbox);
                 if (subTree !== null) {
                     subdata.appendChild(subTree);
@@ -800,32 +790,8 @@
         labelActionLayer = document.createElement("div");
         labelActionLayer.classList.add("labelActionLayer");
 
-        // emphasize listeners
-        labelActionLayer.addEventListener('mouseover', function (thecheckbox) {
-            this.wiringEditor.recommendations.emphasize(thecheckbox);
-        }.bind(this, checkbox));
-        labelActionLayer.addEventListener('mouseout', function (thecheckbox) {
-            this.wiringEditor.recommendations.deemphasize(thecheckbox);
-        }.bind(this, checkbox));
-        checkbox.wrapperElement.addEventListener('mouseover',function (thecheckbox) {
-            this.wiringEditor.recommendations.emphasize(thecheckbox);
-        }.bind(this, checkbox), false);
-        checkbox.wrapperElement.addEventListener('mouseout',function (thecheckbox) {
-            this.wiringEditor.recommendations.deemphasize(thecheckbox);
-        }.bind(this, checkbox), false);
+        setlabelActionListeners.call(this, labelActionLayer, checkbox);
 
-        // Sticky effect
-        labelActionLayer.addEventListener('mouseover', function (e) {
-            checkbox._mouseover_callback(e);
-        }.bind(this));
-        labelActionLayer.addEventListener('mouseout', function (e) {
-            checkbox._mouseout_callback(e);
-        }.bind(this));
-
-        // Connect anchor whith mouseup on the label
-        labelActionLayer.addEventListener('mouseup', function (e) {
-            checkbox._mouseup_callback(e);
-        }.bind(this));
         if (subTreeFrame !== null) {
             subdata.appendChild(subTreeFrame);
             subdata.classList.add("branch");
