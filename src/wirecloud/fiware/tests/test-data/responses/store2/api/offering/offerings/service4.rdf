@@ -1,13 +1,13 @@
 {
     "applications": [],
-    "rating": 1,
+    "rating": 0,
     "related_images": [],
-    "description_url": "http://repository.example.com/CoNWeT/service3.rdf",
+    "description_url": "http://repository.example.com/CoNWeT/service4.rdf",
     "creation_date": "2013-07-11 09:37:29.725000",
     "owner_admin_user_id": "app_provider",
     "publication_date": "2013-07-11 13:41:51.418000",
     "owner_organization": "CoNWeT",
-    "name": "TestOperator",
+    "name": "ArbitraryOffering",
     "tags": [],
     "comments": [],
     "state": "published",
@@ -18,7 +18,7 @@
             {
                 "uriImage": "http://130.206.82.145/media/images/smart_lights_icon.png",
                 "vendor": "CoNWeT",
-                "name": "Smart City Lights application",
+                "name": "Arbitrary Offering",
                 "created": "2013-06-04T00:00",
                 "interactions": [],
                 "long_description": "Smart City Lights application is a valuable utility for incidents management and control of Smart City entities. The user has two different mashups that serve as a UI for the back-end application and leverage on a number of FI-WARE generic enablers. One of the mashups facilitates the real-time management of incidents, while the other allows for the analysis of historical information gathered from each of Smart City entities.",
@@ -116,15 +116,15 @@
             "valid_through": "2011-12-31",
             "valid_from": "2011-12-01",
             "description": "This offering includes the Santander City Lights application",
-            "title": "Test Operator"
+            "title": "SmartCityLights"
         }
     },
     "resources": [
         {
             "version": "1.0",
-            "name": "Test Operator",
-            "content_type": "application/x-operator+mashable-application-component",
-            "description": "Description of the test operator resource."
+            "name": "All you need to know about Wirecloud",
+            "content_type": "application/pdf",
+            "description": "Wirecloud book"
         }
     ]
 }

@@ -20,7 +20,7 @@
     xmlns:gr="http://purl.org/goodrelations/v1#"
     xmlns:doap="http://usefulinc.com/ns/doap#">
 
-    <usdl:ServiceDescription xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="http://repository.example.com/CoNWeT/offering2">
+    <usdl:ServiceDescription xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="http://repository.example.com/CoNWeT/service2.rdf">
         <dcterms:description xml:lang="en"/>
         <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#datetime"/>
         <dcterms:creator rdf:nodeID="b9f"/>

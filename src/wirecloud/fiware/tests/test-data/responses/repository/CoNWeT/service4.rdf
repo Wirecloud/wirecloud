@@ -20,12 +20,12 @@
     xmlns:gr="http://purl.org/goodrelations/v1#"
     xmlns:doap="http://usefulinc.com/ns/doap#">
 
-    <usdl:ServiceDescription xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="http://repository.example.com/CoNWeT/service3.rdf">
+    <usdl:ServiceDescription xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:about="http://repository.example.com/CoNWeT/service4.rdf">
         <dcterms:description xml:lang="en"/>
         <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#datetime"/>
         <dcterms:creator rdf:nodeID="b9f"/>
         <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#datetime">2013-06-04T00:00</dcterms:created>
-        <dcterms:title xml:lang="en">TestOperator</dcterms:title>
+        <dcterms:title xml:lang="en">Offering 4</dcterms:title>
     </usdl:ServiceDescription>
 
     <foaf:Person xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:nodeID="b9f">
@@ -43,7 +43,7 @@
         <dcterms:subject rdf:nodeID="ba2"/>
         <dcterms:subject rdf:nodeID="ba3"/>
         <foaf:depiction rdf:resource="http://static.example.com/smart_lights_icon.png"/>
-        <dcterms:title xml:lang="en">Test Operator</dcterms:title>
+        <dcterms:title xml:lang="en">Arbitrary Offering</dcterms:title>
         <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#datetime">2013-06-04T00:00</dcterms:created>
         <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#datetime">2012-11-19T00:00</dcterms:modified>
         <foaf:page rdf:resource=""/>

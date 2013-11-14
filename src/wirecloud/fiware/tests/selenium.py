@@ -141,6 +141,10 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         button = complex_price_offering.find_element_by_css_selector('.mainbutton')
         self.assertEqual(button.text, 'Purchase')
 
+        arbitrary_offering = self.search_in_catalogue_results('Arbitrary Offering')
+        button = arbitrary_offering.find_element_by_css_selector('.mainbutton')
+        self.assertEqual(button.text, 'Details')
+
     def test_marketplace_offering_list_when_store_down(self):
 
         response_text = read_response_file('responses', 'marketplace', 'keyword_search.xml')

@@ -88,6 +88,7 @@
         this.structure_template = offering_template;
         this.error_template = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div class="alert alert-block alert-error"><t:message/></div></s:styledgui>';
         this.container = container;
+        this.is_details_view = extra_context != null; // TODO
         if (typeof extra_context === 'object' || typeof extra_context === 'function') {
             this.extra_context = extra_context;
         } else {
@@ -221,16 +222,18 @@
 
                         button.addEventListener('click', onClick.bind(null, this.offering.resources[0].url, this.catalogue_view, this.offering.store));
                     }
-                } else {
+                } else if (!this.is_details_view) {
                     button = new StyledElements.StyledButton({
                         'text': gettext('Details')
                     });
 
                     button.addEventListener('click', this.catalogue_view.createUserCommand('showDetails', this.offering));
+                } else {
+                    return null;
                 }
                 button.addClassName('mainbutton btn-primary');
                 return button;
-            }.bind({catalogue_view: this.catalogue_view, offering: offering}),
+            }.bind({catalogue_view: this.catalogue_view, offering: offering, is_details_view: this.is_details_view}),
             'image': function () {
                 var image = document.createElement('img');
                 image.onerror = function (event) {
