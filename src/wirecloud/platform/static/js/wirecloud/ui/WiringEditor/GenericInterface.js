@@ -644,7 +644,7 @@
     /**
      * Generate SubTree
      */
-    GenericInterface.prototype.generateSubTree = function(anchorContext, subAnchors) {
+    GenericInterface.prototype.generateSubTree = function generateSubTree(anchorContext, subAnchors) {
         var treeFrame, key, lab, checkbox, subdata, subTree, labelsFrame, context, name,
             labelActionLayer, entity, type;
 
@@ -702,13 +702,24 @@
     /**
      * Generate Tree
      */
-    GenericInterface.prototype.generateTree = function(anchorContext, subtree, label, closeHandler) {
+    GenericInterface.prototype.generateTree = function generateTree(anchor, name, anchorContext, subtree, label, closeHandler) {
         var subAnchors, treeFrame, lab, checkbox, subdata, key, subTree, subTreeFrame, type,
-            labelsFrame, labelMain, close_button, context, name, labelActionLayer, entity;
+            labelsFrame, labelMain, close_button, context, name, labelActionLayer, entity, treeDiv;
+
+        // Generate tree
+        treeDiv = document.createElement("div");
+        treeDiv.classList.add('anchorTree');
+        treeDiv.addEventListener('click', function (e) {
+            e.stopPropagation();
+        }.bind(this), false);
+        treeDiv.addEventListener('mousedown', function (e) {
+            e.stopPropagation();
+        }.bind(this), false);
 
         treeFrame = document.createElement("div");
         treeFrame.classList.add('tree');
         treeFrame.classList.add('sources');
+
         // Close button
         close_button = new StyledElements.StyledButton({
             'title': gettext("Hide"),
@@ -806,7 +817,11 @@
         labelMain.appendChild(subdata);
         labelMain.appendChild(labelActionLayer);
         treeFrame.appendChild(labelMain);
-        return treeFrame;
+        treeDiv.appendChild(treeFrame);
+        this.wrapperElement.appendChild(treeDiv);
+
+        // Handler for subdata tree menu
+        anchor.menu.append(new StyledElements.MenuItem(gettext("Unfold data structure"), this.subdataHandler.bind(this, treeDiv, name)));
     };
 
     /**
@@ -1029,20 +1044,8 @@
 
             subAnchors = anchorContext.data.subdata;
             if (subAnchors != null) {
-                // Generate tree
-                treeDiv = document.createElement("div");
-                treeDiv.classList.add('anchorTree');
-                treeDiv.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                }.bind(this), false);
-                treeDiv.addEventListener('mousedown', function (e) {
-                    e.stopPropagation();
-                }.bind(this), false);
-                treeDiv.appendChild(this.generateTree(anchorContext, subAnchors, label, this.subdataHandler.bind(this, null, name)));
-                this.wrapperElement.appendChild(treeDiv);
-
-                // Handler for subdata tree
-                anchor.menu.append(new StyledElements.MenuItem(gettext("Unfold data structure"), this.subdataHandler.bind(this, treeDiv, name)));
+                // Generate the tree
+                this.generateTree(anchor, name, anchorContext, subAnchors, label, this.subdataHandler.bind(this, null, name));
             }
 
             labelDiv.addEventListener('mouseover', function () {
