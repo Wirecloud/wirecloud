@@ -274,7 +274,7 @@ def fix_widget_code(widget_code, base_url, content_type, request, encoding, use_
     for file in files:
         head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url(file, request=request)))
     head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url('js/WirecloudAPI/WirecloudAPICommon.js', request=request)))
-    head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url('js/WirecloudAPI/WirecloudAPI.js', request=request)))
+    head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url('js/WirecloudAPI/WirecloudWidgetAPI.js', request=request)))
 
     if use_platform_style:
         head_element.insert(0, etree.Element('link', rel="stylesheet", type="text/css", href=get_absolute_static_url('js/EzWebAPI_ext/EzWebGadgets.css', request=request)))
