@@ -124,7 +124,7 @@ class WorkspaceCollection(Resource):
     def create(self, request):
 
         try:
-            data = json.loads(request.raw_post_data)
+            data = json.loads(request.body)
         except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
@@ -217,7 +217,7 @@ class WorkspaceEntry(Resource):
     def create(self, request, workspace_id):
 
         try:
-            ts = json.loads(request.raw_post_data)
+            ts = json.loads(request.body)
         except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
@@ -286,7 +286,7 @@ class TabCollection(Resource):
     def create(self, request, workspace_id):
 
         try:
-            data = json.loads(request.raw_post_data)
+            data = json.loads(request.body)
         except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
@@ -326,7 +326,7 @@ class TabCollection(Resource):
             return HttpResponseForbidden()
 
         try:
-            order = json.loads(request.raw_post_data)
+            order = json.loads(request.body)
         except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
@@ -356,7 +356,7 @@ class TabEntry(Resource):
             return HttpResponseForbidden()
 
         try:
-            data = json.loads(request.raw_post_data)
+            data = json.loads(request.body)
         except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
@@ -427,7 +427,7 @@ class WorkspaceVariableCollection(Resource):
     def create(self, request, workspace_id):
 
         try:
-            iwidgetVariables = json.loads(request.raw_post_data)
+            iwidgetVariables = json.loads(request.body)
         except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
@@ -453,7 +453,7 @@ class WorkspaceSharerEntry(Resource):
             return HttpResponseForbidden(json.dumps(result), content_type='application/json; charset=UTF-8')
 
         #Everything right!
-        if request.raw_post_data == '':
+        if request.body == '':
             #Share with everybody
             #Linking with public user!
             public_user = None  # TODO
@@ -468,7 +468,7 @@ class WorkspaceSharerEntry(Resource):
         else:
             #Share only with the scpecified groups
             try:
-                groups = json.loads(request.raw_post_data)
+                groups = json.loads(request.body)
             except ValueError, e:
                 msg = _("malformed json data: %s") % unicode(e)
                 return build_error_response(request, 400, msg)
@@ -493,7 +493,7 @@ class MashupMergeService(Service):
     def process(self, request, to_ws_id):
 
         try:
-            data = json.loads(request.raw_post_data)
+            data = json.loads(request.body)
         except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
@@ -576,7 +576,7 @@ class WorkspacePublisherEntry(Resource):
         content_type = get_content_type(request)[0]
         image_file = None
         if content_type == 'application/json':
-            received_json = request.raw_post_data
+            received_json = request.body
         else:
             received_json = request.POST['json']
             image_file = request.FILES.get('image', None)

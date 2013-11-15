@@ -158,7 +158,7 @@ class PlatformPreferencesCollection(Resource):
     @commit_on_http_success
     def create(self, request):
         try:
-            preferences_json = json.loads(request.raw_post_data)
+            preferences_json = json.loads(request.body)
         except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
@@ -197,7 +197,7 @@ class WorkspacePreferencesCollection(Resource):
             return HttpResponseForbidden()
 
         try:
-            preferences_json = json.loads(request.raw_post_data)
+            preferences_json = json.loads(request.body)
         except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
@@ -232,7 +232,7 @@ class TabPreferencesCollection(Resource):
             return HttpResponseForbidden()
 
         try:
-            preferences_json = json.loads(request.raw_post_data)
+            preferences_json = json.loads(request.body)
         except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)

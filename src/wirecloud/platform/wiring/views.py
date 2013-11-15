@@ -41,7 +41,7 @@ class WiringEntry(Resource):
     @supported_request_mime_types(('application/json',))
     def update(self, request, workspace_id):
 
-        wiring_status_string = request.raw_post_data
+        wiring_status_string = request.body
         try:
             wiring_status = json.loads(wiring_status_string)
         except ValueError, e:

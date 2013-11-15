@@ -386,7 +386,7 @@ class ResourceVoteCollection(Resource):
         content_type = get_content_type(request)[0]
         if content_type == 'application/json':
             try:
-                vote = json.loads(request.raw_post_data)['vote']
+                vote = json.loads(request.body)['vote']
             except ValueError, e:
                 msg = _("malformed json data: %s") % unicode(e)
                 return build_error_response(request, 400, msg)
@@ -432,7 +432,7 @@ class ResourceVoteCollection(Resource):
         content_type = get_content_type(request)[0]
         if content_type == 'application/json':
             try:
-                vote = json.loads(request.raw_post_data)['vote']
+                vote = json.loads(request.body)['vote']
             except ValueError, e:
                 msg = _("malformed json data: %s") % unicode(e)
                 return build_error_response(request, 400, msg)
@@ -458,7 +458,7 @@ class ResourceVersionCollection(Resource):
     def create(self, request):
 
         try:
-            resources = json.loads(request.raw_post_data)
+            resources = json.loads(request.body)
         except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)

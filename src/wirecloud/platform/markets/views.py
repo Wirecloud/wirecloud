@@ -66,7 +66,7 @@ class MarketCollection(Resource):
     def create(self, request):
 
         try:
-            received_data = json.loads(request.raw_post_data)
+            received_data = json.loads(request.body)
         except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
@@ -109,7 +109,7 @@ class PublishService(Service):
     def process(self, request):
 
         try:
-            data = json.loads(request.raw_post_data)
+            data = json.loads(request.body)
         except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)

@@ -55,7 +55,7 @@ class IWidgetCollection(Resource):
     def create(self, request, workspace_id, tab_id):
 
         try:
-            iwidget = json.loads(request.raw_post_data)
+            iwidget = json.loads(request.body)
         except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
@@ -83,7 +83,7 @@ class IWidgetCollection(Resource):
     def update(self, request, workspace_id, tab_id):
 
         try:
-            iwidgets = json.loads(request.raw_post_data)
+            iwidgets = json.loads(request.body)
         except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
@@ -118,7 +118,7 @@ class IWidgetEntry(Resource):
     def create(self, request, workspace_id, tab_id, iwidget_id):
 
         try:
-            iwidget = json.loads(request.raw_post_data)
+            iwidget = json.loads(request.body)
         except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
@@ -165,7 +165,7 @@ class IWidgetPreferences(Resource):
             return build_error_response(request, 403, msg)
 
         try:
-            new_values = json.loads(request.raw_post_data)
+            new_values = json.loads(request.body)
         except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
@@ -195,7 +195,7 @@ class IWidgetVersion(Resource):
             raise Http403()
 
         try:
-            data = json.loads(request.raw_post_data)
+            data = json.loads(request.body)
         except ValueError, e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)

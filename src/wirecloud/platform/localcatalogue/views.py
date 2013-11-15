@@ -85,7 +85,7 @@ class ResourceCollection(Resource):
         elif content_type == 'application/octet-stream':
 
             packaged = True
-            downloaded_file = StringIO(request.raw_post_data)
+            downloaded_file = StringIO(request.body)
             try:
                 file_contents = WgtFile(downloaded_file)
             except:
@@ -96,7 +96,7 @@ class ResourceCollection(Resource):
 
             if content_type == 'application/json':
                 try:
-                    data = json.loads(request.raw_post_data)
+                    data = json.loads(request.body)
                 except ValueError, e:
                     msg = _("malformed json data: %s") % unicode(e)
                     return build_error_response(request, 400, msg)

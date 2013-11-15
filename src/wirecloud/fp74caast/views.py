@@ -57,7 +57,7 @@ def parse_username(tenant_id):
 def add_tenant(request):
 
     try:
-        data = json.loads(request.raw_post_data)
+        data = json.loads(request.body)
     except ValueError, e:
         msg = _("malformed json data: %s") % unicode(e)
         return build_error_response(request, 400, msg)
@@ -97,7 +97,7 @@ def add_tenant(request):
 def remove_tenant(request):
 
     try:
-        data = json.loads(request.raw_post_data)
+        data = json.loads(request.body)
     except ValueError, e:
         msg = _("malformed json data: %s") % unicode(e)
         return build_error_response(request, 400, msg)
@@ -130,7 +130,7 @@ def _parse_ac_request(request):
     content_type = get_content_type(request)[0]
 
     try:
-        data = json.loads(request.raw_post_data)
+        data = json.loads(request.body)
     except Exception, e:
         msg = _("malformed json data: %s") % unicode(e)
         return build_error_response(request, 400, msg)

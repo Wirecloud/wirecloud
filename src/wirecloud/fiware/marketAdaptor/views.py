@@ -142,7 +142,7 @@ def start_purchase(request, market_user, market_name, store):
     adaptor = get_market_adaptor(market_user, market_name)
     user_data = get_market_user_data(request.user, market_user, market_name)
 
-    data = json.loads(request.raw_post_data)
+    data = json.loads(request.body)
 
     redirect_uri = get_absolute_reverse_url('wirecloud.fiware.store_redirect_uri', request)
     try:
