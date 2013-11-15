@@ -40,7 +40,7 @@
         this.last = false;
         this.pos = options.pos;
         this.title = options.title;
-        this.nextButtonText = 'next';
+        this.nextButtonText = gettext('Next');
         if (options.nextButtonText) {
             this.nextButtonText = options.nextButtonText;
         }
@@ -65,7 +65,7 @@
         this.cancelButton = new StyledElements.StyledButton({
             'title': gettext("Cancel"),
             'class': 'cancelButton',
-            'text': gettext("cancel"),
+            'text': gettext("Cancel"),
         });
         this.cancelButton.insertInto(this.windowBottom);
         this.cancelButton.addEventListener('click', this._closeListener);
