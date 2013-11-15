@@ -101,7 +101,7 @@ class WidgetCodeEntry(Resource):
             cache_key = resource.widget.xhtml.get_cache_key(get_current_domain(request))
             cache_entry = cache.get(cache_key)
             if cache_entry is not None:
-                response = HttpResponse(cache_entry['code'], mimetype=cache_entry['mimetype'])
+                response = HttpResponse(cache_entry['code'], content_type=cache_entry['content_type'])
                 patch_cache_headers(response, cache_entry['timestamp'], cache_entry['timeout'])
                 return response
 
@@ -150,7 +150,7 @@ class WidgetCodeEntry(Resource):
             cache_timeout = 31536000  # 1 year
             cache_entry = {
                 'code': code,
-                'mimetype': '%s; charset=%s' % (content_type, charset),
+                'content_type': '%s; charset=%s' % (content_type, charset),
                 'timestamp': xhtml.code_timestamp,
                 'timeout': cache_timeout,
             }
@@ -158,7 +158,7 @@ class WidgetCodeEntry(Resource):
         else:
             cache_timeout = 0
 
-        response = HttpResponse(code, mimetype='%s; charset=%s' % (content_type, charset))
+        response = HttpResponse(code, content_type='%s; charset=%s' % (content_type, charset))
         patch_cache_headers(response, xhtml.code_timestamp, cache_timeout)
         return response
 

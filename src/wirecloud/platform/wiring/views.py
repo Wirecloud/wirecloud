@@ -104,7 +104,7 @@ class OperatorEntry(Resource):
 
             xhtml = generate_xhtml_operator_code(js_files, base_url, request)
             cache_timeout = 31536000  # 1 year
-            cached_response = CacheableData(xhtml, timeout=cache_timeout, mimetype='application/xhtml+xml; charset=UTF-8')
+            cached_response = CacheableData(xhtml, timeout=cache_timeout, content_type='application/xhtml+xml; charset=UTF-8')
 
             cache.set(key, cached_response, cache_timeout)
 

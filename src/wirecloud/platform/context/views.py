@@ -32,4 +32,4 @@ class PlatformContextCollection(Resource):
     def read(self, request):
 
         context = get_platform_context(request.user)
-        return HttpResponse(json.dumps(context, cls=LazyEncoder), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(context, cls=LazyEncoder), content_type='application/json; charset=UTF-8')

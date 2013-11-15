@@ -121,7 +121,7 @@ def iframe_error(func):
 @no_cache
 def error(request):
     msg = request.GET.get('msg', 'Widget could not be added')
-    return HttpResponse(msg, mimetype='text/plain; charset=utf-8')
+    return HttpResponse(msg, content_type='text/plain; charset=utf-8')
 
 
 class ResourceCollection(Resource):
@@ -160,7 +160,7 @@ class ResourceCollection(Resource):
             return build_error_response(request, 409, _('Resource already exists'))
 
         resource.users.add(request.user)
-        return HttpResponse(resource.json_description, mimetype='application/json; charset=UTF-8')
+        return HttpResponse(resource.json_description, content_type='application/json; charset=UTF-8')
 
     @no_cache
     def read(self, request, pag=0, offset=0):
@@ -186,7 +186,7 @@ class ResourceEntry(Resource):
     #@method_decorator(login_required)
     def read(self, request, vendor, name, version):
         resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
-        return HttpResponse(json.dumps(get_resource_data(resource, request.user, request)), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(get_resource_data(resource, request.user, request)), content_type='application/json; charset=UTF-8')
 
     @method_decorator(login_required)
     @commit_on_http_success
@@ -207,7 +207,7 @@ class ResourceEntry(Resource):
                 response_json['removedIWidgets'] += result['removedIWidgets']
 
         return HttpResponse(json.dumps(response_json),
-                            mimetype='application/json; charset=UTF-8')
+                            content_type='application/json; charset=UTF-8')
 
 
 class ResourceCollectionBySimpleSearch(Resource):
@@ -473,4 +473,4 @@ class ResourceVersionCollection(Resource):
                 result.append(g)
 
         return HttpResponse(json.dumps({'resources': result}),
-                            mimetype='application/json; charset=UTF-8')
+                            content_type='application/json; charset=UTF-8')

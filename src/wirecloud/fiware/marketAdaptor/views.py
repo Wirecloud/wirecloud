@@ -83,7 +83,7 @@ class ServiceCollection(Resource):
         except:
             return HttpResponse(status=502)
 
-        return HttpResponse(json.dumps(result), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
 
 
 class ServiceSearchCollection(Resource):
@@ -98,7 +98,7 @@ class ServiceSearchCollection(Resource):
         except:
             return HttpResponse(status=502)
 
-        return HttpResponse(json.dumps(result), mimetype='application/json; chaset=UTF-8')
+        return HttpResponse(json.dumps(result), content_type='application/json; chaset=UTF-8')
 
 
 class AllStoresServiceCollection(Resource):
@@ -120,7 +120,7 @@ class AllStoresServiceCollection(Resource):
         except:
             return HttpResponse(status=502)
 
-        return HttpResponse(json.dumps(result), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
 
 
 class StoreCollection(Resource):
@@ -134,7 +134,7 @@ class StoreCollection(Resource):
         except:
             return HttpResponse(status=502)
 
-        return HttpResponse(json.dumps(result), mimetype='application/json; chaset=UTF-8')
+        return HttpResponse(json.dumps(result), content_type='application/json; chaset=UTF-8')
 
 
 def start_purchase(request, market_user, market_name, store):
@@ -150,4 +150,4 @@ def start_purchase(request, market_user, market_name, store):
     except:
         return HttpResponse(status=502)
 
-    return HttpResponse(json.dumps(result), mimetype='application/json; chaset=UTF-8')
+    return HttpResponse(json.dumps(result), content_type='application/json; chaset=UTF-8')

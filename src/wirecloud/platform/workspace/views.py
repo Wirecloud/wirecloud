@@ -115,7 +115,7 @@ class WorkspaceCollection(Resource):
         workspaces, _junk, reload_showcase = get_workspace_list(request.user)
         data_list = [get_workspace_data(workspace, request.user) for workspace in workspaces]
 
-        return HttpResponse(json.dumps(data_list), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(data_list), content_type='application/json; charset=UTF-8')
 
     @authentication_required
     @supported_request_mime_types(('application/json',))
@@ -308,7 +308,7 @@ class TabCollection(Resource):
         # Returning created Ids
         ids = {'id': tab.id, 'name': tab.name}
 
-        return HttpResponse(json.dumps(ids), status=201, mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(ids), status=201, content_type='application/json; charset=UTF-8')
 
     @authentication_required
     @supported_request_mime_types(('application/json',))
@@ -450,7 +450,7 @@ class WorkspaceSharerEntry(Resource):
         if owner != request.user:
             msg = 'You are not the owner of the workspace, so you can not share it!'
             result = {'result': 'error', 'description': msg}
-            return HttpResponseForbidden(json.dumps(result), mimetype='application/json; charset=UTF-8')
+            return HttpResponseForbidden(json.dumps(result), content_type='application/json; charset=UTF-8')
 
         #Everything right!
         if request.raw_post_data == '':
@@ -464,7 +464,7 @@ class WorkspaceSharerEntry(Resource):
             url = request.build_absolute_uri(workspace_path + '?' + urlencode({u'view': 'viewer'}))
 
             result = {"result": "ok", "url": url}
-            return HttpResponse(json.dumps(result), mimetype='application/json; charset=UTF-8')
+            return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
         else:
             #Share only with the scpecified groups
             try:

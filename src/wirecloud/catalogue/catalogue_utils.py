@@ -171,20 +171,20 @@ def get_resource_response(resources, format, items, user, request=None):
         'resources': [get_resource_group_data(group, user, request) for group in resources],
         'items': items,
     }
-    return HttpResponse(json.dumps(data), mimetype='application/json; charset=UTF-8')
+    return HttpResponse(json.dumps(data), content_type='application/json; charset=UTF-8')
 
 def get_tag_response(resource, user, format):
     tag = {}
     tag_data_list = get_tag_data(resource, user.id)
     tag['tagList'] = tag_data_list
-    return HttpResponse(json.dumps(tag), mimetype='application/json; charset=UTF-8')
+    return HttpResponse(json.dumps(tag), content_type='application/json; charset=UTF-8')
 
 
 def get_vote_response(resource, user, format):
     vote = {}
     vote_data = get_vote_data(resource, user)
     vote['voteData'] = vote_data
-    return HttpResponse(json.dumps(vote), mimetype='application/json; charset=UTF-8')
+    return HttpResponse(json.dumps(vote), content_type='application/json; charset=UTF-8')
 
 
 def get_all_resource_versions(vendor, name):

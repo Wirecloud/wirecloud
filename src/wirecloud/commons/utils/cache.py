@@ -38,7 +38,7 @@ def patch_cache_headers(response, timestamp=None, cache_timeout=None):
 
 class CacheableData(object):
 
-    def __init__(self, data, timestamp=None, timeout=0, mimetype='application/json; charset=UTF-8'):
+    def __init__(self, data, timestamp=None, timeout=0, content_type='application/json; charset=UTF-8'):
 
         self.data = data
 
@@ -47,7 +47,7 @@ class CacheableData(object):
         self.timestamp = timestamp
 
         self.timeout = timeout
-        self.mimetype = mimetype
+        self.content_type = content_type
 
     def get_data(self):
 
@@ -55,7 +55,7 @@ class CacheableData(object):
 
     def get_response(self, status_code=200, cacheable=True):
 
-        response = HttpResponse(self.data, status=status_code, mimetype=self.mimetype)
+        response = HttpResponse(self.data, status=status_code, content_type=self.content_type)
         if cacheable:
             patch_cache_headers(response, self.timestamp, self.timeout)
 

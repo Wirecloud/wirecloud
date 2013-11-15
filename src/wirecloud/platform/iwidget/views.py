@@ -47,7 +47,7 @@ class IWidgetCollection(Resource):
         iwidgets = IWidget.objects.filter(tab__workspace__users=request.user, tab__workspace__pk=workspace_id, tab__pk=tab_id)
         data = [get_iwidget_data(iwidget, request.user, workspace, cache_manager) for iwidget in iwidgets]
 
-        return HttpResponse(json.dumps(data), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(data), content_type='application/json; charset=UTF-8')
 
     @authentication_required
     @supported_request_mime_types(('application/json',))
@@ -72,7 +72,7 @@ class IWidgetCollection(Resource):
             iwidget = SaveIWidget(iwidget, request.user, tab, initial_variable_values)
             iwidget_data = get_iwidget_data(iwidget, request.user, tab.workspace)
 
-            return HttpResponse(json.dumps(iwidget_data), mimetype='application/json; charset=UTF-8')
+            return HttpResponse(json.dumps(iwidget_data), content_type='application/json; charset=UTF-8')
         except (CatalogueResource.DoesNotExist, Widget.DoesNotExist), e:
             msg = _('referred widget %(widget_uri)s does not exist.') % {'widget_uri': iwidget['widget']}
             return build_error_response(request, 422, msg)
@@ -110,7 +110,7 @@ class IWidgetEntry(Resource):
         iwidget = get_object_or_404(IWidget, tab__workspace__users=request.user, tab__workspace=workspace, tab__pk=tab_id, pk=iwidget_id)
         iwidget_data = get_iwidget_data(iwidget, request.user, workspace)
 
-        return HttpResponse(json.dumps(iwidget_data), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(iwidget_data), content_type='application/json; charset=UTF-8')
 
     @authentication_required
     @supported_request_mime_types(('application/json',))

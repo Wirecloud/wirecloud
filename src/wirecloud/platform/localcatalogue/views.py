@@ -58,7 +58,7 @@ class ResourceCollection(Resource):
             options = resource.get_processed_info(request)
             resources[resource.local_uri_part] = options
 
-        return HttpResponse(json.dumps(resources), mimetype='application/json; chatset=UTF-8')
+        return HttpResponse(json.dumps(resources), content_type='application/json; chatset=UTF-8')
 
     @authentication_required
     @iframe_error
@@ -163,7 +163,7 @@ class ResourceCollection(Resource):
 
             return build_error_response(request, 409, _('Resource already exists'))
 
-        return HttpResponse(json.dumps(resource.get_processed_info(request)), status=201, mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(resource.get_processed_info(request)), status=201, content_type='application/json; charset=UTF-8')
 
 
 class ResourceEntry(Resource):
@@ -218,7 +218,7 @@ class ResourceEntry(Resource):
                     iwidget.delete()
 
             if request.GET.get('affected', 'false').lower() == 'true':
-                return HttpResponse(json.dumps(result), mimetype='application/json; charset=UTF-8')
+                return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
 
         return HttpResponse(status=204)
 
@@ -242,4 +242,4 @@ class ResourceDescriptionEntry(Resource):
             else:
                 resource_info['wgt_files'] = ()
 
-        return HttpResponse(json.dumps(resource_info), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(resource_info), content_type='application/json; charset=UTF-8')

@@ -40,7 +40,7 @@ class FeatureCollection(Resource):
         for feature_name in info:
             features[feature_name] = info[feature_name]['version']
 
-        return HttpResponse(json.dumps(features), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(features), content_type='application/json; charset=UTF-8')
 
 
 def render_root_page(request):

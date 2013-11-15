@@ -151,7 +151,7 @@ class PlatformPreferencesCollection(Resource):
     def read(self, request):
         result = parseValues(PlatformPreference.objects.filter(user=request.user))
 
-        return HttpResponse(json.dumps(result), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
 
     @authentication_required
     @supported_request_mime_types(('application/json',))
@@ -184,7 +184,7 @@ class WorkspacePreferencesCollection(Resource):
 
         result = get_workspace_preference_values(workspace.id)
 
-        return HttpResponse(json.dumps(result), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
 
     @authentication_required
     @supported_request_mime_types(('application/json',))
@@ -219,7 +219,7 @@ class TabPreferencesCollection(Resource):
 
         result = get_tab_preference_values(tab)
 
-        return HttpResponse(json.dumps(result), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
 
     @authentication_required
     @supported_request_mime_types(('application/json',))

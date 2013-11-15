@@ -58,7 +58,7 @@ class MarketCollection(Resource):
 
             result[market_key] = market_data
 
-        return HttpResponse(json.dumps(result), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
 
     @authentication_required
     @supported_request_mime_types(('application/json'))
@@ -136,6 +136,6 @@ class PublishService(Service):
         if len(errors) == 0:
             return HttpResponse(status=204)
         elif len(errors) == len(data['marketplaces']):
-            return HttpResponse(json.dumps(errors), status=502, mimetype='application/json; charset=UTF-8')
+            return HttpResponse(json.dumps(errors), status=502, content_type='application/json; charset=UTF-8')
         else:
-            return HttpResponse(json.dumps(errors), status=200, mimetype='application/json; charset=UTF-8')
+            return HttpResponse(json.dumps(errors), status=200, content_type='application/json; charset=UTF-8')
