@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
 
-
-#
-try:
-    from django.conf.urls import patterns, url
-except ImportError:  # pragma: no cover
-    # for Django version less than 1.4
-    from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 
 
 urlpatterns = patterns('wirecloud.platform.widget.views',

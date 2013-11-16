@@ -17,14 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-
-try:
-    from django.conf.urls import patterns, url
-except ImportError:  # pragma: no cover
-    # for Django version less than 1.4
-    from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 from django.views.generic.base import TemplateView
+
 from wirecloud.fiware.marketAdaptor import views
+
 
 urlpatterns = patterns('wirecloud.fiware.marketAdaptor.views',
     url(r'^marketplace/(?P<market_user>[\w -]+)/(?P<market_name>[\w -]+)/resources/?$',

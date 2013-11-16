@@ -30,11 +30,7 @@
 
 #
 
-try:
-    from django.conf.urls import patterns, url
-except ImportError:  # pragma: no cover
-    # for Django version less than 1.4
-    from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 
 from wirecloud.catalogue.views import ResourceCollection, ResourceCollectionByGlobalSearch
 from wirecloud.catalogue.views import ResourceCollectionBySimpleSearch, ResourceTagCollection

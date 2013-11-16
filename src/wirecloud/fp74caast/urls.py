@@ -17,11 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-try:
-    from django.conf.urls import patterns, url
-except ImportError:  # pragma: no cover
-    # for Django version less than 1.4
-    from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 
 
 urlpatterns = patterns('wirecloud.fp74caast.views',
