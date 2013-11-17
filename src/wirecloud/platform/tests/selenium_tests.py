@@ -20,7 +20,7 @@
 
 import time
 
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -31,18 +31,24 @@ from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudSel
 def element_to_be_clickable(selector, base_element=None):
 
     def wrapper(driver):
-        if base_element is not None:
-            element = base_element.find_element(*selector)
-        else:
-            element = driver.find_element(*selector)
-        position = element.location_once_scrolled_into_view
-        top_element = driver.execute_script('return document.elementFromPoint(arguments[0], arguments[1]);',
-                position['x'] + (element.size['width'] / 2),
-                position['y'] + (element.size['height'] / 2)
-            )
-        if element == top_element or element == top_element.find_element_by_xpath('..'):
-            return element
-        else:
+
+        try:
+            if base_element is not None:
+                element = base_element.find_element(*selector)
+            else:
+                element = driver.find_element(*selector)
+            position = element.location
+            top_element = driver.execute_script('return document.elementFromPoint(arguments[0], arguments[1]);',
+                    position['x'] + (element.size['width'] / 2),
+                    position['y'] + (element.size['height'] / 2)
+                )
+
+            while top_element is not None:
+                if element == top_element:
+                    return element
+                top_element = top_element.find_element_by_xpath('..')
+            return False
+        except (NoSuchElementException, StaleElementReferenceException):
             return False
 
     return wrapper
@@ -591,11 +597,24 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.back()
         self.assertEqual(self.driver.current_url, self.live_server_url + '/login')
 
+    def test_browser_navigation_to_deleted_workspace(self):
+
+        self.login(username='user_with_workspaces')
+
+        self.change_current_workspace('Pending Events')
+        self.remove_workspace()
+
+        self.assertEqual(self.get_current_workspace_name(), 'ExistingWorkspace')
+
+        self.driver.back()
+        WebDriverWait(self.driver, 5, ignored_exceptions=(StaleElementReferenceException,)).until(lambda driver: self.get_current_workspace_name() == 'd')
+    test_browser_navigation_to_deleted_workspace.tags = ('current',)
+
     def test_gui_tutorials(self):
 
         self.login(username='emptyuser')
 
-        self.driver.find_element_by_css_selector('#wirecloud_header .arrow-down-settings').click()
+        self.driver.find_element_by_css_selector('#wirecloud_header .user_menu_wrapper .styled_button > div, #wirecloud_header .arrow-down-settings').click()
         self.popup_menu_click(('Tutorials', 'Basic concepts'))
         self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']").click()
         WebDriverWait(self.driver, 5, ignored_exceptions=(StaleElementReferenceException,)).until(lambda driver: self.get_current_workspace_name() == 'Basic concepts tutorial')
