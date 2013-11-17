@@ -36,6 +36,42 @@ def marketplace_loaded(driver):
 
     return False
 
+class PopupMenuTester(object):
+
+    def __init__(self, testcase, element):
+
+        self.testcase = testcase
+        self.element = element
+
+    def get_entry(self, name):
+
+        items = self.element.find_elements_by_css_selector('.menu_item')
+
+        for item in items:
+            span = item.find_element_by_css_selector('span')
+            if span and span.text == name:
+                return item
+
+        return None
+
+    def click_entry(self, name):
+        self.get_entry(name).click()
+
+    def check(self, must_be=(), must_be_absent=(), must_be_disabled=()):
+
+        for item in must_be:
+            menu_item = self.get_entry(item)
+            self.testcase.assertIsNotNone(menu_item)
+
+        for item in must_be_absent:
+            menu_item = self.get_entry(item)
+            self.testcase.assertIsNone(menu_item)
+
+        for item in must_be_disabled:
+            menu_item = self.get_entry(item)
+            self.testcase.assertIsNotNone(menu_item)
+            self.testcase.assertTrue('disabled' in menu_item.get_attribute('class'))
+
 
 class WiringEndpointTester(object):
 
@@ -335,20 +371,9 @@ class WirecloudRemoteTestCase(object):
 
     def check_popup_menu(self, must_be=(), must_be_absent=(), must_be_disabled=()):
 
-        time.sleep(0.1)
-
-        for item in must_be:
-            menu_item = self.get_popup_menu_item(item)
-            self.assertIsNotNone(menu_item)
-
-        for item in must_be_absent:
-            menu_item = self.get_popup_menu_item(item)
-            self.assertIsNone(menu_item)
-
-        for item in must_be_disabled:
-            menu_item = self.get_popup_menu_item(item)
-            self.assertIsNotNone(menu_item)
-            self.assertTrue('disabled' in menu_item.get_attribute('class'))
+        popup_menu_element = self.wait_element_visible_by_css_selector('.popup_menu')
+        tester = PopupMenuTester(self, popup_menu_element)
+        tester.check(must_be, must_be_absent, must_be_disabled)
 
     def add_packaged_resource_to_catalogue(self, wgt_file, widget_name, shared=False, expect_error=False):
 
@@ -576,21 +601,26 @@ class WirecloudRemoteTestCase(object):
     def count_iwidgets(self):
         return len(self.driver.find_elements_by_css_selector('div.iwidget'))
 
-    def get_popup_menu_item(self, item_name):
+    def popup_menu_click(self, item_name, element=None):
 
-        items = self.driver.find_elements_by_css_selector('.popup_menu > .menu_item')
-        for item in items:
-            span = item.find_element_by_css_selector('span')
-            if span and span.text == item_name:
-                return item
+        if element is None:
+            element = self.wait_element_visible_by_css_selector('.popup_menu')
 
-        return None
+        if not isinstance(item_name, tuple):
+            item_name = (item_name,)
 
-    def popup_menu_click(self, item_name):
+        tester = PopupMenuTester(self, element)
+        prev_popups = self.driver.find_elements_by_css_selector('.popup_menu')
+        for i, entry in enumerate(item_name[:-1]):
+            current_element = tester.get_entry(entry)
+            ActionChains(self.driver).move_to_element(current_element).perform()
+            WebDriverWait(self.driver, 5).until(lambda driver: len(self.driver.find_elements_by_css_selector('.popup_menu')) > len(prev_popups))
+            next_popups = self.driver.find_elements_by_css_selector('.popup_menu')
+            next_popup = next_popups[-1]
+            tester = PopupMenuTester(self, next_popup)
+            prev_popups = next_popups
 
-        self.wait_element_visible_by_css_selector('.popup_menu')
-        item = self.get_popup_menu_item(item_name)
-        item.click()
+        tester.click_entry(item_name[-1])
 
     def get_current_workspace_name(self):
 

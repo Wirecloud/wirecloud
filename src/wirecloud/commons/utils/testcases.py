@@ -29,6 +29,7 @@ from tempfile import mkdtemp
 from urllib2 import URLError, HTTPError
 from urlparse import urlparse
 
+from django.contrib.staticfiles import finders
 from django.test import LiveServerTestCase
 from django.test import TransactionTestCase
 from django.test.client import Client
@@ -126,7 +127,25 @@ class LiveServer(object):
 
     def request(self, method, url, *args, **kwargs):
 
-        return getattr(self._client, method.lower())(url)
+        parsed_url = urlparse(url)
+        if parsed_url.path.startswith('/static/'):
+            if method != 'GET':
+                raise HTTPError('url', '405', 'Method not allowed', None, None)
+
+            final_path = finders.find(parsed_url.path[8:])
+            f = codecs.open(final_path, 'rb')
+            contents = f.read()
+            f.close()
+
+            return {
+                'headers': {
+                    'Content-Type': mimetypes.guess_type(final_path, strict=False)[0],
+                    'Content-Length': len(contents),
+                },
+                'content': contents,
+            }
+        else:
+            return getattr(self._client, method.lower())(url)
 
 
 class LocalFileSystemServer(object):

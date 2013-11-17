@@ -20,10 +20,32 @@
 
 import time
 
+from selenium.common.exceptions import StaleElementReferenceException
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudSeleniumTestCase
+
+
+def element_to_be_clickable(selector, base_element=None):
+
+    def wrapper(driver):
+        if base_element is not None:
+            element = base_element.find_element(*selector)
+        else:
+            element = driver.find_element(*selector)
+        position = element.location_once_scrolled_into_view
+        top_element = driver.execute_script('return document.elementFromPoint(arguments[0], arguments[1]);',
+                position['x'] + (element.size['width'] / 2),
+                position['y'] + (element.size['height'] / 2)
+            )
+        if element == top_element or element == top_element.find_element_by_xpath('..'):
+            return element
+        else:
+            return False
+
+    return wrapper
 
 
 class BasicSeleniumTests(WirecloudSeleniumTestCase):
@@ -568,3 +590,39 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         WebDriverWait(self.driver, timeout=10).until(lambda driver: self.get_current_view() == 'workspace')
         self.driver.back()
         self.assertEqual(self.driver.current_url, self.live_server_url + '/login')
+
+    def test_gui_tutorials(self):
+
+        self.login(username='emptyuser')
+
+        self.driver.find_element_by_css_selector('#wirecloud_header .arrow-down-settings').click()
+        self.popup_menu_click(('Tutorials', 'Basic concepts'))
+        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']").click()
+        WebDriverWait(self.driver, 5, ignored_exceptions=(StaleElementReferenceException,)).until(lambda driver: self.get_current_workspace_name() == 'Basic concepts tutorial')
+        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']").click()
+        WebDriverWait(self.driver, 10).until(element_to_be_clickable((By.CSS_SELECTOR, '#wirecloud_header .menu .marketplace')))
+        self.change_main_view('marketplace')
+        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']").click()
+        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']").click()
+        time.sleep(5)
+
+        testcase = self
+        def youtube_instantiable(driver):
+            resource = testcase.search_in_catalogue_results('YouTube Browser')
+            return element_to_be_clickable((By.CSS_SELECTOR, '.instantiate_button div'), base_element=resource)(driver)
+        WebDriverWait(self.driver, 10).until(youtube_instantiable).click()
+        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']").click()
+        WebDriverWait(self.driver, 10).until(element_to_be_clickable((By.CSS_SELECTOR, '#wirecloud_header .menu .marketplace')))
+        self.change_main_view('marketplace')
+
+        time.sleep(5)
+
+        testcase = self
+        def input_box_instantiable(driver):
+            resource = testcase.search_in_catalogue_results('Input Box')
+            return element_to_be_clickable((By.CSS_SELECTOR, '.instantiate_button div'), base_element=resource)(driver)
+        WebDriverWait(self.driver, 10).until(input_box_instantiable).click()
+        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Cancel']").click()
+
+        window_menues = self.driver.find_elements_by_css_selector('.window_menu')
+        self.assertEqual(len(window_menues), 1)
