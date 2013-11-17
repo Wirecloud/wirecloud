@@ -89,7 +89,7 @@
         this.error_template = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div class="alert alert-block alert-error"><t:message/></div></s:styledgui>';
         this.container = container;
         this.is_details_view = extra_context != null; // TODO
-        if (typeof extra_context === 'object' || typeof extra_context === 'function') {
+        if (extra_context != null && (typeof extra_context === 'object' || typeof extra_context === 'function')) {
             this.extra_context = extra_context;
         } else {
             this.extra_context = {};
