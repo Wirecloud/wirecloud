@@ -265,7 +265,7 @@
             {'type': 'autoAction', 'action': install_youtubebrowser},
             {'type': 'autoAction', 'action': refreshMarketplace},
             {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>Ok, widgets have been installed successfuly and you can find them in your local catalogue.</p><p>Next step is to add the <em>YouTube Browser</em> widget to the workspace. You can directly select the widget or, alternatively, you can reduce the list using the keyword search feature.</p>"), 'elem': null},
-            {'type': 'autoAction', 'msg': gettext('Typing "youtube search" we can filter widgets that contains in their name or description these words'), 'elem': searchInputMarketplace, 'pos': 'downRight', 'action': searchAction},
+            {'type': 'autoAction', 'msg': gettext('Typing "youtube browser" we can filter widgets that contains in their name or description these words'), 'elem': searchInputMarketplace, 'pos': 'downRight', 'action': searchAction},
             {'type': 'userAction', 'msg': gettext("Once you have the results, you can add the widget. So click <em>Add to workspace</em>"), 'elem': addbuttonYoutubeSearch, 'pos': 'downRight'},
             {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p><span class=\"label label-success\">Great!</span> That was easy, wasn't it?.</p><p>Let's continue adding the <em>Input Box</em> widget.</p>"), 'elem': null},
             {'type': 'userAction', 'msg': gettext("Click <em>Marketplace</em>"), 'elem': main_view_button.bind(null, 'marketplace'), 'pos': 'downLeft'},
@@ -301,8 +301,8 @@
             {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>In left menu you can find all the widgets that have been added into your workspace. In our example these widgets will be the <em>YouTube Browser</em> and the <em>Input Box</em> (It will be listed using the new name given in previous step).</p><p>You can also find <em>operators</em>. These components can act as source, transformators or data targets and a combination of these behaviours.</p>"), 'elem': get_menubar},
             {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>In the next steps, we are going to connect the <em>Input Box</em> and <em>YouTube Browser</em> widgets together. This will allow you to perform searches in the <em>YouTube Browser</em> through the <em>Input Box</em> widget.</p>"), 'elem': get_menubar},
 
-            {'type': 'userAction', 'msg': gettext("Drag &amp; drop <em>Search Box</em>"), 'elem': get_mini_widget.bind(null, 1), 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown', 'elemToApplyNextStepEvent': getDocument},
-            {'type': 'userAction', 'msg': gettext("Drag &amp; drop <em>Youtube Video Search</em>"), 'elem': get_mini_widget.bind(null, 0), 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown', 'elemToApplyNextStepEvent': getDocument},
+            {'type': 'userAction', 'msg': gettext("Drag &amp; drop the <em>Input Box</em> widget"), 'elem': get_mini_widget.bind(null, 1), 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown', 'elemToApplyNextStepEvent': getDocument},
+            {'type': 'userAction', 'msg': gettext("Drag &amp; drop the <em>YouTube Browser</em> widget"), 'elem': get_mini_widget.bind(null, 0), 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown', 'elemToApplyNextStepEvent': getDocument},
 
             {
                 'type': 'userAction',
