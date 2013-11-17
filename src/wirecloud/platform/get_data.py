@@ -418,6 +418,7 @@ def get_global_workspace_data(workspace, user):
     data = cache.get(key)
     if data is None:
         data = CacheableData(_get_global_workspace_data(workspace, user))
+        key = _workspace_cache_key(workspace, user)
         cache.set(key, data)
 
     return data

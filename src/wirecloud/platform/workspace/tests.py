@@ -214,7 +214,11 @@ class WorkspaceCacheTestCase(CacheTestCase):
         self.workspace = Workspace.objects.get(pk=1)
 
         # Fill cache
-        get_global_workspace_data(self.workspace, self.user)
+        self.initial_info = get_global_workspace_data(self.workspace, self.user)
+
+    def test_workspace_data_is_cached(self):
+        workspace_info = get_global_workspace_data(self.workspace, self.user)
+        self.assertEqual(self.initial_info.timestamp, workspace_info.timestamp)
 
     def test_variable_updating_invalidates_cache(self):
 
