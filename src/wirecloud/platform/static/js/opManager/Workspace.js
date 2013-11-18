@@ -377,7 +377,7 @@ function Workspace (workspaceState) {
                     view: "workspace",
                     tab: HistoryManager.getCurrentState().tab
                 };
-                HistoryManager.pushState(state);
+                HistoryManager.replaceState(state);
 
                 layoutManager.logSubTask(gettext('Workspace renamed successfully'));
                 layoutManager.logStep('');

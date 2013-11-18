@@ -597,6 +597,18 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.back()
         self.assertEqual(self.driver.current_url, self.live_server_url + '/login')
 
+    def test_browser_navigation_from_renamed_workspace(self):
+
+        self.login(username='user_with_workspaces')
+
+        initial_workspace = self.get_current_workspace_name()
+
+        self.change_current_workspace('Pending Events')
+        self.rename_workspace('New Name')
+
+        self.driver.back()
+        WebDriverWait(self.driver, 5, ignored_exceptions=(StaleElementReferenceException,)).until(lambda driver: self.get_current_workspace_name() == initial_workspace)
+
     def test_browser_navigation_to_deleted_workspace(self):
 
         self.login(username='user_with_workspaces')
