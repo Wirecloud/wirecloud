@@ -50,7 +50,7 @@ StyledElements.ObjectWithEvents = function(events) {
  */
 StyledElements.ObjectWithEvents.prototype.addEventListener = function(event, handler) {
     if (this.events[event] === undefined)
-        throw new Error(EzWebExt.interpolate("Unhandled event \"%(event)s\"", {event: event}));
+        throw new Error(Wirecloud.Utils.interpolate("Unhandled event \"%(event)s\"", {event: event}));
 
     this.events[event].addEventListener(handler);
 }
@@ -60,7 +60,7 @@ StyledElements.ObjectWithEvents.prototype.addEventListener = function(event, han
  */
 StyledElements.ObjectWithEvents.prototype.removeEventListener = function(event, handler) {
     if (this.events[event] === undefined)
-        throw new Error(EzWebExt.interpolate("Unhandled event \"%(event)s\"", {event: event}));
+        throw new Error(Wirecloud.Utils.interpolate("Unhandled event \"%(event)s\"", {event: event}));
 
     this.events[event].removeEventListener(handler);
 }
@@ -112,7 +112,7 @@ StyledElements.StyledElement.prototype.insertInto = function (element, refElemen
  */
 StyledElements.StyledElement.prototype._getUsableHeight = function() {
     var parentElement = this.wrapperElement.parentNode;
-    if (!EzWebExt.XML.isElement(parentElement)) {
+    if (!Wirecloud.Utils.XML.isElement(parentElement)) {
         return null;
     }
 
@@ -140,7 +140,7 @@ StyledElements.StyledElement.prototype._getUsableHeight = function() {
  */
 StyledElements.StyledElement.prototype._getUsableWidth = function() {
     var parentElement = this.wrapperElement.parentNode;
-    if (!EzWebExt.XML.isElement(parentElement))
+    if (!Wirecloud.Utils.XML.isElement(parentElement))
         return null;
 
     var parentStyle = document.defaultView.getComputedStyle(parentElement, null);
@@ -297,7 +297,7 @@ StyledElements.Container = function(options, events) {
         'class': '',
         'useFullHeight': false
     };
-    options = EzWebExt.merge(defaultOptions, options);
+    options = Wirecloud.Utils.merge(defaultOptions, options);
 
     // Necesario para permitir herencia
     if (options.extending)
@@ -313,7 +313,7 @@ StyledElements.Container = function(options, events) {
         this.wrapperElement.setAttribute("id", options['id']);
     }
 
-    this.wrapperElement.className = EzWebExt.prependWord(options['class'], "container");
+    this.wrapperElement.className = Wirecloud.Utils.prependWord(options['class'], "container");
 }
 StyledElements.Container.prototype = new StyledElements.StyledElement();
 
@@ -429,13 +429,13 @@ StyledElements.StyledHiddenField = function(options) {
         'initialValue': '',
         'class': ''
     };
-    options = EzWebExt.merge(defaultOptions, options);
+    options = Wirecloud.Utils.merge(defaultOptions, options);
 
     StyledElements.StyledInputElement.call(this, options.initialValue, []);
 
     this.wrapperElement = document.createElement("div");
 
-    this.wrapperElement.className = EzWebExt.prependWord(options['class'], 'styled_hidden_field');
+    this.wrapperElement.className = Wirecloud.Utils.prependWord(options['class'], 'styled_hidden_field');
 
     this.inputElement = document.createElement("input");
     this.inputElement.setAttribute("type", "hidden");
@@ -461,12 +461,12 @@ StyledElements.StyledDateField = function(options) {
         'initialValue': '',
         'class': ''
     };
-    options = EzWebExt.merge(defaultOptions, options);
+    options = Wirecloud.Utils.merge(defaultOptions, options);
 
     StyledElements.StyledInputElement.call(this, options.initialValue, ['change']);
 
     this.wrapperElement = document.createElement("div");
-    this.wrapperElement.className = EzWebExt.prependWord(options['class'], 'styled_date_field');
+    this.wrapperElement.className = Wirecloud.Utils.prependWord(options['class'], 'styled_date_field');
 
     this.inputElement = document.createElement("input");
     this.inputElement.setAttribute("type", "text");
@@ -513,7 +513,7 @@ StyledElements.StyledNumericField = function(options) {
         'maxValue': null,
         'inc': 1
     };
-    options = EzWebExt.merge(defaultOptions, options);
+    options = Wirecloud.Utils.merge(defaultOptions, options);
 
     StyledElements.StyledInputElement.call(this, options.initialValue, ['change']);
 
@@ -541,7 +541,7 @@ StyledElements.StyledNumericField = function(options) {
 
     this.inputElement.setAttribute("value", options['initialValue']);
 
-    this.inputElement.className = EzWebExt.prependWord(options['class'], "numeric_field");
+    this.inputElement.className = Wirecloud.Utils.prependWord(options['class'], "numeric_field");
 
     var topButton = document.createElement("div");
     topButton.className = "numeric_top_button";
@@ -564,8 +564,8 @@ StyledElements.StyledNumericField = function(options) {
     };
 
     /* Internal events */
-    this.wrapperElement.addEventListener('mousedown', EzWebExt.stopPropagationListener, true);
-    this.wrapperElement.addEventListener('click', EzWebExt.stopPropagationListener, true);
+    this.wrapperElement.addEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
+    this.wrapperElement.addEventListener('click', Wirecloud.Utils.stopPropagationListener, true);
 
     topButton.addEventListener("click",
         function(event) {
@@ -704,7 +704,7 @@ StyledElements.StyledRadioButton = function StyledRadioButton(options) {
         'group': null,
         'value': null
     };
-    options = EzWebExt.merge(defaultOptions, options);
+    options = Wirecloud.Utils.merge(defaultOptions, options);
 
     StyledElements.StyledInputElement.call(this, options.initiallyChecked, ['change']);
 
@@ -735,8 +735,8 @@ StyledElements.StyledRadioButton = function StyledRadioButton(options) {
     }
 
     /* Internal events */
-    this.inputElement.addEventListener('mousedown', EzWebExt.stopPropagationListener, true);
-    this.inputElement.addEventListener('click', EzWebExt.stopPropagationListener, true);
+    this.inputElement.addEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
+    this.inputElement.addEventListener('click', Wirecloud.Utils.stopPropagationListener, true);
     this.inputElement.addEventListener('change',
                                 function () {
                                     if (this.enabled)
@@ -788,13 +788,13 @@ StyledElements.StyledHPaned = function(options) {
         'rightMinWidth': 0,
         'rightContainerOptions': {'class': ''}
     };
-    options = EzWebExt.merge(defaultOptions, options);
+    options = Wirecloud.Utils.merge(defaultOptions, options);
 
     this.wrapperElement = document.createElement("div");
-    this.wrapperElement.className = EzWebExt.prependWord(options['class'], "hpaned");
+    this.wrapperElement.className = Wirecloud.Utils.prependWord(options['class'], "hpaned");
 
     /* Force leftpanel class */
-    options.leftContainerOptions['class'] = EzWebExt.prependWord(options.leftContainerOptions['class'], 'leftpanel');
+    options.leftContainerOptions['class'] = Wirecloud.Utils.prependWord(options.leftContainerOptions['class'], 'leftpanel');
     options.leftContainerOptions['useFullHeight'] = true;
     this.leftPanel = new StyledElements.Container(options.leftContainerOptions);
 
@@ -802,7 +802,7 @@ StyledElements.StyledHPaned = function(options) {
     this.handler.className = "handler";
 
     /* Force rightpanel class */
-    options.rightContainerOptions['class'] = EzWebExt.prependWord(options.rightContainerOptions['class'], 'rightpanel');
+    options.rightContainerOptions['class'] = Wirecloud.Utils.prependWord(options.rightContainerOptions['class'], 'rightpanel');
     options.leftContainerOptions['useFullHeight'] = true;
     this.rightPanel = new StyledElements.Container(options.rightContainerOptions);
 
@@ -955,7 +955,7 @@ StyledElements.Tab = function(id, notebook, options) {
         'containerOptions': {},
         'name': ''
     };
-    options = EzWebExt.merge(defaultOptions, options);
+    options = Wirecloud.Utils.merge(defaultOptions, options);
     // Work around common typo
     if (options.closeable) {
         options.closable = options.closeable;
@@ -1048,7 +1048,7 @@ StyledElements.Tab.prototype._updateTitle = function() {
 StyledElements.Tab.prototype.setIcon = function(iconURL) {
     if (iconURL == null) {
         if (this.tabIcon != null) {
-            EzWebExt.removeFromParent(this.tabIcon);
+            Wirecloud.Utils.removeFromParent(this.tabIcon);
             this.tabIcon = null;
         }
         return;
@@ -1098,8 +1098,8 @@ StyledElements.Tab.prototype.getTabElement = function() {
  *         -minWidth:
  *         -maxWidth:
  *         -type: Indica el tipo de mesaje que se quiere mostrar. Los valores
- *          disponibles son: EzWebExt.ALERT_INFO, EzWebExt.ALERT_WARNING,
- *          EzWebExt.ALERT_ERROR. Valor por defecto: EzWebExt.ALERT_INFO.
+ *          disponibles son: Wirecloud.Utils.ALERT_INFO, Wirecloud.Utils.ALERT_WARNING,
+ *          Wirecloud.Utils.ALERT_ERROR. Valor por defecto: Wirecloud.Utils.ALERT_INFO.
  */
 StyledElements.StyledAlert = function(title, content, options) {
     var defaultOptions = {
@@ -1108,14 +1108,14 @@ StyledElements.StyledAlert = function(title, content, options) {
         'maxWidth': 400,
         'minHeight': 100,
         'maxHeight': 200,
-        'type': EzWebExt.ALERT_INFO
+        'type': Wirecloud.Utils.ALERT_INFO
     };
-    this.options = EzWebExt.merge(defaultOptions, options);
+    this.options = Wirecloud.Utils.merge(defaultOptions, options);
 
     StyledElements.StyledElement.call(this, ['close']);
 
     var image = document.createElement("img");
-    image.src = EzWebExt.getResourceURL("/images/degradado.png");
+    image.src = Wirecloud.Utils.getResourceURL("/images/degradado.png");
 
     this.wrapperElement = document.createElement("div");
     this.wrapperElement.className = "styled_alert";
@@ -1144,7 +1144,7 @@ StyledElements.StyledAlert = function(title, content, options) {
 
     var types = ["info", "warning", "error"];
     image = document.createElement("img");
-    image.src = EzWebExt.getResourceURL("/images/dialog/dialog-" + types[this.options['type']] + '.png');
+    image.src = Wirecloud.Utils.getResourceURL("/images/dialog/dialog-" + types[this.options['type']] + '.png');
     td.appendChild(image);
 
     if (title) {
@@ -1167,7 +1167,7 @@ StyledElements.StyledAlert = function(title, content, options) {
     }
     this.content.insertInto(this.messageDiv);
 
-    EzWebExt.prependClassName(this.wrapperElement, types[this.options['type']]);
+    Wirecloud.Utils.prependClassName(this.wrapperElement, types[this.options['type']]);
 
     /* Events code */
     if (this._closeButton !== null) {
@@ -1185,8 +1185,8 @@ StyledElements.StyledAlert.prototype.appendChild = function(child) {
  * Closes this alert. After this StyledAlert is closed, it cannot be used anymore.
  */
 StyledElements.StyledAlert.prototype.close = function() {
-    if (EzWebExt.XML.isElement(this.wrapperElement.parentNode)) {
-        EzWebExt.removeFromParent(this.wrapperElement);
+    if (Wirecloud.Utils.XML.isElement(this.wrapperElement.parentNode)) {
+        Wirecloud.Utils.removeFromParent(this.wrapperElement);
         this.events['close'].dispatch(this);
     }
 
@@ -1217,7 +1217,7 @@ StyledElements.StyledAlert.prototype.repaint = function(temporal) {
     if (this.wrapperElement) {
 
         ref_element = this.wrapperElement.parentNode;
-        var parent_position = EzWebExt.getRelativePosition(ref_element, document.body);
+        var parent_position = Wirecloud.Utils.getRelativePosition(ref_element, document.body);
         this.wrapperElement.style.top = parent_position.y + 'px';
         this.wrapperElement.style.left = parent_position.x + 'px';
         this.wrapperElement.style.width = ref_element.clientWidth + 'px';
@@ -1340,7 +1340,7 @@ StyledElements.Alternative = function(id, options) {
     defaultOptions = {
         useFullHeight: true
     };
-    options = EzWebExt.merge(defaultOptions, options);
+    options = Wirecloud.Utils.merge(defaultOptions, options);
 
     this.altId = id;
 
@@ -1393,8 +1393,8 @@ StyledElements.Separator = function Separator () {
 StyledElements.Separator.prototype = new StyledElements.StyledElement();
 
 StyledElements.Separator.prototype.destroy = function destroy () {
-    if (EzWebExt.XML.isElement(this.wrapperElement.parentNode)) {
-        EzWebExt.removeFromParent(this.wrapperElement);
+    if (Wirecloud.Utils.XML.isElement(this.wrapperElement.parentNode)) {
+        Wirecloud.Utils.removeFromParent(this.wrapperElement);
     }
 
     StyledElements.StyledElement.prototype.destroy.call(this);

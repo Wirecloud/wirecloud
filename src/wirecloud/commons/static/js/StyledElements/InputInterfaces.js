@@ -1,4 +1,4 @@
-/*global $, document, gettext, interpolate, Element, EzWebExt, Form, OpManagerFactory, SelectInputInterface, StyledElements, Wirecloud */
+/*global gettext, interpolate, Element, Form, OpManagerFactory, SelectInputInterface, StyledElements, Wirecloud */
 "use strict";
 
 var ValidationErrorManager, InputValidationError = {};
@@ -69,7 +69,7 @@ ValidationErrorManager.prototype._buildErrorMsg = function _buildErrorMsg(errorC
     }
 
     fields = fields.substring(2);
-    return EzWebExt.interpolate(msg, {'fields': fields});
+    return Wirecloud.Utils.interpolate(msg, {'fields': fields});
 };
 
 ValidationErrorManager.prototype.toHTML = function toHTML() {

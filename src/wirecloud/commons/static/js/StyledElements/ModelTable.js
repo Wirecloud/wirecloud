@@ -19,7 +19,7 @@
  *
  */
 
-/*global CSSPrimitiveValue, EzWebExt, StyledElements */
+/*global CSSPrimitiveValue, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -154,7 +154,7 @@
             'initialSortColumn': -1,
             'pageSize': 5
         };
-        options = EzWebExt.merge(defaultOptions, options);
+        options = Wirecloud.Utils.merge(defaultOptions, options);
 
         StyledElements.StyledElement.call(this, ['click']);
 

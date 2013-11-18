@@ -1,4 +1,4 @@
-/*global EzWebExt, StyledElements*/
+/*global StyledElements, Wirecloud*/
 
 (function () {
 
@@ -22,7 +22,7 @@
      * A list
      */
     var StyledList = function StyledList(options) {
-        options = EzWebExt.merge({
+        options = Wirecloud.Utils.merge({
             'class':            '',
             'id':               null,
             'multivalued':      false,
@@ -33,7 +33,7 @@
         StyledElements.StyledElement.call(this, ['change']);
 
         this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = EzWebExt.prependWord(options['class'], "styled_list");
+        this.wrapperElement.className = Wirecloud.Utils.prependWord(options['class'], "styled_list");
 
         if (options.id != null) {
             this.wrapperElement.id = options.id;
@@ -110,7 +110,7 @@
         entry = this.entriesByValue[value];
         delete this.entriesByValue[value];
         this.entries.slice(this.entries.indexOf(entry), 1);
-        EzWebExt.removeFromParent(entry.element);
+        Wirecloud.Utils.removeFromParent(entry.element);
 
         if (index !== -1) {
             this.currentSelection.splice(index, 1);
@@ -133,7 +133,7 @@
      * Devuelve una copia de la selección actual.
      */
     StyledList.prototype.getSelection = function getSelection() {
-        return EzWebExt.clone(this.currentSelection);
+        return Wirecloud.Utils.clone(this.currentSelection);
     };
 
     /**

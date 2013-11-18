@@ -1,16 +1,10 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/lib/prototype/prototype.improvements.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/common/ComputedStyle.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/EzWebExt/EzWebExt.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/StyledElements.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}iphone/interface/NavigationHeader.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}iphone/interface/MobileDragboard.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/interface/LayoutManager.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/common/constants.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/common/utils.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/common/MobileScrollManager.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/common/modules.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}iphone/opManager/Workspace.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}iphone/opManager/Tab.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/opManager/OpManager.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/opManager/HistoryManager.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/varManager/VariablePlatform.js"></script>

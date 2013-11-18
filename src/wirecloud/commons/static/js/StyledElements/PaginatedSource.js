@@ -19,7 +19,7 @@
  *
  */
 
-/*globals EzWebExt, StyledElements*/
+/*globals StyledElements, Wirecloud*/
 
 (function () {
 
@@ -70,7 +70,7 @@
 
         StyledElements.ObjectWithEvents.call(this, ['optionsChanged', 'paginationChanged', 'requestStart', 'requestEnd']);
 
-        this.pOptions = EzWebExt.merge(defaultOptions, options);
+        this.pOptions = Wirecloud.Utils.merge(defaultOptions, options);
         this.currentPage = 1;
         this.currentElements = [];
         this.totalPages = 1;

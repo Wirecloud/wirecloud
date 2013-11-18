@@ -19,7 +19,7 @@
  *
  */
 
-/*global CommandQueue, CSSPrimitiveValue, EzWebExt, StyledElements*/
+/*global CommandQueue, CSSPrimitiveValue, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -51,10 +51,10 @@
             'focusOnSetVisible': true,
             'full': true
         };
-        options = EzWebExt.merge(defaultOptions, options);
+        options = Wirecloud.Utils.merge(defaultOptions, options);
 
         this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = EzWebExt.prependWord(options['class'], "notebook");
+        this.wrapperElement.className = Wirecloud.Utils.prependWord(options['class'], "notebook");
 
         var div = document.createElement("div");
         this.wrapperElement.appendChild(div);
@@ -298,7 +298,7 @@
             'name': '',
             'tab_constructor': StyledElements.Tab
         };
-        options = EzWebExt.merge(defaultOptions, options);
+        options = Wirecloud.Utils.merge(defaultOptions, options);
 
         // Reserve an id for the new tab
         var tabId = this.tabsById.push(null);
@@ -561,7 +561,7 @@
             this.disabledLayer.classList.add('disable-layer');
             this.wrapperElement.appendChild(this.disabledLayer);
         } else {
-            EzWebExt.removeFromParent(this.disabledLayer);
+            Wirecloud.Utils.removeFromParent(this.disabledLayer);
             this.disabledLayer = null;
         }
         this.enabled = !disabled;
@@ -596,8 +596,8 @@
     };
 
     StyledNotebook.prototype.destroy = function destroy() {
-        if (EzWebExt.XML.isElement(this.wrapperElement.parentNode)) {
-            EzWebExt.removeFromParent(this.wrapperElement);
+        if (Wirecloud.Utils.XML.isElement(this.wrapperElement.parentNode)) {
+            Wirecloud.Utils.removeFromParent(this.wrapperElement);
         }
 
         this.tabs = null;

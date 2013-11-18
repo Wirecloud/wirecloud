@@ -19,6 +19,8 @@
  *
  */
 
+/*global Wirecloud*/
+
 function MobileScrollManager(element, options) {
     var touchstart, touchend, touchmove,
         searchTarget, scrollParentX, scrollParentX,
@@ -155,7 +157,7 @@ function MobileScrollManager(element, options) {
         'parentContainer': null,
         'onend': null
     };
-    options = EzWebExt.merge(defaultOptions, options);
+    options = Wirecloud.Utils.merge(defaultOptions, options);
 
     element.addEventListener('touchstart', touchstart, options.capture);
     element.addEventListener('touchmove', touchmove, options.capture);

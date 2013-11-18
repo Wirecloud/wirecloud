@@ -19,7 +19,7 @@
  *
  */
 
-/*global EzWebExt, Wirecloud*/
+/*global Wirecloud*/
 
 (function () {
 
@@ -43,7 +43,7 @@
             type = 'select';
         }
 
-        desc = EzWebExt.merge(this.meta.options, {
+        desc = Wirecloud.Utils.merge(this.meta.options, {
             'type': type,
             'initiallyDisabled': this.readOnly,
             'initialValue': this.value,

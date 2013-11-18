@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2013 Universidad Politécnica de Madrid
+ *     Copyright 2013 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global EzWebExt, Wirecloud*/
+/*global Wirecloud*/
 
 (function () {
 
@@ -49,7 +49,7 @@
     OperatorUserPref.prototype.getInterfaceDescription = function getInterfaceDescription(ioperator) {
         var preference = ioperator.preferences[this.name];
 
-        var desc = EzWebExt.merge(this.options, {
+        var desc = Wirecloud.Utils.merge(this.options, {
             'initiallyDisabled': preference.readonly,
             'initialValue': preference.value,
             'required': false

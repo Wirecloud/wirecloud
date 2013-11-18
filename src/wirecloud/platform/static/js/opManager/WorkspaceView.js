@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012-2013 Universidad Politécnica de Madrid
+ *     Copyright 2012-2013 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -52,7 +52,7 @@
     WorkspaceView.prototype.view_name = 'workspace';
 
     WorkspaceView.prototype.buildStateData = function buildStateData() {
-        return EzWebExt.merge(HistoryManager.getCurrentState(), {
+        return Wirecloud.Utils.merge(HistoryManager.getCurrentState(), {
             view: 'workspace'
         });
     };

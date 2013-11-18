@@ -1,4 +1,4 @@
-/*global EzWebExt, StyledElements*/
+/*global StyledElements, Wirecloud*/
 
 (function () {
 
@@ -19,12 +19,12 @@
             'title': '',
             'class': ''
         };
-        options = EzWebExt.merge(defaultOptions, options);
+        options = Wirecloud.Utils.merge(defaultOptions, options);
 
         StyledElements.StyledElement.call(this, []);
 
         this.wrapperElement = document.createElement("span");
-        this.wrapperElement.className = EzWebExt.appendWord(options['class'], "add-on");
+        this.wrapperElement.className = Wirecloud.Utils.appendWord(options['class'], "add-on");
 
         if (options.title) {
             this.setTitle(options.title);
@@ -37,7 +37,7 @@
         /* Event handlers */
         this._clickCallback = clickCallback.bind(this);
 
-        this.wrapperElement.addEventListener('mousedown', EzWebExt.stopPropagationListener, true);
+        this.wrapperElement.addEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
         this.wrapperElement.addEventListener('click', this._clickCallback, true);
     };
     Addon.prototype = new StyledElements.Container();
@@ -57,7 +57,7 @@
 
     Addon.prototype.destroy = function destroy() {
 
-        this.wrapperElement.removeEventListener('mousedown', EzWebExt.stopPropagationListener, true);
+        this.wrapperElement.removeEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
         this.wrapperElement.removeEventListener('click', this._clickCallback, true);
 
         delete this.wrapperElement;

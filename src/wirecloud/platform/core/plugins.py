@@ -65,7 +65,10 @@ TUTORIAL_FILES = (
 )
 
 STYLED_ELEMENTS_FILES = (
+    'js/StyledElements/StyledElements.js',
     'js/StyledElements/Addon.js',
+    'js/StyledElements/Accordion.js',
+    'js/StyledElements/Expander.js',
     'js/StyledElements/Fragment.js',
     'js/StyledElements/PaginatedSource.js',
     'js/StyledElements/Button.js',
@@ -204,16 +207,18 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
     def get_scripts(self, view):
         common = (
+            'js/common/ComputedStyle.js',
+            'js/wirecloud/Utils.js',
             'js/wirecloud/io.js',
             'js/wirecloud/ContextManager.js',
             'js/wirecloud/UserPrefDef.js',
             'js/wirecloud/UserPref.js',
-            'js/wirecloud/IWidget.js',
             'js/wirecloud/PolicyManager.js',
-            'js/wirecloud/Wiring.js',
             'js/wirecloud/Version.js',
             'js/wirecloud/Widget.js',
         ) + STYLED_ELEMENTS_FILES + (
+            'js/wirecloud/IWidget.js',
+            'js/wirecloud/Wiring.js',
             'js/wirecloud/LogManager.js',
             'js/wirecloud/Widget/LogManager.js',
             'js/wirecloud/ui/InputInterfaceFactory.js',
@@ -242,10 +247,22 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
         if view == 'index':
             return common + (
+                'js/opManager/Workspace.js',
+                'js/opManager/WorkspaceListItems.js',
+                'js/opManager/WorkspaceItems.js',
+                'js/opManager/WorkspaceView.js',
+                'js/opManager/TabMenuItems.js',
+                'js/opManager/Tab.js',
+                'js/catalogue/MarketplaceView.js',
+                'js/catalogue/CatalogueSearchView.js',
+                'js/catalogue/CatalogueView.js',
                 'js/wirecloud/ui/WirecloudHeader.js',
                 'js/dragboard/dragboard.js',
                 'js/wirecloud/DragboardPosition.js',
                 'js/wirecloud/ui/DragboardCursor.js',
+                'js/dragboard/DragboardLayout.js',
+                'js/dragboard/FreeLayout.js',
+                'js/dragboard/FullDragboardLayout.js',
                 'js/wirecloud/ui/ColumnLayout.js',
                 'js/wirecloud/ui/SmartColumnLayout.js',
                 'js/wirecloud/MarketManager.js',
@@ -270,6 +287,13 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/ui/PublishResourceWindowMenu.js',
                 'js/wirecloud/ui/RenameWindowMenu.js',
             ) + WIRING_EDITOR_FILES + TUTORIAL_FILES
+        elif view == 'smartphone':
+            return common + (
+                'iphone/interface/NavigationHeader.js',
+                'iphone/interface/MobileDragboard.js',
+                'iphone/opManager/Workspace.js',
+                'iphone/opManager/Tab.js',
+            )
         else:
             return common
 

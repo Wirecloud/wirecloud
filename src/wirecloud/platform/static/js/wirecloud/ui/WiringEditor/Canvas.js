@@ -18,7 +18,7 @@
  *     under the License.
  */
 
-/*global EzWebExt, StyledElements, Wirecloud */
+/*global StyledElements, Wirecloud */
 
 (function () {
 
@@ -63,7 +63,7 @@
             atr = '';
         }
 
-        this.canvasElement.setAttribute('class', EzWebExt.appendWord(atr, className));
+        this.canvasElement.setAttribute('class', Wirecloud.Utils.appendWord(atr, className));
     };
 
     /**

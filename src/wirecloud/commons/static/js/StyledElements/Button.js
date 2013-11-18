@@ -1,4 +1,4 @@
-/*global EzWebExt, StyledElements*/
+/*global StyledElements, Wirecloud*/
 
 (function () {
 
@@ -34,7 +34,7 @@
             'icon': null,
             'usedInForm': false
         };
-        options = EzWebExt.merge(defaultOptions, options);
+        options = Wirecloud.Utils.merge(defaultOptions, options);
 
         // Necesario para permitir herencia
         if (options.extending) {
@@ -44,7 +44,7 @@
         StyledElements.StyledElement.call(this, ['click']);
 
         this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = EzWebExt.appendWord(options['class'], "styled_button");
+        this.wrapperElement.className = Wirecloud.Utils.appendWord(options['class'], "styled_button");
 
         if (options.usedInForm) {
             button = document.createElement("button");
@@ -84,7 +84,7 @@
         this._clickCallback = clickCallback.bind(this);
         this._keydownCallback = keydownCallback.bind(this);
 
-        button.addEventListener('mousedown', EzWebExt.stopPropagationListener, true);
+        button.addEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
         button.addEventListener('click', this._clickCallback, true);
         button.addEventListener('keydown', this._keydownCallback, true);
 
@@ -106,7 +106,7 @@
 
     StyledButton.prototype.destroy = function destroy() {
 
-        this._button.removeEventListener('mousedown', EzWebExt.stopPropagationListener, true);
+        this._button.removeEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
         this._button.removeEventListener('click', this._clickCallback, true);
         this._button.removeEventListener('keydown', this._keydownCallback, true);
 

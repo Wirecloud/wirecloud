@@ -18,7 +18,7 @@
  *     under the License.
  */
 
-/*global StyledElements, Wirecloud, Draggable, EzWebExt, gettext */
+/*global StyledElements, Wirecloud, Draggable, gettext */
 
 (function () {
 
@@ -500,7 +500,7 @@
         if (atr == null) {
             atr = '';
         }
-        this.wrapperElement.setAttribute('class', EzWebExt.appendWord(atr, className));
+        this.wrapperElement.setAttribute('class', Wirecloud.Utils.appendWord(atr, className));
     };
 
     /**
@@ -517,7 +517,7 @@
         if (atr == null) {
             atr = '';
         }
-        this.wrapperElement.setAttribute('class', EzWebExt.removeWord(atr, className));
+        this.wrapperElement.setAttribute('class', Wirecloud.Utils.removeWord(atr, className));
     };
 
     /**

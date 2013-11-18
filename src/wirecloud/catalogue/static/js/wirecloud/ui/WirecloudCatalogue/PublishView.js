@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright 2012-2013 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global Constants, Element, EzWebExt, gettext, interpolate, LayoutManagerFactory, StyledElements, Wirecloud*/
+/*global Constants, Element, gettext, interpolate, LayoutManagerFactory, StyledElements, Wirecloud*/
 
 (function () {
 

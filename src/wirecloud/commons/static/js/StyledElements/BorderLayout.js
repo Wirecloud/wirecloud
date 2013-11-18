@@ -1,5 +1,4 @@
-/*global EzWebExt, StyledElements */
-
+/*global StyledElements, Wirecloud*/
 
 (function () {
 
@@ -11,12 +10,12 @@
     var BorderLayout = function BorderLayout(options) {
         StyledElements.StyledElement.call(this, []);
 
-        options = EzWebExt.merge({
+        options = Wirecloud.Utils.merge({
             'class': ''
         }, options);
 
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = EzWebExt.appendWord(options['class'], "border_layout");
+        this.wrapperElement.className = Wirecloud.Utils.appendWord(options['class'], "border_layout");
 
         this.north = new StyledElements.Container({'class': 'north_container'});
         this.west = new StyledElements.Container({'class': 'west_container'});

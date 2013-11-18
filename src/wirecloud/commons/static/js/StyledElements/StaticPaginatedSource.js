@@ -19,7 +19,7 @@
  *
  */
 
-/*globals EzWebExt, StyledElements*/
+/*globals StyledElements, Wirecloud*/
 
 (function () {
 
@@ -68,7 +68,7 @@
             return;
         }
 
-        this._currentPattern = new RegExp(EzWebExt.escapeRegExp(keywords), 'i');
+        this._currentPattern = new RegExp(Wirecloud.Utils.escapeRegExp(keywords), 'i');
         filteredElements = [];
         for (i = 0; i < this.elements.length; i += 1) {
             element = this.elements[i];

@@ -18,7 +18,7 @@
  *     <http://www.gnu.org/licenses/>.
  *
  */
-/*global Document, EzWebExt, StyledElements*/
+/*global Document, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -62,7 +62,7 @@
 
         for (i = 0; i < element.childNodes.length; i += 1) {
             child = element.childNodes[i];
-            if (!EzWebExt.XML.isElement(child)) {
+            if (!Wirecloud.Utils.XML.isElement(child)) {
                 continue;
             }
 
@@ -91,7 +91,7 @@
 
         for (i = 0; i < children.length; i += 1) {
             child = children[i];
-            if (!EzWebExt.XML.isElement(child)) {
+            if (!Wirecloud.Utils.XML.isElement(child)) {
                 continue;
             }
 
@@ -157,7 +157,7 @@
                 return layout;
             },
             'button': function (builder, element, options) {
-                options = EzWebExt.merge({}, options);
+                options = Wirecloud.Utils.merge({}, options);
                 options.text = element.textContent;
                 return new StyledElements.StyledButton(options);
             },
@@ -177,7 +177,7 @@
 
     GUIBuilder.prototype.parse = function parse(document, tcomponents) {
         if (typeof document === 'string') {
-            document = EzWebExt.XML.parseFromString(document, 'application/xml');
+            document = Wirecloud.Utils.XML.parseFromString(document, 'application/xml');
         }
 
         if (!(document instanceof Document)) {

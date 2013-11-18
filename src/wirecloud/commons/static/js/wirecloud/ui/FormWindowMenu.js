@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012-2013 Universidad Politécnica de Madrid
+ *     Copyright 2012-2013 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global EzWebExt, Form, Wirecloud */
+/*global Form, Wirecloud */
 
 (function () {
 
@@ -37,7 +37,7 @@
 
         Wirecloud.ui.WindowMenu.call(this, title, extra_class);
 
-        options = EzWebExt.merge({
+        options = Wirecloud.Utils.merge({
             factory: Wirecloud.ui.InputInterfaceFactory,
             autoHide: true
         }, options);

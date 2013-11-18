@@ -19,8 +19,6 @@
  *
  */
 
-/*global EzWebExt*/
-
 (function () {
 
     "use strict";

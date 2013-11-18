@@ -18,7 +18,7 @@
  *     under the License.
  */
 
-/*global Draggable, EzWebExt, Wirecloud, Event, EzWebEffectBase, Element */
+/*global Draggable, Wirecloud, Event, EzWebEffectBase, Element */
 
 (function () {
 
@@ -83,10 +83,10 @@
         // Pullers definition
         this.pullerStartElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
         this.pullerStartElement.setAttribute("r", 5);
-        this.pullerStartElement.addEventListener("click", EzWebExt.stopPropagationListener, false);
+        this.pullerStartElement.addEventListener("click", Wirecloud.Utils.stopPropagationListener, false);
         this.pullerEndElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
         this.pullerEndElement.setAttribute("r", 5);
-        this.pullerEndElement.addEventListener("click", EzWebExt.stopPropagationListener, false);
+        this.pullerEndElement.addEventListener("click", Wirecloud.Utils.stopPropagationListener, false);
 
         this.pullerStartElement.setAttribute('class', 'pullerBall');
         this.pullerEndElement.setAttribute('class', 'pullerBall');

@@ -1,4 +1,4 @@
-/*global EzWebExt, StyledElements*/
+/*global StyledElements*/
 
 (function () {
 

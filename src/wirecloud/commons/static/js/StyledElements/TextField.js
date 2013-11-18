@@ -1,4 +1,4 @@
-/*global EzWebExt, StyledElements */
+/*global StyledElements */
 
 (function () {
 
@@ -35,7 +35,7 @@
             'class': '',
             'placeholder': null
         };
-        options = EzWebExt.merge(defaultOptions, options);
+        options = Wirecloud.Utils.merge(defaultOptions, options);
 
         StyledElements.StyledInputElement.call(this, options.initialValue, ['change', 'focus', 'blur', 'submit']);
 
@@ -72,8 +72,8 @@
         this._onblur = onblur.bind(this);
         this._onkeypress = onkeypress.bind(this);
 
-        this.inputElement.addEventListener('mousedown', EzWebExt.stopPropagationListener, true);
-        this.inputElement.addEventListener('click', EzWebExt.stopPropagationListener, true);
+        this.inputElement.addEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
+        this.inputElement.addEventListener('click', Wirecloud.Utils.stopPropagationListener, true);
         this.inputElement.addEventListener('input', this._oninput, true);
         this.inputElement.addEventListener('focus', this._onfocus, true);
         this.inputElement.addEventListener('blur', this._onblur, true);
@@ -87,8 +87,8 @@
 
     StyledTextField.prototype.destroy = function destroy() {
 
-        this.inputElement.removeEventListener('mousedown', EzWebExt.stopPropagationListener, true);
-        this.inputElement.removeEventListener('click', EzWebExt.stopPropagationListener, true);
+        this.inputElement.removeEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
+        this.inputElement.removeEventListener('click', Wirecloud.Utils.stopPropagationListener, true);
         this.inputElement.removeEventListener('input', this._oninput, true);
         this.inputElement.removeEventListener('focus', this._onfocus, true);
         this.inputElement.removeEventListener('blur', this._onblur, true);

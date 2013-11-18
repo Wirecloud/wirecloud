@@ -18,7 +18,7 @@
  *     under the License.
  */
 
-/*global Constants, EzWebExt, LayoutManagerFactory, opManager, StyledElements, Wirecloud, gettext, Draggable */
+/*global Constants, LayoutManagerFactory, opManager, StyledElements, Wirecloud, gettext, Draggable */
 if (!Wirecloud.ui) {
     // TODO this line should live in another file
     Wirecloud.ui = {};
@@ -127,7 +127,7 @@ if (!Wirecloud.ui) {
     WiringEditor.prototype.view_name = 'wiring';
 
     WiringEditor.prototype.buildStateData = function buildStateData() {
-        var data = EzWebExt.merge(HistoryManager.getCurrentState(), {
+        var data = Wirecloud.Utils.merge(HistoryManager.getCurrentState(), {
             view: 'wiring'
         });
 
@@ -504,7 +504,7 @@ if (!Wirecloud.ui) {
             }
 
             var yesHandler = function () {
-                wiringStatus = EzWebExt.clone(wiringStatus);
+                wiringStatus = Wirecloud.Utils.clone(wiringStatus);
                 delete wiringStatus.views;
                 try {
                     loadWiring.call(this, workspace, wiringStatus);

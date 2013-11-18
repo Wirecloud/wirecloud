@@ -18,7 +18,7 @@
  *     <http://www.gnu.org/licenses/>.
  *
  */
-/*global EzWebExt, StyledElements*/
+/*global StyledElements, Wirecloud*/
 
 (function () {
 
@@ -36,7 +36,7 @@
             'secondInput': null,
             'value': true
         };
-        options = EzWebExt.merge(defaultOptions, options);
+        options = Wirecloud.Utils.merge(defaultOptions, options);
 
         // This is needed for backward compatibility
         if ('initiallyChecked' in options) {
@@ -71,8 +71,8 @@
         }
 
         /* Internal events */
-        this.inputElement.addEventListener('mousedown', EzWebExt.stopPropagationListener, true);
-        this.inputElement.addEventListener('click', EzWebExt.stopPropagationListener, true);
+        this.inputElement.addEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
+        this.inputElement.addEventListener('click', Wirecloud.Utils.stopPropagationListener, true);
         this.inputElement.addEventListener('change',
                                     function () {
                                         if (this.enabled) {

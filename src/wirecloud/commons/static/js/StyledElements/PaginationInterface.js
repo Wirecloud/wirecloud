@@ -1,4 +1,4 @@
-/*global EzWebExt, StyledElements*/
+/*global StyledElements, Wirecloud*/
 
 (function () {
 
@@ -63,7 +63,7 @@
             'layout': '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><t:firstBtn/><t:prevBtn/><div class="box">Page: <t:currentPage/>/<t:totalPages/></div><t:nextBtn/><t:lastBtn/></s:styledgui>',
             'autoHide': false
         };
-        options = EzWebExt.merge(defaultOptions, options);
+        options = Wirecloud.Utils.merge(defaultOptions, options);
         this.autoHide = options.autoHide;
 
         StyledElements.StyledElement.call(this, []);

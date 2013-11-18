@@ -18,7 +18,7 @@
  *     <http://www.gnu.org/licenses/>.
  *
  */
-/*globals CSSPrimitiveValue, EzWebExt, StyledElements */
+/*globals CSSPrimitiveValue, StyledElements, Wirecloud */
 
 (function () {
 
@@ -32,7 +32,7 @@
             'buttonFloat': 'left',
             'title': null
         };
-        options = EzWebExt.merge(defaultOptions, options);
+        options = Wirecloud.Utils.merge(defaultOptions, options);
         if (!options.expandButton && !options.listenOnTitle) {
             throw new TypeError();
         }
@@ -40,7 +40,7 @@
         StyledElements.StyledElement.call(this, ['expandChange']);
 
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = EzWebExt.appendWord(options['class'], "styled_expander");
+        this.wrapperElement.className = Wirecloud.Utils.appendWord(options['class'], "styled_expander");
 
         var header = document.createElement('div');
         this.wrapperElement.appendChild(header);

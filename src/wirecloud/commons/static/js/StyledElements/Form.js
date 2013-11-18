@@ -1,4 +1,4 @@
-/*global $, EzWebExt, gettext, StyledElements, ValidationErrorManager */
+/*global gettext, StyledElements, ValidationErrorManager, Wirecloud*/
 
 (function () {
 
@@ -24,7 +24,7 @@
             defaultOptions.acceptButton = false;
             defaultOptions.cancelButton = false;
         }
-        options = EzWebExt.merge(defaultOptions, options);
+        options = Wirecloud.Utils.merge(defaultOptions, options);
 
         StyledElements.StyledElement.call(this, ['submit', 'cancel']);
 

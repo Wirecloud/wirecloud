@@ -1,5 +1,4 @@
-/*global EzWebExt, StyledElements */
-
+/*global StyledElements, Wirecloud*/
 
 (function () {
 
@@ -11,13 +10,13 @@
     var HorizontalLayout = function HorizontalLayout(options) {
         StyledElements.StyledElement.call(this, []);
 
-        this.options = EzWebExt.merge({
+        this.options = Wirecloud.Utils.merge({
             'class': '',
             'autoHeight': true
         }, options);
 
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = EzWebExt.appendWord(this.options['class'], "horizontal_layout");
+        this.wrapperElement.className = Wirecloud.Utils.appendWord(this.options['class'], "horizontal_layout");
 
         this.west = new StyledElements.Container({'class': 'west_container'});
         this.center = new StyledElements.Container({'class': 'center_container'});

@@ -19,7 +19,7 @@
  *
  */
 
-/*global EzWebExt, InputInterface, StyledElements */
+/*global InputInterface, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -45,7 +45,7 @@
 
     var InputInterfaceFactory = function InputInterfaceFactory() {
 
-        var mapping = EzWebExt.clone(default_mapping);
+        var mapping = Wirecloud.Utils.clone(default_mapping);
 
         this.createInterface = function createInterface(fieldId, fieldDesc) {
             var Class_ = mapping[fieldDesc.type];

@@ -18,7 +18,7 @@
  *     <http://www.gnu.org/licenses/>.
  *
  */
-/*globals CSSPrimitiveValue, EzWebExt, StyledElements */
+/*globals CSSPrimitiveValue, StyledElements, Wirecloud */
 
 (function () {
 
@@ -30,13 +30,13 @@
             'exclusive': true,
             'full': true
         };
-        options = EzWebExt.merge(defaultOptions, options);
+        options = Wirecloud.Utils.merge(defaultOptions, options);
 
         this.exclusive = options.exclusive;
         this.full = options.full;
         this.children = [];
         this.wrapperElement = document.createElement('div');
-        this.wrapperElement.className = EzWebExt.appendWord(options['class'], "styled_accordion");
+        this.wrapperElement.className = Wirecloud.Utils.appendWord(options['class'], "styled_accordion");
     };
     Accordion.prototype = new StyledElements.StyledElement();
 
@@ -44,7 +44,7 @@
         var expander, defaultOptions = {
             'listenOnTitle': true
         };
-        options = EzWebExt.merge(defaultOptions, options);
+        options = Wirecloud.Utils.merge(defaultOptions, options);
         expander = new StyledElements.Expander(options);
         expander.insertInto(this.wrapperElement);
 

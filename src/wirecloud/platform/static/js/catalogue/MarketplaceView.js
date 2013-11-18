@@ -148,7 +148,7 @@
     MarketplaceView.prototype.view_name = 'marketplace';
 
     MarketplaceView.prototype.buildStateData = function buildStateData() {
-        var data = EzWebExt.merge(HistoryManager.getCurrentState(), {
+        var data = Wirecloud.Utils.merge(HistoryManager.getCurrentState(), {
             view: 'marketplace'
         });
 

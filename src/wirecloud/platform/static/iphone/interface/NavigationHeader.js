@@ -19,6 +19,8 @@
  *
  */
 
+/*global Wirecloud*/
+
 StyledElements.NavigationHeader = function (options) {
 
     var defaultOptions = {
@@ -27,12 +29,12 @@ StyledElements.NavigationHeader = function (options) {
         'title': '',
         'extraButton': null
     };
-    options = EzWebExt.merge(defaultOptions, options);
+    options = Wirecloud.Utils.merge(defaultOptions, options);
 
     StyledElements.StyledElement.call(this, ['back']);
 
     this.wrapperElement = document.createElement('div');
-    this.wrapperElement.className = EzWebExt.appendWord(options['class'], "toolbar");
+    this.wrapperElement.className = Wirecloud.Utils.appendWord(options['class'], "toolbar");
 
     this.backButton = document.createElement('div');
     this.backButton.setAttribute('class', 'back_button');

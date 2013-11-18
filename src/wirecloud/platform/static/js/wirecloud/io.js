@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012-2013 Universidad Politécnica de Madrid
+ *     Copyright 2012-2013 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global EzWebExt, interpolate, Wirecloud*/
+/*global interpolate, Wirecloud*/
 
 Wirecloud.location = {
     'domain': document.location.protocol + '//' + document.location.host,
@@ -36,7 +36,7 @@ Wirecloud.location = {
     var setRequestHeaders = function setRequestHeaders() {
         var headers, name;
 
-        headers = EzWebExt.merge({
+        headers = Wirecloud.Utils.merge({
             'X-Requested-With': 'XMLHttpRequest',
             'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
         }, this.options.requestHeaders);
@@ -135,7 +135,7 @@ Wirecloud.location = {
         var key;
 
         this.url = url;
-        this.options = EzWebExt.merge({
+        this.options = Wirecloud.Utils.merge({
             method:       'POST',
             asynchronous: true,
             responseType: null,

@@ -19,7 +19,7 @@
  *
  */
 
-/*global document, EzWebExt, LayoutManagerFactory, gettext, interpolate, StyledElements, Wirecloud */
+/*global document, LayoutManagerFactory, gettext, interpolate, StyledElements, Wirecloud */
 
 (function () {
 
@@ -112,10 +112,10 @@
         if (typeof this.extra_context === 'function') {
             extra_context = this.extra_context(offering);
         } else {
-            extra_context = EzWebExt.clone(this.extra_context);
+            extra_context = Wirecloud.Utils.clone(this.extra_context);
         }
 
-        context = EzWebExt.merge(extra_context, {
+        context = Wirecloud.Utils.merge(extra_context, {
             'displayname': offering.getDisplayName(),
             'name': offering.name,
             'owner': offering.owner,
@@ -251,7 +251,7 @@
 
         // TODO "Show details"
         for (i = 0; i < offering_element.elements.length; i += 1) {
-            if (!EzWebExt.XML.isElement(offering_element.elements[i])) {
+            if (!Wirecloud.Utils.XML.isElement(offering_element.elements[i])) {
                 continue;
             }
             this.create_simple_command(offering_element.elements[i], '.click_for_details', 'click', this.catalogue_view.createUserCommand('showDetails', offering));

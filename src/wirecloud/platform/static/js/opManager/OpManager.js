@@ -23,6 +23,7 @@
 *     http://morfeo-project.org
  */
 
+/*global Wirecloud*/
 
 var OpManagerFactory = function () {
 
@@ -157,7 +158,7 @@ var OpManagerFactory = function () {
 
         OpManager.prototype.addWorkspaceFromMashup = function addWorkspaceFromMashup(resource, options) {
 
-            options = EzWebExt.merge({
+            options = Wirecloud.Utils.merge({
                 allow_renaming: true,
                 dry_run: false
             }, options);

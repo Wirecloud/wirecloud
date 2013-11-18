@@ -1,4 +1,4 @@
-/*global EzWebExt, StyledElements*/
+/*global StyledElements*/
 
 (function () {
 
@@ -13,7 +13,7 @@
             return true;
         }
 
-        options = EzWebExt.merge({
+        options = Wirecloud.Utils.merge({
             'position': ['right-bottom', 'left-bottom']
         }, options);
 

@@ -1,4 +1,4 @@
-/*global EzWebExt, StyledElements*/
+/*global StyledElements, Wirecloud*/
 
 (function () {
 
@@ -47,7 +47,7 @@
         var defaultOptions = {
             'position': ['bottom-left', 'bottom-right', 'top-left', 'top-right']
         };
-        options = EzWebExt.merge(defaultOptions, options);
+        options = Wirecloud.Utils.merge(defaultOptions, options);
 
         if (options.extending) {
             return;
@@ -97,7 +97,7 @@
     };
 
     PopupMenuBase.prototype.isVisible = function isVisible() {
-        return EzWebExt.XML.isElement(this.wrapperElement.parentNode);
+        return Wirecloud.Utils.XML.isElement(this.wrapperElement.parentNode);
     };
 
     PopupMenuBase.prototype.show = function show(refPosition) {
@@ -182,7 +182,7 @@
         this._dynamicItems = [];
         this._submenus = [];
         this.wrapperElement.innerHTML = '';
-        EzWebExt.removeFromParent(this.wrapperElement);
+        Wirecloud.Utils.removeFromParent(this.wrapperElement);
 
         this.events.visibilityChange.dispatch(this);
     };

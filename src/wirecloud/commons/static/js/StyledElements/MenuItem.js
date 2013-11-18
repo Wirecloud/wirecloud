@@ -1,4 +1,4 @@
-/*global EzWebExt, StyledElements*/
+/*global StyledElements, Wirecloud*/
 
 (function () {
 
@@ -49,8 +49,8 @@
     MenuItem.prototype = new StyledElements.StyledElement();
 
     MenuItem.prototype.destroy = function destroy() {
-        if (EzWebExt.XML.isElement(this.wrapperElement.parentNode)) {
-            EzWebExt.removeFromParent(this.wrapperElement);
+        if (Wirecloud.Utils.XML.isElement(this.wrapperElement.parentNode)) {
+            Wirecloud.Utils.removeFromParent(this.wrapperElement);
         }
         this.wrapperElement.removeEventListener("mouseover", this._mouseoverEventHandler, false);
         this.wrapperElement.removeEventListener("mouseout", this._mouseoutEventHandler, false);

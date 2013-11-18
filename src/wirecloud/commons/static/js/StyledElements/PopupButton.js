@@ -18,7 +18,9 @@
  *     <http://www.gnu.org/licenses/>.
  *
  */
-/*globals EzWebExt, StyledElements*/
+
+/*globals StyledElements, Wirecloud*/
+
 (function () {
 
     "use strict";
@@ -27,7 +29,7 @@
         var defaultOptions = {
             'menu': null
         };
-        options = EzWebExt.merge(defaultOptions, options);
+        options = Wirecloud.Utils.merge(defaultOptions, options);
 
         StyledElements.StyledButton.call(this, options);
 

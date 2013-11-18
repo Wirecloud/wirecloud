@@ -1,4 +1,4 @@
-/*globals EzWebExt, StyledElements*/
+/*globals StyledElements, Wirecloud*/
 
 (function () {
 
@@ -33,7 +33,7 @@
      *     a function for converting them into strings.
      */
     StyledSelect = function StyledSelect(options) {
-        options = EzWebExt.merge({
+        options = Wirecloud.Utils.merge({
             'class': '',
             'initialEntries': [],
             'initialValue': null,
@@ -54,7 +54,7 @@
         StyledElements.StyledInputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
 
         this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = EzWebExt.prependWord(options['class'], "styled_select");
+        this.wrapperElement.className = Wirecloud.Utils.prependWord(options['class'], "styled_select");
 
         var wrapper = document.createElement("div");
         this.wrapperElement.appendChild(wrapper);
@@ -88,8 +88,8 @@
         this._onfocus = onfocus.bind(this);
         this._onblur = onblur.bind(this);
 
-        this.inputElement.addEventListener('mousedown', EzWebExt.stopPropagationListener, true);
-        this.inputElement.addEventListener('click', EzWebExt.stopPropagationListener, true);
+        this.inputElement.addEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
+        this.inputElement.addEventListener('click', Wirecloud.Utils.stopPropagationListener, true);
         this.inputElement.addEventListener('change', this._onchange, true);
         this.inputElement.addEventListener('focus', this._onfocus, true);
         this.inputElement.addEventListener('blur', this._onblur, true);
@@ -196,8 +196,8 @@
 
     StyledSelect.prototype.destroy = function destroy() {
 
-        this.inputElement.removeEventListener('mousedown', EzWebExt.stopPropagationListener, true);
-        this.inputElement.removeEventListener('click', EzWebExt.stopPropagationListener, true);
+        this.inputElement.removeEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
+        this.inputElement.removeEventListener('click', Wirecloud.Utils.stopPropagationListener, true);
         this.inputElement.removeEventListener('change', this._onchange, true);
         this.inputElement.removeEventListener('focus', this._onfocus, true);
         this.inputElement.removeEventListener('blur', this._onblur, true);

@@ -1,4 +1,4 @@
-/*global EzWebExt, gettext, LayoutManagerFactory, OpManagerFactory, Variable, Wirecloud*/
+/*global gettext, LayoutManagerFactory, OpManagerFactory, Variable, Wirecloud*/
 
 (function () {
 
@@ -171,7 +171,7 @@
 
         for (key in data) {
             if (key.startsWith('tab-')) {
-                EzWebExt.merge(data.parametrization.iwidgets, data[key]);
+                Wirecloud.Utils.merge(data.parametrization.iwidgets, data[key]);
                 delete data[key];
             }
         }

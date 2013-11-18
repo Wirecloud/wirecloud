@@ -1,4 +1,4 @@
-/*global CommandQueue, EzWebExt, StyledElements*/
+/*global CommandQueue, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -16,11 +16,11 @@
             'defaultEffect': 'None'
         };
 
-        options = EzWebExt.merge(defaultOptions, options);
+        options = Wirecloud.Utils.merge(defaultOptions, options);
         StyledElements.StyledElement.call(this, ['preTransition', 'postTransition']);
 
         this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = EzWebExt.prependWord(options['class'], "alternatives");
+        this.wrapperElement.className = Wirecloud.Utils.prependWord(options['class'], "alternatives");
 
         this.contentArea = document.createElement("div");
         this.contentArea.className = "wrapper";
@@ -164,7 +164,7 @@
             'containerOptions': {},
             'alternative_constructor': StyledElements.Alternative
         };
-        options = EzWebExt.merge(defaultOptions, options);
+        options = Wirecloud.Utils.merge(defaultOptions, options);
 
         var altId = this.nextAltId++;
 

@@ -19,6 +19,8 @@
  *
  */
 
+/*global Wirecloud*/
+
 (function () {
 
     var onFocus = function onFocus(e) {
@@ -60,7 +62,7 @@
 
     EditableElement.prototype.disableEdition = function disableEdition() {
         if (this.wrapperElement.hasAttribute('contenteditable')) {
-            this.wrapperElement.removeEventListener('mousedown', EzWebExt.stopPropagationListenerfunction, true);
+            this.wrapperElement.removeEventListener('mousedown', Wirecloud.Utils.stopPropagationListenerfunction, true);
             this.wrapperElement.removeAttribute('contenteditable');
             this.wrapperElement.blur();
             this.wrapperElement.scrollLeft = 0;
@@ -70,7 +72,7 @@
 
     EditableElement.prototype.enableEdition = function enableEdition() {
         if (!this.wrapperElement.hasAttribute('contenteditable')) {
-            this.wrapperElement.addEventListener('mousedown', EzWebExt.stopPropagationListenerfunction, true);
+            this.wrapperElement.addEventListener('mousedown', Wirecloud.Utils.stopPropagationListenerfunction, true);
             this.wrapperElement.setAttribute('contenteditable', 'true');
         }
         this.wrapperElement.focus();

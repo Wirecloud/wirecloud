@@ -1,4 +1,4 @@
-/*global EzWebExt, StyledElements */
+/*global StyledElements, Wirecloud*/
 
 (function () {
 
@@ -28,7 +28,7 @@
             'initialValue': '',
             'class': ''
         };
-        options = EzWebExt.merge(defaultOptions, options);
+        options = Wirecloud.Utils.merge(defaultOptions, options);
 
         StyledElements.StyledInputElement.call(this, options.initialValue, ['change', 'focus', 'blur']);
 
@@ -60,8 +60,8 @@
         this._onfocus = onfocus.bind(this);
         this._onblur = onblur.bind(this);
 
-        this.inputElement.addEventListener('mousedown', EzWebExt.stopPropagationListener, true);
-        this.inputElement.addEventListener('click', EzWebExt.stopPropagationListener, true);
+        this.inputElement.addEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
+        this.inputElement.addEventListener('click', Wirecloud.Utils.stopPropagationListener, true);
         this.inputElement.addEventListener('input', this._oninput, true);
         this.inputElement.addEventListener('focus', this._onfocus, true);
         this.inputElement.addEventListener('blur', this._onblur, true);
@@ -70,8 +70,8 @@
 
     StyledPasswordField.prototype.destroy = function destroy() {
 
-        this.inputElement.removeEventListener('mousedown', EzWebExt.stopPropagationListener, true);
-        this.inputElement.removeEventListener('click', EzWebExt.stopPropagationListener, true);
+        this.inputElement.removeEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
+        this.inputElement.removeEventListener('click', Wirecloud.Utils.stopPropagationListener, true);
         this.inputElement.removeEventListener('input', this._oninput, true);
         this.inputElement.removeEventListener('focus', this._onfocus, true);
         this.inputElement.removeEventListener('blur', this._onblur, true);
