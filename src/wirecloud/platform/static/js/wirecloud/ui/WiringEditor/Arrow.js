@@ -401,52 +401,21 @@
      *  Add new class in to the arrow
      */
     Arrow.prototype.addClassName = function addClassName(className) {
-        var atr;
-
-        if (className == null) {
-            return;
-        }
-
-        atr = this.wrapperElement.getAttribute('class');
-        if (atr == null) {
-            atr = '';
-        }
-        this.wrapperElement.setAttribute('class', EzWebExt.appendWord(atr, className));
+        this.wrapperElement.classList.add(className);
     };
 
     /**
      * RemoveClassName
      */
     Arrow.prototype.removeClassName = function removeClassName(className) {
-        var atr;
-
-        if (className == null || this.wrapperElement == null) {
-            return;
-        }
-
-        atr = this.wrapperElement.getAttribute('class');
-        if (atr == null) {
-            atr = '';
-        }
-        this.wrapperElement.setAttribute('class', EzWebExt.removeWord(atr, className));
+        this.wrapperElement.classList.remove(className);
     };
 
     /**
      * HasClassName
      */
     Arrow.prototype.hasClassName = function hasClassName(className) {
-        var atr, exp;
-
-        if (className == null || this.wrapperElement == null) {
-            return false;
-        }
-
-        atr = this.wrapperElement.getAttribute('class');
-        if (atr == null) {
-            return false;
-        }
-        exp = new RegExp("(^\\s*|\\s+)" + className + "(\\s+|\\s*$)", "g");
-        return (atr.match(exp) != null);
+        this.wrapperElement.classList.contains(className);
     };
 
     /**
