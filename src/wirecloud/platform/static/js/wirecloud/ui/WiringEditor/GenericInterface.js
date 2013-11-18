@@ -134,9 +134,9 @@
                     return;
                 }
                 if (className == 'iwidget') {
-                    this.wiringEditor.removeIWidget(this);
+                    this.wiringEditor.events.widgetremoved.dispatch(this);
                 } else {
-                    this.wiringEditor.removeIOperator(this);
+                    this.wiringEditor.events.operatorremoved.dispatch(this);
                 }
             }.bind(this));
 

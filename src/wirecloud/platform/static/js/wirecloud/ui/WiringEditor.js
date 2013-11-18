@@ -39,6 +39,12 @@ if (!Wirecloud.ui) {
         options['class'] = 'wiring_editor';
         StyledElements.Alternative.call(this, id, options);
 
+        var events = ['operatorremoved', 'widgetremoved', 'widgetadded',
+                      'operatoradded', 'widgetaddfail', 'operatoraddfail'];
+        for (var i = 0; i < events.length; i++) {
+            this.events[events[i]] = new StyledElements.Event();
+        }
+
         this.addEventListener('show', renewInterface.bind(this));
         this.addEventListener('hide', clearInterface.bind(this));
 
@@ -120,6 +126,15 @@ if (!Wirecloud.ui) {
         // Initialize key listener
         this._keydownListener = keydownListener.bind(this);
         this._keyupListener = keyupListener.bind(this);
+
+        this.addEventListener('operatorremoved', function (entity) {
+            this.removeIOperator(entity);
+        }.bind(this));
+
+        this.addEventListener('widgetremoved', function (entity) {
+            this.removeIWidget(entity);
+        }.bind(this));
+
     };
 
     WiringEditor.prototype = new StyledElements.Alternative();
@@ -807,6 +822,8 @@ if (!Wirecloud.ui) {
 
         this.layout.getCenterContainer().appendChild(widget_interface);
 
+        this.events.widgetadded.dispatch();
+
         for (i = 0; i < widget_interface.sourceAnchors.length; i += 1) {
             anchor = widget_interface.sourceAnchors[i];
             this.recommendations.add_anchor_to_recommendations(anchor);
@@ -857,6 +874,8 @@ if (!Wirecloud.ui) {
         this.layout.getCenterContainer().removeChild(auxDiv);
 
         this.layout.getCenterContainer().appendChild(operator_interface);
+
+        this.events.operatoradded.dispatch();
 
         for (i = 0; i < operator_interface.sourceAnchors.length; i += 1) {
             anchor = operator_interface.sourceAnchors[i];

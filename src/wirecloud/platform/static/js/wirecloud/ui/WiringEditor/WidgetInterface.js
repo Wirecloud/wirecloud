@@ -116,6 +116,7 @@
 
         if (!this.wiringEditor.withinGrid(e)) {
             this.wiringEditor.layout.wrapperElement.removeChild(data.iObjectClon.wrapperElement);
+            this.wiringEditor.events.widgetaddfail.dispatch();
             return;
         }
 
