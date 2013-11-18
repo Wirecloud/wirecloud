@@ -340,7 +340,6 @@ function Workspace(workspaceState) {
 
     Object.defineProperty(this, 'id', {value: workspaceState.id});
     this.workspaceState = workspaceState;
-    this.workspaceGlobal = null;
     this.varManager = null;
     this.tabInstances = [];
     this.wiring = null;

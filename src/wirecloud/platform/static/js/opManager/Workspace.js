@@ -221,7 +221,7 @@ function Workspace (workspaceState) {
 
     var deleteSuccess = function (transport) {
         OpManagerFactory.getInstance().removeWorkspace(this.id);
-        LayoutManagerFactory.getInstance().logSubTask(gettext('Workspace renamed successfully'));
+        LayoutManagerFactory.getInstance().logSubTask(gettext('Workspace removed successfully'));
         LayoutManagerFactory.getInstance().logStep('');
     };
 
@@ -767,7 +767,6 @@ function Workspace (workspaceState) {
 
     Object.defineProperty(this, 'id', {value: workspaceState.id});
     this.workspaceState = workspaceState;
-    this.workspaceGlobal = null;
     this.wiringInterface = null;
     this.varManager = null;
     this.tabInstances = new Hash();
@@ -776,7 +775,6 @@ function Workspace (workspaceState) {
     this.varManager = null;
     this.contextManager = null;
     this.loaded = false;
-    this.wiringLayer = null;
     this.valid=false;
 
     StyledElements.ObjectWithEvents.call(this, ['iwidgetadded', 'iwidgetremoved']);
