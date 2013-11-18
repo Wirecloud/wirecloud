@@ -215,9 +215,19 @@
         return wiringEditor.iwidgets[widget_id].getAnchor(name).wrapperElement;
     };
 
+    var get_full_endpoint = function get_endpoint(index, name) {
+        var widget_id = opManager.activeWorkspace.getIWidgets()[index].id;
+        var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
+        return wiringEditor.iwidgets[widget_id].getAnchor(name).wrapperElement.parentElement;
+    };
+
     var get_wiring_canvas = function get_wiring_canvas() {
         var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
         return wiringEditor.canvas;
+    };
+
+    var get_wiring = function get_wiring() {
+        return LayoutManagerFactory.getInstance().viewsByName["wiring"];
     };
 
     var input_box_input = function input_box_input() {
@@ -301,9 +311,30 @@
             {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>In left menu you can find all the widgets that have been added into your workspace. In our example these widgets will be the <em>YouTube Browser</em> and the <em>Input Box</em> (It will be listed using the new name given in previous step).</p><p>You can also find <em>operators</em>. These components can act as source, transformators or data targets and a combination of these behaviours.</p>"), 'elem': get_menubar},
             {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("<p>In the next steps, we are going to connect the <em>Input Box</em> and <em>YouTube Browser</em> widgets together. This will allow you to perform searches in the <em>YouTube Browser</em> through the <em>Input Box</em> widget.</p>"), 'elem': get_menubar},
 
-            {'type': 'userAction', 'msg': gettext("Drag &amp; drop the <em>Input Box</em> widget"), 'elem': get_mini_widget.bind(null, 1), 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown', 'elemToApplyNextStepEvent': getDocument},
-            {'type': 'userAction', 'msg': gettext("Drag &amp; drop the <em>YouTube Browser</em> widget"), 'elem': get_mini_widget.bind(null, 0), 'pos': 'downRight', 'event': 'mouseup', 'eventToDeactivateLayer': 'mousedown', 'elemToApplyNextStepEvent': getDocument},
+            {
+                'type': 'userAction',
+                'msg': gettext("Drag &amp; drop the <em>Input Box</em> widget"),
+                'elem': get_mini_widget.bind(null, 1),
+                'pos': 'downRight',
+                'restartHandlers': [
+                    {'element': get_wiring, 'event': 'widgetaddfail'},
+                ],
+                'event': 'widgetadded',
+                'eventToDeactivateLayer': 'mousedown',
+                'elemToApplyNextStepEvent': get_wiring,
+            },            {
+                'type': 'userAction',
+                'msg': gettext("Drag &amp; drop the <em>YouTube Browser</em> widget"),
+                'elem': get_mini_widget.bind(null, 0),
+                'pos': 'downRight',
+                'restartHandlers': [
+                    {'element': get_wiring, 'event': 'widgetaddfail'},
+                ],
+                'event': 'widgetadded',
+                'eventToDeactivateLayer': 'mousedown',
+                'elemToApplyNextStepEvent': get_wiring,
 
+            },
             {
                 'type': 'userAction',
                 'msg': gettext("Drag &amp; drop a new connection from <em>Search Box</em>'s <em>keyword</em> endpoint ..."),
@@ -314,7 +345,7 @@
                 ],
                 'disableElems': [wirecloud_header, get_menubar],
                 'nextStepMsg': gettext("... to <em>YouTube Browser</em>'s <em>keyword</em> endpoint"),
-                'elemToApplyNextStepEvent': get_endpoint.bind(null, 0, 'keyword'), 'event': 'mouseup', 'second_pos': 'downLeft',
+                'elemToApplyNextStepEvent': get_full_endpoint.bind(null, 0, 'keyword'), 'event': 'mouseup', 'secondPos': 'downLeft',
             },
             {'type': 'simpleDescription', 'title': gettext('Wirecloud Basic Tutorial'), 'msg': gettext("Now it's time to test our creation.")},
             {'type': 'userAction', 'msg': gettext("Click <em>Editor</em>"), 'elem': main_view_button.bind(null, 'workspace'), 'pos': 'downLeft'},
