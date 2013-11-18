@@ -35,19 +35,6 @@ EzWebExt.stopPropagationListener = function (e) {
     e.stopPropagation();
 };
 
-/**
- * Elimina el exceso de caracteres de espaciado (espacios, tabuladores, saltos
- * de linea, etc...)
- *
- * @param {String} text string inicial
- * @return {String} el string pasado en el argumento text, pero eliminando el
- * exceso de carácteres de espaciado.
- */
-EzWebExt.stripWhiteSpaces = function(text) {
-    //text = text.replace(RegExp("\\s+", "g"), " "); Remove internal spaces
-    return text.replace(RegExp("^\\s+|\\s+$", "g"), "");
-}
-
 /*
 Based on:
   Cross-Browser Split 1.0.1
@@ -151,7 +138,7 @@ EzWebExt.hasWord = function(text, word) {
 }
 
 EzWebExt.removeWord = function(text, word) {
-    return EzWebExt.stripWhiteSpaces(text.replace(RegExp("(^\\s*|\\s+)" + word + "(\\s+|\\s*$)", "g"), " "));
+    return text.replace(RegExp("(^\\s*|\\s+)" + word + "(\\s+|\\s*$)", "g"), " ").trim();
 }
 
 EzWebExt.appendWord = function(text, word) {
