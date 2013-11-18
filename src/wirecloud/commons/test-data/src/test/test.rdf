@@ -80,8 +80,8 @@
 
     <wire:hasPlatformRendering>
         <wire:PlatformRendering>
-            <wire:renderingWidth>24</wire:renderingWidth>
-            <wire:renderingHeight>10</wire:renderingHeight>
+            <wire:renderingWidth>6</wire:renderingWidth>
+            <wire:renderingHeight>24</wire:renderingHeight>
         </wire:PlatformRendering>
     </wire:hasPlatformRendering>
 
