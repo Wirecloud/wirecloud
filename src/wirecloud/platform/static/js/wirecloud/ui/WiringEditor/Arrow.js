@@ -415,7 +415,7 @@
      * HasClassName
      */
     Arrow.prototype.hasClassName = function hasClassName(className) {
-        this.wrapperElement.classList.contains(className);
+        return this.wrapperElement.classList.contains(className);
     };
 
     /**
