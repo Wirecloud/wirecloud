@@ -84,7 +84,7 @@
             this.popup = new Wirecloud.ui.Tutorial.PopUp(this.next_element, {
                 highlight: true,
                 msg: msg,
-                position: this.position,
+                position: this.nextPosition,
                 closable: !this.withoutCloseButton
             });
             this.layer.appendChild(this.popup.wrapperElement);
@@ -151,6 +151,7 @@
         this.tutorial = tutorial;
         this.element = options.elem;
         this.position = options.pos;
+        this.nextPosition = options.secondPos ? options.secondPos : this.position;
         if (options.event) {
             this.event = options.event;
         } else {
