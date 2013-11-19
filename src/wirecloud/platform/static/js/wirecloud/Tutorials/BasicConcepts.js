@@ -200,6 +200,10 @@
     var deploy_tutorial_menu = function deploy_tutorial_menu(autoAction) {
         var header = document.getElementById('wirecloud_header');
         var button = header.getElementsByClassName('arrow-down-settings')[0];
+
+        if (button == null) {
+            button = header.getElementsByClassName('btn-success')[0].childNodes[0];
+        }
         button.click();
         autoAction.nextHandler();
     };
