@@ -76,9 +76,7 @@ function Tab(tabInfo, workspace, index) {
 
     Tab.prototype.updateLayout = function (scrollLeft) {
         if (this.tabElement) {
-            this.tabElement.setStyle({
-                left: scrollLeft + "px"
-            });
+            this.tabElement.style.left = scrollLeft + "px";
         }
     };
 

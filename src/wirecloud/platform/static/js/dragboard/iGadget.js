@@ -723,7 +723,7 @@ IWidget.prototype._recomputeWrapper = function (contentHeight) {
         wrapperHeight = 0;
     }
 
-    this.contentWrapper.setStyle({height: wrapperHeight + "px"});
+    this.contentWrapper.style.height = wrapperHeight + "px";
 };
 
 /**
@@ -783,7 +783,7 @@ IWidget.prototype._recomputeHeight = function (basedOnContent) {
             var processedSize = this.layout.adaptHeight(contentHeight, fullSize);
             contentHeight = processedSize.inPixels;
             this.height = processedSize.inLU;
-            this.content.setStyle({height: contentHeight + "px"});
+            this.content.style.height = contentHeight + "px";
         } else {
             // Based on full widget height
             contentHeight = this.layout.getHeightInPixels(this.height);
@@ -794,7 +794,7 @@ IWidget.prototype._recomputeHeight = function (basedOnContent) {
                 contentHeight = 0;
             }
 
-            this.content.setStyle({height: contentHeight + "px"});
+            this.content.style.height = contentHeight + "px";
             this.contentHeight = Math.floor(this.layout.fromPixelsToVCells(contentHeight));
         }
 
@@ -808,7 +808,7 @@ IWidget.prototype._recomputeHeight = function (basedOnContent) {
     } else { // minimized
         this._recomputeWrapper();
         contentHeight = this.element.offsetHeight;
-        this.content.setStyle({height: "0px"});
+        this.content.style.height = "0px";
         this.height = Math.ceil(this.layout.fromPixelsToVCells(contentHeight));
     }
 
@@ -906,12 +906,13 @@ IWidget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
     if (this.minimized) {
         if (this.onFreeLayout()) {
             // Floating widget
-            this.element.setStyle({"visibility": "hidden"});
-            this.iconElement.setStyle({"display": "block"});
+            this.element.style.visibility = "hidden";
+            this.iconElement.style.display = "block";
         } else {
             // Linked to the grid
-            this.contentWrapper.setStyle({"visibility": "hidden", "border": "0px"});
-            this.statusBar.setStyle({"display": "none"});
+            this.contentWrapper.style.visibility = "hidden";
+            this.contentWrapper.style.border = "0px";
+            this.statusBar.style.display = "none";
             this.minimizeButton.setTitle(gettext("Maximize"));
             this.minimizeButton.removeClassName("icon-minus");
             this.minimizeButton.addClassName("icon-plus");
@@ -920,15 +921,16 @@ IWidget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
         this.minimizeButton.setTitle(gettext("Minimize"));
         this.minimizeButton.removeClassName("icon-plus");
         this.minimizeButton.addClassName("icon-minus");
-        this.contentWrapper.setStyle({"visibility": "", "border": ""});
+        this.contentWrapper.style.visibility = "";
+        this.contentWrapper.style.border = "";
 
         if (this.onFreeLayout()) {
             // Floating widget
-            this.element.setStyle({"visibility": ""});
-            this.iconElement.setStyle({"display": "none"});
+            this.element.style.visibility = "";
+            this.iconElement.style.display = "none";
         } else {
             //Linked to the grid
-            this.statusBar.setStyle({"display": ""});
+            this.statusBar.style.display = "";
         }
     }
 

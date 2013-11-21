@@ -157,15 +157,13 @@
         var windowHeight = window.innerHeight;
         var windowWidth = window.innerWidth;
 
-        this.htmlElement.setStyle({'max-height' : ''});
-        this.htmlElement.setStyle({'max-width' : ''});
+        this.htmlElement.style.maxHeight = '';
+        this.htmlElement.style.maxWidth = '';
         var menuWidth = this.htmlElement.getWidth();
 
         if (menuWidth > windowWidth) {
             menuWidth = windowWidth;
-            this.htmlElement.setStyle({
-                'max-width': menuWidth + 'px'
-            });
+            this.htmlElement.style.maxWidth = menuWidth + 'px';
         }
         var menuHeight = this.htmlElement.getHeight();
 
@@ -179,10 +177,8 @@
             padding = windowStyle.getPropertyCSSValue("padding-top").getFloatValue(CSSPrimitiveValue.CSS_PX);
             padding += windowStyle.getPropertyCSSValue("padding-bottom").getFloatValue(CSSPrimitiveValue.CSS_PX);
 
-            this.htmlElement.setStyle({
-                'max-height': windowHeight - padding + 'px',
-                'top': '0px'
-            });
+            this.htmlElement.style.maxHeight = windowHeight - padding + 'px';
+            this.htmlElement.style.top = '0px';
         } else {
             this.htmlElement.style.top = coordenates[1] + "px";
         }

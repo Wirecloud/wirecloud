@@ -161,7 +161,7 @@ var LayoutManagerFactory = function () {
 
             loadingElement.classList.add('disabled');
             loadingElement.classList.remove('fadding');
-            loadingMessage.setStyle({'opacity': '1'});
+            loadingMessage.style.opacity = '1';
 
             if (this.timeout !== null) {
                 clearTimeout(this.timeout);
@@ -192,7 +192,7 @@ var LayoutManagerFactory = function () {
             function fadder() {
                 ++step;
                 if (step < 80) {
-                    loadingMessage.setStyle({'opacity': 1 - (step * 0.025)});
+                    loadingMessage.style.opacity = "" + (1 - (step * 0.025));
                     layoutManager.timeout = setTimeout(fadder, 50);
                 } else {
                     layoutManager._hideProgressIndicator();
