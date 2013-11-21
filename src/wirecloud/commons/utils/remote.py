@@ -339,9 +339,13 @@ class WirecloudRemoteTestCase(object):
         search_view = catalogue_element.find_element_by_class_name('search_interface')
         WebDriverWait(self.driver, timeout).until(lambda driver: 'disabled' not in search_view.get_attribute('class'))
 
-    def login(self, username='admin', password='admin'):
+    def login(self, username='admin', password='admin', next=None):
 
-        self.driver.get(self.live_server_url + '/login')
+        url = self.live_server_url + '/login'
+        if next is not None:
+            url += '?next=' + next
+
+        self.driver.get(url)
         self.wait_element_visible_by_css_selector('#id_username')
 
         username_input = self.driver.find_element_by_id('id_username')
