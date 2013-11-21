@@ -176,7 +176,7 @@ InputInterface.prototype._normalize = function _normalize(value) {
     if (value == null) {
         return value;
     } else {
-        return ("" + value).strip();
+        return ("" + value).trim();
     }
 };
 

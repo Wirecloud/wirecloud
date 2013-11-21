@@ -110,7 +110,7 @@
             'onError': onError
         };
 
-        if (options.search_criteria.strip() === '') {
+        if (options.search_criteria.trim() === '') {
             url = this.view_all_template.evaluate({'starting_page': options.starting_page, 'resources_per_page': options.resources_per_page});
         } else {
             url = this.simple_search_template.evaluate({'starting_page': options.starting_page, 'resources_per_page': options.resources_per_page});

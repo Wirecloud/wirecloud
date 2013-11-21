@@ -342,7 +342,7 @@ function Workspace (workspaceState) {
     Workspace.prototype.rename = function rename(name) {
         var layoutManager, workspaceUrl, msg = null;
 
-        name = name.strip()
+        name = name.trim();
 
         if (name === "") {
             msg = gettext("Invalid workspace name");

@@ -34,7 +34,7 @@
 
         tcomponent = tcomponents[element.localName];
         if (typeof tcomponent === 'function') {
-            options = element.textContent.strip();
+            options = element.textContent.trim();
             if (options !== '') {
                 try {
                     parsed_options = JSON.parse(options);

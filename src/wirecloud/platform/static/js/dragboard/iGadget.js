@@ -324,10 +324,10 @@ IWidget.prototype.build = function () {
 
     // Icon Element
     this.iconElement = document.createElement("div");
-    this.iconElement.addClassName("floating_widget_icon");
+    this.iconElement.classList.add("floating_widget_icon");
 
     this.iconImg = document.createElement("img");
-    this.iconImg.addClassName("floating_widget_img");
+    this.iconImg.classList.add("floating_widget_img");
     this.iconImg.setAttribute("src", this.internal_iwidget.widget.getIcon());
     this.iconElement.appendChild(this.iconImg);
 
@@ -338,7 +338,7 @@ IWidget.prototype.build = function () {
 
     this.iwidgetIconNameHTMLElement = document.createElement("a");
     this.iwidgetIconNameHTMLElement.update(this.name);
-    this.iwidgetIconNameHTMLElement.addClassName("floating_widget_title");
+    this.iwidgetIconNameHTMLElement.classList.add("floating_widget_title");
     this.iconElement.appendChild(this.iwidgetIconNameHTMLElement);
 
     this.iwidgetIconNameHTMLElement.addEventListener("click",
@@ -398,7 +398,7 @@ IWidget.prototype.paint = function (onInit) {
 
     //Initialize read-only status
     if (this.internal_iwidget.readOnly) {
-        this.element.addClassName("widget_window_readonly");
+        this.element.classList.add("widget_window_readonly");
     }
 
     // Time to show the iwidget (we need to take into account the widget can be iconified)
@@ -997,14 +997,14 @@ IWidget.prototype.log = function (msg, level) {
 
 IWidget.prototype.highlight = function () {
     if (this.isVisible()) {
-        this.element.addClassName('highlighted');
+        this.element.classList.add('highlighted');
 
         if (this.highlightTimeout !== null) {
             clearTimeout(this.highlightTimeout);
         }
 
         this.highlightTimeout = setTimeout(function () {
-                this.element.removeClassName('highlighted');
+                this.element.classList.remove('highlighted');
                 this.highlightTimeout = null;
             }.bind(this),
             15000);

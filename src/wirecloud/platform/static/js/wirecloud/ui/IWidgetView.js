@@ -102,7 +102,7 @@
             },
             'iframe': function () {
                 var content = document.createElement("iframe");
-                content.addClassName("widget_object");
+                content.classList.add("widget_object");
                 content.setAttribute("type", this.widget.code_content_type);
                 content.setAttribute("frameBorder", "0");
                 content.addEventListener("load", iwidget._notifyLoaded.bind(iwidget, content), true);

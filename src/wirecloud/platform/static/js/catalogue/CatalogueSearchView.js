@@ -60,7 +60,7 @@
                 this.resource_painter.setError(gettext('Connection error: No resources retrieved.'));
             }
 
-            if (pagination.pCachedTotalCount === 0 && pagination.pOptions.keywords.strip() === "" && pagination.pOptions.scope === 'all') {
+            if (pagination.pCachedTotalCount === 0 && pagination.pOptions.keywords.trim() === "" && pagination.pOptions.scope === 'all') {
                 this.resource_list.appendChild(this.emptyBox);
             }
 

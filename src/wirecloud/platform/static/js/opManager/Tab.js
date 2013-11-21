@@ -180,7 +180,7 @@
     Tab.prototype.updateInfo = function updateInfo(tabName) {
         var layoutManager, tabUrl, msg = null;
 
-        tabName = tabName.strip();
+        tabName = tabName.trim();
 
         if (tabName === "") {
             msg = interpolate(gettext("Error updating a tab: invalid name"), true);
