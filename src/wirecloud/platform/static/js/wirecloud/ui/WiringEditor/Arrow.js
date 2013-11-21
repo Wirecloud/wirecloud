@@ -18,7 +18,7 @@
  *     under the License.
  */
 
-/*global Draggable, Wirecloud, Event, EzWebEffectBase, Element */
+/*global Draggable, Wirecloud, Event, EzWebEffectBase */
 
 (function () {
 

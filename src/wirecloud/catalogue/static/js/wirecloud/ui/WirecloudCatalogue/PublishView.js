@@ -19,7 +19,7 @@
  *
  */
 
-/*global Constants, Element, gettext, interpolate, LayoutManagerFactory, StyledElements, Wirecloud*/
+/*global Constants, gettext, interpolate, LayoutManagerFactory, StyledElements, Wirecloud*/
 
 (function () {
 

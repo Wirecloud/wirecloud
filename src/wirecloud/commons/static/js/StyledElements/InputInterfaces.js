@@ -1,4 +1,4 @@
-/*global gettext, interpolate, Element, Form, OpManagerFactory, SelectInputInterface, StyledElements, Wirecloud */
+/*global gettext, interpolate, Form, OpManagerFactory, SelectInputInterface, StyledElements, Wirecloud */
 "use strict";
 
 var ValidationErrorManager, InputValidationError = {};
@@ -948,12 +948,12 @@ function ParametrizedTextInputInterface(fieldId, options) {
             this.mainSelect.add(option);
         }
     }
-    Element.observe(this.mainSelect, 'change', this._updateSecondSelect.bind(this));
+    this.mainSelect.addEventListener('change', this._updateSecondSelect.bind(this), true);
     this.selectorWrapperElement.appendChild(this.mainSelect);
 
     this.secondSelect = document.createElement('select');
     this.selectorWrapperElement.appendChild(this.secondSelect);
-    Element.observe(this.secondSelect, 'change', this._updateDescription.bind(this));
+    this.secondSelect.addEventListener('change', this._updateDescription.bind(this), true);
 
     this.addButton = new StyledElements.StyledButton({
         'text': gettext('Add')

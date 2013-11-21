@@ -19,7 +19,7 @@
  *
  */
 
-/*global CSSPrimitiveValue, Draggable, Element, isElement, LayoutManagerFactory, Wirecloud*/
+/*global CSSPrimitiveValue, Draggable, isElement, LayoutManagerFactory, Wirecloud*/
 
 (function () {
 
