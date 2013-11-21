@@ -500,16 +500,21 @@
      * @deprecated @experimental
      */
     Utils.clone = function clone(obj1) {
+        var result;
+
         if (obj1 == null) {
             return obj1;
+        } else if (Array.isArray(obj1)) {
+            result = [];
+        } else {
+            result = {};
         }
 
-        var tmp = {};
         for (var key in obj1) {
-            tmp[key] = obj1[key];
+            result[key] = obj1[key];
         }
 
-        return tmp;
+        return result;
     };
 
     /**

@@ -48,7 +48,7 @@
 
     SourceEndpoint.prototype.fullDisconnect = function fullDisconnect() {
         // Outputs
-        var outputs = this.outputs.clone();
+        var outputs = Wirecloud.Utils.clone(this.outputs);
         for (var i = 0; i < outputs.length; ++i) {
             this.disconnect(outputs[i]);
         }
