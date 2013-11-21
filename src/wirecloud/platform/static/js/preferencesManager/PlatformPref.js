@@ -271,7 +271,7 @@ function WorkspacePreferencesDef(definitions, args) {
 	} else if (workspace.workspaceGlobalInfo != null) {
 		prefManager = PreferencesManagerFactory.getInstance();
 		extra_prefs = prefManager._processDefinitions(workspace.workspaceGlobalInfo.extra_prefs);
-		definitions = Object.extend(definitions, extra_prefs);
+		definitions = Wirecloud.Utils.merge(definitions, extra_prefs);
 	}
 	PreferencesDef.call(this, definitions);
 }

@@ -61,7 +61,7 @@
     SourceEndpoint.prototype.propagate = function propagate(value, options) {
         var i;
 
-        options = Object.extend({
+        options = Wirecloud.Utils.merge({
             initial: false
         }, options);
 

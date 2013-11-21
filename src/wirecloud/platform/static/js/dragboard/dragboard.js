@@ -233,7 +233,7 @@
                 "setDefaultValues" : function () {}
             };
 
-            Object.extend(options, options_);
+            Wirecloud.Utils.merge(options, options_);
 
             if (!(widget instanceof Wirecloud.Widget)) {
                 throw new TypeError();

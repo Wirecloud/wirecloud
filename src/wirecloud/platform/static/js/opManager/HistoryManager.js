@@ -20,7 +20,7 @@
         var key, default_data = {
             view: "workspace"
         };
-        data = Object.extend(default_data, data);
+        data = Wirecloud.Utils.merge(default_data, data);
         for (key in data) {
             data[key] = "" + data[key];
         }
