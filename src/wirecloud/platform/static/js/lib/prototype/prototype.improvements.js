@@ -44,32 +44,6 @@ if (Prototype.BrowserFeatures.ElementExtensions) {
 
 //if (Prototype.Browser.IE || Element.prototype.getBoundingClientRect != undefined) {
 
-if (document.documentElement.getBoundingClientRect != undefined) {
-	Element.getRelativeBoundingClientRect = function(element1, element2) {
-		var rect1 = element1.getBoundingClientRect();
-		var rect2 = element2.getBoundingClientRect();
-		return {
-			top: rect1.top - rect2.top,
-			left: rect1.left - rect2.left,
-			right: rect1.right - rect2.left,
-			bottom: rect1.bottom - rect2.top
-		}
-	}
-} else if (document.getBoxObjectFor != undefined) {
-	Element.getRelativeBoundingClientRect = function(element1, element2) {
-		var box1 = document.getBoxObjectFor(element1);
-		var box2 = document.getBoxObjectFor(element2);
-		return {
-			top: box1.screenY - box2.screenY,
-			left: box1.screenX - box2.screenX,
-			right: box1.screenX + box1.width - box2.screenX,
-			bottom: box1.screenY + box1.height - box2.screenY
-		}
-	}
-} else {
-	// Unsupported browser
-}
-
 /*
  * ARRAY EXTENSIONS
  */
