@@ -271,7 +271,8 @@ function Workspace (workspaceState) {
         var data = JSON.parse(response);
         //update the new wsInfo
         opManager = OpManagerFactory.getInstance();
-        opManager.changeActiveWorkspace(opManager.workspaceInstances.get(data.merged_workspace_id));
+        var workspace = new Workspace(opManager.workspaceInstances[data.merged_workspace_id]);
+        opManager.changeActiveWorkspace(workspace);
         LayoutManagerFactory.getInstance().hideCover();
     }
 
@@ -748,7 +749,7 @@ function Workspace (workspaceState) {
 
         switch (action) {
         case "remove":
-            nworkspaces = OpManagerFactory.getInstance().workspaceInstances.keys().length;
+            nworkspaces = Object.keys(OpManagerFactory.getInstance().workspaceInstances).length;
             return /* opManager.isAllow('add_remove_workspaces') && */ (nworkspaces > 1) && this.removable;
         case "merge_workspaces":
             return this._isAllowed('add_remove_iwidgets') || this._isAllowed('merge_workspaces');

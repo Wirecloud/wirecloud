@@ -46,17 +46,16 @@ var OpManagerFactory = function () {
             for (var i = 0; i < workspaces.length; i++) {
                 var workspace = workspaces[i];
 
-                var workspace_instance = new Workspace(workspace);
-                this.workspaceInstances.set(workspace.id, workspace_instance);
+                this.workspaceInstances[workspace.id] = workspace;
                 if (!(workspace.creator in this.workspacesByUserAndName)) {
                     this.workspacesByUserAndName[workspace.creator] = {};
                 }
-                this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace_instance;
+                this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace;
             }
 
             HistoryManager.init();
             var state = HistoryManager.getCurrentState();
-            this.activeWorkspace = this.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
+            this.activeWorkspace = new Workspace(this.workspacesByUserAndName[state.workspace_creator][state.workspace_name]);
 
             this.activeWorkspace.downloadWorkspaceInfo(HistoryManager.getCurrentState().tab);
         }
@@ -77,10 +76,9 @@ var OpManagerFactory = function () {
 
         /*****WORKSPACE CALLBACK***/
         var createWSSuccess = function(onSuccess, response) {
-            var workspace_data = JSON.parse(response.responseText);
-            var workspace = new Workspace(workspace_data);
-            this.workspaceInstances.set(workspace.id, workspace);
-            this.changeActiveWorkspace(workspace);
+            var workspace = JSON.parse(response.responseText);
+            this.workspaceInstances[workspace.id] = workspace;
+            this.changeActiveWorkspace(new Workspace(workspace));
 
             if (typeof onSuccess === 'function') {
                 try {
@@ -113,7 +111,7 @@ var OpManagerFactory = function () {
         this.loadCompleted = false;
 
         // Variables for controlling the collection of wiring and dragboard instances of a user
-        this.workspaceInstances = new Hash();
+        this.workspaceInstances = {};
         this.workspacesByUserAndName = {};
 
         this.activeWorkspace = null;
@@ -433,23 +431,14 @@ var OpManagerFactory = function () {
             });
         };
 
-        OpManager.prototype.unloadWorkspace = function(workspaceId) {
-            //Unloading the Workspace
-            this.workspaceInstances.get(workspaceId).unload();
-        }
-
         OpManager.prototype.removeWorkspace = function(workspaceId) {
             // Removing reference
-            this.workspaceInstances.unset(workspaceId);
+            delete this.workspaceInstances[workspaceId];
 
             // Set the first workspace as current
-            this.changeActiveWorkspace(this.workspaceInstances.values()[0]);
+            this.changeActiveWorkspace(Object.values(this.workspaceInstances)[0]);
         };
 
-
-        OpManager.prototype.getWorkspaceCount = function(){
-            return this.workspaceInstances.keys().length;
-        }
     }
 
     // *********************************

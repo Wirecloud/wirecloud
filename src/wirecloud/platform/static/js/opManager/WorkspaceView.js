@@ -30,8 +30,8 @@
         StyledElements.Alternative.call(this, id, options);
 
         this.wsMenu = new StyledElements.PopupMenu();
-        this.wsMenu.append(new WorkspaceListItems(function (workspace) {
-            OpManagerFactory.getInstance().changeActiveWorkspace(workspace);
+        this.wsMenu.append(new WorkspaceListItems(function (context, workspace) {
+            OpManagerFactory.getInstance().changeActiveWorkspace(new Workspace(workspace));
         }));
         this.wsMenu.appendSeparator();
         this.wsMenu.append(new WorkspaceItems());

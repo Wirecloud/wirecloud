@@ -37,7 +37,7 @@ var LayoutManagerFactory = function () {
 
         ws_id = parseInt(state.workspace, 10);
         if (ws_id !== opManager.activeWorkspace.id) {
-            nextWorkspace = opManager.workspaceInstances.get(ws_id);
+            nextWorkspace = opManager.workspaceInstances[ws_id];
             opManager.changeActiveWorkspace(nextWorkspace, state.tab);
             return;
         }

@@ -30,17 +30,17 @@ var WorkspaceListItems = function (handler, options) {
 WorkspaceListItems.prototype = new StyledElements.DynamicMenuItems();
 
 WorkspaceListItems.prototype.build = function () {
-    var workspace_keys, i, items, workspace;
+    var workspaceId, items, workspace;
 
     items = [];
 
-    workspace_keys = OpManagerFactory.getInstance().workspaceInstances.keys();
-    for (i = 0; i < workspace_keys.length; i += 1) {
-        workspace = OpManagerFactory.getInstance().workspaceInstances.get(workspace_keys[i]);
+    for (workspaceId in OpManagerFactory.getInstance().workspaceInstances) {
+        workspace = OpManagerFactory.getInstance().workspaceInstances[workspaceId];
 
         items.push(new StyledElements.MenuItem(
-            workspace.getName(),
-            this.handler.bind(this, workspace)
+            workspace.name,
+            this.handler,
+            workspace
         ));
     }
 
