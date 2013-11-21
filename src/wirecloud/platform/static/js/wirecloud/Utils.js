@@ -29,6 +29,14 @@
             });
     };
 
+    Utils.Template = function Template(template) {
+        this.template = template;
+    };
+
+    Utils.Template.prototype.evaluate = function evaluate(context) {
+        return interpolate(this.template, context, true);
+    };
+
     /**
      * Event listener that stops any event propagation.
      */

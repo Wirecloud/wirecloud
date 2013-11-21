@@ -19,7 +19,7 @@
  *
  */
 
-/*global CatalogueResource, gettext, Wirecloud, Template*/
+/*global CatalogueResource, gettext, Wirecloud*/
 
 (function () {
 
@@ -75,11 +75,11 @@
             options.url += '/';
         }
 
-        this.view_all_template = new Template(options.url + 'catalogue/resources/#{starting_page}/#{resources_per_page}');
-        this.simple_search_template = new Template(options.url + 'catalogue/search/and/#{starting_page}/#{resources_per_page}');
+        this.view_all_template = new Wirecloud.Utils.Template(options.url + 'catalogue/resources/%(starting_page)s/%(resources_per_page)s');
+        this.simple_search_template = new Wirecloud.Utils.Template(options.url + 'catalogue/search/and/%(starting_page)s/%(resources_per_page)s');
 
         Object.defineProperty(this, 'RESOURCE_ENTRY', {
-            value: new Template(options.url + 'catalogue/resource/#{vendor}/#{name}/#{version}')
+            value: new Wirecloud.Utils.Template(options.url + 'catalogue/resource/%(vendor)s/%(name)s/%(version)s')
         });
         Object.defineProperty(this, 'RESOURCE_COLLECTION', {value: options.url + 'catalogue/resources'});
     };

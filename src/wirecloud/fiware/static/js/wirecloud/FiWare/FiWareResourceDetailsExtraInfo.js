@@ -25,7 +25,7 @@
 
 var PartsPainter = function(part_structure_element, dom_element){
     this.part_template_element = part_structure_element;
-    this.part_template = new Template(this.part_template_element);
+    this.part_template = new Wirecloud.Utils.Template(this.part_template_element);
     this.dom_element = dom_element;
 
     this.paint = function(resource){
@@ -51,7 +51,7 @@ var PartsPainter = function(part_structure_element, dom_element){
 
 var LegalPainter = function(legal_structure_element, dom_element){
     this.legal_template_element = legal_structure_element;
-    this.legal_template = new Template(this.legal_template_element);
+    this.legal_template = new Wirecloud.Utils.Template(this.legal_template_element);
     this.dom_element = dom_element;
 
     this.paint = function(resource){
@@ -88,7 +88,7 @@ var LegalPainter = function(legal_structure_element, dom_element){
 
 var ClausePainter = function(clause_structure_element, dom_element){
     this.clause_template_element = clause_structure_element;
-    this.clause_template = new Template(this.clause_template_element);
+    this.clause_template = new Wirecloud.Utils.Template(this.clause_template_element);
     this.dom_element = dom_element;
 
     this.paint = function(resource){
@@ -114,7 +114,7 @@ var ClausePainter = function(clause_structure_element, dom_element){
 
 var SlaPainter = function(sla_structure_element, dom_element){
     this.sla_template_element = sla_structure_element;
-    this.sla_template = new Template(this.sla_template_element);
+    this.sla_template = new Wirecloud.Utils.Template(this.sla_template_element);
     this.dom_element = dom_element;
 
     this.paint = function(resource){
@@ -153,7 +153,7 @@ var SlaPainter = function(sla_structure_element, dom_element){
 
 var ExpresionPainter = function(expresion_structure_element, dom_element){
     this.expresion_template_element = expresion_structure_element;
-    this.expresion_template = new Template(this.expresion_template_element);
+    this.expresion_template = new Wirecloud.Utils.Template(this.expresion_template_element);
     this.dom_element = dom_element;
 
     this.paint = function(resource){
@@ -193,7 +193,7 @@ var ExpresionPainter = function(expresion_structure_element, dom_element){
 
 var VariablePainter = function(variable_structure_element, dom_element){
     this.variable_template_element = variable_structure_element;
-    this.variable_template = new Template(this.variable_template_element);
+    this.variable_template = new Wirecloud.Utils.Template(this.variable_template_element);
     this.dom_element = dom_element;
 
     this.paint = function(resource){
@@ -221,7 +221,7 @@ var VariablePainter = function(variable_structure_element, dom_element){
 
 var PricingPainter = function(pricing_structure_element, dom_element){
     this.pricing_template_element = pricing_structure_element;
-    this.pricing_template = new Template(this.pricing_template_element);
+    this.pricing_template = new Wirecloud.Utils.Template(this.pricing_template_element);
     this.dom_element = dom_element;
 
     this.paint = function(resource){
@@ -266,7 +266,7 @@ var PricingPainter = function(pricing_structure_element, dom_element){
 
 var PriceElementPainter = function(price_structure_element, dom_element){
     this.price_template_element = price_structure_element;
-    this.price_template = new Template(this.price_template_element);
+    this.price_template = new Wirecloud.Utils.Template(this.price_template_element);
     this.dom_element = dom_element;
 
     this.paint = function(resource){
