@@ -101,7 +101,7 @@ function Dragboard(tab, workspace, dragboardElement) {
     };
 
     Dragboard.prototype.getIWidgets = function () {
-        return Object.values(this.iWidgets);
+        return Wirecloud.Utils.values(this.iWidgets);
     };
 
     Dragboard.prototype.getIWidget = function (iWidgetId) {

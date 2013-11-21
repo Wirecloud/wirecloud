@@ -436,7 +436,7 @@ var OpManagerFactory = function () {
             delete this.workspaceInstances[workspaceId];
 
             // Set the first workspace as current
-            this.changeActiveWorkspace(Object.values(this.workspaceInstances)[0]);
+            this.changeActiveWorkspace(Wirecloud.Utils.values(this.workspaceInstances)[0]);
         };
 
     }

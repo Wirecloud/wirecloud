@@ -324,7 +324,7 @@
         };
 
         Dragboard.prototype.getIWidgets = function getIWidgets() {
-            return Object.values(this.iWidgets);
+            return Wirecloud.Utils.values(this.iWidgets);
         };
 
         Dragboard.prototype.getIWidget = function getIWidget(iWidgetId) {
