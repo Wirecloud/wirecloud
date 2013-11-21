@@ -203,7 +203,7 @@ function PreferencesDef(definitions) {
 			var complexCell = complexRow.insertCell(-1);
 			complexCell.colSpan = "2";
 
-			var complexTable = $(document.createElement('table'));
+			var complexTable = document.createElement('table');
 			complexTable.classList.add('complexTable');
 			complexTable.setAttribute('cellspacing', '0');
 			complexTable.setAttribute('cellpadding', '0');
@@ -218,7 +218,7 @@ function PreferencesDef(definitions) {
 			columnLabel.colSpan = "2";
 
 			var prefRow = complexTBody.insertRow(-1);
-			var inheritCell = $(prefRow.insertCell(-1));
+			var inheritCell = prefRow.insertCell(-1);
 			inheritCell.classList.add('inheritCell');
 
 			var inheritInput = preference.getInheritInterface();

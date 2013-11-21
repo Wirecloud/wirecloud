@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global Workspace, alert, $, console, LayoutManagerFactory, Modules, setTimeout, Wirecloud */
+/*global Workspace, alert, console, LayoutManagerFactory, Modules, setTimeout, Wirecloud */
 "use strict";
 
 /* 
@@ -250,8 +250,8 @@ var OpManagerFactory = (function () {
         this.activeWorkspace = null;
 
         // workspace menu element
-        this.workspaceMenuElement = $('workspace_menu');
-        this.workspaceListElement = $('workspace_list');
+        this.workspaceMenuElement = document.getElementById('workspace_menu');
+        this.workspaceListElement = document.getElementById('workspace_list');
         this.alternatives = new StyledElements.StyledAlternatives();
         this.workspaceListAlternative = this.alternatives.createAlternative();
         this.workspaceListAlternative.appendChild(this.workspaceMenuElement);

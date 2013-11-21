@@ -19,7 +19,7 @@
  *
  */
 
-/*global $, gettext, LegalPainter, PricingPainter, SlaPainter, StyledElements, Wirecloud */
+/*global gettext, LegalPainter, PricingPainter, SlaPainter, StyledElements, Wirecloud */
 
 (function () {
 

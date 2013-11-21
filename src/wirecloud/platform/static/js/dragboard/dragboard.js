@@ -19,7 +19,7 @@
  *
  */
 
-/*global document, window, Error, gettext, interpolate, $*/
+/*global document, window, Error, gettext, interpolate*/
 /*global Constants, CSSPrimitiveValue, FreeLayout, FullDragboardLayout, IWidget, LayoutManagerFactory, OpManagerFactory, Wirecloud*/
 
 (function () {

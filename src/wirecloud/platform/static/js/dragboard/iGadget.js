@@ -20,7 +20,7 @@
  */
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
-/*global $, CSSPrimitiveValue, Insertion, document, gettext, ngettext, interpolate, window */
+/*global CSSPrimitiveValue, Insertion, document, gettext, ngettext, interpolate, window */
 /*global Constants, DropDownMenu, LayoutManagerFactory, OpManagerFactory, Wirecloud*/
 /*global IWidgetDraggable, IWidgetIconDraggable, FreeLayout, FullDragboardLayout*/
 /*global ColorDropDownMenu*/
@@ -483,7 +483,7 @@ IWidget.prototype.setRefusedVersion = function (v) {
     }
 
     this.refusedVersion = v;
-    $("version_button_" + this.id).hide();
+    document.getElementById("version_button_" + this.id).hide();
 
     var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
         workspace_id: this.layout.dragboard.workspace.id,

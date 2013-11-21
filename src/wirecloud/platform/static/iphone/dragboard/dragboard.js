@@ -1,4 +1,4 @@
-/*global $, OpManagerFactory, IWidget */
+/*global OpManagerFactory, IWidget */
 "use strict";
 
 /* 
@@ -36,8 +36,8 @@ function Dragboard(tab, workspace, dragboardElement) {
     this.currentCode = 1;
 
     // HTML Elements
-    this.dragboardElement = $('dragboard');
-    this.barElement = $('bar');
+    this.dragboardElement = document.getElementById('dragboard');
+    this.barElement = document.getElementById('bar');
 
     //Atributes
     this.iWidgets = {};

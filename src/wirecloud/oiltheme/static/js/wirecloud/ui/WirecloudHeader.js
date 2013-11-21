@@ -19,7 +19,7 @@
  *
  */
 
-/*global $, gettext, LayoutManagerFactory, OpManagerFactory, StyledElements, Wirecloud*/
+/*global gettext, LayoutManagerFactory, OpManagerFactory, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -32,8 +32,8 @@
     var WirecloudHeader = function WirecloudHeader() {
         var menu_wrapper;
 
-        this.wrapperElement = $('wirecloud_header');
-        this.breadcrum = $('wirecloud_breadcrum');
+        this.wrapperElement = document.getElementById('wirecloud_header');
+        this.breadcrum = document.getElementById('wirecloud_breadcrum');
         this.oil_header = this.wrapperElement.getElementsByTagName('header')[0];
 
         this.currentView = null;

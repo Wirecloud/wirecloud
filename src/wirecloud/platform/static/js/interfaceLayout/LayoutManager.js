@@ -41,7 +41,7 @@ var LayoutManagerFactory = function () {
         // *********************************
 
         this.mainLayout = new StyledElements.BorderLayout();
-        this.mainLayout.getNorthContainer().appendChild($('wirecloud_header'));
+        this.mainLayout.getNorthContainer().appendChild(document.getElementById('wirecloud_header'));
 
         this.alternatives = new StyledElements.StyledAlternatives();
         this.mainLayout.getCenterContainer().appendChild(this.alternatives);
@@ -64,11 +64,11 @@ var LayoutManagerFactory = function () {
         // Remaining containers managed by Workspaces!!
         this._clickCallback = this._clickCallback.bind(this);
         this.timeout = null;
-        $("loading-window").addEventListener('click', this._clickCallback, true);
+        document.getElementById("loading-window").addEventListener('click', this._clickCallback, true);
 
         // Menu Layer
         this.currentMenu = null;                                // current menu (either dropdown or window)
-        this.coverLayerElement = $('menu_layer');               // disabling background layer
+        this.coverLayerElement = document.getElementById('menu_layer');               // disabling background layer
         this.coverLayerElement.className = 'disabled_background fade';
 
         this.menus = new Array();
@@ -103,7 +103,7 @@ var LayoutManagerFactory = function () {
 
             msg = gettext("%(task)s %(percentage)s%");
             msg = interpolate(msg, {task: this.task, percentage: taskpercentage}, true);
-            $("loading-task-title").textContent = msg;
+            document.getElementById("loading-task-title").textContent = msg;
 
             if (this.subTask != "") {
                 msg = gettext("%(subTask)s: %(percentage)s%");
@@ -112,7 +112,7 @@ var LayoutManagerFactory = function () {
             }
 
             msg = interpolate(msg, {subTask: this.subTask, percentage: subtaskpercentage}, true);
-            $("loading-subtask-title").textContent = msg;
+            document.getElementById("loading-subtask-title").textContent = msg;
         }
 
         LayoutManager.prototype._startComplexTask = function(task, subtasks) {
@@ -120,7 +120,7 @@ var LayoutManagerFactory = function () {
             this.currentSubTask = -2;
             this.totalSubTasks = subtasks != undefined ? subtasks : 1;
             this.logSubTask("");
-            $("loading-window").classList.remove("disabled");
+            document.getElementById("loading-window").classList.remove("disabled");
         }
 
         LayoutManager.prototype.logSubTask = function(msg, totalSteps) {
@@ -144,7 +144,7 @@ var LayoutManagerFactory = function () {
         }
 
         LayoutManager.prototype.logStep = function(msg, totalSteps) {
-            //$("loading-step-title").textContent = msg ? msg : "";
+            //document.getElementById("loading-step-title").textContent = msg ? msg : "";
             this.currentStep++;
             if (this.currentStep > this.totalSteps)
                 this.totalSteps = this.currentStep + 1;
@@ -156,8 +156,8 @@ var LayoutManagerFactory = function () {
         }
 
         LayoutManager.prototype._hideProgressIndicator = function () {
-            var loadingElement = $("loading-window");
-            var loadingMessage = $("loading-message");
+            var loadingElement = document.getElementById("loading-window");
+            var loadingMessage = document.getElementById("loading-message");
 
             loadingElement.classList.add('disabled');
             loadingElement.classList.remove('fadding');
@@ -172,7 +172,7 @@ var LayoutManagerFactory = function () {
         LayoutManager.prototype._clickCallback = function (event) {
             event = event || window.event;
 
-            if ($("loading-window").hasClassName("fadding")) {
+            if (document.getElementById("loading-window").hasClassName("fadding")) {
                 this._hideProgressIndicator();
             }
             if (event.stopPropagation) {
@@ -183,10 +183,10 @@ var LayoutManagerFactory = function () {
         };
 
         LayoutManager.prototype._notifyPlatformReady = function () {
-            var loadingElement = $("loading-window");
+            var loadingElement = document.getElementById("loading-window");
             loadingElement.classList.add("fadding");
 
-            var loadingMessage = $("loading-message");
+            var loadingMessage = document.getElementById("loading-message");
             var step = 0;
             var layoutManager = this;
             function fadder() {
