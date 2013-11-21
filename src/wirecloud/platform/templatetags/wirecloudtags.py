@@ -28,20 +28,21 @@ from wirecloud.platform.plugins import get_extra_javascripts, get_platform_css, 
 register = template.Library()
 
 
+@register.inclusion_tag('wirecloud/js_includes.html', takes_context=True)
 def extra_javascripts(context, view):
     files = get_extra_javascripts(view)
 
     return {'files': files, 'STATIC_URL': context['STATIC_URL']}
-register.inclusion_tag('wirecloud/js_includes.html', takes_context=True)(extra_javascripts)
 
 
+@register.inclusion_tag('wirecloud/css_includes.html', takes_context=True)
 def platform_css(context, view):
     files = get_platform_css(view)
 
     return {'files': files, 'STATIC_URL': context['STATIC_URL']}
-register.inclusion_tag('wirecloud/css_includes.html', takes_context=True)(platform_css)
 
 
+@register.inclusion_tag('wirecloud/inline_javascript.html', takes_context=True)
 def wirecloud_ajax_endpoints(context, view):
     endpoints = get_wirecloud_ajax_endpoints(view)
     script = 'var Wirecloud = {\n  "ui": {}\n};\n\nWirecloud.URLs = {\n'
@@ -54,7 +55,6 @@ def wirecloud_ajax_endpoints(context, view):
 
     script += '};'
     return {'script': mark_safe(script)}
-register.inclusion_tag('wirecloud/inline_javascript.html', takes_context=True)(wirecloud_ajax_endpoints)
 
 
 @register.filter
