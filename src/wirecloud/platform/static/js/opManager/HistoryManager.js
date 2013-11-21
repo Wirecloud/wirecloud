@@ -131,7 +131,7 @@
     };
 
     HistoryManager.getCurrentState = function getCurrentState() {
-        return Object.clone(history.state);
+        return Wirecloud.Utils.clone(history.state);
     };
 
     window.HistoryManager = HistoryManager;
