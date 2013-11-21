@@ -337,7 +337,7 @@ IWidget.prototype.build = function () {
     };
 
     this.iwidgetIconNameHTMLElement = document.createElement("a");
-    this.iwidgetIconNameHTMLElement.update(this.name);
+    this.iwidgetIconNameHTMLElement.textContent = this.name;
     this.iwidgetIconNameHTMLElement.classList.add("floating_widget_title");
     this.iconElement.appendChild(this.iwidgetIconNameHTMLElement);
 

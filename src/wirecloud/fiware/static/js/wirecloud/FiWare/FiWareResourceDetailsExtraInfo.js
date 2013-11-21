@@ -43,7 +43,7 @@ var PartsPainter = function(part_structure_element, dom_element){
             };
             resource_element = document.createElement('div');
             resource_element.className="part_resource";
-            resource_element.update(this.part_template.evaluate(resource_html));
+            resource_element.innerHTML = this.part_template.evaluate(resource_html);
             this.dom_element.appendChild(resource_element)
         }
     };
@@ -70,7 +70,7 @@ var LegalPainter = function(legal_structure_element, dom_element){
                 };
                 resource_element = document.createElement('div');
                 resource_element.className="legal_resource";
-                resource_element.update(this.legal_template.evaluate(resource_html));
+                resource_element.innerHTML = this.legal_template.evaluate(resource_html);
                 clause_painter = new ClausePainter(Wirecloud.currentTheme.templates['legal_clause_template'], resource_element.getElementsByClassName('clause_list')[0]);
                 clause_painter.paint(legal_element.clauses);
 
@@ -105,7 +105,7 @@ var ClausePainter = function(clause_structure_element, dom_element){
             }
             resource_element = document.createElement('div');
             resource_element.className="clause_resource";
-            resource_element.update(this.clause_template.evaluate(resource_html));
+            resource_element.innerHTML = this.clause_template.evaluate(resource_html);
 
             this.dom_element.appendChild(resource_element)
         }
@@ -135,7 +135,7 @@ var SlaPainter = function(sla_structure_element, dom_element){
                 };
                 resource_element = document.createElement('div');
                 resource_element.className="sla_resource";
-                resource_element.update(this.sla_template.evaluate(resource_html));
+                resource_element.innerHTML = this.sla_template.evaluate(resource_html);
                 expresion_painter = new ExpresionPainter(Wirecloud.currentTheme.templates['sla_expresion_template'], resource_element.getElementsByClassName('expresions_list')[0]);
                 expresion_painter.paint(sla_element.slaExpresions);
 
@@ -171,7 +171,7 @@ var ExpresionPainter = function(expresion_structure_element, dom_element){
             };
             resource_element = document.createElement('div');
             resource_element.className="slaExpresion_resource";
-            resource_element.update(this.expresion_template.evaluate(resource_html));
+            resource_element.innerHTML = this.expresion_template.evaluate(resource_html);
             variable_painter = new VariablePainter(Wirecloud.currentTheme.templates['sla_variable_template'], resource_element.getElementsByClassName('variable_list')[0]);
 
             if ('location' in slaExpresion_element) {
@@ -212,7 +212,7 @@ var VariablePainter = function(variable_structure_element, dom_element){
             }
             resource_element = document.createElement('div');
             resource_element.className="slaVariable_resource";
-            resource_element.update(this.variable_template.evaluate(resource_html));
+            resource_element.innerHTML = this.variable_template.evaluate(resource_html);
 
             this.dom_element.appendChild(resource_element)
         }
@@ -241,7 +241,7 @@ var PricingPainter = function(pricing_structure_element, dom_element){
 	    }
             resource_element = document.createElement('div');
             resource_element.className="pricing_resource";
-            resource_element.update(this.pricing_template.evaluate(resource_html));
+            resource_element.innerHTML = this.pricing_template.evaluate(resource_html);
 
             if ('priceComponents' in pricing_element && pricing_element.priceComponents.length > 0 && pricing_element.priceComponents[0].title !== '') {
                 pricing_component_painter = new PriceElementPainter(Wirecloud.currentTheme.templates['price_component_template'], resource_element.getElementsByClassName('price_components_list')[0]);
@@ -286,7 +286,7 @@ var PriceElementPainter = function(price_structure_element, dom_element){
             }
             resource_element = document.createElement('div');
             resource_element.className="price_element_resource";
-            resource_element.update(this.price_template.evaluate(resource_html));
+            resource_element.innerHTML = this.price_template.evaluate(resource_html);
 
             this.dom_element.appendChild(resource_element)
         }

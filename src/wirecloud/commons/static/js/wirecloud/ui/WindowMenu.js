@@ -225,7 +225,7 @@
 
         this.htmlElement.parentNode.removeChild(this.htmlElement);
         if (this.msgElement != null) {
-            this.msgElement.update();
+            this.msgElement.textContent = '';
         }
         if (this.childWindow != null) {
             this.childWindow.hide();
