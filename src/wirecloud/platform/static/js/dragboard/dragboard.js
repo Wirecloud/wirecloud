@@ -414,8 +414,8 @@
 
         Dragboard.prototype.lowerToBottom = function lowerToBottom(iWidget) {
             var zPos = iWidget.getZPosition();
-            delete this.orderList[zPos];
-            this.orderList = [iWidget].concat(this.orderList).compact();
+            this.orderList.splice(zPos, 1);
+            this.orderList = [iWidget].concat(this.orderList);
 
             for (var i = 0; i < this.orderList.length; i++) {
                 this.orderList[i].setZPosition(i);
@@ -449,12 +449,10 @@
                 return; // Nothing to do
             }
 
-            delete this.orderList[oldZPos];
+            this.orderList.splice(oldZPos, 1);
             this.orderList.push(iWidget);
-            this.orderList = this.orderList.compact();
 
-            var i = 0;
-            for (; i < this.orderList.length; i++) {
+            for (var i = oldZPos; i < this.orderList.length; i++) {
                 this.orderList[i].setZPosition(i);
             }
 
@@ -526,7 +524,7 @@
 
         // Check if we have to readjust the z positions
         oldLength = this.orderList.length;
-        this.orderList = this.orderList.compact();
+        this.orderList = this.orderList.filter(function (iwidget) { return iwidget != null; });
         if (oldLength !== this.orderList.length) {
             for (i = 0; i < this.orderList.length; i += 1) {
                 this.orderList[i].setZPosition(i);

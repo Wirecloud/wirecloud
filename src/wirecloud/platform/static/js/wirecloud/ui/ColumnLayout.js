@@ -676,7 +676,7 @@
 
         // search bottommost row
         for (i = 0; i < this.columns; i++) {
-            lastWidget = this.matrix[i].compact().last();
+            lastWidget = this.matrix[i][this.matrix[x].length - 1];
 
             if (!lastWidget) {
                 continue;
