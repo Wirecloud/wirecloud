@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global Workspace, alert, Hash, $, console, LayoutManagerFactory, Modules, setTimeout, Wirecloud */
+/*global Workspace, alert, $, console, LayoutManagerFactory, Modules, setTimeout, Wirecloud */
 "use strict";
 
 /* 

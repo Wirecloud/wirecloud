@@ -153,9 +153,8 @@
         }.bind(this);
 
         this.markAsVisibleSuccess = function markAsVisibleSuccess() {
-            var tabIds = this.workspace.tabInstances.keys();
-            for (var i = 0; i < tabIds.length; i++) {
-                var tab = this.workspace.tabInstances.get(tabIds[i]);
+            for (var key in this.workspace.tabInstances) {
+                var tab = this.workspace.tabInstances[key];
                 tab.tabInfo.visible = false;
             }
             this.tabInfo.visible = true;
@@ -276,7 +275,7 @@
     Tab.prototype.isAllowed = function isAllowed(action) {
         switch (action) {
         case "remove":
-            return !this.readOnly && this.workspace.tabInstances.keys().length > 1 && !this.hasReadOnlyIWidgets();
+            return !this.readOnly && Object.keys(this.workspace.tabInstances).length > 1 && !this.hasReadOnlyIWidgets();
         default:
             return false;
         }

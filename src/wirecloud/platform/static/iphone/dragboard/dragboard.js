@@ -1,4 +1,4 @@
-/*global Hash, $, OpManagerFactory, IWidget */
+/*global $, OpManagerFactory, IWidget */
 "use strict";
 
 /* 
@@ -40,7 +40,7 @@ function Dragboard(tab, workspace, dragboardElement) {
     this.barElement = $('bar');
 
     //Atributes
-    this.iWidgets = new Hash();
+    this.iWidgets = {};
     this.tab = tab;
     this.workspace = workspace;
 
@@ -65,7 +65,7 @@ function Dragboard(tab, workspace, dragboardElement) {
             container, opManager = OpManagerFactory.getInstance();
 
         this.currentCode = 1;
-        this.iWidgets = new Hash();
+        this.iWidgets = {};
 
         // For controlling when the iwidgets are totally loaded!
         this.iwidgets = tabInfo.iwidgets;
@@ -78,7 +78,7 @@ function Dragboard(tab, workspace, dragboardElement) {
             // Create instance model
             container = opManager.globalDragboard.newIWidgetContainer();
             iwidget = new IWidget(widget, curIWidget.id, curIWidget.code, curIWidget.name, this, container);
-            this.iWidgets.set(curIWidget.id, iwidget);
+            this.iWidgets[curIWidget.id] = iwidget;
 
             if (curIWidget.code >= this.currentCode) {
                 this.currentCode =  curIWidget.code + 1;
@@ -91,24 +91,21 @@ function Dragboard(tab, workspace, dragboardElement) {
     };
 
     Dragboard.prototype.destroy = function () {
-        var keys = this.iWidgets.keys(),
-            i, iwidget;
+        var key;
 
         //disconect and delete the connectables and variables of all tab iWidgets
-        for (i = 0; i < keys.length; i += 1) {
-            iwidget = this.iWidgets.get(keys[i]);
-            this.iWidgets.unset(keys[i]);
-            iwidget.destroy();
+        for (key in this.iWidgets) {
+            this.iWidgets.destroy();
         }
         this.iWidgets = null;
     };
 
     Dragboard.prototype.getIWidgets = function () {
-        return this.iWidgets.values();
+        return Object.values(this.iWidgets);
     };
 
     Dragboard.prototype.getIWidget = function (iWidgetId) {
-        return this.iWidgets.get(iWidgetId);
+        return this.iWidgets[iWidgetId];
     };
 
     Dragboard.prototype._updateIWidgetInfo = function (iWidget) {

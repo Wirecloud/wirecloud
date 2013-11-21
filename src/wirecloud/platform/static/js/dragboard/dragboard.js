@@ -19,7 +19,7 @@
  *
  */
 
-/*global document, window, Error, gettext, interpolate, $, Hash, Event, isElement*/
+/*global document, window, Error, gettext, interpolate, $, Event, isElement*/
 /*global Constants, CSSPrimitiveValue, FreeLayout, FullDragboardLayout, IWidget, LayoutManagerFactory, OpManagerFactory, Wirecloud*/
 
 (function () {
@@ -32,8 +32,8 @@
         opManager = OpManagerFactory.getInstance();
 
         this.currentCode = 1;
-        this.iWidgets = new Hash();
-        this.iWidgetsByCode = new Hash();
+        this.iWidgets = {};
+        this.iWidgetsByCode = {};
 
         if (this.tab.readOnly || !this.workspace.isOwned()) {
             this.readOnly = true;
@@ -86,8 +86,8 @@
         this.baseLayout = null;
         this.freeLayout = null;
         this.widgetToMove = null;
-        this.iWidgets = new Hash();
-        this.iWidgetsByCode = new Hash();
+        this.iWidgets = {};
+        this.iWidgetsByCode = {};
         this.tab = tab;
         this.workspace = workspace;
         this.readOnly = false;
@@ -101,7 +101,7 @@
          */
         this._commitChanges = function _commitChanges(keys) {
             var onSuccess, onError;
-            keys = keys || this.iWidgetsByCode.keys();
+            keys = keys || Object.keys(this.iWidgetsByCode);
 
             onSuccess = function (transport) { };
 
@@ -114,7 +114,7 @@
             data = [];
 
             for (var i = 0; i < keys.length; i++) {
-                iWidget = this.iWidgetsByCode.get(keys[i]);
+                iWidget = this.iWidgetsByCode[keys[i]];
                 iWidgetInfo = {};
                 position = iWidget.getPosition();
                 iWidgetInfo.id = iWidget.id;
@@ -318,27 +318,21 @@
         };
 
         Dragboard.prototype.removeInstance = function removeInstance(iWidgetId, orderFromServer) {
-            var iwidget = this.iWidgets.get(iWidgetId);
+            var iwidget = this.iWidgets[iWidgetId];
 
             iwidget.remove(orderFromServer);
         };
 
         Dragboard.prototype.getIWidgets = function getIWidgets() {
-            return this.iWidgets.values();
+            return Object.values(this.iWidgets);
         };
 
         Dragboard.prototype.getIWidget = function getIWidget(iWidgetId) {
-            return this.iWidgets.get(iWidgetId);
+            return this.iWidgets[iWidgetId];
         };
 
         Dragboard.prototype.hasReadOnlyIWidgets = function hasReadOnlyIWidgets() {
-            var iwidgetKeys = this.iWidgets.keys();
-            for (var i = 0; i < iwidgetKeys.length; i++) {
-                if (this.iWidgets.get(iwidgetKeys[i]).internal_iwidget.readOnly) {
-                    return true;
-                }
-            }
-            return false;
+            return this.iWidgets.some(function (iwidget) { return iwidget.internal_iwidget.readOnly; });
         };
 
         /**
@@ -349,12 +343,12 @@
          */
         Dragboard.prototype._registerIWidget = function _registerIWidget(iWidget) {
             if (iWidget.id) {
-                this.iWidgets.set(iWidget.id, iWidget);
+                this.iWidgets[iWidget.id] = iWidget;
             }
 
             iWidget.code = this.currentCode++;
 
-            this.iWidgetsByCode.set(iWidget.code, iWidget);
+            this.iWidgetsByCode[iWidget.code] = iWidget;
             var zpos = iWidget.getZPosition();
             if (zpos !== null) {
                 if (this.orderList[zpos] !== undefined) {
@@ -383,8 +377,8 @@
          * @param iWidget the iWidget to register
          */
         Dragboard.prototype._deregisterIWidget = function _deregisterIWidget(iWidget) {
-            this.iWidgets.unset(iWidget.id);
-            this.iWidgetsByCode.unset(iWidget.code);
+            delete this.iWidgets[iWidget.id];
+            delete this.iWidgetsByCode[iWidget.code];
 
             // Update z order List
             var zpos = iWidget.getZPosition();
@@ -399,7 +393,7 @@
         };
 
         Dragboard.prototype.addIWidget = function addIWidget(iWidget, iwidgetInfo, options) {
-            if (!this.iWidgetsByCode.get(iWidget.code)) {
+            if (!this.iWidgetsByCode[iWidget.code]) {
                 throw new Error();
             }
 
@@ -411,7 +405,7 @@
             // Notify resize event
             iWidget.layout._notifyResizeEvent(iWidget, oldWidth, oldHeight, iWidget.getWidth(), iWidget.getHeight(), false, true);
 
-            this.iWidgets.set(iWidget.id, iWidget);
+            this.iWidgets[iWidget.id] = iWidget;
         };
 
         Dragboard.prototype.fillFloatingWidgetsMenu = function fillFloatingWidgetsMenu(menu) {

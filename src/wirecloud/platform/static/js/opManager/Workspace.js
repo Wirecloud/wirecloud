@@ -74,7 +74,7 @@ function Workspace (workspaceState) {
                                          initialTab
                                        ]
                                    };
-        this.tabInstances = new Hash();
+        this.tabInstances = {};
         // TODO
         this.notebook.clear()
         this.tabInstances[0] = this.notebook.createTab({'tab_constructor': Tab, 'tab_info': initialTab, 'workspace': this});
@@ -134,7 +134,7 @@ function Workspace (workspaceState) {
                 for (var i = 0; i < tabs.length; i++) {
                     var tab = tabs[i];
                     var tabInstance = this.notebook.createTab({'tab_constructor': Tab, 'tab_info': tab, 'workspace': this});
-                    this.tabInstances.set(tab.id, tabInstance);
+                    this.tabInstances[tab.id] = tabInstance;
 
                     if (tab.visible) {
                         visibleTabId = tab.id;
@@ -160,12 +160,12 @@ function Workspace (workspaceState) {
             this.removable = !this.restricted && this.workspaceGlobalInfo.removable;
             this.valid = true;
 
-            if (this.initial_tab_id && this.tabInstances.get(this.initial_tab_id)) {
+            if (this.initial_tab_id && this.tabInstances[this.initial_tab_id]) {
                 visibleTabId = this.initial_tab_id;
             }
 
             this.wiring.load(this.workspaceGlobalInfo.wiring);
-            this.notebook.goToTab(this.tabInstances.get(visibleTabId));
+            this.notebook.goToTab(this.tabInstances[visibleTabId]);
             loading_tab.close();
 
         } catch (error) {
@@ -299,7 +299,7 @@ function Workspace (workspaceState) {
         tabInfo.preferences = {};
 
         var newTab = this.notebook.createTab({'tab_constructor': Tab, 'tab_info': tabInfo, 'workspace': this});
-        this.tabInstances.set(tabInfo.id, newTab);
+        this.tabInstances[tabInfo.id] = newTab;
 
         layoutManager.logSubTask(gettext('Tab added successfully'));
         layoutManager.logStep('');
@@ -448,9 +448,8 @@ function Workspace (workspaceState) {
     };
 
     Workspace.prototype.getIWidget = function(iwidgetId) {
-        var i, tab_keys = this.tabInstances.keys();
-        for (i = 0; i < tab_keys.length; i += 1) {
-            var tab = this.tabInstances.get(tab_keys[i]);
+        for (var key in this.tabInstances) {
+            var tab = this.tabInstances[key];
             var iwidget = tab.getDragboard().getIWidget(iwidgetId);
 
             if (iwidget) {
@@ -475,7 +474,7 @@ function Workspace (workspaceState) {
     }
 
     Workspace.prototype.getTab = function(tabId) {
-        return this.tabInstances.get(tabId);
+        return this.tabInstances[tabId];
     }
 
     Workspace.prototype.setTab = function(tab) {
@@ -496,14 +495,8 @@ function Workspace (workspaceState) {
         return this.notebook.getVisibleTab();
     }
 
-    Workspace.prototype.tabExists = function(tabName){
-        var tabValues = this.tabInstances.values();
-        for (var i = 0; i < tabValues.length; i++) {
-            if (tabValues[i].tabInfo.name === tabName) {
-                return true;
-            }
-        }
-        return false;
+    Workspace.prototype.tabExists = function (tabName) {
+        return this.tabInstances.some(function (tab) { return tab.tabInfo.name === tabName; });
     }
 
     Workspace.prototype.addTab = function() {
@@ -519,7 +512,7 @@ function Workspace (workspaceState) {
         msg = interpolate(msg, {workspacename: this.workspaceState.name}, true);
         layoutManager.logSubTask(msg);
 
-        counter = this.tabInstances.keys().length + 1;
+        counter = Object.keys(this.tabInstances).length + 1;
         prefixName = gettext("Tab");
         tabName = prefixName + " " + counter.toString();
         //check if there is another tab with the same name
@@ -543,7 +536,7 @@ function Workspace (workspaceState) {
     //It returns if the tab can be removed and shows an error window if it isn't possible
     Workspace.prototype.removeTab = function(tab) {
         var msg = null;
-        if (this.tabInstances.keys().length <= 1) {
+        if (Object.keys(this.tabInstances).length <= 1) {
             msg = gettext("there must be one tab at least");
             msg = interpolate(gettext("Error removing tab: %(errorMsg)s."), {
                 errorMsg: msg
@@ -571,9 +564,9 @@ function Workspace (workspaceState) {
         if (!this.valid)
             return;
 
-        var tab = this.tabInstances.get(tabId);
+        var tab = this.tabInstances[tabId];
 
-        this.tabInstances.unset(tabId);
+        delete this.tabInstances[tabId];
         tab.close();
         tab.destroy();
     };
@@ -594,10 +587,8 @@ function Workspace (workspaceState) {
         this.sendBufferedVars(false);
 
         // After that, tab info is managed
-        var tabKeys = this.tabInstances.keys();
-
-        for (var i=0; i<tabKeys.length; i++) {
-            this.unloadTab(tabKeys[i]);
+        for (var key in this.tabInstances) {
+            this.unloadTab(key);
         }
 
         if (this.pref_window_menu != null) {
@@ -655,9 +646,8 @@ function Workspace (workspaceState) {
 
     Workspace.prototype.getIWidgets = function() {
         var iWidgets = [];
-        var keys = this.tabInstances.keys();
-        for (var i = 0; i < keys.length; i++) {
-            iWidgets = iWidgets.concat(this.tabInstances.get(keys[i]).getDragboard().getIWidgets());
+        for (var keys in this.tabInstances) {
+            iWidgets = iWidgets.concat(this.tabInstances[keys].getDragboard().getIWidgets());
         }
 
         return iWidgets;
@@ -770,7 +760,7 @@ function Workspace (workspaceState) {
     this.workspaceState = workspaceState;
     this.wiringInterface = null;
     this.varManager = null;
-    this.tabInstances = new Hash();
+    this.tabInstances = {};
     this.highlightTimeouts = {};
     this.wiring = null;
     this.varManager = null;
@@ -829,7 +819,7 @@ Workspace.prototype.highlightTab = function(tab) {
     var tabElement;
 
     if (typeof tab === 'number') {
-        tab = this.tabInstances.get(tab);
+        tab = this.tabInstances[tab];
     }
 
     if (!(tab instanceof Tab)) {

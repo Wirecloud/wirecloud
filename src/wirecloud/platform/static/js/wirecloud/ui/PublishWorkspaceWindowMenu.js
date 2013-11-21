@@ -59,13 +59,12 @@
     PublishWorkspaceWindowMenu.prototype = new Wirecloud.ui.FormWindowMenu();
 
     PublishWorkspaceWindowMenu.prototype._addVariableParametrization = function _addVariableParametrization(workspace, fields) {
-        var i, tab_keys, tab_field;
+        var key, tab_field;
 
         this.workspace = workspace;
-        tab_keys = workspace.tabInstances.keys();
 
-        for (i = 0; i < tab_keys.length; i += 1) {
-            tab_field = this._parseTab(workspace.tabInstances.get(tab_keys[i]));
+        for (key in workspace.tabInstances) {
+            tab_field = this._parseTab(workspace.tabInstances[key]);
             if (tab_field !== null) {
                 fields.push(tab_field);
             }
