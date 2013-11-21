@@ -39,12 +39,12 @@
         this.controlLayerLeft = document.createElement("div");
         this.controlLayerRight = document.createElement("div");
         this.controlLayerCenter = document.createElement("div");
-        this.controlLayer.addClassName("controlLayer");
-        this.controlLayerUp.addClassName("controlLayerUp");
-        this.controlLayerDown.addClassName("controlLayerDown");
-        this.controlLayerLeft.addClassName("controlLayerLeft");
-        this.controlLayerRight.addClassName("controlLayerRight");
-        this.controlLayerCenter.addClassName("controlLayerCenter");
+        this.controlLayer.className = "controlLayer";
+        this.controlLayerUp.className = "controlLayerUp";
+        this.controlLayerDown.className = "controlLayerDown";
+        this.controlLayerLeft.className = "controlLayerLeft";
+        this.controlLayerRight.className = "controlLayerRight";
+        this.controlLayerCenter.className = "controlLayerCenter";
         this.controlLayer.appendChild(this.controlLayerUp);
         this.controlLayer.appendChild(this.controlLayerDown);
         this.controlLayer.appendChild(this.controlLayerLeft);
@@ -70,7 +70,7 @@
         this.resetControlLayer(true);
 
         this.msgLayer = document.createElement("div");
-        this.msgLayer.addClassName("msgLayer");
+        this.msgLayer.classList.add("msgLayer");
         document.body.appendChild(this.msgLayer);
 
         for (i = 0; i < this.instructions.length; i ++) {
@@ -107,7 +107,7 @@
      * reset controlLayers positions
      */
     Tutorial.prototype.resetControlLayer = function resetControlLayer(isTransparent) {
-        this.controlLayer.removeClassName("hidden");
+        this.controlLayer.classList.remove("hidden");
         if (isTransparent === true) {
             this.controlLayer.classList.add('transparent');
         } else if (isTransparent === false) {
@@ -195,7 +195,7 @@
      * set controlLayers positions
      */
     Tutorial.prototype.deactivateLayer = function deactivateLayer() {
-        this.controlLayer.addClassName("hidden");
+        this.controlLayer.classList.add("hidden");
     };
 
     /**

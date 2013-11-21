@@ -69,7 +69,7 @@ var LayoutManagerFactory = function () {
         // Menu Layer
         this.currentMenu = null;                                // current menu (either dropdown or window)
         this.coverLayerElement = $('menu_layer');               // disabling background layer
-        this.coverLayerElement.addClassName('disabled_background fade');
+        this.coverLayerElement.className = 'disabled_background fade';
 
         this.menus = new Array();
 
@@ -120,7 +120,7 @@ var LayoutManagerFactory = function () {
             this.currentSubTask = -2;
             this.totalSubTasks = subtasks != undefined ? subtasks : 1;
             this.logSubTask("");
-            $("loading-window").removeClassName("disabled");
+            $("loading-window").classList.remove("disabled");
         }
 
         LayoutManager.prototype.logSubTask = function(msg, totalSteps) {
@@ -159,8 +159,8 @@ var LayoutManagerFactory = function () {
             var loadingElement = $("loading-window");
             var loadingMessage = $("loading-message");
 
-            loadingElement.addClassName('disabled');
-            loadingElement.removeClassName('fadding');
+            loadingElement.classList.add('disabled');
+            loadingElement.classList.remove('fadding');
             loadingMessage.setStyle({'opacity': '1'});
 
             if (this.timeout !== null) {
@@ -184,7 +184,7 @@ var LayoutManagerFactory = function () {
 
         LayoutManager.prototype._notifyPlatformReady = function () {
             var loadingElement = $("loading-window");
-            loadingElement.addClassName("fadding");
+            loadingElement.classList.add("fadding");
 
             var loadingMessage = $("loading-message");
             var step = 0;
@@ -243,7 +243,7 @@ var LayoutManagerFactory = function () {
         LayoutManager.prototype.showUnclickableCover = function() {
             this.coverLayerElement.style.display = "block";
             setTimeout(function () {
-                this.coverLayerElement.addClassName('in');
+                this.coverLayerElement.classList.add('in');
             }.bind(this), 0);
         };
 
@@ -293,7 +293,7 @@ var LayoutManagerFactory = function () {
                 this.currentMenu.hide();
             }
             this.currentMenu = null;
-            this.coverLayerElement.removeClassName('in');
+            this.coverLayerElement.classList.remove('in');
             this.coverLayerElement.style.display = "none";
         }
 

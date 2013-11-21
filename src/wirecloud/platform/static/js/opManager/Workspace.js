@@ -183,9 +183,9 @@ function Workspace (workspaceState) {
 
         // tutorial layer for empty workspaces
         this.emptyWorkspaceInfoBox = document.createElement('div');
-        this.emptyWorkspaceInfoBox.addClassName('emptyWorkspaceInfoBox');
+        this.emptyWorkspaceInfoBox.className = 'emptyWorkspaceInfoBox';
         var subBox = document.createElement('div');
-        subBox.addClassName('alert alert-info alert-block');
+        subBox.className = 'alert alert-info alert-block';
 
         // Title
         var pTitle = document.createElement('h4');
@@ -202,7 +202,7 @@ function Workspace (workspaceState) {
         this.emptyWorkspaceInfoBox.appendChild(subBox);
         this.notebook.getTabByIndex(0).wrapperElement.appendChild(this.emptyWorkspaceInfoBox);
         if (this.getIWidgets().length !== 0) {
-            this.emptyWorkspaceInfoBox.addClassName('hidden');
+            this.emptyWorkspaceInfoBox.classList.add('hidden');
         }
     }
 
@@ -615,7 +615,7 @@ function Workspace (workspaceState) {
 
     Workspace.prototype.addIWidget = function(tab, iwidget, iwidgetJSON, options) {
         // emptyWorkspaceInfoBox
-        this.emptyWorkspaceInfoBox.addClassName('hidden');
+        this.emptyWorkspaceInfoBox.classList.add('hidden');
 
         this.varManager.addInstance(iwidget, iwidgetJSON, tab);
         this.events.iwidgetadded.dispatch(this, iwidget.internal_iwidget);
@@ -640,7 +640,7 @@ function Workspace (workspaceState) {
 
         // emptyWorkspaceInfoBox
         if (this.getIWidgets().length == 0) {
-            this.emptyWorkspaceInfoBox.removeClassName('hidden');
+            this.emptyWorkspaceInfoBox.classList.remove('hidden');
         }
     }
 
@@ -827,12 +827,12 @@ Workspace.prototype.highlightTab = function(tab) {
     }
 
     tabElement = tab.tabHTMLElement;
-    tabElement.addClassName("selected");
+    tabElement.classList.add("selected");
     if (tab.tabInfo.id in this.highlightTimeouts) {
         clearTimeout(this.highlightTimeouts[tab.tabInfo.id]);
     }
     this.highlightTimeouts[tab.tabInfo.id] = setTimeout(function() {
-        tabElement.removeClassName("selected");
+        tabElement.classList.remove("selected");
         delete this.highlightTimeouts[tab.tabInfo.id];
     }.bind(this), 10000);
 };

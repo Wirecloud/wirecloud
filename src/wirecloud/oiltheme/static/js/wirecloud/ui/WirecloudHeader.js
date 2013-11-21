@@ -179,7 +179,7 @@
         breadcrum_part.textContent = breadcrum_entry.label;
         breadcrum_part.className = breadcrum_levels[0];
         if ('class' in breadcrum_entry) {
-            breadcrum_part.addClassName(breadcrum_entry['class']);
+            breadcrum_part.classList.add(breadcrum_entry['class']);
         }
         this.breadcrum.appendChild(breadcrum_part);
 
@@ -193,7 +193,7 @@
             breadcrum_part.textContent = breadcrum_entry.label;
             breadcrum_part.className = breadcrum_levels[i];
             if ('class' in breadcrum_entry) {
-                breadcrum_part.addClassName(breadcrum_entry['class']);
+                breadcrum_part.classList.add(breadcrum_entry['class']);
             }
 
             if ('menu' in breadcrum_entry) {
@@ -213,12 +213,12 @@
         var menuitems, triangle, startx;
 
         if (this.currentMenu !== null) {
-            this.currentMenu.html_element.removeClassName('selected');
+            this.currentMenu.html_element.classList.remove('selected');
         }
 
         this.currentView = newView;
         this.currentMenu = this.menues[newView.view_name];
-        this.currentMenu.html_element.addClassName('selected');
+        this.currentMenu.html_element.classList.add('selected');
 
         this.refresh();
     };
