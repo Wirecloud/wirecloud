@@ -34,6 +34,6 @@ admin.site.register(models.Code, CodeAdmin)
 
 
 class TokenAdmin(admin.ModelAdmin):
-    list_display = ('client', 'user', '__unicode__')
+    list_display = ('client', 'user', 'token', 'scope', 'expires_in')
     ordering = ('client', 'user')
 admin.site.register(models.Token, TokenAdmin)

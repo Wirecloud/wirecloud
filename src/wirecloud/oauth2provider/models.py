@@ -63,4 +63,4 @@ class Token(models.Model):
     expires_in = models.CharField(_('Expires in'), max_length=40, blank=True)
 
     def __unicode__(self):
-        return unicode(token)
+        return unicode(self.token)
