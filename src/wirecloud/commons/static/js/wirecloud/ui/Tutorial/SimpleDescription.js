@@ -74,7 +74,7 @@
 
         // Position
         pos = document.body.getBoundingClientRect();
-        descSize = {'width': this.htmlElement.getWidth()/2, 'height': this.htmlElement.getHeight()/2}
+        descSize = {'width': this.htmlElement.offsetWidth() / 2, 'height': this.htmlElement.offsetHeight / 2}
         this.htmlElement.style.top = ((pos.height/2) - descSize.height) + 'px';
         this.htmlElement.style.left = ((pos.width/2) - descSize.width) + 'px';
 
@@ -161,21 +161,17 @@
         } else {
             this.tutorial.resetControlLayer(false);
         }
-        // I put this here because .getWidth() return different value when this.htmlElement haven't 'activeStep' className
-        /*if (this.last) {
-            this.cancelButton.wrapperElement.style.left = ((this.htmlElement.getWidth()/2) - (this.cancelButton.wrapperElement.getWidth()/2) - 4) + 'px';
-        }*/
         if (this.element != null) {
             pos = this.element.getBoundingClientRect();
             switch(this.pos) {
                 case('up'):
-                    this.htmlElement.style.top = (pos.top - this.htmlElement.getHeight() - 20) + 'px';
+                    this.htmlElement.style.top = (pos.top - this.htmlElement.offsetHeight - 20) + 'px';
                     break;
                 case('right'):
                     this.htmlElement.style.left = (pos.right + 20) + 'px';
                     break;
                 case('left'):
-                    this.htmlElement.style.left = (pos.left - this.htmlElement.getWidth() - 20) + 'px';
+                    this.htmlElement.style.left = (pos.left - this.htmlElement.offsetWidth - 20) + 'px';
                     break;
                 case('down'):
                     this.htmlElement.style.top = (pos.bottom + 20) + 'px';

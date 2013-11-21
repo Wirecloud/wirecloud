@@ -289,8 +289,8 @@ if (!Wirecloud.ui) {
         this.selectedMulti = {};
         this.selectedMulti.length = 0;
         this.selectedCount = 0;
-        this.menubarWidth = document.getElementsByClassName('menubar')[0].getWidth();
-        this.headerHeight = document.getElementById('wirecloud_header').getHeight() - 5;
+        this.menubarWidth = document.getElementsByClassName('menubar')[0].offsetWidth;
+        this.headerHeight = document.getElementById('wirecloud_header').offsetHeight - 5;
         this.ctrlPushed = false;
         this.nextOperatorId = 0;
         this.nextMulticonnectorId = 0;

@@ -159,13 +159,13 @@
 
         this.htmlElement.style.maxHeight = '';
         this.htmlElement.style.maxWidth = '';
-        var menuWidth = this.htmlElement.getWidth();
+        var menuWidth = this.htmlElement.offsetWidth;
 
         if (menuWidth > windowWidth) {
             menuWidth = windowWidth;
             this.htmlElement.style.maxWidth = menuWidth + 'px';
         }
-        var menuHeight = this.htmlElement.getHeight();
+        var menuHeight = this.htmlElement.offsetHeight;
 
         coordenates[1] = (windowHeight - menuHeight) / 2;
         coordenates[0] = (windowWidth - menuWidth) / 2;

@@ -98,13 +98,13 @@
             pos = form.getBoundingClientRect();
             switch(this.mainPos) {
                 case('up'):
-                    this.mainStep.wrapperElement.style.top = (pos.top - this.mainStep.wrapperElement.getHeight() - 20) + 'px';
+                    this.mainStep.wrapperElement.style.top = (pos.top - this.mainStep.wrapperElement.offsetHeight - 20) + 'px';
                     break;
                 case('right'):
                     this.mainStep.wrapperElement.style.left = (pos.right + 20) + 'px';
                     break;
                 case('left'):
-                    this.mainStep.wrapperElement.style.left = (pos.left - this.mainStep.wrapperElement.getWidth() - 20) + 'px';
+                    this.mainStep.wrapperElement.style.left = (pos.left - this.mainStep.wrapperElement.offsetWidth - 20) + 'px';
                     break;
                 case('down'):
                     this.mainStep.wrapperElement.style.top = (pos.bottom + 20) + 'px';
