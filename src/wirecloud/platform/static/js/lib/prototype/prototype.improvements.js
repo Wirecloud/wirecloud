@@ -41,28 +41,3 @@ if (Prototype.BrowserFeatures.ElementExtensions) {
 		return el && ('nodeType' in el) && (el.nodeType === 1);
 	}
 }
-
-//if (Prototype.Browser.IE || Element.prototype.getBoundingClientRect != undefined) {
-
-/*
- * ARRAY EXTENSIONS
- */
-
-Array.prototype.removeById = function (id) {
-	var element;
-	var elementId;
-	for (var i = 0; i < this.length; i++) {
-		if (typeof this[i].getId == "function") {
-			elementId = this[i].getId();
-		} else {
-			elementId = this[i].id;
-		}
-
-		if (elementId == id) {
-			element = this[i];
-			this.splice(i, 1);
-			return element;
-		}
-	}
-	return null;
-};

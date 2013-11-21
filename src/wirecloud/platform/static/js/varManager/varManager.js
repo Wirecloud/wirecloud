@@ -174,12 +174,16 @@ function VarManager (_workspace) {
 
 
     VarManager.prototype.removeIWidgetVariables = function (iWidgetId) {
-        var variable_id, variable;
+        var i, variable_id, variable;
 
         for (variable_id in this.variables) {
             variable = this.variables[variable_id];
             if (variable.iWidget === iWidgetId) {
-                this.iwidgetModifiedVars.removeById(variable_id);
+                for (i = 0; i < this.iwidgetModifiedVars.length; i++) {
+                    if (this.iwidgetModifiedVars[i].id == variable_id) {
+                        this.iwidgetModifiedVars.splice(i, 1);
+                    }
+                }
                 delete this.variables[variable_id];
             }
         }
