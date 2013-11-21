@@ -486,6 +486,16 @@
     Utils.ALERT_ERROR = 2;
 
 
+    Utils.values = function values(object) {
+        var result = [];
+
+        for (var key in object) {
+            result.push(object[key]);
+        }
+
+        return result;
+    };
+
     /**
      * @deprecated @experimental
      */
