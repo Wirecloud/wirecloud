@@ -19,7 +19,7 @@
  *
  */
 
-/*global CatalogueResource, CatalogueSearchView, Constants, Event, gettext, interpolate, LayoutManagerFactory, OpManagerFactory, Wirecloud, StyledElements*/
+/*global CatalogueResource, CatalogueSearchView, Constants, gettext, interpolate, LayoutManagerFactory, OpManagerFactory, Wirecloud, StyledElements*/
 
 (function () {
 
@@ -210,7 +210,6 @@
 
     CatalogueView.prototype.ui_commands.showDetails = function showDetails(resource) {
         return function (e) {
-            Event.stop(e);
             this.viewsByName.details.paint(resource);
             this.alternatives.showAlternative(this.viewsByName.details);
         }.bind(this);

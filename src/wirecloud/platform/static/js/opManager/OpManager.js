@@ -266,7 +266,7 @@ var OpManagerFactory = function () {
             layoutManager.logSubTask(gettext('Retrieving Wirecloud code'));
             layoutManager.logStep('');
 
-            Event.observe(window,
+            window.addEventListener(
                           "beforeunload",
                           this.unloadEnvironment.bind(this),
                           true);

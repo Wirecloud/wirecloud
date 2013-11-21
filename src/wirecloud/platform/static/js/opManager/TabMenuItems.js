@@ -58,17 +58,6 @@
         items.push(item);
         item.setDisabled(!this.tab.isAllowed('remove'))
 
-        /*
-        this.menu.addOption('icon-show-floating',
-            gettext("Show Floating Widget"),
-            function(e) {
-                this.FloatingWidgetsMenu.clearOptions();
-                this.getDragboard().fillFloatingWidgetsMenu(this.FloatingWidgetsMenu);
-                LayoutManagerFactory.getInstance().showDropDownMenu('TabOpsSubMenu',this.FloatingWidgetsMenu, Event.pointerX(e), Event.pointerY(e));
-            }.bind(this),
-            4);
-        */
-
         items.push(new StyledElements.MenuItem(
             gettext("Settings"),
             function () {

@@ -20,7 +20,7 @@
  */
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
-/*global $, CSSPrimitiveValue, Event, Insertion, document, gettext, ngettext, interpolate, window */
+/*global $, CSSPrimitiveValue, Insertion, document, gettext, ngettext, interpolate, window */
 /*global Constants, DropDownMenu, LayoutManagerFactory, OpManagerFactory, Wirecloud*/
 /*global isElement*/
 /*global IWidgetDraggable, IWidgetIconDraggable, FreeLayout, FullDragboardLayout*/
@@ -342,7 +342,7 @@ IWidget.prototype.build = function () {
     this.iwidgetIconNameHTMLElement.addClassName("floating_widget_title");
     this.iconElement.appendChild(this.iwidgetIconNameHTMLElement);
 
-    this.iwidgetIconNameHTMLElement.observe("click",
+    this.iwidgetIconNameHTMLElement.addEventListener("click",
         function () {
             this.toggleMinimizeStatus(false);
             this.layout.dragboard.raiseToTop(this);
@@ -426,7 +426,7 @@ IWidget.prototype.paint = function (onInit) {
     this.iconElement.style.left = this.layout.dragboard.freeLayout.getColumnOffset(this.iconPosition.x) + "px";
     this.iconElement.style.top = this.layout.dragboard.freeLayout.getRowOffset(this.iconPosition.y) + "px";
 
-    Event.observe(this.iconImg,
+    this.iconImg.addEventListener(
         "click",
         function () {
             this.setMinimizeStatus(false);

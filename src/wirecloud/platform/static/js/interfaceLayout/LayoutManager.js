@@ -64,7 +64,7 @@ var LayoutManagerFactory = function () {
         // Remaining containers managed by Workspaces!!
         this._clickCallback = this._clickCallback.bind(this);
         this.timeout = null;
-        $("loading-window").observe('click', this._clickCallback);
+        $("loading-window").addEventListener('click', this._clickCallback, true);
 
         // Menu Layer
         this.currentMenu = null;                                // current menu (either dropdown or window)
@@ -74,7 +74,7 @@ var LayoutManagerFactory = function () {
         this.menus = new Array();
 
         // Listen to resize events
-        Event.observe(window, "resize", this.resizeWrapper.bind(this));
+        window.addEventListener("resize", this.resizeWrapper.bind(this), true);
     }
 
         // ***************

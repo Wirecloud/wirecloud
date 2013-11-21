@@ -52,20 +52,20 @@
                 return;
             }
 
-            Event.stopObserving(document, "mouseup", endresize);
-            Event.stopObserving(document, "mousemove", resize);
+            document.removeEventListener("mouseup", endresize, true);
+            document.removeEventListener("mousemove", resize, true);
 
-            dragboardCover.parentNode.stopObserving("scroll", scroll);
+            dragboardCover.parentNode.removeEventListener("scroll", scroll, true);
             dragboardCover.parentNode.removeChild(dragboardCover);
             dragboardCover = null;
 
-            handleElement.stopObserving("mouseup", endresize, true);
-            handleElement.stopObserving("mousemove", resize, true);
+            handleElement.removeEventListener("mouseup", endresize, true);
+            handleElement.removeEventListener("mousemove", resize, true);
 
             onFinish(resizableElement, handleElement, data);
 
             // Restore start event listener
-            handleElement.observe("mousedown", startresize);
+            handleElement.addEventListener("mousedown", startresize, true);
 
             document.onmousedown = null; // reenable context menu
             document.onselectstart = null; // reenable text selection in IE
@@ -116,20 +116,20 @@
             document.oncontextmenu = cancel; // disable context menu
             document.onmousedown = cancel; // disable text selection
             document.onselectstart = cancel; // disable text selection in IE
-            handleElement.stopObserving("mousedown", startresize);
+            handleElement.removeEventListener("mousedown", startresize, true);
 
             xStart = parseInt(e.screenX, 10);
             yStart = parseInt(e.screenY, 10);
             x = resizableElement.offsetLeft + handleElement.offsetLeft + (handleElement.offsetWidth / 2);
             y = resizableElement.offsetTop + handleElement.offsetTop + (handleElement.offsetHeight / 2);
-            Event.observe(document, "mouseup", endresize);
-            Event.observe(document, "mousemove", resize);
+            document.addEventListener("mouseup", endresize, true);
+            document.addEventListener("mousemove", resize, true);
 
             var dragboard = EzWebEffectBase.findDragboardElement(resizableElement);
             dragboardCover = document.createElement("div");
             dragboardCover.addClassName("cover");
-            dragboardCover.observe("mouseup", endresize, true);
-            dragboardCover.observe("mousemove", resize, true);
+            dragboardCover.addEventListener("mouseup", endresize, true);
+            dragboardCover.addEventListener("mousemove", resize, true);
 
             dragboardCover.style.zIndex = "1000000";
             dragboardCover.style.position = "absolute";
@@ -140,12 +140,12 @@
 
             yScroll = parseInt(dragboard.scrollTop, 10);
 
-            dragboard.observe("scroll", scroll);
+            dragboard.addEventListener("scroll", scroll, true);
 
             dragboard.insertBefore(dragboardCover, dragboard.firstChild);
 
-            handleElement.observe("mouseup", endresize, true);
-            handleElement.observe("mousemove", resize, true);
+            handleElement.addEventListener("mouseup", endresize, true);
+            handleElement.addEventListener("mousemove", resize, true);
 
             onStart(resizableElement, handleElement, data);
 
@@ -153,14 +153,14 @@
         };
 
         // Add event listener
-        Event.observe(handleElement, "mousedown", startresize);
+        handleElement.addEventListener("mousedown", startresize, true);
 
         this.setResizableElement = function (element) {
             resizableElement = element;
         };
 
         this.destroy = function () {
-            Event.stopObserving(handleElement, "mousedown", startresize);
+            handleElement.removeEventListener("mousedown", startresize, true);
             startresize = null;
             resize = null;
             scroll = null;
