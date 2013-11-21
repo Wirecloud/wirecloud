@@ -56,7 +56,6 @@ class CatalogueResource(TransModel):
     vendor = models.CharField(_('Vendor'), max_length=250)
     version = models.CharField(_('Version'), max_length=150)
     type = models.SmallIntegerField(_('Type'), choices=TYPE_CHOICES, null=False, blank=False)
-    ie_compatible = models.BooleanField(_('IE Compatible'), default=False)
 
     author = models.CharField(_('Author'), max_length=250)
     mail = models.CharField(_('Mail'), max_length=100)

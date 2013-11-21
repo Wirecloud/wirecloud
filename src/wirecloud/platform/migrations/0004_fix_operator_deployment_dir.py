@@ -25,6 +25,14 @@ from wirecloud.commons.utils.wgt import WgtFile
 
 class Migration(DataMigration):
 
+    depends_on = (
+        ("catalogue", "0001_initial"),
+    )
+
+    needed_by = (
+        ("catalogue", "0002_auto__del_field_catalogueresource_ie_compatible"),
+    )
+
     def forwards(self, orm):
         from wirecloud.catalogue import utils as catalogue_utils
         from wirecloud.platform.widget import utils as showcase_utils

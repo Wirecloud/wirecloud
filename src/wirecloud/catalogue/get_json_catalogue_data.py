@@ -163,7 +163,6 @@ def get_resource_data(untranslated_resource, user, request=None):
         'uriImage': urljoin(template_uri, resource.image_uri),
         'uriWiki': urljoin(template_uri, resource.wiki_page_uri),
         'uriTemplate': template_uri,
-        'ieCompatible': resource.ie_compatible,
         'tags': [d for d in data_tags],
         'outputs': [d for d in data_events],
         'inputs': [d for d in data_slots],

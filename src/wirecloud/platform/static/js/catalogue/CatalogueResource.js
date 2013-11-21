@@ -117,10 +117,6 @@
             return extra_data;
         };
 
-        this.getIeCompatible = function () {
-            return currentVersion.ieCompatible;
-        };
-
         this.isAllow = function isAllow(action) {
             switch (action) {
             case 'delete':

@@ -6,7 +6,6 @@
         <field type="CharField" name="vendor">Wirecloud</field>
         <field type="CharField" name="version">1.0</field>
         <field type="IntegerField" name="type">0</field>
-        <field type="BooleanField" name="ie_compatible">False</field>
         <field type="BooleanField" name="public">True</field>
         <field to="auth.user" name="users" rel="ManyToOneRel"><object pk="1"></object><object pk="2"></object></field>
         <field type="CharField" name="author">aarranz</field>
@@ -39,7 +38,6 @@
         <field type="CharField" name="vendor">Wirecloud</field>
         <field type="CharField" name="version">1.0</field>
         <field type="IntegerField" name="type">1</field>
-        <field type="BooleanField" name="ie_compatible">False</field>
         <field type="BooleanField" name="public">True</field>
         <field type="CharField" name="author">aarranz</field>
         <field type="CharField" name="mail">aarranz@conwet.com</field>
@@ -61,7 +59,6 @@
         <field type="CharField" name="vendor">Wirecloud</field>
         <field type="CharField" name="version">1.0</field>
         <field type="IntegerField" name="type">2</field>
-        <field type="BooleanField" name="ie_compatible">False</field>
         <field type="BooleanField" name="public">False</field>
         <field to="auth.user" name="users" rel="ManyToOneRel"><object pk="1"></object><object pk="2"></object><object pk="4"></object></field>
         <field type="CharField" name="author">admin</field>
@@ -84,7 +81,6 @@
         <field type="CharField" name="vendor">Wirecloud</field>
         <field type="CharField" name="version">1.0</field>
         <field type="IntegerField" name="type">1</field>
-        <field type="BooleanField" name="ie_compatible">False</field>
         <field type="BooleanField" name="public">True</field>
         <field to="auth.user" name="users" rel="ManyToOneRel"><object pk="2"></object></field>
         <field type="CharField" name="author">aarranz</field>
