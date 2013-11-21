@@ -31,13 +31,3 @@
  */
 
 Prototype.BrowserFeatures.OnHashChangeEvent = 'onhashchange' in window;
-
-if (Prototype.BrowserFeatures.ElementExtensions) {
-	var isElement = function(el) {
-		return el instanceof Element;
-	}
-} else {
-	var isElement = function(el) {
-		return el && ('nodeType' in el) && (el.nodeType === 1);
-	}
-}

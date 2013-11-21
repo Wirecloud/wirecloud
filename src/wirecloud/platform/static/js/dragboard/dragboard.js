@@ -19,7 +19,7 @@
  *
  */
 
-/*global document, window, Error, gettext, interpolate, $, isElement*/
+/*global document, window, Error, gettext, interpolate, $*/
 /*global Constants, CSSPrimitiveValue, FreeLayout, FullDragboardLayout, IWidget, LayoutManagerFactory, OpManagerFactory, Wirecloud*/
 
 (function () {
@@ -599,7 +599,7 @@
 var EzWebEffectBase = {};
 EzWebEffectBase.findDragboardElement = function (element) {
     var tmp = element.parentNode;
-    while (isElement(tmp)) {
+    while (Wirecloud.Utils.XML.isElement(tmp)) {
         //var position = tmp.getStyle("position");
         var position = document.defaultView.getComputedStyle(tmp, null).getPropertyValue("position");
         switch (position) {
@@ -664,11 +664,11 @@ IWidgetDraggable.prototype._findTabElement = function (curNode, maxRecursion) {
     }
 
     // Only check elements, skip other dom nodes.
-    if (isElement(curNode) && curNode.hasClassName('tab')) {
+    if (Wirecloud.Utils.XML.isElement(curNode) && curNode.hasClassName('tab')) {
         return curNode;
     } else {
         var parentNode = curNode.parentNode;
-        if (isElement(parentNode)) {
+        if (Wirecloud.Utils.XML.isElement(parentNode)) {
             return this._findTabElement(parentNode, maxRecursion - 1);
         } else {
             return null;

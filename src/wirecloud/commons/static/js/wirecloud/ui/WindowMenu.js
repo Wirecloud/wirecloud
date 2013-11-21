@@ -19,7 +19,7 @@
  *
  */
 
-/*global CSSPrimitiveValue, Draggable, isElement, LayoutManagerFactory, Wirecloud*/
+/*global CSSPrimitiveValue, Draggable, LayoutManagerFactory, Wirecloud*/
 
 (function () {
 
@@ -94,7 +94,7 @@
 
         for (i = 0; i < ui_fragment.elements.length; i += 1) {
             element = ui_fragment.elements[i];
-            if (isElement(element)) {
+            if (Wirecloud.Utils.XML.isElement(element)) {
                 this.htmlElement = element;
                 break;
             }
@@ -149,7 +149,7 @@
      */
     WindowMenu.prototype.calculatePosition = function calculatePosition() {
 
-        if (!isElement(this.htmlElement.parentNode)) {
+        if (!Wirecloud.Utils.XML.isElement(this.htmlElement.parentNode)) {
             return;
         }
 
@@ -218,7 +218,7 @@
      */
     WindowMenu.prototype.hide = function hide() {
 
-        if (!isElement(this.htmlElement.parentNode)) {
+        if (!Wirecloud.Utils.XML.isElement(this.htmlElement.parentNode)) {
             // This windowmenu is currently hidden => Nothing to do
             return;
         }

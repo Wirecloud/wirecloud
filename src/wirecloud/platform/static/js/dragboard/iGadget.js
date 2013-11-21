@@ -22,7 +22,6 @@
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
 /*global $, CSSPrimitiveValue, Insertion, document, gettext, ngettext, interpolate, window */
 /*global Constants, DropDownMenu, LayoutManagerFactory, OpManagerFactory, Wirecloud*/
-/*global isElement*/
 /*global IWidgetDraggable, IWidgetIconDraggable, FreeLayout, FullDragboardLayout*/
 /*global ColorDropDownMenu*/
 
@@ -604,7 +603,7 @@ IWidget.prototype.remove = function (orderFromServer) {
     this.log(gettext('iWidget deleted'), Constants.Logging.INFO_MSG);
 
     var dragboard = this.layout.dragboard;
-    if (isElement(this.element.parentNode)) {
+    if (Wirecloud.Utils.XML.isElement(this.element.parentNode)) {
         this.layout.removeIWidget(this, true);
     }
 

@@ -1,4 +1,4 @@
-/*global gettext, isElement, StyledElements, Wirecloud*/
+/*global gettext, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -47,7 +47,7 @@
     AlertWindowMenu.prototype.setMsg = function setMsg(msg) {
         this.msgElement.textContent = msg;
 
-        if (isElement(this.htmlElement.parentNode)) {
+        if (Wirecloud.Utils.XML.isElement(this.htmlElement.parentNode)) {
             this.calculatePosition();
         }
     };
@@ -58,7 +58,7 @@
     AlertWindowMenu.prototype.setHTMLMsg = function setHTMLMsg(msg) {
         this.msgElement.innerHTML = msg;
 
-        if (isElement(this.htmlElement.parentNode)) {
+        if (Wirecloud.Utils.XML.isElement(this.htmlElement.parentNode)) {
             this.calculatePosition();
         }
     };

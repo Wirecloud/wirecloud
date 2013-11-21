@@ -80,7 +80,7 @@
      * references.
      */
     DragboardCursor.prototype.destroy = function destroy() {
-        if (isElement(this.element)) {
+        if (Wirecloud.Utils.XML.isElement(this.element)) {
             this.element.parentNode.removeChild(this.element);
             this.element = null;
         }
