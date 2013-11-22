@@ -148,6 +148,7 @@
             });
             Wirecloud.io.makeRequest(uri, {
                 method: 'PUT',
+                requestHeaders: {'Accept': 'application/json'},
                 contentType: 'application/json',
                 postBody: JSON.stringify(data),
                 onSuccess: onSuccess,
@@ -277,6 +278,7 @@
             Wirecloud.io.makeRequest(url, {
                 method: 'POST',
                 contentType: 'application/json',
+                requestHeaders: {'Accept': 'application/json'},
                 postBody: data,
                 onSuccess: function onSuccess(response) {
                     var iwidgetinfo, widget, layout, iwidget;

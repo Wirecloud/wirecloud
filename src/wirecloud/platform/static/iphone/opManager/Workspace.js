@@ -161,6 +161,7 @@ function Workspace(workspaceState) {
         var workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': this.id});
         Wirecloud.io.makeRequest(workspaceUrl, {
             method: 'GET',
+            requestHeaders: {'Accept': 'application/json'},
             onSuccess: loadWorkspace.bind(this),
             onFailure: onError.bind(this),
             onException: onError.bind(this)

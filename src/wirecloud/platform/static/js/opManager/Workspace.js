@@ -365,6 +365,7 @@ function Workspace (workspaceState) {
         Wirecloud.io.makeRequest(workspaceUrl, {
             method: 'POST',
             contentType: 'application/json',
+            requestHeaders: {'Accept': 'application/json'},
             postBody: JSON.stringify({name: name}),
             onSuccess: function () {
                 var state, layoutManager = LayoutManagerFactory.getInstance();
@@ -403,6 +404,7 @@ function Workspace (workspaceState) {
         workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({workspace_id: this.id});
         Wirecloud.io.makeRequest(workspaceUrl, {
             method: 'DELETE',
+            requestHeaders: {'Accept': 'application/json'},
             onSuccess: deleteSuccess.bind(this),
             onFailure: deleteError,
             onException: deleteError
@@ -528,6 +530,7 @@ function Workspace (workspaceState) {
         Wirecloud.io.makeRequest(url, {
             method: 'POST',
             contentType: 'application/json',
+            requestHeaders: {'Accept': 'application/json'},
             postBody: JSON.stringify({name: tabName}),
             onSuccess: createTabSuccess.bind(this),
             onFailure: createTabError,
@@ -684,6 +687,7 @@ function Workspace (workspaceState) {
         var workspaceUrl = Wirecloud.URLs.WORKSPACE_PUBLISH.evaluate({workspace_id: this.id});
         Wirecloud.io.makeRequest(workspaceUrl, {
             method: 'POST',
+            requestHeaders: {'Accept': 'application/json'},
             postBody: payload,
             context: {workspace: this, params: data, options: options},
             onSuccess: publishSuccess.bind(null, options),
@@ -783,6 +787,7 @@ function Workspace (workspaceState) {
         Wirecloud.io.makeRequest(workspaceUrl, {
             method: 'POST',
             contentType: 'application/json',
+            requestHeaders: {'Accept': 'application/json'},
             postBody: JSON.stringify({active: true}),
             onSuccess: this.markAsActiveSuccess.bind(this),
             onFailure: this.markAsActiveError.bind(this)

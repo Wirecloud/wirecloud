@@ -271,6 +271,7 @@
             Wirecloud.io.makeRequest(iwidgetUrl, {
                 method: 'POST',
                 contentType: 'application/json',
+                requestHeaders: {'Accept': 'application/json'},
                 postBody: JSON.stringify({name: new_name}),
                 onSuccess: renameSuccess.bind(this, options, old_name, new_name),
                 onFailure: renameFailure.bind(this, options)

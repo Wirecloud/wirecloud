@@ -105,6 +105,7 @@
         Wirecloud.io.makeRequest(url, {
             method: 'POST',
             contentType: 'application/json',
+            requestHeaders: {'Accept': 'application/json'},
             postBody: JSON.stringify(data),
             onSuccess: function () {
                 layoutManager.logSubTask(gettext('Resource published successfully'));

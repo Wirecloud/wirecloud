@@ -145,6 +145,7 @@
             Wirecloud.io.makeRequest(tabUrl, {
                 method: 'POST',
                 contentType: 'application/json',
+                requestHeaders: {'Accept': 'application/json'},
                 postBody: JSON.stringify({visible: "true"}),
                 onSuccess: this.markAsVisibleSuccess,
                 onFailure: this.markAsVisibleError,
@@ -203,6 +204,7 @@
         Wirecloud.io.makeRequest(tabUrl, {
             method: 'PUT',
             contentType: 'application/json',
+            requestHeaders: {'Accept': 'application/json'},
             postBody: JSON.stringify({'name': tabName}),
             onSuccess: renameSuccess.bind({tab: this, newName: tabName}),
             onFailure: renameError,
@@ -225,6 +227,7 @@
         tabUrl = Wirecloud.URLs.TAB_ENTRY.evaluate({'workspace_id': this.workspace.workspaceState.id, 'tab_id': this.id});
         Wirecloud.io.makeRequest(tabUrl, {
             method: 'DELETE',
+            requestHeaders: {'Accept': 'application/json'},
             onSuccess: deleteSuccess.bind(this),
             onFailure: deleteError,
             onException: deleteError,

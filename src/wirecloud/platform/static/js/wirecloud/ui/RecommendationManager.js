@@ -96,6 +96,7 @@
 
             Wirecloud.io.makeRequest(url, {
                 method: 'GET',
+                requestHeaders: {'Accept': 'application/json'},
                 contentType: 'application/json',
                 onSuccess: onSuccess.bind(this),
                 onFailure: onFailure.bind(this)

@@ -114,6 +114,7 @@ var OpManagerFactory = (function () {
 
             Wirecloud.io.makeRequest(Wirecloud.URLs.PLATFORM_CONTEXT_COLLECTION, {
                 method: 'GET',
+                requestHeaders: {'Accept': 'application/json'},
                 onSuccess: function (transport) {
                     OpManagerFactory.getInstance().contextManager = new Wirecloud.ContextManager(this, JSON.parse(transport.responseText));
                     OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CONTEXT);
@@ -134,6 +135,7 @@ var OpManagerFactory = (function () {
 
                 Wirecloud.io.makeRequest(Wirecloud.URLs.THEME_ENTRY.evaluate({name: this.contextManager.get('theme')}), {
                     method: 'GET',
+                    requestHeaders: {'Accept': 'application/json'},
                     onSuccess: function (transport) {
                         Wirecloud.currentTheme = new Wirecloud.ui.Theme(JSON.parse(transport.responseText));
                         this.continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
@@ -174,6 +176,7 @@ var OpManagerFactory = (function () {
 
             Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_COLLECTION, {
                 method: 'GET',
+                requestHeaders: {'Accept': 'application/json'},
                 onSuccess: loadEnvironment.bind(this),
                 onFailure: onError,
                 onException: onError

@@ -236,6 +236,7 @@
         Wirecloud.io.makeRequest(Wirecloud.URLs.WIRING_ENTRY.evaluate({workspace_id: this.workspace.id}), {
             method: 'PUT',
             contentType: 'application/json',
+            requestHeaders: {'Accept': 'application/json'},
             postBody: JSON.stringify(this.status)
         });
     };

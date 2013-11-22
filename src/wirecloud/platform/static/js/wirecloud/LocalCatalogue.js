@@ -183,6 +183,7 @@
 
         Wirecloud.io.makeRequest(Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION, {
             method: 'GET',
+            requestHeaders: {'Accept': 'application/json'},
             onSuccess: loadSuccessCallback.bind(this, context),
             onFailure: loadFailureCallback.bind(this, context)
         });
@@ -207,6 +208,7 @@
         // Send request to uninstall de widget
         Wirecloud.io.makeRequest(url + '?affected=true', {
             method: 'DELETE',
+            requestHeaders: {'Accept': 'application/json'},
             onSuccess: uninstallOrDeleteSuccessCallback.bind(context),
             onFailure: uninstallErrorCallback.bind(context),
             onException: uninstallErrorCallback.bind(context),
@@ -233,6 +235,7 @@
         // Send request to delete de widget
         Wirecloud.io.makeRequest(url, {
             method: 'DELETE',
+            requestHeaders: {'Accept': 'application/json'},
             onSuccess: uninstallOrDeleteSuccessCallback.bind(context),
             onFailure: deleteErrorCallback.bind(context),
             onException: deleteErrorCallback.bind(context)
@@ -257,6 +260,7 @@
         Wirecloud.io.makeRequest(Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION, {
             method: 'POST',
             contentType: 'application/json',
+            requestHeaders: {'Accept': 'application/json'},
             postBody: JSON.stringify({
                 template_uri: url,
                 packaged: !!options.packaged,

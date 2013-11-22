@@ -456,6 +456,7 @@ Preferences.prototype._save = function(modifiedValues) {
     Wirecloud.io.makeRequest(this._build_save_url(), {
         method: 'POST',
         contentType: 'application/json',
+        requestHeaders: {'Accept': 'application/json'},
         postBody: JSON.stringify(modifiedValues),
         onSuccess: this._onSuccessSavePreferences.bind(context),
         onFailure: this._onErrorSavePreferences.bind(context),

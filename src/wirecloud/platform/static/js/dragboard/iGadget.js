@@ -493,6 +493,7 @@ IWidget.prototype.setRefusedVersion = function (v) {
     Wirecloud.io.makeRequest(iwidgetUrl, {
         method: 'POST',
         contentType: 'application/json',
+        requestHeaders: {'Accept': 'application/json'},
         postBody: JSON.stringify({
             refused_version: this.refusedVersion.text,
             id: this.id
@@ -543,11 +544,12 @@ IWidget.prototype.upgradeIWidget = function () {
 
     Wirecloud.io.makeRequest(url, {
         method: 'PUT',
+        contentType: 'application/json',
+        requestHeaders: {'Accept': 'application/json'},
+        postBody: JSON.stringify(data),
         onSuccess: onUpgradeOk.bind(this),
         onFailure: onUpgradeError.bind(this),
-        onException: onUpgradeError.bind(this),
-        postBody: JSON.stringify(data),
-        contentType: 'application/json'
+        onException: onUpgradeError.bind(this)
     });
 };
 
@@ -621,6 +623,7 @@ IWidget.prototype.remove = function (orderFromServer) {
         });
         Wirecloud.io.makeRequest(uri, {
             method: 'DELETE',
+            requestHeaders: {'Accept': 'application/json'},
             onFailure: onError.bind(this)
         });
     }
@@ -1164,10 +1167,10 @@ IWidget.prototype.moveToLayout = function (newLayout) {
         Wirecloud.io.makeRequest(url, {
             method: 'PUT',
             contentType: 'application/json',
+            requestHeaders: {'Accept': 'application/json'},
             postBody: JSON.stringify(data),
             onSuccess: onSuccess.bind(this),
             onFailure: onError.bind(this),
-            contentType: 'application/json'
         });
     }
 };

@@ -117,6 +117,7 @@
         }
         Wirecloud.io.makeRequest(url, {
             method: 'GET',
+            requestHeaders: {'Accept': 'application/json'},
             parameters: params,
             onSuccess: _onSearchSuccess.bind(context),
             onFailure: _onSearchError.bind(context)
@@ -130,6 +131,10 @@
     WirecloudCatalogue.prototype.addPackagedResource = function addPackagedResource(data, options) {
         var url, requestHeaders;
 
+        requestHeaders = {
+            'Accept': 'application/json'
+        };
+
         if (typeof options != 'object') {
             options = {};
         }
@@ -141,9 +146,7 @@
 
 
             if (this.accesstoken != null) {
-                requestHeaders = {
-                    'Authorization': 'Bearer ' + this.accesstoken
-                };
+                requestHeaders['Authorization'] = 'Bearer ' + this.accesstoken;
             }
         }
 
@@ -186,6 +189,7 @@
 
         Wirecloud.io.makeRequest(this.RESOURCE_COLLECTION, {
             method: 'POST',
+            requestHeaders: {'Accept': 'application/json'},
             parameters: {'template_uri': url, packaged: !!options.packaged, force_create: !!options.forceCreate},
             onSuccess: function () {
                 if (typeof options.onSuccess === 'function') {
@@ -226,6 +230,7 @@
         // Send request to delete de widget
         Wirecloud.io.makeRequest(url, {
             method: 'DELETE',
+            requestHeaders: {'Accept': 'application/json'},
             onSuccess: deleteSuccessCallback.bind(context),
             onFailure: deleteErrorCallback.bind(context),
             onException: deleteErrorCallback.bind(context)

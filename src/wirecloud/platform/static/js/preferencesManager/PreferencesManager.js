@@ -266,6 +266,7 @@ var PreferencesManagerFactory = function () {
 		// Init platform preferences
 		Wirecloud.io.makeRequest(Wirecloud.URLs.PLATFORM_PREFERENCES, {
 			method: 'GET',
+			requestHeaders: {'Accept': 'application/json'},
 			onSuccess: _onSuccessInitPreferences.bind(this),
 			onFailure: _onErrorInitPreferences.bind(this),
 			onException: _onErrorInitPreferences.bind(this)

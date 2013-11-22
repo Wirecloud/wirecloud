@@ -73,6 +73,7 @@ function VarManager (_workspace) {
                 method: 'POST',
                 asynchronous: async,
                 contentType: 'application/json',
+                requestHeaders: {'Accept': 'application/json'},
                 postBody: JSON.stringify(this.iwidgetModifiedVars),
                 onSuccess: onSuccess.bind(this),
                 onFailure: onError.bind(this),

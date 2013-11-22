@@ -53,6 +53,7 @@
             }), {
                 method: 'POST',
                 contentType: 'application/json',
+                requestHeaders: {'Accept': 'application/json'},
                 postBody: JSON.stringify(new_values)
             }
         );

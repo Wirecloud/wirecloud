@@ -147,6 +147,7 @@ var OpManagerFactory = function () {
             Wirecloud.io.makeRequest(mergeURL, {
                 method: 'POST',
                 contentType: 'application/json',
+                requestHeaders: {'Accept': 'application/json'},
                 postBody: JSON.stringify({'mashup': resource.getURI()}),
                 onSuccess: mergeOk.bind(this),
                 onFailure: mergeError.bind(this),
@@ -200,6 +201,7 @@ var OpManagerFactory = function () {
             Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_COLLECTION, {
                 method: 'POST',
                 contentType: 'application/json',
+                requestHeaders: {'Accept': 'application/json'},
                 postBody: JSON.stringify({
                     'allow_renaming': options.allow_renaming,
                     'mashup': resource.getURI(),
@@ -273,6 +275,7 @@ var OpManagerFactory = function () {
 
             Wirecloud.io.makeRequest(Wirecloud.URLs.PLATFORM_CONTEXT_COLLECTION, {
                 method: 'GET',
+                requestHeaders: {'Accept': 'application/json'},
                 onSuccess: function (transport) {
                     OpManagerFactory.getInstance().contextManager = new Wirecloud.ContextManager(this, JSON.parse(transport.responseText));
                     LayoutManagerFactory.getInstance().header._initUserMenu();
@@ -329,6 +332,7 @@ var OpManagerFactory = function () {
 
                 Wirecloud.io.makeRequest(Wirecloud.URLs.THEME_ENTRY.evaluate({name: this.contextManager.get('theme')}), {
                     method: 'GET',
+                    requestHeaders: {'Accept': 'application/json'},
                     onSuccess: function (transport) {
                         Wirecloud.currentTheme = new Wirecloud.ui.Theme(JSON.parse(transport.responseText));
                         this.continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
@@ -379,6 +383,7 @@ var OpManagerFactory = function () {
 
             Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_COLLECTION, {
                 method: 'GET',
+                requestHeaders: {'Accept': 'application/json'},
                 onSuccess: loadEnvironment.bind(this),
                 onFailure: onError.bind(this)
             });
@@ -422,6 +427,7 @@ var OpManagerFactory = function () {
             Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_COLLECTION, {
                 method: 'POST',
                 contentType: 'application/json',
+                requestHeaders: {'Accept': 'application/json'},
                 postBody: JSON.stringify({
                     allow_renaming: !!options.allow_renaming,
                     name: newName

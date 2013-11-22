@@ -38,6 +38,7 @@
     MarketManager.getMarkets = function getMarkets(callback, onFailureCallback, onCompleteCallback) {
         Wirecloud.io.makeRequest(Wirecloud.URLs.MARKET_COLLECTION, {
             method: 'GET',
+            requestHeaders: {'Accept': 'application/json'},
             onSuccess: function onSuccess(transport) {
                 var raw_data = JSON.parse(transport.responseText);
                 callback(raw_data);
@@ -73,6 +74,7 @@
 
         Wirecloud.io.makeRequest(url, {
             method: 'DELETE',
+            requestHeaders: {'Accept': 'application/json'},
             onSuccess: options.onSuccess,
             onFailure: function (transport) {
                 var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error deleting marketplace: %(errorMsg)s."), transport);
@@ -92,6 +94,7 @@
         Wirecloud.io.makeRequest(Wirecloud.URLs.MARKET_COLLECTION, {
             method: 'POST',
             contentType: 'application/json',
+            requestHeaders: {'Accept': 'application/json'},
             postBody: JSON.stringify(market_info),
 
             onSuccess: function (transport) {

@@ -73,6 +73,7 @@
 
         Wirecloud.io.makeRequest(url, {
             method: 'GET',
+            requestHeaders: {'Accept': 'application/json'},
             onSuccess: _onSearchSuccess.bind(context),
             onFailure: _onSearchError.bind(context)
         });
@@ -93,6 +94,7 @@
             url,
             {
                 contentType: 'application/json',
+                requestHeaders: {'Accept': 'application/json'},
                 postBody: JSON.stringify({offering_url: resource.usdl_url}),
                 onSuccess: function (transport) {
                     var data = JSON.parse(transport.responseText);
@@ -115,6 +117,7 @@
 
         Wirecloud.io.makeRequest(url, {
             method: 'GET',
+            requestHeaders: {'Accept': 'application/json'},
             onSuccess: _onSearchSuccess.bind(context),
             onFailure: _onSearchError.bind(context)
         });
