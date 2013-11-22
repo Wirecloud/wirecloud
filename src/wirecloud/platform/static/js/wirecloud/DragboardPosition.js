@@ -26,8 +26,27 @@
     "use strict";
 
     var DragboardPosition = function DragboardPosition(x, y) {
-        this.x = x;
-        this.y = y;
+        Object.defineProperties(this, {
+            x: {
+                get: function () { return x; },
+                set: function (newValue) {
+                    if (typeof newValue != 'number') {
+                        throw new TypeError('value must be a number');
+                    }
+                    x = newValue;
+                }
+            },
+            y: {
+                get: function () { return y; },
+                set: function (newValue) {
+                    if (typeof newValue != 'number') {
+                        throw new TypeError('value must be a number');
+                    }
+                    y = newValue;
+                }
+            }
+        });
+
         Object.freeze(this);
     };
 
