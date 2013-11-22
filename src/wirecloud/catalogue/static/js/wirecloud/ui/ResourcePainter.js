@@ -308,7 +308,7 @@
     };
 
     ResourcePainter.prototype.create_simple_command = function (element, selector, _event, handler, required) {
-        var i, elements = element.getElementsBySelector(selector);
+        var i, elements = element.querySelectorAll(selector);
 
         if (required && elements.length < 1) {
             throw new Error();
