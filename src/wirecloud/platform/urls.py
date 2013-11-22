@@ -48,10 +48,6 @@ urlpatterns = patterns('wirecloud.platform.views',
         cache_page(60 * 60 * 24)(javascript_catalog), {'packages': ()},
         name="wirecloud.javascript_translation_catalogue"),
 
-    url(r'^api/workspace/(?P<workspace_id>\d+)/wiring$',
-        wiring_views.WiringEntry(permitted_methods=('PUT',)),
-        name='wirecloud.workspace_wiring'),
-
     # Context
     url(r'^api/context/?$',
         context_views.PlatformContextCollection(permitted_methods=('GET',)),
@@ -152,6 +148,16 @@ urlpatterns = patterns('wirecloud.platform.views',
     url(r'^api/workspace/(?P<workspace_id>\d+)/variables/?$',
         workspace_views.WorkspaceVariableCollection(permitted_methods=('POST',)),
         name='wirecloud.variable_collection'
+    ),
+
+    url(r'^api/workspace/(?P<workspace_id>\d+)/resources$',
+        localcatalogue_views.WorkspaceResourceCollection(permitted_methods=('GET',)),
+        name='wirecloud.workspace_resource_collection'
+    ),
+
+    url(r'^api/workspace/(?P<workspace_id>\d+)/wiring$',
+        wiring_views.WiringEntry(permitted_methods=('PUT',)),
+        name='wirecloud.workspace_wiring'
     ),
 
     url(r'^api/workspace/(?P<workspace_id>\d+)/share/(?P<share_boolean>\w+)/?$',

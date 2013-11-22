@@ -43,7 +43,7 @@ from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import InvalidContents, WgtFile
 from wirecloud.platform.markets.utils import get_market_managers
-from wirecloud.platform.models import Widget, IWidget
+from wirecloud.platform.models import Widget, IWidget, Workspace
 from wirecloud.platform.localcatalogue.signals import resource_uninstalled
 from wirecloud.platform.localcatalogue.utils import install_resource_to_user
 
@@ -243,3 +243,29 @@ class ResourceDescriptionEntry(Resource):
                 resource_info['wgt_files'] = ()
 
         return HttpResponse(json.dumps(resource_info), content_type='application/json; charset=UTF-8')
+
+
+class WorkspaceResourceCollection(Resource):
+
+    def read(self, request, workspace_id):
+
+        workspace = get_object_or_404(Workspace, id=workspace_id)
+        if not workspace.public and not request.user.is_superuser and workspace.creator != request.user:
+            return build_error_response(request, 403, _("You don't have access to this workspace"))
+
+        resources = set()
+        for tab in workspace.tab_set.all():
+            for iwidget in tab.iwidget_set.select_related('widget__resource').all():
+                resources.add(iwidget.widget.resource)
+
+        wiring_status = json.loads(workspace.wiringStatus)
+        for operator_id, operator in wiring_status['operators'].iteritems():
+            vendor, name, version = operator['name'].split('/')
+            resources.add(CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version))
+
+        result = {}
+        for resource in resources:
+            options = resource.get_processed_info(request)
+            result[resource.local_uri_part] = options
+
+        return HttpResponse(json.dumps(result), content_type='application/json; chatset=UTF-8')
