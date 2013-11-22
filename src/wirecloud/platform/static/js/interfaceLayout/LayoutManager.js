@@ -172,7 +172,7 @@ var LayoutManagerFactory = function () {
         LayoutManager.prototype._clickCallback = function (event) {
             event = event || window.event;
 
-            if (document.getElementById("loading-window").hasClassName("fadding")) {
+            if (document.getElementById("loading-window").classList.contains("fadding")) {
                 this._hideProgressIndicator();
             }
             if (event.stopPropagation) {

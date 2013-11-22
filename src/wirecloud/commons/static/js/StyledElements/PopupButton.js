@@ -51,9 +51,9 @@
 
         this._visibilityChangeListener = function () {
             if (this.popup_menu.isVisible()) {
-                this.wrapperElement.addClassName('open');
+                this.wrapperElement.classList.add('open');
             } else {
-                this.wrapperElement.removeClassName('open');
+                this.wrapperElement.classList.remove('open');
             }
         }.bind(this);
         this.popup_menu.addEventListener('visibilityChange', this._visibilityChangeListener);
