@@ -29,6 +29,7 @@ class Workspace(models.Model):
     name = models.CharField(_('Name'), max_length=30)
     creator = models.ForeignKey(User, related_name='creator', verbose_name=_('Creator'), blank=False, null=False)
 
+    public = models.BooleanField(_('Available to all users'), default=False)
     users = models.ManyToManyField(User, verbose_name=_('Users'), through='UserWorkspace')
     targetOrganizations = models.ManyToManyField(Group, verbose_name=_('Target Organizations'), blank=True, null=True)
     forcedValues = models.TextField(blank=True)
