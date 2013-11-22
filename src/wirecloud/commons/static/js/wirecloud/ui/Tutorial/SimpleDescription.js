@@ -74,7 +74,7 @@
 
         // Position
         pos = document.body.getBoundingClientRect();
-        descSize = {'width': this.htmlElement.offsetWidth() / 2, 'height': this.htmlElement.offsetHeight / 2}
+        descSize = {'width': this.htmlElement.offsetWidth / 2, 'height': this.htmlElement.offsetHeight / 2}
         this.htmlElement.style.top = ((pos.height/2) - descSize.height) + 'px';
         this.htmlElement.style.left = ((pos.width/2) - descSize.width) + 'px';
 

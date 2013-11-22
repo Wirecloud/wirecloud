@@ -496,7 +496,12 @@ function Workspace (workspaceState) {
     }
 
     Workspace.prototype.tabExists = function (tabName) {
-        return this.tabInstances.some(function (tab) { return tab.tabInfo.name === tabName; });
+        for (var key in this.tabInstances) {
+            if (this.tabInstances[key].tabInfo.name === tabName) {
+                return true;
+            }
+        }
+        return false;
     }
 
     Workspace.prototype.addTab = function() {

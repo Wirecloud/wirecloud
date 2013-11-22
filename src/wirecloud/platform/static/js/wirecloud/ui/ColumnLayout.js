@@ -670,13 +670,13 @@
         this.searchInsertPointCache = [];
         for (i = 0; i < this.columns; i++) {
             this.searchInsertPointCache[i] = [];
-            this.shadowMatrix[i] = this.matrix[i].clone();
+            this.shadowMatrix[i] = Wirecloud.Utils.clone(this.matrix[i]);
         }
         this._removeFromMatrix(this.shadowMatrix, iwidget);
 
         // search bottommost row
         for (i = 0; i < this.columns; i++) {
-            lastWidget = this.matrix[i][this.matrix[x].length - 1];
+            lastWidget = this.matrix[i][this.matrix[i].length - 1];
 
             if (!lastWidget) {
                 continue;
