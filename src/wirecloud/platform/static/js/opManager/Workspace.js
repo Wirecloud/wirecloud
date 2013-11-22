@@ -528,7 +528,7 @@ function Workspace (workspaceState) {
         Wirecloud.io.makeRequest(url, {
             method: 'POST',
             contentType: 'application/json',
-            postBody: Object.toJSON({name: tabName}),
+            postBody: JSON.stringify({name: tabName}),
             onSuccess: createTabSuccess.bind(this),
             onFailure: createTabError,
             onException: createTabError,
