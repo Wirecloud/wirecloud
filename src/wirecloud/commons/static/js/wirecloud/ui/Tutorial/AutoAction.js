@@ -29,8 +29,6 @@
      * Constructor
      *************************************************************************/
     var AutoAction = function AutoAction(tutorial, options) {
-        var pos;
-
         this.options = options;
         // Normalize asynchronous option
         this.options.asynchronous = !!this.options.asynchronous;
@@ -62,14 +60,12 @@
      */
     var nextHandler = function nextHandler() {
         if (this.element != null) {
-            this.element.removeClassName('tuto_highlight');
+            this.element.classList.remove('tuto_highlight');
         }
         this.tutorial.nextStep();
     };
 
     var _activate = function _activate(element, withoutCloseButton) {
-        var pos, descSize;
-
         if (element != null) {
             this.element = element;
         }

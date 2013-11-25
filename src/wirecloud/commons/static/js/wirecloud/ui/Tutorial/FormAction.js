@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright 2013 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global Wirecloud*/
+/*global gettext, Wirecloud*/
 
 (function () {
 
@@ -86,27 +86,27 @@
     };
 
     var _activate = function _activate(form) {
-        var pos, i, tempElem, warningIco;
+        var pos, i, tempElem;
         
         this.element = form;
 
         if (this.mainStep) {
             //main description
-            this.mainStep.wrapperElement.addClassName("activeStep");
+            this.mainStep.wrapperElement.classList.add("activeStep");
 
             // Positions
             pos = form.getBoundingClientRect();
-            switch(this.mainPos) {
-                case('up'):
+            switch (this.mainPos) {
+                case 'up':
                     this.mainStep.wrapperElement.style.top = (pos.top - this.mainStep.wrapperElement.offsetHeight - 20) + 'px';
                     break;
-                case('right'):
+                case 'right':
                     this.mainStep.wrapperElement.style.left = (pos.right + 20) + 'px';
                     break;
-                case('left'):
+                case 'left':
                     this.mainStep.wrapperElement.style.left = (pos.left - this.mainStep.wrapperElement.offsetWidth - 20) + 'px';
                     break;
-                case('down'):
+                case 'down':
                     this.mainStep.wrapperElement.style.top = (pos.bottom + 20) + 'px';
                     break;
                 default:
@@ -121,28 +121,28 @@
         this.endAction.activate(withoutCloseButton);
 
         // substeps in this form action
-        var activateSubFormAction = function (index, e) {
-            this.subSteps[index].wrapperElement.addClassName('activate');
+        var activateSubFormAction = function (index) {
+            this.subSteps[index].wrapperElement.classList.add('activate');
             validateInput.call(this, index);
         };
-        var deActivateSubFormAction = function (index, e) {
-            this.subSteps[index].wrapperElement.removeClassName('activate');
+        var deActivateSubFormAction = function (index) {
+            this.subSteps[index].wrapperElement.classList.remove('activate');
         };
 
         // validate function
-        var validateInput = function(index, e) {
+        var validateInput = function (index) {
             if (!this.actionElementsValidators[index](this.actionElements[index]()) && !this.subSteps[index].wrapperElement.hasClassName('invalid')) {
-                this.subSteps[index].wrapperElement.addClassName('invalid');
+                this.subSteps[index].wrapperElement.classList.add('invalid');
                 this.form.acceptButton.disable();
                 this.invalidcounter ++;
             } else if (this.actionElementsValidators[index](this.actionElements[index]()) && this.subSteps[index].wrapperElement.hasClassName('invalid')) {
-                this.subSteps[index].wrapperElement.removeClassName('invalid');
+                this.subSteps[index].wrapperElement.classList.remove('invalid');
                 this.invalidcounter --;
-                if (this.invalidcounter == 0) {
+                if (this.invalidcounter === 0) {
                     this.form.acceptButton.enable();
                 }
             }
-        }
+        };
 
         for (i = 0; i < this.actionElements.length; i ++) {
             this.subSteps[i] = new Wirecloud.ui.Tutorial.PopUp(this.actionElements[i](), {
@@ -153,7 +153,7 @@
             });
 
             this.layer.appendChild(this.subSteps[i].wrapperElement);
-            this.subSteps[i].wrapperElement.addClassName('subFormAction');
+            this.subSteps[i].wrapperElement.classList.add('subFormAction');
             this.subSteps[i].repaint();
 
             // Handlers
@@ -164,7 +164,7 @@
         }
         if (this.actionElements != null) {
             // Activate first step
-            activateSubFormAction.call(this,0);
+            activateSubFormAction.call(this, 0);
         }
         for (i = 0; i < this.disableElems.length; i ++) {
             this.disableLayer[i] = this.disable(this.disableElems[i]());
@@ -193,13 +193,13 @@
 
         pos = elem.getBoundingClientRect();
         disableLayer = document.createElement("div");
-        disableLayer.addClassName('disableLayer');
+        disableLayer.classList.add('disableLayer');
         disableLayer.style.top = pos.top + 'px';
         disableLayer.style.left = pos.left + 'px';
         disableLayer.style.width = pos.width + 'px';
         disableLayer.style.height = pos.height + 'px';
         this.layer.appendChild(disableLayer);
-        return disableLayer;     
+        return disableLayer;
     };
 
     /**
@@ -220,7 +220,7 @@
             this.mainStep = null;
         }
         if (this.endAction != null) {
-        	this.endAction.destroy();
+            this.endAction.destroy();
             this.endAction = null;
         }
     };

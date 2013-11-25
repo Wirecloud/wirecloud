@@ -19,7 +19,7 @@
  *
  */
 
-/*global Wirecloud*/
+/*global NodeList, Wirecloud*/
 
 (function () {
 
@@ -199,7 +199,7 @@
      * set next handler
      */
     UserAction.prototype.setNext = function setNext() {
-        this.nextHandler = function (e) {
+        this.nextHandler = function () {
             if (this.options.eventFilterFunction.apply(null, arguments)) {
                 nextHandler.call(this);
             }
@@ -239,7 +239,7 @@
 
         pos = elem.getBoundingClientRect();
         disableLayer = document.createElement("div");
-        disableLayer.addClassName('disableLayer');
+        disableLayer.className = 'disableLayer';
         disableLayer.style.top = pos.top + 'px';
         disableLayer.style.left = pos.left + 'px';
         disableLayer.style.width = pos.width + 'px';

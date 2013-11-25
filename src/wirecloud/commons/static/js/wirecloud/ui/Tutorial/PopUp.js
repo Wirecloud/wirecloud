@@ -19,8 +19,7 @@
  *
  */
 
-/*global StyledElements, Wirecloud*/
-
+/*global gettext, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -65,10 +64,9 @@
             this.textElement.innerHTML = options.msg;
         }
 
-        //warning
+        // Warning
         this.warningIco = document.createElement("span");
-        this.warningIco.addClassName('warningIco');
-        this.warningIco.addClassName('icon-warning-sign');
+        this.warningIco.className = 'warningIco icon-warning-sign';
         this.wrapperElement.appendChild(this.warningIco);
 
         this.wrapperElement.appendChild(this.textElement);
@@ -113,7 +111,8 @@
             this.arrow.style.right = '-27px';
             break;
         }
-    }
+    };
+
     /**
      * Destroy
      */
@@ -164,7 +163,7 @@
             'top': widget_box.top + element_box.top,
             'width': element_box.width,
             'height': element_box.height
-        }
+        };
     };
 
     WidgetElement.prototype.addEventListener = function () {

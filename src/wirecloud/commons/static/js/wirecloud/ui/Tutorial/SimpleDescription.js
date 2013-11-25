@@ -19,8 +19,7 @@
  *
  */
 
-/*global Wirecloud*/
-
+/*global gettext, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -31,8 +30,6 @@
      *
      */
     var SimpleDescription = function SimpleDescription(tutorial, options) {
-        var nextLabel, pos, descSize;
-
         this.options = options;
         this.element = options.elem;
         this.tutorial = tutorial;
@@ -47,11 +44,7 @@
 
         Wirecloud.ui.WindowMenu.call(this, this.title, 'simpleDescription');
 
-        try {
-            this.windowContent.innerHTML = options.msg;
-        } catch (e) {
-            var msg = 'The provided message is not well formed';
-        }
+        this.windowContent.innerHTML = options.msg;
 
         this.nextButton = new StyledElements.StyledButton({
             'title': gettext("next"),
@@ -72,15 +65,8 @@
 
         this.layer.appendChild(this.htmlElement);
 
-        // Position
-        pos = document.body.getBoundingClientRect();
-        descSize = {'width': this.htmlElement.offsetWidth / 2, 'height': this.htmlElement.offsetHeight / 2}
-        this.htmlElement.style.top = ((pos.height/2) - descSize.height) + 'px';
-        this.htmlElement.style.left = ((pos.width/2) - descSize.width) + 'px';
-
         this.wrapperElement = this.htmlElement;
     };
-
     SimpleDescription.prototype = new Wirecloud.ui.WindowMenu();
 
     SimpleDescription.prototype._closeListener = function _closeListener(e) {
@@ -109,16 +95,6 @@
     };
 
     /**
-     * set the BoundingClientRect parameters
-     */
-    SimpleDescription.prototype.setBoundingClientRect = function setBoundingClientRect(BoundingClientRect, move) {
-        this.htmlElement.style.height = (BoundingClientRect.height + move.height) + 'px';
-        this.htmlElement.style.left = (BoundingClientRect.left + move.left) + 'px';
-        this.htmlElement.style.top = (BoundingClientRect.top + move.top) + 'px';
-        this.htmlElement.style.width = (BoundingClientRect.width + move.width) + 'px';
-    };
-
-    /**
      * set this SimpleDescription as the last one, don't need next button.
      */
     SimpleDescription.prototype.setLast = function setLast(buttonLabel, optionalHandler) {
@@ -126,7 +102,7 @@
         //this.windowBottom.removeChild(this.nextButton.wrapperElement);
         this.nextButton.wrapperElement.remove();
         if (buttonLabel == null) {
-            buttonLabel = 'close'
+            buttonLabel = 'close';
         }
         this.cancelButton.setLabel(gettext(buttonLabel));
         if (optionalHandler != null) {
@@ -151,8 +127,6 @@
      * activate this step
      */
     var _activate = function _activate() {
-        var pos;
-
         this.htmlElement.classList.add("activeStep");
         if (typeof this.element === 'function') {
             this.element = this.element();
@@ -163,23 +137,26 @@
         }
         if (this.element != null) {
             pos = this.element.getBoundingClientRect();
-            switch(this.pos) {
-                case('up'):
+            switch (this.pos) {
+                case 'up':
                     this.htmlElement.style.top = (pos.top - this.htmlElement.offsetHeight - 20) + 'px';
                     break;
-                case('right'):
+                case 'right':
                     this.htmlElement.style.left = (pos.right + 20) + 'px';
                     break;
-                case('left'):
+                case 'left':
                     this.htmlElement.style.left = (pos.left - this.htmlElement.offsetWidth - 20) + 'px';
                     break;
-                case('down'):
+                default:
+                case 'down':
                     this.htmlElement.style.top = (pos.bottom + 20) + 'px';
                     break;
-                default:
-                    break;
             }
+        } else {
+            this.htmlElement.style.top = ((window.innerHeight / 2) - (this.htmlElement.offsetHeight / 2)) + 'px';
+            this.htmlElement.style.left = ((window.innerWidth / 2) - (this.htmlElement.offsetWidth / 2)) + 'px';
         }
+        this.nextButton.focus();
     };
 
      /**
@@ -194,7 +171,8 @@
     };
 
     /*************************************************************************
-     * Make Anchor public
+     * Make SimpleDescription public
      *************************************************************************/
     Wirecloud.ui.Tutorial.SimpleDescription = SimpleDescription;
+
 })();
