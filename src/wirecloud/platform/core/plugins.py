@@ -258,6 +258,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/catalogue/CatalogueView.js',
                 'js/wirecloud/ui/WirecloudHeader.js',
                 'js/dragboard/dragboard.js',
+                'js/wirecloud/ui/IWidgetDraggable.js',
                 'js/wirecloud/DragboardPosition.js',
                 'js/wirecloud/ui/DragboardCursor.js',
                 'js/dragboard/DragboardLayout.js',

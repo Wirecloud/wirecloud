@@ -22,7 +22,7 @@
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
 /*global CSSPrimitiveValue, Insertion, document, gettext, ngettext, interpolate, window */
 /*global Constants, DropDownMenu, LayoutManagerFactory, OpManagerFactory, Wirecloud*/
-/*global IWidgetDraggable, IWidgetIconDraggable, FreeLayout, FullDragboardLayout*/
+/*global IWidgetIconDraggable, FreeLayout, FullDragboardLayout*/
 /*global ColorDropDownMenu*/
 
 /**
@@ -407,7 +407,7 @@ IWidget.prototype.paint = function (onInit) {
     }
 
     // Mark as draggable
-    this.draggable = new IWidgetDraggable(this);
+    this.draggable = new Wirecloud.ui.IWidgetDraggable(this);
 
     // Notify Context Manager about the new position and new sizes
     this.internal_iwidget.contextManager.modify({
