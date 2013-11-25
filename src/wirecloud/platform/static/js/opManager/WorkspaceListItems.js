@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright 2012-2013 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,30 +19,39 @@
  *
  */
 
-/*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50 */
 /*global OpManagerFactory, StyledElements*/
 
-var WorkspaceListItems = function (handler, options) {
-    StyledElements.DynamicMenuItems.call(this);
+(function () {
 
-    this.handler = handler;
-};
-WorkspaceListItems.prototype = new StyledElements.DynamicMenuItems();
+    "use strict";
 
-WorkspaceListItems.prototype.build = function () {
-    var workspaceId, items, workspace;
+    var WorkspaceListItems = function (handler) {
+        StyledElements.DynamicMenuItems.call(this);
 
-    items = [];
+        this.handler = handler;
+    };
+    WorkspaceListItems.prototype = new StyledElements.DynamicMenuItems();
 
-    for (workspaceId in OpManagerFactory.getInstance().workspaceInstances) {
-        workspace = OpManagerFactory.getInstance().workspaceInstances[workspaceId];
+    WorkspaceListItems.prototype.build = function () {
+        var workspace_name, items, workspace, username, opManager;
 
-        items.push(new StyledElements.MenuItem(
-            workspace.name,
-            this.handler,
-            workspace
-        ));
-    }
+        items = [];
 
-    return items;
-};
+        opManager = OpManagerFactory.getInstance();
+        username = opManager.contextManager.get('username');
+        for (workspace_name in opManager.workspacesByUserAndName[username]) {
+            workspace = opManager.workspacesByUserAndName[username][workspace_name];
+
+            items.push(new StyledElements.MenuItem(
+                workspace_name,
+                this.handler,
+                workspace
+            ));
+        }
+
+        return items;
+    };
+
+    window.WorkspaceListItems = WorkspaceListItems;
+
+})();
