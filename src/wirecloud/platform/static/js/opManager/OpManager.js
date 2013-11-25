@@ -161,14 +161,18 @@ var OpManagerFactory = function () {
                 dry_run: false
             }, options);
 
-            var cloneOk = function(transport) {
-                var response, wsInfo, opManager, workspace = null;
+            var cloneOk = function(response) {
+                var workspace = null;
 
-                if (transport.status === 201) {
-                    response = transport.responseText;
-                    wsInfo = JSON.parse(response);
-                    opManager = OpManagerFactory.getInstance();
-                    opManager.workspaceInstances[wsInfo.id] = workspace;
+                if ([201, 204].indexOf(response.status) === -1) {
+                    cloneError(response);
+                }
+
+                if (response.status === 201) {
+                    workspace = JSON.parse(response.responseText);
+                    this.workspaceInstances[workspace.id] = workspace;
+                    this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace;
+
                 }
 
                 if (typeof options.onSuccess === 'function') {
