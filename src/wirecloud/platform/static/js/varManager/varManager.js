@@ -331,7 +331,7 @@ function VarManager (_workspace) {
     this.pendingVariables = {}; //to manage iwidgets loaded on demand caused by a wiring propagation
 
     // Creation of ALL Wirecloud variables regarding one workspace
-    this.parseVariables(this.workspace.workspaceGlobalInfo);
+    this.parseVariables(this.workspace.workspaceState);
 
     _workspace.addEventListener('iwidgetadded', function (workspace, iWidget) {
         iWidget.addEventListener('load', function (iWidget) {

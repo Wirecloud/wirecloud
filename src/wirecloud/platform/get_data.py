@@ -254,7 +254,10 @@ class VariableValueCacheManager():
 
 
 def get_workspace_data(workspace, user):
-    user_workspace = UserWorkspace.objects.get(user=user, workspace=workspace)
+    try:
+        user_workspace = UserWorkspace.objects.get(user=user, workspace=workspace)
+    except UserWorkspace.DoesNotExist:
+        user_workspace = None
 
     return {
         'id': workspace.id,
@@ -262,8 +265,8 @@ def get_workspace_data(workspace, user):
         'shared': workspace.is_shared(),
         'creator': workspace.creator.username,
         'owned': workspace.creator == user,
-        'removable': workspace.creator == user and user_workspace.manager == '',
-        'active': user_workspace.active,
+        'removable': workspace.creator == user and (user_workspace is None or user_workspace.manager == ''),
+        'active': user_workspace is not None and user_workspace.active,
     }
 
 

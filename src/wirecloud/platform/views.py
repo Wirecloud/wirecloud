@@ -67,7 +67,7 @@ def render_workspace_view(request, creator_user, workspace):
     get_workspace_list(request.user)
 
     workspace = get_object_or_404(Workspace, creator__username=creator_user, name=workspace)
-    if request.user not in workspace.users.all():
+    if not workspace.public and request.user not in workspace.users.all():
         return build_error_response(request, 403, 'forbidden')
 
     return render_wirecloud(request)

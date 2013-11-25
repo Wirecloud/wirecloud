@@ -25,6 +25,7 @@ except ImportError:
 import json
 
 from django.conf import settings
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
@@ -161,12 +162,12 @@ def get_workspace_list(user):
 
     reload_showcase = sync_base_workspaces(user)
 
-    if Workspace.objects.filter(users=user).count() == 0:
+    if user.is_authenticated() and Workspace.objects.filter(users=user).count() == 0:
         # create an empty workspace
         createEmptyWorkspace(_('Workspace'), user)
 
-    # Now we can fetch all the workspaces of an user
-    workspaces = Workspace.objects.filter(users__id=user.id)
+    # Now we can fetch all the workspaces for the user
+    workspaces = Workspace.objects.filter(Q(public=True) | Q(users__id=user.id))
 
     # if there is no active workspace
     active_workspaces = UserWorkspace.objects.filter(user=user, active=True)

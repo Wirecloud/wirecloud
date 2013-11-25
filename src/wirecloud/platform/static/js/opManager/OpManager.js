@@ -55,9 +55,7 @@ var OpManagerFactory = function () {
 
             HistoryManager.init();
             var state = HistoryManager.getCurrentState();
-            this.activeWorkspace = new Workspace(this.workspacesByUserAndName[state.workspace_creator][state.workspace_name]);
-
-            this.activeWorkspace.downloadWorkspaceInfo(HistoryManager.getCurrentState().tab);
+            this.changeActiveWorkspace(this.workspacesByUserAndName[state.workspace_creator][state.workspace_name]);
         }
 
         var onError = function (transport, e) {
@@ -78,7 +76,7 @@ var OpManagerFactory = function () {
         var createWSSuccess = function(onSuccess, response) {
             var workspace = JSON.parse(response.responseText);
             this.workspaceInstances[workspace.id] = workspace;
-            this.changeActiveWorkspace(new Workspace(workspace));
+            this.changeActiveWorkspace(workspace);
 
             if (typeof onSuccess === 'function') {
                 try {
@@ -169,8 +167,7 @@ var OpManagerFactory = function () {
                     response = transport.responseText;
                     wsInfo = JSON.parse(response);
                     opManager = OpManagerFactory.getInstance();
-                    workspace = new Workspace(wsInfo);
-                    opManager.workspaceInstances.set(wsInfo.id, workspace);
+                    opManager.workspaceInstances[wsInfo.id] = workspace;
                 }
 
                 if (typeof options.onSuccess === 'function') {
@@ -216,12 +213,12 @@ var OpManagerFactory = function () {
             PreferencesManagerFactory.getInstance().show();
         }
 
-        OpManager.prototype.changeActiveWorkspace = function (workspace, initial_tab) {
+        OpManager.prototype.changeActiveWorkspace = function changeActiveWorkspace(workspace, initial_tab) {
             var state, steps = this.activeWorkspace != null ? 2 : 1;
 
             state = {
-                workspace_creator: workspace.workspaceState.creator,
-                workspace_name: workspace.getName(),
+                workspace_creator: workspace.creator,
+                workspace_name: workspace.name,
                 view: "workspace"
             };
             if (initial_tab) {
@@ -234,8 +231,16 @@ var OpManagerFactory = function () {
                 this.activeWorkspace.unload();
             }
 
-            this.activeWorkspace = workspace;
-            this.activeWorkspace.downloadWorkspaceInfo(initial_tab);
+            LayoutManagerFactory.getInstance().logSubTask(gettext("Downloading workspace data"), 1);
+            var workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': workspace.id});
+            Wirecloud.io.makeRequest(workspaceUrl, {
+                method: 'GET',
+                requestHeaders: {'Accept': 'application/json'},
+                onSuccess: function (response) {
+                    var workspace_data = JSON.parse(response.responseText);
+                    this.activeWorkspace = new Workspace(workspace_data);
+                }.bind(this)
+            });
         }
 
         OpManager.prototype.logout = function logout() {
@@ -439,6 +444,8 @@ var OpManagerFactory = function () {
 
         OpManager.prototype.removeWorkspace = function(workspaceId) {
             // Removing reference
+            var workspace = this.workspaceInstances[workspaceId];
+            delete this.workspacesByUserAndName[workspace.workspaceState.creator][workspace.workspaceState.name];
             delete this.workspaceInstances[workspaceId];
 
             // Set the first workspace as current

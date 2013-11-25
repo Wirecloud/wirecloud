@@ -69,11 +69,11 @@ function Workspace (workspaceState) {
             'preferences': {}
         };
 
-        this.workspaceGlobalInfo = {
-                                       'tabs': [
-                                         initialTab
-                                       ]
-                                   };
+        this.workspaceState = {
+            'tabs': [
+                initialTab
+            ]
+        };
         this.tabInstances = {};
         // TODO
         this.notebook.clear()
@@ -85,8 +85,7 @@ function Workspace (workspaceState) {
         OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.ACTIVE_WORKSPACE);
     };
 
-    // Not like the remaining methods. This is a callback function to process AJAX requests, so must be public.
-    var loadWorkspace = function (transport) {
+    var loadWorkspace = function () {
         var layoutManager, params, param, preferencesWindow, preferenceValues, iwidgets;
 
         layoutManager = LayoutManagerFactory.getInstance();
@@ -95,20 +94,18 @@ function Workspace (workspaceState) {
 
         try {
             // JSON-coded iWidget-variable mapping
-            this.workspaceGlobalInfo = JSON.parse(transport.responseText);
-
             // Load workspace preferences
-            params = this.workspaceGlobalInfo.empty_params;
-            preferenceValues = this.workspaceGlobalInfo['preferences'];
+            params = this.workspaceState.empty_params;
+            preferenceValues = this.workspaceState.preferences;
             this.preferences = PreferencesManagerFactory.getInstance().buildPreferences('workspace', preferenceValues, this, params);
 
             // Check if the workspace needs to ask some values before loading this workspace
-            if (this.workspaceGlobalInfo.empty_params.length > 0) {
+            if (this.workspaceState.empty_params.length > 0) {
                 preferenceValues = {};
                 for (i = 0; i < params.length; i += 1) {
                     param = params[i];
-                    if (this.workspaceGlobalInfo.preferences[param] != null) {
-                        preferenceValues[param] = this.workspaceGlobalInfo.preferences[param];
+                    if (this.workspaceState.preferences[param] != null) {
+                        preferenceValues[param] = this.workspaceState.preferences[param];
                     }
                 }
 
@@ -124,7 +121,7 @@ function Workspace (workspaceState) {
             }
 
             // Load workspace tabs
-            var tabs = this.workspaceGlobalInfo['tabs'];
+            var tabs = this.workspaceState.tabs;
             var visibleTabId = null;
             var loading_tab = this.notebook.createTab({'closeable': false});
 
@@ -144,7 +141,7 @@ function Workspace (workspaceState) {
 
             this.varManager = new VarManager(this);
 
-            this.contextManager = new Wirecloud.ContextManager(this, this.workspaceGlobalInfo.context);
+            this.contextManager = new Wirecloud.ContextManager(this, this.workspaceState.context);
             this.wiring = new Wirecloud.Wiring(this);
             iwidgets = this.getIWidgets();
             for (i = 0; i < iwidgets.length; i += 1) {
@@ -157,14 +154,14 @@ function Workspace (workspaceState) {
             // END FIXME
 
             this.restricted = !this.isOwned() && this.isShared();
-            this.removable = !this.restricted && this.workspaceGlobalInfo.removable;
+            this.removable = !this.restricted && this.workspaceState.removable;
             this.valid = true;
 
             if (this.initial_tab_id && this.tabInstances[this.initial_tab_id]) {
                 visibleTabId = this.initial_tab_id;
             }
 
-            this.wiring.load(this.workspaceGlobalInfo.wiring);
+            this.wiring.load(this.workspaceState.wiring);
             this.notebook.goToTab(this.tabInstances[visibleTabId]);
             loading_tab.close();
 
@@ -419,7 +416,7 @@ function Workspace (workspaceState) {
         return this.varManager;
     }
 
-    Workspace.prototype.downloadWorkspaceInfo = function (initial_tab) {
+    Workspace.prototype.initGUI = function initGUI(initial_tab) {
         // TODO
         this.addTabButton = new StyledElements.StyledButton({
             'class': 'icon-add-tab',
@@ -439,14 +436,7 @@ function Workspace (workspaceState) {
         LayoutManagerFactory.getInstance().viewsByName['workspace'].clear();
         LayoutManagerFactory.getInstance().viewsByName['workspace'].appendChild(this.notebook);
 
-        LayoutManagerFactory.getInstance().logSubTask(gettext("Downloading workspace data"), 1);
         this.initial_tab_id = initial_tab;
-        var workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': this.id});
-        Wirecloud.io.makeRequest(workspaceUrl, {
-            method: 'GET',
-            onSuccess: loadWorkspace.bind(this),
-            onFailure: onError.bind(this)
-        });
     };
 
     Workspace.prototype.getIWidget = function(iwidgetId) {
@@ -775,9 +765,12 @@ function Workspace (workspaceState) {
     this.varManager = null;
     this.contextManager = null;
     this.loaded = false;
-    this.valid=false;
+    this.valid = false;
 
     StyledElements.ObjectWithEvents.call(this, ['iwidgetadded', 'iwidgetremoved']);
+
+    this.initGUI();
+    loadWorkspace.call(this);
 
     /*
      * OPERATIONS
@@ -795,7 +788,6 @@ function Workspace (workspaceState) {
     }.bind(this);
 
     this.markAsActiveSuccess = function() {
-        this.workspaceGlobalInfo.active = true;
         this.workspaceState.active = true;
         if (this.activeEntryId != null) {
             this.confMenu.removeOption(this.activeEntryId);

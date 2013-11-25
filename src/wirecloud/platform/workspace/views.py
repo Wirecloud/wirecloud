@@ -204,10 +204,10 @@ class WorkspaceEntry(Resource):
 
         workspace = get_object_or_404(Workspace, pk=workspace_id)
 
-        if not workspace.users.filter(pk=request.user.pk).exists():
-            return HttpResponseForbidden()
+        if not workspace.public and not workspace.users.filter(pk=request.user.pk).exists():
+            return build_error_response(request, 403, _("You don't have permission to access this workspace"))
 
-        workspace_data = get_global_workspace_data(workspace, request.user)
+        workspace_data = get_global_workspace_data(workspace, workspace.creator)
 
         return workspace_data.get_response()
 

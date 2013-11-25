@@ -31,7 +31,7 @@
 
         this.wsMenu = new StyledElements.PopupMenu();
         this.wsMenu.append(new WorkspaceListItems(function (context, workspace) {
-            OpManagerFactory.getInstance().changeActiveWorkspace(new Workspace(workspace));
+            OpManagerFactory.getInstance().changeActiveWorkspace(workspace);
         }));
         this.wsMenu.appendSeparator();
         this.wsMenu.append(new WorkspaceItems());
@@ -70,7 +70,7 @@
 
             entries = [
                 {
-                    'label': workspace.workspaceGlobalInfo.creator
+                    'label': workspace.workspaceState.creator
                 }, {
                     'label': workspace.getName(),
                     'menu': this.wsMenu
