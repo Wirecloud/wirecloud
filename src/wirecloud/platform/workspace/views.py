@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012-2013 Universidad Politécnica de Madrid
+# Copyright 2012-2013 (c) CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -22,13 +22,10 @@ from cStringIO import StringIO
 import os
 import zipfile
 
-from django.contrib.auth.models import Group, User
-from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseForbidden, Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
-from django.utils.http import urlencode
 
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
@@ -436,53 +433,6 @@ class WorkspaceVariableCollection(Resource):
             set_variable_value(igVar['id'], request.user, igVar['value'])
 
         return HttpResponse(status=204)
-
-
-class WorkspaceSharerEntry(Resource):
-
-    @authentication_required
-    @commit_on_http_success
-    def update(self, request, workspace_id, share_boolean):
-
-        workspace = get_object_or_404(Workspace.objects.get(id=workspace_id))
-        owner = workspace.creator
-
-        if owner != request.user:
-            msg = 'You are not the owner of the workspace, so you can not share it!'
-            result = {'result': 'error', 'description': msg}
-            return HttpResponseForbidden(json.dumps(result), content_type='application/json; charset=UTF-8')
-
-        #Everything right!
-        if request.body == '':
-            #Share with everybody
-            #Linking with public user!
-            public_user = None  # TODO
-
-            linkWorkspaceObject(public_user, workspace, owner, link_variable_values=True)
-
-            workspace_path = reverse('wirecloud.workspace_view', args=(workspace_id,))
-            url = request.build_absolute_uri(workspace_path + '?' + urlencode({u'view': 'viewer'}))
-
-            result = {"result": "ok", "url": url}
-            return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
-        else:
-            #Share only with the scpecified groups
-            try:
-                groups = json.loads(request.body)
-            except ValueError, e:
-                msg = _("malformed json data: %s") % unicode(e)
-                return build_error_response(request, 400, msg)
-
-            queryGroups = Group.objects.filter(id__in=groups)
-            for g in queryGroups:
-                workspace.targetOrganizations.add(g)
-
-            users = User.objects.filter(groups__in=groups).distinct()
-            for user in users:
-                #link the workspace with each user
-                linkWorkspaceObject(user, workspace, owner, link_variable_values=True)
-
-            return HttpResponse(status=204)
 
 
 class MashupMergeService(Service):

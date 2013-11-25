@@ -160,11 +160,6 @@ urlpatterns = patterns('wirecloud.platform.views',
         name='wirecloud.workspace_wiring'
     ),
 
-    url(r'^api/workspace/(?P<workspace_id>\d+)/share/(?P<share_boolean>\w+)/?$',
-        workspace_views.WorkspaceSharerEntry(permitted_methods=('PUT',)),
-        name='wirecloud.workspace_share'
-    ),
-
     url(r'^api/workspace/(?P<to_ws_id>\d+)/merge/?$',
         workspace_views.MashupMergeService(),
         name='wirecloud.workspace_merge'
