@@ -30,38 +30,6 @@
 
 function Workspace(workspaceState) {
 
-    var loadWorkspace,
-        onError;
-
-    // ****************
-    // CALLBACK METHODS
-    // ****************
-
-    // Not like the remaining methods. This is a callback function to process AJAX requests, so must be public.
-    loadWorkspace = function (transport) {
-        // JSON-coded iWidget-variable mapping
-        var response = transport.responseText;
-        this.workspaceGlobalInfo = JSON.parse(response);
-
-        this.loaded = true;
-
-        OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.ACTIVE_WORKSPACE);
-    };
-
-    onError = function (transport, e) {
-        var msg;
-        if (e) {
-            msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"), {
-                errorFile: e.fileName,
-                errorLine: e.lineNumber,
-                errorDesc: e
-            }, true);
-        } else {
-            msg = transport.status + " " + transport.statusText;
-        }
-        alert(msg);
-    };
-
     Workspace.prototype._buildInterface = function () {
         var loginButton;
 
@@ -157,17 +125,6 @@ function Workspace(workspaceState) {
         return this.visibleTab.getDragboard();
     };
 
-    Workspace.prototype.downloadWorkspaceInfo = function () {
-        var workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': this.id});
-        Wirecloud.io.makeRequest(workspaceUrl, {
-            method: 'GET',
-            requestHeaders: {'Accept': 'application/json'},
-            onSuccess: loadWorkspace.bind(this),
-            onFailure: onError.bind(this),
-            onException: onError.bind(this)
-        });
-    };
-
     Workspace.prototype.getIWidget = function (iwidgetId) {
         var i, iwidget;
         for (i = 0; i < this.tabInstances.length; i += 1) {
@@ -180,10 +137,6 @@ function Workspace(workspaceState) {
     };
 
     Workspace.prototype.getIWidgets = function () {
-        if (!this.loaded) {
-            return;
-        }
-
         var iWidgets = [],
             i;
         for (i = 0; i < this.tabInstances.length; i += 1) {
@@ -200,7 +153,7 @@ function Workspace(workspaceState) {
             step = window.innerWidth,
             i, tabs, tab, iwidgets;
 
-        tabs = this.workspaceGlobalInfo.tabs;
+        tabs = this.workspaceState.tabs;
 
         if (tabs.length > 0) {
             for (i = 0; i < tabs.length; i += 1) {
@@ -217,13 +170,13 @@ function Workspace(workspaceState) {
 
         this.varManager = new VarManager(this);
 
-        this.contextManager = new Wirecloud.ContextManager(this, this.workspaceGlobalInfo.context);
+        this.contextManager = new Wirecloud.ContextManager(this, this.workspaceState.context);
         this.wiring = new Wirecloud.Wiring(this);
         iwidgets = this.getIWidgets();
         for (i = 0; i < iwidgets.length; i += 1) {
             this.events.iwidgetadded.dispatch(this, iwidgets[i].internal_iwidget);
         }
-        this.wiring.load(this.workspaceGlobalInfo.wiring);
+        this.wiring.load(this.workspaceState.wiring);
         this._buildInterface();
 
         for (i = 0; i < this.tabInstances.length; i += 1) {
@@ -255,18 +208,11 @@ function Workspace(workspaceState) {
     };
 
     Workspace.prototype.setTab = function (tab) {
-        if (!this.loaded) {
-            return;
-        }
         this.visibleTab = tab;
         this.visibleTab.show();
     };
 
     Workspace.prototype.getVisibleTab = function () {
-        if (!this.loaded) {
-            return;
-        }
-
         return this.visibleTab;
     };
 
@@ -345,7 +291,6 @@ function Workspace(workspaceState) {
     this.tabInstances = [];
     this.wiring = null;
     this.varManager = null;
-    this.loaded = false;
     this.visibleTab = null;
     this.visibleTabIndex = 0;
     this.alternatives = null;
@@ -353,5 +298,7 @@ function Workspace(workspaceState) {
     this.layout = null;
 
     StyledElements.ObjectWithEvents.call(this, ['iwidgetadded', 'iwidgetremoved']);
+
+    this.init();
 }
 Workspace.prototype = new StyledElements.ObjectWithEvents();

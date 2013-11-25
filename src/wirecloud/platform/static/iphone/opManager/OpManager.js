@@ -61,10 +61,7 @@ var OpManagerFactory = (function () {
 
             HistoryManager.init();
             state = HistoryManager.getCurrentState();
-            this.activeWorkspace = new Workspace(this.workspacesByUserAndName[state.workspace_creator][state.workspace_name]);
-
-            // Total information of the active workspace must be downloaded!
-            this.activeWorkspace.downloadWorkspaceInfo();
+            this.changeActiveWorkspace(this.workspacesByUserAndName[state.workspace_creator][state.workspace_name]);
         };
 
         onError = function (transport, e) {
@@ -90,19 +87,41 @@ var OpManagerFactory = (function () {
         OpManager.prototype.changeActiveWorkspace = function (workspace) {
             var state;
 
-            if (this.activeWorkspace !== null && this.activeWorkspace !== undefined) {
+            if (this.activeWorkspace != null) {
                 this.activeWorkspace.unload();
             }
 
-            this.loadCompleted = false;
-            this.activeWorkspace = workspace;
             state = {
-                workspace_creator: workspace.workspaceState.creator,
-                workspace_name: workspace.getName(),
+                workspace_creator: workspace.creator,
+                workspace_name: workspace.name,
                 view: "workspace"
             };
             HistoryManager.pushState(state);
-            this.activeWorkspace.downloadWorkspaceInfo();
+
+            this.loadCompleted = false;
+            var workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': workspace.id});
+            Wirecloud.io.makeRequest(workspaceUrl, {
+                method: 'GET',
+                requestHeaders: {'Accept': 'application/json'},
+                onSuccess: function (response) {
+                    var workspace_data = JSON.parse(response.responseText);
+                    this.activeWorkspace = new Workspace(workspace_data);
+                    this.activeWorkspace.contextManager.addCallback(function (updated_attributes) {
+                        var workspace, old_name;
+
+                        if ('name' in updated_attributes) {
+                            workspace = this.workspaceInstances[this.activeWorkspace.id];
+                            old_name = workspace.name;
+                            delete this.workspacesByUserAndName[workspace.creator][old_name];
+
+                            workspace.name = updated_attributes.name;
+                            this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace;
+                        }
+                    }.bind(this));
+                    this.visibleLayer = 'tabs_container';
+                    this.loadCompleted = true;
+                }.bind(this)
+            });
             this.showWidgetsMenuFromWorskspaceMenu();
         };
 
@@ -160,13 +179,6 @@ var OpManagerFactory = (function () {
                 // It's time for loading tabspace information!
                 this.loadActiveWorkspace();
                 break;
-            case Modules.prototype.ACTIVE_WORKSPACE:
-                this.loadCompleted = true;
-                if (!this.visibleLayer) {
-                    this.showActiveWorkspace(this.activeWorkspace);
-                    this.visibleLayer = "tabs_container";
-                }
-                break;
             }
         };
 
@@ -221,14 +233,13 @@ var OpManagerFactory = (function () {
 
         OpManager.prototype.showWorkspaceMenu = function () {
             //generate the workspace list
-            var workspaceId, wname, workspace, workspaceEntry;
+            var workspaceId, workspace, workspaceEntry;
 
             this.workspaceListElement.innerHTML = '';
             for (workspaceId in this.workspaceInstances) {
                 workspace = this.workspaceInstances[workspaceId];
-                wname = workspace.getName();
                 workspaceEntry = document.createElement('li');
-                workspaceEntry.textContent = wname;
+                workspaceEntry.textContent = workspace.name;
                 if (workspace === this.activeWorkspace) {
                     workspaceEntry.setAttribute('class', 'selected');
                     workspaceEntry.addEventListener('click', this.showWidgetsMenuFromWorskspaceMenu.bind(this), false);

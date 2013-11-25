@@ -31,7 +31,7 @@
 * This class represents a instance of a Widget.
 * @author aarranz
 */
-function IWidget(widget, iWidgetId, iWidgetCode, iWidgetName, dragboard, alternative) {
+function IWidget(widget, iWidgetId, iWidgetCode, iWidgetName, dragboard, alternative, variables) {
     this.code = iWidgetCode;
 
     this.dragboard = dragboard;
@@ -44,7 +44,8 @@ function IWidget(widget, iWidgetId, iWidgetCode, iWidgetName, dragboard, alterna
         {
             id: iWidgetId,
             name: iWidgetName,
-            readOnly: true // TODO
+            readOnly: true, // TODO
+            variables: variables
         }
     );
     Object.defineProperties(this, {

@@ -64,10 +64,9 @@
 
 <script type="text/javascript" src="{{ STATIC_URL }}js/lib/strftime.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/lib/strftime-locales.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/lib/prototype/prototype-1.7.js"></script>
 <script type="text/javascript" src="{% url "wirecloud.javascript_translation_catalogue" %}?language={{ LANGUAGE_CODE }}"></script>
 {% compress js %}
-    {% wirecloud_ajax_endpoints "smartphone" %}
+    {% wirecloud_bootstrap "smartphone" %}
     {% include "wirecloud/views/js_smartphone_includes.js" %}
     {% extra_javascripts "smartphone" %}
 {% endcompress %}

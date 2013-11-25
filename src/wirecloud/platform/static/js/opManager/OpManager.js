@@ -217,6 +217,12 @@ var OpManagerFactory = function () {
         OpManager.prototype.changeActiveWorkspace = function changeActiveWorkspace(workspace, initial_tab) {
             var state, steps = this.activeWorkspace != null ? 2 : 1;
 
+            LayoutManagerFactory.getInstance()._startComplexTask(gettext("Changing current workspace"), steps);
+
+            if (this.activeWorkspace != null) {
+                this.activeWorkspace.unload();
+            }
+
             state = {
                 workspace_creator: workspace.creator,
                 workspace_name: workspace.name,
@@ -226,11 +232,6 @@ var OpManagerFactory = function () {
                 state.tab = initial_tab;
             }
             HistoryManager.pushState(state);
-            LayoutManagerFactory.getInstance()._startComplexTask(gettext("Changing current workspace"), steps);
-
-            if (this.activeWorkspace != null) {
-                this.activeWorkspace.unload();
-            }
 
             LayoutManagerFactory.getInstance().logSubTask(gettext("Downloading workspace data"), 1);
             var workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': workspace.id});

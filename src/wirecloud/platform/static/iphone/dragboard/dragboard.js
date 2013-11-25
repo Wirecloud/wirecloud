@@ -77,7 +77,7 @@ function Dragboard(tab, workspace, dragboardElement) {
 
             // Create instance model
             container = opManager.globalDragboard.newIWidgetContainer();
-            iwidget = new IWidget(widget, curIWidget.id, curIWidget.code, curIWidget.name, this, container);
+            iwidget = new IWidget(widget, curIWidget.id, curIWidget.code, curIWidget.name, this, container, curIWidget.variables);
             this.iWidgets[curIWidget.id] = iwidget;
 
             if (curIWidget.code >= this.currentCode) {
@@ -95,7 +95,7 @@ function Dragboard(tab, workspace, dragboardElement) {
 
         //disconect and delete the connectables and variables of all tab iWidgets
         for (key in this.iWidgets) {
-            this.iWidgets.destroy();
+            this.iWidgets[key].destroy();
         }
         this.iWidgets = null;
     };

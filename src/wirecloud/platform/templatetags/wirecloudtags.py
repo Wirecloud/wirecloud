@@ -42,19 +42,19 @@ def platform_css(context, view):
     return {'files': files, 'STATIC_URL': context['STATIC_URL']}
 
 
-@register.inclusion_tag('wirecloud/inline_javascript.html', takes_context=True)
-def wirecloud_ajax_endpoints(context, view):
+@register.inclusion_tag('wirecloud/bootstrap.html', takes_context=True)
+def wirecloud_bootstrap(context, view):
     endpoints = get_wirecloud_ajax_endpoints(view)
-    script = 'var Wirecloud = {\n  "ui": {}\n};\n\nWirecloud.URLs = {\n'
+    script = 'Wirecloud.URLs = {\n'
     for endpoint in endpoints:
         script += '    "' + endpoint['id'] + '": '
-        if '#{' in endpoint['url']:
-            script += "new Template('" + endpoint['url'] + "'),\n"
+        if '%(' in endpoint['url']:
+            script += "new Wirecloud.Utils.Template('" + endpoint['url'] + "'),\n"
         else:
             script += "'" + endpoint['url'] + "',\n"
 
     script += '};'
-    return {'script': mark_safe(script)}
+    return {'script': mark_safe(script), 'STATIC_URL': context['STATIC_URL']}
 
 
 @register.filter
