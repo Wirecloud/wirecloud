@@ -93,6 +93,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/EditableElement.js',
     'js/StyledElements/CheckBox.js',
     'js/StyledElements/InputInterfaces.js',
+    'js/wirecloud/ui/ParametrizableValueInputInterface.js',
     'js/StyledElements/VersionInputInterface.js',
     'js/StyledElements/InputInterfaceFactory.js',
     'js/StyledElements/DefaultInputInterfaceFactory.js',
