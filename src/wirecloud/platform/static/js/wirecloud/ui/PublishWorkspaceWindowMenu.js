@@ -52,7 +52,7 @@
 
         //fill a warning message
         var warning = document.createElement('div');
-        warning.addClassName('alert');
+        warning.className = 'alert';
         warning.innerHTML = gettext("<strong>Warning!</strong> Configured and stored data in your workspace (properties and preferences except passwords) will be shared by default!");
         this.windowContent.insertBefore(warning, this.form.wrapperElement);
     };
@@ -149,11 +149,6 @@
 
     PublishWorkspaceWindowMenu.prototype._sortVariables = function _sortVariables(var1, var2) {
         return var1.variable.vardef.order - var2.variable.vardef.order;
-    };
-
-    PublishWorkspaceWindowMenu.prototype.show = function show(parentWindow) {
-        Wirecloud.ui.FormWindowMenu.prototype.show.call(this, parentWindow);
-        this.setValue(this.workspace.workspaceGlobalInfo.params);
     };
 
     PublishWorkspaceWindowMenu.prototype.setFocus = function setFocus() {
