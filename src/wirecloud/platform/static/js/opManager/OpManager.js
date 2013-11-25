@@ -239,6 +239,11 @@ var OpManagerFactory = function () {
                 onSuccess: function (response) {
                     var workspace_data = JSON.parse(response.responseText);
                     this.activeWorkspace = new Workspace(workspace_data);
+
+                    // FIXME
+                    LayoutManagerFactory.getInstance().mainLayout.repaint();
+                    LayoutManagerFactory.getInstance().header._notifyWorkspaceLoaded(this.activeWorkspace);
+                    // END FIXME
                 }.bind(this)
             });
         }

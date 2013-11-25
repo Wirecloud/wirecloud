@@ -160,6 +160,34 @@
         }
     },
     {
+        "pk": 5,
+        "model": "platform.iwidget",
+        "fields": {
+            "widget": 1,
+            "layout": 0,
+            "name": "Test 1",
+            "tab": 104,
+            "refused_version": null,
+            "readOnly": false,
+            "position": 1,
+            "icon_position": 2
+        }
+    },
+    {
+        "pk": 6,
+        "model": "platform.iwidget",
+        "fields": {
+            "widget": 1,
+            "layout": 0,
+            "name": "Test 2",
+            "tab": 104,
+            "refused_version": null,
+            "readOnly": false,
+            "position": 3,
+            "icon_position": 4
+        }
+    },
+    {
         "pk": 1,
         "model": "platform.variable",
         "fields": {
@@ -352,6 +380,102 @@
         }
     },
     {
+        "pk": 25,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 5,
+            "vardef": 1
+        }
+    },
+    {
+        "pk": 26,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 5,
+            "vardef": 2
+        }
+    },
+    {
+        "pk": 27,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 5,
+            "vardef": 3
+        }
+    },
+    {
+        "pk": 28,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 5,
+            "vardef": 4
+        }
+    },
+    {
+        "pk": 29,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 5,
+            "vardef": 5
+        }
+    },
+    {
+        "pk": 30,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 5,
+            "vardef": 6
+        }
+    },
+    {
+        "pk": 31,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 6,
+            "vardef": 1
+        }
+    },
+    {
+        "pk": 32,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 6,
+            "vardef": 2
+        }
+    },
+    {
+        "pk": 33,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 6,
+            "vardef": 3
+        }
+    },
+    {
+        "pk": 34,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 6,
+            "vardef": 4
+        }
+    },
+    {
+        "pk": 35,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 6,
+            "vardef": 5
+        }
+    },
+    {
+        "pk": 36,
+        "model": "platform.variable",
+        "fields": {
+            "iwidget": 6,
+            "vardef": 6
+        }
+    },
+    {
         "pk": 1,
         "model": "platform.xhtml",
         "fields": {
@@ -525,6 +649,16 @@
         }
     },
     {
+        "pk": 104,
+        "model": "platform.tab",
+        "fields": {
+            "visible": true,
+            "name": "Tab",
+            "workspace": 4,
+            "position": 0
+        }
+    },
+    {
         "pk": 2,
         "model": "platform.workspace",
         "fields": {
@@ -542,6 +676,18 @@
             "forcedValues": "",
             "wiringStatus": "{\"views\":[{\"label\":\"default\",\"iwidgets\":{\"3\":{\"position\":{\"posX\":84,\"posY\":44},\"endPointsInOuts\":{\"sources\":[\"outputendpoint\"],\"targets\":[\"inputendpoint\"]}},\"4\":{\"position\":{\"posX\":84,\"posY\":153},\"endPointsInOuts\":{\"sources\":[\"outputendpoint\"],\"targets\":[\"inputendpoint\"]}}},\"operators\":{\"0\":{\"position\":{\"posX\":84,\"posY\":256},\"endPointsInOuts\":{\"sources\":[\"output\"],\"targets\":[\"input\"]}}},\"multiconnectors\":{},\"connections\":[{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null},{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null},{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null}]}],\"operators\":{\"0\":{\"name\":\"Wirecloud/TestOperator/1.0\",\"id\":\"0\",\"preferences\":{}}},\"connections\":[{\"source\":{\"type\":\"iwidget\",\"id\":3,\"endpoint\":\"outputendpoint\"},\"target\":{\"type\":\"iwidget\",\"id\":4,\"endpoint\":\"inputendpoint\"}},{\"source\":{\"type\":\"iwidget\",\"id\":4,\"endpoint\":\"outputendpoint\"},\"target\":{\"type\":\"ioperator\",\"id\":0,\"endpoint\":\"input\"}},{\"source\":{\"type\":\"ioperator\",\"id\":0,\"endpoint\":\"output\"},\"target\":{\"type\":\"iwidget\",\"id\":3,\"endpoint\":\"inputendpoint\"}}]}",
             "name": "Pending Events",
+            "targetOrganizations": [],
+            "creator": 4
+        }
+    },
+    {
+        "pk": 4,
+        "model": "platform.workspace",
+        "fields": {
+            "forcedValues": "",
+            "wiringStatus": "{\"views\":[{\"label\":\"default\",\"iwidgets\":{\"5\":{\"position\":{\"posX\":84,\"posY\":44},\"endPointsInOuts\":{\"sources\":[\"outputendpoint\"],\"targets\":[\"inputendpoint\"]}},\"6\":{\"position\":{\"posX\": 256,\"posY\":153},\"endPointsInOuts\":{\"sources\":[\"outputendpoint\"],\"targets\":[\"inputendpoint\"]}}},\"operators\":{\"0\":{\"position\":{\"posX\":84,\"posY\":296},\"endPointsInOuts\":{\"sources\":[\"output\"],\"targets\":[\"input\"]}}},\"multiconnectors\":{},\"connections\":[{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null},{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null},{\"pullerStart\":{\"posX\":150,\"posY\":0},\"pullerEnd\":{\"posX\":-150,\"posY\":0},\"startMulti\":null,\"endMulti\":null}]}],\"operators\":{\"0\":{\"name\":\"Wirecloud/TestOperator/1.0\",\"id\":\"0\",\"preferences\":{}}},\"connections\":[{\"source\":{\"type\":\"iwidget\",\"id\":5,\"endpoint\":\"outputendpoint\"},\"target\":{\"type\":\"iwidget\",\"id\":6,\"endpoint\":\"inputendpoint\"}},{\"source\":{\"type\":\"iwidget\",\"id\":6,\"endpoint\":\"outputendpoint\"},\"target\":{\"type\":\"ioperator\",\"id\":0,\"endpoint\":\"input\"}},{\"source\":{\"type\":\"ioperator\",\"id\":0,\"endpoint\":\"output\"},\"target\":{\"type\":\"iwidget\",\"id\":5,\"endpoint\":\"inputendpoint\"}}]}",
+            "name": "Public Workspace",
+            "public": true,
             "targetOrganizations": [],
             "creator": 4
         }
@@ -566,6 +712,17 @@
             "manager": "",
             "user": 4,
             "workspace": 3
+        }
+    },
+    {
+        "pk": 4,
+        "model": "platform.userworkspace",
+        "fields": {
+            "active": false,
+            "reason_ref": "",
+            "manager": "",
+            "user": 4,
+            "workspace": 4
         }
     },
     {
@@ -708,6 +865,78 @@
         "model": "platform.variablevalue",
         "fields": {
             "variable": 22,
+            "user": 4,
+            "value": "default"
+        }
+    },
+    {
+        "pk": 17,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 25,
+            "user": 4,
+            "value": "default"
+        }
+    },
+    {
+        "pk": 18,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 26,
+            "user": 4,
+            "value": "initial text"
+        }
+    },
+    {
+        "pk": 19,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 27,
+            "user": 4,
+            "value": "false"
+        }
+    },
+    {
+        "pk": 20,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 28,
+            "user": 4,
+            "value": "default"
+        }
+    },
+    {
+        "pk": 21,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 31,
+            "user": 4,
+            "value": "default"
+        }
+    },
+    {
+        "pk": 22,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 32,
+            "user": 4,
+            "value": "initial text"
+        }
+    },
+    {
+        "pk": 23,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 33,
+            "user": 4,
+            "value": "false"
+        }
+    },
+    {
+        "pk": 24,
+        "model": "platform.variablevalue",
+        "fields": {
+            "variable": 34,
             "user": 4,
             "value": "default"
         }

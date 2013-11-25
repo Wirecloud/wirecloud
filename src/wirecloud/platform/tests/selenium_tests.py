@@ -580,6 +580,43 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.assertEqual(len(self.get_current_iwidgets()), 2)
 
+    def test_public_workspaces(self):
+
+        self.login(username='emptyuser', next='/user_with_workspaces/Public Workspace')
+
+        # Check iwidget are loaded correctly
+        iwidgets = self.get_current_iwidgets()
+        self.assertEqual(len(iwidgets), 2)
+        source_iwidget = iwidgets[0]
+        target_iwidget = iwidgets[1]
+        self.assertIsNotNone(source_iwidget.element)
+        self.assertIsNotNone(target_iwidget.element)
+
+        # TODO
+        # Check widget setting cannot be changed
+        # Workspace cannot be renamed
+        # Workspace cannot be removed
+        # Workspace cannot be edited
+        # ...
+        # END TODO
+
+        # Check wiring works
+        with source_iwidget:
+            text_input = self.driver.find_element_by_tag_name('input')
+            self.fill_form_input(text_input, 'hello world!!')
+            # Work around hang when using Firefox Driver
+            self.driver.execute_script('sendEvent();')
+            #self.driver.find_element_by_id('b1').click()
+
+        with target_iwidget:
+            try:
+                WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
+            except:
+                pass
+
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, 'hello world!!')
+
     def test_browser_navigation_history_management(self):
 
         self.login(username='user_with_workspaces')

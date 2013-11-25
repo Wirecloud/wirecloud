@@ -148,11 +148,6 @@ function Workspace (workspaceState) {
                 this.events.iwidgetadded.dispatch(this, iwidgets[i].internal_iwidget);
             }
 
-            // FIXME
-            LayoutManagerFactory.getInstance().mainLayout.repaint();
-            LayoutManagerFactory.getInstance().header._notifyWorkspaceLoaded(this);
-            // END FIXME
-
             this.restricted = !this.isOwned() && this.isShared();
             this.removable = !this.restricted && this.workspaceState.removable;
             this.valid = true;
