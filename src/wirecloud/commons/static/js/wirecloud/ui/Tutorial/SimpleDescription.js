@@ -153,11 +153,11 @@
     var _activate = function _activate() {
         var pos;
 
-        this.htmlElement.addClassName("activeStep");
+        this.htmlElement.classList.add("activeStep");
         if (typeof this.element === 'function') {
             this.element = this.element();
             this.tutorial.setControlLayer(this.element, true);
-            this.element.addClassName('tuto_highlight');
+            this.element.classList.add('tuto_highlight');
         } else {
             this.tutorial.resetControlLayer(false);
         }

@@ -127,7 +127,7 @@
 
             var dragboard = EzWebEffectBase.findDragboardElement(resizableElement);
             dragboardCover = document.createElement("div");
-            dragboardCover.addClassName("cover");
+            dragboardCover.className = "cover";
             dragboardCover.addEventListener("mouseup", endresize, true);
             dragboardCover.addEventListener("mousemove", resize, true);
 

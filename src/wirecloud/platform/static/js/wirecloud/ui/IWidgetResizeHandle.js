@@ -44,7 +44,7 @@
     };
 
     IWidgetResizeHandle.prototype.startFunc = function startFunc(resizableElement, handleElement, data) {
-        handleElement.addClassName("inUse");
+        handleElement.classList.add("inUse");
         // TODO merge with iwidget minimum sizes
         data.minWidth = Math.ceil(data.iWidget.layout.fromPixelsToHCells(80));
         data.minHeight = Math.ceil(data.iWidget.layout.fromPixelsToVCells(50));
@@ -93,7 +93,7 @@
         if (data.innitialWidth !== data.iWidget.getWidth() || data.innitialHeight !== data.iWidget.getHeight()) {
             iWidget.setSize(iWidget.getWidth(), iWidget.getHeight(), data.resizeLeftSide, true);
         }
-        handleElement.removeClassName("inUse");
+        handleElement.classList.remove("inUse");
 
         // This is needed to check if the scrollbar status has changed (visible/hidden)
         data.dragboard._notifyWindowResizeEvent();
