@@ -212,7 +212,7 @@ function Workspace (workspaceState) {
     };
 
     var deleteSuccess = function (transport) {
-        OpManagerFactory.getInstance().removeWorkspace(this.id);
+        OpManagerFactory.getInstance().removeWorkspace(this);
         LayoutManagerFactory.getInstance().logSubTask(gettext('Workspace removed successfully'));
         LayoutManagerFactory.getInstance().logStep('');
     };
@@ -725,7 +725,7 @@ function Workspace (workspaceState) {
      * Checks if an action can be performed in this workspace by current user.
      */
     Workspace.prototype.isAllowed = function (action) {
-        var nworkspaces;
+        var opManager, nworkspaces;
 
         if (action !== "remove" && (!this.valid || this.restricted)) {
             return false;
@@ -733,7 +733,9 @@ function Workspace (workspaceState) {
 
         switch (action) {
         case "remove":
-            nworkspaces = Object.keys(OpManagerFactory.getInstance().workspaceInstances).length;
+            opManager = OpManagerFactory.getInstance();
+            username = opManager.contextManager.get('username');
+            nworkspaces = Object.keys(OpManagerFactory.getInstance().workspacesByUserAndName[username]).length;
             return /* opManager.isAllow('add_remove_workspaces') && */ (nworkspaces > 1) && this.removable;
         case "merge_workspaces":
             return this._isAllowed('add_remove_iwidgets') || this._isAllowed('merge_workspaces');

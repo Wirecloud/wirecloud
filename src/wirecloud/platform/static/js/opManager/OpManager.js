@@ -76,6 +76,7 @@ var OpManagerFactory = function () {
         var createWSSuccess = function(onSuccess, response) {
             var workspace = JSON.parse(response.responseText);
             this.workspaceInstances[workspace.id] = workspace;
+            this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace;
             this.changeActiveWorkspace(workspace);
 
             if (typeof onSuccess === 'function') {
@@ -239,6 +240,18 @@ var OpManagerFactory = function () {
                 onSuccess: function (response) {
                     var workspace_data = JSON.parse(response.responseText);
                     this.activeWorkspace = new Workspace(workspace_data);
+                    this.activeWorkspace.contextManager.addCallback(function (updated_attributes) {
+                        var workspace, old_name;
+
+                        if ('name' in updated_attributes) {
+                            workspace = this.workspaceInstances[this.activeWorkspace.id];
+                            old_name = workspace.name;
+                            delete this.workspacesByUserAndName[workspace.creator][old_name];
+
+                            workspace.name = updated_attributes.name;
+                            this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace;
+                        }
+                    }.bind(this));
 
                     // FIXME
                     LayoutManagerFactory.getInstance().mainLayout.repaint();
@@ -418,15 +431,10 @@ var OpManagerFactory = function () {
         //Operations on workspaces
 
         OpManager.prototype.workspaceExists = function (newName) {
-            var workspace_keys, workspace, i;
-            workspace_keys = this.workspaceInstances.keys();
-            for (i = 0; i < workspace_keys.length; i += 1) {
-                workspace = this.workspaceInstances.get(workspace_keys[i]);
-                if (workspace.workspaceState.name === newName) {
-                    return true;
-                }
-            }
-            return false;
+            var workspaces;
+
+            workspaces = Object.keys(this.workspacesByUserAndName[this.contextManager.get('username')]);
+            return workspaces.indexOf(newName) !== -1;
         }
 
         OpManager.prototype.addWorkspace = function addWorkspace(newName, options) {
@@ -447,14 +455,14 @@ var OpManagerFactory = function () {
             });
         };
 
-        OpManager.prototype.removeWorkspace = function(workspaceId) {
+        OpManager.prototype.removeWorkspace = function(workspace) {
             // Removing reference
-            var workspace = this.workspaceInstances[workspaceId];
             delete this.workspacesByUserAndName[workspace.workspaceState.creator][workspace.workspaceState.name];
-            delete this.workspaceInstances[workspaceId];
+            delete this.workspaceInstances[workspace.id];
 
             // Set the first workspace as current
-            this.changeActiveWorkspace(Wirecloud.Utils.values(this.workspaceInstances)[0]);
+            var username = this.contextManager.get('username');
+            this.changeActiveWorkspace(Wirecloud.Utils.values(this.workspacesByUserAndName[username])[0]);
         };
 
     }

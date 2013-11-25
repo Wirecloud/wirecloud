@@ -334,7 +334,12 @@
         };
 
         Dragboard.prototype.hasReadOnlyIWidgets = function hasReadOnlyIWidgets() {
-            return this.iWidgets.some(function (iwidget) { return iwidget.internal_iwidget.readOnly; });
+            for (var key in this.iWidgets) {
+                if (this.iWidgets[key].internal_iwidget.readOnly) {
+                    return true;
+                }
+            }
+            return false;
         };
 
         /**
