@@ -422,6 +422,10 @@
      * Controlled arrow destruction.
      */
     Arrow.prototype.controlledDestruction = function controlledDestruction() {
+        // Destroyed arrow control
+        if (this.wrapperElement == null) {
+            return true;
+        }
         // Subdata tree control
         if (this.hasClassName('hollow')) {
             // TODO open subdata tree
