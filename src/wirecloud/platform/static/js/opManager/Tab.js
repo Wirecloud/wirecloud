@@ -245,6 +245,10 @@
         return this.dragboard;
     };
 
+    Tab.prototype.getIWidgets = function getIWidgets() {
+        return this.dragboard.getIWidgets();
+    };
+
     /**
     * Gets the banner related to the workspace this dragboard belongs to
     */

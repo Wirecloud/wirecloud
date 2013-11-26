@@ -21,6 +21,7 @@
 import time
 
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -103,6 +104,28 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.check_popup_menu(('Rename', 'Settings', 'New workspace'), ('Remove',))
     test_basic_workspace_operations.tags = ('fiware-ut-5',)
+
+    def test_move_iwidget_between_tabs(self):
+
+        self.login(username='user_with_workspaces')
+
+        self.change_current_workspace('Pending Events')
+
+        src_tab_iwidgets = self.get_current_iwidgets(tab=102)
+        dst_tab_iwidgets = self.get_current_iwidgets(tab=103)
+        src_iwidget_count = len(src_tab_iwidgets)
+        dst_iwidget_count = len(dst_tab_iwidgets)
+
+        iwidget = src_tab_iwidgets[0]
+
+        handle = iwidget.element.find_element_by_css_selector('.widget_menu')
+        tab = self.get_workspace_tab_by_name('Tab 2')
+        ActionChains(self.driver).click_and_hold(handle).move_to_element(tab).release().perform()
+
+        src_tab_iwidgets = self.get_current_iwidgets(tab=102)
+        dst_tab_iwidgets = self.get_current_iwidgets(tab=103)
+        self.assertEqual(len(src_tab_iwidgets), src_iwidget_count - 1)
+        self.assertEqual(len(dst_tab_iwidgets), dst_iwidget_count + 1)
 
     def test_add_widget_from_catalogue(self):
 
