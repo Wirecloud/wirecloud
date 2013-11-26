@@ -1071,7 +1071,7 @@ IWidget.prototype.moveToLayout = function (newLayout) {
 
     // Force an unload event
     if (dragboardChange) {
-        OpManagerFactory.getInstance().iwidgetUnloaded(this.id);
+        this.internal_iwidget._notifyUnloaded();
     }
 
     affectedWidgetsRemoving = oldLayout.removeIWidget(this, dragboardChange);

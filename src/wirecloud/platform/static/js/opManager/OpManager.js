@@ -332,10 +332,6 @@ var OpManagerFactory = function () {
             this.activeWorkspace.iwidgetLoaded(iwidgetId);
         }
 
-        OpManager.prototype.iwidgetUnloaded = function (iwidgetId) {
-            this.activeWorkspace.iwidgetUnloaded(iwidgetId);
-        }
-
         OpManager.prototype.checkForWidgetUpdates = function () {
             this.activeWorkspace.checkForWidgetUpdates();
         }

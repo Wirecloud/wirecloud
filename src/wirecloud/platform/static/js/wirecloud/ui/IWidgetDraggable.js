@@ -25,6 +25,26 @@
 
     "use strict";
 
+    var findTab = function findTab(curNode, maxRecursion) {
+        if (maxRecursion === 0) {
+            return null;
+        }
+
+        // Only check elements, skip other dom nodes.
+        if (Wirecloud.Utils.XML.isElement(curNode)) {
+            for (var i = 0; i < this.length; i++) {
+                if (this[i].tabElement == curNode) {
+                    return this[i];
+                }
+            }
+        } else {
+            return null;
+        }
+
+        var parentNode = curNode.parentNode;
+        return findTab.call(this, parentNode, maxRecursion - 1);
+    };
+
     var IWidgetDraggable = function IWidgetDraggable(iWidget) {
         var context = {
             iWidget: iWidget
@@ -50,13 +70,21 @@
 
 
     IWidgetDraggable.prototype.startFunc = function startFunc(draggable, context) {
+        var key;
+
         context.selectedTab = null;
-        context.selectedTabElement = null;
         context.layout = context.iWidget.layout;
         context.dragboard = context.layout.dragboard;
-        context.currentTab = context.dragboard.tab.id;
         context.dragboard.raiseToTop(context.iWidget);
         context.layout.initializeMove(context.iWidget, draggable);
+
+        context.currentTab = context.dragboard.tab;
+        context.tabs = [];
+        for (key in context.dragboard.tab.workspace.tabInstances) {
+            if (context.dragboard.tab.workspace.tabInstances[key] !== context.currentTab) {
+                context.tabs.push(context.dragboard.tab.workspace.tabInstances[key]);
+            }
+        }
 
         context.y = context.iWidget.element.style.top === "" ? 0 : parseInt(context.iWidget.element.style.top, 10);
         context.x = context.iWidget.element.style.left === "" ? 0 : parseInt(context.iWidget.element.style.left, 10);
@@ -64,24 +92,6 @@
         return {
             dragboard: EzWebEffectBase.findDragboardElement(context.iWidget.element)
         };
-    };
-
-    IWidgetDraggable.prototype._findTabElement = function _findTabElement(curNode, maxRecursion) {
-        if (maxRecursion === 0) {
-            return null;
-        }
-
-        // Only check elements, skip other dom nodes.
-        if (Wirecloud.Utils.XML.isElement(curNode) && curNode.hasClassName('tab')) {
-            return curNode;
-        } else {
-            var parentNode = curNode.parentNode;
-            if (Wirecloud.Utils.XML.isElement(parentNode)) {
-                return this._findTabElement(parentNode, maxRecursion - 1);
-            } else {
-                return null;
-            }
-        }
     };
 
     IWidgetDraggable.prototype.updateFunc = function updateFunc(event, draggable, context, xDelta, yDelta) {
@@ -95,33 +105,23 @@
 
         // Check if the mouse is over a tab
         element = document.elementFromPoint(event.clientX, event.clientY);
-        if (element !== null) {
-            // elementFromPoint may return inner tab elements
-            element = draggable._findTabElement(element, 4);
+        if (element != null) {
+            element = findTab.call(context.tabs, element, 4);
         }
 
-        var id = null;
-        if (element !== null) {
-            id = element.getAttribute("id");
-
-            if (id !== null) {
-                var result = id.match(/tab_(\d+)_(\d+)/);
-                if (result !== null && result[2] !== context.currentTab) {
-                    if (context.selectedTab === result[2]) {
-                        return;
-                    }
-
-                    if (context.selectedTabElement !== null) {
-                        context.selectedTabElement.removeClassName("selected");
-                    }
-
-                    context.selectedTab = result[2];
-                    context.selectedTabElement = element;
-                    context.selectedTabElement.addClassName("selected");
-                    context.layout.disableCursor();
-                    return;
-                }
+        if (element != null) {
+            if (context.selectedTab === element) {
+                return;
             }
+
+            if (context.selectedTab != null) {
+                context.selectedTab.tabElement.classList.remove("selected");
+            }
+
+            context.selectedTab = element;
+            context.selectedTab.tabElement.classList.add("selected");
+            context.layout.disableCursor();
+            return;
         }
 
         // The mouse is not over a tab
@@ -133,26 +133,24 @@
         if (position.x < 0) {
             position.x = 0;
         }
-        if (context.selectedTabElement !== null) {
-            context.selectedTabElement.removeClassName("selected");
+        if (context.selectedTab != null) {
+            context.selectedTab.tabElement.classList.remove("selected");
         }
         context.selectedTab = null;
-        context.selectedTabElement = null;
         context.layout.moveTemporally(position.x, position.y);
         return;
     };
 
     IWidgetDraggable.prototype.finishFunc = function finishFunc(draggable, context) {
-        var tab, destDragboard, workspace, destLayout;
+        var destDragboard, workspace, destLayout;
         if (context.selectedTab !== null) {
             context.layout.cancelMove();
 
             workspace = context.dragboard.workspace;
-            tab = workspace.getTab(context.selectedTab);
 
             // On-demand loading of tabs!
-            tab.paint();
-            destDragboard = tab.getDragboard();
+            context.selectedTab.paint();
+            destDragboard = context.selectedTab.getDragboard();
 
             if (context.iWidget.onFreeLayout()) {
                 destLayout = destDragboard.freeLayout;
@@ -162,10 +160,9 @@
 
             context.iWidget.moveToLayout(destLayout);
 
-            workspace.highlightTab(parseInt(context.selectedTab, 10));
+            workspace.highlightTab(context.selectedTab);
 
             context.selectedTab = null;
-            context.selectedTabElement = null;
         } else {
             context.layout.acceptMove();
         }

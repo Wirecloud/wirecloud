@@ -315,14 +315,6 @@ function Workspace (workspaceState) {
         }
     };
 
-    Workspace.prototype.iwidgetUnloaded = function(iwidgetId) {
-        var iwidget = this.getIWidget(iwidgetId);
-        if (iwidget == null)
-            return;
-
-        iwidget._notifyUnloaded();
-    }
-
     Workspace.prototype.sendBufferedVars = function (async) {
         if (this.varManager) this.varManager.sendBufferedVars(async);
     }
@@ -825,7 +817,7 @@ Workspace.prototype.highlightTab = function(tab) {
         throw new TypeError();
     }
 
-    tabElement = tab.tabHTMLElement;
+    tabElement = tab.tabElement;
     tabElement.classList.add("selected");
     if (tab.tabInfo.id in this.highlightTimeouts) {
         clearTimeout(this.highlightTimeouts[tab.tabInfo.id]);
