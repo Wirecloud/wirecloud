@@ -138,6 +138,10 @@
         this.contentContainer.appendChild(element);
     };
 
+    Expander.prototype.removeChild = function removeChild(element) {
+        this.contentContainer.removeChild(element);
+    };
+
     Expander.prototype.clear = function clear() {
         this.contentContainer.clear();
     };
