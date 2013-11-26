@@ -47,12 +47,12 @@
         if (!('version' in desc) || desc.version.trim() === '') {
             throw new TypeError(gettext('missing operator version'));
         }
-        version = desc.version.trim();
+        version = new Wirecloud.Version(desc.version.trim());
         Object.defineProperty(this, 'version', {value: version});
 
         // URI
         uri = desc.name.trim();
-        Object.defineProperty(this, 'uri', {value: vendor + '/' + name + '/' + version});
+        Object.defineProperty(this, 'uri', {value: vendor + '/' + name + '/' + version.text});
 
         if (!('display_name' in desc) || desc.display_name.trim() === '') {
             display_name = name;
