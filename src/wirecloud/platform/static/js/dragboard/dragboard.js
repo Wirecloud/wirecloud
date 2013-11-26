@@ -60,7 +60,7 @@
                 layout,
                 new Wirecloud.DragboardPosition(curIWidget.left, curIWidget.top),
                 new Wirecloud.DragboardPosition(curIWidget.icon_left, curIWidget.icon_top),
-                curIWidget.zPos,
+                curIWidget.zIndex,
                 curIWidget.width,
                 curIWidget.height,
                 curIWidget.fulldragboard,
