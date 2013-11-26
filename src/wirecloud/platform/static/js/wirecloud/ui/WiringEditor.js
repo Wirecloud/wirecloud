@@ -280,11 +280,39 @@ if (!Wirecloud.ui) {
      * Create Mini Operator for menubar
      */
     var generateMiniOperator = function generateMiniOperator (operator) {
-        var operator_interface;
+        var operator_interface, comp, versionInfo;
 
         try {
-            operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, operator, this, true);
-            this.mini_operator_section.appendChild(operator_interface);
+            versionInfo = this.operatorVersions[operator.vendor + '/' + operator.name];
+            if (!versionInfo) {
+                // New operator
+                operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, operator, this, true);
+                this.mini_operator_section.appendChild(operator_interface);
+                this.operatorVersions[operator.vendor + '/' + operator.name] = {
+                    'lastVersion': operator.version,
+                    'versions': [{'version': operator.version, 'operatorInterface': operator_interface}],
+                    'miniOperator': operator_interface
+                };
+            } else {
+                // Other operator version
+                comp = versionInfo.lastVersion.compareTo(operator.version);
+                if (comp < 0) {
+                    // upgrade
+                    this.mini_operator_section.removeChild(versionInfo.miniOperator);
+                    operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, operator, this, true);
+                    this.mini_operator_section.appendChild(operator_interface);
+                    this.operatorVersions[operator.vendor + '/' + operator.name].lastVersion = operator.version;
+                    this.operatorVersions[operator.vendor + '/' + operator.name].versions.push(operator.version);
+                    this.operatorVersions[operator.vendor + '/' + operator.name].miniOperator = operator_interface;
+                } else if (comp > 0) {
+                    // old version
+                    this.operatorVersions[operator.vendor + '/' + operator.name].versions.push({'version': operator.version, 'operatorInterface': operator_interface});
+                } else {
+                    // Same version. weird...
+                    return;
+                }
+            }
+
         } catch (e){
             throw new Error('WiringEditor error (critical). Creating MiniOperator: ' + e.message);
         }
@@ -554,6 +582,7 @@ if (!Wirecloud.ui) {
         this.entitiesNumber = 0;
         this.recommendationsActivated = false;
         this.recommendations = new Wirecloud.ui.RecommendationManager();
+        this.operatorVersions = {};
 
         // Set 100% Zoom in grid
         // TODO this.grid = this.layout.getCenterContainer().wrapperElement
