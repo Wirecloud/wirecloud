@@ -44,6 +44,13 @@
         e.stopPropagation();
     };
 
+    /**
+     * Event listener that prevents the default action for a event.
+     */
+    Utils.preventDefaultListener = function preventDefaultListener(e) {
+        e.preventDefault();
+    };
+
     /*
     Based on:
       Cross-Browser Split 1.0.1
