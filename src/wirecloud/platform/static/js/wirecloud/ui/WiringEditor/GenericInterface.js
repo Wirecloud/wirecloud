@@ -127,14 +127,16 @@
             }
 
             // Version Status
-            if (type == 'operator' && this.wiringEditor.operatorVersions[this.vendor + '/' + this.name].lastVersion.compareTo(this.version) > 0) {
-                // Old Entity Version
-                this.versionStatus = document.createElement("span");
-                this.versionStatus.classList.add('status');
-                this.versionStatus.classList.add('icon-exclamation-sign');
-                this.versionStatus.setAttribute('title', 'Outdated Version (' + this.version.text + ')');
-                this.header.appendChild(this.versionStatus);
-                this.wrapperElement.classList.add('old')
+            if (type == 'operator' &&
+                this.wiringEditor.operatorVersions[this.vendor + '/' + this.name] &&
+                this.wiringEditor.operatorVersions[this.vendor + '/' + this.name].lastVersion.compareTo(this.version) > 0) {
+                    // Old Entity Version
+                    this.versionStatus = document.createElement("span");
+                    this.versionStatus.classList.add('status');
+                    this.versionStatus.classList.add('icon-exclamation-sign');
+                    this.versionStatus.setAttribute('title', 'Outdated Version (' + this.version.text + ')');
+                    this.header.appendChild(this.versionStatus);
+                    this.wrapperElement.classList.add('old')
             }
 
             // Widget name
