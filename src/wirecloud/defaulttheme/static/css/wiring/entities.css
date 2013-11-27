@@ -151,6 +151,37 @@
     visibility: hidden;
 }
 
+/* miniOperator version status */
+.wiring_editor .menubar .ioperator .header .status, .wiring_editor .menubar .iwidget .header .status{
+    position: absolute;
+    right: -3px;
+    top: -1px;
+    color:  #B9442E;
+    display: none;
+    cursor: pointer;
+    font-family: FontAwesome;
+    font-size: 1.1em;
+}
+
+.wiring_editor .menubar .ioperator.old .header .status, .wiring_editor .menubar .iwidget.old .header .status{
+    display: inline-block;
+}
+/* Operator version status */
+.wiring_editor .grid .ioperator .header .status, .wiring_editor .grid .iwidget .header .status{
+    position: absolute;
+    right: 10px;
+    top: 19px;
+    color:  #B9442E;
+    display: none;
+    cursor: pointer;
+    font-family: FontAwesome;
+    font-size: 0.8em;
+}
+
+.wiring_editor .grid .ioperator.old .header .status, .wiring_editor .grid .iwidget.old .header .status{
+    display: inline-block;
+}
+
 /* anchorDivs */
 .wiring_editor .grid .geContainer .anchorDiv {
     white-space: nowrap;
@@ -450,6 +481,10 @@
 
 .wiring_editor .border_layout .ioperator.clon .header, .wiring_editor .border_layout .iwidget.clon .header {
     padding-top: 4px;
+}
+
+.wiring_editor .border_layout .ioperator.clon .header .status, .wiring_editor .border_layout .iwidget.clon .header .status {
+    display: none;
 }
 
 /* SELECTED OBJECTS */

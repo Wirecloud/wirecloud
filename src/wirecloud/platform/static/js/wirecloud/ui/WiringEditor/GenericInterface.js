@@ -91,8 +91,14 @@
         if (!this.isMiniInterface) {
             if (className == 'iwidget') {
                 type = 'widget';
+                this.version = this.entity.version;
+                this.vendor = this.entity.vendor;
+                this.name = this.entity.name;
             } else {
                 type = 'operator';
+                this.version = this.entity.meta.version;
+                this.vendor = this.entity.meta.vendor;
+                this.name = this.entity.meta.name;
             }
 
             // header, sources and targets for the widget
@@ -108,6 +114,9 @@
 
             // Ghost interface
             if (isGhost) {
+                this.vendor = this.entity.name.split('/')[0];
+                this.name = this.entity.name.split('/')[1];
+                this.version = new Wirecloud.Version(this.entity.name.split('/')[2].trim());
                 this.wrapperElement.classList.add('ghost');
                 ghostNotification = document.createElement("span");
                 ghostNotification.classList.add('ghostNotification');
@@ -115,6 +124,17 @@
                 msg = interpolate(msg, {type: type}, true);
                 ghostNotification.textContent = msg;
                 this.header.appendChild(ghostNotification);
+            }
+
+            // Version Status
+            if (type == 'operator' && this.wiringEditor.operatorVersions[this.vendor + '/' + this.name].lastVersion.compareTo(this.version) > 0) {
+                // Old Entity Version
+                this.versionStatus = document.createElement("span");
+                this.versionStatus.classList.add('status');
+                this.versionStatus.classList.add('icon-exclamation-sign');
+                this.versionStatus.setAttribute('title', 'Outdated Version (' + this.version.text + ')');
+                this.header.appendChild(this.versionStatus);
+                this.wrapperElement.classList.add('old')
             }
 
             // Widget name
@@ -183,10 +203,41 @@
             this.header = document.createElement("div");
             this.header.classList.add('header');
             this.wrapperElement.appendChild(this.header);
-            // Widget name
+
+            // MiniInterface name
             this.nameElement = document.createElement("span");
             this.nameElement.textContent = title;
             this.header.appendChild(this.nameElement);
+
+            // MiniInterface status
+            this.miniStatus = document.createElement("span");
+            this.miniStatus.classList.add('status');
+            this.miniStatus.classList.add('icon-exclamation-sign');
+            this.miniStatus.setAttribute('title', 'Old Version!! right click to change');
+            this.miniStatus.addEventListener('click', this._miniwidgetMenu_callback, false);
+            this.header.appendChild(this.miniStatus);
+
+            // MiniInterface Context Menu
+            this.contextmenu = new StyledElements.PopupMenu({'position': ['bottom-right']});
+            this._miniwidgetMenu_callback = function _miniwidgetMenu_callback(e) {
+                // Context Menu
+                if (e.button == 2) {
+                    if (this.contextmenu.isVisible()) {
+                        this.contextmenu.hide();
+                    } else {
+                        this.contextmenu.show(this.wrapperElement.getBoundingClientRect());
+                    }
+                    return;
+                }
+                e.stopPropagation();
+            }.bind(this);
+
+            this.wrapperElement.addEventListener('mousedown', this._miniwidgetMenu_callback, false);
+            this.wrapperElement.addEventListener('contextmenu', function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+            });
+            this.contextmenu.append(new Wirecloud.ui.WiringEditor.MiniInterfaceSettingsMenuItems(this));
         }
 
         // Draggable

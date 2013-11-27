@@ -290,6 +290,7 @@ if (!Wirecloud.ui) {
                 this.mini_operator_section.appendChild(operator_interface);
                 this.operatorVersions[operator.vendor + '/' + operator.name] = {
                     'lastVersion': operator.version,
+                    'currentVersion': operator.version,
                     'versions': [{'version': operator.version, 'operatorInterface': operator_interface}],
                     'miniOperator': operator_interface
                 };
@@ -302,10 +303,12 @@ if (!Wirecloud.ui) {
                     operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, operator, this, true);
                     this.mini_operator_section.appendChild(operator_interface);
                     this.operatorVersions[operator.vendor + '/' + operator.name].lastVersion = operator.version;
-                    this.operatorVersions[operator.vendor + '/' + operator.name].versions.push(operator.version);
+                    this.operatorVersions[operator.vendor + '/' + operator.name].currentVersion = operator.version;
+                    this.operatorVersions[operator.vendor + '/' + operator.name].versions.push({'version': operator.version, 'operatorInterface': operator_interface});
                     this.operatorVersions[operator.vendor + '/' + operator.name].miniOperator = operator_interface;
                 } else if (comp > 0) {
                     // old version
+                    operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, operator, this, true);
                     this.operatorVersions[operator.vendor + '/' + operator.name].versions.push({'version': operator.version, 'operatorInterface': operator_interface});
                 } else {
                     // Same version. weird...
@@ -779,6 +782,29 @@ if (!Wirecloud.ui) {
     /*************************************************************************
      * Public methods
      *************************************************************************/
+    /**
+     * Change Operator miniInterface version in menubar
+     */
+    WiringEditor.prototype.setOperatorVersion = function setOperatorVersion(miniOperator, versionInfo) {
+        var versionIndex;
+
+        versionIndex = miniOperator.ioperator.vendor + '/' + miniOperator.ioperator.name;
+        if (this.operatorVersions[versionIndex].currentVersion.compareTo(versionInfo.version) == 0) {
+            // Same Version
+            return;
+        }
+
+        //Change Version
+        this.mini_operator_section.removeChild(miniOperator);
+        if (this.operatorVersions[versionIndex].lastVersion.compareTo(versionInfo.version) > 0) {
+            // Old Version
+            versionInfo.operatorInterface.wrapperElement.classList.add('old');
+        }
+        this.mini_operator_section.appendChild(versionInfo.operatorInterface);
+        this.operatorVersions[versionIndex].currentVersion = versionInfo.version;
+        this.operatorVersions[versionIndex].miniOperator = versionInfo.operatorInterface;
+        return;
+    };
 
     /**
      * returns the dom element asociated with the grid
