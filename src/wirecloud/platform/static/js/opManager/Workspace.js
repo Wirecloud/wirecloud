@@ -152,6 +152,11 @@ function Workspace (workspaceState) {
             this.removable = !this.restricted && this.workspaceState.removable;
             this.valid = true;
 
+            // FIXME
+            LayoutManagerFactory.getInstance().mainLayout.repaint();
+            LayoutManagerFactory.getInstance().header._notifyWorkspaceLoaded(this);
+            // END FIXME
+
             if (this.initial_tab_id && this.tabInstances[this.initial_tab_id]) {
                 visibleTabId = this.initial_tab_id;
             }

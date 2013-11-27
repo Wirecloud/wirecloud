@@ -257,11 +257,6 @@ var OpManagerFactory = function () {
                             this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace;
                         }
                     }.bind(this));
-
-                    // FIXME
-                    LayoutManagerFactory.getInstance().mainLayout.repaint();
-                    LayoutManagerFactory.getInstance().header._notifyWorkspaceLoaded(this.activeWorkspace);
-                    // END FIXME
                 }.bind(this)
             });
         }
