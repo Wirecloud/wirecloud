@@ -116,10 +116,12 @@
 
             if (context.selectedTab != null) {
                 context.selectedTab.tabElement.classList.remove("selected");
+                context.selectedTab.tabElement.classList.remove("target");
             }
 
             context.selectedTab = element;
             context.selectedTab.tabElement.classList.add("selected");
+            context.selectedTab.tabElement.classList.add("target");
             context.layout.disableCursor();
             return;
         }
@@ -135,6 +137,7 @@
         }
         if (context.selectedTab != null) {
             context.selectedTab.tabElement.classList.remove("selected");
+            context.selectedTab.tabElement.classList.remove("target");
         }
         context.selectedTab = null;
         context.layout.moveTemporally(position.x, position.y);
@@ -145,6 +148,8 @@
         var destDragboard, workspace, destLayout;
         if (context.selectedTab !== null) {
             context.layout.cancelMove();
+            context.selectedTab.tabElement.classList.remove("selected");
+            context.selectedTab.tabElement.classList.remove("target");
 
             workspace = context.dragboard.workspace;
 

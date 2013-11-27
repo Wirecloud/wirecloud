@@ -818,12 +818,12 @@ Workspace.prototype.highlightTab = function(tab) {
     }
 
     tabElement = tab.tabElement;
-    tabElement.classList.add("selected");
+    tabElement.classList.add("highlight");
     if (tab.tabInfo.id in this.highlightTimeouts) {
         clearTimeout(this.highlightTimeouts[tab.tabInfo.id]);
     }
     this.highlightTimeouts[tab.tabInfo.id] = setTimeout(function() {
-        tabElement.classList.remove("selected");
+        tabElement.classList.remove("highlight");
         delete this.highlightTimeouts[tab.tabInfo.id];
     }.bind(this), 10000);
 };
