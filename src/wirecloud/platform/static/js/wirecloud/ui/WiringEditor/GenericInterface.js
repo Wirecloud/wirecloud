@@ -218,7 +218,7 @@
             this.header.appendChild(this.miniStatus);
 
             // MiniInterface Context Menu
-            this.contextmenu = new StyledElements.PopupMenu({'position': ['bottom-right']});
+            this.contextmenu = new StyledElements.PopupMenu({'position': ['bottom-left', 'top-left']});
             this._miniwidgetMenu_callback = function _miniwidgetMenu_callback(e) {
                 // Context Menu
                 if (e.button == 2) {

@@ -16,20 +16,20 @@
             break;
         case 'top-left':
             this.wrapperElement.style.top = (refPosition.top - this.wrapperElement.offsetHeight + 1) + "px";
-            this.wrapperElement.style.left = (refPosition.right - this.wrapperElement.offsetWidth) + "px";
+            this.wrapperElement.style.left = refPosition.left + "px";
             break;
         case 'top-right':
             this.wrapperElement.style.top = (refPosition.top - this.wrapperElement.offsetHeight + 1) + "px";
-            this.wrapperElement.style.left = refPosition.left + "px";
+            this.wrapperElement.style.left = (refPosition.right - this.wrapperElement.offsetWidth) + "px";
             break;
         case 'bottom-right':
             this.wrapperElement.style.top = (refPosition.bottom - 1) + "px";
-            this.wrapperElement.style.left = refPosition.left + "px";
+            this.wrapperElement.style.left = (refPosition.right - this.wrapperElement.offsetWidth) + "px";
             break;
         default:
         case 'bottom-left':
             this.wrapperElement.style.top = (refPosition.bottom - 1) + "px";
-            this.wrapperElement.style.left = (refPosition.right - this.wrapperElement.offsetWidth) + "px";
+            this.wrapperElement.style.left = refPosition.left + "px";
             break;
         }
     };
