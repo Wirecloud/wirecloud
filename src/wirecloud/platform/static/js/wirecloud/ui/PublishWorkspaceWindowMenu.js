@@ -164,7 +164,7 @@
         };
 
         for (key in data) {
-            if (key.startsWith('tab-')) {
+            if (Wirecloud.Utils.startsWith(key, 'tab-')) {
                 Wirecloud.Utils.merge(data.parametrization.iwidgets, data[key]);
                 delete data[key];
             }

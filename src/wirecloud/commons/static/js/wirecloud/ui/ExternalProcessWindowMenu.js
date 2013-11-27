@@ -82,7 +82,7 @@
         } else if (typeof this.options.return_uri !== 'function') {
             var base_uri = this.options.return_uri;
             this.options.return_uri = function return_uri(uri) {
-                return uri.startsWith(base_uri);
+                return Wirecloud.Utils.startsWith(uri, base_uri);
             };
         }
 

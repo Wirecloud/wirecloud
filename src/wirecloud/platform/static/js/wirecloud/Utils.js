@@ -171,6 +171,30 @@
         return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
     };
 
+    if (!String.prototype.startsWith) {
+        Utils.startsWith = function startsWith(text, searchString, position) {
+            position = position || 0;
+            return text.indexOf(searchString, position) === position;
+        };
+    } else {
+        Utils.startsWith = function startsWith(text, searchString, position) {
+            return text.startsWith(searchString, position);
+        };
+    }
+
+    if (!String.prototype.endsWith) {
+        Utils.endsWith = function endsWith(text, searchString, position) {
+            position = position || text.length;
+            position = position - searchString.length;
+            var lastIndex = text.lastIndexOf(searchString);
+            return lastIndex !== -1 && lastIndex === position;
+        };
+    } else {
+        Utils.endsWith = function endsWith(text, searchString, position) {
+            return text.endsWith(searchString, position);
+        };
+    }
+
     /**
      * Devuelve la posición relativa de un elemento respecto de otro elemento.
      *
