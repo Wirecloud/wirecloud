@@ -215,15 +215,28 @@
             this.miniStatus = document.createElement("span");
             this.miniStatus.classList.add('status');
             this.miniStatus.classList.add('icon-exclamation-sign');
-            this.miniStatus.setAttribute('title', 'Old Version!! right click to change');
-            this.miniStatus.addEventListener('click', this._miniwidgetMenu_callback, false);
+            this.miniStatus.setAttribute('title', gettext('Warning! this is an old version of the operator, click to change the version'));
+            this._miniwidgetMenu_button_callback = function _miniwidgetMenu_button_callback(e) {
+                // Context Menu
+                e.stopPropagation();
+                if (this.contextmenu.isVisible()) {
+                    this.contextmenu.hide();
+                } else {
+                    this.contextmenu.show(this.wrapperElement.getBoundingClientRect());
+                }
+                return;
+            }.bind(this);
+            this.miniStatus.addEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, false);
+            this.miniStatus.addEventListener('click', this._miniwidgetMenu_button_callback, false);
+            this.miniStatus.addEventListener('contextmenu', this._miniwidgetMenu_button_callback, false);
             this.header.appendChild(this.miniStatus);
 
             // MiniInterface Context Menu
             this.contextmenu = new StyledElements.PopupMenu({'position': ['bottom-left', 'top-left']});
             this._miniwidgetMenu_callback = function _miniwidgetMenu_callback(e) {
                 // Context Menu
-                if (e.button == 2) {
+                e.stopPropagation();
+                if (e.button === 2) {
                     if (this.contextmenu.isVisible()) {
                         this.contextmenu.hide();
                     } else {
@@ -231,14 +244,10 @@
                     }
                     return;
                 }
-                e.stopPropagation();
             }.bind(this);
 
             this.wrapperElement.addEventListener('mousedown', this._miniwidgetMenu_callback, false);
-            this.wrapperElement.addEventListener('contextmenu', function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-            });
+            this.wrapperElement.addEventListener('contextmenu', Wirecloud.Utils.preventDefaultListener);
             this.contextmenu.append(new Wirecloud.ui.WiringEditor.MiniInterfaceSettingsMenuItems(this));
         }
 
