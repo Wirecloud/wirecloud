@@ -37,10 +37,10 @@
     MiniInterfaceSettingsMenuItems.prototype = new StyledElements.DynamicMenuItems();
 
     MiniInterfaceSettingsMenuItems.prototype.build = function build(context) {
-        var items, item, label, versions, versionInfo, i, msg, color;
+        var items, item, label, versions, versionInfo, i, msg, color, allVersions, sortedItems;
 
-        items = [];
-
+        items = {};
+        allVersions = [];
         // Widget
         if (!this.geinterface.ioperator) {
             return items;
@@ -63,9 +63,17 @@
                     this.wiringEditor.setOperatorVersion(this, version);
             }.bind(this.geinterface, versions[i]));
             item.wrapperElement.style.color = color;
-            items.push(item);
+            items[versions[i].version.text]= item;
+            allVersions.push(versions[i].version);
         }
-        return items;
+        allVersions = allVersions.sort(function (version1, version2) {
+            return -version1.compareTo(version2);
+        });
+        sortedItems = [];
+        for (i = 0; i < allVersions.length; i++) {
+            sortedItems.push(items[allVersions[i].text]);
+        }
+        return sortedItems;
     };
 
     Wirecloud.ui.WiringEditor.MiniInterfaceSettingsMenuItems = MiniInterfaceSettingsMenuItems;
