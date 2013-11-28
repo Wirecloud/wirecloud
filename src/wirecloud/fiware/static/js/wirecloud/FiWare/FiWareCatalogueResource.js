@@ -55,15 +55,6 @@
         // GETTERS
         /////////////////////////
 
-        this.isMashup = function(){
-            var result = false;
-
-            if (this.type === 'mashup'){
-                result = true;
-            }
-            return result;
-        };
-
         this.getCreator = function() {
             return "";
         };

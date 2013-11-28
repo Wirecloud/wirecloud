@@ -148,16 +148,6 @@
         }
     };
 
-    FiWareCatalogueView.prototype.instantiate = function (resource) {
-        //is mashup?
-        if (resource.isMashup()) {
-            (new Wirecloud.ui.InstantiateMashupWindowMenu(resource)).show();
-        } else {
-            var local_widget = Wirecloud.LocalCatalogue.getResourceId(resource.getURI());
-            OpManagerFactory.getInstance().addInstance(local_widget);
-        }
-    };
-
     FiWareCatalogueView.prototype.getPublishEndpoints = function getPublishEndpoints() {
         var i, stores = [];
 
