@@ -149,7 +149,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
     def test_widget_deletion(self):
         resource = CatalogueResource.objects.get(vendor='Test', short_name='Test Widget', version='1.0.0')
         resource_pk = resource.pk
-        xhtml_pk = resource.widget.pk
+        xhtml_pk = resource.widget.xhtml.pk
 
         resource.delete()
         self.assertRaises(XHTML.DoesNotExist, XHTML.objects.get, pk=xhtml_pk)
