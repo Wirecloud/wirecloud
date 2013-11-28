@@ -38,7 +38,6 @@
             allVersions = [],
             data_by_version = {},
             extra_data = null,
-            deleteable = true,
         ///////////////////////////
         // CONSTRUCTOR VARIABLES
         ///////////////////////////
@@ -118,11 +117,11 @@
         };
 
         this.isAllow = function isAllow(action) {
+
             switch (action) {
             case 'delete':
-                return currentVersion.added_by_user;
             case 'delete-all':
-                return deleteable;
+                return OpManagerFactory.getInstance().contextManager.get('issuperuser');
             }
         };
 
@@ -195,8 +194,6 @@
 
             version_data.version = new Wirecloud.Version(version_data.version, 'catalogue');
             version_data.date = new Date(version_data.date);
-
-            deleteable = deleteable && version_data.added_by_user;
 
             allVersions.push(version_data.version);
             data_by_version[version_data.version.text] = version_data;
