@@ -259,18 +259,18 @@ PlatformPreferencesDef.prototype.buildPreferences = function(values) {
 function WorkspacePreferencesDef(definitions, args) {
 	var extra_prefs, prefManager, empty_params, param, workspace = args[1];
 
-	if (args[2] instanceof Array && args[2].length > 0) {
+	if (Array.isArray(args[2]) && args[2].length > 0) {
 		prefManager = PreferencesManagerFactory.getInstance();
-		extra_prefs = prefManager._processDefinitions(workspace.workspaceGlobalInfo.extra_prefs);
+		extra_prefs = prefManager._processDefinitions(workspace.workspaceState.extra_prefs);
 		empty_params = args[2];
 		definitions = {};
 		for (i = 0; i < empty_params.length; i += 1) {
 			param = empty_params[i];
 			definitions[param] = extra_prefs[param];
 		}
-	} else if (workspace.workspaceGlobalInfo != null) {
+	} else if (workspace.workspaceState != null) {
 		prefManager = PreferencesManagerFactory.getInstance();
-		extra_prefs = prefManager._processDefinitions(workspace.workspaceGlobalInfo.extra_prefs);
+		extra_prefs = prefManager._processDefinitions(workspace.workspaceState.extra_prefs);
 		definitions = Wirecloud.Utils.merge(definitions, extra_prefs);
 	}
 	PreferencesDef.call(this, definitions);
