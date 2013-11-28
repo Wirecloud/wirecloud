@@ -73,7 +73,7 @@
 
         if (!wiringEditor) {
             this.element = document.createElement('object');
-            data_uri = Wirecloud.URLs.OPERATOR_ENTRY.evaluate({vendor: operator_meta.vendor, name: operator_meta.name, version: operator_meta.version}) + '#id=' + id;
+            data_uri = Wirecloud.URLs.OPERATOR_ENTRY.evaluate({vendor: operator_meta.vendor, name: operator_meta.name, version: operator_meta.version.text}) + '#id=' + id;
             this.element.addEventListener('load', function () {
                 this.loaded = true;
                 this.events.load.dispatch(this);
