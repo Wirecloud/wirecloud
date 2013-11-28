@@ -863,7 +863,7 @@ class WirecloudRemoteTestCase(object):
         resource = self.search_in_catalogue_results(resource_name)
         self.assertIsNone(resource)
 
-    def uninstall_resource(self, resource_name, timeout=30):
+    def uninstall_resource(self, resource_name, timeout=30, expect_error=False):
         self.change_main_view('marketplace')
         catalogue_base_element = self.get_current_catalogue_base_element()
 
@@ -874,16 +874,19 @@ class WirecloudRemoteTestCase(object):
         WebDriverWait(self.driver, timeout).until(lambda driver: catalogue_base_element.find_element_by_css_selector('.advanced_operations').is_displayed())
         time.sleep(0.1)
 
-        found = False
+        uninstall_button = None
         for operation in self.driver.find_elements_by_css_selector('.advanced_operations .styled_button'):
             if operation.text == 'Uninstall':
-                found = True
-                operation.find_element_by_css_selector('div').click()
+                uninstall_button = operation.find_element_by_css_selector('div')
                 break
-        self.assertTrue(found)
 
-        self.wait_wirecloud_ready()
+        if expect_error:
+            self.assertIsNone(uninstall_button)
+        else:
+            self.assertIsNotNone(uninstall_button)
 
-        self.search_resource(resource_name)
-        resource = self.search_in_catalogue_results(resource_name)
-        self.assertIsNone(resource)
+            self.wait_wirecloud_ready()
+
+            self.search_resource(resource_name)
+            resource = self.search_in_catalogue_results(resource_name)
+            self.assertIsNone(resource)

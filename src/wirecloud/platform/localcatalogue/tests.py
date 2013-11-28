@@ -506,6 +506,13 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         widget = self.search_in_catalogue_results('Test')
         self.assertIsNone(widget)
 
+    def test_public_resources_are_uninstallable(self):
+
+        self.login(username='normuser')
+
+        self.uninstall_resource('Test', expect_error=True)
+    test_public_resources_are_uninstallable.tags = ('current3',)
+
     def test_resource_uninstall(self):
 
         test_widget = CatalogueResource.objects.get(short_name='Test')

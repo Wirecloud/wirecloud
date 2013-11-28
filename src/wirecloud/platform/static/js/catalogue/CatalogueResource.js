@@ -119,6 +119,8 @@
         this.isAllow = function isAllow(action) {
 
             switch (action) {
+            case 'uninstall':
+                return currentVersion.added_by_user;
             case 'delete':
             case 'delete-all':
                 return OpManagerFactory.getInstance().contextManager.get('issuperuser');
