@@ -172,6 +172,10 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'label': _('Is Staff'),
                 'description': _('Boolean. Designates whether current user can access the admin site.'),
             },
+            'issuperuser': {
+                'label': _('Is Superuser'),
+                'description': _('Boolean. Designates whether current user is a super user.'),
+            },
             'orientation': {
                 'label': _('Orientation'),
                 'description': _('Current screen orientation'),
@@ -191,6 +195,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'username': user.username,
             'fullname': user.get_full_name(),
             'isstaff': user.is_staff,
+            'issuperuser': user.is_superuser,
             'theme': settings.THEME_ACTIVE
         }
 
