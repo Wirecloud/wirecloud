@@ -185,8 +185,6 @@
     };
 
     WirecloudHeader.prototype._notifyWorkspaceLoaded = function _notifyWorkspaceLoaded(workspace) {
-        this._paintBreadcrum(LayoutManagerFactory.getInstance().viewsByName['workspace']);
-
         workspace.wiring.addEventListener('load', function () {
             this.menues.wiring.html_element.classList.remove('error');
         }.bind(this));
