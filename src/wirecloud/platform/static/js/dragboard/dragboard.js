@@ -301,7 +301,7 @@
                         layout,
                         new Wirecloud.DragboardPosition(iwidgetinfo.left, iwidgetinfo.top),
                         new Wirecloud.DragboardPosition(iwidgetinfo.icon_left, iwidgetinfo.icon_top),
-                        iwidgetinfo.zPos,
+                        iwidgetinfo.zIndex,
                         iwidgetinfo.width,
                         iwidgetinfo.height,
                         iwidgetinfo.fulldragboard,
