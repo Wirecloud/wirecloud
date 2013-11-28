@@ -1285,7 +1285,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         url = reverse('wirecloud_showcase.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
         check_delete_requires_authentication(self, url)
 
-    def test_resource_entry_delete(self):
+    def test_resource_entry_delete_uninstall(self):
 
         url = reverse('wirecloud_showcase.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
 
@@ -1293,6 +1293,23 @@ class ResourceManagementAPI(WirecloudTestCase):
 
         response = self.client.delete(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
+        resource = CatalogueResource.objects.get(vendor= 'Wirecloud', short_name= 'Test', version= '1.0')
+        self.assertFalse(resource.users.filter(username='admin').exists())
+
+    def test_resource_entry_delete_delete(self):
+
+        resource = CatalogueResource.objects.get(vendor= 'Wirecloud', short_name= 'Test', version= '1.0')
+        resource.users.clear()
+        resource.public = False
+        resource.save()
+
+        url = reverse('wirecloud_showcase.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
+
+        self.client.login(username='admin', password='admin')
+
+        response = self.client.delete(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+        self.assertRaises(CatalogueResource.DoesNotExist, CatalogueResource.objects.get, vendor= 'Wirecloud', short_name= 'Test', version= '1.0')
 
 
 class ExtraApplicationMashupAPI(WirecloudTestCase):
