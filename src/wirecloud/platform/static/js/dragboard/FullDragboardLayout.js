@@ -19,159 +19,159 @@
  *
  */
 
-/*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
-/*global gettext, Constants, DragboardLayout, IWidget, MultiValuedSize*/
+/*global gettext, Constants, DragboardLayout, IWidget, MultiValuedSize, Wirecloud */
 
-/////////////////////////////////////
-// FullDragboard
-/////////////////////////////////////
+(function () {
 
-/**
- * @class Represents a dragboard layout to be used to place iwidgets into the dragboard.
- *
- * This dragobard uses percentages for horizontal units and px for vertical units.
- *
- * @extends DragboardLayout
- */
-function FullDragboardLayout(dragboard, scrollbarSpace) {
-    if (arguments.length === 0) {
-        return; // Allow empty constructor (allowing hierarchy)
-    }
+    "use strict";
 
-    this.initialized = false;
-    DragboardLayout.call(this, dragboard, scrollbarSpace);
-}
+    /**
+     * @class Represents a dragboard layout to be used to place iwidgets into the dragboard.
+     *
+     * @extends DragboardLayout
+     */
+    var FullDragboardLayout = function FullDragboardLayout(dragboard, scrollbarSpace) {
+        if (arguments.length === 0) {
+            return; // Allow empty constructor (allowing hierarchy)
+        }
 
-FullDragboardLayout.prototype = new DragboardLayout();
+        this.initialized = false;
+        DragboardLayout.call(this, dragboard, scrollbarSpace);
+    };
+    FullDragboardLayout.prototype = new DragboardLayout();
 
-FullDragboardLayout.prototype.fromPixelsToVCells = function (pixels) {
-    return 1;
-};
+    FullDragboardLayout.prototype.fromPixelsToVCells = function fromPixelsToVCells(pixels) {
+        return 1;
+    };
 
-FullDragboardLayout.prototype.fromVCellsToPixels = function (cells) {
-    return this.getHeight();
-};
+    FullDragboardLayout.prototype.fromVCellsToPixels = function fromVCellsToPixels(cells) {
+        return this.getHeight();
+    };
 
-FullDragboardLayout.prototype.getWidthInPixels = function (cells) {
-    return this.getWidth();
-};
+    FullDragboardLayout.prototype.getWidthInPixels = function getWidthInPixels(cells) {
+        return this.getWidth();
+    };
 
-FullDragboardLayout.prototype.getHeightInPixels = function (cells) {
-    return this.getHeight();
-};
+    FullDragboardLayout.prototype.getHeightInPixels = function getHeightInPixels(cells) {
+        return this.getHeight();
+    };
 
-FullDragboardLayout.prototype.fromPixelsToHCells = function (pixels) {
-    return 1;
-};
+    FullDragboardLayout.prototype.fromPixelsToHCells = function fromPixelsToHCells(pixels) {
+        return 1;
+    };
 
-FullDragboardLayout.prototype.fromHCellsToPixels = function (cells) {
-    return this.getWidth();
-};
+    FullDragboardLayout.prototype.fromHCellsToPixels = function fromHCellsToPixels(cells) {
+        return this.getWidth();
+    };
 
-FullDragboardLayout.prototype.fromHCellsToPercentage = function (cells) {
-    return this.getHeight();
-};
+    FullDragboardLayout.prototype.fromHCellsToPercentage = function fromHCellsToPercentage(cells) {
+        return this.getHeight();
+    };
 
-FullDragboardLayout.prototype.getColumnOffset = function (column) {
-    return this.dragboard.dragboardElement.getBoundingClientRect().left;
-};
+    FullDragboardLayout.prototype.getColumnOffset = function getColumnOffset(column) {
+        return this.dragboard.dragboardElement.getBoundingClientRect().left;
+    };
 
-FullDragboardLayout.prototype.getRowOffset = function (row) {
-    return this.dragboard.dragboardElement.getBoundingClientRect().top;
-};
+    FullDragboardLayout.prototype.getRowOffset = function getRowOffset(row) {
+        return this.dragboard.dragboardElement.getBoundingClientRect().top;
+    };
 
-FullDragboardLayout.prototype.adaptColumnOffset = function (pixels) {
-    return new MultiValuedSize(this.dragboard.dragboardElement.getBoundingClientRect().left, 0);
-};
+    FullDragboardLayout.prototype.adaptColumnOffset = function adaptColumnOffset(pixels) {
+        return new MultiValuedSize(this.dragboard.dragboardElement.getBoundingClientRect().left, 0);
+    };
 
-FullDragboardLayout.prototype.adaptRowOffset = function (pixels) {
-    return new MultiValuedSize(this.dragboard.dragboardElement.getBoundingClientRect().top, 0);
-};
+    FullDragboardLayout.prototype.adaptRowOffset = function adaptRowOffset(pixels) {
+        return new MultiValuedSize(this.dragboard.dragboardElement.getBoundingClientRect().top, 0);
+    };
 
-FullDragboardLayout.prototype.adaptHeight = function (contentHeight, fullSize, oldLayout) {
-    var diff = fullSize - contentHeight;
-    return new MultiValuedSize(contentHeight - diff, 1);
-};
+    FullDragboardLayout.prototype.adaptHeight = function adaptHeight(contentHeight, fullSize, oldLayout) {
+        var diff = fullSize - contentHeight;
+        return new MultiValuedSize(contentHeight - diff, 1);
+    };
 
-FullDragboardLayout.prototype.adaptWidth = function (contentWidth, fullSize) {
-    return new MultiValuedSize(this.getWidth(), 1);
-};
+    FullDragboardLayout.prototype.adaptWidth = function adaptWidth(contentWidth, fullSize) {
+        return new MultiValuedSize(this.getWidth(), 1);
+    };
 
-FullDragboardLayout.prototype.initialize = function () {
-    var iWidget, key;
+    FullDragboardLayout.prototype.initialize = function initialize() {
+        var iWidget, key;
 
-    // Insert iwidgets
-    for (key in this.iWidgets) {
-        iWidget = this.iWidgets[key];
-        iWidget.paint(true);
-    }
+        // Insert iwidgets
+        for (key in this.iWidgets) {
+            iWidget = this.iWidgets[key];
+            iWidget.paint(true);
+        }
 
-    this.initialized = true;
-};
+        this.initialized = true;
+    };
 
-/**
- * Calculate what cell is at a given position in pixels
- */
-FullDragboardLayout.prototype.getCellAt = function (x, y) {
-    return new Wirecloud.DragboardPosition(0, 0);
-};
+    /**
+     * Calculate what cell is at a given position in pixels
+     */
+    FullDragboardLayout.prototype.getCellAt = function getCellAt(x, y) {
+        return new Wirecloud.DragboardPosition(0, 0);
+    };
 
-FullDragboardLayout.prototype.addIWidget = function (iWidget, affectsDragboard) {
-    iWidget.element.addClassName('fulldragboard');
+    FullDragboardLayout.prototype.addIWidget = function addIWidget(iWidget, affectsDragboard) {
+        iWidget.element.classList.add('fulldragboard');
 
-    DragboardLayout.prototype.addIWidget.call(this, iWidget, affectsDragboard);
+        DragboardLayout.prototype.addIWidget.call(this, iWidget, affectsDragboard);
 
-    if (!this.initialized) {
-        return;
-    }
+        if (!this.initialized) {
+            return;
+        }
 
-    iWidget.setPosition(new Wirecloud.DragboardPosition(0, 0));
-};
+        iWidget.setPosition(new Wirecloud.DragboardPosition(0, 0));
+    };
 
-FullDragboardLayout.prototype.removeIWidget = function (iWidget, affectsDragboard) {
-    iWidget.element.removeClassName('fulldragboard');
+    FullDragboardLayout.prototype.removeIWidget = function removeIWidget(iWidget, affectsDragboard) {
+        iWidget.element.classList.remove('fulldragboard');
 
-    DragboardLayout.prototype.removeIWidget.call(this, iWidget, affectsDragboard);
-};
+        DragboardLayout.prototype.removeIWidget.call(this, iWidget, affectsDragboard);
+    };
 
 
-FullDragboardLayout.prototype.initializeMove = function (iwidget, draggable) {
-    // Check for pendings moves
-    if (this.iwidgetToMove !== null) {
-        var msg = gettext("There was a pending move that was cancelled because initializedMove function was called before it was finished.");
-        Wirecloud.GlobalLogManager.log(msg, Constants.WARN_MSG);
-        this.cancelMove();
-    }
+    FullDragboardLayout.prototype.initializeMove = function initializeMove(iwidget, draggable) {
+        // Check for pendings moves
+        if (this.iwidgetToMove !== null) {
+            var msg = gettext("There was a pending move that was cancelled because initializedMove function was called before it was finished.");
+            Wirecloud.GlobalLogManager.log(msg, Constants.WARN_MSG);
+            this.cancelMove();
+        }
 
-    this.iwidgetToMove = iwidget;
-};
+        this.iwidgetToMove = iwidget;
+    };
 
-FullDragboardLayout.prototype.moveTemporally = function (x, y) {
-    if (!(this.iwidgetToMove instanceof IWidget)) {
-        var msg = gettext("Dragboard: You must call initializeMove function before calling to this function (moveTemporally).");
-        Wirecloud.GlobalLogManager.log(msg, Constants.WARN_MSG);
-        return;
-    }
-};
+    FullDragboardLayout.prototype.moveTemporally = function moveTemporally(x, y) {
+        if (!(this.iwidgetToMove instanceof IWidget)) {
+            var msg = gettext("Dragboard: You must call initializeMove function before calling to this function (moveTemporally).");
+            Wirecloud.GlobalLogManager.log(msg, Constants.WARN_MSG);
+            return;
+        }
+    };
 
-FullDragboardLayout.prototype.acceptMove = function () {
-    if (!(this.iwidgetToMove instanceof IWidget)) {
-        var msg = gettext("Function acceptMove called when there is not an started iwidget move.");
-        Wirecloud.GlobalLogManager.log(msg, Constants.WARN_MSG);
-        return;
-    }
+    FullDragboardLayout.prototype.acceptMove = function acceptMove() {
+        if (!(this.iwidgetToMove instanceof IWidget)) {
+            var msg = gettext("Function acceptMove called when there is not an started iwidget move.");
+            Wirecloud.GlobalLogManager.log(msg, Constants.WARN_MSG);
+            return;
+        }
 
-    this.iwidgetToMove = null;
-};
+        this.iwidgetToMove = null;
+    };
 
-FullDragboardLayout.prototype.cancelMove = function () {
-    if (!(this.iwidgetToMove instanceof IWidget)) {
-        var msg = gettext("Trying to cancel an inexistant temporal move.");
-        Wirecloud.GlobalLogManager.log(msg, Constants.WARN_MSG);
-        return;
-    }
+    FullDragboardLayout.prototype.cancelMove = function cancelMove() {
+        if (!(this.iwidgetToMove instanceof IWidget)) {
+            var msg = gettext("Trying to cancel an inexistant temporal move.");
+            Wirecloud.GlobalLogManager.log(msg, Constants.WARN_MSG);
+            return;
+        }
 
-    this.iwidgetToMove._notifyWindowResizeEvent();
-    this.iwidgetToMove = null;
-    this.newPosition = null;
-};
+        this.iwidgetToMove._notifyWindowResizeEvent();
+        this.iwidgetToMove = null;
+        this.newPosition = null;
+    };
+
+    window.FullDragboardLayout = FullDragboardLayout;
+
+})();
