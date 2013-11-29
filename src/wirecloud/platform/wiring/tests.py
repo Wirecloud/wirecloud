@@ -422,6 +422,101 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
             self.assertEqual(text_div.text, '')
     test_basic_wiring_editor_operations.tags = ('wiring', 'wiring_editor', 'fiware-ut-6')
 
+    def test_wiring_editor_modify_arrow_endpoints(self):
+
+        if not selenium_supports_draganddrop(self.driver):
+            raise unittest.SkipTest('This test need make use of the native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
+
+        self.login()
+
+        self.add_widget_to_mashup('Test', new_name='Test (1)')
+        self.add_widget_to_mashup('Test', new_name='Test (2)')
+        self.add_widget_to_mashup('Test', new_name='Test (3)')
+        iwidgets = self.get_current_iwidgets()
+
+        self.change_main_view('wiring')
+        grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
+
+        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-80, -80).release().perform()
+
+        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(40, 40).release().perform()
+
+        source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(80, 70).release().perform()
+
+        source = iwidgets[0].get_wiring_endpoint('outputendpoint')
+        target = iwidgets[1].get_wiring_endpoint('inputendpoint')
+        ActionChains(self.driver).drag_and_drop(source.element, target.element).perform()
+
+        self.change_main_view('workspace')
+
+        with iwidgets[0]:
+            text_input = self.driver.find_element_by_tag_name('input')
+            self.fill_form_input(text_input, 'hello world!!')
+            # Work around hang when using Firefox Driver
+            self.driver.execute_script('sendEvent();')
+
+        time.sleep(0.2)
+
+        with iwidgets[1]:
+            try:
+                WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
+            except:
+                pass
+
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, 'hello world!!')
+
+        with iwidgets[2]:
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, '')
+
+        with iwidgets[0]:
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, '')
+
+        self.change_main_view('wiring')
+
+        source = iwidgets[0].get_wiring_endpoint('outputendpoint')
+        target = iwidgets[1].get_wiring_endpoint('inputendpoint')
+        target2 = iwidgets[2].get_wiring_endpoint('inputendpoint')
+        arrows = grid.find_elements_by_css_selector('.arrow')
+        self.assertEqual(len(arrows), 1)
+        arrows[0].find_element_by_css_selector('g').click()
+
+        ActionChains(self.driver).drag_and_drop(target.element, target2.element).perform()
+
+        arrows = grid.find_elements_by_css_selector('.arrow')
+        self.assertEqual(len(arrows), 1)
+
+        self.change_main_view('workspace')
+
+        with iwidgets[0]:
+            text_input = self.driver.find_element_by_tag_name('input')
+            self.fill_form_input(text_input, 'hello new world!!')
+            # Work around hang when using Firefox Driver
+            self.driver.execute_script('sendEvent();')
+
+        with iwidgets[2]:
+
+            try:
+                WebDriverWait(self.driver, timeout=2).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello new world!!')
+            except:
+                pass
+
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, 'hello new world!!')
+
+        with iwidgets[1]:
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, 'hello world!!')
+
+        with iwidgets[0]:
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, '')
+
     def test_widget_preferences_in_wiring_editor(self):
 
         self.login(username='user_with_workspaces')
