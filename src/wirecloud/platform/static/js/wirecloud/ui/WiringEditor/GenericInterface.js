@@ -142,6 +142,7 @@
             // Widget name
             this.nameElement = document.createElement("span");
             this.nameElement.textContent = title;
+            this.nameElement.title = title;
             this.header.appendChild(this.nameElement);
 
             // Close button
@@ -1089,7 +1090,7 @@
         if (desc === '') {
             desc = label;
         }
-        anchorDiv.setAttribute('title', desc);
+        anchorDiv.setAttribute('title', label + ': ' + desc);
         anchorDiv.setAttribute('class', 'anchorDiv');
         // Anchor visible label
         anchorLabel = document.createElement("span");
@@ -1155,7 +1156,7 @@
         if (desc === '') {
             desc = label;
         }
-        anchorDiv.setAttribute('title', desc);
+        anchorDiv.setAttribute('title', label + ': ' + desc);
         anchorDiv.setAttribute('class', 'anchorDiv');
         // Anchor visible label
         anchorLabel = document.createElement("span");
