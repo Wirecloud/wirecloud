@@ -25,12 +25,18 @@
 
     "use strict";
 
+    var VERSION_RE = /^((?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0))((?:a|b|rc)[1-9]\d*)?$/;
+
     var Version = function Version(version, source) {
+        var groups;
         if (typeof version == 'string') {
+            groups = version.match(VERSION_RE);
+            this.array = groups[1].split('.').map(function (x) { return parseInt(x, 10); });
+            this.pre_version = groups[2] != null ? groups[2] : null;
             this.text = version;
-            this.array = version.split('.').map(function (x) { return parseInt(x, 10); });
         } else if (version instanceof Array) {
             this.array = version;
+            this.pre_version = null;
             this.text = version.join('.');
         } else {
             throw new TypeError();
@@ -39,7 +45,7 @@
     };
 
     Version.prototype.compareTo = function compareTo(version) {
-        var len, value1, value2, i;
+        var len, value1, value2, pre_version1, pre_version2, i;
 
         len = Math.max(this.array.length, version.array.length);
 
@@ -52,7 +58,22 @@
             }
         }
 
-        return 0;
+        pre_version1 = this.pre_version;
+        if (pre_version1 == null) {
+            pre_version1 = "z";
+        }
+        pre_version2 = version.pre_version;
+        if (pre_version2 == null) {
+            pre_version2 = "z";
+        }
+
+        if (pre_version1 < pre_version2) {
+            return -1;
+        } else if (pre_version1 > pre_version2) {
+            return 1;
+        } else {
+            return 0;
+        }
     };
 
     Wirecloud.Version = Version;

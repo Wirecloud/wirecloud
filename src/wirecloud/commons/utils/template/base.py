@@ -25,7 +25,7 @@ __all__ = ('is_valid_name', 'is_valid_vendor', 'is_valid_version')
 
 NAME_RE = re.compile(r'^[^/]+$')
 VENDOR_RE = re.compile(r'^[^/]+$')
-VERSION_RE = re.compile(r'^(?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0)$')
+VERSION_RE = re.compile(r'^(?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0)(?:(?:a|b|rc)[1-9]\d*)?$')
 
 
 class TemplateParseException(Exception):
