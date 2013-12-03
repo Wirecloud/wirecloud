@@ -44,7 +44,10 @@ class WgtFile(object):
         return self._zip.read(path)
 
     def get_template(self):
-        return self.read(self._template_filename)
+        try:
+            return self.read(self._template_filename)
+        except KeyError:
+            raise InvalidContents('Missing config.xml at the root of the zipfile (wgt)')
 
     def extract_file(self, file_name, output_path, recreate_=False):
         contents = self.read(file_name)
