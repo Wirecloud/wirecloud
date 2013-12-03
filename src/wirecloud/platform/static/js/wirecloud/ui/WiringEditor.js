@@ -48,7 +48,7 @@ if (!Wirecloud.ui) {
         this.addEventListener('show', renewInterface.bind(this));
         this.addEventListener('hide', clearInterface.bind(this));
 
-        this.layout = new StyledElements.BorderLayout();
+        this.layout = new StyledElements.BorderLayout({class: 'containerLayer'});
         this.appendChild(this.layout);
 
         this.layout.getWestContainer().addClassName('menubar');
@@ -778,9 +778,140 @@ if (!Wirecloud.ui) {
         this.recommendations.destroy();
     };
 
-    /*************************************************************************
-     * Public methods
-     *************************************************************************/
+    /**
+     * @Private
+     * set max width for widget or operator
+     */
+    var setEntityMaxWidth = function setEntityMaxWidth(theInterface) {
+        var auxDiv, titleSpan, virginDimensions;
+
+        var currentSize = parseFloat(this.layout.getCenterContainer().wrapperElement.style.fontSize);
+        var defaultMaxWidgetWidth = 22 * currentSize;
+
+        auxDiv = document.createElement('div');
+        theInterface.insertInto(auxDiv);
+        auxDiv.classList.add('calculateEntitySizeDiv');
+        titleSpan = theInterface.wrapperElement.getElementsByClassName('header')[0].getElementsByTagName('span')[0];
+
+        //width and height to avoid scroll problems
+        auxDiv.style.width = '10000px';
+        auxDiv.style.height = '10000px';
+        this.layout.getCenterContainer().appendChild(auxDiv);
+
+        theInterface.wrapperElement.style.maxWidth = '';
+        theInterface.wrapperElement.style.minWidth = '';
+        resetMaxWidth(theInterface);
+
+        virginDimensions = theInterface.getBoundingClientRect();
+
+        theInterface.wrapperElement.style.maxWidth = defaultMaxWidgetWidth + 'em';
+
+        if (theInterface.getBoundingClientRect().height != virginDimensions.height) {
+            console.debug('Labels demasiado largas!');
+            setSourceTargetMaxWidths.call(this, theInterface, defaultMaxWidgetWidth)
+        }
+        //theInterface.wrapperElement.style.maxWidth = '';
+        theInterface.wrapperElement.style.minWidth = '';
+        // Correction
+        /*while (parseFloat(theInterface.getBoundingClientRect().height) > parseFloat(virginDimensions.height)) {
+            console.debug('Es scroll nos la está liando!! incrementando minwidth en 0,1em');
+            theInterface.wrapperElement.style.minWidth = (parseFloat(theInterface.wrapperElement.style.minWidth) + 0.1) + 'em';
+        }*/
+        // Fix text-align ceneter problem when text-overflow: ellipsis
+        if (titleSpan.offsetWidth < titleSpan.scrollWidth) {
+            // text-overflow: ellipsis ON
+            titleSpan.style.textAlign = 'left'
+        } else {
+            titleSpan.style.textAlign = 'center'
+        }
+
+        this.layout.getCenterContainer().removeChild(auxDiv);
+    };
+
+    /**
+     * @Private
+     * set max width for widget or operator sources and targets Div
+     */
+    var setSourceTargetMaxWidths = function setSourceTargetMaxWidths(theInterface, maxWidth) {
+        var sources, targets, sourcesVirginDims, targetsVirginDims, currentFontSize;
+
+        // Current font-size from css
+        currentFontSize = parseFloat(this.layout.getCenterContainer().wrapperElement.style.fontSize) * parseInt(getComputedStyle(this.wrapperElement).fontSize);
+
+        // Sources
+        sources = theInterface.wrapperElement.getElementsByClassName('sources')[0];
+        sourcesVirginDims = sources.getBoundingClientRect();
+
+        // Targets
+        targets = theInterface.wrapperElement.getElementsByClassName('targets')[0];
+        targetsVirginDims = targets.getBoundingClientRect();
+
+        // Check the problem
+        if ((sourcesVirginDims.width / currentFontSize > maxWidth / 2) && (targetsVirginDims.width / currentFontSize > maxWidth / 2)) {
+            // Both divs are too wide
+            setMaxWidth.call(this, sources, maxWidth / 2, currentFontSize);
+            setMaxWidth.call(this, targets, maxWidth / 2, currentFontSize);
+        } else if (sourcesVirginDims.width / currentFontSize <= maxWidth / 2) {
+            // Targets div is too wide
+            setMaxWidth.call(this, targets, maxWidth - (sourcesVirginDims.width / currentFontSize), currentFontSize);
+        } else if (targetsVirginDims.width / currentFontSize <= maxWidth / 2) {
+            // Sources div is too wide
+            setMaxWidth.call(this, sources, maxWidth - (targetsVirginDims.width / currentFontSize), currentFontSize);
+        }
+    };
+
+    /**
+     * @Private
+     * set max width for each span in source or target div
+     */
+    var setMaxWidth = function setMaxWidth(theDiv, width, currentFontSize) {
+        var theSpans, i, balancedWidth, acumulatedPaddings, theDivComputed, theSpanParentComputed;
+
+        theSpans = theDiv.getElementsByTagName('span');
+
+        theDivComputed = getComputedStyle(theDiv);
+        theSpanParentComputed = getComputedStyle(theSpans[0].parentElement);
+        acumulatedPaddings = 0;
+        // Add paddings of theDiv element in acumulatedPaddings var
+        acumulatedPaddings += (parseFloat(theDivComputed.paddingRight) + parseFloat(theDivComputed.paddingLeft)) / currentFontSize;
+        // Add margins of theDiv element in acumulatedPaddings var
+        acumulatedPaddings += (parseFloat(theDivComputed.marginRight) + parseFloat(theDivComputed.marginLeft)) / currentFontSize;
+
+        // Add paddings of theSpans.parent element in acumulatedPaddings var
+        acumulatedPaddings += (parseFloat(theSpanParentComputed.paddingRight) + parseFloat(theSpanParentComputed.paddingLeft)) / currentFontSize;
+        // Add margins of theSpans.parent element in acumulatedPaddings var
+        acumulatedPaddings += (parseFloat(theSpanParentComputed.marginRight) + parseFloat(theSpanParentComputed.marginLeft)) / currentFontSize;
+
+        balancedWidth = width - acumulatedPaddings;
+
+        for (i = 0; i < theSpans.length; i++){
+            if (theSpans[i].offsetWidth / currentFontSize > balancedWidth) {
+                // change only the too wide spans
+                theSpans[i].style.width = balancedWidth + 'em';
+            }
+        }
+    };
+
+    var resetMaxWidth = function resetMaxWidth(theInterface) {
+        var theSourcesSpans, theTargetSpans, targets, sources, i;
+
+        // Sources
+        sources = theInterface.wrapperElement.getElementsByClassName('sources')[0];
+        theSourcesSpans = sources.getElementsByTagName('span');
+
+        // Targets
+        targets = theInterface.wrapperElement.getElementsByClassName('targets')[0];
+        theTargetSpans = targets.getElementsByTagName('span');
+
+        for (i = 0; i < theSourcesSpans.length; i++){
+            theSourcesSpans[i].style.width =  '';
+        }
+
+        for (i = 0; i < theTargetSpans.length; i++){
+            theTargetSpans[i].style.width =  '';
+        }
+    };
+
     /**
      * Change Operator miniInterface version in menubar
      */
@@ -1008,21 +1139,12 @@ if (!Wirecloud.ui) {
      * add IWidget.
      */
     WiringEditor.prototype.addIWidget = function addIWidget(wiringEditor, iwidget, enpPointPos) {
-        var widget_interface, auxDiv, i, anchor;
+        var widget_interface, i, anchor;
 
         widget_interface = new Wirecloud.ui.WiringEditor.WidgetInterface(wiringEditor, iwidget, this.arrowCreator, false, enpPointPos);
         this.iwidgets[iwidget.id] = widget_interface;
 
-        auxDiv = document.createElement('div');
-        //width and height to avoid scroll problems
-        auxDiv.style.width = '2000px';
-        auxDiv.style.height = '1000px';
-        this.layout.getCenterContainer().appendChild(auxDiv);
-
-        widget_interface.insertInto(auxDiv);
-
-        widget_interface.wrapperElement.style.minWidth = widget_interface.getBoundingClientRect().width + 'px';
-        this.layout.getCenterContainer().removeChild(auxDiv);
+        setEntityMaxWidth.call(this, widget_interface);
 
         this.layout.getCenterContainer().appendChild(widget_interface);
 
@@ -1055,7 +1177,7 @@ if (!Wirecloud.ui) {
      * add IOperator.
      */
     WiringEditor.prototype.addIOperator = function addIOperator(ioperator, enpPointPos) {
-        var instantiated_operator, operator_interface, auxDiv, i, anchor;
+        var instantiated_operator, operator_interface, i, anchor;
 
         if (ioperator instanceof Wirecloud.wiring.OperatorMeta) {
             instantiated_operator = ioperator.instantiate(this.nextOperatorId, null, this);
@@ -1066,16 +1188,7 @@ if (!Wirecloud.ui) {
 
         operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, instantiated_operator, this.arrowCreator, false, enpPointPos);
 
-        auxDiv = document.createElement('div');
-        //width and height to avoid scroll problems
-        auxDiv.style.width = '2000px';
-        auxDiv.style.height = '1000px';
-        this.layout.getCenterContainer().appendChild(auxDiv);
-
-        operator_interface.insertInto(auxDiv);
-
-        operator_interface.wrapperElement.style.minWidth = operator_interface.getBoundingClientRect().width + 'px';
-        this.layout.getCenterContainer().removeChild(auxDiv);
+        setEntityMaxWidth.call(this, operator_interface);
 
         this.layout.getCenterContainer().appendChild(operator_interface);
 
@@ -1095,6 +1208,8 @@ if (!Wirecloud.ui) {
 
         this.targetAnchorList = this.targetAnchorList.concat(operator_interface.targetAnchors);
         this.sourceAnchorList = this.sourceAnchorList.concat(operator_interface.sourceAnchors);
+
+        operator_interface.wrapperElement.style.minWidth = operator_interface.getBoundingClientRect().width + 'px';
 
         this.currentlyInUseOperators[operator_interface.getId()] = operator_interface;
 

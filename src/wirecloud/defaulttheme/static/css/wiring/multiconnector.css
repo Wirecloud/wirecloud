@@ -33,14 +33,16 @@
 
 .wiring_editor .grid .multiconnector.target .anchor.main {
     background: transparent;
-    right: -0.98em;
+    right: -0.5em;
     pointer-events: none;
+    visibility: hidden;
 }
 
 .wiring_editor .grid .multiconnector.source .anchor.main {
     background: transparent;
-    left: -0.98em;
+    left: -0.5em;
     pointer-events: none;
+    visibility: hidden;
 }
 
 .wiring_editor .grid .multiconnector.source.selected {

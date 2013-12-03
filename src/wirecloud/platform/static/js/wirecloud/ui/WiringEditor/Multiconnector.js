@@ -73,6 +73,7 @@
         this.wrapperElement.appendChild(this.mainElement);
         this.wrapperElement.appendChild(this.statusBar);
         this.addClassName('multiconnector');
+        this.removeClassName('icon-circle');
 
         // Initial Position
         if (endPos == null) {

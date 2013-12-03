@@ -35,6 +35,7 @@
         this.context = context;
         Wirecloud.ui.WiringEditor.Anchor.call(this, false, arrowCreator);
         this.arrowCreator = arrowCreator;
+        this.wrapperElement.classList.add('icon-circle');
         if (subAnchors != null) {
             this.isSubAnchor = true;
             this.subAnchors = subAnchors;
