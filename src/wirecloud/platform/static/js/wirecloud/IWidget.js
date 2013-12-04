@@ -19,7 +19,7 @@
  *
  */
 
-/*global IWidgetLogManager, StyledElements, UserPref, Wirecloud*/
+/*global Constants, gettext, interpolate, OpManagerFactory, Tab, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -44,7 +44,7 @@
 
     var renameFailure = function renameFailure(options, response) {
         var msg = gettext("Error renaming iwidget from persistence: %(errorMsg)s.");
-        msg = this.internal_iwidget.logManager.formatError(msg, transport, e);
+        msg = this.internal_iwidget.logManager.formatError(msg, response);
         this.log(msg);
 
         if (options.onFailure === 'function') {
@@ -202,7 +202,7 @@
     IWidget.prototype._notifyLoaded = function _notifyLoaded(element) {
         var msg;
 
-        if (this.loaded || !element.hasAttribute('src') ) {
+        if (this.loaded || !element.hasAttribute('src')) {
             return;
         }
 
@@ -221,7 +221,7 @@
         }
         this.pending_events = [];
 
-        this.events['load'].dispatch(this);
+        this.events.load.dispatch(this);
     };
 
     IWidget.prototype._notifyUnloaded = function _notifyUnloaded() {
@@ -259,7 +259,7 @@
         this.prefCallback = null;
 
         this.loaded = false;
-        this.events['unload'].dispatch(this);
+        this.events.unload.dispatch(this);
     };
 
     IWidget.prototype.buildInterface = function buildInterface(template, view) {
