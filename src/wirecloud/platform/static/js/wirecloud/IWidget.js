@@ -27,6 +27,7 @@
 
     var renameSuccess = function renameSuccess(options, old_name, new_name, response) {
         this.name = new_name;
+        this.contextManager.modify({name: new_name});
 
         var msg = gettext("Name changed from \"%(oldName)s\" to \"%(newName)s\" succesfully");
         msg = interpolate(msg, {oldName: old_name, newName: new_name}, true);
@@ -103,12 +104,41 @@
             'platform': []
         };
         this.contextManager = new Wirecloud.ContextManager(this, {
-            'xPosition': 0,
-            'yPosition': 0,
-            'height': 0,
-            'width': 0,
-            'heightInPixels': 0,
-            'widthInPixels': 0
+            'title': {
+                label: gettext("Widget's title"),
+                description: gettext("Widget's title"),
+                value: options.name
+            },
+            'xPosition': {
+                label: gettext("X-Position"),
+                description: gettext("Specifies the x-coordinate at which the widget is placed"),
+                value: 0
+            },
+            'yPosition': {
+                label: gettext("Y-Position"),
+                description: gettext("Specifies the y-coordinate at which the widget is placed"),
+                value: 0
+            },
+            'height': {
+                label: gettext("Widget height"),
+                description: gettext("Widget height in layout cells"),
+                value: 0
+            },
+            'width': {
+                label: gettext("Widget width"),
+                description: gettext("Widget width in layout cells"),
+                value: 0
+            },
+            'heightInPixels': {
+                label: gettext("Widget height in pixels"),
+                description: gettext("Widget height in pixels"),
+                value: 0
+            },
+            'widthInPixels': {
+                label: gettext("Widget width in pixels"),
+                description: gettext("Widget width in pixels"),
+                value: 0
+            }
         });
         this.logManager = new Wirecloud.Widget.LogManager(this);
         this.prefCallback = null;
