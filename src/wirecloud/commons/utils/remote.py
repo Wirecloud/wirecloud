@@ -884,6 +884,7 @@ class WirecloudRemoteTestCase(object):
             self.assertIsNone(uninstall_button)
         else:
             self.assertIsNotNone(uninstall_button)
+            uninstall_button.click()
 
             self.wait_wirecloud_ready()
 

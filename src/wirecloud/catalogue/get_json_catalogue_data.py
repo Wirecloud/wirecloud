@@ -155,7 +155,9 @@ def get_resource_data(untranslated_resource, user, request=None):
         'packaged': resource.fromWGT,
         'date': creation_timestamp,
         'uploader': uploader,
-        'added_by_user': user.is_superuser or resource.creator == user,
+        'permissions' : {
+            'uninstall': resource.users.filter(pk=user.pk).exists(),
+        },
         'author': resource.author,
         'displayName': displayName,
         'description': resource.description,
