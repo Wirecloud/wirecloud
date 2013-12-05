@@ -184,6 +184,10 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'label': _('Theme'),
                 'description': _('Name of the theme used by the platform'),
             },
+            'version': {
+                'label': _('Version'),
+                'description': _('Version of the platform'),
+            },
         }
 
     def get_platform_context_current_values(self, user):
@@ -196,7 +200,8 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'fullname': user.get_full_name(),
             'isstaff': user.is_staff,
             'issuperuser': user.is_superuser,
-            'theme': settings.THEME_ACTIVE
+            'theme': settings.THEME_ACTIVE,
+            'version': wirecloud.platform.__version__,
         }
 
     def get_workspace_context_definitions(self):
