@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Wirecloud Mashup Template -->
+<!-- Version: 1.0 -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://morfeo-project.org/2007/Template"
+  xmlns:wt="http://morfeo-project.org/2007/Template">
+  <xs:include schemaLocation=""></xs:include>
+  <xs:element name="Template">
+    <xs:complexType>
+      <xs:all>
+        <xs:element name="Catalog.ResourceDescription" minOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Vendor" type="wt:VendorType">
+                <xs:annotation>
+                  <xs:documentation>
+                    The distributor of the mashup.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="Name" type="wt:NameType">
+                <xs:annotation>
+                  <xs:documentation>
+                    Name of the mashup.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="Version" type="wt:VersionType">
+                <xs:annotation>
+                  <xs:documentation>
+                    Current version of the mashup. It must
+                    define starting sequences of numbers separated by dots.
+                    Moreover, zeros can only be used alone (e.g. 0.1 is valid
+                    but 03.2 is not).
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="DisplayName" minOccurs="0" maxOccurs="1"
+                type="wt:NonEmpty">
+                <xs:annotation>
+                  <xs:documentation>
+                    Name used in the user interface for the
+                    mashup. This field can be translated, therefore this field
+                    is not used to uniquely identify the mashup.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="Author" type="wt:NonEmpty">
+                <xs:annotation>
+                  <xs:documentation>
+                    Developer of the mashup.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="Mail" type="wt:NonEmpty">
+                <xs:annotation>
+                  <xs:documentation>
+                    E-mail address to get in touch with the
+                    developer(s).
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="Description" type="wt:NonEmpty">
+                <xs:annotation>
+                  <xs:documentation>
+                    A brief textual description of the mashup.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="ImageURI" type="xs:anyURI">
+                <xs:annotation>
+                  <xs:documentation>
+                    Absolute or template-relative URL of the
+                    mashup image for the catalog.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="iPhoneImageURI" type="xs:anyURI">
+                <xs:annotation>
+                  <xs:documentation>
+                    Image to be used in iPhone and other
+                    smartphones.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="WikiURI" type="xs:anyURI">
+                <xs:annotation>
+                  <xs:documentation>
+                    Absolute or template-relative URL of the
+                    mashup documentation.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="IncludedResources">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Tab" minOccurs="1" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Resource" minOccurs="0"
+                            maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="Position">
+                                  <xs:complexType>
+                                    <xs:attribute name="x" type="xs:string"
+                                      use="required" />
+                                    <xs:attribute name="y" type="xs:string"
+                                      use="required" />
+                                    <xs:attribute name="z" type="xs:string"
+                                      use="required" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="Rendering">
+                                  <xs:complexType>
+                                    <xs:attribute name="width"
+                                      type="xs:string" use="required" />
+                                    <xs:attribute name="minimized"
+                                      type="xs:string" use="required" />
+                                    <xs:attribute name="layout"
+                                      type="xs:string" use="required" />
+                                    <xs:attribute name="height"
+                                      type="xs:string" use="required" />
+                                    <xs:attribute name="fulldragboard"
+                                      type="xs:boolean" use="required" />
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                              <xs:attribute name="vendor" type="wt:VendorType"
+                                use="required" />
+                              <xs:attribute name="name" use="required"
+                                type="wt:NameType" />
+                              <xs:attribute name="version" type="wt:VersionType"
+                                use="required" />
+                              <xs:attribute name="title" use="required"
+                                type="xs:string">
+                                <xs:annotation>
+                                  <xs:documentation></xs:documentation>
+                                </xs:annotation>
+                              </xs:attribute>
+                              <xs:attribute name="id" use="required"
+                                type="xs:string" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="name" use="required"
+                          type="xs:string">
+                        </xs:attribute>
+                        <xs:attribute name="id" use="required"
+                          type="xs:string">
+                        </xs:attribute>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Platform.Wiring" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              List of Input/Output endpoints of the widgets
+              contained in the mashup.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="Event">
+                <xs:annotation>
+                  <xs:documentation>
+                    Output Endpoint
+                  </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:attribute name="type" use="required">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string">
+                        <xs:enumeration value="text"></xs:enumeration>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="name" use="required" type="wt:NonEmpty">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Name that will be used to identify this
+                        output endpoint. This field cannot be translated.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="label" use="required" type="wt:NonEmpty">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Text that will be used to reference this
+                        output endpoint in the user interface. This field can be
+                        translated.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="description" use="required"
+                    type="wt:NonEmpty">
+                  </xs:attribute>
+                  <xs:attribute name="friendcode" use="required"
+                    type="wt:NonEmpty">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Keyword used to tag the output endpoint,
+                        so it can be easily suggested valid conection during the
+                        wiring process.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="Slot">
+                <xs:annotation>
+                  <xs:documentation>Input endpoint</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:attribute name="type" use="required">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string">
+                        <xs:enumeration value="text"></xs:enumeration>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="name" use="required" type="wt:NonEmpty">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Name that will be used to identify this
+                        input endpoint. This field cannot be translated.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="label" use="required" type="wt:NonEmpty">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Text that will be used to reference this
+                        input endpoint in the user interface. This field can be
+                        translated.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="action_label" type="wt:NonEmpty">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Text that will be used in the user
+                        interface to indicate what is going to happen if an
+                        event arrives this input endpoint.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="description" use="required"
+                    type="wt:NonEmpty">
+                  </xs:attribute>
+                  <xs:attribute name="friendcode" use="required"
+                    type="wt:NonEmpty">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Keyword used to tag the input endpoint,
+                        so it can be easily suggested valid conection during the
+                        wiring process.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="Operator">
+                <xs:annotation>
+                  <xs:documentation>
+                    Instanciated operator used in this mashup.
+                  </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:attribute name="id" type="wt:NonEmpty" use="required" />
+                  <xs:attribute name="vendor" type="wt:VendorType"
+                    use="required">
+                    <xs:annotation>
+                      <xs:documentation></xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="name" use="required" type="wt:NameType">
+                    <xs:annotation>
+                      <xs:documentation></xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="version" type="wt:VersionType"
+                    use="required" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="Connection">
+                <xs:annotation>
+                  <xs:documentation>
+                    Connection between an input endpoint and an
+                    output endpoint for this mashup.
+                  </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Source" minOccurs="1"
+                      maxOccurs="1" type="wt:EndpointType">
+                      <xs:annotation>
+                        <xs:documentation>
+                          Output endpoint in the connection
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element name="Target" minOccurs="1"
+                      maxOccurs="1" type="wt:EndpointType">
+                      <xs:annotation>
+                        <xs:documentation>
+                          Input endpoint in the connection
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Translations" minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="Translation">
+                <xs:annotation>
+                  <xs:documentation>
+                    A translation for a specified language
+                  </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="msg">
+                      <xs:annotation>
+                        <xs:documentation>Translated text</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="xs:string">
+                            <xs:attribute name="name" use="required"
+                              type="wt:NonEmpty">
+                            </xs:attribute>
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:choice>
+                  <xs:attribute name="lang" use="required" type="xs:language">
+                    <xs:annotation>
+                      <xs:documentation>Translation language</xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:choice>
+            <xs:attribute name="default" type="xs:language" use="required">
+              <xs:annotation>
+                <xs:documentation>
+                  Default language of the widget
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:simpleType name="NonEmpty">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\s*\S+.*"></xs:pattern>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="VendorType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[\p{L}\p{N}\_-]+"></xs:pattern>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="NameType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[\p{L}\p{N}\_-]+"></xs:pattern>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="VersionType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="(?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0)"></xs:pattern>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="EndpointType">
+    <xs:attribute name="type" type="wt:NonEmpty">
+      <xs:annotation>
+        <xs:documentation>
+          Type of the endpoint (Widget, operator).
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="id" type="wt:NonEmpty" />
+    <xs:attribute name="endpoint" type="wt:NonEmpty">
+      <xs:annotation>
+        <xs:documentation>
+          Input or output endpoint name.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+</xs:schema>
