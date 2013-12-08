@@ -156,7 +156,7 @@ def get_resource_data(untranslated_resource, user, request=None):
         'date': creation_timestamp,
         'uploader': uploader,
         'permissions' : {
-            'uninstall': resource.users.filter(pk=user.pk).exists(),
+            'uninstall': resource.public is False and resource.users.filter(pk=user.pk).exists(),
         },
         'author': resource.author,
         'displayName': displayName,
