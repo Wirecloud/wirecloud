@@ -82,10 +82,10 @@
 
         // Pullers definition
         this.pullerStartElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
-        this.pullerStartElement.setAttribute("r", 5);
+        this.pullerStartElement.setAttribute("r", '0.4em');
         this.pullerStartElement.addEventListener("click", Wirecloud.Utils.stopPropagationListener, false);
         this.pullerEndElement = canvas.canvasElement.generalLayer.ownerDocument.createElementNS(canvas.SVG_NAMESPACE, "svg:circle");
-        this.pullerEndElement.setAttribute("r", 5);
+        this.pullerEndElement.setAttribute("r", '0.4em');
         this.pullerEndElement.addEventListener("click", Wirecloud.Utils.stopPropagationListener, false);
 
         this.pullerStartElement.setAttribute('class', 'pullerBall');
@@ -316,7 +316,7 @@
 
             this.closerElement.setAttribute("cx", posCloser.posX);
             this.closerElement.setAttribute("cy", posCloser.posY);
-            this.closerElement.setAttribute("r", 8);
+            this.closerElement.setAttribute("r", '0.65em');
         }
         catch (err) {
             //TODO: error msg
