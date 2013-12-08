@@ -232,23 +232,25 @@
             this.header.appendChild(this.miniStatus);
 
             // MiniInterface Context Menu
-            this.contextmenu = new StyledElements.PopupMenu({'position': ['bottom-left', 'top-left']});
-            this._miniwidgetMenu_callback = function _miniwidgetMenu_callback(e) {
-                // Context Menu
-                e.stopPropagation();
-                if (e.button === 2) {
-                    if (this.contextmenu.isVisible()) {
-                        this.contextmenu.hide();
-                    } else {
-                        this.contextmenu.show(this.wrapperElement.getBoundingClientRect());
+            if (className == 'ioperator') {
+                this.contextmenu = new StyledElements.PopupMenu({'position': ['bottom-left', 'top-left']});
+                this._miniwidgetMenu_callback = function _miniwidgetMenu_callback(e) {
+                    // Context Menu
+                    e.stopPropagation();
+                    if (e.button === 2) {
+                        if (this.contextmenu.isVisible()) {
+                            this.contextmenu.hide();
+                        } else {
+                            this.contextmenu.show(this.wrapperElement.getBoundingClientRect());
+                        }
+                        return;
                     }
-                    return;
-                }
-            }.bind(this);
+                }.bind(this);
 
-            this.wrapperElement.addEventListener('mousedown', this._miniwidgetMenu_callback, false);
+                this.wrapperElement.addEventListener('mousedown', this._miniwidgetMenu_callback, false);
+                this.contextmenu.append(new Wirecloud.ui.WiringEditor.MiniInterfaceSettingsMenuItems(this));
+            }
             this.wrapperElement.addEventListener('contextmenu', Wirecloud.Utils.preventDefaultListener);
-            this.contextmenu.append(new Wirecloud.ui.WiringEditor.MiniInterfaceSettingsMenuItems(this));
         }
 
         // Draggable
