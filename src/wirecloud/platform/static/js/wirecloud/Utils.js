@@ -554,7 +554,9 @@
      * una excepción.
      */
     Utils.removeFromParent = function removeFromParent(domNode) {
-        domNode.parentNode.removeChild(domNode);
+        if (domNode.parentNode != null) {
+            domNode.parentNode.removeChild(domNode);
+        }
     };
 
     /**

@@ -104,7 +104,7 @@ IWidget.prototype.notifyEvent = function () {
  */
 IWidget.prototype.destroy = function () {
     if (this.element) {
-        this.element.remove();
+        Wirecloud.Utils.removeFromParent(this.element);
         this.element = null;
         this.content = null;
     }
