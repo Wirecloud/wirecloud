@@ -52,12 +52,14 @@
         this.initPos = {'x': 0, 'y': 0};
         this.sticky = null;
 
-        if (height == null) {
-            // Default 50 px height for multiconnector
+        if (height == null || height >= 26) {
+            // Default 30 px height for multiconnector
             height = 30;
-            this.height = height;
+        } else {
+            // Transform 'em' in 'px'. When (font-size == 1em) -> 1px == 0.054em
+            height = height / 0.054;
         }
-
+        this.height = height;
 
         if (this.initAnchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
             Wirecloud.ui.WiringEditor.TargetAnchor.call(this, initAnchor.context,
@@ -119,8 +121,8 @@
         if (endPos == null) {
             coord.posY -= (height / 2);
         }
-        this.wrapperElement.style.height = height + 'px';
-        this.wrapperElement.style.width = '30px';
+        this.wrapperElement.style.height = (height * 0.054) + 'em';
+        this.wrapperElement.style.width = '1.63em';
         this.setPosition(coord);
 
         // Draggable
@@ -223,21 +225,26 @@
      */
     var coord;
     Multiconnector.prototype.calculatePosibleAnchors = function calculatePosibleAnchors() {
-        var i;
+        var i, currentSize;
 
+        currentSize = parseFloat(this.layer.style.fontSize);
+        this.mainAnchor.wrapperElement.style.top = (((this.height - 20) / 2) * currentSize) + 'px';
+        this.movZone.wrapperElement.style.top = ((((this.height - 20) / 2) + 2) * currentSize) + 'px';
         coord = this.mainAnchor.getCoordinates(this.wiringEditor.layout.getCenterContainer().wrapperElement);
-        coord.posY -= (this.height / 2);
+        coord.posY -= (this.height / 2) * currentSize;
         this.arrowPositions = [];
         if (this.initAnchor instanceof Wirecloud.ui.WiringEditor.TargetAnchor) {
-            coord.posX -= 60;
+            coord.posX -= 58 * currentSize;
+        } else {
+            coord.posX -= 3 * currentSize;
         }
 
-        if (this.height < 40) {
-            this.arrowPositions.push({'coord': {'posX': coord.posX + 30, 'posY': coord.posY + 15}, 'free': true});
+        if (this.height * currentSize < (40 * currentSize)) {
+            this.arrowPositions.push({'coord': {'posX': (coord.posX + 30 * currentSize), 'posY': coord.posY + 15 * currentSize}, 'free': true});
             return;
         }
-        for (i = coord.posY + 15; i <= (coord.posY + this.height - 10); i += 15) {
-            this.arrowPositions.push({'coord': {'posX': coord.posX + 30, 'posY': i}, 'free': true});
+        for (i = coord.posY + 15 * currentSize; i <= (coord.posY + ((this.height - 10) * currentSize)); i += 15 * currentSize) {
+            this.arrowPositions.push({'coord': {'posX': (coord.posX + 30 * currentSize), 'posY': i}, 'free': true});
         }
     };
 
@@ -369,7 +376,7 @@
             return;
         }
         this.height += dif;
-        this.wrapperElement.style.height = this.height + 'px';
+        this.wrapperElement.style.height = (this.height * 0.054) + 'em';
         this.wrapperElement.style.top = (parseInt(this.wrapperElement.style.top, 10) - dif) + 'px';
         this.movZone.wrapperElement.style.top = ((this.height - 20) / 2) + 'px';
         this.mainAnchor.wrapperElement.style.top = ((this.height - 20) / 2) + 'px';
