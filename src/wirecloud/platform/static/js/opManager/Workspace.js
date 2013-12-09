@@ -109,9 +109,14 @@ function Workspace (workspaceState) {
                     }
                 }
 
+                layoutManager.header.refresh();
                 this.preferences.addCommitHandler(function() {
                     setTimeout(function() {
-                        OpManagerFactory.getInstance().changeActiveWorkspace(this);
+                        OpManagerFactory.getInstance().changeActiveWorkspace({
+                            id: this.id,
+                            creator: this.workspaceState.creator,
+                            name: this.workspaceState.name
+                        });
                     }.bind(this), 0);
                 }.bind(this));
                 preferencesWindow = this.getPreferencesWindow();
