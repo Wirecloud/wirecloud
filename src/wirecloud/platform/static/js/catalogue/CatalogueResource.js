@@ -1,27 +1,23 @@
 /*
-*     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
-*     S.A.Unipersonal (Telefonica I+D)
-*
-*     This file is part of Morfeo EzWeb Platform.
-*
-*     Morfeo EzWeb Platform is free software: you can redistribute it and/or modify
-*     it under the terms of the GNU Affero General Public License as published by
-*     the Free Software Foundation, either version 3 of the License, or
-*     (at your option) any later version.
-*
-*     Morfeo EzWeb Platform is distributed in the hope that it will be useful,
-*     but WITHOUT ANY WARRANTY; without even the implied warranty of
-*     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*     GNU Affero General Public License for more details.
-*
-*     You should have received a copy of the GNU Affero General Public License
-*     along with Morfeo EzWeb Platform.  If not, see <http://www.gnu.org/licenses/>.
-*
-*     Info about members and contributors of the MORFEO project
-*     is available at
-*
-*     http://morfeo-project.org
-*/
+ *     Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *     This file is part of Wirecloud Platform.
+ *
+ *     Wirecloud Platform is free software: you can redistribute it and/or
+ *     modify it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
+ *
+ *     Wirecloud is distributed in the hope that it will be useful, but WITHOUT
+ *     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+ *     License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with Wirecloud Platform.  If not, see
+ *     <http://www.gnu.org/licenses/>.
+ *
+ */
 
 /*global Wirecloud*/
 
@@ -29,7 +25,7 @@
 
     "use strict";
 
-    var CatalogueResource = function CatalogueResource(resourceJSON_) {
+    var CatalogueResource = function CatalogueResource(data) {
 
         ///////////////////////
         // PRIVATE VARIABLES
@@ -47,28 +43,12 @@
         //////////////////////////
         // GETTERS
         /////////////////////////
-        this.getCreator = function () {
-            return currentVersion.author;
-        };
-
-        this.getDisplayName = function () {
-            return currentVersion.displayName;
-        };
-
         this.getLastVersion = function () {
             return allVersions[0];
         };
 
-        this.getId = function () {
-            return currentVersion.id;
-        };
-
         this.getAllVersions = function () {
             return allVersions;
-        };
-
-        this.getDescription = function () {
-            return currentVersion.description;
         };
 
         this.getUriImage = function () {
@@ -79,20 +59,12 @@
             return currentVersion.uriTemplate;
         };
 
-        this.getUriWiki = function () {
-            return currentVersion.uriWiki;
-        };
-
         this.isMashup = function () {
             return this.type === 'mashup';
         };
 
         this.isWidget = function () {
             return this.type === 'widget';
-        };
-
-        this.getAddedBy = function () {
-            return currentVersion.addedBy;
         };
 
         this.getTags = function () {
@@ -107,10 +79,6 @@
             return currentVersion.votes.user_vote;
         };
 
-        this.getCapabilities = function () {
-            return currentVersion.capabilities;
-        };
-
         this.isAllow = function isAllow(action) {
 
             switch (action) {
@@ -122,23 +90,30 @@
             }
         };
 
-        this.isPackaged = function () {
-            return !!currentVersion.packaged;
-        };
-
-        this.getURI = function () {
-            return [this.vendor, this.name, currentVersion.version.text].join('/');
-        };
-
         Object.defineProperties(this, {
-            'vendor': {value: resourceJSON_.vendor},
-            'name': {value: resourceJSON_.name},
+            'vendor': {value: data.vendor},
+            'name': {value: data.name},
             'version': {
                 get: function () {
                     return currentVersion.version;
                 }
             },
-            'type': {value: resourceJSON_.type},
+            'uri': {
+                get: function () { return [this.vendor, this.name, currentVersion.version.text].join('/'); }
+            },
+            'type': {value: data.type},
+            'packaged': {
+                get: function () { return !!currentVersion.packaged; }
+            },
+            'description': {
+                get: function () { return currentVersion.description; }
+            },
+            'doc_url': {
+                get: function () { return currentVersion.uriWiki; }
+            },
+            'displayname': {
+                get: function () { return currentVersion.displayName; }
+            },
             'uploader': {
                 get: function () { return currentVersion.uploader; }
             },
@@ -150,22 +125,10 @@
             }
         });
 
-        //////////////
-        // SETTERS
-        //////////////
-
-        this.setTags = function (tagsJSON_) {
-            currentVersion.tags = tagsJSON_;
-        };
-
-        this.setVotes = function (voteDataJSON_) {
-            currentVersion.votes = voteDataJSON_;
-        };
-
         /////////////////////////////
         // CONVENIENCE FUNCTIONS
         /////////////////////////////
-        this.changeVersion = function (version) {
+        this.changeVersion = function changeVersion(version) {
             if (version instanceof Wirecloud.Version) {
                 version = version.text;
             }
@@ -180,7 +143,7 @@
         ////////////////////////
         // CONSTRUCTOR
         ////////////////////////
-        versions = resourceJSON_.versions;
+        versions = data.versions;
 
         for (i = 0; i < versions.length; i += 1) {
             version_data = versions[i];

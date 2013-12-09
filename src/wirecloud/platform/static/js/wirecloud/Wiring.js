@@ -265,7 +265,7 @@
         var id, msg, affected = false;
 
         for (id in this.ioperators) {
-            if (this.ioperators[id].meta.uri === operator.getURI()) {
+            if (this.ioperators[id].meta.uri === operator.uri) {
                 affected = true;
                 this.ioperators[id].destroy();
                 delete this.ioperators[id];
@@ -274,7 +274,7 @@
 
         if (affected) {
             msg = gettext('%(operator)s operator was removed while in use');
-            msg = interpolate(msg, {operator: operator.getURI()}, true);
+            msg = interpolate(msg, {operator: operator.uri}, true);
             this.events.error.dispatch(msg);
         }
     };

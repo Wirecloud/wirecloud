@@ -147,7 +147,7 @@ var OpManagerFactory = function () {
                 method: 'POST',
                 contentType: 'application/json',
                 requestHeaders: {'Accept': 'application/json'},
-                postBody: JSON.stringify({'mashup': resource.getURI()}),
+                postBody: JSON.stringify({'mashup': resource.uri}),
                 onSuccess: mergeOk.bind(this),
                 onFailure: mergeError.bind(this),
                 onException: mergeError.bind(this)
@@ -206,7 +206,7 @@ var OpManagerFactory = function () {
                 requestHeaders: {'Accept': 'application/json'},
                 postBody: JSON.stringify({
                     'allow_renaming': options.allow_renaming,
-                    'mashup': resource.getURI(),
+                    'mashup': resource.uri,
                     'dry_run': options.dry_run
                 }),
                 onSuccess: cloneOk.bind(this),

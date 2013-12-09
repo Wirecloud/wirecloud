@@ -103,7 +103,7 @@
                 }
             })
         } else {
-            var local_widget = Wirecloud.LocalCatalogue.getResourceId(resource.getURI());
+            var local_widget = Wirecloud.LocalCatalogue.getResourceId(resource.uri);
             OpManagerFactory.getInstance().addInstance(local_widget);
         }
     };
@@ -143,7 +143,7 @@
             layoutManager.logSubTask(gettext('Uploading resource'));
 
             this.catalogue.addResourceFromURL(resource.getUriTemplate(), {
-                packaged: resource.isPackaged(),
+                packaged: resource.packaged,
                 onSuccess: function () {
                     LayoutManagerFactory.getInstance().logSubTask(gettext('Resource installed successfully'));
                     LayoutManagerFactory.getInstance().logStep('');

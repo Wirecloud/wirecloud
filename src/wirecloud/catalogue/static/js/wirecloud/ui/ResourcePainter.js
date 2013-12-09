@@ -62,13 +62,13 @@
         }
 
         context = Wirecloud.Utils.merge(extra_context, {
-            'displayname': resource.getDisplayName(),
+            'displayname': resource.displayname,
             'name': resource.name,
-            'internalname': resource.getURI(),
+            'internalname': resource.uri,
             'vendor': resource.vendor,
             'version': resource.version.text,
-            'author': resource.getCreator(),
-            'description': resource.getDescription(),
+            'author': resource.author,
+            'description': resource.description,
             'type': function () {
                 var label = document.createElement('div');
                 label.textContent = resource.type;
@@ -100,7 +100,7 @@
                     'title': gettext('Documentation')
                 });
                 button.addEventListener('click', function () {
-                    window.open(resource.getUriWiki(), '_blank');
+                    window.open(resource.doc_url, '_blank');
                 });
 
                 return button;
@@ -114,7 +114,7 @@
                     'title': gettext('Home page')
                 });
                 button.addEventListener('click', function () {
-                    window.open(resource.getUriWiki(), '_blank');
+                    window.open(resource.doc_url, '_blank');
                 });
 
                 return button;

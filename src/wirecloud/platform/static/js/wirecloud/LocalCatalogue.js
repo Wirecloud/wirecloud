@@ -87,8 +87,8 @@
         }
 
         try {
-            delete this.catalogue.resources[this.resource.getURI()];
-            delete this.catalogue.resourcesByType[this.resource.type][this.resource.getURI()];
+            delete this.catalogue.resources[this.resource.uri];
+            delete this.catalogue.resourcesByType[this.resource.type][this.resource.uri];
         } catch (e) {}
 
         if (typeof this.onSuccess === 'function') {
