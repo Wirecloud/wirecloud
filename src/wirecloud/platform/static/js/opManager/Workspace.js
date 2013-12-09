@@ -361,7 +361,6 @@ function Workspace (workspaceState) {
 
                 this.workspaceState.name = name;
                 this.contextManager.modify({'name': name});
-                layoutManager.header.refresh();
                 state = {
                     workspace_creator: this.workspaceState.creator,
                     workspace_name: name,
@@ -370,6 +369,7 @@ function Workspace (workspaceState) {
                 };
                 HistoryManager.replaceState(state);
 
+                layoutManager.header.refresh();
                 layoutManager.logSubTask(gettext('Workspace renamed successfully'));
                 layoutManager.logStep('');
             }.bind(this),
