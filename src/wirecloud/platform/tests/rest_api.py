@@ -1126,7 +1126,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         response_data = json.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
 
-    def test_resource_collection_post_widget_missing_config_xml(self):
+    def test_resource_collection_post_resource_missing_config_xml(self):
 
         url = reverse('wirecloud_showcase.resource_collection')
 
