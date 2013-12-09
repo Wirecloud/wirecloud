@@ -225,14 +225,24 @@ var LayoutManagerFactory = function () {
          * Handler for changes in the hash to navigate to other areas
          */
         LayoutManager.prototype.onHashChange = function(state) {
-            var tab_id, tab, nextWorkspace, opManager, dragboard;
+            var tab_id, tab, nextWorkspace, opManager, dragboard, alert_msg;
 
             opManager = OpManagerFactory.getInstance();
 
             nextWorkspace = opManager.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
-            if (nextWorkspace.id !== opManager.activeWorkspace.id) {
+            if (nextWorkspace == null) {
+                if (opManager.activeWorkspace != null) {
+                    opManager.activeWorkspace.unload();
+                    opManager.activeWorkspace = null;
+                }
+                alert_msg = document.createElement('div');
+                alert_msg.className = 'alert alert-info';
+                alert_msg.textContent = gettext('The requested workspace is no longer available (it was deleted).');;
+                LayoutManagerFactory.getInstance().viewsByName['workspace'].clear();
+                LayoutManagerFactory.getInstance().viewsByName['workspace'].appendChild(alert_msg);
+                this.header.refresh();
+            } else if (opManager.activeWorkspace == null || (nextWorkspace.id !== opManager.activeWorkspace.id)) {
                 opManager.changeActiveWorkspace(nextWorkspace, state.tab);
-                return;
             }
 
             if (state.view !== this.alternatives.getCurrentAlternative().view_name) {

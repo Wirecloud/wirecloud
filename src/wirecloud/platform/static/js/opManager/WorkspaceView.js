@@ -34,18 +34,7 @@
             OpManagerFactory.getInstance().changeActiveWorkspace(workspace);
         }));
         this.wsMenu.appendSeparator();
-        this.wsMenu.append(new WorkspaceItems());
-
-        this.wsMenu.append(new StyledElements.MenuItem(gettext('New workspace'), function () {
-            this.createWorkspaceWindow.show();
-        }.bind(this)));
-
-        this.wsMenu.append(new StyledElements.MenuItem(gettext('Upload to local catalogue'), function () {
-            LayoutManagerFactory.getInstance().viewsByName.marketplace.waitMarketListReady(function () {
-                var window = new Wirecloud.ui.PublishWorkspaceWindowMenu(OpManagerFactory.getInstance().activeWorkspace);
-                window.show();
-            });
-        }.bind(this)));
+        this.wsMenu.append(new WorkspaceItems(this));
     };
     WorkspaceView.prototype = new StyledElements.Alternative();
 
@@ -58,21 +47,15 @@
     };
 
     WorkspaceView.prototype.getBreadcrum = function getBreadcrum() {
-        var workspace, workspace_name, entries;
+        var workspace_name, entries, current_state;
 
-        workspace = OpManagerFactory.getInstance().activeWorkspace;
-        if (workspace != null) {
-            // TODO
-            // Moved here to ensure the initial theme has been loaded
-            if (this.createWorkspaceWindow == null) {
-                this.createWorkspaceWindow = new Wirecloud.ui.NewWorkspaceWindowMenu();
-            }
-
+        current_state = HistoryManager.getCurrentState();
+        if (current_state != null) {
             entries = [
                 {
-                    'label': workspace.workspaceState.creator
+                    'label': current_state.workspace_creator
                 }, {
-                    'label': workspace.getName(),
+                    'label': current_state.workspace_name,
                     'menu': this.wsMenu
                 }
             ];

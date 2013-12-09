@@ -679,8 +679,9 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertEqual(self.get_current_workspace_name(), 'ExistingWorkspace')
 
         self.driver.back()
-        WebDriverWait(self.driver, 5, ignored_exceptions=(StaleElementReferenceException,)).until(lambda driver: self.get_current_workspace_name() == 'd')
-    test_browser_navigation_to_deleted_workspace.tags = ('current',)
+        WebDriverWait(self.driver, 5, ignored_exceptions=(StaleElementReferenceException,)).until(lambda driver: self.get_current_workspace_name() == 'Pending Events')
+        self.driver.back()
+        WebDriverWait(self.driver, 5, ignored_exceptions=(StaleElementReferenceException,)).until(lambda driver: self.get_current_workspace_name() == 'Workspace')
 
     def test_gui_tutorials(self):
 
