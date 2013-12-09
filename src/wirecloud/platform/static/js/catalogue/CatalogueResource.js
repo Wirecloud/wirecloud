@@ -37,7 +37,6 @@
         var currentVersion = null,
             allVersions = [],
             data_by_version = {},
-            extra_data = null,
         ///////////////////////////
         // CONSTRUCTOR VARIABLES
         ///////////////////////////
@@ -112,10 +111,6 @@
             return currentVersion.capabilities;
         };
 
-        this.getExtraData = function () {
-            return extra_data;
-        };
-
         this.isAllow = function isAllow(action) {
 
             switch (action) {
@@ -158,10 +153,6 @@
         //////////////
         // SETTERS
         //////////////
-
-        this.setExtraData = function (extra_data_) {
-            extra_data = extra_data_;
-        };
 
         this.setTags = function (tagsJSON_) {
             currentVersion.tags = tagsJSON_;

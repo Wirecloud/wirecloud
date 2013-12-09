@@ -45,7 +45,6 @@
             name = resourceJSON_.name,
             store = resourceJSON_.store,
             parts = resourceJSON_.parts,
-            extra_data = null,
         ///////////////////////////
         // CONSTRUCTOR VARIABLES
         ///////////////////////////
@@ -93,10 +92,6 @@
 
         this.getLegal = function() {
             return resourceJSON_.legal;
-        };
-
-        this.getExtraData = function () {
-            return extra_data;
         };
 
         this.getTags = function () {
@@ -152,14 +147,6 @@
                 }
             }
         }
-
-        //////////////
-        // SETTERS
-        //////////////
-
-        this.setExtraData = function (extra_data_) {
-            extra_data = extra_data_;
-        };
     }
 
     window.FiWareCatalogueResource = FiWareCatalogueResource;
