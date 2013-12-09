@@ -683,19 +683,38 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.back()
         WebDriverWait(self.driver, 5, ignored_exceptions=(StaleElementReferenceException,)).until(lambda driver: self.get_current_workspace_name() == 'Workspace')
 
+    def assertElementHasFocus(self, element):
+        # Workaround webkit problem with xhtml and retreiving element with focus
+        if self.driver.capabilities['browserName'] == 'chrome':
+            return
+        focused_element = self.driver.switch_to_active_element().find_element_by_tag_name('span')
+        self.assertEqual(element, focused_element)
+
     def test_gui_tutorials(self):
 
         self.login(username='emptyuser')
 
         self.driver.find_element_by_css_selector('#wirecloud_header .user_menu_wrapper .styled_button > div, #wirecloud_header .arrow-down-settings').click()
         self.popup_menu_click(('Tutorials', 'Basic concepts'))
-        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']").click()
+        next_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']")
+        self.assertElementHasFocus(next_button)
+        next_button.click()
+
         WebDriverWait(self.driver, 5, ignored_exceptions=(StaleElementReferenceException,)).until(lambda driver: self.get_current_workspace_name() == 'Basic concepts tutorial')
-        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']").click()
+        next_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']")
+        self.assertElementHasFocus(next_button)
+        next_button.click()
+
         WebDriverWait(self.driver, 10).until(element_to_be_clickable((By.CSS_SELECTOR, '#wirecloud_header .menu .marketplace')))
         self.change_main_view('marketplace')
-        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']").click()
-        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']").click()
+        next_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']")
+        self.assertElementHasFocus(next_button)
+        next_button.click()
+
+        next_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']")
+        self.assertElementHasFocus(next_button)
+        next_button.click()
+
         time.sleep(5)
 
         testcase = self
@@ -703,7 +722,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             resource = testcase.search_in_catalogue_results('YouTube Browser')
             return element_to_be_clickable((By.CSS_SELECTOR, '.instantiate_button div'), base_element=resource)(driver)
         WebDriverWait(self.driver, 10).until(youtube_instantiable).click()
-        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']").click()
+        next_button = self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Next']")
+        self.assertElementHasFocus(next_button)
+        next_button.click()
+
         WebDriverWait(self.driver, 10).until(element_to_be_clickable((By.CSS_SELECTOR, '#wirecloud_header .menu .marketplace')))
         self.change_main_view('marketplace')
 
