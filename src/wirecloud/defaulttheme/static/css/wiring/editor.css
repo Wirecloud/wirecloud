@@ -66,3 +66,11 @@
     height: 12px;
     width: 6px;
 }
+
+/* Entities max-width */
+.wiring_editor .calculateEntitySizeDiv {
+    position: absolute;
+    top: 0;
+    left: 0;
+    white-space: nowrap;
+}
