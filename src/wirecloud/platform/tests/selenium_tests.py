@@ -65,7 +65,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # We need atleast one Workspace, so we cannot delete current workspace
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
-        self.check_popup_menu(('Rename', 'Settings', 'New workspace', 'Upload to local catalogue'), ('Remove',))
+        self.check_popup_menu(('Rename', 'Settings', 'New workspace', 'Upload to local catalogue'), must_be_disabled=('Remove',))
 
         self.create_workspace('Test')
 
@@ -102,7 +102,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Now we have only one workspace, so we cannot remove it
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
-        self.check_popup_menu(('Rename', 'Settings', 'New workspace'), ('Remove',))
+        self.check_popup_menu(('Rename', 'Settings', 'New workspace'), must_be_disabled=('Remove',))
     test_basic_workspace_operations.tags = ('fiware-ut-5',)
 
     def test_move_iwidget_between_tabs(self):

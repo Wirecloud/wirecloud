@@ -62,6 +62,7 @@ class PopupMenuTester(object):
         for item in must_be:
             menu_item = self.get_entry(item)
             self.testcase.assertIsNotNone(menu_item)
+            self.testcase.assertFalse('disabled' in menu_item.get_attribute('class'))
 
         for item in must_be_absent:
             menu_item = self.get_entry(item)
