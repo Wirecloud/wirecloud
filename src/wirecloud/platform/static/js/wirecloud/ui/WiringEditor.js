@@ -586,13 +586,11 @@ if (!Wirecloud.ui) {
         this.recommendations = new Wirecloud.ui.RecommendationManager();
         this.operatorVersions = {};
 
-        // Set 100% Zoom in grid
-        // TODO this.grid = this.layout.getCenterContainer().wrapperElement
         this.gridFullHeight = parseFloat(this.layout.getCenterContainer().wrapperElement.style.height);
         this.gridFullWidth = parseFloat(this.layout.getCenterContainer().wrapperElement.style.width);
         this.fullHeaderHeight = LayoutManagerFactory.getInstance().mainLayout.getNorthContainer().wrapperElement.getBoundingClientRect().height;
+        // Set 100% Zoom in grid
         this.layout.getCenterContainer().wrapperElement.style.fontSize = '1em';
-        //this.layout.getCenterContainer().wrapperElement.style.zoom = '1';
 
         iwidgets = workspace.getIWidgets();
         availableOperators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
@@ -1574,6 +1572,60 @@ if (!Wirecloud.ui) {
         this.canvas.canvasElement.generalLayer.setAttribute('transform', param);
         this.canvas.canvasElement.style.top = scrollY + 'px';
         this.canvas.canvasElement.style.left = scrollX + 'px';
+    };
+
+
+    /**
+     *  Set Zoom level
+     */
+    WiringEditor.prototype.setZoomLevel = function setZoomLevel(percent) {
+        var key, invertPercent, calculatedHeight, calculatedWidth, calculatedLeft, top, left, currentSize;
+
+        // Initial size
+        currentSize = parseFloat(this.layout.getCenterContainer().wrapperElement.style.fontSize);
+        // Change general grid zoom
+        changeZoom(this.layout.getCenterContainer().wrapperElement, percent);
+        for (key in this.currentlyInUseOperators) {
+            this.layout.getCenterContainer().removeChild(this.currentlyInUseOperators[key]);
+            setEntityMaxWidth.call(this, this.currentlyInUseOperators[key]);
+            this.layout.getCenterContainer().appendChild(this.currentlyInUseOperators[key]);
+            // To avoid scroll problems
+            this.currentlyInUseOperators[key].wrapperElement.style.minWidth = this.currentlyInUseOperators[key].getBoundingClientRect().width + 'px';
+            // Calculate new position
+            top = parseFloat(this.currentlyInUseOperators[key].wrapperElement.style.top);
+            left = parseFloat(this.currentlyInUseOperators[key].wrapperElement.style.left);
+            this.currentlyInUseOperators[key].wrapperElement.style.top = ((top / currentSize) * percent) + 'px';
+            this.currentlyInUseOperators[key].wrapperElement.style.left = ((left / currentSize) * percent) + 'px';
+            this.currentlyInUseOperators[key].repaint();
+        }
+        for (key in this.iwidgets) {
+            this.layout.getCenterContainer().removeChild(this.iwidgets[key]);
+            setEntityMaxWidth.call(this, this.iwidgets[key]);
+            this.layout.getCenterContainer().appendChild(this.iwidgets[key]);
+            // To avoid scroll problems
+            this.iwidgets[key].wrapperElement.style.minWidth = this.iwidgets[key].getBoundingClientRect().width + 'px';
+            // Calculate new position
+            top = parseFloat(this.iwidgets[key].wrapperElement.style.top);
+            left = parseFloat(this.iwidgets[key].wrapperElement.style.left);
+            this.iwidgets[key].wrapperElement.style.top = ((top / currentSize) * percent) + 'px';
+            this.iwidgets[key].wrapperElement.style.left = ((left / currentSize) * percent) + 'px';
+            this.iwidgets[key].repaint();
+        }
+        for (key in this.multiconnectors) {
+            // Calculate new position
+            top = parseFloat(this.multiconnectors[key].wrapperElement.style.top);
+            left = parseFloat(this.multiconnectors[key].wrapperElement.style.left);
+            this.multiconnectors[key].wrapperElement.style.top = ((top / currentSize) * percent) + 'px';
+            this.multiconnectors[key].wrapperElement.style.left = ((left / currentSize) * percent) + 'px';
+            this.multiconnectors[key].repaint();
+        }
+    };
+
+    /**
+     *  Generic zoom setter
+     */
+    var changeZoom = function changeZoom(element, level) {
+        element.style.fontSize = level + 'em';
     };
 
     /*************************************************************************

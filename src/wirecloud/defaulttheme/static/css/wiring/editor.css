@@ -27,10 +27,6 @@
     pointer-events: none;
 }
 
-.wiring_editor .grid {
-    font-size: 1.05em;
-}
-
 .wiring_editor .grid.selecting {
     cursor: url('../../images/wiring/cursorAdd.png'), crosshair;
 }
