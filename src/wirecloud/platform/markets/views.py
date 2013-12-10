@@ -20,6 +20,7 @@
 import json
 import os
 
+from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
@@ -71,12 +72,18 @@ class MarketCollection(Resource):
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
-        user_entry = request.user
-        if received_data['options'].get('share', '') is True:
+        if 'user' not in received_data['options'] or received_data['options']['user'] == request.user.username:
+            user_entry = request.user
+        elif received_data['options'].get('user', None) is not None:
+            user_entry = User.objects.get(username=received_data['options']['user'])
+        else:
             user_entry = None
 
-        if user_entry is None and not request.user.is_superuser:
-            return HttpResponseForbidden()
+        if (user_entry is None or user_entry != request.user) and not request.user.is_superuser:
+            return build_error_response(request, 403, _("You don't have permissions for adding public marketplaces"))
+
+        if 'user' in received_data['options']:
+            del received_data['options']['user']
 
         Market.objects.create(user=user_entry, name=received_data['name'], options=json.dumps(received_data['options']))
 

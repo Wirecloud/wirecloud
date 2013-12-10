@@ -753,13 +753,19 @@ class WirecloudRemoteTestCase(object):
         except:
             return self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text
 
-    def perform_market_action(self, action):
+    def open_marketplace_menu(self):
+        self.change_main_view('marketplace')
         try:
             self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         except:
             self.driver.find_element_by_css_selector('#wirecloud_breadcrum .third_level > .icon-menu').click()
 
-        self.popup_menu_click(action)
+        popup_menu_element = self.wait_element_visible_by_css_selector('.popup_menu')
+
+        return PopupMenuTester(self, popup_menu_element)
+
+    def perform_market_action(self, action):
+        self.open_marketplace_menu().click_entry(action)
 
     def perform_workspace_action(self, action):
         self.change_main_view('workspace')
@@ -779,7 +785,7 @@ class WirecloudRemoteTestCase(object):
 
         return None
 
-    def add_marketplace(self, name, url, type_, expect_error=False):
+    def add_marketplace(self, name, url, type_, expect_error=False, public=False):
 
         self.change_main_view('marketplace')
         self.perform_market_action("Add new marketplace")
@@ -790,6 +796,9 @@ class WirecloudRemoteTestCase(object):
         self.fill_form_input(market_url_input, url)
         market_type_input = self.driver.find_element_by_css_selector('.window_menu .styled_form select')
         self.fill_form_input(market_type_input, type_)
+
+        if public:
+            self.driver.find_element_by_css_selector('.window_menu .styled_form input[name="public"]').click()
 
         self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
         self.wait_wirecloud_ready()

@@ -57,6 +57,11 @@ def get_market_managers(user):
     managers = {}
     for market in Market.objects.filter(Q(user=None) | Q(user=user)):
         options = json.loads(market.options)
+        if market.user is None:
+            options['user'] = None
+        else:
+            options['user'] = market.user.username
+
         if options['type'] in manager_classes:
             managers[unicode(market)] = manager_classes[options['type']](options)
 

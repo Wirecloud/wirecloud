@@ -69,7 +69,6 @@
         if (!this.loading && !this.error) {
             items.push(new StyledElements.MenuItem(gettext('Add new marketplace'), function () {
                 var menu, fields, type_entries;
-                //type_entries = this.market.market_types;
 
                 fields = {
                     'name': {
@@ -90,6 +89,12 @@
                         'required': true
                     }
                 };
+                if (OpManagerFactory.getInstance().contextManager.get('issuperuser')) {
+                    fields['public'] = {
+                        'type': 'boolean',
+                        'label': gettext('Public')
+                    }
+                }
                 menu = new Wirecloud.ui.FormWindowMenu(fields, gettext('Add Marketplace'));
 
                 // Form data is sent to server
@@ -100,9 +105,13 @@
                             "name": data.name,
                             "url": data.url,
                             "type": data.type,
-                            "user": OpManagerFactory.getInstance().contextManager.get('username')
                         }
                     };
+                    if (data['public'] === true) {
+                        market_info.options['user'] = null;
+                    } else {
+                        market_info.options['user'] = OpManagerFactory.getInstance().contextManager.get('username');
+                    }
                     Wirecloud.MarketManager.addMarket(market_info, this.market.addMarket.bind(this.market, market_info.options));
                 }.bind(this);
 

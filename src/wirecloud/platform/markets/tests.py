@@ -31,6 +31,17 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
         self.add_marketplace('remote', 'http://localhost:8080', 'wirecloud')
 
         self.login('normuser', 'admin')
+        popup_menu = self.open_marketplace_menu()
+        popup_menu.check(must_be_absent=('remote',))
+
+    def test_add_public_marketplace(self):
+
+        self.login()
+        self.add_marketplace('remote', 'http://localhost:8080', 'wirecloud', public=True)
+
+        self.login('normuser', 'admin')
+        popup_menu = self.open_marketplace_menu()
+        popup_menu.check(must_be=('remote',))
 
     def test_add_duplicated_marketplace(self):
 
@@ -54,3 +65,4 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
         self.login('admin', 'admin')
 
         self.delete_marketplace('origin')
+
