@@ -740,3 +740,4 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         window_menues = self.driver.find_elements_by_css_selector('.window_menu')
         self.assertEqual(len(window_menues), 1)
+    test_gui_tutorials.tags = ('fiware-ut-15',)
