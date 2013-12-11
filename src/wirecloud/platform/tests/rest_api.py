@@ -1310,7 +1310,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         resource = CatalogueResource.objects.get(vendor= 'Wirecloud', short_name= 'Test', version= '1.0')
         self.assertFalse(resource.users.filter(username='admin').exists())
 
-    def test_resource_entry_delete_delete(self):
+    def test_resource_entry_delete(self):
 
         resource = CatalogueResource.objects.get(vendor= 'Wirecloud', short_name= 'Test', version= '1.0')
         resource.users.clear()
