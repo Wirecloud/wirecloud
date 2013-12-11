@@ -215,7 +215,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         self.client = Client()
 
-    def test_features(self):
+    def test_feature_collection_get(self):
 
         url = reverse('wirecloud.features')
 
