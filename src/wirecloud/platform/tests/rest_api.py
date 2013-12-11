@@ -230,7 +230,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.workspace_collection')
         check_get_requires_authentication(self, url)
 
-    def test_workspace_collection_read(self):
+    def test_workspace_collection_get(self):
 
         url = reverse('wirecloud.workspace_collection')
 
@@ -491,12 +491,12 @@ class ApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 1})
         check_get_requires_authentication(self, url)
 
-    def test_workspace_entry_read_requires_permission(self):
+    def test_workspace_entry_get_requires_permission(self):
 
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 1})
         check_get_requires_permission(self, url)
 
-    def test_workspace_entry_read(self):
+    def test_workspace_entry_get(self):
 
         url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 1})
 
@@ -1040,7 +1040,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         url = reverse('wirecloud_showcase.resource_collection')
         check_get_requires_authentication(self, url)
 
-    def test_resource_collection_read(self):
+    def test_resource_collection_get(self):
 
         url = reverse('wirecloud_showcase.resource_collection')
 
@@ -1258,7 +1258,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         url = reverse('wirecloud_showcase.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
         check_get_requires_authentication(self, url)
 
-    def test_resource_entry_read(self):
+    def test_resource_entry_get(self):
 
         resource_id = [
             'Wirecloud',
@@ -1284,7 +1284,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/x-widget+mashable-application-component')
 
-    def test_resource_entry_read_requires_permission(self):
+    def test_resource_entry_get_requires_permission(self):
 
         resource_id = (
             'Wirecloud',
@@ -1336,7 +1336,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 2, 'tab_id': 101})
         check_get_requires_authentication(self, url)
 
-    def test_iwidget_collection_read(self):
+    def test_iwidget_collection_get(self):
 
         url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 2, 'tab_id': 101})
 
@@ -1353,7 +1353,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
         check_get_requires_authentication(self, url)
 
-    def test_iwidget_entry_read(self):
+    def test_iwidget_entry_get(self):
 
         url = reverse('wirecloud.iwidget_entry', kwargs={'workspace_id': 2, 'tab_id': 101, 'iwidget_id': 2})
 
@@ -1370,7 +1370,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud_showcase.resource_description_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
         check_get_requires_authentication(self, url)
 
-    def test_resource_description_entry_read(self):
+    def test_resource_description_entry_get(self):
 
         resource_id = [
             'Wirecloud',
@@ -1387,7 +1387,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
 
-    def test_resource_description_entry_read_requires_permission(self):
+    def test_resource_description_entry_get_requires_permission(self):
 
         resource_id = (
             'Wirecloud',
@@ -1470,7 +1470,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.platform_preferences')
         check_get_requires_authentication(self, url)
 
-    def test_platform_preference_collection_read(self):
+    def test_platform_preference_collection_get(self):
 
         url = reverse('wirecloud.platform_preferences')
 
@@ -1702,12 +1702,12 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.workspace_preferences', kwargs={'workspace_id': 2})
         check_get_requires_authentication(self, url)
 
-    def test_workspace_preference_collection_read_requires_permission(self):
+    def test_workspace_preference_collection_get_requires_permission(self):
 
         url = reverse('wirecloud.workspace_preferences', kwargs={'workspace_id': 2})
         check_get_requires_permission(self, url)
 
-    def test_workspace_preference_collection_read(self):
+    def test_workspace_preference_collection_get(self):
 
         url = reverse('wirecloud.workspace_preferences', kwargs={'workspace_id': 2})
 
@@ -1763,12 +1763,12 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.tab_preferences', kwargs={'workspace_id': 2, 'tab_id': 101})
         check_get_requires_authentication(self, url)
 
-    def test_tab_preference_collection_read_requires_permission(self):
+    def test_tab_preference_collection_get_requires_permission(self):
 
         url = reverse('wirecloud.tab_preferences', kwargs={'workspace_id': 2, 'tab_id': 101})
         check_get_requires_permission(self, url)
 
-    def test_tab_preference_collection_read(self):
+    def test_tab_preference_collection_get(self):
 
         url = reverse('wirecloud.tab_preferences', kwargs={'workspace_id': 2, 'tab_id': 101})
 
