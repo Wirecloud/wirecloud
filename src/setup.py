@@ -20,12 +20,47 @@
 
 import os
 from setuptools import setup
+from setuptools.command.install import install
 from distutils.command.install import INSTALL_SCHEMES
 
 import wirecloud.platform
 
 ROOT = os.path.abspath(os.path.dirname(__file__))
 packages, data_files = [], []
+
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+
+    def disable(self):
+        self.HEADER = ''
+        self.OKBLUE = ''
+        self.OKGREEN = ''
+        self.WARNING = ''
+        self.FAIL = ''
+        self.ENDC = ''
+
+
+class CustomInstallCommand(install):
+
+    """Customized setuptools install command - prints info about the license of Wirecloud after installing it."""
+    def run(self):
+        install.run(self)
+
+        print('')
+        print(bcolors.HEADER + 'License' + bcolors.ENDC)
+        print('')
+        print("Wirecloud is licensed under a AGPLv3+ license with a classpath-like exception \n" +
+              "that allows widgets/operators and mashups to be licensed under any propietary or \n" +
+              "open source license.")
+        print('')
+        license_file = os.path.join(self.install_purelib, 'wirecloud', 'LICENSE')
+        print('A copy of the license has been installed at: ' + bcolors.WARNING + license_file + bcolors.ENDC)
 
 
 for scheme in INSTALL_SCHEMES.values():
@@ -41,6 +76,7 @@ def include_data_files(path):
         if '__init__.py' not in filenames:
             data_files.append([dirpath, [os.path.join(dirpath, f) for f in filenames]])
 
+data_files.append(['wirecloud', ['LICENSE']])
 include_data_files('wirecloud')
 
 setup(
@@ -51,7 +87,7 @@ setup(
     author='CoNWeT Lab',
     author_email='wirecloud@conwet.com',
     url='http://github.com/Wirecloud/wirecloud',
-    license='AGPL3',
+    license='AGPLv3+ with classpath-like exception',
     packages=('wirecloud',),
     entry_points={
         'console_scripts': (
@@ -75,5 +111,8 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: JavaScript',
         'Topic :: Software Development :: Libraries :: Python Modules',
-    )
+    ),
+    cmdclass={
+        'install': CustomInstallCommand,
+    },
 )
