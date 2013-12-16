@@ -19,13 +19,20 @@
 
 from django.contrib import admin
 
-from wirecloud.catalogue.models import CatalogueResource
+from wirecloud.catalogue.models import CatalogueResource, WidgetWiring
+
+
+class ResourceEndpointsInline(admin.TabularInline):
+
+    model = WidgetWiring
+    extra = 0
 
 
 class CatalogueResourceAdmin(admin.ModelAdmin):
 
     search_fields = ('vendor', 'short_name', 'version', 'author')
     list_display = ('vendor', 'short_name', 'version', 'resource_type')
+    inlines = (ResourceEndpointsInline,)
     verbose_name_plural = 'Resources'
 
 admin.site.register(CatalogueResource, CatalogueResourceAdmin)
