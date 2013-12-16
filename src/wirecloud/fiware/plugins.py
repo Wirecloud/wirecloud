@@ -18,6 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf.urls import patterns, include, url
+from django.utils.translation import ugettext_lazy as _
 
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.platform.markets.utils import MarketManager
@@ -128,6 +129,21 @@ class FiWarePlugin(WirecloudPlugin):
             return patterns('',
                 (r'^api/marketAdaptor/', include('wirecloud.fiware.marketAdaptor.urls')),
             )
+
+    def get_platform_context_definitions(self):
+        return {
+            'fiware_version': {
+                'label': _('FI-WARE version'),
+                'description': _('FI-WARE version of the platform'),
+            },
+        }
+
+    def get_platform_context_current_values(self, user):
+        import wirecloud.fiware
+
+        return {
+            'fiware_version': wirecloud.fiware.__version__,
+        }
 
     def get_templates(self, view):
         if view == 'index':
