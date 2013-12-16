@@ -219,6 +219,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
     def get_scripts(self, view):
         common = (
+            'js/wirecloud/BaseRequirements.js',
             'js/common/ComputedStyle.js',
             'js/wirecloud/io.js',
             'js/wirecloud/ContextManager.js',
