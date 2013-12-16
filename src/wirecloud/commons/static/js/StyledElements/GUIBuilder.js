@@ -112,7 +112,7 @@
         var options, options_element;
 
         options = null;
-        options_element = element.ownerDocument.evaluate('s:options', element, function () { return 'http://wirecloud.conwet.fi.upm.es/StyledElements'; }, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        options_element = Wirecloud.Utils.XML.getChildElementByTagNameNS(element, 'http://wirecloud.conwet.fi.upm.es/StyledElements', 'options');
         if (options_element != null) {
             options_element.parentNode.removeChild(options_element);
             try {
@@ -129,13 +129,9 @@
                 var layout = new StyledElements.BorderLayout(options);
 
                 var populateContainer = function populateContainer(element, xpath, container) {
-                    var container_element, i, fragment;
+                    var container_element, fragment;
 
-                    container_element = element.ownerDocument.evaluate(xpath,
-                        element,
-                        function () { return 'http://wirecloud.conwet.fi.upm.es/StyledElements'; },
-                        XPathResult.FIRST_ORDERED_NODE_TYPE,
-                        null).singleNodeValue;
+                    container_element = Wirecloud.Utils.XML.getChildElementByTagNameNS(element, 'http://wirecloud.conwet.fi.upm.es/StyledElements', xpath);
 
                     if (container_element != null) {
                         options = extractOptions(container_element);
@@ -148,11 +144,11 @@
                     }
                 };
 
-                populateContainer(element, 's:northcontainer', layout.getNorthContainer());
-                populateContainer(element, 's:westcontainer', layout.getWestContainer());
-                populateContainer(element, 's:centercontainer', layout.getCenterContainer());
-                populateContainer(element, 's:eastcontainer', layout.getEastContainer());
-                populateContainer(element, 's:southcontainer', layout.getSouthContainer());
+                populateContainer(element, 'northcontainer', layout.getNorthContainer());
+                populateContainer(element, 'westcontainer', layout.getWestContainer());
+                populateContainer(element, 'centercontainer', layout.getCenterContainer());
+                populateContainer(element, 'eastcontainer', layout.getEastContainer());
+                populateContainer(element, 'southcontainer', layout.getSouthContainer());
 
                 return layout;
             },
