@@ -55,6 +55,7 @@ WIRING_EDITOR_FILES = (
     'js/wirecloud/ui/ColorSmartBox.js',
     'js/wirecloud/ui/BasicRecommendations.js',
     'js/wirecloud/ui/RecommendationManager.js',
+    'js/wirecloud/wiring/GhostEndpoint.js',
 )
 
 TUTORIAL_FILES = (

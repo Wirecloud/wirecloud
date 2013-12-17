@@ -145,6 +145,7 @@
         this.startMulti = null;
         this.multiId = null;
         this.readOnly = false;
+        this.isGhost = false;
     };
 
     /*************************************************************************

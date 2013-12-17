@@ -637,6 +637,25 @@
             return this.sourceAnchorsByName[name];
         } else if (name in this.targetAnchorsByName) {
             return this.targetAnchorsByName[name];
+        } else {
+            return null;
+        }
+    };
+
+    /**
+     * Add Ghost Endpoint
+     */
+    GenericInterface.prototype.addGhostEndpoint = function addGhostEndpoint(theEndpoint, isSource) {
+        var context;
+
+        if (isSource) {
+            context =  {'data': new Wirecloud.wiring.GhostEndpoint(theEndpoint, this.entity, true), 'iObject': this};
+            this.addSource(theEndpoint.endpoint, '', theEndpoint.endpoint, context, true);
+            return this.sourceAnchorsByName[theEndpoint.endpoint];
+        } else {
+            context =  {'data': new Wirecloud.wiring.GhostEndpoint(theEndpoint, this.entity, false), 'iObject': this};
+            this.addTarget(theEndpoint.endpoint, '', theEndpoint.endpoint, context, true);
+            return this.targetAnchorsByName[theEndpoint.endpoint];
         }
     };
 
@@ -1078,7 +1097,7 @@
     /**
      * Add Source.
      */
-    GenericInterface.prototype.addSource = function addSource(label, desc, name, anchorContext) {
+    GenericInterface.prototype.addSource = function addSource(label, desc, name, anchorContext, isGhost) {
         var anchor, anchorDiv, labelDiv, anchorLabel, treeDiv, subAnchors;
 
         // Sources counter
@@ -1090,8 +1109,15 @@
         if (desc === '') {
             desc = label;
         }
-        anchorDiv.setAttribute('title', label + ': ' + desc);
-        anchorDiv.setAttribute('class', 'anchorDiv');
+        if (isGhost) {
+            anchorDiv.setAttribute('title', gettext("Mismatch endpoint! ") + label);
+        } else {
+            anchorDiv.setAttribute('title', label + ': ' + desc);
+        }
+        anchorDiv.classList.add('anchorDiv');
+        if (isGhost) {
+            anchorDiv.classList.add('ghost');
+        }
         // Anchor visible label
         anchorLabel = document.createElement("span");
         anchorLabel.textContent = label;
@@ -1102,7 +1128,7 @@
         labelDiv.appendChild(anchorLabel);
 
         if (!this.isMiniInterface) {
-            anchor = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, this.arrowCreator);
+            anchor = new Wirecloud.ui.WiringEditor.SourceAnchor(anchorContext, this.arrowCreator, null, isGhost);
             labelDiv.appendChild(anchor.wrapperElement);
 
             anchor.menu.append(new StyledElements.MenuItem(gettext('Add multiconnector'), createMulticonnector.bind(this, name, anchor)));
@@ -1144,7 +1170,7 @@
     /**
      * Add Target.
      */
-    GenericInterface.prototype.addTarget = function addTarget(label, desc, name, anchorContext) {
+    GenericInterface.prototype.addTarget = function addTarget(label, desc, name, anchorContext, isGhost) {
         var anchor, anchorDiv, labelDiv, anchorLabel;
 
         // Targets counter
@@ -1156,8 +1182,15 @@
         if (desc === '') {
             desc = label;
         }
-        anchorDiv.setAttribute('title', label + ': ' + desc);
-        anchorDiv.setAttribute('class', 'anchorDiv');
+        if (isGhost) {
+            anchorDiv.setAttribute('title', gettext('Mismatch endpoint! ') + label);
+        } else {
+            anchorDiv.setAttribute('title', label + ': ' + desc);
+        }
+        anchorDiv.classList.add('anchorDiv');
+        if (isGhost) {
+            anchorDiv.classList.add('ghost');
+        }
         // Anchor visible label
         anchorLabel = document.createElement("span");
         anchorLabel.textContent = label;
@@ -1168,7 +1201,7 @@
         labelDiv.appendChild(anchorLabel);
 
         if (!this.isMiniInterface) {
-            anchor = new Wirecloud.ui.WiringEditor.TargetAnchor(anchorContext, this.arrowCreator);
+            anchor = new Wirecloud.ui.WiringEditor.TargetAnchor(anchorContext, this.arrowCreator, isGhost);
             labelDiv.appendChild(anchor.wrapperElement);
 
             anchor.menu.append(new StyledElements.MenuItem(gettext('Add multiconnector'), createMulticonnector.bind(this, name, anchor)));

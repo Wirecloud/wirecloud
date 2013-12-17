@@ -75,10 +75,22 @@
             if (!isGhost) {
                 if ((endPointPos.sources.length > 0) || (endPointPos.targets.length > 0)) {
                     for (i = 0; i < endPointPos.sources.length; i += 1) {
-                        outputs[i] = iwidget.outputs[endPointPos.sources[i]];
+                        if (iwidget.outputs[endPointPos.sources[i]]) {
+                            outputs.push(iwidget.outputs[endPointPos.sources[i]]);
+                        } else {
+                            // Lost endpoint.
+                            outputs = iwidget.widget.outputList.map(function (output) {return iwidget.outputs[output.name]});
+                            break;
+                        }
                     }
                     for (i = 0; i < endPointPos.targets.length; i += 1) {
-                        inputs[i] = iwidget.inputs[endPointPos.targets[i]];
+                    if (iwidget.inputs[endPointPos.targets[i]]) {
+                            inputs.push(iwidget.inputs[endPointPos.targets[i]]);
+                        } else {
+                            // Lost endpoint.
+                            inputs = iwidget.widget.inputList.map(function (input) {return iwidget.inputs[input.name]});
+                            break;
+                        }
                     }
                 } else {
                     // No enpoint order info available, use default order

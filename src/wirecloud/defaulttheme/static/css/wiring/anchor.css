@@ -58,3 +58,9 @@
 .wiring_editor .sources .anchor:hover {
     box-shadow: 0 0 20px rgba(0, 0, 255, 1);
 }
+
+/* Ghost Anchor */
+.wiring_editor .grid .container .anchorDiv.ghost .anchor {
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0px 0px 7px rgb(167, 71, 71), 0px 0px 5px rgb(236, 0, 0);
+}

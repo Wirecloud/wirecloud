@@ -100,3 +100,13 @@
 .wiring_editor .canvas .readOnly .arrowborder {
     stroke: #30F;
 }
+
+/* Ghost arrows */
+.wiring_editor .canvas .arrow.ghost .arrowbody {
+	stroke: rgb(255, 255, 255);
+}
+
+.wiring_editor .canvas .arrow.ghost .arrowborder {
+    stroke: rgb(138, 136, 136);
+    stroke-dasharray: 2;
+}

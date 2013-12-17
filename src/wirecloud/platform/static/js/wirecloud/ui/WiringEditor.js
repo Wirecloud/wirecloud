@@ -179,12 +179,12 @@ if (!Wirecloud.ui) {
      * finds anchors from the serialized string
      */
     var findAnchor = function findAnchor(desc, workspace) {
-        var iwidget_interface, iwidget, endPointPos;
+        var iwidget_interface, iwidget, endPointPos, entity;
 
         switch (desc.type) {
         case 'iwidget':
             if (this.iwidgets[desc.id] != null) {
-                return this.iwidgets[desc.id].getAnchor(desc.endpoint);
+                entity =  this.iwidgets[desc.id];
             } else {
                 iwidget = workspace.getIWidget(desc.id);
                 if (iwidget != null) {
@@ -192,17 +192,21 @@ if (!Wirecloud.ui) {
                     iwidget_interface = this.addIWidget(this, iwidget, endPointPos);
                     iwidget_interface.setPosition({posX: 0, posY: 0});
                     this.mini_widgets[iwidget.id].disable();
+                    entity = iwidget_interface;
                 } else {
                     throw new Error('Widget not found');
                 }
-                return iwidget_interface.getAnchor(desc.endpoint);
             }
             break;
         case 'ioperator':
             if (this.currentlyInUseOperators[desc.id] != null) {
-                return this.currentlyInUseOperators[desc.id].getAnchor(desc.endpoint);
+                entity = this.currentlyInUseOperators[desc.id];
+            } else {
+                throw new Error('Operator not found. Id: ' + desc.id);
             }
+            break;
         }
+        return entity.getAnchor(desc.endpoint);
     };
 
     var normalizeWiringStatus = function normalizeWiringStatus(WiringStatus) {
@@ -465,6 +469,10 @@ if (!Wirecloud.ui) {
             } else {
                 anchor = this.iwidgets[multi.objectId].getAnchor(multi.sourceName);
             }
+            if (!anchor) {
+                // Future Ghost
+                return;
+            }
             multiInstance = new Wirecloud.ui.WiringEditor.Multiconnector(multi.id, multi.objectId, multi.sourceName,
                                             this.layout.getCenterContainer().wrapperElement,
                                             this, anchor, multi.pos, multi.height);
@@ -480,7 +488,7 @@ if (!Wirecloud.ui) {
      * Create New Connection
      */
     var GenerateConnection = function GenerateConnection (workspace, connection, connectionView, viewId, connectionId) {
-        var startAnchor, endAnchor, readOnly, extraclass, arrow, multi, pos, msg, iwidget;
+        var startAnchor, endAnchor, readOnly, extraclass, arrow, multi, pos, msg, iwidget, entity, isGhost;
 
         // Find start Anchor
         startAnchor = findAnchor.call(this, connection.source, workspace);
@@ -504,8 +512,11 @@ if (!Wirecloud.ui) {
                 }
 
                 // Create arrow
+                if (startAnchor.context.data instanceof Wirecloud.wiring.GhostEndpoint || endAnchor.context.data instanceof Wirecloud.wiring.GhostEndpoint) {
+                    isGhost = true;
+                }
                 arrow = this.canvas.drawArrow(startAnchor.getCoordinates(this.layout.getCenterContainer().wrapperElement),
-                                              endAnchor.getCoordinates(this.layout.getCenterContainer().wrapperElement), extraclass, readOnly);
+                                              endAnchor.getCoordinates(this.layout.getCenterContainer().wrapperElement), extraclass, readOnly, isGhost);
 
                 // Set arrow anchors
                 arrow.startAnchor = startAnchor;
@@ -521,17 +532,21 @@ if (!Wirecloud.ui) {
                 // Set connection with multiconnectors involved
                 if (connectionView.startMulti != null) {
                     multi = this.multiconnectors[connectionView.startMulti];
-                    arrow.startMulti = connectionView.startMulti;
-                    pos = multi.getCoordinates(this.layout);
-                    arrow.setStart(pos);
-                    multi.addArrow(arrow);
+                    if (multi) {
+                        arrow.startMulti = connectionView.startMulti;
+                        pos = multi.getCoordinates(this.layout);
+                        arrow.setStart(pos);
+                        multi.addArrow(arrow);
+                    }
                 }
                 if (connectionView.endMulti != null) {
-                    arrow.endMulti = connectionView.endMulti;
                     multi = this.multiconnectors[connectionView.endMulti];
-                    pos = multi.getCoordinates(this.layout);
-                    arrow.setEnd(pos);
-                    multi.addArrow(arrow);
+                    if (multi) {
+                        arrow.endMulti = connectionView.endMulti;
+                        pos = multi.getCoordinates(this.layout);
+                        arrow.setEnd(pos);
+                        multi.addArrow(arrow);
+                    }
                 }
 
                 // Draw the arrow
@@ -542,11 +557,39 @@ if (!Wirecloud.ui) {
                 throw new Error('WiringEditor error.' + msg + e.message);
             }
         } else {
-            // Create GhostEndpoint?
-            iwidget = workspace.getIWidget(connection.target.id);
-            msg = '[Type: ' + connection.target.type + ', name: ' + iwidget.name + ', endpoint: ' + connection.target.endpoint + ']';
-            throw new Error('WiringEditor error (critical). Creating connection. Target endpoint not found. ' + msg);
+            // Ghost Endpoint
+            if (!startAnchor) {
+                insertGhostEndpoint.call(this, connection, true);
+            }
+            if (!endAnchor) {
+                insertGhostEndpoint.call(this, connection, false);
+            }
+            GenerateConnection.call(this, workspace, connection, connectionView, viewId, connectionId);
         }
+    };
+
+    /**
+     * @Private
+     * Add Ghost Endpoint in theEndpoint widget or operator
+     */
+    var insertGhostEndpoint = function insertGhostEndpoint(connection, isSource) {
+        var entity, theEndpoint, anchor;
+
+        if(isSource) {
+            theEndpoint = connection.source;
+        } else {
+            theEndpoint = connection.target;
+        }
+        if (theEndpoint.type == 'ioperator') {
+            entity = this.currentlyInUseOperators[theEndpoint.id];
+        } else {
+            entity = this.iwidgets[theEndpoint.id];
+        }
+        anchor = entity.addGhostEndpoint(theEndpoint, isSource);
+
+        // Coherency of the recommendations
+        this.recommendations.add_anchor_to_recommendations(anchor);
+        this._startdrag_map_func(anchor);
     };
 
     /**
@@ -635,7 +678,7 @@ if (!Wirecloud.ui) {
         reallyInUseOperators = workspace.wiring.ioperators;
         operators = this.wiringStatus.operators;
         for (key in operators) {
-            generateOperator.call(this, key, operators[key], reallyInUseOperators);
+            generateOperator.call(this, key, operators[key], reallyInUseOperators, availableOperators);
         }
 
         // Create Multiconnectors
@@ -1037,7 +1080,8 @@ if (!Wirecloud.ui) {
                 WiringStatus.connections.push({
                     'readOnly': arrow.hasClassName('readOnly'),
                     'source': arrow.startAnchor.serialize(),
-                    'target': arrow.endAnchor.serialize()
+                    'target': arrow.endAnchor.serialize(),
+                    'isGhost': arrow.isGhost
                 });
                 WiringStatus.views[0].connections.push({
                     'pullerStart': arrow.getPullerStart(),

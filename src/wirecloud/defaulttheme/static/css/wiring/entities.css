@@ -193,6 +193,10 @@
     white-space: nowrap;
 }
 
+.wiring_editor .grid .geContainer .anchorDiv.ghost {
+    color: rgba(185, 0, 0, 0.67);
+}
+
 .wiring_editor .sources .labelDiv, .wiring_editor .targets .labelDiv {
     border-radius: 1.25em;
     -webkit-transition: background-color 400ms ease-in 150ms, color 550ms ease-out, box-shadow 400ms ease-in 150ms;
