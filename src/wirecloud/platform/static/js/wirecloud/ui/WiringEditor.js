@@ -382,21 +382,26 @@ if (!Wirecloud.ui) {
      * @Private
      * Create New Operator or Ghost Operator
      */
-    var generateOperator = function generateOperator (id, operator, reallyInUseOperators) {
+    var generateOperator = function generateOperator (id, operator, reallyInUseOperators, availableOperators) {
         var operator_instance, op_id, i, endpoint_order, position, is_minimized, operator_interface;
 
         try {
             if (!(id in reallyInUseOperators)) {
-                // Ghost Operator
-                operator_instance = {
-                    'id': operator.id,
-                    'display_name': operator.name,
-                    'name': operator.name,
-                    'ghost': true,
-                    'meta': {
-                        'uri': operator.name
-                    }
-                };
+                if (operator.name in availableOperators) {
+                    // Reinstalled Operator
+                    operator_instance = availableOperators[operator.name].instantiate(operator.id, true, this);
+                } else {
+                    // Ghost Operator
+                    operator_instance = {
+                        'id': operator.id,
+                        'display_name': operator.name,
+                        'name': operator.name,
+                        'ghost': true,
+                        'meta': {
+                            'uri': operator.name
+                        }
+                    };
+                }
             } else {
                 // Normal Operator
                 operator_instance = reallyInUseOperators[id];
