@@ -2,12 +2,40 @@
 <!-- Wirecloud Widget Template -->
 <!-- Version: 1.0 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  targetNamespace="http://morfeo-project.org/2007/Template"
-  xmlns:wt="http://morfeo-project.org/2007/Template">
+  xmlns="http://wirecloud.conwet.fi.upm.es/ns/template#"
+  targetNamespace="http://wirecloud.conwet.fi.upm.es/ns/template#"
+  xmlns:wt="http://wirecloud.conwet.fi.upm.es/ns/template#"
+  attributeFormDefault="unqualified"
+  elementFormDefault="qualified">
+
+  <xs:simpleType name="NonEmpty">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\s*\S+.*"></xs:pattern>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="VendorType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[\p{L}\p{N}_-]+"></xs:pattern>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="NameType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[\p{L}\p{N}_-]+"></xs:pattern>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="VersionType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="([1-9]\d*\.|0\.)*([1-9]\d*|0)"></xs:pattern>
+    </xs:restriction>
+  </xs:simpleType>
+
   <xs:element name="Template">
     <xs:complexType>
       <xs:all minOccurs="1" maxOccurs="1">
-        <xs:element name="Catalog.ResourceDescription" minOccurs="1">
+        <xs:element name="Catalog.ResourceDescription" minOccurs="1" maxOccurs="1">
           <xs:complexType>
             <xs:all>
               <xs:element name="Vendor" type="wt:VendorType">
@@ -90,8 +118,7 @@
                   </xs:documentation>
                 </xs:annotation>
               </xs:element>
-              <xs:element name="Requirements" minOccurs="0"
-                maxOccurs="1">
+              <xs:element name="Requirements" minOccurs="0" maxOccurs="1">
                 <xs:complexType>
                   <xs:choice minOccurs="0" maxOccurs="unbounded">
                     <xs:element name="Feature">
@@ -222,44 +249,41 @@
             </xs:documentation>
           </xs:annotation>
           <xs:complexType>
-            <xs:annotation>
-              <xs:documentation></xs:documentation>
-            </xs:annotation>
-            <xs:all>
-              <xs:element name="Property">
-                <xs:annotation>
-                  <xs:documentation>
-                    Defines a state variable.
-                  </xs:documentation>
-                </xs:annotation>
-                <xs:complexType>
-                  <xs:attribute name="name" use="required" type="wt:NonEmpty">
-                    <xs:annotation>
-                      <xs:documentation>
-                        Name of the variable.
-                      </xs:documentation>
-                    </xs:annotation>
-                  </xs:attribute>
-                  <xs:attribute name="type" use="required">
-                    <xs:annotation>
-                      <xs:documentation>
-                        Data type of the variable. So far only
-                        the type text (string) is allowed.
-                      </xs:documentation>
-                    </xs:annotation>
-                    <xs:simpleType>
-                      <xs:restriction base="xs:string">
-                        <xs:enumeration value="text">
-                        </xs:enumeration>
-                      </xs:restriction>
-                    </xs:simpleType>
-                  </xs:attribute>
+            <xs:sequence>
+                <xs:element name="Property" minOccurs="0" maxOccurs="unbounded">
+                  <xs:annotation>
+                    <xs:documentation>
+                      Defines a state variable.
+                    </xs:documentation>
+                  </xs:annotation>
+                  <xs:complexType>
+                    <xs:attribute name="name" use="required" type="wt:NonEmpty">
+                      <xs:annotation>
+                        <xs:documentation>
+                          Name of the variable.
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="type" use="required">
+                      <xs:annotation>
+                        <xs:documentation>
+                          Data type of the variable. So far only
+                          the type text (string) is allowed.
+                        </xs:documentation>
+                      </xs:annotation>
+                      <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                          <xs:enumeration value="text">
+                          </xs:enumeration>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:attribute>
 
-                  <xs:attribute name="label" use="required" type="wt:NonEmpty">
-                  </xs:attribute>
-                </xs:complexType>
-              </xs:element>
-            </xs:all>
+                    <xs:attribute name="label" use="required" type="wt:NonEmpty">
+                    </xs:attribute>
+                  </xs:complexType>
+                </xs:element>
+            </xs:sequence>
           </xs:complexType>
         </xs:element>
         <xs:element name="Platform.Wiring" minOccurs="0" maxOccurs="1">
@@ -271,7 +295,7 @@
           </xs:annotation>
           <xs:complexType>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
-              <xs:element name="Event">
+              <xs:element name="OutputEndpoint">
                 <xs:annotation>
                   <xs:documentation>
                     Output Endpoint
@@ -310,7 +334,7 @@
                   </xs:attribute>
                 </xs:complexType>
               </xs:element>
-              <xs:element name="Slot">
+              <xs:element name="InputEndpoint">
                 <xs:annotation>
                   <xs:documentation>Input endpoint</xs:documentation>
                 </xs:annotation>
@@ -426,92 +450,6 @@
             </xs:attribute>
           </xs:complexType>
         </xs:element>
-        <xs:element name="Platform.Context" minOccurs="0" maxOccurs="1">
-          <xs:annotation>
-            <xs:documentation>
-              Element in which variables of context are defined. These variables provide
-              widgets with a context, which are managed by the platform.
-            </xs:documentation>
-          </xs:annotation>
-          <xs:complexType>
-            <xs:choice minOccurs="0" maxOccurs="unbounded">
-              <xs:element name="Context">
-                <xs:annotation>
-                  <xs:documentation>
-                    Defines a context variable within platform
-                    scope (e.g. username, etc.).
-                  </xs:documentation>
-                </xs:annotation>
-                <xs:complexType>
-                  <xs:attribute name="name" type="wt:NonEmpty">
-                    <xs:annotation>
-                      <xs:documentation>
-                        Name to use to reference to the
-                        associated concept when using the old javascript API.
-                        Only needed when using the old javascript API.
-                      </xs:documentation>
-                    </xs:annotation>
-                  </xs:attribute>
-                  <xs:attribute name="type">
-                    <xs:simpleType>
-                      <xs:restriction base="xs:string">
-                        <xs:enumeration value="text"></xs:enumeration>
-                      </xs:restriction>
-                    </xs:simpleType>
-                  </xs:attribute>
-                  <xs:attribute name="concept" type="wt:NonEmpty"
-                    use="required">
-                    <xs:annotation>
-                      <xs:documentation>
-                        Label that provides variable with
-                        semantic. It must match with one of the concepts managed
-                        by the platform. Currently only user_name and language
-                        has been defined as platform concepts.
-                      </xs:documentation>
-                    </xs:annotation>
-                  </xs:attribute>
-                </xs:complexType>
-              </xs:element>
-              <xs:element name="GadgetContext">
-                <xs:annotation>
-                  <xs:documentation>
-                    Defines a context variable within widget
-                    scope (e.g. height, width, etc.).
-                  </xs:documentation>
-                </xs:annotation>
-                <xs:complexType>
-                  <xs:attribute name="name" type="wt:NonEmpty">
-                    <xs:annotation>
-                      <xs:documentation>
-                        Name to use to reference to the
-                        associated concept when using the old javascript API.
-                        Only needed when using the old javascript API.
-                      </xs:documentation>
-                    </xs:annotation>
-                  </xs:attribute>
-                  <xs:attribute name="type">
-                    <xs:simpleType>
-                      <xs:restriction base="xs:string">
-                        <xs:enumeration value="text"></xs:enumeration>
-                      </xs:restriction>
-                    </xs:simpleType>
-                  </xs:attribute>
-                  <xs:attribute name="concept" type="wt:NonEmpty"
-                    use="required">
-                    <xs:annotation>
-                      <xs:documentation>
-                        Label that provides variable with
-                        semantic. It must match with one of the concepts managed
-                        by the platform. Currently only height and width has
-                        beed defined in the widget scope.
-                      </xs:documentation>
-                    </xs:annotation>
-                  </xs:attribute>
-                </xs:complexType>
-              </xs:element>
-            </xs:choice>
-          </xs:complexType>
-        </xs:element>
         <xs:element name="Translations" minOccurs="0" maxOccurs="1">
           <xs:complexType>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -547,29 +485,5 @@
       </xs:all>
     </xs:complexType>
   </xs:element>
-
-  <xs:simpleType name="NonEmpty">
-    <xs:restriction base="xs:string">
-      <xs:pattern value="\s*\S+.*"></xs:pattern>
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:simpleType name="VendorType">
-    <xs:restriction base="xs:string">
-      <xs:pattern value="[\p{L}\p{N}\_-]+"></xs:pattern>
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:simpleType name="NameType">
-    <xs:restriction base="xs:string">
-      <xs:pattern value="[\p{L}\p{N}\_-]+"></xs:pattern>
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:simpleType name="VersionType">
-    <xs:restriction base="xs:string">
-      <xs:pattern value="(?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0)"></xs:pattern>
-    </xs:restriction>
-  </xs:simpleType>
 
 </xs:schema>
