@@ -7,7 +7,8 @@
     /**
      * Specific class representing alert dialogs
      */
-    var AlertWindowMenu = function AlertWindowMenu() {
+    var AlertWindowMenu = function AlertWindowMenu(options) {
+
         Wirecloud.ui.WindowMenu.call(this, gettext('Warning'));
 
         // Warning icon
@@ -19,9 +20,13 @@
         this.msgElement.className = "msg";
         this.windowContent.appendChild(this.msgElement);
 
-        // Accept button
+        options = Wirecloud.merge({
+            acceptLabel: gettext('Yes'),
+            cancelLabel: gettext('No')
+        }, options);
+
         this.acceptButton = new StyledElements.StyledButton({
-            text: gettext('Yes'),
+            text: options.acceptLabel,
             'class': 'btn-danger'
         });
         this._acceptListener = this._acceptListener.bind(this);
@@ -30,7 +35,7 @@
 
         // Cancel button
         this.cancelButton = new StyledElements.StyledButton({
-            text: gettext('No'),
+            text: options.cancelLabel,
             'class': 'btn-primary'
         });
         this.cancelButton.addEventListener("click", this._closeListener);
