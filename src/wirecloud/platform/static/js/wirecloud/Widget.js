@@ -34,6 +34,7 @@
         this.version = new Wirecloud.Version(data.version, 'showcase');
         this.uri = this.vendor + '/' + this.name + '/' + this.version.text;
         this.id = this.uri;
+        this.changeLogURL = data.change_log_url;
 
         this.display_name = data.display_name;
         this.code_url = Wirecloud.URLs.WIDGET_CODE_ENTRY.evaluate({

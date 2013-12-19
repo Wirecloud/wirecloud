@@ -189,6 +189,7 @@ class RDFTemplateParser(object):
         self._info['author'] = self._get_field(FOAF, 'name', author)
 
         self._info['image_uri'] = self._get_field(WIRE, 'hasImageUri', self._rootURI)
+        self._info['change_log_url'] = self._get_field(WIRE, 'hasChangeLogURL', self._rootURI, required=False)
         self._info['iphone_image_uri'] = self._get_field(WIRE, 'hasiPhoneImageUri', self._rootURI, required=False)
 
         self._info['doc_uri'] = self._get_field(FOAF, 'page', self._rootURI, required=False)

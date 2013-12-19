@@ -98,6 +98,7 @@ def build_xml_document(options):
     etree.SubElement(desc, 'ImageURI').text = options.get('image_uri', '')
     etree.SubElement(desc, 'iPhoneImageURI').text = options.get('iphone_image_uri', '')
     etree.SubElement(desc, 'WikiURI').text = options.get('doc_uri', '')
+    etree.SubElement(desc, 'ChangeLogURL').text = options.get('change_log_url', '')
 
     if len(options['requirements']) > 0:
         requirements = etree.SubElement(desc, 'Requirements')

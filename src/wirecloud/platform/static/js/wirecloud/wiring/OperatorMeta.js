@@ -27,7 +27,7 @@
 
     var OperatorMeta = function OperatorMeta(desc) {
         var vendor, name, version, uri, display_name, description, inputs,
-            outputs, prefList, prefs, pref, i;
+            outputs, prefList, prefs, pref, i, change_log_url;
 
         // Vendor
         if (!('vendor' in desc) || desc.vendor.trim() === '') {
@@ -53,6 +53,14 @@
         // URI
         uri = desc.name.trim();
         Object.defineProperty(this, 'uri', {value: vendor + '/' + name + '/' + version.text});
+
+        // Change log url
+        if (!('change_log_url' in desc) || desc.change_log_url.trim() === '') {
+            change_log_url = '';
+        } else {
+            change_log_url = desc.change_log_url;
+        }
+        Object.defineProperty(this, 'change_log_url', {value: change_log_url});
 
         if (!('display_name' in desc) || desc.display_name.trim() === '') {
             display_name = name;

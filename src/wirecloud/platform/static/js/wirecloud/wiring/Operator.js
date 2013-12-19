@@ -45,6 +45,7 @@
         Object.defineProperty(this, 'display_name', {value: operator_meta.display_name});
         Object.defineProperty(this, 'id', {value: "" + id});
         Object.defineProperty(this, 'logManager', {value: new Wirecloud.wiring.OperatorLogManager(this)});
+        Object.defineProperty(this, 'changeLogURL', {value: operator_meta.change_log_url});
 
         this.loaded = false;
 

@@ -49,6 +49,7 @@ class TemplateUtilsTestCase(TestCase):
             'image_uri': '',
             'iphone_image_uri': '',
             'doc_uri': '',
+            'change_log_url': '',
             'requirements': [],
             'preferences': [],
             'properties': [],
@@ -76,6 +77,7 @@ class TemplateUtilsTestCase(TestCase):
             'image_uri': 'images/catalogue.png',
             'iphone_image_uri': 'images/smartphone.png',
             'doc_uri': 'docs/index.html',
+            'change_log_url': 'log/change.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
             ],
@@ -196,6 +198,7 @@ class TemplateUtilsTestCase(TestCase):
             'image_uri': 'images/catalogue.png',
             'iphone_image_uri': 'images/smartphone.png',
             'doc_uri': 'docs/index.html',
+            'change_log_url': 'log/change.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
             ],
@@ -403,6 +406,7 @@ class TemplateUtilsTestCase(TestCase):
             'image_uri': u'',
             'iphone_image_uri': u'',
             'doc_uri': '',
+            'change_log_url': '',
             'requirements': [],
             'params': [],
             'preferences': {},
@@ -431,6 +435,7 @@ class TemplateUtilsTestCase(TestCase):
             'image_uri': u'images/catalogue.png',
             'iphone_image_uri': u'images/smartphone.png',
             'doc_uri': u'docs/index.html',
+            'change_log_url': 'log/change.html',
             'requirements': [
                 {'type': 'feature', 'name': u'Wirecloud'},
                 {'type': 'feature', 'name': u'PubSub'}
@@ -614,6 +619,7 @@ class TemplateUtilsTestCase(TestCase):
             'image_uri': u'images/catalogue.png',
             'iphone_image_uri': u'images/smartphone.png',
             'doc_uri': u'docs/index.html',
+            'change_log_url': u'log/change.html',
             'requirements': [
                 {'type': 'feature', 'name': u'Wirecloud'},
                 {'type': 'feature', 'name': u'PubSub'}
@@ -809,6 +815,7 @@ class TemplateUtilsTestCase(TestCase):
             'image_uri': u'images/catalogue.png',
             'iphone_image_uri': u'images/smartphone.png',
             'doc_uri': u'docs/index.html',
+            'change_log_url': u'log/change.html',
             'requirements': [
                 {'type': 'feature', 'name': u'Wirecloud'},
                 {'type': 'feature', 'name': u'PubSub'}
@@ -937,6 +944,7 @@ class TemplateUtilsTestCase(TestCase):
             'image_uri': '',
             'iphone_image_uri': '',
             'doc_uri': '',
+            'change_log_url': '',
             'requirements': [],
             'preferences': [],
             'properties': [],
@@ -968,6 +976,7 @@ class TemplateUtilsTestCase(TestCase):
             'image_uri': 'images/catalogue.png',
             'iphone_image_uri': 'images/smartphone.png',
             'doc_uri': 'docs/index.html',
+            'change_log_url': 'log/change.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
             ],

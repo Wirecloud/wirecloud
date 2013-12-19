@@ -39,6 +39,7 @@ IMAGE_URI_XPATH = 't:ImageURI'
 IPHONE_IMAGE_URI_XPATH = 't:iPhoneImageURI'
 MAIL_XPATH = 't:Mail'
 DOC_URI_XPATH = 't:WikiURI'
+CHANGE_LOG_URL = 't:ChangeLogURL'
 REQUIREMENTS_XPATH = 't:Requirements'
 
 FEATURE_XPATH = 't:Feature'
@@ -185,6 +186,7 @@ class WirecloudTemplateParser(object):
         self._info['image_uri'] = self._get_field(IMAGE_URI_XPATH, self._resource_description, required=False)
         self._info['iphone_image_uri'] = self._get_field(IPHONE_IMAGE_URI_XPATH, self._resource_description, required=False)
         self._info['doc_uri'] = self._get_field(DOC_URI_XPATH, self._resource_description, required=False)
+        self._info['change_log_url'] = self._get_field(CHANGE_LOG_URL, self._resource_description, required=False)
         self._parse_requirements()
 
     def _parse_requirements(self):
