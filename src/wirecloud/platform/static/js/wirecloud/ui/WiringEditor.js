@@ -490,91 +490,6 @@ if (!Wirecloud.ui) {
 
     /**
      * @Private
-     * Create New Connection
-     */
-    var GenerateConnection = function GenerateConnection (workspace, connection, connectionView, viewId, connectionId) {
-        var startAnchor, endAnchor, readOnly, extraclass, arrow, multi, pos, msg, iwidget, entity, isGhost;
-
-        // Find start Anchor
-        startAnchor = findAnchor.call(this, connection.source, workspace);
-
-        // Find end Anchor
-        endAnchor = findAnchor.call(this, connection.target, workspace);
-
-        if (startAnchor !== null && endAnchor !== null) {
-            try {
-                if (connection.readOnly) {
-                    // Set ReadOnly connection
-                    readOnly = true;
-                    extraclass = 'readOnly';
-                    // Increase ReadOnly connection count in each entity
-                    startAnchor.context.iObject.incReadOnlyConnectionsCount();
-                    endAnchor.context.iObject.incReadOnlyConnectionsCount();
-                } else {
-                    // Normal connection
-                    readOnly = false;
-                    extraclass = null;
-                }
-
-                // Create arrow
-                if (startAnchor.context.data instanceof Wirecloud.wiring.GhostEndpoint || endAnchor.context.data instanceof Wirecloud.wiring.GhostEndpoint) {
-                    isGhost = true;
-                }
-                arrow = this.canvas.drawArrow(startAnchor.getCoordinates(this.layout.getCenterContainer().wrapperElement),
-                                              endAnchor.getCoordinates(this.layout.getCenterContainer().wrapperElement), extraclass, readOnly, isGhost);
-
-                // Set arrow anchors
-                arrow.startAnchor = startAnchor;
-                startAnchor.addArrow(arrow);
-                arrow.endAnchor = endAnchor;
-                endAnchor.addArrow(arrow);
-                arrow.addClassName('arrow');
-
-                // Set arrow pullers
-                arrow.setPullerStart(connectionView.pullerStart);
-                arrow.setPullerEnd(connectionView.pullerEnd);
-
-                // Set connection with multiconnectors involved
-                if (connectionView.startMulti != null) {
-                    multi = this.multiconnectors[connectionView.startMulti];
-                    if (multi) {
-                        arrow.startMulti = connectionView.startMulti;
-                        pos = multi.getCoordinates(this.layout);
-                        arrow.setStart(pos);
-                        multi.addArrow(arrow);
-                    }
-                }
-                if (connectionView.endMulti != null) {
-                    multi = this.multiconnectors[connectionView.endMulti];
-                    if (multi) {
-                        arrow.endMulti = connectionView.endMulti;
-                        pos = multi.getCoordinates(this.layout);
-                        arrow.setEnd(pos);
-                        multi.addArrow(arrow);
-                    }
-                }
-
-                // Draw the arrow
-                arrow.redraw();
-            } catch (e) {
-                // TODO: Warning remove view for this connection and redo
-                msg = 'Creating connection. betwen [' + startAnchor.context.data.id + '] and [' + endAnchor.context.data.id + ']. ';
-                throw new Error('WiringEditor error.' + msg + e.message);
-            }
-        } else {
-            // Ghost Endpoint
-            if (!startAnchor) {
-                insertGhostEndpoint.call(this, connection, true);
-            }
-            if (!endAnchor) {
-                insertGhostEndpoint.call(this, connection, false);
-            }
-            GenerateConnection.call(this, workspace, connection, connectionView, viewId, connectionId);
-        }
-    };
-
-    /**
-     * @Private
      * Add Ghost Endpoint in theEndpoint widget or operator
      */
     var insertGhostEndpoint = function insertGhostEndpoint(connection, isSource) {
@@ -701,7 +616,7 @@ if (!Wirecloud.ui) {
                     break;
                 }
             }
-            GenerateConnection.call(this, workspace, this.wiringStatus.connections[i], connectionView, k, i);
+            this.generateConnection(workspace, this.wiringStatus.connections[i], connectionView);
         }
 
         this.activateCtrlMultiSelect();
@@ -987,6 +902,90 @@ if (!Wirecloud.ui) {
      */
     WiringEditor.prototype.getGridElement = function getGridElement() {
         return this.layout.getCenterContainer().wrapperElement;
+    };
+
+    /**
+     * Create New Connection
+     */
+    WiringEditor.prototype.generateConnection = function generateConnection (workspace, connection, connectionView) {
+        var startAnchor, endAnchor, readOnly, extraclass, arrow, multi, pos, msg, iwidget, entity, isGhost;
+
+        // Find start Anchor
+        startAnchor = findAnchor.call(this, connection.source, workspace);
+
+        // Find end Anchor
+        endAnchor = findAnchor.call(this, connection.target, workspace);
+
+        if (startAnchor !== null && endAnchor !== null) {
+            try {
+                if (connection.readOnly) {
+                    // Set ReadOnly connection
+                    readOnly = true;
+                    extraclass = 'readOnly';
+                    // Increase ReadOnly connection count in each entity
+                    startAnchor.context.iObject.incReadOnlyConnectionsCount();
+                    endAnchor.context.iObject.incReadOnlyConnectionsCount();
+                } else {
+                    // Normal connection
+                    readOnly = false;
+                    extraclass = null;
+                }
+
+                // Create arrow
+                if (startAnchor.context.data instanceof Wirecloud.wiring.GhostEndpoint || endAnchor.context.data instanceof Wirecloud.wiring.GhostEndpoint) {
+                    isGhost = true;
+                }
+                arrow = this.canvas.drawArrow(startAnchor.getCoordinates(this.layout.getCenterContainer().wrapperElement),
+                                              endAnchor.getCoordinates(this.layout.getCenterContainer().wrapperElement), extraclass, readOnly, isGhost);
+
+                // Set arrow anchors
+                arrow.startAnchor = startAnchor;
+                startAnchor.addArrow(arrow);
+                arrow.endAnchor = endAnchor;
+                endAnchor.addArrow(arrow);
+                arrow.addClassName('arrow');
+
+                // Set arrow pullers
+                arrow.setPullerStart(connectionView.pullerStart);
+                arrow.setPullerEnd(connectionView.pullerEnd);
+
+                // Set connection with multiconnectors involved
+                if (connectionView.startMulti != null) {
+                    multi = this.multiconnectors[connectionView.startMulti];
+                    if (multi) {
+                        arrow.startMulti = connectionView.startMulti;
+                        pos = multi.getCoordinates(this.layout);
+                        arrow.setStart(pos);
+                        multi.addArrow(arrow);
+                    }
+                }
+                if (connectionView.endMulti != null) {
+                    multi = this.multiconnectors[connectionView.endMulti];
+                    if (multi) {
+                        arrow.endMulti = connectionView.endMulti;
+                        pos = multi.getCoordinates(this.layout);
+                        arrow.setEnd(pos);
+                        multi.addArrow(arrow);
+                    }
+                }
+
+                // Draw the arrow
+                arrow.redraw();
+            } catch (e) {
+                // TODO: Warning remove view for this connection and redo
+                msg = 'Creating connection. betwen [' + startAnchor.context.data.id + '] and [' + endAnchor.context.data.id + ']. ';
+                throw new Error('WiringEditor error.' + msg + e.message);
+            }
+        } else {
+            // Ghost Endpoint
+            if (!startAnchor) {
+                insertGhostEndpoint.call(this, connection, true);
+            }
+            if (!endAnchor) {
+                insertGhostEndpoint.call(this, connection, false);
+            }
+            this.generateConnection(workspace, connection, connectionView);
+        }
     };
 
     /**
