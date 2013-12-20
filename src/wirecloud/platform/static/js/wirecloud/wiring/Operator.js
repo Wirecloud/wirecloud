@@ -26,7 +26,7 @@
     "use strict";
 
     var Operator = function Operator(operator_meta, id, operator_status, /* TODO */ wiringEditor) {
-        var i, inputs, outputs, data_uri, preferences, key;
+        var i, inputs, outputs, data_uri, preferenceList, preferences, key, value;
 
         StyledElements.ObjectWithEvents.call(this, ['load', 'unload']);
 
@@ -52,22 +52,22 @@
 
         this.pending_events = [];
 
+        preferenceList = [];
         preferences = {};
         if (operator_status) {
-            for (key in operator_status.preferences) {
-                preferences[key] = operator_status.preferences[key];
+            for (i = 0; i < this.meta.preferenceList.length; i++) {
+                key = this.meta.preferenceList[i].name;
+                if (key in operator_status.preferences) {
+                    value = operator_status.preferences[key].value;
+                } else {
+                    value = this.meta.preferenceList[i].default_value;
+                }
+                preferences[key] = new Wirecloud.UserPref(this.meta.preferenceList[i], false, false, value);
+                preferenceList.push(preferences[key]);
             }
         }
-
-        for (key in this.meta.preferences) {
-            if (!(key in preferences)) {
-                preferences[key] = {
-                    'readonly': false,
-                    'hidden': false,
-                    'value': this.meta.preferences[key].default_value
-                };
-            }
-        }
+        Object.freeze(preferenceList);
+        Object.defineProperty(this, 'preferenceList', {value: preferenceList});
         Object.freeze(preferences);
         Object.defineProperty(this, 'preferences', {value: preferences});
 

@@ -52,13 +52,13 @@
         var i, prefs, pref, fields;
 
         fields = {};
-        prefs = ioperator.meta.preferenceList;
+        prefs = ioperator.preferenceList;
 
         for (i = 0; i < prefs.length; i++) {
             pref = prefs[i];
 
             if (!pref.hidden) {
-                fields[pref.name] = pref.getInterfaceDescription(ioperator);
+                fields[pref.meta.name] = pref.getInterfaceDescription();
             }
         }
         this._current_ioperator = ioperator;

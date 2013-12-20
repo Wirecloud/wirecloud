@@ -73,7 +73,7 @@
         }
         prefs = {};
         for (i = 0; i < prefList.length; i += 1) {
-            pref = prefList[i] = new Wirecloud.wiring.OperatorUserPref(prefList[i]);
+            pref = prefList[i] = new Wirecloud.UserPrefDef(prefList[i].name, prefList[i].type, prefList[i]);
             prefs[pref.name] = pref;
         }
         Object.defineProperty(this, 'preferences', {value: prefs});
