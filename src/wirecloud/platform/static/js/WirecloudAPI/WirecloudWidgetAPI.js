@@ -104,23 +104,4 @@
 
     Object.preventExtensions(window.MashupPlatform.widget);
 
-    // Prefs Module
-    Object.defineProperty(window.MashupPlatform, 'prefs', {value: {}});
-    Object.defineProperty(window.MashupPlatform.prefs, 'get', {
-        value: function get(key) {
-            return iwidget.preferences[key].value;
-        }
-    });
-    Object.defineProperty(window.MashupPlatform.prefs, 'registerCallback', {
-        value: function registerCallback(callback) {
-            iwidget.registerPrefCallback(callback);
-        }
-    });
-    Object.defineProperty(window.MashupPlatform.prefs, 'set', {
-        value: function get(key, value) {
-            iwidget.preferences[key].value = value;
-        }
-    });
-    Object.preventExtensions(window.MashupPlatform.prefs);
-
 })();

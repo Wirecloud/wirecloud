@@ -47,6 +47,29 @@ setTimeout(function () {
         document.getElementById('widget_log_test').innerHTML = OK_HTML;
     };
 
+    document.getElementById('check_preference_exceptions_button').onclick = function () {
+        var success_count = 0;
+        try {
+            MashupPlatform.prefs.get('nonexistent');
+        } catch (error) {
+            if (error instanceof MashupPlatform.prefs.PreferenceError) {
+                success_count += 1;
+            }
+        }
+
+        try {
+            MashupPlatform.prefs.set('nonexistent');
+        } catch (error) {
+            if (error instanceof MashupPlatform.prefs.PreferenceError) {
+                success_count += 1;
+            }
+        }
+
+        if (success_count === 2) {
+            document.getElementById('preference_exceptions_test').innerHTML = OK_HTML;
+        }
+    };
+
     document.getElementById('check_endpoint_exceptions_button').onclick = function () {
         var success_count = 0;
         try {

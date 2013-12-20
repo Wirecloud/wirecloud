@@ -92,6 +92,10 @@
     };
     Operator.prototype = new StyledElements.ObjectWithEvents();
 
+    Operator.prototype.registerPrefCallback = function registerPrefCallback(prefCallback) {
+        this.prefCallback = prefCallback;
+    };
+
     Operator.prototype.fullDisconnect = function fullDisconnect() {
         var key, connectables;
 

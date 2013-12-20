@@ -223,6 +223,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/common/ComputedStyle.js',
             'js/wirecloud/io.js',
             'js/wirecloud/ContextManager.js',
+            'js/wirecloud/PreferenceError.js',
             'js/wirecloud/UserPrefDef.js',
             'js/wirecloud/UserPref.js',
             'js/wirecloud/PolicyManager.js',

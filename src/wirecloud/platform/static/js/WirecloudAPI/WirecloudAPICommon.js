@@ -77,6 +77,42 @@
 
     Object.preventExtensions(window.MashupPlatform.mashup);
 
+    // Prefs Module
+    Object.defineProperty(window.MashupPlatform, 'prefs', {value: {}});
+    Object.defineProperty(window.MashupPlatform.prefs, 'get', {
+        value: function get(key) {
+            if (key in resource.meta.preferences) {
+                return resource.preferences[key].value;
+            } else {
+                var exception_msg = platform.interpolate('"%(pref)s" is not a valid preference name', {pref: key}, true);
+                var log_msg = platform.interpolate('Error calling MashupPlatform.prefs.get: %(msg)s', {msg: exception_msg}, true);
+                resource.logManager.log(log_msg);
+                throw new MashupPlatform.prefs.PreferenceError(exception_msg);
+            }
+        }
+    });
+    Object.defineProperty(window.MashupPlatform.prefs, 'registerCallback', {
+        value: function registerCallback(callback) {
+            resource.registerPrefCallback(callback);
+        }
+    });
+    Object.defineProperty(window.MashupPlatform.prefs, 'set', {
+        value: function set(key, value) {
+            if (key in resource.meta.preferences) {
+                resource.preferences[key].value = value;
+            } else {
+                var exception_msg = platform.interpolate('"%(pref)s" is not a valid preference name', {pref: key}, true);
+                var log_msg = platform.interpolate('Error calling MashupPlatform.prefs.set: %(msg)s', {msg: exception_msg}, true);
+                resource.logManager.log(log_msg);
+                throw new MashupPlatform.prefs.PreferenceError(exception_msg);
+            }
+        }
+    });
+    Object.defineProperty(window.MashupPlatform.prefs, 'PreferenceError', {
+        value: platform.Wirecloud.PreferenceError
+    });
+    Object.preventExtensions(window.MashupPlatform.prefs);
+
     // Wiring Module
     Object.defineProperty(window.MashupPlatform, 'wiring', {value: {}});
     Object.defineProperty(window.MashupPlatform.wiring, 'registerCallback', {

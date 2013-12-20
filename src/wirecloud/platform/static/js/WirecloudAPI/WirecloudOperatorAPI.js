@@ -60,23 +60,4 @@
     Object.defineProperty(window.MashupPlatform.operator, 'id', {value: id});
     Object.preventExtensions(window.MashupPlatform.operator);
 
-    // Pref Module
-    Object.defineProperty(window.MashupPlatform, 'prefs', {value: {}});
-    Object.defineProperty(window.MashupPlatform.prefs, 'get', {
-        value: function get(key) {
-            return ioperator.preferences[key].value;
-        }
-    });
-    Object.defineProperty(window.MashupPlatform.prefs, 'registerCallback', {
-        value: function registerCallback(callback) {
-            ioperator.prefCallback = callback;
-        }
-    });
-    Object.defineProperty(window.MashupPlatform.prefs, 'set', {
-        value: function get(key, value) {
-            ioperator.preferences[key].value = value;
-        }
-    });
-    Object.preventExtensions(window.MashupPlatform.prefs);
-
 })();

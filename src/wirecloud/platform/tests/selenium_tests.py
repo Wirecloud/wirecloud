@@ -288,6 +288,11 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(api_test_iwidget.error_count, 5)
             self.assertEqual(len(api_test_iwidget.log_entries), old_log_entries + 7)
 
+            # Work around some firefox driver bugs
+            self.driver.execute_script('arguments[0].click()', self.driver.find_element_by_css_selector('#check_preference_exceptions_button'))
+            WebDriverWait(self.driver, timeout=2).until(lambda driver: driver.find_element_by_id('preference_exceptions_test').text == 'Success!!')
+            self.assertEqual(api_test_iwidget.error_count, 7)
+            self.assertEqual(len(api_test_iwidget.log_entries), old_log_entries + 9)
     test_basic_widget_functionalities.tags = ('fiware-ut-5',)
 
     def test_pending_wiring_events(self):
