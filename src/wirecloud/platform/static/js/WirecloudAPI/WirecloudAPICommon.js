@@ -123,7 +123,7 @@
                 var exception_msg = platform.interpolate('"%(endpoint)s" is not a valid input endpoint', {endpoint: inputName}, true);
                 var log_msg = platform.interpolate('Error calling MashupPlatform.wiring.registerCallback: %(msg)s', {msg: exception_msg}, true);
                 resource.logManager.log(log_msg);
-                throw new MashupPlatform.wiring.EndpointException(exception_msg);
+                throw new MashupPlatform.wiring.EndpointError(exception_msg);
             }
         }
     });
@@ -135,7 +135,7 @@
                 var exception_msg = platform.interpolate('"%(endpoint)s" is not a valid output endpoint', {endpoint: outputName}, true);
                 var log_msg = platform.interpolate('Error calling MashupPlatform.wiring.pushEvent: %(msg)s', {msg: exception_msg}, true);
                 resource.logManager.log(log_msg);
-                throw new MashupPlatform.wiring.EndpointException(exception_msg);
+                throw new MashupPlatform.wiring.EndpointError(exception_msg);
             }
         }
     });
@@ -147,12 +147,12 @@
                 var exception_msg = platform.interpolate('"%(endpoint)s" is not a valid output endpoint', {endpoint: outputName}, true);
                 var log_msg = platform.interpolate('Error calling MashupPlatform.wiring.getReachableEndpoints: %(msg)s', {msg: exception_msg}, true);
                 resource.logManager.log(log_msg);
-                throw new MashupPlatform.wiring.EndpointException(exception_msg);
+                throw new MashupPlatform.wiring.EndpointError(exception_msg);
             }
         }
     });
-    Object.defineProperty(window.MashupPlatform.wiring, 'EndpointException', {
-        value: platform.Wirecloud.wiring.EndpointException
+    Object.defineProperty(window.MashupPlatform.wiring, 'EndpointError', {
+        value: platform.Wirecloud.wiring.EndpointError
     });
     Object.preventExtensions(window.MashupPlatform.wiring);
 

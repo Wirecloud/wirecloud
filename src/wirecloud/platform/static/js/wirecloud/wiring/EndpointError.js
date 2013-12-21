@@ -25,16 +25,16 @@
 
     "use strict";
 
-    var EndpointException = function EndpointException(message) {
-        this.name = "EndpointException";
+    var EndpointError = function EndpointError(message) {
+        this.name = "EndpointError";
         this.message = message || "";
     };
-    EndpointException.prototype = new Error();
-    EndpointException.prototype.constructor = EndpointException;
+    EndpointError.prototype = new Error();
+    EndpointError.prototype.constructor = EndpointError;
 
-    Object.freeze(EndpointException.prototype);
-    Object.freeze(EndpointException);
+    Object.freeze(EndpointError.prototype);
+    Object.freeze(EndpointError);
 
-    Wirecloud.wiring.EndpointException = EndpointException;
+    Wirecloud.wiring.EndpointError = EndpointError;
 
 })();

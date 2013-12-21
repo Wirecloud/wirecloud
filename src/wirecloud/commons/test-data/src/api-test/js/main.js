@@ -75,7 +75,7 @@ setTimeout(function () {
         try {
             MashupPlatform.wiring.pushEvent('nonexistent', '');
         } catch (error) {
-            if (error instanceof MashupPlatform.wiring.EndpointException) {
+            if (error instanceof MashupPlatform.wiring.EndpointError) {
                 success_count += 1;
             }
         }
@@ -83,7 +83,7 @@ setTimeout(function () {
         try {
             MashupPlatform.wiring.getReachableEndpoints('nonexistent');
         } catch (error) {
-            if (error instanceof MashupPlatform.wiring.EndpointException) {
+            if (error instanceof MashupPlatform.wiring.EndpointError) {
                 success_count += 1;
             }
         }
@@ -91,7 +91,7 @@ setTimeout(function () {
         try {
             MashupPlatform.wiring.registerCallback('nonexistent', function () {});
         } catch (error) {
-            if (error instanceof MashupPlatform.wiring.EndpointException) {
+            if (error instanceof MashupPlatform.wiring.EndpointError) {
                 success_count += 1;
             }
         }
