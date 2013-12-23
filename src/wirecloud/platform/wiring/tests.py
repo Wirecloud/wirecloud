@@ -1743,7 +1743,7 @@ class StickyEffectTestCase(WirecloudSeleniumTestCase):
             cls.tearDownClass()
             raise unittest.SkipTest('Sticky effect tests need make use of the native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
-    def test_wiring_stycky_effect_in_endpoint_label(self):
+    def test_wiring_sticky_effect_in_endpoint_label(self):
         self.login()
 
         self.add_widget_to_mashup('Test', new_name='Test (1)')
@@ -1760,7 +1760,6 @@ class StickyEffectTestCase(WirecloudSeleniumTestCase):
 
         operator = self.driver.find_element_by_xpath("//*[contains(@class, 'container ioperator')]//*[text()='TestOperator']")
         ActionChains(self.driver).click_and_hold(operator).move_to_element(grid).move_by_offset(-220, -120).release().perform()
-
         ioperator = self.get_current_wiring_editor_ioperators()[0]
 
         widgetInput = iwidgets[0].get_wiring_endpoint('inputendpoint')
@@ -1768,7 +1767,7 @@ class StickyEffectTestCase(WirecloudSeleniumTestCase):
         operatorInput = ioperator.get_wiring_endpoint('input')
         operatorOutput = ioperator.get_wiring_endpoint('output')
 
-        # Try to connect using stycky effect in label endpoints
+        # Try to connect using sticky effect in label endpoints
         ActionChains(self.driver).drag_and_drop(widgetOutput.element, operatorInput.label).perform()
         ActionChains(self.driver).drag_and_drop(operatorOutput.element, widgetInput.label).perform()
 
