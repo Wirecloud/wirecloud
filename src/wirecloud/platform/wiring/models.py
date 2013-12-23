@@ -19,6 +19,7 @@
 
 import os
 
+from django.core.cache import cache
 from django.db.models.signals import post_delete, post_save
 
 from wirecloud.catalogue.models import CatalogueResource
@@ -51,5 +52,7 @@ def undeploy_operators_on_resource_deletion(sender, instance, **kwargs):
         return
 
     showcase_utils.wgt_deployer.undeploy(resource.vendor, resource.short_name, resource.version)
+    key = '_operator/' + resource.local_uri_part
+    cache.delete(key)
 
 post_delete.connect(undeploy_operators_on_resource_deletion, sender=CatalogueResource)
