@@ -1050,7 +1050,7 @@ if (!Wirecloud.ui) {
         var instantiated_operator, operator_interface, auxDiv, i, anchor;
 
         if (ioperator instanceof Wirecloud.wiring.OperatorMeta) {
-            instantiated_operator = ioperator.instantiate(this.nextOperatorId, true, this);
+            instantiated_operator = ioperator.instantiate(this.nextOperatorId, null, this);
             this.nextOperatorId++;
         } else {
             instantiated_operator = ioperator;

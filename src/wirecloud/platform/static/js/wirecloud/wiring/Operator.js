@@ -28,6 +28,16 @@
     var Operator = function Operator(operator_meta, id, operator_status, /* TODO */ wiringEditor) {
         var i, inputs, outputs, data_uri, preferenceList, preferences, readonly, hidden, key, value;
 
+        if (["object", "undefined"].indexOf(typeof operator_status) === -1) {
+            throw new TypeError('invalid operator status');
+        }
+        if (operator_status == null) {
+            operator_status = {};
+        }
+        if (operator_status.preferences == null) {
+            operator_status.preferences = {};
+        }
+
         StyledElements.ObjectWithEvents.call(this, ['load', 'unload']);
 
         Object.defineProperty(this, 'meta', {value: operator_meta});
@@ -54,20 +64,18 @@
 
         preferenceList = [];
         preferences = {};
-        if (operator_status) {
-            for (i = 0; i < this.meta.preferenceList.length; i++) {
-                key = this.meta.preferenceList[i].name;
-                if (key in operator_status.preferences) {
-                    value = operator_status.preferences[key].value;
-                    readonly = operator_status.preferences[key].readonly;
-                    hidden = operator_status.preferences[key].hidden;
-                } else {
-                    value = this.meta.preferenceList[i].default_value;
-                    readonly = hidden = false;
-                }
-                preferences[key] = new Wirecloud.UserPref(this.meta.preferenceList[i], readonly, hidden, value);
-                preferenceList.push(preferences[key]);
+        for (i = 0; i < this.meta.preferenceList.length; i++) {
+            key = this.meta.preferenceList[i].name;
+            if (key in operator_status.preferences) {
+                value = operator_status.preferences[key].value;
+                readonly = operator_status.preferences[key].readonly;
+                hidden = operator_status.preferences[key].hidden;
+            } else {
+                value = this.meta.preferenceList[i].default_value;
+                readonly = hidden = false;
             }
+            preferences[key] = new Wirecloud.UserPref(this.meta.preferenceList[i], readonly, hidden, value);
+            preferenceList.push(preferences[key]);
         }
         Object.freeze(preferenceList);
         Object.defineProperty(this, 'preferenceList', {value: preferenceList});
