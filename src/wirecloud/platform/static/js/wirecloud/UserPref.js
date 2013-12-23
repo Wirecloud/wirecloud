@@ -30,8 +30,8 @@
      */
     var UserPref = function UserPref(pref_def, readOnly, hidden, currentValue) {
         Object.defineProperty(this, 'meta', {value: pref_def});
-        Object.defineProperty(this, 'readOnly', {value: readOnly});
-        Object.defineProperty(this, 'hidden', {value: hidden});
+        Object.defineProperty(this, 'readOnly', {value: !!readOnly});
+        Object.defineProperty(this, 'hidden', {value: !!hidden});
         this.value = currentValue;
     };
 
