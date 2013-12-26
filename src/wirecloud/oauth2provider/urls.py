@@ -18,11 +18,15 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf.urls import patterns, include, url
+from django.views.generic import TemplateView
 
 
 urlpatterns = patterns('wirecloud.oauth2provider.views',
 
     url('^oauth2/auth$', 'provide_authorization_code', name='oauth2provider.auth'),
     url('^oauth2/token$', 'provide_authorization_token', name='oauth2provider.token'),
+    url('^oauth2/default_redirect_uri$',
+        TemplateView.as_view(template_name='wirecloud/oauth2provider/default_redirect_uri.html'),
+        name='oauth2provider.default_redirect_uri'),
 
 )

@@ -1,0 +1,21 @@
+{% extends 'wirecloud/views/base_plain.html' %}
+{% load i18n %}
+
+{% block path %}
+    {% if 'code' in request.GET and request.GET.code != '' %}
+        {% trans "Application authorized successfully" %}
+    {% else %}
+        {% trans "Error authorizing the application" %}
+    {% endif %}
+{% endblock%}
+{% block content %}
+    {% if 'code' in request.GET and request.GET.code != '' %}
+    <div class="alert alert-success">
+        {% blocktrans with username=request.user.username %}The application was successfully authorized to access Wirecloud in your name ({{ username }}).{% endblocktrans %}
+    </div>
+    {% else %}
+    <div class="alert alert-error">
+        {% blocktrans with username=request.user.username %}Error authorizing the application to access Wirecloud in your name ({{ username }}).{% endblocktrans %}
+    </div>
+    {% endif %}
+{% endblock %}
