@@ -163,7 +163,7 @@
                     default:
                         button = new StyledElements.StyledButton({text: gettext('Download')});
                         button.addEventListener('click', function (resource) {
-                            window.open(resource.getUriTemplate(), '_blank');
+                            window.open(resource.description_url, '_blank');
                         }.bind(null, this.resource));
                     }
                 } else {
@@ -195,7 +195,7 @@
                 image.onerror = function (event) {
                     event.target.src = '/static/images/noimage.png';
                 };
-                image.src = resource.getUriImage();
+                image.src = resource.image_url;
                 return image;
             },
             'tags': function (options) {
@@ -238,7 +238,7 @@
             'text': gettext('Download')
         });
         button.addEventListener('click', function () {
-            window.open(resource.getUriTemplate(), '_blank');
+            window.open(resource.description_url, '_blank');
         });
         fragment.appendChild(button);
 

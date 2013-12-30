@@ -32,13 +32,7 @@
         ///////////////////////
         var currentVersion = null,
             allVersions = [],
-            data_by_version = {},
-        ///////////////////////////
-        // CONSTRUCTOR VARIABLES
-        ///////////////////////////
-            i = 0,
-            versions,
-            version_data;
+            data_by_version = {};
 
         //////////////////////////
         // GETTERS
@@ -49,14 +43,6 @@
 
         this.getAllVersions = function () {
             return allVersions;
-        };
-
-        this.getUriImage = function () {
-            return currentVersion.uriImage;
-        };
-
-        this.getUriTemplate = function () {
-            return currentVersion.uriTemplate;
         };
 
         this.isMashup = function () {
@@ -103,7 +89,13 @@
             },
             'type': {value: data.type},
             'packaged': {
-                get: function () { return !!currentVersion.packaged; }
+                get: function () { return currentVersion.packaged; }
+            },
+            'image_url': {
+                get: function () { return currentVersion.uriImage; }
+            },
+            'description_url': {
+                get: function () { return currentVersion.uriTemplate; }
             },
             'description': {
                 get: function () { return currentVersion.description; }
@@ -143,11 +135,12 @@
         ////////////////////////
         // CONSTRUCTOR
         ////////////////////////
-        versions = data.versions;
+        var i, version_data;
 
-        for (i = 0; i < versions.length; i += 1) {
-            version_data = versions[i];
+        for (i = 0; i < data.versions.length; i += 1) {
+            version_data = data.versions[i];
 
+            version_data.packaged = !! version_data.packaged;
             version_data.version = new Wirecloud.Version(version_data.version, 'catalogue');
             version_data.date = new Date(version_data.date);
 
@@ -158,6 +151,8 @@
             return -version1.compareTo(version2);
         });
         this.changeVersion(allVersions[0]);
+
+        Object.freeze(this);
     };
 
     window.CatalogueResource = CatalogueResource;

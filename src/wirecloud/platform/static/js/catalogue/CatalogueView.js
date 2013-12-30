@@ -142,7 +142,7 @@
             layoutManager._startComplexTask(gettext("Importing resource into local repository"), 3);
             layoutManager.logSubTask(gettext('Uploading resource'));
 
-            this.catalogue.addResourceFromURL(resource.getUriTemplate(), {
+            this.catalogue.addResourceFromURL(resource.description_url, {
                 packaged: resource.packaged,
                 onSuccess: function () {
                     LayoutManagerFactory.getInstance().logSubTask(gettext('Resource installed successfully'));
