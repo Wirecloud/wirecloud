@@ -239,7 +239,7 @@
                 image.onerror = function (event) {
                     event.target.src = '/static/images/noimage.png';
                 };
-                image.src = offering.getUriImage();
+                image.src = offering.image_url;
                 return image;
             },
             'tags': function (options) {

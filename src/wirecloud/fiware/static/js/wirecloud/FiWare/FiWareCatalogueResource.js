@@ -54,10 +54,6 @@
         // GETTERS
         /////////////////////////
 
-        this.getCreator = function() {
-            return "";
-        };
-
         this.getParts = function() {
             return parts;
         };
@@ -74,20 +70,8 @@
             return resourceJSON_.displayName;
         };
 
-        this.getUriImage = function () {
-            return resourceJSON_.uriImage;
-        };
-
-        this.getUriTemplate = function () {
-            return resourceJSON_.uriTemplate;
-        };
-
         this.getPage = function () {
             return resourceJSON_.page;
-        };
-
-        this.getCreated = function () {
-            return resourceJSON_.created;
         };
 
         this.getLegal = function() {
@@ -106,10 +90,6 @@
             return false;
         };
 
-        this.getVersion = function getVersion() {
-            return this.version;
-        };
-
         var publicationdate = null;
         if (resourceJSON_.publicationdate != null && resourceJSON_.publicationdate != '') {
             publicationdate = new Date(resourceJSON_.publicationdate);
@@ -120,6 +100,7 @@
             'name': {value: resourceJSON_.name},
             'version': {value: new Wirecloud.Version(resourceJSON_.version, 'catalogue')},
             'type': {value: resourceJSON_.type},
+            'image_url': {value: resourceJSON_.uriImage},
             'abstract': {value: resourceJSON_.shortDescription},
             'description': {value: resourceJSON_.longDescription},
             'pricing': {value: resourceJSON_.pricing},
