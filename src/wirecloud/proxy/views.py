@@ -183,7 +183,7 @@ class Proxy():
             # Add content-type header to the response
             res_info = res.info()
             if 'Content-Type' in res_info:
-                response = HttpResponse(res.read(), mimetype=res_info['Content-Type'])
+                response = HttpResponse(res.read(), content_type=res_info['Content-Type'])
             else:
                 response = HttpResponse(res.read())
 
