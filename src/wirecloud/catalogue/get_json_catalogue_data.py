@@ -32,28 +32,26 @@
 import time
 from urlparse import urljoin, urlparse
 
-from django.shortcuts import get_object_or_404
-
 from wirecloud.catalogue.models import WidgetWiring, UserTag, UserVote
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 
 
-def get_vote_data(widget, user):
-    """Gets the vote for a given user and widget.
+def get_vote_data(resource, user):
+    """Gets the vote for a given user and resource.
 
-    It also gets the number of votes and the popularity of the widget (average).
+    It also gets the number of votes and the popularity of the resource (average).
     """
 
     vote_data = {}
     try:
-        vote_value = get_object_or_404(UserVote, idResource=widget.id, idUser=user.id).vote
-    except:
+        vote_value = resource.uservote_set.get(idUser=user.id).vote
+    except UserVote.DoesNotExist:
         vote_value = 0
-    votes_number = UserVote.objects.filter(idResource=widget).count()
+    votes_number = resource.uservote_set.count()
     vote_data['user_vote'] = vote_value
     vote_data['votes_number'] = votes_number
     # Decimal data loses precision when converted to float
-    vote_data['popularity'] = str(widget.popularity)
+    vote_data['popularity'] = str(resource.popularity)
 
     return vote_data
 
@@ -168,7 +166,7 @@ def get_resource_data(untranslated_resource, user, request=None):
         'tags': [d for d in data_tags],
         'outputs': [d for d in data_events],
         'inputs': [d for d in data_slots],
-        'votes': get_vote_data(widget=resource, user=user),
+        'votes': get_vote_data(resource, user),
     }
 
 
