@@ -17,15 +17,30 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
+
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_http_methods, require_POST
+from django.http import HttpResponse
+from django.views.decorators.http import require_GET, require_http_methods, require_POST
 from django.shortcuts import render
 
+from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.oauth2provider.provider import WirecloudAuthorizationProvider
 
 
 provider = WirecloudAuthorizationProvider()
 
+@require_GET
+def oauth_discovery(request):
+
+    endpoints = {
+        'auth_endpoint': get_absolute_reverse_url('oauth2provider.auth', request),
+        'token_endpoint': get_absolute_reverse_url('oauth2provider.token', request),
+        'default_redirect_uri': get_absolute_reverse_url('oauth2provider.default_redirect_uri', request),
+        'version': '2.0',
+    }
+
+    return HttpResponse(json.dumps(endpoints), content_type='application/json; charset=UTF-8')
 
 @require_http_methods(["GET", "POST"])
 @login_required
