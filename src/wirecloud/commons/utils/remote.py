@@ -61,17 +61,17 @@ class PopupMenuTester(object):
 
         for item in must_be:
             menu_item = self.get_entry(item)
-            self.testcase.assertIsNotNone(menu_item)
-            self.testcase.assertFalse('disabled' in menu_item.get_attribute('class'))
+            self.testcase.assertIsNotNone(menu_item, '"%(item)s" item should be present' % { 'item': item })
+            self.testcase.assertFalse('disabled' in menu_item.get_attribute('class'), '"%(item)s" item should be enabled' % { 'item': item })
 
         for item in must_be_absent:
             menu_item = self.get_entry(item)
-            self.testcase.assertIsNone(menu_item)
+            self.testcase.assertIsNone(menu_item, '"%(item)s" item shouldn\'t be present' % { 'item': item })
 
         for item in must_be_disabled:
             menu_item = self.get_entry(item)
-            self.testcase.assertIsNotNone(menu_item)
-            self.testcase.assertTrue('disabled' in menu_item.get_attribute('class'))
+            self.testcase.assertIsNotNone(menu_item, '"%(item)s" item should be present' % { 'item': item })
+            self.testcase.assertTrue('disabled' in menu_item.get_attribute('class'), '"%(item)s" item shouldn\'t be enabled' % { 'item': item })
 
 
 class WiringEndpointTester(object):
