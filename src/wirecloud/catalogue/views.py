@@ -33,8 +33,6 @@ import os
 from cStringIO import StringIO
 import json
 from urllib import url2pathname
-from xml.sax import make_parser
-from xml.sax.xmlreader import InputSource
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -51,7 +49,6 @@ from django.utils.translation import ugettext as _
 from django.views.static import serve
 
 from wirecloud.catalogue.models import CatalogueResource, UserTag, UserVote
-from wirecloud.catalogue.tagsParser import TagsXMLHandler
 from wirecloud.catalogue.catalogue_utils import get_latest_resource_version
 from wirecloud.catalogue.catalogue_utils import get_resource_response, filter_resources_by_user
 from wirecloud.catalogue.catalogue_utils import filter_resources_by_scope
@@ -311,33 +308,23 @@ class ResourceCollectionByGlobalSearch(Resource):
 class ResourceTagCollection(Resource):
 
     @method_decorator(login_required)
+    @supported_request_mime_types(('application/json',))
     @commit_on_http_success
     def create(self, request, vendor, name, version):
-        format = request.POST.get('format', 'default')
 
-        # Get the xml containing the tags from the request
-        tags_xml = request.POST.get('tags_xml')
-        tags_xml = tags_xml.encode("utf-8")
-
-        # Parse the xml containing the tags
-        parser = make_parser()
-        handler = TagsXMLHandler()
-
-        # Tell the parser to use our handler
-        parser.setContentHandler(handler)
-
-        # Parse the input
-        inpsrc = InputSource()
-        inpsrc.setByteStream(StringIO(tags_xml))
-        parser.parse(inpsrc)
+        try:
+            tags = json.loads(request.body)
+        except ValueError, e:
+            msg = _("malformed json data: %s") % unicode(e)
+            return build_error_response(request, 400, msg)
 
         # Get the resource's id for those vendor, name and version
         resource = get_object_or_404(CatalogueResource, short_name=name,
                                    vendor=vendor, version=version)
 
         # Insert the tags for these resource and user in the database
-        for e in handler._tags:
-            tag_resource(request.user, e, resource)
+        for tag in tags:
+            ag_resource(request.user, tag, resource)
 
         return get_tag_response(resource, request.user, format)
 
