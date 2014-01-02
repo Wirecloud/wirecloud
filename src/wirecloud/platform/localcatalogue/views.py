@@ -260,7 +260,10 @@ class WorkspaceResourceCollection(Resource):
         wiring_status = json.loads(workspace.wiringStatus)
         for operator_id, operator in wiring_status['operators'].iteritems():
             vendor, name, version = operator['name'].split('/')
-            resources.add(CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version))
+            try:
+                resources.add(CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version))
+            except CatalogueResource.DoesNotExist:
+                pass
 
         result = {}
         for resource in resources:
