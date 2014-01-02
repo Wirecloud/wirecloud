@@ -212,9 +212,9 @@ class WirecloudCorePlugin(WirecloudPlugin):
             },
         }
 
-    def get_workspace_context_current_values(self, user_workspace):
+    def get_workspace_context_current_values(self, workspace, user):
         return {
-            'name': user_workspace.workspace.name
+            'name': workspace.name
         }
 
     def get_scripts(self, view):

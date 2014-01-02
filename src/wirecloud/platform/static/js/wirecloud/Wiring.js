@@ -183,7 +183,11 @@
 
         this.events.load.dispatch();
 
-        operators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
+        if (this.workspace.isOwned()) {
+            operators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
+        } else {
+            operators = this.workspace.resources.getAvailableResourcesByType('operator');
+        }
         old_operators = this.ioperators;
         this.ioperators = {};
         for (id in status.operators) {

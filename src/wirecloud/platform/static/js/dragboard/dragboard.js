@@ -37,7 +37,7 @@
 
         if (this.tab.readOnly || !this.workspace.isOwned()) {
             this.readOnly = true;
-            this.dragboardElement.addClassName("fixed");
+            this.dragboardElement.classList.add("fixed");
         }
 
         for (i = 0; i < tabInfo.iwidgets.length; i++) {

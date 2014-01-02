@@ -71,13 +71,12 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
     values_by_varid = {}
     values_by_varname = {}
 
-    if forced_values == None:
-        user_workspace = UserWorkspace.objects.get(user=user, workspace=workspace)
-        context_values = get_context_values(user_workspace)
+    if forced_values is None:
+        context_values = get_context_values(workspace, user)
         preferences = get_workspace_preference_values(workspace)
         forced_values = process_forced_values(workspace, user, context_values, preferences)
 
-    var_values = VariableValue.objects.filter(user__id=user.id, variable__iwidget__tab__workspace=workspace)
+    var_values = VariableValue.objects.filter(user__id=workspace.creator.id, variable__iwidget__tab__workspace=workspace)
     for var_value in var_values.select_related('variable__vardef'):
         variwidget = var_value.variable.iwidget.id
         varname = var_value.variable.vardef.name
@@ -355,18 +354,17 @@ def process_forced_values(workspace, user, concept_values, preferences):
 
 
 def _get_global_workspace_data(workspaceDAO, user):
-    user_workspace = UserWorkspace.objects.get(user=user, workspace=workspaceDAO)
     data_ret = get_workspace_data(workspaceDAO, user)
 
     # Context information
-    data_ret['context'] = get_workspace_context(user_workspace)
+    data_ret['context'] = get_workspace_context(workspaceDAO, user)
 
     # Workspace preferences
     preferences = get_workspace_preference_values(workspaceDAO.pk)
     data_ret['preferences'] = preferences
 
     # Process forced variable values
-    concept_values = get_context_values(user_workspace)
+    concept_values = get_context_values(workspaceDAO, user)
     forced_values = process_forced_values(workspaceDAO, user, concept_values, preferences)
     data_ret['empty_params'] = forced_values['empty_params']
     data_ret['extra_prefs'] = forced_values['extra_prefs']
@@ -399,7 +397,7 @@ def _get_global_workspace_data(workspaceDAO, user):
 
         iwidget_data = []
         for iwidget in iwidgets:
-            iwidget_data.append(get_iwidget_data(iwidget, user, workspaceDAO, cache_manager))
+            iwidget_data.append(get_iwidget_data(iwidget, workspaceDAO, cache_manager))
 
         tab['iwidgets'] = iwidget_data
 
@@ -436,7 +434,7 @@ def get_tab_data(tab):
     }
 
 
-def get_iwidget_data(iwidget, user, workspace, cache_manager=None):
+def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
 
     data_ret = {'id': iwidget.id,
         'name': iwidget.name,
@@ -461,19 +459,19 @@ def get_iwidget_data(iwidget, user, workspace, cache_manager=None):
         data_ret['icon_top'] = 0
         data_ret['icon_left'] = 0
 
-    if cache_manager == None:
+    if cache_manager is None:
         cache_manager = VariableValueCacheManager(workspace, user)
 
     variables = _get_cached_variables(iwidget)
     data_ret['variables'] = {}
     for variable in variables:
-        var_data = get_variable_data(variable, user, workspace, cache_manager)
+        var_data = get_variable_data(variable, workspace, cache_manager)
         data_ret['variables'][variable.vardef.name] = var_data
 
     return data_ret
 
 
-def get_variable_data(variable, user, workspace, cache_manager=None):
+def get_variable_data(variable, workspace, cache_manager=None, user=None):
     data_ret = {
         'id': variable.id,
         'name': variable.vardef.name,
@@ -482,7 +480,7 @@ def get_variable_data(variable, user, workspace, cache_manager=None):
     if variable.vardef.aspect != 'PREF' and variable.vardef.aspect != 'PROP':
         return data_ret
 
-    if cache_manager == None:
+    if cache_manager is None:
         cache_manager = VariableValueCacheManager(workspace, user)
 
     # Variable info is splited into 2 entities: VariableDef and VariableValue

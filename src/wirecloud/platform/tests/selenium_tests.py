@@ -624,18 +624,20 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Check iwidget are loaded correctly
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
-        source_iwidget = iwidgets[0]
-        target_iwidget = iwidgets[1]
+        source_iwidget = iwidgets[1]
+        target_iwidget = iwidgets[0]
         self.assertIsNotNone(source_iwidget.element)
         self.assertIsNotNone(target_iwidget.element)
 
         # TODO
         # Check widget setting cannot be changed
-        # Workspace cannot be renamed
-        # Workspace cannot be removed
         # Workspace cannot be edited
         # ...
         # END TODO
+
+        # Check public workspaces cannot be renamed/removed by non owners
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
+        self.check_popup_menu(must_be_disabled=('Rename', 'Settings', 'Remove'))
 
         # Check wiring works
         with source_iwidget:
@@ -653,7 +655,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'hello world!!')
-    test_public_workspaces.tags = ('current2',)
 
     def test_browser_navigation_history_management(self):
 

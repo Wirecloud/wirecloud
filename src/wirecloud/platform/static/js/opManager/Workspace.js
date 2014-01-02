@@ -745,6 +745,10 @@ function Workspace(workspaceState, resources) {
             return this._isAllowed('add_remove_iwidgets');
         case "catalogue_view_mashups":
             return this.isAllowed('add_remove_workspaces') || this.isAllowed('merge_workspaces');
+        case "update_preferences":
+            return this.removable && this.isAllowed('change_workspace_preferences');
+        case "rename":
+            return this.removable && this.isAllowed('rename_workspaces');
         default:
             return this._isAllowed(action);
         }

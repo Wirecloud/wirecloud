@@ -45,7 +45,7 @@ class IWidgetCollection(Resource):
 
         cache_manager = VariableValueCacheManager(workspace, request.user)
         iwidgets = IWidget.objects.filter(tab__workspace__users=request.user, tab__workspace__pk=workspace_id, tab__pk=tab_id)
-        data = [get_iwidget_data(iwidget, request.user, workspace, cache_manager) for iwidget in iwidgets]
+        data = [get_iwidget_data(iwidget, workspace, cache_manager) for iwidget in iwidgets]
 
         return HttpResponse(json.dumps(data), content_type='application/json; charset=UTF-8')
 
@@ -70,7 +70,7 @@ class IWidgetCollection(Resource):
 
         try:
             iwidget = SaveIWidget(iwidget, request.user, tab, initial_variable_values)
-            iwidget_data = get_iwidget_data(iwidget, request.user, tab.workspace)
+            iwidget_data = get_iwidget_data(iwidget, tab.workspace, user=request.user)
 
             return HttpResponse(json.dumps(iwidget_data), content_type='application/json; charset=UTF-8')
         except (CatalogueResource.DoesNotExist, Widget.DoesNotExist), e:
@@ -108,7 +108,7 @@ class IWidgetEntry(Resource):
         workspace = get_object_or_404(Workspace, id=workspace_id)
 
         iwidget = get_object_or_404(IWidget, tab__workspace__users=request.user, tab__workspace=workspace, tab__pk=tab_id, pk=iwidget_id)
-        iwidget_data = get_iwidget_data(iwidget, request.user, workspace)
+        iwidget_data = get_iwidget_data(iwidget, workspace, user=request.user)
 
         return HttpResponse(json.dumps(iwidget_data), content_type='application/json; charset=UTF-8')
 

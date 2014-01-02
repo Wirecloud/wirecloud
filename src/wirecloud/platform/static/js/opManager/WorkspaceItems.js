@@ -37,13 +37,13 @@ WorkspaceItems.prototype.build = function () {
         (new Wirecloud.ui.RenameWindowMenu(opManager.activeWorkspace, 'rename')).show();
     }.bind(this));
     items.push(item);
-    item.setDisabled(current_workspace == null || !current_workspace.isAllowed('rename_workspace'));
+    item.setDisabled(current_workspace == null || !current_workspace.isAllowed('rename'));
 
     item = new StyledElements.MenuItem(gettext('Settings'), function () {
         current_workspace.getPreferencesWindow().show();
     });
     items.push(item);
-    item.setDisabled(current_workspace == null || !current_workspace.isAllowed('change_workspace_preferences'));
+    item.setDisabled(current_workspace == null || !current_workspace.isAllowed('update_preferences'));
 
     item = new StyledElements.MenuItem(gettext("Remove"), function() {
         var msg = gettext('Do you really want to remove the "%(workspaceName)s" workspace?');

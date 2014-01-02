@@ -40,7 +40,9 @@ class FP74CaaStPlugin(WirecloudPlugin):
             }
         }
 
-    def get_workspace_context_current_values(self, user_workspace):
+    def get_workspace_context_current_values(self, workspace, user):
+
+        user_workspace = workspace.
 
         try:
             tenant_id = user_workspace.workspace.creator.tenantprofile_4CaaSt.id_4CaaSt

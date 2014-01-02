@@ -276,7 +276,7 @@ class WirecloudPlugin(object):
     def get_workspace_context_definitions(self):
         return {}
 
-    def get_workspace_context_current_values(self, user_workspace):
+    def get_workspace_context_current_values(self, workspace, user):
         return {}
 
     def get_scripts(self, view):

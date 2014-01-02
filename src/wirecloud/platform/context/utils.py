@@ -81,21 +81,21 @@ def get_workspace_context_definitions():
     return _wirecloud_workspace_context_definitions
 
 
-def get_workspace_context_current_values(user_workspace):
+def get_workspace_context_current_values(workspace, user):
 
     plugins = get_plugins()
     values = {}
 
     for plugin in plugins:
-        values.update(plugin.get_workspace_context_current_values(user_workspace))
+        values.update(plugin.get_workspace_context_current_values(workspace, user))
 
     return values
 
 
-def get_workspace_context(user_workspace):
+def get_workspace_context(workspace, user):
 
     context = copy.deepcopy(get_workspace_context_definitions())
-    values = get_workspace_context_current_values(user_workspace)
+    values = get_workspace_context_current_values(workspace, user)
     for key in values:
         context[key]['value'] = values[key]
 
@@ -112,17 +112,17 @@ def get_constant_context_values():
     return res
 
 
-def get_context_values(user_workspace):
-    cache_key = 'constant_context/' + str(user_workspace.user.id)
+def get_context_values(workspace, user):
+    cache_key = 'constant_context/' + str(user.id)
     constant_context = cache.get(cache_key)
     if constant_context == None:
         constant_context = get_constant_context_values()
         cache.set(cache_key, constant_context)
 
     platform_context = constant_context
-    platform_context.update(get_platform_context_current_values(user_workspace.user))
+    platform_context.update(get_platform_context_current_values(user))
 
     return {
         'platform': platform_context,
-        'workspace': get_workspace_context_current_values(user_workspace),
+        'workspace': get_workspace_context_current_values(workspace, user),
     }

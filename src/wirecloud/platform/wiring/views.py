@@ -84,8 +84,9 @@ class OperatorEntry(Resource):
     def read(self, request, vendor, name, version):
 
         operator = get_object_or_404(CatalogueResource, type=2, vendor=vendor, short_name=name, version=version)
-        if not operator.is_available_for(request.user):
-            return HttpResponseForbidden()
+        # For now, all operators are freely accessible/distributable
+        #if not operator.is_available_for(request.user):
+        #    return HttpResponseForbidden()
 
         key = '_operator/' + operator.local_uri_part
         cached_response = cache.get(key)

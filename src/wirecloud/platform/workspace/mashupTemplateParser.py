@@ -58,6 +58,7 @@ def buildWorkspaceFromTemplate(template, user, allow_renaming=False):
 
     return (workspace, user_workspace)
 
+
 class MissingDependencies(Exception):
 
     def __init__(self, missing_dependencies):
@@ -65,6 +66,7 @@ class MissingDependencies(Exception):
 
     def __unicode__(self):
         return _('Missing dependencies')
+
 
 def check_mashup_dependencies(template, user):
 
@@ -95,6 +97,7 @@ def check_mashup_dependencies(template, user):
     if len(missing_dependencies) > 0:
         raise MissingDependencies(list(missing_dependencies))
 
+
 def fillWorkspaceUsingTemplate(workspace, template):
 
     if not isinstance(template, TemplateParser):
@@ -105,8 +108,7 @@ def fillWorkspaceUsingTemplate(workspace, template):
 
     user = workspace.creator
 
-    user_workspace = UserWorkspace.objects.get(user=workspace.creator, workspace=workspace)
-    context_values = get_context_values(user_workspace)
+    context_values = get_context_values(workspace, workspace.creator)
     processor = TemplateValueProcessor({'user': user, 'context': context_values})
 
     workspace_info = template.get_resource_info()
