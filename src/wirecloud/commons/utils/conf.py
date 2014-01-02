@@ -55,7 +55,7 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
 
     settings['TEMPLATE_DEBUG'] = settings['DEBUG']
     settings['COMPRESS'] = not settings['DEBUG']
-    settings['COMPRESS_OFFLINE'] = True
+    settings['COMPRESS_OFFLINE'] = False
     settings['APPEND_SLASH'] = False
     settings['COMPRESS_OUTPUT_DIR'] = 'cache'
 
