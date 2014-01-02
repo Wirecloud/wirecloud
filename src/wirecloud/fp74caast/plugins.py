@@ -42,14 +42,13 @@ class FP74CaaStPlugin(WirecloudPlugin):
 
     def get_workspace_context_current_values(self, workspace, user):
 
-        user_workspace = workspace.
-
         try:
-            tenant_id = user_workspace.workspace.creator.tenantprofile_4CaaSt.id_4CaaSt
+            tenant_id = workspace.creator.tenantprofile_4CaaSt.id_4CaaSt
         except:
             tenant_id = ""
 
         try:
+            user_workspace = workspace.userworkspace_set.get(user=user.id)
             SaaS_tenant_id = user_workspace.profile4caast.id_4CaaSt
         except:
             SaaS_tenant_id = ""
