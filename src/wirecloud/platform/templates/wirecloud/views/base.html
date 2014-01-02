@@ -88,9 +88,6 @@
     }
     unsupported_browser_msg.parentNode.removeChild(unsupported_browser_msg);
 
-    var LANGUAGES = [];
-    {% for lang in LANGUAGES %} LANGUAGES.push(["{{lang.0}}","{{lang.1}}"]);{% endfor %}
-
     var opManager = OpManagerFactory.getInstance();
     opManager.loadEnviroment();
 </script>

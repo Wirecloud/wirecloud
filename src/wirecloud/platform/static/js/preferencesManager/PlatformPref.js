@@ -535,7 +535,7 @@ function WorkspacePreferences(definitions, workspace, values) {
 	Preferences.call(this, definitions, values);
 	this._workspace = workspace;
 
-	PreferencesManagerFactory.getInstance().getPlatformPreferences().addCommitHandler(this._handleParentChanges);
+	Wirecloud.preferences.addCommitHandler(this._handleParentChanges);
 }
 WorkspacePreferences.prototype = new Preferences();
 
@@ -545,7 +545,7 @@ WorkspacePreferences.prototype.buildTitle = function() {
 }
 
 WorkspacePreferences.prototype.getParentValue = function(name) {
-	return PreferencesManagerFactory.getInstance().getPlatformPreferences().get(name);
+	return Wirecloud.preferences.get(name);
 }
 
 WorkspacePreferences.prototype._build_save_url = function () {
@@ -553,7 +553,7 @@ WorkspacePreferences.prototype._build_save_url = function () {
 };
 
 WorkspacePreferences.prototype.destroy = function() {
-	PreferencesManagerFactory.getInstance().getPlatformPreferences().removeCommitHandler(this._handleParentChanges);
+	Wirecloud.preferences.removeCommitHandler(this._handleParentChanges);
 
 	Preferences.prototype.destroy.call(this);
 	this._workspace = null;

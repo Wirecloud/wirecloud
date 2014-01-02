@@ -105,7 +105,6 @@ var OpManagerFactory = function () {
         this.showcaseModule = null;
         this.catalogue = null;
         this.logs = null;
-        this.platformPreferences = null;
 
         this.loadCompleted = false;
 
