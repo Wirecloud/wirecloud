@@ -250,7 +250,7 @@ function PlatformPreferencesDef(definitions) {
 PlatformPreferencesDef.prototype = new PreferencesDef();
 
 PlatformPreferencesDef.prototype.buildPreferences = function(values) {
-	return new PlatformPreferences(this, values);
+	return new Wirecloud.PlatformPreferences(this, values);
 }
 
 /**
@@ -525,23 +525,7 @@ Preferences.prototype.save = function() {
 	}
 }
 
-Preferences.prototype.destroy = function() {
-}
-
-/**
- *
- */
-function PlatformPreferences(definitions, values) {
-	Preferences.call(this, definitions, values);
-}
-PlatformPreferences.prototype = new Preferences();
-
-PlatformPreferences.prototype.buildTitle = function() {
-	return gettext("Platform Preferences");
-}
-
-PlatformPreferences.prototype._build_save_url = function () {
-    return Wirecloud.URLs.PLATFORM_PREFERENCES;
+Preferences.prototype.destroy = function destroy() {
 };
 
 /**
