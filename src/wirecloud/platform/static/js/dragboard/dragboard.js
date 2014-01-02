@@ -44,7 +44,7 @@
             curIWidget = tabInfo.iwidgets[i];
 
             // Get widget model
-            widget = Wirecloud.LocalCatalogue.getResourceId(curIWidget.widget);
+            widget = this.workspace.resources.getResourceId(curIWidget.widget);
 
             // Parse layout field
             if (curIWidget.layout === 0) {

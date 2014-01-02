@@ -610,6 +610,15 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_public_workspaces(self):
 
+        # Make Test and TestOperator unavailable to emptyuser
+        test_widget = CatalogueResource.objects.get(short_name='Test')
+        test_widget.public = False
+        test_widget.save()
+
+        test_operator = CatalogueResource.objects.get(short_name='TestOperator')
+        test_operator.public = False
+        test_operator.save()
+
         self.login(username='emptyuser', next='/user_with_workspaces/Public Workspace')
 
         # Check iwidget are loaded correctly
@@ -644,6 +653,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
             text_div = self.driver.find_element_by_id('wiringOut')
             self.assertEqual(text_div.text, 'hello world!!')
+    test_public_workspaces.tags = ('current2',)
 
     def test_browser_navigation_history_management(self):
 

@@ -24,7 +24,7 @@
  */
 
 
-function Workspace (workspaceState) {
+function Workspace(workspaceState, resources) {
 
     Workspace.prototype._updateAddTabButton = function () {
         if (this.addTabButton) {
@@ -755,6 +755,7 @@ function Workspace (workspaceState) {
     // *****************
 
     Object.defineProperty(this, 'id', {value: workspaceState.id});
+    Object.defineProperty(this, 'resources', {value: resources});
     this.workspaceState = workspaceState;
     this.wiringInterface = null;
     this.varManager = null;

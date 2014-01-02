@@ -238,27 +238,31 @@ var OpManagerFactory = function () {
             HistoryManager.pushState(state);
 
             LayoutManagerFactory.getInstance().logSubTask(gettext("Downloading workspace data"), 1);
-            var workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': workspace.id});
-            Wirecloud.io.makeRequest(workspaceUrl, {
-                method: 'GET',
-                requestHeaders: {'Accept': 'application/json'},
-                onSuccess: function (response) {
-                    var workspace_data = JSON.parse(response.responseText);
-                    this.activeWorkspace = new Workspace(workspace_data);
-                    this.activeWorkspace.contextManager.addCallback(function (updated_attributes) {
-                        var workspace, old_name;
+            new Wirecloud.WorkspaceCatalogue(workspace.id, {
+                onSuccess: function (workspace_resources) {
+                    var workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': workspace.id});
+                    Wirecloud.io.makeRequest(workspaceUrl, {
+                        method: 'GET',
+                        requestHeaders: {'Accept': 'application/json'},
+                        onSuccess: function (response) {
+                            var workspace_data = JSON.parse(response.responseText);
+                            this.activeWorkspace = new Workspace(workspace_data, workspace_resources);
+                            this.activeWorkspace.contextManager.addCallback(function (updated_attributes) {
+                                var workspace, old_name;
 
-                        if ('name' in updated_attributes) {
-                            workspace = this.workspaceInstances[this.activeWorkspace.id];
-                            old_name = workspace.name;
-                            delete this.workspacesByUserAndName[workspace.creator][old_name];
+                                if ('name' in updated_attributes) {
+                                    workspace = this.workspaceInstances[this.activeWorkspace.id];
+                                    old_name = workspace.name;
+                                    delete this.workspacesByUserAndName[workspace.creator][old_name];
 
-                            workspace.name = updated_attributes.name;
-                            this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace;
-                        }
-                    }.bind(this));
+                                    workspace.name = updated_attributes.name;
+                                    this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace;
+                                }
+                            }.bind(this));
 
-                    LayoutManagerFactory.getInstance().header.refresh(); // FIXME
+                            LayoutManagerFactory.getInstance().header.refresh(); // FIXME
+                        }.bind(this)
+                    });
                 }.bind(this)
             });
         }
