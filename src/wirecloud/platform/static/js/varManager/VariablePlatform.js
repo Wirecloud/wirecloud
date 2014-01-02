@@ -31,8 +31,6 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function Variable (id, iWidget, name, varManager) {
-    // True when a the value of the variable has changed and the callback has not been invoked!
-    this.annotated = false;
     this.varManager = null;
     this.id = null;
     this.iWidget = null;
@@ -69,11 +67,6 @@ Variable.prototype.set = function (value) { }
 Variable.prototype.getLabel = function () {
     return this.vardef.label;
 };
-
-Variable.prototype.annotate = function (value) {
-    this.annotated = true;
-    this.value = value;
-}
 
 Variable.prototype.assignConnectable = function (connectable) {
     this.connectable = connectable;

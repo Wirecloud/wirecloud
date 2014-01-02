@@ -135,7 +135,6 @@ function VarManager (_workspace) {
     VarManager.prototype.setVariable = function (iWidgetId, variableName, value, options) {
         var variable = this.findVariable(iWidgetId, variableName);
 
-        variable.annotate(value);
         variable.set(value, options);
     }
 
