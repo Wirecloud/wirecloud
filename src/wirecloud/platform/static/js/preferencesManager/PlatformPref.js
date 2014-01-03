@@ -24,104 +24,6 @@
  */
 
 
-/**
- * abstract
- * @author jmostazo-upm
- *
- * @param {Wirecloud.PreferenceDef} preferenceDef
- * @param {Preferences}   manager The preference Group this preference belongs to
- * @param {Boolean}       inherit Use the value from the parent preference group
- * @param {Object}        value   Current value
- */
-function PlatformPref(manager, preferenceDef, inherit, value) {
-	this.definition = preferenceDef;
-	this.manager = manager;
-	this.inherit = inherit;
-	this.value = value;
-
-	this.handlers = new Array();
-}
-
-PlatformPref.prototype.getName = function () {
-	return this.definition.name;
-}
-
-PlatformPref.prototype.getLabel = function () {
-	return this.definition.inputInterface.label;
-}
-
-PlatformPref.prototype.getDescription = function () {
-	return this.definition.inputInterface.description;
-}
-
-PlatformPref.prototype.getDefaultValue = function () {
-	return this.definition.inputInterface.getDefaultValue();
-}
-
-PlatformPref.prototype.getValue = function() {
-	return this.value;
-}
-
-PlatformPref.prototype._getParentValue = function() {
-	return this.manager.getParentValue(this.definition.name);
-}
-
-PlatformPref.prototype.setInheritValue = function (newValue) {
-	this.inherit = newValue;
-}
-
-PlatformPref.prototype.getEffectiveValue = function() {
-	if (this.inherit)
-		return this._getParentValue();
-
-	return this.value;
-}
-
-PlatformPref.prototype.setValue = function (value) {
-	if (this.definition.inputInterface.isValidValue(value)) {
-		this.value = value;
-	}
-}
-
-PlatformPref.prototype.addHandler = function(handler) {
-	this.handlers.push(handler);
-}
-
-PlatformPref.prototype._setManager = function(manager) {
-	this.manager = manager;
-}
-
-PlatformPref.prototype._propagate = function () {
-	// Handlers
-	for (var i = 0; i < this.handlers.length; i++) {
-		try {
-			this.handlers[i](this.scope, this.name, this.value);
-		} catch (e) {
-			// FIXME
-		}
-	}
-}
-
-PlatformPref.prototype.setDefaultValue = function () {
-	this.setValue(this.definition.inputInterface.getDefaultValue());
-}
-
-PlatformPref.prototype.getValueFromInterface = function () {
-	return this.definition.inputInterface.getValue();
-}
-
-PlatformPref.prototype.setValueInInterface = function (newValue) {
-	this.definition.inputInterface.setValue(newValue);
-}
-
-PlatformPref.prototype.resetInterfaceValue = function () {
-	this.definition.inputInterface._setValue(this.value);
-	if (this.definition.inheritInterface) {
-		this.definition.inheritInterface._setValue(this.inherit);
-		this.definition.inputInterface.setDisabled(this.inherit);
-	}
-}
-
 var build_pref_label = function build_pref_label(preference) {
    var label = document.createElement("label");
    label.appendChild(document.createTextNode(preference.label));
@@ -286,7 +188,7 @@ function Preferences(preferencesDef, values) {
 			inherit = definition.inheritByDefault;
 		}
 
-		this._preferences[definition.name] = new PlatformPref(this, definition, inherit, value);
+		this._preferences[definition.name] = new Wirecloud.PlatformPref(this, definition, inherit, value);
 	}
 
 	// Bind _handleParentChanges method

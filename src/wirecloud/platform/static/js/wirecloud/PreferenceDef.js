@@ -39,6 +39,7 @@
             description: {value: options.description},
             inheritable: {value: !!inheritable},
             inheritByDefault: {value: !!(inheritable && inheritByDefault)},
+            default_value: {value: options.defaultValue},
             hidden: {value: !!hidden},
             options: {value: options}
         });
