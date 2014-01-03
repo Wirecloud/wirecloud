@@ -152,19 +152,18 @@
 
         // Save they into our structures
         definitions = this.processDefinitions(platformPreferences);
-        this.preferencesDef.platform = new PlatformPreferencesDef(definitions);
+        this.preferencesDef.platform = [PlatformPreferencesDef, definitions];
         definitions = this.processDefinitions(workspacePreferences);
-        this.preferencesDef.workspace = new WorkspacePreferencesDef(definitions);
+        this.preferencesDef.workspace = [WorkspacePreferencesDef, definitions];
         definitions = this.processDefinitions(tabPreferences);
-        this.preferencesDef.tab = new TabPreferencesDef(definitions);
+        this.preferencesDef.tab = [TabPreferencesDef, definitions];
     };
 
     PreferenceManager.prototype.processDefinitions = function processDefinitions(preferences) {
         var definitions = {};
         for (var key in preferences) {
             var preference_data = preferences[key];
-            var inputInterface = StyledElements.DefaultInputInterfaceFactory.createInterface(key, preference_data);
-            var preferenceDef = new PreferenceDef(key, inputInterface, preference_data.inheritable, preference_data.inheritByDefault, preference_data.hidden);
+            var preferenceDef = new Wirecloud.PreferenceDef(key, preference_data.inheritable, preference_data.inheritByDefault, preference_data.hidden, preference_data);
             definitions[key] = preferenceDef;
         }
         return definitions;
@@ -180,10 +179,10 @@
     PreferenceManager.prototype.buildPreferences = function buildPreferences(scope, values) {
         var args = Array.prototype.slice.call(arguments, 1); // Remove scope argument
 
-        var manager = this.preferencesDef[scope];
-        if (!(manager instanceof PreferencesDef)) {
-            throw new Error();
+        if (!(scope in this.preferencesDef)) {
+            throw new TypeError();
         }
+        var manager = new (this.preferencesDef[scope][0])(this.preferencesDef[scope][1], args);
 
         return manager.buildPreferences.apply(manager, args);
     };

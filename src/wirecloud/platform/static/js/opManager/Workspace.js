@@ -58,7 +58,7 @@ function Workspace(workspaceState, resources) {
 
         // Failsafe workspace status
         layoutManager.currentViewType = "dragboard"; // workaround
-        this.preferences = PreferencesManagerFactory.getInstance().buildPreferences('workspace', {}, this)
+        this.preferences = Wirecloud.PreferenceManager.buildPreferences('workspace', {}, this)
 
         var initialTab = {
             'id': 0,
@@ -97,7 +97,7 @@ function Workspace(workspaceState, resources) {
             // Load workspace preferences
             params = this.workspaceState.empty_params;
             preferenceValues = this.workspaceState.preferences;
-            this.preferences = PreferencesManagerFactory.getInstance().buildPreferences('workspace', preferenceValues, this, params);
+            this.preferences = Wirecloud.PreferenceManager.buildPreferences('workspace', preferenceValues, this, params);
 
             // Check if the workspace needs to ask some values before loading this workspace
             if (this.workspaceState.empty_params.length > 0) {

@@ -25,55 +25,10 @@
 
 
 /**
- * @param {String} name
- * @param {InputInterface} inputInterface
- * @param {Boolean} inheritable
- * @param {Boolean} inheritByDefault
- * @param {Boolean} hidden
- */
-function PreferenceDef(name, inputInterface, inheritable, inheritByDefault, hidden) {
-	this.name = name;
-	this.inputInterface = inputInterface;
-	this.inheritable = inheritable === true;
-	this.inheritByDefault = inheritable && inheritByDefault;
-	this.hidden = hidden === true;
-
-	// Interfaces
-	if (this.inheritable)
-		this.inheritInterface = StyledElements.DefaultInputInterfaceFactory.createInterface('inherit-' + this.name, {'type': 'boolean'});
-
-	this.handlers = new Array();
-}
-
-PreferenceDef.prototype.getLabelInterface = function () {
-	var label = document.createElement("label");
-	label.appendChild(document.createTextNode(gettext(this.inputInterface.getLabel())));
-	label.setAttribute("title", gettext(this.inputInterface.getDescription()));
-	//label.setAttribute("for", this.name);
-	return label;
-}
-
-PreferenceDef.prototype.getInterface = function () {
-	return this.inputInterface;
-}
-
-PreferenceDef.prototype.getInheritInterface = function () {
-	return this.inheritInterface;
-}
-
-PreferenceDef.prototype.isHidden = function () {
-	return this.hidden;
-}
-
-PreferenceDef.prototype.isInheritable = function () {
-	return this.inheritable;
-}
-
-/**
  * abstract
  * @author jmostazo-upm
  *
- * @param {PreferenceDef} preferenceDef
+ * @param {Wirecloud.PreferenceDef} preferenceDef
  * @param {Preferences}   manager The preference Group this preference belongs to
  * @param {Boolean}       inherit Use the value from the parent preference group
  * @param {Object}        value   Current value
@@ -167,6 +122,21 @@ PlatformPref.prototype.resetInterfaceValue = function () {
 	}
 }
 
+var build_pref_label = function build_pref_label(preference) {
+   var label = document.createElement("label");
+   label.appendChild(document.createTextNode(preference.label));
+   label.setAttribute("title", gettext(preference.description));
+   //label.setAttribute("for", preference.name);
+   return label;
+};
+
+var build_inherit_input = function build_inherit_input(preference) {
+    return StyledElements.DefaultInputInterfaceFactory.createInterface('inherit-' + preference.name, {'type': 'boolean'});
+};
+
+var build_pref_input = function build_pref_input(preference) {
+    return StyledElements.DefaultInputInterfaceFactory.createInterface(preference.name, preference.options);
+};
 
 /**
  * 
@@ -188,16 +158,18 @@ function PreferencesDef(definitions) {
 	for (var key in this._preferences) {
 		var preference = this._preferences[key];
 
-		if (preference.isHidden())
+		if (preference.hidden) {
 			continue;
+        }
 
-		if (!preference.isInheritable()) {
+        var input_interface = build_pref_input(preference);
+		if (!preference.inheritable) {
 			var row = tbody.insertRow(-1);
 			var columnLabel = row.insertCell(-1);
 			columnLabel.className = "label-cell";
 			var columnValue = row.insertCell(-1);
-			columnLabel.appendChild(preference.getLabelInterface());
-			preference.getInterface().insertInto(columnValue);
+			columnLabel.appendChild(build_pref_label(preference));
+			input_interface.insertInto(columnValue);
 		} else {
 			var complexRow = tbody.insertRow(-1);
 			var complexCell = complexRow.insertCell(-1);
@@ -221,18 +193,18 @@ function PreferencesDef(definitions) {
 			var inheritCell = prefRow.insertCell(-1);
 			inheritCell.classList.add('inheritCell');
 
-			var inheritInput = preference.getInheritInterface();
+			var inheritInput = build_inherit_input(preference);
 			inheritInput.insertInto(inheritCell);
 			inheritCell.appendChild(document.createTextNode(gettext('Inherit')));
 			inheritInput.inputElement.addEventListener(
 			    'change',
 			    function() {
-			        this.getInterface().setDisabled(this.inheritInterface.getValue());
-			    }.bind(preference));
+			        this.input_interface.setDisabled(this.inherit_interface.getValue());
+			    }.bind({input_interface: input_interface, inherit_interface: inheritInput}));
 
 			var columnValue = prefRow.insertCell(-1);
-			columnLabel.appendChild(preference.getLabelInterface());
-			preference.getInterface().insertInto(columnValue);
+			columnLabel.appendChild(build_pref_label(preference));
+			input_interface.insertInto(columnValue);
 		}
 	}
 }
@@ -257,11 +229,10 @@ PlatformPreferencesDef.prototype.buildPreferences = function(values) {
  *
  */
 function WorkspacePreferencesDef(definitions, args) {
-	var extra_prefs, prefManager, empty_params, param, workspace = args[1];
+	var extra_prefs, empty_params, param, workspace = args[1];
 
+	extra_prefs = Wirecloud.PreferenceManager.processDefinitions(workspace.workspaceState.extra_prefs);
 	if (Array.isArray(args[2]) && args[2].length > 0) {
-		prefManager = PreferencesManagerFactory.getInstance();
-		extra_prefs = prefManager._processDefinitions(workspace.workspaceState.extra_prefs);
 		empty_params = args[2];
 		definitions = {};
 		for (i = 0; i < empty_params.length; i += 1) {
@@ -269,8 +240,6 @@ function WorkspacePreferencesDef(definitions, args) {
 			definitions[param] = extra_prefs[param];
 		}
 	} else if (workspace.workspaceState != null) {
-		prefManager = PreferencesManagerFactory.getInstance();
-		extra_prefs = prefManager._processDefinitions(workspace.workspaceState.extra_prefs);
 		definitions = Wirecloud.Utils.merge(definitions, extra_prefs);
 	}
 	PreferencesDef.call(this, definitions);
@@ -311,9 +280,9 @@ function Preferences(preferencesDef, values) {
 
 		if (key in values) {
 			inherit = values[definition.name].inherit;
-			value = definition.inputInterface.parseFromPersistence(values[key].value);
+			value = values[key].value;
 		} else {
-			value = definition.inputInterface.getDefaultValue();
+			value = definition.default_value;
 			inherit = definition.inheritByDefault;
 		}
 

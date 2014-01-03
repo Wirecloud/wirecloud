@@ -229,6 +229,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/PolicyManager.js',
             'js/wirecloud/Version.js',
             'js/wirecloud/Widget.js',
+            'js/wirecloud/PreferenceDef.js',
             'js/wirecloud/PlatformPreferences.js',
             'js/wirecloud/PreferenceManager.js',
         ) + STYLED_ELEMENTS_FILES + (

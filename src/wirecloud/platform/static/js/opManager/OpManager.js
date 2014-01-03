@@ -349,8 +349,6 @@ var OpManagerFactory = function () {
         OpManager.prototype.continueLoadingGlobalModules = function (module) {
             // Asynchronous load of modules
             // Each singleton module notifies OpManager it has finished loading!
-            var preferencesManager;
-
             switch (module) {
             case Modules.prototype.CONTEXT:
 
@@ -365,12 +363,27 @@ var OpManagerFactory = function () {
                 break;
 
             case Modules.prototype.THEME_MANAGER:
-                this.platformPreferences = PreferencesManagerFactory.getInstance();
+                // Init platform preferences
+                Wirecloud.io.makeRequest(Wirecloud.URLs.PLATFORM_PREFERENCES, {
+                    method: 'GET',
+                    requestHeaders: {'Accept': 'application/json'},
+                    onSuccess: function (response) {
+                        var values = JSON.parse(response.responseText);
+
+                        Wirecloud.preferences = Wirecloud.PreferenceManager.buildPreferences('platform', values);
+                    },
+                    onFailure: function (response) {
+                        Wirecloud.GlobalLogManager.formatAndLog(gettext("Error retrieving platform preferences data: %(errorMsg)s"), response);
+                        Wirecloud.preferences = Wirecloud.PreferenceManager.buildPreferences('platform', {});
+                    },
+                    onComplete: function () {
+                        Wirecloud.preferences.addCommitHandler(this.preferencesChanged.bind(this), 'post-commit');
+                        this.continueLoadingGlobalModules(Modules.prototype.PLATFORM_PREFERENCES);
+                    }.bind(this)
+                });
                 break;
 
             case Modules.prototype.PLATFORM_PREFERENCES:
-                preferencesManager = PreferencesManagerFactory.getInstance();
-                preferencesManager.getPlatformPreferences().addCommitHandler(this.preferencesChanged.bind(this), 'post-commit');
                 Wirecloud.LocalCatalogue.reload({
                     onSuccess: function () {
                         this.continueLoadingGlobalModules(Modules.prototype.SHOWCASE);

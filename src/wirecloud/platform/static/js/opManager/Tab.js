@@ -24,7 +24,7 @@
  */
 
 
-/*global Constants, Dragboard, gettext, interpolate, LayoutManagerFactory, PreferencesManagerFactory, TabMenuItems, StyledElements, Wirecloud*/
+/*global Constants, Dragboard, gettext, interpolate, LayoutManagerFactory, TabMenuItems, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -133,7 +133,7 @@
 
         this.FloatingWidgetsMenu = null;
 
-        this.preferences = PreferencesManagerFactory.getInstance().buildPreferences('tab', this.tabInfo.preferences, this);
+        this.preferences = Wirecloud.PreferenceManager.buildPreferences('tab', this.tabInfo.preferences, this);
         this.preferences.addCommitHandler(preferencesChanged.bind(this));
 
         this.readOnly = false;

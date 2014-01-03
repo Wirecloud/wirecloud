@@ -19,28 +19,33 @@
  *
  */
 
-/*global gettext, Preferences, Wirecloud*/
+/*global Wirecloud*/
 
 (function () {
 
     "use strict";
 
     /**
-     *
+     * @param {String} name
+     * @param {Boolean} inheritable
+     * @param {Boolean} inheritByDefault
+     * @param {Boolean} hidden
+     * @param {Object} options
      */
-    var PlatformPreferences = function PlatformPreferences(definitions, values) {
-        Preferences.call(this, definitions, values);
-    };
-    PlatformPreferences.prototype = new Preferences();
+    var PreferenceDef = function PreferenceDef(name, inheritable, inheritByDefault, hidden, options) {
+        Object.defineProperties(this, {
+            name: {value: name},
+            inheritable: {value: !!inheritable},
+            inheritByDefault: {value: !!(inheritable && inheritByDefault)},
+            hidden: {value: !!hidden},
+            options: {value: options}
+        });
 
-    PlatformPreferences.prototype.buildTitle = function buildTitle() {
-        return gettext("Platform Preferences");
+        Object.freeze(this);
     };
 
-    PlatformPreferences.prototype._build_save_url = function _build_save_url() {
-        return Wirecloud.URLs.PLATFORM_PREFERENCES;
-    };
-
-    Wirecloud.PlatformPreferences = PlatformPreferences;
+    Wirecloud.PreferenceDef = PreferenceDef;
 
 })();
+
+
