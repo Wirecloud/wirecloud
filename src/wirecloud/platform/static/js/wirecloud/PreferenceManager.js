@@ -170,7 +170,7 @@
     };
 
     /**
-     * Builds a <code>Preferences</code> instance suitable for the given scope.
+     * Builds a <code>Wirecloud.Preferences</code> instance suitable for the given scope.
      *
      * @param {String} scope
      *

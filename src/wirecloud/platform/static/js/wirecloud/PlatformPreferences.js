@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, Preferences, Wirecloud*/
+/*global gettext, Wirecloud*/
 
 (function () {
 
@@ -29,9 +29,9 @@
      *
      */
     var PlatformPreferences = function PlatformPreferences(definitions, values) {
-        Preferences.call(this, definitions, values);
+        Wirecloud.Preferences.call(this, definitions, values);
     };
-    PlatformPreferences.prototype = new Preferences();
+    PlatformPreferences.prototype = new Wirecloud.Preferences();
 
     PlatformPreferences.prototype.buildTitle = function buildTitle() {
         return gettext("Platform Preferences");

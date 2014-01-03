@@ -26,13 +26,13 @@
     "use strict";
 
     var TabPreferences = function TabPreferences(definitions, tab, values) {
-        Preferences.call(this, definitions, values);
+        Wirecloud.Preferences.call(this, definitions, values);
         this._tab = tab;
         this._workspace = this._tab.workspace;
 
         this._workspace.preferences.addCommitHandler(this._handleParentChanges);
     };
-    TabPreferences.prototype = new Preferences();
+    TabPreferences.prototype = new Wirecloud.Preferences();
 
     TabPreferences.prototype.buildTitle = function buildTitle() {
         var msg = gettext("Tab preferences (%(tabName)s)");
@@ -50,7 +50,7 @@
     TabPreferences.prototype.destroy = function destroy() {
         this._workspace.preferences.removeCommitHandler(this._handleParentChanges);
 
-        Preferences.prototype.destroy.call(this);
+        Wirecloud.Preferences.prototype.destroy.call(this);
         this._workspace = null;
         this._tab = null;
     };

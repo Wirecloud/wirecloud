@@ -30,7 +30,7 @@
      * @author jmostazo-upm
      *
      * @param {Wirecloud.PreferenceDef} preferenceDef
-     * @param {Preferences}   manager The preference Group this preference belongs to
+     * @param {Wirecloud.Preferences}   manager The preference Group this preference belongs to
      * @param {Boolean}       inherit Use the value from the parent preference group
      * @param {Object}        value   Current value
      */
