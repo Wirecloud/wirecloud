@@ -254,7 +254,7 @@ def fix_widget_code(widget_code, base_url, content_type, request, encoding, use_
     # Fix base element
     base_elements = xpath(xmltree, '/xhtml:html/xhtml:head/xhtml:base', xmlns)
     for base_element in base_elements[1:]:
-        base_element.parent.remove(base_element)
+        base_element.getparent().remove(base_element)
 
     if len(base_elements) >= 1 and force_base:
         base_elements[0].set('href', base_url)

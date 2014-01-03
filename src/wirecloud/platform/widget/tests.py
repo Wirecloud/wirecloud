@@ -89,6 +89,18 @@ class CodeTransformationTestCase(TestCase):
         expected_code = self.read_file('test-data/xhtml1-iso8859-15-expected.html')
         self.assertEqual(final_code, expected_code)
 
+    def test_html_with_one_base_element(self):
+        initial_code = self.read_file('test-data/xhtml4-initial.html')
+        final_code = self.XML_NORMALIZATION_RE.sub('><', fix_widget_code(initial_code, 'http://server.com/widget', 'text/html', None, 'utf-8', False)) + '\n'
+        expected_code = self.read_file('test-data/xhtml4-expected.html')
+        self.assertEqual(final_code, expected_code)
+
+    def test_html_with_more_than_one_base_element(self):
+        initial_code = self.read_file('test-data/xhtml4-extra-base-elements-initial.html')
+        final_code = self.XML_NORMALIZATION_RE.sub('><', fix_widget_code(initial_code, 'http://server.com/widget', 'text/html', None, 'utf-8', False)) + '\n'
+        expected_code = self.read_file('test-data/xhtml4-expected.html')
+        self.assertEqual(final_code, expected_code)
+
     def test_basic_xhtml(self):
         initial_code = self.read_file('test-data/xhtml2-initial.html')
         final_code = self.XML_NORMALIZATION_RE.sub('><', fix_widget_code(initial_code, 'http://server.com/widget', 'application/xhtml+xml', None, 'utf-8', False)) + '\n'
