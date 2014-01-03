@@ -35,6 +35,8 @@
     var PreferenceDef = function PreferenceDef(name, inheritable, inheritByDefault, hidden, options) {
         Object.defineProperties(this, {
             name: {value: name},
+            label: {value: options.label},
+            description: {value: options.description},
             inheritable: {value: !!inheritable},
             inheritByDefault: {value: !!(inheritable && inheritByDefault)},
             hidden: {value: !!hidden},

@@ -232,6 +232,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/PreferenceDef.js',
             'js/wirecloud/PlatformPreferences.js',
             'js/wirecloud/PreferenceManager.js',
+            'js/wirecloud/TabPreferences.js',
         ) + STYLED_ELEMENTS_FILES + (
             'js/wirecloud/IWidget.js',
             'js/wirecloud/Wiring.js',
