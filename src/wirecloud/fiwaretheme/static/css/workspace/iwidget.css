@@ -1,8 +1,8 @@
 .iwidget {
     position: absolute;
-    -moz-transition: box-shadow 0.7s ease-in;
-    -webkit-transition: box-shadow 0.7s ease-in;
-    transition: box-shadow 0.7s ease-in;
+    -moz-transition: box-shadow 0.7s ease-in, opacity 0.35s ease-in;
+    -webkit-transition: box-shadow 0.7s ease-in, opacity 0.35s ease-in;
+    transition: box-shadow 0.7s ease-in, opacity 0.35s ease-in;
     background: white;
 	border-color: #C2CBD2;
     overflow: visible;

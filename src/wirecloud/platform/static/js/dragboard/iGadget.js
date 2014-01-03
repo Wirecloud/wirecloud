@@ -381,6 +381,9 @@ IWidget.prototype.paint = function (onInit) {
 
     // Insert it into the dragboard (initially hidden)
     this.element.style.visibility = "hidden";
+    if (onInit) {
+        this.element.classList.add('in');
+    }
     this.layout.dragboard.dragboardElement.appendChild(this.element);
 
     // Position
@@ -434,6 +437,9 @@ IWidget.prototype.paint = function (onInit) {
         true);
 
     this.content.setAttribute("src", this.codeURL);
+    if (!onInit) {
+        this.element.classList.add('in');
+    }
 };
 
 IWidget.prototype.load = function () {
