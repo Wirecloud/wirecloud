@@ -88,33 +88,6 @@ def serve_catalogue_media(request, vendor, name, version, file_path):
         return response
 
 
-def iframe_error(func):
-
-    def wrapper(self, request, *args, **kwargs):
-        if not request.REQUEST.get('iframe', False):
-            return func(self, request, *args, **kwargs)
-
-        request.META['HTTP_ACCEPT'] = 'text/plain'
-        error_msg = response = None
-        try:
-            response = func(self, request, *args, **kwargs)
-        except Exception, e:
-            error_msg = unicode(e)
-
-        if response is not None and (response.status_code >= 300 or response.status_code < 200):
-            error_msg = response.content
-
-        if error_msg is not None:
-            return HttpResponseRedirect(reverse('iframe_error') + '?msg=' + urlquote_plus(str(error_msg)) + '#error')
-        elif response['Content-Type'] != 'text/plain':
-            response['Content-Type'] = 'text/plain; charset=UTF-8'
-            return response
-        else:
-            return response
-
-    return wrapper
-
-
 @no_cache
 def error(request):
     msg = request.GET.get('msg', 'Widget could not be added')
@@ -124,7 +97,6 @@ def error(request):
 class ResourceCollection(Resource):
 
     @method_decorator(login_required)
-    @iframe_error
     @commit_on_http_success
     @supported_request_mime_types(('application/x-www-form-urlencoded', 'multipart/form-data'))
     def create(self, request, fromWGT=False):

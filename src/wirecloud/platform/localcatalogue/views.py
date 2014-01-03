@@ -34,7 +34,6 @@ from django.views.static import serve
 
 from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.catalogue.utils as catalogue_utils
-from wirecloud.catalogue.views import iframe_error
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.http import authentication_required, build_error_response, get_content_type, supported_request_mime_types
@@ -60,7 +59,6 @@ class ResourceCollection(Resource):
         return HttpResponse(json.dumps(resources), content_type='application/json; chatset=UTF-8')
 
     @authentication_required
-    @iframe_error
     @supported_request_mime_types(('application/x-www-form-urlencoded', 'application/json', 'multipart/form-data', 'application/octet-stream'))
     @commit_on_http_success
     def create(self, request):
