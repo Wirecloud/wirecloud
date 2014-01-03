@@ -149,7 +149,7 @@ function WorkspacePreferencesDef(definitions, args) {
 WorkspacePreferencesDef.prototype = new PreferencesDef();
 
 WorkspacePreferencesDef.prototype.buildPreferences = function(values, workspace) {
-	return new WorkspacePreferences(this, workspace, values);
+	return new Wirecloud.WorkspacePreferences(this, workspace, values);
 }
 
 /**
@@ -162,36 +162,4 @@ TabPreferencesDef.prototype = new PreferencesDef();
 
 TabPreferencesDef.prototype.buildPreferences = function(values, tab) {
 	return new Wirecloud.TabPreferences(this, tab, values);
-}
-
-
-/**
- *
- */
-function WorkspacePreferences(definitions, workspace, values) {
-	Preferences.call(this, definitions, values);
-	this._workspace = workspace;
-
-	Wirecloud.preferences.addCommitHandler(this._handleParentChanges);
-}
-WorkspacePreferences.prototype = new Wirecloud.Preferences();
-
-WorkspacePreferences.prototype.buildTitle = function() {
-	var msg = gettext("Workspace preferences (%(workspaceName)s)");
-	return interpolate(msg, {workspaceName: this._workspace.workspaceState.name}, true);
-}
-
-WorkspacePreferences.prototype.getParentValue = function(name) {
-	return Wirecloud.preferences.get(name);
-}
-
-WorkspacePreferences.prototype._build_save_url = function () {
-    return Wirecloud.URLs.WORKSPACE_PREFERENCES.evaluate({workspace_id: this._workspace.workspaceState.id});
-};
-
-WorkspacePreferences.prototype.destroy = function() {
-	Wirecloud.preferences.removeCommitHandler(this._handleParentChanges);
-
-	Preferences.prototype.destroy.call(this);
-	this._workspace = null;
 }
