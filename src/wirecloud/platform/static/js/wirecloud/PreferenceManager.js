@@ -154,7 +154,7 @@
         definitions = this.processDefinitions(platformPreferences);
         this.preferencesDef.platform = [Wirecloud.PlatformPreferencesDef, definitions];
         definitions = this.processDefinitions(workspacePreferences);
-        this.preferencesDef.workspace = [WorkspacePreferencesDef, definitions];
+        this.preferencesDef.workspace = [Wirecloud.WorkspacePreferencesDef, definitions];
         definitions = this.processDefinitions(tabPreferences);
         this.preferencesDef.tab = [TabPreferencesDef, definitions];
     };

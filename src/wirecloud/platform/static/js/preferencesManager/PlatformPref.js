@@ -26,31 +26,6 @@
 /**
  *
  */
-function WorkspacePreferencesDef(definitions, args) {
-	var extra_prefs, empty_params, param, workspace = args[1];
-
-	extra_prefs = Wirecloud.PreferenceManager.processDefinitions(workspace.workspaceState.extra_prefs);
-	if (Array.isArray(args[2]) && args[2].length > 0) {
-		empty_params = args[2];
-		definitions = {};
-		for (i = 0; i < empty_params.length; i += 1) {
-			param = empty_params[i];
-			definitions[param] = extra_prefs[param];
-		}
-	} else if (workspace.workspaceState != null) {
-		definitions = Wirecloud.Utils.merge(definitions, extra_prefs);
-	}
-	Wirecloud.PreferencesDef.call(this, definitions);
-}
-WorkspacePreferencesDef.prototype = new Wirecloud.PreferencesDef();
-
-WorkspacePreferencesDef.prototype.buildPreferences = function(values, workspace) {
-	return new Wirecloud.WorkspacePreferences(this, workspace, values);
-}
-
-/**
- *
- */
 function TabPreferencesDef(definitions) {
 	Wirecloud.PreferencesDef.call(this, definitions);
 }
