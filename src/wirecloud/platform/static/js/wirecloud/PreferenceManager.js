@@ -156,7 +156,7 @@
         definitions = this.processDefinitions(workspacePreferences);
         this.preferencesDef.workspace = [Wirecloud.WorkspacePreferencesDef, definitions];
         definitions = this.processDefinitions(tabPreferences);
-        this.preferencesDef.tab = [TabPreferencesDef, definitions];
+        this.preferencesDef.tab = [Wirecloud.TabPreferencesDef, definitions];
     };
 
     PreferenceManager.prototype.processDefinitions = function processDefinitions(preferences) {

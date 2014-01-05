@@ -22,15 +22,3 @@
 *
 *     http://morfeo-project.org
  */
-
-/**
- *
- */
-function TabPreferencesDef(definitions) {
-	Wirecloud.PreferencesDef.call(this, definitions);
-}
-TabPreferencesDef.prototype = new Wirecloud.PreferencesDef();
-
-TabPreferencesDef.prototype.buildPreferences = function(values, tab) {
-	return new Wirecloud.TabPreferences(this, tab, values);
-}
