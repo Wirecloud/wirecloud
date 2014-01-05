@@ -152,7 +152,7 @@
 
         // Save they into our structures
         definitions = this.processDefinitions(platformPreferences);
-        this.preferencesDef.platform = [PlatformPreferencesDef, definitions];
+        this.preferencesDef.platform = [Wirecloud.PlatformPreferencesDef, definitions];
         definitions = this.processDefinitions(workspacePreferences);
         this.preferencesDef.workspace = [WorkspacePreferencesDef, definitions];
         definitions = this.processDefinitions(tabPreferences);

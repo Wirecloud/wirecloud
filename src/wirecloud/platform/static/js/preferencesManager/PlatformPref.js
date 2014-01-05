@@ -26,18 +26,6 @@
 /**
  *
  */
-function PlatformPreferencesDef(definitions) {
-	Wirecloud.PreferencesDef.call(this, definitions);
-}
-PlatformPreferencesDef.prototype = new Wirecloud.PreferencesDef();
-
-PlatformPreferencesDef.prototype.buildPreferences = function(values) {
-	return new Wirecloud.PlatformPreferences(this, values);
-}
-
-/**
- *
- */
 function WorkspacePreferencesDef(definitions, args) {
 	var extra_prefs, empty_params, param, workspace = args[1];
 
