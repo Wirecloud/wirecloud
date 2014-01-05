@@ -231,6 +231,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/Widget.js',
             'js/wirecloud/PreferenceDef.js',
             'js/wirecloud/PlatformPref.js',
+            'js/wirecloud/PreferencesDef.js',
             'js/wirecloud/Preferences.js',
             'js/wirecloud/PlatformPreferences.js',
             'js/wirecloud/PreferenceManager.js',

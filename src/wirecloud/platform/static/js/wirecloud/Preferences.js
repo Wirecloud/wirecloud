@@ -84,14 +84,12 @@
             return;
         }
 
-        var definitions = preferencesDef._preferences;
         Object.defineProperty(this, 'meta', {value: preferencesDef});
-
-        this._preferences = {};
+        Object.defineProperty(this, 'preferences', {value: {}});
 
         var inherit, value, definition;
-        for (var key in definitions) {
-            definition = definitions[key];
+        for (var key in preferencesDef.preferences) {
+            definition = preferencesDef.preferences[key];
 
             if (key in values) {
                 inherit = values[definition.name].inherit;
@@ -101,7 +99,7 @@
                 inherit = definition.inheritByDefault;
             }
 
-            this._preferences[definition.name] = new Wirecloud.PlatformPref(this, definition, inherit, value);
+            this.preferences[definition.name] = new Wirecloud.PlatformPref(this, definition, inherit, value);
         }
 
         // Bind _handleParentChanges method
@@ -135,7 +133,7 @@
     };
 
     Preferences.prototype.get = function get(name) {
-        return this._preferences[name].getEffectiveValue();
+        return this.preferences[name].getEffectiveValue();
     };
 
     /**
@@ -156,7 +154,7 @@
         var modifiedValues = {};
 
         for (var name in newValues) {
-            var preference = this._preferences[name];
+            var preference = this.preferences[name];
             var changes = newValues[name];
 
             if ('inherit' in changes) {
@@ -180,7 +178,7 @@
         var propagate = false;
 
         for (var preferenceName in modifiedValues) {
-            if (preferenceName in this._preferences && this._preferences[preferenceName].inherit) {
+            if (preferenceName in this.preferences && this.preferences[preferenceName].inherit) {
                 propagate = true;
                 valuesToPropagate[preferenceName] = modifiedValues[preferenceName];
             }
@@ -202,8 +200,8 @@
         var notify = false;
         var newInheritanceSetting;
 
-        for (var key in this._preferences) {
-            var preference = this._preferences[key];
+        for (var key in this.preferences) {
+            var preference = this.preferences[key];
 
             // Check if this preference has changed
             var inheritSettingChange = false;
