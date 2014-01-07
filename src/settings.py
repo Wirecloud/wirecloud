@@ -4,7 +4,6 @@
 from os import path
 from wirecloud.commons.utils.conf import load_default_wirecloud_conf
 from wirecloud.commons.utils.urlresolvers import reverse_lazy
-from django.utils.translation import ugettext_lazy as _
 
 DEBUG = True
 load_default_wirecloud_conf(locals())
@@ -52,9 +51,9 @@ LANGUAGE_CODE = 'en'
 DEFAULT_LANGUAGE = 'browser'
 
 LANGUAGES = (
-    ('es', _('Spanish')),
-    ('en', _('English')),
-    ('pt', _('Portuguese')),
+    ('es', 'Spanish'),
+    ('en', 'English'),
+    ('pt', 'Portuguese'),
 )
 
 # If you set this to False, Django will make some optimizations so as not
