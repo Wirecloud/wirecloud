@@ -26,7 +26,7 @@ from urlparse import urljoin
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
-from django.http import HttpResponse, HttpResponseForbidden, Http404
+from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.encoding import smart_str
@@ -36,10 +36,9 @@ from django.views.static import serve
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource
-from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.cache import patch_cache_headers
-from wirecloud.commons.utils.http import build_error_response, get_absolute_reverse_url, get_current_domain, get_xml_error_response
+from wirecloud.commons.utils.http import build_error_response, get_absolute_reverse_url, get_current_domain
 from wirecloud.platform.iwidget.utils import deleteIWidget
 from wirecloud.platform.models import Widget, IWidget
 import wirecloud.platform.widget.utils as showcase_utils
@@ -77,7 +76,7 @@ class WidgetCodeEntry(Resource):
         resource = get_object_or_404(CatalogueResource.objects.select_related('widget__xhtml'), vendor=vendor, short_name=name, version=version)
         # For now, all widgets are freely accessible/distributable
         #if not resource.is_available_for(request.user):
-        #    raise Http403()
+        #    return build_error_response(request, 403, "Forbidden")
 
         if resource.resource_type() != 'widget':
             raise Http404()
@@ -158,7 +157,7 @@ def serve_showcase_media(request, vendor, name, version, file_path):
     resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
     # For now, all widgets are freely accessible/distributable
     #if not resource.is_available_for(request.user):
-    #    return HttpResponseForbidden()
+    #    return build_error_response(request, 403, "Forbidden")
 
     base_dir = showcase_utils.wgt_deployer.get_base_dir(vendor, name, version)
     local_path = os.path.join(base_dir, url2pathname(file_path))
