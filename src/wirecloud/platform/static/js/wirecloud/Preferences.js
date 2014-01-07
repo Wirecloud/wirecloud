@@ -158,11 +158,11 @@
             var changes = newValues[name];
 
             if ('inherit' in changes) {
-                preference.setInheritValue(changes.inherit);
+                preference.inherit = changes.inherit;
             }
 
             if ('value' in changes) {
-                preference.setValue(changes.value);
+                preference.value = changes.value;
             }
 
             modifiedValues[name] = changes;
@@ -170,7 +170,7 @@
         }
 
         notifyCommitHandlers.call(this, newEffectiveValues);
-        real_save.call(this, modifiedValues);
+        persist.call(this, modifiedValues);
     };
 
     Preferences.prototype._handleParentChanges = function _handleParentChanges(modifiedValues) {
@@ -186,69 +186,6 @@
 
         if (propagate) {
             notifyCommitHandlers.call(this, valuesToPropagate);
-        }
-    };
-
-    /**
-     * Saves the modified preferences. The new values are taken from the relevant
-     * <code>Wirecloud.ui.PreferencesWindowMenu</code>.
-     */
-    Preferences.prototype.save = function save() {
-        var modifiedPreferences = [];
-        var modifiedValues = {};
-        var newEffectiveValues = {};
-        var notify = false;
-        var newInheritanceSetting;
-
-        for (var key in this.preferences) {
-            var preference = this.preferences[key];
-
-            // Check if this preference has changed
-            var inheritSettingChange = false;
-            if (preference.definition.inheritInterface) {
-                newInheritanceSetting = preference.definition.inheritInterface.getValue();
-                inheritSettingChange = newInheritanceSetting != preference.inherit;
-            }
-
-            var newValue = preference.getValueFromInterface();
-            var valueChange = preference.getValue() != newValue;
-
-            if (!inheritSettingChange && !valueChange) {
-                continue; // This preference has not changed
-            }
-
-            // Process preference changes
-            modifiedPreferences.push(preference);
-            var oldEffectiveValue = preference.getEffectiveValue();
-            var changes = {};
-
-            if (inheritSettingChange) {
-                changes.inherit = newInheritanceSetting;
-                preference.setInheritValue(newInheritanceSetting);
-            }
-
-            //if the value of the combo has changed or we don't want to use the inherited value
-            //take the value of the combo.
-            if (newInheritanceSetting === false || valueChange) {
-                changes.value = newValue;
-                preference.setValue(newValue);
-            }
-
-            var newEffectiveValue = preference.getEffectiveValue();
-            if (oldEffectiveValue != newEffectiveValue) {
-                notify = true;
-                newEffectiveValues[key] = newEffectiveValue;
-            }
-
-            modifiedValues[key] = changes;
-        }
-
-        if (notify) {
-            this._notifyCommitHandlers(newEffectiveValues);
-        }
-
-        if (modifiedPreferences.length !== 0) {
-            persist.call(this, modifiedValues);
         }
     };
 

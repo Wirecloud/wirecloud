@@ -214,8 +214,11 @@ var OpManagerFactory = function () {
         };
 
         OpManager.prototype.showPlatformPreferences = function () {
-            PreferencesManagerFactory.getInstance().show();
-        }
+            if (this.pref_window_menu == null) {
+                this.pref_window_menu = new Wirecloud.ui.PreferencesWindowMenu('platform', Wirecloud.preferences);
+            }
+            this.pref_window_menu.show();
+        };
 
         OpManager.prototype.changeActiveWorkspace = function changeActiveWorkspace(workspace, initial_tab) {
             var state, steps = this.activeWorkspace != null ? 2 : 1;

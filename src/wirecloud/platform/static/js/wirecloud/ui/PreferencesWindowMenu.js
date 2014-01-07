@@ -20,65 +20,8 @@
         return StyledElements.DefaultInputInterfaceFactory.createInterface(preference.name, preference.options);
     };
 
-    var _executeOperation = function _executeOperation() {
-        // Validate input fields
-        var validationManager = new ValidationErrorManager();
-        var preferences = this.manager._preferencesDef._preferences;
-        for (var prefId in preferences) {
-            validationManager.validate(preferences[prefId].inputInterface);
-        }
-
-        // Build Error Message
-        var errorMsg = validationManager.toHTML();
-
-        // Show error message if needed
-        if (errorMsg.length !== 0) {
-            // FIXME
-            this.setMsg(errorMsg[0]);
-        } else {
-            this.manager.save();
-            this.hide();
-        }
-    };
-
-    /**
-     * Specific class for platform preferences windows.
-     *
-     * @param manager
-     *
-     */
-    var PreferencesWindowMenu = function PreferencesWindowMenu(scope, manager) {
-        Wirecloud.ui.WindowMenu.call(this, '', scope + '_preferences');
-
-        this.manager = manager;
-
-        // Accept button
-        this.acceptButton = new StyledElements.StyledButton({
-            text: gettext('Save'),
-            'class': 'btn-primary'
-        });
-        this.acceptButton.addEventListener("click", _executeOperation.bind(this));
-        this.acceptButton.insertInto(this.windowBottom);
-
-        // Cancel button
-        this.cancelButton = new StyledElements.StyledButton({
-            text: gettext('Cancel')
-        });
-
-        this.cancelButton.addEventListener("click", this._closeListener);
-        this.cancelButton.insertInto(this.windowBottom);
-    };
-    PreferencesWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
-
-    PreferencesWindowMenu.prototype.setCancelable = function setCancelable(cancelable) {
-        this.cancelButton.setDisabled(!cancelable);
-    };
-
-    PreferencesWindowMenu.prototype.show = function show(parentWindow) {
-        this.setTitle(this.manager.buildTitle());
-
-        // TODO
-        // Build a form skeleton for changing this gruop of preferences
+    var build_form = function build_form() {
+        // Build a form for changing this gruop of preferences
         var table = document.createElement('table');
         table.setAttribute('cellspacing', '0');
         table.setAttribute('cellpadding', '0');
@@ -86,6 +29,7 @@
         var tbody = document.createElement('tbody'); // IE7 needs a tbody to display dynamic tables
         table.appendChild(tbody);
 
+        Object.defineProperty(this, 'interfaces', {value: {}});
         for (var key in this.manager.meta.preferences) {
             var preference = this.manager.meta.preferences[key];
 
@@ -94,6 +38,9 @@
             }
 
             var input_interface = build_pref_input(preference);
+            this.interfaces[preference.name] = {
+                'base': input_interface
+            };
             if (!preference.inheritable) {
                 var row = tbody.insertRow(-1);
                 var columnLabel = row.insertCell(-1);
@@ -125,6 +72,7 @@
                 inheritCell.classList.add('inheritCell');
 
                 var inheritInput = build_inherit_input(preference);
+                this.interfaces[preference.name].inherit = inheritInput;
                 inheritInput.insertInto(inheritCell);
                 inheritCell.appendChild(document.createTextNode(gettext('Inherit')));
                 inheritInput.inputElement.addEventListener(
@@ -139,8 +87,116 @@
             }
         }
         this.windowContent.insertBefore(table, this.msgElement);
+    };
 
-        this.manager.resetInterface();
+    var save_preferences = function save_preferences() {
+        var modifiedValues = {};
+        var newInheritanceSetting;
+
+        for (var pref_name in this.manager.preferences) {
+            var preference = this.manager.preferences[pref_name];
+            var inputs = this.interfaces[pref_name];
+
+            // Check if this preference has changed
+            var inheritSettingChange = false;
+            if ('inherit' in inputs) {
+                newInheritanceSetting = inputs.inherit.getValue();
+                inheritSettingChange = newInheritanceSetting != preference.inherit;
+            }
+
+            var newValue = inputs.base.getValue();
+            var valueChange = preference.value != newValue;
+
+            if (!inheritSettingChange && !valueChange) {
+                continue; // This preference has not changed
+            }
+
+            // Process preference changes
+            var changes = {};
+
+            if (inheritSettingChange) {
+                changes.inherit = newInheritanceSetting;
+            }
+
+            //if the value of the combo has changed or we don't want to use the inherited value
+            //take the value of the combo.
+            if (newInheritanceSetting === false || valueChange) {
+                changes.value = newValue;
+            }
+
+            modifiedValues[pref_name] = changes;
+        }
+
+        this.manager.set(modifiedValues);
+    };
+
+    var _executeOperation = function _executeOperation() {
+        // Validate input fields
+        var validationManager = new ValidationErrorManager();
+        for (var pref_name in this.manager.preferences) {
+            validationManager.validate(this.interfaces[pref_name].base);
+        }
+
+        // Build Error Message
+        var errorMsg = validationManager.toHTML();
+
+        // Show error message if needed
+        if (errorMsg.length !== 0) {
+            // FIXME
+            this.setMsg(errorMsg[0]);
+        } else {
+            save_preferences.call(this);
+            this.hide();
+        }
+    };
+
+    /**
+     * Specific class for platform preferences windows.
+     *
+     * @param manager
+     *
+     */
+    var PreferencesWindowMenu = function PreferencesWindowMenu(scope, manager) {
+        Wirecloud.ui.WindowMenu.call(this, '', scope + '_preferences');
+
+        Object.defineProperty(this, 'manager', {value: manager});
+
+        // Accept button
+        this.acceptButton = new StyledElements.StyledButton({
+            text: gettext('Save'),
+            'class': 'btn-primary'
+        });
+        this.acceptButton.addEventListener("click", _executeOperation.bind(this));
+        this.acceptButton.insertInto(this.windowBottom);
+
+        // Cancel button
+        this.cancelButton = new StyledElements.StyledButton({
+            text: gettext('Cancel')
+        });
+
+        this.cancelButton.addEventListener("click", this._closeListener);
+        this.cancelButton.insertInto(this.windowBottom);
+    };
+    PreferencesWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
+
+    PreferencesWindowMenu.prototype.setCancelable = function setCancelable(cancelable) {
+        this.cancelButton.setDisabled(!cancelable);
+    };
+
+    PreferencesWindowMenu.prototype.show = function show(parentWindow) {
+        this.setTitle(this.manager.buildTitle());
+
+        if (!('interfaces' in this)) {
+            build_form.call(this);
+        }
+
+        for (var pref_name in this.manager.preferences) {
+            this.interfaces[pref_name].base.setValue(this.manager.preferences[pref_name].value);
+            if ('inherit' in this.interfaces[pref_name]) {
+                this.interfaces[pref_name].inherit.setValue(this.manager.preferences[pref_name].inherit);
+                this.interfaces[pref_name].base.setDisabled(this.manager.preferences[pref_name].inherit);
+            }
+        }
         Wirecloud.ui.WindowMenu.prototype.show.call(this, parentWindow);
     };
 
