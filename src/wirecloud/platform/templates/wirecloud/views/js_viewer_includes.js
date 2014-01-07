@@ -1,7 +1,6 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}js/common/constants.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/common/utils.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/common/ComputedStyle.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/common/modules.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/opManager/Workspace.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/opManager/Tab.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/opManager/InitialScriptExecuter.js"></script>

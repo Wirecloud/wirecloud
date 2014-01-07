@@ -82,7 +82,6 @@ function Workspace(workspaceState, resources) {
         this.loaded = true;
 
         layoutManager.logStep('');
-        OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.ACTIVE_WORKSPACE);
     };
 
     var loadWorkspace = function () {
@@ -180,7 +179,6 @@ function Workspace(workspaceState, resources) {
         this.loaded = true;
 
         layoutManager.logStep('');
-        OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.ACTIVE_WORKSPACE);
         Wirecloud.GlobalLogManager.log(gettext('workspace loaded'), Constants.Logging.INFO_MSG);
 
         // tutorial layer for empty workspaces

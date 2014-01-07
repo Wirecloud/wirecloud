@@ -39,37 +39,6 @@ var OpManagerFactory = function () {
         // ****************
 
         var loadEnvironment = function (transport) {
-            // JSON-coded user tabspaces
-            var response = transport.responseText;
-            var workspaces = JSON.parse(response);
-
-            for (var i = 0; i < workspaces.length; i++) {
-                var workspace = workspaces[i];
-
-                this.workspaceInstances[workspace.id] = workspace;
-                if (!(workspace.creator in this.workspacesByUserAndName)) {
-                    this.workspacesByUserAndName[workspace.creator] = {};
-                }
-                this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace;
-            }
-
-            HistoryManager.init();
-            var state = HistoryManager.getCurrentState();
-            this.changeActiveWorkspace(this.workspacesByUserAndName[state.workspace_creator][state.workspace_name]);
-        }
-
-        var onError = function (transport, e) {
-            var msg;
-            try {
-                msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error loading Wirecloud Platform: %(errorMsg)s."), transport, e);
-                LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-            } catch (e) {
-                if (msg != null) {
-                    alert(msg);
-                } else {
-                    alert (gettext("Error loading Wirecloud Platform"));
-                }
-            }
         }
 
         /*****WORKSPACE CALLBACK***/
@@ -220,8 +189,12 @@ var OpManagerFactory = function () {
             this.pref_window_menu.show();
         };
 
-        OpManager.prototype.changeActiveWorkspace = function changeActiveWorkspace(workspace, initial_tab) {
+        OpManager.prototype.changeActiveWorkspace = function changeActiveWorkspace(workspace, initial_tab, options) {
             var state, steps = this.activeWorkspace != null ? 2 : 1;
+
+            if (options == null) {
+                options = {};
+            }
 
             LayoutManagerFactory.getInstance()._startComplexTask(gettext("Changing current workspace"), steps);
 
@@ -263,6 +236,12 @@ var OpManagerFactory = function () {
                             }.bind(this));
 
                             LayoutManagerFactory.getInstance().header.refresh(); // FIXME
+
+                            if (typeof options.onSuccess === "function") {
+                                try {
+                                    options.onSuccess();
+                                } catch (e) {}
+                            }
                         }.bind(this)
                     });
                 }.bind(this)
@@ -304,16 +283,101 @@ var OpManagerFactory = function () {
                           this.unloadEnvironment.bind(this),
                           true);
 
+            var loaded_modules = 0;
+            var checkPlatformReady = function checkPlatformReady() {
+                // TODO remove hardcoded module count
+                loaded_modules += 1;
+                if (loaded_modules === 4) {
+                    HistoryManager.init();
+                    var state = HistoryManager.getCurrentState();
+                    var workspace = this.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
+                    this.changeActiveWorkspace(workspace, null, {
+                        onSuccess: function () {
+                            var layoutManager = LayoutManagerFactory.getInstance();
+                            layoutManager.logSubTask(gettext("Activating current Workspace"));
+
+                            layoutManager.logStep('');
+                            layoutManager._notifyPlatformReady();
+                            this.loadCompleted = true;
+                        }.bind(this)
+                    });
+                }
+            }.bind(this);
+
+            // Init platform context
             Wirecloud.io.makeRequest(Wirecloud.URLs.PLATFORM_CONTEXT_COLLECTION, {
                 method: 'GET',
                 requestHeaders: {'Accept': 'application/json'},
-                onSuccess: function (transport) {
-                    OpManagerFactory.getInstance().contextManager = new Wirecloud.ContextManager(this, JSON.parse(transport.responseText));
+                onSuccess: function (response) {
+                    this.contextManager = new Wirecloud.ContextManager(this, JSON.parse(response.responseText));
+                    Wirecloud.contextManager = this.contextManager;
                     LayoutManagerFactory.getInstance().header._initUserMenu();
-                    OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CONTEXT);
+
+                    // Init theme
+                    Wirecloud.io.makeRequest(Wirecloud.URLs.THEME_ENTRY.evaluate({name: this.contextManager.get('theme')}), {
+                        method: 'GET',
+                        requestHeaders: {'Accept': 'application/json'},
+                        onSuccess: function (response) {
+                            Wirecloud.currentTheme = new Wirecloud.ui.Theme(JSON.parse(response.responseText));
+                            checkPlatformReady();
+                        }
+                    });
+
+                }.bind(this)
+            });
+
+            // Init platform preferences
+            Wirecloud.io.makeRequest(Wirecloud.URLs.PLATFORM_PREFERENCES, {
+                method: 'GET',
+                requestHeaders: {'Accept': 'application/json'},
+                onSuccess: function (response) {
+                    var values = JSON.parse(response.responseText);
+
+                    Wirecloud.preferences = Wirecloud.PreferenceManager.buildPreferences('platform', values);
+                },
+                onFailure: function (response) {
+                    Wirecloud.GlobalLogManager.formatAndLog(gettext("Error retrieving platform preferences data: %(errorMsg)s"), response);
+                    Wirecloud.preferences = Wirecloud.PreferenceManager.buildPreferences('platform', {});
+                },
+                onComplete: function () {
+                    Wirecloud.preferences.addCommitHandler(this.preferencesChanged.bind(this), 'post-commit');
+                    checkPlatformReady();
+                }.bind(this)
+            });
+
+            // Load workspace list
+            Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_COLLECTION, {
+                method: 'GET',
+                requestHeaders: {'Accept': 'application/json'},
+                onSuccess: function (response) {
+                    var workspaces = JSON.parse(response.responseText);
+
+                    for (var i = 0; i < workspaces.length; i++) {
+                        var workspace = workspaces[i];
+
+                        this.workspaceInstances[workspace.id] = workspace;
+                        if (!(workspace.creator in this.workspacesByUserAndName)) {
+                            this.workspacesByUserAndName[workspace.creator] = {};
+                        }
+                        this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace;
+                    }
+
+                    checkPlatformReady();
+                }.bind(this),
+                onFailure: function (response) {
+                    Wirecloud.GlobalLogManager.formatAndLog(gettext("Error retrieving workspace list"), response);
                 }
             });
-        }
+
+            // Load local catalogue
+            Wirecloud.LocalCatalogue.reload({
+                onSuccess: checkPlatformReady,
+                onFailure: function () {
+                    var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error retrieving available resources: %(errorMsg)s."), transport, e);
+                    LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                }
+            });
+        };
 
         /**
          * Unloads the Wirecloud Platform. This method is called, by default, when
@@ -339,95 +403,11 @@ var OpManagerFactory = function () {
             this.activeWorkspace.checkForWidgetUpdates();
         }
 
-        OpManager.prototype.showActiveWorkspace = function (refreshMenu) {
-            // TODO
-        }
-
         OpManager.prototype.preferencesChanged = function (modifiedValues) {
             if ('language' in modifiedValues) {
                 window.location.reload();
             }
         };
-
-        OpManager.prototype.continueLoadingGlobalModules = function (module) {
-            // Asynchronous load of modules
-            // Each singleton module notifies OpManager it has finished loading!
-            switch (module) {
-            case Modules.prototype.CONTEXT:
-
-                Wirecloud.io.makeRequest(Wirecloud.URLs.THEME_ENTRY.evaluate({name: this.contextManager.get('theme')}), {
-                    method: 'GET',
-                    requestHeaders: {'Accept': 'application/json'},
-                    onSuccess: function (transport) {
-                        Wirecloud.currentTheme = new Wirecloud.ui.Theme(JSON.parse(transport.responseText));
-                        this.continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
-                    }.bind(this)
-                });
-                break;
-
-            case Modules.prototype.THEME_MANAGER:
-                // Init platform preferences
-                Wirecloud.io.makeRequest(Wirecloud.URLs.PLATFORM_PREFERENCES, {
-                    method: 'GET',
-                    requestHeaders: {'Accept': 'application/json'},
-                    onSuccess: function (response) {
-                        var values = JSON.parse(response.responseText);
-
-                        Wirecloud.preferences = Wirecloud.PreferenceManager.buildPreferences('platform', values);
-                    },
-                    onFailure: function (response) {
-                        Wirecloud.GlobalLogManager.formatAndLog(gettext("Error retrieving platform preferences data: %(errorMsg)s"), response);
-                        Wirecloud.preferences = Wirecloud.PreferenceManager.buildPreferences('platform', {});
-                    },
-                    onComplete: function () {
-                        Wirecloud.preferences.addCommitHandler(this.preferencesChanged.bind(this), 'post-commit');
-                        this.continueLoadingGlobalModules(Modules.prototype.PLATFORM_PREFERENCES);
-                    }.bind(this)
-                });
-                break;
-
-            case Modules.prototype.PLATFORM_PREFERENCES:
-                Wirecloud.LocalCatalogue.reload({
-                    onSuccess: function () {
-                        this.continueLoadingGlobalModules(Modules.prototype.SHOWCASE);
-                    }.bind(this),
-                    onFailure: function () {
-                        var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error retrieving available resources: %(errorMsg)s."), transport, e);
-                        LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-                    }
-                });
-                break;
-
-            case Modules.prototype.SHOWCASE:
-            case Modules.prototype.CATALOGUE:
-                // All singleton modules has been loaded!
-                // It's time for loading tabspace information!
-                this.loadActiveWorkspace();
-                break;
-
-            case Modules.prototype.ACTIVE_WORKSPACE:
-                var layoutManager = LayoutManagerFactory.getInstance();
-                layoutManager.logSubTask(gettext("Activating current Workspace"));
-
-                this.showActiveWorkspace();
-
-                layoutManager.logStep('');
-                layoutManager._notifyPlatformReady();
-                this.loadCompleted = true;
-            }
-        }
-
-        OpManager.prototype.loadActiveWorkspace = function () {
-            // Asynchronous load of modules
-            // Each singleton module notifies OpManager it has finished loading!
-
-            Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_COLLECTION, {
-                method: 'GET',
-                requestHeaders: {'Accept': 'application/json'},
-                onSuccess: loadEnvironment.bind(this),
-                onFailure: onError.bind(this)
-            });
-        }
 
         OpManager.prototype.logIWidgetError = function(iWidgetId, msg, level) {
             var iWidget = this.activeWorkspace.getIWidget(iWidgetId);
