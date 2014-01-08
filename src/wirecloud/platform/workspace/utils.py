@@ -160,9 +160,13 @@ def get_workspace_list(user):
 
     from wirecloud.platform.workspace.views import createEmptyWorkspace, setActiveWorkspace
 
+    if not user.is_authenticated():
+        workspaces = Workspace.objects.filter(public=True)
+        return workspaces, workspaces[0], False
+
     reload_showcase = sync_base_workspaces(user)
 
-    if user.is_authenticated() and Workspace.objects.filter(users=user).count() == 0:
+    if Workspace.objects.filter(users=user).count() == 0:
         # create an empty workspace
         createEmptyWorkspace(_('Workspace'), user)
 

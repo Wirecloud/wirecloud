@@ -152,7 +152,7 @@ function Workspace(workspaceState, resources) {
                 this.events.iwidgetadded.dispatch(this, iwidgets[i].internal_iwidget);
             }
 
-            this.restricted = !this.isOwned() && this.isShared();
+            this.restricted = !this.isOwned();
             this.removable = !this.restricted && this.workspaceState.removable;
             this.valid = true;
 

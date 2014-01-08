@@ -253,10 +253,14 @@ class VariableValueCacheManager():
 
 
 def get_workspace_data(workspace, user):
-    try:
-        user_workspace = UserWorkspace.objects.get(user=user, workspace=workspace)
-    except UserWorkspace.DoesNotExist:
-        user_workspace = None
+
+    user_workspace = None
+
+    if user.is_authenticated():
+        try:
+            user_workspace = UserWorkspace.objects.get(user=user, workspace=workspace)
+        except UserWorkspace.DoesNotExist:
+            pass
 
     return {
         'id': workspace.id,

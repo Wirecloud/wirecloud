@@ -62,7 +62,6 @@ def auto_select_workspace(request, mode=None):
     return HttpResponseRedirect(url)
 
 
-@login_required
 def render_workspace_view(request, creator_user, workspace):
     get_workspace_list(request.user)
 

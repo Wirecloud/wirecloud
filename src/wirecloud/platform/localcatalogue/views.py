@@ -52,9 +52,10 @@ class ResourceCollection(Resource):
     def read(self, request):
 
         resources = {}
-        for resource in CatalogueResource.objects.filter(Q(public=True) | Q(users=request.user) | Q(groups=request.user.groups.all())):
-            options = resource.get_processed_info(request)
-            resources[resource.local_uri_part] = options
+        if request.user.is_authenticated():
+            for resource in CatalogueResource.objects.filter(Q(public=True) | Q(users=request.user) | Q(groups=request.user.groups.all())):
+                options = resource.get_processed_info(request)
+                resources[resource.local_uri_part] = options
 
         return HttpResponse(json.dumps(resources), content_type='application/json; chatset=UTF-8')
 

@@ -38,12 +38,14 @@
 
         items = [];
 
-        items.push(new StyledElements.MenuItem(
+        item = new StyledElements.MenuItem(
             gettext('Rename'),
             function () {
                 this.titleelement.enableEdition();
             }.bind(this.iWidget)
-        ));
+        );
+        item.setDisabled(!this.iWidget.isAllowed('rename'));
+        items.push(item);
 
         item = new StyledElements.MenuItem(
             gettext("Settings"),
@@ -52,7 +54,7 @@
                 dialog.show(this);
             }.bind(this.iWidget.internal_iwidget)
         );
-        item.setDisabled(!this.has_prefs);
+        item.setDisabled(!this.has_prefs || !this.iWidget.isAllowed('configure'));
         items.push(item);
 
         items.push(new StyledElements.MenuItem(
@@ -84,12 +86,14 @@
         } else {
             fulldragboard_label = gettext("Full Dragboard");
         }
-        items.push(new StyledElements.MenuItem(
+        item = new StyledElements.MenuItem(
             fulldragboard_label,
             function () {
                 this.setFullDragboardMode(!this.isInFullDragboardMode());
             }.bind(this.iWidget)
-        ));
+        );
+        item.setDisabled(!this.iWidget.isAllowed('move'));
+        items.push(item);
 
         if (!this.iWidget.isInFullDragboardMode()) {
             if (this.iWidget.onFreeLayout()) {
@@ -97,10 +101,12 @@
             } else {
                 layout_label = gettext("Extract from grid");
             }
-            items.push(new StyledElements.MenuItem(
+            item = new StyledElements.MenuItem(
                 layout_label,
                 this.iWidget.toggleLayout.bind(this.iWidget)
-            ));
+            );
+            item.setDisabled(!this.iWidget.isAllowed('move'));
+            items.push(item);
         }
 
         return items;

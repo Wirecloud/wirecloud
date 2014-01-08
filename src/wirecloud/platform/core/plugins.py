@@ -193,11 +193,18 @@ class WirecloudCorePlugin(WirecloudPlugin):
     def get_platform_context_current_values(self, user):
         from django.conf import settings
 
+        if user.is_authenticated():
+            username = user.username
+            fullname = user.get_full_name()
+        else:
+            username = 'anonymous'
+            fullname = _('Anonymous')
+
         return {
             'language': 'es',
             'orientation': 'landscape',
-            'username': user.username,
-            'fullname': user.get_full_name(),
+            'username': username,
+            'fullname': fullname,
             'isstaff': user.is_staff,
             'issuperuser': user.is_superuser,
             'theme': settings.THEME_ACTIVE,
@@ -345,6 +352,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
     def get_ajax_endpoints(self, view):
         endpoints = (
+            {'id': 'LOGIN_VIEW', 'url': build_url_template('login')},
             {'id': 'LOGOUT_VIEW', 'url': build_url_template('logout')},
             {'id': 'LOCAL_REPOSITORY', 'url': build_url_template('wirecloud.root')},
             {'id': 'LOCAL_RESOURCE_COLLECTION', 'url': build_url_template('wirecloud_showcase.resource_collection')},

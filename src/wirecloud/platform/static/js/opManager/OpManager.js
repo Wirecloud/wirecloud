@@ -38,9 +38,6 @@ var OpManagerFactory = function () {
         // CALLBACK METHODS
         // ****************
 
-        var loadEnvironment = function (transport) {
-        }
-
         /*****WORKSPACE CALLBACK***/
         var createWSSuccess = function(onSuccess, response) {
             var workspace = JSON.parse(response.responseText);
@@ -323,6 +320,15 @@ var OpManagerFactory = function () {
                         }
                     });
 
+                    // Load local catalogue
+                    Wirecloud.LocalCatalogue.reload({
+                        onSuccess: checkPlatformReady,
+                        onFailure: function () {
+                            var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error retrieving available resources: %(errorMsg)s."), transport, e);
+                            LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                        }
+                    });
+
                 }.bind(this)
             });
 
@@ -369,14 +375,6 @@ var OpManagerFactory = function () {
                 }
             });
 
-            // Load local catalogue
-            Wirecloud.LocalCatalogue.reload({
-                onSuccess: checkPlatformReady,
-                onFailure: function () {
-                    var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error retrieving available resources: %(errorMsg)s."), transport, e);
-                    LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-                }
-            });
         };
 
         /**

@@ -103,7 +103,6 @@ def normalize_boolean_param(name, value):
 
 class WorkspaceCollection(Resource):
 
-    @authentication_required
     @supported_response_mime_types(('application/json',))
     @commit_on_http_success
     @no_cache
@@ -195,13 +194,12 @@ class WorkspaceCollection(Resource):
 
 class WorkspaceEntry(Resource):
 
-    @authentication_required
     @supported_response_mime_types(('application/json',))
     def read(self, request, workspace_id):
 
         workspace = get_object_or_404(Workspace, pk=workspace_id)
 
-        if not workspace.public and not workspace.users.filter(pk=request.user.pk).exists():
+        if not workspace.public and not (request.user.is_authenticated() and workspace.users.filter(pk=request.user.pk).exists()):
             return build_error_response(request, 403, _("You don't have permission to access this workspace"))
 
         workspace_data = get_global_workspace_data(workspace, request.user)

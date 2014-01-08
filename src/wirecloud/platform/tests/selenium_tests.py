@@ -621,6 +621,35 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username='emptyuser', next='/user_with_workspaces/Public Workspace')
 
+        # Check public workspaces cannot be renamed/removed by non owners
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
+        self.check_popup_menu(must_be_disabled=('Rename', 'Settings', 'Remove'))
+
+        self.check_public_workspace()
+
+    def test_public_workspaces_anonymous_user(self):
+
+        # Make Test and TestOperator unavailable to emptyuser
+        test_widget = CatalogueResource.objects.get(short_name='Test')
+        test_widget.public = False
+        test_widget.save()
+
+        test_operator = CatalogueResource.objects.get(short_name='TestOperator')
+        test_operator.public = False
+        test_operator.save()
+
+        url = self.live_server_url + '/user_with_workspaces/Public Workspace'
+        self.driver.get(url)
+        self.wait_wirecloud_ready()
+
+        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '#wirecloud_breadcrum .second_level > .icon-menu')
+        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '#wirecloud_header .menu .workspace')
+        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '#wirecloud_header .menu .wiring')
+        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '#wirecloud_header .menu .marketplace')
+
+        self.check_public_workspace()
+
+    def check_public_workspace(self):
         # Check iwidget are loaded correctly
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
@@ -629,15 +658,11 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertIsNotNone(source_iwidget.element)
         self.assertIsNotNone(target_iwidget.element)
 
-        # TODO
-        # Check widget setting cannot be changed
-        # Workspace cannot be edited
-        # ...
-        # END TODO
+        source_iwidget.element.find_element_by_css_selector('.icon-cogs').click()
+        self.check_popup_menu(must_be_disabled=('Rename', 'Settings', 'Full Dragboard', 'Extract from grid'))
 
-        # Check public workspaces cannot be renamed/removed by non owners
-        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
-        self.check_popup_menu(must_be_disabled=('Rename', 'Settings', 'Remove'))
+        target_iwidget.element.find_element_by_css_selector('.icon-cogs').click()
+        self.check_popup_menu(must_be_disabled=('Rename', 'Settings', 'Full Dragboard', 'Extract from grid'))
 
         # Check wiring works
         with source_iwidget:

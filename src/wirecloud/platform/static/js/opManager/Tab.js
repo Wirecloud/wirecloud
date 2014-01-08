@@ -127,7 +127,7 @@
         this.menu_button.insertInto(this.tabElement);
 
         Object.defineProperty(this, 'id', {value: tabInfo.id});
-        this.workspace = options.workspace;
+        Object.defineProperty(this, 'workspace', {value: options.workspace});
         this.tabInfo = tabInfo;
         this.dragboardLayerName = "dragboard_" + this.workspace.workspaceState.id + "_" + this.id;
 
@@ -136,7 +136,7 @@
         this.preferences = Wirecloud.PreferenceManager.buildPreferences('tab', this.tabInfo.preferences, this);
         this.preferences.addCommitHandler(preferencesChanged.bind(this));
 
-        this.readOnly = false;
+        this.readOnly = this.workspace.restricted;
 
         this.dragboard = new Dragboard(this, this.workspace, this.wrapperElement);
 

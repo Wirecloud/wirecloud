@@ -181,12 +181,16 @@
             'onError': options.onError
         };
 
-        Wirecloud.io.makeRequest(Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION, {
-            method: 'GET',
-            requestHeaders: {'Accept': 'application/json'},
-            onSuccess: loadSuccessCallback.bind(this, context),
-            onFailure: loadFailureCallback.bind(this, context)
-        });
+        if (Wirecloud.contextManager.get('username') !== 'anonymous') {
+            Wirecloud.io.makeRequest(Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION, {
+                method: 'GET',
+                requestHeaders: {'Accept': 'application/json'},
+                onSuccess: loadSuccessCallback.bind(this, context),
+                onFailure: loadFailureCallback.bind(this, context)
+            });
+        } else {
+            loadSuccessCallback.call(this, context, {responseText: "{}"});
+        }
     };
 
     LocalCatalogue.uninstallResource = function uninstallResource(resource, options) {

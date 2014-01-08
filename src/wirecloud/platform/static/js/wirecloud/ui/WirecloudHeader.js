@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -81,30 +81,44 @@
     };
 
     WirecloudHeader.prototype._initUserMenu = function _initUserMenu() {
-        var user_menu, wrapper;
+        var user_name, user_menu, wrapper, login_button;
 
-        wrapper = document.createElement('div');
-        wrapper.className = 'user_menu_wrapper';
-        this.menu.appendChild(wrapper);
+        user_name = OpManagerFactory.getInstance().contextManager.get('username');
+        if (user_name === 'anonymous') {
+            this.menu.innerHTML = '';
 
-        this.user_button = new StyledElements.PopupButton({
-            'class': 'btn-success',
-            'text': OpManagerFactory.getInstance().contextManager.get('username')
-        });
-        this.user_button.insertInto(wrapper);
+            login_button = new StyledElements.StyledButton({
+                text: gettext('Log in')
+            });
+            login_button.addEventListener('click', function () {
+                window.location = Wirecloud.URLs.LOGIN_VIEW;
+            });
+            login_button.insertInto(this.menu);
+        } else {
+
+            wrapper = document.createElement('div');
+            wrapper.className = 'user_menu_wrapper';
+            this.menu.appendChild(wrapper);
+
+            this.user_button = new StyledElements.PopupButton({
+                'class': 'btn-success user',
+                'text': user_name
+            });
+            this.user_button.insertInto(wrapper);
 
 
-        user_menu = this.user_button.getPopupMenu();
-        user_menu.append(new StyledElements.MenuItem(gettext('Settings'), OpManagerFactory.getInstance().showPlatformPreferences));
+            user_menu = this.user_button.getPopupMenu();
+            user_menu.append(new StyledElements.MenuItem(gettext('Settings'), OpManagerFactory.getInstance().showPlatformPreferences));
 
-        if (OpManagerFactory.getInstance().contextManager.get('isstaff') === true && 'DJANGO_ADMIN' in Wirecloud.URLs) {
-            user_menu.append(new StyledElements.MenuItem(gettext('DJango Admin panel'), function () {
-                window.open(Wirecloud.URLs.DJANGO_ADMIN, '_blank');
-            }));
+            if (OpManagerFactory.getInstance().contextManager.get('isstaff') === true && 'DJANGO_ADMIN' in Wirecloud.URLs) {
+                user_menu.append(new StyledElements.MenuItem(gettext('DJango Admin panel'), function () {
+                    window.open(Wirecloud.URLs.DJANGO_ADMIN, '_blank');
+                }));
+            }
+            user_menu.append(new Wirecloud.ui.TutorialSubMenu());
+
+            user_menu.append(new StyledElements.MenuItem(gettext('Sign out'), OpManagerFactory.getInstance().logout));
         }
-        user_menu.append(new Wirecloud.ui.TutorialSubMenu());
-
-        user_menu.append(new StyledElements.MenuItem(gettext('Sign out'), OpManagerFactory.getInstance().logout));
     };
 
     WirecloudHeader.prototype._clearOldBreadcrum = function _clearOldBreadcrum() {
@@ -156,7 +170,7 @@
                 breadcrum_part.classList.add(breadcrum_entry['class']);
             }
 
-            if ('menu' in breadcrum_entry) {
+            if (breadcrum_entry.menu != null) {
                 button = new StyledElements.PopupButton({
                     'plain': true,
                     'class': 'icon-menu',

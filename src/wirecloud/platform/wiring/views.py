@@ -80,7 +80,6 @@ class WiringEntry(Resource):
 
 class OperatorEntry(Resource):
 
-    @method_decorator(login_required)
     def read(self, request, vendor, name, version):
 
         operator = get_object_or_404(CatalogueResource, type=2, vendor=vendor, short_name=name, version=version)

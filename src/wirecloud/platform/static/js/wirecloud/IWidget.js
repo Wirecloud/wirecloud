@@ -148,6 +148,10 @@
     IWidget.prototype = new StyledElements.ObjectWithEvents();
 
     IWidget.prototype.isAllowed = function isAllowed(action) {
+        if (this.workspace.restricted) {
+            return false;
+        }
+
         switch (action) {
         case "close":
             return !this.readOnly && this.workspace.isAllowed('add_remove_iwidgets');
@@ -156,6 +160,9 @@
             return !this.tab.readOnly && this.workspace.isAllowed('edit_layout');
         case "minimize":
             return this.workspace.isAllowed('edit_layout');
+        case "rename":
+        case "configure":
+            return true;
         default:
             return false;
         }

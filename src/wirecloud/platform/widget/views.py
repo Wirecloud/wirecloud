@@ -70,7 +70,6 @@ def deleteWidget(user, name, vendor, version):
 
 class WidgetCodeEntry(Resource):
 
-    @method_decorator(login_required)
     def read(self, request, vendor, name, version):
 
         resource = get_object_or_404(CatalogueResource.objects.select_related('widget__xhtml'), vendor=vendor, short_name=name, version=version)

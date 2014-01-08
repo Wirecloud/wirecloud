@@ -146,10 +146,12 @@ def update_workspace_preferences(workspace, preferences_json):
 
 class PlatformPreferencesCollection(Resource):
 
-    @authentication_required
     @no_cache
     def read(self, request):
-        result = parseValues(PlatformPreference.objects.filter(user=request.user))
+        if request.user.is_authenticated():
+            result = parseValues(PlatformPreference.objects.filter(user=request.user))
+        else:
+            result = {}
 
         return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
 
