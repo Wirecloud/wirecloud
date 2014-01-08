@@ -60,25 +60,11 @@ Variable.prototype.get = function () {
     return this.value;
 }
 
-Variable.prototype.setHandler = function () { }
-
 Variable.prototype.set = function (value) { }
 
 Variable.prototype.getLabel = function () {
     return this.vardef.label;
 };
-
-Variable.prototype.assignConnectable = function (connectable) {
-    this.connectable = connectable;
-}
-
-Variable.prototype.getConnectable = function () {
-    return this.connectable;
-}
-
-Variable.prototype.getWorkspace = function () {
-    return this.varManager.getWorkspace();
-}
 
 Variable.prototype.serialize = function serialize() {
     return {

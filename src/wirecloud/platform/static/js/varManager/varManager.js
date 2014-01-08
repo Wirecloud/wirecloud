@@ -112,18 +112,6 @@ function VarManager (_workspace) {
         this.iWidgets[iwidget_info['id']] = objVars;
     }
 
-    VarManager.prototype.registerVariable = function (iWidgetId, variableName, handler) {
-        var variable = this.findVariable(iWidgetId, variableName);
-
-        if (variable) {
-            variable.setHandler(handler);
-        } else {
-            var transObj = {iWidgetId: iWidgetId, varName: variableName};
-            var msg = interpolate(gettext("IWidget %(iWidgetId)s does not have any variable named \"%(varName)s\".\nIf you need it, please insert it into the widget's template."), transObj, true);
-            OpManagerFactory.getInstance().logIWidgetError(iWidgetId, msg, Constants.Logging.ERROR_MSG);
-        }
-    }
-
     VarManager.prototype.getVariable = function (iWidgetId, variableName) {
         var variable = this.findVariable(iWidgetId, variableName);
 
@@ -299,10 +287,6 @@ function VarManager (_workspace) {
 
     VarManager.prototype.getVariableByName = function (iwidgetId, varName) {
         return this.findVariable(iwidgetId, varName);
-    }
-
-    VarManager.prototype.getWorkspace = function () {
-        return this.workspace;
     }
 
     // *********************************
