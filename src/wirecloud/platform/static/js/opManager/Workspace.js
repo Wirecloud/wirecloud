@@ -54,7 +54,6 @@ function Workspace(workspaceState, resources) {
         this.varmanager = null;
         this.contextManager = null;
         this.wiring = null;
-        this.wiringInterface = null;
 
         // Failsafe workspace status
         layoutManager.currentViewType = "dragboard"; // workaround
@@ -571,12 +570,6 @@ function Workspace(workspaceState, resources) {
 
         this.loaded = false;
 
-        // Unload Wiring Interface
-        // TODO Wiring Interface should be shared between Workspaces
-        if (this.wiringInterface !== null) {
-            this.wiringInterface.saveWiring();
-        }
-
         this.sendBufferedVars(false);
 
         // After that, tab info is managed
@@ -759,7 +752,6 @@ function Workspace(workspaceState, resources) {
     Object.defineProperty(this, 'id', {value: workspaceState.id});
     Object.defineProperty(this, 'resources', {value: resources});
     this.workspaceState = workspaceState;
-    this.wiringInterface = null;
     this.varManager = null;
     this.tabInstances = {};
     this.highlightTimeouts = {};
