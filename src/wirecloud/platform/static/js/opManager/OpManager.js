@@ -218,6 +218,34 @@ var OpManagerFactory = function () {
                         requestHeaders: {'Accept': 'application/json'},
                         onSuccess: function (response) {
                             var workspace_data = JSON.parse(response.responseText);
+
+                            LayoutManagerFactory.getInstance()._notifyPlatformReady();
+
+                            // Check if the workspace needs to ask some values before loading this workspace
+                            if (workspace_data.empty_params.length > 0) {
+                                var preferences, preferenceValues, param, i, dialog;
+
+                                preferenceValues = {};
+                                for (i = 0; i < workspace_data.empty_params.length; i += 1) {
+                                    param = workspace_data.empty_params[i];
+                                    if (workspace_data.preferences[param] != null) {
+                                        preferenceValues[param] = workspace_data.preferences[param];
+                                    }
+                                }
+
+                                LayoutManagerFactory.getInstance().header.refresh();
+                                preferences = Wirecloud.PreferenceManager.buildPreferences('workspace', preferenceValues, {workspaceState: workspace_data}, workspace_data.empty_params);
+                                preferences.addCommitHandler(function() {
+                                    setTimeout(function() {
+                                        OpManagerFactory.getInstance().changeActiveWorkspace(workspace, initial_tab, options);
+                                    }, 0);
+                                }.bind(this));
+                                dialog = new Wirecloud.ui.PreferencesWindowMenu('workspace', preferences);
+                                dialog.setCancelable(false);
+                                dialog.show();
+                                return;
+                            }
+
                             this.activeWorkspace = new Workspace(workspace_data, workspace_resources);
                             this.activeWorkspace.contextManager.addCallback(function (updated_attributes) {
                                 var workspace, old_name;
@@ -290,11 +318,6 @@ var OpManagerFactory = function () {
                     var workspace = this.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
                     this.changeActiveWorkspace(workspace, null, {
                         onSuccess: function () {
-                            var layoutManager = LayoutManagerFactory.getInstance();
-                            layoutManager.logSubTask(gettext("Activating current Workspace"));
-
-                            layoutManager.logStep('');
-                            layoutManager._notifyPlatformReady();
                             this.loadCompleted = true;
                         }.bind(this)
                     });

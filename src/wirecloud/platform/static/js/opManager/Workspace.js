@@ -84,7 +84,7 @@ function Workspace(workspaceState, resources) {
     };
 
     var loadWorkspace = function () {
-        var layoutManager, params, param, preferencesWindow, preferenceValues, iwidgets;
+        var layoutManager, params, preferenceValues, iwidgets;
 
         layoutManager = LayoutManagerFactory.getInstance();
         layoutManager.logStep('');
@@ -96,32 +96,6 @@ function Workspace(workspaceState, resources) {
             params = this.workspaceState.empty_params;
             preferenceValues = this.workspaceState.preferences;
             this.preferences = Wirecloud.PreferenceManager.buildPreferences('workspace', preferenceValues, this, params);
-
-            // Check if the workspace needs to ask some values before loading this workspace
-            if (this.workspaceState.empty_params.length > 0) {
-                preferenceValues = {};
-                for (i = 0; i < params.length; i += 1) {
-                    param = params[i];
-                    if (this.workspaceState.preferences[param] != null) {
-                        preferenceValues[param] = this.workspaceState.preferences[param];
-                    }
-                }
-
-                layoutManager.header.refresh();
-                this.preferences.addCommitHandler(function() {
-                    setTimeout(function() {
-                        OpManagerFactory.getInstance().changeActiveWorkspace({
-                            id: this.id,
-                            creator: this.workspaceState.creator,
-                            name: this.workspaceState.name
-                        });
-                    }.bind(this), 0);
-                }.bind(this));
-                preferencesWindow = this.getPreferencesWindow();
-                preferencesWindow.setCancelable(false);
-                preferencesWindow.show();
-                return;
-            }
 
             // Load workspace tabs
             var tabs = this.workspaceState.tabs;
