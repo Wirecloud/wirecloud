@@ -36,7 +36,7 @@ from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils import downloader
-from wirecloud.commons.utils.http import authentication_required, build_error_response, get_content_type, supported_request_mime_types
+from wirecloud.commons.utils.http import authentication_required, build_error_response, get_content_type, supported_request_mime_types, supported_response_mime_types
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import InvalidContents, WgtFile
@@ -49,6 +49,7 @@ from wirecloud.platform.localcatalogue.utils import install_resource_to_user
 class ResourceCollection(Resource):
 
     @authentication_required
+    @supported_response_mime_types(('application/json',))
     def read(self, request):
 
         resources = {}
@@ -61,6 +62,7 @@ class ResourceCollection(Resource):
 
     @authentication_required
     @supported_request_mime_types(('application/x-www-form-urlencoded', 'application/json', 'multipart/form-data', 'application/octet-stream'))
+    @supported_response_mime_types(('application/json',))
     @commit_on_http_success
     def create(self, request):
 
