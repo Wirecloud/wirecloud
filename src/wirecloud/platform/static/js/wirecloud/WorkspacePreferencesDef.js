@@ -26,7 +26,7 @@
     "use strict";
 
     var WorkspacePreferencesDef = function WorkspacePreferencesDef(definitions, args) {
-        var extra_prefs, empty_params, param, workspace = args[1];
+        var extra_prefs, empty_params, i, param, workspace = args[1];
 
         extra_prefs = Wirecloud.PreferenceManager.processDefinitions(workspace.workspaceState.extra_prefs);
         if (Array.isArray(args[2]) && args[2].length > 0) {
