@@ -224,11 +224,6 @@ class ApplicationMashupAPI(WirecloudTestCase):
         response_data = json.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
 
-    def test_workspace_collection_get_requires_authentication(self):
-
-        url = reverse('wirecloud.workspace_collection')
-        check_get_requires_authentication(self, url)
-
     def test_workspace_collection_get(self):
 
         url = reverse('wirecloud.workspace_collection')
@@ -484,11 +479,6 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         url = reverse('wirecloud.workspace_collection')
         check_post_bad_request_syntax(self, url)
-
-    def test_workspace_entry_get_requires_authentication(self):
-
-        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 1})
-        check_get_requires_authentication(self, url)
 
     def test_workspace_entry_get_requires_permission(self):
 
@@ -1464,17 +1454,21 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.market_collection')
         check_post_bad_request_syntax(self, url)
 
-    def test_platform_preference_collection_get_requires_authentication(self):
-
-        url = reverse('wirecloud.platform_preferences')
-        check_get_requires_authentication(self, url)
-
     def test_platform_preference_collection_get(self):
 
         url = reverse('wirecloud.platform_preferences')
 
         # Authenticate
         self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+
+    def test_platform_preference_collection_get_allows_anonymous_requests(self):
+
+        url = reverse('wirecloud.platform_preferences')
 
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
@@ -1510,6 +1504,33 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
         url = reverse('wirecloud.platform_preferences')
         check_post_bad_request_syntax(self, url)
+
+    def test_workspace_collection_get_allows_anonymous_requests(self):
+
+        url = reverse('wirecloud.workspace_collection')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, list))
+        self.assertEqual(len(response_data), 1)
+        self.assertEqual(response_data[0]['name'], 'Public Workspace')
+
+    def test_workspace_entry_get_allows_anonymous_requests(self):
+
+        url = reverse('wirecloud.workspace_entry', kwargs={'workspace_id': 4})
+
+        # Make the request
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        # Response should be a dict
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = json.loads(response.content)
+        self.assertTrue('id' in response_data)
+        self.assertEqual(response_data['name'], 'Public Workspace')
+        self.assertEqual(response_data['creator'], 'user_with_workspaces')
 
     def test_workspace_entry_post_requires_authentication(self):
 
