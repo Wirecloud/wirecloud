@@ -207,7 +207,7 @@ var OpManagerFactory = function () {
             if (initial_tab) {
                 state.tab = initial_tab;
             }
-            HistoryManager.pushState(state);
+            Wirecloud.HistoryManager.pushState(state);
 
             LayoutManagerFactory.getInstance().logSubTask(gettext("Downloading workspace data"), 1);
             new Wirecloud.WorkspaceCatalogue(workspace.id, {
@@ -313,8 +313,8 @@ var OpManagerFactory = function () {
                 // TODO remove hardcoded module count
                 loaded_modules += 1;
                 if (loaded_modules === 4) {
-                    HistoryManager.init();
-                    var state = HistoryManager.getCurrentState();
+                    Wirecloud.HistoryManager.init();
+                    var state = Wirecloud.HistoryManager.getCurrentState();
                     var workspace = this.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
                     this.changeActiveWorkspace(workspace, null, {
                         onSuccess: function () {

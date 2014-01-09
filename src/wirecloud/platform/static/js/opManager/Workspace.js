@@ -341,7 +341,7 @@ function Workspace(workspaceState, resources) {
                     workspace_creator: this.workspaceState.creator,
                     workspace_name: name,
                     view: "workspace",
-                    tab: HistoryManager.getCurrentState().tab
+                    tab: Wirecloud.HistoryManager.getCurrentState().tab
                 };
                 HistoryManager.replaceState(state);
 

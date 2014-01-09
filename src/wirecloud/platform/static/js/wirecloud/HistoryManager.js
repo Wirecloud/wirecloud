@@ -1,4 +1,25 @@
-/*global LayoutManagerFactory*/
+/*
+ *     Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *     This file is part of Wirecloud Platform.
+ *
+ *     Wirecloud Platform is free software: you can redistribute it and/or
+ *     modify it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
+ *
+ *     Wirecloud is distributed in the hope that it will be useful, but WITHOUT
+ *     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+ *     License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with Wirecloud Platform.  If not, see
+ *     <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*global LayoutManagerFactory, Wirecloud*/
 
 (function () {
 
@@ -55,7 +76,7 @@
             onpopstate.bind(this),
             true);
 
-        var initialState = prepareData(initialState);
+        initialState = prepareData(initialState);
         var url = buildURL(initialState);
 
         history.replaceState(initialState, document.title, url);
@@ -134,6 +155,6 @@
         return Wirecloud.Utils.clone(history.state);
     };
 
-    window.HistoryManager = HistoryManager;
+    Wirecloud.HistoryManager = HistoryManager;
 
 })();

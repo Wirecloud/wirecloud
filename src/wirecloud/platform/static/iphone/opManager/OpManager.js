@@ -59,8 +59,8 @@ var OpManagerFactory = (function () {
                 this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace;
             }
 
-            HistoryManager.init();
-            state = HistoryManager.getCurrentState();
+            Wirecloud.HistoryManager.init();
+            state = Wirecloud.HistoryManager.getCurrentState();
             this.changeActiveWorkspace(this.workspacesByUserAndName[state.workspace_creator][state.workspace_name]);
         };
 
@@ -96,7 +96,7 @@ var OpManagerFactory = (function () {
                 workspace_name: workspace.name,
                 view: "workspace"
             };
-            HistoryManager.pushState(state);
+            Wirecloud.HistoryManager.pushState(state);
 
             this.loadCompleted = false;
             var workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': workspace.id});

@@ -142,7 +142,7 @@ if (!Wirecloud.ui) {
     WiringEditor.prototype.view_name = 'wiring';
 
     WiringEditor.prototype.buildStateData = function buildStateData() {
-        var data = Wirecloud.Utils.merge(HistoryManager.getCurrentState(), {
+        var data = Wirecloud.Utils.merge(Wirecloud.HistoryManager.getCurrentState(), {
             view: 'wiring'
         });
 

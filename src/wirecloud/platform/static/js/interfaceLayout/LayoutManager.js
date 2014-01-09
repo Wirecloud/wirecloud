@@ -50,7 +50,7 @@ var LayoutManagerFactory = function () {
         /* TODO| FIXME */
         this.header = new Wirecloud.ui.WirecloudHeader(this);
         this.alternatives.addEventListener('postTransition', function (alternatives, old_alternative, new_alternative) {
-            HistoryManager.pushState(new_alternative.buildStateData());
+            Wirecloud.HistoryManager.pushState(new_alternative.buildStateData());
             this.header._notifyViewChange(new_alternative);
         }.bind(this));
         this.viewsByName = {

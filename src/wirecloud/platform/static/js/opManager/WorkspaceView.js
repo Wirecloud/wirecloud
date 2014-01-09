@@ -41,7 +41,7 @@
     WorkspaceView.prototype.view_name = 'workspace';
 
     WorkspaceView.prototype.buildStateData = function buildStateData() {
-        return Wirecloud.Utils.merge(HistoryManager.getCurrentState(), {
+        return Wirecloud.Utils.merge(Wirecloud.HistoryManager.getCurrentState(), {
             view: 'workspace'
         });
     };
@@ -49,7 +49,7 @@
     WorkspaceView.prototype.getBreadcrum = function getBreadcrum() {
         var workspace_name, entries, current_state, menu, context;
 
-        current_state = HistoryManager.getCurrentState();
+        current_state = Wirecloud.HistoryManager.getCurrentState();
         if (current_state != null) {
             context = OpManagerFactory.getInstance().contextManager;
             if (context && context.get('username') !== 'anonymous') {

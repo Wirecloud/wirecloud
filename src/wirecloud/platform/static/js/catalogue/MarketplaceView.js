@@ -110,9 +110,9 @@
             var new_status = this.buildStateData();
 
             if (out_alternative === this.emptyAlternative) {
-                HistoryManager.replaceState(new_status);
+                Wirecloud.HistoryManager.replaceState(new_status);
             } else {
-                HistoryManager.pushState(new_status);
+                Wirecloud.HistoryManager.pushState(new_status);
             }
 
             LayoutManagerFactory.getInstance().header.refresh();
@@ -148,7 +148,7 @@
     MarketplaceView.prototype.view_name = 'marketplace';
 
     MarketplaceView.prototype.buildStateData = function buildStateData() {
-        var data = Wirecloud.Utils.merge(HistoryManager.getCurrentState(), {
+        var data = Wirecloud.Utils.merge(Wirecloud.HistoryManager.getCurrentState(), {
             view: 'marketplace'
         });
 
