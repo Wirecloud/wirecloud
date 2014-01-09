@@ -45,7 +45,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             'marketplace.example.com': DynamicWebServer(),
             'repository.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'repository')),
             'static.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'static')),
-            'store.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'store')),
+            'store.example.com': DynamicWebServer(fallback=LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'store'))),
             'store2.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'store2')),
         },
     }
@@ -68,6 +68,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         self.network._servers['http']['marketplace.example.com'].add_response('GET', '/registration/stores/', {'content': self.store_list_response})
         self.network._servers['http']['marketplace.example.com'].add_response('GET', '/offering/store/Store%201/offerings', {'content': self.store1_offerings})
         self.network._servers['http']['marketplace.example.com'].add_response('GET', '/offering/store/Store%202/offerings', {'content': self.store2_offerings})
+        self.network._servers['http']['store.example.com'].clear()
 
     def test_add_fiware_marketplace(self):
 
@@ -181,35 +182,30 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
     def test_store_upload_resource(self):
 
-        old_store = self.network._servers['http']['store.example.com']
-        self.network._servers['http']['store.example.com'] = DynamicWebServer(fallback=old_store)
         self.network._servers['http']['store.example.com'].add_response('POST', '/api/offering/resources', {'content': ''})
 
-        try:
-            self.login(username='user_with_markets')
+        self.login(username='user_with_markets')
 
-            self.change_main_view('marketplace')
-            catalogue_base_element = self.get_current_catalogue_base_element()
+        self.change_main_view('marketplace')
+        catalogue_base_element = self.get_current_catalogue_base_element()
 
-            resource = self.search_in_catalogue_results('Test')
-            self.scroll_and_click(resource)
+        resource = self.search_in_catalogue_results('Test')
+        self.scroll_and_click(resource)
 
-            WebDriverWait(self.driver, 30).until(lambda driver: catalogue_base_element.find_element_by_css_selector('.advanced_operations').is_displayed())
+        WebDriverWait(self.driver, 30).until(lambda driver: catalogue_base_element.find_element_by_css_selector('.advanced_operations').is_displayed())
 
-            found = False
-            for operation in self.driver.find_elements_by_css_selector('.advanced_operations .styled_button'):
-                if operation.text == 'Publish':
-                    found = True
-                    operation.find_element_by_css_selector('div').click()
-                    break
-            self.assertTrue(found)
+        found = False
+        for operation in self.driver.find_elements_by_css_selector('.advanced_operations .styled_button'):
+            if operation.text == 'Publish':
+                found = True
+                operation.find_element_by_css_selector('div').click()
+                break
+        self.assertTrue(found)
 
-            window_menu = self.driver.find_element_by_css_selector('.window_menu.publish_resource')
-            window_menu.find_element_by_css_selector('input[value="user_with_markets/fiware"]').click()
-            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
-            self.wait_wirecloud_ready()
+        window_menu = self.driver.find_element_by_css_selector('.window_menu.publish_resource')
+        window_menu.find_element_by_css_selector('input[value="user_with_markets/fiware"]').click()
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+        self.wait_wirecloud_ready()
 
-            window_menus = self.driver.find_elements_by_css_selector('.window_menu')
-            self.assertEqual(len(window_menus), 1, 'Resource was not uploaded')
-        finally:
-            self.network._servers['http']['store.example.com'] = old_store
+        window_menus = self.driver.find_elements_by_css_selector('.window_menu')
+        self.assertEqual(len(window_menus), 1, 'Resource was not uploaded')
