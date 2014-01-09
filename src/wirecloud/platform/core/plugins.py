@@ -293,6 +293,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/ui/IWidgetDraggable.js',
                 'js/wirecloud/DragboardPosition.js',
                 'js/wirecloud/ui/DragboardCursor.js',
+                'js/wirecloud/ui/MultiValuedSize.js',
                 'js/dragboard/DragboardLayout.js',
                 'js/dragboard/FreeLayout.js',
                 'js/dragboard/FullDragboardLayout.js',

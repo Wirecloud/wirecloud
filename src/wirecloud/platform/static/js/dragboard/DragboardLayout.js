@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -21,19 +21,6 @@
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
 /*global document, Error, gettext, interpolate */
-
-/////////////////////////////////////
-// MultiValuedSize
-/////////////////////////////////////
-
-/**
- * @class Represents a size in several units.
- */
-function MultiValuedSize(inPixels, inLU) {
-    this.inPixels = inPixels;
-    this.inLU = inLU;
-}
-
 /////////////////////////////////////
 // DragboardLayout
 /////////////////////////////////////
@@ -81,36 +68,36 @@ DragboardLayout.prototype._notifyResizeEvent = function (iWidget, oldWidth, oldH
 /**
  * Returns the size of the menu bar.
  *
- * @returns {MultiValuedSize} the size of the menu bar
+ * @returns {Wirecloud.ui.MultiValuedSize} the size of the menu bar
  */
 DragboardLayout.prototype.getMenubarSize = function () {
     var sizeInPixels = 18; // TODO calculate this
     var sizeInLU = Math.ceil(this.fromPixelsToVCells(sizeInPixels));
-    return new MultiValuedSize(sizeInPixels, sizeInLU);
+    return new Wirecloud.ui.MultiValuedSize(sizeInPixels, sizeInLU);
 };
 
 /**
  * Returns the size of the status bar.
  *
- * @returns {MultiValuedSize} the size of the menu bar
+ * @returns {Wirecloud.ui.MultiValuedSize} the size of the menu bar
  */
 DragboardLayout.prototype.getStatusbarSize = function () {
     var sizeInPixels = 16; // TODO calculate this
     var sizeInLU = Math.ceil(this.fromPixelsToVCells(sizeInPixels));
-    return new MultiValuedSize(sizeInPixels, sizeInLU);
+    return new Wirecloud.ui.MultiValuedSize(sizeInPixels, sizeInLU);
 };
 
 /**
  * Returns the total vertical extra size that will have an iWidget. For now,
  * thats includes the menu bar and the status bar sizes.
  *
- * @returns {MultiValuedSize} vertical extra size
+ * @returns {Wirecloud.ui.MultiValuedSize} vertical extra size
  */
 DragboardLayout.prototype.getExtraSize = function () {
     var sizeInPixels = this.getMenubarSize().inPixels +
                        this.getStatusbarSize().inPixels;
     var sizeInLU = Math.ceil(this.fromPixelsToVCells(sizeInPixels));
-    return new MultiValuedSize(sizeInPixels, sizeInLU);
+    return new Wirecloud.ui.MultiValuedSize(sizeInPixels, sizeInLU);
 };
 
 /////////////////////////////////////

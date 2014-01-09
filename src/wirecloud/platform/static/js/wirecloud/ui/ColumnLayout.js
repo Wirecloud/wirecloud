@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, Constants, DragboardLayout, IWidget, MultiValuedSize, Wirecloud */
+/*global gettext, Constants, DragboardLayout, IWidget, Wirecloud */
 
 (function () {
 
@@ -135,14 +135,14 @@
         var halfColumnWidth = Math.floor(this.fromHCellsToPixels(1) / 2);
         var offsetInLU = Math.floor(this.fromPixelsToHCells(pixels - this.leftMargin + halfColumnWidth));
         var offsetInPixels = this.fromHCellsToPixels(offsetInLU) + this.leftMargin;
-        return new MultiValuedSize(offsetInPixels, offsetInLU);
+        return new Wirecloud.ui.MultiValuedSize(offsetInPixels, offsetInLU);
     };
 
     ColumnLayout.prototype.adaptRowOffset = function (pixels) {
         var halfRowHeight = Math.floor(this.fromVCellsToPixels(1) / 2);
         var offsetInLU = Math.floor(this.fromPixelsToVCells(pixels - this.topMargin + halfRowHeight));
         var offsetInPixels = this.fromVCellsToPixels(offsetInLU) + this.topMargin;
-        return new MultiValuedSize(offsetInPixels, offsetInLU);
+        return new Wirecloud.ui.MultiValuedSize(offsetInPixels, offsetInLU);
     };
 
     ColumnLayout.prototype.adaptHeight = function (contentHeight, fullSize, oldLayout) {
@@ -152,7 +152,7 @@
         var paddedFullSizeInCells = Math.ceil(this.fromPixelsToVCells(fullSize));
         var paddedFullSize = this.fromVCellsToPixels(paddedFullSizeInCells);
 
-        return new MultiValuedSize(contentHeight + (paddedFullSize - fullSize), paddedFullSizeInCells);
+        return new Wirecloud.ui.MultiValuedSize(contentHeight + (paddedFullSize - fullSize), paddedFullSizeInCells);
     };
 
     ColumnLayout.prototype.adaptWidth = function (contentWidth, fullSize, oldLayout) {
@@ -162,7 +162,7 @@
         var paddedFullSizeInCells = Math.ceil(this.fromPixelsToHCells(fullSize));
         var paddedFullSize = this.fromHCellsToPixels(paddedFullSizeInCells);
 
-        return new MultiValuedSize(contentWidth + (paddedFullSize - fullSize), paddedFullSizeInCells);
+        return new Wirecloud.ui.MultiValuedSize(contentWidth + (paddedFullSize - fullSize), paddedFullSizeInCells);
     };
 
     ColumnLayout.prototype.padWidth = function (width) {

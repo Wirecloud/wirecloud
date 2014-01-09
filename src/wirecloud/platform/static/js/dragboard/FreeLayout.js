@@ -20,7 +20,7 @@
  */
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
-/*global gettext, Constants, DragboardLayout, IWidget, LayoutManagerFactory, MultiValuedSize*/
+/*global gettext, Constants, DragboardLayout, IWidget, LayoutManagerFactory*/
 
 /////////////////////////////////////
 // FreeLayout
@@ -84,20 +84,20 @@ FreeLayout.prototype.getRowOffset = function (row) {
 
 FreeLayout.prototype.adaptColumnOffset = function (pixels) {
     var offsetInLU = Math.ceil(this.fromPixelsToHCells(pixels));
-    return new MultiValuedSize(this.fromHCellsToPixels(offsetInLU), offsetInLU);
+    return new Wirecloud.ui.MultiValuedSize(this.fromHCellsToPixels(offsetInLU), offsetInLU);
 };
 
 FreeLayout.prototype.adaptRowOffset = function (pixels) {
-    return new MultiValuedSize(pixels, pixels);
+    return new Wirecloud.ui.MultiValuedSize(pixels, pixels);
 };
 
 FreeLayout.prototype.adaptHeight = function (contentHeight, fullSize, oldLayout) {
-    return new MultiValuedSize(contentHeight, fullSize);
+    return new Wirecloud.ui.MultiValuedSize(contentHeight, fullSize);
 };
 
 FreeLayout.prototype.adaptWidth = function (contentWidth, fullSize) {
     var widthInLU = Math.floor(this.fromPixelsToHCells(fullSize));
-    return new MultiValuedSize(this.fromHCellsToPixels(widthInLU), widthInLU);
+    return new Wirecloud.ui.MultiValuedSize(this.fromHCellsToPixels(widthInLU), widthInLU);
 };
 
 FreeLayout.prototype._notifyWindowResizeEvent = function (widthChanged, heightChanged) {
