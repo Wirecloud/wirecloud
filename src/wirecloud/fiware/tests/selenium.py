@@ -163,17 +163,17 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             self.change_main_view('marketplace')
             self.change_marketplace('fiware')
 
-            # Weather widget comes for an accesible store (store2 is online)
+            # Weather widget comes from an accesible store (store2 is online)
             free_offering = self.search_in_catalogue_results('Weather widget')
             button = free_offering.find_element_by_css_selector('.mainbutton')
             self.assertEqual(button.text, 'Free')
 
-            # Test Operator comes for store1 that is currently down
+            # Test Operator comes from store1 that is currently down
             simple_price_offering = self.search_in_catalogue_results('Test Operator')
             button = simple_price_offering.find_element_by_css_selector('.mainbutton')
             self.assertEqual(button.text, 'Details')
 
-            # Smart City Lights application comes for store1 that is currently down
+            # Smart City Lights application comes from store1 that is currently down
             complex_price_offering = self.search_in_catalogue_results('Smart City Lights application')
             button = complex_price_offering.find_element_by_css_selector('.mainbutton')
             self.assertEqual(button.text, 'Details')
