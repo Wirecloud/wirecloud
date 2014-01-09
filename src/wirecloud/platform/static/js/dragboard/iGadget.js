@@ -38,7 +38,7 @@
  *                                          iWidgets (not coming from
  *                                          persistence)
  * @param {String}            iWidgetName   current widget
- * @param {DragboardLayout}   layout        associated layout
+ * @param {Wirecloud.ui.DragboardLayout}   layout        associated layout
  * @param {DragboardPosition} position      initial position. This parameter can
  *                                          be null for new iWidgets (not coming
  *                                          from persistence)
@@ -260,7 +260,7 @@ IWidget.prototype.getContentHeight = function () {
  *
  * @returns {Number} the current width of the widget in LU
  *
- * @see DragboardLayout
+ * @see Wirecloud.ui.DragboardLayout
  */
 IWidget.prototype.getWidth = function () {
     // For now, the iwidget width is always the width of the iwidget content
@@ -274,7 +274,7 @@ IWidget.prototype.getWidth = function () {
  *
  * @returns {Number} the current height of the widget in LU
  *
- * @see DragboardLayout
+ * @see Wirecloud.ui.DragboardLayout
  */
 IWidget.prototype.getHeight = function () {
     return this.height;
@@ -1043,7 +1043,7 @@ IWidget.prototype.is_shared_workspace = function () {
 /**
  * This function migrates this iwidget form a layout to another
  *
- * @param {DragboardLayout} newLayout the layout where the iWidget will be moved
+ * @param {Wirecloud.ui.DragboardLayout} newLayout the layout where the iWidget will be moved
  *                          to.
  */
 IWidget.prototype.moveToLayout = function (newLayout) {

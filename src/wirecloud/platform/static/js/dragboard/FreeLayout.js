@@ -20,7 +20,7 @@
  */
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
-/*global gettext, Constants, DragboardLayout, IWidget, LayoutManagerFactory*/
+/*global gettext, Constants, IWidget, LayoutManagerFactory*/
 
 /////////////////////////////////////
 // FreeLayout
@@ -31,7 +31,7 @@
  *
  * This dragobard uses percentages for horizontal units and px for vertical units.
  *
- * @extends DragboardLayout
+ * @extends Wirecloud.ui.DragboardLayout
  */
 function FreeLayout(dragboard, scrollbarSpace) {
     if (arguments.length === 0) {
@@ -40,9 +40,9 @@ function FreeLayout(dragboard, scrollbarSpace) {
 
     this.initialized = false;
     this.iwidgetToMove = null;
-    DragboardLayout.call(this, dragboard, scrollbarSpace);
+    Wirecloud.ui.DragboardLayout.call(this, dragboard, scrollbarSpace);
 }
-FreeLayout.prototype = new DragboardLayout();
+FreeLayout.prototype = new Wirecloud.ui.DragboardLayout();
 
 FreeLayout.prototype.MAX_HLU = 1000000;
 
@@ -102,7 +102,7 @@ FreeLayout.prototype.adaptWidth = function (contentWidth, fullSize) {
 
 FreeLayout.prototype._notifyWindowResizeEvent = function (widthChanged, heightChanged) {
     if (widthChanged) {
-        DragboardLayout.prototype._notifyWindowResizeEvent.call(this, widthChanged, heightChanged);
+        Wirecloud.ui.DragboardLayout.prototype._notifyWindowResizeEvent.call(this, widthChanged, heightChanged);
     }
 };
 
@@ -146,7 +146,7 @@ FreeLayout.prototype.getCellAt = function (x, y) {
 };
 
 FreeLayout.prototype.addIWidget = function (iWidget, affectsDragboard) {
-    DragboardLayout.prototype.addIWidget.call(this, iWidget, affectsDragboard);
+    Wirecloud.ui.DragboardLayout.prototype.addIWidget.call(this, iWidget, affectsDragboard);
 
     if (!this.initialized) {
         return;

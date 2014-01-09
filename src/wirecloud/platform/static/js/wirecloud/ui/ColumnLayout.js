@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, Constants, DragboardLayout, IWidget, Wirecloud */
+/*global gettext, Constants, IWidget, Wirecloud */
 
 (function () {
 
@@ -66,13 +66,13 @@
         this.dragboardCursor = null;
         this.iwidgetToMove = null;
 
-        DragboardLayout.call(this, dragboard, scrollbarSpace);
+        Wirecloud.ui.DragboardLayout.call(this, dragboard, scrollbarSpace);
     }
 
     /*
-     * ColumnLayout extends DragboardLayout
+     * ColumnLayout extends Wirecloud.ui.DragboardLayout
      */
-    ColumnLayout.prototype = new DragboardLayout();
+    ColumnLayout.prototype = new Wirecloud.ui.DragboardLayout();
 
     /**
      * Returns the numbers of columns of this layout.
@@ -568,7 +568,7 @@
     ColumnLayout.prototype.addIWidget = function (iWidget, affectsDragboard) {
         var affectedWidgets = false;
 
-        DragboardLayout.prototype.addIWidget.call(this, iWidget, affectsDragboard);
+        Wirecloud.ui.DragboardLayout.prototype.addIWidget.call(this, iWidget, affectsDragboard);
 
         if (!this.initialized) {
             return;
@@ -606,7 +606,7 @@
         var affectedWidgets;
 
         affectedWidgets = this._removeFromMatrix(this.matrix, iWidget);
-        DragboardLayout.prototype.removeIWidget.call(this, iWidget, affectsDragboard);
+        Wirecloud.ui.DragboardLayout.prototype.removeIWidget.call(this, iWidget, affectsDragboard);
         return affectedWidgets;
     };
 

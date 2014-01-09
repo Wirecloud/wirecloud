@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, Constants, DragboardLayout, IWidget, Wirecloud */
+/*global gettext, Constants, IWidget, Wirecloud */
 
 (function () {
 
@@ -28,7 +28,7 @@
     /**
      * @class Represents a dragboard layout to be used to place iwidgets into the dragboard.
      *
-     * @extends DragboardLayout
+     * @extends Wirecloud.ui.DragboardLayout
      */
     var FullDragboardLayout = function FullDragboardLayout(dragboard, scrollbarSpace) {
         if (arguments.length === 0) {
@@ -36,9 +36,9 @@
         }
 
         this.initialized = false;
-        DragboardLayout.call(this, dragboard, scrollbarSpace);
+        Wirecloud.ui.DragboardLayout.call(this, dragboard, scrollbarSpace);
     };
-    FullDragboardLayout.prototype = new DragboardLayout();
+    FullDragboardLayout.prototype = new Wirecloud.ui.DragboardLayout();
 
     FullDragboardLayout.prototype.fromPixelsToVCells = function fromPixelsToVCells(pixels) {
         return 1;
@@ -115,7 +115,7 @@
     FullDragboardLayout.prototype.addIWidget = function addIWidget(iWidget, affectsDragboard) {
         iWidget.element.classList.add('fulldragboard');
 
-        DragboardLayout.prototype.addIWidget.call(this, iWidget, affectsDragboard);
+        Wirecloud.ui.DragboardLayout.prototype.addIWidget.call(this, iWidget, affectsDragboard);
 
         if (!this.initialized) {
             return;
@@ -127,7 +127,7 @@
     FullDragboardLayout.prototype.removeIWidget = function removeIWidget(iWidget, affectsDragboard) {
         iWidget.element.classList.remove('fulldragboard');
 
-        DragboardLayout.prototype.removeIWidget.call(this, iWidget, affectsDragboard);
+        Wirecloud.ui.DragboardLayout.prototype.removeIWidget.call(this, iWidget, affectsDragboard);
     };
 
 

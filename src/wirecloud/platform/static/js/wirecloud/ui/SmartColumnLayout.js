@@ -19,7 +19,7 @@
  *
  */
 
-/*global Constants, DragboardLayout, gettext, Wirecloud*/
+/*global Constants, gettext, Wirecloud*/
 
 (function () {
 
@@ -169,7 +169,7 @@
 
     SmartColumnLayout.prototype._notifyWindowResizeEvent = function (widthChanged, heightChanged) {
         if (widthChanged) {
-            DragboardLayout.prototype._notifyWindowResizeEvent.call(this, widthChanged, heightChanged);
+            Wirecloud.ui.DragboardLayout.prototype._notifyWindowResizeEvent.call(this, widthChanged, heightChanged);
         }
     };
 

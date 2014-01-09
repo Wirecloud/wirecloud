@@ -7,7 +7,6 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}js/opManager/OpManager.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/varManager/VariablePlatform.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/varManager/varManager.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/DragboardLayout.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/FreeLayout.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/FullDragboardLayout.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/iGadget.js"></script>
