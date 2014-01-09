@@ -42,7 +42,7 @@ from wirecloud.platform.workspace.mashupTemplateGenerator import build_template_
 from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 import wirecloud.platform.workspace.utils
 from wirecloud.platform.workspace.utils import sync_base_workspaces
-from wirecloud.platform.workspace.views import createEmptyWorkspace, linkWorkspace
+from wirecloud.platform.workspace.views import createEmptyWorkspace
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/tests/__init__.py)
@@ -100,22 +100,6 @@ class WorkspaceTestCase(CacheTestCase):
         self.assertEqual(data['shared'], False)
     test_create_empty_workspace.tags = ('fiware-ut-3',)
 
-    def test_link_workspace(self):
-
-        workspace = Workspace.objects.get(pk=1)
-
-        alternative_user = User.objects.get(username='test2')
-        new_workspace = linkWorkspace(alternative_user, workspace.id, self.user)
-
-        all_variables = VariableValue.objects.filter(variable__iwidget__tab__workspace=workspace)
-        initial_vars = all_variables.filter(user=self.user)
-        cloned_vars = all_variables.filter(user=alternative_user)
-
-        self.assertEqual(new_workspace.user, alternative_user)
-        self.assertEqual(workspace.creator, self.user)
-        self.assertEqual(new_workspace.workspace, workspace)
-        self.assertEqual(initial_vars.count(), cloned_vars.count())
-
     def test_clone_workspace(self):
 
         workspace = Workspace.objects.get(pk=1)
@@ -136,23 +120,6 @@ class WorkspaceTestCase(CacheTestCase):
 
         self.assertEqual(original_variables.count(), cloned_variables.count())
         self.assertNotEqual(original_variables[0].id, cloned_variables[0].id)
-
-    def test_merge_workspaces(self):
-
-        workspace = Workspace.objects.get(pk=1)
-
-        packageCloner = PackageCloner()
-        cloned_workspace = packageCloner.clone_tuple(workspace)
-        linkWorkspace(self.user, cloned_workspace.id, self.user)
-
-        packageCloner = PackageCloner()
-        packageCloner.merge_workspaces(cloned_workspace, workspace, self.user)
-
-        # Check cache invalidation
-        data = json.loads(get_global_workspace_data(workspace, self.user).get_data())
-        tab_list = data['tabs']
-
-        self.assertEqual(len(tab_list), 2)
 
     def test_shared_workspace(self):
 

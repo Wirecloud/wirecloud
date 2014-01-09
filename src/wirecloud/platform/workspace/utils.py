@@ -34,7 +34,6 @@ from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.platform.iwidget.utils import deleteIWidget
 from wirecloud.platform.models import IWidget, PublishedWorkspace, Tab, UserWorkspace, VariableValue, Workspace
 from wirecloud.platform.workspace.managers import get_workspace_managers
-from wirecloud.platform.workspace.packageLinker import PackageLinker
 
 
 def deleteTab(tab, user):
@@ -109,7 +108,6 @@ def sync_base_workspaces(user):
 
     from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate
 
-    packageLinker = PackageLinker()
     reload_showcase = False
     managers = get_workspace_managers()
 
@@ -141,7 +139,8 @@ def sync_base_workspaces(user):
             from_workspace = workspace_to_add[1]
 
             if isinstance(from_workspace, Workspace):
-                user_workspace = packageLinker.link_workspace(from_workspace, user, from_workspace.creator)
+                # TODO replace old share mechanism
+                pass
             elif isinstance(from_workspace, PublishedWorkspace):
                 _junk, user_workspace = buildWorkspaceFromTemplate(from_workspace.template, user)
             else:

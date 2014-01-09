@@ -43,7 +43,6 @@ from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import check_mashup_dependencies, buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate, MissingDependencies
 from wirecloud.platform.workspace.packageCloner import PackageCloner
-from wirecloud.platform.workspace.packageLinker import PackageLinker
 from wirecloud.platform.workspace.utils import deleteTab, createTab, get_workspace_list, setVisibleTab, set_variable_value
 from wirecloud.platform.markets.utils import get_market_managers
 
@@ -74,18 +73,6 @@ def setActiveWorkspace(user, workspace):
 
     UserWorkspace.objects.filter(user=user, active=True).exclude(workspace=workspace).update(active=False)
     UserWorkspace.objects.filter(user=user, workspace=workspace).update(active=True)
-
-
-def linkWorkspaceObject(user, workspace, creator, link_variable_values=True):
-    packageLinker = PackageLinker()
-
-    return packageLinker.link_workspace(workspace, user, creator, link_variable_values)
-
-
-def linkWorkspace(user, workspace_id, creator, link_variable_values=True):
-    workspace = get_object_or_404(Workspace, id=workspace_id)
-
-    return linkWorkspaceObject(user, workspace, creator, link_variable_values)
 
 
 def normalize_boolean_param(name, value):
