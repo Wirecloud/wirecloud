@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -44,33 +44,30 @@ def get_workspace_description(workspace):
 def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets):
 
     widget = iwidget.widget
+    widget_description = widget.resource.get_template().get_resource_info()
     iwidget_id = str(iwidget.id)
     iwidget_params = {}
     if iwidget_id in parametrization:
         iwidget_params = parametrization[iwidget_id]
 
     # input and output endpoints
-    outputs = widget.get_related_events()
-
-    for output_endpoint in outputs:
+    for output_endpoint in widget_description['wiring']['outputs']:
         wiring['outputs'].append({
-            'name': output_endpoint.name,
-            'type': output_endpoint.type,
-            'label': output_endpoint.label,
-            'description': output_endpoint.description,
-            'friendcode': output_endpoint.friend_code,
+            'name': output_endpoint['name'],
+            'type': output_endpoint['type'],
+            'label': output_endpoint['label'],
+            'description': output_endpoint['description'],
+            'friendcode': output_endpoint['friendcode'],
         })
 
-    inputs = widget.get_related_slots()
-
-    for input_endpoint in inputs:
+    for input_endpoint in widget_description['wiring']['inputs']:
         wiring['inputs'].append({
-            'name': input_endpoint.name,
-            'type': input_endpoint.type,
-            'label': input_endpoint.label,
-            'description': input_endpoint.description,
-            'friendcode': input_endpoint.friend_code,
-            'actionlabel': input_endpoint.action_label,
+            'name': input_endpoint['name'],
+            'type': input_endpoint['type'],
+            'label': input_endpoint['label'],
+            'description': input_endpoint['description'],
+            'friendcode': input_endpoint['friendcode'],
+            'actionlabel': input_endpoint['actionlabel'],
         })
 
     # preferences

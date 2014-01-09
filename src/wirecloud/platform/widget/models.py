@@ -125,12 +125,6 @@ class Widget(models.Model):
     def get_related_properties(self):
         return VariableDef.objects.filter(widget=self, aspect='PROP')
 
-    def get_related_events(self):
-        return VariableDef.objects.filter(widget=self, aspect='EVEN')
-
-    def get_related_slots(self):
-        return VariableDef.objects.filter(widget=self, aspect='SLOT')
-
 
 class VariableDef(TransModel):
 
