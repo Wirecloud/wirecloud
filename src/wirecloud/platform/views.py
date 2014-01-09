@@ -20,6 +20,7 @@
 import json
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import redirect_to_login
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -67,7 +68,10 @@ def render_workspace_view(request, creator_user, workspace):
 
     workspace = get_object_or_404(Workspace, creator__username=creator_user, name=workspace)
     if not workspace.public and request.user not in workspace.users.all():
-        return build_error_response(request, 403, 'forbidden')
+        if request.user.is_authenticated():
+            return build_error_response(request, 403, 'forbidden')
+        else:
+            return redirect_to_login(request.get_full_path())
 
     return render_wirecloud(request)
 

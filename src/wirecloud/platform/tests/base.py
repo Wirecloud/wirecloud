@@ -36,10 +36,20 @@ class BasicViewsAPI(WirecloudTestCase):
 
         self.client = Client()
 
+    def test_workspace_view_redirects_to_login(self):
+
+        url = reverse('wirecloud.workspace_view', kwargs={'creator_user': 'user_with_workspaces', 'workspace': 'ExistingWorkspace'})
+
+        response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('Location', response)
+        self.assertNotEqual(response['Location'], url)
+
     def test_workspace_view_check_permissions(self):
     
         url = reverse('wirecloud.workspace_view', kwargs={'creator_user': 'user_with_workspaces', 'workspace': 'ExistingWorkspace'})
 
+        # Authenticate
         self.client.login(username='emptyuser', password='admin')
 
         response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
@@ -53,6 +63,7 @@ class BasicViewsAPI(WirecloudTestCase):
     
         url = reverse('wirecloud.workspace_view', kwargs={'creator_user': 'noexistent_user', 'workspace': 'NonexistingWorkspace'})
 
+        # Authenticate
         self.client.login(username='emptyuser', password='admin')
 
         response = self.client.get(url, HTTP_ACCEPT='text/html')
