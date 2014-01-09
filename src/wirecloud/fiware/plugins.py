@@ -31,10 +31,14 @@ from wirecloud.fiware.marketAdaptor.views import get_market_adaptor, get_market_
 
 class FiWareMarketManager(MarketManager):
 
+    _user = None
+    _name = None
     _options = None
 
-    def __init__(self, options):
+    def __init__(self, user, name, options):
 
+        self._user = user
+        self._name = name
         self._options = options
 
     def search_resource(self, vendor, name, version, user):
@@ -43,8 +47,8 @@ class FiWareMarketManager(MarketManager):
     def download_resource(self, user, url, endpoint):
 
         store = endpoint['store']
-        adaptor = get_market_adaptor(None, self._options['name'])
-        user_data = get_market_user_data(user, self._options['user'], self._options['name'])
+        adaptor = get_market_adaptor(None, self._name)
+        user_data = get_market_user_data(user, self._user, self._name)
         storeclient = adaptor.get_store(store)
 
         store_token_key = store + '/token'
@@ -69,8 +73,8 @@ class FiWareMarketManager(MarketManager):
         }
 
         store = endpoint['store']
-        adaptor = get_market_adaptor(self._options.get('user', None), self._options['name'])
-        user_data = get_market_user_data(user, self._options['user'], self._options['name'])
+        adaptor = get_market_adaptor(self._user, self._name)
+        user_data = get_market_user_data(user, self._user, self._name)
         storeclient = adaptor.get_store(store)
 
         store_token_key = store + '/token'

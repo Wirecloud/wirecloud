@@ -94,7 +94,7 @@
             }
             return result;
         });
-        data.resource = this.resource.getURI();
+        data.resource = this.resource.uri;
 
         var layoutManager;
 

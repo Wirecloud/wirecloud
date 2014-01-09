@@ -35,14 +35,19 @@ from wirecloud.platform.markets.utils import MarketManager
 
 class WirecloudCatalogueManager(MarketManager):
 
+    _user = None
+    _name = None
     _options = None
 
-    def __init__(self, options):
+    def __init__(self, user, name, options):
+
+        self._user = user
+        self._name = name
         self._options = options
 
     def search_resource(self, vendor, name, version, user):
 
-        if self._options['name'] == 'local':
+        if self._name == 'local':
             resources = CatalogueResource.objects.filter(vendor=vendor, short_name=name, version=version)[:1]
 
             if len(resources) == 1:
@@ -82,7 +87,7 @@ class WirecloudCatalogueManager(MarketManager):
 
     def publish(self, endpoint, wgt_file, user, request=None, template=None):
 
-        if self._options['name'] == 'local':
+        if self._name == 'local':
 
             if template is None:
                 template = TemplateParser(wgt_file.get_template())

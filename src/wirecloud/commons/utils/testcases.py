@@ -101,6 +101,10 @@ class DynamicWebServer(object):
 
     responses = {}
 
+    def __init__(self, fallback=None):
+
+        self.fallback = fallback
+
     def add_response(self, method, path, response_body):
 
         if path not in self.responses:
@@ -115,7 +119,11 @@ class DynamicWebServer(object):
 
         parsed_url = urlparse(url)
         if parsed_url.path not in self.responses or method not in self.responses[parsed_url.path]:
-            raise HTTPError('url', '404', 'Not Found', None, None)
+
+            if self.fallback is not None:
+                return self.fallback.request(method, url, *args, **kwargs)
+            else:
+                raise HTTPError('url', '404', 'Not Found', None, None)
 
         return self.responses[parsed_url.path][method]
 

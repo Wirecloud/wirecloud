@@ -17,7 +17,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import absolute_import
+
 import os
+
+from selenium.webdriver.support.ui import WebDriverWait
 
 from wirecloud.commons.utils.testcases import DynamicWebServer, LocalFileSystemServer, WirecloudSeleniumTestCase
 
@@ -172,5 +176,40 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             complex_price_offering = self.search_in_catalogue_results('Smart City Lights application')
             button = complex_price_offering.find_element_by_css_selector('.mainbutton')
             self.assertEqual(button.text, 'Details')
+        finally:
+            self.network._servers['http']['store.example.com'] = old_store
+
+    def test_store_upload_resource(self):
+
+        old_store = self.network._servers['http']['store.example.com']
+        self.network._servers['http']['store.example.com'] = DynamicWebServer(fallback=old_store)
+        self.network._servers['http']['store.example.com'].add_response('POST', '/api/offering/resources', {'content': ''})
+
+        try:
+            self.login(username='user_with_markets')
+
+            self.change_main_view('marketplace')
+            catalogue_base_element = self.get_current_catalogue_base_element()
+
+            resource = self.search_in_catalogue_results('Test')
+            self.scroll_and_click(resource)
+
+            WebDriverWait(self.driver, 30).until(lambda driver: catalogue_base_element.find_element_by_css_selector('.advanced_operations').is_displayed())
+
+            found = False
+            for operation in self.driver.find_elements_by_css_selector('.advanced_operations .styled_button'):
+                if operation.text == 'Publish':
+                    found = True
+                    operation.find_element_by_css_selector('div').click()
+                    break
+            self.assertTrue(found)
+
+            window_menu = self.driver.find_element_by_css_selector('.window_menu.publish_resource')
+            window_menu.find_element_by_css_selector('input[value="user_with_markets/fiware"]').click()
+            self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+            self.wait_wirecloud_ready()
+
+            window_menus = self.driver.find_elements_by_css_selector('.window_menu')
+            self.assertEqual(len(window_menus), 1, 'Resource was not uploaded')
         finally:
             self.network._servers['http']['store.example.com'] = old_store

@@ -27,7 +27,7 @@ from wirecloud.platform.plugins import get_plugins
 
 class MarketManager:
 
-    def __init__(self, options):
+    def __init__(self, user, name, options):
         pass
 
     def publish_mashup(self, endpoint, published_workspace, user, publish_options):
@@ -58,11 +58,11 @@ def get_market_managers(user):
     for market in Market.objects.filter(Q(user=None) | Q(user=user)):
         options = json.loads(market.options)
         if market.user is None:
-            options['user'] = None
+            user = None
         else:
-            options['user'] = market.user.username
+            user = market.user.username
 
         if options['type'] in manager_classes:
-            managers[unicode(market)] = manager_classes[options['type']](options)
+            managers[unicode(market)] = manager_classes[options['type']](user, market.name, options)
 
     return managers
