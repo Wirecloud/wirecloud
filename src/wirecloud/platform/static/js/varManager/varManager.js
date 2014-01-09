@@ -126,30 +126,6 @@ function VarManager (_workspace) {
         variable.set(value, options);
     }
 
-    VarManager.prototype.addPendingVariable = function (iWidget, variableName, value) {
-        var variables = this.pendingVariables[iWidget.id];
-        if (!variables) {
-            variables = [];
-            this.pendingVariables[iWidget.id] = variables;
-        }
-        variables.push({
-            "name": variableName,
-            "value": value
-        });
-    };
-
-    VarManager.prototype.dispatchPendingVariables = function (iWidgetId) {
-        var variables, i;
-
-        variables = this.pendingVariables[iWidgetId];
-        delete this.pendingVariables[iWidgetId];
-        if (variables) {
-            for (i = 0; i < variables.length; i += 1) {
-                this.setVariable(iWidgetId, variables[i]["name"], variables[i]["value"]);
-            }
-        }
-    };
-
     VarManager.prototype.addInstance = function addInstance(iWidget, iwidgetInfo, tab) {
         this.parseIWidgetVariables(iwidgetInfo, tab, iWidget);
     };
@@ -281,14 +257,6 @@ function VarManager (_workspace) {
         return this.iWidgets[iWidgetId];
     }
 
-    VarManager.prototype.getVariableById = function (varId) {
-        return this.variables[varId];
-    }
-
-    VarManager.prototype.getVariableByName = function (iwidgetId, varName) {
-        return this.findVariable(iwidgetId, varName);
-    }
-
     // *********************************
     // PRIVATE VARIABLES AND CONSTRUCTOR
     // *********************************
@@ -311,14 +279,6 @@ function VarManager (_workspace) {
 
     this.modificationsEnabled = true;
 
-    this.pendingVariables = {}; //to manage iwidgets loaded on demand caused by a wiring propagation
-
     // Creation of ALL Wirecloud variables regarding one workspace
     this.parseVariables(this.workspace.workspaceState);
-
-    _workspace.addEventListener('iwidgetadded', function (workspace, iWidget) {
-        iWidget.addEventListener('load', function (iWidget) {
-            this.dispatchPendingVariables(iWidget.id);
-        }.bind(this));
-    }.bind(this));
 }
