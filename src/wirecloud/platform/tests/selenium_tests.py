@@ -624,6 +624,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Check public workspaces cannot be renamed/removed by non owners
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
         self.check_popup_menu(must_be_disabled=('Rename', 'Settings', 'Remove'))
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
 
         self.check_public_workspace()
 
@@ -663,6 +664,9 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         target_iwidget.element.find_element_by_css_selector('.icon-cogs').click()
         self.check_popup_menu(must_be_disabled=('Rename', 'Settings', 'Full Dragboard', 'Extract from grid'))
+
+        tab = self.get_workspace_tab_by_name('Tab')
+        self.assertRaises(NoSuchElementException, tab.find_element_by_css_selector, '.icon-tab-menu')
 
         # Check wiring works
         with source_iwidget:

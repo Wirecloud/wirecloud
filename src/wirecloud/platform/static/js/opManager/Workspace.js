@@ -97,6 +97,9 @@ function Workspace(workspaceState, resources) {
             preferenceValues = this.workspaceState.preferences;
             this.preferences = Wirecloud.PreferenceManager.buildPreferences('workspace', preferenceValues, this, params);
 
+            this.restricted = !this.isOwned();
+            this.removable = !this.restricted && this.workspaceState.removable;
+
             // Load workspace tabs
             var tabs = this.workspaceState.tabs;
             var visibleTabId = null;
@@ -125,8 +128,6 @@ function Workspace(workspaceState, resources) {
                 this.events.iwidgetadded.dispatch(this, iwidgets[i].internal_iwidget);
             }
 
-            this.restricted = !this.isOwned();
-            this.removable = !this.restricted && this.workspaceState.removable;
             this.valid = true;
 
             // FIXME
@@ -343,7 +344,7 @@ function Workspace(workspaceState, resources) {
                     view: "workspace",
                     tab: Wirecloud.HistoryManager.getCurrentState().tab
                 };
-                HistoryManager.replaceState(state);
+                Wirecloud.HistoryManager.replaceState(state);
 
                 layoutManager.header.refresh();
                 layoutManager.logSubTask(gettext('Workspace renamed successfully'));

@@ -112,22 +112,25 @@
         options.closable = false;
         StyledElements.Tab.call(this, id, notebook, options);
 
+        Object.defineProperty(this, 'id', {value: tabInfo.id});
+        Object.defineProperty(this, 'workspace', {value: options.workspace});
+
         this.addEventListener('show', function (tab) {
             tab.paint();
         });
 
-        this.menu_button = new StyledElements.PopupButton({
-            'class': 'icon-tab-menu',
-            'plain': true,
-            'menuOptions': {
-                'position': ['top-left', 'top-right']
-            }
-        });
-        this.menu_button.getPopupMenu().append(new TabMenuItems(this));
-        this.menu_button.insertInto(this.tabElement);
+        if (!this.workspace.restricted) {
+            this.menu_button = new StyledElements.PopupButton({
+                'class': 'icon-tab-menu',
+                'plain': true,
+                'menuOptions': {
+                    'position': ['top-left', 'top-right']
+                }
+            });
+            this.menu_button.getPopupMenu().append(new TabMenuItems(this));
+            this.menu_button.insertInto(this.tabElement);
+        }
 
-        Object.defineProperty(this, 'id', {value: tabInfo.id});
-        Object.defineProperty(this, 'workspace', {value: options.workspace});
         this.tabInfo = tabInfo;
         this.dragboardLayerName = "dragboard_" + this.workspace.workspaceState.id + "_" + this.id;
 
@@ -305,8 +308,10 @@
         this.preferences.destroy();
         this.preferences = null;
 
-        this.menu_button.destroy();
-        this.menu_button = null;
+        if (this.menu_button) {
+            this.menu_button.destroy();
+            this.menu_button = null;
+        }
 
         this.dragboard.destroy();
         this.dragboard = null;
