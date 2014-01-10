@@ -46,7 +46,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             'repository.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'repository')),
             'static.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'static')),
             'store.example.com': DynamicWebServer(fallback=LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'store'))),
-            'store2.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'store2')),
+            'store2.example.com': DynamicWebServer(fallback=LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'store2'))),
         },
     }
     tags = ('fiware', 'fiware-plugin')
@@ -69,6 +69,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         self.network._servers['http']['marketplace.example.com'].add_response('GET', '/offering/store/Store%201/offerings', {'content': self.store1_offerings})
         self.network._servers['http']['marketplace.example.com'].add_response('GET', '/offering/store/Store%202/offerings', {'content': self.store2_offerings})
         self.network._servers['http']['store.example.com'].clear()
+        self.network._servers['http']['store2.example.com'].clear()
 
     def test_add_fiware_marketplace(self):
 
@@ -209,3 +210,27 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
         window_menus = self.driver.find_elements_by_css_selector('.window_menu')
         self.assertEqual(len(window_menus), 1, 'Resource was not uploaded')
+
+    def test_store_buy_offering(self):
+
+        response_text = read_response_file('responses', 'marketplace', 'keyword_search.xml')
+        self.network._servers['http']['marketplace.example.com'].add_response('GET', '/search/offerings/fulltext/test', {'content': response_text})
+        self.network._servers['http']['store2.example.com'].add_response('POST', '/api/contracting/form', {'content': str('{"url": "' + self.live_server_url + '"}')})
+
+        self.login(username='user_with_markets')
+
+        self.change_main_view('marketplace')
+        self.change_marketplace('fiware')
+
+        free_offering = self.search_in_catalogue_results('Weather widget')
+        free_offering.find_element_by_css_selector('.mainbutton > div').click()
+
+        response_text = read_response_file('responses', 'store2', 'service2_bought.json')
+        self.network._servers['http']['store2.example.com'].add_response('GET', '/api/offering/offerings/service2.rdf', {'content': response_text})
+        self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Start']").click()
+        WebDriverWait(self.driver, 10).until(lambda driver: len(driver.find_elements_by_css_selector('.window_menu')) == 1)
+        self.wait_catalogue_ready()
+
+        free_offering = self.search_in_catalogue_results('Weather widget')
+        button = free_offering.find_element_by_css_selector('.mainbutton')
+        self.assertEqual(button.text, 'Install')
