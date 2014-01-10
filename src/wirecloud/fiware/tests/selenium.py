@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -234,3 +234,34 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         free_offering = self.search_in_catalogue_results('Weather widget')
         button = free_offering.find_element_by_css_selector('.mainbutton')
         self.assertEqual(button.text, 'Install')
+
+    def test_install_store_offering(self):
+
+        response_text = read_response_file('responses', 'store2', 'service2_bought.json')
+        self.network._servers['http']['store2.example.com'].add_response('GET', '/api/offering/offerings/service2.rdf', {'content': response_text})
+        offering_name = 'Weather widget'
+        resource_name = 'Weather Widget Example'
+
+        self.login(username='user_with_markets')
+
+        self.change_main_view('marketplace')
+
+        self.search_resource(resource_name)
+        resource = self.search_in_catalogue_results(resource_name)
+        self.assertIsNone(resource)
+
+        self.change_marketplace('fiware')
+
+        free_offering = self.search_in_catalogue_results(offering_name)
+        button = free_offering.find_element_by_css_selector('.mainbutton > div')
+        self.assertEqual(button.text, 'Install')
+
+        self.scroll_and_click(button)
+        free_offering = self.search_in_catalogue_results(offering_name)
+        button = free_offering.find_element_by_css_selector('.mainbutton > div')
+        self.assertEqual(button.text, 'Uninstall')
+
+        self.change_marketplace('local')
+
+        resource = self.search_in_catalogue_results(resource_name)
+        self.assertIsNotNone(resource)

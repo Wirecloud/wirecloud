@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -38,18 +38,24 @@
     };
 
     var install = function install(url, catalogue_view, store) {
-        var layoutManager, local_catalogue_view;
+        var layoutManager, local_catalogue_view, market_id;
 
         local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
         layoutManager = LayoutManagerFactory.getInstance();
         layoutManager._startComplexTask(gettext("Importing resource into local repository"), 3);
         layoutManager.logSubTask(gettext('Uploading resource'));
 
+        if (catalogue_view.catalogue.market_name !== 'public') {
+            market_id = catalogue_view.catalogue.market_user + '/' + catalogue_view.catalogue.market_name;
+        } else {
+            market_id = catalogue_view.catalogue.market_name;
+        }
+
         local_catalogue_view.catalogue.addResourceFromURL(url, {
             packaged: true,
             forceCreate: true,
             market_info: {
-                name: catalogue_view.catalogue.market_name,
+                name: market_id,
                 store: store
             },
             onSuccess: function () {

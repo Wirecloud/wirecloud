@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -120,8 +120,12 @@ class ResourceCollection(Resource):
                     msg = _('Missing market name')
                     return build_error_response(request, 400, msg)
 
+                market_id = market_endpoint['name']
                 market_managers = get_market_managers(request.user)
-                market_manager = market_managers[market_endpoint['name']]
+                if market_id not in market_managers:
+                    return build_error_response(request, 409, _('Unknown market: %s') % market_id)
+
+                market_manager = market_managers[market_id]
                 downloaded_file = market_manager.download_resource(request.user, templateURL, market_endpoint)
 
             else:

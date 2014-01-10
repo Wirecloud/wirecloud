@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 Conwet Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 Conwet Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -47,7 +47,7 @@ class FiWareMarketManager(MarketManager):
     def download_resource(self, user, url, endpoint):
 
         store = endpoint['store']
-        adaptor = get_market_adaptor(None, self._name)
+        adaptor = get_market_adaptor(self._user, self._name)
         user_data = get_market_user_data(user, self._user, self._name)
         storeclient = adaptor.get_store(store)
 

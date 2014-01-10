@@ -128,7 +128,8 @@
             "version": "1.0",
             "name": "Weather Widget Example",
             "content_type": "application/x-widget+mashable-application-component",
-            "description": "Example of widget for the Wirecloud Plaftorm"
+            "description": "Example of widget for the Wirecloud Plaftorm",
+            "link": "http://store2.example.com/resources/app_provider__Wirecloud_weather-widget_1.0.wgt"
         }
     ]
 }

@@ -115,7 +115,7 @@ def get_and_filter(criterialist, user):
 
     criterialist = criterialist.split()
     for e in criterialist:
-        criteria_filter = criteria_filter & (Q(short_name__icontains=e) | Q(vendor__icontains=e) | Q(author__icontains=e) | Q(mail__icontains=e) | Q(description__icontains=e) | Q(version__icontains=e) | Q(usertag__tag__name__icontains=e))
+        criteria_filter = criteria_filter & (Q(short_name__icontains=e) | Q(display_name__icontains=e) | Q(vendor__icontains=e) | Q(author__icontains=e) | Q(mail__icontains=e) | Q(description__icontains=e) | Q(version__icontains=e) | Q(usertag__tag__name__icontains=e))
 
     return criteria_filter
 
