@@ -54,7 +54,7 @@
                 proxies[i].close();
             } catch (e) {}
         }
-        proxies.clear();
+        proxies.length = 0;
 
         iwidget.removeEventListener('unload', unload_widget);
         delete proxiesByWidget[iwidget.id];
@@ -82,7 +82,7 @@
                 proxies[i].close();
             } catch (e) {}
         }
-        proxies.clear();
+        proxies.length = 0;
 
         ioperator.removeEventListener('unload', unload_operator);
         delete proxiesByOperator[ioperator.id];
