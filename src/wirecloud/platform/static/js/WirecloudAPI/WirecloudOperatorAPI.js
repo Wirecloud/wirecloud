@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -46,7 +46,7 @@
     Object.defineProperty(window, 'MashupPlatform', {value: {}});
 
     // Temporal reference to the resource (in this case a widget) so other API files can make use of it. This attribute is removed in WirecloudAPIClosure.js
-    ioperator = platform.opManager.activeWorkspace.wiring.ioperators[id];
+    ioperator = platform.Wirecloud.activeWorkspace.wiring.ioperators[id];
     MashupPlatform.resource = ioperator;
 
     // HTTP module

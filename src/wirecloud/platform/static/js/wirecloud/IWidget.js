@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global Constants, gettext, interpolate, OpManagerFactory, Tab, StyledElements, Wirecloud*/
+/*global Constants, gettext, interpolate, Tab, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -192,7 +192,7 @@
             this.workspace.contextManager.addCallback(callback);
             break;
         case 'platform':
-            OpManagerFactory.getInstance().contextManager.addCallback(callback);
+            Wirecloud.contextManager.addCallback(callback);
             break;
         default:
             throw new TypeError('invalid scope');
@@ -232,7 +232,7 @@
     };
 
     IWidget.prototype._notifyUnloaded = function _notifyUnloaded() {
-        var i, opManager;
+        var i;
 
         if (!this.loaded) {
             return;
@@ -251,9 +251,8 @@
             this.workspace.contextManager.removeCallback(this.callbacks.mashup[i]);
         }
 
-        opManager = OpManagerFactory.getInstance();
         for (i = 0; i < this.callbacks.platform.length; i += 1) {
-            opManager.contextManager.removeCallback(this.callbacks.platform[i]);
+            Wirecloud.contextManager.removeCallback(this.callbacks.platform[i]);
         }
 
         this.callbacks = {

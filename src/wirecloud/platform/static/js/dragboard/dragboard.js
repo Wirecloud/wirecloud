@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,6 @@
  *
  */
 
-/*global document, window, Error, gettext, interpolate*/
 /*global Constants, CSSPrimitiveValue, FreeLayout, FullDragboardLayout, IWidget, LayoutManagerFactory, OpManagerFactory, Wirecloud*/
 
 (function () {
@@ -27,15 +26,13 @@
     "use strict";
 
     var parseTab = function parseTab(tabInfo) {
-        var curIWidget, widget, layout, opManager, i;
-
-        opManager = OpManagerFactory.getInstance();
+        var curIWidget, widget, layout, i;
 
         this.currentCode = 1;
         this.iWidgets = {};
         this.iWidgetsByCode = {};
 
-        if (this.tab.readOnly || !this.workspace.isOwned()) {
+        if (this.tab.readOnly || this.workspace.restricted) {
             this.readOnly = true;
             this.dragboardElement.classList.add("fixed");
         }
@@ -119,7 +116,7 @@
                 position = iWidget.getPosition();
                 iWidgetInfo.id = iWidget.id;
                 iWidgetInfo.tab = this.tab.id;
-                if (this.workspace.isOwned()) {
+                if (!this.workspace.restricted) {
                     iWidgetInfo.minimized = iWidget.isMinimized();
                 }
                 if (!iWidget.isInFullDragboardMode()) {

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -70,7 +70,7 @@
             layoutManager.logSubTask(gettext('Removing affected iWidgets'));
             opManager = OpManagerFactory.getInstance();
             for (i = 0; i < result.removedIWidgets.length; i += 1) {
-                if (opManager.activeWorkspace.getIWidget(result.removedIWidgets[i]) != null) {
+                if (Wirecloud.activeWorkspace.getIWidget(result.removedIWidgets[i]) != null) {
                     opManager.removeInstance(result.removedIWidgets[i], true);
                 }
             }
@@ -80,8 +80,7 @@
         case 'operator':
             layoutManager = LayoutManagerFactory.getInstance();
             layoutManager.logSubTask(gettext('Uninstantiating affected operators'));
-            opManager = OpManagerFactory.getInstance();
-            opManager.activeWorkspace.wiring._notifyOperatorUninstall(this.resource);
+            Wirecloud.activeWorkspace.wiring._notifyOperatorUninstall(this.resource);
             layoutManager.logSubTask(gettext('Purging operator info'));
             break;
         }

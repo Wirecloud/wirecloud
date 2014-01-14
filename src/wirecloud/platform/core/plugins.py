@@ -228,6 +228,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
         common = (
             'js/wirecloud/BaseRequirements.js',
             'js/common/ComputedStyle.js',
+            'js/wirecloud/core.js',
             'js/wirecloud/io.js',
             'js/wirecloud/ContextManager.js',
             'js/wirecloud/PreferenceError.js',

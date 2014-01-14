@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2013 Universidad Politécnica de Madrid
+ *     (C) Copyright 2013-2014 Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*global NGSI, opManager, Wirecloud*/
+/*global NGSI, Wirecloud*/
 
 (function (NGSI) {
 
@@ -37,7 +37,7 @@
         var iwidget;
 
         if (!(id in proxiesByWidget)) {
-            iwidget = opManager.activeWorkspace.getIWidget(id).internal_iwidget;
+            iwidget = Wirecloud.activeWorkspace.getIWidget(id).internal_iwidget;
             proxiesByWidget[id] = [];
             iwidget.addEventListener('unload', unload_widget);
         }
@@ -65,7 +65,7 @@
         var ioperator;
 
         if (!(id in proxiesByOperator)) {
-            ioperator = opManager.activeWorkspace.wiring.ioperators[id];
+            ioperator = Wirecloud.activeWorkspace.wiring.ioperators[id];
             proxiesByOperator[id] = [];
             ioperator.addEventListener('unload', unload_operator);
         }

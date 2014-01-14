@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -29,7 +29,7 @@
      *************************************************************************/
 
     var WiringPreview = function WiringPreview() {
-        this.workspace = opManager.activeWorkspace;
+        this.workspace = Wirecloud.activeWorkspace;
         this.tab = this.workspace.getVisibleTab();
 
         // Preview structure

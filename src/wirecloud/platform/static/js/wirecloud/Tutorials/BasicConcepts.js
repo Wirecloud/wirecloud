@@ -1,3 +1,24 @@
+/*
+ *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *     This file is part of Wirecloud Platform.
+ *
+ *     Wirecloud Platform is free software: you can redistribute it and/or
+ *     modify it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
+ *
+ *     Wirecloud is distributed in the hope that it will be useful, but WITHOUT
+ *     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+ *     License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with Wirecloud Platform.  If not, see
+ *     <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /*global Wirecloud*/
 
 (function () {
@@ -62,12 +83,12 @@
     };
 
     var widget = function(index) {
-        var widget = opManager.activeWorkspace.getIWidgets()[index];
+        var widget = Wirecloud.activeWorkspace.getIWidgets()[index];
         return widget.element;
     };
 
     var widget_title = function(index) {
-        var widget = opManager.activeWorkspace.getIWidgets()[index];
+        var widget = Wirecloud.activeWorkspace.getIWidgets()[index];
         return widget.element.getElementsByClassName("widget_menu")[0].getElementsByTagName('span')[0];
     };
 
@@ -188,12 +209,12 @@
     };
 
     var widget_menu = function widget_menu(index) {
-        var iwidget = opManager.activeWorkspace.getIWidgets()[index];
+        var iwidget = Wirecloud.activeWorkspace.getIWidgets()[index];
         return iwidget.element.getElementsByClassName('icon-cogs')[0];
     };
 
     var get_mini_widget = function get_mini_widget(index) {
-        var widget_id = opManager.activeWorkspace.getIWidgets()[index].id;
+        var widget_id = Wirecloud.activeWorkspace.getIWidgets()[index].id;
         return LayoutManagerFactory.getInstance().viewsByName.wiring.mini_widgets[widget_id].wrapperElement;
     };
 
@@ -214,13 +235,13 @@
     };
 
     var get_endpoint = function get_endpoint(index, name) {
-        var widget_id = opManager.activeWorkspace.getIWidgets()[index].id;
+        var widget_id = Wirecloud.activeWorkspace.getIWidgets()[index].id;
         var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
         return wiringEditor.iwidgets[widget_id].getAnchor(name).wrapperElement;
     };
 
     var get_full_endpoint = function get_endpoint(index, name) {
-        var widget_id = opManager.activeWorkspace.getIWidgets()[index].id;
+        var widget_id = Wirecloud.activeWorkspace.getIWidgets()[index].id;
         var wiringEditor = LayoutManagerFactory.getInstance().viewsByName["wiring"];
         return wiringEditor.iwidgets[widget_id].getAnchor(name).wrapperElement.parentElement;
     };
@@ -235,7 +256,7 @@
     };
 
     var input_box_input = function input_box_input() {
-        var widget = opManager.activeWorkspace.getIWidgets()[1];
+        var widget = Wirecloud.activeWorkspace.getIWidgets()[1];
         return new Wirecloud.ui.Tutorial.WidgetElement(widget, widget.content.contentDocument.getElementsByTagName('input')[0]);
     };
 

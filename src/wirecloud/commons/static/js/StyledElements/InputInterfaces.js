@@ -1,4 +1,4 @@
-/*global gettext, interpolate, Form, OpManagerFactory, SelectInputInterface, StyledElements, Wirecloud */
+/*global gettext, interpolate, Form, SelectInputInterface, StyledElements, Wirecloud */
 "use strict";
 
 var ValidationErrorManager, InputValidationError = {};
@@ -879,7 +879,7 @@ ParametrizedTextInputInterface.prototype.getAvailableParameters = function getAv
     var concepts, contextFields, conceptName, dashIndex, provider, concept, parameters, label;
 
     if (ParametrizedTextInputInterface.prototype._CONTEXT_PARAMS === null) {
-        concepts = OpManagerFactory.getInstance().activeWorkspace.contextManager._concepts;
+        concepts = Wirecloud.activeWorkspace.contextManager._concepts;
         contextFields = {
             '': []
         };

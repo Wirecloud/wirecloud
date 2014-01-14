@@ -37,7 +37,7 @@ function updateLayout () {
     OpManagerFactory.getInstance().alternatives.repaint();
 
     if (OpManagerFactory.getInstance().loadCompleted) {
-        OpManagerFactory.getInstance().activeWorkspace.updateLayout(orient);
+        Wirecloud.activeWorkspace.updateLayout(orient);
     }
 }
 
@@ -49,12 +49,12 @@ function checkTab () {
     opManager = OpManagerFactory.getInstance();
     if (opManager.visibleLayer === "tabs_container") {
 
-        tabContainer = opManager.activeWorkspace.layout.getCenterContainer().wrapperElement;
+        tabContainer = Wirecloud.activeWorkspace.layout.getCenterContainer().wrapperElement;
         xoffset = tabContainer.scrollLeft;
         tabWidth = window.innerWidth;
         newTabIndex = Math.round(xoffset / tabWidth);
 
         //update the visible Tab
-        opManager.activeWorkspace.updateVisibleTab(newTabIndex);
+        Wirecloud.activeWorkspace.updateVisibleTab(newTabIndex);
     }
 }

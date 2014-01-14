@@ -1,8 +1,8 @@
 /*
  *     DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER
  *
- *     Copyright (c) 2012-2013 Universidad Politécnica de Madrid
- *     Copyright (c) 2012-2013 the Center for Open Middleware
+ *     Copyright (c) 2012-2014 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 the Center for Open Middleware
  *
  *     Licensed under the Apache License, Version 2.0 (the
  *     "License"); you may not use this file except in compliance
@@ -679,7 +679,7 @@ if (!Wirecloud.ui) {
 
         try {
 
-            workspace = opManager.activeWorkspace; // FIXME this is the current way to obtain the current workspace
+            workspace = Wirecloud.activeWorkspace;
             wiringStatus = workspace.wiring.status;
             loadWiring.call(this, workspace, wiringStatus);
 
@@ -749,7 +749,7 @@ if (!Wirecloud.ui) {
     var clearInterface = function clearInterface() {
         var key, workspace;
 
-        workspace = opManager.activeWorkspace; // FIXME this is the current way to obtain the current workspace
+        workspace = Wirecloud.activeWorkspace;
         if (this.valid) {
             workspace.wiring.load(this.serialize());
             workspace.wiring.save();

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -32,12 +32,12 @@
     Object.defineProperty(window.MashupPlatform, 'context', {value: {}});
     Object.defineProperty(window.MashupPlatform.context, 'getAvailableContext', {
         value: function getAvailableContext() {
-            return platform.opManager.contextManager.getAvailableContext();
+            return platform.Wirecloud.contextManager.getAvailableContext();
         }
     });
     Object.defineProperty(window.MashupPlatform.context, 'get', {
         value: function get(name) {
-            return platform.opManager.contextManager.get(name);
+            return platform.Wirecloud.contextManager.get(name);
         }
     });
     Object.defineProperty(window.MashupPlatform.context, 'registerCallback', {
@@ -60,12 +60,12 @@
     Object.defineProperty(window.MashupPlatform.mashup, 'context', {value: {}});
     Object.defineProperty(window.MashupPlatform.mashup.context, 'getAvailableContext', {
         value: function getAvailableContext() {
-            return platform.opManager.activeWorkspace.contextManager.getAvailableContext();
+            return platform.Wirecloud.activeWorkspace.contextManager.getAvailableContext();
         }
     });
     Object.defineProperty(window.MashupPlatform.mashup.context, 'get', {
         value: function get(name) {
-            return platform.opManager.activeWorkspace.contextManager.get(name);
+            return platform.Wirecloud.activeWorkspace.contextManager.get(name);
         }
     });
     Object.defineProperty(window.MashupPlatform.mashup.context, 'registerCallback', {

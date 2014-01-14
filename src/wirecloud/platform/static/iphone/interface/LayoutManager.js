@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -25,7 +25,31 @@ var LayoutManagerFactory = function () {
     var instance = null;
 
     function LayoutManager () {
+        // TODO remove this
+        this.header = {
+            _initUserMenu: function () {},
+            refresh: function () {}
+        };
+        // end TODO
     }
+
+    // TODO
+    LayoutManager.prototype._startComplexTask = function _startComplexTask() {
+    };
+
+    LayoutManager.prototype.logSubTask = function logSubTask() {
+    };
+
+    LayoutManager.prototype.logStep = function logStep() {
+    };
+
+    LayoutManager.prototype._notifyPlatformReady = function _notifyPlatformReady() {
+    };
+
+    LayoutManager.prototype.hideCover = function hideCover() {
+    };
+
+    // end TODO
 
     /*
      * Handler for changes in the hash to navigate to other areas
@@ -36,9 +60,9 @@ var LayoutManagerFactory = function () {
         opManager = OpManagerFactory.getInstance();
 
         ws_id = parseInt(state.workspace, 10);
-        if (ws_id !== opManager.activeWorkspace.id) {
+        if (ws_id !== Wirecloud.activeWorkspace.id) {
             nextWorkspace = opManager.workspaceInstances[ws_id];
-            opManager.changeActiveWorkspace(nextWorkspace, state.tab);
+            Wirecloud.changeActiveWorkspace(nextWorkspace, state.tab);
             return;
         }
 
@@ -47,14 +71,14 @@ var LayoutManagerFactory = function () {
             case "dragboard":
                 dragboard = null;
                 tab_id = parseInt(state.tab, 10);
-                if (state.tab !== opManager.activeWorkspace.visibleTab.id) {
-                    tab = opManager.activeWorkspace.getTab(state.tab);
+                if (state.tab !== Wirecloud.activeWorkspace.visibleTab.id) {
+                    tab = Wirecloud.activeWorkspace.getTab(state.tab);
                     if (typeof tab !== "undefined") {
                         dragboard = tab.getDragboard();
                     }
                 }
                 if (dragboard === null) {
-                    dragboard = opManager.activeWorkspace.getActiveDragboard();
+                    dragboard = Wirecloud.activeWorkspace.getActiveDragboard();
                 }
                 this.showDragboard(dragboard);
                 break;

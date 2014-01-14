@@ -70,7 +70,7 @@
         this.show = function show(refPosition) {
             var iwidget_object, position;
 
-            iwidget_object = platform.opManager.activeWorkspace.getIWidget(MashupPlatform.widget.id).content;
+            iwidget_object = platform.Wirecloud.activeWorkspace.getIWidget(MashupPlatform.widget.id).content;
             position = iwidget_object.getBoundingClientRect();
 
             refPosition = {

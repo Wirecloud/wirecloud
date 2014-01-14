@@ -1,4 +1,4 @@
-/*global gettext, LayoutManagerFactory, OpManagerFactory, Variable, Wirecloud*/
+/*global gettext, LayoutManagerFactory, Variable, Wirecloud*/
 
 (function () {
 
@@ -11,7 +11,7 @@
 
         var fields, user_name, marketFields;
 
-        user_name = OpManagerFactory.getInstance().contextManager.get('username');
+        user_name = Wirecloud.contextManager.get('username');
         fields = [
             {
                 'type': 'group',
@@ -170,7 +170,7 @@
             }
         }
 
-        OpManagerFactory.getInstance().activeWorkspace.publish(data, {
+        Wirecloud.activeWorkspace.publish(data, {
             onFailure: function (msg) {
                 // TODO
                 this.form.pSetMsgs([msg]);

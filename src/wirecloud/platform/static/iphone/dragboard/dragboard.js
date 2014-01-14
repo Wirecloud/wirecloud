@@ -73,7 +73,7 @@ function Dragboard(tab, workspace, dragboardElement) {
             curIWidget = this.iwidgets[i];
 
             // Get widget model
-            widget = Wirecloud.LocalCatalogue.getResourceId(curIWidget.widget);
+            widget = this.workspace.resources.getResourceId(curIWidget.widget);
 
             // Create instance model
             container = opManager.globalDragboard.newIWidgetContainer();

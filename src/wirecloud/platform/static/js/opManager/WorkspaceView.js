@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, OpManagerFactory, StyledElements, Wirecloud, WorkspaceItems, WorkspaceListItems*/
+/*global gettext, StyledElements, Wirecloud, WorkspaceItems, WorkspaceListItems*/
 
 (function () {
 
@@ -31,7 +31,7 @@
 
         this.wsMenu = new StyledElements.PopupMenu();
         this.wsMenu.append(new WorkspaceListItems(function (context, workspace) {
-            OpManagerFactory.getInstance().changeActiveWorkspace(workspace);
+            Wirecloud.changeActiveWorkspace(workspace);
         }));
         this.wsMenu.appendSeparator();
         this.wsMenu.append(new WorkspaceItems(this));
@@ -51,7 +51,7 @@
 
         current_state = Wirecloud.HistoryManager.getCurrentState();
         if (current_state != null) {
-            context = OpManagerFactory.getInstance().contextManager;
+            context = Wirecloud.contextManager;
             if (context && context.get('username') !== 'anonymous') {
                 menu = this.wsMenu;
             }

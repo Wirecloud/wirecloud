@@ -231,9 +231,9 @@ var LayoutManagerFactory = function () {
 
             nextWorkspace = opManager.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
             if (nextWorkspace == null) {
-                if (opManager.activeWorkspace != null) {
-                    opManager.activeWorkspace.unload();
-                    opManager.activeWorkspace = null;
+                if (Wirecloud.activeWorkspace != null) {
+                    Wirecloud.activeWorkspace.unload();
+                    Wirecloud.activeWorkspace = null;
                 }
                 alert_msg = document.createElement('div');
                 alert_msg.className = 'alert alert-info';
@@ -241,8 +241,8 @@ var LayoutManagerFactory = function () {
                 LayoutManagerFactory.getInstance().viewsByName['workspace'].clear();
                 LayoutManagerFactory.getInstance().viewsByName['workspace'].appendChild(alert_msg);
                 this.header.refresh();
-            } else if (opManager.activeWorkspace == null || (nextWorkspace.id !== opManager.activeWorkspace.id)) {
-                opManager.changeActiveWorkspace(nextWorkspace, state.tab);
+            } else if (Wirecloud.activeWorkspace == null || (nextWorkspace.id !== Wirecloud.activeWorkspace.id)) {
+                Wirecloud.changeActiveWorkspace(nextWorkspace, state.tab);
             }
 
             if (state.view !== this.alternatives.getCurrentAlternative().view_name) {

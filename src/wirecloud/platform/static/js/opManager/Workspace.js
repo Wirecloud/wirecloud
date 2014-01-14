@@ -97,7 +97,7 @@ function Workspace(workspaceState, resources) {
             preferenceValues = this.workspaceState.preferences;
             this.preferences = Wirecloud.PreferenceManager.buildPreferences('workspace', preferenceValues, this, params);
 
-            this.restricted = !this.isOwned();
+            this.restricted = !this.owned;
             this.removable = !this.restricted && this.workspaceState.removable;
 
             // Load workspace tabs
@@ -246,7 +246,7 @@ function Workspace(workspaceState, resources) {
         //update the new wsInfo
         opManager = OpManagerFactory.getInstance();
         var workspace = new Workspace(opManager.workspaceInstances[data.merged_workspace_id]);
-        opManager.changeActiveWorkspace(workspace);
+        Wirecloud.changeActiveWorkspace(workspace);
         LayoutManagerFactory.getInstance().hideCover();
     }
 
@@ -677,11 +677,6 @@ function Workspace(workspaceState, resources) {
         return this.workspaceState['shared'];
     };
 
-    // Checks if the current user is the creator of this workspace
-    Workspace.prototype.isOwned = function() {
-        return this.workspaceState['owned'];
-    };
-
     /**
      * Checks when an action, defined by a basic policy, can be performed.
      */
@@ -693,7 +688,7 @@ function Workspace(workspaceState, resources) {
      * Checks if an action can be performed in this workspace by current user.
      */
     Workspace.prototype.isAllowed = function (action) {
-        var opManager, nworkspaces;
+        var nworkspaces;
 
         if (action !== "remove" && (!this.valid || this.restricted)) {
             return false;
@@ -701,8 +696,8 @@ function Workspace(workspaceState, resources) {
 
         switch (action) {
         case "remove":
-            opManager = OpManagerFactory.getInstance();
-            username = opManager.contextManager.get('username');
+            //opManager = OpManagerFactory.getInstance();
+            username = Wirecloud.contextManager.get('username');
             nworkspaces = Object.keys(OpManagerFactory.getInstance().workspacesByUserAndName[username]).length;
             return /* opManager.isAllow('add_remove_workspaces') && */ (nworkspaces > 1) && this.removable;
         case "merge_workspaces":
@@ -726,6 +721,7 @@ function Workspace(workspaceState, resources) {
 
     Object.defineProperty(this, 'id', {value: workspaceState.id});
     Object.defineProperty(this, 'resources', {value: resources});
+    Object.defineProperty(this, 'owned', {value: workspaceState.owned});
     this.workspaceState = workspaceState;
     this.varManager = null;
     this.tabInstances = {};

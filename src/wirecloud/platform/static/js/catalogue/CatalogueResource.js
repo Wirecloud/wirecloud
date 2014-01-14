@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -72,7 +72,7 @@
                 return currentVersion.permissions.uninstall;
             case 'delete':
             case 'delete-all':
-                return OpManagerFactory.getInstance().contextManager.get('issuperuser');
+                return Wirecloud.contextManager.get('issuperuser');
             }
         };
 

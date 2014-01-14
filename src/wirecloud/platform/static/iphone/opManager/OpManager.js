@@ -38,31 +38,11 @@ var OpManagerFactory = (function () {
 
     function OpManager() {
 
-        var loadEnvironment,
-            onError;
+        var onError;
 
         // ****************
         // CALLBACK METHODS
         // ****************
-
-        loadEnvironment = function (transport) {
-            var workspaces = JSON.parse(transport.responseText),
-                workspace, state, i;
-
-            for (i = 0; i < workspaces.length; i += 1) {
-                workspace = workspaces[i];
-
-                this.workspaceInstances[workspace.id] = workspace;
-                if (!(workspace.creator in this.workspacesByUserAndName)) {
-                    this.workspacesByUserAndName[workspace.creator] = {};
-                }
-                this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace;
-            }
-
-            Wirecloud.HistoryManager.init();
-            state = Wirecloud.HistoryManager.getCurrentState();
-            this.changeActiveWorkspace(this.workspacesByUserAndName[state.workspace_creator][state.workspace_name]);
-        };
 
         onError = function (transport, e) {
             alert("error en loadEnvironment");
@@ -81,118 +61,7 @@ var OpManagerFactory = (function () {
         };
 
         OpManager.prototype.sendBufferedVars = function () {
-            this.activeWorkspace.sendBufferedVars();
-        };
-
-        OpManager.prototype.changeActiveWorkspace = function (workspace) {
-            var state;
-
-            if (this.activeWorkspace != null) {
-                this.activeWorkspace.unload();
-            }
-
-            state = {
-                workspace_creator: workspace.creator,
-                workspace_name: workspace.name,
-                view: "workspace"
-            };
-            Wirecloud.HistoryManager.pushState(state);
-
-            this.loadCompleted = false;
-            var workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': workspace.id});
-            Wirecloud.io.makeRequest(workspaceUrl, {
-                method: 'GET',
-                requestHeaders: {'Accept': 'application/json'},
-                onSuccess: function (response) {
-                    var workspace_data = JSON.parse(response.responseText);
-                    this.activeWorkspace = new Workspace(workspace_data);
-                    this.activeWorkspace.contextManager.addCallback(function (updated_attributes) {
-                        var workspace, old_name;
-
-                        if ('name' in updated_attributes) {
-                            workspace = this.workspaceInstances[this.activeWorkspace.id];
-                            old_name = workspace.name;
-                            delete this.workspacesByUserAndName[workspace.creator][old_name];
-
-                            workspace.name = updated_attributes.name;
-                            this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace;
-                        }
-                    }.bind(this));
-                    this.visibleLayer = 'tabs_container';
-                    this.loadCompleted = true;
-                }.bind(this)
-            });
-            this.showWidgetsMenuFromWorskspaceMenu();
-        };
-
-        OpManager.prototype.loadEnviroment = function () {
-            LayoutManagerFactory.getInstance().resizeWrapper();
-            // First, global modules must be loades (Showcase, Catalogue)
-            // Showcase is the first!
-            // When it finish, it will invoke continueLoadingGlobalModules method!
-
-            Wirecloud.io.makeRequest(Wirecloud.URLs.PLATFORM_CONTEXT_COLLECTION, {
-                method: 'GET',
-                requestHeaders: {'Accept': 'application/json'},
-                onSuccess: function (transport) {
-                    OpManagerFactory.getInstance().contextManager = new Wirecloud.ContextManager(this, JSON.parse(transport.responseText));
-                    OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CONTEXT);
-                }
-            });
-        };
-
-        OpManager.prototype.showActiveWorkspace = function () {
-            this.activeWorkspace.init();
-        };
-
-        OpManager.prototype.continueLoadingGlobalModules = function (module) {
-            // Asynchronous load of modules
-            // Each singleton module notifies OpManager it has finished loading!
-            switch (module) {
-
-            case Modules.prototype.CONTEXT:
-
-                Wirecloud.io.makeRequest(Wirecloud.URLs.THEME_ENTRY.evaluate({name: this.contextManager.get('theme')}), {
-                    method: 'GET',
-                    requestHeaders: {'Accept': 'application/json'},
-                    onSuccess: function (transport) {
-                        Wirecloud.currentTheme = new Wirecloud.ui.Theme(JSON.parse(transport.responseText));
-                        this.continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
-                    }.bind(this)
-                });
-                break;
-
-            case Modules.prototype.THEME_MANAGER:
-
-                Wirecloud.LocalCatalogue.reload({
-                    onSuccess: function () {
-                        this.continueLoadingGlobalModules(Modules.prototype.SHOWCASE);
-                    }.bind(this),
-                    onFailure: function () {
-                        var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error retrieving available resources: %(errorMsg)s."), transport, e);
-                        LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-                    }
-                });
-                break;
-            case Modules.prototype.SHOWCASE:
-                // All singleton modules has been loaded!
-                // It's time for loading tabspace information!
-                this.loadActiveWorkspace();
-                break;
-            }
-        };
-
-        OpManager.prototype.loadActiveWorkspace = function () {
-            // Asynchronous load of modules
-            // Each singleton module notifies OpManager it has finished loading!
-
-            Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_COLLECTION, {
-                method: 'GET',
-                requestHeaders: {'Accept': 'application/json'},
-                onSuccess: loadEnvironment.bind(this),
-                onFailure: onError,
-                onException: onError
-            });
+            Wirecloud.activeWorkspace.sendBufferedVars();
         };
 
         //Operations on workspaces
@@ -209,7 +78,7 @@ var OpManagerFactory = (function () {
 
 
         OpManager.prototype.showDragboard = function (iWidgetId) {
-            var dragboard = this.activeWorkspace.getIWidget(iWidgetId).dragboard;
+            var dragboard = Wirecloud.activeWorkspace.getIWidget(iWidgetId).dragboard;
             dragboard.paint(iWidgetId);
             this.visibleLayer = "dragboard";
         };
@@ -217,18 +86,7 @@ var OpManagerFactory = (function () {
         OpManager.prototype.showWidgetsMenu = function () {
             this.alternatives.showAlternative(this.workspaceTabsAlternative);
             this.visibleLayer = "tabs_container";
-            this.activeWorkspace.show();
-        };
-
-        OpManager.prototype.showWidgetsMenuFromWorskspaceMenu = function () {
-            if (!this.loadCompleted) {
-                setTimeout(function () {
-                    OpManagerFactory.getInstance().showWidgetsMenuFromWorskspaceMenu();
-                }, 100);
-                return;
-            }
-            this.showActiveWorkspace(this.activeWorkspace);
-            this.visibleLayer = "tabs_container";
+            Wirecloud.activeWorkspace.show();
         };
 
         OpManager.prototype.showWorkspaceMenu = function () {
@@ -240,11 +98,13 @@ var OpManagerFactory = (function () {
                 workspace = this.workspaceInstances[workspaceId];
                 workspaceEntry = document.createElement('li');
                 workspaceEntry.textContent = workspace.name;
-                if (workspace === this.activeWorkspace) {
+                if (workspace === Wirecloud.activeWorkspace) {
                     workspaceEntry.setAttribute('class', 'selected');
-                    workspaceEntry.addEventListener('click', this.showWidgetsMenuFromWorskspaceMenu.bind(this), false);
+                    workspaceEntry.addEventListener('click', function () {
+                        this.alternatives.showAlternative(Wirecloud.activeWorkspace.tabsContainerElement);
+                    }.bind(this), false);
                 } else {
-                    workspaceEntry.addEventListener('click', this.changeActiveWorkspace.bind(this, workspace), false);
+                    workspaceEntry.addEventListener('click', Wirecloud.changeActiveWorkspace.bind(Wirecloud, workspace), false);
                 }
                 this.workspaceListElement.appendChild(workspaceEntry);
             }
@@ -261,7 +121,6 @@ var OpManagerFactory = (function () {
         // Variables for controlling the collection of wiring and dragboard instances of a user
         this.workspaceInstances = {};
         this.workspacesByUserAndName = {};
-        this.activeWorkspace = null;
 
         // workspace menu element
         this.workspaceMenuElement = document.getElementById('workspace_menu');

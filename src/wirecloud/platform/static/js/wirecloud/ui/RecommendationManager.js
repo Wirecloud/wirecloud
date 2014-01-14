@@ -1,6 +1,6 @@
 /*
- *     Copyright 2013 (c) CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright 2013 (c) Center for Open Middleware
+ *     Copyright 2013-2014 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2013-2014 (c) Center for Open Middleware
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-/*global Wirecloud OpManagerFactory */
+/*global Wirecloud */
 
 (function () {
 
@@ -71,7 +71,7 @@
         this.semanticAvailable = false;
 
         if (Wirecloud.URLs.SEMANTIC_MATCHING_SERVICE) {
-            url = Wirecloud.URLs.SEMANTIC_MATCHING_SERVICE + OpManagerFactory.getInstance().contextManager.get('username');
+            url = Wirecloud.URLs.SEMANTIC_MATCHING_SERVICE + Wirecloud.contextManager.get('username');
 
             onSuccess = function (res) {
                 // Semantic Recommendations available

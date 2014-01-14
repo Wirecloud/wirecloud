@@ -28,7 +28,7 @@
  */
 
 
-function Workspace(workspaceState) {
+function Workspace(workspaceState, resources) {
 
     Workspace.prototype._buildInterface = function () {
         var loginButton;
@@ -247,7 +247,7 @@ function Workspace(workspaceState) {
             iWidgets, contextManager, i;
 
         // Notify this to the ContextManager. The orientation value may be "portrait" or "landscape".
-        OpManagerFactory.getInstance().contextManager.modify({
+        Wirecloud.contextManager.modify({
             'orientation': orientation
         });
 
@@ -286,6 +286,8 @@ function Workspace(workspaceState) {
     // *****************
 
     Object.defineProperty(this, 'id', {value: workspaceState.id});
+    Object.defineProperty(this, 'resources', {value: resources});
+    Object.defineProperty(this, 'owned', {value: workspaceState.owned});
     this.workspaceState = workspaceState;
     this.varManager = null;
     this.tabInstances = [];
@@ -300,5 +302,6 @@ function Workspace(workspaceState) {
     StyledElements.ObjectWithEvents.call(this, ['iwidgetadded', 'iwidgetremoved']);
 
     this.init();
+    OpManagerFactory.getInstance().visibleLayer = "tabs_container";
 }
 Workspace.prototype = new StyledElements.ObjectWithEvents();

@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -42,7 +42,7 @@
         }
     }
 
-    iwidget = platform.opManager.activeWorkspace.getIWidget(id).internal_iwidget;
+    iwidget = platform.Wirecloud.activeWorkspace.getIWidget(id).internal_iwidget;
 
     IWidgetVariable = function IWidgetVariable(variable) {
         this.set = function set(value) {

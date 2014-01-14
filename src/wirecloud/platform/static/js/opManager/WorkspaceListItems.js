@@ -1,5 +1,5 @@
 /*
- *     Copyright 2012-2013 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2012-2014 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -38,7 +38,7 @@
         items = [];
 
         opManager = OpManagerFactory.getInstance();
-        username = opManager.contextManager.get('username');
+        username = Wirecloud.contextManager.get('username');
         for (workspace_name in opManager.workspacesByUserAndName[username]) {
             workspace = opManager.workspacesByUserAndName[username][workspace_name];
 

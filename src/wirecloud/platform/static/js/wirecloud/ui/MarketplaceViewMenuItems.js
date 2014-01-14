@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     (C) Copyright 2012-2014 Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -89,7 +89,7 @@
                         'required': true
                     }
                 };
-                if (OpManagerFactory.getInstance().contextManager.get('issuperuser')) {
+                if (Wirecloud.contextManager.get('issuperuser')) {
                     fields['public'] = {
                         'type': 'boolean',
                         'label': gettext('Public')
@@ -110,7 +110,7 @@
                     if (data['public'] === true) {
                         market_info.options['user'] = null;
                     } else {
-                        market_info.options['user'] = OpManagerFactory.getInstance().contextManager.get('username');
+                        market_info.options['user'] = Wirecloud.contextManager.get('username');
                     }
                     Wirecloud.MarketManager.addMarket(market_info, this.market.addMarket.bind(this.market, market_info.options));
                 }.bind(this);

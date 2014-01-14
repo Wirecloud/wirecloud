@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -80,8 +80,8 @@
     WirecloudHeader.prototype._initUserMenu = function _initUserMenu() {
         var user_menu, wrapper;
 
-        var username = OpManagerFactory.getInstance().contextManager.get('username');
-        var full_name = OpManagerFactory.getInstance().contextManager.get('fullname').trim();
+        var username = Wirecloud.contextManager.get('username');
+        var full_name = Wirecloud.contextManager.get('fullname').trim();
 
         wrapper = document.createElement('div');
         wrapper.className = 'nav pull-right';
@@ -114,7 +114,7 @@
         user_menu = this.user_button.getPopupMenu();
         user_menu.append(new StyledElements.MenuItem(gettext('Settings'), OpManagerFactory.getInstance().showPlatformPreferences));
 
-        if (OpManagerFactory.getInstance().contextManager.get('isstaff') === true && 'DJANGO_ADMIN' in Wirecloud.URLs) {
+        if (Wirecloud.contextManager.get('isstaff') === true && 'DJANGO_ADMIN' in Wirecloud.URLs) {
             user_menu.append(new StyledElements.MenuItem(gettext('DJango Admin panel'), function () {
                 window.open(Wirecloud.URLs.DJANGO_ADMIN, '_blank');
             }));

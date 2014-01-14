@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     (C) Copyright 2012-2014 Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -20,7 +20,7 @@
  */
 
 /*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50 */
-/*global gettext, LayoutManagerFactory, OpManagerFactory, StyledElements*/
+/*global gettext, LayoutManagerFactory, StyledElements*/
 
 var WorkspaceItems = function () {
     StyledElements.DynamicMenuItems.call(this);
@@ -31,10 +31,10 @@ WorkspaceItems.prototype.build = function () {
     var current_workspace, item, items;
 
     items = [];
-    current_workspace = OpManagerFactory.getInstance().activeWorkspace;
+    current_workspace = Wirecloud.activeWorkspace;
 
     item = new StyledElements.MenuItem(gettext('Rename'), function () {
-        (new Wirecloud.ui.RenameWindowMenu(opManager.activeWorkspace, 'rename')).show();
+        (new Wirecloud.ui.RenameWindowMenu(current_workspace, 'rename')).show();
     }.bind(this));
     items.push(item);
     item.setDisabled(current_workspace == null || !current_workspace.isAllowed('rename'));
@@ -66,7 +66,7 @@ WorkspaceItems.prototype.build = function () {
 
     item = new StyledElements.MenuItem(gettext('Upload to local catalogue'), function () {
         LayoutManagerFactory.getInstance().viewsByName.marketplace.waitMarketListReady(function () {
-            var dialog = new Wirecloud.ui.PublishWorkspaceWindowMenu(OpManagerFactory.getInstance().activeWorkspace);
+            var dialog = new Wirecloud.ui.PublishWorkspaceWindowMenu(current_workspace);
             dialog.show();
         });
     }.bind(this));
