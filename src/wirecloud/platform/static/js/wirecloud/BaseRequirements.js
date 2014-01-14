@@ -28,6 +28,10 @@
     var check_basic_requirements = function check_basic_requirements() {
         var tester = {};
 
+        if (!('JSON' in window)) {
+            throw new Error('Missing JSON support');
+        }
+
         if (!('freeze' in Object)) {
             throw new Error('Missing Object.freeze support');
         }
