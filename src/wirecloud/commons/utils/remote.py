@@ -115,7 +115,7 @@ class IWidgetTester(object):
             return self.element
 
     def __enter__(self):
-        self.content_element = self.testcase.driver.execute_script('return opManager.activeWorkspace.getIWidget(%d).content;' % self.id)
+        self.content_element = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.getIWidget(%d).content;' % self.id)
 
         # TODO work around webdriver bugs
         self.testcase.driver.switch_to_default_content()
@@ -139,7 +139,7 @@ class IWidgetTester(object):
 
         old_frame = driver.execute_script("return window.frameElement")
         driver.switch_to_default_content()
-        error_count = driver.execute_script('return opManager.activeWorkspace.getIWidget(%s).internal_iwidget.logManager.errorCount' % self.id)
+        error_count = driver.execute_script('return Wirecloud.activeWorkspace.getIWidget(%s).internal_iwidget.logManager.errorCount' % self.id)
         driver.switch_to_frame(old_frame)
 
         return error_count
@@ -151,7 +151,7 @@ class IWidgetTester(object):
         old_frame = driver.execute_script("return window.frameElement")
         driver.switch_to_default_content()
         log_entries = driver.execute_script('''
-            var iwidget = opManager.activeWorkspace.getIWidget(%s).internal_iwidget;
+            var iwidget = Wirecloud.activeWorkspace.getIWidget(%s).internal_iwidget;
             return iwidget.logManager.entries.map(function (entry) { return {date: entry.date.getTime(), level: entry.level, msg: entry.msg}; });
         ''' % self.id)
         driver.switch_to_frame(old_frame)
@@ -172,7 +172,7 @@ class IWidgetTester(object):
         self.element.find_element_by_css_selector('.statusBar').click()
 
         def name_changed(driver):
-            return driver.execute_script('return opManager.activeWorkspace.getIWidget(%s).name === "%s"' % (self.id, new_name))
+            return driver.execute_script('return Wirecloud.activeWorkspace.getIWidget(%s).name === "%s"' % (self.id, new_name))
 
         WebDriverWait(self.testcase.driver, timeout).until(name_changed)
 
@@ -180,7 +180,7 @@ class IWidgetTester(object):
 
         def iwidget_loaded(driver):
             iwidget_element = driver.execute_script('''
-                var iwidget = opManager.activeWorkspace.getIWidget(%s);
+                var iwidget = Wirecloud.activeWorkspace.getIWidget(%s);
                 return iwidget.internal_iwidget.loaded ? iwidget.element : null;
             ''' % self.id)
 
@@ -194,7 +194,7 @@ class IWidgetTester(object):
 
     def remove(self, timeout=30):
 
-        old_iwidget_ids = self.testcase.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
+        old_iwidget_ids = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
         old_iwidget_count = len(old_iwidget_ids)
 
         self.element.find_element_by_css_selector('.icon-remove').click()
@@ -249,7 +249,7 @@ class IOperatorTester(object):
 
     @property
     def error_count(self):
-        return self.testcase.driver.execute_script('return opManager.activeWorkspace.wiring.ioperators[%s].logManager.errorCount' % self.id)
+        return self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.wiring.ioperators[%s].logManager.errorCount' % self.id)
 
 
 class WirecloudRemoteTestCase(object):
@@ -485,11 +485,11 @@ class WirecloudRemoteTestCase(object):
     def get_current_iwidgets(self, tab=None):
 
         if tab is None:
-            iwidget_ids = self.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
-            iwidget_elements = self.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.internal_iwidget.loaded ? iwidget.element : null;});')
+            iwidget_ids = self.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
+            iwidget_elements = self.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.internal_iwidget.loaded ? iwidget.element : null;});')
         else:
-            iwidget_ids = self.driver.execute_script('return opManager.activeWorkspace.getTab(arguments[0]).getIWidgets().map(function(iwidget) {return iwidget.id;});', tab)
-            iwidget_elements = self.driver.execute_script('return opManager.activeWorkspace.getTab(arguments[0]).getIWidgets().map(function(iwidget) {return iwidget.internal_iwidget.loaded ? iwidget.element : null;});', tab)
+            iwidget_ids = self.driver.execute_script('return Wirecloud.activeWorkspace.getTab(arguments[0]).getIWidgets().map(function(iwidget) {return iwidget.id;});', tab)
+            iwidget_elements = self.driver.execute_script('return Wirecloud.activeWorkspace.getTab(arguments[0]).getIWidgets().map(function(iwidget) {return iwidget.internal_iwidget.loaded ? iwidget.element : null;});', tab)
 
         return [IWidgetTester(self, iwidget_ids[i], iwidget_elements[i]) for i in range(len(iwidget_ids))]
 
@@ -514,7 +514,7 @@ class WirecloudRemoteTestCase(object):
 
     def instantiate(self, resource, timeout=30):
 
-        old_iwidget_ids = self.driver.execute_script('return opManager.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
+        old_iwidget_ids = self.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
         old_iwidget_count = len(old_iwidget_ids)
 
         self.scroll_and_click(resource.find_element_by_css_selector('.instantiate_button div'))
