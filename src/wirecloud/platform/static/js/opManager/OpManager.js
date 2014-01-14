@@ -67,11 +67,6 @@ var OpManagerFactory = function () {
         // PRIVATE VARIABLES AND FUNCTIONS
         // *********************************
 
-        // Singleton modules
-        this.showcaseModule = null;
-        this.catalogue = null;
-        this.logs = null;
-
         this.loadCompleted = false;
 
         // Variables for controlling the collection of wiring and dragboard instances of a user
@@ -414,10 +409,6 @@ var OpManagerFactory = function () {
             }
 
             //TODO: unloadCatalogue
-        }
-
-        OpManager.prototype.iwidgetLoaded = function (iwidgetId) {
-            this.activeWorkspace.iwidgetLoaded(iwidgetId);
         }
 
         OpManager.prototype.checkForWidgetUpdates = function () {

@@ -86,10 +86,6 @@ function Dragboard(tab, workspace, dragboardElement) {
         }
     };
 
-    Dragboard.prototype.iwidgetLoaded = function (iWidgetId) {
-        //DO NOTHING
-    };
-
     Dragboard.prototype.destroy = function () {
         var key;
 
