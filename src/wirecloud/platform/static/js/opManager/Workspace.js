@@ -688,7 +688,7 @@ function Workspace(workspaceState, resources) {
      * Checks if an action can be performed in this workspace by current user.
      */
     Workspace.prototype.isAllowed = function (action) {
-        var nworkspaces;
+        var username, nworkspaces;
 
         if (action !== "remove" && (!this.valid || this.restricted)) {
             return false;

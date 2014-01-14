@@ -43,7 +43,7 @@ var OpManagerFactory = function () {
             var workspace = JSON.parse(response.responseText);
             this.workspaceInstances[workspace.id] = workspace;
             this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace;
-            this.changeActiveWorkspace(workspace);
+            Wirecloud.changeActiveWorkspace(workspace);
 
             if (typeof onSuccess === 'function') {
                 try {
@@ -81,7 +81,7 @@ var OpManagerFactory = function () {
 
             var mergeOk = function(transport) {
                 LayoutManagerFactory.getInstance().logStep('');
-                this.changeActiveWorkspace(Wirecloud.activeWorkspace);
+                Wirecloud.changeActiveWorkspace(Wirecloud.activeWorkspace);
             }
             var mergeError = function(transport, e) {
                 var layoutManager, msg;
@@ -253,7 +253,7 @@ var OpManagerFactory = function () {
 
             // Set the first workspace as current
             var username = Wirecloud.contextManager.get('username');
-            this.changeActiveWorkspace(Wirecloud.Utils.values(this.workspacesByUserAndName[username])[0]);
+            Wirecloud.changeActiveWorkspace(Wirecloud.Utils.values(this.workspacesByUserAndName[username])[0]);
         };
 
     }

@@ -37,7 +37,7 @@
                 LayoutManagerFactory.getInstance().logStep('');
 
                 // create the new workspace and go to it
-                OpManagerFactory.getInstance().changeActiveWorkspace(workspace);
+                Wirecloud.changeActiveWorkspace(workspace);
             },
             onFailure: function (msg) {
                 var layoutManager = LayoutManagerFactory.getInstance();

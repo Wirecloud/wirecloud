@@ -205,7 +205,7 @@
                             preferences = Wirecloud.PreferenceManager.buildPreferences('workspace', preferenceValues, {workspaceState: workspace_data}, workspace_data.empty_params);
                             preferences.addCommitHandler(function () {
                                 setTimeout(function () {
-                                    OpManagerFactory.getInstance().changeActiveWorkspace(workspace, initial_tab, options);
+                                    Wirecloud.changeActiveWorkspace(workspace, initial_tab, options);
                                 }, 0);
                             }.bind(this));
                             dialog = new Wirecloud.ui.PreferencesWindowMenu('workspace', preferences);
@@ -219,12 +219,12 @@
                             var workspace, old_name;
 
                             if ('name' in updated_attributes) {
-                                workspace = this.workspaceInstances[this.activeWorkspace.id];
+                                workspace = opManager.workspaceInstances[this.activeWorkspace.id];
                                 old_name = workspace.name;
-                                delete this.workspacesByUserAndName[workspace.creator][old_name];
+                                delete opManager.workspacesByUserAndName[workspace.creator][old_name];
 
                                 workspace.name = updated_attributes.name;
-                                this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace;
+                                opManager.workspacesByUserAndName[workspace.creator][workspace.name] = workspace;
                             }
                         }.bind(this));
 
