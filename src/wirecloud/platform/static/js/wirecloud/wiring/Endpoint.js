@@ -19,6 +19,8 @@
  *
  */
 
+/*global gettext, interpolate, Wirecloud*/
+
 (function () {
 
     "use strict";
@@ -42,7 +44,7 @@
     Endpoint.prototype.fullDisconnect = function fullDisconnect() {
         var funcName = 'fullDisconnect';
         var msg = gettext("Unimplemented function: %(funcName)s");
-        msg = interpolate(msg, {funcName: funcName}, yes);
+        msg = interpolate(msg, {funcName: funcName}, true);
         Wirecloud.GlobalLogManager.log(msg);
         return;
     };
