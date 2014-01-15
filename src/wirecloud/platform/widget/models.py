@@ -159,10 +159,6 @@ class VariableDef(TransModel):
     def __unicode__(self):
         return self.widget.uri + " " + self.aspect
 
-    #Values that cannot be public: passwords, produced events and consumed events
-    def has_public_value(self):
-        return self.type != 'P' and self.aspect != 'SLOT' and self.aspect != 'EVENT'
-
     def get_default_value(self):
         if self.default_value is None:
             return ''
