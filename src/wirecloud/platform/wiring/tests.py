@@ -370,7 +370,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
     def test_basic_wiring_editor_operations(self):
 
-        if not selenium_supports_draganddrop(self.driver):
+        if not selenium_supports_draganddrop(self.driver):  # pragma: no cover
             raise unittest.SkipTest('This test need make use of the native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
         self.login()
@@ -407,7 +407,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         with iwidgets[1]:
             try:
                 WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
-            except:
+            except:  # pragma: no cover
                 pass
 
             text_div = self.driver.find_element_by_id('wiringOut')
@@ -424,7 +424,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
     def test_wiring_editor_modify_arrow_endpoints(self):
 
-        if not selenium_supports_draganddrop(self.driver):
+        if not selenium_supports_draganddrop(self.driver):  # pragma: no cover
             raise unittest.SkipTest('This test need make use of the native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
         self.login()
@@ -463,7 +463,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         with iwidgets[1]:
             try:
                 WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
-            except:
+            except:  # pragma: no cover
                 pass
 
             text_div = self.driver.find_element_by_id('wiringOut')
@@ -503,7 +503,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
 
             try:
                 WebDriverWait(self.driver, timeout=2).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello new world!!')
-            except:
+            except:  # pragma: no cover
                 pass
 
             text_div = self.driver.find_element_by_id('wiringOut')
@@ -577,7 +577,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         with iwidgets[0]:
             try:
                 WebDriverWait(self.driver, timeout=10).until(lambda driver: driver.find_element_by_id('wiringOut').text != '')
-            except:
+            except:  # pragma: no cover
                 pass
 
             text_div = self.driver.find_element_by_id('wiringOut')
@@ -595,7 +595,7 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         with iwidgets[0]:
             try:
                 WebDriverWait(self.driver, timeout=10).until(lambda driver: driver.find_element_by_id('wiringOut').text != 'preferences changed: prefix')
-            except:
+            except:  # pragma: no cover
                 pass
 
             text_div = self.driver.find_element_by_id('wiringOut')
@@ -758,7 +758,7 @@ class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
         with iwidgets[1]:
             try:
                 WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
-            except:
+            except:  # pragma: no cover
                 pass
 
             text_div = self.driver.find_element_by_id('wiringOut')
@@ -1458,7 +1458,7 @@ class EndpointOrderTestCase(WirecloudSeleniumTestCase):
 
         super(EndpointOrderTestCase, cls).setUpClass()
 
-        if not selenium_supports_draganddrop(cls.driver):
+        if not selenium_supports_draganddrop(cls.driver):  # pragma: no cover
             cls.tearDownClass()
             raise unittest.SkipTest('Endpoint reordering tests need make use of the native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
@@ -1560,7 +1560,7 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
 
         super(MulticonnectorTestCase, cls).setUpClass()
 
-        if not selenium_supports_draganddrop(cls.driver):
+        if not selenium_supports_draganddrop(cls.driver):  # pragma: no cover
             cls.tearDownClass()
             raise unittest.SkipTest('Multiconnector tests need make use of the native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
@@ -1645,7 +1645,7 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
         with iwidgets[1]:
             try:
                 WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'first hello world!!')
-            except:
+            except:  # pragma: no cover
                 pass
 
             text_div = self.driver.find_element_by_id('wiringOut')
@@ -1654,7 +1654,7 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
         with iwidgets[2]:
             try:
                 WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'first hello world!!')
-            except:
+            except:  # pragma: no cover
                 pass
 
             text_div = self.driver.find_element_by_id('wiringOut')
@@ -1704,7 +1704,7 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
         with iwidgets[0]:
             try:
                 WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'first hello world!!')
-            except:
+            except:  # pragma: no cover
                 pass
 
             text_div = self.driver.find_element_by_id('wiringOut')
@@ -1722,7 +1722,7 @@ class MulticonnectorTestCase(WirecloudSeleniumTestCase):
         with iwidgets[0]:
             try:
                 WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'second hello world!!')
-            except:
+            except:  # pragma: no cover
                 pass
 
             text_div = self.driver.find_element_by_id('wiringOut')
@@ -1739,7 +1739,7 @@ class StickyEffectTestCase(WirecloudSeleniumTestCase):
 
         super(StickyEffectTestCase, cls).setUpClass()
 
-        if not selenium_supports_draganddrop(cls.driver):
+        if not selenium_supports_draganddrop(cls.driver):  # pragma: no cover
             cls.tearDownClass()
             raise unittest.SkipTest('Sticky effect tests need make use of the native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
@@ -1794,7 +1794,7 @@ class SimpleRecommendationsTestCase(WirecloudSeleniumTestCase):
 
         super(SimpleRecommendationsTestCase, cls).setUpClass()
 
-        if not selenium_supports_draganddrop(cls.driver):
+        if not selenium_supports_draganddrop(cls.driver):  # pragma: no cover
             cls.tearDownClass()
             raise unittest.SkipTest('Simple recommendation tests need make use of the native events support on selenium <= 2.37.2 when using FirefoxDriver (not available on Mac OS)')
 
