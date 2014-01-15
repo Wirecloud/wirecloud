@@ -159,12 +159,6 @@ class VariableDef(TransModel):
     def __unicode__(self):
         return self.widget.uri + " " + self.aspect
 
-    def get_default_value(self):
-        if self.default_value is None:
-            return ''
-        else:
-            return self.default_value
-
     class Meta:
         app_label = 'platform'
         db_table = 'wirecloud_variabledef'

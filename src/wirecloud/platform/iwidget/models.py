@@ -103,6 +103,3 @@ class Variable(models.Model):
 
     def __unicode__(self):
         return str(self.pk) + " " + self.vardef.name
-
-    def get_default_value(self):
-        return self.vardef.get_default_value()
