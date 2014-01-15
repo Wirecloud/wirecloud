@@ -94,6 +94,18 @@ class MarketAdaptor(object):
         self._user = user
         self._passwd = passwd
 
+    def _process_store_info(self, element):
+        result = {
+            'name': element.get('name'),
+            'url': element.xpath(URL_XPATH)[0].text,
+            'registrationDate': element.xpath(DATE_XPATH)[0].text
+        }
+
+        if result['name'] not in self._stores:
+            self._stores[result['name']] = StoreClient(result['url'])
+
+        return result
+
     def _parse_offering(self, name, url, parsed_usdl, store, options):
 
         offerings = []
@@ -182,14 +194,7 @@ class MarketAdaptor(object):
         result = []
 
         for res in parsed_body.xpath(RESOURCE_XPATH):
-            store = {}
-            store['name'] = res.get('name')
-            url = res.xpath(URL_XPATH)[0].text
-            store['url'] = url
-            result.append(store)
-
-            if store['name'] not in self._stores:
-                self._stores[store['name']] = StoreClient(store['url'])
+            result.append(self._process_store_info(res))
 
         return result
 
@@ -205,16 +210,7 @@ class MarketAdaptor(object):
             raise HTTPError(response.url, response.status_code, response.reason, None, None)
 
         parsed_body = etree.fromstring(response.content)
-
-        result = {}
-        result['name'] = store
-        result['url'] = parsed_body.xpath(URL_XPATH)[0].text
-        result['registrationDate'] = parsed_body.xpath(DATE_XPATH)[0].text
-
-        if result['name'] not in self._stores:
-            self._stores[result['name']] = StoreClient(result['url'])
-
-        return result
+        return self._process_store_info(parsed_body)
 
     def get_all_services_from_store(self, store, **options):
 

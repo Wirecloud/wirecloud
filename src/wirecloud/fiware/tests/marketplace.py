@@ -57,3 +57,12 @@ class MarketplaceTestCase(WirecloudTestCase):
         expected_result = json.loads(self.read_response_file('results', 'test_marketplace_keyword_search.json'))
 
         self.assertEqual(result, expected_result)
+
+    def test_marketplace_get_store_info(self):
+
+        response_text = self.read_response_file('responses', 'marketplace', 'store1_info.xml')
+        self.network._servers['http']['marketplace.example.com'].add_response('GET', '/registration/store/Store%201', {'content': response_text})
+        result = self.market_adaptor.get_store_info('Store 1')
+        expected_result = json.loads(self.read_response_file('results', 'test_marketplace_get_store_info.json'))
+
+        self.assertEqual(result, expected_result)
