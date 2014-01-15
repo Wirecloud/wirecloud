@@ -111,11 +111,8 @@ class AllStoresServiceCollection(Resource):
         try:
             stores = adaptor.get_all_stores()
             for store in stores:
-                #This if is necesary in order to avoid an Http error
-                #caused by and store without name that cant be deleted
-                if store['name'] != '':
-                    store_services = adaptor.get_all_services_from_store(store['name'], **user_data)
-                    result['resources'].extend(store_services['resources'])
+                store_services = adaptor.get_all_services_from_store(store['name'], **user_data)
+                result['resources'].extend(store_services['resources'])
         except:
             return HttpResponse(status=502)
 
