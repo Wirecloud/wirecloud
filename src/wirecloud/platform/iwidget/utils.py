@@ -226,13 +226,3 @@ def UpdateIWidget(iwidget, user, tab):
 
     from wirecloud.platform.get_data import _invalidate_cached_variable_values
     _invalidate_cached_variable_values(ig.tab.workspace)
-
-
-def deleteIWidget(iwidget, user):
-
-    if not user.is_superuser:
-        workspace = iwidget.tab.workspace
-        if workspace.creator != user:
-            raise Http403
-
-    iwidget.delete()

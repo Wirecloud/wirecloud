@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -31,18 +31,16 @@ from django.utils.translation import ugettext as _
 
 from wirecloud.commons.utils.db import save_alternative
 from wirecloud.commons.utils.template import TemplateParser
-from wirecloud.platform.iwidget.utils import deleteIWidget
 from wirecloud.platform.models import IWidget, PublishedWorkspace, Tab, UserWorkspace, VariableValue, Workspace
 from wirecloud.platform.workspace.managers import get_workspace_managers
 
 
 def deleteTab(tab, user):
-    #Deleting iwidgets
-    iwidgets = IWidget.objects.filter(tab=tab)
-    for iwidget in iwidgets:
-        deleteIWidget(iwidget, user)
+    # Delete iwidgets
+    for iwidget in tab.iwidget_set.all():
+        iwidget.delete()
 
-    # Deleting tab
+    # Delete tab
     tab.delete()
 
 

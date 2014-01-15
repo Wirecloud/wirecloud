@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -39,7 +39,6 @@ from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.cache import patch_cache_headers
 from wirecloud.commons.utils.http import build_error_response, get_absolute_reverse_url, get_current_domain
-from wirecloud.platform.iwidget.utils import deleteIWidget
 from wirecloud.platform.models import Widget, IWidget
 import wirecloud.platform.widget.utils as showcase_utils
 from wirecloud.platform.widget.utils import fix_widget_code
@@ -58,7 +57,7 @@ def deleteWidget(user, name, vendor, version):
         iwidgets = IWidget.objects.filter(widget=widget)
         for iwidget in iwidgets:
             result['removedIWidgets'].append(iwidget.id)
-            deleteIWidget(iwidget, user)
+            iwidget.delete()
 
         widget.delete()
 

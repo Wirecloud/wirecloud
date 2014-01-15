@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012-2013 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright 2012-2014 (c) CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -38,7 +38,6 @@ from wirecloud.commons.utils.template import is_valid_name, is_valid_vendor, is_
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.get_data import get_workspace_data, get_global_workspace_data
-from wirecloud.platform.iwidget.utils import deleteIWidget
 from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import check_mashup_dependencies, buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate, MissingDependencies
@@ -250,7 +249,7 @@ class WorkspaceEntry(Resource):
             # Remove the workspace
             iwidgets = IWidget.objects.filter(tab__workspace=workspace)
             for iwidget in iwidgets:
-                deleteIWidget(iwidget, request.user)
+                iwidget.delete()
             workspace.delete()
 
             from wirecloud.platform.get_data import _invalidate_cached_variable_values

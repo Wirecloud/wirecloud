@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -34,7 +34,7 @@ from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 from wirecloud.platform.get_data import get_global_workspace_data
-from wirecloud.platform.iwidget.utils import SaveIWidget, deleteIWidget
+from wirecloud.platform.iwidget.utils import SaveIWidget
 from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Variable, VariableValue, Workspace
 from wirecloud.platform.preferences.views import update_workspace_preferences
 from wirecloud.platform.workspace.packageCloner import PackageCloner
@@ -229,7 +229,7 @@ class WorkspaceCacheTestCase(CacheTestCase):
 
     def test_widget_deletion_invalidates_cache(self):
 
-        deleteIWidget(IWidget.objects.get(pk=1), self.user)
+        IWidget.objects.get(pk=1).delete()
         data = json.loads(get_global_workspace_data(self.workspace, self.user).get_data())
         iwidget_list = data['tabs'][0]['iwidgets']
         self.assertEqual(len(iwidget_list), 1)
