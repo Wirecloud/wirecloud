@@ -187,16 +187,6 @@ def get_vote_response(resource, user, format):
     return HttpResponse(json.dumps(vote), content_type='application/json; charset=UTF-8')
 
 
-def get_all_resource_versions(vendor, name):
-    """Returns all the versions of a specified resource name (formed by vendor and name)."""
-
-    versions = CatalogueResource.objects.filter(vendor=vendor, short_name=name).values_list('version', flat=True)
-
-    # convert from ["1.9", "1.10", "1.9.1"] to [[1,9], [1,10], [1,9,1]] to
-    # allow comparing integers
-    return [map(int, v.split('.')) for v in versions]
-
-
 def get_latest_resource_version(name, vendor):
 
     resource_versions = CatalogueResource.objects.filter(vendor=vendor, short_name=name)
