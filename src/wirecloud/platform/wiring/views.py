@@ -95,7 +95,7 @@ class OperatorEntry(Resource):
 
             base_url = operator.template_uri
             if not base_url.startswith(('http://', 'https://')):
-                base_url = get_absolute_reverse_url('wirecloud_showcase.media', kwargs={
+                base_url = get_absolute_reverse_url('wirecloud.showcase_media', kwargs={
                     'vendor': operator.vendor,
                     'name': operator.short_name,
                     'version': operator.version,

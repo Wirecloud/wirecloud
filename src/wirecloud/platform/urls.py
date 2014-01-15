@@ -53,6 +53,11 @@ urlpatterns = patterns('wirecloud.platform.views',
         context_views.PlatformContextCollection(permitted_methods=('GET',)),
         name='wirecloud.platform_context_collection'),
 
+    url(r'^showcase/media/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/(?P<file_path>.+)$',
+        widget_views.serve_showcase_media,
+        name='wirecloud.showcase_media'
+    ),
+
     # Widgets
     url(r'^api/resources/?$',
         localcatalogue_views.ResourceCollection(permitted_methods=('GET', 'POST',)),

@@ -11,9 +11,6 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
 
-    # Showcase
-    (r'^showcase/', include('wirecloud.platform.widget.showcase_urls')),
-
     # Catalogue
     (r'^catalogue', include('wirecloud.catalogue.urls')),
 
