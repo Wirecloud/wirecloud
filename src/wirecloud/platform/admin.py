@@ -63,7 +63,5 @@ class WorkspaceAdmin(admin.ModelAdmin):
 
 admin.site.register(models.Workspace, WorkspaceAdmin)
 admin.site.register(models.UserWorkspace)
-admin.site.register(models.PublishedWorkspace)
 admin.site.register(models.VariableValue)
 admin.site.register(models.Tab)
-admin.site.register(models.GroupPublishedWorkspace)

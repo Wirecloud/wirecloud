@@ -31,7 +31,7 @@ from django.utils.translation import ugettext as _
 
 from wirecloud.commons.utils.db import save_alternative
 from wirecloud.commons.utils.template import TemplateParser
-from wirecloud.platform.models import IWidget, PublishedWorkspace, Tab, UserWorkspace, VariableValue, Workspace
+from wirecloud.platform.models import IWidget, Tab, UserWorkspace, VariableValue, Workspace
 from wirecloud.platform.workspace.managers import get_workspace_managers
 
 
@@ -136,11 +136,9 @@ def sync_base_workspaces(user):
         for workspace_to_add in result[1]:
             from_workspace = workspace_to_add[1]
 
-            if isinstance(from_workspace, Workspace):
-                # TODO replace old share mechanism
-                pass
-            elif isinstance(from_workspace, PublishedWorkspace):
-                _junk, user_workspace = buildWorkspaceFromTemplate(from_workspace.template, user)
+            if isinstance(from_workspace, CatalogueResource):
+                # TODO
+                continue
             else:
                 # TODO warning
                 continue

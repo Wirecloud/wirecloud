@@ -70,50 +70,6 @@ class UserWorkspace(models.Model):
         return unicode(self.workspace) + " - " + unicode(self.user)
 
 
-class PublishedWorkspace(models.Model):
-
-    vendor = models.CharField(_('Vendor'), max_length=250)
-    name = models.CharField(_('Name'), max_length=250)
-    version = models.CharField(_('Version'), max_length=150)
-
-    wikiURI = models.URLField(_('wikiURI'))
-    imageURI = models.URLField(_('imageURI'))
-
-    description = models.TextField(_('Description'))
-
-    author = models.CharField(_('Author'), max_length=250)
-    creator = models.ForeignKey(User)
-    mail = models.CharField(_('Mail'), max_length=100)
-
-    workspace = models.ForeignKey(Workspace, verbose_name=_('Original Workspace'), null=True, blank=True)
-
-    template = models.TextField(_('Template'))
-    params = models.TextField(_('Params used for publishing'))
-
-    class Meta:
-        app_label = 'platform'
-        db_table = 'wirecloud_publishedworkspace'
-
-    def get_template_url(self, request=None):
-        return get_absolute_reverse_url('wirecloud_showcase.mashup_template', request, args=(self.id,))
-
-    def __unicode__(self):
-        return unicode(self.pk) + " " + unicode(self.name)
-
-
-class GroupPublishedWorkspace(models.Model):
-
-    group = models.ForeignKey(Group)
-    workspace = models.ForeignKey(PublishedWorkspace)
-
-    class Meta:
-        app_label = 'platform'
-        db_table = 'wirecloud_grouppublishedworkspace'
-
-    def __unicode__(self):
-        return '%s => %s' % (unicode(self.workspace), unicode(self.group))
-
-
 class VariableValue(models.Model):
 
     variable = models.ForeignKey('platform.Variable', verbose_name=_('Variable'))

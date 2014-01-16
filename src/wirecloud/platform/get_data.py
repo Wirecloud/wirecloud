@@ -38,7 +38,7 @@ from django.utils.translation import ugettext as _
 
 from wirecloud.commons.utils.cache import CacheableData
 from wirecloud.commons.utils.encoding import LazyEncoder
-from wirecloud.platform.models import IWidget, PublishedWorkspace, Tab, UserWorkspace, Variable, VariableValue
+from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Variable, VariableValue
 from wirecloud.platform.context.utils import get_workspace_context, get_context_values
 from wirecloud.platform.preferences.views import get_workspace_preference_values, get_tab_preference_values
 from wirecloud.platform.workspace.utils import createTab, decrypt_value, encrypt_value
@@ -409,11 +409,6 @@ def _get_global_workspace_data(workspaceDAO, user):
     for forced_operator_id, forced_preferences in forced_values['ioperator'].iteritems():
         for forced_pref_name, forced_preference in forced_preferences.iteritems():
             data_ret['wiring']['operators'][forced_operator_id]['preferences'][forced_pref_name]['value'] = forced_preference['value']
-
-    # Params
-    last_published_workspace = PublishedWorkspace.objects.filter(workspace=workspaceDAO).order_by('-pk')
-    if len(last_published_workspace) > 0:
-        data_ret["params"] = json.loads(last_published_workspace[0].params)
 
     return json.dumps(data_ret, cls=LazyEncoder)
 
