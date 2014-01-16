@@ -121,50 +121,6 @@ class WorkspaceTestCase(CacheTestCase):
         self.assertEqual(original_variables.count(), cloned_variables.count())
         self.assertNotEqual(original_variables[0].id, cloned_variables[0].id)
 
-    def test_shared_workspace(self):
-
-        from django.conf import settings
-        if not hasattr(settings, 'WORKSPACE_MANAGERS') or 'wirecloud.platform.workspace.workspace_managers.OrganizationWorkspaceManager' not in settings.WORKSPACE_MANAGERS:
-            raise unittest.SkipTest('OrganizationWorkspaceManager not enabled')
-
-        workspace = Workspace.objects.get(pk=1)
-
-        # Create a new group and share the workspace with it
-        group = Group.objects.create(name='test_users')
-        workspace.targetOrganizations.add(group)
-
-        other_user = User.objects.get(username='test2')
-        other_user.groups.add(group)
-        other_user.save()
-
-        # Sync shared workspaces
-        sync_base_workspaces(other_user)
-
-        # Check that other_user can access to the shared workspace
-        data = json.loads(get_global_workspace_data(workspace, other_user).get_data())
-        iwidget_list = data['tabs'][0]['iwidgets']
-        self.assertEqual(len(iwidget_list), 2)
-
-        # Add a new iWidget to the workspace
-        tab = Tab.objects.get(pk=1)
-        iwidget_data = {
-            'widget': 'Test/Test Widget/1.0.0',
-            'name': 'test',
-            'top': 0,
-            'left': 0,
-            'width': 2,
-            'height': 2,
-            'zIndex': 1,
-            'layout': 0,
-            'icon_top': 0,
-            'icon_left': 0
-        }
-        SaveIWidget(iwidget_data, self.user, tab, {})
-
-        data = json.loads(get_global_workspace_data(workspace, other_user).get_data())
-        iwidget_list = data['tabs'][0]['iwidgets']
-        self.assertEqual(len(iwidget_list), 3)
-
 
 class WorkspaceCacheTestCase(CacheTestCase):
 

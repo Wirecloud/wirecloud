@@ -108,10 +108,6 @@ CACHES = {
     }
 }
 
-WORKSPACE_MANAGERS = (
-    'wirecloud.platform.workspace.workspace_managers.OrganizationWorkspaceManager',
-)
-
 FORCE_SCRIPT_NAME = ""
 
 NOT_PROXY_FOR = ['localhost', '127.0.0.1']
