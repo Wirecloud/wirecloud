@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -26,14 +26,23 @@ from wirecloud.fiware.marketAdaptor.marketadaptor import MarketAdaptor
 
 class MarketplaceTestCase(WirecloudTestCase):
 
-    tags = ('fiware', 'fiware-plugin', 'fiware-ut-8',)
+    tags = ('fiware', 'fiware-plugin', 'fiware-ut-8', 'fiware-marketplace')
     servers = {
         'http': {
             'marketplace.example.com': DynamicWebServer(),
-            'repository.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'repository')),
+            'repository.example.com': DynamicWebServer(fallback=LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'repository'))),
+            'store2.example.com': DynamicWebServer(fallback=LocalFileSystemServer(os.path.join(os.path.dirname(__file__), 'test-data', 'responses', 'store2'))),
         },
     }
     maxDiff = None
+
+    @classmethod
+    def setUpClass(cls):
+
+        super(MarketplaceTestCase, cls).setUpClass()
+
+        cls.store_list_response = cls.read_response_file('responses', 'marketplace', 'store_list.xml')
+        cls.store2_offerings = cls.read_response_file('responses', 'marketplace', 'store2_offerings.xml')
 
     def setUp(self):
 
@@ -41,13 +50,46 @@ class MarketplaceTestCase(WirecloudTestCase):
 
         self.market_adaptor = MarketAdaptor('http://marketplace.example.com')
         self.network._servers['http']['marketplace.example.com'].clear()
+        self.network._servers['http']['marketplace.example.com'].add_response('GET', '/registration/stores/', {'content': self.store_list_response})
+        self.network._servers['http']['marketplace.example.com'].add_response('GET', '/offering/store/Store%202/offerings', {'content': self.store2_offerings})
+        self.network._servers['http']['repository.example.com'].clear()
 
+    @classmethod
     def read_response_file(self, *response):
         f = open(os.path.join(os.path.dirname(__file__), 'test-data', *response))
         contents = f.read()
         f.close()
 
         return contents
+
+    def test_marketplace_get_all_offerings_from_store(self):
+
+        store2_offerings = self.read_response_file('responses', 'marketplace', 'store2_offerings.xml')
+        self.network._servers['http']['marketplace.example.com'].add_response('GET', '/offering/store/Store%202/offerings', {'content': store2_offerings})
+        result = self.market_adaptor.get_all_services_from_store('Store 2')
+        expected_result = json.loads(self.read_response_file('results', 'test_marketplace_get_all_offerings_from_store.json'))
+
+        self.assertEqual(result, expected_result)
+
+    def test_marketplace_get_all_offerings_from_store_repository_failing(self):
+
+        old_repository = self.network._servers['http']['repository.example.com']
+        del self.network._servers['http']['repository.example.com']
+
+        try:
+            result = self.market_adaptor.get_all_services_from_store('Store 2')
+
+            self.assertEqual(result, {'resources': []})
+        finally:
+            self.network._servers['http']['repository.example.com'] = old_repository
+
+    def test_marketplace_get_all_offerings_from_store_bad_usdl_content(self):
+
+        self.network._servers['http']['repository.example.com'].add_response('GET', '/CoNWeT/service2.rdf', {'content': 'invalid content'});
+        result = self.market_adaptor.get_all_services_from_store('Store 2')
+        expected_result = json.loads(self.read_response_file('results', 'test_marketplace_get_all_offerings_from_store_bad_usdl_content.json'))
+
+        self.assertEqual(result, expected_result)
 
     def test_marketplace_keyword_search(self):
 
