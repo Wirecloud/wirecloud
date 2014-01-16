@@ -15,7 +15,7 @@ urlpatterns = patterns('',
     (r'^catalogue', include('wirecloud.catalogue.urls')),
 
     # Proxy
-    (r'^proxy', include('wirecloud.proxy.urls')),
+    url(r'^cdp', include('wirecloud.proxy.urls')),
 
     # Login/logout
     url(r'^login/?$', 'django.contrib.auth.views.login', name="login"),

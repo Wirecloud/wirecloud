@@ -244,8 +244,7 @@ def proxy_request(request, protocol, domain, path):
     else:
         raw_data = request.body
 
-    if not request.user.is_authenticated():
-        return HttpResponseForbidden(_('Your must be logged in to access this service'))
+    # TODO improve proxy security
 
     try:
         if request.get_host() != urlparse.urlparse(request.META["HTTP_REFERER"])[1]:
