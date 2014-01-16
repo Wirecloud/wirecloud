@@ -91,6 +91,25 @@ class MarketplaceTestCase(WirecloudTestCase):
 
         self.assertEqual(result, expected_result)
 
+    def test_marketplace_get_all_offerings_from_store_failures_are_cached(self):
+
+        def build_invalid_usdl_response(method, url, *args, **kwargs):
+            build_invalid_usdl_response.counter += 1
+            return {
+                'headers': {
+                    'Content-Type': 'application/rdf+xml',
+                    'Content-Length': 5,
+                },
+                'content': 'invalid content'
+            }
+        build_invalid_usdl_response.counter = 0
+
+        self.network._servers['http']['repository.example.com'].add_response('GET', '/CoNWeT/service2.rdf', build_invalid_usdl_response);
+        result1 = self.market_adaptor.get_all_services_from_store('Store 2')
+        result2 = self.market_adaptor.get_all_services_from_store('Store 2')
+        self.assertEqual(result1, result2)
+        self.assertEqual(build_invalid_usdl_response.counter, 1)
+
     def test_marketplace_keyword_search(self):
 
         response_text = self.read_response_file('responses', 'marketplace', 'keyword_search.xml')

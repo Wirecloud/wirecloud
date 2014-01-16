@@ -125,7 +125,12 @@ class DynamicWebServer(object):
             else:
                 raise HTTPError('url', '404', 'Not Found', None, None)
 
-        return self.responses[parsed_url.path][method]
+        response = self.responses[parsed_url.path][method]
+
+        if callable(response):
+            response = response(method, url, *args, **kwargs)
+
+        return response
 
 
 class LiveServer(object):

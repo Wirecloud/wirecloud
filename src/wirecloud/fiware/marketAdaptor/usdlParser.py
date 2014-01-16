@@ -50,7 +50,7 @@ GEO = rdflib.Namespace('http://www.w3.org/2003/01/geo/wgs84_pos#')
 
 class USDLParseException(Exception):
 
-    def __init__(self, msg):
+    def __init__(self, msg=''):
         self.msg = msg
 
     def __str__(self):
@@ -75,13 +75,18 @@ class USDLParser(object):
         self._service_number = 0
         self._graph = rdflib.Graph()
 
-        #Check rdf format
         if mime_type == 'application/rdf+xml':
-            self._graph.parse(data=usdl_document, format="application/rdf+xml")
-        elif mime_type == 'text/n3' or mime_type == 'text/turtle' or mime_type == 'text/plain':
-            self._graph.parse(data=usdl_document, format='n3')
+            rdf_format = 'xml'
+        elif mime_type == 'text/n3' or mime_type == 'text/turtle':
+            rdf_format = 'n3'
         else:
             msg = _('Error the document has not a valid rdf format')
+            raise USDLParseException(msg)
+
+        try:
+            self._graph.parse(data=usdl_document, format=rdf_format)
+        except Exception, e:
+            msg = _('Error parsing rdf document: %s' % unicode(e))
             raise USDLParseException(msg)
 
         # take all the services in the document
