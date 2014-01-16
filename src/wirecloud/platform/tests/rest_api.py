@@ -27,7 +27,7 @@ from django.test import Client
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.testcases import WirecloudTestCase
-from wirecloud.platform.models import IWidget, Tab, VariableValue, Workspace, UserWorkspace
+from wirecloud.platform.models import IWidget, Tab, Variable, Workspace, UserWorkspace
 
 
 # Avoid nose to repeat these tests (they are run through wirecloud/platform/tests/__init__.py)
@@ -928,12 +928,11 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         def iwidget_preference_not_created(self):
             # IWidget preferences should not be updated
-            variable_value = VariableValue.objects.get(
-                user__username='user_with_workspaces',
-                variable__vardef__name='text',
-                variable__iwidget__id=2
+            variable = Variable.objects.get(
+                vardef__name='text',
+                iwidget__id=2
             )
-            self.assertNotEqual(variable_value.value, 'new value')
+            self.assertNotEqual(variable.value, 'new value')
 
         check_post_requires_authentication(self, url, json.dumps(data), iwidget_preference_not_created)
 
@@ -961,12 +960,11 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(response.content, '')
 
         # IWidget preferences should be updated
-        variable_value = VariableValue.objects.get(
-            user__username='user_with_workspaces',
-            variable__vardef__name='text',
-            variable__iwidget__id=2
+        variable = Variable.objects.get(
+            vardef__name='text',
+            iwidget__id=2
         )
-        self.assertEqual(variable_value.value, 'new value')
+        self.assertEqual(variable.value, 'new value')
 
     def test_iwidget_preferences_entry_post_bad_request_syntax(self):
 

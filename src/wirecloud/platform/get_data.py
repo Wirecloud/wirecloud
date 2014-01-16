@@ -38,7 +38,7 @@ from django.utils.translation import ugettext as _
 
 from wirecloud.commons.utils.cache import CacheableData
 from wirecloud.commons.utils.encoding import LazyEncoder
-from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Variable, VariableValue
+from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Variable
 from wirecloud.platform.context.utils import get_workspace_context, get_context_values
 from wirecloud.platform.preferences.views import get_workspace_preference_values, get_tab_preference_values
 from wirecloud.platform.workspace.utils import createTab, decrypt_value, encrypt_value
@@ -76,10 +76,10 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
         preferences = get_workspace_preference_values(workspace)
         forced_values = process_forced_values(workspace, user, context_values, preferences)
 
-    var_values = VariableValue.objects.filter(user__id=workspace.creator.id, variable__iwidget__tab__workspace=workspace)
-    for var_value in var_values.select_related('variable__vardef'):
-        variwidget = var_value.variable.iwidget.id
-        varname = var_value.variable.vardef.name
+    var_values = Variable.objects.filter(iwidget__tab__workspace=workspace)
+    for variable in var_values.select_related('vardef'):
+        variwidget = variable.iwidget.id
+        varname = variable.vardef.name
         # forced_values uses string keys
         svariwidget = str(variwidget)
 
@@ -91,23 +91,23 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
             fv_entry = forced_values['iwidget'][svariwidget][varname]
 
             entry['value'] = fv_entry['value']
-            if var_value.variable.vardef.secure:
+            if variable.vardef.secure:
                 entry['value'] = encrypt_value(entry['value'])
 
             entry['readonly'] = True
             entry['hidden'] = fv_entry.get('hidden', False)
 
         else:
-            entry['value'] = var_value.value
+            entry['value'] = variable.value
 
             entry['readonly'] = False
             entry['hidden'] = False
 
-        entry['type'] = var_value.variable.vardef.type
-        entry['secure'] = var_value.variable.vardef.secure
+        entry['type'] = variable.vardef.type
+        entry['secure'] = variable.vardef.secure
 
         values_by_varname[variwidget][varname] = entry
-        values_by_varid[var_value.variable.id] = entry
+        values_by_varid[variable.id] = entry
 
     values = {
         'by_varid': values_by_varid,

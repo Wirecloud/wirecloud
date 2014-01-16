@@ -70,49 +70,6 @@ class UserWorkspace(models.Model):
         return unicode(self.workspace) + " - " + unicode(self.user)
 
 
-class VariableValue(models.Model):
-
-    variable = models.ForeignKey('platform.Variable', verbose_name=_('Variable'))
-    user = models.ForeignKey(User, verbose_name=_('User'))
-    value = models.TextField(_('Value'), blank=True)
-
-    class Meta:
-        app_label = 'platform'
-        db_table = 'wirecloud_variablevalue'
-        unique_together = ('variable', 'user')
-
-    def save(self, *args, **kwargs):
-
-        super(VariableValue, self).save(*args, **kwargs)
-
-        from wirecloud.platform.get_data import _invalidate_cached_variable_values
-        _invalidate_cached_variable_values(self.variable.iwidget.tab.workspace, self.user)
-
-    def set_variable_value(self, value):
-
-        new_value = unicode(value)
-        if self.variable.vardef.secure:
-            from wirecloud.platform.workspace.utils import encrypt_value
-            new_value = encrypt_value(new_value)
-
-        self.value = new_value
-
-    def get_variable_value(self):
-        value = self.value
-
-        if self.variable.vardef.secure:
-            from wirecloud.platform.workspace.utils import decrypt_value
-            value = decrypt_value(value)
-
-        if self.variable.vardef.type == 'B':
-            value = value.lower() == 'true'
-
-        return value
-
-    def __unicode__(self):
-        return unicode(self.variable.vardef.name) + " - " + unicode(self.user)
-
-
 class Tab(models.Model):
 
     name = models.CharField(_('Name'), max_length=30)

@@ -63,16 +63,8 @@ class IWidget(models.Model):
 
     def delete(self, *args, **kwargs):
 
-        from wirecloud.platform.workspace.models import VariableValue
-
         # Delete all IWidget's variables
-        variables = Variable.objects.filter(iwidget=self)
-        for var in variables:
-
-            # Deleting variable value
-            VariableValue.objects.filter(variable=var).delete()
-
-            var.delete()
+        self.variable_set.delete()
 
         # Delete IWidget and its position
         self.position.delete()
@@ -96,6 +88,35 @@ class Variable(models.Model):
 
     vardef = models.ForeignKey('platform.VariableDef', verbose_name=_('Variable definition'))
     iwidget = models.ForeignKey(IWidget, verbose_name=_('IWidget'))
+    value = models.TextField(_('Value'), blank=True)
+
+    def save(self, *args, **kwargs):
+
+        super(Variable, self).save(*args, **kwargs)
+
+        from wirecloud.platform.get_data import _invalidate_cached_variable_values
+        _invalidate_cached_variable_values(self.iwidget.tab.workspace)
+
+    def set_variable_value(self, value):
+
+        new_value = unicode(value)
+        if self.vardef.secure:
+            from wirecloud.platform.workspace.utils import encrypt_value
+            new_value = encrypt_value(new_value)
+
+        self.value = new_value
+
+    def get_variable_value(self):
+        value = self.value
+
+        if self.vardef.secure:
+            from wirecloud.platform.workspace.utils import decrypt_value
+            value = decrypt_value(value)
+
+        if self.vardef.type == 'B':
+            value = value.lower() == 'true'
+
+        return value
 
     class Meta:
         app_label = 'platform'

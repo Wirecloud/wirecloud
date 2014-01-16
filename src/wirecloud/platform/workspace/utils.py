@@ -31,7 +31,7 @@ from django.utils.translation import ugettext as _
 
 from wirecloud.commons.utils.db import save_alternative
 from wirecloud.commons.utils.template import TemplateParser
-from wirecloud.platform.models import IWidget, Tab, UserWorkspace, VariableValue, Workspace
+from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
 from wirecloud.platform.workspace.managers import get_workspace_managers
 
 
@@ -97,9 +97,9 @@ def decrypt_value(value):
 
 def set_variable_value(var_id, user, value):
 
-    variable_value = VariableValue.objects.select_related('variable__vardef').get(user=user, variable__id=var_id)
-    variable_value.set_variable_value(value)
-    variable_value.save()
+    variable = Variable.objects.select_related('vardef').get(id=var_id)
+    variable.set_variable_value(value)
+    variable.save()
 
 
 def sync_base_workspaces(user):

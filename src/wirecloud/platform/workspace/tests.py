@@ -35,7 +35,7 @@ from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
 from wirecloud.platform.get_data import get_global_workspace_data
 from wirecloud.platform.iwidget.utils import SaveIWidget
-from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Variable, VariableValue, Workspace
+from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Variable, Workspace
 from wirecloud.platform.preferences.views import update_workspace_preferences
 from wirecloud.platform.workspace.packageCloner import PackageCloner
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_template_from_workspace, build_rdf_template_from_workspace

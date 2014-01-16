@@ -30,7 +30,7 @@ from django.core.urlresolvers import reverse
 from django.test import TransactionTestCase, Client
 from django.utils import unittest
 
-from wirecloud.platform.models import VariableValue
+from wirecloud.platform.models import Variable
 from wirecloud.proxy.views import WIRECLOUD_PROXY
 from wirecloud.platform.workspace.utils import HAS_AES, set_variable_value
 
@@ -236,8 +236,8 @@ class ProxySecureDataTests(ProxyTestsBase):
 
     def test_secure_data(self):
 
-        set_variable_value(1, self.user, 'test_password')
-        self.assertTrue(VariableValue.objects.get(pk=1).value != 'test_password')
+        set_variable_value(1, 'test_password')
+        self.assertTrue(Variable.objects.get(pk=1).value != 'test_password')
 
         client = Client()
         client.login(username='test', password='test')
@@ -312,8 +312,8 @@ class ProxySecureDataTests(ProxyTestsBase):
 
     def test_secure_data_using_cookies(self):
 
-        set_variable_value(1, self.user, 'test_password')
-        self.assertTrue(VariableValue.objects.get(pk=1).value != 'test_password')
+        set_variable_value(1, 'test_password')
+        self.assertTrue(Variable.objects.get(pk=1).value != 'test_password')
 
         client = Client()
         client.login(username='test', password='test')

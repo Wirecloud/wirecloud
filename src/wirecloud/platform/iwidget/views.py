@@ -31,7 +31,7 @@ from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.http import authentication_required, build_error_response, supported_request_mime_types
 from wirecloud.platform.get_data import VariableValueCacheManager, get_iwidget_data
 from wirecloud.platform.iwidget.utils import SaveIWidget, UpdateIWidget, UpgradeIWidget
-from wirecloud.platform.models import Widget, IWidget, Tab, UserWorkspace, VariableValue, Workspace
+from wirecloud.platform.models import Widget, IWidget, Tab, UserWorkspace, Variable, Workspace
 from wirecloud.platform.widget.utils import get_or_add_widget_from_catalogue
 
 
@@ -171,14 +171,13 @@ class IWidgetPreferences(Resource):
             return build_error_response(request, 400, msg)
 
         for var_name in new_values:
-            variable_value = VariableValue.objects.select_related('variable__vardef').get(
-                user=request.user,
-                variable__vardef__name=var_name,
-                variable__vardef__aspect='PREF',
-                variable__iwidget__id=iwidget_id
+            variable = Variable.objects.select_related('vardef').get(
+                vardef__name=var_name,
+                vardef__aspect='PREF',
+                iwidget__id=iwidget_id
             )
-            variable_value.set_variable_value(new_values[var_name])
-            variable_value.save()
+            variable.set_variable_value(new_values[var_name])
+            variable.save()
 
         return HttpResponse(status=204)
 

@@ -208,7 +208,8 @@
         "pk": "1",
         "fields": {
             "vardef": "1",
-            "iwidget": "1"
+            "iwidget": "1",
+            "value": "test_password"
         }
     },
     {
@@ -216,7 +217,8 @@
         "pk": "2",
         "fields": {
             "vardef": "2",
-            "iwidget": "1"
+            "iwidget": "1",
+            "value": "test_username"
         }
     },
     {
@@ -232,7 +234,8 @@
         "pk": "4",
         "fields": {
             "vardef": "4",
-            "iwidget": "1"
+            "iwidget": "1",
+            "value": "test_data"
         }
     },
     {
@@ -248,7 +251,8 @@
         "pk": "6",
         "fields": {
             "vardef": "1",
-            "iwidget": "2"
+            "iwidget": "2",
+            "value": "test_password"
         }
     },
     {
@@ -257,6 +261,7 @@
         "fields": {
             "vardef": "2",
             "iwidget": "2"
+            "value": "test_username",
         }
     },
     {
@@ -272,7 +277,8 @@
         "pk": "9",
         "fields": {
             "vardef": "4",
-            "iwidget": "2"
+            "iwidget": "2",
+            "value": "test_data"
         }
     },
     {
@@ -281,60 +287,6 @@
         "fields": {
             "vardef": "5",
             "iwidget": "2"
-        }
-    },
-    {
-        "model": "platform.VariableValue",
-        "pk": "1",
-        "fields": {
-            "variable": "1",
-            "value": "test_password",
-            "user": "2"
-        }
-    },
-    {
-        "model": "platform.VariableValue",
-        "pk": "2",
-        "fields": {
-            "variable": "2",
-            "value": "test_username",
-            "user": "2"
-        }
-    },
-    {
-        "model": "platform.VariableValue",
-        "pk": "3",
-        "fields": {
-            "variable": "4",
-            "value": "test_data",
-            "user": "2"
-        }
-    },
-    {
-        "model": "platform.VariableValue",
-        "pk": "4",
-        "fields": {
-            "variable": "6",
-            "value": "test_password",
-            "user": "2"
-        }
-    },
-    {
-        "model": "platform.VariableValue",
-        "pk": "5",
-        "fields": {
-            "variable": "7",
-            "value": "test_username",
-            "user": "2"
-        }
-    },
-    {
-        "model": "platform.VariableValue",
-        "pk": "6",
-        "fields": {
-            "variable": "9",
-            "value": "test_data",
-            "user": "2"
         }
     },
     {

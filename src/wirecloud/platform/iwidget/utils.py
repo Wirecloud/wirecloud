@@ -34,10 +34,13 @@ from django.utils.translation import ugettext as _
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.exceptions import Http403
-from wirecloud.platform.models import IWidget, Position, Tab, Variable, VariableDef, VariableValue
+from wirecloud.platform.models import IWidget, Position, Tab, Variable, VariableDef
 
 
 def addIWidgetVariable(iwidget, varDef, initial_value=None):
+
+    if varDef.aspect not in ('PREF', 'PROP'):
+        return
 
     # Sets the default value of variable
     if varDef.readonly == False and initial_value:
@@ -49,14 +52,7 @@ def addIWidgetVariable(iwidget, varDef, initial_value=None):
     else:
         var_value = ''
 
-    # Create Variable
-    variable = Variable.objects.create(iwidget=iwidget, vardef=varDef)
-
-    if varDef.aspect == 'PREF' or varDef.aspect == 'PROP':
-
-        # Creating Variable Values for this variable
-        for user in iwidget.tab.workspace.users.all():
-            VariableValue.objects.create(user=user, variable=variable, value=var_value)
+    iwidget.variable_set.create(vardef=varDef, value=var_value)
 
 
 def UpgradeIWidget(iwidget, user, new_widget):

@@ -320,12 +320,6 @@ class PackageCloner:
         self.mapping.add_mapping(table_name, from_ws.id, to_ws.id)
 
         self.final_tables = list(self.final_tables)
-        self.extra_models['Variable'] = (
-            ('platform', 'variablevalue', 'variable', {'user': from_ws.creator}),
-        )
-        self.fields_to_overwrite['VariableValue'] = {
-            'user': user,
-        }
 
         # Continue iterating over data-model structure
         extra_models = self.extra_models.get(table_name, [])

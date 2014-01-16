@@ -414,7 +414,7 @@ class WorkspaceVariableCollection(Resource):
             return build_error_response(request, 400, msg)
 
         for igVar in iwidgetVariables:
-            set_variable_value(igVar['id'], request.user, igVar['value'])
+            set_variable_value(igVar['id'], igVar['value'])
 
         return HttpResponse(status=204)
 
