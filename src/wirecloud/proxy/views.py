@@ -248,9 +248,9 @@ def proxy_request(request, protocol, domain, path):
 
     try:
         if request.get_host() != urlparse.urlparse(request.META["HTTP_REFERER"])[1]:
-            return build_error_response(request, 400, _(u"Invalid request Referer"))
+            return build_error_response(request, 403, _(u"Invalid request"))
     except:
-        return build_error_response(request, 400, _(u"Invalid request Referer"))
+        return build_error_response(request, 403, _(u"Invalid request"))
 
     url = protocol + '://' + domain + path
     if len(request.GET) > 0:
