@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -28,7 +28,7 @@ from django.utils.http import urlencode
 
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.http import build_error_response
-from wirecloud.platform.plugins import get_active_features
+from wirecloud.platform.plugins import get_active_features_info
 from wirecloud.platform.models import Workspace
 from wirecloud.platform.workspace.utils import get_workspace_list
 
@@ -36,10 +36,7 @@ from wirecloud.platform.workspace.utils import get_workspace_list
 class FeatureCollection(Resource):
 
     def read(self, request):
-        info = get_active_features()
-        features = {}
-        for feature_name in info:
-            features[feature_name] = info[feature_name]['version']
+        features = get_active_features_info()
 
         return HttpResponse(json.dumps(features), content_type='application/json; charset=UTF-8')
 

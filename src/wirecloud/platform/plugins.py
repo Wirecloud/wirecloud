@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -28,6 +28,8 @@ from django.utils.regex_helper import normalize
 
 _wirecloud_plugins = None
 _wirecloud_features = None
+_wirecloud_features_info = None
+
 
 def find_wirecloud_plugins():
 
@@ -117,12 +119,29 @@ def get_active_features():
     return _wirecloud_features
 
 
+def get_active_features_info():
+
+    global _wirecloud_features_info
+
+    if _wirecloud_features_info is None:
+        info = get_active_features()
+        features_info = {}
+        for feature_name in info:
+            features_info[feature_name] = info[feature_name]['version']
+
+        _wirecloud_features_info = features_info
+
+    return _wirecloud_features_info
+
+
 def clear_cache():
     global _wirecloud_plugins
     global _wirecloud_features
+    global _wirecloud_features_info
 
     _wirecloud_plugins = None
     _wirecloud_features = None
+    _wirecloud_features_info = None
 
 
 def get_plugin_urls():

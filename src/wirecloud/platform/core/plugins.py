@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,11 +17,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from hashlib import sha1
+import json
+
 from django.utils.translation import ugettext_lazy as _
 
 import wirecloud.platform
 from wirecloud.platform.core.catalogue_manager import WirecloudCatalogueManager
-from wirecloud.platform.plugins import WirecloudPlugin, build_url_template
+from wirecloud.platform.plugins import build_url_template, get_active_features_info, WirecloudPlugin
 
 
 WORKSPACE_CSS = (
@@ -188,6 +191,14 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'label': _('Version'),
                 'description': _('Version of the platform'),
             },
+            'version': {
+                'label': _('Version'),
+                'description': _('Version of the platform'),
+            },
+            'version_hash': {
+                'label': _('Version Hash'),
+                'description': _('Hash for the current version of the platform. This hash changes when the platform is updated or when an addon is added or removed'),
+            }
         }
 
     def get_platform_context_current_values(self, user):
@@ -209,6 +220,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'issuperuser': user.is_superuser,
             'theme': settings.THEME_ACTIVE,
             'version': wirecloud.platform.__version__,
+            'version_hash': sha1(json.dumps(get_active_features_info(), sort_keys=True)).hexdigest(),
         }
 
     def get_workspace_context_definitions(self):
