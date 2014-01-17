@@ -64,7 +64,7 @@ class IWidget(models.Model):
     def delete(self, *args, **kwargs):
 
         # Delete all IWidget's variables
-        self.variable_set.delete()
+        self.variable_set.all().delete()
 
         # Delete IWidget and its position
         self.position.delete()

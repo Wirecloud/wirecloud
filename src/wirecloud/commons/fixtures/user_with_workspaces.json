@@ -192,7 +192,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 1,
-            "vardef": 1
+            "vardef": 1,
+            "value": "default"
         }
     },
     {
@@ -200,7 +201,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 1,
-            "vardef": 2
+            "vardef": 2,
+            "value": "initial text"
         }
     },
     {
@@ -208,7 +210,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 1,
-            "vardef": 3
+            "vardef": 3,
+            "value": "false"
         }
     },
     {
@@ -216,7 +219,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 1,
-            "vardef": 4
+            "vardef": 4,
+            "value": "default"
         }
     },
     {
@@ -240,7 +244,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 2,
-            "vardef": 1
+            "vardef": 1,
+            "value": "default"
         }
     },
     {
@@ -248,7 +253,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 2,
-            "vardef": 2
+            "vardef": 2,
+            "value": "initial text"
         }
     },
     {
@@ -256,7 +262,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 2,
-            "vardef": 3
+            "vardef": 3,
+            "value": "false"
         }
     },
     {
@@ -264,7 +271,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 2,
-            "vardef": 4
+            "vardef": 4,
+            "value": "default"
         }
     },
     {
@@ -288,7 +296,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 3,
-            "vardef": 1
+            "vardef": 1,
+            "value": "default"
         }
     },
     {
@@ -296,7 +305,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 3,
-            "vardef": 2
+            "vardef": 2,
+            "value": "initial text"
         }
     },
     {
@@ -304,7 +314,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 3,
-            "vardef": 3
+            "vardef": 3,
+            "value": "false"
         }
     },
     {
@@ -312,7 +323,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 3,
-            "vardef": 4
+            "vardef": 4,
+            "value": "default"
         }
     },
     {
@@ -336,7 +348,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 4,
-            "vardef": 1
+            "vardef": 1,
+            "value": "default"
         }
     },
     {
@@ -344,7 +357,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 4,
-            "vardef": 2
+            "vardef": 2,
+            "value": "initial text"
         }
     },
     {
@@ -352,7 +366,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 4,
-            "vardef": 3
+            "vardef": 3,
+            "value": "false"
         }
     },
     {
@@ -360,7 +375,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 4,
-            "vardef": 4
+            "vardef": 4,
+            "value": "default"
         }
     },
     {
@@ -384,7 +400,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 5,
-            "vardef": 1
+            "vardef": 1,
+            "value": "default"
         }
     },
     {
@@ -392,7 +409,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 5,
-            "vardef": 2
+            "vardef": 2,
+            "value": "initial text"
         }
     },
     {
@@ -400,7 +418,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 5,
-            "vardef": 3
+            "vardef": 3,
+            "value": "false"
         }
     },
     {
@@ -408,7 +427,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 5,
-            "vardef": 4
+            "vardef": 4,
+            "value": "default"
         }
     },
     {
@@ -432,7 +452,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 6,
-            "vardef": 1
+            "vardef": 1,
+            "value": "default"
         }
     },
     {
@@ -440,7 +461,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 6,
-            "vardef": 2
+            "vardef": 2,
+            "value": "initial text"
         }
     },
     {
@@ -448,7 +470,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 6,
-            "vardef": 3
+            "vardef": 3,
+            "value": "false"
         }
     },
     {
@@ -456,7 +479,8 @@
         "model": "platform.variable",
         "fields": {
             "iwidget": 6,
-            "vardef": 4
+            "vardef": 4,
+            "value": "default"
         }
     },
     {
@@ -723,222 +747,6 @@
             "manager": "",
             "user": 4,
             "workspace": 4
-        }
-    },
-    {
-        "pk": 1,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 1,
-            "user": 4,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 2,
-            "user": 4,
-            "value": "initial text"
-        }
-    },
-    {
-        "pk": 3,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 3,
-            "user": 4,
-            "value": "false"
-        }
-    },
-    {
-        "pk": 4,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 4,
-            "user": 4,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 5,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 7,
-            "user": 4,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 6,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 8,
-            "user": 4,
-            "value": "initial text"
-        }
-    },
-    {
-        "pk": 7,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 9,
-            "user": 4,
-            "value": "false"
-        }
-    },
-    {
-        "pk": 8,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 10,
-            "user": 4,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 9,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 13,
-            "user": 4,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 10,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 14,
-            "user": 4,
-            "value": "initial text"
-        }
-    },
-    {
-        "pk": 11,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 15,
-            "user": 4,
-            "value": "false"
-        }
-    },
-    {
-        "pk": 12,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 16,
-            "user": 4,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 13,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 19,
-            "user": 4,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 14,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 20,
-            "user": 4,
-            "value": "initial text"
-        }
-    },
-    {
-        "pk": 15,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 21,
-            "user": 4,
-            "value": "false"
-        }
-    },
-    {
-        "pk": 16,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 22,
-            "user": 4,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 17,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 25,
-            "user": 4,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 18,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 26,
-            "user": 4,
-            "value": "initial text"
-        }
-    },
-    {
-        "pk": 19,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 27,
-            "user": 4,
-            "value": "false"
-        }
-    },
-    {
-        "pk": 20,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 28,
-            "user": 4,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 21,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 31,
-            "user": 4,
-            "value": "default"
-        }
-    },
-    {
-        "pk": 22,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 32,
-            "user": 4,
-            "value": "initial text"
-        }
-    },
-    {
-        "pk": 23,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 33,
-            "user": 4,
-            "value": "false"
-        }
-    },
-    {
-        "pk": 24,
-        "model": "platform.variablevalue",
-        "fields": {
-            "variable": 34,
-            "user": 4,
-            "value": "default"
         }
     }
 ]
