@@ -260,8 +260,8 @@
         "pk": "7",
         "fields": {
             "vardef": "2",
-            "iwidget": "2"
-            "value": "test_username",
+            "iwidget": "2",
+            "value": "test_username"
         }
     },
     {
