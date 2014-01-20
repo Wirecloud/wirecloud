@@ -134,8 +134,3 @@ CACHES = {
 #)
 
 NOT_PROXY_FOR = ['localhost', '127.0.0.1']
-
-PROXY_PROCESSORS = (
-#    'wirecloud.proxy.processors.FixServletBugsProcessor',
-    'wirecloud.proxy.processors.SecureDataProcessor',
-)
