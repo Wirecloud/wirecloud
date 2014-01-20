@@ -29,6 +29,9 @@ from django.utils.regex_helper import normalize
 _wirecloud_plugins = None
 _wirecloud_features = None
 _wirecloud_features_info = None
+_wirecloud_proxy_processors = None
+_wirecloud_request_proxy_processors = []
+_wirecloud_response_proxy_processors = []
 
 
 def find_wirecloud_plugins():
@@ -205,6 +208,60 @@ def get_platform_css(view):
     return files
 
 
+def get_proxy_processors():
+    global _wirecloud_proxy_processors
+    global _wirecloud_request_proxy_processors
+    global _wirecloud_response_proxy_processors
+
+    if _wirecloud_proxy_processors is None:
+        plugins = get_plugins()
+        modules = []
+
+        for plugin in plugins:
+            modules += plugin.get_proxy_processors()
+
+        processors = []
+        for path in modules:
+            i = path.rfind('.')
+            module, attr = path[:i], path[i + 1:]
+            try:
+                mod = import_module(module)
+            except ImportError, e:
+                raise ImproperlyConfigured('Error importing proxy processor module %s: "%s"' % (module, e))
+
+            try:
+                processor = getattr(mod, attr)()
+            except AttributeError:
+                raise ImproperlyConfigured('Module "%s" does not define a "%s" instanciable processor processor' % (module, attr))
+
+            if hasattr(processor, 'process_request'):
+                _wirecloud_request_proxy_processors.append(processor)
+            if hasattr(processor, 'process_response'):
+                _wirecloud_response_proxy_processors.insert(0, processor)
+
+            processors.append(processor)
+
+        _wirecloud_proxy_processors = tuple(processors)
+        _wirecloud_request_proxy_processors = tuple(_wirecloud_request_proxy_processors)
+        _wirecloud_response_proxy_processors = tuple(_wirecloud_response_proxy_processors)
+
+    return _wirecloud_proxy_processors
+
+
+def get_request_proxy_processors():
+    if _wirecloud_proxy_processors is None:
+        get_proxy_processors()
+
+    return _wirecloud_request_proxy_processors
+
+
+def get_response_proxy_processors():
+    if _wirecloud_proxy_processors is None:
+        get_proxy_processors()
+
+    return _wirecloud_response_proxy_processors
+
+
 def build_url_template(viewname, kwargs=[], urlconf=None, prefix=None, current_app=None):
     resolver = get_resolver(urlconf)
 
@@ -317,4 +374,7 @@ class WirecloudPlugin(object):
         return ()
 
     def get_platform_css(self, view):
+        return ()
+
+    def get_proxy_processors(self):
         return ()

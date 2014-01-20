@@ -190,3 +190,6 @@ class FiWarePlugin(WirecloudPlugin):
             'js/WirecloudAPI/NGSIAPI.js',
             'js/ObjectStorage/ObjectStorageAPI.js',
         )
+
+    def get_proxy_processors(self):
+        return ('wirecloud.fiware.proxy.IDMTokenProcessor',)

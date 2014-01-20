@@ -111,7 +111,7 @@
                 msg = null;
             }
 
-            connection = new NGSI.Connection(MashupPlatform.prefs.get('ngsi_server'));
+            connection = new NGSI.Connection(MashupPlatform.prefs.get('ngsi_server'), {use_user_fiware_token: true});
             connection.createRegistration([
                     {type: 'TestEntity', id: 'test1'}
                 ],

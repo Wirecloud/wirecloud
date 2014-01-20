@@ -1,71 +1,30 @@
+# -*- coding: utf-8 -*-
+
+# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+
+# This file is part of Wirecloud.
+
+# Wirecloud is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Wirecloud is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+
 import re
 import urllib2
 
 from django.utils.http import urlquote
 from django.utils.importlib import import_module
-from django.core.exceptions import ImproperlyConfigured
 
 from wirecloud.platform.get_data import get_variable_value_from_varname
 from wirecloud.proxy.utils import check_empty_params, check_invalid_refs
-
-
-_wirecloud_proxy_processors = None
-_wirecloud_request_proxy_processors = []
-_wirecloud_response_proxy_processors = []
-
-
-def get_proxy_processors():
-    from django.conf import settings
-    global _wirecloud_proxy_processors
-    global _wirecloud_request_proxy_processors
-    global _wirecloud_response_proxy_processors
-
-    if _wirecloud_proxy_processors is None:
-        if getattr(settings, 'PROXY_PROCESSORS', None) is not None:
-            modules = settings.PROXY_PROCESSORS
-        else:
-            modules = ()
-
-        processors = []
-        for path in modules:
-            i = path.rfind('.')
-            module, attr = path[:i], path[i + 1:]
-            try:
-                mod = import_module(module)
-            except ImportError, e:
-                raise ImproperlyConfigured('Error importing proxy processor module %s: "%s"' % (module, e))
-
-            try:
-                processor = getattr(mod, attr)()
-            except AttributeError:
-                raise ImproperlyConfigured('Module "%s" does not define a "%s" instanciable processor processor' % (module, attr))
-
-            if hasattr(processor, 'process_request'):
-                _wirecloud_request_proxy_processors.append(processor)
-            if hasattr(processor, 'process_response'):
-                _wirecloud_response_proxy_processors.insert(0, processor)
-
-            processors.append(processor)
-
-        _wirecloud_proxy_processors = tuple(processors)
-        _wirecloud_request_proxy_processors = tuple(_wirecloud_request_proxy_processors)
-        _wirecloud_response_proxy_processors = tuple(_wirecloud_response_proxy_processors)
-
-    return _wirecloud_proxy_processors
-
-
-def get_request_proxy_processors():
-    if _wirecloud_proxy_processors is None:
-        get_proxy_processors()
-
-    return _wirecloud_request_proxy_processors
-
-
-def get_response_proxy_processors():
-    if _wirecloud_proxy_processors is None:
-        get_proxy_processors()
-
-    return _wirecloud_response_proxy_processors
 
 
 class FixServletBugsProcessor(object):

@@ -32,7 +32,7 @@ from django.utils.http import urlquote
 from django.utils.translation import ugettext as _
 
 from wirecloud.commons.utils.http import build_error_response
-from wirecloud.proxy.processors import get_request_proxy_processors, get_response_proxy_processors
+from wirecloud.platform.plugins import get_request_proxy_processors, get_response_proxy_processors
 from wirecloud.proxy.utils import is_valid_header, ValidationError
 
 
