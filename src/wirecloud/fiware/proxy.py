@@ -24,10 +24,17 @@ class IDMTokenProcessor(object):
         if 'x-fi-ware-oauth-token' not in request['headers']:
             return
 
-        header_name = 'X-Auth-Token'
+        header_name = None
+        token = request['user'].social_auth.filter(provider='fiware').select_related('tokens').get().tokens['access_token']
+
         if 'x-fi-ware-oauth-header-name' in request['headers']:
             header_name = request['headers']['x-fi-ware-oauth-header-name']
+            request['headers'][header_name] = token
             del request['headers']['x-fi-ware-oauth-header-name']
 
-        request['headers'][header_name] = request['user'].social_auth.filter(provider='fiware').select_related('tokens').get().tokens['access_token']
+        if 'x-fi-ware-oauth-token-body-pattern' in request['headers']:
+            pattern = request['headers']['x-fi-ware-oauth-token-body-pattern']
+            request['data'] = request['data'].replace(pattern, token)
+            del request['headers']['x-fi-ware-oauth-token-body-pattern']
+
         del request['headers']['x-fi-ware-oauth-token']
