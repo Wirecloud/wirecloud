@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -19,6 +19,7 @@
 
 from django.contrib.auth.middleware import get_user
 from django.core.exceptions import MiddlewareNotUsed
+from django.core.urlresolvers import reverse
 from django.utils.importlib import import_module
 from django.utils.functional import SimpleLazyObject
 from django.utils.http import http_date, parse_http_date_safe
@@ -27,6 +28,7 @@ from django.utils.http import http_date, parse_http_date_safe
 class URLMiddleware(object):
 
     _middleware = {}
+    _path_mapping = None
 
     def load_middleware(self, group):
         """
@@ -77,12 +79,20 @@ class URLMiddleware(object):
 
     def get_matched_middleware(self, path, middleware_method):
 
-        if path.startswith('/proxy/'):
-            group = 'proxy'
-        elif path.startswith('/api/'):
-            group = 'api'
-        else:
-            group = 'default'
+        if self._path_mapping is None:
+            self._path_mapping = {}
+
+            proxy_path = reverse('wirecloud|proxy', kwargs={'protocol': 'a', 'domain': 'a', 'path': ''})[:-len('a/a')]
+            self._path_mapping[proxy_path] = 'proxy'
+
+            api_path = reverse('wirecloud.features')[:-len('features')]
+            self._path_mapping[api_path] = 'api'
+
+        group = 'default'
+        for path_mapping in self._path_mapping:
+            if path.startswith(path_mapping):
+                group = self._path_mapping[path_mapping]
+                break
 
         if group not in self._middleware:
             self.load_middleware(group)
