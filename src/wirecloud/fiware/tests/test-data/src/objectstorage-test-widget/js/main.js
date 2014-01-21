@@ -6,29 +6,50 @@
     "use strict";
 
     var objectstorage_available = false;
-    var api;
-    var integration_test_account = {
-        PROJECT: "WIRECLOUD",
-        USER: "wirecloud",
-        PASS: "welcome19",
-        TENANT_ID: "86ca53b6d21b4cfe98a4e0c49e2931af",
-        TOKEN_REQUEST_URL: "http://130.206.80.100:5000/v2.0/tokens"
-    };
+    var keystone, api;
     var token, msg, button;
 
     if (typeof ObjectStorageAPI !== 'undefined') {
         try {
-            api = new ObjectStorageAPI('http://130.206.80.102:8080/v1/AUTH_' + integration_test_account.TENANT_ID + '/');
+            keystone = new KeystoneAPI('');
+            api = new ObjectStorageAPI('');
 
             objectstorage_available = true;
         } catch (err) {}
+
+        keystone = null;
+        api = null;
     }
 
-    var onGetAuthTokenSuccess = function onGetAuthTokenSuccess(new_token) {
+    var onGetTenants = function onGetTenants(data) {
+        document.getElementById('tenantId').textContent = data.tenants[0].id;
+
+        keystone.getAuthToken({
+            tenantId: data.tenants[0].id,
+            onSuccess: onGetAuthTokenSuccess,
+            onFailure: function () {
+                document.getElementById('api_token').textContent = 'Fail';
+                fail();
+            }
+        });
+    };
+
+    var onGetAuthTokenSuccess = function onGetAuthTokenSuccess(new_token, data) {
+        var i, object_storage;
+
         token = new_token;
         document.getElementById('api_token').textContent = token;
 
-        api.listContainer('integrationTests', token, {
+        for (i = 0; i < data.access.serviceCatalog.length; i++) {
+            if (data.access.serviceCatalog[i].type === 'object-store') {
+                object_storage = data.access.serviceCatalog[i].endpoints[0].publicURL;
+                break;
+            }
+        }
+
+        api = new ObjectStorageAPI(object_storage);
+        api.listContainer('integrationTests', {
+            token: token,
             onSuccess: onListContainterSuccess,
             onFailure: function () {
                 document.getElementById('file_count').textContent = 'Fail';
@@ -38,26 +59,27 @@
     };
 
     var onListContainterSuccess = function onListContainterSuccess(file_list) {
-        var i, found;
+        var i, j, file_name, found = true; /* At least an iteration */
 
         var base_file_name = 'test';
         var ext = '.txt';
-        var file_name = 'test1.txt';
 
         document.getElementById('file_count').textContent = file_list.length;
-        do {
+        for (i = 1; found; i += 1) {
+            file_name = base_file_name + i + ext;
             found = false;
-            for (i = 0; i < file_list.length; i += 1) {
-                if (file_list[i].name === file_name) {
+            for (j = 0; j < file_list.length; j += 1) {
+                if (file_list[j].name === file_name) {
                     found = true;
                     break;
                 }
             }
-        } while (found);
+        };
 
         document.getElementById('file_name').textContent = file_name;
         var blob = new Blob(["Hello world!"], { type: "text/plain" });
-        api.uploadFile('integrationTests', blob, token, {
+        api.uploadFile('integrationTests', blob, {
+            token: token,
             file_name: file_name,
             onSuccess: onUploadFileSuccess.bind(null, file_name),
             onFailure: function () {
@@ -70,7 +92,8 @@
     var onUploadFileSuccess = function onUploadFileSuccess(file_name) {
         document.getElementById('file_upload').textContent = 'OK';
 
-        api.deleteFile('integrationTests', file_name, token, {
+        api.deleteFile('integrationTests', file_name, {
+            token: token,
             onSuccess: onDeleteFileSuccess,
             onFailure: function () {
                 document.getElementById('file_deletion').textContent = 'Fail';
@@ -89,6 +112,8 @@
 
         msg.scrollIntoView();
         button.enable();
+        keystone = null;
+        api = null;
     };
 
     var fail = function fail() {
@@ -96,6 +121,9 @@
         msg.className = 'alert alert-block alert-error';
         msg.textContent = 'Failure!';
         document.body.appendChild(msg);
+
+        keystone = null;
+        api = null;
 
         msg.scrollIntoView();
         button.enable();
@@ -114,11 +142,20 @@
                 msg.parentElement.removeChild(msg);
                 msg = null;
             }
+            document.getElementById('tenantId').textContent = '';
+            document.getElementById('api_token').textContent = '';
+            document.getElementById('file_count').textContent = '';
+            document.getElementById('file_name').textContent = '';
+            document.getElementById('file_upload').textContent = '';
+            document.getElementById('file_deletion').textContent = '';
+            keystone = new KeystoneAPI(MashupPlatform.prefs.get('keystone_url'), {
+                use_user_fiware_token: true
+            });
 
-            api.getAuthToken(integration_test_account, {
-                onSuccess: onGetAuthTokenSuccess,
+            keystone.getTenants({
+                onSuccess: onGetTenants,
                 onFailure: function () {
-                    document.getElementById('api_token').textContent = 'Fail';
+                    document.getElementById('tenantId').textContent = 'Fail';
                     fail();
                 }
             });
