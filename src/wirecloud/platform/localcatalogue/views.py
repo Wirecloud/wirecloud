@@ -204,10 +204,9 @@ class ResourceEntry(Resource):
 
         resource_uninstalled.send(sender=resource, user=request.user)
 
-        if resource.public == False and resource.users.count() == 0 and resource.groups.count() == 0:
-            resource.delete()
-
-        if resource.resource_type() == 'widget':
+        result = None
+        if resource.resource_type() == 'widget' and request.GET.get('affected', 'false').lower() == 'true':
+            affected = True
             result = {'removedIWidgets': []}
 
             query = Widget.objects.filter(resource=resource)
@@ -216,15 +215,20 @@ class ResourceEntry(Resource):
                 widget = query.get()
 
                 # Remove all iwidgets that matches the resource
-                iwidgets = IWidget.objects.filter(widget=widget, tab__workspace__creator=request.user)
-                for iwidget in iwidgets:
-                    result['removedIWidgets'].append(iwidget.id)
-                    iwidget.delete()
+                iwidgets_to_remove = IWidget.objects.filter(widget=widget, tab__workspace__creator=request.user)
+                result['removedIWidgets'] = [iwidget.id for iwidget in iwidgets_to_remove]
 
-            if request.GET.get('affected', 'false').lower() == 'true':
-                return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
+        if resource.public == False and resource.users.count() == 0 and resource.groups.count() == 0:
+            resource.delete()
+        elif resource.resource_type() == 'widget':
+            # We need to iterate the iwidget list as currently only the individual delete method removes Workspace cache
+            for iwidget in iwidgets_to_remove:
+                iwidget.delete()
 
-        return HttpResponse(status=204)
+        if result is not None:
+            return HttpResponse(json.dumps(result), content_type='application/json; charset=UTF-8')
+        else:
+            return HttpResponse(status=204)
 
 
 class ResourceDescriptionEntry(Resource):
