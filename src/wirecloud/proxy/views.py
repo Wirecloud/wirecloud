@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -27,6 +27,10 @@ import urlparse
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotFound
+try:
+    from django.http import StreamingHttpResponse
+except: # Django 1.4
+    from django.http import HttpResponse as StreamingHttpResponse
 from django.utils.encoding import iri_to_uri
 from django.utils.http import urlquote
 from django.utils.translation import ugettext as _
@@ -182,10 +186,9 @@ class Proxy():
 
             # Add content-type header to the response
             res_info = res.info()
+            response = StreamingHttpResponse(res)
             if 'Content-Type' in res_info:
-                response = HttpResponse(res.read(), content_type=res_info['Content-Type'])
-            else:
-                response = HttpResponse(res.read())
+                response['Content-Type'] = res_info['Content-Type']
 
             # Set status code to the response
             response.status_code = res.code
