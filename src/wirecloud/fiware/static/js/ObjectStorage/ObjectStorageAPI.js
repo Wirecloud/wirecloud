@@ -176,9 +176,13 @@
         });
     };
 
-    var ObjectStorageAPI = function ObjectStorageAPI(url) {
+    var ObjectStorageAPI = function ObjectStorageAPI(url, options) {
         if (typeof url !== 'string') {
             throw new TypeError('url must be a string');
+        }
+
+        if (options == null) {
+            options = {};
         }
 
         if (url[url.length - 1] !== '/') {
@@ -186,6 +190,7 @@
         }
 
         Object.defineProperty(this, 'url', {value: url});
+        this.token = options.token;
     };
 
     ObjectStorageAPI.prototype.getContainerList = function getContainerList(options) {
@@ -193,9 +198,9 @@
 
         url = this.url;
 
-        if (options == null) {
-            options = {};
-        }
+        options = merge({
+            token: this.token
+        }, options);
 
         headers = initHeaders(options);
         headers.Accept = "application/json";
@@ -227,9 +232,9 @@
 
         url = this.url + encodeURIComponent(container);
 
-        if (options == null) {
-            options = {};
-        }
+        options = merge({
+            token: this.token
+        }, options);
 
         headers = initHeaders(options);
         headers.Accept = "application/json";
@@ -261,9 +266,9 @@
 
         url = this.url + encodeURIComponent(container);
 
-        if (options == null) {
-            options = {};
-        }
+        options = merge({
+            token: this.token
+        }, options);
 
         headers = initHeaders(options);
         headers.Accept = "application/json";
@@ -294,9 +299,9 @@
 
         url = this.url + encodeURIComponent(container);
 
-        if (options == null) {
-            options = {};
-        }
+        options = merge({
+            token: this.token
+        }, options);
 
         headers = initHeaders(options);
         headers.Accept = "application/json";
@@ -327,9 +332,9 @@
 
         url = this.url + encodeURIComponent(container) + '/' + encodeURIComponent(file_name);
 
-        if (options == null) {
-            options = {};
-        }
+        options = merge({
+            token: this.token
+        }, options);
 
         headers = initHeaders(options);
         headers.Accept = "*/*";
@@ -365,9 +370,9 @@
             throw new TypeError('file must be an instance of Blob');
         }
 
-        if (options == null) {
-            options = {};
-        }
+        options = merge({
+            token: this.token
+        }, options);
 
         if ('file_name' in options) {
             file_name = options.file_name;
@@ -409,9 +414,9 @@
 
         url = this.url + encodeURIComponent(container) + '/' + encodeURIComponent(file_name);
 
-        if (options == null) {
-            options = {};
-        }
+        options = merge({
+            token: this.token
+        }, options);
 
         headers = initHeaders(options);
         headers.Accept = "application/json";
