@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2013 CoNWeT Lab - Universidad Politécnica de Madrid
+ *     (C) Copyright 2013-2014 CoNWeT Lab - Universidad Politécnica de Madrid
  *
  *     This file is part of ngsijs.
  *

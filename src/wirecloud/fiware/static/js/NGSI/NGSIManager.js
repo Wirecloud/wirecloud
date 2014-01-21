@@ -122,8 +122,8 @@
             if (options.requestHeaders == null) {
                 options.requestHeaders = {};
             }
-            options.requestHeaders['X-FI-WARE-OAuth-Token'] = 'true'
-            options.requestHeaders['X-FI-WARE-OAuth-Header-Name'] = 'X-Auth-Token'
+            options.requestHeaders['X-FI-WARE-OAuth-Token'] = 'true';
+            options.requestHeaders['X-FI-WARE-OAuth-Header-Name'] = 'X-Auth-Token';
         }
 
         NGSI.Connection.call(this, url, options);
