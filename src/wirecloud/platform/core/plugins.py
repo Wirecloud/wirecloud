@@ -417,3 +417,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
         return (
             'js/WirecloudAPI/StyledElements.js',
         )
+
+    def get_proxy_processors(self):
+        return ('wirecloud.proxy.processors.SecureDataProcessor',)

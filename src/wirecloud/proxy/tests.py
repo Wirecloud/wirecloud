@@ -32,6 +32,7 @@ from django.utils import unittest
 
 from wirecloud.platform.models import Variable
 from wirecloud.proxy.views import WIRECLOUD_PROXY
+from wirecloud.platform.plugins import clear_cache
 from wirecloud.platform.workspace.utils import HAS_AES, set_variable_value
 
 
@@ -105,18 +106,32 @@ class ProxyTestsBase(TransactionTestCase):
 
         super(ProxyTestsBase, cls).setUpClass()
         cls.basic_url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/path'})
+        cls.OLD_WIRECLOUD_PLUGINS = getattr(settings, 'WIRECLOUD_PLUGINS', None)
+        clear_cache()
+        settings.WIRECLOUD_PLUGINS = ()
+
+        cls._original_function = WIRECLOUD_PROXY._do_request
+        WIRECLOUD_PROXY._do_request = FakeDownloader()
+
+    @classmethod
+    def tearDownClass(cls):
+        WIRECLOUD_PROXY._do_request = cls._original_function
+        settings.WIRECLOUD_PLUGINS = cls.OLD_WIRECLOUD_PLUGINS
+        clear_cache()
+
+        super(ProxyTestsBase, cls).tearDownClass()
 
     def setUp(self):
-        self.user = User.objects.get(username='test')
-        self._original_function = WIRECLOUD_PROXY._do_request
-        WIRECLOUD_PROXY._do_request = FakeDownloader()
+        cache.clear()
 
         super(ProxyTestsBase, self).setUp()
 
-    def tearDown(self):
-        WIRECLOUD_PROXY._do_request = self._original_function
+    def read_response(self, response):
 
-        super(ProxyTestsBase, self).tearDown()
+        if getattr(response, 'streaming', False) is True:
+            return "".join(response.streaming_content)
+        else:
+            return response.content
 
 
 class ProxyTests(ProxyTestsBase):
@@ -135,18 +150,18 @@ class ProxyTests(ProxyTestsBase):
         # Basic GET request
         response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, 'data')
+        self.assertEqual(self.read_response(response), 'data')
 
         # Basic POST request
         response = client.post(self.basic_url, {}, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, 'data')
+        self.assertEqual(self.read_response(response), 'data')
 
         # Http Error 404
         url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/non_existing_file.html'})
         response = client.get(url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.content, '')
+        self.assertEqual(self.read_response(response), '')
 
     def test_connection_refused(self):
 
@@ -157,7 +172,7 @@ class ProxyTests(ProxyTestsBase):
         WIRECLOUD_PROXY._do_request.set_url_error('http://example.com/path')
         response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 502)
-        self.assertEqual(response.content, '')
+        self.assertEqual(self.read_response(response), '')
 
     def test_connection_timeout(self):
 
@@ -167,12 +182,12 @@ class ProxyTests(ProxyTestsBase):
         WIRECLOUD_PROXY._do_request.set_exception('http://example.com/path', urllib2.URLError(socket.error(errno.ETIMEDOUT,)))
         response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 504)
-        self.assertEqual(response.content, '')
+        self.assertEqual(self.read_response(response), '')
 
         WIRECLOUD_PROXY._do_request.set_exception('http://example.com/path', urllib2.URLError(socket.timeout()))
         response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 504)
-        self.assertEqual(response.content, '')
+        self.assertEqual(self.read_response(response), '')
 
     def test_connection_badstatusline(self):
 
@@ -182,7 +197,7 @@ class ProxyTests(ProxyTestsBase):
         WIRECLOUD_PROXY._do_request.set_exception('http://example.com/path', BadStatusLine('HTTP/1.1 0 Unknown'))
         response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 504)
-        self.assertEqual(response.content, '')
+        self.assertEqual(self.read_response(response), '')
 
     def test_encoded_urls(self):
 
@@ -195,13 +210,13 @@ class ProxyTests(ProxyTestsBase):
         url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/ca%C3%B1on'})
         response = client.get(url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, 'data')
+        self.assertEqual(self.read_response(response), 'data')
 
         # We need to append the path because the reverse method encodes the url
         url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': u'/'}) + 'cañon'
         response = client.get(url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, 'data')
+        self.assertEqual(self.read_response(response), 'data')
 
     def test_cookies(self):
 
@@ -213,7 +228,7 @@ class ProxyTests(ProxyTestsBase):
         WIRECLOUD_PROXY._do_request.set_cookie_response('http://example.com/path', {'Set-Cookie': 'newcookie=test; path=/'})
         response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, 'test=test')
+        self.assertEqual(self.read_response(response), 'test=test')
         self.assertTrue('newcookie' in response.cookies)
         self.assertEqual(response.cookies['newcookie'].value, 'test')
         self.assertEqual(response.cookies['newcookie']['path'], '/proxy/http/example.com/')
@@ -222,17 +237,7 @@ class ProxyTests(ProxyTestsBase):
 @unittest.skipIf(not HAS_AES, 'python-crypto not found')
 class ProxySecureDataTests(ProxyTestsBase):
 
-    def setUp(self):
-        self.OLD_PROXY_PROCESSORS = settings.PROXY_PROCESSORS
-        settings.PROXY_PROCESSORS = (
-            'wirecloud.proxy.processors.SecureDataProcessor',
-        )
-        cache.clear()
-        super(ProxySecureDataTests, self).setUp()
-
-    def tearDown(self):
-        settings.PROXY_PROCESSORS = self.OLD_PROXY_PROCESSORS
-        super(ProxySecureDataTests, self).tearDown()
+    tags = ('proxy', 'proxy-secure-data')
 
     def test_secure_data(self):
 
@@ -256,7 +261,7 @@ class ProxySecureDataTests(ProxyTestsBase):
                             HTTP_X_EZWEB_SECURE_DATA=secure_data_header)
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, 'username=test_username&password=test_password')
+        self.assertEqual(self.read_response(response), 'username=test_username&password=test_password')
 
         secure_data_header = 'action=basic_auth, user_ref=' + user_ref + ', pass_ref=' + pass_ref
         response = client.post(self.basic_url,
@@ -267,7 +272,7 @@ class ProxySecureDataTests(ProxyTestsBase):
                             HTTP_X_EZWEB_SECURE_DATA=secure_data_header)
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, 'username=|username|&password=|password|')
+        self.assertEqual(self.read_response(response), 'username=|username|&password=|password|')
 
         # Secure data header using constants
         WIRECLOUD_PROXY._do_request.reset()
@@ -282,7 +287,7 @@ class ProxySecureDataTests(ProxyTestsBase):
                             HTTP_X_EZWEB_SECURE_DATA=secure_data_header)
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, 'username=test_username&password=test_password')
+        self.assertEqual(self.read_response(response), 'username=test_username&password=test_password')
 
         # Secure data header using encoding=url
         WIRECLOUD_PROXY._do_request.reset()
@@ -297,7 +302,7 @@ class ProxySecureDataTests(ProxyTestsBase):
                             HTTP_X_EZWEB_SECURE_DATA=secure_data_header)
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, 'username=a=, z&password=a%3D%2C%20z')
+        self.assertEqual(self.read_response(response), 'username=a=, z&password=a%3D%2C%20z')
 
         # Secure data header with empty parameters
         secure_data_header = 'action=basic_auth, user_ref=, pass_ref='
@@ -332,7 +337,7 @@ class ProxySecureDataTests(ProxyTestsBase):
                             HTTP_REFERER='http://localhost')
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, 'username=test_username&password=test_password')
+        self.assertEqual(self.read_response(response), 'username=test_username&password=test_password')
 
         secure_data_header = 'action=basic_auth, user_ref=' + user_ref + ', pass_ref=' + pass_ref
         client.cookies['X-EzWeb-Secure-Data'] = secure_data_header
@@ -343,7 +348,7 @@ class ProxySecureDataTests(ProxyTestsBase):
                             HTTP_REFERER='http://localhost')
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, 'username=|username|&password=|password|')
+        self.assertEqual(self.read_response(response), 'username=|username|&password=|password|')
 
         # Secure data header with empty parameters
         secure_data_header = 'action=basic_auth, user_ref=, pass_ref='
