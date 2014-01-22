@@ -46,6 +46,19 @@ from wirecloud.platform.localcatalogue.signals import resource_uninstalled
 from wirecloud.platform.localcatalogue.utils import install_resource_to_user
 
 
+def get_iwidgets_to_remove(resource, user):
+
+    query = Widget.objects.filter(resource=resource)
+    if query.exists():
+
+        widget = query.get()
+
+        # Remove all iwidgets that matches the resource
+        return IWidget.objects.filter(widget=widget, tab__workspace__creator=user)
+    else:
+        return ()
+
+
 class ResourceCollection(Resource):
 
     @authentication_required
@@ -205,22 +218,19 @@ class ResourceEntry(Resource):
         resource_uninstalled.send(sender=resource, user=request.user)
 
         result = None
+        iwidgets_to_remove = None
+
         if resource.resource_type() == 'widget' and request.GET.get('affected', 'false').lower() == 'true':
-            affected = True
-            result = {'removedIWidgets': []}
+            iwidgets_to_remove = get_iwidgets_to_remove(resource, request.user)
+            result = {'removedIWidgets': [iwidget.id for iwidget in iwidgets_to_remove]}
 
-            query = Widget.objects.filter(resource=resource)
-            if query.exists():
-
-                widget = query.get()
-
-                # Remove all iwidgets that matches the resource
-                iwidgets_to_remove = IWidget.objects.filter(widget=widget, tab__workspace__creator=request.user)
-                result['removedIWidgets'] = [iwidget.id for iwidget in iwidgets_to_remove]
-
-        if resource.public == False and resource.users.count() == 0 and resource.groups.count() == 0:
+        if resource.public is False and resource.users.count() == 0 and resource.groups.count() == 0:
             resource.delete()
         elif resource.resource_type() == 'widget':
+
+            if iwidgets_to_remove is None:
+                iwidgets_to_remove = get_iwidgets_to_remove(resource, request.user)
+
             # We need to iterate the iwidget list as currently only the individual delete method removes Workspace cache
             for iwidget in iwidgets_to_remove:
                 iwidget.delete()
