@@ -17,6 +17,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from cStringIO import StringIO
+
+
 class IDMTokenProcessor(object):
 
     def process_request(self, request):
@@ -34,7 +37,7 @@ class IDMTokenProcessor(object):
 
         if 'x-fi-ware-oauth-token-body-pattern' in request['headers']:
             pattern = request['headers']['x-fi-ware-oauth-token-body-pattern']
-            request['data'] = request['data'].replace(pattern, token)
+            request['data'] = StringIO(request['data'].read().replace(pattern, token))
             del request['headers']['x-fi-ware-oauth-token-body-pattern']
 
         del request['headers']['x-fi-ware-oauth-token']

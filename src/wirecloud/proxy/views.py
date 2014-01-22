@@ -232,20 +232,6 @@ WIRECLOUD_PROXY = Proxy()
 
 
 def proxy_request(request, protocol, domain, path):
-    content_type = request.META.get('CONTENT_TYPE', '')
-    if content_type is None:
-        content_type = ''
-
-    if not content_type.startswith('multipart') and '_method' in request.POST:
-        method = request.POST['_method']
-        del request.POST['_method']
-    else:
-        method = request.method.upper()
-
-    if method in ('GET', 'DELETE'):
-        raw_data = ''
-    else:
-        raw_data = request.body
 
     # TODO improve proxy security
 
@@ -259,7 +245,7 @@ def proxy_request(request, protocol, domain, path):
     if len(request.GET) > 0:
         url += '?' + request.GET.urlencode()
 
-    response = WIRECLOUD_PROXY.do_request(request, url, method, raw_data)
+    response = WIRECLOUD_PROXY.do_request(request, url, request.method.upper(), request)
 
     # Process cookies
     for key in response.cookies:

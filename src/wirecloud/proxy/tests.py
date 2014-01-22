@@ -88,7 +88,7 @@ class FakeDownloader(object):
             return self.build_response(url, 200, headers['Cookie'], 'OK', response_headers)
 
         elif url in self._echo_responses:
-            return self.build_response(url, 200, data, 'OK')
+            return self.build_response(url, 200, data.read(), 'OK')
 
         elif url in self._responses:
             return self.build_response(*self._responses[url])

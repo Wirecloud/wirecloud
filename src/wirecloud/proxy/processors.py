@@ -19,6 +19,7 @@
 
 import re
 import urllib2
+from cStringIO import StringIO
 
 from django.utils.http import urlquote
 from django.utils.importlib import import_module
@@ -83,7 +84,8 @@ def process_secure_data(text, request, ignore_errors=False):
                     value = urlquote(value)
                 elif encoding == 'base64':
                     value = value.encode('base64')[:-1]
-                request['data'] = request['data'].replace(substr, value)
+
+                request['data'] = StringIO(request['data'].read().replace(substr, value))
 
             elif action == 'basic_auth':
                 user_ref = options.get('user_ref', '')
