@@ -155,7 +155,7 @@
     };
 
     Wirecloud.changeActiveWorkspace = function changeActiveWorkspace(workspace, initial_tab, options) {
-        var state, steps = this.activeWorkspace != null ? 2 : 1;
+        var msg, state, steps = this.activeWorkspace != null ? 2 : 1;
 
         if (options == null) {
             options = {};
@@ -177,7 +177,8 @@
         }
         Wirecloud.HistoryManager.pushState(state);
 
-        LayoutManagerFactory.getInstance().logSubTask(gettext("Downloading workspace data"), 1);
+        msg = interpolate(gettext("Downloading workspace (%(name)s) data"), {name: workspace.creator + '/' + workspace.name}, true);
+        LayoutManagerFactory.getInstance().logSubTask(msg, 1);
         new Wirecloud.WorkspaceCatalogue(workspace.id, {
             onSuccess: function (workspace_resources) {
                 var workspaceUrl = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({'workspace_id': workspace.id});

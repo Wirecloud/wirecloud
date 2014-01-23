@@ -153,7 +153,7 @@ function Workspace(workspaceState, resources) {
         this.loaded = true;
 
         layoutManager.logStep('');
-        Wirecloud.GlobalLogManager.log(gettext('workspace loaded'), Constants.Logging.INFO_MSG);
+        Wirecloud.GlobalLogManager.log(gettext('Workspace loaded'), Constants.Logging.INFO_MSG);
 
         // tutorial layer for empty workspaces
         this.emptyWorkspaceInfoBox = document.createElement('div');

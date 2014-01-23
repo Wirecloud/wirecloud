@@ -148,6 +148,11 @@ function Workspace(workspaceState, resources) {
 
     /**** Display the IWidgets menu ***/
     Workspace.prototype.init = function () {
+
+        var layoutManager = LayoutManagerFactory.getInstance();
+        layoutManager.logStep('');
+        layoutManager.logSubTask(gettext('Processing workspace data'));
+
         //Create a menu for each tab of the workspace and paint it as main screen.
         var scrolling = 0,
             step = window.innerWidth,
@@ -189,6 +194,8 @@ function Workspace(workspaceState, resources) {
         opManager.alternatives.showAlternative(this.tabsContainerElement);
 
         this.updateVisibleTab(this.visibleTabIndex);
+
+        Wirecloud.GlobalLogManager.log(gettext('Workspace loaded'), Constants.Logging.INFO_MSG);
     };
 
     Workspace.prototype.show = function () {
