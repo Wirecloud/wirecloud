@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -18,13 +18,9 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import rdflib
-import urllib2
-from urllib2 import HTTPError
 
 from django.utils.translation import ugettext as _
 
-from wirecloud.commons.utils.template import TemplateParser
-from wirecloud.proxy.views import MethodRequest
 
 FOAF = rdflib.Namespace('http://xmlns.com/foaf/0.1/')
 RDF = rdflib.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#')
@@ -136,7 +132,7 @@ class USDLParser(object):
             self._info['vcard'] = {
                 'BEGIN': [{
                     'properties': {},
-                    'value':'VCARD',
+                    'value': 'VCARD',
                 }],
                 'FN': [{
                     'properties': {},
