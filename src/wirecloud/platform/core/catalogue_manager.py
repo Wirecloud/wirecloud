@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -19,7 +19,7 @@
 
 import json
 import os
-import urllib2
+import requests
 from urlparse import urljoin
 
 from django.utils.encoding import iri_to_uri
@@ -28,7 +28,6 @@ from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.template import TemplateParser
-from wirecloud.proxy.views import MethodRequest
 from wirecloud.platform.localcatalogue.utils import install_resource_to_user
 from wirecloud.platform.markets.utils import MarketManager
 
@@ -68,14 +67,12 @@ class WirecloudCatalogueManager(MarketManager):
                 return None
         else:
 
-            opener = urllib2.build_opener()
             path = '/'.join(('catalogue', 'resource', vendor, name, version))
             url = iri_to_uri(urljoin(self._options['url'], path))
-            request = MethodRequest('GET', url)
-            response = opener.open(request)
+            response = requests.get(url)
 
-            if response.code == 200:
-                data = json.loads(response.read())
+            if response.status_code == 200:
+                data = json.loads(response.content)
                 downloaded_file = downloader.download_http_content(data['uriTemplate'], user=user)
                 return {
                     'downloaded_file': downloaded_file,
