@@ -60,7 +60,7 @@ class BasicViewsAPI(WirecloudTestCase):
         etree.parse(StringIO(response.content), parser)
 
     def test_workspace_view_handles_not_found(self):
-    
+
         url = reverse('wirecloud.workspace_view', kwargs={'creator_user': 'noexistent_user', 'workspace': 'NonexistingWorkspace'})
 
         # Authenticate
@@ -72,3 +72,15 @@ class BasicViewsAPI(WirecloudTestCase):
 
         parser = etree.XMLParser(encoding='utf-8')
         etree.parse(StringIO(response.content), parser)
+
+    def test_workspace_view_handles_bad_view_value(self):
+
+        url = reverse('wirecloud.workspace_view', kwargs={'creator_user': 'user_with_workspaces', 'workspace': 'ExistingWorkspace'}) + '?view=noexistent&a=b'
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.get(url, HTTP_ACCEPT='text/html')
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('Location', response)
+        self.assertTrue(response['Location'].endswith('?a=b'))

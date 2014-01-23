@@ -18,12 +18,14 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
+from urlparse import urlparse, urlunparse, parse_qs
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
+from django.template import TemplateDoesNotExist
 from django.utils.http import urlencode
 
 from wirecloud.commons.baseviews import Resource
@@ -70,19 +72,40 @@ def render_workspace_view(request, creator_user, workspace):
         else:
             return redirect_to_login(request.get_full_path())
 
-    return render_wirecloud(request)
+    if 'view' in request.GET:
+        view_type = request.GET['view']
+    else:
+        view_type = get_default_view(request)
 
-
-def render_wirecloud(request, view_type=None):
-
-    if view_type is None:
+    try:
+        return render_wirecloud(request, view_type)
+    except TemplateDoesNotExist:
         if 'view' in request.GET:
-            view_type = request.GET['view']
+            url = urlparse(request.build_absolute_uri())
+            query_params = parse_qs(url.query, True)
+            del query_params['view']
+            return HttpResponseRedirect(urlunparse((
+                url.scheme,
+                url.netloc,
+                url.path,
+                url.params,
+                urlencode(query_params, True),
+                url.fragment
+            )))
         else:
-            user_agent = request.META['HTTP_USER_AGENT']
-            if user_agent.find("iPhone") != -1 or user_agent.find("iPod") != -1 or user_agent.find('Android') != -1:
-                view_type = 'smartphone'
-            else:
-                view_type = 'classic'
+            view_type = get_default_view(request)
+            return render_wirecloud(request, view_type)
+
+
+def get_default_view(request):
+
+    user_agent = request.META['HTTP_USER_AGENT']
+    if user_agent.find("iPhone") != -1 or user_agent.find("iPod") != -1 or (user_agent.find('Android') != -1 and user_agent.find('Mobile')):
+        return 'smartphone'
+    else:
+        return 'classic'
+
+
+def render_wirecloud(request, view_type):
 
     return render(request, 'wirecloud/views/%s.html' % view_type, content_type="application/xhtml+xml; charset=UTF-8")
