@@ -31,15 +31,21 @@
         var context = {};
         var handlers = [];
 
-        Object.freeze(context_description);
         for (var key in context_description) {
-            context_description[key];
-            if (typeof context_description[key] === 'object' && 'value' in context_description[key]) {
+            if (context_description == null || typeof context_description[key] !== 'object') {
+                delete context_description[key];
+            }
+
+            context_description[key].name = key;
+            if ('value' in context_description[key]) {
                 context[key] = context_description[key].value;
+                delete context_description[key].value;
             } else {
                 context[key] = null;
             }
+            Object.freeze(context_description[key]);
         }
+        Object.freeze(context_description);
 
         Object.defineProperty(this, 'getAvailableContext', {
             value: function getAvailableContext() {
