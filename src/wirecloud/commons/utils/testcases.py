@@ -506,7 +506,10 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         restoretree(self.localcatalogue_tmp_dir_backup, self.tmp_dir)
         restoretree(self.catalogue_tmp_dir_backup, self.catalogue_tmp_dir)
         cache.clear()
-        self.network._servers['http']['example.com'].clear()
+        try:
+            self.network._servers['http']['example.com'].clear()
+        except:
+            pass
 
         super(WirecloudSeleniumTestCase, self).setUp()
 
