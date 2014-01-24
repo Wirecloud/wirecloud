@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from importlib import import_module
 import requests
 
 from django.conf import settings
@@ -78,13 +79,53 @@ class ProxyTestsBase(WirecloudTestCase):
 
 class ProxyTests(ProxyTestsBase):
 
-    def test_basic_proxy_requests(self):
+    def test_request_with_bad_referer_header(self):
 
         client = Client()
 
-        # Check authentication
+        # Missing header
+        response = client.get(self.basic_url, HTTP_HOST='localhost')
+        self.assertEqual(response.status_code, 403)
+
+        # Bad (syntactically) referer header value
+        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='@a')
+        self.assertEqual(response.status_code, 403)
+
+        # Invalid (but syntactically correct) header value
         response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://other.server.com')
         self.assertEqual(response.status_code, 403)
+
+    def test_basic_anonymous_proxy_requests(self):
+
+        client = Client()
+
+        engine = import_module(settings.SESSION_ENGINE)
+        cookie = engine.SessionStore()
+        cookie.save()  # we need to make load() work, or the cookie is worthless
+        client.cookies[settings.SESSION_COOKIE_NAME] = cookie.session_key
+        client.cookies[settings.CSRF_COOKIE_NAME] = 'TODO'
+
+        # Basic GET request
+        self.network._servers['http']['example.com'].add_response('GET', '/path', {'content': 'data'})
+        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.read_response(response), 'data')
+
+        # Basic POST request
+        self.network._servers['http']['example.com'].add_response('POST', '/path', {'content': 'data'})
+        response = client.post(self.basic_url, {}, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.read_response(response), 'data')
+
+        # Http Error 404
+        url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/non_existing_file.html'})
+        response = client.get(url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(self.read_response(response), '')
+
+    def test_basic_proxy_requests(self):
+
+        client = Client()
 
         client.login(username='test', password='test')
 

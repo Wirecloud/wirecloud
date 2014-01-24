@@ -79,11 +79,9 @@ class Proxy():
 
                 cookie_parser = Cookie.SimpleCookie(str(header[1]))
 
-                # Remove Wirecloud cookies
-                if hasattr(settings, 'SESSION_COOKIE_NAME'):
-                    del cookie_parser[settings.SESSION_COOKIE_NAME]
+                del cookie_parser[settings.SESSION_COOKIE_NAME]
 
-                if hasattr(settings, 'CSRF_COOKIE_NAME') and settings.CSRF_COOKIE_NAME in cookie_parser:
+                if settings.CSRF_COOKIE_NAME in cookie_parser:
                     del cookie_parser[settings.CSRF_COOKIE_NAME]
 
                 request_data['cookies'].update(cookie_parser)
@@ -182,7 +180,10 @@ def proxy_request(request, protocol, domain, path):
 
     try:
         if request.get_host() != urlparse.urlparse(request.META["HTTP_REFERER"])[1]:
-            return build_error_response(request, 403, _(u"Invalid request"))
+            raise Exception()
+
+        if settings.SESSION_COOKIE_NAME not in request.COOKIES:
+            raise Exception()
     except:
         return build_error_response(request, 403, _(u"Invalid request"))
 
