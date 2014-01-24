@@ -17,8 +17,8 @@ MashupPlatform.http.makeRequest('data/success.html', {
 
 MashupPlatform.http.makeRequest('http://example.com/success.html', {
     method: 'GET',
-    onSuccess: function (transport) {
-        if (transport.responseText === 'remote makerequest succeded') {
+    onSuccess: function (response) {
+        if (response.status === 200 && response.responseText === 'remote makerequest was successful') {
             document.getElementById('makerequest_test').innerHTML = OK_HTML;
         }
     }

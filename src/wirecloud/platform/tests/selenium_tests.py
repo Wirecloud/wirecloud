@@ -189,7 +189,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login(username='user_with_workspaces')
         iwidget = self.get_current_iwidgets()[0]
-        api_test_iwidget = self.add_widget_to_mashup('Wirecloud API test')
 
         with iwidget:
             self.assertEqual(self.driver.find_element_by_id('listPref').text, 'default')
@@ -248,6 +247,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, '')
 
         # Use api test widget to test other API features
+        self.network._servers['http']['example.com'].add_response('GET', '/success.html', {'content': 'remote makerequest was successful'})
+        api_test_iwidget = self.add_widget_to_mashup('Wirecloud API test')
 
         # Open widget settings again
         api_test_iwidget.perform_action('Settings')

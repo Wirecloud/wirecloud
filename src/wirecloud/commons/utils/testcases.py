@@ -436,13 +436,11 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
             'http': {
                 'localhost:8001': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), '..', 'test-data', 'src')),
                 'macs.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), '..', 'test-data')),
+                'example.com': DynamicWebServer(),
             },
         }))
         cls.network.mock_requests()
         cls.network.mock_downloader()
-        cls._original_proxy_do_request_function = WIRECLOUD_PROXY._do_request
-        WIRECLOUD_PROXY._do_request = ProxyFakeDownloader()
-        WIRECLOUD_PROXY._do_request.set_response('http://example.com/success.html', 'remote makerequest succeded')
 
         # catalogue deployer
         cls.old_catalogue_deployer = catalogue.wgt_deployer
@@ -486,7 +484,6 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         # Unmock network requests
         cls.network.unmock_requests()
         cls.network.unmock_downloader()
-        WIRECLOUD_PROXY._do_request = cls._original_proxy_do_request_function
 
         # deployers
         catalogue.wgt_deployer = cls.old_catalogue_deployer
@@ -509,6 +506,8 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         restoretree(self.localcatalogue_tmp_dir_backup, self.tmp_dir)
         restoretree(self.catalogue_tmp_dir_backup, self.catalogue_tmp_dir)
         cache.clear()
+        self.network._servers['http']['example.com'].clear()
+
         super(WirecloudSeleniumTestCase, self).setUp()
 
 DEFAULT_BROWSER_CONF = {
