@@ -83,6 +83,12 @@ class ProxyTests(ProxyTestsBase):
 
         client = Client()
 
+        engine = import_module(settings.SESSION_ENGINE)
+        cookie = engine.SessionStore()
+        cookie.save()  # we need to make load() work, or the cookie is worthless
+        client.cookies[settings.SESSION_COOKIE_NAME] = cookie.session_key
+        client.cookies[settings.CSRF_COOKIE_NAME] = 'TODO'
+
         # Missing header
         response = client.get(self.basic_url, HTTP_HOST='localhost')
         self.assertEqual(response.status_code, 403)
@@ -93,6 +99,15 @@ class ProxyTests(ProxyTestsBase):
 
         # Invalid (but syntactically correct) header value
         response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://other.server.com')
+        self.assertEqual(response.status_code, 403)
+
+    def test_request_without_started_session_are_forbidden(self):
+
+        client = Client()
+
+        # Basic GET request
+        self.network._servers['http']['example.com'].add_response('GET', '/path', {'content': 'data'})
+        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 403)
 
     def test_basic_anonymous_proxy_requests(self):
@@ -201,7 +216,7 @@ class ProxyTests(ProxyTestsBase):
 
         def cookie_response(method, url, *args, **kwargs):
             if 'Cookie' in kwargs['headers']:
-                return {'content': kwargs['headers']['Cookie'], 'headers': {'Set-Cookie': 'newcookie=test; path=/'}}
+                return {'content': kwargs['headers']['Cookie'], 'headers': {'Set-Cookie': 'newcookie1=test; path=/, newcookie2=val1; path=/abc/d, newcookie3=c'}}
             else:
                 return {'status_code': 404}
 
@@ -209,10 +224,21 @@ class ProxyTests(ProxyTestsBase):
         response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.read_response(response), 'test=test')
-        self.assertTrue('newcookie' in response.cookies)
-        self.assertEqual(response.cookies['newcookie'].value, 'test')
-        cookie_path = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': ''})
-        self.assertEqual(response.cookies['newcookie']['path'], cookie_path)
+
+        self.assertTrue('newcookie1' in response.cookies)
+        self.assertEqual(response.cookies['newcookie1'].value, 'test')
+        cookie_path = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/'})
+        self.assertEqual(response.cookies['newcookie1']['path'], cookie_path)
+
+        self.assertTrue('newcookie2' in response.cookies)
+        self.assertEqual(response.cookies['newcookie2'].value, 'val1')
+        cookie_path = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/abc/d'})
+        self.assertEqual(response.cookies['newcookie2']['path'], cookie_path)
+
+        self.assertTrue('newcookie3' in response.cookies)
+        self.assertEqual(response.cookies['newcookie3'].value, 'c')
+        cookie_path = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/path'})
+        self.assertEqual(response.cookies['newcookie3']['path'], cookie_path)
 
 
 @unittest.skipIf(not HAS_AES, 'python-crypto not found')
