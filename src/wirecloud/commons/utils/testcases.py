@@ -19,6 +19,8 @@
 
 
 import codecs
+import Cookie
+from cStringIO import StringIO
 import mimetypes
 import os
 import requests
@@ -38,7 +40,6 @@ from django.utils.importlib import import_module
 
 from wirecloud.platform.localcatalogue.utils import install_resource_to_all_users
 from wirecloud.platform.widget import utils as showcase
-from wirecloud.proxy.tests import FakeDownloader as ProxyFakeDownloader
 from wirecloud.proxy.views import WIRECLOUD_PROXY
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.commons.utils import downloader
@@ -123,7 +124,7 @@ class DynamicWebServer(object):
             if self.fallback is not None:
                 return self.fallback.request(method, url, *args, **kwargs)
             else:
-                raise HTTPError('url', '404', 'Not Found', None, None)
+                return {'status_code': 404, 'reason': 'Not Found'}
 
         response = self.responses[parsed_url.path][method]
 
@@ -187,12 +188,13 @@ class LocalFileSystemServer(object):
                 'content': contents,
             }
         else:
-            raise HTTPError('url', '404', 'Not Found', None, None)
+            return {'status_code': 404, 'reason': 'Not Found'}
 
 
 class FakeNetwork(object):
 
     old_download_function = None
+    old_requests_request = None
     old_requests_get = None
     old_requests_post = None
 
@@ -208,41 +210,58 @@ class FakeNetwork(object):
         server = self._servers[parsed_url.scheme][parsed_url.netloc]
         return server.request(method, url, *args, **kwargs)
 
+    def _prepare_response(self, res_info, url):
+
+        res = requests.Response()
+        res.url = res_info.get('url', url)
+        res.status_code = res_info.get('status_code', 200)
+        if 'reason' in res_info:
+            res.reason = res_info['reason']
+
+        if 'headers' in res_info:
+            res.headers.update(res_info['headers'])
+
+            if 'Set-Cookie' in res_info['headers']:
+                cookies = Cookie.SimpleCookie(res_info['headers']['Set-Cookie'])
+                res.cookies.update(cookies)
+
+        content = res_info.get('content', '')
+        if not hasattr(content, 'read') or not callable(content.read):
+            res.raw = StringIO(content)
+        else:
+            res.raw = content
+
+        return res
+
     def mock_requests(self):
 
-        if self.old_requests_get is not None:
+        if self.old_requests_request is not None:
             return
+
+        def request_mock(method, url, *args, **kwargs):
+            res_info = self(method.upper(), url, *args, **kwargs)
+            return self._prepare_response(res_info, url)
 
         def get_mock(url, *args, **kwargs):
             res_info = self('GET', url, *args, **kwargs)
-
-            res = requests.Response()
-            res.url = res_info.get('url', url)
-            res.status_code = res_info.get('status_code', 200)
-            if 'headers' in res_info:
-                res.headers.update(res_info['headers'])
-            res._content = res_info.get('content', '')
-            return res
+            return self._prepare_response(res_info, url)
 
         def post_mock(url, *args, **kwargs):
             res_info = self('POST', url, *args, **kwargs)
+            return self._prepare_response(res_info, url)
 
-            res = requests.Response()
-            res.url = res_info.get('url', url)
-            res.status_code = res_info.get('status_code', 200)
-            if 'headers' in res_info:
-                res.headers.update(res_info['headers'])
-            res._content = res_info.get('content', '')
-            return res
-
+        self.old_requests_request = requests.request
+        requests.request = request_mock
         self.old_requests_get = requests.get
         requests.get = get_mock
         self.old_requests_post = requests.post
         requests.post = post_mock
 
     def unmock_requests(self):
+        requests.request = self.old_requests_request
         requests.get = self.old_requests_get
         requests.post = self.old_requests_post
+        self.old_requests_request = None
         self.old_requests_get = None
         self.old_requests_post = None
 

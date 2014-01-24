@@ -37,7 +37,7 @@ from django.utils.translation import ugettext as _
 
 # content_length + hop-by-hop headers(http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html#sec13.5.1)
 BLACKLISTED_HEADERS = {
-    'connection': 1, 'content-length': 1, 'keep-alive': 1, 'proxy-authenticate': 1,
+    'connection': 1, 'keep-alive': 1, 'proxy-authenticate': 1,
     'proxy-authorization': 1, 'te': 1, 'trailers': 1, 'transfer-encoding': 1,
     'upgrade': 1,
 }
