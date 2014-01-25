@@ -153,7 +153,7 @@ class Proxy():
             if header_lower == 'set-cookie':
 
                 for cookie in res.cookies:
-                    response.set_cookie(cookie.name, cookie.value, cookie.expires, cookie.path, None)
+                    response.set_cookie(cookie.name, value=cookie.value, expires=cookie.expires, path=cookie.path)
 
             elif header_lower == 'via':
 
@@ -201,9 +201,9 @@ def proxy_request(request, protocol, domain, path):
     for key in response.cookies:
         cookie = response.cookies[key]
 
-        if 'path' in cookie:
-            cookie['path'] = reverse('wirecloud|proxy', kwargs={'protocol': protocol, 'domain': domain, 'path': cookie['path']})
-        else:
+        if cookie['path'] == '':
             cookie['path'] = reverse('wirecloud|proxy', kwargs={'protocol': protocol, 'domain': domain, 'path': path})
+        else:
+            cookie['path'] = reverse('wirecloud|proxy', kwargs={'protocol': protocol, 'domain': domain, 'path': cookie['path']})
 
     return response

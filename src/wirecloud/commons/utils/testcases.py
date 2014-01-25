@@ -222,7 +222,9 @@ class FakeNetwork(object):
             res.headers.update(res_info['headers'])
 
             if 'Set-Cookie' in res_info['headers']:
-                cookies = Cookie.SimpleCookie(res_info['headers']['Set-Cookie'])
+                cookies = Cookie.SimpleCookie()
+                for entry in res_info['headers']['Set-Cookie'].split(','):
+                    cookies.load(entry)
                 res.cookies.update(cookies)
 
         content = res_info.get('content', '')
