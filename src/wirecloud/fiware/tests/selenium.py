@@ -21,7 +21,7 @@ from __future__ import absolute_import
 
 import os
 
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import Select, WebDriverWait
 
 from wirecloud.commons.utils.testcases import DynamicWebServer, LocalFileSystemServer, WirecloudSeleniumTestCase
 
@@ -133,6 +133,24 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         self.search_resource('test')
         widget_offering = self.search_in_catalogue_results('Smart City Lights application')
         self.assertIsNotNone(widget_offering)
+
+    def test_marketplace_filter_by_store(self):
+
+        self.login(username='user_with_markets')
+
+        self.change_main_view('marketplace')
+        self.change_marketplace('fiware')
+
+        catalogue_base_element = self.get_current_catalogue_base_element()
+        store_select = Select(catalogue_base_element.find_element_by_css_selector('.store_select select'))
+        store_select.select_by_value('Store 1')
+
+        # Check results from store 1 are not displayed
+        self.assertIsNone(self.search_in_catalogue_results('Weather widget'))
+
+        # Check results from store 2 are displayed
+        self.assertIsNotNone(self.search_in_catalogue_results('Test Operator'))
+        self.assertIsNotNone(self.search_in_catalogue_results('Smart City Lights application'))
 
     def test_marketplace_offering_buttons(self):
 
