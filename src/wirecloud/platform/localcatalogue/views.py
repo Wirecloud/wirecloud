@@ -190,7 +190,7 @@ class ResourceEntry(Resource):
 
         resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
         if not request.user.is_superuser and not resource.is_available_for(request.user):
-            return HttpResponse(status=403)
+            return build_error_response(request, 403, _('You are not allowed to retrieve info about this resource'))
 
         file_name = '_'.join((vendor, name, version)) + '.wgt'
         base_dir = catalogue_utils.wgt_deployer.get_base_dir(vendor, name, version)
@@ -248,7 +248,7 @@ class ResourceDescriptionEntry(Resource):
 
         resource = get_object_or_404(CatalogueResource, vendor=vendor, short_name=name, version=version)
         if not request.user.is_superuser and not resource.is_available_for(request.user):
-            return HttpResponse(status=403)
+            return build_error_response(request, 403, _('You are not allowed to retrieve info about this resource'))
 
         resource_info = resource.get_processed_info(request)
         if request.GET.get('include_wgt_files', '').lower() == 'true':

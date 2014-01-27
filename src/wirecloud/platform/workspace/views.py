@@ -23,7 +23,7 @@ import os
 import zipfile
 
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseForbidden, Http404
+from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
@@ -205,7 +205,7 @@ class WorkspaceEntry(Resource):
 
         workspace = Workspace.objects.get(pk=workspace_id)
         if not (request.user.is_superuser or workspace.users.filter(pk=request.user.pk).exists()):
-            return HttpResponseForbidden()
+            return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
         if 'active' in ts:
 
@@ -234,7 +234,7 @@ class WorkspaceEntry(Resource):
 
         workspace = get_object_or_404(Workspace, pk=workspace_id)
         if not workspace.users.filter(pk=request.user.pk).exists():
-            return HttpResponseForbidden()
+            return build_error_response(request, 403, _('You are not allowed to delete this workspace'))
 
         user_workspace = UserWorkspace.objects.get(user=request.user, workspace=workspace)
         # Check if the user does not have any other workspace
@@ -278,7 +278,7 @@ class TabCollection(Resource):
         tab_name = data['name']
         workspace = Workspace.objects.get(pk=workspace_id)
         if not (request.user.is_superuser or workspace.creator == request.user):
-            return HttpResponseForbidden()
+            return build_error_response(request, 403, _('You are not allowed to create new tabs for this workspace'))
 
         try:
             tab = createTab(tab_name, workspace)
@@ -304,7 +304,7 @@ class TabCollection(Resource):
 
         workspace = user_workspace.workspace
         if workspace.creator != request.user or user_workspace.manager != '':
-            return HttpResponseForbidden()
+            return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
         try:
             order = json.loads(request.body)
@@ -330,11 +330,11 @@ class TabEntry(Resource):
 
         tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
         if tab.workspace.creator != request.user:
-            return HttpResponseForbidden()
+            return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
         user_workspace = UserWorkspace.objects.get(user__id=request.user.id, workspace__id=workspace_id)
         if user_workspace.manager != '':
-            return HttpResponseForbidden()
+            return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
         try:
             data = json.loads(request.body)
@@ -372,7 +372,7 @@ class TabEntry(Resource):
         # Get tab, if it does not exist, an http 404 error is returned
         tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
         if not request.user.is_superuser and not tab.workspace.users.filter(id=request.user.id).exists():
-            return HttpResponseForbidden()
+            return build_error_response(request, 403, _('You are not allowed to remove this tab'))
 
         tabs = Tab.objects.filter(workspace__pk=workspace_id).order_by('position')[::1]
         if len(tabs) == 1:
@@ -442,7 +442,7 @@ class MashupMergeService(Service):
 
         to_ws = get_object_or_404(Workspace, id=to_ws_id)
         if not request.user.is_superuser and to_ws.creator != request.user:
-            return HttpResponseForbidden()
+            return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
         if mashup_id != '':
             values = mashup_id.split('/', 3)
@@ -482,7 +482,7 @@ class MashupMergeService(Service):
 
             from_ws = get_object_or_404(Workspace, id=workspace_id)
             if not request.user.is_superuser and from_ws.creator != request.user:
-                return HttpResponseForbidden()
+                return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
             packageCloner = PackageCloner()
             packageCloner.merge_workspaces(from_ws, to_ws, to_ws.creator)

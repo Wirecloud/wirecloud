@@ -39,7 +39,7 @@ def get_xml_error_response(request, mimetype, status_code, context):
     doc = etree.Element('error')
 
     description = etree.Element('description')
-    description.text = context['error_msg']
+    description.text = unicode(context['error_msg'])
 
     doc.append(description)
 
@@ -62,12 +62,12 @@ def get_xml_error_response(request, mimetype, status_code, context):
 
 def get_json_error_response(request, mimetype, status_code, context):
     body = {
-        'description': context['error_msg']
+        'description': unicode(context['error_msg'])
     }
     if context.get('details') is not None:
         body['details'] = context['details']
 
-    return json.dumps(body)
+    return json.dumps(body, ensure_ascii=False)
 
 
 def get_plain_text_error_response(request, mimetype, status_code, context):

@@ -21,7 +21,7 @@ import json
 
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
@@ -50,7 +50,7 @@ class WiringEntry(Resource):
 
         workspace = get_object_or_404(Workspace, id=workspace_id)
         if not request.user.is_superuser and workspace.creator != request.user:
-            return HttpResponseForbidden()
+            return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
         old_wiring_status = json.loads(workspace.wiringStatus)
         old_read_only_connections = []
@@ -64,11 +64,11 @@ class WiringEntry(Resource):
                 read_only_connections.append(connection)
 
         if len(old_read_only_connections) > len(read_only_connections):
-            return HttpResponseForbidden()
+            return build_error_response(request, 403, _('You are not allowed to remove read only connections'))
 
         for connection in old_read_only_connections:
             if connection not in read_only_connections:
-                return HttpResponseForbidden()
+                return build_error_response(request, 403, _('You are not allowed to remove read only connections'))
 
         workspace.wiringStatus = wiring_status_string
         workspace.save()

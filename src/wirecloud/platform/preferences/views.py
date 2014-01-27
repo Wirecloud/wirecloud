@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2008-2013 Universidad Politécnica de Madrid
+# Copyright 2008-2014 Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -20,7 +20,7 @@
 import json
 
 from django.core.cache import cache
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
@@ -182,7 +182,7 @@ class WorkspacePreferencesCollection(Resource):
         # Check Workspace existance and owned by this user
         workspace = get_object_or_404(Workspace, pk=workspace_id)
         if not (request.user.is_superuser or workspace.users.filter(pk=request.user.pk).exists()):
-            return HttpResponseForbidden()
+            return build_error_response(request, 403, _('You are not allowed to read this workspace'))
 
         result = get_workspace_preference_values(workspace.id)
 
@@ -196,7 +196,7 @@ class WorkspacePreferencesCollection(Resource):
         # Check Workspace existance and owned by this user
         workspace = get_object_or_404(Workspace, pk=workspace_id)
         if not (request.user.is_superuser or workspace.users.filter(pk=request.user.pk).exists()):
-            return HttpResponseForbidden()
+            return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
         try:
             preferences_json = json.loads(request.body)
@@ -217,7 +217,7 @@ class TabPreferencesCollection(Resource):
         # Check Tab existance and owned by this user
         tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
         if not (request.user.is_superuser or tab.workspace.users.filter(pk=request.user.pk).exists()):
-            return HttpResponseForbidden()
+            return build_error_response(request, 403, _('You are not allowed to read this workspace'))
 
         result = get_tab_preference_values(tab)
 
@@ -231,7 +231,7 @@ class TabPreferencesCollection(Resource):
         # Check Tab existance and owned by this user
         tab = get_object_or_404(Tab.objects.select_related('workspace'), workspace__pk=workspace_id, pk=tab_id)
         if not (request.user.is_superuser or tab.workspace.users.filter(pk=request.user.pk).exists()):
-            return HttpResponseForbidden()
+            return build_error_response(request, 403, _('You are not allowed to update this workspace'))
 
         try:
             preferences_json = json.loads(request.body)

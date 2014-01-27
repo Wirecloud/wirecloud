@@ -41,6 +41,21 @@ def check_get_requires_permission(self, url):
 
     response = self.client.get(url, HTTP_ACCEPT='application/json')
     self.assertEqual(response.status_code, 403)
+    self.assertEqual(response['Content-Type'], 'application/json; charset=utf-8')
+
+    # Wirecloud only supports application/json, but error responses may be
+    # returned using other formats
+    response = self.client.get(url, HTTP_ACCEPT='application/json; q=0.2, text/plain')
+    self.assertEqual(response.status_code, 403)
+    self.assertEqual(response['Content-Type'], 'text/plain; charset=utf-8')
+
+    response = self.client.get(url, HTTP_ACCEPT='application/json; q=0.2, application/xml')
+    self.assertEqual(response.status_code, 403)
+    self.assertEqual(response['Content-Type'], 'application/xml; charset=utf-8')
+
+    response = self.client.get(url, HTTP_ACCEPT='application/json; q=0.2, text/html')
+    self.assertEqual(response.status_code, 403)
+    self.assertEqual(response['Content-Type'], 'text/html; charset=utf-8')
 
 
 def check_get_requires_authentication(self, url, test_after_request=None):
@@ -102,9 +117,24 @@ def check_post_requires_permission(self, url, data, test_after_request=None):
 
     response = self.client.post(url, data, content_type='application/json', HTTP_ACCEPT='application/json')
     self.assertEqual(response.status_code, 403)
+    self.assertEqual(response['Content-Type'], 'application/json; charset=utf-8')
 
     if test_after_request is not None:
         test_after_request(self)
+
+    # Wirecloud only supports application/json, but error responses may be
+    # returned using other formats
+    response = self.client.post(url, data, content_type='application/json', HTTP_ACCEPT='application/json; q=0.2, text/plain')
+    self.assertEqual(response.status_code, 403)
+    self.assertEqual(response['Content-Type'], 'text/plain; charset=utf-8')
+
+    response = self.client.post(url, data, content_type='application/json', HTTP_ACCEPT='application/json; q=0.2, application/xml')
+    self.assertEqual(response.status_code, 403)
+    self.assertEqual(response['Content-Type'], 'application/xml; charset=utf-8')
+
+    response = self.client.post(url, data, content_type='application/json', HTTP_ACCEPT='application/json; q=0.2, text/html')
+    self.assertEqual(response.status_code, 403)
+    self.assertEqual(response['Content-Type'], 'text/html; charset=utf-8')
 
 
 def check_post_bad_request_syntax(self, url):
@@ -164,6 +194,21 @@ def check_put_requires_permission(self, url, data):
 
     response = self.client.put(url, data, content_type='application/json', HTTP_ACCEPT='application/json')
     self.assertEqual(response.status_code, 403)
+    self.assertEqual(response['Content-Type'], 'application/json; charset=utf-8')
+
+    # Wirecloud only supports application/json, but error responses may be
+    # returned using other formats
+    response = self.client.put(url, data, content_type='application/json', HTTP_ACCEPT='application/json; q=0.2, text/plain')
+    self.assertEqual(response.status_code, 403)
+    self.assertEqual(response['Content-Type'], 'text/plain; charset=utf-8')
+
+    response = self.client.put(url, data, content_type='application/json', HTTP_ACCEPT='application/json; q=0.2, application/xml')
+    self.assertEqual(response.status_code, 403)
+    self.assertEqual(response['Content-Type'], 'application/xml; charset=utf-8')
+
+    response = self.client.put(url, data, content_type='application/json', HTTP_ACCEPT='application/json; q=0.2, text/html')
+    self.assertEqual(response.status_code, 403)
+    self.assertEqual(response['Content-Type'], 'text/html; charset=utf-8')
 
 
 def check_delete_requires_authentication(self, url, test_after_request=None):
@@ -199,9 +244,24 @@ def check_delete_requires_permission(self, url, test_after_request=None):
 
     response = self.client.delete(url, HTTP_ACCEPT='application/json')
     self.assertEqual(response.status_code, 403)
+    self.assertEqual(response['Content-Type'], 'application/json; charset=utf-8')
 
     if test_after_request is not None:
         test_after_request(self)
+
+    # Wirecloud only supports application/json, but error responses may be
+    # returned using other formats
+    response = self.client.delete(url, HTTP_ACCEPT='application/json; q=0.2, text/plain')
+    self.assertEqual(response.status_code, 403)
+    self.assertEqual(response['Content-Type'], 'text/plain; charset=utf-8')
+
+    response = self.client.delete(url, HTTP_ACCEPT='application/json; q=0.2, application/xml')
+    self.assertEqual(response.status_code, 403)
+    self.assertEqual(response['Content-Type'], 'application/xml; charset=utf-8')
+
+    response = self.client.delete(url, HTTP_ACCEPT='application/json; q=0.2, text/html')
+    self.assertEqual(response.status_code, 403)
+    self.assertEqual(response['Content-Type'], 'text/html; charset=utf-8')
 
 
 class ApplicationMashupAPI(WirecloudTestCase):
