@@ -170,7 +170,8 @@ class ProxyTests(ProxyTestsBase):
         }
 
         self.network._servers['http']['example.com'].add_response('GET', '/path', echo_headers_response)
-        response = client.get(self.basic_url, CONTENT_TYPE=None, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        # Using "request" to work around https://code.djangoproject.com/ticket/20596
+        response = client.request(PATH_INFO=self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.get_response_headers(response), expected_response_headers)
         self.assertEqual(json.loads(self.read_response(response)), expected_response_body);
