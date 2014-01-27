@@ -1436,6 +1436,21 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.market_entry', kwargs={'user': 'user_with_markets', 'market': 'deleteme'})
         check_delete_requires_authentication(self, url)
 
+    def test_market_entry_delete_requires_permission(self):
+
+        url = reverse('wirecloud.market_entry', kwargs={'user': 'user_with_markets', 'market': 'deleteme'})
+        check_delete_requires_permission(self, url)
+
+    def test_market_entry_delete_local(self):
+
+        url = reverse('wirecloud.market_entry', kwargs={'market': 'local'})
+
+        # Authenticate
+        self.client.login(username='admin', password='admin')
+
+        response = self.client.delete(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 403)
+
     def test_market_entry_delete(self):
 
         url = reverse('wirecloud.market_entry', kwargs={'user': 'user_with_markets', 'market': 'deleteme'})

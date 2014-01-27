@@ -22,7 +22,7 @@ import os
 
 from django.contrib.auth.models import User
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
@@ -95,11 +95,11 @@ class MarketEntry(Resource):
     @authentication_required
     def delete(self, request, market, user=None):
 
-        if (user is None and not request.user.is_superuser) or (user is None and market == 'local'):
-            return HttpResponseForbidden()
+        if user is None and (not request.user.is_superuser or market == 'local'):
+            return build_error_response(request, 403, _('You are not allowed to delete this market'))
 
         if user != request.user.username and not request.user.is_superuser:
-            return HttpResponseForbidden()
+            return build_error_response(request, 403, _('You are not allowed to delete this market'))
 
         get_object_or_404(Market, user__username=user, name=market).delete()
 
