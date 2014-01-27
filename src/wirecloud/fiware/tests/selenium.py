@@ -80,6 +80,15 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         self.assertIsNotNone(widget_offering)
     test_add_fiware_marketplace.tags = ('fiware', 'fiware-plugin', 'fiware-ut-8')
 
+    def test_add_public_fiware_marketplace(self):
+
+        self.login()
+
+        self.add_marketplace('fiware', 'http://marketplace.example.com/', 'fiware', public=True)
+        widget_offering = self.search_in_catalogue_results('Smart City Lights application')
+        self.assertIsNotNone(widget_offering)
+    test_add_public_fiware_marketplace.tags = ('fiware', 'fiware-plugin', 'fiware-ut-8')
+
     def test_delete_fiware_marketplace(self):
 
         self.login(username='user_with_markets')
