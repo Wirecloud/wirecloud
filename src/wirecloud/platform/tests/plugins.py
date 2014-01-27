@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -70,11 +70,10 @@ class WirecloudPluginTestCase(TestCase):
         cls.OLD_WIRECLOUD_PLUGINS = getattr(settings, 'WIRECLOUD_PLUGINS', None)
         super(WirecloudPluginTestCase, cls).setUpClass()
 
-    @classmethod
-    def tearDown(cls):
-        settings.WIRECLOUD_PLUGINS = cls.OLD_WIRECLOUD_PLUGINS
+    def tearDown(self):
+        settings.WIRECLOUD_PLUGINS = self.OLD_WIRECLOUD_PLUGINS
         clear_cache()
-        super(WirecloudPluginTestCase, cls).tearDownClass()
+        super(WirecloudPluginTestCase, self).tearDown()
 
     def test_basic_conf(self):
 
