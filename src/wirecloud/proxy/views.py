@@ -34,7 +34,7 @@ from django.utils.encoding import iri_to_uri
 from django.utils.http import urlquote
 from django.utils.translation import ugettext as _
 
-from wirecloud.commons.utils.http import build_error_response
+from wirecloud.commons.utils.http import build_error_response, get_current_domain
 from wirecloud.platform.plugins import get_request_proxy_processors, get_response_proxy_processors
 from wirecloud.proxy.utils import is_valid_header, ValidationError
 
@@ -43,7 +43,6 @@ class Proxy():
 
     http_headerRE = re.compile('^http_')
     protocolRE = re.compile('HTTP/(.*)')
-    hostRE = re.compile('([^.]+)\.(.*)')
 
     blacklisted_http_headers = [
         'http_host',
@@ -98,13 +97,7 @@ class Proxy():
         else:
             protocolVersion = '1.1'
 
-        hostName = self.hostRE.match(request.META['HTTP_HOST'])
-        if hostName is not None:
-            hostName = hostName.group(1)
-        else:
-            hostName = socket.gethostname()
-
-        via_header = "%s %s (Wirecloud-python-Proxy/1.1)" % (protocolVersion, hostName)
+        via_header = "%s %s (Wirecloud-python-Proxy/1.1)" % (protocolVersion, get_current_domain(request))
         if 'via' in request_data['headers']:
             request_data['headers']['via'] += ', ' + via_header
         else:

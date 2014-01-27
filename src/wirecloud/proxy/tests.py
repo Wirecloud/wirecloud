@@ -18,6 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from importlib import import_module
+import json
 import requests
 
 from django.conf import settings
@@ -76,6 +77,9 @@ class ProxyTestsBase(WirecloudTestCase):
         else:
             return response.content
 
+    def get_response_headers(self, response):
+        return {header_name: header_value for header_name, header_value in response._headers.values()}
+
 
 class ProxyTests(ProxyTestsBase):
 
@@ -120,41 +124,77 @@ class ProxyTests(ProxyTestsBase):
         client.cookies[settings.SESSION_COOKIE_NAME] = cookie.session_key
         client.cookies[settings.CSRF_COOKIE_NAME] = 'TODO'
 
-        # Basic GET request
-        self.network._servers['http']['example.com'].add_response('GET', '/path', {'content': 'data'})
-        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.read_response(response), 'data')
-
-        # Basic POST request
-        self.network._servers['http']['example.com'].add_response('POST', '/path', {'content': 'data'})
-        response = client.post(self.basic_url, {}, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.read_response(response), 'data')
-
-        # Http Error 404
-        url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/non_existing_file.html'})
-        response = client.get(url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
-        self.assertEqual(response.status_code, 404)
-        self.assertEqual(self.read_response(response), '')
+        self.check_basic_requests(client)
 
     def test_basic_proxy_requests(self):
 
         client = Client()
-
         client.login(username='test', password='test')
 
+        self.check_basic_requests(client)
+
+    def check_basic_requests(self, client):
+        def echo_headers_response(method, url, *args, **kwargs):
+            data = kwargs['data'].read()
+            if method == 'GET':
+                valid = data == ''
+            elif method == 'POST':
+                valid = data == '{}'
+            else:
+                valid = False
+
+            if not valid:
+                return {'status_code': 400}
+
+            body = json.dumps(kwargs['headers'])
+            return {
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Content-Length': len(body),
+                },
+                'content': body,
+            }
+
         # Basic GET request
-        self.network._servers['http']['example.com'].add_response('GET', '/path', {'content': 'data'})
-        response = client.get(self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        expected_response_headers = {
+            'Content-Type': 'application/json',
+            'Content-Length': '151',
+            'Via': '1.1 localhost (Wirecloud-python-Proxy/1.1)',
+        }
+
+        expected_response_body = {
+            'referer': 'http://localhost',
+            'via': '1.1 localhost (Wirecloud-python-Proxy/1.1)',
+            'x-forwarded-for': '127.0.0.1',
+            'x-forwarded-host': 'example.com'
+        }
+
+        self.network._servers['http']['example.com'].add_response('GET', '/path', echo_headers_response)
+        response = client.get(self.basic_url, CONTENT_TYPE=None, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.read_response(response), 'data')
+        self.assertEqual(self.get_response_headers(response), expected_response_headers)
+        self.assertEqual(json.loads(self.read_response(response)), expected_response_body);
 
         # Basic POST request
-        self.network._servers['http']['example.com'].add_response('POST', '/path', {'content': 'data'})
-        response = client.post(self.basic_url, {}, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        expected_response_headers = {
+            'Content-Type': 'application/json',
+            'Content-Length': '187',
+            'Via': '1.1 localhost (Wirecloud-python-Proxy/1.1)',
+        }
+
+        expected_response_body = {
+            'content-type': 'application/json',
+            'referer': 'http://localhost',
+            'via': '1.1 localhost (Wirecloud-python-Proxy/1.1)',
+            'x-forwarded-for': '127.0.0.1',
+            'x-forwarded-host': 'example.com'
+        }
+
+        self.network._servers['http']['example.com'].add_response('POST', '/path', echo_headers_response)
+        response = client.post(self.basic_url, data='{}', content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.read_response(response), 'data')
+        self.assertEqual(self.get_response_headers(response), expected_response_headers)
+        self.assertEqual(json.loads(self.read_response(response)), expected_response_body);
 
         # Http Error 404
         url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/non_existing_file.html'})
