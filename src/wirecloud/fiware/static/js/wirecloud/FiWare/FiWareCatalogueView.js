@@ -70,7 +70,9 @@
         this.error = false;
         this.store_info = [];
 
-        this.storeSelect = new StyledElements.StyledSelect();
+        this.storeSelect = new StyledElements.StyledSelect({
+            'class': 'store_select'
+        });
         this.storeSelect.addEventListener('change', change_store_filter.bind(this));
         search_view_options = {
             catalogue: this,
