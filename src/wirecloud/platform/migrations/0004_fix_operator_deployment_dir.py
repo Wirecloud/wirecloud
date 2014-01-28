@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -24,10 +24,6 @@ from wirecloud.commons.utils.wgt import WgtFile
 
 
 class Migration(DataMigration):
-
-    depends_on = (
-        ("catalogue", "0001_initial"),
-    )
 
     needed_by = (
         ("catalogue", "0002_auto__del_field_catalogueresource_ie_compatible"),
