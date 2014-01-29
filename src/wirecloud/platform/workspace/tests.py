@@ -37,7 +37,6 @@ from wirecloud.platform.get_data import get_global_workspace_data
 from wirecloud.platform.iwidget.utils import SaveIWidget
 from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Variable, Workspace
 from wirecloud.platform.preferences.views import update_workspace_preferences
-from wirecloud.platform.workspace.packageCloner import PackageCloner
 from wirecloud.platform.workspace.mashupTemplateGenerator import build_template_from_workspace, build_rdf_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 import wirecloud.platform.workspace.utils
@@ -99,27 +98,6 @@ class WorkspaceTestCase(CacheTestCase):
         self.assertEqual(data['owned'], True)
         self.assertEqual(data['shared'], False)
     test_create_empty_workspace.tags = ('fiware-ut-3',)
-
-    def test_clone_workspace(self):
-
-        workspace = Workspace.objects.get(pk=1)
-
-        packageCloner = PackageCloner()
-        cloned_workspace = packageCloner.clone_tuple(workspace)
-
-        self.assertNotEqual(workspace, cloned_workspace)
-        self.assertEqual(cloned_workspace.users.count(), 0)
-
-        original_iwidgets = IWidget.objects.filter(tab__workspace=workspace)
-        cloned_iwidgets = IWidget.objects.filter(tab__workspace=cloned_workspace)
-        self.assertEqual(original_iwidgets.count(), cloned_iwidgets.count())
-        self.assertNotEqual(original_iwidgets[0].id, cloned_iwidgets[0].id)
-
-        original_variables = Variable.objects.filter(iwidget__tab__workspace=workspace)
-        cloned_variables = Variable.objects.filter(iwidget__tab__workspace=cloned_workspace)
-
-        self.assertEqual(original_variables.count(), cloned_variables.count())
-        self.assertNotEqual(original_variables[0].id, cloned_variables[0].id)
 
 
 class WorkspaceCacheTestCase(CacheTestCase):
