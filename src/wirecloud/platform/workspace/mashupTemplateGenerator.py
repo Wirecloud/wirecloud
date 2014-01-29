@@ -85,6 +85,9 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
         else:
             value = get_variable_value_from_varname(workspace.creator, iwidget, pref.name)
 
+        if pref.type == 'B':
+            value = str(value).lower()
+
         preferences[pref.name] = {
             'readonly': status != 'normal',
             'hidden': status == 'hidden',
@@ -241,6 +244,8 @@ def build_json_template_from_workspace(options, workspace, user):
         })
 
     options['wiring']['views'] = wiring_status.get('views', ())
+
+    return options
 
 
 def build_template_from_workspace(options, workspace, user):
