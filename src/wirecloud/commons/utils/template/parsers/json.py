@@ -33,7 +33,12 @@ class JSONTemplateParser(object):
     def __init__(self, template, base=None):
 
         self.base = base
-        self._info = json.loads(template)
+        if isinstance(template, basestring):
+            self._info = json.loads(template)
+        elif isinstance(template, dict):
+            self._info = template
+        else:
+            raise TemplateParseException('Invalid input data')
 
         if 'type' not in self._info:
             raise TemplateParseException(_('Missing resource type.'))
