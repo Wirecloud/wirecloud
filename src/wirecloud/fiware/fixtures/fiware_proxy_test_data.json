@@ -1,0 +1,12 @@
+[
+    {
+        "pk": 1,
+        "model": "social_auth.usersocialauth",
+        "fields": {
+            "uid": "admin",
+            "extra_data": "{\"access_token\": \"yLCdDImTd6V5xegxyaQjBvC8ENRziFchYKXN0ur1y__uQ2ig3uIEaP6nJ0WxiRWGyCKquPQQmTIlhhYCMQWPXg\", \"username\": \"admin\"}",
+            "user": 1,
+            "provider": "fiware"
+        }
+    }
+]
