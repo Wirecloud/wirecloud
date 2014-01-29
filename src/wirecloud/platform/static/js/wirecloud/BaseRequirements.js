@@ -58,6 +58,11 @@
         if (!('classList' in document.documentElement)) {
             throw new Error('Missing Element.classList support');
         }
+
+        if (window.history == null || typeof window.history.pushState !== 'function' || typeof window.history.replaceState !== 'function') {
+            throw new Error("Missing HTML5's history API support");
+        }
+
     };
 
     Wirecloud.check_basic_requirements = check_basic_requirements;

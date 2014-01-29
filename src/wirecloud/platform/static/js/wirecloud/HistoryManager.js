@@ -25,10 +25,6 @@
 
     "use strict";
 
-    if (!('history' in window) || !('pushState' in window.history)) {
-        throw new Error('history support not found');
-    }
-
     var onpopstate = function onpopstate(event) {
         if (event.state === null) {
             return;
