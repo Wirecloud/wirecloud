@@ -208,7 +208,7 @@
                                 setTimeout(function () {
                                     Wirecloud.changeActiveWorkspace(workspace, initial_tab, options);
                                 }, 0);
-                            }.bind(this));
+                            }.bind(this), 'post-commit');
                             dialog = new Wirecloud.ui.PreferencesWindowMenu('workspace', preferences);
                             dialog.setCancelable(false);
                             dialog.show();
