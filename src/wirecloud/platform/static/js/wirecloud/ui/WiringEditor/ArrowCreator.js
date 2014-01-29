@@ -35,12 +35,11 @@
     /**
      * ArrowCreator.
      */
-    var ArrowCreator = function ArrowCreator(canvas, data, onStart, onDrag, onFinish, canBeDragged) {
+    var ArrowCreator = function ArrowCreator(canvas, data, onStart, onDrag, onFinish) {
         var theArrow;
         var draggable = this;
         var currentSource, currentTarget;
         var layer = canvas.getHTMLElement().parentNode; // TODO Trampa
-        canBeDragged = canBeDragged ? canBeDragged : Draggable._canBeDragged;
         this.layer = layer;
         /*************************************************************************
          * Public methods

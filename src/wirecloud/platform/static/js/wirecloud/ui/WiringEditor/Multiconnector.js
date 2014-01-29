@@ -18,7 +18,7 @@
  *     under the License.
  */
 
-/*global StyledElements, Wirecloud, Draggable, gettext */
+/*global StyledElements, Wirecloud, gettext */
 
 (function () {
 
@@ -123,7 +123,7 @@
         this.setPosition(coord);
 
         // Draggable
-        this.draggable = new Draggable(this.movZone.wrapperElement, {iObject: this},
+        this.draggable = new Wirecloud.ui.Draggable(this.movZone.wrapperElement, {iObject: this},
             function onStart(draggable, context) {
                 context.y = context.iObject.wrapperElement.style.top === "" ? 0 : parseInt(context.iObject.wrapperElement.style.top, 10);
                 context.x = context.iObject.wrapperElement.style.left === "" ? 0 : parseInt(context.iObject.wrapperElement.style.left, 10);

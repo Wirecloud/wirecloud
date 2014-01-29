@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2013 Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2014 Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -18,6 +18,8 @@
  *     <http://www.gnu.org/licenses/>.
  *
  */
+
+/*global Wirecloud*/
 
 (function () {
 
@@ -174,5 +176,6 @@
         };
     };
 
-    window.Draggable = Draggable;
+    Wirecloud.ui.Draggable = Draggable;
+
 })();

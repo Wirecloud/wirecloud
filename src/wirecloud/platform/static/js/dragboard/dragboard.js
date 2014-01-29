@@ -626,7 +626,7 @@ function IWidgetIconDraggable(iWidget) {
         x: null,
         y: null
     };
-    Draggable.call(this, iWidget.iconImg, context,
+    Wirecloud.ui.Draggable.call(this, iWidget.iconImg, context,
                          IWidgetIconDraggable.prototype.startFunc,
                          IWidgetIconDraggable.prototype.updateFunc,
                          IWidgetIconDraggable.prototype.finishFunc,

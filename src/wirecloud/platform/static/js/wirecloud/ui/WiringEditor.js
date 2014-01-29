@@ -18,7 +18,7 @@
  *     under the License.
  */
 
-/*global Constants, LayoutManagerFactory, opManager, StyledElements, Wirecloud, gettext, Draggable */
+/*global Constants, LayoutManagerFactory, opManager, StyledElements, Wirecloud, gettext */
 if (!Wirecloud.ui) {
     // TODO this line should live in another file
     Wirecloud.ui = {};
@@ -116,8 +116,7 @@ if (!Wirecloud.ui) {
         this.arrowCreator = new Wirecloud.ui.WiringEditor.ArrowCreator(this.canvas, this,
             function () {},
             function () {},
-            this.enableAnchors,
-            function () {}
+            this.enableAnchors
         );
         this._startdrag_map_func = function (anchor) {
             anchor.addEventListener('startdrag', this.disableAnchors);

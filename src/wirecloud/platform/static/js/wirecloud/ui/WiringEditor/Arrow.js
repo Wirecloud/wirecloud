@@ -18,7 +18,7 @@
  *     under the License.
  */
 
-/*global Draggable, Wirecloud, EzWebEffectBase */
+/*global Wirecloud, EzWebEffectBase */
 
 (function () {
 
@@ -98,7 +98,7 @@
         this.pullerEndLine.setAttribute('class', 'pullerLine');
 
         // Draggable pullers
-        this.pullerStartDraggable = new Draggable(this.pullerStartElement, {arrow: this},
+        this.pullerStartDraggable = new Wirecloud.ui.Draggable(this.pullerStartElement, {arrow: this},
             function onStart(draggable, data) {
                 data.refPos = data.arrow.getPullerStart();
             },
@@ -111,7 +111,7 @@
             },
             function () {return true; }
         );
-        this.pullerEndDraggable = new Draggable(this.pullerEndElement, {arrow: this},
+        this.pullerEndDraggable = new Wirecloud.ui.Draggable(this.pullerEndElement, {arrow: this},
             function onStart(draggable, data) {
                 data.refPos = data.arrow.getPullerEnd();
             },

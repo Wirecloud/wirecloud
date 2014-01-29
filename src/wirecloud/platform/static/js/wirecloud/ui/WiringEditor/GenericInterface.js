@@ -18,7 +18,7 @@
  *     under the License.
  */
 
-/*global Draggable, gettext, ngettext, interpolate, StyledElements, Wirecloud*/
+/*global gettext, ngettext, interpolate, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -257,7 +257,7 @@
         if (!this.isMiniInterface) {
             this.makeDraggable();
         } else { //miniInterface
-            this.draggable = new Draggable(this.wrapperElement, {iObject: this},
+            this.draggable = new Wirecloud.ui.Draggable(this.wrapperElement, {iObject: this},
                 function onStart(draggable, context) {
                     var miniwidget_clon, pos_miniwidget, headerHeight;
 
@@ -488,7 +488,7 @@
      * Making Interface Draggable.
      */
     GenericInterface.prototype.makeDraggable = function makeDraggable() {
-        this.draggable = new Draggable(this.wrapperElement, {iObject: this},
+        this.draggable = new Wirecloud.ui.Draggable(this.wrapperElement, {iObject: this},
             function onStart(draggable, context) {
                 context.y = context.iObject.wrapperElement.style.top === "" ? 0 : parseInt(context.iObject.wrapperElement.style.top, 10);
                 context.x = context.iObject.wrapperElement.style.left === "" ? 0 : parseInt(context.iObject.wrapperElement.style.left, 10);
@@ -546,7 +546,7 @@
      * Make draggable a specific sources or targets for sorting
      */
     GenericInterface.prototype.makeSlotDraggable = function makeSlotDraggable(element, place, className) {
-        element.draggable = new Draggable(element.wrapperElement, {iObject: element, genInterface: this, wiringEditor: this.wiringEditor},
+        element.draggable = new Wirecloud.ui.Draggable(element.wrapperElement, {iObject: element, genInterface: this, wiringEditor: this.wiringEditor},
             function onStart(draggable, context) {
                     var clon, pos_miniwidget, gridbounds, childsN, childPos;
 

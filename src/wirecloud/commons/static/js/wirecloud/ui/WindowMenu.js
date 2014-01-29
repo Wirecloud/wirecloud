@@ -19,7 +19,7 @@
  *
  */
 
-/*global CSSPrimitiveValue, Draggable, LayoutManagerFactory, Wirecloud*/
+/*global CSSPrimitiveValue, LayoutManagerFactory, Wirecloud*/
 
 (function () {
 
@@ -31,7 +31,7 @@
      * Make Draggable.
      */
     var makeDraggable = function makeDraggable(handler) {
-        this.draggable = new Draggable(handler, {window_menu: this},
+        this.draggable = new Wirecloud.ui.Draggable(handler, {window_menu: this},
             function onStart(draggable, context) {
                 var position;
                 context.y = context.window_menu.htmlElement.style.top === "" ? 0 : parseInt(context.window_menu.htmlElement.style.top, 10);

@@ -19,7 +19,7 @@
  *
  */
 
-/*global Draggable, EzWebEffectBase, FullDragboardLayout, Wirecloud*/
+/*global EzWebEffectBase, FullDragboardLayout, Wirecloud*/
 
 (function () {
 
@@ -49,7 +49,7 @@
         var context = {
             iWidget: iWidget
         };
-        Draggable.call(this, iWidget.widgetMenu, context,
+        Wirecloud.ui.Draggable.call(this, iWidget.widgetMenu, context,
                              IWidgetDraggable.prototype.startFunc,
                              IWidgetDraggable.prototype.updateFunc,
                              IWidgetDraggable.prototype.finishFunc,
