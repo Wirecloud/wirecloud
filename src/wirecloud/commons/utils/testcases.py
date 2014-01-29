@@ -317,6 +317,7 @@ class WirecloudTestCase(TransactionTestCase):
             'http': {
                 'localhost:8001': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), '..', 'test-data', 'src')),
                 'macs.example.com': LocalFileSystemServer(os.path.join(os.path.dirname(__file__), '..', 'test-data')),
+                'example.com': DynamicWebServer(),
             },
         }))
         cls.network.mock_requests()
@@ -372,6 +373,12 @@ class WirecloudTestCase(TransactionTestCase):
         # deployers
         restoretree(self.localcatalogue_tmp_dir_backup, self.tmp_dir)
         restoretree(self.catalogue_tmp_dir_backup, self.catalogue_tmp_dir)
+
+        # clean example.com responses
+        try:
+            self.network._servers['http']['example.com'].clear()
+        except:
+            pass
 
         # cache
         from django.core.cache import cache
