@@ -1,4 +1,4 @@
-.ezweb_container {
+.wirecloud_container {
     width: 100%;
 }
 
@@ -47,7 +47,7 @@ img {
 }
 
 /**** MAIN SECTION ****/
-.ezweb_wrapper {
+.wirecloud_wrapper {
     position: relative;
 }
 
@@ -68,7 +68,7 @@ img {
     width: auto;
 }
 
-.ezweb_tab > .toolbar, .dragboard .toolbar {
+.wirecloud_tab > .toolbar, .dragboard .toolbar {
     padding: 10px 35px 10px 75px;
 }
 
@@ -191,7 +191,7 @@ img {
     overflow: auto;
 }
 
-.ezweb_tab {
+.wirecloud_tab {
     position: absolute;
     height: 100%;
     width: 100%;

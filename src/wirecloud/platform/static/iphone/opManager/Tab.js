@@ -47,7 +47,7 @@ function Tab(tabInfo, workspace, index) {
             iWidgetElement, icon, navBarElement;
 
         this.tabElement = document.createElement('div');
-        this.tabElement.setAttribute('class', "ezweb_tab");
+        this.tabElement.setAttribute('class', "wirecloud_tab");
         this.tabElement.style.left = scrollLeft + 'px';
 
         /*
