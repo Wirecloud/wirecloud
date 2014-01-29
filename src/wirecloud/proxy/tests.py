@@ -174,7 +174,7 @@ class ProxyTests(ProxyTestsBase):
         response = client.request(PATH_INFO=self.basic_url, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.get_response_headers(response), expected_response_headers)
-        self.assertEqual(json.loads(self.read_response(response)), expected_response_body);
+        self.assertEqual(json.loads(self.read_response(response)), expected_response_body)
 
         # Basic POST request
         expected_response_headers = {
@@ -195,7 +195,7 @@ class ProxyTests(ProxyTestsBase):
         response = client.post(self.basic_url, data='{}', content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.get_response_headers(response), expected_response_headers)
-        self.assertEqual(json.loads(self.read_response(response)), expected_response_body);
+        self.assertEqual(json.loads(self.read_response(response)), expected_response_body)
 
         # Http Error 404
         url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/non_existing_file.html'})
