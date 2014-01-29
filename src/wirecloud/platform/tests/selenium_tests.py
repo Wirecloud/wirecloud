@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -26,7 +26,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
 from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.commons.utils.testcases import uses_extra_resources, WirecloudSeleniumTestCase
+from wirecloud.commons.utils.testcases import uses_extra_resources, MobileWirecloudSeleniumTestCase, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
 
 
 def element_to_be_clickable(selector, base_element=None):
@@ -787,3 +787,21 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         window_menues = self.driver.find_elements_by_css_selector('.window_menu')
         self.assertEqual(len(window_menues), 1)
     test_gui_tutorials.tags = ('fiware-ut-15',)
+
+
+@wirecloud_selenium_test_case
+class BasicMobileSeleniumTests(MobileWirecloudSeleniumTestCase):
+
+    fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+
+    def test_basic_widget_functionalities(self):
+
+        self.login(username='user_with_workspaces')
+        self.wait_element_visible_by_css_selector('.iwidget_item').click()
+        iwidget = self.get_current_iwidgets()[0]
+
+        with iwidget:
+            self.assertEqual(self.driver.find_element_by_id('listPref').text, 'default')
+            self.assertEqual(self.driver.find_element_by_id('textPref').text, 'initial text')
+            self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'false')
+            self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'default')

@@ -252,43 +252,11 @@ class IOperatorTester(object):
         return self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.wiring.ioperators[%s].logManager.errorCount' % self.id)
 
 
-class WirecloudRemoteTestCase(object):
-
-    @classmethod
-    def setUpClass(cls):
-
-        cls.shared_test_data_dir = os.path.join(os.path.dirname(__file__), '../test-data')
-        cls.test_data_dir = os.path.join(os.path.dirname(sys.modules[cls.__module__].__file__), 'test-data')
-
-        # Load webdriver
-        module_name, klass_name = getattr(cls, '_webdriver_class', 'selenium.webdriver.Firefox').rsplit('.', 1)
-        module = import_module(module_name)
-        webdriver_args = getattr(cls, '_webdriver_args', None)
-        if webdriver_args is None:
-            webdriver_args = {}
-        cls.driver = getattr(module, klass_name)(**webdriver_args)
-
-    @classmethod
-    def tearDownClass(cls):
-
-        cls.driver.quit()
-
-    def tearDown(self):
-
-        self.driver.delete_all_cookies()
+class RemoteTestCase(object):
 
     def fill_form_input(self, form_input, value):
         # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
         self.driver.execute_script('arguments[0].value = arguments[1]', form_input, value)
-
-    def scroll_and_click(self, element):
-
-        # Work around chrome and firefox driver bugs
-        try:
-            self.driver.execute_script("arguments[0].scrollIntoView(false);", element);
-        except:
-            pass
-        ActionChains(self.driver).click(element).perform()
 
     def wait_element_visible_by_css_selector(self, selector, timeout=30, element=None):
         if element is None:
@@ -313,6 +281,52 @@ class WirecloudRemoteTestCase(object):
         WebDriverWait(self.driver, timeout).until(lambda driver: element.find_element_by_xpath(selector).is_displayed())
         time.sleep(0.1)
         return element.find_element_by_xpath(selector)
+
+    def get_current_iwidgets(self, tab=None):
+
+        if tab is None:
+            iwidget_ids = self.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
+            iwidget_elements = self.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.internal_iwidget.loaded ? iwidget.element : null;});')
+        else:
+            iwidget_ids = self.driver.execute_script('return Wirecloud.activeWorkspace.getTab(arguments[0]).getIWidgets().map(function(iwidget) {return iwidget.id;});', tab)
+            iwidget_elements = self.driver.execute_script('return Wirecloud.activeWorkspace.getTab(arguments[0]).getIWidgets().map(function(iwidget) {return iwidget.internal_iwidget.loaded ? iwidget.element : null;});', tab)
+
+        return [IWidgetTester(self, iwidget_ids[i], iwidget_elements[i]) for i in range(len(iwidget_ids))]
+
+
+class WirecloudRemoteTestCase(RemoteTestCase):
+
+    @classmethod
+    def setUpClass(cls):
+
+        cls.shared_test_data_dir = os.path.join(os.path.dirname(__file__), '../test-data')
+        cls.test_data_dir = os.path.join(os.path.dirname(sys.modules[cls.__module__].__file__), 'test-data')
+
+        # Load webdriver
+        module_name, klass_name = getattr(cls, '_webdriver_class', 'selenium.webdriver.Firefox').rsplit('.', 1)
+        module = import_module(module_name)
+        webdriver_args = getattr(cls, '_webdriver_args', None)
+        if webdriver_args is None:
+            webdriver_args = {}
+        cls.driver = getattr(module, klass_name)(**webdriver_args)
+
+    @classmethod
+    def tearDownClass(cls):
+
+        cls.driver.quit()
+
+    def tearDown(self):
+
+        self.driver.delete_all_cookies()
+
+    def scroll_and_click(self, element):
+
+        # Work around chrome and firefox driver bugs
+        try:
+            self.driver.execute_script("arguments[0].scrollIntoView(false);", element);
+        except:
+            pass
+        ActionChains(self.driver).click(element).perform()
 
     def wait_wirecloud_ready(self, start_timeout=30, timeout=30):
 
@@ -481,17 +495,6 @@ class WirecloudRemoteTestCase(object):
                 return resource
 
         return None
-
-    def get_current_iwidgets(self, tab=None):
-
-        if tab is None:
-            iwidget_ids = self.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.id;});')
-            iwidget_elements = self.driver.execute_script('return Wirecloud.activeWorkspace.getIWidgets().map(function(iwidget) {return iwidget.internal_iwidget.loaded ? iwidget.element : null;});')
-        else:
-            iwidget_ids = self.driver.execute_script('return Wirecloud.activeWorkspace.getTab(arguments[0]).getIWidgets().map(function(iwidget) {return iwidget.id;});', tab)
-            iwidget_elements = self.driver.execute_script('return Wirecloud.activeWorkspace.getTab(arguments[0]).getIWidgets().map(function(iwidget) {return iwidget.internal_iwidget.loaded ? iwidget.element : null;});', tab)
-
-        return [IWidgetTester(self, iwidget_ids[i], iwidget_elements[i]) for i in range(len(iwidget_ids))]
 
     def get_current_wiring_editor_ioperators(self):
 
@@ -901,3 +904,47 @@ class WirecloudRemoteTestCase(object):
             self.search_resource(resource_name)
             resource = self.search_in_catalogue_results(resource_name)
             self.assertIsNone(resource)
+
+
+class MobileWirecloudRemoteTestCase(RemoteTestCase):
+
+    @classmethod
+    def setUpClass(cls):
+
+        cls.shared_test_data_dir = os.path.join(os.path.dirname(__file__), '../test-data')
+        cls.test_data_dir = os.path.join(os.path.dirname(sys.modules[cls.__module__].__file__), 'test-data')
+
+        # Load webdriver
+        module_name, klass_name = getattr(cls, '_webdriver_class', 'selenium.webdriver.Firefox').rsplit('.', 1)
+        module = import_module(module_name)
+        webdriver_args = getattr(cls, '_webdriver_args', None)
+        if webdriver_args is None:
+            webdriver_args = {}
+        cls.driver = getattr(module, klass_name)(**webdriver_args)
+
+    @classmethod
+    def tearDownClass(cls):
+
+        cls.driver.quit()
+
+    def login(self, username='admin', password='admin', next=None):
+
+        url = self.live_server_url
+        if next is not None:
+            url += '&next=' + next
+        url += "/?view=smartphone"
+
+        self.driver.get(url)
+        self.wait_element_visible_by_css_selector('#id_username')
+
+        username_input = self.driver.find_element_by_id('id_username')
+        self.fill_form_input(username_input, username)
+        password_input = self.driver.find_element_by_id('id_password')
+        self.fill_form_input(password_input, password)
+        password_input.submit()
+
+        self.wait_wirecloud_ready()
+
+    def wait_wirecloud_ready(self):
+
+        self.wait_element_visible_by_css_selector('.wirecloud_tab')
