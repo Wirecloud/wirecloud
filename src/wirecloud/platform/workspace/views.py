@@ -39,9 +39,8 @@ from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.get_data import get_workspace_data, get_global_workspace_data
 from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
-from wirecloud.platform.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace
+from wirecloud.platform.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import check_mashup_dependencies, buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate, MissingDependencies
-from wirecloud.platform.workspace.packageCloner import PackageCloner
 from wirecloud.platform.workspace.utils import deleteTab, createTab, get_workspace_list, setVisibleTab, set_variable_value
 from wirecloud.platform.markets.utils import get_market_managers
 
@@ -468,25 +467,32 @@ class MashupMergeService(Service):
                 except:
                     build_error_response(request, 424, _('Downloaded invalid resource description from: %(url)s') % {'url': resource.template_uri})
 
-            try:
-                check_mashup_dependencies(template, request.user)
-            except MissingDependencies, e:
-                details = {
-                    'missingDependencies': e.missing_dependencies,
-                }
-                return build_error_response(request, 422, unicode(e), details=details)
-
-            fillWorkspaceUsingTemplate(to_ws, template)
-
         else:
 
             from_ws = get_object_or_404(Workspace, id=workspace_id)
             if not request.user.is_superuser and from_ws.creator != request.user:
-                return build_error_response(request, 403, _('You are not allowed to update this workspace'))
+                return build_error_response(request, 403, _('You are not allowed to read from workspace %s') % workspace_id)
 
-            packageCloner = PackageCloner()
-            packageCloner.merge_workspaces(from_ws, to_ws, to_ws.creator)
+            options = {
+                'vendor': 'api',
+                'name': 'merge_op',
+                'version': '1.0',
+                'display_name': '',
+                'description': 'Temporal mashup for merging operation',
+                'email': 'a@example.com',
+            }
+            # TODO use build_json_template_from_workspace instead of build_template_from_workspace
+            template = TemplateParser(build_template_from_workspace(options, from_ws, from_ws.creator))
 
+        try:
+            check_mashup_dependencies(template, request.user)
+        except MissingDependencies, e:
+            details = {
+                'missingDependencies': e.missing_dependencies,
+            }
+            return build_error_response(request, 422, unicode(e), details=details)
+
+        fillWorkspaceUsingTemplate(to_ws, template)
         return HttpResponse(status=204)
 
 
