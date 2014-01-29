@@ -88,12 +88,6 @@ def serve_catalogue_media(request, vendor, name, version, file_path):
         return response
 
 
-@no_cache
-def error(request):
-    msg = request.GET.get('msg', 'Widget could not be added')
-    return HttpResponse(msg, content_type='text/plain; charset=utf-8')
-
-
 class ResourceCollection(Resource):
 
     @method_decorator(login_required)
