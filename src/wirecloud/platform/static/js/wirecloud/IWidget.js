@@ -44,8 +44,36 @@
 
     var renameFailure = function renameFailure(options, response) {
         var msg = gettext("Error renaming iwidget from persistence: %(errorMsg)s.");
-        msg = this.internal_iwidget.logManager.formatError(msg, response);
+        msg = this.logManager.formatError(msg, response);
         this.log(msg);
+
+        if (options.onFailure === 'function') {
+            try {
+                options.onFailure(msg);
+            } catch (e) {}
+        }
+    };
+
+    var removeSuccess = function removeSuccess(options, response) {
+        var msg = gettext("IWidget \"%(name)s\" removed from workspace succesfully");
+        msg = interpolate(msg, {name: this.name}, true);
+        this.logManager.log(msg, Constants.Logging.INFO_MSG);
+
+        this.events.removed.dispatch(this);
+
+        if (options.onSuccess === 'function') {
+            try {
+                options.onSuccess();
+            } catch (e) {}
+        }
+
+        this.destroy();
+    };
+
+    var removeFailure = function removeFailure(options, response) {
+        var msg = gettext("Error removing iwidget from persistence: %(errorMsg)s.");
+        msg = this.logManager.formatError(msg, response);
+        this.logManager.log(msg);
 
         if (options.onFailure === 'function') {
             try {
@@ -140,10 +168,10 @@
                 value: 0
             }
         });
-        this.logManager = new Wirecloud.Widget.LogManager(this);
+        Object.defineProperty(this, 'logManager', {value: new Wirecloud.Widget.LogManager(this)});
         this.prefCallback = null;
 
-        StyledElements.ObjectWithEvents.call(this, ['load', 'unload', 'name_changed']);
+        StyledElements.ObjectWithEvents.call(this, ['load', 'unload', 'removed', 'name_changed']);
     };
     IWidget.prototype = new StyledElements.ObjectWithEvents();
 
@@ -315,6 +343,26 @@
         }
     };
 
+    IWidget.prototype.remove = function remove(options) {
+        var url;
+
+        if (options == null) {
+            options = {};
+        }
+
+        url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
+            workspace_id: this.workspace.id,
+            tab_id: this.tab.id,
+            iwidget_id: this.id
+        });
+        Wirecloud.io.makeRequest(url, {
+            method: 'DELETE',
+            requestHeaders: {'Accept': 'application/json'},
+            onSuccess: removeSuccess.bind(this, options),
+            onFailure: removeFailure.bind(this, options)
+        });
+    };
+
     /**
      * This method must be called to avoid memory leaks caused by circular references.
      */
@@ -322,13 +370,13 @@
 
         if (this.loaded) {
             this.events.unload.dispatch(this);
+            this.loaded = false;
         }
 
-        this.workspace.varManager.removeInstance(this.id);
         this.contextManager = null;
         this.logManager.close();
-        this.logManager = null;
     };
 
     Wirecloud.IWidget = IWidget;
+
 })();

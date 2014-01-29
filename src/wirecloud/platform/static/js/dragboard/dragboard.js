@@ -316,12 +316,6 @@
             });
         };
 
-        Dragboard.prototype.removeInstance = function removeInstance(iWidgetId, orderFromServer) {
-            var iwidget = this.iWidgets[iWidgetId];
-
-            iwidget.remove(orderFromServer);
-        };
-
         Dragboard.prototype.getIWidgets = function getIWidgets() {
             return Wirecloud.Utils.values(this.iWidgets);
         };

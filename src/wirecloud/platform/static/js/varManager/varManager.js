@@ -130,13 +130,6 @@ function VarManager (_workspace) {
         this.parseIWidgetVariables(iwidgetInfo, tab, iWidget);
     };
 
-    VarManager.prototype.removeInstance = function (iWidgetId) {
-        delete this.iWidgets[iWidgetId];
-
-        this.removeIWidgetVariables(iWidgetId);
-    }
-
-
     VarManager.prototype.removeIWidgetVariables = function (iWidgetId) {
         var i, variable_id, variable;
 
@@ -271,6 +264,12 @@ function VarManager (_workspace) {
     this.workspace = _workspace;
     this.iWidgets = {};
     this.variables = {};
+
+    this.workspace.addEventListener('iwidgetremoved', function (iwidget) {
+        delete this.iWidgets[iwidget.id];
+
+        this.removeIWidgetVariables(iwidget.id);
+    }.bind(this));
 
     // For now workspace variables must be in a separated hash table, because they have a
     // different identifier space and can collide with the idenfiers of normal variables

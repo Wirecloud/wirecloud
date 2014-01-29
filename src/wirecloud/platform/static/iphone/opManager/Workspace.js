@@ -90,7 +90,11 @@ function Workspace(workspaceState, resources) {
             this.alternatives = null;
         }
         this.tabInstances = [];
-        this.wiring.destroy();
+        this.varManager = null;
+        if (this.wiring != null) {
+            this.wiring.destroy();
+            this.wiring = null;
+        }
         OpManagerFactory.getInstance().globalDragboard.clear();
         this.tabsContainerElement = null;
         this.layout.destroy();
@@ -296,7 +300,6 @@ function Workspace(workspaceState, resources) {
     Object.defineProperty(this, 'resources', {value: resources});
     Object.defineProperty(this, 'owned', {value: workspaceState.owned});
     this.workspaceState = workspaceState;
-    this.varManager = null;
     this.tabInstances = [];
     this.wiring = null;
     this.varManager = null;

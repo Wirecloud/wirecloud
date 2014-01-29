@@ -60,7 +60,7 @@
     };
 
     var uninstallOrDeleteSuccessCallback = function uninstallOrDeleteSuccessCallback(transport) {
-        var layoutManager, result, opManager, i, widgetId;
+        var layoutManager, result, opManager, i, iwidget;
 
         switch (this.resource.type) {
         case 'widget':
@@ -70,8 +70,9 @@
             layoutManager.logSubTask(gettext('Removing affected iWidgets'));
             opManager = OpManagerFactory.getInstance();
             for (i = 0; i < result.removedIWidgets.length; i += 1) {
-                if (Wirecloud.activeWorkspace.getIWidget(result.removedIWidgets[i]) != null) {
-                    opManager.removeInstance(result.removedIWidgets[i], true);
+                iwidget = Wirecloud.activeWorkspace.getIWidget(result.removedIWidgets[i]);
+                if (iwidget != null) {
+                    iwidget.remove(true);
                 }
             }
 

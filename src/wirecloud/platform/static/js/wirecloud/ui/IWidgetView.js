@@ -37,12 +37,12 @@
 
                 button.addEventListener("click",
                     function () {
-                        OpManagerFactory.getInstance().removeInstance(iwidget.id);
-                    }.bind(this));
+                        iwidget.remove();
+                    });
 
                 tmp.closebutton = button;
                 return button;
-            }.bind(iwidget),
+            },
             'errorbutton': function () {
                 var button = new StyledElements.StyledButton({
                     'plain': true,

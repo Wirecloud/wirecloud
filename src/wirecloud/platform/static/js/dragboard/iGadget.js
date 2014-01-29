@@ -93,6 +93,8 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
             variables: variables
         }
     );
+    this._iwidget_removed = this._iwidget_removed.bind(this);
+    this.internal_iwidget.addEventListener('removed', this._iwidget_removed);
     this._updateErrorInfo = this._updateErrorInfo.bind(this);
     this.internal_iwidget.logManager.addEventListener('newentry', this._updateErrorInfo);
     Object.defineProperties(this, {
@@ -608,30 +610,10 @@ IWidget.prototype.remove = function (orderFromServer) {
         return;
     }
 
-    this.log(gettext('iWidget deleted'), Constants.Logging.INFO_MSG);
-
-    var dragboard = this.layout.dragboard;
-    if (Wirecloud.Utils.XML.isElement(this.element.parentNode)) {
-        this.layout.removeIWidget(this, true);
-    }
-
-    this.element = null;
-
     if (!orderFromServer) {
-        var onError = function (transport, e) {
-            Wirecloud.GlobalLogManager.formatAndLog(gettext("Error removing iwidget from persistence: %(errorMsg)s."), transport, e);
-        };
-
-        var uri = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-            workspace_id: dragboard.workspace.id,
-            tab_id: dragboard.tab.id,
-            iwidget_id: this.id
-        });
-        Wirecloud.io.makeRequest(uri, {
-            method: 'DELETE',
-            requestHeaders: {'Accept': 'application/json'},
-            onFailure: onError.bind(this)
-        });
+        this.internal_iwidget.remove();
+    } else {
+        this._iwidget_removed();
     }
 };
 
@@ -995,6 +977,18 @@ IWidget.prototype._updateErrorInfo = function _updateErrorInfo() {
     label = ngettext("%(errorCount)s error", "%(errorCount)s errors", errorCount);
     label = interpolate(label, {errorCount: errorCount}, true);
     this.errorButton.setTitle(label);
+};
+
+/**
+ * @private
+ */
+IWidget.prototype._iwidget_removed = function _iwidget_removed() {
+    var dragboard = this.layout.dragboard;
+    if (Wirecloud.Utils.XML.isElement(this.element.parentNode)) {
+        this.layout.removeIWidget(this, true);
+    }
+
+    this.element = null;
 };
 
 /**

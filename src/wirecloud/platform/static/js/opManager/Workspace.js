@@ -125,6 +125,7 @@ function Workspace(workspaceState, resources) {
             this.wiring = new Wirecloud.Wiring(this);
             iwidgets = this.getIWidgets();
             for (i = 0; i < iwidgets.length; i += 1) {
+                iwidgets[i].internal_iwidget.addEventListener('removed', this._iwidget_removed);
                 this.events.iwidgetadded.dispatch(this, iwidgets[i].internal_iwidget);
             }
 
@@ -281,6 +282,15 @@ function Workspace(workspaceState, resources) {
 
     var createTabError = function(transport, e) {
         Wirecloud.GlobalLogManager.formatAndLog(gettext("Error creating a tab: %(errorMsg)s."), transport, e);
+    };
+
+    var iwidget_removed = function iwidget_removed(iwidget) {
+        this.events.iwidgetremoved.dispatch(this, iwidget);
+
+        // emptyWorkspaceInfoBox
+        if (this.getIWidgets().length == 0) {
+            this.emptyWorkspaceInfoBox.classList.remove('hidden');
+        }
     };
 
     // ****************
@@ -562,6 +572,8 @@ function Workspace(workspaceState, resources) {
             this.preferences = null;
         }
 
+        this.varManager = null;
+
         if (this.wiring !== null) {
             this.wiring.destroy();
             this.wiring = null;
@@ -579,31 +591,13 @@ function Workspace(workspaceState, resources) {
         this.emptyWorkspaceInfoBox.classList.add('hidden');
 
         this.varManager.addInstance(iwidget, iwidgetJSON, tab);
+        iwidget.internal_iwidget.addEventListener('removed', this._iwidget_removed);
         this.events.iwidgetadded.dispatch(this, iwidget.internal_iwidget);
 
         options.setDefaultValues.call(this, iwidget.id);
 
         iwidget.paint();
     };
-
-    Workspace.prototype.removeIWidget = function(iWidgetId, orderFromServer) {
-
-        var iwidget = this.getIWidget(iWidgetId);
-        if (iwidget == null) {
-            throw new TypeError();
-        }
-
-        var dragboard = iwidget.layout.dragboard;
-        dragboard.removeInstance(iWidgetId, orderFromServer); // TODO split into hideInstance and removeInstance
-        this.events.iwidgetremoved.dispatch(this, iwidget.internal_iwidget);
-
-        iwidget.destroy();
-
-        // emptyWorkspaceInfoBox
-        if (this.getIWidgets().length == 0) {
-            this.emptyWorkspaceInfoBox.classList.remove('hidden');
-        }
-    }
 
     Workspace.prototype.getIWidgets = function() {
         var iWidgets = [];
@@ -722,6 +716,7 @@ function Workspace(workspaceState, resources) {
     Object.defineProperty(this, 'id', {value: workspaceState.id});
     Object.defineProperty(this, 'resources', {value: resources});
     Object.defineProperty(this, 'owned', {value: workspaceState.owned});
+    Object.defineProperty(this, '_iwidget_removed', {value: iwidget_removed.bind(this)});
     this.workspaceState = workspaceState;
     this.varManager = null;
     this.tabInstances = {};

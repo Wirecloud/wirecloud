@@ -192,13 +192,6 @@ var OpManagerFactory = function () {
             Wirecloud.activeWorkspace.getVisibleTab().getDragboard().addInstance(widget, options);
         };
 
-        OpManager.prototype.removeInstance = function (iWidgetId, orderFromServer) {
-            if (!this.loadCompleted)
-                return;
-
-            Wirecloud.activeWorkspace.removeIWidget(iWidgetId, orderFromServer);
-        }
-
         OpManager.prototype.checkForWidgetUpdates = function () {
             Wirecloud.activeWorkspace.checkForWidgetUpdates();
         }
