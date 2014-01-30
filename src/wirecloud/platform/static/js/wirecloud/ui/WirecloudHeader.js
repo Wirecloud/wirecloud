@@ -88,10 +88,10 @@
             this.menu.innerHTML = '';
 
             login_button = new StyledElements.StyledButton({
-                text: gettext('Log in')
+                text: gettext('Sign in')
             });
             login_button.addEventListener('click', function () {
-                window.location = Wirecloud.URLs.LOGIN_VIEW;
+                window.location = Wirecloud.URLs.LOGIN_VIEW + '?next=' + encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
             });
             login_button.insertInto(this.menu);
         } else {

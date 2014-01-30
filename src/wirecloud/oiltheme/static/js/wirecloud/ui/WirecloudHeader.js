@@ -129,7 +129,7 @@
             this.menu.innerHTML = '';
 
             user_menu.append(new StyledElements.MenuItem(gettext('Sign in'), function () {
-                window.location = Wirecloud.URLs.LOGIN_VIEW;
+                window.location = Wirecloud.URLs.LOGIN_VIEW + '?next=' + encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
             }));
         } else {
             user_menu.append(new StyledElements.MenuItem(gettext('Sign out'), function () {

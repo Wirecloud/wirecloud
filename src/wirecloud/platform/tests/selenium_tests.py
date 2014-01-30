@@ -651,6 +651,18 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.check_public_workspace()
 
+        self.driver.find_element_by_css_selector('#wirecloud_header .user_menu_wrapper .styled_button > div, #wirecloud_header .arrow-down-settings').click()
+        self.popup_menu_click('Sign in')
+
+        username_input = self.wait_element_visible_by_css_selector('#id_username')
+        self.fill_form_input(username_input, 'user_with_workspaces')
+        password_input = self.driver.find_element_by_id('id_password')
+        self.fill_form_input(password_input, 'admin')
+        password_input.submit()
+
+        self.wait_wirecloud_ready()
+        self.assertEqual(self.get_current_workspace_name(), 'Public Workspace')
+
     def check_public_workspace(self):
         # Check iwidget are loaded correctly
         iwidgets = self.get_current_iwidgets()
