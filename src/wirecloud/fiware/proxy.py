@@ -19,6 +19,9 @@
 
 from cStringIO import StringIO
 
+from wirecloud.fiware.plugins import IDM_SUPPORT_ENABLED
+from wirecloud.proxy.utils import ValidationError
+
 
 class IDMTokenProcessor(object):
 
@@ -26,6 +29,9 @@ class IDMTokenProcessor(object):
 
         if 'x-fi-ware-oauth-token' not in request['headers']:
             return
+
+        if not IDM_SUPPORT_ENABLED:
+            raise ValidationError(_('IDM support not enabled'))
 
         header_name = None
         token = request['user'].social_auth.filter(provider='fiware').select_related('tokens').get().tokens['access_token']

@@ -25,9 +25,10 @@ from django.test import Client
 from django.utils import unittest
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
+from wirecloud.fiware.plugins import IDM_SUPPORT_ENABLED
 
 
-@unittest.skipIf(not ('wirecloud.fiware' in settings.INSTALLED_APPS and 'social_auth' in settings.INSTALLED_APPS), 'FI-WARE IdM support not available')
+@unittest.skipIf(not IDM_SUPPORT_ENABLED, 'FI-WARE IdM support not available')
 class ProxyTestCase(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'fiware_proxy_test_data')

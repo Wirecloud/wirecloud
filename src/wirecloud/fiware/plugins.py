@@ -17,8 +17,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.utils.translation import ugettext_lazy as _
+from social_auth.backends import get_backends
 
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.platform.markets.utils import MarketManager
@@ -27,6 +29,9 @@ from wirecloud.platform.plugins import WirecloudPlugin, build_url_template
 import wirecloud.fiware
 from wirecloud.fiware.marketAdaptor.marketadaptor import MarketAdaptor
 from wirecloud.fiware.marketAdaptor.views import get_market_adaptor, get_market_user_data
+
+
+IDM_SUPPORT_ENABLED = 'wirecloud.fiware' in settings.INSTALLED_APPS and 'social_auth' in settings.INSTALLED_APPS and 'fiware' in get_backends()
 
 
 class FiWareMarketManager(MarketManager):
