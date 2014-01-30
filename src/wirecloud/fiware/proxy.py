@@ -34,7 +34,7 @@ class IDMTokenProcessor(object):
             raise ValidationError(_('IDM support not enabled'))
 
         header_name = None
-        token = request['user'].social_auth.filter(provider='fiware').select_related('tokens').get().tokens['access_token']
+        token = request['user'].social_auth.filter(provider='fiware').get().tokens['access_token']
 
         if 'x-fi-ware-oauth-header-name' in request['headers']:
             header_name = request['headers']['x-fi-ware-oauth-header-name']
