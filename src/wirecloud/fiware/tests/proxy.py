@@ -32,7 +32,7 @@ from wirecloud.fiware.plugins import IDM_SUPPORT_ENABLED
 class ProxyTestCase(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'fiware_proxy_test_data')
-    tags = ('proxy-fiware',)
+    tags = ('fiware-proxy',)
 
     def read_response(self, response):
 
