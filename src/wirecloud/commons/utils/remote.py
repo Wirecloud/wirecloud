@@ -291,6 +291,11 @@ class RemoteTestCase(object):
             iwidget_ids = self.driver.execute_script('return Wirecloud.activeWorkspace.getTab(arguments[0]).getIWidgets().map(function(iwidget) {return iwidget.id;});', tab)
             iwidget_elements = self.driver.execute_script('return Wirecloud.activeWorkspace.getTab(arguments[0]).getIWidgets().map(function(iwidget) {return iwidget.internal_iwidget.loaded ? iwidget.element : null;});', tab)
 
+        # Work around race condition reading iwidget ids and elements
+        if len(iwidget_ids) != len(iwidget_elements):
+            time.sleep(0.1)
+            return self.get_current_iwidgets(self, tab)
+
         return [IWidgetTester(self, iwidget_ids[i], iwidget_elements[i]) for i in range(len(iwidget_ids))]
 
 
