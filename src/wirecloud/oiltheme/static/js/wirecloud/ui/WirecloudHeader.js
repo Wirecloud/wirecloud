@@ -78,7 +78,7 @@
     };
 
     WirecloudHeader.prototype._initUserMenu = function _initUserMenu() {
-        var user_menu, wrapper;
+        var user_menu, wrapper, login_button, item;
 
         var username = Wirecloud.contextManager.get('username');
         var full_name = Wirecloud.contextManager.get('fullname').trim();
@@ -112,39 +112,51 @@
         this.user_button.insertInto(wrapper);
 
         user_menu = this.user_button.getPopupMenu();
-        user_menu.append(new StyledElements.MenuItem(gettext('Settings'), OpManagerFactory.getInstance().showPlatformPreferences));
+        item = new StyledElements.MenuItem(gettext('Settings'), OpManagerFactory.getInstance().showPlatformPreferences);
+        user_menu.append(item);
+        item.setDisabled(username === 'anonymous');
 
         if (Wirecloud.contextManager.get('isstaff') === true && 'DJANGO_ADMIN' in Wirecloud.URLs) {
             user_menu.append(new StyledElements.MenuItem(gettext('DJango Admin panel'), function () {
                 window.open(Wirecloud.URLs.DJANGO_ADMIN, '_blank');
             }));
         }
-        user_menu.append(new Wirecloud.ui.TutorialSubMenu());
+        item = new Wirecloud.ui.TutorialSubMenu();
+        user_menu.append(item);
+        item.setDisabled(username === 'anonymous');
         user_menu.append(new StyledElements.Separator());
-        user_menu.append(new StyledElements.MenuItem(gettext('Sign out'), function () {
-            var portal_logout_urls = [
-                'http://cloud.lab.fi-ware.eu/logout',
-                'https://store.lab.fi-ware.eu/logout',
-                'https://mashup.lab.fi-ware.eu/logout',
-                'https://account.lab.fi-ware.eu/users/sign_out'
-            ];
-            var counter = portal_logout_urls.length;
-            for (var i = 0; i < portal_logout_urls.length; i += 1) {
-                Wirecloud.io.makeRequest(portal_logout_urls[i], {
-                    method: 'GET',
-                    supportsAccessControl: true,
-                    withCredentials: true,
-                    requestHeaders: {
-                        'X-Requested-With': null
-                    },
-                    onComplete: function () {
-                        if (--counter === 0) {
-                            window.location = 'http://lab.fi-ware.eu';
+        if (username === 'anonymous') {
+            this.menu.innerHTML = '';
+
+            user_menu.append(new StyledElements.MenuItem(gettext('Sign in'), function () {
+                window.location = Wirecloud.URLs.LOGIN_VIEW;
+            }));
+        } else {
+            user_menu.append(new StyledElements.MenuItem(gettext('Sign out'), function () {
+                var portal_logout_urls = [
+                    'http://cloud.lab.fi-ware.eu/logout',
+                    'https://store.lab.fi-ware.eu/logout',
+                    'https://mashup.lab.fi-ware.eu/logout',
+                    'https://account.lab.fi-ware.eu/users/sign_out'
+                ];
+                var counter = portal_logout_urls.length;
+                for (var i = 0; i < portal_logout_urls.length; i += 1) {
+                    Wirecloud.io.makeRequest(portal_logout_urls[i], {
+                        method: 'GET',
+                        supportsAccessControl: true,
+                        withCredentials: true,
+                        requestHeaders: {
+                            'X-Requested-With': null
+                        },
+                        onComplete: function () {
+                            if (--counter === 0) {
+                                window.location = 'http://lab.fi-ware.eu';
+                            }
                         }
-                    }
-                });
-            }
-        }));
+                    });
+                }
+            }));
+        }
     };
 
     WirecloudHeader.prototype._clearOldBreadcrum = function _clearOldBreadcrum() {
@@ -196,7 +208,7 @@
                 breadcrum_part.classList.add(breadcrum_entry['class']);
             }
 
-            if ('menu' in breadcrum_entry) {
+            if (breadcrum_entry.menu != null) {
                 button = new StyledElements.PopupButton({
                     'plain': true,
                     'class': 'icon-menu',
