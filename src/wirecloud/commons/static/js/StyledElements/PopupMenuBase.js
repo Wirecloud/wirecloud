@@ -75,6 +75,12 @@
             child.addEventListener('click', this._menuItemCallback);
             child.addEventListener('mouseover', this._menuItemEnterCallback);
             child._setParentPopupMenu(this);
+        } else if (child instanceof StyledElements.DynamicMenuItems || child instanceof StyledElements.Separator) {
+            // nothing to do
+        } else if (child != null) {
+            throw new TypeError('Invalid chlid element');
+        } else {
+            throw new TypeError('The new child element is null');
         }
         where.push(child);
     };
