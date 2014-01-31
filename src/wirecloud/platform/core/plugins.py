@@ -229,11 +229,16 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'label': _('Name'),
                 'description': _('Current name of the workspace'),
             },
+            'owner': {
+                'label': _('Owner'),
+                'description': _("Workspace's owner username"),
+            }
         }
 
     def get_workspace_context_current_values(self, workspace, user):
         return {
-            'name': workspace.name
+            'name': workspace.name,
+            'owner': workspace.creator.username,
         }
 
     def get_scripts(self, view):

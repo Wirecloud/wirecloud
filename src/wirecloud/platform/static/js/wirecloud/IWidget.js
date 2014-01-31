@@ -133,7 +133,7 @@
         };
         this.contextManager = new Wirecloud.ContextManager(this, {
             'title': {
-                label: gettext("Widget's title"),
+                label: gettext("Title"),
                 description: gettext("Widget's title"),
                 value: options.name
             },
@@ -148,23 +148,23 @@
                 value: 0
             },
             'height': {
-                label: gettext("Widget height"),
-                description: gettext("Widget height in layout cells"),
+                label: gettext("Height"),
+                description: gettext("Widget's height in layout cells"),
                 value: 0
             },
             'width': {
-                label: gettext("Widget width"),
-                description: gettext("Widget width in layout cells"),
+                label: gettext("Width"),
+                description: gettext("Widget's width in layout cells"),
                 value: 0
             },
             'heightInPixels': {
-                label: gettext("Widget height in pixels"),
-                description: gettext("Widget height in pixels"),
+                label: gettext("Height in pixels"),
+                description: gettext("Widget's height in pixels"),
                 value: 0
             },
             'widthInPixels': {
-                label: gettext("Widget width in pixels"),
-                description: gettext("Widget width in pixels"),
+                label: gettext("Width in pixels"),
+                description: gettext("Widget's width in pixels"),
                 value: 0
             }
         });
