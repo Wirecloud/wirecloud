@@ -26,7 +26,6 @@ from wirecloud.platform.markets.utils import MarketManager
 from wirecloud.platform.plugins import WirecloudPlugin, build_url_template
 
 import wirecloud.fiware
-from wirecloud.fiware.marketAdaptor.marketadaptor import MarketAdaptor
 from wirecloud.fiware.marketAdaptor.views import get_market_adaptor, get_market_user_data
 
 try:
@@ -138,7 +137,7 @@ class FiWarePlugin(WirecloudPlugin):
 
     def get_urls(self):
             return patterns('',
-                (r'^api/marketAdaptor/', include('wirecloud.fiware.marketAdaptor.urls')),
+                url(r'^api/marketAdaptor/', include('wirecloud.fiware.marketAdaptor.urls')),
             )
 
     def get_platform_context_definitions(self):
