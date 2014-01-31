@@ -294,7 +294,7 @@ class RemoteTestCase(object):
         # Work around race condition reading iwidget ids and elements
         if len(iwidget_ids) != len(iwidget_elements):
             time.sleep(0.1)
-            return self.get_current_iwidgets(self, tab)
+            return self.get_current_iwidgets(tab)
 
         return [IWidgetTester(self, iwidget_ids[i], iwidget_elements[i]) for i in range(len(iwidget_ids))]
 
