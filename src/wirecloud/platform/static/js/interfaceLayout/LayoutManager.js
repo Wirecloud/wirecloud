@@ -204,9 +204,6 @@ var LayoutManagerFactory = function () {
             layoutManager.timeout = setTimeout(fadder, 50);
         }
 
-        LayoutManager.prototype.resizeContainer = function (container) {
-        }
-
         LayoutManager.prototype.resizeWrapper = function () {
             this.mainLayout.repaint();
 
@@ -306,13 +303,6 @@ var LayoutManagerFactory = function () {
             this.coverLayerElement.classList.remove('in');
             this.coverLayerElement.style.display = "none";
         }
-
-        LayoutManager.prototype.FADE_TAB_INI = "#F0E68C";
-        LayoutManager.prototype.FADE_TAB_CUR_END = "#E0E0E0";
-        LayoutManager.prototype.FADE_TAB_END = "#97A0A8";
-        LayoutManager.prototype.IDENTIFIER_WIDTH = 550;
-        LayoutManager.prototype.SLIDER_WIDTH = 30;
-
 
     // *********************************
     // SINGLETON GET INSTANCE
