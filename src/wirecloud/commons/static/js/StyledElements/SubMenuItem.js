@@ -67,6 +67,18 @@
         }
     };
 
+    SubMenuItem.prototype.enable = function enable() {
+        this.menuItem.enable();
+    };
+
+    SubMenuItem.prototype.disable = function disable() {
+        this.menuItem.disable();
+    };
+
+    SubMenuItem.prototype.setDisabled = function setDisabled(disabled) {
+        this.menuItem.setDisabled(disabled);
+    };
+
     SubMenuItem.prototype.destroy = function destroy() {
         if (this.menuItem) {
             this.menuItem.destroy();
