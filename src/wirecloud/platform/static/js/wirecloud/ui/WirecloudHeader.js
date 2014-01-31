@@ -87,13 +87,17 @@
         if (user_name === 'anonymous') {
             this.menu.innerHTML = '';
 
+            wrapper = document.createElement('div');
+            wrapper.className = 'user_menu_wrapper';
+            this.menu.appendChild(wrapper);
+
             login_button = new StyledElements.StyledButton({
                 text: gettext('Sign in')
             });
             login_button.addEventListener('click', function () {
                 window.location = Wirecloud.URLs.LOGIN_VIEW + '?next=' + encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
             });
-            login_button.insertInto(this.menu);
+            login_button.insertInto(wrapper);
         } else {
 
             wrapper = document.createElement('div');
