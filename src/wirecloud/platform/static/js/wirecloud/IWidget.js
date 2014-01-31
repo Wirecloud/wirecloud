@@ -27,7 +27,7 @@
 
     var renameSuccess = function renameSuccess(options, old_name, new_name, response) {
         this.name = new_name;
-        this.contextManager.modify({name: new_name});
+        this.contextManager.modify({title: new_name});
 
         var msg = gettext("Name changed from \"%(oldName)s\" to \"%(newName)s\" succesfully");
         msg = interpolate(msg, {oldName: old_name, newName: new_name}, true);
