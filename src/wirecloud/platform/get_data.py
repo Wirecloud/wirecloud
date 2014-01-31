@@ -207,11 +207,6 @@ class VariableValueCacheManager():
 
         return self.values
 
-    def get_variable_value_from_var(self, variable):
-        values = self.get_variable_values()
-        entry = values['by_varid'][variable.id]
-        return self._process_entry(entry)
-
     def get_variable_value_from_varname(self, iwidget, var_name):
 
         if 'id' in iwidget:
