@@ -20,7 +20,7 @@
 from hashlib import sha1
 import json
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import get_language, ugettext_lazy as _
 
 import wirecloud.platform
 from wirecloud.platform.core.catalogue_manager import WirecloudCatalogueManager
@@ -212,7 +212,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             fullname = _('Anonymous')
 
         return {
-            'language': 'es',
+            'language': get_language(),
             'orientation': 'landscape',
             'username': username,
             'fullname': fullname,
