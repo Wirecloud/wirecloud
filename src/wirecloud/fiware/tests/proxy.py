@@ -19,13 +19,15 @@
 
 import json
 
-from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.test import Client
 from django.utils import unittest
 
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.fiware.plugins import IDM_SUPPORT_ENABLED
+
+
+TEST_TOKEN = 'yLCdDImTd6V5xegxyaQjBvC8ENRziFchYKXN0ur1y__uQ2ig3uIEaP6nJ0WxiRWGyCKquPQQmTIlhhYCMQWPXg'
 
 
 @unittest.skipIf(not IDM_SUPPORT_ENABLED, 'FI-WARE IdM support not available')
@@ -41,7 +43,7 @@ class ProxyTestCase(WirecloudTestCase):
         else:
             return response.content
 
-    def test_fiware_idm_processor(self):
+    def test_fiware_idm_processor_header(self):
 
         def echo_headers_response(method, url, *args, **kwargs):
             body = json.dumps(kwargs['headers'])
@@ -66,4 +68,23 @@ class ProxyTestCase(WirecloudTestCase):
         self.assertEqual(response.status_code, 200)
         headers = json.loads(self.read_response(response))
         self.assertIn('X-Auth-Token', headers)
-        self.assertEqual(headers['X-Auth-Token'], 'yLCdDImTd6V5xegxyaQjBvC8ENRziFchYKXN0ur1y__uQ2ig3uIEaP6nJ0WxiRWGyCKquPQQmTIlhhYCMQWPXg')
+        self.assertEqual(headers['X-Auth-Token'], TEST_TOKEN)
+
+    def test_fiware_idm_processor_body(self):
+
+        def echo_response(method, url, *args, **kwargs):
+            return {'content': kwargs['data']}
+
+        self.network._servers['http']['example.com'].add_response('POST', '/path', echo_response)
+        url = reverse('wirecloud|proxy', kwargs={'protocol': 'http', 'domain': 'example.com', 'path': '/path'})
+
+        client = Client()
+        client.login(username='admin', password='admin')
+        response = client.post(url, data='{"token": "%token%"}', content_type='application/json',
+                HTTP_HOST='localhost',
+                HTTP_REFERER='http://localhost/user/workspace',
+                HTTP_X_FI_WARE_OAUTH_TOKEN='true',
+                HTTP_X_FI_WARE_OAUTH_TOKEN_BODY_PATTERN='%token%')
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(self.read_response(response))
+        self.assertEqual(data['token'], TEST_TOKEN)
