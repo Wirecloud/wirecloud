@@ -1,3 +1,5 @@
+/*global MashupPlatform, StyledElements */
+
 (function () {
 
     "use strict";
@@ -19,8 +21,9 @@
 
         title = document.createElement('div');
         title.className = 'title';
-        title.textContent = concept;
+        title.textContent = concept.label + ' [' + concept.name + ']';
         this.wrapperElement.appendChild(title);
+        title.title = concept.description;
 
         content = document.createElement('div');
         content.className = 'content';
@@ -31,31 +34,32 @@
     ContextTester.prototype = new StyledElements.StyledElement();
 
     var MashupContextTester = function MashupContextTester(concept) {
-        ContextTester.call(this, concept, MashupPlatform.mashup.context.get(concept));
+        ContextTester.call(this, concept, MashupPlatform.mashup.context.get(concept.name));
     };
     MashupContextTester.prototype = new ContextTester();
 
     var PlatformContextTester = function PlatformContextTester(concept) {
-        ContextTester.call(this, concept, MashupPlatform.context.get(concept));
+        ContextTester.call(this, concept, MashupPlatform.context.get(concept.name));
     };
     PlatformContextTester.prototype = new ContextTester();
 
     var WidgetContextTester = function WidgetContextTester(concept) {
-        ContextTester.call(this, concept, MashupPlatform.widget.context.get(concept));
+        ContextTester.call(this, concept, MashupPlatform.widget.context.get(concept.name));
     };
     WidgetContextTester.prototype = new ContextTester();
 
     var notebook = new StyledElements.StyledNotebook();
 
     var loadWidgetContext = function loadWidgetContext() {
-        var i, key, testers, context, container;
+        var i, key, testers, context, context_keys, container;
 
         container = notebook.createTab({name: 'Widget', closable: false});
         testers = {};
-        context = Object.getOwnPropertyNames(MashupPlatform.widget.context.getAvailableContext()).sort();
-        for (i = 0; i < context.length; i += 1) {
-            key = context[i];
-            testers[key] = new WidgetContextTester(key);
+        context = MashupPlatform.widget.context.getAvailableContext();
+        context_keys = Object.getOwnPropertyNames(context).sort();
+        for (i = 0; i < context_keys.length; i += 1) {
+            key = context_keys[i];
+            testers[key] = new WidgetContextTester(context[key]);
             container.appendChild(testers[key]);
         }
 
@@ -72,14 +76,15 @@
     };
 
     var loadMashupContext = function loadMashupContext() {
-        var i, key, testers, context, container;
+        var i, key, testers, context, context_keys, container;
 
         container = notebook.createTab({name: 'Mashup', closable: false});
         testers = {};
-        context = Object.getOwnPropertyNames(MashupPlatform.mashup.context.getAvailableContext()).sort();
-        for (i = 0; i < context.length; i += 1) {
-            key = context[i];
-            testers[key] = new MashupContextTester(key);
+        context = MashupPlatform.mashup.context.getAvailableContext();
+        context_keys = Object.getOwnPropertyNames(context).sort();
+        for (i = 0; i < context_keys.length; i += 1) {
+            key = context_keys[i];
+            testers[key] = new MashupContextTester(context[key]);
             container.appendChild(testers[key]);
         }
 
@@ -92,14 +97,15 @@
     };
 
     var loadPlatformContext = function loadPlatformContext() {
-        var i, key, testers, context, container;
+        var i, key, testers, context, context_keys, container;
 
         container = notebook.createTab({name: 'Platform', closable: false});
         testers = {};
-        context = Object.getOwnPropertyNames(MashupPlatform.context.getAvailableContext()).sort();
-        for (i = 0; i < context.length; i += 1) {
-            key = context[i];
-            testers[key] = new PlatformContextTester(key);
+        context = MashupPlatform.context.getAvailableContext();
+        context_keys = Object.getOwnPropertyNames(context).sort();
+        for (i = 0; i < context_keys.length; i += 1) {
+            key = context_keys[i];
+            testers[key] = new PlatformContextTester(context[key]);
             container.appendChild(testers[key]);
         }
 
