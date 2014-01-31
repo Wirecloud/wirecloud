@@ -19,6 +19,8 @@
 
 from cStringIO import StringIO
 
+from django.utils.translation import ugettext as _
+
 from wirecloud.fiware.plugins import IDM_SUPPORT_ENABLED
 from wirecloud.proxy.utils import ValidationError
 
