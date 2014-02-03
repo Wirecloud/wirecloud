@@ -178,6 +178,10 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         button = arbitrary_offering.find_element_by_css_selector('.mainbutton')
         self.assertEqual(button.text, 'Details')
 
+        pack_offering = self.search_in_catalogue_results('MultimediaPack')
+        button = pack_offering.find_element_by_css_selector('.mainbutton')
+        self.assertEqual(button.text, 'Details')
+
     def test_marketplace_offering_list_when_store_down(self):
 
         response_text = read_response_file('responses', 'marketplace', 'keyword_search.xml')
@@ -204,6 +208,11 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
             # Smart City Lights application comes from store1 that is currently down
             complex_price_offering = self.search_in_catalogue_results('Smart City Lights application')
             button = complex_price_offering.find_element_by_css_selector('.mainbutton')
+            self.assertEqual(button.text, 'Details')
+
+            # MultimediaPack comes from store1 that is currently down
+            pack_offering = self.search_in_catalogue_results('MultimediaPack')
+            button = pack_offering.find_element_by_css_selector('.mainbutton')
             self.assertEqual(button.text, 'Details')
         finally:
             self.network._servers['http']['store.example.com'] = old_store
