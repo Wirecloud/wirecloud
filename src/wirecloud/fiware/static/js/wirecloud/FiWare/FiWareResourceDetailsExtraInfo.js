@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -20,7 +20,7 @@
  */
 
 /*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global alert, Constants, document, gettext, interpolate, LayoutManagerFactory, Template */
+/*global alert, Constants, document, gettext, interpolate, LayoutManagerFactory */
 "use strict";
 
 var PartsPainter = function(part_structure_element, dom_element){
