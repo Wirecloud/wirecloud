@@ -1,3 +1,24 @@
+/*
+ *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *     This file is part of Wirecloud Platform.
+ *
+ *     Wirecloud Platform is free software: you can redistribute it and/or
+ *     modify it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
+ *
+ *     Wirecloud is distributed in the hope that it will be useful, but WITHOUT
+ *     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+ *     License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with Wirecloud Platform.  If not, see
+ *     <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /*global gettext, LayoutManagerFactory, StyledElements, Wirecloud*/
 
 (function () {
@@ -14,18 +35,24 @@
     };
 
     var install = function install(url, catalogue, store, button) {
-        var layoutManager, local_catalogue_view;
+        var layoutManager, local_catalogue_view, market_id;
 
         local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
         layoutManager = LayoutManagerFactory.getInstance();
         layoutManager._startComplexTask(gettext("Importing resource into local repository"), 3);
         layoutManager.logSubTask(gettext('Uploading resource'));
 
+        if (catalogue.market_user !== 'public') {
+            market_id = catalogue.market_user + '/' + catalogue.market_name;
+        } else {
+            market_id = catalogue.market_name;
+        }
+
         local_catalogue_view.catalogue.addResourceFromURL(url, {
             packaged: true,
             forceCreate: true,
             market_info: {
-                name: catalogue.market_name,
+                name: market_id,
                 store: store
             },
             onSuccess: function () {
@@ -56,12 +83,14 @@
         var i, resource, wrapper, li, button;
 
         wrapper = document.createElement('ul');
+        wrapper.className = 'offering_resource_list';
         dom_element.appendChild(wrapper);
 
         for (i = 0; i < offering.resources.length; i += 1) {
             resource = offering.resources[i];
 
             li = document.createElement('li');
+            li.className = 'offering_resource';
             li.textContent = resource.name;
             if ('url' in resource) {
                 if (is_mac_mimetype(resource.content_type)) {

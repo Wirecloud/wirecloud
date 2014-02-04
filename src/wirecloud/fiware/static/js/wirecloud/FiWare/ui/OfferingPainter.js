@@ -19,7 +19,7 @@
  *
  */
 
-/*global document, LayoutManagerFactory, gettext, interpolate, StyledElements, Wirecloud */
+/*global LayoutManagerFactory, gettext, StyledElements, Wirecloud */
 
 (function () {
 
@@ -45,7 +45,7 @@
         layoutManager._startComplexTask(gettext("Importing resource into local repository"), 3);
         layoutManager.logSubTask(gettext('Uploading resource'));
 
-        if (catalogue_view.catalogue.market_name !== 'public') {
+        if (catalogue_view.catalogue.market_user !== 'public') {
             market_id = catalogue_view.catalogue.market_user + '/' + catalogue_view.catalogue.market_name;
         } else {
             market_id = catalogue_view.catalogue.market_name;
