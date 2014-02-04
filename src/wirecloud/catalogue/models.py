@@ -34,6 +34,7 @@ from urlparse import urlparse
 
 from django.db import models
 from django.contrib.auth.models import User, Group
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from wirecloud.commons.models import TransModel
@@ -41,6 +42,7 @@ from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.template.parsers import TemplateParser
 
 
+@python_2_unicode_compatible
 class CatalogueResource(TransModel):
 
     RESOURCE_TYPES = ('widget', 'mashup', 'operator')
@@ -146,26 +148,28 @@ class CatalogueResource(TransModel):
     class Meta:
         unique_together = ("short_name", "vendor", "version")
 
-    def __unicode__(self):
-        return unicode(self.local_uri_part)
+    def __str__(self):
+        return self.local_uri_part
 
 
+@python_2_unicode_compatible
 class WidgetWiring(models.Model):
 
     friendcode = models.CharField(_('Friend code'), max_length=30, blank=True, null=True)
     wiring = models.CharField(_('Wiring'), max_length=5)
     idResource = models.ForeignKey(CatalogueResource)
 
-    def __unicode__(self):
-        return unicode(self.friendcode)
+    def __str__(self):
+        return self.friendcode
 
 
+@python_2_unicode_compatible
 class Tag(models.Model):
 
     name = models.CharField(max_length=20, unique=True)
 
-    def __unicode__(self):
-        return unicode(self.name)
+    def __str__(self):
+        return self.name
 
 
 class UserTag(models.Model):
@@ -204,6 +208,7 @@ VOTES = (
 )
 
 
+@python_2_unicode_compatible
 class UserVote(models.Model):
     """
     A vote on a CatalogueResource by a User.
@@ -216,5 +221,5 @@ class UserVote(models.Model):
         # One vote per user per object
         unique_together = (('idUser', 'idResource'),)
 
-    def __unicode__(self):
-        return u'%s: %s on %s' % (self.idUser, self.vote, self.idResource)
+    def __str__(self):
+        return '%s: %s on %s' % (self.idUser, self.vote, self.idResource)
