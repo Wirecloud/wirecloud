@@ -95,7 +95,7 @@
     };
 
     IWidgetDraggable.prototype.updateFunc = function updateFunc(event, draggable, context, xDelta, yDelta) {
-        var x, y, element = null;
+        var x, y, clientX, clientY, element = null;
 
         context.iWidget.element.style.left = (context.x + xDelta) + 'px';
         context.iWidget.element.style.top = (context.y + yDelta) + 'px';
@@ -103,8 +103,16 @@
         x = context.x + xDelta + context.xOffset;
         y = context.y + yDelta + context.yOffset;
 
+        if ('touches' in event) {
+            clientX = event.touches[0].clientX;
+            clientY = event.touches[0].clientY;
+        } else {
+            clientX = event.clientX;
+            clientY = event.clientY;
+        }
+
         // Check if the mouse is over a tab
-        element = document.elementFromPoint(event.clientX, event.clientY);
+        element = document.elementFromPoint(clientX, clientY);
         if (element != null) {
             element = findTab.call(context.tabs, element, 4);
         }
