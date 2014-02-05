@@ -26,12 +26,6 @@
 
 function Workspace(workspaceState, resources) {
 
-    Workspace.prototype._updateAddTabButton = function () {
-        if (this.addTabButton) {
-            this.addTabButton.setDisabled(!this.isAllowed('add_tab'));
-        }
-    }
-
     // ****************
     // CALLBACK METHODS
     // ****************
@@ -395,27 +389,27 @@ function Workspace(workspaceState, resources) {
         return this.varManager;
     }
 
-    Workspace.prototype.initGUI = function initGUI(initial_tab) {
+    Workspace.prototype.initGUI = function initGUI() {
+
         // TODO
-        this.addTabButton = new StyledElements.StyledButton({
-            'class': 'icon-add-tab',
-            'plain': true,
-            'title': gettext('Add a new tab')
-        });
+        if (this.isAllowed('add_tab')) {
+            this.addTabButton = new StyledElements.StyledButton({
+                'class': 'icon-add-tab',
+                'plain': true,
+                'title': gettext('Add a new tab')
+            });
+
+            this.notebook.addButton(this.addTabButton);
+            this.addTabButton.addEventListener('click', this.addTab.bind(this));
+        }
 
         this.poweredByWirecloudButton = new StyledElements.StyledButton({
             'class': 'powered-by-wirecloud'
         });
-
-        this.notebook = new StyledElements.StyledNotebook({'class': 'workspace'});
-        this.notebook.addButton(this.addTabButton);
-        this.addTabButton.addEventListener('click', this.addTab.bind(this));
         this.notebook.addButton(this.poweredByWirecloudButton);
         this.poweredByWirecloudButton.addEventListener('click', function () {window.open('http://conwet.fi.upm.es/wirecloud/', '_blank')});
-        LayoutManagerFactory.getInstance().viewsByName['workspace'].clear();
-        LayoutManagerFactory.getInstance().viewsByName['workspace'].appendChild(this.notebook);
 
-        this.initial_tab_id = initial_tab;
+        this.notebook.repaint();
     };
 
     Workspace.prototype.getIWidget = function(iwidgetId) {
@@ -699,11 +693,13 @@ function Workspace(workspaceState, resources) {
         case "catalogue_view_widgets":
             return this._isAllowed('add_remove_iwidgets');
         case "catalogue_view_mashups":
-            return this.isAllowed('add_remove_workspaces') || this.isAllowed('merge_workspaces');
+            return this.isAllowed('add_remove_workspaces') || this._isAllowed('merge_workspaces');
         case "update_preferences":
-            return this.removable && this.isAllowed('change_workspace_preferences');
+            return this.removable && this._isAllowed('change_workspace_preferences');
         case "rename":
-            return this.removable && this.isAllowed('rename_workspaces');
+            return this.removable && this._isAllowed('rename_workspaces');
+        case "add_tab":
+            return this.removable;
         default:
             return this._isAllowed(action);
         }
@@ -729,8 +725,12 @@ function Workspace(workspaceState, resources) {
 
     StyledElements.ObjectWithEvents.call(this, ['iwidgetadded', 'iwidgetremoved']);
 
-    this.initGUI();
+    this.notebook = new StyledElements.StyledNotebook({'class': 'workspace'});
+    LayoutManagerFactory.getInstance().viewsByName['workspace'].clear();
+    LayoutManagerFactory.getInstance().viewsByName['workspace'].appendChild(this.notebook);
+
     loadWorkspace.call(this);
+    this.initGUI();
 
     /*
      * OPERATIONS

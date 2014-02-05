@@ -686,6 +686,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         tab = self.get_workspace_tab_by_name('Tab')
         self.assertRaises(NoSuchElementException, tab.find_element_by_css_selector, '.icon-tab-menu')
 
+        self.assertRaises(NoSuchElementException, self.find_element_by_css_selector, '.icon-add-tab')
+
         # Check wiring works
         with source_iwidget:
             text_input = self.driver.find_element_by_tag_name('input')
