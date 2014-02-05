@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -35,15 +35,26 @@ class Workspace(models.Model):
     forcedValues = models.TextField(blank=True)
     wiringStatus = models.TextField(blank=True)
 
+    __original_public = False
+
     class Meta:
         app_label = 'platform'
         db_table = 'wirecloud_workspace'
         unique_together = ('creator', 'name')
 
-    def __unicode__(self):
-        return unicode(self.pk) + " " + unicode(self.name)
+    def __init__(self, *args, **kwargs):
+        super(Workspace, self).__init__(*args, **kwargs)
+        self.__original_public = self.public
+
+    def __str__(self):
+        return self.creator.username + '/' + self.name
 
     def save(self, *args, **kwargs):
+
+        if self.public != self.__original_public:
+            from wirecloud.platform.preferences.views import update_workspace_preferences
+            update_workspace_preferences(self, {'public': {'value': self.public}})
+            self.__original_public = self.public
 
         super(Workspace, self).save(*args, **kwargs)
 

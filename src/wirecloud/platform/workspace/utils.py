@@ -157,7 +157,7 @@ def get_workspace_list(user):
 
     if not user.is_authenticated():
         workspaces = Workspace.objects.filter(public=True)
-        return workspaces, workspaces[0], False
+        return workspaces, None, False
 
     reload_showcase = sync_base_workspaces(user)
 

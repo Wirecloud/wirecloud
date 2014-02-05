@@ -47,6 +47,12 @@
 
         // Workspace preferences
         var workspacePreferences = {
+            "public": {
+                "defaultValue":  false,
+                "label":         gettext("Public"),
+                "type":          "boolean",
+                "description":   gettext("Allows other users to open this workspace (in read-only mode). (default: disabled)")
+            },
             "layout": {
                 "defaultValue":  "Fixed",
                 "label":         gettext("Default grid layout"),

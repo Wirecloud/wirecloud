@@ -204,7 +204,13 @@ class WorkspacePreferencesCollection(Resource):
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
+        if 'public' in preferences_json:
+            workspace.public = preferences_json['public']['value']
+            workspace.save()
+            del preferences_json['public']
+
         update_workspace_preferences(workspace, preferences_json)
+
         return HttpResponse(status=204)
 
 
