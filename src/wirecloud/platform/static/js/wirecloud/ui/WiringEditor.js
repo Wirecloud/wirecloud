@@ -989,10 +989,19 @@ if (!Wirecloud.ui) {
      * check if the position of the event occurred within the grid
      */
     WiringEditor.prototype.withinGrid = function withinGrid(event) {
-        var box = this.layout.getCenterContainer().getBoundingClientRect();
+        var clientX, clientY, box;
 
-        return (event.clientX > box.left) && (event.clientX < box.right) &&
-               (event.clientY > box.top) && (event.clientY < box.bottom);
+        box = this.layout.getCenterContainer().getBoundingClientRect();
+
+        if ('touches' in event) {
+            clientX = event.changedTouches[0].clientX;
+            clientY = event.changedTouches[0].clientY;
+        } else {
+            clientX = event.clientX;
+            clientY = event.clientY;
+        }
+        return (clientX > box.left) && (clientX < box.right) &&
+               (clientY > box.top) && (clientY < box.bottom);
     };
 
     /**
