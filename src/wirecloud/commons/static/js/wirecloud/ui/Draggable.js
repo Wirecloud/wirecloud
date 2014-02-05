@@ -50,12 +50,14 @@
         enddrag = function enddrag(e) {
 
             // Only attend to left button (or right button for left-handed persons) events
-            if (e.button !== 0) {
+            if (e.type === 'mouseup' && e.button !== 0) {
                 return;
             }
 
             document.removeEventListener("mouseup", enddrag, false);
+            document.removeEventListener("touchend", enddrag, false);
             document.removeEventListener("mousemove", drag, false);
+            document.removeEventListener("touchmove", drag, false);
 
             if (dragboardCover != null) {
                 dragboardCover.parentNode.removeEventListener("scroll", scroll, true);
@@ -66,6 +68,7 @@
             onFinish(draggable, data, e);
 
             handler.addEventListener("mousedown", startdrag, false);
+            handler.addEventListener("touchstart", startdrag, false);
 
             document.onmousedown = null; // reenable context menu
             document.onselectstart = null; // reenable text selection in IE
@@ -74,9 +77,15 @@
 
         // fire each time it's dragged
         drag = function drag(e) {
+            var clientX, clientY;
 
-            var clientX = parseInt(e.clientX, 10);
-            var clientY = parseInt(e.clientY, 10);
+            if ('touches' in e) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
             var xDelta = clientX - xStart - xScrollDelta;
             var yDelta = clientY - yStart - yScrollDelta;
 
@@ -87,7 +96,7 @@
         startdrag = function startdrag(e) {
 
             // Only attend to left button (or right button for left-handed persons) events
-            if (e.button !== 0) {
+            if (e.type === 'mousedown' && e.button !== 0) {
                 return false;
             }
 
@@ -99,12 +108,20 @@
             document.onmousedown = _cancel; // disable text selection in Firefox
             document.onselectstart = _cancel; // disable text selection in IE
             handler.removeEventListener("mousedown", startdrag, false);
+            handler.removeEventListener("touchstart", startdrag, false);
 
-            xStart = parseInt(e.clientX, 10);
-            yStart = parseInt(e.clientY, 10);
+            if ('touches' in e) {
+                xStart = e.touches[0].clientX;
+                yStart = e.touches[0].clientY;
+            } else {
+                xStart = e.clientX;
+                yStart = e.clientY;
+            }
 
             document.addEventListener("mouseup", enddrag, false);
+            document.addEventListener("touchend", enddrag, false);
             document.addEventListener("mousemove", drag, false);
+            document.addEventListener("touchmove", drag, false);
 
             yScrollDelta = 0;
             xScrollDelta = 0;
@@ -116,7 +133,9 @@
                 dragboardCover = document.createElement("div");
                 dragboardCover.className = "cover";
                 dragboardCover.addEventListener("mouseup", enddrag, true);
+                dragboardCover.addEventListener("touchend", enddrag, true);
                 dragboardCover.addEventListener("mousemove", drag, true);
+                dragboardCover.addEventListener("touchmove", drag, true);
 
                 dragboardCover.style.zIndex = "1000000";
                 dragboardCover.style.position = "absolute";
@@ -159,6 +178,7 @@
 
         // add mousedown event listener
         handler.addEventListener("mousedown", startdrag, false);
+        handler.addEventListener("touchstart", startdrag, false);
 
         /**********
          * Public methods
@@ -166,6 +186,7 @@
 
         this.destroy = function destroy() {
             handler.removeEventListener("mousedown", startdrag, false);
+            handler.removeEventListener("touchstart", startdrag, false);
             startdrag = null;
             enddrag = null;
             drag = null;
