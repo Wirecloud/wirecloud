@@ -90,7 +90,7 @@
         var li = document.createElement('li');
         wrapper.appendChild(li);
         var anchor = document.createElement('a');
-        anchor.setAttribute('href', 'https://account.lab.fi-ware.eu/users/' + username);
+        anchor.setAttribute('href', 'https://account.lab.fi-ware.org/users/' + username);
         anchor.setAttribute('target', '_blank');
         li.appendChild(anchor);
         var img = document.createElement('img');
@@ -134,10 +134,10 @@
         } else {
             user_menu.append(new StyledElements.MenuItem(gettext('Sign out'), function () {
                 var portal_logout_urls = [
-                    'http://cloud.lab.fi-ware.eu/logout',
-                    'https://store.lab.fi-ware.eu/logout',
-                    'https://mashup.lab.fi-ware.eu/logout',
-                    'https://account.lab.fi-ware.eu/users/sign_out'
+                    'http://cloud.lab.fi-ware.org/logout',
+                    'https://store.lab.fi-ware.org/logout',
+                    'https://mashup.lab.fi-ware.org/logout',
+                    'https://account.lab.fi-ware.org/users/sign_out'
                 ];
                 var counter = portal_logout_urls.length;
                 for (var i = 0; i < portal_logout_urls.length; i += 1) {
@@ -150,7 +150,7 @@
                         },
                         onComplete: function () {
                             if (--counter === 0) {
-                                window.location = 'http://lab.fi-ware.eu';
+                                window.location = 'http://lab.fi-ware.org';
                             }
                         }
                     });
@@ -238,7 +238,7 @@
     WirecloudHeader.prototype._notifyWorkspaceLoaded = function _notifyWorkspaceLoaded(workspace) {
         if (this.footer == null) {
             this.footer = document.createElement('footer');
-            this.footer.innerHTML = '<div>2013 © <a href="http://fi-ware.eu/">FI-WARE</a>. The use of FI-LAB services is subject to the acceptance of the <a href="http://wiki.fi-ware.eu/FI-LAB_Terms_and_Conditions">Terms and Conditions</a> and the <a href="http://forge.fi-ware.eu/plugins/mediawiki/wiki/fiware/index.php/FI-LAB_Personal_Data_Protection_Policy">Personal Data Protection Policy</a></div>';
+            this.footer.innerHTML = '<div>2014 © <a href="http://fi-ware.org/">FI-WARE</a>. The use of FI-LAB services is subject to the acceptance of the <a href="http://wiki.fi-ware.org/FI-LAB_Terms_and_Conditions">Terms and Conditions</a> and the <a href="http://forge.fi-ware.org/plugins/mediawiki/wiki/fiware/index.php/FI-LAB_Personal_Data_Protection_Policy">Personal Data Protection Policy</a></div>';
             LayoutManagerFactory.getInstance().mainLayout.getSouthContainer().appendChild(this.footer);
             LayoutManagerFactory.getInstance().mainLayout.repaint();
         }

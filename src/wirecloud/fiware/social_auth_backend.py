@@ -41,7 +41,7 @@ from social_auth.utils import dsa_urlopen
 from social_auth.backends import BaseOAuth2, OAuthBackend
 
 
-FILAB_IDM_SERVER = 'https://account.lab.fi-ware.eu'
+FILAB_IDM_SERVER = 'https://account.lab.fi-ware.org'
 
 FIWARE_AUTHORIZATION_ENDPOINT = 'authorize'
 FIWARE_ACCESS_TOKEN_ENDPOINT = 'token'
