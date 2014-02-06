@@ -25,11 +25,14 @@
 
     "use strict";
 
+    var currentState = {};
+
     var onpopstate = function onpopstate(event) {
         if (event.state === null) {
             return;
         }
 
+        currentState = event.state;
         LayoutManagerFactory.getInstance().onHashChange(event.state);
     };
 
@@ -76,6 +79,7 @@
         var url = buildURL(initialState);
 
         history.replaceState(initialState, document.title, url);
+        currentState = initialState;
     };
 
     HistoryManager._parseStateFromHash = function _parseStateFromHash(hash) {
@@ -115,7 +119,7 @@
         data = prepareData(data);
         equal = true;
         for (key in data) {
-            if (data[key] !== history.state[key]) {
+            if (data[key] !== currentState[key]) {
                 equal = false;
                 break;
             }
@@ -126,6 +130,7 @@
         url = buildURL(data);
 
         history.pushState(data, "", url);
+        currentState = data;
     };
 
     HistoryManager.replaceState = function replaceState(data) {
@@ -134,7 +139,7 @@
         data = prepareData(data);
         equal = true;
         for (key in data) {
-            if (data[key] !== history.state[key]) {
+            if (data[key] !== currentState[key]) {
                 equal = false;
                 break;
             }
@@ -145,10 +150,11 @@
         url = buildURL(data);
 
         history.replaceState(data, "", url);
+        currentState = data;
     };
 
     HistoryManager.getCurrentState = function getCurrentState() {
-        return Wirecloud.Utils.clone(history.state);
+        return Wirecloud.Utils.clone(currentState);
     };
 
     Wirecloud.HistoryManager = HistoryManager;
