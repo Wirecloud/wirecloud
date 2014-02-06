@@ -52,6 +52,8 @@
             // Only attend to left button (or right button for left-handed persons) events
             if (e.type === 'mouseup' && e.button !== 0) {
                 return;
+            } else if (e.type === 'touchend' && e.touches.length > 0) {
+                return;
             }
 
             document.removeEventListener("mouseup", enddrag, false);
@@ -82,6 +84,8 @@
             if ('touches' in e) {
                 clientX = e.touches[0].clientX;
                 clientY = e.touches[0].clientY;
+                // Work around chrome bug: https://code.google.com/p/chromium/issues/detail?id=150779
+                e.preventDefault();
             } else {
                 clientX = e.clientX;
                 clientY = e.clientY;
