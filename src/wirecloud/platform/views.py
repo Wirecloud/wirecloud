@@ -23,7 +23,7 @@ from urlparse import urlparse, urlunparse, parse_qs
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.template import TemplateDoesNotExist
 from django.utils.http import urlencode
@@ -47,19 +47,21 @@ def render_root_page(request):
     return auto_select_workspace(request, request.GET.get('view', None))
 
 
-@login_required
 def auto_select_workspace(request, mode=None):
     _junk1, active_workspace, _junk2 = get_workspace_list(request.user)
 
-    url = reverse('wirecloud.workspace_view', kwargs={
-        'creator_user': active_workspace.workspace.creator.username,
-        'workspace': active_workspace.workspace.name,
-    })
+    if active_workspace is not None:
+        url = reverse('wirecloud.workspace_view', kwargs={
+            'creator_user': active_workspace.workspace.creator.username,
+            'workspace': active_workspace.workspace.name,
+        })
 
-    if mode:
-        url += '?' + urlencode({'view': mode})
+        if mode:
+            url += '?' + urlencode({'view': mode})
 
-    return HttpResponseRedirect(url)
+        return HttpResponseRedirect(url)
+    else:
+        return render(request, 'wirecloud/landing_page.html', content_type="application/xhtml+xml; charset=UTF-8")
 
 
 def render_workspace_view(request, creator_user, workspace):
