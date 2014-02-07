@@ -102,8 +102,6 @@ RWVariable.prototype = new Variable;
 RWVariable.prototype.set = function (value_, options_) {
     var oldvalue;
 
-    this.varManager.incNestingLevel();
-
     oldvalue = this.value;
     this.value = value_;
 
@@ -119,6 +117,5 @@ RWVariable.prototype.set = function (value_, options_) {
         this.value = '';
     }
 
-    // This will save all modified vars if we are the root event
-    this.varManager.decNestingLevel();
+    this.commitModifiedVariables();
 }

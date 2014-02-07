@@ -196,54 +196,34 @@ function VarManager (_workspace) {
 
 
     VarManager.prototype.markVariablesAsModified = function (variables) {
-        if (this.modificationsEnabled) {
+        for (var j = 0; j < variables.length; j++) {
+            var variable = variables[j];
 
-            for (var j = 0; j < variables.length; j++) {
-                var variable = variables[j];
-
-                var modVar = this.findVariableInCollection(this.iwidgetModifiedVars, variable.id)
-                if (modVar) {
-                    modVar.value = variable.value;
-                    return;
-                }
-
-                //It's doesn't exist in the list
-                //It's time to create it!
-                var varInfo = {
-                    'id': variable.id,
-                    'value': variable.value
-                }
-
-                this.iwidgetModifiedVars.push(varInfo);
+            var modVar = this.findVariableInCollection(this.iwidgetModifiedVars, variable.id)
+            if (modVar) {
+                modVar.value = variable.value;
+                return;
             }
-        }
 
-    }
+            //It's doesn't exist in the list
+            //It's time to create it!
+            var varInfo = {
+                'id': variable.id,
+                'value': variable.value
+            }
 
-    VarManager.prototype.incNestingLevel = function() {
-        if (this.modificationsEnabled)
-            this.nestingLevel++;
-    }
-
-    VarManager.prototype.decNestingLevel = function() {
-        if (this.modificationsEnabled) {
-            this.nestingLevel--;
-            if (this.nestingLevel == 0)
-                this.commitModifiedVariables();
+            this.iwidgetModifiedVars.push(varInfo);
         }
     }
 
     VarManager.prototype.resetModifiedVariables = function () {
-        this.nestingLevel = 0;
         this.buffered_requests = 0;
         this.iwidgetModifiedVars = [];
         this.force_commit = false;
     }
 
     VarManager.prototype.forceCommit = function(){
-        if (this.modificationsEnabled){
-            this.force_commit = true;
-        }
+        this.force_commit = true;
     }
 
     VarManager.prototype.getIWidgetVariables = function (iWidgetId) {
@@ -273,10 +253,7 @@ function VarManager (_workspace) {
 
     // For now workspace variables must be in a separated hash table, because they have a
     // different identifier space and can collide with the idenfiers of normal variables
-
     this.resetModifiedVariables();
-
-    this.modificationsEnabled = true;
 
     // Creation of ALL Wirecloud variables regarding one workspace
     this.parseVariables(this.workspace.workspaceState);
