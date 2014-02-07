@@ -21,6 +21,8 @@ import os
 import sys
 import time
 
+from django.core.urlresolvers import reverse
+from django.utils.http import urlencode
 from django.utils.importlib import import_module
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver import ActionChains
@@ -35,6 +37,7 @@ def marketplace_loaded(driver):
         pass
 
     return False
+
 
 class PopupMenuTester(object):
 
@@ -934,9 +937,13 @@ class MobileWirecloudRemoteTestCase(RemoteTestCase):
     def login(self, username='admin', password='admin', next=None):
 
         url = self.live_server_url
+        url += reverse('login')
         if next is not None:
-            url += '&next=' + next
-        url += "/?view=smartphone"
+            next_url = next
+        else:
+            next_url = self.live_server_url
+        next_url += "?view=smartphone"
+        url += "?" + urlencode({'next': next_url})
 
         self.driver.get(url)
         self.wait_element_visible_by_css_selector('#id_username')
