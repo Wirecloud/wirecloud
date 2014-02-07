@@ -8,31 +8,12 @@
         <span>FI-</span>WARE
       </a>
     </div><ul class="oil-portal">
+      {% for portal in FIWARE_PORTALS %}
       <li>
-        <a href="http://cloud.lab.fi-ware.org/">
-          Cloud
+        <a href="{{ portal.url }}">{{ portal.name }}
         </a>
       </li>
-      <li>
-        <a href="https://store.lab.fi-ware.org/">
-          Store
-        </a>
-      </li>
-      <li class="active">
-        <a href="https://mashup.lab.fi-ware.org/">
-          Mashup
-        </a>
-      </li>
-      <li>
-        <a href="https://account.lab.fi-ware.org/">
-          Account
-        </a>
-      </li>
-      <li>
-        <a href="http://lab.fi-ware.org/">
-          Help&amp;info
-        </a>
-      </li>
+      {% endfor %}
     </ul>
 
   </nav>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,18 +17,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME, logout as django_logout
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 
 from wirecloud.commons.utils.http import build_error_response
 
-
-ALLOWED_ORIGINS = (
-    'https://account.lab.fi-ware.eu',
-    'https://cloud.lab.fi-ware.eu',
-    'https://store.lab.fi-ware.eu',
-)
+ALLOWED_ORIGINS = [url for (name, url, logout_path) in getattr(settings, 'FIWARE_PORTALS', DEFAULT_FIWARE_PORTALS)]
 
 def login(request):
 

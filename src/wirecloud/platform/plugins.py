@@ -378,3 +378,6 @@ class WirecloudPlugin(object):
 
     def get_proxy_processors(self):
         return ()
+
+    def get_django_template_context_processors(self):
+        return {}

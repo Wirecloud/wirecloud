@@ -199,3 +199,6 @@ class FiWarePlugin(WirecloudPlugin):
 
     def get_proxy_processors(self):
         return ('wirecloud.fiware.proxy.IDMTokenProcessor',)
+
+    def get_django_template_context_processors(self):
+        return {"FIWARE_PORTALS": getattr(settings, "FIWARE_PORTALS", wirecloud.fiware.DEFAULT_FIWARE_PORTALS)}

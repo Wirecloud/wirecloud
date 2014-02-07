@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,13 +17,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-__version_info__ = (2, 3, 1)
-__version__ = '.'.join(map(str, __version_info__))
+from wirecloud.platform.plugins import get_plugins
 
-DEFAULT_FIWARE_PORTALS = (
-    {'name': 'Cloud', 'url': 'http://cloud.lab.fi-ware.org', "logout_path": "/logout"},
-    {'name': 'Store', 'url': 'https://store.lab.fi-ware.org', "logout_path": "/logout"},
-    {'name': 'Mashup', 'url': 'https://mashup.lab.fi-ware.org', "logout_path": "/logout"},
-    {'name': 'Account', 'url': 'https://account.lab.fi-ware.org', "logout_path": "/users/sign_out"},
-    {'name': 'Help&Info', 'url': 'https://lab.fi-ware.org'},
-)
+
+def plugins(request):
+    plugins = get_plugins()
+    context = {}
+
+    for plugin in plugins:
+        context.update(plugin.get_django_template_context_processors())
+
+    return context
