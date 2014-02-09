@@ -251,6 +251,8 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/PreferenceError.js',
             'js/wirecloud/UserPrefDef.js',
             'js/wirecloud/UserPref.js',
+            'js/wirecloud/PersistentVariable.js',
+            'js/wirecloud/PersistentVariableDef.js',
             'js/wirecloud/PolicyManager.js',
             'js/wirecloud/HistoryManager.js',
             'js/wirecloud/Version.js',

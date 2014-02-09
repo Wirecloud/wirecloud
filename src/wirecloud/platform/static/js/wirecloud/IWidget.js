@@ -86,7 +86,7 @@
      */
     var IWidget = function IWidget(widget, tab, options) {
 
-        var key, i, preferences, iwidget_pref_info;
+        var key, i, preferences, iwidget_pref_info, properties, iwidget_prop_info;
 
         if (typeof options !== 'object' || !(widget instanceof Wirecloud.Widget)) {
             throw new TypeError();
@@ -123,6 +123,17 @@
                 iwidget_pref_info = options.variables[preferences[i].name];
                 this.preferenceList[i] = new Wirecloud.UserPref(preferences[i], iwidget_pref_info.readonly, iwidget_pref_info.hidden, iwidget_pref_info.value);
                 this.preferences[preferences[i].name] = this.preferenceList[i];
+            }
+        }
+
+        properties = this.meta.propertyList;
+        this.propertyList = [];
+        this.properties = {};
+        if (options.variables != null) {
+            for (i = 0; i < properties.length; i++) {
+                iwidget_prop_info = options.variables[properties[i].name];
+                this.propertyList[i] = new Wirecloud.PersistentVariable(properties[i], iwidget_prop_info.id, iwidget_prop_info.readonly, iwidget_prop_info.value);
+                this.properties[properties[i].name] = this.propertyList[i];
             }
         }
 
@@ -193,17 +204,6 @@
             return true;
         default:
             return false;
-        }
-    };
-
-    IWidget.prototype.getVariable = function getVariable(name) {
-        var variable;
-
-        variable = this.workspace.varManager.findVariable(this.id, name);
-        if (variable.vardef.aspect === 'PROP') {
-            return variable;
-        } else {
-            return null;
         }
     };
 

@@ -1,4 +1,4 @@
-/*global gettext, LayoutManagerFactory, Variable, Wirecloud*/
+/*global gettext, LayoutManagerFactory, Wirecloud*/
 
 (function () {
 
@@ -73,9 +73,8 @@
 
     PublishWorkspaceWindowMenu.prototype._parseTab = function _parseTab(tab) {
 
-        var i, j, name, iwidget, iwidgets, iwidget_params, pref_params,
-            prop_params, variable, variables, varManager, var_elements,
-            fields;
+        var i, j, iwidget, iwidgets, iwidget_params, pref_params,
+            prop_params, varManager, var_elements, fields;
 
         varManager = tab.workspace.getVarManager();
         iwidgets = tab.getDragboard().getIWidgets();
@@ -83,7 +82,6 @@
 
         for (i = 0; i < iwidgets.length; i++) {
             iwidget = iwidgets[i].internal_iwidget;
-            variables = varManager.getIWidgetVariables(iwidget.id);
             pref_params = [];
             for (j = 0; j < iwidget.preferenceList.length; j += 1) {
                 pref_params.push({
@@ -96,16 +94,13 @@
             }
 
             prop_params = [];
-            for (name in variables) {
-                variable = variables[name];
-                if (variable.vardef.aspect === Variable.prototype.PROPERTY) {
-                    prop_params.push({
-                        label: variable.getLabel(),
-                        type: 'parametrizableValue',
-                        variable: variable,
-                        parentWindow: this
-                    });
-                }
+            for (j = 0; j < iwidget.propertyList.length; j += 1) {
+                prop_params.push({
+                    label: iwidget.preferenceList[i].meta.label,
+                    type: 'parametrizableValue',
+                    variable: iwidget.propertyList[j],
+                    parentWindow: this
+                });
             }
 
             var_elements = {};

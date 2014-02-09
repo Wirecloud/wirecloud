@@ -32,20 +32,6 @@ function VarManager (_workspace) {
     // PUBLIC METHODS
     // ****************
 
-
-    VarManager.prototype.parseVariables = function (workspaceInfo) {
-        // Iwidget variables!
-        var tabs = workspaceInfo['tabs'];
-
-        for (var i=0; i<tabs.length; i++) {
-            var iwidgets = tabs[i]['iwidgets'];
-
-            for (var j=0; j<iwidgets.length; j++) {
-                this.parseIWidgetVariables(iwidgets[j], this.workspace.getTab(tabs[i].id));
-            }
-        }
-    }
-
     /**
      * Saves all modified variables.
      *
@@ -84,64 +70,15 @@ function VarManager (_workspace) {
         }
     }
 
-    VarManager.prototype.parseIWidgetVariables = function (iwidget_info, tab, iwidget) {
-        var name, id, variables, variable, iwidget, varInfo, aspect, value,
-            objVars = {};
-
-        if (iwidget == null) {
-            iwidget = this.workspace.getIWidget(iwidget_info['id']);
-        }
-        variables = iwidget.widget.variables;
-
-        for (name in variables) {
-            variable = variables[name];
-            varInfo = name in iwidget_info.variables ? iwidget_info.variables[name] : {};
-
-            id = varInfo.id;
-            aspect = variable.aspect;
-            value = 'value' in varInfo ? varInfo.value : '';
-
-            switch (aspect) {
-                case Variable.prototype.PROPERTY:
-                    objVars[name] = new RWVariable(id, iwidget, variable, this, value, tab);
-                    this.variables[id] = objVars[name];
-                    break;
-            }
-        }
-
-        this.iWidgets[iwidget_info['id']] = objVars;
-    }
-
-    VarManager.prototype.getVariable = function (iWidgetId, variableName) {
-        var variable = this.findVariable(iWidgetId, variableName);
-
-        // Error control
-
-        return variable.get();
-    }
-
-    VarManager.prototype.setVariable = function (iWidgetId, variableName, value, options) {
-        var variable = this.findVariable(iWidgetId, variableName);
-
-        variable.set(value, options);
-    }
-
-    VarManager.prototype.addInstance = function addInstance(iWidget, iwidgetInfo, tab) {
-        this.parseIWidgetVariables(iwidgetInfo, tab, iWidget);
-    };
-
-    VarManager.prototype.removeIWidgetVariables = function (iWidgetId) {
+    VarManager.prototype.removeIWidgetVariables = function (iwidget) {
         var i, variable_id, variable;
 
-        for (variable_id in this.variables) {
-            variable = this.variables[variable_id];
-            if (variable.iWidget === iWidgetId) {
-                for (i = 0; i < this.iwidgetModifiedVars.length; i++) {
-                    if (this.iwidgetModifiedVars[i].id == variable_id) {
-                        this.iwidgetModifiedVars.splice(i, 1);
-                    }
+        for (variable_id in iwidget.properties) {
+            variable = iwidget.properties[variable_id];
+            for (i = 0; i < this.iwidgetModifiedVars.length; i++) {
+                if (this.iwidgetModifiedVars[i].id == variable.id) {
+                    this.iwidgetModifiedVars.splice(i, 1);
                 }
-                delete this.variables[variable_id];
             }
         }
     }
@@ -157,30 +94,6 @@ function VarManager (_workspace) {
         }
 
         this.sendBufferedVars();
-    }
-
-    VarManager.prototype.initializeInterface = function () {
-        // Calling all SLOT vars handler
-        var variable;
-        var vars;
-        var varIndex;
-        var widgetIndex;
-
-        for (widgetIndex in this.iWidgets) {
-        vars = this.iWidgets[widgetIndex];
-
-            for (varIndex in vars) {
-                variable = vars[varIndex];
-
-                if (variable.vardef.aspect == "SLOT" && variable.handler) {
-                    try {
-                        variable.handler(variable.value);
-                    } catch (e) {
-                    }
-                }
-            }
-
-        }
     }
 
     VarManager.prototype.findVariableInCollection = function(varCollection, id){
@@ -226,35 +139,15 @@ function VarManager (_workspace) {
         this.force_commit = true;
     }
 
-    VarManager.prototype.getIWidgetVariables = function (iWidgetId) {
-        return this.iWidgets[iWidgetId];
-    }
-
     // *********************************
     // PRIVATE VARIABLES AND CONSTRUCTOR
     // *********************************
 
-    VarManager.prototype.findVariable = function (iWidgetId, name) {
-        var variables = this.iWidgets[iWidgetId];
-        var variable = variables[name];
-
-        return variable;
-    }
-
     this.workspace = _workspace;
-    this.iWidgets = {};
-    this.variables = {};
 
     this.workspace.addEventListener('iwidgetremoved', function (iwidget) {
-        delete this.iWidgets[iwidget.id];
-
-        this.removeIWidgetVariables(iwidget.id);
+        this.removeIWidgetVariables(iwidget);
     }.bind(this));
 
-    // For now workspace variables must be in a separated hash table, because they have a
-    // different identifier space and can collide with the idenfiers of normal variables
     this.resetModifiedVariables();
-
-    // Creation of ALL Wirecloud variables regarding one workspace
-    this.parseVariables(this.workspace.workspaceState);
 }

@@ -1,8 +1,8 @@
 /*
  *     DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER
  *
- *     Copyright (c) 2012-2013 Universidad Politécnica de Madrid
- *     Copyright (c) 2012-2013 the Center for Open Middleware
+ *     Copyright (c) 2012-2014 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 the Center for Open Middleware
  *
  *     Licensed under the Apache License, Version 2.0 (the
  *     "License"); you may not use this file except in compliance
@@ -18,7 +18,7 @@
  *     under the License.
  */
 
-/*global opManager, Variable, Wirecloud */
+/*global opManager, Wirecloud */
 
 (function () {
 

@@ -27,7 +27,7 @@
 
     var Widget = function Widget(data) {
 
-        var i, preference;
+        var i, preference, property;
 
         this.vendor = data.vendor;
         this.name = data.name;
@@ -53,6 +53,17 @@
         }
         Object.freeze(this.preferences);
         Object.freeze(this.preferenceList);
+
+        // Properties
+        this.properties = {}
+        this.propertyList = [];
+        for (i = 0; i < data.properties.length; i++) {
+            property = new Wirecloud.PersistentVariableDef(data.properties[i].name, data.properties[i].type, data.properties[i]);
+            this.properties[property.name] = property;
+            this.propertyList.push(property);
+        }
+        Object.freeze(this.properties);
+        Object.freeze(this.propertyList);
 
         // Inputs
         this.inputList = data.wiring.inputs;
@@ -110,22 +121,6 @@
         };
 
         this.isUpToDate = function isUpToDate() { return upToDate; };
-
-        this.variables = {};
-
-        var varname, variable;
-
-        for (i = 0; i < data.properties.length; i += 1) {
-            this.variables[data.properties[i].name] = data.properties[i];
-            this.variables[data.properties[i].name].aspect = 'PROP';
-        }
-
-        for (varname in this.variables) {
-            variable = this.variables[varname];
-            if (typeof variable.label === 'undefined' || variable.label === null || variable.label === '') {
-                variable.label = variable.name;
-            }
-        }
         /* END FIXME */
 
         Object.freeze(this);

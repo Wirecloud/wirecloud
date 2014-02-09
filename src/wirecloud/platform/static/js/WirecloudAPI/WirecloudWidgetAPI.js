@@ -72,7 +72,7 @@
     Object.defineProperty(window.MashupPlatform.widget, 'id', {value: id});
     Object.defineProperty(window.MashupPlatform.widget, 'getVariable', {
         value: function getVariable(name) {
-            var variable = iwidget.getVariable(name);
+            var variable = iwidget.properties[name];
             if (variable != null) {
                 return new IWidgetVariable(variable);
             }
