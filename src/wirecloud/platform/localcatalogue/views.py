@@ -36,14 +36,15 @@ from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils import downloader
-from wirecloud.commons.utils.http import authentication_required, build_error_response, get_content_type, supported_request_mime_types, supported_response_mime_types
+from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_error_response, get_content_type, supported_request_mime_types, supported_response_mime_types
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
 from wirecloud.commons.utils.wgt import InvalidContents, WgtFile
-from wirecloud.platform.markets.utils import get_market_managers
-from wirecloud.platform.models import Widget, IWidget, Workspace
 from wirecloud.platform.localcatalogue.signals import resource_uninstalled
 from wirecloud.platform.localcatalogue.utils import install_resource_to_user
+from wirecloud.platform.markets.utils import get_market_managers
+from wirecloud.platform.models import Widget, IWidget, Workspace
+from wirecloud.platform.settings import ALLOW_ANONYMOUS_ACCESS
 
 
 def get_iwidgets_to_remove(resource, user):
@@ -265,6 +266,7 @@ class ResourceDescriptionEntry(Resource):
 
 class WorkspaceResourceCollection(Resource):
 
+    @authentication_required_cond(ALLOW_ANONYMOUS_ACCESS)
     def read(self, request, workspace_id):
 
         workspace = get_object_or_404(Workspace, id=workspace_id)

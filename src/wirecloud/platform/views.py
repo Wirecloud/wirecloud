@@ -20,7 +20,6 @@
 import json
 from urlparse import urlparse, urlunparse, parse_qs
 
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
@@ -32,6 +31,7 @@ from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.http import build_error_response
 from wirecloud.platform.plugins import get_active_features_info
 from wirecloud.platform.models import Workspace
+from wirecloud.platform.settings import ALLOW_ANONYMOUS_ACCESS
 from wirecloud.platform.workspace.utils import get_workspace_list
 
 
@@ -48,6 +48,10 @@ def render_root_page(request):
 
 
 def auto_select_workspace(request, mode=None):
+
+    if ALLOW_ANONYMOUS_ACCESS is False and request.user.is_authenticated() is False:
+        return redirect_to_login(request.get_full_path())
+
     _junk1, active_workspace, _junk2 = get_workspace_list(request.user)
 
     if active_workspace is not None:
@@ -65,6 +69,10 @@ def auto_select_workspace(request, mode=None):
 
 
 def render_workspace_view(request, creator_user, workspace):
+
+    if ALLOW_ANONYMOUS_ACCESS is False and request.user.is_authenticated() is False:
+        return redirect_to_login(request.get_full_path())
+
     get_workspace_list(request.user)
 
     workspace = get_object_or_404(Workspace, creator__username=creator_user, name=workspace)
