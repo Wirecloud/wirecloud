@@ -19,9 +19,11 @@
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
 
 
+@python_2_unicode_compatible
 class Market(models.Model):
     user = models.ForeignKey(User, verbose_name=_('User'), blank=True, null=True)
     name = models.CharField(_('Name'), max_length=50)
@@ -32,13 +34,14 @@ class Market(models.Model):
         app_label = 'platform'
         db_table = 'wirecloud_market'
 
-    def __unicode__(self):
+    def __str__(self):
         if self.user is None:
             return self.name
         else:
             return self.user.username + '/' + self.name
 
 
+@python_2_unicode_compatible
 class MarketUserData(models.Model):
 
     market = models.ForeignKey(Market, verbose_name=_('Market'), blank=False, null=False)
@@ -50,3 +53,6 @@ class MarketUserData(models.Model):
         unique_together = ('market', 'user', 'name')
         app_label = 'platform'
         db_table = 'wirecloud_marketuserdata'
+
+    def __str__(self):
+        return self.name

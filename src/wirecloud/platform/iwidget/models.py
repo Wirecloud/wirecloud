@@ -20,11 +20,13 @@
 import json
 
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
 
 from wirecloud.platform.wiring.utils import remove_related_iwidget_connections
 
 
+@python_2_unicode_compatible
 class Position(models.Model):
 
     posX = models.IntegerField(_('PositionX'))
@@ -39,10 +41,11 @@ class Position(models.Model):
         app_label = 'platform'
         db_table = 'wirecloud_position'
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.pk)
 
 
+@python_2_unicode_compatible
 class IWidget(models.Model):
 
     name = models.CharField(_('Name'), max_length=250)
@@ -58,7 +61,7 @@ class IWidget(models.Model):
         app_label = 'platform'
         db_table = 'wirecloud_iwidget'
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.pk)
 
     def delete(self, *args, **kwargs):
@@ -84,6 +87,7 @@ class IWidget(models.Model):
         super(IWidget, self).delete(*args, **kwargs)
 
 
+@python_2_unicode_compatible
 class Variable(models.Model):
 
     vardef = models.ForeignKey('platform.VariableDef', verbose_name=_('Variable definition'))
@@ -122,5 +126,5 @@ class Variable(models.Model):
         app_label = 'platform'
         db_table = 'wirecloud_variable'
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.pk) + " " + self.vardef.name

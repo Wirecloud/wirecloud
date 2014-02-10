@@ -22,6 +22,7 @@ import random
 
 from django.core.cache import cache
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext as _
 
@@ -30,6 +31,7 @@ from wirecloud.commons.models import TransModel
 from wirecloud.commons.utils.wgt import WgtFile
 
 
+@python_2_unicode_compatible
 class XHTML(models.Model):
 
     uri = models.CharField(_('URI'), max_length=255, unique=True)
@@ -40,7 +42,7 @@ class XHTML(models.Model):
     use_platform_style = models.BooleanField(_('Uses platform style'), default=False)
     cacheable = models.BooleanField(_('Cacheable'), default=True, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.uri
 
     def get_cache_key(self, domain):
@@ -70,6 +72,7 @@ class WidgetManager(models.Manager):
         return super(WidgetManager, self).get_query_set().select_related('resource')
 
 
+@python_2_unicode_compatible
 class Widget(models.Model):
 
     resource = models.OneToOneField('catalogue.CatalogueResource')
@@ -104,7 +107,7 @@ class Widget(models.Model):
         showcase_utils.wgt_deployer.undeploy(self.resource.vendor, self.resource.short_name, self.resource.version)
         super(Widget, self).delete(*args, **kwargs)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.uri
 
     def get_related_preferences(self):
@@ -114,6 +117,7 @@ class Widget(models.Model):
         return VariableDef.objects.filter(widget=self, aspect='PROP')
 
 
+@python_2_unicode_compatible
 class VariableDef(TransModel):
 
     name = models.CharField(_('Name'), max_length=30)
@@ -144,7 +148,7 @@ class VariableDef(TransModel):
     widget = models.ForeignKey(Widget)
     order = models.IntegerField(default=0, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.widget.uri + " " + self.aspect
 
     class Meta:
@@ -152,13 +156,14 @@ class VariableDef(TransModel):
         db_table = 'wirecloud_variabledef'
 
 
+@python_2_unicode_compatible
 class UserPrefOption(TransModel):
 
     value = models.CharField(_('Value'), max_length=50)
     name = models.CharField(_('Name'), max_length=50)
     variableDef = models.ForeignKey(VariableDef)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.variableDef.widget.uri + " " + self.name
 
     class Meta:
@@ -166,13 +171,14 @@ class UserPrefOption(TransModel):
         db_table = 'wirecloud_userprefoption'
 
 
+@python_2_unicode_compatible
 class VariableDefAttr(models.Model):
 
     value = models.CharField(_('Value'), max_length=30)
     name = models.CharField(_('Name'), max_length=30)
     variableDef = models.ForeignKey(VariableDef)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.variableDef + self.name
 
     class Meta:

@@ -19,11 +19,13 @@
 
 from django.contrib.auth.models import User, Group
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
 
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 
 
+@python_2_unicode_compatible
 class Workspace(models.Model):
 
     name = models.CharField(_('Name'), max_length=30)
@@ -65,6 +67,7 @@ class Workspace(models.Model):
         return len(self.users.all()) > 1
 
 
+@python_2_unicode_compatible
 class UserWorkspace(models.Model):
 
     workspace = models.ForeignKey(Workspace)
@@ -77,10 +80,11 @@ class UserWorkspace(models.Model):
         app_label = 'platform'
         db_table = 'wirecloud_userworkspace'
 
-    def __unicode__(self):
-        return unicode(self.workspace) + " - " + unicode(self.user)
+    def __str__(self):
+        return self.workspace + " - " + self.user
 
 
+@python_2_unicode_compatible
 class Tab(models.Model):
 
     name = models.CharField(_('Name'), max_length=30)
@@ -96,8 +100,8 @@ class Tab(models.Model):
         db_table = 'wirecloud_tab'
         unique_together = ('name', 'workspace')
 
-    def __unicode__(self):
-        return unicode(self.pk) + " " + unicode(self.name)
+    def __str__(self):
+        return self.pk + " " + self.name
 
     def save(self, *args, **kwargs):
 

@@ -21,9 +21,11 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.signals import user_logged_in
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import check_for_language, gettext_lazy as _
 
 
+@python_2_unicode_compatible
 class PlatformPreference(models.Model):
 
     user = models.ForeignKey(User)
@@ -34,7 +36,11 @@ class PlatformPreference(models.Model):
         app_label = 'platform'
         db_table = 'wirecloud_platformpreference'
 
+    def __str__(self):
+        return self.name
 
+
+@python_2_unicode_compatible
 class WorkspacePreference(models.Model):
 
     workspace = models.ForeignKey('platform.Workspace')
@@ -46,7 +52,11 @@ class WorkspacePreference(models.Model):
         app_label = 'platform'
         db_table = 'wirecloud_workspacepreference'
 
+    def __str__(self):
+        return self.name
 
+
+@python_2_unicode_compatible
 class TabPreference(models.Model):
 
     tab = models.ForeignKey('platform.Tab')
@@ -57,6 +67,9 @@ class TabPreference(models.Model):
     class Meta:
         app_label = 'platform'
         db_table = 'wirecloud_tabpreference'
+
+    def __str__(self):
+        return self.name
 
 
 def update_session_lang(request, user):
