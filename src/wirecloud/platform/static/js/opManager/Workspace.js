@@ -584,7 +584,6 @@ function Workspace(workspaceState, resources) {
         // emptyWorkspaceInfoBox
         this.emptyWorkspaceInfoBox.classList.add('hidden');
 
-        this.varManager.addInstance(iwidget, iwidgetJSON, tab);
         iwidget.internal_iwidget.addEventListener('removed', this._iwidget_removed);
         this.events.iwidgetadded.dispatch(this, iwidget.internal_iwidget);
 
