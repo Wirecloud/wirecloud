@@ -13,32 +13,6 @@ div.dragboard.fixed {
   background: transparent;
 }
 
-div.iwidget div.widget_menu > .versionbutton {
-    background-image: url(../images/icons-sprite.png);
-    background-position: -24px -216px;
-    background-color: transparent;
-}
-
-div.iwidget div.snapButton {
-  /* This icon represents that the iGadget is outside the grid */
-  background: url(../images/icons-sprite.png);
-  background-position: -48px -72px;
-}
-
-div.iwidget .dragboardwiki {
-  background: url(../images/icons-sprite.png);
-  background-position: -24px -360px;
-}
-
-div.iwidget .dragboardwiki:hover {
-  background-position: 0px -360px;
-}
-
-div.iwidget div.extractButton {
-  background: url(../images/icons-sprite.png);
-  background-position: -48px -360px;
-}
-
 div.widget_window_locked {
     border-color: transparent;
 }

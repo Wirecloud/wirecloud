@@ -370,7 +370,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 "iwidget_smartphone": "wirecloud/ui/iwidget_smartphone.html",
                 "window_menu": "wirecloud/ui/window_menu.html",
                 "wirecloud_catalogue_search_interface": "wirecloud/catalogue/search_interface.html",
-                "wirecloud_wiring_template": "wirecloud/wiring.html",
                 "catalogue_resource_template": "wirecloud/catalogue/resource.html",
                 "catalogue_main_resource_details_template": "wirecloud/catalogue/main_resource_details.html",
                 "catalogue_resource_details_template": "wirecloud/catalogue/resource_details.html",

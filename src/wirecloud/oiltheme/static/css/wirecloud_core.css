@@ -494,27 +494,6 @@ footer {
     margin: 0;
 }
 
-.closebutton {
-    border: 0px none;
-    cursor: pointer;
-    padding: 0px;
-    width: 16px;
-    height: 16px;
-    background: url(../images/icons-sprite.png);
-    background-position: -48px -312px;
-}
-
-.help_button {
-    margin-left: 0px;
-    margin-bottom: 2px;
-    vertical-align: middle;
-    cursor: pointer;
-    border: none;
-    width: 16px;
-    height: 16px;
-    display: block;
-}
-
 .window_menu .styled_form .notebook {
     height: 400px;
 }

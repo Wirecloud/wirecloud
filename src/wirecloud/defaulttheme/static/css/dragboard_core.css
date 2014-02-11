@@ -24,16 +24,6 @@ div.fixed div.widget_menu {
   cursor: default;
 }
 
-/*div.dragboard.fixed -> LOCK OR SHARED STATUS*/
-div.fixed div.iwidget div.widget_menu .closebutton, div.fixed div.iwidget div.widget_menu .versionbutton {
-  display: none;
-}
-
-/*div.widget_window_readonly -> READONLY STATUS*/
-div.iwidget.widget_window_readonly div.widget_menu .closebutton {
-  display: none;
-}
-
 div.iwidget div.widget_wrapper {
   width: auto;
 }
