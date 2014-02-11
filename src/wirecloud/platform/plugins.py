@@ -18,6 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import inspect
+import json
 
 from django.conf.urls import patterns
 from django.core.exceptions import ImproperlyConfigured
@@ -26,12 +27,16 @@ from django.utils.encoding import force_unicode
 from django.utils.importlib import import_module
 from django.utils.regex_helper import normalize
 
+from wirecloud.commons.utils.encoding import LazyEncoderXHTML
+
+
 _wirecloud_plugins = None
 _wirecloud_features = None
 _wirecloud_features_info = None
 _wirecloud_proxy_processors = None
 _wirecloud_request_proxy_processors = []
 _wirecloud_response_proxy_processors = []
+_wirecloud_constants = None
 
 
 def find_wirecloud_plugins():
@@ -141,10 +146,18 @@ def clear_cache():
     global _wirecloud_plugins
     global _wirecloud_features
     global _wirecloud_features_info
+    global _wirecloud_proxy_processors
+    global _wirecloud_request_proxy_processors
+    global _wirecloud_response_proxy_processors
+    global _wirecloud_constants
 
     _wirecloud_plugins = None
     _wirecloud_features = None
     _wirecloud_features_info = None
+    _wirecloud_proxy_processors = None
+    _wirecloud_request_proxy_processors = []
+    _wirecloud_response_proxy_processors = []
+    _wirecloud_constants = None
 
 
 def get_plugin_urls():
@@ -176,6 +189,24 @@ def get_extra_javascripts(view):
         files += plugin.get_scripts(view)
 
     return files
+
+
+def get_constants():
+    global _wirecloud_constants
+
+    if _wirecloud_constants is None:
+        plugins = get_plugins()
+        constants_dict = {}
+        for plugin in plugins:
+            constants_dict.update(plugin.get_constants())
+
+        constants = []
+        for constant_key in constants_dict:
+            constants.append({'key': constant_key, 'value': json.dumps(constants_dict[constant_key], cls=LazyEncoderXHTML)})
+
+        _wirecloud_constants = constants
+
+    return _wirecloud_constants
 
 
 def get_widget_api_extensions(view):
@@ -363,6 +394,9 @@ class WirecloudPlugin(object):
 
     def get_urls(self):
         return self.urls
+
+    def get_constants(self):
+        return {}
 
     def get_ajax_endpoints(self, view):
         return ()

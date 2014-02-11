@@ -17,15 +17,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-import json
-
 from django import template
-from django.conf import settings
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 
-from wirecloud.platform.plugins import get_extra_javascripts, get_platform_css, get_wirecloud_ajax_endpoints
+from wirecloud.platform.plugins import get_constants, get_extra_javascripts, get_platform_css, get_wirecloud_ajax_endpoints
 
 
 register = template.Library()
@@ -58,11 +55,14 @@ def wirecloud_bootstrap(context, view):
 
     script += '};'
 
-    languages = json.dumps([{'value': lang[0], 'label': _(lang[1])} for lang in settings.LANGUAGES])
+    constants_def = get_constants()
+    constants = []
+    for constant in constants_def:
+        constants.append({'key': constant['key'], 'value': mark_safe(constant['value'])})
 
     return {
         'script': mark_safe(script),
-        'languages': mark_safe(languages),
+        'constants': constants,
         'STATIC_URL': context['STATIC_URL']
     }
 

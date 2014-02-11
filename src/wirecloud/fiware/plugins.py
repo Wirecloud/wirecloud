@@ -155,6 +155,11 @@ class FiWarePlugin(WirecloudPlugin):
             'fiware_version': wirecloud.fiware.__version__,
         }
 
+    def get_constants(self):
+        return {
+            'FIWARE_PORTALS': getattr(settings, "FIWARE_PORTALS", wirecloud.fiware.DEFAULT_FIWARE_PORTALS)
+        }
+
     def get_templates(self, view):
         if view == 'index':
             return {

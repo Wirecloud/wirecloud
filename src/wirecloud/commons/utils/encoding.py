@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -24,9 +24,28 @@ except:
     from django.utils.encoding import force_text as force_unicode
 from json import JSONEncoder
 
+
 class LazyEncoder(JSONEncoder):
     def default(self, o):
         if isinstance(o, Promise):
             return force_unicode(o)
         else:
             return super(LazyEncoder, self).default(o)
+
+
+class LazyEncoderXHTML(LazyEncoder):
+
+    def encode(self, o):
+        chunks = self.iterencode(o, True)
+        if self.ensure_ascii:
+            return ''.join(chunks)
+        else:
+            return u''.join(chunks)
+
+    def iterencode(self, o, _one_shot=False):
+        chunks = super(LazyEncoderXHTML, self).iterencode(o, _one_shot)
+        for chunk in chunks:
+            chunk = chunk.replace('&', '\\u0026')
+            chunk = chunk.replace('<', '\\u003c')
+            chunk = chunk.replace('>', '\\u003e')
+            yield chunk

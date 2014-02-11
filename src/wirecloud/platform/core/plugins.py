@@ -20,6 +20,7 @@
 from hashlib import sha1
 import json
 
+from django.conf import settings
 from django.utils.translation import get_language, ugettext_lazy as _
 
 import wirecloud.platform
@@ -354,6 +355,12 @@ class WirecloudCorePlugin(WirecloudPlugin):
     def get_market_classes(self):
         return {
             'wirecloud': WirecloudCatalogueManager,
+        }
+
+    def get_constants(self):
+        languages = [{'value': lang[0], 'label': _(lang[1])} for lang in settings.LANGUAGES]
+        return {
+            'availableLanguages': languages,
         }
 
     def get_templates(self, view):

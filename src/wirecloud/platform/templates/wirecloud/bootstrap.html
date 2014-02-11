@@ -1,7 +1,9 @@
 <script type="text/javascript">
     var Wirecloud = {
+{% for entry in constants %}
+        {{ entry.key }}: {{ entry.value }},
+{% endfor %}
         ui: {},
-        availableLanguages: {{ languages }}
     };
 </script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wirecloud/Utils.js" ></script>

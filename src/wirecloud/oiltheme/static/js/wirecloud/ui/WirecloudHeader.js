@@ -133,28 +133,28 @@
             }));
         } else {
             user_menu.append(new StyledElements.MenuItem(gettext('Sign out'), function () {
-                var portal_logout_urls = [
-                    'http://cloud.lab.fi-ware.org/logout',
-                    'https://store.lab.fi-ware.org/logout',
-                    'https://mashup.lab.fi-ware.org/logout',
-                    'https://account.lab.fi-ware.org/users/sign_out'
-                ];
-                var counter = portal_logout_urls.length;
-                for (var i = 0; i < portal_logout_urls.length; i += 1) {
+                var portal_logout_urls, i, portal;
+
+                portal_logout_urls = [];
+                for (i = 0; i < Wirecloud.FIWARE_PORTALS.length; i++) {
+                    portal = Wirecloud.FIWARE_PORTALS[i];
+                    if ('logout_path' in portal) {
+                        portal_logout_urls.push(portal.url + portal.logout_path);
+                    }
+                };
+                for (i = 0; i < portal_logout_urls.length; i += 1) {
                     Wirecloud.io.makeRequest(portal_logout_urls[i], {
                         method: 'GET',
                         supportsAccessControl: true,
                         withCredentials: true,
                         requestHeaders: {
                             'X-Requested-With': null
-                        },
-                        onComplete: function () {
-                            if (--counter === 0) {
-                                window.location = 'http://lab.fi-ware.org';
-                            }
                         }
                     });
                 }
+                setTimeout(function () {
+                    window.location = 'http://lab.fi-ware.org';
+                }, 1000);
             }));
         }
     };
