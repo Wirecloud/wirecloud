@@ -25,7 +25,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from wirecloud.commons.utils.http import build_error_response
 from wirecloud.fiware import DEFAULT_FIWARE_PORTALS
 
-ALLOWED_ORIGINS = [url for (name, url, logout_path) in getattr(settings, 'FIWARE_PORTALS', DEFAULT_FIWARE_PORTALS)]
+ALLOWED_ORIGINS = [portal['url'] for portal in getattr(settings, 'FIWARE_PORTALS', DEFAULT_FIWARE_PORTALS)]
 
 def login(request):
 
