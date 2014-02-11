@@ -23,7 +23,7 @@ __version__ = '.'.join(map(str, __version_info__))
 DEFAULT_FIWARE_PORTALS = (
     {'name': 'Cloud', 'url': 'http://cloud.lab.fi-ware.org', "logout_path": "/logout"},
     {'name': 'Store', 'url': 'https://store.lab.fi-ware.org', "logout_path": "/logout"},
-    {'name': 'Mashup', 'url': 'https://mashup.lab.fi-ware.org', "logout_path": "/logout"},
+    {'name': 'Mashup', 'url': 'https://mashup.lab.fi-ware.org', "logout_path": "/logout", "active": True},
     {'name': 'Account', 'url': 'https://account.lab.fi-ware.org', "logout_path": "/users/sign_out"},
     {'name': 'Help&Info', 'url': 'https://lab.fi-ware.org'},
 )

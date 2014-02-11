@@ -9,9 +9,8 @@
       </a>
     </div><ul class="oil-portal">
       {% for portal in FIWARE_PORTALS %}
-      <li>
-        <a href="{{ portal.url }}">{{ portal.name }}
-        </a>
+      <li {% if portal.active %}class="active"{% endif %}>
+        <a href="{{ portal.url }}">{{ portal.name }}</a>
       </li>
       {% endfor %}
     </ul>
