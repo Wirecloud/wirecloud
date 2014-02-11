@@ -74,6 +74,15 @@ class Proxy():
             if header_name == 'content_type' and header[1]:
                 request_data['headers']["content-type"] = header[1]
 
+            elif header_name == 'content_length' and header[1]:
+                # It's better not propagate the Content-Length header as
+                # request processors may change final data length. In addition
+                # to this, the requests modules ignores the Content-Length
+                # header and tries to obtain data length directly from the
+                # data parameter. Therefore, providing this value in the len
+                # attribute seems to be the best option
+                request_data['data'].len = int(header[1])
+
             elif header_name == 'cookie' or header_name == 'http_cookie':
 
                 cookie_parser = Cookie.SimpleCookie(str(header[1]))
