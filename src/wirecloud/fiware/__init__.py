@@ -27,3 +27,5 @@ DEFAULT_FIWARE_PORTALS = (
     {'name': 'Account', 'url': 'https://account.lab.fi-ware.org', "logout_path": "/users/sign_out"},
     {'name': 'Help&Info', 'url': 'https://lab.fi-ware.org'},
 )
+
+DEFAULT_FIWARE_HOME = 'https://lab.fi-ware.org';

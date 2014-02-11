@@ -90,7 +90,7 @@
         var li = document.createElement('li');
         wrapper.appendChild(li);
         var anchor = document.createElement('a');
-        anchor.setAttribute('href', 'https://account.lab.fi-ware.org/users/' + username);
+        anchor.setAttribute('href', Wirecloud.FIWARE_IDM_SERVER + '/users/' + username);
         anchor.setAttribute('target', '_blank');
         li.appendChild(anchor);
         var img = document.createElement('img');
@@ -153,7 +153,7 @@
                     });
                 }
                 setTimeout(function () {
-                    window.location = 'http://lab.fi-ware.org';
+                    window.location = Wirecloud.FIWARE_HOME;
                 }, 1000);
             }));
         }
