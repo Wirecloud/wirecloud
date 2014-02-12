@@ -298,8 +298,8 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/wiring/WidgetTargetEndpoint.js',
         )
 
-        if view == 'index':
-            return common + (
+        if view in ('index', 'embedded'):
+            scripts = common + (
                 'js/opManager/Workspace.js',
                 'js/opManager/WorkspaceListItems.js',
                 'js/opManager/WorkspaceItems.js',
@@ -309,7 +309,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/catalogue/MarketplaceView.js',
                 'js/catalogue/CatalogueSearchView.js',
                 'js/catalogue/CatalogueView.js',
-                'js/wirecloud/ui/WirecloudHeader.js',
                 'js/dragboard/dragboard.js',
                 'js/wirecloud/ui/IWidgetDraggable.js',
                 'js/wirecloud/DragboardPosition.js',
@@ -342,6 +341,14 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'js/wirecloud/ui/PublishResourceWindowMenu.js',
                 'js/wirecloud/ui/RenameWindowMenu.js',
             ) + WIRING_EDITOR_FILES + TUTORIAL_FILES
+
+            if view == 'embedded':
+                scripts += ('js/wirecloud/ui/EmbeddedWirecloudHeader.js',)
+            else:
+                scripts += ('js/wirecloud/ui/WirecloudHeader.js',)
+
+            return scripts
+
         elif view == 'smartphone':
             return common + (
                 'iphone/interface/NavigationHeader.js',

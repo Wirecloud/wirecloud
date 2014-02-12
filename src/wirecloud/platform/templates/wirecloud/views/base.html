@@ -53,7 +53,9 @@
   </div>
 </div>
 
+{% block header %}
 {% include "wirecloud/views/header.html" %}
+{% endblock %}
 
 <div id="unsupported-browser-msg" class="alert alert-error" style="display: none; text-align: left;">
     <h4>{% trans "Your browser seems to lack some required features" %}</h4>
@@ -70,9 +72,11 @@
 <script type="text/javascript" src="{% url "wirecloud.javascript_translation_catalogue" %}?language={{ LANGUAGE_CODE }}"></script>
 
 {% compress js %}
+{% block core_scripts %}
 {% wirecloud_bootstrap "index" %}
 {% include "wirecloud/views/js_includes.js" %}
 {% extra_javascripts "index" %}
+{% endblock %}
 {% endcompress %}
 
 {% block extra_scripts %}{% endblock %}
