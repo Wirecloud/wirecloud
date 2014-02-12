@@ -26,7 +26,6 @@ from wirecloud.platform.markets.utils import MarketManager
 from wirecloud.platform.plugins import WirecloudPlugin, build_url_template
 
 import wirecloud.fiware
-import wirecloud.fiware.social_auth_backend
 from wirecloud.fiware.marketAdaptor.views import get_market_adaptor, get_market_user_data
 
 try:
@@ -157,6 +156,7 @@ class FiWarePlugin(WirecloudPlugin):
         }
 
     def get_constants(self):
+        import wirecloud.fiware.social_auth_backend
         return {
             "FIWARE_HOME": getattr(settings, "FIWARE_HOME", wirecloud.fiware.DEFAULT_FIWARE_HOME),
             "FIWARE_IDM_SERVER": getattr(settings, "FIWARE_IDM_SERVER", wirecloud.fiware.social_auth_backend.FILAB_IDM_SERVER),
