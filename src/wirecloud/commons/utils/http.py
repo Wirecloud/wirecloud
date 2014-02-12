@@ -47,15 +47,23 @@ def get_xml_error_response(request, mimetype, status_code, context):
         details_element = etree.Element('details')
         for key in context['details']:
             element = etree.Element(key)
+
             if isinstance(context['details'][key], basestring):
                 element.text = context['details'][key]
+            elif hasattr(context['details'][key], '__iter__'):
+                for value in context['details'][key]:
+                    list_element = etree.Element('element')
+                    list_element.text = value
+                    element.append(list_element)
             else:
                 for key2 in context['details'][key]:
-                    list_element = etree.Element('element')
+                    list_element = etree.Element(key2)
                     list_element.text = context['details'][key][key2]
                     element.append(list_element)
 
             details_element.append(element)
+
+        doc.append(details_element)
 
     return etree.tostring(doc, pretty_print=False, method='xml')
 

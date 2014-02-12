@@ -18,6 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
+from lxml import etree
 import os
 import shutil
 
@@ -489,6 +490,31 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         # Workspace should not be created
         self.assertFalse(Workspace.objects.filter(creator=2, name='Test Mashup').exists())
+
+        # Make the request now accepting xml
+        data = {
+            'mashup': 'Wirecloud/test-mashup-dependencies/1.0',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json; q=0.2, application/xml')
+        self.assertEqual(response.status_code, 422)
+        self.assertEqual(response['Content-Type'], 'application/xml; charset=utf-8')
+
+        # Check basic response structure
+        response_data = etree.fromstring(response.content)
+        self.assertEqual(response_data.tag, 'error')
+        self.assertEqual(len(response_data), 2)
+        self.assertEqual(response_data[0].tag, 'description')
+        self.assertEqual(response_data[1].tag, 'details')
+        self.assertEqual(response_data[1][0].tag, 'missingDependencies')
+        missingDependencies = [dependency.text for dependency in response_data[1][0]]
+        missingDependenciesSet = set(missingDependencies)
+        self.assertEqual(len(missingDependenciesSet), len(missingDependencies))
+        self.assertEqual(missingDependenciesSet, set((
+            'Wirecloud/nonavailable-operator/1.0',
+            'Wirecloud/nonavailable-widget/1.0',
+            'Wirecloud/TestOperator/1.0',
+            'Wirecloud/Test/1.0',
+        )))
 
     def test_workspace_collection_post_creation_from_mashup_missing_dependencies_dry_run(self):
 
