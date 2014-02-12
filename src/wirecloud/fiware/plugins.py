@@ -26,6 +26,7 @@ from wirecloud.platform.markets.utils import MarketManager
 from wirecloud.platform.plugins import WirecloudPlugin, build_url_template
 
 import wirecloud.fiware
+import wirecloud.fiware.social_auth_backend
 from wirecloud.fiware.marketAdaptor.views import get_market_adaptor, get_market_user_data
 
 try:
