@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012 Universidad Politécnica de Madrid
+# Copyright 2012-2014 Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -23,9 +23,9 @@ from wirecloud.commons.baseviews.resource import Resource
 
 class Service(Resource):
 
-    def __init__(self, authentication=None, mimetype=None):
+    def __init__(self, authentication=None):
         permitted_methods = ('POST',)
-        super(Service, self).__init__(authentication=authentication, permitted_methods=permitted_methods, mimetype=mimetype)
+        super(Service, self).__init__(authentication=authentication, permitted_methods=permitted_methods)
 
     def create(self, *args, **kwargs):
         return self.process(*args, **kwargs)

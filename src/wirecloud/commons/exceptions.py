@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -20,10 +20,3 @@
 
 class Http403(Exception):
     pass
-
-
-class HttpMethodNotAllowed(Exception):
-    """
-    Signals that request.method was not part of
-    the list of permitted methods.
-    """
