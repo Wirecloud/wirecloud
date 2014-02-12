@@ -120,9 +120,6 @@ class IWidgetTester(object):
     def __enter__(self):
         self.content_element = self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.getIWidget(%d).content;' % self.id)
 
-        # TODO work around webdriver bugs
-        self.testcase.driver.switch_to_default_content()
-
         self.testcase.driver.switch_to_frame(self.content_element)
         return None
 

@@ -18,7 +18,10 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import os
 import time
+import urlparse
+import urllib
 
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver.common.action_chains import ActionChains
@@ -631,7 +634,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_public_workspaces_anonymous_user(self):
 
-        # Make Test and TestOperator unavailable to emptyuser
+        # Make Test and TestOperator unavailable to the anonymous user
         test_widget = CatalogueResource.objects.get(short_name='Test')
         test_widget.public = False
         test_widget.save()
@@ -668,7 +671,23 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.wait_wirecloud_ready()
         self.assertEqual(self.get_current_workspace_name(), 'Public Workspace')
 
-    def check_public_workspace(self):
+    def test_embedded_view(self):
+
+        mashup_url = self.live_server_url + '/user_with_workspaces/Public Workspace?view=embedded'
+        iframe_test_path = os.path.join(self.shared_test_data_dir, 'iframe_test.html')
+        iframe_test_url = urlparse.urljoin('file:', urllib.pathname2url(iframe_test_path))
+        self.driver.get(iframe_test_url)
+
+        # Load Wirecloud using the iframe element
+        self.driver.execute_script("document.getElementById('iframe').src = arguments[0]", mashup_url)
+
+        # Swicth to Wirecloud's iframe
+        iframe = self.driver.find_element_by_id('iframe')
+        self.driver.switch_to_frame(iframe)
+        self.wait_wirecloud_ready()
+        self.check_public_workspace(frame_id='iframe')
+
+    def check_public_workspace(self, frame_id=None):
         # Check iwidget are loaded correctly
         iwidgets = self.get_current_iwidgets()
         self.assertEqual(len(iwidgets), 2)
@@ -695,6 +714,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             # Work around hang when using Firefox Driver
             self.driver.execute_script('sendEvent();')
             #self.driver.find_element_by_id('b1').click()
+
+        # Work around selenium not being able to go to the parent frame
+        if frame_id is not None:
+            self.driver.switch_to_frame(self.driver.find_element_by_id(frame_id))
 
         with target_iwidget:
             try:
