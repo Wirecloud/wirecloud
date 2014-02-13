@@ -156,12 +156,16 @@ class FiWarePlugin(WirecloudPlugin):
         }
 
     def get_constants(self):
-        import wirecloud.fiware.social_auth_backend
-        return {
+        constants = {
             "FIWARE_HOME": getattr(settings, "FIWARE_HOME", wirecloud.fiware.DEFAULT_FIWARE_HOME),
-            "FIWARE_IDM_SERVER": getattr(settings, "FIWARE_IDM_SERVER", wirecloud.fiware.social_auth_backend.FILAB_IDM_SERVER),
             'FIWARE_PORTALS': getattr(settings, "FIWARE_PORTALS", wirecloud.fiware.DEFAULT_FIWARE_PORTALS)
         }
+
+        if IDM_SUPPORT_ENABLED:
+            import wirecloud.fiware.social_auth_backend
+            constants["FIWARE_IDM_SERVER"] = getattr(settings, "FIWARE_IDM_SERVER", wirecloud.fiware.social_auth_backend.FILAB_IDM_SERVER),
+
+        return constants
 
     def get_templates(self, view):
         if view == 'index':
