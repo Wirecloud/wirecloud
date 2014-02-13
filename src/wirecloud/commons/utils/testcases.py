@@ -204,6 +204,9 @@ class FakeNetwork(object):
     def __call__(self, method, url, *args, **kwargs):
         parsed_url = urlparse(url)
 
+        if 'data' not in kwargs or kwargs['data'] is None:
+            kwargs['data'] = StringIO('')
+
         if parsed_url.scheme not in self._servers or parsed_url.netloc not in self._servers[parsed_url.scheme]:
             raise URLError('not valid')
 
