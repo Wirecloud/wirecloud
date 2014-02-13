@@ -1,3 +1,24 @@
+/*
+ *     Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ *
+ *     This file is part of Wirecloud Platform.
+ *
+ *     Wirecloud Platform is free software: you can redistribute it and/or
+ *     modify it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
+ *
+ *     Wirecloud is distributed in the hope that it will be useful, but WITHOUT
+ *     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+ *     License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with Wirecloud Platform.  If not, see
+ *     <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /*global StyledElements, Wirecloud*/
 
 (function () {
@@ -37,7 +58,33 @@
     var standsOut = function standsOut() {
         var parent_box = this.wrapperElement.parentElement.getBoundingClientRect();
         var element_box = this.wrapperElement.getBoundingClientRect();
-        return element_box.left < parent_box.left || element_box.top < parent_box.top || element_box.right > parent_box.right || element_box.bottom > parent_box.bottom;
+
+        var visible_width = element_box.width - Math.max(element_box.right - parent_box.right, 0) - Math.max(parent_box.left - element_box.left, 0);
+        var visible_height = element_box.height - Math.max(element_box.bottom - parent_box.bottom, 0) - Math.max(parent_box.top - element_box.top, 0);
+        var element_area = element_box.width * element_box.height;
+        var visible_area = visible_width * visible_height;
+        return element_area - visible_area;
+    };
+
+    var fixPosition = function fixPosition(refPosition, weights, positions) {
+        var best_weight = Math.min.apply(Math, weights);
+        var index = weights.indexOf(best_weight);
+        var position = positions[index];
+
+        setPosition.call(this, refPosition, position);
+
+        var parent_box = this.wrapperElement.parentElement.getBoundingClientRect();
+        var element_box = this.wrapperElement.getBoundingClientRect();
+
+        if (element_box.bottom > parent_box.bottom) {
+            this.wrapperElement.style.top = "";
+            this.wrapperElement.style.bottom = "10px";
+            element_box = this.wrapperElement.getBoundingClientRect();
+        }
+
+        if (element_box.top < parent_box.top) {
+            this.wrapperElement.style.top = "10px";
+        }
     };
 
     /**
@@ -58,7 +105,11 @@
         this.wrapperElement = document.createElement('div');
         this.wrapperElement.className = 'popup_menu hidden';
         this._context = null;
-        this._position = options.position;
+        if (Array.isArray(options.position)) {
+            this._position = options.position;
+        } else {
+            this._position = [options.position];
+        }
         this._items = [];
         this._dynamicItems = [];
         this._submenus = [];
@@ -152,14 +203,16 @@
             this.wrapperElement.style.top = refPosition.y + "px";
             this.wrapperElement.style.left = refPosition.x + "px";
         } else {
-            if (Array.isArray(this._position)) {
-                var i = 0;
-                do {
-                    setPosition.call(this, refPosition, this._position[i]);
-                    i += 1;
-                } while (standsOut.call(this) && i < this._position.length)
-            } else {
-                setPosition.call(this, refPosition, this._position);
+            i = 0;
+            var weights = [];
+            do {
+                setPosition.call(this, refPosition, this._position[i]);
+                weights.push(standsOut.call(this));
+                i += 1;
+            } while (weights[i - 1] > 0 && i < this._position.length);
+
+            if (weights[i - 1] > 0) {
+                fixPosition.call(this, refPosition, weights, this._position);
             }
         }
         this.wrapperElement.style.display = 'block';
@@ -173,6 +226,7 @@
         }
 
         this.wrapperElement.classList.add('hidden');
+        this.wrapperElement.style.bottom = "";
 
         for (i = 0; i < this._submenus.length; i += 1) {
             this._submenus[i].hide();
