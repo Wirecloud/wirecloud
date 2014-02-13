@@ -152,8 +152,8 @@
         };
 
         // Initialize some dynamic preferences (language)
-        for (i = 0; i < Wirecloud.availableLanguages.length; i += 1) {
-            platformPreferences.language.initialEntries.push(Wirecloud.availableLanguages[i]);
+        for (i = 0; i < Wirecloud.constants.AVAILABLE_LANGUAGES.length; i += 1) {
+            platformPreferences.language.initialEntries.push(Wirecloud.constants.AVAILABLE_LANGUAGES[i]);
         }
 
         // Save they into our structures

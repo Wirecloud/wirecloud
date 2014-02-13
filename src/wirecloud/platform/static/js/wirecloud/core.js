@@ -71,7 +71,7 @@
             requestHeaders: {'Accept': 'application/json'},
             onSuccess: function (response) {
                 Wirecloud.contextManager = new Wirecloud.ContextManager(Wirecloud, JSON.parse(response.responseText));
-                Wirecloud.contextManager.modify({'mode': Wirecloud.CURRENT_MODE});
+                Wirecloud.contextManager.modify({'mode': Wirecloud.constants.CURRENT_MODE});
                 LayoutManagerFactory.getInstance().header._initUserMenu();
 
                 // Init theme

@@ -372,7 +372,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
     def get_constants(self):
         languages = [{'value': lang[0], 'label': _(lang[1])} for lang in settings.LANGUAGES]
         return {
-            'availableLanguages': languages,
+            'AVAILABLE_LANGUAGES': languages,
         }
 
     def get_templates(self, view):

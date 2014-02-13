@@ -90,7 +90,7 @@
         var li = document.createElement('li');
         wrapper.appendChild(li);
         var anchor = document.createElement('a');
-        anchor.setAttribute('href', Wirecloud.FIWARE_IDM_SERVER + '/users/' + username);
+        anchor.setAttribute('href', Wirecloud.constants.FIWARE_IDM_SERVER + '/users/' + username);
         anchor.setAttribute('target', '_blank');
         li.appendChild(anchor);
         var img = document.createElement('img');
@@ -136,8 +136,8 @@
                 var portal_logout_urls, i, portal;
 
                 portal_logout_urls = [];
-                for (i = 0; i < Wirecloud.FIWARE_PORTALS.length; i++) {
-                    portal = Wirecloud.FIWARE_PORTALS[i];
+                for (i = 0; i < Wirecloud.constants.FIWARE_PORTALS.length; i++) {
+                    portal = Wirecloud.constants.FIWARE_PORTALS[i];
                     if ('logout_path' in portal) {
                         portal_logout_urls.push(portal.url + portal.logout_path);
                     }
@@ -153,7 +153,7 @@
                     });
                 }
                 setTimeout(function () {
-                    window.location = Wirecloud.FIWARE_HOME;
+                    window.location = Wirecloud.constants.FIWARE_HOME;
                 }, 1000);
             }));
         }
