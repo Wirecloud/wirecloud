@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -59,6 +59,7 @@ def wirecloud_bootstrap(context, view):
     constants = []
     for constant in constants_def:
         constants.append({'key': constant['key'], 'value': mark_safe(constant['value'])})
+    constants.append({'key': 'CURRENT_MODE', 'value': mark_safe('"' + view + '"')})
 
     return {
         'script': mark_safe(script),

@@ -180,6 +180,10 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'label': _('Is Superuser'),
                 'description': _('Boolean. Designates whether current user is a super user.'),
             },
+            'mode': {
+                'label': _('Mode'),
+                'description': _('Rendering mode used by the platform (available modes: classic, smartphone and embedded)'),
+            },
             'orientation': {
                 'label': _('Orientation'),
                 'description': _('Current screen orientation'),
@@ -199,7 +203,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'version_hash': {
                 'label': _('Version Hash'),
                 'description': _('Hash for the current version of the platform. This hash changes when the platform is updated or when an addon is added or removed'),
-            }
+            },
         }
 
     def get_platform_context_current_values(self, user):
@@ -219,6 +223,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'fullname': fullname,
             'isstaff': user.is_staff,
             'issuperuser': user.is_superuser,
+            'mode': 'unknown',
             'theme': settings.THEME_ACTIVE,
             'version': wirecloud.platform.__version__,
             'version_hash': sha1(json.dumps(get_active_features_info(), sort_keys=True)).hexdigest(),
