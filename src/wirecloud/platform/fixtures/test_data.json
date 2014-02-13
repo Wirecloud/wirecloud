@@ -69,7 +69,8 @@
         "pk": "1",
         "fields": {
             "workspace": "1",
-            "name": "tab"
+            "name": "tab",
+            "visible": true
         }
     },
     {
