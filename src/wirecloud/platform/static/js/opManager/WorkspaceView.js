@@ -50,7 +50,7 @@
         var workspace_name, entries, current_state, menu, context;
 
         current_state = Wirecloud.HistoryManager.getCurrentState();
-        if (current_state != null) {
+        if ('workspace_creator' in current_state) {
             context = Wirecloud.contextManager;
             if (context && context.get('username') !== 'anonymous') {
                 menu = this.wsMenu;
