@@ -51,14 +51,14 @@ class Proxy():
     # set the timeout to 60 seconds
     socket.setdefaulttimeout(60)
 
-    def do_request(self, request, url, method, data):
+    def do_request(self, request, url, method):
 
         url = iri_to_uri(url)
 
         request_data = {
             "method": method,
             "url": url,
-            "data": data,
+            "data": None,
             "headers": {},
             "cookies": Cookie.SimpleCookie(),
             "user": request.user,
@@ -69,12 +69,19 @@ class Proxy():
         proto, host, cgi, param, query = urlparse.urlparse(url)[:5]
 
         # Extract headers from META
+        if 'HTTP_TRANSFER_ENCODING' in request.META:
+            return build_error_response(request, 500, "Wirecloud doesn't support requests using Transfer-Encodings")
+
         for header in request.META.items():
             header_name = header[0].lower()
             if header_name == 'content_type' and header[1]:
                 request_data['headers']["content-type"] = header[1]
 
             elif header_name == 'content_length' and header[1]:
+                # Only take into account request body if the request has a
+                # Content-Length header (we don't support chunked requests)
+                request_data['data'] = request
+
                 # It's better not propagate the Content-Length header as
                 # request processors may change final data length. In addition
                 # to this, the requests modules ignores the Content-Length
@@ -194,7 +201,7 @@ def proxy_request(request, protocol, domain, path):
         url += '?' + request.GET.urlencode()
 
     try:
-        response = WIRECLOUD_PROXY.do_request(request, url, request.method.upper(), request)
+        response = WIRECLOUD_PROXY.do_request(request, url, request.method.upper())
     except Exception, e:
         msg = _("Error processing proxy request: %s") % unicode(e)
         return build_error_response(request, 500, msg)
