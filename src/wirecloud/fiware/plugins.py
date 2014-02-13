@@ -149,6 +149,7 @@ class FiWarePlugin(WirecloudPlugin):
         }
 
     def get_platform_context_current_values(self, user):
+        # Work around bug when running manage.py compress
         import wirecloud.fiware
 
         return {
@@ -156,6 +157,9 @@ class FiWarePlugin(WirecloudPlugin):
         }
 
     def get_constants(self):
+        # Work around bug when running manage.py compress
+        import wirecloud.fiware
+
         constants = {
             "FIWARE_HOME": getattr(settings, "FIWARE_HOME", wirecloud.fiware.DEFAULT_FIWARE_HOME),
             'FIWARE_PORTALS': getattr(settings, "FIWARE_PORTALS", wirecloud.fiware.DEFAULT_FIWARE_PORTALS)
