@@ -44,8 +44,10 @@
 
             if (desc.endpoint in entry.outputs) {
                 return entry.outputs[desc.endpoint];
-            } else {
+            } else if (desc.endpoint in entry.inputs) {
                 return entry.inputs[desc.endpoint];
+            } else {
+                return null;
             }
             break;
         case 'ioperator':
@@ -56,8 +58,10 @@
 
             if (desc.endpoint in entry.inputs) {
                 return entry.inputs[desc.endpoint];
-            } else {
+            } else if (desc.endpoint in entry.outputs) {
                 return entry.outputs[desc.endpoint];
+            } else {
+                return null;
             }
             break;
         }
