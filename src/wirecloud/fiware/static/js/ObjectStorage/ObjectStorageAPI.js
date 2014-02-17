@@ -333,16 +333,20 @@
         url = this.url + encodeURIComponent(container) + '/' + encodeURIComponent(file_name);
 
         options = merge({
-            token: this.token
+            token: this.token,
+            response_type: "blob"
         }, options);
 
+        if (['text', 'blob'].indexOf(options.response_type) === -1) {
+            throw new TypeError('Invalid response_type value');
+        }
         headers = initHeaders(options);
         headers.Accept = "*/*";
 
         MashupPlatform.http.makeRequest(url, {
             method: "GET",
             requestHeaders: headers,
-            responseType: "blob",
+            responseType: options.response_type,
             onSuccess: function (transport) {
                 if (typeof options.onSuccess === 'function') {
                     options.onSuccess(transport.response);
