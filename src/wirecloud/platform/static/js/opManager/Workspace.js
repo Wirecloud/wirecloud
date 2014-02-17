@@ -91,7 +91,7 @@ function Workspace(workspaceState, resources) {
             preferenceValues = this.workspaceState.preferences;
             this.preferences = Wirecloud.PreferenceManager.buildPreferences('workspace', preferenceValues, this, params);
 
-            this.restricted = !this.owned;
+            this.restricted = !this.owned /* TODO */ || Wirecloud.contextManager.get('mode') === 'embedded';
             this.removable = !this.restricted && this.workspaceState.removable;
 
             // Load workspace tabs
