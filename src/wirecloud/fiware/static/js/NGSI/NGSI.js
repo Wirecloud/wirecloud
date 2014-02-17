@@ -220,7 +220,7 @@
         this.makeRequest(url, {
             method: 'POST',
             contentType: 'application/xml',
-            requestHeaders: this.requestHeaders,
+            requestHeaders: this.request_headers,
             postBody: NGSI.XML.serialize(payload),
             onSuccess: function (transport) {
                 if (typeof callbacks.onSuccess === 'function') {
@@ -1124,7 +1124,7 @@
             options = {};
         }
 
-        this.requestHeaders = options.requestHeaders;
+        this.request_headers = options.request_headers;
 
         if (typeof options.requestFunction === 'function') {
             this.makeRequest = options.requestFunction;

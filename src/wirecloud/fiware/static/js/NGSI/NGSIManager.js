@@ -119,11 +119,11 @@
         }
 
         if (options.use_user_fiware_token === true) {
-            if (options.requestHeaders == null) {
-                options.requestHeaders = {};
+            if (options.request_headers == null) {
+                options.request_headers = {};
             }
-            options.requestHeaders['X-FI-WARE-OAuth-Token'] = 'true';
-            options.requestHeaders['X-FI-WARE-OAuth-Header-Name'] = 'X-Auth-Token';
+            options.request_headers['X-FI-WARE-OAuth-Token'] = 'true';
+            options.request_headers['X-FI-WARE-OAuth-Header-Name'] = 'X-Auth-Token';
         }
 
         NGSI.Connection.call(this, url, options);
