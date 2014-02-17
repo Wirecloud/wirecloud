@@ -121,7 +121,7 @@ class FiWarePlugin(WirecloudPlugin):
             'js/NGSI/NGSIManager.js',
         )
 
-        if view == 'index':
+        if view == 'classic':
             return common + (
                 "js/wirecloud/FiWare.js",
                 "js/wirecloud/FiWare/FiWareCatalogueView.js",
@@ -172,7 +172,7 @@ class FiWarePlugin(WirecloudPlugin):
         return constants
 
     def get_templates(self, view):
-        if view == 'index':
+        if view == 'classic':
             return {
                 "fiware_marketplace_search_interface": "wirecloud/fiware/marketplace/search_interface.html",
                 "fiware_catalogue_resource_details_template": "wirecloud/fiware/marketplace/resource_details.html",

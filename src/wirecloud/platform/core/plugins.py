@@ -303,7 +303,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/wiring/WidgetTargetEndpoint.js',
         )
 
-        if view in ('index', 'embedded'):
+        if view in ('classic', 'embedded'):
             scripts = common + (
                 'js/opManager/Workspace.js',
                 'js/opManager/WorkspaceListItems.js',
@@ -377,7 +377,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
         }
 
     def get_templates(self, view):
-        if view == 'index':
+        if view == 'classic':
             return {
                 "iwidget": "wirecloud/ui/iwidget.html",
                 "iwidget_smartphone": "wirecloud/ui/iwidget_smartphone.html",
@@ -435,7 +435,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
     def get_platform_css(self, view):
         common = BASE_CSS + STYLED_ELEMENTS_CSS
 
-        if view == 'index':
+        if view == 'classic':
             return common + WORKSPACE_CSS + WIRING_EDITOR_CSS + CATALOGUE_CSS + TUTORIAL_CSS
         else:
             return common

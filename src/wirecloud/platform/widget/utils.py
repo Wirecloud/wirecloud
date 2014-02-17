@@ -269,7 +269,7 @@ def fix_widget_code(widget_code, base_url, content_type, request, encoding, use_
             script.text = ''
 
     head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url('js/WirecloudAPI/WirecloudAPIClosure.js', request=request)))
-    files = get_widget_api_extensions('index')
+    files = get_widget_api_extensions('classic')
     files.reverse()
     for file in files:
         head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url(file, request=request)))

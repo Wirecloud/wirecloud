@@ -36,13 +36,13 @@ class WirecloudTestPlugin1(WirecloudPlugin):
     }
 
     def get_scripts(self, view):
-        if view == 'index':
+        if view == 'classic':
             return ('a.js', 'b.js')
         else:
             return ('a.js',)
 
     def get_widget_api_extensions(self, view):
-        if view == 'index':
+        if view == 'classic':
             return ('d.js',)
         else:
             return ()
@@ -82,10 +82,10 @@ class WirecloudPluginTestCase(TestCase):
 
         core_plugins = len(get_plugins())
         core_features = len(get_active_features())
-        core_index_javascripts = len(get_extra_javascripts('index'))
-        core_iphone_javascripts = len(get_extra_javascripts('iphone'))
-        core_index_extensions = len(get_widget_api_extensions('index'))
-        core_iphone_extensions = len(get_widget_api_extensions('iphone'))
+        core_classic_javascripts = len(get_extra_javascripts('classic'))
+        core_smartphone_javascripts = len(get_extra_javascripts('smartphone'))
+        core_classic_extensions = len(get_widget_api_extensions('classic'))
+        core_smartphone_extensions = len(get_widget_api_extensions('smartphone'))
 
         settings.WIRECLOUD_PLUGINS = (
             'wirecloud.platform.tests.plugins.WirecloudTestPlugin1',
@@ -95,10 +95,10 @@ class WirecloudPluginTestCase(TestCase):
 
         self.assertEqual(len(get_plugins()), core_plugins + 2)
         self.assertEqual(len(get_active_features()), core_features + 2)
-        self.assertEqual(len(get_extra_javascripts('index')), core_index_javascripts + 2)
-        self.assertEqual(len(get_extra_javascripts('iphone')), core_iphone_javascripts + 1)
-        self.assertEqual(len(get_widget_api_extensions('index')), core_index_extensions + 1)
-        self.assertEqual(len(get_widget_api_extensions('iphone')), core_iphone_extensions + 0)
+        self.assertEqual(len(get_extra_javascripts('classic')), core_classic_javascripts + 2)
+        self.assertEqual(len(get_extra_javascripts('smartphone')), core_smartphone_javascripts + 1)
+        self.assertEqual(len(get_widget_api_extensions('classic')), core_classic_extensions + 1)
+        self.assertEqual(len(get_widget_api_extensions('smartphone')), core_smartphone_extensions + 0)
 
     def test_several_plugins_with_the_same_feature(self):
         settings.WIRECLOUD_PLUGINS = (

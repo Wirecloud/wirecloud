@@ -53,7 +53,7 @@ class ThemeEntry(Resource):
 
         context = RequestContext(request)
         templates = {}
-        template_descriptions = get_templates('index')
+        template_descriptions = get_templates('classic')
         for template_id in template_descriptions:
             template = get_template(template_descriptions[template_id])
             templates[template_id] = template.render(context)
