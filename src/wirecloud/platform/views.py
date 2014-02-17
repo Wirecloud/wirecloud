@@ -56,8 +56,8 @@ def auto_select_workspace(request, mode=None):
 
     if active_workspace is not None:
         url = reverse('wirecloud.workspace_view', kwargs={
-            'creator_user': active_workspace.workspace.creator.username,
-            'workspace': active_workspace.workspace.name,
+            'owner': active_workspace.workspace.creator.username,
+            'name': active_workspace.workspace.name,
         })
 
         if mode:
@@ -68,14 +68,14 @@ def auto_select_workspace(request, mode=None):
         return render(request, 'wirecloud/landing_page.html', content_type="application/xhtml+xml; charset=UTF-8")
 
 
-def render_workspace_view(request, creator_user, workspace):
+def render_workspace_view(request, owner, name):
 
     if ALLOW_ANONYMOUS_ACCESS is False and request.user.is_authenticated() is False:
         return redirect_to_login(request.get_full_path())
 
     get_workspace_list(request.user)
 
-    workspace = get_object_or_404(Workspace, creator__username=creator_user, name=workspace)
+    workspace = get_object_or_404(Workspace, creator__username=owner, name=name)
     if not workspace.public and request.user not in workspace.users.all():
         if request.user.is_authenticated():
             return build_error_response(request, 403, 'forbidden')

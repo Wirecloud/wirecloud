@@ -177,5 +177,5 @@ urlpatterns = patterns('wirecloud.platform.views',
 
 ) + get_plugin_urls() + patterns('wirecloud.platform.views',
 
-    url(r'^(?P<creator_user>[^/]+)/(?P<workspace>[^/]+)/?$', 'render_workspace_view', name='wirecloud.workspace_view'),
+    url(r'^(?P<owner>[^/]+)/(?P<name>[^/]+)/?$', 'render_workspace_view', name='wirecloud.workspace_view'),
 )

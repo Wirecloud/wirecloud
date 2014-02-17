@@ -64,6 +64,15 @@ WorkspaceItems.prototype.build = function () {
     }.bind(this));
     items.push(item);
 
+    item = new StyledElements.MenuItem(gettext('Embed'), function () {
+        var title = gettext('Embed Code');
+        var path = Wirecloud.URLs.WORKSPACE_VIEW.evaluate({owner: current_workspace.workspaceState.creator, name: current_workspace.workspaceState.name});
+        var workspace_url = document.location.protocol + '//' + document.location.host + path + '?view=embedded';
+        var dialog = new Wirecloud.ui.EmbedCodeWindowMenu(title, '<iframe src="' + workspace_url + '" frameborder="0" allowfullscreen></iframe>');
+        dialog.show();
+    });
+    items.push(item);
+
     item = new StyledElements.MenuItem(gettext('Upload to local catalogue'), function () {
         LayoutManagerFactory.getInstance().viewsByName.marketplace.waitMarketListReady(function () {
             var dialog = new Wirecloud.ui.PublishWorkspaceWindowMenu(current_workspace);

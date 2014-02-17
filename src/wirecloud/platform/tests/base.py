@@ -38,7 +38,7 @@ class BasicViewsAPI(WirecloudTestCase):
 
     def test_workspace_view_redirects_to_login(self):
 
-        url = reverse('wirecloud.workspace_view', kwargs={'creator_user': 'user_with_workspaces', 'workspace': 'ExistingWorkspace'})
+        url = reverse('wirecloud.workspace_view', kwargs={'owner': 'user_with_workspaces', 'name': 'ExistingWorkspace'})
 
         response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
         self.assertEqual(response.status_code, 302)
@@ -47,7 +47,7 @@ class BasicViewsAPI(WirecloudTestCase):
 
     def test_workspace_view_check_permissions(self):
     
-        url = reverse('wirecloud.workspace_view', kwargs={'creator_user': 'user_with_workspaces', 'workspace': 'ExistingWorkspace'})
+        url = reverse('wirecloud.workspace_view', kwargs={'owner': 'user_with_workspaces', 'name': 'ExistingWorkspace'})
 
         # Authenticate
         self.client.login(username='emptyuser', password='admin')
@@ -61,7 +61,7 @@ class BasicViewsAPI(WirecloudTestCase):
 
     def test_workspace_view_handles_not_found(self):
 
-        url = reverse('wirecloud.workspace_view', kwargs={'creator_user': 'noexistent_user', 'workspace': 'NonexistingWorkspace'})
+        url = reverse('wirecloud.workspace_view', kwargs={'owner': 'noexistent_user', 'name': 'NonexistingWorkspace'})
 
         # Authenticate
         self.client.login(username='emptyuser', password='admin')
@@ -75,7 +75,7 @@ class BasicViewsAPI(WirecloudTestCase):
 
     def test_workspace_view_handles_bad_view_value(self):
 
-        url = reverse('wirecloud.workspace_view', kwargs={'creator_user': 'user_with_workspaces', 'workspace': 'ExistingWorkspace'}) + '?view=noexistent&a=b'
+        url = reverse('wirecloud.workspace_view', kwargs={'owner': 'user_with_workspaces', 'name': 'ExistingWorkspace'}) + '?view=noexistent&a=b'
 
         # Authenticate
         self.client.login(username='user_with_workspaces', password='admin')
