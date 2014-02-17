@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -939,7 +939,7 @@ class MobileWirecloudRemoteTestCase(RemoteTestCase):
             next_url = next
         else:
             next_url = self.live_server_url
-        next_url += "?view=smartphone"
+        next_url += "?mode=smartphone"
         url += "?" + urlencode({'next': next_url})
 
         self.driver.get(url)

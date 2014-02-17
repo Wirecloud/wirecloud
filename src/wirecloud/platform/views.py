@@ -44,7 +44,7 @@ class FeatureCollection(Resource):
 
 
 def render_root_page(request):
-    return auto_select_workspace(request, request.GET.get('view', None))
+    return auto_select_workspace(request, request.GET.get('mode', None))
 
 
 def auto_select_workspace(request, mode=None):
@@ -61,7 +61,7 @@ def auto_select_workspace(request, mode=None):
         })
 
         if mode:
-            url += '?' + urlencode({'view': mode})
+            url += '?' + urlencode({'mode': mode})
 
         return HttpResponseRedirect(url)
     else:
@@ -82,18 +82,18 @@ def render_workspace_view(request, owner, name):
         else:
             return redirect_to_login(request.get_full_path())
 
-    if 'view' in request.GET:
-        view_type = request.GET['view']
+    if 'mode' in request.GET:
+        view_type = request.GET['mode']
     else:
         view_type = get_default_view(request)
 
     try:
         return render_wirecloud(request, view_type)
     except TemplateDoesNotExist:
-        if 'view' in request.GET:
+        if 'mode' in request.GET:
             url = urlparse(request.build_absolute_uri())
             query_params = parse_qs(url.query, True)
-            del query_params['view']
+            del query_params['mode']
             return HttpResponseRedirect(urlunparse((
                 url.scheme,
                 url.netloc,
