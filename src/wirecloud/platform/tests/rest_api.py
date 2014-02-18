@@ -448,6 +448,21 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Workspace should be created
         self.assertTrue(Workspace.objects.filter(creator=2, name='Test Mashup').exists())
 
+    def test_workspace_collection_post_creation_from_mashup_conflict(self):
+
+        url = reverse('wirecloud.workspace_collection')
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'mashup': 'Wirecloud/test-mashup/1.0',
+            'name': 'ExistingWorkspace',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 409)
+
     def test_workspace_collection_post_creation_from_mashup_missing_dependencies(self):
 
         url = reverse('wirecloud.workspace_collection')

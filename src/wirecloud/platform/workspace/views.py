@@ -167,8 +167,11 @@ class WorkspaceCollection(Resource):
             if dry_run:
                 return HttpResponse(status=204)
 
+            if workspace_name == '':
+                workspace_name = None
+
             try:
-                workspace, _junk = buildWorkspaceFromTemplate(template, request.user, allow_renaming=allow_renaming)
+                workspace, _junk = buildWorkspaceFromTemplate(template, request.user, allow_renaming=allow_renaming, new_name=workspace_name)
             except IntegrityError:
                 msg = _('A workspace with the given name already exists')
                 return build_error_response(request, 409, msg)

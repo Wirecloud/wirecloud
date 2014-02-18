@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2011-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -33,7 +33,7 @@ from wirecloud.platform.models import Workspace, UserWorkspace
 from wirecloud.platform.workspace.utils import createTab
 
 
-def buildWorkspaceFromTemplate(template, user, allow_renaming=False):
+def buildWorkspaceFromTemplate(template, user, allow_renaming=False, new_name=None):
 
     if not isinstance(template, TemplateParser):
         template = TemplateParser(template)
@@ -41,7 +41,10 @@ def buildWorkspaceFromTemplate(template, user, allow_renaming=False):
     if template.get_resource_type() != 'mashup':
         raise Exception()
 
-    name = template.get_resource_name()
+    if new_name is not None:
+        name = new_name
+    else:
+        name = template.get_resource_name()
 
     # Workspace creation
     workspace = Workspace(name=name, creator=user)
