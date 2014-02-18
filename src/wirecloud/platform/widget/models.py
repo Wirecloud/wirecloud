@@ -45,13 +45,13 @@ class XHTML(models.Model):
     def __str__(self):
         return self.uri
 
-    def get_cache_key(self, domain):
+    def get_cache_key(self, domain, mode):
         version = cache.get('_widget_xhtml_version/' + str(self.id))
         if version is None:
             version = random.randrange(1, 100000)
             cache.set('_widget_xhtml_version/' + str(self.id), version)
 
-        return '_widget_xhtml/' + str(version) + '/' + domain + '/' + str(self.id)
+        return '_widget_xhtml/' + str(version) + '/' + domain + '/' + str(self.id) + '?mode=' + mode
 
     def delete(self, *args, **kwargs):
         old_id = self.id

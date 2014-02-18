@@ -67,6 +67,11 @@ def deleteWidget(user, name, vendor, version):
     return result
 
 
+def process_requirements(requirements):
+
+    return {requirement['name']: {} for requirement in requirements}
+
+
 class WidgetCodeEntry(Resource):
 
     def read(self, request, vendor, name, version):
@@ -79,12 +84,13 @@ class WidgetCodeEntry(Resource):
         if resource.resource_type() != 'widget':
             raise Http404()
 
+        mode = request.GET.get('mode', 'classic')
         widget_info = json.loads(resource.json_description)
 
         # check if the xhtml code has been cached
         if widget_info['code_cacheable'] is True:
 
-            cache_key = resource.widget.xhtml.get_cache_key(get_current_domain(request))
+            cache_key = resource.widget.xhtml.get_cache_key(get_current_domain(request), mode)
             cache_entry = cache.get(cache_key)
             if cache_entry is not None:
                 response = HttpResponse(cache_entry['code'], content_type=cache_entry['content_type'])
@@ -127,7 +133,7 @@ class WidgetCodeEntry(Resource):
             xhtml.save()
 
         try:
-            code = fix_widget_code(code, base_url, content_type, request, charset, xhtml.use_platform_style, force_base=force_base)
+            code = fix_widget_code(code, base_url, content_type, request, charset, xhtml.use_platform_style, process_requirements(widget_info['requirements']), force_base, mode)
         except UnicodeEncodeError:
             msg = _('Widget code was not encoded using the specified charset (%(charset)s according to the widget descriptor file).')
             return build_error_response(request, 502, msg % {'charset': charset})

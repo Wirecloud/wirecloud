@@ -41,7 +41,7 @@ class WirecloudTestPlugin1(WirecloudPlugin):
         else:
             return ('a.js',)
 
-    def get_widget_api_extensions(self, view):
+    def get_widget_api_extensions(self, view, requirements):
         if view == 'classic':
             return ('d.js',)
         else:

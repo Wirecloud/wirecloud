@@ -440,7 +440,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
         else:
             return common
 
-    def get_widget_api_extensions(self, view):
+    def get_widget_api_extensions(self, view, requirements):
         return (
             'js/WirecloudAPI/StyledElements.js',
         )

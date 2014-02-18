@@ -222,7 +222,7 @@ def xpath(tree, query, xmlns):
         return tree.xpath(query, namespaces={'xhtml': xmlns})
 
 
-def fix_widget_code(widget_code, base_url, content_type, request, encoding, use_platform_style, force_base=False):
+def fix_widget_code(widget_code, base_url, content_type, request, encoding, use_platform_style, requirements, force_base, mode):
 
     # This line is here for raising UnicodeDecodeError in case the widget_code is not encoded using the expecified encoding
     widget_code.decode(encoding)
@@ -269,7 +269,7 @@ def fix_widget_code(widget_code, base_url, content_type, request, encoding, use_
             script.text = ''
 
     head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url('js/WirecloudAPI/WirecloudAPIClosure.js', request=request)))
-    files = get_widget_api_extensions('classic')
+    files = get_widget_api_extensions(mode, requirements)
     files.reverse()
     for file in files:
         head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url(file, request=request)))
