@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -142,8 +142,12 @@ urlpatterns = patterns('wirecloud.platform.views',
         name='wirecloud.workspace_entry'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tabs/?$',
-        workspace_views.TabCollection(permitted_methods=('POST', 'PUT',)),
+        workspace_views.TabCollection(permitted_methods=('POST',)),
         name='wirecloud.tab_collection'
+    ),
+    url(r'^api/workspace/(?P<workspace_id>\d+)/tabs/order/?$',
+        workspace_views.TabOrderService(),
+        name='wirecloud.tab_order'
     ),
     url(r'^api/workspace/(?P<workspace_id>\d+)/tab/(?P<tab_id>\w+)/?$',
         workspace_views.TabEntry(permitted_methods=('PUT', 'DELETE',)),

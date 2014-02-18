@@ -908,6 +908,39 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Tab should not be removed
         self.assertTrue(Tab.objects.filter(pk=103).exists())
 
+    def test_tab_order_post_requires_authentication(self):
+
+        url = reverse('wirecloud.tab_order', kwargs={'workspace_id': 3})
+
+        data = (103, 102)
+
+        check_post_requires_authentication(self, url, json.dumps(data))
+
+    def test_tab_order_post_requires_permission(self):
+
+        url = reverse('wirecloud.tab_order', kwargs={'workspace_id': 3})
+
+        data = (103, 102)
+
+        def test_tab_order_not_changed(self):
+            self.assertEqual(tuple(Workspace.objects.get(pk=3).tab_set.order_by('position').values_list('pk', flat=True)), (102, 103))
+
+        check_post_requires_permission(self, url, json.dumps(data), test_tab_order_not_changed)
+
+    def test_tab_order_post(self):
+
+        url = reverse('wirecloud.tab_order', kwargs={'workspace_id': 3})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = (103, 102)
+        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+
+        self.assertEqual(tuple(Workspace.objects.get(pk=3).tab_set.order_by('position').values_list('pk', flat=True)), data)
+
     def test_iwidget_collection_post_requires_authentication(self):
 
         url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 1})

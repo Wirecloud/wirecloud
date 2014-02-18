@@ -295,20 +295,17 @@ class TabCollection(Resource):
 
         return HttpResponse(json.dumps(ids), status=201, content_type='application/json; charset=UTF-8')
 
+
+class TabOrderService(Service):
+
     @authentication_required
     @supported_request_mime_types(('application/json',))
     @commit_on_http_success
-    def update(self, request, workspace_id):
+    def process(self, request, workspace_id):
 
-        user_workspaces = UserWorkspace.objects.select_related('workspace')
-        try:
-            user_workspace = user_workspaces.get(user__id=request.user.id, workspace__id=workspace_id)
-        except UserWorkspace.DoesNotExist:
-            raise Http404
-
-        workspace = user_workspace.workspace
-        if workspace.creator != request.user or user_workspace.manager != '':
-            return build_error_response(request, 403, _('You are not allowed to update this workspace'))
+        workspace = Workspace.objects.get(pk=workspace_id)
+        if not (request.user.is_superuser or workspace.creator == request.user):
+            return build_error_response(request, 403, _('You are not allowed to create new tabs for this workspace'))
 
         try:
             order = json.loads(request.body)
