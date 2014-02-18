@@ -50,7 +50,7 @@
     };
 
     EmbedCodeWindowMenu.prototype.setFocus = function setFocus() {
-        this.button.focus();
+        this.code.select();
     };
 
     Wirecloud.ui.EmbedCodeWindowMenu = EmbedCodeWindowMenu;
