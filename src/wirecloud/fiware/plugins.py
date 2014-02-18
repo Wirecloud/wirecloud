@@ -201,24 +201,24 @@ class FiWarePlugin(WirecloudPlugin):
             {'id': 'FIWARE_STORE_START_PURCHASE', 'url': build_url_template('wirecloud.fiware.store_start_purchase', ['market_user', 'market_name', 'store'])},
         )
 
-    def get_widget_api_extensions(self, view, requirements):
+    def get_widget_api_extensions(self, view, features):
         files = []
 
-        if 'NGSI' in requirements:
+        if 'NGSI' in features:
             files.append('js/WirecloudAPI/NGSIAPI.js')
 
-        if 'ObjectStorage' in requirements:
+        if 'ObjectStorage' in features:
             files.append('js/ObjectStorage/ObjectStorageAPI.js')
 
         return files
 
-    def get_operator_api_extensions(self, view, requirements):
+    def get_operator_api_extensions(self, view, features):
         files = []
 
-        if 'NGSI' in requirements:
+        if 'NGSI' in features:
             files.append('js/WirecloudAPI/NGSIAPI.js')
 
-        if 'ObjectStorage' in requirements:
+        if 'ObjectStorage' in features:
             files.append('js/ObjectStorage/ObjectStorageAPI.js')
 
         return files

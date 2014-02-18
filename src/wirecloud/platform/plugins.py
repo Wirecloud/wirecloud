@@ -209,22 +209,22 @@ def get_constants():
     return _wirecloud_constants
 
 
-def get_widget_api_extensions(view, requirements):
+def get_widget_api_extensions(view, features):
     plugins = get_plugins()
     files = []
 
     for plugin in plugins:
-        files += plugin.get_widget_api_extensions(view, requirements)
+        files += plugin.get_widget_api_extensions(view, features)
 
     return files
 
 
-def get_operator_api_extensions(view, requirements):
+def get_operator_api_extensions(view, features):
     plugins = get_plugins()
     files = []
 
     for plugin in plugins:
-        files += plugin.get_operator_api_extensions(view, requirements)
+        files += plugin.get_operator_api_extensions(view, features)
 
     return files
 
@@ -401,10 +401,10 @@ class WirecloudPlugin(object):
     def get_ajax_endpoints(self, view):
         return ()
 
-    def get_widget_api_extensions(self, view, requirements):
+    def get_widget_api_extensions(self, view, features):
         return ()
 
-    def get_operator_api_extensions(self, view, requirements):
+    def get_operator_api_extensions(self, view, features):
         return ()
 
     def get_platform_css(self, view):
