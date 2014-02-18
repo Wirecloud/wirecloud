@@ -43,12 +43,12 @@ def remove_related_iwidget_connections(wiring, iwidget):
             del wiring['views'][0]['connections'][connection['index']]
 
 
-def generate_xhtml_operator_code(js_files, base_url, request):
+def generate_xhtml_operator_code(js_files, base_url, request, requirements, mode):
 
     api_url = get_absolute_static_url('js/WirecloudAPI/WirecloudOperatorAPI.js', request=request)
     api_common_url = get_absolute_static_url('js/WirecloudAPI/WirecloudAPICommon.js', request=request)
     api_closure_url = get_absolute_static_url('js/WirecloudAPI/WirecloudAPIClosure.js', request=request)
-    api_js_files = [get_absolute_static_url(url, request=request) for url in get_operator_api_extensions('classic')]
+    api_js_files = [get_absolute_static_url(url, request=request) for url in get_operator_api_extensions(mode, requirements)]
     api_js = [api_url, api_common_url] + api_js_files + [api_closure_url]
 
     t = loader.get_template('wirecloud/operator_xhtml.html')

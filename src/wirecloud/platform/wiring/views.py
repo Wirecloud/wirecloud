@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -78,6 +78,11 @@ class WiringEntry(Resource):
         return HttpResponse(status=204)
 
 
+def process_requirements(requirements):
+
+    return {requirement['name']: {} for requirement in requirements}
+
+
 class OperatorEntry(Resource):
 
     def read(self, request, vendor, name, version):
@@ -87,7 +92,9 @@ class OperatorEntry(Resource):
         #if not operator.is_available_for(request.user):
         #    return HttpResponseForbidden()
 
-        key = '_operator/' + operator.local_uri_part
+        mode = request.GET.get('mode', 'classic')
+
+        key = '_operator/' + operator.local_uri_part + '?mode=' + mode
         cached_response = cache.get(key)
         if cached_response is None:
             options = json.loads(operator.json_description)
@@ -102,7 +109,7 @@ class OperatorEntry(Resource):
                     'file_path': operator.template_uri
                 }, request=request)
 
-            xhtml = generate_xhtml_operator_code(js_files, base_url, request)
+            xhtml = generate_xhtml_operator_code(js_files, base_url, request, process_requirements(options['requirements']), mode)
             cache_timeout = 31536000  # 1 year
             cached_response = CacheableData(xhtml, timeout=cache_timeout, content_type='application/xhtml+xml; charset=UTF-8')
 

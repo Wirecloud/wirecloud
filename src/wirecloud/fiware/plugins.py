@@ -212,11 +212,16 @@ class FiWarePlugin(WirecloudPlugin):
 
         return files
 
-    def get_operator_api_extensions(self, view):
-        return (
-            'js/WirecloudAPI/NGSIAPI.js',
-            'js/ObjectStorage/ObjectStorageAPI.js',
-        )
+    def get_operator_api_extensions(self, view, requirements):
+        files = []
+
+        if 'NGSI' in requirements:
+            files.append('js/WirecloudAPI/NGSIAPI.js')
+
+        if 'ObjectStorage' in requirements:
+            files.append('js/ObjectStorage/ObjectStorageAPI.js')
+
+        return files
 
     def get_proxy_processors(self):
         return ('wirecloud.fiware.proxy.IDMTokenProcessor',)
