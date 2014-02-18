@@ -1770,10 +1770,19 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
         url = reverse('wirecloud.workspace_merge', kwargs={'to_ws_id': 2})
 
-        data = [
-            {'id': 2, 'value': 'new_value'}
-        ]
+        data = {
+            'mashup': 'Wirecloud/test-mashup/1.0',
+        }
         check_post_requires_authentication(self, url, json.dumps(data))
+
+    def test_workspace_merge_service_post_requires_permission(self):
+
+        url = reverse('wirecloud.workspace_merge', kwargs={'to_ws_id': 2})
+
+        data = {
+            'mashup': 'Wirecloud/test-mashup/1.0',
+        }
+        check_post_requires_permission(self, url, json.dumps(data))
 
     def test_workspace_merge_service_post(self):
 
