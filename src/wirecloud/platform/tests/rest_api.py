@@ -2072,6 +2072,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         # Test invalid vendor
         data = {
             'vendor': 'Wire/cloud',
+            'name': 'test-published-mashup',
             'version': '1.0.5',
             'email': 'test@example.com'
         }
