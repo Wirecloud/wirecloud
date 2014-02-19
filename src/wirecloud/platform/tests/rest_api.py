@@ -941,6 +941,11 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         self.assertEqual(tuple(Workspace.objects.get(pk=3).tab_set.order_by('position').values_list('pk', flat=True)), data)
 
+    def test_tab_order_post_bad_request_syntax(self):
+
+        url = reverse('wirecloud.tab_order', kwargs={'workspace_id': 3})
+        check_post_bad_request_syntax(self, url)
+
     def test_iwidget_collection_post_requires_authentication(self):
 
         url = reverse('wirecloud.iwidget_collection', kwargs={'workspace_id': 1, 'tab_id': 1})
