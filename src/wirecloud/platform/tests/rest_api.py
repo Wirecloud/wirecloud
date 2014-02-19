@@ -150,6 +150,14 @@ def check_post_bad_request_syntax(self, url):
     self.assertTrue(isinstance(response_data, dict))
 
 
+def check_post_bad_provided_data(self, url, data):
+
+    response = self.client.post(url, data, content_type='application/json', HTTP_ACCEPT='application/json')
+    self.assertEqual(response.status_code, 400)
+    response_data = json.loads(response.content)
+    self.assertTrue(isinstance(response_data, dict))
+
+
 def check_put_bad_request_syntax(self, url):
 
     # Authenticate
@@ -2052,14 +2060,31 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         # Authenticate
         self.client.login(username='user_with_workspaces', password='admin')
 
-        # Test empty parameter
+        # Test empty name
         data = {
-            'name': ''
+            'vendor': 'Wirecloud',
+            'name': '',
+            'version': '1.0.5',
+            'email': 'test@example.com'
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 400)
-        response_data = json.loads(response.content)
-        self.assertTrue(isinstance(response_data, dict))
+        check_post_bad_provided_data(self, url, json.dumps(data))
+
+        # Test invalid vendor
+        data = {
+            'vendor': 'Wire/cloud',
+            'version': '1.0.5',
+            'email': 'test@example.com'
+        }
+        check_post_bad_provided_data(self, url, json.dumps(data))
+
+        # Test invalid name
+        data = {
+            'vendor': 'Wirecloud',
+            'name': 'test/published/mashup',
+            'version': '1.0.5',
+            'email': 'test@example.com'
+        }
+        check_post_bad_provided_data(self, url, json.dumps(data))
 
         # Test invalid version
         data = {
@@ -2068,10 +2093,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'version': '1.0.05',
             'email': 'test@example.com'
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 400)
-        response_data = json.loads(response.content)
-        self.assertTrue(isinstance(response_data, dict))
+        check_post_bad_provided_data(self, url, json.dumps(data))
 
     def test_workspace_publish_bad_request_syntax(self):
 
