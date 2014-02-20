@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -96,7 +96,7 @@ setup(
     },
     include_package_data=True,
     data_files=data_files,
-    install_requires=('Django>=1.4.2,<1.7', 'south>=0.7.4,<2.0', 'lxml', 'BeautifulSoup', 'django_compressor>=1.2', 'rdflib>=3.2.0', 'requests>=2.0.0', 'selenium', 'pytz'),
+    install_requires=('Django>=1.4.2,<1.7', 'south>=0.7.4,<2.0', 'lxml', 'BeautifulSoup', 'django_compressor>=1.2', 'rdflib>=3.2.0', 'requests>=2.0.0', 'selenium', 'pytz', 'django_relatives'),
     tests_require=('django-nose'),
     classifiers=(
         'Development Status :: 4 - Beta',
