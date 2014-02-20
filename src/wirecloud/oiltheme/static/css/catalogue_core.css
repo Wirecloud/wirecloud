@@ -33,7 +33,7 @@
 
 .catalogue .search_interface .search_bar {
     background: #fcfcfc;
-    padding: 0 2ex;
+    padding: 7px 3px 0 7px;
     z-index: 2;
 }
 
