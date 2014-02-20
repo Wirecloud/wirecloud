@@ -17,12 +17,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 from django.contrib.auth.models import User, Group
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
-
-from wirecloud.commons.utils.http import get_absolute_reverse_url
 
 
 @python_2_unicode_compatible
@@ -49,7 +49,7 @@ class Workspace(models.Model):
         self.__original_public = self.public
 
     def __str__(self):
-        return self.creator.username + '/' + self.name
+        return "%s/%s" % (self.creator.username, self.name)
 
     def save(self, *args, **kwargs):
 
@@ -81,7 +81,7 @@ class UserWorkspace(models.Model):
         db_table = 'wirecloud_userworkspace'
 
     def __str__(self):
-        return self.workspace + " - " + self.user
+        return "%s - %s" % (self.workspace, self.user)
 
 
 @python_2_unicode_compatible
@@ -101,7 +101,7 @@ class Tab(models.Model):
         unique_together = ('name', 'workspace')
 
     def __str__(self):
-        return self.pk + " " + self.name
+        return self.name
 
     def save(self, *args, **kwargs):
 

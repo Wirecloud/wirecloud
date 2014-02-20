@@ -18,6 +18,9 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
+from django.utils.translation import ugettext_lazy as _
+from relatives.utils import object_edit_link
+
 from wirecloud.platform import models
 
 
@@ -46,6 +49,8 @@ class VariableDefInline(admin.StackedInline):
 class WidgetAdmin(admin.ModelAdmin):
 
     inlines = (VariableDefInline,)
+
+
 admin.site.register(models.Widget, WidgetAdmin)
 admin.site.register(models.XHTML)
 
@@ -53,14 +58,43 @@ admin.site.register(models.UserPrefOption)
 admin.site.register(models.VariableDefAttr)
 
 admin.site.register(models.PlatformPreference)
-admin.site.register(models.WorkspacePreference)
-admin.site.register(models.TabPreference)
+
+
+class WorkspacePreferenceInline(admin.TabularInline):
+
+    model = models.WorkspacePreference
+    extra = 1
+
+
+class TabPreferenceInline(admin.TabularInline):
+
+    model = models.TabPreference
+    extra = 1
+
+
+class TabInline(admin.TabularInline):
+
+    model = models.Tab
+    edit_link = object_edit_link(_("Edit"))
+    fields = ('name', 'position', edit_link)
+    readonly_fields = (edit_link,)
+    ordering = ('position',)
+    extra = 1
+
+
+class TabAdmin(admin.ModelAdmin):
+
+    list_display = ('workspace', 'name', 'position')
+    list_display_links = ('name',)
+    ordering = ('workspace', 'position')
+    inlines = (TabPreferenceInline,)
 
 
 class WorkspaceAdmin(admin.ModelAdmin):
     list_display = ('creator', 'name')
     ordering = ('creator', 'name')
+    inlines = (WorkspacePreferenceInline, TabInline,)
 
 admin.site.register(models.Workspace, WorkspaceAdmin)
+admin.site.register(models.Tab, TabAdmin)
 admin.site.register(models.UserWorkspace)
-admin.site.register(models.Tab)
