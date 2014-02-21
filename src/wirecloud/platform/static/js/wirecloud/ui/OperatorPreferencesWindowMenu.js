@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2013 Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -42,7 +42,11 @@
         }
 
         if (typeof this._current_ioperator.prefCallback === 'function') {
-            this._current_ioperator.prefCallback(new_values);
+            try {
+                this._current_ioperator.prefCallback(new_values);
+            } catch (e) {
+                this._current_ioperator.logManager.log(gettext('Exception catched while processing preference changes'));
+            }
         }
 
         this.hide();

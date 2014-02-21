@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-20123 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -57,8 +57,13 @@
                 postBody: JSON.stringify(new_values)
             }
         );
+
         if (typeof this._current_iwidget.prefCallback === 'function') {
-            this._current_iwidget.prefCallback(new_values);
+            try {
+                this._current_iwidget.prefCallback(new_values);
+            } catch (e) {
+                this._current_iwidget.logManager.log(gettext('Exception catched while processing preference changes'));
+            }
         }
     };
 
