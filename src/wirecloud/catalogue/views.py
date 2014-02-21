@@ -114,7 +114,7 @@ class ResourceCollection(Resource):
 
                 return build_error_response(request, 400, _("Missing parameter: template_uri or file"))
 
-        except TemplateParseException, e:
+        except TemplateParseException as e:
 
             return build_error_response(request, 400, unicode(e.msg))
 
@@ -280,7 +280,7 @@ class ResourceTagCollection(Resource):
 
         try:
             tags = json.loads(request.body)
-        except ValueError, e:
+        except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -340,7 +340,7 @@ class ResourceVoteCollection(Resource):
         if content_type == 'application/json':
             try:
                 vote = json.loads(request.body)['vote']
-            except ValueError, e:
+            except ValueError as e:
                 msg = _("malformed json data: %s") % unicode(e)
                 return build_error_response(request, 400, msg)
         else:
@@ -386,7 +386,7 @@ class ResourceVoteCollection(Resource):
         if content_type == 'application/json':
             try:
                 vote = json.loads(request.body)['vote']
-            except ValueError, e:
+            except ValueError as e:
                 msg = _("malformed json data: %s") % unicode(e)
                 return build_error_response(request, 400, msg)
         else:
@@ -412,7 +412,7 @@ class ResourceVersionCollection(Resource):
 
         try:
             resources = json.loads(request.body)
-        except ValueError, e:
+        except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 

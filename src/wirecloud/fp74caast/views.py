@@ -58,7 +58,7 @@ def add_tenant(request):
 
     try:
         data = json.loads(request.body)
-    except ValueError, e:
+    except ValueError as e:
         msg = _("malformed json data: %s") % unicode(e)
         return build_error_response(request, 400, msg)
 
@@ -98,7 +98,7 @@ def remove_tenant(request):
 
     try:
         data = json.loads(request.body)
-    except ValueError, e:
+    except ValueError as e:
         msg = _("malformed json data: %s") % unicode(e)
         return build_error_response(request, 400, msg)
 
@@ -131,7 +131,7 @@ def _parse_ac_request(request):
 
     try:
         data = json.loads(request.body)
-    except Exception, e:
+    except Exception as e:
         msg = _("malformed json data: %s") % unicode(e)
         return build_error_response(request, 400, msg)
 
@@ -203,7 +203,7 @@ def deploy_tenant_ac(request):
 
         resource = install_resource_to_user(user, file_contents=wgt_file, templateURL=fileURL, packaged=True)
 
-    except TemplateParseException, e:
+    except TemplateParseException as e:
 
         return build_error_response(request, 400, unicode(e.msg))
 

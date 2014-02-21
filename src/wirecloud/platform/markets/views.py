@@ -68,7 +68,7 @@ class MarketCollection(Resource):
 
         try:
             received_data = json.loads(request.body)
-        except ValueError, e:
+        except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -117,7 +117,7 @@ class PublishService(Service):
 
         try:
             data = json.loads(request.body)
-        except ValueError, e:
+        except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -137,7 +137,7 @@ class PublishService(Service):
 
             try:
                 market_managers[market_endpoint['market']].publish(market_endpoint, wgt_file, request.user, request=request)
-            except Exception, e:
+            except Exception as e:
                 errors[market_endpoint['market']] = unicode(e)
 
         if len(errors) == 0:

@@ -96,7 +96,7 @@ def get_plugins():
                 module, attr = entry[:i], entry[i + 1:]
                 try:
                     mod = import_module(module)
-                except ImportError, e:
+                except ImportError as e:
                     raise ImproperlyConfigured('Error importing wirecloud plugin module %s: "%s"' % (module, e))
 
                 try:
@@ -257,7 +257,7 @@ def get_proxy_processors():
             module, attr = path[:i], path[i + 1:]
             try:
                 mod = import_module(module)
-            except ImportError, e:
+            except ImportError as e:
                 raise ImproperlyConfigured('Error importing proxy processor module %s: "%s"' % (module, e))
 
             try:
@@ -331,7 +331,7 @@ def build_url_template(viewname, kwargs=[], urlconf=None, prefix=None, current_a
             extra, resolver = resolver.namespace_dict[ns]
             resolved_path.append(ns)
             ns_pattern = ns_pattern + extra
-        except KeyError, key:
+        except KeyError as key:
             if resolved_path:
                 raise NoReverseMatch(
                     "%s is not a registered namespace inside '%s'" %

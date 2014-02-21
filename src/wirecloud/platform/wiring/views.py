@@ -44,7 +44,7 @@ class WiringEntry(Resource):
         wiring_status_string = request.body
         try:
             wiring_status = json.loads(wiring_status_string)
-        except ValueError, e:
+        except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 

@@ -116,7 +116,7 @@ class WidgetCodeEntry(Resource):
                 else:
                     code = downloader.download_http_content('file://' + os.path.join(showcase_utils.wgt_deployer.root_dir, url2pathname(xhtml.url)), user=request.user)
 
-            except Exception, e:
+            except Exception as e:
                 msg = _("XHTML code is not accessible: %(errorMsg)s") % {'errorMsg': e.message}
                 return build_error_response(request, 502, msg)
         else:

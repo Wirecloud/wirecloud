@@ -111,7 +111,7 @@ class ResourceCollection(Resource):
             if content_type == 'application/json':
                 try:
                     data = json.loads(request.body)
-                except ValueError, e:
+                except ValueError as e:
                     msg = _("malformed json data: %s") % unicode(e)
                     return build_error_response(request, 400, msg)
 
@@ -166,7 +166,7 @@ class ResourceCollection(Resource):
 
             resource = install_resource_to_user(request.user, file_contents=file_contents, templateURL=templateURL, packaged=packaged, raise_conflicts=force_create)
 
-        except OSError, e:
+        except OSError as e:
 
             if e.errno == errno.EACCES:
                 return build_error_response(request, 500, _('Error writing the resource into the filesystem. Please, contact the server administrator.'))

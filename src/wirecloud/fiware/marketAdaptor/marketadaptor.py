@@ -59,7 +59,7 @@ def parse_usdl_from_url(url):
         content_type = parse_mime_type(response.headers.get('content-type'))[0]
         parser = USDLParser(response.content, content_type)
         usdl_info = parser.parse()
-    except (requests.ConnectionError, URLError, USDLParseException), e:
+    except (requests.ConnectionError, URLError, USDLParseException) as e:
         cache.set(cache_key, e, 2 * 60 * 60)
         raise
 
@@ -182,7 +182,7 @@ class MarketAdaptor(object):
         url = urljoin(self._marketplace_uri, "registration/stores/")
         try:
             response = requests.get(url, auth=HTTPBasicAuth(self._user, self._passwd))
-        except HTTPError, e:
+        except HTTPError as e:
             if e.code == 404:
                 return []
 
@@ -203,7 +203,7 @@ class MarketAdaptor(object):
         url = urljoin(self._marketplace_uri, "registration/store/" + urlquote(store))
         try:
             response = requests.get(url, auth=HTTPBasicAuth(self._user, self._passwd))
-        except HTTPError, e:
+        except HTTPError as e:
             raise HTTPError(e.url, e.code, e.msg, None, None)
 
         if response.status_code != 200:
@@ -217,7 +217,7 @@ class MarketAdaptor(object):
         url = urljoin(self._marketplace_uri, "offering/store/" + urlquote(store) + "/offerings")
         try:
             response = requests.get(url, auth=HTTPBasicAuth(self._user, self._passwd))
-        except HTTPError, e:
+        except HTTPError as e:
             raise HTTPError(e.url, e.code, e.msg, None, None)
 
         if response.status_code != 200:
@@ -260,7 +260,7 @@ class MarketAdaptor(object):
         url = urljoin(self._marketplace_uri, "search/offerings/fulltext/" + urlquote_plus(search_string))
         try:
             response = requests.get(url, auth=HTTPBasicAuth(self._user, self._passwd))
-        except HTTPError, e:
+        except HTTPError as e:
             raise HTTPError(e.url, e.code, e.msg, None, None)
 
         if response.status_code != 200:

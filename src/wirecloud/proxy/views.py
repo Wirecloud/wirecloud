@@ -133,7 +133,7 @@ class Proxy():
         try:
             for processor in get_request_proxy_processors():
                 processor.process_request(request_data)
-        except ValidationError, e:
+        except ValidationError as e:
             return e.get_response()
 
         # Cookies
@@ -202,7 +202,7 @@ def proxy_request(request, protocol, domain, path):
 
     try:
         response = WIRECLOUD_PROXY.do_request(request, url, request.method.upper())
-    except Exception, e:
+    except Exception as e:
         msg = _("Error processing proxy request: %s") % unicode(e)
         return build_error_response(request, 500, msg)
 

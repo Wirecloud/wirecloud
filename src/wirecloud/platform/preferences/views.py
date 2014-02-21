@@ -161,7 +161,7 @@ class PlatformPreferencesCollection(Resource):
     def create(self, request):
         try:
             preferences_json = json.loads(request.body)
-        except ValueError, e:
+        except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -200,7 +200,7 @@ class WorkspacePreferencesCollection(Resource):
 
         try:
             preferences_json = json.loads(request.body)
-        except ValueError, e:
+        except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -241,7 +241,7 @@ class TabPreferencesCollection(Resource):
 
         try:
             preferences_json = json.loads(request.body)
-        except ValueError, e:
+        except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 

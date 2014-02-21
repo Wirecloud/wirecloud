@@ -56,7 +56,7 @@ class IWidgetCollection(Resource):
 
         try:
             iwidget = json.loads(request.body)
-        except ValueError, e:
+        except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -73,7 +73,7 @@ class IWidgetCollection(Resource):
             iwidget_data = get_iwidget_data(iwidget, tab.workspace, user=request.user)
 
             return HttpResponse(json.dumps(iwidget_data), content_type='application/json; charset=UTF-8')
-        except (CatalogueResource.DoesNotExist, Widget.DoesNotExist), e:
+        except (CatalogueResource.DoesNotExist, Widget.DoesNotExist) as e:
             msg = _('referred widget %(widget_uri)s does not exist.') % {'widget_uri': iwidget['widget']}
             return build_error_response(request, 422, msg)
 
@@ -84,7 +84,7 @@ class IWidgetCollection(Resource):
 
         try:
             iwidgets = json.loads(request.body)
-        except ValueError, e:
+        except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -119,7 +119,7 @@ class IWidgetEntry(Resource):
 
         try:
             iwidget = json.loads(request.body)
-        except ValueError, e:
+        except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -166,7 +166,7 @@ class IWidgetPreferences(Resource):
 
         try:
             new_values = json.loads(request.body)
-        except ValueError, e:
+        except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -195,7 +195,7 @@ class IWidgetVersion(Resource):
 
         try:
             data = json.loads(request.body)
-        except ValueError, e:
+        except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 

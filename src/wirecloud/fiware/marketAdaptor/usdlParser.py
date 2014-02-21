@@ -81,7 +81,7 @@ class USDLParser(object):
 
         try:
             self._graph.parse(data=usdl_document, format=rdf_format)
-        except Exception, e:
+        except Exception as e:
             msg = _('Error parsing rdf document: %s' % unicode(e))
             raise USDLParseException(msg)
 

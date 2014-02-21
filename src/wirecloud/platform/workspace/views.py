@@ -107,7 +107,7 @@ class WorkspaceCollection(Resource):
 
         try:
             data = json.loads(request.body)
-        except ValueError, e:
+        except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -116,7 +116,7 @@ class WorkspaceCollection(Resource):
         try:
             allow_renaming = normalize_boolean_param('allow_renaming', data.get('allow_renaming', False))
             dry_run = normalize_boolean_param('allow_renaming', data.get('dry_run', False))
-        except (TypeError, ValueError), e:
+        except (TypeError, ValueError) as e:
             return build_error_response(request, 422, unicode(e))
 
         if mashup_id == '' and workspace_name == '':
@@ -158,7 +158,7 @@ class WorkspaceCollection(Resource):
 
             try:
                 check_mashup_dependencies(template, request.user)
-            except MissingDependencies, e:
+            except MissingDependencies as e:
                 details = {
                     'missingDependencies': e.missing_dependencies,
                 }
