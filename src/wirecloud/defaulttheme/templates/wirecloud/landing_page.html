@@ -3,6 +3,59 @@
 {% block title %}{% trans "Wirecloud · Build application mashups" %}{% endblock %}
 {% block path %}{% trans "Welcome to WireCloud!" %}{% endblock %}
 {% block content %}
-    <h1>{% trans "Welcome to the next-generation application mashup platform aimed at leveraging the long tail of the Internet of Services."%}</h1>
-{% endblock %}
 
+    <h3>{% trans "Welcome to the next-generation application mashup platform aimed at leveraging the long tail of the Internet of Services."%}</h3>
+    <section id="innertop" class="grid-block">
+
+        <div class="grid-box width25">
+            <div class="module">
+                <p class="img"> <img src="{{ STATIC_URL }}images/innovation3.png" alt="Innovation"/> </p>
+                <h3> Innovation </h3>
+                        <p> Innovate through experimentation by choosing the best suited widgets and prefab mashup-lets for your devised mashup from a vast, ever-growing distributed catalogue </p>
+                </div>
+            </div>
+
+        <div class="grid-box width25">
+            <div class="module">
+                <p class="img"> <img src="{{ STATIC_URL }}images/features.png" alt="Features"/> </p>
+                <h3> Generic Features </h3>
+                <ul>
+                    <li>JavaScript pub/sub API for event-driven widgets</li>
+                    <li>NGSI API compatible with FI-WARE Orion Context Broker Generic Enabler</li>
+                    <li>Server-side state persistence for widgets and mashups</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="grid-box width25">
+            <div class="module">
+                <p class="img"> <img src="{{ STATIC_URL }}images/piping.png" alt="Wiring &amp; Piping"/> </p>
+                <h3> Wiring &amp; Piping </h3>
+                <p> Wiring allows you to easily connect widgets in a mashup to create a full-fledged dashboard with RIA functionality. </p>
+                <p> Piping links your widgets to back-end services or data sources through an extendable set of operators, including filters, aggregators, adapters, etc. </p>
+            </div>
+        </div>
+
+        <div class="grid-box width25">
+            <div class="module">
+                <p class="img"> <img src="{{ STATIC_URL }}images/fiware2.png" alt="Fiware" /></p>
+                <h3>100% FI-Ware</h3>
+                <ul>
+                    <li>1st OSS reference implementation of the Application Mashup GE</li>
+                    <li>Support for linked-USDL</li>
+                    <li>Full integration with FI-WARE's:
+                        <ul>
+                            <li>Marketplace</li>
+                            <li>Store</li>
+                            <li>Context Broker</li>
+                            <li>Object Storage</li>
+                            <li>...</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </section>
+
+{% endblock %}
