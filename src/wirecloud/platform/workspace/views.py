@@ -203,7 +203,7 @@ class WorkspaceEntry(Resource):
 
         try:
             ts = json.loads(request.body)
-        except ValueError, e:
+        except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -272,7 +272,7 @@ class TabCollection(Resource):
 
         try:
             data = json.loads(request.body)
-        except ValueError, e:
+        except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -309,7 +309,7 @@ class TabOrderService(Service):
 
         try:
             order = json.loads(request.body)
-        except ValueError, e:
+        except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -339,7 +339,7 @@ class TabEntry(Resource):
 
         try:
             data = json.loads(request.body)
-        except ValueError, e:
+        except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -410,7 +410,7 @@ class WorkspaceVariableCollection(Resource):
 
         try:
             iwidgetVariables = json.loads(request.body)
-        except ValueError, e:
+        except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -429,7 +429,7 @@ class MashupMergeService(Service):
 
         try:
             data = json.loads(request.body)
-        except ValueError, e:
+        except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 
@@ -525,7 +525,7 @@ class WorkspacePublisherEntry(Resource):
 
         try:
             options = json.loads(received_json)
-        except ValueError, e:
+        except ValueError as e:
             msg = _("malformed json data: %s") % unicode(e)
             return build_error_response(request, 400, msg)
 

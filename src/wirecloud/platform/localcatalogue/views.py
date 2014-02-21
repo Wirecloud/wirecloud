@@ -155,7 +155,7 @@ class ResourceCollection(Resource):
                     downloaded_file = StringIO(downloaded_file)
                     file_contents = WgtFile(downloaded_file)
 
-                except zipfile.BadZipfile, e:
+                except zipfile.BadZipfile as e:
 
                     return build_error_response(request, 400, unicode(e))
 
@@ -173,7 +173,7 @@ class ResourceCollection(Resource):
             else:
                 raise
 
-        except (TemplateParseException, InvalidContents), e:
+        except (TemplateParseException, InvalidContents) as e:
 
             return build_error_response(request, 400, unicode(e))
 
