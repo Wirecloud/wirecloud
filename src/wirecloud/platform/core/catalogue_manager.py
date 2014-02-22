@@ -26,7 +26,7 @@ from django.utils.encoding import iri_to_uri
 
 from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.catalogue.utils as catalogue_utils
-from wirecloud.commons.utils import downloader
+from wirecloud.commons.utils.downloader import download_http_content, download_local_file
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.platform.localcatalogue.utils import install_resource_to_user
 from wirecloud.platform.markets.utils import MarketManager
@@ -53,10 +53,10 @@ class WirecloudCatalogueManager(MarketManager):
                 resource = resources[0]
 
                 if resource.template_uri.startswith(('http://', 'https://')):
-                    downloaded_file = downloader.download_http_content(resource.template_uri, user=user)
+                    downloaded_file = download_http_content(resource.template_uri, user=user)
                 else:
                     base_dir = catalogue_utils.wgt_deployer.get_base_dir(vendor, name, version)
-                    downloaded_file = downloader.download_http_content('file://' + os.path.join(base_dir, resource.template_uri), user=user)
+                    downloaded_file = download_local_file(os.path.join(base_dir, resource.template_uri))
 
                 return {
                     'downloaded_file': downloaded_file,
@@ -73,7 +73,7 @@ class WirecloudCatalogueManager(MarketManager):
 
             if response.status_code == 200:
                 data = json.loads(response.content)
-                downloaded_file = downloader.download_http_content(data['uriTemplate'], user=user)
+                downloaded_file = download_http_content(data['uriTemplate'], user=user)
                 return {
                     'downloaded_file': downloaded_file,
                     'template_url': data['uriTemplate'],

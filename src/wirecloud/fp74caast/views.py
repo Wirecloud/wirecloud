@@ -28,7 +28,7 @@ from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_GET, require_POST
 
 from wirecloud.catalogue.models import CatalogueResource
-from wirecloud.commons.utils import downloader
+from wirecloud.commons.utils.downloader import download_http_content
 from wirecloud.commons.utils.http import build_error_response, get_content_type
 from wirecloud.commons.utils.template import TemplateParser, TemplateParseException
 from wirecloud.commons.utils.template.writers.rdf import write_rdf_description
@@ -148,7 +148,7 @@ def _parse_ac_request(request):
         return build_error_response(request, 400, _('Invalid 4CaaStID'))
 
     try:
-        downloaded_file = downloader.download_http_content(fileURL)
+        downloaded_file = download_http_content(fileURL)
     except:
         return build_error_response(request, 409, _('Mashable application component could not be downloaded'))
 

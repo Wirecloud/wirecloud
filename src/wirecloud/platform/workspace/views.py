@@ -30,9 +30,9 @@ from django.utils.translation import ugettext as _
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource, Service
-from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.cache import no_cache
 from wirecloud.commons.utils.db import save_alternative
+from wirecloud.commons.utils.downloader import download_http_content
 from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_error_response, get_content_type, supported_request_mime_types, supported_response_mime_types
 from wirecloud.commons.utils.template import is_valid_name, is_valid_vendor, is_valid_version, TemplateParser
 from wirecloud.commons.utils.transaction import commit_on_http_success
@@ -150,7 +150,7 @@ class WorkspaceCollection(Resource):
                 wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
                 template = TemplateParser(wgt_file.get_template())
             else:
-                template = downloader.download_http_content(resource.template_uri, user=request.user)
+                template = download_http_content(resource.template_uri, user=request.user)
                 try:
                     template = TemplateParser(template)
                 except:
@@ -463,7 +463,7 @@ class MashupMergeService(Service):
                 wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
                 template = TemplateParser(wgt_file.get_template())
             else:
-                template = downloader.download_http_content(resource.template_uri, user=request.user)
+                template = download_http_content(resource.template_uri, user=request.user)
                 try:
                     template = TemplateParser(template)
                 except:

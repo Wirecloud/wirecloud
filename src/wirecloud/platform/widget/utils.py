@@ -26,7 +26,7 @@ from django.db.models import Q
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.models import Translation
-from wirecloud.commons.utils import downloader
+from wirecloud.commons.utils.downloader import download_http_content
 from wirecloud.commons.utils.http import get_absolute_static_url
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import WgtDeployer, WgtFile
@@ -59,7 +59,7 @@ def create_widget_from_template(template, user, request=None, base=None):
     if isinstance(template, TemplateParser):
         parser = template
     else:
-        template_content = downloader.download_http_content(template, user=user)
+        template_content = download_http_content(template, user=user)
         if base is None:
             base = template
         parser = TemplateParser(template_content, base=base)
@@ -197,7 +197,7 @@ def create_widget_from_wgt(wgt, user, deploy_only=False):
     if isinstance(wgt, WgtFile):
         wgt_file = wgt
     else:
-        wgt_file = WgtFile(StringIO(downloader.download_http_content(wgt)))
+        wgt_file = WgtFile(StringIO(download_http_content(wgt)))
 
     template = wgt_deployer.deploy(wgt_file)
     if not deploy_only:

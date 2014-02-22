@@ -35,7 +35,7 @@ from django.views.static import serve
 from wirecloud.catalogue.models import CatalogueResource
 import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.commons.baseviews import Resource
-from wirecloud.commons.utils import downloader
+from wirecloud.commons.utils.downloader import download_http_content
 from wirecloud.commons.utils.http import authentication_required, authentication_required_cond, build_error_response, get_content_type, supported_request_mime_types, supported_response_mime_types
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
@@ -145,7 +145,7 @@ class ResourceCollection(Resource):
             else:
 
                 try:
-                    downloaded_file = downloader.download_http_content(templateURL)
+                    downloaded_file = download_http_content(templateURL)
                 except:
                     return build_error_response(request, 409, _('Content cannot be downloaded'))
 

@@ -36,8 +36,8 @@ from django.views.static import serve
 
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource
-from wirecloud.commons.utils import downloader
 from wirecloud.commons.utils.cache import patch_cache_headers
+from wirecloud.commons.utils.downloader import download_http_content, download_local_file
 from wirecloud.commons.utils.http import build_error_response, get_absolute_reverse_url, get_current_domain
 from wirecloud.platform.models import Widget, IWidget
 import wirecloud.platform.widget.utils as showcase_utils
@@ -112,9 +112,9 @@ class WidgetCodeEntry(Resource):
         if not xhtml.cacheable or code == '':
             try:
                 if xhtml.url.startswith(('http://', 'https://')):
-                    code = downloader.download_http_content(urljoin(base_url, xhtml.url), user=request.user)
+                    code = download_http_content(urljoin(base_url, xhtml.url), user=request.user)
                 else:
-                    code = downloader.download_http_content('file://' + os.path.join(showcase_utils.wgt_deployer.root_dir, url2pathname(xhtml.url)), user=request.user)
+                    code = download_local_file(os.path.join(showcase_utils.wgt_deployer.root_dir, url2pathname(xhtml.url)))
 
             except Exception as e:
                 msg = _("XHTML code is not accessible: %(errorMsg)s") % {'errorMsg': e.message}

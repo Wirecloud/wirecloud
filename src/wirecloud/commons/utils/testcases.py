@@ -270,33 +270,6 @@ class FakeNetwork(object):
         self.old_requests_get = None
         self.old_requests_post = None
 
-    def mock_downloader(self):
-
-        if self.old_download_function is not None:
-            return
-
-        self.old_download_function = staticmethod(downloader.download_http_content)
-
-        def downloader_mock(url, *args, **kwargs):
-
-            parsed_url = urlparse(url)
-            if parsed_url.scheme == 'file':
-                f = codecs.open(parsed_url.path, 'rb')
-                contents = f.read()
-                f.close()
-                return contents
-
-            res_info = self('GET', url)
-
-            return res_info.get('content', '')
-
-        downloader.download_http_content = downloader_mock
-
-    def unmock_downloader(self):
-
-        downloader.download_http_content = self.old_download_function
-        self.old_download_function = None
-
 
 class WirecloudTestCase(TransactionTestCase):
 
@@ -324,7 +297,6 @@ class WirecloudTestCase(TransactionTestCase):
             },
         }))
         cls.network.mock_requests()
-        cls.network.mock_downloader()
 
         # catalogue deployer
         cls.old_catalogue_deployer = catalogue.wgt_deployer
@@ -367,7 +339,6 @@ class WirecloudTestCase(TransactionTestCase):
 
         # Unmock network requests
         cls.network.unmock_requests()
-        cls.network.unmock_downloader()
 
         super(WirecloudTestCase, cls).tearDownClass()
 
@@ -452,7 +423,6 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
             },
         }))
         cls.network.mock_requests()
-        cls.network.mock_downloader()
 
         # catalogue deployer
         cls.old_catalogue_deployer = catalogue.wgt_deployer
@@ -495,7 +465,6 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
         # Unmock network requests
         cls.network.unmock_requests()
-        cls.network.unmock_downloader()
 
         # deployers
         catalogue.wgt_deployer = cls.old_catalogue_deployer
@@ -554,7 +523,6 @@ class MobileWirecloudSeleniumTestCase(LiveServerTestCase, MobileWirecloudRemoteT
             },
         }))
         cls.network.mock_requests()
-        cls.network.mock_downloader()
 
         # catalogue deployer
         cls.old_catalogue_deployer = catalogue.wgt_deployer
@@ -597,7 +565,6 @@ class MobileWirecloudSeleniumTestCase(LiveServerTestCase, MobileWirecloudRemoteT
 
         # Unmock network requests
         cls.network.unmock_requests()
-        cls.network.unmock_downloader()
 
         # deployers
         catalogue.wgt_deployer = cls.old_catalogue_deployer
