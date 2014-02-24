@@ -1593,6 +1593,27 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
 
+    def test_market_collection_post_duplicated(self):
+
+        url = reverse('wirecloud.market_collection')
+
+        # Authenticate
+        self.client.login(username='user_with_markets', password='admin')
+
+        # Make request
+        data = {
+            'name': 'deleteme',
+            'user': 'user_with_markets',
+            'options': {
+                'type': 'wirecloud',
+                'url': 'http://example.com'
+            }
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 409)
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = json.loads(response.content)
+
     def test_market_entry_delete_requires_authentication(self):
 
         url = reverse('wirecloud.market_entry', kwargs={'user': 'user_with_markets', 'market': 'deleteme'})
