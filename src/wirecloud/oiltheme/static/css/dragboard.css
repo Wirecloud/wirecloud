@@ -3,6 +3,10 @@
     border-radius: 0px;
 }
 
+#workspace {
+    overflow: hidden;
+}
+
 #workspace > .alert {
     margin: 2ex 5ex;
 }
