@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import sys
+
 from django.utils.functional import Promise
 try:
     from django.utils.encoding import force_unicode
@@ -33,19 +35,39 @@ class LazyEncoder(JSONEncoder):
             return super(LazyEncoder, self).default(o)
 
 
-class LazyEncoderXHTML(LazyEncoder):
+if sys.version_info >= (2, 7):
 
-    def encode(self, o):
-        chunks = self.iterencode(o, True)
-        if self.ensure_ascii:
-            return ''.join(chunks)
-        else:
-            return u''.join(chunks)
+    class LazyEncoderXHTML(LazyEncoder):
 
-    def iterencode(self, o, _one_shot=False):
-        chunks = super(LazyEncoderXHTML, self).iterencode(o, _one_shot)
-        for chunk in chunks:
-            chunk = chunk.replace('&', '\\u0026')
-            chunk = chunk.replace('<', '\\u003c')
-            chunk = chunk.replace('>', '\\u003e')
-            yield chunk
+        def encode(self, o):
+            chunks = self.iterencode(o, True)
+            if self.ensure_ascii:
+                return ''.join(chunks)
+            else:
+                return u''.join(chunks)
+
+        def iterencode(self, o, _one_shot=False):
+            chunks = super(LazyEncoderXHTML, self).iterencode(o, _one_shot)
+            for chunk in chunks:
+                chunk = chunk.replace('&', '\\u0026')
+                chunk = chunk.replace('<', '\\u003c')
+                chunk = chunk.replace('>', '\\u003e')
+                yield chunk
+else:
+
+    class LazyEncoderXHTML(LazyEncoder):
+
+        def encode(self, o):
+            chunks = self.iterencode(o)
+            if self.ensure_ascii:
+                return ''.join(chunks)
+            else:
+                return u''.join(chunks)
+
+        def iterencode(self, o):
+            chunks = super(LazyEncoderXHTML, self).iterencode(o)
+            for chunk in chunks:
+                chunk = chunk.replace('&', '\\u0026')
+                chunk = chunk.replace('<', '\\u003c')
+                chunk = chunk.replace('>', '\\u003e')
+                yield chunk
