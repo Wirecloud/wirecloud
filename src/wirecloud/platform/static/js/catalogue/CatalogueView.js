@@ -154,7 +154,7 @@
                     catalogue_source.refresh_search_results();
                 }.bind(this),
                 onFailure: function (msg) {
-                    LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                    (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
                     Wirecloud.GlobalLogManager.log(msg);
                 },
                 onComplete: function () {
@@ -185,7 +185,7 @@
                     }
                 }.bind(this),
                 onFailure: function (msg) {
-                    LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                    (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
                     Wirecloud.GlobalLogManager.log(msg);
                 },
                 onComplete: function () {
@@ -225,12 +225,8 @@
         }.bind(this);
 
         error_callback = function (msg) {
-            var logManager, layoutManager;
-
-            layoutManager = LayoutManagerFactory.getInstance();
-
-            layoutManager._notifyPlatformReady();
-            layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+            LayoutManagerFactory.getInstance()._notifyPlatformReady();
+            (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
         };
 
         doRequest = function () {

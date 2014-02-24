@@ -42,7 +42,7 @@ function Workspace(workspaceState, resources) {
         // Show a user friend alert
         var layoutManager = LayoutManagerFactory.getInstance();
         var msg = gettext('Error loading workspace. Please, change active workspace or create a new one.');
-        layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+        (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
 
         // Clean current status
         this.varmanager = null;
@@ -180,12 +180,8 @@ function Workspace(workspaceState, resources) {
     }
 
     var renameError = function(transport, e) {
-        var layoutManager, msg;
-
-        layoutManager = LayoutManagerFactory.getInstance();
-
-        msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error renaming workspace: %(errorMsg)s."), transport, e);
-        layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+        var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error renaming workspace: %(errorMsg)s."), transport, e);
+        (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
     };
 
     var deleteSuccess = function (transport) {
@@ -196,7 +192,7 @@ function Workspace(workspaceState, resources) {
 
     var deleteError = function(transport, e) {
         var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error removing workspace, changes will not be saved: %(errorMsg)s."), transport, e);
-        LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+        (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
 
         LayoutManagerFactory.getInstance()._notifyPlatformReady();
     };
@@ -254,7 +250,7 @@ function Workspace(workspaceState, resources) {
         layoutManager.logStep('');
         layoutManager._notifyPlatformReady();
 
-        layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+        (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
     }
 
     //**** TAB CALLBACK*****
@@ -521,8 +517,7 @@ function Workspace(workspaceState, resources) {
 
         if (msg) { //It cannot be deleted
             Wirecloud.GlobalLogManager.log(msg);
-            //LayoutManagerFactory.getInstance().hideCover();
-            LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+            (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
             return false;
         }
 

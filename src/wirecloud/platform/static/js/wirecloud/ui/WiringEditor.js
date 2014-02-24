@@ -687,7 +687,7 @@ if (!Wirecloud.ui) {
                 clearInterface.call(this);
             } catch (e1) {
                 msg = gettext('Unrecoverable error while loading wiring data into the wiring editor');
-                layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
             }
 
             var yesHandler = function () {
@@ -701,7 +701,7 @@ if (!Wirecloud.ui) {
                             clearInterface.call(this);
                         } catch (e1) {
                             msg = gettext('Fatal error loading wiring data');
-                            layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                            (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
                         }
                         // private functions
                         var yesHandler2 = function () {
@@ -715,7 +715,7 @@ if (!Wirecloud.ui) {
                                 // Use setTimeout as at the end of the yesHandler all window menus are closed including the one we are opening now
                                 setTimeout(function () {
                                     msg = gettext('Fatal error loading wiring data');
-                                    layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                                    (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
                                 }, 0);
                             }
                         }.bind(this);

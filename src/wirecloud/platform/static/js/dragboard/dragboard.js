@@ -240,7 +240,7 @@
             if (this.readOnly) {
                 var msg = gettext("The destination tab (%(tabName)s) is read only.");
                 msg = interpolate(msg, {tabName: this.tab.tabInfo.name}, true);
-                LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.WARN_MSG);
+                (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
                 return;
             }
 

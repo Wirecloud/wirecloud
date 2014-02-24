@@ -71,8 +71,6 @@ var LayoutManagerFactory = function () {
         this.coverLayerElement = document.getElementById('menu_layer');               // disabling background layer
         this.coverLayerElement.className = 'disabled_background fade';
 
-        this.menus = new Array();
-
         // Listen to resize events
         window.addEventListener("resize", this.resizeWrapper.bind(this), true);
     }
@@ -270,29 +268,6 @@ var LayoutManagerFactory = function () {
             this.showUnclickableCover();
             this.currentMenu = window_menu;
         };
-
-        /**
-         * Shows the message window menu using the specified text. By default,
-         * it will be interpreted as an information message, but you can use the
-         * type param to change this behaviour.
-         *
-         * @param {String} msg Text of the message to show
-         * @param {Constants.Logging} type Optional parameter to change the
-         *        message type. (default value: Constants.Logging.INFO_MSG)
-         */
-        LayoutManager.prototype.showMessageMenu = function(msg, type) {
-            var menu;
-            if (!this.menus['messageMenu']) {
-                this.menus['messageMenu'] = new Wirecloud.ui.MessageWindowMenu(null);
-            }
-            menu = this.menus['messageMenu'];
-
-            type = type ? type : Constants.Logging.INFO_MSG;
-            menu.setMsg(msg);
-            menu.setType(type);
-            // TODO: this.currentMenu???
-            menu.show(this.currentMenu);
-        }
 
         //hides the disabling layer and so, the current menu
         LayoutManager.prototype.hideCover = function() {

@@ -92,7 +92,7 @@ var OpManagerFactory = function () {
                 layoutManager.logStep('');
                 layoutManager._notifyPlatformReady();
 
-                layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
             }
 
             LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding the mashup"), 1);

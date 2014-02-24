@@ -104,7 +104,7 @@
             },
             onFailure: function (transport) {
                 var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error adding marketplace: %(errorMsg)s."), transport);
-                LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
             },
             onComplete: function () {
                 LayoutManagerFactory.getInstance()._notifyPlatformReady();

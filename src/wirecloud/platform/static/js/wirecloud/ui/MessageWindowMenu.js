@@ -50,6 +50,9 @@
         });
         this.button.insertInto(this.windowBottom);
         this.button.addEventListener("click", this._closeListener);
+
+        this.setMsg(msg);
+        this.setType(type);
     };
     MessageWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
 
@@ -67,9 +70,6 @@
     };
 
     MessageWindowMenu.prototype.setType = function setType(type) {
-        var titles = ['', gettext('Error'), gettext('Warning'), gettext('Info')];
-        var icons = ['', 'icon-error', 'icon-warning', 'icon-info'];
-
         // Update title
         this.setTitle(titles[type]);
 
@@ -78,4 +78,5 @@
     };
 
     Wirecloud.ui.MessageWindowMenu = MessageWindowMenu;
+
 })();

@@ -138,7 +138,7 @@
                                 });
                             }.bind(this),
                             onFailure: function (msg) {
-                                LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                                (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
                                 Wirecloud.GlobalLogManager.log(msg);
                                 LayoutManagerFactory.getInstance()._notifyPlatformReady();
                             }
