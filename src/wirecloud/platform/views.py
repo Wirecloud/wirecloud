@@ -26,6 +26,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.template import TemplateDoesNotExist
 from django.utils.http import urlencode
+from user_agents import parse as ua_parse
 
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.http import build_error_response
@@ -109,11 +110,16 @@ def render_workspace_view(request, owner, name):
 
 def get_default_view(request):
 
-    user_agent = request.META['HTTP_USER_AGENT']
-    if user_agent.find("iPhone") != -1 or user_agent.find("iPod") != -1 or (user_agent.find('Android') != -1 and user_agent.find('Mobile')):
-        return 'smartphone'
-    else:
-        return 'classic'
+    if 'default_mode' not in request.session:
+        user_agent = ua_parse(request.META['HTTP_USER_AGENT'])
+        if user_agent.is_mobile:
+            mode = 'smartphone'
+        else:
+            mode = 'classic'
+
+        request.session['default_mode'] = mode
+
+    return request.session['default_mode']
 
 
 def render_wirecloud(request, view_type):
