@@ -36,7 +36,7 @@ function updateLayout () {
 
     OpManagerFactory.getInstance().alternatives.repaint();
 
-    if (OpManagerFactory.getInstance().loadCompleted) {
+    if (Wirecloud.activeWorkspace != null) {
         Wirecloud.activeWorkspace.updateLayout(orient);
     }
 }
