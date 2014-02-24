@@ -24,11 +24,9 @@ from urllib import url2pathname
 from urlparse import urljoin
 
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
-from django.utils.decorators import method_decorator
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_GET

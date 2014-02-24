@@ -19,11 +19,9 @@
 
 import json
 
-from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 
 from wirecloud.catalogue.models import CatalogueResource
