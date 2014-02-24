@@ -249,6 +249,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
     def get_scripts(self, view):
         common = (
+            'js/wirecloud/shims/classList.js',
             'js/wirecloud/BaseRequirements.js',
             'js/common/ComputedStyle.js',
             'js/wirecloud/core.js',
