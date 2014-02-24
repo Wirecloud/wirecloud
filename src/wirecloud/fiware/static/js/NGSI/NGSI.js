@@ -196,23 +196,55 @@
 
     }
 
-    NGSI.XML.getChildElementByTagName = function getChildElementByTagName(element, tagName) {
-        var xpathResult = element.ownerDocument.evaluate(tagName, element, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
-        return xpathResult.singleNodeValue;
-    };
+    if (typeof XPathResult !== 'undefined') {
 
-    NGSI.XML.getChildElementsByTagName = function getChildElementsByTagName(element, tagName) {
-        var xpathResult, result, i;
+        NGSI.XML.getChildElementByTagName = function getChildElementByTagName(element, tagName) {
+            var xpathResult = element.ownerDocument.evaluate(tagName, element, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+            return xpathResult.singleNodeValue;
+        };
 
-        xpathResult = element.ownerDocument.evaluate(tagName, element, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        NGSI.XML.getChildElementsByTagName = function getChildElementsByTagName(element, tagName) {
+            var xpathResult, result, i;
 
-        result = [];
-        for (i = 0; i < xpathResult.snapshotLength; i += 1) {
-            result.push(xpathResult.snapshotItem(i));
-        }
+            xpathResult = element.ownerDocument.evaluate(tagName, element, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 
-        return result;
-    };
+            result = [];
+            for (i = 0; i < xpathResult.snapshotLength; i += 1) {
+                result.push(xpathResult.snapshotItem(i));
+            }
+
+            return result;
+        };
+
+    } else {
+
+        NGSI.XML.getChildElementByTagName = function getChildElementByTagName(element, tagName) {
+            var i, child;
+
+            for (i = 0; i < element.childNodes.length; i += 1) {
+                child = element.childNodes[i];
+                if (child.nodeType === Node.ELEMENT_TYPE || child.localName === tagName) {
+                    return element.childNodes[i];
+                }
+            }
+
+            return null;
+        };
+
+        NGSI.XML.getChildElementsByTagName = function getChildElementsByTagName(element, tagName) {
+            var i, child, result = [];
+
+            for (i = 0; i < element.childNodes.length; i += 1) {
+                child = element.childNodes[i];
+                if (child.nodeType === Node.ELEMENT_TYPE || child.localName === tagName) {
+                    result.push(element.childNodes[i]);
+                }
+            }
+
+            return result;
+        };
+
+    }
 
     /* Request utility functions */
 
