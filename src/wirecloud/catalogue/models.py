@@ -30,8 +30,10 @@
 
 #
 
+import random
 from urlparse import urlparse
 
+from django.core.cache import cache
 from django.db import models
 from django.contrib.auth.models import User, Group
 from django.utils.encoding import python_2_unicode_compatible
@@ -87,6 +89,15 @@ class CatalogueResource(TransModel):
 
         return self.vendor + '/' + self.short_name + '/' + self.version
 
+    @property
+    def cache_version(self):
+        version = cache.get('_catalogue_resource_version/' + str(self.id))
+        if version is None:
+            version = random.randrange(1, 100000)
+            cache.set('_catalogue_resource_version/' + str(self.id), version)
+
+        return version
+
     def is_available_for(self, user):
 
         return self.public or self.users.filter(id=user.id).exists() or len(set(self.groups.all()) & set(user.groups.all())) > 0
@@ -136,7 +147,14 @@ class CatalogueResource(TransModel):
         if not self.template_uri.startswith(('http', 'https')):
             wgt_deployer.undeploy(self.vendor, self.short_name, self.version)
 
+        old_id = self.id
         super(CatalogueResource, self).delete(*args, **kwargs)
+
+        # Remove cache for this resource
+        try:
+            cache.incr('_catalogue_resource_version/' + str(old_id))
+        except ValueError:
+            pass
 
     def resource_type(self):
         return self.RESOURCE_TYPES[self.type]

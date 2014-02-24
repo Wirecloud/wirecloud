@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -41,6 +41,10 @@ def remove_related_iwidget_connections(wiring, iwidget):
         wiring['connections'].remove(connection)
         if connection_view_available and len(wiring['views'][0]['connections']) > connection['index']:
             del wiring['views'][0]['connections'][connection['index']]
+
+
+def get_operator_cache_key(operator, domain, mode):
+    return '_operator_xhtml/%s/%s/%s?mode=%s' % (operator.cache_version, domain, operator.id, mode)
 
 
 def generate_xhtml_operator_code(js_files, base_url, request, requirements, mode):

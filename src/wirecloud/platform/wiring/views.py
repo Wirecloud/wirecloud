@@ -29,10 +29,10 @@ from django.utils.translation import ugettext as _
 from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.baseviews import Resource
 from wirecloud.commons.utils.cache import CacheableData
-from wirecloud.commons.utils.http import authentication_required, build_error_response, get_absolute_reverse_url, supported_request_mime_types
+from wirecloud.commons.utils.http import authentication_required, build_error_response, get_absolute_reverse_url, get_current_domain, supported_request_mime_types
 from wirecloud.platform.get_data import _invalidate_cached_variable_values
 from wirecloud.platform.models import Workspace
-from wirecloud.platform.wiring.utils import generate_xhtml_operator_code
+from wirecloud.platform.wiring.utils import generate_xhtml_operator_code, get_operator_cache_key
 
 
 class WiringEntry(Resource):
@@ -94,7 +94,7 @@ class OperatorEntry(Resource):
 
         mode = request.GET.get('mode', 'classic')
 
-        key = '_operator/' + operator.local_uri_part + '?mode=' + mode
+        key = get_operator_cache_key(operator, get_current_domain(request), mode)
         cached_response = cache.get(key)
         if cached_response is None:
             options = json.loads(operator.json_description)
