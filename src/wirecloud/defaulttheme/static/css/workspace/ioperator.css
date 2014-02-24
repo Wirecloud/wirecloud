@@ -1,0 +1,6 @@
+#workspace .ioperator {
+    visibility: hidden;
+    overflow: hidden;
+    height: 0;
+    width: 0;
+}

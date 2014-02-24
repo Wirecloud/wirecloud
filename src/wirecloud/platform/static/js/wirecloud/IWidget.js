@@ -235,14 +235,12 @@
      * @private
      */
     IWidget.prototype._notifyLoaded = function _notifyLoaded(element) {
-        var msg;
 
         if (this.loaded || !element.hasAttribute('src')) {
             return;
         }
 
-        msg = gettext('iWidget loaded');
-        this.logManager.log(msg, Constants.Logging.INFO_MSG);
+        this.logManager.log(gettext('iWidget loaded'), Constants.Logging.INFO_MSG);
 
         this.loaded = true;
 
@@ -266,8 +264,7 @@
             return;
         }
 
-        var msg = gettext('iWidget unloaded');
-        this.logManager.log(msg, Constants.Logging.INFO_MSG);
+        this.logManager.log(gettext('iWidget unloaded'), Constants.Logging.INFO_MSG);
         this.logManager.newCycle();
 
         // Remove context callbacks

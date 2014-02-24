@@ -83,9 +83,11 @@
         Object.defineProperty(this, 'preferences', {value: preferences});
 
         if (!wiringEditor) {
-            this.element = document.createElement('object');
+            this.element = document.createElement('iframe');
+            this.element.className = 'ioperator';
             data_uri = Wirecloud.URLs.OPERATOR_ENTRY.evaluate({vendor: operator_meta.vendor, name: operator_meta.name, version: operator_meta.version.text}) + '#id=' + id;
             this.element.addEventListener('load', function () {
+                this.logManager.log('Operator loaded', Constants.Logging.INFO_MSG);
                 this.loaded = true;
                 this.events.load.dispatch(this);
                 for (var i = 0; i < this.pending_events.length; i += 1) {
@@ -94,11 +96,13 @@
                 this.pending_events = [];
             }.bind(this), true);
             this.element.addEventListener('unload', function () {
+                this.logManager.log('Operator unloaded', Constants.Logging.INFO_MSG);
                 this.loaded = false;
                 this.events.unload.dispatch(this);
             }.bind(this), true);
-            this.element.setAttribute('data', data_uri);
-            document.body.appendChild(this.element);
+            this.element.setAttribute('type', 'text/html');
+            this.element.setAttribute('src', data_uri);
+            document.getElementById('workspace').appendChild(this.element);
         }
     };
     Operator.prototype = new StyledElements.ObjectWithEvents();
