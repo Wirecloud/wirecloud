@@ -51,7 +51,7 @@
         this.button.insertInto(this.windowBottom);
         this.button.addEventListener("click", this._closeListener);
 
-        this.setMsg(msg);
+        this.setMsg(message);
         this.setType(type);
     };
     MessageWindowMenu.prototype = new Wirecloud.ui.WindowMenu();
