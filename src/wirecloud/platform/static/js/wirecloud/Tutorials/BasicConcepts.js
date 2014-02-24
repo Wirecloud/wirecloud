@@ -223,7 +223,7 @@
         var button = header.getElementsByClassName('arrow-down-settings')[0];
 
         if (button == null) {
-            button = header.getElementsByClassName('btn-success')[0].childNodes[0];
+            button = header.getElementsByClassName('btn-success')[0].firstChild;
         }
         button.click();
         autoAction.nextHandler();

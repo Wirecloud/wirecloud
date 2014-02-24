@@ -49,7 +49,7 @@
 
         entry_element.appendChild(document.createTextNode(entry.msg));
 
-        this.windowContent.insertBefore(entry_element, this.windowContent.childNodes[0]);
+        this.windowContent.insertBefore(entry_element, this.windowContent.firstChild);
 
         if (this.fadeTimeout != null) {
             clearTimeout(this.fadeTimeout);

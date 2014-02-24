@@ -13,7 +13,7 @@
         // Warning icon
         this.iconElement = document.createElement('div');
         this.iconElement.className = "window-icon icon-size icon-warning";
-        this.windowContent.insertBefore(this.iconElement, this.windowContent.childNodes[0]);
+        this.windowContent.insertBefore(this.iconElement, this.windowContent.firstChild);
 
         this.msgElement = document.createElement('div');
         this.msgElement.className = "msg";

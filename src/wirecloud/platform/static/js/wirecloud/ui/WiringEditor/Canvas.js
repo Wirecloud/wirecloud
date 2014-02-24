@@ -105,7 +105,7 @@
     Canvas.prototype.clear = function clear() {
         this.canvasElement.classList.remove("elevated");
         while (this.canvasElement.generalLayer.childNodes.length > 0) {
-            this.canvasElement.generalLayer.removeChild(this.canvasElement.generalLayer.childNodes[0]);
+            this.canvasElement.generalLayer.removeChild(this.canvasElement.generalLayer.firstChild);
         }
     };
 
