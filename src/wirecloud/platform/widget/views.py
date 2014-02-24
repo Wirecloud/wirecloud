@@ -67,7 +67,7 @@ def deleteWidget(user, name, vendor, version):
 
 def process_requirements(requirements):
 
-    return {requirement['name']: {} for requirement in requirements}
+    return dict((requirement['name'], {}) for requirement in requirements)
 
 
 class WidgetCodeEntry(Resource):
