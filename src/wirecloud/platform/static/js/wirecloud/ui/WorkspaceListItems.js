@@ -19,7 +19,7 @@
  *
  */
 
-/*global OpManagerFactory, StyledElements*/
+/*global OpManagerFactory, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -52,6 +52,6 @@
         return items;
     };
 
-    window.WorkspaceListItems = WorkspaceListItems;
+    Wirecloud.ui.WorkspaceListItems = WorkspaceListItems;
 
 })();

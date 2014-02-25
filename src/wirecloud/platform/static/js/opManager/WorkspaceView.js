@@ -19,7 +19,7 @@
  *
  */
 
-/*global gettext, StyledElements, Wirecloud, WorkspaceItems, WorkspaceListItems*/
+/*global gettext, StyledElements, Wirecloud, WorkspaceItems*/
 
 (function () {
 
@@ -30,7 +30,7 @@
         StyledElements.Alternative.call(this, id, options);
 
         this.wsMenu = new StyledElements.PopupMenu();
-        this.wsMenu.append(new WorkspaceListItems(function (context, workspace) {
+        this.wsMenu.append(new Wirecloud.ui.WorkspaceListItems(function (context, workspace) {
             Wirecloud.changeActiveWorkspace(workspace);
         }));
         this.wsMenu.appendSeparator();

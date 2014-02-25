@@ -308,7 +308,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
         if view in ('classic', 'embedded'):
             scripts = common + (
                 'js/opManager/Workspace.js',
-                'js/opManager/WorkspaceListItems.js',
+                'js/wirecloud/ui/WorkspaceListItems.js',
                 'js/opManager/WorkspaceItems.js',
                 'js/opManager/WorkspaceView.js',
                 'js/opManager/TabMenuItems.js',
