@@ -20,7 +20,7 @@
 from django.http import HttpResponse
 
 
-# content_length + hop-by-hop headers(http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html#sec13.5.1)
+# hop-by-hop headers(http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html#sec13.5.1)
 BLACKLISTED_HEADERS = {
     'connection': 1, 'keep-alive': 1, 'proxy-authenticate': 1,
     'proxy-authorization': 1, 'te': 1, 'trailers': 1, 'transfer-encoding': 1,
@@ -37,5 +37,5 @@ class ValidationError(Exception):
         return HttpResponse(self.msg, status=422)
 
 
-def is_valid_header(header):
+def is_valid_response_header(header):
     return not header in BLACKLISTED_HEADERS

@@ -36,7 +36,7 @@ from django.utils.translation import ugettext as _
 
 from wirecloud.commons.utils.http import build_error_response, get_current_domain
 from wirecloud.platform.plugins import get_request_proxy_processors, get_response_proxy_processors
-from wirecloud.proxy.utils import is_valid_header, ValidationError
+from wirecloud.proxy.utils import is_valid_response_header, ValidationError
 
 
 class Proxy():
@@ -168,7 +168,7 @@ class Proxy():
 
                 via_header = via_header + ', ' + res.headers[header]
 
-            elif is_valid_header(header_lower):
+            elif is_valid_response_header(header_lower):
                 response[header] = res.headers[header]
 
         # Pass proxy processors to the response
