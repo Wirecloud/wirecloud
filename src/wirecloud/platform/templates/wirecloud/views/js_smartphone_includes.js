@@ -1,4 +1,3 @@
-<script type="text/javascript" src="{{ STATIC_URL }}js/common/ComputedStyle.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/interface/LayoutManager.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/common/utils.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/common/MobileScrollManager.js"></script>
