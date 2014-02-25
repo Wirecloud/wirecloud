@@ -66,8 +66,8 @@
                 catalogue_view.refresh_search_results();
             },
             onFailure: function (msg) {
-                LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
                 Wirecloud.GlobalLogManager.log(msg);
+                (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
             },
             onComplete: function () {
                 LayoutManagerFactory.getInstance()._notifyPlatformReady();

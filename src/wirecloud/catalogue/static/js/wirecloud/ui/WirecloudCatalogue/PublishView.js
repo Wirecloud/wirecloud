@@ -55,7 +55,7 @@
                 this.mainview.refresh_search_results();
             }.bind(this),
             onFailure: function (msg) {
-                LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
             },
             onComplete: function () {
                 LayoutManagerFactory.getInstance()._notifyPlatformReady();
@@ -115,7 +115,7 @@
         var layoutManager = LayoutManagerFactory.getInstance();
 
         layoutManager._notifyPlatformReady();
-        layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+        (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
     };
 
     Wirecloud.ui.WirecloudCatalogue = {};
