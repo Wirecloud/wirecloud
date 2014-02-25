@@ -107,16 +107,16 @@ class SecureDataProcessor(object):
 
     def process_request(self, request):
 
-        # Process secure data from the X-EzWeb-Secure-Data header
-        if 'x-ezweb-secure-data' in request['headers']:
-            secure_data_value = request['headers']['x-ezweb-secure-data']
+        # Process secure data from the X-Wirecloud-Secure-Data header
+        if 'x-wirecloud-secure-data' in request['headers']:
+            secure_data_value = request['headers']['x-wirecloud-secure-data']
             process_secure_data(secure_data_value, request, ignore_errors=False)
 
-            del request['headers']['x-ezweb-secure-data']
+            del request['headers']['x-wirecloud-secure-data']
 
         # Process secure data cookie
         cookie_parser = request['cookies']
 
-        if cookie_parser is not None and 'X-EzWeb-Secure-Data' in cookie_parser:
-            process_secure_data(cookie_parser['X-EzWeb-Secure-Data'].value, request, ignore_errors=True)
-            del cookie_parser['X-EzWeb-Secure-Data']
+        if cookie_parser is not None and 'X-Wirecloud-Secure-Data' in cookie_parser:
+            process_secure_data(cookie_parser['X-Wirecloud-Secure-Data'].value, request, ignore_errors=True)
+            del cookie_parser['X-Wirecloud-Secure-Data']

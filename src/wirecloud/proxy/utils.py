@@ -60,7 +60,7 @@ def check_empty_params(**kargs):
             missing_params.append(param_name)
 
     if len(missing_params) > 0:
-        msg = _('X-EzWeb-Secure-Data: The following required parameters are missing: %(params)s')
+        msg = _('X-Wirecloud-Secure-Data: The following required parameters are missing: %(params)s')
         raise ValidationError(msg % {'params': ', '.join(missing_params)})
 
 
@@ -72,7 +72,7 @@ def check_invalid_refs(**kargs):
             invalid_params.append(param_name)
 
     if len(invalid_params) > 0:
-        msg = _('X-EzWeb-Secure-Data: The following required parameters are invalid: %(params)s')
+        msg = _('X-Wirecloud-Secure-Data: The following required parameters are invalid: %(params)s')
         raise ValidationError(msg % {'params': ', '.join(invalid_params)})
 
 
