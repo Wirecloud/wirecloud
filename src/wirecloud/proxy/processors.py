@@ -22,10 +22,10 @@ import urllib2
 from cStringIO import StringIO
 
 from django.utils.http import urlquote
-from django.utils.importlib import import_module
+from django.utils.translation import ugettext as _
 
 from wirecloud.platform.get_data import get_variable_value_from_varname
-from wirecloud.proxy.utils import check_empty_params, check_invalid_refs
+from wirecloud.proxy.utils import ValidationError
 
 
 class FixServletBugsProcessor(object):
@@ -53,6 +53,30 @@ def get_variable_value_by_ref(ref, user):
             return result.group('var_name')
         else:
             return get_variable_value_from_varname(user, result.group('iwidget_id'), result.group('var_name'))
+
+
+def check_empty_params(**kargs):
+    missing_params = []
+
+    for param_name in kargs:
+        if kargs[param_name] == '':
+            missing_params.append(param_name)
+
+    if len(missing_params) > 0:
+        msg = _('X-Wirecloud-Secure-Data: The following required parameters are missing: %(params)s')
+        raise ValidationError(msg % {'params': ', '.join(missing_params)})
+
+
+def check_invalid_refs(**kargs):
+    invalid_params = []
+
+    for param_name in kargs:
+        if kargs[param_name] == None:
+            invalid_params.append(param_name)
+
+    if len(invalid_params) > 0:
+        msg = _('X-Wirecloud-Secure-Data: The following required parameters are invalid: %(params)s')
+        raise ValidationError(msg % {'params': ', '.join(invalid_params)})
 
 
 def process_secure_data(text, request, ignore_errors=False):

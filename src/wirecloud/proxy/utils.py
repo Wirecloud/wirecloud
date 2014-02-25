@@ -17,10 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-import re
-
 from django.http import HttpResponse
-from django.utils.translation import ugettext as _
+
 
 # content_length + hop-by-hop headers(http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html#sec13.5.1)
 BLACKLISTED_HEADERS = {
@@ -37,30 +35,6 @@ class ValidationError(Exception):
 
     def get_response(self):
         return HttpResponse(self.msg, status=422)
-
-
-def check_empty_params(**kargs):
-    missing_params = []
-
-    for param_name in kargs:
-        if kargs[param_name] == '':
-            missing_params.append(param_name)
-
-    if len(missing_params) > 0:
-        msg = _('X-Wirecloud-Secure-Data: The following required parameters are missing: %(params)s')
-        raise ValidationError(msg % {'params': ', '.join(missing_params)})
-
-
-def check_invalid_refs(**kargs):
-    invalid_params = []
-
-    for param_name in kargs:
-        if kargs[param_name] == None:
-            invalid_params.append(param_name)
-
-    if len(invalid_params) > 0:
-        msg = _('X-Wirecloud-Secure-Data: The following required parameters are invalid: %(params)s')
-        raise ValidationError(msg % {'params': ', '.join(invalid_params)})
 
 
 def is_valid_header(header):
