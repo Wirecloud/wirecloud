@@ -177,7 +177,7 @@
 
         this._clearOldBreadcrum();
 
-        if ('getBreadcrum' in newView) {
+        if (newView != null && 'getBreadcrum' in newView) {
             breadcrum = newView.getBreadcrum();
         } else {
             return;

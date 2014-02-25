@@ -54,21 +54,25 @@ var LayoutManagerFactory = function () {
             this.header._notifyViewChange(new_alternative);
         }.bind(this));
         this.viewsByName = {
+            'initial': this.alternatives.createAlternative(),
             'workspace': this.alternatives.createAlternative({'alternative_constructor': WorkspaceView}),
             'wiring': this.alternatives.createAlternative({'alternative_constructor': Wirecloud.ui.WiringEditor}),
             'marketplace': this.alternatives.createAlternative({'alternative_constructor': MarketplaceView})
         };
-        this.header._notifyViewChange(this.viewsByName['workspace']);
+        var plain_content = document.querySelector('.plain_content');
+        if (plain_content != null) {
+            this.viewsByName.initial.appendChild(plain_content);
+        }
 
-        // Container managed by LayOutManager: {showcase_tab}
-        // Remaining containers managed by Workspaces!!
         this._clickCallback = this._clickCallback.bind(this);
         this.timeout = null;
-        document.getElementById("loading-window").addEventListener('click', this._clickCallback, true);
+        if (document.getElementById("loading-window")) {
+            document.getElementById("loading-window").addEventListener('click', this._clickCallback, true);
+        }
 
-        // Menu Layer
-        this.currentMenu = null;                                // current menu (either dropdown or window)
-        this.coverLayerElement = document.getElementById('menu_layer');               // disabling background layer
+        this.currentMenu = null;  // current root dialog
+        this.coverLayerElement = document.createElement('div');               // disabling background layer
+        this.coverLayerElement.id = 'menu_layer';
         this.coverLayerElement.className = 'disabled_background fade';
 
         // Listen to resize events
@@ -79,16 +83,12 @@ var LayoutManagerFactory = function () {
         // PUBLIC METHODS
         // ****************
 
+        var updateSubTaskProgress = function updateSubTaskProgress() {
+            this.subTask.updateTaskProgress(Math.round((this.currentStep * 100) / this.totalSteps));
+        };
 
-        LayoutManager.prototype._updateTaskProgress = function() {
-            var msg, subtaskpercentage, taskpercentage;
-
-            subtaskpercentage = Math.round((this.currentStep * 100) / this.totalSteps);
-            if (subtaskpercentage < 0) {
-                subtaskpercentage = 0;
-            } else if (subtaskpercentage > 100) {
-                subtaskpercentage = 100;
-            }
+        var updateTaskProgress = function updateTaskProgress() {
+            var msg, taskpercentage;
 
             taskpercentage = (this.currentSubTask * 100) / this.totalSubTasks;
             taskpercentage += subtaskpercentage * (1 / this.totalSubTasks);
@@ -111,47 +111,42 @@ var LayoutManagerFactory = function () {
 
             msg = interpolate(msg, {subTask: this.subTask, percentage: subtaskpercentage}, true);
             document.getElementById("loading-subtask-title").textContent = msg;
-        }
+        };
+
 
         LayoutManager.prototype._startComplexTask = function(task, subtasks) {
-            this.task = task ? task : "";
-            this.currentSubTask = -2;
-            this.totalSubTasks = subtasks != undefined ? subtasks : 1;
-            this.logSubTask("");
+            monitor = new Wirecloud.TaskMonitorModel(task, subtasks);
             document.getElementById("loading-window").classList.remove("disabled");
-        }
+
+            this.monitor = monitor; // TODO
+            return monitor;
+        };
 
         LayoutManager.prototype.logSubTask = function(msg, totalSteps) {
-            this.subTask = msg ? msg : "";
-
-            if (msg) {
-                Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.INFO_MSG);
-            }
-
-            this.currentSubTask++;
-            if (this.currentSubTask >= this.totalSubTasks)
-                this.totalSubTasks = this.currentSubTask + 1;
+            this.subTask = this.monitor.nextSubtask(msg);
 
             this.currentStep = 0;
-            if (arguments.length == 2)
+            if (arguments.length == 2) {
                 this.totalSteps = totalSteps;
-            else
+            } else {
                 this.totalSteps = 1;
+            }
 
-            this._updateTaskProgress();
-        }
+            updateSubTaskProgress.call(this);
+        };
 
         LayoutManager.prototype.logStep = function(msg, totalSteps) {
-            //document.getElementById("loading-step-title").textContent = msg ? msg : "";
             this.currentStep++;
-            if (this.currentStep > this.totalSteps)
+            if (this.currentStep > this.totalSteps) {
                 this.totalSteps = this.currentStep + 1;
+            }
 
-            if (arguments.length == 2)
+            if (arguments.length == 2) {
                 this.totalSteps = totalSteps;
+            }
 
-            this._updateTaskProgress();
-        }
+            updateSubTaskProgress.call(this);
+        };
 
         LayoutManager.prototype._hideProgressIndicator = function () {
             var loadingElement = document.getElementById("loading-window");

@@ -34,13 +34,37 @@
     /**
      * Loads the Wirecloud Platform.
      */
-    Wirecloud.init = function init() {
-        // Init Layout Manager
-        var layoutManager = LayoutManagerFactory.getInstance();
-        layoutManager.resizeWrapper();
-        layoutManager._startComplexTask(gettext('Loading Wirecloud Platform'), 3);
-        layoutManager.logSubTask(gettext('Retrieving Wirecloud code'));
-        layoutManager.logStep('');
+    Wirecloud.init = function init(options) {
+
+        options = Wirecloud.Utils.merge({
+            'monitor': null
+        }, options);
+
+        if (options.monitor == null) {
+            // Init Layout Manager
+            var layoutManager = LayoutManagerFactory.getInstance();
+            layoutManager.resizeWrapper();
+            options.monitor = layoutManager._startComplexTask(gettext('Loading Wirecloud Platform'), 4);
+            layoutManager.logSubTask(gettext('Retrieving Wirecloud code'));
+            layoutManager.logStep('');
+            layoutManager.logSubTask(gettext('Retrieving initial data'), 4);
+        } else if (!(options.monitor instanceof Wirecloud.TaskMonitorModel)) {
+            throw new TypeError('Invalid monitor');
+        }
+
+        if (typeof options.onSuccess !== 'function') {
+            options.onSuccess = function () {
+                Wirecloud.HistoryManager.init();
+                var state = Wirecloud.HistoryManager.getCurrentState();
+                LayoutManagerFactory.getInstance().changeCurrentView('workspace');
+                var workspace = opManager.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
+                this.changeActiveWorkspace(workspace, null, {
+                    onSuccess: function () {
+                        this.loadCompleted = true;
+                    }.bind(opManager)
+                });
+            }.bind(this);
+        }
 
         window.addEventListener(
                       "beforeunload",
@@ -51,25 +75,18 @@
 
         var loaded_modules = 0;
         var checkPlatformReady = function checkPlatformReady() {
-            // TODO remove hardcoded module count
             loaded_modules += 1;
             if (loaded_modules === 4) {
-                Wirecloud.HistoryManager.init();
-                var state = Wirecloud.HistoryManager.getCurrentState();
-                var workspace = opManager.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
-                this.changeActiveWorkspace(workspace, null, {
-                    onSuccess: function () {
-                        this.loadCompleted = true;
-                    }.bind(opManager)
-                });
+                options.onSuccess();
             }
-        }.bind(this);
+        };
 
         // Init platform context
         Wirecloud.io.makeRequest(Wirecloud.URLs.PLATFORM_CONTEXT_COLLECTION, {
             method: 'GET',
             requestHeaders: {'Accept': 'application/json'},
             onSuccess: function (response) {
+                options.monitor.nextSubtask('Processing initial context data');
                 Wirecloud.contextManager = new Wirecloud.ContextManager(Wirecloud, JSON.parse(response.responseText));
                 Wirecloud.contextManager.modify({'mode': Wirecloud.constants.CURRENT_MODE});
                 LayoutManagerFactory.getInstance().header._initUserMenu();
