@@ -83,9 +83,6 @@ function VarManager (_workspace) {
         }
     }
 
-    VarManager.prototype.unload = function () {
-    }
-
     VarManager.prototype.commitModifiedVariables = function() {
         //If it have not been buffered all the requests, it's not time to send a PUT request
         if (!this.force_commit && this.buffered_requests < VarManager.prototype.MAX_BUFFERED_REQUESTS) {

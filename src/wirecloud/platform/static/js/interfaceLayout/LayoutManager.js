@@ -163,16 +163,11 @@ var LayoutManagerFactory = function () {
         };
 
         LayoutManager.prototype._clickCallback = function (event) {
-            event = event || window.event;
 
             if (document.getElementById("loading-window").classList.contains("fadding")) {
                 this._hideProgressIndicator();
             }
-            if (event.stopPropagation) {
-                event.stopPropagation();
-            } else {
-                event.cancelBubble = true;
-            }
+            event.stopPropagation();
         };
 
         LayoutManager.prototype._notifyPlatformReady = function () {
