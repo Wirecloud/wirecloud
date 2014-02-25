@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -21,6 +21,7 @@ import json
 import os
 
 from django.contrib.auth.models import User
+from django.db import IntegrityError
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -85,7 +86,10 @@ class MarketCollection(Resource):
         if 'user' in received_data['options']:
             del received_data['options']['user']
 
-        Market.objects.create(user=user_entry, name=received_data['name'], options=json.dumps(received_data['options']))
+        try:
+            Market.objects.create(user=user_entry, name=received_data['name'], options=json.dumps(received_data['options']))
+        except IntegrityError:
+            return build_error_response(request, 409, 'Market name already in use')
 
         return HttpResponse(status=201)
 
