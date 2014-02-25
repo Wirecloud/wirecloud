@@ -19,7 +19,7 @@
  *
  */
 
-/*global CatalogueResource, CatalogueSearchView, Constants, gettext, interpolate, LayoutManagerFactory, OpManagerFactory, Wirecloud, StyledElements*/
+/*global CatalogueResource, CatalogueSearchView, gettext, interpolate, LayoutManagerFactory, OpManagerFactory, Wirecloud, StyledElements*/
 
 (function () {
 
@@ -93,13 +93,14 @@
                 dry_run: true,
                 onSuccess: next,
                 onFailure: function (msg, details) {
+                    var dialog;
                     if (details != null && 'missingDependencies' in details) {
                         // Show missing dependencies
-                        var dialog = new Wirecloud.ui.MissingDependenciesWindowMenu(next, details);
-                        dialog.show();
+                        dialog = new Wirecloud.ui.MissingDependenciesWindowMenu(next, details);
                     } else {
-                        LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+                        dialog = new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG);
                     }
+                    dialog.show();
                 }
             })
         } else {
@@ -154,7 +155,7 @@
                     catalogue_source.refresh_search_results();
                 }.bind(this),
                 onFailure: function (msg) {
-                    (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
+                    (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
                     Wirecloud.GlobalLogManager.log(msg);
                 },
                 onComplete: function () {
@@ -185,7 +186,7 @@
                     }
                 }.bind(this),
                 onFailure: function (msg) {
-                    (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
+                    (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
                     Wirecloud.GlobalLogManager.log(msg);
                 },
                 onComplete: function () {
@@ -226,7 +227,7 @@
 
         error_callback = function (msg) {
             LayoutManagerFactory.getInstance()._notifyPlatformReady();
-            (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
+            (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
         };
 
         doRequest = function () {

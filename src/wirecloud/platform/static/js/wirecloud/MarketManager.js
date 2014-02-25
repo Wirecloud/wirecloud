@@ -19,7 +19,7 @@
  *
  */
 
-/*global CatalogueView, Constants, gettext, LayoutManagerFactory, StyledElements, Wirecloud*/
+/*global CatalogueView, gettext, LayoutManagerFactory, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -104,7 +104,7 @@
             },
             onFailure: function (transport) {
                 var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error adding marketplace: %(errorMsg)s."), transport);
-                (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
+                (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
             },
             onComplete: function () {
                 LayoutManagerFactory.getInstance()._notifyPlatformReady();

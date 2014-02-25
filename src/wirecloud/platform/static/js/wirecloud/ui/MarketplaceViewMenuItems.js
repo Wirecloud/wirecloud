@@ -19,7 +19,7 @@
  *
  */
 
-/*global Constants, gettext, StyledElements, Wirecloud, LayoutManagerFactory*/
+/*global gettext, StyledElements, Wirecloud, LayoutManagerFactory*/
 
 (function () {
 
@@ -138,7 +138,7 @@
                                 });
                             }.bind(this),
                             onFailure: function (msg) {
-                                (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
+                                (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
                                 Wirecloud.GlobalLogManager.log(msg);
                                 LayoutManagerFactory.getInstance()._notifyPlatformReady();
                             }

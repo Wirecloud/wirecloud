@@ -21,7 +21,7 @@
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
 /*global CSSPrimitiveValue, Insertion, document, gettext, ngettext, interpolate, window */
-/*global Constants, DropDownMenu, LayoutManagerFactory, OpManagerFactory, Wirecloud*/
+/*global DropDownMenu, LayoutManagerFactory, OpManagerFactory, Wirecloud*/
 /*global IWidgetIconDraggable, FreeLayout, FullDragboardLayout*/
 /*global ColorDropDownMenu*/
 
@@ -995,7 +995,7 @@ IWidget.prototype._iwidget_removed = function _iwidget_removed() {
  * Logs a success
  */
 IWidget.prototype.log = function (msg, level) {
-    level = level != null ? level : Constants.Logging.ERROR_MSG;
+    level = level != null ? level : Wirecloud.constants.LOGGING.ERROR_MSG;
 
     this.internal_iwidget.logManager.log(msg, level);
 };

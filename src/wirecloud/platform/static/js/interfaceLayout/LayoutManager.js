@@ -125,7 +125,7 @@ var LayoutManagerFactory = function () {
             this.subTask = msg ? msg : "";
 
             if (msg) {
-                Wirecloud.GlobalLogManager.log(msg, Constants.Logging.INFO_MSG);
+                Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.INFO_MSG);
             }
 
             this.currentSubTask++;

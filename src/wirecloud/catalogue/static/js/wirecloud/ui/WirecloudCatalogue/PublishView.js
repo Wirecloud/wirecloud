@@ -19,7 +19,7 @@
  *
  */
 
-/*global Constants, gettext, interpolate, LayoutManagerFactory, StyledElements, Wirecloud*/
+/*global gettext, interpolate, LayoutManagerFactory, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -55,7 +55,7 @@
                 this.mainview.refresh_search_results();
             }.bind(this),
             onFailure: function (msg) {
-                (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
+                (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
             },
             onComplete: function () {
                 LayoutManagerFactory.getInstance()._notifyPlatformReady();
@@ -115,7 +115,7 @@
         var layoutManager = LayoutManagerFactory.getInstance();
 
         layoutManager._notifyPlatformReady();
-        (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
+        (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
     };
 
     Wirecloud.ui.WirecloudCatalogue = {};

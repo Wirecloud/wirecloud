@@ -19,7 +19,7 @@
  *
  */
 
-/*global Constants, CSSPrimitiveValue, FreeLayout, FullDragboardLayout, IWidget, LayoutManagerFactory, OpManagerFactory, Wirecloud*/
+/*global CSSPrimitiveValue, FreeLayout, FullDragboardLayout, IWidget, LayoutManagerFactory, OpManagerFactory, Wirecloud*/
 
 (function () {
 
@@ -240,7 +240,7 @@
             if (this.readOnly) {
                 var msg = gettext("The destination tab (%(tabName)s) is read only.");
                 msg = interpolate(msg, {tabName: this.tab.tabInfo.name}, true);
-                (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
+                (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
                 return;
             }
 

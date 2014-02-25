@@ -44,7 +44,7 @@
                 layoutManager.logStep('');
                 layoutManager._notifyPlatformReady();
 
-                (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
+                (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
             }
         });
         this.destroy();

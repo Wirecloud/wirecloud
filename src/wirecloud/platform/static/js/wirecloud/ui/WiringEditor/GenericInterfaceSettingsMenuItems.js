@@ -18,7 +18,7 @@
  *     under the License.
  */
 
-/*global Constants, gettext, StyledElements, Wirecloud, LayoutManagerFactory*/
+/*global gettext, StyledElements, Wirecloud, LayoutManagerFactory*/
 
 (function () {
 

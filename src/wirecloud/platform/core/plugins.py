@@ -253,6 +253,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/shims/classList.js',
             'js/wirecloud/BaseRequirements.js',
             'js/common/ComputedStyle.js',
+            'js/wirecloud/constants.js',
             'js/wirecloud/core.js',
             'js/wirecloud/io.js',
             'js/wirecloud/ContextManager.js',

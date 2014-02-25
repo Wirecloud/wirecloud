@@ -19,7 +19,7 @@
  *
  */
 
-/*global Constants, gettext, LayoutManagerFactory, Wirecloud*/
+/*global gettext, LayoutManagerFactory, Wirecloud*/
 
 (function () {
 
@@ -113,7 +113,7 @@
             },
             onFailure: function (transport) {
                 var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error publishing resource: %(errorMsg)s."), transport, null);
-                (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
+                (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
             },
             onComplete: function () {
                 LayoutManagerFactory.getInstance()._notifyPlatformReady();

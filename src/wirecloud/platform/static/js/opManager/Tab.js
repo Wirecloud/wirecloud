@@ -24,7 +24,7 @@
  */
 
 
-/*global Constants, Dragboard, gettext, interpolate, LayoutManagerFactory, TabMenuItems, StyledElements, Wirecloud*/
+/*global Dragboard, gettext, interpolate, LayoutManagerFactory, TabMenuItems, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -43,7 +43,7 @@
 
     var renameError = function renameError(transport, e) {
         var msg = Wirecloud.GlobaLogManager.formatError(gettext("Error renaming tab: %(errorMsg)s."), transport, e);
-        (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
+        (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
     };
 
     var deleteSuccess = function deleteSuccess(transport) {
@@ -57,7 +57,7 @@
 
     var deleteError = function deleteError(transport, e) {
         var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error removing tab: %(errorMsg)s."), transport, e);
-        (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
+        (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
     };
 
     /**

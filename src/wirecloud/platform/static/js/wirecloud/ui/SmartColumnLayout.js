@@ -19,7 +19,7 @@
  *
  */
 
-/*global Constants, gettext, Wirecloud*/
+/*global gettext, Wirecloud*/
 
 (function () {
 
@@ -124,7 +124,7 @@
     SmartColumnLayout.prototype.moveTemporally = function (x, y) {
         if (this.iwidgetToMove == null) {
             var msg = gettext("Dragboard: You must call initializeMove function before calling to this function (moveTemporally).");
-            Wirecloud.GlobalLogManager.log(msg, Constants.WARN_MSG);
+            Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
             return;
         }
 

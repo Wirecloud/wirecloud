@@ -20,7 +20,7 @@
  */
 
 /*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global alert, Constants, document, gettext, interpolate, LayoutManagerFactory */
+/*global alert, document, gettext, interpolate, LayoutManagerFactory */
 "use strict";
 
 var PartsPainter = function(part_structure_element, dom_element){

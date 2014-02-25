@@ -19,7 +19,7 @@
  *
  */
 
-/*global console, Constants, gettext, interpolate, Wirecloud*/
+/*global console, gettext, interpolate, Wirecloud*/
 
 (function () {
 
@@ -47,7 +47,7 @@
         Object.freeze(entry);
 
         this.entries.push(entry);
-        if (entry.level === Constants.Logging.ERROR_MSG) {
+        if (entry.level === Wirecloud.constants.LOGGING.ERROR_MSG) {
             this.errorCount += 1;
         }
         this.totalCount += 1;
@@ -70,18 +70,18 @@
         date = new Date();
         switch (level) {
         default:
-            level = Constants.Logging.ERROR_MSG;
-        case Constants.Logging.ERROR_MSG:
+            level = Wirecloud.constants.LOGGING.ERROR_MSG;
+        case Wirecloud.constants.LOGGING.ERROR_MSG:
             if ('console' in window && typeof console.error === 'function') {
                 console.error(msg);
             }
             break;
-        case Constants.Logging.WARN_MSG:
+        case Wirecloud.constants.LOGGING.WARN_MSG:
             if ('console' in window && typeof console.warn === 'function') {
                 console.warn(msg);
             }
             break;
-        case Constants.Logging.INFO_MSG:
+        case Wirecloud.constants.LOGGING.INFO_MSG:
             if ('console' in window && typeof console.info === 'function') {
                 console.info(msg);
             }
@@ -134,11 +134,9 @@
                 if (transport.status !== 0 && transport.statusText !== '') {
                     errorDesc = gettext(transport.statusText);
                 } else {
-                    errorDesc = Constants.HttpStatusDescription[transport.status];
-                    if (transport.status === 0) {
-                        msg = errorDesc;
-                    } else if (!errorDesc) {
-                        errorDesc = Constants.UnknownStatusCodeDescription;
+                    errorDesc = Wirecloud.constants.HTTP_STATUS_DESCRIPTIONS[transport.status];
+                    if (errorDesc == null) {
+                        errorDesc = Wirecloud.constants.UNKNOWN_STATUS_CODE_DESCRIPTION;
                     }
                 }
                 msg = interpolate(msg, {errorCode: transport.status, errorDesc: errorDesc}, true);

@@ -199,7 +199,7 @@ function Workspace(workspaceState, resources) {
 
         this.updateVisibleTab(this.visibleTabIndex);
 
-        Wirecloud.GlobalLogManager.log(gettext('Workspace loaded'), Constants.Logging.INFO_MSG);
+        Wirecloud.GlobalLogManager.log(gettext('Workspace loaded'), Wirecloud.constants.LOGGING.INFO_MSG);
     };
 
     Workspace.prototype.show = function () {

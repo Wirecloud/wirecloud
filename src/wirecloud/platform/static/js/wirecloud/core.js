@@ -19,7 +19,7 @@
  *
  */
 
-/*global Constants, gettext, LayoutManagerFactory, OpManagerFactory, Wirecloud, Workspace*/
+/*global gettext, LayoutManagerFactory, OpManagerFactory, Wirecloud, Workspace*/
 
 (function () {
 
@@ -89,7 +89,7 @@
                     onSuccess: checkPlatformReady,
                     onFailure: function (response) {
                         var msg = Wirecloud.GlobalLogManager.formatAndLog(gettext("Error retrieving available resources: %(errorMsg)s."), response);
-                        (new Wirecloud.ui.MessageWindowMenu(msg, Constants.Logging.ERROR_MSG)).show();
+                        (new Wirecloud.ui.MessageWindowMenu(msg, Wirecloud.constants.LOGGING.ERROR_MSG)).show();
                     }
                 });
 

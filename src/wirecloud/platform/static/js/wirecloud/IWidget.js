@@ -19,7 +19,7 @@
  *
  */
 
-/*global Constants, gettext, interpolate, Tab, StyledElements, Wirecloud*/
+/*global gettext, interpolate, Tab, StyledElements, Wirecloud*/
 
 (function () {
 
@@ -31,7 +31,7 @@
 
         var msg = gettext("Name changed from \"%(oldName)s\" to \"%(newName)s\" succesfully");
         msg = interpolate(msg, {oldName: old_name, newName: new_name}, true);
-        this.logManager.log(msg, Constants.Logging.INFO_MSG);
+        this.logManager.log(msg, Wirecloud.constants.LOGGING.INFO_MSG);
 
         this.events.name_changed.dispatch(new_name);
 
@@ -57,7 +57,7 @@
     var removeSuccess = function removeSuccess(options, response) {
         var msg = gettext("IWidget \"%(name)s\" removed from workspace succesfully");
         msg = interpolate(msg, {name: this.name}, true);
-        this.logManager.log(msg, Constants.Logging.INFO_MSG);
+        this.logManager.log(msg, Wirecloud.constants.LOGGING.INFO_MSG);
 
         this.events.removed.dispatch(this);
 
@@ -240,7 +240,7 @@
             return;
         }
 
-        this.logManager.log(gettext('iWidget loaded'), Constants.Logging.INFO_MSG);
+        this.logManager.log(gettext('iWidget loaded'), Wirecloud.constants.LOGGING.INFO_MSG);
 
         this.loaded = true;
 
@@ -264,7 +264,7 @@
             return;
         }
 
-        this.logManager.log(gettext('iWidget unloaded'), Constants.Logging.INFO_MSG);
+        this.logManager.log(gettext('iWidget unloaded'), Wirecloud.constants.LOGGING.INFO_MSG);
         this.logManager.newCycle();
 
         // Remove context callbacks

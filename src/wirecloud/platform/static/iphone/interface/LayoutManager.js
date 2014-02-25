@@ -39,7 +39,7 @@ var LayoutManagerFactory = function () {
 
     LayoutManager.prototype.logSubTask = function logSubTask(msg, totalSteps) {
         if (msg) {
-            Wirecloud.GlobalLogManager.log(msg, Constants.Logging.INFO_MSG);
+            Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.INFO_MSG);
         }
 
     };
