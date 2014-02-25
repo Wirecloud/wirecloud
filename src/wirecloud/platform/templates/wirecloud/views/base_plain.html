@@ -1,7 +1,5 @@
 {% load compress i18n %}
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xml:lang="{{ LANGUAGE_CODE }}"
       lang="{{ LANGUAGE_CODE }}">
@@ -13,11 +11,14 @@
     <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}images/favicon.ico" />
     {% endblock %}
 
-    {% block css %}
+    {% block basecss %}
         {% compress css %}
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/wirecloud_core.css" />
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/static_pages.css" />
         {% endcompress %}
+    {% endblock %}
+
+    {% block css %}
     {% endblock %}
 
     {% block js %}

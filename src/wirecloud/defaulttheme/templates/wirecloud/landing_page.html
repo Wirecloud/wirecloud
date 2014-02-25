@@ -2,6 +2,9 @@
 {% load i18n %}
 {% block title %}{% trans "Wirecloud · Build application mashups" %}{% endblock %}
 {% block path %}{% trans "Welcome to WireCloud!" %}{% endblock %}
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/landing_page.css" />
+{% endblock %}
 {% block content %}
 
     <h3>{% trans "Welcome to the next-generation application mashup platform aimed at leveraging the long tail of the Internet of Services."%}</h3>
