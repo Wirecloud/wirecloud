@@ -140,9 +140,10 @@
             target.scrollLeft = newScrollLeft;
             target.scrollTop = newScrollTop;
 
-            event.stopPropagation();
-            event.preventDefault();
-            return false;
+            if (options.propagate === false) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
         };
 
         touchend = function (event) {
@@ -152,14 +153,15 @@
                     options.onend.call(this);
                 } catch (e) {}
             }
-            event.stopPropagation();
-            event.preventDefault();
-            return false;
+            if (options.propagate === false) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
         };
 
         defaultOptions = {
             'capture': true,
-            'propage': true,
+            'propagate': true,
             'parentContainer': null,
             'onend': null
         };

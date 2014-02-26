@@ -59,7 +59,7 @@ function Workspace(workspaceState, resources) {
 
         new MobileScrollManager(this.layout.getCenterContainer().wrapperElement, {
             'capture': true,
-            'propagate': false,
+            'propagate': true,
             'onend': checkTab
         });
 
