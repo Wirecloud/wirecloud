@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2011-2012 Universidad Politécnica de Madrid
+ *     Copyright (c) 2011-2012 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -21,146 +21,156 @@
 
 /*global Wirecloud*/
 
-function MobileScrollManager(element, options) {
-    var touchstart, touchend, touchmove,
-        searchTarget, scrollParentX, scrollParentX,
-        baseX, baseY, baseScrollTop, baseScrollLeft,
-        target, defaultOptions;
+(function () {
 
-    searchTarget = function (element, property, nextLevel) {
-        var computedStyle, prop_value, currentElement = element;
+    "use strict";
 
-        while (currentElement !== null) {
-            computedStyle = element.ownerDocument.defaultView.getComputedStyle(currentElement, null);
-            prop_value = computedStyle.getPropertyValue(property);
-            if (prop_value === 'auto' || prop_value === 'scroll') {
-                return currentElement;
+    function MobileScrollManager(element, options) {
+        var touchstart, touchend, touchmove,
+            searchTarget, scrollParentY, scrollParentX,
+            baseX, baseY, baseScrollTop, baseScrollLeft,
+            target, defaultOptions;
+
+        searchTarget = function (element, property, nextLevel) {
+            var computedStyle, prop_value, currentElement = element;
+
+            while (currentElement !== null) {
+                computedStyle = element.ownerDocument.defaultView.getComputedStyle(currentElement, null);
+                prop_value = computedStyle.getPropertyValue(property);
+                if (prop_value === 'auto' || prop_value === 'scroll') {
+                    return currentElement;
+                }
+                currentElement = currentElement.parentElement;
             }
-            currentElement = currentElement.parentElement;
-        }
 
-        if (nextLevel && element.ownerDocument !== nextLevel.ownerDocument) {
-            return searchTarget(nextLevel, property, null);
-        }
-        return null;
-    };
+            if (nextLevel && element.ownerDocument !== nextLevel.ownerDocument) {
+                return searchTarget(nextLevel, property, null);
+            }
+            return null;
+        };
 
-    scrollParentY = function (element, extraScroll) {
-        var newScrollTop,
-            newExtraScroll = 0,
-            parentElement;
+        scrollParentY = function (element, extraScroll) {
+            var newScrollTop,
+                newExtraScroll = 0,
+                parentElement;
 
-        parentElement = searchTarget(element.parentElement, 'overflow-y');
+            parentElement = searchTarget(element.parentElement, 'overflow-y');
 
-        if (parentElement !== null) {
-            newScrollTop = parentElement.scrollTop + extraScroll;
+            if (parentElement !== null) {
+                newScrollTop = parentElement.scrollTop + extraScroll;
+                if (newScrollTop < 0) {
+                    newExtraScroll = newScrollTop;
+                    newScrollTop = 0;
+                } else if ((newScrollTop + target.clientHeight > target.scrollHeight)) {
+                    newExtraScroll = newScrollTop;
+                    newScrollTop = parentElement.scrollHeight - parentElement.clientHeight;
+                    newExtraScroll -= newScrollTop;
+                }
+                parentElement.scrollTop = newScrollTop;
+                if (newExtraScroll !== 0) {
+                    scrollParentY(parentElement.parentElement, newExtraScroll);
+                }
+            }
+        };
+
+        scrollParentX = function (element, extraScroll) {
+            var parentElement = searchTarget(element.parentElement, 'overflow-x');
+
+            if (parentElement !== null) {
+                parentElement.scrollLeft += extraScroll;
+                //scrollParentX(parentElement.parentElement, newExtraScroll);
+            }
+        };
+
+        touchstart = function (event) {
+            target = searchTarget(event.target, 'overflow-y');
+
+            if (target !== null) {
+                baseX = event.touches[0].screenX;
+                baseY = event.touches[0].screenY;
+                baseScrollTop = target.scrollTop;
+                baseScrollLeft = target.scrollLeft;
+            }
+        };
+
+        touchmove = function (event) {
+            var tmpScroll;
+
+            if (target === null || event.touches.length > 1) {
+                return;
+            }
+
+            var eventX = event.touches[0].screenX;
+            var eventY = event.touches[0].screenY;
+            var newScrollLeft = baseScrollLeft + (baseX - eventX);
+            var newScrollTop = baseScrollTop + (baseY - eventY);
+            baseX = eventX;
+            baseY = eventY;
+
+            if (newScrollLeft < 0) {
+                if (options.propagate) {
+                    scrollParentX(target, newScrollLeft);
+                }
+                newScrollLeft = 0;
+            } else if ((newScrollLeft + target.clientWidth > target.scrollWidth)) {
+                tmpScroll = newScrollLeft;
+                newScrollLeft = target.scrollWidth - target.clientWidth;
+                if (options.propagate) {
+                    tmpScroll -= newScrollLeft;
+                    scrollParentX(target, tmpScroll);
+                }
+            }
+
             if (newScrollTop < 0) {
-                newExtraScroll = newScrollTop;
+                if (options.propagate) {
+                    scrollParentY(target, newScrollTop);
+                }
                 newScrollTop = 0;
             } else if ((newScrollTop + target.clientHeight > target.scrollHeight)) {
-                newExtraScroll = newScrollTop;
-                newScrollTop = parentElement.scrollHeight - parentElement.clientHeight;
-                newExtraScroll -= newScrollTop;
+                tmpScroll = newScrollTop;
+                newScrollTop = target.scrollHeight - target.clientHeight;
+                if (options.propagate) {
+                    tmpScroll -= newScrollTop;
+                    scrollParentY(target, tmpScroll);
+                }
             }
-            parentElement.scrollTop = newScrollTop;
-            if (newExtraScroll !== 0) {
-                scrollParentY(parentElement.parentElement, newExtraScroll);
+
+            baseScrollLeft = newScrollLeft;
+            baseScrollTop = newScrollTop;
+            target.scrollLeft = newScrollLeft;
+            target.scrollTop = newScrollTop;
+
+            event.stopPropagation();
+            event.preventDefault();
+            return false;
+        };
+
+        touchend = function (event) {
+            target = null;
+            if (options.onend) {
+                try {
+                    options.onend.call(this);
+                } catch (e) {}
             }
-        }
-    };
+            event.stopPropagation();
+            event.preventDefault();
+            return false;
+        };
 
-    scrollParentX = function (element, extraScroll) {
-        var parentElement = searchTarget(element.parentElement, 'overflow-x');
+        defaultOptions = {
+            'capture': true,
+            'propage': true,
+            'parentContainer': null,
+            'onend': null
+        };
+        options = Wirecloud.Utils.merge(defaultOptions, options);
 
-        if (parentElement !== null) {
-            parentElement.scrollLeft += extraScroll;
-            //scrollParentX(parentElement.parentElement, newExtraScroll);
-        }
-    };
+        element.addEventListener('touchstart', touchstart, options.capture);
+        element.addEventListener('touchmove', touchmove, options.capture);
+        element.addEventListener('touchend', touchend, options.capture);
+        element.addEventListener('touchcancel', touchend, options.capture);
+    }
 
-    touchstart = function (event) {
-        target = searchTarget(event.target, 'overflow-y');
+    window.MobileScrollManager = MobileScrollManager;
 
-        if (target !== null) {
-            baseX = event.touches[0].screenX;
-            baseY = event.touches[0].screenY;
-            baseScrollTop = target.scrollTop;
-            baseScrollLeft = target.scrollLeft;
-        }
-    };
-
-    touchmove = function (event) {
-        if (target === null || event.touches.length > 1) {
-            return;
-        }
-
-        var eventX = event.touches[0].screenX;
-        var eventY = event.touches[0].screenY;
-        var newScrollLeft = baseScrollLeft + (baseX - eventX);
-        var newScrollTop = baseScrollTop + (baseY - eventY);
-        baseX = eventX;
-        baseY = eventY;
-
-        if (newScrollLeft < 0) {
-            if (options.propagate) {
-                scrollParentX(target, newScrollLeft);
-            }
-            newScrollLeft = 0;
-        } else if ((newScrollLeft + target.clientWidth > target.scrollWidth)) {
-            var tmpScroll = newScrollLeft;
-            newScrollLeft = target.scrollWidth - target.clientWidth;
-            if (options.propagate) {
-                tmpScroll -= newScrollLeft;
-                scrollParentX(target, tmpScroll);
-            }
-        }
-
-        if (newScrollTop < 0) {
-            if (options.propagate) {
-                scrollParentY(target, newScrollTop);
-            }
-            newScrollTop = 0;
-        } else if ((newScrollTop + target.clientHeight > target.scrollHeight)) {
-            var tmpScroll = newScrollTop;
-            newScrollTop = target.scrollHeight - target.clientHeight;
-            if (options.propagate) {
-                tmpScroll -= newScrollTop;
-                scrollParentY(target, tmpScroll);
-            }
-        }
-
-        baseScrollLeft = newScrollLeft;
-        baseScrollTop = newScrollTop;
-        target.scrollLeft = newScrollLeft;
-        target.scrollTop = newScrollTop;
-
-        event.stopPropagation();
-        event.preventDefault();
-        return false;
-    };
-
-    touchend = function (event) {
-        target = null;
-        if (options.onend) {
-            try {
-                options.onend.call(this);
-            } catch (e) {};
-        }
-        event.stopPropagation();
-        event.preventDefault();
-        return false;
-    };
-
-    defaultOptions = {
-        'capture': true,
-        'propage': true,
-        'parentContainer': null,
-        'onend': null
-    };
-    options = Wirecloud.Utils.merge(defaultOptions, options);
-
-    element.addEventListener('touchstart', touchstart, options.capture);
-    element.addEventListener('touchmove', touchmove, options.capture);
-    element.addEventListener('touchend', touchend, options.capture);
-    element.addEventListener('touchcancel', touchend, options.capture);
-}
+})();
