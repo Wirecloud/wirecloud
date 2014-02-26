@@ -74,6 +74,8 @@ var LayoutManagerFactory = function () {
         this.coverLayerElement = document.createElement('div');               // disabling background layer
         this.coverLayerElement.id = 'menu_layer';
         this.coverLayerElement.className = 'disabled_background fade';
+        this.coverLayerElement.style.display = 'none';
+        document.body.insertBefore(this.coverLayerElement, document.body.firstChild);
 
         // Listen to resize events
         window.addEventListener("resize", this.resizeWrapper.bind(this), true);

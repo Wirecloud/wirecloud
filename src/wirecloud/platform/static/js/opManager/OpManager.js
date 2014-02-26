@@ -184,14 +184,6 @@ var OpManagerFactory = function () {
             window.location = Wirecloud.URLs.LOGOUT_VIEW;
         }
 
-        OpManager.prototype.addInstance = function (widget, options) {
-            if (!this.loadCompleted) {
-                return;
-            }
-
-            Wirecloud.activeWorkspace.getVisibleTab().getDragboard().addInstance(widget, options);
-        };
-
         OpManager.prototype.checkForWidgetUpdates = function () {
             Wirecloud.activeWorkspace.checkForWidgetUpdates();
         }

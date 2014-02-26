@@ -105,7 +105,7 @@
             })
         } else {
             var local_widget = Wirecloud.LocalCatalogue.getResourceId(resource.uri);
-            OpManagerFactory.getInstance().addInstance(local_widget);
+            Wirecloud.activeWorkspace.addInstance(local_widget);
         }
     };
 

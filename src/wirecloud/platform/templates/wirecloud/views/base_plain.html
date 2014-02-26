@@ -1,4 +1,4 @@
-{% load compress i18n %}
+{% load compress i18n wirecloudtags %}
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xml:lang="{{ LANGUAGE_CODE }}"
@@ -19,6 +19,15 @@
     {% endblock %}
 
     {% block css %}
+    {% endblock %}
+
+    {% block basejs %}
+        <script type="text/javascript" src="{% url "wirecloud.javascript_translation_catalogue" %}?language={{ LANGUAGE_CODE }}"></script>
+        {% compress js %}
+        {% wirecloud_bootstrap "classic" %}
+        {% include "wirecloud/views/js_includes.js" %}
+        {% extra_javascripts "classic" %}
+        {% endcompress %}
     {% endblock %}
 
     {% block js %}

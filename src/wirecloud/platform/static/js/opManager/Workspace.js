@@ -287,6 +287,9 @@ function Workspace(workspaceState, resources) {
     // PUBLIC METHODS
     // ****************
 
+    Workspace.prototype.addInstance = function addInstance(widget, options) {
+        this.getVisibleTab().getDragboard().addInstance(widget, options);
+    };
 
     Workspace.prototype.checkForWidgetUpdates = function() {
         var i, iwidgets;
