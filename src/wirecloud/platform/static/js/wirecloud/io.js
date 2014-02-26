@@ -178,6 +178,9 @@ Wirecloud.location = {
             this.transport.responseType = this.options.responseType;
         }
         this.transport.addEventListener('readystatechange', onReadyStateChange.bind(this), true);
+        if (typeof this.options.onUploadProgress === 'function') {
+            this.transport.upload.addEventListener('progress', options.onUploadProgress, false);
+        }
         setRequestHeaders.call(this);
         this.transport.send(this.options.postBody);
     };

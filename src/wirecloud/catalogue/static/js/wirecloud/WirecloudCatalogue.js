@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -129,7 +129,7 @@
     };
 
     WirecloudCatalogue.prototype.addPackagedResource = function addPackagedResource(data, options) {
-        var url, requestHeaders;
+        var url, requestHeaders, task, onUploadProgress;
 
         requestHeaders = {
             'Accept': 'application/json'
@@ -148,6 +148,13 @@
             if (this.accesstoken != null) {
                 requestHeaders['Authorization'] = 'Bearer ' + this.accesstoken;
             }
+        }
+
+        if (options.monitor) {
+            task = options.monitor.nextSubtask(gettext('Uploading packaged resource'));
+            onUploadProgress = function (event) {
+                task.updateTaskProgress(Math.round(event.loaded * 100 / event.total));
+            };
         }
 
         Wirecloud.io.makeRequest(url, {
@@ -178,7 +185,8 @@
                         options.onComplete();
                     } catch (e) {}
                 }
-            }
+            },
+            onUploadProgress: onUploadProgress
         });
     };
 
