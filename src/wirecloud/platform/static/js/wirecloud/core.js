@@ -206,8 +206,6 @@
                     onSuccess: function (response) {
                         var workspace_data = JSON.parse(response.responseText);
 
-                        LayoutManagerFactory.getInstance()._notifyPlatformReady();
-
                         // Check if the workspace needs to ask some values before loading this workspace
                         if (workspace_data.empty_params.length > 0) {
                             var preferences, preferenceValues, param, i, dialog;
@@ -227,6 +225,8 @@
                                     Wirecloud.changeActiveWorkspace(workspace, initial_tab, options);
                                 }, 0);
                             }.bind(this), 'post-commit');
+
+                            LayoutManagerFactory.getInstance()._notifyPlatformReady();
                             dialog = new Wirecloud.ui.PreferencesWindowMenu('workspace', preferences);
                             dialog.setCancelable(false);
                             dialog.show();
@@ -247,6 +247,7 @@
                             }
                         }.bind(this));
 
+                        LayoutManagerFactory.getInstance()._notifyPlatformReady();
                         LayoutManagerFactory.getInstance().header.refresh(); // FIXME
 
                         if (typeof options.onSuccess === "function") {

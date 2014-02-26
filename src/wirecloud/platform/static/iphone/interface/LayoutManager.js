@@ -34,23 +34,26 @@ var LayoutManagerFactory = function () {
     }
 
     // TODO
-    LayoutManager.prototype._startComplexTask = function _startComplexTask() {
+    LayoutManager.prototype._startComplexTask = function _startComplexTask(task, subtasks) {
+        this.monitor = new Wirecloud.TaskMonitorModel(task, subtasks);
+        return this.monitor;
     };
 
     LayoutManager.prototype.logSubTask = function logSubTask(msg, totalSteps) {
-        if (msg) {
-            Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.INFO_MSG);
-        }
-
+        this.monitor.nextSubtask(msg);
     };
 
     LayoutManager.prototype.logStep = function logStep() {
     };
 
     LayoutManager.prototype._notifyPlatformReady = function _notifyPlatformReady() {
+        this.monitor = null;
     };
 
     LayoutManager.prototype.hideCover = function hideCover() {
+    };
+
+    LayoutManager.prototype.changeCurrentView = function changeCurrentView() {
     };
 
     // end TODO

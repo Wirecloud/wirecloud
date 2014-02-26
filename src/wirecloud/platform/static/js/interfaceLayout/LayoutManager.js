@@ -89,38 +89,38 @@ var LayoutManagerFactory = function () {
             this.subTask.updateTaskProgress(Math.round((this.currentStep * 100) / this.totalSteps));
         };
 
-        var updateTaskProgress = function updateTaskProgress() {
-            var msg, taskpercentage;
-
-            taskpercentage = (this.currentSubTask * 100) / this.totalSubTasks;
-            taskpercentage += subtaskpercentage * (1 / this.totalSubTasks);
-            taskpercentage = Math.round(taskpercentage);
-            if (taskpercentage < 0) {
-                taskpercentage = 0;
-            } else if (taskpercentage > 100) {
-                subtaskpercentage = 100;
-            }
+        var updateTaskProgress = function updateTaskProgress(monitor, progress) {
+            var msg;
 
             msg = gettext("%(task)s %(percentage)s%");
-            msg = interpolate(msg, {task: this.task, percentage: taskpercentage}, true);
+            msg = interpolate(msg, {task: monitor.title, percentage: progress}, true);
             document.getElementById("loading-task-title").textContent = msg;
 
-            if (this.subTask != "") {
+            if (monitor.subtasks.length === 0) {
+                msg = '';
+            } else if (monitor.subtasks[monitor.currentsubtask].title != "") {
                 msg = gettext("%(subTask)s: %(percentage)s%");
+                msg = interpolate(msg, {
+                    subTask: monitor.subtasks[monitor.currentsubtask].title,
+                    percentage: monitor.subtasks[monitor.currentsubtask].progress
+                }, true);
             } else {
-                msg = "%(subTask)s";
+                msg = "%(percentage)s";
+                msg = interpolate(msg, {
+                    percentage: monitor.subtasks[monitor.currentsubtask].progress
+                }, true);
             }
 
-            msg = interpolate(msg, {subTask: this.subTask, percentage: subtaskpercentage}, true);
             document.getElementById("loading-subtask-title").textContent = msg;
         };
 
 
         LayoutManager.prototype._startComplexTask = function(task, subtasks) {
-            monitor = new Wirecloud.TaskMonitorModel(task, subtasks);
+            var monitor = new Wirecloud.TaskMonitorModel(task, subtasks);
             document.getElementById("loading-window").classList.remove("disabled");
 
             this.monitor = monitor; // TODO
+            this.monitor.addEventListener('progress', updateTaskProgress);
             return monitor;
         };
 

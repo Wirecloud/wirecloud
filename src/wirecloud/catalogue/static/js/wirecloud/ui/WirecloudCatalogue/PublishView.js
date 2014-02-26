@@ -32,8 +32,9 @@
      *************************************************************************/
 
     upload_wgt_file = function upload_wgt_file() {
-        LayoutManagerFactory.getInstance()._startComplexTask(gettext("Uploading packaged widget"), 1);
+        var monitor = LayoutManagerFactory.getInstance()._startComplexTask(gettext("Uploading packaged widget"), 1);
         this.catalogue.addPackagedResource(new FormData(this.wrapperElement.getElementsByClassName("wgt_upload_form")[0]), {
+            monitor: monitor,
             onSuccess: this._onUploadSuccess.bind(this),
             onFailure: this._onUploadFailure.bind(this)
         });
@@ -103,8 +104,6 @@
     PublishView.prototype._onUploadSuccess = function _onUploadSuccess() {
         var layoutManager = LayoutManagerFactory.getInstance();
 
-        layoutManager.logSubTask(gettext('Resource uploaded successfully'));
-        layoutManager.logStep('');
         layoutManager._notifyPlatformReady();
 
         this.mainview.home();

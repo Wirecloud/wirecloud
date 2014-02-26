@@ -253,7 +253,6 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/shims/classList.js',
             'js/wirecloud/BaseRequirements.js',
             'js/common/ComputedStyle.js',
-            'js/wirecloud/TaskMonitorModel.js',
             'js/wirecloud/constants.js',
             'js/wirecloud/core.js',
             'js/wirecloud/io.js',
@@ -279,6 +278,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/WorkspacePreferences.js',
             'js/wirecloud/TabPreferences.js',
         ) + STYLED_ELEMENTS_FILES + (
+            'js/wirecloud/TaskMonitorModel.js',
             'js/wirecloud/IWidget.js',
             'js/wirecloud/Wiring.js',
             'js/wirecloud/LogManager.js',
