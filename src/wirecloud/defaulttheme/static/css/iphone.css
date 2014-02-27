@@ -3,7 +3,7 @@
 }
 
 body {
-    background: #E0E0E0;
+    background: white;
     margin: 0;
     font-family: Helvetica;
     -webkit-text-size-adjust: none;
@@ -154,12 +154,12 @@ img {
     -webkit-border-bottom-right-radius: 6px;
 }
 
-#workspace_list > li:hover {
-    background: rgb(51,102,204);
+#workspace_list > li:hover, #workspace_list > li:active {
+    background-color: #FEF9DB;
 }
 
 #workspace_list > li {
-    color: black;
+    color: rgb(76, 80, 84);
     text-decoration: none;
     padding: 10px 10px 10px 10px;
     display: block;
@@ -310,7 +310,7 @@ img {
     -webkit-border-image: url(../images/iphone/whiteButton.png) 0 14 0 14;
 }
 
-.mashup_content #add_resource a:hover{
+.mashup_content #add_resource a:hover {
     color: #fff !important;
     text-shadow: #000 0px 1px 0;
     -webkit-border-image: url(../images/iphone/blueButton.png) 0 14 0 14;
@@ -323,7 +323,6 @@ img {
     width: 100%;
     position: absolute;
     overflow: hidden;
-    background: #E0E0E0;
     color:#4C5054;
     z-index: 0;
 }
@@ -420,7 +419,7 @@ body.landscape #mymw-nav {
     z-index: -1;
 }
 
-.widget_content {
+.iwidget {
     overflow: hidden;
     display: block;
     position: absolute;
@@ -441,9 +440,11 @@ body.landscape #mymw-nav {
     height: 0;
     width: 0;
 }
-.widget_object{
+
+.widget_object {
     width: 100%;
     height: 100%;
+    border: 0px solid transparent;
 }
 
 /**** Related Widget Section ****/
