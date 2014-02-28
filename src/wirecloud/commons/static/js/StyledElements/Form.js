@@ -26,6 +26,29 @@
         }
         options = Wirecloud.Utils.merge(defaultOptions, options);
 
+        // Parse acceptButton
+        this.acceptButton = null;
+        if (options.acceptButton instanceof StyledElements.StyledButton) {
+            this.acceptButton = options.acceptButton;
+        } else if (options.acceptButton === true) {
+            this.acceptButton = new StyledElements.StyledButton({
+                'usedInForm': true,
+                'class': 'btn-primary',
+                'text': gettext('Accept')
+            });
+        }
+
+        // Parse cancelButton
+        this.cancelButton = null;
+        if (options.cancelButton instanceof StyledElements.StyledButton) {
+            this.cancelButton = options.cancelButton;
+        } else if (options.cancelButton === true) {
+            this.cancelButton = new StyledElements.StyledButton({
+                usedInForm: true,
+                text: gettext('Cancel')
+            });
+        }
+
         StyledElements.StyledElement.call(this, ['submit', 'cancel']);
 
         this.childComponents = [];
@@ -69,7 +92,7 @@
 
         if (options.buttonArea != null) {
             buttonArea = options.buttonArea;
-        } else {
+        } else if (options.acceptButton !== false || options.cancelButton !== false) {
             buttonArea = document.createElement('div');
             buttonArea.className = 'buttons';
             div.appendChild(buttonArea);
@@ -77,16 +100,6 @@
 
         // Accept button
         this.pAcceptHandler = this.pAcceptHandler.bind(this);
-        this.acceptButton = null;
-        if (options.acceptButton instanceof StyledElements.StyledButton) {
-            this.acceptButton = options.acceptButton;
-        } else if (options.acceptButton === true) {
-            this.acceptButton = new StyledElements.StyledButton({
-                'usedInForm': true,
-                'class': 'btn-primary',
-                'text': gettext('Accept')
-            });
-        }
         if (this.acceptButton !== null) {
             this.acceptButton.addEventListener("click", this.pAcceptHandler);
             this.acceptButton.insertInto(buttonArea);
@@ -94,15 +107,6 @@
 
         // Cancel button
         this.pCancelHandler = this.pCancelHandler.bind(this);
-        this.cancelButton = null;
-        if (options.cancelButton instanceof StyledElements.StyledButton) {
-            this.cancelButton = options.cancelButton;
-        } else if (options.cancelButton === true) {
-            this.cancelButton = new StyledElements.StyledButton({
-                usedInForm: true,
-                text: gettext('Cancel')
-            });
-        }
         if (this.cancelButton !== null) {
             this.cancelButton.addEventListener("click", this.pCancelHandler);
             this.cancelButton.insertInto(buttonArea);
@@ -155,6 +159,7 @@
                     'fields': field.fields
                 };
                 tmp_input = this.factory.createInterface(field.name, tmp_field);
+                tmp_input.assignDefaultButton(this.acceptButton);
 
                 this.fieldInterfaces[field.name] = tmp_input;
                 this.fields[field.name] = tmp_field;
@@ -239,6 +244,7 @@
                 field = desc.fields[fieldId];
 
                 inputInterface = this.factory.createInterface(fieldId, field);
+                inputInterface.assignDefaultButton(this.acceptButton);
                 inputInterface.insertInto(wrapper);
                 // TODO
                 wrapperElement = null;
@@ -312,6 +318,7 @@
         row.appendChild(inputCell);
 
         inputInterface = this.factory.createInterface(fieldId, field);
+        inputInterface.assignDefaultButton(this.acceptButton);
         inputInterface.insertInto(inputCell);
         if (this.readOnly || inputInterface._readOnly) {
             inputInterface.setDisabled(true);

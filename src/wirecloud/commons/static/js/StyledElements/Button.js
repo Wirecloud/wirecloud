@@ -104,6 +104,12 @@
         this.buttonElement.setAttribute('title', title);
     };
 
+    StyledButton.prototype.click = function click() {
+        if (this.enabled) {
+            this.events.click.dispatch(this);
+        }
+    };
+
     StyledButton.prototype.destroy = function destroy() {
 
         this._button.removeEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);

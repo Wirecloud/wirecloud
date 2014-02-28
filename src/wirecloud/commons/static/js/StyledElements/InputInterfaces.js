@@ -98,6 +98,12 @@ function TextInputInterface(fieldId, options) {
 }
 TextInputInterface.prototype = new InputInterface();
 
+TextInputInterface.prototype.assignDefaultButton = function assignDefaultButton(button) {
+    this.inputElement.addEventListener('submit', function () {
+        button.click();
+    });
+};
+
 /**
  *
  */

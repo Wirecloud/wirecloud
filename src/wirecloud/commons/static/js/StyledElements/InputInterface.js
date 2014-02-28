@@ -255,6 +255,9 @@
         return value;
     };
 
+    InputInterface.prototype.assignDefaultButton = function assignDefaultButton(button) {
+    };
+
     window.InputInterface = InputInterface;
 
 })();
