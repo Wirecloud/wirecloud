@@ -72,18 +72,6 @@
         div.appendChild(this.pBuildFieldTable(fields));
         this.wrapperElement.className = "styled_form";
 
-        // Legend
-        if (options.legend === true || (!this.readOnly && options.legend !== false)) {
-            legend = document.createElement('div');
-            legend.className = "legend";
-            requiredMark = document.createElement('span');
-            requiredMark.appendChild(document.createTextNode('*'));
-            requiredMark.className = 'required_mark';
-            legend.appendChild(requiredMark);
-            legend.appendChild(document.createTextNode('required field'));
-            div.appendChild(legend);
-        }
-
         // Mark our message div as an error msg
         this.msgElement = document.createElement('div');
         this.msgElement.className = 'alert alert-error';
