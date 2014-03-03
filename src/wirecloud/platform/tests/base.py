@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -21,20 +21,32 @@
 from lxml import etree
 from cStringIO import StringIO
 
+from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.test.client import RequestFactory
 from django.test import Client
+from django.utils import unittest
 
+from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 
 
 class BasicViewsAPI(WirecloudTestCase):
 
     fixtures = ('selenium_test_data', 'user_with_workspaces')
+    tags = ('base_views',)
 
     def setUp(self):
         super(BasicViewsAPI, self).setUp()
 
         self.client = Client()
+
+    @classmethod
+    def setUpClass(cls):
+        super(BasicViewsAPI, cls).setUpClass()
+        factory = RequestFactory()
+        request = factory.get(reverse('login'))
+        cls.login_url = get_absolute_reverse_url('login', request=request)
 
     def test_workspace_view_redirects_to_login(self):
 
@@ -43,10 +55,10 @@ class BasicViewsAPI(WirecloudTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
         self.assertEqual(response.status_code, 302)
         self.assertIn('Location', response)
-        self.assertNotEqual(response['Location'], url)
+        self.assertTrue(response['Location'].startswith(self.login_url))
 
     def test_workspace_view_check_permissions(self):
-    
+
         url = reverse('wirecloud.workspace_view', kwargs={'owner': 'user_with_workspaces', 'name': 'ExistingWorkspace'})
 
         # Authenticate
@@ -80,7 +92,24 @@ class BasicViewsAPI(WirecloudTestCase):
         # Authenticate
         self.client.login(username='user_with_workspaces', password='admin')
 
-        response = self.client.get(url, HTTP_ACCEPT='text/html')
+        response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
         self.assertEqual(response.status_code, 302)
         self.assertIn('Location', response)
         self.assertTrue(response['Location'].endswith('?a=b'))
+
+    @unittest.skipIf(settings.ALLOW_ANONYMOUS_ACCESS is False, 'Anonymous access disabled')
+    def test_root_view_anonymous_allowed(self):
+
+        url = reverse('wirecloud.root')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
+        self.assertEqual(response.status_code, 200)
+
+    @unittest.skipIf(settings.ALLOW_ANONYMOUS_ACCESS is True, 'Anonymous access enabled')
+    def test_root_view_anonymous_not_allowed(self):
+
+        url = reverse('wirecloud.root')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/xhtml+xml')
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response['Location'].startswith(self.login_url))
