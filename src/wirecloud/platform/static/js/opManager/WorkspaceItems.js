@@ -66,7 +66,7 @@ WorkspaceItems.prototype.build = function () {
 
     item = new StyledElements.MenuItem(gettext('Embed'), function () {
         var title = gettext('Embed Code');
-        var path = Wirecloud.URLs.WORKSPACE_VIEW.evaluate({owner: current_workspace.workspaceState.creator, name: current_workspace.workspaceState.name});
+        var path = Wirecloud.URLs.WORKSPACE_VIEW.evaluate({owner: encodeURIComponent(current_workspace.workspaceState.creator), name: encodeURIComponent(current_workspace.workspaceState.name)});
         var workspace_url = document.location.protocol + '//' + document.location.host + path + '?mode=embedded';
         var dialog = new Wirecloud.ui.EmbedCodeWindowMenu(title, '<iframe src="' + workspace_url + '" frameborder="0" allowfullscreen></iframe>');
         dialog.show();
