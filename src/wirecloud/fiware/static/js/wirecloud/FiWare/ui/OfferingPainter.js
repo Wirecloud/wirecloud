@@ -126,7 +126,7 @@
             'name': offering.name,
             'owner': offering.owner,
             'store': offering.store,
-            'version': offering.version.text,
+            'version': offering.version,
             'abstract': offering['abstract'],
             'description': offering.description,
             'type': function () {

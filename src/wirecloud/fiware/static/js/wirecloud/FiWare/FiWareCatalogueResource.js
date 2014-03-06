@@ -82,10 +82,6 @@
             return [];
         };
 
-        this.getURI = function () {
-            return [vendor, name, version.text].join('/');
-        };
-
         this.isAllow = function isAllow(action) {
             return false;
         };
@@ -98,7 +94,7 @@
         Object.defineProperties(this, {
             'owner': {value: resourceJSON_.vendor},
             'name': {value: resourceJSON_.name},
-            'version': {value: new Wirecloud.Version(resourceJSON_.version, 'catalogue')},
+            'version': {value: resourceJSON_.version},
             'type': {value: resourceJSON_.type},
             'image_url': {value: resourceJSON_.uriImage},
             'abstract': {value: resourceJSON_.shortDescription},
