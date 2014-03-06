@@ -344,6 +344,27 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Workspace should be created
         self.assertTrue(Workspace.objects.filter(creator=1, name='test').exists())
 
+    def test_workspace_collection_post_bad_name(self):
+
+        url = reverse('wirecloud.workspace_collection')
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'name': 'bad/name',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 422)
+
+        # Make another request with another invalid name
+        data = {
+            'name': '      ',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 422)
+
     def test_workspace_collection_post_conflict(self):
 
         url = reverse('wirecloud.workspace_collection')

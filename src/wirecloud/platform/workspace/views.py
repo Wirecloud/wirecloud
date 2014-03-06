@@ -124,6 +124,9 @@ class WorkspaceCollection(Resource):
 
         if mashup_id == '':
 
+            if not is_valid_name(workspace_name):
+                return build_error_response(request, 422, _('invalid workspace name'))
+
             if dry_run:
                 return HttpResponse(status=204)
 
