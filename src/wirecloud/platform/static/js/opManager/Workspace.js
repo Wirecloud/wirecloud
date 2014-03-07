@@ -408,7 +408,7 @@ function Workspace(workspaceState, resources) {
         this.notebook.addButton(this.poweredByWirecloudButton);
         this.poweredByWirecloudButton.addEventListener('click', function () {window.open('http://conwet.fi.upm.es/wirecloud/', '_blank')});
 
-        this.notebook.repaint();
+        LayoutManagerFactory.getInstance().viewsByName.workspace.repaint();
     };
 
     Workspace.prototype.getIWidget = function(iwidgetId) {
