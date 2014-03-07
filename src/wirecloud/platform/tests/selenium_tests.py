@@ -673,7 +673,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
     def test_embedded_view(self):
 
-        mashup_url = self.live_server_url + '/user_with_workspaces/Public Workspace?view=embedded'
+        mashup_url = self.live_server_url + '/user_with_workspaces/Public Workspace?mode=embedded'
         iframe_test_path = os.path.join(self.shared_test_data_dir, 'iframe_test.html')
         iframe_test_url = urlparse.urljoin('file:', urllib.pathname2url(iframe_test_path))
         self.driver.get(iframe_test_url)
