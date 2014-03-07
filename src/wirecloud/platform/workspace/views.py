@@ -94,7 +94,7 @@ class WorkspaceCollection(Resource):
     @no_cache
     def read(self, request):
 
-        workspaces, _junk, reload_showcase = get_workspace_list(request.user)
+        workspaces, _junk = get_workspace_list(request.user)
         data_list = [get_workspace_data(workspace, request.user) for workspace in workspaces]
 
         return HttpResponse(json.dumps(data_list), content_type='application/json; charset=UTF-8')
@@ -243,14 +243,7 @@ class WorkspaceEntry(Resource):
         if not workspace.users.filter(pk=request.user.pk).exists():
             return build_error_response(request, 403, _('You are not allowed to delete this workspace'))
 
-        user_workspace = UserWorkspace.objects.get(user=request.user, workspace=workspace)
-        # Check if the user does not have any other workspace
-        if user_workspace.manager != '' or UserWorkspace.objects.filter(user=request.user).count() == 0:
-            msg = _("workspace cannot be deleted")
-
-            return build_error_response(request, 403, msg)
-
-        user_workspace.delete()
+        UserWorkspace.objects.filter(user=request.user, workspace=workspace).delete()
         if workspace.users.count() == 0:
 
             # Remove the workspace

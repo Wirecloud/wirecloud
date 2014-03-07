@@ -153,17 +153,13 @@ def sync_base_workspaces(user):
 
 def get_workspace_list(user):
 
-    from wirecloud.platform.workspace.views import createEmptyWorkspace, setActiveWorkspace
+    from wirecloud.platform.workspace.views import setActiveWorkspace
 
     if not user.is_authenticated():
         workspaces = Workspace.objects.filter(public=True)
-        return workspaces, None, False
+        return workspaces, None
 
-    reload_showcase = sync_base_workspaces(user)
-
-    if Workspace.objects.filter(users=user).count() == 0:
-        # create an empty workspace
-        createEmptyWorkspace(_('Workspace'), user)
+    sync_base_workspaces(user)
 
     # Now we can fetch all the workspaces for the user
     workspaces = Workspace.objects.filter(Q(public=True) | Q(users__id=user.id))
@@ -172,9 +168,12 @@ def get_workspace_list(user):
     active_workspaces = UserWorkspace.objects.filter(user=user, active=True)
     if len(active_workspaces) == 0:
 
-        # set the first workspace as active
-        active_workspace = UserWorkspace.objects.filter(user=user)[0]
-        setActiveWorkspace(user, active_workspace.workspace)
+        try:
+            # set the first workspace as active
+            active_workspace = UserWorkspace.objects.filter(user=user)[0]
+            setActiveWorkspace(user, active_workspace.workspace)
+        except IndexError:
+            active_workspace = None
 
     elif len(active_workspaces) > 1:
 
@@ -184,4 +183,4 @@ def get_workspace_list(user):
     else:
         active_workspace = active_workspaces[0]
 
-    return workspaces, active_workspace, reload_showcase
+    return workspaces, active_workspace

@@ -39,11 +39,14 @@ var OpManagerFactory = function () {
         // ****************
 
         /*****WORKSPACE CALLBACK***/
-        var createWSSuccess = function(onSuccess, response) {
+        var createWSSuccess = function(replaceNavigationState, onSuccess, response) {
             var workspace = JSON.parse(response.responseText);
             this.workspaceInstances[workspace.id] = workspace;
+            if (!(workspace.creator in this.workspacesByUserAndName)) {
+                this.workspacesByUserAndName[workspace.creator] = {};
+            }
             this.workspacesByUserAndName[workspace.creator][workspace.name] = workspace;
-            Wirecloud.changeActiveWorkspace(workspace);
+            Wirecloud.changeActiveWorkspace(workspace, null, {replaceNavigationState: replaceNavigationState});
 
             if (typeof onSuccess === 'function') {
                 try {
@@ -214,9 +217,9 @@ var OpManagerFactory = function () {
         }
 
         OpManager.prototype.addWorkspace = function addWorkspace(newName, options) {
-            if (options == null) {
-                options = {};
-            }
+            options = Wirecloud.Utils.merge({
+                replaceNavigationState: false
+            }, options);
 
             Wirecloud.io.makeRequest(Wirecloud.URLs.WORKSPACE_COLLECTION, {
                 method: 'POST',
@@ -226,7 +229,7 @@ var OpManagerFactory = function () {
                     allow_renaming: !!options.allow_renaming,
                     name: newName
                 }),
-                onSuccess: createWSSuccess.bind(this, options.onSuccess),
+                onSuccess: createWSSuccess.bind(this, options.replaceNavigationState, options.onSuccess),
                 onFailure: createWSError.bind(this, options.onFailure)
             });
         };

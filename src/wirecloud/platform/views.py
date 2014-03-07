@@ -53,7 +53,7 @@ def auto_select_workspace(request, mode=None):
     if ALLOW_ANONYMOUS_ACCESS is False and request.user.is_authenticated() is False:
         return redirect_to_login(request.get_full_path())
 
-    _junk1, active_workspace, _junk2 = get_workspace_list(request.user)
+    _junk1, active_workspace = get_workspace_list(request.user)
 
     if active_workspace is not None:
         url = reverse('wirecloud.workspace_view', kwargs={
@@ -65,6 +65,8 @@ def auto_select_workspace(request, mode=None):
             url += '?' + urlencode({'mode': mode})
 
         return HttpResponseRedirect(url)
+    elif request.user.is_authenticated():
+        return render_wirecloud(request, mode)
     else:
         return render(request, 'wirecloud/landing_page.html', content_type="application/xhtml+xml; charset=UTF-8")
 
@@ -83,13 +85,32 @@ def render_workspace_view(request, owner, name):
         else:
             return redirect_to_login(request.get_full_path())
 
-    if 'mode' in request.GET:
-        view_type = request.GET['mode']
-    else:
-        view_type = get_default_view(request)
+    return render_wirecloud(request)
+
+def get_default_view(request):
+
+    if 'default_mode' not in request.session:
+        user_agent = ua_parse(request.META['HTTP_USER_AGENT'])
+        if user_agent.is_mobile:
+            mode = 'smartphone'
+        else:
+            mode = 'classic'
+
+        request.session['default_mode'] = mode
+
+    return request.session['default_mode']
+
+
+def render_wirecloud(request, view_type=None):
+
+    if view_type is None:
+        if 'mode' in request.GET:
+            view_type = request.GET['mode']
+        else:
+            view_type = get_default_view(request)
 
     try:
-        return render_wirecloud(request, view_type)
+        return render(request, 'wirecloud/views/%s.html' % view_type, content_type="application/xhtml+xml; charset=UTF-8")
     except TemplateDoesNotExist:
         if 'mode' in request.GET:
             url = urlparse(request.build_absolute_uri())
@@ -106,22 +127,3 @@ def render_workspace_view(request, owner, name):
         else:
             view_type = get_default_view(request)
             return render_wirecloud(request, view_type)
-
-
-def get_default_view(request):
-
-    if 'default_mode' not in request.session:
-        user_agent = ua_parse(request.META['HTTP_USER_AGENT'])
-        if user_agent.is_mobile:
-            mode = 'smartphone'
-        else:
-            mode = 'classic'
-
-        request.session['default_mode'] = mode
-
-    return request.session['default_mode']
-
-
-def render_wirecloud(request, view_type):
-
-    return render(request, 'wirecloud/views/%s.html' % view_type, content_type="application/xhtml+xml; charset=UTF-8")

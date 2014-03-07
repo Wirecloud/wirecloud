@@ -57,12 +57,17 @@
                 Wirecloud.HistoryManager.init();
                 var state = Wirecloud.HistoryManager.getCurrentState();
                 LayoutManagerFactory.getInstance().changeCurrentView('workspace');
-                var workspace = opManager.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
-                this.changeActiveWorkspace(workspace, null, {
-                    onSuccess: function () {
-                        this.loadCompleted = true;
-                    }.bind(opManager)
-                });
+
+                if (opManager.workspacesByUserAndName[Wirecloud.contextManager.get('username')] != null) {
+                    var workspace = opManager.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
+                    this.changeActiveWorkspace(workspace, null, {
+                        onSuccess: function () {
+                            this.loadCompleted = true;
+                        }.bind(opManager)
+                    });
+                } else {
+                    opManager.addWorkspace(gettext('Workspace'), {replaceNavigationState: true});
+                }
             }.bind(this);
         }
 
@@ -175,9 +180,9 @@
     Wirecloud.changeActiveWorkspace = function changeActiveWorkspace(workspace, initial_tab, options) {
         var msg, state, steps = this.activeWorkspace != null ? 2 : 1;
 
-        if (options == null) {
-            options = {};
-        }
+        options = Wirecloud.Utils.merge({
+            replaceNavigationState: false
+        }, options);
 
         LayoutManagerFactory.getInstance()._startComplexTask(gettext("Changing current workspace"), steps);
 
@@ -193,7 +198,11 @@
         if (initial_tab) {
             state.tab = initial_tab;
         }
-        Wirecloud.HistoryManager.pushState(state);
+        if (options.replaceNavigationState) {
+            Wirecloud.HistoryManager.replaceState(state);
+        } else {
+            Wirecloud.HistoryManager.pushState(state);
+        }
 
         msg = interpolate(gettext("Downloading workspace (%(name)s) data"), {name: workspace.creator + '/' + workspace.name}, true);
         LayoutManagerFactory.getInstance().logSubTask(msg, 1);
