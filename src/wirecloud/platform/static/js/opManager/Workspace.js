@@ -673,7 +673,7 @@ function Workspace(workspaceState, resources) {
      * Checks if an action can be performed in this workspace by current user.
      */
     Workspace.prototype.isAllowed = function (action) {
-        var username, nworkspaces;
+        var username, workspaces, nworkspaces;
 
         if (action !== "remove" && (!this.valid || this.restricted)) {
             return false;
@@ -683,8 +683,13 @@ function Workspace(workspaceState, resources) {
         case "remove":
             //opManager = OpManagerFactory.getInstance();
             username = Wirecloud.contextManager.get('username');
-            nworkspaces = Object.keys(OpManagerFactory.getInstance().workspacesByUserAndName[username]).length;
-            return /* opManager.isAllow('add_remove_workspaces') && */ (nworkspaces > 1) && this.removable;
+            workspaces = OpManagerFactory.getInstance().workspacesByUserAndName[username];
+            if (workspaces != null) {
+                nworkspaces = Object.keys(workspaces).length;
+            } else {
+                nworkspaces = 0;
+            }
+            return /* opManager.isAllow('add_remove_workspaces') && */ this.removable && (nworkspaces > 1);
         case "merge_workspaces":
             return this._isAllowed('add_remove_iwidgets') || this._isAllowed('merge_workspaces');
         case "catalogue_view_widgets":

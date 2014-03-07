@@ -33,14 +33,25 @@
     WorkspaceListItems.prototype = new StyledElements.DynamicMenuItems();
 
     WorkspaceListItems.prototype.build = function () {
-        var workspace_name, items, workspace, username, opManager;
+        var workspace_name, items, workspace, username, user_workspaces;
 
         items = [];
 
-        opManager = OpManagerFactory.getInstance();
         username = Wirecloud.contextManager.get('username');
-        for (workspace_name in opManager.workspacesByUserAndName[username]) {
-            workspace = opManager.workspacesByUserAndName[username][workspace_name];
+        user_workspaces = OpManagerFactory.getInstance().workspacesByUserAndName[username];
+
+        if (user_workspaces == null || Object.keys(user_workspaces).length === 0) {
+            items.push(new StyledElements.MenuItem(
+                gettext('Empty workspace list'),
+                this.handler,
+                null
+            ));
+            items[0].disable();
+            return items;
+        }
+
+        for (workspace_name in user_workspaces) {
+            workspace = user_workspaces[workspace_name];
 
             items.push(new StyledElements.MenuItem(
                 workspace_name,

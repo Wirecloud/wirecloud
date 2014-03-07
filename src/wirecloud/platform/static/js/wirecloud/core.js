@@ -58,7 +58,7 @@
                 var state = Wirecloud.HistoryManager.getCurrentState();
                 LayoutManagerFactory.getInstance().changeCurrentView('workspace');
 
-                if (opManager.workspacesByUserAndName[Wirecloud.contextManager.get('username')] != null) {
+                if (state.workspace_name !== '') {
                     var workspace = opManager.workspacesByUserAndName[state.workspace_creator][state.workspace_name];
                     this.changeActiveWorkspace(workspace, null, {
                         onSuccess: function () {
