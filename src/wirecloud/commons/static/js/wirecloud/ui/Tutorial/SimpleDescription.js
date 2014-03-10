@@ -135,7 +135,7 @@
             this.tutorial.resetControlLayer(false);
         }
         if (this.element != null) {
-            pos = this.element.getBoundingClientRect();
+            var pos = this.element.getBoundingClientRect();
             switch (this.pos) {
                 case 'up':
                     this.htmlElement.style.top = (pos.top - this.htmlElement.offsetHeight - 20) + 'px';
