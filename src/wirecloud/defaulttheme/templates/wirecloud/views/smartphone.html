@@ -10,8 +10,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}images/favicon.ico" />
 
     {% compress css %}
-    <link rel="stylesheet" type="text/css" media="screen,projection" href="{{ STATIC_URL }}css/iphone.css" />
-    <link rel="stylesheet" type="text/css" media="screen,projection" href="{{ STATIC_URL }}css/styled_elements_core.css" />
+    {% platform_css VIEW_MODE %}
     {% endcompress %}
 </head>
 

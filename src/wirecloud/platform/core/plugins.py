@@ -29,7 +29,6 @@ from wirecloud.platform.plugins import build_url_template, get_active_features_i
 
 
 WORKSPACE_CSS = (
-    'css/workspace/ioperator.css',
     'css/workspace/iwidget.css',
     'css/workspace/empty_workspace_message.css',
 )
@@ -112,6 +111,7 @@ STYLED_ELEMENTS_FILES = (
 BASE_CSS = (
     'css/base/fade.css',
     'css/windowmenues/logwindowmenu.css',
+    'css/workspace/ioperator.css',
 )
 
 WIRING_EDITOR_CSS = (
@@ -442,6 +442,10 @@ class WirecloudCorePlugin(WirecloudPlugin):
 
         if view == 'classic':
             return common + WORKSPACE_CSS + WIRING_EDITOR_CSS + CATALOGUE_CSS + TUTORIAL_CSS
+        elif view == 'embedded':
+            return common + WORKSPACE_CSS
+        elif view == 'smartphone':
+            return common + ('css/iphone.css',)
         else:
             return common
 

@@ -57,6 +57,7 @@ function Workspace(workspaceState, resources) {
         });
         this.layout.getNorthContainer().appendChild(this.toolbar);
 
+        this.layout.getCenterContainer().wrapperElement.setAttribute('id', 'workspace');
         new MobileScrollManager(this.layout.getCenterContainer().wrapperElement, {
             'capture': true,
             'propagate': true,
@@ -185,8 +186,8 @@ function Workspace(workspaceState, resources) {
         for (i = 0; i < iwidgets.length; i += 1) {
             this.events.iwidgetadded.dispatch(this, iwidgets[i].internal_iwidget);
         }
-        this.wiring.load(this.workspaceState.wiring);
         this._buildInterface();
+        this.wiring.load(this.workspaceState.wiring);
 
         for (i = 0; i < this.tabInstances.length; i += 1) {
             this.tabInstances[i].paint(this.layout.getCenterContainer(), scrolling, i);

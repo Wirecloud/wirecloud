@@ -110,7 +110,7 @@ def render_wirecloud(request, view_type=None):
             view_type = get_default_view(request)
 
     try:
-        return render(request, 'wirecloud/views/%s.html' % view_type, content_type="application/xhtml+xml; charset=UTF-8")
+        return render(request, 'wirecloud/views/%s.html' % view_type, {'VIEW_MODE': view_type}, content_type="application/xhtml+xml; charset=UTF-8")
     except TemplateDoesNotExist:
         if 'mode' in request.GET:
             url = urlparse(request.build_absolute_uri())
