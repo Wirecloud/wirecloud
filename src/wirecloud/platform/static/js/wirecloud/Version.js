@@ -42,6 +42,7 @@
             throw new TypeError();
         }
         this.source = source;
+        Object.freeze(this);
     };
 
     Version.prototype.compareTo = function compareTo(version) {
