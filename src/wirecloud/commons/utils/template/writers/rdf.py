@@ -449,8 +449,8 @@ def build_rdf_graph(template_info):
 
 def write_rdf_description(template_info, format='pretty-xml'):
 
-    if options['type'] not in ('widget', 'operator', 'mashup'):
-        raise Exception('Unsupported resource type: ' + options['type'])
+    if template_info['type'] not in ('widget', 'operator', 'mashup'):
+        raise Exception('Unsupported resource type: ' + template_info['type'])
 
     graph = build_rdf_graph(template_info)
     return graph.serialize(format=format)
