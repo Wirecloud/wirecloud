@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -448,5 +448,9 @@ def build_rdf_graph(template_info):
 
 
 def write_rdf_description(template_info, format='pretty-xml'):
+
+    if options['type'] not in ('widget', 'operator', 'mashup'):
+        raise Exception('Unsupported resource type: ' + options['type'])
+
     graph = build_rdf_graph(template_info)
     return graph.serialize(format=format)

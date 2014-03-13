@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -199,6 +199,9 @@ def build_xml_document(options):
 
 
 def write_xml_description(options):
+
+    if options['type'] not in ('widget', 'mashup'):
+        raise Exception('Unsupported resource type: ' + options['type'])
 
     doc = build_xml_document(options)
     return etree.tostring(doc, method='xml', xml_declaration=True, encoding="UTF-8", pretty_print=True)

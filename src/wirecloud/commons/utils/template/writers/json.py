@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -23,6 +23,10 @@ import json
 
 
 def write_json_description(template_info):
+
+    if options['type'] not in ('widget', 'operator', 'mashup'):
+        raise Exception('Unsupported resource type: ' + options['type'])
+
     template_info = copy.copy(template_info)
     del template_info['translation_index_usage']
     return json.dumps(template_info, sort_keys=True, indent=4)
