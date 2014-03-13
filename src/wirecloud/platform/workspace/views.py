@@ -23,7 +23,7 @@ import os
 import zipfile
 
 from django.db import IntegrityError
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
