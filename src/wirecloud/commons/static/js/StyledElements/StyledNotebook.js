@@ -183,6 +183,20 @@
         this.moveRightButton.addEventListener("click",
                                              this.shiftRightTabs.bind(this),
                                              true);
+
+        Object.defineProperty(this, 'fullscreen', {
+            get: function () {
+                if ('fullscreenElement' in document) {
+                    return document.fullscreenElement === this.wrapperElement;
+                } else if ('msFullscreenElement' in document) {
+                    return document.msFullscreenElement === this.wrapperElement;
+                } else if ('mozFullScreenElement' in document) {
+                    return document.mozFullScreenElement === this.wrapperElement;
+                } else if ('webkitFullscreenElement' in document) {
+                    return document.webkitFullscreenElement === this.wrapperElement;
+                }
+            }
+        });
     };
     StyledNotebook.prototype = new StyledElements.StyledElement();
 
@@ -510,12 +524,16 @@
         var i, height, tabElement;
         temporal = temporal !== undefined ? temporal: false;
 
-        height = this._getUsableHeight();
-        if (height == null) {
-            return; // nothing to do
-        }
+        if (this.fullscreen !== true) {
+            height = this._getUsableHeight();
+            if (height == null) {
+                return; // nothing to do
+            }
 
-        this.wrapperElement.style.height = (height + "px");
+            this.wrapperElement.style.height = (height + "px");
+        } else {
+            this.wrapperElement.style.height = '';
+        }
 
         this.tabWrapper.repaint();
 
@@ -593,6 +611,34 @@
         }
 
         this.tabWrapper.getEastContainer().appendChild(button);
+    };
+
+    StyledNotebook.prototype.requestFullscreen = function requestFullscreen() {
+        if ('requestFullscreen' in this.wrapperElement) {
+            this.wrapperElement.requestFullscreen();
+        } else if ('msRequestFullscreen' in this.wrapperElement) {
+            this.wrapperElement.msRequestFullscreen();
+        } else if ('mozRequestFullScreen' in this.wrapperElement) {
+            this.wrapperElement.mozRequestFullScreen();
+        } else if ('webkitRequestFullscreen' in this.wrapperElement) {
+            this.wrapperElement.webkitRequestFullscreen();
+        }
+    };
+
+    StyledNotebook.prototype.exitFullscreen = function exitFullscreen() {
+        if (this.fullscreen !== true) {
+            return;
+        }
+
+        if ('exitFullscreen' in document) {
+            document.exitFullscreen();
+        } else if ('msExitFullscreen' in document) {
+            document.msExitFullscreen();
+        } else if ('mozCancelFullScreen' in document) {
+            document.mozCancelFullScreen();
+        } else if ('webkitExitFullscreen' in document) {
+            document.webkitExitFullscreen();
+        }
     };
 
     StyledNotebook.prototype.destroy = function destroy() {

@@ -7,6 +7,12 @@
     overflow: hidden;
 }
 
+#workspace.fullscreen {
+    width: 100%;
+    height: 100%;
+    background: white;
+}
+
 #workspace > .alert {
     margin: 2ex 5ex;
 }

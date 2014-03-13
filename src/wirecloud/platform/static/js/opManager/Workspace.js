@@ -402,11 +402,48 @@ function Workspace(workspaceState, resources) {
             this.addTabButton.addEventListener('click', this.addTab.bind(this));
         }
 
-        this.poweredByWirecloudButton = new StyledElements.StyledButton({
-            'class': 'powered-by-wirecloud'
-        });
-        this.notebook.addButton(this.poweredByWirecloudButton);
-        this.poweredByWirecloudButton.addEventListener('click', function () {window.open('http://conwet.fi.upm.es/wirecloud/', '_blank')});
+        if (Wirecloud.contextManager.get('mode') === 'embedded' && Wirecloud.Utils.isFullscreenSupported()) {
+            this.fullscreenButton = new StyledElements.StyledButton({
+                'class': 'icon-resize-full',
+                'plain': true
+            });
+            this.notebook.addButton(this.fullscreenButton);
+            Wirecloud.Utils.onFullscreenChange(this.notebook, function () {
+                this.fullscreenButton.removeClassName('icon-resize-full');
+                this.fullscreenButton.removeClassName('icon-resize-small');
+                if (this.notebook.fullscreen) {
+                    this.fullscreenButton.addClassName('icon-resize-small');
+                    this.notebook.addClassName('fullscreen');
+                } else {
+                    this.fullscreenButton.addClassName('icon-resize-full');
+                    this.notebook.removeClassName('fullscreen');
+                }
+            }.bind(this));
+            this.fullscreenButton.addEventListener('click', function () {
+                if (this.notebook.fullscreen) {
+                    this.notebook.exitFullscreen();
+                } else {
+                    this.notebook.requestFullscreen();
+                }
+            }.bind(this));
+        }
+
+        if (Wirecloud.contextManager.get('mode') === 'embedded') {
+            this.seeOnWirecloudButton = new StyledElements.StyledButton({
+                'class': 'powered-by-wirecloud'
+            });
+            this.notebook.addButton(this.seeOnWirecloudButton);
+            this.seeOnWirecloudButton.addEventListener('click', function () {
+                var url = Wirecloud.URLs.WORKSPACE_VIEW.evaluate({owner: encodeURIComponent(this.workspaceState.creator), name: encodeURIComponent(this.workspaceState.name)});
+                window.open(url, '_blank')
+            }.bind(this));
+        } else {
+            this.poweredByWirecloudButton = new StyledElements.StyledButton({
+                'class': 'powered-by-wirecloud'
+            });
+            this.notebook.addButton(this.poweredByWirecloudButton);
+            this.poweredByWirecloudButton.addEventListener('click', function () {window.open('http://conwet.fi.upm.es/wirecloud/', '_blank')});
+        }
 
         LayoutManagerFactory.getInstance().viewsByName.workspace.repaint();
     };

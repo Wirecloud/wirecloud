@@ -51,6 +51,38 @@
         e.preventDefault();
     };
 
+    Utils.onFullscreenChange = function onFullscreenChange(element, callback) {
+        if (element instanceof StyledElements.StyledElement) {
+            element = element.wrapperElement;
+        }
+
+        element.ownerDocument.addEventListener('fullscreenchange', callback, true);
+        element.ownerDocument.addEventListener('msfullscreenchange', callback, true);
+        element.ownerDocument.addEventListener('mozfullscreenchange', callback, true);
+        element.ownerDocument.addEventListener('webkitfullscreenchange', callback, true);
+    };
+
+    Utils.removeFullscreenChangeCallback = function onFullscreenChange(element, callback) {
+        if (element instanceof StyledElements.StyledElement) {
+            element = element.wrapperElement;
+        }
+
+        element.ownerDocument.removeEventListener('fullscreenchange', callback, true);
+        element.ownerDocument.removeEventListener('msfullscreenchange', callback, true);
+        element.ownerDocument.removeEventListener('mozfullscreenchange', callback, true);
+        element.ownerDocument.removeEventListener('webkitfullscreenchange', callback, true);
+    };
+
+    Utils.isFullscreenSupported = function isFullscreenSupported() {
+        if ('fullscreenEnabled' in document) {
+            return document.fullscreenEnabled;
+        } else if ('mozFullScreenEnabled' in document) {
+            return document.mozFullScreenEnabled;
+        } else if ('webkitFullscreenEnabled' in document) {
+            return document.webkitFullscreenEnabled;
+        }
+    };
+
     /*
     Based on:
       Cross-Browser Split 1.0.1

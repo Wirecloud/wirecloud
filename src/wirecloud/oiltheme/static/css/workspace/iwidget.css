@@ -3,7 +3,6 @@
     -moz-transition: box-shadow 0.7s ease-in, opacity 0.35s ease-in;
     -webkit-transition: box-shadow 0.7s ease-in, opacity 0.35s ease-in;
     transition: box-shadow 0.7s ease-in, opacity 0.35s ease-in;
-    background: #fcfcfc;
 	border-color: #C2CBD2;
     overflow: visible;
 }
@@ -81,6 +80,7 @@
 }
 
 .iwidget > .widget_shadow {
+    background: #fcfcfc;
     box-shadow: 0 0 8px rgba(50, 50, 50, 0.1);
     border-radius: 4px;
 }
