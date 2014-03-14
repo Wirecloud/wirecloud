@@ -78,7 +78,7 @@ Wirecloud.location = {
 
             if (this.options.onComplete) {
                 try {
-                    this.options.onComplete();
+                    this.options.onComplete(response);
                 } catch (e) {
                     if (this.options.onException) {
                         try {
