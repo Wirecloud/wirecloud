@@ -159,7 +159,7 @@
                 "username": options.user,
                 "password": options.pass
             };
-        } else if (typeof options === 'string') {
+        } else if (typeof options.token === 'string') {
             postBody.auth.token = {
                 "id": options.token
             };
