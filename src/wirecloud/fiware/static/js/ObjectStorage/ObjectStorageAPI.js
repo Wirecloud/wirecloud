@@ -51,6 +51,17 @@
         return headers;
     };
 
+    var process_failure = function process_failure(response) {
+        switch (response.status) {
+        case 401:
+            return this.ERROR.UNAUTHORIZED;
+        case 0:
+            return this.ERROR.CONNECTION_REFUSED;
+        default:
+            return this.ERROR.UNKNOWN;
+        }
+    };
+
     var KeystoneAPI = function KeystoneAPI(url, options) {
         if (typeof url !== 'string') {
             throw new TypeError('url must be a string');
@@ -71,6 +82,12 @@
 
     KeystoneAPI.prototype.TENANTS_ENDPOINT = 'tenants';
     KeystoneAPI.prototype.TOKENS_ENDPOINT = 'tokens';
+
+    KeystoneAPI.prototype.ERROR = {
+        UNKNOWN: 0,
+        CONNECTION_REFUSED: 1,
+        UNAUTHORIZED: 2
+    };
 
     KeystoneAPI.prototype.getTenants = function getTenants(options) {
 
@@ -94,9 +111,12 @@
                     options.onSuccess(response);
                 }
             },
-            onFailure: function (transport) {
+            onFailure: function (response) {
+                var reason;
+
                 if (typeof options.onFailure === 'function') {
-                    options.onFailure();
+                    reason = process_failure(response);
+                    options.onFailure(reason);
                 }
             },
             onComplete: function (transport) {
@@ -163,9 +183,12 @@
                     options.onSuccess(response.access.token.id, response);
                 }
             },
-            onFailure: function (transport) {
+            onFailure: function (response) {
+                var reason;
+
                 if (typeof options.onFailure === 'function') {
-                    options.onFailure();
+                    reason = process_failure(response);
+                    options.onFailure(reason);
                 }
             },
             onComplete: function (transport) {
@@ -193,6 +216,12 @@
         this.token = options.token;
     };
 
+    ObjectStorageAPI.prototype.ERROR = {
+        UNKNOWN: 0,
+        CONNECTION_REFUSED: 1,
+        UNAUTHORIZED: 2
+    };
+
     ObjectStorageAPI.prototype.getContainerList = function getContainerList(options) {
         var url, headers;
 
@@ -214,9 +243,12 @@
                     options.onSuccess(data);
                 }
             },
-            onFailure: function (transport) {
+            onFailure: function (response) {
+                var reason;
+
                 if (typeof options.onFailure === 'function') {
-                    options.onFailure();
+                    reason = process_failure(response);
+                    options.onFailure(reason);
                 }
             },
             onComplete: function (transport) {
@@ -248,9 +280,12 @@
                     options.onSuccess(created);
                 }
             },
-            onFailure: function (transport) {
+            onFailure: function (response) {
+                var reason;
+
                 if (typeof options.onFailure === 'function') {
-                    options.onFailure();
+                    reason = process_failure(response);
+                    options.onFailure(reason);
                 }
             },
             onComplete: function (transport) {
@@ -281,9 +316,12 @@
                     options.onSuccess(JSON.parse(transport.responseText));
                 }
             },
-            onFailure: function (transport) {
+            onFailure: function (response) {
+                var reason;
+
                 if (typeof options.onFailure === 'function') {
-                    options.onFailure();
+                    reason = process_failure(response);
+                    options.onFailure(reason);
                 }
             },
             onComplete: function (transport) {
@@ -314,9 +352,12 @@
                     options.onSuccess();
                 }
             },
-            onFailure: function (transport) {
+            onFailure: function (response) {
+                var reason;
+
                 if (typeof options.onFailure === 'function') {
-                    options.onFailure();
+                    reason = process_failure(response);
+                    options.onFailure(reason);
                 }
             },
             onComplete: function (transport) {
@@ -352,9 +393,12 @@
                     options.onSuccess(transport.response);
                 }
             },
-            onFailure: function (transport) {
+            onFailure: function (response) {
+                var reason;
+
                 if (typeof options.onFailure === 'function') {
-                    options.onFailure();
+                    reason = process_failure(response);
+                    options.onFailure(reason);
                 }
             },
             onComplete: function (transport) {
@@ -400,9 +444,12 @@
                     options.onSuccess();
                 }
             },
-            onFailure: function (transport) {
+            onFailure: function (response) {
+                var reason;
+
                 if (typeof options.onFailure === 'function') {
-                    options.onFailure();
+                    reason = process_failure(response);
+                    options.onFailure(reason);
                 }
             },
             onComplete: function (transport) {
@@ -433,9 +480,12 @@
                     options.onSuccess();
                 }
             },
-            onFailure: function (transport) {
+            onFailure: function (response) {
+                var reason;
+
                 if (typeof options.onFailure === 'function') {
-                    options.onFailure();
+                    reason = process_failure(response);
+                    options.onFailure(reason);
                 }
             },
             onComplete: function (transport) {
