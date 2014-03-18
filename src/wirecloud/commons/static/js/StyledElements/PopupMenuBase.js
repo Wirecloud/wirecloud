@@ -149,8 +149,16 @@
     };
 
     PopupMenuBase.prototype._menuItemCallback = function _menuItemCallback(menuItem) {
-        this.hide();
-        menuItem.run(this._context, menuItem.context);
+        if (menuItem.wrapperElement.classList.contains('submenu')) {
+            this.show();
+            menuItem.wrapperElement.classList.add("hovered");
+        } else {
+            this.hide();
+        }
+
+        if (typeof menuItem.run === 'function') {
+            menuItem.run(this._context, menuItem.context);
+        }
     };
 
     PopupMenuBase.prototype.isVisible = function isVisible() {
