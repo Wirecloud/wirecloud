@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -63,6 +63,9 @@
             throw new Error("Missing HTML5's history API support");
         }
 
+        if (!('pointerEvents' in document.documentElement.style)) {
+            throw new Error('Missing pointer-events support for HTML elements');
+        }
     };
 
     Wirecloud.check_basic_requirements = check_basic_requirements;
