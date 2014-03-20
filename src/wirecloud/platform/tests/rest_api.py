@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import filecmp
 import json
 from lxml import etree
 import os
@@ -27,6 +28,7 @@ from django.test import Client
 
 from wirecloud.catalogue import utils as catalogue
 from wirecloud.catalogue.models import CatalogueResource
+import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.commons.utils.testcases import WirecloudTestCase
 from wirecloud.platform.models import IWidget, Tab, Variable, Workspace, UserWorkspace
 
@@ -2140,12 +2142,42 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
 
+    def test_workspace_publish_including_image(self):
+
+        url = reverse('wirecloud.workspace_publish', kwargs={'workspace_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        data = {
+            'vendor': 'Wirecloud',
+            'name': 'test-published-mashup',
+            'version': '1.0.5',
+            'email': 'test@example.com'
+        }
+
+        original_image = os.path.join(self.shared_test_data_dir, 'src/api-test/images/catalogue.png')
+        with open(original_image, 'rb') as f:
+            response = self.client.post(url, {'json': json.dumps(data), 'image': f}, HTTP_ACCEPT='application/json')
+
+        self.assertEqual(response.status_code, 201)
+
+        # TODO search a better way for checking this
+        test_mashup = CatalogueResource.objects.get(short_name='test-published-mashup')
+        base_dir = catalogue_utils.wgt_deployer.get_base_dir('Wirecloud', 'test-published-mashup', '1.0.5')
+        image_path = os.path.join(base_dir, test_mashup.image_uri)
+        self.assertTrue(filecmp.cmp(original_image, image_path))
+
     def test_workspace_publish_bad_provided_data(self):
 
         url = reverse('wirecloud.workspace_publish', kwargs={'workspace_id': 2})
 
         # Authenticate
         self.client.login(username='user_with_workspaces', password='admin')
+
+        # Test missing parameters
+        data = {}
+        check_post_bad_provided_data(self, url, json.dumps(data))
 
         # Test empty name
         data = {
