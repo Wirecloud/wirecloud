@@ -433,9 +433,9 @@ class MashupMergeService(Service):
         workspace_id = data.get('workspace', '')
 
         if mashup_id == '' and workspace_id == '':
-            return build_error_response(request, 422, _('missing workspace name or mashup id'))
+            return build_error_response(request, 422, _('Missing workspace or mashup parameter'))
         elif  mashup_id != '' and workspace_id != '':
-            return build_error_response(request, 422, _('missing workspace name or mashup id'))
+            return build_error_response(request, 422, _('Workspace and mashup parameters cannot be used at the same time'))
 
         to_ws = get_object_or_404(Workspace, id=to_ws_id)
         if not request.user.is_superuser and to_ws.creator != request.user:
