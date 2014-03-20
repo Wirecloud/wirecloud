@@ -29,7 +29,7 @@
         Wirecloud.Preferences.call(this, definitions, values);
         this._workspace = workspace;
 
-        Wirecloud.preferences.addCommitHandler(this._handleParentChanges);
+        Wirecloud.preferences.addEventListener('pre-commit', this._handleParentChanges);
     };
     WorkspacePreferences.prototype = new Wirecloud.Preferences();
 
@@ -47,7 +47,7 @@
     };
 
     WorkspacePreferences.prototype.destroy = function destroy() {
-        Wirecloud.preferences.removeCommitHandler(this._handleParentChanges);
+        Wirecloud.preferences.removeEventListener('pre-commit', this._handleParentChanges);
 
         Wirecloud.Preferences.prototype.destroy.call(this);
         this._workspace = null;

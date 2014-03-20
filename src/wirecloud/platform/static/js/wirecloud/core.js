@@ -25,7 +25,7 @@
 
     "use strict";
 
-    var preferencesChanged = function preferencesChanged(modifiedValues) {
+    var preferencesChanged = function preferencesChanged(preferences, modifiedValues) {
         if ('language' in modifiedValues) {
             window.location.reload();
         }
@@ -132,7 +132,7 @@
                 Wirecloud.preferences = Wirecloud.PreferenceManager.buildPreferences('platform', {});
             },
             onComplete: function () {
-                Wirecloud.preferences.addCommitHandler(preferencesChanged.bind(this), 'post-commit');
+                Wirecloud.preferences.addEventListener('post-commit', preferencesChanged.bind(this));
                 checkPlatformReady();
             }.bind(this)
         });
@@ -229,11 +229,11 @@
 
                             LayoutManagerFactory.getInstance().header.refresh();
                             preferences = Wirecloud.PreferenceManager.buildPreferences('workspace', preferenceValues, {workspaceState: workspace_data}, workspace_data.empty_params);
-                            preferences.addCommitHandler(function () {
+                            preferences.addEventListener('post-commit', function () {
                                 setTimeout(function () {
                                     Wirecloud.changeActiveWorkspace(workspace, initial_tab, options);
                                 }, 0);
-                            }.bind(this), 'post-commit');
+                            }.bind(this));
 
                             LayoutManagerFactory.getInstance()._notifyPlatformReady();
                             dialog = new Wirecloud.ui.PreferencesWindowMenu('workspace', preferences);

@@ -29,13 +29,7 @@
      * @private
      */
     var onSuccessSavePreferences = function onSuccessSavePreferences() {
-        var i, handlers;
-
-        handlers = this.preferences.handlers['post-commit'];
-
-        for (i = 0; i < handlers.length; i += 1) {
-            handlers[i](this.modifiedValues);
-        }
+        this.preferences.events['post-commit'].dispatch(this.preferences, this.modifiedValues);
     };
 
     /**
@@ -61,19 +55,6 @@
             onSuccess: onSuccessSavePreferences.bind(context),
             onFailure: onErrorSavePreferences.bind(context)
         });
-    };
-
-    /**
-     * @private
-     *
-     * Notifies modified values to commit handlers. This method does not
-     * notify modified values to each specific preference handlers.
-     */
-    var notifyCommitHandlers = function notifyCommitHandlers(modifiedValues) {
-        var len = this.handlers['pre-commit'].length;
-        for (var i = 0; i < len; i++) {
-            this.handlers['pre-commit'][i](modifiedValues);
-        }
     };
 
     /**
@@ -105,32 +86,9 @@
         // Bind _handleParentChanges method
         this._handleParentChanges = this._handleParentChanges.bind(this);
 
-        // Init handlers attribute
-        this.handlers = {
-            'pre-commit': [],
-            'post-commit': []
-        };
+        StyledElements.ObjectWithEvents.call(this, ['pre-commit', 'post-commit']);
     };
-
-    Preferences.prototype.addCommitHandler = function addCommitHandler(handler, _event) {
-        _event = _event ? _event : 'pre-commit';
-
-        if (_event in this.handlers) {
-            this.handlers[_event].push(handler);
-        }
-    };
-
-    Preferences.prototype.removeCommitHandler = function removeCommitHandler(handler, _event) {
-        var index;
-
-        _event = _event ? _event : 'pre-commit';
-        if (_event in this.handlers) {
-            index = this.handlers['pre-commit'].indexOf(handler);
-            if (index !== -1) {
-                this.handlers['pre-commit'].splice(index, 1);
-            }
-        }
-    };
+    Preferences.prototype = new StyledElements.ObjectWithEvents();
 
     Preferences.prototype.get = function get(name) {
         return this.preferences[name].getEffectiveValue();
@@ -169,11 +127,11 @@
             newEffectiveValues[name] = preference.getEffectiveValue();
         }
 
-        notifyCommitHandlers.call(this, newEffectiveValues);
+        this.events['pre-commit'].dispatch(this, newEffectiveValues);
         persist.call(this, modifiedValues);
     };
 
-    Preferences.prototype._handleParentChanges = function _handleParentChanges(modifiedValues) {
+    Preferences.prototype._handleParentChanges = function _handleParentChanges(parentPreferences, modifiedValues) {
         var valuesToPropagate = {};
         var propagate = false;
 
@@ -185,7 +143,7 @@
         }
 
         if (propagate) {
-            notifyCommitHandlers.call(this, valuesToPropagate);
+            this.events['pre-commit'].dispatch(this, valuesToPropagate);
         }
     };
 

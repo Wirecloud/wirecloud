@@ -273,12 +273,12 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/PlatformPreferencesDef.js',
             'js/wirecloud/WorkspacePreferencesDef.js',
             'js/wirecloud/TabPreferencesDef.js',
+        ) + STYLED_ELEMENTS_FILES + (
             'js/wirecloud/Preferences.js',
             'js/wirecloud/PlatformPreferences.js',
             'js/wirecloud/PreferenceManager.js',
             'js/wirecloud/WorkspacePreferences.js',
             'js/wirecloud/TabPreferences.js',
-        ) + STYLED_ELEMENTS_FILES + (
             'js/wirecloud/TaskMonitorModel.js',
             'js/wirecloud/IWidget.js',
             'js/wirecloud/Wiring.js',

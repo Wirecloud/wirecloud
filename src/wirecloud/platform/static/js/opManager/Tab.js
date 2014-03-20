@@ -65,7 +65,7 @@
      *
      * This method is called when tab preferences are changed
      */
-    var preferencesChanged = function preferencesChanged(modifiedValues) {
+    var preferencesChanged = function preferencesChanged(preferences, modifiedValues) {
         var preferenceName, newLayout;
 
         for (preferenceName in modifiedValues) {
@@ -129,7 +129,7 @@
         this.FloatingWidgetsMenu = null;
 
         this.preferences = Wirecloud.PreferenceManager.buildPreferences('tab', this.tabInfo.preferences, this);
-        this.preferences.addCommitHandler(preferencesChanged.bind(this));
+        this.preferences.addEventListener('pre-commit', preferencesChanged.bind(this));
 
         this.readOnly = this.workspace.restricted;
 

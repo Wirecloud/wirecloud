@@ -30,7 +30,7 @@
         this._tab = tab;
         this._workspace = this._tab.workspace;
 
-        this._workspace.preferences.addCommitHandler(this._handleParentChanges);
+        this._workspace.preferences.addEventListener('pre-commit', this._handleParentChanges);
     };
     TabPreferences.prototype = new Wirecloud.Preferences();
 
@@ -48,7 +48,7 @@
     };
 
     TabPreferences.prototype.destroy = function destroy() {
-        this._workspace.preferences.removeCommitHandler(this._handleParentChanges);
+        this._workspace.preferences.removeEventListener('pre-commit', this._handleParentChanges);
 
         Wirecloud.Preferences.prototype.destroy.call(this);
         this._workspace = null;
