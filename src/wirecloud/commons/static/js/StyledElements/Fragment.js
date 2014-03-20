@@ -29,8 +29,14 @@
      *
      */
     var Fragment = function Fragment(elements) {
+        var tmp_element;
+
         if (Array.isArray(elements)) {
             this.elements = elements;
+        } else if (typeof elements === 'string') {
+            tmp_element = document.createElement('div');
+            tmp_element.innerHTML = elements;
+            this.elements = Array.prototype.slice.call(tmp_element.childNodes);
         } else {
             this.elements = [];
         }

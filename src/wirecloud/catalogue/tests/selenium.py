@@ -87,3 +87,17 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         self.add_template_to_catalogue('http://localhost:8001/test/test.rdf', 'Test_Selenium')
         self.delete_resource('Test_Selenium')
+
+    def test_search_empty_results(self):
+
+        self.login()
+
+        self.search_resource('nousedkeyword')
+        catalogue_base_element = self.get_current_catalogue_base_element()
+
+        resources = catalogue_base_element.find_elements_by_css_selector('.resource_list .resource')
+        self.assertEqual(len(resources), 0)
+
+        alert = catalogue_base_element.find_elements_by_css_selector('.alert')
+        self.assertEqual(len(alert), 1)
+        self.assertIn('nousedkeyword', alert[0].text)

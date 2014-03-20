@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -24,6 +24,27 @@
 (function () {
 
     "use strict";
+
+    var initEmptyCatalogueInfoBox = function initEmptyCatalogueInfoBox() {
+        // Tutorial layer for empty catalogues
+        this.emptyBox = document.createElement('div');
+        this.emptyBox.className = 'catalogueEmptyBox';
+
+        var wrapper = document.createElement('div');
+        wrapper.className = 'alert alert-info';
+
+        // Title
+        var pTitle = document.createElement('h4');
+        pTitle.textContent = gettext("Empty Marketplace!");
+        wrapper.appendChild(pTitle);
+
+        // Message
+        var message = document.createElement('p');
+        message.innerHTML = gettext("This is an empty Marketplace. You can upload widgets or operators using the button to the right of the name of the marketplace");
+        wrapper.appendChild(message);
+
+        this.emptyBox.appendChild(wrapper);
+    };
 
     var CatalogueSearchView = function CatalogueSearchView(id, options) {
         var builder, context, extra_context, resource_template;
@@ -56,12 +77,24 @@
         });
         this.source.addEventListener('requestStart', this.disable.bind(this));
         this.source.addEventListener('requestEnd', function (pagination, error) {
+            var msg;
+
             if (error != null) {
                 this.resource_painter.setError(gettext('Connection error: No resources retrieved.'));
             }
 
             if (pagination.pCachedTotalCount === 0 && pagination.pOptions.keywords.trim() === "" && pagination.pOptions.scope === 'all') {
                 this.resource_list.appendChild(this.emptyBox);
+            } else if (pagination.pCachedTotalCount === 0) {
+                msg = gettext("<p>We couldn't find anything for your search - <b>%(keywords)s.</b></p>" +
+                    "<p>Suggestions:</p>" +
+                    "<ul>" +
+                    "<li>Make sure all words are spelled correctly.</li>" +
+                    "<li>Try different keywords.</li>" +
+                    "<li>Try more general keywords.</li>" +
+                    "</ul>");
+                msg = interpolate(msg, {keywords: Wirecloud.Utils.escapeHTML(pagination.pOptions.keywords.trim())}, true);
+                this.resource_painter.setError(new StyledElements.Fragment(msg));
             }
 
             this.enable();
@@ -160,7 +193,7 @@
         );
 
         this.addEventListener('show', this.refresh_if_needed.bind(this));
-        this.initEmptyInfoBox();
+        initEmptyCatalogueInfoBox.call(this);
     };
     CatalogueSearchView.prototype = new StyledElements.Alternative();
 
@@ -169,27 +202,6 @@
     };
 
     CatalogueSearchView.prototype.view_name = 'search';
-
-    CatalogueSearchView.prototype.initEmptyInfoBox = function () {
-        // Tutorial layer for empty catalogues
-        this.emptyBox = document.createElement('div');
-        this.emptyBox.className = 'catalogueEmptyBox';
-
-        var wrapper = document.createElement('div');
-        wrapper.className = 'alert alert-info';
-
-        // Title
-        var pTitle = document.createElement('h4');
-        pTitle.textContent = gettext("Empty Marketplace!");
-        wrapper.appendChild(pTitle);
-
-        // Message
-        var message = document.createElement('p');
-        message.innerHTML = gettext("This is an empty Marketplace. You can upload widgets or operators using the button to the right of the name of the marketplace");
-        wrapper.appendChild(message);
-
-        this.emptyBox.appendChild(wrapper);
-    };
 
     CatalogueSearchView.prototype.mark_outdated = function mark_outdated() {
         this._last_search = false;
