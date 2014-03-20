@@ -1898,6 +1898,37 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(len(response_data['tabs'][1]['iwidgets']), 1)
         self.assertEqual(len(response_data['tabs'][2]['iwidgets']), 1)
 
+    def test_workspace_merge_service_post_required_paramateres(self):
+
+        url = reverse('wirecloud.workspace_merge', kwargs={'to_ws_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {}
+        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+
+        # Request should fail as the API requires you to provide a mashup or a workspace id
+        self.assertEqual(response.status_code, 422)
+
+    def test_workspace_merge_service_post_using_workspace_and_mashup_parameters(self):
+
+        url = reverse('wirecloud.workspace_merge', kwargs={'to_ws_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'mashup': 'Wirecloud/test-mashup/1.0',
+            'workspace': '3',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+
+        # Request should fail as the API doesn't allow using both parameters, mashup and workspace, in the same request
+        self.assertEqual(response.status_code, 422)
+
     def test_workspace_merge_service_post_from_workspace(self):
 
         url = reverse('wirecloud.workspace_merge', kwargs={'to_ws_id': 2})
@@ -1923,6 +1954,20 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(len(response_data['tabs'][0]['iwidgets']), 2)
         self.assertEqual(len(response_data['tabs'][1]['iwidgets']), 1)
         self.assertEqual(len(response_data['tabs'][2]['iwidgets']), 1)
+
+    def test_workspace_merge_service_post_from_mashup_bad_id(self):
+
+        url = reverse('wirecloud.workspace_merge', kwargs={'to_ws_id': 2})
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # Make the request
+        data = {
+            'mashup': 'bad/id',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 422)
 
     def test_workspace_merge_service_post_from_nonexistent_mashup(self):
 
