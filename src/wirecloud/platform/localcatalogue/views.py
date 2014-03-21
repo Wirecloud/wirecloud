@@ -173,7 +173,16 @@ class ResourceCollection(Resource):
             else:
                 raise
 
-        except (TemplateParseException, InvalidContents) as e:
+        except TemplateParseException as e:
+
+            if packaged:
+                msg = "Error parsing config.xml descriptor file: %s" % e
+            else:
+                msg = "Error parsing resource descriptor from the providen URL: %s" % e
+
+            return build_error_response(request, 400, msg)
+
+        except InvalidContents as e:
 
             return build_error_response(request, 400, unicode(e))
 

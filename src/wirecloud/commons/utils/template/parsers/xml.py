@@ -89,13 +89,14 @@ class WirecloudTemplateParser(object):
         else:
             self._doc = template
 
-        prefix = self._doc.prefix
-        xmlns = None
-        if prefix in self._doc.nsmap:
-            xmlns = self._doc.nsmap[prefix]
+        root_element_qname = etree.QName(self._doc)
+        xmlns = root_element_qname.namespace
 
         if xmlns is not None and xmlns != WIRECLOUD_TEMPLATE_NS:
             raise TemplateParseException("Invalid namespace: " + xmlns)
+
+        if root_element_qname.localname != 'Template':
+            raise TemplateParseException("Invalid root element: " + root_element_qname.localname)
 
         self._namespace = xmlns
 

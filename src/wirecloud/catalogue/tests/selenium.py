@@ -60,7 +60,7 @@ class CatalogueSeleniumTests(WirecloudSeleniumTestCase):
 
         self.login()
 
-        self.add_template_to_catalogue('http://localhost:8001/test/invalidTest.rdf', 'Test_Selenium', expect_error='missing required field: versionInfo.')
+        self.add_template_to_catalogue('http://localhost:8001/test/invalidTest.rdf', 'Test_Selenium', expect_error='Error parsing resource descriptor from the providen URL: missing required field: versionInfo.')
 
     def test_add_widget_twice(self):
 

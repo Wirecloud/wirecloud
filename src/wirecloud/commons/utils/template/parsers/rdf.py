@@ -20,6 +20,7 @@
 import rdflib
 
 from django.utils.translation import ugettext as _
+from lxml import etree
 
 from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version, TemplateParseException
 from wirecloud.commons.utils.http import parse_mime_type
@@ -30,7 +31,8 @@ WIRE_M = rdflib.Namespace("http://wirecloud.conwet.fi.upm.es/ns/mashup#")
 FOAF = rdflib.Namespace("http://xmlns.com/foaf/0.1/")
 USDL = rdflib.Namespace("http://www.linked-usdl.org/ns/usdl-core#")
 DCTERMS = rdflib.Namespace("http://purl.org/dc/terms/")
-RDF = rdflib.Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+RDF_NS = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+RDF = rdflib.Namespace(RDF_NS)
 RDFS = rdflib.Namespace("http://www.w3.org/2000/01/rdf-schema#")
 VCARD = rdflib.Namespace("http://www.w3.org/2006/vcard/ns#")
 BLUEPRINT = rdflib.Namespace("http://bizweb.sap.com/TR/blueprint#")
@@ -58,6 +60,24 @@ class RDFTemplateParser(object):
                 self._graph = rdflib.Graph()
                 self._graph.parse(data=template, format='n3')
             except:
+                if isinstance(template, str):
+                    doc = etree.fromstring(template)
+                elif isinstance(template, unicode):
+                    # Work around: ValueError: Unicode strings with encoding
+                    # declaration are not supported.
+                    doc = etree.fromstring(template.encode('utf-8'))
+
+                root_element_qname = etree.QName(doc)
+
+                if root_element_qname.namespace is None:
+                    raise TemplateParseException("XML document does not contain a valid rdf namespace")
+
+                if root_element_qname.namespace != RDF_NS:
+                    raise TemplateParseException("Invalid namespace: " + root_element_qname.namespace)
+
+                if root_element_qname.localname != 'RDF':
+                    raise TemplateParseException("Invalid root element: " + root_element_qname.localname)
+
                 self._graph = rdflib.Graph()
                 self._graph.parse(data=template, format='xml')
 
