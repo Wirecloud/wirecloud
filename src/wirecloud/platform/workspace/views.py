@@ -112,6 +112,7 @@ class WorkspaceCollection(Resource):
             return build_error_response(request, 400, msg)
 
         workspace_name = data.get('name', '').strip()
+        workspace_id = data.get('workspace', '')
         mashup_id = data.get('mashup', '')
         try:
             allow_renaming = normalize_boolean_param('allow_renaming', data.get('allow_renaming', False))
@@ -119,10 +120,12 @@ class WorkspaceCollection(Resource):
         except (TypeError, ValueError) as e:
             return build_error_response(request, 422, unicode(e))
 
-        if mashup_id == '' and workspace_name == '':
-            return build_error_response(request, 422, _('missing workspace name'))
+        if mashup_id == '' and workspace_id == '' and workspace_name == '':
+            return build_error_response(request, 422, _('Missing name parameter'))
+        elif  mashup_id != '' and workspace_id != '':
+            return build_error_response(request, 422, _('Workspace and mashup parameters cannot be used at the same time'))
 
-        if mashup_id == '':
+        if mashup_id == '' and workspace_id == '':
 
             if not is_valid_name(workspace_name):
                 return build_error_response(request, 422, _('invalid workspace name'))
@@ -136,28 +139,47 @@ class WorkspaceCollection(Resource):
                 msg = _('A workspace with the given name already exists')
                 return build_error_response(request, 409, msg)
         else:
-            values = mashup_id.split('/', 3)
-            if len(values) != 3:
-                return build_error_response(request, 422, _('invalid mashup id'))
 
-            (mashup_vendor, mashup_name, mashup_version) = values
-            try:
-                resource = CatalogueResource.objects.get(vendor=mashup_vendor, short_name=mashup_name, version=mashup_version)
-                if not resource.is_available_for(request.user) or resource.resource_type() != 'mashup':
-                    raise CatalogueResource.DoesNotExist
-            except CatalogueResource.DoesNotExist:
-                return build_error_response(request, 422, _('Mashup not found: %(mashup_id)s') % {'mashup_id': mashup_id})
+            if mashup_id != '':
+                values = mashup_id.split('/', 3)
+                if len(values) != 3:
+                    return build_error_response(request, 422, _('invalid mashup id'))
 
-            if resource.fromWGT:
-                base_dir = catalogue.wgt_deployer.get_base_dir(mashup_vendor, mashup_name, mashup_version)
-                wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
-                template = TemplateParser(wgt_file.get_template())
-            else:
-                template = download_http_content(resource.template_uri, user=request.user)
+                (mashup_vendor, mashup_name, mashup_version) = values
                 try:
-                    template = TemplateParser(template)
-                except:
-                    build_error_response(request, 424, _('Downloaded invalid resource description from: %(url)s') % {'url': resource.template_uri})
+                    resource = CatalogueResource.objects.get(vendor=mashup_vendor, short_name=mashup_name, version=mashup_version)
+                    if not resource.is_available_for(request.user) or resource.resource_type() != 'mashup':
+                        raise CatalogueResource.DoesNotExist
+                except CatalogueResource.DoesNotExist:
+                    return build_error_response(request, 422, _('Mashup not found: %(mashup_id)s') % {'mashup_id': mashup_id})
+
+                if resource.fromWGT:
+                    base_dir = catalogue.wgt_deployer.get_base_dir(mashup_vendor, mashup_name, mashup_version)
+                    wgt_file = WgtFile(os.path.join(base_dir, resource.template_uri))
+                    template = TemplateParser(wgt_file.get_template())
+                else:
+                    template = download_http_content(resource.template_uri, user=request.user)
+                    try:
+                        template = TemplateParser(template)
+                    except:
+                        build_error_response(request, 422, _('Downloaded invalid resource description from: %(url)s') % {'url': resource.template_uri})
+
+            else:
+
+                from_ws = get_object_or_404(Workspace, id=workspace_id)
+                if from_ws.public is False and not request.user.is_superuser and from_ws.creator != request.user:
+                    return build_error_response(request, 403, _('You are not allowed to read from workspace %s') % workspace_id)
+
+                options = {
+                    'vendor': 'api',
+                    'name': from_ws.name,
+                    'version': '1.0',
+                    'display_name': '',
+                    'description': 'Temporal mashup for the workspace copy operation',
+                    'email': 'a@example.com',
+                }
+                # TODO use build_json_template_from_workspace instead of build_template_from_workspace
+                template = TemplateParser(build_template_from_workspace(options, from_ws, from_ws.creator))
 
             try:
                 check_mashup_dependencies(template, request.user)

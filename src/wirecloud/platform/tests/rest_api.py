@@ -346,6 +346,63 @@ class ApplicationMashupAPI(WirecloudTestCase):
         # Workspace should be created
         self.assertTrue(Workspace.objects.filter(creator=1, name='test').exists())
 
+    def test_workspace_collection_post_from_workspace(self):
+
+        # Make TestOperator available to emptyuser
+        test_widget = CatalogueResource.objects.get(short_name='TestOperator')
+        test_widget.public = True
+        test_widget.save()
+
+        url = reverse('wirecloud.workspace_collection')
+
+        # Authenticate
+        self.client.login(username='emptyuser', password='admin')
+
+        # Make the request
+        # workspace 4 (creator: user_with_workspaces, name: Public Workspace) is readable and copyable by emptyuser
+        data = {
+            'workspace': '4',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['creator'], 'emptyuser')
+        self.assertEqual(response_data['name'], 'Public Workspace')
+        public_preference = response_data['preferences'].get('public', {'value': 'False', 'inherit': False})
+        self.assertEqual(public_preference['value'], 'False')
+
+    def test_workspace_collection_post_from_workspace_allow_renaming(self):
+
+        url = reverse('wirecloud.workspace_collection')
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        # workspace 3 (creator: user_with_workspaces, name: Pending Events)
+        data = {
+            'allow_renaming': True,
+            'workspace': '3',
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data['creator'], 'user_with_workspaces')
+        self.assertEqual(response_data['name'], 'Pending Events 2')
+        public_preference = response_data['preferences'].get('public', {'value': 'False', 'inherit': False})
+        self.assertEqual(public_preference['value'], 'False')
+
+    def test_workspace_collection_post_from_workspace_requires_permission(self):
+
+        url = reverse('wirecloud.workspace_collection')
+
+        # workspace 3 (creator: user_with_workspaces, name: Pending Events) is not readable by emptyuser
+        data = {
+            'workspace': '3',
+        }
+        check_post_requires_permission(self, url, json.dumps(data))
+
     def test_workspace_collection_post_bad_name(self):
 
         url = reverse('wirecloud.workspace_collection')
