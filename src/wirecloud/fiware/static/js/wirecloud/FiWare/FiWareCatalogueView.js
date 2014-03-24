@@ -261,5 +261,5 @@
 
     Wirecloud.FiWare.FiWareCatalogueView = FiWareCatalogueView;
 
-    Wirecloud.MarketManager.addMarketType('fiware', 'FiWare', FiWareCatalogueView);
+    Wirecloud.MarketManager.addMarketType('fiware', 'FI-WARE', FiWareCatalogueView);
 })();

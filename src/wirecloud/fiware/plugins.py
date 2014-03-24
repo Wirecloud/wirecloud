@@ -103,7 +103,7 @@ class FiWareMarketManager(MarketManager):
 class FiWarePlugin(WirecloudPlugin):
 
     features = {
-        'FiWare': wirecloud.fiware.__version__,
+        'FI-WARE': wirecloud.fiware.__version__,
         'NGSI': '1.0',
         'ObjectStorage': '0.5',
     }
