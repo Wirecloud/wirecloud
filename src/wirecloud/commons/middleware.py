@@ -80,13 +80,17 @@ class URLMiddleware(object):
     def get_matched_middleware(self, path, middleware_method):
 
         if self._path_mapping is None:
+
+            from django.conf import settings
+
             self._path_mapping = {}
 
-            proxy_path = reverse('wirecloud|proxy', kwargs={'protocol': 'a', 'domain': 'a', 'path': ''})[:-len('a/a')]
-            self._path_mapping[proxy_path] = 'proxy'
+            if 'wirecloud.platform' in settings.INSTALLED_APPS:
+                api_path = reverse('wirecloud.features')[:-len('features')]
+                self._path_mapping[api_path] = 'api'
 
-            api_path = reverse('wirecloud.features')[:-len('features')]
-            self._path_mapping[api_path] = 'api'
+                proxy_path = reverse('wirecloud|proxy', kwargs={'protocol': 'a', 'domain': 'a', 'path': ''})[:-len('a/a')]
+                self._path_mapping[proxy_path] = 'proxy'
 
         group = 'default'
         for path_mapping in self._path_mapping:
