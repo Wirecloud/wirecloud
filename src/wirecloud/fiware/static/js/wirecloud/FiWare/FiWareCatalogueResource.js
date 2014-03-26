@@ -78,10 +78,6 @@
             return resourceJSON_.legal;
         };
 
-        this.getTags = function () {
-            return [];
-        };
-
         this.isAllow = function isAllow(action) {
             return false;
         };

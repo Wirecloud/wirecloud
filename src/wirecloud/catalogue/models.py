@@ -1,34 +1,21 @@
 # -*- coding: utf-8 -*-
 
-#...............................licence...........................................
-#
-#     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
-#     S.A.Unipersonal (Telefonica I+D)
-#
-#     This file is part of Morfeo EzWeb Platform.
-#
-#     Morfeo EzWeb Platform is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU Affero General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     (at your option) any later version.
-#
-#     Morfeo EzWeb Platform is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU Affero General Public License for more details.
-#
-#     You should have received a copy of the GNU Affero General Public License
-#     along with Morfeo EzWeb Platform.  If not, see <http://www.gnu.org/licenses/>.
-#
-#     Info about members and contributors of the MORFEO project
-#     is available at
-#
-#     http://morfeo-project.org
-#
-#...............................licence...........................................#
+# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
+# This file is part of Wirecloud.
 
-#
+# Wirecloud is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Wirecloud is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import random
 from urlparse import urlparse
@@ -130,12 +117,6 @@ class CatalogueResource(TransModel):
         # Delete the related wiring information for that resource
         WidgetWiring.objects.filter(idResource=self.id).delete()
 
-        # Delete the related tags for that resource
-        UserTag.objects.filter(idResource=self.id).delete()
-
-        # Delete the related votes for that resource
-        UserVote.objects.filter(idResource=self.id).delete()
-
         if hasattr(self, 'widget'):
             from wirecloud.platform.models import Widget
             try:
@@ -179,65 +160,3 @@ class WidgetWiring(models.Model):
 
     def __str__(self):
         return self.friendcode
-
-
-@python_2_unicode_compatible
-class Tag(models.Model):
-
-    name = models.CharField(max_length=20, unique=True)
-
-    def __str__(self):
-        return self.name
-
-
-class UserTag(models.Model):
-
-    tag = models.ForeignKey(Tag)
-    weight = models.CharField(max_length=20, null=True)
-    criteria = models.CharField(max_length=20, null=True)
-    value = models.CharField(max_length=20, null=True)
-    idUser = models.ForeignKey(User)
-    idResource = models.ForeignKey(CatalogueResource)
-
-    class Meta:
-        unique_together = ("tag", "idUser", "idResource")
-
-    #def __unicode__(self):
-    #   return self.tag
-
-
-class Category(TransModel):
-
-    name = models.CharField(max_length=50, unique=True)
-    tags = models.ManyToManyField(Tag)
-    parent = models.ForeignKey('self', blank=True, null=True)
-    organizations = models.ManyToManyField(Group, related_name='organizations', null=True, blank=True)
-
-    def __unicode__(self):
-        return self.name
-
-VOTES = (
-    (u'0', 0),
-    (u'1', 1),
-    (u'1', 2),
-    (u'1', 3),
-    (u'1', 4),
-    (u'1', 5),
-)
-
-
-@python_2_unicode_compatible
-class UserVote(models.Model):
-    """
-    A vote on a CatalogueResource by a User.
-    """
-    idUser = models.ForeignKey(User)
-    idResource = models.ForeignKey(CatalogueResource)
-    vote = models.SmallIntegerField(choices=VOTES)
-
-    class Meta:
-        # One vote per user per object
-        unique_together = (('idUser', 'idResource'),)
-
-    def __str__(self):
-        return '%s: %s on %s' % (self.idUser, self.vote, self.idResource)

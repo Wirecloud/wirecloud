@@ -32,62 +32,8 @@
 import time
 from urlparse import urljoin, urlparse
 
-from wirecloud.catalogue.models import WidgetWiring, UserTag, UserVote
+from wirecloud.catalogue.models import WidgetWiring
 from wirecloud.commons.utils.http import get_absolute_reverse_url
-
-
-def get_vote_data(resource, user):
-    """Gets the vote for a given user and resource.
-
-    It also gets the number of votes and the popularity of the resource (average).
-    """
-
-    vote_data = {}
-    try:
-        vote_value = resource.uservote_set.get(idUser=user.id).vote
-    except UserVote.DoesNotExist:
-        vote_value = 0
-    votes_number = resource.uservote_set.count()
-    vote_data['user_vote'] = vote_value
-    vote_data['votes_number'] = votes_number
-    # Decimal data loses precision when converted to float
-    vote_data['popularity'] = str(resource.popularity)
-
-    return vote_data
-
-
-def get_tag_data(widget_id, user_id):
-    """Gets the non-repeated tags for a given widget and a logged user.
-
-    It also gets the number of appareances of every tag and if one of those
-    appareances has been added by the logged user.
-    """
-
-    all_tags = []
-    tags_by_name = {}
-    # Get the user's tags
-    tags = UserTag.objects.filter(idResource=widget_id)
-    for t in tags:
-        if t.tag.name in tags_by_name:
-            if t.idUser.id == user_id:
-                tags_by_name[t.tag.name]['added_by'] = 'Yes'
-
-            continue
-
-        tag_data = {}
-        tag_data['id'] = t.id
-        tag_data['value'] = t.tag.name
-        tag_data['appearances'] = tags.filter(tag=t.tag).count()
-
-        if t.idUser.id == user_id:
-            tag_data['added_by'] = 'Yes'
-        else:
-            tag_data['added_by'] = 'No'
-
-        all_tags.append(tag_data)
-        tags_by_name[t.tag.name] = tag_data
-
-    return all_tags
 
 
 def get_event_data(widget_id):
@@ -131,7 +77,6 @@ def get_resource_data(untranslated_resource, user, request=None):
     else:
         displayName = resource.short_name
 
-    data_tags = get_tag_data(widget_id=resource.pk, user_id=user.id)
     data_events = get_event_data(widget_id=resource.pk)
     data_slots = get_slot_data(widget_id=resource.pk)
 
@@ -163,10 +108,8 @@ def get_resource_data(untranslated_resource, user, request=None):
         'uriImage': urljoin(template_uri, resource.image_uri),
         'uriWiki': urljoin(template_uri, resource.wiki_page_uri),
         'uriTemplate': template_uri,
-        'tags': [d for d in data_tags],
         'outputs': [d for d in data_events],
         'inputs': [d for d in data_slots],
-        'votes': get_vote_data(resource, user),
     }
 
 

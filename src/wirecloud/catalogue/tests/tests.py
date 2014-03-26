@@ -217,26 +217,6 @@ class CatalogueAPITestCase(TestCase):
         self.assertEqual(len(result_json['resources']), 1)
         self.assertEqual(result_json['resources'][0]['lastVersion'], '1.10')
 
-    def test_vote_queries(self):
-
-        User.objects.create_user('test2', 'test@example.com', 'test')
-        vote_url = reverse('wirecloud_catalogue.resource_vote', kwargs={'vendor': 'Test', 'name': 'widget1', 'version': '1.2'})
-
-        self.client.login(username='test', password='test')
-        result = self.client.post(vote_url, json.dumps({'vote': 3}), **self.basic_request_meta)
-        self.assertEqual(result.status_code, 200)
-
-        self.client.login(username='test2', password='test')
-        result = self.client.post(vote_url, json.dumps({'vote': 4}), **self.basic_request_meta)
-        self.assertEqual(result.status_code, 200)
-
-        result_json = json.loads(result.content)
-        self.assertTrue('voteData' in result_json)
-        self.assertTrue('popularity' in result_json['voteData'])
-        self.assertEqual(result_json['voteData']['popularity'], '3.5')
-        self.assertTrue('user_vote' in result_json['voteData'])
-        self.assertEqual(result_json['voteData']['user_vote'], 4)
-
 
 class PublishTestCase(WirecloudTestCase):
 

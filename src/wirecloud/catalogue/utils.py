@@ -24,7 +24,7 @@ from urlparse import urljoin
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from wirecloud.catalogue.models import WidgetWiring, CatalogueResource, Tag, UserTag
+from wirecloud.catalogue.models import WidgetWiring, CatalogueResource
 from wirecloud.commons.exceptions import Http403
 from wirecloud.commons.models import Translation
 from wirecloud.commons.utils.timezone import now
@@ -199,8 +199,3 @@ def delete_resource(resource, user):
     resource.delete()
 
     return result
-
-
-def tag_resource(user, tag, resource):
-    tag, _junk = Tag.objects.get_or_create(name=tag)
-    UserTag.objects.get_or_create(tag=tag, idUser=user, idResource=resource)

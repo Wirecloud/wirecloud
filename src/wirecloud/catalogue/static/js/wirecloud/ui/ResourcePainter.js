@@ -286,7 +286,7 @@
 
         fragment = new StyledElements.Fragment();
 
-        tags = resource.getTags();
+        tags = resource.tags.slice();
         tags = tags.sort(function (a, b) {
             return b.apparences - a.apparences;
         });

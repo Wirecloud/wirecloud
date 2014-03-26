@@ -20,8 +20,7 @@
 from django.conf.urls import patterns, url
 
 from wirecloud.catalogue.views import ResourceCollection, ResourceCollectionByGlobalSearch
-from wirecloud.catalogue.views import ResourceCollectionBySimpleSearch, ResourceTagCollection
-from wirecloud.catalogue.views import ResourceVoteCollection, ResourceVersionCollection
+from wirecloud.catalogue.views import ResourceCollectionBySimpleSearch, ResourceVersionCollection
 from wirecloud.catalogue.views import ResourceEntry
 
 urlpatterns = patterns('wirecloud.catalogue.views',
@@ -35,9 +34,6 @@ urlpatterns = patterns('wirecloud.catalogue.views',
     url(r'^/resources$',
         ResourceCollection(permitted_methods=('GET', 'POST',)),
         name='wirecloud_catalogue.resource_collection'),
-    url(r'^/voting/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)$',
-        ResourceVoteCollection(permitted_methods=('GET', 'POST', 'PUT',)),
-        name='wirecloud_catalogue.resource_vote'),
 
     # Search Resources
     url(r'^/resources/(?P<pag>\d+)/(?P<offset>\d+)$',
@@ -49,12 +45,6 @@ urlpatterns = patterns('wirecloud.catalogue.views',
     url(r'^/globalsearch/(?P<pag>\d+)/(?P<offset>\d+)$',
         ResourceCollectionByGlobalSearch(permitted_methods=('GET',)),
         name="wirecloud_catalogue.global_search"),
-
-    # Tags
-    (r'^/tag(s)?/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/(?P<tag>\d+)$',
-        ResourceTagCollection(permitted_methods=('DELETE',))),
-    (r'^/tag(s)?/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)$',
-        ResourceTagCollection(permitted_methods=('GET', 'POST',))),
 
     #version check
     url(r'^/versions',

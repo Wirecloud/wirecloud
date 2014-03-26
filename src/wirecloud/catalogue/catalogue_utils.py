@@ -1,42 +1,29 @@
 # -*- coding: utf-8 -*-
 
-#...............................licence...........................................
-#
-#     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
-#     S.A.Unipersonal (Telefonica I+D)
-#
-#     This file is part of Morfeo EzWeb Platform.
-#
-#     Morfeo EzWeb Platform is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU Affero General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     (at your option) any later version.
-#
-#     Morfeo EzWeb Platform is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU Affero General Public License for more details.
-#
-#     You should have received a copy of the GNU Affero General Public License
-#     along with Morfeo EzWeb Platform.  If not, see <http://www.gnu.org/licenses/>.
-#
-#     Info about members and contributors of the MORFEO project
-#     is available at
-#
-#     http://morfeo-project.org
-#
-#...............................licence...........................................#
+# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
+# This file is part of Wirecloud.
 
-#
+# Wirecloud is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Wirecloud is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
 
 from django.http import HttpResponse
 from django.db.models import Q
 
-from wirecloud.catalogue.get_json_catalogue_data import get_resource_group_data, get_tag_data, get_vote_data
-from wirecloud.catalogue.models import CatalogueResource, UserVote
+from wirecloud.catalogue.get_json_catalogue_data import get_resource_group_data
+from wirecloud.catalogue.models import CatalogueResource
 
 
 def group_resources(resources):
@@ -115,7 +102,7 @@ def get_and_filter(criterialist, user):
 
     criterialist = criterialist.split()
     for e in criterialist:
-        criteria_filter = criteria_filter & (Q(short_name__icontains=e) | Q(display_name__icontains=e) | Q(vendor__icontains=e) | Q(author__icontains=e) | Q(mail__icontains=e) | Q(description__icontains=e) | Q(version__icontains=e) | Q(usertag__tag__name__icontains=e))
+        criteria_filter = criteria_filter & (Q(short_name__icontains=e) | Q(display_name__icontains=e) | Q(vendor__icontains=e) | Q(author__icontains=e) | Q(mail__icontains=e) | Q(description__icontains=e) | Q(version__icontains=e))
 
     return criteria_filter
 
@@ -126,7 +113,7 @@ def get_or_filter(criterialist, user):
 
     criterialist = criterialist.split()
     for e in criterialist:
-        criteria_filter = criteria_filter | (Q(short_name__icontains=e) | Q(vendor__icontains=e) | Q(author__icontains=e) | Q(mail__icontains=e) | Q(description__icontains=e) | Q(version__icontains=e) | Q(usertag__tag__name__icontains=e))
+        criteria_filter = criteria_filter | (Q(short_name__icontains=e) | Q(vendor__icontains=e) | Q(author__icontains=e) | Q(mail__icontains=e) | Q(description__icontains=e) | Q(version__icontains=e))
 
     return criteria_filter
 
@@ -137,17 +124,9 @@ def get_not_filter(criterialist, user):
 
     criterialist = criterialist.split()
     for e in criterialist:
-        criteria_filter = criteria_filter & ~(Q(short_name__icontains=e) | Q(vendor__icontains=e) | Q(author__icontains=e) | Q(mail__icontains=e) | Q(description__icontains=e) | Q(version__icontains=e) | Q(usertag__tag__name__icontains=e))
+        criteria_filter = criteria_filter & ~(Q(short_name__icontains=e) | Q(vendor__icontains=e) | Q(author__icontains=e) | Q(mail__icontains=e) | Q(description__icontains=e) | Q(version__icontains=e))
 
     return criteria_filter
-
-
-def get_tag_filter(search_criteria):
-    search_criteria = search_criteria.split()
-    filters = Q()
-    for e in search_criteria:
-        filters = filters | Q(usertag__tag__name__icontains=e)
-    return filters
 
 
 def get_event_filter(search_criteria):
@@ -173,20 +152,6 @@ def get_resource_response(resources, format, items, user, request=None):
     }
     return HttpResponse(json.dumps(data), content_type='application/json; charset=UTF-8')
 
-def get_tag_response(resource, user, format):
-    tag = {}
-    tag_data_list = get_tag_data(resource, user.id)
-    tag['tagList'] = tag_data_list
-    return HttpResponse(json.dumps(tag), content_type='application/json; charset=UTF-8')
-
-
-def get_vote_response(resource, user, format):
-    vote = {}
-    vote_data = get_vote_data(resource, user)
-    vote['voteData'] = vote_data
-    return HttpResponse(json.dumps(vote), content_type='application/json; charset=UTF-8')
-
-
 def get_latest_resource_version(name, vendor):
 
     resource_versions = CatalogueResource.objects.filter(vendor=vendor, short_name=name)
@@ -203,43 +168,3 @@ def get_latest_resource_version(name, vendor):
         return resource_versions[index]
 
     return None
-
-
-def get_resource_popularity(votes_sum, votes_number):
-
-    if votes_number == 0:
-        return 0
-
-    floor = votes_sum // votes_number
-    mod = votes_sum % votes_number
-    mod = mod / votes_number
-
-    if mod <= 0.25:
-        mod = 0.0
-    elif mod > 0.75:
-        mod = 1.0
-    else:
-        mod = 0.5
-
-    result = floor + mod
-
-    return result
-
-
-def update_resource_popularity(resource):
-
-    # Get all the votes on this resource
-    votes = UserVote.objects.filter(idResource=resource)
-
-    # Get the number of votes
-    votes_number = UserVote.objects.filter(idResource=resource).count()
-    # Sum all the votes
-    votes_sum = 0.0
-    for e in votes:
-        votes_sum = votes_sum + e.vote
-
-    # Calculate the resource popularity
-    popularity = get_resource_popularity(votes_sum, votes_number)
-    # Update the resource in the database
-    resource.popularity = unicode(popularity)
-    resource.save()

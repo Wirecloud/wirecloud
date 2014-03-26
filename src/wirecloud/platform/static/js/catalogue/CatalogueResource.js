@@ -53,18 +53,6 @@
             return this.type === 'widget';
         };
 
-        this.getTags = function () {
-            return currentVersion.tags;
-        };
-
-        this.getVotes = function () {
-            return currentVersion.votes.votes_number;
-        };
-
-        this.getUserVote = function () {
-            return currentVersion.votes.user_vote;
-        };
-
         this.isAllow = function isAllow(action) {
 
             switch (action) {
@@ -109,8 +97,11 @@
             'uploader': {
                 get: function () { return currentVersion.uploader; }
             },
+            'tags': {
+                get: function () { return []; }
+            },
             'rating': {
-                get: function () { return currentVersion.votes.popularity; }
+                get: function () { return 0; }
             },
             'date': {
                 get: function () { return currentVersion.date; }

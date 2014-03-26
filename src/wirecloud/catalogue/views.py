@@ -1,33 +1,21 @@
+# -*- coding: utf-8 -*-
 
-#...............................licence...........................................
-#
-#     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
-#     S.A.Unipersonal (Telefonica I+D)
-#
-#     This file is part of Morfeo EzWeb Platform.
-#
-#     Morfeo EzWeb Platform is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU Affero General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     (at your option) any later version.
-#
-#     Morfeo EzWeb Platform is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU Affero General Public License for more details.
-#
-#     You should have received a copy of the GNU Affero General Public License
-#     along with Morfeo EzWeb Platform.  If not, see <http://www.gnu.org/licenses/>.
-#
-#     Info about members and contributors of the MORFEO project
-#     is available at
-#
-#     http://morfeo-project.org
-#
-#...............................licence...........................................#
+# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
+# This file is part of Wirecloud.
 
-#
+# Wirecloud is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Wirecloud is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
 from cStringIO import StringIO
@@ -36,35 +24,29 @@ from urllib import url2pathname
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseNotAllowed
-from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.utils.decorators import method_decorator
 from django.utils.encoding import smart_str
-from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext as _
 from django.views.static import serve
 
-from wirecloud.catalogue.models import CatalogueResource, UserTag, UserVote
+from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.catalogue.catalogue_utils import get_latest_resource_version
 from wirecloud.catalogue.catalogue_utils import get_resource_response, filter_resources_by_user
 from wirecloud.catalogue.catalogue_utils import filter_resources_by_scope
 from wirecloud.catalogue.catalogue_utils import get_and_filter, get_or_filter, get_not_filter
-from wirecloud.catalogue.catalogue_utils import get_tag_filter, get_event_filter, get_slot_filter, get_paginatedlist
-from wirecloud.catalogue.catalogue_utils import get_tag_response, update_resource_popularity
-from wirecloud.catalogue.catalogue_utils import get_vote_response, group_resources
+from wirecloud.catalogue.catalogue_utils import get_event_filter, get_slot_filter, get_paginatedlist
+from wirecloud.catalogue.catalogue_utils import group_resources
 from wirecloud.catalogue.get_json_catalogue_data import get_resource_data
 import wirecloud.catalogue.utils as catalogue_utils
 from wirecloud.catalogue.utils import add_widget_from_wgt, add_resource_from_template, delete_resource
-from wirecloud.catalogue.utils import tag_resource
 from wirecloud.commons.utils.downloader import download_http_content
 from wirecloud.commons.baseviews import Resource
-from wirecloud.commons.utils import mimeparser
 from wirecloud.commons.utils.cache import no_cache
-from wirecloud.commons.utils.http import build_error_response, get_content_type, supported_request_mime_types
+from wirecloud.commons.utils.http import build_error_response, supported_request_mime_types
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.transaction import commit_on_http_success
 
@@ -199,8 +181,6 @@ class ResourceCollectionBySimpleSearch(Resource):
             filters = get_event_filter(search_criteria)
         elif criteria == 'slot':
             filters = get_slot_filter(search_criteria)
-        elif criteria == 'tag':
-            filters = get_tag_filter(search_criteria)
         elif criteria == 'connectSlot':
             # get all resource compatible with the given events
             search_criteria = search_criteria.split()
@@ -252,8 +232,6 @@ class ResourceCollectionByGlobalSearch(Resource):
             filters = join_filters(filters, get_or_filter(search_criteria[1], request.user))
         if search_criteria[2] != "":
             filters = join_filters(filters, get_not_filter(search_criteria[2], request.user))
-        if search_criteria[3] != "":
-            filters = join_filters(filters, get_tag_filter(search_criteria[3]))
         if search_criteria[4] != "":
             filters = join_filters(filters, get_event_filter(search_criteria[4]))
         if search_criteria[5] != "":
@@ -269,140 +247,6 @@ class ResourceCollectionByGlobalSearch(Resource):
         resources = get_paginatedlist(resources, pag, offset)
 
         return get_resource_response(resources, format, items, request.user, request)
-
-
-class ResourceTagCollection(Resource):
-
-    @method_decorator(login_required)
-    @supported_request_mime_types(('application/json',))
-    @commit_on_http_success
-    def create(self, request, vendor, name, version):
-
-        try:
-            tags = json.loads(request.body)
-        except ValueError as e:
-            msg = _("malformed json data: %s") % unicode(e)
-            return build_error_response(request, 400, msg)
-
-        # Get the resource's id for those vendor, name and version
-        resource = get_object_or_404(CatalogueResource, short_name=name,
-                                   vendor=vendor, version=version)
-
-        # Insert the tags for these resource and user in the database
-        for tag in tags:
-            ag_resource(request.user, tag, resource)
-
-        return get_tag_response(resource, request.user, format)
-
-    @no_cache
-    def read(self, request, vendor, name, version):
-        format = request.GET.get('format', 'default')
-
-        # Get the resource's id for those vendor, name and version
-        resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version).id
-
-        return get_tag_response(resource, request.user, format)
-
-    @method_decorator(login_required)
-    @commit_on_http_success
-    def delete(self, request, vendor, name, version, tag):
-
-        format = request.GET.get('format', 'default')
-
-        resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version).id
-        userTag = get_object_or_404(UserTag, id=tag)
-
-        #if there is no more resources tagged by an user with this tag, delete the Tag
-        if UserTag.objects.filter(tag=userTag.tag).count() == 1:
-            userTag.tag.delete()
-
-        userTag.delete()
-
-        return get_tag_response(resource, request.user, format)
-
-
-class ResourceVoteCollection(Resource):
-
-    @method_decorator(login_required)
-    @supported_request_mime_types(('application/x-www-form-urlencoded', 'application/json'))
-    @commit_on_http_success
-    def create(self, request, vendor, name, version):
-
-        formats = ('application/json', 'application/xml')
-
-        if request.META.get('HTTP_X_REQUESTED_WITH', '') == 'XMLHttpRequest':
-            mimetype = 'application/json; charset=utf-8'
-        else:
-            mimetype = mimeparser.best_match(formats, request.META.get('HTTP_ACCEPT', ''))
-
-        # Get the vote from the request
-        content_type = get_content_type(request)[0]
-        if content_type == 'application/json':
-            try:
-                vote = json.loads(request.body)['vote']
-            except ValueError as e:
-                msg = _("malformed json data: %s") % unicode(e)
-                return build_error_response(request, 400, msg)
-        else:
-            vote = request.POST.get('vote')
-
-        resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
-
-        # Insert the vote for these resource and user in the database
-        UserVote.objects.create(vote=vote, idUser=request.user, idResource=resource)
-        update_resource_popularity(resource)
-
-        return get_vote_response(resource, request.user, mimetype)
-
-    @no_cache
-    def read(self, request, vendor, name, version):
-
-        formats = ('application/json', 'application/xml')
-
-        if request.META.get('HTTP_X_REQUESTED_WITH', '') == 'XMLHttpRequest':
-            mimetype = 'application/json; charset=utf-8'
-        else:
-            mimetype = mimeparser.best_match(formats, request.META.get('HTTP_ACCEPT', ''))
-
-        # Get the resource's id for those vendor, name and version
-        resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
-
-        return get_vote_response(resource, request.user, mimetype)
-
-    @method_decorator(login_required)
-    @supported_request_mime_types(('application/x-www-form-urlencoded', 'application/json'))
-    @commit_on_http_success
-    def update(self, request, vendor, name, version):
-
-        formats = ('application/json', 'application/xml')
-
-        if request.META.get('HTTP_X_REQUESTED_WITH', '') == 'XMLHttpRequest':
-            mimetype = 'application/json; charset=utf-8'
-        else:
-            mimetype = mimeparser.best_match(formats, request.META.get('HTTP_ACCEPT', ''))
-
-        # Get the vote from the request
-        content_type = get_content_type(request)[0]
-        if content_type == 'application/json':
-            try:
-                vote = json.loads(request.body)['vote']
-            except ValueError as e:
-                msg = _("malformed json data: %s") % unicode(e)
-                return build_error_response(request, 400, msg)
-        else:
-            vote = request.POST.get('vote')
-
-        # Get the resource's id for those vendor, name and version
-        resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
-
-        # Insert the vote for these resource and user in the database
-        userVote = get_object_or_404(UserVote, idUser=request.user, idResource=resource)
-        userVote.vote = vote
-        userVote.save()
-
-        update_resource_popularity(resource)
-
-        return get_vote_response(resource, request.user, mimetype)
 
 
 class ResourceVersionCollection(Resource):
