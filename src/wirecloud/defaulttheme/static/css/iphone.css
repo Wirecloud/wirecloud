@@ -129,8 +129,10 @@ img {
     font-weight: bold;
     padding: 0;
     margin: 10px;
-    -webkit-border-radius: 8px;
+    border-radius: 8px;
     -webkit-box-shadow: 0.2ex 0.2ex 1ex rgba(0,0,0,0.8);
+    -moz-box-shadow: 0.2ex 0.2ex 1ex rgba(0,0,0,0.8);
+    box-shadow: 0.2ex 0.2ex 1ex rgba(0,0,0,0.8);
 }
 
 #workspace_list > li {
@@ -145,13 +147,13 @@ img {
 
 #workspace_list > li:first-child {
     border-top: 0;
-    -webkit-border-top-left-radius: 6px;
-    -webkit-border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
 }
 
 #workspace_list > li:last-child {
-    -webkit-border-bottom-left-radius: 6px;
-    -webkit-border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
 }
 
 #workspace_list > li:hover, #workspace_list > li:active {
