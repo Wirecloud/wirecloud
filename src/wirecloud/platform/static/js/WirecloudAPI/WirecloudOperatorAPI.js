@@ -58,6 +58,11 @@
     // Operator Module
     Object.defineProperty(window.MashupPlatform, 'operator', {value: {}});
     Object.defineProperty(window.MashupPlatform.operator, 'id', {value: id});
+    Object.defineProperty(window.MashupPlatform.operator, 'log', {
+        value: function log(msg, level) {
+            ioperator.logManager.log(msg, level);
+        }
+    });
     Object.preventExtensions(window.MashupPlatform.operator);
 
 })();

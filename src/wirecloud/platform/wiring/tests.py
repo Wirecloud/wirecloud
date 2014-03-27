@@ -663,6 +663,35 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         self.assertEqual(ioperator.error_count, 1)
         self.assertEqual(target_iwidget.error_count, 0)
 
+    def test_operator_logging_support(self):
+
+        self.login(username='user_with_workspaces')
+
+        self.change_main_view('wiring')
+
+        ioperator = self.get_current_wiring_editor_ioperators()[0]
+        self.assertEqual(ioperator.error_count, 0)
+
+        # Change operator settings
+        ioperator.element.find_element_by_css_selector('.specialIcon').click()
+        self.wait_element_visible_by_css_selector('.editPos_button', element=ioperator.element).click()
+        self.popup_menu_click('Settings')
+
+        self.driver.find_element_by_css_selector('.window_menu [name="test_logging"]').click()
+        self.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Accept']").click()
+
+        self.assertEqual(ioperator.error_count, 2)
+        self.assertEqual(len(ioperator.log_entries), 5)
+
+        with self.get_current_iwidgets()[0]:
+            try:
+                WebDriverWait(self.driver, timeout=10).until(lambda driver: driver.find_element_by_id('wiringOut').text != '')
+            except:
+                pass
+
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, 'preferences changed: test_logging')
+
 
 class WiringRecoveringTestCase(WirecloudSeleniumTestCase):
 

@@ -28,7 +28,7 @@
         </vCard:addr>
 
         <wire:hasPlatformPreference>
-            <wire:PlatformPreference rdf:ID="preference_1">
+            <wire:PlatformPreference>
                 <dcterms:title>prefix</dcterms:title>
                 <wire:index>0</wire:index>
                 <wire:type>text</wire:type>
@@ -39,12 +39,23 @@
         </wire:hasPlatformPreference>
 
         <wire:hasPlatformPreference>
-            <wire:PlatformPreference rdf:ID="preference_2">
+            <wire:PlatformPreference>
                 <dcterms:title>exception_on_event</dcterms:title>
                 <wire:index>1</wire:index>
                 <wire:type>boolean</wire:type>
                 <dcterms:description>Raise exception on event arrival</dcterms:description>
                 <rdfs:label>Throw exceptions</rdfs:label>
+                <wire:default>false</wire:default>
+            </wire:PlatformPreference>
+        </wire:hasPlatformPreference>
+
+        <wire:hasPlatformPreference>
+            <wire:PlatformPreference>
+                <dcterms:title>test_logging</dcterms:title>
+                <wire:index>2</wire:index>
+                <wire:type>boolean</wire:type>
+                <dcterms:description>Run logging support tests on change to true</dcterms:description>
+                <rdfs:label>Run logging tests</rdfs:label>
                 <wire:default>false</wire:default>
             </wire:PlatformPreference>
         </wire:hasPlatformPreference>

@@ -251,6 +251,13 @@ class IOperatorTester(object):
     def error_count(self):
         return self.testcase.driver.execute_script('return Wirecloud.activeWorkspace.wiring.ioperators[%s].logManager.errorCount' % self.id)
 
+    @property
+    def log_entries(self):
+        return self.testcase.driver.execute_script('''
+            var ioperator = Wirecloud.activeWorkspace.wiring.ioperators[%s];
+            return ioperator.logManager.entries.map(function (entry) { return {date: entry.date.getTime(), level: entry.level, msg: entry.msg}; });
+        ''' % self.id)
+
 
 class RemoteTestCase(object):
 
