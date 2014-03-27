@@ -835,15 +835,52 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 class BasicMobileSeleniumTests(MobileWirecloudSeleniumTestCase):
 
     fixtures = ('initial_data', 'selenium_test_data', 'user_with_workspaces')
+    tags = ('mobile',)
 
-    def test_basic_widget_functionalities(self):
+    def check_basic_workspace(self, frame_id=None):
 
-        self.login(username='user_with_workspaces')
-        self.wait_element_visible_by_css_selector('.iwidget_item').click()
-        iwidget = self.get_current_iwidgets()[0]
+        iwidget_icons = self.driver.find_elements_by_css_selector('.iwidget_item')
+        iwidget_icons[0].click()
+        source_iwidget = self.get_current_iwidgets()[0]
 
-        with iwidget:
+        with source_iwidget:
             self.assertEqual(self.driver.find_element_by_id('listPref').text, 'default')
             self.assertEqual(self.driver.find_element_by_id('textPref').text, 'initial text')
             self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'false')
             self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'default')
+
+            text_input = self.driver.find_element_by_tag_name('input')
+            self.fill_form_input(text_input, 'hello world!!')
+            # Work around hang when using Firefox Driver
+            self.driver.execute_script('sendEvent();')
+            #self.driver.find_element_by_id('b1').click()
+
+        self.driver.find_element_by_css_selector('.dragboard .toolbar .back_button > .menu_text').click()
+        time.sleep(0.2)
+
+        iwidget_icons[1].click()
+        target_iwidget = self.get_current_iwidgets()[1]
+
+        with target_iwidget:
+
+            try:
+                WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text != '')
+            except:
+                pass
+
+            text_div = self.driver.find_element_by_id('wiringOut')
+            self.assertEqual(text_div.text, 'hello world!!')
+
+    def test_basic_widget_functionalities(self):
+
+        self.login(username='user_with_workspaces')
+        self.wait_element_visible_by_css_selector('.iwidget_item')
+
+        self.check_basic_workspace()
+
+    def test_public_workspaces(self):
+
+        self.login(username='emptyuser', next='/user_with_workspaces/Public Workspace')
+        self.wait_element_visible_by_css_selector('.iwidget_item')
+
+        self.check_basic_workspace()
