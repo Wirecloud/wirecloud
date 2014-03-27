@@ -328,55 +328,6 @@ img {
 }
 
 /**** Bar Section ****/
-#mymw-nav {
-    margin: 0px;
-    padding: 0px;
-    position: absolute;
-    top: 24px;
-    left: 1px;
-    z-index: 2;
-}
-body.landscape #mymw-nav {
-    left: 3px;
-}
-#mymw-nav li {
-    padding: 2px 4px;
-    border: 2px solid #4C5054;
-    border-bottom: none;
-    background: #4C5054;
-    display: inline;
-    color: white;
-    margin: 0 6px 0 0px;
-    -webkit-border-top-left-radius: 10px;
-    -webkit-border-top-right-radius: 10px;
-}
-
-#mymw-nav li a {
-    color: white;
-    text-decoration: none;
-    font-size: 10pt;
-}
-
-#mymw-nav li.mymw-selected {
-    background: white;
-}
-
-#mymw-nav li.mymw-selected a {
-    color: #4C5054;
-}
-
-#mymw-nav li.mymw-highlight {
-    background: #ebabab;
-}
-
-#mymw-nav li.mymw-highlight a {
-    color: #4C5054;
-}
-
-#mymw-nav li.mymw-inactive {
-    visibility: hidden;
-}
-
 .bar{
     position: relative;
     width: 100%;
@@ -412,13 +363,6 @@ body.landscape #mymw-nav {
     z-index: 2;
 }
 
-.iwidget_section div.mymw-inactive {
-    height: 0;
-    width: 0;
-    /*visibility: hidden;*/
-    z-index: -1;
-}
-
 .iwidget {
     overflow: hidden;
     display: block;
@@ -431,54 +375,11 @@ body.landscape #mymw-nav {
     margin: 0px;
 }
 
-.iwidget_section div.mymw-inactive .related_widgets{
-    height: 0;
-    width: 0;
-}
-
-.iwidget_section div.mymw-inactive .widget_object{
-    height: 0;
-    width: 0;
-}
-
 .widget_object {
     width: 100%;
     height: 100%;
     border: 0px solid transparent;
 }
-
-/**** Related Widget Section ****/
-.iwidget_section div.mymw-inactive .related_widgets{
-    height: 0;
-    width: 0;
-}
-
-.related_widgets{
-    border: 1px solid #E0E0E0;
-    width: 95%;
-    height: 36px;
-    padding: 0px;
-    margin: 2px auto;
-    text-align: center;
-    display: block;
-    padding: 2px 0;
-}
-.related_widget_div{
-    display: inline;
-    position: relative;
-}
-
-.related_widget{
-    margin: 0 5px;
-    height: 35px;
-    width: 35px;
-    cursor: pointer;
-}
-
-.related_widgets .active{
-    border: 2px solid #ebabab;
-}
-
 
 /*** OTHER SECTIONS ***/
 .menu_icon{
