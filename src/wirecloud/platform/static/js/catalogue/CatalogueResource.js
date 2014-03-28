@@ -72,6 +72,11 @@
                     return currentVersion.version;
                 }
             },
+            'author': {
+                get: function () {
+                    return currentVersion.author;
+                }
+            },
             'uri': {
                 get: function () { return [this.vendor, this.name, currentVersion.version.text].join('/'); }
             },
