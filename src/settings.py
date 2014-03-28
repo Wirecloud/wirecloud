@@ -76,10 +76,7 @@ ROOT_URLCONF = 'urls'
 INSTALLED_APPS += (
     'wirecloud.oauth2provider',
     'wirecloud.fiware',
-    'django_nose',
-    'social_auth',
 )
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 SESSION_COOKIE_AGE = 5184000  # 2 months
 
