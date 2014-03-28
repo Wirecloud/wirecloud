@@ -245,6 +245,21 @@
                 delete _matrix[position.x + x][position.y + y];
             }
         }
+
+        this._compressColumns(_matrix, position.x, width);
+    };
+
+    ColumnLayout.prototype._compressColumns = function(_matrix, x, width) {
+        var i, y;
+
+        for (i = 0; i < width; i++) {
+            for (y = _matrix[x + i].length - 1; y >= 0; y--) {
+                if (_matrix[x + i][y] != null) {
+                    break;
+                }
+                _matrix[x + i].pop();
+            }
+        }
     };
 
     ColumnLayout.prototype._searchInsertPoint = function (_matrix, x, y, width, height) {
@@ -353,6 +368,8 @@
                 delete _matrix[positionX + x][positionY + y];
             }
         }
+
+        this._compressColumns(_matrix, positionX, width);
     };
 
     ColumnLayout.prototype._notifyResizeEvent = function (iWidget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
