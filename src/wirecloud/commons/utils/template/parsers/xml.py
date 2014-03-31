@@ -177,9 +177,6 @@ class WirecloudTemplateParser(object):
         self._info['display_name'] = self._get_field(DISPLAY_NAME_XPATH, self._resource_description, required=False)
         self._add_translation_index(self._info['display_name'], type='resource', field='display_name')
 
-        if not self._info['display_name']:
-            self._info['display_name'] = self._info['name']
-
         self._info['description'] = self._get_field(DESCRIPTION_XPATH, self._resource_description, required=False)
         self._add_translation_index(self._info['description'], type='resource', field='description')
 

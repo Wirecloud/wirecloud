@@ -225,9 +225,6 @@ class RDFTemplateParser(object):
 
         self._info['display_name'] = self._get_translation_field(WIRE, 'displayName', self._rootURI, 'display_name', required=False, type='resource', field='display_name')
 
-        if not self._info['display_name']:
-            self._info['display_name'] = self._info['name']
-
         addr_element = self._get_field(VCARD, 'addr', self._rootURI, id_=True)
         self._info['email'] = self._get_field(VCARD, 'email', addr_element)
         self._parse_requirements()

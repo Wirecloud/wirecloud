@@ -148,6 +148,9 @@ class TemplateParser(object):
         del info['translations']
         del info['translation_index_usage']
 
+        if info['display_name'] == '':
+            info['display_name'] = info['name']
+
         # process url fields
         for field in BASIC_URL_FIELDS:
             info[field] = absolutize_url_field(info[field], base)
