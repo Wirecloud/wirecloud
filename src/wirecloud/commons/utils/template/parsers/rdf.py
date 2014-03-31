@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 import rdflib
 
 from django.utils.translation import ugettext as _
@@ -565,7 +567,7 @@ class RDFTemplateParser(object):
         if typeText in mapping:
             return mapping[typeText]
         else:
-            raise TemplateParseException(_(u"ERROR: unkown TEXT TYPE ") + typeText)
+            raise TemplateParseException(_("ERROR: unkown TEXT TYPE ") + typeText)
 
     def get_contents(self):
         return self._graph.serialize(format='pretty-xml')

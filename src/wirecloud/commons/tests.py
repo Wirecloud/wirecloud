@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -16,6 +16,8 @@
 
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+
+from __future__ import unicode_literals
 
 import copy
 
@@ -126,51 +128,51 @@ class TemplateUtilsTestCase(TestCase):
             'wiring': {
                 'inputs': [
                     {
-                        'name': u'input1',
+                        'name': 'input1',
                         'type': 'text',
-                        'label': u'Input label 1',
-                        'description': u'Input description 1',
-                        'actionlabel': u'a',
-                        'friendcode': u'friendcode 1'
+                        'label': 'Input label 1',
+                        'description': 'Input description 1',
+                        'actionlabel': 'a',
+                        'friendcode': 'friendcode 1'
                     },
                     {
-                        'name': u'input2',
+                        'name': 'input2',
                         'type': 'text',
-                        'label': u'Input label 2',
-                        'description': u'Input description 2',
+                        'label': 'Input label 2',
+                        'description': 'Input description 2',
                         'actionlabel': '',
-                        'friendcode': u'friendcode 2'
+                        'friendcode': 'friendcode 2'
                     },
                     {
-                        'name': u'input3',
+                        'name': 'input3',
                         'type': 'text',
-                        'label': u'Input label 3',
-                        'description': u'Input description 3',
+                        'label': 'Input label 3',
+                        'description': 'Input description 3',
                         'actionlabel': 'action label 3',
-                        'friendcode': u'friendcode 3'
+                        'friendcode': 'friendcode 3'
                     }
                 ],
                 'outputs': [
                     {
-                        'name': u'output1',
+                        'name': 'output1',
                         'type': 'text',
-                        'label': u'Output label 1',
-                        'description': u'Output description 1',
-                        'friendcode': u'friendcode 1'
+                        'label': 'Output label 1',
+                        'description': 'Output description 1',
+                        'friendcode': 'friendcode 1'
                     },
                     {
-                        'name': u'output2',
+                        'name': 'output2',
                         'type': 'text',
-                        'label': u'Output label 2',
-                        'description': u'Output description 2',
-                        'friendcode': u'friendcode 2'
+                        'label': 'Output label 2',
+                        'description': 'Output description 2',
+                        'friendcode': 'friendcode 2'
                     },
                     {
-                        'name': u'output3',
+                        'name': 'output3',
                         'type': 'text',
-                        'label': u'Output label 3',
-                        'description': u'Output description 3',
-                        'friendcode': u'friendcode 3'
+                        'label': 'Output label 3',
+                        'description': 'Output description 3',
+                        'friendcode': 'friendcode 3'
                     }
                 ]
             },
@@ -246,51 +248,51 @@ class TemplateUtilsTestCase(TestCase):
             'wiring': {
                 'inputs': [
                     {
-                        'name': u'input1',
+                        'name': 'input1',
                         'type': 'text',
-                        'label': u'__MSG_input1_label__',
-                        'description': u'__MSG_input1_description__',
-                        'actionlabel': u'__MSG_input1_actionlabel__',
-                        'friendcode': u'friendcode 1'
+                        'label': '__MSG_input1_label__',
+                        'description': '__MSG_input1_description__',
+                        'actionlabel': '__MSG_input1_actionlabel__',
+                        'friendcode': 'friendcode 1'
                     },
                     {
-                        'name': u'input2',
+                        'name': 'input2',
                         'type': 'text',
-                        'label': u'__MSG_input2_label__',
-                        'description': u'__MSG_input2_description__',
-                        'actionlabel': u'__MSG_input2_actionlabel__',
-                        'friendcode': u'friendcode 2'
+                        'label': '__MSG_input2_label__',
+                        'description': '__MSG_input2_description__',
+                        'actionlabel': '__MSG_input2_actionlabel__',
+                        'friendcode': 'friendcode 2'
                     },
                     {
-                        'name': u'input3',
+                        'name': 'input3',
                         'type': 'text',
-                        'label': u'__MSG_input3_label__',
-                        'description': u'__MSG_input3_description__',
-                        'actionlabel': u'__MSG_input3_actionlabel__',
-                        'friendcode': u'friendcode 3'
+                        'label': '__MSG_input3_label__',
+                        'description': '__MSG_input3_description__',
+                        'actionlabel': '__MSG_input3_actionlabel__',
+                        'friendcode': 'friendcode 3'
                     }
                 ],
                 'outputs': [
                     {
-                        'name': u'output1',
+                        'name': 'output1',
                         'type': 'text',
-                        'label': u'__MSG_output1_label__',
-                        'description': u'__MSG_output1_description__',
-                        'friendcode': u'friendcode 1'
+                        'label': '__MSG_output1_label__',
+                        'description': '__MSG_output1_description__',
+                        'friendcode': 'friendcode 1'
                     },
                     {
-                        'name': u'output2',
+                        'name': 'output2',
                         'type': 'text',
-                        'label': u'__MSG_output2_label__',
-                        'description': u'__MSG_output2_description__',
-                        'friendcode': u'friendcode 2'
+                        'label': '__MSG_output2_label__',
+                        'description': '__MSG_output2_description__',
+                        'friendcode': 'friendcode 2'
                     },
                     {
-                        'name': u'output3',
+                        'name': 'output3',
                         'type': 'text',
-                        'label': u'__MSG_output3_label__',
-                        'description': u'__MSG_output3_description__',
-                        'friendcode': u'friendcode 3'
+                        'label': '__MSG_output3_label__',
+                        'description': '__MSG_output3_description__',
+                        'friendcode': 'friendcode 3'
                     }
                 ]
             },
@@ -311,9 +313,9 @@ class TemplateUtilsTestCase(TestCase):
                     'pref2_label': 'Pref2 label',
                     'pref2_description': 'Pref2 description',
                     'prop1_label': 'Prop1 label',
-                    'prop1_description': u'Prop1 description',
+                    'prop1_description': 'Prop1 description',
                     'prop2_label': 'Prop2 label',
-                    'prop2_description': u'Prop2 description',
+                    'prop2_description': 'Prop2 description',
                     'input1_label': 'Input1 label',
                     'input1_description': 'Input1 description',
                     'input1_actionlabel': 'Input1 action label',
@@ -332,32 +334,32 @@ class TemplateUtilsTestCase(TestCase):
                 },
                 'es': {
                     'display_name': 'Operador de prueba',
-                    'description': u'descripción',
-                    'pref1_option0_label': u'Etiqueta de la opción 1',
-                    'pref1_option1_label': u'Etiqueta de la opción 2',
+                    'description': 'descripción',
+                    'pref1_option0_label': 'Etiqueta de la opción 1',
+                    'pref1_option1_label': 'Etiqueta de la opción 2',
                     'pref1_label': 'Etiqueta de la pref1',
-                    'pref1_description': u'Descripción de la pref1',
+                    'pref1_description': 'Descripción de la pref1',
                     'pref2_label': 'Etiqueta de la pref2',
-                    'pref2_description': u'Descripción de la pref2',
+                    'pref2_description': 'Descripción de la pref2',
                     'prop1_label': 'Etiqueta de la propiedad 1',
-                    'prop1_description': u'Descripción de la propiedad 1',
+                    'prop1_description': 'Descripción de la propiedad 1',
                     'prop2_label': 'Etiqueta de la propiedad 2',
-                    'prop2_description': u'Descripción de la propiedad 2',
+                    'prop2_description': 'Descripción de la propiedad 2',
                     'input1_label': 'Etiqueta del input 1',
-                    'input1_description': u'Descripción del input 1',
-                    'input1_actionlabel': u'Etiqueta de acción del input 1',
+                    'input1_description': 'Descripción del input 1',
+                    'input1_actionlabel': 'Etiqueta de acción del input 1',
                     'input2_label': 'Etiqueta del input 2',
-                    'input2_description': u'Descripción del input 2',
-                    'input2_actionlabel': u'Etiqueta de acción del input 2',
+                    'input2_description': 'Descripción del input 2',
+                    'input2_actionlabel': 'Etiqueta de acción del input 2',
                     'input3_label': 'Etiqueta del input 3',
-                    'input3_description': u'Descripción del input 3',
-                    'input3_actionlabel': u'Etiqueta de acción del input 3',
+                    'input3_description': 'Descripción del input 3',
+                    'input3_actionlabel': 'Etiqueta de acción del input 3',
                     'output1_label': 'Etiqueta del output 1',
-                    'output1_description': u'Descripción del output 1',
+                    'output1_description': 'Descripción del output 1',
                     'output2_label': 'Etiqueta del output 2',
-                    'output2_description': u'Descripción del output 2',
+                    'output2_description': 'Descripción del output 2',
                     'output3_label': 'Etiqueta del output 3',
-                    'output3_description': u'Descripción del output 3',
+                    'output3_description': 'Descripción del output 3',
                 }
             },
             'translation_index_usage': {
@@ -393,15 +395,15 @@ class TemplateUtilsTestCase(TestCase):
 
         cls.basic_mashup_info = {
             'type': 'mashup',
-            'vendor': u'Wirecloud',
-            'name': u'TemplateTestMashup',
-            'version': u'1.0',
-            'display_name': u'Template Test Mashup',
-            'description': u'',
-            'author': u'',
-            'email': u'email@example.com',
-            'image_uri': u'',
-            'iphone_image_uri': u'',
+            'vendor': 'Wirecloud',
+            'name': 'TemplateTestMashup',
+            'version': '1.0',
+            'display_name': 'Template Test Mashup',
+            'description': '',
+            'author': '',
+            'email': 'email@example.com',
+            'image_uri': '',
+            'iphone_image_uri': '',
             'doc_uri': '',
             'requirements': [],
             'params': [],
@@ -421,19 +423,19 @@ class TemplateUtilsTestCase(TestCase):
 
         cls.mashup_info = {
             'type': 'mashup',
-            'vendor': u'Wirecloud',
-            'name': u'TemplateTestMashup',
-            'version': u'1.0',
-            'display_name': u'Template Test Mashup',
-            'description': u'test',
-            'author': u'author_test',
-            'email': u'test@example.com',
-            'image_uri': u'images/catalogue.png',
-            'iphone_image_uri': u'images/smartphone.png',
-            'doc_uri': u'docs/index.html',
+            'vendor': 'Wirecloud',
+            'name': 'TemplateTestMashup',
+            'version': '1.0',
+            'display_name': 'Template Test Mashup',
+            'description': 'test',
+            'author': 'author_test',
+            'email': 'test@example.com',
+            'image_uri': 'images/catalogue.png',
+            'iphone_image_uri': 'images/smartphone.png',
+            'doc_uri': 'docs/index.html',
             'requirements': [
-                {'type': 'feature', 'name': u'Wirecloud'},
-                {'type': 'feature', 'name': u'PubSub'}
+                {'type': 'feature', 'name': 'Wirecloud'},
+                {'type': 'feature', 'name': 'PubSub'}
             ],
             'params': [],
             'preferences': {
@@ -441,18 +443,18 @@ class TemplateUtilsTestCase(TestCase):
             },
             'tabs': [
                 {
-                    'name': u'Tab 1',
+                    'name': 'Tab 1',
                     'preferences': {
                         'columns': '9',
                         'smart': 'false'
                     },
                     'resources': [
                         {
-                            'id': u'1',
-                            'vendor': u'Wirecloud',
-                            'name': u'TestWidget',
-                            'version': u'1.0',
-                            'title': u'Widget title',
+                            'id': '1',
+                            'vendor': 'Wirecloud',
+                            'name': 'TestWidget',
+                            'version': '1.0',
+                            'title': 'Widget title',
                             'readonly': False,
                             'properties': {
                                 'prop1': {'value': 'value1', 'readonly': False},
@@ -463,25 +465,25 @@ class TemplateUtilsTestCase(TestCase):
                                 'text': {'value': 'other value', 'readonly': True, 'hidden': True}
                             },
                             'position': {
-                                'x': u'0',
-                                'y': u'1',
-                                'z': u'2',
+                                'x': '0',
+                                'y': '1',
+                                'z': '2',
                             },
                             'rendering': {
-                                'width': u'10',
-                                'height': u'10',
-                                'layout': u'0',
+                                'width': '10',
+                                'height': '10',
+                                'layout': '0',
                                 'fulldragboard': False,
                                 'minimized': False
                             }
                         },
                         {
-                            'id': u'2',
-                            'vendor': u'Wirecloud',
-                            'name': u'TestWidget',
-                            'version': u'2.0',
+                            'id': '2',
+                            'vendor': 'Wirecloud',
+                            'name': 'TestWidget',
+                            'version': '2.0',
                             'readonly': True,
-                            'title': u'Widget title',
+                            'title': 'Widget title',
                             'properties': {
                                 'prop1': {'value': 'value1', 'readonly': False}
                             },
@@ -489,14 +491,14 @@ class TemplateUtilsTestCase(TestCase):
                                 'text': {'value': 'other value', 'readonly': True, 'hidden': True}
                             },
                             'position': {
-                                'x': u'10',
-                                'y': u'1',
-                                'z': u'2',
+                                'x': '10',
+                                'y': '1',
+                                'z': '2',
                             },
                             'rendering': {
-                                'width': u'10',
-                                'height': u'10',
-                                'layout': u'0',
+                                'width': '10',
+                                'height': '10',
+                                'layout': '0',
                                 'fulldragboard': True,
                                 'minimized': True
                             }
@@ -504,9 +506,9 @@ class TemplateUtilsTestCase(TestCase):
                     ]
                 },
                 {
-                    'name': u'Tab 2',
+                    'name': 'Tab 2',
                     'preferences': {
-                        u'pref1': u'pref value',
+                        'pref1': 'pref value',
                     },
                     'resources': []
                 },
@@ -514,84 +516,84 @@ class TemplateUtilsTestCase(TestCase):
             'wiring': {
                 'inputs': [
                     {
-                        'name': u'input1',
+                        'name': 'input1',
                         'type': 'text',
-                        'label': u'Input label 1',
-                        'description': u'Input description 1',
-                        'actionlabel': u'a',
-                        'friendcode': u'friendcode 1'
+                        'label': 'Input label 1',
+                        'description': 'Input description 1',
+                        'actionlabel': 'a',
+                        'friendcode': 'friendcode 1'
                     },
                     {
-                        'name': u'input2',
+                        'name': 'input2',
                         'type': 'text',
-                        'label': u'Input label 2',
-                        'description': u'Input description 2',
+                        'label': 'Input label 2',
+                        'description': 'Input description 2',
                         'actionlabel': '',
-                        'friendcode': u'friendcode 2'
+                        'friendcode': 'friendcode 2'
                     },
                     {
-                        'name': u'input3',
+                        'name': 'input3',
                         'type': 'text',
-                        'label': u'Input label 3',
-                        'description': u'Input description 3',
+                        'label': 'Input label 3',
+                        'description': 'Input description 3',
                         'actionlabel': 'action label 3',
-                        'friendcode': u'friendcode 3'
+                        'friendcode': 'friendcode 3'
                     }
                 ],
                 'outputs': [
                     {
-                        'name': u'output1',
+                        'name': 'output1',
                         'type': 'text',
-                        'label': u'Output label 1',
-                        'description': u'Output description 1',
-                        'friendcode': u'friendcode 1'
+                        'label': 'Output label 1',
+                        'description': 'Output description 1',
+                        'friendcode': 'friendcode 1'
                     },
                     {
-                        'name': u'output2',
+                        'name': 'output2',
                         'type': 'text',
-                        'label': u'Output label 2',
-                        'description': u'Output description 2',
-                        'friendcode': u'friendcode 2'
+                        'label': 'Output label 2',
+                        'description': 'Output description 2',
+                        'friendcode': 'friendcode 2'
                     },
                     {
-                        'name': u'output3',
+                        'name': 'output3',
                         'type': 'text',
-                        'label': u'Output label 3',
-                        'description': u'Output description 3',
-                        'friendcode': u'friendcode 3'
+                        'label': 'Output label 3',
+                        'description': 'Output description 3',
+                        'friendcode': 'friendcode 3'
                     }
                 ],
                 'operators': {
-                    u'1': {
-                        "id": u'1',
-                        "name": u"Wirecloud/TestOperator/1.0",
+                    '1': {
+                        "id": '1',
+                        "name": "Wirecloud/TestOperator/1.0",
                         "preferences": {}
                     },
-                    u'2': {
-                        "id": u'2',
-                        "name": u"Wirecloud/TestOperator/2.0",
+                    '2': {
+                        "id": '2',
+                        "name": "Wirecloud/TestOperator/2.0",
                         "preferences": {
-                            u'pref1': {'value': u'op2 pref1 value', 'hidden': False, 'readonly': False},
-                            u'pref2': {'value': u'op2 pref2 value', 'hidden': False, 'readonly': True}
+                            'pref1': {'value': 'op2 pref1 value', 'hidden': False, 'readonly': False},
+                            'pref2': {'value': 'op2 pref2 value', 'hidden': False, 'readonly': True}
                         },
                     },
-                    u'3': {
-                        "id": u'3',
-                        "name": u"Wirecloud/TestOperator/2.0",
+                    '3': {
+                        "id": '3',
+                        "name": "Wirecloud/TestOperator/2.0",
                         "preferences": {
-                            u'pref1': {'value': u'op3 pref1 value', 'hidden': True, 'readonly': True}
+                            'pref1': {'value': 'op3 pref1 value', 'hidden': True, 'readonly': True}
                         },
                     }
                 },
                 'connections': [
                     {
-                        "source": {"type": u"operator", 'id': u'1', 'endpoint': u'output1'},
-                        "target": {"type": u"operator", 'id': u'2', 'endpoint': u'input1'},
+                        "source": {"type": "operator", 'id': '1', 'endpoint': 'output1'},
+                        "target": {"type": "operator", 'id': '2', 'endpoint': 'input1'},
                         "readonly": True
                     },
                     {
-                        "source": {"type": u"iwidget", 'id': u'1', 'endpoint': u'output1'},
-                        "target": {"type": u"operator", 'id': u'1', 'endpoint': u'input1'},
+                        "source": {"type": "iwidget", 'id': '1', 'endpoint': 'output1'},
+                        "target": {"type": "operator", 'id': '1', 'endpoint': 'input1'},
                         "readonly": False
                     }
                 ],
@@ -604,19 +606,19 @@ class TemplateUtilsTestCase(TestCase):
 
         cls.mashup_with_translations_info = {
             'type': 'mashup',
-            'vendor': u'Wirecloud',
-            'name': u'TemplateTestMashup',
-            'version': u'1.0',
-            'display_name': u'__MSG_display_name__',
-            'description': u'__MSG_description__',
-            'author': u'author_test',
-            'email': u'test@example.com',
-            'image_uri': u'images/catalogue.png',
-            'iphone_image_uri': u'images/smartphone.png',
-            'doc_uri': u'docs/index.html',
+            'vendor': 'Wirecloud',
+            'name': 'TemplateTestMashup',
+            'version': '1.0',
+            'display_name': '__MSG_display_name__',
+            'description': '__MSG_description__',
+            'author': 'author_test',
+            'email': 'test@example.com',
+            'image_uri': 'images/catalogue.png',
+            'iphone_image_uri': 'images/smartphone.png',
+            'doc_uri': 'docs/index.html',
             'requirements': [
-                {'type': 'feature', 'name': u'Wirecloud'},
-                {'type': 'feature', 'name': u'PubSub'}
+                {'type': 'feature', 'name': 'Wirecloud'},
+                {'type': 'feature', 'name': 'PubSub'}
             ],
             'params': [],
             'preferences': {
@@ -624,18 +626,18 @@ class TemplateUtilsTestCase(TestCase):
             },
             'tabs': [
                 {
-                    'name': u'Tab 1',
+                    'name': 'Tab 1',
                     'preferences': {
                         'columns': '9',
                         'smart': 'false'
                     },
                     'resources': [
                         {
-                            'id': u'1',
-                            'vendor': u'Wirecloud',
-                            'name': u'TestWidget',
-                            'version': u'1.0',
-                            'title': u'Widget title',
+                            'id': '1',
+                            'vendor': 'Wirecloud',
+                            'name': 'TestWidget',
+                            'version': '1.0',
+                            'title': 'Widget title',
                             'readonly': False,
                             'properties': {
                                 'prop1': {'value': 'value1', 'readonly': False},
@@ -646,24 +648,24 @@ class TemplateUtilsTestCase(TestCase):
                                 'text': {'value': 'other value', 'readonly': True, 'hidden': True}
                             },
                             'position': {
-                                'x': u'0',
-                                'y': u'1',
-                                'z': u'2',
+                                'x': '0',
+                                'y': '1',
+                                'z': '2',
                             },
                             'rendering': {
-                                'width': u'10',
-                                'height': u'10',
-                                'layout': u'0',
+                                'width': '10',
+                                'height': '10',
+                                'layout': '0',
                                 'fulldragboard': False,
                                 'minimized': False
                             }
                         },
                         {
-                            'id': u'2',
-                            'vendor': u'Wirecloud',
-                            'name': u'TestWidget',
-                            'version': u'2.0',
-                            'title': u'Widget title',
+                            'id': '2',
+                            'vendor': 'Wirecloud',
+                            'name': 'TestWidget',
+                            'version': '2.0',
+                            'title': 'Widget title',
                             'readonly': True,
                             'properties': {
                                 'prop1': {'value': 'value1', 'readonly': False}
@@ -672,14 +674,14 @@ class TemplateUtilsTestCase(TestCase):
                                 'text': {'value': 'other value', 'readonly': True, 'hidden': True}
                             },
                             'position': {
-                                'x': u'10',
-                                'y': u'1',
-                                'z': u'2',
+                                'x': '10',
+                                'y': '1',
+                                'z': '2',
                             },
                             'rendering': {
-                                'width': u'10',
-                                'height': u'10',
-                                'layout': u'0',
+                                'width': '10',
+                                'height': '10',
+                                'layout': '0',
                                 'fulldragboard': True,
                                 'minimized': True
                             }
@@ -687,9 +689,9 @@ class TemplateUtilsTestCase(TestCase):
                     ]
                 },
                 {
-                    'name': u'Tab 2',
+                    'name': 'Tab 2',
                     'preferences': {
-                        u'pref1': u'pref value',
+                        'pref1': 'pref value',
                     },
                     'resources': []
                 },
@@ -697,84 +699,84 @@ class TemplateUtilsTestCase(TestCase):
             'wiring': {
                 'inputs': [
                     {
-                        'name': u'input1',
+                        'name': 'input1',
                         'type': 'text',
-                        'label': u'Input label 1',
-                        'description': u'Input description 1',
-                        'actionlabel': u'a',
-                        'friendcode': u'friendcode 1'
+                        'label': 'Input label 1',
+                        'description': 'Input description 1',
+                        'actionlabel': 'a',
+                        'friendcode': 'friendcode 1'
                     },
                     {
-                        'name': u'input2',
+                        'name': 'input2',
                         'type': 'text',
-                        'label': u'Input label 2',
-                        'description': u'Input description 2',
+                        'label': 'Input label 2',
+                        'description': 'Input description 2',
                         'actionlabel': '',
-                        'friendcode': u'friendcode 2'
+                        'friendcode': 'friendcode 2'
                     },
                     {
-                        'name': u'input3',
+                        'name': 'input3',
                         'type': 'text',
-                        'label': u'Input label 3',
-                        'description': u'Input description 3',
+                        'label': 'Input label 3',
+                        'description': 'Input description 3',
                         'actionlabel': 'action label 3',
-                        'friendcode': u'friendcode 3'
+                        'friendcode': 'friendcode 3'
                     }
                 ],
                 'outputs': [
                     {
-                        'name': u'output1',
+                        'name': 'output1',
                         'type': 'text',
-                        'label': u'Output label 1',
-                        'description': u'Output description 1',
-                        'friendcode': u'friendcode 1'
+                        'label': 'Output label 1',
+                        'description': 'Output description 1',
+                        'friendcode': 'friendcode 1'
                     },
                     {
-                        'name': u'output2',
+                        'name': 'output2',
                         'type': 'text',
-                        'label': u'Output label 2',
-                        'description': u'Output description 2',
-                        'friendcode': u'friendcode 2'
+                        'label': 'Output label 2',
+                        'description': 'Output description 2',
+                        'friendcode': 'friendcode 2'
                     },
                     {
-                        'name': u'output3',
+                        'name': 'output3',
                         'type': 'text',
-                        'label': u'Output label 3',
-                        'description': u'Output description 3',
-                        'friendcode': u'friendcode 3'
+                        'label': 'Output label 3',
+                        'description': 'Output description 3',
+                        'friendcode': 'friendcode 3'
                     }
                 ],
                 'operators': {
-                    u'1': {
-                        "id": u'1',
-                        "name": u"Wirecloud/TestOperator/1.0",
+                    '1': {
+                        "id": '1',
+                        "name": "Wirecloud/TestOperator/1.0",
                         "preferences": {}
                     },
-                    u'2': {
-                        "id": u'2',
-                        "name": u"Wirecloud/TestOperator/2.0",
+                    '2': {
+                        "id": '2',
+                        "name": "Wirecloud/TestOperator/2.0",
                         "preferences": {
-                            u'pref1': {'value': u'op2 pref1 value', 'hidden': False, 'readonly': False},
-                            u'pref2': {'value': u'op2 pref2 value', 'hidden': False, 'readonly': True}
+                            'pref1': {'value': 'op2 pref1 value', 'hidden': False, 'readonly': False},
+                            'pref2': {'value': 'op2 pref2 value', 'hidden': False, 'readonly': True}
                         },
                     },
-                    u'3': {
-                        "id": u'3',
-                        "name": u"Wirecloud/TestOperator/2.0",
+                    '3': {
+                        "id": '3',
+                        "name": "Wirecloud/TestOperator/2.0",
                         "preferences": {
-                            u'pref1': {'value': u'op3 pref1 value', 'hidden': True, 'readonly': True}
+                            'pref1': {'value': 'op3 pref1 value', 'hidden': True, 'readonly': True}
                         },
                     }
                 },
                 'connections': [
                     {
-                        "source": {"type": u"operator", 'id': u'1', 'endpoint': u'output1'},
-                        "target": {"type": u"operator", 'id': u'2', 'endpoint': u'input1'},
+                        "source": {"type": "operator", 'id': '1', 'endpoint': 'output1'},
+                        "target": {"type": "operator", 'id': '2', 'endpoint': 'input1'},
                         "readonly": True
                     },
                     {
-                        "source": {"type": u"iwidget", 'id': u'1', 'endpoint': u'output1'},
-                        "target": {"type": u"operator", 'id': u'1', 'endpoint': u'input1'},
+                        "source": {"type": "iwidget", 'id': '1', 'endpoint': 'output1'},
+                        "target": {"type": "operator", 'id': '1', 'endpoint': 'input1'},
                         "readonly": False
                     }
                 ],
@@ -788,7 +790,7 @@ class TemplateUtilsTestCase(TestCase):
                 },
                 'es': {
                     'display_name': 'Operador de prueba',
-                    'description': u'descripción'
+                    'description': 'descripción'
                 }
             },
             'translation_index_usage': {
@@ -799,19 +801,19 @@ class TemplateUtilsTestCase(TestCase):
 
         cls.mashup_with_params = {
             'type': 'mashup',
-            'vendor': u'Wirecloud',
-            'name': u'TemplateTestMashup',
-            'version': u'1.0',
-            'display_name': u'Template Test Mashup',
-            'description': u'test',
-            'author': u'author_test',
-            'email': u'test@example.com',
-            'image_uri': u'images/catalogue.png',
-            'iphone_image_uri': u'images/smartphone.png',
-            'doc_uri': u'docs/index.html',
+            'vendor': 'Wirecloud',
+            'name': 'TemplateTestMashup',
+            'version': '1.0',
+            'display_name': 'Template Test Mashup',
+            'description': 'test',
+            'author': 'author_test',
+            'email': 'test@example.com',
+            'image_uri': 'images/catalogue.png',
+            'iphone_image_uri': 'images/smartphone.png',
+            'doc_uri': 'docs/index.html',
             'requirements': [
-                {'type': 'feature', 'name': u'Wirecloud'},
-                {'type': 'feature', 'name': u'PubSub'}
+                {'type': 'feature', 'name': 'Wirecloud'},
+                {'type': 'feature', 'name': 'PubSub'}
             ],
             'params': [
                 {'name': 'param1', 'label': 'Param 1', 'type': 'text'},
@@ -822,18 +824,18 @@ class TemplateUtilsTestCase(TestCase):
             },
             'tabs': [
                 {
-                    'name': u'Tab 1',
+                    'name': 'Tab 1',
                     'preferences': {
                         'columns': '9',
                         'smart': 'false'
                     },
                     'resources': [
                         {
-                            'id': u'1',
-                            'vendor': u'Wirecloud',
-                            'name': u'TestWidget',
-                            'version': u'1.0',
-                            'title': u'Widget title',
+                            'id': '1',
+                            'vendor': 'Wirecloud',
+                            'name': 'TestWidget',
+                            'version': '1.0',
+                            'title': 'Widget title',
                             'readonly': False,
                             'properties': {
                                 'prop1': {'value': 'value1', 'readonly': False},
@@ -844,24 +846,24 @@ class TemplateUtilsTestCase(TestCase):
                                 'text': {'value': '%(param.param2)', 'readonly': True, 'hidden': True}
                             },
                             'position': {
-                                'x': u'0',
-                                'y': u'1',
-                                'z': u'2',
+                                'x': '0',
+                                'y': '1',
+                                'z': '2',
                             },
                             'rendering': {
-                                'width': u'10',
-                                'height': u'10',
-                                'layout': u'0',
+                                'width': '10',
+                                'height': '10',
+                                'layout': '0',
                                 'fulldragboard': False,
                                 'minimized': False
                             }
                         },
                         {
-                            'id': u'2',
-                            'vendor': u'Wirecloud',
-                            'name': u'TestWidget',
-                            'version': u'2.0',
-                            'title': u'Widget title',
+                            'id': '2',
+                            'vendor': 'Wirecloud',
+                            'name': 'TestWidget',
+                            'version': '2.0',
+                            'title': 'Widget title',
                             'readonly': True,
                             'properties': {
                                 'prop1': {'value': 'value1', 'readonly': False}
@@ -870,14 +872,14 @@ class TemplateUtilsTestCase(TestCase):
                                 'text': {'value': 'other value', 'readonly': True, 'hidden': True}
                             },
                             'position': {
-                                'x': u'10',
-                                'y': u'1',
-                                'z': u'2',
+                                'x': '10',
+                                'y': '1',
+                                'z': '2',
                             },
                             'rendering': {
-                                'width': u'10',
-                                'height': u'10',
-                                'layout': u'0',
+                                'width': '10',
+                                'height': '10',
+                                'layout': '0',
                                 'fulldragboard': True,
                                 'minimized': True
                             }
@@ -885,9 +887,9 @@ class TemplateUtilsTestCase(TestCase):
                     ]
                 },
                 {
-                    'name': u'Tab 2',
+                    'name': 'Tab 2',
                     'preferences': {
-                        u'pref1': u'pref value',
+                        'pref1': 'pref value',
                     },
                     'resources': []
                 },
@@ -896,24 +898,24 @@ class TemplateUtilsTestCase(TestCase):
                 'inputs': [],
                 'outputs': [],
                 'operators': {
-                    u'1': {
-                        "id": u'1',
-                        "name": u"Wirecloud/TestOperator/1.0",
+                    '1': {
+                        "id": '1',
+                        "name": "Wirecloud/TestOperator/1.0",
                         "preferences": {}
                     },
-                    u'2': {
-                        "id": u'2',
-                        "name": u"Wirecloud/TestOperator/2.0",
+                    '2': {
+                        "id": '2',
+                        "name": "Wirecloud/TestOperator/2.0",
                         "preferences": {
-                            u'pref1': {'value': u'op2 pref1 value', 'hidden': False, 'readonly': False},
-                            u'pref2': {'value': u'%(param.param1)', 'hidden': False, 'readonly': True}
+                            'pref1': {'value': 'op2 pref1 value', 'hidden': False, 'readonly': False},
+                            'pref2': {'value': '%(param.param1)', 'hidden': False, 'readonly': True}
                         },
                     },
-                    u'3': {
-                        "id": u'3',
-                        "name": u"Wirecloud/TestOperator/2.0",
+                    '3': {
+                        "id": '3',
+                        "name": "Wirecloud/TestOperator/2.0",
                         "preferences": {
-                            u'pref1': {'value': u'%(param.param2)', 'hidden': True, 'readonly': True}
+                            'pref1': {'value': '%(param.param2)', 'hidden': True, 'readonly': True}
                         },
                     }
                 },
@@ -1018,51 +1020,51 @@ class TemplateUtilsTestCase(TestCase):
             'wiring': {
                 'inputs': [
                     {
-                        'name': u'input1',
+                        'name': 'input1',
                         'type': 'text',
-                        'label': u'Input label 1',
-                        'description': u'Input description 1',
-                        'actionlabel': u'a',
-                        'friendcode': u'friendcode 1'
+                        'label': 'Input label 1',
+                        'description': 'Input description 1',
+                        'actionlabel': 'a',
+                        'friendcode': 'friendcode 1'
                     },
                     {
-                        'name': u'input2',
+                        'name': 'input2',
                         'type': 'text',
-                        'label': u'Input label 2',
-                        'description': u'Input description 2',
+                        'label': 'Input label 2',
+                        'description': 'Input description 2',
                         'actionlabel': '',
-                        'friendcode': u'friendcode 2'
+                        'friendcode': 'friendcode 2'
                     },
                     {
-                        'name': u'input3',
+                        'name': 'input3',
                         'type': 'text',
-                        'label': u'Input label 3',
-                        'description': u'Input description 3',
+                        'label': 'Input label 3',
+                        'description': 'Input description 3',
                         'actionlabel': 'action label 3',
-                        'friendcode': u'friendcode 3'
+                        'friendcode': 'friendcode 3'
                     }
                 ],
                 'outputs': [
                     {
-                        'name': u'output1',
+                        'name': 'output1',
                         'type': 'text',
-                        'label': u'Output label 1',
-                        'description': u'Output description 1',
-                        'friendcode': u'friendcode 1'
+                        'label': 'Output label 1',
+                        'description': 'Output description 1',
+                        'friendcode': 'friendcode 1'
                     },
                     {
-                        'name': u'output2',
+                        'name': 'output2',
                         'type': 'text',
-                        'label': u'Output label 2',
-                        'description': u'Output description 2',
-                        'friendcode': u'friendcode 2'
+                        'label': 'Output label 2',
+                        'description': 'Output description 2',
+                        'friendcode': 'friendcode 2'
                     },
                     {
-                        'name': u'output3',
+                        'name': 'output3',
                         'type': 'text',
-                        'label': u'Output label 3',
-                        'description': u'Output description 3',
-                        'friendcode': u'friendcode 3'
+                        'label': 'Output label 3',
+                        'description': 'Output description 3',
+                        'friendcode': 'friendcode 3'
                     }
                 ]
             },
