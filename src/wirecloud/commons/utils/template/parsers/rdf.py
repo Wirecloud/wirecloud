@@ -205,6 +205,14 @@ class RDFTemplateParser(object):
         if not is_valid_version(self._info['version']):
             raise TemplateParseException(_('ERROR: the format of the version number is invalid. Format: X.X.X where X is an integer. Ex. "0.1", "1.11" NOTE: "1.01" should be changed to "1.0.1" or "1.1"'))
 
+        license = self._get_field(DCTERMS, 'license', self._rootURI, required=False, default=None, id_=True)
+        if license is not None:
+            self._info['license_url'] = unicode(license)
+            self._info['license'] = self._get_field(RDFS, 'label', license, required=False)
+        else:
+            self._info['license_url'] = ''
+            self._info['license'] = ''
+
         self._info['description'] = self._get_translation_field(DCTERMS, 'description', self._rootURI, 'description', type='resource', field='description')
 
         author = self._get_field(DCTERMS, 'creator', self._rootURI, id_=True)

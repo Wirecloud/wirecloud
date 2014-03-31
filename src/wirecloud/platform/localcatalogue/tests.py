@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -74,6 +74,8 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.assertEqual(data['image_uri'], 'http://example.com/path/images/catalogue.png')
         self.assertEqual(data['iphone_image_uri'], 'http://example.com/path/images/catalogue_iphone.png')
         self.assertEqual(data['doc_uri'], 'http://example.com/path/doc/index.html')
+        self.assertEqual(data['license'], 'Apache License 2.0')
+        self.assertEqual(data['license_url'], 'http://www.apache.org/licenses/LICENSE-2.0.html')
 
         self.assertEqual(len(data['properties']), 1)
         self.assertEqual(data['properties'], [{u'default_value': u'', u'secure': False, u'name': u'prop', u'label': u'Property label', u'type': u'text', u'description': u''}])
@@ -86,6 +88,23 @@ class LocalCatalogueTestCase(WirecloudTestCase):
 
         self.assertEqual(len(data['wiring']['outputs']), 1)
         self.assertEqual(data['wiring']['outputs'], [{u'name': u'event', u'label': u'Event label', u'type': u'text', u'description': u'', u'friendcode': u'test_friend_code'}])
+
+    def test_widget_with_minimal_info(self):
+
+        template_uri = "http://example.com/path/widget.xml"
+        template = self.read_template('template9.xml')
+
+        self.network._servers['http']['example.com'].add_response('GET', '/path/widget.xml', {'content': template})
+        self.network._servers['http']['example.com'].add_response('GET', '/path/test.html', {'content': BASIC_HTML_GADGET_CODE})
+        resource = install_resource_to_user(self.user, file_contents=template, templateURL=template_uri)
+
+        self.assertEqual(resource.vendor, 'Wirecloud')
+        self.assertEqual(resource.short_name, 'test')
+        self.assertEqual(resource.version, '0.1')
+        self.assertEqual(resource.mail, 'test@example.com')
+        self.assertEqual(resource.public, False)
+        self.assertEqual(tuple(resource.users.values_list('username', flat=True)), (u'test',))
+        self.assertEqual(tuple(resource.groups.values_list('name', flat=True)), ())
 
     def test_basic_widget_creation(self):
         template_uri = "http://example.com/path/widget.xml"

@@ -51,6 +51,8 @@ class TemplateUtilsTestCase(TestCase):
             'image_uri': '',
             'iphone_image_uri': '',
             'doc_uri': '',
+            'license': '',
+            'license_url': '',
             'requirements': [],
             'preferences': [],
             'properties': [],
@@ -78,6 +80,8 @@ class TemplateUtilsTestCase(TestCase):
             'image_uri': 'images/catalogue.png',
             'iphone_image_uri': 'images/smartphone.png',
             'doc_uri': 'docs/index.html',
+            'license': 'Apache License 2',
+            'license_url': 'http://www.apache.org/licenses/LICENSE-2.0.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
             ],
@@ -198,6 +202,8 @@ class TemplateUtilsTestCase(TestCase):
             'image_uri': 'images/catalogue.png',
             'iphone_image_uri': 'images/smartphone.png',
             'doc_uri': 'docs/index.html',
+            'license': 'Apache License 2',
+            'license_url': 'http://www.apache.org/licenses/LICENSE-2.0.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
             ],
@@ -405,6 +411,8 @@ class TemplateUtilsTestCase(TestCase):
             'image_uri': '',
             'iphone_image_uri': '',
             'doc_uri': '',
+            'license': '',
+            'license_url': '',
             'requirements': [],
             'params': [],
             'preferences': {},
@@ -433,6 +441,8 @@ class TemplateUtilsTestCase(TestCase):
             'image_uri': 'images/catalogue.png',
             'iphone_image_uri': 'images/smartphone.png',
             'doc_uri': 'docs/index.html',
+            'license': 'Apache License 2',
+            'license_url': 'http://www.apache.org/licenses/LICENSE-2.0.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
                 {'type': 'feature', 'name': 'PubSub'}
@@ -616,6 +626,8 @@ class TemplateUtilsTestCase(TestCase):
             'image_uri': 'images/catalogue.png',
             'iphone_image_uri': 'images/smartphone.png',
             'doc_uri': 'docs/index.html',
+            'license': 'Apache License 2',
+            'license_url': 'http://www.apache.org/licenses/LICENSE-2.0.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
                 {'type': 'feature', 'name': 'PubSub'}
@@ -811,6 +823,8 @@ class TemplateUtilsTestCase(TestCase):
             'image_uri': 'images/catalogue.png',
             'iphone_image_uri': 'images/smartphone.png',
             'doc_uri': 'docs/index.html',
+            'license': 'Apache License 2',
+            'license_url': 'http://www.apache.org/licenses/LICENSE-2.0.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
                 {'type': 'feature', 'name': 'PubSub'}
@@ -939,6 +953,8 @@ class TemplateUtilsTestCase(TestCase):
             'image_uri': '',
             'iphone_image_uri': '',
             'doc_uri': '',
+            'license': '',
+            'license_url': '',
             'requirements': [],
             'preferences': [],
             'properties': [],
@@ -970,6 +986,8 @@ class TemplateUtilsTestCase(TestCase):
             'image_uri': 'images/catalogue.png',
             'iphone_image_uri': 'images/smartphone.png',
             'doc_uri': 'docs/index.html',
+            'license': 'Apache License 2',
+            'license_url': 'http://www.apache.org/licenses/LICENSE-2.0.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
             ],

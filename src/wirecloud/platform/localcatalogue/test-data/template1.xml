@@ -11,6 +11,8 @@
     <ImageURI>images/catalogue.png</ImageURI>
     <iPhoneImageURI>images/catalogue_iphone.png</iPhoneImageURI>
     <WikiURI>doc/index.html</WikiURI>
+    <License>Apache License 2.0</License>
+    <LicenseURL>http://www.apache.org/licenses/LICENSE-2.0.html</LicenseURL>
 
     <Requirements>
         <Feature name="Wirecloud" />

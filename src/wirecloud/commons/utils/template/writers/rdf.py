@@ -299,6 +299,15 @@ def build_rdf_graph(template_info):
 
     add_translated_nodes(graph, resource_uri, WIRE, 'displayName', template_info.get('display_name', ''), {'type': 'resource', 'field': 'display_name'}, template_info)
 
+    license_url_text = template_info.get('license_url', None)
+    if license_url_text not in (None, ''):
+        license = rdflib.URIRef(license_url_text)
+        graph.add((resource_uri, DCTERMS['license'], license))
+        license_text = template_info.get('license', None)
+        if license_text not in (None, ''):
+            graph.add((license, rdflib.RDF.type, DCTERMS['LicenseDocument']))
+            graph.add((license, RDFS['label'], rdflib.Literal(license_text)))
+
     addr = rdflib.BNode()
     graph.add((addr, rdflib.RDF.type, VCARD['Work']))
     graph.add((resource_uri, VCARD['addr'], addr))

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -39,6 +39,8 @@ IMAGE_URI_XPATH = 't:ImageURI'
 IPHONE_IMAGE_URI_XPATH = 't:iPhoneImageURI'
 MAIL_XPATH = 't:Mail'
 DOC_URI_XPATH = 't:WikiURI'
+LICENCE_XPATH = 't:License'
+LICENCE_URL_XPATH = 't:LicenseURL'
 REQUIREMENTS_XPATH = 't:Requirements'
 
 FEATURE_XPATH = 't:Feature'
@@ -186,6 +188,8 @@ class WirecloudTemplateParser(object):
         self._info['image_uri'] = self._get_field(IMAGE_URI_XPATH, self._resource_description, required=False)
         self._info['iphone_image_uri'] = self._get_field(IPHONE_IMAGE_URI_XPATH, self._resource_description, required=False)
         self._info['doc_uri'] = self._get_field(DOC_URI_XPATH, self._resource_description, required=False)
+        self._info['license'] = self._get_field(LICENCE_XPATH, self._resource_description, required=False)
+        self._info['license_url'] = self._get_field(LICENCE_URL_XPATH, self._resource_description, required=False)
         self._parse_requirements()
 
     def _parse_requirements(self):

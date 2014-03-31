@@ -53,12 +53,18 @@
     };
 
     ResourcePainter.prototype.paint = function paint(resource) {
-        var extra_context, i, context, resource_element;
+        var extra_context, i, context, resource_element, license_text;
 
         if (typeof this.extra_context === 'function') {
             extra_context = this.extra_context(resource);
         } else {
             extra_context = Wirecloud.Utils.clone(this.extra_context);
+        }
+
+        if (resource.license != null && resource.license != '') {
+            license_text = resource.license;
+        } else {
+            license_text = 'N/A';
         }
 
         context = Wirecloud.Utils.merge(extra_context, {
@@ -115,6 +121,21 @@
                 });
                 button.addEventListener('click', function () {
                     window.open(resource.doc_url, '_blank');
+                });
+
+                return button;
+            },
+            'license': license_text,
+            'license_home': function () {
+                var button;
+
+                button = new StyledElements.StyledButton({
+                    'plain': true,
+                    'class': 'icon-legal',
+                    'title': gettext('License details')
+                });
+                button.addEventListener('click', function () {
+                    window.open(resource.license_url, '_blank');
                 });
 
                 return button;

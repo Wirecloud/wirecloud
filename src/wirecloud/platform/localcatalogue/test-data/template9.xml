@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<Template xmlns="http://wirecloud.conwet.fi.upm.es/ns/template#">
+
+  <Catalog.ResourceDescription>
+    <Vendor>Wirecloud</Vendor>
+    <Name>test</Name>
+    <Version>0.1</Version>
+    <Mail>test@example.com</Mail>
+  </Catalog.ResourceDescription>
+
+  <Platform.Link>
+    <XHTML href="test.html"/>
+  </Platform.Link>
+
+  <Platform.Rendering height="24" width="10"/>
+</Template>
