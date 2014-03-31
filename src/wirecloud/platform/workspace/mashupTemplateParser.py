@@ -245,8 +245,8 @@ def fillWorkspaceUsingTemplate(workspace, template):
             new_forced_values['ioperator'][new_id] = ioperator_forced_values
 
     for connection in workspace_info['wiring']['connections']:
-        source_id = connection['source']['id']
-        target_id = connection['target']['id']
+        source_id = str(connection['source']['id'])
+        target_id = str(connection['target']['id'])
 
         if connection['source']['type'] == 'iwidget':
             source_id = iwidget_id_mapping[source_id].id

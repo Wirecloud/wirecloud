@@ -40,7 +40,7 @@ from wirecloud.commons.utils.wgt import WgtFile
 from wirecloud.platform.get_data import get_workspace_data, get_global_workspace_data
 from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Workspace
 from wirecloud.platform.settings import ALLOW_ANONYMOUS_ACCESS
-from wirecloud.platform.workspace.mashupTemplateGenerator import build_rdf_template_from_workspace, build_template_from_workspace
+from wirecloud.platform.workspace.mashupTemplateGenerator import build_json_template_from_workspace, build_rdf_template_from_workspace, build_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import check_mashup_dependencies, buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate, MissingDependencies
 from wirecloud.platform.workspace.utils import deleteTab, createTab, get_workspace_list, setVisibleTab, set_variable_value
 from wirecloud.platform.markets.utils import get_market_managers
@@ -178,8 +178,8 @@ class WorkspaceCollection(Resource):
                     'description': 'Temporal mashup for the workspace copy operation',
                     'email': 'a@example.com',
                 }
-                # TODO use build_json_template_from_workspace instead of build_template_from_workspace
-                template = TemplateParser(build_template_from_workspace(options, from_ws, from_ws.creator))
+
+                template = TemplateParser(build_json_template_from_workspace(options, from_ws, from_ws.creator))
 
             try:
                 check_mashup_dependencies(template, request.user)
@@ -501,8 +501,8 @@ class MashupMergeService(Service):
                 'description': 'Temporal mashup for merging operation',
                 'email': 'a@example.com',
             }
-            # TODO use build_json_template_from_workspace instead of build_template_from_workspace
-            template = TemplateParser(build_template_from_workspace(options, from_ws, from_ws.creator))
+
+            template = TemplateParser(build_json_template_from_workspace(options, from_ws, from_ws.creator))
 
         try:
             check_mashup_dependencies(template, request.user)
