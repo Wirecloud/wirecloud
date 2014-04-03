@@ -149,8 +149,8 @@ def build_json_template_from_workspace(options, workspace, user):
     else:
         options['description'] = description + '\n' + get_workspace_description(workspace)
 
-    if options.get('author', '').strip() == '':
-        options['author'] = unicode(user)
+    if options.get('authors', '').strip() == '':
+        options['authors'] = unicode(user)
 
     options['requirements'] = []
 
@@ -225,7 +225,7 @@ def build_json_template_from_workspace(options, workspace, user):
             elif preference['name'] in operator['preferences']:
                 value = operator['preferences'][preference['name']]['value']
             else:
-                value = preference['default_value']
+                value = preference['default']
 
             operator_data['preferences'][preference['name']] = {
                 'readonly': status != 'normal',

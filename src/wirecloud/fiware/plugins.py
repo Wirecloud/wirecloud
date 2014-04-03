@@ -90,7 +90,7 @@ class FiWareMarketManager(MarketManager):
             token = user_data['idm_token']
 
         storeclient.upload_resource(
-            resource_info['display_name'],
+            resource_info['title'],
             resource_info['version'],
             "_".join((resource_info['vendor'], resource_info['name'], resource_info['version'])) + '.wgt',
             resource_info['description'],

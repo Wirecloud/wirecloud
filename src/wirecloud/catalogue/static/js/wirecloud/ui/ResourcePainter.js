@@ -73,7 +73,7 @@
             'internalname': resource.uri,
             'vendor': resource.vendor,
             'version': resource.version.text,
-            'author': resource.author,
+            'authors': resource.authors,
             'description': resource.description,
             'type': function () {
                 var label = document.createElement('div');
@@ -135,7 +135,7 @@
                     'title': gettext('License details')
                 });
                 button.addEventListener('click', function () {
-                    window.open(resource.license_url, '_blank');
+                    window.open(resource.licenseurl, '_blank');
                 });
 
                 return button;
@@ -216,7 +216,7 @@
                 image.onerror = function (event) {
                     event.target.src = '/static/images/noimage.png';
                 };
-                image.src = resource.image_url;
+                image.src = resource.image;
                 return image;
             },
             'tags': function (options) {

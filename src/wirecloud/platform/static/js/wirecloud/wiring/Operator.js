@@ -42,7 +42,7 @@
 
         Object.defineProperty(this, 'meta', {value: operator_meta});
         Object.defineProperty(this, 'name', {value: operator_meta.name});
-        Object.defineProperty(this, 'display_name', {value: operator_meta.display_name});
+        Object.defineProperty(this, 'title', {value: operator_meta.title});
         Object.defineProperty(this, 'id', {value: "" + id});
         Object.defineProperty(this, 'logManager', {value: new Wirecloud.wiring.OperatorLogManager(this)});
 
@@ -71,7 +71,7 @@
                 readonly = operator_status.preferences[key].readonly;
                 hidden = operator_status.preferences[key].hidden;
             } else {
-                value = this.meta.preferenceList[i].default_value;
+                value = this.meta.preferenceList[i].default;
                 readonly = hidden = false;
             }
             preferences[key] = new Wirecloud.UserPref(this.meta.preferenceList[i], readonly, hidden, value);

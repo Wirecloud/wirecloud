@@ -91,15 +91,15 @@ def build_xml_document(options):
     etree.SubElement(desc, 'Vendor').text = options.get('vendor')
     etree.SubElement(desc, 'Name').text = options.get('name')
     etree.SubElement(desc, 'Version').text = options.get('version')
-    etree.SubElement(desc, 'DisplayName').text = options.get('display_name')
-    etree.SubElement(desc, 'Author').text = options.get('author')
+    etree.SubElement(desc, 'DisplayName').text = options.get('title')
+    etree.SubElement(desc, 'Author').text = options.get('authors')
     etree.SubElement(desc, 'Mail').text = options.get('email')
     etree.SubElement(desc, 'Description').text = options.get('description')
-    etree.SubElement(desc, 'ImageURI').text = options.get('image_uri', '')
-    etree.SubElement(desc, 'iPhoneImageURI').text = options.get('iphone_image_uri', '')
-    etree.SubElement(desc, 'WikiURI').text = options.get('doc_uri', '')
+    etree.SubElement(desc, 'ImageURI').text = options.get('image', '')
+    etree.SubElement(desc, 'iPhoneImageURI').text = options.get('smartphoneimage', '')
+    etree.SubElement(desc, 'WikiURI').text = options.get('doc', '')
     etree.SubElement(desc, 'License').text = options.get('license', '')
-    etree.SubElement(desc, 'LicenseURL').text = options.get('license_url', '')
+    etree.SubElement(desc, 'LicenseURL').text = options.get('licenseurl', '')
 
     if len(options['requirements']) > 0:
         requirements = etree.SubElement(desc, 'Requirements')
@@ -122,7 +122,7 @@ def build_xml_document(options):
                     label=pref['label'],
                     description=pref['description'],
                     readonly=str(pref['readonly']).lower(),
-                    default=pref['default_value'])
+                    default=pref['default'])
 
                 if pref['secure']:
                     pref_element.set('secure', 'true')
@@ -143,7 +143,7 @@ def build_xml_document(options):
                     type=prop['type'],
                     label=prop['label'],
                     description=prop['description'],
-                    default=prop['default_value'],
+                    default=prop['default'],
                     secure=str(prop['secure']).lower())
 
     if options['type'] == 'mashup':

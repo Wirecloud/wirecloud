@@ -101,7 +101,7 @@ def get_resource_data(untranslated_resource, user, request=None):
         'permissions' : {
             'uninstall': resource.public is False and resource.users.filter(pk=user.pk).exists(),
         },
-        'author': resource.author,
+        'authors': resource.author,
         'displayName': displayName,
         'description': resource.description,
         'mail': resource.mail,

@@ -245,7 +245,7 @@
                 image.onerror = function (event) {
                     event.target.src = '/static/images/noimage.png';
                 };
-                image.src = offering.image_url;
+                image.src = offering.image;
                 return image;
             },
             'tags': function (options) {

@@ -21,15 +21,16 @@ from copy import deepcopy
 import urlparse
 
 from wirecloud.commons.utils.template.base import TemplateParseException
-from wirecloud.commons.utils.template.parsers.xml import WirecloudTemplateParser
 from wirecloud.commons.utils.template.parsers.json import JSONTemplateParser
+from wirecloud.commons.utils.template.parsers.next_xml import ApplicationMashupTemplateParser
 from wirecloud.commons.utils.template.parsers.rdf import RDFTemplateParser
+from wirecloud.commons.utils.template.parsers.xml import WirecloudTemplateParser
 
 
 __all__ = ('TemplateParseException', 'TemplateParser')
 
 
-BASIC_URL_FIELDS = ['doc_uri', 'image_uri', 'iphone_image_uri']
+BASIC_URL_FIELDS = ['doc', 'image', 'smartphoneimage']
 
 
 def absolutize_url_field(value, base_url):
@@ -44,7 +45,7 @@ class TemplateParser(object):
 
     _doc = None
     _parser = None
-    parsers = (WirecloudTemplateParser, JSONTemplateParser, RDFTemplateParser)
+    parsers = (ApplicationMashupTemplateParser, WirecloudTemplateParser, JSONTemplateParser, RDFTemplateParser)
 
     def __init__(self, template, base=None):
 
@@ -148,8 +149,8 @@ class TemplateParser(object):
         del info['translations']
         del info['translation_index_usage']
 
-        if info['display_name'] == '':
-            info['display_name'] = info['name']
+        if info['title'] == '':
+            info['title'] = info['name']
 
         # process url fields
         for field in BASIC_URL_FIELDS:

@@ -207,23 +207,23 @@ class RDFTemplateParser(object):
 
         license = self._get_field(DCTERMS, 'license', self._rootURI, required=False, default=None, id_=True)
         if license is not None:
-            self._info['license_url'] = unicode(license)
+            self._info['licenseurl'] = unicode(license)
             self._info['license'] = self._get_field(RDFS, 'label', license, required=False)
         else:
-            self._info['license_url'] = ''
+            self._info['licenseurl'] = ''
             self._info['license'] = ''
 
         self._info['description'] = self._get_translation_field(DCTERMS, 'description', self._rootURI, 'description', type='resource', field='description')
 
-        author = self._get_field(DCTERMS, 'creator', self._rootURI, id_=True)
-        self._info['author'] = self._get_field(FOAF, 'name', author)
+        authors = self._get_field(DCTERMS, 'creator', self._rootURI, required=False, id_=True)
+        self._info['authors'] = self._get_field(FOAF, 'name', authors, required=False)
 
-        self._info['image_uri'] = self._get_field(WIRE, 'hasImageUri', self._rootURI)
-        self._info['iphone_image_uri'] = self._get_field(WIRE, 'hasiPhoneImageUri', self._rootURI, required=False)
+        self._info['image'] = self._get_field(WIRE, 'hasImageUri', self._rootURI, required=False)
+        self._info['smartphoneimage'] = self._get_field(WIRE, 'hasiPhoneImageUri', self._rootURI, required=False)
 
-        self._info['doc_uri'] = self._get_field(FOAF, 'page', self._rootURI, required=False)
+        self._info['doc'] = self._get_field(FOAF, 'page', self._rootURI, required=False)
 
-        self._info['display_name'] = self._get_translation_field(WIRE, 'displayName', self._rootURI, 'display_name', required=False, type='resource', field='display_name')
+        self._info['title'] = self._get_translation_field(WIRE, 'displayName', self._rootURI, 'title', required=False, type='resource', field='title')
 
         addr_element = self._get_field(VCARD, 'addr', self._rootURI, id_=True)
         self._info['email'] = self._get_field(VCARD, 'email', addr_element)
@@ -403,7 +403,7 @@ class RDFTemplateParser(object):
                 'label': self._get_translation_field(RDFS, 'label', preference, var_name + '_label', required=False, type='vdef', variable=var_name, field='label'),
                 'description': self._get_translation_field(DCTERMS, 'description', preference, var_name + '_description', required=False, type='vdef', variable=var_name, field='description'),
                 'readonly': self._get_field(WIRE, 'readonly', preference, required=False).lower() == 'true',
-                'default_value': self._get_field(WIRE, 'default', preference, required=False),
+                'default': self._get_field(WIRE, 'default', preference, required=False),
                 'value': self._get_field(WIRE, 'value', preference, required=False, default=None),
                 'secure': self._get_field(WIRE, 'secure', preference, required=False).lower() == 'true',
             }
@@ -430,7 +430,7 @@ class RDFTemplateParser(object):
                 'type': self._get_field(WIRE, 'type', prop, required=False),
                 'label': self._get_translation_field(RDFS, 'label', prop, var_name + '_label', required=False, type='vdef', variable=var_name, field='label'),
                 'description': self._get_translation_field(DCTERMS, 'description', prop, var_name + '_description', required=False, type='vdef', variable=var_name, field='description'),
-                'default_value': self._get_field(WIRE, 'default', prop, required=False),
+                'default': self._get_field(WIRE, 'default', prop, required=False),
                 'secure': self._get_field(WIRE, 'secure', prop, required=False).lower() == 'true',
             })
 

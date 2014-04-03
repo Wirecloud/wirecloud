@@ -270,8 +270,8 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         addr = graph.objects(mashup_uri, self.VCARD['addr']).next()
         self.assertRDFElement(graph, addr, self.VCARD, 'email', u'a@b.com')
 
-        author = graph.objects(mashup_uri, self.DCTERMS['creator']).next()
-        self.assertRDFElement(graph, author, self.FOAF, 'name', u'test')
+        authors = graph.objects(mashup_uri, self.DCTERMS['creator']).next()
+        self.assertRDFElement(graph, authors, self.FOAF, 'name', u'test')
 
     def check_empty_rdf_wiring_info(self, graph, mashup_uri):
 
@@ -286,7 +286,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             'vendor': 'Wirecloud Test Suite',
             'name': 'Test Mashup',
             'version': '1',
-            'author': 'test',
+            'authors': 'test',
             'email': 'a@b.com',
         }
         template = build_template_from_workspace(options, self.workspace, self.user)
@@ -304,9 +304,9 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             'vendor': 'Wirecloud Test Suite',
             'name': 'Test Mashup',
             'version': '1',
-            'author': 'test',
+            'authors': 'test',
             'email': 'a@b.com',
-            'doc_uri': 'http://example.com/test-mashup/docs/index.html',
+            'doc': 'http://example.com/test-mashup/docs/index.html',
             'readOnlyWidgets': False,
         }
         template = build_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
@@ -329,9 +329,9 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             'vendor': 'Wirecloud Test Suite',
             'name': 'Test Mashup',
             'version': '1',
-            'author': 'test',
+            'authors': 'test',
             'email': 'a@b.com',
-            'doc_uri': 'http://example.com/test-mashup/docs/index.html',
+            'doc': 'http://example.com/test-mashup/docs/index.html',
             'readOnlyWidgets': True,
         }
         template = build_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
@@ -356,7 +356,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             'vendor': 'Wirecloud Test Suite',
             'name': 'Test Mashup',
             'version': '1',
-            'author': 'test',
+            'authors': 'test',
             'email': 'a@b.com',
             'readOnlyWidgets': False,
             'parametrization': {
@@ -396,7 +396,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             'vendor': u'Wirecloud Test Suite',
             'name': u'Test Mashup',
             'version': u'1',
-            'author': u'test',
+            'authors': u'test',
             'email': u'a@b.com',
         }
         # Basic info
@@ -416,7 +416,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             'vendor': u'Wirecloud Test Suite',
             'name': u'Test Mashup',
             'version': u'1',
-            'author': u'test',
+            'authors': u'test',
             'email': u'a@b.com',
             'readOnlyWidgets': False,
         }
@@ -457,7 +457,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             'vendor': u'Wirecloud Test Suite',
             'name': u'Test Mashup',
             'version': u'1',
-            'author': u'test',
+            'authors': u'test',
             'email': u'a@b.com',
             'readOnlyWidgets': True,
         }
@@ -499,7 +499,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             'vendor': 'Wirecloud Test Suite',
             'name': 'Test Mashup',
             'version': '1',
-            'author': 'test',
+            'authors': 'test',
             'email': 'a@b.com',
             'readOnlyWidgets': False,
             'parametrization': {
@@ -564,7 +564,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             'vendor': u'Wirecloud Test Suite',
             'name': u'Test Mashup with ñ',
             'version': u'1',
-            'author': u'author with é',
+            'authors': u'author with é',
             'email': u'a@b.com',
             'readOnlyWidgets': True,
         }
@@ -581,8 +581,8 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         addr = graph.objects(mashup_uri, self.VCARD['addr']).next()
         self.assertRDFElement(graph, addr, self.VCARD, 'email', u'a@b.com')
 
-        author = graph.objects(mashup_uri, self.DCTERMS['creator']).next()
-        self.assertRDFElement(graph, author, self.FOAF, 'name', u'author with é')
+        authors = graph.objects(mashup_uri, self.DCTERMS['creator']).next()
+        self.assertRDFElement(graph, authors, self.FOAF, 'name', u'author with é')
 
 
 class ParameterizedWorkspaceParseTestCase(CacheTestCase):

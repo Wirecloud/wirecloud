@@ -28,8 +28,8 @@
      */
     var UserPrefDef = function UserPrefDef(name, type, options) {
 
-        if (options.default_value != null && typeof options.default_value !== "string") {
-            throw new TypeError('Invalid default_value option');
+        if (options.default != null && typeof options.default !== "string") {
+            throw new TypeError('Invalid default option');
         }
 
         if (type === 'list') {
@@ -48,12 +48,12 @@
         Object.defineProperty(this, 'options', {value: options});
 
         var default_value = '';
-        if (options.type !== 'boolean' && options.default_value != null) {
-            default_value = options.default_value;
+        if (options.type !== 'boolean' && options.default != null) {
+            default_value = options.default;
         } else if (options.type === 'boolean') {
-            default_value = options.default_value.trim().toLowerCase() === 'true';
+            default_value = options.default.trim().toLowerCase() === 'true';
         }
-        Object.defineProperty(this, 'default_value', {value: default_value});
+        Object.defineProperty(this, 'default', {value: default_value});
     };
 
     Wirecloud.UserPrefDef = UserPrefDef;

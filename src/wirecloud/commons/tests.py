@@ -27,6 +27,7 @@ from wirecloud.commons.utils.template.parsers import TemplateParser
 from wirecloud.commons.utils.template.writers.json import write_json_description
 from wirecloud.commons.utils.template.writers.rdf import write_rdf_description
 from wirecloud.commons.utils.template.writers.xml import write_xml_description
+from wirecloud.commons.utils.template.writers.next_xml import write_xml_description as write_next_xml_description
 
 
 class TemplateUtilsTestCase(TestCase):
@@ -44,15 +45,15 @@ class TemplateUtilsTestCase(TestCase):
             'vendor': 'Wirecloud',
             'name': 'TemplateTestOperator',
             'version': '1.0',
-            'display_name': '',
+            'title': '',
             'description': '',
-            'author': '',
+            'authors': '',
             'email': 'email@example.com',
-            'image_uri': '',
-            'iphone_image_uri': '',
-            'doc_uri': '',
+            'image': '',
+            'smartphoneimage': '',
+            'doc': '',
             'license': '',
-            'license_url': '',
+            'licenseurl': '',
             'requirements': [],
             'preferences': [],
             'properties': [],
@@ -73,15 +74,15 @@ class TemplateUtilsTestCase(TestCase):
             'vendor': 'Wirecloud',
             'name': 'TemplateTestOperator',
             'version': '2.0',
-            'display_name': 'Template Test Operator',
+            'title': 'Template Test Operator',
             'description': 'test',
-            'author': 'author_test',
+            'authors': 'author_test',
             'email': 'test@example.com',
-            'image_uri': 'images/catalogue.png',
-            'iphone_image_uri': 'images/smartphone.png',
-            'doc_uri': 'docs/index.html',
+            'image': 'images/catalogue.png',
+            'smartphoneimage': 'images/smartphone.png',
+            'doc': 'docs/index.html',
             'license': 'Apache License 2',
-            'license_url': 'http://www.apache.org/licenses/LICENSE-2.0.html',
+            'licenseurl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
             ],
@@ -97,7 +98,7 @@ class TemplateUtilsTestCase(TestCase):
                     'readonly': False,
                     'label': 'Preference label',
                     'description': 'Preference description',
-                    'default_value': 'value',
+                    'default': 'value',
                     'value': None
                 },
                 {
@@ -107,7 +108,7 @@ class TemplateUtilsTestCase(TestCase):
                     'readonly': True,
                     'label': 'Preference label',
                     'description': 'Preference description',
-                    'default_value': '',
+                    'default': '',
                     'value': '5'
                 }
             ],
@@ -118,7 +119,7 @@ class TemplateUtilsTestCase(TestCase):
                     'secure': False,
                     'label': 'Prop1',
                     'description': 'description 1',
-                    'default_value': 'value1',
+                    'default': 'value1',
                 },
                 {
                     'name': 'prop2',
@@ -126,7 +127,7 @@ class TemplateUtilsTestCase(TestCase):
                     'secure': True,
                     'label': 'Prop2',
                     'description': 'description 2',
-                    'default_value': 'value2',
+                    'default': 'value2',
                 }
             ],
             'wiring': {
@@ -195,15 +196,15 @@ class TemplateUtilsTestCase(TestCase):
             'vendor': 'Wirecloud',
             'name': 'TemplateTestOperator',
             'version': '2.0',
-            'display_name': '__MSG_display_name__',
+            'title': '__MSG_title__',
             'description': '__MSG_description__',
-            'author': 'author_test',
+            'authors': 'author_test',
             'email': 'test@example.com',
-            'image_uri': 'images/catalogue.png',
-            'iphone_image_uri': 'images/smartphone.png',
-            'doc_uri': 'docs/index.html',
+            'image': 'images/catalogue.png',
+            'smartphoneimage': 'images/smartphone.png',
+            'doc': 'docs/index.html',
             'license': 'Apache License 2',
-            'license_url': 'http://www.apache.org/licenses/LICENSE-2.0.html',
+            'licenseurl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
             ],
@@ -219,7 +220,7 @@ class TemplateUtilsTestCase(TestCase):
                     'readonly': False,
                     'label': '__MSG_pref1_label__',
                     'description': '__MSG_pref1_description__',
-                    'default_value': 'value',
+                    'default': 'value',
                     'value': None
                 },
                 {
@@ -229,7 +230,7 @@ class TemplateUtilsTestCase(TestCase):
                     'readonly': True,
                     'label': '__MSG_pref2_label__',
                     'description': '__MSG_pref2_description__',
-                    'default_value': '',
+                    'default': '',
                     'value': '5'
                 }
             ],
@@ -240,7 +241,7 @@ class TemplateUtilsTestCase(TestCase):
                     'secure': False,
                     'label': '__MSG_prop1_label__',
                     'description': '__MSG_prop1_description__',
-                    'default_value': 'value1',
+                    'default': 'value1',
                 },
                 {
                     'name': 'prop2',
@@ -248,7 +249,7 @@ class TemplateUtilsTestCase(TestCase):
                     'secure': True,
                     'label': '__MSG_prop2_label__',
                     'description': '__MSG_prop2_description__',
-                    'default_value': 'value2',
+                    'default': 'value2',
                 }
             ],
             'wiring': {
@@ -310,7 +311,7 @@ class TemplateUtilsTestCase(TestCase):
             'default_lang': 'en',
             'translations': {
                 'en': {
-                    'display_name': 'Template Test Operator',
+                    'title': 'Template Test Operator',
                     'description': 'description',
                     'pref1_option0_label': 'Option1 label',
                     'pref1_option1_label': 'Option2 label',
@@ -339,7 +340,7 @@ class TemplateUtilsTestCase(TestCase):
                     'output3_description': 'Output3 description',
                 },
                 'es': {
-                    'display_name': 'Operador de prueba',
+                    'title': 'Operador de prueba',
                     'description': 'descripción',
                     'pref1_option0_label': 'Etiqueta de la opción 1',
                     'pref1_option1_label': 'Etiqueta de la opción 2',
@@ -369,7 +370,7 @@ class TemplateUtilsTestCase(TestCase):
                 }
             },
             'translation_index_usage': {
-                'display_name': [{'type': 'resource', 'field': 'display_name'}],
+                'title': [{'type': 'resource', 'field': 'title'}],
                 'description': [{'type': 'resource', 'field': 'description'}],
                 'pref1_option0_label': [{'type': 'upo', 'variable': 'pref1', 'option': 0}],
                 'pref1_option1_label': [{'type': 'upo', 'variable': 'pref1', 'option': 1}],
@@ -404,19 +405,25 @@ class TemplateUtilsTestCase(TestCase):
             'vendor': 'Wirecloud',
             'name': 'TemplateTestMashup',
             'version': '1.0',
-            'display_name': '',
+            'title': '',
             'description': '',
-            'author': '',
+            'authors': '',
             'email': 'email@example.com',
-            'image_uri': '',
-            'iphone_image_uri': '',
-            'doc_uri': '',
+            'image': '',
+            'smartphoneimage': '',
+            'doc': '',
             'license': '',
-            'license_url': '',
+            'licenseurl': '',
             'requirements': [],
             'params': [],
             'preferences': {},
-            'tabs': [],
+            'tabs': [
+                {
+                    'name': 'Tab 1',
+                    'preferences': {},
+                    'resources': []
+                }
+            ],
             'wiring': {
                 'inputs': [],
                 'outputs': [],
@@ -434,15 +441,15 @@ class TemplateUtilsTestCase(TestCase):
             'vendor': 'Wirecloud',
             'name': 'TemplateTestMashup',
             'version': '1.0',
-            'display_name': 'Template Test Mashup',
+            'title': 'Template Test Mashup',
             'description': 'test',
-            'author': 'author_test',
+            'authors': 'author_test',
             'email': 'test@example.com',
-            'image_uri': 'images/catalogue.png',
-            'iphone_image_uri': 'images/smartphone.png',
-            'doc_uri': 'docs/index.html',
+            'image': 'images/catalogue.png',
+            'smartphoneimage': 'images/smartphone.png',
+            'doc': 'docs/index.html',
             'license': 'Apache License 2',
-            'license_url': 'http://www.apache.org/licenses/LICENSE-2.0.html',
+            'licenseurl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
                 {'type': 'feature', 'name': 'PubSub'}
@@ -619,15 +626,15 @@ class TemplateUtilsTestCase(TestCase):
             'vendor': 'Wirecloud',
             'name': 'TemplateTestMashup',
             'version': '1.0',
-            'display_name': '__MSG_display_name__',
+            'title': '__MSG_title__',
             'description': '__MSG_description__',
-            'author': 'author_test',
+            'authors': 'author_test',
             'email': 'test@example.com',
-            'image_uri': 'images/catalogue.png',
-            'iphone_image_uri': 'images/smartphone.png',
-            'doc_uri': 'docs/index.html',
+            'image': 'images/catalogue.png',
+            'smartphoneimage': 'images/smartphone.png',
+            'doc': 'docs/index.html',
             'license': 'Apache License 2',
-            'license_url': 'http://www.apache.org/licenses/LICENSE-2.0.html',
+            'licenseurl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
                 {'type': 'feature', 'name': 'PubSub'}
@@ -797,16 +804,16 @@ class TemplateUtilsTestCase(TestCase):
             'default_lang': 'en',
             'translations': {
                 'en': {
-                    'display_name': 'Template Test Operator',
+                    'title': 'Template Test Operator',
                     'description': 'description'
                 },
                 'es': {
-                    'display_name': 'Operador de prueba',
+                    'title': 'Operador de prueba',
                     'description': 'descripción'
                 }
             },
             'translation_index_usage': {
-                'display_name': [{'type': 'resource', 'field': 'display_name'}],
+                'title': [{'type': 'resource', 'field': 'title'}],
                 'description': [{'type': 'resource', 'field': 'description'}]
             },
         }
@@ -816,15 +823,15 @@ class TemplateUtilsTestCase(TestCase):
             'vendor': 'Wirecloud',
             'name': 'TemplateTestMashup',
             'version': '1.0',
-            'display_name': 'Template Test Mashup',
+            'title': 'Template Test Mashup',
             'description': 'test',
-            'author': 'author_test',
+            'authors': 'author_test',
             'email': 'test@example.com',
-            'image_uri': 'images/catalogue.png',
-            'iphone_image_uri': 'images/smartphone.png',
-            'doc_uri': 'docs/index.html',
+            'image': 'images/catalogue.png',
+            'smartphoneimage': 'images/smartphone.png',
+            'doc': 'docs/index.html',
             'license': 'Apache License 2',
-            'license_url': 'http://www.apache.org/licenses/LICENSE-2.0.html',
+            'licenseurl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
                 {'type': 'feature', 'name': 'PubSub'}
@@ -946,15 +953,15 @@ class TemplateUtilsTestCase(TestCase):
             'vendor': 'Wirecloud',
             'name': 'TemplateTest',
             'version': '1.0',
-            'display_name': '',
+            'title': '',
             'description': '',
-            'author': '',
+            'authors': '',
             'email': 'email@example.com',
-            'image_uri': '',
-            'iphone_image_uri': '',
-            'doc_uri': '',
+            'image': '',
+            'smartphoneimage': '',
+            'doc': '',
             'license': '',
-            'license_url': '',
+            'licenseurl': '',
             'requirements': [],
             'preferences': [],
             'properties': [],
@@ -979,15 +986,15 @@ class TemplateUtilsTestCase(TestCase):
             'vendor': 'Wirecloud',
             'name': 'TemplateTest',
             'version': '2.0',
-            'display_name': 'Template Test',
+            'title': 'Template Test',
             'description': 'test',
-            'author': 'author_test',
+            'authors': 'author_test',
             'email': 'test@example.com',
-            'image_uri': 'images/catalogue.png',
-            'iphone_image_uri': 'images/smartphone.png',
-            'doc_uri': 'docs/index.html',
+            'image': 'images/catalogue.png',
+            'smartphoneimage': 'images/smartphone.png',
+            'doc': 'docs/index.html',
             'license': 'Apache License 2',
-            'license_url': 'http://www.apache.org/licenses/LICENSE-2.0.html',
+            'licenseurl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
             ],
@@ -1003,7 +1010,7 @@ class TemplateUtilsTestCase(TestCase):
                     'readonly': False,
                     'label': 'Preference label',
                     'description': 'Preference description',
-                    'default_value': '',
+                    'default': '',
                     'value': None
                 },
                 {
@@ -1013,7 +1020,7 @@ class TemplateUtilsTestCase(TestCase):
                     'readonly': True,
                     'label': 'Preference label',
                     'description': 'Preference description',
-                    'default_value': 'value',
+                    'default': 'value',
                     'value': '5'
                 }
             ],
@@ -1024,7 +1031,7 @@ class TemplateUtilsTestCase(TestCase):
                     'secure': False,
                     'label': 'Prop1',
                     'description': 'description 1',
-                    'default_value': 'value1',
+                    'default': 'value1',
                 },
                 {
                     'name': 'prop2',
@@ -1032,7 +1039,7 @@ class TemplateUtilsTestCase(TestCase):
                     'secure': True,
                     'label': 'Prop2',
                     'description': 'description 2',
-                    'default_value': 'value2',
+                    'default': 'value2',
                 }
             ],
             'wiring': {
@@ -1324,3 +1331,75 @@ class TemplateUtilsTestCase(TestCase):
 
         self.assertEqual(processed_info, self.widget_info)
     test_xml_parser_writer_widget.tags = ('template', 'fiware-ut-14')
+
+    def test_next_xml_parser_writer_basic_operator(self):
+
+        xml_description = write_next_xml_description(self.basic_operator_info)
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.basic_operator_info)
+
+    def test_next_xml_parser_writer_operator(self):
+
+        xml_description = write_next_xml_description(self.operator_info)
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.operator_info)
+
+    def test_next_xml_parser_writer_operator_with_translations(self):
+
+        xml_description = write_json_description(self.operator_with_translation_info)
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.operator_with_translation_info)
+
+    def test_next_xml_parser_writer_basic_mashup(self):
+
+        xml_description = write_next_xml_description(self.basic_mashup_info)
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.basic_mashup_info)
+
+    def test_next_xml_parser_writer_mashup(self):
+
+        xml_description = write_next_xml_description(self.mashup_info)
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.check_full_mashup(processed_info, self.mashup_info)
+
+    def test_next_xml_parser_writer_mashup_with_translations(self):
+
+        xml_description = write_next_xml_description(self.mashup_with_translations_info)
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.check_full_mashup(processed_info, self.mashup_with_translations_info)
+
+    def test_next_xml_parser_writer_mashup_with_params(self):
+
+        xml_description = write_next_xml_description(self.mashup_with_params)
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.check_full_mashup(processed_info, self.mashup_with_params)
+
+    def test_next_xml_parser_writer_basic_widget(self):
+
+        xml_description = write_next_xml_description(self.basic_widget_info)
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.basic_widget_info)
+
+    def test_next_xml_parser_writer_widget(self):
+
+        xml_description = write_next_xml_description(self.widget_info)
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.widget_info)

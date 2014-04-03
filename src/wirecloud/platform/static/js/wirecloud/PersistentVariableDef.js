@@ -28,8 +28,8 @@
      */
     var PersistentVariableDef = function PersistentVariableDef(name, type, options) {
 
-        if (options.default_value != null && typeof options.default_value !== "string") {
-            throw new TypeError('Invalid default_value option');
+        if (options.default != null && typeof options.default !== "string") {
+            throw new TypeError('Invalid default option');
         }
 
         // the value option is only used on the server side
@@ -42,7 +42,7 @@
         Object.defineProperty(this, 'label', {value: options.label});
         Object.defineProperty(this, 'description', {value: options.description});
         Object.defineProperty(this, 'options', {value: options});
-        Object.defineProperty(this, 'default_value', {value: options.default_value});
+        Object.defineProperty(this, 'default', {value: options.default});
     };
 
     Wirecloud.PersistentVariableDef = PersistentVariableDef;

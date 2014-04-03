@@ -58,7 +58,7 @@ class JSONTemplateParser(object):
 
     def _init(self):
 
-        for field in ['doc_uri', 'image_uri', 'iphone_image_uri']:
+        for field in ['doc', 'image', 'smartphoneimage']:
             if field not in self._info:
                 self._info[field] = ''
 
@@ -75,7 +75,7 @@ class JSONTemplateParser(object):
         if 'translations' not in self._info:
             self._info['translations'] = {}
 
-        self._add_translation_index(self._info['display_name'], type='resource', field='display_name')
+        self._add_translation_index(self._info['title'], type='resource', field='title')
         self._add_translation_index(self._info['description'], type='resource', field='description')
 
         if self._info['type'] != 'mashup':

@@ -43,8 +43,8 @@
                     {name: 'version', label: gettext('Version'), type: 'version',  required: true},
                     {name: 'email', label: gettext('Email'), type: 'text',  required: true},
                     {name: 'description', label: gettext('Description'), type: 'longtext'},
-                    {name: 'doc_uri', label: gettext('Homepage'), type: 'text'},
-                    {name: 'author', label: gettext('Author'), type: 'text',  initialValue: user_name, defaultValue: user_name}
+                    {name: 'doc', label: gettext('Homepage'), type: 'text'},
+                    {name: 'authors', label: gettext('Author'), type: 'text',  initialValue: user_name, defaultValue: user_name}
                 ]
             },
             {

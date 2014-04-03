@@ -236,7 +236,7 @@ def undeploy_tenant_ac(request):
     # If the resource is a mashup, remove the assigned workspace
     template = TemplateParser(wgt_file.get_template())
     if template.get_resource_type() == 'mashup':
-        Workspace.objects.filter(creator=user, name=template.get_resource_info()['display_name']).delete()
+        Workspace.objects.filter(creator=user, name=template.get_resource_info()['title']).delete()
 
     # Uninstall de resource
     template = TemplateParser(wgt_file.get_template())
