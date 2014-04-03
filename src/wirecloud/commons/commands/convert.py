@@ -33,11 +33,13 @@ class ConvertCommand(BaseCommand):
         make_option('-d', '--dest-format',
             action='store',
             dest='dest_format',
-            default='rdf'),
+            default='rdf',
+            help='Specifies the output serialization format for the mashable application component description. Available options are: xml and rdf. Default: rdf.'),
         make_option('', '--rdf-format',
             action='store',
             dest='rdf_format',
-            default='pretty-xml'),
+            default='pretty-xml',
+            help='Specifies the output rdf serialization format fo the mashable application component description. This option only will take effect if the output serialization format is rdf. Available options are: pretty-xml, xml, turtle and n3. Default: pretty-xml.'),
     )
 
     def handle(self, *args, **options):
