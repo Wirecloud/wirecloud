@@ -593,7 +593,9 @@
 
         if (iWidget.getWidth() > this.getColumns()) {
             iWidget.contentWidth = this.getColumns();
-            iWidget._recomputeSize(true);
+            if (iWidget.isVisible()) {
+                iWidget._recomputeSize(true);
+            }
         }
 
         var position = iWidget.getPosition();
