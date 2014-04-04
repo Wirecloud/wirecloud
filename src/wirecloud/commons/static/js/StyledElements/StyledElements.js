@@ -589,6 +589,10 @@ StyledElements.StyledNumericField = function(options) {
 }
 StyledElements.StyledNumericField.prototype = new StyledElements.StyledInputElement();
 
+StyledElements.StyledNumericField.prototype.getValue = function () {
+    return Number(this.inputElement.value);
+};
+
 /**
  * Este componente permite agrupar varios CheckBoxes o RadioButtons, con el
  * objetivo de tratarlos como un único campo de entrada, permitiendo obtener y
