@@ -25,7 +25,7 @@ import os
 
 from django.utils.translation import ugettext as _
 
-from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version, TemplateParseException
+from wirecloud.commons.utils.template.base import TemplateParseException
 from wirecloud.commons.utils.translation import get_trans_index
 
 
@@ -119,11 +119,7 @@ class ApplicationMashupTemplateParser(object):
         self._parse_basic_info()
 
     def _xpath(self, query, element):
-        if self._namespace is not None:
-            return element.xpath(query, namespaces={'t': self._namespace})
-        else:
-            query = query.replace('t:', '')
-            return element.xpath(query)
+        return element.xpath(query, namespaces={'t': self._namespace})
 
     def get_xpath(self, query, element):
         elements = self._xpath(query, element)
@@ -170,16 +166,8 @@ class ApplicationMashupTemplateParser(object):
     def _parse_basic_info(self):
 
         self._info['vendor'] = self._doc.get('vendor', '').strip()
-        if not is_valid_vendor(self._info['vendor']):
-            raise TemplateParseException(_('ERROR: the format of the vendor is invalid.'))
-
         self._info['name'] = self._doc.get('name', '').strip()
-        if not is_valid_name(self._info['name']):
-            raise TemplateParseException(_('ERROR: the format of the name is invalid.'))
-
         self._info['version'] = self._doc.get('version', '').strip()
-        if not is_valid_version(self._info['version']):
-            raise TemplateParseException(_('ERROR: the format of the version number is invalid. Format: X.X.X where X is an integer. Ex. "0.1", "1.11" NOTE: "1.01" should be changed to "1.0.1" or "1.1"'))
 
         self._info['title'] = self._get_field(DISPLAY_NAME_XPATH, self._resource_description, required=False)
         self._add_translation_index(self._info['title'], type='resource', field='title')
@@ -204,12 +192,9 @@ class ApplicationMashupTemplateParser(object):
             return
 
         for requirement in self._xpath(FEATURE_XPATH, requirements_elements[0]):
-            if requirement.get('name', '').strip() == '':
-                raise TemplateParseException('Missing required feature name')
-
             self._info['requirements'].append({
                 'type': 'feature',
-                'name': requirement.get('name')
+                'name': requirement.get('name').strip()
             })
 
     def _parse_wiring_info(self, parse_connections=False):
@@ -265,15 +250,8 @@ class ApplicationMashupTemplateParser(object):
 
         for connection in self._xpath(CONNECTION_XPATH, wiring_element):
 
-            if len(self._xpath(SOURCE_XPATH, connection)) > 0:
-                source_element = self._xpath(SOURCE_XPATH, connection)[0]
-            else:
-                raise TemplateParseException(_('Missing required field: source'))
-
-            if len(self._xpath(SOURCE_XPATH, connection)) > 0:
-                target_element = self._xpath(TARGET_XPATH, connection)[0]
-            else:
-                raise TemplateParseException(_('Missing required field: target'))
+            source_element = self._xpath(SOURCE_XPATH, connection)[0]
+            target_element = self._xpath(TARGET_XPATH, connection)[0]
 
             connection_info = {
                 'readonly': connection.get('readonly', 'false').lower() == 'true',
@@ -490,7 +468,7 @@ class ApplicationMashupTemplateParser(object):
             self._info['translations'][translation.get('lang')] = current_catalogue
 
         if self._info['default_lang'] not in self._info['translations']:
-            raise TemplateParseException(_("ERROR: There isn't a Translation element with the default language (%(default_lang)s) translations") % {'default_lang': self._info['default_lang']})
+            raise TemplateParseException(_("ERROR: There isn't a translation element for the default translation language: (%(default_lang)s)") % {'default_lang': self._info['default_lang']})
 
         for index in self._translation_indexes:
             if index not in self._info['translations'][self._info['default_lang']]:

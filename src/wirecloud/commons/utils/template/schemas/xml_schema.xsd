@@ -28,7 +28,7 @@
 
     <xs:simpleType name="VersionType">
         <xs:restriction base="xs:string">
-            <xs:pattern value="([1-9]\d*\.|0\.)*([1-9]\d*|0)"></xs:pattern>
+            <xs:pattern value="([1-9]\d*\.|0\.)*([1-9]\d*|0)((a|b|rc)[1-9]\d*)?"></xs:pattern>
         </xs:restriction>
     </xs:simpleType>
 
@@ -113,7 +113,12 @@
         <xs:choice minOccurs="0" maxOccurs="unbounded">
             <xs:element name="feature">
                 <xs:complexType>
-                    <xs:attribute name="name" type="macd:NonEmpty">
+                    <xs:attribute name="name" type="macd:NonEmpty" use="required">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Name of the required feature.
+                            </xs:documentation>
+                        </xs:annotation>
                     </xs:attribute>
                 </xs:complexType>
             </xs:element>
@@ -669,10 +674,10 @@
                             </xs:annotation>
                         </xs:element>
                     </xs:sequence>
-                    <xs:attribute name="readonly" type="xs:boolean">
+                    <xs:attribute name="readonly" type="xs:boolean" use="optional">
                         <xs:annotation>
                             <xs:documentation>
-                                Whether this connection is readonly and thus cannot be deleted.
+                                Whether this connection is readonly and thus cannot be deleted. Default: false.
                             </xs:documentation>
                         </xs:annotation>
                     </xs:attribute>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,15 +17,17 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-import re
+from __future__ import unicode_literals
+
+import regex
 
 
 __all__ = ('is_valid_name', 'is_valid_vendor', 'is_valid_version')
 
 
-NAME_RE = re.compile(r'^[^/]+$')
-VENDOR_RE = re.compile(r'^[^/]+$')
-VERSION_RE = re.compile(r'^(?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0)(?:(?:a|b|rc)[1-9]\d*)?$')
+NAME_RE = regex.compile(r'^(\p{L}\p{M}*|[\p{N}_-])+$')
+VENDOR_RE = regex.compile(r'^(\p{L}\p{M}*|[\p{N}_-])+$')
+VERSION_RE = regex.compile(r'^(?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0)(?:(?:a|b|rc)[1-9]\d*)?$')
 
 
 class TemplateParseException(Exception):
@@ -42,14 +44,14 @@ class TemplateParseException(Exception):
 
 def is_valid_name(name):
 
-    return re.match(NAME_RE, name)
+    return regex.match(NAME_RE, name)
 
 
 def is_valid_vendor(vendor):
 
-    return re.match(VENDOR_RE, vendor)
+    return regex.match(VENDOR_RE, vendor)
 
 
 def is_valid_version(version):
 
-    return re.match(VERSION_RE, version)
+    return regex.match(VERSION_RE, version)

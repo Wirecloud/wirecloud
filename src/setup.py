@@ -107,7 +107,8 @@ setup(
         'selenium',
         'pytz',
         'django_relatives',
-        'user-agents'
+        'user-agents',
+        'regex',
     ),
     tests_require=('django-nose'),
     classifiers=(
