@@ -110,6 +110,12 @@
             },
             'date': {
                 get: function () { return currentVersion.date; }
+            },
+            'license': {
+                get: function () { return currentVersion.license; }
+            },
+            'licenseurl': {
+                get: function () { return currentVersion.licenseurl; }
             }
         });
 

@@ -61,6 +61,7 @@ def get_slot_data(widget_id):
 def get_resource_data(untranslated_resource, user, request=None):
     """Gets all the information related to the given widget."""
     resource = untranslated_resource.get_translated_model()
+    resource_info = untranslated_resource.get_processed_info(request)
 
     if urlparse(resource.template_uri).scheme == '':
         template_uri = get_absolute_reverse_url('wirecloud_catalogue.media', kwargs={
@@ -108,6 +109,8 @@ def get_resource_data(untranslated_resource, user, request=None):
         'uriImage': urljoin(template_uri, resource.image_uri),
         'uriWiki': urljoin(template_uri, resource.wiki_page_uri),
         'uriTemplate': template_uri,
+        'license': resource_info['license'],
+        'licenseurl': resource_info['license_url'],
         'outputs': [d for d in data_events],
         'inputs': [d for d in data_slots],
     }
