@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 import filecmp
 import json
 from lxml import etree
@@ -89,7 +91,7 @@ def check_get_requires_authentication(self, url, test_after_request=None):
 
 def check_post_requires_authentication(self, url, data, test_after_request=None):
 
-    response = self.client.post(url, data, content_type='application/json', HTTP_ACCEPT='application/json')
+    response = self.client.post(url, data, content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
     self.assertEqual(response.status_code, 401)
     self.assertTrue('WWW-Authenticate' in response)
 
@@ -102,7 +104,7 @@ def check_post_requires_authentication(self, url, data, test_after_request=None)
         test_after_request(self)
 
     # Check using Accept: text/html
-    response = self.client.post(url, data, content_type='application/json', HTTP_ACCEPT='text/html')
+    response = self.client.post(url, data, content_type='application/json; charset=UTF-8', HTTP_ACCEPT='text/html')
     self.assertEqual(response.status_code, 401)
     self.assertTrue('WWW-Authenticate' in response)
 
@@ -118,7 +120,7 @@ def check_post_requires_permission(self, url, data, test_after_request=None):
     # Authenticate
     self.client.login(username='emptyuser', password='admin')
 
-    response = self.client.post(url, data, content_type='application/json', HTTP_ACCEPT='application/json')
+    response = self.client.post(url, data, content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
     self.assertEqual(response.status_code, 403)
     self.assertEqual(response['Content-Type'], 'application/json; charset=utf-8')
 
@@ -127,15 +129,15 @@ def check_post_requires_permission(self, url, data, test_after_request=None):
 
     # Wirecloud only supports application/json, but error responses may be
     # returned using other formats
-    response = self.client.post(url, data, content_type='application/json', HTTP_ACCEPT='application/json; q=0.2, text/plain')
+    response = self.client.post(url, data, content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json; q=0.2, text/plain')
     self.assertEqual(response.status_code, 403)
     self.assertEqual(response['Content-Type'], 'text/plain; charset=utf-8')
 
-    response = self.client.post(url, data, content_type='application/json', HTTP_ACCEPT='application/json; q=0.2, application/xml')
+    response = self.client.post(url, data, content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json; q=0.2, application/xml')
     self.assertEqual(response.status_code, 403)
     self.assertEqual(response['Content-Type'], 'application/xml; charset=utf-8')
 
-    response = self.client.post(url, data, content_type='application/json', HTTP_ACCEPT='application/json; q=0.2, text/html')
+    response = self.client.post(url, data, content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json; q=0.2, text/html')
     self.assertEqual(response.status_code, 403)
     self.assertEqual(response['Content-Type'], 'text/html; charset=utf-8')
 
@@ -146,7 +148,7 @@ def check_post_bad_request_syntax(self, url):
     self.client.login(username='user_with_workspaces', password='admin')
 
     # Test bad json syntax
-    response = self.client.post(url, 'bad syntax', content_type='application/json', HTTP_ACCEPT='application/json')
+    response = self.client.post(url, 'bad syntax', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
     self.assertEqual(response.status_code, 400)
     response_data = json.loads(response.content)
     self.assertTrue(isinstance(response_data, dict))
@@ -154,7 +156,7 @@ def check_post_bad_request_syntax(self, url):
 
 def check_post_bad_provided_data(self, url, data):
 
-    response = self.client.post(url, data, content_type='application/json', HTTP_ACCEPT='application/json')
+    response = self.client.post(url, data, content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
     self.assertEqual(response.status_code, 400)
     response_data = json.loads(response.content)
     self.assertTrue(isinstance(response_data, dict))
@@ -166,7 +168,7 @@ def check_put_bad_request_syntax(self, url):
     self.client.login(username='user_with_workspaces', password='admin')
 
     # Test bad json syntax
-    response = self.client.put(url, 'bad syntax', content_type='application/json', HTTP_ACCEPT='application/json')
+    response = self.client.put(url, 'bad syntax', content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
     self.assertEqual(response.status_code, 400)
     response_data = json.loads(response.content)
     self.assertTrue(isinstance(response_data, dict))
@@ -203,21 +205,21 @@ def check_put_requires_permission(self, url, data):
     # Authenticate
     self.client.login(username='emptyuser', password='admin')
 
-    response = self.client.put(url, data, content_type='application/json', HTTP_ACCEPT='application/json')
+    response = self.client.put(url, data, content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
     self.assertEqual(response.status_code, 403)
     self.assertEqual(response['Content-Type'], 'application/json; charset=utf-8')
 
     # Wirecloud only supports application/json, but error responses may be
     # returned using other formats
-    response = self.client.put(url, data, content_type='application/json', HTTP_ACCEPT='application/json; q=0.2, text/plain')
+    response = self.client.put(url, data, content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json; q=0.2, text/plain')
     self.assertEqual(response.status_code, 403)
     self.assertEqual(response['Content-Type'], 'text/plain; charset=utf-8')
 
-    response = self.client.put(url, data, content_type='application/json', HTTP_ACCEPT='application/json; q=0.2, application/xml')
+    response = self.client.put(url, data, content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json; q=0.2, application/xml')
     self.assertEqual(response.status_code, 403)
     self.assertEqual(response['Content-Type'], 'application/xml; charset=utf-8')
 
-    response = self.client.put(url, data, content_type='application/json', HTTP_ACCEPT='application/json; q=0.2, text/html')
+    response = self.client.put(url, data, content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json; q=0.2, text/html')
     self.assertEqual(response.status_code, 403)
     self.assertEqual(response['Content-Type'], 'text/html; charset=utf-8')
 
@@ -333,7 +335,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'name': 'test',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
 
         # Check basic response structure
@@ -363,7 +365,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'workspace': '4',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
         response_data = json.loads(response.content)
@@ -384,7 +386,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
             'allow_renaming': True,
             'workspace': '3',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
         response_data = json.loads(response.content)
@@ -414,14 +416,14 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'name': 'bad/name',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
 
         # Make another request with another invalid name
         data = {
             'name': '      ',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
 
     def test_workspace_collection_post_conflict(self):
@@ -435,7 +437,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'name': 'ExistingWorkspace',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 409)
 
     def test_workspace_collection_post_allow_renaming(self):
@@ -450,7 +452,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
             'allow_renaming': True,
             'name': 'ExistingWorkspace'
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
         response_data = json.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
@@ -472,7 +474,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'mashup': 'Wirecloud/nonexistent-mashup/1.0',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
 
     def test_workspace_collection_post_creation_from_operator(self):
@@ -486,7 +488,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'mashup': 'Wirecloud/TestOperator/1.0',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
 
     def test_workspace_collection_post_creation_from_mashup_dry_run(self):
@@ -501,7 +503,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
             'dry_run': True,
             'mashup': 'Wirecloud/test-mashup/1.0',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
 
         # Make the request (now using a string for the dry_run option)
@@ -509,7 +511,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
             'dry_run': 'True',
             'mashup': 'Wirecloud/test-mashup/1.0',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
 
     def test_workspace_collection_post_creation_from_mashup(self):
@@ -523,7 +525,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'mashup': 'Wirecloud/test-mashup/1.0',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
 
         # Check basic response structure
@@ -548,7 +550,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
             'mashup': 'Wirecloud/test-mashup/1.0',
             'name': 'ExistingWorkspace',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 409)
 
     def test_workspace_collection_post_creation_from_mashup_bad_id(self):
@@ -563,7 +565,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
             'mashup': 'bad/id',
             'name': 'NewWorkspace',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
 
     def test_workspace_collection_post_creation_from_mashup_missing_dependencies(self):
@@ -588,7 +590,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'mashup': 'Wirecloud/test-mashup-dependencies/1.0',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
 
         # Check basic response structure
@@ -613,7 +615,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'mashup': 'Wirecloud/test-mashup-dependencies/1.0',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json; q=0.2, application/xml')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json; q=0.2, application/xml')
         self.assertEqual(response.status_code, 422)
         self.assertEqual(response['Content-Type'], 'application/xml; charset=utf-8')
 
@@ -645,7 +647,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'mashup': 'Wirecloud/test-mashup-dependencies/1.0',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
 
         # Check basic response structure
@@ -671,7 +673,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         # Make the request
         data = {}
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
 
         # Check basic response structure
@@ -762,7 +764,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
             'operators': [{'name': 'Operator1'}],
             'connections': [],
         })
-        response = self.client.put(url, data, content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.put(url, data, content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 401)
         self.assertTrue('WWW-Authenticate' in response)
 
@@ -777,7 +779,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         self.assertEqual(wiring_status, old_wiring_status)
 
         # Check using Accept: text/html
-        response = self.client.put(url, data, content_type='application/json', HTTP_ACCEPT='text/html')
+        response = self.client.put(url, data, content_type='application/json; charset=UTF-8', HTTP_ACCEPT='text/html')
         self.assertEqual(response.status_code, 401)
         self.assertTrue('WWW-Authenticate' in response)
 
@@ -806,7 +808,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         # Make the request
         data = json.dumps(new_wiring_status)
-        response = self.client.put(url, data, content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.put(url, data, content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
 
         # Workspace wiring status should have change
@@ -853,7 +855,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'name': 'rest_api_test',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
 
         # Check basic response structure
@@ -875,7 +877,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'name': 'ExistingTab',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 409)
 
     def test_tab_collection_post_bad_request_syntax(self):
@@ -910,7 +912,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'name': 'new tab name'
         }
-        response = self.client.put(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.put(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
 
         # Tab should be renamed
@@ -922,7 +924,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'visible': True
         }
-        response = self.client.put(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.put(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
 
         # Tab should be marked as the default one
@@ -937,7 +939,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'visible': 'true'
         }
-        response = self.client.put(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.put(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
 
         # Tab should be marked as the default one
@@ -1024,7 +1026,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
 
         # Make the request
         data = (103, 102)
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
 
         self.assertEqual(tuple(Workspace.objects.get(pk=3).tab_set.order_by('position').values_list('pk', flat=True)), data)
@@ -1063,7 +1065,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'widget': 'Wirecloud/Test/1.0',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
@@ -1079,7 +1081,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'widget': 'Wirecloud/nonexistent-widget/1.0',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
         response_data = json.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
@@ -1101,7 +1103,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'widget': 'Wirecloud/Test/1.0',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
         response_data = json.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
@@ -1146,7 +1148,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'name': 'New Name',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
         self.assertEqual(response.content, '')
 
@@ -1197,7 +1199,7 @@ class ApplicationMashupAPI(WirecloudTestCase):
         data = {
             'text': 'new value',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
         self.assertEqual(response.content, '')
 
@@ -1685,7 +1687,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
                 'url': 'http://example.com'
             }
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
 
     def test_market_collection_post_duplicated(self):
@@ -1704,7 +1706,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
                 'url': 'http://example.com'
             }
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 409)
         self.assertEqual(response['Content-Type'].split(';', 1)[0], 'application/json')
         response_data = json.loads(response.content)
@@ -1787,7 +1789,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'pref1': {'value': '5'},
             'pref2': {'value': 'false'}
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
         self.assertEqual(response.content, '')
 
@@ -1866,7 +1868,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'name': 'RenamedWorkspace',
             'active': False,
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
 
         user_workspace = UserWorkspace.objects.get(pk=2)
@@ -1877,7 +1879,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'name': 'Workspace',
             'active': 'True',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
 
         user_workspace = UserWorkspace.objects.get(pk=2)
@@ -1911,7 +1913,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         data = [
             {'id': 2, 'value': 'new_value'}
         ]
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
 
         # Check the new value
@@ -1957,7 +1959,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         data = {
             'mashup': 'Wirecloud/test-mashup/1.0',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
 
         # Check new workspace status
@@ -1981,7 +1983,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
         # Make the request
         data = {}
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
 
         # Request should fail as the API requires you to provide a mashup or a workspace id
         self.assertEqual(response.status_code, 422)
@@ -1998,7 +2000,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'mashup': 'Wirecloud/test-mashup/1.0',
             'workspace': '3',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
 
         # Request should fail as the API doesn't allow using both parameters, mashup and workspace, in the same request
         self.assertEqual(response.status_code, 422)
@@ -2014,7 +2016,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         data = {
             'workspace': '3',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
 
         # Check new workspace status
@@ -2040,7 +2042,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         data = {
             'mashup': 'bad/id',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
 
     def test_workspace_merge_service_post_from_nonexistent_mashup(self):
@@ -2054,7 +2056,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         data = {
             'mashup': 'Wirecloud/nonexistent-mashup/1.0',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 422)
 
     def test_workspace_merge_service_post_bad_request_syntax(self):
@@ -2114,7 +2116,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'pref1': {'inherit': 'false', 'value': '5'},
             'pref2': {'inherit': 'true', 'value': 'false'}
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
         self.assertEqual(response.content, '')
 
@@ -2175,7 +2177,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'pref1': '5',
             'pref2': 'true',
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 204)
         self.assertEqual(response.content, '')
 
@@ -2194,7 +2196,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'version': '1.0.5',
             'email': 'test@example.com'
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 401)
         self.assertTrue('WWW-Authenticate' in response)
 
@@ -2211,7 +2213,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'version': '1.0.5',
             'email': 'test@example.com'
         }
-        response = self.client.post(url, json.dumps(data), content_type='application/json', HTTP_ACCEPT='application/json')
+        response = self.client.post(url, json.dumps(data), content_type='application/json; charset=UTF-8', HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 201)
 
     def test_workspace_publish_including_image(self):
