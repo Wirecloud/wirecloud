@@ -248,7 +248,7 @@ def build_json_template_from_workspace(options, workspace, user):
     return options
 
 
-def build_template_from_workspace(options, workspace, user):
+def build_xml_template_from_workspace(options, workspace, user):
 
     build_json_template_from_workspace(options, workspace, user)
 

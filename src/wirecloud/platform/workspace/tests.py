@@ -37,7 +37,7 @@ from wirecloud.platform.get_data import get_global_workspace_data
 from wirecloud.platform.iwidget.utils import SaveIWidget
 from wirecloud.platform.models import IWidget, Tab, UserWorkspace, Variable, Workspace
 from wirecloud.platform.preferences.views import update_workspace_preferences
-from wirecloud.platform.workspace.mashupTemplateGenerator import build_template_from_workspace, build_rdf_template_from_workspace
+from wirecloud.platform.workspace.mashupTemplateGenerator import build_xml_template_from_workspace, build_rdf_template_from_workspace
 from wirecloud.platform.workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 import wirecloud.platform.workspace.utils
 from wirecloud.platform.workspace.utils import sync_base_workspaces
@@ -280,7 +280,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
         self.assertRDFCount(graph, wiring, self.WIRE_M, 'hasiOperator', 0)
         self.assertRDFCount(graph, wiring, self.WIRE_M, 'hasWiringView', 0)
 
-    def test_build_template_from_workspace(self):
+    def test_build_xml_template_from_workspace(self):
 
         options = {
             'vendor': 'Wirecloud Test Suite',
@@ -289,7 +289,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             'author': 'test',
             'email': 'a@b.com',
         }
-        template = build_template_from_workspace(options, self.workspace, self.user)
+        template = build_xml_template_from_workspace(options, self.workspace, self.user)
 
         self.check_basic_xml_workspace_template_info(template)
         self.check_empty_xml_wiring_info(template)
@@ -309,7 +309,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             'doc_uri': 'http://example.com/test-mashup/docs/index.html',
             'readOnlyWidgets': False,
         }
-        template = build_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
+        template = build_xml_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
 
         self.check_basic_xml_workspace_template_info(template)
 
@@ -322,7 +322,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
         self.check_empty_xml_wiring_info(template)
 
-    def test_build_template_from_workspace_read_only_widgets(self):
+    def test_build_xml_template_from_workspace_read_only_widgets(self):
 
         # Workspace with iwidgets
         options = {
@@ -334,7 +334,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
             'doc_uri': 'http://example.com/test-mashup/docs/index.html',
             'readOnlyWidgets': True,
         }
-        template = build_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
+        template = build_xml_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
 
         self.check_basic_xml_workspace_template_info(template)
 
@@ -347,9 +347,9 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
         self.check_empty_xml_wiring_info(template)
 
-    test_build_template_from_workspace_read_only_widgets.tags = ('next',)
+    test_build_xml_template_from_workspace_read_only_widgets.tags = ('next',)
 
-    def test_build_template_from_workspace_forced_values(self):
+    def test_build_xml_template_from_workspace_forced_values(self):
 
         # Workspace with iwidgets
         options = {
@@ -369,7 +369,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
                 'ioperators': {}
             },
         }
-        template = build_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
+        template = build_xml_template_from_workspace(options, self.workspace_with_iwidgets, self.user)
         self.check_basic_xml_workspace_template_info(template)
 
         self.assertXPathAttr(template, '/Template/Catalog.ResourceDescription/IncludedResources/Tab[1]/Resource[@id="1"]/Preference[@name="username"]', 'readonly', 'true')
@@ -388,7 +388,7 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase):
 
         self.check_empty_xml_wiring_info(template)
 
-    test_build_template_from_workspace_forced_values.tags = ('next',)
+    test_build_xml_template_from_workspace_forced_values.tags = ('next',)
 
     def test_build_rdf_template_from_workspace(self):
 
