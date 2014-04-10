@@ -112,12 +112,3 @@
     margin-top: 0px;
     margin-right: 0px;
 }
-
-.resource_details .panel {
-    background-color: rgb(246, 246, 244);
-    border: 1px solid rgb(205, 206, 209);
-    border-radius: 6px 6px 6px 6px;
-    text-align: center;
-    margin: 0 3ex;
-    padding: 1ex;
-}
