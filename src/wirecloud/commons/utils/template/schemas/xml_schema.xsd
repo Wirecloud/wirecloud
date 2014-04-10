@@ -16,13 +16,13 @@
 
     <xs:simpleType name="VendorType">
         <xs:restriction base="xs:string">
-            <xs:pattern value="[\p{L}\p{N}_-]+"></xs:pattern>
+            <xs:pattern value="[^/]+"></xs:pattern>
         </xs:restriction>
     </xs:simpleType>
 
     <xs:simpleType name="NameType">
         <xs:restriction base="xs:string">
-            <xs:pattern value="[\p{L}\p{N}_-]+"></xs:pattern>
+            <xs:pattern value="[^/]+"></xs:pattern>
         </xs:restriction>
     </xs:simpleType>
 
