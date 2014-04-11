@@ -36,7 +36,7 @@ def oauth_discovery(request):
     endpoints = {
         'auth_endpoint': get_absolute_reverse_url('oauth2provider.auth', request),
         'token_endpoint': get_absolute_reverse_url('oauth2provider.token', request),
-        'default_redirect_uri': get_absolute_reverse_url('oauth2provider.default_redirect_uri', request),
+        'default_redirect_uri': get_absolute_reverse_url('oauth.default_redirect_uri', request),
         'version': '2.0',
     }
 

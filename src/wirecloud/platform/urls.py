@@ -19,6 +19,7 @@
 
 from django.conf.urls import patterns, include, url
 from django.views.decorators.cache import cache_page
+from django.views.generic import TemplateView
 from django.views.i18n import javascript_catalog
 
 from wirecloud.platform import views
@@ -178,6 +179,10 @@ urlpatterns = patterns('wirecloud.platform.views',
         workspace_views.WorkspacePublisherEntry(permitted_methods=('POST',)),
         name='wirecloud.workspace_publish'
     ),
+
+    url('^oauth2/default_redirect_uri$',
+        TemplateView.as_view(template_name='wirecloud/oauth2/default_redirect_uri.html'),
+        name='oauth.default_redirect_uri'),
 
 ) + get_plugin_urls() + patterns('wirecloud.platform.views',
 

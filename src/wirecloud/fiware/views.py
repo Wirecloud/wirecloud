@@ -17,15 +17,34 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
+
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME, logout as django_logout
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
+from django.views.decorators.http import require_GET
 
-from wirecloud.commons.utils.http import build_error_response
+from wirecloud.commons.utils.http import build_error_response, get_absolute_reverse_url
 from wirecloud.fiware import DEFAULT_FIWARE_PORTALS
 
 ALLOWED_ORIGINS = [portal['url'] for portal in getattr(settings, 'FIWARE_PORTALS', DEFAULT_FIWARE_PORTALS)]
+
+
+@require_GET
+def oauth_discovery(request):
+
+    from social_auth.backends import get_backends
+
+    fiware_auth_backend = get_backends()['fiware']
+    endpoints = {
+        'auth_endpoint': fiware_auth_backend.AUTHORIZATION_URL,
+        'token_endpoint': fiware_auth_backend.ACCESS_TOKEN_URL,
+        'default_redirect_uri': get_absolute_reverse_url('oauth.default_redirect_uri', request),
+        'version': '2.0',
+    }
+
+    return HttpResponse(json.dumps(endpoints), content_type='application/json; charset=UTF-8')
 
 def login(request):
 

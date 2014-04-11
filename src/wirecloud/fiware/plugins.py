@@ -20,6 +20,7 @@
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.utils.translation import ugettext_lazy as _
+from django.views.decorators.cache import cache_page
 
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.platform.markets.utils import MarketManager
@@ -136,9 +137,17 @@ class FiWarePlugin(WirecloudPlugin):
             return common
 
     def get_urls(self):
-            return patterns('',
-                url(r'^api/marketAdaptor/', include('wirecloud.fiware.marketAdaptor.urls')),
+        urls = patterns('',
+            url(r'^api/marketAdaptor/', include('wirecloud.fiware.marketAdaptor.urls')),
+        )
+
+        if IDM_SUPPORT_ENABLED:
+            from wirecloud.fiware.views import oauth_discovery
+            urls += patterns('',
+                url('^.well-known/oauth$', cache_page(7 * 24 * 60 * 60)(oauth_discovery), name='oauth.discovery'),
             )
+
+        return urls
 
     def get_platform_context_definitions(self):
         return {

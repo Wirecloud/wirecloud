@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -19,17 +19,13 @@
 
 from django.conf.urls import patterns, include, url
 from django.views.decorators.cache import cache_page
-from django.views.generic import TemplateView
 
 from wirecloud.oauth2provider.views import oauth_discovery
 
 urlpatterns = patterns('wirecloud.oauth2provider.views',
 
-    url('^.well-known/oauth$', cache_page(7 * 24 * 60 * 60)(oauth_discovery), name='oauth2provider.discovery'),
+    url('^.well-known/oauth$', cache_page(7 * 24 * 60 * 60)(oauth_discovery), name='oauth.discovery'),
     url('^oauth2/auth$', 'provide_authorization_code', name='oauth2provider.auth'),
     url('^oauth2/token$', 'provide_authorization_token', name='oauth2provider.token'),
-    url('^oauth2/default_redirect_uri$',
-        TemplateView.as_view(template_name='wirecloud/oauth2provider/default_redirect_uri.html'),
-        name='oauth2provider.default_redirect_uri'),
 
 )
