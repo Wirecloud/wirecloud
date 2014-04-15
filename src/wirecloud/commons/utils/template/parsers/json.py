@@ -22,6 +22,7 @@ from __future__ import absolute_import
 import json
 import urlparse
 
+from django.utils import six
 from django.utils.translation import ugettext as _
 
 from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version, TemplateParseException
@@ -46,6 +47,33 @@ class JSONTemplateParser(object):
         if self._info['type'] not in ('widget', 'operator', 'mashup'):
             raise TemplateParseException(_('Invalid resource type: %s') % self._info['type'])
 
+    def _check_array_fields(self, fields, place=None, required=False):
+
+        if place is None:
+            place = self._info
+
+        for field in fields:
+            if field not in place:
+                if required:
+                    raise TemplateParseException('Missing required field: %s' % field)
+
+                place[field] = []
+            elif not isinstance(place[field], (list, tuple)):
+                raise TemplateParseException('An array value was expected for the %s field' % field)
+
+    def _check_string_fields(self, fields, place=None, required=False):
+        if place is None:
+            place = self._info
+
+        for field in fields:
+            if field not in place:
+                if required:
+                    raise TemplateParseException('Missing required field: %s' % field)
+
+                place[field] = ''
+            elif not isinstance(place[field], six.string_types):
+                raise TemplateParseException('A string value was expected for the %s field' % field)
+
     def _add_translation_index(self, value, **kwargs):
         index = get_trans_index(value)
         if not index:
@@ -58,17 +86,22 @@ class JSONTemplateParser(object):
 
     def _init(self):
 
-        for field in ['doc_uri', 'image_uri', 'iphone_image_uri']:
-            if field not in self._info:
-                self._info[field] = ''
-
+        self._check_string_fields(('doc_uri', 'image_uri', 'iphone_image_uri'))
         if self._info['type'] == 'widget':
 
-            if self._info.get('code_content_type') is None:
+            self._check_string_fields(('code_url',), required=True)
+            self._check_array_fields(('preferences', 'properties'))
+
+            if self._info.get('code_content_type', None) is None:
                 self._info['code_content_type'] = 'text/html'
 
-            if self._info.get('code_charset') is None:
+            if self._info.get('code_charset', None) is None:
                 self._info['code_charset'] = 'utf-8'
+
+        if not 'wiring' in self._info:
+            self._info['wiring'] = {}
+
+        self._check_array_fields(('inputs', 'outputs'), place=self._info['wiring'])
 
         # Translations
         self._info['translation_index_usage'] = {}
