@@ -631,6 +631,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level > .icon-menu').click()
 
         self.check_public_workspace()
+    test_public_workspaces.tags = ('fiware-ut-18',)
 
     def test_public_workspaces_anonymous_user(self):
 
@@ -670,6 +671,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         self.wait_wirecloud_ready()
         self.assertEqual(self.get_current_workspace_name(), 'Public Workspace')
+    test_public_workspaces_anonymous_user.tags = ('fiware-ut-18',)
 
     def test_embedded_view(self):
 
@@ -686,6 +688,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.switch_to_frame(iframe)
         self.wait_wirecloud_ready()
         self.check_public_workspace(frame_id='iframe')
+    test_embedded_view.tags = ('fiware-ut-18',)
 
     def check_public_workspace(self, frame_id=None):
         # Check iwidget are loaded correctly
