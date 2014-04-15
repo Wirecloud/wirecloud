@@ -11,7 +11,8 @@
             "type": 0,
             "public": true,
             "creation_date": "2009-01-01T00:00:00+01:00",
-            "template_uri": "http://example.com/path/widget.xml"
+            "template_uri": "http://example.com/path/widget.xml",
+            "json_description": "{\"vendor\": \"Test\", \"name\": \"widget1\", \"version\": \"1.2\", \"type\": \"widget\", \"description\": \"\", \"display_name\": \"\", \"license\": \"\", \"license_url\": \"\", \"code_url\": \"js/main.js\"}"
         }
     },
     {
@@ -26,7 +27,8 @@
             "type": 0,
             "public": true,
             "creation_date": "2009-01-01T00:00:00+01:00",
-            "template_uri": "http://example.com/path/widget.xml"
+            "template_uri": "http://example.com/path/widget.xml",
+            "json_description": "{\"vendor\": \"Test\", \"name\": \"widget1\", \"version\": \"1.10\", \"type\": \"widget\", \"description\": \"\", \"display_name\": \"\", \"license\": \"\", \"license_url\": \"\", \"code_url\": \"js/main.js\"}"
         }
     },
     {
@@ -41,7 +43,9 @@
             "type": 0,
             "public": true,
             "creation_date": "2009-01-01T00:00:00+01:00",
-            "template_uri": "http://example.com/path/widget.xml"
+            "template_uri": "http://example.com/path/widget.xml",
+            "json_description": "{\"vendor\": \"Test\", \"name\": \"widget2\", \"version\": \"1.0\", \"type\": \"widget\", \"description\": \"\", \"display_name\": \"\", \"license\": \"\", \"license_url\": \"\", \"code_url\": \"js/main.js\"}"
+
         }
     },
     {
@@ -56,7 +60,8 @@
             "type": 0,
             "public": true,
             "creation_date": "2009-01-01T00:00:00+01:00",
-            "template_uri": "http://example.com/path/widget.xml"
+            "template_uri": "http://example.com/path/widget.xml",
+            "json_description": "{\"vendor\": \"Test\", \"name\": \"awidget\", \"version\": \"1.0\", \"type\": \"widget\", \"description\": \"\", \"display_name\": \"\", \"preferences\": [], \"properties\": [], \"license\": \"\", \"license_url\": \"\", \"code_url\": \"js/main.js\"}"
         }
     },
     {
@@ -71,7 +76,9 @@
             "type": 0,
             "public": true,
             "creation_date": "2009-01-01T00:00:00+01:00",
-            "template_uri": "http://example.com/path/widget.xml"
+            "template_uri": "http://example.com/path/widget.xml",
+            "json_description": "{\"vendor\": \"Test\", \"name\": \"zwidget\", \"version\": \"1.0\", \"type\": \"widget\", \"description\": \"\", \"display_name\": \"\", \"license\": \"\", \"license_url\": \"\", \"code_url\": \"js/main.js\"}"
+
         }
     },
     {
@@ -86,7 +93,9 @@
             "type": 0,
             "public": true,
             "creation_date": "2009-01-01T00:00:00+01:00",
-            "template_uri": "http://example.com/path/widget.xml"
+            "template_uri": "http://example.com/path/widget.xml",
+            "json_description": "{\"vendor\": \"Wirecloud\", \"name\": \"test\", \"version\": \"0.1\", \"type\": \"widget\", \"description\": \"\", \"display_name\": \"\", \"license\": \"\", \"license_url\": \"\", \"code_url\": \"js/main.js\"}"
+
         }
     },
     {
