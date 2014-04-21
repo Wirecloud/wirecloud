@@ -39,9 +39,27 @@
                     return button;
                 }.bind(this),
                 'details': function (options, context) {
-                    var details, painter;
+                    var details, painter, i, entries, versions;
 
                     details = new StyledElements.StyledNotebook();
+
+                    var select = new StyledElements.StyledSelect({'class': 'versions'});
+                    entries = [];
+                    versions = resource.getAllVersions();
+                    for (i = 0; i < versions.length; i++) {
+                        entries.push({
+                            'label': 'v' + versions[i].text,
+                            'value': versions[i].text
+                        });
+                    }
+                    select.addEntries(entries);
+                    details.addButton(select);
+                    select.setDisabled(versions.length === 1);
+                    select.setValue(resource.version.text);
+                    select.addEventListener('change', function (select) {
+                        resource.changeVersion(select.getValue());
+                        this.mainview.createUserCommand('showDetails', resource)();
+                    }.bind(this));
 
                     var button = new StyledElements.StyledButton({text: gettext('Close details')});
                     button.addEventListener('click', this.mainview.home.bind(this.mainview));

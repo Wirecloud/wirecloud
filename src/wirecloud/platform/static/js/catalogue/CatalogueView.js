@@ -213,6 +213,7 @@
         return function (e) {
             this.viewsByName.details.paint(resource);
             this.alternatives.showAlternative(this.viewsByName.details);
+            this.viewsByName.details.repaint();
         }.bind(this);
     };
 
