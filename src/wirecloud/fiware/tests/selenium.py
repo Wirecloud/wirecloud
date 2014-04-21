@@ -178,9 +178,10 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         button = arbitrary_offering.find_element_by_css_selector('.mainbutton')
         self.assertEqual(button.text, 'Details')
 
+        # Purchased offerings
         pack_offering = self.search_in_catalogue_results('MultimediaPack')
         button = pack_offering.find_element_by_css_selector('.mainbutton')
-        self.assertEqual(button.text, 'Details')
+        self.assertEqual(button.text, 'Install')
 
     def test_marketplace_offering_list_when_store_down(self):
 
@@ -301,6 +302,41 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
 
         resource = self.search_in_catalogue_results(resource_name)
         self.assertIsNotNone(resource)
+
+    def test_install_store_pack_offering(self):
+
+        offering_name = 'MultimediaPack'
+        resources = (
+            'YouTube Browser',
+            'Input Box',
+        )
+
+        self.login(username='user_with_markets')
+
+        self.change_main_view('marketplace')
+
+        for resource_name in resources:
+            resource = self.search_in_catalogue_results(resource_name)
+            self.assertIsNone(resource)
+
+        self.change_marketplace('fiware')
+
+        free_offering = self.search_in_catalogue_results(offering_name)
+        button = free_offering.find_element_by_css_selector('.mainbutton')
+        self.assertEqual(button.text, 'Install')
+
+        button.find_element_by_css_selector('div').click()
+        self.wait_wirecloud_ready()
+
+        free_offering = self.search_in_catalogue_results(offering_name)
+        button = free_offering.find_element_by_css_selector('.mainbutton')
+        self.assertEqual(button.text, 'Uninstall')
+
+        self.change_marketplace('local')
+
+        for resource_name in resources:
+            resource = self.search_in_catalogue_results(resource_name)
+            self.assertIsNotNone(resource)
 
     def test_install_individual_resource_from_store_offering(self):
 

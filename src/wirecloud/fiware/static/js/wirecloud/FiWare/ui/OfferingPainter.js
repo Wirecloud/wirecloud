@@ -37,12 +37,11 @@
         return MAC_MIMETYPES.indexOf(mimetype) !== -1;
     };
 
-    var install = function install(url, catalogue_view, store) {
+    var install = function install(url, catalogue_view, store, monitor) {
         var layoutManager, local_catalogue_view, market_id;
 
         local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
         layoutManager = LayoutManagerFactory.getInstance();
-        layoutManager._startComplexTask(gettext("Importing resource into local repository"), 3);
         layoutManager.logSubTask(gettext('Uploading resource'));
 
         if (catalogue_view.catalogue.market_user !== 'public') {
@@ -75,8 +74,17 @@
         });
     };
 
-    var onClick = function onClick(url, catalogue_view, store) {
-        install(url, catalogue_view, store);
+    var onInstallClick = function onInstallClick(offering, catalogue_view) {
+        var layoutManager, monitor, i;
+
+        layoutManager = LayoutManagerFactory.getInstance();
+        monitor = layoutManager._startComplexTask(gettext("Importing offering resources into local repository"), 3);
+
+        for (i = 0; i < offering.resources.length; i++) {
+            if ('type' in offering.resources[i]) {
+                install(offering.resources[i].url, catalogue_view, offering.store);
+            }
+        }
     };
 
     var is_single_payment = function is_single_payment(offering) {
@@ -212,21 +220,25 @@
                     return button;
                 }
 
-                if (['widget', 'operator', 'mashup'].indexOf(this.offering.type) !== -1) {
+                if (['widget', 'operator', 'mashup', 'pack'].indexOf(this.offering.type) !== -1) {
 
-                    if (Wirecloud.LocalCatalogue.resourceExistsId(this.offering.resources[0].id)) {
+                    for (i = 0; i < this.offering.resources.length; i++) {
+                        if (!Wirecloud.LocalCatalogue.resourceExistsId(this.offering.resources[i].id)) {
+                            button = new StyledElements.StyledButton({
+                                'text': gettext('Install')
+                            });
+
+                            button.addEventListener('click', onInstallClick.bind(null, this.offering, this.catalogue_view));
+                            break;
+                        }
+                    }
+
+                    if (!button) {
                         button = new StyledElements.StyledButton({
                             'class': 'btn-danger',
                             'text': gettext('Uninstall')
                         });
                         button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', this.offering.resources[0], this.catalogue_view));
-                    } else {
-
-                        button = new StyledElements.StyledButton({
-                            'text': gettext('Install')
-                        });
-
-                        button.addEventListener('click', onClick.bind(null, this.offering.resources[0].url, this.catalogue_view, this.offering.store));
                     }
                 } else if (!this.is_details_view) {
                     button = new StyledElements.StyledButton({

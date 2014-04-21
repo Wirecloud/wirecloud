@@ -72,7 +72,7 @@
         },
         {
             "version": "1.0.1",
-            "link": "http://static.example.com/CoNWeT__Input Box Widget__1.0.1__CoNWeT_multimedia-viewer_1.0.1.wgt",
+            "link": "http://static.example.com/CoNWeT__Input Box Widget__1.0__CoNWeT_input-box_1.0.wgt",
             "name": "Input Box Widget",
             "content_type": "application/x-widget+mashable-application-component",
             "description": "A widget for viewing photos and videos"
