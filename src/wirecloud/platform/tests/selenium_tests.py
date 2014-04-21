@@ -843,8 +843,10 @@ class BasicMobileSeleniumTests(MobileWirecloudSeleniumTestCase):
     def check_basic_workspace(self, frame_id=None):
 
         iwidget_icons = self.driver.find_elements_by_css_selector('.iwidget_item')
-        iwidget_icons[0].click()
-        source_iwidget = self.get_current_iwidgets()[0]
+
+        # Send event from Test 2 as it is the one connected to the test operator
+        iwidget_icons[1].click()
+        source_iwidget = self.get_current_iwidgets()[1]
 
         with source_iwidget:
             self.assertEqual(self.driver.find_element_by_id('listPref').text, 'default')
@@ -861,8 +863,8 @@ class BasicMobileSeleniumTests(MobileWirecloudSeleniumTestCase):
         self.driver.find_element_by_css_selector('.dragboard .toolbar .back_button > .menu_text').click()
         time.sleep(0.2)
 
-        iwidget_icons[1].click()
-        target_iwidget = self.get_current_iwidgets()[1]
+        iwidget_icons[0].click()
+        target_iwidget = self.get_current_iwidgets()[0]
 
         with target_iwidget:
 
