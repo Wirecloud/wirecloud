@@ -48,6 +48,21 @@
         this.events[event].addEventListener(handler);
     };
 
+    ObjectWithEvents.prototype.clearEventListeners = function clearEventListeners(event) {
+
+        if (event == null) {
+            for (event in this.events) {
+                this.events[event].clearEventListeners();
+            }
+        } else {
+            if (this.events[event] == null) {
+                throw new TypeError(Wirecloud.Utils.interpolate("Unhandled event \"%(event)s\"", {event: event}));
+            }
+
+            this.events[event].clearEventListeners();
+        }
+    };
+
     /**
      * Elimina un listener para un evento indicado.
      */

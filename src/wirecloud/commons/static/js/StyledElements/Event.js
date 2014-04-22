@@ -46,6 +46,10 @@ var StyledElements = new Object();
         }
     };
 
+    Event.prototype.clearEventListeners = function clearEventListeners() {
+        this.handlers.length = 0;
+    };
+
     Event.prototype.dispatch = function dispatch() {
         for (var i = 0; i < this.handlers.length; i++) {
             try {
