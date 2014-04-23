@@ -410,7 +410,7 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         button.click()
 
         self.wait_wirecloud_ready()
-        self.assertEqual(button.text, 'Installed')
+        self.assertEqual(button.text, 'Uninstall')
 
         self.change_marketplace('local')
 
