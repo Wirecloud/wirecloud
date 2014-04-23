@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2008-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -31,6 +31,7 @@ from tempfile import mkdtemp
 from urllib2 import URLError, HTTPError
 from urlparse import urlparse
 
+from django.contrib.auth.models import User
 from django.contrib.staticfiles import finders
 from django.test import LiveServerTestCase
 from django.test import TransactionTestCase
@@ -38,7 +39,7 @@ from django.test.client import Client
 from django.utils import translation
 from django.utils.importlib import import_module
 
-from wirecloud.platform.localcatalogue.utils import install_resource_to_all_users
+from wirecloud.platform.localcatalogue.utils import install_resource
 from wirecloud.platform.widget import utils as showcase
 from wirecloud.proxy.views import WIRECLOUD_PROXY
 from wirecloud.catalogue import utils as catalogue
@@ -370,7 +371,7 @@ class WirecloudTestCase(TransactionTestCase):
         translation.activate(new_language)
 
 
-def uses_extra_resources(resources, shared=False):
+def uses_extra_resources(resources, shared=False, public=True, users=(), groups=()):
 
     def wrap(test_func):
 
@@ -384,7 +385,19 @@ def uses_extra_resources(resources, shared=False):
             for resource in resources:
                 wgt_file = open(os.path.join(base, resource), 'rb')
                 wgt = WgtFile(wgt_file)
-                resource = install_resource_to_all_users(file_contents=wgt, packaged=True)
+
+                resource = install_resource(wgt, None, None, True)
+
+                if public:
+                    resource.public = True
+                    resource.save()
+
+                final_users = (User.objects.get(username=user) for user in users)
+                resource.users.add(*final_users)
+
+                final_groups = (Group.objects.get(name=group) for group in groups)
+                resource.groups.add(*final_groups)
+
                 wgt_file.close()
 
             return test_func(self, *args, **kwargs)
