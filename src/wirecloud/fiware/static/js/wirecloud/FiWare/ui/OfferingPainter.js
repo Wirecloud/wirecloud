@@ -61,7 +61,7 @@
                 LayoutManagerFactory.getInstance().logSubTask(gettext('Resource installed successfully'));
                 LayoutManagerFactory.getInstance().logStep('');
 
-                local_catalogue_view.refresh_search_results();
+                local_catalogue_view.viewsByName.search.mark_outdated();
                 catalogue_view.refresh_search_results();
             },
             onFailure: function (msg) {
@@ -83,6 +83,34 @@
         for (i = 0; i < offering.resources.length; i++) {
             if ('type' in offering.resources[i]) {
                 install(offering.resources[i].url, catalogue_view, offering.store);
+            }
+        }
+    };
+
+    var onUninstallClick = function onUninstallClick(offering, catalogue_view) {
+        var layoutManager, local_catalogue_view, monitor, i, count;
+
+        layoutManager = LayoutManagerFactory.getInstance();
+        local_catalogue_view = LayoutManagerFactory.getInstance().viewsByName.marketplace.viewsByName.local;
+        monitor = layoutManager._startComplexTask(gettext("Uninstalling offering resources"), 1);
+
+        count = offering.resources.length;
+        for (i = 0; i < offering.resources.length; i++) {
+            if ('type' in offering.resources[i]) {
+                local_catalogue_view.catalogue.uninstallResource(offering.resources[i], {
+                    onSuccess: function () {
+                        local_catalogue_view.viewsByName.search.mark_outdated();
+                        catalogue_view.viewsByName.search.mark_outdated();
+                    },
+                    onComplete: function () {
+                        if (--count === 0) {
+                            LayoutManagerFactory.getInstance()._notifyPlatformReady();
+                            catalogue_view.refresh_if_needed();
+                        }
+                    }
+                });
+            } else {
+                count -= 1;
             }
         }
     };
@@ -238,7 +266,7 @@
                             'class': 'btn-danger',
                             'text': gettext('Uninstall')
                         });
-                        button.addEventListener('click', local_catalogue_view.createUserCommand('uninstall', this.offering.resources[0], this.catalogue_view));
+                        button.addEventListener('click', onUninstallClick.bind(null, this.offering, this.catalogue_view));
                     }
                 } else if (!this.is_details_view) {
                     button = new StyledElements.StyledButton({

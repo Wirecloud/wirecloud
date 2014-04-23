@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-/*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
+/*global Wirecloud*/
 
 (function () {
 
@@ -32,37 +32,17 @@
         return MAC_MIMETYPES.indexOf(mimetype) !== -1;
     };
 
-    var getURI = function getURI() {
-        return this.id;
-    };
-
     function FiWareCatalogueResource(resourceJSON_) {
-
-        ///////////////////////
-        // PRIVATE VARIABLES
-        ///////////////////////
-        var vendor = resourceJSON_.vendor,
-            name = resourceJSON_.name,
-            store = resourceJSON_.store,
-            parts = resourceJSON_.parts,
-        ///////////////////////////
-        // CONSTRUCTOR VARIABLES
-        ///////////////////////////
-            i = 0;
 
         //////////////////////////
         // GETTERS
         /////////////////////////
 
-        this.getParts = function() {
-            return parts;
+        this.getParts = function getParts() {
+            return resourceJSON_.parts;
         };
 
-        this.getLastVersion = function () {
-            return allVersions[0];
-        };
-
-        this.getId = function () {
+        this.getId = function getId() {
             return resourceJSON_.id;
         };
 
@@ -70,11 +50,11 @@
             return resourceJSON_.displayName;
         };
 
-        this.getPage = function () {
+        this.getPage = function getPage() {
             return resourceJSON_.page;
         };
 
-        this.getLegal = function() {
+        this.getLegal = function getLegal() {
             return resourceJSON_.legal;
         };
 
@@ -83,7 +63,7 @@
         };
 
         var publicationdate = null;
-        if (resourceJSON_.publicationdate != null && resourceJSON_.publicationdate != '') {
+        if (resourceJSON_.publicationdate != null && resourceJSON_.publicationdate !== '') {
             publicationdate = new Date(resourceJSON_.publicationdate);
         }
 
@@ -99,7 +79,7 @@
             'rating': {value: resourceJSON_.rating},
             'sla': {value: resourceJSON_.sla},
             'state': {value: resourceJSON_.state},
-            'store': {value: store},
+            'store': {value: resourceJSON_.store},
             'usdl_url': {value: resourceJSON_.usdl_url},
             'resources': {value: resourceJSON_.resources},
             'publicationdate': {value: publicationdate}
@@ -114,9 +94,14 @@
                         resource.version = new Wirecloud.Version(parts[2], 'catalogue');
                         resource.vendor = parts[0];
                         resource.name = parts[1];
+                        resource.uri = resource.id;
                         resource.type = MAC_TYPES[MAC_MIMETYPES.indexOf(resource.content_type)];
-                        resource.getURI = getURI;
-                    } catch (error) {}
+                    } catch (error) {
+                        delete resource.version;
+                        delete resource.vendor;
+                        delete resource.name;
+                        delete resource.type;
+                    }
                 }
             }
         }

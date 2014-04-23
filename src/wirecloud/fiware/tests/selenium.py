@@ -23,7 +23,7 @@ import os
 
 from selenium.webdriver.support.ui import Select, WebDriverWait
 
-from wirecloud.commons.utils.testcases import DynamicWebServer, LocalFileSystemServer, WirecloudSeleniumTestCase
+from wirecloud.commons.utils.testcases import DynamicWebServer, LocalFileSystemServer, uses_extra_resources, WirecloudSeleniumTestCase
 
 
 __test__ = False
@@ -337,6 +337,47 @@ class FiWareSeleniumTestCase(WirecloudSeleniumTestCase):
         for resource_name in resources:
             resource = self.search_in_catalogue_results(resource_name)
             self.assertIsNotNone(resource)
+
+    @uses_extra_resources((
+        'responses/static/CoNWeT__Input Box Widget__1.0__CoNWeT_input-box_1.0.wgt',
+        'responses/static/CoNWeT__Youtube Browser Widget__2.99.0__CoNWeT_youtube-browser_2.99.0.wgt',
+        ),
+        public=False,
+        users=('user_with_markets',))
+    def test_uninstall_store_pack_offering(self):
+
+        offering_name = 'MultimediaPack'
+        resources = (
+            'YouTube Browser',
+            'Input Box',
+        )
+
+        self.login(username='user_with_markets')
+
+        self.change_main_view('marketplace')
+
+        for resource_name in resources:
+            resource = self.search_in_catalogue_results(resource_name)
+            self.assertIsNotNone(resource)
+
+        self.change_marketplace('fiware')
+
+        free_offering = self.search_in_catalogue_results(offering_name)
+        button = free_offering.find_element_by_css_selector('.mainbutton')
+        self.assertEqual(button.text, 'Uninstall')
+
+        button.find_element_by_css_selector('div').click()
+        self.wait_wirecloud_ready()
+
+        free_offering = self.search_in_catalogue_results(offering_name)
+        button = free_offering.find_element_by_css_selector('.mainbutton')
+        self.assertEqual(button.text, 'Install')
+
+        self.change_marketplace('local')
+
+        for resource_name in resources:
+            resource = self.search_in_catalogue_results(resource_name)
+            self.assertIsNone(resource)
 
     def test_install_individual_resource_from_store_offering(self):
 
