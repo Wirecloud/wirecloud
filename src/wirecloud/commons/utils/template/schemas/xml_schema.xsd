@@ -1,0 +1,900 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Wirecloud Widget Template -->
+<!-- Version: 1.0 -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1"
+    targetNamespace="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1"
+    xmlns:macd="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1"
+    attributeFormDefault="unqualified"
+    elementFormDefault="qualified">
+
+    <xs:simpleType name="NonEmpty">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\s*\S+.*"></xs:pattern>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="VendorType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[^/]+"></xs:pattern>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="NameType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[^/]+"></xs:pattern>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="VersionType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="([1-9]\d*\.|0\.)*([1-9]\d*|0)((a|b|rc)[1-9]\d*)?"></xs:pattern>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="ResourceInfo">
+        <xs:all>
+            <xs:element name="title" minOccurs="0" maxOccurs="1"
+                type="macd:NonEmpty">
+                <xs:annotation>
+                    <xs:documentation>
+                        Name used in the user interface for the
+                        widget. This field can be translated, therefore this field
+                        is not used to uniquely identify the widget.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="authors" minOccurs="0" maxOccurs="1" type="macd:NonEmpty">
+                <xs:annotation>
+                    <xs:documentation>
+                        Developer(s) of the widget.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="email" minOccurs="0" maxOccurs="1" type="macd:NonEmpty">
+                <xs:annotation>
+                    <xs:documentation>
+                        E-mail address to get in touch with the
+                        developer(s).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="description" minOccurs="0" maxOccurs="1" type="macd:NonEmpty">
+                <xs:annotation>
+                    <xs:documentation>
+                        A brief textual description of the widget.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="image" minOccurs="0" maxOccurs="1" type="xs:anyURI">
+                <xs:annotation>
+                    <xs:documentation>
+                        Absolute or template-relative URL of the
+                        widget image for the catalog.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="smartphoneimage" minOccurs="0" maxOccurs="1" type="xs:anyURI">
+                <xs:annotation>
+                    <xs:documentation>
+                        Image to be used in iPhone and other
+                        smartphones.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="doc" minOccurs="0" maxOccurs="1" type="xs:anyURI">
+                <xs:annotation>
+                    <xs:documentation>
+                        Absolute or template-relative URL of the
+                        widget documentation.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="license" minOccurs="0" maxOccurs="1" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>
+                        Absolute or template-relative URL of the
+                        mashable application component license.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="licenseurl" minOccurs="0" maxOccurs="1" type="xs:anyURI">
+                <xs:annotation>
+                    <xs:documentation>
+                        Absolute or template-relative URL of the
+                        widget documentation.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="Requirements">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="feature">
+                <xs:complexType>
+                    <xs:attribute name="name" type="macd:NonEmpty" use="required">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Name of the required feature.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="MashupPreference">
+        <xs:sequence>
+            <xs:element name="option" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>
+                        Defines an item of the selection list.
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:attribute name="label" type="macd:NonEmpty" use="optional">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Text to display in the selection
+                                list.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="value" type="macd:NonEmpty" use="required">
+                        <xs:annotation>
+                            <xs:documentation>
+                                The value used when the option is
+                                selected.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="type" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    Data type used by the preference: text
+                    (string), number, boolean, password and list.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="text"/>
+                    <xs:enumeration value="number"/>
+                    <xs:enumeration value="boolean"/>
+                    <xs:enumeration value="password"/>
+                    <xs:enumeration value="list"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="name" use="required" type="macd:NameType">
+            <xs:annotation>
+                <xs:documentation>
+                    Name that will be used to identify this
+                    preference. This field cannot be translated.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="label" use="required" type="macd:NonEmpty">
+            <xs:annotation>
+                <xs:documentation>
+                    Text that will be used to reference this
+                    preference in the user interface. This field can be
+                    translated.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="description" type="macd:NonEmpty">
+            <xs:annotation>
+                <xs:documentation>
+                    Descriptive text.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="default" type="macd:NonEmpty">
+            <xs:annotation>
+                <xs:documentation>
+                    Default value.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="readonly" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    Whether this preference can be modified.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="Preference">
+        <xs:complexContent>
+            <xs:extension base="macd:MashupPreference">
+                <xs:attribute name="value" type="macd:NonEmpty">
+                    <xs:annotation>
+                        <xs:documentation>
+                            Initial value. If not especified, the default value will be used as the initial value.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="secure" type="xs:boolean" use="optional">
+                    <xs:annotation>
+                        <xs:documentation>
+                            Direct access from the javascript code of the application mashup component to this preference is disallowed if the value of this attribute is true. default: false.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="Preferences">
+        <xs:annotation>
+            <xs:documentation>
+                The user preferences, which may be changed
+                through the platform interface. It's a mandatory element,
+                consisting of one, several or even none preference
+                sub-elements
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="preference" type="macd:Preference"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="MashupPreferences">
+        <xs:annotation>
+            <xs:documentation>
+                The user preferences, which may be changed
+                through the platform interface. It's a mandatory element,
+                consisting of one, several or even none preference
+                sub-elements
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="preference" type="macd:MashupPreference"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="PersistentVariables">
+        <xs:sequence>
+            <xs:element name="variable" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>
+                        Defines a presistent variable.
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:attribute name="name" use="required" type="macd:NameType">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Name of the variable.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="type" use="required">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Data type of the variable. So far only
+                                the type text (string) is allowed.
+                            </xs:documentation>
+                        </xs:annotation>
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="text">
+                                </xs:enumeration>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+
+                    <xs:attribute name="label" use="required" type="macd:NonEmpty">
+                    </xs:attribute>
+
+                    <xs:attribute name="description" use="optional" type="macd:NonEmpty">
+                    </xs:attribute>
+
+                    <xs:attribute name="default" use="optional" type="xs:string">
+                        <!-- rename to value -->
+                    </xs:attribute>
+
+                    <xs:attribute name="secure" type="xs:boolean" use="optional">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Direct access from the javascript code of the application mashup component to this variable is disallowed if the value of this attribute is true. default: false.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="OutputEndpoint">
+        <xs:attribute name="type" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="text"></xs:enumeration>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="name" use="required" type="macd:NameType">
+            <xs:annotation>
+                <xs:documentation>
+                    Name that will be used to identify this
+                    output endpoint. This field cannot be translated.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="label" use="required" type="macd:NonEmpty">
+            <xs:annotation>
+                <xs:documentation>
+                    Text that will be used to reference this
+                    output endpoint in the user interface. This field can be
+                    translated.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="description" use="required" type="macd:NonEmpty">
+            <xs:annotation>
+                <xs:documentation>
+                    Text describing in which conditions the resource is
+                    going to send events through this endpoint. This
+                    description is also a good place for providing details
+                    about the data structure used by events leaving
+                    this output endpoint. This description is very
+                    important for the wiring process as the user needs
+                    this information for taking decisions on homacdo wire
+                    widgets/operators.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="friendcode" use="required" type="macd:NonEmpty">
+            <xs:annotation>
+                <xs:documentation>
+                    Keyword used to tag this output endpoint,
+                    so it can be easily suggested valid conection during the
+                    wiring process.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="InputEndpoint">
+        <xs:attribute name="type" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="text"></xs:enumeration>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="name" use="required" type="macd:NameType">
+            <xs:annotation>
+                <xs:documentation>
+                    Name that will be used to identify this
+                    input endpoint. This field cannot be translated.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="label" use="required" type="macd:NonEmpty">
+            <xs:annotation>
+                <xs:documentation>
+                    Text that will be used to reference this
+                    input endpoint in the user interface. This field can be
+                    translated.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="actionlabel" type="macd:NonEmpty" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    Short text describing what is going to
+                    happen if an event is sent to this input endpoint. Other
+                    widgets will use this text in buttons, selection boxes,
+                    etc... allowing end users to select what to do (and the
+                    widget will send a event to the associated target
+                    endpoint).
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="description" use="required"
+            type="macd:NonEmpty">
+            <xs:annotation>
+                <xs:documentation>
+                    Text describing what is going to happen if an event
+                    arrives this input endpoint. This description is very
+                    important for the wiring process as the user needs
+                    this information for taking decisions on howto wire
+                    widgets/operators.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="friendcode" use="required"
+            type="macd:NonEmpty">
+            <xs:annotation>
+                <xs:documentation>
+                    Keyword used to tag the input endpoint,
+                    so it can be easily suggested valid conection during the
+                    wiring process.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="Wiring">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="outputendpoint" type="macd:OutputEndpoint">
+                <xs:annotation>
+                    <xs:documentation>Output Endpoint</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="inputendpoint" type="macd:InputEndpoint">
+                <xs:annotation>
+                    <xs:documentation>Input endpoint</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="Translations">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="translation">
+                <xs:annotation>
+                    <xs:documentation>
+                        A translation for a specified language
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:choice minOccurs="0" maxOccurs="unbounded">
+                        <xs:element name="msg">
+                          <xs:annotation>
+                            <xs:documentation>Translated text</xs:documentation>
+                          </xs:annotation>
+                          <xs:complexType>
+                            <xs:simpleContent>
+                              <xs:extension base="xs:string">
+                                <xs:attribute name="name" use="required" type="macd:NonEmpty">
+                                </xs:attribute>
+                              </xs:extension>
+                            </xs:simpleContent>
+                          </xs:complexType>
+                        </xs:element>
+                    </xs:choice>
+                    <xs:attribute name="lang" use="required" type="xs:language">
+                        <xs:annotation>
+                            <xs:documentation>Translation language</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+        <xs:attribute name="default" type="xs:language" use="required">
+            <xs:annotation>
+                <xs:documentation>Default widget language.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="Resource">
+        <xs:attribute name="vendor" type="macd:VendorType">
+            <xs:annotation>
+                <xs:documentation>
+                    The distributor of the resource.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="name" type="macd:NameType">
+            <xs:annotation>
+                <xs:documentation>
+                    Name of the resource.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="version" type="macd:VersionType">
+            <xs:annotation>
+                <xs:documentation>
+                    Current version of the resource. It must
+                    define starting sequences of numbers separated by dots.
+                    Moreover, zeros can only be used alone (e.g. 0.1 is valid
+                    but 03.2 is not).
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="ResourcePreferenceValue">
+        <xs:attribute name="name" type="macd:NonEmpty" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    Name of the preference value.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="value" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    Value of the preference. If not defined, the default value for this preference will be used
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="readonly" type="xs:boolean" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    Whether this preference can be modified.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="hidden" type="xs:boolean" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    Whether this preference can be displayed to the user.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="PreferenceValue">
+        <xs:attribute name="name" type="macd:NonEmpty" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    Name of the preference value.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="value" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    Value of the preference.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="Tab">
+        <xs:sequence>
+            <xs:element name="preferencevalue" type="macd:PreferenceValue" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="resource" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:choice minOccurs="1" maxOccurs="unbounded">
+                        <xs:element name="preferencevalue" type="macd:ResourcePreferenceValue" minOccurs="0" maxOccurs="unbounded" />
+                        <xs:element name="variablevalue" type="macd:ResourcePreferenceValue" minOccurs="0" maxOccurs="unbounded" />
+                        <xs:element name="position" minOccurs="1" maxOccurs="1">
+                            <xs:complexType>
+                                <xs:attribute name="x" type="xs:string" use="required" />
+                                <xs:attribute name="y" type="xs:string" use="required" />
+                                <xs:attribute name="z" type="xs:string" use="required" />
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="rendering" minOccurs="1" maxOccurs="1">
+                            <xs:complexType>
+                                <xs:attribute name="width" type="xs:string" use="required" />
+                                <xs:attribute name="minimized" type="xs:boolean" use="optional" />
+                                <xs:attribute name="layout" type="xs:string" use="required" />
+                                <xs:attribute name="height" type="xs:string" use="required" />
+                                <xs:attribute name="fulldragboard" type="xs:boolean" use="optional" />
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:choice>
+                    <xs:attribute name="vendor" type="macd:VendorType" use="required" />
+                    <xs:attribute name="name" use="required" type="macd:NameType" />
+                    <xs:attribute name="version" type="macd:VersionType" use="required" />
+                    <xs:attribute name="title" use="required" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation></xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="readonly" type="xs:boolean" use="optional">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Whether this widget can be remove from the final workspace.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="id" use="required" type="xs:string" />
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="name" use="required"
+            type="xs:string">
+        </xs:attribute>
+        <xs:attribute name="id" use="required"
+            type="xs:string">
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="EndpointType">
+        <xs:attribute name="type" type="macd:NonEmpty">
+            <xs:annotation>
+                <xs:documentation>
+                    Type of the endpoint (Widget, operator).
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="id" type="macd:NonEmpty" />
+        <xs:attribute name="endpoint" type="macd:NonEmpty">
+            <xs:annotation>
+                <xs:documentation>
+                    Input or output endpoint name.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="MashupWiring">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="operator" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>
+                        Instanciated operator used in this mashup.
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:choice minOccurs="0" maxOccurs="unbounded">
+                        <xs:element name="preferencevalue" type="macd:ResourcePreferenceValue" minOccurs="0" maxOccurs="unbounded" />
+                    </xs:choice>
+                    <xs:attribute name="id" type="macd:NonEmpty" use="required" />
+                    <xs:attribute name="vendor" type="macd:VendorType" use="required">
+                        <xs:annotation>
+                            <xs:documentation></xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="name" use="required" type="macd:NameType">
+                        <xs:annotation>
+                            <xs:documentation></xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="version" type="macd:VersionType" use="required" />
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="connection" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>
+                        Connection between an input endpoint and an
+                        output endpoint for this mashup.
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="source" minOccurs="1"
+                            maxOccurs="1" type="macd:EndpointType">
+                            <xs:annotation>
+                                <xs:documentation>
+                                    Output endpoint in the connection
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="target" minOccurs="1"
+                            maxOccurs="1" type="macd:EndpointType">
+                            <xs:annotation>
+                                <xs:documentation>
+                                    Input endpoint in the connection
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="readonly" type="xs:boolean" use="optional">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Whether this connection is readonly and thus cannot be deleted. Default: false.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="MashupStructure">
+        <xs:sequence>
+            <xs:element name="preferencevalue" type="macd:PreferenceValue" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="tab" type="macd:Tab" minOccurs="1" maxOccurs="unbounded" />
+            <xs:element name="wiring" type="macd:MashupWiring" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Scripts">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="script">
+                <xs:annotation>
+                    <xs:documentation>
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:attribute name="src" use="required" type="xs:anyURI">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Data type used by the preference: text
+                                (string), number, boolean, password and list.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:element name="widget">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="macd:Resource">
+                    <xs:all minOccurs="1" maxOccurs="1">
+                        <xs:element name="details" type="macd:ResourceInfo" minOccurs="1" maxOccurs="1" />
+                        <xs:element name="requirements" type="macd:Requirements" minOccurs="0" maxOccurs="1" />
+                        <xs:element name="preferences" type="macd:Preferences" minOccurs="0" maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation>
+                                    The user preferences, which may be changed through
+                                    the platform interface.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="persitentvariables" type="macd:PersistentVariables" minOccurs="0" maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation>
+                                    This element contains some variables that reflects
+                                    the persitent widget state. The state can be any information
+                                    desired to be persisted.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="wiring" type="macd:Wiring" minOccurs="0" maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation>
+                                    List of Input/Output endpoints widget will use to
+                                    communicate with other widgets through the wiring.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="contents" minOccurs="1" maxOccurs="1">
+                            <xs:complexType>
+                                <xs:attribute name="src" type="xs:anyURI" use="required">
+                                    <xs:annotation>
+                                        <xs:documentation>
+                                            Absolute or template-relative URL of
+                                            widget code.
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                </xs:attribute>
+                                <xs:attribute name="contenttype" type="macd:NonEmpty">
+                                    <xs:annotation>
+                                        <xs:documentation>
+                                            Content type of the linked resource.
+                                            Suggested values are: text/html and
+                                            application/xml+xhtml. Optional attribute, 'text/html'
+                                            by default.
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                </xs:attribute>
+                                <xs:attribute name="charset" type="macd:NonEmpty">
+                                    <xs:annotation>
+                                        <xs:documentation>
+                                            Charset used by the linked resource.
+                                            Optional attribute, 'utf-8' by default.
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                </xs:attribute>
+                                <xs:attribute name="cacheable" type="xs:boolean">
+                                    <xs:annotation>
+                                        <xs:documentation>
+                                            Whether this code can be cached by the
+                                            platform. Possible values are "true" and "false".
+                                            Optional attribute, "true" by default.
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                </xs:attribute>
+                                <xs:attribute name="useplatformstyle" type="xs:boolean">
+                                    <xs:annotation>
+                                        <xs:documentation>
+                                            Whether this widget will inherit the style of the platform.
+                                            Possible values are "true" and "false". Optional attribute,
+                                            "false" by default.
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                </xs:attribute>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="rendering" minOccurs="1"
+                            maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation>
+                                    Contains information about how to show the widget
+                                </xs:documentation>
+                            </xs:annotation>
+                            <xs:complexType>
+                                <xs:attribute name="width" use="required">
+                                    <xs:simpleType>
+                                        <xs:restriction base="xs:byte" />
+                                    </xs:simpleType>
+                                </xs:attribute>
+                                <xs:attribute name="height" use="required">
+                                    <xs:simpleType>
+                                        <xs:restriction base="xs:byte" />
+                                    </xs:simpleType>
+                                </xs:attribute>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="translations" type="macd:Translations" minOccurs="0" maxOccurs="1" />
+                    </xs:all>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="operator">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="macd:Resource">
+                    <xs:all minOccurs="1" maxOccurs="1">
+                        <xs:element name="details" type="macd:ResourceInfo" minOccurs="1" maxOccurs="1" />
+                        <xs:element name="requirements" type="macd:Requirements" minOccurs="0" maxOccurs="1" />
+                        <xs:element name="preferences" type="macd:Preferences" minOccurs="0" maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation>
+                                    The user preferences, which may be changed through
+                                    the platform interface.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="persitentvariables" type="macd:PersistentVariables" minOccurs="0" maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation>
+                                    This element contains some variables that reflects
+                                    the persitent operator state. The state can be any information
+                                    desired to be persisted.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="wiring" type="macd:Wiring" minOccurs="0" maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation>
+                                    List of Input/Output endpoints that the operator will use to
+                                    communicate with other widgets/operators through the wiring.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="scripts" type="macd:Scripts" minOccurs="1" maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation>
+                                    List of scripts the operator is going to use.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="translations" type="macd:Translations" minOccurs="0" maxOccurs="1" />
+                    </xs:all>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="mashup">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="macd:Resource">
+                    <xs:all minOccurs="1" maxOccurs="1">
+                        <xs:element name="details" type="macd:ResourceInfo" minOccurs="1" maxOccurs="1" />
+                        <xs:element name="requirements" type="macd:Requirements" minOccurs="0" maxOccurs="1" />
+                        <xs:element name="preferences" type="macd:MashupPreferences" minOccurs="0" maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation>
+                                    The user preferences, which may be changed through
+                                    the platform interface.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="structure" type="macd:MashupStructure" minOccurs="1" maxOccurs="1"/>
+                        <xs:element name="wiring" type="macd:Wiring" minOccurs="0" maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation>
+                                    List of Input/Output endpoints that the operators and widgets of this mashup are declaring.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="translations" type="macd:Translations" minOccurs="0" maxOccurs="1" />
+                    </xs:all>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

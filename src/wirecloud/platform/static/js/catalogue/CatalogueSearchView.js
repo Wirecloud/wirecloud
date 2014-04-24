@@ -131,8 +131,7 @@
                         {'label': gettext('Popularity'), 'value': '-popularity'},
                         {'label': gettext('Creation date'), 'value': '-creation_date'},
                         {'label': gettext('Short name'), 'value': 'short_name'},
-                        {'label': gettext('Vendor'), 'value': 'vendor'},
-                        {'label': gettext('Author'), 'value': 'author'}
+                        {'label': gettext('Vendor'), 'value': 'vendor'}
                     ]
                 });
                 select.addEventListener('change', function (select) {

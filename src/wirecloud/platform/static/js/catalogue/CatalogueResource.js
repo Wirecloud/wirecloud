@@ -72,9 +72,9 @@
                     return currentVersion.version;
                 }
             },
-            'author': {
+            'authors': {
                 get: function () {
-                    return currentVersion.author;
+                    return currentVersion.authors;
                 }
             },
             'uri': {
@@ -84,7 +84,7 @@
             'packaged': {
                 get: function () { return currentVersion.packaged; }
             },
-            'image_url': {
+            'image': {
                 get: function () { return currentVersion.uriImage; }
             },
             'description_url': {

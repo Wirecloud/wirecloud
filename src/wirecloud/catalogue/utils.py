@@ -40,25 +40,25 @@ def extract_resource_media_from_package(template, package, base_path):
     overrides = {}
     resource_info = template.get_resource_info()
 
-    if resource_info['image_uri'] != '':
-        if not resource_info['image_uri'].startswith(('http://', 'https://', '//', '/')):
-            image_path = os.path.normpath(resource_info['image_uri'])
+    if resource_info['image'] != '':
+        if not resource_info['image'].startswith(('http://', 'https://', '//', '/')):
+            image_path = os.path.normpath(resource_info['image'])
             try:
-                package.extract_file(resource_info['image_uri'], os.path.join(base_path, image_path), True)
+                package.extract_file(resource_info['image'], os.path.join(base_path, image_path), True)
             except KeyError:
-                overrides['image_uri'] = urljoin(settings.STATIC_URL, '/images/catalogue/widget_image.png')
-        elif resource_info['image_uri'].startswith(('//', '/')):
-            overrides['image_uri'] = template.get_absolute_url(resource_info['image_uri'])
+                overrides['image'] = urljoin(settings.STATIC_URL, '/images/catalogue/widget_image.png')
+        elif resource_info['image'].startswith(('//', '/')):
+            overrides['image'] = template.get_absolute_url(resource_info['image'])
 
-    if resource_info['iphone_image_uri'] != '':
-        if not resource_info['iphone_image_uri'].startswith(('http://', 'https://', '//', '/')):
-            image_path = os.path.normpath(resource_info['iphone_image_uri'])
+    if resource_info['smartphoneimage'] != '':
+        if not resource_info['smartphoneimage'].startswith(('http://', 'https://', '//', '/')):
+            image_path = os.path.normpath(resource_info['smartphoneimage'])
             try:
-                package.extract_file(resource_info['iphone_image_uri'], os.path.join(base_path, image_path), True)
+                package.extract_file(resource_info['smartphoneimage'], os.path.join(base_path, image_path), True)
             except KeyError:
-                overrides['iphone_image_uri'] = urljoin(settings.STATIC_URL, '/images/catalogue/widget_image.png')
-        elif resource_info['iphone_image_uri'].startswith(('//', '/')):
-            overrides['iphone_image_uri'] = template.get_absolute_url(resource_info['iphone_image_uri'])
+                overrides['smartphoneimage'] = urljoin(settings.STATIC_URL, '/images/catalogue/widget_image.png')
+        elif resource_info['smartphoneimage'].startswith(('//', '/')):
+            overrides['smartphoneimage'] = template.get_absolute_url(resource_info['smartphoneimage'])
 
     return overrides
 
@@ -128,13 +128,13 @@ def add_resource_from_template(template_uri, template, user, fromWGT=False, over
         fromWGT=fromWGT,
         type=CatalogueResource.RESOURCE_TYPES.index(resource_info['type']),
         creator=user,
-        author=resource_info['author'],
-        display_name=resource_info['display_name'],
+        author=resource_info['authors'],
+        display_name=resource_info['title'],
         description=resource_info['description'],
         mail=resource_info['email'],
-        image_uri=resource_info['image_uri'],
-        iphone_image_uri=resource_info.get('iphone_image_uri', ''),
-        wiki_page_uri=resource_info['doc_uri'],
+        image_uri=resource_info['image'],
+        iphone_image_uri=resource_info.get('smartphoneimage', ''),
+        wiki_page_uri=resource_info['doc'],
         template_uri=template_uri,
         creation_date=now(),
         popularity='0.0',

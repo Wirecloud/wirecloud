@@ -227,7 +227,7 @@
          */
         Dragboard.prototype.addInstance = function addInstance(widget, options_) {
             var options = {
-                "iwidgetName": widget.display_name,
+                "iwidgetName": widget.title,
                 "setDefaultValues" : function () {}
             };
 

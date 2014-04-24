@@ -19,6 +19,7 @@
 
 from __future__ import unicode_literals
 
+from django.utils.http import urlquote
 import rdflib
 
 from wirecloud.commons.utils.translation import replace_trans_index
@@ -265,7 +266,7 @@ def build_rdf_graph(template_info):
     graph.bind('wire-m', WIRE_M)
     graph.bind('gr', GR)
 
-    uri = template_info.get('vendor') + '/' + template_info.get('name') + '/' + template_info.get('version')
+    uri = urlquote(template_info.get('vendor') + '/' + template_info.get('name') + '/' + template_info.get('version'))
     if template_info['type'] == 'widget':
         resource_uri = rdflib.URIRef(WIRE[uri])
         graph.add((resource_uri, rdflib.RDF.type, WIRE['Widget']))
@@ -287,19 +288,19 @@ def build_rdf_graph(template_info):
     graph.add((resource_uri, DCTERMS['title'], rdflib.Literal(template_info.get('name'))))
     add_translated_nodes(graph, resource_uri, DCTERMS, 'description', template_info.get('description'), {'type': 'resource', 'field': 'description'}, template_info)
 
-    author = rdflib.BNode()
-    graph.add((author, rdflib.RDF.type, FOAF['Person']))
-    graph.add((resource_uri, DCTERMS['creator'], author))
-    graph.add((author, FOAF['name'], rdflib.Literal(template_info.get('author'))))
+    authors = rdflib.BNode()
+    graph.add((authors, rdflib.RDF.type, FOAF['Person']))
+    graph.add((resource_uri, DCTERMS['creator'], authors))
+    graph.add((authors, FOAF['name'], rdflib.Literal(template_info.get('authors'))))
 
-    graph.add((resource_uri, WIRE['hasImageUri'], rdflib.URIRef(template_info.get('image_uri', ''))))
+    graph.add((resource_uri, WIRE['hasImageUri'], rdflib.URIRef(template_info.get('image', ''))))
 
-    if template_info.get('doc_uri'):
-        graph.add((resource_uri, FOAF['page'], rdflib.URIRef(template_info.get('doc_uri'))))
+    if template_info.get('doc'):
+        graph.add((resource_uri, FOAF['page'], rdflib.URIRef(template_info.get('doc'))))
 
-    add_translated_nodes(graph, resource_uri, WIRE, 'displayName', template_info.get('display_name', ''), {'type': 'resource', 'field': 'display_name'}, template_info)
+    add_translated_nodes(graph, resource_uri, WIRE, 'displayName', template_info.get('title', ''), {'type': 'resource', 'field': 'title'}, template_info)
 
-    license_url_text = template_info.get('license_url', None)
+    license_url_text = template_info.get('licenseurl', None)
     if license_url_text not in (None, ''):
         license = rdflib.URIRef(license_url_text)
         graph.add((resource_uri, DCTERMS['license'], license))
@@ -363,8 +364,8 @@ def build_rdf_graph(template_info):
     if template_info['type'] == 'mashup':
         write_mashup_wiring_graph(graph, wiring, template_info)
 
-    if template_info.get('iphone_image_uri'):
-        graph.add((resource_uri, WIRE['hasiPhoneImageUri'], rdflib.URIRef(template_info.get('iphone_image_uri', ''))))
+    if template_info.get('smartphoneimage'):
+        graph.add((resource_uri, WIRE['hasiPhoneImageUri'], rdflib.URIRef(template_info.get('smartphoneimage', ''))))
 
     if template_info['type'] == 'mashup':
         # Mashup preferences
@@ -389,8 +390,8 @@ def build_rdf_graph(template_info):
             if pref.get('readonly', False) is True:
                 graph.add((pref_node, WIRE['readonly'], rdflib.Literal('true')))
 
-            if pref.get('default_value') not in (None, ''):
-                graph.add((pref_node, WIRE['default'], rdflib.Literal(pref.get('default_value'))))
+            if pref.get('default') not in (None, ''):
+                graph.add((pref_node, WIRE['default'], rdflib.Literal(pref.get('default'))))
 
             if pref.get('value'):
                 graph.add((pref_node, WIRE['value'], rdflib.Literal(pref['value'])))
@@ -418,8 +419,8 @@ def build_rdf_graph(template_info):
             add_translated_nodes(graph, prop_node, RDFS, 'label', prop.get('label'), {'type': 'vdef', 'variable': prop.get('name'), 'field': 'label'}, template_info)
             add_translated_nodes(graph, prop_node, DCTERMS, 'description', prop.get('description'), {'type': 'vdef', 'variable': prop.get('name'), 'field': 'description'}, template_info)
 
-            if prop.get('default_value') not in (None, ''):
-                graph.add((prop_node, WIRE['default'], rdflib.Literal(prop.get('default_value'))))
+            if prop.get('default') not in (None, ''):
+                graph.add((prop_node, WIRE['default'], rdflib.Literal(prop.get('default'))))
 
             if prop.get('secure'):
                 graph.add((prop_node, WIRE['secure'], rdflib.Literal(prop.get('secure'))))

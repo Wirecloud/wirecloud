@@ -42,7 +42,7 @@
         if (value != null) {
             this.value = value;
         } else {
-            this.value = preferenceDef.default_value;
+            this.value = preferenceDef.default;
         }
 
         this.handlers = [];

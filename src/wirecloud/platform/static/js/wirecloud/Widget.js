@@ -35,7 +35,7 @@
         this.uri = this.vendor + '/' + this.name + '/' + this.version.text;
         this.id = this.uri;
 
-        this.display_name = data.display_name;
+        this.title = data.title;
         this.code_url = Wirecloud.URLs.WIDGET_CODE_ENTRY.evaluate({
             vendor: this.vendor,
             name: this.name,
@@ -83,9 +83,9 @@
         this.default_height = data.widget_height;
 
         /* FIXME */
-        this.getUriWiki = function getUriWiki() { return data.doc_uri; };
-        this.getImage = function getImage() { return data.image_uri; };
-        this.getIcon = function getIcon() { return data.iphone_image_uri !== '' ? data.iphone_image_uri : data.image_uri; };
+        this.getUriWiki = function getUriWiki() { return data.doc; };
+        this.getImage = function getImage() { return data.image; };
+        this.getIcon = function getIcon() { return data.smartphoneimage !== '' ? data.smartphoneimage : data.image; };
         this.getIPhoneImageURI = this.getIcon;
 
         var lastVersion = this.version;

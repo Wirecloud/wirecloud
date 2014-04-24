@@ -99,7 +99,7 @@ def create_widget_from_template(template, user, request=None, base=None):
             aspect='PREF',
             readonly=preference['readonly'],
             label=preference['label'],
-            default_value=preference['default_value'],
+            default_value=preference['default'],
             value=preference['value'],
             widget=widget,
             secure=preference['secure']
@@ -125,7 +125,7 @@ def create_widget_from_template(template, user, request=None, base=None):
             type=parser.typeText2typeCode(prop['type']),
             aspect='PROP',
             label=prop['label'],
-            default_value=prop['default_value'],
+            default_value=prop['default'],
             widget=widget,
             secure=prop['secure'],
         )

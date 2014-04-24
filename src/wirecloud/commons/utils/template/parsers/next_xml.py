@@ -17,61 +17,69 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
+import codecs
 from lxml import etree
+import os
 
 from django.utils.translation import ugettext as _
 
-from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor, is_valid_version, TemplateParseException
+from wirecloud.commons.utils.template.base import TemplateParseException
 from wirecloud.commons.utils.translation import get_trans_index
 
 
-WIRECLOUD_TEMPLATE_NS = 'http://wirecloud.conwet.fi.upm.es/ns/template#'
+XMLSCHEMA_FILE = codecs.open(os.path.join(os.path.dirname(__file__), '../schemas/xml_schema.xsd'), 'rb')
+XMLSCHEMA_DOC = etree.parse(XMLSCHEMA_FILE)
+XMLSCHEMA_FILE.close()
+XMLSCHEMA = etree.XMLSchema(XMLSCHEMA_DOC)
 
-RESOURCE_DESCRIPTION_XPATH = '/t:Template/t:Catalog.ResourceDescription'
-NAME_XPATH = 't:Name'
-VENDOR_XPATH = 't:Vendor'
-VERSION_XPATH = 't:Version'
-DISPLAY_NAME_XPATH = 't:DisplayName'
-DESCRIPTION_XPATH = 't:Description'
-AUTHOR_XPATH = 't:Author'
-ORGANIZATION_XPATH = 't:Organization'
-IMAGE_URI_XPATH = 't:ImageURI'
-IPHONE_IMAGE_URI_XPATH = 't:iPhoneImageURI'
-MAIL_XPATH = 't:Mail'
-DOC_URI_XPATH = 't:WikiURI'
-LICENCE_XPATH = 't:License'
-LICENCE_URL_XPATH = 't:LicenseURL'
-REQUIREMENTS_XPATH = 't:Requirements'
+WIRECLOUD_TEMPLATE_NS = 'http://wirecloud.conwet.fi.upm.es/ns/macdescription/1'
 
-FEATURE_XPATH = 't:Feature'
-CODE_XPATH = '/t:Template/t:Platform.Link[1]/t:XHTML'
-PREFERENCE_XPATH = 't:Preference'
-PREFERENCES_XPATH = '/t:Template/t:Platform.Preferences[1]/t:Preference'
-OPTION_XPATH = 't:Option'
-PROPERTY_XPATH = '/t:Template/t:Platform.StateProperties[1]/t:Property'
-WIRING_XPATH = '/t:Template/t:Platform.Wiring'
-INPUT_ENDPOINT_XPATH = 't:InputEndpoint'
-OUTPUT_ENDPOINT_XPATH = 't:OutputEndpoint'
-PLATFORM_RENDERING_XPATH = '/t:Template/t:Platform.Rendering'
+RESOURCE_DESCRIPTION_XPATH = 't:details'
+DISPLAY_NAME_XPATH = 't:title'
+DESCRIPTION_XPATH = 't:description'
+AUTHOR_XPATH = 't:authors'
+IMAGE_URI_XPATH = 't:image'
+IPHONE_IMAGE_URI_XPATH = 't:smartphoneimage'
+MAIL_XPATH = 't:email'
+DOC_URI_XPATH = 't:doc'
+LICENCE_XPATH = 't:license'
+LICENCE_URL_XPATH = 't:licenseurl'
+REQUIREMENTS_XPATH = 't:requirements'
 
-INCLUDED_RESOURCES_XPATH = 't:IncludedResources'
-TAB_XPATH = 't:Tab'
-RESOURCE_XPATH = 't:Resource'
-POSITION_XPATH = 't:Position'
-RENDERING_XPATH = 't:Rendering'
-PARAM_XPATH = 't:Param'
-PROPERTIES_XPATH = 't:Property'
-CONNECTION_XPATH = 't:Connection'
-IOPERATOR_XPATH = 't:Operator'
-SOURCE_XPATH = 't:Source'
-TARGET_XPATH = 't:Target'
+FEATURE_XPATH = 't:feature'
+CODE_XPATH = 't:contents'
+PREFERENCE_XPATH = 't:preference'
+PREFERENCE_VALUE_XPATH = 't:preferencevalue'
+PREFERENCES_XPATH = 't:preferences/t:preference'
+OPTION_XPATH = 't:option'
+PROPERTY_XPATH = 't:persitentvariables/t:variable'
+WIRING_XPATH = 't:wiring'
+MASHUP_WIRING_XPATH = 't:structure/t:wiring'
+INPUT_ENDPOINT_XPATH = 't:inputendpoint'
+OUTPUT_ENDPOINT_XPATH = 't:outputendpoint'
+SCRIPT_XPATH = 't:scripts/t:script'
+PLATFORM_RENDERING_XPATH = 't:rendering'
 
-TRANSLATIONS_XPATH = '/t:Template/t:Translations'
-TRANSLATION_XPATH = 't:Translation'
+INCLUDED_RESOURCES_XPATH = 't:structure'
+TAB_XPATH = 't:tab'
+RESOURCE_XPATH = 't:resource'
+POSITION_XPATH = 't:position'
+RENDERING_XPATH = 't:rendering'
+PARAM_XPATH = 't:preferences/t:preference'
+PROPERTIES_XPATH = 't:variablevalue'
+CONNECTION_XPATH = 't:connection'
+IOPERATOR_XPATH = 't:operator'
+SOURCE_XPATH = 't:source'
+TARGET_XPATH = 't:target'
+
+TRANSLATIONS_XPATH = 't:translations'
+TRANSLATION_XPATH = 't:translation'
 MSG_XPATH = 't:msg'
 
 
-class WirecloudTemplateParser(object):
+class ApplicationMashupTemplateParser(object):
 
     _doc = None
     _resource_description = None
@@ -97,28 +105,21 @@ class WirecloudTemplateParser(object):
         if xmlns is not None and xmlns != WIRECLOUD_TEMPLATE_NS:
             raise TemplateParseException("Invalid namespace: " + xmlns)
 
-        if root_element_qname.localname != 'Template':
+        if root_element_qname.localname not in ('widget', 'operator', 'mashup'):
             raise TemplateParseException("Invalid root element: " + root_element_qname.localname)
 
         self._namespace = xmlns
+        self._info['type'] = root_element_qname.localname
 
     def _init(self):
+
+        XMLSCHEMA.assertValid(self._doc)
 
         self._resource_description = self._xpath(RESOURCE_DESCRIPTION_XPATH, self._doc)[0]
         self._parse_basic_info()
 
-        included_resources_elements = self._xpath(INCLUDED_RESOURCES_XPATH, self._resource_description)
-        if len(included_resources_elements) == 1:
-            self._info['type'] = 'mashup'
-        else:
-            self._info['type'] = 'widget'
-
     def _xpath(self, query, element):
-        if self._namespace is not None:
-            return element.xpath(query, namespaces={'t': self._namespace})
-        else:
-            query = query.replace('t:', '')
-            return element.xpath(query)
+        return element.xpath(query, namespaces={'t': self._namespace})
 
     def get_xpath(self, query, element):
         elements = self._xpath(query, element)
@@ -141,6 +142,8 @@ class WirecloudTemplateParser(object):
     def _parse_extra_info(self):
         if self._info['type'] == 'widget':
             self._parse_widget_info()
+        elif self._info['type'] == 'operator':
+            self._parse_operator_info()
         elif self._info['type'] == 'mashup':
             self._parse_workspace_info()
 
@@ -162,17 +165,9 @@ class WirecloudTemplateParser(object):
 
     def _parse_basic_info(self):
 
-        self._info['vendor'] = self._get_field(VENDOR_XPATH, self._resource_description).strip()
-        if not is_valid_vendor(self._info['vendor']):
-            raise TemplateParseException(_('ERROR: the format of the vendor is invalid.'))
-
-        self._info['name'] = self._get_field(NAME_XPATH, self._resource_description).strip()
-        if not is_valid_name(self._info['name']):
-            raise TemplateParseException(_('ERROR: the format of the name is invalid.'))
-
-        self._info['version'] = self._get_field(VERSION_XPATH, self._resource_description).strip()
-        if not is_valid_version(self._info['version']):
-            raise TemplateParseException(_('ERROR: the format of the version number is invalid. Format: X.X.X where X is an integer. Ex. "0.1", "1.11" NOTE: "1.01" should be changed to "1.0.1" or "1.1"'))
+        self._info['vendor'] = self._doc.get('vendor', '').strip()
+        self._info['name'] = self._doc.get('name', '').strip()
+        self._info['version'] = self._doc.get('version', '').strip()
 
         self._info['title'] = self._get_field(DISPLAY_NAME_XPATH, self._resource_description, required=False)
         self._add_translation_index(self._info['title'], type='resource', field='title')
@@ -192,17 +187,14 @@ class WirecloudTemplateParser(object):
     def _parse_requirements(self):
 
         self._info['requirements'] = []
-        requirements_elements = self._xpath(REQUIREMENTS_XPATH, self._resource_description)
+        requirements_elements = self._xpath(REQUIREMENTS_XPATH, self._doc)
         if len(requirements_elements) < 1:
             return
 
         for requirement in self._xpath(FEATURE_XPATH, requirements_elements[0]):
-            if requirement.get('name', '').strip() == '':
-                raise TemplateParseException('Missing required feature name')
-
             self._info['requirements'].append({
                 'type': 'feature',
-                'name': requirement.get('name')
+                'name': requirement.get('name').strip()
             })
 
     def _parse_wiring_info(self, parse_connections=False):
@@ -213,38 +205,44 @@ class WirecloudTemplateParser(object):
         }
 
         wiring_elements = self._xpath(WIRING_XPATH, self._doc)
-        if len(wiring_elements) < 1:
-            return
-        wiring_element = wiring_elements[0]
+        if len(wiring_elements) != 0:
+            wiring_element = wiring_elements[0]
 
-        for slot in self._xpath(INPUT_ENDPOINT_XPATH, wiring_element):
-            self._add_translation_index(slot.get('label'), type='vdef', variable=slot.get('name'))
-            self._add_translation_index(slot.get('actionlabel', ''), type='vdef', variable=slot.get('name'))
-            self._add_translation_index(slot.get('description', ''), type='vdef', variable=slot.get('name'))
-            self._info['wiring']['inputs'].append({
-                'name': slot.get('name'),
-                'type': slot.get('type'),
-                'label': slot.get('label'),
-                'description': slot.get('description', ''),
-                'actionlabel': slot.get('actionlabel', slot.get('action_label', '')),
-                'friendcode': slot.get('friendcode'),
-            })
+            for slot in self._xpath(INPUT_ENDPOINT_XPATH, wiring_element):
+                self._add_translation_index(slot.get('label'), type='vdef', variable=slot.get('name'))
+                self._add_translation_index(slot.get('actionlabel', ''), type='vdef', variable=slot.get('name'))
+                self._add_translation_index(slot.get('description', ''), type='vdef', variable=slot.get('name'))
+                self._info['wiring']['inputs'].append({
+                    'name': slot.get('name'),
+                    'type': slot.get('type'),
+                    'label': slot.get('label'),
+                    'description': slot.get('description', ''),
+                    'actionlabel': slot.get('actionlabel', ''),
+                    'friendcode': slot.get('friendcode'),
+                })
 
-        for event in self._xpath(OUTPUT_ENDPOINT_XPATH, wiring_element):
-            self._add_translation_index(event.get('label'), type='vdef', variable=event.get('name'))
-            self._add_translation_index(event.get('description', ''), type='vdef', variable=event.get('name'))
-            self._info['wiring']['outputs'].append({
-                'name': event.get('name'),
-                'type': event.get('type'),
-                'label': event.get('label'),
-                'description': event.get('description', ''),
-                'friendcode': event.get('friendcode'),
-            })
+            for event in self._xpath(OUTPUT_ENDPOINT_XPATH, wiring_element):
+                self._add_translation_index(event.get('label'), type='vdef', variable=event.get('name'))
+                self._add_translation_index(event.get('description', ''), type='vdef', variable=event.get('name'))
+                self._info['wiring']['outputs'].append({
+                    'name': event.get('name'),
+                    'type': event.get('type'),
+                    'label': event.get('label'),
+                    'description': event.get('description', ''),
+                    'friendcode': event.get('friendcode'),
+                })
 
         if parse_connections:
-            self._parse_wiring_connection_info(wiring_element)
-            self._parse_wiring_operator_info(wiring_element)
+            self._info['wiring']['connections'] = []
+            self._info['wiring']['operators'] = []
             self._info['wiring']['views'] = []
+
+            mashup_wiring_elements = self._xpath(MASHUP_WIRING_XPATH, self._doc)
+            if len(mashup_wiring_elements) == 0:
+                return
+
+            self._parse_wiring_connection_info(mashup_wiring_elements[0])
+            self._parse_wiring_operator_info(mashup_wiring_elements[0])
 
     def _parse_wiring_connection_info(self, wiring_element):
 
@@ -252,15 +250,8 @@ class WirecloudTemplateParser(object):
 
         for connection in self._xpath(CONNECTION_XPATH, wiring_element):
 
-            if len(self._xpath(SOURCE_XPATH, connection)) > 0:
-                source_element = self._xpath(SOURCE_XPATH, connection)[0]
-            else:
-                raise TemplateParseException(_('Missing required field: source'))
-
-            if len(self._xpath(SOURCE_XPATH, connection)) > 0:
-                target_element = self._xpath(TARGET_XPATH, connection)[0]
-            else:
-                raise TemplateParseException(_('Missing required field: target'))
+            source_element = self._xpath(SOURCE_XPATH, connection)[0]
+            target_element = self._xpath(TARGET_XPATH, connection)[0]
 
             connection_info = {
                 'readonly': connection.get('readonly', 'false').lower() == 'true',
@@ -287,11 +278,11 @@ class WirecloudTemplateParser(object):
         for operator in self._xpath(IOPERATOR_XPATH, wiring_element):
             operator_info = {
                 'id': operator.get('id'),
-                'name': operator.get('name'),
+                'name': '/'.join((operator.get('vendor'), operator.get('name'), operator.get('version'))),
                 'preferences': {},
             }
 
-            for pref in self._xpath(PREFERENCE_XPATH, operator):
+            for pref in self._xpath(PREFERENCE_VALUE_XPATH, operator):
                 operator_info['preferences'][pref.get('name')] = {
                     'readonly': pref.get('readonly', 'false').lower() == 'true',
                     'hidden': pref.get('hidden', 'false').lower() == 'true',
@@ -301,6 +292,33 @@ class WirecloudTemplateParser(object):
             self._info['wiring']['operators'][operator_info['id']] = operator_info
 
     def _parse_widget_info(self):
+
+        self._parse_resource_preferences()
+        self._parse_resource_persistentvariables()
+        self._parse_wiring_info()
+
+        xhtml_element = self._xpath(CODE_XPATH, self._doc)[0]
+        self._info['code_url'] = xhtml_element.get('src')
+        self._info['code_content_type'] = xhtml_element.get('contenttype', 'text/html')
+        self._info['code_charset'] = xhtml_element.get('charset', 'utf-8')
+        self._info['code_uses_platform_style'] = xhtml_element.get('useplatformstyle', 'false').lower() == 'true'
+        self._info['code_cacheable'] = xhtml_element.get('cacheable', 'true').lower() == 'true'
+
+        rendering_element = self.get_xpath(PLATFORM_RENDERING_XPATH, self._doc)
+        self._info['widget_width'] = rendering_element.get('width')
+        self._info['widget_height'] = rendering_element.get('height')
+
+    def _parse_operator_info(self):
+
+        self._parse_resource_preferences()
+        self._parse_resource_persistentvariables()
+        self._parse_wiring_info()
+
+        self._info['js_files'] = []
+        for script in self._xpath(SCRIPT_XPATH, self._doc):
+            self._info['js_files'].append(script.get('src'))
+
+    def _parse_resource_preferences(self):
 
         self._info['preferences'] = []
         for preference in self._xpath(PREFERENCES_XPATH, self._doc):
@@ -329,6 +347,8 @@ class WirecloudTemplateParser(object):
 
             self._info['preferences'].append(preference_info)
 
+    def _parse_resource_persistentvariables(self):
+
         self._info['properties'] = []
         for prop in self._xpath(PROPERTY_XPATH, self._doc):
             self._add_translation_index(prop.get('label'), type='vdef', variable=prop.get('name'))
@@ -342,36 +362,22 @@ class WirecloudTemplateParser(object):
                 'secure': prop.get('secure', 'false').lower() == 'true',
             })
 
-        self._parse_wiring_info()
+    def _parse_preference_values(self, element):
+        values = {}
 
-        xhtml_elements = self._xpath(CODE_XPATH, self._doc)
-        if len(xhtml_elements) == 1 and xhtml_elements[0].get('href', '') != '':
-            xhtml_element = xhtml_elements[0]
-            self._info['code_url'] = xhtml_element.get('href')
-        else:
-            msg = _('missing required attribute in Platform.Link: href')
-            raise TemplateParseException(msg)
+        for preference in self._xpath(PREFERENCE_VALUE_XPATH, element):
+            values[preference.get('name')] = preference.get('value')
 
-        self._info['code_content_type'] = xhtml_element.get('content-type', 'text/html')
-        self._info['code_charset'] = xhtml_element.get('charset', 'utf-8')
-        self._info['code_uses_platform_style'] = xhtml_element.get('use-platform-style', 'false').lower() == 'true'
-        self._info['code_cacheable'] = xhtml_element.get('cacheable', 'true').lower() == 'true'
-
-        rendering_element = self.get_xpath(PLATFORM_RENDERING_XPATH, self._doc)
-        self._info['widget_width'] = rendering_element.get('width')
-        self._info['widget_height'] = rendering_element.get('height')
+        return values
 
     def _parse_workspace_info(self):
 
-        workspace_structure = self._xpath(INCLUDED_RESOURCES_XPATH, self._resource_description)[0]
+        workspace_structure = self._xpath(INCLUDED_RESOURCES_XPATH, self._doc)[0]
 
-        preferences = {}
-        for preference in self._xpath(PREFERENCE_XPATH, workspace_structure):
-            preferences[preference.get('name')] = preference.get('value')
-        self._info['preferences'] = preferences
+        self._info['preferences'] = self._parse_preference_values(workspace_structure)
 
         self._info['params'] = []
-        for param in self._xpath(PARAM_XPATH, workspace_structure):
+        for param in self._xpath(PARAM_XPATH, self._doc):
             self._info['params'].append({
                 'name': param.get('name'),
                 'label': param.get('label'),
@@ -382,12 +388,9 @@ class WirecloudTemplateParser(object):
         for tab in self._xpath(TAB_XPATH, workspace_structure):
             tab_info = {
                 'name': tab.get('name'),
-                'preferences': {},
+                'preferences': self._parse_preference_values(tab),
                 'resources': [],
             }
-
-            for preference in self._xpath(PREFERENCE_XPATH, tab):
-                tab_info['preferences'][preference.get('name')] = preference.get('value')
 
             for resource in self._xpath(RESOURCE_XPATH, tab):
                 position = self.get_xpath(POSITION_XPATH, resource)
@@ -422,7 +425,7 @@ class WirecloudTemplateParser(object):
                         'value': prop.get('value'),
                     }
 
-                for pref in self._xpath(PREFERENCE_XPATH, resource):
+                for pref in self._xpath(PREFERENCE_VALUE_XPATH, resource):
                     resource_info['preferences'][pref.get('name')] = {
                         'readonly': pref.get('readonly', 'false').lower() == 'true',
                         'hidden': pref.get('hidden', 'false').lower() == 'true',
@@ -465,7 +468,7 @@ class WirecloudTemplateParser(object):
             self._info['translations'][translation.get('lang')] = current_catalogue
 
         if self._info['default_lang'] not in self._info['translations']:
-            raise TemplateParseException(_("ERROR: There isn't a Translation element with the default language (%(default_lang)s) translations") % {'default_lang': self._info['default_lang']})
+            raise TemplateParseException(_("ERROR: There isn't a translation element for the default translation language: (%(default_lang)s)") % {'default_lang': self._info['default_lang']})
 
         for index in self._translation_indexes:
             if index not in self._info['translations'][self._info['default_lang']]:

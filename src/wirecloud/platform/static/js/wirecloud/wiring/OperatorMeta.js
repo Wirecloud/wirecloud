@@ -26,7 +26,7 @@
     "use strict";
 
     var OperatorMeta = function OperatorMeta(desc) {
-        var vendor, name, version, uri, display_name, description, inputs,
+        var vendor, name, version, uri, title, description, inputs,
             outputs, prefList, prefs, pref, i;
 
         // Vendor
@@ -54,12 +54,12 @@
         uri = desc.name.trim();
         Object.defineProperty(this, 'uri', {value: vendor + '/' + name + '/' + version.text});
 
-        if (!('display_name' in desc) || desc.display_name.trim() === '') {
-            display_name = name;
+        if (!('title' in desc) || desc.title.trim() === '') {
+            title = name;
         } else {
-            display_name = desc.display_name;
+            title = desc.title;
         }
-        Object.defineProperty(this, 'display_name', {value: display_name});
+        Object.defineProperty(this, 'title', {value: title});
 
         description = desc.description;
         if (description == null || description.trim() === '') {

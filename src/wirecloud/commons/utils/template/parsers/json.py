@@ -85,7 +85,7 @@ class JSONTemplateParser(object):
 
     def _init(self):
 
-        self._check_string_fields(('doc_uri', 'image_uri', 'iphone_image_uri', 'license', 'license_url'))
+        self._check_string_fields(('title', 'description', 'authors', 'doc', 'image', 'smartphoneimage', 'license', 'licenseurl'))
         if self._info['type'] == 'widget':
 
             self._check_string_fields(('code_url',), required=True)
@@ -107,7 +107,7 @@ class JSONTemplateParser(object):
         if 'translations' not in self._info:
             self._info['translations'] = {}
 
-        self._add_translation_index(self._info['display_name'], type='resource', field='display_name')
+        self._add_translation_index(self._info['title'], type='resource', field='title')
         self._add_translation_index(self._info['description'], type='resource', field='description')
 
         if self._info['type'] != 'mashup':

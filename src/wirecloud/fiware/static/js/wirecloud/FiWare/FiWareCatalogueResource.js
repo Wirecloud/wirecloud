@@ -72,7 +72,7 @@
             'name': {value: resourceJSON_.name},
             'version': {value: resourceJSON_.version},
             'type': {value: resourceJSON_.type},
-            'image_url': {value: resourceJSON_.uriImage},
+            'image': {value: resourceJSON_.uriImage},
             'abstract': {value: resourceJSON_.shortDescription},
             'description': {value: resourceJSON_.longDescription},
             'pricing': {value: resourceJSON_.pricing},

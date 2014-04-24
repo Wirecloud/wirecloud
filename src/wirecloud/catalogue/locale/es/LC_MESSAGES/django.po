@@ -1,0 +1,152 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-02-07 13:03+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: models.py:56
+msgid "Name"
+msgstr "Nombre"
+
+#: models.py:57
+msgid "Display Name"
+msgstr ""
+
+#: models.py:58
+msgid "Vendor"
+msgstr ""
+
+#: models.py:59
+msgid "Version"
+msgstr "Versión"
+
+#: models.py:60
+msgid "Type"
+msgstr "Tipo"
+
+#: models.py:62
+msgid "Author"
+msgstr ""
+
+#: models.py:63
+msgid "Mail"
+msgstr ""
+
+#: models.py:67
+msgid "Available to all users"
+msgstr "Disponible para todos los usuarios"
+
+#: models.py:68
+msgid "Users"
+msgstr "Usuarios"
+
+#: models.py:69
+msgid "Groups"
+msgstr "Grupos"
+
+#: models.py:71
+msgid "Description"
+msgstr "Descripción"
+
+#: models.py:72
+msgid "License"
+msgstr "Licencia"
+
+#: models.py:75
+msgid "imageURI"
+msgstr ""
+
+#: models.py:76
+msgid "iPhoneImageURI"
+msgstr ""
+
+#: models.py:77
+msgid "wikiURI"
+msgstr ""
+
+#: models.py:78
+msgid "templateURI"
+msgstr ""
+
+#: models.py:80
+msgid "popularity"
+msgstr ""
+
+#: models.py:81
+msgid "fromWGT"
+msgstr ""
+
+#: models.py:83
+msgid "JSON description"
+msgstr ""
+
+#: models.py:158
+msgid "Friend code"
+msgstr ""
+
+#: models.py:159
+msgid "Wiring"
+msgstr ""
+
+#: utils.py:98
+#, python-format
+msgid ""
+"%(file_name)s was not encoded using the specified charset (%(charset)s "
+"according to the widget descriptor file)."
+msgstr ""
+
+#: utils.py:200
+#, python-format
+msgid "user %(username)s is not the owner of the resource %(resource_id)s"
+msgstr ""
+
+#: views.py:115
+msgid "Missing parameter: template_uri or file"
+msgstr "Faltan el parámetro template_uri o file"
+
+#: views.py:123
+msgid "Resource already exists"
+msgstr ""
+
+#: views.py:284 views.py:344 views.py:390 views.py:416
+#, python-format
+msgid "malformed json data: %s"
+msgstr "datos json malformados: %s"
+
+#: management/commands/addtocatalogue.py:50
+msgid "Wrong number of arguments"
+msgstr "Número de argumentos incorrecto"
+
+#: management/commands/addtocatalogue.py:61
+#, python-format
+msgid "Failed to read from %(file_name)s"
+msgstr ""
+
+#: management/commands/addtocatalogue.py:82
+#, python-format
+msgid "Successfully imported %(name)s widget"
+msgstr ""
+
+#: management/commands/addtocatalogue.py:84
+#, python-format
+msgid ""
+"Version %(version)s of the %(name)s widget (from %(vendor)s) already exists"
+msgstr ""
+
+#: management/commands/addtocatalogue.py:90
+#, python-format
+msgid "Failed to import widget from %(file_name)s"
+msgstr ""

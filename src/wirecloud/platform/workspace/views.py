@@ -174,7 +174,7 @@ class WorkspaceCollection(Resource):
                     'vendor': 'api',
                     'name': from_ws.name,
                     'version': '1.0',
-                    'display_name': '',
+                    'title': '',
                     'description': 'Temporal mashup for the workspace copy operation',
                     'email': 'a@example.com',
                 }
@@ -497,7 +497,7 @@ class MashupMergeService(Service):
                 'vendor': 'api',
                 'name': 'merge_op',
                 'version': '1.0',
-                'display_name': '',
+                'title': '',
                 'description': 'Temporal mashup for merging operation',
                 'email': 'a@example.com',
             }
@@ -563,7 +563,7 @@ class WorkspacePublisherEntry(Resource):
         workspace = get_object_or_404(Workspace, id=workspace_id)
         if image_file is not None:
             image_filename = 'images/catalogue' + os.path.splitext(image_file.name)[1]
-            options['image_uri'] = image_filename
+            options['image'] = image_filename
         description = build_rdf_template_from_workspace(options, workspace, request.user)
 
         f = StringIO()

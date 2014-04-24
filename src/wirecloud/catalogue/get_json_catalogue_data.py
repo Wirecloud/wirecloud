@@ -102,7 +102,7 @@ def get_resource_data(untranslated_resource, user, request=None):
         'permissions' : {
             'uninstall': resource.public is False and resource.users.filter(pk=user.pk).exists(),
         },
-        'author': resource.author,
+        'authors': resource.author,
         'displayName': displayName,
         'description': resource.description,
         'mail': resource.mail,
@@ -110,7 +110,7 @@ def get_resource_data(untranslated_resource, user, request=None):
         'uriWiki': urljoin(template_uri, resource.wiki_page_uri),
         'uriTemplate': template_uri,
         'license': resource_info['license'],
-        'licenseurl': resource_info['license_url'],
+        'licenseurl': resource_info['licenseurl'],
         'outputs': [d for d in data_events],
         'inputs': [d for d in data_slots],
     }

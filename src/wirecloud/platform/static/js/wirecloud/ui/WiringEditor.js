@@ -386,7 +386,7 @@ if (!Wirecloud.ui) {
                 // Ghost Operator
                 operator_instance = {
                     'id': operator.id,
-                    'display_name': operator.name,
+                    'title': operator.name,
                     'name': operator.name,
                     'ghost': true,
                     'meta': {

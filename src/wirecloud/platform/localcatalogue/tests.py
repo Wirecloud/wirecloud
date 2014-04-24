@@ -71,17 +71,17 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.assertEqual(data['name'], 'test')
         self.assertEqual(data['version'], '0.1')
         self.assertEqual(data['description'], 'Test Widget description')
-        self.assertEqual(data['image_uri'], 'http://example.com/path/images/catalogue.png')
-        self.assertEqual(data['iphone_image_uri'], 'http://example.com/path/images/catalogue_iphone.png')
-        self.assertEqual(data['doc_uri'], 'http://example.com/path/doc/index.html')
+        self.assertEqual(data['image'], 'http://example.com/path/images/catalogue.png')
+        self.assertEqual(data['smartphoneimage'], 'http://example.com/path/images/catalogue_iphone.png')
+        self.assertEqual(data['doc'], 'http://example.com/path/doc/index.html')
         self.assertEqual(data['license'], 'Apache License 2.0')
-        self.assertEqual(data['license_url'], 'http://www.apache.org/licenses/LICENSE-2.0.html')
+        self.assertEqual(data['licenseurl'], 'http://www.apache.org/licenses/LICENSE-2.0.html')
 
         self.assertEqual(len(data['properties']), 1)
-        self.assertEqual(data['properties'], [{u'default_value': u'', u'secure': False, u'name': u'prop', u'label': u'Property label', u'type': u'text', u'description': u''}])
+        self.assertEqual(data['properties'], [{u'default': u'', u'secure': False, u'name': u'prop', u'label': u'Property label', u'type': u'text', u'description': u''}])
 
         self.assertEqual(len(data['preferences']), 1)
-        self.assertEqual(data['preferences'], [{u'default_value': u'value', u'secure': False, u'name': u'pref', u'label': u'Preference label', u'type': u'list', u'options': [{u'value': u'1', u'label': u'Option name'}], u'readonly': False, u'description': u'Preference description', u'value': None}])
+        self.assertEqual(data['preferences'], [{u'default': u'value', u'secure': False, u'name': u'pref', u'label': u'Preference label', u'type': u'list', u'options': [{u'value': u'1', u'label': u'Option name'}], u'readonly': False, u'description': u'Preference description', u'value': None}])
 
         self.assertEqual(len(data['wiring']['inputs']), 1)
         self.assertEqual(data['wiring']['inputs'], [{u'name': u'slot', u'label': u'Slot label', u'type': u'text', u'description': u'',u'friendcode': u'test_friend_code', u'actionlabel': u''}])
@@ -156,7 +156,7 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.assertEqual(data['wiring']['outputs'][0]['friendcode'], 'test_friend_code')
         self.assertEqual(data['preferences'][0]['label'], 'Preference label')
         self.assertEqual(data['preferences'][0]['description'], 'Preference description')
-        self.assertEqual(data['preferences'][0]['default_value'], 'value')
+        self.assertEqual(data['preferences'][0]['default'], 'value')
         self.assertEqual(len(data['js_files']), 5)
 
         self.assertEqual(data['js_files'][0], '/examplecode1.js')
@@ -245,17 +245,17 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.assertEqual(data['vendor'], 'Wirecloud')
         self.assertEqual(data['name'], 'test')
         self.assertEqual(data['version'], '0.1')
-        self.assertEqual(data['display_name'], 'Widget de prueba')
+        self.assertEqual(data['title'], 'Widget de prueba')
         self.assertEqual(data['description'], u'Descripción del Widget de pruebas')
-        self.assertEqual(data['image_uri'], 'http://example.com/path/images/catalogue.png')
-        self.assertEqual(data['iphone_image_uri'], 'http://example.com/path/images/catalogue_iphone.png')
-        self.assertEqual(data['doc_uri'], 'http://example.com/path/doc/index.html')
+        self.assertEqual(data['image'], 'http://example.com/path/images/catalogue.png')
+        self.assertEqual(data['smartphoneimage'], 'http://example.com/path/images/catalogue_iphone.png')
+        self.assertEqual(data['doc'], 'http://example.com/path/doc/index.html')
 
         self.assertEqual(len(data['properties']), 1)
-        self.assertEqual(data['properties'], [{u'default_value': u'', u'secure': False, u'name': u'prop', u'label': u'Etiqueta de la propiedad', u'type': u'text', u'description': u''}])
+        self.assertEqual(data['properties'], [{u'default': u'', u'secure': False, u'name': u'prop', u'label': u'Etiqueta de la propiedad', u'type': u'text', u'description': u''}])
 
         self.assertEqual(len(data['preferences']), 1)
-        self.assertEqual(data['preferences'], [{u'default_value': u'value', u'secure': False, u'name': u'pref', u'label': u'Etiqueta de la preferencia', u'type': u'list', u'options': [{u'value': u'1', u'label': u'Nombre de la opción'}], u'readonly': False, u'description': u'Descripción de la preferencia', u'value': None}])
+        self.assertEqual(data['preferences'], [{u'default': u'value', u'secure': False, u'name': u'pref', u'label': u'Etiqueta de la preferencia', u'type': u'list', u'options': [{u'value': u'1', u'label': u'Nombre de la opción'}], u'readonly': False, u'description': u'Descripción de la preferencia', u'value': None}])
 
         self.assertEqual(len(data['wiring']['inputs']), 1)
         self.assertEqual(data['wiring']['inputs'], [{u'name': u'slot', u'label': u'Etiqueta del endpoint de entrada', u'type': u'text', u'description': u'',u'friendcode': u'test_friend_code', u'actionlabel': u''}])
@@ -272,14 +272,14 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         resource = install_resource(template, template_uri, self.user, False)
 
         data = resource.get_processed_info()
-        self.assertEqual(data['display_name'], 'Test Widget')
+        self.assertEqual(data['title'], 'Test Widget')
         self.assertEqual(data['version'], '0.2')
 
         self.assertEqual(len(data['properties']), 1)
-        self.assertEqual(data['properties'], [{u'default_value': u'', u'secure': False, u'name': u'prop', u'label': u'Label', u'type': u'text', u'description': u''}])
+        self.assertEqual(data['properties'], [{u'default': u'', u'secure': False, u'name': u'prop', u'label': u'Label', u'type': u'text', u'description': u''}])
 
         self.assertEqual(len(data['preferences']), 1)
-        self.assertEqual(data['preferences'], [{u'default_value': u'value', u'secure': False, u'name': u'pref', u'label': u'Label', u'readonly': False, u'type': u'text', u'description': u'Preference description', u'value': None}])
+        self.assertEqual(data['preferences'], [{u'default': u'value', u'secure': False, u'name': u'pref', u'label': u'Label', u'readonly': False, u'type': u'text', u'description': u'Preference description', u'value': None}])
 
         self.assertEqual(len(data['wiring']['inputs']), 1)
         self.assertEqual(data['wiring']['inputs'], [{u'name': u'slot', u'label': u'Label', u'type': u'text', u'description': u'',u'friendcode': u'test_friend_code', u'actionlabel': u''}])
