@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -20,7 +20,6 @@
 from __future__ import absolute_import
 
 import json
-import urlparse
 
 from django.utils import six
 from django.utils.translation import ugettext as _
@@ -86,7 +85,7 @@ class JSONTemplateParser(object):
 
     def _init(self):
 
-        self._check_string_fields(('doc_uri', 'image_uri', 'iphone_image_uri'))
+        self._check_string_fields(('doc_uri', 'image_uri', 'iphone_image_uri', 'license', 'license_url'))
         if self._info['type'] == 'widget':
 
             self._check_string_fields(('code_url',), required=True)

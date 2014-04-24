@@ -22,10 +22,20 @@ import copy
 import json
 
 
+def remove_empty_fields(fields, data):
+
+    for field in fields:
+        value = data.get(field)
+        if value is None or value == '':
+            del data[field]
+
+
 def write_json_description(template_info):
 
     if template_info['type'] not in ('widget', 'operator', 'mashup'):
         raise Exception('Unsupported resource type: ' + template_info['type'])
+
+    remove_empty_fields(('license', 'license_url'), template_info)
 
     template_info = copy.copy(template_info)
     del template_info['translation_index_usage']
