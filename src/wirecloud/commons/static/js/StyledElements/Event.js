@@ -36,10 +36,16 @@ var StyledElements = new Object();
     };
 
     Event.prototype.addEventListener = function addEventListener(handler) {
+        if (typeof handler !== 'function') {
+            throw new TypeError('Handlers must be functions');
+        }
         this.handlers.push(handler);
     };
 
     Event.prototype.removeEventListener = function removeEventListener(handler) {
+        if (typeof handler !== 'function') {
+            throw new TypeError('Handlers must be functions');
+        }
         var index = this.handlers.indexOf(handler);
         if (index != -1) {
             this.handlers.splice(index, 1);
