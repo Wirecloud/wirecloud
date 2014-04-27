@@ -31,12 +31,17 @@ try:
 except: # Django 1.4
     from django.http import HttpResponse as StreamingHttpResponse
 from django.utils.encoding import iri_to_uri
-from django.utils.http import urlquote
 from django.utils.translation import ugettext as _
 
 from wirecloud.commons.utils.http import build_error_response, get_current_domain
 from wirecloud.platform.plugins import get_request_proxy_processors, get_response_proxy_processors
 from wirecloud.proxy.utils import is_valid_response_header, ValidationError
+
+
+def response_iterator(response, chunk_size=4096):
+
+    for chunk in response.stream(chunk_size, decode_content=False):
+        yield chunk
 
 
 class Proxy():
@@ -150,7 +155,7 @@ class Proxy():
             return HttpResponse(status=502)
 
         # Build a Django response
-        response = StreamingHttpResponse(res.raw)
+        response = StreamingHttpResponse(response_iterator(res.raw))
 
         # Set status code to the response
         response.status_code = res.status_code
