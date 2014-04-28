@@ -38,12 +38,6 @@ from wirecloud.platform.plugins import get_request_proxy_processors, get_respons
 from wirecloud.proxy.utils import is_valid_response_header, ValidationError
 
 
-def response_iterator(response, chunk_size=4096):
-
-    for chunk in response.stream(chunk_size, decode_content=False):
-        yield chunk
-
-
 class Proxy():
 
     http_headerRE = re.compile('^http_')
@@ -155,7 +149,7 @@ class Proxy():
             return HttpResponse(status=502)
 
         # Build a Django response
-        response = StreamingHttpResponse(response_iterator(res.raw))
+        response = StreamingHttpResponse(res.raw.stream(4096, decode_content=False))
 
         # Set status code to the response
         response.status_code = res.status_code
