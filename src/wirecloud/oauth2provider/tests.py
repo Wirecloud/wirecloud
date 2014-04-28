@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -90,6 +90,16 @@ class Oauth2TestCase(TestCase):
         response_data = json.loads(response.content)
         self.assertTrue(isinstance(response_data, dict))
     test_authorization_code_grant_flow.tags = ('oauth2', 'fiware-ut-9')
+
+    def test_authorization_bad_token(self):
+        url = reverse('wirecloud.resource_collection')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json', HTTP_AUTHORIZATION='Bearer invalid_token')
+        self.assertEqual(response.status_code, 401)
+
+        response_data = json.loads(response.content)
+        self.assertIn('WWW-Authenticate', response)
+        self.assertTrue(isinstance(response_data, dict))
 
     @unittest.skip('wip test')
     def test_implicit_grant_flow(self):

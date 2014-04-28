@@ -18,6 +18,7 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib.auth.middleware import get_user
+from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import MiddlewareNotUsed
 from django.core.urlresolvers import reverse
 from django.utils.importlib import import_module
@@ -141,8 +142,15 @@ def get_api_user(request):
 
     from wirecloud.oauth2provider.models import Token
 
-    token = request.META['HTTP_AUTHORIZATION'].split(' ', 1)[1]
-    return Token.objects.get(token=token).user
+    parts = request.META['HTTP_AUTHORIZATION'].split(' ', 1)
+    if len(parts) == 0:
+        return AnonymousUser()
+
+    (auth_type, token) = parts
+    try:
+        return Token.objects.get(token=token).user
+    except:
+        return AnonymousUser()
 
 
 class AuthenticationMiddleware(object):
