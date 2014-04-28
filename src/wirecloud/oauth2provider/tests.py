@@ -82,13 +82,13 @@ class Oauth2TestCase(TestCase):
         self.assertEqual(token_type, 'Bearer')
 
         # Make an authenticated request
-        url = reverse('wirecloud.workspace_collection')
+        url = reverse('wirecloud.resource_collection')
 
         response = self.client.get(url, HTTP_ACCEPT='application/json', HTTP_AUTHORIZATION='Bearer ' + token)
         self.assertEqual(response.status_code, 200)
 
         response_data = json.loads(response.content)
-        self.assertTrue(isinstance(response_data, list))
+        self.assertTrue(isinstance(response_data, dict))
     test_authorization_code_grant_flow.tags = ('oauth2', 'fiware-ut-9')
 
     @unittest.skip('wip test')
