@@ -192,6 +192,24 @@ class LocalFileSystemServer(object):
             return {'status_code': 404, 'reason': 'Not Found'}
 
 
+class StreamContent(object):
+
+    def __init__(self, content):
+
+        if not hasattr(content, '__iter__'):
+            self._content = StringIO(content)
+        else:
+            self._content = content
+
+    def read(self, *args, **kwargs):
+
+        return self._content.read(*args, **kwargs)
+
+    def stream(self, *args, **kwargs):
+
+        return self._content.__iter__()
+
+
 class FakeNetwork(object):
 
     old_download_function = None
@@ -231,11 +249,7 @@ class FakeNetwork(object):
                     cookies.load(entry)
                 res.cookies.update(cookies)
 
-        content = res_info.get('content', '')
-        if not hasattr(content, 'read') or not callable(content.read):
-            res.raw = StringIO(content)
-        else:
-            res.raw = content
+        res.raw = StreamContent(res_info.get('content', ''))
 
         return res
 
