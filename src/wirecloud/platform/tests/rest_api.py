@@ -1747,6 +1747,29 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         url = reverse('wirecloud.market_collection')
         check_post_bad_request_syntax(self, url)
 
+    def test_platform_context_collection_get(self):
+
+        url = reverse('wirecloud.platform_context_collection')
+
+        # Authenticate
+        self.client.login(username='user_with_workspaces', password='admin')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertEqual(response_data['username']['value'], 'user_with_workspaces')
+
+    def test_platform_context_collection_get_allows_anonymous_requests(self):
+
+        url = reverse('wirecloud.platform_context_collection')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertTrue(isinstance(response_data, dict))
+        self.assertEqual(response_data['username']['value'], 'anonymous')
+
     def test_platform_preference_collection_get(self):
 
         url = reverse('wirecloud.platform_preferences')
