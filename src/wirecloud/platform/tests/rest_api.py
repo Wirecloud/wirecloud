@@ -1268,12 +1268,12 @@ class ResourceManagementAPI(WirecloudTestCase):
 
     def test_resource_collection_get_requires_authentication(self):
 
-        url = reverse('wirecloud_showcase.resource_collection')
+        url = reverse('wirecloud.resource_collection')
         check_get_requires_authentication(self, url)
 
     def test_resource_collection_get(self):
 
-        url = reverse('wirecloud_showcase.resource_collection')
+        url = reverse('wirecloud.resource_collection')
 
         self.client.login(username='admin', password='admin')
 
@@ -1293,12 +1293,12 @@ class ResourceManagementAPI(WirecloudTestCase):
 
     def test_resource_collection_post_requires_authentication(self):
 
-        url = reverse('wirecloud_showcase.resource_collection')
+        url = reverse('wirecloud.resource_collection')
         check_post_requires_authentication(self, url, '{}')
 
     def test_resource_collection_post_widget(self):
 
-        url = reverse('wirecloud_showcase.resource_collection')
+        url = reverse('wirecloud.resource_collection')
 
         # Authenticate
         self.client.login(username='admin', password='admin')
@@ -1321,7 +1321,7 @@ class ResourceManagementAPI(WirecloudTestCase):
 
     def test_resource_collection_post_widget_without_enough_filesystem_permissions(self):
 
-        url = reverse('wirecloud_showcase.resource_collection')
+        url = reverse('wirecloud.resource_collection')
 
         resource_id = [
             'Wirecloud',
@@ -1345,7 +1345,7 @@ class ResourceManagementAPI(WirecloudTestCase):
 
     def test_resource_collection_post_widget_invalid_html_encoding(self):
 
-        url = reverse('wirecloud_showcase.resource_collection')
+        url = reverse('wirecloud.resource_collection')
 
         # Authenticate
         self.client.login(username='admin', password='admin')
@@ -1359,7 +1359,7 @@ class ResourceManagementAPI(WirecloudTestCase):
 
     def test_resource_collection_post_resource_missing_config_xml(self):
 
-        url = reverse('wirecloud_showcase.resource_collection')
+        url = reverse('wirecloud.resource_collection')
 
         # Authenticate
         self.client.login(username='admin', password='admin')
@@ -1373,7 +1373,7 @@ class ResourceManagementAPI(WirecloudTestCase):
 
     def test_resource_collection_post_resource_invalid_config_xml(self):
 
-        url = reverse('wirecloud_showcase.resource_collection')
+        url = reverse('wirecloud.resource_collection')
 
         # Authenticate
         self.client.login(username='admin', password='admin')
@@ -1388,7 +1388,7 @@ class ResourceManagementAPI(WirecloudTestCase):
 
     def test_resource_collection_post_operator(self):
 
-        url = reverse('wirecloud_showcase.resource_collection')
+        url = reverse('wirecloud.resource_collection')
 
         # Authenticate
         self.client.login(username='admin', password='admin')
@@ -1410,7 +1410,7 @@ class ResourceManagementAPI(WirecloudTestCase):
 
     def test_resource_collection_post_mashup(self):
 
-        url = reverse('wirecloud_showcase.resource_collection')
+        url = reverse('wirecloud.resource_collection')
 
         # Authenticate
         self.client.login(username='normuser', password='admin')
@@ -1443,7 +1443,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         test_operator.users.clear()
         test_operator.save()
 
-        url = reverse('wirecloud_showcase.resource_collection')
+        url = reverse('wirecloud.resource_collection')
 
         # Authenticate
         self.client.login(username='normuser', password='admin')
@@ -1455,7 +1455,7 @@ class ResourceManagementAPI(WirecloudTestCase):
 
     def test_resource_collection_post_using_octet_stream(self):
 
-        url = reverse('wirecloud_showcase.resource_collection')
+        url = reverse('wirecloud.resource_collection')
 
         # Authenticate
         self.client.login(username='admin', password='admin')
@@ -1475,7 +1475,7 @@ class ResourceManagementAPI(WirecloudTestCase):
 
     def test_resource_collection_post_using_bad_packaged_resouce_from_uri(self):
 
-        url = reverse('wirecloud_showcase.resource_collection')
+        url = reverse('wirecloud.resource_collection')
 
         # Authenticate
         self.client.login(username='admin', password='admin')
@@ -1490,7 +1490,7 @@ class ResourceManagementAPI(WirecloudTestCase):
 
     def test_resource_collection_post_using_octet_stream_error(self):
 
-        url = reverse('wirecloud_showcase.resource_collection')
+        url = reverse('wirecloud.resource_collection')
 
         # Authenticate
         self.client.login(username='admin', password='admin')
@@ -1501,7 +1501,7 @@ class ResourceManagementAPI(WirecloudTestCase):
 
     def test_resource_entry_get_requires_authentication(self):
 
-        url = reverse('wirecloud_showcase.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
+        url = reverse('wirecloud.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
         check_get_requires_authentication(self, url)
 
     def test_resource_entry_get(self):
@@ -1511,7 +1511,7 @@ class ResourceManagementAPI(WirecloudTestCase):
             'Test',
             '1.0'
         ]
-        url = reverse('wirecloud_showcase.resource_entry', args=resource_id)
+        url = reverse('wirecloud.resource_entry', args=resource_id)
         file_name = '_'.join(resource_id) + '.wgt'
         local_dir = catalogue.wgt_deployer.get_base_dir(*resource_id)
         dst_file = os.path.join(local_dir, file_name)
@@ -1537,17 +1537,17 @@ class ResourceManagementAPI(WirecloudTestCase):
             'TestOperator',
             '1.0',
         )
-        url = reverse('wirecloud_showcase.resource_entry', args=resource_id)
+        url = reverse('wirecloud.resource_entry', args=resource_id)
         check_get_requires_permission(self, url)
 
     def test_resource_entry_delete_requires_authentication(self):
 
-        url = reverse('wirecloud_showcase.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
+        url = reverse('wirecloud.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
         check_delete_requires_authentication(self, url)
 
     def test_resource_entry_delete_uninstall(self):
 
-        url = reverse('wirecloud_showcase.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
+        url = reverse('wirecloud.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
 
         self.client.login(username='admin', password='admin')
 
@@ -1563,7 +1563,7 @@ class ResourceManagementAPI(WirecloudTestCase):
         resource.public = False
         resource.save()
 
-        url = reverse('wirecloud_showcase.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
+        url = reverse('wirecloud.resource_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
 
         self.client.login(username='admin', password='admin')
 
@@ -1613,7 +1613,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
 
     def test_resource_description_entry_get_requires_authentication(self):
 
-        url = reverse('wirecloud_showcase.resource_description_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
+        url = reverse('wirecloud.resource_description_entry', kwargs={'vendor': 'Wirecloud', 'name': 'Test', 'version': '1.0'})
         check_get_requires_authentication(self, url)
 
     def test_resource_description_entry_get(self):
@@ -1623,7 +1623,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'Test',
             '1.0'
         ]
-        url = reverse('wirecloud_showcase.resource_description_entry', args=resource_id)
+        url = reverse('wirecloud.resource_description_entry', args=resource_id)
 
         # Authenticate
         self.client.login(username='admin', password='admin')
@@ -1640,7 +1640,7 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
             'TestOperator',
             '1.0',
         )
-        url = reverse('wirecloud_showcase.resource_description_entry', args=resource_id)
+        url = reverse('wirecloud.resource_description_entry', args=resource_id)
         check_get_requires_permission(self, url)
 
     def test_market_collection_get_requires_authentication(self):
