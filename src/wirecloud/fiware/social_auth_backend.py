@@ -54,6 +54,7 @@ class FiwareBackend(OAuthBackend):
     # Default extra data to store
     EXTRA_DATA = [
         ('nickName', 'username'),
+        ('actorId', 'uid'),
     ]
 
     def get_user_id(self, details, response):
