@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -17,9 +17,19 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from wirecloud.platform.plugins import WirecloudPlugin
+from django.contrib.auth.models import AnonymousUser
 
+from wirecloud.platform.plugins import WirecloudPlugin
+from wirecloud.oauth2provider.models import Token
 from wirecloud.oauth2provider.urls import urlpatterns
+
+
+def auth_oauth2_token(auth_type, token):
+
+    try:
+        return Token.objects.get(token=token).user
+    except:
+        return AnonymousUser()
 
 
 class OAuth2ProviderPlugin(WirecloudPlugin):
@@ -30,3 +40,9 @@ class OAuth2ProviderPlugin(WirecloudPlugin):
 
     def get_urls(self):
         return urlpatterns
+
+    def get_api_auth_backends(self):
+
+        return {
+            'Bearer': auth_oauth2_token,
+        }

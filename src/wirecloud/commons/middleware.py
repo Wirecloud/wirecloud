@@ -140,15 +140,16 @@ class URLMiddleware(object):
 
 def get_api_user(request):
 
-    from wirecloud.oauth2provider.models import Token
+    from wirecloud.platform.plugins import get_api_auth_backends
 
     parts = request.META['HTTP_AUTHORIZATION'].split(' ', 1)
     if len(parts) == 0:
         return AnonymousUser()
 
     (auth_type, token) = parts
+    backends = get_api_auth_backends()
     try:
-        return Token.objects.get(token=token).user
+        return backends[auth_type](auth_type, token)
     except:
         return AnonymousUser()
 

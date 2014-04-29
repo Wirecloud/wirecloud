@@ -37,6 +37,7 @@ _wirecloud_proxy_processors = None
 _wirecloud_request_proxy_processors = []
 _wirecloud_response_proxy_processors = []
 _wirecloud_constants = None
+_wirecloud_api_auth_backends = None
 
 
 def find_wirecloud_plugins():
@@ -150,6 +151,7 @@ def clear_cache():
     global _wirecloud_request_proxy_processors
     global _wirecloud_response_proxy_processors
     global _wirecloud_constants
+    global _wirecloud_api_auth_backends
 
     _wirecloud_plugins = None
     _wirecloud_features = None
@@ -158,6 +160,7 @@ def clear_cache():
     _wirecloud_request_proxy_processors = []
     _wirecloud_response_proxy_processors = []
     _wirecloud_constants = None
+    _wirecloud_api_auth_backends = None
 
 
 def get_plugin_urls():
@@ -237,6 +240,19 @@ def get_platform_css(view):
         files += plugin.get_platform_css(view)
 
     return files
+
+
+def get_api_auth_backends():
+    global _wirecloud_api_auth_backends
+
+    if _wirecloud_api_auth_backends is None:
+        plugins = get_plugins()
+
+        _wirecloud_api_auth_backends = {}
+        for plugin in plugins:
+            _wirecloud_api_auth_backends.update(plugin.get_api_auth_backends())
+
+    return _wirecloud_api_auth_backends
 
 
 def get_proxy_processors():
@@ -414,4 +430,7 @@ class WirecloudPlugin(object):
         return ()
 
     def get_django_template_context_processors(self):
+        return {}
+
+    def get_api_auth_backends(self):
         return {}
