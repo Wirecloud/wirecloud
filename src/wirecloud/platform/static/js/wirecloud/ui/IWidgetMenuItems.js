@@ -69,7 +69,11 @@
             gettext("Reload"),
             function () {
                 try {
-                    this.content.contentDocument.location.reload();
+                    var prev = this.content.src;
+                    this.content.src = this.codeURL;
+                    if (this.content.src === prev) {
+                        this.content.contentDocument.location.reload();
+                    }
                 } catch (e) {}
             }.bind(this.iWidget)
         ));
