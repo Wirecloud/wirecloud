@@ -19,6 +19,7 @@
 
 from django.conf import settings
 from django.conf.urls import patterns, include, url
+from django.contrib.auth.models import AnonymousUser
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import cache_page
 
@@ -32,8 +33,16 @@ from wirecloud.fiware.marketAdaptor.views import get_market_adaptor, get_market_
 try:
     from social_auth.backends import get_backends
     IDM_SUPPORT_ENABLED = 'wirecloud.fiware' in settings.INSTALLED_APPS and 'social_auth' in settings.INSTALLED_APPS and 'fiware' in get_backends()
+    FIWARE_SOCIAL_AUTH_BACKEND = get_backends()['fiware']
 except:
     IDM_SUPPORT_ENABLED = False
+
+
+def auth_fiware_token(request, auth_type, token):
+
+    from social_auth.models import UserSocialAuth
+    user_data = FIWARE_SOCIAL_AUTH_BACKEND._user_data(token)
+    return UserSocialAuth.objects.get(provider='fiware', uid=user_data['nickName']).user
 
 
 class FiWareMarketManager(MarketManager):
@@ -240,3 +249,12 @@ class FiWarePlugin(WirecloudPlugin):
             "FIWARE_HOME": getattr(settings, "FIWARE_HOME", wirecloud.fiware.DEFAULT_FIWARE_HOME),
             "FIWARE_PORTALS": getattr(settings, "FIWARE_PORTALS", wirecloud.fiware.DEFAULT_FIWARE_PORTALS),
         }
+
+    def get_api_auth_backends(self):
+
+        if IDM_SUPPORT_ENABLED:
+            return {
+                'Bearer': auth_fiware_token,
+            }
+        else:
+            return {}

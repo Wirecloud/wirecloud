@@ -93,9 +93,9 @@ class FiwareAuth(BaseOAuth2):
 
     FIWARE_ORGANIZATION = getattr(settings, 'FIWARE_ORGANIZATION', None)
 
-    def user_data(self, access_token, *args, **kwargs):
-        """Loads user data from service"""
-        url = self.USER_DATA_URL + '?' + urlencode({
+    @staticmethod
+    def _user_data(access_token):
+        url = FiwareAuth.USER_DATA_URL + '?' + urlencode({
             'access_token': access_token
         })
 
@@ -105,6 +105,10 @@ class FiwareAuth(BaseOAuth2):
             data = None
 
         return data
+
+    def user_data(self, access_token, *args, **kwargs):
+        """Loads user data from service"""
+        return self._user_data(access_token)
 
 # Backend definition
 BACKENDS = {
