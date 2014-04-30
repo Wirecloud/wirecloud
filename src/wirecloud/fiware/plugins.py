@@ -38,7 +38,7 @@ except:
     IDM_SUPPORT_ENABLED = False
 
 
-def auth_fiware_token(request, auth_type, token):
+def auth_fiware_token(auth_type, token):
 
     from social_auth.models import UserSocialAuth
     user_data = FIWARE_SOCIAL_AUTH_BACKEND._user_data(token)
