@@ -69,11 +69,15 @@
     /**
      * Draws an arrow into this canvas.
      */
-    Canvas.prototype.drawArrow = function drawArrow(from, to, extraClass, readOnly) {
+    Canvas.prototype.drawArrow = function drawArrow(from, to, extraClass, readOnly, isGhost) {
         var arrow = new Wirecloud.ui.WiringEditor.Arrow(this);
         arrow.addClassName(extraClass);
         if (readOnly) {
             arrow.readOnly = true;
+        }
+        if (isGhost) {
+            arrow.isGhost = true;
+            arrow.addClassName('ghost');
         }
         arrow.setStart(from);
         arrow.setEnd(to);

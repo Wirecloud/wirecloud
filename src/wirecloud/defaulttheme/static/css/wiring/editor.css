@@ -27,10 +27,6 @@
     pointer-events: none;
 }
 
-.wiring_editor .grid {
-    font-size: 1.05em;
-}
-
 .wiring_editor .grid.selecting {
     cursor: url('../../images/wiring/cursorAdd.png'), crosshair;
 }
@@ -69,4 +65,12 @@
     left: 5px;
     height: 12px;
     width: 6px;
+}
+
+/* Entities max-width */
+.wiring_editor .calculateEntitySizeDiv {
+    position: absolute;
+    top: 0;
+    left: 0;
+    white-space: nowrap;
 }

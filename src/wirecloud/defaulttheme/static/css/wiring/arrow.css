@@ -14,55 +14,55 @@
 
 .wiring_editor .canvas .arrow .arrowbody {
     stroke: rgb(214, 214, 214);
-    stroke-width: 5;
+    stroke-width: 0.4em;
 }
 
 .wiring_editor .canvas .arrowborder {
     stroke: rgb(110, 110, 110);
-    stroke-width: 8;
+    stroke-width: 0.65em;
 }
 
 .wiring_editor .canvas .pullerBall {
     stroke: black;
     fill:   rgba(138, 131, 226, 0.9);
-    stroke-width: 1;
+    stroke-width: 0.03em;
     display: none;
 }
 
 .wiring_editor .canvas .pullerLine {
     stroke: rgb(128, 128, 128);
-    stroke-width: 1;
+    stroke-width: 0.03em;
     display: none;
     stroke-dasharray: 2;
 }
 
 .wiring_editor .canvas .selected .arrowbody, .wiring_editor .canvas .selected.emphasize .arrowbody {
     stroke: rgb(214, 214, 214);
-    stroke-width: 5;
+    stroke-width: 0.4em;
 }
 
 .wiring_editor .canvas .selected .arrowborder, .wiring_editor .canvas .selected.emphasize .arrowborder {
     stroke: orange;
-    stroke-width: 10;
+    stroke-width: 0.8em;
 }
 
 .wiring_editor .canvas .emphasize .arrowbody {
     stroke: rgba(138, 131, 226, 0.9);
     fill:   none;
-    stroke-width: 5;
+    stroke-width: 0.4em;
 }
 
 .wiring_editor .canvas .emphasize .arrowborder {
     stroke: black;
     fill:   none;
-    stroke-width: 8;
+    stroke-width: 0.65em;
 }
 
 .wiring_editor .canvas .closer {
     stroke: black;
     fill:   red;
     fill-opacity:1;
-    stroke-width: 1;
+    stroke-width: 0.03em;
     display: none;
 }
 
@@ -76,11 +76,6 @@
 
 .wiring_editor .canvas .selected .pullerLine {
     display: inline;
-}
-.wiring_editor .canvas .highlighted .arrowborder {
-    stroke: #DF7A62;
-    fill:   none;
-    stroke-width: 11;
 }
 
 /* Hollow arrows */
@@ -104,4 +99,14 @@
 
 .wiring_editor .canvas .readOnly .arrowborder {
     stroke: #30F;
+}
+
+/* Ghost arrows */
+.wiring_editor .canvas .arrow.ghost .arrowbody {
+	stroke: rgb(255, 255, 255);
+}
+
+.wiring_editor .canvas .arrow.ghost .arrowborder {
+    stroke: rgb(138, 136, 136);
+    stroke-dasharray: 2;
 }

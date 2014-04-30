@@ -41,6 +41,7 @@ MAIL_XPATH = 't:Mail'
 DOC_URI_XPATH = 't:WikiURI'
 LICENCE_XPATH = 't:License'
 LICENCE_URL_XPATH = 't:LicenseURL'
+CHANGE_LOG_XPATH = 't:ChangeLogURL'
 REQUIREMENTS_XPATH = 't:Requirements'
 
 FEATURE_XPATH = 't:Feature'
@@ -187,6 +188,7 @@ class WirecloudTemplateParser(object):
         self._info['doc'] = self._get_field(DOC_URI_XPATH, self._resource_description, required=False)
         self._info['license'] = self._get_field(LICENCE_XPATH, self._resource_description, required=False)
         self._info['licenseurl'] = self._get_field(LICENCE_URL_XPATH, self._resource_description, required=False)
+        self._info['changelog'] = self._get_field(CHANGE_LOG_XPATH, self._resource_description, required=False)
         self._parse_requirements()
 
     def _parse_requirements(self):

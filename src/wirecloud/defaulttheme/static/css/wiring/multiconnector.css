@@ -1,6 +1,6 @@
 .wiring_editor .grid .multiconnector {
     position: absolute;
-    border-radius: 15px;
+    border-radius: 1em;
     border: 1px solid;
     border-color: gray;
     pointer-events: auto;
@@ -22,8 +22,8 @@
 .wiring_editor .grid .multiconnector .dragZone {
     font-family: FontAwesome;
     position: absolute;
-    left: 4px;
-    font-size: 16px;
+    left: 0.25em;
+    font-size: 0.9em;
     color: #535386;
 }
 
@@ -33,14 +33,18 @@
 
 .wiring_editor .grid .multiconnector.target .anchor.main {
     background: transparent;
-    right: -0.98em;
+    right: -0.5em;
     pointer-events: none;
+    visibility: hidden;
+    font-size: 0.9em;
 }
 
 .wiring_editor .grid .multiconnector.source .anchor.main {
     background: transparent;
-    left: -0.98em;
+    left: -0.5em;
     pointer-events: none;
+    visibility: hidden;
+    font-size: 0.9em;
 }
 
 .wiring_editor .grid .multiconnector.source.selected {

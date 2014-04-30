@@ -49,7 +49,7 @@
          * stardrag, first step to draw a dragable arrow
          */
         this.startdrag = function startdrag(e, initAnchor) {
-            var tmpPos, xStart, yStart;
+            var tmpPos, xStart, yStart, isGhost;
             // Only process left mouse button events
             if (e.button !== 0) {
                 return;
@@ -66,6 +66,7 @@
             document.oncontextmenu = _cancel; // disable context menu
             document.onmousedown = _cancel; // disable text selection in Firefox
             document.onselectstart = _cancel; // disable text selection in IE
+
             // enddrag when mouseup in no-anchor
             document.addEventListener('mouseup', this.enddrag, false);
 
@@ -73,8 +74,13 @@
             yStart = parseInt(e.clientY, 10);
 
             tmpPos = initAnchor.getCoordinates(layer);
+
             // Arrow pointer
-            theArrow = canvas.drawArrow(tmpPos, tmpPos, "arrow");
+            if (initAnchor.context.data instanceof Wirecloud.wiring.GhostEndpoint) {
+                //Arrow from Ghost Endpoint. Ghost Arrow
+                isGhost = true;
+            }
+            theArrow = canvas.drawArrow(tmpPos, tmpPos, "arrow", false, isGhost);
 
             // Minimized operators
             this.initAnchor.context.iObject.potentialArrow = theArrow;

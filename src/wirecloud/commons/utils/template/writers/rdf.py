@@ -295,6 +295,8 @@ def build_rdf_graph(template_info):
 
     graph.add((resource_uri, WIRE['hasImageUri'], rdflib.URIRef(template_info.get('image', ''))))
 
+    graph.add((resource_uri, WIRE['hasChangeLog'], rdflib.URIRef(template_info.get('changelog', ''))))
+
     if template_info.get('doc'):
         graph.add((resource_uri, FOAF['page'], rdflib.URIRef(template_info.get('doc'))))
 

@@ -221,6 +221,7 @@ class RDFTemplateParser(object):
         self._info['image'] = self._get_field(WIRE, 'hasImageUri', self._rootURI, required=False)
         self._info['smartphoneimage'] = self._get_field(WIRE, 'hasiPhoneImageUri', self._rootURI, required=False)
 
+        self._info['changelog'] = self._get_field(WIRE, 'hasChangeLogURL', self._rootURI, required=False)
         self._info['doc'] = self._get_field(FOAF, 'page', self._rootURI, required=False)
 
         self._info['title'] = self._get_translation_field(WIRE, 'displayName', self._rootURI, 'title', required=False, type='resource', field='title')

@@ -48,7 +48,7 @@ if (!Wirecloud.ui) {
         this.addEventListener('show', renewInterface.bind(this));
         this.addEventListener('hide', clearInterface.bind(this));
 
-        this.layout = new StyledElements.BorderLayout();
+        this.layout = new StyledElements.BorderLayout({class: 'containerLayer'});
         this.appendChild(this.layout);
 
         this.layout.getWestContainer().addClassName('menubar');
@@ -179,12 +179,12 @@ if (!Wirecloud.ui) {
      * finds anchors from the serialized string
      */
     var findAnchor = function findAnchor(desc, workspace) {
-        var iwidget_interface, iwidget, endPointPos;
+        var iwidget_interface, iwidget, endPointPos, entity;
 
         switch (desc.type) {
         case 'iwidget':
             if (this.iwidgets[desc.id] != null) {
-                return this.iwidgets[desc.id].getAnchor(desc.endpoint);
+                entity =  this.iwidgets[desc.id];
             } else {
                 iwidget = workspace.getIWidget(desc.id);
                 if (iwidget != null) {
@@ -192,17 +192,21 @@ if (!Wirecloud.ui) {
                     iwidget_interface = this.addIWidget(this, iwidget, endPointPos);
                     iwidget_interface.setPosition({posX: 0, posY: 0});
                     this.mini_widgets[iwidget.id].disable();
+                    entity = iwidget_interface;
                 } else {
                     throw new Error('Widget not found');
                 }
-                return iwidget_interface.getAnchor(desc.endpoint);
             }
             break;
         case 'ioperator':
             if (this.currentlyInUseOperators[desc.id] != null) {
-                return this.currentlyInUseOperators[desc.id].getAnchor(desc.endpoint);
+                entity = this.currentlyInUseOperators[desc.id];
+            } else {
+                throw new Error('Operator not found. Id: ' + desc.id);
             }
+            break;
         }
+        return entity.getAnchor(desc.endpoint);
     };
 
     var normalizeWiringStatus = function normalizeWiringStatus(WiringStatus) {
@@ -378,7 +382,7 @@ if (!Wirecloud.ui) {
      * @Private
      * Create New Operator or Ghost Operator
      */
-    var generateOperator = function generateOperator (id, operator, reallyInUseOperators) {
+    var generateOperator = function generateOperator (id, operator, reallyInUseOperators, availableOperators) {
         var operator_instance, op_id, i, endpoint_order, position, is_minimized, operator_interface;
 
         try {
@@ -465,6 +469,10 @@ if (!Wirecloud.ui) {
             } else {
                 anchor = this.iwidgets[multi.objectId].getAnchor(multi.sourceName);
             }
+            if (!anchor) {
+                // Future Ghost
+                return;
+            }
             multiInstance = new Wirecloud.ui.WiringEditor.Multiconnector(multi.id, multi.objectId, multi.sourceName,
                                             this.layout.getCenterContainer().wrapperElement,
                                             this, anchor, multi.pos, multi.height);
@@ -477,76 +485,26 @@ if (!Wirecloud.ui) {
 
     /**
      * @Private
-     * Create New Connection
+     * Add Ghost Endpoint in theEndpoint widget or operator
      */
-    var GenerateConnection = function GenerateConnection (workspace, connection, connectionView, viewId, connectionId) {
-        var startAnchor, endAnchor, readOnly, extraclass, arrow, multi, pos, msg, iwidget;
+    var insertGhostEndpoint = function insertGhostEndpoint(connection, isSource) {
+        var entity, theEndpoint, anchor;
 
-        // Find start Anchor
-        startAnchor = findAnchor.call(this, connection.source, workspace);
-
-        // Find end Anchor
-        endAnchor = findAnchor.call(this, connection.target, workspace);
-
-        if (startAnchor !== null && endAnchor !== null) {
-            try {
-                if (connection.readOnly) {
-                    // Set ReadOnly connection
-                    readOnly = true;
-                    extraclass = 'readOnly';
-                    // Increase ReadOnly connection count in each entity
-                    startAnchor.context.iObject.incReadOnlyConnectionsCount();
-                    endAnchor.context.iObject.incReadOnlyConnectionsCount();
-                } else {
-                    // Normal connection
-                    readOnly = false;
-                    extraclass = null;
-                }
-
-                // Create arrow
-                arrow = this.canvas.drawArrow(startAnchor.getCoordinates(this.layout.getCenterContainer().wrapperElement),
-                                              endAnchor.getCoordinates(this.layout.getCenterContainer().wrapperElement), extraclass, readOnly);
-
-                // Set arrow anchors
-                arrow.startAnchor = startAnchor;
-                startAnchor.addArrow(arrow);
-                arrow.endAnchor = endAnchor;
-                endAnchor.addArrow(arrow);
-                arrow.addClassName('arrow');
-
-                // Set arrow pullers
-                arrow.setPullerStart(connectionView.pullerStart);
-                arrow.setPullerEnd(connectionView.pullerEnd);
-
-                // Set connection with multiconnectors involved
-                if (connectionView.startMulti != null) {
-                    multi = this.multiconnectors[connectionView.startMulti];
-                    arrow.startMulti = connectionView.startMulti;
-                    pos = multi.getCoordinates(this.layout);
-                    arrow.setStart(pos);
-                    multi.addArrow(arrow);
-                }
-                if (connectionView.endMulti != null) {
-                    arrow.endMulti = connectionView.endMulti;
-                    multi = this.multiconnectors[connectionView.endMulti];
-                    pos = multi.getCoordinates(this.layout);
-                    arrow.setEnd(pos);
-                    multi.addArrow(arrow);
-                }
-
-                // Draw the arrow
-                arrow.redraw();
-            } catch (e) {
-                // TODO: Warning remove view for this connection and redo
-                msg = 'Creating connection. betwen [' + startAnchor.context.data.id + '] and [' + endAnchor.context.data.id + ']. ';
-                throw new Error('WiringEditor error.' + msg + e.message);
-            }
+        if(isSource) {
+            theEndpoint = connection.source;
         } else {
-            // Create GhostEndpoint?
-            iwidget = workspace.getIWidget(connection.target.id);
-            msg = '[Type: ' + connection.target.type + ', name: ' + iwidget.name + ', endpoint: ' + connection.target.endpoint + ']';
-            throw new Error('WiringEditor error (critical). Creating connection. Target endpoint not found. ' + msg);
+            theEndpoint = connection.target;
         }
+        if (theEndpoint.type == 'ioperator') {
+            entity = this.currentlyInUseOperators[theEndpoint.id];
+        } else {
+            entity = this.iwidgets[theEndpoint.id];
+        }
+        anchor = entity.addGhostEndpoint(theEndpoint, isSource);
+
+        // Coherency of the recommendations
+        this.recommendations.add_anchor_to_recommendations(anchor);
+        this._startdrag_map_func(anchor);
     };
 
     /**
@@ -586,13 +544,11 @@ if (!Wirecloud.ui) {
         this.recommendations = new Wirecloud.ui.RecommendationManager();
         this.operatorVersions = {};
 
-        // Set 100% Zoom in grid
-        // TODO this.grid = this.layout.getCenterContainer().wrapperElement
         this.gridFullHeight = parseFloat(this.layout.getCenterContainer().wrapperElement.style.height);
         this.gridFullWidth = parseFloat(this.layout.getCenterContainer().wrapperElement.style.width);
         this.fullHeaderHeight = LayoutManagerFactory.getInstance().mainLayout.getNorthContainer().wrapperElement.getBoundingClientRect().height;
+        // Set 100% Zoom in grid
         this.layout.getCenterContainer().wrapperElement.style.fontSize = '1em';
-        //this.layout.getCenterContainer().wrapperElement.style.zoom = '1';
 
         iwidgets = workspace.getIWidgets();
         availableOperators = Wirecloud.wiring.OperatorFactory.getAvailableOperators();
@@ -637,7 +593,7 @@ if (!Wirecloud.ui) {
         reallyInUseOperators = workspace.wiring.ioperators;
         operators = this.wiringStatus.operators;
         for (key in operators) {
-            generateOperator.call(this, key, operators[key], reallyInUseOperators);
+            generateOperator.call(this, key, operators[key], reallyInUseOperators, availableOperators);
         }
 
         // Create Multiconnectors
@@ -655,7 +611,7 @@ if (!Wirecloud.ui) {
                     break;
                 }
             }
-            GenerateConnection.call(this, workspace, this.wiringStatus.connections[i], connectionView, k, i);
+            this.generateConnection(workspace, this.wiringStatus.connections[i], connectionView);
         }
 
         this.activateCtrlMultiSelect();
@@ -778,9 +734,140 @@ if (!Wirecloud.ui) {
         this.recommendations.destroy();
     };
 
-    /*************************************************************************
-     * Public methods
-     *************************************************************************/
+    /**
+     * @Private
+     * set max width for widget or operator
+     */
+    var setEntityMaxWidth = function setEntityMaxWidth(theInterface) {
+        var auxDiv, titleSpan, virginDimensions;
+
+        var currentSize = parseFloat(this.layout.getCenterContainer().wrapperElement.style.fontSize);
+        var defaultMaxWidgetWidth = 22 * currentSize;
+
+        auxDiv = document.createElement('div');
+        theInterface.insertInto(auxDiv);
+        auxDiv.classList.add('calculateEntitySizeDiv');
+        titleSpan = theInterface.wrapperElement.getElementsByClassName('header')[0].getElementsByTagName('span')[0];
+
+        //width and height to avoid scroll problems
+        auxDiv.style.width = '10000px';
+        auxDiv.style.height = '10000px';
+        this.layout.getCenterContainer().appendChild(auxDiv);
+
+        theInterface.wrapperElement.style.maxWidth = '';
+        theInterface.wrapperElement.style.minWidth = '';
+        resetMaxWidth(theInterface);
+
+        virginDimensions = theInterface.getBoundingClientRect();
+
+        theInterface.wrapperElement.style.maxWidth = defaultMaxWidgetWidth + 'em';
+
+        if (theInterface.getBoundingClientRect().height != virginDimensions.height) {
+            console.debug('Labels demasiado largas!');
+            setSourceTargetMaxWidths.call(this, theInterface, defaultMaxWidgetWidth)
+        }
+        //theInterface.wrapperElement.style.maxWidth = '';
+        theInterface.wrapperElement.style.minWidth = '';
+        // Correction
+        /*while (parseFloat(theInterface.getBoundingClientRect().height) > parseFloat(virginDimensions.height)) {
+            console.debug('Es scroll nos la está liando!! incrementando minwidth en 0,1em');
+            theInterface.wrapperElement.style.minWidth = (parseFloat(theInterface.wrapperElement.style.minWidth) + 0.1) + 'em';
+        }*/
+        // Fix text-align ceneter problem when text-overflow: ellipsis
+        if (titleSpan.offsetWidth < titleSpan.scrollWidth) {
+            // text-overflow: ellipsis ON
+            titleSpan.style.textAlign = 'left'
+        } else {
+            titleSpan.style.textAlign = 'center'
+        }
+
+        this.layout.getCenterContainer().removeChild(auxDiv);
+    };
+
+    /**
+     * @Private
+     * set max width for widget or operator sources and targets Div
+     */
+    var setSourceTargetMaxWidths = function setSourceTargetMaxWidths(theInterface, maxWidth) {
+        var sources, targets, sourcesVirginDims, targetsVirginDims, currentFontSize;
+
+        // Current font-size from css
+        currentFontSize = parseFloat(this.layout.getCenterContainer().wrapperElement.style.fontSize) * parseInt(getComputedStyle(this.wrapperElement).fontSize);
+
+        // Sources
+        sources = theInterface.wrapperElement.getElementsByClassName('sources')[0];
+        sourcesVirginDims = sources.getBoundingClientRect();
+
+        // Targets
+        targets = theInterface.wrapperElement.getElementsByClassName('targets')[0];
+        targetsVirginDims = targets.getBoundingClientRect();
+
+        // Check the problem
+        if ((sourcesVirginDims.width / currentFontSize > maxWidth / 2) && (targetsVirginDims.width / currentFontSize > maxWidth / 2)) {
+            // Both divs are too wide
+            setMaxWidth.call(this, sources, maxWidth / 2, currentFontSize);
+            setMaxWidth.call(this, targets, maxWidth / 2, currentFontSize);
+        } else if (sourcesVirginDims.width / currentFontSize <= maxWidth / 2) {
+            // Targets div is too wide
+            setMaxWidth.call(this, targets, maxWidth - (sourcesVirginDims.width / currentFontSize), currentFontSize);
+        } else if (targetsVirginDims.width / currentFontSize <= maxWidth / 2) {
+            // Sources div is too wide
+            setMaxWidth.call(this, sources, maxWidth - (targetsVirginDims.width / currentFontSize), currentFontSize);
+        }
+    };
+
+    /**
+     * @Private
+     * set max width for each span in source or target div
+     */
+    var setMaxWidth = function setMaxWidth(theDiv, width, currentFontSize) {
+        var theSpans, i, balancedWidth, acumulatedPaddings, theDivComputed, theSpanParentComputed;
+
+        theSpans = theDiv.getElementsByTagName('span');
+
+        theDivComputed = getComputedStyle(theDiv);
+        theSpanParentComputed = getComputedStyle(theSpans[0].parentElement);
+        acumulatedPaddings = 0;
+        // Add paddings of theDiv element in acumulatedPaddings var
+        acumulatedPaddings += (parseFloat(theDivComputed.paddingRight) + parseFloat(theDivComputed.paddingLeft)) / currentFontSize;
+        // Add margins of theDiv element in acumulatedPaddings var
+        acumulatedPaddings += (parseFloat(theDivComputed.marginRight) + parseFloat(theDivComputed.marginLeft)) / currentFontSize;
+
+        // Add paddings of theSpans.parent element in acumulatedPaddings var
+        acumulatedPaddings += (parseFloat(theSpanParentComputed.paddingRight) + parseFloat(theSpanParentComputed.paddingLeft)) / currentFontSize;
+        // Add margins of theSpans.parent element in acumulatedPaddings var
+        acumulatedPaddings += (parseFloat(theSpanParentComputed.marginRight) + parseFloat(theSpanParentComputed.marginLeft)) / currentFontSize;
+
+        balancedWidth = width - acumulatedPaddings;
+
+        for (i = 0; i < theSpans.length; i++){
+            if (theSpans[i].offsetWidth / currentFontSize > balancedWidth) {
+                // change only the too wide spans
+                theSpans[i].style.width = balancedWidth + 'em';
+            }
+        }
+    };
+
+    var resetMaxWidth = function resetMaxWidth(theInterface) {
+        var theSourcesSpans, theTargetSpans, targets, sources, i;
+
+        // Sources
+        sources = theInterface.wrapperElement.getElementsByClassName('sources')[0];
+        theSourcesSpans = sources.getElementsByTagName('span');
+
+        // Targets
+        targets = theInterface.wrapperElement.getElementsByClassName('targets')[0];
+        theTargetSpans = targets.getElementsByTagName('span');
+
+        for (i = 0; i < theSourcesSpans.length; i++){
+            theSourcesSpans[i].style.width =  '';
+        }
+
+        for (i = 0; i < theTargetSpans.length; i++){
+            theTargetSpans[i].style.width =  '';
+        }
+    };
+
     /**
      * Change Operator miniInterface version in menubar
      */
@@ -810,6 +897,90 @@ if (!Wirecloud.ui) {
      */
     WiringEditor.prototype.getGridElement = function getGridElement() {
         return this.layout.getCenterContainer().wrapperElement;
+    };
+
+    /**
+     * Create New Connection
+     */
+    WiringEditor.prototype.generateConnection = function generateConnection (workspace, connection, connectionView) {
+        var startAnchor, endAnchor, readOnly, extraclass, arrow, multi, pos, msg, iwidget, entity, isGhost;
+
+        // Find start Anchor
+        startAnchor = findAnchor.call(this, connection.source, workspace);
+
+        // Find end Anchor
+        endAnchor = findAnchor.call(this, connection.target, workspace);
+
+        if (startAnchor !== null && endAnchor !== null) {
+            try {
+                if (connection.readOnly) {
+                    // Set ReadOnly connection
+                    readOnly = true;
+                    extraclass = 'readOnly';
+                    // Increase ReadOnly connection count in each entity
+                    startAnchor.context.iObject.incReadOnlyConnectionsCount();
+                    endAnchor.context.iObject.incReadOnlyConnectionsCount();
+                } else {
+                    // Normal connection
+                    readOnly = false;
+                    extraclass = null;
+                }
+
+                // Create arrow
+                if (startAnchor.context.data instanceof Wirecloud.wiring.GhostEndpoint || endAnchor.context.data instanceof Wirecloud.wiring.GhostEndpoint) {
+                    isGhost = true;
+                }
+                arrow = this.canvas.drawArrow(startAnchor.getCoordinates(this.layout.getCenterContainer().wrapperElement),
+                                              endAnchor.getCoordinates(this.layout.getCenterContainer().wrapperElement), extraclass, readOnly, isGhost);
+
+                // Set arrow anchors
+                arrow.startAnchor = startAnchor;
+                startAnchor.addArrow(arrow);
+                arrow.endAnchor = endAnchor;
+                endAnchor.addArrow(arrow);
+                arrow.addClassName('arrow');
+
+                // Set arrow pullers
+                arrow.setPullerStart(connectionView.pullerStart);
+                arrow.setPullerEnd(connectionView.pullerEnd);
+
+                // Set connection with multiconnectors involved
+                if (connectionView.startMulti != null) {
+                    multi = this.multiconnectors[connectionView.startMulti];
+                    if (multi) {
+                        arrow.startMulti = connectionView.startMulti;
+                        pos = multi.getCoordinates(this.layout);
+                        arrow.setStart(pos);
+                        multi.addArrow(arrow);
+                    }
+                }
+                if (connectionView.endMulti != null) {
+                    multi = this.multiconnectors[connectionView.endMulti];
+                    if (multi) {
+                        arrow.endMulti = connectionView.endMulti;
+                        pos = multi.getCoordinates(this.layout);
+                        arrow.setEnd(pos);
+                        multi.addArrow(arrow);
+                    }
+                }
+
+                // Draw the arrow
+                arrow.redraw();
+            } catch (e) {
+                // TODO: Warning remove view for this connection and redo
+                msg = 'Creating connection. betwen [' + startAnchor.context.data.id + '] and [' + endAnchor.context.data.id + ']. ';
+                throw new Error('WiringEditor error.' + msg + e.message);
+            }
+        } else {
+            // Ghost Endpoint
+            if (!startAnchor) {
+                insertGhostEndpoint.call(this, connection, true);
+            }
+            if (!endAnchor) {
+                insertGhostEndpoint.call(this, connection, false);
+            }
+            this.generateConnection(workspace, connection, connectionView);
+        }
     };
 
     /**
@@ -908,7 +1079,8 @@ if (!Wirecloud.ui) {
                 WiringStatus.connections.push({
                     'readOnly': arrow.hasClassName('readOnly'),
                     'source': arrow.startAnchor.serialize(),
-                    'target': arrow.endAnchor.serialize()
+                    'target': arrow.endAnchor.serialize(),
+                    'isGhost': arrow.isGhost
                 });
                 WiringStatus.views[0].connections.push({
                     'pullerStart': arrow.getPullerStart(),
@@ -1008,21 +1180,12 @@ if (!Wirecloud.ui) {
      * add IWidget.
      */
     WiringEditor.prototype.addIWidget = function addIWidget(wiringEditor, iwidget, enpPointPos) {
-        var widget_interface, auxDiv, i, anchor;
+        var widget_interface, i, anchor;
 
         widget_interface = new Wirecloud.ui.WiringEditor.WidgetInterface(wiringEditor, iwidget, this.arrowCreator, false, enpPointPos);
         this.iwidgets[iwidget.id] = widget_interface;
 
-        auxDiv = document.createElement('div');
-        //width and height to avoid scroll problems
-        auxDiv.style.width = '2000px';
-        auxDiv.style.height = '1000px';
-        this.layout.getCenterContainer().appendChild(auxDiv);
-
-        widget_interface.insertInto(auxDiv);
-
-        widget_interface.wrapperElement.style.minWidth = widget_interface.getBoundingClientRect().width + 'px';
-        this.layout.getCenterContainer().removeChild(auxDiv);
+        setEntityMaxWidth.call(this, widget_interface);
 
         this.layout.getCenterContainer().appendChild(widget_interface);
 
@@ -1055,7 +1218,7 @@ if (!Wirecloud.ui) {
      * add IOperator.
      */
     WiringEditor.prototype.addIOperator = function addIOperator(ioperator, enpPointPos) {
-        var instantiated_operator, operator_interface, auxDiv, i, anchor;
+        var instantiated_operator, operator_interface, i, anchor;
 
         if (ioperator instanceof Wirecloud.wiring.OperatorMeta) {
             instantiated_operator = ioperator.instantiate(this.nextOperatorId, null, this);
@@ -1066,16 +1229,7 @@ if (!Wirecloud.ui) {
 
         operator_interface = new Wirecloud.ui.WiringEditor.OperatorInterface(this, instantiated_operator, this.arrowCreator, false, enpPointPos);
 
-        auxDiv = document.createElement('div');
-        //width and height to avoid scroll problems
-        auxDiv.style.width = '2000px';
-        auxDiv.style.height = '1000px';
-        this.layout.getCenterContainer().appendChild(auxDiv);
-
-        operator_interface.insertInto(auxDiv);
-
-        operator_interface.wrapperElement.style.minWidth = operator_interface.getBoundingClientRect().width + 'px';
-        this.layout.getCenterContainer().removeChild(auxDiv);
+        setEntityMaxWidth.call(this, operator_interface);
 
         this.layout.getCenterContainer().appendChild(operator_interface);
 
@@ -1095,6 +1249,8 @@ if (!Wirecloud.ui) {
 
         this.targetAnchorList = this.targetAnchorList.concat(operator_interface.targetAnchors);
         this.sourceAnchorList = this.sourceAnchorList.concat(operator_interface.sourceAnchors);
+
+        operator_interface.wrapperElement.style.minWidth = operator_interface.getBoundingClientRect().width + 'px';
 
         this.currentlyInUseOperators[operator_interface.getId()] = operator_interface;
 
@@ -1459,6 +1615,60 @@ if (!Wirecloud.ui) {
         this.canvas.canvasElement.generalLayer.setAttribute('transform', param);
         this.canvas.canvasElement.style.top = scrollY + 'px';
         this.canvas.canvasElement.style.left = scrollX + 'px';
+    };
+
+
+    /**
+     *  Set Zoom level
+     */
+    WiringEditor.prototype.setZoomLevel = function setZoomLevel(percent) {
+        var key, invertPercent, calculatedHeight, calculatedWidth, calculatedLeft, top, left, currentSize;
+
+        // Initial size
+        currentSize = parseFloat(this.layout.getCenterContainer().wrapperElement.style.fontSize);
+        // Change general grid zoom
+        changeZoom(this.layout.getCenterContainer().wrapperElement, percent);
+        for (key in this.currentlyInUseOperators) {
+            this.layout.getCenterContainer().removeChild(this.currentlyInUseOperators[key]);
+            setEntityMaxWidth.call(this, this.currentlyInUseOperators[key]);
+            this.layout.getCenterContainer().appendChild(this.currentlyInUseOperators[key]);
+            // To avoid scroll problems
+            this.currentlyInUseOperators[key].wrapperElement.style.minWidth = this.currentlyInUseOperators[key].getBoundingClientRect().width + 'px';
+            // Calculate new position
+            top = parseFloat(this.currentlyInUseOperators[key].wrapperElement.style.top);
+            left = parseFloat(this.currentlyInUseOperators[key].wrapperElement.style.left);
+            this.currentlyInUseOperators[key].wrapperElement.style.top = ((top / currentSize) * percent) + 'px';
+            this.currentlyInUseOperators[key].wrapperElement.style.left = ((left / currentSize) * percent) + 'px';
+            this.currentlyInUseOperators[key].repaint();
+        }
+        for (key in this.iwidgets) {
+            this.layout.getCenterContainer().removeChild(this.iwidgets[key]);
+            setEntityMaxWidth.call(this, this.iwidgets[key]);
+            this.layout.getCenterContainer().appendChild(this.iwidgets[key]);
+            // To avoid scroll problems
+            this.iwidgets[key].wrapperElement.style.minWidth = this.iwidgets[key].getBoundingClientRect().width + 'px';
+            // Calculate new position
+            top = parseFloat(this.iwidgets[key].wrapperElement.style.top);
+            left = parseFloat(this.iwidgets[key].wrapperElement.style.left);
+            this.iwidgets[key].wrapperElement.style.top = ((top / currentSize) * percent) + 'px';
+            this.iwidgets[key].wrapperElement.style.left = ((left / currentSize) * percent) + 'px';
+            this.iwidgets[key].repaint();
+        }
+        for (key in this.multiconnectors) {
+            // Calculate new position
+            top = parseFloat(this.multiconnectors[key].wrapperElement.style.top);
+            left = parseFloat(this.multiconnectors[key].wrapperElement.style.left);
+            this.multiconnectors[key].wrapperElement.style.top = ((top / currentSize) * percent) + 'px';
+            this.multiconnectors[key].wrapperElement.style.left = ((left / currentSize) * percent) + 'px';
+            this.multiconnectors[key].repaint();
+        }
+    };
+
+    /**
+     *  Generic zoom setter
+     */
+    var changeZoom = function changeZoom(element, level) {
+        element.style.fontSize = level + 'em';
     };
 
     /*************************************************************************

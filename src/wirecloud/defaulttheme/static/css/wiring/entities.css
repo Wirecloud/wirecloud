@@ -16,9 +16,8 @@
     -moz-transition: box-shadow 600ms;
     -o-transition: box-shadow 600ms;
     transition: box-shadow 600ms;
-    padding-bottom: 2px;
+    padding-bottom: 0.65em;
     border: 1px solid #B4B4B4;
-    padding-bottom: 8px;
     border-radius: 1.25ex 1.25ex 1.25ex 1.25ex;
     pointer-events: auto;
     position: absolute;
@@ -37,14 +36,6 @@
 
 .wiring_editor .ioperator.ghost .header span, .wiring_editor .iwidget.ghost .header span {
     font-style: italic;
-}
-
-.wiring_editor .ioperator.ghost .header .editPos_button, .wiring_editor .iwidget.ghost .header .editPos_button {
-    top: -16px;
-}
-
-.wiring_editor .ioperator.ghost .header .closebutton, .wiring_editor .iwidget.ghost .header .closebutton {
-    top: -16px;
 }
 
 /* flex */
@@ -85,22 +76,19 @@
 .wiring_editor .grid .geContainer .header {
     position: relative;
     display: block;
-    text-align: center;
     font-size: 1.3em;
     font-weight: bold;
     overflow: hidden;
-    border-radius: 15px;
-    padding: 8px;
+    border-radius: 1em;
+    padding: 0.55em 0.4em;
     color: #1D1D2F;
     cursor: move;
-    text-overflow: ellipsis;
 }
 
 .wiring_editor .grid .geContainer .sources {
     position: relative;
     display: inline-block;
-    margin-top: 2px;
-    margin-bottom: 2px;
+    margin: 0.17em 0em;
     vertical-align: top;
     float: right;
     padding-left: 1em;
@@ -111,8 +99,7 @@
 .wiring_editor .grid .geContainer .targets {
     position: relative;
     display: inline-block;
-    margin-top: 2px;
-    margin-bottom: 2px;
+    margin: 0.17em 0em;
     vertical-align: top;
     float: left;
     padding-left: 1em;
@@ -120,22 +107,36 @@
     text-align: left;
 }
 
+.wiring_editor .grid .header span {
+    position: relative;
+    display: inline-block;
+    padding: 0em 1.8em 0em 1.8em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 100%;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    text-align: center;
+}
+
 .wiring_editor .grid .header .closebutton {
+    position: absolute;
     font-family: FontAwesome;
-    background: transparent;
-    top: -7px;
-    float: right;
-    margin-right: 0px;
-    font-size: 15px;
+    top: 0.2em;
+    right: 0.2em;
+    margin-right: 0;
+    font-size: 0.99em;
     color: rgb(83, 83, 134);
 }
 
 /* edit Button */
 .wiring_editor .grid .header .editPos_button {
-    float: left;
+    position: absolute;
     font-family: FontAwesome;
-    top: -7px;
-    font-size: 15px;
+    top: 0.2em;
+    left: 0.2em;
+    font-size: 0.99em;
     color: rgb(83, 83, 134);
 }
 
@@ -143,8 +144,11 @@
 .wiring_editor .grid .header > .logbutton {
     font-family: FontAwesome;
     float: right;
-    font-size: 15px;
+    font-size: 0.99em;
     color: rgb(83, 83, 134);
+    position: absolute;
+    right: 1em;
+    top: 0.2em;
 }
 
 .wiring_editor .grid .header > .logbutton.disabled {
@@ -169,13 +173,15 @@
 /* Operator version status */
 .wiring_editor .grid .ioperator .header .status, .wiring_editor .grid .iwidget .header .status{
     position: absolute;
-    right: 10px;
-    top: 19px;
-    color:  #B9442E;
+    right: 0;
+    top: 1.4em;
+    color: rgb(185, 68, 46);
     display: none;
     cursor: pointer;
     font-family: FontAwesome;
     font-size: 0.8em;
+    width: 0;
+    z-index: 1;
 }
 
 .wiring_editor .grid .ioperator.old .header .status, .wiring_editor .grid .iwidget.old .header .status{
@@ -187,31 +193,44 @@
     white-space: nowrap;
 }
 
+.wiring_editor .grid .geContainer .anchorDiv.ghost {
+    color: rgba(185, 0, 0, 0.67);
+}
+
 .wiring_editor .sources .labelDiv, .wiring_editor .targets .labelDiv {
-    border-radius: 15px;
+    border-radius: 1.25em;
     -webkit-transition: background-color 400ms ease-in 150ms, color 550ms ease-out, box-shadow 400ms ease-in 150ms;
     -moz-transition: background-color 400ms ease-in 150ms, color 550ms ease-out, box-shadow 400ms ease-in 150ms;
     -o-transition: background-color 400ms ease-in 150ms, color 550ms ease-out, box-shadow 400ms ease-in 150ms;
 }
 .wiring_editor .labelDiv {
-    padding: 4px 6px;
+    padding: 0.34em 0.5em;
     display: inline-block;
     font-weight: normal;
-    margin-top: 1px;
-	margin-bottom: 1px;
+    margin-top: 0.09em;
+	margin-bottom: 0.09em;
+}
+
+.wiring_editor .labelDiv span{
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    display: inline-block;
+    overflow: hidden;
 }
 
 .wiring_editor .sources .labelDiv {
-    margin-right: -6px;
+    margin-right: -0.5em;
 }
 
 .wiring_editor .targets .labelDiv {
-    margin-left: -6px;
+    margin-left: -0.5em;
 }
 
 /* reduced Interface Operators */
 .wiring_editor .grid .reducedInt.ioperator {
-    padding-bottom: 2px;
+    padding-bottom: 0.2em;
     background: rgba(158, 221, 218, 0.8);
     border-radius: 3px;
 }
@@ -383,8 +402,7 @@
     font-size: 1.3em;
     font-weight: bold;
     overflow: hidden;
-    border-radius: 5px;
-    padding: 8px;
+    border-radius: 1.25em;
     color: #1D1D2F;
     text-overflow: ellipsis;
 }
@@ -510,6 +528,11 @@
 
 .wiring_editor .sources .highlight span, .wiring_editor .targets .highlight span, .wiring_editor .targets .highlight_main span, .wiring_editor .sources .highlight_main span {
     pointer-events: none;
+    overflow: hidden;
+}
+
+.wiring_editor .sources .highlight span.customized, .wiring_editor .targets .highlight span.customized, .wiring_editor .targets .highlight_main span.customized, .wiring_editor .sources .highlight_main span.customized {
+    overflow: visible;
 }
 
 /* highlight subdata events and slots by friendcode */

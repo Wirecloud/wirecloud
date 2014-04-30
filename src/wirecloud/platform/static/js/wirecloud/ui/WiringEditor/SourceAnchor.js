@@ -31,9 +31,9 @@
     /**
      * SourceAnchor Class
      */
-    var SourceAnchor = function SourceAnchor(context, arrowCreator, subAnchors) {
+    var SourceAnchor = function SourceAnchor(context, arrowCreator, subAnchors, isGhost) {
         this.context = context;
-        Wirecloud.ui.WiringEditor.Anchor.call(this, false, arrowCreator);
+        Wirecloud.ui.WiringEditor.Anchor.call(this, false, arrowCreator, isGhost);
         this.arrowCreator = arrowCreator;
         if (subAnchors != null) {
             this.isSubAnchor = true;

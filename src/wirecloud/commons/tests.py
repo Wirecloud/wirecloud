@@ -54,6 +54,7 @@ class TemplateUtilsTestCase(TestCase):
             'doc': '',
             'license': '',
             'licenseurl': '',
+            'changelog': '',
             'requirements': [],
             'preferences': [],
             'properties': [],
@@ -83,6 +84,7 @@ class TemplateUtilsTestCase(TestCase):
             'doc': 'docs/index.html',
             'license': 'Apache License 2',
             'licenseurl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
+            'changelog': 'log/change.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
             ],
@@ -205,6 +207,7 @@ class TemplateUtilsTestCase(TestCase):
             'doc': 'docs/index.html',
             'license': 'Apache License 2',
             'licenseurl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
+            'changelog': 'log/change.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
             ],
@@ -414,6 +417,7 @@ class TemplateUtilsTestCase(TestCase):
             'doc': '',
             'license': '',
             'licenseurl': '',
+            'changelog': '',
             'requirements': [],
             'params': [],
             'preferences': {},
@@ -450,6 +454,7 @@ class TemplateUtilsTestCase(TestCase):
             'doc': 'docs/index.html',
             'license': 'Apache License 2',
             'licenseurl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
+            'changelog': 'log/change.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
                 {'type': 'feature', 'name': 'PubSub'}
@@ -635,6 +640,7 @@ class TemplateUtilsTestCase(TestCase):
             'doc': 'docs/index.html',
             'license': 'Apache License 2',
             'licenseurl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
+            'changelog': 'log/change.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
                 {'type': 'feature', 'name': 'PubSub'}
@@ -832,6 +838,7 @@ class TemplateUtilsTestCase(TestCase):
             'doc': 'docs/index.html',
             'license': 'Apache License 2',
             'licenseurl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
+            'changelog': 'log/change.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
                 {'type': 'feature', 'name': 'PubSub'}
@@ -962,6 +969,7 @@ class TemplateUtilsTestCase(TestCase):
             'doc': '',
             'license': '',
             'licenseurl': '',
+            'changelog': '',
             'requirements': [],
             'preferences': [],
             'properties': [],
@@ -995,6 +1003,7 @@ class TemplateUtilsTestCase(TestCase):
             'doc': 'docs/index.html',
             'license': 'Apache License 2',
             'licenseurl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
+            'changelog': 'log/change.html',
             'requirements': [
                 {'type': 'feature', 'name': 'Wirecloud'},
             ],

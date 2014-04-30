@@ -44,8 +44,10 @@
 
             if (desc.endpoint in entry.outputs) {
                 return entry.outputs[desc.endpoint];
-            } else {
+            } else if (desc.endpoint in entry.inputs) {
                 return entry.inputs[desc.endpoint];
+            } else {
+                return null;
             }
             break;
         case 'ioperator':
@@ -56,8 +58,10 @@
 
             if (desc.endpoint in entry.inputs) {
                 return entry.inputs[desc.endpoint];
-            } else {
+            } else if (desc.endpoint in entry.outputs) {
                 return entry.outputs[desc.endpoint];
+            } else {
+                return null;
             }
             break;
         }
@@ -222,7 +226,7 @@
             if (sourceConnectable != null && targetConnectable != null) {
                 sourceConnectable.connect(targetConnectable);
             } else {
-                msg = gettext('The connection between %(source)s and %(target)s could be established');
+                msg = gettext('The connection between %(source)s and %(target)s could not be established');
                 msg = interpolate(msg, {
                     source: JSON.stringify(connection.source),
                     target: JSON.stringify(connection.target)

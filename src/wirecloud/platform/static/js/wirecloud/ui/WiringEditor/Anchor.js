@@ -35,7 +35,7 @@
      *
      * @abstract
      */
-    var Anchor = function Anchor(extending, arrowCreator) {
+    var Anchor = function Anchor(extending, arrowCreator, isGhost) {
 
         if (extending === true) {
             return;
@@ -45,7 +45,12 @@
         this.arrows = [];
 
         this.wrapperElement = document.createElement("div");
-        this.wrapperElement.className = 'anchor';
+        this.wrapperElement.classList.add('anchor');
+        if (isGhost) {
+            this.wrapperElement.classList.add('icon-exclamation-sign');
+        } else {
+            this.wrapperElement.classList.add('icon-circle');
+        }
         this.menu = new StyledElements.PopupMenu({'position': ['bottom-left', 'top-left', 'bottom-right', 'top-right']});
 
         this._mousedown_callback = function _mousedown_callback(e) {
@@ -173,8 +178,20 @@
                     }
                     if (!arrowCreator.invert) {
                         arrowCreator.theArrow.setEnd(pos);
+                        if (!arrowCreator.theArrow.isGhost &&
+                            this.context.data instanceof Wirecloud.wiring.GhostEndpoint) {
+                            //Ghost Arrow
+                            arrowCreator.theArrow.isGhost = true;
+                            arrowCreator.theArrow.addClassName('ghost');
+                        }
                     } else {
                         arrowCreator.theArrow.setStart(pos);
+                        if (!arrowCreator.theArrow.isGhost &&
+                            this.context.data instanceof Wirecloud.wiring.GhostEndpoint) {
+                            //Ghost Arrow
+                            arrowCreator.theArrow.isGhost = true;
+                            arrowCreator.theArrow.addClassName('ghost');
+                        }
                     }
                     arrowCreator.theArrow.redraw();
                 }
@@ -189,6 +206,12 @@
                     document.addEventListener("mousemove", arrowCreator.drag, false);
                     if (this instanceof Wirecloud.ui.WiringEditor.Multiconnector) {
                         this.unstick();
+                    }
+                    if (arrowCreator.theArrow.isGhost &&
+                        !(arrowCreator.initAnchor.context.data instanceof Wirecloud.wiring.GhostEndpoint)) {
+                        //Clean Ghost Arrow
+                        arrowCreator.theArrow.isGhost = false;
+                        arrowCreator.theArrow.removeClassName('ghost');
                     }
                 }
             }
