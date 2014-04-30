@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import time
+
 from django.contrib.auth.models import AnonymousUser
 
 from wirecloud.platform.plugins import WirecloudPlugin
@@ -27,7 +29,11 @@ from wirecloud.oauth2provider.urls import urlpatterns
 def auth_oauth2_token(auth_type, token):
 
     try:
-        return Token.objects.get(token=token).user
+        token = Token.objects.get(token=token)
+        if (int(token.creation_timestamp) + int(token.expires_in)) <= time.time():
+            raise Exception('Token expired')
+
+        return token.user
     except:
         return AnonymousUser()
 

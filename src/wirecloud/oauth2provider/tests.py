@@ -101,6 +101,16 @@ class Oauth2TestCase(TestCase):
         self.assertIn('WWW-Authenticate', response)
         self.assertTrue(isinstance(response_data, dict))
 
+    def test_authorization_expired_token(self):
+        url = reverse('wirecloud.resource_collection')
+
+        response = self.client.get(url, HTTP_ACCEPT='application/json', HTTP_AUTHORIZATION='Bearer expired_token')
+        self.assertEqual(response.status_code, 401)
+
+        response_data = json.loads(response.content)
+        self.assertIn('WWW-Authenticate', response)
+        self.assertTrue(isinstance(response_data, dict))
+
     @unittest.skip('wip test')
     def test_implicit_grant_flow(self):
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -16,6 +16,8 @@
 
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+
+import time
 
 from django.http import HttpResponse
 
@@ -54,7 +56,13 @@ class WirecloudAuthorizationProvider(AuthorizationProvider):
         return True
 
     def persist_authorization_code(self, user, client, code, scope):
-        Code.objects.create(client=client, user=user, scope=scope, code=code)
+        Code.objects.create(
+            client=client,
+            user=user,
+            scope=scope,
+            code=code,
+            creation_timestamp=int(time.time())
+        )
 
     def persist_token_information(self, client_id, scope, access_token, token_type, expires_in, refresh_token, data):
         Token.objects.create(
@@ -63,6 +71,7 @@ class WirecloudAuthorizationProvider(AuthorizationProvider):
             token_type=token_type,
             client_id=client_id,
             scope=scope,
+            creation_timestamp=int(time.time()),
             expires_in=expires_in,
             refresh_token=refresh_token
         )
