@@ -78,7 +78,10 @@ class ProxyTestsBase(WirecloudTestCase):
             return response.content
 
     def get_response_headers(self, response):
-        return {header_name: header_value for header_name, header_value in response._headers.values()}
+        headers = {}
+        for header_name, header_value in response._headers.values():
+            headers[header_name] = header_value
+        return headers
 
 
 class ProxyTests(ProxyTestsBase):
