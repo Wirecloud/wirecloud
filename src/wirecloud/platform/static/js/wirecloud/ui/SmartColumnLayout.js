@@ -121,36 +121,6 @@
         return this.searchInsertPointCache[x][y];
     };
 
-    SmartColumnLayout.prototype.moveTemporally = function (x, y) {
-        if (this.iwidgetToMove == null) {
-            var msg = gettext("Dragboard: You must call initializeMove function before calling to this function (moveTemporally).");
-            Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
-            return;
-        }
-
-        var maxX = this.getColumns() - this.iwidgetToMove.getWidth();
-        if (x > maxX) {
-            x = maxX;
-        }
-
-        // Check if we have to change the position of the cursor
-        y = this._searchInsertPoint(this.shadowMatrix, x, y, this.iwidgetToMove.getWidth(), this.iwidgetToMove.getHeight());
-
-        if (this.dragboardCursor !== null) {
-            var cursorpos = this.dragboardCursor.getPosition();
-
-            if ((cursorpos.y !== y) || (cursorpos.x !== x)) {
-                // Change cursor position
-                this._removeFromMatrix(this.matrix, this.dragboardCursor);
-                this._insertAt(this.dragboardCursor, x, y);
-            }
-        } else {
-            this.dragboardCursor = new Wirecloud.ui.DragboardCursor(this.iwidgetToMove);
-            this.dragboardCursor.paint(this.dragboard.dragboardElement);
-            this._insertAt(this.dragboardCursor, x, y);
-        }
-    };
-
     SmartColumnLayout.prototype.initialize = function () {
         var modified = Wirecloud.ui.ColumnLayout.prototype.initialize.call(this);
 
@@ -159,7 +129,7 @@
         for (key in this.iWidgets) {
             keys.push(key);
             iWidget = this.iWidgets[key];
-            modified = modified || this._moveSpaceUp(this.matrix, iWidget);
+            modified = modified || this._moveSpaceUp("base", iWidget);
         }
         if (modified) {
             //save these changes in the server side
@@ -194,7 +164,7 @@
                     for (y = 0; y < newHeight; ++y) {
                         iWidgetToMove = this.matrix[x][position.y + y];
                         if (iWidgetToMove != null) {
-                            this._moveSpaceDown(this.matrix, iWidgetToMove, finalYPos - iWidgetToMove.position.y);
+                            this._moveSpaceDown("base", iWidgetToMove, finalYPos - iWidgetToMove.position.y);
                             break; // Continue with the next column
                         }
                     }
@@ -216,7 +186,7 @@
                     for (y = 0; y < newHeight; ++y) {
                         iWidgetToMove = this.matrix[x][position.y + y];
                         if (iWidgetToMove != null) {
-                            this._moveSpaceDown(this.matrix, iWidgetToMove, finalYPos - iWidgetToMove.position.y);
+                            this._moveSpaceDown("base", iWidgetToMove, finalYPos - iWidgetToMove.position.y);
                             break; // Continue with the next column
                         }
                     }
@@ -243,7 +213,7 @@
                 limitX = position.x + widthDiff;
                 for (x = position.x; x < limitX; ++x) {
                     if (this.matrix[x][y] != null) {
-                        this._moveSpaceUp(this.matrix, this.matrix[x][y]);
+                        this._moveSpaceUp("base", this.matrix[x][y]);
                     }
                 }
 
@@ -263,7 +233,7 @@
                 limitX = position.x + oldWidth;
                 for (x = position.x + newWidth; x < limitX; ++x) {
                     if (this.matrix[x][y] != null) {
-                        this._moveSpaceUp(this.matrix, this.matrix[x][y]);
+                        this._moveSpaceUp("base", this.matrix[x][y]);
                     }
                 }
             }
@@ -276,7 +246,7 @@
             for (y = position.y + oldHeight; y < limitY; y++) {
                 for (x = step2X; x < limitX; x++) {
                     if (this.matrix[x][y] != null) {
-                        this._moveSpaceDown(this.matrix, this.matrix[x][y], limitY - y);
+                        this._moveSpaceDown("base", this.matrix[x][y], limitY - y);
                     }
                 }
             }
@@ -291,37 +261,38 @@
             limitX = step2X + step2Width;
             for (x = step2X; x < limitX; x++) {
                 if (this.matrix[x][y] != null) {
-                    this._moveSpaceUp(this.matrix, this.matrix[x][y]);
+                    this._moveSpaceUp("base", this.matrix[x][y]);
                 }
             }
         }
 
         this._notifyWindowResizeEvent(true, true); // TODO
         if (persist) {
-            this._moveSpaceUp(this.matrix, iWidget);
+            this._moveSpaceUp("base", iWidget);
             // Save new positions into persistence
             this.dragboard._commitChanges(); // FIXME
         }
     };
 
     //Returns if any widget's position has been modified
-    SmartColumnLayout.prototype._insertAt = function (iWidget, x, y) {
+    SmartColumnLayout.prototype._insertAt = function (iWidget, x, y, buffer) {
 
-        var affectedWidgets = Wirecloud.ui.ColumnLayout.prototype._insertAt.call(this, iWidget, x, y);
-
-        this._moveSpaceUp(this.matrix, iWidget);
+        var affectedWidgets = Wirecloud.ui.ColumnLayout.prototype._insertAt.call(this, iWidget, x, y, buffer);
+        this._moveSpaceUp(buffer, iWidget);
 
         return affectedWidgets;
     };
 
     //Returns if any widget's position has been modified
-    SmartColumnLayout.prototype._removeFromMatrix = function (_matrix, iWidget) {
-        this._clearSpace(_matrix, iWidget);
+    SmartColumnLayout.prototype._removeFromMatrix = function (buffer, iWidget) {
+        this._clearSpace(buffer, iWidget);
 
         var modified = false, affectedIWidgets = {};
         var affectedwidget, x, y, columnsize;
-        var position = this._getPositionOn(_matrix, iWidget);
+        var position = this._getPositionOn(buffer, iWidget);
         var edgeY = position.y + iWidget.getHeight();
+
+        var _matrix = this._buffers[buffer].matrix;
 
         // check if we have to update the representations of the widget instances
         for (x = 0; x < iWidget.getWidth(); x++) {
@@ -331,7 +302,7 @@
                 if ((affectedwidget != null) && (typeof affectedIWidgets[affectedwidget.code] !== true)) {
                     affectedIWidgets[affectedwidget.code] = true;
                     modified = true;
-                    this._moveSpaceUp(_matrix, affectedwidget);
+                    this._moveSpaceUp(buffer, affectedwidget);
                     break;
                 }
             }

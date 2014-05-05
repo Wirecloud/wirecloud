@@ -41,8 +41,7 @@
         }
 
         this.initialized = false;
-        this.shadowMatrix = null;    // Temporal matrix of iwidgets used for D&D
-        this.shadowPositions = null;
+        this._buffers = {"base": {}};
         this.columns = columns;
         this.cellHeight = cellHeight;
 
@@ -62,7 +61,10 @@
             this.rightMargin = Math.floor(horizontalMargin / 2) + 1;
         }
 
-        this._clearMatrix();         // Matrix of iwidgets
+        this._clearMatrix();         // Matrix of iWidgets
+        this._buffers["base"] = {
+            matrix: this.matrix,
+        };
         this.dragboardCursor = null;
         this.iwidgetToMove = null;
 
@@ -183,24 +185,25 @@
         return this.dragboardTopMargin + this.fromVCellsToPixels(row) + this.topMargin;
     };
 
-    ColumnLayout.prototype._getPositionOn = function (_matrix, widget) {
-        if (_matrix === this.matrix) {
+    ColumnLayout.prototype._getPositionOn = function _getPositionOn(buffer, widget) {
+        if (buffer === this.matrix || buffer === "base") {
             return widget.getPosition();
         } else {
-            return this.shadowPositions[widget.code];
+            return this._buffers[buffer].positions[widget.code];
         }
     };
 
-    ColumnLayout.prototype._setPositionOn = function (_matrix, widget, position) {
-        if (_matrix === this.matrix) {
+    ColumnLayout.prototype._setPositionOn = function _setPositionOn(buffer, widget, position) {
+        if (buffer === this.matrix || buffer === "base") {
             widget.setPosition(position);
         } else {
-            this.shadowPositions[widget.code] = position;
+            this._buffers[buffer].positions[widget.code] = position;
         }
     };
 
     ColumnLayout.prototype._clearMatrix = function () {
         this.matrix = [];
+        this._buffers["base"].matrix = this.matrix;
 
         for (var x = 0; x < this.getColumns(); x++) {
             this.matrix[x] = [];
@@ -209,6 +212,10 @@
 
     ColumnLayout.prototype._hasSpaceFor = function (_matrix, positionX, positionY, width, height) {
         var x, y;
+
+        if (typeof _matrix === "string") {
+            _matrix = this._buffers[_matrix].matrix;
+        }
 
         for (x = 0; x < width; x++) {
             for (y = 0; y < height; y++) {
@@ -227,6 +234,10 @@
         var width = iWidget.getWidth();
         var height = iWidget.getHeight();
 
+        if (typeof _matrix === "string") {
+            _matrix = this._buffers[_matrix].matrix;
+        }
+
         for (x = 0; x < width; x++) {
             for (y = 0; y < height; y++) {
                 _matrix[position.x + x][position.y + y] = iWidget;
@@ -239,6 +250,10 @@
         var position = this._getPositionOn(_matrix, iWidget);
         var width = iWidget.getWidth();
         var height = iWidget.getHeight();
+
+        if (typeof _matrix === "string") {
+            _matrix = this._buffers[_matrix].matrix;
+        }
 
         for (x = 0; x < width; x++) {
             for (y = 0; y < height; y++) {
@@ -262,15 +277,16 @@
         }
     };
 
-    ColumnLayout.prototype._searchInsertPoint = function (_matrix, x, y, width, height) {
+    ColumnLayout.prototype._searchInsertPoint = function _searchInsertPoint(_matrix, x, y, width, height) {
         return y;
     };
 
-    ColumnLayout.prototype._moveSpaceDown = function (_matrix, iWidget, offsetY) {
-        var affectedIWidgets, position, finalPosition, edgeY, iwidget, x, y, key;
+    ColumnLayout.prototype._moveSpaceDown = function _moveSpaceDown(buffer, iWidget, offsetY) {
+        var affectedIWidgets, position, finalPosition, edgeY, iwidget, x, y, key, matrix;
 
         affectedIWidgets = {};
-        position = this._getPositionOn(_matrix, iWidget);
+        matrix = this._buffers[buffer].matrix;
+        position = this._getPositionOn(buffer, iWidget);
         finalPosition = new Wirecloud.DragboardPosition(position.x, position.y + offsetY);
 
         edgeY = position.y + iWidget.getHeight();
@@ -279,7 +295,7 @@
         // TODO move widgets according to the biggest offset for optimizing
         for (x = 0; x < iWidget.getWidth(); x++) {
             for (y = 0; y < offsetY; y++) {
-                iwidget = _matrix[position.x + x][edgeY + y];
+                iwidget = matrix[position.x + x][edgeY + y];
                 if (iwidget != null) {
                     affectedIWidgets[iwidget.code] = offsetY - y; // calculate the offset for this iwidget
                     break; // continue whit the next column
@@ -290,24 +306,25 @@
         // Move affected widgets instances
         for (key in affectedIWidgets) {
             iwidget = this.iWidgets[key];
-            this._moveSpaceDown(_matrix, iwidget, affectedIWidgets[key]);
+            this._moveSpaceDown(buffer, iwidget, affectedIWidgets[key]);
         }
 
         // Move the widget
-        this._clearSpace(_matrix, iWidget);
-        this._setPositionOn(_matrix, iWidget, finalPosition);
-        this._reserveSpace(_matrix, iWidget);
+        this._clearSpace(buffer, iWidget);
+        this._setPositionOn(buffer, iWidget, finalPosition);
+        this._reserveSpace(buffer, iWidget);
     };
 
-    ColumnLayout.prototype._moveSpaceUp = function (_matrix, iWidget) {
+    ColumnLayout.prototype._moveSpaceUp = function (buffer, iWidget) {
         var position, edgeY, offsetY, affectedIWidgets, finalPosition, iwidget,
-            x, y, columnsize, key;
+            x, y, columnsize, key, matrix;
 
-        position = this._getPositionOn(_matrix, iWidget);
+        matrix = this._buffers[buffer].matrix;
+        position = this._getPositionOn(buffer, iWidget);
         edgeY = position.y + iWidget.getHeight();
 
         offsetY = 1;
-        while (((position.y - offsetY) >= 0) && this._hasSpaceFor(_matrix, position.x, position.y - offsetY, iWidget.getWidth(), 1)) {
+        while (((position.y - offsetY) >= 0) && this._hasSpaceFor(matrix, position.x, position.y - offsetY, iWidget.getWidth(), 1)) {
             offsetY += 1;
         }
         offsetY -= 1;
@@ -319,9 +336,9 @@
             // Search affected widgets
             // TODO move the topmost widget for optimizing
             for (x = 0; x < iWidget.getWidth(); x++) {
-                columnsize = _matrix[position.x + x].length;
+                columnsize = matrix[position.x + x].length;
                 for (y = edgeY; y < columnsize; y++) {
-                    iwidget = _matrix[position.x + x][y];
+                    iwidget = matrix[position.x + x][y];
                     if (iwidget != null) {
                         affectedIWidgets[iwidget.code] = iwidget;
                         break; // continue whit the next column
@@ -330,13 +347,13 @@
             }
 
             // Move the representation of the widget
-            this._clearSpace(_matrix, iWidget);
-            this._setPositionOn(_matrix, iWidget, finalPosition);
-            this._reserveSpace(_matrix, iWidget);
+            this._clearSpace(buffer, iWidget);
+            this._setPositionOn(buffer, iWidget, finalPosition);
+            this._reserveSpace(buffer, iWidget);
 
             // Move affected widgets instances
             for (key in affectedIWidgets) {
-                this._moveSpaceUp(_matrix, affectedIWidgets[key]);
+                this._moveSpaceUp(buffer, affectedIWidgets[key]);
             }
 
             //return true if the iwidget position has been modified
@@ -393,7 +410,7 @@
                     for (y = 0; y < newHeight; ++y) {
                         iWidgetToMove = this.matrix[x][position.y + y];
                         if (iWidgetToMove != null) {
-                            this._moveSpaceDown(this.matrix, iWidgetToMove, finalYPos - iWidgetToMove.position.y);
+                            this._moveSpaceDown("base", iWidgetToMove, finalYPos - iWidgetToMove.position.y);
                             break; // Continue with the next column
                         }
                     }
@@ -415,7 +432,7 @@
                     for (y = 0; y < newHeight; ++y) {
                         iWidgetToMove = this.matrix[x][position.y + y];
                         if (iWidgetToMove != null) {
-                            this._moveSpaceDown(this.matrix, iWidgetToMove, finalYPos - iWidgetToMove.position.y);
+                            this._moveSpaceDown("base", iWidgetToMove, finalYPos - iWidgetToMove.position.y);
                             break; // Continue with the next column
                         }
                     }
@@ -458,7 +475,7 @@
             for (y = position.y + oldHeight; y < limitY; y++) {
                 for (x = step2X; x < limitX; x++) {
                     if (this.matrix[x][y] != null) {
-                        this._moveSpaceDown(this.matrix, this.matrix[x][y], limitY - y);
+                        this._moveSpaceDown("base", this.matrix[x][y], limitY - y);
                     }
                 }
             }
@@ -476,24 +493,29 @@
         }
     };
 
-    ColumnLayout.prototype._insertAt = function (iWidget, x, y) {
+    ColumnLayout.prototype._insertAt = function _insertAt(iWidget, x, y, buffer) {
         var newPosition = new Wirecloud.DragboardPosition(x > 0 ? x : 0, y > 0 ? y : 0);
 
         // Move other instances
-        var affectedwidget, offset, affectedY;
+        var affectedwidget, offset, affectedY, matrix;
         var affectedWidgets = false;
         var lastX = newPosition.x + iWidget.getWidth();
         var lastY = newPosition.y + iWidget.getHeight();
 
+        if (buffer == null) {
+            buffer = "base";
+        }
+        matrix = this._buffers[buffer].matrix;
+
         for (x = newPosition.x; x < lastX; x++) {
             for (y = newPosition.y; y < lastY; y++) {
-                affectedwidget = this.matrix[x][y];
+                affectedwidget = matrix[x][y];
                 if (affectedwidget != null) {
                     // only move the widget if we didn't move it before
-                    affectedY = affectedwidget.getPosition().y;
+                    affectedY = this._getPositionOn(buffer, affectedwidget).y;
                     // y + iWidget.getHeight() - affectedY - (newPosition.y - y);
                     offset = lastY - affectedY;
-                    this._moveSpaceDown(this.matrix, affectedwidget,  offset);
+                    this._moveSpaceDown(buffer, affectedwidget, offset);
                     // move only the topmost widget in the column
                     affectedWidgets = true;
                     break;
@@ -502,9 +524,9 @@
         }
 
         // Change Widget instance position (insert it)
-        iWidget.setPosition(newPosition);
+        this._setPositionOn(buffer, iWidget, newPosition);
 
-        this._reserveSpace(this.matrix, iWidget);
+        this._reserveSpace(buffer, iWidget);
 
         //returns if any widget's position has been modified
         return affectedWidgets;
@@ -624,7 +646,7 @@
     ColumnLayout.prototype.removeIWidget = function (iWidget, affectsDragboard) {
         var affectedWidgets;
 
-        affectedWidgets = this._removeFromMatrix(this.matrix, iWidget);
+        affectedWidgets = this._removeFromMatrix("base", iWidget);
         Wirecloud.ui.DragboardLayout.prototype.removeIWidget.call(this, iWidget, affectsDragboard);
         return affectedWidgets;
     };
@@ -661,6 +683,26 @@
         delete this._removeFromMatrix;
     };
 
+    ColumnLayout.prototype._cloneMatrix = function _cloneMatrix(matrix) {
+        var i, cloned_matrix = [];
+
+        for (i = 0; i < this.columns; i++) {
+            cloned_matrix[i] = Wirecloud.Utils.clone(matrix[i]);
+        }
+
+        return cloned_matrix;
+    };
+
+    ColumnLayout.prototype._clonePositions = function _clonePositions(buffer) {
+        var key, positions = {};
+
+        for (key in this.iWidgets) {
+            positions[key] = this._getPositionOn(buffer, this.iWidgets[key]).clone();
+        }
+
+        return positions;
+    };
+
     ColumnLayout.prototype.initializeMove = function (iwidget, draggable) {
         var msg, key, i, lastWidget, lastY, tmp;
 
@@ -676,25 +718,22 @@
         this.iwidgetToMove = iwidget;
 
         // Make a copy of the positions of the widgets
-        this.shadowPositions = [];
-
-        for (key in this.iWidgets) {
-            this.shadowPositions[key] = this.iWidgets[key].getPosition().clone();
-        }
+        this._buffers["backup"] = {};
+        this._buffers["backup"]["positions"] = this._clonePositions(this.matrix);
+        this._buffers["shadow"] = {
+            "matrix": this.matrix
+        };
 
         // Shadow matrix = current matrix without the widget to move
         // Initialize shadow matrix and searchInsertPointCache
         lastY = 0;
-        this.shadowMatrix = [];
-        this.searchInsertPointCache = [];
-        for (i = 0; i < this.columns; i++) {
-            this.searchInsertPointCache[i] = [];
-            this.shadowMatrix[i] = Wirecloud.Utils.clone(this.matrix[i]);
-        }
-        this._removeFromMatrix(this.shadowMatrix, iwidget);
+        this._buffers["backup"]["matrix"] = this._cloneMatrix(this.matrix);
+        this._removeFromMatrix("backup", iwidget);
 
+        this.searchInsertPointCache = [];
         // search bottommost row
         for (i = 0; i < this.columns; i++) {
+            this.searchInsertPointCache[i] = [];
             lastWidget = this.matrix[i][this.matrix[i].length - 1];
 
             if (!lastWidget) {
@@ -711,7 +750,6 @@
         // Create dragboard cursor
         this.dragboardCursor = new Wirecloud.ui.DragboardCursor(iwidget);
         this.dragboardCursor.paint(this.dragboard.dragboardElement);
-        this._reserveSpace(this.matrix, this.dragboardCursor);
 
         if (draggable) {
             draggable.setXOffset(this.fromHCellsToPixels(1) / 2);
@@ -719,38 +757,31 @@
         }
     };
 
-    ColumnLayout.prototype._destroyCursor = function (clearSpace) {
+    ColumnLayout.prototype._destroyCursor = function _destroyCursor() {
         if (this.dragboardCursor !== null) {
-            if (clearSpace) {
-                this._removeFromMatrix(this.matrix, this.dragboardCursor);
-            }
             this.dragboardCursor.destroy();
             this.dragboardCursor = null;
         }
     };
 
     ColumnLayout.prototype.disableCursor = function () {
-        this._destroyCursor(true);
+        this._destroyCursor();
     };
 
-    /**
-     * @private
-     */
-    ColumnLayout.prototype._restorePositions = function () {
-        this._clearMatrix();
+    ColumnLayout.prototype._setPositions = function _setPositions() {
+        var key, curIWidget;
 
-        var key;
         for (key in this.iWidgets) {
-            var curIWidget = this.iWidgets[key];
+            curIWidget = this.iWidgets[key];
             if (curIWidget !== this.iwidgetToMove) {
-                curIWidget.setPosition(this._getPositionOn(this._matrix, curIWidget));
-
-                this._reserveSpace(this.matrix, curIWidget);
+                curIWidget.setPosition(this._getPositionOn("shadow", curIWidget));
             }
         }
+
+        this.dragboardCursor.setPosition(this._getPositionOn("shadow", this.dragboardCursor));
     };
 
-    ColumnLayout.prototype.moveTemporally = function (x, y) {
+    ColumnLayout.prototype.moveTemporally = function moveTemporally(x, y) {
         if (!(this.iwidgetToMove instanceof IWidget)) {
             var msg = gettext("Dragboard: You must call initializeMove function before calling to this function (moveTemporally).");
             Wirecloud.GlobalLogManager.log(msg, Wirecloud.constants.LOGGING.WARN_MSG);
@@ -766,16 +797,20 @@
             var cursorpos = this.dragboardCursor.getPosition();
 
             if ((cursorpos.y !== y) || (cursorpos.x !== x)) {
-                this._restorePositions();
+                this._buffers["shadow"]["positions"] = this._clonePositions("backup");
+                this._buffers["shadow"]["matrix"] = this._cloneMatrix(this._buffers["backup"]["matrix"]);
 
                 // Change cursor position
-                //this._removeFromMatrix(this.matrix, this.dragboardCursor); Done at _restorePositions
-                this._insertAt(this.dragboardCursor, x, y);
+                this._insertAt(this.dragboardCursor, x, y, "shadow");
+                this._setPositions();
             }
         } else {
+            this._buffers["shadow"]["positions"] = this._clonePositions("backup");
+            this._buffers["shadow"]["matrix"] = this._cloneMatrix(this._buffers["backup"]["matrix"]);
+
             this.dragboardCursor = new Wirecloud.ui.DragboardCursor(this.iwidgetToMove);
             this.dragboardCursor.paint(this.dragboard.dragboardElement);
-            this._insertAt(this.dragboardCursor, x, y);
+            this._insertAt(this.dragboardCursor, x, y, "shadow");
         }
     };
 
@@ -786,10 +821,11 @@
             return;
         }
 
-        this._destroyCursor(true);
-        var position = this.iwidgetToMove.getPosition();
-        this._insertAt(this.iwidgetToMove, position.x, position.y);
-        this.shadowMatrix = null;
+        this._destroyCursor();
+
+        for (var key in this.iWidgets) {
+            this.iWidgets[key].setPosition(this.iWidgets[key].getPosition());
+        }
         this.iwidgetToMove = null;
         this.dragboardCursor = null;
     };
@@ -803,23 +839,22 @@
 
         var oldposition = this.iwidgetToMove.getPosition();
         var newposition = this.dragboardCursor.getPosition();
-        this._destroyCursor(false);
+        this._destroyCursor();
 
         // Needed to force repaint of the iwidget at the correct position
         this.iwidgetToMove.setPosition(newposition);
 
-        // Needed to overwriting the cursor cells
-        this._reserveSpace(this.matrix, this.iwidgetToMove);
-
         // Update iwidgets positions in persistence
         if (oldposition.y !== newposition.y || oldposition.x !== newposition.x) {
+            this.matrix = this._buffers["shadow"].matrix;
+            this._buffers["base"].matrix = this.matrix;
+            this._reserveSpace("base", this.iwidgetToMove);
             this.dragboard._commitChanges();
         }
 
         // This is needed to check if the scrollbar status has changed (visible/hidden)
         this.dragboard._notifyWindowResizeEvent();
 
-        this.shadowMatrix = null;
         this.iwidgetToMove = null;
         this.dragboardCursor = null;
     };

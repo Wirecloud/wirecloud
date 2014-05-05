@@ -41,6 +41,7 @@
         var positiontmp = iWidget.getPosition();
         this.position = positiontmp.clone();
 
+        this.code = 'cursor';
         this.layout = iWidget.layout;
         this.width = iWidget.getWidth();
         this.height = iWidget.getHeight();
