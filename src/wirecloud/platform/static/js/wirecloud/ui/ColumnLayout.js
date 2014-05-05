@@ -628,7 +628,7 @@
             }
 
             // Insert it. Returns if there are any affected widget
-            affectedWidgets = this._insertAt(iWidget, position.x, position.y);
+            affectedWidgets = this._insertAt(iWidget, position.x, position.y, "base");
         } else {
             // Search a position for the widget
             position = this._searchFreeSpace(iWidget.getWidth(), iWidget.getHeight());
