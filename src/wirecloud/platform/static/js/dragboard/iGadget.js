@@ -162,16 +162,19 @@ IWidget.prototype.setPosition = function (position) {
         this.setIconPosition(position);
     }
 
-    this.position = position;
+    if (!position.equals(this.position)) {
 
-    if (this.element !== null) { // if visible
-        this.element.style.left = this.layout.getColumnOffset(position.x) + "px";
-        this.element.style.top = this.layout.getRowOffset(position.y) + "px";
+        this.position = position;
 
-        this.internal_iwidget.contextManager.modify({
-            'xPosition': this.position.x,
-            'yPosition': this.position.y
-        });
+        if (this.element !== null) { // if visible
+            this.element.style.left = this.layout.getColumnOffset(position.x) + "px";
+            this.element.style.top = this.layout.getRowOffset(position.y) + "px";
+
+            this.internal_iwidget.contextManager.modify({
+                'xPosition': this.position.x,
+                'yPosition': this.position.y
+            });
+        }
     }
 };
 
@@ -323,6 +326,8 @@ IWidget.prototype.build = function () {
     this.leftResizeHandle = contents.tmp.leftresizehandle;
     this.rightResizeHandle = contents.tmp.rightresizehandle;
     this.titleelement = contents.tmp.titleelement;
+
+    this.element.addEventListener('transitionend', this._notifyWindowResizeEvent.bind(this), true);
 
     // Icon Element
     this.iconElement = document.createElement("div");

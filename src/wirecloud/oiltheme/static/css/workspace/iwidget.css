@@ -1,10 +1,16 @@
 .iwidget {
     position: absolute;
+    -moz-transition: box-shadow 0.7s ease-in, opacity 0.35s ease-in, top 0.2s ease-in, left 0.2s ease-in, width 0.2s ease-in, height 0.2s ease-in;
+    -webkit-transition: box-shadow 0.7s ease-in, opacity 0.35s ease-in, top 0.2s ease-in, left 0.2s ease-in, width 0.2s ease-in, height 0.2s ease-in;
+    transition: box-shadow 0.7s ease-in, opacity 0.35s ease-in, top 0.2s ease-in, left 0.2s ease-in, width 0.2s ease-in, height 0.2s ease-in;
+    border-color: #C2CBD2;
+    overflow: visible;
+}
+
+.iwidget.draganddrop {
     -moz-transition: box-shadow 0.7s ease-in, opacity 0.35s ease-in;
     -webkit-transition: box-shadow 0.7s ease-in, opacity 0.35s ease-in;
     transition: box-shadow 0.7s ease-in, opacity 0.35s ease-in;
-	border-color: #C2CBD2;
-    overflow: visible;
 }
 
 .iwidget > .widget_menu {

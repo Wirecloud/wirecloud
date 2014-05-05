@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2008-2013 Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -45,6 +45,8 @@
 
     IWidgetResizeHandle.prototype.startFunc = function startFunc(resizableElement, handleElement, data) {
         handleElement.classList.add("inUse");
+        data.iWidget.element.classList.add('draganddrop');
+
         // TODO merge with iwidget minimum sizes
         data.minWidth = Math.ceil(data.iWidget.layout.fromPixelsToHCells(80));
         data.minHeight = Math.ceil(data.iWidget.layout.fromPixelsToVCells(50));
@@ -89,6 +91,7 @@
 
     IWidgetResizeHandle.prototype.finishFunc = function finishFunc(resizableElement, handleElement, data) {
         var iWidget = data.iWidget;
+        data.iWidget.element.classList.remove('draganddrop');
         data.iWidget.setZPosition(data.oldZIndex);
         if (data.innitialWidth !== data.iWidget.getWidth() || data.innitialHeight !== data.iWidget.getHeight()) {
             iWidget.setSize(iWidget.getWidth(), iWidget.getHeight(), data.resizeLeftSide, true);

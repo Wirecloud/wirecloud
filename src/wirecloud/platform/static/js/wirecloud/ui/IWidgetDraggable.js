@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2008-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2008-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -78,6 +78,8 @@
         context.dragboard.raiseToTop(context.iWidget);
         context.layout.initializeMove(context.iWidget, draggable);
 
+        context.iWidget.element.classList.add('draganddrop');
+
         context.currentTab = context.dragboard.tab;
         context.tabs = [];
         for (key in context.dragboard.tab.workspace.tabInstances) {
@@ -154,6 +156,9 @@
 
     IWidgetDraggable.prototype.finishFunc = function finishFunc(draggable, context) {
         var destDragboard, workspace, destLayout;
+
+        context.iWidget.element.classList.remove('draganddrop');
+
         if (context.selectedTab !== null) {
             context.layout.cancelMove();
             context.selectedTab.tabElement.classList.remove("selected");
