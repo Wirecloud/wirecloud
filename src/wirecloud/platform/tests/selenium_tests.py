@@ -129,6 +129,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         dst_tab_iwidgets = self.get_current_iwidgets(tab=103)
         self.assertEqual(len(src_tab_iwidgets), src_iwidget_count - 1)
         self.assertEqual(len(dst_tab_iwidgets), dst_iwidget_count + 1)
+    test_move_iwidget_between_tabs.tags = ('dragboard',)
 
     def test_add_widget_from_catalogue(self):
 
@@ -832,6 +833,72 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         window_menues = self.driver.find_elements_by_css_selector('.window_menu')
         self.assertEqual(len(window_menues), 1)
     test_gui_tutorials.tags = ('fiware-ut-15',)
+
+    def test_move_widget_and_restore(self):
+
+        self.login(username="user_with_workspaces")
+
+        iwidgets = self.get_current_iwidgets()
+
+        self.assertEqual(iwidgets[0].layout_position, (0, 0))
+        self.assertEqual(iwidgets[1].layout_position, (6, 0))
+
+        self.driver.execute_script('''
+            var layout = Wirecloud.activeWorkspace.getActiveDragboard().baseLayout;
+            var iwidget = Wirecloud.activeWorkspace.getIWidget(%s);
+            layout.initializeMove(iwidget);
+            layout.moveTemporally(6, 1);
+            layout.acceptMove();
+        ''' % iwidgets[0].id);
+
+        self.assertEqual(iwidgets[0].layout_position, (6, 0))
+        self.assertEqual(iwidgets[1].layout_position, (6, 24))
+
+        self.driver.execute_script('''
+            var layout = Wirecloud.activeWorkspace.getActiveDragboard().baseLayout;
+            var iwidget = Wirecloud.activeWorkspace.getIWidget(%s);
+            layout.initializeMove(iwidget);
+            layout.moveTemporally(0, 0);
+            layout.acceptMove();
+        ''' % iwidgets[0].id);
+
+        self.assertEqual(iwidgets[0].layout_position, (0, 0))
+        self.assertEqual(iwidgets[1].layout_position, (6, 0))
+
+    test_move_widget_and_restore.tags = ('dragboard',)
+
+    def test_move_widget_interchange(self):
+
+        self.login(username="user_with_workspaces")
+
+        iwidgets = self.get_current_iwidgets()
+
+        self.assertEqual(iwidgets[0].layout_position, (0, 0))
+        self.assertEqual(iwidgets[1].layout_position, (6, 0))
+
+        self.driver.execute_script('''
+            var layout = Wirecloud.activeWorkspace.getActiveDragboard().baseLayout;
+            var iwidget = Wirecloud.activeWorkspace.getIWidget(%s);
+            layout.initializeMove(iwidget);
+            layout.moveTemporally(6, 25);
+            layout.acceptMove();
+        ''' % iwidgets[0].id);
+
+        self.assertEqual(iwidgets[0].layout_position, (6, 24))
+        self.assertEqual(iwidgets[1].layout_position, (6, 0))
+
+        self.driver.execute_script('''
+            var layout = Wirecloud.activeWorkspace.getActiveDragboard().baseLayout;
+            var iwidget = Wirecloud.activeWorkspace.getIWidget(%s);
+            layout.initializeMove(iwidget);
+            layout.moveTemporally(0, 0);
+            layout.acceptMove();
+        ''' % iwidgets[1].id);
+
+        self.assertEqual(iwidgets[0].layout_position, (6, 0))
+        self.assertEqual(iwidgets[1].layout_position, (0, 0))
+
+    test_move_widget_interchange.tags = ('dragboard',)
 
 
 @wirecloud_selenium_test_case

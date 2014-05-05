@@ -158,6 +158,15 @@ class IWidgetTester(object):
 
         return log_entries
 
+    @property
+    def layout_position(self):
+
+        return tuple(self.testcase.driver.execute_script('''
+            var iwidget = Wirecloud.activeWorkspace.getIWidget(%s);
+            var position = iwidget.getPosition();
+            return [position.x, position.y];
+        ''' % self.id));
+
     def perform_action(self, action):
 
         self.element.find_element_by_css_selector('.icon-cogs').click()
