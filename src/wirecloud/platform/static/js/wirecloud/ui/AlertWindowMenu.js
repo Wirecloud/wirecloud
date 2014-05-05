@@ -20,7 +20,7 @@
         this.msgElement.className = "msg";
         this.windowContent.appendChild(this.msgElement);
 
-        options = Wirecloud.merge({
+        options = Wirecloud.Utils.merge({
             acceptLabel: gettext('Yes'),
             cancelLabel: gettext('No')
         }, options);

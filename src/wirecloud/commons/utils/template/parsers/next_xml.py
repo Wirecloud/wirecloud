@@ -46,6 +46,7 @@ MAIL_XPATH = 't:email'
 DOC_URI_XPATH = 't:doc'
 LICENCE_XPATH = 't:license'
 LICENCE_URL_XPATH = 't:licenseurl'
+CHANGELOG_XPATH = 't:changelog'
 REQUIREMENTS_XPATH = 't:requirements'
 
 FEATURE_XPATH = 't:feature'
@@ -182,6 +183,7 @@ class ApplicationMashupTemplateParser(object):
         self._info['doc'] = self._get_field(DOC_URI_XPATH, self._resource_description, required=False)
         self._info['license'] = self._get_field(LICENCE_XPATH, self._resource_description, required=False)
         self._info['licenseurl'] = self._get_field(LICENCE_URL_XPATH, self._resource_description, required=False)
+        self._info['changelog'] = self._get_field(CHANGELOG_XPATH, self._resource_description, required=False)
         self._parse_requirements()
 
     def _parse_requirements(self):

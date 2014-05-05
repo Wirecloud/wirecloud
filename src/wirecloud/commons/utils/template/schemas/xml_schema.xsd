@@ -106,6 +106,13 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="changelog" minOccurs="0" maxOccurs="1" type="xs:anyURI">
+                <xs:annotation>
+                    <xs:documentation>
+                        Absolute or template-relative URL for the changelog documentation.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
         </xs:all>
     </xs:complexType>
 
