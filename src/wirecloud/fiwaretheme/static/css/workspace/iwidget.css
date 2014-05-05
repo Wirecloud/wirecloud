@@ -8,7 +8,7 @@
     overflow: visible;
 }
 
-.iwidget.dragandrop {
+.iwidget.draganddrop {
     -moz-transition: box-shadow 0.7s ease-in, opacity 0.35s ease-in;
     -webkit-transition: box-shadow 0.7s ease-in, opacity 0.35s ease-in;
     transition: box-shadow 0.7s ease-in, opacity 0.35s ease-in;
