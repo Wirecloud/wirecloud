@@ -438,10 +438,10 @@ class WiringSeleniumTestCase(WirecloudSeleniumTestCase):
         grid = self.driver.find_element_by_xpath("//*[contains(@class, 'container center_container grid')]")
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (1)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-80, -80).release().perform()
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(-100, -100).release().perform()
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (2)']")
-        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(40, 40).release().perform()
+        ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(50, 40).release().perform()
 
         source = self.driver.find_element_by_xpath("//*[contains(@class, 'container iwidget')]//*[text()='Test (3)']")
         ActionChains(self.driver).click_and_hold(source).move_to_element(grid).move_by_offset(80, 70).release().perform()
