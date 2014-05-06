@@ -177,6 +177,10 @@ class WirecloudCorePlugin(WirecloudPlugin):
                 'label': _('Full name'),
                 'description': _('Full name of the logged user'),
             },
+            'isanonymous': {
+                'label': _('Is Anonymous'),
+                'description': _('Boolean. Designates whether current user is logged in the system.'),
+            },
             'isstaff': {
                 'label': _('Is Staff'),
                 'description': _('Boolean. Designates whether current user can access the admin site.'),
@@ -226,6 +230,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'orientation': 'landscape',
             'username': username,
             'fullname': fullname,
+            'isanonymous': user.is_anonymous(),
             'isstaff': user.is_staff,
             'issuperuser': user.is_superuser,
             'mode': 'unknown',
