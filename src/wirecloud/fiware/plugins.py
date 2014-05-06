@@ -164,14 +164,20 @@ class FiWarePlugin(WirecloudPlugin):
                 'label': _('FI-WARE version'),
                 'description': _('FI-WARE version of the platform'),
             },
+            'fiware_token_available': {
+                'label': _('FI-WARE token available'),
+                'description': _('Indicates if the current user has associated a FI-WARE auth token that can be used for accessing other FI-WARE resources'),
+            },
         }
 
     def get_platform_context_current_values(self, user):
         # Work around bug when running manage.py compress
         import wirecloud.fiware
 
+        fiware_token_available = IDM_SUPPORT_ENABLED and user.is_authenticated() and user.social_auth.filter(provider='fiware').exists()
         return {
             'fiware_version': wirecloud.fiware.__version__,
+            'fiware_token_available': fiware_token_available
         }
 
     def get_constants(self):
