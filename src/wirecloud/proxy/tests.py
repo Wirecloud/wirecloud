@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from importlib import import_module
 import json
 import requests
 
@@ -26,6 +25,7 @@ from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.test import Client
 from django.utils import unittest
+from django.utils.importlib import import_module
 
 from wirecloud.commons.utils.testcases import DynamicWebServer, WirecloudTestCase
 from wirecloud.platform.models import Variable
