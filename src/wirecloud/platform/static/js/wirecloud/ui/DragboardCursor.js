@@ -59,7 +59,7 @@
 
     DragboardCursor.prototype.paint = function paint(dragboard) {
         var dragboardCursor = document.createElement("div");
-        dragboardCursor.setAttribute("id", "dragboardcursor");
+        dragboardCursor.setAttribute("class", "dragboardcursor");
 
         // Set width and height
         dragboardCursor.style.height = this.heightInPixels + "px";
@@ -68,8 +68,6 @@
         // Set position
         dragboardCursor.style.left = (this.layout.getColumnOffset(this.position.x) - 2) + "px"; // TODO -2 px for borders
         dragboardCursor.style.top = (this.layout.getRowOffset(this.position.y) - 2) + "px"; // TODO -2 px for borders
-
-        dragboardCursor.style.zIndex = this.refIWidget.getZPosition();
 
         // assign the created element
         dragboard.insertBefore(dragboardCursor, this.refIWidget.element);

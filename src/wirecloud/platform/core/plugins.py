@@ -29,6 +29,7 @@ from wirecloud.platform.plugins import build_url_template, get_active_features_i
 
 
 WORKSPACE_CSS = (
+    'css/workspace/dragboard_cursor.css',
     'css/workspace/iwidget.css',
     'css/workspace/empty_workspace_message.css',
 )

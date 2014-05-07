@@ -29,15 +29,6 @@ div.widget_window_locked {
  *
  */
 
-#dragboardcursor {
-  border-color: #97A0A8;
-  background: #F2F9FF;
-  -moz-border-radius-topleft:  6px;
-  -moz-border-radius-topright: 6px;
-  -webkit-border-top-left-radius: 6px;
-  -webkit-border-top-right-radius: 6px;
-}
-
 div.iwidget.highlighted {
     box-shadow: 0px 0px 3px 3px rgba(250, 0, 0, 0.7);
 }

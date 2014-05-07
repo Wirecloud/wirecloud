@@ -161,12 +161,6 @@ div.widget_window_locked div.widget_menu, div.widget_window_locked div.statusBar
   float: right;
 }
 
-#dragboardcursor {
-  position: absolute;
-  z-index: 1;
-  border: 2px dashed;
-}
-
 .dragboardwikilink {
 	color: transparent;
 }

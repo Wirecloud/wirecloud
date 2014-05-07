@@ -1,0 +1,9 @@
+.dragboardcursor {
+    border-color: #97A0A8;
+    background: #F2F9FF;
+    border: 2px dashed;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    position: absolute;
+    z-index: 0;
+}
