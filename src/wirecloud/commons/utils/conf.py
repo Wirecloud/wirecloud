@@ -20,6 +20,8 @@
 import os
 import sys
 
+from django.core.urlresolvers import reverse_lazy
+
 
 class NoseArgs(object):
 
@@ -179,5 +181,8 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
             },
         }
     }
+
+    settings['LOGIN_REDIRECT_URL'] = reverse_lazy('wirecloud.root')
+    settings['LOGOUT_REDIRECT_URL'] = reverse_lazy('wirecloud.root')
 
     settings['NOSE_ARGS'] = NoseArgs(instance_type)
