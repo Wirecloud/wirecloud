@@ -23,7 +23,7 @@ from django.core.management.base import CommandError
 
 from wirecloud.commons.utils.commands import BaseCommand
 from wirecloud.commons.utils.template.parsers import TemplateParser
-from wirecloud.commons.utils.template.writers import json, rdf, xml
+from wirecloud.commons.utils.template.writers import json, rdf, next_xml as xml, xml as old_xml
 
 class ConvertCommand(BaseCommand):
     args = '<source_widget_descriptor> [dest_file]'
@@ -61,6 +61,8 @@ class ConvertCommand(BaseCommand):
             converted_template = json.write_json_description(template_info)
         elif options['dest_format'] == 'xml':
             converted_template = xml.write_xml_description(template_info)
+        elif options['dest_format'] == 'old_xml':
+            converted_template = old_xml.write_xml_description(template_info)
 
         if len(args) == 2:
             output_file = open(args[1], "wb")
