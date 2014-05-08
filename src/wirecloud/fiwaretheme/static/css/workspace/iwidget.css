@@ -104,6 +104,14 @@
 
 .iwidget > .statusBar {
     background: #DDD;
+    height: 1px;
+    border: 1px solid #DDD;
+    border-radius: 0px 0px 4px 4px;
+    background: #DDD;
+}
+
+.fulldragboard .statusBar {
+  display: none;
 }
 
 .iwidget .leftResizeHandle {

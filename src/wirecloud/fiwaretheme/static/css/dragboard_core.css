@@ -33,23 +33,11 @@ div.fixed .widget_menu span {
 	cursor: default;
 }
 
-div.iwidget div.statusBar {
-    height: 1px;
-    padding: 0 32px;
-    border: 1px solid #DDD;
-    border-radius: 0px 0px 4px 4px;
-    background: #DDD;
-}
-
 .widget_menu_locked .hide_on_lock, .widget_menu_fulldragboard .hide_on_fulldragboard, .widget_menu_minimized .hide_on_minimize {
   display: none;
 }
 
 /********************************************/
-div.fulldragboard div.statusBar {
-  display: none;
-}
-
 div.fulldragboard {
   border: 0px none;
 }
