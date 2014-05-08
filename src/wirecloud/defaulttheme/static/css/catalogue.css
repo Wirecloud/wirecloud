@@ -8,16 +8,6 @@
 	border-color: #DDDDDD;
 }
 
-.catalogue button {
-	-moz-border-radius: 4px;
-	-webkit-border-radius: 4px;
-}
-
-.window_menu button {
-	-moz-border-radius: 4px;
-	-webkit-border-radius: 4px;
-}
-
 .resource_details img {
     background: white;
 }

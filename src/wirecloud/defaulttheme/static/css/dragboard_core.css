@@ -8,13 +8,6 @@ div.fulldragboard {
   position: fixed;
 }
 
-div.widget_window_locked {
-}
-
-div.widget_window_transparent {
-  background: transparent;
-}
-
 div.widget_menu {
   padding: 1px 3px 1px 7px;
 }
@@ -28,25 +21,8 @@ div.iwidget div.widget_wrapper {
   width: auto;
 }
 
-div.widget_window_locked div.widget_wrapper {
-  border: none;
-}
-
 div.row {
   white-space: nowrap;
-}
-
-div.iwidget .button {
-  display: none;
-  margin: 2px 2px 0px 2px;
-  float: right;
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-}
-
-div.iwidget .snapButton, div.iwidget .extractButton, div.iwidget .dragboardwiki{
-	display: block;
 }
 
 div.iwidget div.leftResizeHandle {
@@ -89,8 +65,6 @@ div.iwidget div.rightResizeHandle.inUse {
 /*div.dragboard.fixed*/
 div.fixed div.iwidget div.leftResizeHandle,
   div.fixed div.iwidget div.rightResizeHandle,
-  div.fixed div.iwidget div.extractButton,
-  div.fixed div.iwidget div.snapButton
 {
   display: none;
 }
@@ -122,7 +96,7 @@ div.fulldragboard {
   border: 0px none;
 }
 
-div.fulldragboard div.widget_menu input[type="button"].minimizebutton {
+div.fulldragboard div.widget_menu .icon-minus {
   display: none;
 }
 
@@ -134,14 +108,6 @@ div.fulldragboard div.widget_menu {
  * Locked Dragboard
  ******************************/
 
-div.widget_window_locked {
-    border: 1px solid;
-}
-
-div.widget_window_locked div.widget_menu, div.widget_window_locked div.statusBar {
-    display: none;
-}
-
 /***
  *
  */
@@ -151,13 +117,6 @@ div.widget_window_locked div.widget_menu, div.widget_window_locked div.statusBar
 
 .floatright {
   float: right;
-}
-
-.dragboardwikilink {
-	color: transparent;
-}
-.dragboardwikilink:hover {
-	color: transparent;
 }
 
 .floating_widget_icon{

@@ -29,10 +29,6 @@ div.iwidget div.widget_menu > .errorbutton.disabled {
     opacity: 0;
 }
 
-div.widget_window_locked {
-    border-color: transparent;
-}
-
 /***
  *
  */

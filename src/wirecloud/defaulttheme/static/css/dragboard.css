@@ -33,10 +33,6 @@ div.iwidget div.rightResizeHandle {
   background: transparent url(../images/resize-handle-bottom-right.png) no-repeat right bottom;
 }
 
-div.widget_window_locked {
-    border-color: transparent;
-}
-
 /***
  *
  */

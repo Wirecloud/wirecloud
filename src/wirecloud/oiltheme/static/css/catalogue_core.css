@@ -22,7 +22,7 @@
   max-width: 700px;
 }
 
-.catalogue .developer_block button, .catalogue #template_uri, .catalogue #widget_uri {
+.catalogue #template_uri, .catalogue #widget_uri {
   margin-left:15px;
   margin-top:10px;
 }
