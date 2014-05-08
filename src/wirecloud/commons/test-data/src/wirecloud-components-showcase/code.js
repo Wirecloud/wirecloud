@@ -318,38 +318,6 @@ var init = function init() {
 
 
     /*
-     * Alert example
-     */
-    code = "\
-    function showInfoAlert() {\n\
-        var alert = new StyledElements.StyledAlert('titulo', 'contenido');\n\
-        container.appendChild(alert);\n\
-    }\n\
-    var button = new StyledElements.StyledButton({text: 'Show Info Alert'});\n\
-    button.addEventListener('click', showInfoAlert)\n\
-    container.appendChild(button);\n\
-\n\
-    function showWarningAlert() {\n\
-        var alert = new StyledElements.StyledAlert('titulo', 'contenido', {'type': 1});\n\
-        container.appendChild(alert);\n\
-    }\n\
-    var button = new StyledElements.StyledButton({text: 'Show Warning Alert'});\n\
-    button.addEventListener('click', showWarningAlert)\n\
-    container.appendChild(button);\n\
-\n\
-    function showErrorAlert() {\n\
-        var alert = new StyledElements.StyledAlert('titulo', 'contenido', {'type': 2});\n\
-        container.appendChild(alert);\n\
-    }\n\
-    var button = new StyledElements.StyledButton({text: 'Show Error Alert'});\n\
-    button.addEventListener('click', showErrorAlert)\n\
-    container.appendChild(button);\n\
-\n";
-    
-    insertExample("Alert", code);
-
-
-    /*
      * List example
      */
     code = "\n\
