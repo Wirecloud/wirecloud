@@ -153,7 +153,7 @@
                     });
                 }
                 setTimeout(function () {
-                    window.location = Wirecloud.constants.FIWARE_HOME;
+                    window.location = Wirecloud.URLs.LOGOUT_VIEW;
                 }, 1000);
             }));
         }
