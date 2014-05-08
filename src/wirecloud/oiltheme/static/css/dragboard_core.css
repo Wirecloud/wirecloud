@@ -29,50 +29,6 @@ div.row {
   white-space: nowrap;
 }
 
-div.iwidget div.leftResizeHandle {
-    position: absolute;
-    width: 40px;
-    height: 5px;
-    bottom: -1px;
-    left: -1px;
-    cursor: sw-resize;
-}
-
-div.iwidget div.rightResizeHandle {
-    position: absolute;
-    width: 40px;
-    height: 5px;
-    bottom: -1px;
-    right: -1px;
-    cursor: se-resize;
-}
-
-div.iwidget div.inUse {
-    width: 200%;
-    height: 200%;
-}
-
-div.iwidget div.leftResizeHandle.inUse {
-    right: 0px;
-    top: 0px;
-    bottom: auto;
-    left: auto;
-}
-
-div.iwidget div.rightResizeHandle.inUse {
-    left: 0px;
-    top: 0px;
-    bottom: auto;
-    right: auto;
-}
-
-/*div.dragboard.fixed*/
-div.fixed div.iwidget div.leftResizeHandle,
-  div.fixed div.iwidget div.rightResizeHandle,
-{
-  display: none;
-}
-
 div.fixed .widget_menu span {
 	cursor: default;
 }

@@ -105,3 +105,47 @@
 .iwidget > .statusBar {
     background: #DDD;
 }
+
+.iwidget .leftResizeHandle {
+    position: absolute;
+    width: 50px;
+    height: 10px;
+    bottom: -5px;
+    left: -2px;
+    cursor: sw-resize;
+}
+
+.iwidget .rightResizeHandle {
+    position: absolute;
+    width: 50px;
+    height: 10px;
+    bottom: -5px;
+    right: -2px;
+    cursor: se-resize;
+}
+
+.iwidget div.inUse {
+    width: 200%;
+    height: 200%;
+}
+
+.iwidget div.leftResizeHandle.inUse {
+    right: 0px;
+    top: 0px;
+    bottom: auto;
+    left: auto;
+}
+
+.iwidget div.rightResizeHandle.inUse {
+    left: 0px;
+    top: 0px;
+    bottom: auto;
+    right: auto;
+}
+
+/*div.dragboard.fixed*/
+div.fixed div.iwidget div.leftResizeHandle,
+  div.fixed div.iwidget div.rightResizeHandle,
+{
+  display: none;
+}

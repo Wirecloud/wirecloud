@@ -107,3 +107,65 @@
     height: 16px;
     padding: 0 32px;
 }
+
+.iwidget .leftResizeHandleIcon {
+    background: transparent url(../../images/resize-handle-bottom-left.png) no-repeat left bottom;
+    position: absolute;
+    width: 32px;
+    height: 16px;
+    bottom: 0px;
+    left: 0px;
+}
+
+.iwidget .leftResizeHandle {
+    position: absolute;
+    width: 40px;
+    height: 24px;
+    bottom: -6px;
+    left: -6px;
+    cursor: sw-resize;
+}
+
+.iwidget .rightResizeHandleIcon {
+    background: transparent url(../../images/resize-handle-bottom-right.png) no-repeat right bottom;
+    position: absolute;
+    width: 32px;
+    height: 16px;
+    bottom: 0px;
+    right: 0px;
+}
+
+.iwidget .rightResizeHandle {
+    position: absolute;
+    width: 40px;
+    height: 24px;
+    bottom: -6px;
+    right: -6px;
+    cursor: se-resize;
+}
+
+.iwidget .inUse {
+    width: 200%;
+    height: 200%;
+}
+
+.iwidget .leftResizeHandle.inUse {
+    right: 0px;
+    top: 0px;
+    bottom: auto;
+    left: auto;
+}
+
+.iwidget .rightResizeHandle.inUse {
+    left: 0px;
+    top: 0px;
+    bottom: auto;
+    right: auto;
+}
+
+/*div.dragboard.fixed*/
+div.fixed .iwidget .leftResizeHandle,
+  div.fixed .iwidget .rightResizeHandle,
+{
+  display: none;
+}

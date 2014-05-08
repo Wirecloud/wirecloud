@@ -23,16 +23,6 @@ div.dragboard.fixed {
   background: transparent;
 }
 
-div.iwidget div.leftResizeHandle {
-  /* Can not use sprite image cause the handle grows to 100%x100% when resizing */
-  background: transparent url(../images/resize-handle-bottom-left.png) no-repeat left bottom;
-}
-
-div.iwidget div.rightResizeHandle {
-  /* Can not use sprite image cause the handle grows to 100%x100% when resizing */
-  background: transparent url(../images/resize-handle-bottom-right.png) no-repeat right bottom;
-}
-
 /***
  *
  */
