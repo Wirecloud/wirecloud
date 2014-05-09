@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012-2013 Universidad Politécnica de Madrid
+ *     Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -28,6 +28,7 @@
     // StyledElements
     var RealStyledElements = window.parent.StyledElements;
     var platform = window.parent;
+    var iwidget = platform.Wirecloud.activeWorkspace.getIWidget(MashupPlatform.widget.id);
 
     window.StyledElements = {
         'Addon': window.parent.StyledElements.Addon,
@@ -68,14 +69,11 @@
         };
 
         this.show = function show(refPosition) {
-            var iwidget_object, position;
-
-            iwidget_object = platform.Wirecloud.activeWorkspace.getIWidget(MashupPlatform.widget.id).content;
-            position = iwidget_object.getBoundingClientRect();
+            var position = iwidget.content.getBoundingClientRect();
 
             refPosition = {
-                top: refPosition.top + position.top,
-                left: refPosition.left + position.left,
+                top: refPosition.top + position.top + platform.document.body.scrollTop,
+                left: refPosition.left + position.left + platform.document.body.scrollLeft,
                 width: refPosition.width,
                 height: refPosition.height
             };
@@ -88,6 +86,54 @@
     };
     PopupMenu.prototype = new window.StyledElements.StyledElement();
     window.StyledElements.PopupMenu = PopupMenu;
+
+    var Popover = function Popover(options) {
+        var popover = new RealStyledElements.Popover(options);
+
+        Object.defineProperty(this, 'visible', {
+            get: function () {
+                return popover.visible;
+            }
+        });
+
+        this.show = function show(refPosition) {
+            var position = iwidget.content.getBoundingClientRect();
+
+            if ('getBoundingClientRect' in refPosition) {
+                refPosition = refPosition.getBoundingClientRect();
+            }
+
+            refPosition = {
+                top: refPosition.top + position.top + platform.document.body.scrollTop,
+                left: refPosition.left + position.left + platform.document.body.scrollLeft,
+                width: refPosition.width,
+                height: refPosition.height
+            };
+            refPosition.right = refPosition.left + refPosition.width;
+            refPosition.bottom = refPosition.top + refPosition.height;
+            Object.freeze(refPosition);
+
+            popover.show(refPosition);
+        };
+
+        this.hide = function hide() {
+            popover.hide();
+        };
+
+        this.bind = function bind(element, mode) {
+            element.addEventListener('click', this.toggle.bind(this));
+        };
+    };
+    Popover.prototype = new window.StyledElements.StyledElement();
+
+    Popover.prototype.toggle = function toggle(refPosition) {
+        if (this.visible) {
+            this.hide();
+        } else {
+            this.show(refPosition);
+        }
+    };
+    window.StyledElements.Popover = Popover;
 
     var getEventActions = function getEventActions(endpoint) {
         var i, actions, contactSlots, nslotsByLabel, slotInfo, actionLabel;

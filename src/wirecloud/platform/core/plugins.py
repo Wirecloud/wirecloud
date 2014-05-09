@@ -110,6 +110,7 @@ STYLED_ELEMENTS_FILES = (
     'js/StyledElements/Form.js',
     'js/StyledElements/GUIBuilder.js',
     'js/StyledElements/PaginationInterface.js',
+    'js/StyledElements/Popover.js',
 )
 
 BASE_CSS = (
@@ -153,6 +154,7 @@ STYLED_ELEMENTS_CSS = (
     'css/styledelements/styled_message.css',
     'css/styledelements/styled_rating.css',
     'css/styledelements/styled_popup_menu.css',
+    'css/styledelements/styled_popover.css',
 )
 
 
