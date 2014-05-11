@@ -300,18 +300,6 @@ div.styled_numeric_field div.numeric_bottom_button {
   right: 0;
 }
 
-/* Popup menu */
-
-.popup_menu {
-  position: absolute;
-  z-index: 111112;
-  margin: 0;
-}
-
-.popup_menu .menu_item {
-  cursor:hand; cursor: pointer;
-}
-
 .model_table .headrow .cell, .model_table .tbody .cell {
     white-space: nowrap;
     display: inline-block;
@@ -502,33 +490,6 @@ div.styled_numeric_field div.numeric_bottom_button {
 	right:0px;
 	bottom:0px;
 	overflow:auto;
-}
-
-/* Popup menu */
-
-.popup_menu {
-  padding: 0;
-  background: #FFFFFF;
-  border: 1px solid #888888;
-}
-
-.popup_menu .menu_item {
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-  margin: 0.4ex;
-  padding: 0.3ex;
-}
-
-.popup_menu .menu_item.hovered {
-  background: #FCD18E;
-}
-
-.popup_menu hr {
-  border-width: 1px 0 0 0;
-  border-style: solid;
-  border-color: #888888;
-  margin: 0;
 }
 
 .error_desc .action_desc {
