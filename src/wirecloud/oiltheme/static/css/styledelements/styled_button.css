@@ -10,6 +10,10 @@
     margin: 3px;
     position: relative;
     vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .styled_button:focus {
