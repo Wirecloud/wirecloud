@@ -1004,9 +1004,14 @@
     };
 
     NGSI.ProxyConnection = function ProxyConnection(url, /* TODO */ makeRequest) {
+        this.url = "" + url;
+
+        if (this.url[this.url.length - 1] !== '/') {
+            this.url += '/';
+        }
+
         this.connected = false;
         this.connecting = false;
-        this.url = url;
         this.makeRequest = makeRequest;
         this.callbacks = {};
         this.callbacks_by_subscriptionId = {};
