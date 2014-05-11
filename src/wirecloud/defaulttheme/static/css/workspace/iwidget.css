@@ -108,6 +108,15 @@
     padding: 0 32px;
 }
 
+.iwidget .bottomResizeHandle {
+    position: absolute;
+    height: 24px;
+    bottom: -6px;
+    left: 34px;
+    right: 34px;
+    cursor: s-resize;
+}
+
 .iwidget .leftResizeHandleIcon {
     background: transparent url(../../images/resize-handle-bottom-left.png) no-repeat left bottom;
     position: absolute;

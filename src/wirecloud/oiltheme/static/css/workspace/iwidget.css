@@ -118,6 +118,15 @@
   display: none;
 }
 
+.iwidget .bottomResizeHandle {
+    position: absolute;
+    height: 10px;
+    bottom: -5px;
+    left: 48px;
+    right: 48px;
+    cursor: s-resize;
+}
+
 .iwidget .leftResizeHandle {
     position: absolute;
     width: 50px;

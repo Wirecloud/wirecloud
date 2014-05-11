@@ -88,6 +88,12 @@
                 tmp.titleelement = element;
                 return element;
             },
+            'bottomresizehandle': function () {
+                var handle = new IWidgetResizeHandle(view, true);
+                tmp.bottomresizehandle = handle;
+                handle.addClassName("bottomResizeHandle");
+                return handle;
+            },
             'leftresizehandle': function () {
                 var handle = new IWidgetResizeHandle(view, true);
                 tmp.leftresizehandle = handle;
