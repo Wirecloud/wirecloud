@@ -379,6 +379,46 @@ var init = function init() {
     insertExample("PopupMenu", code);
 
     /*
+     * Popover example
+     */
+    code = "\n\
+    var button, popover;\n\
+\n\
+    //button = new StyledElements.StyledButton({'class': 'icon-question-sign', plain: true});\n\
+    button = new StyledElements.StyledButton({text: 'Popover on left'});\n\
+    container.appendChild(button);\n\
+\n\
+    popover = new StyledElements.Popover({title: 'Popover left', content: 'Vivamus sagittis lacus vel augue laoreet rutrum faucibus.', placement: ['left']});\n\
+    popover.bind(button, 'click')\n\
+\n\
+    button = new StyledElements.StyledButton({text: 'Popover on top'});\n\
+    container.appendChild(button);\n\
+\n\
+    popover = new StyledElements.Popover({title: 'Popover top', content: 'Vivamus sagittis lacus vel augue laoreet rutrum faucibus.', placement: ['top']});\n\
+    popover.bind(button, 'click')\n\
+\n\
+    button = new StyledElements.StyledButton({text: 'Popover on bottom'});\n\
+    container.appendChild(button);\n\
+\n\
+    popover = new StyledElements.Popover({title: 'Popover bottom', content: 'Vivamus sagittis lacus vel augue laoreet rutrum faucibus.', placement: ['bottom']});\n\
+    popover.bind(button, 'click')\n\
+\n\
+    button = new StyledElements.StyledButton({text: 'Popover on right'});\n\
+    container.appendChild(button);\n\
+\n\
+    popover = new StyledElements.Popover({title: 'Popover right', content: 'Vivamus sagittis lacus vel augue laoreet rutrum faucibus.', placement: ['right']});\n\
+    popover.bind(button, 'click')\n\
+\n\
+    button = new StyledElements.StyledButton({text: 'Auto placement popover'});\n\
+    container.appendChild(button);\n\
+\n\
+    popover = new StyledElements.Popover({content: 'Vivamus sagittis lacus vel augue laoreet rutrum faucibus.'});\n\
+    popover.bind(button, 'click')\n\
+\n";
+
+    insertExample("Popupover", code);
+
+    /*
      * Buttons example
      */
     code = "\n\
