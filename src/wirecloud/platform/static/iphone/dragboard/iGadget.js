@@ -92,13 +92,6 @@ IWidget.prototype.paint = function () {
 
 IWidget.prototype.load = IWidget.prototype.paint;
 
-/*
-* Perform the properly actions to show to the user that the widget has received and event
-*/
-IWidget.prototype.notifyEvent = function () {
-    // nothing to do in iphone
-};
-
 /**
  * This method must be called to avoid memory leaks caused by circular references.
  */

@@ -284,10 +284,6 @@ IWidget.prototype.getHeight = function () {
     return this.height;
 };
 
-IWidget.prototype.getElement = function () {
-    return this.element;
-};
-
 /**
  * Returns true if the iWidget is currently visible in a dragboard.
  *
@@ -454,115 +450,6 @@ IWidget.prototype.load = function () {
 
 IWidget.prototype.isPainted = function () {
     return this.menu !== null;
-};
-
-/*
- * Perform the properly actions to show to the user that the widget has received and event
- */
-IWidget.prototype.notifyEvent = function () {
-    // if the iwidget is out of the grid it has to be raised to the top
-    if (this.layout instanceof FreeLayout) {
-        this.layout.dragboard.raiseToTop(this);
-        //Moreover, if the iwidget is iconified it has to be opened
-        if (this.isIconified()) {
-            //maximize iconified widget
-            this.toggleMinimizeStatus();
-        }
-    }
-};
-
-IWidget.prototype.isIconified = function () {
-    return (this.layout instanceof FreeLayout && this.minimized);
-};
-
-IWidget.prototype.askForIconVersion = function () {
-    var msg = gettext('Do you want to remove the notice of the new version available?');
-    msg = interpolate(msg, {iwidgetName: this.name}, true);
-
-    var dialog = new Wirecloud.ui.AlertWindowMenu();
-    dialog.setMsg(msg);
-    dialog.setHandler(function () {
-            this.setRefusedVersion(this.internal_iwidget.widget.getLastVersion());
-        }.bind(this));
-    dialog.show();
-};
-
-IWidget.prototype.setRefusedVersion = function (v) {
-    function onSuccess() {}
-    function onError(transport, e) {
-        var msg = gettext("Error setting the refused version of the iwidget to persistence: %(errorMsg)s.");
-        this.internal_iwidget.logManager.formatAndLog(msg, transport, e);
-    }
-
-    this.refusedVersion = v;
-    document.getElementById("version_button_" + this.id).hide();
-
-    var iwidgetUrl = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
-        workspace_id: this.layout.dragboard.workspace.id,
-        tab_id: this.layout.dragboard.tab.id,
-        iwidget_id: this.id
-    });
-    Wirecloud.io.makeRequest(iwidgetUrl, {
-        method: 'POST',
-        contentType: 'application/json',
-        requestHeaders: {'Accept': 'application/json'},
-        postBody: JSON.stringify({
-            refused_version: this.refusedVersion.text,
-            id: this.id
-        }),
-        onFailure: onError.bind(this)
-    });
-};
-
-/**
- * Checks if the refused version is lower than the last one
- *
- * @returns {Boolean}
- */
-IWidget.prototype.isRefusedUpgrade = function () {
-    return this.refusedVersion && this.refusedVersion.compareTo(this.internal_iwidget.widget.getLastVersion()) === 0;
-};
-
-/**
- * Update the widget to its newest version
- */
-IWidget.prototype.upgradeIWidget = function () {
-    function onUpgradeOk(transport) {
-    }
-
-    function onUpgradeError(transport, e) {
-        var msg = gettext('<p>Sorry but the "%(iwidgetName)s" widget <b>cannot be automatically updated</b> because its version is not compatible ' +
-                'with the last version.<br/>If you want to update the widget you must replace <b>by hand</b> the existing one with the widget ' +
-                'available in the catalogue.</p><b>Do you want to remove the notice of the new version available?</b>');
-        msg = interpolate(msg, {iwidgetName: this.name}, true);
-        var dialog = new Wirecloud.ui.AlertWindowMenu();
-        dialog.setMsg(msg);
-        dialog.setHandler(function () {
-                this.setRefusedVersion(this.internal_iwidget.widget.getLastVersion());
-            }.bind(this));
-        dialog.show();
-    }
-
-    var data = {
-        id: this.id,
-        newVersion: this.internal_iwidget.widget.getLastVersion().text,
-        source: this.internal_iwidget.widget.getLastVersion().source
-    };
-    var url = Wirecloud.URLs.IWIDGET_VERSION_ENTRY.evaluate({
-        workspace_id: this.layout.dragboard.workspace.id,
-        tab_id: this.layout.dragboard.tab.id,
-        iwidget_id: this.id
-    });
-
-    Wirecloud.io.makeRequest(url, {
-        method: 'PUT',
-        contentType: 'application/json',
-        requestHeaders: {'Accept': 'application/json'},
-        postBody: JSON.stringify(data),
-        onSuccess: onUpgradeOk.bind(this),
-        onFailure: onUpgradeError.bind(this),
-        onException: onUpgradeError.bind(this)
-    });
 };
 
 /**
@@ -1025,13 +912,6 @@ IWidget.prototype.toggleLayout = function () {
     } else {
         this.moveToLayout(this.layout.dragboard.freeLayout);
     }
-};
-
-/**
- * Check if the iwidget belongs to a shared workspace
- */
-IWidget.prototype.is_shared_workspace = function () {
-    return this.internal_iwidget.workspace.isShared();
 };
 
 /**
