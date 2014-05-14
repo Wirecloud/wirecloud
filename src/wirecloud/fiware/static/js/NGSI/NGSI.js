@@ -755,9 +755,14 @@
     var parse_context_response_list = function parse_context_response_list(element, options) {
         var contextResponses, contextResponse, entry, entityIdElement, nameElement, flat,
             typeElement, attributeName, contextValueElement, entityId, idElement, i, j,
-            contextAttributeListElement, attributeList, contextValue, data = {};
+            contextAttributeListElement, attributeList, contextValue, data;
 
         flat = !!options.flat;
+        if (flat) {
+            data = {};
+        } else {
+            data = [];
+        }
         contextResponses = NGSI.XML.getChildElementsByTagName(element, 'contextElementResponse');
         for (i = 0; i < contextResponses.length; i += 1) {
             contextResponse = NGSI.XML.getChildElementByTagName(contextResponses[i], 'contextElement');
@@ -767,7 +772,7 @@
             } else {
                 entry = {
                     entity: null,
-                    attributes: {}
+                    attributes: []
                 };
             }
 
@@ -802,16 +807,20 @@
                     if (flat) {
                         entry[attributeName] = contextValue;
                     } else {
-                        entry.attributes[attributeName] = {
+                        entry.attributes.push({
                             name: attributeName,
                             type: NGSI.XML.getTextContent(typeElement),
                             contextValue: contextValue
-                        };
+                        });
                     }
                 }
             }
 
-            data[entityId] = entry;
+            if (flat) {
+                data[entityId] = entry;
+            } else {
+                data.push(entry);
+            }
         }
 
         return data;

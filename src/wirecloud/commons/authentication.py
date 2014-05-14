@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2013-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -23,7 +23,7 @@ from django.utils.translation import ugettext as _
 from django.conf import settings
 
 
-def logout(request, next_page=settings.LOGOUT_URL, template_name='registration/logged_out.html'):
+def logout(request, next_page=getattr(settings, 'LOGOUT_REDIRECT_URL', None), template_name='registration/logged_out.html'):
 
     old_lang = request.session.get('django_language', None)
 
@@ -36,4 +36,4 @@ def logout(request, next_page=settings.LOGOUT_URL, template_name='registration/l
         return render(request, template_name, {'title': _('Logged out')})
     else:
         # Redirect to this page until the session has been cleared.
-        return HttpResponseRedirect(next_page or request.path)
+        return HttpResponseRedirect(next_page)

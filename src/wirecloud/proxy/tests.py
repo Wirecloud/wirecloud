@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
-from importlib import import_module
 import json
 import requests
 
@@ -26,6 +25,7 @@ from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.test import Client
 from django.utils import unittest
+from django.utils.importlib import import_module
 
 from wirecloud.commons.utils.testcases import DynamicWebServer, WirecloudTestCase
 from wirecloud.platform.models import Variable
@@ -78,7 +78,10 @@ class ProxyTestsBase(WirecloudTestCase):
             return response.content
 
     def get_response_headers(self, response):
-        return {header_name: header_value for header_name, header_value in response._headers.values()}
+        headers = {}
+        for header_name, header_value in response._headers.values():
+            headers[header_name] = header_value
+        return headers
 
 
 class ProxyTests(ProxyTestsBase):
