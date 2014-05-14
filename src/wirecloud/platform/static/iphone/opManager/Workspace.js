@@ -293,6 +293,9 @@ function Workspace(workspaceState, resources) {
         return false;
     };
 
+    Workspace.prototype.drawAttention = function drawAttention(iwidget) {
+    };
+
     // *****************
     //  CONSTRUCTOR
     // *****************

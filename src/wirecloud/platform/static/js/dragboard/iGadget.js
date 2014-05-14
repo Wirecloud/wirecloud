@@ -63,7 +63,6 @@ function IWidget(widget, iWidgetId, iWidgetName, layout, position, iconPosition,
     this.draggable = null;
     this.visible = false;
     this.minimized = minimized;
-    this.highlightTimeout = null;
 
     if (fulldragboard) {
         this.minimized = false;
@@ -1005,19 +1004,15 @@ IWidget.prototype.log = function (msg, level) {
     this.internal_iwidget.logManager.log(msg, level);
 };
 
-IWidget.prototype.highlight = function () {
+IWidget.prototype.highlight = function highlight() {
     if (this.isVisible()) {
         this.element.classList.add('highlighted');
+    }
+};
 
-        if (this.highlightTimeout !== null) {
-            clearTimeout(this.highlightTimeout);
-        }
-
-        this.highlightTimeout = setTimeout(function () {
-                this.element.classList.remove('highlighted');
-                this.highlightTimeout = null;
-            }.bind(this),
-            15000);
+IWidget.prototype.unhighlight = function unhighlight() {
+    if (this.isVisible()) {
+        this.element.classList.remove('highlighted');
     }
 };
 

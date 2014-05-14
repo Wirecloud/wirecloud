@@ -27,10 +27,6 @@ div.dragboard.fixed {
  *
  */
 
-div.iwidget.highlighted {
-    box-shadow: 0px 0px 3px 3px rgba(250, 0, 0, 0.7);
-}
-
 .notebook.full.workspace > div {
     top: 0;
     left: 0;
@@ -93,6 +89,9 @@ div.iwidget.highlighted {
     -moz-border-radius: 0 0 3px 3px;
     -webkit-border-radius: 0 0 3px 3px;
     border-radius: 0 0 8px 3px;
+    -webkit-transition: box-shadow 0.7s ease-in;
+    -moz-transition: box-shadow 0.7s ease-in;
+    transition: box-shadow 0.7s ease-in;
 }
 
 .notebook.workspace .tab_area .tab > span {
@@ -105,4 +104,23 @@ div.iwidget.highlighted {
     border-top: 0px none;
     border-bottom: 1px solid #600000;
     height: 16px;
+}
+
+.notebook.workspace .tab_area > .tab.highlight {
+    -webkit-animation: highlight_tab 2s infinite linear;
+    -moz-animation: highlight_tab 2s infinite linear;
+    -o-animation: highlight_tab 2s infinite linear;
+    animation: highlight_tab 2s infinite linear;
+}
+
+@-webkit-keyframes highlight_tab {
+    0% {
+        box-shadow: 0px 0px 2px 2px rgba(255, 255, 255, 0.5);
+    }
+    50% {
+        box-shadow: 0px 0px 3px 5px rgba(255, 255, 255, 0.5);
+    }
+    100% {
+        box-shadow: 0px 0px 2px 2px rgba(255, 255, 255, 0.5);
+    }
 }

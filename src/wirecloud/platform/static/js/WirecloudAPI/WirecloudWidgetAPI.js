@@ -79,6 +79,12 @@
         }
     });
 
+    Object.defineProperty(window.MashupPlatform.widget, 'drawAttention', {
+        value: function drawAttention() {
+            iwidget.workspace.drawAttention(iwidget.id);
+        }
+    });
+
     Object.defineProperty(window.MashupPlatform.widget, 'context', {value: {}});
     Object.defineProperty(window.MashupPlatform.widget, 'log', {
         value: function log(msg, level) {

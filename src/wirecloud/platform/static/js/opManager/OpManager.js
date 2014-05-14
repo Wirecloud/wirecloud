@@ -203,10 +203,6 @@ var OpManagerFactory = function () {
             iWidget.log(msg, level);
         }
 
-        OpManager.prototype.drawAttention = function(iWidgetId) {
-            Wirecloud.activeWorkspace.drawAttention(iWidgetId);
-        };
-
         //Operations on workspaces
 
         OpManager.prototype.workspaceExists = function (newName) {

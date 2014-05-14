@@ -807,7 +807,7 @@ Workspace.prototype.getPreferencesWindow = function getPreferencesWindow() {
     return this.pref_window_menu;
 };
 
-Workspace.prototype.drawAttention = function(iWidgetId) {
+Workspace.prototype.drawAttention = function drawAttention(iWidgetId) {
     var iWidget = this.getIWidget(iWidgetId);
     if (iWidget !== null) {
         this.highlightTab(iWidget.layout.dragboard.tab);
@@ -816,9 +816,7 @@ Workspace.prototype.drawAttention = function(iWidgetId) {
     }
 };
 
-Workspace.prototype.highlightTab = function(tab) {
-    var tabElement;
-
+Workspace.prototype.highlightTab = function highlightTab(tab) {
     if (typeof tab === 'number') {
         tab = this.tabInstances[tab];
     }
@@ -827,13 +825,17 @@ Workspace.prototype.highlightTab = function(tab) {
         throw new TypeError();
     }
 
-    tabElement = tab.tabElement;
-    tabElement.classList.add("highlight");
-    if (tab.tabInfo.id in this.highlightTimeouts) {
-        clearTimeout(this.highlightTimeouts[tab.tabInfo.id]);
+    tab.tabElement.classList.add("highlight");
+};
+
+Workspace.prototype.unhighlightTab = function unhighlightTab(tab) {
+    if (typeof tab === 'number') {
+        tab = this.tabInstances[tab];
     }
-    this.highlightTimeouts[tab.tabInfo.id] = setTimeout(function() {
-        tabElement.classList.remove("highlight");
-        delete this.highlightTimeouts[tab.tabInfo.id];
-    }.bind(this), 10000);
+
+    if (!(tab instanceof Tab)) {
+        throw new TypeError();
+    }
+
+    tab.tabElement.classList.remove("highlight");
 };

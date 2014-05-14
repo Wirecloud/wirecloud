@@ -89,6 +89,9 @@
     background: #fcfcfc;
     box-shadow: 0 0 8px rgba(50, 50, 50, 0.1);
     border-radius: 4px;
+    -moz-transition: box-shadow 0.7s linear;
+    -webkit-transition: box-shadow 0.7s linear;
+    transition: box-shadow 0.7s linear;
 }
 
 .iwidget > .widget_shadow > .widget_wrapper {
@@ -99,6 +102,9 @@
     border-radius: 4px 4px 0px 0px;
     border-style: solid;
     border-color: #DDD;
+    -moz-transition: border-color 0.7s ease-in;
+    -webkit-transition: border-color 0.7s ease-in;
+    transition: border-color 0.7s ease-in;
 }
 
 .iwidget > .widget_shadow > .widget_wrapper > iframe {
@@ -112,6 +118,37 @@
     border: 1px solid #DDD;
     border-radius: 0px 0px 4px 4px;
     background: #DDD;
+    -moz-transition: border-color 0.7s ease-in, background-color 0.7s ease-in;
+    -webkit-transition: border-color 0.7s ease-in, background-color 0.7s ease-in;
+    transition: border-color 0.7s ease-in, background-color 0.7s ease-in;
+}
+
+.iwidget.highlighted > .widget_shadow {
+    -webkit-animation: highlight_iwidget 2s infinite linear;
+    -moz-animation: highlight_iwidget 2s infinite linear;
+    -o-animation: highlight_iwidget 2s infinite linear;
+    animation: highlight_iwidget 2s infinite linear;
+}
+
+.iwidget.highlighted > .widget_shadow > .widget_wrapper {
+    border-color: rgba(82, 168, 236, 0.8);
+}
+
+.iwidget.highlighted > .widget_shadow > .statusBar {
+    border-color: rgba(82, 168, 236, 0.8);
+    background-color: rgb(82, 168, 236);
+}
+
+@-webkit-keyframes highlight_iwidget {
+    0% {
+        box-shadow: 0 0 8px 0px rgba(82, 168, 236, 0.6);
+    }
+    50% {
+        box-shadow: 0 0 8px 4px rgba(82, 168, 236, 0.6);
+    }
+    100% {
+        box-shadow: 0 0 8px 0px rgba(82, 168, 236, 0.6);
+    }
 }
 
 .fulldragboard .iwidget > .widget_shadow > .statusBar {
