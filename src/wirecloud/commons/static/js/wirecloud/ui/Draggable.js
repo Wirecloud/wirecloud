@@ -72,9 +72,8 @@
             handler.addEventListener("mousedown", startdrag, false);
             handler.addEventListener("touchstart", startdrag, false);
 
-            document.onmousedown = null; // reenable context menu
-            document.onselectstart = null; // reenable text selection in IE
-            document.oncontextmenu = null; // reenable text selection
+            document.removeEventListener('contextmenu', Wirecloud.Utils.preventDefaultListener); // reenable context menu
+            document.removeEventListener('mousedown', Wirecloud.Utils.preventDefaultListener); // reenable text selection
         };
 
         // fire each time it's dragged
@@ -101,16 +100,16 @@
 
             // Only attend to left button (or right button for left-handed persons) events
             if (e.type === 'mousedown' && e.button !== 0) {
-                return false;
+                return;
             }
 
             if (!canBeDragged(draggable, data)) {
                 return false;
             }
 
-            document.oncontextmenu = _cancel; // disable context menu
-            document.onmousedown = _cancel; // disable text selection in Firefox
-            document.onselectstart = _cancel; // disable text selection in IE
+            e.preventDefault(); // disable text selection caused by this event
+            document.addEventListener('contextmenu', Wirecloud.Utils.preventDefaultListener); // disable context menu
+            document.addEventListener('mousedown', Wirecloud.Utils.preventDefaultListener); // disable text selection in Firefox
             handler.removeEventListener("mousedown", startdrag, false);
             handler.removeEventListener("touchstart", startdrag, false);
 
@@ -155,8 +154,8 @@
 
                 dragboard.insertBefore(dragboardCover, dragboard.firstChild);
             }
+
             e.stopPropagation();
-            return false;
         };
 
         // fire each time the dragboard is scrolled while dragging

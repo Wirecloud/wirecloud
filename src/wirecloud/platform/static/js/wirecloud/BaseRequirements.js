@@ -28,6 +28,10 @@
     var check_basic_requirements = function check_basic_requirements() {
         var tester = {};
 
+        if (!('addEventListener' in document.documentElement)) {
+            throw new Error('Missing basic DOM event support');
+        }
+
         if (!('JSON' in window)) {
             throw new Error('Missing JSON support');
         }
