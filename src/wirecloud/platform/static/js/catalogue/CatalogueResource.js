@@ -45,14 +45,6 @@
             return allVersions;
         };
 
-        this.isMashup = function () {
-            return this.type === 'mashup';
-        };
-
-        this.isWidget = function () {
-            return this.type === 'widget';
-        };
-
         this.isAllow = function isAllow(action) {
 
             switch (action) {

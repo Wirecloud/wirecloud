@@ -88,7 +88,7 @@
             (new Wirecloud.ui.InstantiateMashupWindowMenu(resource)).show();
         };
 
-        if (resource.isMashup()) {
+        if (resource.type === 'mashup') {
             OpManagerFactory.getInstance().addWorkspaceFromMashup(resource, {
                 dry_run: true,
                 onSuccess: next,
