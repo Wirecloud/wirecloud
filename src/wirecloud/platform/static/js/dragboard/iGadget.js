@@ -322,7 +322,11 @@ IWidget.prototype.build = function () {
     this.rightResizeHandle = contents.tmp.rightresizehandle;
     this.titleelement = contents.tmp.titleelement;
 
-    this.element.addEventListener('transitionend', this._notifyWindowResizeEvent.bind(this), true);
+    this.element.addEventListener('transitionend', function () {
+        if (this.layout.iwidgetToMove == null) {
+            this._notifyWindowResizeEvent();
+        }
+    }.bind(this), true);
 
     // Icon Element
     this.iconElement = document.createElement("div");
