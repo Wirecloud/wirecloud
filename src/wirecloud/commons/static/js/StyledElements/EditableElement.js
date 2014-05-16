@@ -29,15 +29,23 @@
         var sel = window.getSelection();
         sel.removeAllRanges();
         sel.addRange(range);
+
+        document.addEventListener('mousedown', this._onBlur, false);
     };
 
     var onKeydown = function onKeydown(e) {
         if (e.keyCode === 13) {
-            this.wrapperElement.blur();
+            this._onBlur();
         }
     };
 
     var onBlur = function onBlur(e) {
+        if (!this.wrapperElement.hasAttribute('contenteditable')) {
+            return;
+        }
+
+        document.removeEventListener('mousedown', this._onBlur, false);
+
         this.events.change.dispatch(this, this.wrapperElement.textContent);
         this.disableEdition();
     };
@@ -62,7 +70,7 @@
 
     EditableElement.prototype.disableEdition = function disableEdition() {
         if (this.wrapperElement.hasAttribute('contenteditable')) {
-            this.wrapperElement.removeEventListener('mousedown', Wirecloud.Utils.stopPropagationListenerfunction, true);
+            this.wrapperElement.removeEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
             this.wrapperElement.removeAttribute('contenteditable');
             this.wrapperElement.blur();
             this.wrapperElement.scrollLeft = 0;
@@ -72,7 +80,7 @@
 
     EditableElement.prototype.enableEdition = function enableEdition() {
         if (!this.wrapperElement.hasAttribute('contenteditable')) {
-            this.wrapperElement.addEventListener('mousedown', Wirecloud.Utils.stopPropagationListenerfunction, true);
+            this.wrapperElement.addEventListener('mousedown', Wirecloud.Utils.stopPropagationListener, true);
             this.wrapperElement.setAttribute('contenteditable', 'true');
         }
         this.wrapperElement.focus();
