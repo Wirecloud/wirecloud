@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2012-2013 Universidad Politécnica de Madrid
+ *     Copyright (c) CoNWeT Lab., 2012-2014 Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,54 +26,9 @@
     "use strict";
 
     var OperatorMeta = function OperatorMeta(desc) {
-        var vendor, name, version, uri, title, description, inputs,
-            outputs, prefList, prefs, pref, i, changelog;
+        var inputs, outputs, prefList, prefs, pref, i;
 
-        // Vendor
-        if (!('vendor' in desc) || desc.vendor.trim() === '') {
-            throw new TypeError(gettext('missing operator vendor'));
-        }
-        vendor = desc.vendor.trim();
-        Object.defineProperty(this, 'vendor', {value: vendor});
-
-        // Name
-        if (!('name' in desc) || desc.name.trim() === '') {
-            throw new TypeError(gettext('missing operator name'));
-        }
-        name = desc.name.trim();
-        Object.defineProperty(this, 'name', {value: name});
-
-        // Version
-        if (!('version' in desc) || desc.version.trim() === '') {
-            throw new TypeError(gettext('missing operator version'));
-        }
-        version = new Wirecloud.Version(desc.version.trim());
-        Object.defineProperty(this, 'version', {value: version});
-
-        // URI
-        uri = desc.name.trim();
-        Object.defineProperty(this, 'uri', {value: vendor + '/' + name + '/' + version.text});
-
-        // Change log url
-        if (!('changelog' in desc) || desc.changelog.trim() === '') {
-            changelog = '';
-        } else {
-            changelog = desc.changelog;
-        }
-        Object.defineProperty(this, 'changelog', {value: changelog});
-
-        if (!('title' in desc) || desc.title.trim() === '') {
-            title = name;
-        } else {
-            title = desc.title;
-        }
-        Object.defineProperty(this, 'title', {value: title});
-
-        description = desc.description;
-        if (description == null || description.trim() === '') {
-            description = '';
-        }
-        Object.defineProperty(this, 'description', {value: description});
+        Wirecloud.MashableApplicationComponent.call(this, desc);
 
         prefList = desc.preferences;
         if (!Array.isArray(prefList)) {

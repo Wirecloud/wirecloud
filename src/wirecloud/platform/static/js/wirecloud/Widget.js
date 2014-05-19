@@ -29,14 +29,10 @@
 
         var i, preference, property;
 
-        this.vendor = data.vendor;
-        this.name = data.name;
-        this.version = new Wirecloud.Version(data.version, 'showcase');
-        this.uri = this.vendor + '/' + this.name + '/' + this.version.text;
-        this.id = this.uri;
-        this.changelog = data.changelog;
+        Wirecloud.MashableApplicationComponent.call(this, data);
 
-        this.title = data.title;
+        this.id = this.uri;
+
         this.code_url = Wirecloud.URLs.WIDGET_CODE_ENTRY.evaluate({
             vendor: this.vendor,
             name: this.name,
