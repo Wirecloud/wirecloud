@@ -1,67 +1,31 @@
 # -*- coding: utf-8 -*-
 
-#...............................licence...........................................
-#
-#     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
-#     S.A.Unipersonal (Telefonica I+D)
-#
-#     This file is part of Morfeo EzWeb Platform.
-#
-#     Morfeo EzWeb Platform is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU Affero General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     (at your option) any later version.
-#
-#     Morfeo EzWeb Platform is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU Affero General Public License for more details.
-#
-#     You should have received a copy of the GNU Affero General Public License
-#     along with Morfeo EzWeb Platform.  If not, see <http://www.gnu.org/licenses/>.
-#
-#     Info about members and contributors of the MORFEO project
-#     is available at
-#
-#     http://morfeo-project.org
-#
-#...............................licence...........................................#
+# Copyright (c) 2011-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
+# This file is part of Wirecloud.
 
-#
+# Wirecloud is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Wirecloud is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+
 import time
 from urlparse import urljoin, urlparse
 
-from wirecloud.catalogue.models import WidgetWiring
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 
 
-def get_event_data(widget_id):
-    """Gets the events of the given widget."""
-    all_events = []
-    events = WidgetWiring.objects.filter(idResource=widget_id, wiring='out')
-    for e in events:
-        event_data = {}
-        event_data['friendcode'] = e.friendcode
-        all_events.append(event_data)
-    return all_events
-
-
-def get_slot_data(widget_id):
-    """Gets the slots of the given widget."""
-    all_slots = []
-    slots = WidgetWiring.objects.filter(idResource=widget_id, wiring='in')
-    for s in slots:
-        slot_data = {}
-        slot_data['friendcode'] = s.friendcode
-        all_slots.append(slot_data)
-    return all_slots
-
-
-def get_resource_data(untranslated_resource, user, request=None):
-    """Gets all the information related to the given widget."""
-    resource = untranslated_resource.get_translated_model()
-    resource_info = untranslated_resource.get_processed_info(request)
+def get_resource_data(resource, user, request=None):
+    """Gets all the information related to the given resource."""
+    resource_info = resource.get_processed_info(request)
 
     if urlparse(resource.template_uri).scheme == '':
         template_uri = get_absolute_reverse_url('wirecloud_catalogue.media', kwargs={
@@ -77,9 +41,6 @@ def get_resource_data(untranslated_resource, user, request=None):
         displayName = resource.display_name
     else:
         displayName = resource.short_name
-
-    data_events = get_event_data(widget_id=resource.pk)
-    data_slots = get_slot_data(widget_id=resource.pk)
 
     uploader = None
     if resource.creator is not None:
@@ -111,8 +72,6 @@ def get_resource_data(untranslated_resource, user, request=None):
         'uriTemplate': template_uri,
         'license': resource_info['license'],
         'licenseurl': resource_info['licenseurl'],
-        'outputs': [d for d in data_events],
-        'inputs': [d for d in data_slots],
     }
 
 
