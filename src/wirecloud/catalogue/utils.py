@@ -60,6 +60,16 @@ def extract_resource_media_from_package(template, package, base_path):
         elif resource_info['smartphoneimage'].startswith(('//', '/')):
             overrides['smartphoneimage'] = template.get_absolute_url(resource_info['smartphoneimage'])
 
+    if resource_info['doc'] != '':
+        if not resource_info['doc'].startswith(('http://', 'https://', '//', '/')):
+            doc_path = os.path.normpath(os.path.dirname(resource_info['doc']))
+            try:
+                package.extract_dir(doc_path, os.path.join(base_path, doc_path))
+            except KeyError:
+                overrides['doc'] = ''
+        elif resource_info['doc'].startswith(('//', '/')):
+            overrides['doc'] = template.get_absolute_url(resource_info['doc'])
+
     return overrides
 
 

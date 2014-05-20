@@ -60,6 +60,40 @@ class WgtFile(object):
         f.write(contents)
         f.close()
 
+    def extract_dir(self, dir_name, output_path):
+
+        if not dir_name.endswith('/'):
+            dir_name += '/'
+
+        if dir_name not in self._zip.namelist():
+            raise KeyError(dir_name)
+
+        if not os.path.exists(output_path):
+            os.makedirs(output_path)
+
+        for name in self._zip.namelist():
+
+            if not name.startswith(dir_name):
+                continue
+
+            local_name = name[len(dir_name):]
+            listnames = local_name.split("/")[:-1]
+            folder = output_path
+            if name.endswith("/"):
+                for namedir in listnames:
+                    folder += os.sep + namedir.replace("/", os.sep)
+                    if (not os.path.exists(folder)
+                        or (os.path.exists(folder) and not os.path.isdir(folder))):
+                        os.mkdir(folder)
+            else:
+                for namedir in listnames:
+                    folder += os.sep + namedir.replace("/", os.sep)
+                    if not os.path.exists(folder) or not os.path.isdir(folder):
+                        os.mkdir(folder)
+                outfile = open(os.path.join(output_path, local_name.replace("/", os.sep)), 'wb')
+                outfile.write(self._zip.read(name))
+                outfile.close()
+
     def extract(self, path):
 
         if not os.path.exists(path) or not os.path.isdir(path):

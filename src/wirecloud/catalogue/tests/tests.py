@@ -289,7 +289,7 @@ class WGTDeploymentTestCase(TransactionTestCase):
 
         self.assertFalse(response.status_code > 200 and response.status_code < 300)
 
-    def test_upload_of_basic_wgt(self):
+    def test_upload_of_packaged_widget(self):
         User.objects.create_user('test', 'test@example.com', 'test')
         widget_path = wirecloud.catalogue.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
         c = Client()
@@ -300,7 +300,10 @@ class WGTDeploymentTestCase(TransactionTestCase):
         f.close()
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(os.path.isdir(widget_path), True)
+        self.assertTrue(os.path.isdir(widget_path))
+        self.assertTrue(os.path.exists(os.path.join(widget_path, 'images/catalogue.png')))
+        self.assertTrue(os.path.exists(os.path.join(widget_path, 'documentation/index.html')))
+        self.assertFalse(os.path.exists(os.path.join(widget_path, 'test.html')))
         widget = CatalogueResource.objects.get(vendor='Morfeo', short_name='Test', version='0.1')
         self.assertEqual(widget.template_uri, 'Morfeo_Test_0.1.wgt')
         self.assertEqual(widget.image_uri, 'images/catalogue.png')
@@ -314,7 +317,7 @@ class WGTDeploymentTestCase(TransactionTestCase):
         response = c.delete(resource_entry_url, HTTP_HOST='www.example.com')
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(os.path.exists(widget_path), False)
+        self.assertFalse(os.path.exists(widget_path))
 
     def test_upload_of_packaged_operators(self):
         User.objects.create_user('test', 'test@example.com', 'test')
