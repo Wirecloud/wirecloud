@@ -79,13 +79,13 @@ class AddWidgetTestCase(WirecloudTestCase):
         self.changeLanguage('en')
         data = get_resource_data(widget, self.user)
 
-        self.assertEqual(data['displayName'], 'Test Widget')
+        self.assertEqual(data['title'], 'Test Widget')
         self.assertEqual(data['description'], 'Test Widget description')
 
         self.changeLanguage('es')
         data = get_resource_data(widget, self.user)
 
-        self.assertEqual(data['displayName'], u'Widget de pruebas')
+        self.assertEqual(data['title'], u'Widget de pruebas')
         self.assertEqual(data['description'], u'Descripción del Widget de pruebas')
 
 
