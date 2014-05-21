@@ -132,37 +132,6 @@ def create_widget_from_template(template, user, request=None, base=None):
         variable_definitions[vDef.name] = vDef
         order += 1
 
-    order = 0
-    for input_endpoint in widget_info['wiring']['inputs']:
-        vDef = VariableDef.objects.create(
-            name=input_endpoint['name'],
-            order=order,
-            description=input_endpoint['description'],
-            type=parser.typeText2typeCode(input_endpoint['type']),
-            aspect='SLOT',
-            friend_code=input_endpoint['friendcode'],
-            label=input_endpoint['label'],
-            action_label=input_endpoint['actionlabel'],
-            widget=widget,
-        )
-        variable_definitions[vDef.name] = vDef
-        order += 1
-
-    order = 0
-    for output_endpoint in widget_info['wiring']['outputs']:
-        vDef = VariableDef.objects.create(
-            name=output_endpoint['name'],
-            order=order,
-            description=output_endpoint['description'],
-            type=parser.typeText2typeCode(output_endpoint['type']),
-            aspect='EVEN',
-            friend_code=output_endpoint['friendcode'],
-            label=output_endpoint['label'],
-            widget=widget,
-        )
-        variable_definitions[vDef.name] = vDef
-        order += 1
-
     for lang in widget_info['translations']:
         translation = widget_info['translations'][lang]
         for index in translation:
