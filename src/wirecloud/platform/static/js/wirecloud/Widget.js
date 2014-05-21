@@ -76,12 +76,12 @@
             this.outputs[this.outputList[i].name] = this.outputList[i];
         }
 
+        this.image = data.image;
         this.default_width = data.widget_width;
         this.default_height = data.widget_height;
 
         /* FIXME */
         this.getUriWiki = function getUriWiki() { return data.doc; };
-        this.getImage = function getImage() { return data.image; };
         this.getIcon = function getIcon() { return data.smartphoneimage !== '' ? data.smartphoneimage : data.image; };
         this.getIPhoneImageURI = this.getIcon;
 

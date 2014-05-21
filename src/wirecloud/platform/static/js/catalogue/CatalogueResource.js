@@ -77,7 +77,7 @@
                 get: function () { return currentVersion.packaged; }
             },
             'image': {
-                get: function () { return currentVersion.uriImage; }
+                get: function () { return currentVersion.image; }
             },
             'description_url': {
                 get: function () { return currentVersion.uriTemplate; }
@@ -85,11 +85,11 @@
             'description': {
                 get: function () { return currentVersion.description; }
             },
-            'doc_url': {
-                get: function () { return currentVersion.uriWiki; }
+            'doc': {
+                get: function () { return currentVersion.doc; }
             },
-            'displayname': {
-                get: function () { return currentVersion.displayName; }
+            'title': {
+                get: function () { return currentVersion.title; }
             },
             'uploader': {
                 get: function () { return currentVersion.uploader; }

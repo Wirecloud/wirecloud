@@ -68,7 +68,7 @@
         }
 
         context = Wirecloud.Utils.merge(extra_context, {
-            'displayname': resource.displayname,
+            'title': resource.title,
             'name': resource.name,
             'internalname': resource.uri,
             'vendor': resource.vendor,
@@ -106,7 +106,7 @@
                     'title': gettext('Documentation')
                 });
                 button.addEventListener('click', function () {
-                    window.open(resource.doc_url, '_blank');
+                    window.open(resource.doc, '_blank');
                 });
 
                 return button;
@@ -120,7 +120,7 @@
                     'title': gettext('Home page')
                 });
                 button.addEventListener('click', function () {
-                    window.open(resource.doc_url, '_blank');
+                    window.open(resource.doc, '_blank');
                 });
 
                 return button;

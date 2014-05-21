@@ -37,11 +37,6 @@ def get_resource_data(resource, user, request=None):
     else:
         template_uri = resource.template_uri
 
-    if resource.display_name and resource.display_name != "":
-        displayName = resource.display_name
-    else:
-        displayName = resource.short_name
-
     uploader = None
     if resource.creator is not None:
         uploader = resource.creator.get_full_name()
@@ -56,19 +51,19 @@ def get_resource_data(resource, user, request=None):
         'vendor': resource.vendor,
         'name': resource.short_name,
         'version': resource.version,
-        'type': resource.resource_type(),
+        'type': resource_info['type'],
         'packaged': resource.fromWGT,
         'date': creation_timestamp,
         'uploader': uploader,
         'permissions' : {
             'uninstall': resource.public is False and resource.users.filter(pk=user.pk).exists(),
         },
-        'authors': resource.author,
-        'displayName': displayName,
-        'description': resource.description,
-        'mail': resource.mail,
-        'uriImage': urljoin(template_uri, resource.image_uri),
-        'uriWiki': urljoin(template_uri, resource.wiki_page_uri),
+        'authors': resource_info['authors'],
+        'title': resource_info['title'],
+        'description': resource_info['description'],
+        'email': resource_info['email'],
+        'image': resource_info['image'],
+        'doc': resource_info['doc'],
         'uriTemplate': template_uri,
         'license': resource_info['license'],
         'licenseurl': resource_info['licenseurl'],
