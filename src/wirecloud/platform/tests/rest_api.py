@@ -2262,7 +2262,8 @@ class ExtraApplicationMashupAPI(WirecloudTestCase):
         # TODO search a better way for checking this
         test_mashup = CatalogueResource.objects.get(short_name='test-published-mashup')
         base_dir = catalogue_utils.wgt_deployer.get_base_dir('Wirecloud', 'test-published-mashup', '1.0.5')
-        image_path = os.path.join(base_dir, test_mashup.image_uri)
+        test_mashup_info = json.loads(test_mashup.json_description)
+        image_path = os.path.join(base_dir, test_mashup_info['image'])
         self.assertTrue(filecmp.cmp(original_image, image_path))
 
     def test_workspace_publish_bad_provided_data(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2012-2013 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2012-2014 CoNWeT Lab., Universidad Politécnica de Madrid
 
 # This file is part of Wirecloud.
 
@@ -31,7 +31,7 @@ from django.test import TransactionTestCase, TestCase, Client
 import wirecloud.catalogue.utils
 from wirecloud.catalogue.utils import add_resource_from_template
 from wirecloud.catalogue.get_json_catalogue_data import get_resource_data
-from wirecloud.catalogue.models import CatalogueResource, WidgetWiring
+from wirecloud.catalogue.models import CatalogueResource
 from wirecloud.commons.utils.template import TemplateParseException
 from wirecloud.commons.utils.testcases import LocalFileSystemServer, WirecloudTestCase
 from wirecloud.commons.utils.wgt import WgtDeployer
@@ -66,12 +66,19 @@ class AddWidgetTestCase(WirecloudTestCase):
     def test_add_resource_from_template(self):
 
         widget = add_resource_from_template(self.template_uri, self.template, self.user)
+        widget_info = widget.get_processed_info()
 
-        outputs = WidgetWiring.objects.filter(idResource=widget, wiring='out')
-        self.assertTrue(outputs.count() == 1 and outputs[0].friendcode == 'test_friend_code')
-
-        inputs = WidgetWiring.objects.filter(idResource=widget, wiring='in')
-        self.assertTrue(inputs.count() == 1 and inputs[0].friendcode == 'test_friend_code')
+        self.assertEqual(widget.vendor, 'Morfeo')
+        self.assertEqual(widget.short_name, 'Test')
+        self.assertEqual(widget.version, '0.1')
+        self.assertEqual(widget_info['wiring'], {
+            'inputs': [
+                {'friendcode': 'test_friend_code', 'name': 'slot', 'actionlabel': '', 'label': 'Slot label', 'type': 'text', 'description': ''}
+            ],
+            'outputs': [
+                {'description': '', 'type': 'text', 'friendcode': 'test_friend_code', 'name': 'event', 'label': 'Event label'}
+            ]
+        })
 
     def test_add_resource_from_template_translations(self):
 
@@ -233,27 +240,29 @@ class PublishTestCase(WirecloudTestCase):
 
         return contents
 
+    def check_basic_mashup_info(self, mashup):
+        mashup_info = mashup.get_processed_info()
+
+        self.assertEqual(mashup.vendor, 'Wirecloud')
+        self.assertEqual(mashup.short_name, 'Test Mashup')
+        self.assertEqual(mashup.version, '1')
+
+        self.assertEqual(mashup_info['description'], 'This template defines an empty mashup')
+        self.assertEqual(mashup_info['authors'], 'test')
+
     def test_publish_empty_mashup_xml(self):
         template_uri = "http://example.com/path/mashup.xml"
         template = self.read_template('test-data', 'mt1.xml')
 
         mashup = add_resource_from_template(template_uri, template, self.user)
-        self.assertEqual(mashup.vendor, 'Wirecloud')
-        self.assertEqual(mashup.short_name, 'Test Mashup')
-        self.assertEqual(mashup.version, '1')
-        self.assertEqual(mashup.description, 'This template defines an empty mashup')
-        self.assertEqual(mashup.author, 'test')
+        self.check_basic_mashup_info(mashup)
 
     def test_publish_empty_mashup_rdf(self):
         template_uri = "http://example.com/path/mashup.rdf"
         template = self.read_template('test-data', 'mt1.rdf')
 
         mashup = add_resource_from_template(template_uri, template, self.user)
-        self.assertEqual(mashup.vendor, 'Wirecloud')
-        self.assertEqual(mashup.short_name, 'Test Mashup')
-        self.assertEqual(mashup.version, '1')
-        self.assertEqual(mashup.description, 'This template defines an empty mashup')
-        self.assertEqual(mashup.author, 'test')
+        self.check_basic_mashup_info(mashup)
 
     def test_publish_invalid_mashup(self):
         template_uri = "http://example.com/path/mashup.rdf"
@@ -302,11 +311,14 @@ class WGTDeploymentTestCase(TransactionTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(os.path.isdir(widget_path))
         self.assertTrue(os.path.exists(os.path.join(widget_path, 'images/catalogue.png')))
+        self.assertTrue(os.path.exists(os.path.join(widget_path, 'images/smartphone.png')))
+        self.assertTrue(os.path.exists(os.path.join(widget_path, 'documentation/images/image.png')))
         self.assertTrue(os.path.exists(os.path.join(widget_path, 'documentation/index.html')))
         self.assertFalse(os.path.exists(os.path.join(widget_path, 'test.html')))
         widget = CatalogueResource.objects.get(vendor='Morfeo', short_name='Test', version='0.1')
+        widget_info = json.loads(widget.json_description)
         self.assertEqual(widget.template_uri, 'Morfeo_Test_0.1.wgt')
-        self.assertEqual(widget.image_uri, 'images/catalogue.png')
+        self.assertEqual(widget_info['image'], 'images/catalogue.png')
 
         resource_entry_url = reverse('wirecloud_catalogue.resource_entry', kwargs={
             'vendor': 'Morfeo',
@@ -330,10 +342,14 @@ class WGTDeploymentTestCase(TransactionTestCase):
         f.close()
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(os.path.isdir(operator_path), True)
+        self.assertTrue(os.path.isdir(operator_path))
+        self.assertTrue(os.path.exists(os.path.join(operator_path, 'images/catalogue.png')))
+        self.assertTrue(os.path.exists(os.path.join(operator_path, 'doc/images/image.png')))
+        self.assertTrue(os.path.exists(os.path.join(operator_path, 'doc/index.html')))
         operator = CatalogueResource.objects.get(vendor='Wirecloud', short_name='basic-operator', version='0.1')
+        operator_info = json.loads(operator.json_description)
         self.assertEqual(operator.template_uri, 'Wirecloud_basic-operator_0.1.wgt')
-        self.assertEqual(operator.image_uri, 'images/catalogue.png')
+        self.assertEqual(operator_info['image'], 'images/catalogue.png')
 
         resource_entry_url = reverse('wirecloud_catalogue.resource_entry', kwargs={
             'vendor': 'Wirecloud',
