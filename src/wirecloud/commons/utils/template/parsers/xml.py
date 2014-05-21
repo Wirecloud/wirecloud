@@ -220,9 +220,9 @@ class WirecloudTemplateParser(object):
         wiring_element = wiring_elements[0]
 
         for slot in self._xpath(INPUT_ENDPOINT_XPATH, wiring_element):
-            self._add_translation_index(slot.get('label'), type='vdef', variable=slot.get('name'))
-            self._add_translation_index(slot.get('actionlabel', ''), type='vdef', variable=slot.get('name'))
-            self._add_translation_index(slot.get('description', ''), type='vdef', variable=slot.get('name'))
+            self._add_translation_index(slot.get('label'), type='inputendpoint', variable=slot.get('name'))
+            self._add_translation_index(slot.get('actionlabel', ''), type='inputendpoint', variable=slot.get('name'))
+            self._add_translation_index(slot.get('description', ''), type='inputendpoint', variable=slot.get('name'))
             self._info['wiring']['inputs'].append({
                 'name': slot.get('name'),
                 'type': slot.get('type'),
@@ -233,8 +233,8 @@ class WirecloudTemplateParser(object):
             })
 
         for event in self._xpath(OUTPUT_ENDPOINT_XPATH, wiring_element):
-            self._add_translation_index(event.get('label'), type='vdef', variable=event.get('name'))
-            self._add_translation_index(event.get('description', ''), type='vdef', variable=event.get('name'))
+            self._add_translation_index(event.get('label'), type='outputendpoint', variable=event.get('name'))
+            self._add_translation_index(event.get('description', ''), type='outputendpoint', variable=event.get('name'))
             self._info['wiring']['outputs'].append({
                 'name': event.get('name'),
                 'type': event.get('type'),

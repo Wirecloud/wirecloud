@@ -135,7 +135,7 @@ class TemplateParser(object):
                 for use in usages:
                     if use['type'] == 'resource':
                         info[use['field']] = info[use['field']].replace('__MSG_' + index + '__', value)
-                    elif use['type'] == 'vdef':
+                    elif use['type'] in ('vdef', 'inputendpoint', 'outputendpoint'):
                         variable = variables[use['variable']]
                         for field in variable:
                             if isinstance(variable[field], basestring):

@@ -124,13 +124,13 @@ class JSONTemplateParser(object):
                 self._add_translation_index(prop['description'], type='vdef', variable=prop['name'], field='description')
 
             for input_endpoint in self._info['wiring']['inputs']:
-                self._add_translation_index(input_endpoint['label'], type='vdef', variable=input_endpoint['name'], field='label')
-                self._add_translation_index(input_endpoint['description'], type='vdef', variable=input_endpoint['name'], field='description')
-                self._add_translation_index(input_endpoint['actionlabel'], type='vdef', variable=input_endpoint['name'], field='actionlabel')
+                self._add_translation_index(input_endpoint['label'], type='inputendpoint', variable=input_endpoint['name'], field='label')
+                self._add_translation_index(input_endpoint['description'], type='inputendpoint', variable=input_endpoint['name'], field='description')
+                self._add_translation_index(input_endpoint['actionlabel'], type='inputendpoint', variable=input_endpoint['name'], field='actionlabel')
 
             for output_endpoint in self._info['wiring']['outputs']:
-                self._add_translation_index(output_endpoint['label'], type='vdef', variable=output_endpoint['name'], field='label')
-                self._add_translation_index(output_endpoint['description'], type='vdef', variable=output_endpoint['name'], field='description')
+                self._add_translation_index(output_endpoint['label'], type='outputendpoint', variable=output_endpoint['name'], field='label')
+                self._add_translation_index(output_endpoint['description'], type='outputendpoint', variable=output_endpoint['name'], field='description')
 
     def get_resource_type(self):
         return self._info['type']

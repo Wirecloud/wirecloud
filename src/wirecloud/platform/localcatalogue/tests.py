@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
 import os.path
 from shutil import rmtree
 from tempfile import mkdtemp
@@ -98,11 +99,12 @@ class LocalCatalogueTestCase(WirecloudTestCase):
         self.network._servers['http']['example.com'].add_response('GET', '/path/test.html', {'content': BASIC_HTML_GADGET_CODE})
         resource = install_resource_to_user(self.user, file_contents=template, templateURL=template_uri)
 
+        resource_info = json.loads(resource.json_description)
         self.assertEqual(resource.vendor, 'Wirecloud')
         self.assertEqual(resource.short_name, 'test')
         self.assertEqual(resource.version, '0.1')
-        self.assertEqual(resource.mail, 'test@example.com')
-        self.assertEqual(resource.public, False)
+        self.assertEqual(resource_info['email'], 'test@example.com')
+        self.assertFalse(resource.public)
         self.assertEqual(tuple(resource.users.values_list('username', flat=True)), (u'test',))
         self.assertEqual(tuple(resource.groups.values_list('name', flat=True)), ())
 

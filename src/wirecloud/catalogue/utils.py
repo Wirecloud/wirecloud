@@ -138,32 +138,11 @@ def add_resource_from_template(template_uri, template, user, fromWGT=False, over
         fromWGT=fromWGT,
         type=CatalogueResource.RESOURCE_TYPES.index(resource_info['type']),
         creator=user,
-        author=resource_info['authors'],
-        display_name=resource_info['title'],
-        description=resource_info['description'],
-        mail=resource_info['email'],
-        image_uri=resource_info['image'],
-        iphone_image_uri=resource_info.get('smartphoneimage', ''),
-        wiki_page_uri=resource_info['doc'],
         template_uri=template_uri,
         creation_date=now(),
         popularity='0.0',
         json_description=json.dumps(resource_info)
     )
-
-    for input_endpoint in resource_info['wiring']['inputs']:
-        WidgetWiring.objects.create(
-            idResource=resource,
-            wiring='in',
-            friendcode=input_endpoint['friendcode']
-        )
-
-    for output_endpoint in resource_info['wiring']['outputs']:
-        WidgetWiring.objects.create(
-            idResource=resource,
-            wiring='out',
-            friendcode=output_endpoint['friendcode']
-        )
 
     resource_table = resource._get_table_id()
     for lang in resource_info['translations']:

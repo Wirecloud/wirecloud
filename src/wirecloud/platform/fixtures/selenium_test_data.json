@@ -53,10 +53,7 @@
         "fields": {
             "default_value": "default",
             "name": "list",
-            "description": "list preference",
-            "label": "list",
             "aspect": "PREF",
-            "order": 0,
             "type": "L",
             "widget": 1,
             "secure": false
@@ -68,10 +65,7 @@
         "fields": {
             "default_value": "initial text",
             "name": "text",
-            "description": "text preference",
-            "label": "text",
             "aspect": "PREF",
-            "order": 1,
             "type": "S",
             "widget": 1,
             "secure": false
@@ -83,10 +77,7 @@
         "fields": {
             "default_value": "false",
             "name": "boolean",
-            "description": "boolean preference",
-            "label": "boolean",
             "aspect": "PREF",
-            "order": 2,
             "type": "B",
             "widget": 1,
             "secure": false
@@ -98,43 +89,8 @@
         "fields": {
             "default_value": "default",
             "name": "password",
-            "description": "password preference",
-            "label": "password",
             "aspect": "PREF",
-            "order": 3,
             "type": "P",
-            "widget": 1,
-            "secure": false
-        }
-    },
-    {
-        "pk": 5,
-        "model": "platform.variabledef",
-        "fields": {
-            "default_value": null,
-            "name": "inputendpoint",
-            "description": "",
-            "label": "Input",
-            "aspect": "SLOT",
-            "friend_code": "test-data",
-            "order": 0,
-            "type": "S",
-            "widget": 1,
-            "secure": false
-        }
-    },
-    {
-        "pk": 6,
-        "model": "platform.variabledef",
-        "fields": {
-            "default_value": null,
-            "name": "outputendpoint",
-            "description": "",
-            "label": "Output",
-            "aspect": "EVEN",
-            "friend_code": "test-data",
-            "order": 0,
-            "type": "S",
             "widget": 1,
             "secure": false
         }

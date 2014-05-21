@@ -93,12 +93,9 @@ def create_widget_from_template(template, user, request=None, base=None):
     for preference in widget_info['preferences']:
         vDef = VariableDef.objects.create(
             name=preference['name'],
-            order=order,
-            description=preference['description'],
             type=parser.typeText2typeCode(preference['type']),
             aspect='PREF',
             readonly=preference['readonly'],
-            label=preference['label'],
             default_value=preference['default'],
             value=preference['value'],
             widget=widget,
@@ -120,11 +117,8 @@ def create_widget_from_template(template, user, request=None, base=None):
     for prop in widget_info['properties']:
         vDef = VariableDef.objects.create(
             name=prop['name'],
-            order=order,
-            description=prop['description'],
             type=parser.typeText2typeCode(prop['type']),
             aspect='PROP',
-            label=prop['label'],
             default_value=prop['default'],
             widget=widget,
             secure=prop['secure'],

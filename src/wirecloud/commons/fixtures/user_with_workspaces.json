@@ -529,11 +529,8 @@
             "default_value": "default",
             "widget": 1,
             "name": "list",
-            "description": "list preference",
-            "label": "list",
             "aspect": "PREF",
             "type": "L",
-            "order": 0,
             "secure": false
         }
     },
@@ -544,11 +541,8 @@
             "default_value": "initial text",
             "widget": 1,
             "name": "text",
-            "description": "text preference",
-            "label": "text",
             "aspect": "PREF",
             "type": "S",
-            "order": 1,
             "secure": false
         }
     },
@@ -559,11 +553,8 @@
             "default_value": "false",
             "widget": 1,
             "name": "boolean",
-            "description": "boolean preference",
-            "label": "boolean",
             "aspect": "PREF",
             "type": "B",
-            "order": 2,
             "secure": false
         }
     },
@@ -574,44 +565,8 @@
             "default_value": "default",
             "widget": 1,
             "name": "password",
-            "description": "password preference",
-            "label": "password",
             "aspect": "PREF",
             "type": "P",
-            "order": 3,
-            "secure": false
-        }
-    },
-    {
-        "pk": 5,
-        "model": "platform.variabledef",
-        "fields": {
-            "default_value": null,
-            "action_label": "",
-            "widget": 1,
-            "name": "inputendpoint",
-            "description": "",
-            "label": "Input",
-            "aspect": "SLOT",
-            "friend_code": "test-data",
-            "type": "S",
-            "order": 0,
-            "secure": false
-        }
-    },
-    {
-        "pk": 6,
-        "model": "platform.variabledef",
-        "fields": {
-            "default_value": null,
-            "widget": 1,
-            "name": "outputendpoint",
-            "description": "",
-            "label": "Output",
-            "aspect": "EVEN",
-            "friend_code": "test-data",
-            "type": "S",
-            "order": 0,
             "secure": false
         }
     },
