@@ -26,7 +26,6 @@ from django.utils.translation import ugettext as _
 
 from wirecloud.catalogue.models import WidgetWiring, CatalogueResource
 from wirecloud.commons.exceptions import Http403
-from wirecloud.commons.models import Translation
 from wirecloud.commons.utils.timezone import now
 from wirecloud.commons.utils.template import TemplateParser
 from wirecloud.commons.utils.wgt import InvalidContents, WgtDeployer, WgtFile
@@ -143,28 +142,6 @@ def add_resource_from_template(template_uri, template, user, fromWGT=False, over
         popularity='0.0',
         json_description=json.dumps(resource_info)
     )
-
-    resource_table = resource._get_table_id()
-    for lang in resource_info['translations']:
-        translation = resource_info['translations'][lang]
-        for index in translation:
-            value = translation[index]
-            usages = resource_info['translation_index_usage'][index]
-            for use in usages:
-                if use['type'] != 'resource':
-                    continue
-
-                Translation.objects.create(
-                    text_id=index,
-                    element_id=resource.id,
-                    table=resource_table,
-                    language=lang,
-                    value=value,
-                    default=resource_info['default_lang'] == lang
-                )
-
-                # Create only a translation entry for this index
-                break
 
     return resource
 

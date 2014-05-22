@@ -26,13 +26,12 @@ from django.contrib.auth.models import User, Group
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
-from wirecloud.commons.models import TransModel
 from wirecloud.commons.utils.http import get_absolute_reverse_url
 from wirecloud.commons.utils.template.parsers import TemplateParser
 
 
 @python_2_unicode_compatible
-class CatalogueResource(TransModel):
+class CatalogueResource(models.Model):
 
     RESOURCE_TYPES = ('widget', 'mashup', 'operator')
     RESOURCE_MIMETYPES = ('application/x-widget+mashable-application-component', 'application/x-mashup+mashable-application-component', 'application/x-operator+mashable-application-component')
@@ -42,14 +41,10 @@ class CatalogueResource(TransModel):
         (2, 'Operator'),
     )
 
-    short_name = models.CharField(_('Name'), max_length=250)
-    display_name = models.CharField(_('Display Name'), max_length=250, null=True, blank=True)
     vendor = models.CharField(_('Vendor'), max_length=250)
+    short_name = models.CharField(_('Name'), max_length=250)
     version = models.CharField(_('Version'), max_length=150)
     type = models.SmallIntegerField(_('Type'), choices=TYPE_CHOICES, null=False, blank=False)
-
-    author = models.CharField(_('Author'), max_length=250)
-    mail = models.CharField(_('Mail'), max_length=100)
 
     # Person who added the resource to catalogue!
     creator = models.ForeignKey(User, null=True, blank=True, related_name='uploaded_resources')
@@ -57,13 +52,7 @@ class CatalogueResource(TransModel):
     users = models.ManyToManyField(User, verbose_name=_('Users'), related_name='local_resources', blank=True)
     groups = models.ManyToManyField(Group, verbose_name=_('Groups'), related_name='local_resources', blank=True)
 
-    description = models.TextField(_('Description'))
-    license = models.CharField(_('License'), max_length=20, null=True, blank=True)
-
     creation_date = models.DateTimeField('creation_date')
-    image_uri = models.CharField(_('imageURI'), max_length=200, blank=True)
-    iphone_image_uri = models.CharField(_('iPhoneImageURI'), max_length=200, blank=True)
-    wiki_page_uri = models.CharField(_('wikiURI'), max_length=200, blank=True)
     template_uri = models.CharField(_('templateURI'), max_length=200, blank=True)
 
     popularity = models.DecimalField(_('popularity'), default=0, max_digits=2, decimal_places=1)
