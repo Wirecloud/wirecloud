@@ -54,8 +54,6 @@ class WidgetAdmin(admin.ModelAdmin):
 admin.site.register(models.Widget, WidgetAdmin)
 admin.site.register(models.XHTML)
 
-admin.site.register(models.VariableDefAttr)
-
 admin.site.register(models.PlatformPreference)
 
 

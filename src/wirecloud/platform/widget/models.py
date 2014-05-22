@@ -148,21 +148,6 @@ class VariableDef(models.Model):
         db_table = 'wirecloud_variabledef'
 
 
-@python_2_unicode_compatible
-class VariableDefAttr(models.Model):
-
-    value = models.CharField(_('Value'), max_length=30)
-    name = models.CharField(_('Name'), max_length=30)
-    variableDef = models.ForeignKey(VariableDef)
-
-    def __str__(self):
-        return self.variableDef + self.name
-
-    class Meta:
-        app_label = 'platform'
-        db_table = 'wirecloud_variabledefattr'
-
-
 def create_widget_on_resource_creation(sender, instance, created, raw, **kwargs):
 
     from wirecloud.catalogue import utils as catalogue
